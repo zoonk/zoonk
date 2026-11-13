@@ -4,7 +4,7 @@ description: Use when designing, reviewing, or implementing any Apple-platform U
 license: MIT
 metadata:
   author: zoonk
-  version: "3.0.0"
+  version: "3.1.0"
 ---
 
 # Apple Human Interface Guidelines
@@ -34,6 +34,20 @@ Web, iOS and Android are one product, so the content layer looks the same on all
 - **Custom** artwork only where no piece carries the meaning (belts and characters, for example), and it still adapts to dark, Increase Contrast and Dynamic Type.
 
 From `main` take the product and its look: copy, flows, information hierarchy, screen structure, icons (as SF Symbols) and the content layer's design through the shared pieces. The words are main's too, written to zoonk-design's [Words](../zoonk-design/SKILL.md#words): a native slot with room for a sentence (a footer, a description, an alert's message) doesn't earn one. Take controls, navigation, gestures, input and accessibility from the platform. Don't port web implementation details (HTML layout tricks, hover-only affordances, custom replacements for native controls, hex colors, pixel sizes at the call site).
+
+## Roles
+
+Zoonk's [roles](../zoonk-design/SKILL.md#find-the-piece-before-you-build-one) each have one piece and one way on every screen. Here they are Apple's pieces:
+
+- **A page's top and the way back:** the system's. A pushed page keeps the system back button with the previous page's title (never a hidden back button, a hidden back title or a chevron a screen draws), and leads with `PageHeader`, with no eyebrow and no padding of the screen's own above it. A task keeps ✕ (`TaskToolbar`).
+- **The main action:** one `.mainAction` button in a `.safeAreaBar(edge: .bottom)`, on every screen that has one, on iPhone and iPad alike; never under the content on one screen and in the bar on the next. A screen with no main action has no bar.
+- **What opens over a page:** a `.sheet`, which the system brings up from the bottom on iPhone and centers on iPad; `.alert` or `confirmationDialog` only to confirm. Never a centered card a screen draws.
+- **A button:** its title and at most one symbol, and no arrow on a main action. While it works, the progress view takes the symbol's place and the button keeps its width.
+- **The small line over a title:** one chip (`.chip()`), written as a sentence, never the mono uppercase `.eyebrow`.
+- **Paying:** the action reads "Subscribe". A paid feature's row or card looks like any other (no "Plus" chip, no notice in a list), and the subscription gate shows once, when the learner starts the feature.
+- **Words:** main's. "Your buddy", a buddy's name or a feature's name only after the screen that introduces it; before that, "we". A step with Skip has no "none" option.
+
+Compare a role across the app the way [the role read](../zoonk-design/references/craft.md#the-role-read) does on the web: simulator screenshots of every screen that draws it, side by side.
 
 ## Liquid Glass (iOS 26 and later)
 

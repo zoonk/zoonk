@@ -1,13 +1,16 @@
 import { NoSessionNote } from "@/components/public/no-account-note";
+import { DISCLOSURE_ANSWER_CLASS } from "@/components/public/public-disclosure";
 import { StartLink, getSecondaryStartControlClassName } from "@/components/public/public-start";
 import { getAppLocale } from "@/i18n/locale";
 import { withOrigin } from "@/lib/public/public-hrefs";
 import { type PublicLibraryLesson } from "@zoonk/core/library/lessons/public";
+import { Eyebrow } from "@zoonk/learn/eyebrow";
+import { QuestionTitle } from "@zoonk/learn/question-title";
 import { RichTextBlocks } from "@zoonk/learn/rich-text";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getSentenceSpace } from "@zoonk/utils/locale";
-import { ArrowRightIcon, CirclePlayIcon, SparklesIcon } from "lucide-react";
+import { CirclePlayIcon, SparklesIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import { type ReactNode } from "react";
 import { LessonProgressSwitch } from "./course-progress";
@@ -18,11 +21,11 @@ export type FirstChoiceScreen = Extract<
   { kind: "choice" }
 >;
 
-export function StartNote({ children, className }: { children: ReactNode; className?: string }) {
+function StartNote({ children, className }: { children: ReactNode; className?: string }) {
   return (
     <p
       className={cn(
-        "text-muted-foreground mt-5 flex gap-2 text-[13px] leading-snug sm:text-sm",
+        "text-muted-foreground text-compact mt-5 flex gap-3 leading-snug sm:text-sm",
         className,
       )}
     >
@@ -42,40 +45,40 @@ type FirstQuestionProps = {
   screen: FirstChoiceScreen;
 };
 
+/** Inside "Try a lesson" the card's own chip says what this is and how long the lesson takes. */
 async function QuestionScreen({
   lessonId,
   minutes,
   origin,
   playerPath,
   screen,
-}: FirstQuestionProps) {
+  timed,
+}: FirstQuestionProps & { timed: boolean }) {
   const t = await getExtracted();
   const space = getSentenceSpace(await getAppLocale());
 
   return (
     <>
-      <p className="text-muted-foreground flex items-center gap-1.5 text-[13px] font-medium">
-        <SparklesIcon aria-hidden="true" className="size-3.5 flex-none" />
-        {screen.guess
-          ? t({
-              description:
-                "Chip above the lesson's opening question, which the learner answers before being taught. Guesses are never scored.",
-              message: "Just a guess, it doesn't count",
-            })
-          : t("Quick question")}
-      </p>
+      {timed && (
+        <Eyebrow icon={<SparklesIcon aria-hidden="true" />}>
+          {screen.guess
+            ? t({
+                description:
+                  "Chip above the lesson's opening question, which the learner answers before being taught. Guesses are never scored.",
+                message: "Just a guess, it doesn't count",
+              })
+            : t("Quick question")}
+        </Eyebrow>
+      )}
 
       {screen.context && (
         <RichTextBlocks
-          className="text-muted-foreground mt-3 text-[15px] leading-relaxed sm:text-base"
+          className="text-muted-foreground text-reading mt-3 leading-relaxed sm:text-base"
           text={screen.context}
         />
       )}
 
-      <RichTextBlocks
-        className="mt-2 mb-5 text-[19px] leading-snug font-[560] tracking-[-0.015em] text-pretty"
-        text={screen.question}
-      />
+      <QuestionTitle className="mt-2 mb-4" heading={false} text={screen.question} />
 
       <FirstScreenChoices
         action={playerPath}
@@ -86,11 +89,9 @@ async function QuestionScreen({
       />
 
       <StartNote>
-        {screen.guess
+        {timed
           ? t("Your answer starts the {minutes}-minute lesson.", { minutes: String(minutes) })
-          : t("Your choice opens the {minutes}-minute lesson. Check your answer there.", {
-              minutes: String(minutes),
-            })}
+          : t("Your answer starts the lesson.")}
         {space}
         <NoSessionNote>{t("No sign-up needed.")}</NoSessionNote>
       </StartNote>
@@ -104,7 +105,7 @@ async function ContinueLesson({ href, secondary }: { href: string; secondary: bo
 
   return (
     <>
-      <p className="text-muted-foreground mb-5 text-[15px] leading-relaxed text-pretty sm:text-base">
+      <p className={cn(DISCLOSURE_ANSWER_CLASS, "mb-5")}>
         {t("You've started this lesson. It picks up where you left off.")}
       </p>
 
@@ -114,7 +115,6 @@ async function ContinueLesson({ href, secondary }: { href: string; secondary: bo
           href={href}
         >
           {label}
-          <ArrowRightIcon aria-hidden="true" data-icon="inline-end" />
         </a>
       ) : (
         <StartLink className="w-full sm:w-auto sm:self-start" href={href}>
@@ -134,7 +134,7 @@ export function FirstQuestion({
       continueLesson={
         <ContinueLesson href={withOrigin(props.playerPath, props.origin)} secondary={secondary} />
       }
-      question={<QuestionScreen {...props} />}
+      question={<QuestionScreen {...props} timed={!secondary} />}
     />
   );
 }

@@ -1,39 +1,27 @@
-import {
-  Container,
-  ContainerBody,
-  ContainerDescription,
-  ContainerHeader,
-  ContainerHeaderGroup,
-  ContainerTitle,
-} from "@zoonk/ui/components/container";
+import { AdminPage, AdminPageBody, AdminPageHeader, AdminToolbar } from "@/components/admin-page";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { Suspense } from "react";
-import { MessageList, MessageListSkeleton, MessageStatusFilter } from "./message-list";
+import { MessageFilter, MessageList, MessageListSkeleton } from "./message-list";
 
-export const metadata: Metadata = { title: "Feedback Messages" };
+export const metadata: Metadata = { title: "Feedback" };
 
 export default function FeedbackMessagesPage({ searchParams }: PageProps<"/feedback/messages">) {
   return (
-    <Container>
-      <ContainerHeader variant="sidebar">
-        <ContainerHeaderGroup>
-          <ContainerTitle>Feedback messages</ContainerTitle>
-          <ContainerDescription>
-            Messages from the feedback form, with the page and content they were sent from.
-          </ContainerDescription>
-        </ContainerHeaderGroup>
-      </ContainerHeader>
+    <AdminPage>
+      <AdminPageHeader title="Feedback" />
 
-      <ContainerBody>
-        <Suspense fallback={<Skeleton className="h-7 w-64" />}>
-          <MessageStatusFilter searchParams={searchParams} />
-        </Suspense>
+      <AdminPageBody>
+        <AdminToolbar>
+          <Suspense fallback={<Skeleton className="h-7.5 w-64" />}>
+            <MessageFilter searchParams={searchParams} />
+          </Suspense>
+        </AdminToolbar>
 
         <Suspense fallback={<MessageListSkeleton />}>
           <MessageList searchParams={searchParams} />
         </Suspense>
-      </ContainerBody>
-    </Container>
+      </AdminPageBody>
+    </AdminPage>
   );
 }

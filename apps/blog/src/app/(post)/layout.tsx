@@ -1,3 +1,7 @@
 export default function PostLayout({ children }: LayoutProps<"/">) {
-  return <article className="prose dark:prose-invert max-w-none">{children}</article>;
+  return (
+    <article className="prose prose-neutral dark:prose-invert prose-h2:font-semibold prose-h3:font-semibold prose-h4:font-semibold prose-p:leading-[1.6] prose-li:leading-[1.6] prose-li:marker:text-muted-foreground prose-ul:ps-5 prose-ol:ps-5 prose-li:ps-2 max-w-none">
+      {children}
+    </article>
+  );
 }

@@ -5,7 +5,6 @@ import {
   Drawer,
   DrawerContent,
   DrawerDescription,
-  DrawerHeader,
   DrawerPopup,
   DrawerTitle,
   DrawerTrigger,
@@ -23,6 +22,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import { ChangeSaveError } from "../_components/save-error";
+import { SheetHeader } from "../_components/sheet-header";
 import { ChoiceList } from "../onboarding/choice-list";
 import { useAimWords } from "./use-aim-words";
 
@@ -148,10 +148,10 @@ export function AimPicker({
       <Drawer onOpenChange={changeOpen} open={open}>
         <DrawerTrigger render={trigger}>{children}</DrawerTrigger>
         <DrawerPopup>
-          <DrawerHeader>
-            <DrawerTitle className="text-lg font-semibold">{title}</DrawerTitle>
+          <SheetHeader>
+            <DrawerTitle>{title}</DrawerTitle>
             {description && <DrawerDescription>{description}</DrawerDescription>}
-          </DrawerHeader>
+          </SheetHeader>
           <DrawerContent className="flex flex-col gap-3 pt-2">{choices}</DrawerContent>
         </DrawerPopup>
       </Drawer>

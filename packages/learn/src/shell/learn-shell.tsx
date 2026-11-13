@@ -16,61 +16,28 @@ export function LearnShell({ children, className, ...props }: React.ComponentPro
   );
 }
 
+/**
+ * The frame's gutter and bottom room (`--page-gutter`, `--page-bottom`) are set here so the bar over
+ * a tab and the page under it share one column. Where the phone's tab bar shows, a bottom bar
+ * rests on it (`--page-dock`) and leaves the home indicator's inset to it.
+ */
 export function LearnShellContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("flex min-w-0 flex-1 flex-col", className)}
+      className={cn(
+        "flex min-w-0 flex-1 flex-col [--page-bottom:--spacing(12)] [--page-gutter:--spacing(4)] sm:[--page-gutter:--spacing(8)] lg:[--page-bottom:--spacing(16)] lg:[--page-gutter:--spacing(10)]",
+        "max-lg:has-data-[slot=learn-bottom-navigation]:[--page-dock:calc(4rem+1px+env(safe-area-inset-bottom))] max-lg:has-data-[slot=learn-bottom-navigation]:[--page-safe-bottom:0px]",
+        className,
+      )}
       data-slot="learn-shell-content"
       {...props}
     />
   );
 }
 
-export function LearnShellHeader({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<"header">) {
-  return (
-    <header className={className} data-slot="learn-shell-header" {...props}>
-      <div
-        className={cn(
-          "grid grid-cols-[minmax(0,1fr)_auto] grid-rows-[minmax(2.75rem,auto)] items-center gap-x-3 lg:grid-rows-[minmax(2.5rem,auto)]",
-          BAR_ROW_CLASS,
-        )}
-      >
-        {children}
-      </div>
-    </header>
-  );
-}
-
-export function LearnShellStart({ children, className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      className={cn("col-start-1 row-start-1 flex min-w-0 items-center gap-2", className)}
-      data-slot="learn-shell-start"
-      {...props}
-    >
-      {children}
-    </div>
-  );
-}
-
-export function LearnShellEnd({ children, className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      className={cn("col-start-2 row-start-1 flex items-center justify-end gap-1", className)}
-      data-slot="learn-shell-end"
-      {...props}
-    >
-      {children}
-    </div>
-  );
-}
-
-export const BAR_ROW_CLASS =
-  "mx-auto w-full px-4 pt-3 pb-2 sm:max-w-3xl sm:px-8 lg:mx-0 lg:max-w-none lg:px-10 lg:py-3";
+/** The page's column inside the frame: the bar over a tab and the notices line up with it. */
+export const FRAME_COLUMN_CLASS =
+  "mx-auto w-full px-(--page-gutter) sm:max-w-3xl lg:mx-0 lg:max-w-none";
 
 const LEARN_MAIN_ID = "main-content";
 
@@ -87,13 +54,15 @@ export function LearnSkipLink({ children }: { children: React.ReactNode }) {
 
 /**
  * Its padding never depends on the page inside: pages the router keeps hidden stay in the document,
- * so a page with an aside reaches past the padding itself.
+ * so a page with an aside reaches past the padding itself. It has no top padding: the page's bar
+ * owns all the room over a title.
  */
 export function LearnShellMain({ children, className, ...props }: React.ComponentProps<"main">) {
   return (
     <main
       className={cn(
-        "flex w-full flex-1 flex-col px-4 pt-4 pb-12 outline-none sm:mx-auto sm:max-w-3xl sm:px-8 sm:pt-6 lg:mx-0 lg:max-w-none lg:px-10 lg:pt-8 lg:pb-16",
+        FRAME_COLUMN_CLASS,
+        "flex flex-1 flex-col pb-(--page-bottom) outline-none",
         className,
       )}
       data-slot="learn-shell-main"
@@ -107,6 +76,10 @@ export function LearnShellMain({ children, className, ...props }: React.Componen
   );
 }
 
+/**
+ * From 72rem the aside runs from the frame's top, beside a tab's bar too (`--frame-bar`), and its
+ * first line of words centers on the bar's row (24px over a 20px line: y 34).
+ */
 export function PageWithAside({
   aside,
   asideClassName,
@@ -124,15 +97,10 @@ export function PageWithAside({
 }) {
   return (
     <div
-      className="flex w-full flex-1 flex-col gap-10 min-[72rem]:-mx-10 min-[72rem]:-mt-8 min-[72rem]:-mb-16 min-[72rem]:grid min-[72rem]:w-auto min-[72rem]:grid-cols-[minmax(0,1fr)_auto] min-[72rem]:gap-0"
+      className="flex w-full flex-1 flex-col gap-7 min-[72rem]:-mx-10 min-[72rem]:-mb-16 min-[72rem]:grid min-[72rem]:w-auto min-[72rem]:grid-cols-[minmax(0,1fr)_auto] min-[72rem]:gap-0"
       data-slot="page-with-aside"
     >
-      <div
-        className={cn(
-          "flex min-w-0 flex-col min-[72rem]:px-10 min-[72rem]:pt-8 min-[72rem]:pb-16",
-          className,
-        )}
-      >
+      <div className={cn("flex min-w-0 flex-col min-[72rem]:px-10 min-[72rem]:pb-16", className)}>
         {children}
       </div>
 
@@ -140,8 +108,8 @@ export function PageWithAside({
         <aside
           aria-label={asideLabel}
           className={cn(
-            "flex min-w-0 flex-col gap-8 outline-none",
-            "min-[72rem]:border-border min-[72rem]:sticky min-[72rem]:top-0 min-[72rem]:flex min-[72rem]:h-dvh min-[72rem]:w-[300px] min-[72rem]:overflow-y-auto min-[72rem]:border-l min-[72rem]:px-6 min-[72rem]:py-8 xl:w-80",
+            "flex min-w-0 flex-col gap-7 outline-none min-[72rem]:gap-9",
+            "min-[72rem]:border-border min-[72rem]:bg-background min-[72rem]:sticky min-[72rem]:top-0 min-[72rem]:z-30 min-[72rem]:-mt-(--frame-bar) min-[72rem]:flex min-[72rem]:h-dvh min-[72rem]:w-[300px] min-[72rem]:overflow-y-auto min-[72rem]:border-l min-[72rem]:px-6 min-[72rem]:pt-6 min-[72rem]:pb-8 xl:w-80",
             asideClassName,
           )}
           data-slot="page-aside"

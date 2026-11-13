@@ -86,7 +86,7 @@ export function TestOutStartLink({
       <form action={start} className={cn("text-muted-foreground text-sm", className)}>
         {t("Already know this?")}
         {space}
-        <Button busy={opening} type="submit" variant="link">
+        <Button busy={opening} className="text-[length:inherit]" type="submit" variant="link">
           {t("Take the test")}
         </Button>
       </form>

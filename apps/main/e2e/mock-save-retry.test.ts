@@ -56,7 +56,7 @@ test.describe("Mock answers on a bad connection", () => {
 
     const retrying = page.getByRole("status").filter({ hasText: "Not saved yet · retrying" });
     await expect(retrying).toBeVisible();
-    await expect(retrying.getByRole("button", { name: "Retry" })).toBeEnabled();
+    await expect(retrying.getByRole("button", { name: "Try again" })).toBeEnabled();
     await page.clock.fastForward(1000);
     await expect.poll(() => countStoredAnswers(user.id)).toBe(1);
     await expect(retrying).toBeHidden();

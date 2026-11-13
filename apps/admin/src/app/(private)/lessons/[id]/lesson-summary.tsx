@@ -3,72 +3,96 @@ import { AdminSection } from "@/components/admin-section";
 import { DetailField, DetailFields } from "@/components/detail-field";
 import { ProvenanceFields } from "@/components/provenance";
 import { type LibraryLessonDetail } from "@/data/lessons/get-library-lesson";
-import { formatDateTime } from "@/lib/format";
-import { libraryLessonStatusLabels } from "@/lib/library-lesson-filters";
+import { formatCount, formatDateTime } from "@/lib/format";
 import Link from "next/link";
 import { LessonHeldBack } from "./lesson-held-back";
 
 type Lesson = LibraryLessonDetail["lesson"];
 
+const LINK_CLASS = "hit-area relative underline underline-offset-3";
+
 function LessonChapters({ lesson }: { lesson: Lesson }) {
   if (lesson.chapters.length === 0) {
-    return <span className="text-muted-foreground">Not in any chapter</span>;
+    return "Not in any chapter";
   }
 
   return (
-    <ul className="flex flex-col gap-1">
+    <span className="flex flex-col gap-2">
       {lesson.chapters.map(({ chapter }) => (
-        <li key={chapter.id}>
+        <span className="flex flex-col" key={chapter.id}>
           {chapter.title}
-          <span className="text-muted-foreground text-xs">
-            {" · "}
-            {chapter.courses.map(({ course }) => course.title).join(", ") || "no course"}
-            {chapter.id === lesson.homeChapterId ? " · home" : ""}
-          </span>
-        </li>
+          {chapter.courses.map(({ course }) => (
+            <Link
+              className={`${LINK_CLASS} text-muted-foreground text-xs`}
+              href={`/courses/${course.id}`}
+              key={course.id}
+            >
+              {course.title}
+            </Link>
+          ))}
+        </span>
       ))}
-    </ul>
+    </span>
   );
 }
 
-export function LessonSummary({ lesson }: { lesson: Lesson }) {
+/** Beside the screens: what the lesson teaches, where it sits and who is using it. */
+export function LessonAbout({ lesson }: { lesson: Lesson }) {
+  return (
+    <>
+      <AdminSection title="About">
+        <DetailFields>
+          <DetailField label="Teaches">
+            {lesson.skills.length > 0 ? (
+              <span className="flex flex-col gap-1">
+                {lesson.skills.map(({ skill }) => (
+                  <Link className={LINK_CLASS} href={`/skills/${skill.id}`} key={skill.id}>
+                    {skill.name}
+                  </Link>
+                ))}
+              </span>
+            ) : (
+              "No skill yet"
+            )}
+          </DetailField>
+          <DetailField label="Chapter">
+            <LessonChapters lesson={lesson} />
+          </DetailField>
+          <DetailField label="Open to">
+            {lesson.owner ? (
+              <Link className={LINK_CLASS} href={`/users/${lesson.owner.id}`}>
+                Only {lesson.owner.name || lesson.owner.email}
+              </Link>
+            ) : (
+              "Everyone"
+            )}
+          </DetailField>
+        </DetailFields>
+      </AdminSection>
+
+      <AdminSection title="Learners">
+        <DetailFields>
+          <DetailField label="In plans">
+            {formatCount(lesson._count.planItems, "plan")} ·{" "}
+            {formatCount(lesson._count.studyBlocks, "session")}
+          </DetailField>
+          <DetailField label="Buddy questions">
+            {lesson._count.questionThreads.toLocaleString("en")}
+          </DetailField>
+        </DetailFields>
+      </AdminSection>
+    </>
+  );
+}
+
+export function LessonDetails({ lesson }: { lesson: Lesson }) {
   return (
     <AdminSection title="Details">
       <DetailFields>
-        <DetailField label="Description">{lesson.description || "—"}</DetailField>
+        <DetailField label="Description">{lesson.description}</DetailField>
+        <DetailField label="Learners can then">{lesson.canDo}</DetailField>
         <DetailField label="Held back">
           <LessonHeldBack lesson={lesson} />
-        </DetailField>
-        <DetailField label="Spec">{libraryLessonStatusLabels[lesson.specStatus]}</DetailField>
-        <DetailField label="Visibility">
-          {lesson.owner ? (
-            <Link className="underline" href={`/users/${lesson.owner.id}`}>
-              Private to {lesson.owner.name || lesson.owner.email}
-            </Link>
-          ) : (
-            <span className="capitalize">{lesson.visibility}</span>
-          )}
-        </DetailField>
-        <DetailField label="Can do">{lesson.canDo ?? "—"}</DetailField>
-        <DetailField label="Chapters">
-          <LessonChapters lesson={lesson} />
-        </DetailField>
-        <DetailField label="Skills">
-          {lesson.skills.length > 0 ? (
-            <span className="flex flex-wrap gap-x-3 gap-y-1">
-              {lesson.skills.map(({ skill }) => (
-                <Link className="underline" href={`/skills/${skill.id}`} key={skill.id}>
-                  {skill.name}
-                </Link>
-              ))}
-            </span>
-          ) : (
-            "—"
-          )}
-        </DetailField>
-        <DetailField label="In plans">
-          {lesson._count.planItems} plan items · {lesson._count.studyBlocks} session blocks ·{" "}
-          {lesson._count.questionThreads} question threads
         </DetailField>
         <DetailField label="Updated">{formatDateTime(lesson.updatedAt)}</DetailField>
       </DetailFields>

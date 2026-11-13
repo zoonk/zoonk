@@ -28,14 +28,13 @@ import {
   ScrollAreaViewport,
 } from "@zoonk/ui/components/scroll-area";
 import { cn } from "@zoonk/ui/lib/utils";
-import { SearchIcon } from "lucide-react";
+import { ArrowDownIcon, ArrowUpIcon, SearchIcon } from "lucide-react";
 import { useRef } from "react";
 import type * as React from "react";
 
 const Command = Autocomplete.Root;
 
 /**
- * `overNested` draws the backdrop Base UI skips for a dialog opened inside another one.
  * `suggestionsFirst` is for a list whose rows are the likely answer: on touch screens the popup
  * takes focus instead of the search field, so the keyboard doesn't cover them. Its `CommandInput`
  * then needs `autoFocus={false}`.
@@ -44,14 +43,12 @@ function CommandDialog({
   children,
   className,
   finalFocus,
-  overNested,
   suggestionsFirst,
   ...props
 }: React.ComponentProps<typeof Dialog> & {
   className?: string;
   children: React.ReactNode;
   finalFocus?: React.ComponentProps<typeof DialogPopup>["finalFocus"];
-  overNested?: boolean;
   suggestionsFirst?: boolean;
 }) {
   const popupRef = useRef<HTMLDivElement>(null);
@@ -59,10 +56,7 @@ function CommandDialog({
   return (
     <Dialog {...props}>
       <DialogPortal>
-        <DialogOverlay
-          className="bg-black/15 supports-backdrop-filter:backdrop-blur-none dark:bg-black/50"
-          forceRender={overNested}
-        />
+        <DialogOverlay className="bg-black/15 supports-backdrop-filter:backdrop-blur-none dark:bg-black/50" />
         <DialogViewport className="flex items-start justify-center sm:px-4 sm:pt-[12vh] sm:pb-4">
           <DialogPopup
             finalFocus={finalFocus}
@@ -109,12 +103,12 @@ function CommandInput({
       className="flex items-center gap-3 px-4 pt-2.5 pb-2 sm:border-b sm:p-0"
       data-slot="command-input-wrapper"
     >
-      <div className="ring-input focus-within:ring-foreground flex h-11 min-w-0 flex-1 items-center gap-2.5 rounded-[0.625rem] px-3 ring-[1.5px] ring-inset sm:h-13 sm:rounded-none sm:px-4 sm:ring-0 sm:focus-within:ring-0">
+      <div className="ring-input focus-within:ring-foreground flex h-11 min-w-0 flex-1 items-center gap-2.5 rounded-lg px-3 ring-[1.5px] ring-inset sm:h-13 sm:rounded-none sm:px-4 sm:ring-0 sm:focus-within:ring-0">
         <SearchIcon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
         <Autocomplete.Input
           autoFocus
           className={cn(
-            "placeholder:text-muted-foreground h-full min-w-0 flex-1 bg-transparent text-base outline-none disabled:cursor-not-allowed disabled:opacity-50 sm:text-[0.9375rem]",
+            "placeholder:text-muted-foreground sm:text-reading h-full min-w-0 flex-1 bg-transparent text-base outline-none disabled:cursor-not-allowed disabled:opacity-50",
             className,
           )}
           data-slot="command-input"
@@ -179,7 +173,7 @@ function CommandGroup({ className, ...props }: AutocompleteGroupProps) {
 }
 
 const COMMAND_GROUP_LABEL_CLASS =
-  "text-faint pt-3.5 pb-1.5 text-[0.71875rem] font-[550] tracking-[0.04em] uppercase sm:px-2.5 sm:pt-2 sm:pb-1 sm:tracking-normal sm:normal-case";
+  "text-faint pt-3.5 pb-1.5 text-2xs font-medium tracking-[0.04em] uppercase sm:px-2.5 sm:pt-2 sm:pb-1 sm:tracking-normal sm:normal-case";
 
 function CommandGroupLabel({ className, ...props }: AutocompleteGroupLabelProps) {
   return (
@@ -201,7 +195,7 @@ function CommandItem({ className, ...props }: AutocompleteItemProps) {
       className={cn(
         "group/command-item border-border relative flex min-h-11 w-full max-w-full min-w-0 cursor-default items-center gap-3 overflow-hidden border-t py-2 text-sm outline-hidden select-none sm:rounded-lg sm:border-t-0 sm:px-2.5",
         "sm:data-highlighted:bg-muted data-highlighted:text-foreground data-disabled:pointer-events-none data-disabled:opacity-50",
-        "pointer-fine:data-highlighted:after:ring-input pointer-fine:data-highlighted:after:text-muted-foreground max-sm:after:hidden pointer-fine:data-highlighted:after:ml-auto pointer-fine:data-highlighted:after:rounded-[0.3125rem] pointer-fine:data-highlighted:after:px-1 pointer-fine:data-highlighted:after:font-mono pointer-fine:data-highlighted:after:text-[0.6875rem] pointer-fine:data-highlighted:after:ring-1 pointer-fine:data-highlighted:after:content-['⏎']",
+        "pointer-fine:data-highlighted:after:ring-input pointer-fine:data-highlighted:after:text-muted-foreground pointer-fine:data-highlighted:after:text-2xs max-sm:after:hidden pointer-fine:data-highlighted:after:ml-auto pointer-fine:data-highlighted:after:rounded-sm pointer-fine:data-highlighted:after:px-1 pointer-fine:data-highlighted:after:font-mono pointer-fine:data-highlighted:after:ring-1 pointer-fine:data-highlighted:after:content-['⏎']",
         "[&>svg]:text-muted-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
@@ -216,12 +210,37 @@ function CommandFooter({ className, ...props }: React.ComponentProps<"div">) {
     <div
       aria-hidden="true"
       className={cn(
-        "text-faint hidden h-9 shrink-0 items-center gap-3.5 border-t px-3.5 text-[0.71875rem] sm:pointer-fine:flex [&>span]:inline-flex [&>span]:items-center [&>span]:gap-1",
+        "text-faint text-2xs hidden h-9 shrink-0 items-center gap-3.5 border-t px-3.5 sm:pointer-fine:flex [&>span]:inline-flex [&>span]:items-center [&>span]:gap-1",
         className,
       )}
       data-slot="command-footer"
       {...props}
     />
+  );
+}
+
+/** The keys every palette answers, in its footer. The app passes the words in its own language. */
+function CommandKeyHints({ close, move, open }: { close: string; move: string; open: string }) {
+  return (
+    <CommandFooter>
+      <span>
+        <Kbd>
+          <ArrowUpIcon />
+        </Kbd>
+        <Kbd>
+          <ArrowDownIcon />
+        </Kbd>
+        {move}
+      </span>
+      <span>
+        <Kbd>⏎</Kbd>
+        {open}
+      </span>
+      <span>
+        <Kbd>Esc</Kbd>
+        {close}
+      </span>
+    </CommandFooter>
   );
 }
 
@@ -237,5 +256,6 @@ export {
   CommandGroupLabel,
   CommandInput,
   CommandItem,
+  CommandKeyHints,
   CommandList,
 };

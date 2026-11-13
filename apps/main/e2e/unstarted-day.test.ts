@@ -5,7 +5,7 @@ import { openAs } from "./study-day";
 import { createUnstartedDay } from "./unstarted-day-fixtures";
 
 function todaySession(page: Page) {
-  return page.getByRole("region", { name: "Today's session" });
+  return page.getByRole("region", { name: "Today's lessons" });
 }
 
 async function readTodaySteps(page: Page) {
@@ -32,7 +32,7 @@ async function openToday(page: Page) {
   );
 
   await page.goto("/today");
-  await expect(page.getByRole("button", { name: "Start session" })).toBeEnabled();
+  await expect(page.getByRole("button", { name: /^Start\b/u })).toBeEnabled();
   await sessionFrame;
   await page.waitForLoadState("networkidle");
 }
@@ -61,7 +61,7 @@ test.describe("An unstarted day", () => {
 
     // Under `instant()` the session screen's read never arrives: the intro draws from Today's day.
     await instant(page, async () => {
-      await page.getByRole("button", { name: "Start session" }).click();
+      await page.getByRole("button", { name: /^Start\b/u }).click();
       await expect(page.getByRole("button", { name: "How reviews work" })).toBeVisible();
     });
 
@@ -71,10 +71,10 @@ test.describe("An unstarted day", () => {
     await startStep(page);
     await expect(page.getByRole("heading", { name: day.reviewQuestion })).toBeVisible();
 
-    await page.getByRole("link", { name: "Close. Your answers are saved." }).click();
+    await page.getByRole("link", { name: "Leave. Your answers are saved." }).click();
     await expect(page).toHaveURL(/\/today$/u);
 
-    await expect(page.getByRole("button", { name: "Continue session" })).toBeVisible();
+    await expect(page.getByRole("button", { name: /^Continue\b/u })).toBeVisible();
     await expect.poll(() => readTodaySteps(page)).toStrictEqual(shown);
     await expect(countSessions(day.user.id)).resolves.toBe(1);
     await page.context().close();
@@ -93,7 +93,7 @@ test.describe("An unstarted day", () => {
 
     const phone = await openAs(browser, day.user);
     await phone.goto("/today");
-    await phone.getByRole("button", { name: "Start session" }).click();
+    await phone.getByRole("button", { name: /^Start\b/u }).click();
     await startStep(phone);
     await expect(phone.getByRole("heading", { name: day.reviewQuestion })).toBeVisible();
     await phone.context().close();
@@ -101,7 +101,7 @@ test.describe("An unstarted day", () => {
     await page.clock.fastForward("05:00");
     await page.goBack();
     await expect(page).toHaveURL(/\/today$/u);
-    await expect(page.getByRole("button", { name: "Continue session" })).toBeVisible();
+    await expect(page.getByRole("button", { name: /^Continue\b/u })).toBeVisible();
     await page.context().close();
   });
 });

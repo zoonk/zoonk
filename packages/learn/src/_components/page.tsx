@@ -1,4 +1,7 @@
+import { PAGE_HEADER_CLASS } from "@zoonk/ui/components/page-header-class";
 import { cn } from "@zoonk/ui/lib/utils";
+
+export { PageTitle } from "@zoonk/ui/components/page-top";
 
 export const PAGE_COLUMN_CLASS = "w-full min-w-0";
 
@@ -31,10 +34,7 @@ export function PageHeader({ className, ...props }: React.ComponentProps<"header
 export function PageHeaderContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn(
-        "flex min-w-0 flex-col gap-1 not-has-[>[data-slot=page-eyebrow]]:pt-5",
-        className,
-      )}
+      className={cn(PAGE_HEADER_CLASS, "has-[>[data-slot=page-eyebrow]]:pt-0", className)}
       data-slot="page-header-content"
       {...props}
     />
@@ -44,21 +44,10 @@ export function PageHeaderContent({ className, ...props }: React.ComponentProps<
 export function PageEyebrow({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
-      className={cn(
-        "text-faint font-mono text-xs leading-4 uppercase max-sm:text-[0.71875rem]",
-        className,
-      )}
+      className={cn("text-faint max-sm:text-2xs font-mono text-xs leading-4 uppercase", className)}
       data-slot="page-eyebrow"
       {...props}
     />
-  );
-}
-
-export function PageTitle({ children, className, ...props }: React.ComponentProps<"h1">) {
-  return (
-    <h1 className={cn("text-title", className)} data-slot="page-title" {...props}>
-      {children}
-    </h1>
   );
 }
 
@@ -126,7 +115,7 @@ export function PageSectionDetail({ className, ...props }: React.ComponentProps<
 export function PageSectionLabel({ children, className, ...props }: React.ComponentProps<"h3">) {
   return (
     <h3
-      className={cn("text-muted-foreground -mb-1 pt-1 text-[0.8125rem] font-medium", className)}
+      className={cn("text-muted-foreground text-compact -mb-1 pt-1 font-medium", className)}
       data-slot="page-section-label"
       {...props}
     >
@@ -139,7 +128,7 @@ export function PageSectionFooter({ className, ...props }: React.ComponentProps<
   return (
     <p
       className={cn(
-        "text-muted-foreground max-w-column text-[0.8125rem] leading-snug [&_a]:underline [&_a]:underline-offset-2",
+        "text-muted-foreground max-w-column text-compact leading-snug [&_a]:underline [&_a]:underline-offset-2",
         className,
       )}
       data-slot="page-section-footer"

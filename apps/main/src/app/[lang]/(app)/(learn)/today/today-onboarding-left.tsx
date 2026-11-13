@@ -1,8 +1,7 @@
-import { Link } from "@/i18n/navigation";
 import { getOnboarding } from "@zoonk/core/view-models/onboarding/get";
 import { hasOnboardingQuestions } from "@zoonk/core/view-models/onboarding/steps";
+import { EnterLink } from "@zoonk/learn/enter-button";
 import { TodayAtRest } from "@zoonk/learn/today/at-rest";
-import { buttonVariants } from "@zoonk/ui/components/button";
 import { ListChecksIcon, MapIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 
@@ -42,14 +41,12 @@ export async function TodayOnboardingLeft({
       <TodayAtRest
         banner={banner}
         actions={
-          <Link className={buttonVariants({ size: "lg" })} href={href} prefetch>
+          <EnterLink href={href} size="lg">
             {t("See your plan")}
-          </Link>
+          </EnterLink>
         }
-        clause={t("Look it over before you start.")}
         icon={<MapIcon />}
         sentence={t("Your {goal} plan is ready.", { goal: goal.displayName })}
-        state={t("Plan ready")}
         title={t("Today")}
       />
     );
@@ -59,14 +56,12 @@ export async function TodayOnboardingLeft({
     <TodayAtRest
       banner={banner}
       actions={
-        <Link className={buttonVariants({ size: "lg" })} href={href} prefetch>
-          {t("Continue setting up")}
-        </Link>
+        <EnterLink href={href} size="lg">
+          {t("Continue")}
+        </EnterLink>
       }
-      clause={t("It's built from what you tell us.")}
       icon={<ListChecksIcon />}
       sentence={t("Your {goal} plan needs a few more answers.", { goal: goal.displayName })}
-      state={t("Setting up")}
       title={t("Today")}
     />
   );

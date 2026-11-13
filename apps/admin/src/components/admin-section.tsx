@@ -1,4 +1,6 @@
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { type Route } from "next";
+import Link from "next/link";
 import { DetailFieldsSkeleton } from "./detail-field";
 
 export function AdminSection({
@@ -9,7 +11,7 @@ export function AdminSection({
 }: {
   action?: React.ReactNode;
   children: React.ReactNode;
-  description?: string;
+  description?: React.ReactNode;
   title: string;
 }) {
   return (
@@ -18,10 +20,12 @@ export function AdminSection({
         <div className="flex min-w-0 flex-col gap-0.5">
           <h2 className="text-sm leading-5 font-semibold">{title}</h2>
           {description ? (
-            <p className="text-muted-foreground text-[0.8125rem] text-pretty">{description}</p>
+            <p className="text-muted-foreground text-compact text-pretty">{description}</p>
           ) : null}
         </div>
-        {action}
+        {/* A 30 px control hangs past the 20 px title line, so the title and what follows it start
+            at one height with or without one, as the section's skeleton draws them. */}
+        {action ? <div className="-my-1.25 flex shrink-0 items-center">{action}</div> : null}
       </div>
 
       {children}
@@ -31,6 +35,20 @@ export function AdminSection({
 
 export function AdminSectionEmpty({ children }: { children: React.ReactNode }) {
   return <p className="text-muted-foreground text-sm">{children}</p>;
+}
+
+/** Under a list cut to its first rows: the link that shows the rest. */
+export function AdminSectionMore({ children, href }: { children: React.ReactNode; href: Route }) {
+  return (
+    <Link
+      className="text-muted-foreground hover:text-foreground text-compact hit-area relative self-start font-medium"
+      href={href}
+      prefetch
+      scroll={false}
+    >
+      {children}
+    </Link>
+  );
 }
 
 const SKELETON_ROWS = 4;

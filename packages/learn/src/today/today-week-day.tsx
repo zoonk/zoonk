@@ -30,7 +30,7 @@ type WeekDay = StudySession["week"]["days"][number];
 export const WEEK_DAY_SLOT = "today-week-day";
 
 const DAY_BUTTON_CLASS =
-  "flex min-h-11 w-full cursor-pointer flex-col items-center gap-1.5 rounded-md py-1 outline-none transition-colors hover:bg-muted/70 focus-visible:ring-[3px] focus-visible:ring-ring/50";
+  "hit-area relative -mx-1 flex min-h-11 cursor-pointer flex-col items-center gap-1.5 rounded-md px-1 py-1 outline-none transition-colors hover:bg-muted/70 focus-visible:ring-[3px] focus-visible:ring-ring/50";
 
 const RING_CLASS = "size-7.5";
 
@@ -113,7 +113,7 @@ function DayLetter({ day }: { day: WeekDay }) {
     <span
       aria-hidden="true"
       className={cn(
-        "text-faint font-mono text-[0.6875rem] uppercase",
+        "text-faint text-2xs font-mono uppercase",
         day.isToday && "text-foreground font-medium",
       )}
     >
@@ -125,10 +125,11 @@ function DayLetter({ day }: { day: WeekDay }) {
 function useDayStatus() {
   const t = useExtracted();
   const localDate = useWeekDate();
+  const { today } = useTodayScreen();
 
   return (day: WeekDay): string => {
     if (day.hitGoal) {
-      return t("daily time met");
+      return t("done");
     }
 
     if (day.studied) {
@@ -140,7 +141,7 @@ function useDayStatus() {
     }
 
     if (day.kind === "deadline") {
-      return t("your goal's date");
+      return t("end date");
     }
 
     if (day.kind === "beforeStart") {
@@ -148,7 +149,7 @@ function useDayStatus() {
     }
 
     if (day.kind === "afterEnd") {
-      return t("after your date");
+      return today.goal.kind === "exam" ? t("after your exam") : t("after your end date");
     }
 
     if (day.kind === "rest") {

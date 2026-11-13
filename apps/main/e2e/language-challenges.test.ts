@@ -38,10 +38,9 @@ test("a Free learner can open the next lesson while the earlier call challenge s
 
   const page = await openAs(browser, user);
   await page.goto("/today");
-  const today = page.getByRole("region", { name: "Today's session" });
-  const lessonName = `${nextLesson?.title}, counts toward a mission`;
-  await expect(today.getByRole("link", { exact: true, name: lessonName })).toBeVisible();
-  await today.getByRole("link", { name: /^Start session/u }).click();
+  const today = page.getByRole("region", { name: "Today's lessons" });
+  await expect(today.getByRole("link", { exact: true, name: nextLesson?.title })).toBeVisible();
+  await today.getByRole("link", { name: /^Start\b/u }).click();
   await expect(page).toHaveURL(new RegExp(`/learn/${nextLesson?.id}\\?session=`, "u"));
   await expect(page.getByText('What does the electron "cloud" show?')).toBeVisible();
 

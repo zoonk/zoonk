@@ -12,16 +12,12 @@ import {
   ListRowLink,
   ListRowTitle,
 } from "../_components/list-group";
-import { PlusMark } from "../_components/plus-lock";
-import { MarkedText } from "../_components/title-row";
 import { useBuddyName } from "../buddies/use-buddy-name";
-import { CatchUpLater } from "./today-catch-up";
+import { ExtraTimeButton } from "../session/extra-time-button";
 import { useTodayScreen } from "./today-context";
-import { TodayExtraTime } from "./today-extra-time";
+import { EarlierLessons } from "./today-earlier-lessons";
 import { getChallengeEventKind, useWeekdayLabel } from "./today-week-challenge";
 import { useDayState, useTodayPastDate, useUpNextLessons } from "./use-today-copy";
-
-const SECONDARY_CLASS = "max-sm:h-11 max-sm:w-full max-sm:rounded-lg max-sm:text-sm sm:self-start";
 
 function MoreTime() {
   const t = useExtracted();
@@ -33,15 +29,15 @@ function MoreTime() {
   }
 
   return (
-    <TodayExtraTime
+    <ExtraTimeButton
       action={actions.addExtraTime}
-      className={SECONDARY_CLASS}
       label={
         today.studiedToday
           ? undefined
-          : t("Study for {minutes} minutes", { minutes: String(extraTime.minutes) })
+          : t("Practice {minutes} min", { minutes: String(extraTime.minutes) })
       }
       minutes={extraTime.minutes}
+      size="page"
     />
   );
 }
@@ -58,16 +54,14 @@ function ChallengeRow() {
 
   return (
     <ListRowLink href={actions.challengeHref(challenge.planItemId)}>
-      <ListRowLeading className="w-4 justify-center">
+      <ListRowLeading>
         <KindDot kind={getChallengeEventKind(challenge)} />
       </ListRowLeading>
       <ListRowContent>
         <ListRowTitle>
-          <MarkedText mark={challenge.access === "plusRequired" && <PlusMark />}>
-            {challenge.kind === "mock"
-              ? t("See {day}'s mock exam", { day: weekdayLabel(challenge.date) })
-              : t("See {day}'s challenge", { day: weekdayLabel(challenge.date) })}
-          </MarkedText>
+          {challenge.kind === "mock"
+            ? t("See {day}'s mock exam", { day: weekdayLabel(challenge.date) })
+            : t("See {day}'s challenge", { day: weekdayLabel(challenge.date) })}
         </ListRowTitle>
       </ListRowContent>
     </ListRowLink>
@@ -114,7 +108,7 @@ export function TodayMore({ className }: { className?: string }) {
   return (
     <div className={cn("flex flex-col gap-3 empty:hidden", className)} data-slot="today-more">
       {(state === "done" || state === "rest") && <MoreTime />}
-      {(state === "underway" || state === "done") && <CatchUpLater />}
+      {(state === "underway" || state === "done") && <EarlierLessons />}
     </div>
   );
 }

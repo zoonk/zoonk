@@ -1,9 +1,4 @@
-import {
-  CourseChapterFold,
-  CourseExampleNumbers,
-  CourseHere,
-} from "@/components/catalog/course-progress";
-import { NUMERIC_CLASS } from "@/components/public/landing-styles";
+import { CourseChapterFold, CourseHere } from "@/components/catalog/course-progress";
 import { type LibraryOutline } from "@/data/catalog/resolve-catalog-route";
 import { Link } from "@/i18n/navigation";
 import { getChapterHref, getLessonHref } from "@/lib/public/public-hrefs";
@@ -17,7 +12,17 @@ export type OutlineBand = LibraryOutline["levels"][number];
 export type OutlineChapter = OutlineBand["chapters"][number];
 
 /** A no-break space keeps each dot at the end of a line, never at the start of the next. */
-export const OUTLINE_SEPARATOR = " · ";
+const OUTLINE_SEPARATOR = "\u00A0· ";
+
+const CHAPTERS_NAMED = 3;
+
+/** A closed level or subject says what it holds; open, its rows do. */
+export function getZoneChapterNames(chapters: OutlineChapter[]): string {
+  return chapters
+    .slice(0, CHAPTERS_NAMED)
+    .map((chapter) => chapter.title)
+    .join(OUTLINE_SEPARATOR);
+}
 
 const CHAPTERS_SHOWN = 6;
 
@@ -41,8 +46,6 @@ const LESSON_LINK_CLASS =
 const LONE_LESSON_LINK_CLASS =
   "relative inline-block before:absolute before:inset-x-0 before:top-0 before:-bottom-5.5 before:min-w-11";
 
-const MARK_CLASS = cn(NUMERIC_CLASS, "text-muted-foreground flex-none text-xs leading-5.5");
-
 function ChapterLessonLinks({
   chapter,
   params,
@@ -53,7 +56,7 @@ function ChapterLessonLinks({
   const hasLoneLesson = chapter.lessons.length === 1;
 
   return (
-    <p className="text-muted-foreground max-w-column mt-1.5 text-sm leading-relaxed">
+    <p className="text-muted-foreground mt-1.5 max-w-140 text-sm leading-relaxed text-pretty">
       {chapter.lessons.map((lesson, index) => (
         <Fragment key={lesson.id}>
           {index > 0 && OUTLINE_SEPARATOR}
@@ -92,7 +95,7 @@ export async function OutlineChapterList({
 
       <CourseChapterFold
         chapterIds={folded.map((item) => item.chapterId)}
-        className="mt-1 ml-10"
+        className="mt-1 mb-4 ml-10"
         courseId={courseId}
         less={t("Show fewer chapters")}
         more={t("{count, plural, one {Show # more chapter} other {Show # more chapters}}", {
@@ -109,13 +112,11 @@ export async function OutlineChapterList({
 export function OutlineChapterRow({
   chapter,
   courseId,
-  mark,
   number,
   params,
 }: {
   chapter: OutlineChapter;
   courseId: string;
-  mark?: ReactNode;
   number: number;
   params: OutlineParams;
 }) {
@@ -129,7 +130,7 @@ export function OutlineChapterRow({
 
       <div className="min-w-0 flex-1">
         <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
-          <h3 className="text-[0.9375rem] leading-5.5 font-semibold text-balance">
+          <h3 className="text-reading leading-5.5 font-semibold text-balance">
             <Link
               className={CHAPTER_LINK_CLASS}
               href={getChapterHref({ ...params, chapterSlug: chapter.slug })}
@@ -139,14 +140,7 @@ export function OutlineChapterRow({
             </Link>
           </h3>
 
-          <div className="flex items-baseline gap-3">
-            <CourseHere chapterId={chapter.id} courseId={courseId} />
-            {mark && (
-              <CourseExampleNumbers courseId={courseId}>
-                <p className={MARK_CLASS}>{mark}</p>
-              </CourseExampleNumbers>
-            )}
-          </div>
+          <CourseHere chapterId={chapter.id} courseId={courseId} />
         </div>
 
         {chapter.lessons.length > 0 && <ChapterLessonLinks chapter={chapter} params={params} />}

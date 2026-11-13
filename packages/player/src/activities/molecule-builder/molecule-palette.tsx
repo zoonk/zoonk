@@ -67,7 +67,7 @@ export function MoleculeElements({
               : t("Add {element}", { element: nameOf(element) })}
           </span>
           <ElementSwatch element={element} />
-          <span className="text-muted-foreground text-[13px] whitespace-nowrap">
+          <span className="text-muted-foreground text-compact whitespace-nowrap">
             {t("{count, plural, one {# bond} other {# bonds}}", { count: valenceOf(element) })}
           </span>
         </button>
@@ -93,7 +93,7 @@ export function MoleculeTools({
     <div className="flex shrink-0 gap-2">
       <Button
         aria-label={t("Undo")}
-        className="size-11 rounded-xl"
+        className="rounded-xl"
         disabled={!canUndo}
         onClick={onUndo}
         size="icon-lg"
@@ -106,7 +106,7 @@ export function MoleculeTools({
         aria-label={
           selectedName ? t("Remove {atom}", { atom: selectedName }) : t("Remove the selected atom")
         }
-        className="size-11 rounded-xl"
+        className="rounded-xl"
         disabled={!selectedName}
         onClick={onRemove}
         size="icon-lg"

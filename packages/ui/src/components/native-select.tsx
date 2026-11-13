@@ -7,7 +7,7 @@ import type * as React from "react";
  * see-through while the wrapper draws the small box.
  */
 const SMALL_SELECT_FRAME_CLASS = cn(
-  "data-[size=sm]:before:border-input data-[size=sm]:isolate data-[size=sm]:before:pointer-events-none data-[size=sm]:before:absolute data-[size=sm]:before:inset-x-0 data-[size=sm]:before:top-1/2 data-[size=sm]:before:-z-10 data-[size=sm]:before:h-7.5 data-[size=sm]:before:-translate-y-1/2 data-[size=sm]:before:rounded-md data-[size=sm]:before:border data-[size=sm]:before:transition-colors",
+  "data-[size=sm]:before:border-field data-[size=sm]:isolate data-[size=sm]:before:pointer-events-none data-[size=sm]:before:absolute data-[size=sm]:before:inset-x-0 data-[size=sm]:before:top-1/2 data-[size=sm]:before:-z-10 data-[size=sm]:before:h-7.5 data-[size=sm]:before:-translate-y-1/2 data-[size=sm]:before:rounded-md data-[size=sm]:before:border data-[size=sm]:before:transition-colors",
   "data-[size=sm]:has-[select:hover]:before:bg-muted data-[size=sm]:has-[select:focus-visible]:before:border-ring data-[size=sm]:has-[select:focus-visible]:before:ring-ring/50 data-[size=sm]:has-[select:focus-visible]:before:ring-[3px]",
 );
 
@@ -37,7 +37,7 @@ function NativeSelect({
     >
       <select
         aria-disabled={keepsFocus || undefined}
-        className="border-input bg-input/30 selection:bg-primary selection:text-primary-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:bg-input/30 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 dark:hover:bg-input/50 h-11 w-full min-w-0 appearance-none rounded-lg border py-1 pr-8 pl-3 text-sm transition-colors outline-none select-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:cursor-not-allowed aria-disabled:pointer-events-none aria-invalid:ring-[3px] data-[size=sm]:rounded-md data-[size=sm]:border-transparent data-[size=sm]:bg-transparent data-[size=sm]:pr-7 data-[size=sm]:pl-2.5 data-[size=sm]:text-[0.8125rem] data-[size=sm]:hover:bg-transparent data-[size=sm]:focus-visible:border-transparent data-[size=sm]:focus-visible:ring-0 dark:data-[size=sm]:bg-transparent dark:data-[size=sm]:hover:bg-transparent"
+        className="border-field bg-input/30 selection:bg-primary selection:text-primary-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:bg-input/30 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 dark:hover:bg-input/50 data-[size=sm]:text-compact md:data-[size=default]:text-reading h-11 w-full min-w-0 appearance-none rounded-lg border py-1 pr-8 pl-3 transition-colors outline-none select-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:cursor-not-allowed aria-disabled:pointer-events-none aria-invalid:ring-[3px] data-[size=default]:text-base data-[size=sm]:rounded-md data-[size=sm]:border-transparent data-[size=sm]:bg-transparent data-[size=sm]:pr-7 data-[size=sm]:pl-2.5 data-[size=sm]:hover:bg-transparent data-[size=sm]:focus-visible:border-transparent data-[size=sm]:focus-visible:ring-0 dark:data-[size=sm]:bg-transparent dark:data-[size=sm]:hover:bg-transparent"
         data-size={size}
         data-slot="native-select"
         disabled={keepsFocus ? false : disabled}

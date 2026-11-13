@@ -168,7 +168,7 @@ export function ProgressLineChart({
       <div className="flex gap-2">
         <div
           aria-hidden="true"
-          className="text-muted-foreground flex h-32 w-9 shrink-0 flex-col justify-between text-right font-mono text-[0.6875rem] leading-none tabular-nums"
+          className="text-muted-foreground text-2xs flex h-32 w-9 shrink-0 flex-col justify-between text-right font-mono leading-none tabular-nums"
         >
           {ticks.map((tick) => (
             <span className="-translate-y-1/2 first:translate-y-0 last:translate-y-0" key={tick}>
@@ -217,7 +217,7 @@ export function ProgressLineChart({
 
       <div
         aria-hidden="true"
-        className="text-muted-foreground flex justify-between pl-11 font-mono text-[0.6875rem]"
+        className="text-muted-foreground text-2xs flex justify-between pl-11 font-mono"
       >
         <span>{first}</span>
         <span>{latest}</span>

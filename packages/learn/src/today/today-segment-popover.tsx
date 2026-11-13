@@ -19,9 +19,12 @@ import { useTodayScreen } from "./today-context";
 
 export const DAY_SEGMENT_SLOT = "today-day-segment";
 
-/** Its hit area reaches past the thin bar so a finger can land on it. */
+/**
+ * Its hit area reaches past the thin bar so a finger can land on it: up to the heading and down to
+ * the first row, 38px in all, since any taller it would cover one of them.
+ */
 const TRIGGER_CLASS =
-  "relative flex min-w-1 grow basis-0 cursor-pointer rounded-[3px] outline-none transition-[filter] before:absolute before:-inset-x-px before:-inset-y-3 before:content-[''] hover:brightness-95 focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:hover:brightness-125";
+  "relative flex min-w-1 grow basis-0 cursor-pointer rounded-meter outline-none transition-[filter] before:absolute before:-inset-x-px before:-top-5 before:-bottom-3 before:content-[''] hover:brightness-95 focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:hover:brightness-125";
 
 function useKindNote() {
   const t = useExtracted();
@@ -133,8 +136,8 @@ export function HeldSegment({ minutes }: { minutes: number }) {
   const title = t("Your next lessons");
   const time = formatDuration(minutes);
 
-  const writing = writingStalled ? t("Taking longer than usual") : t("Being written for you…");
-  const note = today.session.lessonsToPrepare ? t("Not written yet.") : writing;
+  const coming = writingStalled ? t("Taking longer than usual") : t("Getting ready…");
+  const note = today.session.lessonsToPrepare ? t("Not ready yet") : coming;
 
   return (
     <Popover>

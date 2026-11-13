@@ -1,5 +1,5 @@
-const defaultUserSort = "brain-power";
-const userSorts = [defaultUserSort, "newest-signups"] as const;
+const defaultUserSort = "newest-signups";
+const userSorts = [defaultUserSort, "brain-power"] as const;
 
 export type UserSort = (typeof userSorts)[number];
 

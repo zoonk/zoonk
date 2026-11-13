@@ -10,12 +10,7 @@ type FreshnessCommand = "checkNow" | "readAgain" | "stop";
 export type FreshnessTargetKind = "exam" | "source";
 type FreshnessResult = "started" | "stopped";
 
-export type FreshnessCommandState = {
-  command: FreshnessCommand | null;
-  error: string | null;
-  result: FreshnessResult | null;
-  submissionId: number;
-};
+type FreshnessCommandResult = { error: string | null; result: FreshnessResult | null };
 
 function parseCommand(value: string | null): FreshnessCommand | null {
   return value === "checkNow" || value === "readAgain" || value === "stop" ? value : null;
@@ -45,18 +40,16 @@ function readResult(data: unknown): FreshnessResult | null {
 
 /** The API may be down locally, so a failed call returns an error message instead of throwing. */
 export async function sendFreshnessCommandAction(
-  previousState: FreshnessCommandState,
   formData: FormData,
-): Promise<FreshnessCommandState> {
+): Promise<FreshnessCommandResult> {
   const session = await assertAdmin();
-  const submissionId = previousState.submissionId + 1;
   const command = parseCommand(parseFormField(formData, "command"));
   const targetKind = parseFormField(formData, "targetKind");
   const targetId = parseFormField(formData, "targetId");
   const target = buildTarget({ id: targetId, kind: targetKind });
 
   if (!(command && target)) {
-    return { command, error: "Invalid freshness command.", result: null, submissionId };
+    return { error: "Invalid freshness command.", result: null };
   }
 
   const response = await postAdminApi({
@@ -69,14 +62,12 @@ export async function sendFreshnessCommandAction(
 
   if (!result) {
     return {
-      command,
       error: "Could not reach the API. Check that it is running and try again.",
       result: null,
-      submissionId,
     };
   }
 
   revalidatePath(target.kind === "exam" ? `/exams/${targetId}` : `/sources/${targetId}`);
 
-  return { command, error: null, result, submissionId };
+  return { error: null, result };
 }

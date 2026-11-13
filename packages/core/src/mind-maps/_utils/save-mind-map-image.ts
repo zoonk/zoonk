@@ -3,8 +3,7 @@ import { getPrivateImageFolder } from "@zoonk/utils/user-blobs";
 import sharp from "sharp";
 import { optimizeImage } from "../../images/optimize-image";
 import { uploadImage } from "../../images/upload-image";
-
-const THUMBNAIL_WIDTH = 640;
+import { MIND_MAP_THUMBNAIL_WIDTH } from "../mind-map-contract";
 
 export type SavedMindMapImage = {
   height: number;
@@ -51,7 +50,7 @@ export async function saveMindMapImage({
   }
 
   const [thumbnail, { height, width }] = await Promise.all([
-    sharp(optimized).resize({ width: THUMBNAIL_WIDTH }).webp().toBuffer(),
+    sharp(optimized).resize({ width: MIND_MAP_THUMBNAIL_WIDTH }).webp().toBuffer(),
     sharp(optimized).metadata(),
   ]);
 

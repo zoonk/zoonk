@@ -2,6 +2,7 @@ import {
   type AdminTableColumn,
   AdminTableColumns,
   AdminTableColumnsSkeleton,
+  emptyListLabel,
 } from "@/components/admin-table-columns";
 import { AdminPagination } from "@/components/pagination";
 import { listLessonQuestions } from "@/data/questions/list-lesson-questions";
@@ -9,11 +10,10 @@ import { parseSearchParams } from "@/lib/parse-search-params";
 import { QuestionRow } from "./question-row";
 
 const QUESTION_COLUMNS: AdminTableColumn[] = [
-  { label: "Question" },
-  { label: "Answer" },
-  { label: "User" },
-  { label: "Course / lesson" },
-  { label: "Status / asked" },
+  { label: "Question", twoLines: true },
+  { label: "Who", size: "text", twoLines: true },
+  { label: "Where", size: "long", twoLines: true },
+  { label: "Asked" },
 ];
 
 export async function QuestionList({
@@ -47,7 +47,7 @@ async function CachedQuestionList({
     <>
       <AdminTableColumns
         columns={QUESTION_COLUMNS}
-        emptyLabel="No questions found."
+        emptyLabel={emptyListLabel({ noun: "questions", search })}
         isEmpty={questions.length === 0}
       >
         {questions.map((question) => (

@@ -111,12 +111,12 @@ msgstr "Étudié"
 #: src/journey/roadmap-lane.tsx
 #: src/onboarding/steps/reveal-days.tsx
 #: src/session/session-queue.tsx
+#: src/shell/learn-bar.tsx
 #: src/shell/learn-navigation.tsx
 #: src/today/today-heading.tsx
 #: src/today/today-lessons-card.tsx
 #: src/today/today-preparing.tsx
 #: src/today/today-shell.tsx
-#: src/today/today-subject-rows.tsx
 msgctxt "zWgbGg"
 msgid "Today"
 msgstr "Aujourd’hui"
@@ -148,6 +148,7 @@ msgid "Time a day"
 msgstr "Durée quotidienne"
 
 #: src/_components/detail-page.tsx
+#: src/_components/question-actions.tsx
 #: src/_components/steps.tsx
 #: src/ceremonies/use-ceremony-copy.ts
 #: src/certificates/certificate-moment-parts.tsx
@@ -160,7 +161,6 @@ msgstr "Durée quotidienne"
 #: src/language/conversation/conversation-result.tsx
 #: src/language/conversation/speaking-mock-result.tsx
 #: src/language/exam-speaking/exam-speaking-result.tsx
-#: src/language/pattern/language-pattern-screen.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/language/unit/practice-conversation.tsx
 #: src/mock/mock-result-actions.tsx
@@ -174,14 +174,15 @@ msgstr "Durée quotidienne"
 #: src/session/lesson-moment.tsx
 #: src/session/next-stop.tsx
 #: src/session/question-block/block-body.tsx
-#: src/session/question-block/question-actions.tsx
 #: src/session/study-moment.tsx
 #: src/session/summary/summary-steps.tsx
+#: src/today/today-action.tsx
 msgctxt "acrOoz"
 msgid "Continue"
 msgstr "Continuer"
 
 #: src/_components/detail-page.tsx
+#: src/_components/question-actions.tsx
 #: src/challenge/challenge-footer.tsx
 #: src/conversation/tutor-feature-offers.tsx
 #: src/language/level-test/level-test-screens.tsx
@@ -190,6 +191,8 @@ msgstr "Continuer"
 #: src/onboarding/steps/placement-screens.tsx
 #: src/onboarding/steps/reveal-body.tsx
 #: src/session/next-stop.tsx
+#: src/today/today-action.tsx
+#: src/today/today-suggested-goal.tsx
 msgctxt "mOFG3K"
 msgid "Start"
 msgstr "Commencer"
@@ -198,20 +201,6 @@ msgstr "Commencer"
 msgctxt "xJFp6i"
 msgid "{percent}% done"
 msgstr "{percent} % terminé"
-
-#: src/_components/details-drawer.tsx
-#: src/appearance/buddy-settings.tsx
-#: src/certificates/certificate-linkedin.tsx
-#: src/certificates/certificate-name.tsx
-#: src/certificates/certificate-share.tsx
-#: src/explain/explain-waiting.tsx
-#: src/journey/rename-goal-dialog.tsx
-#: src/memory/memory-fact-row.tsx
-#: src/mind-maps/mind-map-viewer.tsx
-#: src/plan/plan-editor.tsx
-msgctxt "rbrahO"
-msgid "Close"
-msgstr "Fermer"
 
 #: src/_components/finish-ready.tsx
 msgctxt "MaLZrn"
@@ -243,7 +232,6 @@ msgstr "Ta semaine gratuite de préparation à l’examen est terminée"
 #: src/onboarding/entry/goal-limit-notice.tsx
 #: src/plan/plan-suggestion.tsx
 #: src/questions/test-out-preparing.tsx
-#: src/today/today-exam-access.tsx
 msgctxt "xANHtD"
 msgid "See Plus"
 msgstr "Découvrir Plus"
@@ -413,6 +401,7 @@ msgstr "{done, number} sur {total, number}"
 #: src/mind-maps/mind-map-aside.tsx
 #: src/mind-maps/mind-map-row.tsx
 #: src/mind-maps/not-made-yet.tsx
+#: src/mock/mock-frame.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
 #: src/onboarding/steps/step-parts.tsx
 #: src/plan/plan-bases-advice.tsx
@@ -488,6 +477,58 @@ msgctxt "kaDIbJ"
 msgid "That didn't work. Try again in a moment."
 msgstr "Ça n’a pas marché. Réessaie dans un instant."
 
+#: src/_components/question-actions.tsx
+msgctxt "RDZVQL"
+msgid "Check"
+msgstr "Vérifier"
+
+#: src/_components/question-actions.tsx
+msgctxt "N2IrpM"
+msgid "Confirm"
+msgstr "Confirmer"
+
+#: src/_components/question-actions.tsx
+#: src/session/question-block/block-finish-ready.tsx
+#: src/session/summary/summary-actions.tsx
+msgctxt "2O2sfp"
+msgid "Finish"
+msgstr "Terminer"
+
+#: src/_components/question-actions.tsx
+#: src/plan/plan-suggestion-context.tsx
+msgctxt "9-Ddtu"
+msgid "Next"
+msgstr "Suivant"
+
+#: src/_components/question-actions.tsx
+msgctxt "BkQAJw"
+msgid "Show the next step"
+msgstr "Afficher l’étape suivante"
+
+#: src/_components/question-actions.tsx
+msgctxt "ZLtyTD"
+msgid "See the answer"
+msgstr "Voir la réponse"
+
+#: src/_components/question-actions.tsx
+#: src/challenge/challenge-footer.tsx
+#: src/language/pronunciation/pronunciation-review-screen.tsx
+#: src/mock/mock-screen.tsx
+msgctxt "zDR51u"
+msgid "See how it went"
+msgstr "Voir le résultat"
+
+#: src/_components/question-actions.tsx
+msgctxt "QriCsD"
+msgid "Previous screen"
+msgstr "Écran précédent"
+
+#: src/_components/question-actions.tsx
+#: src/session/question-block/question-feedback.tsx
+msgctxt "h5CuXu"
+msgid "I don't know yet"
+msgstr "Je ne sais pas encore"
+
 #: src/_components/save-error.tsx
 #: src/feedback/feedback-form-dialog.tsx
 #: src/feedback/report-problem-item.tsx
@@ -510,6 +551,20 @@ msgstr "Ça n’a pas marché. Tes réponses sont conservées."
 msgctxt "DxPDlc"
 msgid "That didn't save. Try again."
 msgstr "L’enregistrement a échoué. Réessaie."
+
+#: src/_components/sheet-header.tsx
+#: src/_components/suggestion.tsx
+#: src/certificates/certificate-linkedin.tsx
+#: src/certificates/certificate-name.tsx
+#: src/certificates/certificate-share.tsx
+#: src/explain/explain-waiting.tsx
+#: src/journey/rename-goal-dialog.tsx
+#: src/memory/memory-fact-row.tsx
+#: src/mind-maps/mind-map-viewer.tsx
+#: src/plan/plan-editor.tsx
+msgctxt "rbrahO"
+msgid "Close"
+msgstr "Fermer"
 
 #: src/_components/skill-list.tsx
 #: src/session/summary/summary-parts.tsx
@@ -555,6 +610,7 @@ msgstr "Impossible d’ouvrir cette étape. Réessaie."
 #: src/language/conversation/call-problem.tsx
 #: src/mistakes/practice-done.tsx
 #: src/onboarding/onboarding-bar.tsx
+#: src/session/summary/summary-steps.tsx
 #: src/shell/learn-bar.tsx
 msgctxt "cyR7Kh"
 msgid "Back"
@@ -565,15 +621,27 @@ msgctxt "FgydNe"
 msgid "View"
 msgstr "Voir"
 
+#: src/_components/task-close.tsx
+#: src/essay/essay-screen.tsx
+#: src/mock/mock-runner-view.tsx
+msgctxt "fnihsY"
+msgid "Leave"
+msgstr "Quitter"
+
+#: src/_components/task-header.tsx
+msgctxt "eOJ4QU"
+msgid "Collapse sidebar"
+msgstr "Réduire la barre latérale"
+
 #: src/_components/task-header.tsx
 msgctxt "1JgBls"
 msgid "Expand sidebar"
 msgstr "Développer la barre latérale"
 
 #: src/_components/task-header.tsx
-msgctxt "eOJ4QU"
-msgid "Collapse sidebar"
-msgstr "Réduire la barre latérale"
+msgctxt "y7b8vA"
+msgid "Screen options"
+msgstr "Options de l’écran"
 
 #: src/_components/test-out-start-link.tsx
 #: src/questions/test-out-preparing.tsx
@@ -1247,15 +1315,9 @@ msgstr "Ce que tu veux apprendre"
 #: src/buddies/buddy-goal-start.tsx
 #: src/language/level-test/level-test-screens.tsx
 #: src/onboarding/entry/goal-entry.tsx
-#: src/today/today-suggested-goal.tsx
 msgctxt "UTU-oM"
 msgid "Build my plan"
 msgstr "Préparer mon plan"
-
-#: src/buddies/buddy-header.tsx
-msgctxt "Dh-vx4"
-msgid "Your study buddy"
-msgstr "Ton compagnon d’étude"
 
 #: src/buddies/buddy-labels.tsx
 msgctxt "hn8Urr"
@@ -2157,14 +2219,6 @@ msgid "Mock exams come with Plus: whenever you want, and every week in your plan
 msgstr "Les examens blancs sont inclus dans Plus : quand tu veux, et chaque semaine dans ton plan."
 
 #: src/challenge/challenge-footer.tsx
-#: src/checkpoints/checkpoint-duel-view.tsx
-#: src/language/pronunciation/pronunciation-review-screen.tsx
-#: src/mock/mock-screen.tsx
-msgctxt "zDR51u"
-msgid "See how it went"
-msgstr "Voir le résultat"
-
-#: src/challenge/challenge-footer.tsx
 #: src/checkpoints/checkpoint-duel-verdict.tsx
 msgctxt "a2N2Lk"
 msgid "{lessons, plural, =0 {New try tomorrow. Nothing is lost.} one {New try tomorrow, after # short lesson. Nothing is lost.} other {New try tomorrow, after # short lessons. Nothing is lost.}}"
@@ -2179,6 +2233,7 @@ msgstr "{lessons, plural, =0 {Nouvel essai demain. Rien n’est perdu.} one {Nou
 #: src/syllabus/syllabus-section.tsx
 #: src/syllabus/syllabus-summary.tsx
 #: src/today/today-week-challenge.tsx
+#: src/today/use-row-label.ts
 msgctxt "UIUcbm"
 msgid "{count, plural, one {# question} other {# questions}}"
 msgstr "{count, plural, one {# question} other {# questions}}"
@@ -2346,7 +2401,6 @@ msgstr "Ton plan ne peut pas faire de place pour cet examen blanc de {duration} 
 #: src/essay/essay-feedback.tsx
 #: src/onboarding/entry/guest-goal-gate.tsx
 #: src/session/open-next-step.tsx
-#: src/session/session-header.tsx
 msgctxt "OC7hHG"
 msgid "Back to Today"
 msgstr "Retour à Aujourd’hui"
@@ -2439,6 +2493,7 @@ msgstr "Options du chapitre"
 #: src/chapter/chapter-header.tsx
 #: src/journey/plan-header.tsx
 #: src/language/unit/unit-header.tsx
+#: src/shell/learn-bar.tsx
 #: src/shell/learn-navigation.tsx
 #: src/syllabus/subject-screen.tsx
 msgctxt "fz0z4c"
@@ -2513,20 +2568,6 @@ msgstr "Tu verras pourquoi à la fin."
 msgctxt "e-k3Hd"
 msgid "Every question is answered."
 msgstr "Toutes les questions ont une réponse."
-
-#: src/checkpoints/checkpoint-duel-view.tsx
-#: src/mock/mock-runner-view.tsx
-#: src/plan/plan-suggestion-context.tsx
-#: src/questions/choice-questions-run.tsx
-msgctxt "9-Ddtu"
-msgid "Next"
-msgstr "Suivant"
-
-#: src/checkpoints/checkpoint-duel-view.tsx
-#: src/session/question-block/question-actions.tsx
-msgctxt "N2IrpM"
-msgid "Confirm"
-msgstr "Confirmer"
 
 #: src/checkpoints/checkpoint-duel-view.tsx
 msgctxt "v5U-vD"
@@ -2748,11 +2789,6 @@ msgstr "Nouvelle tentative à ta prochaine séance"
 msgctxt "odE1Ih"
 msgid "Completed lessons"
 msgstr "Leçons terminées"
-
-#: src/completed-lessons/completed-lessons-row.tsx
-msgctxt "Sr-Gso"
-msgid "Go back to any lesson you've finished"
-msgstr "Retrouve toutes les leçons que tu as terminées"
 
 #: src/completed-lessons/completed-lessons-screen.tsx
 msgctxt "6dIxDP"
@@ -3386,13 +3422,6 @@ msgid "Keep writing"
 msgstr "Continuer à écrire"
 
 #: src/essay/essay-screen.tsx
-#: src/shell/learn-bar.tsx
-#: src/shell/task-frame.tsx
-msgctxt "fnihsY"
-msgid "Leave"
-msgstr "Quitter"
-
-#: src/essay/essay-screen.tsx
 msgctxt "QnB_s5"
 msgid "Your text stays on this device, here when you come back."
 msgstr "Ton texte reste sur cet appareil et sera là à ton retour."
@@ -4007,6 +4036,11 @@ msgid "Quick explanation · {time}"
 msgstr "Explication rapide · {time}"
 
 #: src/feedback/feedback-form-dialog.tsx
+msgctxt "feedback.rbrahO"
+msgid "Close"
+msgstr "Fermer"
+
+#: src/feedback/feedback-form-dialog.tsx
 #: src/feedback/report-problem-item.tsx
 msgctxt "feedback.G5YSJR"
 msgid "Send feedback"
@@ -4016,11 +4050,6 @@ msgstr "Donner ton avis"
 msgctxt "feedback.Kz11c4"
 msgid "Found a problem or have an idea? Tell us below or email hello@zoonk.com."
 msgstr "Tu as rencontré un problème ou tu as une idée ? Parles-en ci-dessous ou écris-nous à hello@zoonk.com."
-
-#: src/feedback/feedback-form-dialog.tsx
-msgctxt "feedback.rbrahO"
-msgid "Close"
-msgstr "Fermer"
 
 #: src/feedback/feedback-form-dialog.tsx
 msgctxt "feedback.NDni4R"
@@ -4515,6 +4544,7 @@ msgstr "en cours"
 
 #: src/generation/generation-wait.tsx
 #: src/journey/pace-details.tsx
+#: src/today/today-week-day.tsx
 msgctxt "B7ijKz"
 msgid "done"
 msgstr "terminé"
@@ -4776,7 +4806,6 @@ msgstr "On vérifie s’il s’agit d’un examen, d’une langue ou d’une mat
 #: src/generation/use-generation-copy.ts
 #: src/onboarding/steps/plan-building.tsx
 #: src/onboarding/steps/plan-wait.tsx
-#: src/today/today-preparing.tsx
 msgctxt "PBFmO0"
 msgid "Building your plan"
 msgstr "Préparation de ton plan"
@@ -5415,7 +5444,6 @@ msgid "Ahead"
 msgstr "En avance"
 
 #: src/journey/pace-details.tsx
-#: src/today/today-heading.tsx
 msgctxt "RlWvYP"
 msgid "Behind"
 msgstr "En retard"
@@ -5528,13 +5556,11 @@ msgid "{total, plural, =0 {{done, number} of # lessons} one {{done, number} of #
 msgstr "{total, plural, =0 {{done, number} sur # leçon} one {{done, number} sur # leçon} other {{done, number} sur # leçons}}"
 
 #: src/journey/plan-header.tsx
-#: src/today/today-heading.tsx
 msgctxt "8PP61v"
 msgid "{days, plural, =0 {The day is here} one {# day left} other {# days left}}"
 msgstr "{days, plural, =0 {Le grand jour est arrivé} one {Encore # jour} other {Encore # jours}}"
 
 #: src/journey/plan-header.tsx
-#: src/today/today-heading.tsx
 msgctxt "vjhiy6"
 msgid "{days, plural, one {~# day left} other {~# days left}}"
 msgstr "{days, plural, one {Encore ~# jour} other {Encore ~# jours}}"
@@ -7031,12 +7057,6 @@ msgid "Mistake pattern"
 msgstr "Erreur récurrente"
 
 #: src/language/pattern/language-pattern-screen.tsx
-#: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "y7b8vA"
-msgid "Screen options"
-msgstr "Options de l’écran"
-
-#: src/language/pattern/language-pattern-screen.tsx
 msgctxt "ZZjlNy"
 msgid "See the rule"
 msgstr "Voir la règle"
@@ -7051,17 +7071,6 @@ msgstr "S’entraîner sur ce point · {time}"
 msgctxt "uhjTvw"
 msgid "The rule"
 msgstr "La règle"
-
-#: src/language/pattern/language-pattern-screen.tsx
-msgctxt "q56JGx"
-msgid "See how you did"
-msgstr "Voir tes résultats"
-
-#: src/language/pattern/language-pattern-screen.tsx
-#: src/session/question-block/question-actions.tsx
-msgctxt "RDZVQL"
-msgid "Check"
-msgstr "Vérifier"
 
 #: src/language/pattern/pattern-drill.tsx
 msgctxt "27c7dl"
@@ -7963,9 +7972,9 @@ msgid "Couldn't remove this map. Try again."
 msgstr "Impossible de retirer cette carte mentale. Réessaie."
 
 #: src/missions/brain-power-reward.tsx
-msgctxt "b3Jpo7"
-msgid "What you've learned, in points: it raises your belt and grows your buddy. Answers, lessons and challenges add to it, and finishing today's missions adds +{points}."
-msgstr "Ce que tu as appris, en points : ils te font progresser dans les ceintures et grandir ton Compagnon. Tes réponses, tes leçons et tes défis t’en rapportent, et terminer les missions du jour t’en rapporte +{points}."
+msgctxt "HCrEOP"
+msgid "Points for what you learn. They raise your belt and grow your buddy."
+msgstr "Des points pour ce que tu apprends. Ils te permettent de passer à la ceinture suivante et font grandir ton compagnon."
 
 #: src/missions/brain-power-reward.tsx
 msgctxt "JGTjfj"
@@ -8010,75 +8019,15 @@ msgid "Have your first call"
 msgstr "Passer ton premier appel"
 
 #: src/missions/first-step-copy.tsx
-msgctxt "missions.BUTJD4"
-msgid "Take your first mock"
-msgstr "Passer ton premier examen blanc"
+msgctxt "missions.ePGEKw"
+msgid "Take your first mock exam"
+msgstr "Passe ton premier examen blanc"
 
 #: src/missions/first-step-copy.tsx
 #: src/missions/mission-copy.tsx
-msgctxt "missions.9qOzm_"
-msgid "Take on the Trickster"
-msgstr "Affronter le Farceur"
-
-#: src/missions/first-step-copy.tsx
-msgctxt "bz2BN8"
-msgid "With your first challenge, <mono>{date}</mono>"
-msgstr "Avec ton premier défi, <mono>{date}</mono>"
-
-#: src/missions/first-step-copy.tsx
-msgctxt "BgUc01"
-msgid "With your first challenge"
-msgstr "Avec ton premier défi"
-
-#: src/missions/first-step-copy.tsx
-msgctxt "-DJ5Y5"
-msgid "On your first essay day"
-msgstr "Le jour de ta première rédaction"
-
-#: src/missions/first-step-copy.tsx
-msgctxt "RBXnZe"
-msgid "The day after your first mistake"
-msgstr "Le lendemain de ta première erreur"
-
-#: src/missions/first-step-copy.tsx
-msgctxt "xyUK7Y"
-msgid "When your first review is due"
-msgstr "Quand il sera temps de faire ta première révision"
-
-#: src/missions/first-step-copy.tsx
-msgctxt "cGp3F-"
-msgid "When your mistakes show a pattern"
-msgstr "Quand tes erreurs suivront un même schéma"
-
-#: src/missions/first-step-copy.tsx
-msgctxt "RGbEQY"
-msgid "When you have call time again"
-msgstr "Quand tu auras de nouveau du temps d’appel"
-
-#: src/missions/first-step-copy.tsx
-msgctxt "YGZZ9y"
-msgid "When you can ask again"
-msgstr "Quand tu pourras poser une nouvelle question"
-
-#: src/missions/first-step-copy.tsx
-msgctxt "RkPz67"
-msgid "On your next lesson day"
-msgstr "Le jour de ta prochaine leçon"
-
-#: src/missions/first-step-copy.tsx
-msgctxt "0rP6q7"
-msgid "When your plan has a mock"
-msgstr "Quand ton plan prévoit un examen blanc"
-
-#: src/missions/first-step-copy.tsx
-msgctxt "FNSnUK"
-msgid "One of today's missions"
-msgstr "Une des missions du jour"
-
-#: src/missions/first-step-copy.tsx
-msgctxt "AwhX1o"
-msgid "Anytime"
-msgstr "À tout moment"
+msgctxt "missions._N9GlC"
+msgid "Beat the Trickster"
+msgstr "Battre le Farceur"
 
 #: src/missions/first-steps.tsx
 msgctxt "3_YJkO"
@@ -8086,9 +8035,14 @@ msgid "First steps"
 msgstr "Premiers pas"
 
 #: src/missions/first-steps.tsx
-msgctxt "0HCcI5"
-msgid "You've tried everything your plan uses."
-msgstr "Tu as essayé tout ce que ton plan propose."
+msgctxt "584gds"
+msgid "{count, plural, one {# more opens as you go} other {# more open as you go}}"
+msgstr "{count, plural, one {# autre se débloque au fil de tes progrès} other {# autres se débloquent au fil de tes progrès}}"
+
+#: src/missions/first-steps.tsx
+msgctxt "kNlVEU"
+msgid "You've tried everything."
+msgstr "Tu as tout essayé."
 
 #: src/missions/mission-copy.tsx
 msgctxt "missions.QZSmDQ"
@@ -8131,8 +8085,8 @@ msgid "Weekly challenge"
 msgstr "Défi hebdomadaire"
 
 #: src/missions/mission-copy.tsx
-msgctxt "missions.T8ny0q"
-msgid "Take the mock"
+msgctxt "missions.LIsld3"
+msgid "Take the mock exam"
 msgstr "Passer l’examen blanc"
 
 #. A mission to practice an essay.
@@ -8147,9 +8101,9 @@ msgid "{count, plural, one {Fix a mistake} other {Fix # mistakes}}"
 msgstr "{count, plural, one {Corriger une erreur} other {Corriger # erreurs}}"
 
 #: src/missions/mission-copy.tsx
-msgctxt "missions.vuwclE"
-msgid "Pronunciation"
-msgstr "Prononciation"
+msgctxt "missions.YahrnI"
+msgid "Practice pronunciation"
+msgstr "S’entraîner à la prononciation"
 
 #: src/missions/mission-copy.tsx
 msgctxt "missions.x_ozmd"
@@ -8227,60 +8181,15 @@ msgid ", choose a call"
 msgstr ", choisir un appel"
 
 #: src/missions/mission-copy.tsx
-msgctxt "mQmNzY"
-msgid ", after this phase's lessons"
-msgstr ", après les leçons de cette phase"
+msgctxt "J8WnXZ"
+msgid ", after today's lessons"
+msgstr ", après les leçons d’aujourd’hui"
 
 #: src/missions/mission-copy.tsx
-msgctxt "-d7MNH"
-msgid "After this phase's lessons"
-msgstr "Après les leçons de cette phase"
-
-#: src/missions/mission-copy.tsx
-msgctxt "teh3kP"
-msgid "From your mistakes notebook"
-msgstr "Depuis ton Carnet d’erreurs"
-
-#: src/missions/mission-copy.tsx
-msgctxt "QUXFCm"
-msgid "Due today"
-msgstr "À faire aujourd’hui"
-
-#: src/missions/mission-copy.tsx
-msgctxt "2-8mko"
-msgid "Quick call · {unit}"
-msgstr "Appel rapide · {unit}"
-
-#: src/missions/mission-copy.tsx
-msgctxt "M62Zd9"
-msgid "A quick call"
-msgstr "Un appel rapide"
-
-#: src/missions/mission-copy.tsx
-msgctxt "DBrHAL"
-msgid "Anything about today's lessons"
-msgstr "Tout ce que tu veux savoir sur les leçons du jour"
-
-#: src/missions/mission-copy.tsx
-msgctxt "8zl1aR"
-msgid "{count, plural, one {The last lesson is in today's plan} other {The last # lessons are in today's plan}}"
-msgstr "{count, plural, one {La dernière leçon est dans le plan du jour} other {Les # dernières leçons sont dans le plan du jour}}"
-
-#: src/missions/mission-copy.tsx
-msgctxt "76vDAi"
-msgid "{title} (+{count, plural, one {# lesson} other {# lessons}})"
-msgstr "{title} (+{count, plural, one {# leçon} other {# leçons}})"
-
-#: src/missions/mission-copy.tsx
-msgctxt "tbs1gZ"
-msgid "Finish today's new lesson"
-msgstr "Terminer la nouvelle leçon du jour"
-
-#. A mission to practice the area where the learner can improve the most.
-#: src/missions/mission-copy.tsx
-msgctxt "YiVZjK"
-msgid "Most room to grow"
-msgstr "S’entraîner là où tu peux le plus progresser"
+#: src/today/use-row-label.ts
+msgctxt "L_nv1C"
+msgid "After today's lessons"
+msgstr "Après les leçons d’aujourd’hui"
 
 #: src/missions/mission-list.tsx
 msgctxt "l8GXmx"
@@ -8308,7 +8217,6 @@ msgid "{count, plural, one {# more for +{points} Brain Power} other {# more for 
 msgstr "{count, plural, one {Encore # mission pour +{points} Puissance Mentale} other {Encore # missions pour +{points} Puissance Mentale}}"
 
 #: src/missions/mission-moment.tsx
-#: src/missions/missions-card.tsx
 msgctxt "aGylUw"
 msgid "You earned +{points} Brain Power."
 msgstr "Tu as gagné +{points} Puissance Mentale."
@@ -8319,24 +8227,14 @@ msgid "Just done"
 msgstr "À l’instant"
 
 #: src/missions/missions-card.tsx
-msgctxt "3-ihlA"
-msgid "{count, plural, one {# mission} other {# missions}}"
-msgstr "{count, plural, one {# mission} other {# missions}}"
-
-#: src/missions/missions-card.tsx
-msgctxt "4JBtJN"
-msgid "{count, plural, one {# left} other {# left}}"
-msgstr "{count, plural, one {# restante} other {# restantes}}"
+msgctxt "deISVW"
+msgid "{done} of {total} done"
+msgstr "{done} sur {total} terminés"
 
 #: src/missions/missions-card.tsx
 msgctxt "0gBkBl"
 msgid "Missions done"
 msgstr "Missions terminées"
-
-#: src/missions/missions-card.tsx
-msgctxt "agm7r8"
-msgid "Today's missions start with today's session."
-msgstr "Les missions du jour commencent avec ta séance du jour."
 
 #. "It" is the question: it comes back in later practice.
 #: src/mistakes/drill/drill-answer-notes.tsx
@@ -8353,11 +8251,6 @@ msgstr "Bien vu. Mieux vaut dire que tu n’es pas sûr que de répondre au hasa
 msgctxt "AmTEu0"
 msgid "The trap:"
 msgstr "Le piège :"
-
-#: src/mistakes/drill/drill-controls.tsx
-msgctxt "XUx7zX"
-msgid "I'm not sure"
-msgstr "Je ne suis pas sûr"
 
 #: src/mistakes/drill/drill-countdown.tsx
 msgctxt "XYckgX"
@@ -8436,14 +8329,9 @@ msgid "Open the lesson"
 msgstr "Ouvrir la leçon"
 
 #: src/mistakes/mistake-practice-run.tsx
-msgctxt "tsWXZT"
-msgid "Back to the notebook"
-msgstr "Retour au carnet"
-
-#: src/mistakes/mistake-practice-run.tsx
-msgctxt "2LmYn_"
-msgid "End practice. What you answered counts."
-msgstr "Terminer l’entraînement. Tes réponses sont prises en compte."
+msgctxt "z2HeMD"
+msgid "Leave. What you answered counts."
+msgstr "Quitter. Tes réponses sont prises en compte."
 
 #: src/mistakes/mistake-practice-run.tsx
 #: src/mistakes/mistakes-notebook.tsx
@@ -8561,13 +8449,10 @@ msgid "The rest are still ready to practice."
 msgstr "Tu peux toujours réviser les autres."
 
 #: src/mistakes/practice-step.tsx
-#: src/onboarding/steps/placement-question.tsx
-#: src/questions/choice-questions-run.tsx
 #: src/session/question-block/block-question.tsx
-#: src/session/question-block/question-feedback.tsx
-msgctxt "h5CuXu"
-msgid "I don't know yet"
-msgstr "Je ne sais pas encore"
+msgctxt "XUx7zX"
+msgid "I'm not sure"
+msgstr "Je ne suis pas sûr"
 
 #. "Your notebook" is the learner's Mistakes notebook.
 #: src/mistakes/practice-step.tsx
@@ -8797,24 +8682,19 @@ msgid "time left"
 msgstr "temps restant"
 
 #: src/mock/mock-entry.tsx
-msgctxt "gaCKXR"
-msgid "Whenever you want: a full exam day, half a day or one subject"
-msgstr "Quand tu veux : une journée d’examen complète, une demi-journée ou une matière"
+msgctxt "CfczSe"
+msgid "The full exam, half of it or one subject"
+msgstr "L’examen complet, la moitié ou une seule matière"
 
 #: src/mock/mock-entry.tsx
-msgctxt "HVwCpv"
-msgid "Whenever you want: a full exam day or half a day"
-msgstr "Quand tu veux : une journée d’examen complète ou une demi-journée"
+msgctxt "fWOwxQ"
+msgid "The full exam or half of it"
+msgstr "L’examen complet ou la moitié"
 
 #: src/mock/mock-entry.tsx
 msgctxt "v_VKuk"
 msgid "Continue your mock exam"
 msgstr "Continuer ton examen blanc"
-
-#: src/mock/mock-entry.tsx
-msgctxt "QJQ0Nr"
-msgid "It's where you left it"
-msgstr "Reprends là où tu t’es arrêté"
 
 #: src/mock/mock-expired.tsx
 msgctxt "2E0g32"
@@ -8835,11 +8715,6 @@ msgstr "Comme la plupart des questions sont restées sans réponse, cet examen n
 msgctxt "UIkt52"
 msgid "Not saved yet · retrying"
 msgstr "Pas encore enregistré · nouvelle tentative en cours"
-
-#: src/mock/mock-frame.tsx
-msgctxt "62nsdy"
-msgid "Retry"
-msgstr "Réessayer"
 
 #: src/mock/mock-frame.tsx
 msgctxt "gOsgur"
@@ -9556,6 +9431,21 @@ msgstr "Rendre l’examen blanc"
 msgctxt "z1R1nT"
 msgid "Hand in this section"
 msgstr "Rendre cette partie"
+
+#: src/mock/mock-runner-view.tsx
+msgctxt "r5QD8t"
+msgid "Stay"
+msgstr "Rester"
+
+#: src/mock/mock-runner-view.tsx
+msgctxt "jOu95u"
+msgid "Your answers are saved. The clock keeps running while you're away."
+msgstr "Tes réponses sont enregistrées. Le chronomètre continue de tourner en ton absence."
+
+#: src/mock/mock-runner-view.tsx
+msgctxt "N4BqWk"
+msgid "Leave the mock exam?"
+msgstr "Quitter l’examen blanc ?"
 
 #: src/mock/mock-screen.tsx
 msgctxt "Ly_Z1F"
@@ -10980,6 +10870,7 @@ msgid "Done. Your plan now covers your whole goal."
 msgstr "C’est fait. Ton plan couvre maintenant tout ton objectif."
 
 #: src/onboarding/steps/reveal-days.tsx
+#: src/today/today-week-challenge.tsx
 msgctxt "R-J5ox"
 msgid "Review"
 msgstr "Réviser"
@@ -11776,6 +11667,7 @@ msgid "In your own words, like “less on weekends”. You'll see the change bef
 msgstr "Avec tes mots, par exemple « moins le week-end ». Tu verras le changement avant qu’il soit appliqué."
 
 #: src/plan/plan-editor.tsx
+#: src/today/today-heading.tsx
 msgctxt "v5e5kt"
 msgid "Adjust your plan"
 msgstr "Ajuster ton plan"
@@ -12972,7 +12864,6 @@ msgstr "Examen blanc et entraînement"
 
 #: src/plan/use-short-plan.ts
 #: src/session/use-block-copy.ts
-#: src/today/today-week-challenge.tsx
 msgctxt "ZBDAJ7"
 msgid "Full review"
 msgstr "Révision complète"
@@ -13515,13 +13406,6 @@ msgctxt "-HTKTB"
 msgid "{current, number} of {total, number}"
 msgstr "{current, number} sur {total, number}"
 
-#: src/questions/choice-questions-run.tsx
-#: src/session/question-block/block-finish-ready.tsx
-#: src/session/summary/summary-actions.tsx
-msgctxt "2O2sfp"
-msgid "Finish"
-msgstr "Terminer"
-
 #: src/questions/item-set-stimulus.tsx
 msgctxt "_pDdit"
 msgid "Question {position, number} of {count, number} on this recording"
@@ -13893,10 +13777,9 @@ msgid "vector {base}"
 msgstr "vecteur {base}"
 
 #: src/session/extra-time-button.tsx
-#: src/today/today-extra-time.tsx
-msgctxt "a8JHBW"
-msgid "Study {minutes} more minutes"
-msgstr "Étudier {minutes} minutes de plus"
+msgctxt "dWsizD"
+msgid "Practice {minutes} more min"
+msgstr "S’entraîner {minutes} min de plus"
 
 #: src/session/failed-moment.tsx
 msgctxt "kapQxt"
@@ -13991,7 +13874,6 @@ msgid "Stop for today"
 msgstr "Arrêter pour aujourd’hui"
 
 #: src/session/next-stop.tsx
-#: src/today/use-row-label.ts
 msgctxt "d562ST"
 msgid "Often tested"
 msgstr "Souvent évalué"
@@ -14062,9 +13944,14 @@ msgid "A few misses in a row. A short break often helps, and everything you did 
 msgstr "Quelques erreurs de suite. Une courte pause aide souvent, et tout ce que tu as fait aujourd’hui compte."
 
 #: src/session/question-block/placement-note.tsx
-msgctxt "lTfSB-"
-msgid "Fine-tuning your plan. A miss here is never saved as a mistake."
-msgstr "On affine ton plan. Une erreur ici n’est jamais enregistrée dans ton carnet d’erreurs."
+msgctxt "l8gWNH"
+msgid "Fine-tuning your plan"
+msgstr "Ajustement de ton plan"
+
+#: src/session/question-block/placement-note.tsx
+msgctxt "yHidq9"
+msgid "A miss here is never saved as a mistake."
+msgstr "Ici, une mauvaise réponse n’est jamais ajoutée à ton carnet d’erreurs."
 
 #: src/session/question-block/placement-note.tsx
 msgctxt "0z8Wa1"
@@ -14072,9 +13959,9 @@ msgid "Not today"
 msgstr "Pas aujourd’hui"
 
 #: src/session/question-block/question-block-header.tsx
-msgctxt "JJytYK"
-msgid "Close. Your answers are saved."
-msgstr "Fermer. Tes réponses sont enregistrées."
+msgctxt "2vhowQ"
+msgid "Leave. Your answers are saved."
+msgstr "Quitter. Tes réponses sont enregistrées."
 
 #: src/session/question-block/question-block-status.tsx
 msgctxt "iMYxZV"
@@ -14244,7 +14131,6 @@ msgstr "{completed, plural, =0 {# sur {total} terminés} one {# terminé sur {to
 #: src/session/session-header.tsx
 #: src/session/session-queue.tsx
 #: src/session/summary/summary-parts.tsx
-#: src/today/today-screen.tsx
 msgctxt "hnntJl"
 msgid "Today's session"
 msgstr "Séance du jour"
@@ -14457,11 +14343,11 @@ msgid ", {variety}"
 msgstr ", {variety}"
 
 #: src/shell/goal-menu-row.tsx
-msgctxt "goalSwitcher._G_fp6"
-msgid "Pause a goal or get Plus"
-msgstr "Mets un objectif en pause ou passe à Plus"
+msgctxt "goalSwitcher.J0jAqm"
+msgid "Pause a goal to start it"
+msgstr "Mets un objectif en pause pour commencer celui-ci"
 
-#. Status under a goal in the goal switcher that a guest typed with their goals but can't start yet, read like “Starts with Plus” under an account's waiting goal: a short status, not a button or a command. Without an account a learner follows one goal at a time; a “free account” (signed up, on the free plan, not the paid plan) follows more goals at once. This counts goals followed at the same time, not new goals started per day or month. The goal comes with them when they create the account. Tapping the row opens sign-up.
+#. A short status, not a button, under a goal a guest typed and can't start yet. Creating a free account lets them start it; tapping the row opens sign-up.
 #: src/shell/goal-menu-row.tsx
 msgctxt "goalSwitcher.VX7VBg"
 msgid "Starts with a free account"
@@ -14525,9 +14411,9 @@ msgid "Quick explanations"
 msgstr "Explications rapides"
 
 #: src/shell/goal-switcher.tsx
-msgctxt "goalSwitcher.QTg-WT"
-msgid "Start a new goal"
-msgstr "Commencer un nouvel objectif"
+msgctxt "goalSwitcher.Q25Oon"
+msgid "New goal"
+msgstr "Nouvel objectif"
 
 #: src/shell/goal-switcher.tsx
 msgctxt "goalSwitcher.s-Ncqj"
@@ -14560,19 +14446,14 @@ msgid "Make room for {goal}"
 msgstr "Fais de la place pour {goal}"
 
 #: src/shell/make-room-sheet.tsx
-msgctxt "goalSwitcher.92OYJm"
-msgid "You're following as many goals as the free plan allows. Pause one to start {goal}. You can resume it later."
-msgstr "Tu as atteint la limite d’objectifs de la formule gratuite. Mets-en un en pause pour commencer {goal}. Tu pourras le reprendre plus tard."
+msgctxt "goalSwitcher.4nd7tj"
+msgid "That's as many goals as you can study at once. Pause one to start this one."
+msgstr "C’est le maximum d’objectifs que tu peux suivre en même temps. Mets-en un en pause pour commencer celui-ci."
 
 #: src/shell/make-room-sheet.tsx
-msgctxt "goalSwitcher.rbrahO"
-msgid "Close"
-msgstr "Fermer"
-
-#: src/shell/make-room-sheet.tsx
-msgctxt "goalSwitcher.0I_Rwu"
-msgid "Get Plus"
-msgstr "Passer à Plus"
+msgctxt "goalSwitcher.gczcC5"
+msgid "Subscribe"
+msgstr "S’abonner"
 
 #. Stops a recording. Hints tell the learner to press it by this name.
 #: src/speech/record-button.tsx
@@ -14974,23 +14855,13 @@ msgid "{count, plural, one {# lesson skipped because you already know it} other 
 msgstr "{count, plural, one {# leçon sautée car tu la connais déjà} other {# leçons sautées car tu les connais déjà}}"
 
 #: src/today/today-action.tsx
-msgctxt "AstaIr"
-msgid "Continue session"
-msgstr "Continuer la séance"
+#: src/today/today-more.tsx
+msgctxt "6Jd28t"
+msgid "Practice {minutes} min"
+msgstr "S’entraîner {minutes} min"
 
+#. Button that asks for today's lessons to be made ready.
 #: src/today/today-action.tsx
-msgctxt "J9JF-p"
-msgid "Start session"
-msgstr "Commencer la séance"
-
-#: src/today/today-action.tsx
-msgctxt "AFqHlU"
-msgid "Practice for {minutes} minutes"
-msgstr "S’entraîner pendant {minutes} minutes"
-
-#. Button that has Zoonk write today's lessons.
-#: src/today/today-action.tsx
-#: src/today/today-coming-lessons.tsx
 msgctxt "Nb8Jg7"
 msgid "Get today's lessons"
 msgstr "Obtenir les leçons du jour"
@@ -15001,41 +14872,21 @@ msgid "We couldn't open your next lessons. Try again."
 msgstr "Nous n’avons pas pu ouvrir tes prochaines leçons. Réessaie."
 
 #: src/today/today-block-row.tsx
-msgctxt "pPB2tF"
-msgid "{phase} · after this phase's lessons"
-msgstr "{phase} · après les leçons de cette phase"
-
-#: src/today/today-block-row.tsx
 msgctxt "bUQLj8"
 msgid ", skipped"
 msgstr ", sautée"
 
 #: src/today/today-block-row.tsx
+msgctxt "PFPoFb"
+msgid ", counts toward a mission"
+msgstr ", compte pour une mission"
+
+#: src/today/today-block-row.tsx
 #: src/today/today-coming-lessons.tsx
 #: src/today/today-segment-popover.tsx
-msgctxt "FAa3OD"
-msgid "Being written for you…"
-msgstr "En préparation pour toi…"
-
-#: src/today/today-catch-up.tsx
-msgctxt "46XG_j"
-msgid "{lessons, plural, one {Your next days start with the # lesson left to catch up.} other {Your next days start with the # lessons left to catch up.}}"
-msgstr "{lessons, plural, one {Tes prochaines journées commenceront par # leçon à rattraper.} other {Tes prochaines journées commenceront par # leçons à rattraper.}}"
-
-#: src/today/today-catch-up.tsx
-msgctxt "KieifK"
-msgid "{lessons, plural, one {You can still catch up on # lesson today, if you have time.} other {You can still catch up on # lessons today, if you have time.}}"
-msgstr "{lessons, plural, one {Tu peux encore rattraper # leçon aujourd’hui, si tu as le temps.} other {Tu peux encore rattraper # leçons aujourd’hui, si tu as le temps.}}"
-
-#: src/today/today-catch-up.tsx
-msgctxt "3aXO5g"
-msgid "{lessons, plural, one {# more lesson to catch up comes first tomorrow.} other {# more lessons to catch up come first tomorrow.}}"
-msgstr "{lessons, plural, one {Demain, tu commenceras par # autre leçon à rattraper.} other {Demain, tu commenceras par # autres leçons à rattraper.}}"
-
-#: src/today/today-catch-up.tsx
-msgctxt "HK8HHp"
-msgid "Catch up today · +{time}"
-msgstr "Rattraper aujourd’hui · +{time}"
+msgctxt "2LhxfA"
+msgid "Getting ready…"
+msgstr "Préparation en cours…"
 
 #: src/today/today-change-notice.tsx
 msgctxt "ZoDO4s"
@@ -15043,16 +14894,21 @@ msgid "What changed"
 msgstr "Ce qui a changé"
 
 #: src/today/today-coming-lessons.tsx
-#: src/today/today-segment-popover.tsx
-msgctxt "Ay_6I8"
-msgid "Not written yet."
-msgstr "Pas encore préparées."
+msgctxt "4bemPv"
+msgid "Get them now"
+msgstr "Les préparer maintenant"
 
 #: src/today/today-coming-lessons.tsx
 #: src/today/today-segment-popover.tsx
 msgctxt "FAEHQ7"
 msgid "Your next lessons"
 msgstr "Tes prochaines leçons"
+
+#: src/today/today-coming-lessons.tsx
+#: src/today/today-segment-popover.tsx
+msgctxt "5CkyMG"
+msgid "Not ready yet"
+msgstr "Pas encore prêtes"
 
 #: src/today/today-coming-lessons.tsx
 #: src/today/today-segment-popover.tsx
@@ -15065,15 +14921,25 @@ msgctxt "m9CrfE"
 msgid "{done, plural, =0 {# of {total, number} done} one {# of {total, number} done} other {# of {total, number} done}}"
 msgstr "{done, plural, =0 {# sur {total, number} terminés} one {# sur {total, number} terminé} other {# sur {total, number} terminés}}"
 
+#: src/today/today-day-progress.tsx
+msgctxt "OFFVnK"
+msgid "A shorter day"
+msgstr "Une journée plus courte"
+
+#: src/today/today-day-progress.tsx
+msgctxt "73UHV8"
+msgid "Your plan keeps time for the mock exam on {date}."
+msgstr "Ton plan réserve du temps pour l’examen blanc du {date}."
+
 #: src/today/today-day-status.tsx
 msgctxt "XMRh7X"
 msgid "You studied on your day off."
 msgstr "Tu as étudié pendant ton jour de repos."
 
 #: src/today/today-day-status.tsx
-msgctxt "QPZgh9"
-msgid "Today's session is complete."
-msgstr "Ta séance du jour est terminée."
+msgctxt "CZ9Ql4"
+msgid "You're done for today."
+msgstr "Tu as terminé pour aujourd’hui."
 
 #: src/today/today-day-status.tsx
 msgctxt "9JilTp"
@@ -15081,19 +14947,9 @@ msgid "No study planned today."
 msgstr "Rien de prévu aujourd’hui."
 
 #: src/today/today-day-status.tsx
-msgctxt "n6t3BM"
-msgid "Welcome back! Your next lessons are here if you'd like to study."
-msgstr "Bon retour ! Tes prochaines leçons sont là si tu veux étudier."
-
-#: src/today/today-day-status.tsx
-msgctxt "lx6WCd"
-msgid "Your next lessons are here if you'd like to study."
-msgstr "Tes prochaines leçons sont là si tu veux étudier."
-
-#: src/today/today-day-status.tsx
-msgctxt "xzdcrh"
-msgid "Welcome back! Today is a rest day in your plan, so enjoy it."
-msgstr "Bon retour ! Ton plan prévoit une journée de repos aujourd’hui, alors profites-en."
+msgctxt "RC22zo"
+msgid "Your next lessons are below if you want to study."
+msgstr "Tes prochaines leçons sont ci-dessous si tu veux étudier."
 
 #: src/today/today-day-status.tsx
 msgctxt "MdRa2K"
@@ -15116,45 +14972,29 @@ msgid "Getting today's lessons ready…"
 msgstr "Préparation des leçons du jour…"
 
 #: src/today/today-day-status.tsx
-msgctxt "JpvthH"
-msgid "They show up here on their own."
-msgstr "Elles apparaîtront ici automatiquement."
+msgctxt "DI5PCI"
+msgid "Today's lessons aren't ready yet."
+msgstr "Les leçons d’aujourd’hui ne sont pas encore prêtes."
 
 #: src/today/today-day-status.tsx
-msgctxt "OX1Nok"
-msgid "Adjust your plan to keep going."
-msgstr "Ajuste ton plan pour continuer."
+msgctxt "bGbW_K"
+msgid "You finished your plan."
+msgstr "Tu as terminé ton plan."
 
 #: src/today/today-day-status.tsx
-msgctxt "FyQP44"
-msgid "Today's lessons aren't written yet."
-msgstr "Les leçons du jour ne sont pas encore préparées."
+msgctxt "brhjJ2"
+msgid "You're all caught up."
+msgstr "Tu es à jour."
 
-#: src/today/today-day-status.tsx
-msgctxt "2PMQ3_"
-msgid "Nothing to review today."
-msgstr "Rien à réviser aujourd’hui."
+#: src/today/today-earlier-lessons.tsx
+msgctxt "JMtLiG"
+msgid "{lessons, plural, one {# lesson from earlier days} other {# lessons from earlier days}}"
+msgstr "{lessons, plural, one {# leçon des jours précédents} other {# leçons des jours précédents}}"
 
-#: src/today/today-day-status.tsx
-msgctxt "wqqp3S"
-msgid "Nothing new for today."
-msgstr "Rien de nouveau aujourd’hui."
-
-#: src/today/today-day-status.tsx
-msgctxt "vzcvDF"
-msgid "You've done every lesson in your plan, or already know it."
-msgstr "Tu as terminé toutes les leçons de ton plan ou tu connaissais déjà leur contenu."
-
-#. Study left over, not a job: lessons left unfinished on earlier days. {count} is how many.
-#: src/today/today-earlier-work.tsx
-msgctxt "ylqDtY"
-msgid "Earlier unfinished work · {count}"
-msgstr "Leçons des jours précédents à terminer · {count}"
-
-#: src/today/today-exam-access.tsx
-msgctxt "6cgB9d"
-msgid "Exam prep on the free plan"
-msgstr "Préparation aux examens avec la formule gratuite"
+#: src/today/today-earlier-lessons.tsx
+msgctxt "dlS9NH"
+msgid "Add to today"
+msgstr "Ajouter aux leçons du jour"
 
 #: src/today/today-exam-choice.tsx
 msgctxt "SVKPfj"
@@ -15220,24 +15060,19 @@ msgid "Your time can't cover everything before your exam. In about {time}, the F
 msgstr "Tu n’as pas le temps de tout étudier avant ton examen. En {time} environ, le Test de priorités t’indique quoi étudier en priorité."
 
 #: src/today/today-heading.tsx
-msgctxt "FR3uzc"
-msgid "{exam} tomorrow"
-msgstr "{exam} demain"
+msgctxt "M3adyv"
+msgid "Not enough time left for all your lessons."
+msgstr "Il ne reste pas assez de temps pour toutes tes leçons."
 
 #: src/today/today-heading.tsx
-msgctxt "hKmRFY"
-msgid "{exam} today"
-msgstr "{exam} aujourd’hui"
+msgctxt "RxQWR_"
+msgid "Welcome back. Today is short, so it's easy to start again."
+msgstr "Ça fait plaisir de te revoir. Aujourd’hui, il y a peu à faire pour reprendre en douceur."
 
 #: src/today/today-heading.tsx
-msgctxt "Ld_YBu"
-msgid "Saving time for {date}'s mock exam"
-msgstr "Du temps réservé pour l’examen blanc du {date}"
-
-#: src/today/today-heading.tsx
-msgctxt "dYEY9n"
-msgid "Lighter day: saving time for {date}'s mock exam"
-msgstr "Journée allégée : du temps réservé pour l’examen blanc du {date}"
+msgctxt "Viq1rs"
+msgid "{exam} in {days, plural, one {# day} other {# days}}"
+msgstr "{exam} dans {days, plural, one {# jour} other {# jours}}"
 
 #: src/today/today-insight.tsx
 msgctxt "8owE4V"
@@ -15249,11 +15084,10 @@ msgctxt "xNg7nj"
 msgid "Keep it"
 msgstr "Le garder"
 
-#. Study time is the time of day the learner studies. {time} is a time of day, like "20:00".
 #: src/today/today-insight.tsx
-msgctxt "YSLbSf"
-msgid "Move my study time to {time}"
-msgstr "Étudier désormais à {time}"
+msgctxt "5cDa2C"
+msgid "Move it"
+msgstr "Déplacer"
 
 #: src/today/today-insight.tsx
 msgctxt "NYTGIb"
@@ -15282,11 +15116,6 @@ msgstr "C’est noté."
 msgctxt "HEEfpS"
 msgid "From your recent answers"
 msgstr "D’après tes réponses récentes"
-
-#: src/today/today-more.tsx
-msgctxt "4wC4V5"
-msgid "Study for {minutes} minutes"
-msgstr "Étudier pendant {minutes} minutes"
 
 #: src/today/today-more.tsx
 msgctxt "KnL14u"
@@ -15329,20 +15158,20 @@ msgid "Building your {goal} plan"
 msgstr "Préparation de ton plan {goal}"
 
 #: src/today/today-preparing.tsx
-msgctxt "YIDCBU"
-msgid "It usually takes a minute or two. Your first day opens here as soon as it's ready."
-msgstr "Cela prend généralement une ou deux minutes. Ta première journée s’affichera ici dès qu’elle sera prête."
-
-#: src/today/today-row-open.tsx
-msgctxt "PFPoFb"
-msgid ", counts toward a mission"
-msgstr ", compte pour une mission"
+msgctxt "Xu-pMI"
+msgid "It takes a minute or two. Your first day opens here as soon as it's ready."
+msgstr "Ça prend une ou deux minutes. Ta première journée s’affichera ici dès qu’elle sera prête."
 
 #: src/today/today-screen.tsx
 #: src/today/today-shell.tsx
 msgctxt "32z8oG"
 msgid "Your week"
 msgstr "Ta semaine"
+
+#: src/today/today-screen.tsx
+msgctxt "cBjaVC"
+msgid "Today's lessons"
+msgstr "Leçons d’aujourd’hui"
 
 #: src/today/today-segment-popover.tsx
 msgctxt "MDSrNP"
@@ -15422,9 +15251,9 @@ msgid "Up next in your plan"
 msgstr "À venir dans ton plan"
 
 #: src/today/today-week-challenge.tsx
-msgctxt "tfN79H"
-msgid "full review"
-msgstr "révision complète"
+msgctxt "bJtf06"
+msgid "review"
+msgstr "révision"
 
 #: src/today/today-week-challenge.tsx
 msgctxt "VNs9hR"
@@ -15437,14 +15266,9 @@ msgid "weekly challenge"
 msgstr "défi hebdomadaire"
 
 #: src/today/today-week-challenge.tsx
-msgctxt "MuwOz5"
-msgid "every topic, your weakest first"
-msgstr "tous les sujets, en commençant par ceux que tu maîtrises le moins"
-
-#: src/today/today-week-day.tsx
-msgctxt "VlCnpE"
-msgid "daily time met"
-msgstr "durée quotidienne atteinte"
+msgctxt "J3eMtx"
+msgid "every topic"
+msgstr "tous les sujets"
 
 #: src/today/today-week-day.tsx
 msgctxt "F8phHs"
@@ -15457,9 +15281,9 @@ msgid "exam day"
 msgstr "jour d’examen"
 
 #: src/today/today-week-day.tsx
-msgctxt "ndZ3YE"
-msgid "your goal's date"
-msgstr "date de ton objectif"
+msgctxt "WcEyrI"
+msgid "end date"
+msgstr "date de fin"
 
 #: src/today/today-week-day.tsx
 msgctxt "KQR6jo"
@@ -15467,9 +15291,14 @@ msgid "before your plan"
 msgstr "avant ton plan"
 
 #: src/today/today-week-day.tsx
-msgctxt "fy2sc9"
-msgid "after your date"
-msgstr "après la date de ton objectif"
+msgctxt "1RBuve"
+msgid "after your exam"
+msgstr "après ton examen"
+
+#: src/today/today-week-day.tsx
+msgctxt "coog-B"
+msgid "after your end date"
+msgstr "après ta date de fin"
 
 #: src/today/today-week-day.tsx
 msgctxt "v_Mk8I"
@@ -15491,42 +15320,10 @@ msgctxt "9PPMqu"
 msgid "{time} planned"
 msgstr "Durée prévue : {time}"
 
-#. A lesson left from an earlier day.
 #: src/today/use-row-label.ts
-msgctxt "afsNpC"
-msgid "Catching up · {subject}"
-msgstr "Rattrapage · {subject}"
-
-#. A lesson left from an earlier day.
-#: src/today/use-row-label.ts
-msgctxt "tj4pFE"
-msgid "Catching up"
-msgstr "Rattrapage"
-
-#: src/today/use-row-label.ts
-msgctxt "4qsWr2"
-msgid "{label} · often tested"
-msgstr "{label} · souvent évalué"
-
-#: src/today/use-today-copy.ts
-msgctxt "QyI7sJ"
-msgid "Welcome back! Today takes about {time}, so it's easy to pick up again."
-msgstr "Content de te revoir ! Aujourd’hui, il te faut environ {time} pour reprendre en douceur."
-
-#: src/today/use-today-copy.ts
-msgctxt "x6Er4-"
-msgid "Welcome back! Today is lighter, about {time}, so it's easy to pick up again."
-msgstr "Content de te revoir ! La séance d’aujourd’hui est plus légère, environ {time}, pour reprendre en douceur."
-
-#: src/today/use-today-copy.ts
-msgctxt "d8NWNt"
-msgid "A new phase starts today, with an easy warm-up first."
-msgstr "Une nouvelle phase commence aujourd’hui, avec un petit échauffement pour démarrer."
-
-#: src/today/use-today-copy.ts
-msgctxt "RlVM-g"
-msgid "A fresh week. Today starts with an easy warm-up."
-msgstr "Une nouvelle semaine commence. Aujourd’hui, on démarre avec un petit échauffement."
+msgctxt "OUc_Xr"
+msgid "Every topic"
+msgstr "Tous les sujets"
 
 #: src/topic-outline/far-topic-sheet.tsx
 msgctxt "OA9N1Z"

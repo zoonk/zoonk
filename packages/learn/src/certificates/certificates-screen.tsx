@@ -81,12 +81,12 @@ function CertificateItem({ facts, links }: ListedCertificate) {
             variant="thumb"
           />
         ) : (
-          <LockedCertificateSheet className="rounded-[4px] lg:rounded-md" facts={facts} />
+          <LockedCertificateSheet className="rounded-sm lg:rounded-md" facts={facts} />
         )}
       </span>
 
       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <span className="group-hover:decoration-input text-sm leading-snug font-[550] tracking-[-0.01em] text-pretty group-hover:underline group-hover:underline-offset-4">
+        <span className="group-hover:decoration-input text-sm leading-snug font-medium tracking-[-0.01em] text-pretty group-hover:underline group-hover:underline-offset-4">
           {certificateName(facts)}
           {!links && <PlusMark className="ml-2 align-middle" />}
         </span>
@@ -97,10 +97,7 @@ function CertificateItem({ facts, links }: ListedCertificate) {
         </span>
       </span>
 
-      <ChevronRightIcon
-        aria-hidden="true"
-        className="text-muted-foreground/60 size-4 shrink-0 lg:hidden"
-      />
+      <ChevronRightIcon aria-hidden="true" className="text-faint size-4 shrink-0 lg:hidden" />
     </LearnLink>
   );
 }
@@ -139,10 +136,10 @@ function GhostCertificate() {
       className="bg-ground border-input relative aspect-297/210 w-full max-w-104 rounded-lg border border-dashed"
     >
       {bars.map((bar) => (
-        <i className={`bg-surface-3 absolute left-[7%] block rounded-[4px] ${bar}`} key={bar} />
+        <i className={`bg-surface-3 absolute left-[7%] block rounded-sm ${bar}`} key={bar} />
       ))}
-      <i className="bg-input absolute top-[76%] left-[7%] block h-[2%] w-[86%] rounded-[4px]" />
-      <i className="bg-surface-3 absolute top-[82%] left-[83%] block h-[14%] w-[10%] rounded-[4px]" />
+      <i className="bg-input absolute top-[76%] left-[7%] block h-[2%] w-[86%] rounded-sm" />
+      <i className="bg-surface-3 absolute top-[82%] left-[83%] block h-[14%] w-[10%] rounded-sm" />
     </div>
   );
 }

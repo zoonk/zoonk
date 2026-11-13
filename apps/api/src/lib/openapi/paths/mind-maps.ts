@@ -31,7 +31,7 @@ export const mindMapPaths = {
   "/goals/{goalId}/chapters/{chapterId}/lesson-maps": {
     get: {
       description:
-        "A chapter's lesson maps: every lesson of the chapter whose map is written and published, studied or not, in chapter order, except its challenge, whose summary recaps a case rather than mapping a lesson, with its ideas and their icons as the lesson player draws them, whether the learner saved it, and whether a free exam plan past its first week keeps it for Plus (`locked`, with no `map`). Maps written before ideas had labels are included. Lesson maps are shared content; a lesson's map appears once the lesson is written. A chapter outside the goal's scope, or one that can't have maps (a language's unit), isn't found.",
+        "A chapter's lesson maps: every lesson of the chapter whose map is written and published, studied or not, in chapter order, except its challenge, whose summary recaps a case rather than mapping a lesson, with its ideas and their icons as the lesson player draws them, whether the learner saved it. Maps written before ideas had labels are included. Lesson maps are shared content; a lesson's map appears once the lesson is written. A chapter outside the goal's scope, or one that can't have maps (a language's unit), isn't found.",
       operationId: "listChapterLessonMaps",
       requestParams: { path: goalChapterPathParamsSchema },
       responses: {
@@ -67,7 +67,7 @@ export const mindMapPaths = {
   "/goals/{goalId}/chapters/{chapterId}/mind-map/generations": {
     post: {
       description:
-        "Makes a chapter's mind map when the learner asks for it (never on a screen view); any chapter of the goal's scope, as `GET /goals/{goalId}/mind-maps` lists them. `ready` when it exists. Otherwise a run writes the chapter's lessons not written yet (`writingLessons`, a few minutes), then writes the map from what they teach and draws it (`drawing`, about half a minute), and the answer is 202; a request while it's being made, from any learner of the chapter, joins that run and counts nothing. Before a run starts, a new map counts once per chapter toward the learner's mind map limits (`resource: mindMap`) and each lesson it writes first counts as that lesson's start (starting it later counts nothing more), all or none; a refusal is `SLOW_DOWN` or `USAGE_LIMIT_REACHED` with `details.limit` (its `resource` says what ran out). A chapter whose lessons a free exam plan past its first week keeps for Plus answers 402 `PLUS_REQUIRED` and nothing is made.",
+        "Makes a chapter's mind map when the learner asks for it (never on a screen view); any chapter of the goal's scope, as `GET /goals/{goalId}/mind-maps` lists them. `ready` when it exists. Otherwise a run writes the chapter's lessons not written yet (`writingLessons`, a few minutes), then writes the map from what they teach and draws it (`drawing`, about half a minute), and the answer is 202; a request while it's being made, from any learner of the chapter, joins that run and counts nothing. Before a run starts, a new map counts once per chapter toward the learner's mind map limits (`resource: mindMap`) and each lesson it writes first counts as that lesson's start (starting it later counts nothing more), all or none; a refusal is `SLOW_DOWN` or `USAGE_LIMIT_REACHED` with `details.limit` (its `resource` says what ran out).",
       operationId: "createChapterMindMapGeneration",
       requestParams: { path: goalChapterPathParamsSchema },
       responses: {
@@ -92,7 +92,7 @@ export const mindMapPaths = {
         "402": {
           ...paymentRequiredResponse,
           description:
-            "The free plan's mind maps or lessons are used up (`USAGE_LIMIT_REACHED`; Plus has more), or a free exam plan past its first week keeps this chapter's lessons, and so its map, for Plus (`PLUS_REQUIRED`)",
+            "The free plan's mind maps or lessons are used up (`USAGE_LIMIT_REACHED`; Plus has more)",
         },
         "403": guestRefusalResponse,
         "422": {
@@ -177,11 +177,7 @@ export const mindMapPaths = {
           description: "The map's saved state now",
         },
         ...readErrors,
-        "402": {
-          ...paymentRequiredResponse,
-          description:
-            "A free exam plan past its first week keeps this map for Plus (`PLUS_REQUIRED`)",
-        },
+        "402": { ...paymentRequiredResponse, description: "The map is unavailable" },
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Save or remove a map",

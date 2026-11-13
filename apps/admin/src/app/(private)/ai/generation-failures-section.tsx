@@ -1,111 +1,114 @@
-import { AdminSection } from "@/components/admin-section";
+import { AdminToolbar } from "@/components/admin-page";
+import { AdminSectionEmpty } from "@/components/admin-section";
 import { type AdminTableColumn, AdminTableColumns } from "@/components/admin-table-columns";
 import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
+import { AdminTabs } from "@/components/admin-tabs";
+import { StateMark } from "@/components/state-mark";
 import {
   type GenerationFailure,
-  STUCK_RUNNING_MINUTES,
+  LATEST_FAILURES_PER_WORKFLOW,
   getGenerationFailures,
 } from "@/data/ai/get-generation-failures";
-import { formatDateTime } from "@/lib/format";
-import { Badge } from "@zoonk/ui/components/badge";
-import { TableCell, TableRow } from "@zoonk/ui/components/table";
-import { cn } from "@zoonk/ui/lib/utils";
+import { formatCount, formatDateTime } from "@/lib/format";
+import { TableCell } from "@zoonk/ui/components/table";
+import { MS_PER_DAY } from "@zoonk/utils/date";
+import { sumOf } from "@zoonk/utils/number";
 import { generationWorkflowLabels, getGenerationFailureHref } from "./_utils/ai-labels";
 
-type FailureCount = Awaited<ReturnType<typeof getGenerationFailures>>["counts"][number];
-
-const countColumns: AdminTableColumn[] = [
-  { label: "Workflow" },
-  { align: "right", label: "Failed" },
-  { align: "right", label: `Running over ${STUCK_RUNNING_MINUTES} min` },
+const columns: AdminTableColumn[] = [
+  { label: "What was being written" },
+  { label: "Kind", size: "wide" },
+  { label: "State", size: "wide" },
+  { label: "Updated", size: "text" },
 ];
-
-const latestColumns: AdminTableColumn[] = [
-  { label: "Workflow" },
-  { label: "Content" },
-  { label: "State" },
-  { label: "Updated" },
-];
-
-function FailureCountRow({ count }: { count: FailureCount }) {
-  return (
-    <TableRow>
-      <TableCell>{generationWorkflowLabels[count.workflow]}</TableCell>
-      <TableCell
-        className={cn("text-right tabular-nums", count.failed > 0 && "text-destructive-text")}
-      >
-        {count.failed.toLocaleString()}
-      </TableCell>
-      <TableCell
-        className={cn("text-right tabular-nums", count.stuck > 0 && "text-destructive-text")}
-      >
-        {count.stuck.toLocaleString()}
-      </TableCell>
-    </TableRow>
-  );
-}
 
 function FailureLabel({ failure }: { failure: GenerationFailure }) {
   const href = getGenerationFailureHref(failure);
   const label = failure.label || "Untitled";
 
   if (!href) {
-    return <span className="line-clamp-1">{label}</span>;
+    return label;
   }
 
   return (
     <AdminTableRowLink href={href} prefetch>
-      <span className="line-clamp-1">{label}</span>
+      {label}
     </AdminTableRowLink>
   );
 }
 
-function LatestFailureRow({ failure }: { failure: GenerationFailure }) {
+function FailureState({ failure, now }: { failure: GenerationFailure; now: number }) {
+  if (failure.status === "failed") {
+    return <StateMark state="failed" />;
+  }
+
+  const days = Math.floor((now - failure.updatedAt.getTime()) / MS_PER_DAY);
+
   return (
-    <AdminTableRow>
-      <TableCell>{generationWorkflowLabels[failure.workflow]}</TableCell>
-      <TableCell className="max-w-80 min-w-48 whitespace-normal">
-        <FailureLabel failure={failure} />
-      </TableCell>
-      <TableCell>
-        <Badge variant={failure.status === "failed" ? "destructive" : "secondary"}>
-          {failure.status === "failed" ? "Failed" : "Stuck running"}
-        </Badge>
-      </TableCell>
-      <TableCell className="text-muted-foreground text-xs">
-        {formatDateTime(failure.updatedAt)}
-      </TableCell>
-    </AdminTableRow>
+    <StateMark state="stuck">
+      {days > 0 ? `Stuck for ${formatCount(days, "day")}` : "Stuck today"}
+    </StateMark>
   );
 }
 
-export async function GenerationFailuresSection() {
+/**
+ * What failed to be written, or started and never finished, newest first. A kind's view keeps its
+ * count; a kind with nothing wrong has no view.
+ */
+export async function GenerationFailuresSection({ kind }: { kind: string | undefined }) {
   "use cache: private";
 
   const { counts, latest } = await getGenerationFailures();
+  const kinds = counts.filter((row) => row.failed + row.stuck > 0);
+  const current = kinds.find((row) => row.workflow === kind);
+  const rows = current ? latest.filter((row) => row.workflow === current.workflow) : latest;
+  const all = sumOf(kinds.map((row) => row.failed + row.stuck));
+  const total = current ? current.failed + current.stuck : all;
+  // oxlint-disable-next-line react/purity -- A cached Server Component reads the time once per cache entry and never re-renders on the client.
+  const now = Date.now();
+
+  if (kinds.length === 0) {
+    return <AdminSectionEmpty>Nothing failed and nothing is stuck.</AdminSectionEmpty>;
+  }
 
   return (
-    <AdminSection
-      description={`Rows whose generation failed, or still running after ${STUCK_RUNNING_MINUTES} minutes.`}
-      title="Generation failures"
-    >
-      <div className="flex flex-col gap-4">
-        <AdminTableColumns columns={countColumns} emptyLabel="" isEmpty={false}>
-          {counts.map((count) => (
-            <FailureCountRow count={count} key={count.workflow} />
-          ))}
-        </AdminTableColumns>
+    <>
+      <AdminToolbar>
+        <AdminTabs
+          label="Kind"
+          options={[
+            { count: all, href: "/ai?tab=failed", isActive: !current, label: "All" },
+            ...kinds.map((row) => ({
+              count: row.failed + row.stuck,
+              href: `/ai?tab=failed&kind=${row.workflow}`,
+              isActive: row.workflow === current?.workflow,
+              label: generationWorkflowLabels[row.workflow],
+            })),
+          ]}
+        />
+      </AdminToolbar>
 
-        <AdminTableColumns
-          columns={latestColumns}
-          emptyLabel="No failed or stuck generations."
-          isEmpty={latest.length === 0}
-        >
-          {latest.map((failure) => (
-            <LatestFailureRow failure={failure} key={`${failure.workflow}|${failure.id}`} />
+      <div className="flex flex-col gap-3">
+        <AdminTableColumns columns={columns} emptyLabel="" isEmpty={false}>
+          {rows.map((failure) => (
+            <AdminTableRow key={`${failure.workflow}|${failure.id}`}>
+              <TableCell className="text-foreground font-medium">
+                <FailureLabel failure={failure} />
+              </TableCell>
+              <TableCell>{generationWorkflowLabels[failure.workflow]}</TableCell>
+              <TableCell>
+                <FailureState failure={failure} now={now} />
+              </TableCell>
+              <TableCell>{formatDateTime(failure.updatedAt)}</TableCell>
+            </AdminTableRow>
           ))}
         </AdminTableColumns>
+        {rows.length < total ? (
+          <p className="text-muted-foreground text-compact">
+            The newest {LATEST_FAILURES_PER_WORKFLOW} of each kind, of {total.toLocaleString("en")}.
+          </p>
+        ) : null}
       </div>
-    </AdminSection>
+    </>
   );
 }
