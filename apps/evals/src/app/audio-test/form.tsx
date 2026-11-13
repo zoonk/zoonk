@@ -1,20 +1,16 @@
 "use client";
 
+import { LabeledSelect } from "@/components/labeled-select";
 import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { Input } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@zoonk/ui/components/select";
 import { MainSubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 import { TTS_VOICES } from "@zoonk/utils/languages";
 import { useActionState } from "react";
 import { generateAudioAction } from "./actions";
 import { AUDIO_MODEL_OPTIONS, DEFAULT_AUDIO_MODEL_VALUE } from "./models";
+
+const VOICE_OPTIONS = TTS_VOICES.map((voice) => ({ label: voice, value: voice }));
 
 type AudioTestResult = { audioUrl?: string; error?: string };
 
@@ -45,37 +41,25 @@ function AudioTestFields({ disabled }: { disabled: boolean }) {
         />
       </div>
 
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="model">Model</Label>
-        <Select defaultValue={DEFAULT_AUDIO_MODEL_VALUE} disabled={disabled} name="model">
-          <SelectTrigger className="w-full" id="model">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {AUDIO_MODEL_OPTIONS.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+      <LabeledSelect
+        defaultValue={DEFAULT_AUDIO_MODEL_VALUE}
+        disabled={disabled}
+        id="model"
+        label="Model"
+        name="model"
+        options={AUDIO_MODEL_OPTIONS}
+        triggerClassName="w-full"
+      />
 
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="voice">Voice (Gemini models only)</Label>
-        <Select defaultValue="Kore" disabled={disabled} name="voice">
-          <SelectTrigger className="w-full" id="voice">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {TTS_VOICES.map((voice) => (
-              <SelectItem key={voice} value={voice}>
-                {voice}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+      <LabeledSelect
+        defaultValue="Kore"
+        disabled={disabled}
+        id="voice"
+        label="Voice (Gemini models only)"
+        name="voice"
+        options={VOICE_OPTIONS}
+        triggerClassName="w-full"
+      />
     </div>
   );
 }
