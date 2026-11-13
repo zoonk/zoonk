@@ -95,6 +95,7 @@ export async function gradeLevelTestSpeech({
   // A sentence fixed while the learner read it isn't scored: the test asks it again as it is now.
   const excused =
     !match.isCorrect &&
+    !progress.showedFixedSentence &&
     (await isFixedDuringTest({
       bankId,
       goal: owned.goal,
@@ -103,13 +104,10 @@ export async function gradeLevelTestSpeech({
     }));
 
   const next = excused
-    ? progress
+    ? { ...progress, showedFixedSentence: true }
     : { ...progress, speaking: { level: step.speaking.level, score: match.score } };
 
-  if (
-    !excused &&
-    !(await saveLevelTestProgress({ from: progress, goal: owned.goal, progress: next }))
-  ) {
+  if (!(await saveLevelTestProgress({ from: progress, goal: owned.goal, progress: next }))) {
     return { status: "invalid" };
   }
 

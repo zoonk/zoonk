@@ -232,7 +232,7 @@ describe("level test answers saved before a fix", () => {
 });
 
 describe("level test sentence fixed during the test", () => {
-  it("doesn't score a take of the old sentence and asks the fixed one again", async () => {
+  it("doesn't score a take of the old sentence, asks the fixed one again, then scores it", async () => {
     const { bankId, goalId, questions } = await learnerWithBank();
     const levels = ["A1", "A2", "B1"];
 
@@ -311,17 +311,25 @@ describe("level test sentence fixed during the test", () => {
       userPrompt: "",
     }));
 
-    await expect(
-      gradeLevelTestSpeech({
-        audio: { bytes: ONE_SECOND_RECORDING, mediaType: "audio/webm" },
-        goalId,
-      }),
-    ).resolves.toMatchObject({
+    const audio = { bytes: ONE_SECOND_RECORDING, mediaType: "audio/webm" };
+
+    await expect(gradeLevelTestSpeech({ audio, goalId })).resolves.toMatchObject({
       status: "ready",
       test: { next: { kind: "speaking", speaking: { sentence: expect.stringContaining("now") } } },
     });
 
     const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
     expect(readGoalDetails(saved).levelTest).toMatchObject({ speaking: null });
+
+    await expect(gradeLevelTestSpeech({ audio, goalId })).resolves.toMatchObject({
+      status: "ready",
+      test: { next: { kind: "done" } },
+    });
+
+    const retaken = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
+
+    expect(readGoalDetails(retaken).levelTest).toMatchObject({
+      speaking: { score: expect.any(Number) },
+    });
   });
 });

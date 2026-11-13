@@ -65,6 +65,8 @@ export const levelTestProgressSchema = z.object({
   scores: z
     .object({ listening: z.number(), reading: z.number(), speaking: z.number().optional() })
     .optional(),
+  /** A take excused by a sentence fix showed the fixed sentence, so later takes are scored. */
+  showedFixedSentence: z.boolean().optional(),
   speaking: z
     .object({ level: z.enum(CEFR_LEVELS), score: z.number().min(0).max(1) })
     .nullable()
