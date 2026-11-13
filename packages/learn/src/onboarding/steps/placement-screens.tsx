@@ -2,11 +2,9 @@
 
 import { useExtracted } from "next-intl";
 import {
-  OnboardingActions,
   OnboardingColumn,
   OnboardingDescription,
   OnboardingHeading,
-  OnboardingPrimaryButton,
   OnboardingSubject,
   OnboardingTitle,
 } from "../onboarding-frame";
