@@ -20,13 +20,40 @@ import { CertificateSheet } from "./certificate-sheet";
 /** What only the certificate's owner sees on its page. */
 export type CertificateOwner = { saveName: SaveCertificateName };
 
-export function CertificatesBackLink({ href }: { href: string }) {
+/**
+ * Where a title's first letter starts inside its box, in ems of Geist: a round letter by 0.053, a
+ * stem by 0.08, a diagonal or a bar by 0.02. Any other letter or script takes the round one.
+ */
+function titleBearingClass(text: string) {
+  const first = text.trimStart().charAt(0);
+
+  if ("AJTVWXYvwxy".includes(first)) {
+    return "[--title-bearing:0.02]";
+  }
+
+  if ("BDEFHIKLMNPRUbhiklmnpru".includes(first)) {
+    return "[--title-bearing:0.08]";
+  }
+
+  return "[--title-bearing:0.053]";
+}
+
+/**
+ * The kit's pull puts the arrow's ink on the column's edge; the 34 px title under it (48 px from
+ * 40rem) starts its first letter further in, so the link moves by that letter's start, to a whole
+ * pixel and never left of the edge.
+ */
+export function CertificatesBackLink({ facts, href }: { facts: CertificateFacts; href: string }) {
   const t = useExtracted();
+  const sentence = useCertificateSentence();
 
   return (
     <LearnLink
       className={buttonVariants({
-        className: "text-muted-foreground mb-3.5",
+        className: cn(
+          "text-muted-foreground relative left-[round(var(--title-size)*var(--title-bearing),1px)] mb-3.5 [--title-size:2.125rem] sm:[--title-size:3rem]",
+          titleBearingClass(sentence(facts)),
+        ),
         edge: "start",
         size: "sm",
         variant: "ghost",
@@ -133,19 +160,19 @@ export function CertificatePaper({
   const date = useCertificateDate();
 
   if (!links) {
-    return <LockedCertificateSheet className="rounded-lg" facts={facts} />;
+    return <LockedCertificateSheet className="rounded-xl" facts={facts} />;
   }
 
   return (
     <a
-      className="focus-visible:ring-ring/50 block rounded-md outline-none focus-visible:ring-[3px]"
+      className="focus-visible:ring-ring/50 block rounded-xl outline-none focus-visible:ring-[3px]"
       href={links.imageUrls.print}
       rel="noopener"
       target="_blank"
     >
       <CertificateSheet
         alt={`${sentence(facts)} · ${date.long(facts.completedOn)}`}
-        className="rounded-lg"
+        className="rounded-xl"
         loading="eager"
         images={links.imageUrls}
       />

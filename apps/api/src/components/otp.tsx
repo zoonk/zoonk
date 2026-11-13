@@ -63,9 +63,13 @@ export function OTPFormSkeleton() {
   );
 }
 
-export function OTPInput({ ...props }: Partial<Omit<InputOTPProps, "render">>) {
+export function OTPInput({
+  invalid = false,
+  ...props
+}: Partial<Omit<InputOTPProps, "render">> & { invalid?: boolean }) {
   return (
     <InputOTP
+      aria-invalid={invalid}
       maxLength={OTP_LENGTH}
       name="otp"
       pasteTransformer={keepDigits}
@@ -74,12 +78,9 @@ export function OTPInput({ ...props }: Partial<Omit<InputOTPProps, "render">>) {
       {...props}
     >
       <InputOTPGroup>
-        <InputOTPSlot index={0} />
-        <InputOTPSlot index={1} />
-        <InputOTPSlot index={2} />
-        <InputOTPSlot index={3} />
-        <InputOTPSlot index={4} />
-        <InputOTPSlot index={5} />
+        {Array.from({ length: OTP_LENGTH }, (_, index) => (
+          <InputOTPSlot aria-invalid={invalid} index={index} key={index} />
+        ))}
       </InputOTPGroup>
     </InputOTP>
   );

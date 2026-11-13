@@ -26,14 +26,14 @@ export async function ProgressEmptyState({
   if (!isAuthenticated) {
     return (
       <ProgressContent>
-        <AuthGate className="py-4" next={next} />
+        <AuthGate next={next} />
       </ProgressContent>
     );
   }
 
   return (
     <ProgressContent>
-      <Empty className="py-4">
+      <Empty>
         <EmptyHeader>
           <EmptyMedia variant="icon">
             <Icon aria-hidden="true" />

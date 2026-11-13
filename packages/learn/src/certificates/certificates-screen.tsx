@@ -73,13 +73,13 @@ function CertificateItem({ facts, links }: ListedCertificate) {
         {links ? (
           <CertificateSheet
             alt={sentence(facts)}
-            className="lg:rounded-md"
+            className="lg:rounded-xl"
             loading="lazy"
             images={links.imageUrls}
             variant="thumb"
           />
         ) : (
-          <LockedCertificateSheet className="rounded-sm lg:rounded-md" facts={facts} />
+          <LockedCertificateSheet className="rounded-sm lg:rounded-xl" facts={facts} />
         )}
       </span>
 
@@ -132,7 +132,7 @@ function GhostCertificate() {
   return (
     <div
       aria-hidden="true"
-      className="bg-ground border-input relative aspect-297/210 w-full max-w-104 rounded-lg border border-dashed"
+      className="bg-ground border-input relative aspect-297/210 w-full max-w-104 rounded-xl border border-dashed"
     >
       {bars.map((bar) => (
         <i className={`bg-surface-3 absolute left-[7%] block rounded-sm ${bar}`} key={bar} />

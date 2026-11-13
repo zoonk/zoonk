@@ -39,7 +39,7 @@ export function CertificateView({
     <>
       <section className="bg-ground">
         <div className={cn(PUBLIC_CONTAINER_CLASS, "pt-8 pb-14 sm:pt-12 sm:pb-16")}>
-          {ownerActions && <CertificatesBackLink href="/certificates" />}
+          {ownerActions && <CertificatesBackLink facts={facts} href="/certificates" />}
           <CertificateIntro facts={facts} locked={!links} />
 
           {ownerActions && (

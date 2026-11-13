@@ -225,6 +225,7 @@ export function OTPForm({
         aria-label={t("Code from the email")}
         autoFocus
         disabled={isCodeGone}
+        invalid={status === "wrongCode"}
         key={codeRound}
         onComplete={() => formRef.current?.requestSubmit()}
       />
