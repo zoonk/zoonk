@@ -217,9 +217,7 @@ export function SuggestionHeader({ children }: { children: React.ReactNode }) {
     return (
       <div className="flex items-center gap-2.5" data-slot="suggestion-header">
         <SuggestionMark />
-        <DrawerTitle className="text-lg leading-snug font-semibold text-pretty">
-          {children}
-        </DrawerTitle>
+        <DrawerTitle className="text-pretty">{children}</DrawerTitle>
       </div>
     );
   }

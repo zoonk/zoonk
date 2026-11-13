@@ -144,7 +144,7 @@ function DialogFooter({
 function DialogTitle({ className, ...props }: DialogPrimitive.Title.Props) {
   return (
     <DialogPrimitive.Title
-      className={cn("text-base leading-none font-medium", className)}
+      className={cn("text-lg leading-tight font-semibold", className)}
       data-slot="dialog-title"
       {...props}
     />

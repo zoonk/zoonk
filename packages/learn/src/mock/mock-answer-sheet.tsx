@@ -265,7 +265,7 @@ export function MockAnswerSheet({ onHandIn }: { onHandIn: () => void }) {
       <DrawerPopup>
         <DrawerHeader className="flex-row items-start justify-between gap-3">
           <div className="flex min-w-0 flex-col gap-1">
-            <DrawerTitle className="text-xl font-semibold">{t("Answer sheet")}</DrawerTitle>
+            <DrawerTitle>{t("Answer sheet")}</DrawerTitle>
             <DrawerDescription className="font-mono text-xs tabular-nums">
               {counts}
             </DrawerDescription>

@@ -215,7 +215,7 @@ export function PhasesSheet({
     <Drawer onOpenChange={onOpenChange} open={open}>
       <DrawerPopup>
         <DrawerHeader className="flex-row items-center justify-between gap-3">
-          <DrawerTitle className="text-xl font-semibold">{t("Your path")}</DrawerTitle>
+          <DrawerTitle>{t("Your path")}</DrawerTitle>
           <DrawerCloseButton />
         </DrawerHeader>
         <DrawerContent className="pt-2">

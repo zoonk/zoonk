@@ -72,9 +72,7 @@ function BuddyTodaySheet({
       <DrawerPopup finalFocus={!asked}>
         <DrawerHeader className="flex-row items-start justify-between gap-3">
           <div className="flex flex-col gap-1">
-            <DrawerTitle className="text-xl font-semibold">
-              {t("{buddy} today", { buddy: name })}
-            </DrawerTitle>
+            <DrawerTitle>{t("{buddy} today", { buddy: name })}</DrawerTitle>
             <DrawerDescription>
               <BuddyStageName stage={status.stage} />
               {" · "}

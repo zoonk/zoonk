@@ -154,7 +154,7 @@ export function MakeRoomSheet({
       <DrawerPopup>
         <DrawerHeader className="flex-row items-start justify-between gap-3">
           <div className="flex min-w-0 flex-col gap-1">
-            <DrawerTitle className="text-xl font-semibold text-balance">
+            <DrawerTitle className="text-balance">
               {t("Make room for {goal}", { goal })}
             </DrawerTitle>
             <DrawerDescription className="text-pretty">

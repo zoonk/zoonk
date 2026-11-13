@@ -195,7 +195,7 @@ In a bar with a main and a second action, both are one height, and on a phone th
 
 ### T1. Sizes come from the roles
 
-Every font size is a type role's (`TYPE_ROLES`, `apps/playground/src/design-system/type.ts`): 11.5px `text-2xs`, 12px `text-xs`, 13px `text-compact`, 14px `text-sm`, 15px `text-reading`, then 16, 18, 20, 24 and 30px from Tailwind's scale, and the sizes the title, headline, display, lead and readout roles set for themselves. No code writes a size (`text-[…]`) except a readout's 40 and 56px. A block uses three sizes at most: the main thing, its supporting line, its meta.
+Every font size is a type role's (`TYPE_ROLES`, `apps/playground/src/design-system/type.ts`): 11.5px `text-2xs`, 12px `text-xs`, 13px `text-compact`, 14px `text-sm`, 15px `text-reading`, then 16, 18, 20, 24 and 30px from Tailwind's scale, and the sizes the title, headline, display, lead and readout roles set for themselves. No code writes a size (`text-[…]`) except a readout's 40 and 56px. A sheet's, a dialog's and a side sheet's title is 18px semibold, set by the piece, never by its caller. A block uses three sizes at most: the main thing, its supporting line, its meta.
 
 - **Check.** List the sizes in each block: four or more is a finding, and so is a size no role or shared piece has.
 - **Usual break.** `text-[1.1875rem]` for one heading; 13.5px beside 13px.

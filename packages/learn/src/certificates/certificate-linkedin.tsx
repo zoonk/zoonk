@@ -72,9 +72,7 @@ export function CertificateLinkedInDialog({
         overNested
       >
         <DialogHeader>
-          <DialogTitle className="text-lg font-semibold">
-            {t("Add to your LinkedIn profile")}
-          </DialogTitle>
+          <DialogTitle>{t("Add to your LinkedIn profile")}</DialogTitle>
           <DialogDescription>
             {t(
               "LinkedIn opens its form to add a license or certification. Copy each field into it.",

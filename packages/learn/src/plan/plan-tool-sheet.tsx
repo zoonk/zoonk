@@ -150,7 +150,7 @@ export function PlanToolSheet({
     >
       <DrawerPopup>
         <DrawerHeader>
-          <DrawerTitle className="text-xl font-semibold">{tool?.name}</DrawerTitle>
+          <DrawerTitle>{tool?.name}</DrawerTitle>
           <DrawerDescription>{t("How will you use it?")}</DrawerDescription>
         </DrawerHeader>
 

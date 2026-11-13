@@ -28,6 +28,12 @@ export const TYPE_ROLES: readonly TypeRole[] = [
     use: "An app page's or a task's title (`PageTitle`, `DetailTitle`).",
   },
   {
+    className: "text-lg font-semibold leading-tight",
+    name: "Sheet title",
+    sample: "Adjust your plan",
+    use: "A sheet's, a dialog's or a side sheet's title (18px), set by `DrawerTitle`, `DialogTitle` and `SheetTitle`.",
+  },
+  {
     className: "text-section",
     name: "Section",
     sample: "Example plan",

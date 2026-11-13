@@ -278,7 +278,7 @@ export function PlanBasesSheet({
       <DrawerPopup>
         <DrawerHeader className="flex-row items-start justify-between gap-3">
           <div className="flex flex-col gap-1">
-            <DrawerTitle className="text-xl font-semibold">{t("Prerequisites")}</DrawerTitle>
+            <DrawerTitle>{t("Prerequisites")}</DrawerTitle>
             <DrawerDescription>{description}</DrawerDescription>
           </div>
           <DrawerCloseButton />

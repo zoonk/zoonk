@@ -188,9 +188,7 @@ export function PracticeCallSheet({
       <DrawerPopup>
         <DrawerHeader className="flex-row items-start gap-3">
           <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-            <DrawerTitle className="text-xl font-semibold">
-              {t("Practice a conversation")}
-            </DrawerTitle>
+            <DrawerTitle>{t("Practice a conversation")}</DrawerTitle>
             {character && (
               <DrawerDescription>
                 {t("with {name} · {role}", { name: character.name, role: character.role })}

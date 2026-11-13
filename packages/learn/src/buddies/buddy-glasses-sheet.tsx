@@ -36,7 +36,7 @@ export function BuddyGlassesSheet({
     <Drawer onOpenChange={onOpenChange} open={open}>
       <DrawerPopup>
         <DrawerHeader>
-          <DrawerTitle className="text-xl font-semibold">{t("Glasses")}</DrawerTitle>
+          <DrawerTitle>{t("Glasses")}</DrawerTitle>
           <DrawerDescription>
             {t({
               description: "The learner's buddy wears the glasses.",

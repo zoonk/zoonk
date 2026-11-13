@@ -31,7 +31,7 @@ export function LessonMapSheet({
     <Drawer onOpenChange={onOpenChange} open={open}>
       <DrawerPopup finalFocus={getLessonFocusTarget}>
         <DrawerHeader>
-          <DrawerTitle className="flex items-center gap-2 text-lg font-semibold">
+          <DrawerTitle className="flex items-center gap-2">
             <NetworkIcon aria-hidden="true" className="size-5" />
             {t("Lesson map")}
           </DrawerTitle>

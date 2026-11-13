@@ -118,7 +118,7 @@ function StudyEverythingSheet({
       <DrawerPopup>
         <DrawerHeader className="flex-row items-start justify-between gap-3">
           <div className="flex flex-col gap-1">
-            <DrawerTitle className="text-xl font-semibold">{t("Study everything")}</DrawerTitle>
+            <DrawerTitle>{t("Study everything")}</DrawerTitle>
             <DrawerDescription>
               {course.isExam
                 ? t("Every topic, even after the exam, at your own pace.")

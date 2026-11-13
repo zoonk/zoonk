@@ -188,7 +188,7 @@ export function FarTopicSheet({
       <DrawerPopup>
         <DrawerHeader className="flex-row items-start justify-between gap-3">
           <div className="flex min-w-0 flex-col gap-1">
-            <DrawerTitle className="text-xl font-semibold text-balance">{title}</DrawerTitle>
+            <DrawerTitle className="text-balance">{title}</DrawerTitle>
             <DrawerDescription>{line({ lessons, nextDate })}</DrawerDescription>
           </div>
           <DrawerCloseButton />
