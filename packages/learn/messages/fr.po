@@ -3185,11 +3185,13 @@ msgstr "Écris toute ta rédaction, puis envoie-la à nouveau."
 
 #: src/essay/essay-feedback.tsx
 #: src/mock/mock-result-breakdown.tsx
+#: src/mock/mock-result-speaking.tsx
 msgctxt "kV-RMr"
 msgid "{low}–{high}"
 msgstr "{low}–{high}"
 
 #: src/essay/essay-feedback.tsx
+#: src/mock/mock-result-speaking.tsx
 msgctxt "T735yK"
 msgid "Estimated score, from <mono>0</mono> to <mono>{max}</mono>"
 msgstr "Score estimé, de <mono>0</mono> à <mono>{max}</mono>"
@@ -8484,9 +8486,9 @@ msgid "Not sorted yet"
 msgstr "Pas encore classée"
 
 #: src/mock/mock-answer-sheet.tsx
-msgctxt "GFUPBi"
-msgid "{answered, plural, =0 {# answered} one {# answered} other {# answered}} · {flagged, plural, =0 {# flagged} one {# flagged} other {# flagged}}"
-msgstr "{answered, plural, =0 {# réponse donnée} one {# réponse donnée} other {# réponses données}} · {flagged, plural, =0 {# question signalée} one {# question signalée} other {# questions signalées}}"
+msgctxt "0CHpAw"
+msgid "{answered, plural, =0 {# answered} one {# answered} other {# answered}}"
+msgstr ""
 
 #: src/mock/mock-answer-sheet.tsx
 #: src/mock/mock-chooser-picked.tsx
@@ -8503,8 +8505,8 @@ msgid "Question {number}"
 msgstr "Question {number}"
 
 #: src/mock/mock-answer-sheet.tsx
-msgctxt "OVFPd-"
-msgid "Flagged"
+msgctxt "TV9YpL"
+msgid "{flagged, plural, one {# flagged} other {# flagged}}"
 msgstr ""
 
 #: src/mock/mock-answer-sheet.tsx
@@ -9216,26 +9218,6 @@ msgid "Below {min, number} on this paper, the whole exam isn't passed."
 msgstr "En dessous de {min, number} à cette épreuve, l’examen entier n’est pas réussi."
 
 #: src/mock/mock-result-speaking.tsx
-msgctxt "-U9tBB"
-msgid "No estimate"
-msgstr "Aucune estimation"
-
-#: src/mock/mock-result-speaking.tsx
-msgctxt "n6FCOa"
-msgid "About {points} of {total}"
-msgstr "Environ {points} sur {total}"
-
-#: src/mock/mock-result-speaking.tsx
-msgctxt "rdlLKm"
-msgid "About {low} to {high} of {total}"
-msgstr "Entre {low} et {high} sur {total} environ"
-
-#: src/mock/mock-result-speaking.tsx
-msgctxt "p7Ub7O"
-msgid "An estimate, not an official score."
-msgstr "Une estimation, pas un Score officiel."
-
-#: src/mock/mock-result-speaking.tsx
 msgctxt "ohRjp5"
 msgid "Not every task was done, so there's no estimate for this paper."
 msgstr "Toutes les tâches n’ont pas été réalisées, donc il n’y a pas d’estimation pour cette épreuve."
@@ -9259,6 +9241,11 @@ msgstr "Voir les commentaires"
 msgctxt "zqV6aP"
 msgid "Not done"
 msgstr "Non réalisée"
+
+#: src/mock/mock-result-speaking.tsx
+msgctxt "-U9tBB"
+msgid "No estimate"
+msgstr "Aucune estimation"
 
 #: src/mock/mock-result-speaking.tsx
 msgctxt "xQAJsr"

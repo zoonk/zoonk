@@ -3185,11 +3185,13 @@ msgstr "Kompozisyonun tamamını yaz, sonra yeniden gönder."
 
 #: src/essay/essay-feedback.tsx
 #: src/mock/mock-result-breakdown.tsx
+#: src/mock/mock-result-speaking.tsx
 msgctxt "kV-RMr"
 msgid "{low}–{high}"
 msgstr "{low}–{high}"
 
 #: src/essay/essay-feedback.tsx
+#: src/mock/mock-result-speaking.tsx
 msgctxt "T735yK"
 msgid "Estimated score, from <mono>0</mono> to <mono>{max}</mono>"
 msgstr "Tahmini puan, <mono>0</mono> ile <mono>{max}</mono> arasında"
@@ -8484,9 +8486,9 @@ msgid "Not sorted yet"
 msgstr "Henüz sınıflandırılmadı"
 
 #: src/mock/mock-answer-sheet.tsx
-msgctxt "GFUPBi"
-msgid "{answered, plural, =0 {# answered} one {# answered} other {# answered}} · {flagged, plural, =0 {# flagged} one {# flagged} other {# flagged}}"
-msgstr "{answered, plural, =0 {# soru cevaplandı} other {# soru cevaplandı}} · {flagged, plural, =0 {# soru işaretlendi} other {# soru işaretlendi}}"
+msgctxt "0CHpAw"
+msgid "{answered, plural, =0 {# answered} one {# answered} other {# answered}}"
+msgstr ""
 
 #: src/mock/mock-answer-sheet.tsx
 #: src/mock/mock-chooser-picked.tsx
@@ -8503,8 +8505,8 @@ msgid "Question {number}"
 msgstr "Soru {number}"
 
 #: src/mock/mock-answer-sheet.tsx
-msgctxt "OVFPd-"
-msgid "Flagged"
+msgctxt "TV9YpL"
+msgid "{flagged, plural, one {# flagged} other {# flagged}}"
 msgstr ""
 
 #: src/mock/mock-answer-sheet.tsx
@@ -9216,26 +9218,6 @@ msgid "Below {min, number} on this paper, the whole exam isn't passed."
 msgstr "Bu oturumda {min, number} puanın altında kalırsan sınavı geçmiş sayılmazsın."
 
 #: src/mock/mock-result-speaking.tsx
-msgctxt "-U9tBB"
-msgid "No estimate"
-msgstr "Tahmin yok"
-
-#: src/mock/mock-result-speaking.tsx
-msgctxt "n6FCOa"
-msgid "About {points} of {total}"
-msgstr "Yaklaşık {points} / {total}"
-
-#: src/mock/mock-result-speaking.tsx
-msgctxt "rdlLKm"
-msgid "About {low} to {high} of {total}"
-msgstr "Yaklaşık {low}–{high} / {total}"
-
-#: src/mock/mock-result-speaking.tsx
-msgctxt "p7Ub7O"
-msgid "An estimate, not an official score."
-msgstr "Bu bir tahmin, resmî puan değil."
-
-#: src/mock/mock-result-speaking.tsx
 msgctxt "ohRjp5"
 msgid "Not every task was done, so there's no estimate for this paper."
 msgstr "Tüm bölümler tamamlanmadığı için bu oturumun puan tahmini yok."
@@ -9259,6 +9241,11 @@ msgstr "Geri bildirimi gör"
 msgctxt "zqV6aP"
 msgid "Not done"
 msgstr "Tamamlanmadı"
+
+#: src/mock/mock-result-speaking.tsx
+msgctxt "-U9tBB"
+msgid "No estimate"
+msgstr "Tahmin yok"
 
 #: src/mock/mock-result-speaking.tsx
 msgctxt "xQAJsr"

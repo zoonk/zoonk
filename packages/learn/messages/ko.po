@@ -3185,11 +3185,13 @@ msgstr "에세이를 끝까지 쓴 뒤 다시 보내세요."
 
 #: src/essay/essay-feedback.tsx
 #: src/mock/mock-result-breakdown.tsx
+#: src/mock/mock-result-speaking.tsx
 msgctxt "kV-RMr"
 msgid "{low}–{high}"
 msgstr "{low}–{high}"
 
 #: src/essay/essay-feedback.tsx
+#: src/mock/mock-result-speaking.tsx
 msgctxt "T735yK"
 msgid "Estimated score, from <mono>0</mono> to <mono>{max}</mono>"
 msgstr "예상 점수, <mono>0</mono>부터 <mono>{max}</mono>까지"
@@ -8484,9 +8486,9 @@ msgid "Not sorted yet"
 msgstr "아직 분류 안 됨"
 
 #: src/mock/mock-answer-sheet.tsx
-msgctxt "GFUPBi"
-msgid "{answered, plural, =0 {# answered} one {# answered} other {# answered}} · {flagged, plural, =0 {# flagged} one {# flagged} other {# flagged}}"
-msgstr "{answered, plural, =0 {답한 문제 #개} other {#문제 답변 완료}} · {flagged, plural, =0 {표시한 문제 #개} other {#문제 표시됨}}"
+msgctxt "0CHpAw"
+msgid "{answered, plural, =0 {# answered} one {# answered} other {# answered}}"
+msgstr ""
 
 #: src/mock/mock-answer-sheet.tsx
 #: src/mock/mock-chooser-picked.tsx
@@ -8503,8 +8505,8 @@ msgid "Question {number}"
 msgstr "{number}번 문제"
 
 #: src/mock/mock-answer-sheet.tsx
-msgctxt "OVFPd-"
-msgid "Flagged"
+msgctxt "TV9YpL"
+msgid "{flagged, plural, one {# flagged} other {# flagged}}"
 msgstr ""
 
 #: src/mock/mock-answer-sheet.tsx
@@ -9216,26 +9218,6 @@ msgid "Below {min, number} on this paper, the whole exam isn't passed."
 msgstr "이 파트의 점수가 {min, number} 미만이면 전체 시험에 합격할 수 없어요."
 
 #: src/mock/mock-result-speaking.tsx
-msgctxt "-U9tBB"
-msgid "No estimate"
-msgstr "예상 점수 없음"
-
-#: src/mock/mock-result-speaking.tsx
-msgctxt "n6FCOa"
-msgid "About {points} of {total}"
-msgstr "약 {points} / {total}"
-
-#: src/mock/mock-result-speaking.tsx
-msgctxt "rdlLKm"
-msgid "About {low} to {high} of {total}"
-msgstr "약 {low}~{high} / {total}"
-
-#: src/mock/mock-result-speaking.tsx
-msgctxt "p7Ub7O"
-msgid "An estimate, not an official score."
-msgstr "공식 점수가 아닌 예상 점수예요."
-
-#: src/mock/mock-result-speaking.tsx
 msgctxt "ohRjp5"
 msgid "Not every task was done, so there's no estimate for this paper."
 msgstr "끝내지 않은 과제가 있어서 이 파트의 예상 점수가 없어요."
@@ -9259,6 +9241,11 @@ msgstr "피드백 보기"
 msgctxt "zqV6aP"
 msgid "Not done"
 msgstr "미완료"
+
+#: src/mock/mock-result-speaking.tsx
+msgctxt "-U9tBB"
+msgid "No estimate"
+msgstr "예상 점수 없음"
 
 #: src/mock/mock-result-speaking.tsx
 msgctxt "xQAJsr"
