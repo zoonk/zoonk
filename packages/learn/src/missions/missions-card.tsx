@@ -1,8 +1,8 @@
 "use client";
 
 import { countDoneMissions, isFullMeal } from "@zoonk/core/sessions/missions";
+import { FoldChevron } from "@zoonk/ui/components/collapsible";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronDownIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { ListGroup } from "../_components/list-group";
@@ -82,10 +82,7 @@ function MissionsTitle({ fold, won }: { fold: RowsFold | null; won: boolean }) {
       type="button"
     >
       {title}
-      <ChevronDownIcon
-        aria-hidden="true"
-        className={cn("text-muted-foreground size-3.5 shrink-0", fold.open && "rotate-180")}
-      />
+      <FoldChevron className="text-muted-foreground" inline />
     </button>
   );
 }
