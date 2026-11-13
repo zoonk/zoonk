@@ -7,6 +7,9 @@ import Link from "next/link";
 
 const TOKENS_PER_MILLION = 1_000_000;
 
+// Wide enough for "$0.075", so each price ends on one edge down the column.
+const PRICE_CLASS = "inline-block min-w-[6ch] text-end";
+
 function formatPrice(price: number): string {
   return `$${Number((price * TOKENS_PER_MILLION).toFixed(3))}`;
 }
@@ -46,7 +49,9 @@ export function ModelList({
 
               {pricing && (
                 <span className="text-muted-foreground shrink-0 font-mono text-xs tabular-nums">
-                  {formatPrice(pricing.input)} / {formatPrice(pricing.output)}
+                  <span className={PRICE_CLASS}>{formatPrice(pricing.input)}</span>
+                  {" / "}
+                  <span className={PRICE_CLASS}>{formatPrice(pricing.output)}</span>
                 </span>
               )}
             </Link>
