@@ -151,7 +151,7 @@ export function SwatchTable({
             <div
               className={cn(
                 modeClass(mode.id),
-                "ring-border flex min-h-16 items-center gap-3 self-start rounded-lg px-3 py-2 ring-1",
+                "ring-border flex min-h-16 items-center gap-3 self-start rounded-xl px-3 py-2 ring-1",
               )}
               data-mode={mode.id}
               data-subject={subject}

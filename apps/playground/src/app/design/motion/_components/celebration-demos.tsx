@@ -33,11 +33,7 @@ export function SettleDemo() {
     <div className="flex flex-wrap items-center gap-10">
       <LevelBadge />
 
-      <CheckIcon
-        aria-hidden="true"
-        className="text-success animate-settle size-5"
-        strokeWidth={2.5}
-      />
+      <CheckIcon aria-hidden="true" className="text-success animate-settle size-5" />
 
       <StarIcon aria-hidden="true" className="fill-success text-success animate-settle size-5" />
     </div>

@@ -27,6 +27,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { type Metadata } from "next";
 import { PreviewIntlProvider } from "../../preview/preview-intl-provider";
 import { DevOnlySpecimen, DoDont, DocHeader, DocSection, Specimen } from "../_components/doc";
+import { CurrentSpecimen } from "./current-specimen";
 import { WordsSpecimen } from "./words-specimen";
 
 export const metadata: Metadata = { title: "Components and patterns" };
@@ -192,7 +193,7 @@ function StructureSpecimen() {
 
 function BandsSpecimen() {
   return (
-    <div className="flex flex-col overflow-hidden rounded-lg">
+    <div className="flex flex-col overflow-hidden rounded-xl">
       <div className="bg-ground flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-col gap-1">
           <p className="text-section">Quantum physics from scratch</p>
@@ -201,7 +202,7 @@ function BandsSpecimen() {
         <Surface className="p-4 text-sm">The one white sheet on it.</Surface>
       </div>
       <div className="p-6 text-sm">The next part, on the page.</div>
-      <div className="bg-foreground text-background dark:bg-card dark:text-foreground dark:ring-border flex items-center justify-between gap-4 rounded-b-lg p-6 dark:ring-1 dark:ring-inset">
+      <div className="bg-foreground text-background dark:bg-card dark:text-foreground dark:ring-border flex items-center justify-between gap-4 rounded-b-xl p-6 dark:ring-1 dark:ring-inset">
         <p className="text-section">Start today, at your level</p>
         <Button
           className="bg-background text-foreground hover:bg-background/90 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90"
@@ -275,6 +276,7 @@ const SPECIMENS: Record<string, () => React.ReactNode> = {
   actions: ActionsSpecimen,
   answers: AnswersSpecimen,
   bands: BandsSpecimen,
+  current: CurrentSpecimen,
   kinds: KindsSpecimen,
   readouts: ReadoutsSpecimen,
   route: RouteSpecimen,

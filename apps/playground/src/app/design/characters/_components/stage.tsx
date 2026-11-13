@@ -91,7 +91,7 @@ export function Stage<ActName extends string>({
         </Button>
       </div>
 
-      <div className="bg-muted/40 flex h-60 items-center justify-center rounded-lg">{children}</div>
+      <div className="bg-muted/40 flex h-60 items-center justify-center rounded-xl">{children}</div>
 
       <div className="flex flex-wrap gap-2">
         {acts.map((act) => (

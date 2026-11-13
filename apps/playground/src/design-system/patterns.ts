@@ -40,10 +40,27 @@ export const PATTERNS: readonly Pattern[] = [
       "An action inside a sentence (Take the test, Try again, Undo after a memory change) is a word (the `link` variant): the text color, underlined, at the size of the text around it.",
       "A quiet option under a task's main action (another try, the details, Undo after a result) is a ghost button on its own row (`TASK_OPTION_CLASS`), never an underlined word.",
       "The main action shows its key as a keycap on pointer devices (`ShortcutKbd`).",
+      "Buttons side by side are one height, 8px apart (see Control heights under Spacing and shape).",
     ],
     id: "actions",
     summary: "The main action is the text color, the strongest thing on the screen.",
     title: "Actions",
+  },
+  {
+    avoid: [
+      "An underlined or boxed tab.",
+      "A heavier weight or a thicker border on the current item: it moves its neighbors.",
+      "A filled button for the current view of a list.",
+    ],
+    follow: [
+      "The current tab is the navigation's `muted` fill, the same mark as the sidebar's current page: `Tabs`, or `TAB_CLASS` and `TAB_LIST_CLASS` for tabs that are links.",
+      "The current tab's fill reaches 10px past the column, like a highlighted row, so the first tab's label starts on the title's edge.",
+      "A pick is a 2px ring in the text color on its tint (`ChoiceList`, `AnswerOption`).",
+      "A state change moves nothing: hover, focus, current, busy and disabled keep a control's size and its neighbors' place.",
+    ],
+    id: "current",
+    summary: "Where you are and what you picked, each drawn one way in every app.",
+    title: "Current and picked",
   },
   {
     avoid: [
@@ -124,6 +141,8 @@ export const PATTERNS: readonly Pattern[] = [
     follow: [
       "Lists are flat rows with hairlines (`ListGroup`), the current row highlighted past the column's edges.",
       "A panel (`Surface`) holds one self-contained thing: a preview, a notice, the missions.",
+      "A row's mark is centered on a row of one or two lines and sits on the first line of three or more (`ListRowLeading`). Every mark takes the same 16px box, so labels start on one edge.",
+      "A row that opens a page ends in a chevron on the column's edge (`ListRowChevron`).",
     ],
     id: "structure",
     summary: "Fewer boxes: content sits on the page.",

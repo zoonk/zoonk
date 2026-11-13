@@ -1,7 +1,19 @@
-import { ICON_RULES } from "@/design-system/shape";
+import { ICON_MEANINGS, ICON_RULES, ICON_SIZES, type IconMeaning } from "@/design-system/shape";
 import { KindMark, type LearnKind } from "@zoonk/learn/kind-tile";
 import { DoneMark, StatusMark } from "@zoonk/learn/status-mark";
-import { BarChart3Icon, MapIcon, NotebookPenIcon, SunIcon } from "lucide-react";
+import {
+  ArrowRightIcon,
+  BarChart3Icon,
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  EllipsisIcon,
+  type LucideIcon,
+  MapIcon,
+  NotebookPenIcon,
+  SunIcon,
+  XIcon,
+} from "lucide-react";
 import { type Metadata } from "next";
 import { DocHeader, DocRules, DocSection, Specimen } from "../_components/doc";
 
@@ -26,6 +38,15 @@ const KINDS: readonly { kind: LearnKind; label: string }[] = [
   { kind: "mindMap", label: "Mind map" },
 ];
 
+const MEANING_ICONS: Record<IconMeaning["icon"], LucideIcon> = {
+  "arrow-right": ArrowRightIcon,
+  "chevron-down": ChevronDownIcon,
+  "chevron-left": ChevronLeftIcon,
+  "chevron-right": ChevronRightIcon,
+  ellipsis: EllipsisIcon,
+  x: XIcon,
+};
+
 const STATUSES = [
   { label: "Done", status: "done" },
   { label: "Next: where the learner is", status: "next" },
@@ -43,6 +64,42 @@ export default function IconsPage() {
 
       <DocSection title="Rules">
         <DocRules rules={ICON_RULES} />
+      </DocSection>
+
+      <DocSection
+        intro="Five sizes, each matched to the text or the control it sits in."
+        title="Sizes"
+      >
+        <Specimen className="grid gap-x-8 gap-y-4 sm:grid-cols-2 xl:grid-cols-5">
+          {ICON_SIZES.map((size) => (
+            <div className="flex flex-col gap-2" key={size.className}>
+              <span className="flex h-6 items-center">
+                <SunIcon aria-hidden="true" className={size.className} />
+              </span>
+              <p className="text-sm font-medium">{size.size}</p>
+              <code className="text-muted-foreground font-mono text-xs">{size.className}</code>
+              <p className="text-muted-foreground text-xs leading-relaxed">{size.use}</p>
+            </div>
+          ))}
+        </Specimen>
+      </DocSection>
+
+      <DocSection
+        intro="The same glyph for the same thing on every screen."
+        title="One thing, one icon"
+      >
+        <Specimen className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          {ICON_MEANINGS.map(({ icon, meaning }) => {
+            const Icon = MEANING_ICONS[icon];
+
+            return (
+              <span className="flex items-center gap-2 text-sm" key={icon}>
+                <Icon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
+                {meaning}
+              </span>
+            );
+          })}
+        </Specimen>
       </DocSection>
 
       <DocSection intro="Every navigation icon is the same neutral color." title="Navigation">
