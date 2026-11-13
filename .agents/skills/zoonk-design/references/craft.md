@@ -35,10 +35,10 @@ An icon button with no bezel that is the first or last thing in a bar, a header 
 
 ### E3. One end edge
 
-Trailing things end on the column's end edge: a header's detail, a row's value or chevron, a button's bezel, a meter.
+Trailing things end on the column's end edge: a header's detail, a row's value or chevron, a button's bezel, a meter. In one list, rows with and without a chevron end their values on one edge, and so do values and glyphs at a row's end: a row without a chevron keeps the chevron's room.
 
-- **Check.** Ruler down the right side: details, values, chevrons and buttons end on one line (glyph ink within 2px).
-- **Usual break.** A chevron whose box is flush and whose ink stops 5px short, under a detail that ends on the edge.
+- **Check.** Ruler down the right side: details, values, chevrons and buttons end on one line (glyph ink within 2px), and in a list every row's value ends where the others' do.
+- **Usual break.** A chevron whose box is flush and whose ink stops 5px short, under a detail that ends on the edge. A date that runs to the edge on the one row with nothing to open.
 
 ### E4. One axis for marks, one edge for labels
 
@@ -56,10 +56,10 @@ An icon beside one line of text is centered on that line. Beside a title with on
 
 ### E6. Shared baselines, tops and bottoms
 
-Texts of different sizes on one row share a baseline (a readout and its unit, a title and its count). A control and the text beside it share a center line. Siblings of one kind side by side (tiles, cards, buttons) share a top and a bottom.
+Texts of different sizes on one row share a baseline (a readout and its unit, a title and its count). A control and the text beside it share a center line. Siblings of one kind side by side (tiles, cards, buttons) share a top and a bottom. A row is aligned one way: when its text and controls are centered, its picture is too.
 
 - **Check.** Baselines within 1px; centers within 1px; siblings' visible boxes equal in top and height.
-- **Usual break.** `items-center` where `items-baseline` was needed.
+- **Usual break.** `items-center` where `items-baseline` was needed. A character's picture on the row's bottom beside centered text.
 
 ### E7. Bleeds are declared, equal and symmetric
 
@@ -68,12 +68,12 @@ Only three things pass the column: a highlighted or hovered row (10px each side,
 - **Check.** Anything wider than its column: left bleed equals right bleed, and it is one of the three.
 - **Usual break.** A tinted band with a negative margin on one side only.
 
-### E8. Titles at one height
+### E8. One page top
 
-On pages with the same bar, the page title's top is at the same y ([titles at one height](app-patterns.md#what-every-page-shares)).
+Every app page's top is one shared piece: the way back, then the title close under it, as onboarding's headline sits. The title sits the same distance under the bar above it on every page, on a phone and a computer alike. The way back is a left chevron and the name of the page it goes back to, the gap between them the same as between a "See all" row's label and its chevron. No page sets its own top padding, and no page keeps an empty line over its title. A task keeps its own top (✕, the title centered, the progress).
 
-- **Check.** The `h1`'s top per page and screen size, grouped by bar (tab root, pushed page, section, task): equal within 1px.
-- **Usual break.** Dropping an empty eyebrow's line, so one page's title rises.
+- **Check.** The distance from the bar's bottom to the `h1`'s top: equal within 1px on every page and at both sizes, so pages with the same bar have their titles at one y. Each back link: a label beside the chevron, at the row's gap.
+- **Usual break.** A page's own `pt-*`. A second header component that decides the title's place again. A bare chevron with no page name.
 
 ### E9. Start-aligned or centered, never both
 
@@ -107,10 +107,10 @@ A title is closer to what it names than to what precedes it: the space above a s
 
 ### S4. Padding is even
 
-A container's left and right padding are equal, its text is never closer than 8px to its edge (12px in a panel), and two containers of one kind have the same padding.
+A box that holds content (a card, a panel, a composer, a bar) gives it the same room on all four sides. A control (a button, a chip, a field) is wider than tall, with equal left and right padding. Text is never closer than 8px to a bordered or filled edge (12px in a panel), and two containers of one kind have the same padding.
 
-- **Check.** Padding left equals right; text ink to the nearest bordered or filled edge is 8px or more.
-- **Usual break.** Two rails of one width with different inner padding.
+- **Check.** In a box: content ink to each of the four edges, equal within 2px. Text ink to the nearest bordered or filled edge is 8px or more.
+- **Usual break.** 16px at a card's sides and 12px over and under it. Two rails of one width with different inner padding.
 
 ### S5. The gutter is the frame's
 
@@ -225,7 +225,7 @@ Running text is 45 to 90 characters a line and never wider than `max-w-column`. 
 
 ### T6. Titles, not labels
 
-A page's parts are named by sentence-case titles. Uppercase is the label role inside a panel or a sheet, and the mono eyebrow.
+A page's parts are named by sentence-case titles. Uppercase is the label role inside a panel or a sheet.
 
 - **Check.** No section of the page is headed by small capitals.
 - **Usual break.** An uppercase label heading one section among sentence-case titles.
@@ -255,7 +255,7 @@ Lucide's stroke is 2 on its 24-unit canvas, so the line thins and thickens with 
 
 ### I4. One thing, one icon
 
-Back to a page is `chevron-left` (`LearnBackLink`), a task's previous step `arrow-left`, close `x`, more `ellipsis`, go forward `arrow-right` after the label (`FORWARD_ICON`). A row that opens a page ends in `chevron-right`, one that folds in `chevron-down`. A kind's icon comes from `KIND_MARKS`.
+Back to a page is `chevron-left` (`LearnBackLink`), a task's previous step `arrow-left`, close `x`, more `ellipsis`, go forward `chevron-right` after the label (`FORWARD_ICON`), never an arrow. A row that opens a page ends in `chevron-right`, one that folds in `chevron-down`. A kind's icon comes from `KIND_MARKS`.
 
 - **Check.** This screen's back, close and more are drawn as the last screen drew them.
 - **Usual break.** An arrow for the way back to a page.
@@ -266,6 +266,13 @@ An icon and its label are one gap apart per component (`Button`'s own gap; 12px 
 
 - **Check.** No icon tighter to its word than the icons above it.
 - **Usual break.** `gap-1.5` on a hand-built row among `ListRow`s.
+
+### I6. One glyph on a button
+
+A button shows its label and at most one glyph: an icon, a forward chevron or a keycap, never two. A main action that Enter presses shows the ⏎ hint on devices with a keyboard and no other glyph; while it works, the spinner takes the hint's place, and nothing changes width. A glyph sits on the label's center line.
+
+- **Check.** Count the glyphs in each button: two is a finding. The glyph's center against the label's: 1px or less. The button's width at rest and busy: equal.
+- **Usual break.** A forward arrow and ⏎ on "Start". An icon added so the spinner has a place to go.
 
 ## Density and balance
 
@@ -351,10 +358,10 @@ No key acts through a control the learner can't see. Where a back link is drawn 
 
 A dialog, a sheet or a side panel closes with Esc, with a press outside it, and with a control you can see: its ✕ beside its title, one size in every panel. A sheet on a phone also closes with a swipe down. Only an alert that asks before something that can't be undone ignores a press outside.
 
-What opens decides its panel: an alert for a question before something that can't be undone; a bottom sheet on a phone and a centered dialog on a computer for a short form, a pick or a detail; a side panel on a computer only for something edited beside the page it changes; a menu or a popover for a few choices tied to a control. A bottom-docked box is a phone's shape (where the thumb is, closed with a swipe); on a computer the eyes and pointer are in the middle of the window.
+What opens decides its panel: an alert for a question before something that can't be undone; a bottom sheet on a phone and a centered dialog on a computer for a short form, a pick or a detail, drawn by one piece that decides by screen size, so no screen picks a dialog or a drawer itself; a side panel on a computer only for something edited beside the page it changes; a menu or a popover for a few choices tied to a control. A bottom-docked box is a phone's shape (where the thumb is, closed with a swipe); on a computer the eyes and pointer are in the middle of the window.
 
 - **Check.** Open it and close it each way. On a computer, find its ✕ without looking for a grab handle.
-- **Usual break.** A sheet with a grab handle and no ✕, docked at the bottom of a computer's window.
+- **Usual break.** A sheet with a grab handle and no ✕, docked at the bottom of a computer's window. A centered dialog on a phone, where everything else that opens comes from the bottom.
 
 ### B5. Focus goes in, and comes back
 
@@ -370,6 +377,38 @@ On a task, Esc closes what is open; with nothing open, it presses ✕, so it goe
 - **Check.** Type an answer, move focus off the field, press Esc: the same question ✕ asks. With nothing to lose, Esc and ✕ land on the same page.
 - **Usual break.** A switch that turns Esc off on one screen while ✕ beside it still leaves with one click; a task that asks on ✕ and leaves on Esc.
 
+## Roles
+
+A role is a job a screen gives one of its parts: its top, the way back, its main action, what opens over it, the line over its title, the gate before something paid. One role has one piece, one place and one wording, in every area; the [design skill's table](../SKILL.md#find-the-piece-before-you-build-one) is the short form.
+
+### R1. One role, one piece
+
+Each role is drawn by its shared piece, with nothing added around it by the screen: no spacing, size, glyph or words of its own. The top is E8's, a button's glyph I6's, an overlay B4's, and the three below.
+
+- **Check.** [The role read](#the-role-read): every instance of the role, side by side. Any that differs is a finding.
+- **Usual break.** Two areas each building the piece. A screen that wraps the piece in its own padding.
+
+### R2. The main action is in the bottom bar
+
+A screen's one main action sits in the shared bottom bar, pinned to the bottom of the screen on a phone and a computer, where the thumb is and where Enter's hint is found. A task's record or check button is its main action and sits there too. A screen with no main action has no bar; a second action sits beside the main one (Z4) and a third in the column. Dialogs keep the platform's order.
+
+- **Check.** The main action's box is inside the bar; the bar's bottom is the screen's bottom before and after scrolling, at 390 and 1440.
+- **Usual break.** The action under the content on one screen, beside the title on the next, at the top on a computer.
+
+### R3. The line over a title is `Eyebrow`
+
+When a task's, a card's or a step's title has a small line over it, that line is `Eyebrow` (`SuccessEyebrow` for something done): an outlined chip written as a sentence. An app page's title has no line over it; what the line said goes under the title or leaves.
+
+- **Check.** Anything directly over a title is the chip, or nothing.
+- **Usual break.** Gray or mono uppercase text over a title in one area and a chip in the next.
+
+### R4. A paid feature wears nothing, and gates once
+
+A row, card, tab or button for a paid feature looks like its free neighbors: no badge, chip, lock or card that says it's paid. The subscription gate shows once, in the feature's place, when the learner tries to use it. Its action reads "Subscribe".
+
+- **Check.** No "Plus" on a chip or a row. One gate on a screen at most, and none before the learner asked for the feature.
+- **Usual break.** A badge on the row and a notice on the page it opens. A card that announces the limit above a button that will show the gate anyway.
+
 ## The craft read
 
 The questions of [the craft read](../SKILL.md#the-craft-read), answered for one screenshot, in this order, each with "fine" or a finding you can point at:
@@ -384,15 +423,24 @@ The questions of [the craft read](../SKILL.md#the-craft-read), answered for one 
 8. **Control sizes.** Which heights are on the screen? Any row with two? Any control unlike the same control elsewhere? (Z1, Z2, Z4)
 9. **Type.** Which sizes are in each block? More than three, or two you can barely tell apart? Any other face, any bold, any uppercase heading? (T1, T2, T3, T6)
 10. **Numbers.** Do columns of numbers line up and end together? (T4)
-11. **Icons.** One family, one line weight, sizes that match their text, the usual glyph for back, close, more and forward? (I1 to I5)
+11. **Icons.** One family, one line weight, sizes that match their text, the usual glyph for back, close, more and forward, and no button with two glyphs? (I1 to I6)
 12. **Balance.** One filled button? Anything empty, centered in a start-aligned column, or bleeding on one side only? (D3, D4, E7, E9)
 13. **States, if shown.** Is the selected, focused, disabled or busy thing drawn the system's way, and did anything move? (X1 to X3)
 14. **Siblings, if given.** Does each piece here look and act like the same piece on the existing screen that does the same thing: words, icon, size, place, state?
-15. **Keys and closes, at 1440.** Does the main action wear ⏎, and does each icon button whose tooltip is shown wear its key? Does every dialog, sheet and side panel have its ✕ beside its title, one size in each? Is a short form on a computer centered, not docked at the bottom? (B2, B4)
+15. **Roles.** Is the title close under its bar, with the page's name beside the back chevron? Is the main action in the bar at the bottom? Is anything over a title a chip? Does any row, chip or card say something is paid, or any action that leads to paying say anything but "Subscribe"? (E8, R2, R3, R4)
+16. **Keys and closes, at 1440.** Does the main action wear ⏎, and does each icon button whose tooltip is shown wear its key? Does every dialog, sheet and side panel have its ✕ beside its title, one size in each? Is a short form on a computer centered, not docked at the bottom, and on a phone a sheet from the bottom? (B2, B4)
 
 A still picture can't show what a key does, where focus goes or whether Esc asks first (B1, B3, B5, B6): say so, and leave them to the walk in the running app.
 
 Then one line: would a principal designer find anything to pick at here, and what first?
+
+### The role read
+
+The craft read takes one screen. The role read takes one role on every screen, because a difference between two areas is invisible to a reader who sees one. It runs when a change draws or moves a role, touches a role's piece, or was built by more than one agent, and again on the whole when the parts are combined.
+
+1. For each role the change reaches, collect a crop of every instance, from every area and not only the changed screens, at 390 and 1440, on one sheet per role: page tops, back links, bottom bars with their main action, the overlays (open, on a phone and a computer), subscription gates, empty states, the line over a title, tabs, a list's row ends.
+2. A reader that built none of them gets the sheets and this file, and nothing else. Per sheet it answers: which instances differ from the rest, in what (place, size, gap, glyph, words, what a key or a tap does), and by how much.
+3. Each difference is a finding against the piece (`systemic`) or the one screen (`screen`). A difference is never deliberate unless it is in the [exceptions](#exceptions-the-user-granted).
 
 ### A finding
 
@@ -419,14 +467,27 @@ Then one line: would a principal designer find anything to pick at here, and wha
 
 ## Deliberate choices
 
-Zoonk's own, never findings on a screen. If one looks wrong, report it once as `principle`, with the reason.
+Zoonk's own, never findings on a screen. If one looks wrong, report it once as `principle`, with the reason. This list is the design system's: only the user adds to it. An agent that wants to keep a departure follows the rule and puts the case in its handoff.
 
 - A highlighted or hovered row reaches 10px past the column on both sides, so rows stay square and hairlines straight.
 - In the player, ✕ and "…" sit in the window's corners, not on the column, and the main action sits in the bottom-right corner on wide screens.
 - Onboarding, the player and the buddy's conversation center one column; pages that are worked in never do.
 - Content is flat: no shadows, few boxes. Body text is 14px in the app.
 - Colored marks and words are soft until the device asks for more contrast. The main action is the text color.
-- Eyebrows and facts lines are mono, uppercase where the role says so.
+- A facts line is mono.
 - A switch is a pill; keycaps are small 4px squares; meters are 6px with 3px corners.
 - A caption directly under a full-width button is centered.
 - Characters and flags are pictures with their own shapes and blank margins.
+
+### Exceptions the user granted
+
+Each is one named place where a rule above doesn't hold, by the user's decision. Leave them, and don't extend one to a neighbor.
+
+- The landing page's hero headline and a blog post's title keep their own weight and line height (T1, T3).
+- A lesson question's picture is centered in the column (E9).
+- Pricing's Monthly and Yearly switch is not the tab piece: it's a control that looks pressable (X2).
+- The code boxes (a sign-in or account code) are rectangles taller than they are wide, not field-height squares, lined up with the button under them (Z1).
+- Tables in Admin and evals keep their roomier cells; they aren't tightened to a list row's height (D1).
+- The day's bar on Today keeps its look and its parts' popovers; it is never made 44px tall to press (Z3).
+- A row on Today that counts toward a mission keeps its small violet target (it isn't a paid mark, R4).
+- Where plans are compared (pricing, the subscription page), a plan is named ("Plus"); the action still reads "Subscribe" (R4).
