@@ -78,11 +78,9 @@ export function AuthSubmit({
   const status = useFormStatus();
 
   return (
-    // Enter in the form's field submits it, so the key is the field's.
     <EnterButton
       busy={isLoading ?? status.pending}
       className={cn("w-full", className)}
-      enter="host"
       size="lg"
       type="submit"
       {...props}
