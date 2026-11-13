@@ -4,6 +4,7 @@ import {
   CHARACTER_LIGHT_RULES,
   CHARACTER_MOMENTS,
   CHARACTER_PARTS,
+  CHARACTER_PICTURE_RULES,
   CHARACTER_RULES,
   CHARACTER_TIMING_RULES,
   TRICKSTER_EXPRESSIONS,
@@ -98,6 +99,62 @@ function EnergyGrid() {
                   energy={state.energy}
                   kind={kind}
                   studiedToday={state.studiedToday}
+                />
+              </Cell>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+const STAGES = [
+  { beltColor: "white", label: "Baby" },
+  { beltColor: "orange", label: "Young" },
+  { beltColor: "black", label: "Adult" },
+] as const;
+
+const PICTURE_BOX = "outline-border outline outline-1 outline-dashed";
+
+/** Each picture's own box is outlined, so what a screen has to place is what shows. */
+function PictureGrid() {
+  return (
+    <div className="grid gap-x-10 gap-y-8 lg:grid-cols-2">
+      {KINDS.map(({ kind, name }) => (
+        <div className="flex flex-col gap-3" key={kind}>
+          <p className="text-muted-foreground text-xs font-medium">{name}</p>
+          <div className="flex flex-wrap items-end gap-4">
+            <Cell label="Face">
+              <Buddy
+                beltColor="orange"
+                className={cn("size-8", PICTURE_BOX)}
+                energy={ENERGY}
+                kind={kind}
+                studiedToday
+                view="face"
+              />
+            </Cell>
+            {STAGES.map((stage) => (
+              <Cell key={`frame-${stage.beltColor}`} label={`${stage.label}, frame`}>
+                <Buddy
+                  beltColor={stage.beltColor}
+                  className={cn("h-23", PICTURE_BOX)}
+                  energy={ENERGY}
+                  kind={kind}
+                  studiedToday
+                />
+              </Cell>
+            ))}
+            {STAGES.map((stage) => (
+              <Cell key={`ink-${stage.beltColor}`} label={`${stage.label}, ink`}>
+                <Buddy
+                  beltColor={stage.beltColor}
+                  className={cn("[--buddy-height:--spacing(23)]", PICTURE_BOX)}
+                  energy={ENERGY}
+                  fit="ink"
+                  kind={kind}
+                  studiedToday
                 />
               </Cell>
             ))}
@@ -219,6 +276,14 @@ export default function CharactersPage() {
       >
         <DocRules rules={CHARACTER_LIGHT_RULES} />
         <EnergyGrid />
+      </DocSection>
+
+      <DocSection
+        intro="The picture a screen places, outlined: the head, the body in the one frame every buddy shares, and the body in its own drawn outline."
+        title="Pictures"
+      >
+        <DocRules rules={CHARACTER_PICTURE_RULES} />
+        <PictureGrid />
       </DocSection>
 
       <DocSection

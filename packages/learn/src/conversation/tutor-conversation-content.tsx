@@ -3,7 +3,7 @@
 import { useExtracted } from "next-intl";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { type TutorCardActions, type TutorCards, getTutorCards } from "./tutor-cards";
-import { useTutorIdentity } from "./tutor-identity";
+import { type TutorIdentity, useTutorIdentity } from "./tutor-identity";
 
 export type TutorSituation = { hasMistake: boolean; hasToday: boolean };
 
@@ -11,7 +11,7 @@ export type TutorConversationContent = TutorCards & {
   composerLabel: string;
   greeting: string;
   greetingAction?: React.ReactNode;
-  identity: { avatar: React.ReactNode; name: string };
+  identity: TutorIdentity;
   onAnswered?: () => void;
   onAsked?: () => void;
   placeholder: string;
