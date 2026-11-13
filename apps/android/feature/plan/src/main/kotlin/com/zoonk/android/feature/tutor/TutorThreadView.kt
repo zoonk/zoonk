@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -66,7 +65,7 @@ import com.zoonk.android.feature.session.toDayMission
 import com.zoonk.android.feature.subscription.SubscribeButton
 import com.zoonk.android.navigation.AppLink
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.ui.characters.Buddy
+import com.zoonk.android.ui.characters.StandingBuddy
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.Button
@@ -591,14 +590,14 @@ internal fun FailureAction(
 }
 
 @Composable
-private fun EmptyThread(
+internal fun EmptyThread(
     identity: TutorIdentity,
     suggestions: List<TutorSuggestion>,
     canAsk: Boolean,
     onSelect: (TutorSuggestion) -> Unit,
 ) {
     CenteredState {
-        identity.look?.let { Buddy(it, Modifier.height(EMPTY_BUDDY_HEIGHT).aspectRatio(BUDDY_ASPECT)) }
+        identity.look?.let { StandingBuddy(it, EMPTY_BUDDY_HEIGHT) }
         Text(stringResource(R.string.tutor_empty_title), textAlign = TextAlign.Center, style = MaterialTheme.typography.titleMedium)
         Text(
             stringResource(R.string.tutor_empty_ai, identity.name),
@@ -671,7 +670,6 @@ private val AVATAR_SIZE = 32.dp
 private val BUBBLE_SHAPE =
     RoundedCornerShape(topStart = ZoonkRadius.option, topEnd = ZoonkRadius.option, bottomEnd = 4.dp, bottomStart = ZoonkRadius.option)
 private val EMPTY_BUDDY_HEIGHT = 96.dp
-private const val BUDDY_ASPECT = 6f / 7f
 private val BUBBLE_MAX_WIDTH = 480.dp
 private val LOADING_HEIGHT = 96.dp
 

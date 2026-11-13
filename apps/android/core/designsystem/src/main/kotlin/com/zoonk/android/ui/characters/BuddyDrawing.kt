@@ -31,6 +31,10 @@ internal class BuddyDrawing(
                 val centerY = Ground.y - (Ground.y - FACE_CENTER_Y) * stageScale
                 Rect(Offset(Ground.x - size / 2, centerY - size / 2), Size(size, size))
             }
+
+            BuddyCrop.Ink -> {
+                look.bodyInk
+            }
         }
 
     override val clipsToBox: Boolean get() = crop == BuddyCrop.Face
@@ -229,7 +233,39 @@ internal class BuddyDrawing(
     }
 }
 
-enum class BuddyCrop { Whole, Face }
+/** `Ink` frames the body by its drawn outline ([bodyInk]), where it stands alone and nothing may move when it changes. */
+enum class BuddyCrop { Whole, Face, Ink }
+
+/**
+ * Main's `BODY_INK`: each kind's and stage's drawn outline over every face, pair of glasses and
+ * Energy, with 2 units clear, in the drawing's units. Measured from the drawings, so a new buddy, a
+ * stage or anything worn means measuring again, on every platform.
+ */
+internal val BuddyLook.bodyInk: Rect
+    get() {
+        val (x, y, width, height) =
+            when (kind) {
+                BuddyKind.Beep -> stage.pick(floatArrayOf(22f, 23f, 77.5f, 97.5f), floatArrayOf(15f, 3f, 92.5f, 118f), floatArrayOf(7f, -16f, 108f, 137.5f))
+                BuddyKind.Noodle -> stage.pick(floatArrayOf(22.5f, 38f, 77f, 81f), floatArrayOf(15f, 22f, 92.5f, 97.5f), floatArrayOf(7f, 6f, 108f, 114f))
+                BuddyKind.Otto -> stage.pick(floatArrayOf(24f, 38f, 75.5f, 83f), floatArrayOf(16.5f, 22f, 91f, 99f), floatArrayOf(9f, 6f, 106f, 116f))
+                BuddyKind.Zu -> stage.pick(floatArrayOf(22.5f, 22f, 77f, 98f), floatArrayOf(15f, 2f, 92.5f, 119f), floatArrayOf(7f, -18f, 108f, 139f))
+            }
+        return Rect(Offset(x, y), Size(width, height))
+    }
+
+private fun BuddyStage.pick(
+    baby: FloatArray,
+    young: FloatArray,
+    adult: FloatArray,
+): FloatArray =
+    when (this) {
+        BuddyStage.Baby -> baby
+        BuddyStage.Young -> young
+        BuddyStage.Adult -> adult
+    }
+
+/** Main's `BODY_BOX` height: a standing body's size is set as if its box were this tall, so every buddy keeps its scale. */
+internal const val BODY_BOX_HEIGHT = 140f
 
 private class Light(
     x: Float,
