@@ -8,7 +8,6 @@ import { LevelValue } from "../language/progress/level-value";
 import { useTodayScreen } from "./today-context";
 import { LessonsCard } from "./today-lessons-card";
 import { ProgressCard, useCardIds } from "./today-progress-card";
-import { SubjectRows, type TodaySyllabus, useSubjectRows } from "./today-subject-rows";
 
 const PERCENT = 100;
 
@@ -29,19 +28,16 @@ function useWeekGain(gain: number): React.ReactNode {
 
 function PreparationCard({
   className,
-  syllabus,
   value,
   weekGain,
 }: {
   className?: string;
-  syllabus: TodaySyllabus | null;
   value: number;
   weekGain: number;
 }) {
   const t = useExtracted();
   const formatShare = useFormatShare();
   const ids = useCardIds();
-  const rows = useSubjectRows(syllabus);
   const gain = useWeekGain(weekGain);
 
   return (
@@ -51,9 +47,7 @@ function PreparationCard({
       ids={ids}
       title={t("Preparation")}
       value={formatShare(value)}
-    >
-      <SubjectRows labelledBy={ids.title} rows={rows} />
-    </ProgressCard>
+    />
   );
 }
 
@@ -79,14 +73,15 @@ function LevelCard({
   );
 }
 
+/** The goal's one number; its parts are the Plan's to list. */
 export function TodayPreparation({
   className,
+  knownLessons,
   level = null,
-  syllabus,
 }: {
   className?: string;
+  knownLessons: number;
   level?: LanguageTodayView["level"];
-  syllabus: TodaySyllabus | null;
 }) {
   const { today } = useTodayScreen();
   const { progress } = today;
@@ -101,20 +96,15 @@ export function TodayPreparation({
 
   if (progress.measure === "preparation") {
     return (
-      <PreparationCard
-        className={className}
-        syllabus={syllabus}
-        value={progress.value}
-        weekGain={progress.weekGain}
-      />
+      <PreparationCard className={className} value={progress.value} weekGain={progress.weekGain} />
     );
   }
 
   return (
     <LessonsCard
       className={className}
+      knownLessons={knownLessons}
       lessons={progress.lessons}
-      syllabus={syllabus}
       value={progress.value}
     />
   );
