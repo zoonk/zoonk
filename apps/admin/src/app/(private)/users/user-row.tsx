@@ -13,7 +13,7 @@ export function UserRow({
     <AdminTableRow>
       <AdminUserCell note={user.banned && "Banned"} user={user} userId={user.id} />
 
-      <TableCell className={user.plan === "free" ? "text-muted-foreground" : ""}>
+      <TableCell className={user.plan === "free" ? undefined : "text-foreground"}>
         {capitalize(user.plan)}
       </TableCell>
 
