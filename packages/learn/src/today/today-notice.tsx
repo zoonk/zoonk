@@ -5,7 +5,6 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useRef, useState } from "react";
 import { useFocusOnRemovedControl } from "../_components/suggestion-focus";
 import { useTodayScreen } from "./today-context";
-import { TodayExamAccess } from "./today-exam-access";
 import { TodayExamChoice } from "./today-exam-choice";
 import { TodayExamMoment } from "./today-exam-moment";
 import { TodayFocusTest } from "./today-focus-test";
@@ -38,8 +37,6 @@ function NoticeOfKind({ kind }: { kind: TodayNoticeKind | null }) {
   switch (kind) {
     case "exam":
       return <TodayExamMoment />;
-    case "examAccess":
-      return <TodayExamAccess />;
     case "examChoice":
       return <TodayExamChoice />;
     case "focusTest":
@@ -56,6 +53,8 @@ function NoticeOfKind({ kind }: { kind: TodayNoticeKind | null }) {
       return <TodaySuggestedGoal />;
     case "uploadRequest":
       return notices.uploadRequest;
+    // The free week it announced is gone; core keeps the kind for clients that still read it.
+    case "examAccess":
     case null:
       return null;
     default:

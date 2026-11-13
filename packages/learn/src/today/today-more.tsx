@@ -12,8 +12,6 @@ import {
   ListRowLink,
   ListRowTitle,
 } from "../_components/list-group";
-import { PlusMark } from "../_components/plus-lock";
-import { MarkedText } from "../_components/title-row";
 import { useBuddyName } from "../buddies/use-buddy-name";
 import { ExtraTimeButton } from "../session/extra-time-button";
 import { useTodayScreen } from "./today-context";
@@ -61,11 +59,9 @@ function ChallengeRow() {
       </ListRowLeading>
       <ListRowContent>
         <ListRowTitle>
-          <MarkedText mark={challenge.access === "plusRequired" && <PlusMark />}>
-            {challenge.kind === "mock"
-              ? t("See {day}'s mock exam", { day: weekdayLabel(challenge.date) })
-              : t("See {day}'s challenge", { day: weekdayLabel(challenge.date) })}
-          </MarkedText>
+          {challenge.kind === "mock"
+            ? t("See {day}'s mock exam", { day: weekdayLabel(challenge.date) })
+            : t("See {day}'s challenge", { day: weekdayLabel(challenge.date) })}
         </ListRowTitle>
       </ListRowContent>
     </ListRowLink>

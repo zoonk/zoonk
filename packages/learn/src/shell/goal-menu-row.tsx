@@ -38,7 +38,7 @@ export function WaitingOption({
   const routes = useLearnRoutes();
 
   const lockedLine = onMakeRoom
-    ? t("Pause a goal or get Plus")
+    ? t("Pause a goal to start it")
     : t({
         description:
           "A short status, not a button, under a goal a guest typed and can't start yet. Creating a free account lets them start it; tapping the row opens sign-up.",

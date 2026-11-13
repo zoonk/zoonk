@@ -154,9 +154,7 @@ export function MakeRoomSheet({
         <SheetHeader>
           <DrawerTitle className="text-balance">{t("Make room for {goal}", { goal })}</DrawerTitle>
           <DrawerDescription className="text-pretty">
-            {t(
-              "That's as many goals as you can study at once without Plus. Pause one to start this one.",
-            )}
+            {t("That's as many goals as you can study at once. Pause one to start this one.")}
           </DrawerDescription>
         </SheetHeader>
 
@@ -188,7 +186,7 @@ export function MakeRoomSheet({
             href={routes.upgrade}
             onClick={() => room.setOpen(false)}
           >
-            {t("See Plus")}
+            {t("Subscribe")}
           </LearnLink>
         </DrawerContent>
       </DrawerPopup>

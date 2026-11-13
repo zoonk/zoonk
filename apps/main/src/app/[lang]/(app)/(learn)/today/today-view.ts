@@ -69,7 +69,7 @@ async function loadPlanEnd(today: TodayView): Promise<string | null> {
   return result.status === "ready" ? result.view.plan.estimate.endDate : null;
 }
 
-/** Offered to every learner: without Plus the row is marked Plus and its chooser says what Plus unlocks. */
+/** Offered to every learner: the chooser says what a subscription unlocks. */
 async function loadTodayMocks(goal: TodayView["goal"]) {
   if (goal.kind !== "exam") {
     return null;

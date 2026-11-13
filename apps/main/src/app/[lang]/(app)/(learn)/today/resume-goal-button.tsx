@@ -21,9 +21,7 @@ function ResumeError({ outcome }: { outcome: GoalStatusOutcome | null }) {
 
   return (
     <p className="text-destructive-text text-sm text-pretty" role="alert">
-      {t(
-        "That's as many goals as you can study at once without Plus. Pause another goal to resume this one.",
-      )}
+      {t("That's as many goals as you can study at once. Pause another goal to resume this one.")}
     </p>
   );
 }
