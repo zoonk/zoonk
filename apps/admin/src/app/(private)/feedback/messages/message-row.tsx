@@ -3,6 +3,7 @@ import { type ListedFeedbackMessage } from "@/data/feedback/list-feedback-messag
 import { formatDate } from "@/lib/format";
 import { TableCell } from "@zoonk/ui/components/table";
 import {
+  feedbackStatusClass,
   feedbackStatusLabels,
   getFeedbackLearnerLabel,
   getFeedbackPlatform,
@@ -35,7 +36,7 @@ export function MessageRow({
         </AdminTableRowLink>
       </TableCell>
       {showState ? (
-        <TableCell className={message.status === "new" ? "font-medium" : "text-muted-foreground"}>
+        <TableCell className={feedbackStatusClass(message.status)}>
           {feedbackStatusLabels[message.status]}
         </TableCell>
       ) : null}

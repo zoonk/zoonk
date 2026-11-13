@@ -58,7 +58,7 @@ export function DetailField({
       <dt className="text-muted-foreground">{label}</dt>
       <dd
         className={cn(
-          "[&_a]:hit-area min-w-0 wrap-break-word [&_a]:relative",
+          "[&_a]:hit-area min-w-0 wrap-anywhere [&_a]:relative",
           (mono ?? isData({ children, label })) && "text-compact font-mono tabular-nums",
         )}
       >

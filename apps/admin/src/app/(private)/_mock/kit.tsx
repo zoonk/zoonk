@@ -6,6 +6,7 @@ import { AdminTableRow, TABLE_ROW_LINK_CLASS } from "@/components/admin-table-ro
 // from the records today's pages show (`data/*.json`). Remove with the rest of `_mock`.
 import { AdminTabs } from "@/components/admin-tabs";
 import { DetailField, DetailFields } from "@/components/detail-field";
+import { formatDateTime } from "@/lib/format";
 import { Button } from "@zoonk/ui/components/button";
 import { TableCell } from "@zoonk/ui/components/table";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -221,6 +222,17 @@ export function readView(value: string | string[] | undefined): string {
 const NONE = <span className="text-faint">None</span>;
 
 /** Every field of one section of today's page, renamed where the proposal renames it. */
+const NUMERIC_DATE_TIME = /^\d{1,2}\/\d{1,2}\/\d{4}, /u;
+
+/** Today's pages print some times as "10/26/2026, 4:02:36 PM"; the proposal says them one way. */
+function factValue(value: string): React.ReactNode {
+  if (value === "—") {
+    return NONE;
+  }
+
+  return NUMERIC_DATE_TIME.test(value) ? formatDateTime(value) : value;
+}
+
 export function FactsFrom({
   dump,
   omit = [],
@@ -239,7 +251,7 @@ export function FactsFrom({
     <Facts
       rows={dump.fields
         .filter((item) => item.section === section && !omit.includes(item.label))
-        .map((item) => [rename[item.label] ?? item.label, item.value === "—" ? NONE : item.value])}
+        .map((item) => [rename[item.label] ?? item.label, factValue(item.value)])}
     />
   );
 }

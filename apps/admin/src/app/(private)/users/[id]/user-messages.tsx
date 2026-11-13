@@ -4,7 +4,11 @@ import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
 import { listUserMessages } from "@/data/users/list-user-messages";
 import { formatDate } from "@/lib/format";
 import { TableCell } from "@zoonk/ui/components/table";
-import { feedbackStatusLabels, getFeedbackSubject } from "../../feedback/_utils/feedback-labels";
+import {
+  feedbackStatusClass,
+  feedbackStatusLabels,
+  getFeedbackSubject,
+} from "../../feedback/_utils/feedback-labels";
 
 const FEEDBACK_COLUMNS: AdminTableColumn[] = [
   { label: "Sent" },
@@ -39,7 +43,7 @@ export async function UserMessages({ userId }: { userId: string }) {
                 </AdminTableRowLink>
               </TableCell>
               <TableCell>{getFeedbackSubject(message.context)}</TableCell>
-              <TableCell className="text-muted-foreground">
+              <TableCell className={feedbackStatusClass(message.status)}>
                 {feedbackStatusLabels[message.status]}
               </TableCell>
             </AdminTableRow>
