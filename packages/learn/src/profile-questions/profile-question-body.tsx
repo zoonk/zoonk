@@ -25,17 +25,12 @@ export function ProfileQuestionBody({
         <WorkBody {...props} declineAsSkip={declineAsSkip} jobPrefill={jobPrefill} label={label} />
       );
     case "studies":
-      return <StudiesBody {...props} declineAsSkip={declineAsSkip} label={label} />;
+      return <StudiesBody {...props} label={label} />;
     case "conditions":
       return <ConditionsBody {...props} label={label} />;
     case "learningSupport":
       return (
-        <SupportBody
-          {...props}
-          declineAsSkip={declineAsSkip}
-          label={label}
-          prechecked={prechecked}
-        />
+        <SupportBody {...props} label={label} prechecked={prechecked} />
       );
     case "addressForm":
       return <AddressFormBody {...props} declineAsSkip={declineAsSkip} label={label} />;
@@ -46,7 +41,7 @@ export function ProfileQuestionBody({
     case "read":
     case "activities":
       return (
-        <ChipBody {...props} chip={props.question.id} declineAsSkip={declineAsSkip} label={label} />
+        <ChipBody {...props} chip={props.question.id} label={label} />
       );
     default:
       return props.question.id satisfies never;

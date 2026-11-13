@@ -36,12 +36,6 @@ export function useExclusiveLabels() {
   const t = useExtracted();
 
   return {
-    none: t({
-      description: "An option that declines a question: none of the listed options apply.",
-      message: "None of these",
-    }),
-    nothing: t("Nothing to add"),
-    nothingInParticular: t("Nothing in particular"),
     ratherNot: t("I'd rather not say"),
   } satisfies Record<ProfileExclusive, string>;
 }

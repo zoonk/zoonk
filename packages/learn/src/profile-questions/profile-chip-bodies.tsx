@@ -9,7 +9,7 @@ import { useExtracted } from "next-intl";
 import { ChoiceList } from "../onboarding/choice-list";
 import { TextField } from "../onboarding/steps/text-field";
 import { type BodyProps, setText, useExclusiveLabels, usePicker } from "./profile-body-parts";
-import { ProfileChip, ProfileChips } from "./profile-chips";
+import { ProfileChips } from "./profile-chips";
 import { type ChipQuestion, toggleProfileExclusive, toggleProfilePick } from "./profile-draft";
 
 function useFavoritesField(question: ChipQuestion) {
@@ -46,12 +46,11 @@ function useFavoritesField(question: ChipQuestion) {
 }
 
 export function ChipBody(
-  props: BodyProps & { chip: ChipQuestion; declineAsSkip: boolean; label: string },
+  props: BodyProps & { chip: ChipQuestion; label: string },
 ) {
   const { draft, question } = props;
   const picker = usePicker(props);
   const field = useFavoritesField(props.chip);
-  const exclusiveLabels = useExclusiveLabels();
 
   return (
     <>
@@ -73,16 +72,6 @@ export function ChipBody(
         placeholder={field.placeholder}
         value={draft.text}
       />
-
-      {!props.declineAsSkip && (
-        <div className="flex">
-          <ProfileChip
-            label={exclusiveLabels.none}
-            onToggle={() => picker.exclusive("none")}
-            pressed={draft.exclusive === "none"}
-          />
-        </div>
-      )}
     </>
   );
 }
@@ -164,11 +153,10 @@ export function AddressFormBody(props: BodyProps & { declineAsSkip: boolean; lab
   );
 }
 
-export function StudiesBody(props: BodyProps & { declineAsSkip: boolean; label: string }) {
+export function StudiesBody(props: BodyProps & { label: string }) {
   const t = useExtracted();
   const { draft, question } = props;
   const picker = usePicker(props);
-  const exclusiveLabels = useExclusiveLabels();
   const labelOf = (id: string) => question.options.find((option) => option.id === id)?.label ?? id;
 
   const setSubject = (field: string, subject: string) =>
@@ -190,16 +178,6 @@ export function StudiesBody(props: BodyProps & { declineAsSkip: boolean; label: 
           pressed: draft.studies.some((study) => study.field === option.id),
         }))}
       />
-
-      {!props.declineAsSkip && (
-        <div className="flex">
-          <ProfileChip
-            label={exclusiveLabels.nothing}
-            onToggle={() => picker.exclusive("nothing")}
-            pressed={draft.exclusive === "nothing"}
-          />
-        </div>
-      )}
 
       {draft.studies.map((study) => (
         <TextField

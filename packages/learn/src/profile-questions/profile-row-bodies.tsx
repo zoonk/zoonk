@@ -10,46 +10,32 @@ import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { CheckList } from "../onboarding/choice-list";
 import { TextField } from "../onboarding/steps/text-field";
-import { type BodyProps, setText, useExclusiveLabels, usePicker } from "./profile-body-parts";
-import { type ProfileExclusive } from "./profile-draft";
+import { type BodyProps, setText, usePicker } from "./profile-body-parts";
 
 function changedRow(previous: readonly string[], next: readonly string[]): string | undefined {
   return next.find((id) => !previous.includes(id)) ?? previous.find((id) => !next.includes(id));
 }
 
-const NO_EXCLUSIVES: ProfileExclusive[] = [];
-
-function RowsBody({
-  exclusives = NO_EXCLUSIVES,
-  ...props
-}: BodyProps & { exclusives?: ProfileExclusive[]; label: string }) {
+function RowsBody(props: BodyProps & { label: string }) {
   const { draft, question } = props;
-  const exclusiveLabels = useExclusiveLabels();
-  const value = draft.exclusive ? [draft.exclusive] : draft.picks;
   const picker = usePicker(props);
 
   return (
     <CheckList
-      choices={[
-        ...question.options.map((option) => ({
-          description: option.description ?? undefined,
-          label: option.label,
-          value: option.id,
-        })),
-        ...exclusives.map((exclusive) => ({ label: exclusiveLabels[exclusive], value: exclusive })),
-      ]}
+      choices={question.options.map((option) => ({
+        description: option.description ?? undefined,
+        label: option.label,
+        value: option.id,
+      }))}
       label={props.label}
       onChange={(next) => {
-        const changed = changedRow(value, next);
-        const exclusive = exclusives.find((id) => id === changed);
+        const changed = changedRow(draft.picks, next);
 
-        if (exclusive) {
-          picker.exclusive(exclusive);
-        } else if (changed) {
+        if (changed) {
           picker.toggle(changed);
         }
       }}
-      value={value}
+      value={draft.picks}
     />
   );
 }
@@ -118,10 +104,8 @@ function SupportNote(props: BodyProps) {
   );
 }
 
-const SUPPORT_EXCLUSIVES: ProfileExclusive[] = ["nothingInParticular"];
-
 export function SupportBody(
-  props: BodyProps & { declineAsSkip: boolean; label: string; prechecked: boolean },
+  props: BodyProps & { label: string; prechecked: boolean },
 ) {
   const t = useExtracted();
 
@@ -133,7 +117,7 @@ export function SupportBody(
         </p>
       )}
 
-      <RowsBody {...props} exclusives={props.declineAsSkip ? NO_EXCLUSIVES : SUPPORT_EXCLUSIVES} />
+      <RowsBody {...props} />
 
       {props.memoryEnabled && <SupportNote {...props} />}
     </>

@@ -5,7 +5,7 @@ import { MAX_PROFILE_PICKS } from "./profile-draft";
 
 type ChipOption = { id: string; label: string; pressed: boolean };
 
-export function ProfileChip({
+function ProfileChip({
   disabled = false,
   label,
   onToggle,
