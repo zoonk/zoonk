@@ -79,7 +79,7 @@ export async function EveryPlan() {
             })}
           />
           <EveryPlanItem
-            mark={<Zu className="size-7" crop="face" />}
+            mark={<Zu className="size-7" view="face" />}
             name={t({
               description:
                 "Zu is the study buddy's name. In Brazilian Portuguese: “Travou? Pergunte para Zu”.",

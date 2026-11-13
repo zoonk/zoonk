@@ -677,22 +677,41 @@
 
 /*
  * A bare button at a column's edge, or a bare icon there, lines up by its ink, not its box (craft
- * E2). `--edge-pull` is an icon button's padding plus the glyph's blank side, which Lucide draws
- * in 24ths of the icon: about 2 for most glyphs, more for the narrow ones below. A text button
- * names its padding and border as `--edge-text`, and a narrow glyph at its edge adds its extra
- * blank.
+ * E2). An icon button is pulled out by its padding and its glyph's blank side, which Lucide draws
+ * in 24ths of the icon: 1 at least, more for the narrow glyphs below. A text button names its
+ * padding and border as `--edge-text` (`--edge-text-start` and `--edge-text-end` where an icon
+ * tightens that side), and a narrow glyph at its edge adds its blank.
+ *
+ * `--edge-pull` ends a column: what ends there is hairlines and boxes, so the glyph's ink ends on
+ * the box. `--edge-start` starts one: the letters under the glyph start inside their box (Geist's
+ * "S" by 0.053em, a stem by 0.08em, a diagonal by 0.02em), so the glyph stops that far short of the
+ * box to sit with them; `--edge-under` is the size of the text on that edge. Both round down to a
+ * whole pixel, so no part of the glyph crosses the edge at any pixel density.
  */
 @utility edge {
-  --glyph-blank: 2;
-  --edge-pull: calc(
+  --glyph-blank: 0;
+  --edge-blank: calc(var(--icon-size, 1rem) * var(--glyph-blank) / 24);
+  --edge-icon: calc(
+    (var(--control-size, var(--icon-size, 1rem)) - var(--icon-size, 1rem)) / 2 +
+      max(var(--edge-blank), var(--icon-size, 1rem) / 24)
+  );
+  --edge-pull: round(
+    down,
+    var(--edge-text-end, var(--edge-text, calc(var(--edge-icon) - var(--edge-blank)))) +
+      var(--edge-blank),
+    1px
+  );
+  --edge-start: round(
+    down,
     var(
-        --edge-text,
-        calc(
-          (var(--control-size, var(--icon-size, 1rem)) - var(--icon-size, 1rem)) / 2 +
-            var(--icon-size, 1rem) / 12
+        --edge-text-start,
+        var(
+          --edge-text,
+          calc(var(--edge-icon) - var(--edge-blank) - var(--edge-under, 1rem) * 0.053)
         )
       ) +
-      var(--icon-size, 1rem) * (var(--glyph-blank) - 2) / 24
+      var(--edge-blank),
+    1px
   );
 
   &:is(
@@ -711,7 +730,11 @@
     --glyph-blank: 5;
   }
 
-  &:has(.lucide-ellipsis, .lucide-menu, .lucide-plus) {
+  &:has(.lucide-plus) {
+    --glyph-blank: 4;
+  }
+
+  &:has(.lucide-ellipsis, .lucide-menu) {
     --glyph-blank: 3;
   }
 }
