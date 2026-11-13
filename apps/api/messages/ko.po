@@ -143,9 +143,9 @@ msgid "Change email"
 msgstr "이메일 변경"
 
 #: src/app/auth/[locale]/otp/page.tsx
-msgctxt "AmelVC"
-msgid "Enter the code we sent to {email}."
-msgstr "{email}에 보낸 코드를 입력하세요."
+msgctxt "xNDAQj"
+msgid "Enter the code we sent to <address>{email}</address>."
+msgstr "<address>{email}</address>에 보낸 코드를 입력하세요."
 
 #: src/app/auth/[locale]/otp/page.tsx
 msgctxt "zx7CKB"

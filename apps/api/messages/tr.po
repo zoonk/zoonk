@@ -143,9 +143,9 @@ msgid "Change email"
 msgstr "E-posta adresini değiştir"
 
 #: src/app/auth/[locale]/otp/page.tsx
-msgctxt "AmelVC"
-msgid "Enter the code we sent to {email}."
-msgstr "{email} adresine gönderdiğimiz kodu gir."
+msgctxt "xNDAQj"
+msgid "Enter the code we sent to <address>{email}</address>."
+msgstr "<address>{email}</address> adresine gönderdiğimiz kodu gir."
 
 #: src/app/auth/[locale]/otp/page.tsx
 msgctxt "zx7CKB"

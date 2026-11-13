@@ -23,8 +23,32 @@ async function CodeSentTo({ searchParams }: Pick<OTPPageProps, "searchParams">) 
   const [t, { email }] = await Promise.all([getExtracted(), readCodeRequest(searchParams)]);
 
   return email ? (
-    <AuthDescription>{t("Enter the code we sent to {email}.", { email })}</AuthDescription>
+    <AuthDescription>
+      {t.rich("Enter the code we sent to <address>{email}</address>.", {
+        address: emailAddress(email),
+        email,
+      })}
+    </AuthDescription>
   ) : null;
+}
+
+/** An address that has to wrap breaks only before its "@", never at a hyphen or dot inside it. */
+function emailAddress(email: string) {
+  const at = email.lastIndexOf("@");
+
+  return function EmailAddress() {
+    if (at <= 0) {
+      return <span className="whitespace-nowrap">{email}</span>;
+    }
+
+    return (
+      <>
+        <span className="whitespace-nowrap">{email.slice(0, at)}</span>
+        <wbr />
+        <span className="whitespace-nowrap">{email.slice(at)}</span>
+      </>
+    );
+  };
 }
 
 async function CodeForm({

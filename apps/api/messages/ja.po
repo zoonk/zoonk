@@ -143,9 +143,9 @@ msgid "Change email"
 msgstr "メールアドレスを変更する"
 
 #: src/app/auth/[locale]/otp/page.tsx
-msgctxt "AmelVC"
-msgid "Enter the code we sent to {email}."
-msgstr "{email}に送信したコードを入力してください。"
+msgctxt "xNDAQj"
+msgid "Enter the code we sent to <address>{email}</address>."
+msgstr "<address>{email}</address>に送信したコードを入力してください。"
 
 #: src/app/auth/[locale]/otp/page.tsx
 msgctxt "zx7CKB"
