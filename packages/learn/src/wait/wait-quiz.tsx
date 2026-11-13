@@ -228,10 +228,13 @@ const OPTION_COUNT = 3;
 export function WaitQuizSkeleton() {
   return (
     <div aria-hidden="true" className="flex flex-col gap-5">
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-1">
         <QuizEyebrow />
-        <Skeleton className="h-6 w-full" />
-        <Skeleton className="h-6 w-2/3" />
+
+        <div className="flex flex-col gap-2">
+          <Skeleton className="h-6 w-full" />
+          <Skeleton className="h-6 w-2/3" />
+        </div>
       </div>
 
       <div className="flex flex-col gap-2">
@@ -299,10 +302,10 @@ export function WaitQuizCard({
 
   return (
     <section aria-labelledby={questionId} className="flex flex-col gap-5" data-slot="wait-quiz">
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-1">
         <QuizEyebrow />
 
-        <QuestionTitle id={questionId} ref={questionRef} tabIndex={-1}>
+        <QuestionTitle className="text-balance" id={questionId} ref={questionRef} tabIndex={-1}>
           {card.question}
         </QuestionTitle>
       </div>

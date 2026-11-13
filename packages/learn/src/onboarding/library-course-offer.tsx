@@ -29,7 +29,10 @@ export function LibraryCourseOffer({
           {t("A course on this is ready now")}
         </span>
       </span>
-      <ListRowChevron />
+      {/* Beside the bar's actions on a computer, it hugs its words, and a chevron would end mid-bar. */}
+      <span className="contents lg:hidden">
+        <ListRowChevron />
+      </span>
     </LearnLink>
   );
 }

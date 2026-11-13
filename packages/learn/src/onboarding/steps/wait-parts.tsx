@@ -70,7 +70,7 @@ export function WaitBar({
   return (
     <div className="flex w-full flex-col gap-3 lg:flex-row lg:items-center lg:justify-between lg:gap-6">
       {library}
-      <div className="flex flex-col gap-2 lg:items-end">{actions}</div>
+      <div className="flex flex-col gap-2 not-has-[a,button,p]:hidden lg:items-end">{actions}</div>
     </div>
   );
 }

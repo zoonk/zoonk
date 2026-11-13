@@ -234,6 +234,8 @@ export function PlacementQuestionScreen({
             pressed={pressed}
           />
         }
+        // A question's title sits as far over its options as in a session and the wait's quiz.
+        className="gap-5"
       >
         <OnboardingHeading>
           {subject && number !== undefined && (
