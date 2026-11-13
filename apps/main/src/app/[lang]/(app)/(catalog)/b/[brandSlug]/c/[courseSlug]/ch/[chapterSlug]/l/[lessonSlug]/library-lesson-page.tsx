@@ -12,6 +12,7 @@ import { type PublicLibraryLesson } from "@zoonk/core/library/lessons/public";
 import { Page } from "@zoonk/learn/page";
 import { PageWithAside } from "@zoonk/learn/shell";
 import { SubjectGlyph, getSubject } from "@zoonk/learn/subject-label";
+import { PAGE_HEADER_CLASS } from "@zoonk/ui/components/page-header-class";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type SupportedLocale } from "@zoonk/utils/locale";
 import { getExtracted } from "next-intl/server";
@@ -69,7 +70,7 @@ export async function LibraryLessonPage({
       asideClassName="hidden min-[72rem]:flex"
       asideLabel={t("Lessons")}
     >
-      <div className="flex flex-col gap-8" data-subject={subject}>
+      <div className="flex flex-col" data-subject={subject}>
         <CatalogPageBar
           back={{
             href: getChapterHref({ ...params, chapterSlug: chapter.slug }),
@@ -78,7 +79,7 @@ export async function LibraryLessonPage({
           title={lesson.title}
         />
 
-        <Page className="gap-16 pt-2 sm:gap-24 sm:pt-4">
+        <Page className="gap-16 sm:gap-24">
           <PublicViewTracker contentId={lesson.id} page="lesson" />
 
           <LessonJsonLd
@@ -99,7 +100,10 @@ export async function LibraryLessonPage({
             }}
           />
 
-          <article aria-labelledby={titleId} className="max-w-column flex flex-col">
+          <article
+            aria-labelledby={titleId}
+            className={cn(PAGE_HEADER_CLASS, "max-w-column gap-0")}
+          >
             <p className="text-muted-foreground sm:text-reading flex items-center gap-2 text-sm">
               <SubjectGlyph subject={subject} />
               <PublicEyebrowLink href={getCourseHref(params)}>{course.title}</PublicEyebrowLink>

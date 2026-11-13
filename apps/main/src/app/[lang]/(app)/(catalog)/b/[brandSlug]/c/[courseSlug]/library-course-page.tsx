@@ -35,6 +35,7 @@ import { Page } from "@zoonk/learn/page";
 import { Route, RouteMark, RouteStop, RouteTitle } from "@zoonk/learn/route-line";
 import { type Subject, getSubject } from "@zoonk/learn/subject-label";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
+import { PAGE_HEADER_CLASS } from "@zoonk/ui/components/page-header-class";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type SupportedLocale, getContentLocale } from "@zoonk/utils/locale";
 import { ChevronRightIcon, LanguagesIcon } from "lucide-react";
@@ -102,7 +103,7 @@ function CourseHero({
   const titleId = `course-title-${course.id}`;
 
   return (
-    <section aria-labelledby={titleId} className="max-w-column flex min-w-0 flex-col">
+    <section aria-labelledby={titleId} className={cn(PAGE_HEADER_CLASS, "max-w-column gap-0")}>
       {isOtherLanguage && <EditionNotice courseId={course.id} locale={locale} />}
 
       <CourseMark course={course} loading="eager" locale={locale} />
@@ -247,7 +248,7 @@ export async function LibraryCoursePage({
 
   return (
     <CourseProgressScope courseId={course.id} lessonId={tryLesson?.lessonId ?? null}>
-      <div className="flex flex-col gap-8" data-subject={subject}>
+      <div className="flex flex-col" data-subject={subject}>
         <CatalogPageBar
           back={{ href: "/courses", label: t("Explore courses") }}
           options={
@@ -261,7 +262,7 @@ export async function LibraryCoursePage({
           title={course.title}
         />
 
-        <Page className="gap-0 pt-2 sm:pt-4">
+        <Page className="gap-0">
           <PublicViewTracker contentId={course.id} page="course" />
 
           <JsonLd

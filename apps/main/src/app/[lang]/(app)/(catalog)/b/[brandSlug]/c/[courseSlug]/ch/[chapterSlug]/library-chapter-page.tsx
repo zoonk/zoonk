@@ -11,7 +11,6 @@ import { CourseProgressScope } from "@/components/catalog/course-progress";
 import { TryLesson, getTryLessonId } from "@/components/catalog/try-lesson";
 import { CheckItem } from "@/components/public/check-mark";
 import { JsonLd } from "@/components/public/json-ld";
-import { PublicEyebrowLink } from "@/components/public/public-eyebrow-link";
 import { StartBlock } from "@/components/public/public-start";
 import { PublicViewTracker } from "@/components/public/public-view-tracker";
 import { StartFreeNote } from "@/components/public/start-free-note";
@@ -26,7 +25,8 @@ import { getExamChapterAreas } from "@zoonk/core/catalog/course-plan-example";
 import { pickTryLesson } from "@zoonk/core/catalog/try-lesson";
 import { ContentFeedbackMenu } from "@zoonk/learn/feedback/content-menu";
 import { Page, PageSection } from "@zoonk/learn/page";
-import { SubjectGlyph, getSubject } from "@zoonk/learn/subject-label";
+import { getSubject } from "@zoonk/learn/subject-label";
+import { PAGE_HEADER_CLASS } from "@zoonk/ui/components/page-header-class";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type SupportedLocale } from "@zoonk/utils/locale";
 import { getExtracted } from "next-intl/server";
@@ -162,12 +162,11 @@ export async function LibraryChapterPage({
   ]);
 
   const hasObjectives = chapter.objectives.length > 0;
-  const area = areas?.get(chapter.id) ?? null;
   const titleId = `chapter-title-${chapter.id}`;
   const subject = getSubject(course.categories);
 
   return (
-    <div className="flex flex-col gap-8" data-subject={subject}>
+    <div className="flex flex-col" data-subject={subject}>
       <CatalogPageBar
         back={{ href: getCourseHref(params), label: course.title }}
         options={
@@ -181,7 +180,7 @@ export async function LibraryChapterPage({
         title={chapter.title}
       />
 
-      <Page className="gap-16 pt-2 sm:gap-24 sm:pt-4">
+      <Page className="gap-16 sm:gap-24">
         <PublicViewTracker contentId={chapter.id} page="chapter" />
 
         <JsonLd
@@ -209,16 +208,11 @@ export async function LibraryChapterPage({
         />
 
         <div className={cn(COURSE_HERO_CLASS, tryLesson && COURSE_HERO_PAIR_CLASS)}>
-          <section aria-labelledby={titleId} className="max-w-column flex min-w-0 flex-col">
-            <p className="text-muted-foreground sm:text-reading flex flex-wrap items-center gap-x-2 text-sm">
-              <SubjectGlyph subject={subject} />
-              <PublicEyebrowLink href={getCourseHref(params)}>{course.title}</PublicEyebrowLink>
-              {area && (
-                <span className="leading-snug before:mr-2 before:content-['·']">{area}</span>
-              )}
-            </p>
-
-            <h1 className={cn(COURSE_TITLE_CLASS, "mt-2")} id={titleId}>
+          <section
+            aria-labelledby={titleId}
+            className={cn(PAGE_HEADER_CLASS, "max-w-column gap-0")}
+          >
+            <h1 className={COURSE_TITLE_CLASS} id={titleId}>
               {chapter.title}
             </h1>
 
