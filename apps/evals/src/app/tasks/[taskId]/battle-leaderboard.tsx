@@ -1,6 +1,6 @@
 "use client";
 
-import { ColumnDollars } from "@/components/column-dollars";
+import { dollarsCells } from "@/components/column-dollars";
 import { formatDollars, formatSeconds } from "@/lib/format";
 import { type BattleLeaderboardEntry } from "@/lib/types";
 import { type LeaderboardColumn, LeaderboardTable, ModelLink } from "./leaderboard-table";
@@ -54,7 +54,7 @@ function getColumns(entries: BattleLeaderboardEntry[], taskId: string) {
     },
     ...(entries.some((entry) => entry.codeChecks) ? [codeChecks] : []),
     {
-      cell: (entry) => <ColumnDollars value={entry.costPer1000Runs} />,
+      cell: dollarsCells(entries, (entry) => entry.costPer1000Runs),
       id: "cost",
       isNumber: true,
       label: "Cost / 1k runs",

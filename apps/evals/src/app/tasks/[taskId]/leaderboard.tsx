@@ -1,6 +1,6 @@
 "use client";
 
-import { ColumnDollars } from "@/components/column-dollars";
+import { dollarsCells } from "@/components/column-dollars";
 import { CaseCount, FailureCounts, KeyFlawCount } from "@/components/eval-counts";
 import { REQUIRED_LANGUAGES, formatLanguageResults } from "@/lib/case-languages";
 import { FAILURE_REASONS, HISTORICAL_ATTEMPTS_NOTE } from "@/lib/eval-summary";
@@ -90,7 +90,7 @@ function getColumns({
       },
     ),
     {
-      cell: (entry) => <ColumnDollars value={entry.costPer1000Runs} />,
+      cell: dollarsCells(entries, (entry) => entry.costPer1000Runs),
       id: "cost",
       isNumber: true,
       label: "Cost / 1k runs",
@@ -171,7 +171,7 @@ function getMoreColumns(entries: LeaderboardEntry[], taskId: string): Column[] {
     ...shownWhen(
       entries.some((entry) => entry.judgeCost > 0),
       {
-        cell: (entry) => <ColumnDollars value={entry.judgeCost} />,
+        cell: dollarsCells(entries, (entry) => entry.judgeCost),
         id: "judgeCost",
         isNumber: true,
         label: "Judge cost",
