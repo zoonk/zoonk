@@ -35,6 +35,3 @@ export function useTermHighlighter(): string | null {
 export function LessonBody({ children }: { children: string }) {
   return <RichTextBlocks className={cn(LESSON_BODY_CLASS, "lg:max-w-xl")} text={children} />;
 }
-
-export const SCREEN_CHIP_CLASS =
-  "text-muted-foreground ring-border inline-flex min-h-5.5 w-fit items-center gap-1.5 rounded-sm px-2 py-0.5 text-xs font-medium ring-1 ring-inset [&_svg]:size-3.5";
