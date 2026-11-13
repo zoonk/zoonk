@@ -305,15 +305,23 @@ private struct CallFeedbackSections: View {
           Image(systemName: "checkmark.circle.fill").foregroundStyle(.success)
         }
       }
-
-      ForEach(feedback.wentWell, id: \.self) { phrase in
-        Text(phrase)
-          .typeWeight(.medium)
-          .typesettingLanguage(.init(identifier: language))
-      }
     } header: {
       SectionTitle(
         Text("What went well", tableName: "Voice", comment: "A call result's first part"))
+    }
+
+    if !feedback.wentWell.isEmpty {
+      Section {
+        ForEach(feedback.wentWell, id: \.self) { phrase in
+          Text("“\(phrase)”", tableName: "Voice", comment: "A phrase the learner said well, quoted")
+            .typeWeight(.medium)
+            .typesettingLanguage(.init(identifier: language))
+        }
+      } header: {
+        Text(
+          "Phrases you said well", tableName: "Voice",
+          comment: "Over the phrases the learner said well in a call")
+      }
     }
 
     if feedback.improve != nil || !missed.isEmpty || !feedback.pronunciation.isEmpty {
@@ -326,7 +334,7 @@ private struct CallFeedbackSections: View {
               Text("You said", tableName: "Voice", comment: "What the learner said in the call")
             }
 
-            HStack(alignment: .firstTextBaseline) {
+            HStack {
               LabeledContent {
                 Text(improve.better)
                   .typeWeight(.medium)
@@ -334,6 +342,8 @@ private struct CallFeedbackSections: View {
               } label: {
                 Text("Better", tableName: "Voice", comment: "A better way to say it")
               }
+
+              Spacer()
 
               SpeakButton(sound: .text(improve.better, language: language, personal: true))
             }
