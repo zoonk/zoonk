@@ -23,8 +23,8 @@ import { GenerationWait } from "../generation/generation-wait";
 import { useRefreshUntilShown } from "../generation/use-refresh-until-shown";
 import { LearnLink } from "../learn-link";
 import {
-  OnboardingColumn,
   OnboardingActions,
+  OnboardingColumn,
   OnboardingFrame,
   OnboardingHeading,
   OnboardingPrimaryButton,

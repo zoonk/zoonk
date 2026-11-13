@@ -7,11 +7,10 @@ import {
 } from "@zoonk/core/learner/placement/focus-test-contract";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
-import { ChangeSaveError } from "../_components/save-error";
 import {
+  OnboardingActions,
   OnboardingColumn,
   OnboardingDescription,
-  OnboardingActions,
   OnboardingHeading,
   OnboardingPrimaryButton,
   OnboardingSecondaryButton,

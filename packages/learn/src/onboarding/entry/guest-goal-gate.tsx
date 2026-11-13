@@ -1,16 +1,14 @@
 "use client";
 
-import { buttonVariants } from "@zoonk/ui/components/button";
-import { cn } from "@zoonk/ui/lib/utils";
 import { UserRoundPlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { LearnLink } from "../../learn-link";
 import { type OnboardingRoutes } from "../onboarding-actions";
 import {
   ONBOARDING_ACTION_LINK_CLASS,
+  OnboardingActions,
   OnboardingColumn,
   OnboardingDescription,
-  OnboardingActions,
   OnboardingHeading,
   OnboardingTitle,
 } from "../onboarding-frame";

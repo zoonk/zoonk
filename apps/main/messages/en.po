@@ -1144,17 +1144,17 @@ msgid "Your plan follows this course, in the time you have each day."
 msgstr "Your plan follows this course, in the time you have each day."
 
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
-msgctxt "54WyfN"
-msgid "{minutes, plural, one {# minute} other {# minutes}} a day. You can change it later."
-msgstr "{minutes, plural, one {# minute} other {# minutes}} a day. You can change it later."
-
-#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
 #: src/app/[lang]/learn/[lessonId]/guest-plan-start.tsx
 #: src/components/public/goal-form.tsx
 #: src/components/public/start-plan-link.tsx
 msgctxt "UTU-oM"
 msgid "Build my plan"
 msgstr "Build my plan"
+
+#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
+msgctxt "54WyfN"
+msgid "{minutes, plural, one {# minute} other {# minutes}} a day. You can change it later."
+msgstr "{minutes, plural, one {# minute} other {# minutes}} a day. You can change it later."
 
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
 #: src/app/[lang]/learn/[lessonId]/guest-plan-start.tsx

@@ -149,7 +149,9 @@ export function OnboardingColumn({
         {children}
       </div>
 
-      <OnboardingBottomBar className={cn(ACTION_BAR_SURFACE_CLASS, BAR_PADDING_CLASS, "-mx-4 px-4")}>
+      <OnboardingBottomBar
+        className={cn(ACTION_BAR_SURFACE_CLASS, BAR_PADDING_CLASS, "-mx-4 px-4")}
+      >
         {bar}
       </OnboardingBottomBar>
     </main>

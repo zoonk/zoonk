@@ -1,7 +1,5 @@
 "use client";
 
-import { buttonVariants } from "@zoonk/ui/components/button";
-import { cn } from "@zoonk/ui/lib/utils";
 import { PendingLink } from "@zoonk/ui/patterns/links/pending";
 import {
   BellIcon,
@@ -19,9 +17,9 @@ import { type GoalError } from "../goal-errors";
 import { type WaitlistOutcome } from "../onboarding-actions";
 import {
   ONBOARDING_ACTION_LINK_CLASS,
+  OnboardingActions,
   OnboardingColumn,
   OnboardingDescription,
-  OnboardingActions,
   OnboardingHeading,
   OnboardingPrimaryButton,
   OnboardingSecondaryButton,
@@ -166,7 +164,9 @@ export function DeclinedGoal({ goal, onRetry }: { goal: string; onRetry: () => v
     <OnboardingColumn
       bar={
         <OnboardingActions>
-          <OnboardingPrimaryButton onClick={onRetry}>{t("Try another goal")}</OnboardingPrimaryButton>
+          <OnboardingPrimaryButton onClick={onRetry}>
+            {t("Try another goal")}
+          </OnboardingPrimaryButton>
         </OnboardingActions>
       }
     >

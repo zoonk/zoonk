@@ -9,16 +9,7 @@ import { useId, useState, useTransition } from "react";
 import { ListGroup, ListRowContent, ListRowLink, ListRowTitle } from "../_components/list-group";
 import { ChangeSaveError } from "../_components/save-error";
 import { SettingRow } from "../_components/setting-rows";
-import {
-  OnboardingColumn,
-  OnboardingDescription,
-  OnboardingActions,
-  OnboardingHeading,
-  OnboardingPrimaryButton,
-  OnboardingSecondaryButton,
-  OnboardingSubject,
-  OnboardingTitle,
-} from "../onboarding/onboarding-frame";
+import { OnboardingDescription, OnboardingSecondaryButton } from "../onboarding/onboarding-frame";
 import { TestOutcome } from "../onboarding/test-outcome";
 import {
   type FocusTestPlanActions,

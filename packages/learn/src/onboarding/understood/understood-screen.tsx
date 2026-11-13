@@ -14,7 +14,6 @@ import { type GoalLimitReason } from "../onboarding-actions";
 import {
   OnboardingColumn,
   OnboardingDescription,
-  OnboardingActions,
   OnboardingHeading,
   OnboardingPrimaryButton,
   OnboardingSecondaryButton,

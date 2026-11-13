@@ -4,9 +4,9 @@ import {
   LEVEL_TEST_MINUTES,
   type LanguageLevelTestView,
 } from "@zoonk/core/language/level-test/contract";
+import { Button } from "@zoonk/ui/components/button";
 import { getLanguageNameInSentence } from "@zoonk/utils/languages";
 import { isValidLocale } from "@zoonk/utils/locale";
-import { Button } from "@zoonk/ui/components/button";
 import { PlayIcon, SkipForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useAppLocale } from "../../_utils/locale";

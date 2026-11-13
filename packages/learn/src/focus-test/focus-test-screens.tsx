@@ -6,11 +6,10 @@ import {
 } from "@zoonk/core/learner/placement/focus-test-contract";
 import { PlayIcon, SkipForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { ChangeSaveError } from "../_components/save-error";
 import {
+  OnboardingActions,
   OnboardingColumn,
   OnboardingDescription,
-  OnboardingActions,
   OnboardingHeading,
   OnboardingPrimaryButton,
   OnboardingSecondaryButton,

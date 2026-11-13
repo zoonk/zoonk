@@ -5,7 +5,6 @@ import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { RadioGroup, RadioGroupItem, RadioGroupOption } from "@zoonk/ui/components/radio-group";
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { Fragment, useRef } from "react";
 import {
@@ -16,7 +15,7 @@ import {
   ListRowLeading,
   ListRowTitle,
 } from "../_components/list-group";
-import { CHOICE_CONTROL_CLASS, CHOICE_PICKED_ROW_CLASS } from "./choice-styles";
+import { CHOICE_PICKED_ROW_CLASS } from "./choice-styles";
 import { useOnboardingAnnounce } from "./onboarding-announcer";
 
 export type Choice<Value extends string> = {
@@ -30,22 +29,6 @@ export type Choice<Value extends string> = {
 };
 
 const NUMBER_KEY_COUNT = 9;
-
-function ChoiceRadio<Value extends string>({ value }: { value: Value }) {
-  return (
-    <span className="relative flex shrink-0 self-center">
-      <RadioGroupItem
-        className={cn(CHOICE_CONTROL_CLASS, "**:data-[slot=radio-group-indicator]:hidden")}
-        value={value}
-      />
-      <CheckIcon
-        aria-hidden="true"
-        className="text-selected-foreground pointer-events-none absolute inset-0 m-auto hidden size-3 group-has-data-checked/choice:block"
-        strokeWidth={3}
-      />
-    </span>
-  );
-}
 
 export const CHOICE_ROW_CLASS = cn(
   LIST_ROW_INTERACTIVE_CLASS,
@@ -162,7 +145,7 @@ export function ChoiceList<Value extends string>({
             </ListRowContent>
 
             {choice.trailing}
-            <ChoiceRadio value={choice.value} />
+            <RadioGroupItem className="self-center" value={choice.value} />
           </RadioGroupOption>
 
           {choice.after}
@@ -207,7 +190,7 @@ export function CheckList<Value extends string>({
             </ListRowContent>
             <Checkbox
               checked={isPicked}
-              className={cn(CHOICE_CONTROL_CLASS, "rounded-sm")}
+              className="self-center"
               disabled={isDisabled}
               onCheckedChange={(checked) =>
                 onChange(

@@ -163,6 +163,11 @@ type GoalStartFlowProps = {
   takesHandedOffGoal?: boolean;
 };
 
+/** Embedded in another page, the goal box has no room for examples, so they go beside it. */
+function SectionExamples({ onPick }: { onPick: (goal: string) => void }) {
+  return useOnboardingSection() ? <GoalExamples onPick={onPick} /> : null;
+}
+
 function GoalStartFlow({
   actions,
   buddy,
@@ -175,7 +180,6 @@ function GoalStartFlow({
   routes,
   takesHandedOffGoal = false,
 }: GoalStartFlowProps) {
-  const section = useOnboardingSection();
   const creation = useGoalCreation();
   const { createExplanation } = useDraftGoals(actions);
   const [attached, setAttached] = useState<AttachedSource[]>([]);
@@ -268,7 +272,7 @@ function GoalStartFlow({
 
   const rail = (
     <>
-      {section && state.kind === "entry" && <GoalExamples onPick={submit} />}
+      {state.kind === "entry" && <SectionExamples onPick={submit} />}
       <OnboardingHowItWorks hasAccount={canAttach} />
     </>
   );

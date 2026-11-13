@@ -17,9 +17,7 @@ export const BAR_MIDDLE_CLASS = "w-24 sm:w-32";
 
 /** A step's bar has its own way back, progress or menu; the entry's holds only the way out. */
 export function isStepBar(bar: OnboardingBar): boolean {
-  return (
-    bar.onBack !== undefined || Boolean(bar.start) || Boolean(bar.middle) || Boolean(bar.end)
-  );
+  return bar.onBack !== undefined || Boolean(bar.start) || Boolean(bar.middle) || Boolean(bar.end);
 }
 
 export function TestProgress({ value }: { value: number }) {

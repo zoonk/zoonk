@@ -97,12 +97,7 @@ export function WaitLinkAction({ children, href }: { children: ReactNode; href: 
   const ref = useEnterClick<HTMLAnchorElement>();
 
   return (
-    <LearnLink
-      className={ONBOARDING_ACTION_LINK_CLASS.main}
-      href={href}
-      lessonWritten
-      ref={ref}
-    >
+    <LearnLink className={ONBOARDING_ACTION_LINK_CLASS.main} href={href} lessonWritten ref={ref}>
       <PlayIcon aria-hidden="true" data-icon="inline-start" />
       {children}
       <ShortcutKbd tone="inverse">⏎</ShortcutKbd>

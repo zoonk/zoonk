@@ -45,12 +45,7 @@ export function TestOutcome({
       bar={
         <OnboardingActions failed={failed}>
           {other}
-          <OnboardingPrimaryButton
-            autoFocus
-            busy={busy}
-            disabled={disabled}
-            onClick={onContinue}
-          >
+          <OnboardingPrimaryButton autoFocus busy={busy} disabled={disabled} onClick={onContinue}>
             {continueLabel ?? t("Continue")}
           </OnboardingPrimaryButton>
         </OnboardingActions>
