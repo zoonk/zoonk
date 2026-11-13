@@ -85,7 +85,7 @@ function SetText({ continued, set }: { continued: boolean; set: ItemSetView }) {
       {set.text && (
         <div
           className={cn(
-            "text-sm leading-relaxed",
+            "text-reading leading-relaxed",
             !expanded &&
               "max-h-24 overflow-hidden mask-b-from-40% lg:max-h-none lg:overflow-visible lg:mask-none",
           )}

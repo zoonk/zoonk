@@ -23,7 +23,9 @@ function ReviewAnswers({ entry }: { entry: MockReviewEntry }) {
 
   return (
     <>
-      {yours === null && <p className="text-muted-foreground text-sm">{t("You left it blank.")}</p>}
+      {yours === null && (
+        <p className="text-muted-foreground text-reading">{t("You left it blank.")}</p>
+      )}
 
       <AnswerOptionGroup aria-label={t("Your answer and the right one")}>
         {yours !== null && (
@@ -59,17 +61,19 @@ function ReviewEntry({ continued, entry }: { continued: boolean; entry: MockRevi
         />
       </div>
       {entry.set && <ItemSetStimulus continued={continued} set={entry.set} />}
-      {entry.context && <ItemText className="text-muted-foreground text-sm" text={entry.context} />}
-      <div className="text-base font-semibold">
+      {entry.context && (
+        <ItemText className="text-muted-foreground text-reading" text={entry.context} />
+      )}
+      <div className="text-reading font-semibold">
         <ItemStem text={entry.question} />
       </div>
       {entry.outcome === "partial" && (
-        <p className="text-muted-foreground text-sm">
+        <p className="text-muted-foreground text-reading">
           {t("Partly right: it earned part of its points.")}
         </p>
       )}
       <ReviewAnswers entry={entry} />
-      {entry.explanation && <ItemText className="text-sm" text={entry.explanation} />}
+      {entry.explanation && <ItemText className="text-reading" text={entry.explanation} />}
       {entry.citation && (
         <ItemCitationNote citation={entry.citation} className="text-muted-foreground" />
       )}

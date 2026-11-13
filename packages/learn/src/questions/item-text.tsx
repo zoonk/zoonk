@@ -109,7 +109,7 @@ export function ItemSupport({
   return (
     <>
       {context && (
-        <ItemText className={cn("text-base leading-relaxed", className)} text={context} />
+        <ItemText className={cn("text-reading leading-relaxed", className)} text={context} />
       )}
       {image && <ItemPicture image={image} />}
       <LessonVisual visual={visual} />
