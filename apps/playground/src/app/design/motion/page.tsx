@@ -11,12 +11,14 @@ import {
   NEVER_RULES,
   PERFORMANCE_RULES,
 } from "@/design-system/motion";
+import { SURFACE_CLASS } from "@zoonk/learn/surface";
 import { type MotionDuration, type MotionEasing } from "@zoonk/ui/lib/motion";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type Metadata } from "next";
 import {
   DOC_TABLE_HEAD,
   DOC_TABLE_ROW,
+  DOC_THREE_COLUMNS,
   DocHeader,
   DocRules,
   DocSection,
@@ -49,11 +51,9 @@ const EASING_DURATION: Record<string, { duration: MotionDuration; easing: Motion
   "--ease-swing": { duration: "settle", easing: "swing" },
 };
 
-const TOKEN_COLUMNS = "lg:grid-cols-[14rem_minmax(0,1fr)_minmax(0,1fr)]";
-
 function TokenRow({ token, value }: { token: MotionToken; value: React.ReactNode }) {
   return (
-    <div className={cn(DOC_TABLE_ROW, TOKEN_COLUMNS)} role="row">
+    <div className={cn(DOC_TABLE_ROW, DOC_THREE_COLUMNS)} role="row">
       <div className="flex flex-col gap-1" role="rowheader">
         <span className="font-medium">{token.name}</span>
         <code className="font-mono text-xs">{token.utility}</code>
@@ -70,7 +70,7 @@ function TokenRow({ token, value }: { token: MotionToken; value: React.ReactNode
 function TokenTable({ children }: React.PropsWithChildren) {
   return (
     <div className="flex flex-col" role="table">
-      <div className={cn(DOC_TABLE_HEAD, TOKEN_COLUMNS)} role="row">
+      <div className={cn(DOC_TABLE_HEAD, DOC_THREE_COLUMNS)} role="row">
         <span role="columnheader">Token</span>
         <span role="columnheader">What it&apos;s for</span>
         <span role="columnheader">With reduced motion</span>
@@ -88,7 +88,7 @@ function PatternFacts({ pattern }: { pattern: MotionPattern }) {
   ];
 
   return (
-    <dl className="max-w-column grid gap-x-6 gap-y-1.5 text-sm leading-6 lg:grid-cols-[14rem_minmax(0,1fr)]">
+    <dl className="max-w-column grid gap-x-6 gap-y-1.5 text-sm leading-5.5 lg:grid-cols-[14rem_minmax(0,1fr)]">
       {facts.map((fact) => (
         <div className="contents" key={fact.label}>
           <dt className="text-muted-foreground">{fact.label}</dt>
@@ -99,18 +99,16 @@ function PatternFacts({ pattern }: { pattern: MotionPattern }) {
   );
 }
 
-const LADDER_COLUMNS = "lg:grid-cols-[14rem_10rem_minmax(0,1fr)]";
-
 function LadderTable() {
   return (
     <div className="flex flex-col" role="table">
-      <div className={cn(DOC_TABLE_HEAD, LADDER_COLUMNS)} role="row">
+      <div className={cn(DOC_TABLE_HEAD, DOC_THREE_COLUMNS)} role="row">
         <span role="columnheader">Moment</span>
         <span role="columnheader">How often</span>
         <span role="columnheader">How it moves</span>
       </div>
       {CELEBRATION_LADDER.map((step) => (
-        <div className={cn(DOC_TABLE_ROW, LADDER_COLUMNS)} key={step.moment} role="row">
+        <div className={cn(DOC_TABLE_ROW, DOC_THREE_COLUMNS)} key={step.moment} role="row">
           <span className="font-medium" role="rowheader">
             {step.moment}
           </span>
@@ -128,9 +126,9 @@ function Tiers() {
   return (
     <div className="grid gap-4 lg:grid-cols-3">
       {MOTION_TIERS.map((tier) => (
-        <section className="ring-border flex flex-col gap-3 rounded-xl p-5 ring-1" key={tier.id}>
+        <section className={cn(SURFACE_CLASS, "flex flex-col gap-3 p-5")} key={tier.id}>
           <h3 className="font-semibold">{tier.title}</h3>
-          <p className="text-muted-foreground text-sm leading-6">{tier.summary}</p>
+          <p className="text-muted-foreground text-sm leading-5.5">{tier.summary}</p>
           <DocRules rules={tier.rules} />
         </section>
       ))}

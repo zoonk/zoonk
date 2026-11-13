@@ -31,7 +31,7 @@ export default function TypographyPage() {
                 <code className="text-muted-foreground font-mono text-xs wrap-break-word">
                   {role.component ? `<${role.component}>` : role.className}
                 </code>
-                <p className="text-muted-foreground text-xs leading-relaxed">
+                <p className="text-muted-foreground text-xs leading-normal">
                   {renderCode(role.use)}
                 </p>
               </div>

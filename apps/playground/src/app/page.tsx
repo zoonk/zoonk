@@ -65,7 +65,7 @@ async function Gallery({ searchParams }: Pick<PageProps<"/">, "searchParams">) {
           />
 
           <a
-            className="text-muted-foreground text-sm underline-offset-4 hover:underline"
+            className="text-muted-foreground text-compact underline-offset-4 hover:underline"
             href={src}
             rel="noreferrer"
             target="_blank"

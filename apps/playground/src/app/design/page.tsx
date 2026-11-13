@@ -3,6 +3,7 @@ import { AnswerOption } from "@zoonk/learn/answer-option";
 import { kindFillClass } from "@zoonk/learn/kind-tile";
 import { MeterPart, MeterParts } from "@zoonk/learn/meter";
 import { StatusMark } from "@zoonk/learn/status-mark";
+import { SURFACE_CLASS } from "@zoonk/learn/surface";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type Metadata } from "next";
 import { PreviewIntlProvider } from "../preview/preview-intl-provider";
@@ -31,10 +32,7 @@ function AtAGlance() {
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {MODES.map((mode) => (
           <div
-            className={cn(
-              modeClass(mode.id),
-              "ring-border flex flex-col gap-3 rounded-xl p-4 ring-1",
-            )}
+            className={cn(modeClass(mode.id), SURFACE_CLASS, "flex flex-col gap-3 p-4")}
             key={mode.id}
           >
             <p className="text-muted-foreground text-xs font-medium">{mode.label}</p>

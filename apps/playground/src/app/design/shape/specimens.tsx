@@ -75,7 +75,7 @@ export function ControlSizes() {
           <div className="flex flex-col gap-1">
             <p className="text-sm font-semibold">{control.height}</p>
             <code className="text-muted-foreground font-mono text-xs">{`size="${control.size}"`}</code>
-            <p className="text-muted-foreground text-xs leading-relaxed">{control.use}</p>
+            <p className="text-muted-foreground text-xs leading-normal">{control.use}</p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
@@ -98,9 +98,7 @@ export function ControlSizes() {
         <div className="flex flex-col gap-1">
           <p className="text-sm font-semibold">22px</p>
           <code className="text-muted-foreground font-mono text-xs">{"<Badge>"}</code>
-          <p className="text-muted-foreground text-xs leading-relaxed">
-            A chip. It is not pressed.
-          </p>
+          <p className="text-muted-foreground text-xs leading-normal">A chip. It is not pressed.</p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">

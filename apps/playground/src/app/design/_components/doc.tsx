@@ -1,3 +1,4 @@
+import { SURFACE_CLASS } from "@zoonk/learn/surface";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, XIcon } from "lucide-react";
 
@@ -5,7 +6,8 @@ import { CheckIcon, XIcon } from "lucide-react";
 const DOC_MEASURE = "max-w-lg";
 
 /** Every table on the site starts its second column on the same line. */
-export const DOC_TABLE_ROW = "grid gap-x-6 gap-y-1 border-t py-3 text-sm leading-6";
+export const DOC_TABLE_ROW = "grid gap-x-6 gap-y-1 border-t py-3 text-sm leading-5.5";
+export const DOC_THREE_COLUMNS = "lg:grid-cols-[14rem_minmax(0,1fr)_minmax(0,1fr)]";
 export const DOC_TABLE_HEAD = "text-faint hidden gap-x-6 pb-2 text-xs lg:grid";
 
 export function DocHeader({ children, title }: React.PropsWithChildren<{ title: string }>) {
@@ -31,7 +33,9 @@ export function DocSection({
       <div className={cn(DOC_MEASURE, "flex flex-col gap-1")}>
         <h2 className="text-section">{title}</h2>
         {intro && (
-          <p className="text-muted-foreground text-sm leading-6 text-pretty">{renderCode(intro)}</p>
+          <p className="text-muted-foreground text-sm leading-5.5 text-pretty">
+            {renderCode(intro)}
+          </p>
         )}
       </div>
       {children}
@@ -41,7 +45,7 @@ export function DocSection({
 
 export function DocRules({ rules }: { rules: readonly string[] }) {
   return (
-    <ul className={cn(DOC_MEASURE, "flex list-disc flex-col gap-1.5 pl-5 text-sm leading-6")}>
+    <ul className={cn(DOC_MEASURE, "flex list-disc flex-col gap-1.5 pl-5 text-sm leading-5.5")}>
       {rules.map((rule) => (
         <li key={rule}>{renderCode(rule)}</li>
       ))}
@@ -51,7 +55,7 @@ export function DocRules({ rules }: { rules: readonly string[] }) {
 
 export function Specimen({ children, className }: React.PropsWithChildren<{ className?: string }>) {
   return (
-    <div className={cn("ring-border rounded-xl p-5 ring-1 sm:p-6", className)} data-slot="specimen">
+    <div className={cn(SURFACE_CLASS, "p-5 sm:p-6", className)} data-slot="specimen">
       {children}
     </div>
   );
@@ -76,7 +80,7 @@ export function DevOnlySpecimen({ children }: React.PropsWithChildren) {
 
 export function DoDont({ avoid, follow }: { avoid: readonly string[]; follow: readonly string[] }) {
   return (
-    <div className="grid gap-4 text-sm leading-6 sm:grid-cols-2">
+    <div className="grid gap-4 text-sm leading-5.5 sm:grid-cols-2">
       <ul className="flex flex-col gap-1.5">
         {follow.map((item) => (
           <li className="flex gap-2" key={item}>

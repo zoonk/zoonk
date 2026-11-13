@@ -141,9 +141,9 @@ export function SwatchTable({
           <div className="flex min-w-0 flex-col gap-1" role="rowheader">
             <code className="text-compact font-mono font-medium">{token.name}</code>
             <p className="text-sm">{token.meaning}</p>
-            <p className="text-muted-foreground text-xs leading-relaxed">{renderCode(token.use)}</p>
+            <p className="text-muted-foreground text-xs leading-normal">{renderCode(token.use)}</p>
             {token.avoid && (
-              <p className="text-muted-foreground text-xs leading-relaxed">
+              <p className="text-muted-foreground text-xs leading-normal">
                 Never: {renderCode(token.avoid)}
               </p>
             )}
@@ -153,7 +153,7 @@ export function SwatchTable({
             <div
               className={cn(
                 modeClass(mode.id),
-                "ring-border flex min-h-16 items-center gap-3 self-start rounded-xl px-3 py-2 ring-1",
+                "ring-border flex min-h-16 items-center gap-3 self-start rounded-xl px-3 py-2 ring-1 ring-inset",
               )}
               data-mode={mode.id}
               data-subject={subject}

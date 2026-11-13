@@ -92,11 +92,11 @@ export function EasingCurve({
       </svg>
 
       <div className="flex items-center gap-3">
-        <span className="bg-muted relative h-2 w-40 rounded-full">
+        <span className="bg-muted relative h-2 w-40 shrink-0 rounded-full">
           <span className="bg-foreground absolute top-0 left-0 size-2 rounded-full" ref={dot} />
         </span>
         <button
-          className="text-muted-foreground hover:text-foreground hit-area relative text-xs font-medium underline-offset-2 hover:underline"
+          className="text-muted-foreground hover:text-foreground hit-area relative text-xs font-medium whitespace-nowrap underline-offset-2 hover:underline"
           onClick={play}
           type="button"
         >

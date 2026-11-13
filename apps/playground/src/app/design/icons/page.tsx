@@ -78,7 +78,7 @@ export default function IconsPage() {
               </span>
               <p className="text-sm font-medium">{size.size}</p>
               <code className="text-muted-foreground font-mono text-xs">{size.className}</code>
-              <p className="text-muted-foreground text-xs leading-relaxed">{size.use}</p>
+              <p className="text-muted-foreground text-xs leading-normal">{size.use}</p>
             </div>
           ))}
         </Specimen>

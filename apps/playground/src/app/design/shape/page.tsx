@@ -46,7 +46,7 @@ export default function ShapePage() {
               <div className={cn("bg-muted ring-input h-16 ring-1 ring-inset", radius.className)} />
               <p className="text-sm font-medium">{radius.name}</p>
               <code className="text-muted-foreground font-mono text-xs">{radius.className}</code>
-              <p className="text-muted-foreground text-xs leading-relaxed">
+              <p className="text-muted-foreground text-xs leading-normal">
                 {renderCode(radius.use)}
               </p>
             </div>

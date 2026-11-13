@@ -34,7 +34,7 @@ export const metadata: Metadata = { title: "Components and patterns" };
 
 function ActionsSpecimen() {
   return (
-    <div className="flex flex-wrap items-center gap-3">
+    <div className="flex flex-wrap items-center gap-2">
       <Button size="lg">Continue session</Button>
       <Button size="lg" variant="outline">
         Adjust plan

@@ -1,5 +1,6 @@
 "use client";
 
+import { SURFACE_CLASS } from "@zoonk/learn/surface";
 import { Button } from "@zoonk/ui/components/button";
 import { Switch } from "@zoonk/ui/components/switch";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -70,10 +71,7 @@ export function Stage<ActName extends string>({
   return (
     <section
       aria-label={name}
-      className={cn(
-        "ring-border flex flex-col gap-5 rounded-xl p-5 ring-1",
-        switches.switched && REDUCED_CLASS,
-      )}
+      className={cn(SURFACE_CLASS, "flex flex-col gap-5 p-5", switches.switched && REDUCED_CLASS)}
       data-stage={name}
     >
       {switches.switched && css && <style>{css}</style>}
@@ -108,7 +106,7 @@ export function Stage<ActName extends string>({
         ))}
       </div>
 
-      <div className="flex flex-wrap gap-x-5 gap-y-2">
+      <div className="mt-auto flex flex-wrap gap-x-5 gap-y-2">
         <LabeledSwitch
           checked={switches.reduced}
           disabled={switches.device}

@@ -6,7 +6,7 @@ import { Specimen } from "../../_components/doc";
 const ENERGY = 70;
 
 /** Each picture has a hairline around it here, to show that nothing of the character passes it. */
-const FRAME = "ring-border ring-1";
+const FRAME = "ring-border ring-1 ring-inset";
 
 export function SizeSpecimen() {
   return (
