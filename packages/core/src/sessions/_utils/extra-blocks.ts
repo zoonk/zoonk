@@ -18,7 +18,6 @@ import { type DayBlockInput } from "./day-block-view";
 import { loadExamStructure } from "./exam-structure";
 import { loadPlanLessons } from "./load-plan-lessons";
 import { loadPracticeItems } from "./load-practice";
-import { loadExamPrepAccess } from "./plus-only-lessons";
 import { getPlanTopics, getPracticeLabels } from "./practice-blocks";
 import { lockSessionQueue } from "./session-queue-lock";
 import { type StudyBlockView, toStudyBlockView } from "./session-view";
@@ -40,22 +39,6 @@ async function loadPracticePlan(goalId: string | null) {
 }
 
 /** Uses the session's saved local day, not the request's later date. */
-export async function isFreeWeekOver(
-  session: ExtraDay,
-  readViewer?: typeof readEntitlementViewer,
-): Promise<boolean> {
-  if (!session.goal) {
-    return false;
-  }
-
-  const access = await loadExamPrepAccess({
-    goal: session.goal,
-    readViewer,
-    today: session.localDate,
-  });
-
-  return access.trialEnded;
-}
 
 /** Null without an askable question; never reuses questions already asked by the session. */
 export async function buildExtraPractice({
@@ -132,12 +115,10 @@ function getLessonsDoneToday(session: ExtraDay): Set<string> {
   );
 }
 
-/** Preserves plan order and permits the last lesson to exceed minutes; no new lessons past the free exam week. */
 export async function buildExtraLessons({
   areaId = null,
   minutes = 0,
   planItemIds,
-  readViewer,
   session,
 }: {
   areaId?: string | null;
@@ -146,10 +127,6 @@ export async function buildExtraLessons({
   readViewer?: typeof readEntitlementViewer;
   session: ExtraDay;
 }): Promise<PlannedBlock[]> {
-  if (await isFreeWeekOver(session, readViewer)) {
-    return [];
-  }
-
   const done = getLessonsDoneToday(session);
 
   const items = await prisma.planItem.findMany({
@@ -206,7 +183,6 @@ export async function buildExtraLessons({
 
 export async function planExtraBlocks({
   minutes,
-  readViewer,
   session,
   skillIds,
   userId,
@@ -217,7 +193,7 @@ export async function planExtraBlocks({
   skillIds: string[];
   userId: string;
 }): Promise<ExtraBlocks | null> {
-  const [lesson, ...lessons] = await buildExtraLessons({ minutes, readViewer, session });
+  const [lesson, ...lessons] = await buildExtraLessons({ minutes, session });
 
   if (lesson) {
     return [lesson, ...lessons];
@@ -239,10 +215,6 @@ export async function withExtraStudyCheck({
 }): Promise<ExtraTime> {
   if (!extraTime.available) {
     return extraTime;
-  }
-
-  if (await isFreeWeekOver(session, readEntitlementViewer)) {
-    return { available: false, lessons: [], minutes: 0, reason: "plusRequired" };
   }
 
   const skillIds = session.goalId ? await loadGoalSkillIds(session.goalId) : [];

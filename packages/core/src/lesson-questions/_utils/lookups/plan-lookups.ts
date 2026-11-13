@@ -105,14 +105,12 @@ function toScheduleDay({
   items,
   ...sources
 }: ScheduleSources & { date: string; items: PlanItem[] }) {
-  const { freeUntil } = sources.plan.access;
   const shown = items.slice(0, MAX_DAY_ITEMS);
 
   return {
     date,
     items: shown.map((item) => toScheduledItem({ ...sources, item })),
     moreItems: items.length - shown.length,
-    ...(freeUntil !== null && date > freeUntil && { plusRequired: true as const }),
   };
 }
 
