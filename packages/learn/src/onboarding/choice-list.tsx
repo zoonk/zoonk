@@ -4,6 +4,7 @@ import { Checkbox } from "@zoonk/ui/components/checkbox";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { RadioGroup, RadioGroupItem, RadioGroupOption } from "@zoonk/ui/components/radio-group";
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
+import { MAX_PICK_KEYS, shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -29,12 +30,17 @@ export type Choice<Value extends string> = {
   value: Value;
 };
 
-const NUMBER_KEY_COUNT = 9;
-
-function ChoiceRadio<Value extends string>({ value }: { value: Value }) {
+function ChoiceRadio<Value extends string>({
+  keyShortcuts,
+  value,
+}: {
+  keyShortcuts: string | undefined;
+  value: Value;
+}) {
   return (
     <span className="relative flex shrink-0 self-center">
       <RadioGroupItem
+        aria-keyshortcuts={keyShortcuts}
         className={cn(CHOICE_CONTROL_CLASS, "**:data-[slot=radio-group-indicator]:hidden")}
         value={value}
       />
@@ -52,6 +58,18 @@ export const CHOICE_ROW_CLASS = cn(
   CHOICE_PICKED_ROW_CLASS,
   "group/choice has-focus-visible:before:ring-ring/50 cursor-pointer has-focus-visible:before:ring-[3px] has-focus-visible:before:ring-inset",
 );
+
+/**
+ * A row's number key, only where there is a keyboard. Rows past the ninth keep its room, so every
+ * label starts on one edge.
+ */
+function ChoiceKey({ index }: { index: number }) {
+  return (
+    <ListRowLeading className="hidden w-5 justify-center empty:block pointer-fine:flex">
+      {index < MAX_PICK_KEYS && <ShortcutKbd index={index} shortcut="pick" />}
+    </ListRowLeading>
+  );
+}
 
 /**
  * `onPick` hears only a deliberate pick (a tap, a click or a number key), never the arrow keys, so
@@ -101,10 +119,16 @@ export function ChoiceList<Value extends string>({
     onPick: (index) => {
       const choice = choices[index];
 
-      if (choice) {
-        onChange(choice.value);
-        pickDeliberately(choice);
+      if (!choice) {
+        return false;
       }
+
+      // Like a click on a picked radio, the key leaves the pick as it is.
+      if (choice.value !== value) {
+        onChange(choice.value);
+      }
+
+      pickDeliberately(choice);
     },
   });
 
@@ -150,11 +174,7 @@ export function ChoiceList<Value extends string>({
               pointerPick.current = choice.value;
             }}
           >
-            {numberKeys && index < NUMBER_KEY_COUNT && (
-              <ListRowLeading className="hidden w-5 justify-center pointer-fine:flex">
-                <ShortcutKbd index={index} shortcut="pick" />
-              </ListRowLeading>
-            )}
+            {numberKeys && <ChoiceKey index={index} />}
 
             <ListRowContent>
               <ListRowTitle>{choice.label}</ListRowTitle>
@@ -162,7 +182,10 @@ export function ChoiceList<Value extends string>({
             </ListRowContent>
 
             {choice.trailing}
-            <ChoiceRadio value={choice.value} />
+            <ChoiceRadio
+              keyShortcuts={numberKeys ? shortcutKeys("pick", index) : undefined}
+              value={choice.value}
+            />
           </RadioGroupOption>
 
           {choice.after}
@@ -172,10 +195,15 @@ export function ChoiceList<Value extends string>({
   );
 }
 
+/**
+ * Number keys tick and untick its rows, as they pick a `ChoiceList`'s: the screen's one list
+ * answers 1 to 9 whether it takes one answer or several. Turn them off beside another list.
+ */
 export function CheckList<Value extends string>({
   choices,
   label,
   max,
+  numberKeys = true,
   onChange,
   readOnly = false,
   value,
@@ -183,18 +211,41 @@ export function CheckList<Value extends string>({
   choices: Choice<Value>[];
   label: string;
   max?: number;
+  numberKeys?: boolean;
   onChange: (value: Value[]) => void;
   readOnly?: boolean;
   value: readonly Value[];
 }) {
   const isFull = max !== undefined && value.length >= max;
+  const isOff = (choice: Choice<Value>) => readOnly || (!value.includes(choice.value) && isFull);
+
+  const toggle = (choice: Choice<Value>) =>
+    onChange(
+      value.includes(choice.value)
+        ? value.filter((item) => item !== choice.value)
+        : [...value, choice.value],
+    );
+
+  useNumberKeys({
+    count: choices.length,
+    enabled: numberKeys && !readOnly,
+    onPick: (index) => {
+      const choice = choices[index];
+
+      if (!choice || isOff(choice)) {
+        return false;
+      }
+
+      toggle(choice);
+    },
+  });
 
   return (
     <fieldset className={LIST_GROUP_CLASS}>
       <legend className="sr-only">{label}</legend>
-      {choices.map((choice) => {
+      {choices.map((choice, index) => {
         const isPicked = value.includes(choice.value);
-        const isDisabled = readOnly || (!isPicked && isFull);
+        const isDisabled = isOff(choice);
 
         return (
           <label
@@ -202,21 +253,18 @@ export function CheckList<Value extends string>({
             data-highlighted={isPicked || undefined}
             key={choice.value}
           >
+            {numberKeys && <ChoiceKey index={index} />}
+
             <ListRowContent>
               <ListRowTitle>{choice.label}</ListRowTitle>
               {choice.description && <ListRowDescription>{choice.description}</ListRowDescription>}
             </ListRowContent>
             <Checkbox
+              aria-keyshortcuts={numberKeys ? shortcutKeys("pick", index) : undefined}
               checked={isPicked}
               className={CHOICE_CONTROL_CLASS}
               disabled={isDisabled}
-              onCheckedChange={(checked) =>
-                onChange(
-                  checked
-                    ? [...value, choice.value]
-                    : value.filter((item) => item !== choice.value),
-                )
-              }
+              onCheckedChange={() => toggle(choice)}
             />
           </label>
         );

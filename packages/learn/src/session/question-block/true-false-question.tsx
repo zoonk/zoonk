@@ -1,8 +1,8 @@
 "use client";
 
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
-import { useNumberKeys, useShortcut } from "@zoonk/ui/hooks/keyboard";
-import { type ShortcutName, shortcutKeys } from "@zoonk/ui/lib/shortcuts";
+import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
@@ -18,11 +18,11 @@ type TrueFalseAnswer = { dontKnow: true } | { isTrue: boolean };
 
 export type TrueFalseResult = { answer: TrueFalseAnswer; correct: boolean | null };
 
-type Option = { answer: TrueFalseAnswer; key: "blank" | "false" | "true"; shortcut: ShortcutName };
+type Option = { answer: TrueFalseAnswer; key: "blank" | "false" | "true" };
 
-const FALSE_OPTION: Option = { answer: { isTrue: false }, key: "false", shortcut: "answerFalse" };
-const TRUE_OPTION: Option = { answer: { isTrue: true }, key: "true", shortcut: "answerTrue" };
-const BLANK_OPTION: Option = { answer: { dontKnow: true }, key: "blank", shortcut: "answerBlank" };
+const FALSE_OPTION: Option = { answer: { isTrue: false }, key: "false" };
+const TRUE_OPTION: Option = { answer: { isTrue: true }, key: "true" };
+const BLANK_OPTION: Option = { answer: { dontKnow: true }, key: "blank" };
 
 /** In reading order, so the number keys follow them: false, blank, true. */
 const THREE_OPTIONS = [FALSE_OPTION, BLANK_OPTION, TRUE_OPTION];
@@ -121,18 +121,14 @@ export function TrueFalseQuestion({
     onChange(next);
   };
 
-  // A swipe or an arrow picks its side, and doing it again keeps it picked.
-  const pickSide = (answer: TrueFalseAnswer) => {
-    setPicked(answer);
-    onChange(answer);
-  };
-
-  const swipe = useSwipe({ enabled: canSwipe, onSwipe: (isTrue) => pickSide({ isTrue }) });
-  const sideKey = (option: Option) => () => (locked ? false : pickSide(option.answer));
-
-  useShortcut("answerFalse", sideKey(FALSE_OPTION));
-  useShortcut("answerTrue", sideKey(TRUE_OPTION));
-  useShortcut("answerBlank", sideKey(BLANK_OPTION), { enabled: allowBlank });
+  // A swipe picks its side, and doing it again keeps it picked.
+  const swipe = useSwipe({
+    enabled: canSwipe,
+    onSwipe: (isTrue) => {
+      setPicked({ isTrue });
+      onChange({ isTrue });
+    },
+  });
 
   useNumberKeys({
     count: options.length,
@@ -171,7 +167,7 @@ export function TrueFalseQuestion({
         {options.map((option, index) =>
           isShown({ option, result }) ? (
             <AnswerOption
-              aria-keyshortcuts={`${shortcutKeys(option.shortcut)} ${shortcutKeys("pick", index)}`}
+              aria-keyshortcuts={shortcutKeys("pick", index)}
               disabled={locked}
               key={option.key}
               marker={index + 1}

@@ -223,7 +223,7 @@ export function FeedbackForm({
           <SendButton disabled={viewerEmail === undefined} pending={isPending} />
         </div>
       ) : (
-        <div className="flex justify-end">
+        <div className="flex flex-col sm:flex-row sm:justify-end">
           <SubmitButton disabled={viewerEmail === undefined} icon={<SendIcon aria-hidden="true" />}>
             {t("Send message")}
           </SubmitButton>

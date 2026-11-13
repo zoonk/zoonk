@@ -120,7 +120,6 @@ export function WorkBody(props: BodyProps & { jobPrefill: string | null; label: 
         { label: exclusiveLabels.ratherNot, value: "ratherNot" },
       ]}
       label={props.label}
-      numberKeys={false}
       onChange={(value) =>
         props.onChange(
           value === "ratherNot"

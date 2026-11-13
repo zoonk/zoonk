@@ -3,7 +3,6 @@
 /** Where an element sits in the layout and how big it is, in CSS pixels, transforms left out. */
 export type Place = { height: number; left: number; top: number; width: number };
 
-/** An element that moved or changed size between two snapshots of the same page. */
 export type Moved = {
   after: Place;
   before: Place;
@@ -18,7 +17,7 @@ export type Moved = {
 };
 
 /** A search field is a field whose list below it changes as a person types. */
-export type ActionKind = "control" | "field" | "fold" | "overlay" | "pick" | "search";
+type ActionKind = "control" | "field" | "fold" | "overlay" | "pick" | "search";
 
 export type Action = { id: string; kind: ActionKind; label: string };
 
@@ -160,7 +159,6 @@ export function snapshotLayout() {
 
 export type Comparison = { moved: Moved[]; target: Place | null };
 
-/** What moved or changed size since `snapshotLayout`, among elements on screen both times. */
 export function compareLayout(targetId: string): Comparison {
   const LABEL_LENGTH = 40;
   const before = globalThis.zoonkLayout ?? [];
@@ -258,4 +256,18 @@ export function compareLayout(targetId: string): Comparison {
   });
 
   return { moved, target: target instanceof HTMLElement ? place(target) : null };
+}
+
+/** The `data-zoonk-act` of every choice now picked, so the walk can put a radio group back. */
+export function pickedIds() {
+  return [
+    ...document.querySelectorAll(
+      "[aria-checked=true], [aria-selected=true], [aria-pressed=true], input:checked",
+    ),
+  ]
+    .map((node) => {
+      const holder = node.closest("[data-zoonk-act]") ?? node;
+      return holder instanceof HTMLElement ? (holder.dataset.zoonkAct ?? null) : null;
+    })
+    .filter((id) => id !== null);
 }
