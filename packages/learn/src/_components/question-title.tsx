@@ -1,3 +1,4 @@
+import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ItemStem } from "../questions/item-text";
 
@@ -38,5 +39,30 @@ export function QuestionTitle({
     <Tag className={titleClass} data-slot="question-title" {...props}>
       {children}
     </Tag>
+  );
+}
+
+/**
+ * The gray line over a question that says what is at stake ("Just a guess, it doesn't count"):
+ * one size and tone wherever a question is asked, with an optional mark on its first line.
+ */
+export function QuestionEyebrow({
+  children,
+  className,
+  icon,
+  ...props
+}: React.ComponentProps<"p"> & { icon?: React.ReactNode }) {
+  return (
+    <p
+      className={cn(
+        "text-muted-foreground text-compact flex items-start gap-1.5 font-medium text-pretty [&_svg]:size-3.5",
+        className,
+      )}
+      data-slot="question-eyebrow"
+      {...props}
+    >
+      {icon && <LineMarker>{icon}</LineMarker>}
+      <span className="min-w-0">{children}</span>
+    </p>
   );
 }

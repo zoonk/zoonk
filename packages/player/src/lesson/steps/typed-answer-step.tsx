@@ -1,12 +1,13 @@
 "use client";
 
+import { QuestionEyebrow } from "@zoonk/learn/question-title";
 import { useSpokenText } from "@zoonk/learn/rich-text/speech";
 import { LessonVisual } from "@zoonk/learn/visual";
 import { Button } from "@zoonk/ui/components/button";
 import { PenLineIcon, PenOffIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { COLUMN_GHOST_ACTION_CLASS, InteractiveStepLayout } from "../../components/step-layouts";
-import { LessonContext, LessonEyebrow, LessonQuestion } from "../_components/lesson-step-text";
+import { LessonContext, LessonQuestion } from "../_components/lesson-step-text";
 import { ScreenSupport } from "../_components/screen-support";
 import { splitQuestionData } from "../_utils/lesson-aside";
 import { focusLessonAfterTurn } from "../_utils/lesson-focus";
@@ -54,9 +55,9 @@ export function TypedAnswerStepView({
     <InteractiveStepLayout>
       <div className="flex flex-col gap-3">
         {isExplanation && (
-          <LessonEyebrow icon={<PenLineIcon aria-hidden="true" />}>
+          <QuestionEyebrow icon={<PenLineIcon aria-hidden="true" />}>
             {t("In your own words")}
-          </LessonEyebrow>
+          </QuestionEyebrow>
         )}
         <ScreenSupport>
           <LessonContext>{step.content.context}</LessonContext>
