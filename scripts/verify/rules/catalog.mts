@@ -2,7 +2,7 @@ import { type CatalogString } from "../strings.mts";
 import { type Rule } from "./shared.mts";
 
 /**
- * The founder's rulings a catalog can hold (BUILD rules 1, 2 and 10). `allowed` is where the
+ * Catalog wording checks. `allowed` is where the
  * string may stay: the web's strings by the sources that use them, Apple's and Android's by their
  * catalog's file, since those list no sources. `allowedNote` lets a string through by what its
  * translator note says about who sees it.

@@ -73,7 +73,7 @@ function text(label: string, size: number, overrides: Partial<TextStyle> = {}): 
   return { block: -1, inline: false, label, size, ...overrides };
 }
 
-/** The rules' ids, which the lanes' findings share. */
+/** Craft rule ids are shared across reports. */
 function checks(findings: { check: string }[]) {
   return findings.map((finding) => finding.check.split(" ")[0]);
 }
@@ -251,7 +251,7 @@ function roomPanel(overrides: Partial<Ink>): Ink {
 }
 
 describe("a panel's room (S4)", () => {
-  it("leads to a panel with less room above and below its content than beside it (DS-004)", () => {
+  it("leads to a panel with less room above and below its content than beside it", () => {
     const [finding] = roomLeads([roomPanel({}), ink('"Explain this"', 32, 108, { context: 0 })]);
     assert.equal(finding?.value, 20);
   });
