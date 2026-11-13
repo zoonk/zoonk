@@ -11,7 +11,9 @@ const chapterLessonSchema = z
     minutes: z.int().min(0),
     plusRequired: z
       .boolean()
-      .meta({ description: "Always false. New lessons use the shared monthly lesson allowance" }),
+      .meta({
+        description: "Always false. New lessons use the shared rolling 30-day lesson allowance",
+      }),
     skillIds: z
       .array(uuidSchema())
       .meta({ description: "Skills it teaches, so tapping a skill on the map lists its lessons" }),

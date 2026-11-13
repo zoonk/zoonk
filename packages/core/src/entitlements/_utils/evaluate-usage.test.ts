@@ -16,6 +16,7 @@ function counts(overrides: Partial<UsageCounts>): UsageCounts {
     day: 0,
     generatedTotal: 0,
     lastUsedAt: null,
+    lessonStarts: { count: 0, latest: [] },
     month: 0,
     secondsThisMonth: 0,
     secondsToday: 0,
@@ -26,18 +27,28 @@ function counts(overrides: Partial<UsageCounts>): UsageCounts {
 }
 
 describe(evaluateUsage, () => {
-  it("reports the monthly lesson cap even when all starts happened today", () => {
+  it("reports the rolling lesson cap even when all starts happened today", () => {
     expect(
       evaluateUsage({
         costMicros: 0,
-        counts: counts({ day: 20, month: 40 }),
+        counts: counts({
+          day: 20,
+          lessonStarts: { count: 20, latest: Array.from({ length: 20 }, () => NOW) },
+          month: 40,
+        }),
         generated: false,
         kind: "lessonStart",
         now: NOW,
         tier: "free",
       }),
     ).toStrictEqual({
-      limit: { limit: 20, period: "month", resource: "lessonStart", tier: "free" },
+      limit: {
+        availableAt: new Date(NOW.getTime() + 30 * 24 * 60 * 60 * 1000),
+        limit: 20,
+        period: "rolling30Days",
+        resource: "lessonStart",
+        tier: "free",
+      },
       status: "limitReached",
     });
   });

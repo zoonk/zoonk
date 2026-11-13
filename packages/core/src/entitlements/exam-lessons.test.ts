@@ -40,7 +40,7 @@ describe("exam lesson admission", () => {
     await expect(
       startLibraryLesson({ input: {}, lessonId: next.lesson.id }),
     ).resolves.toMatchObject({
-      limit: { limit: 20, period: "month", resource: "lessonStart", tier: "free" },
+      limit: { limit: 20, period: "rolling30Days", resource: "lessonStart", tier: "free" },
       status: "limitReached",
     });
 
