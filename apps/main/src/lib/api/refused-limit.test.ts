@@ -15,7 +15,20 @@ describe(readRefusedLimit, () => {
   it("reads which cap it was and when it starts over", () => {
     expect(
       readRefusedLimit({
-        body: limitReached({ limit: 40, period: "month", resource: "lessonStart", tier: "free" }),
+        body: limitReached({ limit: 40, period: "month", resource: "mindMap", tier: "free" }),
+        status: 402,
+      }),
+    ).toStrictEqual({ period: "month", status: "limitReached", tier: "free" });
+
+    expect(
+      readRefusedLimit({
+        body: limitReached({
+          availableAt: "2026-11-20T12:00:00.000Z",
+          limit: 20,
+          period: "rolling30Days",
+          resource: "lessonStart",
+          tier: "free",
+        }),
         status: 402,
       }),
     ).toStrictEqual({ period: "month", status: "limitReached", tier: "free" });

@@ -72,7 +72,7 @@ function WritingWaitBar({ footer, holding }: { footer?: React.ReactNode; holding
   const { release, slotShown } = useWaitScreen();
 
   if (holding) {
-    return <StartLessonBar busy={false} onStart={release} />;
+    return <StartLessonBar busy={false} onStart={release} ready />;
   }
 
   if (footer || !slotShown) {
@@ -226,14 +226,22 @@ function WaitNote({ state }: { state: WaitState }) {
   );
 }
 
-function StartLessonBar({ busy, onStart }: { busy: boolean; onStart: () => void }) {
+function StartLessonBar({
+  busy,
+  onStart,
+  ready = false,
+}: {
+  busy: boolean;
+  onStart: () => void;
+  ready?: boolean;
+}) {
   const t = useExtracted();
 
   return (
     <TaskActionBar>
       <TaskActions>
         <TaskMainButton busy={busy} onClick={onStart}>
-          {t("Get it ready")}
+          {ready ? t("Start this lesson") : t("Get it ready")}
         </TaskMainButton>
       </TaskActions>
     </TaskActionBar>

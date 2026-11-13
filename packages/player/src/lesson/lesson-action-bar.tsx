@@ -103,7 +103,7 @@ export function LessonActionBar() {
   }
 
   return (
-    <TaskActionBar data-slot="lesson-action-bar">
+    <TaskActionBar>
       <QuestionActions>
         {screen.canGoBack && (
           <QuestionBack

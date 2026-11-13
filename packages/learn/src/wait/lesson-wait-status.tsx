@@ -19,6 +19,7 @@ export function LessonWaitStatus({
   since: number;
 }) {
   const t = useExtracted();
+
   const gettingReady =
     kind === "challenge" ? t("Getting your challenge ready") : t("Getting your lesson ready");
 

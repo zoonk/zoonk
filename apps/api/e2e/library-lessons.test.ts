@@ -64,14 +64,16 @@ test.describe("Library lessons API", () => {
     baseURL = process.env.E2E_BASE_URL ?? "";
   });
 
-  test("shares the monthly lesson boundary across concurrent starts and reports its reset", async () => {
+  test("shares the rolling lesson boundary across concurrent starts and returns its next eligible instant", async () => {
     const [{ api, userId }, first, second] = await Promise.all([
-      createBearerLearner({ baseURL, prefix: "monthly-lessons" }),
+      createBearerLearner({ baseURL, prefix: "rolling-lessons" }),
       playableLessonFixture({ steps: ["check"] }),
       playableLessonFixture({ steps: ["check"] }),
     ]);
 
-    await usageRecordsFixture({ count: 19, createdAt: new Date(), kind: "lessonStart", userId });
+    const claimedAt = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const availableAt = new Date(claimedAt.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString();
+    await usageRecordsFixture({ count: 19, createdAt: claimedAt, kind: "lessonStart", userId });
 
     const starts = await Promise.all(
       [first, second].map(({ lesson }) =>
@@ -88,7 +90,15 @@ test.describe("Library lessons API", () => {
     expect(await refused?.json()).toMatchObject({
       error: {
         code: "USAGE_LIMIT_REACHED",
-        details: { limit: { limit: 20, period: "month", resource: "lessonStart", tier: "free" } },
+        details: {
+          limit: {
+            availableAt,
+            limit: 20,
+            period: "rolling30Days",
+            resource: "lessonStart",
+            tier: "free",
+          },
+        },
       },
     });
 
@@ -106,17 +116,50 @@ test.describe("Library lessons API", () => {
 
     expect(body.items).toContainEqual(
       expect.objectContaining({
+        availableAt,
         kind: "lessonStart",
-        monthlyLimit: 20,
         remaining: 0,
-        usedThisMonth: 20,
+        rollingLimit: 20,
+        usedLast30Days: 20,
       }),
     );
 
-    const now = new Date();
+    const lessonEntry = body.items.find((item: { kind: string }) => item.kind === "lessonStart");
+    expect(lessonEntry).not.toHaveProperty("monthlyLimit");
+    expect(lessonEntry).not.toHaveProperty("usedThisMonth");
 
-    expect(body.resets.month).toBe(
-      new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1)).toISOString(),
+    await usageRecordsFixture({
+      count: 5,
+      createdAt: new Date(claimedAt.getTime() - 24 * 60 * 60 * 1000),
+      kind: "lessonStart",
+      userId,
+    });
+
+    const refusedLesson = [first, second][
+      starts.findIndex((response) => response.status() === 402)
+    ];
+
+    const stillRefused = await api.post(`/v1/library/lessons/${refusedLesson?.lesson.id}/starts`, {
+      data: {},
+    });
+
+    expect(stillRefused.status()).toBe(402);
+
+    expect(await stillRefused.json()).toMatchObject({
+      error: { details: { limit: { availableAt, period: "rolling30Days" } } },
+    });
+
+    const overflow = await api.get("/v1/me/allowance");
+    const overflowBody = await overflow.json();
+
+    expect(overflowBody.items).toContainEqual(
+      expect.objectContaining({
+        availableAt,
+        kind: "lessonStart",
+        remaining: 0,
+        rollingLimit: 20,
+        usedLast30Days: 25,
+      }),
     );
 
     await api.dispose();
