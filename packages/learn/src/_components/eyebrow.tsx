@@ -8,9 +8,8 @@ const EYEBROW_TONE = {
 };
 
 /**
- * The small line over a title: a chip that names what the screen under it is ("Worked example",
- * "Mock exam") or what is at stake ("Just a guess, it doesn't count"). One look wherever a title
- * has such a line, with an optional mark on its first line.
+ * The small line over a title is this chip on every screen that has one. It holds a label: a
+ * sentence or a control goes beside it or under the title.
  */
 export function Eyebrow({
   children,
@@ -35,7 +34,6 @@ export function Eyebrow({
   );
 }
 
-/** An eyebrow saying something is done. */
 export function SuccessEyebrow({
   iconClassName,
   ...props
