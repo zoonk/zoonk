@@ -5,6 +5,7 @@ import {
   type CraftPage,
   type GapGroup,
   type Icon,
+  type Ink,
   type TextStyle,
 } from "./craft-probe.mts";
 import {
@@ -207,10 +208,65 @@ export function iconLeads(icons: Icon[]): Finding[] {
   return [...off, ...restroked];
 }
 
+/** A panel shorter than this is a chip or a control's, whose padding is its own (Z1). */
+const PANEL_MIN = 44;
+
+/**
+ * S4, as the founder ruled it (rule 11): what a panel holds has the same room on every side the
+ * layout puts it against. Left and top always count, right only where something is pushed to the
+ * end, bottom always; a panel whose content touches an edge (a picture across it) is left alone.
+ */
+export function roomLeads(ink: Ink[]): Finding[] {
+  return ink.flatMap((box) => {
+    if (
+      box.kind !== "box" ||
+      box.control ||
+      box.inner === undefined ||
+      box.bottom - box.top < PANEL_MIN
+    ) {
+      return [];
+    }
+
+    const held = ink.filter((item) => item.context === box.inner);
+    const ends = held.filter((item) => item.rightCounts);
+
+    if (held.length === 0) {
+      return [];
+    }
+
+    const room = {
+      bottom: box.bottom - Math.max(...held.map((item) => item.bottom)),
+      left: Math.min(...held.map((item) => item.left)) - box.left,
+      top: Math.min(...held.map((item) => item.top)) - box.top,
+      ...(ends.length > 0
+        ? { right: box.right - Math.max(...ends.map((item) => item.right)) }
+        : {}),
+    };
+
+    const sides = Object.values(room);
+    const spread = Math.max(...sides) - Math.min(...sides);
+
+    if (Math.min(...sides) <= 0 || spread <= CRAFT_LINES.evenRoom) {
+      return [];
+    }
+
+    return [
+      lead(
+        "S4",
+        `${box.label} holds its content with ${Object.entries(room)
+          .map(([side, value]) => `${px(value)} ${side}`)
+          .join(", ")}: the same room on every side`,
+        spread,
+      ),
+    ];
+  });
+}
+
 /** One lead per message: a heatmap's every row with the same gap is one finding. */
 export function craftFindings(page: CraftPage, typeScale: number[]): Finding[] {
   const findings = [
     ...edgeLeads(page.ink),
+    ...roomLeads(page.ink),
     ...centerLeads(page.ink),
     ...shapeLeads(page),
     ...sizeLeads(page.controls),
@@ -224,18 +280,4 @@ export function craftFindings(page: CraftPage, typeScale: number[]): Finding[] {
       findings.map((finding) => [`${finding.check} ${finding.message}`, finding]),
     ).values(),
   ];
-}
-
-/** How many of each a screen uses, for the loads table: fewer reads calmer. */
-export type CraftCounts = { heights: number; icons: number; radii: number; sizes: number };
-
-export function countCraft(page: CraftPage): CraftCounts {
-  const controls = page.controls.filter((control) => control.kind !== "panel");
-
-  return {
-    heights: new Set(controls.map((control) => Math.round(control.height))).size,
-    icons: new Set(page.icons.map((icon) => Math.round(icon.size))).size,
-    radii: new Set(controls.map((control) => control.radius)).size,
-    sizes: new Set(page.texts.map((text) => text.size)).size,
-  };
 }
