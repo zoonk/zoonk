@@ -79,7 +79,7 @@ function DrawerPopup({
 function DrawerContent({ className, ...props }: DrawerPrimitive.Content.Props) {
   return (
     <DrawerPrimitive.Content
-      className={cn("overflow-y-auto px-6 pb-6", className)}
+      className={cn("scroll-hairline-t overflow-y-auto px-6 pb-6", className)}
       data-slot="drawer-content"
       {...props}
     />
