@@ -39,7 +39,7 @@ export function PublicDisclosure({
         <LineMarker>
           <ChevronDownIcon
             aria-hidden="true"
-            className="text-muted-foreground size-4 transition-transform group-open:rotate-180 motion-reduce:transition-none"
+            className="text-muted-foreground edge -me-(--edge-pull) size-4 transition-transform group-open:rotate-180 motion-reduce:transition-none"
           />
         </LineMarker>
       </summary>
