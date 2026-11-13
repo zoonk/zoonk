@@ -4,6 +4,7 @@ import { ListGroup } from "@zoonk/learn/list";
 import { NameHint } from "@zoonk/learn/name-hint";
 import { Page } from "@zoonk/learn/page";
 import { SettingRow } from "@zoonk/learn/setting-rows";
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
@@ -26,9 +27,9 @@ async function ProfileContent() {
       <ProfileForm
         defaultName={session?.user.name ?? ""}
         defaultUsername={session?.user.username ?? ""}
-      />
-
-      <PasskeysSection />
+      >
+        <PasskeysSection />
+      </ProfileForm>
     </ProtectedSection>
   );
 }
@@ -37,7 +38,7 @@ async function ProfileSkeleton() {
   const t = await getExtracted();
 
   return (
-    <div className="flex flex-col">
+    <>
       <ListGroup>
         <SettingRow description={<NameHint />} label={t("Name")} wide>
           <Skeleton className="h-11 w-full rounded-lg" />
@@ -46,10 +47,12 @@ async function ProfileSkeleton() {
           <Skeleton className="h-11 w-full rounded-lg" />
         </SettingRow>
       </ListGroup>
-      <div className="flex justify-end border-t pt-5">
-        <Skeleton className="h-7.5 w-13 rounded-md" />
-      </div>
-    </div>
+      <BottomBar>
+        <BottomBarActions>
+          <Skeleton className="h-11 w-full rounded-md sm:w-24" />
+        </BottomBarActions>
+      </BottomBar>
+    </>
   );
 }
 
