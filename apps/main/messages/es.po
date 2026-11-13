@@ -956,7 +956,7 @@ msgstr "No se guardó ninguna respuesta."
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "aqjWQg"
 msgid "Questions you asked in lessons that have since changed."
-msgstr ""
+msgstr "Preguntas que hiciste en lecciones que cambiaron después."
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "YPd0dY"
@@ -2874,7 +2874,7 @@ msgstr "Abriendo tu lección"
 #: src/app/[lang]/learn/[lessonId]/lesson-ready-alternative.tsx
 msgctxt "9VWjJv"
 msgid "Ready to start now"
-msgstr ""
+msgstr "Puedes empezar ahora"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-ready-alternative.tsx
 msgctxt "P0sSfc"
@@ -2894,27 +2894,27 @@ msgstr "Tu lección está lista"
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "uaZ--2"
 msgid "Getting your lesson ready"
-msgstr ""
+msgstr "Preparando tu lección"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "zvNRS6"
 msgid "This lesson isn't ready yet"
-msgstr ""
+msgstr "Esta lección aún no está lista"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "_LfrbS"
 msgid "We couldn't get this lesson ready"
-msgstr ""
+msgstr "No pudimos preparar esta lección"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "3x95yN"
 msgid "It takes a few minutes, and keeps going if you leave."
-msgstr ""
+msgstr "La preparación toma unos minutos y continúa aunque salgas."
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "1H9PtO"
 msgid "Get it ready"
-msgstr ""
+msgstr "Prepararla"
 
 #: src/app/[lang]/logbook/page.tsx
 msgctxt "_qTRbZ"
