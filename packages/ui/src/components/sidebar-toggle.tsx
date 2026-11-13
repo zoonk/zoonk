@@ -171,7 +171,7 @@ const TOGGLE = {
     className: cn(buttonVariants({ size: "icon", variant: "ghost" }), "shrink-0"),
     tooltipSide: "bottom",
   },
-  // Ends the sidebar's header row, so its glyph's ink ends on the sidebar's edge; collapsed, it is the row.
+  // Its glyph's ink ends on the sidebar's edge; collapsed, the toggle is the whole row.
   start: {
     Icon: PanelLeftIcon,
     className: cn(
