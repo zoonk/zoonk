@@ -134,15 +134,13 @@ export function CodeTracerActivity({
       <TracerVariables values={values} />
 
       <div className={cn(ACTIVITY_BOX_CLASS, "flex flex-col gap-1 px-2 pt-2 pb-2.5")}>
-        <div className="pl-2">
-          <TracerControls
-            canGoBack={step > start}
-            canGoForward={step < lastStep && !blocking}
-            label={position}
-            onBack={() => goTo(step - 1)}
-            onForward={() => goTo(step + 1)}
-          />
-        </div>
+        <TracerControls
+          canGoBack={step > start}
+          canGoForward={step < lastStep && !blocking}
+          label={position}
+          onBack={() => goTo(step - 1)}
+          onForward={() => goTo(step + 1)}
+        />
 
         <TracerCode
           code={fields.code}

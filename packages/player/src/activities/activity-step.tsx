@@ -98,7 +98,7 @@ export function ActivityStep({
         <ActivityDataNote content={content} />
       </fieldset>
 
-      {!isCheckFirst && checkArea}
+      {!isCheckFirst && <div className="pt-2">{checkArea}</div>}
 
       {phase === "checked" && isCorrect !== null && (
         <ActivityFeedback answer={answer} content={content} isCorrect={isCorrect} />

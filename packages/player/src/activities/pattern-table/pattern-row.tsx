@@ -135,7 +135,7 @@ export function PatternRow({
         <Form form={row.model} stem={modelStem} />
       </td>
 
-      <td className="px-2 py-2 align-middle">
+      <td className={cn("px-2 align-middle", row.blank && !isChecked ? "py-1.5" : "py-2")}>
         {!row.blank && <Form form={row.answer} stem={newStem} />}
 
         {row.blank && isChecked && <CheckedBlank chosen={chosen} expected={expected} stem={stem} />}

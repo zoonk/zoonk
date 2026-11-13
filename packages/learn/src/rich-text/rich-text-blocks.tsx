@@ -51,6 +51,7 @@ function RichTableBlock({ block }: { block: Extract<RichBlock, { kind: "table" }
   return (
     <RichTable
       align={block.align}
+      className="my-1.5"
       header={block.header}
       label={block.header.map((cell) => speakSegments({ segments: cell, words })).join(", ")}
       renderCell={(cell) => <RichInlineSegments segments={cell} />}

@@ -80,10 +80,10 @@ function BuddyTodaySheet({
         </DrawerHeader>
 
         <DrawerContent className="flex flex-col gap-4 pt-2">
-          <BuddyEnergy href={energyHref} name={name} status={status} />
+          <BuddyEnergy className="-mb-2" href={energyHref} name={name} status={status} />
 
           {(!today || today.missions.length > 0) && (
-            <div className="border-t pt-4">
+            <div className="border-t pt-5">
               <MissionsCard
                 brainPower={status.belt.totalBrainPower}
                 showBuddy={false}
@@ -95,7 +95,7 @@ function BuddyTodaySheet({
           )}
 
           {firstSteps && (
-            <div className="border-t pt-4">
+            <div className="border-t pt-5">
               <FirstStepsSection buddy={buddy} firstSteps={firstSteps} links={links} />
             </div>
           )}
