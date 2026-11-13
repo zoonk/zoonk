@@ -33,7 +33,7 @@ export function TodayWeek({ className }: { className?: string }) {
 
       <div className="flex flex-col">
         {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- The arrow keys move between the buttons inside. */}
-        <ol className="grid grid-cols-7 gap-1 py-1" onKeyDown={moveBetweenDays}>
+        <ol className="flex justify-between py-1" onKeyDown={moveBetweenDays}>
           {days.map((day, index) => (
             <li key={day.date.toISOString()}>
               <WeekDayCell

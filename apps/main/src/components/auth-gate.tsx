@@ -1,4 +1,4 @@
-import { PublicTopBar } from "@/components/public/public-top-bar";
+import { ColumnScreen } from "@/components/public/column-screen";
 import { getAppLocale } from "@/i18n/locale";
 import { Link, getPathname } from "@/i18n/navigation";
 import { hasSessionCookie } from "@zoonk/auth/cookies";
@@ -53,6 +53,7 @@ export async function AuthGate({
         <EmptyContent>
           <PendingLink
             className={buttonVariants()}
+            data-account-offer
             href={loginHref}
             icon={<UserPlusIcon aria-hidden="true" />}
           >
@@ -98,12 +99,9 @@ export async function AuthGate({
 
 export function AuthGateScreen({ next }: { next: string }) {
   return (
-    <div className="flex min-h-dvh flex-col">
-      <PublicTopBar actions={null} />
-      <main className="max-w-column mx-auto flex w-full flex-1 flex-col px-4">
-        <AuthGate className="py-16" heading="h1" next={next} />
-      </main>
-    </div>
+    <ColumnScreen width="message">
+      <AuthGate heading="h1" next={next} />
+    </ColumnScreen>
   );
 }
 

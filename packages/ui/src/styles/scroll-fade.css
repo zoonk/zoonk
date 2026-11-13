@@ -40,7 +40,7 @@
   @supports (animation-timeline: scroll()) {
     animation: scroll-fade-reveal-b 1ms ease-in-out;
     animation-timeline: scroll(self y);
-    animation-range: calc(100% - var(--scroll-fade-reveal, calc(var(--spacing) * 24))) 100%;
+    animation-range: calc(100% - var(--scroll-fade-reveal, calc(var(--spacing) * 4))) 100%;
     animation-fill-mode: both;
   }
 
@@ -114,7 +114,26 @@
       scroll-fade-reveal-e 1ms linear both;
     animation-timeline: scroll(self inline), scroll(self inline);
     animation-range:
-      0 var(--scroll-fade-reveal, calc(var(--spacing) * 24)),
-      calc(100% - var(--scroll-fade-reveal, calc(var(--spacing) * 24))) 100%;
+      0 var(--scroll-fade-reveal, calc(var(--spacing) * 4)),
+      calc(100% - var(--scroll-fade-reveal, calc(var(--spacing) * 4))) 100%;
+  }
+}
+
+@theme inline {
+  @keyframes scroll-hairline-t {
+    to {
+      border-top-color: var(--border);
+    }
+  }
+}
+
+/* A hairline over a scroller once its content has gone under what is above it (a sheet's title). */
+@utility scroll-hairline-t {
+  border-top: 1px solid transparent;
+
+  @supports (animation-timeline: scroll()) {
+    animation: scroll-hairline-t 1ms linear both;
+    animation-timeline: scroll(self y);
+    animation-range: 0 1px;
   }
 }

@@ -53,7 +53,7 @@ export function MissionListRow({
 }) {
   const content = (
     <>
-      <ListRowLeading className="w-3 justify-center">{mark}</ListRowLeading>
+      <ListRowLeading>{mark}</ListRowLeading>
       <ListRowBody>
         <ListRowContent>
           <ListRowTitle className={cn(muted && "text-muted-foreground")}>
@@ -89,7 +89,7 @@ export function MissionListRow({
         {content}
       </ListRowButton>
 
-      {target.failed && <StepOpenFailed className="-mt-0.5 pb-2.75 pl-6" />}
+      {target.failed && <StepOpenFailed className="-mt-0.5 pb-2.75 pl-7" />}
     </>
   );
 }

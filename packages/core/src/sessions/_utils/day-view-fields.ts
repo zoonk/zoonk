@@ -10,8 +10,8 @@ import { type DayBlockInput } from "./day-block-view";
 import { getDayLessons } from "./empty-day";
 import { type ExamPrepAccess } from "./exam-access";
 import { isExamTomorrow } from "./exam-tomorrow";
+import { type PlusLesson } from "./load-exam-access";
 import { type DayOutlines } from "./outlining-stand-ins";
-import { type PlusLesson } from "./plus-only-lessons";
 import { type SessionAnswer } from "./session-answers";
 import { type SessionWeek, type StudySessionView } from "./session-view";
 
@@ -70,15 +70,7 @@ export function toDayViewFields({
   "blocks" | "id" | "missions" | "nextBlockId" | "state" | "status"
 > {
   const streak = scoreAnswers({ answers }).streak;
-
-  const lessons = getDayLessons({
-    blocks: session.blocks,
-    dayMinutes,
-    lessonRoom,
-    outlines,
-    trialEnded: examAccess.trialEnded,
-  });
-
+  const lessons = getDayLessons({ blocks: session.blocks, dayMinutes, lessonRoom, outlines });
   const blocksPower = session.blocks.reduce((sum, block) => sum + block.brainPower, 0);
 
   return {

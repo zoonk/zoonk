@@ -263,7 +263,7 @@ export function TutorPlanChange({
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 flex-col gap-1">
-          <h3 className="text-[0.8125rem] leading-snug font-semibold" id={titleId}>
+          <h3 className="text-compact leading-snug font-semibold" id={titleId}>
             {t("Change to your plan")}
           </h3>
         </div>

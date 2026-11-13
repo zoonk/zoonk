@@ -9,7 +9,7 @@ const POINTS_CLASS = "text-muted-foreground flex list-disc flex-col gap-1 pl-5 t
 function Comparison({ comparison }: { comparison: NonNullable<Outline["comparison"]> }) {
   return (
     <section aria-label={comparison.title} className="flex flex-col gap-2">
-      <p className="text-muted-foreground text-[0.8125rem] font-medium">{comparison.title}</p>
+      <p className="text-muted-foreground text-compact font-medium">{comparison.title}</p>
       <ul className="grid gap-3 sm:grid-cols-2">
         {comparison.columns.map((column) => (
           <li className="flex flex-col gap-1" key={column.name}>

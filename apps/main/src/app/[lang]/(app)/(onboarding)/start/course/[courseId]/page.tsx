@@ -111,7 +111,7 @@ function CourseStartView({ hasSession, screen }: CourseStartViewProps) {
   return (
     <OnboardingPage
       backHref="/courses"
-      barEnd={hasSession ? null : <LoginBarLink className="lg:hidden" />}
+      barEnd={hasSession ? null : <LoginBarLink className="lg:hidden" edge="end" />}
     >
       <CourseStartScreen {...screen} />
     </OnboardingPage>

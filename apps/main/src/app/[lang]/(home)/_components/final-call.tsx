@@ -22,7 +22,7 @@ export async function FinalCall({ startPath }: { startPath: string }) {
         )}
       >
         <h2
-          className="text-[clamp(2.5rem,7vw,5.25rem)] leading-[0.98] font-[680] tracking-tighter text-balance"
+          className="text-[clamp(2.5rem,7vw,5.25rem)] leading-[0.98] font-semibold tracking-tighter text-balance"
           id={TITLE_ID}
         >
           {t({

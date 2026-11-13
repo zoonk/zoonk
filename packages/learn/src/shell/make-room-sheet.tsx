@@ -3,15 +3,13 @@
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
   DrawerDescription,
-  DrawerHeader,
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
 import { safeAsync } from "@zoonk/utils/error";
-import { PauseIcon, XIcon } from "lucide-react";
+import { PauseIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type TransitionStartFunction, useId, useState } from "react";
 import {
@@ -21,6 +19,7 @@ import {
   ListRowLeading,
   ListRowTitle,
 } from "../_components/list-group";
+import { SheetHeader } from "../_components/sheet-header";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { GoalCountryName, GoalMark } from "./goal-mark";
@@ -152,24 +151,12 @@ export function MakeRoomSheet({
   return (
     <Drawer onOpenChange={(open) => !isStarting && room.setOpen(open)} open={state.open}>
       <DrawerPopup>
-        <DrawerHeader className="flex-row items-start justify-between gap-3">
-          <div className="flex min-w-0 flex-col gap-1">
-            <DrawerTitle className="text-xl font-semibold text-balance">
-              {t("Make room for {goal}", { goal })}
-            </DrawerTitle>
-            <DrawerDescription className="text-pretty">
-              {t(
-                "You're following as many goals as the free plan allows. Pause one to start {goal}. You can resume it later.",
-                { goal },
-              )}
-            </DrawerDescription>
-          </div>
-
-          <DrawerClose render={<Button className="-mr-2 shrink-0" size="icon" variant="ghost" />}>
-            <XIcon aria-hidden="true" />
-            <span className="sr-only">{t("Close")}</span>
-          </DrawerClose>
-        </DrawerHeader>
+        <SheetHeader>
+          <DrawerTitle className="text-balance">{t("Make room for {goal}", { goal })}</DrawerTitle>
+          <DrawerDescription className="text-pretty">
+            {t("That's as many goals as you can study at once. Pause one to start this one.")}
+          </DrawerDescription>
+        </SheetHeader>
 
         <DrawerContent className="flex flex-col gap-4 pt-2">
           <ListGroup aria-label={t("Your goals")} role="list" variant="panel">
@@ -199,7 +186,7 @@ export function MakeRoomSheet({
             href={routes.upgrade}
             onClick={() => room.setOpen(false)}
           >
-            {t("Get Plus")}
+            {t("Subscribe")}
           </LearnLink>
         </DrawerContent>
       </DrawerPopup>

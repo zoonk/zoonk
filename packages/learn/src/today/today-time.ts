@@ -43,16 +43,3 @@ export function getHeldMinutes(day: Omit<TimedDay, "state">): number {
     day.minutes.left - sumMinutes(day.blocks.filter((block) => !isFinished(block))),
   );
 }
-
-/** What's left beyond the rows above the fold, so the time held for unwritten lessons sits inside it. */
-export function getFoldMinutes({
-  hasHiddenRows,
-  left,
-  shown,
-}: {
-  hasHiddenRows: boolean;
-  left: number;
-  shown: readonly Pick<DayStep, "estimatedMinutes">[];
-}): number | undefined {
-  return hasHiddenRows ? Math.max(0, left - sumMinutes(shown)) : undefined;
-}

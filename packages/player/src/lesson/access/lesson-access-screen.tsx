@@ -1,7 +1,8 @@
 "use client";
 
+import { EnterButton, EnterLink } from "@zoonk/learn/enter-button";
 import { useFreeWeekOverCopy } from "@zoonk/learn/free-week";
-import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { buttonVariants } from "@zoonk/ui/components/button";
 import { CircleAlertIcon, HourglassIcon, SparklesIcon, UserRoundPlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect } from "react";
@@ -9,8 +10,14 @@ import { useLessonPlayer, useLessonPlayerConfig } from "../lesson-player-context
 import { type LessonRunRefusal } from "../lesson-player-types";
 import { AccessLayout, LessonSlowDown } from "./lesson-slow-down";
 
-const PRIMARY_BUTTON = buttonVariants({ size: "xl" });
+/** Beside "Back" from `sm`, the main action keeps its own width as it did. */
+const PRIMARY_CLASS = "sm:grow-0 sm:basis-auto";
 const SECONDARY_BUTTON = buttonVariants({ size: "xl", variant: "outline" });
+
+/** Sign-in leaves the app's router, so it's a full page load. */
+function PageLink({ children, ...props }: React.ComponentProps<"a">) {
+  return <a {...props}>{children}</a>;
+}
 
 function SlowDown({ retryAfterSeconds }: { retryAfterSeconds: number }) {
   const { actions } = useLessonPlayer();
@@ -43,9 +50,9 @@ function FreeLimitReached({ period }: { period: "day" | "month" | "total" }) {
           : t("That's all the new lessons for today")
       }
     >
-      <LinkComponent className={PRIMARY_BUTTON} href={routes.upgrade}>
+      <EnterLink className={PRIMARY_CLASS} href={routes.upgrade} link={LinkComponent}>
         {t("See Plus")}
-      </LinkComponent>
+      </EnterLink>
       <LinkComponent className={SECONDARY_BUTTON} href={routes.exit}>
         {t("Back")}
       </LinkComponent>
@@ -64,9 +71,9 @@ function FreeWeekOver() {
 
   return (
     <AccessLayout description={body} icon={<SparklesIcon aria-hidden="true" />} title={title}>
-      <LinkComponent className={PRIMARY_BUTTON} href={routes.upgrade}>
+      <EnterLink className={PRIMARY_CLASS} href={routes.upgrade} link={LinkComponent}>
         {t("See Plus")}
-      </LinkComponent>
+      </EnterLink>
       <LinkComponent className={SECONDARY_BUTTON} href={routes.exit}>
         {t("Back")}
       </LinkComponent>
@@ -93,9 +100,9 @@ function LimitReached({
         icon={<UserRoundPlusIcon aria-hidden="true" />}
         title={t("Save your progress to keep going")}
       >
-        <a className={PRIMARY_BUTTON} href={routes.signUp}>
+        <EnterLink className={PRIMARY_CLASS} href={routes.signUp} link={PageLink}>
           {t("Create a free account")}
-        </a>
+        </EnterLink>
       </AccessLayout>
     );
   }
@@ -133,9 +140,9 @@ function Unavailable({
         icon={<CircleAlertIcon aria-hidden="true" />}
         title={t("We couldn't open this lesson")}
       >
-        <Button className={PRIMARY_BUTTON} onClick={actions.retryStart}>
+        <EnterButton className={PRIMARY_CLASS} onClick={actions.retryStart}>
           {t("Try again")}
-        </Button>
+        </EnterButton>
       </AccessLayout>
     );
   }
@@ -153,13 +160,13 @@ function Unavailable({
       }
     >
       {refusal.reason === "unauthorized" ? (
-        <a className={PRIMARY_BUTTON} href={routes.signUp}>
+        <EnterLink className={PRIMARY_CLASS} href={routes.signUp} link={PageLink}>
           {t("Sign in")}
-        </a>
+        </EnterLink>
       ) : (
-        <LinkComponent className={PRIMARY_BUTTON} href={routes.exit}>
+        <EnterLink className={PRIMARY_CLASS} href={routes.exit} link={LinkComponent}>
           {t("Back")}
-        </LinkComponent>
+        </EnterLink>
       )}
     </AccessLayout>
   );

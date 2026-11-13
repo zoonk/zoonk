@@ -1,9 +1,9 @@
 "use client";
 
 import { type ExamView } from "@zoonk/core/exams/view/contract";
+import { FoldChevron } from "@zoonk/ui/components/collapsible";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronDownIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import {
   LIST_GROUP_CLASS,
@@ -102,10 +102,7 @@ function SubjectRow({
               {subjectWeight && <span className="font-mono text-xs">{subjectWeight}</span>}
             </ListRowTrailing>
           </ListRowBody>
-          <ChevronDownIcon
-            aria-hidden="true"
-            className="text-muted-foreground/60 size-4 shrink-0 self-center transition-transform group-open:rotate-180 motion-reduce:transition-none"
-          />
+          <FoldChevron />
         </summary>
 
         <div className="flex flex-col gap-1 px-4 pb-3">

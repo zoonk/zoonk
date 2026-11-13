@@ -79,7 +79,7 @@ function OwnerPart({
         <ShareCertificateButton className="flex-1 sm:flex-none" />
         <AddToLinkedInButton className="flex-1 sm:flex-none" />
       </CertificateSharing>
-      <p className="text-faint mt-3.5 text-[0.8125rem]">{saved}</p>
+      <p className="text-faint text-compact mt-3.5">{saved}</p>
     </>
   );
 }

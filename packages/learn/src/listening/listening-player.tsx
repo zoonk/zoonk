@@ -205,7 +205,7 @@ export function ListeningPlayer({
             <MeterFill share={totalMs > 0 ? elapsedMs / totalMs : 0} />
           </Meter>
 
-          <p className="text-muted-foreground font-mono text-[0.6875rem] tabular-nums">
+          <p className="text-muted-foreground text-2xs font-mono tabular-nums">
             {t("{elapsed} of {total}", {
               elapsed: formatClock(elapsedMs),
               total: formatClock(totalMs),

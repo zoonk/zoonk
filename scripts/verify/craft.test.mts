@@ -6,6 +6,7 @@ import { type Control, type CraftPage, type Ink, type TextStyle } from "./craft-
 import {
   craftFindings,
   iconLeads,
+  roomLeads,
   shapeLeads,
   sizeLeads,
   spacingLeads,
@@ -72,7 +73,7 @@ function text(label: string, size: number, overrides: Partial<TextStyle> = {}): 
   return { block: -1, inline: false, label, size, ...overrides };
 }
 
-/** The rules' ids, which the lanes' findings share. */
+/** Craft rule ids are shared across reports. */
 function checks(findings: { check: string }[]) {
   return findings.map((finding) => finding.check.split(" ")[0]);
 }
@@ -242,6 +243,37 @@ describe("shapes and sizes", () => {
     ];
 
     assert.deepEqual(sizeLeads(apart), []);
+  });
+});
+
+function roomPanel(overrides: Partial<Ink>): Ink {
+  return ink('"Ask Zu"', 16, 100, { bottom: 156, inner: 0, kind: "box", right: 374, ...overrides });
+}
+
+describe("a panel's room (S4)", () => {
+  it("leads to a panel with less room above and below its content than beside it", () => {
+    const [finding] = roomLeads([roomPanel({}), ink('"Explain this"', 32, 108, { context: 0 })]);
+    assert.equal(finding?.value, 20);
+  });
+
+  it("stays quiet for even room, controls, a picture across a panel and a ragged end", () => {
+    const held = ink('"Explain this"', 32, 116, { bottom: 140, context: 0 });
+    assert.deepEqual(roomLeads([roomPanel({}), held]), []);
+
+    assert.deepEqual(
+      roomLeads([roomPanel({ control: true }), ink('"Go"', 32, 108, { context: 0 })]),
+      [],
+    );
+
+    assert.deepEqual(
+      roomLeads([roomPanel({}), ink("picture", 16, 100, { context: 0, kind: "picture" })]),
+      [],
+    );
+
+    assert.deepEqual(
+      roomLeads([roomPanel({ bottom: 130 }), ink('"x"', 32, 108, { context: 0 })]),
+      [],
+    );
   });
 });
 

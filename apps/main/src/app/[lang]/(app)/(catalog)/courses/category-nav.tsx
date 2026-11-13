@@ -12,8 +12,7 @@ import { useSelectedLayoutSegment } from "next/navigation";
 
 type CategoryLink = { courseCount: number; key: CourseCategory; label: string };
 
-const ROW_BLEED_CLASS = "-mx-4 sm:-mx-0";
-const ROW_INSET_CLASS = "px-4 sm:px-0";
+const ROW_BLEED_CLASS = "-mx-4 [--scroll-inset:--spacing(4)] sm:mx-0 sm:[--scroll-inset:0px]";
 
 const CHIPS_FRAME_CLASS =
   "bg-background/95 supports-backdrop-filter:bg-background/80 sticky top-(--catalog-bar) z-20 -my-2 py-2 backdrop-blur lg:hidden";
@@ -21,7 +20,7 @@ const CHIPS_FRAME_CLASS =
 const LIST_FRAME_CLASS = "sticky top-8 hidden self-start lg:block";
 
 const LIST_LINK_CLASS =
-  "text-muted-foreground hover:bg-muted/50 hover:text-foreground aria-[current=page]:bg-muted aria-[current=page]:text-foreground focus-visible:ring-ring/50 hit-area relative flex h-8 items-center gap-2.5 rounded-md px-2 text-[0.84375rem] font-medium outline-none transition-colors focus-visible:ring-[3px]";
+  "text-muted-foreground hover:bg-muted/50 hover:text-foreground aria-[current=page]:bg-muted aria-[current=page]:text-foreground focus-visible:ring-ring/50 hit-area relative flex h-8 items-center gap-2.5 rounded-md px-2 text-compact font-medium outline-none transition-colors focus-visible:ring-[3px]";
 
 function revealChip(chip: HTMLAnchorElement | null) {
   chip?.scrollIntoView({ block: "nearest", inline: "nearest" });
@@ -71,11 +70,7 @@ function CategoryNavView(props: CategoryNavProps) {
           className={ROW_BLEED_CLASS}
           labels={{ left: t("Scroll left"), right: t("Scroll right") }}
         >
-          <HorizontalScrollContent
-            aria-label={t("Course categories")}
-            className={ROW_INSET_CLASS}
-            role="navigation"
-          >
+          <HorizontalScrollContent aria-label={t("Course categories")} role="navigation">
             {links.map((link) => (
               <Link
                 aria-current={link.current ? "page" : undefined}

@@ -68,7 +68,6 @@ type LessonPlayerConfig = {
     "estimatedMinutes" | "id" | "language" | "summary" | "targetLanguage" | "title"
   >;
   linkComponent: PlayerLinkComponent;
-  onExit: () => void;
   outline: boolean;
   routes: LessonPlayerRoutes;
   slots: LessonPlayerSlots;

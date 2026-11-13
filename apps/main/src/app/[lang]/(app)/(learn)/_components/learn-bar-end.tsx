@@ -7,7 +7,6 @@ import { VisitorLook } from "@/components/learner/visitor-look";
 import { Link } from "@/i18n/navigation";
 import { useBeltLabel } from "@/lib/belt-label";
 import { getMenu } from "@/lib/menu";
-import { LearnShellEnd } from "@zoonk/learn/shell";
 import { BeltIndicator } from "@zoonk/ui/components/belt-indicator";
 import { type BeltColor } from "@zoonk/utils/belt-level";
 import { useExtracted } from "next-intl";
@@ -38,7 +37,7 @@ function LevelLink({ level }: { level: { color: BeltColor; level: number } }) {
 
   return (
     <Link
-      className="text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-ring/50 hit-area relative flex h-9 shrink-0 items-center gap-1.5 rounded-lg px-2 font-mono text-[0.8125rem] tabular-nums transition-colors outline-none focus-visible:ring-[3px]"
+      className="text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-ring/50 hit-area text-compact relative flex h-9 shrink-0 items-center gap-1.5 rounded-lg px-2 font-mono tabular-nums transition-colors outline-none focus-visible:ring-[3px]"
       href={getMenu("stats").url}
       prefetch
       title={t("Statistics")}
@@ -51,40 +50,48 @@ function LevelLink({ level }: { level: { color: BeltColor; level: number } }) {
   );
 }
 
-function PendingBarEnd({ visitor }: { visitor: React.ReactNode }) {
+type BarEndProps = {
+  /** A learner's way to the command palette; a visitor's is at the bar's start. */
+  search: React.ReactNode;
+  visitor: React.ReactNode;
+};
+
+function PendingBarEnd({ search, visitor }: BarEndProps) {
   return (
-    <LearnShellEnd>
+    <>
       <VisitorLook>{visitor}</VisitorLook>
+      <div className="signed-in:contents hidden">{search}</div>
       <PendingAccountAvatar className="size-7" />
-    </LearnShellEnd>
+    </>
   );
 }
 
-function BarEnd({ visitor }: { visitor: React.ReactNode }) {
+function BarEnd({ search, visitor }: BarEndProps) {
   const learner = useFrameLearner();
 
   if (learner.status === "visitor") {
-    return <LearnShellEnd>{visitor}</LearnShellEnd>;
+    return visitor;
   }
 
   if (learner.status !== "ready") {
-    return <PendingBarEnd visitor={visitor} />;
+    return <PendingBarEnd search={search} visitor={visitor} />;
   }
 
   const { level } = learner.summary;
 
   return (
-    <LearnShellEnd>
+    <>
+      {search}
       {level && <LevelLink level={level} />}
       <UserAvatarMenu />
-    </LearnShellEnd>
+    </>
   );
 }
 
-export function LearnBarEnd({ visitor }: { visitor: React.ReactNode }) {
+export function LearnBarEnd(props: BarEndProps) {
   return (
-    <Suspense fallback={<PendingBarEnd visitor={visitor} />}>
-      <BarEnd visitor={visitor} />
+    <Suspense fallback={<PendingBarEnd {...props} />}>
+      <BarEnd {...props} />
     </Suspense>
   );
 }

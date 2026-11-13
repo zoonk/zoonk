@@ -5,18 +5,18 @@ import { LearnerSeedChannel } from "@/components/learner/learner-seed-provider";
 import { VisitorBarLinks } from "@/components/login-bar-link";
 import { TabMissionsProvider } from "@/lib/learn/tab-missions-provider";
 import {
-  BAR_ROW_CLASS,
+  FRAME_COLUMN_CLASS,
   LearnShell,
   LearnShellContent,
-  LearnShellHeader,
-  LearnShellStart,
   LearnSkipLink,
 } from "@zoonk/learn/shell";
+import { PageTopBar } from "@zoonk/ui/components/page-top";
+import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted } from "next-intl/server";
 import { LearnBarEnd } from "./learn-bar-end";
 import { LearnGoalMenu } from "./learn-goal-menu";
 import { LearnAppSidebar } from "./learn-sidebar";
-import { LearnSidebarSearch } from "./learn-sidebar-links";
+import { LearnBarSearch } from "./learn-sidebar-links";
 import {
   AppPageHistory,
   LearnBottomTabs,
@@ -30,21 +30,44 @@ async function SkipToContent() {
   return <LearnSkipLink>{t("Skip to content")}</LearnSkipLink>;
 }
 
+/** From `lg` the sidebar holds the goal, search and the account, and the bar stays as room. */
+function PhoneOnly({ children }: { children: React.ReactNode }) {
+  return <div className="contents lg:hidden">{children}</div>;
+}
+
+/**
+ * A tab's own page (Today, Plan, the buddy) has the frame's bar; a pushed page draws its own. In
+ * its own column, so it scrolls away with the page.
+ */
 function LearnTopBar() {
   return (
     <TabRootOnly>
-      <LearnShellHeader className="lg:hidden">
-        <LearnShellStart>
-          <LearnGoalMenu />
-        </LearnShellStart>
-
-        <LearnBarEnd visitor={<VisitorBarLinks />} />
-
-        <LearnSidebarSearch className="col-span-2 mt-1.5" placement="bar" />
-      </LearnShellHeader>
+      <div className={FRAME_COLUMN_CLASS} data-slot="learn-frame-bar">
+        <PageTopBar
+          actions={
+            <PhoneOnly>
+              <LearnBarEnd search={<LearnBarSearch />} visitor={<VisitorBarLinks />} />
+            </PhoneOnly>
+          }
+          back={
+            <PhoneOnly>
+              <LearnGoalMenu visitor={<LearnBarSearch edge="start" />} />
+            </PhoneOnly>
+          }
+        />
+      </div>
     </TabRootOnly>
   );
 }
+
+/**
+ * The frame's bar is `PageTopBar`'s height; a page's aside reaches up beside it. The second rule is
+ * the first paint's, before the path is known (`TabRootOnly`).
+ */
+const FRAME_BAR_VAR_CLASS = cn(
+  "[--frame-bar:0px] [&:has(>[data-slot=learn-frame-bar])]:[--frame-bar:calc(4rem+1px)]",
+  "[&:has(>div>[data-slot=learn-frame-bar]):not(:has([data-slot=learn-shell-main]_[data-slot=page-top-bar]))]:[--frame-bar:calc(4rem+1px)]",
+);
 
 /**
  * The learner comes from the learner summary: a private section reads it with the page, so a hard
@@ -59,8 +82,8 @@ export function LearnFrame({ children }: { children: React.ReactNode }) {
             <SkipToContent />
             <LearnAppSidebar tabs={<LearnSideTabs />} />
 
-            <LearnShellContent>
-              <UsageDataNotice className={BAR_ROW_CLASS} />
+            <LearnShellContent className={FRAME_BAR_VAR_CLASS}>
+              <UsageDataNotice className={FRAME_COLUMN_CLASS} />
               <LearnTopBar />
               <LearnFrameMain>{children}</LearnFrameMain>
               <LearnBottomTabs />

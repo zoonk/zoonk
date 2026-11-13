@@ -58,6 +58,11 @@
   --container-column: 40rem;
   --container-form: 45rem;
   --container-wide: 84rem;
+  --radius-meter: 3px;
+  --text-2xs: 0.71875rem;
+  --text-compact: 0.8125rem;
+  --text-reading: 0.9375rem;
+  /* The web draws options at `rounded-xl`; the native apps still generate their option radius from this. */
   --radius-option: calc(var(--radius) + 2px);
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
@@ -90,6 +95,7 @@
   --color-success-text: var(--success-text);
   --color-border: var(--border);
   --color-input: var(--input);
+  --color-field: var(--field);
   --color-ring: var(--ring);
   --color-ground: var(--ground);
   --color-energy: var(--energy);
@@ -207,6 +213,16 @@
 :root {
   --radius: 0.625rem;
   --press-scale: 0.97;
+
+  /*
+   * What a page's frame tells the pieces that reach its edges (the page top's bar, the bottom
+   * bar): its side padding, its bottom padding, the height of what it docks under the page (a
+   * phone's tab bar), and the safe area the bottom bar still has to clear (none over a dock).
+   */
+  --page-gutter: 0px;
+  --page-bottom: 0px;
+  --page-dock: 0px;
+  --page-safe-bottom: env(safe-area-inset-bottom);
   --background: var(--color-white);
   --foreground: oklch(0.185 0.004 286);
   --card: var(--color-white);
@@ -235,6 +251,7 @@
   --ground: oklch(0.975 0.0015 106);
   --border: oklch(0 0 0 / 7%);
   --input: oklch(0 0 0 / 13%);
+  --field: oklch(0.185 0.004 286 / 50%);
   --ring: var(--color-primary);
   --energy: oklch(0.782 0.158 72.3);
   --brain: oklch(0.64 0.17 293);
@@ -301,6 +318,7 @@
     --ground: var(--color-neutral-100);
     --border: var(--color-neutral-950);
     --input: var(--color-neutral-950);
+    --field: var(--color-neutral-950);
     --ring: var(--color-primary);
     --energy: var(--color-amber-700);
     --brain: var(--color-violet-800);
@@ -348,6 +366,7 @@
     --ground: oklch(0.16 0.003 286);
     --border: oklch(1 0 0 / 7.5%);
     --input: oklch(1 0 0 / 13%);
+    --field: oklch(0.94 0.003 286 / 50%);
     --ring: var(--color-primary);
     --energy: oklch(0.782 0.158 72.3);
     --brain: oklch(0.75 0.13 293);
@@ -406,6 +425,7 @@
       --ground: var(--color-neutral-900);
       --border: var(--color-neutral-50);
       --input: var(--color-neutral-50);
+      --field: var(--color-neutral-50);
       --ring: var(--color-primary);
       --energy: var(--color-amber-200);
       --brain: var(--color-violet-200);
@@ -583,6 +603,20 @@
     letter-spacing: -0.006em;
   }
 
+  /* Preflight sets bold text to `bolder`, which is 700; the heaviest weight here is 600. */
+  b,
+  strong {
+    @apply font-semibold;
+  }
+
+  /* The browser draws its own filled calendar on a date field; this is Lucide's, in the muted tone. */
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    background: var(--muted-foreground);
+    cursor: pointer;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 2v4M16 2v4M3 10h18'/%3E%3Crect width='18' height='18' x='3' y='4' rx='2'/%3E%3C/svg%3E")
+      center / 1rem no-repeat;
+  }
+
   /* Browsers break Korean inside words by default; Korean wraps between them, at the spaces. */
   :lang(ko) {
     word-break: keep-all;
@@ -670,6 +704,104 @@
   }
 }
 
+/*
+ * A bare button at a column's edge, or a bare icon there, lines up by its ink, not its box (craft
+ * E2). An icon button is pulled out by its padding and its glyph's blank side, which Lucide draws
+ * in 24ths of the icon: 1 at least, more for the narrow glyphs below. A text button names its
+ * padding and border as `--edge-text` (`--edge-text-start` and `--edge-text-end` where an icon
+ * tightens that side) and adds the blank of a glyph on the pulled side: a back chevron or a plus
+ * leads its label, the other chevrons trail it.
+ *
+ * `--edge-pull` ends a column: what ends there is hairlines and boxes, so the glyph's ink ends on
+ * the box. `--edge-start` starts one: the letters under the glyph start inside their box (Geist's
+ * "S" by 0.053em, a stem by 0.08em, a diagonal by 0.02em), so the glyph stops that far short of the
+ * box to sit with them; `--edge-under` is the size of the text on that edge. A text button stops
+ * short the same way when a glyph leads its label. Both round down to a whole pixel, so no part of
+ * the glyph crosses the edge at any pixel density.
+ */
+@utility edge {
+  --glyph-blank: 0;
+  --glyph-blank-start: 0;
+  --glyph-blank-end: 0;
+  --edge-icon: calc(
+    (var(--control-size, var(--icon-size, 1rem)) - var(--icon-size, 1rem)) / 2 +
+      var(--icon-size, 1rem) * max(var(--glyph-blank), 1) / 24
+  );
+  --edge-pull: round(
+    down,
+    var(
+        --edge-text-end,
+        var(
+          --edge-text,
+          calc(var(--edge-icon) - var(--icon-size, 1rem) * var(--glyph-blank-end) / 24)
+        )
+      ) +
+      var(--icon-size, 1rem) * var(--glyph-blank-end) / 24,
+    1px
+  );
+  --edge-short: calc(var(--edge-under, 1rem) * 0.053);
+  --edge-start: round(
+    down,
+    var(
+        --edge-text-start,
+        var(
+          --edge-text,
+          calc(
+            var(--edge-icon) - var(--icon-size, 1rem) * var(--glyph-blank-start) / 24 -
+              var(--edge-short) * (1 - min(var(--glyph-blank-start), 1))
+          )
+        )
+      ) +
+      var(--icon-size, 1rem) * var(--glyph-blank-start) / 24 - var(--edge-short) *
+      min(var(--glyph-blank-start), 1),
+    1px
+  );
+
+  &:is(.lucide-chevron-left, :has(.lucide-chevron-left)) {
+    --glyph-blank: 8;
+    --glyph-blank-start: 8;
+  }
+
+  &:is(.lucide-chevron-right, :has(.lucide-chevron-right)) {
+    --glyph-blank: 8;
+    --glyph-blank-end: 8;
+  }
+
+  &:is(.lucide-chevron-down, .lucide-chevron-up, :has(.lucide-chevron-down, .lucide-chevron-up)) {
+    --glyph-blank: 5;
+    --glyph-blank-end: 5;
+  }
+
+  &:has(.lucide-x) {
+    --glyph-blank: 5;
+  }
+
+  &:has(.lucide-plus) {
+    --glyph-blank: 4;
+    --glyph-blank-start: 4;
+  }
+
+  &:has(.lucide-ellipsis, .lucide-menu) {
+    --glyph-blank: 3;
+  }
+}
+
+/*
+ * The back link over a page's title lines up with the title's first letter, so the size of the text
+ * under it comes from the title's type role, never from the page.
+ */
+[data-slot="page-top-bar"] {
+  --edge-under: 1.875rem;
+
+  [data-slot="page-top"]:has([data-title="headline"]) & {
+    --edge-under: 2.125rem;
+
+    @media (width >= 40rem) {
+      --edge-under: 3rem;
+    }
+  }
+}
+
 ::selection {
   @apply bg-primary text-primary-foreground;
 }
@@ -677,7 +809,7 @@
 @utility text-display {
   font-size: 2.5rem;
   line-height: 2.75rem;
-  font-weight: 650;
+  font-weight: 600;
   letter-spacing: -0.04em;
   text-wrap: balance;
 
@@ -690,7 +822,7 @@
 @utility text-headline {
   font-size: 2.125rem;
   line-height: 2.375rem;
-  font-weight: 640;
+  font-weight: 600;
   letter-spacing: -0.035em;
   text-wrap: balance;
 
@@ -731,7 +863,7 @@
 @utility text-title {
   font-size: 1.875rem;
   line-height: 1.1;
-  font-weight: 620;
+  font-weight: 600;
   letter-spacing: -0.035em;
   text-wrap: balance;
 }
@@ -739,7 +871,7 @@
 @utility text-label {
   font-size: 0.71875rem;
   line-height: 1rem;
-  font-weight: 550;
+  font-weight: 500;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--faint);

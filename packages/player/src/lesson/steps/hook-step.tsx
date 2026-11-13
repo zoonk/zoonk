@@ -1,5 +1,6 @@
 "use client";
 
+import { Eyebrow } from "@zoonk/learn/eyebrow";
 import { LessonVisual } from "@zoonk/learn/visual";
 import { SparklesIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -7,12 +8,7 @@ import { PlayerChoiceScene, PlayerChoiceScenePrompt } from "../../components/pla
 import { PlayerReadScene } from "../../components/player-read-scene";
 import { LessonChoiceOptions } from "../_components/lesson-choice-options";
 import { LessonStepPicture, useIsRequiredPictureDrawing } from "../_components/lesson-pictures";
-import {
-  LessonBody,
-  LessonContext,
-  LessonEyebrow,
-  LessonQuestion,
-} from "../_components/lesson-step-text";
+import { LessonBody, LessonContext, LessonQuestion } from "../_components/lesson-step-text";
 import { OpeningMap } from "../_components/opening-map";
 import { ScreenSupport } from "../_components/screen-support";
 import { splitQuestionData } from "../_utils/lesson-aside";
@@ -39,13 +35,13 @@ function HookGuess({
   return (
     <PlayerChoiceScene>
       <PlayerChoiceScenePrompt>
-        <LessonEyebrow icon={<SparklesIcon aria-hidden="true" />}>
+        <Eyebrow icon={<SparklesIcon aria-hidden="true" />}>
           {t({
             description:
               "Chip above the lesson's guess, which the learner answers after the opening scene and the first explanation. Guesses are never scored.",
             message: "Just a guess, it doesn't count",
           })}
-        </LessonEyebrow>
+        </Eyebrow>
         <ScreenSupport>
           <LessonStepPicture asks priority step={step} />
           <LessonVisual visual={step.content.visual} />
