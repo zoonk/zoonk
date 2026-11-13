@@ -7,8 +7,8 @@ export type UsagePeriod = "day" | "month" | "rolling30Days" | "total";
 export type CalendarPeriod = Exclude<UsagePeriod, "rolling30Days">;
 
 /**
- * Screens that name a calendar window ("today", "this month") read the free plan's rolling 30 days
- * as its month, the way the plan is described: "20 lessons a month".
+ * Only a new lesson is counted over rolling 30 days, and its gate gives the day from `availableAt`.
+ * Every other cap names a calendar window, and this lets its screen take core's one period type.
  */
 export function toCalendarPeriod(period: UsagePeriod): CalendarPeriod {
   return period === "rolling30Days" ? "month" : period;

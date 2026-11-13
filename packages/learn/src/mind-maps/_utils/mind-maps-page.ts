@@ -1,4 +1,3 @@
-import { toCalendarPeriod } from "@zoonk/core/entitlements/contract";
 import {
   type GoalMindMapView,
   type GoalMindMapsView,
@@ -37,9 +36,9 @@ export function toMindMapsPage(mindMaps: GoalMindMapsView): MindMapsPage {
   };
 }
 
-/** A map the learner can open, or one Plus keeps: what the list of maps shows. */
+/** A map the learner can open: what the list of maps shows. */
 function isIndexed(chapter: MindMapsPageChapter): boolean {
-  return chapter.status === "ready" || chapter.status === "plusRequired";
+  return chapter.status === "ready";
 }
 
 export function splitChapters(chapters: readonly MindMapsPageChapter[]) {
@@ -50,6 +49,7 @@ export function splitChapters(chapters: readonly MindMapsPageChapter[]) {
 }
 
 export function countChapterMaps(chapters: readonly MindMapsPageChapter[]) {
+  // No plan keeps a map for subscribers any more; installed native apps still decode the status.
   const open = chapters.filter((chapter) => chapter.status !== "plusRequired");
 
   return {
@@ -70,7 +70,7 @@ export function countChapterMaps(chapters: readonly MindMapsPageChapter[]) {
 export function countTabs(page: MindMapsPage): Record<MindMapTab, number> {
   return {
     chapters: countChapterMaps(page.chapters).ready,
-    lessons: page.lessonGroups.reduce((total, group) => total + group.count - group.locked, 0),
+    lessons: page.lessonGroups.reduce((total, group) => total + group.count, 0),
     saved: page.saved.length,
   };
 }
@@ -131,8 +131,18 @@ export function toMindMapLimit({
     return { retryAfterSeconds, status: "slowDown" };
   }
 
+  if (stop.period === "rolling30Days") {
+    return {
+      availableAt: stop.resetsAt ?? "",
+      period: "rolling30Days",
+      resource: "lessonStart",
+      status: "limitReached",
+      tier: "free",
+    };
+  }
+
   return {
-    period: toCalendarPeriod(stop.period ?? "day"),
+    period: stop.period ?? "day",
     resource: stop.resource ?? undefined,
     status: "limitReached",
     tier,

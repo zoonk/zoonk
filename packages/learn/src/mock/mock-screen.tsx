@@ -42,13 +42,18 @@ function MockGrading() {
               disabled={runner.pending}
               onClick={() => void runner.finish()}
             >
-              {t("See how it went")}
+              {t("See result")}
             </TaskMainButton>
           </TaskActions>
         </>
       }
     >
-      <StepTitle>{t("Mock exam handed in")}</StepTitle>
+      <StepCard>
+        <StepHeader>
+          <StepTitle>{t("Mock exam handed in")}</StepTitle>
+          <StepDetail>{t("Your answers are saved.")}</StepDetail>
+        </StepHeader>
+      </StepCard>
     </MockFrame>
   );
 }
@@ -59,7 +64,7 @@ function MockTimeUp() {
   const { actions, runner } = useMockScreen();
   const isLast = runner.view.current?.section === runner.view.sections.length - 1;
   const handingIn = runner.busy === "submit";
-  const action = isLast ? t("See how it went") : t("Continue");
+  const action = isLast ? t("See result") : t("Continue");
   useRefreshPastMockDeadline({ deadline: runner.view.current?.deadline, refresh: actions.refresh });
 
   return (
@@ -85,9 +90,7 @@ function MockTimeUp() {
         <StepHeader>
           <MockEyebrow />
           <StepTitle>{t("Time's up")}</StepTitle>
-          {runner.saveStatus === "saved" && (
-            <StepDetail>{t("Your answers so far are saved.")}</StepDetail>
-          )}
+          {runner.saveStatus === "saved" && <StepDetail>{t("Your answers are saved.")}</StepDetail>}
         </StepHeader>
       </StepCard>
     </MockFrame>

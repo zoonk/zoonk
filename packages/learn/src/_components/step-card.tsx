@@ -35,6 +35,11 @@ export function StepTitle({ children, className, ...props }: React.ComponentProp
   );
 }
 
+/** A number inside a step's sentence, set to tabular figures like the step's own number. */
+export function renderStepNumber(chunks: React.ReactNode) {
+  return <span className="tabular-nums">{chunks}</span>;
+}
+
 export function StepTitleNumber({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span

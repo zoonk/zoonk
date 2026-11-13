@@ -1903,7 +1903,6 @@ msgid "{count, plural, one {# answer} other {# answers}}, needs {minimum, number
 msgstr "{count, plural, other {# cevap}}, dikkate alınması için en az {minimum, number} gerekli"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
-#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 msgctxt "HHFpcy"
 msgid "Best day"
@@ -1915,7 +1914,6 @@ msgid "Throughout the week"
 msgstr "Hafta boyunca"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
-#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 msgctxt "dFW9lU"
 msgid "Best time"
@@ -1972,29 +1970,29 @@ msgid "A day or a time of day needs {count, plural, one {# answer} other {# answ
 msgstr "Bir günün ya da saatin hesaba katılması için {count, plural, other {# cevap}} gerekir, bu yüzden şans eseri doğru verilen tek bir cevap bir eğilim oluşturmaz."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "0Fab5z"
-msgid "Within {points, plural, =0 {# points} one {# point} other {# points}}"
-msgstr "En fazla {points, plural, =0 {# puan} other {# puan}} fark"
+msgctxt "_GJimN"
+msgid "Your best day is {day}."
+msgstr "En iyi sonuç aldığın gün {day}."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "yJxUpG"
-msgid "Not enough answers yet"
-msgstr "Henüz yeterli cevap yok"
+msgctxt "ZTJDAv"
+msgid "You answer about the same every day."
+msgstr "Her gün benzer sonuçlar alıyorsun."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "9DVTlI"
-msgid "{score} · {count, plural, one {# answer} other {# answers}}"
-msgstr "{score} · {count, plural, other {# cevap}}"
+msgctxt "RF7ki8"
+msgid "Your best time is the {time}."
+msgstr "En iyi sonuçları {time} alıyorsun."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "WDXXIC"
-msgid "In the last 90 days"
-msgstr "Son 90 günde"
+msgctxt "6hLEQI"
+msgid "The time of day makes no difference."
+msgstr "Günün saati fark yaratmıyor."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "2mUitd"
-msgid "Answers"
-msgstr "Cevaplar"
+msgctxt "IrWIWh"
+msgid "Answer more questions to see when you do best."
+msgstr "En iyi sonuçları ne zaman aldığını görmek için daha çok soru cevapla."
 
 #: src/app/[lang]/(app)/(stats)/score/page.tsx
 msgctxt "-JqpHp"
@@ -2952,9 +2950,9 @@ msgid "Terms of Use"
 msgstr "Kullanım koşulları"
 
 #: src/app/[lang]/test-out/[chapterId]/page.tsx
-msgctxt "5-s6we"
-msgid "Test out of a chapter"
-msgstr "Testi geçerek üniteyi atla"
+msgctxt "su55__"
+msgid "Chapter test"
+msgstr "Ünite testi"
 
 #: src/app/[lang]/test-out/[chapterId]/page.tsx
 #: src/components/catalog/chapter-strip.tsx
@@ -3005,24 +3003,14 @@ msgid "Page not found"
 msgstr "Sayfa bulunamadı"
 
 #: src/components/auth-gate.tsx
-msgctxt "xhBZ5m"
-msgid "Create an account to use this page"
-msgstr "Bu sayfayı kullanmak için hesap oluştur"
-
-#: src/components/auth-gate.tsx
 msgctxt "DrBO6u"
 msgid "Your plan and progress move to your account, safe on any device."
 msgstr "Planın ve ilerlemen hesabına taşınır, her cihazda güvende kalır."
 
 #: src/components/auth-gate.tsx
-msgctxt "HVR09O"
-msgid "Your session ended"
-msgstr "Oturumun sona erdi"
-
-#: src/components/auth-gate.tsx
-msgctxt "acWSVG"
-msgid "Log in to continue"
-msgstr "Devam etmek için giriş yap"
+msgctxt "xhBZ5m"
+msgid "Create an account to use this page"
+msgstr "Bu sayfayı kullanmak için hesap oluştur"
 
 #: src/components/auth-gate.tsx
 msgctxt "pb0Q20"
@@ -3030,9 +3018,19 @@ msgid "Log in to pick up your plan."
 msgstr "Planına devam etmek için giriş yap."
 
 #: src/components/auth-gate.tsx
+msgctxt "HVR09O"
+msgid "Your session ended"
+msgstr "Oturumun sona erdi"
+
+#: src/components/auth-gate.tsx
 msgctxt "eSXQ3z"
 msgid "Log in to pick up where you left off, or start free."
 msgstr "Kaldığın yerden devam etmek için giriş yap veya ücretsiz başla."
+
+#: src/components/auth-gate.tsx
+msgctxt "acWSVG"
+msgid "Log in to continue"
+msgstr "Devam etmek için giriş yap"
 
 #: src/components/auth-gate.tsx
 msgctxt "77LoTm"

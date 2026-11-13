@@ -2,34 +2,24 @@
 
 import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
 import { type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@zoonk/ui/components/dropdown-menu";
-import { CheckIcon, ChevronDownIcon } from "lucide-react";
+import { DropdownMenuItem } from "@zoonk/ui/components/dropdown-menu";
 import { useExtracted } from "next-intl";
-import {
-  SuggestionAction,
-  SuggestionActions,
-  SuggestionDescription,
-} from "../_components/suggestion";
+import { SuggestionAction, SuggestionActions } from "../_components/suggestion";
+import { SuggestionMenu } from "../_components/suggestion-menu";
 import { useTimeAnswerTexts } from "../_components/time-answer";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { getLongerTime } from "../_utils/time-answer";
 import { useFormatDuration } from "../_utils/time-format";
-import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
+import { type GoalDateMove } from "../plan-diff/change-names";
+import { PlanEffectDiff, PlanEffectNote } from "../plan-diff/plan-effect-diff";
 import { usePlanScreen } from "./plan-context";
 import { useCanChooseFocus, useChooseFocus } from "./plan-focus";
 import { useFullCourse, useFullCourseText } from "./plan-full-course";
 import { type SlotItem, type SlotPreview, usePlanSuggestionSlot } from "./plan-suggestion-context";
 import { useStudyEverythingFromSuggestion } from "./study-everything";
-import { useChangeSentence } from "./use-change-sentence";
+import { usePlanChangeSentence, usePlanDateKind } from "./use-change-sentence";
 import { usePlanChange } from "./use-plan-change";
 import { readTimeToCover } from "./use-time-to-cover";
-
-type GoalDateMove = { after: string; before: string | null };
 
 export function getGoalDateMove({
   operations,
@@ -45,10 +35,16 @@ export function getGoalDateMove({
     : undefined;
 }
 
+/**
+ * In the aside's narrow card a consequence often takes two lines, so the card keeps that room
+ * through the check: its buttons stay where the pointer is when the changes arrive.
+ */
+const EFFECT_ROOM_CLASS = "in-data-[slot=suggestion-panel]:min-h-16";
+
 export function useApplyPreview(item: SlotItem) {
   const t = useExtracted();
-  const sentence = useChangeSentence();
-  const { change, failed, isPending } = usePlanChange();
+  const sentence = usePlanChangeSentence();
+  const { change, isPending } = usePlanChange();
   const { setPreview, setResult } = usePlanSuggestionSlot();
 
   const apply = (preview: SlotPreview) => {
@@ -73,7 +69,7 @@ export function useApplyPreview(item: SlotItem) {
     });
   };
 
-  return { apply, failed, isPending };
+  return { apply, isPending };
 }
 
 export function OfferPreview({
@@ -82,38 +78,30 @@ export function OfferPreview({
   onRetry,
   pending,
   preview,
+  repriced = false,
 }: {
   goalDate?: GoalDateMove;
   onApply: () => void;
   onRetry: () => void;
   pending: boolean;
   preview: SlotPreview;
+  /** The card showed other numbers before this check. */
+  repriced?: boolean;
 }) {
   const t = useExtracted();
+  const dateKind = usePlanDateKind();
   const { setPreview } = usePlanSuggestionSlot();
 
   if (preview.status === "loading") {
-    return (
-      <>
-        <SuggestionDescription aria-busy="true" role="status">
-          {t("Checking what changes…")}
-        </SuggestionDescription>
-        <SuggestionActions>
-          {/* Keyed, so a focused Try again never turns into the Not now beside it. */}
-          <SuggestionAction key="not-now" onClick={() => setPreview()} variant="outline">
-            {t("Not now")}
-          </SuggestionAction>
-        </SuggestionActions>
-      </>
-    );
+    return <CheckingChange onCancel={() => setPreview()} />;
   }
 
   if (preview.status === "failed") {
     return (
       <>
-        <SuggestionDescription role="status">
+        <PlanEffectNote className={EFFECT_ROOM_CLASS}>
           {t("We couldn't check what changes.")}
-        </SuggestionDescription>
+        </PlanEffectNote>
         <SuggestionActions>
           <SuggestionAction key="retry" onClick={onRetry}>
             {t("Try again")}
@@ -130,30 +118,29 @@ export function OfferPreview({
     return null;
   }
 
-  const { effect, feasibility, unchanged } = preview.preview;
+  const { effect, unchanged } = preview.preview;
 
   return (
     <>
       {unchanged ? (
-        <SuggestionDescription>{t("Your plan stays as it is.")}</SuggestionDescription>
+        <PlanEffectNote className={EFFECT_ROOM_CLASS}>
+          {t("Your plan stays as it is.")}
+        </PlanEffectNote>
       ) : (
-        <PlanEffectDiff effect={effect} goalDate={goalDate} />
-      )}
-
-      {!unchanged && feasibility?.fits && (
-        <SuggestionDescription>
-          {t({
-            description: '"Then" means "with this change".',
-            message: "Your plan then covers everything in depth.",
-          })}
-        </SuggestionDescription>
+        <PlanEffectDiff
+          className={EFFECT_ROOM_CLASS}
+          dateKind={dateKind}
+          effect={effect}
+          goalDate={goalDate}
+          repriced={repriced}
+        />
       )}
 
       <SuggestionActions>
-        {/* Never applied without the diff it makes, as Today's proposals. */}
+        {/* Never applied before its effect is worked out, as Today's proposals. */}
         {!unchanged && effect !== null && (
-          <SuggestionAction action={onApply} busy={pending} icon={<CheckIcon aria-hidden="true" />}>
-            {t("Apply")}
+          <SuggestionAction action={onApply} busy={pending}>
+            {t("Change my plan")}
           </SuggestionAction>
         )}
         <SuggestionAction disabled={pending} onClick={() => setPreview()} variant="outline">
@@ -164,19 +151,34 @@ export function OfferPreview({
   );
 }
 
+/**
+ * The button the check leads to holds its place, off, so no button moves or changes size when the
+ * check ends. Keyed, so a focused Try again never turns into the button beside it.
+ */
+function CheckingActions({ onCancel }: { onCancel: () => void }) {
+  const t = useExtracted();
+
+  return (
+    <SuggestionActions>
+      <SuggestionAction disabled key="apply">
+        {t("Change my plan")}
+      </SuggestionAction>
+      <SuggestionAction key="not-now" onClick={onCancel} variant="outline">
+        {t("Not now")}
+      </SuggestionAction>
+    </SuggestionActions>
+  );
+}
+
 export function CheckingChange({ onCancel }: { onCancel: () => void }) {
   const t = useExtracted();
 
   return (
     <>
-      <SuggestionDescription aria-busy="true" role="status">
+      <PlanEffectNote busy className={EFFECT_ROOM_CLASS}>
         {t("Checking what changes…")}
-      </SuggestionDescription>
-      <SuggestionActions>
-        <SuggestionAction key="not-now" onClick={onCancel} variant="outline">
-          {t("Not now")}
-        </SuggestionAction>
-      </SuggestionActions>
+      </PlanEffectNote>
+      <CheckingActions onCancel={onCancel} />
     </>
   );
 }
@@ -292,28 +294,21 @@ export function OtherOptions({
   const { dismiss } = usePlanSuggestionSlot();
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger render={<SuggestionAction variant="outline" />}>
-        {t("Other options")}
-        <ChevronDownIcon aria-hidden="true" data-icon="inline-end" />
-      </DropdownMenuTrigger>
-
-      <DropdownMenuContent align="start" className="w-64">
-        {onMoveDate && (
-          <DropdownMenuItem onClick={onMoveDate}>
-            {t("Move your date to cover everything")}
-          </DropdownMenuItem>
-        )}
-        {canChooseFocus && (
-          <DropdownMenuItem onClick={chooseFocus}>{t("Choose where to focus")}</DropdownMenuItem>
-        )}
-        {course && !course.on && !studyEverythingLeads && (
-          <DropdownMenuItem onClick={() => studyEverything(course)}>
-            {course.isExam ? t("Study everything, even after the exam") : t("Study everything")}
-          </DropdownMenuItem>
-        )}
-        <DropdownMenuItem onClick={() => dismiss("coverage")}>{t("Not now")}</DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <SuggestionMenu>
+      {onMoveDate && (
+        <DropdownMenuItem onClick={onMoveDate}>
+          {t("Move your date to cover everything")}
+        </DropdownMenuItem>
+      )}
+      {canChooseFocus && (
+        <DropdownMenuItem onClick={chooseFocus}>{t("Choose where to focus")}</DropdownMenuItem>
+      )}
+      {course && !course.on && !studyEverythingLeads && (
+        <DropdownMenuItem onClick={() => studyEverything(course)}>
+          {course.isExam ? t("Study everything, even after the exam") : t("Study everything")}
+        </DropdownMenuItem>
+      )}
+      <DropdownMenuItem onClick={() => dismiss("coverage")}>{t("Not now")}</DropdownMenuItem>
+    </SuggestionMenu>
   );
 }
