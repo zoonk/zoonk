@@ -6,8 +6,8 @@ Account
   whoami                                  Show who is logged in
 
 Staff (production data)
-  staff models [model...]                 Readable model names, or the named models' fields, relations
-                                          and, for content, what a fix may change
+  staff models [model...]                 Readable and fixable model names, or the named models'
+                                          fields, relations and each fix operation with its rules
   staff users find <email|username|id>    One account by exact email, username or id
   staff users search <text> [--limit n]   Accounts whose name, email or username contain the text
   staff get <model> <id> [--fields ...]   One record by id
