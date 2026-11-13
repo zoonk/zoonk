@@ -27,9 +27,10 @@ export async function LessonChapterAside({
   ];
 
   return (
+    // The column's first line sits on the page bar's line ("‹ A very small world"), 8px above its padding.
     <section
       aria-labelledby={titleId}
-      className="flex flex-col gap-3"
+      className="-mt-2 flex flex-col gap-3"
       data-subject={getSubject(course.categories)}
     >
       <div className="flex flex-col gap-1">
