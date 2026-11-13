@@ -64,6 +64,18 @@ describe("course category fixes", () => {
     await expect(categoriesOf(course.id)).resolves.toStrictEqual(["science"]);
   });
 
+  it("files an uncategorized course, and its revert leaves it uncategorized again", async () => {
+    const course = await courseFixture({ visibility: "public" });
+
+    const { fix } = await approveFix({
+      changes: [{ id: course.id, model: "Course", setCategories: ["tech"] }],
+      reason: "The course teaches an app.",
+    });
+
+    await expect(revertAndApprove(fix.id)).resolves.toMatchObject({ fix: { status: "applied" } });
+    await expect(categoriesOf(course.id)).resolves.toStrictEqual([]);
+  });
+
   it("refuses a category the catalog doesn't have and a private course", async () => {
     const [course, owned] = await Promise.all([
       courseFixture({ visibility: "public" }),

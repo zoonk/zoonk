@@ -3,10 +3,8 @@ import { COURSE_CATEGORIES } from "@zoonk/utils/categories";
 import { z } from "zod";
 import { collectionHandler } from "./collection-handler";
 
-/** A course left with none would be filed again by the course details writer, so it keeps one. */
 const categoriesSchema = z
   .array(z.enum(COURSE_CATEGORIES))
-  .min(1)
   .refine((categories) => new Set(categories).size === categories.length, {
     message: "Each category appears once.",
   })
@@ -33,7 +31,7 @@ export const courseCategories = collectionHandler({
   },
   model: "Course",
   op: "setCategories",
-  rules: `{ setCategories: [category, ...] } files a public course in the catalog under these categories, at least one: ${COURSE_CATEGORIES.join(", ")}.`,
+  rules: `{ setCategories: [category, ...] } files a public course in the catalog under these categories: ${COURSE_CATEGORIES.join(", ")}. A course left with none is filed again by the course details writer.`,
   schema: categoriesSchema,
   table: sql`courses`,
   write: async (tx, id, after) => {
