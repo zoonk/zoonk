@@ -69,7 +69,7 @@ export const TASK_MAIN_ACTION_CLASS = cn(
 
 export const TASK_OPTION_CLASS = "w-full lg:w-auto";
 
-export const TASK_BACK_ACTION_CLASS = "size-11 shrink-0 [--icon-size:--spacing(5)] lg:mr-auto";
+export const TASK_BACK_ACTION_CLASS = "size-11 shrink-0 lg:mr-auto";
 
 export type TaskAsideWidth = "default" | "half";
 
