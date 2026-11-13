@@ -136,7 +136,7 @@ test.describe("Study reminders", () => {
     const page = await openAs(browser, day.user);
     await page.goto(`/today?goal=${other.id}`);
 
-    const switchGoal = page.getByRole("button", { name: "Switch to this goal" });
+    const switchGoal = page.getByRole("button", { exact: true, name: "Switch" });
     await expectHydrated(switchGoal);
     await expect(page.getByText(`Your study reminder was for ${other.title}.`)).toBeVisible();
     await expect(readActiveGoalId(day.user.id)).resolves.toBe(day.goal.id);
@@ -167,7 +167,7 @@ test.describe("Study reminders", () => {
       // oxlint-disable-next-line no-await-in-loop -- Waits for the page each link opened.
       await expectHydrated(page.getByRole("button", { name: /^(?:Start|Continue)/u }));
       // oxlint-disable-next-line no-await-in-loop -- Checks the page each link opened.
-      await expect(page.getByRole("button", { name: "Switch to this goal" })).toHaveCount(0);
+      await expect(page.getByRole("button", { exact: true, name: "Switch" })).toHaveCount(0);
     }
 
     await expect(readActiveGoalId(day.user.id)).resolves.toBe(day.goal.id);
@@ -188,7 +188,7 @@ test.describe("Study reminders", () => {
     const page = await openAs(browser, day.user);
     await page.goto(`/today?goal=${other.id}`);
 
-    const switchGoal = page.getByRole("button", { name: "Switch to this goal" });
+    const switchGoal = page.getByRole("button", { exact: true, name: "Switch" });
     const start = page.getByRole("button", { name: /^(?:Start|Continue)/u });
     await expectHydrated(switchGoal);
 

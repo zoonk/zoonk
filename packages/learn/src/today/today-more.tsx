@@ -12,12 +12,10 @@ import {
   ListRowLink,
   ListRowTitle,
 } from "../_components/list-group";
-import { PlusMark } from "../_components/plus-lock";
-import { MarkedText } from "../_components/title-row";
 import { useBuddyName } from "../buddies/use-buddy-name";
 import { ExtraTimeButton } from "../session/extra-time-button";
-import { CatchUpLater } from "./today-catch-up";
 import { useTodayScreen } from "./today-context";
+import { EarlierLessons } from "./today-earlier-lessons";
 import { getChallengeEventKind, useWeekdayLabel } from "./today-week-challenge";
 import { useDayState, useTodayPastDate, useUpNextLessons } from "./use-today-copy";
 
@@ -36,7 +34,7 @@ function MoreTime() {
       label={
         today.studiedToday
           ? undefined
-          : t("Study for {minutes} minutes", { minutes: String(extraTime.minutes) })
+          : t("Practice {minutes} min", { minutes: String(extraTime.minutes) })
       }
       minutes={extraTime.minutes}
       size="page"
@@ -61,11 +59,9 @@ function ChallengeRow() {
       </ListRowLeading>
       <ListRowContent>
         <ListRowTitle>
-          <MarkedText mark={challenge.access === "plusRequired" && <PlusMark />}>
-            {challenge.kind === "mock"
-              ? t("See {day}'s mock exam", { day: weekdayLabel(challenge.date) })
-              : t("See {day}'s challenge", { day: weekdayLabel(challenge.date) })}
-          </MarkedText>
+          {challenge.kind === "mock"
+            ? t("See {day}'s mock exam", { day: weekdayLabel(challenge.date) })
+            : t("See {day}'s challenge", { day: weekdayLabel(challenge.date) })}
         </ListRowTitle>
       </ListRowContent>
     </ListRowLink>
@@ -112,7 +108,7 @@ export function TodayMore({ className }: { className?: string }) {
   return (
     <div className={cn("flex flex-col gap-3 empty:hidden", className)} data-slot="today-more">
       {(state === "done" || state === "rest") && <MoreTime />}
-      {(state === "underway" || state === "done") && <CatchUpLater />}
+      {(state === "underway" || state === "done") && <EarlierLessons />}
     </div>
   );
 }

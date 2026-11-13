@@ -6,6 +6,7 @@ import { useScrolled } from "@zoonk/ui/hooks/scrolled";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronLeftIcon } from "lucide-react";
 import { buttonVariants } from "./button";
+import { PAGE_HEADER_CLASS } from "./page-header-class";
 
 const BACK_LINK_CLASS = cn(
   buttonVariants({ edge: "start", size: "sm", variant: "ghost" }),
@@ -79,12 +80,6 @@ function PageTopBar({
 }
 
 /**
- * The block that holds a page's title, right under the bar. A page adds no padding or margin over
- * its title: this is all of it.
- */
-const PAGE_HEADER_CLASS = "flex min-w-0 flex-col gap-1 pt-1";
-
-/**
  * A page's whole top, for a page that draws both parts itself. Where a layout draws the bar and
  * the page its title, as in the app's shell, they use `PageTopBar` and `PAGE_HEADER_CLASS`.
  */
@@ -126,4 +121,4 @@ function PageTitle({
   );
 }
 
-export { BackLink, PAGE_HEADER_CLASS, PageTitle, PageTop, PageTopBar };
+export { BackLink, PageTitle, PageTop, PageTopBar };
