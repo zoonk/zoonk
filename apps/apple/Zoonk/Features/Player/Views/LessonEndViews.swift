@@ -356,9 +356,10 @@ struct LessonCompletionView: View {
   }
 }
 
-/// Never a dead end. `isNotice` is main's `LessonNotWrittenNotice`: a lesson its writing was
-/// refused for says so under its description, start-aligned with small buttons, instead of the
-/// centered state a lesson that can't open takes.
+/// Never a dead end. As a screen it is main's `lesson-access-screen`: the reason as the title, at
+/// most one line, and the one way on in the bottom bar (a free learner's is "Subscribe", and the
+/// close button leaves). `isNotice` is main's `LessonNotWrittenNotice`: a lesson whose writing was
+/// refused says so under its description, start-aligned with a small button.
 struct LessonUnavailableView: View {
   @Environment(\.dismiss) private var dismiss
 
@@ -368,13 +369,12 @@ struct LessonUnavailableView: View {
 
   var body: some View {
     if isNotice {
-      VStack(alignment: .leading, spacing: 12) {
-        LessonNoticeText(title: Text(title), description: Text(description))
+      VStack(alignment: .leading, spacing: 8) {
+        GateWords(title: Text(title), line: noticeLine.map(Text.init))
 
-        HStack(spacing: 8) {
-          actions
-        }
-        .controlSize(.small)
+        action
+          .buttonStyle(.outline)
+          .controlSize(.small)
       }
       .frame(maxWidth: .infinity, alignment: .leading)
     } else {
@@ -385,62 +385,53 @@ struct LessonUnavailableView: View {
           Image(systemName: symbol)
         }
       } description: {
-        Text(description)
-      } actions: {
-        actions
+        if let line = screenLine {
+          Text(line)
+        }
+      }
+      .safeAreaBar(edge: .bottom) {
+        TaskActionBar {
+          action
+            .buttonStyle(.mainAction)
+            .controlSize(.large)
+        }
       }
     }
   }
 
-  /// A notice's buttons are all quiet: the screen's own bar holds its main action.
-  private var mainStyle: ZoonkButtonStyle {
-    isNotice ? .outline : .mainAction
-  }
-
   var said: String {
-    [String(localized: title), String(localized: description)].joinedSentences()
+    let line = isNotice ? noticeLine.map { String(localized: $0) } : screenLine
+    return ([String(localized: title)] + [line].compactMap(\.self)).joinedSentences()
   }
 
   @ViewBuilder
-  private var actions: some View {
+  private var action: some View {
     switch refusal {
     case .failed:
       Button(action: retry) {
         Text("Try again", tableName: "Player", comment: "Tries opening the lesson again")
+          .frame(maxWidth: isNotice ? nil : .infinity)
       }
-      .buttonStyle(mainStyle)
     case .slowDown:
       Button(action: retry) {
         Text("Try again", tableName: "Player", comment: "Tries opening the lesson again")
+          .frame(maxWidth: isNotice ? nil : .infinity)
       }
-      .buttonStyle(.outline)
     case .plusRequired, .limitReached(tier: .free, _):
-      SeePlusButton()
-        .buttonStyle(mainStyle)
-        .onAppear {
-          UsageAnalytics.track(.subscriptionGateShown)
-        }
-
-      if !isNotice {
-        backButton
-      }
+      SubscribeButton()
+        .frame(maxWidth: isNotice ? nil : .infinity)
     case .limitReached(tier: .guest, _):
-      SignUpButton()
-        .buttonStyle(mainStyle)
+      SignUpButton(fills: !isNotice)
     case .limitReached(tier: .plus, _), .notFound:
       if !isNotice {
-        backButton
+        Button {
+          dismiss()
+        } label: {
+          Text("Back", tableName: "Player", comment: "Leaves a lesson that can't open")
+            .frame(maxWidth: .infinity)
+        }
       }
     }
-  }
-
-  private var backButton: some View {
-    Button {
-      dismiss()
-    } label: {
-      Text("Back", tableName: "Player", comment: "Leaves a lesson that can't open")
-    }
-    .buttonStyle(.outline)
   }
 
   private var title: LocalizedStringResource {
@@ -451,69 +442,47 @@ struct LessonUnavailableView: View {
     case .slowDown:
       LocalizedStringResource(
         "Take a short break", table: "Player", comment: "Fair use spaces new lessons out")
-    case .plusRequired:
-      FreeWeekOverNotice.title
-    case .limitReached(.guest, _):
-      LocalizedStringResource(
-        "Save your progress to keep going", table: "Player", comment: "A guest used their lessons")
-    case .limitReached(.free, .month):
-      LocalizedStringResource(
-        "That's all the new lessons for this month", table: "Player",
-        comment: "A free learner used the month's lessons")
-    case .limitReached(.free, _):
-      LocalizedStringResource(
-        "That's all the new lessons for today", table: "Player",
-        comment: "A free learner used the day's lessons")
-    case .limitReached(.plus, _):
-      LocalizedStringResource(
-        "That's a lot of learning today", table: "Player",
-        comment: "A Plus learner reached the day's limit")
     case .notFound:
       LocalizedStringResource(
-        "Lesson not available", table: "Player", comment: "The lesson doesn't exist anymore")
+        "This lesson isn't available", table: "Player", comment: "The lesson doesn't exist anymore")
+    case .plusRequired, .limitReached:
+      refusal.limit?.lessonWords.title
+        ?? LocalizedStringResource(
+          "We couldn't open this lesson", table: "Player", comment: "A lesson failed to open")
     }
   }
 
-  private var description: LocalizedStringResource {
+  /// In place, a limit's line says only when lessons come back.
+  private var noticeLine: LocalizedStringResource? {
+    refusal.limit?.lessonWords.line
+  }
+
+  private var screenLine: String? {
     switch refusal {
-    case .failed:
-      LocalizedStringResource(
-        "Try again in a moment. Nothing you did was lost.", table: "Player",
-        comment: "A lesson failed to open")
+    case .failed, .notFound:
+      return nil
     case .slowDown(let seconds):
-      LocalizedStringResource(
-        "New lessons open again in \(Duration.seconds(seconds).formatted(.units(allowed: [.minutes, .seconds], width: .wide)))",
-        table: "Player", comment: "How long until the next lesson opens")
-    case .plusRequired:
-      FreeWeekOverNotice.description
+      return String(
+        localized:
+          "You opened a lot of lessons quickly. This one opens on its own in \(Duration.seconds(seconds).formatted(.units(allowed: [.minutes, .seconds], width: .wide))).",
+        table: "Player", comment: "How long until the next lesson opens; the argument is a duration")
     case .limitReached(.guest, _):
-      LocalizedStringResource(
-        "You've taken the lessons you can try without an account. Create a free account to keep going, and everything you learned comes with you.",
-        table: "Player", comment: "A guest used their lessons")
-    case .limitReached(.free, .month):
-      LocalizedStringResource(
-        "You can still review what you learned and practice your mistakes. New lessons open again next month, or get Plus to keep going now.",
-        table: "Player", comment: "A free learner used the month's lessons")
-    case .limitReached(.free, _):
-      LocalizedStringResource(
-        "You can still review what you learned and practice your mistakes. New lessons open again tomorrow, or get Plus to keep going now.",
-        table: "Player", comment: "A free learner used the day's lessons")
-    case .limitReached(.plus, _):
-      LocalizedStringResource(
-        "You've reached today's limit. New lessons open again tomorrow.", table: "Player",
-        comment: "A Plus learner reached the day's limit")
-    case .notFound:
-      LocalizedStringResource(
-        "This lesson isn't available anymore.", table: "Player",
-        comment: "The lesson doesn't exist anymore")
+      return String(
+        localized: "Everything you learned comes with you.", table: "Player",
+        comment: "A guest used the lessons they can try; signing up keeps their progress")
+    case .plusRequired, .limitReached:
+      let stillFree = String(
+        localized: "You can still review and practice your mistakes.", table: "Player",
+        comment: "Under used-up lessons, before when they come back")
+      return ([stillFree] + [noticeLine.map { String(localized: $0) }].compactMap(\.self))
+        .joinedSentences()
     }
   }
 
   private var symbol: String {
     switch refusal {
     case .failed, .notFound: "exclamationmark.circle"
-    case .slowDown, .limitReached(.plus, _): "hourglass"
-    case .plusRequired, .limitReached(.free, _): "lock.fill"
+    case .slowDown, .plusRequired, .limitReached(.free, _), .limitReached(.plus, _): "hourglass"
     case .limitReached(.guest, _): "person.crop.circle.badge.plus"
     }
   }
@@ -621,55 +590,52 @@ private struct LessonGuestEndingView: View {
 private struct SignUpButton: View {
   @Environment(\.lessonPlayerRoutes) private var routes
 
+  var fills = false
+
   var body: some View {
     Button {
       routes.signIn()
     } label: {
       Text(
-        "Create a free account", tableName: "Player", comment: "Opens account creation for a guest")
+        "Create a free account", tableName: "Player", comment: "Opens account creation for a guest"
+      )
+      .frame(maxWidth: fills ? .infinity : nil)
     }
   }
 }
 
-struct LessonHelpLimitNote: View {
-  let refusal: LessonRunRefusal
-
-  var body: some View {
-    VStack(alignment: .leading, spacing: 8) {
-      Text(Self.message(refusal))
-
-      switch refusal {
-      case .limitReached(.guest, _):
-        SignUpButton()
-          .buttonStyle(.mainAction)
-      case .limitReached(.free, _):
-        SeePlusButton()
-          .buttonStyle(.outline)
-      default:
-        EmptyView()
-      }
+extension LessonRunRefusal {
+  /// The refusal as the limit every limit notice reads; a lesson that failed or is gone has none.
+  var limit: HelpLimit? {
+    switch self {
+    case .slowDown(let seconds):
+      .slowDown(retryAfterSeconds: seconds)
+    case .limitReached(let tier, let period):
+      .limitReached(period: period.helpPeriod, tier: tier.learnerTier)
+    case .plusRequired:
+      .limitReached(period: .month, tier: .free)
+    case .failed, .notFound:
+      nil
     }
-    .typeStyle(.note)
-    .foregroundStyle(.mutedForeground)
   }
+}
 
-  static func message(_ refusal: LessonRunRefusal) -> String {
-    switch refusal {
-    case .slowDown:
-      String(
-        localized: "Take a short break", table: "Player", comment: "Fair use spaces AI help out")
-    case .limitReached(.guest, _):
-      String(
-        localized: "Save your progress to keep going", table: "Player",
-        comment: "A guest used their AI help")
-    case .limitReached(.free, _):
-      String(
-        localized: "You used today's AI help. Plus gives you more.", table: "Player",
-        comment: "A free learner used the day's AI help")
-    default:
-      String(
-        localized: "You've used today's AI help. It's back tomorrow.", table: "Player",
-        comment: "A learner used the day's AI help")
+extension LessonRunRefusal.Tier {
+  fileprivate var learnerTier: LearnerTier {
+    switch self {
+    case .guest: .guest
+    case .free: .free
+    case .plus: .plus
+    }
+  }
+}
+
+extension LessonRunRefusal.Period {
+  fileprivate var helpPeriod: HelpLimit.Period {
+    switch self {
+    case .day: .day
+    case .month: .month
+    case .total: .total
     }
   }
 }
