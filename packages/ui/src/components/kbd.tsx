@@ -4,7 +4,13 @@ import { useShortcutLabel } from "@zoonk/ui/hooks/shortcut-label";
 import { SHORTCUTS, type ShortcutName, isModShortcut, pickKey } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type VariantProps, cva } from "class-variance-authority";
-import { ArrowDownIcon, ArrowLeftIcon, ArrowRightIcon, CornerDownLeftIcon } from "lucide-react";
+import {
+  ArrowDownIcon,
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  CommandIcon,
+  CornerDownLeftIcon,
+} from "lucide-react";
 
 const shortcutKbdVariants = cva("hidden pointer-fine:inline-flex", {
   defaultVariants: { tone: "default" },
@@ -32,34 +38,51 @@ export function useShortcutCap(shortcut: ShortcutName, index?: number): string {
   return isModShortcut(shortcut) ? modCap : cap;
 }
 
-/** A key named by a symbol is drawn as Lucide's glyph: a font's ⏎ and arrows are a few pixels of ink. */
+/**
+ * A key named by a symbol is drawn as Lucide's glyph: a font's ⏎ and arrows are a few pixels of ink,
+ * and its ⌘ is shorter than the letter after it.
+ */
 const KEY_GLYPHS: Partial<Record<string, typeof CornerDownLeftIcon>> = {
   "←": ArrowLeftIcon,
   "→": ArrowRightIcon,
   "↓": ArrowDownIcon,
+  "⌘": CommandIcon,
   "⏎": CornerDownLeftIcon,
 };
 
 function KeyGlyph({ children }: { children: React.ReactNode }) {
-  const Glyph = typeof children === "string" ? KEY_GLYPHS[children] : undefined;
-
-  if (!Glyph) {
+  if (typeof children !== "string") {
     return children;
   }
 
-  return (
-    <>
-      <Glyph aria-hidden="true" />
-      <span className="sr-only">{children}</span>
-    </>
-  );
+  const Glyph = KEY_GLYPHS[children];
+
+  if (Glyph) {
+    return (
+      <>
+        <Glyph aria-hidden="true" />
+        <span className="sr-only">{children}</span>
+      </>
+    );
+  }
+
+  if (children.length > 1 && children.startsWith("⌘")) {
+    return (
+      <>
+        <KeyGlyph>⌘</KeyGlyph>
+        {children.slice(1)}
+      </>
+    );
+  }
+
+  return children;
 }
 
 function Kbd({ children, className, ...props }: React.ComponentProps<"kbd">) {
   return (
     <kbd
       className={cn(
-        "bg-foreground/4 ring-foreground/12 in-data-[slot=tooltip-content]:bg-background/20 in-data-[slot=tooltip-content]:text-background text-muted-foreground dark:in-data-[slot=tooltip-content]:bg-background/10 text-2xs pointer-events-none inline-flex h-5 w-fit min-w-5 items-center justify-center gap-1 rounded-sm px-1 font-mono font-medium ring-1 select-none ring-inset in-data-[slot=tooltip-content]:ring-0 [&_svg:not([class*='size-'])]:size-3",
+        "bg-foreground/4 ring-foreground/12 in-data-[slot=tooltip-content]:bg-background/20 in-data-[slot=tooltip-content]:text-background text-muted-foreground dark:in-data-[slot=tooltip-content]:bg-background/10 text-2xs pointer-events-none inline-flex h-5 w-fit min-w-5 items-center justify-center gap-0.5 rounded-sm px-1 font-mono font-medium ring-1 select-none ring-inset in-data-[slot=tooltip-content]:ring-0 [&_svg:not([class*='size-'])]:size-3",
         className,
       )}
       data-slot="kbd"
