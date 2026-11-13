@@ -146,36 +146,34 @@ function ChapterBody({
   const { chapter, hrefs } = useChapterScreen();
 
   return (
-    <>
-      <DetailLayout
-        aside={
-          <>
-            <ChapterProgress />
-            <ChapterPractice />
-            <ChapterSummary renderLessonText={renderLessonText} />
-          </>
-        }
-        asideLabel={t("About this chapter")}
-        bar={<ChapterBar />}
-        data-slot="chapter"
-      >
-        <DetailAside>
-          <ChapterHeader />
-          <ChapterMapRow />
-        </DetailAside>
+    <DetailLayout
+      aside={
+        <>
+          <ChapterProgress />
+          <ChapterPractice />
+          <ChapterSummary renderLessonText={renderLessonText} />
+        </>
+      }
+      asideLabel={t("About this chapter")}
+      bar={<ChapterBar />}
+      bottomBar={<ChapterBottomBar />}
+      data-slot="chapter"
+    >
+      <DetailAside>
+        <ChapterHeader />
+        <ChapterMapRow />
+      </DetailAside>
 
-        <DetailContent>
-          {chapter.lessons.length > 0 && (
-            <LessonList
-              lessonHref={(lessonId) => `${hrefs.lessonBasePath}/${lessonId}`}
-              lessons={chapter.lessons}
-              upNext
-            />
-          )}
-        </DetailContent>
-      </DetailLayout>
-      <ChapterBottomBar />
-    </>
+      <DetailContent>
+        {chapter.lessons.length > 0 && (
+          <LessonList
+            lessonHref={(lessonId) => `${hrefs.lessonBasePath}/${lessonId}`}
+            lessons={chapter.lessons}
+            upNext
+          />
+        )}
+      </DetailContent>
+    </DetailLayout>
   );
 }
 

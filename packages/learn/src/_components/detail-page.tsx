@@ -11,6 +11,7 @@ export function DetailLayout({
   aside,
   asideLabel = "",
   bar,
+  bottomBar,
   children,
   className,
   ...props
@@ -18,6 +19,8 @@ export function DetailLayout({
   aside?: React.ReactNode;
   asideLabel?: string;
   bar?: React.ReactNode;
+  /** The page's `BottomBar`, placed by `PageWithAside` beside an aside. */
+  bottomBar?: React.ReactNode;
 }) {
   const page = (
     <article className="flex min-w-0 flex-col" {...props}>
@@ -32,11 +35,16 @@ export function DetailLayout({
   );
 
   if (!aside) {
-    return page;
+    return (
+      <>
+        {page}
+        {bottomBar}
+      </>
+    );
   }
 
   return (
-    <PageWithAside aside={aside} asideLabel={asideLabel}>
+    <PageWithAside aside={aside} asideLabel={asideLabel} bottomBar={bottomBar}>
       {page}
     </PageWithAside>
   );

@@ -238,58 +238,52 @@ export function SubjectScreen({
   const t = useExtracted();
 
   return (
-    <>
-      <DetailLayout
-        aside={
-          <SubjectAside
-            ask={ask?.row}
-            questionsSource={syllabus.questionsSource}
-            subject={subject}
-          />
-        }
-        asideLabel={t("About this subject")}
-        bar={
-          <LearnPageBar back={{ href: hrefs.back, label: t("Plan") }} title={subject.name}>
-            {ask && <div className="contents min-[72rem]:hidden">{ask.bar}</div>}
-          </LearnPageBar>
-        }
-        data-slot="subject"
-      >
-        <DetailAside>
-          <SubjectHeader
-            fromMaterial={syllabus.fromMaterial}
-            kind={syllabus.kind}
-            sharedExams={syllabus.sharedExams}
-            subject={subject}
-          />
-          <SubjectCoverage className="min-[72rem]:hidden" labelled subject={subject} />
-          <NotPlannedCallout actions={actions} adjustHref={hrefs.adjust} subject={subject} />
-          <SubjectWrittenPractice
-            actions={actions}
-            practice={syllabus.writtenPractice}
-            subject={subject}
-          />
-        </DetailAside>
+    <DetailLayout
+      aside={
+        <SubjectAside ask={ask?.row} questionsSource={syllabus.questionsSource} subject={subject} />
+      }
+      asideLabel={t("About this subject")}
+      bar={
+        <LearnPageBar back={{ href: hrefs.back, label: t("Plan") }} title={subject.name}>
+          {ask && <div className="contents min-[72rem]:hidden">{ask.bar}</div>}
+        </LearnPageBar>
+      }
+      bottomBar={<SubjectBottomBar chapterHref={hrefs.chapter} subject={subject} />}
+      data-slot="subject"
+    >
+      <DetailAside>
+        <SubjectHeader
+          fromMaterial={syllabus.fromMaterial}
+          kind={syllabus.kind}
+          sharedExams={syllabus.sharedExams}
+          subject={subject}
+        />
+        <SubjectCoverage className="min-[72rem]:hidden" labelled subject={subject} />
+        <NotPlannedCallout actions={actions} adjustHref={hrefs.adjust} subject={subject} />
+        <SubjectWrittenPractice
+          actions={actions}
+          practice={syllabus.writtenPractice}
+          subject={subject}
+        />
+      </DetailAside>
 
-        <DetailContent>
-          <SubjectChapters
+      <DetailContent>
+        <SubjectChapters
+          chapterHref={hrefs.chapter}
+          chapters={subject.chapters}
+          mindMapsHref={hrefs.mindMaps?.(subject.key) ?? null}
+        />
+
+        {subject.topics.length > 0 && (
+          <TopicsSection
             chapterHref={hrefs.chapter}
-            chapters={subject.chapters}
-            mindMapsHref={hrefs.mindMaps?.(subject.key) ?? null}
+            fromMaterial={syllabus.fromMaterial}
+            subject={subject}
           />
+        )}
 
-          {subject.topics.length > 0 && (
-            <TopicsSection
-              chapterHref={hrefs.chapter}
-              fromMaterial={syllabus.fromMaterial}
-              subject={subject}
-            />
-          )}
-
-          <SubjectMatrix matrix={subject.matrix} />
-        </DetailContent>
-      </DetailLayout>
-      <SubjectBottomBar chapterHref={hrefs.chapter} subject={subject} />
-    </>
+        <SubjectMatrix matrix={subject.matrix} />
+      </DetailContent>
+    </DetailLayout>
   );
 }
