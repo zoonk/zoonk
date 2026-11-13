@@ -173,12 +173,6 @@ export function LearnSideNavigation(props: LearnNavigationProps) {
   );
 }
 
-/**
- * The bar's hairline, its padding around its 52px tabs, and the home indicator's inset: change it
- * with the bar.
- */
-export const ABOVE_BOTTOM_TABS_CLASS = "bottom-[calc(4rem+1px+env(safe-area-inset-bottom))]";
-
 /** Place it after `LearnShellMain`; toasts rise above it (`data-bottom-bar`). */
 export function LearnBottomNavigation({ activeTab, buddy, missions }: LearnNavigationProps) {
   const routes = useLearnRoutes();
