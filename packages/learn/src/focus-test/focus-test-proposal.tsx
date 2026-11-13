@@ -92,7 +92,7 @@ export function FocusTestProposal({
       </OnboardingHeading>
 
       <FocusSubjects rows={rows} />
-      <PlanEffectDiff effect={proposal.effect} />
+      <PlanEffectDiff dateKind="exam" effect={proposal.effect} />
 
       <OnboardingFooter>
         {failed && <ChangeSaveError />}

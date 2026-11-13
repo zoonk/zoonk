@@ -24,13 +24,16 @@ function useChoiceName() {
   const names: Record<BaseChoice, string> = {
     deep: t({
       description: "Choice to study a prerequisite with all its lessons.",
-      message: "Full lessons",
+      message: "Every lesson",
     }),
     essential: t({
       description: "Choice to study only the first, most important lessons of a prerequisite.",
-      message: "Key points",
+      message: "First lessons only",
     }),
-    quick: t("Quick lesson"),
+    quick: t({
+      description: "Choice to study a prerequisite as one short lesson.",
+      message: "One short lesson each",
+    }),
     skip: t("Skip"),
   };
 

@@ -9,7 +9,7 @@ import {
   type SlotItem,
   usePlanSuggestionSlot,
 } from "./plan-suggestion-context";
-import { usePlanChangeSentence } from "./use-change-sentence";
+import { usePlanChangeSentence, usePlanDateKind } from "./use-change-sentence";
 import { usePlanChange } from "./use-plan-change";
 
 export function PlanOfferSuggestion({
@@ -33,6 +33,7 @@ export function PlanOfferSuggestion({
 }) {
   const t = useExtracted();
   const sentence = usePlanChangeSentence();
+  const dateKind = usePlanDateKind();
   const { change, isPending } = usePlanChange();
   const { setResult } = usePlanSuggestionSlot();
 
@@ -54,7 +55,7 @@ export function PlanOfferSuggestion({
 
   return (
     <PlanChangeSuggestion item={item} title={title}>
-      {offer && <PlanEffectDiff effect={offer.effect} said={said} />}
+      {offer && <PlanEffectDiff dateKind={dateKind} effect={offer.effect} said={said} />}
 
       <SuggestionActions>
         {offer && canApply && (

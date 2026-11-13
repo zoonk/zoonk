@@ -2,13 +2,19 @@
 
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { useExtracted, useFormatter } from "next-intl";
+import { type GoalDateKind } from "../plan/goal-date-kind";
 import { toTopicWords } from "../syllabus/topic-number";
 
 export type PlanEffect = NonNullable<PlanChangeView["effect"]>;
 
 export type GoalDateMove = { after: string; before: string | null };
 
-export type ChangeOptions = { byDate?: boolean; goalDate?: GoalDateMove };
+export type ChangeOptions = {
+  byDate?: boolean;
+  /** Whose date the lessons are counted against; a card that can't tell names no date. */
+  dateKind?: GoalDateKind;
+  goalDate?: GoalDateMove;
+};
 
 export function getTopicNames(areas: PlanEffect["topicsLeftOut"]): string[] {
   return (areas ?? []).flatMap((area) => area.topics.map((topic) => toTopicWords(topic)));

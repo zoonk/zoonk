@@ -22,6 +22,7 @@ import {
 import { PlanChangeApplied } from "./plan-change-applied";
 import { type PlanChangeOutcome, usePlanScreen } from "./plan-context";
 import { type PlanPreviewState, currentPlanPreview } from "./plan-preview-state";
+import { usePlanDateKind } from "./use-change-sentence";
 import { usePlanChange } from "./use-plan-change";
 import { usePlanPreview, usePreviewBase } from "./use-plan-preview";
 
@@ -85,6 +86,7 @@ function BasesFooter({
   preview: PlanPreviewState;
 }) {
   const t = useExtracted();
+  const dateKind = usePlanDateKind();
   const saveButton = useRef<HTMLButtonElement>(null);
 
   // Try again gives way to the check: the keyboard waits on Save, which opens once it's done.
@@ -116,7 +118,7 @@ function BasesFooter({
     }
 
     return changes ? (
-      <PlanEffectDiff effect={changes.effect} />
+      <PlanEffectDiff dateKind={dateKind} effect={changes.effect} />
     ) : (
       <PlanEffectNote busy>{t("Checking what changes…")}</PlanEffectNote>
     );

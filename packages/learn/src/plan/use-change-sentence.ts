@@ -177,10 +177,14 @@ export function useChangeWords({ dateKind = "unknown" }: { dateKind?: GoalDateKi
   };
 }
 
+export function usePlanDateKind(): GoalDateKind {
+  const { goal } = usePlanScreen();
+  return getGoalDateKind(goal.kind);
+}
+
 /** On the Plan, where the goal's kind is known. */
 export function usePlanChangeWords() {
-  const { goal } = usePlanScreen();
-  return useChangeWords({ dateKind: getGoalDateKind(goal.kind) });
+  return useChangeWords({ dateKind: usePlanDateKind() });
 }
 
 export function usePlanChangeSentence() {

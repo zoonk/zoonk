@@ -17,7 +17,7 @@ import { useCanChooseFocus, useChooseFocus } from "./plan-focus";
 import { useFullCourse, useFullCourseText } from "./plan-full-course";
 import { type SlotItem, type SlotPreview, usePlanSuggestionSlot } from "./plan-suggestion-context";
 import { useStudyEverythingFromSuggestion } from "./study-everything";
-import { usePlanChangeSentence } from "./use-change-sentence";
+import { usePlanChangeSentence, usePlanDateKind } from "./use-change-sentence";
 import { usePlanChange } from "./use-plan-change";
 import { readTimeToCover } from "./use-time-to-cover";
 
@@ -86,6 +86,7 @@ export function OfferPreview({
   preview: SlotPreview;
 }) {
   const t = useExtracted();
+  const dateKind = usePlanDateKind();
   const { setPreview } = usePlanSuggestionSlot();
 
   if (preview.status === "loading") {
@@ -123,7 +124,12 @@ export function OfferPreview({
           {t("Your plan stays as it is.")}
         </PlanEffectNote>
       ) : (
-        <PlanEffectDiff className={EFFECT_ROOM_CLASS} effect={effect} goalDate={goalDate} />
+        <PlanEffectDiff
+          className={EFFECT_ROOM_CLASS}
+          dateKind={dateKind}
+          effect={effect}
+          goalDate={goalDate}
+        />
       )}
 
       <SuggestionActions>

@@ -16,7 +16,7 @@ import { useWrittenCadenceWords } from "./written-cadence";
 
 type DifficultyBias = PlanView["steering"]["difficultyBias"];
 
-export function useDifficultySentence() {
+function useDifficultySentence() {
   const t = useExtracted();
 
   return (bias: DifficultyBias): string => {
@@ -76,7 +76,9 @@ function useAreaStatement() {
 
     switch (operation.kind) {
       case "focusAreas":
-        return count > 0 ? t("Your focus: {subjects}.", { subjects }) : t("Your plan has no focus.");
+        return count > 0
+          ? t("Your focus: {subjects}.", { subjects })
+          : t("Your plan has no focus.");
       case "reduceAreas":
         return t("Less time for {subjects}.", { subjects });
       case "skipAreas":
@@ -114,13 +116,16 @@ function useBaseChoicesStatement() {
 
     const parts = [
       count("deep") > 0 &&
-        t("{count, plural, one {# full lessons} other {# full lessons}}", { count: count("deep") }),
-      count("essential") > 0 &&
-        t("{count, plural, one {# key points} other {# key points}}", {
-          count: count("essential"),
+        t("{count, plural, one {# with every lesson} other {# with every lesson}}", {
+          count: count("deep"),
         }),
+      count("essential") > 0 &&
+        t(
+          "{count, plural, one {# with the first lessons only} other {# with the first lessons only}}",
+          { count: count("essential") },
+        ),
       count("quick") > 0 &&
-        t("{count, plural, one {# quick lesson} other {# quick lessons}}", {
+        t("{count, plural, one {# with one short lesson} other {# with one short lesson}}", {
           count: count("quick"),
         }),
       count("skip") > 0 &&

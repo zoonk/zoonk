@@ -138,7 +138,7 @@ function ChoicePicked({ change, onUndone }: { change: PlanChangeView; onUndone: 
 
       <SuggestionContent>
         <SuggestionResult>{sentence(change)}</SuggestionResult>
-        <PlanEffectDiff effect={change.effect} />
+        <PlanEffectDiff dateKind="exam" effect={change.effect} />
         {undoButton && <SuggestionActions>{undoButton}</SuggestionActions>}
         {failed && <SuggestionSaveError />}
       </SuggestionContent>

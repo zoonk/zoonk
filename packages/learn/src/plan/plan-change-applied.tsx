@@ -7,7 +7,7 @@ import { type LucideIcon, Undo2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
 import { usePlanScreen } from "./plan-context";
-import { useAppliedLine, usePlanChangeSentence } from "./use-change-sentence";
+import { useAppliedLine, usePlanChangeSentence, usePlanDateKind } from "./use-change-sentence";
 import { useUndoChange } from "./use-undo-change";
 
 export function PlanChangeSummary({
@@ -23,6 +23,7 @@ export function PlanChangeSummary({
   const t = useExtracted();
   const sentence = usePlanChangeSentence();
   const appliedLine = useAppliedLine();
+  const dateKind = usePlanDateKind();
   const { plan } = usePlanScreen();
   // A choice that sets back what the latest change set is its Undo (see `changeGoalPlan`).
   const undone = change.status === "undone";
@@ -37,7 +38,7 @@ export function PlanChangeSummary({
         <p className="font-medium text-pretty">
           {undone ? t("Undone. Your plan is back as it was.") : sentence(change)}
         </p>
-        {!undone && <PlanEffectDiff byDate={byDate} effect={change.effect} />}
+        {!undone && <PlanEffectDiff byDate={byDate} dateKind={dateKind} effect={change.effect} />}
         {!undone && (
           <p className="text-muted-foreground text-sm">{appliedLine(change.todaySession)}</p>
         )}

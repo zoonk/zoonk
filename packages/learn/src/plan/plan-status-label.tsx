@@ -29,7 +29,7 @@ export function usePlanStatusText() {
       case "finished":
         return t("Finished");
       case "needsAdjusting":
-        return t("Doesn't fit");
+        return t("Not enough time");
       case "onTrack":
         return t("Up to date");
       case "pastDate":

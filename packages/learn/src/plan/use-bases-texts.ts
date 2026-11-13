@@ -18,12 +18,12 @@ export function useAdviceText() {
 
   return (recommended: RecommendedBases): string => {
     if (recommended === "deep") {
-      return t("We recommend full lessons. Your time covers them.");
+      return t("We recommend every lesson. Your time covers them.");
     }
 
     return recommended === "quick"
-      ? t("We recommend a quick lesson each, so there's time for the rest.")
-      : t("We recommend the key points.");
+      ? t("We recommend one short lesson each, so there's time for the rest.")
+      : t("We recommend the first lessons only.");
   };
 }
 
@@ -53,14 +53,14 @@ export function useSummaryText() {
 
     if (shared === "deep") {
       return t(
-        "{count, plural, one {# prerequisite} other {# prerequisites}} · full lessons · {time}",
+        "{count, plural, one {# prerequisite} other {# prerequisites}} · every lesson · {time}",
         values,
       );
     }
 
     if (shared === "quick") {
       return t(
-        "{count, plural, one {# prerequisite} other {# prerequisites}} · quick lesson · {time}",
+        "{count, plural, one {# prerequisite} other {# prerequisites}} · one short lesson each · {time}",
         values,
       );
     }
@@ -70,7 +70,7 @@ export function useSummaryText() {
     }
 
     return t(
-      "{count, plural, one {# prerequisite} other {# prerequisites}} · key points · {time}",
+      "{count, plural, one {# prerequisite} other {# prerequisites}} · first lessons only · {time}",
       values,
     );
   };

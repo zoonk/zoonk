@@ -25,7 +25,11 @@ import {
 import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
 import { useAppliedLine, useOfficialDateLine } from "../plan/use-change-sentence";
 import { getChangeMark } from "./today-change-mark";
-import { useTodayChangeWords, useTodayCountsByDate } from "./today-change-sentence";
+import {
+  useTodayChangeWords,
+  useTodayCountsByDate,
+  useTodayDateKind,
+} from "./today-change-sentence";
 import { useTodayScreen } from "./today-context";
 import { FallingBehindNotice } from "./today-falling-behind";
 import { useShownChange } from "./use-shown-change";
@@ -191,6 +195,7 @@ function PlanChangeNotice({
   const answeredText = useAnsweredText();
   const officialDate = useOfficialDateLine()(change);
   const byDate = useTodayCountsByDate()(change);
+  const dateKind = useTodayDateKind();
   const result = answered ? answeredText(answered) : null;
 
   const after = answered && (
@@ -217,7 +222,7 @@ function PlanChangeNotice({
       <SuggestionContent>
         <SuggestionHeader>{words.title}</SuggestionHeader>
         {words.why && <SuggestionDescription>{words.why}</SuggestionDescription>}
-        <PlanEffectDiff byDate={byDate} effect={change.effect} />
+        <PlanEffectDiff byDate={byDate} dateKind={dateKind} effect={change.effect} />
         {officialDate && <SuggestionDescription>{officialDate}</SuggestionDescription>}
 
         {result ? (

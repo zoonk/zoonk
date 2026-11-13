@@ -3,6 +3,7 @@
 import { useExtracted } from "next-intl";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatWeekday } from "../_utils/use-format-weekday";
+import { type GoalDateKind } from "../plan/goal-date-kind";
 import {
   type ChangeOptions,
   type GoalDateMove,
@@ -17,11 +18,64 @@ const NAMED_IN_SENTENCE = 3;
 
 type Consequence = { key: string; text: string; whole: boolean };
 
+/** What a learner studies before their date, said for them and never for the lessons. */
+function useLessonCountText() {
+  const t = useExtracted();
+
+  return {
+    fewer: (count: number, dateKind: GoalDateKind): string => {
+      if (dateKind === "exam") {
+        return t(
+          "{count, plural, one {You'll study # fewer lesson before your exam.} other {You'll study # fewer lessons before your exam.}}",
+          { count },
+        );
+      }
+
+      return dateKind === "goal"
+        ? t(
+            "{count, plural, one {You'll study # fewer lesson before your end date.} other {You'll study # fewer lessons before your end date.}}",
+            { count },
+          )
+        : t(
+            "{count, plural, one {You'll study # fewer lesson.} other {You'll study # fewer lessons.}}",
+            { count },
+          );
+    },
+    more: (count: number, dateKind: GoalDateKind): string => {
+      if (dateKind === "exam") {
+        return t(
+          "{count, plural, one {You'll study # more lesson before your exam.} other {You'll study # more lessons before your exam.}}",
+          { count },
+        );
+      }
+
+      return dateKind === "goal"
+        ? t(
+            "{count, plural, one {You'll study # more lesson before your end date.} other {You'll study # more lessons before your end date.}}",
+            { count },
+          )
+        : t(
+            "{count, plural, one {You'll study # more lesson.} other {You'll study # more lessons.}}",
+            { count },
+          );
+    },
+  };
+}
+
 function useLessonConsequence() {
   const t = useExtracted();
   const listNames = useNames();
+  const lessonCount = useLessonCountText();
 
-  return function lessonConsequence(effect: PlanEffect, byDate: boolean): Consequence | null {
+  return function lessonConsequence({
+    byDate,
+    dateKind,
+    effect,
+  }: {
+    byDate: boolean;
+    dateKind: GoalDateKind;
+    effect: PlanEffect;
+  }): Consequence | null {
     const topicsOut = getTopicNames(effect.topicsLeftOut);
     const topicsIn = getTopicNames(effect.topicsAdded);
     const { added, removed } = countLessons(effect, byDate);
@@ -43,10 +97,7 @@ function useLessonConsequence() {
     if (byDate && removed > 0) {
       return {
         key: "notInPlan",
-        text: t(
-          "{count, plural, one {# lesson won't be in your plan.} other {# lessons won't be in your plan.}}",
-          { count: removed },
-        ),
+        text: lessonCount.fewer(removed, dateKind),
         whole: (effect.lessonsLeftOut ?? []).length + (effect.unwrittenLeftOut ?? []).length === 0,
       };
     }
@@ -66,14 +117,7 @@ function useLessonConsequence() {
     }
 
     return byDate && added > 0
-      ? {
-          key: "added",
-          text: t(
-            "{count, plural, one {# more lesson will be in your plan.} other {# more lessons will be in your plan.}}",
-            { count: added },
-          ),
-          whole: true,
-        }
+      ? { key: "added", text: lessonCount.more(added, dateKind), whole: true }
       : null;
   };
 }
@@ -82,10 +126,7 @@ function useEndConsequence() {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
 
-  return function endConsequence(
-    effect: PlanEffect,
-    goalDate?: GoalDateMove,
-  ): Consequence | null {
+  return function endConsequence(effect: PlanEffect, goalDate?: GoalDateMove): Consequence | null {
     const end = getShownEndMove(effect);
 
     // A change that moves the goal's own date already says the date in its title.
@@ -179,13 +220,13 @@ export function usePlanChangeConsequence() {
 
   return function planChangeConsequence(
     effect: PlanEffect | null,
-    { byDate = true, goalDate }: ChangeOptions = {},
+    { byDate = true, dateKind = "unknown", goalDate }: ChangeOptions = {},
   ): Consequence | null {
     if (!effect) {
       return null;
     }
 
-    const lessons = lessonConsequence(effect, byDate);
+    const lessons = lessonConsequence({ byDate, dateKind, effect });
 
     if (lessons?.key === "notInPlan") {
       return lessons;

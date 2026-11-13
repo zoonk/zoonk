@@ -1,7 +1,7 @@
 "use client";
 
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
-import { getGoalDateKind } from "../plan/goal-date-kind";
+import { type GoalDateKind, getGoalDateKind } from "../plan/goal-date-kind";
 import { useChangeWords } from "../plan/use-change-sentence";
 import { useTodayScreen } from "./today-context";
 
@@ -25,7 +25,11 @@ export function useTodayCountsByDate() {
     change.status === "proposed" || countsByDate(change.effect, dateAhead);
 }
 
-export function useTodayChangeWords() {
+export function useTodayDateKind(): GoalDateKind {
   const { today } = useTodayScreen();
-  return useChangeWords({ dateKind: getGoalDateKind(today.goal.kind) });
+  return getGoalDateKind(today.goal.kind);
+}
+
+export function useTodayChangeWords() {
+  return useChangeWords({ dateKind: useTodayDateKind() });
 }

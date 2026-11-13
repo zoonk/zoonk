@@ -22,6 +22,7 @@ import {
 import { useLearnAnalytics } from "../learn-context";
 import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
 import { useAppliedLine } from "../plan/use-change-sentence";
+import { useTodayDateKind } from "./today-change-sentence";
 import { useTodayScreen } from "./today-context";
 
 type InsightAnswer = "accepted" | "dismissed";
@@ -144,6 +145,7 @@ function InsightActions({
 
 function InsightNotice({ insight }: { insight: MemoryInsightView }) {
   const t = useExtracted();
+  const dateKind = useTodayDateKind();
   const answeredText = useAnsweredText(insight);
   const { answer, isPending, state } = useInsightAnswer(insight);
   const result = state && "answer" in state ? answeredText(state.answer) : null;
@@ -169,7 +171,7 @@ function InsightNotice({ insight }: { insight: MemoryInsightView }) {
         <SuggestionHeader>{t("From your recent answers")}</SuggestionHeader>
         <SuggestionDescription className="text-foreground">{insight.message}</SuggestionDescription>
         {insight.planChange?.status === "proposed" && (
-          <PlanEffectDiff effect={insight.planChange.effect} />
+          <PlanEffectDiff dateKind={dateKind} effect={insight.planChange.effect} />
         )}
 
         {result ? (

@@ -3,6 +3,7 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { QuietDisclosure } from "../_components/quiet-disclosure";
+import { type GoalDateKind } from "../plan/goal-date-kind";
 import { type GoalDateMove, type PlanEffect } from "./change-names";
 import { usePlanChangeConsequence } from "./use-change-consequence";
 import { type ChangeRow, usePlanChangeRows } from "./use-change-rows";
@@ -75,6 +76,7 @@ function namesAdded(effect: PlanEffect | null): boolean {
 export function PlanEffectDiff({
   byDate = true,
   className,
+  dateKind,
   effect,
   goalDate,
   said,
@@ -82,6 +84,7 @@ export function PlanEffectDiff({
 }: {
   byDate?: boolean;
   className?: string;
+  dateKind?: GoalDateKind;
   effect: PlanEffect | null;
   goalDate?: GoalDateMove;
   /** What the screen's title already states, so the same count isn't said twice under it. */
@@ -90,7 +93,7 @@ export function PlanEffectDiff({
   summary?: boolean;
 }) {
   const t = useExtracted();
-  const found = usePlanChangeConsequence()(effect, { byDate, goalDate });
+  const found = usePlanChangeConsequence()(effect, { byDate, dateKind, goalDate });
   const repeatsTitle = said === "lessonsAdded" && found?.key === "added" && !namesAdded(effect);
   const consequence = summary && !repeatsTitle ? found : null;
   const rows = usePlanChangeRows()(effect, { byDate, goalDate });
