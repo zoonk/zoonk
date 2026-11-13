@@ -1069,9 +1069,9 @@ msgid "Switch"
 msgstr "Değiştir"
 
 #: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
-msgctxt "74ApEM"
-msgid "That's as many goals as you can study at once without Plus. Pause another goal to resume this one."
-msgstr "Plus olmadan aynı anda çalışabileceğin hedef sınırına ulaştın. Bu hedefe devam etmek için başka bir hedefi duraklat."
+msgctxt "DuuVCx"
+msgid "That's as many goals as you can study at once. Pause another goal to resume this one."
+msgstr "Aynı anda çalışabileceğin hedef sınırına ulaştın. Bu hedefe devam etmek için başka bir hedefi duraklat."
 
 #: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
 msgctxt "3y9DGg"
