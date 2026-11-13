@@ -51,6 +51,12 @@ export function ModelLink({
 const COLUMN_LABELS = ["More columns", "Fewer columns"];
 
 /**
+ * An empty last column takes the room the columns don't need, so every column is as wide as its
+ * content and "More columns" adds columns without moving the ones already there.
+ */
+const SPARE_ROOM_CLASS = "w-full p-0";
+
+/**
  * A number column keeps its label on the numbers' edge, so its arrow goes before the label. The
  * arrow keeps its room when the column isn't the sorted one, so sorting moves no column.
  */
@@ -170,6 +176,7 @@ export function LeaderboardTable<Entry extends SortableEntry & { modelId: string
                 onSort={handleSort}
               />
             ))}
+            <TableHead aria-hidden="true" className={SPARE_ROOM_CLASS} />
           </TableRow>
         </TableHeader>
 
@@ -187,6 +194,7 @@ export function LeaderboardTable<Entry extends SortableEntry & { modelId: string
                   {column.cell(entry, index)}
                 </TableCell>
               ))}
+              <TableCell aria-hidden="true" className={SPARE_ROOM_CLASS} />
             </TableRow>
           ))}
         </TableBody>

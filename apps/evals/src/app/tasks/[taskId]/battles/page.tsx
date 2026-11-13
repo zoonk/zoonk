@@ -30,7 +30,13 @@ export async function generateMetadata({ params }: BattlesRouteProps): Promise<M
 async function BattlesTaskBreadcrumb({ params }: BattlesRouteProps) {
   const { task, taskId } = await getTaskRouteFromParams(params);
 
-  return <TaskLinkBreadcrumb taskId={taskId} taskName={task.name} />;
+  return (
+    <>
+      <TaskLinkBreadcrumb taskId={taskId} taskName={task.name} />
+      <BreadcrumbSeparator />
+      <BattlesPageBreadcrumb />
+    </>
+  );
 }
 
 async function BattleResults({ params }: BattlesRouteProps) {
@@ -49,8 +55,6 @@ export default function BattlesPage({ params }: BattlesRouteProps) {
         <Suspense fallback={<AppBreadcrumbItemSkeleton />}>
           <BattlesTaskBreadcrumb params={params} />
         </Suspense>
-        <BreadcrumbSeparator />
-        <BattlesPageBreadcrumb />
       </AppBreadcrumb>
 
       <ContainerHeader>

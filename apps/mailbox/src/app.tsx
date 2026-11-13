@@ -191,7 +191,7 @@ function EmailPreview({ email }: { email: CapturedEmail }) {
             title={`${email.subject} email body`}
           />
         ) : (
-          <pre className="border-border bg-background m-0 min-h-95 w-full overflow-auto rounded-xl border p-7 font-mono text-sm leading-normal whitespace-pre-wrap md:min-h-105">
+          <pre className="border-border bg-background m-0 min-h-95 w-full overflow-auto rounded-xl border p-5 font-sans text-sm leading-normal whitespace-pre-wrap md:min-h-105">
             {email.textBody || copy.noBody}
           </pre>
         )}
