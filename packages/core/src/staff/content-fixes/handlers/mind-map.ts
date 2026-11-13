@@ -1,6 +1,7 @@
 import { mindMapStructureSchema } from "@zoonk/ai/tasks/mind-maps/schema";
 import { sql } from "@zoonk/db";
-import { oweFollowUps } from "../../../follow-ups/owe-follow-ups";
+import { after as afterResponse } from "next/server";
+import { startMindMapRedraw } from "../../../follow-ups/follow-up-starter";
 import { PRIVATE_CONTENT, toJson } from "../_utils/resolved-change";
 import { sharedRowHandler } from "./shared-row";
 
@@ -19,9 +20,9 @@ export const mindMapSet = sharedRowHandler({
           (row.chapter.ownerId || row.chapter.visibility !== "public"
             ? PRIVATE_CONTENT
             : undefined) ||
-          (row.status === "completed" || row.status === "failed"
-            ? undefined
-            : "Wait for the current mind-map run before fixing its text."),
+          (row.status === "running"
+            ? "Wait for the current mind-map run before fixing its text."
+            : undefined),
         row: { structure: toJson(row.structure) },
         unit: { id: row.chapterId, kind: "chapter" },
       }
@@ -29,7 +30,7 @@ export const mindMapSet = sharedRowHandler({
   },
   model: "ChapterMindMap",
   rules:
-    "Completed or failed maps of public chapters only. Keep branches, points, comparison columns and drawing descriptions. The outline changes and a durable workflow redraws the picture; old readers keep their copy.",
+    "Non-running maps of public chapters only. Keep branches, points, comparison columns and drawing descriptions. The outline changes and a durable workflow redraws the picture; old readers keep their copy.",
   table: sql`chapter_mind_maps`,
   validate: (row, next) => {
     const before = mindMapStructureSchema.safeParse(row.structure);
@@ -49,34 +50,22 @@ export const mindMapSet = sharedRowHandler({
       ? null
       : "Keep the map's structure and drawing descriptions.";
   },
-  write: async (tx, id, values, context) => {
+  write: async (tx, id, values) => {
     const row = await tx.chapterMindMap.update({
       data: {
         imageHeight: null,
         imageUrl: null,
         imageWidth: null,
-        status: "pending",
+        redrawAttemptedAt: null,
+        redrawOwedAt: new Date(),
+        runId: null,
+        status: "completed",
         structure: mindMapStructureSchema.parse(values.structure),
         thumbnailUrl: null,
       },
       where: { id },
     });
 
-    const fix = await tx.contentFix.findUniqueOrThrow({
-      select: { deciderId: true },
-      where: { id: context.fixId },
-    });
-
-    if (!fix.deciderId) {
-      throw new Error("A redraw needs the staff approver.");
-    }
-
-    await oweFollowUps({
-      db: tx,
-      followUps: [
-        { input: { chapterId: row.chapterId, fixId: context.fixId }, kind: "redrawChapterMindMap" },
-      ],
-      userId: fix.deciderId,
-    });
+    afterResponse(() => startMindMapRedraw(row.chapterId));
   },
 });

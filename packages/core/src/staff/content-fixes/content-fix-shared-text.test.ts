@@ -298,16 +298,6 @@ describe.each(models)("shared %s fixes", (model) => {
       status: "decided",
     });
 
-    if (model === "ChapterMindMap") {
-      const owed = await prisma.followUp.findFirst({ where: { kind: "redrawChapterMindMap" } });
-
-      if (!owed) {
-        throw new Error("Missing owed redraw");
-      }
-
-      await prisma.chapterMindMap.update({ data: { status: "failed" }, where: { id: row.id } });
-    }
-
     await signInProposer();
     const reverted = await revertFix({ fixId: fix.id, reason: "Restore original" });
     expect(reverted.status).toBe("proposed");
