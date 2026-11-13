@@ -195,10 +195,8 @@ export function MissionsCard({
     >
       <div className={cn(TITLE_ROW_CLASS, "items-start gap-y-1")}>
         {/* Centers on the title and its count, whatever the reward beside them takes. */}
-        <div className="flex items-center gap-3 *:last:min-w-0">
-          {/* Hangs 4px out at each side, so it centers on the rows' marks and the title starts with their
-          names, and 2px over and under, so a one-line title keeps the reward's baseline. */}
-          {showBuddy && <BuddyArt buddy={buddy} className="-mx-1 -my-0.5 size-6" view="face" />}
+        <div className="flex items-center gap-2.5 *:last:min-w-0">
+          {showBuddy && <BuddyArt buddy={buddy} className="size-6" view="face" />}
           <MissionsHeading
             fold={
               foldRows ? { listId, onToggle: () => setUnfolded((value) => !value), open } : null
