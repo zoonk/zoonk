@@ -55,9 +55,9 @@ function useStatusError() {
       outcome === "limitReached"
         ? t({
             description:
-              "Shown when a free learner tries to resume a paused goal while following as many goals as the free plan allows at once. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress. “Plus” is the name of the paid plan, not the word “more”.",
+              "Shown when a learner without a subscription tries to resume a paused goal while studying as many goals at once as they can. This counts goals studied at the same time, not new goals per day or month. Pausing a goal keeps its progress.",
             message:
-              "You're following as many goals as the free plan allows. Pause another goal to resume this one, or get Plus to follow more.",
+              "That's all the goals you can study at once. Pause another to resume this one, or subscribe to study more.",
           })
         : saveError,
     );
