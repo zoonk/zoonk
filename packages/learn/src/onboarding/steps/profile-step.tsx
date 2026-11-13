@@ -157,15 +157,10 @@ function ProfileStep({
       }}
       pending={pending}
       skipLabel={question.id === "addressForm" ? exclusiveLabels.ratherNot : undefined}
-      subject={
-        progress.total === 1
-          ? t("About you")
-          : t({
-              description: "Which of the questions about the learner this is, such as 4 of 10.",
-              message: "About you · {current, number} of {total, number}",
-              values: progress,
-            })
+      position={
+        progress.total === 1 ? undefined : t("{current, number} of {total, number}", progress)
       }
+      subject={t("About you")}
       title={title}
     >
       <ProfileQuestionBody

@@ -30,7 +30,7 @@ test("questions about the learner lead to the plan, and a skipped one comes back
   await page.goto(`/start/${goal.id}`);
 
   await expect(page.getByRole("heading", { name: "What do you do now?" })).toBeVisible();
-  await expect(page.getByText("About you · 1 of 10")).toBeVisible();
+  await expect(page.getByText("1 of 10", { exact: true })).toBeVisible();
 
   const work = page.getByRole("radio", { exact: true, name: "I work" });
   await expectHydrated(work);
@@ -72,7 +72,7 @@ test("questions about the learner lead to the plan, and a skipped one comes back
     page.getByRole("heading", { name: "Which apps and tools do you use most?" }),
   ).toBeVisible();
 
-  await expect(page.getByText("About you · 1 of 9")).toBeVisible();
+  await expect(page.getByText("1 of 9", { exact: true })).toBeVisible();
 });
 
 function createGoalAtConditions(userId: string) {

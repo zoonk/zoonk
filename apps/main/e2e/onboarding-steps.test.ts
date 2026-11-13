@@ -58,7 +58,7 @@ test.describe("Refreshing mid-onboarding", () => {
 
     const confirm = page.getByRole("alertdialog", { name: "Start over?" });
     await confirm.getByRole("button", { name: "Start over" }).click();
-    await expect(page.getByRole("heading", { name: "What do you want to achieve?" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "What's your goal?" })).toBeVisible();
 
     await expect
       .poll(async () => {
