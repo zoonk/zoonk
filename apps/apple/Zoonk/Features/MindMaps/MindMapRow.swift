@@ -191,11 +191,7 @@ struct MindMapRow: View {
           String(
             localized: "As text", table: "MindMaps",
             comment: "A map on the mind maps page whose picture failed, so it opens as its outline")
-        case .plusRequired:
-          String(
-            localized: "Plus", table: "Subscriptions",
-            comment: "Mark on a feature that comes with Zoonk Plus")
-        case .create, .ready: nil
+        case .create, .ready, .plusRequired: nil
         default: waitLine ?? stateLine(ready: nil)
         }
 

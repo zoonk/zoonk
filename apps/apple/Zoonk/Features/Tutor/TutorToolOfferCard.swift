@@ -327,20 +327,19 @@ struct TutorToolOfferCard: View {
         action: .open(open, .memory))
     case .case14(let plus):
       return Content(
-        title: Text("Plus", tableName: "Tutor", comment: "The buddy offers the subscription"),
+        title: Text(
+          "Subscription", tableName: "Tutor", comment: "The buddy offers the subscription page"),
         description: plus.subscribed
           ? Text(
             "Your plan and its billing.", tableName: "Tutor",
             comment: "What the subscription page shows a subscriber")
           : Text(
-            "What Plus includes and its price.", tableName: "Tutor",
+            "What it includes and its price.", tableName: "Tutor",
             comment: "What the subscription page shows"),
         action: .open(
           plus.subscribed
             ? Text("Manage", tableName: "Tutor", comment: "Opens the learner's subscription")
-            : Text(
-              "See Plus", tableName: "Tutor",
-              comment: "Opens the Zoonk Plus subscription; Plus is its name, not \"more\""),
+            : Text("Subscribe", tableName: "Tutor", comment: "Opens the subscription page"),
           .subscription))
     }
   }

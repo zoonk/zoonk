@@ -584,7 +584,7 @@ private struct ListeningMessage: View {
       return nil
     }
 
-    return limit?.message ?? audioDidntPlay
+    return limit?.helpWords().said ?? audioDidntPlay
   }
 
   private func play() {

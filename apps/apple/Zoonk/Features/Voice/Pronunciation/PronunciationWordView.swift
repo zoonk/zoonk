@@ -90,7 +90,7 @@ private struct ListenButtons: View {
         }
       }
     }
-    .announcesStatus(limit(state)?.message)
+    .announcesStatus(limit(state)?.helpWords().said)
   }
 
   private func limit(_ state: SpeechPlayer.State) -> HelpLimit? {
