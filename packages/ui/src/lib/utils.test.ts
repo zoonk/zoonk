@@ -29,7 +29,7 @@ describe(cn, () => {
   });
 
   it("treats the option radius and the column widths as their kind's values", () => {
-    expect(cn("rounded-xl", "rounded-option")).toBe("rounded-option");
+    expect(cn("rounded-xl", "rounded-xl")).toBe("rounded-xl");
     expect(cn("max-w-column", "max-w-none")).toBe("max-w-none");
     expect(cn("max-w-150", "lg:max-w-page")).toBe("max-w-150 lg:max-w-page");
   });

@@ -22,7 +22,7 @@ export function StartNote({ children, className }: { children: ReactNode; classN
   return (
     <p
       className={cn(
-        "text-muted-foreground mt-5 flex gap-2 text-[13px] leading-snug sm:text-sm",
+        "text-muted-foreground text-compact mt-5 flex gap-2 leading-snug sm:text-sm",
         className,
       )}
     >
@@ -54,7 +54,7 @@ async function QuestionScreen({
 
   return (
     <>
-      <p className="text-muted-foreground flex items-center gap-1.5 text-[13px] font-medium">
+      <p className="text-muted-foreground text-compact flex items-center gap-1.5 font-medium">
         <SparklesIcon aria-hidden="true" className="size-3.5 flex-none" />
         {screen.guess
           ? t({
@@ -67,13 +67,13 @@ async function QuestionScreen({
 
       {screen.context && (
         <RichTextBlocks
-          className="text-muted-foreground mt-3 text-[15px] leading-relaxed sm:text-base"
+          className="text-muted-foreground text-reading mt-3 leading-relaxed sm:text-base"
           text={screen.context}
         />
       )}
 
       <RichTextBlocks
-        className="mt-2 mb-5 text-[19px] leading-snug font-[560] tracking-[-0.015em] text-pretty"
+        className="mt-2 mb-5 text-xl leading-snug font-[560] tracking-[-0.015em] text-pretty"
         text={screen.question}
       />
 
@@ -104,7 +104,7 @@ async function ContinueLesson({ href, secondary }: { href: string; secondary: bo
 
   return (
     <>
-      <p className="text-muted-foreground mb-5 text-[15px] leading-relaxed text-pretty sm:text-base">
+      <p className="text-muted-foreground text-reading mb-5 leading-relaxed text-pretty sm:text-base">
         {t("You've started this lesson. It picks up where you left off.")}
       </p>
 

@@ -41,7 +41,7 @@ function PlanlessHeader({
 }
 
 const SETUP_TITLE_ID = "journey-setup-title";
-const SETUP_TITLE_CLASS = "text-[0.9375rem] font-medium";
+const SETUP_TITLE_CLASS = "text-reading font-medium";
 const SETUP_ACTION_CLASS = "mt-2 w-full md:w-auto";
 
 function SetupPaused({

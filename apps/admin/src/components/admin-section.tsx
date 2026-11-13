@@ -18,7 +18,7 @@ export function AdminSection({
         <div className="flex min-w-0 flex-col gap-0.5">
           <h2 className="text-sm leading-5 font-semibold">{title}</h2>
           {description ? (
-            <p className="text-muted-foreground text-[0.8125rem] text-pretty">{description}</p>
+            <p className="text-muted-foreground text-compact text-pretty">{description}</p>
           ) : null}
         </div>
         {action}

@@ -3,6 +3,7 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { SMALL_CHEVRON_CLASS } from "../_components/list-group";
 import { MeterPart, MeterParts } from "../_components/meter";
 import { StatusMark } from "../_components/status-mark";
 import { TITLE_ROW_CLASS, TRUNCATED_TITLE_CLASS } from "../_components/title-row";
@@ -81,7 +82,7 @@ function RoadmapCompact({
           </span>
           <span className="text-muted-foreground flex items-center gap-0.5 font-mono tabular-nums">
             {phaseWhen(position.phase)}
-            {onOpen && <ChevronRightIcon aria-hidden="true" className="size-3.5" />}
+            {onOpen && <ChevronRightIcon aria-hidden="true" className={SMALL_CHEVRON_CLASS} />}
           </span>
         </span>
       )}
@@ -94,7 +95,7 @@ function RoadmapCompact({
               total: phases.length,
             })}
           </span>
-          <ChevronRightIcon aria-hidden="true" className="size-3.5 shrink-0" />
+          <ChevronRightIcon aria-hidden="true" className={SMALL_CHEVRON_CLASS} />
         </span>
       )}
     </>
@@ -112,7 +113,7 @@ function RoadmapCompact({
     <button
       aria-haspopup="dialog"
       className={cn(
-        "focus-visible:ring-ring/50 hover:bg-muted/70 -mx-2.5 flex min-h-11 flex-col gap-2 rounded-[0.625rem] px-2.5 py-1.5 text-left transition-colors outline-none focus-visible:ring-[3px]",
+        "focus-visible:ring-ring/50 hover:bg-muted/70 -mx-2.5 flex min-h-11 flex-col gap-2 rounded-lg px-2.5 py-1.5 text-left transition-colors outline-none focus-visible:ring-[3px]",
         className,
       )}
       data-slot="plan-roadmap"

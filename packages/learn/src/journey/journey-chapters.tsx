@@ -5,10 +5,11 @@ import {
   type PlanPhaseCheckpointView,
 } from "@zoonk/core/plans/view-contract";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronRightIcon, MinusIcon, PlusIcon } from "lucide-react";
+import { MinusIcon, PlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { ChapterMark } from "../_components/chapter-mark";
+import { ListRowChevron } from "../_components/list-group";
 import { LearnLink } from "../learn-link";
 import { FarTopicSheet } from "../topic-outline/far-topic-sheet";
 import { useTopicOutlineActions } from "../topic-outline/topic-outline-actions";
@@ -148,7 +149,7 @@ function ChapterRow({
       href={links.chapter(chapter.chapterId)}
     >
       {content}
-      <ChevronRightIcon aria-hidden="true" className="text-muted-foreground/60 size-4 shrink-0" />
+      <ListRowChevron />
     </LearnLink>
   );
 }

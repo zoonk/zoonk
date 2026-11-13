@@ -1,10 +1,10 @@
 "use client";
 
 import { type ProgressView } from "@zoonk/core/view-models/progress/get";
-import { ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { BigQuantity } from "../../_components/big-quantity";
 import { KindDot, KindMark } from "../../_components/kind-tile";
+import { ListRowChevron } from "../../_components/list-group";
 import { Meter, MeterFill } from "../../_components/meter";
 import { PlusMark } from "../../_components/plus-lock";
 import { QuietDisclosure } from "../../_components/quiet-disclosure";
@@ -126,11 +126,11 @@ function StillNeededRow({ examHref, item }: { examHref: string | null; item: Sti
   if (item.key === "test" && item.kind === "mock" && examHref) {
     return (
       <LearnLink
-        className="hover:bg-muted/70 focus-visible:ring-ring/50 -mx-2.5 flex min-h-12 items-center gap-3 rounded-[0.625rem] px-2.5 py-1.5 transition-colors outline-none focus-visible:ring-[3px]"
+        className="hover:bg-muted/70 focus-visible:ring-ring/50 -mx-2.5 flex min-h-12 items-center gap-3 rounded-lg px-2.5 py-1.5 transition-colors outline-none focus-visible:ring-[3px]"
         href={examHref}
       >
         {content}
-        <ChevronRightIcon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
+        <ListRowChevron />
       </LearnLink>
     );
   }

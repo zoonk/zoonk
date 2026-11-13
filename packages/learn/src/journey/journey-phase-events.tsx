@@ -3,9 +3,9 @@
 import { type PlanPhaseCheckpointView } from "@zoonk/core/plans/view-contract";
 import { Trickster } from "@zoonk/ui/components/trickster";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { KindMark } from "../_components/kind-tile";
+import { ListRowChevron } from "../_components/list-group";
 import { PlusMark } from "../_components/plus-lock";
 import { MarkedText, TITLE_ROW_CLASS } from "../_components/title-row";
 import { useFormatIsoDate } from "../_utils/iso-date";
@@ -16,7 +16,7 @@ import { PlanDateText, useFormatPlanDate } from "../plan/plan-date-text";
 import { type JourneyPathLinks } from "./journey-links";
 
 export const PATH_ROW_CLASS =
-  "-mx-2.5 flex min-h-11 w-[calc(100%+1.25rem)] items-center gap-3 rounded-[0.625rem] px-2.5 py-1.5 text-left text-sm transition-colors outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50";
+  "-mx-2.5 flex min-h-11 w-[calc(100%+1.25rem)] items-center gap-3 rounded-lg px-2.5 py-1.5 text-left text-sm transition-colors outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50";
 
 export const PATH_ROW_LEADING_CLASS = "flex size-4 shrink-0 items-center justify-center";
 
@@ -39,7 +39,7 @@ function EventRow({ children, href }: { children: React.ReactNode; href: string 
   return (
     <LearnLink className={EVENT_ROW_CLASS} href={href}>
       {children}
-      <ChevronRightIcon aria-hidden="true" className="text-muted-foreground/60 size-4 shrink-0" />
+      <ListRowChevron />
     </LearnLink>
   );
 }

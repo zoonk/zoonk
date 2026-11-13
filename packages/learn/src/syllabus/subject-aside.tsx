@@ -30,7 +30,7 @@ function SubjectMastery({ mastery }: { mastery: SyllabusSubject["mastery"] }) {
   }
 
   return (
-    <p className="flex flex-col gap-0.5 text-[0.71875rem]" data-slot="subject-mastery">
+    <p className="text-2xs flex flex-col gap-0.5" data-slot="subject-mastery">
       <span className="font-medium">{t("Right answers")}</span>
       <span className="text-muted-foreground tabular-nums">
         {t("{done, number} of {total, number}", { done: mastery.correct, total: mastery.answered })}
@@ -57,9 +57,7 @@ function SubjectPreparation({
     <div className={cn("flex flex-col gap-2", className)} data-slot="subject-preparation">
       {labelled && <span className={PAGE_SECTION_TITLE_CLASS}>{t("Preparation")}</span>}
 
-      <BigQuantity className={labelled ? "text-2xl" : "text-[2rem]"}>
-        {formatShare(share)}
-      </BigQuantity>
+      <BigQuantity className={labelled ? "text-2xl" : "text-3xl"}>{formatShare(share)}</BigQuantity>
       <CoverageBar studied={share} />
 
       <SubjectMastery mastery={mastery} />
@@ -108,7 +106,7 @@ export function SubjectCoverage({
   return (
     <div className={cn("flex flex-col gap-2", className)} data-slot="subject-coverage">
       <CoverageBar known={coverage.known} studied={coverage.studied} />
-      <ul className="text-muted-foreground flex flex-wrap items-center gap-x-3 gap-y-1 text-[0.71875rem]">
+      <ul className="text-muted-foreground text-2xs flex flex-wrap items-center gap-x-3 gap-y-1">
         {parts.map((part) => (
           <li className="flex items-center gap-1.5" key={part.label}>
             <span aria-hidden="true" className={cn("size-1.5 rounded-full", part.dot)} />

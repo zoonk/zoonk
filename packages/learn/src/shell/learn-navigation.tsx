@@ -221,7 +221,7 @@ export function LearnBottomNavigation({ activeTab, buddy, missions }: LearnNavig
               aria-current={tab === activeTab ? "page" : undefined}
               className={cn(
                 TAB_ITEM_CLASS,
-                "flex min-h-13 w-18 min-w-0 flex-col items-center justify-center gap-0.5 rounded-[0.625rem] px-1 text-[0.6875rem]",
+                "text-2xs flex min-h-13 w-18 min-w-0 flex-col items-center justify-center gap-0.5 rounded-lg px-1",
               )}
               href={routes[tab]}
             >

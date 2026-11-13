@@ -62,7 +62,7 @@ function Transcript({
           </LearnerBubble>
         ) : (
           <p
-            className="max-w-[80%] self-start text-[0.9375rem] leading-relaxed text-pretty"
+            className="text-reading max-w-[80%] self-start leading-relaxed text-pretty"
             // oxlint-disable-next-line react/no-array-index-key -- Turns only grow at the end, so their position identifies them.
             key={index}
             lang={conversation.targetLanguage}

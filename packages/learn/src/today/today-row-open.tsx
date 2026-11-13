@@ -14,7 +14,7 @@ import { useTodayScreen } from "./today-context";
  * Its `::after` stretches over the whole row, so the row is one target with its focus ring there.
  */
 export const ROW_OPEN_CLASS =
-  "flex min-w-0 text-left outline-none after:absolute after:top-1/2 after:h-full after:min-h-11 after:-translate-y-1/2 after:rounded-[0.625rem] focus-visible:after:ring-[3px] focus-visible:after:ring-ring/50 aria-disabled:cursor-default";
+  "flex min-w-0 text-left outline-none after:absolute after:top-1/2 after:h-full after:min-h-11 after:-translate-y-1/2 after:rounded-lg focus-visible:after:ring-[3px] focus-visible:after:ring-ring/50 aria-disabled:cursor-default";
 
 export function RowOpen({
   block,

@@ -6,7 +6,7 @@ import { useKeptTyping } from "@zoonk/ui/hooks/kept-typing";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useEffect, useRef } from "react";
 
-export const GOAL_FIELD_TEXT_CLASS = "py-2.5 text-[17px] leading-6";
+export const GOAL_FIELD_TEXT_CLASS = "py-2.5 text-lg leading-6";
 
 const GOAL_FIELD = "goal";
 

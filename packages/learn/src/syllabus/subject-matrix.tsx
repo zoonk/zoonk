@@ -73,7 +73,7 @@ function MatrixGroupRow({ group }: { group: MatrixGroup }) {
         {content}
         <ChevronDownIcon
           aria-hidden="true"
-          className="text-muted-foreground/60 size-4 shrink-0 self-center transition-transform group-data-panel-open/matrix:rotate-180 motion-reduce:transition-none"
+          className="text-muted-foreground/60 edge -me-(--edge-pull) size-4 shrink-0 self-center transition-transform group-data-panel-open/matrix:rotate-180 motion-reduce:transition-none"
         />
       </CollapsibleTrigger>
 

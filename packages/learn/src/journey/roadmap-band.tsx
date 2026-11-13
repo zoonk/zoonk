@@ -26,7 +26,7 @@ export function BandFace({ phase }: { phase: PlanPhaseView }) {
       <span className={BAND_NAME_CLASS}>
         {phase.state === "done" && (
           <span className="whitespace-nowrap">
-            <CheckIcon aria-hidden="true" className={BAND_CHECK_CLASS} strokeWidth={2.5} />
+            <CheckIcon aria-hidden="true" className={BAND_CHECK_CLASS} />
             {WORD_JOINER}
           </span>
         )}

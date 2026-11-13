@@ -24,7 +24,7 @@ export const TASK_HEADER_SIDE_CLASS = {
   start: "flex min-w-fit flex-1 basis-0 justify-start",
 } as const;
 
-export const BAR_PADDING_CLASS = "pt-3 pb-[max(1rem,env(safe-area-inset-bottom))]";
+export const BAR_PADDING_CLASS = "pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]";
 
 export const ACTION_BAR_SURFACE_CLASS = "bg-background border-border sticky bottom-0 z-20 border-t";
 
@@ -43,7 +43,7 @@ export function TaskActionBar({ children, className, ...props }: React.Component
 export function TaskActions({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("flex w-full flex-wrap items-center gap-2.5 lg:justify-end", className)}
+      className={cn("flex w-full flex-wrap items-center gap-2 lg:justify-end", className)}
       data-slot="task-actions"
       {...props}
     />
@@ -270,7 +270,7 @@ export function TaskSkeleton({
       </div>
 
       <div className="border-border border-t">
-        <div className={cn(TASK_BAR_ROW_CLASS, "flex gap-2.5 lg:justify-end", BAR_PADDING_CLASS)}>
+        <div className={cn(TASK_BAR_ROW_CLASS, "flex gap-2 lg:justify-end", BAR_PADDING_CLASS)}>
           {actions}
           <Skeleton className="h-11 w-full rounded-lg lg:w-40" />
         </div>

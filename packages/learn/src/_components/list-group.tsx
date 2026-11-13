@@ -32,7 +32,7 @@ export function ListGroup({
 
 export const LIST_ROW_CLASS = cn(
   "relative isolate flex w-full min-w-0 items-stretch gap-3 text-left",
-  "aria-[current]:before:bg-muted data-highlighted:before:bg-muted before:pointer-events-none before:absolute before:-inset-x-2.5 before:inset-y-0.5 before:-z-10 before:rounded-[0.625rem] before:transition-colors",
+  "aria-[current]:before:bg-muted data-highlighted:before:bg-muted before:pointer-events-none before:absolute before:-inset-x-2.5 before:inset-y-0.5 before:-z-10 before:rounded-lg before:transition-colors",
   "in-data-[list=panel]:px-4 in-data-[list=panel]:before:inset-0 in-data-[list=panel]:before:rounded-none",
 );
 
@@ -43,13 +43,16 @@ export const LIST_ROW_INTERACTIVE_CLASS = cn(
 
 export const CURRENT_ROW_CLASS = "before:bg-muted hover:before:bg-muted";
 
-function ListRowChevron({ className }: { className?: string }) {
-  return (
-    <ChevronRightIcon
-      aria-hidden="true"
-      className={cn("text-muted-foreground/60 size-4 shrink-0 self-center", className)}
-    />
-  );
+/** A row's trailing chevron, its ink on the row's end edge. */
+export const ROW_CHEVRON_CLASS =
+  "text-muted-foreground/60 edge -me-(--edge-pull) size-4 shrink-0 self-center";
+
+/** The same chevron after a 12px line, such as a header's "1 of 4". */
+export const SMALL_CHEVRON_CLASS =
+  "edge -me-(--edge-pull) size-3.5 shrink-0 [--icon-size:--spacing(3.5)]";
+
+export function ListRowChevron() {
+  return <ChevronRightIcon aria-hidden="true" className={ROW_CHEVRON_CLASS} />;
 }
 
 export function ListRow({ className, ...props }: React.ComponentProps<"div">) {
@@ -125,7 +128,10 @@ export function ListRowButton({
 export function ListRowLeading({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
-      className={cn("flex shrink-0 items-center self-center empty:hidden", className)}
+      className={cn(
+        "flex min-w-4 shrink-0 items-center justify-center self-center empty:hidden",
+        className,
+      )}
       data-slot="list-row-leading"
       {...props}
     />

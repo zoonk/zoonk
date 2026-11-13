@@ -16,6 +16,7 @@ import { HistoryIcon, PenLineIcon, PencilRulerIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { DrawerCloseButton } from "../_components/details-drawer";
+import { BAR_PADDING_CLASS } from "../_components/task-layout";
 import { type TaskFrameAside } from "../shell/task-frame";
 import { SectionClock } from "./mock-clock";
 import { useMockScreen } from "./mock-context";
@@ -36,7 +37,7 @@ function useSheetCountLine(): string {
 }
 
 const CELL_SIZE = {
-  row: { cell: "h-7 rounded-[0.375rem] text-xs", essay: "size-3.5" },
+  row: { cell: "h-7 rounded-sm text-xs", essay: "size-3.5" },
   sheet: { cell: "h-11 rounded-lg text-sm", essay: "size-4" },
 } as const;
 
@@ -138,7 +139,7 @@ export function SheetLegend({ className }: { className?: string }) {
     <p className={cn("text-muted-foreground flex items-start gap-1.5 text-xs", className)}>
       <span
         aria-hidden="true"
-        className="ring-warning mt-1 size-2 shrink-0 rounded-[2px] ring-[1.5px] ring-inset"
+        className="ring-warning mt-1 size-2 shrink-0 rounded-xs ring-[1.5px] ring-inset"
       />
       {t("flagged · no feedback until the end, like on exam day")}
     </p>
@@ -282,7 +283,7 @@ export function MockAnswerSheet({ onHandIn }: { onHandIn: () => void }) {
           />
         </DrawerContent>
 
-        <div className="border-border border-t px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))]">
+        <div className={cn("border-border border-t px-4", BAR_PADDING_CLASS)}>
           <SheetHandIn
             onHandIn={() => {
               setOpen(false);

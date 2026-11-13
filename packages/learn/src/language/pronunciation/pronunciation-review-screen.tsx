@@ -12,13 +12,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
-import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, EllipsisIcon, RotateCcwIcon, SkipForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { FeedbackVerdict } from "../../_components/feedback-panel";
 import { MomentReadouts } from "../../_components/moment-readouts";
 import { AnswersSaveError } from "../../_components/save-error";
-import { TASK_HEADER_ICON_CLASS, TaskHeaderTitle } from "../../_components/task-header";
+import { TaskHeaderTitle } from "../../_components/task-header";
 import { TaskActions } from "../../_components/task-layout";
 import { type LearnBuddy } from "../../buddies/use-buddy-name";
 import { DayMoment } from "../../session/day-moment";
@@ -91,13 +90,7 @@ function WordMenu({ disabled, onSkip }: { disabled: boolean; onSkip: () => void 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        render={
-          <Button
-            className={cn("shrink-0", TASK_HEADER_ICON_CLASS.end)}
-            size="icon"
-            variant="ghost"
-          />
-        }
+        render={<Button className="shrink-0" edge="end" size="icon" variant="ghost" />}
       >
         <EllipsisIcon aria-hidden="true" />
         <span className="sr-only">{t("Screen options")}</span>

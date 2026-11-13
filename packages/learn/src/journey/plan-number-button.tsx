@@ -31,7 +31,7 @@ const NUMBER_CLASS = {
   ),
   tiles: cn(
     ROWS_CLASS,
-    "ring-border rounded-option hover:bg-muted/50 focus-visible:ring-ring/50 w-full min-w-0 p-3 text-left ring-1 transition-colors outline-none ring-inset focus-visible:ring-[3px]",
+    "ring-border hover:bg-muted/50 focus-visible:ring-ring/50 w-full min-w-0 rounded-xl p-3 text-left ring-1 transition-colors outline-none ring-inset focus-visible:ring-[3px]",
   ),
 } as const;
 

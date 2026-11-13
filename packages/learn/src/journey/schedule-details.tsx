@@ -103,7 +103,7 @@ function PlanWeek() {
             <li className="flex flex-col items-center gap-1.5 py-1" key={day.date}>
               <span
                 aria-hidden="true"
-                className="text-muted-foreground font-mono text-[0.6875rem] font-medium uppercase"
+                className="text-muted-foreground text-2xs font-mono font-medium uppercase"
               >
                 {format.dateTime(date, { timeZone: "UTC", weekday: "narrow" })}
               </span>

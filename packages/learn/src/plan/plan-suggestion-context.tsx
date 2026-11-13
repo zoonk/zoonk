@@ -104,6 +104,7 @@ export function SlotPager({ className }: { className?: string }) {
     >
       <Button
         className="text-muted-foreground"
+        edge="end"
         onClick={showNext}
         size="sm"
         variant="ghost"

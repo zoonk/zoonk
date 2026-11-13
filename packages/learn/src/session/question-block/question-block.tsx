@@ -127,12 +127,7 @@ function BlockMenu({ target }: { target: ReturnType<typeof getVoteTarget> }) {
   }
 
   return (
-    <ContentFeedbackMenu
-      label={t("Question options")}
-      screen="question-block"
-      size="task"
-      target={target}
-    />
+    <ContentFeedbackMenu label={t("Question options")} screen="question-block" target={target} />
   );
 }
 

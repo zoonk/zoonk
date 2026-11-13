@@ -38,7 +38,7 @@ function LevelLink({ level }: { level: { color: BeltColor; level: number } }) {
 
   return (
     <Link
-      className="text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-ring/50 hit-area relative flex h-9 shrink-0 items-center gap-1.5 rounded-lg px-2 font-mono text-[0.8125rem] tabular-nums transition-colors outline-none focus-visible:ring-[3px]"
+      className="text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-ring/50 hit-area text-compact relative flex h-9 shrink-0 items-center gap-1.5 rounded-lg px-2 font-mono tabular-nums transition-colors outline-none focus-visible:ring-[3px]"
       href={getMenu("stats").url}
       prefetch
       title={t("Statistics")}
