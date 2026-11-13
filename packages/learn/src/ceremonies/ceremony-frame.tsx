@@ -2,15 +2,10 @@
 
 import { Button } from "@zoonk/ui/components/button";
 import { Dialog, DialogPopup, DialogPortal } from "@zoonk/ui/components/dialog";
-import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
-import {
-  TASK_MAIN_ACTION_CLASS,
-  TaskActionBar,
-  TaskActions,
-  TaskBody,
-} from "../_components/task-layout";
+import { EnterButton } from "../_components/enter-button";
+import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
 import { SCREEN_STEADY_MS, useSteady } from "../_utils/use-steady";
 
 /**
@@ -101,16 +96,10 @@ export function CeremonyBar({
           </Button>
         )}
 
-        <Button
-          aria-keyshortcuts="Enter"
-          autoFocus
-          className={TASK_MAIN_ACTION_CLASS}
-          onClick={onConfirm}
-          size="xl"
-        >
+        {/* It takes focus when the moment opens, so Enter is its own. */}
+        <EnterButton autoFocus enter="host" onClick={onConfirm}>
           {action}
-          <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-        </Button>
+        </EnterButton>
       </TaskActions>
     </TaskActionBar>
   );

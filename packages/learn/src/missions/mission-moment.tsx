@@ -108,7 +108,7 @@ export function MissionMoment({
       className="border-brain/25 bg-brain/5 dark:bg-brain/10 contrast-more:bg-card flex w-full flex-col rounded-xl border p-4"
       data-slot="mission-moment"
     >
-      <div className={cn("flex items-center", payoff ? "gap-4" : "gap-3")}>
+      <div className={cn("flex", payoff ? "items-end gap-4" : "items-center gap-3")}>
         {buddy !== undefined && <MomentBuddy buddy={buddy} whole={payoff} />}
 
         <div className={cn("flex min-w-0 flex-1 flex-col", payoff ? "gap-3" : "gap-0.5")}>
