@@ -136,14 +136,15 @@ export function LeaderboardExport({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger render={<Button size="sm" variant="outline" />}>
-        <Download className="size-4" />
+      <DropdownMenuTrigger render={<Button icon={<Download />} size="sm" variant="outline" />}>
         Export
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => exportAsMarkdown(false)}>Export All Data</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => exportAsMarkdown(false)}>
+          With model names
+        </DropdownMenuItem>
         <DropdownMenuItem onClick={() => exportAsMarkdown(true)}>
-          Export Anonymous Data
+          Without model names
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

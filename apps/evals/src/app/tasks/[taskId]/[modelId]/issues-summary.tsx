@@ -1,3 +1,4 @@
+import { FoldRowTitle } from "@/components/fold-row-title";
 import { getScoreClassName } from "@/lib/score";
 import { type EvalResult, type ScoreStep } from "@/lib/types";
 import {
@@ -12,8 +13,8 @@ type Issue = { testCaseId: string; conclusion: string; score: number };
 const ISSUE_KINDS = ["majorErrors", "minorErrors"] as const;
 
 const LABELS: Record<(typeof ISSUE_KINDS)[number], string> = {
-  majorErrors: "Major Issues",
-  minorErrors: "Minor Issues",
+  majorErrors: "Major issues",
+  minorErrors: "Minor issues",
 };
 
 function getIssuesByKind(results: EvalResult[], kind: ScoreStep["kind"]): Issue[] {
@@ -34,9 +35,7 @@ function IssueGroup({ issues, label }: { issues: Issue[]; label: string }) {
   return (
     <AccordionItem value={label}>
       <AccordionTrigger className="hover:no-underline">
-        <span className="text-sm font-medium">
-          {label} ({issues.length})
-        </span>
+        <FoldRowTitle title={label}>{issues.length}</FoldRowTitle>
       </AccordionTrigger>
 
       <AccordionContent>
@@ -68,7 +67,7 @@ function IssueGroup({ issues, label }: { issues: Issue[]; label: string }) {
 export function IssuesSummary({ results }: { results: EvalResult[] }) {
   return (
     <div className="flex flex-col gap-4">
-      <h2 className="text-lg font-semibold tracking-tight">Issues Summary</h2>
+      <h2 className="text-lg font-semibold tracking-tight">Issues</h2>
 
       <Accordion className="w-full">
         {ISSUE_KINDS.map((kind) => (
