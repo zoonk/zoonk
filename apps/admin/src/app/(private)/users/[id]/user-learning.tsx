@@ -58,15 +58,11 @@ export async function UserLearning({ userId }: { userId: string }) {
             {stats.lessonKinds.map((row) => (
               <AdminTableRow key={row.kind}>
                 <TableCell>{getAdminLessonKindLabel(row.kind)}</TableCell>
-                <TableCell className="text-right tabular-nums">
-                  {row.completedLessons.toLocaleString("en")}
-                </TableCell>
-                <TableCell className="text-right tabular-nums">
+                <TableCell numeric>{row.completedLessons.toLocaleString("en")}</TableCell>
+                <TableCell numeric>
                   {row.avgDurationSeconds === null ? "—" : formatDuration(row.avgDurationSeconds)}
                 </TableCell>
-                <TableCell className="text-right tabular-nums">
-                  {formatDuration(row.totalDurationSeconds)}
-                </TableCell>
+                <TableCell numeric>{formatDuration(row.totalDurationSeconds)}</TableCell>
               </AdminTableRow>
             ))}
           </AdminTableColumns>

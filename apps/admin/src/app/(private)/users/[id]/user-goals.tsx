@@ -52,9 +52,9 @@ function GoalRow({ goal }: { goal: UserGoal }) {
         )}
       </TableCell>
       <TableCell>{toWords(goal.status)}</TableCell>
-      <TableCell className="text-right tabular-nums">{goal.dailyMinutes} min</TableCell>
+      <TableCell numeric>{goal.dailyMinutes} min</TableCell>
       <TableCell>{formatDate(goal.targetDate)}</TableCell>
-      <TableCell className="text-right tabular-nums">
+      <TableCell numeric>
         {goal.plan
           ? `${goal.doneItems.toLocaleString("en")} of ${goal.totalItems.toLocaleString("en")} done`
           : "No plan"}
@@ -137,10 +137,8 @@ export async function UserPlans({ userId }: { userId: string }) {
               <TableCell className="min-w-56 whitespace-normal">
                 <GoalName goal={goal} />
               </TableCell>
-              <TableCell className="text-right tabular-nums">
-                {goal.plan ? goal.plan.version : "No plan"}
-              </TableCell>
-              <TableCell className="text-right tabular-nums">
+              <TableCell numeric>{goal.plan ? goal.plan.version : "No plan"}</TableCell>
+              <TableCell numeric>
                 {goal.plan?.estimateHours ? `${Math.round(goal.plan.estimateHours)} h` : "—"}
               </TableCell>
               <TableCell className="text-muted-foreground">{formatDate(goal.createdAt)}</TableCell>

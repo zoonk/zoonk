@@ -54,7 +54,7 @@ export function MockTable({
       <TableHeader>
         <AdminTableRow>
           {columns.map((column) => (
-            <TableHead className={column.align === "right" ? "text-right" : ""} key={column.label}>
+            <TableHead key={column.label} numeric={column.align === "right"}>
               {column.label}
             </TableHead>
           ))}
@@ -65,10 +65,8 @@ export function MockTable({
           <AdminTableRow key={row.key}>
             {row.cells.map((cell, index) => (
               <TableCell
-                className={cn(
-                  columns[index]?.align === "right" && "text-right tabular-nums",
-                  index > 0 && "text-muted-foreground",
-                )}
+                className={cn(index > 0 && "text-muted-foreground")}
+                numeric={columns[index]?.align === "right"}
                 // oxlint-disable-next-line react/no-array-index-key -- A static mock table.
                 key={index}
               >

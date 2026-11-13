@@ -39,11 +39,9 @@ export async function UserLearnerSkills({ userId }: { userId: string }) {
             </TableCell>
             <TableCell>{toWords(learnerSkill.state)}</TableCell>
             <TableCell>{formatDate(learnerSkill.due)}</TableCell>
-            <TableCell className="text-right tabular-nums">{learnerSkill.reps}</TableCell>
-            <TableCell className="text-right tabular-nums">{learnerSkill.lapses}</TableCell>
-            <TableCell className="text-right tabular-nums">
-              {formatCount(learnerSkill.recallDays, "day")}
-            </TableCell>
+            <TableCell numeric>{learnerSkill.reps}</TableCell>
+            <TableCell numeric>{learnerSkill.lapses}</TableCell>
+            <TableCell numeric>{formatCount(learnerSkill.recallDays, "day")}</TableCell>
             <TableCell className="text-muted-foreground">
               {formatDate(learnerSkill.lastReviewedAt)}
             </TableCell>

@@ -21,8 +21,8 @@ export function SourceRow({ source }: { source: ListedSource }) {
       <TableCell className="text-muted-foreground">{formatDate(source.fetchedAt)}</TableCell>
       <TableCell className="text-muted-foreground">{formatDate(source.validUntil)}</TableCell>
       <TableCell className="text-muted-foreground">{formatDate(source.nextCheckAt)}</TableCell>
-      <TableCell className="text-right tabular-nums">{source._count.learnerSources}</TableCell>
-      <TableCell className="text-right tabular-nums">{source._count.examBlueprints}</TableCell>
+      <TableCell numeric>{source._count.learnerSources}</TableCell>
+      <TableCell numeric>{source._count.examBlueprints}</TableCell>
     </AdminTableRow>
   );
 }

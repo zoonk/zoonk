@@ -9,8 +9,8 @@ export function ContentTotalsTable({ rows }: { rows: readonly ContentTotalRow[] 
       <TableHeader>
         <AdminTableRow>
           <TableHead>Type</TableHead>
-          <TableHead className="text-right">Total</TableHead>
-          <TableHead className="text-right">Created this period</TableHead>
+          <TableHead numeric>Total</TableHead>
+          <TableHead numeric>Created this period</TableHead>
         </AdminTableRow>
       </TableHeader>
 
@@ -27,8 +27,8 @@ function ContentRow({ row }: { row: ContentTotalRow }) {
   return (
     <AdminTableRow>
       <TableCell className="font-medium">{row.title}</TableCell>
-      <TableCell className="text-right tabular-nums">{row.total.toLocaleString()}</TableCell>
-      <TableCell className="text-right tabular-nums">
+      <TableCell numeric>{row.total.toLocaleString()}</TableCell>
+      <TableCell numeric>
         {row.created === undefined ? (
           <span className="text-muted-foreground">—</span>
         ) : (

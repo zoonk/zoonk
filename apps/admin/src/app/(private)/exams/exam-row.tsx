@@ -22,8 +22,8 @@ export function ExamRow({ exam }: { exam: ListedExam }) {
         {formatExamDate(exam.registrationEndsAt)}
       </TableCell>
       <TableCell className="text-muted-foreground">{formatDate(exam.nextCheckAt)}</TableCell>
-      <TableCell className="text-right tabular-nums">{exam._count.goals}</TableCell>
-      <TableCell className="text-right tabular-nums">{exam._count.items}</TableCell>
+      <TableCell numeric>{exam._count.goals}</TableCell>
+      <TableCell numeric>{exam._count.items}</TableCell>
     </AdminTableRow>
   );
 }

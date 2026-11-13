@@ -7,7 +7,7 @@ export function SubscribersTable({ data }: { data: { plan: string; count: number
       <TableHeader>
         <AdminTableRow>
           <TableHead>Plan</TableHead>
-          <TableHead className="text-right">Subscribers</TableHead>
+          <TableHead numeric>Subscribers</TableHead>
         </AdminTableRow>
       </TableHeader>
 
@@ -16,9 +16,7 @@ export function SubscribersTable({ data }: { data: { plan: string; count: number
           data.map((sub) => (
             <AdminTableRow key={sub.plan}>
               <TableCell className="font-medium capitalize">{sub.plan}</TableCell>
-              <TableCell className="text-right tabular-nums">
-                {sub.count.toLocaleString()}
-              </TableCell>
+              <TableCell numeric>{sub.count.toLocaleString()}</TableCell>
             </AdminTableRow>
           ))
         ) : (

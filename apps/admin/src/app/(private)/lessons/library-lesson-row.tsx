@@ -41,7 +41,7 @@ export function LibraryLessonRow({ lesson }: { lesson: ListedLibraryLesson }) {
           {lesson.setAsideAt ? "Set aside" : libraryLessonStatusLabels[lesson.contentStatus]}
         </Badge>
       </TableCell>
-      <TableCell className="text-right tabular-nums">{lesson._count.steps}</TableCell>
+      <TableCell numeric>{lesson._count.steps}</TableCell>
       <TableCell>
         <ProvenanceLine provenance={firstStep ?? { model: null, promptVersion: null }} />
       </TableCell>

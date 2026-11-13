@@ -31,14 +31,10 @@ function FailureCountRow({ count }: { count: FailureCount }) {
   return (
     <AdminTableRow>
       <TableCell>{generationWorkflowLabels[count.workflow]}</TableCell>
-      <TableCell
-        className={cn("text-right tabular-nums", count.failed > 0 && "text-destructive-text")}
-      >
+      <TableCell className={cn(count.failed > 0 && "text-destructive-text")} numeric>
         {count.failed.toLocaleString()}
       </TableCell>
-      <TableCell
-        className={cn("text-right tabular-nums", count.stuck > 0 && "text-destructive-text")}
-      >
+      <TableCell className={cn(count.stuck > 0 && "text-destructive-text")} numeric>
         {count.stuck.toLocaleString()}
       </TableCell>
     </AdminTableRow>

@@ -43,8 +43,8 @@ function GoalSpenders({ goals }: { goals: TopSpenders["goals"] }) {
               "—"
             )}
           </TableCell>
-          <TableCell className="text-right tabular-nums">{row.calls.toLocaleString()}</TableCell>
-          <TableCell className="text-right font-medium tabular-nums">
+          <TableCell numeric>{row.calls.toLocaleString()}</TableCell>
+          <TableCell numeric className="font-medium">
             {formatUsd(row.costUsd)}
           </TableCell>
         </AdminTableRow>
@@ -64,8 +64,8 @@ function LearnerSpenders({ learners }: { learners: TopSpenders["learners"] }) {
       {learners.map((row) => (
         <AdminTableRow key={row.id}>
           <AdminUserCell user={row.user} userId={row.id} />
-          <TableCell className="text-right tabular-nums">{row.calls.toLocaleString()}</TableCell>
-          <TableCell className="text-right font-medium tabular-nums">
+          <TableCell numeric>{row.calls.toLocaleString()}</TableCell>
+          <TableCell numeric className="font-medium">
             {formatUsd(row.costUsd)}
           </TableCell>
         </AdminTableRow>

@@ -101,17 +101,23 @@ function AdminTable({
 function AdminTableColumnHead({ column, sized }: { column: AdminTableColumn; sized: boolean }) {
   const { align, label, sort } = column;
 
-  const className = cn(
-    sized && SIZES[column.size ?? "fact"].className,
-    align === "right" && "text-right",
-  );
+  const className = cn(sized && SIZES[column.size ?? "fact"].className);
+  const numeric = align === "right";
 
   if (!sort) {
-    return <TableHead className={className}>{label}</TableHead>;
+    return (
+      <TableHead className={className} numeric={numeric}>
+        {label}
+      </TableHead>
+    );
   }
 
   return (
-    <TableHead aria-sort={sort.isActive ? "descending" : undefined} className={className}>
+    <TableHead
+      aria-sort={sort.isActive ? "descending" : undefined}
+      className={className}
+      numeric={numeric}
+    >
       <Link
         aria-current={sort.isActive ? "page" : undefined}
         className={cn(

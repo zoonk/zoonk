@@ -11,8 +11,10 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@zoonk/ui/components/alert-dialog";
+import { EnterButton } from "@zoonk/ui/components/enter-button";
 import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 import { useState } from "react";
+import { useFormStatus } from "react-dom";
 
 /**
  * A Server Action that throws when it fails, or one that answers `{ error }` to say why in the
@@ -118,15 +120,41 @@ function ConfirmForm({
 
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <SubmitButton
-            className="w-auto"
-            disabled={confirmDisabled}
-            variant={destructive ? "destructive" : "default"}
-          >
+          <ConfirmButton destructive={destructive} disabled={confirmDisabled}>
             {confirmLabel}
-          </SubmitButton>
+          </ConfirmButton>
         </AlertDialogFooter>
       </div>
     </form>
+  );
+}
+
+/**
+ * Enter confirms what can be taken back (⏎ on the button); a destructive action is never the
+ * default, so Enter doesn't press it and it shows no ⏎.
+ */
+function ConfirmButton({
+  children,
+  destructive,
+  disabled,
+}: {
+  children: React.ReactNode;
+  destructive: boolean;
+  disabled: boolean;
+}) {
+  const status = useFormStatus();
+
+  if (destructive) {
+    return (
+      <SubmitButton className="w-auto" disabled={disabled} variant="destructive">
+        {children}
+      </SubmitButton>
+    );
+  }
+
+  return (
+    <EnterButton busy={status.pending} disabled={disabled} type="submit">
+      {children}
+    </EnterButton>
   );
 }

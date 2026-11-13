@@ -41,8 +41,8 @@ function SessionRow({ session, showGoal }: { session: UserStudySession; showGoal
           <span className="text-muted-foreground"> · {toWords(session.freshStart)}</span>
         ) : null}
       </TableCell>
-      <TableCell className="text-right tabular-nums">{session.plannedMinutes} min</TableCell>
-      <TableCell className="text-right tabular-nums">
+      <TableCell numeric>{session.plannedMinutes} min</TableCell>
+      <TableCell numeric>
         {done} of {session.blocks.length}
       </TableCell>
       <TableCell className="text-muted-foreground min-w-48 whitespace-normal">

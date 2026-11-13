@@ -115,14 +115,14 @@ function PlanRow({
   return (
     <AdminTableRow>
       <TableCell>{PLAN_LABELS[billing]}</TableCell>
-      <TableCell className="text-right tabular-nums">{learners.length.toLocaleString()}</TableCell>
-      <TableCell className="text-right tabular-nums">{formatPays(paysUsd, billing)}</TableCell>
-      <TableCell className="text-right font-medium tabular-nums">{formatUsd(total)}</TableCell>
-      <TableCell className="text-right tabular-nums">
-        {formatUsd(total / Math.max(learners.length, 1))}
+      <TableCell numeric>{learners.length.toLocaleString()}</TableCell>
+      <TableCell numeric>{formatPays(paysUsd, billing)}</TableCell>
+      <TableCell numeric className="font-medium">
+        {formatUsd(total)}
       </TableCell>
-      <TableCell className="text-right tabular-nums">{formatUsd(first?.costUsd ?? 0)}</TableCell>
-      <TableCell className="text-right tabular-nums">
+      <TableCell numeric>{formatUsd(total / Math.max(learners.length, 1))}</TableCell>
+      <TableCell numeric>{formatUsd(first?.costUsd ?? 0)}</TableCell>
+      <TableCell numeric>
         {billing === "trial" || billing === "granted"
           ? "—"
           : learners.filter((learner) => isAbovePlan(learner)).length.toLocaleString()}
@@ -181,18 +181,14 @@ function LearnerRow({ learner }: { learner: PlusLearner }) {
       <TableCell>
         <LearnerGoals goals={learner.goals} />
       </TableCell>
-      <TableCell className="text-right tabular-nums">{learner.calls.toLocaleString()}</TableCell>
+      <TableCell numeric>{learner.calls.toLocaleString()}</TableCell>
       <TableCell
-        className={cn(
-          "text-right font-medium tabular-nums",
-          isAbovePlan(learner) && "text-destructive-text",
-        )}
+        className={cn("font-medium", isAbovePlan(learner) && "text-destructive-text")}
+        numeric
       >
         {formatUsd(learner.costUsd)}
       </TableCell>
-      <TableCell className="text-right tabular-nums">
-        {formatPays(learner.paysUsd, learner.billing)}
-      </TableCell>
+      <TableCell numeric>{formatPays(learner.paysUsd, learner.billing)}</TableCell>
     </AdminTableRow>
   );
 }

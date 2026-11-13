@@ -154,9 +154,9 @@ export function MockRows({
             <TableCell
               className={cn(
                 index === 0 && "whitespace-normal",
-                aligned[index]?.align === "right" && "text-right tabular-nums",
                 index > 0 && "text-muted-foreground",
               )}
+              numeric={aligned[index]?.align === "right"}
               // oxlint-disable-next-line react/no-array-index-key -- A static mock table.
               key={index}
             >

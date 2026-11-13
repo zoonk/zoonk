@@ -124,10 +124,12 @@ function BrainPowerLeaderboardHeader() {
   return (
     <TableHeader>
       <AdminTableRow>
-        <TableHead className="w-16 text-right">Rank</TableHead>
+        <TableHead numeric className="w-16">
+          Rank
+        </TableHead>
         <TableHead>User</TableHead>
         <TableHead>Username</TableHead>
-        <TableHead className="text-right">Brain Power</TableHead>
+        <TableHead numeric>Brain Power</TableHead>
       </AdminTableRow>
     </TableHeader>
   );
@@ -146,12 +148,12 @@ function BrainPowerLeaderboardEmptyRow({ periodDescription }: { periodDescriptio
 function BrainPowerLeaderboardRow({ leader }: { leader: BrainPowerLeader }) {
   return (
     <AdminTableRow>
-      <TableCell className="text-muted-foreground text-right tabular-nums">
+      <TableCell numeric className="text-muted-foreground">
         {leader.rank.toLocaleString()}
       </TableCell>
       <AdminUserCell user={leader.user} userId={leader.user.id} />
       <TableCell>{leader.user.username || "—"}</TableCell>
-      <TableCell className="text-right font-medium tabular-nums">
+      <TableCell numeric className="font-medium">
         {leader.brainPower.toLocaleString()}
       </TableCell>
     </AdminTableRow>

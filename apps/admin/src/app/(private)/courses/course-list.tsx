@@ -76,8 +76,8 @@ function CourseTableHeader() {
         <TableHead>Title</TableHead>
         <TableHead>Organization</TableHead>
         <TableHead>Language</TableHead>
-        <TableHead className="text-right">Chapters</TableHead>
-        <TableHead className="text-right">Written lessons</TableHead>
+        <TableHead numeric>Chapters</TableHead>
+        <TableHead numeric>Written lessons</TableHead>
         <TableHead>Published</TableHead>
         <TableHead>Created</TableHead>
       </AdminTableRow>

@@ -23,18 +23,14 @@ export async function UserAiSpend({ userId }: { userId: string }) {
         {tasks.map((row) => (
           <AdminTableRow key={row.task}>
             <TableCell className="font-mono text-xs">{row.task}</TableCell>
-            <TableCell className="text-right tabular-nums">{row.calls.toLocaleString()}</TableCell>
-            <TableCell className="text-right tabular-nums">{formatUsd(row.costUsd)}</TableCell>
+            <TableCell numeric>{row.calls.toLocaleString()}</TableCell>
+            <TableCell numeric>{formatUsd(row.costUsd)}</TableCell>
           </AdminTableRow>
         ))}
         <AdminTableRow className="font-medium">
           <TableCell>All tasks</TableCell>
-          <TableCell className="text-right tabular-nums">
-            {sumOf(tasks.map((row) => row.calls)).toLocaleString()}
-          </TableCell>
-          <TableCell className="text-right tabular-nums">
-            {formatUsd(sumOf(tasks.map((row) => row.costUsd)))}
-          </TableCell>
+          <TableCell numeric>{sumOf(tasks.map((row) => row.calls)).toLocaleString()}</TableCell>
+          <TableCell numeric>{formatUsd(sumOf(tasks.map((row) => row.costUsd)))}</TableCell>
         </AdminTableRow>
       </AdminTableColumns>
     </AdminSection>

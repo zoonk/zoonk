@@ -48,7 +48,7 @@ function MediaStepsTable({ steps }: { steps: AdminMediaAsset["steps"] }) {
               {step.lesson.title}
             </AdminTableRowLink>
           </TableCell>
-          <TableCell className="text-right tabular-nums">{step.position}</TableCell>
+          <TableCell numeric>{step.position}</TableCell>
           <TableCell>{step.kind}</TableCell>
         </AdminTableRow>
       ))}

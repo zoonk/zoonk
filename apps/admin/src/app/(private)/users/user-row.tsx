@@ -17,7 +17,7 @@ export function UserRow({
         {capitalize(user.plan)}
       </TableCell>
 
-      <TableCell className="text-right tabular-nums">
+      <TableCell numeric>
         {Number(user.progress?.totalBrainPower ?? 0).toLocaleString("en")}
       </TableCell>
 

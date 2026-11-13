@@ -54,8 +54,8 @@ export function LessonVersions({ steps }: { steps: LibraryLessonStep[] }) {
               <TableHead>Written</TableHead>
               <TableHead>Model</TableHead>
               <TableHead>Prompt version</TableHead>
-              <TableHead className="text-right">Step contract</TableHead>
-              <TableHead className="text-right">Rows</TableHead>
+              <TableHead numeric>Step contract</TableHead>
+              <TableHead numeric>Rows</TableHead>
             </AdminTableRow>
           </TableHeader>
           <TableBody>
@@ -66,10 +66,8 @@ export function LessonVersions({ steps }: { steps: LibraryLessonStep[] }) {
                 </TableCell>
                 <TableCell className="font-mono text-xs">{version.model}</TableCell>
                 <TableCell className="font-mono text-xs">{version.promptVersion}</TableCell>
-                <TableCell className="text-right tabular-nums">
-                  v{version.contractVersion}
-                </TableCell>
-                <TableCell className="text-right tabular-nums">{version.rows}</TableCell>
+                <TableCell numeric>v{version.contractVersion}</TableCell>
+                <TableCell numeric>{version.rows}</TableCell>
               </AdminTableRow>
             ))}
           </TableBody>

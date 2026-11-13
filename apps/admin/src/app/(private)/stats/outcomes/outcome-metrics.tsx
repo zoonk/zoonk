@@ -164,36 +164,30 @@ async function ExamResultsAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }
           <TableHeader>
             <AdminTableRow>
               <TableHead>Exam</TableHead>
-              <TableHead className="text-right">Reports</TableHead>
-              <TableHead className="text-right">Passed</TableHead>
-              <TableHead className="text-right">Inside estimate</TableHead>
-              <TableHead className="text-right">Avg. error</TableHead>
-              <TableHead className="text-right">Avg. mocks</TableHead>
+              <TableHead numeric>Reports</TableHead>
+              <TableHead numeric>Passed</TableHead>
+              <TableHead numeric>Inside estimate</TableHead>
+              <TableHead numeric>Avg. error</TableHead>
+              <TableHead numeric>Avg. mocks</TableHead>
             </AdminTableRow>
           </TableHeader>
           <TableBody>
             {rows.map((row) => (
               <AdminTableRow key={row.examName}>
                 <TableCell className="font-medium">{row.examName}</TableCell>
-                <TableCell className="text-right tabular-nums">
-                  {row.reports.toLocaleString()}
-                </TableCell>
-                <TableCell className="text-right tabular-nums">
-                  {row.passed.toLocaleString()}
-                </TableCell>
-                <TableCell className="text-right tabular-nums">
+                <TableCell numeric>{row.reports.toLocaleString()}</TableCell>
+                <TableCell numeric>{row.passed.toLocaleString()}</TableCell>
+                <TableCell numeric>
                   {row.withEstimate > 0
                     ? formatPercent(
                         toPercent({ denominator: row.withEstimate, numerator: row.withinEstimate }),
                       )
                     : "—"}
                 </TableCell>
-                <TableCell className="text-right tabular-nums">
+                <TableCell numeric>
                   {row.avgEstimateError === null ? "—" : row.avgEstimateError.toFixed(DECIMALS)}
                 </TableCell>
-                <TableCell className="text-right tabular-nums">
-                  {row.avgMocks.toFixed(DECIMALS)}
-                </TableCell>
+                <TableCell numeric>{row.avgMocks.toFixed(DECIMALS)}</TableCell>
               </AdminTableRow>
             ))}
           </TableBody>

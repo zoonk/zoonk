@@ -18,10 +18,10 @@ export async function RetentionAnalysis({ statsPeriod }: { statsPeriod: StatsPer
         <TableHeader>
           <AdminTableRow>
             <TableHead>Signup week</TableHead>
-            <TableHead className="text-right">Signups</TableHead>
-            <TableHead className="text-right">Day 1</TableHead>
-            <TableHead className="text-right">Day 7</TableHead>
-            <TableHead className="text-right">Day 30</TableHead>
+            <TableHead numeric>Signups</TableHead>
+            <TableHead numeric>Day 1</TableHead>
+            <TableHead numeric>Day 7</TableHead>
+            <TableHead numeric>Day 30</TableHead>
           </AdminTableRow>
         </TableHeader>
 
@@ -45,7 +45,7 @@ function RetentionRow({ row }: { row: SignupRetentionRow }) {
   return (
     <AdminTableRow>
       <TableCell className="font-medium">Week of {weekFormat.format(row.signupWeek)}</TableCell>
-      <TableCell className="text-right tabular-nums">{row.signups.toLocaleString()}</TableCell>
+      <TableCell numeric>{row.signups.toLocaleString()}</TableCell>
       <RetentionCell eligible={row.d1Eligible} retained={row.d1Retained} />
       <RetentionCell eligible={row.d7Eligible} retained={row.d7Retained} />
       <RetentionCell eligible={row.d30Eligible} retained={row.d30Retained} />
@@ -55,7 +55,7 @@ function RetentionRow({ row }: { row: SignupRetentionRow }) {
 
 function RetentionCell({ eligible, retained }: { eligible: number; retained: number }) {
   return (
-    <TableCell className="text-right tabular-nums">
+    <TableCell numeric>
       {formatPercent(toPercent({ denominator: eligible, numerator: retained }))}
       {eligible > 0 ? (
         <span className="text-muted-foreground ml-2 text-xs">

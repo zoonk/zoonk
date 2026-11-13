@@ -1,5 +1,6 @@
 import { readQueryParam } from "@/lib/query-param";
-import { TabLink, TabLinkCount, TabLinks } from "@zoonk/ui/components/tab-links";
+import { TAB_CLASS, TAB_LIST_CLASS } from "@zoonk/ui/components/tab-class";
+import { cn } from "@zoonk/ui/lib/utils";
 import Link from "next/link";
 
 export type AdminTabOption = {
@@ -57,21 +58,32 @@ export function AdminRecordTabs<Value extends string>({
 /**
  * A record's parts and a list's views. They are links, so each has an address, the server draws
  * only the open one, and only that one's data loads. A list's view that narrows it to what's
- * waiting comes first.
+ * waiting comes first. The row reaches 10px past its column on both sides, so the first label
+ * starts on the column's edge and the current tab's fill hangs past it like a highlighted row.
  */
 export function AdminTabs({ label, options }: { label: string; options: AdminTabOption[] }) {
   return (
-    <TabLinks label={label}>
-      {options.map((option) => (
-        <TabLink
-          current={option.isActive}
-          key={option.href}
-          render={<Link href={option.href} prefetch scroll={false} />}
-        >
-          {option.label}
-          {option.count ? <TabLinkCount>{option.count.toLocaleString("en")}</TabLinkCount> : null}
-        </TabLink>
-      ))}
-    </TabLinks>
+    <nav aria-label={label} className="min-w-0">
+      <ul className={cn(TAB_LIST_CLASS, "-mx-2.5 -my-2 scrollbar-none overflow-x-auto py-2")}>
+        {options.map((option) => (
+          <li key={option.href}>
+            <Link
+              aria-current={option.isActive ? "page" : undefined}
+              className={TAB_CLASS}
+              href={option.href}
+              prefetch
+              scroll={false}
+            >
+              {option.label}
+              {option.count ? (
+                <span className="font-mono text-xs tabular-nums">
+                  {option.count.toLocaleString("en")}
+                </span>
+              ) : null}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </nav>
   );
 }

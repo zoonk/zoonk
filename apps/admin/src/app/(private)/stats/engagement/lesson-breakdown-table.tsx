@@ -18,7 +18,7 @@ export function LessonBreakdownTable({ data }: { data: LessonBreakdownData[] }) 
           <TableHead>Lesson type</TableHead>
           <TableHead>Avg duration</TableHead>
           <TableHead>Completion rate</TableHead>
-          <TableHead className="text-right">Completions</TableHead>
+          <TableHead numeric>Completions</TableHead>
         </AdminTableRow>
       </TableHeader>
       <TableBody>
@@ -44,9 +44,7 @@ function LessonBreakdownRow({ row }: { row: LessonBreakdownData }) {
       <TableCell>
         <CompletionBar rate={row.completionRate} />
       </TableCell>
-      <TableCell className="text-right tabular-nums">
-        {row.completionCount.toLocaleString()}
-      </TableCell>
+      <TableCell numeric>{row.completionCount.toLocaleString()}</TableCell>
     </AdminTableRow>
   );
 }

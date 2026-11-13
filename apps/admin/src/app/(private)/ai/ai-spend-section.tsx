@@ -87,23 +87,17 @@ async function SpendByTask({ days }: { days: number }) {
       {rows.map((row) => (
         <AdminTableRow key={row.task}>
           <TableCell className="font-mono text-xs">{row.task}</TableCell>
-          <TableCell className="text-right tabular-nums">{row.calls.toLocaleString()}</TableCell>
-          <TableCell className="text-right font-medium tabular-nums">
+          <TableCell numeric>{row.calls.toLocaleString()}</TableCell>
+          <TableCell numeric className="font-medium">
             {formatUsd(row.costUsd)}
           </TableCell>
-          <TableCell className="text-right tabular-nums">
-            {formatUsd(row.calls > 0 ? row.costUsd / row.calls : 0)}
-          </TableCell>
-          <TableCell className="text-right tabular-nums">
-            {formatUsd(row.personalCostUsd)}
-          </TableCell>
-          <TableCell className="text-right tabular-nums">
+          <TableCell numeric>{formatUsd(row.calls > 0 ? row.costUsd / row.calls : 0)}</TableCell>
+          <TableCell numeric>{formatUsd(row.personalCostUsd)}</TableCell>
+          <TableCell numeric>
             {formatShare({ part: row.cacheReadTokens, whole: row.inputTokens })}
           </TableCell>
-          <TableCell className="text-right tabular-nums">
-            {row.flexCalls.toLocaleString()}
-          </TableCell>
-          <TableCell className="text-right tabular-nums">
+          <TableCell numeric>{row.flexCalls.toLocaleString()}</TableCell>
+          <TableCell numeric>
             {formatLatency(row.p50LatencyMs === null ? null : row.p50LatencyMs / MS_PER_SECOND)}
           </TableCell>
         </AdminTableRow>
@@ -126,18 +120,16 @@ async function SpendByModel({ days }: { days: number }) {
         <AdminTableRow key={`${row.model}|${row.serviceTier ?? "standard"}`}>
           <TableCell className="font-mono text-xs">{row.model}</TableCell>
           <TableCell className="text-xs">{row.serviceTier ?? "standard"}</TableCell>
-          <TableCell className="text-right tabular-nums">{row.calls.toLocaleString()}</TableCell>
-          <TableCell className="text-right tabular-nums">{formatTokens(row.inputTokens)}</TableCell>
-          <TableCell className="text-right tabular-nums">
+          <TableCell numeric>{row.calls.toLocaleString()}</TableCell>
+          <TableCell numeric>{formatTokens(row.inputTokens)}</TableCell>
+          <TableCell numeric>
             {formatShare({ part: row.cacheReadTokens, whole: row.inputTokens })}
           </TableCell>
-          <TableCell className="text-right tabular-nums">
-            {formatTokens(row.outputTokens)}
-          </TableCell>
-          <TableCell className="text-right font-medium tabular-nums">
+          <TableCell numeric>{formatTokens(row.outputTokens)}</TableCell>
+          <TableCell numeric className="font-medium">
             {formatUsd(row.costUsd)}
           </TableCell>
-          <TableCell className="text-right tabular-nums">
+          <TableCell numeric>
             {row.gatewayCostUsd === null ? "—" : formatUsd(row.gatewayCostUsd)}
           </TableCell>
         </AdminTableRow>

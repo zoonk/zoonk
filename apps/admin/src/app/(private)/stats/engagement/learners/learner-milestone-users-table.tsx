@@ -43,15 +43,9 @@ function LearnerMilestoneUserRow({ user }: { user: LearnerMilestoneUser }) {
     <AdminTableRow>
       <AdminUserCell user={user} userId={user.id} />
 
-      <TableCell className="text-right tabular-nums">
-        {user.completedLessons.toLocaleString("en")}
-      </TableCell>
-      <TableCell className="text-right tabular-nums">
-        {user.learningDays.toLocaleString("en")}
-      </TableCell>
-      <TableCell className="text-right tabular-nums">
-        {user.totalBrainPower.toLocaleString("en")}
-      </TableCell>
+      <TableCell numeric>{user.completedLessons.toLocaleString("en")}</TableCell>
+      <TableCell numeric>{user.learningDays.toLocaleString("en")}</TableCell>
+      <TableCell numeric>{user.totalBrainPower.toLocaleString("en")}</TableCell>
       <TableCell className="text-muted-foreground">
         {formatLearnerDate(user.lastLearningDate)}
       </TableCell>

@@ -29,7 +29,7 @@ async function ProvenanceTable({ days }: { days: number }) {
           <TableCell>{provenanceTableLabels[row.table]}</TableCell>
           <TableCell className="font-mono text-xs">{row.model}</TableCell>
           <TableCell className="font-mono text-xs">{row.promptVersion ?? "—"}</TableCell>
-          <TableCell className="text-right tabular-nums">{row.rows.toLocaleString()}</TableCell>
+          <TableCell numeric>{row.rows.toLocaleString()}</TableCell>
         </AdminTableRow>
       ))}
     </AdminTableColumns>

@@ -60,8 +60,8 @@ function MasteryStateTable({
       <TableHeader>
         <AdminTableRow>
           <TableHead>Current state (all time)</TableHead>
-          <TableHead className="text-right">Learner skills</TableHead>
-          <TableHead className="text-right">Share</TableHead>
+          <TableHead numeric>Learner skills</TableHead>
+          <TableHead numeric>Share</TableHead>
         </AdminTableRow>
       </TableHeader>
 
@@ -70,10 +70,8 @@ function MasteryStateTable({
           states.map((row) => (
             <AdminTableRow key={row.state}>
               <TableCell className="font-medium">{STATE_LABELS[row.state]}</TableCell>
-              <TableCell className="text-right tabular-nums">
-                {row.count.toLocaleString()}
-              </TableCell>
-              <TableCell className="text-right tabular-nums">
+              <TableCell numeric>{row.count.toLocaleString()}</TableCell>
+              <TableCell numeric>
                 {formatPercent(toPercent({ denominator: total, numerator: row.count }))}
               </TableCell>
             </AdminTableRow>

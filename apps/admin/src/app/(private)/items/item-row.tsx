@@ -36,10 +36,8 @@ export function ItemRow({ answerStats, item }: { answerStats: ItemAnswerStats; i
           "—"
         )}
       </TableCell>
-      <TableCell className="text-right tabular-nums">{answerStats.attempts}</TableCell>
-      <TableCell className="text-right tabular-nums">
-        {formatPercent(getItemAccuracy(answerStats))}
-      </TableCell>
+      <TableCell numeric>{answerStats.attempts}</TableCell>
+      <TableCell numeric>{formatPercent(getItemAccuracy(answerStats))}</TableCell>
       <TableCell>
         <ProvenanceLine provenance={item} />
       </TableCell>

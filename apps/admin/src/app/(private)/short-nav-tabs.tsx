@@ -1,6 +1,7 @@
 "use client";
 
-import { TabLink, TabLinks } from "@zoonk/ui/components/tab-links";
+import { TAB_CLASS, TAB_LIST_CLASS } from "@zoonk/ui/components/tab-class";
+import { cn } from "@zoonk/ui/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { adminNavigation } from "./admin-navigation";
@@ -20,18 +21,22 @@ export function ShortNavTabs({ counts }: { counts: AdminNavCounts }) {
 
   return (
     <div className="flex h-14 items-center border-b px-4 sm:px-8 lg:px-10">
-      <TabLinks label={group.label}>
-        {group.items.map((item) => (
-          <TabLink
-            current={pathname.startsWith(item.url)}
-            key={item.url}
-            render={<Link href={item.url} />}
-          >
-            {item.label}
-            {item.queue ? counts[item.queue] : null}
-          </TabLink>
-        ))}
-      </TabLinks>
+      <nav aria-label={group.label} className="min-w-0">
+        <ul className={cn(TAB_LIST_CLASS, "-mx-2.5")}>
+          {group.items.map((item) => (
+            <li key={item.url}>
+              <Link
+                aria-current={pathname.startsWith(item.url) ? "page" : undefined}
+                className={TAB_CLASS}
+                href={item.url}
+              >
+                {item.label}
+                {item.queue ? counts[item.queue] : null}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
     </div>
   );
 }

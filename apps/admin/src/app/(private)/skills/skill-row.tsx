@@ -21,10 +21,10 @@ export function SkillRow({ skill }: { skill: ListedSkill }) {
       <TableCell className="uppercase">{skill.language}</TableCell>
       <TableCell className="capitalize">{skill.level ?? "—"}</TableCell>
       <TableCell className="capitalize">{skill.visibility}</TableCell>
-      <TableCell className="text-right tabular-nums">{skill._count.lessons}</TableCell>
-      <TableCell className="text-right tabular-nums">{skill._count.items}</TableCell>
-      <TableCell className="text-right tabular-nums">{skill._count.learnerSkills}</TableCell>
-      <TableCell className="text-right tabular-nums">{skill._count.prerequisites}</TableCell>
+      <TableCell numeric>{skill._count.lessons}</TableCell>
+      <TableCell numeric>{skill._count.items}</TableCell>
+      <TableCell numeric>{skill._count.learnerSkills}</TableCell>
+      <TableCell numeric>{skill._count.prerequisites}</TableCell>
       <TableCell>
         <ProvenanceLine provenance={skill} />
       </TableCell>
