@@ -2,7 +2,6 @@
 
 import { type UnderstoodGoalView } from "@zoonk/core/view-models/onboarding/contract";
 import { type OnboardingDraftEdit } from "@zoonk/core/view-models/onboarding/draft-edit-contract";
-import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
 import { CreateAccountLink } from "../../_components/create-account-link";
@@ -254,12 +253,7 @@ export function UnderstoodScreen({
       ) : (
         <GoalFooter error={cardError} signUpHref={signUpHref}>
           <form action={() => onConfirm()} className="contents">
-            <OnboardingPrimaryButton
-              busy={isCreating}
-              disabled={rewriting}
-              icon={<CheckIcon aria-hidden="true" />}
-              type="submit"
-            >
+            <OnboardingPrimaryButton busy={isCreating} disabled={rewriting} type="submit">
               {t("Looks right")}
             </OnboardingPrimaryButton>
           </form>

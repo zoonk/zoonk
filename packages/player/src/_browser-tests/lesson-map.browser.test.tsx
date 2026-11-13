@@ -173,6 +173,7 @@ describe("the opening guess's action bar", () => {
       .element(page.getByText("Getting it wrong now helps you remember later."))
       .not.toBeInTheDocument();
 
+    await expect.element(barButton("I don't know yet")).not.toBeInTheDocument();
     await barButton("See the answer").click();
 
     await expect
@@ -218,19 +219,18 @@ describe("the opening guess's action bar", () => {
     expect(requestExampleLine).toHaveBeenCalledExactlyOnceWith({ stepId: lesson.steps[1]?.id });
   });
 
-  it("reads See the answer with or without a pick, and checks the guess once one is picked", async () => {
+  it("reads See the answer with a pick, without one, and after unpicking", async () => {
     renderLessonPlayer({
       lesson: buildLesson([teachingStep("hook"), teachingStep("explanation")]),
     });
 
     await expect.element(barButton("See the answer")).toBeVisible();
-    await expect.element(barButton("I don't know yet")).not.toBeInTheDocument();
 
     await page.getByRole("radio", { name: "Yes, exactly" }).click();
     await expect.element(barButton("See the answer")).toBeVisible();
-    await expect.element(barButton("I don't know yet")).not.toBeInTheDocument();
 
     await page.getByRole("radio", { name: "Yes, exactly" }).click();
+    await expect.element(page.getByRole("radio", { name: "Yes, exactly" })).not.toBeChecked();
     await expect.element(barButton("See the answer")).toBeVisible();
 
     await page.getByRole("radio", { name: "No" }).click();

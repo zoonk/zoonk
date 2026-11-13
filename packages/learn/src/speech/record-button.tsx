@@ -1,6 +1,5 @@
 "use client";
 
-import { MicIcon, SquareIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { EnterButton } from "../_components/enter-button";
 import { formatClock } from "../_utils/clock";
@@ -39,13 +38,6 @@ export function RecordButton({
       className={className}
       data-slot="record-button"
       disabled={disabled}
-      icon={
-        recording ? (
-          <SquareIcon aria-hidden="true" className="fill-current" />
-        ) : (
-          <MicIcon aria-hidden="true" />
-        )
-      }
       onClick={recording ? onStop : onStart}
       size={size}
     >

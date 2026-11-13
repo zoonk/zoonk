@@ -101,7 +101,7 @@ describe("numbered pictures", () => {
 
     renderLessonPlayer({ adapters: buildAdapters(lesson, { getLessonPictures }), lesson });
 
-    const seeAnswer = page.getByRole("button", { exact: true, name: "See the answer" });
+    const seeAnswer = page.getByRole("button", { name: /^See the answer/u });
     const revealed = page.getByRole("status").filter({ hasText: "Here's the answer" });
     await expect.element(seeAnswer).toBeDisabled();
 

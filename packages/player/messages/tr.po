@@ -2079,6 +2079,7 @@ msgid "The music couldn't load. Check your connection and try again."
 msgstr "Müzik yüklenemedi. Bağlantını kontrol edip tekrar dene."
 
 #: src/activities/notation-player/notation-player-activity.tsx
+#: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "q_uwLT"
 msgid "Stop"
 msgstr "Durdur"
@@ -2514,14 +2515,19 @@ msgid "We couldn't match enough taps to the clicks. Try again, tapping with each
 msgstr "Yeterli sayıda vuruşu tık sesleriyle eşleştiremedik. Her tık sesinde dokunarak tekrar dene."
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
-msgctxt "NNlvmb"
-msgid "All set."
-msgstr "Her şey hazır."
+msgctxt "JUoCnO"
+msgid "Sound on this device arrives on time."
+msgstr "Bu cihazda ses zamanında geliyor."
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
-msgctxt "Jk0E1p"
-msgid "Tap along with {count} clicks, so your taps are timed right."
-msgstr "Vuruşlarının zamanlamasını ayarlamak için {count} tık sesini takip ederek dokun."
+msgctxt "hIMvUw"
+msgid "Sound on this device arrives about {ms} ms late. Rhythms here take that out."
+msgstr "Bu cihazda ses yaklaşık {ms} ms gecikmeyle geliyor. Ritim etkinliklerinde zamanlamayı buna göre ayarlıyoruz."
+
+#: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
+msgctxt "ukg6sv"
+msgid "Headphones can play sound a little late. Tap along with {count} clicks once, and rhythms on this device are timed fairly."
+msgstr "Kulaklıklar sesi biraz gecikmeli verebilir. Bir defalığına {count} tık sesinin her birinde dokun; böylece bu cihazdaki ritim etkinliklerinde zamanlamanı doğru değerlendirebiliriz."
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 msgctxt "sz0O7I"
@@ -2529,9 +2535,9 @@ msgid "Set up your sound"
 msgstr "Sesi ayarla"
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
-msgctxt "mOFG3K"
-msgid "Start"
-msgstr "Başla"
+msgctxt "JrS_qa"
+msgid "Start the sound check"
+msgstr "Ses kontrolünü başlat"
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 #: src/lesson/completion/lesson-completion-moment.tsx
@@ -3049,21 +3055,45 @@ msgid "Tap an idea to see what it covers"
 msgstr "Neleri kapsadığını görmek için bir kavrama dokun"
 
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "q5JxBr"
-msgid "You can still review and practice your mistakes."
-msgstr "Tekrar yapmaya ve yanlışların üzerinde çalışmaya devam edebilirsin."
+msgctxt "P0MjYO"
+msgid "You can still review what you learned and practice your mistakes. New lessons open again next month, or get Plus to keep going now."
+msgstr "Öğrendiklerini tekrar edebilir, yanlışların üzerinde çalışabilirsin. Yeni dersler gelecek ay yeniden açılacak; hemen devam etmek için Plus’a geç."
 
 #: src/lesson/access/lesson-access-screen.tsx
-#: src/questions/lesson-question-errors.tsx
-msgctxt "gczcC5"
-msgid "Subscribe"
-msgstr "Abone ol"
+msgctxt "SDARaX"
+msgid "You can still review what you learned and practice your mistakes. New lessons open again tomorrow, or get Plus to keep going now."
+msgstr "Öğrendiklerini tekrar edebilir, yanlışların üzerinde çalışabilirsin. Yeni dersler yarın yeniden açılacak; hemen devam etmek için Plus’a geç."
+
+#: src/lesson/access/lesson-access-screen.tsx
+msgctxt "o_xO7j"
+msgid "That's all the new lessons for this month"
+msgstr "Bu ay için yeni dersler bu kadar"
+
+#: src/lesson/access/lesson-access-screen.tsx
+msgctxt "PXe9T_"
+msgid "That's all the new lessons for today"
+msgstr "Bugünlük yeni dersler bu kadar"
+
+#: src/lesson/access/lesson-access-screen.tsx
+msgctxt "xANHtD"
+msgid "See Plus"
+msgstr "Plus’ı incele"
 
 #: src/lesson/access/lesson-access-screen.tsx
 #: src/questions/tutor-dock.tsx
 msgctxt "cyR7Kh"
 msgid "Back"
 msgstr "Geri dön"
+
+#: src/lesson/access/lesson-access-screen.tsx
+msgctxt "q-Zgbe"
+msgid "You've taken the lessons you can try without an account. Create a free account to keep going, and everything you learned comes with you."
+msgstr "Hesap açmadan deneyebileceğin dersleri tamamladın. Ücretsiz bir hesap açıp kaldığın yerden devam et; tüm ilerlemen korunacak."
+
+#: src/lesson/access/lesson-access-screen.tsx
+msgctxt "gojCcS"
+msgid "Save your progress to keep going"
+msgstr "Devam etmek için ilerlemeni kaydet"
 
 #: src/lesson/access/lesson-access-screen.tsx
 #: src/questions/lesson-question-thread.tsx
@@ -3073,9 +3103,19 @@ msgid "Create a free account"
 msgstr "Ücretsiz hesap oluştur"
 
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "KFO_vV"
-msgid "Everything you learned comes with you."
-msgstr "Öğrendiğin her şey seninle kalır."
+msgctxt "nkKtmz"
+msgid "You've reached today's limit. New lessons open again tomorrow."
+msgstr "Bugünkü ders sınırına ulaştın. Yeni dersler yarın yeniden açılacak."
+
+#: src/lesson/access/lesson-access-screen.tsx
+msgctxt "8aKab6"
+msgid "That's a lot of learning today"
+msgstr "Bugün çok şey öğrendin"
+
+#: src/lesson/access/lesson-access-screen.tsx
+msgctxt "jdlHSh"
+msgid "Try again in a moment. Nothing you did was lost."
+msgstr "Birazdan tekrar dene. İlerlemen kaybolmadı."
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "ObBVZr"
@@ -3083,25 +3123,35 @@ msgid "We couldn't open this lesson"
 msgstr "Bu dersi açamadık"
 
 #: src/lesson/access/lesson-access-screen.tsx
+msgctxt "hp9pnq"
+msgid "Sign in to keep learning."
+msgstr "Öğrenmeye devam etmek için giriş yap."
+
+#: src/lesson/access/lesson-access-screen.tsx
+msgctxt "QvYlF0"
+msgid "This lesson isn't available anymore."
+msgstr "Bu ders artık kullanılamıyor."
+
+#: src/lesson/access/lesson-access-screen.tsx
+msgctxt "szo7Rq"
+msgid "Sign in to continue"
+msgstr "Devam etmek için giriş yap"
+
+#: src/lesson/access/lesson-access-screen.tsx
+msgctxt "A_VPtF"
+msgid "Lesson not available"
+msgstr "Ders kullanılamıyor"
+
+#: src/lesson/access/lesson-access-screen.tsx
 #: src/questions/lesson-question-errors.tsx
-msgctxt "odXlk8"
-msgid "Log in"
+msgctxt "SQJto2"
+msgid "Sign in"
 msgstr "Giriş yap"
 
-#: src/lesson/access/lesson-access-screen.tsx
-msgctxt "bBaQAY"
-msgid "You've been logged out"
-msgstr "Oturumun kapandı"
-
-#: src/lesson/access/lesson-access-screen.tsx
-msgctxt "t12Boe"
-msgid "This lesson isn't available"
-msgstr "Bu ders kullanılamıyor"
-
 #: src/lesson/access/lesson-slow-down.tsx
-msgctxt "z7s-vx"
-msgid "You opened a lot of lessons quickly. This one opens on its own in {seconds, plural, =0 {# seconds} one {# second} other {# seconds}}."
-msgstr "Kısa sürede çok sayıda ders açtın. Bu ders {seconds, plural, =0 {# saniye} other {# saniye}} sonra kendiliğinden açılacak."
+msgctxt "fKzrQy"
+msgid "You started a lot of lessons in a short time. This one opens in {seconds, plural, =0 {# seconds} one {# second} other {# seconds}}."
+msgstr "Kısa sürede çok sayıda derse başladın. Bu ders {seconds, plural, =0 {# saniye içinde} other {# saniye sonra}} açılacak."
 
 #: src/lesson/access/lesson-slow-down.tsx
 msgctxt "bKi-gy"
@@ -3295,9 +3345,9 @@ msgid "Also correct:"
 msgstr "Bu da doğru:"
 
 #: src/lesson/feedback/lesson-step-result.tsx
-msgctxt "WGhDaL"
-msgid "This question was already checked a few times today, so this answer doesn't count. Compare it with this one:"
-msgstr "Bu soru bugün birkaç kez kontrol edildiği için bu cevabın sayılmıyor. Cevabını şu örnekle karşılaştır:"
+msgctxt "57Nd7h"
+msgid "Each question is checked a few times a day. Compare your answer with this one:"
+msgstr "Her soruyu günde birkaç kez kontrol ediyoruz. Cevabını bununla karşılaştır:"
 
 #: src/lesson/feedback/lesson-step-result.tsx
 msgctxt "bqVpRG"
@@ -3387,15 +3437,25 @@ msgctxt "ZHEKO0"
 msgid "Lesson content"
 msgstr "Ders içeriği"
 
+#: src/lesson/lesson-practice-step.tsx
+msgctxt "N2IrpM"
+msgid "Confirm"
+msgstr "Onayla"
+
+#: src/lesson/lesson-practice-step.tsx
+msgctxt "zDR51u"
+msgid "See how it went"
+msgstr "Sonucunu gör"
+
+#: src/lesson/lesson-practice-step.tsx
+msgctxt "mOFG3K"
+msgid "Start"
+msgstr "Başla"
+
 #: src/lesson/lesson-screen-menu.tsx
 msgctxt "_fpJc0"
 msgid "Made with AI. It may contain mistakes."
 msgstr "Yapay zekâyla hazırlandı. Hatalar içerebilir."
-
-#: src/lesson/lesson-screen-menu.tsx
-msgctxt "GscVFm"
-msgid "Skip writing questions today"
-msgstr "Bugün yazma sorularını atla"
 
 #: src/lesson/lesson-screen-menu.tsx
 msgctxt "JfMPi0"
@@ -3403,9 +3463,9 @@ msgid "I already know this"
 msgstr "Bunu zaten biliyorum"
 
 #: src/lesson/lesson-stage.tsx
-msgctxt "Bvu2Yr"
-msgid "Turn back on"
-msgstr "Yeniden aç"
+msgctxt "qzpeai"
+msgid "Write again"
+msgstr "Tekrar yaz"
 
 #: src/lesson/lesson-stage.tsx
 msgctxt "LnHBcu"
@@ -3428,9 +3488,9 @@ msgid "This question was waiting for its picture. Answer it to finish the lesson
 msgstr "Bu soru için görsel bekleniyordu. Dersi bitirmek için soruyu cevapla."
 
 #: src/lesson/lesson-stage.tsx
-msgctxt "36aQ8F"
-msgid "Writing is off for today."
-msgstr "Yazma soruları bugün kapalı."
+msgctxt "I67vt5"
+msgid "No more writing today."
+msgstr "Bugün başka içerik hazırlamıyoruz."
 
 #: src/lesson/lesson-stage.tsx
 msgctxt "N9yMCQ"
@@ -3473,9 +3533,9 @@ msgid "Challenge complete"
 msgstr "Meydan okuma tamamlandı"
 
 #: src/lesson/steps/challenge/challenge-debrief.tsx
-msgctxt "3SY66E"
-msgid "What you practiced"
-msgstr "Çalıştıkların"
+msgctxt "ttLWcq"
+msgid "Skills practiced"
+msgstr "Çalışılan beceriler"
 
 #: src/lesson/steps/challenge/challenge-debrief.tsx
 msgctxt "gvZdep"
@@ -3501,6 +3561,16 @@ msgstr "Meydan okuma · {setting}"
 msgctxt "KV-6ml"
 msgid "Your mission"
 msgstr "Görevin"
+
+#: src/lesson/steps/challenge/challenge-intro.tsx
+msgctxt "r5v2r8"
+msgid "You can ask the team or the AI for help. Your decisions change the outcome."
+msgstr "Ekibinden veya yapay zekâdan yardım isteyebilirsin. Kararların sonucu değiştirir."
+
+#: src/lesson/steps/challenge/challenge-intro.tsx
+msgctxt "cjl8Gf"
+msgid "You can ask the team for help. Your decisions change the outcome."
+msgstr "Ekibinden yardım isteyebilirsin. Kararların sonucu değiştirir."
 
 #: src/lesson/steps/challenge/challenge-meters.tsx
 msgctxt "eppyrx"
@@ -3558,11 +3628,15 @@ msgctxt "YAXwBl"
 msgid "Write your answer"
 msgstr "Cevabını yaz"
 
-#. “Record” is the label of the button that starts the recording.
 #: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "PDfU14"
-msgid "Tap Record and say it out loud"
-msgstr "Kaydet düğmesine dokun ve sesli söyle"
+msgctxt "7Y6Yvq"
+msgid "Record"
+msgstr "Kaydı başlat"
+
+#: src/lesson/steps/spoken-answer-step.tsx
+msgctxt "Tljb7W"
+msgid "Tap and say it out loud"
+msgstr "Dokun ve sesli söyle"
 
 #. “Stop” is the label of the button that ends the recording.
 #: src/lesson/steps/spoken-answer-step.tsx
@@ -3599,6 +3673,11 @@ msgstr "Özet"
 msgctxt "-LUe1w"
 msgid "{count, plural, one {# idea to take from this lesson} other {# ideas to take from this lesson}}"
 msgstr "{count, plural, other {Bu dersten aklında kalacak # nokta}}"
+
+#: src/lesson/steps/typed-answer-step.tsx
+msgctxt "DPTzG-"
+msgid "Can't write now"
+msgstr "Şu an yazamıyorum"
 
 #: src/lesson/steps/typed-answer-step.tsx
 msgctxt "lZZnLn"
@@ -3808,14 +3887,14 @@ msgid "⏎ send · ⇧⏎ new line"
 msgstr "⏎ gönder · ⇧⏎ yeni satır"
 
 #: src/questions/lesson-question-errors.tsx
-msgctxt "NYRAZH"
-msgid "You've been logged out."
-msgstr "Oturumun kapandı."
+msgctxt "2P8sqa"
+msgid "Your session expired. Sign in again."
+msgstr "Oturumunun süresi doldu. Tekrar giriş yap."
 
 #: src/questions/lesson-question-errors.tsx
-msgctxt "JGZkd5"
-msgid "Asking questions needs a subscription"
-msgstr "Soru sormak için abonelik gerekiyor"
+msgctxt "iVOq9B"
+msgid "Subscribe to ask questions"
+msgstr "Soru sormak için abone ol"
 
 #: src/questions/lesson-question-errors.tsx
 msgctxt "0-TBnr"
@@ -3836,6 +3915,11 @@ msgstr "Kısa bir ara ver, sonra tekrar sor."
 msgctxt "3kJE8G"
 msgid "Something went wrong. Try again."
 msgstr "Bir sorun oluştu. Tekrar dene."
+
+#: src/questions/lesson-question-errors.tsx
+msgctxt "EaucLA"
+msgid "View plans"
+msgstr "Paketleri incele"
 
 #: src/questions/lesson-question-panel.tsx
 msgctxt "BIwI4b"

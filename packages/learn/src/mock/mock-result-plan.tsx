@@ -8,9 +8,10 @@ import { CheckIcon, CircleCheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
 import { type DiffLine, DiffLines } from "../_components/diff-lines";
+import { Eyebrow } from "../_components/eyebrow";
 import { Meter, MeterFill } from "../_components/meter";
 import { useChangeSaveErrorMessage } from "../_components/save-error";
-import { StepCard, StepDetail, StepEyebrow, StepHeader, StepTitle } from "../_components/step-card";
+import { StepCard, StepDetail, StepHeader, StepTitle } from "../_components/step-card";
 import { useFormatShare } from "../_utils/percent";
 import { type MockPlanOffer, type MockPlanOfferOutcome, useMockScreen } from "./mock-context";
 
@@ -300,7 +301,7 @@ export function MockPlanStep({
   return (
     <StepCard>
       <StepHeader>
-        <StepEyebrow>{preparation ? t("Your preparation") : t("Your plan")}</StepEyebrow>
+        <Eyebrow>{preparation ? t("Your preparation") : t("Your plan")}</Eyebrow>
         <StepTitle className={cn(preparation && "text-readout text-5xl")}>
           {preparation ? <PreparationNumbers change={preparation} /> : changeTitle}
         </StepTitle>

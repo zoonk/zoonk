@@ -4,7 +4,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { CompassIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
-import { QuestionEyebrow } from "../../_components/question-title";
+import { Eyebrow } from "../../_components/eyebrow";
 import { ChangeSaveError } from "../../_components/save-error";
 import { useSentenceSpace } from "../../_utils/locale";
 import { type StudyQuestion } from "../session-types";
@@ -34,19 +34,22 @@ export function PlacementNote({
 
   return (
     <div className="flex flex-col gap-1" data-slot="placement-note">
-      <QuestionEyebrow icon={<CompassIcon aria-hidden="true" />}>
-        {t("Fine-tuning your plan. A miss here is never saved as a mistake.")}
-        {onSkipToday && (
-          <>
-            {space}
-            <Button busy={isPending} onClick={skipToday} variant="link">
-              {t("Not today")}
-            </Button>
-          </>
-        )}
-      </QuestionEyebrow>
+      <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+        <Eyebrow icon={<CompassIcon aria-hidden="true" />}>{t("Fine-tuning your plan")}</Eyebrow>
+        <p className="text-muted-foreground text-compact text-pretty">
+          {t("A miss here is never saved as a mistake.")}
+          {onSkipToday && (
+            <>
+              {space}
+              <Button busy={isPending} onClick={skipToday} variant="link">
+                {t("Not today")}
+              </Button>
+            </>
+          )}
+        </p>
+      </div>
 
-      {failed && <ChangeSaveError className="ps-5 text-xs" />}
+      {failed && <ChangeSaveError className="text-xs" />}
     </div>
   );
 }

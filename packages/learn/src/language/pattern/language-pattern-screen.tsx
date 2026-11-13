@@ -3,7 +3,7 @@
 import { type MistakePatternView } from "@zoonk/core/language/patterns/contract";
 import { Drawer, DrawerContent, DrawerPopup, DrawerTitle } from "@zoonk/ui/components/drawer";
 import { DropdownMenuItem } from "@zoonk/ui/components/dropdown-menu";
-import { BookOpenIcon, CheckIcon } from "lucide-react";
+import { BookOpenIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useState } from "react";
 import { QuestionActions, QuestionMainAction } from "../../_components/question-actions";
@@ -37,7 +37,7 @@ function DoneAction({ exitHref }: { exitHref: string }) {
 
   return (
     <TaskActions>
-      <TaskMainLink href={exitHref} icon={<CheckIcon aria-hidden="true" />} toApp>
+      <TaskMainLink href={exitHref} toApp>
         {t("Done")}
       </TaskMainLink>
     </TaskActions>

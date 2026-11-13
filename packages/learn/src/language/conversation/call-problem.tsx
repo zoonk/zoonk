@@ -2,7 +2,6 @@
 
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
-import { ArrowLeftIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import { EnterLink } from "../../_components/enter-button";
@@ -47,9 +46,7 @@ function ProblemWithBack({
       exitHref={exitHref}
       footer={
         <TaskActions>
-          <TaskMainLink href={exitHref} icon={<ArrowLeftIcon aria-hidden="true" />}>
-            {t("Back")}
-          </TaskMainLink>
+          <TaskMainLink href={exitHref}>{t("Back")}</TaskMainLink>
         </TaskActions>
       }
       headerTitle={title}
@@ -80,7 +77,7 @@ function CallLimitScreen({
         <>
           {limit.tier === "guest" && (
             <TaskActions>
-              <EnterLink href={routes.signUp} icon={null} link={PageLink}>
+              <EnterLink href={routes.signUp} link={PageLink}>
                 {t("Create a free account")}
               </EnterLink>
             </TaskActions>
@@ -88,9 +85,7 @@ function CallLimitScreen({
           {limit.tier === "free" && <SubscribeMainAction />}
           {limit.tier === "plus" && (
             <TaskActions>
-              <TaskMainLink href={exitHref} icon={<ArrowLeftIcon aria-hidden="true" />}>
-                {t("Back")}
-              </TaskMainLink>
+              <TaskMainLink href={exitHref}>{t("Back")}</TaskMainLink>
             </TaskActions>
           )}
         </>

@@ -5,6 +5,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { CircleHelpIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { EnterLink } from "../_components/enter-button";
+import { SuccessEyebrow } from "../_components/eyebrow";
 import {
   ListGroup,
   ListRowContent,
@@ -16,7 +17,6 @@ import {
 } from "../_components/list-group";
 import { MomentReadouts } from "../_components/moment-readouts";
 import { PAGE_SECTION_TITLE_CLASS, PageSectionTitle } from "../_components/page";
-import { SuccessEyebrow } from "../_components/success-eyebrow";
 import { TaskActionBar, TaskActions, TaskAsideContent, TaskBody } from "../_components/task-layout";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { DayMoment } from "../session/day-moment";
@@ -33,11 +33,7 @@ function DoneLink({ href, saving }: { href: string; saving: boolean }) {
     return <PendingMainAction>{t("Done")}</PendingMainAction>;
   }
 
-  return (
-    <EnterLink href={href} icon={null}>
-      {t("Done")}
-    </EnterLink>
-  );
+  return <EnterLink href={href}>{t("Done")}</EnterLink>;
 }
 
 function QuestionRow({ href, question }: { href: string; question: string }) {
@@ -72,7 +68,9 @@ function ExplainRecap({
   }
 
   return (
-    <TaskAsideContent className={cn("with-aside:top-0", className)}>
+    <TaskAsideContent
+      className={cn("with-aside:top-0 with-aside:group-data-aside/task:pt-0", className)}
+    >
       <section aria-labelledby="explain-recap" className="with-aside:gap-0 flex flex-col gap-1">
         <h2
           className={cn(

@@ -42,7 +42,7 @@ function SubscribeGateScreen({ limit }: { limit: ReachedLimit }) {
   return (
     <AccessLayout
       actions={
-        <EnterLink href={routes.upgrade} icon={null} link={LinkComponent}>
+        <EnterLink href={routes.upgrade} link={LinkComponent}>
           {t("Subscribe")}
         </EnterLink>
       }
@@ -62,7 +62,7 @@ function SubscriberLimitReached({ limit }: { limit: ReachedLimit }) {
   return (
     <AccessLayout
       actions={
-        <EnterLink href={routes.exit} icon={null} link={LinkComponent}>
+        <EnterLink href={routes.exit} link={LinkComponent}>
           {t("Back")}
         </EnterLink>
       }
@@ -81,7 +81,7 @@ function GuestLimitReached({ limit }: { limit: ReachedLimit }) {
   return (
     <AccessLayout
       actions={
-        <EnterLink href={routes.signUp} icon={null} link={PageLink}>
+        <EnterLink href={routes.signUp} link={PageLink}>
           {t("Create a free account")}
         </EnterLink>
       }
@@ -127,11 +127,11 @@ function Unavailable({
     <AccessLayout
       actions={
         refusal.reason === "unauthorized" ? (
-          <EnterLink href={routes.signUp} icon={null} link={PageLink}>
+          <EnterLink href={routes.signUp} link={PageLink}>
             {t("Log in")}
           </EnterLink>
         ) : (
-          <EnterLink href={routes.exit} icon={null} link={LinkComponent}>
+          <EnterLink href={routes.exit} link={LinkComponent}>
             {t("Back")}
           </EnterLink>
         )

@@ -17,7 +17,6 @@ import { WaitContent, WaitScreen, WaitSlot, useWaitScreen } from "@zoonk/learn/w
 import { useReadyHold } from "@zoonk/learn/wait/hold";
 import { LessonWaitStatus } from "@zoonk/learn/wait/lesson-status";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
-import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useState } from "react";
 import { type ReadyAlternative, ReadyLesson } from "./lesson-ready-alternative";
@@ -233,7 +232,7 @@ function StartLessonBar({ busy, onStart }: { busy: boolean; onStart: () => void 
   return (
     <TaskActionBar>
       <TaskActions>
-        <TaskMainButton busy={busy} icon={<PlayIcon aria-hidden="true" />} onClick={onStart}>
+        <TaskMainButton busy={busy} onClick={onStart}>
           {t("Get it ready")}
         </TaskMainButton>
       </TaskActions>

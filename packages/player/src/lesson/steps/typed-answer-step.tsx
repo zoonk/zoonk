@@ -1,6 +1,6 @@
 "use client";
 
-import { QuestionEyebrow } from "@zoonk/learn/question-title";
+import { Eyebrow } from "@zoonk/learn/eyebrow";
 import { useSpokenText } from "@zoonk/learn/rich-text/speech";
 import { LessonVisual } from "@zoonk/learn/visual";
 import { PenLineIcon } from "lucide-react";
@@ -31,9 +31,7 @@ export function TypedAnswerStepView({
     <InteractiveStepLayout>
       <div className="flex flex-col gap-3">
         {isExplanation && (
-          <QuestionEyebrow icon={<PenLineIcon aria-hidden="true" />}>
-            {t("In your own words")}
-          </QuestionEyebrow>
+          <Eyebrow icon={<PenLineIcon aria-hidden="true" />}>{t("In your own words")}</Eyebrow>
         )}
         <ScreenSupport>
           <LessonContext>{step.content.context}</LessonContext>

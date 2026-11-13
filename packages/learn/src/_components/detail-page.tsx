@@ -2,7 +2,6 @@
 
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { PageWithAside } from "../shell/learn-shell";
 import { EnterLink } from "./enter-button";
@@ -83,7 +82,6 @@ export function DetailContinueLink({
     <EnterLink
       className={DETAIL_PRIMARY_CLASS}
       href={href}
-      icon={<PlayIcon aria-hidden="true" />}
       lessonWritten={lessonWritten}
       prefetch={lessonWritten === false ? "auto" : true}
       size="lg"
