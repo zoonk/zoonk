@@ -205,24 +205,14 @@ function CommandItem({ className, ...props }: AutocompleteItemProps) {
   );
 }
 
-function CommandFooter({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      aria-hidden="true"
-      className={cn(
-        "text-faint text-2xs hidden h-9 shrink-0 items-center gap-3.5 border-t px-5 sm:pointer-fine:flex [&>span]:inline-flex [&>span]:items-center [&>span]:gap-1",
-        className,
-      )}
-      data-slot="command-footer"
-      {...props}
-    />
-  );
-}
-
 /** The keys every palette answers, in its footer. The app passes the words in its own language. */
 function CommandKeyHints({ close, move, open }: { close: string; move: string; open: string }) {
   return (
-    <CommandFooter>
+    <div
+      aria-hidden="true"
+      className="text-faint text-2xs hidden h-9 shrink-0 items-center gap-3.5 border-t px-5 sm:pointer-fine:flex [&>span]:inline-flex [&>span]:items-center [&>span]:gap-1"
+      data-slot="command-footer"
+    >
       <span>
         <Kbd>
           <ArrowUpIcon />
@@ -240,7 +230,7 @@ function CommandKeyHints({ close, move, open }: { close: string; move: string; o
         <Kbd>Esc</Kbd>
         {close}
       </span>
-    </CommandFooter>
+    </div>
   );
 }
 
@@ -251,7 +241,6 @@ export {
   CommandDialog,
   CommandDialogDescription,
   CommandDialogTitle,
-  CommandFooter,
   CommandGroup,
   CommandGroupLabel,
   CommandInput,
