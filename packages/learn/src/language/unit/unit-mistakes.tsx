@@ -5,6 +5,7 @@ import {
   type LanguageUnitView,
 } from "@zoonk/core/view-models/language/contract";
 import { useExtracted } from "next-intl";
+import { Eyebrow } from "../../_components/eyebrow";
 import { MistakeAnswer } from "../../mistakes/mistake-entry";
 import { ItemStem, ItemText } from "../../questions/item-text";
 
@@ -26,7 +27,7 @@ function MistakeItem({ mistake }: { mistake: UnitMistake }) {
 
   return (
     <li className="flex flex-col gap-2 py-3 first:pt-0 last:pb-0">
-      <p className="text-muted-foreground text-xs font-medium">{labels[mistake.skill]}</p>
+      <Eyebrow>{labels[mistake.skill]}</Eyebrow>
       <div className="text-sm font-medium">
         <ItemStem text={mistake.question} />
       </div>

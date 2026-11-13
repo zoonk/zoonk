@@ -19,6 +19,7 @@ import {
   type ExerciseResources,
   serializeExerciseSteps,
 } from "@zoonk/core/player/contracts/prepare-lesson-data";
+import { DRAWN_PICTURE_SIZE } from "@zoonk/learn/picture-box";
 import {
   numberedCheckContent,
   pictureCheckContent,
@@ -72,7 +73,9 @@ export function pictureCheckStep({
 }: Omit<StepOptions, "optionPictures"> & { drawn?: readonly string[] } = {}) {
   const optionPictures = Object.fromEntries(
     pictureCheckContent.options.flatMap((option) =>
-      drawn.includes(option.id) ? [[option.id, inlineImage({ alt: option.picture.alt })]] : [],
+      drawn.includes(option.id)
+        ? [[option.id, inlineImage({ alt: option.picture.alt, kind: "option" })]]
+        : [],
     ),
   );
 
@@ -272,11 +275,24 @@ function escapeSvgText(value: string) {
     .replaceAll("'", "&#39;");
 }
 
-export function inlineImage({ alt, id }: { alt: string; id?: string }): PlayableStepImage {
+const SAMPLE_PICTURE_SIZE = { height: 1280, width: 1024 };
+
+/** `kind` draws the sample at the size a new picture of that kind arrives in, the room its wait holds. */
+export function inlineImage({
+  alt,
+  id,
+  kind,
+}: {
+  alt: string;
+  id?: string;
+  kind?: keyof typeof DRAWN_PICTURE_SIZE;
+}): PlayableStepImage {
+  const { height, width } = kind ? DRAWN_PICTURE_SIZE[kind] : SAMPLE_PICTURE_SIZE;
+
   const svg = [
-    '<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1280" viewBox="0 0 1024 1280">',
-    '<rect width="1024" height="1280" fill="#f4f4f5" />',
-    '<text x="512" y="640" fill="#111827" font-family="Arial, sans-serif" font-size="36" text-anchor="middle">',
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">`,
+    `<rect width="${width}" height="${height}" fill="#f4f4f5" />`,
+    `<text x="${width / 2}" y="${height / 2}" fill="#111827" font-family="Arial, sans-serif" font-size="36" text-anchor="middle">`,
     escapeSvgText(alt),
     "</text>",
     "</svg>",
@@ -284,9 +300,9 @@ export function inlineImage({ alt, id }: { alt: string; id?: string }): Playable
 
   return {
     alt,
-    height: 1280,
+    height,
     id: id ?? crypto.randomUUID(),
     url: `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`,
-    width: 1024,
+    width,
   };
 }

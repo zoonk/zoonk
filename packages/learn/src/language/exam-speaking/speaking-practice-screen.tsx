@@ -13,10 +13,7 @@ import {
   ListRowLeading,
   ListRowLink,
   ListRowTitle,
-  ListRowTrailing,
 } from "../../_components/list-group";
-import { PageEyebrow } from "../../_components/page";
-import { PlusMark } from "../../_components/plus-lock";
 import { LearnPageBar } from "../../shell/learn-bar";
 import { type ExamTaskStart, SpeakingPaperSection } from "./speaking-paper-section";
 import { useTaskMinutes } from "./speaking-task-row";
@@ -42,11 +39,6 @@ export function SpeakingPracticeRow({
             {t("{exam} tasks on a call", { exam: entry.title })}
           </ListRowDescription>
         </ListRowContent>
-        {entry.access === "plusRequired" && (
-          <ListRowTrailing className="font-sans">
-            <PlusMark />
-          </ListRowTrailing>
-        )}
       </ListRowBody>
     </ListRowLink>
   );
@@ -76,7 +68,6 @@ export function SpeakingPracticeScreen({
         <DetailAside>
           <DetailHero>
             <DetailHeroText>
-              <PageEyebrow>{t("Exam-style speaking")}</PageEyebrow>
               <DetailTitle>{paper.title}</DetailTitle>
               <DetailFacts>
                 {t("{count, plural, one {# task} other {# tasks}} · {minutes} in the exam", {
@@ -86,13 +77,6 @@ export function SpeakingPracticeScreen({
               </DetailFacts>
             </DetailHeroText>
           </DetailHero>
-
-          <p className="text-muted-foreground max-w-column text-sm text-pretty">
-            {t(
-              "{exam} is an official exam. Practice its speaking tasks whether or not you plan to take it.",
-              { exam: paper.title },
-            )}
-          </p>
         </DetailAside>
 
         <DetailContent>

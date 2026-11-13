@@ -42,7 +42,8 @@ export function PlusNotice({
   cta?: boolean;
   href?: string;
   inset?: boolean;
-  title?: string;
+  /** What is locked, as the notice's one message: "Mock exams come with Plus". */
+  title: string;
 }) {
   const t = useExtracted();
   const routes = useLearnRoutes();
@@ -57,7 +58,7 @@ export function PlusNotice({
       </NoticeCardLeading>
 
       <NoticeCardContent>
-        <NoticeCardTitle>{title ?? t("Available with Plus")}</NoticeCardTitle>
+        <NoticeCardTitle>{title}</NoticeCardTitle>
         {children && <NoticeCardDescription>{children}</NoticeCardDescription>}
 
         {(cta || action) && (
@@ -67,7 +68,7 @@ export function PlusNotice({
                 className={buttonVariants({ size: "sm", variant: "outline" })}
                 href={href ?? routes.upgrade}
               >
-                {t("See Plus")}
+                {t("Subscribe")}
               </LearnLink>
             )}
             {action}

@@ -9,6 +9,7 @@ import {
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { getLessonFocusTarget } from "../lesson/_utils/lesson-focus";
 import { QuestionComposer } from "./lesson-question-composer";
@@ -18,6 +19,7 @@ import {
 } from "./lesson-question-navigation";
 import { useLessonQuestionController } from "./lesson-question-provider";
 import { QuestionThread } from "./lesson-question-thread";
+import { THREAD_SIDE_CLASS } from "./lesson-question-thread-viewport";
 import { type LessonQuestionController } from "./use-lesson-questions";
 
 function LessonQuestionPanelDescription({
@@ -60,7 +62,7 @@ function LessonQuestionPanelHeader({
 
   return (
     <DrawerHeader
-      className="border-border items-center border-b px-4 pt-2.5 pb-3"
+      className={cn(THREAD_SIDE_CLASS, "border-border items-center border-b pt-2.5 pb-3")}
       closeLabel={t("Close questions")}
     >
       <div className="flex items-center gap-2.5">
@@ -144,7 +146,7 @@ export function LessonQuestionDrawer({
 
           {canAskQuestions && (
             <QuestionComposer
-              className="px-3 pt-2 pb-[max(1.5rem,env(safe-area-inset-bottom))]"
+              className={cn(THREAD_SIDE_CLASS, "pt-2 pb-[max(1.5rem,env(safe-area-inset-bottom))]")}
               controller={controller}
             />
           )}

@@ -118,6 +118,11 @@ function countPlays() {
   return plays;
 }
 
+/** A formula becomes a tab stop once it has been measured against its column. */
+function formulaStops() {
+  return document.querySelectorAll("[data-slot='display-math'] > [tabindex]");
+}
+
 describe("lesson by keyboard", () => {
   afterEach(() => {
     vi.restoreAllMocks();
@@ -231,10 +236,9 @@ describe("lesson by keyboard", () => {
       await press("Enter");
       await expect.element(page.getByText("A line that fits.")).toBeVisible();
 
-      const stops = document.querySelectorAll("[data-slot='display-math'] > [tabindex]");
-      expect(stops).toHaveLength(1);
+      await expect.poll(() => formulaStops()).toHaveLength(1);
 
-      const formula = page.elementLocator(stops[0]!);
+      const formula = page.elementLocator(formulaStops()[0]!);
       await tabTo(formula);
       expect(formula.element().scrollLeft).toBe(0);
 

@@ -6,6 +6,7 @@ import { CircleX } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { NotQuiteLead } from "../../components/not-quite-lead";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
+import { ACTIVITY_BOX_CLASS } from "../_components/activity-canvas";
 import { type ProgramRun } from "../_sandbox/run-program";
 
 const MS_PER_SECOND = 1000;
@@ -115,7 +116,8 @@ export function CodeRunnerOutput({
     <div className="flex flex-col gap-3">
       <div
         className={cn(
-          "bg-background grid overflow-hidden rounded-xl border",
+          ACTIVITY_BOX_CLASS,
+          "grid overflow-hidden",
           expectedOutput !== null && "grid-cols-2",
         )}
       >

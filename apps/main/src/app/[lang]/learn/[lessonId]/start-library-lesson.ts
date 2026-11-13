@@ -63,7 +63,7 @@ function toStartOutcome({
     return { period: readPeriod(body), reason: "limitReached", tier: readTier(body) };
   }
 
-  return status === "unauthorized" || status === "notFound" || status === "plusRequired"
+  return status === "unauthorized" || status === "notFound"
     ? { reason: status }
     : { reason: "failed" };
 }
