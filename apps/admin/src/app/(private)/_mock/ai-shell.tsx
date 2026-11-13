@@ -1,6 +1,6 @@
 import { AdminNotice } from "@/components/admin-notice";
 import { AdminPage, AdminPageBody, AdminPageHeader } from "@/components/admin-page";
-import { AdminTabs, recordTabs } from "@/components/admin-tabs";
+import { AdminRecordTabs } from "@/components/admin-tabs";
 import { MockLink } from "./parts";
 
 const TABS = [
@@ -20,10 +20,7 @@ export function AiMockShell({ children, current }: { children: React.ReactNode; 
             5 failed. 35 started over an hour ago and never finished. <MockLink>See them</MockLink>
           </AdminNotice>
         ) : null}
-        <AdminTabs
-          label="AI"
-          options={recordTabs({ current: current as "spend", path: "/ai/mock", tabs: TABS })}
-        />
+        <AdminRecordTabs current={current as "spend"} label="AI" path="/ai/mock" tabs={TABS} />
         {children}
       </AdminPageBody>
     </AdminPage>

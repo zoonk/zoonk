@@ -9,7 +9,7 @@ import {
   AdminDetailPage,
 } from "@/components/admin-detail";
 import { AdminSection, AdminSectionEmpty } from "@/components/admin-section";
-import { AdminTabs, recordTabs } from "@/components/admin-tabs";
+import { AdminRecordTabs } from "@/components/admin-tabs";
 import { MockLink } from "../../_mock/parts";
 
 const question = dump as Dump;
@@ -37,13 +37,11 @@ export default async function BuddyQuestionMockPage({
       />
 
       <AdminDetailBody>
-        <AdminTabs
+        <AdminRecordTabs
+          current={tab as "answer"}
           label="Buddy question"
-          options={recordTabs({
-            current: tab as "answer",
-            path: "/questions/mock-one",
-            tabs: TABS,
-          })}
+          path="/questions/mock-one"
+          tabs={TABS}
         />
 
         {tab === "written" ? (

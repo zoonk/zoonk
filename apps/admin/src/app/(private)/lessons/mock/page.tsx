@@ -7,7 +7,7 @@ import {
   AdminDetailPage,
 } from "@/components/admin-detail";
 import { AdminSection } from "@/components/admin-section";
-import { AdminTabs, recordTabs } from "@/components/admin-tabs";
+import { AdminRecordTabs } from "@/components/admin-tabs";
 import { DetailField, DetailFields } from "@/components/detail-field";
 import { MockLink, type MockOption, MockOptions } from "../../_mock/parts";
 
@@ -282,9 +282,11 @@ export default async function LessonMockPage({ searchParams }: PageProps<"/lesso
       />
 
       <AdminDetailBody>
-        <AdminTabs
+        <AdminRecordTabs
+          current={tab as "screens"}
           label="Lesson"
-          options={recordTabs({ current: tab as "screens", path: "/lessons/mock", tabs: TABS })}
+          path="/lessons/mock"
+          tabs={TABS}
         />
 
         <Body json={json} />

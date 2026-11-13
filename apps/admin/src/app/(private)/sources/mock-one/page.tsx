@@ -8,7 +8,7 @@ import {
   AdminDetailPage,
 } from "@/components/admin-detail";
 import { AdminSection, AdminSectionEmpty } from "@/components/admin-section";
-import { AdminTabs, recordTabs } from "@/components/admin-tabs";
+import { AdminRecordTabs } from "@/components/admin-tabs";
 import { Button } from "@zoonk/ui/components/button";
 import { CircleStopIcon, RefreshCwIcon } from "lucide-react";
 import { MockLink } from "../../_mock/parts";
@@ -59,13 +59,11 @@ export default async function SourceMockPage({ searchParams }: PageProps<"/sourc
       />
 
       <AdminDetailBody>
-        <AdminTabs
+        <AdminRecordTabs
+          current={tab as "overview"}
           label="Source"
-          options={recordTabs({
-            current: tab as "overview",
-            path: "/sources/mock-one",
-            tabs: TABS,
-          })}
+          path="/sources/mock-one"
+          tabs={TABS}
         />
 
         {tab === "text" ? (

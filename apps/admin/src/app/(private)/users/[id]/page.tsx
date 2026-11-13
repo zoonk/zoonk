@@ -7,7 +7,7 @@ import {
 } from "@/components/admin-detail";
 import { AdminNotice } from "@/components/admin-notice";
 import { AdminSectionSkeleton } from "@/components/admin-section";
-import { AdminTabs, readAdminTab, recordTabs } from "@/components/admin-tabs";
+import { AdminRecordTabs, readAdminTab } from "@/components/admin-tabs";
 import { getUser } from "@/data/users/get-user";
 import { getUserSubscriptions } from "@/data/users/get-user-subscriptions";
 import { capitalize, formatDate } from "@/lib/format";
@@ -76,10 +76,7 @@ async function UserDetailContent({ params, searchParams }: PageProps<"/users/[id
         <Suspense fallback={null}>
           <UserBanNotice userId={userId} />
         </Suspense>
-        <AdminTabs
-          label="User"
-          options={recordTabs({ current: tab, path: `/users/${userId}`, tabs: USER_TABS })}
-        />
+        <AdminRecordTabs current={tab} label="User" path={`/users/${userId}`} tabs={USER_TABS} />
         <UserTabContent tab={tab} userId={userId} />
       </AdminDetailBody>
     </>

@@ -1,10 +1,5 @@
-import {
-  Container,
-  ContainerBody,
-  ContainerHeader,
-  ContainerHeaderGroup,
-  ContainerTitle,
-} from "@zoonk/ui/components/container";
+import { AdminHeader } from "@/components/admin-header";
+import { Container, ContainerBody, ContainerTitle } from "@zoonk/ui/components/container";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type StatsAnalysisView } from "../_utils/stats-analysis";
 import { type StatsPeriod } from "../_utils/stats-period";
@@ -27,52 +22,30 @@ export function StatsExplorerLayout({
 
   return (
     <Container className="min-h-full gap-2">
-      <ContainerHeader className="items-start" variant="sidebar">
-        <ContainerHeaderGroup className="min-w-0 flex-1 gap-3">
+      <AdminHeader
+        actions={
+          selectedView.usesPeriod ? (
+            <StatsPeriodPicker
+              currentQuery={getCurrentStatsQuery({ periodQuery, selectedView })}
+              path={selectedView.path}
+              statsPeriod={statsPeriod}
+            />
+          ) : null
+        }
+        crumb={
           <StatsBreadcrumb
             items={[{ label: section.charAt(0).toUpperCase() + section.slice(1) }]}
           />
-          <StatsExplorerControls
-            periodQuery={periodQuery}
-            selectedView={selectedView}
-            statsPeriod={statsPeriod}
-          />
-        </ContainerHeaderGroup>
-      </ContainerHeader>
+        }
+        title={
+          <ContainerTitle>
+            <StatsAnalysisPicker periodQuery={periodQuery} selectedView={selectedView} />
+          </ContainerTitle>
+        }
+      />
 
       <ContainerBody className="min-h-0 flex-1 pt-2 sm:pb-6">{children}</ContainerBody>
     </Container>
-  );
-}
-
-function StatsExplorerControls({
-  periodQuery,
-  selectedView,
-  statsPeriod,
-}: {
-  periodQuery: string;
-  selectedView: StatsAnalysisView;
-  statsPeriod: StatsPeriod;
-}) {
-  const currentQuery = getCurrentStatsQuery({ periodQuery, selectedView });
-
-  return (
-    <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-      <ContainerTitle className="min-w-0 flex-1 text-2xl sm:text-3xl">
-        <StatsAnalysisPicker periodQuery={periodQuery} selectedView={selectedView} />
-      </ContainerTitle>
-
-      {selectedView.usesPeriod ? (
-        // The title carries 20 px of padding above its line; this puts the picker on that line.
-        <div className="sm:mt-5">
-          <StatsPeriodPicker
-            currentQuery={currentQuery}
-            path={selectedView.path}
-            statsPeriod={statsPeriod}
-          />
-        </div>
-      ) : null}
-    </div>
   );
 }
 
@@ -109,15 +82,15 @@ export function StatsExplorerSkeleton() {
 export function StatsExplorerPageSkeleton() {
   return (
     <Container className="min-h-full gap-2">
-      <ContainerHeader className="items-start" variant="sidebar">
-        <ContainerHeaderGroup className="w-full gap-3">
-          <Skeleton className="h-4 w-32" />
-          <div className="flex flex-col gap-2 sm:flex-row sm:justify-between">
-            <Skeleton className="h-9 w-56 max-w-full" />
-            <Skeleton className="h-9 w-40 max-w-full" />
-          </div>
-        </ContainerHeaderGroup>
-      </ContainerHeader>
+      <AdminHeader
+        actions={<Skeleton className="h-7.5 w-24 rounded-md" />}
+        crumb={<Skeleton className="h-4 w-32" data-slot="page-eyebrow" />}
+        title={
+          <span aria-hidden="true" className="text-title flex h-lh items-center">
+            <Skeleton className="h-7 w-56 max-w-full" />
+          </span>
+        }
+      />
       <ContainerBody className="pt-2">
         <StatsExplorerSkeleton />
       </ContainerBody>

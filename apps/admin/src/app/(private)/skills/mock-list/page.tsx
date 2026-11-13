@@ -34,15 +34,12 @@ export default function SkillsMockPage() {
       toolbar={
         <>
           <MockSearch placeholder="Search skills by name…" />
-          <MockSelect>All languages</MockSelect>
           <MockViews
             label="Who can see it"
             views={[{ active: true, label: "All" }, { label: "Public" }, { label: "Private" }]}
           />
-          <MockViews
-            label="Merged"
-            views={[{ active: true, label: "Hide merged" }, { label: "Show merged" }]}
-          />
+          <MockSelect>All languages</MockSelect>
+          <MockSelect>Hide merged</MockSelect>
         </>
       }
     />

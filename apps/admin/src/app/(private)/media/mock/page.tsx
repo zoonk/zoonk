@@ -1,6 +1,13 @@
 import lessons from "@/app/(private)/_mock/data/media-lessons.json";
 import dump from "@/app/(private)/_mock/data/media.json";
-import { type Dump, MockList, MockViews, day, language } from "@/app/(private)/_mock/kit";
+import {
+  type Dump,
+  MockList,
+  MockSelect,
+  MockViews,
+  day,
+  language,
+} from "@/app/(private)/_mock/kit";
 import { Button } from "@zoonk/ui/components/button";
 import { AudioLinesIcon } from "lucide-react";
 
@@ -59,10 +66,7 @@ export default function MediaMockPage() {
             label="Kind"
             views={[{ active: true, label: "All media" }, { label: "Images" }, { label: "Audio" }]}
           />
-          <MockViews
-            label="Who can see it"
-            views={[{ active: true, label: "All" }, { label: "Public" }, { label: "Private" }]}
-          />
+          <MockSelect>Public and private</MockSelect>
         </>
       }
     />

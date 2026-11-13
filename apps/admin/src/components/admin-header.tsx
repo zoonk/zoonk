@@ -20,27 +20,28 @@ export function AdminHeader({
   crumb?: React.ReactNode;
   title: React.ReactNode;
 }) {
+  const beside = actions ? "col-span-2 md:col-span-1" : "col-span-2";
+
   return (
     <header
       className={cn(
         CONTAINER_HEADER_EDGES_CLASS,
-        "grid min-w-0 grid-cols-[minmax(0,1fr)_auto] gap-x-6 gap-y-1 *:col-span-2",
+        "grid min-w-0 grid-cols-[minmax(0,1fr)_auto] gap-x-6 gap-y-1",
       )}
       data-slot="admin-header"
     >
-      {crumb ?? <span aria-hidden="true" className="h-4" data-slot="page-eyebrow" />}
-
-      <div
-        className={cn("min-w-0", actions && "md:col-span-1", actionsBesideTitle && "col-span-1")}
-      >
-        {title}
+      <div className="col-span-2 min-w-0">
+        {crumb ?? <span aria-hidden="true" className="block h-4" data-slot="page-eyebrow" />}
       </div>
+
+      <div className={cn("min-w-0", actionsBesideTitle ? "col-span-1" : beside)}>{title}</div>
 
       {actions ? (
         <div
           className={cn(
-            "flex flex-wrap items-center gap-2 self-center md:col-span-1",
+            "flex flex-wrap items-center gap-2 self-center",
             actionsBesideTitle ? "col-span-1" : "max-md:order-last max-md:mt-3",
+            !actionsBesideTitle && beside,
           )}
           data-slot="admin-header-actions"
         >
@@ -48,7 +49,7 @@ export function AdminHeader({
         </div>
       ) : null}
 
-      {children}
+      {children ? <div className="col-span-2 min-w-0">{children}</div> : null}
     </header>
   );
 }

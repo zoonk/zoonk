@@ -1,10 +1,6 @@
-import {
-  Container,
-  ContainerBody,
-  ContainerHeader,
-  ContainerHeaderGroup,
-  ContainerTitle,
-} from "@zoonk/ui/components/container";
+import { AdminHeader } from "@/components/admin-header";
+import { AdminPage, AdminPageBody } from "@/components/admin-page";
+import { ContainerTitle } from "@zoonk/ui/components/container";
 import { StatsBreadcrumb, type StatsBreadcrumbItem } from "./stats-breadcrumb";
 
 export function StatsPageLayout({
@@ -17,15 +13,13 @@ export function StatsPageLayout({
   title: string;
 }) {
   return (
-    <Container>
-      <ContainerHeader variant="sidebar">
-        <ContainerHeaderGroup className="flex-1">
-          <StatsBreadcrumb items={breadcrumbItems} />
-          <ContainerTitle>{title}</ContainerTitle>
-        </ContainerHeaderGroup>
-      </ContainerHeader>
+    <AdminPage>
+      <AdminHeader
+        crumb={<StatsBreadcrumb items={breadcrumbItems} />}
+        title={<ContainerTitle>{title}</ContainerTitle>}
+      />
 
-      <ContainerBody>{children}</ContainerBody>
-    </Container>
+      <AdminPageBody>{children}</AdminPageBody>
+    </AdminPage>
   );
 }

@@ -24,21 +24,33 @@ export function readAdminTab<Value extends string>({
   return (tabs.find((tab) => tab.value === requested) ?? tabs[0])?.value;
 }
 
-/** A record's parts, one per `?tab=`. The first tab is the record's own address. */
-export function recordTabs<Value extends string>({
+/**
+ * A record's parts, one per `?tab=`: the first is the record's own address. They sit over a
+ * hairline, which closes the record's header and tells them from a list's views further down.
+ */
+export function AdminRecordTabs<Value extends string>({
   current,
+  label,
   path,
   tabs,
 }: {
   current: Value | undefined;
+  label: string;
   path: string;
   tabs: readonly RecordTab<Value>[];
-}): AdminTabOption[] {
-  return tabs.map((tab, index) => ({
-    href: index === 0 ? path : `${path}?tab=${tab.value}`,
-    isActive: tab.value === current,
-    label: tab.label,
-  }));
+}) {
+  return (
+    <div className="border-b pb-3">
+      <AdminTabs
+        label={label}
+        options={tabs.map((tab, index) => ({
+          href: index === 0 ? path : `${path}?tab=${tab.value}`,
+          isActive: tab.value === current,
+          label: tab.label,
+        }))}
+      />
+    </div>
+  );
 }
 
 /**

@@ -17,7 +17,7 @@ import {
   AdminDetailPage,
 } from "@/components/admin-detail";
 import { AdminSection, AdminSectionEmpty } from "@/components/admin-section";
-import { AdminTabs, recordTabs } from "@/components/admin-tabs";
+import { AdminRecordTabs } from "@/components/admin-tabs";
 import { Button } from "@zoonk/ui/components/button";
 import { BookOpenTextIcon, CircleStopIcon, RefreshCwIcon, RotateCcwIcon } from "lucide-react";
 import { MockLink, MockMore } from "../../_mock/parts";
@@ -252,10 +252,7 @@ export default async function ExamMockPage({ searchParams }: PageProps<"/exams/m
       />
 
       <AdminDetailBody>
-        <AdminTabs
-          label="Exam"
-          options={recordTabs({ current: tab as "overview", path: "/exams/mock", tabs: TABS })}
-        />
+        <AdminRecordTabs current={tab as "overview"} label="Exam" path="/exams/mock" tabs={TABS} />
         <Body />
       </AdminDetailBody>
     </AdminDetailPage>

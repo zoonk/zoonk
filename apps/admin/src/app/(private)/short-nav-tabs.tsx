@@ -19,7 +19,7 @@ export function ShortNavTabs({ counts }: { counts: AdminNavCounts }) {
   }
 
   return (
-    <div className="border-b px-4 py-2 sm:px-8 lg:px-10">
+    <div className="flex h-14 items-center border-b px-4 sm:px-8 lg:px-10">
       <TabLinks label={group.label}>
         {group.items.map((item) => (
           <TabLink

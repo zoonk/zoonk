@@ -4,6 +4,7 @@ import {
   Lead,
   MockList,
   MockSearch,
+  MockSelect,
   MockViews,
   day,
   language,
@@ -57,10 +58,7 @@ export default function SourcesMockPage() {
               { label: "Upload" },
             ]}
           />
-          <MockViews
-            label="Who can see it"
-            views={[{ active: true, label: "All" }, { label: "Public" }, { label: "Private" }]}
-          />
+          <MockSelect>Public and private</MockSelect>
         </>
       }
     />
