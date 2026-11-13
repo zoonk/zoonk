@@ -3003,24 +3003,14 @@ msgid "Page not found"
 msgstr "Sayfa bulunamadı"
 
 #: src/components/auth-gate.tsx
-msgctxt "xhBZ5m"
-msgid "Create an account to use this page"
-msgstr "Bu sayfayı kullanmak için hesap oluştur"
-
-#: src/components/auth-gate.tsx
 msgctxt "DrBO6u"
 msgid "Your plan and progress move to your account, safe on any device."
 msgstr "Planın ve ilerlemen hesabına taşınır, her cihazda güvende kalır."
 
 #: src/components/auth-gate.tsx
-msgctxt "HVR09O"
-msgid "Your session ended"
-msgstr "Oturumun sona erdi"
-
-#: src/components/auth-gate.tsx
-msgctxt "acWSVG"
-msgid "Log in to continue"
-msgstr "Devam etmek için giriş yap"
+msgctxt "xhBZ5m"
+msgid "Create an account to use this page"
+msgstr "Bu sayfayı kullanmak için hesap oluştur"
 
 #: src/components/auth-gate.tsx
 msgctxt "pb0Q20"
@@ -3028,9 +3018,19 @@ msgid "Log in to pick up your plan."
 msgstr "Planına devam etmek için giriş yap."
 
 #: src/components/auth-gate.tsx
+msgctxt "HVR09O"
+msgid "Your session ended"
+msgstr "Oturumun sona erdi"
+
+#: src/components/auth-gate.tsx
 msgctxt "eSXQ3z"
 msgid "Log in to pick up where you left off, or start free."
 msgstr "Kaldığın yerden devam etmek için giriş yap veya ücretsiz başla."
+
+#: src/components/auth-gate.tsx
+msgctxt "acWSVG"
+msgid "Log in to continue"
+msgstr "Devam etmek için giriş yap"
 
 #: src/components/auth-gate.tsx
 msgctxt "77LoTm"

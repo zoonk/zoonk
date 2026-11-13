@@ -6,8 +6,8 @@ import { RadioGroup, RadioGroupItem, RadioGroupOption } from "@zoonk/ui/componen
 import { safeAsync } from "@zoonk/utils/error";
 import { SignpostIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useState, useTransition } from "react";
-import { ChangeSaveError } from "../_components/save-error";
+import { useTransition } from "react";
+import { useChangeSaveFailed } from "../_components/save-error";
 import {
   Suggestion,
   SuggestionAction,
@@ -17,7 +17,6 @@ import {
   SuggestionLine,
   SuggestionOpen,
   SuggestionResult,
-  SuggestionSaveError,
   SuggestionSummary,
 } from "../_components/suggestion";
 import { useChoiceLeftOutLine } from "../_utils/use-choice-left-out";
@@ -32,17 +31,16 @@ import {
   usePlanSuggestionSlot,
   useSlotAnswer,
 } from "./plan-suggestion-context";
-import { useChangeSentence } from "./use-change-sentence";
+import { usePlanChangeSentence } from "./use-change-sentence";
 import { useTappedChoice } from "./use-tapped-choice";
 
 function useExamChoice({ onChange }: { onChange?: (change: PlanChangeView) => void } = {}) {
   const { actions, keepFocus } = usePlanScreen();
   const editor = useReportEditorChange();
   const [isPending, startTransition] = useTransition();
-  const [failed, setFailed] = useState(false);
+  const saveFailed = useChangeSaveFailed();
 
   const choose = (input: { group: string; subjects: string[] }, answer?: () => void) => {
-    setFailed(false);
     keepFocus();
 
     startTransition(async () => {
@@ -50,7 +48,10 @@ function useExamChoice({ onChange }: { onChange?: (change: PlanChangeView) => vo
 
       // Updates after an `await` join the transition only when started in one again.
       startTransition(() => {
-        setFailed(!outcome);
+        if (!outcome) {
+          saveFailed();
+        }
+
         answer?.();
 
         if (outcome?.change) {
@@ -61,7 +62,7 @@ function useExamChoice({ onChange }: { onChange?: (change: PlanChangeView) => vo
     });
   };
 
-  return { choose, failed, isPending };
+  return { choose, isPending };
 }
 
 function OneOptionChoice({
@@ -98,8 +99,7 @@ function OneOptionChoice({
 }
 
 function ExamChoice({ choice }: { choice: ExamChoiceView }) {
-  const leftOutLine = useChoiceLeftOutLine();
-  const { choose, failed, isPending } = useExamChoice();
+  const { choose, isPending } = useExamChoice();
 
   return (
     <fieldset className="flex flex-col gap-2">
@@ -114,12 +114,6 @@ function ExamChoice({ choice }: { choice: ExamChoiceView }) {
       ) : (
         <OneOptionChoice choice={choice} choose={choose} isPending={isPending} />
       )}
-
-      {choice.subjects.length === 0 && (
-        <p className="text-muted-foreground text-sm">{leftOutLine(choice)}</p>
-      )}
-
-      {failed && <ChangeSaveError />}
     </fieldset>
   );
 }
@@ -132,7 +126,7 @@ export function PlanExamChoices() {
 
 export function ExamChoiceSuggestion({ item }: { item: Extract<SlotItem, { kind: "choice" }> }) {
   const t = useExtracted();
-  const sentence = useChangeSentence();
+  const sentence = usePlanChangeSentence();
   const leftOutLine = useChoiceLeftOutLine();
   const { setResult } = usePlanSuggestionSlot();
   const answer = useSlotAnswer(item);
@@ -143,7 +137,7 @@ export function ExamChoiceSuggestion({ item }: { item: Extract<SlotItem, { kind:
       ? t("{group}: which ones will you take?", { group: choice.group })
       : t("{group}: which one will you take?", { group: choice.group });
 
-  const { choose, failed, isPending } = useExamChoice({
+  const { choose, isPending } = useExamChoice({
     onChange: (change) => setResult({ change, item, text: sentence(change) }),
   });
 
@@ -175,7 +169,8 @@ export function ExamChoiceSuggestion({ item }: { item: Extract<SlotItem, { kind:
           </>
         ) : (
           <>
-            <SuggestionDescription>{leftOutLine(choice)}</SuggestionDescription>
+            <SuggestionDescription>{leftOutLine}</SuggestionDescription>
+
             {choice.take > 1 ? (
               <ExamChoicePicks
                 choice={choice}
@@ -183,7 +178,7 @@ export function ExamChoiceSuggestion({ item }: { item: Extract<SlotItem, { kind:
                 pending={isPending}
               />
             ) : (
-              <SuggestionActions>
+              <SuggestionActions className="*:min-w-0 *:flex-1">
                 {choice.options.map((option) => (
                   <SuggestionAction
                     action={() => choose({ group: choice.group, subjects: [option.name] })}
@@ -196,7 +191,6 @@ export function ExamChoiceSuggestion({ item }: { item: Extract<SlotItem, { kind:
                 ))}
               </SuggestionActions>
             )}
-            {failed && <SuggestionSaveError />}
           </>
         )}
       </SlotContent>

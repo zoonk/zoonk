@@ -17,7 +17,7 @@ export const sharedWithSchema = z
   .array(uuidSchema())
   .meta({
     description:
-      "The goals in `sharedExams` whose plans also teach some of this subject's skills with the same lessons: show it as also in those exams. Empty when no other exam shares it",
+      "The goals in `sharedExams` whose plans also teach some of this subject's skills with the same lessons. Empty when no other exam shares it",
   });
 
 export type SharedExam = z.infer<typeof sharedExamsSchema>[number];

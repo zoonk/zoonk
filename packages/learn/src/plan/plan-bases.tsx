@@ -18,10 +18,12 @@ export function PlanBases() {
 
   return (
     <section className="flex flex-col gap-2" data-slot="plan-bases">
-      <h3 className="text-sm font-medium">{t("Prerequisites")}</h3>
-      <p className="text-muted-foreground text-sm text-pretty">{summaryText(bases)}</p>
+      <div className="flex flex-col gap-0.5">
+        <h3 className="text-sm font-medium">{t("Prerequisites")}</h3>
+        <p className="text-muted-foreground text-sm text-pretty">{summaryText(bases)}</p>
+      </div>
       <Button className="self-start" onClick={() => setOpen(true)} size="sm" variant="outline">
-        {t("Choose prerequisites")}
+        {t("Change")}
       </Button>
       <PlanBasesSheet bases={bases} onOpenChange={setOpen} open={open} />
     </section>

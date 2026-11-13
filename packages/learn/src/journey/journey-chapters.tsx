@@ -34,7 +34,7 @@ export function useChapterTitle() {
   return (chapter: PlanChapterView): string => {
     if (chapter.skills.length > 0) {
       return t(
-        "{count, plural, one {# skill you already know} other {# skills you already know}}",
+        "{count, plural, one {# topic you already know} other {# topics you already know}}",
         { count: chapter.skills.length },
       );
     }
@@ -97,9 +97,9 @@ function ChapterRow({
   const line =
     writing ??
     (chapter.testedOut && chapter.skills.length === 0
-      ? t("Skipped because you already know it")
+      ? t("Skipped · you already know it")
       : null) ??
-    (chapter.deeper ? t("Going deeper into an earlier topic") : null);
+    (chapter.deeper ? t("More on an earlier topic") : null);
 
   const content = (
     <>
@@ -151,34 +151,6 @@ function ChapterRow({
       {content}
       <ListRowChevron />
     </LearnLink>
-  );
-}
-
-export function WritingAheadLine({
-  chapters,
-  unit = false,
-}: {
-  chapters: readonly PlanChapterView[];
-  unit?: boolean;
-}) {
-  const t = useExtracted();
-  const writing = chapters.filter((chapter) => isWritingAhead(chapter));
-
-  if (writing.length === 0) {
-    return null;
-  }
-
-  const courses = writing.map((chapter) => chapter.title).filter(Boolean);
-
-  return (
-    <p className="text-muted-foreground py-2 text-xs" data-slot="writing-ahead">
-      {courses.length > 0 &&
-        t("Lessons from {courses} are being written.", { courses: courses.join(", ") })}
-      {courses.length === 0 &&
-        (unit
-          ? t("More lessons for this unit are being written.")
-          : t("More lessons for this phase are being written."))}
-    </p>
   );
 }
 
@@ -234,10 +206,6 @@ export function JourneyChapters({
           <CheckpointRow checkpoint={checkpoint} links={links} />
         </li>
       )}
-
-      <li className="empty:hidden">
-        <WritingAheadLine chapters={chapters} />
-      </li>
     </ul>
   );
 }

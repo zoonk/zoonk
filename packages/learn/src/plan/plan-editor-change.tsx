@@ -5,22 +5,20 @@ import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { SlidersHorizontalIcon, Undo2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { ChangeSaveError } from "../_components/save-error";
 import { PlanChangeSummary } from "./plan-change-applied";
 import { useEditorChange } from "./plan-editor-change-context";
 import { useUndoChange } from "./use-undo-change";
 
 function EditorChangeNote({ change }: { change: PlanChangeView }) {
   const t = useExtracted();
-  const { failed, isPending, undo } = useUndoChange({ change });
+  const { isPending, undo } = useUndoChange({ change });
 
   return (
-    <>
-      <PlanChangeSummary change={change} icon={SlidersHorizontalIcon} />
+    <PlanChangeSummary change={change} icon={SlidersHorizontalIcon}>
       {change.canUndo && (
         <Button
           busy={isPending}
-          className="self-start"
+          className="mt-1.5 self-start"
           icon={<Undo2Icon aria-hidden="true" />}
           onClick={undo}
           size="sm"
@@ -29,8 +27,7 @@ function EditorChangeNote({ change }: { change: PlanChangeView }) {
           {t("Undo")}
         </Button>
       )}
-      {failed && <ChangeSaveError />}
-    </>
+    </PlanChangeSummary>
   );
 }
 

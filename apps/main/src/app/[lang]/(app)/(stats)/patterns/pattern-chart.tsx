@@ -1,10 +1,5 @@
 import { MIN_PATTERN_ANSWERS, type ScorePerformance } from "@zoonk/core/progress/score-performance";
-import {
-  PageSection,
-  PageSectionFooter,
-  PageSectionHeader,
-  PageSectionTitle,
-} from "@zoonk/learn/page";
+import { PageSection, PageSectionHeader, PageSectionTitle } from "@zoonk/learn/page";
 import {
   ChartInspector,
   ChartInspectorPoint,
@@ -208,13 +203,11 @@ function PatternColumn({
 export async function PatternChart({
   bestLabel,
   columns,
-  footer,
   id,
   title,
 }: {
   bestLabel: string;
   columns: PatternColumnView[];
-  footer?: string | null;
   id: string;
   title: string;
 }) {
@@ -254,8 +247,6 @@ export async function PatternChart({
 
         <ChartInspectorTooltip within={PROGRESS_CONTENT_SELECTOR} />
       </ChartInspector>
-
-      {footer && <PageSectionFooter>{footer}</PageSectionFooter>}
     </PageSection>
   );
 }

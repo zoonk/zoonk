@@ -10,7 +10,7 @@ const planChangeInvalidErrorSchema = errorSchema
         reason: z
           .string()
           .describe(
-            "Why the change was refused. moveBeforeNextMonday means the requested destination is before next Monday in the learner's time zone: pick a day on or after next Monday. This date refusal takes precedence over collision and funding checks. mockCollision means two weekly events would share a day: the requested day already holds a weekly challenge or mock, another move in the plan or the request takes an event there, or the event already moved once. Preserve the prior plan and pick another day. baseChoiceClosed means a setBaseChoices choice isn't in that base's choices (a studied base is open only to deep study): offer only its choices. Preserve unknown reasons.",
+            "Why the change was refused. moveBeforeNextMonday means the requested destination is before next Monday in the learner's time zone: pick a day on or after next Monday. This date refusal takes precedence over collision and funding checks. mockCollision means two weekly events would share a day: the requested day already holds a weekly challenge or mock, another move in the plan or the request takes an event there, or the event already moved once. Preserve the prior plan and pick another day. baseChoiceClosed means a setBaseChoices choice isn't in that base's choices (a studied base is open only to deep study). Preserve unknown reasons.",
           ),
         unfundedMove: unfundedMoveSchema
           .optional()
@@ -34,7 +34,7 @@ const outOfRangeDateSchema = z.object({
     .describe(
       "earliest: before tomorrow; latest: after calendar day 3,650. Preserve unknown bounds.",
     ),
-  limit: z.iso.date().describe("The nearest accepted bound, to offer instead"),
+  limit: z.iso.date().describe("The nearest accepted bound"),
   message: z.string(),
   path: z
     .array(z.union([z.string(), z.number()]))
