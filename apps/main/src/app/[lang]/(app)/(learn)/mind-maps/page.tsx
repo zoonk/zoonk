@@ -66,6 +66,14 @@ function MapRowSkeleton() {
   );
 }
 
+function SubtitleSkeleton() {
+  return (
+    <span className="flex h-6 items-center pt-1">
+      <Skeleton className="h-3.5 w-32 rounded-sm" />
+    </span>
+  );
+}
+
 async function MindMapsSkeleton() {
   const t = await getExtracted();
 
@@ -76,10 +84,9 @@ async function MindMapsSkeleton() {
         <div className="flex flex-col gap-5">
           <DetailHero>
             <DetailHeroText>
-              <Skeleton className="my-0.5 h-3 w-32 rounded-sm" />
               <PageTitle>{t("Mind maps")}</PageTitle>
+              <SubtitleSkeleton />
             </DetailHeroText>
-            <Skeleton className="h-11 w-full rounded-lg md:w-28" />
           </DetailHero>
           <div className="flex gap-1">
             <Skeleton className="h-8 w-24 rounded-md" />

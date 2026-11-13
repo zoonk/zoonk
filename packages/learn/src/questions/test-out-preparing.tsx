@@ -26,7 +26,7 @@ function TestOutCard() {
         <h2 className="text-title">{t("Already know this?")}</h2>
         <StepDetail>
           {t(
-            "A few questions on this chapter. Do well, and your plan skips what you already know.",
+            "A few questions on this chapter, with your results at the end. Do well, and your plan skips what you already know.",
           )}
         </StepDetail>
       </StepHeader>

@@ -12,6 +12,7 @@ import {
   ListeningStimulus,
   type ServedPlays,
 } from "../listening/listening-stimulus";
+import { Eyebrow } from "../_components/eyebrow";
 import { LessonVisual } from "../visuals/lesson-visual";
 import { ItemText } from "./item-text";
 
@@ -29,7 +30,7 @@ function SetPlace({ set }: { set: ItemSetView }) {
     text: t("Question {position, number} of {count, number} on this text", place),
   }[set.kind];
 
-  return <p className="text-muted-foreground text-xs font-medium">{label}</p>;
+  return <Eyebrow>{label}</Eyebrow>;
 }
 
 type RecordingProps = {

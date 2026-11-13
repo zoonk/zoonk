@@ -13,6 +13,7 @@ import {
   TriangleAlertIcon,
 } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
+import { Eyebrow } from "../_components/eyebrow";
 import { TagBesideOrUnder } from "../_components/answer-option";
 import { ANSWER_TAG_CLASS, ANSWER_TAG_TONE, ANSWER_TONE } from "../_components/answer-tone";
 import { QuestionTitle } from "../_components/question-title";
@@ -43,10 +44,7 @@ function MistakeCauseLabel({ cause }: { cause: MistakeEntry["cause"] }) {
   }
 
   return (
-    <p className="text-muted-foreground flex min-w-0 items-center gap-1.5 text-xs font-medium">
-      <CauseIcon aria-hidden="true" className="size-3.5 shrink-0" />
-      {causeLabel(cause)}
-    </p>
+    <Eyebrow icon={<CauseIcon aria-hidden="true" />}>{causeLabel(cause)}</Eyebrow>
   );
 }
 

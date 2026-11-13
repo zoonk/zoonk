@@ -12,7 +12,6 @@ import {
   StepRow,
   StepRows,
   StepTitle,
-  StepTitleLabel,
   StepTitleNumber,
   renderStepNumber,
 } from "../_components/step-card";

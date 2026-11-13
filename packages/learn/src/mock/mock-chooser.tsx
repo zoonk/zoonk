@@ -6,16 +6,8 @@ import { type ReactNode, useState } from "react";
 import { ChoiceRows } from "../_components/choice-rows";
 import { DetailContent } from "../_components/detail-page";
 import { PageSectionTitle } from "../_components/page";
-import { SubscribeGate } from "../_components/subscribe-gate";
 import { ChooserLastMock } from "./mock-chooser-last-mock";
-import {
-  ChooserBottomBar,
-  ChooserHeader,
-  ChooserLayout,
-  ChooserRefusal,
-  ChooserStartButton,
-  MockWriting,
-} from "./mock-chooser-page";
+import { ChooserBar, ChooserHeader, ChooserLayout, MockWriting } from "./mock-chooser-page";
 import { type MockChooserStatus } from "./mock-chooser-parts";
 import { type MockChooserHrefs, PickedMock } from "./mock-chooser-picked";
 import { useMockOptionDetail, useMockOptionName, useMockOptionSize } from "./mock-option-labels";
@@ -142,14 +134,6 @@ function PracticeChooser({
     }
   };
 
-  const action = gated ? (
-    <SubscribeGate title={t("Mock exams need a subscription")} />
-  ) : (
-    <ChooserStartButton busy={busy} disabled={!option} onClick={start}>
-      {t("Start")}
-    </ChooserStartButton>
-  );
-
   return (
     <ChooserLayout
       aside={
@@ -160,19 +144,23 @@ function PracticeChooser({
         </>
       }
       bar={bar}
+      bottomBar={
+        <ChooserBar
+          busy={busy}
+          disabled={!option}
+          gated={gated}
+          onStart={start}
+          status={shown}
+        />
+      }
     >
       <ChooserHeader
-        action={action}
         detail={t("Timed like the real exam. You see your result at the end.")}
-        eyebrow={view.examName}
-        status={shown}
         title={t("Take a mock exam")}
       />
 
       <DetailContent>
-        <ChooserRefusal busy={busy} status={shown} />
         <MockOptionLists onPick={setPicked} picked={picked} severalDays={severalDays} view={view} />
-        <ChooserBottomBar>{action}</ChooserBottomBar>
       </DetailContent>
 
       <MockShortDialog
@@ -186,7 +174,7 @@ function PracticeChooser({
 
 export function MockChooserScreen(props: MockChooserProps) {
   if (props.status.kind === "writing") {
-    return <MockWriting bar={props.bar} eyebrow={props.view.examName} run={props.status.run} />;
+    return <MockWriting bar={props.bar} run={props.status.run} />;
   }
 
   return <PracticeChooser {...props} />;

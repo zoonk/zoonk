@@ -12,6 +12,7 @@ import { ItemLine, ItemStem, ItemText } from "../questions/item-text";
 import { useTrueFalseLabels } from "../questions/use-true-false-labels";
 import { useMockScreen } from "./mock-context";
 import { ResultSection } from "./mock-result-section";
+import { Eyebrow } from "../_components/eyebrow";
 
 function ReviewAnswers({ entry }: { entry: MockReviewEntry }) {
   const t = useExtracted();
@@ -46,11 +47,11 @@ function ReviewEntry({ continued, entry }: { continued: boolean; entry: MockRevi
   return (
     <li className="border-border flex flex-col gap-3 border-b py-5 first:pt-0 last:border-b-0">
       <div className="flex items-center justify-between gap-2">
-        <p className="text-muted-foreground font-mono text-xs tabular-nums">
+        <Eyebrow>
           {entry.area
             ? t("Question {number} · {area}", { area: entry.area, number: String(entry.number) })
             : t("Question {number}", { number: String(entry.number) })}
-        </p>
+        </Eyebrow>
         <ContentFeedbackMenu
           label={t("Question options")}
           screen="mock-review"

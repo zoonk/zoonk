@@ -1,7 +1,7 @@
 "use client";
 
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import {
-  DetailActions,
   DetailHero,
   DetailHeroText,
   DetailTitle,
@@ -11,19 +11,17 @@ import {
   GenerationTimelineTitle,
 } from "@zoonk/ui/components/generation-timeline";
 import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
-import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import { DETAIL_PRIMARY_CLASS, PAGE_ARTICLE_CLASS } from "../_components/detail-page";
 import { EnterButton } from "../_components/enter-button";
 import { HelpLimitNotice } from "../_components/help-limit-notice";
-import { Page, PageEyebrow } from "../_components/page";
-import { StatusRegion } from "../_components/status-region";
+import { Page } from "../_components/page";
+import { GateWords, SubscribeMainAction } from "../_components/subscribe-gate";
 import { type GenerationRun } from "../generation/generation-run";
 import { GenerationWait } from "../generation/generation-wait";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
-import { ABOVE_BOTTOM_TABS_CLASS } from "../shell/learn-navigation";
 import { PageWithAside } from "../shell/learn-shell";
 import { type MockChooserStatus } from "./mock-chooser-parts";
 
@@ -31,26 +29,31 @@ export function ChooserLayout({
   aside,
   asideClassName,
   bar,
+  bottomBar,
   children,
 }: {
   aside?: ReactNode;
   asideClassName?: string;
   bar: ReactNode;
+  bottomBar?: ReactNode;
   children: ReactNode;
 }) {
   const t = useExtracted();
 
   return (
-    <PageWithAside
-      aside={aside}
-      asideClassName={asideClassName}
-      asideLabel={t("The picked mock exam")}
-    >
-      <article className={PAGE_ARTICLE_CLASS}>
-        {bar}
-        <Page className="gap-8">{children}</Page>
-      </article>
-    </PageWithAside>
+    <>
+      <PageWithAside
+        aside={aside}
+        asideClassName={asideClassName}
+        asideLabel={t("The picked mock exam")}
+      >
+        <article className={PAGE_ARTICLE_CLASS}>
+          {bar}
+          <Page className="gap-8">{children}</Page>
+        </article>
+      </PageWithAside>
+      {bottomBar}
+    </>
   );
 }
 
@@ -63,124 +66,99 @@ function useFailureText() {
       : t("We couldn't start the mock exam. Try again.");
 }
 
-function ChooserLine({ detail, status }: { detail: string; status: MockChooserStatus }) {
-  const failureText = useFailureText();
-
-  return (
-    <p
-      className={cn(
-        "pt-1 text-sm text-pretty",
-        status.kind === "failed" ? "text-destructive-text" : "text-muted-foreground",
-      )}
-      role="status"
-    >
-      {status.kind === "failed" ? failureText(status.reason) : detail}
-    </p>
-  );
-}
-
-/** On a phone the bottom bar carries the action instead. */
-export function ChooserHeader({
-  action,
-  detail,
-  eyebrow,
-  status,
-  title,
-}: {
-  action: ReactNode;
-  detail: string;
-  eyebrow: string;
-  status: MockChooserStatus;
-  title: string;
-}) {
+export function ChooserHeader({ detail, title }: { detail: string; title: string }) {
   return (
     <DetailHero>
       <DetailHeroText>
-        <PageEyebrow>{eyebrow}</PageEyebrow>
         <DetailTitle>{title}</DetailTitle>
-        <ChooserLine detail={detail} status={status} />
+        <p className="text-muted-foreground pt-1 text-sm text-pretty">{detail}</p>
       </DetailHeroText>
-
-      <DetailActions className="max-md:hidden">{action}</DetailActions>
     </DetailHero>
   );
 }
 
-/** Phones and tablets keep Start in reach after the list: the choice comes before the action. */
-export function ChooserBottomBar({ children }: { children: ReactNode }) {
-  return (
-    <div
-      className={cn(
-        "bg-background sticky z-20 -mx-4 flex border-t px-4 py-3 md:hidden",
-        ABOVE_BOTTOM_TABS_CLASS,
-      )}
-      data-slot="mock-chooser-bar"
-    >
-      {children}
-    </div>
-  );
-}
-
-export function ChooserStartButton({
-  busy,
-  children,
-  disabled = false,
-  onClick,
-}: {
-  busy: boolean;
-  children: ReactNode;
-  disabled?: boolean;
-  onClick: () => void;
-}) {
-  const mounted = useIsMounted();
-
-  return (
-    <EnterButton
-      busy={busy}
-      className={DETAIL_PRIMARY_CLASS}
-      disabled={disabled || !mounted}
-      onClick={onClick}
-      size="lg"
-    >
-      {children}
-    </EnterButton>
-  );
-}
-
-export function ChooserRefusal({ busy, status }: { busy: boolean; status: MockChooserStatus }) {
+/** Why Start didn't start, read out as it shows: over the bar, where the learner pressed. */
+function useChooserNote({ busy, gated, status }: ChooserBarProps): ReactNode {
+  const t = useExtracted();
   const routes = useLearnRoutes();
+  const failureText = useFailureText();
+
+  if (gated) {
+    return (
+      <div role="alert">
+        <GateWords title={t("Mock exams need a subscription")} />
+      </div>
+    );
+  }
+
+  if (busy) {
+    return null;
+  }
+
+  if (status.kind === "refused") {
+    return (
+      <div role="alert">
+        <HelpLimitNotice limit={status.limit} linkComponent={LearnLink} routes={routes} />
+      </div>
+    );
+  }
+
+  if (status.kind === "failed") {
+    return (
+      <p className="text-destructive-text text-sm text-pretty" role="alert">
+        {failureText(status.reason)}
+      </p>
+    );
+  }
+
+  return null;
+}
+
+type ChooserBarProps = { busy: boolean; gated: boolean; status: MockChooserStatus };
+
+/** Start on every screen size, after the list: the choice comes before the action. */
+export function ChooserBar({
+  busy,
+  disabled,
+  gated,
+  onStart,
+  status,
+}: ChooserBarProps & { disabled: boolean; onStart: () => void }) {
+  const t = useExtracted();
+  const mounted = useIsMounted();
+  const note = useChooserNote({ busy, gated, status });
 
   return (
-    <StatusRegion>
-      {!busy && status.kind === "refused" && (
-        <HelpLimitNotice limit={status.limit} linkComponent={LearnLink} routes={routes} />
+    <BottomBar note={note}>
+      {gated ? (
+        <SubscribeMainAction />
+      ) : (
+        <BottomBarActions>
+          <EnterButton
+            busy={busy}
+            className={DETAIL_PRIMARY_CLASS}
+            disabled={disabled || !mounted}
+            onClick={onStart}
+            size="lg"
+          >
+            {t("Start")}
+          </EnterButton>
+        </BottomBarActions>
       )}
-    </StatusRegion>
+    </BottomBar>
   );
 }
 
-/** The exam's name stays over the title, so the title doesn't jump when Start is pressed. */
-export function MockWriting({
-  bar,
-  eyebrow,
-  run,
-}: {
-  bar: ReactNode;
-  eyebrow: string;
-  run: GenerationRun;
-}) {
+export function MockWriting({ bar, run }: { bar: ReactNode; run: GenerationRun }) {
   const t = useExtracted();
 
   return (
     <ChooserLayout bar={bar}>
       <GenerationWait kind="mockQuestions" run={run}>
-        <div className="flex flex-col gap-1">
-          <PageEyebrow>{eyebrow}</PageEyebrow>
-          {/* oxlint-disable-next-line jsx-a11y/heading-has-content -- The title's text is its children. */}
-          <GenerationTimelineTitle render={<h1 />}>
-            {t("Getting your mock exam ready…")}
-          </GenerationTimelineTitle>
-        </div>
+        {/* oxlint-disable-next-line jsx-a11y/heading-has-content -- The title's text is its children. */}
+        <GenerationTimelineTitle render={<h1 />}>
+          {t("Getting your mock exam ready…")}
+        </GenerationTimelineTitle>
         <GenerationTimelineDescription>
           {t(
             "We're writing questions like the exam's for you. It starts here as soon as they're ready.",

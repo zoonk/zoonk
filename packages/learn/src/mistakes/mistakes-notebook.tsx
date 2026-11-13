@@ -4,13 +4,8 @@ import { type CurrentUserMistakes } from "@zoonk/core/mistakes/list-current-user
 import { type NoticedPattern } from "@zoonk/core/view-models/language/contract";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { FoldChevron } from "@zoonk/ui/components/collapsible";
-import {
-  DetailActions,
-  DetailFacts,
-  DetailHero,
-  DetailHeroText,
-  DetailTitle,
-} from "@zoonk/ui/components/detail";
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
+import { DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
 import { type CSSPropertiesWithVariables } from "@zoonk/ui/lib/css-variables";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
@@ -31,14 +26,14 @@ import {
   ListRowTitle,
   ListRowTrailing,
 } from "../_components/list-group";
-import { INBOX_PAGE_CLASS, PageEyebrow } from "../_components/page";
+import { INBOX_PAGE_CLASS, PageSubtitle } from "../_components/page";
 import { PageTab, PageTabs, PageTabsGroup } from "../_components/page-tabs";
 import { DoneMark } from "../_components/status-mark";
 import { PatternRow } from "../language/today/language-today-section";
 import { LearnLink } from "../learn-link";
 import { LearnPageBar } from "../shell/learn-bar";
 import { MistakeEntryCard, getMistakeEntryLinks } from "./mistake-entry";
-import { NotebookAvailabilityText } from "./notebook-availability-text";
+import { useNotebookAvailabilityText } from "./notebook-availability-text";
 
 type Notebook = Extract<CurrentUserMistakes, { status: "ready" }>;
 export type MistakeEntry = Notebook["mistakes"][number];
@@ -84,40 +79,46 @@ const INBOX_QUERY = "(min-width: 64rem)";
 
 function NotebookHero({
   goalTitle,
-  hrefs,
   notebook,
 }: {
   goalTitle: string | null;
-  hrefs: MistakesHrefs;
   notebook: Notebook;
 }) {
   const t = useExtracted();
-  const { availability } = notebook;
+  const availability = useNotebookAvailabilityText(notebook.availability);
+  const subtitle = [goalTitle, availability].filter(Boolean).join(" · ");
 
   return (
     <DetailHero>
       <DetailHeroText>
-        <PageEyebrow>{goalTitle}</PageEyebrow>
         <DetailTitle>{t("Mistakes notebook")}</DetailTitle>
-        <DetailFacts className="empty:hidden">
-          <NotebookAvailabilityText availability={availability} />
-        </DetailFacts>
+        {subtitle && <PageSubtitle>{subtitle}</PageSubtitle>}
       </DetailHeroText>
-
-      {availability.ready > 0 && (
-        <DetailActions>
-          <EnterLink
-            className={DETAIL_PRIMARY_CLASS}
-            href={hrefs.practice}
-            // Practice picks a fresh set of mistakes when it opens, so it isn't prefetched.
-            prefetch={false}
-            size="lg"
-          >
-            {t("Practice mistakes")}
-          </EnterLink>
-        </DetailActions>
-      )}
     </DetailHero>
+  );
+}
+
+function PracticeBar({ hrefs, notebook }: { hrefs: MistakesHrefs; notebook: Notebook }) {
+  const t = useExtracted();
+
+  if (notebook.availability.ready === 0) {
+    return null;
+  }
+
+  return (
+    <BottomBar>
+      <BottomBarActions>
+        <EnterLink
+          className={DETAIL_PRIMARY_CLASS}
+          href={hrefs.practice}
+          // Practice picks a fresh set of mistakes when it opens, so it isn't prefetched.
+          prefetch={false}
+          size="lg"
+        >
+          {t("Practice mistakes")}
+        </EnterLink>
+      </BottomBarActions>
+    </BottomBar>
   );
 }
 
@@ -268,13 +269,14 @@ export function MistakesNotebook({
   const groups = groupBySkill(mistakes);
 
   return (
+    <>
     <DetailLayout
       bar={<LearnPageBar back={{ href: hrefs.back }} root title={t("Mistakes notebook")} />}
       className={INBOX_PAGE_CLASS}
       data-slot="mistakes-notebook"
     >
       <DetailAside>
-        <NotebookHero goalTitle={goalTitle} hrefs={hrefs} notebook={notebook} />
+        <NotebookHero goalTitle={goalTitle} notebook={notebook} />
       </DetailAside>
 
       <PageTabsGroup>
@@ -314,5 +316,7 @@ export function MistakesNotebook({
         </DetailContent>
       </PageTabsGroup>
     </DetailLayout>
+    <PracticeBar hrefs={hrefs} notebook={notebook} />
+    </>
   );
 }

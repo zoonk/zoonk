@@ -14,7 +14,6 @@ import {
   StepRow,
   StepRows,
   StepTitle,
-  StepTitleLabel,
   StepTitleNumber,
   renderStepNumber,
 } from "../_components/step-card";
@@ -70,8 +69,8 @@ export function EssayGradeCard({
   return (
     <StepCard>
       <StepHeader>
-        <StepTitle className="flex flex-col items-start gap-1.5">
-          <StepTitleLabel>{writingName(rubric)}</StepTitleLabel>
+        <Eyebrow>{writingName(rubric)}</Eyebrow>
+        <StepTitle>
           <StepTitleNumber>
             {t("{low}–{high}", {
               high: formatScore(grade.range.high),

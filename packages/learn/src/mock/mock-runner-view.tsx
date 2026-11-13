@@ -9,6 +9,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { FlagIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
+import { Eyebrow } from "../_components/eyebrow";
 import { QuestionActions, QuestionMainAction } from "../_components/question-actions";
 import { TaskHeaderProgress } from "../_components/task-header";
 import { TASK_COLUMN_CLASS } from "../_components/task-layout";
@@ -46,18 +47,18 @@ function RunnerProgress({ question }: { question: MockQuestion }) {
       <div
         className={cn(
           TASK_COLUMN_CLASS,
-          "text-muted-foreground flex items-center justify-between gap-3 pt-1.5 pb-1 font-mono text-xs tabular-nums",
+          "text-muted-foreground flex items-center justify-between gap-3 pt-1.5 pb-1",
         )}
         data-slot="mock-meta"
       >
-        <span aria-hidden="true" className="min-w-0 truncate">
+        <Eyebrow aria-hidden="true" className={cn(!question.area && "with-aside:hidden")}>
           <span className="with-aside:hidden">
             {title(runner.view)}
             {question.area && " · "}
           </span>
           {question.area}
-        </span>
-        <span className="flex shrink-0 items-center gap-3">
+        </Eyebrow>
+        <span className="flex shrink-0 items-center gap-3 font-mono text-xs tabular-nums">
           <ItemClock />
           <span aria-hidden="true">
             {inSection

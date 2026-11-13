@@ -67,7 +67,7 @@ export function DetailContent({ className, ...props }: React.ComponentProps<"div
 
 export const DETAIL_PRIMARY_CLASS = cn(
   buttonVariants({ size: "lg" }),
-  "min-w-0 flex-1 md:flex-none md:px-5",
+  "min-w-0 flex-1 lg:flex-none lg:px-5",
 );
 
 export function DetailContinueLink({

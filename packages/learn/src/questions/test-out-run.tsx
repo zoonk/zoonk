@@ -185,7 +185,7 @@ function TestOutQuestions({
   unsent: UnsentAnswers<ChoiceQuestionAnswer[]> | null;
 }) {
   const t = useExtracted();
-  const rule = useTestOutRule(test.passMark);
+  const { label, rule } = useTestOutRule(test.passMark);
   const aside = useTestOutAside({ chapterTitle, lessonsLeft, rule });
 
   return (
@@ -197,7 +197,7 @@ function TestOutQuestions({
         screen: "test-out",
         title: t("Test: {chapter}", { chapter: chapterTitle }),
       }}
-      hint={(question) => (question === test.questions[0] ? rule : "")}
+      hint={(question) => (question === test.questions[0] ? label : null)}
       onFinish={onFinish}
       pending={pending}
       questions={test.questions}

@@ -1,6 +1,7 @@
 "use client";
 
 import { type ExamView } from "@zoonk/core/exams/view/contract";
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import {
   DetailActions,
   DetailFacts,
@@ -15,10 +16,8 @@ import {
   PopoverHeader,
   PopoverTrigger,
 } from "@zoonk/ui/components/popover";
-import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted, useFormatter } from "next-intl";
 import { DetailAside, DetailContent, DetailLayout } from "../_components/detail-page";
-import { PageEyebrow } from "../_components/page";
 import { FactSegments } from "../_components/task-meta";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { toLabelCase } from "../_utils/label-case";
@@ -73,25 +72,6 @@ function useExamDays(): string[] {
     !timePerDay && days.length > 1 ? [format.list(days, { type: "conjunction" })] : days;
 
   return sharedTime ? [...dates, formatTimeOfDay(sharedTime)] : dates;
-}
-
-function ExamEyebrow() {
-  const t = useExtracted();
-  const { exam } = useExamScreen();
-  const days = exam.daysLeft;
-
-  // The day before, the card under the title says "tomorrow": the count would say it twice.
-  if (days === null || days <= 0 || exam.stage === "dayBefore") {
-    return <PageEyebrow>{t("Exam")}</PageEyebrow>;
-  }
-
-  return (
-    <PageEyebrow>
-      {t("Exam · {days, plural, =0 {The day is here} one {# day left} other {# days left}}", {
-        days,
-      })}
-    </PageEyebrow>
-  );
 }
 
 /** On a phone the options sit across from the back arrow every day, so the page's top never moves. */
@@ -168,8 +148,23 @@ function ExamNoticeDay() {
   );
 }
 
+/** The day before, the card under the title says "tomorrow": the count would say it twice. */
+function useDaysLeft(): string | null {
+  const t = useExtracted();
+  const { exam } = useExamScreen();
+  const days = exam.daysLeft;
+
+  if (days === null || days <= 0 || exam.stage === "dayBefore") {
+    return null;
+  }
+
+  return t("{days, plural, one {# day left} other {# days left}}", { days });
+}
+
 function ExamFacts() {
-  const days = useExamDays();
+  const dates = useExamDays();
+  const daysLeft = useDaysLeft();
+  const days = daysLeft ? [...dates, daysLeft] : dates;
 
   if (days.length === 0) {
     return null;
@@ -190,22 +185,19 @@ function isLastDays(stage: ExamView["stage"]): boolean {
   return stage === "dayBefore" || stage === "examDay" || stage === "afterExam";
 }
 
-function ExamHero({ mockAction }: { mockAction: React.ReactNode }) {
+function ExamHero() {
   const t = useExtracted();
   const { exam } = useExamScreen();
-  const main = isLastDays(exam.stage) ? null : mockAction;
 
   return (
     <DetailHero>
       <DetailHeroText>
-        <ExamEyebrow />
         <DetailTitle>{exam.examName}</DetailTitle>
         <ExamFacts />
       </DetailHeroText>
 
-      <DetailActions className={cn(!main && "max-lg:hidden")}>
-        {main}
-        <ReportProblemMenu className="max-lg:hidden" label={t("Exam options")} screen="exam" />
+      <DetailActions className="max-lg:hidden">
+        <ReportProblemMenu label={t("Exam options")} screen="exam" />
       </DetailActions>
     </DetailHero>
   );
@@ -278,6 +270,7 @@ export function ExamScreen({
   openSpeakingTask?: string | null;
 }) {
   const t = useExtracted();
+  const lastDays = isLastDays(exam.stage);
 
   return (
     <ExamScreenProvider value={{ actions, exam, hrefs, openSpeakingTask }}>
@@ -293,19 +286,25 @@ export function ExamScreen({
         data-slot="exam-screen"
       >
         <DetailAside>
-          <ExamHero mockAction={mockAction} />
+          <ExamHero />
         </DetailAside>
 
         <DetailContent>
           <ExamNoticeDay />
           <ExamMoment />
           <ExamResultSection />
-          <ExamMocks entry={isLastDays(exam.stage) && mockAction !== null} />
+          <ExamMocks entry={lastDays && mockAction !== null} />
           <ExamMockProgress />
           {exam.format.length === 0 && <ExamMapSection />}
           <ExamSpeaking />
         </DetailContent>
       </DetailLayout>
+
+      {!lastDays && mockAction && (
+        <BottomBar>
+          <BottomBarActions>{mockAction}</BottomBarActions>
+        </BottomBar>
+      )}
     </ExamScreenProvider>
   );
 }

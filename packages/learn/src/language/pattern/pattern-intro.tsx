@@ -6,7 +6,7 @@ import { useExtracted } from "next-intl";
 import { useId } from "react";
 import { DiffLines } from "../../_components/diff-lines";
 import { LIST_GROUP_CLASS } from "../../_components/list-group";
-import { PageEyebrow, PageSectionTitle, PageTitle } from "../../_components/page";
+import { PageSectionTitle, PageTitle } from "../../_components/page";
 
 type PatternExample = MistakePatternView["examples"][number];
 
@@ -143,7 +143,6 @@ export function TyposNote({ pattern }: { pattern: MistakePatternView }) {
 
   return (
     <header className="flex flex-col gap-2">
-      <PageEyebrow>{t("Mistake pattern")}</PageEyebrow>
       <PageTitle>{t("Just typos")}</PageTitle>
       <p className="text-muted-foreground text-pretty">
         {t(

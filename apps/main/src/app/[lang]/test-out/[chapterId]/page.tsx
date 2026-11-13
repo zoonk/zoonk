@@ -173,7 +173,7 @@ function TestOutSkeleton() {
       title={<Skeleton className="h-4 w-40" />}
     >
       <div className="flex items-center gap-3">
-        <Skeleton className="h-4 w-2/3 lg:hidden" />
+        <Skeleton className="h-5.5 w-48 rounded-sm lg:hidden" />
         <Skeleton className="ml-auto h-3 w-10" />
       </div>
       <QuestionSkeleton />

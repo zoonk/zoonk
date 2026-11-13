@@ -1,8 +1,8 @@
 "use client";
 
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { type EntitlementTier } from "@zoonk/core/entitlements/contract";
 import {
-  DetailActions,
   DetailHero,
   DetailHeroText,
   DetailTitle,
@@ -17,7 +17,12 @@ import {
 } from "../_components/detail-page";
 import { EnterLink } from "../_components/enter-button";
 import { LIST_GROUP_CLASS } from "../_components/list-group";
-import { PageEyebrow, PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
+import {
+  PageSection,
+  PageSectionHeader,
+  PageSectionTitle,
+  PageSubtitle,
+} from "../_components/page";
 import { PageTab, PageTabs, PageTabsGroup } from "../_components/page-tabs";
 import { LearnPageBar } from "../shell/learn-bar";
 import {
@@ -265,6 +270,7 @@ export function MindMapsScreen({
   );
 
   return (
+    <>
     <DetailLayout
       bar={<LearnPageBar back={{ href: hrefs.back }} root title={t("Mind maps")} />}
       data-slot="mind-maps"
@@ -272,11 +278,9 @@ export function MindMapsScreen({
       <DetailAside>
         <DetailHero>
           <DetailHeroText>
-            <PageEyebrow>{page.goal.displayName}</PageEyebrow>
             <DetailTitle>{t("Mind maps")}</DetailTitle>
+            <PageSubtitle>{page.goal.displayName}</PageSubtitle>
           </DetailHeroText>
-
-          <DetailActions className="max-md:hidden">{study}</DetailActions>
         </DetailHero>
       </DetailAside>
 
@@ -295,8 +299,6 @@ export function MindMapsScreen({
           ))}
         </PageTabs>
 
-        {/* Under the tabs on a phone: a tab with no maps has no Study, and the tabs must not move for it. */}
-        <div className="flex empty:hidden md:hidden">{study}</div>
 
         <DetailContent>
           {current === "chapters" && (
@@ -309,5 +311,11 @@ export function MindMapsScreen({
         </DetailContent>
       </PageTabsGroup>
     </DetailLayout>
+    {study && (
+      <BottomBar>
+        <BottomBarActions>{study}</BottomBarActions>
+      </BottomBar>
+    )}
+    </>
   );
 }

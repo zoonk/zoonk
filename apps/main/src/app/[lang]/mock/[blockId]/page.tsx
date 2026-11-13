@@ -37,7 +37,10 @@ function MockSkeleton() {
       progress
       title={<Skeleton className="h-6 w-24" />}
     >
-      <Skeleton className="h-3 w-full" />
+      <div className="flex items-center gap-3">
+        <Skeleton className="h-5.5 w-40 rounded-sm" />
+        <Skeleton className="ml-auto h-3 w-16" />
+      </div>
       <QuestionSkeleton options={5} />
     </TaskSkeleton>
   );
