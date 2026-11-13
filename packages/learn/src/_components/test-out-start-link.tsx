@@ -17,9 +17,7 @@ import {
   ListRowLeading,
   ListRowTitle,
 } from "./list-group";
-import { PlusMark } from "./plus-lock";
 import { StatusRegion } from "./status-region";
-import { MarkedText } from "./title-row";
 
 export type TestOutStart =
   | { limit: HelpLimit; status: "refused" }
@@ -96,22 +94,12 @@ export function TestOutStartLink({
   );
 }
 
-function TestOutRowContent({
-  opening,
-  plusRequired,
-  scope,
-}: {
-  opening: boolean;
-  plusRequired: boolean;
-  scope: "chapter" | "unit";
-}) {
+function TestOutRowContent({ opening, scope }: { opening: boolean; scope: "chapter" | "unit" }) {
   const t = useExtracted();
 
   return (
     <ListRowContent>
-      <ListRowTitle>
-        <MarkedText mark={plusRequired && <PlusMark />}>{t("Already know this?")}</MarkedText>
-      </ListRowTitle>
+      <ListRowTitle>{t("Already know this?")}</ListRowTitle>
       <ListRowDescription>
         {opening && t("Opening the test…")}
         {!opening && scope === "chapter" && t("Take the test and skip the chapter")}
@@ -123,11 +111,9 @@ function TestOutRowContent({
 
 export function TestOutStartRow({
   onStart,
-  plusRequired = false,
   scope,
 }: {
   onStart: () => Promise<TestOutStart>;
-  plusRequired?: boolean;
   scope: "chapter" | "unit";
 }) {
   const { isPending, opening, result, start } = useTestOutStart(onStart);
@@ -139,7 +125,7 @@ export function TestOutStartRow({
           <ListRowLeading>
             <KindDot kind="practice" />
           </ListRowLeading>
-          <TestOutRowContent opening={opening} plusRequired={plusRequired} scope={scope} />
+          <TestOutRowContent opening={opening} scope={scope} />
         </ListRowButton>
       </form>
 
