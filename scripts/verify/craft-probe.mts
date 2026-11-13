@@ -13,7 +13,8 @@ export type Ink = {
   bare?: boolean;
   bottom: number;
   context: number;
-  /** For a box, the context its own contents are in. */
+  /** For a box: the context its own contents are in, and whether it's a control's. */
+  control?: boolean;
   inner?: number;
   /**
    * For a text, where its first and last letters are drawn: letters start and end a little inside
@@ -522,6 +523,10 @@ export function readCraft(): CraftPage {
       };
     });
 
+  const BUTTON = String.raw`button, [role=button], a[data-slot=button], a.group\/button`;
+  const FIELD = `input:not([type=checkbox], [type=radio], [type=hidden], [type=range]), select, textarea, [role=combobox]`;
+  const TOGGLE = "[role=checkbox], [role=switch], [role=radio], [role=slider]";
+
   const boxes = contexts.map((element, index) => {
     const frame = element.getBoundingClientRect();
     const outside = Math.max(0, ...rings(element));
@@ -538,6 +543,7 @@ export function readCraft(): CraftPage {
     return {
       ...place(box),
       context: contextOf(element),
+      control: element.matches(`${BUTTON}, ${FIELD}, ${TOGGLE}`),
       inner: index,
       kind: "box" as const,
       label: label(element),
@@ -546,10 +552,6 @@ export function readCraft(): CraftPage {
       rightCounts: !middle && endPlaced(element),
     };
   });
-
-  const BUTTON = String.raw`button, [role=button], a[data-slot=button], a.group\/button`;
-  const FIELD = `input:not([type=checkbox], [type=radio], [type=hidden], [type=range]), select, textarea, [role=combobox]`;
-  const TOGGLE = "[role=checkbox], [role=switch], [role=radio], [role=slider]";
 
   function controlKind(element: Element) {
     if (element.matches(FIELD)) {
