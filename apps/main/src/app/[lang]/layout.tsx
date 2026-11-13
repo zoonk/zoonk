@@ -14,6 +14,7 @@ import { Suspense } from "react";
 import { AccountDeletedToast } from "./account-deleted-toast";
 import { AppAnalytics } from "./app-analytics";
 import { AppCommandPalette } from "./app-command-palette";
+import { AppKeyboardShortcuts } from "./app-keyboard-shortcuts";
 import { AuthChangeReload } from "./auth-change-reload";
 import { KeepTypingScript } from "./keep-typing-script";
 import { LearnerSummarySync } from "./learner-summary-sync";
@@ -41,6 +42,7 @@ function AppCommandPaletteSlot() {
         <PaletteRequestReset />
       </Suspense>
       <AppCommandPalette />
+      <AppKeyboardShortcuts />
     </>
   );
 }

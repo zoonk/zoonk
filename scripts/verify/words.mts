@@ -12,15 +12,21 @@ export const WORD_BUDGET = {
   stringWords: 20,
 };
 
-export type PageText = {
+type PagePlace = {
+  /** Whether the one main action is pinned (fixed or sticky) in the screen's lower half; null without exactly one. */
+  actionPinned: boolean | null;
+  /** From the bottom of the nearest thing drawn above the title to the title's top. */
+  titleGap: number | null;
+};
+
+export type PageText = PagePlace & {
   aboveAction: number | null;
   action: string | null;
   buttons: string[];
   text: string;
 };
 
-export type PageWords = {
-  /** Text elements between the title and the main action; null when there's no main action. */
+export type PageWords = PagePlace & {
   aboveAction: number | null;
   action: string | null;
   kind: PageKind;
@@ -68,6 +74,37 @@ export function readWords(): PageText {
       (button) => button.classList.contains("bg-primary") && all.indexOf(button) > start,
     ) ?? null;
 
+  const filled = buttons.filter((button) => button.classList.contains("bg-primary"));
+  const titleBox = title?.getBoundingClientRect();
+
+  const above = titleBox
+    ? all
+        .filter((element) => !element.contains(title) && shown(element))
+        .map((element) => element.getBoundingClientRect())
+        .filter(
+          (box) =>
+            box.bottom <= titleBox.top + 1 &&
+            box.left < titleBox.right &&
+            box.right > titleBox.left,
+        )
+        .reduce((lowest, box) => Math.max(lowest, box.bottom), 0)
+    : 0;
+
+  // oxlint-disable-next-line unicorn/consistent-function-scoping -- The probe is sent as one function.
+  function pinned(element: Element) {
+    if (element.getBoundingClientRect().bottom <= innerHeight / 2) {
+      return false;
+    }
+
+    for (let current: Element | null = element; current; current = current.parentElement) {
+      if (["fixed", "sticky"].includes(getComputedStyle(current).position)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   const between = action
     ? all
         .slice(start + 1, all.indexOf(action))
@@ -82,6 +119,8 @@ export function readWords(): PageText {
         )
     : [];
 
+  const [only] = filled;
+
   return {
     aboveAction: action
       ? between.filter(
@@ -89,9 +128,11 @@ export function readWords(): PageText {
         ).length
       : null,
     action: action ? label(action) : null,
+    actionPinned: filled.length === 1 && only ? pinned(only) : null,
     buttons: buttons.map((button) => label(button)).filter(Boolean),
     // oxlint-disable-next-line unicorn/prefer-dom-node-text-content -- Only `innerText` skips hidden text (`display: none`), which `textContent` would count.
     text: main.innerText,
+    titleGap: titleBox ? Math.round(titleBox.top - above) : null,
   };
 }
 
@@ -132,10 +173,53 @@ export function summarizeWords(page: PageText, kind: PageKind): PageWords {
   return {
     aboveAction: page.aboveAction,
     action: page.action,
+    actionPinned: page.actionPinned,
     kind,
     longestButton,
+    titleGap: page.titleGap,
     words: countWords(page.text),
   };
+}
+
+/** Phone and laptop agree on a title's room above it within this; a line box rounds to it. */
+const SAME_GAP = 4;
+
+/**
+ * The founder's rule 4 on one load: a screen's one main action is pinned in the bottom bar. A
+ * screen that keeps it elsewhere says why in its decisions, so this is a lead.
+ */
+export function placeFindings(page: PageWords): Finding[] {
+  return page.kind === "app" && page.actionPinned === false
+    ? [
+        {
+          check: "R2 main action pinned",
+          level: "warn",
+          message: `"${page.action ?? ""}" is the screen's one main action and isn't pinned in the bottom bar`,
+        },
+      ]
+    : [];
+}
+
+/** The founder's rule 3: the title sits as close to the top on a phone as on a computer. */
+export function titleGapFindings(phone: PageWords, laptop: PageWords): Finding[] {
+  if (
+    phone.kind !== "app" ||
+    phone.titleGap === null ||
+    laptop.titleGap === null ||
+    Math.abs(phone.titleGap - laptop.titleGap) <= SAME_GAP
+  ) {
+    return [];
+  }
+
+  return [
+    {
+      check: "E8 page top",
+      level: "warn",
+      message: `the title has ${phone.titleGap} px above it on a phone and ${laptop.titleGap} px on a laptop: one page top, the same on both`,
+      unit: "px",
+      value: Math.abs(phone.titleGap - laptop.titleGap),
+    },
+  ];
 }
 
 export function wordFindings(page: PageWords): Finding[] {

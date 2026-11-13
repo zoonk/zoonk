@@ -105,7 +105,6 @@ export function AllBasesChoice({
     <ChoiceRows
       choices={choices}
       label={t("All prerequisites")}
-      numberKeys={false}
       onChange={onChoose}
       readOnly={readOnly}
       stackOnPhone={false}

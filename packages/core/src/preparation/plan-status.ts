@@ -118,7 +118,6 @@ function isDue({ item, today }: { item: PlanStatusItem; today: Date }): boolean 
 }
 
 function getPlanLifecycle({
-  freeWeekOver,
   goalKind,
   items,
   phaseChallengesRequired,
@@ -127,7 +126,6 @@ function getPlanLifecycle({
   targetDate,
   today,
 }: {
-  freeWeekOver: boolean;
   goalKind: Goal["kind"];
   items: readonly PlanStatusItem[];
   phaseChallengesRequired: boolean;
@@ -150,10 +148,6 @@ function getPlanLifecycle({
     return { kind: "finished" };
   }
 
-  if (freeWeekOver) {
-    return null;
-  }
-
   const lessons = countLessonsLeft(items);
 
   if (lessons > 0 && isDateReached({ studiesPastTarget, targetDate, today })) {
@@ -171,7 +165,6 @@ function getPlanLifecycle({
 
 function getPlanPace({
   catchUp,
-  freeWeekOver,
   items,
   minutesPerItem,
   phaseChallengesRequired,
@@ -179,7 +172,6 @@ function getPlanPace({
   today,
 }: {
   catchUp: number;
-  freeWeekOver: boolean;
   items: readonly PlanStatusItem[];
   minutesPerItem: number;
   phaseChallengesRequired: boolean;
@@ -192,7 +184,7 @@ function getPlanPace({
 
   const days = new Set(scheduled.map((item) => item.scheduledFor?.getTime())).size;
 
-  if (freeWeekOver || days === 0) {
+  if (days === 0) {
     return null;
   }
 
@@ -228,7 +220,6 @@ function getPlanPace({
 export function getPlanStatus({
   phaseChallengesRequired = true,
   catchUp = 0,
-  freeWeekOver = false,
   goalKind,
   items,
   minutesPerItem,
@@ -239,7 +230,6 @@ export function getPlanStatus({
 }: {
   phaseChallengesRequired?: boolean;
   catchUp?: number;
-  freeWeekOver?: boolean;
   goalKind: Goal["kind"];
   items: readonly PlanStatusItem[];
   minutesPerItem: number;
@@ -250,7 +240,6 @@ export function getPlanStatus({
   today: Date;
 }): PlanStatus | null {
   const lifecycle = getPlanLifecycle({
-    freeWeekOver,
     goalKind,
     items,
     phaseChallengesRequired,
@@ -266,7 +255,7 @@ export function getPlanStatus({
 
   const pace = getPlanPace({
     catchUp,
-    freeWeekOver,
+
     items,
     minutesPerItem,
     phaseChallengesRequired,

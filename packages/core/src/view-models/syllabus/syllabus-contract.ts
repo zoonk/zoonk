@@ -249,10 +249,7 @@ export const syllabusViewSchema = z
       }),
     knownTopicsReturn: z
       .enum(["practice", "reviews"])
-      .meta({
-        description:
-          "Where a `known` topic comes back to be confirmed: `practice`, or `reviews` for a free exam plan past its first week, whose practice is Plus (the quick review asks it then)",
-      }),
+      .meta({ description: "Where a known topic comes back to be confirmed. Always practice" }),
     lessons: z
       .object({
         done: countSchema.meta({ description: "Studied or skipped as known" }),

@@ -131,12 +131,7 @@ const lessonMapGroupSchema = z
         description:
           "The lessons whose maps open (not `locked`), in chapter order: the maps the Lessons tab studies, which a reader opened with this list keeps as they were",
       }),
-    locked: z
-      .int()
-      .min(0)
-      .meta({
-        description: "How many of them a free exam plan past its first week keeps for Plus",
-      }),
+    locked: z.int().min(0).meta({ description: "Always zero. Chapter lessons do not expire" }),
   })
   .meta({ id: "LessonMapGroup" });
 

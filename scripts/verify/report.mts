@@ -89,8 +89,8 @@ function list(title: string, groups: Group[], screensPerPage: Map<string, number
 
 function loadRows(loads: LoadReport[], out: string): string[] {
   return [
-    "| Page | Screen | TTFB | FCP | Shell words | Content | Blank at | LCP | Links live | Blocking | CLS | Main thread | Server CPU | SQL (ms) | KB (HTML/JS/all) | RSC KB | Prefetches | Skeleton shown | Paints (last) | Words | Before the action | Longest button | Craft | Screenshots |",
-    "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+    "| Page | Screen | TTFB | FCP | Shell words | Content | Blank at | LCP | Links live | Blocking | CLS | Main thread | Server CPU | SQL (ms) | KB (HTML/JS/all) | RSC KB | Prefetches | Skeleton shown | Paints (last) | Words | Before the action | Longest button | Screenshots |",
+    "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ...loads.map((load) => {
       const kilobytes = [load.bytes.html, load.bytes.scripts, load.bytes.total].map((bytes) =>
         Math.round(bytes / KILOBYTE),
@@ -123,7 +123,6 @@ function loadRows(loads: LoadReport[], out: string): string[] {
           ? "– (no main action)"
           : `${load.words.aboveAction} (to "${load.words.action}")`,
         load.words.longestButton === null ? "–" : `"${load.words.longestButton}"`,
-        `${load.craft.radii}/${load.craft.heights}/${load.craft.sizes}/${load.craft.icons}`,
         load.screenshots.map((screenshot) => relative(out, screenshot)).join(", "),
       ].join(" | ")} |`;
     }),
@@ -219,7 +218,7 @@ export function renderReport({
     ...sections,
     `**Words** are the main region's. **Before the action** counts text elements (an element with its own text, not inside another counted one) between the title (the main region's first \`h1\`, or its start) and the main action (the first button with the primary fill after it). A button is drawn with \`buttonVariants\` and doesn't look like a link. They're leads from zoonk-design's Words budget, not failures: over ${WORD_BUDGET.aboveAction} text elements before the action, over ${WORD_BUDGET.decisionWords} words on a page with a main action, a label over ${WORD_BUDGET.buttonWords} words, and with a baseline words up by more than ${WORD_BUDGET.growth * PERCENT}%. The budget is for the product's own screens: long-form pages (a lesson, the legal pages) skip the word and text-element leads, and marketing pages (the landing page, the catalog, pricing, shared links, the blog) skip all three; their counts still show, and with a baseline so does the change.`,
     "",
-    "**Craft** counts what the screen draws with: control corner radii / control heights / text sizes / icon sizes. Each craft lead carries its rule's id and name from zoonk-design's craft reference (`references/craft.md`), the element and its numbers: open the screenshot at that element, then fix it or say which deliberate choice it is. Craft is measured once per screen, at rest after load, in the first color scheme.",
+    "Each craft lead carries its rule's id and name from zoonk-design's craft reference (`references/craft.md`), the element and its numbers: open the screenshot at that element, then fix it or say which deliberate choice it is. Craft is measured once per screen, at rest after load, in the first color scheme.",
     "",
     "Paints are the screencast's frames after the navigation started, in the first color scheme, saved beside the screenshots in each screen's `-frames` folder and named by their time. More than a couple after the first paint, or a late last one, means the page changed after it appeared: a flash, a swap, a late image or an animation. Open them to see which.",
   ].join("\n");

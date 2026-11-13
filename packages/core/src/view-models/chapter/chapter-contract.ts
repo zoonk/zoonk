@@ -11,10 +11,7 @@ const chapterLessonSchema = z
     minutes: z.int().min(0),
     plusRequired: z
       .boolean()
-      .meta({
-        description:
-          "A free exam plan past its first week opens this new lesson with Plus only; starting it answers 402",
-      }),
+      .meta({ description: "Always false. New lessons use the shared monthly lesson allowance" }),
     skillIds: z
       .array(uuidSchema())
       .meta({ description: "Skills it teaches, so tapping a skill on the map lists its lessons" }),
@@ -83,10 +80,7 @@ export const chapterViewSchema = z
         }),
       plusRequired: z
         .boolean()
-        .meta({
-          description:
-            "A free exam plan past its first week takes the chapter's test-out with Plus only; its endpoints answer 402",
-        }),
+        .meta({ description: "Always false. Chapter test-out does not require a subscription" }),
     }),
   })
   .meta({ id: "GoalChapter" });

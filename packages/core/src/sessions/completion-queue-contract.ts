@@ -23,7 +23,7 @@ const studyDayProgressSchema = z
       .nullable()
       .meta({
         description:
-          "The lessons earlier days left (the plan's latest missed-days change, the same lessons Today counts as behind). It holds what the completion read and doesn't change after it. Null when nothing is carried, on a welcome-back session, once a free exam plan's first week is over, or when none are left and none were caught up today. `lessonsLeft` 0 with `doneToday` above 0 means every carried lesson is done.",
+          "The lessons earlier days left (the plan's latest missed-days change, the same lessons Today counts as behind). It holds what the completion read and doesn't change after it. Null when nothing is carried, on a welcome-back session, or when none are left and none were caught up today. `lessonsLeft` 0 with `doneToday` above 0 means every carried lesson is done.",
       }),
     lead: z
       .enum(["done", "left", "open", "complete"])

@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@zoonk/ui/components/button";
 import {
   Drawer,
   DrawerContent,
@@ -9,14 +8,12 @@ import {
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
 import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@zoonk/ui/components/sheet";
+  SidePanel,
+  SidePanelContent,
+  SidePanelHeader,
+  SidePanelTitle,
+} from "@zoonk/ui/components/side-panel";
 import { useIsMobile } from "@zoonk/ui/hooks/mobile";
-import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { PlanActivities } from "./plan-activities";
 import { PlanAim } from "./plan-aim";
@@ -75,30 +72,17 @@ function EditorPanel({ initialFocus, onOpenChange, open }: EditorFrameProps) {
   const t = useExtracted();
 
   return (
-    <Sheet onOpenChange={onOpenChange} open={open}>
-      <SheetContent
+    <SidePanel onOpenChange={onOpenChange} open={open}>
+      <SidePanelContent
         className="gap-0 shadow-none data-[side=right]:w-full data-[side=right]:sm:max-w-104"
         initialFocus={initialFocus}
         overlayClassName="bg-black/20 supports-backdrop-filter:backdrop-blur-none dark:bg-black/25"
         side="right"
       >
         <PlanEditorChangeProvider>
-          <SheetHeader className="flex-row items-center justify-between gap-3 px-6 pt-5 pb-3">
-            <SheetTitle>{t("Adjust your plan")}</SheetTitle>
-            <SheetClose
-              render={
-                <Button
-                  className="[--icon-size:--spacing(5)]"
-                  edge="end"
-                  size="icon"
-                  variant="ghost"
-                />
-              }
-            >
-              <XIcon aria-hidden="true" />
-              <span className="sr-only">{t("Close")}</span>
-            </SheetClose>
-          </SheetHeader>
+          <SidePanelHeader closeLabel={t("Close")}>
+            <SidePanelTitle>{t("Adjust your plan")}</SidePanelTitle>
+          </SidePanelHeader>
 
           <PlanEditorChange className="border-t-0 border-b pt-0 pb-4" />
 
@@ -106,8 +90,8 @@ function EditorPanel({ initialFocus, onOpenChange, open }: EditorFrameProps) {
             <EditorSections />
           </div>
         </PlanEditorChangeProvider>
-      </SheetContent>
-    </Sheet>
+      </SidePanelContent>
+    </SidePanel>
   );
 }
 

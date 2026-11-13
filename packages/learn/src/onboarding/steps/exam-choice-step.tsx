@@ -98,7 +98,7 @@ export function ExamChoiceStep({
         { count: takes },
       )}
     >
-      {choices.map((choice, index) => {
+      {choices.map((choice) => {
         const options = choice.options.map((option) => ({
           description:
             option.shortName && option.shortName !== option.name ? option.name : undefined,
@@ -120,6 +120,7 @@ export function ExamChoiceStep({
                   choices={options}
                   label={choice.group}
                   max={choice.take}
+                  numberKeys={choices.length === 1}
                   onChange={(names) => setPicks({ ...picks, [choice.group]: names })}
                   readOnly={pending}
                   value={picks[choice.group] ?? []}
@@ -129,7 +130,7 @@ export function ExamChoiceStep({
               <ChoiceList
                 choices={options}
                 label={choice.group}
-                numberKeys={index === 0}
+                numberKeys={choices.length === 1}
                 onChange={(value) => setPicks({ ...picks, [choice.group]: [value] })}
                 onPick={
                   takes === 1 ? (value) => pick({ ...picks, [choice.group]: [value] }) : undefined
