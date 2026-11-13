@@ -2,8 +2,6 @@
 
 import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
-import { FreeWeekOverNotice } from "../../_components/free-week-over";
-import { usePlanScreen } from "../../plan/plan-context";
 import { useCoveredText, usePlanCoverage } from "../../plan/plan-coverage";
 import { useFullCourse } from "../../plan/plan-full-course";
 
@@ -13,14 +11,9 @@ import { useFullCourse } from "../../plan/plan-full-course";
  */
 export function RevealCoverage({ onAddTime }: { onAddTime: () => void }) {
   const t = useExtracted();
-  const { plan } = usePlanScreen();
   const coverage = usePlanCoverage();
   const coveredText = useCoveredText();
   const course = useFullCourse();
-
-  if (plan.access.freeWeekOver) {
-    return <FreeWeekOverNotice />;
-  }
 
   // A plan that keeps going after the exam covers the rest then.
   if (!coverage || course?.on) {
