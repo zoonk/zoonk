@@ -16,7 +16,7 @@ const MARGIN = 16;
 
 function getVisibleArea(scroller: HTMLElement) {
   const box = scroller.getBoundingClientRect();
-  const bar = scroller.querySelector<HTMLElement>('[data-slot="lesson-action-bar"]');
+  const bar = scroller.querySelector<HTMLElement>('[data-slot="task-action-bar"]');
   const isStuck = bar ? getComputedStyle(bar).position === "sticky" : false;
 
   return { bottom: box.bottom - (isStuck && bar ? bar.offsetHeight : 0), top: box.top };
