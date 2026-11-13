@@ -17,6 +17,20 @@ describe(toLessonLimitParam, () => {
       { period: "month", status: "limitReached", tier: "free" },
     ],
     [
+      {
+        availableAt: "2026-11-20T12:00:00.000Z",
+        period: "rolling30Days",
+        status: "limitReached",
+        tier: "free",
+      },
+      {
+        availableAt: "2026-11-20T12:00:00.000Z",
+        period: "rolling30Days",
+        status: "limitReached",
+        tier: "free",
+      },
+    ],
+    [
       { period: "day", status: "limitReached", tier: "plus" },
       { period: "day", status: "limitReached", tier: "plus" },
     ],
@@ -42,6 +56,9 @@ describe(readLessonLimitParam, () => {
     "slow-down-",
     "slow-down-soon",
     "slow-down--5",
+    "free-opens-",
+    "free-opens-soon",
+    "free-opens-99999999999999999",
     ["guest", "plus"],
   ])("reads %o as no limit", (value) => {
     expect(readLessonLimitParam(value)).toBeNull();

@@ -282,6 +282,27 @@ msgid "You've reached today's limit"
 msgstr "Hai raggiunto il limite di oggi"
 
 #: src/_components/help-limit-notice.tsx
+msgctxt "sq9fni"
+msgid "Your next free lesson opens later today, or subscribe to keep going."
+msgstr "La tua prossima lezione gratuita sarà disponibile più tardi oggi, oppure puoi abbonarti per continuare."
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "q6VpbS"
+msgid "Your next free lesson opens tomorrow, or subscribe to keep going."
+msgstr "La tua prossima lezione gratuita sarà disponibile domani, oppure puoi abbonarti per continuare."
+
+#. On the screen a free learner sees when their free lessons are used. {date} is a day and its month, such as "November 22" in English.
+#: src/_components/help-limit-notice.tsx
+msgctxt "wsvV5i"
+msgid "Your next free lesson opens on {date}, or subscribe to keep going."
+msgstr "La tua prossima lezione gratuita sarà disponibile il {date}, oppure puoi abbonarti per continuare."
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "y0Yu1A"
+msgid "You've used your free lessons"
+msgstr "Hai esaurito le tue lezioni gratuite"
+
+#: src/_components/help-limit-notice.tsx
 msgctxt "j9Za23"
 msgid "No more new lessons today"
 msgstr "Hai raggiunto il limite di nuove lezioni per oggi"
@@ -290,11 +311,6 @@ msgstr "Hai raggiunto il limite di nuove lezioni per oggi"
 msgctxt "2LDIQ9"
 msgid "No more lessons without an account"
 msgstr "Per altre lezioni serve un account"
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "2XtwRD"
-msgid "You've used this month's free lessons"
-msgstr "Hai usato tutte le lezioni gratuite di questo mese"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "VGhCC9"
