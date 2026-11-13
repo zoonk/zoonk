@@ -68,7 +68,7 @@ function DrawerPopup({
           data-slot="drawer-popup"
           {...props}
         >
-          <div className="bg-foreground/25 mx-auto mt-3 h-1 w-10 shrink-0 rounded-full" />
+          <div className="bg-foreground/50 mx-auto mt-3 h-1 w-10 shrink-0 rounded-full" />
           <PopupShortcutLayer value>{children}</PopupShortcutLayer>
         </DrawerPrimitive.Popup>
       </DrawerPrimitive.Viewport>
