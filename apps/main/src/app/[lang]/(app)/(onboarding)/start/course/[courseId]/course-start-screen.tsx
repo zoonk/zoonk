@@ -20,7 +20,7 @@ import {
   LevelChoiceList,
   toLevelAnswer,
 } from "@zoonk/learn/onboarding/level-choices";
-import { FORWARD_ICON, buttonVariants } from "@zoonk/ui/components/button";
+import { buttonVariants } from "@zoonk/ui/components/button";
 import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
@@ -175,7 +175,6 @@ function CourseStartForm({
               startHere();
             }}
             type="submit"
-            {...FORWARD_ICON}
           >
             {t("Build my plan")}
           </OnboardingPrimaryButton>

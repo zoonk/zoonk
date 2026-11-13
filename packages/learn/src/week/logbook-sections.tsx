@@ -4,6 +4,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { ClockIcon, ListChecksIcon, SearchCheckIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
+import { Eyebrow } from "../_components/eyebrow";
 import { GoalRing } from "../_components/goal-ring";
 import { KindMark, type LearnKind } from "../_components/kind-tile";
 import { StatTile, StatTiles } from "../_components/stat-tile";
@@ -11,7 +12,6 @@ import { DoneMark } from "../_components/status-mark";
 import {
   StepCard,
   StepDetail,
-  StepEyebrow,
   StepHeader,
   StepRow,
   StepRows,
@@ -93,14 +93,14 @@ export function WeekStep({ range }: { range: string }) {
     <StepCard>
       <WeekRings />
       <StepHeader>
-        <StepEyebrow>
+        <Eyebrow>
           {finished
             ? t("Phase {phase} · {name} done", {
                 name: finished.name,
                 phase: String(finished.phase + 1),
               })
             : t("Weekly summary · {range}", { range })}
-        </StepEyebrow>
+        </Eyebrow>
         <StepTitle className="wrap-anywhere">
           {learnerName ? t("What a week, {name}!", { name: learnerName }) : t("What a week!")}
         </StepTitle>
@@ -128,7 +128,7 @@ export function QuietWeekStep({ range }: { range: string }) {
     <StepCard>
       <WeekRings />
       <StepHeader>
-        <StepEyebrow>{t("Weekly summary · {range}", { range })}</StepEyebrow>
+        <Eyebrow>{t("Weekly summary · {range}", { range })}</Eyebrow>
         <StepTitle>
           {recap.ready ? t("A quiet week") : t("Your first summary comes on Sunday")}
         </StepTitle>
@@ -177,7 +177,7 @@ export function TurnaroundStep() {
   return (
     <StepCard>
       <StepHeader>
-        <StepEyebrow>{t("The biggest turnaround")}</StepEyebrow>
+        <Eyebrow>{t("The biggest turnaround")}</Eyebrow>
         <StepTitle>{turnaround.name}</StepTitle>
         <StepDetail className="tabular-nums">
           {t({
@@ -277,7 +277,7 @@ export function NextWeekStep({ title }: { title: string }) {
   return (
     <StepCard>
       <StepHeader>
-        <StepEyebrow>{t("Next week")}</StepEyebrow>
+        <Eyebrow>{t("Next week")}</Eyebrow>
         <StepTitle>{title}</StepTitle>
       </StepHeader>
     </StepCard>

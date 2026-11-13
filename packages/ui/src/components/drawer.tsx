@@ -23,9 +23,11 @@ function DrawerPortal({ ...props }: DrawerPrimitive.Portal.Props) {
   return <DrawerPrimitive.Portal data-slot="drawer-portal" {...props} />;
 }
 
+/** Drawn for a nested overlay too, which Base UI skips, so whatever it opened from dims under it. */
 function DrawerBackdrop({ className, ...props }: DrawerPrimitive.Backdrop.Props) {
   return (
     <DrawerPrimitive.Backdrop
+      forceRender
       className={cn(
         "fixed inset-0 z-50 bg-black",
         "[--backdrop-opacity:0.5] dark:[--backdrop-opacity:0.7]",

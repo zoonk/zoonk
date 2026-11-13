@@ -1,4 +1,7 @@
+import { PAGE_HEADER_CLASS } from "@zoonk/ui/components/page-top";
 import { cn } from "@zoonk/ui/lib/utils";
+
+export { PageTitle } from "@zoonk/ui/components/page-top";
 
 export const PAGE_COLUMN_CLASS = "w-full min-w-0";
 
@@ -31,10 +34,7 @@ export function PageHeader({ className, ...props }: React.ComponentProps<"header
 export function PageHeaderContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn(
-        "flex min-w-0 flex-col gap-1 not-has-[>[data-slot=page-eyebrow]]:pt-5",
-        className,
-      )}
+      className={cn(PAGE_HEADER_CLASS, "has-[>[data-slot=page-eyebrow]]:pt-0", className)}
       data-slot="page-header-content"
       {...props}
     />
@@ -48,14 +48,6 @@ export function PageEyebrow({ className, ...props }: React.ComponentProps<"p">) 
       data-slot="page-eyebrow"
       {...props}
     />
-  );
-}
-
-export function PageTitle({ children, className, ...props }: React.ComponentProps<"h1">) {
-  return (
-    <h1 className={cn("text-title", className)} data-slot="page-title" {...props}>
-      {children}
-    </h1>
   );
 }
 

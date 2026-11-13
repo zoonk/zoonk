@@ -35,7 +35,6 @@ import type * as React from "react";
 const Command = Autocomplete.Root;
 
 /**
- * `overNested` draws the backdrop Base UI skips for a dialog opened inside another one.
  * `suggestionsFirst` is for a list whose rows are the likely answer: on touch screens the popup
  * takes focus instead of the search field, so the keyboard doesn't cover them. Its `CommandInput`
  * then needs `autoFocus={false}`.
@@ -44,14 +43,12 @@ function CommandDialog({
   children,
   className,
   finalFocus,
-  overNested,
   suggestionsFirst,
   ...props
 }: React.ComponentProps<typeof Dialog> & {
   className?: string;
   children: React.ReactNode;
   finalFocus?: React.ComponentProps<typeof DialogPopup>["finalFocus"];
-  overNested?: boolean;
   suggestionsFirst?: boolean;
 }) {
   const popupRef = useRef<HTMLDivElement>(null);
@@ -59,10 +56,7 @@ function CommandDialog({
   return (
     <Dialog {...props}>
       <DialogPortal>
-        <DialogOverlay
-          className="bg-black/15 supports-backdrop-filter:backdrop-blur-none dark:bg-black/50"
-          forceRender={overNested}
-        />
+        <DialogOverlay className="bg-black/15 supports-backdrop-filter:backdrop-blur-none dark:bg-black/50" />
         <DialogViewport className="flex items-start justify-center sm:px-4 sm:pt-[12vh] sm:pb-4">
           <DialogPopup
             finalFocus={finalFocus}

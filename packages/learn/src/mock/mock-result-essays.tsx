@@ -5,7 +5,8 @@ import { Button } from "@zoonk/ui/components/button";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
 import { useExtracted } from "next-intl";
-import { StepCard, StepDetail, StepEyebrow, StepHeader, StepTitle } from "../_components/step-card";
+import { Eyebrow } from "../_components/eyebrow";
+import { StepCard, StepDetail, StepHeader, StepTitle } from "../_components/step-card";
 import { type StepsItem } from "../_components/steps";
 import { EssayGradeCard, NextStepComment } from "../essay/essay-feedback";
 import { useWritingName } from "../essay/essay-labels";
@@ -57,7 +58,7 @@ function UngradedEssayStep({ essay, eyebrow }: { essay: MockEssayView; eyebrow: 
   return (
     <StepCard>
       <StepHeader>
-        {eyebrow && <StepEyebrow>{eyebrow}</StepEyebrow>}
+        {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
         <StepTitle>{writingName(runner.view.essayRubric ?? "custom")}</StepTitle>
         {essay.status === "blank" && <StepDetail>{t("You left it blank.")}</StepDetail>}
         {tooShort && <StepDetail>{t("Too short to grade")}</StepDetail>}

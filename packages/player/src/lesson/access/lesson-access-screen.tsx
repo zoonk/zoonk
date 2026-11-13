@@ -50,7 +50,7 @@ function FreeLimitReached({ period }: { period: "day" | "month" | "total" }) {
           : t("That's all the new lessons for today")
       }
     >
-      <EnterLink className={PRIMARY_CLASS} href={routes.upgrade} icon={null} link={LinkComponent}>
+      <EnterLink className={PRIMARY_CLASS} href={routes.upgrade} link={LinkComponent}>
         {t("See Plus")}
       </EnterLink>
       <LinkComponent className={SECONDARY_BUTTON} href={routes.exit}>
@@ -71,7 +71,7 @@ function FreeWeekOver() {
 
   return (
     <AccessLayout description={body} icon={<SparklesIcon aria-hidden="true" />} title={title}>
-      <EnterLink className={PRIMARY_CLASS} href={routes.upgrade} icon={null} link={LinkComponent}>
+      <EnterLink className={PRIMARY_CLASS} href={routes.upgrade} link={LinkComponent}>
         {t("See Plus")}
       </EnterLink>
       <LinkComponent className={SECONDARY_BUTTON} href={routes.exit}>
@@ -100,7 +100,7 @@ function LimitReached({
         icon={<UserRoundPlusIcon aria-hidden="true" />}
         title={t("Save your progress to keep going")}
       >
-        <EnterLink className={PRIMARY_CLASS} href={routes.signUp} icon={null} link={PageLink}>
+        <EnterLink className={PRIMARY_CLASS} href={routes.signUp} link={PageLink}>
           {t("Create a free account")}
         </EnterLink>
       </AccessLayout>
@@ -160,11 +160,11 @@ function Unavailable({
       }
     >
       {refusal.reason === "unauthorized" ? (
-        <EnterLink className={PRIMARY_CLASS} href={routes.signUp} icon={null} link={PageLink}>
+        <EnterLink className={PRIMARY_CLASS} href={routes.signUp} link={PageLink}>
           {t("Sign in")}
         </EnterLink>
       ) : (
-        <EnterLink className={PRIMARY_CLASS} href={routes.exit} icon={null} link={LinkComponent}>
+        <EnterLink className={PRIMARY_CLASS} href={routes.exit} link={LinkComponent}>
           {t("Back")}
         </EnterLink>
       )}
