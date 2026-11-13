@@ -2,11 +2,11 @@
 
 import { type WarmUpSurface } from "@zoonk/core/analytics/events";
 import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
-import { Button } from "@zoonk/ui/components/button";
+import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
 import { useEnterKey, useEscapeClick } from "@zoonk/ui/hooks/keyboard";
 import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ArrowRightIcon, ChevronLeftIcon } from "lucide-react";
+import { ChevronLeftIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode, type RefObject, createContext, use, useRef } from "react";
 import { TASK_WRAPPING_ACTION_CLASS } from "../_components/task-layout";
@@ -230,9 +230,9 @@ export function WaitSlot({
       ref={nextRef}
       size="xl"
       variant="outline"
+      {...FORWARD_ICON}
     >
       {t("Next guess")}
-      <ArrowRightIcon aria-hidden="true" data-icon="inline-end" />
     </Button>
   );
 }
