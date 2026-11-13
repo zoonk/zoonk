@@ -129,7 +129,7 @@ test.describe("Course certificates", () => {
     }
   });
 
-  test("a free learner's certificate stays locked and theirs: See Plus doesn't close its moment", async ({
+  test("a free learner's certificate stays locked and theirs: Subscribe doesn't close its moment", async ({
     browser,
     noProgressUser,
     userWithoutProgress: page,
@@ -140,7 +140,7 @@ test.describe("Course certificates", () => {
     await expect(moment.getByText("Get your certificate with Plus")).toBeVisible();
     await expect(moment.getByRole("button", { name: "Share" })).toBeHidden();
 
-    await moment.getByRole("link", { name: "See Plus" }).click();
+    await moment.getByRole("link", { name: "Subscribe" }).click();
     await expect(page).toHaveURL(/\/subscription$/u);
 
     const certificate = await readCertificate(goal.id);
