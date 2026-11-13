@@ -18,6 +18,7 @@ import {
   ListRowLink,
   ListRowTitle,
 } from "../_components/list-group";
+import { PageEyebrow } from "../_components/page";
 import { type GenerationRun } from "../generation/generation-run";
 import { GenerationWait } from "../generation/generation-wait";
 import { useRefreshUntilShown } from "../generation/use-refresh-until-shown";
@@ -28,7 +29,6 @@ import {
   OnboardingFrame,
   OnboardingHeading,
   OnboardingPrimaryButton,
-  OnboardingSubject,
   OnboardingTitle,
 } from "../onboarding/onboarding-frame";
 import { useQuickExplanationLabel } from "./quick-explanation-label";
@@ -192,7 +192,7 @@ export function ExplainWaiting({
     >
       <OnboardingColumn>
         <OnboardingHeading>
-          <OnboardingSubject>{quickExplanation}</OnboardingSubject>
+          <PageEyebrow>{quickExplanation}</PageEyebrow>
           <OnboardingTitle>{explanation.title}</OnboardingTitle>
         </OnboardingHeading>
 

@@ -24,6 +24,11 @@ function Cell({ value }: { value: ActivityCell }) {
   return typeof value === "number" ? format(value, { grouping: false }) : value;
 }
 
+function isNumberColumn(rows: readonly (readonly ActivityCell[])[], position: number): boolean {
+  const values = rows.map((row) => row[position]).filter((value) => value !== null);
+  return values.length > 0 && values.every((value) => typeof value === "number");
+}
+
 function SqlRow({ row, state }: { row: readonly ActivityCell[]; state: RowState }) {
   const t = useExtracted();
   const cells = keyedByPosition(row, (value) => String(value));
@@ -89,9 +94,12 @@ export function SqlRowsTable({
           <caption className="sr-only">{caption}</caption>
           <thead className="bg-muted/60 text-muted-foreground font-mono text-xs">
             <tr>
-              {keyedByPosition(columns, (column) => column).map(({ item, key }) => (
+              {keyedByPosition(columns, (column) => column).map(({ item, key }, position) => (
                 <th
-                  className="px-3.5 py-1.5 text-left font-normal whitespace-nowrap"
+                  className={cn(
+                    "px-3.5 py-1.5 text-left font-normal whitespace-nowrap",
+                    isNumberColumn(rows, position) && "text-right",
+                  )}
                   key={key}
                   scope="col"
                 >

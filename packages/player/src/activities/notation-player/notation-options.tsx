@@ -1,6 +1,7 @@
 "use client";
 
 import { NativeSelect, NativeSelectOption } from "@zoonk/ui/components/native-select";
+import { TAB_CLASS, TAB_LIST_CLASS } from "@zoonk/ui/components/tab-class";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
@@ -31,20 +32,11 @@ export function ViewToggle({
   return (
     <div
       aria-label={t("Show the music as")}
-      className="bg-muted flex items-center rounded-lg p-0.5"
+      className={cn(TAB_LIST_CLASS, "shrink-0")}
       role="radiogroup"
     >
       {views.map((option) => (
-        <label
-          className={cn(
-            "relative flex h-10 min-w-11 cursor-pointer items-center justify-center rounded-md px-3.5 text-sm font-medium",
-            "has-focus-visible:ring-ring/50 has-focus-visible:ring-[3px]",
-            view === option.value
-              ? "bg-background text-foreground shadow-xs"
-              : "text-muted-foreground",
-          )}
-          key={option.value}
-        >
+        <label className={cn(TAB_CLASS, "cursor-pointer")} key={option.value}>
           <input
             checked={view === option.value}
             className="absolute inset-0 m-0 cursor-pointer opacity-0"

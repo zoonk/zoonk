@@ -152,7 +152,7 @@ export function TaskRow({
       </CollapsibleTrigger>
       <CollapsibleContent>
         <div className="flex flex-col items-start gap-3 ps-7 pt-1 pb-4">
-          <p className="text-muted-foreground text-sm text-pretty">
+          <p className="text-muted-foreground max-w-column text-sm text-pretty">
             {t("Rated on {criteria}.", {
               criteria: format.list(
                 task.criteria.map((criterion) => gloss(criterion)),

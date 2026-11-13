@@ -97,7 +97,7 @@ export function TracerControls({
           aria-label={t("Step back")}
           disabled={!canGoBack}
           onClick={onBack}
-          size="icon-lg"
+          size="icon"
           variant="outline"
         >
           <StepBack aria-hidden="true" />
@@ -106,7 +106,7 @@ export function TracerControls({
           aria-label={t("Step forward")}
           disabled={!canGoForward}
           onClick={onForward}
-          size="icon-lg"
+          size="icon"
           variant="outline"
         >
           <StepForward aria-hidden="true" />

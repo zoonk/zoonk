@@ -107,7 +107,7 @@ function CallSetup({
   const call = useCallStart({ onStart: () => onStart(minutes) });
 
   if (conversation.paused) {
-    return <CallsPausedMessage className="py-4" />;
+    return <CallsPausedMessage className="pt-4" />;
   }
 
   if (call.writing) {
@@ -121,7 +121,7 @@ function CallSetup({
   }
 
   if (conversation.limit) {
-    return <CallLimitReason className="py-4" limit={conversation.limit} />;
+    return <CallLimitReason className="pt-4" limit={conversation.limit} />;
   }
 
   const isLocked = conversation.plusMinutes.includes(minutes);

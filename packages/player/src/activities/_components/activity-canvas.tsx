@@ -71,7 +71,7 @@ export function ActivityCanvasLabel({ className, ...props }: React.ComponentProp
 export function ActivityReadout({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
-      className={cn("font-mono text-2xl font-medium tracking-tight tabular-nums", className)}
+      className={cn("text-2xl font-medium tracking-tight tabular-nums", className)}
       data-slot="activity-readout"
       {...props}
     />
