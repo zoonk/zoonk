@@ -257,11 +257,7 @@ describe(toProfileAnswer, () => {
 
   it("an empty support screen declines and turns sounds back on", () => {
     expect(
-      toProfileAnswer({
-        draft: draft(),
-        memoryEnabled: true,
-        question: "learningSupport",
-      })?.answer,
+      toProfileAnswer({ draft: draft(), memoryEnabled: true, question: "learningSupport" })?.answer,
     ).toStrictEqual({ declined: true, needs: [], note: null, soundEffects: true });
   });
 

@@ -45,9 +45,7 @@ function useFavoritesField(question: ChipQuestion) {
   }
 }
 
-export function ChipBody(
-  props: BodyProps & { chip: ChipQuestion; label: string },
-) {
+export function ChipBody(props: BodyProps & { chip: ChipQuestion; label: string }) {
   const { draft, question } = props;
   const picker = usePicker(props);
   const field = useFavoritesField(props.chip);

@@ -104,9 +104,7 @@ function SupportNote(props: BodyProps) {
   );
 }
 
-export function SupportBody(
-  props: BodyProps & { label: string; prechecked: boolean },
-) {
+export function SupportBody(props: BodyProps & { label: string; prechecked: boolean }) {
   const t = useExtracted();
 
   return (

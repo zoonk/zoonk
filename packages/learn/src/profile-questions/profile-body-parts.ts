@@ -35,7 +35,5 @@ export function setText(props: BodyProps, text: string) {
 export function useExclusiveLabels() {
   const t = useExtracted();
 
-  return {
-    ratherNot: t("I'd rather not say"),
-  } satisfies Record<ProfileExclusive, string>;
+  return { ratherNot: t("I'd rather not say") } satisfies Record<ProfileExclusive, string>;
 }

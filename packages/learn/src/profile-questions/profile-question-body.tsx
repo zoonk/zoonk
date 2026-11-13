@@ -29,9 +29,7 @@ export function ProfileQuestionBody({
     case "conditions":
       return <ConditionsBody {...props} label={label} />;
     case "learningSupport":
-      return (
-        <SupportBody {...props} label={label} prechecked={prechecked} />
-      );
+      return <SupportBody {...props} label={label} prechecked={prechecked} />;
     case "addressForm":
       return <AddressFormBody {...props} declineAsSkip={declineAsSkip} label={label} />;
     case "tools":
@@ -40,9 +38,7 @@ export function ProfileQuestionBody({
     case "play":
     case "read":
     case "activities":
-      return (
-        <ChipBody {...props} chip={props.question.id} label={label} />
-      );
+      return <ChipBody {...props} chip={props.question.id} label={label} />;
     default:
       return props.question.id satisfies never;
   }
