@@ -3,6 +3,7 @@
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
 import { useRef, useState } from "react";
 import { AnswerOption, AnswerOptionGroup } from "../../_components/answer-option";
+import { useFocusMainActionWhenComplete } from "../../_components/question-actions";
 import { ItemLine } from "../../questions/item-text";
 import {
   type OptionSelect,
@@ -11,7 +12,6 @@ import {
   isMultiPick,
   togglePick,
 } from "../../questions/pick-rule";
-import { useFocusCheckWhenComplete } from "./question-actions";
 
 export type ChoiceResult = { correct: readonly number[]; picked: readonly number[] };
 
@@ -57,7 +57,7 @@ export function ChoiceQuestion({
   const multi = isMultiPick(select);
   const shownPicks = result?.picked ?? picks;
 
-  useFocusCheckWhenComplete({
+  useFocusMainActionWhenComplete({
     complete: multi && isCompletePick({ picks, select }),
     containerRef: groupRef,
   });

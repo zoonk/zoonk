@@ -1,7 +1,6 @@
 "use client";
 
-import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronDownIcon } from "lucide-react";
+import { FoldChevron } from "@zoonk/ui/components/collapsible";
 import { DoneMark } from "../_components/status-mark";
 import { SESSION_LIST_ID } from "./today-ids";
 
@@ -29,10 +28,7 @@ export function FoldRow({
       </span>
       <span className="flex min-w-0 flex-1 items-center gap-1.5 font-medium">
         {label}
-        <ChevronDownIcon
-          aria-hidden="true"
-          className={cn("size-3.5 shrink-0 transition-transform", open && "rotate-180")}
-        />
+        <FoldChevron inline />
       </span>
     </button>
   );
