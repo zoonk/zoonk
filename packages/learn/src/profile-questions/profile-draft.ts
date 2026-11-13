@@ -273,6 +273,11 @@ function toAnswer({
   }
 }
 
+/** What onboarding's Skip saves: the question is declined, so the next goal doesn't ask it again. */
+export function declineProfileQuestion(question: ProfileQuestion): ProfileAnswerInput {
+  return profileAnswerInputSchema.parse({ answer: { declined: true }, question });
+}
+
 /** An empty or exclusive screen declines. */
 export function toProfileAnswer({
   draft,

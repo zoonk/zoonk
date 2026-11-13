@@ -112,13 +112,17 @@ function SupportNote(props: BodyProps) {
         value={props.draft.text}
       />
       <p className="text-muted-foreground text-sm" id={helpId}>
-        {t("We'll remember this for your buddy. You can delete it in Memory.")}
+        {t("We'll remember this. You can delete it anytime in Settings.")}
       </p>
     </div>
   );
 }
 
-export function SupportBody(props: BodyProps & { label: string; prechecked: boolean }) {
+const SUPPORT_EXCLUSIVES: ProfileExclusive[] = ["nothingInParticular"];
+
+export function SupportBody(
+  props: BodyProps & { declineAsSkip: boolean; label: string; prechecked: boolean },
+) {
   const t = useExtracted();
 
   return (
@@ -129,7 +133,7 @@ export function SupportBody(props: BodyProps & { label: string; prechecked: bool
         </p>
       )}
 
-      <RowsBody {...props} exclusives={["nothingInParticular"]} />
+      <RowsBody {...props} exclusives={props.declineAsSkip ? NO_EXCLUSIVES : SUPPORT_EXCLUSIVES} />
 
       {props.memoryEnabled && <SupportNote {...props} />}
     </>

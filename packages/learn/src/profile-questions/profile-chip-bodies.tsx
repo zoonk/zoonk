@@ -21,12 +21,12 @@ function useFavoritesField(question: ChipQuestion) {
     case "watch":
       return {
         label: t("Favorite shows, films, teams or channels (optional)"),
-        placeholder: t("E.g., Star Trek, Flamengo"),
+        placeholder: t("E.g., Star Trek, Formula 1"),
       };
     case "listen":
       return {
         label: t("Favorite artists or podcasts (optional)"),
-        placeholder: t("E.g., Coldplay, Radiolab"),
+        placeholder: t("E.g., Coldplay, TED Talks Daily"),
       };
     case "play":
       return { label: t("Favorite games (optional)"), placeholder: t("E.g., Catan, Valorant") };
@@ -45,7 +45,9 @@ function useFavoritesField(question: ChipQuestion) {
   }
 }
 
-export function ChipBody(props: BodyProps & { chip: ChipQuestion; label: string }) {
+export function ChipBody(
+  props: BodyProps & { chip: ChipQuestion; declineAsSkip: boolean; label: string },
+) {
   const { draft, question } = props;
   const picker = usePicker(props);
   const field = useFavoritesField(props.chip);
@@ -72,18 +74,22 @@ export function ChipBody(props: BodyProps & { chip: ChipQuestion; label: string 
         value={draft.text}
       />
 
-      <div className="flex">
-        <ProfileChip
-          label={exclusiveLabels.none}
-          onToggle={() => picker.exclusive("none")}
-          pressed={draft.exclusive === "none"}
-        />
-      </div>
+      {!props.declineAsSkip && (
+        <div className="flex">
+          <ProfileChip
+            label={exclusiveLabels.none}
+            onToggle={() => picker.exclusive("none")}
+            pressed={draft.exclusive === "none"}
+          />
+        </div>
+      )}
     </>
   );
 }
 
-export function WorkBody(props: BodyProps & { jobPrefill: string | null; label: string }) {
+export function WorkBody(
+  props: BodyProps & { declineAsSkip: boolean; jobPrefill: string | null; label: string },
+) {
   const t = useExtracted();
   const { draft, jobPrefill, question } = props;
   const exclusiveLabels = useExclusiveLabels();
@@ -114,7 +120,7 @@ export function WorkBody(props: BodyProps & { jobPrefill: string | null; label: 
           label: option.label,
           value: option.id,
         })),
-        { label: exclusiveLabels.ratherNot, value: "ratherNot" },
+        ...(props.declineAsSkip ? [] : [{ label: exclusiveLabels.ratherNot, value: "ratherNot" }]),
       ]}
       label={props.label}
       numberKeys={false}
@@ -159,7 +165,7 @@ export function AddressFormBody(props: BodyProps & { declineAsSkip: boolean; lab
   );
 }
 
-export function StudiesBody(props: BodyProps & { label: string }) {
+export function StudiesBody(props: BodyProps & { declineAsSkip: boolean; label: string }) {
   const t = useExtracted();
   const { draft, question } = props;
   const picker = usePicker(props);
@@ -186,13 +192,15 @@ export function StudiesBody(props: BodyProps & { label: string }) {
         }))}
       />
 
-      <div className="flex">
-        <ProfileChip
-          label={exclusiveLabels.nothing}
-          onToggle={() => picker.exclusive("nothing")}
-          pressed={draft.exclusive === "nothing"}
-        />
-      </div>
+      {!props.declineAsSkip && (
+        <div className="flex">
+          <ProfileChip
+            label={exclusiveLabels.nothing}
+            onToggle={() => picker.exclusive("nothing")}
+            pressed={draft.exclusive === "nothing"}
+          />
+        </div>
+      )}
 
       {draft.studies.map((study) => (
         <TextField

@@ -16,6 +16,7 @@ import { useExclusiveLabels } from "../../profile-questions/profile-body-parts";
 import {
   type ProfileDraft,
   canSendProfileDraft,
+  declineProfileQuestion,
   getPrecheckedSupports,
   getProfileJobPrefill,
   toProfileAnswer,
@@ -30,22 +31,6 @@ import {
 import { type FlowState } from "../_utils/answered-step";
 import { getProfileProgress } from "../_utils/setup-progress";
 import { StepForm } from "./step-form";
-
-/**
- * Skipping conditions declines them, so a learner isn't asked about their health at every new goal;
- * the address form's skip is its "I'd rather not say".
- */
-function skipAnswer(question: ProfileQuestionView["id"]): OnboardingAnswerInput {
-  if (question === "conditions") {
-    return { answer: { conditions: [], consented: false, declined: true }, question };
-  }
-
-  if (question === "addressForm") {
-    return { answer: { declined: true, form: null }, question };
-  }
-
-  return { answer: null, question };
-}
 
 function initialDraft({
   jobPrefill,
@@ -168,7 +153,7 @@ function ProfileStep({
       onSkip={() => {
         onConditions([]);
 
-        void onAnswer(skipAnswer(question.id));
+        void onAnswer(declineProfileQuestion(question.id));
       }}
       pending={pending}
       skipLabel={question.id === "addressForm" ? exclusiveLabels.ratherNot : undefined}
