@@ -51,7 +51,7 @@ async function AreaFit({
   return (
     <CourseExampleNumbers courseId={courseId}>
       <span className="flex flex-col gap-1.5">
-        <span className="text-muted-foreground text-[13px] leading-snug font-normal sm:text-sm">
+        <span className="text-muted-foreground text-compact leading-snug font-normal sm:text-sm">
           {[
             text?.time,
             text?.detail,

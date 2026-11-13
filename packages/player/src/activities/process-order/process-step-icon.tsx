@@ -8,5 +8,5 @@ export function ProcessStepIcon({ icon }: { icon: ProcessIconName | undefined })
 
   const Icon = PROCESS_ICONS[icon];
 
-  return <Icon aria-hidden="true" className="text-muted-foreground size-[18px] shrink-0" />;
+  return <Icon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />;
 }

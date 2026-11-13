@@ -56,19 +56,12 @@ const FOCUS_CLASS =
   "has-[[data-slot=input-group-control]:focus-visible]:border-transparent has-[[data-slot=input-group-control]:focus-visible]:ring-1 has-[[data-slot=input-group-control]:focus-visible]:ring-foreground/35 contrast-more:has-[[data-slot=input-group-control]:focus-visible]:ring-[3px] contrast-more:has-[[data-slot=input-group-control]:focus-visible]:ring-foreground";
 
 const FRAME_CLASS: Record<ComposerVariant, string> = {
-  compact: cn(
-    "bg-card ring-input rounded-option! items-end border-0 ring-1 ring-inset",
-    FOCUS_CLASS,
-  ),
-  page: cn(
-    TUTOR_COMPOSER_FRAME_CLASS,
-    "items-end rounded-[0.875rem]! border-transparent",
-    FOCUS_CLASS,
-  ),
+  compact: cn("bg-card ring-input items-end rounded-xl! border-0 ring-1 ring-inset", FOCUS_CLASS),
+  page: cn(TUTOR_COMPOSER_FRAME_CLASS, "items-end rounded-xl! border-transparent", FOCUS_CLASS),
 };
 
 const LIMIT_FRAME_CLASS: Record<ComposerVariant, string> = {
-  compact: "bg-card ring-input rounded-option ring-1 ring-inset",
+  compact: "bg-card ring-input rounded-xl ring-1 ring-inset",
   page: TUTOR_COMPOSER_FRAME_CLASS,
 };
 
@@ -80,7 +73,7 @@ const TEXTAREA_CLASS: Record<ComposerVariant, string> = {
     ONE_LINE_PLACEHOLDER_CLASS,
   ),
   page: cn(
-    "max-h-40 min-h-12 py-3 pl-3.5 text-[0.9375rem] md:text-[0.9375rem]",
+    "text-reading md:text-reading max-h-40 min-h-12 py-3 pl-3.5",
     ONE_LINE_PLACEHOLDER_CLASS,
   ),
 };
@@ -248,7 +241,7 @@ export function QuestionComposer({
           <InputGroupButton
             aria-label={submitLabel}
             busy={state.creating !== null}
-            className="size-7.5 rounded-lg"
+            className="rounded-lg"
             disabled={!canSend || createNavigationError}
             focusableWhenDisabled
             icon={<SubmitIcon isResolvingPreviousQuestion={isResolvingPreviousQuestion} />}
@@ -279,7 +272,7 @@ export function QuestionComposer({
       )}
 
       {variant === "page" && (
-        <p className="text-faint mt-2 hidden px-1 font-mono text-[0.6875rem] leading-4 pointer-fine:block">
+        <p className="text-faint text-2xs mt-2 hidden px-1 font-mono leading-4 pointer-fine:block">
           {t("⏎ send · ⇧⏎ new line")}
         </p>
       )}

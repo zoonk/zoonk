@@ -42,7 +42,7 @@ function NextBlock({ block, subject }: { block: StudyBlock; subject: boolean }) 
       data-slot="study-moment-next"
     >
       <PageSectionLabel>{t("Up next")}</PageSectionLabel>
-      <div className="bg-muted -mx-2.5 flex items-center gap-3 rounded-[0.625rem] px-2.5 py-2.75">
+      <div className="bg-muted -mx-2.5 flex items-center gap-3 rounded-lg px-2.5 py-2.75">
         <KindMark kind={getBlockKind(block)} />
         <span className="min-w-0 flex-1 truncate text-sm font-medium">{blockTitle(block)}</span>
         <span className="text-muted-foreground shrink-0 font-mono text-xs tabular-nums">

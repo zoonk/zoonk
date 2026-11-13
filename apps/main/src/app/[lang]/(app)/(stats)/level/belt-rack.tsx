@@ -82,7 +82,7 @@ export async function BeltRack({
             <span
               aria-hidden="true"
               className={cn(
-                "hidden text-[0.71875rem] whitespace-nowrap md:block",
+                "hidden text-2xs whitespace-nowrap md:block",
                 index === currentIndex && "text-foreground font-medium",
                 index < currentIndex && "text-muted-foreground",
                 index > currentIndex && "text-faint",
@@ -95,10 +95,7 @@ export async function BeltRack({
       </ol>
 
       {firstBelt && lastBelt && (
-        <div
-          aria-hidden="true"
-          className="text-faint flex justify-between text-[0.71875rem] md:hidden"
-        >
+        <div aria-hidden="true" className="text-faint text-2xs flex justify-between md:hidden">
           <span>{firstBelt.label}</span>
           <span>{lastBelt.label}</span>
         </div>

@@ -32,7 +32,7 @@ function RankStripe({ isReached, share }: { isReached: boolean; share?: number }
     <span className="flex h-8 w-full py-[2.5px] md:h-11">
       <span
         className={cn(
-          "relative flex-1 overflow-hidden rounded-[1px]",
+          "relative flex-1 overflow-hidden rounded-xs",
           isReached && "bg-white",
           !isReached && "bg-black/50 ring-1 ring-inset",
           !isReached && (share === undefined ? "ring-white/15" : "ring-white/35"),
@@ -98,7 +98,7 @@ function BeltDrawing({
             <RankStripe isReached={index < level} share={index === level ? share : undefined} />
             <span
               className={cn(
-                "font-mono text-[0.625rem] leading-none",
+                "text-2xs font-mono leading-none",
                 index + 1 === level ? "text-foreground font-semibold" : "text-faint",
               )}
             >

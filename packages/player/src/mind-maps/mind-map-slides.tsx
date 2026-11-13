@@ -108,7 +108,7 @@ export function ChapterMapSlide({ save, slide }: { save: MindMapSave; slide: Cha
 function LessonMapSkeleton() {
   return (
     <div aria-busy="true" className="flex w-full flex-col items-center gap-5">
-      <Skeleton className="h-9 w-48 rounded-[9px]" />
+      <Skeleton className="h-9 w-48 rounded-lg" />
       <div className="grid w-full grid-cols-1 gap-x-3 gap-y-5 min-[26rem]:grid-cols-2">
         <Skeleton className="h-28 rounded-xl" />
         <Skeleton className="h-28 rounded-xl" />

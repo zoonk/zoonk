@@ -2,12 +2,10 @@
 
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { useEscapeClick } from "@zoonk/ui/hooks/keyboard";
-import { cn } from "@zoonk/ui/lib/utils";
 import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import {
-  TASK_HEADER_ICON_CLASS,
   TaskHeader,
   TaskHeaderBar,
   TaskHeaderSegments,
@@ -103,10 +101,7 @@ export function SessionHeader({
             <LearnLink
               aria-keyshortcuts="Escape"
               aria-label={t("Back to Today")}
-              className={cn(
-                buttonVariants({ size: "icon", variant: "ghost" }),
-                TASK_HEADER_ICON_CLASS.start,
-              )}
+              className={buttonVariants({ edge: "start", size: "icon", variant: "ghost" })}
               href={exitHref}
               prefetch={false}
               ref={closeRef}

@@ -48,7 +48,7 @@ function WeekRings() {
             <GoalRing share={isStudied ? 1 : 0}>{isStudied && <DoneMark />}</GoalRing>
             <span
               className={cn(
-                "font-mono text-[0.6875rem] uppercase",
+                "text-2xs font-mono uppercase",
                 isStudied ? "text-foreground" : "text-faint",
               )}
             >

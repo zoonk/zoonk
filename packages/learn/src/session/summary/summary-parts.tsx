@@ -221,7 +221,7 @@ export function DoneStep() {
       <StepHeader>
         <StepTitle>{stopped ? t("Done for now") : <DoneTitle />}</StepTitle>
         {stopped && summary.minutes >= 1 && (
-          <StepDetail className="font-mono text-[0.8125rem] tabular-nums">
+          <StepDetail className="text-compact font-mono tabular-nums">
             {t("{time} today", { time: formatDuration(summary.minutes) })}
           </StepDetail>
         )}

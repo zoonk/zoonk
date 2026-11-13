@@ -20,7 +20,7 @@ export function CountDemo() {
         <span className="text-muted-foreground text-sm font-medium">Brain Power</span>
       </p>
 
-      <p className="ring-border rounded-option flex flex-col gap-1 px-4 py-3 ring-1">
+      <p className="ring-border flex flex-col gap-1 rounded-xl px-4 py-3 ring-1">
         <span className="text-muted-foreground text-xs">Brain Power</span>
         <CountUp className="text-readout text-2xl" format={plus} value={TILE_EARNED} />
       </p>

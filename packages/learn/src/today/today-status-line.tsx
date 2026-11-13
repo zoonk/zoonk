@@ -50,7 +50,7 @@ export function TodayStatusClause({
     <span
       className={cn(
         "text-muted-foreground",
-        mono && "font-mono text-[0.8125rem] whitespace-nowrap tabular-nums",
+        mono && "text-compact font-mono whitespace-nowrap tabular-nums",
       )}
     >
       {children}

@@ -56,7 +56,7 @@ function DrawerPopup({
       >
         <DrawerPrimitive.Popup
           className={cn(
-            "bg-background flex max-h-[80dvh] w-full flex-col rounded-t-xl border-t sm:mb-4 sm:max-w-2xl sm:rounded-xl sm:border",
+            "bg-background flex max-h-[80dvh] w-full flex-col rounded-t-2xl border-t sm:mb-4 sm:max-w-2xl sm:rounded-2xl sm:border",
             "transform-[translateY(var(--drawer-swipe-movement-y))]",
             "transition-transform duration-450 ease-[cubic-bezier(0.32,0.72,0,1)]",
             "data-swiping:duration-0 data-swiping:select-none",

@@ -29,7 +29,7 @@ export function FoldRow({
     <button
       aria-controls={SESSION_LIST_ID}
       aria-expanded={open}
-      className="text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 -mx-2.5 flex min-h-11 w-[calc(100%+1.25rem)] items-center gap-3 rounded-[0.625rem] px-2.5 text-left text-sm outline-none focus-visible:ring-[3px] focus-visible:ring-inset"
+      className="text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 -mx-2.5 flex min-h-11 w-[calc(100%+1.25rem)] items-center gap-3 rounded-lg px-2.5 text-left text-sm outline-none focus-visible:ring-[3px] focus-visible:ring-inset"
       onClick={onToggle}
       type="button"
     >

@@ -78,12 +78,7 @@ function LessonQuestionPanelHeader({
         </div>
         <DrawerClose
           render={
-            <Button
-              aria-label={t("Close questions")}
-              className="-mr-1.5"
-              size="icon-sm"
-              variant="ghost"
-            />
+            <Button aria-label={t("Close questions")} edge="end" size="icon-sm" variant="ghost" />
           }
         >
           <XIcon aria-hidden="true" />

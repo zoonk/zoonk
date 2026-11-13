@@ -90,7 +90,7 @@ function EditorPanel({ initialFocus, onOpenChange, open }: EditorFrameProps) {
         <PlanEditorChangeProvider>
           <SheetHeader className="flex-row items-center justify-between gap-3 px-6 pt-5 pb-3">
             <SheetTitle className="text-xl font-semibold">{t("Adjust your plan")}</SheetTitle>
-            <SheetClose render={<Button className="-mr-2" size="icon" variant="ghost" />}>
+            <SheetClose render={<Button edge="end" size="icon" variant="ghost" />}>
               <XIcon aria-hidden="true" />
               <span className="sr-only">{t("Close")}</span>
             </SheetClose>

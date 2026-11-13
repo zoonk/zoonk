@@ -42,7 +42,7 @@ function DailyTimeValue() {
 }
 
 const PROPERTY_ROW_CLASS =
-  "hover:bg-muted focus-visible:ring-ring/50 -mx-2 flex min-h-11 w-[calc(100%+1rem)] items-center justify-between gap-3 rounded-md px-2 text-left text-[0.8125rem] transition-colors outline-none focus-visible:ring-[3px]";
+  "hover:bg-muted focus-visible:ring-ring/50 -mx-2 flex min-h-11 w-[calc(100%+1rem)] items-center justify-between gap-3 rounded-md px-2 text-left text-compact transition-colors outline-none focus-visible:ring-[3px]";
 
 function PropertyRowParts({ children, label }: { children: React.ReactNode; label: string }) {
   return (

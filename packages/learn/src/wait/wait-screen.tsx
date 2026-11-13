@@ -4,11 +4,9 @@ import { type WarmUpSurface } from "@zoonk/core/analytics/events";
 import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
 import { Button } from "@zoonk/ui/components/button";
 import { useEnterKey, useEscapeClick } from "@zoonk/ui/hooks/keyboard";
-import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowRightIcon, ChevronLeftIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode, type RefObject, createContext, use, useRef } from "react";
-import { TASK_HEADER_ICON_CLASS } from "../_components/task-header";
 import { type ReadyHoldControl } from "./use-ready-hold";
 import { type WaitView, useWaitView } from "./use-wait-view";
 import {
@@ -252,7 +250,8 @@ export function WaitTopBarBack({ children }: { children: ReactNode }) {
     <Button
       aria-keyshortcuts="Escape"
       aria-label={label}
-      className={cn("shrink-0", TASK_HEADER_ICON_CLASS.start)}
+      className="shrink-0"
+      edge="start"
       onClick={back}
       ref={ref}
       size="icon"

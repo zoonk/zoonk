@@ -135,7 +135,7 @@ async function PlusPrices({
   const monthly = (
     <>
       <PlanPrice amount={formatPlanPrice({ locale, price: monthlyPrice })} per={t("per month")} />
-      <p className="text-muted-foreground text-[0.8125rem]">{t("Billed every month.")}</p>
+      <p className="text-muted-foreground text-compact">{t("Billed every month.")}</p>
     </>
   );
 
@@ -151,7 +151,7 @@ async function PlusPrices({
 
       <Variant className="flex flex-col gap-2" name={billingSwitch} value="yearly">
         <PlanPrice amount={formatPlanPrice({ locale, price: yearlyPrice })} per={t("per year")} />
-        <p className="text-muted-foreground text-[0.8125rem]">
+        <p className="text-muted-foreground text-compact">
           {t.rich("That's <mono>{amount}</mono> a month.", {
             amount: formatPlanPrice({ locale, price: monthlyEquivalent }),
             mono: renderMono,
