@@ -121,7 +121,11 @@ export async function addTodayMock({ goalId, userId }: { goalId: string; userId:
 type MockAnswers = Awaited<ReturnType<typeof addTodayMock>>["answers"];
 
 async function handInMock(page: Page) {
-  await page.getByRole("button", { exact: true, name: "Hand in" }).click();
+  await page
+    .getByRole("complementary", { name: "Answer sheet" })
+    .getByRole("button", { name: "Hand in" })
+    .click();
+
   await page.getByRole("alertdialog").getByRole("button", { name: "Hand in" }).click();
 }
 

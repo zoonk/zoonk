@@ -185,6 +185,7 @@ msgstr "Continue"
 #: src/conversation/tutor-feature-offers.tsx
 #: src/language/level-test/level-test-screens.tsx
 #: src/mock/mock-chooser.tsx
+#: src/mock/mock-short-dialog.tsx
 #: src/mock/mock-speaking.tsx
 #: src/onboarding/steps/placement-screens.tsx
 #: src/onboarding/steps/reveal-body.tsx
@@ -524,6 +525,16 @@ msgstr "Previous screen"
 msgctxt "h5CuXu"
 msgid "I don't know yet"
 msgstr "I don't know yet"
+
+#: src/_components/questions-source-text.tsx
+msgctxt "WO4U48"
+msgid "Questions per subject in the {edition}, as counted by <link>{publisher}</link>."
+msgstr "Questions per subject in the {edition}, as counted by <link>{publisher}</link>."
+
+#: src/_components/questions-source-text.tsx
+msgctxt "ZzIKNp"
+msgid "Questions per subject in the latest exam, as counted by <link>{publisher}</link>."
+msgstr "Questions per subject in the latest exam, as counted by <link>{publisher}</link>."
 
 #: src/_components/save-error.tsx
 #: src/feedback/feedback-form-dialog.tsx
@@ -3257,14 +3268,6 @@ msgid ", missing"
 msgstr ", missing"
 
 #: src/essay/essay-feedback.tsx
-#: src/essay/essay-screen.tsx
-#: src/onboarding/steps/step-form.tsx
-#: src/plan/plan-bases-choices.tsx
-msgctxt "_4tOwT"
-msgid "Skip"
-msgstr "Skip"
-
-#: src/essay/essay-feedback.tsx
 msgctxt "scAuEr"
 msgid "Rewrite"
 msgstr "Rewrite"
@@ -3427,6 +3430,13 @@ msgstr "Your text stays on this device, here when you come back."
 msgctxt "-D1SOt"
 msgid "Leave for now?"
 msgstr "Leave for now?"
+
+#: src/essay/essay-skip-button.tsx
+#: src/onboarding/steps/step-form.tsx
+#: src/plan/plan-bases-choices.tsx
+msgctxt "_4tOwT"
+msgid "Skip"
+msgstr "Skip"
 
 #: src/essay/essay-status-line.tsx
 msgctxt "8injUu"
@@ -8620,11 +8630,6 @@ msgid "We couldn't start the mock exam. Try again."
 msgstr "We couldn't start the mock exam. Try again."
 
 #: src/mock/mock-chooser-page.tsx
-msgctxt "ULqnCA"
-msgid "Today it has {count, number} of its {total, number} questions, about {time}."
-msgstr "Today it has {count, number} of its {total, number} questions, about {time}."
-
-#: src/mock/mock-chooser-page.tsx
 msgctxt "qFtRJW"
 msgid "Getting your mock exam ready…"
 msgstr "Getting your mock exam ready…"
@@ -8878,18 +8883,6 @@ msgstr "Your material doesn't say the test's size, so this mock exam used {count
 msgctxt "fag1EX"
 msgid "{document, select, notice {The official guide doesn't say the exam's size, so this mock exam used {count, plural, one {# question} other {# questions}} in {time}.} other {The official guide doesn't say the exam's size, so this mock exam used {count, plural, one {# question} other {# questions}} in {time}.}}"
 msgstr "{document, select, notice {The official guide doesn't say the exam's size, so this mock exam used {count, plural, one {# question} other {# questions}} in {time}.} other {The official guide doesn't say the exam's size, so this mock exam used {count, plural, one {# question} other {# questions}} in {time}.}}"
-
-#: src/mock/mock-notes.tsx
-#: src/syllabus/syllabus-notes.tsx
-msgctxt "WO4U48"
-msgid "Questions per subject in the {edition}, as counted by <link>{publisher}</link>."
-msgstr "Questions per subject in the {edition}, as counted by <link>{publisher}</link>."
-
-#: src/mock/mock-notes.tsx
-#: src/syllabus/syllabus-notes.tsx
-msgctxt "ZzIKNp"
-msgid "Questions per subject in the latest exam, as counted by <link>{publisher}</link>."
-msgstr "Questions per subject in the latest exam, as counted by <link>{publisher}</link>."
 
 #: src/mock/mock-notes.tsx
 msgctxt "A5qJXf"
@@ -9421,6 +9414,31 @@ msgstr "Handed in"
 msgctxt "4osCkq"
 msgid "Section {number, number}"
 msgstr "Section {number, number}"
+
+#: src/mock/mock-short-dialog.tsx
+msgctxt "HwbZRQ"
+msgid "Today this one has {count, number} of its {total, number} questions, about {time}. You can take the full one tomorrow."
+msgstr "Today this one has {count, number} of its {total, number} questions, about {time}. You can take the full one tomorrow."
+
+#: src/mock/mock-short-dialog.tsx
+msgctxt "YIvNSi"
+msgid "Today this one has {count, number} of its {total, number} questions, about {time}. You can take the full one next month."
+msgstr "Today this one has {count, number} of its {total, number} questions, about {time}. You can take the full one next month."
+
+#: src/mock/mock-short-dialog.tsx
+msgctxt "Rr2HWA"
+msgid "Today this one has {count, number} of its {total, number} questions, about {time}."
+msgstr "Today this one has {count, number} of its {total, number} questions, about {time}."
+
+#: src/mock/mock-short-dialog.tsx
+msgctxt "hLpiWW"
+msgid "Start a shorter mock exam?"
+msgstr "Start a shorter mock exam?"
+
+#: src/mock/mock-short-dialog.tsx
+msgctxt "ggPo6m"
+msgid "Pick another"
+msgstr "Pick another"
 
 #: src/mock/mock-speaking.tsx
 msgctxt "YaAVNM"

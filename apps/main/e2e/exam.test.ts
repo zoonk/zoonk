@@ -96,8 +96,10 @@ test.describe("Exam goal", () => {
       const handingIn = await holdServerActions(page, isHandIn);
       await playMock({ answers: mock.answers, page });
 
-      const handIn = page.getByRole("button", { exact: true, name: "Hand in" });
-      await expect(handIn).toHaveAttribute("aria-busy", "true");
+      const handIn = page
+        .getByRole("complementary", { name: "Answer sheet" })
+        .getByRole("button", { name: "Hand in" });
+
       await expect(handIn).toBeDisabled();
       await page.clock.fastForward(11_000);
 
@@ -110,7 +112,7 @@ test.describe("Exam goal", () => {
 
       await handingIn.release();
 
-      await page.getByRole("button", { exact: true, name: "Hand in" }).click();
+      await handIn.click();
 
       await page
         .getByRole("alertdialog", { name: "Hand in the mock exam?" })
@@ -226,7 +228,7 @@ test.describe("Exam goal", () => {
         }
       });
 
-      const skip = page.getByRole("button", { name: "Skip the rewrite" });
+      const skip = page.getByRole("button", { exact: true, name: "Skip" });
       await skip.click();
       await expect(skip).toBeDisabled();
       await expect(send).toBeDisabled();
