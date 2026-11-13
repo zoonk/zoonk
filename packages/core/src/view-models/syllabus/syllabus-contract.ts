@@ -111,7 +111,7 @@ const syllabusTopicSchema = z
       .nullable()
       .meta({
         description:
-          "From the plan's lessons on it. `known`: the learner showed they know it (a right answer in placement or a test, or a test-out), so the plan has no lessons on it; practice still asks it, and a miss brings its lessons back. In a subject the learner took out, a topic they studied lessons of keeps `studied` (or `known`) and its `chapters`, with `notPlannedReason` `skipped`. A topic whose lessons left were set aside after missed days is out for time (`notPlannedReason` `time`): `notPlanned`, or `inProgress` with the `chapters` the learner studied of it. Null when the plan doesn't say which skills teach which topic (plans made before topics were mapped): show the topic without a status",
+          "From the plan's lessons on it. `known`: the learner showed they know it (a right answer in placement or a test, or a test-out), so the plan has no lessons on it; practice still asks it, and a miss brings its lessons back. In a subject the learner took out, a topic they studied lessons of keeps `studied` (or `known`) and its `chapters`, with `notPlannedReason` `skipped`. A topic whose lessons left were set aside after missed days is out for time (`notPlannedReason` `time`): `notPlanned`, or `inProgress` with the `chapters` the learner studied of it. Null when the plan doesn't say which skills teach which topic (plans made before topics were mapped): the topic has no status then",
       }),
   })
   .meta({ id: "SyllabusTopic" });
@@ -176,7 +176,7 @@ const syllabusSubjectSchema = z
       .nullable()
       .meta({
         description:
-          "An exam goal's preparation in this subject, on the same scale as the goal's (`GET /v1/goals/{goalId}/preparation`): the goal's rule on the subject's skills and answers, with the goal's mock exams, which test every subject. The goal's preparation is its subjects' together, each counting by how much it weighs, so it never sits outside them. Show it as the subject's number and bar, with `mastery` saying how much of it practice backs. A subject out of the plan (`notPlannedReason`) that the goal still counts (left out for time, its basics passed or its bases skipped, the exam testing it, with a section that weighs in the goal) has it too: show the number muted beside why it's out, with no bar. Null for other goals, whose subjects' progress is their lessons (`lessonsDone` and `lessonsKnown` of `lessonsTotal`), and for a subject out of the plan the goal doesn't count (`skipped` by the learner, `missing`, or weighing nothing in the goal)",
+          "An exam goal's preparation in this subject, on the same scale as the goal's (`GET /v1/goals/{goalId}/preparation`): the goal's rule on the subject's skills and answers, with the goal's mock exams, which test every subject. The goal's preparation is its subjects' together, each counting by how much it weighs, so it never sits outside them. `mastery` says how much of it practice backs. A subject out of the plan (`notPlannedReason`) that the goal still counts (left out for time, its basics passed or its bases skipped, the exam testing it, with a section that weighs in the goal) has it too. Null for other goals, whose subjects' progress is their lessons (`lessonsDone` and `lessonsKnown` of `lessonsTotal`), and for a subject out of the plan the goal doesn't count (`skipped` by the learner, `missing`, or weighing nothing in the goal)",
       }),
     questions: countSchema
       .nullable()

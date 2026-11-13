@@ -20,7 +20,7 @@ export const planPhaseSchema = z
       .default(false)
       .meta({
         description:
-          "The phase keeps lessons but its challenge has no room before the plan's date, so it's off the calendar and the phase isn't done without it: say there's no time for its challenge before the date, whatever the phase's state. Another study day before the date, or a later date, brings it back; more minutes on the days the plan already has may not. A phase with nothing to study or no finished skill its challenge can ask has no challenge and is never marked",
+          "The phase keeps lessons but its challenge has no room before the plan's date, so it's off the calendar and the phase isn't done without it, whatever the phase's state. Another study day before the date, or a later date, brings it back; more minutes on the days the plan already has may not. A phase with nothing to study or no finished skill its challenge can ask has no challenge and is never marked",
       }),
     chapterCount: z.int().min(0),
     chapters: z
@@ -31,13 +31,13 @@ export const planPhaseSchema = z
             .boolean()
             .meta({
               description:
-                "Its lessons go deeper into topics of an earlier phase: a plan short on time studies every phase's core first and the rest after it, in a later phase's time, so the chapter shows again there. Say so, so it never reads as listed twice",
+                "Its lessons go deeper into topics of an earlier phase: a plan short on time studies every phase's core first and the rest after it, in a later phase's time, so the same chapter is in both phases, here with the lessons that go deeper",
             }),
           far: z
             .boolean()
             .meta({
               description:
-                "A `writing` row starting after the two weeks the plan writes ahead: say the lessons the plan teaches it (`plannedLessons`, about that many) and when it starts (`nextDate`), not that they're on the way. False for every other row",
+                "A `writing` row starting after the two weeks the plan writes ahead: its lessons aren't on the way yet, and `plannedLessons` and `nextDate` hold how many the plan teaches (about that many) and when it starts. False for every other row",
             }),
           lessonsDone: z.int().min(0),
           lessonsTotal: z.int().min(0),
@@ -50,7 +50,7 @@ export const planPhaseSchema = z
             .nullable()
             .meta({
               description:
-                "A `writing` row's lessons the plan teaches, after its cuts and base choices. Null for every other row, and for one of a plan saved before it stored them (until its next change): say no count then",
+                "A `writing` row's lessons the plan teaches, after its cuts and base choices. Null for every other row, and for one of a plan saved before it stored them (until its next change)",
             }),
           skillId: uuidSchema()
             .nullable()
@@ -69,14 +69,14 @@ export const planPhaseSchema = z
             .boolean()
             .meta({
               description:
-                "Every lesson in it was tested out (placement or a test-out), so it's done without being studied; say so",
+                "Every lesson in it was tested out (placement or a test-out), so it's done without being studied",
             }),
           title: z.string(),
           writing: z
             .boolean()
             .meta({
               description:
-                "Skills whose lessons aren't written yet (the plan writes them two weeks ahead), grouped under their course's title (empty for the goal's own course: say \"More lessons\"). A `far` row starts after those weeks; any other's lessons are on the way",
+                "Skills whose lessons aren't written yet (the plan writes them two weeks ahead), grouped under their course's title (empty for the goal's own course). A `far` row starts after those weeks; any other's lessons are on the way",
             }),
         }),
       )
@@ -109,7 +109,7 @@ export const planPhaseSchema = z
           .enum(["date", "nextSession", "queued"])
           .meta({
             description:
-              "`date` shows the approximate date for a phase challenge, never earlier than tomorrow. `nextSession` means today's session holds it, or the day Today plans holds it before Start builds the session; say that instead of the estimate. A challenge tests only finished lessons, and no challenge or lesson waits for another challenge. `queued` is retained for older clients and is never returned. Always `date` once won, while locked, and past a free exam plan's first week.",
+              "`date` shows the approximate date for a phase challenge, never earlier than tomorrow. `nextSession` means today's session holds it, or the day Today plans holds it before Start builds the session, so no estimate applies. A challenge tests only finished lessons, and no challenge or lesson waits for another challenge. `queued` is retained for older clients and is never returned. Always `date` once won, while locked, and past a free exam plan's first week.",
           }),
       })
       .nullable()
@@ -146,7 +146,7 @@ export const planPhaseSchema = z
       .enum(["current", "done", "leftOut", "unfinished", "upcoming"])
       .meta({
         description:
-          "`current` is the earliest phase with work left. One before it is `done` once the learner finished its work, and `unfinished` while some of it was set aside (missed days the plan couldn't fit back): never mark it done; say the lessons studied of its total (`lessonsDone`, `lessonsTotal`). `leftOut`: the plan holds none of its work (a date too near for its topics): say it's not in the plan, and leave it out of the phases counted done",
+          "`current` is the earliest phase with work left. One before it is `done` once the learner finished its work, and `unfinished` while some of it was set aside (missed days the plan couldn't fit back): it isn't done, and `lessonsDone` of `lessonsTotal` is how far it got. `leftOut`: the plan holds none of its work (a date too near for its topics), and it doesn't count among the phases done",
       }),
   })
   .meta({ id: "PlanPhase" });

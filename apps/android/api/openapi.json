@@ -16021,7 +16021,7 @@
     },
     "/goals/{goalId}/plan/changes/{changeId}": {
       "post": {
-        "description": "The learner's answer to a change: applied or declined for a proposal, undone for the latest applied edit or a test-out (while the plan is still as it left it), or seen (\"Got it\") for an applied change the plan should stop showing. Applying a proposal works it out against the plan as it is today first: when that differs from the `effect` it had, nothing is applied and the answer is the change still `proposed`, with the new `effect`, for the learner to answer again. Applying or undoing a change prepares the lessons it brings in soon on the server; ask for nothing after it. 409 when the change was already answered or the plan moved on.",
+        "description": "The learner's answer to a change: applied or declined for a proposal, undone for the latest applied edit or a test-out (while the plan is still as it left it), or seen for an applied change the learner has acknowledged. Applying a proposal works it out against the plan as it is today first: when that differs from the `effect` it had, nothing is applied and the answer is the change still `proposed`, with the new `effect`, for the learner to answer again. Applying or undoing a change prepares the lessons it brings in soon on the server; ask for nothing after it. 409 when the change was already answered or the plan moved on.",
         "operationId": "decidePlanChange",
         "security": [
           {
@@ -16241,7 +16241,7 @@
     },
     "/goals/{goalId}/plan/tool-choices": {
       "post": {
-        "description": "The learner's answer on the plan's \"You'll use\" card for one or more of its tools: they have it, they'll set it up on their device, or they'll go without (examples only, no practice on their own computer). Setting a tool up adds a short setup lesson for that tool and device right before the first chapter that uses it; a setup lesson nobody has needed yet answers 202 with the run writing it, nothing applied: follow it, then send the same choice again. Any other answer takes back a setup lesson an earlier answer added. It re-plans from today and can be undone like any plan change. 422 PLAN_CHANGE_INVALID with reason unknownTool when a tool isn't in the plan.",
+        "description": "The learner's answer about one or more of the plan's tools: they have it, they'll set it up on their device, or they'll go without (examples only, no practice on their own computer). Setting a tool up adds a short setup lesson for that tool and device right before the first chapter that uses it; a setup lesson nobody has needed yet answers 202 with the run writing it, nothing applied: follow it, then send the same choice again. Any other answer takes back a setup lesson an earlier answer added. It re-plans from today and can be undone like any plan change. 422 PLAN_CHANGE_INVALID with reason unknownTool when a tool isn't in the plan.",
         "operationId": "createPlanToolChoice",
         "security": [
           {
@@ -36776,7 +36776,7 @@
                 "properties": {
                   "reason": {
                     "type": "string",
-                    "description": "Why the change was refused. moveBeforeNextMonday means the requested destination is before next Monday in the learner's time zone: pick a day on or after next Monday. This date refusal takes precedence over collision and funding checks. mockCollision means two weekly events would share a day: the requested day already holds a weekly challenge or mock, another move in the plan or the request takes an event there, or the event already moved once. Preserve the prior plan and pick another day. baseChoiceClosed means a setBaseChoices choice isn't in that base's choices (a studied base is open only to deep study): offer only its choices. Preserve unknown reasons."
+                    "description": "Why the change was refused. moveBeforeNextMonday means the requested destination is before next Monday in the learner's time zone: pick a day on or after next Monday. This date refusal takes precedence over collision and funding checks. mockCollision means two weekly events would share a day: the requested day already holds a weekly challenge or mock, another move in the plan or the request takes an event there, or the event already moved once. Preserve the prior plan and pick another day. baseChoiceClosed means a setBaseChoices choice isn't in that base's choices (a studied base is open only to deep study). Preserve unknown reasons."
                   },
                   "unfundedMove": {
                     "description": "Present for reason unfundedMove: the requested calendar day and the mock's real duration. The prior plan is preserved. Ask the learner to pick a later day.",
@@ -39354,7 +39354,7 @@
                       "type": "string",
                       "format": "date",
                       "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$",
-                      "description": "The nearest accepted bound, to offer instead"
+                      "description": "The nearest accepted bound"
                     },
                     "message": {
                       "type": "string"
@@ -83984,7 +83984,7 @@
           },
           "preparation": {
             "nullable": true,
-            "description": "An exam goal's preparation in this subject, on the same scale as the goal's (`GET /v1/goals/{goalId}/preparation`): the goal's rule on the subject's skills and answers, with the goal's mock exams, which test every subject. The goal's preparation is its subjects' together, each counting by how much it weighs, so it never sits outside them. Show it as the subject's number and bar, with `mastery` saying how much of it practice backs. A subject out of the plan (`notPlannedReason`) that the goal still counts (left out for time, its basics passed or its bases skipped, the exam testing it, with a section that weighs in the goal) has it too: show the number muted beside why it's out, with no bar. Null for other goals, whose subjects' progress is their lessons (`lessonsDone` and `lessonsKnown` of `lessonsTotal`), and for a subject out of the plan the goal doesn't count (`skipped` by the learner, `missing`, or weighing nothing in the goal)",
+            "description": "An exam goal's preparation in this subject, on the same scale as the goal's (`GET /v1/goals/{goalId}/preparation`): the goal's rule on the subject's skills and answers, with the goal's mock exams, which test every subject. The goal's preparation is its subjects' together, each counting by how much it weighs, so it never sits outside them. `mastery` says how much of it practice backs. A subject out of the plan (`notPlannedReason`) that the goal still counts (left out for time, its basics passed or its bases skipped, the exam testing it, with a section that weighs in the goal) has it too. Null for other goals, whose subjects' progress is their lessons (`lessonsDone` and `lessonsKnown` of `lessonsTotal`), and for a subject out of the plan the goal doesn't count (`skipped` by the learner, `missing`, or weighing nothing in the goal)",
             "type": "number",
             "minimum": 0,
             "maximum": 1
@@ -84235,7 +84235,7 @@
           },
           "status": {
             "nullable": true,
-            "description": "From the plan's lessons on it. `known`: the learner showed they know it (a right answer in placement or a test, or a test-out), so the plan has no lessons on it; practice still asks it, and a miss brings its lessons back. In a subject the learner took out, a topic they studied lessons of keeps `studied` (or `known`) and its `chapters`, with `notPlannedReason` `skipped`. A topic whose lessons left were set aside after missed days is out for time (`notPlannedReason` `time`): `notPlanned`, or `inProgress` with the `chapters` the learner studied of it. Null when the plan doesn't say which skills teach which topic (plans made before topics were mapped): show the topic without a status",
+            "description": "From the plan's lessons on it. `known`: the learner showed they know it (a right answer in placement or a test, or a test-out), so the plan has no lessons on it; practice still asks it, and a miss brings its lessons back. In a subject the learner took out, a topic they studied lessons of keeps `studied` (or `known`) and its `chapters`, with `notPlannedReason` `skipped`. A topic whose lessons left were set aside after missed days is out for time (`notPlannedReason` `time`): `notPlanned`, or `inProgress` with the `chapters` the learner studied of it. Null when the plan doesn't say which skills teach which topic (plans made before topics were mapped): the topic has no status then",
             "type": "string",
             "enum": [
               "studied",
@@ -84337,7 +84337,7 @@
                 },
                 "partOf": {
                   "nullable": true,
-                  "description": "The area it's part of, for an option the exam counts inside another subject (the foreign language a candidate takes, inside ENEM's languages area): show and focus it with that area, never on its own. Null for every other area",
+                  "description": "The area it's part of, for an option the exam counts inside another subject (the foreign language a candidate takes, inside ENEM's languages area): it belongs with that area and is focused with it, never on its own. Null for every other area",
                   "type": "string"
                 },
                 "pastBasics": {
@@ -84538,7 +84538,7 @@
           },
           "fitOffer": {
             "nullable": true,
-            "description": "The lessons the learner's own time fits by the plan's date that the plan doesn't hold, as one change (`fitLessons`) with its effect, so Apply is one tap after its diff: offered once every lesson is done (no system refresh adds lessons then), or once the learner's time covers everything the plan leaves out (a date moved closer, then faster study). Send `operations` to POST /v1/goals/{goalId}/plan/changes as they are. Never offer less daily time as covering more. Null otherwise, and when it would add no lesson",
+            "description": "The lessons the learner's own time fits by the plan's date that the plan doesn't hold, as one change (`fitLessons`) with its effect: present once every lesson is done (no system refresh adds lessons then), or once the learner's time covers everything the plan leaves out (a date moved closer, then faster study). Send `operations` to POST /v1/goals/{goalId}/plan/changes as they are. Null otherwise, and when it would add no lesson",
             "type": "object",
             "properties": {
               "effect": {
@@ -84546,7 +84546,7 @@
               },
               "fits": {
                 "type": "boolean",
-                "description": "The plan with the change covers everything in depth by its date, as the change plans it: say so (\"Your time covers everything by …\") only then"
+                "description": "True when the plan with the change covers everything in depth by its date, as the change plans it"
               },
               "operations": {
                 "minItems": 1,
@@ -84642,11 +84642,11 @@
                 },
                 "title": {
                   "type": "string",
-                  "description": "The lesson's title; for a skill whose lessons are still being written, its course's (empty when unknown or for the goal's own course: say \"More lessons\")"
+                  "description": "The lesson's title; for a skill whose lessons are still being written, its course's (empty when unknown or for the goal's own course)"
                 },
                 "writing": {
                   "type": "boolean",
-                  "description": "A stand-in for a skill whose lessons are still being written; show it as being written, never by the skill's name"
+                  "description": "A stand-in for a skill whose lessons are still being written: `title` is its course's, never the skill's name"
                 }
               },
               "required": [
@@ -84845,7 +84845,7 @@
               },
               "targetDateNamedMonth": {
                 "type": "boolean",
-                "description": "The date is the start of the month the learner named, standing for that month: say the month, not the day"
+                "description": "The date is the start of the month the learner named, and stands for that month, not that day"
               },
               "weekdayMinutes": {
                 "type": "array",
@@ -85075,7 +85075,7 @@
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991,
-            "description": "Bases placement or a test-out found the learner knows: they're out of the plan already. Say so"
+            "description": "Bases placement or a test-out found the learner knows: they're out of the plan already"
           }
         },
         "required": [
@@ -85113,7 +85113,7 @@
                 "skip"
               ]
             },
-            "description": "The choices it is open to, the only ones setBaseChoices accepts for it (others are refused with baseChoiceClosed): only deep once its core is studied (studied), and only when it has more than its core; every choice otherwise. Offer only these"
+            "description": "The choices it is open to, the only ones setBaseChoices accepts for it (others are refused with baseChoiceClosed): only deep once its core is studied (studied), and only when it has more than its core; every choice otherwise"
           },
           "minutes": {
             "type": "object",
@@ -85159,7 +85159,7 @@
           },
           "studied": {
             "type": "boolean",
-            "description": "The learner studied its core, none of its lessons still to do: say \"Studied\", and offer only deep study when choices has it"
+            "description": "The learner studied its core and has none of its lessons still to do; `choices` then holds deep study at most"
           }
         },
         "required": [
@@ -85322,7 +85322,7 @@
         "properties": {
           "challengeLeftOut": {
             "default": false,
-            "description": "The phase keeps lessons but its challenge has no room before the plan's date, so it's off the calendar and the phase isn't done without it: say there's no time for its challenge before the date, whatever the phase's state. Another study day before the date, or a later date, brings it back; more minutes on the days the plan already has may not. A phase with nothing to study or no finished skill its challenge can ask has no challenge and is never marked",
+            "description": "The phase keeps lessons but its challenge has no room before the plan's date, so it's off the calendar and the phase isn't done without it, whatever the phase's state. Another study day before the date, or a later date, brings it back; more minutes on the days the plan already has may not. A phase with nothing to study or no finished skill its challenge can ask has no challenge and is never marked",
             "type": "boolean"
           },
           "chapterCount": {
@@ -85343,11 +85343,11 @@
                 },
                 "deeper": {
                   "type": "boolean",
-                  "description": "Its lessons go deeper into topics of an earlier phase: a plan short on time studies every phase's core first and the rest after it, in a later phase's time, so the chapter shows again there. Say so, so it never reads as listed twice"
+                  "description": "Its lessons go deeper into topics of an earlier phase: a plan short on time studies every phase's core first and the rest after it, in a later phase's time, so the same chapter is in both phases, here with the lessons that go deeper"
                 },
                 "far": {
                   "type": "boolean",
-                  "description": "A `writing` row starting after the two weeks the plan writes ahead: say the lessons the plan teaches it (`plannedLessons`, about that many) and when it starts (`nextDate`), not that they're on the way. False for every other row"
+                  "description": "A `writing` row starting after the two weeks the plan writes ahead: its lessons aren't on the way yet, and `plannedLessons` and `nextDate` hold how many the plan teaches (about that many) and when it starts. False for every other row"
                 },
                 "lessonsDone": {
                   "type": "integer",
@@ -85368,7 +85368,7 @@
                 },
                 "plannedLessons": {
                   "nullable": true,
-                  "description": "A `writing` row's lessons the plan teaches, after its cuts and base choices. Null for every other row, and for one of a plan saved before it stored them (until its next change): say no count then",
+                  "description": "A `writing` row's lessons the plan teaches, after its cuts and base choices. Null for every other row, and for one of a plan saved before it stored them (until its next change)",
                   "type": "integer",
                   "minimum": 1,
                   "maximum": 9007199254740991
@@ -85397,14 +85397,14 @@
                 },
                 "testedOut": {
                   "type": "boolean",
-                  "description": "Every lesson in it was tested out (placement or a test-out), so it's done without being studied; say so"
+                  "description": "Every lesson in it was tested out (placement or a test-out), so it's done without being studied"
                 },
                 "title": {
                   "type": "string"
                 },
                 "writing": {
                   "type": "boolean",
-                  "description": "Skills whose lessons aren't written yet (the plan writes them two weeks ahead), grouped under their course's title (empty for the goal's own course: say \"More lessons\"). A `far` row starts after those weeks; any other's lessons are on the way"
+                  "description": "Skills whose lessons aren't written yet (the plan writes them two weeks ahead), grouped under their course's title (empty for the goal's own course). A `far` row starts after those weeks; any other's lessons are on the way"
                 }
               },
               "required": [
@@ -85463,7 +85463,7 @@
                   "nextSession",
                   "queued"
                 ],
-                "description": "`date` shows the approximate date for a phase challenge, never earlier than tomorrow. `nextSession` means today's session holds it, or the day Today plans holds it before Start builds the session; say that instead of the estimate. A challenge tests only finished lessons, and no challenge or lesson waits for another challenge. `queued` is retained for older clients and is never returned. Always `date` once won, while locked, and past a free exam plan's first week."
+                "description": "`date` shows the approximate date for a phase challenge, never earlier than tomorrow. `nextSession` means today's session holds it, or the day Today plans holds it before Start builds the session, so no estimate applies. A challenge tests only finished lessons, and no challenge or lesson waits for another challenge. `queued` is retained for older clients and is never returned. Always `date` once won, while locked, and past a free exam plan's first week."
               }
             },
             "required": [
@@ -85585,7 +85585,7 @@
               "unfinished",
               "upcoming"
             ],
-            "description": "`current` is the earliest phase with work left. One before it is `done` once the learner finished its work, and `unfinished` while some of it was set aside (missed days the plan couldn't fit back): never mark it done; say the lessons studied of its total (`lessonsDone`, `lessonsTotal`). `leftOut`: the plan holds none of its work (a date too near for its topics): say it's not in the plan, and leave it out of the phases counted done"
+            "description": "`current` is the earliest phase with work left. One before it is `done` once the learner finished its work, and `unfinished` while some of it was set aside (missed days the plan couldn't fit back): it isn't done, and `lessonsDone` of `lessonsTotal` is how far it got. `leftOut`: the plan holds none of its work (a date too near for its topics), and it doesn't count among the phases done"
           }
         },
         "required": [
@@ -85621,7 +85621,7 @@
       },
       "PlanMockSchedule": {
         "nullable": true,
-        "description": "When an exam plan's mock exams still to take fall, from their planned days: say only the pattern given (a weekday, the weeks between them), else the next date. Mocks go on the week's last study day, so study days move them. Null without one ahead",
+        "description": "When an exam plan's mock exams still to take fall, from their planned days: the pattern they keep (a weekday, the weeks between them) where they keep one, and the next date. Mocks go on the week's last study day, so study days move them. Null without one ahead",
         "type": "object",
         "properties": {
           "count": {
@@ -85644,7 +85644,7 @@
           },
           "weekday": {
             "nullable": true,
-            "description": "The weekday every mock ahead falls on (Sunday 0), as in \"Mock exams · Sundays\"; null when they fall on different days or there is one",
+            "description": "The weekday every mock ahead falls on (Sunday 0); null when they fall on different days or there is one",
             "type": "integer",
             "minimum": 0,
             "maximum": 6
@@ -85811,7 +85811,7 @@
           },
           "id": {
             "nullable": true,
-            "description": "null for selected in-memory work until the learner opens the day; show the row without an action link",
+            "description": "null for selected in-memory work until the learner opens the day: it has nothing to open yet",
             "type": "string",
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
@@ -85864,11 +85864,11 @@
           },
           "title": {
             "type": "string",
-            "description": "The lesson's title; for a skill whose lessons are still being written, its course's (empty when unknown or for the goal's own course: say \"More lessons\")"
+            "description": "The lesson's title; for a skill whose lessons are still being written, its course's (empty when unknown or for the goal's own course)"
           },
           "writing": {
             "type": "boolean",
-            "description": "A stand-in for a skill whose lessons are still being written; show it as being written, never by the skill's name"
+            "description": "A stand-in for a skill whose lessons are still being written: `title` is its course's, never the skill's name"
           }
         },
         "required": [

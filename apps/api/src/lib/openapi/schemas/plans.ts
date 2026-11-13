@@ -194,7 +194,7 @@ export const planResponseSchema = z
         .boolean()
         .meta({
           description:
-            "The date is the start of the month the learner named, standing for that month: say the month, not the day",
+            "The date is the start of the month the learner named, and stands for that month, not that day",
         }),
       weekdayMinutes: z.array(z.int()).meta({ description: "Sunday first; 0 for rest days" }),
     }),
