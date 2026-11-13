@@ -3,7 +3,7 @@
 import { useSpokenText } from "@zoonk/learn/rich-text/speech";
 import { LessonVisual } from "@zoonk/learn/visual";
 import { Button } from "@zoonk/ui/components/button";
-import { HelpCircleIcon, PenLineIcon, PenOffIcon } from "lucide-react";
+import { PenLineIcon, PenOffIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { COLUMN_GHOST_ACTION_CLASS, InteractiveStepLayout } from "../../components/step-layouts";
 import { LessonContext, LessonEyebrow, LessonQuestion } from "../_components/lesson-step-text";
@@ -45,7 +45,6 @@ export function TypedAnswerStepView({
   const t = useExtracted();
   const spoken = useSpokenText();
   const text = answer?.kind === "typedAnswer" ? answer.text : "";
-  const { actions, screen } = useLessonPlayer();
   const { showWritingAlternatives = true } = useLessonPlayerConfig();
   const isNumber = isNumberAnswer(step.content.acceptedAnswers);
   const isExplanation = !isNumber && (step.content.acceptedAnswers ?? []).length === 0;
@@ -78,25 +77,7 @@ export function TypedAnswerStepView({
 
       <div className="flex flex-col gap-3.5 empty:hidden">
         <ExplainFirstButton />
-        {!isLocked && !isNumber && showWritingAlternatives && (
-          <>
-            {!screen.canExplainFirst && (
-              <Button
-                className={COLUMN_GHOST_ACTION_CLASS}
-                onClick={() => {
-                  actions.dontKnow(step.id);
-                  focusLessonAfterTurn();
-                }}
-                size="sm"
-                variant="ghost"
-              >
-                <HelpCircleIcon aria-hidden="true" />
-                {t("I don't know yet")}
-              </Button>
-            )}
-            <SkipWritingButton />
-          </>
-        )}
+        {!isLocked && !isNumber && showWritingAlternatives && <SkipWritingButton />}
       </div>
     </InteractiveStepLayout>
   );

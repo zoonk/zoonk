@@ -1,6 +1,6 @@
+import { FoldChevron } from "@zoonk/ui/components/collapsible";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronDownIcon } from "lucide-react";
 import { type ReactNode } from "react";
 
 export const ROUTE_CLASS =
@@ -159,10 +159,7 @@ export function RouteZone({
         <ZoneLabel aside={aside} summary={summary} />
 
         <LineMarker>
-          <ChevronDownIcon
-            aria-hidden="true"
-            className="text-muted-foreground size-4 transition-transform group-open/zone:rotate-180 motion-reduce:transition-none"
-          />
+          <FoldChevron />
         </LineMarker>
       </summary>
 

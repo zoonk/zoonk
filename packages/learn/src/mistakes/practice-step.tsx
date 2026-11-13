@@ -8,8 +8,8 @@ import {
   FeedbackPanel,
   FeedbackVerdict,
 } from "../_components/feedback-panel";
+import { QuestionDontKnow, QuestionMainAction } from "../_components/question-actions";
 import { ItemText } from "../questions/item-text";
-import { QuestionMainButton } from "../session/question-block/question-actions";
 import {
   WorkedSteps,
   useAnswerText,
@@ -17,7 +17,6 @@ import {
 } from "../session/question-block/question-feedback";
 import { BankPracticeQuestion } from "./bank-practice-question";
 import { DrillAnswerNotes } from "./drill/drill-answer-notes";
-import { NotSureButton } from "./drill/drill-controls";
 import { DrillCountdown } from "./drill/drill-countdown";
 import { DrillIntro } from "./drill/drill-intro";
 import { type LessonHref, isIdeaFirst, pressesCheck } from "./drill/drill-types";
@@ -31,7 +30,7 @@ import { type useMistakePractice } from "./use-mistake-practice";
 
 type Run = ReturnType<typeof useMistakePractice>;
 
-function getMainAction(run: Run): React.ComponentProps<typeof QuestionMainButton> {
+function getMainAction(run: Run): React.ComponentProps<typeof QuestionMainAction> {
   const { phase } = run.state;
 
   if (phase.kind === "feedback") {
@@ -82,16 +81,13 @@ export function PracticeStepActions({ run, step }: { run: Run; step: Step }) {
   return (
     <>
       {answering && (
-        <NotSureButton
-          busy={sender === "notSure"}
-          disabled={checking}
-          label={step.entry.drill.kind === "noGuessing" ? undefined : t("I don't know yet")}
-          onClick={run.notSure}
-        />
+        <QuestionDontKnow busy={sender === "notSure"} disabled={checking} onPress={run.notSure}>
+          {step.entry.drill.kind === "noGuessing" && t("I'm not sure")}
+        </QuestionDontKnow>
       )}
 
       {(step.lesson?.step.kind !== "challenge" || phase.kind === "feedback") && (
-        <QuestionMainButton {...getMainAction(run)} />
+        <QuestionMainAction {...getMainAction(run)} />
       )}
     </>
   );

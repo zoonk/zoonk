@@ -256,7 +256,7 @@ export function TutorAskButton({ quiet = false }: { quiet?: boolean }) {
       <Button
         className={cn(TASK_WRAPPING_ACTION_CLASS, "with-aside:hidden ml-auto lg:ml-0")}
         onClick={() => buddy.open()}
-        size="lg"
+        size="xl"
         type="button"
         variant="outline"
       >

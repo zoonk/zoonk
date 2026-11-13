@@ -103,6 +103,8 @@
     "./mind-maps/urls": "./src/mind-maps/_utils/mind-map-urls.ts",
     "./mind-maps/viewer": "./src/mind-maps/mind-map-viewer.tsx",
     "./picture-box": "./src/_components/picture-box.ts",
+    "./question-actions": "./src/_components/question-actions.tsx",
+    "./question-title": "./src/_components/question-title.tsx",
     "./question-tutor": "./src/questions/question-tutor.ts",
     "./topic-outline": "./src/topic-outline/topic-outline-actions.ts",
     "./mistakes": "./src/mistakes/mistakes-notebook.tsx",
