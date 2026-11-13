@@ -6,9 +6,9 @@ import { validateActivity } from "../../../library/activities/validate-activity"
 import { normalizeStepContentValue } from "../../../library/steps/contract/normalize-step-content";
 import {
   describeContentIssues,
+  isRelationKind,
   safeParseStepContent,
 } from "../../../library/steps/contract/step-contract";
-import { isExerciseKind } from "../../../player/contracts/exercise-content";
 import {
   type Json,
   NOT_CURRENT_SCREEN,
@@ -58,20 +58,40 @@ export const screenSelect = {
   wordId: true,
 } as const;
 
+/** A spoken screen copies its sentence; those fields change with the sentence, not the screen. */
+const SENTENCE_FIELDS = ["romanization", "targetText", "translation"] as const;
+
 function screenProblem(step: ScreenRow): string | null {
   if (step.retiredAt || step.staged) {
     return NOT_CURRENT_SCREEN;
   }
 
-  if (step.itemId) {
-    return "This screen's numeric question is also in the practice bank; fixing it is a later phase.";
-  }
-
-  if (step.wordId || step.sentenceId || isExerciseKind(step.kind)) {
-    return "Language screens come from the lesson's words and sentences; fixing them is a later phase.";
+  if (isRelationKind(step.kind)) {
+    const row = step.wordId ? `Word ${step.wordId}` : `Sentence ${step.sentenceId ?? ""}`;
+    return `This screen shows ${row} and holds no text of its own; fix that row instead.`;
   }
 
   return null;
+}
+
+function copiedFieldProblem({
+  after,
+  before,
+  step,
+}: {
+  after: Json;
+  before: Json;
+  step: ScreenRow;
+}): string | null {
+  if (!step.sentenceId || !isJsonObject(after) || !isJsonObject(before)) {
+    return null;
+  }
+
+  const copied = SENTENCE_FIELDS.find((field) => !isDeepStrictEqual(after[field], before[field]));
+
+  return copied
+    ? `content.${copied} is copied from Sentence ${step.sentenceId}; fix the sentence instead.`
+    : null;
 }
 
 function contentProblem({ content, kind }: { content: Json; kind: StepKind }): string | null {
@@ -104,25 +124,30 @@ function resolveContent<Model extends ScreenModel>({
   after: sent,
   before,
   id,
-  kind,
-  lessonId,
   model,
+  step,
 }: {
   after: Json;
   before: Json;
   id: string;
-  kind: StepKind;
-  lessonId: string;
   model: Model;
+  step: ScreenRow;
 }): Resolution<ContentStored<Model>> {
   const after = toJson(normalizeStepContentValue(sent));
-  const invalid = contentProblem({ content: after, kind });
+  const invalid = contentProblem({ content: after, kind: step.kind });
 
   if (invalid) {
     return refuse(invalid);
   }
 
-  const verdict = checkScreenContentChange({ after, before, kind });
+  const copied = copiedFieldProblem({ after, before, step });
+
+  if (copied) {
+    return refuse(copied);
+  }
+
+  const keyedElsewhere = model === "Step" && step.itemId !== null;
+  const verdict = checkScreenContentChange({ after, before, keyedElsewhere, kind: step.kind });
 
   if (!verdict.ok) {
     return refuse(`content: ${verdict.problem}`);
@@ -133,17 +158,48 @@ function resolveContent<Model extends ScreenModel>({
   }
 
   const effects: ContentFixEffect[] = [
-    verdict.changesAnswerKey && { id, kind: "answerKeyChanged" as const, model },
-    verdict.changesQuestion && { id, kind: "questionChanged" as const, model },
-    { kind: "marksKept" as const, lessonId },
+    !keyedElsewhere && verdict.changesAnswerKey && { id, kind: "answerKeyChanged" as const, model },
+    !keyedElsewhere && verdict.changesQuestion && { id, kind: "questionChanged" as const, model },
+    { kind: "marksKept" as const, lessonId: step.lessonId },
   ].filter((effect) => effect !== false);
 
   return {
     effects,
     ok: true,
     stored: { fields: [{ after, before, field: "content" }], id, model, op: "set" },
-    unit: { id: lessonId, kind: "lesson" },
+    unit: { id: step.lessonId, kind: "lesson" },
   };
+}
+
+/** What a screen fix deletes: answers explained and tutor answers shared, written from the old screen. */
+async function writtenFromScreen(db: TransactionClient, stepId: string) {
+  const [explanations, tutorAnswers] = await Promise.all([
+    db.answerExplanation.count({ where: { stepId } }),
+    db.tutorSharedAnswer.count({ where: { stepId } }),
+  ]);
+
+  return [
+    ...(explanations > 0
+      ? [{ count: explanations, kind: "answerExplanationsDeleted" as const, stepId }]
+      : []),
+    ...(tutorAnswers > 0
+      ? [{ count: tutorAnswers, kind: "tutorAnswersDeleted" as const, stepId }]
+      : []),
+  ];
+}
+
+async function deleteWrittenFromScreen(tx: TransactionClient, stepId: string): Promise<void> {
+  await tx.answerExplanation.deleteMany({ where: { stepId } });
+  await tx.tutorSharedAnswer.deleteMany({ where: { stepId } });
+}
+
+async function withWrittenFromScreen<Stored>(
+  db: TransactionClient,
+  { resolved, stepId }: { resolved: Resolution<Stored>; stepId: string },
+): Promise<Resolution<Stored>> {
+  return resolved.ok
+    ? { ...resolved, effects: [...resolved.effects, ...(await writtenFromScreen(db, stepId))] }
+    : resolved;
 }
 
 async function resolveStepContent(
@@ -175,26 +231,11 @@ async function resolveStepContent(
     after: set.content ?? null,
     before: toJson(step.content),
     id,
-    kind: step.kind,
-    lessonId: step.lessonId,
     model: "Step",
+    step,
   });
 
-  if (!resolved.ok) {
-    return resolved;
-  }
-
-  const explanations = await db.answerExplanation.count({ where: { stepId: id } });
-
-  return {
-    ...resolved,
-    effects: [
-      ...resolved.effects,
-      ...(explanations > 0
-        ? [{ count: explanations, kind: "answerExplanationsDeleted" as const, stepId: id }]
-        : []),
-    ],
-  };
+  return withWrittenFromScreen(db, { resolved, stepId: id });
 }
 
 async function resolveVariantContent(
@@ -208,7 +249,7 @@ async function resolveVariantContent(
   }
 
   const variant = await db.stepVariant.findUnique({
-    select: { content: true, step: { select: screenSelect } },
+    select: { content: true, step: { select: screenSelect }, stepId: true },
     where: { id },
   });
 
@@ -222,14 +263,15 @@ async function resolveVariantContent(
     return refuse(problem);
   }
 
-  return resolveContent({
+  const resolved = resolveContent({
     after: set.content ?? null,
     before: toJson(variant.content),
     id,
-    kind: variant.step.kind,
-    lessonId: variant.step.lessonId,
     model: "StepVariant",
+    step: variant.step,
   });
+
+  return withWrittenFromScreen(db, { resolved, stepId: variant.stepId });
 }
 
 function contentOf(fields: readonly FieldChange[]) {
@@ -251,12 +293,12 @@ const contentStored = <Model extends ScreenModel>(model: Model) =>
   });
 
 const SCREEN_RULES =
-  "A current screen of a published lesson; send the whole content. It keeps its fields, ids, option count and order, references and picture requests, and changes what learners read before answering or which answer is right, never both. Its saved answer explanations are deleted. Language screens and screens with a numeric practice question can't be fixed yet.";
+  "A current screen of a published lesson, of any kind; send the whole content. It keeps its fields, ids, option count and order, references and picture requests, and changes what learners read before answering or which answer is right, never both, except a language exercise's words (fillBlank, multipleChoice, matchColumns…), which may change together. A screen with a numeric practice question (itemId) changes in the same fix as that Item, as the question draws it. A spoken screen's sentence fields and a word or sentence screen change with their Word or Sentence. Its variants (StepVariant) can be set in the same fix; the ones left out keep their content. Its saved answer explanations and shared tutor answers are deleted. A learner who started the lesson before the fix is never marked wrong for it.";
 
 export const stepSet = defineFixHandler({
   apply: async (tx, stored) => {
     await tx.step.update({ data: { content: contentOf(stored.fields) }, where: { id: stored.id } });
-    await tx.answerExplanation.deleteMany({ where: { stepId: stored.id } });
+    await deleteWrittenFromScreen(tx, stored.id);
   },
   model: "Step",
   op: "set",
@@ -275,10 +317,13 @@ export const stepSet = defineFixHandler({
 
 export const variantSet = defineFixHandler({
   apply: async (tx, stored) => {
-    await tx.stepVariant.update({
+    const { stepId } = await tx.stepVariant.update({
       data: { content: contentOf(stored.fields) },
+      select: { stepId: true },
       where: { id: stored.id },
     });
+
+    await deleteWrittenFromScreen(tx, stepId);
   },
   model: "StepVariant",
   op: "set",

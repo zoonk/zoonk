@@ -22,6 +22,7 @@ import {
   toSetProposal,
 } from "./fix-handler";
 import { checkItemContent } from "./item-content-rules";
+import { findAskingScreen, resolveScreenItemSet } from "./numeric-screen";
 
 const ITEMS = sql`items`;
 
@@ -53,6 +54,12 @@ async function resolveItemSet(
 ): Promise<Resolution<SetStored>> {
   if (!isDeepStrictEqual(Object.keys(set), ["content"])) {
     return refuse("An Item fix sets only content, the whole question as JSON.");
+  }
+
+  const screen = await findAskingScreen(db, id);
+
+  if (screen) {
+    return resolveScreenItemSet(db, { id, screen, sent: set.content ?? null });
   }
 
   const loaded = await loadBankItem(db, id);
@@ -213,7 +220,7 @@ export const itemSet = defineFixHandler({
   proposal: {
     fields: ["content"],
     rules:
-      "Changes a multipleChoice or trueFalse practice question's words in place: which answers are right, how many to pick, the options' count and order, its picture and visual stay. Its saved answer explanations are deleted. Any other change is a replace.",
+      "Changes a multipleChoice or trueFalse practice question's words in place: which answers are right, how many to pick, the options' count and order, its picture and visual stay. Its saved answer explanations are deleted. Any other change is a replace. A numeric question a lesson screen asks changes in place in the same fix as that screen (the screen as the question draws it): its words, or the numbers that decide its answer (math variables, solution, answer, tolerance, otherSolutions), not both.",
     schema: z.strictObject({ id: idSchema, model: z.literal("Item"), set: setFieldsSchema }),
   },
   resolve: (db, proposed) => resolveItemSet(db, proposed),

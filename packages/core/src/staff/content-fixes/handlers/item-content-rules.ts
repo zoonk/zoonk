@@ -3,7 +3,11 @@ import { type GeneratedItem } from "@zoonk/ai/tasks/items/schemas";
 import { type ItemFormat } from "@zoonk/db";
 import { z } from "zod";
 import { checkItem } from "../../../library/items/item-checks";
-import { type ParsedItemContent, parseItemContent } from "../../../library/items/item-content";
+import {
+  type ParsedItemContent,
+  parseItemContent,
+  toStoredItem,
+} from "../../../library/items/item-content";
 import { type Json, type Refusal, refuse, toJson } from "../_utils/resolved-change";
 
 /** Choice questions are graded by option index and flag, so their wording can change in place. */
@@ -118,4 +122,52 @@ export function checkItemContent({
   return isDeepStrictEqual(after.content, before.content)
     ? refuse(`Item ${item.id} already has this content.`)
     : { after: toJson(after.content) };
+}
+
+/**
+ * A lesson screen's numeric question is stored as the lesson stores it (`toStoredItem`), so the
+ * screen and its practice question stay one question that a later version of the lesson reuses.
+ */
+export function checkScreenItemContent({
+  item,
+  sent,
+}: {
+  item: { content: unknown; format: ItemFormat; id: string; language: string };
+  sent: Json;
+}): CheckedContent {
+  const before = parseContent({ content: toJson(item.content), format: item.format });
+  const after = parseContent({ content: sent, format: item.format });
+
+  if ("ok" in before) {
+    return refuse(`Item ${item.id}'s stored content doesn't parse, so it can't be fixed.`);
+  }
+
+  if ("ok" in after) {
+    return after;
+  }
+
+  if (after.format !== "numeric") {
+    return refuse(`Item ${item.id} isn't a numeric question.`);
+  }
+
+  const problems = problemsOf(after, item.language);
+
+  if (problems.length > 0) {
+    return refuse(`content: ${problems.join(" ")}`);
+  }
+
+  const { entry, ...question } = after.content;
+
+  const stored = toJson(
+    // oxlint-disable-next-line unicorn/prefer-structured-clone -- Compares as the column stores it: JSON drops undefined fields, which a clone keeps.
+    JSON.parse(
+      JSON.stringify(
+        toStoredItem({ ...question, difficulty: "medium", format: "numeric" }, { entry }).content,
+      ),
+    ),
+  );
+
+  return isDeepStrictEqual(stored, toJson(item.content))
+    ? refuse(`Item ${item.id} already has this content.`)
+    : { after: stored };
 }

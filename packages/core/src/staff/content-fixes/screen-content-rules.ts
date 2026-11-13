@@ -1,4 +1,6 @@
 import { type StepKind } from "@zoonk/db";
+import { isAnswerableStep } from "../../lesson-player/lesson-run";
+import { isExerciseKind } from "../../player/contracts/exercise-content";
 
 type FieldClass = "answerKey" | "prose" | "question" | "structure";
 
@@ -63,13 +65,19 @@ const PROSE_KEYS = new Set([
   "source",
 ]);
 
-const ANSWERED_KINDS = new Set<StepKind>([
-  "activity",
-  "challenge",
-  "check",
-  "spokenAnswer",
-  "typedAnswer",
-]);
+/**
+ * Language exercises reuse field names with their own meaning: a blank's `template` is the
+ * sentence learners read, and a match's pairs are both what they read and how they're graded.
+ */
+const EXERCISE_FIELDS: Partial<Record<StepKind, Readonly<Record<string, FieldClass>>>> = {
+  fillBlank: {
+    answers: "answerKey",
+    distractors: "question",
+    romanizations: "prose",
+    template: "question",
+  },
+  matchColumns: { pairs: "answerKey" },
+};
 
 export type ScreenContentVerdict =
   | { ok: true; changesAnswerKey: boolean; changesQuestion: boolean }
@@ -148,25 +156,47 @@ function diffValues(before: unknown, after: unknown, path: Path): Diff {
   return { changed: before === after ? [] : [path] };
 }
 
-function classify({ answered, path }: { answered: boolean; path: Path }): FieldClass {
-  const keys = path.filter((segment): segment is string => typeof segment === "string");
+function classOf({ key, kind }: { key: string; kind?: StepKind }): FieldClass | null {
+  const exercise = kind ? EXERCISE_FIELDS[kind]?.[key] : undefined;
 
-  if (keys.some((key) => STRUCTURE_KEYS.has(key))) {
+  if (exercise) {
+    return exercise;
+  }
+
+  if (STRUCTURE_KEYS.has(key)) {
     return "structure";
   }
 
-  const decided = keys.findLast((key) => ANSWER_KEY_KEYS.has(key) || PROSE_KEYS.has(key));
-
-  if (decided) {
-    return ANSWER_KEY_KEYS.has(decided) ? "answerKey" : "prose";
+  if (ANSWER_KEY_KEYS.has(key)) {
+    return "answerKey";
   }
 
-  return answered ? "question" : "prose";
+  return PROSE_KEYS.has(key) ? "prose" : null;
+}
+
+function classify({
+  answered,
+  kind,
+  path,
+}: {
+  answered: boolean;
+  kind?: StepKind;
+  path: Path;
+}): FieldClass {
+  const classes = path
+    .filter((segment): segment is string => typeof segment === "string")
+    .map((key) => classOf({ key, kind }));
+
+  if (classes.includes("structure")) {
+    return "structure";
+  }
+
+  return classes.findLast((entry) => entry !== null) ?? (answered ? "question" : "prose");
 }
 
 function isAnswered({ content, kind }: { content: unknown; kind: StepKind }): boolean {
   return (
-    ANSWERED_KINDS.has(kind) ||
+    isAnswerableStep({ kind }) ||
     (kind === "hook" && isRecord(content) && content.variant === "guess")
   );
 }
@@ -174,16 +204,19 @@ function isAnswered({ content, kind }: { content: unknown; kind: StepKind }): bo
 /**
  * Whether a screen's content may change from `before` to `after` in one fix: the same shape with
  * only text, flags and numbers changed, never a structural part, and never both what learners
- * read before answering and which answer is right, since a learner still on the old screen would
- * be graded by a key written for another question.
+ * read before answering and which answer is right, so a reviewer reads one kind of change at a
+ * time. A language exercise's words are both, so it may change them together, and so may a
+ * screen whose question another row decides (`keyedElsewhere`), which checks that row instead.
  */
 export function checkScreenContentChange({
   after,
   before,
+  keyedElsewhere = false,
   kind,
 }: {
   after: unknown;
   before: unknown;
+  keyedElsewhere?: boolean;
   kind: StepKind;
 }): ScreenContentVerdict {
   const diff = diffValues(before, after, []);
@@ -193,7 +226,7 @@ export function checkScreenContentChange({
   }
 
   const answered = isAnswered({ content: before, kind });
-  const classes = diff.changed.map((path) => ({ kind: classify({ answered, path }), path }));
+  const classes = diff.changed.map((path) => ({ kind: classify({ answered, kind, path }), path }));
   const structural = classes.find((entry) => entry.kind === "structure");
 
   if (structural) {
@@ -202,8 +235,9 @@ export function checkScreenContentChange({
 
   const changesAnswerKey = classes.some((entry) => entry.kind === "answerKey");
   const changesQuestion = classes.some((entry) => entry.kind === "question");
+  const together = keyedElsewhere || isExerciseKind(kind);
 
-  if (changesAnswerKey && changesQuestion) {
+  if (changesAnswerKey && changesQuestion && !together) {
     return {
       ok: false,
       problem:

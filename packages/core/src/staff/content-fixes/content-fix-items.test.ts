@@ -219,7 +219,9 @@ describe("questions a fix can't change on their own", () => {
         expect.stringContaining("Private content"),
         expect.stringContaining("is retired"),
         expect.stringContaining("changes with its set"),
-        expect.stringContaining("fix that screen instead"),
+        expect.stringContaining(
+          operation === "set" ? "isn't a numeric question" : "in the same fix as that screen",
+        ),
       ]);
     },
   );

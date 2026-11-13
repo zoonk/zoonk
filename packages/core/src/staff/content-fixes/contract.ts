@@ -77,6 +77,15 @@ const effectSchema = z.discriminatedUnion("kind", [
     .object({ count: z.int(), kind: z.literal("answerExplanationsDeleted"), stepId: idSchema })
     .meta({ description: "Explanations of wrong answers written from the old screen are deleted" }),
   z
+    .object({ count: z.int(), kind: z.literal("tutorAnswersDeleted"), stepId: idSchema })
+    .meta({ description: "Tutor answers shared from the old screen are deleted" }),
+  z
+    .object({ count: z.int(), kind: z.literal("variantsKept"), stepId: idSchema })
+    .meta({
+      description:
+        "The screen's versions for a field or tool keep their content; set them in the fix to change them",
+    }),
+  z
     .object({ id: idSchema, kind: z.literal("answerKeyChanged"), model: screenModelSchema })
     .meta({ description: "Which answer counts as right changes" }),
   z

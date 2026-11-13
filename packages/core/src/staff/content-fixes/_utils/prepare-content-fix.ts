@@ -4,6 +4,7 @@ import { CURRENT_STEPS, readStagedLessonVersion } from "../../../library/lessons
 import { getScreenReadingTexts, holdsQuote } from "../../../library/steps/question-bases";
 import { type ContentFixEffect, type StoredChange, contentFixChangesSchema } from "../contract";
 import { type FixTarget } from "../handlers/fix-handler";
+import { numericScreenProblem } from "../handlers/numeric-screen";
 import { findStoredHandler, prepareProposedChange } from "../handlers/registry";
 import {
   type FixUnit,
@@ -133,6 +134,32 @@ function screenContents(changes: readonly StoredChange[]): Map<string, Json> {
   );
 }
 
+function variantIds(changes: readonly StoredChange[]): string[] {
+  return changes.filter((change) => change.model === "StepVariant").map((change) => change.id);
+}
+
+/** A screen's versions for a field or tool are rows of their own, which a fix sets or leaves. */
+async function keptVariantEffects(
+  db: TransactionClient,
+  changes: readonly StoredChange[],
+): Promise<ContentFixEffect[]> {
+  const stepIds = [...screenContents(changes).keys()];
+
+  if (stepIds.length === 0) {
+    return [];
+  }
+
+  const kept = await db.stepVariant.findMany({
+    select: { stepId: true },
+    where: { id: { notIn: variantIds(changes) }, stepId: { in: stepIds } },
+  });
+
+  return stepIds.flatMap((stepId) => {
+    const count = kept.filter((variant) => variant.stepId === stepId).length;
+    return count > 0 ? [{ count, kind: "variantsKept" as const, stepId }] : [];
+  });
+}
+
 function uniqueEffects(effects: readonly ContentFixEffect[]): ContentFixEffect[] {
   const seen = new Set<string>();
 
@@ -164,7 +191,11 @@ async function deletedExplanationProblem(
   const deleted = await db.answerExplanation.findFirst({
     select: { id: true },
     where: {
-      OR: [{ stepId: { in: [...screenContents(changes).keys()] } }, { itemId: { in: itemIds } }],
+      OR: [
+        { stepId: { in: [...screenContents(changes).keys()] } },
+        { step: { variants: { some: { id: { in: variantIds(changes) } } } } },
+        { itemId: { in: itemIds } },
+      ],
       id: { in: explanationIds },
     },
   });
@@ -189,6 +220,7 @@ async function unitProblem(
   return (
     (await lessonProblem(db, unit.id)) ??
     (await deletedExplanationProblem(db, changes)) ??
+    (await numericScreenProblem(db, changes)) ??
     quoteProblem(db, { contents: screenContents(changes), lessonId: unit.id })
   );
 }
@@ -231,12 +263,11 @@ export async function prepareContentFix(
   const lessonVersion: ContentFixEffect[] =
     first.unit.kind === "lesson" ? [{ kind: "lessonVersion", lessonId: first.unit.id }] : [];
 
-  return {
-    fix: {
-      changes: stored,
-      effects: uniqueEffects([...lessonVersion, ...accepted.flatMap((change) => change.effects)]),
-      unit: first.unit,
-    },
-    ok: true,
-  };
+  const effects = [
+    ...lessonVersion,
+    ...accepted.flatMap((change) => change.effects),
+    ...(await keptVariantEffects(db, stored)),
+  ];
+
+  return { fix: { changes: stored, effects: uniqueEffects(effects), unit: first.unit }, ok: true };
 }

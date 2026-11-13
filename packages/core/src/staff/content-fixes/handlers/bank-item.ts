@@ -34,6 +34,8 @@ export async function loadBankItem(db: TransactionClient, id: string) {
   }
 
   return item._count.steps > 0
-    ? refuse("A current lesson screen asks this question; fix that screen instead.")
+    ? refuse(
+        "A current lesson screen asks this question, so it stays asked: fix it in place with Item set in the same fix as that screen's Step set.",
+      )
     : { item, ok: true as const };
 }

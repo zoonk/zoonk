@@ -2,6 +2,35 @@ import { type ContentFixDetail } from "@/data/content-fixes/get-content-fix";
 import { type ContentFixEffect } from "@zoonk/core/staff/content-fixes/contract";
 import { TriangleAlertIcon } from "lucide-react";
 
+function countOf({ count, many, one }: { count: number; many: string; one: string }): string {
+  return `${String(count)} ${count === 1 ? one : many}`;
+}
+
+function describeWrittenFromScreen({
+  count,
+  kind,
+  screen,
+}: {
+  count: number;
+  kind: "answerExplanationsDeleted" | "tutorAnswersDeleted";
+  screen: string;
+}): string {
+  const rows =
+    kind === "answerExplanationsDeleted"
+      ? countOf({
+          count,
+          many: "saved explanations of wrong answers on",
+          one: "saved explanation of wrong answers on",
+        })
+      : countOf({ count, many: "shared tutor answers about", one: "shared tutor answer about" });
+
+  return `${rows} ${screen} ${count === 1 ? "is" : "are"} deleted. New ones are written from the fixed screen.`;
+}
+
+function screenLabel(rowLabels: ReadonlyMap<string, string>, id: string): string {
+  return rowLabels.get(id) ?? "this screen";
+}
+
 function describeEffect({
   effect,
   rowLabels,
@@ -13,11 +42,18 @@ function describeEffect({
     case "lessonVersion":
       return "Learners who open the lesson next get the fixed version.";
     case "answerExplanationsDeleted":
-      return `${String(effect.count)} saved ${effect.count === 1 ? "explanation" : "explanations"} of wrong answers on ${rowLabels.get(effect.stepId) ?? "this screen"} ${effect.count === 1 ? "is" : "are"} deleted. New ones are written from the fixed screen.`;
+    case "tutorAnswersDeleted":
+      return describeWrittenFromScreen({
+        count: effect.count,
+        kind: effect.kind,
+        screen: screenLabel(rowLabels, effect.stepId),
+      });
+    case "variantsKept":
+      return `The fix leaves ${countOf({ count: effect.count, many: "versions", one: "version" })} of ${screenLabel(rowLabels, effect.stepId)} for a field or tool unchanged.`;
     case "answerKeyChanged":
-      return `Which answer counts as right changes on ${rowLabels.get(effect.id) ?? "this screen"}.`;
+      return `Which answer counts as right changes on ${screenLabel(rowLabels, effect.id)}. Learners who started the lesson before the fix aren't marked wrong for it.`;
     case "questionChanged":
-      return `The question or options learners read change on ${rowLabels.get(effect.id) ?? "this screen"}. Someone answering the old screen is still graded by the same answer key.`;
+      return `The question or options learners read change on ${screenLabel(rowLabels, effect.id)}. Someone answering the old screen is still graded by the same answer key.`;
     case "marksKept":
       return "The lesson's idea marks, icons and maps stay as they were drawn.";
     case "screenLeftOut":

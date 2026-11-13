@@ -116,6 +116,60 @@ describe(checkScreenContentChange, () => {
       }),
     ).toMatchObject({ ok: false });
   });
+
+  it("reads a blank's sentence as its question and its answers as the key, which may change together", () => {
+    const before = {
+      answers: ["es"],
+      distractors: ["está", "son"],
+      feedback: "Ser describes what something is.",
+      template: "La casa [BLANK] grande.",
+    };
+
+    expect(
+      checkScreenContentChange({
+        after: { ...before, answers: ["está"], template: "La casa [BLANK] limpia hoy." },
+        before,
+        kind: "fillBlank",
+      }),
+    ).toStrictEqual({ changesAnswerKey: true, changesQuestion: true, ok: true });
+
+    expect(
+      checkScreenContentChange({
+        after: { ...before, feedback: "Ser describes what something is like." },
+        before,
+        kind: "fillBlank",
+      }),
+    ).toStrictEqual({ changesAnswerKey: false, changesQuestion: false, ok: true });
+  });
+
+  it("reads a match's pairs as its answer key", () => {
+    const before = { pairs: [{ left: "perro", right: "dog" }] };
+
+    expect(
+      checkScreenContentChange({
+        after: { pairs: [{ left: "perro", right: "a dog" }] },
+        before,
+        kind: "matchColumns",
+      }),
+    ).toStrictEqual({ changesAnswerKey: true, changesQuestion: false, ok: true });
+  });
+
+  it("lets a screen whose question another row decides change both, still refusing structure", () => {
+    const after = { ...withOptions([{ text: "6" }, { isCorrect: true }]), question: "2 + 4?" };
+
+    expect(
+      checkScreenContentChange({ after, before: check, keyedElsewhere: true, kind: "check" }),
+    ).toStrictEqual({ changesAnswerKey: true, changesQuestion: true, ok: true });
+
+    expect(
+      checkScreenContentChange({
+        after: withOptions([{ id: "c" }]),
+        before: check,
+        keyedElsewhere: true,
+        kind: "check",
+      }),
+    ).toMatchObject({ ok: false });
+  });
 });
 
 describe(listContentValueChanges, () => {
