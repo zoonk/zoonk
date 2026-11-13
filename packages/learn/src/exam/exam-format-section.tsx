@@ -50,7 +50,7 @@ function useDayParts() {
   const t = useExtracted();
   const format = useFormatter();
 
-  return (day: ExamFormatDay): string => {
+  return (day: ExamFormatDay): { count: string | null; parts: string } => {
     const questions = day.parts.reduce(
       (sum, part) => sum + (part.written ? 0 : (part.questions ?? 0)),
       0,
@@ -61,13 +61,12 @@ function useDayParts() {
       { type: "conjunction" },
     );
 
-    // The no-break space keeps "·" with the count, so a wrapped line never ends on the dot.
-    return questions > 0
-      ? t("{parts} ·{count, plural, one {# question} other {# questions}}", {
-          count: questions,
-          parts,
-        })
-      : parts;
+    const count =
+      questions > 0
+        ? t("{count, plural, one {# question} other {# questions}}", { count: questions })
+        : null;
+
+    return { count, parts };
   };
 }
 
@@ -90,6 +89,7 @@ function DayRow({ day, numbered }: { day: ExamFormatDay; numbered: boolean }) {
   const dayTitle = useDayTitle();
   const dayParts = useDayParts();
   const formatDuration = useFormatDuration();
+  const { count, parts } = dayParts(day);
 
   return (
     <li className="py-2.5">
@@ -99,7 +99,9 @@ function DayRow({ day, numbered }: { day: ExamFormatDay; numbered: boolean }) {
           {day.minutes !== null && day.minutes > 0 ? formatDuration(day.minutes) : null}
         </span>
         <span className="text-muted-foreground basis-full pt-0.5 text-xs text-pretty">
-          {dayParts(day)}
+          {parts}
+          {/* Unbroken from " ·" on, so a wrapped line never starts or ends on the dot. */}
+          {count && <span className="whitespace-nowrap">{` · ${count}`}</span>}
         </span>
       </span>
     </li>
