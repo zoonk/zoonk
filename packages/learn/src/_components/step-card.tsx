@@ -15,7 +15,7 @@ export function StepCard({ className, ...props }: React.ComponentProps<"section"
 export function StepHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("flex flex-col items-start gap-1.5", className)}
+      className={cn("flex flex-col items-start gap-1.5 *:data-[slot=eyebrow]:mb-1.5", className)}
       data-slot="step-header"
       {...props}
     />
