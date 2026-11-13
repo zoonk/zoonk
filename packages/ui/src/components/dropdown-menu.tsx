@@ -5,6 +5,9 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon } from "lucide-react";
 import type * as React from "react";
 
+/** A menu keeps the page's gutter from the screen's edge, as content does (craft S5). */
+const PAGE_GUTTER = 16;
+
 /** Inside a dynamic segment, give it a `key` that changes with the route: Base UI Menu's context goes stale across soft navigations. */
 function DropdownMenu({ ...props }: MenuPrimitive.Root.Props) {
   return <MenuPrimitive.Root data-slot="dropdown-menu" {...props} />;
@@ -18,7 +21,7 @@ function DropdownMenuTrigger({ ...props }: MenuPrimitive.Trigger.Props) {
 function DropdownMenuContent({
   align = "start",
   alignOffset = 0,
-  collisionPadding,
+  collisionPadding = PAGE_GUTTER,
   keepMounted,
   side = "bottom",
   sideOffset = 4,

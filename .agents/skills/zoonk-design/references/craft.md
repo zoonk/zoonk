@@ -119,7 +119,7 @@ A container's left and right padding are equal, its text is never closer than 8p
 
 ### S5. The gutter is the frame's
 
-Content keeps the frame's gutter from the screen's edge: 16px on a phone, 32px on a tablet, 40px beside the sidebar from `lg`. Only E7's bleeds pass it.
+Content keeps the frame's gutter from the screen's edge: 16px on a phone, 32px on a tablet, 40px beside the sidebar from `lg`. Only E7's bleeds pass it. A menu or a popover keeps at least 16px from the screen's edge (the pieces' collision padding).
 
 - **Check.** The main region's leftmost and rightmost ink against the screen's edges.
 - **Usual break.** A box drawn with an outside ring, 1px wider than the field above it.

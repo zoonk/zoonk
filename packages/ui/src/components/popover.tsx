@@ -4,6 +4,9 @@ import { Popover as PopoverPrimitive } from "@base-ui/react/popover";
 import { cn } from "@zoonk/ui/lib/utils";
 import type * as React from "react";
 
+/** A popover keeps the page's gutter from the screen's edge, as content does (craft S5). */
+const PAGE_GUTTER = 16;
+
 function Popover({ ...props }: PopoverPrimitive.Root.Props) {
   return <PopoverPrimitive.Root data-slot="popover" {...props} />;
 }
@@ -32,6 +35,7 @@ function PopoverContent({
         align={align}
         alignOffset={alignOffset}
         className="isolate z-50"
+        collisionPadding={PAGE_GUTTER}
         side={side}
         sideOffset={sideOffset}
       >
