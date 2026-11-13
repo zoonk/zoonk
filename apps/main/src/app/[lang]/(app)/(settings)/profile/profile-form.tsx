@@ -189,7 +189,7 @@ export function ProfileForm({
 
       <BottomBar>
         <BottomBarActions>
-          <EnterButton busy={isSaving} disabled={!canSave} enter="host" form={formId} type="submit">
+          <EnterButton busy={isSaving} disabled={!canSave} form={formId} type="submit">
             {t("Save")}
           </EnterButton>
         </BottomBarActions>
