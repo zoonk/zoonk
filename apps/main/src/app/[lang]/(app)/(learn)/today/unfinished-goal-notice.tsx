@@ -17,13 +17,13 @@ export async function UnfinishedGoalNotice({ goal }: { goal: UnfinishedGoal }) {
   const t = await getExtracted();
 
   return (
-    <section aria-label={t("What you wrote")}>
+    <section aria-label={t("A goal you started")}>
       <NoticeCard>
         <PenLineIcon aria-hidden="true" />
 
         <NoticeCardContent>
           <NoticeCardTitle className="line-clamp-2">{goal.prompt}</NoticeCardTitle>
-          <NoticeCardDescription>{t("What you wrote")}</NoticeCardDescription>
+          <NoticeCardDescription>{t("You didn't finish setting this up.")}</NoticeCardDescription>
 
           <NoticeCardActions>
             <Link

@@ -70,8 +70,8 @@ function MissionsLabel({ missions }: { missions: MissionsCount }) {
 }
 
 const GLYPH_SIZES = {
-  md: { face: "size-7", icon: "size-5", ring: "size-8", ringedFace: "size-6" },
-  sm: { face: "size-5", icon: "size-4", ring: "size-6", ringedFace: "size-4" },
+  md: { face: "size-6", icon: "size-5", ring: "size-6 shrink-0", ringedFace: "size-4.5" },
+  sm: { face: "size-5", icon: "size-4", ring: "size-6 shrink-0", ringedFace: "size-4" },
 } as const;
 
 function TabIcon({
@@ -136,26 +136,11 @@ const SIDE_TAB_ITEM_CLASS = cn(
 const PENDING_NAVIGATION_CLASS =
   "[&:has([data-link-pending])_[aria-current=page]]:bg-transparent [&:has([data-link-pending])_[aria-current=page]]:text-muted-foreground";
 
-type SideNavigationProps = LearnNavigationProps & { todayCount?: React.ReactNode };
-
-function SideTab({
-  activeTab,
-  buddy,
-  missions,
-  tab,
-  todayCount,
-}: SideNavigationProps & { tab: LearnTab }) {
+function SideTab({ activeTab, buddy, missions, tab }: LearnNavigationProps & { tab: LearnTab }) {
   const routes = useLearnRoutes();
 
   return (
-    <SidebarTooltip
-      label={
-        <>
-          <TabLabel buddy={buddy} tab={tab} />
-          {tab === "today" && todayCount}
-        </>
-      }
-    >
+    <SidebarTooltip label={<TabLabel buddy={buddy} tab={tab} />}>
       <LearnLink
         aria-current={tab === activeTab ? "page" : undefined}
         className={SIDE_TAB_ITEM_CLASS}
@@ -168,14 +153,13 @@ function SideTab({
           <TabLabel buddy={buddy} tab={tab} />
         </span>
         {tab === "buddy" && missions && <MissionsLabel missions={missions} />}
-        {tab === "today" && todayCount}
       </LearnLink>
     </SidebarTooltip>
   );
 }
 
 /** Place it inside `Sidebar`. */
-export function LearnSideNavigation(props: SideNavigationProps) {
+export function LearnSideNavigation(props: LearnNavigationProps) {
   return (
     <NavigationRoot className={PENDING_NAVIGATION_CLASS} data-slot="learn-side-navigation">
       <ul className="flex flex-col gap-0.5">
