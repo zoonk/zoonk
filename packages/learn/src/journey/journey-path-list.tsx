@@ -128,7 +128,7 @@ function ChaptersPhase({
       <li aria-current={phase.state === "current" ? "step" : undefined} data-state={phase.state}>
         <div className={PHASE_ROW_CLASS}>
           {header}
-          <ListRowChevronSpace fold />
+          <ListRowChevronSpace />
         </div>
       </li>
     );
@@ -210,7 +210,7 @@ function FinishItem() {
             />
           )}
         </span>
-        <ListRowChevronSpace fold />
+        <ListRowChevronSpace />
       </div>
     </li>
   );

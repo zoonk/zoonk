@@ -1,5 +1,4 @@
 import { BusyIcon } from "@zoonk/ui/components/button";
-import { FoldChevron } from "@zoonk/ui/components/collapsible";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronRightIcon } from "lucide-react";
 import { type LearnLinkComponentProps } from "../learn-context";
@@ -44,8 +43,13 @@ export const LIST_ROW_INTERACTIVE_CLASS = cn(
 
 export const CURRENT_ROW_CLASS = "before:bg-muted hover:before:bg-muted";
 
-/** A row's trailing chevron, its ink on the row's end edge. */
-export const ROW_CHEVRON_CLASS = "text-faint edge -me-(--edge-pull) size-4 shrink-0 self-center";
+/**
+ * A row's trailing chevron, its ink on the row's end edge. The pull moves the glyph, not its place:
+ * every glyph keeps a 16px slot, so the value before a ">" ends where the value before a fold arrow
+ * does.
+ */
+export const ROW_CHEVRON_CLASS =
+  "text-faint edge ms-(--edge-pull) -me-(--edge-pull) size-4 shrink-0 self-center";
 
 /** The same chevron after a 12px line, such as a header's "1 of 4". */
 export const SMALL_CHEVRON_CLASS =
@@ -56,16 +60,11 @@ export function ListRowChevron() {
 }
 
 /**
- * The chevron's place, empty, at the end of a row that can't be opened: the value before it ends
- * where the other rows' values do. It is the hidden glyph itself, so its box can't drift from the
- * chevron's; `fold` stands in for a fold arrow.
+ * The chevron's slot, empty, at the end of a row that can't be opened: the value before it ends
+ * where the other rows' values do.
  */
-export function ListRowChevronSpace({ fold = false }: { fold?: boolean }) {
-  return fold ? (
-    <FoldChevron className="invisible" />
-  ) : (
-    <ChevronRightIcon aria-hidden="true" className={cn(ROW_CHEVRON_CLASS, "invisible")} />
-  );
+export function ListRowChevronSpace() {
+  return <span aria-hidden="true" className="size-4 shrink-0" />;
 }
 
 export function ListRow({ className, ...props }: React.ComponentProps<"div">) {
