@@ -380,7 +380,8 @@ private struct BuddyContent: View {
       DisclosureChevron()
     }
     .labelStyle(.titleAndIcon)
-    .typeStyle(.data)
+    .typeStyle(.note)
+    .monospacedDigit()
     .foregroundStyle(.mutedForeground)
     .contentShape(.rect)
   }
