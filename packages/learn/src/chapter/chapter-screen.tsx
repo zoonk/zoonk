@@ -108,13 +108,7 @@ function ChapterPractice() {
       </PageSectionHeader>
 
       <ListGroup>
-        {canTestOut && (
-          <TestOutStartRow
-            onStart={actions.startTestOut}
-            plusRequired={chapter.testOut.plusRequired}
-            scope="chapter"
-          />
-        )}
+        {canTestOut && <TestOutStartRow onStart={actions.startTestOut} scope="chapter" />}
         <ChapterMistakes />
       </ListGroup>
     </PageSection>

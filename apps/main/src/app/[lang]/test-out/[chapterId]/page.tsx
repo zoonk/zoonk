@@ -91,11 +91,7 @@ async function TestOutBody({ params, searchParams }: Props) {
     return null;
   }
 
-  if (
-    result.status !== "ready" &&
-    result.status !== "plusRequired" &&
-    result.status !== "recorded"
-  ) {
+  if (result.status !== "ready" && result.status !== "recorded") {
     return (
       <NotFoundPage>
         <TaskNotFound />
@@ -129,10 +125,6 @@ async function TestOutBody({ params, searchParams }: Props) {
         test={null}
       />
     );
-  }
-
-  if (result.status === "plusRequired") {
-    return <TestOutPreparingClient generationId={null} page={page} plusRequired />;
   }
 
   if (result.testOut.questions.length === 0) {
