@@ -6,13 +6,13 @@ import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson
 import { Kbd } from "@zoonk/ui/components/kbd";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
+import { MAX_PICK_KEYS, shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { stripWrappingQuotes } from "@zoonk/utils/string";
 import { useExtracted } from "next-intl";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { useWebHaptics } from "web-haptics/react";
 import { usePlayerInteractionState } from "../player-context";
-import { MAX_NUMBER_KEY_SHORTCUT, getNumberKeyShortcut } from "../player-shortcuts";
 import { type SelectedAnswer } from "../step-answer";
 import {
   type ItemVisualState,
@@ -52,14 +52,14 @@ function MatchItem({
 }) {
   const isLocked = state === "correct" || state === "incorrectFlash";
   const displayLabel = stripWrappingQuotes(label);
-  const shortcut = !isLocked && isShortcutActive ? getNumberKeyShortcut(marker - 1) : null;
+  const shortcut = !isLocked && isShortcutActive ? shortcutKeys("pick", marker - 1) : undefined;
 
   return (
     <button
-      aria-keyshortcuts={shortcut ?? undefined}
+      aria-keyshortcuts={shortcut}
       aria-pressed={state === "selected"}
       className={cn(
-        "rounded-option focus-visible:outline-ring flex min-h-11 items-start gap-3 px-3 py-3.25 text-left leading-6 font-medium wrap-break-word transition-colors outline-none select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid sm:px-3.5",
+        "focus-visible:outline-ring flex min-h-11 items-start gap-3 rounded-xl px-3 py-3.25 text-left leading-6 font-medium wrap-break-word transition-colors outline-none select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid sm:px-3.5",
         getItemClassName(state),
       )}
       aria-disabled={isLocked || undefined}
@@ -175,7 +175,7 @@ export function MatchColumnsStep({
   );
 
   useNumberKeys({
-    count: Math.min(keyboardItems.length, MAX_NUMBER_KEY_SHORTCUT),
+    count: Math.min(keyboardItems.length, MAX_PICK_KEYS),
     enabled: !isSolved && flashingMatch === null && interactionState !== "paused",
     onPick: (index) => {
       const item = keyboardItems[index];
@@ -211,7 +211,7 @@ export function MatchColumnsStep({
 
       <MatchBoard
         alignRows
-        className="text-[0.9375rem]"
+        className="text-reading"
         left={leftItems}
         renderItem={renderItem}
         right={board.rightItems}

@@ -35,7 +35,7 @@ export async function LessonChapterAside({
       <div className="flex flex-col gap-1">
         <p className="text-muted-foreground font-mono text-xs tabular-nums">{facts.join(" · ")}</p>
 
-        <h2 className="text-[0.9375rem] leading-snug font-semibold text-pretty" id={titleId}>
+        <h2 className="text-reading leading-snug font-semibold text-pretty" id={titleId}>
           <Link
             className="focus-visible:ring-ring/50 hit-area relative rounded-md outline-none hover:underline hover:underline-offset-4 focus-visible:ring-[3px]"
             href={getChapterHref({ ...params, chapterSlug: chapter.slug })}

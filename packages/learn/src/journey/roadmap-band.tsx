@@ -18,9 +18,7 @@ export function BandFace({ phase }: { phase: PlanPhaseView }) {
   return (
     <>
       <span className={BAND_NAME_CLASS}>
-        {phase.state === "done" && (
-          <CheckIcon aria-hidden="true" className={BAND_CHECK_CLASS} strokeWidth={2.5} />
-        )}
+        {phase.state === "done" && <CheckIcon aria-hidden="true" className={BAND_CHECK_CLASS} />}
         {phaseName(phase, { mocksRequirePlus: plan.access.mocksRequirePlus })}
       </span>
       {phase.state === "current" && <span className="sr-only">{t(", you are here")}</span>}

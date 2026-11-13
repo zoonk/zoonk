@@ -8,7 +8,7 @@ import { type ReactNode } from "react";
 
 /** Rows a little larger than the app's, so a phone reads them at a glance. */
 export const EXAMPLE_ROWS_CLASS =
-  "**:data-[slot=list-row-description]:text-[0.8125rem] **:data-[slot=list-row-title]:text-[0.9375rem] **:data-[slot=list-row-trailing]:text-[0.8125rem]";
+  "**:data-[slot=list-row-description]:text-compact **:data-[slot=list-row-title]:text-reading **:data-[slot=list-row-trailing]:text-compact";
 
 export function ExampleCard({ className, ...props }: React.ComponentProps<"div">) {
   return <ProductWindow className={cn("p-5 sm:p-6", className)} {...props} />;
@@ -28,10 +28,10 @@ export async function ExampleCardHead({
   return (
     <div className="flex items-start justify-between gap-3">
       <div className="flex min-w-0 flex-col gap-0.5">
-        <p className="text-[1.0625rem] leading-snug font-semibold tracking-[-0.015em] text-pretty">
+        <p className="text-lg leading-snug font-semibold tracking-[-0.015em] text-pretty">
           {title}
         </p>
-        <p className="text-muted-foreground text-[0.8125rem]">
+        <p className="text-muted-foreground text-compact">
           {t("Example")}
           {detail && (
             <>
@@ -66,16 +66,14 @@ export async function ExampleDay({ detail, steps }: { detail?: string; steps: Da
   return (
     <div className="flex flex-col">
       <p className="flex items-baseline justify-between gap-3">
-        <span className="text-[1.1875rem] leading-6 font-semibold tracking-[-0.02em]">
-          {t("Today")}
-        </span>
-        <span className={cn(NUMERIC_CLASS, "text-muted-foreground text-[0.8125rem]")}>
+        <span className="text-xl leading-6 font-semibold tracking-[-0.02em]">{t("Today")}</span>
+        <span className={cn(NUMERIC_CLASS, "text-muted-foreground text-compact")}>
           {minutesText(minutes)}
         </span>
       </p>
 
       {detail && (
-        <p className="text-muted-foreground mt-0.5 text-[0.8125rem]">{`${t("Example")} · ${detail}`}</p>
+        <p className="text-muted-foreground text-compact mt-0.5">{`${t("Example")} · ${detail}`}</p>
       )}
 
       <DaySegments className="mt-3 mb-1" steps={steps} />

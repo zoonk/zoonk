@@ -2,7 +2,7 @@
 
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { Button } from "@zoonk/ui/components/button";
-import { ArrowLeftIcon, Undo2Icon } from "lucide-react";
+import { Undo2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { StepCard, StepDetail, StepHeader, StepTitle } from "../_components/step-card";
 import { TaskActions } from "../_components/task-layout";
@@ -30,15 +30,12 @@ export function ChallengeMovedScreen({
 
   return (
     <TaskFrame
-      closeOnEscape
       exitHref={hrefs.exit}
       footer={
         <>
           <MoveFailed />
           <TaskActions>
-            <TaskMainLink href={hrefs.exit} icon={<ArrowLeftIcon aria-hidden="true" />}>
-              {t("Back to Today")}
-            </TaskMainLink>
+            <TaskMainLink href={hrefs.exit}>{t("Back to Today")}</TaskMainLink>
             <Button
               busy={move.pending}
               className="shrink-0"

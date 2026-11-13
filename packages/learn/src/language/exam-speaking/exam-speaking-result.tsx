@@ -10,13 +10,8 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { LightbulbIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { CHIP_CLASS } from "../../_components/chip";
-import {
-  StepCard,
-  StepDetail,
-  StepEyebrow,
-  StepHeader,
-  StepTitle,
-} from "../../_components/step-card";
+import { Eyebrow } from "../../_components/eyebrow";
+import { StepCard, StepDetail, StepHeader, StepTitle } from "../../_components/step-card";
 import { Steps, type StepsItem } from "../../_components/steps";
 import { StepWithDayMoment } from "../../session/day-moment";
 import { TaskMainLink } from "../../shell/task-frame";
@@ -143,7 +138,7 @@ function CriteriaStep({
     <>
       <StepCard>
         <StepHeader>
-          <StepEyebrow>{title(examTask)}</StepEyebrow>
+          <Eyebrow>{title(examTask)}</Eyebrow>
           <StepTitle lang={conversation.targetLanguage}>{examTask.task.name}</StepTitle>
           {levelLine && <StepDetail>{levelLine}</StepDetail>}
           {notes.map((note) => (
@@ -187,7 +182,7 @@ function FocusStep({ focus, language }: { focus: GradedCriterion; language: stri
     <>
       <StepCard>
         <StepHeader>
-          <StepEyebrow>{t("Work on this first")}</StepEyebrow>
+          <Eyebrow>{t("Work on this first")}</Eyebrow>
           <StepTitle>{gloss(focus.criterion)}</StepTitle>
           <StepDetail lang={language}>{focus.criterion.name}</StepDetail>
           <StepDetail>{focus.grade.evidence}</StepDetail>

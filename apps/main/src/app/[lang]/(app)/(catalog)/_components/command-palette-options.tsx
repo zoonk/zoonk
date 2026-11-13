@@ -123,7 +123,7 @@ function SimpleOptionContent({
       <span className="flex min-w-0 flex-1 items-center gap-2">
         <span className="truncate">{item.label}</span>
         {chip && (
-          <span className="text-muted-foreground ring-border hidden h-5.5 shrink-0 items-center rounded-md px-2 text-[0.71875rem] font-medium ring-1 ring-inset sm:inline-flex">
+          <span className="text-muted-foreground ring-border text-2xs hidden h-5.5 shrink-0 items-center rounded-sm px-2 font-medium ring-1 ring-inset sm:inline-flex">
             {chip}
           </span>
         )}

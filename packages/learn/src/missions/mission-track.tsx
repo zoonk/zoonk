@@ -56,7 +56,7 @@ export function MissionTrack({
 
         return (
           <span
-            className="bg-brain/15 dark:bg-brain/30 relative h-1.5 flex-1 overflow-hidden rounded-[3px]"
+            className="bg-brain/15 dark:bg-brain/30 rounded-meter relative h-1.5 flex-1 overflow-hidden"
             key={mission.kind}
           >
             <span

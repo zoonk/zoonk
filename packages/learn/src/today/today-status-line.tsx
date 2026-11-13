@@ -19,7 +19,7 @@ export function TodayStatusLine({
     >
       <span
         aria-hidden="true"
-        className="text-muted-foreground flex h-5 w-5 shrink-0 items-center justify-center [&>svg]:size-4"
+        className="text-muted-foreground flex h-5 w-4 shrink-0 items-center justify-center [&>svg]:size-4"
       >
         {icon}
       </span>
@@ -50,7 +50,7 @@ export function TodayStatusClause({
     <span
       className={cn(
         "text-muted-foreground",
-        mono && "font-mono text-[0.8125rem] whitespace-nowrap tabular-nums",
+        mono && "text-compact font-mono whitespace-nowrap tabular-nums",
       )}
     >
       {children}

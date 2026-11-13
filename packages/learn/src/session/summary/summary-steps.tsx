@@ -1,12 +1,13 @@
 "use client";
 
 import { CelebrationScope } from "@zoonk/ui/hooks/celebration";
-import { useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
+import { useShortcut } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { QuestionBack } from "../../_components/question-actions";
 import { StepDots } from "../../_components/step-dots";
-import { StepsBackButton, focusStepTitle } from "../../_components/steps";
+import { focusStepTitle } from "../../_components/steps";
 import { useTaskAsideShown } from "../../_components/task-header";
 import { TaskActions } from "../../_components/task-layout";
 import { isFocusLost } from "../../_utils/is-focus-lost";
@@ -44,7 +45,7 @@ function useRewardsStep(stepRef: React.RefObject<HTMLElement | null>) {
     setOpen(false);
   };
 
-  useKeyboardCallback("ArrowLeft", () => (shown ? close() : false), { mode: "none", screen: true });
+  useShortcut("previous", () => (shown ? close() : false));
 
   const last = useRef({ open, shown });
 
@@ -87,7 +88,7 @@ function SummaryButtons({
 
   return (
     <TaskActions>
-      {rewards.open && <StepsBackButton onClick={rewards.close} />}
+      {rewards.open && <QuestionBack label={t("Back")} onClick={rewards.close} />}
       {!rewards.open && canSeeMistakes && (
         <SeeMistakesLink className={sharedRow} href={mistakesHref} />
       )}
@@ -147,7 +148,6 @@ export function SummarySteps() {
           label: t("Earned today"),
           title: t("Earned today"),
         }}
-        closeOnEscape
         exitHref={exitHref}
         footer={
           <>

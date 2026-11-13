@@ -94,7 +94,7 @@ function MonthYear({ isoDate }: { isoDate: string }) {
   return parts.map((part, index) =>
     part.type === "year" ? (
       // oxlint-disable-next-line react/no-array-index-key -- the parts are fixed for this date
-      <span className="text-muted-foreground text-[0.8125rem] font-medium" key={index}>
+      <span className="text-muted-foreground text-compact font-medium" key={index}>
         {part.value}
       </span>
     ) : (

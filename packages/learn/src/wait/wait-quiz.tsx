@@ -5,7 +5,7 @@ import { type WarmUpCard as Card, type WarmUpDeck } from "@zoonk/core/library/wa
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
-import { cn } from "@zoonk/ui/lib/utils";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { useExtracted } from "next-intl";
 import {
   type KeyboardEvent,
@@ -19,12 +19,12 @@ import {
 import { AnswerOption, AnswerOptionGroup } from "../_components/answer-option";
 import { type AnswerOptionResult } from "../_components/answer-tone";
 import { PageEyebrow } from "../_components/page";
+import { QuestionTitle } from "../_components/question-title";
 import { VerdictLabel } from "../_components/verdict-label";
 import { tabStorage } from "../_utils/device-storage";
 import { isFocusLost } from "../_utils/is-focus-lost";
 import { useLearnAnalytics } from "../learn-context";
 import { useOnboardingClock } from "../onboarding/onboarding-clock";
-import { QUESTION_TEXT_CLASS } from "../questions/item-text";
 
 type Dealt = { pickedId: string | null; position: number };
 
@@ -204,7 +204,7 @@ function QuizReveal({ card, pickedId }: { card: Card; pickedId: string }) {
   return (
     <div className="flex flex-col gap-1.5">
       <VerdictLabel verdict={right ? "guessRight" : "guess"} />
-      <p className="text-[0.9375rem] leading-normal text-pretty">{card.reveal}</p>
+      <p className="text-reading leading-normal text-pretty">{card.reveal}</p>
     </div>
   );
 }
@@ -237,7 +237,7 @@ export function WaitQuizSkeleton() {
 
       <div className="flex flex-col gap-2.5">
         {Array.from({ length: OPTION_COUNT }, (_, index) => (
-          <Skeleton className="rounded-option h-12.5 w-full" key={index} />
+          <Skeleton className="h-12.5 w-full rounded-xl" key={index} />
         ))}
       </div>
     </div>
@@ -303,23 +303,18 @@ export function WaitQuizCard({
       <div className="flex flex-col gap-2">
         <QuizEyebrow />
 
-        <h2
-          className={cn(QUESTION_TEXT_CLASS, "outline-none")}
-          id={questionId}
-          ref={questionRef}
-          tabIndex={-1}
-        >
+        <QuestionTitle id={questionId} ref={questionRef} tabIndex={-1}>
           {card.question}
-        </h2>
+        </QuestionTitle>
       </div>
 
-      <AnswerOptionGroup aria-label={undefined} aria-labelledby={questionId}>
+      <AnswerOptionGroup aria-label={undefined} aria-labelledby={questionId} arrows="move">
         {card.options.map((option, index) => {
           const picked = option.id === pickedId;
 
           return (
             <AnswerOption
-              aria-keyshortcuts={String(index + 1)}
+              aria-keyshortcuts={shortcutKeys("pick", index)}
               disabled={answered}
               guessed
               key={option.id}

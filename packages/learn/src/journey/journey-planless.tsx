@@ -1,14 +1,12 @@
 "use client";
 
-import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { GenerationTimelineDescription } from "@zoonk/ui/components/generation-timeline";
-import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { EnterButton, EnterLink } from "../_components/enter-button";
 import { Page, PageEyebrow, PageSection } from "../_components/page";
 import { type GenerationRun } from "../generation/generation-run";
 import { GenerationWait } from "../generation/generation-wait";
 import { useRefreshUntilShown } from "../generation/use-refresh-until-shown";
-import { LearnLink } from "../learn-link";
 import {
   GoalMenuDialogs,
   type GoalStatusControl,
@@ -41,7 +39,7 @@ function PlanlessHeader({
 }
 
 const SETUP_TITLE_ID = "journey-setup-title";
-const SETUP_TITLE_CLASS = "text-[0.9375rem] font-medium";
+const SETUP_TITLE_CLASS = "text-reading font-medium";
 const SETUP_ACTION_CLASS = "mt-2 w-full md:w-auto";
 
 function SetupPaused({
@@ -62,15 +60,14 @@ function SetupPaused({
       <p className="text-muted-foreground text-sm">
         {t("Nothing is planned until you resume it.")}
       </p>
-      <Button
+      <EnterButton
         busy={isPending}
         className={SETUP_ACTION_CLASS}
-        icon={<PlayIcon aria-hidden="true" />}
         onClick={() => setStatus("active")}
         size="lg"
       >
         {t("Resume")}
-      </Button>
+      </EnterButton>
     </>
   );
 }
@@ -86,12 +83,9 @@ function SetupLeft({ continueHref }: { continueHref: string }) {
       <p className="text-muted-foreground text-sm">
         {t("Answer them and we'll plan every day until you reach your goal.")}
       </p>
-      <LearnLink
-        className={buttonVariants({ className: SETUP_ACTION_CLASS, size: "lg" })}
-        href={continueHref}
-      >
+      <EnterLink className={SETUP_ACTION_CLASS} href={continueHref} size="lg">
         {t("Continue")}
-      </LearnLink>
+      </EnterLink>
     </>
   );
 }

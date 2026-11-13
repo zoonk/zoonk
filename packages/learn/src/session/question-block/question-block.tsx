@@ -1,6 +1,7 @@
 "use client";
 
 import { useExtracted } from "next-intl";
+import { QuestionActions } from "../../_components/question-actions";
 import { type TaskSegment } from "../../_components/task-header";
 import { TaskActionBar } from "../../_components/task-layout";
 import { type LearnBuddy } from "../../buddies/use-buddy-name";
@@ -25,7 +26,6 @@ import {
 } from "./block-question";
 import { getBlockTutorItem, withTutorAside } from "./block-tutor-item";
 import { PauseSuggestion } from "./pause-suggestion";
-import { QuestionActionsRow } from "./question-actions";
 import { QuestionBlockClose, QuestionBlockHeader } from "./question-block-header";
 import { type QuestionBlockPhase, type QuestionBlockState } from "./question-block-state";
 import { QuestionBlockStatus } from "./question-block-status";
@@ -127,12 +127,7 @@ function BlockMenu({ target }: { target: ReturnType<typeof getVoteTarget> }) {
   }
 
   return (
-    <ContentFeedbackMenu
-      label={t("Question options")}
-      screen="question-block"
-      size="task"
-      target={target}
-    />
+    <ContentFeedbackMenu label={t("Question options")} screen="question-block" target={target} />
   );
 }
 
@@ -240,14 +235,15 @@ export function QuestionBlock({
           <FinishReadyActions onFinish={run.retryFinish} phase={phase} />
 
           {question && isQuestionPhase(phase) && (
-            <QuestionActionsRow ask={phase.kind === "alreadyAnswered" ? null : askButton}>
+            <QuestionActions>
               <BlockQuestionActions
                 blockDrill={blockDrill}
                 draft={draft}
                 question={question}
                 run={run}
               />
-            </QuestionActionsRow>
+              {phase.kind !== "alreadyAnswered" && askButton}
+            </QuestionActions>
           )}
         </TaskActionBar>
       )}

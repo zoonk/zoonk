@@ -10,6 +10,7 @@ import { SURFACE_CLASS, Surface } from "../_components/surface";
 import { FactSegments } from "../_components/task-meta";
 import { TITLE_ROW_CLASS } from "../_components/title-row";
 import { useFormatDuration } from "../_utils/time-format";
+import { BuddyArt } from "../buddies/buddy-art";
 import { type BuddyToday } from "../buddies/buddy-status-view";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { type DayStep } from "../session/session-types";
@@ -17,7 +18,7 @@ import { BrainPowerReward } from "./brain-power-reward";
 import { MissionStepLine, useMissionName, useMissionStateLabel } from "./mission-copy";
 import { type MissionLinks, type MissionView, useMissionOpen } from "./mission-links";
 import { MissionListRow, ProgressCount } from "./mission-list";
-import { BuddyFace, MissionMark } from "./mission-mark";
+import { MissionMark } from "./mission-mark";
 import { MissionTrack } from "./mission-track";
 
 export type MissionsDay = Pick<BuddyToday, "fullMeal"> & { missions: readonly MissionView[] };
@@ -200,13 +201,13 @@ export function MissionsCard({
       )}
       data-slot="missions-card"
     >
-      <div className="flex items-start gap-2.5">
-        {showBuddy && <BuddyFace buddy={buddy} className="mt-0.5 size-6" />}
-
-        <div className={cn(TITLE_ROW_CLASS, "min-w-0 flex-1 items-start gap-y-1")}>
+      <div className={cn(TITLE_ROW_CLASS, "items-start gap-y-1")}>
+        {/* Centers on the title and its count, whatever the reward beside them takes. */}
+        <div className="flex items-center gap-2.5 *:last:min-w-0">
+          {showBuddy && <BuddyArt buddy={buddy} className="size-6" view="face" />}
           <MissionsHeading missions={missions} points={points} titleId={titleId} won={won} />
-          <BrainPowerReward brainPower={brainPower} earned={won} points={points} />
         </div>
+        <BrainPowerReward brainPower={brainPower} earned={won} points={points} />
       </div>
 
       <MissionTrack className="mt-3.5" missions={missions} />
