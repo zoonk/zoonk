@@ -13733,9 +13733,9 @@ msgid "vector {base}"
 msgstr "vecteur {base}"
 
 #: src/session/extra-time-button.tsx
-msgctxt "a8JHBW"
-msgid "Study {minutes} more minutes"
-msgstr "Étudier {minutes} minutes de plus"
+msgctxt "dWsizD"
+msgid "Practice {minutes} more min"
+msgstr "S’entraîner {minutes} min de plus"
 
 #: src/session/failed-moment.tsx
 msgctxt "kapQxt"
@@ -14811,7 +14811,7 @@ msgid "{count, plural, one {# lesson skipped because you already know it} other 
 msgstr "{count, plural, one {# leçon sautée car tu la connais déjà} other {# leçons sautées car tu les connais déjà}}"
 
 #: src/today/today-action.tsx
-#: src/today/today-extra-time.tsx
+#: src/today/today-more.tsx
 msgctxt "6Jd28t"
 msgid "Practice {minutes} min"
 msgstr "S’entraîner {minutes} min"
@@ -14966,11 +14966,6 @@ msgstr "Choix d’examen"
 msgctxt "9HjIgh"
 msgid "Your exam"
 msgstr "Ton examen"
-
-#: src/today/today-extra-time.tsx
-msgctxt "dWsizD"
-msgid "Practice {minutes} more min"
-msgstr "S’entraîner {minutes} min de plus"
 
 #: src/today/today-falling-behind.tsx
 msgctxt "0NqGSq"

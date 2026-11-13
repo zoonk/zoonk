@@ -13733,9 +13733,9 @@ msgid "vector {base}"
 msgstr "wektor {base}"
 
 #: src/session/extra-time-button.tsx
-msgctxt "a8JHBW"
-msgid "Study {minutes} more minutes"
-msgstr "Ucz się jeszcze przez {minutes} min"
+msgctxt "dWsizD"
+msgid "Practice {minutes} more min"
+msgstr "Ćwicz jeszcze przez {minutes} min"
 
 #: src/session/failed-moment.tsx
 msgctxt "kapQxt"
@@ -14811,7 +14811,7 @@ msgid "{count, plural, one {# lesson skipped because you already know it} other 
 msgstr "{count, plural, one {Pominięto # lekcję, bo już ją znasz} few {Pominięto # lekcje, bo już je znasz} other {Pominięto # lekcji, bo już je znasz}}"
 
 #: src/today/today-action.tsx
-#: src/today/today-extra-time.tsx
+#: src/today/today-more.tsx
 msgctxt "6Jd28t"
 msgid "Practice {minutes} min"
 msgstr "Ćwicz przez {minutes} min"
@@ -14966,11 +14966,6 @@ msgstr "Wybór egzaminu"
 msgctxt "9HjIgh"
 msgid "Your exam"
 msgstr "Twój egzamin"
-
-#: src/today/today-extra-time.tsx
-msgctxt "dWsizD"
-msgid "Practice {minutes} more min"
-msgstr "Ćwicz jeszcze przez {minutes} min"
 
 #: src/today/today-falling-behind.tsx
 msgctxt "0NqGSq"

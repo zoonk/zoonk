@@ -13733,9 +13733,9 @@ msgid "vector {base}"
 msgstr "{base} vektörü"
 
 #: src/session/extra-time-button.tsx
-msgctxt "a8JHBW"
-msgid "Study {minutes} more minutes"
-msgstr "{minutes} dakika daha çalış"
+msgctxt "dWsizD"
+msgid "Practice {minutes} more min"
+msgstr "{minutes} dk. daha çalış"
 
 #: src/session/failed-moment.tsx
 msgctxt "kapQxt"
@@ -14811,7 +14811,7 @@ msgid "{count, plural, one {# lesson skipped because you already know it} other 
 msgstr "{count, plural, other {Zaten bildiğin # ders atlandı}}"
 
 #: src/today/today-action.tsx
-#: src/today/today-extra-time.tsx
+#: src/today/today-more.tsx
 msgctxt "6Jd28t"
 msgid "Practice {minutes} min"
 msgstr "{minutes} dk. çalış"
@@ -14966,11 +14966,6 @@ msgstr "Sınav seçimi"
 msgctxt "9HjIgh"
 msgid "Your exam"
 msgstr "Sınavın"
-
-#: src/today/today-extra-time.tsx
-msgctxt "dWsizD"
-msgid "Practice {minutes} more min"
-msgstr "{minutes} dk. daha çalış"
 
 #: src/today/today-falling-behind.tsx
 msgctxt "0NqGSq"
