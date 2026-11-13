@@ -17,12 +17,12 @@ import { ReportProblemItem } from "./report-problem-item";
 export function ContentFeedbackMenu({
   label,
   screen,
-  size = "icon",
+  size = "icon-bar",
   target,
 }: {
   label: string;
   screen: string;
-  size?: "detail" | "icon" | "icon-bar";
+  size?: "detail" | "icon-bar";
   target: FeedbackTarget;
 }) {
   const feedback = useContentFeedback();
@@ -39,7 +39,7 @@ export function ContentFeedbackMenu({
 
   if (size !== "detail") {
     return (
-      <TaskHeaderMenu className="w-60" label={label} onOpenChange={onOpenChange} size={size}>
+      <TaskHeaderMenu className="w-60" label={label} onOpenChange={onOpenChange}>
         <ReportProblemItem screen={screen} target={target} />
       </TaskHeaderMenu>
     );

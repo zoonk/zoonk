@@ -239,12 +239,16 @@ export function TaskSkeleton({
       <div className="border-b border-transparent">
         <div className={TASK_HEADER_BAR_CLASS}>
           <div className={TASK_HEADER_SIDE_CLASS.start}>
-            <Skeleton className="-ml-2.5 size-9 rounded-lg" />
+            <Skeleton className="-ml-3 size-11 rounded-lg lg:-ml-2.5 lg:size-10" />
           </div>
           <div className="flex min-w-0 justify-center">{title}</div>
           <div className={TASK_HEADER_SIDE_CLASS.end}>
-            {menu && <Skeleton className={cn("-mr-2.5 size-9 rounded-lg", aside && "lg:mr-0")} />}
-            {aside && <Skeleton className="-mr-2.5 hidden size-9 rounded-lg lg:block" />}
+            {menu && (
+              <Skeleton
+                className={cn("-mr-3 size-11 rounded-lg lg:-mr-2.5 lg:size-10", aside && "lg:mr-0")}
+              />
+            )}
+            {aside && <Skeleton className="-mr-2.5 hidden size-10 rounded-lg lg:block" />}
           </div>
         </div>
 
