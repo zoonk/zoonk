@@ -145,13 +145,7 @@ function PracticeChooser({
       }
       bar={bar}
       bottomBar={
-        <ChooserBar
-          busy={busy}
-          disabled={!option}
-          gated={gated}
-          onStart={start}
-          status={shown}
-        />
+        <ChooserBar busy={busy} disabled={!option} gated={gated} onStart={start} status={shown} />
       }
     >
       <ChooserHeader

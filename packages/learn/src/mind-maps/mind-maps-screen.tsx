@@ -1,12 +1,8 @@
 "use client";
 
-import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { type EntitlementTier } from "@zoonk/core/entitlements/contract";
-import {
-  DetailHero,
-  DetailHeroText,
-  DetailTitle,
-} from "@zoonk/ui/components/detail";
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
+import { DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
 import {
@@ -271,51 +267,50 @@ export function MindMapsScreen({
 
   return (
     <>
-    <DetailLayout
-      bar={<LearnPageBar back={{ href: hrefs.back }} root title={t("Mind maps")} />}
-      data-slot="mind-maps"
-    >
-      <DetailAside>
-        <DetailHero>
-          <DetailHeroText>
-            <DetailTitle>{t("Mind maps")}</DetailTitle>
-            <PageSubtitle>{page.goal.displayName}</PageSubtitle>
-          </DetailHeroText>
-        </DetailHero>
-      </DetailAside>
+      <DetailLayout
+        bar={<LearnPageBar back={{ href: hrefs.back }} root title={t("Mind maps")} />}
+        data-slot="mind-maps"
+      >
+        <DetailAside>
+          <DetailHero>
+            <DetailHeroText>
+              <DetailTitle>{t("Mind maps")}</DetailTitle>
+              <PageSubtitle>{page.goal.displayName}</PageSubtitle>
+            </DetailHeroText>
+          </DetailHero>
+        </DetailAside>
 
-      <PageTabsGroup>
-        <PageTabs data-slot="mind-maps-tabs" label={t("Mind maps")}>
-          {MIND_MAP_TABS.map((name) => (
-            <PageTab
-              count={counts[name]}
-              current={name === current}
-              href={buildMindMapsHref({ page: hrefs.page, tab: name })}
-              key={name}
-              onSelect={() => showTab(name)}
-            >
-              {labels[name]}
-            </PageTab>
-          ))}
-        </PageTabs>
+        <PageTabsGroup>
+          <PageTabs data-slot="mind-maps-tabs" label={t("Mind maps")}>
+            {MIND_MAP_TABS.map((name) => (
+              <PageTab
+                count={counts[name]}
+                current={name === current}
+                href={buildMindMapsHref({ page: hrefs.page, tab: name })}
+                key={name}
+                onSelect={() => showTab(name)}
+              >
+                {labels[name]}
+              </PageTab>
+            ))}
+          </PageTabs>
 
-
-        <DetailContent>
-          {current === "chapters" && (
-            <ChaptersTab hrefs={hrefs} library={library} subject={subject} tier={tier} />
-          )}
-          {current === "lessons" && (
-            <LessonsTab hrefs={hrefs} library={library} subject={subject} />
-          )}
-          {current === "saved" && <SavedTab hrefs={hrefs} library={library} />}
-        </DetailContent>
-      </PageTabsGroup>
-    </DetailLayout>
-    {study && (
-      <BottomBar>
-        <BottomBarActions>{study}</BottomBarActions>
-      </BottomBar>
-    )}
+          <DetailContent>
+            {current === "chapters" && (
+              <ChaptersTab hrefs={hrefs} library={library} subject={subject} tier={tier} />
+            )}
+            {current === "lessons" && (
+              <LessonsTab hrefs={hrefs} library={library} subject={subject} />
+            )}
+            {current === "saved" && <SavedTab hrefs={hrefs} library={library} />}
+          </DetailContent>
+        </PageTabsGroup>
+      </DetailLayout>
+      {study && (
+        <BottomBar>
+          <BottomBarActions>{study}</BottomBarActions>
+        </BottomBar>
+      )}
     </>
   );
 }

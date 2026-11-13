@@ -2,9 +2,9 @@
 
 import { type CurrentUserMistakes } from "@zoonk/core/mistakes/list-current-user";
 import { type NoticedPattern } from "@zoonk/core/view-models/language/contract";
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { FoldChevron } from "@zoonk/ui/components/collapsible";
-import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
 import { type CSSPropertiesWithVariables } from "@zoonk/ui/lib/css-variables";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -77,13 +77,7 @@ function getGroupKey(group: readonly MistakeEntry[]): string {
 /** Tailwind's `lg`. */
 const INBOX_QUERY = "(min-width: 64rem)";
 
-function NotebookHero({
-  goalTitle,
-  notebook,
-}: {
-  goalTitle: string | null;
-  notebook: Notebook;
-}) {
+function NotebookHero({ goalTitle, notebook }: { goalTitle: string | null; notebook: Notebook }) {
   const t = useExtracted();
   const availability = useNotebookAvailabilityText(notebook.availability);
   const subtitle = [goalTitle, availability].filter(Boolean).join(" · ");
@@ -270,53 +264,53 @@ export function MistakesNotebook({
 
   return (
     <>
-    <DetailLayout
-      bar={<LearnPageBar back={{ href: hrefs.back }} root title={t("Mistakes notebook")} />}
-      className={INBOX_PAGE_CLASS}
-      data-slot="mistakes-notebook"
-    >
-      <DetailAside>
-        <NotebookHero goalTitle={goalTitle} notebook={notebook} />
-      </DetailAside>
+      <DetailLayout
+        bar={<LearnPageBar back={{ href: hrefs.back }} root title={t("Mistakes notebook")} />}
+        className={INBOX_PAGE_CLASS}
+        data-slot="mistakes-notebook"
+      >
+        <DetailAside>
+          <NotebookHero goalTitle={goalTitle} notebook={notebook} />
+        </DetailAside>
 
-      <PageTabsGroup>
-        <NotebookTabs counts={counts} notebookHref={hrefs.notebook} showingFixed={showingFixed} />
+        <PageTabsGroup>
+          <NotebookTabs counts={counts} notebookHref={hrefs.notebook} showingFixed={showingFixed} />
 
-        <DetailContent>
-          {pattern && !showingFixed && (
-            <ListGroup>
-              <PatternRow href={`${hrefs.pattern}/${pattern.id}`} pattern={pattern} />
-            </ListGroup>
-          )}
+          <DetailContent>
+            {pattern && !showingFixed && (
+              <ListGroup>
+                <PatternRow href={`${hrefs.pattern}/${pattern.id}`} pattern={pattern} />
+              </ListGroup>
+            )}
 
-          {groups.length > 0 ? (
-            <section aria-label={showingFixed ? t("What you fixed") : t("What you got wrong")}>
-              <MistakesInbox
-                groups={groups}
-                hrefs={hrefs}
-                trueFalseLabels={notebook.trueFalseLabels}
-              />
-            </section>
-          ) : (
-            <EmptyNotebook showingFixed={showingFixed} />
-          )}
+            {groups.length > 0 ? (
+              <section aria-label={showingFixed ? t("What you fixed") : t("What you got wrong")}>
+                <MistakesInbox
+                  groups={groups}
+                  hrefs={hrefs}
+                  trueFalseLabels={notebook.trueFalseLabels}
+                />
+              </section>
+            ) : (
+              <EmptyNotebook showingFixed={showingFixed} />
+            )}
 
-          {filters.nextOffset !== null && (
-            <LearnLink
-              className={buttonVariants({ className: "self-start", variant: "outline" })}
-              href={buildNotebookHref({
-                ...filters,
-                notebook: hrefs.notebook,
-                offset: filters.nextOffset,
-              })}
-            >
-              {t("Show more")}
-            </LearnLink>
-          )}
-        </DetailContent>
-      </PageTabsGroup>
-    </DetailLayout>
-    <PracticeBar hrefs={hrefs} notebook={notebook} />
+            {filters.nextOffset !== null && (
+              <LearnLink
+                className={buttonVariants({ className: "self-start", variant: "outline" })}
+                href={buildNotebookHref({
+                  ...filters,
+                  notebook: hrefs.notebook,
+                  offset: filters.nextOffset,
+                })}
+              >
+                {t("Show more")}
+              </LearnLink>
+            )}
+          </DetailContent>
+        </PageTabsGroup>
+      </DetailLayout>
+      <PracticeBar hrefs={hrefs} notebook={notebook} />
     </>
   );
 }

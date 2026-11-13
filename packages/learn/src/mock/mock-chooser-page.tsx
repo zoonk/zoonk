@@ -1,11 +1,7 @@
 "use client";
 
 import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
-import {
-  DetailHero,
-  DetailHeroText,
-  DetailTitle,
-} from "@zoonk/ui/components/detail";
+import { DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
 import {
   GenerationTimelineDescription,
   GenerationTimelineTitle,

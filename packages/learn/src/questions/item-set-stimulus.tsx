@@ -7,12 +7,12 @@ import { FoldChevron } from "@zoonk/ui/components/collapsible";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
+import { Eyebrow } from "../_components/eyebrow";
 import {
   type ListeningQuestions,
   ListeningStimulus,
   type ServedPlays,
 } from "../listening/listening-stimulus";
-import { Eyebrow } from "../_components/eyebrow";
 import { LessonVisual } from "../visuals/lesson-visual";
 import { ItemText } from "./item-text";
 

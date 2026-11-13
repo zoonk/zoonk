@@ -13,9 +13,9 @@ import {
   TriangleAlertIcon,
 } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
-import { Eyebrow } from "../_components/eyebrow";
 import { TagBesideOrUnder } from "../_components/answer-option";
 import { ANSWER_TAG_CLASS, ANSWER_TAG_TONE, ANSWER_TONE } from "../_components/answer-tone";
+import { Eyebrow } from "../_components/eyebrow";
 import { QuestionTitle } from "../_components/question-title";
 import { TITLE_ROW_CLASS } from "../_components/title-row";
 import { LearnLink } from "../learn-link";
@@ -43,9 +43,7 @@ function MistakeCauseLabel({ cause }: { cause: MistakeEntry["cause"] }) {
     return <span />;
   }
 
-  return (
-    <Eyebrow icon={<CauseIcon aria-hidden="true" />}>{causeLabel(cause)}</Eyebrow>
-  );
+  return <Eyebrow icon={<CauseIcon aria-hidden="true" />}>{causeLabel(cause)}</Eyebrow>;
 }
 
 function useEntryDate() {
