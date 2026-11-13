@@ -14,7 +14,7 @@ const COLUMNS = [
   { label: "Skill", size: "long" as const },
   { label: "Format", size: "wide" as const },
   { align: "right" as const, label: "Answers" },
-  { align: "right" as const, label: "Accuracy", size: "wide" as const },
+  { align: "right" as const, label: "Accuracy" },
 ];
 
 // A real question from the same database that today's search by skill name can't find.
@@ -50,7 +50,7 @@ export default async function ItemsMockPage({ searchParams }: PageProps<"/items/
         row[1]?.text,
         row[2]?.text,
         row[6]?.text,
-        row[7]?.text === "—" ? "No answers yet" : row[7]?.text,
+        row[7]?.text,
       ])}
       title="Practice questions"
       toolbar={

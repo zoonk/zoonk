@@ -18,7 +18,7 @@ import { MissingAudioUploadForm } from "./missing-audio-upload-form";
 const MISSING_AUDIO_COLUMNS: AdminTableColumn[] = [
   { label: "Text" },
   { label: "Language" },
-  { label: "Used in" },
+  { label: "Used in", size: "text" },
   { align: "right", label: "Audio", size: "long" },
 ];
 

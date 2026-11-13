@@ -24,7 +24,7 @@ export default async function ContentFixesMockPage({
         </span>,
         <span className="block" key="who">
           {parts(row[2])[1]}
-          <span className="block text-xs">{parts(row[2])[0]}</span>
+          <span className="block text-xs leading-5">{parts(row[2])[0]}</span>
         </span>,
       ])}
       title="Content fixes"

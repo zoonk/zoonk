@@ -78,7 +78,11 @@ export default async function MediaAssetMockPage({ searchParams }: PageProps<"/m
             aside={
               <AdminSection title="Used on 2 screens">
                 <MockRows
-                  columns={[{ label: "Lesson" }, { label: "Screen" }, { label: "Kind" }]}
+                  columns={[
+                    { label: "Lesson" },
+                    { label: "Screen", size: "narrow" as const },
+                    { label: "Kind", size: "narrow" as const },
+                  ]}
                   rows={uses.map((row) => [
                     <MockLink key="lesson">{row[0]?.text}</MockLink>,
                     row[1]?.text,

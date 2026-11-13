@@ -13,6 +13,11 @@ const ai = dump as Dump;
 const SHOWN = 8;
 const RIGHT = "right" as const;
 
+/** A column of money says no money as an amount, so every row ends in digits. */
+function money(text = "") {
+  return text === "Nothing" ? "$0.00" : text;
+}
+
 function table(section: string, index = 0): Cell[][] {
   return ai.tables.filter((item) => item.section === section)[index]?.rows ?? [];
 }
@@ -233,7 +238,9 @@ function Plus() {
           ]}
           rows={table("Plus learners this month").map((row) =>
             row.map((cell, index) =>
-              index === 0 ? strong(cell.text.replace("Granted", "Given by Zoonk")) : cell.text,
+              index === 0
+                ? strong(cell.text.replace("Granted", "Given by Zoonk"))
+                : money(cell.text),
             ),
           )}
         />
@@ -260,7 +267,7 @@ function Plus() {
             </span>,
             row[3]?.text,
             row[4]?.text,
-            row[5]?.text,
+            money(row[5]?.text),
           ])}
         />
       </AdminSection>

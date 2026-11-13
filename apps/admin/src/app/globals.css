@@ -1,8 +1,8 @@
 @import "@zoonk/ui/globals.css";
 @import "@zoonk/player/questions/styles.css";
 
-/* Admin's tables end-align numbers and nothing else, so an end-aligned cell is data: set in mono, digit under digit. */
-[data-slot="table-cell"].text-right {
+/* Admin's tables end-align numbers and a row's own button, so an end-aligned cell with no control is data: set in mono, digit under digit. */
+[data-slot="table-cell"].text-right:not(:has(button, input, select)) {
   font-family: var(--font-mono);
   font-size: 0.8125rem;
 }
