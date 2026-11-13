@@ -4,7 +4,7 @@ import { type MockResult } from "@zoonk/core/exams/mocks/contract";
 import { type MockAdaptView } from "@zoonk/core/exams/mocks/view-contract";
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CheckIcon, CircleCheckIcon } from "lucide-react";
+import { CircleCheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
 import { type DiffLine, DiffLines } from "../_components/diff-lines";
@@ -228,14 +228,8 @@ export function MockPlanChange({
       {!change.settled && (
         <div className="flex flex-wrap gap-2">
           <form action={() => change.apply()} className="contents">
-            <Button
-              busy={change.isPending}
-              icon={<CheckIcon aria-hidden="true" />}
-              size="sm"
-              type="submit"
-              variant="outline"
-            >
-              {t("Apply")}
+            <Button busy={change.isPending} size="sm" type="submit" variant="outline">
+              {t("Change my plan")}
             </Button>
           </form>
           <Button
@@ -245,7 +239,7 @@ export function MockPlanChange({
             size="sm"
             variant="ghost"
           >
-            {t("Keep my plan")}
+            {t("Not now")}
           </Button>
         </div>
       )}

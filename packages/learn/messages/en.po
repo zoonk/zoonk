@@ -1506,6 +1506,7 @@ msgstr "Zu"
 #: src/focus-test/focus-test-proposal.tsx
 #: src/focus-test/focus-test-screens.tsx
 #: src/mock/mock-result-actions.tsx
+#: src/mock/mock-result-plan.tsx
 #: src/plan/plan-fit-suggestion.tsx
 #: src/plan/plan-offer-preview.tsx
 #: src/plan/plan-past-date-suggestion.tsx
@@ -2461,6 +2462,12 @@ msgid "{count, plural, one {# topic} other {# topics}}"
 msgstr "{count, plural, one {# topic} other {# topics}}"
 
 #: src/chapter/chapter-header.tsx
+#: src/mind-maps/mind-map-index-rows.tsx
+msgctxt "sIR8OK"
+msgid "Chapter {number, number}"
+msgstr "Chapter {number, number}"
+
+#: src/chapter/chapter-header.tsx
 #: src/language/unit/unit-header.tsx
 #: src/plan-diff/use-change-rows.ts
 #: src/syllabus/subject-aside.tsx
@@ -2469,17 +2476,6 @@ msgstr "{count, plural, one {# topic} other {# topics}}"
 msgctxt "n7xPkB"
 msgid "{count, plural, one {# lesson} other {# lessons}}"
 msgstr "{count, plural, one {# lesson} other {# lessons}}"
-
-#: src/chapter/chapter-header.tsx
-msgctxt "4g6Lc5"
-msgid "{subject} · Chapter {number, number}"
-msgstr "{subject} · Chapter {number, number}"
-
-#: src/chapter/chapter-header.tsx
-#: src/mind-maps/mind-map-index-rows.tsx
-msgctxt "sIR8OK"
-msgid "Chapter {number, number}"
-msgstr "Chapter {number, number}"
 
 #: src/chapter/chapter-header.tsx
 msgctxt "uPK7mm"
@@ -2849,27 +2845,26 @@ msgid "Message {name}"
 msgstr "Message {name}"
 
 #: src/conversation/tutor-country-offer.tsx
-#: src/conversation/tutor-variety-offer.tsx
-#: src/mock/mock-result-plan.tsx
-msgctxt "EWw_tK"
-msgid "Apply"
-msgstr "Apply"
+#: src/plan/plan-country.tsx
+msgctxt "g0uUNM"
+msgid "Change country"
+msgstr "Change country"
 
 #: src/conversation/tutor-country-offer.tsx
-msgctxt "-DMpal"
-msgid "Applying it rebuilds your plan for this country. The lessons you've finished stay done."
-msgstr "Applying it rebuilds your plan for this country. The lessons you've finished stay done."
+msgctxt "q6A4gA"
+msgid "We'll make a new plan for it. Finished lessons stay done."
+msgstr "We'll make a new plan for it. Finished lessons stay done."
 
 #: src/conversation/tutor-country-offer.tsx
-msgctxt "Ol1JfV"
-msgid "Saved. Your new plan is being prepared, and you can keep studying meanwhile."
-msgstr "Saved. Your new plan is being prepared, and you can keep studying meanwhile."
+msgctxt "Qo8YGk"
+msgid "Saved. We're getting your new plan ready. You can keep studying meanwhile."
+msgstr "Saved. We're getting your new plan ready. You can keep studying meanwhile."
 
 #. {country} is a country's name. It always follows the colon, so it never needs an article or a case.
 #: src/conversation/tutor-country-offer.tsx
-msgctxt "RZJ-9n"
-msgid "Content country: {country}"
-msgstr "Content country: {country}"
+msgctxt "N6YBR8"
+msgid "Country: {country}"
+msgstr "Country: {country}"
 
 #: src/conversation/tutor-country-offer.tsx
 msgctxt "EWygiy"
@@ -3032,6 +3027,7 @@ msgid "Use my date"
 msgstr "Use my date"
 
 #: src/conversation/tutor-plan-change.tsx
+#: src/mock/mock-result-plan.tsx
 #: src/plan/plan-offer-preview.tsx
 #: src/today/today-plan-change.tsx
 msgctxt "ZPLfTK"
@@ -3097,6 +3093,11 @@ msgstr "Take a mock exam"
 msgctxt "TuQ18m"
 msgid "Choose"
 msgstr "Choose"
+
+#: src/conversation/tutor-variety-offer.tsx
+msgctxt "EWw_tK"
+msgid "Apply"
+msgstr "Apply"
 
 #. {variety} is a language with a country, written as it reads inside a sentence, such as “Spanish (Mexico)”.
 #: src/conversation/tutor-variety-offer.tsx
@@ -9140,11 +9141,6 @@ msgid "Off your plan"
 msgstr "Off your plan"
 
 #: src/mock/mock-result-plan.tsx
-msgctxt "uFDpFL"
-msgid "Keep my plan"
-msgstr "Keep my plan"
-
-#: src/mock/mock-result-plan.tsx
 msgctxt "2NTXpl"
 msgid "The mock exam showed what's still missing."
 msgstr "The mock exam showed what's still missing."
@@ -11537,11 +11533,6 @@ msgstr "Change your country?"
 msgctxt "4ncwjO"
 msgid "New country: {country}. We'll make a new plan for it. Finished lessons stay done."
 msgstr "New country: {country}. We'll make a new plan for it. Finished lessons stay done."
-
-#: src/plan/plan-country.tsx
-msgctxt "g0uUNM"
-msgid "Change country"
-msgstr "Change country"
 
 #: src/plan/plan-coverage-suggestion.tsx
 msgctxt "TJo5E6"
@@ -14273,16 +14264,6 @@ msgstr "This subject isn't in your plan yet."
 msgctxt "BZdkSg"
 msgid "From your material"
 msgstr "From your material"
-
-#: src/syllabus/subject-screen.tsx
-msgctxt "LLtKhp"
-msgid "Subject"
-msgstr "Subject"
-
-#: src/syllabus/subject-screen.tsx
-msgctxt "kEbyXS"
-msgid "Module"
-msgstr "Module"
 
 #: src/syllabus/subject-screen.tsx
 #: src/syllabus/syllabus-notes.tsx
