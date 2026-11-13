@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { betterAuth } from "better-auth/minimal";
 import { describe, expect, it } from "vitest";
 import { rememberHomeCountryAfterSessionCreate } from "./db-hooks";
+import { createTestEmail, guestAuth, toCookieHeaders } from "./guests/_test-utils/guest-auth";
 import { baseAuthConfig } from "./server";
 
 const auth = betterAuth({
@@ -85,5 +86,21 @@ describe("home country from the sign-in's location", () => {
     );
 
     await expect(homeCountry(userId)).resolves.toBeNull();
+  });
+
+  it("keeps the country a guest picked when they create an account somewhere else", async () => {
+    const guest = await guestAuth.api.signInAnonymous({ returnHeaders: true });
+    const guestId = guest.response.user.id;
+    await prisma.userLearningProfile.create({ data: { homeCountry: "BR", userId: guestId } });
+
+    const headers = toCookieHeaders(guest.headers);
+    headers.set("x-vercel-ip-country", "US");
+
+    const account = await guestAuth.api.signUpEmail({
+      body: { email: createTestEmail(), name: "Home", password: PASSWORD },
+      headers,
+    });
+
+    await expect(homeCountry(account.user.id)).resolves.toBe("BR");
   });
 });
