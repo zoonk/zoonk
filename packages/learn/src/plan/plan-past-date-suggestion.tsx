@@ -1,13 +1,8 @@
 "use client";
 
 import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@zoonk/ui/components/dropdown-menu";
-import { CalendarClockIcon, ChevronDownIcon } from "lucide-react";
+import { DropdownMenuItem } from "@zoonk/ui/components/dropdown-menu";
+import { CalendarClockIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
 import {
@@ -15,6 +10,7 @@ import {
   SuggestionActions,
   SuggestionDescription,
 } from "../_components/suggestion";
+import { SuggestionMenu } from "../_components/suggestion-menu";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { usePlanScreen } from "./plan-context";
 import {
@@ -39,17 +35,10 @@ function OtherOptions({ item }: { item: SlotItem }) {
   const { dismiss, host } = usePlanSuggestionSlot();
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger render={<SuggestionAction variant="outline" />}>
-        {t("Other options")}
-        <ChevronDownIcon aria-hidden="true" data-icon="inline-end" />
-      </DropdownMenuTrigger>
-
-      <DropdownMenuContent align="start" className="min-w-64">
-        <DropdownMenuItem onClick={() => host.onEdit("date")}>{t("Adjust plan")}</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => dismiss(item.key)}>{t("Not now")}</DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <SuggestionMenu>
+      <DropdownMenuItem onClick={() => host.onEdit("date")}>{t("Adjust plan")}</DropdownMenuItem>
+      <DropdownMenuItem onClick={() => dismiss(item.key)}>{t("Not now")}</DropdownMenuItem>
+    </SuggestionMenu>
   );
 }
 

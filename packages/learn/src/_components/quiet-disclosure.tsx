@@ -4,9 +4,8 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
+  FoldChevron,
 } from "@zoonk/ui/components/collapsible";
-import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronDownIcon } from "lucide-react";
 
 /** The look of a small text action under a line: "See all changes", or "Try again" in its place. */
 export const QUIET_ACTION_CLASS =
@@ -24,16 +23,11 @@ export function QuietDisclosure({
 }) {
   return (
     <Collapsible className={className} data-slot="quiet-disclosure">
-      <CollapsibleTrigger className={cn("group/quiet", QUIET_ACTION_CLASS)}>
+      <CollapsibleTrigger className={QUIET_ACTION_CLASS}>
         {label}
-        <ChevronDownIcon
-          aria-hidden="true"
-          className="size-3.5 transition-transform group-data-panel-open/quiet:rotate-180 motion-reduce:transition-none"
-        />
+        <FoldChevron className="size-3.5" inline />
       </CollapsibleTrigger>
-      <CollapsibleContent className="h-(--collapsible-panel-height) overflow-hidden transition-[height] duration-200 ease-out data-ending-style:h-0 data-starting-style:h-0 motion-reduce:transition-none">
-        {children}
-      </CollapsibleContent>
+      <CollapsibleContent>{children}</CollapsibleContent>
     </Collapsible>
   );
 }

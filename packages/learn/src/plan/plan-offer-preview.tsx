@@ -2,15 +2,10 @@
 
 import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
 import { type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@zoonk/ui/components/dropdown-menu";
-import { ChevronDownIcon } from "lucide-react";
+import { DropdownMenuItem } from "@zoonk/ui/components/dropdown-menu";
 import { useExtracted } from "next-intl";
 import { SuggestionAction, SuggestionActions } from "../_components/suggestion";
+import { SuggestionMenu } from "../_components/suggestion-menu";
 import { useTimeAnswerTexts } from "../_components/time-answer";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { getLongerTime } from "../_utils/time-answer";
@@ -289,28 +284,21 @@ export function OtherOptions({
   const { dismiss } = usePlanSuggestionSlot();
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger render={<SuggestionAction variant="outline" />}>
-        {t("Other options")}
-        <ChevronDownIcon aria-hidden="true" data-icon="inline-end" />
-      </DropdownMenuTrigger>
-
-      <DropdownMenuContent align="start" className="min-w-64">
-        {onMoveDate && (
-          <DropdownMenuItem onClick={onMoveDate}>
-            {t("Move your date to cover everything")}
-          </DropdownMenuItem>
-        )}
-        {canChooseFocus && (
-          <DropdownMenuItem onClick={chooseFocus}>{t("Choose where to focus")}</DropdownMenuItem>
-        )}
-        {course && !course.on && !studyEverythingLeads && (
-          <DropdownMenuItem onClick={() => studyEverything(course)}>
-            {course.isExam ? t("Study everything, even after the exam") : t("Study everything")}
-          </DropdownMenuItem>
-        )}
-        <DropdownMenuItem onClick={() => dismiss("coverage")}>{t("Not now")}</DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <SuggestionMenu>
+      {onMoveDate && (
+        <DropdownMenuItem onClick={onMoveDate}>
+          {t("Move your date to cover everything")}
+        </DropdownMenuItem>
+      )}
+      {canChooseFocus && (
+        <DropdownMenuItem onClick={chooseFocus}>{t("Choose where to focus")}</DropdownMenuItem>
+      )}
+      {course && !course.on && !studyEverythingLeads && (
+        <DropdownMenuItem onClick={() => studyEverything(course)}>
+          {course.isExam ? t("Study everything, even after the exam") : t("Study everything")}
+        </DropdownMenuItem>
+      )}
+      <DropdownMenuItem onClick={() => dismiss("coverage")}>{t("Not now")}</DropdownMenuItem>
+    </SuggestionMenu>
   );
 }

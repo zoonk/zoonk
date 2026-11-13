@@ -2,14 +2,9 @@
 
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { type TodayView } from "@zoonk/core/view-models/today/get";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@zoonk/ui/components/dropdown-menu";
+import { DropdownMenuItem } from "@zoonk/ui/components/dropdown-menu";
 import { safeAsync } from "@zoonk/utils/error";
-import { CalendarClockIcon, ChevronDownIcon } from "lucide-react";
+import { CalendarClockIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import {
@@ -26,6 +21,7 @@ import {
   SuggestionSaveError,
   SuggestionSummary,
 } from "../_components/suggestion";
+import { SuggestionMenu } from "../_components/suggestion-menu";
 import { useFormatShare } from "../_utils/percent";
 import { useFormatDuration } from "../_utils/time-format";
 import { LearnLink } from "../learn-link";
@@ -127,20 +123,13 @@ function BehindChoices({
         {t({ description: "Keeps the learner's time a day as it is.", message: "Keep my time" })}
       </SuggestionAction>
 
-      <DropdownMenu>
-        <DropdownMenuTrigger render={<SuggestionAction variant="ghost" />}>
-          {t("More options")}
-          <ChevronDownIcon aria-hidden="true" data-icon="inline-end" />
-        </DropdownMenuTrigger>
-
-        <DropdownMenuContent align="start" className="w-64">
-          {others.map(({ href, label, option }) => (
-            <DropdownMenuItem key={option} render={<LearnLink href={href} />}>
-              {label}
-            </DropdownMenuItem>
-          ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <SuggestionMenu>
+        {others.map(({ href, label, option }) => (
+          <DropdownMenuItem key={option} render={<LearnLink href={href} />}>
+            {label}
+          </DropdownMenuItem>
+        ))}
+      </SuggestionMenu>
     </SuggestionActions>
   );
 }
