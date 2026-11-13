@@ -128,6 +128,7 @@
     <string name="profile_questions_condition_note">知っておいてほしいことはありますか？</string>
     <string name="profile_questions_support_title">どんな工夫があると学びやすいですか？</string>
     <string name="profile_questions_support_description">役立つものをいくつでも選べます。特性に名前がついていなくても、診断を受けていなくても大丈夫です。</string>
+    <!-- Asks which grammatical forms (feminine, masculine or neutral wording) the app should use for words about the learner, such as "you're right". Not a question about pronouns or identity. -->
     <string name="profile_questions_address_title">どんな表現で話しかけてほしいですか？</string>
     <string name="profile_questions_address_description">相棒の言葉やフィードバックに、この表現を使います。レッスンは変わりません。</string>
     <string name="profile_questions_suggested">選んだ内容をもとに、どんな工夫が役立つことが多いかを調べました。自由に変更できます。</string>
@@ -157,9 +158,11 @@
     <string name="profile_questions_row_activities">好きなこと</string>
     <string name="profile_questions_row_conditions">健康状態や特性</string>
     <string name="profile_questions_row_support">学習の助けになること</string>
+    <!-- Which grammatical forms (feminine, masculine or neutral wording) the app uses for words about the learner. -->
     <string name="profile_questions_row_address">話しかけるときの表現</string>
     <string name="profile_questions_not_answered">未回答</string>
     <string name="profile_questions_not_shared">まだ教えていません</string>
+    <!-- An answer the learner saved, without showing it. -->
     <string name="profile_questions_saved">保存済み</string>
     <string name="profile_questions_add">追加</string>
     <plurals name="profile_questions_conditions_saved">

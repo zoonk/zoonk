@@ -150,7 +150,7 @@ class TutorScreenshots {
             TutorRoutes(
                 createAccount = {},
                 signIn = {},
-                seePlus = {},
+                subscribe = {},
                 open = {},
                 startCall = callStarter { CallStart.Failed },
             )

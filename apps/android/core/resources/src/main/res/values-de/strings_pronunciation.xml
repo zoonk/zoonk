@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "pronunciation_accent": "39fefd057d558b7a3964f881990a9388f9dc2b580fbe004608f25dfbae2a7507",
   "pronunciation_continue": "4a967383a4ec715c85d7b589e7569500bf48aebfe1306ae3e5dd79741695aa06",
   "pronunciation_done": "8151d0cf7253591faa66d19209bd9eaddab54635292d8d102f94be6802df2ab8",
   "pronunciation_failed": "2971259ea18190d9743a0f5a4b08c4cbda06a8d5a47affaebd5b45724946a957",
@@ -59,7 +58,6 @@
     <string name="pronunciation_no_words">Heute gibt es keine Wörter zum Wiederholen.</string>
     <string name="pronunciation_practice_done">Übung abgeschlossen</string>
     <string name="pronunciation_nothing_said">Dieses Mal nichts gesagt</string>
-    <string name="pronunciation_accent">Ein Akzent steht dir nie im Weg.</string>
     <!-- Closes the finished round. -->
     <string name="pronunciation_done">Fertig</string>
 </resources>

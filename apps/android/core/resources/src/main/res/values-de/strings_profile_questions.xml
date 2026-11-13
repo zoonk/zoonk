@@ -128,6 +128,7 @@
     <string name="profile_questions_condition_note">Was sollten wir wissen?</string>
     <string name="profile_questions_support_title">Was hilft dir beim Lernen?</string>
     <string name="profile_questions_support_description">Wähl alles aus, was dir hilft. Du brauchst dafür keine Einordnung oder Diagnose.</string>
+    <!-- Asks which grammatical forms (feminine, masculine or neutral wording) the app should use for words about the learner, such as "you're right". Not a question about pronouns or identity. -->
     <string name="profile_questions_address_title">Wie sollen wir dich ansprechen?</string>
     <string name="profile_questions_address_description">Dein Kumpel spricht dich so an. Auch die Rückmeldungen sind so formuliert. Die Lektionen bleiben gleich.</string>
     <string name="profile_questions_suggested">Wir haben geprüft, was bei deiner Auswahl oft hilft. Pass alles so an, wie du möchtest.</string>
@@ -157,9 +158,11 @@
     <string name="profile_questions_row_activities">Aktivitäten</string>
     <string name="profile_questions_row_conditions">Gesundheitliche Besonderheiten</string>
     <string name="profile_questions_row_support">Was dir beim Lernen hilft</string>
+    <!-- Which grammatical forms (feminine, masculine or neutral wording) the app uses for words about the learner. -->
     <string name="profile_questions_row_address">Wie wir dich ansprechen</string>
     <string name="profile_questions_not_answered">Nicht beantwortet</string>
     <string name="profile_questions_not_shared">Nicht angegeben</string>
+    <!-- An answer the learner saved, without showing it. -->
     <string name="profile_questions_saved">Gespeichert</string>
     <string name="profile_questions_add">Hinzufügen</string>
     <plurals name="profile_questions_conditions_saved">

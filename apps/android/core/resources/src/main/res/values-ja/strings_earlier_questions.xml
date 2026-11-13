@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "earlier_questions_description": "a33874e97cf4bd76934f2a3a18ba1eb55b5bd1340609fd1472ba6be952d38cd2",
+  "earlier_questions_description": "bd67d21e6c3c2627f66bb86baedaa524f1665f9b5b2f0587f1df655f7d7ad8a9",
   "earlier_questions_empty": "35b3f49149df2569e3be6d58ea087e03524ead45d7505c081a0b81e601d223d3",
   "earlier_questions_from": "dfdbbfaabe7dbc284f7d646ee0a11a80670e47399af9aef8b2728fd1014ab85c",
   "earlier_questions_from_course": "6560f0fb9a319a5b385ec5f74192b96181a51a9436109b37751dd76b9e3bddf4",
@@ -16,8 +16,7 @@
 <resources>
     <!-- Title of the page that keeps the questions the learner asked about lessons before every course was rewritten. -->
     <string name="earlier_questions_title">以前の質問</string>
-    <!-- Keep "before we rewrote them": every course was rewritten, which is why these questions moved here. -->
-    <string name="earlier_questions_description">コースをすべて書き直す前にした質問です。レッスンの内容が変わったため、ここで読み返せるように残しています。</string>
+    <string name="earlier_questions_description">レッスンの内容が変わる前にした質問です。</string>
     <string name="earlier_questions_empty">以前の質問はありません。</string>
     <!-- Above a question about a lesson that no longer exists. %1$s is the course's title as the learner saw it, %2$s the lesson's. -->
     <string name="earlier_questions_from_course_lesson">改訂前の%1$s · %2$s</string>

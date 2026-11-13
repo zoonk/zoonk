@@ -56,12 +56,11 @@
   "activities_music_same_notes_guitar": "cd6c79dd5682bbf27b154fd6b0cb02ff514afff999f9ff7c884ce4eb252f0f92",
   "activities_music_show_as": "696341eee34ff6dd805a765bec3f4920e07423fb9727df1d947332e7befa2e9b",
   "activities_music_skip_for_now": "66e8385897b4b827780881621bc29daec7ab940aee9387becd54b5df92902254",
+  "activities_music_sound_check_done": "66a93eb47832b942f343fac6a9767974334a3c1a3bae376d840da4a66ab93d65",
   "activities_music_sound_check_failed": "c28eef09e814987cfa93ee20bb343cce59f7f215344e061c0c4fb57db445240d",
-  "activities_music_sound_check_intro": "1fedb502d02104b9052922ea562d3bb514ee1e2d681286d8322329fe78194385",
-  "activities_music_sound_check_late": "a64994766381c683a0aa149af8c81fdf9cb21d81cbc0591896dca2e869c6293b",
+  "activities_music_sound_check_intro": "77d3bd8780eff374c5fb4857b61c08642c07fc0e077efe8bce6a40afbc57b84c",
   "activities_music_sound_check_listen": "40892c575fc99d78767c9af7cf1112b7c4066632164448ac51755f0c17aeccf6",
-  "activities_music_sound_check_on_time": "c15c45b19008bb4623481c1f2c504d57e9c6b8be1d9c1d3a879468b16ec952c5",
-  "activities_music_sound_check_start": "0f10058d3f4d1d9df0cc450de9819e1355b5cb743a812588a7daa7e6ca29c340",
+  "activities_music_sound_check_start": "c55be4c0d68afbacedd6eaa7f83eb81805e8241b7c45901f1b384d26cd8988f8",
   "activities_music_sound_check_tap": "6e41cfaf69d6df59a14da978a766af230461051b57dfdd33329712fa31326ca2",
   "activities_music_sound_check_title": "a35ccce8d2b8472bbd2cdd57ea4400051ac93b99f7a82d0f2c11b93f2e26acf4",
   "activities_music_sound_notes": "cac9f388b9a990198798bb74bbb91b9d49097792bbd06482a90019939cebdd44",
@@ -235,17 +234,15 @@
     <!-- The title of the one-time check of how late this device plays sound. -->
     <string name="activities_music_sound_check_title">Ton einrichten</string>
     <plurals name="activities_music_sound_check_intro">
-        <item quantity="one">Kopfhörer können den Ton leicht verzögert wiedergeben. Tippe einmal mit %1$d Klick, damit Rhythmen auf diesem Gerät fair bewertet werden.</item>
-        <item quantity="other">Kopfhörer können den Ton leicht verzögert wiedergeben. Tippe einmal mit %1$d Klicks, damit Rhythmen auf diesem Gerät fair bewertet werden.</item>
+        <item quantity="one">Tippe zu %1$d Klick mit, damit deine Schläge im Takt sind.</item>
+        <item quantity="other">Tippe zu %1$d Klicks mit, damit deine Schläge im Takt sind.</item>
     </plurals>
     <string name="activities_music_sound_check_listen">Hör dir die Klicks an…</string>
     <!-- Which click to tap with now, like "Tap with each click · 2 of 6". -->
     <string name="activities_music_sound_check_tap">Tippe bei jedem Klick · %1$d von %2$d</string>
     <string name="activities_music_sound_check_failed">Wir konnten nicht genug Klopfer den Klicks zuordnen. Versuch es noch einmal und klopfe zu jedem Klick mit.</string>
-    <string name="activities_music_sound_check_on_time">Der Ton auf diesem Gerät kommt pünktlich an.</string>
-    <!-- How late this device plays sound, like "about 120 ms late". -->
-    <string name="activities_music_sound_check_late">Der Ton auf diesem Gerät kommt etwa %1$d ms zu spät an. Bei den Rhythmen wird das ausgeglichen.</string>
-    <string name="activities_music_sound_check_start">Soundcheck starten</string>
+    <string name="activities_music_sound_check_done">Alles bereit.</string>
+    <string name="activities_music_sound_check_start">Starten</string>
     <string name="activities_music_skip_for_now">Vorerst überspringen</string>
     <string name="activities_music_continue">Weiter</string>
 </resources>
