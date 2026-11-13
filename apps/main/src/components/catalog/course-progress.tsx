@@ -9,12 +9,11 @@ import { type LearnerSummaryGoal } from "@zoonk/core/learner/summary/contract";
 import { type CourseLevel } from "@zoonk/db/enums";
 import { RouteZone } from "@zoonk/learn/route-line";
 import { StatusMark } from "@zoonk/learn/status-mark";
-import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
+import { Button } from "@zoonk/ui/components/button";
 import { showErrorToast } from "@zoonk/ui/components/toast";
 import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
 import { isJsonObject } from "@zoonk/utils/json";
-import { ArrowRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import {
   type ComponentProps,
@@ -151,7 +150,6 @@ export function CourseContinueLink({ courseId }: { courseId: string }) {
         prefetch
       >
         {label}
-        <ArrowRightIcon aria-hidden="true" data-icon="inline-end" />
       </Link>
     );
   }
@@ -175,7 +173,6 @@ export function CourseContinueLink({ courseId }: { courseId: string }) {
       className={getStartControlClassName()}
       onClick={continueGoal}
       size="lg"
-      {...FORWARD_ICON}
     >
       {label}
     </Button>

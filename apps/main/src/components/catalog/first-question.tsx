@@ -10,7 +10,7 @@ import { RichTextBlocks } from "@zoonk/learn/rich-text";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getSentenceSpace } from "@zoonk/utils/locale";
-import { ArrowRightIcon, CirclePlayIcon, SparklesIcon } from "lucide-react";
+import { CirclePlayIcon, SparklesIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import { type ReactNode } from "react";
 import { LessonProgressSwitch } from "./course-progress";
@@ -113,7 +113,6 @@ async function ContinueLesson({ href, secondary }: { href: string; secondary: bo
           href={href}
         >
           {label}
-          <ArrowRightIcon aria-hidden="true" data-icon="inline-end" />
         </a>
       ) : (
         <StartLink className="w-full sm:w-auto sm:self-start" href={href}>

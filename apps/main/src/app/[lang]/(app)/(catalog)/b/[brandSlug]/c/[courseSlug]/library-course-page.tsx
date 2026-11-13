@@ -37,7 +37,7 @@ import { type Subject, getSubject } from "@zoonk/learn/subject-label";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type SupportedLocale, getContentLocale } from "@zoonk/utils/locale";
-import { ArrowRightIcon, LanguagesIcon } from "lucide-react";
+import { ChevronRightIcon, LanguagesIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import { type ReactNode } from "react";
 import { ContentCountryLine } from "./content-country-line";
@@ -72,7 +72,7 @@ async function EditionNotice({ courseId, locale }: { courseId: string; locale: S
         {t("This course is also available in your language.")}
       </span>
       <LineMarker>
-        <ArrowRightIcon aria-hidden="true" className="size-4" />
+        <ChevronRightIcon aria-hidden="true" className="size-4" />
       </LineMarker>
     </Link>
   );

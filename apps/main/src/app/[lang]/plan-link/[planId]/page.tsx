@@ -14,7 +14,6 @@ import { getSession } from "@zoonk/core/users/session";
 import { PlanPhaseName } from "@zoonk/learn/plan/phase-name";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
-import { ArrowRightIcon } from "lucide-react";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
@@ -109,7 +108,6 @@ async function PlanLinkBody({ params }: Props) {
                     "Button under a study plan someone else shared: the reader gets a plan of their own for the same subject.",
                   message: "Start my own plan",
                 })}
-                <ArrowRightIcon aria-hidden="true" data-icon="inline-end" />
               </Link>
             </StartBlock>
           )}

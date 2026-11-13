@@ -7,7 +7,7 @@ import { getChapterHref } from "@/lib/public/public-hrefs";
 import { getTotalDurationLabel } from "@/lib/public/public-labels";
 import { LessonRichText } from "@zoonk/player/lesson/rich-text";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ArrowRightIcon } from "lucide-react";
+import { ChevronRightIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 
 type Params = { brandSlug: string; courseSlug: string };
@@ -57,7 +57,7 @@ export async function LessonMore({
           prefetch
         >
           {t("Go to the chapter")}
-          <ArrowRightIcon aria-hidden="true" className="size-4" />
+          <ChevronRightIcon aria-hidden="true" className="size-4" />
         </Link>
       </PublicDisclosure>
     </div>

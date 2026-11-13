@@ -1,6 +1,5 @@
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ArrowRightIcon } from "lucide-react";
 import { type ReactNode } from "react";
 import { PageStartMark } from "./page-start";
 
@@ -31,7 +30,6 @@ export function StartLink({
   return (
     <a className={getStartControlClassName(className)} href={href} id={id}>
       {children}
-      <ArrowRightIcon aria-hidden="true" data-icon="inline-end" />
     </a>
   );
 }
