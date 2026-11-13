@@ -32,7 +32,7 @@ async function EarlierQuestionEntry({ question }: { question: EarlierQuestion })
       <p className="font-medium text-pretty">{question.question}</p>
 
       {question.answer ? (
-        <div className="text-[0.9375rem] leading-relaxed">
+        <div className="text-reading leading-relaxed">
           <LessonQuestionMarkdown
             answer={question.answer}
             isAnimating={false}

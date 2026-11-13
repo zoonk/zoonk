@@ -2,7 +2,7 @@
 
 import { type ChallengeStep } from "@zoonk/core/library/challenges/graph";
 import { getChallengeMeters } from "@zoonk/core/library/challenges/run";
-import { RichTextBlocks } from "@zoonk/learn/rich-text";
+import { QuestionTitle } from "@zoonk/learn/question-title";
 import { getScrollBehavior } from "@zoonk/ui/lib/scroll-behavior";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef } from "react";
@@ -11,7 +11,6 @@ import {
   PlayerChoiceSceneOptions,
 } from "../../../components/player-choice-scene";
 import { PlayerReadScene } from "../../../components/player-read-scene";
-import { QUESTION_TEXT_CLASS } from "../../../components/question-text";
 import { LessonRichText } from "../../_components/lesson-rich-text";
 import { type ChallengeProgress } from "../../_utils/challenge-progress";
 import { type StepOf } from "../lesson-step-view-props";
@@ -81,11 +80,7 @@ function ChallengeDecision({
   return (
     <div className="flex flex-col gap-6" data-slot="challenge-decision">
       <div id={`challenge-prompt-${node.id}`}>
-        <RichTextBlocks
-          className={QUESTION_TEXT_CLASS}
-          paragraphTag="h3"
-          text={names.fill(node.prompt)}
-        />
+        <QuestionTitle text={names.fill(node.prompt)} />
       </div>
 
       <PlayerChoiceSceneOptions

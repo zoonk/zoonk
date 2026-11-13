@@ -58,7 +58,7 @@ function MinuteChips({
       {choices.map((choice) => (
         <label
           className={cn(
-            "border-input rounded-option flex min-h-11 cursor-pointer items-center justify-center gap-2 border px-3 text-sm font-medium transition-colors duration-150 motion-reduce:transition-none",
+            "border-input flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border px-3 text-sm font-medium transition-colors duration-150 motion-reduce:transition-none",
             "hover:bg-muted/50 has-focus-visible:ring-ring/50 has-focus-visible:ring-[3px]",
             "has-checked:border-foreground has-checked:bg-muted",
           )}

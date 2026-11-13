@@ -274,7 +274,8 @@ export function CertificateShareDialog({
 
         <button
           className={buttonVariants({
-            className: "-ml-3 justify-self-start",
+            className: "justify-self-start",
+            edge: "start",
             size: "lg",
             variant: "ghost",
           })}

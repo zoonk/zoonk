@@ -59,9 +59,9 @@ function SampleRow({ result, shouldMatch }: { result: SampleResult; shouldMatch:
           <span className="text-destructive-text font-sans text-xs font-medium">{status}</span>
         )}
         {result.passes ? (
-          <Check className="text-success-text size-[18px]" />
+          <Check className="text-success-text size-4" />
         ) : (
-          <X className="text-destructive-text size-[18px]" />
+          <X className="text-destructive-text size-4" />
         )}
       </span>
     </li>

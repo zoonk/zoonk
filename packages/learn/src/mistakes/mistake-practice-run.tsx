@@ -6,8 +6,8 @@ import { useEscapeClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { QuestionActions } from "../_components/question-actions";
 import { AnswersSaveError } from "../_components/save-error";
-import { TASK_HEADER_ICON_CLASS } from "../_components/task-header";
 import {
   TaskActionBar,
   TaskAside,
@@ -20,7 +20,6 @@ import { LearnLink } from "../learn-link";
 import { type QuestionTutor } from "../questions/question-tutor";
 import { usePreloadMath } from "../rich-text/use-preload-math";
 import { type MomentCeremony } from "../session/moment-ceremony";
-import { QuestionActionsRow } from "../session/question-block/question-actions";
 import { QuestionBlockHeader } from "../session/question-block/question-block-header";
 import { type LessonHref } from "./drill/drill-types";
 import {
@@ -42,10 +41,7 @@ export type { MistakePracticeFeedback, MistakePracticeSummary } from "./mistake-
 
 type Run = ReturnType<typeof useMistakePractice>;
 
-const CLOSE_CLASS = cn(
-  buttonVariants({ size: "icon", variant: "ghost" }),
-  TASK_HEADER_ICON_CLASS.start,
-);
+const CLOSE_CLASS = buttonVariants({ edge: "start", size: "icon", variant: "ghost" });
 
 function EndButton({ backHref, run }: { backHref: string; run: Run }) {
   const t = useExtracted();
@@ -71,7 +67,7 @@ function EndButton({ backHref, run }: { backHref: string; run: Run }) {
     <Button
       aria-keyshortcuts="Escape"
       aria-label={t("End practice. What you answered counts.")}
-      className={TASK_HEADER_ICON_CLASS.start}
+      edge="start"
       disabled={phase.kind === "checking"}
       focusableWhenDisabled
       onClick={run.end}
@@ -104,7 +100,6 @@ function QuestionMenu({ run }: { run: Run }) {
     <ContentFeedbackMenu
       label={t("Question options")}
       screen="mistake-practice"
-      size="task"
       target={
         run.step.lesson
           ? { contentId: run.step.lesson.step.id, contentKind: "step" }
@@ -174,9 +169,10 @@ function PracticeBody({
           {phase.kind === "answerFailed" && (
             <AnswersSaveError failures={run.state.failures} onRetry={run.retry} />
           )}
-          <QuestionActionsRow ask={askButton}>
+          <QuestionActions>
             <PracticeStepActions run={run} step={run.step} />
-          </QuestionActionsRow>
+            {askButton}
+          </QuestionActions>
         </TaskActionBar>
       )}
     </>

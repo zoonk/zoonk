@@ -4,8 +4,8 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 
-/** The one frame of the field a learner asks in, wherever it shows: 44px, the option radius. */
-export const TUTOR_COMPOSER_FRAME_CLASS = "bg-card ring-input rounded-option ring-1 ring-inset";
+/** The one frame of the field a learner asks in, wherever it shows: 44px, the container radius. */
+export const TUTOR_COMPOSER_FRAME_CLASS = "bg-card ring-input rounded-xl ring-1 ring-inset";
 
 export function TutorComposerSkeleton() {
   const t = useExtracted();

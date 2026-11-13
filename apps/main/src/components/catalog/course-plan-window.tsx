@@ -39,7 +39,7 @@ const BIG_LINE_CLASS =
   "text-muted-foreground flex flex-wrap items-baseline gap-x-2 text-lg font-medium tracking-[-0.01em]";
 
 const RESULT_LINE_CLASS =
-  "text-muted-foreground max-w-[30rem] text-[0.9375rem] leading-relaxed text-pretty";
+  "text-muted-foreground max-w-[30rem] text-reading leading-relaxed text-pretty";
 
 async function getEndMonthText({ endDate, fromDate }: { endDate: string; fromDate: string }) {
   const format = await getFormatter();
@@ -84,7 +84,7 @@ async function UndatedHeadline({
       </p>
 
       {endMonth && (
-        <p className="flex gap-2 text-[0.9375rem] leading-relaxed text-pretty">
+        <p className="text-reading flex gap-2 leading-relaxed text-pretty">
           <LineMarker>
             <FlagIcon aria-hidden="true" className="text-muted-foreground size-4" />
           </LineMarker>
@@ -128,7 +128,7 @@ async function UndatedToday({
   return (
     <div className="flex flex-col gap-2">
       <p className="flex items-baseline justify-between gap-3">
-        <span className="text-[0.9375rem] font-semibold">{t("Today")}</span>
+        <span className="text-reading font-semibold">{t("Today")}</span>
         <span className={cn(NUMERIC_CLASS, "text-muted-foreground text-xs")}>
           {t("{count, plural, one {# lesson} other {# lessons}}", { count: steps.length })}
           {" · "}
@@ -256,7 +256,7 @@ export async function CoursePlanWindow({
   );
 
   const caption = (
-    <p className="text-muted-foreground text-[13px] leading-relaxed text-pretty">
+    <p className="text-muted-foreground text-compact leading-relaxed text-pretty">
       {t("An example. Your plan follows your answers, so it can start later and end sooner.")}
     </p>
   );

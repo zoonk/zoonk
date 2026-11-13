@@ -55,7 +55,7 @@ function WriteAgainButton() {
 
   return (
     <Button
-      className="-mr-2.5 shrink-0"
+      edge="end"
       onClick={() => {
         actions.restoreWriting();
         focusLessonAfterTurn();

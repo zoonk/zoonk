@@ -55,11 +55,7 @@ type ComposerVariant = "compact" | "page";
 const FOCUS_CLASS =
   "has-[[data-slot=input-group-control]:focus-visible]:border-transparent has-[[data-slot=input-group-control]:focus-visible]:ring-1 has-[[data-slot=input-group-control]:focus-visible]:ring-foreground/35 contrast-more:has-[[data-slot=input-group-control]:focus-visible]:ring-[3px] contrast-more:has-[[data-slot=input-group-control]:focus-visible]:ring-foreground";
 
-const FRAME_CLASS = cn(
-  TUTOR_COMPOSER_FRAME_CLASS,
-  "rounded-option! items-end border-0",
-  FOCUS_CLASS,
-);
+const FRAME_CLASS = cn(TUTOR_COMPOSER_FRAME_CLASS, "items-end rounded-xl! border-0", FOCUS_CLASS);
 
 const ONE_LINE_PLACEHOLDER_CLASS = "placeholder-shown:truncate placeholder:truncate";
 
@@ -263,7 +259,7 @@ export function QuestionComposer({
       )}
 
       {variant === "page" && (
-        <p className="text-faint mt-2 hidden px-1 font-mono text-[0.6875rem] leading-4 pointer-fine:block">
+        <p className="text-faint text-2xs mt-2 hidden px-1 font-mono leading-4 pointer-fine:block">
           {t("⏎ send · ⇧⏎ new line")}
         </p>
       )}

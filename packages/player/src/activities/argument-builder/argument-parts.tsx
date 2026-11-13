@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { Check, GripVertical, X } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -24,7 +25,7 @@ export function ArgumentText({ citation, text }: { citation?: string; text: stri
 
   return (
     <span className="flex flex-col gap-1">
-      <q className="text-[15px] leading-snug sm:text-base">
+      <q className="text-reading leading-snug sm:text-base">
         <LessonRichText text={text} />
       </q>
       <span className="text-muted-foreground text-xs">{citation}</span>
@@ -149,14 +150,17 @@ export function ArgumentSlot({
         )}
 
         {onClear && (
-          <button
+          <Button
             aria-label={clearLabel}
-            className="text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 -my-2 -mr-2 flex size-11 items-center justify-center rounded-full outline-none focus-visible:ring-[3px]"
+            className="text-muted-foreground -my-1"
+            edge="end"
             onClick={onClear}
+            size="icon"
             type="button"
+            variant="ghost"
           >
-            <X aria-hidden="true" className="size-4" />
-          </button>
+            <X aria-hidden="true" />
+          </Button>
         )}
       </div>
 

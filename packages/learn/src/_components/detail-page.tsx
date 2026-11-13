@@ -23,7 +23,7 @@ export function DetailLayout({
   bar?: React.ReactNode;
 }) {
   const page = (
-    <article className="flex min-w-0 flex-col gap-8" {...props}>
+    <article className="flex min-w-0 flex-col gap-2 sm:gap-8" {...props}>
       {bar}
       <div
         className={cn(PAGE_COLUMN_CLASS, "flex flex-col gap-8", className)}
@@ -145,7 +145,7 @@ export function DetailProperty({
   mono?: boolean;
 }) {
   return (
-    <div className="flex min-h-8.5 items-center justify-between gap-3 text-[0.8125rem]">
+    <div className="text-compact flex min-h-8.5 items-center justify-between gap-3">
       <dt className="text-muted-foreground min-w-0 truncate">{label}</dt>
       <dd className={cn("min-w-0 text-right", mono && "font-mono tabular-nums")}>{children}</dd>
     </div>

@@ -59,7 +59,7 @@ export function ApplyOfferCard({
     <OfferCard
       description={saved ? null : description}
       note={
-        <StatusRegion className="text-muted-foreground text-[0.8125rem] text-pretty">
+        <StatusRegion className="text-muted-foreground text-compact text-pretty">
           {saved && savedText}
         </StatusRegion>
       }

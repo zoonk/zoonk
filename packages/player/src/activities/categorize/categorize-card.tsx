@@ -20,7 +20,7 @@ function CategorizeCardFace({
     <p
       {...dragProps}
       className={cn(
-        "bg-background ring-input flex items-center gap-3 rounded-xl py-4 ps-3.5 pe-4 text-[1.0625rem] leading-snug font-medium ring-1 [grid-area:1/1] ring-inset",
+        "bg-background ring-input flex items-center gap-3 rounded-xl py-4 ps-3.5 pe-4 text-lg leading-snug font-medium ring-1 [grid-area:1/1] ring-inset",
         isHeld ? "cursor-grab touch-manipulation select-none active:cursor-grabbing" : "invisible",
         isDragging && "relative z-10 shadow-lg",
       )}

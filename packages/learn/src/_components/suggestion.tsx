@@ -42,7 +42,7 @@ function useSuggestion(): SuggestionValue {
   return value;
 }
 
-const FRAME_CLASS = cn(SURFACE_CLASS, "ring-inset");
+const FRAME_CLASS = SURFACE_CLASS;
 
 const LINE_CLASS = "min-[72rem]:hidden";
 const PANEL_CLASS = "hidden min-[72rem]:flex";
@@ -150,7 +150,7 @@ export function SuggestionSummary({ className, ...props }: React.ComponentProps<
   return (
     <p
       className={cn(
-        "text-muted-foreground stacked:line-clamp-none line-clamp-2 min-w-0 flex-1 text-[0.8125rem] leading-snug",
+        "text-muted-foreground stacked:line-clamp-none text-compact line-clamp-2 min-w-0 flex-1 leading-snug",
         className,
       )}
       data-slot="suggestion-summary"
@@ -217,7 +217,7 @@ export function SuggestionHeader({ children }: { children: React.ReactNode }) {
     return (
       <div className="flex items-center gap-2.5" data-slot="suggestion-header">
         <SuggestionMark />
-        <DrawerTitle className="text-[1.0625rem] leading-snug font-semibold text-pretty">
+        <DrawerTitle className="text-lg leading-snug font-semibold text-pretty">
           {children}
         </DrawerTitle>
       </div>
@@ -227,15 +227,15 @@ export function SuggestionHeader({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-center gap-2" data-slot="suggestion-header">
       <SuggestionMark />
-      <h2 className="text-[0.8125rem] leading-snug font-semibold text-pretty">{children}</h2>
+      <h2 className="text-compact leading-snug font-semibold text-pretty">{children}</h2>
     </div>
   );
 }
 
 const DESCRIPTION_SIZE: Readonly<Record<Presentation, string>> = {
-  line: "text-[0.8125rem] leading-snug",
-  panel: "text-[0.78125rem] leading-normal",
-  sheet: "text-[0.9375rem] leading-normal",
+  line: "text-compact leading-snug",
+  panel: "text-xs leading-normal",
+  sheet: "text-reading leading-normal",
 };
 
 export function SuggestionDescription({ className, ...props }: React.ComponentProps<"p">) {
@@ -251,9 +251,9 @@ export function SuggestionDescription({ className, ...props }: React.ComponentPr
 }
 
 const RESULT_SIZE: Readonly<Record<Presentation, string>> = {
-  line: "min-w-0 flex-1 text-[0.8125rem] leading-snug",
-  panel: "text-[0.8125rem] leading-snug",
-  sheet: "text-[0.9375rem] leading-normal",
+  line: "min-w-0 flex-1 text-compact leading-snug",
+  panel: "text-compact leading-snug",
+  sheet: "text-reading leading-normal",
 };
 
 export function SuggestionResult({ className, ...props }: React.ComponentProps<"p">) {
@@ -270,7 +270,7 @@ export function SuggestionResult({ className, ...props }: React.ComponentProps<"
 }
 
 export function SuggestionSaveError({ className }: { className?: string }) {
-  return <ChangeSaveError className={cn("text-[0.8125rem] leading-snug", className)} />;
+  return <ChangeSaveError className={cn("text-compact leading-snug", className)} />;
 }
 
 const ACTIONS_CLASS: Readonly<Record<Presentation, string>> = {

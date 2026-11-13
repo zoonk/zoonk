@@ -1,18 +1,13 @@
 "use client";
 
-import { TASK_HEADER_ICON_CLASS, useTaskAsideShown } from "@zoonk/learn/task-header";
-import { Button } from "@zoonk/ui/components/button";
+import { TaskHeaderMenu, useTaskAsideShown } from "@zoonk/learn/task-header";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
-import { cn } from "@zoonk/ui/lib/utils";
-import { EllipsisIcon, NetworkIcon, SparklesIcon, ZapIcon } from "lucide-react";
+import { NetworkIcon, SparklesIcon, ZapIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { getLessonFocusTarget } from "./_utils/lesson-focus";
@@ -82,44 +77,33 @@ export function LessonScreenMenu() {
 
   return (
     <>
-      <DropdownMenu onOpenChange={mapSheet.onMenuOpenChange}>
-        <DropdownMenuTrigger
-          render={
-            <Button
-              className={cn("shrink-0", TASK_HEADER_ICON_CLASS.end)}
-              size="icon"
-              variant="ghost"
-            />
-          }
-        >
-          <EllipsisIcon aria-hidden="true" />
-          <span className="sr-only">{t("Screen options")}</span>
-        </DropdownMenuTrigger>
+      <TaskHeaderMenu
+        onOpenChange={mapSheet.onMenuOpenChange}
+        className="w-64"
+        finalFocus={getLessonFocusTarget}
+      >
+        <DropdownMenuGroup>
+          <AiNote />
+        </DropdownMenuGroup>
 
-        <DropdownMenuContent align="end" className="w-64" finalFocus={getLessonFocusTarget}>
-          <DropdownMenuGroup>
-            <AiNote />
-          </DropdownMenuGroup>
+        {(screen.canKnowThis || showsMap || reportItem) && <DropdownMenuSeparator />}
 
-          {(screen.canKnowThis || showsMap || reportItem) && <DropdownMenuSeparator />}
+        {screen.canKnowThis && (
+          <DropdownMenuItem onClick={actions.knowThis}>
+            <ZapIcon aria-hidden="true" />
+            {t("I already know this")}
+          </DropdownMenuItem>
+        )}
 
-          {screen.canKnowThis && (
-            <DropdownMenuItem onClick={actions.knowThis}>
-              <ZapIcon aria-hidden="true" />
-              {t("I already know this")}
-            </DropdownMenuItem>
-          )}
+        {showsMap && (
+          <DropdownMenuItem onClick={() => mapSheet.change(true)}>
+            <NetworkIcon aria-hidden="true" />
+            {t("Lesson map")}
+          </DropdownMenuItem>
+        )}
 
-          {showsMap && (
-            <DropdownMenuItem onClick={() => mapSheet.change(true)}>
-              <NetworkIcon aria-hidden="true" />
-              {t("Lesson map")}
-            </DropdownMenuItem>
-          )}
-
-          {reportItem}
-        </DropdownMenuContent>
-      </DropdownMenu>
+        {reportItem}
+      </TaskHeaderMenu>
 
       {lesson.summary && (
         <LessonMapSheet

@@ -106,12 +106,10 @@ function GoalLine({ goal }: { goal: SwitcherGoal }) {
 
   const line = { active, completed: t("Finished"), paused: t("Paused") }[goal.status];
 
-  return (
-    <span className="text-muted-foreground font-mono text-[0.71875rem] tabular-nums">{line}</span>
-  );
+  return <span className="text-muted-foreground text-2xs font-mono tabular-nums">{line}</span>;
 }
 
-const MENU_LABEL_CLASS = "text-faint px-2 pt-1.5 pb-1 text-[0.71875rem] font-[550]";
+const MENU_LABEL_CLASS = "text-faint px-2 pt-1.5 pb-1 text-2xs font-[550]";
 
 function GoalOption({ goal }: { goal: SwitcherGoal }) {
   return (
@@ -144,9 +142,9 @@ function ExplanationOption({ goal, href }: { goal: SwitcherGoal; href: string })
 
 /** The bar's trigger hangs 8px into the gutter (`-ml-2`), so it may be that much wider than its slot. */
 const TRIGGER_CLASS = {
-  bar: "hover:bg-muted aria-expanded:bg-muted focus-visible:ring-ring/50 hit-area relative -ml-2 flex h-9 max-w-[calc(100%+0.5rem)] min-w-0 items-center gap-2 rounded-lg px-2 text-[0.9375rem] font-semibold outline-none focus-visible:ring-[3px]",
+  bar: "hover:bg-muted aria-expanded:bg-muted focus-visible:ring-ring/50 hit-area relative -ml-2 flex h-9 max-w-[calc(100%+0.5rem)] min-w-0 items-center gap-3 rounded-lg px-2 text-reading font-semibold outline-none focus-visible:ring-[3px]",
   sidebar:
-    "hover:bg-muted/60 aria-expanded:bg-muted focus-visible:ring-ring/50 hit-area relative flex h-8 w-full min-w-0 items-center gap-2 rounded-md px-1.5 text-[0.84375rem] font-semibold outline-none focus-visible:ring-[3px]",
+    "hover:bg-muted/60 aria-expanded:bg-muted focus-visible:ring-ring/50 hit-area relative flex h-8 w-full min-w-0 items-center gap-2.5 rounded-md px-2 text-compact font-semibold outline-none focus-visible:ring-[3px]",
 } as const;
 
 type SwitcherPlacement = keyof typeof TRIGGER_CLASS;

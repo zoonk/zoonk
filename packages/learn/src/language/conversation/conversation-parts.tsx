@@ -132,7 +132,7 @@ export function SoundNote() {
   const t = useExtracted();
 
   return (
-    <p className="text-muted-foreground flex items-start gap-3 text-[0.8125rem] leading-snug text-pretty">
+    <p className="text-muted-foreground text-compact flex items-start gap-3 leading-snug text-pretty">
       <LineMarker className="w-4 justify-center">
         <Volume2Icon aria-hidden="true" className="size-3.5" />
       </LineMarker>

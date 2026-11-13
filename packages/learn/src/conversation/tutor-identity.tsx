@@ -30,7 +30,7 @@ export function TutorMessage({
 }) {
   if (page) {
     return (
-      <Message className="text-[0.9375rem] leading-[1.55]">
+      <Message className="text-reading leading-[1.55]">
         <MessageContent>
           <span className="sr-only">{identity.name}</span>
           {children}

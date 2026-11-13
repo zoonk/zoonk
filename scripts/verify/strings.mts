@@ -232,7 +232,7 @@ function termIn(text: string, terms: string[]): string | undefined {
   );
 }
 
-export function judgeString(
+function judgeString(
   string: CatalogString,
   { read, terms }: { read: (path: string) => string; terms: string[] },
 ): { rule: Rule; sample: string }[] {

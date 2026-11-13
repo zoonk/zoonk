@@ -84,7 +84,7 @@ export async function BeltRack({
             <span
               aria-hidden="true"
               className={cn(
-                "hidden max-w-full truncate text-[0.71875rem] md:block",
+                "text-2xs hidden max-w-full truncate md:block",
                 index === currentIndex && "text-foreground font-medium",
                 index < currentIndex && "text-muted-foreground",
                 index > currentIndex && "text-faint",
@@ -97,10 +97,7 @@ export async function BeltRack({
       </ol>
 
       {firstBelt && lastBelt && (
-        <div
-          aria-hidden="true"
-          className="text-faint flex justify-between text-[0.71875rem] md:hidden"
-        >
+        <div aria-hidden="true" className="text-faint text-2xs flex justify-between md:hidden">
           <span>{firstBelt.label}</span>
           <span>{lastBelt.label}</span>
         </div>

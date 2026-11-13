@@ -44,7 +44,7 @@ function EnergyStarts({ name }: { name: string }) {
   return (
     <section className="flex flex-col gap-1">
       <PageSectionTitle>{t("{buddy}'s Energy", { buddy: name })}</PageSectionTitle>
-      <p className="text-muted-foreground text-[0.8125rem] leading-snug">
+      <p className="text-muted-foreground text-compact leading-snug">
         {t("It starts with your first lesson.")}
       </p>
     </section>
@@ -75,14 +75,14 @@ export function BuddyEnergy({
   return (
     <LearnLink
       className={cn(
-        "hover:bg-muted/70 focus-visible:ring-ring/50 -mx-2.5 flex flex-col gap-2 rounded-[0.625rem] px-2.5 py-2 transition-colors outline-none focus-visible:ring-[3px]",
+        "hover:bg-muted/70 focus-visible:ring-ring/50 -mx-2.5 flex flex-col gap-2 rounded-lg px-2.5 py-2 transition-colors outline-none focus-visible:ring-[3px]",
         className,
       )}
       href={href}
     >
       <span className="flex items-center justify-between gap-3">
         <span className={PAGE_SECTION_TITLE_CLASS}>{t("{buddy}'s Energy", { buddy: name })}</span>
-        <span className="flex items-center gap-0.5 font-mono text-[0.8125rem] font-medium tabular-nums">
+        <span className="text-compact flex items-center gap-0.5 font-mono font-medium tabular-nums">
           {formatShare(share)}
           <ChevronRightIcon aria-hidden="true" className="text-muted-foreground/60 size-3.5" />
         </span>
@@ -92,7 +92,7 @@ export function BuddyEnergy({
         <MeterFill className="bg-energy" share={share} />
       </Meter>
 
-      {line && <span className="text-muted-foreground text-[0.8125rem] leading-snug">{line}</span>}
+      {line && <span className="text-muted-foreground text-compact leading-snug">{line}</span>}
     </LearnLink>
   );
 }

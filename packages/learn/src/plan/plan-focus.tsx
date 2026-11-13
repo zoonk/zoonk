@@ -12,10 +12,11 @@ import {
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CheckIcon, ChevronRightIcon, CrosshairIcon } from "lucide-react";
+import { CheckIcon, CrosshairIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { createContext, use, useId, useState } from "react";
 import { DrawerCloseButton } from "../_components/details-drawer";
+import { ListRowChevron } from "../_components/list-group";
 import { ChangeSaveError } from "../_components/save-error";
 import { FactSegments } from "../_components/task-meta";
 import { useFocusTestRowFacts } from "../focus-test/use-focus-test-texts";
@@ -61,7 +62,7 @@ function FocusTestLink({ focusTest, href }: { focusTest: FocusTestSummary; href:
 
   return (
     <LearnLink
-      className="ring-input hover:bg-muted/70 focus-visible:ring-ring/50 rounded-option flex min-h-14 items-center gap-3 px-3.5 py-2.5 ring-1 transition-colors outline-none ring-inset focus-visible:ring-[3px]"
+      className="ring-input hover:bg-muted/70 focus-visible:ring-ring/50 flex min-h-14 items-center gap-3 rounded-xl px-3.5 py-2.5 ring-1 transition-colors outline-none ring-inset focus-visible:ring-[3px]"
       href={href}
     >
       <CrosshairIcon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
@@ -71,7 +72,7 @@ function FocusTestLink({ focusTest, href }: { focusTest: FocusTestSummary; href:
           <FactSegments facts={rowFacts(focusTest)} />
         </span>
       </span>
-      <ChevronRightIcon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
+      <ListRowChevron />
     </LearnLink>
   );
 }

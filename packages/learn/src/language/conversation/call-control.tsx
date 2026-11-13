@@ -184,7 +184,7 @@ export function CallTurn({
       <p className="flex min-w-0 flex-col text-pretty">
         <span className="text-sm leading-5 font-medium">{state.title}</span>
         {detail && (
-          <span className="text-muted-foreground text-[0.8125rem] leading-snug">{detail}</span>
+          <span className="text-muted-foreground text-compact leading-snug">{detail}</span>
         )}
       </p>
     </div>

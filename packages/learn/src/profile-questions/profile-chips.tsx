@@ -14,12 +14,12 @@ export function ProfileChip({
 }: Omit<ChipOption, "id"> & { onToggle: () => void }) {
   return (
     <Toggle
-      className="aria-pressed:text-foreground h-auto min-h-11 rounded-lg px-3.5 py-2 text-left text-[0.9375rem] whitespace-normal"
+      className="aria-pressed:text-foreground text-reading h-auto min-h-11 rounded-lg px-3.5 py-2 text-left whitespace-normal"
       onPressedChange={onToggle}
       pressed={pressed}
       variant="outline"
     >
-      {pressed && <CheckIcon aria-hidden="true" strokeWidth={2.5} />}
+      {pressed && <CheckIcon aria-hidden="true" />}
       {label}
     </Toggle>
   );

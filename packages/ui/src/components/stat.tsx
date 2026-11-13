@@ -8,7 +8,7 @@ export function Stat({ className, render, ...props }: useRender.ComponentProps<"
     props: mergeProps<"div">(
       {
         className: cn(
-          "ring-border rounded-option flex min-w-0 flex-col gap-1.5 p-3 text-left ring-1 ring-inset",
+          "ring-border flex min-w-0 flex-col gap-1.5 rounded-xl p-3 text-left ring-1 ring-inset",
           className,
         ),
       },
@@ -53,7 +53,7 @@ export function StatValue({ className, ...props }: React.ComponentProps<"span">)
 export function StatDetail({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
-      className={cn("text-muted-foreground text-[0.71875rem] leading-snug", className)}
+      className={cn("text-muted-foreground text-2xs leading-snug", className)}
       data-slot="stat-detail"
       {...props}
     />

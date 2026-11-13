@@ -172,7 +172,7 @@ export function SkillLevelsCard({ progress }: { progress: LanguageProgressView }
 
       <div aria-hidden="true" className={ROW_GRID}>
         <span />
-        <span className="text-muted-foreground grid grid-cols-6 text-center font-mono text-[0.6875rem] font-medium">
+        <span className="text-muted-foreground text-2xs grid grid-cols-6 text-center font-mono font-medium">
           {CEFR_LEVELS.map((band) => (
             <span key={band}>{band}</span>
           ))}

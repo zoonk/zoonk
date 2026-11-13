@@ -2,7 +2,6 @@
 
 import { Link } from "@/i18n/navigation";
 import {
-  TASK_HEADER_ICON_CLASS,
   TaskHeader,
   TaskHeaderBar,
   TaskHeaderSide,
@@ -28,11 +27,7 @@ function LessonExit({ href }: { href: string }) {
 
   return (
     <Link
-      className={cn(
-        buttonVariants({ size: "icon", variant: "ghost" }),
-        "shrink-0",
-        TASK_HEADER_ICON_CLASS.start,
-      )}
+      className={cn(buttonVariants({ edge: "start", size: "icon", variant: "ghost" }), "shrink-0")}
       href={href}
     >
       <XIcon aria-hidden="true" />

@@ -50,7 +50,7 @@ export function OfferCard({
             {locked && <PlusMark />}
           </h3>
           {description && (
-            <p className="text-muted-foreground text-[0.8125rem] text-pretty">{description}</p>
+            <p className="text-muted-foreground text-compact text-pretty">{description}</p>
           )}
           {note}
         </div>

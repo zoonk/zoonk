@@ -5,6 +5,7 @@ import {
   type SerializedStep,
   type WordBankOption,
 } from "@zoonk/core/player/contracts/prepare-lesson-data";
+import { QuestionTitle } from "@zoonk/learn/question-title";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useCallback, useMemo, useState } from "react";
@@ -14,7 +15,7 @@ import { type BlankState, getCompletedUserAnswers } from "./_utils/fill-blank-st
 import { getTemplateRomanization } from "./_utils/template-romanization";
 import { removeKeepingFocus } from "./_utils/word-bank-focus";
 import { FillBlankWordBank } from "./fill-blank-word-bank";
-import { QUESTION_TEXT_CLASS, QuestionText } from "./question-text";
+import { QuestionText } from "./question-text";
 import { RomanizationText } from "./romanization-text";
 import { InteractiveStepLayout } from "./step-layouts";
 
@@ -116,9 +117,10 @@ function TemplateText({
   const segments = template.split("[BLANK]");
 
   return (
-    <p
-      className={cn(QUESTION_TEXT_CLASS, "leading-10", titled && "font-normal")}
+    <QuestionTitle
+      className={cn("leading-10", titled && "font-normal")}
       data-slot="word-answer"
+      heading={false}
     >
       {segments.map((segment, index) => (
         // oxlint-disable-next-line react/no-array-index-key -- Template segments from split() can repeat, no unique ID
@@ -135,7 +137,7 @@ function TemplateText({
           )}
         </span>
       ))}
-    </p>
+    </QuestionTitle>
   );
 }
 
