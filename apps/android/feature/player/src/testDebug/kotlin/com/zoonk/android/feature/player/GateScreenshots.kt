@@ -35,6 +35,8 @@ import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import java.io.File
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 
 /**
  * Review screenshots of the subscription gate and the limits in a lesson, written only on demand:
@@ -53,15 +55,27 @@ class GateScreenshots {
 
     @Test
     @Config(qualifiers = PHONE)
-    fun lessonFreeMonth() = capture("gate-lesson-free-month-phone") { access(Limit.Reached(LimitTier.Free, LimitPeriod.Month)) }
+    fun lessonFreeLaterToday() = capture("gate-lesson-free-today-phone") { access(free(Instant.now().plusSeconds(60))) }
+
+    @Test
+    @Config(qualifiers = PHONE)
+    fun lessonFreeTomorrow() = capture("gate-lesson-free-tomorrow-phone") { access(free(Instant.now().plus(1, ChronoUnit.DAYS))) }
+
+    @Test
+    @Config(qualifiers = PHONE)
+    fun lessonFreeOnADay() = capture("gate-lesson-free-on-day-phone") { access(free(Instant.now().plus(9, ChronoUnit.DAYS))) }
 
     @Test
     @Config(qualifiers = PHONE_DARK)
-    fun lessonFreeMonthDark() = capture("gate-lesson-free-month-phone-dark") { access(Limit.Reached(LimitTier.Free, LimitPeriod.Month)) }
+    fun lessonFreeOnADayDark() = capture("gate-lesson-free-on-day-phone-dark") { access(free(Instant.now().plus(9, ChronoUnit.DAYS))) }
 
     @Test
     @Config(qualifiers = TABLET)
-    fun lessonFreeMonthTablet() = capture("gate-lesson-free-month-tablet") { access(Limit.Reached(LimitTier.Free, LimitPeriod.Month)) }
+    fun lessonFreeOnADayTablet() = capture("gate-lesson-free-on-day-tablet") { access(free(Instant.now().plus(9, ChronoUnit.DAYS))) }
+
+    @Test
+    @Config(qualifiers = PHONE)
+    fun lessonFreeNoDay() = capture("gate-lesson-free-no-day-phone") { access(free(null)) }
 
     @Test
     @Config(qualifiers = PHONE)
@@ -81,6 +95,7 @@ class GateScreenshots {
         capture("gate-in-place-phone-font200") {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 listOf(
+                    free(Instant.now().plus(9, ChronoUnit.DAYS)) to LimitSubject.Lessons,
                     Limit.Reached(LimitTier.Free, LimitPeriod.Day) to LimitSubject.Explanations,
                     Limit.Reached(LimitTier.Guest, LimitPeriod.Day) to LimitSubject.Messages,
                     Limit.Reached(LimitTier.Plus, LimitPeriod.Month) to LimitSubject.Help,
@@ -93,6 +108,8 @@ class GateScreenshots {
                 RecordButton(VoiceRecorder.Status.Recording(SystemClock.elapsedRealtime() - 7_000), onStart = {}, onStop = {})
             }
         }
+
+    private fun free(availableAt: Instant?) = Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days, availableAt)
 
     @Composable
     private fun access(limit: Limit) = access(LessonRefusal.Limited(limit))

@@ -3,7 +3,7 @@
 {
   "speaking_eyebrow": "511991acae0c7e8a10320f67f609c962e8e5ddba433e9a53c9407231a7ca94d0",
   "speaking_facts": "a48c4d8bbcfa4c7d641599fdf7bd6a54590d0759fc17538297eee59854b26a80",
-  "speaking_gate": "9344b74b30d4f07dee60d843ed656e09203d3f507c296c8567273ceeab2a2934",
+  "speaking_gate": "9dfc6cec5b5b9fca7296ed066ca617dc66861d7b1ab3f3120201c6c97ce2f415",
   "speaking_last_at": "432cd6b81095ba7f9a24fbd0819b0d4b16e7575f5d6147a70f4de549d1f09eca",
   "speaking_last_below": "a0ef7cd1db2f40104f96c3668ffbac0709d0a9e4ca4f256cf32acac795799d8c",
   "speaking_last_near": "2194dc72c6ec3a66e1b7f56d259924ad50e7367552c9e46e077f8153a7675ff0",
@@ -48,7 +48,7 @@
     <string name="speaking_tasks">Tareas</string>
     <!-- The exam page's speaking section, with the paper's title beside it. -->
     <string name="speaking_section">Expresión oral</string>
-    <string name="speaking_gate">Necesitas una suscripción para practicar expresión oral</string>
+    <string name="speaking_gate">La práctica de expresión oral requiere una suscripción</string>
     <string name="speaking_opens_when_ready">Tu tarea se abrirá en cuanto esté lista la tarjeta.</string>
     <string name="speaking_no_time_month">No te queda suficiente tiempo de llamada este mes para esta tarea</string>
     <string name="speaking_no_time_day">No te queda suficiente tiempo de llamada hoy para esta tarea</string>

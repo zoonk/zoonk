@@ -7,10 +7,11 @@
     <string name="limit_more_next_month">More next month.</string>
     <string name="limit_more_tomorrow_or_subscribe">More tomorrow, or subscribe to keep going.</string>
     <string name="limit_more_next_month_or_subscribe">More next month, or subscribe to keep going.</string>
-    <string name="limit_still_review_more_tomorrow">You can still review and practice your mistakes. More tomorrow.</string>
-    <string name="limit_still_review_more_next_month">You can still review and practice your mistakes. More next month.</string>
-    <string name="limit_still_review_more_tomorrow_or_subscribe">You can still review and practice your mistakes. More tomorrow, or subscribe to keep going.</string>
-    <string name="limit_still_review_more_next_month_or_subscribe">You can still review and practice your mistakes. More next month, or subscribe to keep going.</string>
+    <string name="limit_still_review">You can still review and practice your mistakes.</string>
+    <string name="limit_lesson_opens_today">Your next free lesson opens later today, or subscribe to keep going.</string>
+    <string name="limit_lesson_opens_tomorrow">Your next free lesson opens tomorrow, or subscribe to keep going.</string>
+    <!-- On the screen a free learner sees when their free lessons are used. {date} is a day and its month, such as "November 22" in English. -->
+    <string name="limit_lesson_opens_on">Your next free lesson opens on %1$s, or subscribe to keep going.</string>
     <string name="limit_help_guest">That\'s all you can try without an account</string>
     <string name="limit_help_day">You\'ve reached today\'s limit</string>
     <string name="limit_help_month">You\'ve reached this month\'s limit</string>
@@ -19,7 +20,7 @@
     <string name="limit_explanations_day">No more explanations today</string>
     <string name="limit_explanations_month">No more explanations this month</string>
     <string name="limit_lessons_guest">No more lessons without an account</string>
-    <string name="limit_lessons_free_month">You\'ve used this month\'s free lessons</string>
+    <string name="limit_lessons_free">You\'ve used your free lessons</string>
     <string name="limit_lessons_day">No more new lessons today</string>
     <string name="limit_lessons_month">No more new lessons this month</string>
     <string name="limit_mind_maps_guest">No more mind maps without an account</string>

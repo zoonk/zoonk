@@ -79,7 +79,7 @@
   "player_getting_challenge_ready": "61699e5b20b31e6bbbb62b02730a3badf37aa0836d1d78525bfbc8db23909005",
   "player_getting_lesson_ready": "7ca830b47eee47ad159f4b066ce622d7816c8b85e4298db1bdb230b4da1a1c21",
   "player_guess_chip": "3c2723ef1c91a25a4dbef7f6651de611ad72a2640cdf93e0c5dcb97e701a1d52",
-  "player_guest_limit_description": "cde1466a325566a57fdfe7c96cb2e1e0e26ad99b12f878eb3194db8060f3b2ce",
+  "player_guest_limit_description": "679a624b2bf62b84ff843f42d8c5199aeeb74c589c77294adca0415e8322e2d0",
   "player_guest_save_note": "2f5c39fd34e5271661c0de7b4b6333d40769466cfe7d763085e9586bfc9b5e98",
   "player_how_to_say": "23193f849f17431b1e6e0169bd3b7fe41b80fe599e3853af09d385ddc9bca7c4",
   "player_hyperdrive_streak": "94cb2c8a2040d9cf0dcefec7fe4ea528a6749efcad7a1ab17e2366e7e7d3fb49",
@@ -389,7 +389,7 @@
         <item quantity="one">Du hast in kurzer Zeit viele Lektionen geöffnet. Diese Lektion öffnet sich in %1$s Sekunde von selbst.</item>
         <item quantity="other">Du hast in kurzer Zeit viele Lektionen geöffnet. Diese Lektion öffnet sich in %1$s Sekunden von selbst.</item>
     </plurals>
-    <string name="player_guest_limit_description">Alles, was du gelernt hast, nimmst du mit.</string>
+    <string name="player_guest_limit_description">Alles, was du gelernt hast, bleibt dir erhalten.</string>
     <string name="player_lesson_complete">Lektion abgeschlossen</string>
     <string name="player_already_knew">Das wusstest du schon</string>
     <string name="player_saving_progress">Wir speichern deinen Fortschritt…</string>

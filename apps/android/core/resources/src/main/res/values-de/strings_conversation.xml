@@ -19,7 +19,7 @@
   "conversation_calling": "a4a6f38f987c046d702b804651da25d92f067e0e847be197f8ff41764b247452",
   "conversation_calls_need_account": "1e72744b3412530031a0d92803ac735167b185d0175ec3c9022d015d86dd2efb",
   "conversation_cancel": "521964f32c2ba2d9386d2bdeac84e818a9e7324d8b1a001ccc0c4a9a1a272363",
-  "conversation_challenge_gate_line": "37d395d2b617f8080e308b735114357d2ec435fd9198a1f7a23feb66f3d664b7",
+  "conversation_challenge_gate_line": "1dff8e3391314850d9943c469019a6efbf0b2ce88010a93f30cb6124251b0911",
   "conversation_challenge_gate_title": "3871ac4f591ce6175c2a3dde200f17c5d76bb126d47deb7b37f7a8a2f557644e",
   "conversation_challenge_passed": "8b33ec83258b4fcfc6ca0f123808fc6a7125e6b96e0659f2c5e19de2b48a5d7a",
   "conversation_character_detail": "2c88dc15017d78b48cc94f8c9b5c30e52e95485d2c0d4174429df3d6fbbac314",
@@ -186,7 +186,7 @@
     <string name="conversation_start">Gespräch starten</string>
     <string name="conversation_start_failed">Das Gespräch konnte nicht starten. Versuch es gleich noch einmal.</string>
     <string name="conversation_challenge_gate_title">Für dieses Gespräch brauchst du ein Abo</string>
-    <string name="conversation_challenge_gate_line">Dein Plan geht auch ohne dieses Gespräch weiter.</string>
+    <string name="conversation_challenge_gate_line">Dein Plan läuft auch ohne diesen Teil weiter.</string>
     <!-- The microphone permission was denied; the character's name. -->
     <string name="conversation_mic_off">Erlaub in den Einstellungen den Zugriff aufs Mikrofon, um mit %1$s zu sprechen, oder antworte schriftlich.</string>
     <!-- Starts the call without the microphone, answering by typing. -->

@@ -190,7 +190,7 @@ private fun LessonRefusal.reached(): Limit.Reached? =
         }
 
         LessonRefusal.PlusRequired -> {
-            Limit.Reached(LimitTier.Free, LimitPeriod.Month)
+            Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days)
         }
 
         else -> {

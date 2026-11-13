@@ -8,6 +8,10 @@ import com.zoonk.android.R
 import com.zoonk.android.feature.subscription.CreateAccountButton
 import com.zoonk.android.feature.subscription.GateLayout
 import com.zoonk.android.feature.subscription.SubscribeButton
+import com.zoonk.android.ui.format.DateStyle
+import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatDate
+import java.time.Instant
 
 /** What ran out as the title, and when it comes back as the one line under it. */
 data class LimitWords(
@@ -54,6 +58,25 @@ val Limit.hasWayOn: Boolean
 private val Limit.Reached.monthly: Boolean
     get() = period == LimitPeriod.Month || period == LimitPeriod.Total
 
+/** A free learner's new lessons count their last 30 days (rule 16), so their gate gives the day the next one opens. */
+private val Limit.Reached.freeLessons: Boolean
+    get() = tier == LimitTier.Free && period == LimitPeriod.Rolling30Days
+
+/** The day's sentence from [availableAt]; none when the API gave no instant, never a guessed day. */
+@Composable
+private fun opensLine(
+    availableAt: Instant?,
+    @StringRes today: Int,
+    @StringRes tomorrow: Int,
+    @StringRes on: Int,
+): String? =
+    when (val day = availableAt?.let { openingDay(it) }) {
+        null -> null
+        OpeningDay.Today -> stringResource(today)
+        OpeningDay.Tomorrow -> stringResource(tomorrow)
+        is OpeningDay.On -> stringResource(on, formatDate(day.date, currentLocale(), DateStyle.DayMonth))
+    }
+
 @Composable
 fun limitWords(
     limit: Limit,
@@ -68,6 +91,19 @@ fun limitWords(
 /** When it comes back; a guest's way on is the button, so their notice has no line. */
 @Composable
 fun comesBackLine(limit: Limit.Reached): String? =
+    if (limit.freeLessons) {
+        opensLine(
+            limit.availableAt,
+            R.string.limit_lesson_opens_today,
+            R.string.limit_lesson_opens_tomorrow,
+            R.string.limit_lesson_opens_on,
+        )
+    } else {
+        reachedLine(limit)
+    }
+
+@Composable
+private fun reachedLine(limit: Limit.Reached): String? =
     when (limit.tier) {
         LimitTier.Guest -> {
             null
@@ -84,17 +120,10 @@ fun comesBackLine(limit: Limit.Reached): String? =
         }
     }
 
-/** The lesson screen's line: what stays free, then when lessons come back. */
+/** The lesson screen's line: what stays free, then [comesBackLine], as the web joins them. */
 @Composable
 fun stillReviewLine(limit: Limit.Reached): String =
-    stringResource(
-        when {
-            limit.tier == LimitTier.Free && limit.monthly -> R.string.limit_still_review_more_next_month_or_subscribe
-            limit.tier == LimitTier.Free -> R.string.limit_still_review_more_tomorrow_or_subscribe
-            limit.monthly -> R.string.limit_still_review_more_next_month
-            else -> R.string.limit_still_review_more_tomorrow
-        },
-    )
+    listOfNotNull(stringResource(R.string.limit_still_review), comesBackLine(limit)).joinToString(" ")
 
 /** Calls have no title here: their screen already says what ran out. */
 @StringRes
@@ -139,7 +168,7 @@ private fun reachedTitle(
         LimitSubject.Lessons -> {
             when {
                 guest -> R.string.limit_lessons_guest
-                limit.tier == LimitTier.Free && month -> R.string.limit_lessons_free_month
+                limit.freeLessons || (limit.tier == LimitTier.Free && month) -> R.string.limit_lessons_free
                 month -> R.string.limit_lessons_month
                 else -> R.string.limit_lessons_day
             }

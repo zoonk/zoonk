@@ -3,7 +3,7 @@
 {
   "speaking_eyebrow": "ba048e3dd30f2939c2e1edf78b575a3f06b7f7a8753eecaa29de458bb7cc720c",
   "speaking_facts": "7c718308bb6c8c98114ecca72df81cb5103e3ebe6db7ea0032a2fe4d1aef2190",
-  "speaking_gate": "cfc405ad5b1b012a7e86dfb4705cdff9d21503c1cd65f616231ff23cf579f517",
+  "speaking_gate": "f95cfb256a95f143bcc2c288bf4484d19ff2e09a11652ace1c819b066995c930",
   "speaking_last_at": "b0a5994f5f47cb4214e78f64022d2822482d6c0c2afa8fd16d9422b2ad2853f1",
   "speaking_last_below": "de85a71c3d7af5fb4a429fe7660efaa9dd5517995788863a14221d43771f8d86",
   "speaking_last_near": "4f21063f6c81671f1049e26f0302b3afe44d0cacc99d5c31ce9ba83ba78ac82c",
@@ -48,7 +48,7 @@
     <string name="speaking_tasks">Tâches</string>
     <!-- The exam page's speaking section, with the paper's title beside it. -->
     <string name="speaking_section">Expression orale</string>
-    <string name="speaking_gate">L’entraînement à l’oral nécessite un abonnement</string>
+    <string name="speaking_gate">Il faut un abonnement pour s’entraîner à l’expression orale</string>
     <string name="speaking_opens_when_ready">Ta tâche s’ouvre dès que sa fiche est prête.</string>
     <string name="speaking_no_time_month">Pas assez de temps d’appel ce mois-ci pour cette tâche</string>
     <string name="speaking_no_time_day">Pas assez de temps d’appel aujourd’hui pour cette tâche</string>

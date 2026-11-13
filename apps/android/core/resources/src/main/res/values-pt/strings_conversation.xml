@@ -20,7 +20,7 @@
   "conversation_calls_need_account": "108cd4b02083c756b12d34bf91eb95d30feaeb93b1fd8f0fc610b30fc02b9bb2",
   "conversation_cancel": "99adf5aefd8e9cd10501523ce5661f246280463bf017b47efd100587284a76b6",
   "conversation_challenge_gate_line": "58de5f2104668d390f12c33bce06944cccff92b1226ad22195f68b5a1704075c",
-  "conversation_challenge_gate_title": "848fedbb63b0b1db7d63c944ff0f0d19461c50c1f815deb4ab436b5da3bfe34b",
+  "conversation_challenge_gate_title": "e96415857b5c7c2f382f8d62acaec11c888fc78538f6ee8a9037c2c4071c7bc8",
   "conversation_challenge_passed": "a518a9a8023ab3b9d1ceb8335c684812d096cbc6d40f6228e797819d23a69041",
   "conversation_character_detail": "50731f369c2a59e7ddb8dfb5e5ff6a1ad51fb79b64fab9bd4c5478c243981f8e",
   "conversation_character_said": "03fe4722c855a5d8be977992a5a045ee5fb631fdcede061da49e60c11e0c93af",
@@ -72,7 +72,7 @@
   "conversation_listen_then_answer": "8b4b62b8f58acc027dc9d15f43c8b5e994484d345274bd8a52c9d926eed730da",
   "conversation_listen_to": "9c40cfd8a30a626551c227242316e5d4675d493db66f6e19cb0971828bdc3c34",
   "conversation_listening": "be0c767678cfb38f99089f9ca74fa5462bd76117a8f1b28e266b61208b5d9878",
-  "conversation_longer_calls_gate": "246b5a59acc2e85caa24be46a104cb9da421a89d5253d640b4dbc240650c368e",
+  "conversation_longer_calls_gate": "4cd547f827e0638f242e833295e040b33b185f7fe4e426f04c7ea6e5a9334ae7",
   "conversation_mic_off": "b27cb4e4edfe93d23a2c595e7a624743e2965a8b5d7bbb597deecd3c3e326da8",
   "conversation_minutes_range": "0df611f487d0e7733d670fa51d726c81c53717d70e2f988b8a8f81f676b059ab",
   "conversation_mock_band_ielts": "de9e2a3a30bf7fa73c1890c607020fe09381ccfd387411073d8ea58826aee7f9",
@@ -185,7 +185,7 @@
     <string name="conversation_call">Conversar com %1$s</string>
     <string name="conversation_start">Começar a conversa</string>
     <string name="conversation_start_failed">A conversa não começou. Tente de novo em instantes.</string>
-    <string name="conversation_challenge_gate_title">Esta conversa precisa de uma assinatura</string>
+    <string name="conversation_challenge_gate_title">Para esta conversa, é preciso assinar</string>
     <string name="conversation_challenge_gate_line">Seu plano continua sem ela.</string>
     <!-- The microphone permission was denied; the character's name. -->
     <string name="conversation_mic_off">Permita o uso do microfone nas Configurações para falar com %1$s ou responda digitando.</string>
@@ -288,7 +288,7 @@
     <!-- Who the practice call is with, such as "with Lucía · Waiter". -->
     <string name="conversation_practice_with">com %1$s · %2$s</string>
     <string name="conversation_call_length">Duração da conversa</string>
-    <string name="conversation_longer_calls_gate">Conversas mais longas precisam de uma assinatura</string>
+    <string name="conversation_longer_calls_gate">Para conversar por mais tempo, é preciso assinar</string>
     <string name="conversation_opens_when_ready">Sua conversa abre assim que estiver pronta.</string>
     <string name="conversation_get_ready">Começar</string>
     <string name="conversation_get_ready_description">Uma conversa curta por voz com um personagem de IA sobre esta unidade.</string>

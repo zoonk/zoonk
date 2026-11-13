@@ -19,8 +19,8 @@
   "conversation_calling": "ece68cc1ef5f27db05e51d3f370386ba0f1c3b838b59ab0dec857f349d83b089",
   "conversation_calls_need_account": "3a8dda0450cc1ec89dd422b3d2daee744b972ceee08a652d6aeef9b80846c6f2",
   "conversation_cancel": "89b7accc3616048c584c8e1797de12ece66d34ebfc02fb54940866a8fb04dd2c",
-  "conversation_challenge_gate_line": "8724edbcc2d3d59c3852c7af3443438dcdd9d33702699d51d386311ac90c38b1",
-  "conversation_challenge_gate_title": "7182636f84e9b3864549011ff8242eb3170bd7af6e1ca244a92ad7074062bc86",
+  "conversation_challenge_gate_line": "71c669604db631894190e6431f0f0a7256a0219d73b006d24a190b98a50d38a2",
+  "conversation_challenge_gate_title": "704a4fe45afe99e6a792ef78b60d8407c7fd8aa68ec0c70f38668eeabbcaf57c",
   "conversation_challenge_passed": "0f3266a9b0d35415815520c3c062ecc4270cbbd0b68b32a6189be49b2c582366",
   "conversation_character_detail": "bdb870c614ef01c1c564598e1591c65cd08835c10024ba3e5de8c4983530a325",
   "conversation_character_said": "9531cea3e051feae61dbb2c273190cf213de459af7571043691044568d7394c6",
@@ -185,8 +185,8 @@
     <string name="conversation_call">Appeler %1$s</string>
     <string name="conversation_start">Démarrer l’appel</string>
     <string name="conversation_start_failed">L’appel n’a pas pu démarrer. Réessaie dans un instant.</string>
-    <string name="conversation_challenge_gate_title">Cet appel nécessite un abonnement</string>
-    <string name="conversation_challenge_gate_line">Ton plan continue sans cet appel.</string>
+    <string name="conversation_challenge_gate_title">Il faut un abonnement pour cet appel</string>
+    <string name="conversation_challenge_gate_line">Ton plan continue sans ça.</string>
     <!-- The microphone permission was denied; the character's name. -->
     <string name="conversation_mic_off">Autorise l’accès au micro dans les paramètres pour parler avec %1$s, ou participe à l’appel par écrit.</string>
     <!-- Starts the call without the microphone, answering by typing. -->

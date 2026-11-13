@@ -147,7 +147,7 @@
   "player_set_aside_description": "dd8d49c8ac09a476b7a6a8702b377168fa565ae58b481e86ed98adc401c1c156",
   "player_set_aside_title": "b94f855889d7ae7919183b596a225c3f32a73a9324bd256fc7fd37255b36c9e1",
   "player_slow_down_description": "731e5aee9e1823f000f91c539d927467766da1434634d6db39c800c42ac96b3e",
-  "player_slow_down_title": "1623381b1e2be502bae2649131a78ef70a2a9c34adef0bd454f017155626659a",
+  "player_slow_down_title": "8d837eaeec7ede02c5bf7d287842177a9e310e55936eb75c62f84469a6725efe",
   "player_slowly": "c1b4ab884dcb58c410c3829a10b2e4000946ab8cb3209976ea9f26d17c35b5b0",
   "player_sounds_like": "c1d197fc1afb784348c15e51c9047f6310c2c74bb707fd199b81f6b9db15d6a6",
   "player_spelled": "95ecbb14ea0bb84ee21bd76c4410065d111cc6f588c36c74427a5c5428408675",
@@ -387,7 +387,7 @@
     <string name="player_not_in_app_description">Ela tem telas que o app ainda não consegue mostrar. Você pode fazer a aula em zoonk.com.</string>
     <string name="player_start_failed_title">Não conseguimos abrir esta aula</string>
     <string name="player_start_failed_description">Nada do que você fez foi perdido.</string>
-    <string name="player_slow_down_title">Faça uma pausa rápida</string>
+    <string name="player_slow_down_title">Faça uma pausa</string>
     <plurals name="player_slow_down_description">
         <item quantity="one">Você abriu muitas aulas em pouco tempo. Esta aula abre sozinha em %1$s segundo.</item>
         <item quantity="many">Você abriu muitas aulas em pouco tempo. Esta aula abre sozinha em %1$s segundos.</item>

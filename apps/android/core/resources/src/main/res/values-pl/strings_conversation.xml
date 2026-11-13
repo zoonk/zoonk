@@ -19,7 +19,7 @@
   "conversation_calling": "e46dba5a725687fbc3046a95a1bc3b60685acd44aaa3dc20c01955e4bdf701c6",
   "conversation_calls_need_account": "f6ceb25c666371dc6e518901964cd707034722f77d85e8604030dada652cdddd",
   "conversation_cancel": "2c8e85aefc10b01d5542d51c8b6bcc28078105c5f7a941d85a68119b96eaaae5",
-  "conversation_challenge_gate_line": "9d17609a86fc0413349142eb493fe6aeb0bd6c5356f9a9f2e9b48fbb4a46c101",
+  "conversation_challenge_gate_line": "447e1210e238b4354fb5d6b4988ac5836e754dc21144ee29bce76140be4e900e",
   "conversation_challenge_gate_title": "5af7a9c20e7426e13f228c3d2da27e5f76ea48902e4042f7524f3cde9281abf8",
   "conversation_challenge_passed": "f6565855d92f44dc08cc5493d70509823b8fdb1fe5bc7d5c66cbbb559abe84e4",
   "conversation_character_detail": "9e456cf68aa5fea3c3280b350ae2a4537b785e690e3942ef42e7aff64727fb5b",
@@ -186,7 +186,7 @@
     <string name="conversation_start">Rozpocznij rozmowę</string>
     <string name="conversation_start_failed">Nie udało się rozpocząć rozmowy. Spróbuj ponownie za chwilę.</string>
     <string name="conversation_challenge_gate_title">Ta rozmowa wymaga subskrypcji</string>
-    <string name="conversation_challenge_gate_line">Możesz kontynuować plan bez tej rozmowy.</string>
+    <string name="conversation_challenge_gate_line">Możesz kontynuować plan bez niej.</string>
     <!-- The microphone permission was denied; the character's name. -->
     <string name="conversation_mic_off">Zezwól na dostęp do mikrofonu w Ustawieniach, by porozmawiać. Odpowie %1$s. Możesz też pisać.</string>
     <!-- Starts the call without the microphone, answering by typing. -->

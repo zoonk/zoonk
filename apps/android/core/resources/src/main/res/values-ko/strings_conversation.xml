@@ -19,8 +19,8 @@
   "conversation_calling": "8653b7b99ba7905a348911df347913f039d16caa2e94c5aa21e72ec078526e78",
   "conversation_calls_need_account": "19e8cca2dc29f97a60eb4353dd69af2e9b1b24fdd46c21da347f4c329dc79ae2",
   "conversation_cancel": "13b0ae0affca9fcc60f6cc7d91b671ff9938045a708d009255a2ae39acacb1a9",
-  "conversation_challenge_gate_line": "03901a0dc0ffbd05da14012184824e4f7b03b66e0ad6845968f4e42d1eb01864",
-  "conversation_challenge_gate_title": "a48e467ff91a68e834bb154e13ac112490b04f55d9a5d1cb7db6b6e057949134",
+  "conversation_challenge_gate_line": "b1fcbdca59a232f0df6156ffcf96e424a8a77a8348295cf174a42c139a15720b",
+  "conversation_challenge_gate_title": "780e6ec922491ec518fcd770182c3b513746648ff9d0e2c985708177cc482370",
   "conversation_challenge_passed": "cda489cb3315d7e50998fb908fb23cf025e82c90080e54d2f5a0081bb64fbba5",
   "conversation_character_detail": "30b35c9fabed058b45ce7560515b887d9911747f61277acacdf0b0b3d6a4107c",
   "conversation_character_said": "25ac743252f51f560b64f7e3cb454806ee027aa0c9d389b42d63e97dbee38ff7",
@@ -72,7 +72,7 @@
   "conversation_listen_then_answer": "6cc0ccd46a9ff3aa93fd4f53e1d3ce3ccd04153e3571112af4c1d559ca62df0c",
   "conversation_listen_to": "862f02e53b19e8d83eb3041994470d225551edbd1928bbaaf7fa479ec1a330b1",
   "conversation_listening": "798758ab15151423f161734043e676d997a377ed900c9be986a97e1a9cf133f5",
-  "conversation_longer_calls_gate": "878ada975ffa5342ea2a664e2cb742395bd9578506ed1a1c265a9e8b35c6f845",
+  "conversation_longer_calls_gate": "d5aa702a6e776906287ad7d3ec2e5f3c40e6b002691acca07391ce198a70ca16",
   "conversation_mic_off": "eae9561f0987df0bc0dba765d112d2f9a914ec4dc6b30946fcafa585519dc393",
   "conversation_minutes_range": "1f3f6a419306f9e1f3ce24c286927665c532c3c090c700e63b2a1a5a20f6c27d",
   "conversation_mock_band_ielts": "a1a46b3b353f69a004d918dbd64837655b9b9c797c4f8b5756c74be091f3f47e",
@@ -185,8 +185,8 @@
     <string name="conversation_call">%1$s와(과) 대화하기</string>
     <string name="conversation_start">대화 시작하기</string>
     <string name="conversation_start_failed">대화를 시작하지 못했어요. 잠시 후에 다시 시도해 보세요.</string>
-    <string name="conversation_challenge_gate_title">이 대화에는 구독이 필요해요</string>
-    <string name="conversation_challenge_gate_line">이 대화 없이도 계획은 계속돼요.</string>
+    <string name="conversation_challenge_gate_title">이 대화를 하려면 구독이 필요해요</string>
+    <string name="conversation_challenge_gate_line">이 부분 없이도 계획은 계속 진행돼요.</string>
     <!-- The microphone permission was denied; the character's name. -->
     <string name="conversation_mic_off">설정에서 마이크 사용을 허용하면 %1$s와(과) 말로 대화할 수 있어요. 글로 답해도 돼요.</string>
     <!-- Starts the call without the microphone, answering by typing. -->
@@ -286,7 +286,7 @@
     <!-- Who the practice call is with, such as "with Lucía · Waiter". -->
     <string name="conversation_practice_with">%1$s와(과) 함께 · %2$s</string>
     <string name="conversation_call_length">대화 시간</string>
-    <string name="conversation_longer_calls_gate">더 긴 대화에는 구독이 필요해요</string>
+    <string name="conversation_longer_calls_gate">더 오래 대화하려면 구독이 필요해요</string>
     <string name="conversation_opens_when_ready">준비가 끝나면 대화 화면이 바로 열려요.</string>
     <string name="conversation_get_ready">시작하기</string>
     <string name="conversation_get_ready_description">이 단원에 대해 AI 캐릭터와 짧게 음성으로 대화해요.</string>

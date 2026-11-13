@@ -264,7 +264,7 @@ fun LessonNotWrittenNotice(
     val limit =
         when (val refusal = (writing as? LessonWriting.Refused)?.refusal) {
             is LessonRefusal.Limited -> refusal.limit
-            LessonRefusal.PlusRequired -> Limit.Reached(LimitTier.Free, LimitPeriod.Month)
+            LessonRefusal.PlusRequired -> Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days)
             else -> null
         }
     when {

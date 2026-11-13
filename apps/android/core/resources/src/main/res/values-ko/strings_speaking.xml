@@ -3,7 +3,7 @@
 {
   "speaking_eyebrow": "f4ac085cb57be38e3ec3af4d77adf397a0d8374f39bfa548f702d2c2b51aa430",
   "speaking_facts": "04ba2a228bd08b3fdd9c0d760b373be862d253e0a8e31dc591c820dbe879f625",
-  "speaking_gate": "cfbc96667762a9d02f858b399e180ba736ea5db9e2eaf889d0de370b0083a772",
+  "speaking_gate": "c5af57ac12874fd1948d5cad7d3653c4bf1b26eb23df1c20e2523c1e143b25f2",
   "speaking_last_at": "c44dab445f90cef418b8daf8cdb06d971e27fca2306103233b6f74bce08b0e67",
   "speaking_last_below": "74f9c4d7437d85d5a88712740a904b0d2bd2749cc3a69d726634092e13a713d8",
   "speaking_last_near": "4e5de95849357f24f7f483508bb15539a782748115c1569ac4468d2c2b657e6c",
@@ -46,7 +46,7 @@
     <string name="speaking_tasks">과제</string>
     <!-- The exam page's speaking section, with the paper's title beside it. -->
     <string name="speaking_section">말하기</string>
-    <string name="speaking_gate">말하기 연습을 하려면 구독이 필요해요</string>
+    <string name="speaking_gate">말하기 연습에는 구독이 필요해요</string>
     <string name="speaking_opens_when_ready">카드가 준비되는 대로 과제가 열려요.</string>
     <string name="speaking_no_time_month">이 과제를 진행하기에는 이번 달 남은 대화 시간이 부족해요</string>
     <string name="speaking_no_time_day">이 과제를 진행하기에는 오늘 남은 대화 시간이 부족해요</string>

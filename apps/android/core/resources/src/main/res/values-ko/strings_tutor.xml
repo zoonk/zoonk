@@ -61,10 +61,10 @@
   "tutor_offer_country_description": "e7525dff32628e0b73a601886b023f696859ce5622a5d6ffaabc7d50c558f3a6",
   "tutor_offer_essay_biweekly": "fe6451741876b12a0d92fbe72398181e00a217665080546614e684dea9b51338",
   "tutor_offer_essay_final_weeks": "da1c2614b5145634ac7ee814aba2c7dd41a056ca662ccc91a739ee6e247476d8",
-  "tutor_offer_essay_gate": "83c9afa4ad9af1f98b8013c9253f57a63cf90a885896bb2bf159d2f5e7830936",
+  "tutor_offer_essay_gate": "55c872202469f53b3de57d7e46962dd9ce1ef1d75cb326e9182b80000b6f4320",
   "tutor_offer_essay_weekly": "d36af3f84a68f7d687fb1e9b97a73ea903981a14a070f8c31311ea9083f5e6f1",
   "tutor_offer_goal": "bc4682eac036a3c3b1b71a87eb6e153023aba0210004251061bfaa4a9751e89d",
-  "tutor_offer_goal_gate": "8059beba673fd461dfa614900af22366d17cab3b81a048bb3d88369ce36652e5",
+  "tutor_offer_goal_gate": "7caf7f5cced8664cda61fafabe63de8416bdc04e331bbaf3c74c150b80fcae52",
   "tutor_offer_home_country_saved": "1e4741e3664c741ac73bed8060eaa325449a6eb845bd572fa22c8b1cacddcd6d",
   "tutor_offer_home_country_title": "6780258adfbba139ee1efb1c8e2a1e3d73f1199a61f349a0ac3cdfe794a138f7",
   "tutor_offer_logbook": "1b6e3c0845a0387d0298a167ce69a072aee4504985fd5ace83c4c7f3b1ba92f1",
@@ -217,7 +217,7 @@
     <!-- The goal the learner may start, in quotes. -->
     <string name="tutor_offer_goal">“%1$s”</string>
     <!-- On that card when the free plan doesn't let the learner start another goal now: the lock can come from the goals they follow at the same time or from the new goals they started recently, so it names neither. Plus is the name of Zoonk's paid plan, not the word "more". -->
-    <string name="tutor_offer_goal_gate">지금 다른 목표를 시작하려면 구독이 필요해요</string>
+    <string name="tutor_offer_goal_gate">지금 목표를 하나 더 시작하려면 구독이 필요해요</string>
     <string name="tutor_offer_catalog_course">목록에서 바로 시작할 수 있는 코스</string>
     <string name="tutor_offer_chapter_test">테스트: %1$s</string>
     <plurals name="tutor_offer_chapter_test_lessons">
@@ -240,7 +240,7 @@
     <string name="tutor_offer_essay_biweekly">계획에 따라 2주에 한 번 연습하고, 쓴 글은 매번 채점받아요.</string>
     <!-- Describes the essay practice Plus offers in the plan, not an instruction to the learner. -->
     <string name="tutor_offer_essay_final_weeks">시험 전 마지막 몇 주 동안 연습하고, 쓴 글은 매번 채점받아요.</string>
-    <string name="tutor_offer_essay_gate">에세이 연습을 하려면 구독이 필요해요</string>
+    <string name="tutor_offer_essay_gate">에세이 연습에는 구독이 필요해요</string>
     <string name="tutor_offer_mistakes">오답 노트</string>
     <plurals name="tutor_offer_mistakes_open">
         <item quantity="other">고칠 문제 %d개를 하나씩 다시 연습할 수 있어요.</item>

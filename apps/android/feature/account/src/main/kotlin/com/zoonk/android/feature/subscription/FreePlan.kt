@@ -43,8 +43,8 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.spaceAfterSentence
-import com.zoonk.api.models.AllowanceItem
 import com.zoonk.api.models.FreePlan
+import com.zoonk.api.models.MonthlyAllowanceItem
 
 /** Main's FreePlan card: how a visitor starts, how a guest keeps going, or a Free account's use of it today. */
 @Composable
@@ -54,7 +54,7 @@ internal fun FreePlanCard(
     viewer: PlanViewer,
     navigator: AppNavigator,
     modifier: Modifier = Modifier,
-    messagesUsed: AllowanceItem? = null,
+    messagesUsed: MonthlyAllowanceItem? = null,
 ) {
     OutlinedCard(modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -73,8 +73,8 @@ internal fun FreePlanCard(
                         goals(limits.activeGoals),
                         pluralStringResource(
                             R.plurals.subscription_free_lessons_a_month,
-                            count(limits.lessonsPerMonth),
-                            count(limits.lessonsPerMonth),
+                            count(limits.lessonsPer30Days),
+                            count(limits.lessonsPer30Days),
                         ),
                     ),
                 items =
@@ -110,7 +110,7 @@ private fun ColumnScope.StartFree(
 }
 
 @Composable
-private fun ColumnScope.CurrentPlanUse(messagesUsed: AllowanceItem?) {
+private fun ColumnScope.CurrentPlanUse(messagesUsed: MonthlyAllowanceItem?) {
     Text(
         stringResource(R.string.subscription_current_plan),
         Modifier.align(Alignment.CenterHorizontally),
@@ -193,8 +193,8 @@ private fun FreePlanAnswer(
             goals(limits.activeGoals, R.plurals.subscription_answer_free_goals),
             pluralStringResource(
                 R.plurals.subscription_answer_free_lessons,
-                count(limits.lessonsPerMonth),
-                count(limits.lessonsPerMonth),
+                count(limits.lessonsPer30Days),
+                count(limits.lessonsPer30Days),
                 count(limits.lessonsPerDay),
             ),
             limits.examPrepDays?.let {

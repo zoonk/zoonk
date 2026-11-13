@@ -79,7 +79,7 @@
   "player_getting_challenge_ready": "d044e2dba5101b8dd3f8ffd2dffe6b03f5909a35d7c7a54ab2bd290d4935222b",
   "player_getting_lesson_ready": "71fe263efbd0e5a51507c2b92abf67a667f23c41787cf3951abc0a8d8cf6530f",
   "player_guess_chip": "13b685cc605e07731bfd0f1ba8973c59f6633864a668a35788da8c2df5bab055",
-  "player_guest_limit_description": "99db3149bac98c506608578fdecbd801f9ff4ca5f53253d8c72a49031c9a87c1",
+  "player_guest_limit_description": "9af8e7edadeef1be16d628ae684a6ca324e21dfadba55c5762e6bf294d0af55c",
   "player_guest_save_note": "ccd1dd6e5f132f148a0fd34736a425a5e5360be479520969b9e8891af86d8537",
   "player_how_to_say": "7cb6bc0412689f777ad23a6431b10c4eeebc2290251d138bc34c7a6fff93f686",
   "player_hyperdrive_streak": "5fc742d8bbba87f3dbf8af0dd0de28f4f17f9d40563585c87c9329d7a46a8b3a",
@@ -385,7 +385,7 @@
     <plurals name="player_slow_down_description">
         <item quantity="other">짧은 시간에 레슨을 많이 열었어요. 이 레슨은 %1$s초 후에 자동으로 열려요.</item>
     </plurals>
-    <string name="player_guest_limit_description">지금까지 배운 내용은 모두 그대로 이어져요.</string>
+    <string name="player_guest_limit_description">지금까지 배운 내용은 모두 그대로 남아요.</string>
     <string name="player_lesson_complete">레슨 완료</string>
     <string name="player_already_knew">이미 알고 있던 내용이에요</string>
     <string name="player_saving_progress">진도를 저장하고 있어요…</string>

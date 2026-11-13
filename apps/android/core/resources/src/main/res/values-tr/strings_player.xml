@@ -79,7 +79,7 @@
   "player_getting_challenge_ready": "f5476898657e9490977eb2667b1958cd893c149f30a94b4e03d3050a25178b4c",
   "player_getting_lesson_ready": "d9f1152b8ddfeb981957ca6ae7a1ad6e2684da0db2fbea9493ceb2ea8300772e",
   "player_guess_chip": "14e424f42a05bd3765bf320e582766b9069412c1d2e04292e93c7a620393f602",
-  "player_guest_limit_description": "f013cf1baddb2cb881cab8d631b47c635542f72f655a009a9642e73595c9e06e",
+  "player_guest_limit_description": "1509cb85384b949f358b60194e28d2c7798fc29526263d9da0498154a8f60016",
   "player_guest_save_note": "0492c1126c85faf2a6634e30de7a2e223d61a19a5b57c824ba3de7c2e6feb972",
   "player_how_to_say": "33f4bfe8545f50fdf06a9351451a83ce8f43b9cf67d06f177b30ca7fd61910ce",
   "player_hyperdrive_streak": "2900c3e097de5ebb4055d84c0eed4f7c67015a2f4b68ed54d5514e45af8c04fa",
@@ -389,7 +389,7 @@
         <item quantity="one">Kısa sürede birçok ders açtın. Bu ders %1$s saniye sonra kendiliğinden açılacak.</item>
         <item quantity="other">Kısa sürede birçok ders açtın. Bu ders %1$s saniye sonra kendiliğinden açılacak.</item>
     </plurals>
-    <string name="player_guest_limit_description">Öğrendiklerin seninle kalır.</string>
+    <string name="player_guest_limit_description">Öğrendiğin her şey seninle kalır.</string>
     <string name="player_lesson_complete">Ders tamamlandı</string>
     <string name="player_already_knew">Bunu zaten biliyordun</string>
     <string name="player_saving_progress">İlerlemeni kaydediyoruz…</string>
