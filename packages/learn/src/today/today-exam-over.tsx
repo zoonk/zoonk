@@ -39,19 +39,7 @@ export function TodayExamOver() {
 
   return (
     <>
-      <div className="flex flex-col gap-2 sm:flex-row-reverse sm:items-center">
-        <form action={keepStudying} className="contents">
-          <EnterButton
-            busy={isPending}
-            className={TODAY_ACTION_BUTTON_CLASS}
-            enter="host"
-            size="lg"
-            type="submit"
-          >
-            {t("Keep studying")}
-          </EnterButton>
-        </form>
-
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
         <ArchiveGoal
           goalTitle={today.goal.displayName}
           onSetStatus={async () => ((await actions.archiveGoal()) ? "saved" : "failed")}
@@ -70,6 +58,17 @@ export function TodayExamOver() {
             </Button>
           )}
         </ArchiveGoal>
+
+        <form action={keepStudying} className="contents">
+          <EnterButton
+            busy={isPending}
+            className={TODAY_ACTION_BUTTON_CLASS}
+            size="lg"
+            type="submit"
+          >
+            {t("Keep studying")}
+          </EnterButton>
+        </form>
       </div>
 
       <span className={TODAY_ACTION_STATUS_CLASS} data-speaking={failed || undefined}>
