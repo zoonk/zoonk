@@ -60,6 +60,11 @@ async function proposeVoiceAndApprove(input: unknown) {
   return { decision, fix };
 }
 
+/** Every default language lesson's reading tiles show "rent", so a word whose text changes needs its own. */
+function uniqueWordText() {
+  return `rent${crypto.randomUUID().replaceAll("-", "")}`;
+}
+
 function spokenStep(steps: readonly { id: string; kind: string }[]) {
   const step = steps.find((candidate) => candidate.kind === "spokenAnswer");
 
@@ -72,7 +77,7 @@ function spokenStep(steps: readonly { id: string; kind: string }[]) {
 
 describe("word and sentence fixes", () => {
   it("voices a word's new text before approval, then writes the text and its clip together", async () => {
-    const { lesson, word } = await languageLessonFixture();
+    const { lesson, word } = await languageLessonFixture({ wordText: uniqueWordText() });
     const proposer = await signInProposer();
 
     const fix = await proposeFix({
@@ -83,7 +88,7 @@ describe("word and sentence fixes", () => {
     expect(fix).toMatchObject({
       changes: [
         {
-          fields: [{ after: "rental", before: "rent", field: "word" }],
+          fields: [{ after: "rental", before: word.word, field: "word" }],
           id: word.id,
           model: "Word",
           op: "set",
@@ -239,7 +244,7 @@ describe("word and sentence fixes", () => {
   });
 
   it("puts the original text and its clip back when a text fix is reverted", async () => {
-    const { word } = await languageLessonFixture();
+    const { word } = await languageLessonFixture({ wordText: uniqueWordText() });
 
     const original = {
       audioGeneratedAt: new Date("2026-01-01T00:00:00.000Z"),
@@ -274,12 +279,12 @@ describe("word and sentence fixes", () => {
 
     await expect(prisma.word.findUniqueOrThrow({ where: { id: word.id } })).resolves.toMatchObject({
       ...original,
-      word: "rent",
+      word: word.word,
     });
   });
 
   it("goes stale when the clip changed after a text fix was proposed", async () => {
-    const { word } = await languageLessonFixture();
+    const { word } = await languageLessonFixture({ wordText: uniqueWordText() });
     await signInProposer();
 
     const fix = await proposeFix({
@@ -303,12 +308,12 @@ describe("word and sentence fixes", () => {
 
     await expect(prisma.word.findUniqueOrThrow({ where: { id: word.id } })).resolves.toMatchObject({
       audioUrl: "https://blob.test/newer-rent.mp3",
-      word: "rent",
+      word: word.word,
     });
   });
 
   it("goes stale when the clip changed after a text fix's revert was proposed", async () => {
-    const { word } = await languageLessonFixture();
+    const { word } = await languageLessonFixture({ wordText: uniqueWordText() });
 
     const { fix } = await proposeVoiceAndApprove({
       changes: [{ id: word.id, model: "Word", set: { word: "rental" } }],
@@ -376,32 +381,43 @@ describe("word and sentence fixes", () => {
     );
   });
 
-  it("keeps a word-bank tile's text, and fixes its romanization without a clip", async () => {
-    const { word } = await languageLessonFixture();
-    const tile = await wordFixture({ organizationId: word.organizationId, targetLanguage: "ja" });
+  it("keeps a word's text while another lesson's tiles find it by that text, except its case", async () => {
+    const text = uniqueWordText();
+
+    const [{ word }] = await Promise.all([
+      languageLessonFixture({ wordText: text }),
+      languageLessonFixture({ sentenceText: `Is ${text} cheap?` }),
+    ]);
 
     await signInProposer();
 
     await expect(
       proposeContentFix({
-        changes: [{ id: tile.id, model: "Word", set: { word: "家賃" } }],
+        changes: [{ id: word.id, model: "Word", set: { word: `${text}al` } }],
         reason: "Typo.",
       }),
     ).resolves.toMatchObject({
-      message: expect.stringContaining("word-bank tile"),
+      message: expect.stringContaining("1 lesson finds"),
       status: "invalid",
     });
 
     await expect(
       proposeFix({
-        changes: [{ id: tile.id, model: "Word", set: { romanization: "yachin" } }],
+        changes: [{ id: word.id, model: "Word", set: { romanization: "rent" } }],
         reason: "Missing romanization.",
       }),
-    ).resolves.toMatchObject({ effects: [], voiceOwed: false });
+    ).resolves.toMatchObject({ voiceOwed: false });
+
+    await expect(
+      proposeFix({
+        changes: [{ id: word.id, model: "Word", set: { word: text.toUpperCase() } }],
+        reason: "The word is an acronym.",
+      }),
+    ).resolves.toMatchObject({ voiceOwed: true });
   });
 
   it("updates the lessons whose reading and fill-in-the-blank tiles show a word", async () => {
-    const text = `rent${crypto.randomUUID().replaceAll("-", "")}`;
+    const text = uniqueWordText();
     const shown = `R${text.slice(1)}`;
 
     const [reading, blank, listening] = await Promise.all([
@@ -439,7 +455,7 @@ describe("word and sentence fixes", () => {
   });
 
   it("updates the lessons whose tiles show a word as a distractor in another case", async () => {
-    const text = `rent${crypto.randomUUID().replaceAll("-", "")}`;
+    const text = uniqueWordText();
     const shown = `R${text.slice(1)}`;
 
     const [reading, vocabulary] = await Promise.all([

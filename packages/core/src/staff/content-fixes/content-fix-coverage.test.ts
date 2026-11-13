@@ -119,7 +119,8 @@ const NOT_FIXED: Record<string, string> = {
   UserLearningProfile: ONE_LEARNERS,
   UserProgress: ONE_LEARNERS,
   Verification: SIGN_IN,
-  "Word: a bank-only word's text": "Lessons look the tile up by its text.",
+  "Word: text other lessons' tiles find it by, beyond its case":
+    "Tiles look the row up by their text.",
 };
 
 /** Shared rows learners see that no fix reaches yet. */

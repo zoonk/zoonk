@@ -1,9 +1,9 @@
 import { type TransactionClient } from "@zoonk/db";
 import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
 import { z } from "zod";
-import { CURRENT_STEPS } from "../../../library/lessons/lesson-versions";
 import { type Resolution, changedFields, refuse } from "../_utils/resolved-change";
 import { readFixClip } from "../_utils/vocabulary-voice";
+import { findLessonsWithWordTiles } from "../_utils/word-tile-lessons";
 import {
   type FieldChange,
   type FixContext,
@@ -56,14 +56,32 @@ async function findSameText(
   return found?.id ?? null;
 }
 
-/** A word no lesson links to is a word-bank tile, which lessons find by its text. */
-async function isBankOnlyWord(db: TransactionClient, wordId: string): Promise<boolean> {
-  const [lessonWords, steps] = await Promise.all([
-    db.lessonWord.count({ where: { wordId } }),
-    db.step.count({ where: { wordId, ...CURRENT_STEPS } }),
-  ]);
+/**
+ * Tiles find their word's row by their own text, ignoring case, so other text leaves those lessons'
+ * tiles without its clip and romanization.
+ */
+async function tilesProblem(
+  db: TransactionClient,
+  { row, text }: { row: VocabularyRow; text: string },
+): Promise<string | null> {
+  if (text.toLowerCase() === row.text.toLowerCase()) {
+    return null;
+  }
 
-  return lessonWords === 0 && steps === 0;
+  const lessons = await findLessonsWithWordTiles(db, {
+    targetLanguage: row.targetLanguage,
+    word: row.text,
+  });
+
+  const count = new Set(lessons.map((lesson) => lesson.lessonId)).size;
+
+  if (count === 0) {
+    return null;
+  }
+
+  const finds = count === 1 ? "1 lesson finds" : `${count} lessons find`;
+
+  return `${finds} this word by its text in reading, fill-in-the-blank or distractor tiles, so only its case can change. Fix those lessons' tiles first. Its romanization and clip can change now.`;
 }
 
 const setValuesSchema = z.strictObject({
@@ -107,9 +125,7 @@ async function textProblem(
     return `${model} ${existing} already holds "${text}" in this language. Fix the lessons that show this one to use that row instead.`;
   }
 
-  return model === "Word" && (await isBankOnlyWord(db, id))
-    ? "This word is a word-bank tile that lessons find by its text, so its text can't change. Its romanization and clip can."
-    : null;
+  return model === "Word" ? tilesProblem(db, { row, text }) : null;
 }
 
 /**
@@ -269,7 +285,7 @@ function setTargets(stored: SetStored<VocabularyModel>) {
 const RULES = {
   Sentence:
     "A shared sentence's text and romanization. New text can't match another sentence of the language. A new clip is voiced before it can be approved, and approving writes both; a revert puts the old text's clip back. Every lesson showing it changes at once: its spoken screens copy the new text, and its word orders are written again.",
-  Word: "A shared word's text and romanization. New text can't match another word of the language, and a word-bank tile (a word no lesson links to) keeps its text. A new clip is voiced before it can be approved, and approving writes both; a revert puts the old text's clip back. Pronunciation guides stay unless the fix sets them (WordPronunciation).",
+  Word: "A shared word's text and romanization. New text can't match another word of the language, and only its case can change while lessons' reading, fill-in-the-blank or distractor tiles find it by its text: fix those tiles first. A new clip is voiced before it can be approved, and approving writes both; a revert puts the old text's clip back. Pronunciation guides stay unless the fix sets them (WordPronunciation).",
 } as const satisfies Record<VocabularyModel, string>;
 
 function vocabularySet<Model extends VocabularyModel>(model: Model) {
