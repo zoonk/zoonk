@@ -137,6 +137,7 @@ class SessionViewModelTest {
                 LessonReadiness(
                     alternative = null,
                     generationId = null,
+                    kind = LessonReadiness.Kind.LESSON,
                     setAside = false,
                     status = LessonReadiness.Status.FAILED,
                     warmUpId = null,

@@ -4,6 +4,7 @@ import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fix
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { MS_PER_DAY } from "@zoonk/utils/date";
+import { onTestFinished, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "../../plans/_test-utils/plan-library";
 import { createGoalPlan } from "../../plans/create-goal-plan";
@@ -17,6 +18,13 @@ const CITATION = { passage: "passage", sourceId: "source" };
 /** Far enough from the exam that a focus still moves the plan. */
 const SHORT_PLAN_DAYS = 30;
 const SHORT_PLAN_LESSONS = 8;
+
+/**
+ * The planner lays a plan out from today's weekday: from a Friday or Saturday the Sunday mock's
+ * funding takes every day before it, and from a Sunday there's no mock and time to spare. A
+ * Wednesday start keeps lessons in the first days and the time short.
+ */
+const SHORT_PLAN_START = new Date("2026-11-11T12:00:00Z");
 
 type TestSubject = {
   /** Questions ready per topic; 2 unless given. */
@@ -204,13 +212,21 @@ const SHORT_PLAN_SUBJECTS = [
 /**
  * An exam goal with a plan the planner laid out whose time doesn't cover everything by its date:
  * six subjects that weigh the same, each with ready questions. Pass `PLAN_SHOWN` as `goal` for
- * one past its setup; it is at the Focus test's step of onboarding otherwise.
+ * one past its setup; it is at the Focus test's step of onboarding otherwise. The clock runs from
+ * a fixed Wednesday until the test ends, so `vi.setSystemTime` moves it from there.
  */
 export async function shortPlanExamGoalFixture({
   daysLeft = SHORT_PLAN_DAYS,
   lessons = SHORT_PLAN_LESSONS,
   goal: goalAttrs = {},
 }: { daysLeft?: number; lessons?: number; goal?: Partial<Omit<GoalAttrs, "userId">> } = {}) {
+  vi.useFakeTimers({ shouldAdvanceTime: true, toFake: ["Date"] });
+  vi.setSystemTime(SHORT_PLAN_START);
+
+  onTestFinished(() => {
+    vi.useRealTimers();
+  });
+
   const subjects = SHORT_PLAN_SUBJECTS.map((name) => ({ name, questions: 5 }));
 
   const [user, blueprint, library] = await Promise.all([

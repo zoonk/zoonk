@@ -7,10 +7,11 @@ import {
 import { ListRowButton, ListRowContent, ListRowLeading, ListRowTitle } from "@zoonk/learn/list";
 import { type TutorIdentity, useTutorIdentity } from "@zoonk/learn/tutor-identity";
 import { Button } from "@zoonk/ui/components/button";
+import { createOnDemand } from "@zoonk/ui/lib/on-demand";
 import { cn } from "@zoonk/ui/lib/utils";
 import { MessageCircleQuestionIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { Suspense, lazy, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { type LessonTutorConfig } from "../lesson/tutor/lesson-tutor-context";
 import {
   LessonQuestionHostProvider,
@@ -20,16 +21,20 @@ import { preloadTutorMarkdown } from "./tutor-markdown-preload";
 
 type ScreenTarget = Extract<TutorTarget, { kind: LessonQuestionScreenKind }>;
 
-const loadDrawer = () => import("./lesson-question-panel");
-
-const LessonQuestionDrawer = lazy(async () => {
-  const panel = await loadDrawer();
-  return { default: panel.LessonQuestionDrawer };
-});
+const questionPanel = createOnDemand(() => import("./lesson-question-panel"));
 
 function preloadDrawer() {
-  loadDrawer().catch(() => null);
+  void questionPanel.load();
   preloadTutorMarkdown();
+}
+
+function useOpenDrawer(kind: LessonQuestionScreenKind) {
+  const { open } = useLessonQuestionController();
+
+  return () => {
+    void questionPanel.load();
+    open({ kind });
+  };
 }
 
 const PRELOAD_ON_INTENT = {
@@ -78,11 +83,11 @@ function AskTutorRow({
   identity: TutorIdentity;
   kind: LessonQuestionScreenKind;
 }) {
-  const { open } = useLessonQuestionController();
+  const openDrawer = useOpenDrawer(kind);
   const label = useAskLabel({ kind, name: identity.name });
 
   return (
-    <ListRowButton {...PRELOAD_ON_INTENT} onClick={() => open({ kind })}>
+    <ListRowButton {...PRELOAD_ON_INTENT} onClick={openDrawer}>
       <ListRowLeading>
         <span aria-hidden="true" className="flex size-5 items-center justify-center *:size-5!">
           {identity.avatar}
@@ -105,7 +110,7 @@ function AskTutorButton({
   size: AskTutorSize;
 }) {
   const t = useExtracted();
-  const { open } = useLessonQuestionController();
+  const openDrawer = useOpenDrawer(kind);
   const label = useAskLabel({ kind, name: identity.name });
 
   const name = t("Ask {name}", { name: identity.name });
@@ -116,7 +121,7 @@ function AskTutorButton({
         {...PRELOAD_ON_INTENT}
         aria-label={label}
         className={TASK_ASK_CLASS}
-        onClick={() => open({ kind })}
+        onClick={openDrawer}
         size="xl"
         type="button"
         variant="outline"
@@ -138,7 +143,7 @@ function AskTutorButton({
       {...PRELOAD_ON_INTENT}
       aria-label={label}
       className={cn("pl-1.5", size === "bar" && BAR_ASK_CLASS)}
-      onClick={() => open({ kind })}
+      onClick={openDrawer}
       size={size}
       type="button"
       variant="outline"
@@ -165,15 +170,13 @@ function ScreenTutorDrawer({
     setOpened(true);
   }
 
-  if (!opened) {
+  const Drawer = questionPanel.useModule({ enabled: opened })?.LessonQuestionDrawer;
+
+  if (!Drawer) {
     return null;
   }
 
-  return (
-    <Suspense fallback={null}>
-      <LessonQuestionDrawer identity={identity} navigation={navigation} open={state.isOpen} />
-    </Suspense>
-  );
+  return <Drawer identity={identity} navigation={navigation} open={state.isOpen} />;
 }
 
 function AskTutorProvider({

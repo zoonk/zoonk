@@ -2,8 +2,6 @@ import "server-only";
 import { type Milestone, prisma } from "@zoonk/db";
 import { after } from "next/server";
 import { trackLearnerEvents } from "../analytics/track-learner-event";
-import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
-import { getUserProgressCacheTag } from "../cache/tags";
 import { CHECKPOINT_LEDGER_KINDS } from "../checkpoints/_utils/checkpoint-results";
 import { getPassMark, hasPassedCheckpoint } from "../checkpoints/checkpoint-rules";
 import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
@@ -60,7 +58,10 @@ export async function loadMilestoneCounts(userId: string): Promise<MilestoneCoun
   };
 }
 
-/** Returns only newly inserted milestones; repeating an award has no effect. */
+/**
+ * Returns only newly inserted milestones; repeating an award has no effect. Expires no tags: a
+ * session's finish keeps its moment and ceremony on screen, so callers expire their own.
+ */
 export async function awardMilestones({
   badges = [],
   brainPower,
@@ -110,8 +111,6 @@ export async function awardMilestones({
   });
 
   if (inserted.length > 0) {
-    revalidateCacheTags([getUserProgressCacheTag(userId)]);
-
     after(() =>
       trackLearnerEvents({
         events: inserted.map((milestone) => ({
