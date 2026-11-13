@@ -186,7 +186,7 @@ private func places(_ summary: LearnerSummary) -> SearchGroup {
     SearchItem(
       id: "logbook",
       title: String(
-        localized: "Logbook", table: "Search", comment: "Search row for the weekly recap"),
+        localized: "Weekly summary", table: "Search", comment: "Search row for the weekly summary"),
       systemImage: "book.closed",
       action: .open(.logbook)),
     place(.statistics, route: .statistics),

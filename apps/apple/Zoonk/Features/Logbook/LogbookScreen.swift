@@ -1,4 +1,3 @@
-import Charts
 import SwiftUI
 
 struct WeeklyRecap: Decodable, Equatable, Sendable {
@@ -29,22 +28,8 @@ struct WeeklyRecap: Decodable, Equatable, Sendable {
   }
 
   struct Turnaround: Decodable, Equatable, Sendable {
-    enum Reason: String, Decodable, Sendable {
-      case gold
-      case practice
-      case solid
-    }
-
-    struct Point: Decodable, Equatable, Sendable {
-      let accuracy: Double?
-      let date: String
-    }
-
     let from: Double
     let name: String
-    let points: [Point]
-    let reason: Reason
-    let rememberedOn: [String]
     let to: Double
   }
 
@@ -60,29 +45,6 @@ struct WeeklyRecap: Decodable, Equatable, Sendable {
   let weekStart: String
 
   var isQuiet: Bool { !ready || week.daysStudied.isEmpty }
-
-  /// Main's story: the week, its biggest turnaround, what was learned, then next week.
-  var steps: [LogbookStep] {
-    guard !isQuiet else {
-      return [.week]
-    }
-
-    return LogbookStep.allCases.filter { step in
-      switch step {
-      case .week: true
-      case .turnaround: turnaround != nil
-      case .learned: buddyAte.newIdeas + buddyAte.reviews + buddyAte.fixes + badges.count > 0
-      case .next: nextFocus != nil
-      }
-    }
-  }
-}
-
-enum LogbookStep: CaseIterable, Hashable {
-  case week
-  case turnaround
-  case learned
-  case next
 }
 
 struct LogbookScreen: View {
@@ -98,7 +60,7 @@ struct LogbookScreen: View {
       Group {
         switch recap.state {
         case .loaded(let value):
-          LogbookSteps(recap: value, learnerName: learnerName)
+          WeeklySummary(recap: value, learnerName: learnerName)
             .onAppear {
               UsageAnalytics.track(.logbookViewed)
             }
@@ -124,8 +86,9 @@ struct LogbookScreen: View {
         }
       }
       .loads(recap)
-      .navigationTitle(Text("Logbook", tableName: "Session", comment: "The weekly recap's title"))
-      .navigationBarTitleDisplayMode(.inline)
+      .barName(
+        Text("Weekly summary", tableName: "Session", comment: "The weekly summary's name")
+      )
       .toolbar {
         ToolbarItem(placement: .cancellationAction) {
           Button(role: .close) {
@@ -146,221 +109,101 @@ struct LogbookScreen: View {
   }
 }
 
-/// One step at a time, as main tells it; a swipe or Continue turns the page. Two panes have room
-/// for the whole story at once.
-private struct LogbookSteps: View {
-  @Environment(\.accessibilityReduceMotion) private var reduceMotion
+/// Main's one screen: the week's days, two numbers, then a row for each thing that happened. A
+/// row with nothing to count isn't drawn.
+private struct WeeklySummary: View {
   @Environment(AppRouter.self) private var router
-  @State private var current = LogbookStep.week
   @ScaledMetric(relativeTo: .body) private var tileWidth = 150.0
-  @AccessibilityFocusState private var focusedStep: LogbookStep?
 
   let recap: WeeklyRecap
   let learnerName: String?
 
   var body: some View {
-    let steps = recap.steps
+    ZoonkList {
+      Section {
+        WeekRings(recap: recap)
+          .listRowBackground(Color.clear)
+          .listRowSeparator(.hidden)
 
-    PaneSplit {
-      ZoonkList {
-        page(.week)
+        header
       }
-    } secondary: {
-      ZoonkList {
-        ForEach(steps.filter { $0 != .week }, id: \.self) { step in
-          page(step)
-        }
-      }
-      .safeAreaBar(edge: .bottom) {
-        letsGo
-          .controlSize(.large)
-          .scenePadding(.horizontal)
-          .padding(.vertical, 10)
-      }
-    } single: {
-      TabView(selection: $current) {
-        ForEach(steps, id: \.self) { step in
-          ZoonkList {
-            page(step)
+
+      if !recap.isQuiet {
+        Section {
+          StatTileGrid(columns: [2, 1], minimumWidth: tileWidth) {
+            StatTile(
+              label: Text("Time", tableName: "Session", comment: "The week's study time"),
+              quantity: studyDuration(minutes: recap.week.minutes),
+              systemImage: "clock")
+            StatTile(
+              label: Text("Questions", tableName: "Session", comment: "The week's questions"),
+              value: Text(recap.week.questions, format: .number),
+              systemImage: "checklist")
           }
-          .tag(step)
+          .listRowBackground(Color.clear)
+          .listRowSeparator(.hidden)
+        }
+
+        Section {
+          row(
+            Text("New topics", tableName: "Session", comment: "New topics learned this week"),
+            count: recap.buddyAte.newIdeas)
+          row(
+            Text("Reviews done", tableName: "Session", comment: "Reviews done this week"),
+            count: recap.buddyAte.reviews)
+          row(
+            Text("Mistakes fixed", tableName: "Session", comment: "Mistakes fixed this week"),
+            count: recap.buddyAte.fixes)
+          row(
+            Text("Trap hunter badges", tableName: "Session", comment: "Badges earned this week"),
+            count: recap.badges.count)
+
+          if let turnaround = recap.turnaround {
+            row(
+              Text("Most improved", tableName: "Session", comment: "The topic that grew most"),
+              value: Text(
+                "\(turnaround.name)\u{00A0}· \(percent(turnaround.from)) to \(percent(turnaround.to))",
+                tableName: "Session",
+                comment:
+                  "The topic that grew most, then its right answers at the week's start and end, as in Fractions · 40% to 85%"
+              ))
+          }
+
+          if let next = recap.nextFocus {
+            row(
+              Text("Up next", tableName: "Session", comment: "What the next study day starts with"),
+              value: Text(next.title))
+          }
         }
       }
-      .tabViewStyle(.page(indexDisplayMode: steps.count > 1 ? .always : .never))
-      .indexViewStyle(.page(backgroundDisplayMode: .always))
-      .background(Color(.systemBackground))
-      .safeAreaBar(edge: .bottom) {
-        action(steps)
-          .controlSize(.large)
-          .scenePadding(.horizontal)
-          .padding(.vertical, 10)
-          .keepsOffFold()
-      }
     }
-    .onChange(of: current) {
-      focusedStep = current
-    }
-  }
-
-  @ViewBuilder
-  private func action(_ steps: [LogbookStep]) -> some View {
-    let position = steps.firstIndex(of: current) ?? 0
-
-    if position + 1 < steps.count {
+    .safeAreaBar(edge: .bottom) {
       Button {
-        withAnimation(reduceMotion ? nil : .default) {
-          current = steps[position + 1]
-        }
+        router.showRoot(of: .today)
       } label: {
-        Text("Continue", tableName: "Session", comment: "Turns to the recap's next step")
+        Text("Done", tableName: "Session", comment: "Closes the weekly summary and opens Today")
           .frame(maxWidth: .infinity)
       }
       .buttonStyle(.mainAction)
-    } else {
-      letsGo
+      .controlSize(.large)
+      .scenePadding(.horizontal)
+      .padding(.vertical, 10)
+      .keepsOffFold()
     }
   }
 
-  private var letsGo: some View {
-    Button {
-      router.showRoot(of: .today)
-    } label: {
-      Text("Let's go", tableName: "Session", comment: "Closes the recap and opens Today")
-        .frame(maxWidth: .infinity)
-    }
-    .buttonStyle(.mainAction)
-  }
-
-  @ViewBuilder
-  private func page(_ step: LogbookStep) -> some View {
-    switch step {
-    case .week:
-      weekPage
-    case .turnaround:
-      if let turnaround = recap.turnaround {
-        Section {
-          header(
-            .turnaround,
-            eyebrow: Text(
-              "The biggest turnaround", tableName: "Session", comment: "The skill that grew most"),
-            title: Text(turnaround.name),
-            detail: Text(
-              "\(turnaround.from.formatted(.percent.precision(.fractionLength(0)))) → \(turnaround.to.formatted(.percent.precision(.fractionLength(0)))) right answers",
-              tableName: "Session", comment: "A skill's right answers at the week's start and end"
-            )
-            .monospacedDigit())
-        }
-
-        Section {
-          TurnaroundChart(turnaround: turnaround)
-
-          if let reason = reason(turnaround) {
-            reason
-          }
-        }
-      }
-    case .learned:
-      Section {
-        header(
-          .learned,
-          title: Text("What you learned", tableName: "Session", comment: "The week's learning"))
-      }
-
-      Section {
-        learnedRow(
-          .lesson, Text("New ideas", tableName: "Session", comment: "New ideas learned this week"),
-          count: recap.buddyAte.newIdeas)
-        learnedRow(
-          .review, Text("Reviews", tableName: "Session", comment: "Reviews done this week"),
-          count: recap.buddyAte.reviews)
-        learnedRow(
-          .mistakes,
-          Text("Mistakes fixed", tableName: "Session", comment: "Mistakes fixed this week"),
-          count: recap.buddyAte.fixes)
-
-        if !recap.badges.isEmpty {
-          IconLabeledContent {
-            Text(recap.badges.count, format: .number)
-          } title: {
-            Text("Trap hunter badges", tableName: "Session", comment: "Badges earned this week")
-          } icon: {
-            Image(systemName: "rosette")
-              .foregroundStyle(.mutedForeground)
-          }
-        }
-      }
-    case .next:
-      if let next = recap.nextFocus {
-        Section {
-          header(
-            .next,
-            eyebrow: Text("Next week", tableName: "Session", comment: "The plan's next week"),
-            title: Text(next.title))
-        }
-      }
-    }
-  }
-
-  @ViewBuilder
-  private var weekPage: some View {
-    Section {
-      WeekRings(recap: recap)
-        .listRowBackground(Color.clear)
-        .listRowSeparator(.hidden)
-
-      if recap.isQuiet {
-        header(
-          .week, eyebrow: Text(weekRange),
-          title: recap.ready
-            ? Text("A quiet week", tableName: "Session", comment: "A week without study")
-            : Text(
-              "Your first summary comes on Sunday", tableName: "Session",
-              comment: "No weekly summary yet"),
-          detail: recap.ready
-            ? Text("Every week starts fresh.", tableName: "Session", comment: "A quiet week")
-            : Text(
-              "It shows your week in numbers and the skill that grew the most.",
-              tableName: "Session", comment: "What the weekly summary shows"))
-      } else {
-        header(.week, eyebrow: Text(weekEyebrow), title: weekTitle, detail: gain)
-      }
-    }
-
-    if !recap.isQuiet {
-      Section {
-        StatTileGrid(columns: [2, 1], minimumWidth: tileWidth) {
-          StatTile(
-            label: Text("Time", tableName: "Session", comment: "The week's study time"),
-            quantity: studyDuration(minutes: recap.week.minutes),
-            systemImage: "clock")
-          StatTile(
-            label: Text("Questions", tableName: "Session", comment: "The week's questions"),
-            value: Text(recap.week.questions, format: .number),
-            systemImage: "checklist")
-        }
-        .listRowBackground(Color.clear)
-        .listRowSeparator(.hidden)
-      }
-    }
-  }
-
-  private func header(
-    _ step: LogbookStep, eyebrow: Text? = nil, title: Text, detail: Text? = nil
-  ) -> some View {
+  private var header: some View {
     VStack(alignment: .leading, spacing: 6) {
-      if let eyebrow {
-        eyebrow
-          .typeStyle(.eyebrow)
-          .foregroundStyle(.faint)
-      }
+      Text(weekRange)
+        .typeStyle(.eyebrow)
+        .foregroundStyle(.faint)
 
       title
         .typeStyle(.pageTitle)
         .accessibilityAddTraits(.isHeader)
-        .accessibilityFocused($focusedStep, equals: step)
 
-      if let detail {
-        detail
+      if let line {
+        line
           .typeStyle(.reading)
           .foregroundStyle(.mutedForeground)
       }
@@ -368,40 +211,17 @@ private struct LogbookSteps: View {
     .listRowBackground(Color.clear)
   }
 
-  @ViewBuilder
-  private func learnedRow(_ kind: LearnKind, _ label: Text, count: Int) -> some View {
-    if count > 0 {
-      IconLabeledContent {
-        Text(count, format: .number)
-      } title: {
-        label
-      } icon: {
-        KindMark(kind: kind)
-      }
+  private var title: Text {
+    if !recap.ready {
+      return Text(
+        "Your first weekly summary comes this Sunday", tableName: "Session",
+        comment: "No weekly summary yet")
     }
-  }
 
-  private func reason(_ turnaround: WeeklyRecap.Turnaround) -> Text? {
-    switch turnaround.reason {
-    case .gold:
-      Text(
-        "\(turnaround.name) is Mastered now: you remembered it on \(turnaround.rememberedOn.count) different days.",
-        tableName: "Session",
-        comment:
-          "Why the week's biggest turnaround grew: its skill, then the days it was remembered on"
-      )
-    case .solid:
-      Text(
-        "\(turnaround.name) is Solid now: you kept getting it right on later days.",
-        tableName: "Session",
-        comment: "Why the week's biggest turnaround grew; the argument is its skill"
-      )
-    case .practice:
-      nil
+    if recap.isQuiet {
+      return Text("A quiet week", tableName: "Session", comment: "A week without study")
     }
-  }
 
-  private var weekTitle: Text {
     if let learnerName {
       return Text(
         "What a week, \(learnerName)!", tableName: "Session", comment: "The recap's title")
@@ -410,30 +230,22 @@ private struct LogbookSteps: View {
     return Text("What a week!", tableName: "Session", comment: "The recap's title")
   }
 
-  private var weekRange: String {
-    let range = [recap.weekStart, recap.weekEnd].compactMap(studyDate)
-    let text =
-      range.count == 2
-      ? (range[0]..<range[1]).formatted(
-        Date.IntervalFormatStyle(timeZone: .gmt).month(.abbreviated).day())
-      : recap.weekStart
-
-    return String(
-      localized: "Weekly summary\u{00A0}· \(text)", table: "Session", comment: "The recap's week")
-  }
-
-  private var weekEyebrow: String {
-    guard let finished = recap.phasesFinished.first else {
-      return weekRange
+  /// A finished phase leads; otherwise only good news is compared, and a quieter week starts over.
+  private var line: Text? {
+    if !recap.ready {
+      return nil
     }
 
-    return String(
-      localized: "Phase \(finished.phase + 1)\u{00A0}· \(finished.name) done", table: "Session",
-      comment: "A phase finished this week")
-  }
+    if recap.isQuiet {
+      return Text("Every week starts fresh.", tableName: "Session", comment: "A quiet week")
+    }
 
-  /// Only good news is compared; a quieter week starts over.
-  private var gain: Text? {
+    if let finished = recap.phasesFinished.first {
+      return Text(
+        "You finished \(finished.name).", tableName: "Session",
+        comment: "Under the weekly summary's title: the plan's phase that ended this week")
+    }
+
     if recap.comparison.minutes > 0 {
       return Text(
         "\(studyDuration(minutes: recap.comparison.minutes)) more than the week before!",
@@ -448,67 +260,39 @@ private struct LogbookSteps: View {
 
     return nil
   }
-}
 
-/// Right answers on the skill each day it was studied, across the week's seven days.
-private struct TurnaroundChart: View {
-  let turnaround: WeeklyRecap.Turnaround
+  private var weekRange: String {
+    let range = [recap.weekStart, recap.weekEnd].compactMap(studyDate)
+    let text =
+      range.count == 2
+      ? (range[0]..<range[1]).formatted(
+        Date.IntervalFormatStyle(timeZone: .gmt).month(.abbreviated).day())
+      : recap.weekStart
 
-  var body: some View {
-    let days = Array(turnaround.points.enumerated())
+    return String(
+      localized: "Weekly summary\u{00A0}· \(text)", table: "Session", comment: "The recap's week")
+  }
 
-    Chart {
-      RuleMark(y: .value(rightAnswers, 0.0))
-        .foregroundStyle(Color.border)
-
-      ForEach(days, id: \.offset) { index, point in
-        if let accuracy = point.accuracy {
-          LineMark(x: .value(day, index), y: .value(rightAnswers, accuracy))
-            .lineStyle(StrokeStyle(lineWidth: 3, lineCap: .round))
-            .foregroundStyle(.success)
-
-          PointMark(x: .value(day, index), y: .value(rightAnswers, accuracy))
-            .symbolSize(64)
-            .foregroundStyle(.success)
-            .accessibilityLabel(Text(weekday(point, .wide)))
-            .accessibilityValue(Text(accuracy.formatted(.percent.precision(.fractionLength(0)))))
-        }
-      }
+  @ViewBuilder
+  private func row(_ label: Text, count: Int) -> some View {
+    if count > 0 {
+      row(label, value: Text(count, format: .number))
     }
-    .chartXScale(domain: 0...max(days.count - 1, 1))
-    .chartYScale(domain: 0...1)
-    .chartYAxis(.hidden)
-    .chartXAxis {
-      AxisMarks(values: days.map(\.offset)) { value in
-        AxisValueLabel {
-          if let index = value.as(Int.self), days.indices.contains(index) {
-            Text(weekday(days[index].element, .narrow))
-          }
-        }
-      }
+  }
+
+  private func row(_ label: Text, value: Text) -> some View {
+    ListRow(label) {
+      EmptyView()
+    } trailing: {
+      value
+        .typeStyle(.meta)
+        .multilineTextAlignment(.trailing)
     }
-    .frame(height: 140)
-    .padding(.vertical, 8)
-    .accessibilityLabel(
-      Text(
-        "Right answers on this skill each day of the week", tableName: "Session",
-        comment: "Spoken name of the turnaround chart"))
+    .accessibilityElement(children: .combine)
   }
 
-  private var day: Text {
-    Text("Day", tableName: "Session", comment: "Turnaround chart axis: a day")
-  }
-
-  private var rightAnswers: Text {
-    Text("Right answers", tableName: "Session", comment: "Turnaround chart axis: right answers")
-  }
-
-  private func weekday(
-    _ point: WeeklyRecap.Turnaround.Point, _ width: Date.FormatStyle.Symbol.Weekday
-  )
-    -> String
-  {
-    studyDate(point.date)?.formatted(.studyDay.weekday(width)) ?? ""
+  private func percent(_ share: Double) -> String {
+    share.formatted(.percent.precision(.fractionLength(0)))
   }
 }
 
