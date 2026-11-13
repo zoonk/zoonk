@@ -46,7 +46,7 @@ function BuddyOption({
         kind={kind}
         studiedToday={look.studiedToday}
       />
-      <span className="text-base font-semibold">{name}</span>
+      <span className="text-sm font-semibold">{name}</span>
       <span className="text-muted-foreground text-xs">
         <BuddyTagline kind={kind} />
       </span>

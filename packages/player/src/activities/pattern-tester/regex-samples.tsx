@@ -47,7 +47,7 @@ function SampleRow({ result, shouldMatch }: { result: SampleResult; shouldMatch:
     <li
       className={cn(
         ACTIVITY_CARD_CLASS,
-        "flex min-h-11 items-center gap-2 font-mono text-base",
+        "flex min-h-11 items-center gap-2 py-2 font-mono text-base",
         !result.passes && "border-destructive/50 bg-destructive/10",
       )}
     >
@@ -113,7 +113,7 @@ export function RegexSampleList({
               <li
                 className={cn(
                   ACTIVITY_CARD_CLASS,
-                  "flex min-h-11 items-center font-mono text-base whitespace-pre",
+                  "flex min-h-11 items-center py-2 font-mono text-base whitespace-pre",
                 )}
                 key={key}
               >

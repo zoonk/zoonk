@@ -146,7 +146,7 @@ export function PatternTesterActivity({
         <div
           className={cn(
             ACTIVITY_FIELD_CLASS,
-            "flex h-14 items-center gap-0.5 px-4 font-mono text-xl",
+            "flex h-11 items-center gap-0.5 px-4 font-mono text-xl",
             isChecked && "opacity-80",
           )}
         >

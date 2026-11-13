@@ -312,7 +312,7 @@ export function ChartVisualView({
           </svg>
         </div>
 
-        <p aria-hidden="true" className="text-muted-foreground text-center text-xs">
+        <p aria-hidden="true" className="text-muted-foreground text-xs">
           {sideways ? valueLabel : visual.categoryLabel}
         </p>
       </div>

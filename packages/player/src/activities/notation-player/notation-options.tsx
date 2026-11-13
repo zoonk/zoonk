@@ -1,5 +1,6 @@
 "use client";
 
+import { NativeSelect, NativeSelectOption } from "@zoonk/ui/components/native-select";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
@@ -70,17 +71,17 @@ export function TempoSelect({
   const t = useExtracted();
 
   return (
-    <select
+    <NativeSelect
       aria-label={t("Tempo")}
-      className="border-border bg-background focus-visible:ring-ring/50 h-11 shrink-0 rounded-lg border px-3 text-sm tabular-nums outline-none focus-visible:ring-[3px]"
+      className="shrink-0 tabular-nums"
       onChange={(event) => onChange(Number(event.target.value))}
       value={tempo}
     >
       {tempos.map((option) => (
-        <option key={option} value={option}>
+        <NativeSelectOption key={option} value={option}>
           {t("{tempo} bpm", { tempo: String(option) })}
-        </option>
+        </NativeSelectOption>
       ))}
-    </select>
+    </NativeSelect>
   );
 }

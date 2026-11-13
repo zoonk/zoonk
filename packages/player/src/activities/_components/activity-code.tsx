@@ -79,7 +79,7 @@ export function ActivityCodeLine({
         tone === "current" &&
           "bg-viz-highlight-soft rounded-l-none shadow-[inset_3px_0_0_var(--color-viz-highlight)]",
         tone === "editable" &&
-          "bg-background ring-viz-accent/40 contrast-more:ring-viz-accent ring-1",
+          "bg-background ring-viz-accent/40 contrast-more:ring-viz-accent ring-1 ring-inset",
         tone === "error" && "bg-destructive/10",
         className,
       )}

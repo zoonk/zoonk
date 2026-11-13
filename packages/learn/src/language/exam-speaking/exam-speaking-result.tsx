@@ -109,7 +109,7 @@ function CriterionEstimate({
   const { standing } = graded.grade;
 
   return (
-    <span className="flex shrink-0 flex-col items-end gap-1">
+    <span className="flex shrink-0 flex-col items-end">
       <span className="font-mono font-medium whitespace-nowrap tabular-nums">
         {estimateText(graded.grade.estimate)}
       </span>
@@ -118,7 +118,7 @@ function CriterionEstimate({
       >
         {standingText(standing, level)}
       </span>
-      {focus && <span className={CHIP_CLASS}>{t("Focus")}</span>}
+      {focus && <span className={cn(CHIP_CLASS, "mt-1")}>{t("Focus")}</span>}
     </span>
   );
 }
