@@ -39,9 +39,11 @@ export function AdminHeader({
       {actions ? (
         <div
           className={cn(
-            "flex flex-wrap items-center gap-2 self-center",
-            actionsBesideTitle ? "col-span-1" : "max-md:order-last max-md:mt-3",
-            !actionsBesideTitle && beside,
+            "flex flex-wrap items-center gap-2 self-start",
+            // On the title's first line: half of what its 33 px line has over a 30 px control.
+            actionsBesideTitle
+              ? "col-span-1 mt-[0.09375rem]"
+              : cn(beside, "max-md:order-last max-md:mt-3 md:mt-[0.09375rem]"),
           )}
           data-slot="admin-header-actions"
         >
