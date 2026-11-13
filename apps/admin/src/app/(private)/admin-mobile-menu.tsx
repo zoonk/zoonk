@@ -1,40 +1,27 @@
 "use client";
 
-import { Button } from "@zoonk/ui/components/button";
-import { SidebarSearch } from "@zoonk/ui/components/sidebar-toggle";
-import { openCommandPalette } from "@zoonk/ui/lib/command-palette-event";
-import { MenuIcon } from "lucide-react";
+import { listenForAdminMenuOpen } from "@/lib/admin-menu-event";
 import { usePathname, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { type AdminAccount } from "./admin-account-menu";
 import { AdminMenuSheet, type AdminNavCounts } from "./app-sidebar";
 
-type AdminMobileBarProps = { account: AdminAccount; counts: AdminNavCounts };
+type AdminMenuProps = { account: AdminAccount; counts: AdminNavCounts };
 
-export function AdminMobileBar(props: AdminMobileBarProps) {
+/**
+ * The menu where the sidebar is hidden. A page's bar asks for it; it lives here, in the layout,
+ * which holds the account and the counts. A new address closes it.
+ */
+export function AdminMobileMenu(props: AdminMenuProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  return <AdminMobileBarContent {...props} key={`${pathname}?${searchParams.toString()}`} />;
+  return <AdminMobileMenuSheet {...props} key={`${pathname}?${searchParams.toString()}`} />;
 }
 
-function AdminMobileBarContent({ account, counts }: AdminMobileBarProps) {
+function AdminMobileMenuSheet({ account, counts }: AdminMenuProps) {
   const [open, setOpen] = useState(false);
 
-  return (
-    <header className="flex items-center gap-1 px-4 pt-1.5 sm:px-8 lg:hidden">
-      <Button edge="start" onClick={() => setOpen(true)} size="icon-bar" variant="ghost">
-        <MenuIcon aria-hidden="true" />
-        <span className="sr-only">Menu</span>
-      </Button>
+  useEffect(() => listenForAdminMenuOpen(() => setOpen(true)), []);
 
-      <SidebarSearch
-        className="ml-auto max-w-64 flex-1"
-        label="Search…"
-        onClick={openCommandPalette}
-        placement="bar"
-      />
-
-      <AdminMenuSheet account={account} counts={counts} onOpenChange={setOpen} open={open} />
-    </header>
-  );
+  return <AdminMenuSheet account={account} counts={counts} onOpenChange={setOpen} open={open} />;
 }

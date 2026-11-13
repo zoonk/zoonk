@@ -1,11 +1,7 @@
-import {
-  Container,
-  ContainerBody,
-  ContainerDescription,
-  ContainerTitle,
-} from "@zoonk/ui/components/container";
+import { Container, ContainerBody, ContainerDescription } from "@zoonk/ui/components/container";
+import { PageTitle } from "@zoonk/ui/components/page-top";
 import { cn } from "@zoonk/ui/lib/utils";
-import { AdminHeader } from "./admin-header";
+import { AdminHeader, type AdminParent } from "./admin-header";
 
 /** A list, queue or numbers page: its title, then its body. Detail pages use `AdminDetailPage`. */
 export function AdminPage({ children }: { children: React.ReactNode }) {
@@ -20,14 +16,17 @@ export function AdminPage({ children }: { children: React.ReactNode }) {
 export function AdminPageHeader({
   actions,
   children,
+  parent,
   title,
 }: {
   actions?: React.ReactNode;
   children?: React.ReactNode;
+  /** The page this one is reached from, when it isn't in the sidebar. */
+  parent?: AdminParent;
   title: string;
 }) {
   return (
-    <AdminHeader actions={actions} title={<ContainerTitle>{title}</ContainerTitle>}>
+    <AdminHeader actions={actions} parent={parent} title={<PageTitle>{title}</PageTitle>}>
       {children ? (
         <ContainerDescription className="max-w-column">{children}</ContainerDescription>
       ) : null}

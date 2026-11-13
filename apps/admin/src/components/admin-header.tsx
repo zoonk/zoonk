@@ -1,57 +1,57 @@
-import { CONTAINER_HEADER_EDGES_CLASS } from "@zoonk/ui/components/container";
-import { cn } from "@zoonk/ui/lib/utils";
+import { BackLink, PageTop } from "@zoonk/ui/components/page-top";
+import Link from "next/link";
+import { AdminBarMenuButton, AdminBarSearchButton } from "./admin-bar-buttons";
+
+export type AdminParent = { href: string; label: string };
+
+/** The page's side room, which the bar reads to reach the frame's edges. */
+const PAGE_GUTTER_CLASS =
+  "px-4 [--page-gutter:1rem] sm:px-8 sm:[--page-gutter:2rem] lg:px-10 lg:[--page-gutter:2.5rem]";
 
 /**
- * The top of every Admin page, list or record: the line over the title (a record's crumb, or its
- * empty room, so every title starts at one height), the title with its actions level with it, then
- * what `children` says about it. On a phone the actions follow below, except a lone menu
- * (`actionsBesideTitle`), which stays beside the title.
+ * The top of every Admin page, list or record, on the shared page top: a bar with the way back to
+ * the page it belongs to and the page's own actions, then the title and what `children` says about
+ * it. Where the sidebar is hidden the bar also opens the menu and search.
  */
 export function AdminHeader({
   actions,
-  actionsBesideTitle = false,
   children,
-  crumb,
+  parent,
   title,
 }: {
+  /** Small buttons (`size="sm"`) and a record's menu. */
   actions?: React.ReactNode;
-  actionsBesideTitle?: boolean;
   children?: React.ReactNode;
-  crumb?: React.ReactNode;
+  /** The list a record belongs to. A list page has none. */
+  parent?: AdminParent;
   title: React.ReactNode;
 }) {
-  const beside = actions ? "col-span-2 md:col-span-1" : "col-span-2";
-
   return (
-    <header
-      className={cn(
-        CONTAINER_HEADER_EDGES_CLASS,
-        "grid min-w-0 grid-cols-[minmax(0,1fr)_auto] gap-x-6 gap-y-1",
-      )}
-      data-slot="admin-header"
-    >
-      <div className="col-span-2 min-w-0">
-        {crumb ?? <span aria-hidden="true" className="block h-4" data-slot="page-eyebrow" />}
-      </div>
-
-      <div className={cn("min-w-0", actionsBesideTitle ? "col-span-1" : beside)}>{title}</div>
-
-      {actions ? (
-        <div
-          className={cn(
-            "flex flex-wrap items-center gap-2 self-start",
-            // On the title's first line: half of what its 33 px line has over a 30 px control.
-            actionsBesideTitle
-              ? "col-span-1 mt-[0.09375rem]"
-              : cn(beside, "max-md:order-last max-md:mt-3 md:mt-[0.09375rem]"),
-          )}
-          data-slot="admin-header-actions"
-        >
-          {actions}
-        </div>
-      ) : null}
-
-      {children ? <div className="col-span-2 min-w-0">{children}</div> : null}
-    </header>
+    <div className={PAGE_GUTTER_CLASS} data-slot="admin-header">
+      <PageTop
+        actions={
+          <>
+            {actions}
+            <AdminBarSearchButton />
+          </>
+        }
+        back={
+          <>
+            <AdminBarMenuButton />
+            {parent ? (
+              <BackLink
+                aria-label={`Back to ${parent.label}`}
+                render={<Link href={parent.href} prefetch />}
+              >
+                {parent.label}
+              </BackLink>
+            ) : null}
+          </>
+        }
+      >
+        {title}
+        {children}
+      </PageTop>
+    </div>
   );
 }

@@ -1,9 +1,9 @@
 import { Container, ContainerBody } from "@zoonk/ui/components/container";
-import { DetailFacts, DetailTitle } from "@zoonk/ui/components/detail";
+import { DetailFacts } from "@zoonk/ui/components/detail";
+import { PageTitle } from "@zoonk/ui/components/page-top";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
-import { AdminBreadcrumb, type AdminBreadcrumbParent } from "./admin-breadcrumb";
-import { AdminHeader } from "./admin-header";
+import { AdminHeader, type AdminParent } from "./admin-header";
 
 export function AdminDetailPage({ children }: { children: React.ReactNode }) {
   return <Container className="gap-8">{children}</Container>;
@@ -32,6 +32,9 @@ export function AdminDetailColumns({
   );
 }
 
+/** A record's name is its own words, so a long one wraps and balances. */
+const TITLE_CLASS = "text-balance wrap-break-word";
+
 export function AdminDetailHeader({
   actions,
   alert,
@@ -49,7 +52,8 @@ export function AdminDetailHeader({
   /** What the record is, drawn before its name: a person's photo or initials. */
   mark?: React.ReactNode;
   menu?: React.ReactNode;
-  parents: AdminBreadcrumbParent[];
+  /** The pages over this record, the list first. The way back names the nearest one. */
+  parents: AdminParent[];
   title: string;
   titleClassName?: string;
 }) {
@@ -65,16 +69,15 @@ export function AdminDetailHeader({
           </>
         ) : null
       }
-      actionsBesideTitle={!actions}
-      crumb={<AdminBreadcrumb current={title} parents={parents} />}
+      parent={parents.at(-1)}
       title={
         mark ? (
           <span className="flex min-w-0 items-center gap-3">
             {mark}
-            <DetailTitle className={titleClassName}>{title}</DetailTitle>
+            <PageTitle className={cn(TITLE_CLASS, titleClassName)}>{title}</PageTitle>
           </span>
         ) : (
-          <DetailTitle className={titleClassName}>{title}</DetailTitle>
+          <PageTitle className={cn(TITLE_CLASS, titleClassName)}>{title}</PageTitle>
         )
       }
     >
@@ -93,7 +96,7 @@ export function AdminDetailHeaderSkeleton({
   parents,
 }: {
   actions?: "buttons" | "menu";
-  parents: AdminBreadcrumbParent[];
+  parents: AdminParent[];
 }) {
   return (
     <AdminHeader
@@ -105,13 +108,7 @@ export function AdminDetailHeaderSkeleton({
           />
         ) : null
       }
-      actionsBesideTitle={actions === "menu"}
-      crumb={
-        <AdminBreadcrumb
-          current={<Skeleton aria-hidden="true" className="h-3.5 w-28" />}
-          parents={parents}
-        />
-      }
+      parent={parents.at(-1)}
       title={
         <span aria-hidden="true" className="text-title flex h-lh items-center">
           <Skeleton className="h-7 w-72 max-w-full" />

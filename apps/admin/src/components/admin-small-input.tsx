@@ -22,7 +22,7 @@ export function AdminSmallInput({
   return (
     <div
       className={cn(
-        "before:border-input before:bg-background relative isolate before:pointer-events-none before:absolute before:inset-x-0 before:top-1/2 before:-z-10 before:-translate-y-1/2 before:border before:transition-colors",
+        "before:border-field before:bg-background relative isolate before:pointer-events-none before:absolute before:inset-x-0 before:top-1/2 before:-z-10 before:-translate-y-1/2 before:border before:transition-colors",
         "has-[input:focus-visible]:before:border-ring has-[input:focus-visible]:before:ring-ring/50 has-[input:focus-visible]:before:ring-[3px]",
         fullOnPhone
           ? "before:h-11 before:rounded-lg md:before:h-7.5 md:before:rounded-md"

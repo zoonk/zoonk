@@ -1,3 +1,4 @@
+import { AdminPage, AdminPageBody, AdminPageHeader } from "@/components/admin-page";
 import {
   getDefaultLearnerMilestoneThreshold,
   getLearnerMilestoneCopy,
@@ -7,11 +8,12 @@ import {
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { Suspense } from "react";
-import { StatsPageLayout } from "../../_components/stats-page-layout";
 import { LearnerMilestoneThresholdForm } from "./learner-milestone-threshold-form";
 import { LearnerMilestoneUsers, LearnerMilestoneUsersSkeleton } from "./learner-milestone-users";
 
-export const metadata: Metadata = { title: "Learner Milestones" };
+export const metadata: Metadata = { title: "Learner milestones" };
+
+const ENGAGEMENT = { href: "/stats/engagement", label: "Engagement" };
 
 export default function LearnerMilestoneUsersPage({
   searchParams,
@@ -19,15 +21,12 @@ export default function LearnerMilestoneUsersPage({
   return (
     <Suspense
       fallback={
-        <StatsPageLayout
-          breadcrumbItems={[
-            { href: "/stats/engagement", label: "Engagement & Learning" },
-            { label: "Learner milestones" },
-          ]}
-          title="Learner Milestones"
-        >
-          <LearnerMilestoneUsersPageSkeleton />
-        </StatsPageLayout>
+        <AdminPage>
+          <AdminPageHeader parent={ENGAGEMENT} title="Learner milestones" />
+          <AdminPageBody>
+            <LearnerMilestoneUsersPageSkeleton />
+          </AdminPageBody>
+        </AdminPage>
       }
     >
       <LearnerMilestoneUsersPageContent searchParams={searchParams} />
@@ -49,14 +48,9 @@ async function LearnerMilestoneUsersPageContent({
   const copy = getLearnerMilestoneCopy({ kind, threshold });
 
   return (
-    <StatsPageLayout
-      breadcrumbItems={[
-        { href: "/stats/engagement", label: "Engagement & Learning" },
-        { label: "Learner milestones" },
-      ]}
-      title={copy.pageTitle}
-    >
-      <div className="flex flex-col gap-6">
+    <AdminPage>
+      <AdminPageHeader parent={ENGAGEMENT} title={copy.pageTitle} />
+      <AdminPageBody className="gap-6">
         <header className="flex flex-col gap-1">
           <p className="text-muted-foreground text-sm">{copy.tableCaption}</p>
         </header>
@@ -75,8 +69,8 @@ async function LearnerMilestoneUsersPageContent({
             threshold={threshold}
           />
         </Suspense>
-      </div>
-    </StatsPageLayout>
+      </AdminPageBody>
+    </AdminPage>
   );
 }
 

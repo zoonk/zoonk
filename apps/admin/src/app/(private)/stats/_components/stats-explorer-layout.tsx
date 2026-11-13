@@ -1,11 +1,13 @@
 import { AdminHeader } from "@/components/admin-header";
-import { Container, ContainerBody, ContainerTitle } from "@zoonk/ui/components/container";
+import { Container, ContainerBody } from "@zoonk/ui/components/container";
+import { PageTitle } from "@zoonk/ui/components/page-top";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type StatsAnalysisView } from "../_utils/stats-analysis";
 import { type StatsPeriod } from "../_utils/stats-period";
 import { StatsAnalysisPicker } from "./stats-analysis-picker";
-import { StatsBreadcrumb } from "./stats-breadcrumb";
 import { StatsPeriodPicker } from "./stats-period-picker";
+
+const STATS = { href: "/stats", label: "Stats" };
 
 export function StatsExplorerLayout({
   children,
@@ -18,8 +20,6 @@ export function StatsExplorerLayout({
   selectedView: StatsAnalysisView;
   statsPeriod: StatsPeriod;
 }) {
-  const section = selectedView.path.split("/").at(-1) ?? "";
-
   return (
     <Container className="min-h-full gap-2">
       <AdminHeader
@@ -32,15 +32,11 @@ export function StatsExplorerLayout({
             />
           ) : null
         }
-        crumb={
-          <StatsBreadcrumb
-            items={[{ label: section.charAt(0).toUpperCase() + section.slice(1) }]}
-          />
-        }
+        parent={STATS}
         title={
-          <ContainerTitle>
+          <PageTitle>
             <StatsAnalysisPicker periodQuery={periodQuery} selectedView={selectedView} />
-          </ContainerTitle>
+          </PageTitle>
         }
       />
 
@@ -84,7 +80,7 @@ export function StatsExplorerPageSkeleton() {
     <Container className="min-h-full gap-2">
       <AdminHeader
         actions={<Skeleton className="h-7.5 w-24 rounded-md" />}
-        crumb={<Skeleton className="h-4 w-32" data-slot="page-eyebrow" />}
+        parent={STATS}
         title={
           <span aria-hidden="true" className="text-title flex h-lh items-center">
             <Skeleton className="h-7 w-56 max-w-full" />
