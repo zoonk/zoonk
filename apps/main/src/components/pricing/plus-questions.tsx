@@ -52,7 +52,7 @@ async function FreePlanAnswer({ viewerState }: { viewerState?: PlusViewerState }
     }),
     t(
       "{month, plural, one {# lesson} other {# lessons}} a month, across all your goals, exams included",
-      { month: limits.lessonsPerMonth ?? 0 },
+      { month: limits.lessonsPer30Days ?? 0 },
     ),
     t("An AI study buddy: {count, plural, one {# message} other {# messages}} a day", {
       count: limits.tutorMessagesPerDay ?? 0,
