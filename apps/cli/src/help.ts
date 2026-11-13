@@ -34,7 +34,6 @@ Each API keeps its own login.
 Exit codes: 0 done, 1 failed, 2 wrong usage, 3 not logged in (run pnpm zoonk login).
 `;
 
-/** A command as the help above shows it, so a usage error can repeat its arguments. */
 export function commandUsage(name: string): string {
   const line = HELP.split("\n").find((entry) => entry.startsWith(`  ${name} `));
   const [usage = name] = line?.trim().split(/\s{2,}/u) ?? [];

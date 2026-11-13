@@ -44,7 +44,6 @@ function OfferHeading({ chip, line, title }: { chip: string; line: string; title
   );
 }
 
-/** The Focus test's offer to an exam learner: the screen before the Words rule and after it. */
 export function WordsSpecimen() {
   return (
     <div className="grid items-start gap-6 sm:grid-cols-2">
