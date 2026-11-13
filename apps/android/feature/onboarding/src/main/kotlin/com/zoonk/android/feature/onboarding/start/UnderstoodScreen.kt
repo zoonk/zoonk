@@ -179,7 +179,6 @@ internal fun ColumnScope.UnderstoodScreen(
                 onClick = onConfirm,
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !rewriting,
-                leadingIcon = { ButtonIcon(R.drawable.ic_check) },
             ) {
                 Text(stringResource(R.string.onboarding_looks_right))
             }
@@ -461,7 +460,7 @@ private fun TextEditor(
             keyboardActions = KeyboardActions(onDone = { submit() }),
         )
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Button(busy = saving, onClick = { submit() }, leadingIcon = { ButtonIcon(R.drawable.ic_check) }) {
+            Button(busy = saving, onClick = { submit() }) {
                 Text(stringResource(R.string.onboarding_save))
             }
             TextButton(onClick = onCancel, enabled = !saving) { Text(stringResource(R.string.onboarding_cancel)) }

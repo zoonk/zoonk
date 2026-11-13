@@ -37,8 +37,8 @@ import com.zoonk.android.R
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.DisclosureRow
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
-import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.bleed
@@ -167,7 +167,6 @@ internal fun ColumnScope.BasesChoices(
                 onClick = { edits.change(PlanPart.Bases, operations) { edits.answerSheet(draft.opening, it) } },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = operations.isNotEmpty() && check is Check.Ready,
-                leadingIcon = { ButtonIcon(R.drawable.ic_check) },
             ) { Text(stringResource(R.string.plan_save_choices)) }
             if (edits.sheetFailed(PlanPart.Bases, draft.opening)) SaveFailedText()
         },
@@ -194,7 +193,7 @@ private fun AllBasesChoice(
                     selected = choice == value,
                     onSelect = { onChoose(choice) },
                     enabled = enabled,
-                    mark = if (choice == recommended) ({ LabelChip(stringResource(R.string.plan_recommended)) }) else null,
+                    mark = if (choice == recommended) ({ Eyebrow(stringResource(R.string.plan_recommended)) }) else null,
                     trailing =
                         if (choice == PlanBase.Choice.SKIP) {
                             null

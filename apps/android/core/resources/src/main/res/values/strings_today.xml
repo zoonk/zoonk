@@ -1,42 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="today_title">Today</string>
+    <string name="today_welcome_back_line">Welcome back. Today is short, so it\'s easy to start again.</string>
+    <string name="today_not_enough_time">Not enough time left for all your lessons.</string>
+    <string name="today_adjust_your_plan">Adjust your plan</string>
+    <plurals name="today_exam_in_days">
+        <item quantity="one">%1$s in %2$d day</item>
+        <item quantity="other">%1$s in %2$d days</item>
+    </plurals>
+    <string name="today_shorter_day">A shorter day</string>
+    <string name="today_shorter_day_note">Your plan keeps time for the mock exam on %1$s.</string>
     <string name="today_day_is_here">The day is here</string>
     <plurals name="today_days_left">
         <item quantity="one">%d day left</item>
         <item quantity="other">%d days left</item>
     </plurals>
-    <!-- The goal's date is the likely day of an exam whose notice isn't out yet. -->
-    <plurals name="today_days_left_estimated">
-        <item quantity="one">~%d day left</item>
-        <item quantity="other">~%d days left</item>
-    </plurals>
-    <string name="today_behind">Behind</string>
-    <string name="today_pace_one_day_ahead">One day ahead</string>
-    <plurals name="today_pace_ahead">
-        <item quantity="one">%d day ahead</item>
-        <item quantity="other">%d days ahead</item>
-    </plurals>
-    <string name="today_pace_one_day_behind">One day behind</string>
-    <plurals name="today_pace_behind_days">
-        <item quantity="one">%d day behind</item>
-        <item quantity="other">%d days behind</item>
-    </plurals>
     <plurals name="today_pace_lessons_to_catch_up">
         <item quantity="one">%d lesson to catch up</item>
         <item quantity="other">%d lessons to catch up</item>
     </plurals>
-    <plurals name="today_pace_challenges_left">
-        <item quantity="one">%d challenge left</item>
-        <item quantity="other">%d challenges left</item>
-    </plurals>
-    <string name="today_pace_finished">Plan finished</string>
-    <string name="today_pace_needs_adjusting">Needs adjusting</string>
-    <string name="today_pace_on_track">Keeping pace</string>
-    <string name="today_pace_past_date">Past your date</string>
-    <!-- %1$s is the exam's name, such as "ENEM". -->
-    <string name="today_exam_tomorrow">%1$s tomorrow</string>
-    <string name="today_exam_today">%1$s today</string>
 
     <string name="today_time_left">%1$s left</string>
     <string name="today_time_studied">%1$s studied</string>
@@ -126,12 +108,10 @@
     <string name="today_not_now">Not now</string>
     <string name="today_save_failed">That didn\'t save. Try again.</string>
 
-    <string name="today_finished">Finished</string>
     <!-- %1$s is the goal's short name, like "CGU" or "Italian". -->
     <string name="today_finished_goal">You finished your %1$s goal.</string>
     <string name="today_finished_detail">Start a new goal, or pick another one above.</string>
     <string name="today_start_new_goal">Start a new goal</string>
-    <string name="today_paused">Paused</string>
     <string name="today_paused_goal">Your %1$s goal is paused.</string>
     <string name="today_paused_this_goal">This goal is paused.</string>
     <!-- "It" is the learner's paused goal. -->
@@ -141,11 +121,9 @@
     <string name="today_resume_effect">Your plan picks up from today, starting with the lessons planned for the days you paused.</string>
     <!-- When a free learner resumes a paused goal while following as many goals as the free plan allows. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. Plus is the name of Zoonk's paid plan, not the word "more". -->
     <string name="today_resume_goal_limit">You\'re following as many goals as the free plan allows. Pause another goal to resume this one, or get Plus to follow more.</string>
-    <string name="today_setting_up">Setting up</string>
     <string name="today_setting_up_goal">Your %1$s plan needs a few more answers.</string>
     <string name="today_setting_up_detail">It\'s built from what you tell us.</string>
     <string name="today_continue_setting_up">Continue setting up</string>
-    <string name="today_building_plan">Building your plan</string>
     <string name="today_building_plan_goal">Building your %1$s plan</string>
     <string name="today_building_plan_detail">It usually takes a minute or two. Your first day opens here as soon as it\'s ready.</string>
     <string name="today_quick_explanation">Quick explanation</string>
@@ -210,10 +188,6 @@
         <item quantity="one">%d available tomorrow</item>
         <item quantity="other">%d available tomorrow</item>
     </plurals>
-    <!-- %1$s is the mock's date, such as Nov 3. Today is shorter so time is set aside for that mock. -->
-    <string name="today_mock_funding">Lighter day: saving time for the mock exam on %1$s</string>
-    <!-- %1$s is the mock's date, such as Nov 3. Zoonk sets time aside for that mock. -->
-    <string name="today_mock_funding_welcome_back">Saving time for the mock exam on %1$s</string>
     <string name="today_take_mock">Take a mock exam</string>
     <string name="today_take_mock_detail">Whenever you want: a full exam day or half a day</string>
     <!-- Kinds of mock exam the learner can take: a full exam day, half an exam day or one subject. -->

@@ -96,7 +96,7 @@ internal fun ColumnScope.ProfileStep(
                         busy = vm.isSaving && startingLesson,
                         focusableWhenDisabled = vm.isSaving,
                         size = ButtonSize.Small,
-                        trailingIcon = { ButtonIcon(R.drawable.ic_chevron_right) },
+                        forward = true,
                     ) {
                         Text(
                             stringResource(

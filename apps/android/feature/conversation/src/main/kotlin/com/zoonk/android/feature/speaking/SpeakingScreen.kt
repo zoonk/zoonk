@@ -435,7 +435,7 @@ private fun TaskRow(
             )
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 if (!locked) {
-                    Button(busy = starting, onClick = onStart, enabled = !busy, leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) }) {
+                    Button(busy = starting, onClick = onStart, enabled = !busy) {
                         Text(stringResource(R.string.speaking_start_task))
                     }
                 }

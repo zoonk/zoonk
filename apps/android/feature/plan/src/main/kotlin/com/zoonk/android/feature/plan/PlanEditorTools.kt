@@ -336,7 +336,6 @@ internal fun ColumnScope.ToolChoiceForm(
                     },
                     modifier = Modifier.weight(1f),
                     enabled = chosen != null && !needsSystem,
-                    leadingIcon = { ButtonIcon(R.drawable.ic_check) },
                 ) { Text(stringResource(R.string.plan_save)) }
             }
             if (edits.sheetFailed(PlanPart.Tools, draft.opening)) SaveFailedText()

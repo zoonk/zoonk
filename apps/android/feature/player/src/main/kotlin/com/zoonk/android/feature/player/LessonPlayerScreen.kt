@@ -129,7 +129,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.DropdownMenu
-import com.zoonk.android.ui.components.LabelChip
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedIconButton
@@ -759,7 +759,7 @@ private fun Notice(
     if (!shown) return
 
     if (quickCheck != null) {
-        LabelChip(
+        Eyebrow(
             text = stringResource(R.string.player_quick_check, count(quickCheck.first + 1), count(quickCheck.second)),
             icon = R.drawable.ic_bolt,
         )
@@ -880,16 +880,13 @@ private fun ActionBar(
     TaskActions(back) { width ->
         if (promptUrl != null && prompt != null) PromptAudioIconButton(promptUrl, prompt)
         val label: @Composable RowScope.() -> Unit = { Text(stringResource(primary.label.text())) }
-        val iconId = primary.label.icon()
-        val icon: @Composable () -> Unit = { ButtonIcon(iconId) }
-        val forward = iconId == R.drawable.ic_arrow_forward
         if (primary.label == PrimaryLabel.DontKnowYet) {
             SecondaryButton(
                 onClick = actions::runPrimary,
                 enabled = primary.enabled,
                 busy = primary.busy,
                 modifier = width.focusRequester(primaryFocus),
-                leadingIcon = icon,
+                leadingIcon = { ButtonIcon(R.drawable.ic_help) },
                 content = label,
             )
         } else {
@@ -898,23 +895,12 @@ private fun ActionBar(
                 onClick = actions::runPrimary,
                 modifier = width.focusRequester(primaryFocus),
                 enabled = primary.enabled,
-                leadingIcon = icon.takeUnless { forward },
-                trailingIcon = icon.takeIf { forward },
                 content = label,
             )
         }
         ask()
     }
 }
-
-private fun PrimaryLabel.icon(): Int =
-    when (this) {
-        PrimaryLabel.Check, PrimaryLabel.Confirm -> R.drawable.ic_check
-        PrimaryLabel.Continue, PrimaryLabel.Next, PrimaryLabel.NextStep, PrimaryLabel.SeeHowItWent -> R.drawable.ic_arrow_forward
-        PrimaryLabel.DontKnowYet -> R.drawable.ic_help
-        PrimaryLabel.SeeAnswer -> R.drawable.ic_visibility
-        PrimaryLabel.Start -> R.drawable.ic_play_arrow
-    }
 
 private fun PrimaryLabel.text(): Int =
     when (this) {

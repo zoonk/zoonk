@@ -256,7 +256,6 @@ fun RecordButton(
         modifier = modifier,
         enabled = enabled || recording != null,
         colors = if (recording != null) ButtonDefaults.filledTonalButtonColors() else ButtonDefaults.buttonColors(),
-        border = recording?.let { BorderStroke(RECORDING_BORDER, MaterialTheme.colorScheme.onSurface) },
     ) {
         val icon = Modifier.size(buttonIconSize())
         if (recording == null) {
@@ -307,8 +306,6 @@ private const val SLOW_CHECK_MS = 15_000L
 
 /** Silence still shows the meter, faintly. */
 private const val QUIET_LEVEL = 0.38f
-
-private val RECORDING_BORDER = 1.5.dp
 
 /** Inline, beside the step it belongs to; [description] says what the microphone is for here. */
 @Composable

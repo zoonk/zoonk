@@ -128,6 +128,7 @@
     <string name="profile_questions_condition_note">Bilmemiz gereken neler var?</string>
     <string name="profile_questions_support_title">Öğrenmeni neler kolaylaştırır?</string>
     <string name="profile_questions_support_description">Sana yardımcı olan her şeyi seç. Herhangi bir durum belirtmen ya da tanı almış olman gerekmez.</string>
+    <!-- Asks which grammatical forms (feminine, masculine or neutral wording) the app should use for words about the learner, such as "you're right". Not a question about pronouns or identity. -->
     <string name="profile_questions_address_title">Sana nasıl hitap edelim?</string>
     <string name="profile_questions_address_description">Ders arkadaşın sana bu şekilde hitap edecek, geri bildirimler de buna göre yazılacak. Dersler aynı kalacak.</string>
     <string name="profile_questions_suggested">Seçtiğin durumlarda genelde nelerin işe yaradığına baktık. İstediğini değiştirebilirsin.</string>
@@ -157,9 +158,11 @@
     <string name="profile_questions_row_activities">Yapmayı sevdiklerin</string>
     <string name="profile_questions_row_conditions">Sağlık durumun</string>
     <string name="profile_questions_row_support">Öğrenmene yardımcı olan şeyler</string>
+    <!-- Which grammatical forms (feminine, masculine or neutral wording) the app uses for words about the learner. -->
     <string name="profile_questions_row_address">Sana hitap şeklimiz</string>
     <string name="profile_questions_not_answered">Cevaplanmadı</string>
     <string name="profile_questions_not_shared">Anlatılmadı</string>
+    <!-- An answer the learner saved, without showing it. -->
     <string name="profile_questions_saved">Kaydedildi</string>
     <string name="profile_questions_add">Ekle</string>
     <plurals name="profile_questions_conditions_saved">

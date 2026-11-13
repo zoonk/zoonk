@@ -130,7 +130,6 @@ fun FeedbackForm(
             onClick = { form.send(accountEmail) },
             modifier = Modifier.align(Alignment.End),
             enabled = form.canSend(accountEmail),
-            leadingIcon = { ButtonIcon(R.drawable.ic_send) },
             size = ButtonSize.Small,
         ) { Text(stringResource(R.string.feedback_send)) }
     }

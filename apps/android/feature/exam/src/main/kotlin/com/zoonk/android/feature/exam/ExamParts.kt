@@ -310,7 +310,6 @@ internal fun ExamResultSection(
 
         Button(
             busy = status == SaveStatus.Pending,
-            leadingIcon = { ButtonIcon(R.drawable.ic_check) },
             onClick = {
                 viewModel.report(
                     ExamResultReport(

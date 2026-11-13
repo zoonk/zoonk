@@ -596,7 +596,6 @@ private fun WordActions(
                     busy = round.pending,
                     onClick = model::next,
                     modifier = width,
-                    trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
                 ) {
                     Text(
                         stringResource(
@@ -619,7 +618,6 @@ private fun WordActions(
                     busy = round.pending,
                     onClick = model::next,
                     modifier = width,
-                    leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
                 ) {
                     Text(stringResource(R.string.pronunciation_skip))
                 }

@@ -3,11 +3,12 @@ package com.zoonk.android.feature.today
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.InlineTextContent
+import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -15,6 +16,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -22,21 +27,23 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.Placeholder
+import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import com.zoonk.android.R
 import com.zoonk.android.feature.plan.shortDayRange
-import com.zoonk.android.feature.plan.shortFocusName
 import com.zoonk.android.feature.session.FreshStart
-import com.zoonk.android.feature.subscription.PlusMark
-import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.components.Readout
 import com.zoonk.android.ui.format.DateStyle
-import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
@@ -51,178 +58,101 @@ import kotlinx.datetime.toJavaLocalDate
 
 @Composable
 internal fun TodayPageHeader(
-    state: String?,
     title: String,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        state?.let { Eyebrow(it) }
-        PageTitleRow(title)
-    }
+    PageTitleRow(title, modifier)
 }
 
+/** "Today" with the day's time, and under it one line at most: only what changes today, so a normal day has none. */
 @Composable
 internal fun TodayHeading(
     model: TodayDayModel,
-    wide: Boolean,
+    onAdjustPlan: () -> Unit,
     modifier: Modifier = Modifier,
-    action: @Composable () -> Unit,
 ) {
     Column(modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        todayEyebrow(model).takeIf { it.isNotEmpty() }?.let { Eyebrow(it) }
-
-        PageTitleRow(stringResource(R.string.today_title)) {
-            if (wide) {
-                action()
-            } else {
-                DayTime(model, MaterialTheme.typography.headlineSmall)
-            }
-        }
-
-        if (model.state != StudySession.State.DONE && model.state != StudySession.State.REST) MockFundingLine(model)
+        PageTitleRow(stringResource(R.string.today_title)) { DayTime(model, MaterialTheme.typography.headlineSmall) }
+        TodayLine(model, onAdjustPlan)
     }
 }
 
-/** A mock the learner's plan doesn't include wears the Plus mark, so the line never reads as a mock they can take. */
+/** A return after days away leads with its welcome, so the plan's state waits for the learner to start. */
 @Composable
-private fun MockFundingLine(model: TodayDayModel) {
-    val funding = model.today.mockFunding ?: return
-    val locale = currentLocale()
-    val date = formatDate(funding.mockDate.toJavaLocalDate(), locale, DateStyle.Day, model.day.localDate.toJavaLocalDate())
-    val text =
-        if (model.day.freshStart == FreshStart.WelcomeBack) {
-            stringResource(R.string.today_mock_funding_welcome_back, date)
-        } else {
-            stringResource(R.string.today_mock_funding, date)
-        }
-
-    FlowRow(
-        modifier = Modifier.semantics(mergeDescendants = true) {},
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-        itemVerticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
-        if (!model.day.examAccess.includesMockExams) PlusMark()
-    }
-}
-
-@Composable
-private fun todayEyebrow(model: TodayDayModel): AnnotatedString {
+private fun TodayLine(
+    model: TodayDayModel,
+    onAdjustPlan: () -> Unit,
+) {
     val today = model.today
-    val daysLeft = today.goal.daysLeft?.toInt()
     val exam = today.exam
-    val status = today.progress?.status
-    val parts = mutableListOf<AnnotatedString>()
+    val daysLeft = today.goal.daysLeft?.toInt()
+    val short = today.shortPlan
 
-    if (daysLeft != null) {
-        val text =
-            when {
-                today.goal.dateEstimated -> pluralStringResource(R.plurals.today_days_left_estimated, daysLeft, daysLeft)
-                daysLeft == 0 -> stringResource(R.string.today_day_is_here)
-                else -> pluralStringResource(R.plurals.today_days_left, daysLeft, daysLeft)
-            }
-        parts += AnnotatedString(text)
-    }
-
-    today.shortPlan?.let { short ->
-        parts += AnnotatedString(shortDayRange(short.days.toInt(), short.day.toInt()))
-        parts += AnnotatedString(shortFocusName(short.focus, mocksRequirePlus = !model.day.examAccess.includesMockExams))
-    }
-
-    when (exam?.stage) {
-        ExamMoment.Stage.DAY_BEFORE -> parts += AnnotatedString(stringResource(R.string.today_exam_tomorrow, exam.examName))
-        ExamMoment.Stage.EXAM_DAY -> parts += AnnotatedString(stringResource(R.string.today_exam_today, exam.examName))
-        else -> Unit
-    }
-
-    // Behind says so in a word before what to catch up; a return after a break says only "Behind".
-    if (status != null && today.shortPlan == null) {
-        val behind = status as? PlanStatus.PlanStatusOneOf2Value
-        val welcomeBack = model.day.freshStart == FreshStart.WelcomeBack
-
-        when {
-            behind != null && welcomeBack -> {
-                parts += AnnotatedString(stringResource(R.string.today_behind))
-            }
-
-            behind != null && behind.value.lessons != null -> {
-                parts += AnnotatedString(stringResource(R.string.today_behind))
-                parts += AnnotatedString(planStatusText(status))
-            }
-
-            status is PlanStatus.PlanStatusOneOf5Value -> {
-                val error = MaterialTheme.colorScheme.error
-                parts +=
-                    buildAnnotatedString {
-                        withStyle(
-                            SpanStyle(color = error, fontWeight = FontWeight.Medium),
-                        ) { append(planStatusText(status)) }
-                    }
-            }
-
-            else -> {
-                parts += AnnotatedString(planStatusText(status))
-            }
+    when {
+        model.welcomesBack -> {
+            Supporting(stringResource(R.string.today_welcome_back_line))
         }
-    }
 
-    return buildAnnotatedString {
-        parts.forEachIndexed { index, part ->
-            if (index > 0) append(FACT_SEPARATOR)
-            append(part)
+        short != null -> {
+            Supporting(shortDayRange(short.days.toInt(), short.day.toInt()))
+        }
+
+        today.progress?.status is PlanStatus.PlanStatusOneOf5Value && !model.welcomesBack -> {
+            NotEnoughTime(onAdjustPlan)
+        }
+
+        exam?.stage == ExamMoment.Stage.FINAL_STRETCH && daysLeft != null -> {
+            Supporting(pluralStringResource(R.plurals.today_exam_in_days, daysLeft, exam.examName, daysLeft))
         }
     }
 }
 
-/** The learner's pace against their plan, never whether the plan reaches the goal. */
 @Composable
-internal fun planStatusText(status: PlanStatus): String =
-    when (status) {
-        is PlanStatus.PlanStatusOneOfValue -> {
-            stringResource(R.string.today_pace_on_track)
-        }
+private fun Supporting(text: String) {
+    Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+}
 
-        is PlanStatus.PlanStatusOneOf1Value -> {
-            val days = status.value.days.toInt()
-            if (days ==
-                1
+@Composable
+private fun NotEnoughTime(onAdjustPlan: () -> Unit) {
+    val sentence = stringResource(R.string.today_not_enough_time)
+    val link = stringResource(R.string.today_adjust_your_plan)
+    val ink = MaterialTheme.colorScheme.onSurface
+    val text =
+        buildAnnotatedString {
+            append(sentence)
+            append(spaceAfterSentence(sentence))
+            withLink(
+                LinkAnnotation.Clickable(
+                    tag = "adjust-plan",
+                    styles = TextLinkStyles(SpanStyle(color = ink, fontWeight = FontWeight.Medium)),
+                ) {
+                    onAdjustPlan()
+                },
             ) {
-                stringResource(R.string.today_pace_one_day_ahead)
-            } else {
-                pluralStringResource(R.plurals.today_pace_ahead, days, days)
+                append(link)
+                appendInlineContent(CHEVRON)
             }
         }
+    val chevron =
+        mapOf(
+            CHEVRON to
+                InlineTextContent(Placeholder(1.em, 1.em, PlaceholderVerticalAlign.TextCenter)) {
+                    Icon(painterResource(R.drawable.ic_chevron_right), contentDescription = null, tint = ink)
+                },
+        )
 
-        is PlanStatus.PlanStatusOneOf2Value -> {
-            val lessons = status.value.lessons?.toInt()
-            val days = status.value.days.toInt()
-            if (lessons != null && lessons > 0) {
-                pluralStringResource(R.plurals.today_pace_lessons_to_catch_up, lessons, lessons)
-            } else if (days == 1) {
-                stringResource(R.string.today_pace_one_day_behind)
-            } else {
-                pluralStringResource(R.plurals.today_pace_behind_days, days, days)
-            }
-        }
+    Text(text, inlineContent = chevron, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+}
 
-        is PlanStatus.PlanStatusOneOf3Value -> {
-            val count = status.value.challenges.toInt()
-            pluralStringResource(R.plurals.today_pace_challenges_left, count, count)
-        }
+private const val CHEVRON = "chevron"
 
-        is PlanStatus.PlanStatusOneOf4Value -> {
-            stringResource(R.string.today_pace_finished)
-        }
-
-        is PlanStatus.PlanStatusOneOf5Value -> {
-            stringResource(R.string.today_pace_needs_adjusting)
-        }
-
-        is PlanStatus.PlanStatusOneOf6Value -> {
-            stringResource(R.string.today_pace_past_date)
-        }
-    }
+/** The day welcomes the learner back until they start, except on a day they're ahead or resting. */
+internal val TodayDayModel.welcomesBack: Boolean
+    get() =
+        day.freshStart == FreshStart.WelcomeBack &&
+            day.showsFreshStart(today.studiedToday) &&
+            state != StudySession.State.AHEAD &&
+            state != StudySession.State.REST
 
 internal val TodayProgress.status: PlanStatus?
     get() =
@@ -270,8 +200,36 @@ internal fun DayTime(
             }
         } ?: return
 
-    Readout(text, modifier, style)
+    val funding = model.today.mockFunding
+    if (funding == null || model.state == StudySession.State.DONE) {
+        Readout(text, modifier, style)
+        return
+    }
+
+    // A day that keeps time for a mock exam is shorter than the learner's time a day, so its time opens why.
+    val date = formatDate(funding.mockDate.toJavaLocalDate(), locale, DateStyle.Day, model.day.localDate.toJavaLocalDate())
+    TodayPopover(
+        title = stringResource(R.string.today_shorter_day),
+        facts = null,
+        note = stringResource(R.string.today_shorter_day_note, date),
+        modifier = modifier,
+    ) { open ->
+        Readout(text, open.dottedUnderline(MaterialTheme.colorScheme.onSurfaceVariant), style)
+    }
 }
+
+/** Main's dotted underline under something that opens a note. */
+private fun Modifier.dottedUnderline(color: Color): Modifier =
+    drawBehind {
+        val y = size.height - 2.dp.toPx()
+        drawLine(
+            color = color,
+            start = Offset(0f, y),
+            end = Offset(size.width, y),
+            strokeWidth = 1.dp.toPx(),
+            pathEffect = PathEffect.dashPathEffect(floatArrayOf(2.dp.toPx(), 2.dp.toPx())),
+        )
+    }
 
 /** A status, so a day that changes while the learner is here (lessons that arrive) is announced. */
 @Composable

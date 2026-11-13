@@ -83,10 +83,10 @@ import com.zoonk.android.feature.player.model.NumericCheck
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepResult
 import com.zoonk.android.feature.player.revealPart
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.FeedbackPanel
 import com.zoonk.android.ui.components.FeedbackTone
 import com.zoonk.android.ui.components.FeedbackVerdict
-import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.PictureFrame
 import com.zoonk.android.ui.format.currencyFor
@@ -198,7 +198,7 @@ internal fun ActivityView(
     QuestionScene {
         if (part.showsScreen) {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                renderer?.badge?.invoke(content.content)?.let { LabelChip(stringResource(it.label), icon = it.icon) }
+                renderer?.badge?.invoke(content.content)?.let { Eyebrow(stringResource(it.label), icon = it.icon) }
                 QuestionText(frame.prompt)
             }
             StepPicture(step, PictureFrame.Question)
