@@ -20,7 +20,7 @@ export const FILL_SCREEN_CLASS = cn(FILL_FOR_WORD_BANK_CLASS, FILL_FOR_OPENING_M
 export function InteractiveStepLayout({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <PlayerContentFrame
-      className={cn("flex flex-col gap-6 pt-4 pb-6", FILL_FOR_WORD_BANK_CLASS, className)}
+      className={cn("flex flex-col gap-4 pt-4 pb-6", FILL_FOR_WORD_BANK_CLASS, className)}
       data-slot="interactive-step-layout"
       {...props}
     />

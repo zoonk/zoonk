@@ -123,7 +123,7 @@ export function LessonActionBar() {
           onClick={(event) => pressKeepingFocus(event, () => runPrimary({ actions, screen }))}
         />
 
-        <TutorAskButton quiet={Boolean(screen.struggleOffer)} />
+        <TutorAskButton />
       </QuestionActions>
     </TaskActionBar>
   );

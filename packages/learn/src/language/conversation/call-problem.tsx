@@ -3,7 +3,7 @@
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
-import { ChevronLeftIcon } from "lucide-react";
+import { ArrowLeftIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import { type CallLimit, useCallLimitLine } from "../../_components/help-limit-notice";
@@ -42,7 +42,7 @@ function ProblemWithBack({
       exitHref={exitHref}
       footer={
         <TaskActions>
-          <TaskMainLink href={exitHref} icon={<ChevronLeftIcon aria-hidden="true" />}>
+          <TaskMainLink href={exitHref} icon={<ArrowLeftIcon aria-hidden="true" />}>
             {t("Back")}
           </TaskMainLink>
         </TaskActions>
