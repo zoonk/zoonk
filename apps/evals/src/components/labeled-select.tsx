@@ -21,7 +21,6 @@ export function LabeledSelect({
   label,
   name,
   options,
-  size,
   triggerClassName,
 }: {
   defaultValue: string;
@@ -32,7 +31,6 @@ export function LabeledSelect({
   label: string;
   name: string;
   options: readonly SelectOption[];
-  size?: React.ComponentProps<typeof SelectTrigger>["size"];
   triggerClassName?: string;
 }) {
   return (
@@ -45,7 +43,7 @@ export function LabeledSelect({
         items={options}
         name={name}
       >
-        <SelectTrigger className={triggerClassName} id={id} size={size}>
+        <SelectTrigger className={triggerClassName} id={id}>
           <SelectValue />
         </SelectTrigger>
         <SelectContent>

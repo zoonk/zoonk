@@ -11,7 +11,6 @@ export function ReasoningSelect({ form, reasoning }: { form?: string; reasoning?
       label="Reasoning"
       name="reasoning"
       options={REASONING_OPTIONS}
-      size="md"
       triggerClassName="min-w-40"
     />
   );

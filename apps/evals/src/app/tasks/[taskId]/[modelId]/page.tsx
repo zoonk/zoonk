@@ -150,7 +150,11 @@ async function TaskModelResults({ params }: TaskModelRouteProps) {
     return <EvalResults outputs={generatedOutputs} results={results} />;
   }
 
-  return null;
+  return (
+    <p className="text-muted-foreground text-sm">
+      No outputs yet. Generate them, then score them to see how this model did.
+    </p>
+  );
 }
 
 export default function TaskModelPage({ params }: TaskModelRouteProps) {
