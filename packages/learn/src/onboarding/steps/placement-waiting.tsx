@@ -135,9 +135,7 @@ function PlacementBar({
   if (holding) {
     return (
       <WaitBar>
-        <OnboardingPrimaryButton className="lg:w-auto lg:min-w-40" onClick={release}>
-          {t("Continue")}
-        </OnboardingPrimaryButton>
+        <OnboardingPrimaryButton onClick={release}>{t("Continue")}</OnboardingPrimaryButton>
       </WaitBar>
     );
   }
@@ -147,21 +145,20 @@ function PlacementBar({
   }
 
   return (
-    <WaitBar>
+    <WaitBar
+      failed={skipFailed}
+      note={
+        canSkip && skip?.note !== null
+          ? (skip?.note ?? t("Your first sessions will ask a few of these instead."))
+          : null
+      }
+    >
       <WaitSlot />
 
       {canSkip && (
-        <div className="flex flex-col gap-1 lg:items-end">
-          <OnboardingSecondaryButton className="lg:w-auto" disabled={skipping} onClick={onSkip}>
-            {skip?.label ?? t("Skip for now")}
-          </OnboardingSecondaryButton>
-          {skipFailed && <ChangeSaveError className="text-center lg:text-right" />}
-          {skip?.note !== null && (
-            <p className="text-muted-foreground text-center text-sm text-pretty lg:text-right">
-              {skip?.note ?? t("Your first sessions will ask a few of these instead.")}
-            </p>
-          )}
-        </div>
+        <OnboardingSecondaryButton disabled={skipping} onClick={onSkip}>
+          {skip?.label ?? t("Skip for now")}
+        </OnboardingSecondaryButton>
       )}
     </WaitBar>
   );

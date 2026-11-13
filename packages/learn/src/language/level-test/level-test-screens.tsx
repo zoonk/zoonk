@@ -6,21 +6,21 @@ import {
 } from "@zoonk/core/language/level-test/contract";
 import { getLanguageNameInSentence } from "@zoonk/utils/languages";
 import { isValidLocale } from "@zoonk/utils/locale";
+import { Button } from "@zoonk/ui/components/button";
 import { PlayIcon, SkipForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { ChangeSaveError } from "../../_components/save-error";
 import { useAppLocale } from "../../_utils/locale";
 import { useFormatDuration } from "../../_utils/time-format";
 import {
+  OnboardingActions,
   OnboardingColumn,
   OnboardingDescription,
-  OnboardingFooter,
   OnboardingHeading,
   OnboardingPrimaryButton,
   OnboardingSecondaryButton,
-  OnboardingSubject,
   OnboardingTitle,
 } from "../../onboarding/onboarding-frame";
+import { TestOutcome } from "../../onboarding/test-outcome";
 import { LevelBars } from "./level-test-parts";
 
 type ReadyTest = Extract<LanguageLevelTestView, { status: "ready" }>;
@@ -40,11 +40,17 @@ function InterfaceOffer({
   }
 
   return (
-    <OnboardingSecondaryButton lang={language} onClick={() => onSwitch(language)} variant="ghost">
+    <Button
+      className="self-start"
+      edge="start"
+      lang={language}
+      onClick={() => onSwitch(language)}
+      variant="ghost"
+    >
       {t("Use the app in {language}", {
         language: getLanguageNameInSentence({ targetLanguage: language, userLanguage: language }),
       })}
-    </OnboardingSecondaryButton>
+    </Button>
   );
 }
 
@@ -75,7 +81,28 @@ export function TestIntro({
   });
 
   return (
-    <OnboardingColumn>
+    <OnboardingColumn
+      bar={
+        <OnboardingActions>
+          <OnboardingSecondaryButton
+            busy={pending}
+            disabled={starting}
+            icon={<SkipForwardIcon aria-hidden="true" />}
+            onClick={onScratch}
+          >
+            {t("Skip")}
+          </OnboardingSecondaryButton>
+          <OnboardingPrimaryButton
+            busy={starting}
+            disabled={pending}
+            icon={<PlayIcon aria-hidden="true" />}
+            onClick={onStart}
+          >
+            {t("Start")}
+          </OnboardingPrimaryButton>
+        </OnboardingActions>
+      }
+    >
       <OnboardingHeading>
         <OnboardingTitle>
           {t("Find your level in {language}", { language: target })}
@@ -94,26 +121,7 @@ export function TestIntro({
         </p>
       )}
 
-      <OnboardingFooter>
-        <OnboardingPrimaryButton
-          busy={starting}
-          disabled={pending}
-          icon={<PlayIcon aria-hidden="true" />}
-          onClick={onStart}
-        >
-          {t("Start")}
-        </OnboardingPrimaryButton>
-        <OnboardingSecondaryButton
-          busy={pending}
-          disabled={starting}
-          icon={<SkipForwardIcon aria-hidden="true" />}
-          onClick={onScratch}
-          variant="ghost"
-        >
-          {t("Skip")}
-        </OnboardingSecondaryButton>
-        <InterfaceOffer language={goal.language} onSwitch={onSwitch} />
-      </OnboardingFooter>
+      <InterfaceOffer language={goal.language} onSwitch={onSwitch} />
     </OnboardingColumn>
   );
 }
@@ -132,18 +140,14 @@ export function TestDone({
   const t = useExtracted();
 
   return (
-    <OnboardingColumn>
-      <OnboardingHeading>
-        <OnboardingSubject>{t("Level test")}</OnboardingSubject>
-        <OnboardingTitle>{t("Your level")}</OnboardingTitle>
-      </OnboardingHeading>
+    <TestOutcome
+      disabled={pending}
+      failed={failed}
+      onContinue={onContinue}
+      subject={t("Level test")}
+      title={t("Your level")}
+    >
       <LevelBars levels={levels} />
-      <OnboardingFooter>
-        {failed && <ChangeSaveError />}
-        <OnboardingPrimaryButton autoFocus disabled={pending} onClick={onContinue}>
-          {t("Continue")}
-        </OnboardingPrimaryButton>
-      </OnboardingFooter>
-    </OnboardingColumn>
+    </TestOutcome>
   );
 }

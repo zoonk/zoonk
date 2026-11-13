@@ -1,10 +1,10 @@
 "use client";
 
 import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
-import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useKeptTyping } from "@zoonk/ui/hooks/kept-typing";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useEffect, useRef } from "react";
+import { EnterButton } from "../../_components/enter-button";
 
 export const GOAL_FIELD_TEXT_CLASS = "py-2.5 text-lg leading-6";
 
@@ -169,19 +169,15 @@ export function GoalFieldSubmit({
   children,
   className,
   ...props
-}: Omit<React.ComponentProps<typeof Button>, "size" | "type" | "variant">) {
+}: Omit<React.ComponentProps<typeof EnterButton>, "type">) {
   return (
-    <Button
-      aria-keyshortcuts="Enter"
-      className={cn("shrink-0 px-4", className)}
-      focusableWhenDisabled
-      size="lg"
+    <EnterButton
+      className={cn("shrink-0 grow-0 basis-auto", className)}
       type="submit"
       {...FORWARD_ICON}
       {...props}
     >
       {children}
-      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-    </Button>
+    </EnterButton>
   );
 }

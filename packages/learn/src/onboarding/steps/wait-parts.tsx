@@ -1,15 +1,20 @@
 "use client";
 
-import { buttonVariants } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
-import { cn } from "@zoonk/ui/lib/utils";
 import { PlayIcon } from "lucide-react";
 import { type ReactNode } from "react";
 import { PageSectionTitle } from "../../_components/page";
 import { LearnLink } from "../../learn-link";
 import { useWaitBack, useWaitPlace } from "../../wait/wait-screen";
-import { OnboardingDescription, OnboardingHeading, OnboardingTitle } from "../onboarding-frame";
+import {
+  ONBOARDING_ACTION_LINK_CLASS,
+  OnboardingActions,
+  OnboardingActionsNote,
+  OnboardingDescription,
+  OnboardingHeading,
+  OnboardingTitle,
+} from "../onboarding-frame";
 import {
   OnboardingScreenProvider,
   useOnboardingHost,
@@ -37,28 +42,35 @@ export function WaitHeading({ description, title }: { description: ReactNode; ti
   );
 }
 
-/** A wait's bar: the Library's way out on the left, a note over the slot's action on the right. */
+/** A wait's bar: its actions, with the Library's way out before them on a computer's row. */
 export function WaitBar({
   children,
+  failed,
   library,
   note,
 }: {
   children: ReactNode;
+  failed?: boolean;
   library?: ReactNode;
-  note?: string;
+  note?: string | null;
 }) {
-  return (
-    <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between lg:gap-6">
-      {library}
+  const actions = (
+    <OnboardingActions
+      failed={failed}
+      note={note && <OnboardingActionsNote>{note}</OnboardingActionsNote>}
+    >
+      {children}
+    </OnboardingActions>
+  );
 
-      <div className={cn("flex flex-col gap-2 lg:items-end", !library && "lg:ml-auto")}>
-        {note && (
-          <p className="text-muted-foreground text-center text-sm text-pretty lg:text-right">
-            {note}
-          </p>
-        )}
-        {children}
-      </div>
+  if (!library) {
+    return actions;
+  }
+
+  return (
+    <div className="flex w-full flex-col gap-3 lg:flex-row lg:items-center lg:justify-between lg:gap-6">
+      {library}
+      <div className="flex flex-col gap-2 lg:items-end">{actions}</div>
     </div>
   );
 }
@@ -86,7 +98,7 @@ export function WaitLinkAction({ children, href }: { children: ReactNode; href: 
 
   return (
     <LearnLink
-      className={cn(buttonVariants({ size: "lg" }), "w-full font-[560] lg:w-auto lg:min-w-40")}
+      className={ONBOARDING_ACTION_LINK_CLASS.main}
       href={href}
       lessonWritten
       ref={ref}

@@ -17,7 +17,9 @@ export const BAR_MIDDLE_CLASS = "w-24 sm:w-32";
 
 /** A step's bar has its own way back, progress or menu; the entry's holds only the way out. */
 export function isStepBar(bar: OnboardingBar): boolean {
-  return bar.onBack !== undefined || Boolean(bar.middle) || Boolean(bar.end);
+  return (
+    bar.onBack !== undefined || Boolean(bar.start) || Boolean(bar.middle) || Boolean(bar.end)
+  );
 }
 
 export function TestProgress({ value }: { value: number }) {
@@ -58,10 +60,24 @@ export function OnboardingBarRow({ bar, className }: { bar: OnboardingBar; class
         className,
       )}
     >
-      <div className="justify-self-start">{bar.onBack && <BackButton onBack={bar.onBack} />}</div>
+      <div className="justify-self-start">
+        {bar.start ?? (bar.onBack && <BackButton onBack={bar.onBack} />)}
+      </div>
       {bar.middle ?? <span />}
       <div className="justify-self-end">{bar.end}</div>
     </div>
+  );
+}
+
+function BarStart({ backHref, bar }: { backHref: string; bar: OnboardingBar }) {
+  if (bar.start) {
+    return bar.start;
+  }
+
+  return bar.onBack ? (
+    <BackButton onBack={bar.onBack} />
+  ) : (
+    <LearnBackLink className="lg:hidden" href={backHref} leave toApp />
   );
 }
 
@@ -86,11 +102,7 @@ export function OnboardingPageBar({
         )}
       >
         <div className="justify-self-start">
-          {bar.onBack ? (
-            <BackButton onBack={bar.onBack} />
-          ) : (
-            <LearnBackLink className="lg:hidden" href={backHref} leave toApp />
-          )}
+          <BarStart backHref={backHref} bar={bar} />
         </div>
 
         {bar.middle ?? <span />}

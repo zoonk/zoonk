@@ -12,13 +12,14 @@ import { SettingRow } from "../_components/setting-rows";
 import {
   OnboardingColumn,
   OnboardingDescription,
-  OnboardingFooter,
+  OnboardingActions,
   OnboardingHeading,
   OnboardingPrimaryButton,
   OnboardingSecondaryButton,
   OnboardingSubject,
   OnboardingTitle,
 } from "../onboarding/onboarding-frame";
+import { TestOutcome } from "../onboarding/test-outcome";
 import {
   type FocusTestPlanActions,
   FocusTestProposal,
@@ -136,12 +137,13 @@ function FocusTestResult({
   const line = focus && words.line(focus.state);
 
   return (
-    <OnboardingColumn>
-      <OnboardingHeading>
-        <OnboardingSubject>{t("Focus test")}</OnboardingSubject>
-        <OnboardingTitle>{words.title({ focus, lessonsSkipped })}</OnboardingTitle>
-
-        {answer ? (
+    <TestOutcome
+      busy={pressed === "main"}
+      continueLabel={host === "onboarding" ? undefined : t("Done")}
+      disabled={pressed === "other"}
+      failed={failed}
+      lead={
+        answer ? (
           <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 pt-1">
             <OnboardingDescription role="status">
               {words.answered(answer.decision)}
@@ -161,9 +163,28 @@ function FocusTestResult({
           </div>
         ) : (
           line && <OnboardingDescription>{line}</OnboardingDescription>
-        )}
-      </OnboardingHeading>
-
+        )
+      }
+      onContinue={onDone}
+      other={
+        host === "plan" &&
+        focusTest.offer && (
+          <OnboardingSecondaryButton
+            busy={pressed === "other"}
+            disabled={pressed === "main"}
+            onClick={onContinueTest}
+          >
+            {t({
+              description:
+                "Button on the Focus test's result: continues the test with more questions.",
+              message: "Answer more questions",
+            })}
+          </OnboardingSecondaryButton>
+        )
+      }
+      subject={t("Focus test")}
+      title={words.title({ focus, lessonsSkipped })}
+    >
       {focus && <FocusSubjects rows={focus.rows} />}
 
       {focus && lessonsSkipped > 0 && (
@@ -176,33 +197,7 @@ function FocusTestResult({
       )}
 
       {plan && <ResultRows changesFocus={changesFocus} focusTest={focusTest} plan={plan} />}
-
-      <OnboardingFooter>
-        {failed && <ChangeSaveError />}
-        <OnboardingPrimaryButton
-          autoFocus
-          busy={pressed === "main"}
-          disabled={pressed === "other"}
-          onClick={onDone}
-        >
-          {host === "onboarding" ? t("Continue") : t("Done")}
-        </OnboardingPrimaryButton>
-
-        {host === "plan" && focusTest.offer && (
-          <OnboardingSecondaryButton
-            busy={pressed === "other"}
-            disabled={pressed === "main"}
-            onClick={onContinueTest}
-          >
-            {t({
-              description:
-                "Button on the Focus test's result: continues the test with more questions.",
-              message: "Answer more questions",
-            })}
-          </OnboardingSecondaryButton>
-        )}
-      </OnboardingFooter>
-    </OnboardingColumn>
+    </TestOutcome>
   );
 }
 

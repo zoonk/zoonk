@@ -5,9 +5,10 @@ import { useExtracted } from "next-intl";
 import { type GenerationRun } from "../../generation/generation-run";
 import { GenerationWait } from "../../generation/generation-wait";
 import {
+  OnboardingActions,
+  OnboardingActionsNote,
   OnboardingColumn,
   OnboardingDescription,
-  OnboardingFooter,
   OnboardingHeading,
   OnboardingSecondaryButton,
   OnboardingTitle,
@@ -27,7 +28,25 @@ export function LevelTestPreparing({
   const t = useExtracted();
 
   return (
-    <OnboardingColumn>
+    <OnboardingColumn
+      bar={
+        <OnboardingActions
+          note={
+            <OnboardingActionsNote>
+              {t("Your plan starts from the level you gave, and your first sessions fine-tune it.")}
+            </OnboardingActionsNote>
+          }
+        >
+          <OnboardingSecondaryButton
+            busy={skipping}
+            icon={<SkipForwardIcon aria-hidden="true" />}
+            onClick={onSkip}
+          >
+            {t("Skip the test")}
+          </OnboardingSecondaryButton>
+        </OnboardingActions>
+      }
+    >
       <GenerationWait kind="levelTestBank" run={run}>
         <OnboardingHeading>
           <OnboardingTitle>{t("Preparing your level test")}</OnboardingTitle>
@@ -39,19 +58,6 @@ export function LevelTestPreparing({
           </OnboardingDescription>
         </OnboardingHeading>
       </GenerationWait>
-
-      <OnboardingFooter>
-        <OnboardingSecondaryButton
-          busy={skipping}
-          icon={<SkipForwardIcon aria-hidden="true" />}
-          onClick={onSkip}
-        >
-          {t("Skip the test")}
-        </OnboardingSecondaryButton>
-        <p className="text-muted-foreground text-center text-sm text-pretty">
-          {t("Your plan starts from the level you gave, and your first sessions fine-tune it.")}
-        </p>
-      </OnboardingFooter>
     </OnboardingColumn>
   );
 }

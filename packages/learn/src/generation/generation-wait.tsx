@@ -215,7 +215,7 @@ export function GenerationFailureNotice({
   }[failure];
 
   return (
-    <NoticeCard role="alert">
+    <NoticeCard className="max-w-column" role="alert">
       <NoticeCardLeading className="text-muted-foreground">
         <FailureIcon failure={failure} />
       </NoticeCardLeading>

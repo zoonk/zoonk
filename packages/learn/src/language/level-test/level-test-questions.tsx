@@ -8,8 +8,8 @@ import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import { CreateAccountLink } from "../../_components/create-account-link";
 import {
+  OnboardingActions,
   OnboardingColumn,
-  OnboardingFooter,
   OnboardingHeading,
   OnboardingSecondaryButton,
   OnboardingTitle,
@@ -123,7 +123,15 @@ export function SpeakingStep({
 
   return (
     <OnboardingTestQuestion progress={progress}>
-      <OnboardingColumn>
+      <OnboardingColumn
+        bar={
+          <OnboardingActions note={needsAccount && <CreateAccountLink />}>
+            <OnboardingSecondaryButton disabled={isPending} onClick={onSkip}>
+              {t("Skip this part")}
+            </OnboardingSecondaryButton>
+          </OnboardingActions>
+        }
+      >
         <OnboardingHeading>
           <OnboardingTitle>{t("Say it out loud")}</OnboardingTitle>
         </OnboardingHeading>
@@ -154,12 +162,6 @@ export function SpeakingStep({
           pending={isPending}
           sentence={sentence}
         />
-        <OnboardingFooter>
-          {needsAccount && <CreateAccountLink />}
-          <OnboardingSecondaryButton disabled={isPending} onClick={onSkip}>
-            {t("Skip this part")}
-          </OnboardingSecondaryButton>
-        </OnboardingFooter>
       </OnboardingColumn>
     </OnboardingTestQuestion>
   );

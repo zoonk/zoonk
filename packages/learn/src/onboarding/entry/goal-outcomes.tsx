@@ -18,9 +18,10 @@ import { useSentenceSpace } from "../../_utils/locale";
 import { type GoalError } from "../goal-errors";
 import { type WaitlistOutcome } from "../onboarding-actions";
 import {
+  ONBOARDING_ACTION_LINK_CLASS,
   OnboardingColumn,
   OnboardingDescription,
-  OnboardingFooter,
+  OnboardingActions,
   OnboardingHeading,
   OnboardingPrimaryButton,
   OnboardingSecondaryButton,
@@ -38,7 +39,7 @@ export function SignUpLink({ href }: { href: string }) {
 
   return (
     <PendingLink
-      className={cn(buttonVariants({ size: "lg" }), "w-full")}
+      className={ONBOARDING_ACTION_LINK_CLASS.main}
       href={href}
       icon={<UserPlusIcon aria-hidden="true" />}
     >
@@ -47,13 +48,8 @@ export function SignUpLink({ href }: { href: string }) {
   );
 }
 
-export function GoalErrorAlert({
-  error,
-  signUpHref,
-}: {
-  error: GoalError | null;
-  signUpHref: string;
-}) {
+/** What starting a goal couldn't do. The way on (an account to create) is `GoalActions`' or the alert's. */
+export function GoalErrorMessage({ error }: { error: GoalError | null }) {
   if (!error) {
     return null;
   }
@@ -66,23 +62,33 @@ export function GoalErrorAlert({
     );
   }
 
-  if (!error.needsAccount) {
-    return (
-      <p className="text-destructive-text text-sm" role="alert">
-        {error.message}
-      </p>
-    );
-  }
+  return error.needsAccount ? (
+    <p className="text-base text-pretty" role="alert">
+      {error.message}
+    </p>
+  ) : (
+    <ChangeSaveError>{error.message}</ChangeSaveError>
+  );
+}
 
+/** For a screen with no bar: the message with its way on under it. */
+export function GoalErrorAlert({
+  error,
+  signUpHref,
+}: {
+  error: GoalError | null;
+  signUpHref: string;
+}) {
   return (
-    <div className="flex flex-col gap-4" role="alert">
-      <p className="text-base text-pretty">{error.message}</p>
-      <SignUpLink href={signUpHref} />
+    <div className="flex flex-col gap-4 empty:hidden">
+      <GoalErrorMessage error={error} />
+      {error?.needsAccount && <SignUpLink href={signUpHref} />}
     </div>
   );
 }
 
-export function GoalFooter({
+/** A goal screen's bar: creating an account takes its actions' place when the goal needs one. */
+export function GoalActions({
   children,
   error,
   signUpHref,
@@ -91,19 +97,10 @@ export function GoalFooter({
   error: GoalError | null;
   signUpHref: string;
 }) {
-  if (error?.needsAccount) {
-    return (
-      <OnboardingFooter>
-        <GoalErrorAlert error={error} signUpHref={signUpHref} />
-      </OnboardingFooter>
-    );
-  }
-
   return (
-    <>
-      <GoalErrorAlert error={error} signUpHref={signUpHref} />
-      <OnboardingFooter>{children}</OnboardingFooter>
-    </>
+    <OnboardingActions>
+      {error?.needsAccount ? <SignUpLink href={signUpHref} /> : children}
+    </OnboardingActions>
   );
 }
 
@@ -133,7 +130,19 @@ export function ExplainGoal({
   const t = useExtracted();
 
   return (
-    <OnboardingColumn>
+    <OnboardingColumn
+      bar={
+        <GoalActions error={error} signUpHref={signUpHref}>
+          <OnboardingPrimaryButton
+            busy={isStarting}
+            icon={<LightbulbIcon aria-hidden="true" />}
+            onClick={onStart}
+          >
+            {t("Explain it")}
+          </OnboardingPrimaryButton>
+        </GoalActions>
+      }
+    >
       <TypedGoal goal={goal} />
       <span aria-hidden="true" className={ICON_CLASS}>
         <LightbulbIcon />
@@ -145,15 +154,7 @@ export function ExplainGoal({
         </OnboardingDescription>
       </OnboardingHeading>
 
-      <GoalFooter error={error} signUpHref={signUpHref}>
-        <OnboardingPrimaryButton
-          busy={isStarting}
-          icon={<LightbulbIcon aria-hidden="true" />}
-          onClick={onStart}
-        >
-          {t("Explain it")}
-        </OnboardingPrimaryButton>
-      </GoalFooter>
+      <GoalErrorMessage error={error} />
     </OnboardingColumn>
   );
 }
@@ -162,7 +163,13 @@ export function DeclinedGoal({ goal, onRetry }: { goal: string; onRetry: () => v
   const t = useExtracted();
 
   return (
-    <OnboardingColumn>
+    <OnboardingColumn
+      bar={
+        <OnboardingActions>
+          <OnboardingPrimaryButton onClick={onRetry}>{t("Try another goal")}</OnboardingPrimaryButton>
+        </OnboardingActions>
+      }
+    >
       <TypedGoal goal={goal} />
       <span aria-hidden="true" className={ICON_CLASS}>
         <HandHeartIcon />
@@ -175,9 +182,6 @@ export function DeclinedGoal({ goal, onRetry }: { goal: string; onRetry: () => v
           )}
         </OnboardingDescription>
       </OnboardingHeading>
-      <OnboardingFooter>
-        <OnboardingPrimaryButton onClick={onRetry}>{t("Try another goal")}</OnboardingPrimaryButton>
-      </OnboardingFooter>
     </OnboardingColumn>
   );
 }
@@ -186,7 +190,15 @@ export function UnclearGoal({ goal, onRetry }: { goal: string; onRetry: () => vo
   const t = useExtracted();
 
   return (
-    <OnboardingColumn>
+    <OnboardingColumn
+      bar={
+        <OnboardingActions>
+          <OnboardingPrimaryButton onClick={onRetry}>
+            {t("Write my goal again")}
+          </OnboardingPrimaryButton>
+        </OnboardingActions>
+      }
+    >
       <TypedGoal goal={goal} />
       <span aria-hidden="true" className={ICON_CLASS}>
         <MessageCircleQuestionIcon />
@@ -199,11 +211,6 @@ export function UnclearGoal({ goal, onRetry }: { goal: string; onRetry: () => vo
           )}
         </OnboardingDescription>
       </OnboardingHeading>
-      <OnboardingFooter>
-        <OnboardingPrimaryButton onClick={onRetry}>
-          {t("Write my goal again")}
-        </OnboardingPrimaryButton>
-      </OnboardingFooter>
     </OnboardingColumn>
   );
 }
@@ -268,7 +275,27 @@ export function InstrumentGoal({
   const t = useExtracted();
 
   return (
-    <OnboardingColumn>
+    <OnboardingColumn
+      bar={
+        <GoalActions error={error} signUpHref={signUpHref}>
+          <OnboardingSecondaryButton
+            busy={isJoining}
+            disabled={waitlist === "joined"}
+            icon={<BellIcon aria-hidden="true" />}
+            onClick={onJoinWaitlist}
+          >
+            {t("Join the waitlist")}
+          </OnboardingSecondaryButton>
+          <OnboardingPrimaryButton
+            busy={isStarting}
+            icon={<PlayIcon aria-hidden="true" />}
+            onClick={onStartMusicianship}
+          >
+            {t("Start music basics")}
+          </OnboardingPrimaryButton>
+        </GoalActions>
+      }
+    >
       <TypedGoal goal={goal} />
 
       <span aria-hidden="true" className={ICON_CLASS}>
@@ -292,24 +319,7 @@ export function InstrumentGoal({
       </OnboardingHeading>
 
       <WaitlistNote outcome={waitlist} signUpHref={signUpHref} />
-
-      <GoalFooter error={error} signUpHref={signUpHref}>
-        <OnboardingPrimaryButton
-          busy={isStarting}
-          icon={<PlayIcon aria-hidden="true" />}
-          onClick={onStartMusicianship}
-        >
-          {t("Start music basics")}
-        </OnboardingPrimaryButton>
-        <OnboardingSecondaryButton
-          busy={isJoining}
-          disabled={waitlist === "joined"}
-          icon={<BellIcon aria-hidden="true" />}
-          onClick={onJoinWaitlist}
-        >
-          {t("Join the waitlist")}
-        </OnboardingSecondaryButton>
-      </GoalFooter>
+      <GoalErrorMessage error={error} />
     </OnboardingColumn>
   );
 }

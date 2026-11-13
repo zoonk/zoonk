@@ -20,8 +20,8 @@ export function PlanStartNoticeProvider({
 }
 
 /**
- * In the footer, so a notice never moves the choices under the learner's finger; the live region
- * stays while empty, so it's heard when it comes.
+ * In the bar, so a notice never moves the choices under the learner's finger. The live region stays
+ * while empty, so it's heard when it comes, and out of the bar's flow, so it adds no gap.
  */
 export function PlanStartNoticeSlot() {
   const run = use(PlanRunContext);
@@ -31,7 +31,7 @@ export function PlanStartNoticeSlot() {
   }
 
   return (
-    <div aria-live="polite" className="not-empty:pb-2">
+    <div aria-live="polite" className="empty:absolute">
       {run && <PlanStartNotice run={run} />}
     </div>
   );

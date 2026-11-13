@@ -2,10 +2,7 @@
 
 import { type PlanRevealDays } from "@zoonk/core/view-models/today/plan-reveal";
 import { BuddyActor } from "@zoonk/ui/components/buddy-actor";
-import { Button } from "@zoonk/ui/components/button";
-import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { CelebrationScope, useCelebration } from "@zoonk/ui/hooks/celebration";
-import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { BEAT_MS } from "@zoonk/ui/lib/motion";
 import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
@@ -13,7 +10,6 @@ import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import { PageSectionTitle } from "../../_components/page";
-import { ChangeSaveError } from "../../_components/save-error";
 import { StepOpenFailed } from "../../_components/step-open-failed";
 import { SuccessEyebrow } from "../../_components/success-eyebrow";
 import { type LearnBuddy, resolveLearnBuddy } from "../../buddies/use-buddy-name";
@@ -24,7 +20,13 @@ import { PlanEditor } from "../../plan/plan-editor";
 import { type PlanEditorSection } from "../../plan/plan-editor-sections";
 import { type DayStep } from "../../session/session-types";
 import { isFinished } from "../../today/today-queue";
-import { OnboardingColumn, OnboardingTitle } from "../onboarding-frame";
+import {
+  OnboardingActions,
+  OnboardingColumn,
+  OnboardingPrimaryButton,
+  OnboardingSecondaryButton,
+  OnboardingTitle,
+} from "../onboarding-frame";
 import { SavePlanNote } from "../save-plan-note";
 import { UsualStructureNote } from "./notice-reading";
 import { PlanChapterList, PlanPhasesBar } from "./plan-shape";
@@ -63,10 +65,7 @@ function PlanCreated() {
   );
 }
 
-/**
- * Pinned to the bottom on phones and tablets, where the plan scrolls under it, and beside the hero
- * from `lg`. Start works from the moment's first frame.
- */
+/** Start works from the moment's first frame. */
 function RevealActions({
   failure,
   isGuest,
@@ -86,43 +85,30 @@ function RevealActions({
   started: boolean;
 }) {
   const t = useExtracted();
-  const startRef = useEnterClick<HTMLButtonElement>();
 
   return (
-    <div
-      className={cn(
-        "bg-background sticky bottom-0 -mx-4 flex flex-col gap-2 border-t px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]",
-        "lg:static lg:col-2! lg:row-start-1 lg:mx-0 lg:w-56 lg:self-start lg:border-t-0 lg:p-0",
-      )}
-      data-slot="reveal-actions"
+    <OnboardingActions
+      failed={failure === "save"}
+      note={
+        <>
+          {failure === "open" && <StepOpenFailed />}
+          {isGuest && <SavePlanNote className="text-left lg:text-right" signUpHref={signUpHref} />}
+        </>
+      }
     >
-      {failure === "save" && <ChangeSaveError />}
-      {failure === "open" && <StepOpenFailed />}
+      <OnboardingSecondaryButton onClick={onAdjust}>{t("Adjust")}</OnboardingSecondaryButton>
 
-      <div className="flex gap-2 lg:flex-col-reverse">
-        <Button className="flex-1 lg:flex-none" onClick={onAdjust} size="lg" variant="outline">
-          {t("Adjust")}
-        </Button>
-
-        {/* A submit, so a press before the page hydrates starts once it does. */}
-        <form action={() => onStart()} className="contents">
-          <Button
-            aria-keyshortcuts="Enter"
-            busy={pending}
-            className="flex-2 font-[560] lg:flex-none"
-            icon={<PlayIcon aria-hidden="true" />}
-            ref={startRef}
-            size="lg"
-            type="submit"
-          >
-            {started ? t("Continue") : t("Start")}
-            <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-          </Button>
-        </form>
-      </div>
-
-      {isGuest && <SavePlanNote className="lg:text-right" signUpHref={signUpHref} />}
-    </div>
+      {/* A submit, so a press before the page hydrates starts once it does. */}
+      <form action={() => onStart()} className="contents">
+        <OnboardingPrimaryButton
+          busy={pending}
+          icon={<PlayIcon aria-hidden="true" />}
+          type="submit"
+        >
+          {started ? t("Continue") : t("Start")}
+        </OnboardingPrimaryButton>
+      </form>
+    </OnboardingActions>
   );
 }
 
@@ -197,7 +183,18 @@ function RevealColumn({
 
   return (
     <OnboardingColumn
-      className="gap-8 lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:content-start lg:gap-x-10 lg:*:col-span-2"
+      bar={
+        <RevealActions
+          failure={startFailure}
+          isGuest={isGuest}
+          onAdjust={() => setEditor({ open: true, section: null })}
+          onStart={start}
+          pending={starting}
+          signUpHref={signUpHref}
+          started={started}
+        />
+      }
+      className="gap-8"
       rail={
         <RevealRailBlock title={t("Choices")}>
           <PlanChoices />
@@ -205,7 +202,7 @@ function RevealColumn({
       }
       wide
     >
-      <header className="flex min-w-0 flex-col gap-5 pt-2 lg:col-1! lg:row-start-1">
+      <header className="flex min-w-0 flex-col gap-5 pt-2">
         <div className="flex items-start justify-between gap-4">
           <div className="flex min-w-0 flex-col gap-1">
             <PlanCreated />
@@ -237,16 +234,6 @@ function RevealColumn({
         onOpenChange={(open) => setEditor({ ...editor, open })}
         open={editor.open}
         section={editor.section}
-      />
-
-      <RevealActions
-        isGuest={isGuest}
-        onAdjust={() => setEditor({ open: true, section: null })}
-        failure={startFailure}
-        onStart={start}
-        pending={starting}
-        signUpHref={signUpHref}
-        started={started}
       />
     </OnboardingColumn>
   );

@@ -10,13 +10,14 @@ import { ChangeSaveError } from "../_components/save-error";
 import {
   OnboardingColumn,
   OnboardingDescription,
-  OnboardingFooter,
+  OnboardingActions,
   OnboardingHeading,
   OnboardingPrimaryButton,
   OnboardingSecondaryButton,
   OnboardingSubject,
   OnboardingTitle,
 } from "../onboarding/onboarding-frame";
+import { TestOutcome } from "../onboarding/test-outcome";
 import { type FocusTestHost } from "./focus-test-result";
 import { type Pressed } from "./use-focus-test";
 import { useFocusTestTitle, useSeeResultLabel, useTestTime } from "./use-focus-test-texts";
@@ -43,32 +44,33 @@ export function FocusTestInvitation({
   const time = useTestTime();
 
   return (
-    <OnboardingColumn>
+    <OnboardingColumn
+      bar={
+        <OnboardingActions failed={failed}>
+          <OnboardingSecondaryButton
+            busy={pressed === "other"}
+            disabled={pressed === "main"}
+            icon={host === "onboarding" ? <SkipForwardIcon aria-hidden="true" /> : undefined}
+            onClick={onSkip}
+          >
+            {host === "onboarding" ? t("Skip for now") : t("Not now")}
+          </OnboardingSecondaryButton>
+          <OnboardingPrimaryButton
+            busy={pressed === "main"}
+            disabled={pressed === "other"}
+            icon={<PlayIcon aria-hidden="true" />}
+            onClick={onStart}
+          >
+            {t("Start")}
+          </OnboardingPrimaryButton>
+        </OnboardingActions>
+      }
+    >
       <OnboardingHeading>
         <OnboardingSubject position={time.whole(next.minutes)}>{t("Focus test")}</OnboardingSubject>
         <OnboardingTitle>{title(suggestsFocus)}</OnboardingTitle>
         <OnboardingDescription>{t("A short test on your exam's subjects.")}</OnboardingDescription>
       </OnboardingHeading>
-
-      <OnboardingFooter>
-        {failed && <ChangeSaveError />}
-        <OnboardingPrimaryButton
-          busy={pressed === "main"}
-          disabled={pressed === "other"}
-          icon={<PlayIcon aria-hidden="true" />}
-          onClick={onStart}
-        >
-          {t("Start")}
-        </OnboardingPrimaryButton>
-        <OnboardingSecondaryButton
-          busy={pressed === "other"}
-          disabled={pressed === "main"}
-          icon={host === "onboarding" ? <SkipForwardIcon aria-hidden="true" /> : undefined}
-          onClick={onSkip}
-        >
-          {host === "onboarding" ? t("Skip for now") : t("Not now")}
-        </OnboardingSecondaryButton>
-      </OnboardingFooter>
     </OnboardingColumn>
   );
 }
@@ -93,7 +95,23 @@ export function FocusTestResume({
   const seeResult = useSeeResultLabel();
 
   return (
-    <OnboardingColumn>
+    <OnboardingColumn
+      bar={
+        <OnboardingActions failed={failed}>
+          <OnboardingSecondaryButton busy={pressed === "other"} onClick={onSeeResult}>
+            {seeResult}
+          </OnboardingSecondaryButton>
+          <OnboardingPrimaryButton
+            autoFocus
+            disabled={pressed === "other"}
+            icon={<PlayIcon aria-hidden="true" />}
+            onClick={onContinue}
+          >
+            {t("Continue")}
+          </OnboardingPrimaryButton>
+        </OnboardingActions>
+      }
+    >
       <OnboardingHeading>
         <OnboardingSubject position={time.left(sitting.minutes)}>
           {t("Focus test")}
@@ -109,21 +127,6 @@ export function FocusTestResume({
           })}
         </OnboardingDescription>
       </OnboardingHeading>
-
-      <OnboardingFooter>
-        {failed && <ChangeSaveError />}
-        <OnboardingPrimaryButton
-          autoFocus
-          disabled={pressed === "other"}
-          icon={<PlayIcon aria-hidden="true" />}
-          onClick={onContinue}
-        >
-          {t("Continue")}
-        </OnboardingPrimaryButton>
-        <OnboardingSecondaryButton busy={pressed === "other"} onClick={onSeeResult}>
-          {seeResult}
-        </OnboardingSecondaryButton>
-      </OnboardingFooter>
     </OnboardingColumn>
   );
 }
@@ -142,18 +145,13 @@ export function FocusTestEnded({
   const seeResult = useSeeResultLabel();
 
   return (
-    <OnboardingColumn>
-      <OnboardingHeading>
-        <OnboardingSubject>{t("Focus test")}</OnboardingSubject>
-        <OnboardingTitle>{t("Your answers are saved")}</OnboardingTitle>
-      </OnboardingHeading>
-
-      <OnboardingFooter>
-        {failed && <ChangeSaveError />}
-        <OnboardingPrimaryButton autoFocus busy={pending} onClick={onFinish}>
-          {seeResult}
-        </OnboardingPrimaryButton>
-      </OnboardingFooter>
-    </OnboardingColumn>
+    <TestOutcome
+      busy={pending}
+      continueLabel={seeResult}
+      failed={failed}
+      onContinue={onFinish}
+      subject={t("Focus test")}
+      title={t("Your answers are saved")}
+    />
   );
 }

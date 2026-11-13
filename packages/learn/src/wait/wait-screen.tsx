@@ -4,9 +4,11 @@ import { type WarmUpSurface } from "@zoonk/core/analytics/events";
 import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
 import { Button } from "@zoonk/ui/components/button";
 import { useEnterKey, useEscapeClick } from "@zoonk/ui/hooks/keyboard";
+import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowRightIcon, ChevronLeftIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode, type RefObject, createContext, use, useRef } from "react";
+import { TASK_WRAPPING_ACTION_CLASS } from "../_components/task-layout";
 import { type ReadyHoldControl } from "./use-ready-hold";
 import { type WaitView, useWaitView } from "./use-wait-view";
 import {
@@ -159,7 +161,7 @@ export function useWaitPlace(): WaitPlace {
   return use(WaitPlaceContext);
 }
 
-const SLOT_BUTTON_CLASS = "w-full lg:w-auto lg:min-w-40";
+const SLOT_BUTTON_CLASS = cn(TASK_WRAPPING_ACTION_CLASS, "w-full lg:w-auto lg:min-w-40");
 
 function useBackToQuizText(): string {
   const t = useExtracted();
@@ -198,7 +200,7 @@ export function WaitSlot({
 
   if (view === "progress" && quiz) {
     return (
-      <Button className={SLOT_BUTTON_CLASS} onClick={back ?? playQuiz} size="lg" variant="outline">
+      <Button className={SLOT_BUTTON_CLASS} onClick={back ?? playQuiz} size="xl" variant="outline">
         {back
           ? backToQuiz
           : t({
@@ -216,9 +218,7 @@ export function WaitSlot({
 
   if (!quiz.hasNext) {
     return (
-      <p className="text-muted-foreground text-center text-sm lg:text-right">
-        {t("That's all for now.")}
-      </p>
+      <p className="text-muted-foreground text-sm lg:text-right">{t("That's all for now.")}</p>
     );
   }
 
@@ -227,7 +227,7 @@ export function WaitSlot({
       className={SLOT_BUTTON_CLASS}
       onClick={quiz.next}
       ref={nextRef}
-      size="lg"
+      size="xl"
       variant="outline"
     >
       {t("Next guess")}

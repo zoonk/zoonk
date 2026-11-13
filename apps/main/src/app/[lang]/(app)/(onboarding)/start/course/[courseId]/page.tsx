@@ -173,7 +173,7 @@ async function CourseStartContent({ params, searchParams }: Props) {
     initialFailure: toFailure(readParam(query[COURSE_START_ERROR_PARAM])) ?? toLimitFailure(limit),
     note: (
       <NoAccountNote>
-        <p className="text-muted-foreground text-center text-sm" data-slot="start-note">
+        <p className="text-muted-foreground text-sm lg:text-right">
           {t("Start free, no account needed.")}
         </p>
       </NoAccountNote>
