@@ -1,19 +1,18 @@
 "use client";
 
-import { Button } from "@zoonk/ui/components/button";
 import { CelebrationScope } from "@zoonk/ui/hooks/celebration";
-import { useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
+import { useShortcut } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronLeftIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { getStepMoves } from "../_utils/step-moves";
 import { CeremonyClosingContext, useClosedOnReturn } from "../ceremonies/ceremony-closing";
 import { TaskFrame, type TaskFrameAside, TaskMainButton } from "../shell/task-frame";
+import { QuestionBack } from "./question-actions";
 import { STEP_TITLE_SLOT } from "./step-card";
 import { StepDots } from "./step-dots";
 import { useTaskAsideShown } from "./task-header";
-import { TASK_BACK_ACTION_CLASS, TaskActions } from "./task-layout";
+import { TaskActions } from "./task-layout";
 
 export type StepsItem = {
   action?: React.ReactNode;
@@ -28,23 +27,6 @@ export function focusStepTitle(container: HTMLElement | null) {
   container
     ?.querySelector<HTMLElement>(`[data-slot="${STEP_TITLE_SLOT}"]`)
     ?.focus({ preventScroll: true });
-}
-
-function StepsBackButton({ onClick }: { onClick: () => void }) {
-  const t = useExtracted();
-
-  return (
-    <Button
-      aria-keyshortcuts="ArrowLeft"
-      aria-label={t("Back")}
-      className={TASK_BACK_ACTION_CLASS}
-      onClick={onClick}
-      size="icon"
-      variant="outline"
-    >
-      <ChevronLeftIcon aria-hidden="true" />
-    </Button>
-  );
 }
 
 function WideOnly({ children, when }: { children: React.ReactNode; when: boolean }) {
@@ -136,7 +118,7 @@ export function Steps({
 
   const back = () => move("back");
 
-  useKeyboardCallback("ArrowLeft", back, { mode: "none", screen: true });
+  useShortcut("previous", back);
 
   useEffect(() => {
     if (focusedIndex.current === current) {
@@ -160,13 +142,12 @@ export function Steps({
   return (
     <TaskFrame
       aside={aside}
-      closeOnEscape
       exitHref={exitHref}
       footer={
         showsStep ? (
           <>
             <TaskActions>
-              {phone.back !== -1 && <StepsBackButton onClick={back} />}
+              {phone.back !== -1 && <QuestionBack label={t("Back")} onClick={back} />}
               {item.action}
               {!isLastHere && (
                 <TaskMainButton

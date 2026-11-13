@@ -1,10 +1,8 @@
 "use client";
 
-import { buttonVariants } from "@zoonk/ui/components/button";
-import { useEscapeClick } from "@zoonk/ui/hooks/keyboard";
-import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
+import { TaskClose } from "../_components/task-close";
 import {
   TaskHeader,
   TaskHeaderBar,
@@ -13,7 +11,6 @@ import {
   TaskHeaderTitle,
   type TaskSegment,
 } from "../_components/task-header";
-import { LearnLink } from "../learn-link";
 import { WaitTopBarBack } from "../wait/wait-screen";
 import { type SessionQueueRow } from "./session-queue-rows";
 
@@ -90,7 +87,6 @@ export function SessionHeader({
 }) {
   const t = useExtracted();
   const label = useSessionProgressLabel({ lessonsComing, sessionBar });
-  const closeRef = useEscapeClick<HTMLAnchorElement>();
   const { segments, weights } = getSessionSegments({ queue, sessionBar });
 
   return (
@@ -98,16 +94,7 @@ export function SessionHeader({
       <TaskHeaderBar>
         <TaskHeaderSide align="start">
           <WaitTopBarBack>
-            <LearnLink
-              aria-keyshortcuts="Escape"
-              aria-label={t("Back to Today")}
-              className={buttonVariants({ edge: "start", size: "icon", variant: "ghost" })}
-              href={exitHref}
-              prefetch={false}
-              ref={closeRef}
-            >
-              <XIcon aria-hidden="true" />
-            </LearnLink>
+            <TaskClose href={exitHref} prefetch={false} />
           </WaitTopBarBack>
         </TaskHeaderSide>
 

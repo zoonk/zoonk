@@ -8,8 +8,9 @@ import { ChevronLeftIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import { PAGE_COLUMN_CLASS } from "../_components/page";
+import { TaskClose } from "../_components/task-close";
 import { useAppLocale } from "../_utils/locale";
-import { CRUMB_LINK_CLASS, LearnBackLink, PageBarSurface } from "../shell/learn-bar";
+import { CRUMB_LINK_CLASS, PageBarSurface } from "../shell/learn-bar";
 import { type OnboardingBar } from "./onboarding-host";
 import { testProgressPercent } from "./test-progress";
 
@@ -84,7 +85,7 @@ export function OnboardingPageBar({
           {bar.onBack ? (
             <BackButton onBack={bar.onBack} />
           ) : (
-            <LearnBackLink className="lg:hidden" href={backHref} leave toApp />
+            <TaskClose className="lg:hidden" href={backHref} size="icon-bar" toApp />
           )}
         </div>
 

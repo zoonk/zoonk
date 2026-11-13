@@ -242,7 +242,12 @@ export function AlternativeButton({
 
   return (
     <form action={() => void other.run()} className="contents">
-      <EnterButton busy={other.isPending} icon={<PlayIcon aria-hidden="true" />} type="submit">
+      <EnterButton
+        busy={other.isPending}
+        enter="host"
+        icon={<PlayIcon aria-hidden="true" />}
+        type="submit"
+      >
         {label(alternative)}
       </EnterButton>
     </form>

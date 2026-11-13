@@ -30,7 +30,6 @@ export function ChallengeMovedScreen({
 
   return (
     <TaskFrame
-      closeOnEscape
       exitHref={hrefs.exit}
       footer={
         <>

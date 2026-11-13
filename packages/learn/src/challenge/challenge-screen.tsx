@@ -46,7 +46,7 @@ function ChallengeIntroScreen() {
   const aside = useChallengeIntroAside();
 
   return (
-    <TaskFrame aside={aside} closeOnEscape exitHref={hrefs.exit} footer={<ChallengeFooter />}>
+    <TaskFrame aside={aside} exitHref={hrefs.exit} footer={<ChallengeFooter />}>
       <ChallengeIntro />
     </TaskFrame>
   );

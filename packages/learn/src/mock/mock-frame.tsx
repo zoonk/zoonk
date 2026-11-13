@@ -32,7 +32,7 @@ function SaveStatusLine() {
       <p className="text-muted-foreground flex items-center gap-2 text-sm" role="status">
         <span className="min-w-0 flex-1">{t("Not saved yet · retrying")}</span>
         <Button className="shrink-0" onClick={runner.retrySaves} size="sm" variant="outline">
-          {t("Retry")}
+          {t("Try again")}
         </Button>
       </p>
     );

@@ -64,35 +64,14 @@ function InputGroupAddon({
   );
 }
 
-const inputGroupButtonVariants = cva("flex items-center gap-2 rounded-lg text-sm shadow-none", {
-  defaultVariants: { size: "xs" },
-  variants: {
-    size: {
-      "icon-sm": "size-7.5 p-0 has-[>svg]:p-0",
-      "icon-xs": "size-6 p-0 has-[>svg]:p-0",
-      sm: "",
-      xs: "h-6 gap-1 px-1.5 [&>svg:not([class*='size-'])]:size-3.5",
-    },
-  },
-});
-
+/** `Button`, ghost and 24px unless told otherwise: an input's control takes the button's own sizes. */
 function InputGroupButton({
-  className,
+  size = "xs",
   type = "button",
   variant = "ghost",
-  size = "xs",
   ...props
-}: Omit<React.ComponentProps<typeof Button>, "size" | "type"> &
-  VariantProps<typeof inputGroupButtonVariants> & { type?: "button" | "submit" | "reset" }) {
-  return (
-    <Button
-      className={cn(inputGroupButtonVariants({ size }), className)}
-      data-size={size}
-      type={type}
-      variant={variant}
-      {...props}
-    />
-  );
+}: Omit<React.ComponentProps<typeof Button>, "type"> & { type?: "button" | "submit" | "reset" }) {
+  return <Button data-size={size} size={size} type={type} variant={variant} {...props} />;
 }
 
 function InputGroupText({ className, ...props }: React.ComponentProps<"span">) {

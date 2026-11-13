@@ -74,10 +74,11 @@ function StartButton({
 }) {
   const t = useExtracted();
   const ref = useTapFocus(focus);
+  const icon = <PlayIcon aria-hidden="true" />;
 
   return (
     <form action={() => onStart()} className="contents">
-      <EnterButton busy={busy} icon={<PlayIcon aria-hidden="true" />} ref={ref} type="submit">
+      <EnterButton busy={busy} enter="host" icon={icon} ref={ref} type="submit">
         {step.status === "active" ? t("Continue") : t("Start")}
       </EnterButton>
     </form>

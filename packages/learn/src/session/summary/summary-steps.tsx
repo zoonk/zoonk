@@ -82,7 +82,6 @@ export function SummarySteps() {
           label: t("Earned today"),
           title: t("Earned today"),
         }}
-        closeOnEscape
         exitHref={exitHref}
         footer={
           <>

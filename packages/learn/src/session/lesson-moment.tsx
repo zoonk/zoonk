@@ -112,7 +112,7 @@ function OutsideSession({
         )}
 
         <TaskActions>
-          <EnterButton busy={isPending} onClick={run} {...FORWARD_ICON}>
+          <EnterButton busy={isPending} enter="host" onClick={run} {...FORWARD_ICON}>
             {t("Continue")}
           </EnterButton>
         </TaskActions>

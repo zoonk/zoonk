@@ -3,8 +3,9 @@
 import { Kbd } from "@zoonk/ui/components/kbd";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { ignoreHeldEnter } from "@zoonk/ui/hooks/keyboard";
-import { cn } from "@zoonk/ui/lib/utils";
+import { cn, mergeRefs } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
+import { useLayoutEffect, useRef } from "react";
 import { SpokenMath } from "../rich-text/spoken-math";
 import {
   ANSWER_OPTION_CLASS,
@@ -14,15 +15,78 @@ import {
   type AnswerOptionResult,
 } from "./answer-tone";
 
-export function AnswerOptionGroup({ className, ...props }: React.ComponentProps<"div">) {
+const RADIO_SELECTOR = "[role='radio']:not(:disabled)";
+
+function getRadios(group: HTMLElement): HTMLElement[] {
+  return [...group.querySelectorAll<HTMLElement>(RADIO_SELECTOR)];
+}
+
+/**
+ * "Pick one" options take one Tab stop, the picked option or else the first, and ↑ and ↓ move
+ * between them and pick, as `RadioGroup` and a native radio group do. `arrows="move"` only moves,
+ * for a group where a pick is final at once. A `role="group"` of checkboxes keeps a stop each.
+ */
+export function AnswerOptionGroup({
+  arrows = "pick",
+  className,
+  onKeyDown,
+  ref,
+  role = "radiogroup",
+  ...props
+}: React.ComponentProps<"div"> & { arrows?: "move" | "pick" }) {
   const t = useExtracted();
+  const group = useRef<HTMLDivElement>(null);
+  const single = role === "radiogroup";
+
+  useLayoutEffect(() => {
+    if (!group.current || !single) {
+      return;
+    }
+
+    const radios = getRadios(group.current);
+    const stop = radios.find((radio) => radio.ariaChecked === "true") ?? radios[0];
+
+    for (const radio of radios) {
+      radio.tabIndex = radio === stop ? 0 : -1;
+    }
+  });
+
+  const moveWithArrows = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    onKeyDown?.(event);
+
+    const step = { ArrowDown: 1, ArrowUp: -1 }[event.key];
+    const modified = event.altKey || event.ctrlKey || event.metaKey || event.shiftKey;
+
+    if (!single || !step || modified || event.defaultPrevented) {
+      return;
+    }
+
+    const radios = getRadios(event.currentTarget);
+    const active = document.activeElement;
+    const index = active instanceof HTMLElement ? radios.indexOf(active) : -1;
+    const next = radios[(index + step + radios.length) % radios.length];
+
+    if (index === -1 || !next) {
+      return;
+    }
+
+    event.preventDefault();
+    next.focus();
+
+    if (arrows === "pick" && !event.repeat) {
+      next.click();
+    }
+  };
 
   return (
+    // oxlint-disable-next-line jsx-a11y/no-static-element-interactions -- Its role is `radiogroup` unless the caller names another.
     <div
       aria-label={t("Answer options")}
       className={cn("flex flex-col gap-2", className)}
       data-slot="answer-option-group"
-      role="radiogroup"
+      onKeyDown={moveWithArrows}
+      ref={mergeRefs(group, ref)}
+      role={role}
       {...props}
     />
   );
