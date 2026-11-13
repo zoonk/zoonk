@@ -166,7 +166,8 @@ function ScoreStep({ result }: { result: MockResult }) {
           </p>
         )}
 
-        <MockDayMoment />
+        {/* A miss's headline isn't followed by a celebration; the day's summary still shows the belt. */}
+        {!missed && <MockDayMoment />}
       </div>
 
       {hasBreakdown(result) && <MockResultBreakdown result={result} />}

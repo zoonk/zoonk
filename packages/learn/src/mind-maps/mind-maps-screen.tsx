@@ -308,7 +308,7 @@ export function MindMapsScreen({
         </PageTabs>
 
         {/* Under the tabs on a phone: a tab with no maps has no Study, and the tabs must not move for it. */}
-        <div className="flex flex-col empty:hidden md:hidden">{study}</div>
+        <div className="flex empty:hidden md:hidden">{study}</div>
       </DetailAside>
 
       <DetailContent>
