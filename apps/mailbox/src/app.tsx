@@ -1,3 +1,5 @@
+import { Button } from "@zoonk/ui/components/button";
+import { PageTitle, PageTop } from "@zoonk/ui/components/page-top";
 import { SwapLabel } from "@zoonk/ui/components/swap-label";
 import { useClipboard } from "@zoonk/ui/hooks/clipboard";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -5,17 +7,14 @@ import { useState } from "react";
 import {
   Mailbox,
   MailboxBody,
-  MailboxButton,
   MailboxEmpty,
-  MailboxHeader,
-  MailboxIdentity,
   MailboxInbox,
   MailboxList,
   MailboxListItem,
   MailboxMessageButton,
   MailboxPreview,
   MailboxStatus,
-  MailboxTitle,
+  MailboxTop,
 } from "./components/mailbox";
 import { type CapturedEmail } from "./email";
 import { type EmailInboxStatus, clearEmailInbox, useEmailInbox } from "./email-store";
@@ -51,19 +50,25 @@ export function App() {
 
   return (
     <Mailbox>
-      <MailboxHeader>
-        <MailboxIdentity>
-          <MailboxTitle>{copy.title}</MailboxTitle>
-          <MailboxStatus data-status={status}>
-            <span aria-hidden="true" className={getStatusDotClassName(status)} />
-            {getStatusLabel(status)}
-          </MailboxStatus>
-        </MailboxIdentity>
-
-        {emails.length > 0 && (
-          <MailboxButton onClick={handleClear}>{copy.clearInbox}</MailboxButton>
-        )}
-      </MailboxHeader>
+      <MailboxTop>
+        <PageTop
+          actions={
+            emails.length > 0 && (
+              <Button onClick={handleClear} size="sm" type="button" variant="outline">
+                {copy.clearInbox}
+              </Button>
+            )
+          }
+          back={
+            <MailboxStatus data-status={status}>
+              <span aria-hidden="true" className={getStatusDotClassName(status)} />
+              {getStatusLabel(status)}
+            </MailboxStatus>
+          }
+        >
+          <PageTitle>{copy.title}</PageTitle>
+        </PageTop>
+      </MailboxTop>
 
       {selectedEmail ? (
         <MailboxBody>
@@ -149,12 +154,16 @@ function SignInCode({ code }: { code: string }) {
 
       <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
         <p className="font-mono text-4xl font-semibold tracking-[0.08em] tabular-nums">{code}</p>
-        <MailboxButton onClick={() => void copyText(code).catch(() => null)}>
+        <Button
+          onClick={() => void copyText(code).catch(() => null)}
+          type="button"
+          variant="outline"
+        >
           <SwapLabel
             current={isCopied ? copy.copied : copy.copyCode}
             labels={[copy.copyCode, copy.copied]}
           />
-        </MailboxButton>
+        </Button>
       </div>
     </div>
   );

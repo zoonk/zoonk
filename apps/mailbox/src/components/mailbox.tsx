@@ -1,4 +1,3 @@
-import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type ComponentProps } from "react";
 
@@ -14,52 +13,23 @@ export function Mailbox({ className, ...props }: ComponentProps<"main">) {
   );
 }
 
-export function MailboxHeader({ className, ...props }: ComponentProps<"header">) {
+/** The page's top over the panes, on the shared page top: the status and Clear inbox in its bar. */
+export function MailboxTop({ className, ...props }: ComponentProps<"div">) {
   return (
-    <header
+    <div
       className={cn(
-        "border-border bg-background/90 z-10 flex min-h-18 flex-wrap items-center justify-between gap-3 border-b px-4 py-3 backdrop-blur-lg sm:flex-nowrap sm:py-4 md:px-6",
+        "border-border bg-background border-b px-(--page-gutter) pb-4 [--page-gutter:1rem] md:[--page-gutter:1.5rem]",
         className,
       )}
       {...props}
     />
-  );
-}
-
-export function MailboxIdentity({ className, ...props }: ComponentProps<"div">) {
-  return <div className={cn("flex items-baseline gap-3.5", className)} {...props} />;
-}
-
-export function MailboxTitle({ children, className, ...props }: ComponentProps<"h1">) {
-  return (
-    <h1 className={cn("text-lg font-semibold tracking-tight", className)} {...props}>
-      {children}
-    </h1>
   );
 }
 
 export function MailboxStatus({ className, ...props }: ComponentProps<"span">) {
   return (
     <span
-      className={cn(
-        "text-muted-foreground text-2xs inline-flex items-center gap-2 font-mono tracking-[0.06em] uppercase",
-        className,
-      )}
-      {...props}
-    />
-  );
-}
-
-export function MailboxButton({
-  className,
-  variant = "outline",
-  ...props
-}: ComponentProps<typeof Button>) {
-  return (
-    <Button
-      className={cn("text-compact rounded-lg motion-reduce:transition-none", className)}
-      type="button"
-      variant={variant}
+      className={cn("text-muted-foreground inline-flex items-center gap-2 text-sm", className)}
       {...props}
     />
   );
