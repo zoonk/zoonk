@@ -10,7 +10,7 @@ import { formatDate } from "@/lib/format";
 import { TableCell } from "@zoonk/ui/components/table";
 
 const COLUMNS: AdminTableColumn[] = [
-  { label: "User" },
+  { label: "User", twoLines: true },
   { align: "right", label: "Lessons" },
   { align: "right", label: "Days" },
   { align: "right", label: "Brain Power" },

@@ -21,7 +21,7 @@ function userColumns({ search, sort }: { search?: string; sort?: UserSort }): Ad
   });
 
   return [
-    { label: "User" },
+    { label: "User", twoLines: true },
     { label: "Plan" },
     { align: "right", label: "Brain Power", sort: sortBy("brain-power") },
     { label: "Last active" },

@@ -11,7 +11,7 @@ import { TableCell } from "@zoonk/ui/components/table";
 import { RevokeCliLoginsForm } from "./revoke-cli-logins-form";
 
 const COLUMNS: AdminTableColumn[] = [
-  { label: "Person" },
+  { label: "Person", twoLines: true },
   { label: "Logged in on" },
   { label: "Last used" },
   { align: "right", label: "", size: "text" },

@@ -11,7 +11,7 @@ import { QuestionRow } from "./question-row";
 const QUESTION_COLUMNS: AdminTableColumn[] = [
   { label: "Question" },
   { label: "Answer" },
-  { label: "User" },
+  { label: "User", twoLines: true },
   { label: "Course / lesson" },
   { label: "Status / asked" },
 ];

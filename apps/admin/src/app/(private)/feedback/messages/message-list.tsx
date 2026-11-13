@@ -35,7 +35,7 @@ function messageColumns(filter: FeedbackFilter): AdminTableColumn[] {
   // State comes right after the first column, which gives it its room: the columns after it
   // stay where they are when the view changes.
   return [
-    { label: "From" },
+    { label: "From", twoLines: true },
     ...(filter === "all" ? [{ label: "State" }] : []),
     { label: "About", size: "text" },
     { label: "App", size: "wide" },

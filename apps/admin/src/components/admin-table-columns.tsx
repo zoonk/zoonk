@@ -26,6 +26,8 @@ export type AdminTableColumn = {
    * few words, `text` for a name or a date with its time, `long` for a sentence.
    */
   size?: "long" | "narrow" | "text" | "wide";
+  /** The cell holds a name over a second line, so a row that's loading is as tall as a loaded one. */
+  twoLines?: boolean;
 };
 
 /**
@@ -181,7 +183,14 @@ function AdminTableColumnsSkeletonRow({ columns }: { columns: AdminTableColumn[]
     <TableRow>
       {columns.map((column) => (
         <TableCell key={column.label}>
-          <Skeleton className={column.align === "right" ? "ml-auto h-4 w-8" : "h-4 w-20"} />
+          {column.twoLines ? (
+            <div className="flex h-9 flex-col justify-center gap-1.5">
+              <Skeleton className="h-3.5 w-28" />
+              <Skeleton className="h-3 w-40" />
+            </div>
+          ) : (
+            <Skeleton className={column.align === "right" ? "ml-auto h-4 w-8" : "h-4 w-20"} />
+          )}
         </TableCell>
       ))}
     </TableRow>

@@ -21,7 +21,7 @@ import { TableCell } from "@zoonk/ui/components/table";
 import { cn } from "@zoonk/ui/lib/utils";
 
 const COLUMNS: AdminTableColumn[] = [
-  { label: "User" },
+  { label: "User", twoLines: true },
   { label: "Plan" },
   { label: "Billed by", size: "text" },
   { label: "State" },
