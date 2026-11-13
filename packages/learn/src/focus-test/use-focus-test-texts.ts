@@ -61,6 +61,31 @@ export function useFocusTestTitle() {
     suggestsFocus ? t("Find what to study most") : t("Skip what you already know");
 }
 
+/**
+ * What the test is and why, wherever it's offered. "It never removes a subject" is exact: focusing
+ * gives some subjects more time and takes none out, though too little time can still leave one out.
+ */
+export function useFocusTestLine() {
+  const t = useExtracted();
+  const formatDuration = useFormatDuration();
+
+  return {
+    offer: (suggestsFocus: boolean): string =>
+      suggestsFocus
+        ? t(
+            "This test shows what you already know, so more of your time goes to what you need most. It never removes a subject.",
+          )
+        : t("This test shows what you already know, so your plan can skip it."),
+    timed: (minutes: number): string =>
+      t({
+        description: "{time} is a duration with its unit, such as “15 min”.",
+        message:
+          "A {time} test shows what you already know, so more of your time goes to what you need most. It never removes a subject.",
+        values: { time: formatDuration(minutes) },
+      }),
+  };
+}
+
 export function useTestTime() {
   const t = useExtracted();
   const formatDuration = useFormatDuration();

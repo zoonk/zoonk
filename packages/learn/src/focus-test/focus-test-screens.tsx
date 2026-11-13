@@ -19,7 +19,12 @@ import {
 import { TestOutcome } from "../onboarding/test-outcome";
 import { type FocusTestHost } from "./focus-test-result";
 import { type Pressed } from "./use-focus-test";
-import { useFocusTestTitle, useSeeResultLabel, useTestTime } from "./use-focus-test-texts";
+import {
+  useFocusTestLine,
+  useFocusTestTitle,
+  useSeeResultLabel,
+  useTestTime,
+} from "./use-focus-test-texts";
 
 export function FocusTestInvitation({
   failed,
@@ -40,6 +45,7 @@ export function FocusTestInvitation({
 }) {
   const t = useExtracted();
   const title = useFocusTestTitle();
+  const line = useFocusTestLine();
   const time = useTestTime();
 
   return (
@@ -68,7 +74,7 @@ export function FocusTestInvitation({
       <OnboardingHeading>
         <OnboardingSubject position={time.whole(next.minutes)}>{t("Focus test")}</OnboardingSubject>
         <OnboardingTitle>{title(suggestsFocus)}</OnboardingTitle>
-        <OnboardingDescription>{t("A short test on your exam's subjects.")}</OnboardingDescription>
+        <OnboardingDescription>{line.offer(suggestsFocus)}</OnboardingDescription>
       </OnboardingHeading>
     </OnboardingColumn>
   );

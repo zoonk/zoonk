@@ -18,8 +18,7 @@ import {
   SuggestionSaveError,
   SuggestionSummary,
 } from "../_components/suggestion";
-import { useFormatDuration } from "../_utils/time-format";
-import { useFocusTestTitle } from "../focus-test/use-focus-test-texts";
+import { useFocusTestLine, useFocusTestTitle } from "../focus-test/use-focus-test-texts";
 import { useTodayScreen } from "./today-context";
 
 function FocusTestNotice({
@@ -32,7 +31,7 @@ function FocusTestNotice({
   const t = useExtracted();
   const { actions } = useTodayScreen();
   const title = useFocusTestTitle();
-  const formatDuration = useFormatDuration();
+  const line = useFocusTestLine();
   const [state, setState] = useState<"dismissed" | "failed" | null>(null);
   // Stays busy after the start is saved, until the test's page replaces this one.
   const [starting, setStarting] = useState(false);
@@ -83,13 +82,7 @@ function FocusTestNotice({
           <SuggestionResult>{result}</SuggestionResult>
         ) : (
           <>
-            <SuggestionDescription>
-              {t({
-                description: "{time} is a duration with its unit, such as “15 min”.",
-                message: "A {time} test on your exam's subjects.",
-                values: { time: formatDuration(offer.minutes) },
-              })}
-            </SuggestionDescription>
+            <SuggestionDescription>{line.timed(offer.minutes)}</SuggestionDescription>
 
             <SuggestionActions>
               <SuggestionAction action={start} busy={starting} disabled={busy}>
