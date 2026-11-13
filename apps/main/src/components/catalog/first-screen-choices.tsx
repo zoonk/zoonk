@@ -1,7 +1,7 @@
-import { ANSWER_OPTION_CLASS, AnswerOptionContent } from "@/components/public/answer-option";
 import { FIRST_ANSWER_PARAM } from "@/lib/public/public-hrefs";
+import { AnswerOption, AnswerOptionGroup } from "@zoonk/learn/answer-option";
 import { useSpokenText } from "@zoonk/learn/rich-text/speech";
-import { cn } from "@zoonk/ui/lib/utils";
+import { LessonRichText } from "@zoonk/player/lesson/rich-text";
 import { FirstAnswerForm } from "./first-answer-form";
 
 export function FirstScreenChoices({
@@ -26,23 +26,20 @@ export function FirstScreenChoices({
       lessonId={lessonId}
       origin={origin}
     >
-      <ul className="flex flex-col gap-2 sm:gap-2.5">
+      <AnswerOptionGroup role="group">
         {options.map((option, index) => (
-          <li key={option.id}>
-            <button
-              className={cn(
-                ANSWER_OPTION_CLASS,
-                "hover:bg-muted focus-visible:ring-ring/50 press outline-none [--press-scale:0.99] focus-visible:ring-[3px]",
-              )}
-              name={FIRST_ANSWER_PARAM}
-              type="submit"
-              value={option.id}
-            >
-              <AnswerOptionContent number={index + 1} text={option.text} />
-            </button>
-          </li>
+          <AnswerOption
+            key={option.id}
+            marker={index + 1}
+            name={FIRST_ANSWER_PARAM}
+            picked={false}
+            type="submit"
+            value={option.id}
+          >
+            <LessonRichText text={option.text} />
+          </AnswerOption>
         ))}
-      </ul>
+      </AnswerOptionGroup>
     </FirstAnswerForm>
   );
 }

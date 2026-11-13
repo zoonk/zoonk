@@ -1,4 +1,4 @@
-import { PublicTopBar } from "@/components/public/public-top-bar";
+import { ColumnScreen } from "@/components/public/column-screen";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
@@ -19,13 +19,10 @@ async function UnsubscribeContent({ searchParams }: Props) {
 
 export default function UnsubscribePage(props: Props) {
   return (
-    <div className="flex min-h-dvh flex-col">
-      <PublicTopBar actions={null} />
-      <main className="max-w-column mx-auto flex w-full flex-1 flex-col px-4 py-16">
-        <Suspense fallback={<Skeleton className="mx-auto h-48 w-full max-w-sm rounded-xl" />}>
-          <UnsubscribeContent {...props} />
-        </Suspense>
-      </main>
-    </div>
+    <ColumnScreen>
+      <Suspense fallback={<Skeleton className="mx-auto h-48 w-full max-w-sm rounded-xl" />}>
+        <UnsubscribeContent {...props} />
+      </Suspense>
+    </ColumnScreen>
   );
 }
