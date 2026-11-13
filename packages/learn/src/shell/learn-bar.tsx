@@ -24,7 +24,7 @@ export function PageBarSurface({ children, className, ...props }: React.Componen
     <div
       className={cn(
         BAR_SURFACE_CLASS,
-        "sticky top-0 z-30 -mx-4 -mt-4 sm:-mx-8 sm:-mt-6 lg:-mx-10 lg:-mt-8",
+        "sticky top-0 z-30 -mx-4 -mt-2 sm:-mx-8 sm:-mt-6 lg:-mx-10 lg:-mt-8",
         scrolled ? "border-border" : "border-transparent",
         className,
       )}
@@ -69,9 +69,26 @@ export const CRUMB_LINK_CLASS = cn(
   "lg:text-muted-foreground lg:text-compact lg:h-8 lg:w-auto lg:gap-0.5 lg:border-0 lg:pr-1 lg:font-normal lg:[--control-size:initial] lg:[--icon-size:--spacing(4)] lg:hover:bg-transparent",
 );
 
+/**
+ * The chevron and the page's name as one link, the name right after the chevron as in a crumb. Its
+ * box is the glyph and the 1px border each side, which is what the edge pulls back.
+ */
+const NAMED_BACK_LINK_CLASS = cn(
+  BAR_ICON_LINK_CLASS,
+  "h-11 w-auto min-w-0 shrink gap-0.5 pr-2 [--control-size:calc(var(--icon-size)+2px)] lg:h-10 lg:[--control-size:calc(var(--icon-size)+2px)]",
+);
+
 function BackLinkName({ label }: { label?: string }) {
   const t = useExtracted();
   return label ? t("Back to {page}", { page: label }) : t("Back");
+}
+
+function getBackLinkClass({ crumb, named }: { crumb: boolean; named: boolean }) {
+  if (named) {
+    return NAMED_BACK_LINK_CLASS;
+  }
+
+  return crumb ? CRUMB_LINK_CLASS : BAR_ICON_LINK_CLASS;
 }
 
 export function LearnBackLink({
@@ -80,6 +97,7 @@ export function LearnBackLink({
   href,
   label,
   leave = false,
+  named = false,
   toApp = false,
 }: {
   className?: string;
@@ -87,6 +105,8 @@ export function LearnBackLink({
   href: string;
   label?: string;
   leave?: boolean;
+  /** Shows `label` beside the chevron at every width. */
+  named?: boolean;
   toApp?: boolean;
 }) {
   const t = useExtracted();
@@ -109,7 +129,7 @@ export function LearnBackLink({
 
   return (
     <LearnLink
-      className={cn(crumb ? CRUMB_LINK_CLASS : BAR_ICON_LINK_CLASS, className)}
+      className={cn(getBackLinkClass({ crumb, named }), className)}
       href={href}
       onClick={onClick}
       ref={ref}
@@ -118,6 +138,11 @@ export function LearnBackLink({
       <span className="sr-only">{leave ? t("Leave") : <BackLinkName label={label} />}</span>
       {crumb && label && (
         <span aria-hidden="true" className="hidden lg:inline">
+          {label}
+        </span>
+      )}
+      {named && label && (
+        <span aria-hidden="true" className="min-w-0 truncate">
           {label}
         </span>
       )}
@@ -289,14 +314,7 @@ function SectionBarStart({
     );
   }
 
-  return (
-    <>
-      <LearnBackLink href={parent.href} label={parent.label} />
-      <span aria-hidden="true" className="min-w-0 truncate text-sm font-medium">
-        {parent.label}
-      </span>
-    </>
-  );
+  return <LearnBackLink href={parent.href} label={parent.label} named />;
 }
 
 export { markAppEntry } from "./app-history";
