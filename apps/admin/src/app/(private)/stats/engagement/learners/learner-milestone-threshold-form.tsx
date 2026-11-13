@@ -1,40 +1,35 @@
+import { AdminSmallInput } from "@/components/admin-small-input";
 import { type LearnerMilestoneKind } from "@/lib/learner-milestone-filters";
-import { Button } from "@zoonk/ui/components/button";
-import { Input } from "@zoonk/ui/components/input";
-import { Label } from "@zoonk/ui/components/label";
 import Form from "next/form";
 
+/** The list's one filter, said as a sentence: "At least 10 lessons". Enter applies it. */
 export function LearnerMilestoneThresholdForm({
-  inputLabel,
   kind,
   threshold,
+  unit,
 }: {
-  inputLabel: string;
   kind: LearnerMilestoneKind;
   threshold: number;
+  unit: string;
 }) {
   return (
-    <Form
-      action="/stats/engagement/learners"
-      className="flex max-w-md flex-col gap-3 sm:flex-row sm:items-end"
-    >
+    <Form action="/stats/engagement/learners">
       <input name="kind" type="hidden" value={kind} />
 
-      <div className="flex min-w-0 flex-1 flex-col gap-2">
-        <Label htmlFor="milestone-threshold">{inputLabel}</Label>
-        <Input
+      <label className="flex items-center gap-2 text-sm">
+        At least
+        <AdminSmallInput
+          className="md:text-compact px-2.5"
           defaultValue={threshold}
-          id="milestone-threshold"
+          frameClassName="w-16"
+          inputMode="numeric"
           key={threshold}
           min={1}
           name="threshold"
           type="number"
         />
-      </div>
-
-      <Button size="lg" type="submit" variant="outline">
-        Apply
-      </Button>
+        {unit}
+      </label>
     </Form>
   );
 }

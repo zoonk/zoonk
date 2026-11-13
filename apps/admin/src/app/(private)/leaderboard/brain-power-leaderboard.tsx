@@ -1,22 +1,16 @@
-import { AdminTableRow } from "@/components/admin-table-row";
-import { AdminTableSkeletonRows } from "@/components/admin-table-skeleton";
-import { AdminUserCell } from "@/components/admin-user-cell";
+import { AdminSectionEmpty } from "@/components/admin-section";
+import { AdminUserAvatar } from "@/components/admin-user-avatar";
+import { BarList } from "@/components/bar-list";
 import { AdminPagination } from "@/components/pagination";
 import {
   type BrainPowerLeader,
   listBrainPowerLeaders,
 } from "@/data/users/list-brain-power-leaders";
+import { getLearnerLabel } from "@/lib/learner-label";
 import { parseSearchParams } from "@/lib/parse-search-params";
 import { getRollingUtcDateWindowStarts } from "@/lib/rolling-date-windows";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-} from "@zoonk/ui/components/table";
+import Link from "next/link";
 import {
   type LeaderboardPeriod,
   getLeaderboardPeriodDays,
@@ -24,7 +18,7 @@ import {
   parseLeaderboardPeriod,
 } from "./leaderboard-period";
 
-const TABLE_COLUMN_COUNT = 4;
+const SKELETON_ROWS = 8;
 
 export async function BrainPowerLeaderboard({
   searchParams,
@@ -36,6 +30,23 @@ export async function BrainPowerLeaderboard({
   const period = parseLeaderboardPeriod(params.period);
 
   return <CachedBrainPowerLeaderboard limit={limit} offset={offset} page={page} period={period} />;
+}
+
+/** A learner's place, photo and name; the row opens their page. */
+function LeaderName({ leader }: { leader: BrainPowerLeader }) {
+  return (
+    <Link
+      className="hit-area relative flex min-w-0 items-center gap-3"
+      href={`/users/${leader.user.id}`}
+      prefetch
+    >
+      <span className="text-muted-foreground text-compact w-6 shrink-0 text-end font-mono tabular-nums">
+        {leader.rank.toLocaleString("en")}
+      </span>
+      <AdminUserAvatar user={leader.user} />
+      <span className="truncate font-medium">{getLearnerLabel(leader.user)}</span>
+    </Link>
+  );
 }
 
 /** Primitive props make each leaderboard state its own cache entry. */
@@ -64,120 +75,46 @@ async function CachedBrainPowerLeaderboard({
     startDate: currentPeriodStart,
   });
 
-  const totalPages = Math.ceil(total / limit);
-  const periodDescription = leaderboardPeriodDescriptions[period];
-  const userCountLabel = getLeaderboardUserCountLabel(total);
+  if (leaders.length === 0) {
+    return (
+      <AdminSectionEmpty>
+        Nobody earned Brain Power {leaderboardPeriodDescriptions[period]}.
+      </AdminSectionEmpty>
+    );
+  }
 
   return (
     <>
-      <p className="text-muted-foreground text-sm">
-        {total.toLocaleString()} {userCountLabel} earned Brain Power {periodDescription}.
-      </p>
-
-      <Table>
-        <TableCaption className="sr-only">Brain Power leaderboard {periodDescription}</TableCaption>
-        <BrainPowerLeaderboardHeader />
-
-        <TableBody>
-          {leaders.length > 0 ? (
-            leaders.map((leader) => (
-              <BrainPowerLeaderboardRow key={leader.user.id} leader={leader} />
-            ))
-          ) : (
-            <BrainPowerLeaderboardEmptyRow periodDescription={periodDescription} />
-          )}
-        </TableBody>
-      </Table>
+      <BarList
+        rows={leaders.map((leader) => ({
+          display: leader.brainPower.toLocaleString("en"),
+          key: leader.user.id,
+          name: <LeaderName leader={leader} />,
+          value: leader.brainPower,
+        }))}
+      />
 
       <AdminPagination
         basePath="/leaderboard"
         limit={limit}
         page={page}
         queryParams={{ period: period === "today" ? undefined : period }}
-        totalPages={totalPages}
+        totalPages={Math.ceil(total / limit)}
       />
     </>
   );
 }
 
-function getLeaderboardUserCountLabel(total: number): "user" | "users" {
-  return total === 1 ? "user" : "users";
-}
-
 export function BrainPowerLeaderboardSkeleton() {
   return (
-    <div className="flex flex-col gap-4">
-      <Skeleton className="h-4 w-56" />
-
-      <Table>
-        <BrainPowerLeaderboardHeader />
-
-        <AdminTableSkeletonRows>
-          <BrainPowerLeaderboardSkeletonRow />
-        </AdminTableSkeletonRows>
-      </Table>
-    </div>
-  );
-}
-
-function BrainPowerLeaderboardHeader() {
-  return (
-    <TableHeader>
-      <AdminTableRow>
-        <TableHead numeric className="w-16">
-          Rank
-        </TableHead>
-        <TableHead>User</TableHead>
-        <TableHead>Username</TableHead>
-        <TableHead numeric>Brain Power</TableHead>
-      </AdminTableRow>
-    </TableHeader>
-  );
-}
-
-function BrainPowerLeaderboardEmptyRow({ periodDescription }: { periodDescription: string }) {
-  return (
-    <AdminTableRow>
-      <TableCell className="text-muted-foreground" colSpan={TABLE_COLUMN_COUNT}>
-        No Brain Power earned {periodDescription}.
-      </TableCell>
-    </AdminTableRow>
-  );
-}
-
-function BrainPowerLeaderboardRow({ leader }: { leader: BrainPowerLeader }) {
-  return (
-    <AdminTableRow>
-      <TableCell numeric className="text-muted-foreground">
-        {leader.rank.toLocaleString()}
-      </TableCell>
-      <AdminUserCell user={leader.user} userId={leader.user.id} />
-      <TableCell>{leader.user.username || "—"}</TableCell>
-      <TableCell numeric className="font-medium">
-        {leader.brainPower.toLocaleString()}
-      </TableCell>
-    </AdminTableRow>
-  );
-}
-
-function BrainPowerLeaderboardSkeletonRow() {
-  return (
-    <AdminTableRow>
-      <TableCell>
-        <Skeleton className="ml-auto h-4 w-6" />
-      </TableCell>
-      <TableCell>
-        <div className="flex flex-col gap-2">
-          <Skeleton className="h-4 w-32" />
-          <Skeleton className="h-3 w-48" />
+    <div aria-hidden="true" className="divide-y">
+      {Array.from({ length: SKELETON_ROWS }, (_, index) => (
+        <div className="flex h-11 items-center gap-3" key={index}>
+          <Skeleton className="h-3.5 w-6" />
+          <Skeleton className="size-6 rounded-full" />
+          <Skeleton className="h-3.5 w-40" />
         </div>
-      </TableCell>
-      <TableCell>
-        <Skeleton className="h-4 w-24" />
-      </TableCell>
-      <TableCell>
-        <Skeleton className="ml-auto h-4 w-16" />
-      </TableCell>
-    </AdminTableRow>
+      ))}
+    </div>
   );
 }

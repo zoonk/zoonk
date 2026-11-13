@@ -8,6 +8,7 @@ import { AdminSection, AdminSectionSkeleton } from "@/components/admin-section";
 import { DetailField, DetailFields } from "@/components/detail-field";
 import { type AdminPrompt, getPrompt } from "@/data/prompts/get-prompt";
 import { formatDateTime } from "@/lib/format";
+import { languageName } from "@/lib/language-filter";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
@@ -43,16 +44,22 @@ function PromptDetails({ prompt }: { prompt: AdminPrompt }) {
   return (
     <DetailFields>
       <DetailField label="Learner">
-        <Link className="hover:underline" href={`/users/${user.id}`} prefetch>
+        <Link
+          className="hit-area relative underline underline-offset-3"
+          href={`/users/${user.id}`}
+          prefetch
+        >
           {getPromptLearnerLabel(user)}
         </Link>
         {email && <span className="text-muted-foreground block">{email}</span>}
       </DetailField>
       <DetailField label="Time zone">{prompt.timeZone}</DetailField>
       <DetailField label="Run" mono>
-        {prompt.runId ?? "—"}
+        {prompt.runId}
       </DetailField>
-      <DetailField label="Updated">{formatDateTime(prompt.updatedAt)}</DetailField>
+      <DetailField label="Updated" mono={false}>
+        {formatDateTime(prompt.updatedAt)}
+      </DetailField>
     </DetailFields>
   );
 }
@@ -84,7 +91,7 @@ async function PromptDetail({ id }: { id: string }) {
         alert={failed ? promptOutcomeLabels.failed : null}
         facts={[
           !failed && promptOutcomeLabels[prompt.outcome],
-          prompt.language,
+          languageName(prompt.language),
           `Typed ${formatDateTime(prompt.createdAt)}`,
         ]}
         parents={PROMPT_PARENTS}

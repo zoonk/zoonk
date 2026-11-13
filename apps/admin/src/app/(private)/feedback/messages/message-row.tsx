@@ -1,16 +1,25 @@
-import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
+import { AdminNameCell } from "@/components/admin-name-cell";
+import { AdminTableRow } from "@/components/admin-table-row";
+import { StateMark } from "@/components/state-mark";
 import { type ListedFeedbackMessage } from "@/data/feedback/list-feedback-messages";
 import { formatDate } from "@/lib/format";
 import { TableCell } from "@zoonk/ui/components/table";
 import {
-  feedbackStatusClass,
   feedbackStatusLabels,
   getFeedbackLearnerLabel,
   getFeedbackPlatform,
   getFeedbackSubject,
 } from "../_utils/feedback-labels";
 
-/** Rows show who wrote and what about, never the message's text: that stays on its own page. */
+/** Who wrote: their name and the address a reply goes to. */
+function sender({ email, user }: ListedFeedbackMessage): string {
+  return (
+    [user ? getFeedbackLearnerLabel(user) : null, email].filter(Boolean).join(" · ") ||
+    "Unknown sender"
+  );
+}
+
+/** A row leads with the message's own first line, so staff can pick what to open. */
 export function MessageRow({
   message,
   showState,
@@ -18,38 +27,29 @@ export function MessageRow({
   message: ListedFeedbackMessage;
   showState: boolean;
 }) {
-  const { context, email, user } = message;
+  const { context } = message;
   const subject = getFeedbackSubject(context);
 
   return (
     <AdminTableRow>
-      <TableCell>
-        <AdminTableRowLink className="block" href={`/feedback/messages/${message.id}`} prefetch>
-          <span className="block truncate font-medium">
-            {user ? getFeedbackLearnerLabel(user) : (email ?? "Unknown sender")}
-          </span>
-          {user ? (
-            <span className="text-muted-foreground block truncate text-xs">
-              {email ?? "No reply email"}
-            </span>
-          ) : null}
-        </AdminTableRowLink>
-      </TableCell>
+      <AdminNameCell
+        href={`/feedback/messages/${message.id}`}
+        note={sender(message)}
+        title={<span className="line-clamp-1">{message.message}</span>}
+      />
       {showState ? (
-        <TableCell className={feedbackStatusClass(message.status)}>
-          {feedbackStatusLabels[message.status]}
+        <TableCell>
+          <StateMark state={message.status}>{feedbackStatusLabels[message.status]}</StateMark>
         </TableCell>
       ) : null}
       <TableCell>
-        <span className="block truncate">{subject}</span>
+        <span className="text-foreground block truncate">{subject}</span>
         {context.screen && context.screen !== subject ? (
-          <span className="text-muted-foreground block truncate text-xs">
-            Sent from the {context.screen} screen
-          </span>
+          <span className="block truncate text-xs">Sent from the {context.screen} screen</span>
         ) : null}
       </TableCell>
-      <TableCell className="text-muted-foreground">{getFeedbackPlatform(context) ?? "—"}</TableCell>
-      <TableCell className="text-muted-foreground">{formatDate(message.createdAt)}</TableCell>
+      <TableCell>{getFeedbackPlatform(context)}</TableCell>
+      <TableCell>{formatDate(message.createdAt)}</TableCell>
     </AdminTableRow>
   );
 }

@@ -1,10 +1,10 @@
+import { AdminToolbar } from "@/components/admin-page";
 import { AdminSearch, AdminSearchSkeleton } from "@/components/admin-search";
 import { AdminTabs } from "@/components/admin-tabs";
 import { PROMPT_OUTCOMES, type PromptOutcome } from "@/data/prompts/_utils/prompt-outcomes";
 import { buildAdminHref } from "@/lib/admin-href";
 import { buildEnumFilterOptions } from "@/lib/enum-filter-options";
 import { parseSearchParams } from "@/lib/parse-search-params";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { parsePromptOutcome, promptOutcomeLabels } from "./_utils/prompt-labels";
 
 export async function PromptFilters({ searchParams }: Pick<PageProps<"/prompts">, "searchParams">) {
@@ -12,8 +12,8 @@ export async function PromptFilters({ searchParams }: Pick<PageProps<"/prompts">
   const { search } = parseSearchParams(params);
 
   return (
-    <div className="flex flex-col gap-3">
-      <AdminSearch placeholder="Search prompts, names, or emails…" />
+    <AdminToolbar>
+      <AdminSearch placeholder="Search requests, names, or emails…" />
 
       <AdminTabs
         label="Outcome"
@@ -24,15 +24,14 @@ export async function PromptFilters({ searchParams }: Pick<PageProps<"/prompts">
           options: PROMPT_OUTCOMES.map((value) => ({ label: promptOutcomeLabels[value], value })),
         })}
       />
-    </div>
+    </AdminToolbar>
   );
 }
 
 export function PromptFiltersSkeleton() {
   return (
-    <div className="flex flex-col gap-3">
+    <AdminToolbar>
       <AdminSearchSkeleton />
-      <Skeleton className="h-8 w-full max-w-xl rounded-4xl" />
-    </div>
+    </AdminToolbar>
   );
 }

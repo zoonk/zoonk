@@ -10,7 +10,7 @@ import { formatDate } from "@/lib/format";
 import { TableCell } from "@zoonk/ui/components/table";
 
 const COLUMNS: AdminTableColumn[] = [
-  { label: "User", twoLines: true },
+  { label: "Learner", twoLines: true },
   { align: "right", label: "Lessons" },
   { align: "right", label: "Days" },
   { align: "right", label: "Brain Power" },
@@ -46,10 +46,8 @@ function LearnerMilestoneUserRow({ user }: { user: LearnerMilestoneUser }) {
       <TableCell numeric>{user.completedLessons.toLocaleString("en")}</TableCell>
       <TableCell numeric>{user.learningDays.toLocaleString("en")}</TableCell>
       <TableCell numeric>{user.totalBrainPower.toLocaleString("en")}</TableCell>
-      <TableCell className="text-muted-foreground">
-        {formatLearnerDate(user.lastLearningDate)}
-      </TableCell>
-      <TableCell className="text-muted-foreground">{formatDate(user.createdAt)}</TableCell>
+      <TableCell>{formatLearnerDate(user.lastLearningDate)}</TableCell>
+      <TableCell>{formatDate(user.createdAt)}</TableCell>
     </AdminTableRow>
   );
 }

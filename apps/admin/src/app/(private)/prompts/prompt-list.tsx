@@ -11,11 +11,10 @@ import { parsePromptOutcome } from "./_utils/prompt-labels";
 import { PromptRow } from "./prompt-row";
 
 const columns: AdminTableColumn[] = [
-  { label: "Prompt" },
-  { label: "Outcome" },
-  { label: "Read as" },
-  { label: "Learner" },
-  { label: "Language" },
+  { label: "They typed", twoLines: true },
+  { label: "Zoonk read it as", size: "long", twoLines: true },
+  { label: "Outcome", size: "wide" },
+  { label: "Who", size: "text", twoLines: true },
   { label: "Date" },
 ];
 
@@ -54,9 +53,8 @@ async function CachedPromptList({
   return (
     <>
       <AdminTableColumns
-        unsized
         columns={columns}
-        emptyLabel={outcome || search ? "No prompts match." : "No prompts yet."}
+        emptyLabel={outcome || search ? "No requests match." : "No requests yet."}
         isEmpty={prompts.length === 0}
       >
         {prompts.map((prompt) => (
@@ -77,5 +75,5 @@ async function CachedPromptList({
 }
 
 export function PromptListSkeleton() {
-  return <AdminTableColumnsSkeleton unsized columns={columns} />;
+  return <AdminTableColumnsSkeleton columns={columns} />;
 }

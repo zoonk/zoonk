@@ -8,7 +8,7 @@ import {
 export function LeaderboardPeriodFilter({ period }: { period: LeaderboardPeriod }) {
   return (
     <AdminTabs
-      label="Leaderboard period filter"
+      label="Period"
       options={leaderboardPeriods.map((item) => ({
         href: getLeaderboardPeriodHref(item),
         isActive: period === item,

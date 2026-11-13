@@ -1,4 +1,4 @@
-import { AdminPage, AdminPageBody, AdminPageHeader } from "@/components/admin-page";
+import { AdminPage, AdminPageBody, AdminPageHeader, AdminToolbar } from "@/components/admin-page";
 import {
   getDefaultLearnerMilestoneThreshold,
   getLearnerMilestoneCopy,
@@ -11,7 +11,7 @@ import { Suspense } from "react";
 import { LearnerMilestoneThresholdForm } from "./learner-milestone-threshold-form";
 import { LearnerMilestoneUsers, LearnerMilestoneUsersSkeleton } from "./learner-milestone-users";
 
-export const metadata: Metadata = { title: "Learner milestones" };
+export const metadata: Metadata = { title: "Learners by what they completed" };
 
 const ENGAGEMENT = { href: "/stats/engagement", label: "Engagement" };
 
@@ -22,7 +22,7 @@ export default function LearnerMilestoneUsersPage({
     <Suspense
       fallback={
         <AdminPage>
-          <AdminPageHeader parent={ENGAGEMENT} title="Learner milestones" />
+          <AdminPageHeader parent={ENGAGEMENT} title="Learners by lessons completed" />
           <AdminPageBody>
             <LearnerMilestoneUsersPageSkeleton />
           </AdminPageBody>
@@ -49,17 +49,12 @@ async function LearnerMilestoneUsersPageContent({
 
   return (
     <AdminPage>
-      <AdminPageHeader parent={ENGAGEMENT} title={copy.pageTitle} />
-      <AdminPageBody className="gap-6">
-        <header className="flex flex-col gap-1">
-          <p className="text-muted-foreground text-sm">{copy.tableCaption}</p>
-        </header>
+      <AdminPageHeader parent={ENGAGEMENT} title={copy.listTitle} />
 
-        <LearnerMilestoneThresholdForm
-          inputLabel={copy.inputLabel}
-          kind={kind}
-          threshold={threshold}
-        />
+      <AdminPageBody>
+        <AdminToolbar>
+          <LearnerMilestoneThresholdForm kind={kind} threshold={threshold} unit={copy.unit} />
+        </AdminToolbar>
 
         <Suspense fallback={<LearnerMilestoneUsersSkeleton />} key={`${kind}-${threshold}`}>
           <LearnerMilestoneUsers
@@ -76,10 +71,13 @@ async function LearnerMilestoneUsersPageContent({
 
 function LearnerMilestoneUsersPageSkeleton() {
   return (
-    <div className="flex flex-col gap-6">
-      <Skeleton className="h-4 w-80 max-w-full" />
-      <Skeleton className="h-16 w-full rounded-lg" />
+    <>
+      <AdminToolbar>
+        <div className="flex h-11 items-center">
+          <Skeleton className="h-7.5 w-44 rounded-md" />
+        </div>
+      </AdminToolbar>
       <LearnerMilestoneUsersSkeleton />
-    </div>
+    </>
   );
 }

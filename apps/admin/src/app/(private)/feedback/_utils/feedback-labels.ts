@@ -23,11 +23,6 @@ export const feedbackStatusLabels: Record<FeedbackStatus, string> = {
   replied: "Replied",
 };
 
-/** A new message stands out wherever it is listed; one already handled is quiet. */
-export function feedbackStatusClass(status: FeedbackStatus): string {
-  return status === "new" ? "text-foreground font-medium" : "text-muted-foreground";
-}
-
 const feedbackReportTypeLabels: Record<FeedbackReportType, string> = {
   saveFailure: "Save problem",
 };
