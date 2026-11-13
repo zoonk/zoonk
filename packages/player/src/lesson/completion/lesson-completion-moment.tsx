@@ -1,5 +1,6 @@
 "use client";
 
+import { EnterLink } from "@zoonk/learn/enter-button";
 import { MomentReadouts } from "@zoonk/learn/moment-readouts";
 import { DayMoment } from "@zoonk/learn/session/day-moment";
 import { FailedMoment } from "@zoonk/learn/session/failed-moment";
@@ -10,7 +11,6 @@ import {
   PendingMainAction,
 } from "@zoonk/learn/session/moment-header";
 import {
-  TASK_MAIN_ACTION_CLASS,
   TASK_WRAPPING_ACTION_CLASS,
   TaskActionBar,
   TaskActionLabel,
@@ -19,8 +19,6 @@ import {
 } from "@zoonk/learn/task-layout";
 import { useStudyTimeFact } from "@zoonk/learn/time-format";
 import { buttonVariants } from "@zoonk/ui/components/button";
-import { ShortcutKbd } from "@zoonk/ui/components/kbd";
-import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import {
@@ -64,7 +62,6 @@ function NextLabel({ nextLesson }: { nextLesson: boolean }) {
 function CompletionLinks({ pending }: { pending: boolean }) {
   const { linkComponent: LinkComponent, routes } = useLessonPlayerConfig();
   const { state } = useLessonPlayer();
-  const primaryRef = useEnterClick<HTMLAnchorElement>();
   const replay = state.run.status === "started" && state.run.replay;
   const nextLessonHref = replay ? null : routes.nextLesson;
   const nextLesson = Boolean(nextLessonHref);
@@ -87,18 +84,11 @@ function CompletionLinks({ pending }: { pending: boolean }) {
         {pending ? (
           <PendingMainAction>
             <NextLabel nextLesson={nextLesson} />
-            <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
           </PendingMainAction>
         ) : (
-          <LinkComponent
-            aria-keyshortcuts="Enter"
-            className={cn(buttonVariants({ size: "xl" }), TASK_MAIN_ACTION_CLASS)}
-            href={nextLessonHref ?? routes.exit}
-            ref={primaryRef}
-          >
+          <EnterLink href={nextLessonHref ?? routes.exit} link={LinkComponent}>
             <NextLabel nextLesson={nextLesson} />
-            <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-          </LinkComponent>
+          </EnterLink>
         )}
       </TaskActions>
     </TaskActionBar>

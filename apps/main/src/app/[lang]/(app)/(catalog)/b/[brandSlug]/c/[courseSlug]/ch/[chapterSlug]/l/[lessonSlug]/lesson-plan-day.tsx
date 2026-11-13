@@ -74,7 +74,7 @@ export async function LessonPlanDay({
 
       <div className="flex flex-col gap-2">
         <p className="flex items-baseline justify-between gap-3">
-          <span className="text-[0.9375rem] font-semibold">{t("Example plan")}</span>
+          <span className="text-reading font-semibold">{t("Example plan")}</span>
           <span className={cn(NUMERIC_CLASS, "text-muted-foreground text-xs")}>
             {t("{count, plural, one {# lesson} other {# lessons}}", { count: steps.length })}
             {" · "}
@@ -84,7 +84,7 @@ export async function LessonPlanDay({
 
         <DayList minutesText={minutesText} steps={steps} />
 
-        <p className="text-muted-foreground pt-2 text-[13px] leading-relaxed text-pretty">
+        <p className="text-muted-foreground text-compact pt-2 leading-relaxed text-pretty">
           {t("An example. Your plan follows your answers, so it can start later and end sooner.")}
         </p>
       </div>

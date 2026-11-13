@@ -209,7 +209,7 @@ describe(requestLessonGeneration, () => {
     ).resolves.toStrictEqual([{ generated: true, kind: "lessonStart", targetId: lesson.id }]);
   });
 
-  it("refuses an account past today's new lessons, planned ones included", async () => {
+  it("refuses an account past this month's new lessons, planned ones included", async () => {
     freezeClock();
 
     const { plan, user } = await learnerWithPlan();
@@ -224,7 +224,7 @@ describe(requestLessonGeneration, () => {
 
     await expect(requestLessonGeneration({ lessonId: lesson.id })).resolves.toMatchObject({
       decision: {
-        limit: { period: "day", resource: "lessonStart", tier: "free" },
+        limit: { period: "month", resource: "lessonStart", tier: "free" },
         status: "limitReached",
       },
       status: "refused",

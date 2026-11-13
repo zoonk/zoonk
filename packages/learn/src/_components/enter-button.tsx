@@ -1,26 +1,51 @@
 "use client";
 
-import { Button } from "@zoonk/ui/components/button";
-import { ShortcutKbd } from "@zoonk/ui/components/kbd";
+import {
+  type EnterLinkProps,
+  EnterButton as KitEnterButton,
+  EnterLink as KitEnterLink,
+} from "@zoonk/ui/components/enter-button";
 import { cn } from "@zoonk/ui/lib/utils";
+import { LearnLink } from "../learn-link";
 import { TASK_MAIN_ACTION_CLASS } from "./task-layout";
 
-/** Shows the ⏎ hint only: the caller binds Enter, since when it may press depends on the step. */
+type Size = "lg" | "xl";
+
+/** A task's main action is `xl` and takes its bar's width rules; a page's is `lg`. */
+function mainActionClass(size: Size, className?: string) {
+  return cn(size === "xl" && TASK_MAIN_ACTION_CLASS, className);
+}
+
+/** The kit's `EnterButton` at a task's size, unless it's given a page's (`lg`). */
 export function EnterButton({
-  children,
   className,
+  size = "xl",
   ...props
-}: Omit<React.ComponentProps<typeof Button>, "size" | "variant">) {
-  return (
-    <Button
-      aria-keyshortcuts="Enter"
-      className={cn(TASK_MAIN_ACTION_CLASS, className)}
-      focusableWhenDisabled
-      size="xl"
-      {...props}
-    >
-      {children}
-      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-    </Button>
+}: Omit<React.ComponentProps<typeof KitEnterButton>, "className" | "size"> & {
+  className?: string;
+  size?: Size;
+}) {
+  return <KitEnterButton className={mainActionClass(size, className)} size={size} {...props} />;
+}
+
+type HostLink = React.ComponentProps<typeof KitEnterLink>["link"];
+
+/**
+ * The kit's `EnterLink` on the app's link. `link` is the host's own where the screen runs outside
+ * the app's frame (a lesson, the sign-in pages).
+ */
+export function EnterLink({
+  className,
+  link,
+  size = "xl",
+  ...props
+}: EnterLinkProps &
+  Omit<React.ComponentProps<typeof LearnLink>, keyof EnterLinkProps> & { link?: HostLink }) {
+  const classes = mainActionClass(size, className);
+
+  return link ? (
+    <KitEnterLink className={classes} link={link} size={size} {...props} />
+  ) : (
+    <KitEnterLink className={classes} link={LearnLink} size={size} {...props} />
   );
 }

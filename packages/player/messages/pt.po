@@ -2541,7 +2541,6 @@ msgstr "Começar a conferir o som"
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 #: src/lesson/completion/lesson-completion-moment.tsx
-#: src/lesson/lesson-action-bar.tsx
 msgctxt "acrOoz"
 msgid "Continue"
 msgstr "Continuar"
@@ -3360,56 +3359,6 @@ msgctxt "mhiTW7"
 msgid "Correct answer"
 msgstr "Resposta correta"
 
-#: src/lesson/lesson-action-bar.tsx
-msgctxt "RDZVQL"
-msgid "Check"
-msgstr "Conferir"
-
-#: src/lesson/lesson-action-bar.tsx
-#: src/lesson/lesson-practice-step.tsx
-msgctxt "N2IrpM"
-msgid "Confirm"
-msgstr "Confirmar"
-
-#: src/lesson/lesson-action-bar.tsx
-#: src/lesson/steps/typed-answer-step.tsx
-msgctxt "h5CuXu"
-msgid "I don't know yet"
-msgstr "Ainda não sei"
-
-#: src/lesson/lesson-action-bar.tsx
-#: src/mind-maps/mind-map-reader.tsx
-msgctxt "9-Ddtu"
-msgid "Next"
-msgstr "Próximo"
-
-#: src/lesson/lesson-action-bar.tsx
-msgctxt "BkQAJw"
-msgid "Show the next step"
-msgstr "Mostrar o próximo passo"
-
-#: src/lesson/lesson-action-bar.tsx
-msgctxt "ZLtyTD"
-msgid "See the answer"
-msgstr "Ver a resposta"
-
-#: src/lesson/lesson-action-bar.tsx
-#: src/lesson/lesson-practice-step.tsx
-msgctxt "zDR51u"
-msgid "See how it went"
-msgstr "Ver como foi"
-
-#: src/lesson/lesson-action-bar.tsx
-#: src/lesson/lesson-practice-step.tsx
-msgctxt "mOFG3K"
-msgid "Start"
-msgstr "Começar"
-
-#: src/lesson/lesson-action-bar.tsx
-msgctxt "QriCsD"
-msgid "Previous screen"
-msgstr "Tela anterior"
-
 #: src/lesson/lesson-aside.tsx
 #: src/lesson/steps/worked-example-content.tsx
 msgctxt "ZpQ6us"
@@ -3448,30 +3397,25 @@ msgctxt "chnAWh"
 msgid "Help with this screen"
 msgstr "Ajuda com esta tela"
 
-#: src/lesson/lesson-leave.tsx
-msgctxt "-D1SOt"
-msgid "Leave for now?"
-msgstr "Sair por enquanto?"
-
-#: src/lesson/lesson-leave.tsx
-msgctxt "evHhXy"
-msgid "Your answer hasn't been checked, so it won't be kept."
-msgstr "Sua resposta ainda não foi conferida, então não será salva."
-
-#: src/lesson/lesson-leave.tsx
+#: src/lesson/lesson-player-header.tsx
 msgctxt "xNSBn4"
 msgid "Keep writing"
 msgstr "Continuar escrevendo"
 
-#: src/lesson/lesson-leave.tsx
+#: src/lesson/lesson-player-header.tsx
 msgctxt "fnihsY"
 msgid "Leave"
 msgstr "Sair"
 
 #: src/lesson/lesson-player-header.tsx
-msgctxt "fp5tEg"
-msgid "Close lesson"
-msgstr "Fechar aula"
+msgctxt "evHhXy"
+msgid "Your answer hasn't been checked, so it won't be kept."
+msgstr "Sua resposta ainda não foi conferida, então não será salva."
+
+#: src/lesson/lesson-player-header.tsx
+msgctxt "-D1SOt"
+msgid "Leave for now?"
+msgstr "Sair por enquanto?"
 
 #: src/lesson/lesson-player-header.tsx
 msgctxt "0WZ-rc"
@@ -3493,10 +3437,20 @@ msgctxt "ZHEKO0"
 msgid "Lesson content"
 msgstr "Conteúdo da aula"
 
-#: src/lesson/lesson-screen-menu.tsx
-msgctxt "y7b8vA"
-msgid "Screen options"
-msgstr "Opções da tela"
+#: src/lesson/lesson-practice-step.tsx
+msgctxt "N2IrpM"
+msgid "Confirm"
+msgstr "Confirmar"
+
+#: src/lesson/lesson-practice-step.tsx
+msgctxt "zDR51u"
+msgid "See how it went"
+msgstr "Ver como foi"
+
+#: src/lesson/lesson-practice-step.tsx
+msgctxt "mOFG3K"
+msgid "Start"
+msgstr "Começar"
 
 #: src/lesson/lesson-screen-menu.tsx
 msgctxt "_fpJc0"
@@ -3762,11 +3716,6 @@ msgid "You picked <strong>{answer}</strong> on “<question></question>”"
 msgstr "Você escolheu <strong>{answer}</strong> em “<question></question>”"
 
 #: src/mind-maps/mind-map-reader-menu.tsx
-msgctxt "IzCVhG"
-msgid "More options"
-msgstr "Mais opções"
-
-#: src/mind-maps/mind-map-reader-menu.tsx
 msgctxt "pyQIKJ"
 msgid "Start from the first map"
 msgstr "Começar pelo primeiro mapa"
@@ -3800,6 +3749,11 @@ msgstr "Ainda não há mapas para estudar aqui."
 msgctxt "lvN_47"
 msgid "Previous map"
 msgstr "Mapa anterior"
+
+#: src/mind-maps/mind-map-reader.tsx
+msgctxt "9-Ddtu"
+msgid "Next"
+msgstr "Próximo"
 
 #: src/mind-maps/mind-map-slides.tsx
 msgctxt "Vxnu0A"

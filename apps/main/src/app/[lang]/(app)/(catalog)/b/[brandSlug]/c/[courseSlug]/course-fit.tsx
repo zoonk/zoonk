@@ -11,7 +11,7 @@ function OutcomeList({ outcomes }: { outcomes: string[] }) {
   return (
     <ul className="flex flex-col gap-3">
       {outcomes.map((item) => (
-        <li className="flex gap-3 text-[0.9375rem] leading-relaxed" key={item}>
+        <li className="text-reading flex gap-3 leading-relaxed" key={item}>
           <LineMarker>
             <CheckMark size="sm" />
           </LineMarker>
@@ -71,7 +71,7 @@ export async function CourseFit({
       <ul className="max-w-column flex flex-col lg:row-start-2">
         {audience.map((item) => (
           <li
-            className="border-border py-3 text-[0.9375rem] leading-relaxed text-pretty not-first:border-t first:pt-0"
+            className="border-border text-reading py-3 leading-relaxed text-pretty not-first:border-t first:pt-0"
             key={item}
           >
             {item}
@@ -85,7 +85,7 @@ export async function CourseFit({
           className="max-w-column mt-6 flex flex-col gap-4 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:mt-0"
         >
           <h2
-            className="flex items-center gap-2 text-[0.9375rem] leading-relaxed font-semibold lg:min-h-6.5"
+            className="text-reading flex items-center gap-2 leading-relaxed font-semibold lg:min-h-6.5"
             id={outcomesId}
           >
             <ArrowRightIcon aria-hidden="true" className="text-muted-foreground size-4" />

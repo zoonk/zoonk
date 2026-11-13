@@ -3,7 +3,6 @@
 import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
 import { GenerationTimelineDescription } from "@zoonk/ui/components/generation-timeline";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
-import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useState } from "react";
 import { EnterButton } from "../_components/enter-button";
@@ -234,7 +233,7 @@ export function AlternativeButton({
 
   return (
     <form action={() => void other.run()} className="contents">
-      <EnterButton busy={other.isPending} icon={<PlayIcon aria-hidden="true" />} type="submit">
+      <EnterButton busy={other.isPending} enter="host" type="submit">
         {reason === "instead"
           ? t("Instead: {title}", { title: title(alternative) })
           : t("While you wait: {title}", { title: title(alternative) })}

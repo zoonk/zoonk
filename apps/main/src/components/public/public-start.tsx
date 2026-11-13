@@ -6,7 +6,7 @@ import { type ReactNode } from "react";
 /** The start row's short note steps aside for it: the reason matters more than the reassurance. */
 export const START_FAILURE_SLOT = "start-failure";
 
-const START_CONTROL_CLASS = "px-5 font-[560]";
+const START_CONTROL_CLASS = "px-5";
 
 export function getStartControlClassName(className?: string) {
   return cn(buttonVariants({ size: "lg" }), START_CONTROL_CLASS, className);
@@ -55,7 +55,7 @@ export function StartBlock({
 
       {note && (
         <p
-          className="text-muted-foreground text-center text-[13px] sm:text-left sm:text-sm"
+          className="text-muted-foreground text-compact text-center sm:text-left sm:text-sm"
           data-slot="start-note"
         >
           {note}

@@ -3,8 +3,9 @@
 import { type EssayView } from "@zoonk/core/exams/essays/contract";
 import { useExtracted } from "next-intl";
 import { PageSectionTitle } from "../_components/page";
+import { QuestionTitle } from "../_components/question-title";
 import { TaskAsideContent } from "../_components/task-layout";
-import { ItemStem, ItemText, QUESTION_TEXT_CLASS } from "../questions/item-text";
+import { ItemText } from "../questions/item-text";
 import { useEssayScreen } from "./essay-context";
 import { CriteriaInView } from "./essay-rewrite-guide";
 
@@ -71,9 +72,7 @@ export function EssayInstruction({ context }: { context: string | null }) {
           text={context}
         />
       )}
-      <div className={QUESTION_TEXT_CLASS}>
-        <ItemStem text={essay.question} heading="h2" />
-      </div>
+      <QuestionTitle text={essay.question} />
     </section>
   );
 }

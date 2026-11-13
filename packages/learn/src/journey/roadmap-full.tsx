@@ -131,7 +131,7 @@ function RoadmapLegend() {
   return (
     <span
       aria-hidden="true"
-      className="text-muted-foreground ml-auto hidden shrink-0 items-center gap-3 text-[0.71875rem] @xl/roadmap:flex"
+      className="text-muted-foreground text-2xs ml-auto hidden shrink-0 items-center gap-3 @xl/roadmap:flex"
     >
       {hasMocks && (
         <span className="flex items-center gap-1.5">
@@ -141,7 +141,7 @@ function RoadmapLegend() {
       )}
       {hasChallenges && (
         <span className="flex items-center gap-1.5">
-          <Trickster className="size-3.5" />
+          <Trickster className="size-3.5" view="face" />
           {t("Phase challenge")}
         </span>
       )}

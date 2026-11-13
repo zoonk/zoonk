@@ -22,7 +22,7 @@ export function GoalSection({
       <div className={PUBLIC_CONTAINER_CLASS}>
         <div
           aria-hidden="true"
-          className="bg-border before:bg-subject relative h-px before:absolute before:-top-px before:left-0 before:h-0.75 before:w-18 before:rounded-[3px]"
+          className="bg-border before:bg-subject before:rounded-meter relative h-px before:absolute before:-top-px before:left-0 before:h-0.75 before:w-18"
         />
 
         <div className="pt-7 lg:grid lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:items-start lg:gap-20 lg:pt-10">

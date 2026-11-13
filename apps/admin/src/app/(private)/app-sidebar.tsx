@@ -1,6 +1,6 @@
 "use client";
 
-import { Sheet, SheetContent, SheetTitle } from "@zoonk/ui/components/sheet";
+import { SidePanel, SidePanelContent, SidePanelTitle } from "@zoonk/ui/components/side-panel";
 import {
   SIDEBAR_ITEM_CLASS,
   Sidebar,
@@ -101,15 +101,15 @@ export function AdminMenuSheet({
   open,
 }: AdminSidebarProps & { onOpenChange: (open: boolean) => void; open: boolean }) {
   return (
-    <Sheet onOpenChange={onOpenChange} open={open}>
-      <SheetContent className="gap-4 overflow-y-auto p-3 data-[side=left]:w-60" side="left">
-        <SheetTitle className="sr-only">Menu</SheetTitle>
+    <SidePanel onOpenChange={onOpenChange} open={open}>
+      <SidePanelContent className="gap-4 overflow-y-auto p-3 data-[side=left]:w-60" side="left">
+        <SidePanelTitle className="sr-only">Menu</SidePanelTitle>
         <AdminSidebarContent
           account={account}
           counts={counts}
           onNavigate={() => onOpenChange(false)}
         />
-      </SheetContent>
-    </Sheet>
+      </SidePanelContent>
+    </SidePanel>
   );
 }

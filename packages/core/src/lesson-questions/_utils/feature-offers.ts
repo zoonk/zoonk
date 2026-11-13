@@ -6,7 +6,6 @@ import {
   getVarietyFlagCode,
   isLanguageRegion,
 } from "@zoonk/utils/language-regions";
-import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { searchCourses } from "../../courses/search-courses";
 import { type Allowance } from "../../entitlements/contract";
 import { getAllowance } from "../../entitlements/get-allowance";
@@ -14,8 +13,6 @@ import { getLessonVariety } from "../../goals/_utils/content-country-view";
 import { hasCountryReading, isCountryGoal } from "../../goals/_utils/goal-content-country";
 import { loadDuePronunciation } from "../../language/pronunciation/load-due-pronunciation";
 import { loadGoalMemberSkillIds } from "../../learner/_utils/goal-skill-graph";
-import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
-import { getExamPrepAccess } from "../../sessions/_utils/exam-access";
 import { buildSyllabus } from "../../view-models/syllabus/_utils/build-syllabus";
 import { loadSyllabusInput } from "../../view-models/syllabus/_utils/load-syllabus";
 import { type TutorToolOffer } from "../tutor-tool-offer-contract";
@@ -103,19 +100,9 @@ export async function offerEssay(goal: Goal): Promise<TutorToolResult> {
     return { reason: goal.kind === "exam" ? "notWritten" : "notExam", status: "unavailable" };
   }
 
-  const timeZone = getAnswerTimeZone({ goal });
-  const allowance = await getAllowance();
-
-  const access = getExamPrepAccess({
-    examPrep: allowance?.examPrep ?? null,
-    goal,
-    timeZone,
-    today: getDateInTimeZone({ date: new Date(), timeZone }),
-  });
-
   return {
     offer: {
-      access: access.trialEnded ? "plusRequired" : "open",
+      access: "open",
       cadence: practice.cadence,
       goalId: goal.id,
       kind: "essay",

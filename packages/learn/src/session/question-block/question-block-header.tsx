@@ -1,12 +1,8 @@
 "use client";
 
-import { buttonVariants } from "@zoonk/ui/components/button";
-import { useEscapeClick } from "@zoonk/ui/hooks/keyboard";
-import { cn } from "@zoonk/ui/lib/utils";
-import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { TaskClose } from "../../_components/task-close";
 import {
-  TASK_HEADER_ICON_CLASS,
   TaskHeader,
   TaskHeaderBar,
   TaskHeaderSegments,
@@ -14,29 +10,12 @@ import {
   TaskHeaderTitle,
   type TaskSegment,
 } from "../../_components/task-header";
-import { LearnLink } from "../../learn-link";
 
 const PERCENT = 100;
 
 export function QuestionBlockClose({ href }: { href: string }) {
   const t = useExtracted();
-  const closeRef = useEscapeClick<HTMLAnchorElement>();
-
-  return (
-    <LearnLink
-      aria-keyshortcuts="Escape"
-      aria-label={t("Close. Your answers are saved.")}
-      className={cn(
-        buttonVariants({ size: "icon", variant: "ghost" }),
-        TASK_HEADER_ICON_CLASS.start,
-      )}
-      href={href}
-      prefetch={false}
-      ref={closeRef}
-    >
-      <XIcon aria-hidden="true" />
-    </LearnLink>
-  );
+  return <TaskClose href={href} label={t("Leave. Your answers are saved.")} prefetch={false} />;
 }
 
 export function QuestionBlockHeader({

@@ -182,10 +182,10 @@ export function ExplainWaiting({
         end: (
           <LearnLink
             aria-label={t("Close")}
-            className={buttonVariants({ size: "icon-bar", variant: "ghost" })}
+            className={buttonVariants({ edge: "end", size: "icon-bar", variant: "ghost" })}
             href={closeHref}
           >
-            <XIcon aria-hidden="true" className="size-5" />
+            <XIcon aria-hidden="true" />
           </LearnLink>
         ),
       }}

@@ -129,7 +129,7 @@ export function OutlineChapterRow({
 
       <div className="min-w-0 flex-1">
         <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
-          <h3 className="text-[0.9375rem] leading-5.5 font-semibold text-balance">
+          <h3 className="text-reading leading-5.5 font-semibold text-balance">
             <Link
               className={CHAPTER_LINK_CLASS}
               href={getChapterHref({ ...params, chapterSlug: chapter.slug })}

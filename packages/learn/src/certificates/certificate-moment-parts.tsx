@@ -6,13 +6,13 @@ import {
 } from "@zoonk/core/certificates/contract";
 import { Burst } from "@zoonk/ui/components/burst";
 import { Button } from "@zoonk/ui/components/button";
-import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useCelebration } from "@zoonk/ui/hooks/celebration";
 import { BEAT_MS } from "@zoonk/ui/lib/motion";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type CertificateLinks } from "@zoonk/utils/certificate-links";
 import { useExtracted } from "next-intl";
-import { TASK_MAIN_ACTION_CLASS, TaskActionBar, TaskActions } from "../_components/task-layout";
+import { EnterButton } from "../_components/enter-button";
+import { TaskActionBar, TaskActions } from "../_components/task-layout";
 import { useCertificateSentence } from "./certificate-labels";
 import { LockedCertificateSheet } from "./certificate-lock";
 import { CertificateSheet } from "./certificate-sheet";
@@ -78,7 +78,7 @@ export function MomentSheets({
 }
 
 function NameStrong(chunks: React.ReactNode) {
-  return <span className="text-foreground font-[550]">{chunks}</span>;
+  return <span className="text-foreground font-medium">{chunks}</span>;
 }
 
 export function NameRow({ name, onChange }: { name: string; onChange: () => void }) {
@@ -87,7 +87,7 @@ export function NameRow({ name, onChange }: { name: string; onChange: () => void
   return (
     <p className="text-muted-foreground text-sm">
       {t.rich("On your certificate: <strong>{name}</strong>", { name, strong: NameStrong })}
-      <Button className="ml-2 font-[550]" onClick={onChange} variant="link">
+      <Button className="ml-2 font-medium" onClick={onChange} variant="link">
         {t("Change")}
       </Button>
     </p>
@@ -100,16 +100,10 @@ export function ContinueBar({ onContinue }: { onContinue: () => void }) {
   return (
     <TaskActionBar>
       <TaskActions>
-        <Button
-          aria-keyshortcuts="Enter"
-          autoFocus
-          className={TASK_MAIN_ACTION_CLASS}
-          onClick={onContinue}
-          size="xl"
-        >
+        {/* It takes focus when the moment opens, so Enter is its own. */}
+        <EnterButton autoFocus enter="host" onClick={onContinue}>
           {t("Continue")}
-          <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-        </Button>
+        </EnterButton>
       </TaskActions>
     </TaskActionBar>
   );

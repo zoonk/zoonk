@@ -3,19 +3,21 @@
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
 import { Button } from "@zoonk/ui/components/button";
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { AnswerOption, AnswerOptionGroup } from "../../_components/answer-option";
+import {
+  QuestionActions,
+  QuestionDontKnow,
+  QuestionMainAction,
+} from "../../_components/question-actions";
+import { QuestionTitle } from "../../_components/question-title";
 import { AnswersSaveError } from "../../_components/save-error";
-import { NotSureButton } from "../../mistakes/drill/drill-controls";
 import { getSentDurationMs } from "../../mistakes/drill/drill-types";
-import { ItemLine, ItemStem, ItemSupport } from "../../questions/item-text";
+import { ItemLine, ItemSupport } from "../../questions/item-text";
 import { useTrueFalseLabels } from "../../questions/use-true-false-labels";
 import { useSpokenText } from "../../rich-text/use-spoken-text";
-import {
-  QuestionActionsRow,
-  QuestionMainButton,
-} from "../../session/question-block/question-actions";
 import { type Choice } from "../choice-list";
 import { type PlacementAnswer, type PlacementQuestion } from "../onboarding-actions";
 import {
@@ -75,7 +77,7 @@ function PlacementOptions({
     <AnswerOptionGroup aria-label={label}>
       {choices.map((choice, index) => (
         <AnswerOption
-          aria-keyshortcuts={String(index + 1)}
+          aria-keyshortcuts={shortcutKeys("pick", index)}
           key={choice.value}
           marker={index + 1}
           onClick={() => onChange(choice.value)}
@@ -117,7 +119,7 @@ function PlacementActions({
   pressed,
 }: {
   canConfirm: boolean;
-  dontKnowLabel: string;
+  dontKnowLabel?: string;
   failures: number;
   onConfirm: () => void;
   onDontKnow: () => void;
@@ -131,20 +133,17 @@ function PlacementActions({
       <PlanStartNoticeSlot />
       {failures > 0 && !pending && <AnswersSaveError failures={failures} />}
 
-      <QuestionActionsRow ask={null}>
-        <NotSureButton
-          busy={busy === "dontKnow"}
-          disabled={pending}
-          label={dontKnowLabel}
-          onClick={onDontKnow}
-        />
-        <QuestionMainButton
+      <QuestionActions>
+        <QuestionDontKnow busy={busy === "dontKnow"} disabled={pending} onPress={onDontKnow}>
+          {dontKnowLabel}
+        </QuestionDontKnow>
+        <QuestionMainAction
           action="confirm"
           busy={busy === "confirm"}
           disabled={!canConfirm || pending}
           onPress={onConfirm}
         />
-      </QuestionActionsRow>
+      </QuestionActions>
     </div>
   );
 }
@@ -233,7 +232,7 @@ export function PlacementQuestionScreen({
         bar={
           <PlacementActions
             canConfirm={canConfirm}
-            dontKnowLabel={dontKnowLabel ?? t("I don't know yet")}
+            dontKnowLabel={dontKnowLabel}
             failures={failures}
             onConfirm={confirm}
             onDontKnow={() => send({ dontKnow: true }, "dontKnow")}
@@ -259,13 +258,7 @@ export function PlacementQuestionScreen({
 
           <ItemSupport context={question.context} image={question.image} visual={question.visual} />
 
-          <div
-            className="text-[1.1875rem] leading-[1.35] font-[560] tracking-[-0.02em] text-pretty outline-none"
-            ref={title}
-            tabIndex={-1}
-          >
-            <ItemStem text={question.question} heading="h1" />
-          </div>
+          <QuestionTitle heading="h1" ref={title} tabIndex={-1} text={question.question} />
         </OnboardingHeading>
 
         {isTyped ? (

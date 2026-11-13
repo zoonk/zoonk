@@ -6,7 +6,6 @@ import { claimUsage, claimUsageFor } from "../entitlements/claim-usage";
 import { type UsageDecision } from "../entitlements/contract";
 import { isVisibleTo } from "../library/_utils/library-visibility";
 import { getLessonGenerationState } from "../library/generation/lesson-generation-state";
-import { isLessonPlusOnly } from "../sessions/_utils/plus-only-lessons";
 import { findViewerLesson } from "./_utils/viewer-lesson";
 
 /** generating follows the existing stream; start requires a caller-started run. setAside must never restart generation. */
@@ -49,10 +48,6 @@ async function requestFor({
   platform: AnalyticsPlatform | null;
   userId: string;
 }): Promise<LessonGenerationRequest> {
-  if (await isLessonPlusOnly({ lessonId, userId })) {
-    return { status: "plusRequired" };
-  }
-
   const state = await getLessonGenerationState(lessonId);
 
   if (!state) {

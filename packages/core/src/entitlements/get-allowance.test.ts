@@ -39,18 +39,18 @@ describe(getAllowance, () => {
 
     expect(allowance).toMatchObject({
       activeGoals: { limit: 3, used: 1 },
-      examPrep: { includesMockExams: false, studyDays: 7 },
+      examPrep: { includesMockExams: false, studyDays: null },
       generatedLessons: null,
       resets: { day: new Date("2026-09-16T00:00:00Z"), month: new Date("2026-10-01T00:00:00Z") },
       tier: "free",
     });
 
     expect(allowance?.items.find((item) => item.kind === "lessonStart")).toStrictEqual({
-      dailyLimit: 20,
+      dailyLimit: null,
       fairUseDailyLimit: null,
       kind: "lessonStart",
-      monthlyLimit: 40,
-      remaining: 7,
+      monthlyLimit: 20,
+      remaining: 0,
       totalLimit: null,
       usedThisMonth: 33,
       usedToday: 3,
