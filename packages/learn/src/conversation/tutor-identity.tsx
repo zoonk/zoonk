@@ -1,27 +1,13 @@
 "use client";
 
-import { Buddy } from "@zoonk/ui/components/buddy";
 import { Message, MessageContent } from "@zoonk/ui/components/message";
 import { useExtracted } from "next-intl";
+import { BuddyArt } from "../buddies/buddy-art";
 import { type LearnBuddy, resolveLearnBuddy, useBuddyName } from "../buddies/use-buddy-name";
 
 export type { LearnBuddy } from "../buddies/use-buddy-name";
 
 export type TutorIdentity = { avatar: React.ReactNode; name: string };
-
-function TutorAvatar({ buddy }: { buddy: LearnBuddy }) {
-  return (
-    <Buddy
-      beltColor={buddy.beltColor}
-      className="size-8"
-      crop="face"
-      energy={buddy.energy}
-      glasses={buddy.glasses}
-      kind={buddy.kind}
-      studiedToday={buddy.studiedToday}
-    />
-  );
-}
 
 export function useTutorIdentity(buddy: LearnBuddy | null | undefined): TutorIdentity {
   const t = useExtracted();
@@ -30,7 +16,7 @@ export function useTutorIdentity(buddy: LearnBuddy | null | undefined): TutorIde
 
   return buddy === undefined
     ? { avatar: null, name: t("Your buddy") }
-    : { avatar: <TutorAvatar buddy={resolved} />, name };
+    : { avatar: <BuddyArt buddy={resolved} className="size-8" view="face" />, name };
 }
 
 export function TutorMessage({
@@ -44,7 +30,7 @@ export function TutorMessage({
 }) {
   if (page) {
     return (
-      <Message className="text-[0.9375rem] leading-[1.55]">
+      <Message className="text-reading leading-[1.55]">
         <MessageContent>
           <span className="sr-only">{identity.name}</span>
           {children}

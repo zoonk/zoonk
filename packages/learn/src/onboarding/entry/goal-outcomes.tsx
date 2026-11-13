@@ -10,7 +10,6 @@ import {
   LightbulbIcon,
   MessageCircleQuestionIcon,
   MusicIcon,
-  PlayIcon,
   UserPlusIcon,
 } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -30,7 +29,7 @@ import {
 import { GoalLimitNotice, isPlusGoalLimit } from "./goal-limit-notice";
 
 const BUBBLE_CLASS =
-  "bg-muted self-end rounded-xl rounded-br-sm px-3.5 py-2.5 text-[15px] leading-relaxed whitespace-pre-wrap";
+  "bg-muted self-end rounded-xl rounded-br-sm px-3.5 py-2.5 text-reading leading-relaxed whitespace-pre-wrap";
 
 const ICON_CLASS = "text-muted-foreground flex [&_svg]:size-6";
 
@@ -147,11 +146,7 @@ export function ExplainGoal({
       </OnboardingHeading>
 
       <GoalFooter error={error} signUpHref={signUpHref}>
-        <OnboardingPrimaryButton
-          busy={isStarting}
-          icon={<LightbulbIcon aria-hidden="true" />}
-          onClick={onStart}
-        >
+        <OnboardingPrimaryButton busy={isStarting} onClick={onStart}>
           {t("Explain it")}
         </OnboardingPrimaryButton>
       </GoalFooter>
@@ -310,11 +305,7 @@ export function InstrumentGoal({
       <WaitlistNote outcome={waitlist} signUpHref={signUpHref} />
 
       <GoalFooter error={error} signUpHref={signUpHref}>
-        <OnboardingPrimaryButton
-          busy={isStarting}
-          icon={<PlayIcon aria-hidden="true" />}
-          onClick={onStartMusicianship}
-        >
+        <OnboardingPrimaryButton busy={isStarting} onClick={onStartMusicianship}>
           {t("Start musicianship")}
         </OnboardingPrimaryButton>
         <OnboardingSecondaryButton

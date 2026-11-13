@@ -22,7 +22,7 @@ function AdminMobileBarContent({ account, counts }: AdminMobileBarProps) {
 
   return (
     <header className="flex items-center gap-1 px-4 pt-1.5 sm:px-8 lg:hidden">
-      <Button className="-ml-3.5" onClick={() => setOpen(true)} size="icon-bar" variant="ghost">
+      <Button edge="start" onClick={() => setOpen(true)} size="icon-bar" variant="ghost">
         <MenuIcon aria-hidden="true" />
         <span className="sr-only">Menu</span>
       </Button>

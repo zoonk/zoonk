@@ -110,7 +110,7 @@ export function RhythmGrid({
 
       <div className="text-muted-foreground flex flex-wrap gap-x-4 gap-y-1 text-xs">
         <span className="flex items-center gap-1.5">
-          <span className="bg-viz-accent h-2 w-3 rounded-[2px]" />
+          <span className="bg-viz-accent h-2 w-3 rounded-xs" />
           {t("Rhythm hits")}
         </span>
         <span className="flex items-center gap-1.5">

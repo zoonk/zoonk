@@ -129,7 +129,7 @@ function Turn({
 
       <TutorMessage identity={identity} page={page}>
         <Bubble variant="ghost">
-          <BubbleContent className={cn(page && "text-[0.9375rem] leading-[1.55]")}>
+          <BubbleContent className={cn(page && "text-reading leading-[1.55]")}>
             {answer}
           </BubbleContent>
         </Bubble>

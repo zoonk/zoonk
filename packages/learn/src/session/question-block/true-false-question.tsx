@@ -1,14 +1,15 @@
 "use client";
 
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
-import { useKeyboardCallback, useNumberKeys } from "@zoonk/ui/hooks/keyboard";
+import { useNumberKeys, useShortcut } from "@zoonk/ui/hooks/keyboard";
+import { type ShortcutName, shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { AnswerOption, AnswerOptionGroup } from "../../_components/answer-option";
+import { QuestionTitle } from "../../_components/question-title";
 import { useTrueFalseLabels } from "../../questions/use-true-false-labels";
 import { parseRichBlocks } from "../../rich-text/rich-text-parser";
-import { QuestionTitle } from "./question-title";
 
 const SWIPE_THRESHOLD_PX = 90;
 const TILT_DEGREES_PER_PX = 0.06;
@@ -17,17 +18,15 @@ type TrueFalseAnswer = { dontKnow: true } | { isTrue: boolean };
 
 export type TrueFalseResult = { answer: TrueFalseAnswer; correct: boolean | null };
 
-type Option = { answer: TrueFalseAnswer; key: "blank" | "false" | "true"; keys: string };
+type Option = { answer: TrueFalseAnswer; key: "blank" | "false" | "true"; shortcut: ShortcutName };
 
-const FALSE_OPTION: Option = { answer: { isTrue: false }, key: "false", keys: "ArrowLeft" };
-const TRUE_OPTION: Option = { answer: { isTrue: true }, key: "true", keys: "ArrowRight" };
-const BLANK_OPTION: Option = { answer: { dontKnow: true }, key: "blank", keys: "ArrowDown" };
+const FALSE_OPTION: Option = { answer: { isTrue: false }, key: "false", shortcut: "answerFalse" };
+const TRUE_OPTION: Option = { answer: { isTrue: true }, key: "true", shortcut: "answerTrue" };
+const BLANK_OPTION: Option = { answer: { dontKnow: true }, key: "blank", shortcut: "answerBlank" };
 
 /** In reading order, so the number keys follow them: false, blank, true. */
 const THREE_OPTIONS = [FALSE_OPTION, BLANK_OPTION, TRUE_OPTION];
 const TWO_OPTIONS = [FALSE_OPTION, TRUE_OPTION];
-
-const SCREEN_KEY = { mode: "none", screen: true } as const;
 
 function isSameAnswer(a: TrueFalseAnswer | null, b: TrueFalseAnswer): boolean {
   if (!a) {
@@ -131,9 +130,9 @@ export function TrueFalseQuestion({
   const swipe = useSwipe({ enabled: canSwipe, onSwipe: (isTrue) => pickSide({ isTrue }) });
   const sideKey = (option: Option) => () => (locked ? false : pickSide(option.answer));
 
-  useKeyboardCallback("ArrowLeft", sideKey(FALSE_OPTION), SCREEN_KEY);
-  useKeyboardCallback("ArrowRight", sideKey(TRUE_OPTION), SCREEN_KEY);
-  useKeyboardCallback("ArrowDown", allowBlank ? sideKey(BLANK_OPTION) : () => false, SCREEN_KEY);
+  useShortcut("answerFalse", sideKey(FALSE_OPTION));
+  useShortcut("answerTrue", sideKey(TRUE_OPTION));
+  useShortcut("answerBlank", sideKey(BLANK_OPTION), { enabled: allowBlank });
 
   useNumberKeys({
     count: options.length,
@@ -172,7 +171,7 @@ export function TrueFalseQuestion({
         {options.map((option, index) =>
           isShown({ option, result }) ? (
             <AnswerOption
-              aria-keyshortcuts={`${option.keys} ${index + 1}`}
+              aria-keyshortcuts={`${shortcutKeys(option.shortcut)} ${shortcutKeys("pick", index)}`}
               disabled={locked}
               key={option.key}
               marker={index + 1}

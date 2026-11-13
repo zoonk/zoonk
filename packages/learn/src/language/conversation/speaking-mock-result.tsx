@@ -10,10 +10,10 @@ import { LightbulbIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { CHIP_CLASS } from "../../_components/chip";
 import { DetailsDrawer } from "../../_components/details-drawer";
+import { Eyebrow } from "../../_components/eyebrow";
 import {
   StepCard,
   StepDetail,
-  StepEyebrow,
   StepHeader,
   StepTitle,
   StepTitleLabel,
@@ -136,7 +136,7 @@ function FocusStep({ criterion }: { criterion: Criterion }) {
     <>
       <StepCard>
         <StepHeader>
-          <StepEyebrow>{t("Work on this first")}</StepEyebrow>
+          <Eyebrow>{t("Work on this first")}</Eyebrow>
           <StepTitle>{criterionName(criterion.criterion)}</StepTitle>
           <StepDetail>{criterion.evidence}</StepDetail>
         </StepHeader>

@@ -39,10 +39,7 @@ function FieldRow({
       <ListRowContent>
         <span className="text-muted-foreground text-xs">{label}</span>
         <span
-          className={cn(
-            "text-sm wrap-anywhere",
-            mono ? "font-mono text-[0.8125rem]" : "font-medium",
-          )}
+          className={cn("text-sm wrap-anywhere", mono ? "text-compact font-mono" : "font-medium")}
         >
           {value}
         </span>
@@ -72,12 +69,9 @@ export function CertificateLinkedInDialog({
       <DialogContent
         className="max-h-[calc(100dvh-2rem)] gap-5 overflow-y-auto sm:max-w-[540px]"
         closeLabel={t("Close")}
-        overNested
       >
         <DialogHeader>
-          <DialogTitle className="text-lg font-semibold">
-            {t("Add to your LinkedIn profile")}
-          </DialogTitle>
+          <DialogTitle>{t("Add to your LinkedIn profile")}</DialogTitle>
           <DialogDescription>
             {t(
               "LinkedIn opens its form to add a license or certification. Copy each field into it.",

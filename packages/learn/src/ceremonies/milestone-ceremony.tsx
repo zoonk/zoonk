@@ -11,19 +11,14 @@ import {
   DialogPortal,
   DialogTitle,
 } from "@zoonk/ui/components/dialog";
-import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { BEAT_MS } from "@zoonk/ui/lib/motion";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type BeltColor } from "@zoonk/utils/belt-level";
 import { type BuddyGlasses } from "@zoonk/utils/buddy";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
-import {
-  TASK_MAIN_ACTION_CLASS,
-  TaskActionBar,
-  TaskActions,
-  TaskBody,
-} from "../_components/task-layout";
+import { EnterButton } from "../_components/enter-button";
+import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
 import { toBeltColor } from "../_utils/use-belt-name";
 import { SCREEN_STEADY_MS, useSteady } from "../_utils/use-steady";
 import { type LearnBuddy, resolveLearnBuddy, useBuddyName } from "../buddies/use-buddy-name";
@@ -112,7 +107,7 @@ function CeremonyArt({
       )}
       <BuddyActor
         beltColor={milestone.kind === "belt" && belt ? belt : buddy.beltColor}
-        className="relative size-40 sm:size-48"
+        className="relative h-47 sm:h-56"
         energy={buddy.energy}
         expression="happy"
         glasses={milestone.kind === "glasses" && glasses ? glasses : buddy.glasses}
@@ -155,16 +150,10 @@ function CeremonyBar({
           </Button>
         )}
 
-        <Button
-          aria-keyshortcuts="Enter"
-          autoFocus
-          className={TASK_MAIN_ACTION_CLASS}
-          onClick={onConfirm}
-          size="xl"
-        >
+        {/* It takes focus when the ceremony opens, so Enter is its own. */}
+        <EnterButton autoFocus enter="host" onClick={onConfirm}>
           {action}
-          <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-        </Button>
+        </EnterButton>
       </TaskActions>
     </TaskActionBar>
   );

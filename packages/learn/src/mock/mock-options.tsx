@@ -3,17 +3,16 @@
 import { type MockAnswer, type MockChoice } from "@zoonk/core/exams/mocks/answer-contract";
 import { type MockQuestion } from "@zoonk/core/exams/mocks/view-contract";
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CheckIcon, MinusIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { AnswerOption, AnswerOptionGroup } from "../_components/answer-option";
 import { ItemLine } from "../questions/item-text";
 import { type OptionSelect, PickRule, togglePick } from "../questions/pick-rule";
 import { useTrueFalseLabels } from "../questions/use-true-false-labels";
 import { useMockScreen } from "./mock-context";
-import { getOptionMarks } from "./mock-keys";
 
-type Option = { answer: MockChoice | null; key: string; label: string; marker: React.ReactNode };
+type Option = { answer: MockChoice | null; key: string; label: string };
 
 function isSame(first: MockAnswer | null, second: MockAnswer | null): boolean {
   return JSON.stringify(first) === JSON.stringify(second);
@@ -33,23 +32,15 @@ function useOptions(question: MockQuestion): Option[] {
       answer: { selectedIndex: index },
       key: `option-${index}`,
       label,
-      marker: index + 1,
     }));
   }
 
-  if (getOptionMarks({ format: question.format, scoring: runner.view.scoring }) === "glyphs") {
-    return [
-      { answer: { isTrue: true }, key: "true", label: answerLabel(true), marker: <CheckIcon /> },
-      { answer: { isTrue: false }, key: "false", label: answerLabel(false), marker: <XIcon /> },
-      ...(runner.moves.mustAnswer
-        ? []
-        : [{ answer: null, key: "blank", label: t("Leave blank"), marker: <MinusIcon /> }]),
-    ];
-  }
+  const canLeaveBlank = runner.view.scoring === "net" && !runner.moves.mustAnswer;
 
   return [
-    { answer: { isTrue: true }, key: "true", label: answerLabel(true), marker: 1 },
-    { answer: { isTrue: false }, key: "false", label: answerLabel(false), marker: 2 },
+    { answer: { isTrue: true }, key: "true", label: answerLabel(true) },
+    { answer: { isTrue: false }, key: "false", label: answerLabel(false) },
+    ...(canLeaveBlank ? [{ answer: null, key: "blank", label: t("Leave blank") }] : []),
   ];
 }
 
@@ -84,11 +75,11 @@ export function MockOptions({ question }: { question: MockQuestion }) {
     <AnswerOptionGroup>
       {options.map((option, index) => (
         <AnswerOption
-          aria-keyshortcuts={String(index + 1)}
+          aria-keyshortcuts={shortcutKeys("pick", index)}
           className={cn(option.answer === null && "text-muted-foreground")}
           disabled={locked}
           key={option.key}
-          marker={option.marker}
+          marker={index + 1}
           onClick={() => pick(index)}
           picked={option.answer !== null && hasDraft && isSame(option.answer, current)}
         >
@@ -130,7 +121,7 @@ export function MockPicks({ question, select }: { question: MockQuestion; select
         {options.map((label, index) => (
           <AnswerOption
             aria-checked={picks.includes(index)}
-            aria-keyshortcuts={String(index + 1)}
+            aria-keyshortcuts={shortcutKeys("pick", index)}
             disabled={locked}
             key={label}
             marker={index + 1}

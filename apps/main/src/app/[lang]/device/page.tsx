@@ -1,4 +1,4 @@
-import { PublicTopBar } from "@/components/public/public-top-bar";
+import { ColumnScreen } from "@/components/public/column-screen";
 import { getAppLocale } from "@/i18n/locale";
 import { getPathname } from "@/i18n/navigation";
 import { getSession } from "@zoonk/core/users/session";
@@ -81,16 +81,12 @@ export default async function CliLoginPage({ searchParams }: Props) {
   const t = await getExtracted();
 
   return (
-    <div className="flex min-h-dvh flex-col">
-      <PublicTopBar actions={null} />
+    <ColumnScreen className="gap-8">
+      <h1 className="text-title">{t("Log in to the Zoonk CLI")}</h1>
 
-      <main className="max-w-column mx-auto flex w-full flex-1 flex-col gap-8 px-4 py-12 sm:py-16">
-        <h1 className="text-title">{t("Log in to the Zoonk CLI")}</h1>
-
-        <Suspense fallback={<CliLoginSkeleton />}>
-          <CliLoginBody searchParams={searchParams} />
-        </Suspense>
-      </main>
-    </div>
+      <Suspense fallback={<CliLoginSkeleton />}>
+        <CliLoginBody searchParams={searchParams} />
+      </Suspense>
+    </ColumnScreen>
   );
 }

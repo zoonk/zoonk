@@ -1,10 +1,10 @@
 "use client";
 
+import { Eyebrow } from "@zoonk/learn/eyebrow";
 import { NetworkIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { PlayerReadScene } from "../components/player-read-scene";
 import { LessonMap } from "./_components/lesson-map";
-import { SCREEN_CHIP_CLASS } from "./_components/lesson-step-text";
 import { LessonActionBar } from "./lesson-action-bar";
 import { useLessonPlayerConfig } from "./lesson-player-context";
 import { LessonScreenFrame } from "./lesson-stage";
@@ -22,14 +22,13 @@ export function LessonMapScreen() {
       <div className="flex flex-1 flex-col" data-slot="lesson-map-screen">
         <LessonScreenFrame turn={null}>
           <PlayerReadScene className="gap-5">
-            <h2 className={SCREEN_CHIP_CLASS}>
-              <NetworkIcon aria-hidden="true" />
+            <Eyebrow aria-level={2} icon={<NetworkIcon aria-hidden="true" />} role="heading">
               {t({
                 description:
                   "A small diagram of this lesson's main ideas, drawn by the app. Not the chapter's mind map.",
                 message: "Lesson map",
               })}
-            </h2>
+            </Eyebrow>
             <LessonMap map={lesson.summary} title={lesson.title} />
           </PlayerReadScene>
         </LessonScreenFrame>

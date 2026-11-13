@@ -49,10 +49,10 @@ export function SpeakingMockCard({
       <div className="flex items-baseline gap-3">
         <KindDot className="-translate-y-px" kind="conversation" />
         <div className="flex min-w-0 flex-col gap-0.5">
-          <h2 className="text-[0.9375rem] font-medium" id="language-speaking-mock">
+          <h2 className="text-reading font-medium" id="language-speaking-mock">
             {title(exam)}
           </h2>
-          <p className="text-muted-foreground text-[0.8125rem]">{description(exam)}</p>
+          <p className="text-muted-foreground text-compact">{description(exam)}</p>
         </div>
       </div>
 

@@ -2,7 +2,7 @@
 
 import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
 import { Button } from "@zoonk/ui/components/button";
-import { CircleStopIcon, PlayIcon } from "lucide-react";
+import { CircleStopIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useLayoutEffect, useRef, useState } from "react";
 import { EnterButton } from "../_components/enter-button";
@@ -84,7 +84,7 @@ function StartButton({
 
   return (
     <form action={() => onStart()} className="contents">
-      <EnterButton busy={busy} icon={<PlayIcon aria-hidden="true" />} ref={ref} type="submit">
+      <EnterButton busy={busy} enter="host" ref={ref} type="submit">
         {step.status === "active" ? t("Continue") : t("Start")}
       </EnterButton>
     </form>
