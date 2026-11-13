@@ -5,7 +5,9 @@ const ROW_CLASS = "w-full px-(--page-gutter)";
 /**
  * The one home of a screen's main action, on a phone and a computer: pinned to the bottom of its
  * frame while the screen scrolls under it. Its buttons never move: what the last action couldn't do
- * goes in `note`, which is drawn over the screen above the bar instead of pushing the bar taller.
+ * goes in `note`, which is drawn over the screen above the bar instead of pushing the bar taller,
+ * and read to screen readers as it appears: pass its words (an error that must interrupt keeps
+ * `role="alert"`).
  *
  * It reaches the frame's edges by the frame's own padding (`--page-gutter`, `--page-bottom`) and
  * rests on what the frame docks under it (`--page-dock`), so it's the same piece in the app's
@@ -25,14 +27,18 @@ function BottomBar({
       data-slot="bottom-bar"
       {...props}
     >
-      {note && (
-        <div
-          className="bg-background border-border absolute inset-x-0 bottom-full border-t"
-          data-slot="bottom-bar-note"
-        >
-          <div className={cn(ROW_CLASS, "pt-2 text-sm", className)}>{note}</div>
-        </div>
-      )}
+      {/* Mounted while empty: a screen reader reads a line added to a live region it already knows. */}
+      <div
+        aria-live="polite"
+        className="absolute inset-x-0 bottom-full"
+        data-slot="bottom-bar-note"
+      >
+        {note && (
+          <div className="bg-background border-border border-t">
+            <div className={cn(ROW_CLASS, "pt-2 text-sm", className)}>{note}</div>
+          </div>
+        )}
+      </div>
 
       <div
         className={cn(
