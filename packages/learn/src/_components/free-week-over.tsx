@@ -5,7 +5,7 @@ import { useLessonLimitWords } from "./help-limit-notice";
 import { PlusNotice } from "./plus-lock";
 
 /** A new lesson a free learner can't start reads as the month's lessons used up, wherever it shows. */
-export function useFreeWeekOverCopy(): { body: string; title: string } {
+function useFreeWeekOverCopy(): { body: string; title: string } {
   const { line = "", title = "" } = useLessonLimitWords({
     period: "month",
     status: "limitReached",

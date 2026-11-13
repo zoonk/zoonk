@@ -3,9 +3,10 @@
 import { type EssayDraft, type EssayView } from "@zoonk/core/exams/essays/contract";
 import { Button } from "@zoonk/ui/components/button";
 import { Textarea } from "@zoonk/ui/components/textarea";
+import { cn } from "@zoonk/ui/lib/utils";
 import { countWords } from "@zoonk/utils/string";
 import { settleWithin } from "@zoonk/utils/timeout";
-import { SendIcon, SkipForwardIcon } from "lucide-react";
+import { SendIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
 import { AnswersSaveError } from "../_components/save-error";
@@ -23,9 +24,10 @@ import {
   useEssayScreen,
 } from "./essay-context";
 import { EssayGradeSteps } from "./essay-feedback";
-import { useWritingName } from "./essay-labels";
+import { ESSAY_FIELD_CLASS, useWritingName } from "./essay-labels";
 import { EssayInstruction, EssayTexts, usePromptLabel, useTextsLabel } from "./essay-prompt";
 import { RewriteGuide } from "./essay-rewrite-guide";
+import { EssaySkipButton } from "./essay-skip-button";
 import { type EssayStatus, GRADING_BOUNDS, StatusLine } from "./essay-status-line";
 import { EssayWordCount } from "./essay-word-count";
 import { clearUnsentText, keepUnsentText, readUnsentText } from "./unsent-text";
@@ -119,7 +121,7 @@ function EssayBox({ writer }: { writer: EssayWriter }) {
         {drafts.length > 0 ? t("Rewrite what needs work") : writingName(essay.rubric)}
       </label>
       <Textarea
-        className="min-h-72 flex-1 text-base leading-relaxed md:text-base lg:field-sizing-fixed lg:min-h-36"
+        className={cn(ESSAY_FIELD_CLASS, "flex-1 lg:field-sizing-fixed lg:min-h-36")}
         aria-describedby={`${textId}-count`}
         id={textId}
         onChange={(event) => writer.write(event.target.value)}
@@ -143,18 +145,7 @@ function EssayWriteFooter({ writer }: { writer: EssayWriter }) {
         <AnswersSaveError failures={finishing.failures} onRetry={() => void finishing.finish()} />
       )}
       <TaskActions>
-        {drafts.length > 0 && (
-          <Button
-            busy={finishing.pending}
-            className="shrink-0"
-            icon={<SkipForwardIcon aria-hidden="true" />}
-            onClick={() => void finishing.finish()}
-            size="xl"
-            variant="outline"
-          >
-            {t("Skip the rewrite")}
-          </Button>
-        )}
+        {drafts.length > 0 && <EssaySkipButton finishing={finishing} />}
         <Button
           busy={pending}
           className={TASK_MAIN_ACTION_CLASS}
@@ -176,6 +167,12 @@ function EssayWriteScreen({ onSeeGrade, writer }: { onSeeGrade: () => void; writ
   const { drafts, essay, hrefs } = useEssayScreen();
   const label = usePromptLabel(essay.rubric);
   const textsLabel = useTextsLabel(essay.rubric);
+
+  const lastGradeLabel = t({
+    description: "The grade of the learner's last essay draft.",
+    message: "Your last grade",
+  });
+
   const lastGrade = drafts[0]?.grade;
   const criteria = Boolean(lastGrade) && lastGrade?.zeroReason !== "tooShort";
   const texts = isLongText(essay.context) ? essay.context : null;
@@ -194,13 +191,8 @@ function EssayWriteScreen({ onSeeGrade, writer }: { onSeeGrade: () => void; writ
       aside={
         texts || criteria
           ? {
-              label: texts
-                ? textsLabel
-                : t({
-                    description: "The grade of the learner's last essay draft.",
-                    message: "Your last grade",
-                  }),
-              title: texts ? textsLabel : undefined,
+              label: texts ? textsLabel : lastGradeLabel,
+              title: texts ? textsLabel : lastGradeLabel,
             }
           : null
       }

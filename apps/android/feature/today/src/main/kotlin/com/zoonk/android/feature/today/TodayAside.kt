@@ -16,6 +16,7 @@ import com.zoonk.android.feature.session.MissionOpens
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.components.SuggestionLayout
+import com.zoonk.api.models.TodayGoal
 
 /** What the aside needs beyond the day: values the screen reads, and where its rows lead. */
 internal class TodayAsideState(
@@ -58,7 +59,7 @@ internal fun TodayAside(
             rowsInQueue = !beside && model.leavesRowsToQueue(),
             collapseWhenDone = true,
         )
-        TodayWeek(model.day, model.today.weeklyChallenge, aside.navigate)
+        TodayWeek(model.day, model.today.weeklyChallenge, aside.navigate, exam = model.today.goal.kind == TodayGoal.Kind.EXAM)
         if (beside) aside.standing()
         if (beside) aside.notice(SuggestionLayout.Panel)
         // Beside the page, the drawer's Study places hold the same ways in.

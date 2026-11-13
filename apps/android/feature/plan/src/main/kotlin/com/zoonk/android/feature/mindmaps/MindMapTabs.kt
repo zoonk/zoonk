@@ -54,6 +54,7 @@ import com.zoonk.api.models.MindMapAllowanceStop
 import com.zoonk.api.models.SavedMindMap
 import com.zoonk.api.models.SavedMindMapKind
 import kotlinx.coroutines.launch
+import kotlin.time.toJavaInstant
 
 private val NOT_MADE =
     setOf(GoalMindMap.Status.AVAILABLE, GoalMindMap.Status.WRITING_LESSONS, GoalMindMap.Status.DRAWING, GoalMindMap.Status.FAILED)
@@ -274,15 +275,22 @@ internal fun MindMapAllowanceStop.limit(tier: LimitTier): Limit =
                 tier,
                 when (period) {
                     MindMapAllowanceStop.Period.MONTH -> LimitPeriod.Month
+                    MindMapAllowanceStop.Period.ROLLING30_DAYS -> LimitPeriod.Rolling30Days
                     MindMapAllowanceStop.Period.TOTAL -> LimitPeriod.Total
                     MindMapAllowanceStop.Period.DAY, null -> LimitPeriod.Day
                 },
+                availableAt = resetsAt?.toJavaInstant(),
             )
         }
     }
 
 private val MindMapAllowanceStop?.limitSubject: LimitSubject
-    get() = if (this?.resource == MindMapAllowanceStop.Resource.AI_SPEND) LimitSubject.Help else LimitSubject.MindMaps
+    get() =
+        when (this?.resource) {
+            MindMapAllowanceStop.Resource.AI_SPEND -> LimitSubject.Help
+            MindMapAllowanceStop.Resource.LESSON_START -> LimitSubject.Lessons
+            else -> LimitSubject.MindMaps
+        }
 
 /** The notice only says to wait; the time isn't shown. */
 private const val SLOW_DOWN_SECONDS = 60

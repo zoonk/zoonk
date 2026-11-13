@@ -237,15 +237,7 @@ private fun missionStep(
         }
 
         mission.kind == Kind.REVIEW -> {
-            stringResource(
-                if ((mission.minutes ?: 0.0) >
-                    QUICK_REVIEW_MAX_MINUTES
-                ) {
-                    R.string.session_block_reviews
-                } else {
-                    R.string.session_block_quick_review
-                },
-            )
+            stringResource(R.string.session_block_review)
         }
 
         mission.kind == Kind.SOMETHING_NEW -> {
@@ -277,5 +269,3 @@ val Kind.learnKind: LearnKind
             Kind.PRACTICE, Kind.WEAK_SPOT -> LearnKind.Practice
             Kind.PRONUNCIATION, Kind.REVIEW -> LearnKind.Review
         }
-
-private const val QUICK_REVIEW_MAX_MINUTES = 5

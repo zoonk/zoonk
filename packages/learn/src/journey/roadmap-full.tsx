@@ -1,7 +1,7 @@
 "use client";
 
 import { type PlanPhaseView } from "@zoonk/core/plans/view-contract";
-import { Popover, PopoverContent, PopoverTrigger } from "@zoonk/ui/components/popover";
+import { Drawer, DrawerPopup, DrawerTrigger } from "@zoonk/ui/components/drawer";
 import { Trickster } from "@zoonk/ui/components/trickster";
 import { cn } from "@zoonk/ui/lib/utils";
 import { FlagIcon } from "lucide-react";
@@ -51,11 +51,13 @@ function TodayTicks({ share }: { share: number }) {
 
 function PhaseBand({
   focusable,
+  isLast,
   links,
   phase,
   todayShare,
 }: {
   focusable: boolean;
+  isLast: boolean;
   links: JourneyPathLinks;
   phase: PlanPhaseView;
   todayShare: number | null;
@@ -63,8 +65,8 @@ function PhaseBand({
   const label = usePhaseLabel();
 
   return (
-    <Popover>
-      <PopoverTrigger
+    <Drawer>
+      <DrawerTrigger
         render={
           <button
             aria-current={phase.state === "current" ? "step" : undefined}
@@ -80,18 +82,14 @@ function PhaseBand({
           />
         }
       >
-        <BandFace phase={phase} />
+        <BandFace isLast={isLast} phase={phase} />
         {todayShare !== null && <TodayTicks share={todayShare} />}
-      </PopoverTrigger>
+      </DrawerTrigger>
 
-      <PopoverContent
-        align="start"
-        className="max-h-[min(60vh,28rem)] w-80 gap-3 overflow-y-auto"
-        side="bottom"
-      >
+      <DrawerPopup>
         <PhaseDetails links={links} phase={phase} />
-      </PopoverContent>
-    </Popover>
+      </DrawerPopup>
+    </Drawer>
   );
 }
 
@@ -112,7 +110,13 @@ function PhaseColumn({
 }) {
   return (
     <li className={BAND_COLUMN_CLASS}>
-      <PhaseBand focusable={focusable} links={links} phase={phase} todayShare={todayShare} />
+      <PhaseBand
+        focusable={focusable}
+        isLast={isLast}
+        links={links}
+        phase={phase}
+        todayShare={todayShare}
+      />
 
       <PhaseLane isLast={isLast} phase={phase} />
       <PhaseAxis isLast={isLast} labelled={labelled} phase={phase} todayShare={todayShare} />
@@ -141,14 +145,14 @@ function RoadmapLegend() {
       )}
       {hasChallenges && (
         <span className="flex items-center gap-1.5">
-          <Trickster className="size-3.5" view="face" />
-          {t("Phase challenge")}
+          <Trickster className="size-4" view="face" />
+          {goal.kind === "language" ? t("Call") : t("The Trickster")}
         </span>
       )}
       {finish && (
         <span className="flex items-center gap-1.5">
           <FlagIcon className="size-3.5" />
-          {goal.kind === "exam" ? t("Exam day") : t("Goal date")}
+          {goal.kind === "exam" ? t("Exam date") : t("End date")}
         </span>
       )}
     </span>
@@ -164,10 +168,8 @@ function RoadmapPosition() {
 
   return (
     <p className="min-w-0 truncate text-xs">
-      <span className="font-medium">{position.name}</span>
-      <span className="text-muted-foreground font-mono tabular-nums">
-        {[position.day, position.place].filter(Boolean).map((part) => ` · ${part}`)}
-      </span>
+      <span className="font-medium">{position.place}</span>
+      {position.name && <span className="text-muted-foreground">{` · ${position.name}`}</span>}
     </p>
   );
 }

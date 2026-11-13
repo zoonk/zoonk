@@ -78,7 +78,7 @@ export const chapterViewSchema = z
         .boolean()
         .meta({
           description:
-            "Offer the test while the chapter has lessons left, unless it was failed today without a lesson studied in it since; it becomes available again on the next learner-local day",
+            "True while the chapter's test is available: the chapter has lessons left, and the test wasn't failed today without a lesson studied in it since. A failed one becomes available again on the next learner-local day",
         }),
       plusRequired: z
         .boolean()

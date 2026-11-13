@@ -2,7 +2,8 @@
 
 import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
 import { safeAsync } from "@zoonk/utils/error";
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
+import { useChangeSaveFailed } from "../_components/save-error";
 import { type PlanChangeOutcome, usePlanScreen } from "./plan-context";
 import { useReportEditorChange } from "./plan-editor-change-context";
 
@@ -12,7 +13,7 @@ export function usePlanChange() {
   const { actions, keepFocus } = usePlanScreen();
   const editor = useReportEditorChange();
   const [isPending, startTransition] = useTransition();
-  const [failed, setFailed] = useState(false);
+  const saveFailed = useChangeSaveFailed();
 
   /**
    * `answer` runs in the change's transition, so what it shows arrives with the re-planned page,
@@ -22,7 +23,6 @@ export function usePlanChange() {
     operations: LearnerPlanOperation[],
     answer?: PlanChangeAnswer,
   ): Promise<PlanChangeOutcome | null> => {
-    setFailed(false);
     keepFocus();
     const done = Promise.withResolvers<PlanChangeOutcome | null>();
 
@@ -31,7 +31,10 @@ export function usePlanChange() {
 
       // Updates after an `await` join the transition only when started in one again.
       startTransition(() => {
-        setFailed(!outcome);
+        if (!outcome) {
+          saveFailed();
+        }
+
         answer?.(outcome ?? null);
 
         if (outcome?.status === "applied" && outcome.change) {
@@ -45,5 +48,5 @@ export function usePlanChange() {
     return done.promise;
   };
 
-  return { change, failed, isPending };
+  return { change, isPending };
 }

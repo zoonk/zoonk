@@ -6,7 +6,6 @@ import { Input } from "@zoonk/ui/components/input";
 import { ignoreHeldEnter } from "@zoonk/ui/hooks/keyboard";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
-import { ChangeSaveError } from "../_components/save-error";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { UseDateButton, useNoticeDayText } from "./notice-day";
 import { usePlanScreen } from "./plan-context";
@@ -69,7 +68,7 @@ export function PlanDate() {
   const inputId = useId();
   const noteId = useId();
   const { goal, plan, today } = usePlanScreen();
-  const { change, failed, isPending } = usePlanChange();
+  const { change, isPending } = usePlanChange();
   const noticeDayText = useNoticeDayText();
   const { noticeDay, targetDate, targetDateNamedMonth } = plan.schedule;
   const namedMonth = targetDateNamedMonth && targetDate !== null;
@@ -131,7 +130,7 @@ export function PlanDate() {
           value={value}
         />
         {canSave && (
-          <Button disabled={isPending} focusableWhenDisabled type="submit" variant="outline">
+          <Button busy={isPending} type="submit" variant="outline">
             {t("Save")}
           </Button>
         )}
@@ -147,8 +146,6 @@ export function PlanDate() {
       )}
 
       {course && !course.isExam && <StudyEverything course={course} />}
-
-      {failed && <ChangeSaveError />}
     </div>
   );
 }

@@ -17,12 +17,12 @@ export const planMockScheduleSchema = z
       .nullable()
       .meta({
         description:
-          'The weekday every mock ahead falls on (Sunday 0), as in "Mock exams · Sundays"; null when they fall on different days or there is one',
+          "The weekday every mock ahead falls on (Sunday 0); null when they fall on different days or there is one",
       }),
   })
   .nullable()
   .meta({
     description:
-      "When an exam plan's mock exams still to take fall, from their planned days: say only the pattern given (a weekday, the weeks between them), else the next date. Mocks go on the week's last study day, so study days move them. Null without one ahead",
+      "When an exam plan's mock exams still to take fall, from their planned days: the pattern they keep (a weekday, the weeks between them) where they keep one, and the next date. Mocks go on the week's last study day, so study days move them. Null without one ahead",
     id: "PlanMockSchedule",
   });

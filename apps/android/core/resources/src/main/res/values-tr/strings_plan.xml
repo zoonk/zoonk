@@ -301,7 +301,7 @@
   "plan_get_recommendation": "564ff2cd3af329fc60e18931e8ae9f52061a74a321adb3c1bcc83f4130311191",
   "plan_go_to_today": "f84146d0a318222dc7292256a3b8be6b8fcc243a4f2cfb0ed0f728ed35566cc6",
   "plan_goal_date": "1cbecdc3fc356730a16ba0c6b1e9d114715b3f2ffb1d4f58ddd0ccf8179c0075",
-  "plan_goal_limit_reached": "f73cf65961886aca3939238a073c380e57d398f80b2f5f2ae863873b88c463d5",
+  "plan_goal_limit_reached": "1a88a5f61a21ae24f372c78c5a38519af57cba80138a68fe65b8304547cdaed0",
   "plan_goal_paused": "896c464f0a074cffe81e4ce57d8248b86ba3982fb4b8c8564e736d0152895d57",
   "plan_going_deeper": "db2289f8c29b0522ec6ba245430746f0e64501b4ed5833303c4547ccc6fca797",
   "plan_how_is_it_going": "009d62d3e2c5ab5ffbe02cac16cd3048717722a346cebaa261a237a5ea026d96",
@@ -389,9 +389,9 @@
   "plan_pace_value_too_tight": "e5b1080e68f1933f936b7c33c43a870155bfc9064454e03995ca7b0372d05bc6",
   "plan_pace_win_challenge": "389db363d6d8502aec58611636485cfb081b4c7e2c3f78ff9e138f4d69c25be2",
   "plan_pace_win_challenges": "0dff3a5a01c7e5677920d5198f10ba69811d1bce567211de9460ad7ff3607214",
-  "plan_past_date_exam_sentence": "c23398e29a1f03d1b892870294c967bb08a0d999cd1b254a442f12929ae6b9ba",
+  "plan_past_date_exam_sentence": "b503c79c380dd6412a3078be93749fdd0a46bec82ceb08dcc48a0b32150a0b45",
   "plan_past_date_exam_title": "be6f3990708661824ba151b7e51b6137d8292a86f33858863bf8b010a54b3c33",
-  "plan_past_date_goal_sentence": "1b09adb56d1923305ab0799cbab60db513639d7ed171f4254db26a7347799fd0",
+  "plan_past_date_goal_sentence": "6dc34ca564b58ea7f37b36530fc473fbba7fbecc1ff7dafc08ae6d6e1e8cc442",
   "plan_past_date_goal_title": "32cfa4cfaf66ff5dfb6ffa04ac75bc1ba249cb56093c353450a654fc7f441e9d",
   "plan_pause_goal": "011cf29bbb96f964309ce4da56fd1ead9ec05375d03543056c764085a132ac79",
   "plan_phase_after_exam": "48874c600df93fadf3e5de26286e312d0a1b42ad9699e3d602aa6ece0fd5ff00",
@@ -649,8 +649,8 @@
     <string name="plan_resume_effect">Planın bugünden itibaren devam eder; önce ara verdiğin günler için planlanan dersler gelir.</string>
     <string name="plan_resume">Devam et</string>
     <string name="plan_cancel">Vazgeç</string>
-    <!-- When a free learner resumes a paused goal while following as many goals as the free plan allows. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. Plus is the name of Zoonk's paid plan, not the word "more". -->
-    <string name="plan_goal_limit_reached">Ücretsiz pakette aynı anda takip edebileceğin hedef sayısına ulaştın. Bu hedefe devam etmek için başka bir hedefi duraklat ya da daha fazla hedefi takip etmek için Plus’a geç.</string>
+    <!-- When a learner resumes a paused goal while studying as many goals at once as they can. Pausing a goal keeps its progress. -->
+    <string name="plan_goal_limit_reached">Aynı anda çalışabileceğin hedef sayısına ulaştın. Birini duraklat veya daha fazla hedef üzerinde çalışmak için abone ol.</string>
     <string name="plan_save_failed">Kaydedilemedi. Tekrar dene.</string>
     <plurals name="plan_phases_done">
         <item quantity="one">%1$d / %2$d aşama tamamlandı</item>
@@ -880,12 +880,12 @@
         <item quantity="other">Günde %1$d dakika daha çalışırsan %2$s sonra planın yeniden yoluna girer.</item>
     </plurals>
     <plurals name="plan_past_date_exam_sentence">
-        <item quantity="one">Sınav tarihi geldiğinde %d ders kalmıştı.</item>
-        <item quantity="other">Sınav tarihi geldiğinde %d ders kalmıştı.</item>
+        <item quantity="one">Sınav tarihin geçti, geriye %d ders kaldı.</item>
+        <item quantity="other">Sınav tarihin geçti, geriye %d ders kaldı.</item>
     </plurals>
     <plurals name="plan_past_date_goal_sentence">
-        <item quantity="one">Hedeflediğin tarih geldiğinde %d ders kalmıştı.</item>
-        <item quantity="other">Hedeflediğin tarih geldiğinde %d ders kalmıştı.</item>
+        <item quantity="one">Bitiş tarihin geçti, geriye %d ders kaldı.</item>
+        <item quantity="other">Bitiş tarihin geçti, geriye %d ders kaldı.</item>
     </plurals>
     <string name="plan_this_week">Bu hafta</string>
     <string name="plan_week_time">%1$s / %2$s</string>

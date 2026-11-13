@@ -12,6 +12,8 @@ import {
   StepRow,
   StepRows,
   StepTitle,
+  StepTitleNumber,
+  renderStepNumber,
 } from "../_components/step-card";
 import { type StepsItem } from "../_components/steps";
 import { LearnLink } from "../learn-link";
@@ -43,35 +45,23 @@ function hasPoints(estimate: Estimate): estimate is Estimate & { high: number; l
   return estimate.complete && estimate.low !== null && estimate.high !== null;
 }
 
-function useEstimateTitle(estimate: Estimate): string {
+function useEstimateRange(estimate: Estimate): string | null {
   const t = useExtracted();
   const format = useFormatter();
   const number = (value: number) => format.number(value, { maximumFractionDigits: 1 });
 
   if (!hasPoints(estimate)) {
-    return t("No estimate");
+    return null;
   }
 
-  if (estimate.low === estimate.high) {
-    return t("About {points} of {total}", {
-      points: number(estimate.low),
-      total: number(estimate.total),
-    });
-  }
-
-  return t("About {low} to {high} of {total}", {
-    high: number(estimate.high),
-    low: number(estimate.low),
-    total: number(estimate.total),
-  });
+  return estimate.low === estimate.high
+    ? number(estimate.low)
+    : t("{low}–{high}", { high: number(estimate.high), low: number(estimate.low) });
 }
 
-function useEstimateDetail({ done, estimate }: { done: boolean; estimate: Estimate }): string {
+/** Why a paper has no estimate. */
+function useNoEstimateReason({ done, estimate }: { done: boolean; estimate: Estimate }): string {
   const t = useExtracted();
-
-  if (hasPoints(estimate)) {
-    return t("An estimate, not an official score.");
-  }
 
   if (!done) {
     return t("Not every task was done, so there's no estimate for this paper.");
@@ -115,22 +105,32 @@ function SpeakingTaskRows({ tasks }: { tasks: SpeakingSectionView["tasks"] }) {
 function SpeakingStep({ paper }: { paper: SpeakingSectionView }) {
   const t = useExtracted();
   const done = paper.tasks.every((task) => task.status === "completed");
-  const title = useEstimateTitle(paper.estimate);
-  const detail = useEstimateDetail({ done, estimate: paper.estimate });
+  const range = useEstimateRange(paper.estimate);
+  const format = useFormatter();
+  const noEstimate = useNoEstimateReason({ done, estimate: paper.estimate });
   const rule = usePassRule(paper.pass);
 
   return (
     <StepCard>
       <StepHeader>
         <Eyebrow>{paper.paper}</Eyebrow>
-        <StepTitle>{title}</StepTitle>
-        <StepDetail>{detail}</StepDetail>
+        <StepTitle>
+          {range ? <StepTitleNumber>{range}</StepTitleNumber> : t("No estimate")}
+        </StepTitle>
+        <StepDetail className="text-sm">
+          {range
+            ? t.rich("Estimated score, from <mono>0</mono> to <mono>{max}</mono>", {
+                max: format.number(paper.estimate.total),
+                mono: renderStepNumber,
+              })
+            : noEstimate}
+        </StepDetail>
         {paper.estimate.typed && hasPoints(paper.estimate) && (
-          <StepDetail>
+          <StepDetail className="text-sm">
             {t("You typed in at least one task, so the estimate leaves out how you sounded there.")}
           </StepDetail>
         )}
-        {rule && <StepDetail>{rule}</StepDetail>}
+        {rule && <StepDetail className="text-sm">{rule}</StepDetail>}
       </StepHeader>
       <SpeakingTaskRows tasks={paper.tasks} />
     </StepCard>

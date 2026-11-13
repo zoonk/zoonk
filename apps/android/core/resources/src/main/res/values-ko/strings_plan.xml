@@ -301,7 +301,7 @@
   "plan_get_recommendation": "001170cd154b0f570dffb49a1d6dff979bcd51371627dbfeff81e285c485af85",
   "plan_go_to_today": "e57c1665706b339788018cd54e6e00fc73a3ab471b55650173ddefde8c0d1b8b",
   "plan_goal_date": "621fdd06f7c1f96171ffe6de59bb85c23031f620fe24eff9ef8df1a5b6cabda0",
-  "plan_goal_limit_reached": "ab8264f41a8d1b0bf4da1f14b6bfaa9b78518de3e1b73c05689cd8828e1f3f0b",
+  "plan_goal_limit_reached": "d00d2615386e96f5540d61cb3f97a09cd3e0fc940fdf48e127228a29457bb6b3",
   "plan_goal_paused": "170f451390b2f0159f25e06340dbbfd710768540178bfd4a34b308d96e7e0704",
   "plan_going_deeper": "a6afa0aafb3bc199d83214cc05dfa4e9fcf805c238d7ea97bce06df3c4132411",
   "plan_how_is_it_going": "2c83e5104466a15b46152c4959d1b62141f1d85c21ed4f7738cc65ee2646bbda",
@@ -389,9 +389,9 @@
   "plan_pace_value_too_tight": "f5c951256e9f099ae901438c815ec9e0149c5a370de6eafd2b2302a1b276297c",
   "plan_pace_win_challenge": "520702e4347740552fb14a814c42c24fc161fae6c83800b40702a17a1a4f0987",
   "plan_pace_win_challenges": "21304560f117bf2512a84261ae4e6ab57241d3c4ca3af9d08ae8b6d599cc5ab1",
-  "plan_past_date_exam_sentence": "b3223d96ecb19ede19516fe42eb63d7e9c22701e3f8ee2701c765a7c49664026",
+  "plan_past_date_exam_sentence": "0de318a4c18250bd589cceaf44e82da05e35130336f3c56e716481d31454b201",
   "plan_past_date_exam_title": "99e429de0ab5b8abd21453bded3a47828d283b75142f8a81e2d07ebec3bab017",
-  "plan_past_date_goal_sentence": "071a03a1a2b8d78094c0c4489134c4c4f0b5389575cbb331355029b44f71c932",
+  "plan_past_date_goal_sentence": "4210dbf4cee98041970843d731052ce49634bbcffe15617b69c298e3c8f84d62",
   "plan_past_date_goal_title": "44ffc128ead601443ccfe042b786d2b119c98643121f1e9e4f37fb76a68ca218",
   "plan_pause_goal": "bf672f3f7c1ddd50b3b5695ce78524c117c280978f76cf385f3626861ba65ec3",
   "plan_phase_after_exam": "4fb0cd462512371792c32da35fb73b392e1b7543febd75923671dae634958680",
@@ -646,8 +646,8 @@
     <string name="plan_resume_effect">오늘부터 계획을 다시 이어 가요. 일시 중지한 기간에 예정되어 있던 레슨부터 시작해요.</string>
     <string name="plan_resume">이어가기</string>
     <string name="plan_cancel">취소</string>
-    <!-- When a free learner resumes a paused goal while following as many goals as the free plan allows. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. Plus is the name of Zoonk's paid plan, not the word "more". -->
-    <string name="plan_goal_limit_reached">무료 요금제에서 동시에 진행할 수 있는 목표 수를 모두 채웠어요. 이 목표를 다시 진행하려면 다른 목표를 일시 중지하세요. Plus를 구독하면 더 많은 목표를 동시에 진행할 수 있어요.</string>
+    <!-- When a learner resumes a paused goal while studying as many goals at once as they can. Pausing a goal keeps its progress. -->
+    <string name="plan_goal_limit_reached">한 번에 학습할 수 있는 목표 수를 다 채웠어요. 목표 하나를 일시 중지하거나 구독해서 더 많은 목표를 학습하세요.</string>
     <string name="plan_save_failed">저장하지 못했어요. 다시 시도해 보세요.</string>
     <plurals name="plan_phases_done">
         <item quantity="other">단계 %1$d개 완료(총 %2$d개)</item>
@@ -857,10 +857,10 @@
         <item quantity="other">하루에 %1$d분씩 더 공부하면 %2$s 뒤에는 다시 계획대로 학습할 수 있어요.</item>
     </plurals>
     <plurals name="plan_past_date_exam_sentence">
-        <item quantity="other">시험일에 레슨 %d개가 남아 있었어요.</item>
+        <item quantity="other">레슨 %d개가 남은 채로 시험 날짜가 지났어요.</item>
     </plurals>
     <plurals name="plan_past_date_goal_sentence">
-        <item quantity="other">목표 날짜가 되었을 때 레슨 %d개가 남아 있었어요.</item>
+        <item quantity="other">레슨 %d개가 남은 채로 종료일이 지났어요.</item>
     </plurals>
     <string name="plan_this_week">이번 주</string>
     <string name="plan_week_time">%1$s / %2$s</string>

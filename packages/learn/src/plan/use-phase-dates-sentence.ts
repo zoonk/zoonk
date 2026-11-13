@@ -1,64 +1,52 @@
 "use client";
 
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { daysBetween, useFormatIsoDate } from "../_utils/iso-date";
+import { toLabelCase } from "../_utils/label-case";
 
-export function usePhaseDatesSentence() {
+/** One thing moves: which, and why in the learner's terms. The moved dates are the change's effect. */
+export function usePhaseDatesQuestion() {
   const t = useExtracted();
-  const format = useFormatter();
   const formatDate = useFormatIsoDate();
 
-  return (effect: PlanChangeView["effect"]): string => {
+  return (effect: PlanChangeView["effect"]): { title: string; why: string | null } => {
     const moves = effect?.phaseEnds ?? [];
     const late = moves.filter((move) => move.lessonsFirst);
     const resting = moves.filter((move) => move.restDay);
-    const outcomes = effect?.outcomesAdded ?? [];
     const [first] = late;
     const [rest] = resting;
 
     if (late.length > 1) {
-      return t(
-        "Some lessons are taking longer than planned, so the challenges that end these phases now come before them. Moving their dates fits the lessons in first.",
-      );
+      return {
+        title: t("Move your phase dates later?"),
+        why: t("That gives you time to finish each phase's lessons."),
+      };
     }
 
     if (first) {
-      return t(
-        "Some lessons are taking longer than planned, so the challenge that ends {phase} now comes before them. Moving that end {days, plural, one {# day} other {# days}} later fits them in first.",
-        { days: daysBetween(first.before, first.after), phase: first.name },
-      );
+      return {
+        title: t(
+          "{days, plural, one {Move the end of {phase} # day later?} other {Move the end of {phase} # days later?}}",
+          { days: daysBetween(first.before, first.after), phase: first.name },
+        ),
+        why: t("That gives you time to finish its lessons."),
+      };
     }
 
     if (resting.length > 1) {
-      return t(
-        "{count} phase challenges fall on days you rest. Moving your phase dates gives them study days.",
-        { count: String(resting.length) },
-      );
+      return { title: t("Move your phase dates off rest days?"), why: null };
     }
 
     if (rest) {
-      return t(
-        "{phase} ends with a challenge on {day}, a day you rest. Moving your phase dates gives it a study day.",
-        { day: formatDate(rest.before, "weekdayDay"), phase: rest.name },
-      );
+      const day = formatDate(rest.before, "weekday");
+
+      return {
+        title: t("Move the end of {phase} off {day}?", { day, phase: rest.name }),
+        why: t("{day} is a day you don't study.", { day: toLabelCase(day) }),
+      };
     }
 
-    if (outcomes.length > 0) {
-      return t(
-        "Keeping your phase dates leaves {outcomes} out by your goal's date. Moving them fits them in.",
-        { outcomes: format.list(outcomes, { type: "conjunction" }) },
-      );
-    }
-
-    if ((effect?.lessonsAdded ?? 0) > 0) {
-      return t(
-        "Some lessons take more or less time than planned. Moving your phase dates fits more of them before your goal's date.",
-      );
-    }
-
-    return t(
-      "A phase's challenge falls on a day without room for it. Moving your phase dates gives it room.",
-    );
+    return { title: t("Move your phase dates?"), why: null };
   };
 }

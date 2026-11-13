@@ -1,7 +1,7 @@
 "use client";
 
 import { postFromBrowser } from "@/lib/api/browser-api";
-import { readRefusedLimit } from "@/lib/api/refused-limit";
+import { readRefusedLessonLimit } from "@/lib/api/refused-limit";
 import { ensureGuestSession } from "@/lib/guest/ensure-guest-session";
 import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes";
 import { type LessonLimit } from "@zoonk/learn/help-limit";
@@ -25,7 +25,7 @@ function readAnswer({
 }): LessonWritingAnswer {
   const code = isJsonObject(body) ? getString(body.error, "code") : null;
 
-  const limit = readRefusedLimit({ body, status: response.status });
+  const limit = readRefusedLessonLimit({ body, status: response.status });
 
   if (limit) {
     return { limit, status: "refused" };

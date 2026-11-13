@@ -31,27 +31,25 @@ function Calibration() {
 
   return (
     <>
-      <ListRowDescription className="text-foreground pt-1">
-        {t({
-          description: '"Sure" and "unsure" group the answers the learner was sure or unsure of.',
-          message:
-            "In your mock exams: sure, {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}}. Unsure, {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}}.",
-          values: {
+      <ListRowDescription className="text-foreground">
+        {t(
+          "In your mock exams: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}} when not flagged, {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}} when flagged.",
+          {
             sureAnswered: String(calibration.sure.answered),
             sureRight: calibration.sure.right,
             unsureAnswered: String(calibration.unsure.answered),
             unsureRight: calibration.unsure.right,
           },
-        })}
+        )}
       </ListRowDescription>
       {calibration.advice === "blankUnsure" && (
         <ListRowDescription>
-          {t("Your unsure answers cost more than they earn: leave those blank.")}
+          {t("Your flagged answers cost more than they earn: leave those blank.")}
         </ListRowDescription>
       )}
       {calibration.advice === "keepAnswering" && (
         <ListRowDescription>
-          {t("Your unsure answers still earn points: keep answering them.")}
+          {t("Your flagged answers still earn points: keep answering them.")}
         </ListRowDescription>
       )}
     </>

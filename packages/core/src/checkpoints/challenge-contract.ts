@@ -82,7 +82,7 @@ export type ChallengeView = {
   status: ChallengeStatus;
   timeZone: string | null;
   title: string;
-  /** The learner's today, YYYY-MM-DD, so screens say "Today" or "Sunday" for `date`. */
+  /** The learner's today, YYYY-MM-DD, to place `date` against. */
   today: string;
   /** Plan-ordered topics; empty for mocks and language calls. */
   topics: ChallengeTopic[];

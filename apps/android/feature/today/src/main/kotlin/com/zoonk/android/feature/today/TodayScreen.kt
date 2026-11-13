@@ -4,7 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -58,9 +58,11 @@ import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.StatusMessage
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.rememberGoalExamples
 import com.zoonk.android.ui.scaffold.BeforeFold
+import com.zoonk.android.ui.scaffold.BottomBar
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.TabRootScaffold
 import com.zoonk.android.ui.scaffold.pagePadding
@@ -212,30 +214,41 @@ private fun TodayRead(
 }
 
 @Composable
-private fun WelcomeBack(
+internal fun WelcomeBack(
     suggestion: SuggestedGoal,
     viewModel: TodayViewModel,
     padding: PaddingValues,
 ) {
-    TodayPage(padding) {
+    TodayPage(
+        padding,
+        note = if (viewModel.answerFailed) ({ BarFailure(stringResource(R.string.today_save_failed)) }) else null,
+        bottomBar = {
+            TaskActions(
+                back = {
+                    OutlinedButton(
+                        enabled = !viewModel.isAnswering,
+                        onClick = { viewModel.answer(suggestion, accepted = false, hasGoal = false) },
+                    ) {
+                        Text(stringResource(R.string.today_not_now))
+                    }
+                },
+            ) { main ->
+                Button(
+                    enabled = !viewModel.isAnswering,
+                    onClick = { viewModel.answer(suggestion, accepted = true, hasGoal = false) },
+                    modifier = main,
+                ) {
+                    Text(stringResource(R.string.today_suggested_goal_accept))
+                }
+            }
+        },
+    ) {
         TodayPageHeader(stringResource(R.string.today_welcome_back))
         TodayStatusLine(
             icon = R.drawable.ic_explore,
             sentence = stringResource(R.string.today_suggested_goal_question, suggestion.title),
             clause = stringResource(R.string.today_suggested_goal_detail),
         )
-        TodayActions {
-            Button(enabled = !viewModel.isAnswering, onClick = { viewModel.answer(suggestion, accepted = true, hasGoal = false) }) {
-                Text(stringResource(R.string.today_suggested_goal_accept))
-            }
-            OutlinedButton(
-                enabled = !viewModel.isAnswering,
-                onClick = { viewModel.answer(suggestion, accepted = false, hasGoal = false) },
-            ) {
-                Text(stringResource(R.string.today_not_now))
-            }
-        }
-        if (viewModel.answerFailed) SaveFailed(stringResource(R.string.today_save_failed))
     }
 }
 
@@ -290,7 +303,7 @@ private fun ExplanationContinue(
             supporting = { Text(stringResource(R.string.today_quick_explanation)) },
         )
         Button(onClick = { navigator.open(AppRoute.Explain(explanation.id.toString())) }) {
-            Text(stringResource(R.string.today_continue_explanation))
+            Text(stringResource(R.string.today_continue_draft))
         }
     }
 }
@@ -310,7 +323,7 @@ internal fun UnfinishedGoal(
             modifier = Modifier.bleed(LIST_ITEM_INSET),
             highlighted = true,
             leading = { androidx.compose.material3.Icon(painterResource(R.drawable.ic_edit), contentDescription = null) },
-            supporting = { Text(stringResource(R.string.onboarding_what_you_wrote)) },
+            supporting = { Text(stringResource(R.string.today_unfinished_setup)) },
         )
         OutlinedButton(onClick = { navigate(AppRoute.StartGoal(draftId = draft.draftId.toString())) }) {
             Text(stringResource(R.string.today_continue_draft))
@@ -329,15 +342,14 @@ private fun GoalAtRest(
 ) {
     val goal = summary?.goals?.firstOrNull { it.id == summary.activeGoalId }
 
+    val newGoal = { navigator.open(AppRoute.StartGoal()) }
+
     if (goal?.status == LearnerSummaryGoal.Status.COMPLETED) {
         TodayAtRest(
             padding = padding,
             icon = R.drawable.ic_flag,
             sentence = stringResource(R.string.today_finished_goal, goal.displayName),
-            clause = stringResource(R.string.today_finished_detail),
-        ) {
-            Button(onClick = { navigator.open(AppRoute.StartGoal()) }) { Text(stringResource(R.string.today_start_new_goal)) }
-        }
+        ) { main -> Button(onClick = newGoal, modifier = main) { Text(stringResource(R.string.today_new_goal)) } }
         return
     }
 
@@ -355,14 +367,14 @@ private fun GoalAtRest(
                 ResumeFailure.Failed -> stringResource(R.string.today_save_failed)
                 null -> null
             },
-    ) {
+        other = if (goal != null) ({ OutlinedButton(onClick = newGoal) { Text(stringResource(R.string.today_new_goal)) } }) else null,
+    ) { main ->
         if (goal != null) {
-            Button(enabled = viewModel.resuming == null, onClick = { viewModel.resume(goal.id) }) {
-                Text(stringResource(R.string.today_resume_goal, goal.displayName), maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Button(busy = viewModel.resuming != null, onClick = { viewModel.resume(goal.id) }, modifier = main) {
+                Text(stringResource(R.string.today_resume))
             }
-            OutlinedButton(onClick = { navigator.open(AppRoute.StartGoal()) }) { Text(stringResource(R.string.today_new_goal)) }
         } else {
-            Button(onClick = { navigator.open(AppRoute.StartGoal()) }) { Text(stringResource(R.string.today_new_goal)) }
+            Button(onClick = newGoal, modifier = main) { Text(stringResource(R.string.today_new_goal)) }
         }
     }
 }
@@ -397,9 +409,8 @@ private fun Preparing(
             padding = padding,
             icon = R.drawable.ic_check,
             sentence = stringResource(R.string.onboarding_plan_ready_goal, read.displayName),
-            clause = stringResource(R.string.onboarding_plan_look_over),
-        ) {
-            Button(onClick = { navigator.open(AppRoute.GoalSetup(read.goalId.toString(), revealMoment = true)) }) {
+        ) { main ->
+            Button(onClick = { navigator.open(AppRoute.GoalSetup(read.goalId.toString(), revealMoment = true)) }, modifier = main) {
                 Text(stringResource(R.string.onboarding_see_plan))
             }
         }
@@ -412,10 +423,9 @@ private fun Preparing(
             padding = padding,
             icon = R.drawable.ic_checklist,
             sentence = stringResource(R.string.today_setting_up_goal, read.displayName),
-            clause = stringResource(R.string.today_setting_up_detail),
-        ) {
-            Button(onClick = { navigator.open(AppRoute.GoalSetup(read.goalId.toString())) }) {
-                Text(stringResource(R.string.today_continue_setting_up))
+        ) { main ->
+            Button(onClick = { navigator.open(AppRoute.GoalSetup(read.goalId.toString())) }, modifier = main) {
+                Text(stringResource(R.string.today_continue_draft))
             }
         }
         return
@@ -464,7 +474,7 @@ private fun PlanWaitStalled(onReconnect: () -> Unit) {
 }
 
 @Composable
-private fun TodayPlanWait(goalTitle: String) {
+internal fun TodayPlanWait(goalTitle: String) {
     Column(
         modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -479,64 +489,60 @@ private fun TodayPlanWait(goalTitle: String) {
     }
 }
 
+/** A goal with no day: what it is in the page, what to do about it in the bottom bar, the main action last. */
 @Composable
-private fun TodayAtRest(
+internal fun TodayAtRest(
     padding: PaddingValues,
-    banner: @Composable () -> Unit = {},
     @DrawableRes icon: Int,
     sentence: String,
-    clause: String,
+    clause: String? = null,
+    banner: @Composable () -> Unit = {},
     detail: @Composable () -> Unit = {},
     failure: String? = null,
-    actions: @Composable () -> Unit,
+    other: (@Composable () -> Unit)? = null,
+    main: @Composable (Modifier) -> Unit,
 ) {
-    TodayPage(padding) {
+    TodayPage(
+        padding,
+        note = failure?.let { { BarFailure(it) } },
+        bottomBar = { TaskActions(back = other) { modifier -> main(modifier) } },
+    ) {
         banner()
         TodayPageHeader(stringResource(R.string.today_title))
         TodayStatusLine(icon = icon, sentence = sentence, clause = clause)
         detail()
-        TodayActions(actions)
-        if (failure != null) SaveFailed(failure)
     }
 }
 
-/** One readable column, scrolled, as main's `Page`. */
+/** One readable column, scrolled, as main's `Page`, over the page's [bottomBar] when it has one. */
 @Composable
 internal fun TodayPage(
     padding: PaddingValues,
+    note: (@Composable () -> Unit)? = null,
+    bottomBar: (@Composable ColumnScope.() -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
     BeforeFold { beforeFold ->
-        Box(
-            modifier = beforeFold.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()),
-            contentAlignment = Alignment.TopCenter,
-        ) {
-            Column(
-                modifier = Modifier.widthIn(max = PAGE_WIDTH).fillMaxWidth().padding(pagePadding()),
-                verticalArrangement = Arrangement.spacedBy(20.dp),
+        Column(beforeFold.fillMaxSize().padding(padding)) {
+            Box(
+                modifier = Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState()),
+                contentAlignment = Alignment.TopCenter,
             ) {
-                content()
+                Column(
+                    modifier = Modifier.widthIn(max = PAGE_WIDTH).fillMaxWidth().padding(pagePadding()),
+                    verticalArrangement = Arrangement.spacedBy(20.dp),
+                ) {
+                    content()
+                }
             }
+            if (bottomBar != null) BottomBar(note = note, columnWidth = PAGE_WIDTH, content = bottomBar)
         }
     }
 }
 
 @Composable
-internal fun TodayActions(content: @Composable () -> Unit) {
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) { content() }
-}
-
-@Composable
-private fun SaveFailed(
-    message: String,
-    modifier: Modifier = Modifier,
-) {
-    Text(
-        text = message,
-        modifier = modifier.semantics { liveRegion = LiveRegionMode.Polite },
-        color = MaterialTheme.colorScheme.error,
-        style = MaterialTheme.typography.bodyMedium,
-    )
+private fun BarFailure(message: String) {
+    Text(text = message, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyMedium)
 }
 
 internal val PAGE_WIDTH = 720.dp

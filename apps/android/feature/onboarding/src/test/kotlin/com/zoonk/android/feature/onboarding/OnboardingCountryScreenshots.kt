@@ -148,7 +148,7 @@ class OnboardingCountryScreenshots {
                                     edits = FactEdits(null, null, null, {}, { _, _ -> }),
                                     onRewrite = {},
                                     onCreateAccount = {},
-                                    onSeePlus = {},
+                                    onSubscribe = {},
                                     onOpenPlan = {},
                                 )
                             } else {

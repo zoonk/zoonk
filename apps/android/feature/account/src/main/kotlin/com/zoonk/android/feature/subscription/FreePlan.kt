@@ -71,8 +71,8 @@ internal fun FreePlanCard(
                         goals(limits.activeGoals),
                         pluralStringResource(
                             R.plurals.subscription_free_lessons_a_month,
-                            count(limits.lessonsPerMonth),
-                            count(limits.lessonsPerMonth),
+                            count(limits.lessonsPer30Days),
+                            count(limits.lessonsPer30Days),
                         ),
                     ),
                 items =
@@ -178,8 +178,8 @@ private fun FreePlanAnswer(
             goals(limits.activeGoals, R.plurals.subscription_answer_free_goals),
             pluralStringResource(
                 R.plurals.subscription_answer_free_lessons,
-                count(limits.lessonsPerMonth),
-                count(limits.lessonsPerMonth),
+                count(limits.lessonsPer30Days),
+                count(limits.lessonsPer30Days),
             ),
             stringResource(
                 R.string.subscription_answer_free_buddy_uploads,

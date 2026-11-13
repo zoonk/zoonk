@@ -15,7 +15,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
-import { ChangeSaveError } from "../_components/save-error";
+import { useChangeSaveFailed } from "../_components/save-error";
 import { type CountryChoice } from "../country/country-choice";
 import { CountryPicker } from "../country/country-picker";
 import { useLessonLanguageLine } from "../country/use-country-lines";
@@ -45,13 +45,13 @@ function ChangeCountryDialog({
     >
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>{t("Change the content country?")}</AlertDialogTitle>
+          <AlertDialogTitle>{t("Change your country?")}</AlertDialogTitle>
           <AlertDialogDescription className="max-h-[50dvh] overflow-y-auto">
             {t({
               description:
                 "{country} is a country's name. It always follows the colon, so it never needs an article or a case.",
               message:
-                "New country: {country}. Your plan will be rebuilt for it. The lessons you've finished stay done, and you can keep studying your current plan until the new one is ready.",
+                "New country: {country}. We'll make a new plan for it. Finished lessons stay done.",
               values: { country: country?.name ?? "" },
             })}
           </AlertDialogDescription>
@@ -61,7 +61,7 @@ function ChangeCountryDialog({
           <AlertDialogCancel disabled={saving}>{t("Cancel")}</AlertDialogCancel>
           <form action={onConfirm} className="contents">
             <AlertDialogAction busy={saving} type="submit">
-              {t("Rebuild plan")}
+              {t("Change country")}
             </AlertDialogAction>
           </form>
         </AlertDialogFooter>
@@ -79,12 +79,10 @@ function ContentCountryControl({ country }: { country: PlanContentCountry }) {
   const lessonLanguage = useLessonLanguageLine()(country.lessonVariety);
   const [open, setOpen] = useState(false);
   const [asking, setAsking] = useState<CountryChoice | null>(null);
-  const [failed, setFailed] = useState(false);
+  const saveFailed = useChangeSaveFailed();
   const [saving, startSaving] = useTransition();
 
   const pick = (picked: CountryChoice | null) => {
-    setFailed(false);
-
     if (!picked || picked.code === country.code) {
       setOpen(false);
       return;
@@ -106,7 +104,11 @@ function ContentCountryControl({ country }: { country: PlanContentCountry }) {
       // Updates after an `await` join the transition only when started in one again.
       startSaving(() => {
         setAsking(null);
-        setFailed(!saved);
+
+        if (!saved) {
+          saveFailed();
+        }
+
         setOpen(!saved);
       });
     });
@@ -114,13 +116,12 @@ function ContentCountryControl({ country }: { country: PlanContentCountry }) {
 
   return (
     <section className="flex flex-col gap-2">
-      <h3 className="text-sm font-medium">{t("Content country")}</h3>
+      <h3 className="text-sm font-medium">{t("Country")}</h3>
 
       <Button
         aria-haspopup="dialog"
         className="h-auto min-h-9 justify-between py-1.5 text-left whitespace-normal"
         onClick={() => {
-          setFailed(false);
           setOpen(true);
         }}
         type="button"
@@ -140,9 +141,7 @@ function ContentCountryControl({ country }: { country: PlanContentCountry }) {
         suggested={country.suggested}
         title={t("Country")}
         value={country.code}
-      >
-        {failed && <ChangeSaveError />}
-      </CountryPicker>
+      />
 
       <ChangeCountryDialog
         country={asking}

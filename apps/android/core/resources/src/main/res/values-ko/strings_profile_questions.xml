@@ -5,11 +5,11 @@
   "profile_questions_activities_placeholder": "76572fa9e5acc0ba5069605db3003dea72e47f00e0bb9496d3232c735f79e7d2",
   "profile_questions_activities_title": "98bafbf978de934c2f01913fea46e1c9d7d8b63d7b848064418655b157599685",
   "profile_questions_add": "84a9dfa8332523c01f1228b875fa9c1e6ba5b65ca9c46756c7bfb1be0526a133",
-  "profile_questions_address_description": "2a51eb17893325670d291e022b2851e1554c7d286670274f72b9d1f3e23fadb3",
+  "profile_questions_address_description": "ef379534c6ea4173d6e951e3a4126de2d9d846d04381b0b67193b595805a0840",
   "profile_questions_address_title": "618aebe3788d8c734e107d63129be001670cdf52e6da5964a90a5db7eba967a6",
   "profile_questions_cap": "fa71a9486bd5782b82710874fd3ac914ce7b7296c0b02ab048a34052c1eaff7e",
   "profile_questions_condition_note": "94b84b91fcb7ffb267f80babf4b30638946c1d7d1c6c57ffb5fc9496c937baef",
-  "profile_questions_conditions_description": "dc0bbb192c6dba4bca6ea01b08a365484867c9fc22cce5e4bb651ff38a1c734c",
+  "profile_questions_conditions_description": "eb1feda258c46d10e969c2dc230200cb18e821d49370396493b72aa74c97471d",
   "profile_questions_conditions_saved": "4b6ad5691478e86710740421c422a3ccbbec9a7677ccab100914f44dfd476ec3",
   "profile_questions_conditions_title": "8d166896a970fc3bb9dce6e5c91c574ccc863ac7838f64131c78aa9a5e6cbba1",
   "profile_questions_description": "2b7e129301372058e29449306ae0baae192ce5639ec384dda022cd9a7d595301",
@@ -21,7 +21,7 @@
   "profile_questions_job_placeholder": "3d1a6b5cb64ec094f7fa97451eda2ceaee0b8ab82444628cae34e1215a55c9ef",
   "profile_questions_lesson_ready": "30883b1fefa9522116794f39f4fb3c85ed7418de068c43ba03c7e0179f40efe3",
   "profile_questions_listen_favorites": "f80073de1e607afa77a08a63ea8724dbbe990315141356d77fcd87ef9baf1d6d",
-  "profile_questions_listen_placeholder": "bf28622d925e06972217d870452f736a5c3ecdd4b90c54168dd29e42e9f6aab2",
+  "profile_questions_listen_placeholder": "7180a3d5648aad4fb6989ae37b9e30d32f3ca2cf03ac03088e2a162d0a060d62",
   "profile_questions_listen_title": "fdc24235c5733a73292361baae31085aef8f1a232c9e201dc8f800fd9e48a26d",
   "profile_questions_memory_off": "7407adfd57d80ae92958572dfb0214b9a3c878b29ff8297c4859de15ce7688aa",
   "profile_questions_never_ask": "ff7c5c99d72752954b75e568b66374dd56d2a3f03b385a55e99fd91f4decde90",
@@ -63,7 +63,7 @@
   "profile_questions_suggested": "087be5cca0ea39fdb38d8a7d4f8ebe04637d0e52c61faff4a0e1f4df01740e3c",
   "profile_questions_support_description": "15d8ccdaac0c8b9073340aa9ce7aeeaf8ae339874b458f28cce3745d56d26e8c",
   "profile_questions_support_note": "f7876469a33aae7c539967faa43275ed09e8a95f83236a0f010c86877a79c6d2",
-  "profile_questions_support_note_help": "46db25772c1b75db93ea1a7ce42af5cec6da33a97f569b1b227dc286fd1c7a25",
+  "profile_questions_support_note_help": "e4f3a4f945e562bfe4a4cef367122eaa576e835c46a67e657b87a3a016e5516e",
   "profile_questions_support_placeholder": "9eb15fd974e4470b5938c30ab9840a0e01e31d1a0145283c9a5832fe60cc5d6f",
   "profile_questions_support_title": "a38141384719701cafeb226f27bc7a9cf2b3130d6d0696fbbebf115db6367c1b",
   "profile_questions_title": "7eaf7e63f77e155874272b1473d0e7290e9233f956e78ce7c2975f76f438afb8",
@@ -72,7 +72,7 @@
   "profile_questions_tools_placeholder": "5427a4b77702686600d00bb2132a373cc9cf77686bc5445e02a211ead1ae0ab2",
   "profile_questions_tools_title": "828ecb915e073c7ea20d16cccf939dddffd4f1482169b6fc733d0df0b569fd3d",
   "profile_questions_watch_favorites": "ad8597b9635600133cc5913b34712d3aeb9fb33d0282d5b059f3b3944a78642c",
-  "profile_questions_watch_placeholder": "4f6b57178ccb46a570c21eebec4c958126b7eebb11d22c23d32bb9d3a8520c69",
+  "profile_questions_watch_placeholder": "1cea9e0e40e905d38ffd1b775b0f37ffe8b57a4faeb01b9ed06c5cdfeb86fd87",
   "profile_questions_watch_title": "8811f3e2be668e1a80d59c41821a05a70c98fa6410fea5a9b938fb2bfc1edd9e",
   "profile_questions_which_field": "79ce3ce24a77031993579746709cfdd3e131eca8c452b4025a09b94b894f34ca",
   "profile_questions_work_description": "b6001c83e32a21e0c10bfd4f9889bc2ad63ef6ad7c3960fc7fd719ddbfacf660",
@@ -110,10 +110,10 @@
     <string name="profile_questions_interest_description">최대 3개까지 고르세요. 고른 항목을 레슨 예시에 활용할게요.</string>
     <string name="profile_questions_watch_title">무엇을 즐겨 보나요?</string>
     <string name="profile_questions_watch_favorites">좋아하는 프로그램, 영화, 팀 또는 채널 (선택)</string>
-    <string name="profile_questions_watch_placeholder">예: Star Trek, Flamengo</string>
+    <string name="profile_questions_watch_placeholder">예: Star Trek, Formula 1</string>
     <string name="profile_questions_listen_title">무엇을 즐겨 듣나요?</string>
     <string name="profile_questions_listen_favorites">좋아하는 아티스트나 팟캐스트 (선택)</string>
-    <string name="profile_questions_listen_placeholder">예: Coldplay, Radiolab</string>
+    <string name="profile_questions_listen_placeholder">예: Coldplay, TED Talks Daily</string>
     <string name="profile_questions_play_title">어떤 게임을 좋아하나요?</string>
     <string name="profile_questions_play_favorites">좋아하는 게임 (선택)</string>
     <string name="profile_questions_play_placeholder">예: Catan, Valorant</string>
@@ -124,19 +124,19 @@
     <string name="profile_questions_activities_favorites">그 밖에 관심 있는 게 있나요? (선택)</string>
     <string name="profile_questions_activities_placeholder">예: 빵 굽기, 자동차, 천문학</string>
     <string name="profile_questions_conditions_title">해당하는 항목이 있나요?</string>
-    <string name="profile_questions_conditions_description">선택 사항이에요. 짝꿍이 나에게 맞춰 도와줄 수 있도록 선택한 내용을 프로필에 저장해요. 설정에서 언제든지 삭제할 수 있어요.</string>
+    <string name="profile_questions_conditions_description">선택 사항이에요. 선택한 내용을 바탕으로 콘텐츠를 필요에 맞게 조정해요. 설정에서 언제든 삭제할 수 있어요.</string>
     <string name="profile_questions_condition_note">어떤 점을 알아 두면 좋을까요?</string>
     <string name="profile_questions_support_title">어떤 방법이 공부에 도움이 되나요?</string>
     <string name="profile_questions_support_description">도움이 되는 건 모두 고르세요. 특정 유형에 해당하지 않아도, 진단을 받지 않았어도 괜찮아요.</string>
     <!-- Asks which grammatical forms (feminine, masculine or neutral wording) the app should use for words about the learner, such as "you're right". Not a question about pronouns or identity. -->
     <string name="profile_questions_address_title">여성형, 남성형, 중립형 중 어떤 표현이 좋을까요?</string>
-    <string name="profile_questions_address_description">짝꿍의 말과 피드백에 이 표현을 써요. 레슨은 그대로예요.</string>
+    <string name="profile_questions_address_description">이렇게 이야기할게요.</string>
     <string name="profile_questions_suggested">고른 항목에 보통 어떤 방법이 도움이 되는지 알아봤어요. 원하는 대로 바꿔 보세요.</string>
     <string name="profile_questions_nothing_particular">특별히 없어요</string>
     <string name="profile_questions_something_else">+ 그 밖에 도움이 되는 방법</string>
     <string name="profile_questions_support_note">도움이 되는 방법을 자유롭게 적어 주세요 (선택 사항)</string>
     <string name="profile_questions_support_placeholder">예: 글보다 도표로 보면 더 잘 이해해요</string>
-    <string name="profile_questions_support_note_help">짝꿍이 참고할 수 있도록 기억해 둘게요. 메모리에서 삭제할 수 있어요.</string>
+    <string name="profile_questions_support_note_help">이 내용을 기억해 둘게요. 설정에서 언제든 삭제할 수 있어요.</string>
     <string name="profile_questions_lesson_ready">레슨 1이 준비됐어요.</string>
     <string name="profile_questions_start_lesson">1번 레슨 시작하기</string>
     <string name="profile_questions_save_start_lesson">저장하고 레슨 1 시작하기</string>

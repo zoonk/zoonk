@@ -25,13 +25,15 @@ function getCoverage(subject: SyllabusSubject) {
 function SubjectMastery({ mastery }: { mastery: SyllabusSubject["mastery"] }) {
   const t = useExtracted();
 
+  if (!mastery) {
+    return null;
+  }
+
   return (
     <p className="text-2xs flex flex-col gap-0.5" data-slot="subject-mastery">
-      <span className="font-medium">{t("Mastery")}</span>
+      <span className="font-medium">{t("Right answers")}</span>
       <span className="text-muted-foreground tabular-nums">
-        {mastery
-          ? t("{correct, number} of {answered, number} right", mastery)
-          : t("Shows after a few practice questions")}
+        {t("{done, number} of {total, number}", { done: mastery.correct, total: mastery.answered })}
       </span>
     </p>
   );
@@ -178,10 +180,8 @@ function SubjectDetails({
       )}
 
       {subject.lessonsKnown > 0 && (
-        <DetailProperty label={t("Known before")}>
-          {t("{count, plural, one {# lesson skipped} other {# lessons skipped}}", {
-            count: subject.lessonsKnown,
-          })}
+        <DetailProperty label={t("Skipped")}>
+          {t("{count, plural, one {# lesson} other {# lessons}}", { count: subject.lessonsKnown })}
         </DetailProperty>
       )}
     </DetailProperties>

@@ -86,7 +86,6 @@ fun TodayPracticeRows(
                     PracticeRow(
                         kind = LearnKind.Lesson,
                         title = stringResource(R.string.navigation_completed_lessons),
-                        description = stringResource(R.string.today_completed_lessons_detail),
                     ) { navigate(AppRoute.CompletedLessons) }
                 }
             }
@@ -187,7 +186,7 @@ private fun MistakesRow(
 private fun PracticeRow(
     kind: LearnKind,
     title: String,
-    description: String,
+    description: String? = null,
     trailing: (@Composable () -> Unit)? = null,
     onClick: () -> Unit,
 ) {
@@ -196,7 +195,7 @@ private fun PracticeRow(
         modifier = Modifier.bleed(LIST_ITEM_INSET),
         onClick = onClick,
         leading = { KindDot(kind) },
-        supporting = { Text(description) },
+        supporting = description?.let { { Text(it) } },
         meta = trailing,
     )
 }

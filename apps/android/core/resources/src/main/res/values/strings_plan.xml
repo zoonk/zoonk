@@ -46,8 +46,8 @@
     <string name="plan_resume_effect">Your plan picks up from today, starting with the lessons planned for the days you paused.</string>
     <string name="plan_resume">Resume</string>
     <string name="plan_cancel">Cancel</string>
-    <!-- When a free learner resumes a paused goal while following as many goals as the free plan allows. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. Plus is the name of Zoonk's paid plan, not the word "more". -->
-    <string name="plan_goal_limit_reached">You\'re following as many goals as the free plan allows. Pause another goal to resume this one, or get Plus to follow more.</string>
+    <!-- When a learner resumes a paused goal while studying as many goals at once as they can. Pausing a goal keeps its progress. -->
+    <string name="plan_goal_limit_reached">That\'s all the goals you can study at once. Pause one, or subscribe to study more.</string>
     <string name="plan_save_failed">That didn\'t save. Try again.</string>
 
     <plurals name="plan_phases_done">
@@ -283,12 +283,12 @@
         <item quantity="other">%1$d more minutes a day for %2$s and you\'re keeping pace again.</item>
     </plurals>
     <plurals name="plan_past_date_exam_sentence">
-        <item quantity="one">%d lesson was left before your exam.</item>
-        <item quantity="other">%d lessons were left before your exam.</item>
+        <item quantity="one">Your exam date has passed with %d lesson left.</item>
+        <item quantity="other">Your exam date has passed with %d lessons left.</item>
     </plurals>
     <plurals name="plan_past_date_goal_sentence">
-        <item quantity="one">Your date came with %d lesson left.</item>
-        <item quantity="other">Your date came with %d lessons left.</item>
+        <item quantity="one">Your end date has passed with %d lesson left.</item>
+        <item quantity="other">Your end date has passed with %d lessons left.</item>
     </plurals>
     <string name="plan_this_week">This week</string>
     <string name="plan_week_time">%1$s of %2$s</string>

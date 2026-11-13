@@ -6,9 +6,9 @@ import { Button } from "@zoonk/ui/components/button";
 import { safeAsync } from "@zoonk/utils/error";
 import { CircleMinusIcon, ListPlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
 import { NoticeCard } from "../_components/notice-card";
-import { ChangeSaveError } from "../_components/save-error";
+import { useChangeSaveFailed } from "../_components/save-error";
 import { useSentenceSpace } from "../_utils/locale";
 import { LearnLink } from "../learn-link";
 
@@ -26,7 +26,7 @@ function RestoreButton({
   restore: SubjectActions["restore"];
 }) {
   const t = useExtracted();
-  const [failed, setFailed] = useState(false);
+  const saveFailed = useChangeSaveFailed();
   const [isPending, startTransition] = useTransition();
 
   return (
@@ -35,7 +35,10 @@ function RestoreButton({
         action={() =>
           startTransition(async () => {
             const { data: restored } = await safeAsync(() => restore(areas));
-            setFailed(!restored);
+
+            if (!restored) {
+              saveFailed();
+            }
           })
         }
         className="contents"
@@ -47,10 +50,9 @@ function RestoreButton({
           type="submit"
           variant="outline"
         >
-          {t("Bring it back")}
+          {t("Add it back")}
         </Button>
       </form>
-      {failed && <ChangeSaveError />}
     </div>
   );
 }
@@ -79,17 +81,14 @@ export function NotPlannedCallout({
         {reason === "skipped" && <p>{t("You took this subject out of your plan.")}</p>}
         {reason === "time" && (
           <p>
-            {t({
-              description: '"It" is the subject this page shows.',
-              message: "It doesn't fit in the time you have.",
-            })}
+            {t("This subject isn't in your plan: not enough time before your exam.")}
             {space}
-            <LearnLink className="font-medium underline underline-offset-4" href={adjustHref}>
+            <LearnLink className="font-medium underline underline-offset-2" href={adjustHref}>
               {t("Adjust plan")}
             </LearnLink>
           </p>
         )}
-        {reason === "missing" && <p>{t("Your plan doesn't teach this subject yet.")}</p>}
+        {reason === "missing" && <p>{t("This subject isn't in your plan yet.")}</p>}
         {reason === "skipped" && <RestoreButton areas={subject.areas} restore={actions.restore} />}
       </div>
     </NoticeCard>

@@ -98,11 +98,9 @@ function WritingTestOut({ generationId, page }: { generationId: string; page: Te
 export function TestOutPreparingClient({
   generationId,
   page,
-  plusRequired = false,
 }: {
   generationId: string | null;
   page: TestOutPage;
-  plusRequired?: boolean;
 }) {
   const router = useRouter();
 
@@ -136,8 +134,11 @@ export function TestOutPreparingClient({
       closeHref={page.closeHref}
       limit={writing?.status === "refused" ? writing.limit : null}
       onStart={start}
-      plusRequired={plusRequired || writing?.status === "plusRequired"}
-      run={writing?.status === "failed" && !isPending ? notStartedRun(start) : null}
+      run={
+        (writing?.status === "failed" || writing?.status === "plusRequired") && !isPending
+          ? notStartedRun(start)
+          : null
+      }
       starting={isPending || writing?.status === "ready"}
     />
   );

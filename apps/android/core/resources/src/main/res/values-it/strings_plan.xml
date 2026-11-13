@@ -301,7 +301,7 @@
   "plan_get_recommendation": "9f9df9c3c82dc2469323af7eaddddcb02c31f9ea4403aba79d7b356514654787",
   "plan_go_to_today": "6d8405df23ad5bd8f5ddd9db4a9c2b153c50ed98f43e858da734ce89cfc23268",
   "plan_goal_date": "3b2387408b071dcf4fd9a89a32e2922328f7dfaf159cd5ce379c429fc7457442",
-  "plan_goal_limit_reached": "4f2980ad0c04744d294659a09714738a2e423464b5a08682d3d76a51f539a7fa",
+  "plan_goal_limit_reached": "4172bd9c597093f41e2f7d8ba38417205363d150d2607e0be51651cc67356a04",
   "plan_goal_paused": "41e7bd1ddba1dc05fbacc7f357533839c534a7eb4545e040770da3383335d461",
   "plan_going_deeper": "ddc12c28dc92f0ba0c9e1d51690a959c43ff6e9adf016353b585ce84b1e383fc",
   "plan_how_is_it_going": "b22bf3c0c45f5d84dec6a197a989da5e2c0f6121a978fbd4d0a234a2ef571f4c",
@@ -389,9 +389,9 @@
   "plan_pace_value_too_tight": "b52baddcb3e0e2af308c22a2a7eb3bf882219f9a848420d558d39b7faae654bd",
   "plan_pace_win_challenge": "72263d3f7850a2d76d9c2b493f3f1ab59c1ba11765d46c3735f05f6234a4c054",
   "plan_pace_win_challenges": "8d74522a2316d2a0dd7b8f8d383e785e4796b3d62f24651aeb0e939e81bb9ca8",
-  "plan_past_date_exam_sentence": "1cd13053fba35f892f2385a79698db605a16bcb6dbb742e3303d6b2920ef4717",
+  "plan_past_date_exam_sentence": "68a56adf9a1ea675ce5b2bd2c4310a8cd28a6fa392a8ee1a4d474f119e4baf14",
   "plan_past_date_exam_title": "068b017a270e3c82acc10948ae2e868493a40fdab65f7dbec6c51940ed1420b3",
-  "plan_past_date_goal_sentence": "00b0c086a1bc98ce18471a2d44b53883e3ce0c8e221491d7c8e39da10d308e33",
+  "plan_past_date_goal_sentence": "247bfefd36c4ec9b632abc18333f8e2b3e3e4208838b8cb64af0f11aa12da6d9",
   "plan_past_date_goal_title": "04252d931632ac530107bb37335b18e583c5a01677a4feb581f08959e21021c7",
   "plan_pause_goal": "d938c3727afd8871a3dd68b81eee0489e004eef7b1fc1e3e153da57468513772",
   "plan_phase_after_exam": "4517fd91e3a34b76dfb626c988b13b6ba4312f0c855f9234f9e33cad66c5ded1",
@@ -652,8 +652,8 @@
     <string name="plan_resume_effect">Il tuo piano riparte da oggi, iniziando dalle lezioni previste per i giorni di pausa.</string>
     <string name="plan_resume">Riprendi</string>
     <string name="plan_cancel">Annulla</string>
-    <!-- When a free learner resumes a paused goal while following as many goals as the free plan allows. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. Plus is the name of Zoonk's paid plan, not the word "more". -->
-    <string name="plan_goal_limit_reached">Stai già seguendo il numero massimo di obiettivi consentito dalla formula Free. Metti in pausa un altro obiettivo per riprendere questo, oppure passa a Plus per seguirne di più.</string>
+    <!-- When a learner resumes a paused goal while studying as many goals at once as they can. Pausing a goal keeps its progress. -->
+    <string name="plan_goal_limit_reached">Stai già seguendo il numero massimo di obiettivi. Mettine uno in pausa o abbonati per seguirne di più.</string>
     <string name="plan_save_failed">Il salvataggio non è riuscito. Riprova.</string>
     <plurals name="plan_phases_done">
         <item quantity="one">%1$d fase completata su %2$d</item>
@@ -903,14 +903,14 @@
         <item quantity="other">%1$d minuti in più al giorno per %2$s e sei di nuovo al passo.</item>
     </plurals>
     <plurals name="plan_past_date_exam_sentence">
-        <item quantity="one">Prima dell’esame restava ancora %d lezione da completare.</item>
-        <item quantity="many">Prima dell’esame restavano ancora %d lezioni da completare.</item>
-        <item quantity="other">Prima dell’esame restavano ancora %d lezioni da completare.</item>
+        <item quantity="one">La data dell’esame è passata e hai ancora %d lezione da completare.</item>
+        <item quantity="many">La data dell’esame è passata e hai ancora %d lezioni da completare.</item>
+        <item quantity="other">La data dell’esame è passata e hai ancora %d lezioni da completare.</item>
     </plurals>
     <plurals name="plan_past_date_goal_sentence">
-        <item quantity="one">Alla data scelta restava ancora %d lezione da completare.</item>
-        <item quantity="many">Alla data scelta restavano ancora %d lezioni da completare.</item>
-        <item quantity="other">Alla data scelta restavano ancora %d lezioni da completare.</item>
+        <item quantity="one">La data di fine è passata e hai ancora %d lezione da completare.</item>
+        <item quantity="many">La data di fine è passata e hai ancora %d lezioni da completare.</item>
+        <item quantity="other">La data di fine è passata e hai ancora %d lezioni da completare.</item>
     </plurals>
     <string name="plan_this_week">Questa settimana</string>
     <string name="plan_week_time">%1$s su %2$s</string>

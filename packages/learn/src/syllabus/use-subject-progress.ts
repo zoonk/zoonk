@@ -35,18 +35,16 @@ export function useKnownLine() {
   return function knownLine(subject: SyllabusSectionSubject): string | null {
     if (subject.topicsKnown !== null && subject.topics.length > 0) {
       return subject.topicsKnown > 0
-        ? t(
-            "{count, plural, one {# topic skipped because you already know it} other {# topics skipped because you already know them}}",
-            { count: subject.topicsKnown },
-          )
+        ? t("{count, plural, one {# topic you already know} other {# topics you already know}}", {
+            count: subject.topicsKnown,
+          })
         : null;
     }
 
     return subject.lessonsKnown > 0
-      ? t(
-          "{count, plural, one {# lesson skipped because you already know it} other {# lessons skipped because you already know them}}",
-          { count: subject.lessonsKnown },
-        )
+      ? t("{count, plural, one {# lesson you already know} other {# lessons you already know}}", {
+          count: subject.lessonsKnown,
+        })
       : null;
   };
 }

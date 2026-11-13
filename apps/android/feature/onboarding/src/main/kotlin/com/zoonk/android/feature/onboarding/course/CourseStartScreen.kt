@@ -199,7 +199,7 @@ private fun CourseStartForm(
         }
 
         if (limit == GoalLimitReason.ActiveGoals) {
-            GoalLimitWall(limit, onSeePlus = { remedy(AppRoute.Subscription) }, onOpenPlan = { remedy(AppRoute.Plan()) })
+            GoalLimitWall(limit, onSubscribe = { remedy(AppRoute.Subscription) }, onOpenPlan = { remedy(AppRoute.Plan()) })
             return@SetupColumn
         }
 
@@ -207,7 +207,7 @@ private fun CourseStartForm(
             error = limit?.let(GoalError::Limit),
             onCreateAccount = { remedy(AppRoute.Login) },
             onOpenPlan = { remedy(AppRoute.Plan()) },
-            onSeePlus = { remedy(AppRoute.Subscription) },
+            onSubscribe = { remedy(AppRoute.Subscription) },
         ) {
             if (vm.failure == CourseStartFailure.Failed) {
                 Text(

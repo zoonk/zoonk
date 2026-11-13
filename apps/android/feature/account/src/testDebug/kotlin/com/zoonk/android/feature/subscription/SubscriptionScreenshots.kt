@@ -127,7 +127,7 @@ private val LIMITS =
         examPrepDays = null,
         guestLessons = 3,
         lessonsPerDay = null,
-        lessonsPerMonth = 20,
+        lessonsPer30Days = 20,
         tutorMessagesPerDay = 10,
         uploadsPerDay = 1,
     )

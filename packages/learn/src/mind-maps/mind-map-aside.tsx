@@ -12,20 +12,18 @@ import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { MindMapLimitNotice } from "../_components/help-limit-notice";
 import { KindDot } from "../_components/kind-tile";
-import { PlusMark } from "../_components/plus-lock";
 import { StatusRegion } from "../_components/status-region";
 import { Surface } from "../_components/surface";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
-import { toMindMapSrc } from "./_utils/mind-map-urls";
 import { useStateLines } from "./mind-map-copy";
-import { MindMapDescription, useMindMapAlt } from "./mind-map-description";
+import { MindMapDescription } from "./mind-map-description";
 import { MindMapOutline } from "./mind-map-outline";
 import { type MindMapSave } from "./mind-map-save-button";
+import { MindMapThumbnail } from "./mind-map-thumbnail";
 import { MindMapDownloadLink, MindMapViewer } from "./mind-map-viewer";
 import { type MindMapRequest } from "./use-mind-map-request";
 
-const THUMBNAIL_WIDTH = 640;
 const STATE_TEXT_CLASS = "text-muted-foreground text-sm text-pretty";
 
 function MindMapPicture({
@@ -42,7 +40,6 @@ function MindMapPicture({
   const t = useExtracted();
   const [open, setOpen] = useState(false);
   const descriptionId = useId();
-  const alt = useMindMapAlt({ outline, title });
   const action = buttonVariants({ size: "sm", variant: "ghost" });
 
   return (
@@ -54,16 +51,12 @@ function MindMapPicture({
         onClick={() => setOpen(true)}
         type="button"
       >
-        {/* oxlint-disable-next-line next/no-img-element -- @zoonk/learn doesn't depend on next/image; maps are stored, optimized webp files. */}
-        <img
-          alt={alt}
+        <MindMapThumbnail
           className="aspect-square h-auto w-full object-cover"
-          decoding="async"
-          height={image.height}
+          image={image}
+          outline={outline}
           sizes="20rem"
-          src={toMindMapSrc(image.url)}
-          srcSet={`${toMindMapSrc(image.thumbnailUrl)} ${THUMBNAIL_WIDTH}w, ${toMindMapSrc(image.url)} ${image.width}w`}
-          width={image.width}
+          title={title}
         />
       </button>
 
@@ -106,27 +99,6 @@ function StateHeading({ children }: { children: React.ReactNode }) {
       <KindDot className="-translate-y-px" kind="mindMap" />
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">{children}</div>
     </div>
-  );
-}
-
-function LockedMap() {
-  const t = useExtracted();
-  const routes = useLearnRoutes();
-
-  return (
-    <LearnLink
-      className="hover:bg-muted/60 focus-visible:ring-ring -mx-2 flex flex-col rounded-lg px-2 py-1.5 outline-none focus-visible:ring-2"
-      data-slot="mind-map-locked"
-      href={routes.upgrade}
-    >
-      <StateHeading>
-        <p className="text-reading flex items-center justify-between gap-3 font-medium">
-          {t("Mind map")}
-          <PlusMark className="font-sans" />
-        </p>
-        <p className={STATE_TEXT_CLASS}>{t("Its main ideas in one picture")}</p>
-      </StateHeading>
-    </LearnLink>
   );
 }
 
@@ -204,10 +176,6 @@ export function MindMapAside({
 
   if (shown === "unavailable") {
     return null;
-  }
-
-  if (shown === "plusRequired") {
-    return <LockedMap />;
   }
 
   if (shown === "ready" && view.outline) {

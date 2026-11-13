@@ -13,20 +13,15 @@ import {
   ListRowTrailing,
 } from "../_components/list-group";
 import { StatusMark } from "../_components/status-mark";
-import { useMockNumber, useMockShapeLabel } from "./mock-labels";
+import { getMockSubject, useMockNumber } from "./mock-labels";
 
 function useMeasureText() {
   const t = useExtracted();
   const points = useMockNumber();
 
   return (mock: ExamMockSummary): string => {
-    // An IRT score is only ever an estimate shown as a range (on the Plan), so a past mock
-    // shows what it certainly was: its right answers.
     if (mock.scoring === "net") {
-      return t("Net {score} of {total}", {
-        score: points(mock.measure),
-        total: String(mock.total),
-      });
+      return t("{score} of {total}", { score: points(mock.measure), total: String(mock.total) });
     }
 
     return t(
@@ -52,17 +47,8 @@ export function MockSummaryRow({
   const t = useExtracted();
   const format = useFormatter();
   const measure = useMeasureText();
-  const shapeLabel = useMockShapeLabel();
   const date = format.dateTime(new Date(mock.finishedAt), { day: "numeric", month: "short" });
-  const shape = shapeLabel(mock);
-
-  const label =
-    mock.examQuestions !== null && mock.examQuestions > mock.total
-      ? t(
-          "{shape}, {count, plural, one {# of {examQuestions, number} questions} other {# of {examQuestions, number} questions}}",
-          { count: mock.total, examQuestions: mock.examQuestions, shape },
-        )
-      : shape;
+  const subject = getMockSubject(mock);
 
   const content = (
     <>
@@ -72,7 +58,7 @@ export function MockSummaryRow({
       <ListRowBody>
         <ListRowContent>
           <ListRowTitle>{t("Mock exam {number}", { number: String(mock.number) })}</ListRowTitle>
-          <ListRowDescription>{label ? `${date} · ${label}` : date}</ListRowDescription>
+          <ListRowDescription>{subject ? `${date} · ${subject}` : date}</ListRowDescription>
           {stacked && (
             <ListRowDescription className="font-mono tabular-nums">
               {measure(mock)}

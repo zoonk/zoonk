@@ -5,43 +5,44 @@ import { Button } from "@zoonk/ui/components/button";
 import { DrawerContent } from "@zoonk/ui/components/drawer";
 import { type LucideIcon, Undo2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { ChangeSaveError } from "../_components/save-error";
-import { PhaseEndMoves } from "./phase-end-moves";
+import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
 import { usePlanScreen } from "./plan-context";
-import { useAppliedLine, useChangeSentence } from "./use-change-sentence";
-import { useAppliedEffectText } from "./use-effect-text";
+import { useAppliedLine, usePlanChangeSentence, usePlanDateKind } from "./use-change-sentence";
 import { useUndoChange } from "./use-undo-change";
 
 export function PlanChangeSummary({
   change,
+  children,
   icon: Icon,
 }: {
   change: PlanChangeView;
+  /** What follows the note on its text edge, such as Undo. */
+  children?: React.ReactNode;
   icon: LucideIcon;
 }) {
   const t = useExtracted();
-  const sentence = useChangeSentence();
+  const sentence = usePlanChangeSentence();
   const appliedLine = useAppliedLine();
-  const effectText = useAppliedEffectText();
+  const dateKind = usePlanDateKind();
   const { plan } = usePlanScreen();
   // A choice that sets back what the latest change set is its Undo (see `changeGoalPlan`).
   const undone = change.status === "undone";
-  const effect = undone ? null : effectText(change, plan.schedule);
+  const byDate = plan.schedule.targetDate !== null && !plan.schedule.fullCourse;
 
   return (
     <div className="flex items-start gap-3" role="status">
       <span aria-hidden="true" className="flex h-6 shrink-0 items-center">
         <Icon className="text-muted-foreground size-4" />
       </span>
-      <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+      <div className="flex min-w-0 flex-1 flex-col gap-1.5">
         <p className="font-medium text-pretty">
           {undone ? t("Undone. Your plan is back as it was.") : sentence(change)}
         </p>
-        {effect && <p className="text-muted-foreground text-sm">{effect}</p>}
+        {!undone && <PlanEffectDiff byDate={byDate} dateKind={dateKind} effect={change.effect} />}
         {!undone && (
           <p className="text-muted-foreground text-sm">{appliedLine(change.todaySession)}</p>
         )}
-        {!undone && <PhaseEndMoves effect={change.effect} />}
+        {children}
       </div>
     </div>
   );
@@ -57,7 +58,7 @@ export function PlanChangeApplied({
   onDone: () => void;
 }) {
   const t = useExtracted();
-  const { failed, isPending, undo } = useUndoChange({ change, onUndone: onDone });
+  const { isPending, undo } = useUndoChange({ change, onUndone: onDone });
 
   return (
     <>
@@ -77,7 +78,6 @@ export function PlanChangeApplied({
             {t("Undo")}
           </Button>
         )}
-        {failed && <ChangeSaveError />}
       </div>
     </>
   );

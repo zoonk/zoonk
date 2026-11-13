@@ -301,7 +301,7 @@
   "plan_get_recommendation": "d2a54a427111e0f0179091bf089ee5d1f43e0e6b96061243b1f0dd277d3d1136",
   "plan_go_to_today": "36a158089e1823ea76dd08fbfa52cb9f8b722bd54bcb9ac4e36f86fbe50d0d50",
   "plan_goal_date": "5aa8e7d3452151e824211fc2878e8ce22f4ea819d96b9ed87bd3ad28903fad46",
-  "plan_goal_limit_reached": "04532266d3b8be28e11a48c6de71d229d2a093a5bae5c5c8433125cb157f6863",
+  "plan_goal_limit_reached": "4b0b289a202d9548748bda6ce1ab6ae588d95dfa59c499ee7090c2eeb1b5ebf3",
   "plan_goal_paused": "1045372d879d08c975679cc0279b44a73830d65339e66049f0126f6049bea082",
   "plan_going_deeper": "3a9cddd2ad991c18a9de81c142f2d15dcb79feb2ef26e6e9e370b48517b1776c",
   "plan_how_is_it_going": "f81934a885b353446ce04d1aaff98f4e453f1dea919bf89201bbc63845e0d55d",
@@ -389,9 +389,9 @@
   "plan_pace_value_too_tight": "99537d565c3929828fdcdfa7c284faa8848c29c6eb94140986bd3f0b4873b6ca",
   "plan_pace_win_challenge": "1c45d9a5e90c144631fae72f85e84a07309d8eb73c65eba55d3eb3f708a7f27a",
   "plan_pace_win_challenges": "793e9da97a2ec35082f6be4e8405385328279222b8432376b4b16582a010bda5",
-  "plan_past_date_exam_sentence": "f60c41fb9d2cb12c6081e810bfbbee5851eb3217580042b3d995fb17c6c47f1a",
+  "plan_past_date_exam_sentence": "9a1a0c925be5af3126552b5fd0e2975d34e2d27a5ef964e13fca6b74300e5660",
   "plan_past_date_exam_title": "ed06f60cf5f6c3cec1097293f9bea8f8e63f9fb03dac053aa0ee2cccd029bf01",
-  "plan_past_date_goal_sentence": "eec283d7aac3c5c8f1db71ae6e75c5a81a2db40b608899d9f906c4c4d03996c3",
+  "plan_past_date_goal_sentence": "e184ac6c4ff99a5e4c12de5c21de5d1855de5b272adf7bae6d9cd0ca229b36c4",
   "plan_past_date_goal_title": "62cf3fd7c516686943704136b62b189bf489ed7b63cefd8947125e9c88f0e49f",
   "plan_pause_goal": "72706ccaf7949d6b0873a17bf73a959c2fce44bb214165d07c8dcf8b5a4b4359",
   "plan_phase_after_exam": "45db19d76d5e81d2ca259c0fd7e834fde6d8a03584462b7004736fb5d2b98104",
@@ -646,8 +646,8 @@
     <string name="plan_resume_effect">今日から学習計画を再開し、休んでいた日に予定されていたレッスンから進めます。</string>
     <string name="plan_resume">再開する</string>
     <string name="plan_cancel">キャンセル</string>
-    <!-- When a free learner resumes a paused goal while following as many goals as the free plan allows. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. Plus is the name of Zoonk's paid plan, not the word "more". -->
-    <string name="plan_goal_limit_reached">無料プランで同時に進められる目標の上限に達しています。ほかの目標を一時停止すると、この目標を再開できます。Plusに登録すれば、より多くの目標を同時に進められます。</string>
+    <!-- When a learner resumes a paused goal while studying as many goals at once as they can. Pausing a goal keeps its progress. -->
+    <string name="plan_goal_limit_reached">同時に学習できる目標の上限に達しました。ほかの目標を一時停止するか、サブスクリプションに登録すると、この目標も学習できます。</string>
     <string name="plan_save_failed">保存できませんでした。もう一度お試しください。</string>
     <plurals name="plan_phases_done">
         <item quantity="other">%1$d / %2$dフェーズ完了</item>
@@ -857,10 +857,10 @@
         <item quantity="other">1日の学習時間を%1$d分増やして%2$s続けると、また順調なペースに戻れます。</item>
     </plurals>
     <plurals name="plan_past_date_exam_sentence">
-        <item quantity="other">試験日を迎えた時点で、%dレッスンが残っていました。</item>
+        <item quantity="other">%dレッスンが残ったまま、試験日を過ぎました。</item>
     </plurals>
     <plurals name="plan_past_date_goal_sentence">
-        <item quantity="other">目標日を迎えた時点で、%dレッスンが残っていました。</item>
+        <item quantity="other">%dレッスンが残ったまま、終了予定日を過ぎました。</item>
     </plurals>
     <string name="plan_this_week">今週</string>
     <string name="plan_week_time">%1$s / %2$s</string>
