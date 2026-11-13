@@ -231,7 +231,12 @@ test.describe("A lesson still being written", () => {
     await expectHydrated(start);
     await start.click();
 
-    await expect(page.getByText("This didn't finish")).toBeVisible();
+    const stopped = page.getByRole("heading", {
+      level: 1,
+      name: "We couldn't get this lesson ready",
+    });
+
+    await expect(stopped).toBeVisible();
 
     await expect(page.getByRole("link", { name: written.title })).toHaveAttribute(
       "href",
@@ -247,7 +252,7 @@ test.describe("A lesson still being written", () => {
         .filter({ hasText: "Writing the lesson" }),
     ).toHaveAttribute("aria-current", "step");
 
-    await expect(page.getByText("This didn't finish")).toBeHidden();
+    await expect(stopped).toBeHidden();
     expect(asked).toHaveLength(2);
     await page.context().close();
   });
