@@ -180,7 +180,7 @@ const DENSE_SEGMENTS = 40;
 
 const SEGMENT_CLASS: Record<TaskSegment, string> = {
   ahead: "bg-surface-3",
-  current: "ring-success ring-1 ring-inset",
+  current: "bg-success/40",
   done: "bg-success",
   read: "bg-foreground/25",
   right: "bg-success",
