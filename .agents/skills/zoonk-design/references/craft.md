@@ -160,7 +160,7 @@ Borders and dividers are 1px. A 2px line means a pick or focus. Content casts no
 
 ### Z1. Heights from the set, one height per row
 
-A control's height is one of `Button`'s: 44px for a screen's action (`lg`) and for inputs, 36px by default, 30px beside text (`sm`), 24px inside another control (`xs`); a bar's button is 44px and 40px from `lg`; chips are 22px. Controls on one row share one height, and an icon button is as tall as the button beside it (`icon-sm` beside `sm`, 30px). A page's "…" is as tall as the action beside it, and 30px alone beside the title (`DetailMenu`).
+A control's height is one of `Button`'s: 44px for a screen's action (`lg`) and for inputs, 36px by default, 30px beside text (`sm`), 24px inside another control (`xs`); a top bar's button is 44px and 40px from `lg`; a bottom bar's buttons are 44px at every width; chips are 22px. Controls on one row share one height, and an icon button is as tall as the button beside it (`icon-sm` beside `sm`, 30px). A page's "…" is as tall as the action beside it, and 30px alone beside the title (`DetailMenu`).
 
 - **Check.** In any row of controls, visible heights are equal within 0.5px, and each is in the set.
 - **Usual break.** A 44px select beside 36px buttons in a toolbar.
@@ -241,7 +241,7 @@ Every interface icon on the web is Lucide. Characters, flags, the logo, brand ma
 
 ### I2. Sizes matched to the text
 
-Five sizes (`ICON_RULES`): 16px beside text, 14px as a list's mark, 20px alone in a bar's button or beside 18px text, 24px as an empty state's or a notice's one mark, 12px inside a 24px control. No other size, and icons side by side are one size.
+Five sizes (`ICON_RULES`): 16px beside text, 14px as a list's mark, 20px alone in a bar's button that has no outline or beside 18px text, 24px as an empty state's or a notice's one mark, 12px inside a 24px control. A glyph inside an outlined or filled square button is 16px at every button size. No other size, and icons side by side are one size.
 
 - **Check.** No icon larger than 1.3 times its text's size; one size per row of icons.
 - **Usual break.** `size-4.5` or `size-[18px]`: an icon scaled to fill a gap.
@@ -368,6 +368,7 @@ Then one line: would a principal designer find anything to pick at here, and wha
 Zoonk's own, never findings on a screen. If one looks wrong, report it once as `principle`, with the reason.
 
 - A highlighted or hovered row reaches 10px past the column on both sides, so rows stay square and hairlines straight.
+- The current tab's fill reaches 10px past the column like a highlighted row, so the first tab's label starts on the title's edge.
 - A highlighted row's band is inset 2px top and bottom, so two highlighted rows in a list don't touch; the row is still its full height.
 - A chat bubble has one small corner, its tail, on the side of who wrote it.
 - A control with no outline hangs its hover box past the column so its glyph's ink sits on the edge (`edge`).
