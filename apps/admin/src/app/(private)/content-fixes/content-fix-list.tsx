@@ -8,7 +8,8 @@ import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
 import { type ContentFixListItem, listContentFixes } from "@/data/content-fixes/list-content-fixes";
 import { formatDateTime } from "@/lib/format";
 import { TableCell } from "@zoonk/ui/components/table";
-import { ContentFixStatusBadge } from "./content-fix-status";
+import Link from "next/link";
+import { ContentFixStatusBadge, contentFixState } from "./content-fix-status";
 
 const PENDING_COLUMNS: AdminTableColumn[] = [
   { label: "Fix" },
@@ -28,6 +29,15 @@ function ContentFixRow({ fix, withDecision }: { fix: ContentFixListItem; withDec
             {fix.reason}
           </span>
         </AdminTableRowLink>
+        {fix.batch.size > 1 && (
+          <Link
+            className="text-muted-foreground relative text-xs hover:underline"
+            href={`/content-fixes/batches/${fix.batch.id}`}
+            prefetch
+          >
+            One of {fix.batch.size} proposed together
+          </Link>
+        )}
       </TableCell>
       <TableCell className="max-w-80 min-w-48 text-xs whitespace-normal">
         {fix.location.trail.join(" › ") || "Deleted content"}
@@ -38,7 +48,7 @@ function ContentFixRow({ fix, withDecision }: { fix: ContentFixListItem; withDec
       </TableCell>
       {withDecision && (
         <TableCell className="text-xs">
-          <ContentFixStatusBadge status={fix.status} />
+          <ContentFixStatusBadge state={contentFixState(fix)} />
           <div className="text-muted-foreground mt-1">
             {[formatDateTime(fix.decidedAt), fix.decider?.name].filter(Boolean).join(" · ")}
           </div>

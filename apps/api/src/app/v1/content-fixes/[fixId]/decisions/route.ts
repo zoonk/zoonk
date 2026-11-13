@@ -5,22 +5,19 @@ import {
   contentFixPathParamsSchema,
 } from "@/lib/openapi/schemas/content-fixes";
 import { readBody, readPathParams } from "@/lib/request-input";
-import { approveContentFix, rejectContentFix } from "@zoonk/core/staff/content-fixes/decide";
+import { rejectContentFix } from "@zoonk/core/staff/content-fixes/decide";
 import { NextResponse } from "next/server";
 
 async function createDecision(
   request: Request,
   context: RouteContext<"/v1/content-fixes/[fixId]/decisions">,
 ) {
-  const [path, body] = await Promise.all([
+  const [path] = await Promise.all([
     readPathParams(context, contentFixPathParamsSchema),
     readBody(request, contentFixDecisionRequestSchema),
   ]);
 
-  const result =
-    body.decision === "approve"
-      ? await approveContentFix({ assertion: body.assertion, fixId: path.fixId })
-      : await rejectContentFix(path.fixId);
+  const result = await rejectContentFix(path.fixId);
 
   if (result.status === "unauthorized") {
     return errors.unauthorized();

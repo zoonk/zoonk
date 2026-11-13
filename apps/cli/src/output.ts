@@ -35,7 +35,10 @@ function shapeModels(body: Record<string, unknown>, names: string[]) {
   const models = Array.isArray(body.models) ? body.models.filter((model) => isRecord(model)) : [];
 
   if (names.length === 0) {
-    return { models: models.map((model) => model.name) };
+    return {
+      fixable: models.filter((model) => "fixable" in model).map((model) => model.name),
+      models: models.map((model) => model.name),
+    };
   }
 
   const unknown = names.filter((name) => !models.some((model) => model.name === name));

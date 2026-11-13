@@ -2558,9 +2558,9 @@
         }
       }
     },
-    "/content-fixes/{fixId}/approval-options": {
+    "/content-fix-batches/{batchId}/approval-options": {
       "post": {
-        "description": "Starts approving a proposed content fix: a single-use challenge for one of the signed-in staff person's own passkeys, with user verification. Asking again replaces the challenge. Staff sessions only; a CLI login can't approve.",
+        "description": "Starts approving the selected proposed fixes of a batch: one single-use challenge for one of the signed-in staff person's own passkeys, with user verification, stored on exactly those fixes. Asking again replaces it. Staff sessions only; a CLI login can't approve.",
         "operationId": "createContentFixApprovalOptions",
         "security": [
           {
@@ -2570,24 +2570,33 @@
             "cookieAuth": []
           }
         ],
-        "summary": "Start approving a content fix (staff)",
+        "summary": "Start approving content fixes (staff)",
         "tags": [
           "Content fixes"
         ],
         "parameters": [
           {
             "in": "path",
-            "name": "fixId",
+            "name": "batchId",
             "schema": {
               "type": "string",
               "format": "uuid",
               "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-              "description": "Content fix ID"
+              "description": "Content fix batch ID"
             },
             "required": true,
-            "description": "Content fix ID"
+            "description": "Content fix batch ID"
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContentFixApprovalOptionsRequest"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "The options to sign, or why there's nothing to sign",
@@ -2652,9 +2661,112 @@
         }
       }
     },
+    "/content-fix-batches/{batchId}/decisions": {
+      "post": {
+        "description": "Approves the batch's fixes that hold the challenge a passkey assertion signed, then applies each in its own transaction, in proposal order: a fix applies only while every field still holds its recorded value, and otherwise ends stale with nothing changed. `resume` applies what the same approver already approved but didn't finish. A repeat returns where the batch stands. Staff sessions only; a CLI login can't decide.",
+        "operationId": "createContentFixBatchDecision",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Approve content fixes (staff)",
+        "tags": [
+          "Content fixes"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "batchId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Content fix batch ID"
+            },
+            "required": true,
+            "description": "Content fix batch ID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContentFixBatchDecisionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Where each fix of the batch stands, or why the approval wasn't accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContentFixDecision"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Request forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/content-fixes/{fixId}/decisions": {
       "post": {
-        "description": "Approves a proposed content fix with a passkey assertion over its challenge, or rejects it. Approving applies exactly the recorded change, only while every field still holds its recorded value; otherwise the fix ends stale and nothing changes. A repeat returns what was decided first. Staff sessions only; a CLI login can't decide.",
+        "description": "Rejects one proposed content fix. It needs no passkey, since it changes no content. A repeat returns what was decided first. Staff sessions only; a CLI login can't decide.",
         "operationId": "createContentFixDecision",
         "security": [
           {
@@ -2664,7 +2776,7 @@
             "cookieAuth": []
           }
         ],
-        "summary": "Approve or reject a content fix (staff)",
+        "summary": "Reject a content fix (staff)",
         "tags": [
           "Content fixes"
         ],
@@ -2693,7 +2805,7 @@
         },
         "responses": {
           "200": {
-            "description": "What was decided, or why the approval wasn't accepted",
+            "description": "Where the fix stands",
             "content": {
               "application/json": {
                 "schema": {
@@ -9056,7 +9168,7 @@
     },
     "/steps/{stepId}/checks": {
       "post": {
-        "description": "Grades one answer to a lesson screen on the server and records it: the attempt, the review of its skill and, when wrong, an entry in the mistakes notebook. Checks, activities and language exercises are graded by the same code the app runs; typed answers (and the typed fallback of a spoken answer) by the grader. The answer counts toward an open run of the screen's lesson; an answer to a screen that already has a right answer in its progress window, or a miss after three misses there, is graded by code and returned without recording an attempt, mistake or review change. Reuse `attemptId` to replay a saved verdict. `LESSON_RUN_ENDED` (409) means the run finished.",
+        "description": "Grades one answer to a lesson screen on the server and records it: the attempt, the review of its skill and, when wrong, an entry in the mistakes notebook. Checks, activities and language exercises are graded by the same code the app runs; typed answers (and the typed fallback of a spoken answer) by the grader. The answer counts toward an open run of the screen's lesson; an answer to a screen that already has a right answer in its progress window, or a miss after three misses there, is graded by code and returned without recording an attempt, mistake or review change. An answer that isn't right to a screen a staff content fix changed after the run started comes back with `checked: false` and records nothing, since the learner may still be looking at the old screen. Reuse `attemptId` to replay a saved verdict. `LESSON_RUN_ENDED` (409) means the run finished.",
         "operationId": "createStepCheck",
         "security": [
           {
@@ -26133,7 +26245,27 @@
         },
         "additionalProperties": false
       },
-      "ContentFixDecisionRequest": {
+      "ContentFixApprovalOptionsRequest": {
+        "type": "object",
+        "properties": {
+          "fixIds": {
+            "minItems": 1,
+            "maxItems": 250,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "description": "The batch's proposed fixes the approver read and selected"
+          }
+        },
+        "required": [
+          "fixIds"
+        ],
+        "additionalProperties": false
+      },
+      "ContentFixBatchDecisionRequest": {
         "oneOf": [
           {
             "type": "object",
@@ -26229,7 +26361,7 @@
               "decision"
             ],
             "additionalProperties": false,
-            "description": "The approver's own passkey signed this fix's challenge on Admin's page"
+            "description": "The approver's own passkey signed the challenge of the fixes they selected, on Admin's page"
           },
           {
             "type": "object",
@@ -26237,17 +26369,33 @@
               "decision": {
                 "type": "string",
                 "enum": [
-                  "reject"
+                  "resume"
                 ]
               }
             },
             "required": [
               "decision"
             ],
-            "additionalProperties": false
+            "additionalProperties": false,
+            "description": "Applies what this approver already approved but didn't finish"
           }
         ],
         "type": "object"
+      },
+      "ContentFixDecisionRequest": {
+        "type": "object",
+        "properties": {
+          "decision": {
+            "type": "string",
+            "enum": [
+              "reject"
+            ]
+          }
+        },
+        "required": [
+          "decision"
+        ],
+        "additionalProperties": false
       },
       "GenerationWaitInput": {
         "type": "object",
@@ -38641,21 +38789,18 @@
           {
             "type": "object",
             "properties": {
-              "fix": {
-                "$ref": "#/components/schemas/DecidedContentFix"
-              },
               "status": {
                 "type": "string",
                 "enum": [
-                  "decided"
+                  "changed"
                 ]
               }
             },
             "required": [
-              "fix",
               "status"
             ],
-            "additionalProperties": false
+            "additionalProperties": false,
+            "description": "The selection no longer matches the batch's proposed fixes; read it again"
           }
         ],
         "type": "object"
@@ -38719,36 +38864,6 @@
         "additionalProperties": false,
         "description": "Pass to `navigator.credentials.get()` (`startAuthentication` in `@simplewebauthn/browser`)"
       },
-      "DecidedContentFix": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid",
-            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-          },
-          "staleReason": {
-            "nullable": true,
-            "description": "Why approving found the content no longer as the fix described it",
-            "type": "string"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "proposed",
-              "applied",
-              "rejected",
-              "stale"
-            ]
-          }
-        },
-        "required": [
-          "id",
-          "staleReason",
-          "status"
-        ],
-        "additionalProperties": false
-      },
       "ContentFixDecision": {
         "oneOf": [
           {
@@ -38756,11 +38871,15 @@
             "properties": {
               "cacheNotified": {
                 "nullable": true,
-                "description": "Set when this request applied the fix: false means Main shows the old content until its cache expires. Null for an outcome decided earlier.",
+                "description": "Set when this request applied fixes: false means Main shows the old content until its cache expires. Null when it applied none.",
                 "type": "boolean"
               },
-              "fix": {
-                "$ref": "#/components/schemas/DecidedContentFix"
+              "fixes": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/DecidedContentFix"
+                },
+                "description": "Each fix of the batch and where it stands"
               },
               "status": {
                 "type": "string",
@@ -38771,7 +38890,7 @@
             },
             "required": [
               "cacheNotified",
-              "fix",
+              "fixes",
               "status"
             ],
             "additionalProperties": false
@@ -38806,10 +38925,42 @@
               "status"
             ],
             "additionalProperties": false,
-            "description": "The assertion isn't this person's passkey signing this fix's challenge"
+            "description": "The assertion isn't this person's passkey signing the batch's challenge"
           }
         ],
         "type": "object"
+      },
+      "DecidedContentFix": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "staleReason": {
+            "nullable": true,
+            "description": "Why approving found the content no longer as the fix described it",
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "proposed",
+              "approved",
+              "applied",
+              "rejected",
+              "stale"
+            ],
+            "description": "`approved` means a passkey approved it and it hasn't applied yet; the same approver resumes it"
+          }
+        },
+        "required": [
+          "id",
+          "staleReason",
+          "status"
+        ],
+        "additionalProperties": false
       },
       "GoalGenerationRun": {
         "type": "object",
@@ -41669,6 +41820,10 @@
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
+          "checked": {
+            "description": "False when the sentence was corrected after the learner started the lesson: the take wasn't scored or saved and counts neither way. Absent when it was scored",
+            "type": "boolean"
+          },
           "explanation": {
             "nullable": true,
             "description": "What we heard and how to say the words that didn't match",
@@ -41855,7 +42010,7 @@
         "properties": {
           "checked": {
             "type": "boolean",
-            "description": "False for a typed answer that wasn't checked: past a few graded answers to the same screen a day, code still recognizes an accepted answer, and anything else is shown with the sample answer (`correctAnswer`) as not checked, not as wrong. It isn't recorded and saves no mistake. True otherwise."
+            "description": "False when the answer wasn't checked, so show it as not checked, never as wrong. It isn't recorded and saves no mistake. Two cases: a typed answer past a few graded answers to the same screen a day (code still recognizes an accepted answer, and anything else comes with the sample answer in `correctAnswer`), and an answer that isn't right to a screen of any kind whose content, version, word or sentence a staff fix changed after the run started, since the learner may still be looking at the old screen (`correctAnswer` is null). True otherwise."
           },
           "correctAnswer": {
             "nullable": true,
@@ -77723,7 +77878,7 @@
         "properties": {
           "checked": {
             "type": "boolean",
-            "description": "False for a typed answer that wasn't checked: past a few graded answers to the same screen a day, code still recognizes an accepted answer, and anything else is shown with the sample answer (`correctAnswer`) as not checked, not as wrong. It isn't recorded and saves no mistake. True otherwise."
+            "description": "False when the answer wasn't checked, so show it as not checked, never as wrong. It isn't recorded and saves no mistake. Two cases: a typed answer past a few graded answers to the same screen a day (code still recognizes an accepted answer, and anything else comes with the sample answer in `correctAnswer`), and an answer that isn't right to a screen of any kind whose content, version, word or sentence a staff fix changed after the run started, since the learner may still be looking at the old screen (`correctAnswer` is null). True otherwise."
           },
           "correctAnswer": {
             "nullable": true,

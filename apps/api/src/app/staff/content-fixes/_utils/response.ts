@@ -7,7 +7,10 @@ const CREATED = 201;
 export function proposalResponse(result: Awaited<ReturnType<typeof proposeContentFix>>) {
   switch (result.status) {
     case "proposed":
-      return NextResponse.json({ fix: result.fix }, { status: CREATED });
+      return NextResponse.json(
+        { batchId: result.batchId, fixes: result.fixes, reviewUrl: result.reviewUrl },
+        { status: CREATED },
+      );
     case "unauthorized":
       return errors.unauthorized("Run `pnpm zoonk login` to sign in.");
     case "forbidden":

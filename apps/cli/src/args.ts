@@ -15,6 +15,7 @@ export type Command =
   | { name: "request"; request: ApiRequest; shape?: OutputShape };
 
 type Options = {
+  batch?: string;
   fields?: string;
   limit?: string;
   offset?: string;
@@ -132,7 +133,9 @@ function readJsonObject(path: string): Record<string, unknown> {
   const body = parseJson(readText(path));
 
   if (!isRecord(body)) {
-    throw usageError(`${path} must hold one JSON object: { reason, feedbackId?, changes }.`);
+    throw usageError(
+      `${path} must hold one JSON object: { reason, feedbackId?, changes } or { reason, fixes: [{ changes }] }.`,
+    );
   }
 
   return body;
@@ -144,6 +147,16 @@ function requireReason(reason: string | undefined): string {
   }
 
   return reason;
+}
+
+function revertTarget({ args, batch }: { args: string[]; batch: string | undefined }) {
+  const [fixId, ...extra] = args;
+
+  if (extra.length > 0 || (fixId === undefined) === (batch === undefined)) {
+    throw usageError(`"staff fixes revert" takes one fix id, or --batch <batchId>.`);
+  }
+
+  return fixId === undefined ? { batchId: batch } : { fixId };
 }
 
 function get(path: string, shape?: OutputShape): Command {
@@ -224,10 +237,13 @@ const COMMANDS = new Map<string, CommandSpec>([
   [
     "staff fixes revert",
     {
-      arguments: 1,
-      build: ([fixId], { reason }) =>
-        post("/staff/content-fixes/revert", { fixId, reason: requireReason(reason) }),
-      options: ["reason"],
+      arguments: "any",
+      build: (args, { batch, reason }) =>
+        post("/staff/content-fixes/revert", {
+          ...revertTarget({ args, batch }),
+          reason: requireReason(reason),
+        }),
+      options: ["batch", "reason"],
     },
   ],
   [
@@ -305,6 +321,7 @@ function parseCommandLine(argv: string[]) {
       args: argv,
       options: {
         api: { type: "string" },
+        batch: { type: "string" },
         fields: { type: "string" },
         help: { short: "h", type: "boolean" },
         limit: { type: "string" },

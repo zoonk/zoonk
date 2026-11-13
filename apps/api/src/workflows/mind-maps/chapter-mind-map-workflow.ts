@@ -7,8 +7,10 @@ import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { type ChapterMindMapInput } from "./chapter-mind-map-input";
 import {
   checkMindMapStep,
+  claimMindMapRedrawStep,
   drawMindMapStep,
   failMindMapStep,
+  finishMindMapRedrawStep,
   holdMindMapStep,
   removeMindMapImageStep,
   writeMindMapStructureStep,
@@ -74,7 +76,12 @@ async function checkShownMindMap(run: MindMapRun): Promise<ChapterMindMapResult>
     return { hasImage: second.imageUrl !== null };
   }
 
-  await removeMindMapImageStep({ chapterId: run.chapterId, imageUrl: second.imageUrl });
+  await removeMindMapImageStep({
+    chapterId: run.chapterId,
+    imageUrl: second.imageUrl,
+    runId: run.analytics.runId,
+  });
+
   return { hasImage: false };
 }
 
@@ -82,6 +89,7 @@ export async function chapterMindMapWorkflow({
   analytics,
   chapterId,
   lessons,
+  redraw,
 }: ChapterMindMapInput): Promise<ChapterMindMapResult> {
   "use workflow";
 
@@ -101,12 +109,24 @@ export async function chapterMindMapWorkflow({
       await writeLessons({ analytics, chapterId, lessons, runId: workflowRunId });
     }
 
-    await writeMindMapStructureStep(run);
+    const claimed = redraw
+      ? await claimMindMapRedrawStep({ chapterId, runId: workflowRunId })
+      : await writeMindMapStructureStep(run);
+
+    if (!claimed) {
+      return { hasImage: false };
+    }
+
     await drawMindMapStep(run);
+    const result = await checkShownMindMap(run);
+
+    if (redraw) {
+      await finishMindMapRedrawStep({ chapterId, runId: workflowRunId });
+    }
+
+    return result;
   } catch (error) {
     await failMindMapStep({ chapterId, runId: workflowRunId });
     throw error;
   }
-
-  return checkShownMindMap(run);
 }

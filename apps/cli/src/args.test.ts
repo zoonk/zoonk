@@ -82,11 +82,21 @@ describe(parseInvocation, () => {
       method: "POST",
       path: "/staff/content-fixes/revert",
     });
+
+    expect(
+      sentRequest(["staff", "fixes", "revert", "--batch", "batch-1", "--reason", "Wrong batch."]),
+    ).toStrictEqual({
+      body: { batchId: "batch-1", reason: "Wrong batch." },
+      method: "POST",
+      path: "/staff/content-fixes/revert",
+    });
   });
 
   it.each([
     [["staff", "fixes", "propose", "/no/such/fix.json"], "Can't read"],
     [["staff", "fixes", "revert", "fix-1"], "--reason"],
+    [["staff", "fixes", "revert", "fix-1", "--batch", "b", "--reason", "x"], "--batch <batchId>"],
+    [["staff", "fixes", "revert", "--reason", "x"], "--batch <batchId>"],
   ])("refuses %j before sending anything", (argv, message) => {
     expect(() => parseInvocation(argv)).toThrow(
       expect.objectContaining({

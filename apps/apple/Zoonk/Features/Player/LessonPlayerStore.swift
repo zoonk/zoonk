@@ -839,7 +839,7 @@ final class LessonPlayerStore {
     switch checked {
     case .done(.checked(var result)):
       result.answerText = answer.text
-      self.state?.resolve(step.id, result: result)
+      self.state?.resolve(step.id, result: result, counts: result.checked)
       sendUnsaved()
     case .done(.failed), .done(.refused), .failed:
       self.state?.failChecking()
@@ -854,12 +854,15 @@ final class LessonPlayerStore {
       feedback: verdict.feedback)
     result.score = verdict.score
     result.heard = verdict.heard
+    result.checked = verdict.checked
 
-    if case .spokenAnswer(let content, _) = state?.steps[stepId]?.content, !verdict.isCorrect {
+    if case .spokenAnswer(let content, _) = state?.steps[stepId]?.content, !verdict.isCorrect,
+      verdict.checked
+    {
       result.correctAnswer = content.targetText
     }
 
-    state?.resolve(stepId, result: result)
+    state?.resolve(stepId, result: result, counts: verdict.checked)
     sendUnsaved()
   }
 

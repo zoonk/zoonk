@@ -120,6 +120,20 @@ export async function loadStartedLessonIds({
   return new Set(runs.flatMap((run) => getRunLessonId(run) ?? []));
 }
 
+/** The learner's latest unfinished run of a lesson, however long ago it started. */
+export function findOpenLessonRun({ lessonId, userId }: { lessonId: string; userId: string }) {
+  return prisma.learningEvent.findFirst({
+    orderBy: { startedAt: "desc" },
+    select: { startedAt: true },
+    where: {
+      contentIds: { equals: lessonId, path: ["lessonId"] },
+      endedAt: null,
+      kind: { in: [...LESSON_RUN_KINDS] },
+      userId,
+    },
+  });
+}
+
 export function findResumableRun(
   tx: TransactionClient,
   { lessonId, now, userId }: { lessonId: string; now: Date; userId: string },

@@ -103,6 +103,8 @@ struct SpokenAnswerVerdict: Hashable, Sendable {
   let transcript: String
   let feedback: String?
   let heard: SpokenHeard
+  /// False when the sentence was fixed after the learner started: the take counts neither way.
+  var checked = true
 }
 
 /// What was heard, word by word against the expected sentence, and at most two words to practice.

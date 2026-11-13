@@ -1,89 +1,79 @@
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
+import { MAX_BATCH_FIXES } from "./batches";
+import { FIX_HANDLERS } from "./handlers/registry";
 
 /**
- * A typo repeated across a lesson's screens fits, and an approver can still read every row's
- * before and after in one sitting; a bigger rewrite is a new version of the lesson, not a fix.
+ * A review bound on what one fix asks the approver to read, not on what it depends on: a word or
+ * sentence carries the row of every lesson that teaches it, so those rows don't count.
  */
 const MAX_CONTENT_FIX_CHANGES = 10;
+const LESSON_ROW_MODELS = new Set(["LessonSentence", "LessonWord"]);
 
 const MAX_REASON_LENGTH = 2000;
 
-const SET_MODELS = [
-  "Course",
-  "Chapter",
-  "Lesson",
-  "Step",
-  "StepVariant",
-  "AnswerExplanation",
-] as const;
-
 const idSchema = uuidSchema();
-const setModelSchema = z.enum(SET_MODELS);
 const reasonSchema = z.string().trim().min(1).max(MAX_REASON_LENGTH);
+const feedbackSchema = idSchema.meta({ description: "The learner report this fix answers" });
 
-const setChangeSchema = z.strictObject({
-  id: idSchema,
-  model: setModelSchema,
-  set: z
-    .record(z.string(), z.json())
-    .refine((fields) => Object.keys(fields).length > 0, { message: "Set at least one field" })
-    .meta({ description: "Each field's whole new value" }),
+const changesSchema = z
+  .array(
+    z
+      .looseObject({
+        id: idSchema
+          .or(z.record(z.string(), idSchema))
+          .meta({
+            description: "The row's id, or a lesson row's key such as { lessonId, wordId }",
+          }),
+        model: z.string(),
+      })
+      .meta({ description: "{ model, id, <operation> }, as pnpm zoonk staff models lists them" }),
+  )
+  .min(1)
+  .refine(
+    (changes) =>
+      changes.filter((change) => !LESSON_ROW_MODELS.has(change.model)).length <=
+      MAX_CONTENT_FIX_CHANGES,
+    {
+      message: `A fix holds up to ${MAX_CONTENT_FIX_CHANGES} changes besides a word's or sentence's lesson rows; split the rest into fixes of a batch.`,
+    },
+  );
+
+const batchFixSchema = z.strictObject({
+  changes: changesSchema,
+  feedbackId: feedbackSchema.optional(),
+  reason: reasonSchema.optional().meta({ description: "This fix's own reason, if it differs" }),
 });
-
-const retireChangeSchema = z.strictObject({
-  id: idSchema,
-  model: z.literal("Item"),
-  retire: z.literal(true),
-});
-
-const detachPictureChangeSchema = z.strictObject({
-  detachPicture: z.literal(true),
-  id: idSchema,
-  model: z.literal("Step"),
-});
-
-const proposedChangeSchema = z.union([
-  setChangeSchema,
-  retireChangeSchema,
-  detachPictureChangeSchema,
-]);
-
-/** Only reverting a retired question or a detached picture builds these; the CLI can't send them. */
-type InverseChange =
-  | { id: string; model: "Item"; unretire: true }
-  | { attachPicture: string; id: string; model: "Step" };
-
-export type ProposedChange = z.infer<typeof proposedChangeSchema> | InverseChange;
 
 export const contentFixProposalSchema = z
   .strictObject({
-    changes: z.array(proposedChangeSchema).min(1).max(MAX_CONTENT_FIX_CHANGES),
-    feedbackId: idSchema.optional().meta({ description: "The learner report this fix answers" }),
+    changes: changesSchema.optional().meta({ description: "One fix's changes" }),
+    feedbackId: feedbackSchema.optional(),
+    fixes: z
+      .array(batchFixSchema)
+      .min(1)
+      .max(MAX_BATCH_FIXES)
+      .optional()
+      .meta({ description: "A batch: fixes reviewed and approved together, each applied alone" }),
     reason: reasonSchema.meta({ description: "Why the content is wrong, in the proposer's words" }),
+  })
+  .refine((proposal) => (proposal.changes === undefined) !== (proposal.fixes === undefined), {
+    message: "Send changes for one fix or fixes for a batch, not both.",
   })
   .meta({ id: "ContentFixProposal" });
 
 export const contentFixRevertSchema = z
-  .strictObject({ fixId: idSchema, reason: reasonSchema })
+  .strictObject({
+    batchId: idSchema.optional().meta({ description: "Revert every applied fix of this batch" }),
+    fixId: idSchema.optional(),
+    reason: reasonSchema,
+  })
+  .refine((revert) => (revert.batchId === undefined) !== (revert.fixId === undefined), {
+    message: "Name one fixId or one batchId.",
+  })
   .meta({ id: "ContentFixRevert" });
 
-const fieldChangeSchema = z.object({ after: z.json(), before: z.json(), field: z.string() });
-
-const pictureChange = { id: idSchema, mediaAssetId: idSchema, model: z.literal("Step") };
-
-const storedChangeSchema = z.discriminatedUnion("op", [
-  z.object({
-    fields: z.array(fieldChangeSchema).min(1),
-    id: idSchema,
-    model: setModelSchema,
-    op: z.literal("set"),
-  }),
-  z.object({ id: idSchema, model: z.literal("Item"), op: z.literal("retire") }),
-  z.object({ id: idSchema, model: z.literal("Item"), op: z.literal("unretire") }),
-  z.object({ ...pictureChange, op: z.literal("detachPicture") }),
-  z.object({ ...pictureChange, op: z.literal("attachPicture") }),
-]);
+const storedChangeSchema = z.union(FIX_HANDLERS.map((handler) => handler.stored));
 
 export type StoredChange = z.infer<typeof storedChangeSchema>;
 
@@ -95,12 +85,27 @@ export const contentFixChangesSchema = z
 const screenModelSchema = z.enum(["Step", "StepVariant"]);
 
 const effectSchema = z.discriminatedUnion("kind", [
+  z.object({ id: idSchema, kind: z.literal("structureAddressKept") }),
+  z.object({ kind: z.literal("existingPlanGraphsKept") }),
+  z.object({ count: z.int(), kind: z.literal("optionPicturesUnlinked"), stepId: idSchema }),
+  z.object({ id: idSchema, kind: z.literal("itemSetReplaced"), replacementId: idSchema }),
+  z.object({ id: idSchema, kind: z.literal("itemSetRestored") }),
+  z.object({ chapterId: idSchema, kind: z.literal("mindMapRedrawOwed") }),
   z
     .object({ kind: z.literal("lessonVersion"), lessonId: idSchema })
     .meta({ description: "Learners who open the lesson next get the fixed version" }),
   z
     .object({ count: z.int(), kind: z.literal("answerExplanationsDeleted"), stepId: idSchema })
     .meta({ description: "Explanations of wrong answers written from the old screen are deleted" }),
+  z
+    .object({ count: z.int(), kind: z.literal("tutorAnswersDeleted"), stepId: idSchema })
+    .meta({ description: "Tutor answers shared from the old screen are deleted" }),
+  z
+    .object({ count: z.int(), kind: z.literal("variantsKept"), stepId: idSchema })
+    .meta({
+      description:
+        "The screen's versions for a field or tool keep their content; set them in the fix to change them",
+    }),
   z
     .object({ id: idSchema, kind: z.literal("answerKeyChanged"), model: screenModelSchema })
     .meta({ description: "Which answer counts as right changes" }),
@@ -120,12 +125,59 @@ const effectSchema = z.discriminatedUnion("kind", [
     .object({ itemId: idSchema, kind: z.literal("itemRestored") })
     .meta({ description: "New practice can pick the item again" }),
   z
+    .object({ count: z.int(), itemId: idSchema, kind: z.literal("itemExplanationsDeleted") })
+    .meta({
+      description: "Explanations of wrong answers written from the old question are deleted",
+    }),
+  z
+    .object({ itemId: idSchema, kind: z.literal("itemReplaced"), replacementId: idSchema })
+    .meta({
+      description:
+        "New practice asks the replacement; answers, history and mistakes stay with the retired original, whose mistakes no longer replay",
+    }),
+  z
+    .object({
+      answerKeys: z.array(z.string()),
+      kind: z.literal("levelTestChanged"),
+      questions: z.array(z.string()),
+      speaking: z.array(z.string()),
+    })
+    .meta({
+      description:
+        "The level test questions whose words change, those whose right option changes, and the levels whose sentence to say changes",
+    }),
+  z
     .object({
       id: idSchema,
       kind: z.literal("slugKept"),
       model: z.enum(["Course", "Chapter", "Lesson"]),
     })
     .meta({ description: "The title changes but the address keeps its old slug" }),
+  z
+    .object({ id: idSchema, kind: z.literal("voiceOwed"), model: z.enum(["Word", "Sentence"]) })
+    .meta({
+      description:
+        "A clip of the new text is recorded before the fix can be approved; approving writes both",
+    }),
+  z
+    .object({ kind: z.literal("lessonsUpdated"), lessonIds: z.array(idSchema) })
+    .meta({ description: "Every lesson showing the word or sentence changes at once" }),
+  z
+    .object({ kind: z.literal("spokenScreensCopied"), stepIds: z.array(idSchema) })
+    .meta({
+      description: "Spoken screens copy the sentence's new text, translation or romanization",
+    }),
+  z
+    .object({ kind: z.literal("sentenceOrdersOwed"), lessonIds: z.array(idSchema) })
+    .meta({
+      description:
+        "The lessons' other accepted word orders are cleared and written again right after approval",
+    }),
+  z
+    .object({ count: z.int(), kind: z.literal("pronunciationsKept"), wordId: idSchema })
+    .meta({
+      description: "The word's pronunciation guides stay; set them in the fix to change them",
+    }),
 ]);
 
 export type ContentFixEffect = z.infer<typeof effectSchema>;

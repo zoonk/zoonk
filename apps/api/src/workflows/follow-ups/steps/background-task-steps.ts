@@ -12,6 +12,7 @@ import {
 } from "@zoonk/core/memory/insights/daily";
 import { resolveMistakeCause } from "@zoonk/core/mistakes/resolve-cause";
 import { settleOwedSessionDay } from "@zoonk/core/sessions/settle-owed-day";
+import { failContentFixVoice, voiceContentFix } from "@zoonk/core/staff/content-fixes/voice";
 import {
   askToCancelSecondStorePlus,
   endWebPlusBesideStore,
@@ -53,6 +54,16 @@ export async function settleSessionDayStep(input: Parameters<typeof settleOwedSe
 export async function voiceWordStep(input: Parameters<typeof voiceWord>[0]) {
   "use step";
   await voiceWord(input);
+}
+
+export async function voiceContentFixStep(input: { fixId: string }) {
+  "use step";
+  await voiceContentFix(input);
+}
+
+export async function failContentFixVoiceStep(input: { fixId: string }) {
+  "use step";
+  await failContentFixVoice(input);
 }
 
 export async function proposeOnboardingMemoryStep(input: {

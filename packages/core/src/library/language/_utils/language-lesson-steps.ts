@@ -34,6 +34,21 @@ function isSameText(text: string, translation: string): boolean {
   return normalizeDistractorKey(text) === normalizeDistractorKey(translation);
 }
 
+/** What a spoken screen copies from its sentence, so it reads and grades without a join. */
+export function copySpokenSentence(sentence: {
+  romanization?: string | null;
+  sentence: string;
+  translation: string;
+}) {
+  return {
+    targetText: sentence.sentence,
+    ...(isSameText(sentence.sentence, sentence.translation)
+      ? {}
+      : { translation: sentence.translation }),
+    ...(sentence.romanization ? { romanization: sentence.romanization } : {}),
+  };
+}
+
 function getTipText(tip: LanguageLessonContent["tip"]): string {
   const examples = tip.examples.map((example) =>
     isSameText(example.sentence, example.translation)
@@ -75,15 +90,7 @@ function getSentenceSteps({
     .map((sentence) =>
       step(
         "spokenAnswer",
-        {
-          language: targetLanguage,
-          prompt: sentence.prompt,
-          targetText: sentence.sentence,
-          ...(isSameText(sentence.sentence, sentence.translation)
-            ? {}
-            : { translation: sentence.translation }),
-          ...(sentence.romanization ? { romanization: sentence.romanization } : {}),
-        },
+        { language: targetLanguage, prompt: sentence.prompt, ...copySpokenSentence(sentence) },
         { sentenceId: sentence.sentenceId },
       ),
     );
