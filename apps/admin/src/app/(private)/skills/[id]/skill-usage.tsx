@@ -1,9 +1,13 @@
 import { AdminSection } from "@/components/admin-section";
 import { type AdminTableColumn, AdminTableColumns } from "@/components/admin-table-columns";
 import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
+import { StateMark } from "@/components/state-mark";
 import { getSkill } from "@/data/skills/get-skill";
 import { MAX_SKILL_USAGE_ROWS, getSkillUsage } from "@/data/skills/get-skill-usage";
+import { toWords } from "@/lib/format";
 import { ITEM_FORMAT_LABELS, getItemLabel } from "@/lib/item-label";
+import { languageName } from "@/lib/language-filter";
+import { libraryLessonStatusLabels } from "@/lib/library-lesson-filters";
 import { TableCell } from "@zoonk/ui/components/table";
 
 type SkillUsageRows = Awaited<ReturnType<typeof getSkillUsage>>;
@@ -11,21 +15,15 @@ type SkillUsageRows = Awaited<ReturnType<typeof getSkillUsage>>;
 const LESSON_COLUMNS: AdminTableColumn[] = [
   { label: "Lesson" },
   { label: "Level" },
-  { label: "Visibility" },
-  { label: "Content" },
+  { label: "State", size: "wide" },
 ];
 
-const CHAPTER_COLUMNS: AdminTableColumn[] = [
-  { label: "Chapter" },
-  { label: "Level" },
-  { label: "Visibility" },
-];
+const CHAPTER_COLUMNS: AdminTableColumn[] = [{ label: "Chapter" }, { label: "Level" }];
 
 const ITEM_COLUMNS: AdminTableColumn[] = [
-  { label: "Item" },
-  { label: "Format" },
+  { label: "Question" },
+  { label: "Format", size: "wide" },
   { label: "Language" },
-  { label: "Field" },
 ];
 
 function getUsageDescription(total: number): string | undefined {
@@ -56,7 +54,7 @@ export async function SkillUsage({ skillId }: { skillId: string }) {
 
       <AdminSection
         description={getUsageDescription(counts.items)}
-        title={`Items (${counts.items})`}
+        title={`Practice questions (${counts.items})`}
       >
         <SkillItemsTable items={usage.items} />
       </AdminSection>
@@ -67,21 +65,23 @@ export async function SkillUsage({ skillId }: { skillId: string }) {
 function SkillLessonsTable({ lessons }: { lessons: SkillUsageRows["lessons"] }) {
   return (
     <AdminTableColumns
-      unsized
       columns={LESSON_COLUMNS}
       emptyLabel="No lesson teaches this skill."
       isEmpty={lessons.length === 0}
     >
       {lessons.map((lesson) => (
         <AdminTableRow key={lesson.id}>
-          <TableCell className="max-w-96 min-w-56 whitespace-normal">
+          <TableCell className="text-foreground whitespace-normal">
             <AdminTableRowLink href={`/lessons/${lesson.id}`} prefetch={false}>
               {lesson.title}
             </AdminTableRowLink>
           </TableCell>
-          <TableCell className="capitalize">{lesson.level}</TableCell>
-          <TableCell className="capitalize">{lesson.visibility}</TableCell>
-          <TableCell className="capitalize">{lesson.contentStatus}</TableCell>
+          <TableCell>{toWords(lesson.level)}</TableCell>
+          <TableCell>
+            <StateMark state={lesson.contentStatus}>
+              {libraryLessonStatusLabels[lesson.contentStatus]}
+            </StateMark>
+          </TableCell>
         </AdminTableRow>
       ))}
     </AdminTableColumns>
@@ -91,16 +91,14 @@ function SkillLessonsTable({ lessons }: { lessons: SkillUsageRows["lessons"] }) 
 function SkillChaptersTable({ chapters }: { chapters: SkillUsageRows["chapters"] }) {
   return (
     <AdminTableColumns
-      unsized
       columns={CHAPTER_COLUMNS}
       emptyLabel="No chapter was tagged with this skill."
       isEmpty={chapters.length === 0}
     >
       {chapters.map((chapter) => (
         <AdminTableRow key={chapter.id}>
-          <TableCell className="max-w-96 min-w-56 whitespace-normal">{chapter.title}</TableCell>
-          <TableCell className="capitalize">{chapter.level}</TableCell>
-          <TableCell className="capitalize">{chapter.visibility}</TableCell>
+          <TableCell className="text-foreground whitespace-normal">{chapter.title}</TableCell>
+          <TableCell>{toWords(chapter.level)}</TableCell>
         </AdminTableRow>
       ))}
     </AdminTableColumns>
@@ -110,21 +108,19 @@ function SkillChaptersTable({ chapters }: { chapters: SkillUsageRows["chapters"]
 function SkillItemsTable({ items }: { items: SkillUsageRows["items"] }) {
   return (
     <AdminTableColumns
-      unsized
       columns={ITEM_COLUMNS}
-      emptyLabel="No item practices this skill."
+      emptyLabel="No practice question tests this skill."
       isEmpty={items.length === 0}
     >
       {items.map((item) => (
         <AdminTableRow key={item.id}>
-          <TableCell className="max-w-96 min-w-56 whitespace-normal">
+          <TableCell className="text-foreground whitespace-normal">
             <AdminTableRowLink href={`/items/${item.id}`} prefetch={false}>
               <span className="line-clamp-2">{getItemLabel(item)}</span>
             </AdminTableRowLink>
           </TableCell>
           <TableCell>{ITEM_FORMAT_LABELS[item.format]}</TableCell>
-          <TableCell className="uppercase">{item.language}</TableCell>
-          <TableCell>{item.field ?? "—"}</TableCell>
+          <TableCell>{languageName(item.language)}</TableCell>
         </AdminTableRow>
       ))}
     </AdminTableColumns>

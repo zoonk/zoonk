@@ -2,6 +2,7 @@ import {
   type AdminTableColumn,
   AdminTableColumns,
   AdminTableColumnsSkeleton,
+  emptyListLabel,
 } from "@/components/admin-table-columns";
 import { AdminPagination } from "@/components/pagination";
 import { getItemAnswerStats, readItemAnswerStats } from "@/data/items/get-item-answer-stats";
@@ -11,17 +12,12 @@ import { type ItemFormat } from "@zoonk/db";
 import { parseItemListFilters } from "./_utils/item-list-params";
 import { ItemRow } from "./item-row";
 
-const ITEM_COLUMNS: AdminTableColumn[] = [
-  { label: "Item" },
-  { label: "Skill" },
-  { label: "Format" },
-  { label: "Language" },
-  { label: "Field" },
-  { label: "Exam" },
-  { align: "right", label: "Attempts" },
-  { align: "right", label: "Accuracy" },
-  { label: "Provenance" },
-  { label: "Created" },
+const columns: AdminTableColumn[] = [
+  { label: "Question", twoLines: true },
+  { label: "Skill", size: "long" },
+  { label: "Format", size: "wide" },
+  { align: "right", label: "Answers" },
+  { align: "right", label: "Right", size: "wide" },
 ];
 
 /** Resolves the URL into primitive filters so each list state is its own cache entry. */
@@ -67,9 +63,8 @@ async function CachedItemList({
   return (
     <>
       <AdminTableColumns
-        unsized
-        columns={ITEM_COLUMNS}
-        emptyLabel="No items found."
+        columns={columns}
+        emptyLabel={emptyListLabel({ noun: "practice questions", search })}
         isEmpty={items.length === 0}
       >
         {items.map((item) => (
@@ -94,5 +89,5 @@ async function CachedItemList({
 }
 
 export function ItemListSkeleton() {
-  return <AdminTableColumnsSkeleton unsized columns={ITEM_COLUMNS} />;
+  return <AdminTableColumnsSkeleton columns={columns} />;
 }

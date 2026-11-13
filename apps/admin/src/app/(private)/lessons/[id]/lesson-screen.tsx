@@ -1,9 +1,9 @@
 import { AdminJson } from "@/components/admin-json";
+import { ContentWords } from "@/components/content-words";
 import { type LibraryLessonStep } from "@/data/lessons/get-library-lesson";
 import { formatCount, formatPercent, toWords } from "@/lib/format";
 import { isJsonObject } from "@zoonk/utils/json";
 import Link from "next/link";
-import { LessonScreenContent } from "./lesson-screen-content";
 
 export type StepAnswers = { correct: number; total: number };
 
@@ -97,7 +97,7 @@ export function LessonScreen({
         </div>
 
         <div className="flex max-w-prose flex-col gap-3 text-sm leading-6">
-          <LessonScreenContent content={step.content} />
+          <ContentWords content={step.content} />
         </div>
 
         <ScreenLinks step={step} />

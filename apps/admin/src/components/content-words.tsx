@@ -77,11 +77,11 @@ function Answer({ children, label }: { children: string | null; label: string })
 }
 
 /**
- * A screen as its words, the way a learner reads it: the text, the question and its answers with
- * the right one marked. What a kind keeps besides (a chart's data, a challenge's branches) is in
- * the screen's JSON.
+ * A lesson screen or a practice question as its words, the way a learner reads it: the text, the
+ * question and its answers with the right one marked. What a kind keeps besides (a chart's data, a
+ * challenge's branches) is in its JSON.
  */
-export function LessonScreenContent({ content }: { content: unknown }) {
+export function ContentWords({ content }: { content: unknown }) {
   if (!isJsonObject(content)) {
     return null;
   }
@@ -99,6 +99,7 @@ export function LessonScreenContent({ content }: { content: unknown }) {
         {text(content.text) ??
           text(content.problem) ??
           text(content.question) ??
+          text(content.statement) ??
           text(content.prompt) ??
           text(content.mission)}
       </Prose>

@@ -2,6 +2,7 @@ import {
   type AdminTableColumn,
   AdminTableColumns,
   AdminTableColumnsSkeleton,
+  emptyListLabel,
 } from "@/components/admin-table-columns";
 import { AdminPagination } from "@/components/pagination";
 import { listSkills } from "@/data/skills/list-skills";
@@ -10,17 +11,12 @@ import { type LibraryVisibility } from "@zoonk/db";
 import { getSkillListQueryParams, parseSkillListFilters } from "./_utils/skill-list-params";
 import { SkillRow } from "./skill-row";
 
-const SKILL_COLUMNS: AdminTableColumn[] = [
-  { label: "Skill" },
-  { label: "Language" },
+const columns: AdminTableColumn[] = [
+  { label: "Skill", twoLines: true },
   { label: "Level" },
-  { label: "Visibility" },
   { align: "right", label: "Lessons" },
-  { align: "right", label: "Items" },
+  { align: "right", label: "Practice questions", size: "wide" },
   { align: "right", label: "Learners" },
-  { align: "right", label: "Prerequisites" },
-  { label: "Provenance" },
-  { label: "Created" },
 ];
 
 /** Resolves the URL into primitive filters so each list state is its own cache entry. */
@@ -73,9 +69,8 @@ async function CachedSkillList({
   return (
     <>
       <AdminTableColumns
-        unsized
-        columns={SKILL_COLUMNS}
-        emptyLabel="No skills found."
+        columns={columns}
+        emptyLabel={emptyListLabel({ noun: "skills", search })}
         isEmpty={skills.length === 0}
       >
         {skills.map((skill) => (
@@ -96,5 +91,5 @@ async function CachedSkillList({
 }
 
 export function SkillListSkeleton() {
-  return <AdminTableColumnsSkeleton unsized columns={SKILL_COLUMNS} />;
+  return <AdminTableColumnsSkeleton columns={columns} />;
 }

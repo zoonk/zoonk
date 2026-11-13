@@ -1,13 +1,18 @@
-import { AdminSection } from "@/components/admin-section";
-import { DetailField, DetailFields } from "@/components/detail-field";
+import { AdminSection, AdminSectionEmpty } from "@/components/admin-section";
+import { StatTile } from "@/components/stat-tile";
 import { countItemMistakes } from "@/data/items/get-item";
 import {
   getItemAccuracy,
   getItemAnswerStats,
   readItemAnswerStats,
 } from "@/data/items/get-item-answer-stats";
-import { formatPercent } from "@/lib/format";
+import { formatCount, formatPercent } from "@/lib/format";
+import { Meter, MeterFill } from "@zoonk/learn/meter";
+import { CircleCheckIcon, MessageSquareIcon } from "lucide-react";
 
+const PERCENT = 100;
+
+/** How learners did on it. Accounts left out of analytics aren't counted. */
 export async function ItemAnswers({ itemId }: { itemId: string }) {
   "use cache: private";
 
@@ -17,24 +22,33 @@ export async function ItemAnswers({ itemId }: { itemId: string }) {
   ]);
 
   const stats = readItemAnswerStats(answerStats, itemId);
+  const accuracy = getItemAccuracy(stats);
 
   return (
-    <AdminSection
-      description="From learners' answers, without accounts left out of analytics."
-      title="Answers"
-    >
-      <DetailFields>
-        <DetailField label="Attempts">
-          <span className="tabular-nums">{stats.attempts}</span>
-        </DetailField>
-        <DetailField label="Accuracy">{formatPercent(getItemAccuracy(stats))}</DetailField>
-        <DetailField label="Open mistakes">
-          <span className="tabular-nums">{mistakes.open}</span>
-        </DetailField>
-        <DetailField label="Fixed mistakes">
-          <span className="tabular-nums">{mistakes.fixed}</span>
-        </DetailField>
-      </DetailFields>
+    <AdminSection title="Answers">
+      {stats.attempts === 0 ? (
+        <AdminSectionEmpty>No learner has answered it yet.</AdminSectionEmpty>
+      ) : (
+        <div className="grid grid-cols-2 gap-2">
+          <StatTile
+            detail={`${formatCount(mistakes.open, "mistake")} still open`}
+            icon={<MessageSquareIcon />}
+            title="Answers"
+            value={stats.attempts.toLocaleString("en")}
+          />
+          <StatTile
+            detail={
+              <Meter className="mt-1">
+                <MeterFill share={(accuracy ?? 0) / PERCENT} />
+              </Meter>
+            }
+            icon={<CircleCheckIcon />}
+            title="Right"
+            tone="success"
+            value={formatPercent(accuracy)}
+          />
+        </div>
+      )}
     </AdminSection>
   );
 }
