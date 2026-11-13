@@ -3,7 +3,7 @@
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { PlusNotice } from "../../_components/plus-lock";
+import { SubscribeGate } from "../../_components/subscribe-gate";
 import { useLearnRoutes } from "../../learn-context";
 import { LearnLink } from "../../learn-link";
 import { useGoalLimitMessage } from "../goal-errors";
@@ -13,6 +13,7 @@ export function isPlusGoalLimit(reason: GoalLimitReason): boolean {
   return reason === "activeGoals" || reason === "monthlyGoals";
 }
 
+/** The gate a learner meets on trying to start a goal their plan has no room for. */
 export function GoalLimitNotice({ reason }: { reason: GoalLimitReason }) {
   const t = useExtracted();
   const routes = useLearnRoutes();
@@ -23,14 +24,14 @@ export function GoalLimitNotice({ reason }: { reason: GoalLimitReason }) {
 
   if (reason !== "activeGoals") {
     return (
-      <PlusNotice title={t("No more new goals this month")}>
-        {t("More next month, or now with Plus.")}
-      </PlusNotice>
+      <SubscribeGate title={t("No more new goals this month")}>
+        {t("More next month, or subscribe to keep going.")}
+      </SubscribeGate>
     );
   }
 
   return (
-    <PlusNotice
+    <SubscribeGate
       action={
         <LearnLink
           className={buttonVariants({ size: "sm", variant: "outline" })}
@@ -41,8 +42,8 @@ export function GoalLimitNotice({ reason }: { reason: GoalLimitReason }) {
       }
       title={t("That's all the goals you can study at once")}
     >
-      {t("Pause one in your Plan to start another. You can still get a quick explanation here.")}
-    </PlusNotice>
+      {t("Pause one in your Plan, or subscribe to study more at once.")}
+    </SubscribeGate>
   );
 }
 
@@ -62,7 +63,7 @@ export function GoalLimitWall({ reason }: { reason: GoalLimitReason }) {
       </p>
 
       <LearnLink className={cn(buttonVariants({ size: "lg" }), "w-full")} href={routes.upgrade}>
-        {t("See Plus")}
+        {t("Subscribe")}
       </LearnLink>
 
       {reason === "activeGoals" && (

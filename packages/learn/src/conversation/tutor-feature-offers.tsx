@@ -12,11 +12,10 @@ import {
 import { useExtracted, useFormatter } from "next-intl";
 import { KindDot } from "../_components/kind-tile";
 import { ListRowChevron } from "../_components/list-group";
-import { PlusNotice } from "../_components/plus-lock";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { SubjectIcon } from "../syllabus/subject-icon";
-import { OfferCard, OfferLink, OfferTile, usePracticeVerb } from "./tutor-offer-card";
+import { OfferAction, OfferCard, OfferLink, OfferTile, usePracticeVerb } from "./tutor-offer-card";
 
 type Offer<Kind extends TutorToolOffer["kind"]> = Extract<TutorToolOffer, { kind: Kind }>;
 
@@ -64,7 +63,6 @@ export function StartGoalOffer({
   return (
     <OfferCard
       description={t("“{goal}”", { goal: offer.goal })}
-      locked={locked}
       tile={
         <OfferTile>
           <PlusIcon />
@@ -72,11 +70,12 @@ export function StartGoalOffer({
       }
       title={t("Start a new goal")}
     >
-      {locked ? (
-        <PlusNotice inset title={t("Starting another goal now comes with Plus")} />
-      ) : (
-        <OfferLink href={hrefs.start}>{t("Start")}</OfferLink>
-      )}
+      <OfferAction
+        gate={locked ? t("Another goal now needs a subscription") : null}
+        href={hrefs.start}
+      >
+        {t("Start")}
+      </OfferAction>
 
       {offer.course && (
         <CatalogCourseRow
@@ -110,7 +109,6 @@ export function EssayOffer({ href, offer }: { href: string; offer: Offer<"essay"
   return (
     <OfferCard
       description={descriptions[offer.cadence]}
-      locked={locked}
       tile={
         <OfferTile>
           <KindDot kind="essay" />
@@ -118,11 +116,9 @@ export function EssayOffer({ href, offer }: { href: string; offer: Offer<"essay"
       }
       title={offer.subject}
     >
-      {locked ? (
-        <PlusNotice inset title={t("Essay practice comes with Plus")} />
-      ) : (
-        <OfferLink href={href}>{t("Open")}</OfferLink>
-      )}
+      <OfferAction gate={locked ? t("Essay practice needs a subscription") : null} href={href}>
+        {t("Open")}
+      </OfferAction>
     </OfferCard>
   );
 }
@@ -223,16 +219,16 @@ export function PlusOffer({ offer }: { offer: Offer<"plus"> }) {
   return (
     <OfferCard
       description={
-        offer.subscribed ? t("Your plan and its billing.") : t("What Plus includes and its price.")
+        offer.subscribed ? t("Your plan and its billing.") : t("What it includes and its price.")
       }
       tile={
         <OfferTile>
           <SparklesIcon />
         </OfferTile>
       }
-      title={t("Plus")}
+      title={t("Subscription")}
     >
-      <OfferLink href={routes.upgrade}>{offer.subscribed ? t("Manage") : t("See Plus")}</OfferLink>
+      <OfferLink href={routes.upgrade}>{offer.subscribed ? t("Manage") : t("Subscribe")}</OfferLink>
     </OfferCard>
   );
 }

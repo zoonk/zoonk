@@ -5,7 +5,6 @@ import { CrosshairIcon, FastForwardIcon, PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { KindDot } from "../_components/kind-tile";
-import { PlusNotice } from "../_components/plus-lock";
 import {
   type TestOutStart,
   TestOutStartStatus,
@@ -23,7 +22,14 @@ import {
   PronunciationOffer,
   StartGoalOffer,
 } from "./tutor-feature-offers";
-import { OfferButton, OfferCard, OfferLink, OfferTile, usePracticeVerb } from "./tutor-offer-card";
+import {
+  OfferAction,
+  OfferButton,
+  OfferCard,
+  OfferLink,
+  OfferTile,
+  usePracticeVerb,
+} from "./tutor-offer-card";
 import { VarietyOffer } from "./tutor-variety-offer";
 
 export type TutorToolActions = {
@@ -190,7 +196,6 @@ function MockExamOffer({
   return (
     <OfferCard
       description={description}
-      locked={locked}
       tile={
         <OfferTile>
           <KindDot kind="mock" />
@@ -198,11 +203,9 @@ function MockExamOffer({
       }
       title={t("Take a mock exam")}
     >
-      {locked ? (
-        <PlusNotice inset title={t("Mock exams come with Plus")} />
-      ) : (
-        <OfferLink href={href}>{t("Choose")}</OfferLink>
-      )}
+      <OfferAction gate={locked ? t("Mock exams need a subscription") : null} href={href}>
+        {t("Choose")}
+      </OfferAction>
     </OfferCard>
   );
 }

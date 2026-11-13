@@ -13,6 +13,7 @@ import {
 } from "@zoonk/ui/components/collapsible";
 import { PlayIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
+import { useState } from "react";
 import {
   LIST_ROW_INTERACTIVE_CLASS,
   ListRowContent,
@@ -21,6 +22,7 @@ import {
   ListRowLeading,
   ListRowTitle,
 } from "../../_components/list-group";
+import { SubscribeGate } from "../../_components/subscribe-gate";
 import { useFormatDuration } from "../../_utils/time-format";
 import { LearnLink } from "../../learn-link";
 import { useCriterionGloss, useTaskRoleLabel } from "./exam-speaking-labels";
@@ -110,7 +112,7 @@ export function TaskRow({
   index,
   language,
   level,
-  locked,
+  needsSubscription,
   onStart,
   paused,
   resultHref,
@@ -122,7 +124,8 @@ export function TaskRow({
   index: number;
   language: string;
   level: string;
-  locked: boolean;
+  /** The tasks look as they do for a subscriber; "Start" then shows the gate in its place. */
+  needsSubscription: boolean;
   onStart: () => void;
   paused: boolean;
   resultHref: (conversationId: string) => string;
@@ -134,6 +137,7 @@ export function TaskRow({
   const facts = useTaskFacts();
   const gloss = useCriterionGloss();
   const lastTryText = useLastTryText();
+  const [gated, setGated] = useState(false);
 
   return (
     <Collapsible data-slot="speaking-task" defaultOpen={defaultOpen}>
@@ -160,15 +164,16 @@ export function TaskRow({
               ),
             })}
           </p>
+          {gated && <SubscribeGate title={t("Speaking practice needs a subscription")} />}
           <div className="flex flex-wrap gap-2">
             {paused && <p className="text-muted-foreground text-sm">{t("Calls are paused")}</p>}
-            {!locked && (
+            {!paused && !gated && (
               <Button
                 busy={starting}
                 disabled={busy}
                 focusableWhenDisabled
                 icon={<PlayIcon aria-hidden="true" />}
-                onClick={onStart}
+                onClick={needsSubscription ? () => setGated(true) : onStart}
                 size="sm"
               >
                 {t("Start")}

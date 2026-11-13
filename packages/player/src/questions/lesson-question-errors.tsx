@@ -55,7 +55,7 @@ export function RequestErrorMessage({ error }: { error: LessonQuestionApiError |
   }
 
   if (error?.kind === "subscription") {
-    return <>{t("Asking questions comes with Plus.")}</>;
+    return <>{t("Asking questions needs a subscription")}</>;
   }
 
   if (error?.kind === "unavailable") {
@@ -110,7 +110,7 @@ export function QuestionErrorAction({
   if (error?.kind === "subscription") {
     return (
       <Link className={buttonVariants({ className, variant: "outline" })} href={subscriptionHref}>
-        {t("See Plus")}
+        {t("Subscribe")}
       </Link>
     );
   }

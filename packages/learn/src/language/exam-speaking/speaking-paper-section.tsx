@@ -19,7 +19,6 @@ import {
   PageSectionHeader,
   PageSectionTitle,
 } from "../../_components/page";
-import { PlusNotice } from "../../_components/plus-lock";
 import { WritingWait } from "../../generation/writing-wait";
 import { CallLimitReason } from "../conversation/call-limit-message";
 import { type CallStartOutcome, useCallStart } from "../conversation/use-call-start";
@@ -57,7 +56,6 @@ export function SpeakingPaperSection({
   const selected = useRef<string | null>(null);
   const [startedTask, setStartedTask] = useState<string | null>(null);
   const [limit, setLimit] = useState<CallLimit | null>(null);
-  const locked = paper.access === "plusRequired";
 
   const call = useCallStart({
     onStart: async () => {
@@ -82,8 +80,6 @@ export function SpeakingPaperSection({
         <PageSectionTitle id={titleId}>{title ?? t("Speaking")}</PageSectionTitle>
         {!title && <PageSectionDetail>{paper.title}</PageSectionDetail>}
       </PageSectionHeader>
-
-      {locked && <PlusNotice title={t("Speaking practice comes with Plus")} />}
 
       {(paused || call.paused) && (
         <NoticeCard>
@@ -113,7 +109,7 @@ export function SpeakingPaperSection({
                 index={index}
                 language={paper.language}
                 level={paper.level}
-                locked={locked || paused}
+                needsSubscription={paper.access === "plusRequired"}
                 onStart={() => {
                   selected.current = task.key;
                   setStartedTask(task.key);

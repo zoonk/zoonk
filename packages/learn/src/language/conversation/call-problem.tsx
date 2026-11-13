@@ -1,15 +1,15 @@
 "use client";
 
-import { buttonVariants } from "@zoonk/ui/components/button";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
 import { ArrowLeftIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
+import { EnterLink } from "../../_components/enter-button";
 import { type CallLimit, useCallLimitLine } from "../../_components/help-limit-notice";
+import { SubscribeMainAction } from "../../_components/subscribe-gate";
 import { TaskActions } from "../../_components/task-layout";
 import { useLearnRoutes } from "../../learn-context";
-import { LearnLink } from "../../learn-link";
 import { TaskFrame, TaskMainButton, TaskMainLink } from "../../shell/task-frame";
 import { useCallLimitTitle } from "./call-limit-message";
 import { useRefusalCopy } from "./call-refusal-copy";
@@ -17,6 +17,11 @@ import { CallOffMessage } from "./conversation-parts";
 import { type LiveCallError } from "./live-call-lifecycle";
 
 type CallProblemKind = Exclude<LiveCallError, "dropped"> | "takenOver";
+
+/** Sign-up leaves the app's router, so it's a full page load. */
+function PageLink({ children, ...props }: React.ComponentProps<"a">) {
+  return <a {...props}>{children}</a>;
+}
 
 function ProblemMessage({ text, title }: { text: string; title: string }) {
   return (
@@ -54,7 +59,7 @@ function ProblemWithBack({
   );
 }
 
-/** As a lesson's limit screen is: what ran out, when it comes back, the way on, then Back. */
+/** As a lesson's limit screen is: what ran out, when it comes back, and its one way on in the bar. */
 function CallLimitScreen({
   exitHref,
   limit,
@@ -67,29 +72,34 @@ function CallLimitScreen({
   const t = useExtracted();
   const routes = useLearnRoutes();
   const line = useCallLimitLine(limit);
-  const wayOn = buttonVariants({ size: "xl" });
 
   return (
-    <TaskFrame exitHref={exitHref} headerTitle={title}>
+    <TaskFrame
+      exitHref={exitHref}
+      footer={
+        <>
+          {limit.tier === "guest" && (
+            <TaskActions>
+              <EnterLink href={routes.signUp} icon={null} link={PageLink}>
+                {t("Create a free account")}
+              </EnterLink>
+            </TaskActions>
+          )}
+          {limit.tier === "free" && <SubscribeMainAction />}
+          {limit.tier === "plus" && (
+            <TaskActions>
+              <TaskMainLink href={exitHref} icon={<ArrowLeftIcon aria-hidden="true" />}>
+                {t("Back")}
+              </TaskMainLink>
+            </TaskActions>
+          )}
+        </>
+      }
+      headerTitle={title}
+    >
       <CallOffMessage title={useCallLimitTitle(limit)}>
         {line && <p className="text-muted-foreground text-base leading-relaxed">{line}</p>}
       </CallOffMessage>
-
-      <div className="flex flex-col gap-2 sm:flex-row">
-        {limit.tier === "guest" && (
-          <a className={wayOn} href={routes.signUp}>
-            {t("Create a free account")}
-          </a>
-        )}
-        {limit.tier === "free" && (
-          <LearnLink className={wayOn} href={routes.upgrade}>
-            {t("See Plus")}
-          </LearnLink>
-        )}
-        <LearnLink className={buttonVariants({ size: "xl", variant: "outline" })} href={exitHref}>
-          {t("Back")}
-        </LearnLink>
-      </div>
     </TaskFrame>
   );
 }

@@ -13,10 +13,8 @@ import {
   ListRowLeading,
   ListRowLink,
   ListRowTitle,
-  ListRowTrailing,
 } from "../../_components/list-group";
 import { PageEyebrow } from "../../_components/page";
-import { PlusMark } from "../../_components/plus-lock";
 import { LearnPageBar } from "../../shell/learn-bar";
 import { type ExamTaskStart, SpeakingPaperSection } from "./speaking-paper-section";
 import { useTaskMinutes } from "./speaking-task-row";
@@ -42,11 +40,6 @@ export function SpeakingPracticeRow({
             {t("{exam} tasks on a call", { exam: entry.title })}
           </ListRowDescription>
         </ListRowContent>
-        {entry.access === "plusRequired" && (
-          <ListRowTrailing className="font-sans">
-            <PlusMark />
-          </ListRowTrailing>
-        )}
       </ListRowBody>
     </ListRowLink>
   );

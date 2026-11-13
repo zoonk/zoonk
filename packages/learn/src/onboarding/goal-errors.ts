@@ -21,15 +21,17 @@ export function useGoalLimitMessage() {
 
   const messages: Record<GoalLimitReason, string> = {
     activeGoals: t(
-      "That's all the goals you can study at once without Plus. Pause one to start another.",
+      "That's all the goals you can study at once. Pause one, or subscribe to study more.",
     ),
-    dailyExplanations: t("No more quick explanations today. More tomorrow, or now with Plus."),
+    dailyExplanations: t(
+      "No more quick explanations today. More tomorrow, or subscribe to keep going.",
+    ),
     dailyGoals: t("No more new goals today. More tomorrow."),
     guest: t("Without an account, you study one goal. Create a free account to start another."),
     monthlyExplanations: t(
-      "No more quick explanations this month. More next month, or now with Plus.",
+      "No more quick explanations this month. More next month, or subscribe to keep going.",
     ),
-    monthlyGoals: t("No more new goals this month. More next month, or now with Plus."),
+    monthlyGoals: t("No more new goals this month. More next month, or subscribe to keep going."),
     signUpRequired: t("This needs a free account."),
     slowDown: t("You're starting goals quickly. Try again in a few minutes."),
   };
@@ -58,8 +60,8 @@ function useUnderstandingLimit() {
     return {
       message:
         period === "month"
-          ? t("No more new goals this month. More next month, or now with Plus.")
-          : t("No more new goals today. More tomorrow, or now with Plus."),
+          ? t("No more new goals this month. More next month, or subscribe to keep going.")
+          : t("No more new goals today. More tomorrow, or subscribe to keep going."),
       needsAccount: false,
     };
   };

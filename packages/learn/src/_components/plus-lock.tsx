@@ -68,7 +68,7 @@ export function PlusNotice({
                 className={buttonVariants({ size: "sm", variant: "outline" })}
                 href={href ?? routes.upgrade}
               >
-                {t("See Plus")}
+                {t("Subscribe")}
               </LearnLink>
             )}
             {action}

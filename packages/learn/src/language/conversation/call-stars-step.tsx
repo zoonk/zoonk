@@ -17,8 +17,8 @@ import {
   StepHeader,
   StepTitle,
 } from "../../_components/step-card";
-import { ChallengeCallPlusNotice } from "../../challenge/challenge-plus-lock";
 import { StepWithDayMoment } from "../../session/day-moment";
+import { ChallengeCallGate } from "./challenge-call-gate";
 import { useConversationTitle } from "./conversation-labels";
 
 type Result = NonNullable<LanguageConversationView["result"]>;
@@ -158,7 +158,7 @@ export function StarsStep({
 
       <CallFacts conversation={conversation} result={result} />
 
-      {lost && conversation.locked && <ChallengeCallPlusNotice cta />}
+      {lost && conversation.locked && <ChallengeCallGate form="inPlace" />}
 
       {lost && !conversation.locked && (
         <p className="text-muted-foreground text-compact text-pretty">

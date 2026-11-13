@@ -7,6 +7,7 @@ import { PendingLink } from "@zoonk/ui/patterns/links/pending";
 import { UserPlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
+import { GateWords, SubscribeAction } from "./subscribe-gate";
 
 type SignUpRequired = { status: "signUpRequired" };
 
@@ -38,8 +39,6 @@ type LimitNoticeProps = {
   routes: { signUp: string; upgrade: string };
 };
 
-const TEXT_CLASS = "text-muted-foreground text-sm text-pretty";
-
 /** What ran out as the title, and when it comes back as the one line under it. */
 type LimitWords = { line?: string; title?: string };
 
@@ -52,15 +51,6 @@ export function needsAccount(limit: HelpLimit): boolean {
   );
 }
 
-function LimitWordsLines({ line, title }: LimitWords) {
-  return (
-    <div className="flex min-w-0 flex-col gap-0.5" data-slot="limit-words">
-      {title && <p className="text-sm font-medium text-pretty">{title}</p>}
-      {line && <p className={TEXT_CLASS}>{line}</p>}
-    </div>
-  );
-}
-
 function LimitNoticeBody({
   className,
   limit,
@@ -69,32 +59,29 @@ function LimitNoticeBody({
   words,
 }: LimitNoticeProps & { limit: HelpLimit; words: LimitWords }) {
   const t = useExtracted();
-  const action = buttonVariants({ size: "sm", variant: "outline" });
 
   if (limit.status === "slowDown" || (limit.status === "limitReached" && limit.tier === "plus")) {
     return (
       <div className={className}>
-        <LimitWordsLines {...words} />
+        <GateWords {...words} />
       </div>
     );
   }
 
   return (
     <div className={cn("flex flex-col items-start gap-2", className)}>
-      <LimitWordsLines {...words} />
+      <GateWords {...words} />
 
       {needsAccount(limit) ? (
         <PendingLink
-          className={action}
+          className={buttonVariants({ size: "sm", variant: "outline" })}
           href={routes.signUp}
           icon={<UserPlusIcon aria-hidden="true" />}
         >
           {t("Create a free account")}
         </PendingLink>
       ) : (
-        <LinkComponent className={action} href={routes.upgrade}>
-          {t("See Plus")}
-        </LinkComponent>
+        <SubscribeAction href={routes.upgrade} link={LinkComponent} />
       )}
     </div>
   );
@@ -120,8 +107,8 @@ function useComesBackLine() {
     }
 
     return isMonthly(limit)
-      ? t("More next month, or now with Plus.")
-      : t("More tomorrow, or now with Plus.");
+      ? t("More next month, or subscribe to keep going.")
+      : t("More tomorrow, or subscribe to keep going.");
   };
 }
 
@@ -168,7 +155,8 @@ export function useHelpLimitWords(limit: HelpLimit, kind?: HelpKind): LimitWords
     : refusal(limit);
 }
 
-function useLessonLimitWords(limit: LessonLimit): LimitWords {
+/** A free learner's month of lessons is the plan's one allowance, so its title says so. */
+export function useLessonLimitWords(limit: LessonLimit): LimitWords {
   const t = useExtracted();
   const refusal = useRefusalWords();
   const comesBack = useComesBackLine();
@@ -179,6 +167,10 @@ function useLessonLimitWords(limit: LessonLimit): LimitWords {
 
   if (limit.tier === "guest") {
     return { title: t("No more lessons without an account") };
+  }
+
+  if (limit.tier === "free" && isMonthly(limit)) {
+    return { line: comesBack(limit), title: t("You've used this month's free lessons") };
   }
 
   return {

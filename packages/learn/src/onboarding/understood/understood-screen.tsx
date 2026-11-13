@@ -6,7 +6,7 @@ import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
 import { CreateAccountLink } from "../../_components/create-account-link";
-import { PlusNotice } from "../../_components/plus-lock";
+import { GateWords, SubscribeGate } from "../../_components/subscribe-gate";
 import { GoalLimitWall } from "../entry/goal-limit-notice";
 import { GoalFooter } from "../entry/goal-outcomes";
 import { type GoalError } from "../goal-errors";
@@ -117,7 +117,7 @@ function LockedGoalCard({ goal }: { goal: UnderstoodGoalView }) {
   );
 }
 
-/** A guest's next step is a free account, which follows more goals at once; an account's is Plus. */
+/** A guest's next step is a free account, which studies more goals at once; an account's is subscribing. */
 function LockedGoalsNote({
   count,
   hasAccount,
@@ -130,22 +130,25 @@ function LockedGoalsNote({
   const t = useExtracted();
 
   if (hasAccount) {
-    return (
-      <PlusNotice cta={offersRemedy} title={t("More goals at once come with Plus")}>
-        {t(
-          "{count, plural, one {Pause another goal to start this one.} other {Pause another goal to start these.}}",
-          { count },
-        )}
-      </PlusNotice>
+    const title = t("More goals at once need a subscription");
+
+    const line = t(
+      "{count, plural, one {Pause another goal to start this one.} other {Pause another goal to start these.}}",
+      { count },
+    );
+
+    return offersRemedy ? (
+      <SubscribeGate title={title}>{line}</SubscribeGate>
+    ) : (
+      <GateWords line={line} title={title} />
     );
   }
 
   return (
-    <PlusNotice
-      action={offersRemedy && <CreateAccountLink />}
-      cta={false}
-      title={t("More goals at once come with a free account")}
-    />
+    <div className="flex flex-col items-start gap-2">
+      <GateWords title={t("More goals at once come with a free account")} />
+      {offersRemedy && <CreateAccountLink />}
+    </div>
   );
 }
 
