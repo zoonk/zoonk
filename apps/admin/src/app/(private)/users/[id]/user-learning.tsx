@@ -34,15 +34,19 @@ export async function UserLearning({ userId }: { userId: string }) {
     <>
       <AdminSection title="Totals">
         <DetailFields>
-          <DetailField label="Brain Power">
+          <DetailField label="Brain Power" mono>
             {Number(user.progress?.totalBrainPower ?? 0).toLocaleString("en")}
           </DetailField>
-          <DetailField label="Energy">
+          <DetailField label="Energy" mono>
             {ENERGY_FORMATTER.format(user.progress?.currentEnergy ?? 0)}
           </DetailField>
-          <DetailField label="Study time">{formatDuration(stats.totalLearningSeconds)}</DetailField>
-          <DetailField label="Days studied">{stats.learningDays.toLocaleString("en")}</DetailField>
-          <DetailField label="Lessons completed">
+          <DetailField label="Study time" mono>
+            {formatDuration(stats.totalLearningSeconds)}
+          </DetailField>
+          <DetailField label="Days studied" mono>
+            {stats.learningDays.toLocaleString("en")}
+          </DetailField>
+          <DetailField label="Lessons completed" mono>
             {stats.completedLessons.toLocaleString("en")}
           </DetailField>
         </DetailFields>

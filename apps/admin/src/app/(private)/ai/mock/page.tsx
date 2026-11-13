@@ -287,9 +287,14 @@ function WrittenBy() {
           { label: "Prompt version", size: "wide" as const },
           { align: RIGHT, label: "How many" },
         ]}
-        rows={rows
-          .slice(0, SHOWN)
-          .map((row) => [strong(row[0]?.text), row[1]?.text, row[2]?.text, row[3]?.text])}
+        rows={rows.slice(0, SHOWN).map((row) => [
+          strong(row[0]?.text),
+          row[1]?.text,
+          <span className="font-mono text-xs" key="version">
+            {row[2]?.text}
+          </span>,
+          row[3]?.text,
+        ])}
       />
       <MockMore>Show all {rows.length}</MockMore>
     </AdminSection>

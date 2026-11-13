@@ -21,7 +21,7 @@ export function AdminNotice({
   return (
     <div
       className={cn(
-        "flex flex-col gap-1 rounded-lg px-4 py-3 text-sm [&_a]:font-medium [&_a]:underline [&_a]:underline-offset-3",
+        "flex flex-col gap-1 rounded-xl px-4 py-3 text-sm [&_a]:font-medium [&_a]:underline [&_a]:underline-offset-3",
         TONES[tone],
       )}
       role="status"

@@ -256,13 +256,19 @@ export function TableFrom({
     .map((label, index) => ({ index, label }))
     .filter(({ label }) => !omit.includes(label));
 
+  const rows = table?.rows ?? [];
+
+  const isNumbers = (index: number) =>
+    rows.length > 0 && rows.every((row) => /^[\d,.]+$/u.test(row[index]?.text ?? ""));
+
   return (
     <MockRows
-      columns={keep.map(({ label }) => ({
+      columns={keep.map(({ index, label }) => ({
+        align: isNumbers(index) ? ("right" as const) : undefined,
         label: rename[label] ?? label,
         size: sizes[rename[label] ?? label],
       }))}
-      rows={(table?.rows ?? []).map((row) =>
+      rows={rows.map((row) =>
         keep.map(({ index }, position) =>
           position === 0 ? (
             <Lead key="lead" title={row[index]?.text} />
