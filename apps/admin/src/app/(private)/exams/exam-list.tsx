@@ -8,18 +8,12 @@ import { listExams } from "@/data/exams/list-exams";
 import { parseSearchParams } from "@/lib/parse-search-params";
 import { ExamRow } from "./exam-row";
 
-const EXAM_COLUMNS: AdminTableColumn[] = [
-  { label: "Exam" },
-  { label: "Country" },
-  { label: "Board" },
-  { label: "Role" },
-  { label: "Language" },
-  { label: "Edition" },
+const columns: AdminTableColumn[] = [
+  { label: "Exam", twoLines: true },
+  { label: "Country", size: "wide" },
   { label: "Exam date" },
-  { label: "Registration ends" },
-  { label: "Next check" },
   { align: "right", label: "Goals" },
-  { align: "right", label: "Items" },
+  { label: "Next check", size: "wide" },
 ];
 
 export async function ExamList({ searchParams }: Pick<PageProps<"/exams">, "searchParams">) {
@@ -43,12 +37,7 @@ async function CachedExamList({
 
   return (
     <>
-      <AdminTableColumns
-        unsized
-        columns={EXAM_COLUMNS}
-        emptyLabel="No exam blueprints yet."
-        isEmpty={exams.length === 0}
-      >
+      <AdminTableColumns columns={columns} emptyLabel="No exams yet." isEmpty={exams.length === 0}>
         {exams.map((exam) => (
           <ExamRow exam={exam} key={exam.id} />
         ))}
@@ -65,5 +54,5 @@ async function CachedExamList({
 }
 
 export function ExamListSkeleton() {
-  return <AdminTableColumnsSkeleton unsized columns={EXAM_COLUMNS} />;
+  return <AdminTableColumnsSkeleton columns={columns} />;
 }

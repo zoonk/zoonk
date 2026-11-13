@@ -18,10 +18,15 @@ import {
  * read, so it sits in the menu and asks first.
  */
 export function FreshnessActions({
+  menuEnd,
+  menuStart,
   targetId,
   targetKind,
   targetName,
 }: {
+  /** What else the record's menu holds: `menuStart` before "Stop checking", `menuEnd` (what destroys) after. */
+  menuEnd?: React.ReactNode;
+  menuStart?: React.ReactNode;
   targetId: string;
   targetKind: FreshnessTargetKind;
   targetName: string;
@@ -57,10 +62,12 @@ export function FreshnessActions({
       </form>
 
       <DetailMenu label={targetKind === "exam" ? "Exam actions" : "Source actions"} size="sm">
+        {menuStart}
         <DropdownMenuItem onClick={() => setIsStopOpen(true)}>
           <CircleStopIcon aria-hidden="true" />
           Stop checking
         </DropdownMenuItem>
+        {menuEnd}
       </DetailMenu>
 
       <AdminConfirmDialog
