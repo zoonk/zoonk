@@ -1,5 +1,6 @@
 "use client";
 
+import { FoldRowTitle } from "@/components/fold-row-title";
 import { getScoreClassName } from "@/lib/score";
 import { calculateScore } from "@/lib/score-calculation";
 import { PROSE_MEASURE_CLASS } from "@/lib/table-classes";
@@ -144,16 +145,6 @@ function CategoryScoresSection({ categoryScores }: { categoryScores: CategorySco
   );
 }
 
-/** The score ends on the row's edge in mono, so scores line up down the list. */
-function TestCaseTitle({ children, title }: React.PropsWithChildren<{ title: string }>) {
-  return (
-    <span className="flex min-w-0 flex-1 items-baseline justify-between gap-6">
-      <span className="min-w-0 wrap-break-word">{title}</span>
-      <span className="text-compact shrink-0 font-mono">{children}</span>
-    </span>
-  );
-}
-
 export function TestCase({ result, index }: { result: EvalResult; index: number }) {
   const testCaseTitle = result.testCase.id || `Test Case ${index + 1}`;
   const score = calculateScore({ categoryScores: result.categoryScores, steps: result.steps });
@@ -162,9 +153,9 @@ export function TestCase({ result, index }: { result: EvalResult; index: number 
   return (
     <AccordionItem id={`case-${result.testCase.id}`} value={`test-case-${index}`}>
       <AccordionTrigger className="hover:no-underline">
-        <TestCaseTitle title={testCaseTitle}>
+        <FoldRowTitle title={testCaseTitle}>
           <span className={getScoreClassName(score)}>{scoreDisplay}</span>
-        </TestCaseTitle>
+        </FoldRowTitle>
       </AccordionTrigger>
 
       <AccordionContent className="flex flex-col gap-4 pt-4">
@@ -190,9 +181,9 @@ export function OutputTestCase({ output, index }: { output: TestCaseOutput; inde
   return (
     <AccordionItem id={`case-${output.testCaseId}`} value={`output-test-case-${index}`}>
       <AccordionTrigger className="hover:no-underline">
-        <TestCaseTitle title={testCaseTitle}>
+        <FoldRowTitle title={testCaseTitle}>
           <span className="text-muted-foreground font-sans">Not scored</span>
-        </TestCaseTitle>
+        </FoldRowTitle>
       </AccordionTrigger>
 
       <AccordionContent className="flex flex-col gap-4 pt-4">

@@ -1,5 +1,6 @@
 "use client";
 
+import { FoldRowTitle } from "@/components/fold-row-title";
 import { getModelById, getModelDisplayName } from "@/lib/models";
 import { type BattleMatchup, type CategoryScore } from "@/lib/types";
 import {
@@ -100,13 +101,12 @@ function ModelItem({
   return (
     <AccordionItem value={model.modelId}>
       <AccordionTrigger className="hover:no-underline">
-        <div className="flex items-baseline gap-3">
-          <span className="font-medium">{model.modelName}</span>
-          <span className="font-semibold tabular-nums">{model.averageScore.toFixed(1)}</span>
-          <span className="text-muted-foreground text-xs font-normal">
+        <FoldRowTitle title={model.modelName}>
+          <span className="text-muted-foreground font-sans text-xs font-normal">
             {model.testCases.length} {model.testCases.length === 1 ? "case" : "cases"}
-          </span>
-        </div>
+          </span>{" "}
+          <span className="ms-2 font-semibold">{model.averageScore.toFixed(1)}</span>
+        </FoldRowTitle>
       </AccordionTrigger>
 
       <AccordionContent className="flex flex-col gap-3 pt-4">

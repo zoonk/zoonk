@@ -48,7 +48,7 @@ const LIST_ITEM = "flex gap-3";
 
 export function DocRules({ rules }: { rules: readonly string[] }) {
   return (
-    <ul className={cn(DOC_MEASURE, "flex flex-col gap-1.5 text-sm leading-5.5")}>
+    <ul className={cn(DOC_MEASURE, "flex flex-col gap-2 text-sm leading-5.5")}>
       {rules.map((rule) => (
         <li className={LIST_ITEM} key={rule}>
           <span aria-hidden="true" className="flex h-5.5 w-4 shrink-0 items-center">
@@ -89,7 +89,7 @@ export function DevOnlySpecimen({ children }: React.PropsWithChildren) {
 export function DoDont({ avoid, follow }: { avoid: readonly string[]; follow: readonly string[] }) {
   return (
     <div className="grid gap-4 text-sm leading-5.5 sm:grid-cols-2">
-      <ul className="flex flex-col gap-1.5">
+      <ul className="flex flex-col gap-2">
         {follow.map((item) => (
           <li className={LIST_ITEM} key={item}>
             <CheckIcon aria-hidden="true" className="text-success mt-1 size-4 shrink-0" />
@@ -100,7 +100,7 @@ export function DoDont({ avoid, follow }: { avoid: readonly string[]; follow: re
           </li>
         ))}
       </ul>
-      <ul className="flex flex-col gap-1.5">
+      <ul className="flex flex-col gap-2">
         {avoid.map((item) => (
           <li className={LIST_ITEM} key={item}>
             <XIcon aria-hidden="true" className="text-destructive mt-1 size-4 shrink-0" />
