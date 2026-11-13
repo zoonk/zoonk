@@ -48,8 +48,8 @@ function catalogMessages(locale: string) {
       id: "npC_pq",
       locale,
     }),
-    mainNumber: catalogMessage({ catalog: "../../messages", id: "wieA_m", locale }),
-    mainPlural: catalogMessage({ catalog: "../../messages", id: "ArogzQ", locale }),
+    mainNumber: catalogMessage({ catalog: "../../messages", id: "RdGReZ", locale }),
+    mainPlural: catalogMessage({ catalog: "../../messages", id: "l0d7rx", locale }),
   };
 }
 
@@ -72,10 +72,10 @@ describe("catalog formatting", () => {
     const settings = await config();
     const t = createTranslator({ ...settings, timeZone: "UTC" });
 
-    expect(t("mainNumber", { week: value })).toBe(`semana ${formatted}`);
+    expect(t("mainNumber", { number: value })).toBe(`Semana ${formatted}`);
 
-    expect(t("mainPlural", { count: value, total: value })).toBe(
-      `${formatted} lecciones de ${formatted}`,
+    expect(t("mainPlural", { count: value, minimum: value })).toBe(
+      `${formatted} respuestas, se necesitan ${formatted} para detectar un patrón`,
     );
 
     expect(t("learnNumber", { done: value, total: value })).toBe(`${formatted} de ${formatted}`);
@@ -108,10 +108,10 @@ describe("catalog formatting", () => {
     const t = createTranslator(await config("en"));
     const formatted = new Intl.NumberFormat("en").format(value);
 
-    expect(t("mainNumber", { week: value })).toBe(`week ${formatted}`);
+    expect(t("mainNumber", { number: value })).toBe(`Week ${formatted}`);
 
-    expect(t("mainPlural", { count: value, total: value })).toBe(
-      `${formatted} of ${formatted} lessons`,
+    expect(t("mainPlural", { count: value, minimum: value })).toBe(
+      `${formatted} answers, needs ${formatted} to count`,
     );
 
     expect(t("learnNumber", { done: value, total: value })).toBe(`${formatted} of ${formatted}`);
