@@ -29,7 +29,7 @@ export const SHORTCUTS = {
   },
   main: { cap: "⏎", does: "Press the screen's main action", keys: ["Enter"] },
   next: { cap: "→", does: "Go to the next screen, question or map", keys: ["ArrowRight"] },
-  pick: { cap: "1 to 9", does: "Pick the option with that number", keys: NUMBER_KEYS },
+  pick: { cap: "1–9", does: "Pick the option with that number", keys: NUMBER_KEYS },
   previous: { cap: "←", does: "Go to the previous screen, question or map", keys: ["ArrowLeft"] },
   save: { cap: "S", does: "Save this mind map", keys: ["s", "S"] },
   search: { cap: "K", does: "Search or ask, on every page", keys: ["k", "K"], mod: true },
