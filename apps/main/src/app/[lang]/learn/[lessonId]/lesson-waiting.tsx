@@ -8,6 +8,7 @@ import { trackEvent } from "@zoonk/core/analytics/client";
 import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
 import { type LessonWaitingResult } from "@zoonk/core/lookahead/lesson-waiting-state";
 import { GenerationFailureNotice, GenerationWait } from "@zoonk/learn/generation";
+import { type LessonKind } from "@zoonk/learn/generation/kinds";
 import { type GenerationRun, toHeldRun } from "@zoonk/learn/generation/run";
 import { useVisibleWait } from "@zoonk/learn/generation/wait-clock";
 import { KindMark } from "@zoonk/learn/kind-tile";
@@ -108,10 +109,12 @@ type LessonFrame = { goalId: string | null; exitHref: string; lesson: LessonOutl
 
 function WritingProgress({
   holding,
+  kind,
   run,
   since,
 }: {
   holding: boolean;
+  kind: LessonKind;
   run: GenerationRun;
   since: number;
 }) {
@@ -121,7 +124,7 @@ function WritingProgress({
     <>
       <GenerationWait
         doneLabel={holding ? t("Your lesson is ready") : undefined}
-        kind="lesson"
+        kind={kind}
         run={holding ? toHeldRun(run) : run}
         since={since}
       />
@@ -163,6 +166,7 @@ function WritingWait({
   children,
   footer,
   frame,
+  kind,
   warmUp,
   writing,
 }: {
@@ -170,6 +174,7 @@ function WritingWait({
   children?: React.ReactNode;
   footer?: React.ReactNode;
   frame: LessonFrame;
+  kind: LessonKind;
   warmUp: WarmUpDeck | null;
   writing: ReturnType<typeof useLessonWriting>;
 }) {
@@ -178,7 +183,7 @@ function WritingWait({
 
   const followed = useWorkflowRun({
     generationId: writing.generationId,
-    kind: "lesson",
+    kind,
     restart: writing.restart,
   });
 
@@ -190,7 +195,7 @@ function WritingWait({
   const ready = run.status === "ready";
   const hold = useReadyHold(ready);
   const holding = hold.status === "hold";
-  const progress = <WritingProgress holding={holding} run={run} since={since} />;
+  const progress = <WritingProgress holding={holding} kind={kind} run={run} since={since} />;
 
   useOpenWhenReady(hold.status === "go");
 
@@ -212,7 +217,7 @@ function WritingWait({
             run.status === "failed" ? (
               <GenerationFailureNotice failure={run.failure ?? "generation"} retry={run.retry} />
             ) : (
-              <LessonWaitStatus holding={holding} run={run} since={since} />
+              <LessonWaitStatus holding={holding} kind={kind} run={run} since={since} />
             )
           }
         />
@@ -263,6 +268,7 @@ export function LessonWaiting({
   alternative,
   exitHref,
   initialRequest,
+  kind,
   lesson,
   warmUp,
 }: {
@@ -270,6 +276,7 @@ export function LessonWaiting({
   alternative: ReadyAlternative | null;
   exitHref: string;
   initialRequest: LessonRequest;
+  kind: LessonKind;
   lesson: LessonOutline;
   warmUp: WarmUpDeck | null;
 }) {
@@ -299,6 +306,7 @@ export function LessonWaiting({
         footer={footer}
         frame={frame}
         key={writing.attempt}
+        kind={kind}
         warmUp={warmUp}
         writing={writing}
       >

@@ -345,8 +345,8 @@ final class GenerationEventsTests: XCTestCase {
   func testFollowingAWritingLessonWaitsForTheRunItsReadinessNamesThenReadsItAgain() async throws {
     let transport = LessonWritingTransport(
       readiness: [
-        #"{"alternative":null,"generationId":"run-1","setAside":false,"status":"generating"}"#,
-        #"{"alternative":null,"generationId":null,"setAside":false,"status":"ready"}"#,
+        #"{"alternative":null,"generationId":"run-1","kind":"lesson","setAside":false,"status":"generating"}"#,
+        #"{"alternative":null,"generationId":null,"kind":"lesson","setAside":false,"status":"ready"}"#,
       ],
       events: #"data: {"status":"started","step":"writeLesson"}"# + "\n\n"
         + #"data: {"entityId":"lesson-1","status":"completed","step":"lessonReady"}"# + "\n\n")
@@ -370,8 +370,8 @@ final class GenerationEventsTests: XCTestCase {
   func testFollowingALessonItsChecksSetAsideSaysSoOnceItsRunEnds() async throws {
     let transport = LessonWritingTransport(
       readiness: [
-        #"{"alternative":null,"generationId":"run-1","setAside":false,"status":"generating"}"#,
-        #"{"alternative":null,"generationId":null,"setAside":true,"status":"failed"}"#,
+        #"{"alternative":null,"generationId":"run-1","kind":"lesson","setAside":false,"status":"generating"}"#,
+        #"{"alternative":null,"generationId":null,"kind":"lesson","setAside":true,"status":"failed"}"#,
       ],
       events: #"data: {"status":"started","step":"writeLesson"}"# + "\n\n"
         + #"data: {"status":"error","step":"workflowError"}"# + "\n\n")

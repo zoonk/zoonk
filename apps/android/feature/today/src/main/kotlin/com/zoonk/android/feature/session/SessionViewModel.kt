@@ -147,7 +147,20 @@ class SessionViewModel(
                         if (status == LessonReadiness.Status.READY) {
                             readDay()
                         } else {
-                            lesson = LessonState(lessonId, status, read.value.setAside, read.value.warmUpId?.toString())
+                            lesson =
+                                LessonState(
+                                    lessonId,
+                                    status,
+                                    read.value.setAside,
+                                    read.value.warmUpId?.toString(),
+                                    if (read.value.kind ==
+                                        LessonReadiness.Kind.CHALLENGE
+                                    ) {
+                                        GenerationKind.Challenge
+                                    } else {
+                                        GenerationKind.Lesson
+                                    },
+                                )
                         }
                         if (status == LessonReadiness.Status.GENERATING) follow(read.value.generationId)
                         if ((status == LessonReadiness.Status.NOT_STARTED && !asked) || read.value.setAside) return
@@ -252,6 +265,7 @@ data class LessonState(
     val setAside: Boolean,
     /** The goal's deck while this is its first lesson; kept once the lesson is written, so a learner who guessed can finish the card. */
     val warmUpId: String?,
+    val kind: GenerationKind,
 )
 
 private data class LessonWait(

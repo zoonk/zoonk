@@ -15,6 +15,7 @@ import {
   findOwnedStudySession,
   findStudySessionFor,
 } from "../sessions/_utils/study-session-access";
+import { loadWindowChallenges } from "./_utils/window-challenges";
 import { type LearnerLookahead, getLearnerTier, getLookahead } from "./learner-lookahead";
 
 const OPEN_BLOCK_STATUSES = new Set<StudySessionBlock["status"]>(["active", "pending"]);
@@ -37,7 +38,7 @@ export type SessionPreparation = {
   lessonIds: string[];
   /** Next-day lessons use background generation at the flex tier. */
   laterLessonIds: string[];
-  /** Includes written lessons too, in plan order. */
+  /** Includes written lessons and the window's chapter challenges too. */
   plannedLessonIds: string[];
   /** Write the personal layer only after the underlying shared lessons finish. */
   personalized: boolean;
@@ -294,7 +295,7 @@ async function hasPersonalLayer(goal: Goal) {
   return parsePlanSettings(plan?.settings).tools.length > 0;
 }
 
-/** Workflow bridge: ids must come from getSessionPreparationAccess. Preserves plan order and excludes already-written or running content. */
+/** Workflow bridge: ids must come from getSessionPreparationAccess. Includes the window's chapter challenges and excludes already-written or running content. */
 export async function listSessionPreparation({
   goalId,
   timeZone,
@@ -327,13 +328,21 @@ export async function listSessionPreparation({
     upcoming,
   }).filter((lessonId) => !todayWindow.includes(lessonId));
 
-  const planned = [...todayWindow, ...nextLessons];
+  const challenges = await loadWindowChallenges({
+    goalId,
+    lessonIds: [...todayWindow, ...nextLessons],
+    userId,
+  });
+
+  const soon = [...new Set([...todayWindow, ...challenges])];
+  const later = nextLessons.filter((lessonId) => !soon.includes(lessonId));
+  const planned = [...soon, ...later];
   const states = await getLessonGenerationStates(planned);
 
   return {
     forExam: goal.kind === "exam",
-    laterLessonIds: filterUnwritten({ lessonIds: nextLessons, states }),
-    lessonIds: filterUnwritten({ lessonIds: todayWindow, states }),
+    laterLessonIds: filterUnwritten({ lessonIds: later, states }),
+    lessonIds: filterUnwritten({ lessonIds: soon, states }),
     personalized: planned.length > 0 && (await hasPersonalLayer(goal)),
     plannedLessonIds: planned,
   };
