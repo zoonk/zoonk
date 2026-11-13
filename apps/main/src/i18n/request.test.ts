@@ -49,7 +49,7 @@ function catalogMessages(locale: string) {
       locale,
     }),
     mainNumber: catalogMessage({ catalog: "../../messages", id: "RdGReZ", locale }),
-    mainPlural: catalogMessage({ catalog: "../../messages", id: "l0d7rx", locale }),
+    mainPlural: catalogMessage({ catalog: "../../messages", id: "n7xPkB", locale }),
   };
 }
 
@@ -74,9 +74,7 @@ describe("catalog formatting", () => {
 
     expect(t("mainNumber", { number: value })).toBe(`Semana ${formatted}`);
 
-    expect(t("mainPlural", { count: value, minimum: value })).toBe(
-      `${formatted} respuestas, se necesitan ${formatted} para detectar un patrón`,
-    );
+    expect(t("mainPlural", { count: value })).toBe(`${formatted} lecciones`);
 
     expect(t("learnNumber", { done: value, total: value })).toBe(`${formatted} de ${formatted}`);
 
@@ -110,9 +108,7 @@ describe("catalog formatting", () => {
 
     expect(t("mainNumber", { number: value })).toBe(`Week ${formatted}`);
 
-    expect(t("mainPlural", { count: value, minimum: value })).toBe(
-      `${formatted} answers, needs ${formatted} to count`,
-    );
+    expect(t("mainPlural", { count: value })).toBe(`${formatted} lessons`);
 
     expect(t("learnNumber", { done: value, total: value })).toBe(`${formatted} of ${formatted}`);
   });
