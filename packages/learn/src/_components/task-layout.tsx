@@ -192,12 +192,15 @@ export function TaskAside({
   );
 }
 
-/** Nothing between it and the task's root may set a transform, which would hold it in place. */
+/**
+ * Nothing between it and the task's root may set a transform, which would hold it in place. Its top
+ * padding is the body's plus the header's hairline, so both columns start on one line.
+ */
 export function TaskAsideContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       className={cn(
-        "with-aside:group-data-aside/task:scroll-fade-b with-aside:top-(--task-bar) with-aside:right-0 with-aside:bottom-(--task-aside-bottom) with-aside:w-[calc(var(--task-aside)-1px)] with-aside:group-has-data-[slot$=docked-conversation]/task:invisible with-aside:group-data-aside/task:fixed with-aside:group-data-aside/task:z-30 with-aside:group-data-aside/task:overflow-y-auto with-aside:group-data-aside/task:px-6 with-aside:group-data-aside/task:pb-6",
+        "with-aside:group-data-aside/task:scroll-fade-b with-aside:top-(--task-bar) with-aside:right-0 with-aside:bottom-(--task-aside-bottom) with-aside:w-[calc(var(--task-aside)-1px)] with-aside:group-has-data-[slot$=docked-conversation]/task:invisible with-aside:group-data-aside/task:fixed with-aside:group-data-aside/task:z-30 with-aside:group-data-aside/task:overflow-y-auto with-aside:group-data-aside/task:px-6 with-aside:group-data-aside/task:pt-[calc(--spacing(4)+1px)] with-aside:group-data-aside/task:pb-6",
         className,
       )}
       data-slot="task-aside-content"

@@ -73,7 +73,9 @@ function ExplainRecap({
   }
 
   return (
-    <TaskAsideContent className={cn("with-aside:top-0", className)}>
+    <TaskAsideContent
+      className={cn("with-aside:top-0 with-aside:group-data-aside/task:pt-0", className)}
+    >
       <section aria-labelledby="explain-recap" className="with-aside:gap-0 flex flex-col gap-1">
         <SectionLabel
           className="with-aside:flex with-aside:h-13 with-aside:shrink-0 with-aside:items-center with-aside:xl:h-15"
