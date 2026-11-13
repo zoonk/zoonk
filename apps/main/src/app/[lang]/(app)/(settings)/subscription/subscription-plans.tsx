@@ -1,3 +1,4 @@
+import { SectionPageHeader } from "@/components/learn/section-page";
 import { BILLING_PERIOD_PARAM, readBillingPeriod } from "@/components/pricing/plus-plan";
 import { PlusPricing } from "@/components/pricing/plus-pricing";
 import { getCurrentPlusSubscription } from "@/data/subscriptions/get-current-plus-subscription";
@@ -70,11 +71,7 @@ export async function SubscriptionPlans({
 
   return (
     <Page>
-      <PageHeader>
-        <PageHeaderContent>
-          <PageTitle className="md:text-xl md:leading-tight">{t("Plus")}</PageTitle>
-        </PageHeaderContent>
-      </PageHeader>
+      <SectionPageHeader title={t("Subscription")} />
 
       <PlusPricing
         defaultPeriod={readBillingPeriod(query[BILLING_PERIOD_PARAM])}
