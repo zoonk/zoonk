@@ -42,7 +42,7 @@ function ChangeCountryDialog({
       }}
       open={country !== null}
     >
-      <AlertDialogContent overNested>
+      <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{t("Change your country?")}</AlertDialogTitle>
           <AlertDialogDescription className="max-h-[50dvh] overflow-y-auto">
@@ -137,7 +137,6 @@ function ContentCountryControl({ country }: { country: PlanContentCountry }) {
         onOpenChange={setOpen}
         onPick={pick}
         open={open}
-        overNested
         suggested={country.suggested}
         title={t("Country")}
         value={country.code}

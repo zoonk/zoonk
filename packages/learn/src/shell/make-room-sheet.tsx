@@ -152,17 +152,13 @@ export function MakeRoomSheet({
     <Drawer onOpenChange={(open) => !isStarting && room.setOpen(open)} open={state.open}>
       <DrawerPopup>
         <SheetHeader>
-          <div className="flex min-w-0 flex-col gap-1">
-            <DrawerTitle className="text-balance">
-              {t("Make room for {goal}", { goal })}
-            </DrawerTitle>
-            <DrawerDescription className="text-pretty">
-              {t(
-                "You're following as many goals as the free plan allows. Pause one to start {goal}. You can resume it later.",
-                { goal },
-              )}
-            </DrawerDescription>
-          </div>
+          <DrawerTitle className="text-balance">{t("Make room for {goal}", { goal })}</DrawerTitle>
+          <DrawerDescription className="text-pretty">
+            {t(
+              "You're following as many goals as the free plan allows. Pause one to start {goal}. You can resume it later.",
+              { goal },
+            )}
+          </DrawerDescription>
         </SheetHeader>
 
         <DrawerContent className="flex flex-col gap-4 pt-2">
