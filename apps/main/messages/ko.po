@@ -993,13 +993,6 @@ msgid "Quick explanation"
 msgstr "간단한 설명"
 
 #: src/app/[lang]/(app)/(learn)/today/page.tsx
-#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
-#: src/app/[lang]/(app)/(learn)/today/unfinished-goal-notice.tsx
-msgctxt "acrOoz"
-msgid "Continue"
-msgstr "계속하기"
-
-#: src/app/[lang]/(app)/(learn)/today/page.tsx
 msgctxt "B1ehqx"
 msgid "Each day's lessons, reviews and practice for your goal."
 msgstr "목표에 맞춘 매일의 레슨과 복습, 연습을 확인해요."
@@ -1053,6 +1046,12 @@ msgstr "내 계획 보기"
 msgctxt "_V80Fi"
 msgid "Your {goal} plan is ready."
 msgstr "{goal} 계획이 준비됐어요."
+
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+#: src/app/[lang]/(app)/(learn)/today/unfinished-goal-notice.tsx
+msgctxt "acrOoz"
+msgid "Continue"
+msgstr "계속하기"
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
 msgctxt "CIgx3N"
@@ -2762,11 +2761,6 @@ msgstr "레슨을 열지 못했어요. 다시 시도해 보거나 로그인해�
 msgctxt "ZGpU-B"
 msgid "Opening your lesson"
 msgstr "레슨을 열고 있어요"
-
-#: src/app/[lang]/learn/[lessonId]/lesson-route-frame.tsx
-msgctxt "cyR7Kh"
-msgid "Back"
-msgstr "뒤로"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-route-frame.tsx
 msgctxt "A6lEGi"

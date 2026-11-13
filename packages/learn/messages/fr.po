@@ -201,20 +201,6 @@ msgctxt "xJFp6i"
 msgid "{percent}% done"
 msgstr "{percent} % terminé"
 
-#: src/_components/details-drawer.tsx
-#: src/appearance/buddy-settings.tsx
-#: src/certificates/certificate-linkedin.tsx
-#: src/certificates/certificate-name.tsx
-#: src/certificates/certificate-share.tsx
-#: src/explain/explain-waiting.tsx
-#: src/journey/rename-goal-dialog.tsx
-#: src/memory/memory-fact-row.tsx
-#: src/mind-maps/mind-map-viewer.tsx
-#: src/plan/plan-editor.tsx
-msgctxt "rbrahO"
-msgid "Close"
-msgstr "Fermer"
-
 #: src/_components/finish-ready.tsx
 msgctxt "MaLZrn"
 msgid "Nothing left to answer"
@@ -415,6 +401,7 @@ msgstr "{done, number} sur {total, number}"
 #: src/mind-maps/mind-map-aside.tsx
 #: src/mind-maps/mind-map-row.tsx
 #: src/mind-maps/not-made-yet.tsx
+#: src/mock/mock-frame.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
 #: src/onboarding/steps/step-parts.tsx
 #: src/plan/plan-bases-advice.tsx
@@ -565,6 +552,21 @@ msgctxt "DxPDlc"
 msgid "That didn't save. Try again."
 msgstr "L’enregistrement a échoué. Réessaie."
 
+#: src/_components/sheet-header.tsx
+#: src/_components/suggestion.tsx
+#: src/appearance/buddy-settings.tsx
+#: src/certificates/certificate-linkedin.tsx
+#: src/certificates/certificate-name.tsx
+#: src/certificates/certificate-share.tsx
+#: src/explain/explain-waiting.tsx
+#: src/journey/rename-goal-dialog.tsx
+#: src/memory/memory-fact-row.tsx
+#: src/mind-maps/mind-map-viewer.tsx
+#: src/plan/plan-editor.tsx
+msgctxt "rbrahO"
+msgid "Close"
+msgstr "Fermer"
+
 #: src/_components/skill-list.tsx
 #: src/session/summary/summary-parts.tsx
 msgctxt "IIe6nO"
@@ -609,6 +611,7 @@ msgstr "Impossible d’ouvrir cette étape. Réessaie."
 #: src/language/conversation/call-problem.tsx
 #: src/mistakes/practice-done.tsx
 #: src/onboarding/onboarding-bar.tsx
+#: src/session/summary/summary-steps.tsx
 #: src/shell/learn-bar.tsx
 msgctxt "cyR7Kh"
 msgid "Back"
@@ -619,10 +622,17 @@ msgctxt "FgydNe"
 msgid "View"
 msgstr "Voir"
 
+#: src/_components/task-close.tsx
+#: src/essay/essay-screen.tsx
+#: src/mock/mock-runner-view.tsx
+msgctxt "fnihsY"
+msgid "Leave"
+msgstr "Quitter"
+
 #: src/_components/task-header.tsx
-msgctxt "y7b8vA"
-msgid "Screen options"
-msgstr "Options de l’écran"
+msgctxt "eOJ4QU"
+msgid "Collapse sidebar"
+msgstr "Réduire la barre latérale"
 
 #: src/_components/task-header.tsx
 msgctxt "1JgBls"
@@ -630,9 +640,9 @@ msgid "Expand sidebar"
 msgstr "Développer la barre latérale"
 
 #: src/_components/task-header.tsx
-msgctxt "eOJ4QU"
-msgid "Collapse sidebar"
-msgstr "Réduire la barre latérale"
+msgctxt "y7b8vA"
+msgid "Screen options"
+msgstr "Options de l’écran"
 
 #: src/_components/test-out-start-link.tsx
 #: src/questions/test-out-preparing.tsx
@@ -2397,7 +2407,6 @@ msgstr "Ton plan ne peut pas faire de place pour cet examen blanc de {duration} 
 #: src/essay/essay-feedback.tsx
 #: src/onboarding/entry/guest-goal-gate.tsx
 #: src/session/open-next-step.tsx
-#: src/session/session-header.tsx
 msgctxt "OC7hHG"
 msgid "Back to Today"
 msgstr "Retour à Aujourd’hui"
@@ -3416,13 +3425,6 @@ msgstr "Envoyer pour correction"
 msgctxt "xNSBn4"
 msgid "Keep writing"
 msgstr "Continuer à écrire"
-
-#: src/essay/essay-screen.tsx
-#: src/shell/learn-bar.tsx
-#: src/shell/task-frame.tsx
-msgctxt "fnihsY"
-msgid "Leave"
-msgstr "Quitter"
 
 #: src/essay/essay-screen.tsx
 msgctxt "QnB_s5"
@@ -8289,14 +8291,9 @@ msgid "Open the lesson"
 msgstr "Ouvrir la leçon"
 
 #: src/mistakes/mistake-practice-run.tsx
-msgctxt "tsWXZT"
-msgid "Back to the notebook"
-msgstr "Retour au carnet"
-
-#: src/mistakes/mistake-practice-run.tsx
-msgctxt "2LmYn_"
-msgid "End practice. What you answered counts."
-msgstr "Terminer l’entraînement. Tes réponses sont prises en compte."
+msgctxt "z2HeMD"
+msgid "Leave. What you answered counts."
+msgstr ""
 
 #: src/mistakes/mistake-practice-run.tsx
 #: src/mistakes/mistakes-notebook.tsx
@@ -8680,11 +8677,6 @@ msgstr "Comme la plupart des questions sont restées sans réponse, cet examen n
 msgctxt "UIkt52"
 msgid "Not saved yet · retrying"
 msgstr "Pas encore enregistré · nouvelle tentative en cours"
-
-#: src/mock/mock-frame.tsx
-msgctxt "62nsdy"
-msgid "Retry"
-msgstr "Réessayer"
 
 #: src/mock/mock-frame.tsx
 msgctxt "gOsgur"
@@ -9401,6 +9393,21 @@ msgstr "Rendre l’examen blanc"
 msgctxt "z1R1nT"
 msgid "Hand in this section"
 msgstr "Rendre cette partie"
+
+#: src/mock/mock-runner-view.tsx
+msgctxt "r5QD8t"
+msgid "Stay"
+msgstr ""
+
+#: src/mock/mock-runner-view.tsx
+msgctxt "jOu95u"
+msgid "Your answers are saved. The clock keeps running while you're away."
+msgstr ""
+
+#: src/mock/mock-runner-view.tsx
+msgctxt "N4BqWk"
+msgid "Leave the mock exam?"
+msgstr ""
 
 #: src/mock/mock-screen.tsx
 msgctxt "Ly_Z1F"
@@ -13908,9 +13915,9 @@ msgid "Not today"
 msgstr "Pas aujourd’hui"
 
 #: src/session/question-block/question-block-header.tsx
-msgctxt "JJytYK"
-msgid "Close. Your answers are saved."
-msgstr "Fermer. Tes réponses sont enregistrées."
+msgctxt "2vhowQ"
+msgid "Leave. Your answers are saved."
+msgstr ""
 
 #: src/session/question-block/question-block-status.tsx
 msgctxt "iMYxZV"
@@ -14398,11 +14405,6 @@ msgstr "Fais de la place pour {goal}"
 msgctxt "goalSwitcher.ivx3YV"
 msgid "That's as many goals as you can study at once without Plus. Pause one to start this one."
 msgstr "Tu as atteint le nombre maximum d’objectifs en cours sans Plus. Mets-en un en pause pour commencer celui-ci."
-
-#: src/shell/make-room-sheet.tsx
-msgctxt "goalSwitcher.rbrahO"
-msgid "Close"
-msgstr "Fermer"
 
 #: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.xANHtD"
@@ -15135,37 +15137,37 @@ msgstr "Leçons d’aujourd’hui"
 #: src/today/today-segment-popover.tsx
 msgctxt "MDSrNP"
 msgid "Checks what you've learned so far."
-msgstr "Vérifie ce que tu as appris jusqu’ici."
+msgstr ""
 
 #: src/today/today-segment-popover.tsx
 msgctxt "jIBu7R"
 msgid "You put what you learned into your own words."
-msgstr "Tu expliques ce que tu as appris avec tes propres mots."
+msgstr ""
 
 #: src/today/today-segment-popover.tsx
 msgctxt "LjCPIV"
 msgid "Another try at questions you missed."
-msgstr "Tu reprends les questions où tu as fait des erreurs."
+msgstr ""
 
 #: src/today/today-segment-popover.tsx
 msgctxt "hm2fwy"
 msgid "A practice exam, like the real one."
-msgstr "Un examen blanc, comme le vrai."
+msgstr ""
 
 #: src/today/today-segment-popover.tsx
 msgctxt "1zNtC7"
 msgid "New questions that mix what you've learned."
-msgstr "De nouvelles questions qui mélangent ce que tu as appris."
+msgstr ""
 
 #: src/today/today-segment-popover.tsx
 msgctxt "LHmG9j"
 msgid "Brings back what you studied before you forget it."
-msgstr "Te fait revoir ce que tu as étudié avant que tu l’oublies."
+msgstr ""
 
 #: src/today/today-segment-popover.tsx
 msgctxt "G-gCWb"
 msgid "{answered, number} of {count, plural, one {# question} other {# questions}}"
-msgstr "{answered, number} sur {count, plural, one {# question} other {# questions}}"
+msgstr ""
 
 #: src/today/today-session-card.tsx
 msgctxt "RrxniK"

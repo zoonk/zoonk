@@ -993,13 +993,6 @@ msgid "Quick explanation"
 msgstr "Szybkie wyjaśnienie"
 
 #: src/app/[lang]/(app)/(learn)/today/page.tsx
-#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
-#: src/app/[lang]/(app)/(learn)/today/unfinished-goal-notice.tsx
-msgctxt "acrOoz"
-msgid "Continue"
-msgstr "Kontynuuj"
-
-#: src/app/[lang]/(app)/(learn)/today/page.tsx
 msgctxt "B1ehqx"
 msgid "Each day's lessons, reviews and practice for your goal."
 msgstr "Lekcje, powtórki i ćwiczenia na każdy dzień, by osiągnąć cel."
@@ -1053,6 +1046,12 @@ msgstr "Zobacz swój plan"
 msgctxt "_V80Fi"
 msgid "Your {goal} plan is ready."
 msgstr "Twój plan jest gotowy: {goal}."
+
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+#: src/app/[lang]/(app)/(learn)/today/unfinished-goal-notice.tsx
+msgctxt "acrOoz"
+msgid "Continue"
+msgstr "Kontynuuj"
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
 msgctxt "CIgx3N"
@@ -2762,11 +2761,6 @@ msgstr "Nie udało się otworzyć lekcji. Spróbuj ponownie lub zaloguj się, ab
 msgctxt "ZGpU-B"
 msgid "Opening your lesson"
 msgstr "Otwieramy twoją lekcję"
-
-#: src/app/[lang]/learn/[lessonId]/lesson-route-frame.tsx
-msgctxt "cyR7Kh"
-msgid "Back"
-msgstr "Wróć"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-route-frame.tsx
 msgctxt "A6lEGi"

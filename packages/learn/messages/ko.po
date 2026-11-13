@@ -201,20 +201,6 @@ msgctxt "xJFp6i"
 msgid "{percent}% done"
 msgstr "{percent}% 완료"
 
-#: src/_components/details-drawer.tsx
-#: src/appearance/buddy-settings.tsx
-#: src/certificates/certificate-linkedin.tsx
-#: src/certificates/certificate-name.tsx
-#: src/certificates/certificate-share.tsx
-#: src/explain/explain-waiting.tsx
-#: src/journey/rename-goal-dialog.tsx
-#: src/memory/memory-fact-row.tsx
-#: src/mind-maps/mind-map-viewer.tsx
-#: src/plan/plan-editor.tsx
-msgctxt "rbrahO"
-msgid "Close"
-msgstr "닫기"
-
 #: src/_components/finish-ready.tsx
 msgctxt "MaLZrn"
 msgid "Nothing left to answer"
@@ -415,6 +401,7 @@ msgstr "{done, number}/{total, number}"
 #: src/mind-maps/mind-map-aside.tsx
 #: src/mind-maps/mind-map-row.tsx
 #: src/mind-maps/not-made-yet.tsx
+#: src/mock/mock-frame.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
 #: src/onboarding/steps/step-parts.tsx
 #: src/plan/plan-bases-advice.tsx
@@ -565,6 +552,21 @@ msgctxt "DxPDlc"
 msgid "That didn't save. Try again."
 msgstr "저장하지 못했어요. 다시 시도해 보세요."
 
+#: src/_components/sheet-header.tsx
+#: src/_components/suggestion.tsx
+#: src/appearance/buddy-settings.tsx
+#: src/certificates/certificate-linkedin.tsx
+#: src/certificates/certificate-name.tsx
+#: src/certificates/certificate-share.tsx
+#: src/explain/explain-waiting.tsx
+#: src/journey/rename-goal-dialog.tsx
+#: src/memory/memory-fact-row.tsx
+#: src/mind-maps/mind-map-viewer.tsx
+#: src/plan/plan-editor.tsx
+msgctxt "rbrahO"
+msgid "Close"
+msgstr "닫기"
+
 #: src/_components/skill-list.tsx
 #: src/session/summary/summary-parts.tsx
 msgctxt "IIe6nO"
@@ -609,6 +611,7 @@ msgstr "이 단계를 열지 못했어요. 다시 시도해 보세요."
 #: src/language/conversation/call-problem.tsx
 #: src/mistakes/practice-done.tsx
 #: src/onboarding/onboarding-bar.tsx
+#: src/session/summary/summary-steps.tsx
 #: src/shell/learn-bar.tsx
 msgctxt "cyR7Kh"
 msgid "Back"
@@ -619,10 +622,17 @@ msgctxt "FgydNe"
 msgid "View"
 msgstr "보기"
 
+#: src/_components/task-close.tsx
+#: src/essay/essay-screen.tsx
+#: src/mock/mock-runner-view.tsx
+msgctxt "fnihsY"
+msgid "Leave"
+msgstr "나가기"
+
 #: src/_components/task-header.tsx
-msgctxt "y7b8vA"
-msgid "Screen options"
-msgstr "화면 옵션"
+msgctxt "eOJ4QU"
+msgid "Collapse sidebar"
+msgstr "사이드바 접기"
 
 #: src/_components/task-header.tsx
 msgctxt "1JgBls"
@@ -630,9 +640,9 @@ msgid "Expand sidebar"
 msgstr "사이드바 펼치기"
 
 #: src/_components/task-header.tsx
-msgctxt "eOJ4QU"
-msgid "Collapse sidebar"
-msgstr "사이드바 접기"
+msgctxt "y7b8vA"
+msgid "Screen options"
+msgstr "화면 옵션"
 
 #: src/_components/test-out-start-link.tsx
 #: src/questions/test-out-preparing.tsx
@@ -2397,7 +2407,6 @@ msgstr "이 {duration} 모의고사를 {date} 계획에 넣을 시간이 없어�
 #: src/essay/essay-feedback.tsx
 #: src/onboarding/entry/guest-goal-gate.tsx
 #: src/session/open-next-step.tsx
-#: src/session/session-header.tsx
 msgctxt "OC7hHG"
 msgid "Back to Today"
 msgstr "오늘로 돌아가기"
@@ -3416,13 +3425,6 @@ msgstr "채점 요청하기"
 msgctxt "xNSBn4"
 msgid "Keep writing"
 msgstr "계속 쓰기"
-
-#: src/essay/essay-screen.tsx
-#: src/shell/learn-bar.tsx
-#: src/shell/task-frame.tsx
-msgctxt "fnihsY"
-msgid "Leave"
-msgstr "나가기"
 
 #: src/essay/essay-screen.tsx
 msgctxt "QnB_s5"
@@ -8289,14 +8291,9 @@ msgid "Open the lesson"
 msgstr "레슨 열기"
 
 #: src/mistakes/mistake-practice-run.tsx
-msgctxt "tsWXZT"
-msgid "Back to the notebook"
-msgstr "오답 노트로 돌아가기"
-
-#: src/mistakes/mistake-practice-run.tsx
-msgctxt "2LmYn_"
-msgid "End practice. What you answered counts."
-msgstr "연습 끝내기. 지금까지 푼 문제는 반영돼요."
+msgctxt "z2HeMD"
+msgid "Leave. What you answered counts."
+msgstr ""
 
 #: src/mistakes/mistake-practice-run.tsx
 #: src/mistakes/mistakes-notebook.tsx
@@ -8680,11 +8677,6 @@ msgstr "답하지 않은 문제가 대부분이라 채점하지 않고 준비도
 msgctxt "UIkt52"
 msgid "Not saved yet · retrying"
 msgstr "아직 저장되지 않았어요 · 다시 시도하고 있어요"
-
-#: src/mock/mock-frame.tsx
-msgctxt "62nsdy"
-msgid "Retry"
-msgstr "다시 시도"
 
 #: src/mock/mock-frame.tsx
 msgctxt "gOsgur"
@@ -9401,6 +9393,21 @@ msgstr "모의고사 제출하기"
 msgctxt "z1R1nT"
 msgid "Hand in this section"
 msgstr "이 파트 제출하기"
+
+#: src/mock/mock-runner-view.tsx
+msgctxt "r5QD8t"
+msgid "Stay"
+msgstr ""
+
+#: src/mock/mock-runner-view.tsx
+msgctxt "jOu95u"
+msgid "Your answers are saved. The clock keeps running while you're away."
+msgstr ""
+
+#: src/mock/mock-runner-view.tsx
+msgctxt "N4BqWk"
+msgid "Leave the mock exam?"
+msgstr ""
 
 #: src/mock/mock-screen.tsx
 msgctxt "Ly_Z1F"
@@ -13908,9 +13915,9 @@ msgid "Not today"
 msgstr "오늘은 건너뛰기"
 
 #: src/session/question-block/question-block-header.tsx
-msgctxt "JJytYK"
-msgid "Close. Your answers are saved."
-msgstr "닫기. 답은 저장되어 있어요."
+msgctxt "2vhowQ"
+msgid "Leave. Your answers are saved."
+msgstr ""
 
 #: src/session/question-block/question-block-status.tsx
 msgctxt "iMYxZV"
@@ -14398,11 +14405,6 @@ msgstr "{goal} 목표를 위한 자리 만들기"
 msgctxt "goalSwitcher.ivx3YV"
 msgid "That's as many goals as you can study at once without Plus. Pause one to start this one."
 msgstr "Plus 없이 동시에 공부할 수 있는 목표 수를 다 채웠어요. 이 목표를 시작하려면 다른 목표 하나를 일시 중지하세요."
-
-#: src/shell/make-room-sheet.tsx
-msgctxt "goalSwitcher.rbrahO"
-msgid "Close"
-msgstr "닫기"
 
 #: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.xANHtD"
@@ -15135,37 +15137,37 @@ msgstr "오늘 레슨"
 #: src/today/today-segment-popover.tsx
 msgctxt "MDSrNP"
 msgid "Checks what you've learned so far."
-msgstr "지금까지 배운 내용을 확인해요."
+msgstr ""
 
 #: src/today/today-segment-popover.tsx
 msgctxt "jIBu7R"
 msgid "You put what you learned into your own words."
-msgstr "배운 내용을 자신의 말로 표현해요."
+msgstr ""
 
 #: src/today/today-segment-popover.tsx
 msgctxt "LjCPIV"
 msgid "Another try at questions you missed."
-msgstr "틀린 문제를 다시 풀어요."
+msgstr ""
 
 #: src/today/today-segment-popover.tsx
 msgctxt "hm2fwy"
 msgid "A practice exam, like the real one."
-msgstr "실제 시험처럼 풀어 보는 모의고사예요."
+msgstr ""
 
 #: src/today/today-segment-popover.tsx
 msgctxt "1zNtC7"
 msgid "New questions that mix what you've learned."
-msgstr "배운 내용을 골고루 담은 새 문제를 풀어요."
+msgstr ""
 
 #: src/today/today-segment-popover.tsx
 msgctxt "LHmG9j"
 msgid "Brings back what you studied before you forget it."
-msgstr "배운 내용을 잊기 전에 복습해요."
+msgstr ""
 
 #: src/today/today-segment-popover.tsx
 msgctxt "G-gCWb"
 msgid "{answered, number} of {count, plural, one {# question} other {# questions}}"
-msgstr "{answered, number}문제 / {count, plural, other {총 #문제}}"
+msgstr ""
 
 #: src/today/today-session-card.tsx
 msgctxt "RrxniK"

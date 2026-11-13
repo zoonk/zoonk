@@ -993,13 +993,6 @@ msgid "Quick explanation"
 msgstr "Kısa açıklama"
 
 #: src/app/[lang]/(app)/(learn)/today/page.tsx
-#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
-#: src/app/[lang]/(app)/(learn)/today/unfinished-goal-notice.tsx
-msgctxt "acrOoz"
-msgid "Continue"
-msgstr "Devam et"
-
-#: src/app/[lang]/(app)/(learn)/today/page.tsx
 msgctxt "B1ehqx"
 msgid "Each day's lessons, reviews and practice for your goal."
 msgstr "Hedefin için günlük dersler, tekrarlar ve alıştırmalar."
@@ -1053,6 +1046,12 @@ msgstr "Planını gör"
 msgctxt "_V80Fi"
 msgid "Your {goal} plan is ready."
 msgstr "{goal} planın hazır."
+
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+#: src/app/[lang]/(app)/(learn)/today/unfinished-goal-notice.tsx
+msgctxt "acrOoz"
+msgid "Continue"
+msgstr "Devam et"
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
 msgctxt "CIgx3N"
@@ -2762,11 +2761,6 @@ msgstr "Dersi açamadık. Tekrar dene veya devam etmek için giriş yap."
 msgctxt "ZGpU-B"
 msgid "Opening your lesson"
 msgstr "Dersini açıyoruz"
-
-#: src/app/[lang]/learn/[lessonId]/lesson-route-frame.tsx
-msgctxt "cyR7Kh"
-msgid "Back"
-msgstr "Geri dön"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-route-frame.tsx
 msgctxt "A6lEGi"
