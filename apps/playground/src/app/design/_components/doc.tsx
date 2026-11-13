@@ -103,7 +103,7 @@ export function DoDont({ avoid, follow }: { avoid: readonly string[]; follow: re
   );
 }
 
-const CODE_CHIP = "bg-muted rounded px-1 py-0.5 font-mono text-[0.85em] leading-none";
+const CODE_CHIP = "bg-muted rounded px-1 py-0.5 font-mono text-xs leading-none";
 
 export function renderCode(text: string): React.ReactNode {
   return text.split(/(?<code>`[^`]+`)/u).map((part, index) =>

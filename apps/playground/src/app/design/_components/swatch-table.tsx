@@ -42,6 +42,7 @@ function Sample({ mode, token }: { mode: string; token: ColorToken }) {
         style={{ backgroundColor: `var(--${token.on})` }}
       >
         <span
+          aria-hidden="true"
           className="text-sm font-semibold"
           data-measure="text"
           data-token={token.name}
@@ -65,6 +66,7 @@ function Sample({ mode, token }: { mode: string; token: ColorToken }) {
       />
       {token.text && (
         <span
+          aria-hidden="true"
           className="text-sm font-semibold"
           data-measure="text"
           data-token={token.name}

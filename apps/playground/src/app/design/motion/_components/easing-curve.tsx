@@ -1,5 +1,6 @@
 "use client";
 
+import { SwapLabel } from "@zoonk/ui/components/swap-label";
 import {
   type MotionDuration,
   type MotionEasing,
@@ -8,6 +9,8 @@ import {
 } from "@zoonk/ui/lib/motion";
 import { useEffect, useRef, useState } from "react";
 import { useReducedPreview } from "./motion-preview";
+
+const PLAY_LABELS = ["Play", "Play (reduced)"];
 
 const SAMPLES = 48;
 
@@ -97,7 +100,7 @@ export function EasingCurve({
           onClick={play}
           type="button"
         >
-          {reduced ? "Play (reduced)" : "Play"}
+          <SwapLabel current={reduced ? "Play (reduced)" : "Play"} labels={PLAY_LABELS} />
         </button>
       </div>
     </div>
