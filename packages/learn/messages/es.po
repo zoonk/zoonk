@@ -14176,7 +14176,7 @@ msgstr ", {variety}"
 #: src/shell/goal-menu-row.tsx
 msgctxt "goalSwitcher.J0jAqm"
 msgid "Pause a goal to start it"
-msgstr "Pausa un objetivo para crear este"
+msgstr "Pausa un objetivo para empezar a estudiar este"
 
 #. A short status, not a button, under a goal a guest typed and can't start yet. Creating a free account lets them start it; tapping the row opens sign-up.
 #: src/shell/goal-menu-row.tsx
@@ -14279,7 +14279,7 @@ msgstr "Haz espacio para {goal}"
 #: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.4nd7tj"
 msgid "That's as many goals as you can study at once. Pause one to start this one."
-msgstr "Llegaste al límite de objetivos que puedes estudiar a la vez. Pausa uno para crear este."
+msgstr "Alcanzaste el límite de objetivos que puedes estudiar a la vez. Pausa uno para empezar a estudiar este."
 
 #: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.gczcC5"
@@ -14786,7 +14786,7 @@ msgstr "No hay estudio programado para hoy."
 #: src/today/today-day-status.tsx
 msgctxt "RC22zo"
 msgid "Your next lessons are below if you want to study."
-msgstr "Tus próximas lecciones están abajo por si quieres estudiar."
+msgstr "Tus próximas lecciones están abajo si quieres estudiar."
 
 #: src/today/today-day-status.tsx
 msgctxt "MdRa2K"
@@ -14899,12 +14899,12 @@ msgstr "No te alcanza el tiempo para estudiar todo antes de tu examen. En aproxi
 #: src/today/today-heading.tsx
 msgctxt "M3adyv"
 msgid "Not enough time left for all your lessons."
-msgstr "No queda suficiente tiempo para todas tus lecciones."
+msgstr "No queda suficiente tiempo para completar todas tus lecciones."
 
 #: src/today/today-heading.tsx
 msgctxt "RxQWR_"
 msgid "Welcome back. Today is short, so it's easy to start again."
-msgstr "Qué bueno que volviste. Hoy estudiarás poco para que sea fácil empezar de nuevo."
+msgstr "Qué bueno que volviste. Hoy tienes poco por hacer, así que es fácil volver a empezar."
 
 #: src/today/today-heading.tsx
 msgctxt "Viq1rs"
@@ -14924,7 +14924,7 @@ msgstr "Mantener el cambio"
 #: src/today/today-insight.tsx
 msgctxt "5cDa2C"
 msgid "Move it"
-msgstr "Moverlo"
+msgstr "Cambiar el horario"
 
 #: src/today/today-insight.tsx
 msgctxt "NYTGIb"
@@ -14997,7 +14997,7 @@ msgstr "Preparando tu plan de {goal}"
 #: src/today/today-preparing.tsx
 msgctxt "Xu-pMI"
 msgid "It takes a minute or two. Your first day opens here as soon as it's ready."
-msgstr "Tarda uno o dos minutos. Tu primer día aparecerá aquí en cuanto esté listo."
+msgstr "Tarda uno o dos minutos. Tu primer día de estudio aparecerá aquí en cuanto esté listo."
 
 #: src/today/today-screen.tsx
 #: src/today/today-shell.tsx

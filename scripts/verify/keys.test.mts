@@ -35,7 +35,7 @@ function messages(facts: Partial<KeyFacts>) {
   );
 }
 
-describe("the screen's keys (IX's A1, A2, A3, A5, A6)", () => {
+describe("the screen's keyboard controls", () => {
   it("distinguishes controls with the same label", () => {
     const findings = messages({
       enter: { bound: [{ id: "expected", label: "Start" }], pressed: START, unbuilt: [] },
@@ -90,10 +90,10 @@ describe("the screen's keys (IX's A1, A2, A3, A5, A6)", () => {
         sidebarsWithoutToggle: ["end"],
       }),
       [
-        "fail Behavior: A1 sidebar key: ⌘B didn't fold the start sidebar",
-        "fail Behavior: A1 sidebar key: the end sidebar is drawn with no toggle for it",
-        "fail Behavior: A3 Esc: Esc clicked Back, which isn't on screen",
-        "fail Behavior: A3 Esc: Esc didn't press the task's ✕",
+        "fail Behavior: sidebar key: ⌘B didn't fold the start sidebar",
+        "fail Behavior: sidebar key: the end sidebar is drawn with no toggle for it",
+        "fail Behavior: Escape: Esc clicked Back, which isn't on screen",
+        "fail Behavior: Escape: Esc didn't press the task's ✕",
       ],
     );
   });
@@ -111,15 +111,15 @@ describe("the screen's keys (IX's A1, A2, A3, A5, A6)", () => {
         },
       }),
       [
-        "warn Behavior: A2 Enter: Enter clicked Skip, which isn't a main action showing ⏎",
-        "warn Behavior: A2 Enter: two main actions answer Enter: Start, Skip",
-        "warn Behavior: A2 Enter: Continue is a main action drawn without the piece that binds Enter",
+        "warn Behavior: Enter: Enter clicked Skip, which isn't a main action showing ⏎",
+        "warn Behavior: Enter: two main actions answer Enter: Start, Skip",
+        "warn Behavior: Enter: Continue is a main action drawn without the piece that binds Enter",
       ],
     );
 
     assert.deepEqual(
       messages({ enter: { bound: [{ id: "start", label: "Start" }], pressed: null, unbuilt: [] } }),
-      ["warn Behavior: A2 Enter: Enter didn't press Start, the screen's main action"],
+      ["warn Behavior: Enter: Enter didn't press Start, the screen's main action"],
     );
   });
 
@@ -139,16 +139,16 @@ describe("the screen's keys (IX's A1, A2, A3, A5, A6)", () => {
         ],
       }),
       [
-        "warn Behavior: A5 arrows: ↓ didn't move to the next option in Answers",
-        "warn Behavior: A5 arrows: Answers has 3 Tab stops, where a group has one",
-        "warn Behavior: A6 keycaps: the flag key didn't press Flag, which shows it",
-        'warn Behavior: A6 keycaps: Flag announces "" where its key is "F"',
+        "warn Behavior: radio arrows: ↓ didn't move to the next option in Answers",
+        "warn Behavior: radio arrows: Answers has 3 Tab stops, where a group has one",
+        "warn Behavior: keycaps: the flag key didn't press Flag, which shows it",
+        'warn Behavior: keycaps: Flag announces "" where its key is "F"',
       ],
     );
   });
 });
 
-describe("a panel the walk opened (IX's A4 and the founder's rule 5)", () => {
+describe("a panel the walk opened", () => {
   const panel: PanelFacts = {
     centered: null,
     closeDrawn: true,

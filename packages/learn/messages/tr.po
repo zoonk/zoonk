@@ -7943,7 +7943,7 @@ msgstr "Bu harita kaldırılamadı. Tekrar dene."
 #: src/missions/brain-power-reward.tsx
 msgctxt "HCrEOP"
 msgid "Points for what you learn. They raise your belt and grow your buddy."
-msgstr "Öğrendikçe puan kazanırsın. Bu puanlar kuşağını yükseltir ve ders arkadaşını büyütür."
+msgstr "Öğrendikçe puan kazanırsın. Bu puanlarla kuşağın yükselir, ders arkadaşın büyür."
 
 #: src/missions/brain-power-reward.tsx
 msgctxt "JGTjfj"
@@ -8637,12 +8637,12 @@ msgstr "kalan süre"
 #: src/mock/mock-entry.tsx
 msgctxt "CfczSe"
 msgid "The full exam, half of it or one subject"
-msgstr "Sınavın tamamı, yarısı ya da bir branş"
+msgstr "Sınavın tamamı, yarısı veya tek bir branş"
 
 #: src/mock/mock-entry.tsx
 msgctxt "fWOwxQ"
 msgid "The full exam or half of it"
-msgstr "Sınavın tamamı ya da yarısı"
+msgstr "Sınavın tamamı veya yarısı"
 
 #: src/mock/mock-entry.tsx
 msgctxt "v_VKuk"
@@ -13743,7 +13743,7 @@ msgstr "Bugünkü çalışmanı sonlandıramadık. Tekrar dene."
 #: src/session/extra-time-button.tsx
 msgctxt "dWsizD"
 msgid "Practice {minutes} more min"
-msgstr "{minutes} dk. daha pratik yap"
+msgstr "{minutes} dk. daha çalış"
 
 #: src/session/failed-moment.tsx
 msgctxt "kapQxt"
@@ -14176,7 +14176,7 @@ msgstr ", {variety}"
 #: src/shell/goal-menu-row.tsx
 msgctxt "goalSwitcher.J0jAqm"
 msgid "Pause a goal to start it"
-msgstr "Başlamak için bir hedefi duraklat"
+msgstr "Başlamak için başka bir hedefi duraklat"
 
 #. A short status, not a button, under a goal a guest typed and can't start yet. Creating a free account lets them start it; tapping the row opens sign-up.
 #: src/shell/goal-menu-row.tsx
@@ -14695,7 +14695,7 @@ msgstr "Bugünün özetini gör"
 #: src/today/today-more.tsx
 msgctxt "6Jd28t"
 msgid "Practice {minutes} min"
-msgstr "{minutes} dk. alıştırma yap"
+msgstr "{minutes} dk. çalış"
 
 #. Button that asks for today's lessons to be made ready.
 #: src/today/today-action.tsx
@@ -14761,7 +14761,7 @@ msgstr "{done, plural, =0 {# / {total, number} tamamlandı} other {# / {total, n
 #: src/today/today-day-progress.tsx
 msgctxt "OFFVnK"
 msgid "A shorter day"
-msgstr "Daha kısa bir gün"
+msgstr "Daha kısa bir çalışma günü"
 
 #: src/today/today-day-progress.tsx
 msgctxt "73UHV8"
@@ -14821,7 +14821,7 @@ msgstr "Planını tamamladın."
 #: src/today/today-day-status.tsx
 msgctxt "brhjJ2"
 msgid "You're all caught up."
-msgstr "Bugüne kadarki tüm derslerini tamamladın."
+msgstr "Planın yolunda."
 
 #: src/today/today-earlier-lessons.tsx
 msgctxt "JMtLiG"
@@ -14899,17 +14899,17 @@ msgstr "Sınava kadar her şeye zamanın yetmiyor. Odak testi yaklaşık {time} 
 #: src/today/today-heading.tsx
 msgctxt "M3adyv"
 msgid "Not enough time left for all your lessons."
-msgstr "Tüm derslerine yetecek zaman kalmadı."
+msgstr "Tüm derslerini bitirmek için yeterli zaman kalmadı."
 
 #: src/today/today-heading.tsx
 msgctxt "RxQWR_"
 msgid "Welcome back. Today is short, so it's easy to start again."
-msgstr "Tekrar hoş geldin. Bugünkü çalışman kısa, kolayca yeniden başlayabilirsin."
+msgstr "Tekrar hoş geldin. Bugünkü çalışma kısa, bu yüzden yeniden başlamak kolay."
 
 #: src/today/today-heading.tsx
 msgctxt "Viq1rs"
 msgid "{exam} in {days, plural, one {# day} other {# days}}"
-msgstr "{exam} için {days, plural, other {# gün kaldı}}"
+msgstr "{exam} için {days, plural, other {# gün}} kaldı"
 
 #: src/today/today-insight.tsx
 msgctxt "8owE4V"
@@ -14924,7 +14924,7 @@ msgstr "Böyle bırak"
 #: src/today/today-insight.tsx
 msgctxt "5cDa2C"
 msgid "Move it"
-msgstr "Saatini değiştir"
+msgstr "Değiştir"
 
 #: src/today/today-insight.tsx
 msgctxt "NYTGIb"

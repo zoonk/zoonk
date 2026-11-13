@@ -7943,7 +7943,7 @@ msgstr "Impossible de retirer cette carte mentale. Réessaie."
 #: src/missions/brain-power-reward.tsx
 msgctxt "HCrEOP"
 msgid "Points for what you learn. They raise your belt and grow your buddy."
-msgstr "Des points pour ce que tu apprends. Ils te font passer à la ceinture supérieure et font grandir ton compagnon."
+msgstr "Des points pour ce que tu apprends. Ils te permettent de passer à la ceinture suivante et font grandir ton compagnon."
 
 #: src/missions/brain-power-reward.tsx
 msgctxt "JGTjfj"
@@ -7996,7 +7996,7 @@ msgstr "Passe ton premier examen blanc"
 #: src/missions/mission-copy.tsx
 msgctxt "missions._N9GlC"
 msgid "Beat the Trickster"
-msgstr "Bats le Farceur"
+msgstr "Battre le Farceur"
 
 #: src/missions/first-steps.tsx
 msgctxt "3_YJkO"
@@ -8006,7 +8006,7 @@ msgstr "Premiers pas"
 #: src/missions/first-steps.tsx
 msgctxt "584gds"
 msgid "{count, plural, one {# more opens as you go} other {# more open as you go}}"
-msgstr "{count, plural, one {# de plus se débloque au fil de tes progrès} other {# de plus se débloquent au fil de tes progrès}}"
+msgstr "{count, plural, one {# autre se débloque au fil de tes progrès} other {# autres se débloquent au fil de tes progrès}}"
 
 #: src/missions/first-steps.tsx
 msgctxt "kNlVEU"
@@ -13743,7 +13743,7 @@ msgstr "Impossible d’arrêter la séance pour aujourd’hui. Réessaie."
 #: src/session/extra-time-button.tsx
 msgctxt "dWsizD"
 msgid "Practice {minutes} more min"
-msgstr "S’entraîner {minutes} min de plus"
+msgstr "S’entraîner {minutes} min de plus"
 
 #: src/session/failed-moment.tsx
 msgctxt "kapQxt"
@@ -14279,7 +14279,7 @@ msgstr "Fais de la place pour {goal}"
 #: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.4nd7tj"
 msgid "That's as many goals as you can study at once. Pause one to start this one."
-msgstr "Tu as déjà le maximum d’objectifs en cours. Mets-en un en pause pour commencer celui-ci."
+msgstr "C’est le maximum d’objectifs que tu peux suivre en même temps. Mets-en un en pause pour commencer celui-ci."
 
 #: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.gczcC5"
@@ -14695,7 +14695,7 @@ msgstr "Voir le résumé du jour"
 #: src/today/today-more.tsx
 msgctxt "6Jd28t"
 msgid "Practice {minutes} min"
-msgstr "S’entraîner {minutes} min"
+msgstr "S’entraîner {minutes} min"
 
 #. Button that asks for today's lessons to be made ready.
 #: src/today/today-action.tsx
@@ -14761,7 +14761,7 @@ msgstr "{done, plural, =0 {# sur {total, number} terminés} one {# sur {total, n
 #: src/today/today-day-progress.tsx
 msgctxt "OFFVnK"
 msgid "A shorter day"
-msgstr "Une journée allégée"
+msgstr "Une journée plus courte"
 
 #: src/today/today-day-progress.tsx
 msgctxt "73UHV8"
@@ -14831,7 +14831,7 @@ msgstr "{lessons, plural, one {# leçon des jours précédents} other {# leçons
 #: src/today/today-earlier-lessons.tsx
 msgctxt "dlS9NH"
 msgid "Add to today"
-msgstr "Ajouter pour aujourd’hui"
+msgstr "Ajouter aux leçons du jour"
 
 #: src/today/today-exam-choice.tsx
 msgctxt "SVKPfj"
@@ -14904,7 +14904,7 @@ msgstr "Il ne reste pas assez de temps pour toutes tes leçons."
 #: src/today/today-heading.tsx
 msgctxt "RxQWR_"
 msgid "Welcome back. Today is short, so it's easy to start again."
-msgstr "Ça fait plaisir de te revoir. Aujourd’hui, la journée est allégée pour reprendre en douceur."
+msgstr "Ça fait plaisir de te revoir. Aujourd’hui, il y a peu à faire pour reprendre en douceur."
 
 #: src/today/today-heading.tsx
 msgctxt "Viq1rs"

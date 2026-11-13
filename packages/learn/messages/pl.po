@@ -7943,7 +7943,7 @@ msgstr "Nie udało się usunąć tej mapy. Spróbuj ponownie."
 #: src/missions/brain-power-reward.tsx
 msgctxt "HCrEOP"
 msgid "Points for what you learn. They raise your belt and grow your buddy."
-msgstr "Punkty za to, czego się uczysz. Dzięki nim zdobywasz wyższy pas, a twój kumpel rośnie."
+msgstr "Punkty za naukę. Dzięki nim zdobywasz kolejne pasy, a twój kumpel rośnie."
 
 #: src/missions/brain-power-reward.tsx
 msgctxt "JGTjfj"
@@ -13743,7 +13743,7 @@ msgstr "Nie udało się zakończyć nauki na dziś. Spróbuj ponownie."
 #: src/session/extra-time-button.tsx
 msgctxt "dWsizD"
 msgid "Practice {minutes} more min"
-msgstr "Ćwicz jeszcze {minutes} min"
+msgstr "Ćwicz jeszcze {minutes} min"
 
 #: src/session/failed-moment.tsx
 msgctxt "kapQxt"
@@ -14176,7 +14176,7 @@ msgstr ", {variety}"
 #: src/shell/goal-menu-row.tsx
 msgctxt "goalSwitcher.J0jAqm"
 msgid "Pause a goal to start it"
-msgstr "Wstrzymaj inny cel, by zacząć ten"
+msgstr "Wstrzymaj inny cel, żeby zacząć ten"
 
 #. A short status, not a button, under a goal a guest typed and can't start yet. Creating a free account lets them start it; tapping the row opens sign-up.
 #: src/shell/goal-menu-row.tsx
@@ -14279,7 +14279,7 @@ msgstr "Miejsce na cel: {goal}"
 #: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.4nd7tj"
 msgid "That's as many goals as you can study at once. Pause one to start this one."
-msgstr "To limit celów, nad którymi możesz pracować naraz. Wstrzymaj jeden, by zacząć ten."
+msgstr "Tyle celów możesz realizować naraz. Wstrzymaj jeden, żeby zacząć ten."
 
 #: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.gczcC5"
@@ -14695,7 +14695,7 @@ msgstr "Zobacz dzisiejsze podsumowanie"
 #: src/today/today-more.tsx
 msgctxt "6Jd28t"
 msgid "Practice {minutes} min"
-msgstr "Ćwicz przez {minutes} min"
+msgstr "Ćwicz {minutes} min"
 
 #. Button that asks for today's lessons to be made ready.
 #: src/today/today-action.tsx
@@ -14761,12 +14761,12 @@ msgstr "{done, plural, =0 {Ukończono # z {total, number}} other {Ukończono # z
 #: src/today/today-day-progress.tsx
 msgctxt "OFFVnK"
 msgid "A shorter day"
-msgstr "Krótszy dzień nauki"
+msgstr "Krótszy dzień"
 
 #: src/today/today-day-progress.tsx
 msgctxt "73UHV8"
 msgid "Your plan keeps time for the mock exam on {date}."
-msgstr "Twój plan zostawia czas na egzamin próbny {date}."
+msgstr "Twój plan rezerwuje czas na egzamin próbny {date}."
 
 #: src/today/today-day-status.tsx
 msgctxt "XMRh7X"
@@ -14776,7 +14776,7 @@ msgstr "Udało ci się pouczyć w dzień wolny."
 #: src/today/today-day-status.tsx
 msgctxt "CZ9Ql4"
 msgid "You're done for today."
-msgstr "Na dziś to wszystko."
+msgstr "Na dziś to już wszystko."
 
 #: src/today/today-day-status.tsx
 msgctxt "9JilTp"
@@ -14821,7 +14821,7 @@ msgstr "Udało ci się ukończyć plan."
 #: src/today/today-day-status.tsx
 msgctxt "brhjJ2"
 msgid "You're all caught up."
-msgstr "Jesteś na bieżąco."
+msgstr "Jesteś już na bieżąco."
 
 #: src/today/today-earlier-lessons.tsx
 msgctxt "JMtLiG"
@@ -14904,7 +14904,7 @@ msgstr "Zostało za mało czasu na wszystkie lekcje."
 #: src/today/today-heading.tsx
 msgctxt "RxQWR_"
 msgid "Welcome back. Today is short, so it's easy to start again."
-msgstr "Miło cię znów widzieć. Dziś nauka potrwa krótko, więc łatwo będzie do niej wrócić."
+msgstr "Witaj ponownie. Dziś nauka potrwa krótko, więc łatwo będzie do niej wrócić."
 
 #: src/today/today-heading.tsx
 msgctxt "Viq1rs"
@@ -14997,7 +14997,7 @@ msgstr "Przygotowujemy twój plan: {goal}"
 #: src/today/today-preparing.tsx
 msgctxt "Xu-pMI"
 msgid "It takes a minute or two. Your first day opens here as soon as it's ready."
-msgstr "Potrzebujemy minuty lub dwóch. Twój pierwszy dzień nauki pojawi się tutaj, gdy tylko będzie gotowy."
+msgstr "To zajmie minutę lub dwie. Gdy skończymy, zobaczysz tu swój pierwszy dzień nauki."
 
 #: src/today/today-screen.tsx
 #: src/today/today-shell.tsx
@@ -15130,12 +15130,12 @@ msgstr "przed rozpoczęciem twojego planu"
 #: src/today/today-week-day.tsx
 msgctxt "1RBuve"
 msgid "after your exam"
-msgstr "po twoim egzaminie"
+msgstr "po egzaminie"
 
 #: src/today/today-week-day.tsx
 msgctxt "coog-B"
 msgid "after your end date"
-msgstr "po terminie zakończenia"
+msgstr "po dacie zakończenia"
 
 #: src/today/today-week-day.tsx
 msgctxt "v_Mk8I"

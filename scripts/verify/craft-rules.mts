@@ -47,7 +47,7 @@ export const CRAFT_LINES = {
 
 /**
  * Each lead carries its rule's id and name from zoonk-design's craft reference. The ids are a
- * contract: the lanes' findings name the same rules.
+ * contract: reports name the same rules.
  */
 const RULES = {
   E1: "E1 one start edge per column",
