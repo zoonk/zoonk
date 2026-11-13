@@ -117,9 +117,7 @@ private struct BuddyContent: View {
     }
     .navigationTitle(Text(name))
     .navigationSubtitle(
-      Text(
-        "Your study buddy\u{00A0}· \(status.stage.name)", tableName: "Buddy",
-        comment: "What the buddy is, and its stage")
+      Text("Your study buddy", tableName: "Buddy", comment: "What the buddy is, under its name")
     )
     .taskOptions(
       label: Text(
@@ -221,7 +219,7 @@ private struct BuddyContent: View {
         scope: .plan(goalId: goalId),
         suggestions: suggestions(mistakes: mistakes.state),
         placeholder: Text(
-          "Ask a question or request a change", tableName: "Buddy",
+          "Ask anything", tableName: "Buddy",
           comment: "Placeholder of the buddy's composer: it answers and changes the plan"),
         isPage: true
       ) {
@@ -237,7 +235,7 @@ private struct BuddyContent: View {
   private var greeting: some View {
     VStack(alignment: .leading, spacing: 12) {
       Text(
-        "Hi! I'm \(name), your AI study buddy. Ask me anything about what you're studying, or tell me what you'd like to change in your plan.",
+        "Hi! I'm \(name), your AI study buddy. Ask me anything, or tell me what to change in your plan.",
         tableName: "Buddy",
         comment: "The buddy's hello at the top of its conversation; the argument is its name"
       )
@@ -352,10 +350,14 @@ private struct BuddyContent: View {
 
       AccessibilityStack(spacing: 16, stackedSpacing: 4) {
         Label {
-          Text(
-            status.energy.current.map {
-              ($0 / 100).formatted(.percent.precision(.fractionLength(0)))
-            } ?? "–")
+          if let current = status.energy.current {
+            Text(
+              "\((current / 100).formatted(.percent.precision(.fractionLength(0)))) Energy",
+              tableName: "Buddy",
+              comment: "The buddy's Energy beside its bolt, such as \"68% Energy\"")
+          } else {
+            Text(verbatim: "–")
+          }
         } icon: {
           Image(systemName: "bolt.fill")
             .foregroundStyle(.energy)
@@ -364,8 +366,8 @@ private struct BuddyContent: View {
         if let today = status.today, !today.missions.isEmpty {
           Label {
             Text(
-              verbatim:
-                "\(today.missions.filter { $0.status == .done }.count)/\(today.missions.count)")
+              "\(today.missions.filter { $0.status == .done }.count) of \(today.missions.count) missions",
+              tableName: "Buddy", comment: "Today's missions done, such as \"0 of 3 missions\"")
           } icon: {
             Image(systemName: "target")
           }

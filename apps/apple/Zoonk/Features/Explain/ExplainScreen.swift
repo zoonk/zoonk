@@ -91,10 +91,7 @@ private struct ExplanationView: View {
             Text(
               "Quick explanation\u{00A0}· \(Duration.seconds(300), format: .units(allowed: [.minutes], width: .abbreviated))",
               tableName: "Explain",
-              comment: "Eyebrow over a quick explanation's title: its kind and length")),
-          supporting: Text(
-            "No plan to set up.", tableName: "Explain", comment: "Under a quick explanation's title"
-          )
+              comment: "Chip over a quick explanation's title: its kind and length"))
         )
         .listRowBackground(Color.clear)
       }
@@ -153,7 +150,7 @@ private struct ExplanationView: View {
         } else {
           StepButtons(
             continueLabel: Text(
-              "See explanation", tableName: "Explain", comment: "Plays a written quick explanation")
+              "Start", tableName: "Explain", comment: "Plays a written quick explanation")
           ) {
             hasPlayed = true
             router.open(.lesson(lessonId: lesson.id))
@@ -192,7 +189,7 @@ private struct ExplanationView: View {
 
   private var stillWriting: String {
     String(
-      localized: "Still writing your explanation. It shows up here as soon as it's ready.",
+      localized: "Still getting your explanation ready.",
       table: "Explain", comment: "Under a quick explanation that's still being written")
   }
 
@@ -236,7 +233,7 @@ private struct ExplanationView: View {
       } label: {
         VStack(alignment: .leading, spacing: 2) {
           Text(
-            "I want to learn this in depth", tableName: "Explain",
+            "Learn more about this", tableName: "Explain",
             comment: "Starts a plan from a quick explanation"
           )
           .foregroundStyle(.primary)

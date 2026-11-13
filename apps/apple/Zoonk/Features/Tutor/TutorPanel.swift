@@ -5,6 +5,7 @@ import SwiftUI
 struct TutorPanel: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(LearnerSummaryStore.self) private var summary
+  @Environment(TutorStore.self) private var tutor
 
   let scope: TutorScope
   var quote: String?
@@ -44,6 +45,14 @@ struct TutorPanel: View {
   private var thread: some View {
     TutorThreadView(scope: scope, draft: draft) {
       VStack(alignment: .leading, spacing: 8) {
+        if showsBuddy {
+          BuddyCharacter(look: summary.summary.value?.buddy ?? BuddyLook())
+            .frame(height: 96)
+            .frame(maxWidth: .infinity)
+            .padding(.bottom, 4)
+            .accessibilityHidden(true)
+        }
+
         if isPane {
           title
             .typeStyle(.body.weight(.semibold))
@@ -72,6 +81,14 @@ struct TutorPanel: View {
 
   private var name: String {
     summary.buddyDisplayName
+  }
+
+  /// Main's E-020: inside a lesson, the whole buddy greets an empty conversation.
+  private var showsBuddy: Bool {
+    switch scope {
+    case .step, .lesson: tutor.conversation(scope).turns.isEmpty
+    default: false
+    }
   }
 
   private func quoteLine(_ question: String) -> String {
