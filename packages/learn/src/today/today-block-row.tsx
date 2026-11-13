@@ -1,14 +1,14 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
-import { Loader2Icon } from "lucide-react";
+import { Loader2Icon, TargetIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { KindMark } from "../_components/kind-tile";
-import { PlusMark } from "../_components/plus-lock";
 import { TestOutStartLink } from "../_components/test-out-start-link";
 import { TITLE_ROW_CLASS, TRUNCATED_TITLE_CLASS } from "../_components/title-row";
 import { useFormatDuration } from "../_utils/time-format";
 import { LearnLink } from "../learn-link";
+import { type MissionView } from "../missions/mission-links";
 import { BlockMark } from "../session/block-mark";
 import { type DayStep } from "../session/session-types";
 import { useBlockTitle } from "../session/use-block-copy";
@@ -54,9 +54,35 @@ function RowTime({ minutes }: { minutes: number }) {
   );
 }
 
+function opensStep(opens: MissionView["opens"], step: DayStep): boolean {
+  if (opens?.kind !== "block") {
+    return false;
+  }
+
+  return "blockId" in opens
+    ? "id" in step && opens.blockId === step.id
+    : opens.ref.position === step.position;
+}
+
+/** A step still to do that one of today's open missions asks for. */
+function useCountsTowardMission() {
+  const { missions } = useTodayScreen();
+
+  return (step: DayStep): boolean =>
+    Boolean(
+      !missions?.fullMeal.earned &&
+      !isFinished(step) &&
+      missions?.missions.some(
+        (mission) =>
+          mission.status === "todo" && !mission.waitReason && opensStep(mission.opens, step),
+      ),
+    );
+}
+
 function RowName({ block, isNext }: { block: DayStep; isNext: boolean }) {
   const t = useExtracted();
   const title = useBlockTitle();
+  const countsTowardMission = useCountsTowardMission()(block);
 
   return (
     <span
@@ -69,6 +95,7 @@ function RowName({ block, isNext }: { block: DayStep; isNext: boolean }) {
       {title(block)}
       {block.status === "completed" && <span className="sr-only">{t(", done")}</span>}
       {block.status === "skipped" && <span className="sr-only">{t(", skipped")}</span>}
+      {countsTowardMission && <span className="sr-only">{t(", counts toward a mission")}</span>}
     </span>
   );
 }
@@ -144,6 +171,7 @@ export function BlockRow({
   opens?: boolean;
 }) {
   const finished = isFinished(block);
+  const countsTowardMission = useCountsTowardMission()(block);
   const lessonAgainId = getLessonAgainId(block);
 
   return (
@@ -167,7 +195,14 @@ export function BlockRow({
         </div>
 
         {!finished && (
-          <span className="text-muted-foreground flex h-5 items-center font-mono text-xs tabular-nums">
+          <span className="text-muted-foreground flex h-5 items-center gap-1.5 font-mono text-xs tabular-nums">
+            {countsTowardMission && (
+              <TargetIcon
+                aria-hidden="true"
+                className="text-brain size-3.5"
+                data-slot="mission-row-mark"
+              />
+            )}
             <RowTime minutes={block.estimatedMinutes} />
           </span>
         )}
@@ -234,8 +269,9 @@ export function PlanLessonRow({
 }
 
 /**
- * Not part of the session: never the next block, no mission mark, and the day's segments, time and
- * action leave it out.
+ * A lesson past what the learner's plan includes looks like any lesson and opens the subscription
+ * page. Not part of the session: never the next block, no mission mark, and the day's segments,
+ * time and action leave it out.
  */
 export function PlusLessonRow({ title }: { title: string }) {
   const { actions } = useTodayScreen();
@@ -257,7 +293,6 @@ export function PlusLessonRow({ title }: { title: string }) {
         prefetch={false}
       >
         <span className="min-w-0 flex-1 truncate text-sm leading-5 font-medium">{title}</span>
-        <PlusMark />
       </LearnLink>
     </li>
   );

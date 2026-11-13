@@ -47,7 +47,6 @@ export function TodayShell() {
             <div className={METER_PARTS_CLASS}>
               <Skeleton className="h-full w-full rounded-full" />
             </div>
-            <Skeleton className="mt-2 h-3 w-40 rounded-sm" />
 
             <DayRowsSkeleton />
           </div>

@@ -167,9 +167,9 @@ export function TodaySession({ className }: { className?: string }) {
   const next = useNextBlock();
 
   return (
-    <div className={cn("flex min-w-0 flex-col", className)} data-slot="today-session">
+    <div className={cn("relative flex min-w-0 flex-col", className)} data-slot="today-session">
       <DayProgress />
-      <DayOpenStatus className="mt-2" />
+      <DayOpenStatus />
 
       <div className="mt-3 flex flex-col first:mt-0 empty:hidden" data-slot="today-list">
         <SessionQueue next={next} />

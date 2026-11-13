@@ -12,15 +12,16 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { BigQuantity } from "../_components/big-quantity";
 import { METER_PARTS_CLASS } from "../_components/meter";
-import { PlusMark } from "../_components/plus-lock";
+import { moveFocusWithArrows } from "../_utils/arrow-focus";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { getDayMeterParts } from "../session/day-meter-parts";
 import { getSessionQueue } from "../session/session-queue-rows";
 import { type DayStep } from "../session/session-types";
-import { DaySegment, drawsDayMeter } from "./day-segments";
+import { drawsDayMeter } from "./day-segments";
 import { TodayContinueStatus } from "./today-action";
 import { useTodayScreen } from "./today-context";
+import { BlockSegment, DAY_SEGMENT_SLOT, HeldSegment } from "./today-segment-popover";
 import { getDayTime, getHeldMinutes } from "./today-time";
 
 function getBlockShare(block: DayStep): number {
@@ -31,7 +32,8 @@ function getBlockShare(block: DayStep): number {
   return Math.min(1, block.answered / block.questions);
 }
 
-/** A picture of the day, not a control: the list under it names each step and its time. */
+const moveBetweenSegments = moveFocusWithArrows(DAY_SEGMENT_SLOT);
+
 export function DayProgress({ className }: { className?: string }) {
   const t = useExtracted();
   const { today } = useTodayScreen();
@@ -44,11 +46,14 @@ export function DayProgress({ className }: { className?: string }) {
     rows: getSessionQueue({ blocks, nextPosition }),
   });
 
+  const focusPosition = next?.position ?? parts[0]?.block.position;
+
   if (!drawsDayMeter({ held: held > 0, parts })) {
     return null;
   }
 
   return (
+    // oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- The arrow keys move between the buttons inside.
     <div
       aria-label={t(
         "{done, plural, =0 {# of {total, number} done} one {# of {total, number} done} other {# of {total, number} done}}",
@@ -56,12 +61,13 @@ export function DayProgress({ className }: { className?: string }) {
       )}
       className={cn(METER_PARTS_CLASS, className)}
       data-slot="today-day-progress"
-      role="img"
+      onKeyDown={moveBetweenSegments}
+      role="group"
     >
       {parts.map((part) => (
-        <DaySegment key={part.id} kind={part.kind} share={part.share} state={part.state} />
+        <BlockSegment focusable={part.block.position === focusPosition} key={part.id} part={part} />
       ))}
-      {held > 0 && <DaySegment kind="lesson" state="ahead" />}
+      {held > 0 && <HeldSegment minutes={held} />}
     </div>
   );
 }
@@ -93,8 +99,7 @@ function DayTimeReadout({ className }: { className?: string }) {
 
 /**
  * A day that keeps time for a mock exam is shorter than the learner's time a day, so its time opens
- * why. A mock the learner's plan doesn't include wears the Plus mark, so the line never reads as a
- * mock they can take.
+ * why.
  */
 export function DayTime({ className }: { className?: string }) {
   const t = useExtracted();
@@ -124,13 +129,15 @@ export function DayTime({ className }: { className?: string }) {
             })}
           </PopoverDescription>
         </PopoverHeader>
-        {!session.examAccess.includesMockExams && <PlusMark className="self-start" />}
       </PopoverContent>
     </Popover>
   );
 }
 
-/** Holds the line a slow or failed open speaks on, so nothing under the meter moves. */
+/**
+ * From `sm` a slow or failed open speaks under the action, in the room over the day's bar, so it
+ * takes no line of its own and nothing moves. On a phone the docked action says it.
+ */
 export function DayOpenStatus({ className }: { className?: string }) {
   const { today } = useTodayScreen();
 
@@ -140,10 +147,13 @@ export function DayOpenStatus({ className }: { className?: string }) {
 
   return (
     <p
-      className={cn("text-muted-foreground hidden min-h-5 text-xs sm:flex", className)}
+      className={cn(
+        "text-muted-foreground absolute right-0 bottom-full hidden max-w-full text-xs leading-4 sm:flex",
+        className,
+      )}
       data-slot="today-open-status"
     >
-      <TodayContinueStatus className="ml-auto min-w-0 truncate text-right" />
+      <TodayContinueStatus className="min-w-0 truncate text-right" />
     </p>
   );
 }
