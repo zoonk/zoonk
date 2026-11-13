@@ -369,7 +369,7 @@ export type TricksterProps = Omit<React.ComponentProps<"svg">, "children"> & {
 
 /** As the buddy's: a view's picture holds everything that view draws, in every expression. */
 const BODY_BOX = "0 0 160 160";
-const FACE_BOX = "27.5 51.5 93 93";
+const FACE_BOX = "25.5 51.5 93 93";
 
 export function TricksterFigure({
   className,
