@@ -47,7 +47,7 @@ async function FirstDay({
   return (
     <div className="flex min-w-0 flex-col gap-2">
       <p className="flex items-baseline justify-between gap-3">
-        <span className="text-[0.9375rem] font-semibold">
+        <span className="text-reading font-semibold">
           {t({
             description:
               "Heading over the lessons a new learner would study on the first day of this course.",
@@ -127,7 +127,7 @@ export async function CoursePlanWindow({
             })}
           </p>
 
-          <p className="text-muted-foreground max-w-120 text-[0.9375rem] leading-relaxed text-pretty">
+          <p className="text-muted-foreground max-w-120 text-reading leading-relaxed text-pretty">
             {t({
               description:
                 "Under a big number of weeks (“~32 weeks”): how long the course takes when studying this many minutes a day.",

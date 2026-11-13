@@ -29,7 +29,7 @@ export function ExplanationStepView({ step }: LessonStepViewProps<StepOf<"explan
       <div className="flow-root w-full lg:max-w-xl" data-slot="lesson-text">
         {cornerIcon && <CornerIcon className="-me-2 -mt-1 mb-2" icon={cornerIcon} />}
         {content.title && (
-          <h2 className="text-foreground mb-2 text-[0.9375rem] leading-snug font-semibold sm:mb-3">
+          <h2 className="text-foreground text-reading mb-2 leading-snug font-semibold sm:mb-3">
             <SpokenMath>
               <LessonRichText text={content.title} />
             </SpokenMath>

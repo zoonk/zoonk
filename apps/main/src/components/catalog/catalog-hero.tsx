@@ -12,7 +12,7 @@ export const HERO_LEAD_CLASS = "text-lead mt-4";
 
 export const LESSON_LEAD_CLASS = "text-lead mt-3";
 
-const PLAN_LINE_CLASS = "text-muted-foreground mt-4 flex gap-2 text-[0.9375rem] leading-snug";
+const PLAN_LINE_CLASS = "text-muted-foreground mt-4 flex gap-2 text-reading leading-snug";
 
 type PlanStart = "chapter" | "exam" | "known";
 

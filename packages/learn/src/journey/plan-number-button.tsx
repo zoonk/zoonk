@@ -18,7 +18,7 @@ const NUMBER_CLASS = {
   stats:
     "-m-2 w-[calc(100%+1rem)] rounded-lg p-2 hover:bg-muted/70 focus-visible:ring-ring/50 flex min-w-0 flex-col gap-1.5 text-left outline-none transition-colors focus-visible:ring-[3px]",
   tiles:
-    "ring-border rounded-option hover:bg-muted/50 focus-visible:ring-ring/50 flex h-full w-full min-w-0 flex-col gap-1.5 p-3 text-left ring-1 outline-none transition-colors ring-inset focus-visible:ring-[3px]",
+    "ring-border rounded-xl hover:bg-muted/50 focus-visible:ring-ring/50 flex h-full w-full min-w-0 flex-col gap-1.5 p-3 text-left ring-1 outline-none transition-colors ring-inset focus-visible:ring-[3px]",
 } as const;
 
 export type PlanNumberVariant = keyof typeof NUMBER_CLASS;

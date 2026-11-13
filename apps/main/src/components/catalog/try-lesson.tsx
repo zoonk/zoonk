@@ -42,7 +42,7 @@ export async function TryLesson({
         {t("Try a lesson · free · {time}", { time: minutesText(pick.minutes) })}
       </h2>
 
-      <p className="text-muted-foreground mt-1.5 mb-5 text-[13px] leading-snug text-pretty">
+      <p className="text-muted-foreground text-compact mt-1.5 mb-5 leading-snug text-pretty">
         {t("{chapter} · lesson {number, number}", {
           chapter: pick.chapterTitle,
           number: pick.number,

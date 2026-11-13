@@ -100,7 +100,7 @@ export async function LibraryLessonPage({
           />
 
           <article aria-labelledby={titleId} className="max-w-column flex flex-col">
-            <p className="text-muted-foreground flex items-center gap-2 text-sm sm:text-[15px]">
+            <p className="text-muted-foreground sm:text-reading flex items-center gap-2 text-sm">
               <SubjectGlyph subject={subject} />
               <PublicEyebrowLink href={getCourseHref(params)}>{course.title}</PublicEyebrowLink>
             </p>

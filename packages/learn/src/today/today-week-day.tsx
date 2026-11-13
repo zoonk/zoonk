@@ -113,7 +113,7 @@ function DayLetter({ day }: { day: WeekDay }) {
     <span
       aria-hidden="true"
       className={cn(
-        "text-faint font-mono text-[0.6875rem] uppercase",
+        "text-faint text-2xs font-mono uppercase",
         day.isToday && "text-foreground font-medium",
       )}
     >

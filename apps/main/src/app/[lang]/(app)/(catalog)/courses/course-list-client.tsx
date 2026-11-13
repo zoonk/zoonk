@@ -87,7 +87,7 @@ function CourseItem({
 
         <span className="flex min-w-0 flex-1 flex-col self-stretch">
           <span className="flex items-start justify-between gap-3">
-            <span className="min-w-0 text-[0.9375rem] leading-snug font-semibold text-pretty">
+            <span className="text-reading min-w-0 leading-snug font-semibold text-pretty">
               {course.title}
             </span>
 
@@ -99,7 +99,7 @@ function CourseItem({
           </span>
 
           {course.description && (
-            <span className="text-muted-foreground mt-1 line-clamp-2 text-[0.8125rem] leading-snug">
+            <span className="text-muted-foreground text-compact mt-1 line-clamp-2 leading-snug">
               {getFirstSentence(course.description, course.language)}
             </span>
           )}

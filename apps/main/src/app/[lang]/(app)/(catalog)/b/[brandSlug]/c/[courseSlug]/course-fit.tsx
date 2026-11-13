@@ -8,7 +8,7 @@ import { getExtracted } from "next-intl/server";
 
 const STOP_CLASS = "flex flex-col gap-5";
 const LIST_CLASS = "divided-rows max-w-column flex flex-col";
-const ROW_CLASS = "py-3 text-[0.9375rem] leading-relaxed first:pt-0";
+const ROW_CLASS = "py-3 text-reading leading-relaxed first:pt-0";
 
 /** The details step writes only a few short lines (`PAGE_LISTS` in `@zoonk/ai`), so they all show. */
 function OutcomeList({ outcomes }: { outcomes: string[] }) {

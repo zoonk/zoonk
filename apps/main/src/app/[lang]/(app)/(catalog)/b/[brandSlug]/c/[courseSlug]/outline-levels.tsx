@@ -12,7 +12,7 @@ import {
 } from "./outline-chapter-row";
 
 const LEVEL_LINE_CLASS =
-  "text-muted-foreground text-[13px] leading-snug font-normal text-pretty sm:text-sm";
+  "text-muted-foreground text-compact leading-snug font-normal text-pretty sm:text-sm";
 
 function LevelLabel({
   courseId,

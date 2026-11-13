@@ -48,7 +48,7 @@ async function MockResult() {
 
           return (
             <div className="flex min-w-0 flex-col" key={score.label}>
-              <p className="text-muted-foreground text-[0.8125rem]">{score.label}</p>
+              <p className="text-muted-foreground text-compact">{score.label}</p>
               <p className="text-readout mt-1.5 text-[clamp(1.75rem,10.5cqi,3.75rem)] whitespace-nowrap">
                 {number}
                 {unit && (
@@ -69,7 +69,7 @@ async function MockResult() {
         })}
       </div>
 
-      <ul className="divided-rows mt-6 border-t text-[0.9375rem] leading-snug">
+      <ul className="divided-rows mt-6 border-t text-reading leading-snug">
         <li className="flex min-h-12 items-center gap-3 py-2.5">
           <DoneMark />
           <span>

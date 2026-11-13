@@ -4,7 +4,7 @@ import { ChevronDownIcon } from "lucide-react";
 import { type ReactNode } from "react";
 
 export const DISCLOSURE_ANSWER_CLASS =
-  "text-muted-foreground max-w-column text-[15px] leading-relaxed text-pretty sm:text-base";
+  "text-muted-foreground max-w-column text-reading leading-relaxed text-pretty sm:text-base";
 
 export const DISCLOSURE_LINK_CLASS =
   "text-foreground hit-area relative font-medium underline underline-offset-4";
@@ -25,12 +25,12 @@ export function PublicDisclosure({
 }) {
   return (
     <details className={cn("group not-first:border-t", className)} open={open}>
-      <summary className="hover:text-foreground focus-visible:ring-ring/50 flex cursor-pointer list-none gap-4 rounded-md py-4 text-[15px] leading-snug font-semibold outline-none select-none focus-visible:ring-[3px] sm:text-base [&::-webkit-details-marker]:hidden">
+      <summary className="hover:text-foreground focus-visible:ring-ring/50 flex cursor-pointer list-none gap-4 rounded-md py-4 text-reading leading-snug font-medium outline-none select-none focus-visible:ring-[3px] sm:text-base [&::-webkit-details-marker]:hidden">
         <span className="flex min-w-0 flex-1 flex-col gap-0.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
           <span className="text-pretty">{summary}</span>
 
           {aside && (
-            <span className="text-muted-foreground flex-none text-[13px] font-normal tabular-nums sm:text-sm">
+            <span className="text-muted-foreground flex-none text-compact font-normal tabular-nums sm:text-sm">
               {aside}
             </span>
           )}
@@ -39,7 +39,7 @@ export function PublicDisclosure({
         <LineMarker>
           <ChevronDownIcon
             aria-hidden="true"
-            className="text-muted-foreground size-4 transition-transform group-open:rotate-180 motion-reduce:transition-none"
+            className="text-muted-foreground edge -me-(--edge-pull) size-4 transition-transform group-open:rotate-180 motion-reduce:transition-none"
           />
         </LineMarker>
       </summary>

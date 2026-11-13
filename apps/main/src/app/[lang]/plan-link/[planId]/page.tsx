@@ -75,7 +75,7 @@ async function PlanLinkBody({ params }: Props) {
         <PlanLinkTracker planId={planId} />
 
         <div className="min-w-0">
-          <p className="text-muted-foreground text-sm font-medium sm:text-[15px]">
+          <p className="text-muted-foreground text-sm font-medium sm:text-reading">
             {t("Someone shared their study plan with you")}
           </p>
 
@@ -92,7 +92,7 @@ async function PlanLinkBody({ params }: Props) {
               <ClientMessagesProvider scope="learn">
                 <StartPlanForm action={startPlanAction.bind(null, planId)} />
               </ClientMessagesProvider>
-              <p className="text-muted-foreground text-[13px] sm:text-sm">{makeItYours}</p>
+              <p className="text-muted-foreground text-compact sm:text-sm">{makeItYours}</p>
             </div>
           ) : (
             <StartBlock

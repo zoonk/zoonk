@@ -12,7 +12,7 @@ export function PublicEyebrowLink({
 }) {
   return (
     <Link
-      className="text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 -my-2.5 inline-flex min-h-11 max-w-full min-w-11 items-center rounded-md text-sm leading-snug font-medium text-pretty transition-colors outline-none focus-visible:ring-[3px] sm:text-[15px]"
+      className="text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 -my-2.5 inline-flex min-h-11 max-w-full min-w-11 items-center rounded-md text-sm leading-snug font-medium text-pretty transition-colors outline-none focus-visible:ring-[3px] sm:text-reading"
       href={href}
       prefetch
     >

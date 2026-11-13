@@ -19,7 +19,7 @@ const CHAPTERS_NAMED = 3;
 /** A closed level or subject says what it holds; open, its rows do. */
 export function ZoneChapterNames({ chapters }: { chapters: OutlineChapter[] }) {
   return (
-    <span className="text-muted-foreground text-[13px] leading-snug font-normal text-pretty group-open/zone:hidden sm:text-sm">
+    <span className="text-muted-foreground text-compact leading-snug font-normal text-pretty group-open/zone:hidden sm:text-sm">
       {chapters
         .slice(0, CHAPTERS_NAMED)
         .map((chapter) => chapter.title)
@@ -134,7 +134,7 @@ export function OutlineChapterRow({
 
       <div className="min-w-0 flex-1">
         <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
-          <h3 className="text-[0.9375rem] leading-5.5 font-semibold text-balance">
+          <h3 className="text-reading leading-5.5 font-semibold text-balance">
             <Link
               className={CHAPTER_LINK_CLASS}
               href={getChapterHref({ ...params, chapterSlug: chapter.slug })}

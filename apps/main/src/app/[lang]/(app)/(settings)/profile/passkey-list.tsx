@@ -95,7 +95,8 @@ function PasskeyRow({
           render={
             <Button
               aria-label={t("Options for “{name}”", { name })}
-              className="text-muted-foreground -mr-2 size-11 shrink-0"
+              className="text-muted-foreground shrink-0"
+              edge="end"
               size="icon"
               variant="ghost"
             />

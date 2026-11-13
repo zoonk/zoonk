@@ -81,7 +81,7 @@ export async function LessonFirstScreen({
     return (
       <FirstScreenSection>
         <RichTextBlocks
-          className="mb-6 text-[1.0625rem] leading-relaxed text-pretty sm:text-lg"
+          className="mb-6 text-lg leading-relaxed text-pretty"
           text={screen.text}
         />
 

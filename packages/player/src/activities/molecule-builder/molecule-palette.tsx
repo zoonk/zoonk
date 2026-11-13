@@ -67,7 +67,7 @@ export function MoleculeElements({
               : t("Add {element}", { element: nameOf(element) })}
           </span>
           <ElementSwatch element={element} />
-          <span className="text-muted-foreground text-[13px] whitespace-nowrap">
+          <span className="text-muted-foreground text-compact whitespace-nowrap">
             {t("{count, plural, one {# bond} other {# bonds}}", { count: valenceOf(element) })}
           </span>
         </button>

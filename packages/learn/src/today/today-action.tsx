@@ -22,7 +22,7 @@ import { TODAY_ACTION_STATUS_CLASS } from "./today-layout";
 import { useContinueSession } from "./use-continue-session";
 import { useDayState, useSessionState, useTodayPastDate, useUpNextLessons } from "./use-today-copy";
 
-const ACTION_CLASS = "w-full text-[0.9375rem] sm:w-auto";
+const ACTION_CLASS = "w-full text-reading sm:w-auto";
 
 type SessionAction = ReturnType<typeof useSessionAction> & { wait: WaitState };
 

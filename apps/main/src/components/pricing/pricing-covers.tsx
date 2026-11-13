@@ -23,7 +23,7 @@ const PRACTICE_FIRST_MOCK_SHARE = 0.35;
 const PRACTICE_SECOND_MOCK_SHARE = 0.8;
 const FINAL_MOCK_SHARE = 0.4;
 
-const SWATCH_CLASS = "inline-block h-2.5 w-3.5 rounded-[3px] ring-1 ring-inset";
+const SWATCH_CLASS = "inline-block h-2.5 w-3.5 rounded-meter ring-1 ring-inset";
 
 async function getExamRoad(): Promise<RoadBand[]> {
   const t = await getExtracted();
@@ -115,7 +115,7 @@ async function FreeMonth() {
     <div className="flex flex-col gap-3 border-t pt-6">
       <p className="text-sm font-semibold">{t("Any other goal")}</p>
 
-      <p className="text-muted-foreground text-[0.8125rem]">
+      <p className="text-muted-foreground text-compact">
         {t(
           "Free: {month, plural, one {# lesson} other {# lessons}} a month, {count, plural, one {about one short lesson each weekday} other {about # short lessons each weekday}} · Plus: every lesson",
           { count: perWeekday, month: perMonth },

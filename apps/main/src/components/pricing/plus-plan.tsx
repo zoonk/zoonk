@@ -1,7 +1,5 @@
 import { NUMERIC_CLASS } from "@/components/public/landing-styles";
 import {
-  SEGMENTED_OPTION_CLASS,
-  SEGMENTED_TRACK_CLASS,
   Variant,
   VariantSwitch,
   VariantSwitchOption,
@@ -10,6 +8,7 @@ import { getAppLocale } from "@/i18n/locale";
 import { Link, getPathname } from "@/i18n/navigation";
 import { SURFACE_CLASS } from "@zoonk/learn/surface";
 import { FORWARD_ICON, buttonVariants } from "@zoonk/ui/components/button";
+import { TAB_CLASS, TAB_LIST_CLASS } from "@zoonk/ui/components/tab-class";
 import { cn } from "@zoonk/ui/lib/utils";
 import { PendingLink } from "@zoonk/ui/patterns/links/pending";
 import { type PriceInfo } from "@zoonk/utils/currency";
@@ -144,7 +143,7 @@ async function PlusPrices({
   const monthly = (
     <>
       <PlanPrice amount={formatPlanPrice({ locale, price: monthlyPrice })} per={t("per month")} />
-      <p className="text-muted-foreground text-[0.8125rem]">{t("Billed every month.")}</p>
+      <p className="text-muted-foreground text-compact">{t("Billed every month.")}</p>
     </>
   );
 
@@ -160,7 +159,7 @@ async function PlusPrices({
 
       <Variant className="flex flex-col gap-2" name={billingSwitch} value="yearly">
         <PlanPrice amount={formatPlanPrice({ locale, price: yearlyPrice })} per={t("per year")} />
-        <p className="text-muted-foreground text-[0.8125rem]">
+        <p className="text-muted-foreground text-compact">
           {t.rich("That's <mono>{amount}</mono> a month.", {
             amount: formatPlanPrice({ locale, price: monthlyEquivalent }),
             mono: renderMono,
@@ -203,13 +202,13 @@ export async function PlusPlan({
         {hasChoice && (
           <VariantSwitch
             aria-label={t("Billing period")}
-            className={SEGMENTED_TRACK_CLASS}
+            className={cn(TAB_LIST_CLASS, "-me-2.5")}
             defaultValue={defaultPeriod}
             name={billingSwitch}
             values={PERIODS}
           >
             <VariantSwitchOption
-              className={SEGMENTED_OPTION_CLASS}
+              className={TAB_CLASS}
               defaultValue={defaultPeriod}
               name={billingSwitch}
               value="monthly"
@@ -218,7 +217,7 @@ export async function PlusPlan({
             </VariantSwitchOption>
 
             <VariantSwitchOption
-              className={SEGMENTED_OPTION_CLASS}
+              className={TAB_CLASS}
               defaultValue={defaultPeriod}
               name={billingSwitch}
               value="yearly"
