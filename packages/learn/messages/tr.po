@@ -504,16 +504,6 @@ msgid "This is taking longer than usual. It opens on its own, no need to tap aga
 msgstr "Bu işlem normalden uzun sürüyor. Kendiliğinden açılacak, tekrar dokunmana gerek yok."
 
 #: src/_components/plus-lock.tsx
-msgctxt "lOdoIb"
-msgid "Plus"
-msgstr "Plus"
-
-#: src/_components/plus-lock.tsx
-msgctxt "fi0FtL"
-msgid "Available with Plus"
-msgstr "Plus ile kullanılabilir"
-
-#: src/_components/plus-lock.tsx
 #: src/_components/subscribe-gate.tsx
 #: src/conversation/tutor-feature-offers.tsx
 #: src/onboarding/entry/goal-limit-notice.tsx

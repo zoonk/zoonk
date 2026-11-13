@@ -504,16 +504,6 @@ msgid "This is taking longer than usual. It opens on its own, no need to tap aga
 msgstr "평소보다 오래 걸리고 있어요. 자동으로 열리니 다시 누르지 않아도 돼요."
 
 #: src/_components/plus-lock.tsx
-msgctxt "lOdoIb"
-msgid "Plus"
-msgstr "Plus"
-
-#: src/_components/plus-lock.tsx
-msgctxt "fi0FtL"
-msgid "Available with Plus"
-msgstr "Plus에서 이용 가능"
-
-#: src/_components/plus-lock.tsx
 #: src/_components/subscribe-gate.tsx
 #: src/conversation/tutor-feature-offers.tsx
 #: src/onboarding/entry/goal-limit-notice.tsx
