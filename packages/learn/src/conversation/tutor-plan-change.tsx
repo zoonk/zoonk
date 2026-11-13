@@ -112,7 +112,7 @@ function ChangeActions({
           </Button>
         )}
         <Button
-          className="min-w-0 flex-1"
+          className="min-w-0"
           disabled={isPending}
           focusableWhenDisabled
           formAction={() => answer("declined")}

@@ -160,6 +160,15 @@ export function SuggestionSummary({ className, ...props }: React.ComponentProps<
   );
 }
 
+/**
+ * A suggestion's main action on a page that has its own (Today's "Start session"): filled in the
+ * sheet, which covers the page, and outline in the panel beside it, so the page keeps one filled
+ * button.
+ */
+export function useMainActionVariant(): "default" | "outline" {
+  return use(PresentationContext) === "panel" ? "outline" : "default";
+}
+
 export function useCloseSuggestionSheet(): () => void {
   const { setOpen } = useSuggestion();
   return () => setOpen(false);

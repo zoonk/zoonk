@@ -20,6 +20,7 @@ import {
   SuggestionResult,
   SuggestionSaveError,
   SuggestionSummary,
+  useMainActionVariant,
 } from "../_components/suggestion";
 import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
 import { useAppliedLine, useOfficialDateLine } from "../plan/use-change-sentence";
@@ -66,11 +67,16 @@ function ChangeActions({
   const overridesNotice = change.officialDate !== null;
   // Answering the notice or the phase dates keeps what the learner has, and the answer stays.
   const keepsMine = change.source === NOTICE_SOURCE || change.source === PHASE_DATES_SOURCE;
+  const mainVariant = useMainActionVariant();
 
   return (
     <SuggestionActions>
       {change.canApply && (
-        <SuggestionAction action={() => onAnswer("applied")} disabled={disabled}>
+        <SuggestionAction
+          action={() => onAnswer("applied")}
+          disabled={disabled}
+          variant={mainVariant}
+        >
           {overridesNotice ? t("Use my date") : t("Change my plan")}
         </SuggestionAction>
       )}

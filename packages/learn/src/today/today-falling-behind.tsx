@@ -20,6 +20,7 @@ import {
   SuggestionResult,
   SuggestionSaveError,
   SuggestionSummary,
+  useMainActionVariant,
 } from "../_components/suggestion";
 import { SuggestionMenu } from "../_components/suggestion-menu";
 import { useFormatShare } from "../_utils/percent";
@@ -108,10 +109,15 @@ function BehindChoices({
   const leading = getLeadingOption({ behind, returnDay: isWelcomeBackDay(today.session) });
   const lead = options.find(({ option }) => option === leading);
   const others = options.filter(({ option }) => option !== leading);
+  const mainVariant = useMainActionVariant();
 
   return (
     <SuggestionActions>
-      {lead && <SuggestionLinkAction href={lead.href}>{lead.label}</SuggestionLinkAction>}
+      {lead && (
+        <SuggestionLinkAction href={lead.href} variant={mainVariant}>
+          {lead.label}
+        </SuggestionLinkAction>
+      )}
 
       <SuggestionAction
         action={keep}
