@@ -5,7 +5,6 @@ import SwiftUI
 struct ExamMoment: Hashable, Decodable, Sendable {
   var checklist: [ExamView.ChecklistItem]
   var day: ExamView.Day?
-  var dayBefore: ExamView.DayBefore
   var examName: String
   var mocksTaken: Int
   var prepared: Bool
@@ -20,7 +19,7 @@ extension ExamView {
   var moment: ExamMoment {
     ExamMoment(
       checklist: stage == .dayBefore || stage == .examDay ? checklist : [], day: days.first,
-      dayBefore: dayBefore, examName: examName, mocksTaken: mocks.count, prepared: prepared,
+      examName: examName, mocksTaken: mocks.count, prepared: prepared,
       resultReported: true, sessionsDone: sessionsDone, stage: stage, tools: tools)
   }
 }
@@ -120,15 +119,14 @@ struct ExamMomentSection<Action: View>: View {
       (
         String(localized: "The final stretch", table: "Exam", comment: "The exam's last weeks"),
         String(
-          localized:
-            "The last days before the exam go to mixed review and mock exams. New topics wait, unless they weigh a lot and are quick.",
-          table: "Exam", comment: "What the final stretch does")
+          localized: "From now on, review and mock exams.", table: "Exam",
+          comment: "What the final stretch does")
       )
     case .dayBefore:
       (
         String(
           localized: "\(moment.examName) is tomorrow", table: "Exam", comment: "The day before"),
-        dayBeforeBody
+        work
       )
     case .examDay:
       (
@@ -141,55 +139,29 @@ struct ExamMomentSection<Action: View>: View {
           localized: "How did it go?", table: "Exam",
           comment: "Asks how the exam went, once it's over"),
         String(
-          localized:
-            "When your official result comes out, add it here. It helps make estimates more accurate for everyone.",
-          table: "Exam", comment: "Asks for the official result once the exam is over")
+          localized: "Add your official result when it comes out.", table: "Exam",
+          comment: "Asks for the official result once the exam is over")
       )
     case .preparing, .afterExam:
       nil
     }
   }
 
+  /// Today's list shows today's work, so the day before and exam day say only what was done.
   private var work: String {
     let done =
       moment.mocksTaken == 0
       ? String(
-        localized: "You did \(moment.sessionsDone) sessions.", table: "Exam",
-        comment: "Sessions done before the exam")
+        localized: "\(moment.sessionsDone) days of study done.", table: "Exam",
+        comment: "Days the learner studied before the exam")
       : String(
-        localized: "You did \(moment.sessionsDone) sessions and \(moment.mocksTaken) mock exams.",
-        table: "Exam", comment: "Sessions and mocks done before the exam")
+        localized: "\(moment.sessionsDone) days of study and \(moment.mocksTaken) mock exams done.",
+        table: "Exam", comment: "Days studied and mock exams taken before the exam")
 
     return moment.prepared
-      ? [done, String(localized: "You've prepared for this.", table: "Exam", comment: "Prepared")]
+      ? [String(localized: "You've prepared for this.", table: "Exam", comment: "Prepared"), done]
         .joinedSentences()
       : done
-  }
-
-  private var dayBeforeBody: String {
-    switch moment.dayBefore {
-    case .mock:
-      String(
-        localized: "Today is your short mock, then a look at what it finds. Then rest. \(work)",
-        table: "Exam", comment: "The day before: a mock")
-    case .learnAndMock:
-      String(
-        localized: "Today goes to the topics that come up most, then a short mock. Then rest.",
-        table: "Exam", comment: "The day before: learn and a mock")
-    case .learn:
-      String(
-        localized: "Today goes to the topics that come up most. Then rest.", table: "Exam",
-        comment: "The day before: learn")
-    case .review:
-      String(
-        localized:
-          "Today is a full review of every topic, in your test's format, your weakest first. Then rest. \(work)",
-        table: "Exam", comment: "The day before: a full review")
-    case .light:
-      String(
-        localized: "Today is a short, light review. Then rest. \(work)", table: "Exam",
-        comment: "The day before: light review")
-    }
   }
 
   private func checklistLabel(_ item: ExamView.ChecklistItem) -> String {
