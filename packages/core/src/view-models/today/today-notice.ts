@@ -88,9 +88,7 @@ export function pickTodayNotice({
   const insightChange = getInsightChange(insight);
   const planChange = getPlanChangeStatus(today);
 
-  const pressing: [TodayNoticeKind, boolean][] = [
-    ["exam", isExamDay(exam)],
-  ];
+  const pressing: [TodayNoticeKind, boolean][] = [["exam", isExamDay(exam)]];
 
   const candidates: [TodayNoticeKind, boolean][] = showsWelcomeBack(today)
     ? pressing
