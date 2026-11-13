@@ -30,8 +30,13 @@ struct CallProblemView: View {
       }
     } description: {
       description
-    } actions: {
-      actions
+    }
+    .safeAreaBar(edge: .bottom) {
+      TaskActionBar {
+        actions
+          .buttonStyle(.mainAction)
+          .controlSize(.large)
+      }
     }
     .lonePage()
   }
@@ -65,40 +70,34 @@ struct CallProblemView: View {
     }
   }
 
+  /// The screen's one way on, in its bottom bar; a gate's is "Subscribe" and the close button
+  /// leaves.
   @ViewBuilder
   private var actions: some View {
     switch problem {
     case .call(.callInProgress, _):
-      CallMainButton {
+      Button {
         onAction(.takeover)
       } label: {
         CallRefusal.takeover
+          .frame(maxWidth: .infinity)
       }
     case .call(.connect, _), .call(.plusRequired, _):
-      CallMainButton {
+      Button {
         onAction(.retry)
       } label: {
         Text("Try again", tableName: "Voice", comment: "Calls again")
+          .frame(maxWidth: .infinity)
       }
     case .call(.limit, let limit?) where limit.tier != .plus:
       CallLimitUpsell(limit: limit)
-        .buttonStyle(.mainAction)
-        .controlSize(.large)
-
-      backButton
-        .buttonStyle(.outline)
     default:
-      backButton
-        .buttonStyle(.mainAction)
-        .controlSize(.large)
-    }
-  }
-
-  private var backButton: some View {
-    Button {
-      onAction(.back)
-    } label: {
-      Text("Back", tableName: "Voice", comment: "Leaves the call")
+      Button {
+        onAction(.back)
+      } label: {
+        Text("Back", tableName: "Voice", comment: "Leaves the call")
+          .frame(maxWidth: .infinity)
+      }
     }
   }
 }
@@ -138,11 +137,7 @@ struct DroppedCallView: View {
     case .microphone:
       why(CallMicrophoneOff.title, CallMicrophoneOff.text(name: name))
     case .plusRequired:
-      why(
-        Text(
-          "Available with Plus", tableName: "Subscriptions",
-          comment: "Title of the notice on a feature the learner's plan doesn't include"),
-        CallStartFooter.plusRequired)
+      why(CallStartFooter.plusRequiredTitle, CallStartFooter.plusRequired)
     case .callInProgress:
       refused(.callInProgress)
     case .callsPaused:
@@ -205,7 +200,7 @@ struct DroppedCallView: View {
   @ViewBuilder
   private var upsell: some View {
     if dropped.reason == .plusRequired {
-      SeePlusButton()
+      SubscribeButton()
     } else if dropped.reason == .limit, let limit {
       CallLimitUpsell(limit: limit)
     }
@@ -249,7 +244,7 @@ private enum CallRefusal {
     case .callsPaused:
       Text("Calls are paused", tableName: "Voice", comment: "Calls are off for everyone")
     case .callInProgress:
-      Text("You're already in a call", tableName: "Voice", comment: "Another call is open")
+      Text("You're in another call", tableName: "Voice", comment: "Another call is open")
     case .limit:
       switch limit?.period {
       case .month:
@@ -275,10 +270,10 @@ private enum CallRefusal {
         comment: "Calls are paused for everyone")
     case .callInProgress:
       Text(
-        "It's open in another tab or on another device. Ending it from here skips its feedback.",
+        "It's open in another tab or on another device. Starting this one ends it, without its feedback.",
         tableName: "Voice", comment: "Another call of the learner's is open")
     case .limit:
-      limit.map(limitText)
+      limit.flatMap(limitText)
     case .connect, .dropped, .plusRequired:
       Text(
         "This happens sometimes. Try again in a moment.", tableName: "Voice",
@@ -287,38 +282,18 @@ private enum CallRefusal {
   }
 
   static var takeover: Text {
-    Text("End that call and start this one", tableName: "Voice", comment: "Takes over a call")
+    Text("Start this call", tableName: "Voice", comment: "Ends the learner's other call and starts this one")
   }
 
-  /// Never says how much call time a plan has.
-  private static func limitText(_ limit: CallLimit) -> Text {
-    switch (limit.tier, limit.period) {
-    case (.guest, _):
-      Text(
-        "Speaking calls come with a free account. Create one to practice out loud.",
-        tableName: "Voice",
-        comment: "A guest's plan has no calls")
-    case (.plus, .month):
-      Text(
-        "Your calls come back next month.", tableName: "Voice",
-        comment: "A Plus learner used this month's call time")
-    case (.plus, _):
-      Text(
-        "Your calls come back tomorrow.", tableName: "Voice",
-        comment: "A Plus learner used today's call time")
-    case (.free, .month):
-      Text(
-        "Your calls come back next month, or get Plus for higher call limits.",
-        tableName: "Voice", comment: "A free learner used this month's call time")
-    case (.free, _):
-      Text(
-        "Your calls come back tomorrow, or get Plus for higher call limits.",
-        tableName: "Voice", comment: "A free learner used today's call time")
-    }
+  /// When the calls come back; a guest's way on is the button. Never says how much call time a
+  /// plan has.
+  private static func limitText(_ limit: CallLimit) -> Text? {
+    HelpLimit.limitReached(period: limit.period, tier: limit.tier).comesBack.map(Text.init)
   }
 }
 
-/// More calls: a free account for a guest, Plus for a free learner. Plus has no more to offer.
+/// More calls: a free account for a guest, a subscription for a free learner. A subscriber has no
+/// more to offer.
 private struct CallLimitUpsell: View {
   @Environment(AppRouter.self) private var router
 
@@ -332,10 +307,13 @@ private struct CallLimitUpsell: View {
       } label: {
         Text(
           "Create a free account", tableName: "Voice",
-          comment: "Button to sign up after a guest used the free help")
+          comment: "Button to sign up after a guest used the free help"
+        )
+        .frame(maxWidth: .infinity)
       }
     case .free:
-      SeePlusButton()
+      SubscribeButton()
+        .frame(maxWidth: .infinity)
     case .plus:
       EmptyView()
     }

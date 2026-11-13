@@ -45,7 +45,7 @@ struct CheckpointCallIntro: View {
         Label(preparing.unitTitle, systemImage: "phone")
       } description: {
         Text(
-          "This challenge is a short call about the unit. It's written for your speaking level first, which takes up to half a minute.",
+          "A short voice call with an AI character, about this unit.",
           tableName: "Voice", comment: "A language checkpoint's call that isn't written yet")
       } actions: {
         if needsPlus {
@@ -56,8 +56,8 @@ struct CheckpointCallIntro: View {
               "Getting your call ready", tableName: "Voice",
               comment: "A checkpoint's call is being written"),
             hint: Text(
-              "It opens here as soon as it's ready.", tableName: "Voice",
-              comment: "A checkpoint's call opens by itself once it's written"))
+              "This takes about half a minute.", tableName: "Voice",
+              comment: "How long getting a checkpoint's call ready takes; it opens by itself"))
         } else {
           startButton(writesFirst: true, callee: nil)
         }
@@ -99,8 +99,8 @@ struct CheckpointCallIntro: View {
       } label: {
         if writesFirst {
           Text(
-            "Get the call ready", tableName: "Voice",
-            comment: "Writes a checkpoint's call, then opens it")
+            "Start", tableName: "Voice",
+            comment: "Gets a checkpoint's call ready, then opens it")
         } else {
           CallButtonTitle(callee: callee)
         }

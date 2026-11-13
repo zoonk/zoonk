@@ -90,45 +90,27 @@ struct ConversationIntro<Footer: View>: View {
     Section {
       VStack(alignment: .leading, spacing: 8) {
         eyebrow
-          .typeStyle(.data)
-          .foregroundStyle(.faint)
+          .chip()
+          .padding(.bottom, 4)
 
         Text(intro.speakingTask?.task.name ?? intro.title)
           .typeStyle(.section)
 
         Text(intro.speakingTask?.card.summary ?? intro.situation)
           .foregroundStyle(.mutedForeground)
-
-        if !intro.callsCharacter {
-          Text(howTheCallRuns)
-            .typeStyle(.note)
-            .foregroundStyle(.mutedForeground)
-        }
       }
       .listRowBackground(Color.clear)
       .listRowSeparator(.hidden)
     }
 
-    if let examTask = intro.speakingTask {
-      Section {
-        CharacterRow(intro: intro, isTalking: false)
-      } footer: {
-        SectionFooter {
-          StandInNote(name: intro.character.name, role: examTask.task.role)
-        }
-      }
-    } else {
-      Section {
-        CharacterRow(intro: intro, isTalking: false)
-      }
+    Section {
+      CharacterRow(intro: intro, isTalking: false)
     }
 
-    if let examTask = intro.speakingTask {
-      if examTask.task.prepMinutes > 0, let conversationId = intro.conversationId {
-        ExamPrepTimer(cardId: conversationId, task: examTask.task)
-      }
-    } else if intro.callsCharacter {
-      HowTheCallWorks(intro: intro)
+    if let examTask = intro.speakingTask, examTask.task.prepMinutes > 0,
+      let conversationId = intro.conversationId
+    {
+      ExamPrepTimer(cardId: conversationId, task: examTask.task)
     }
   }
 
@@ -137,28 +119,9 @@ struct ConversationIntro<Footer: View>: View {
       Text(speakingTaskMinutes(min: examTask.task.minutes.min, max: examTask.task.minutes.max))
     } else {
       Text(
-        "About \(length)\u{00A0}· Level \(intro.level)", tableName: "Voice",
+        "\(length)\u{00A0}· Level \(intro.level)", tableName: "Voice",
         comment: "A call's length and level, over its title")
     }
-  }
-
-  private var howTheCallRuns: String {
-    let ends = String(
-      localized: "It ends on its own after about \(length).", table: "Voice",
-      comment: "An exam task's call stops by itself at about its length")
-
-    guard let examTask = intro.speakingTask else {
-      return ends
-    }
-
-    return [
-      String(
-        localized: "\(intro.character.name) opens the call, and your card stays on screen.",
-        table: "Voice", comment: "An exam task's call: the AI speaks first, the card stays visible"),
-      ends,
-      speakingRatedOn(
-        examTask.criteria.map { speakingCriterionName($0.key, officialName: $0.name) }),
-    ].joinedSentences()
   }
 
   @ViewBuilder
@@ -174,13 +137,7 @@ struct ConversationIntro<Footer: View>: View {
             comment: "Which task of the exam's speaking paper this is"))
       } footer: {
         SectionFooter {
-          MicNote(
-            text: Text(
-              "Speak your answers: typed ones aren't rated on how you sound. The microphone is used only during the call.",
-              tableName: "Voice",
-              comment:
-                "Before an exam task's call: why to speak rather than type, and the microphone"
-            ))
+          SoundNote()
         }
       }
     } else {
@@ -201,10 +158,7 @@ struct ConversationIntro<Footer: View>: View {
         )
       } footer: {
         SectionFooter {
-          MicNote(
-            text: Text(
-              "Turn your sound on. The microphone is on only during the call.", tableName: "Voice",
-              comment: "Before a call: what it needs from the learner's device"))
+          SoundNote()
         }
       }
     }
@@ -218,24 +172,30 @@ struct ConversationIntro<Footer: View>: View {
   }
 }
 
-/// A call the learner's plan leaves to Plus shows the same intro, locked.
+/// A call that needs a subscription shows the same intro with the gate in the call button's place.
 struct CallStartFooter: View {
   let isLocked: Bool
   /// Whom the learner calls; nil for an examiner, whose call just starts.
   let callee: String?
   let onStart: () -> Void
 
+  static var plusRequiredTitle: Text {
+    Text(
+      "This call needs a subscription", tableName: "Voice",
+      comment: "A free learner tried a language plan's challenge call")
+  }
+
   static var plusRequired: Text {
     Text(
-      "Challenge calls come with Plus. Your plan keeps going without them.",
-      tableName: "Voice", comment: "A checkpoint call or exam speaking task needs Plus")
+      "Your plan goes on without it.", tableName: "Voice",
+      comment: "Under a challenge call that needs a subscription")
   }
 
   var body: some View {
     if isLocked {
-      PlusNotice(description: Self.plusRequired, showsSeePlus: false)
+      GateWords(title: Self.plusRequiredTitle, line: Self.plusRequired)
 
-      SeePlusButton()
+      SubscribeButton()
         .frame(maxWidth: .infinity)
         .buttonStyle(.mainAction)
         .controlSize(.large)
@@ -328,85 +288,13 @@ struct CallMicrophoneOff: View {
   }
 }
 
-/// What happens once the learner calls, so the character speaking first is no surprise.
-private struct HowTheCallWorks: View {
-  let intro: CallIntro
-
-  var body: some View {
-    let name = intro.character.name
-    let length = Duration.seconds(intro.minutes * 60).formatted(
-      .units(allowed: [.minutes], width: .abbreviated))
-
-    Section {
-      step(1) {
-        Text(
-          "\(name) answers and speaks first.", tableName: "Voice",
-          comment: "How a call works: step 1")
-      }
-      step(2) {
-        Text(
-          "Then it's your turn: answer out loud, or type if you can't talk.", tableName: "Voice",
-          comment: "How a call works: step 2")
-      }
-      step(3) {
-        Text(
-          "When you've done everything, or after about \(length), \(name) says goodbye and the call ends.",
-          tableName: "Voice", comment: "How a call works: step 3")
-      }
-    } header: {
-      SectionTitle(
-        Text("How the call works", tableName: "Voice", comment: "Before a call: what will happen"))
-    }
-  }
-
-  private func step(_ number: Int, @ViewBuilder _ text: () -> Text) -> some View {
-    Label {
-      text()
-    } icon: {
-      Image(systemName: "\(number).circle")
-    }
-  }
-}
-
-private struct StandInNote: View {
-  let name: String
-  let role: Components.Schemas.SpeakingTask.RolePayload
-
-  var body: some View {
-    let standIn =
-      switch role {
-      case .examiner:
-        String(
-          localized: "\(name) is an AI standing in for a human examiner.", table: "Voice",
-          comment: "Before an exam task: who the AI plays")
-      case .partner:
-        String(
-          localized: "\(name) is an AI playing the other candidate, in place of a real one.",
-          table: "Voice", comment: "Before an exam task: who the AI plays")
-      }
-
-    Label {
-      Text(
-        [
-          standIn,
-          String(
-            localized: "It's practice: the estimate after it isn't an official score.",
-            table: "Voice", comment: "Before an exam task: its estimate isn't an official score"),
-        ].joinedSentences())
-    } icon: {
-      Image(systemName: "info.circle")
-    }
-  }
-}
-
-private struct MicNote: View {
-  let text: Text
-
+/// The system asks for the microphone when the call starts, so the note is only the sound.
+private struct SoundNote: View {
   var body: some View {
     Label {
-      text
+      Text("Turn your sound on.", tableName: "Voice", comment: "Before a call: what it needs from the learner's device")
     } icon: {
-      Image(systemName: "mic")
+      Image(systemName: "speaker.wave.2")
     }
   }
 }
@@ -437,10 +325,13 @@ struct CharacterRow: View {
           if let role = intro.speakingTask?.task.role {
             switch role {
             case .examiner:
-              Text("Examiner", tableName: "Voice", comment: "Whom the AI plays in an exam task")
+              Text(
+                "Examiner (AI)", tableName: "Voice",
+                comment: "Whom the AI plays in an exam task, in place of a human examiner")
             case .partner:
               Text(
-                "Other candidate", tableName: "Voice", comment: "Whom the AI plays in an exam task")
+                "Other candidate (AI)", tableName: "Voice",
+                comment: "Whom the AI plays in an exam task, in place of a real candidate")
             }
           } else {
             Text("\(character.role)\u{00A0}· \(character.place)")
