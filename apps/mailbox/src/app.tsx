@@ -54,7 +54,7 @@ export function App() {
         <PageTop
           actions={
             emails.length > 0 && (
-              <Button onClick={handleClear} size="sm" type="button" variant="outline">
+              <Button onClick={handleClear} size="bar" type="button" variant="outline">
                 {copy.clearInbox}
               </Button>
             )

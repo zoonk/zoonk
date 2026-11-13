@@ -1,5 +1,6 @@
 "use client";
 
+import { BAR_GLYPH_ACTION, BarActionLabel } from "@/components/bar-action";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -41,10 +42,12 @@ export function DeleteModelDataDialog({
   return (
     <AlertDialog>
       <AlertDialogTrigger
-        render={<Button disabled={disabled} size="sm" type="button" variant="destructive" />}
+        render={
+          <Button {...BAR_GLYPH_ACTION} disabled={disabled} type="button" variant="destructive" />
+        }
       >
         <Trash2Icon />
-        <span className="sr-only sm:not-sr-only">Delete results</span>
+        <BarActionLabel>Delete results</BarActionLabel>
       </AlertDialogTrigger>
 
       <AlertDialogContent>

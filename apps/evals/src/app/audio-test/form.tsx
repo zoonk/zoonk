@@ -1,10 +1,10 @@
 "use client";
 
+import { FormMainButton } from "@/components/form-main-button";
 import { LabeledSelect } from "@/components/labeled-select";
 import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { Input } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
-import { MainSubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 import { TTS_VOICES } from "@zoonk/utils/languages";
 import { useActionState } from "react";
 import { generateAudioAction } from "./actions";
@@ -91,7 +91,7 @@ export function AudioTestForm() {
             </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="audioUrl">Audio file</Label>
-              <Input className="font-mono text-sm" id="audioUrl" readOnly value={result.audioUrl} />
+              <Input className="font-mono" id="audioUrl" readOnly value={result.audioUrl} />
             </div>
           </div>
         )}
@@ -107,7 +107,7 @@ export function AudioTestForm() {
         }
       >
         <BottomBarActions>
-          <MainSubmitButton className="lg:w-auto">Generate audio</MainSubmitButton>
+          <FormMainButton enter="host">Generate audio</FormMainButton>
         </BottomBarActions>
       </BottomBar>
     </form>

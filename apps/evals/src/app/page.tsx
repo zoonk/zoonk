@@ -34,7 +34,7 @@ export default function Home() {
     <main className="flex flex-col gap-4">
       <EvalPageTop
         actions={
-          <Link className={buttonVariants({ size: "sm", variant: "outline" })} href="/audio-test">
+          <Link className={buttonVariants({ size: "bar", variant: "outline" })} href="/audio-test">
             Audio test
           </Link>
         }

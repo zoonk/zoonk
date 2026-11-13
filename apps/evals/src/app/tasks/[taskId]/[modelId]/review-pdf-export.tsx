@@ -1,5 +1,6 @@
 "use client";
 
+import { BAR_GLYPH_ACTION, BarActionLabel } from "@/components/bar-action";
 import { type EvalSummary } from "@/lib/eval-summary";
 import { type ReviewExportEntry } from "@/lib/review-export";
 import { Button } from "@zoonk/ui/components/button";
@@ -84,11 +85,16 @@ export function ReviewPdfExport({
     <Drawer onOpenChange={handleOpenChange} open={open}>
       <DrawerTrigger
         render={
-          <Button disabled={summary.attempted === 0} size="sm" type="button" variant="outline" />
+          <Button
+            {...BAR_GLYPH_ACTION}
+            disabled={summary.attempted === 0}
+            type="button"
+            variant="outline"
+          />
         }
       >
         <FileTextIcon />
-        <span className="sr-only sm:not-sr-only">Export review PDF</span>
+        <BarActionLabel>Export review PDF</BarActionLabel>
       </DrawerTrigger>
 
       <DrawerPopup>

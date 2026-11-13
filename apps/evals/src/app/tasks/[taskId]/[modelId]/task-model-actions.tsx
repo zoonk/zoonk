@@ -1,3 +1,4 @@
+import { FormMainButton } from "@/components/form-main-button";
 import { type EvalSummary } from "@/lib/eval-summary";
 import { DEFAULT_REASONING, type ModelConfig } from "@/lib/models";
 import { type OutputProgress } from "@/lib/output-loader";
@@ -11,7 +12,7 @@ import { type OutputExportEntry, OutputsExport } from "./outputs-export";
 import { ReasoningSelect } from "./reasoning-select";
 import { ReviewPdfExport } from "./review-pdf-export";
 
-const GENERATE_FORM_ID = "generate-outputs";
+const RUN_FORM_ID = "model-run";
 
 /** Exports and delete, at the end of the page top's bar. */
 export function TaskModelFileActions({
@@ -49,16 +50,17 @@ export function TaskModelFileActions({
   );
 }
 
-/** The reasoning the next generation uses; its button is in the bottom bar's form. */
+/** The reasoning the next generation uses; it belongs to the bottom bar's form. */
 export function TaskModelReasoning({ model }: { model: ModelConfig }) {
   return model.kind === "generation" ? (
-    <ReasoningSelect form={GENERATE_FORM_ID} reasoning={model.reasoning} />
+    <ReasoningSelect form={RUN_FORM_ID} reasoning={model.reasoning} />
   ) : null;
 }
 
 /**
- * Generate and score, pinned at the bottom. The one that's due is filled and last: generate until
- * every output exists, then score.
+ * Generate and score, pinned at the bottom, in one form that each button sends to its own action.
+ * The one that's due is the main action, filled and last: generate until every output exists, then
+ * score until every output is scored. Enter presses neither, so neither shows its key.
  */
 export function TaskModelRunBar({
   model,
@@ -77,48 +79,45 @@ export function TaskModelRunBar({
   const hasEveryOutput = outputStatus.status === "complete";
   const needsEval = hasEveryOutput && summary.scored < outputStatus.totalOutputs;
 
-  const mainClass = "grow lg:grow-0";
+  const generate = hasEveryOutput ? (
+    <SubmitButton formAction={generateOutputsAction} key="generate" size="lg" variant="outline">
+      Generate outputs
+    </SubmitButton>
+  ) : (
+    <FormMainButton enter="off" formAction={generateOutputsAction} key="generate">
+      Generate outputs
+    </FormMainButton>
+  );
 
-  const generate = (
-    <form
-      action={generateOutputsAction}
-      className={hasEveryOutput ? undefined : mainClass}
-      id={GENERATE_FORM_ID}
-      key="generate"
+  const score = needsEval ? (
+    <FormMainButton enter="off" formAction={runEvalAction} key="score">
+      Score outputs
+    </FormMainButton>
+  ) : (
+    <SubmitButton
+      disabled={!hasOutputs}
+      formAction={runEvalAction}
+      key="score"
+      size="lg"
+      variant="outline"
     >
+      Score outputs
+    </SubmitButton>
+  );
+
+  return (
+    <form className="contents" id={RUN_FORM_ID}>
       <input name="taskId" type="hidden" value={taskId} />
       <input name="modelId" type="hidden" value={modelId} />
       {model.kind !== "generation" && (
         <input name="reasoning" type="hidden" value={DEFAULT_REASONING} />
       )}
-      <SubmitButton
-        full={!hasEveryOutput}
-        size="lg"
-        variant={hasEveryOutput ? "outline" : "default"}
-      >
-        Generate outputs
-      </SubmitButton>
-    </form>
-  );
 
-  const score = (
-    <form action={runEvalAction} className={hasEveryOutput ? mainClass : undefined} key="score">
-      <input name="taskId" type="hidden" value={taskId} />
-      <input name="modelId" type="hidden" value={modelId} />
-      <SubmitButton
-        disabled={!hasOutputs}
-        full={hasEveryOutput}
-        size="lg"
-        variant={needsEval ? "default" : "outline"}
-      >
-        Score outputs
-      </SubmitButton>
+      <BottomBar>
+        <BottomBarActions>
+          {hasEveryOutput ? [generate, score] : [score, generate]}
+        </BottomBarActions>
+      </BottomBar>
     </form>
-  );
-
-  return (
-    <BottomBar>
-      <BottomBarActions>{hasEveryOutput ? [generate, score] : [score, generate]}</BottomBarActions>
-    </BottomBar>
   );
 }

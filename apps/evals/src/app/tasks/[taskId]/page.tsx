@@ -31,7 +31,7 @@ function TaskHeaderActions({ canRunBattle, taskId }: { canRunBattle: boolean; ta
   return (
     <>
       <Link
-        className={buttonVariants({ size: "sm", variant: "outline" })}
+        className={buttonVariants({ size: "bar", variant: "outline" })}
         href={`/tasks/${taskId}/battles`}
       >
         Judge comments
@@ -39,7 +39,7 @@ function TaskHeaderActions({ canRunBattle, taskId }: { canRunBattle: boolean; ta
 
       <form action={runBattleModeAction}>
         <input name="taskId" type="hidden" value={taskId} />
-        <SubmitButton disabled={!canRunBattle} size="sm" variant="outline">
+        <SubmitButton disabled={!canRunBattle} size="bar" variant="outline">
           Run battle
         </SubmitButton>
       </form>
