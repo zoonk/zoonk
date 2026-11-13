@@ -70,7 +70,7 @@ function MissionsLabel({ missions }: { missions: MissionsCount }) {
 }
 
 const GLYPH_SIZES = {
-  md: { face: "size-7", icon: "size-5", ring: "size-7 shrink-0", ringedFace: "size-5.5" },
+  md: { face: "size-6", icon: "size-5", ring: "size-6 shrink-0", ringedFace: "size-4.5" },
   sm: { face: "size-5", icon: "size-4", ring: "size-6 shrink-0", ringedFace: "size-4" },
 } as const;
 
