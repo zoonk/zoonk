@@ -27,8 +27,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.data.LoadState
@@ -41,7 +39,6 @@ import com.zoonk.android.ui.components.ChartInspector
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
-import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StatTile
 import com.zoonk.android.ui.components.StatTiles
@@ -51,7 +48,6 @@ import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.color
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.format.formatHourRange
@@ -59,7 +55,7 @@ import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.android.ui.theme.zoonk
-import com.zoonk.android.ui.theme.zoonkType
+import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.CurrentUserActivityResponseActivity
 import com.zoonk.api.models.CurrentUserProgressResponse
 import com.zoonk.api.models.CurrentUserProgressResponseLevel
@@ -151,21 +147,16 @@ private fun OverviewContent(
     progress: CurrentUserProgressResponse,
 ) {
     val locale = currentLocale()
-    val energy by context.stats.energy.collectShown()
     val level = progress.level
 
     val tiles =
         listOfNotNull<@Composable (Modifier) -> Unit>(
-            level?.let { { modifier -> LevelTile(it, modifier) { context.open(StatsPage.Level) } } },
+            level?.let { { modifier -> BeltTile(it, modifier) { context.open(StatsPage.Level) } } },
             progress.energy?.let { now ->
                 { modifier ->
                     StatTile(
                         label = stringResource(R.string.stats_energy),
                         value = percent(now.currentEnergy, locale),
-                        detail =
-                            energy.value?.insights?.let {
-                                stringResource(R.string.stats_energy_average, metricPercent(it.averageEnergy, locale))
-                            },
                         tone = StatTone.Energy,
                         icon = icon(R.drawable.ic_bolt),
                         onClick = { context.open(StatsPage.Energy) },
@@ -174,17 +165,9 @@ private fun OverviewContent(
                 }
             },
             { modifier ->
-                val lessons = progress.activity.totalLessonCompletions
                 StatTile(
                     label = stringResource(R.string.stats_days_studied),
                     value = whole(progress.activity.learningDays, locale),
-                    detail =
-                        pluralStringResource(
-                            R.plurals.stats_lessons_time,
-                            lessons.toInt(),
-                            whole(lessons, locale),
-                            formatDuration(progress.activity.totalLearningSeconds, locale),
-                        ),
                     tone = StatTone.Success,
                     icon = icon(R.drawable.ic_bar_chart),
                     onClick = { context.open(StatsPage.Activity) },
@@ -192,14 +175,9 @@ private fun OverviewContent(
                 )
             },
             { modifier ->
-                val score = progress.score
                 StatTile(
                     label = stringResource(R.string.stats_score),
-                    value = score?.let { metricPercent(it.score, locale) } ?: stringResource(R.string.stats_not_yet),
-                    detail =
-                        score?.let {
-                            stringResource(R.string.stats_right_count, whole(it.correctAnswers, locale), whole(it.totalAnswers, locale))
-                        } ?: stringResource(R.string.stats_right_last_90),
+                    value = progress.score?.let { metricPercent(it.score, locale) } ?: DASH,
                     tone = StatTone.Success,
                     icon = icon(R.drawable.ic_target),
                     onClick = { context.open(StatsPage.Score) },
@@ -228,14 +206,19 @@ private fun OverviewContent(
 
             else -> {
                 Beside(context.stats.patterns) { patterns ->
-                    val summary = patterns?.let { patternsSummary(it) }
-                    val names = listOfNotNull(summary?.let { bestDayName(it.days) }, summary?.let { bestTimeName(it.times) })
+                    val days = patterns?.let { patternsSummary(it).days }
                     ListRow(
                         headline = { Text(stringResource(R.string.stats_patterns)) },
                         modifier = Modifier.bleed(LIST_ITEM_INSET),
                         onClick = { context.open(StatsPage.Patterns) },
                         trailing = {
-                            PatternValue(names.factsLine().ifEmpty { stringResource(R.string.stats_not_yet) })
+                            PatternValue(
+                                when (days) {
+                                    is Verdict.Best -> stringResource(R.string.stats_best_on, weekdayName(days.key, locale))
+                                    is Verdict.Even -> stringResource(R.string.stats_any_day)
+                                    else -> stringResource(R.string.stats_not_yet)
+                                },
+                            )
                         },
                         chevron = true,
                     )
@@ -245,11 +228,12 @@ private fun OverviewContent(
     }
 }
 
+/** The belt's name over its number, as the top bar's mark says it: "White belt 2". */
 @Composable
-private fun LevelTile(
+private fun BeltTile(
     level: CurrentUserProgressResponseLevel,
     modifier: Modifier,
-    onClick: (() -> Unit)? = null,
+    onClick: () -> Unit,
 ) {
     val belt = beltOf(level.belt.value)
 
@@ -280,9 +264,7 @@ private fun PatternsOverview(
     context: StatsContext,
     patterns: CurrentUserScorePatternsResponsePatterns?,
 ) {
-    val locale = currentLocale()
     val summary = patterns?.let { patternsSummary(it) }
-    val spread = patterns?.weekSpread?.let { stringResource(R.string.stats_range, percent(it.low, locale), percent(it.high, locale)) }
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         SectionHeader(stringResource(R.string.stats_patterns_90)) {
@@ -290,16 +272,10 @@ private fun PatternsOverview(
         }
 
         Column(Modifier.bleed(LIST_ITEM_INSET)) {
-            PatternRow(stringResource(R.string.stats_best_day), summary?.let { bestDayName(it.days) }, summary?.days?.bestScore(locale))
+            PatternRow(stringResource(R.string.stats_best_day), summary?.let { bestDayName(it.days) })
             ListDivider()
-            PatternRow(stringResource(R.string.stats_best_time), summary?.let { bestTimeName(it.times) }, summary?.times?.bestScore(locale))
-            spread?.let {
-                ListDivider()
-                PatternRow(stringResource(R.string.stats_week_spread), it, null)
-            }
+            PatternRow(stringResource(R.string.stats_best_time), summary?.let { bestTimeName(it.times) })
         }
-
-        if (patterns != null && summary != null) PatternsNote(summary, patterns.minimumAnswers)
     }
 }
 
@@ -307,19 +283,8 @@ private fun PatternsOverview(
 private fun PatternRow(
     label: String,
     value: String?,
-    score: String?,
 ) {
-    ListRow(
-        headline = { Text(label) },
-        trailing = {
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                PatternValue(value ?: stringResource(R.string.stats_not_yet))
-                score?.let {
-                    Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.zoonkType.data)
-                }
-            }
-        },
-    )
+    ListRow(headline = { Text(label) }, trailing = { PatternValue(value ?: stringResource(R.string.stats_not_yet)) })
 }
 
 /** The answer reads at the label's weight, not as a list item's quiet trailing text. */
@@ -328,11 +293,10 @@ private fun PatternValue(text: String) {
     Text(text, color = MaterialTheme.colorScheme.onSurface, style = MaterialTheme.typography.bodyMedium)
 }
 
-// Level
+// Belt
 
 @Composable
 internal fun LevelPage(context: StatsContext) {
-    val locale = currentLocale()
     val level =
         context.stats.progress
             .collectShown()
@@ -341,71 +305,13 @@ internal fun LevelPage(context: StatsContext) {
     val belt = beltOf(level.belt.value)
     val nextBelt = level.nextBelt?.let { beltOf(it.belt.value) }
 
-    Column(verticalArrangement = Arrangement.spacedBy(32.dp)) {
-        StatTiles(
-            columns = if (context.wide) 3 else 2,
-            tiles =
-                listOf(
-                    { modifier -> LevelTile(level, modifier) },
-                    { modifier ->
-                        StatTile(
-                            label = stringResource(R.string.stats_brain_power),
-                            value = whole(level.totalBrainPower, locale),
-                            detail = stringResource(R.string.stats_never_goes_down),
-                            tone = StatTone.Brain,
-                            icon = icon(R.drawable.ic_psychology),
-                            modifier = modifier,
-                        )
-                    },
-                    { modifier -> NextLevelTile(level, nextBelt, modifier) },
-                ),
-        )
-
-        BeltProgression(level, belt, nextBelt)
-        StatsLine(stringResource(R.string.stats_level_line, whole(BRAIN_POWER_PER_LESSON, locale)))
-    }
-}
-
-/** After a belt's tenth level the next is the next belt's first, so the tile names that belt. */
-@Composable
-private fun NextLevelTile(
-    level: CurrentUserProgressResponseLevel,
-    nextBelt: Belt?,
-    modifier: Modifier,
-) {
-    val locale = currentLocale()
-
-    if (level.isMaxLevel) {
-        StatTile(
-            label = stringResource(R.string.stats_next_level),
-            value = DASH,
-            detail = stringResource(R.string.stats_max_level),
-            icon = icon(R.drawable.ic_keyboard_double_arrow_up),
-            modifier = modifier,
-        )
-        return
-    }
-
-    val label =
-        if (nextBelt != null && level.level == LEVELS_PER_BELT) {
-            stringResource(R.string.stats_to_belt, stringResource(nextBelt.label))
-        } else {
-            stringResource(R.string.stats_to_level, whole(level.level + 1, locale))
-        }
-
-    StatTile(
-        label = label,
-        value = stringResource(R.string.stats_brain_power_amount, whole(level.bpToNextLevel, locale)),
-        icon = icon(R.drawable.ic_keyboard_double_arrow_up),
-        modifier = modifier,
-        footer = { Meter(level.progressInLevel.toFloat() / level.bpPerLevel.coerceAtLeast(1), color = MaterialTheme.zoonk.brain) },
-    )
+    BeltProgression(level, belt, nextBelt)
 }
 
 /**
- * Main's belt progression: a panel in the belt's tint with its ten levels (those reached in the
- * belt's color, the next one filling with Brain Power), the next belt and how far it is, then every
- * belt in order, the earned ones full and the current one ringed.
+ * Main's `LevelProgression`: a panel in the belt's tint with the belt and its number, its Brain Power,
+ * the ten numbers drawn on the belt (the next one filling) and what the next number takes; then every
+ * belt in order, and when the next belt comes.
  */
 @Composable
 private fun BeltProgression(
@@ -424,18 +330,21 @@ private fun BeltProgression(
         } else {
             lerp(surface, belt.color, PANEL_TINT)
         }
+    val name = stringResource(belt.label)
 
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        SectionHeader(stringResource(R.string.stats_belt_progression))
-
         Card(colors = CardDefaults.cardColors(containerColor = panel)) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                    Text(stringResource(belt.label), style = MaterialTheme.typography.titleMedium)
+                Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                     Text(
-                        stringResource(R.string.stats_level_of, whole(level.level, locale), whole(LEVELS_PER_BELT, locale)),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyMedium,
+                        stringResource(R.string.belt_level, name, whole(level.level, locale)),
+                        modifier = Modifier.weight(1f),
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                    Text(
+                        stringResource(R.string.stats_brain_power_amount, whole(level.totalBrainPower, locale)),
+                        color = MaterialTheme.zoonk.brainText,
+                        style = MaterialTheme.typography.labelLarge.withTabularFigures(),
                     )
                 }
 
@@ -445,48 +354,52 @@ private fun BeltProgression(
                     share = if (level.isMaxLevel) null else level.progressInLevel.toFloat() / level.bpPerLevel.coerceAtLeast(1),
                     modifier = Modifier.bleedStart(16.dp),
                 )
-                NextBelt(level, nextBelt)
+                NextStep(level, name, nextBelt)
             }
         }
 
         BeltRack(belt)
+
+        val next = level.nextBelt
+        if (nextBelt != null && next != null && level.level < LEVELS_PER_BELT) {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                BeltDot(nextBelt)
+                StatsLine(
+                    stringResource(
+                        R.string.stats_belt_comes_after,
+                        stringResource(nextBelt.label),
+                        name,
+                        whole(LEVELS_PER_BELT, locale),
+                        whole(next.startBrainPower, locale),
+                    ),
+                )
+            }
+        }
     }
 }
 
+/** After a belt's tenth number comes the next belt, so the line names that belt alone. */
 @Composable
-private fun NextBelt(
+private fun NextStep(
     level: CurrentUserProgressResponseLevel,
+    name: String,
     nextBelt: Belt?,
 ) {
     val locale = currentLocale()
-    val next = level.nextBelt
 
-    if (nextBelt == null || next == null) {
+    if (level.isMaxLevel) {
         Text(stringResource(R.string.stats_every_belt), style = MaterialTheme.typography.bodyMedium)
         return
     }
 
-    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        val heading = stringResource(R.string.stats_next_belt)
-        Text(
-            heading.uppercase(locale),
-            Modifier.semantics { contentDescription = heading },
-            color = MaterialTheme.zoonk.faint,
-            style = MaterialTheme.zoonkType.label,
-        )
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            BeltDot(nextBelt)
-            Text(
-                stringResource(R.string.stats_belt_at, stringResource(nextBelt.label), whole(next.startBrainPower, locale)),
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        }
-        Text(
-            stringResource(R.string.stats_to_go, whole(next.brainPowerToGo, locale)),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodySmall,
-        )
-    }
+    val points = whole(level.bpToNextLevel, locale)
+    StatsLine(
+        if (nextBelt != null && level.level == LEVELS_PER_BELT) {
+            stringResource(R.string.stats_brain_power_to, points, stringResource(nextBelt.label))
+        } else {
+            stringResource(R.string.stats_brain_power_to, points, stringResource(R.string.belt_level, name, whole(level.level + 1, locale)))
+        },
+    )
 }
 
 // Energy
@@ -502,7 +415,7 @@ internal fun EnergyPage(context: StatsContext) {
 
     Column(verticalArrangement = Arrangement.spacedBy(32.dp)) {
         StatTiles(
-            columns = if (context.wide) 3 else 2,
+            columns = 2,
             tiles =
                 listOf(
                     { modifier ->
@@ -517,22 +430,8 @@ internal fun EnergyPage(context: StatsContext) {
                     },
                     { modifier ->
                         StatTile(
-                            label = stringResource(R.string.stats_average),
-                            value = insights?.let { metricPercent(it.averageEnergy, locale) } ?: DASH,
-                            detail = stringResource(R.string.stats_since_start),
-                            tone = StatTone.Energy,
-                            icon = icon(R.drawable.ic_speed),
-                            modifier = modifier,
-                        )
-                    },
-                    { modifier ->
-                        StatTile(
-                            label = stringResource(R.string.stats_full_energy),
-                            value =
-                                insights?.let {
-                                    pluralStringResource(R.plurals.stats_days, it.fullEnergyDays.toInt(), whole(it.fullEnergyDays, locale))
-                                } ?: DASH,
-                            detail = stringResource(R.string.stats_full_energy_days),
+                            label = stringResource(R.string.stats_days_at_full),
+                            value = insights?.let { whole(it.fullEnergyDays, locale) } ?: DASH,
                             tone = StatTone.Energy,
                             icon = icon(R.drawable.ic_battery_full),
                             modifier = modifier,
@@ -566,16 +465,9 @@ internal fun EnergyPage(context: StatsContext) {
             color = MaterialTheme.zoonk.energy,
             low = stringResource(R.string.stats_low),
             high = stringResource(R.string.stats_high),
-            summary =
-                stringResource(
-                    R.string.stats_calendar_energy_summary,
-                    percent(energy.currentEnergy, locale),
-                    insights?.let { metricPercent(it.averageEnergy, locale) } ?: DASH,
-                ),
+            summary = stringResource(R.string.stats_calendar_energy_summary, percent(energy.currentEnergy, locale)),
             inspector = context.inspector,
         )
-
-        StatsLine(stringResource(R.string.stats_energy_line))
     }
 }
 
@@ -599,7 +491,6 @@ internal fun ActivityPage(context: StatsContext) {
                         StatTile(
                             label = stringResource(R.string.stats_days_studied),
                             value = whole(activity.learningDays, locale),
-                            detail = stringResource(R.string.stats_any_day_studied),
                             tone = StatTone.Success,
                             icon = icon(R.drawable.ic_calendar_month),
                             modifier = modifier,
@@ -609,7 +500,6 @@ internal fun ActivityPage(context: StatsContext) {
                         StatTile(
                             label = stringResource(R.string.stats_lessons),
                             value = whole(activity.totalLessonCompletions, locale),
-                            detail = stringResource(R.string.stats_finished),
                             tone = StatTone.Success,
                             icon = icon(R.drawable.ic_menu_book),
                             modifier = modifier,
@@ -619,7 +509,6 @@ internal fun ActivityPage(context: StatsContext) {
                         StatTile(
                             label = stringResource(R.string.stats_time),
                             value = formatDuration(activity.totalLearningSeconds, locale),
-                            detail = stringResource(R.string.stats_studying_total),
                             icon = icon(R.drawable.ic_schedule),
                             modifier = modifier,
                         )
@@ -647,16 +536,16 @@ private fun ActivityCalendar(
     val days =
         activity.days.map { day ->
             val date = day.date.toJavaLocalDate()
-            val count = day.activitiesCompleted
+            val lessons = day.lessonCompletions
             CalendarDay(
                 date = date,
-                band = activityBand(count, maximum),
+                band = activityBand(day.activitiesCompleted, maximum),
                 label = formatDate(date, locale, DateStyle.Day, today = newest ?: date),
                 value =
-                    if (count == 0L) {
-                        stringResource(R.string.stats_no_study)
-                    } else {
-                        pluralStringResource(R.plurals.stats_activities, count.toInt(), whole(count, locale))
+                    when {
+                        lessons > 0 -> pluralStringResource(R.plurals.stats_lesson_count, lessons.toInt(), whole(lessons, locale))
+                        day.activitiesCompleted > 0 -> stringResource(R.string.stats_studied)
+                        else -> stringResource(R.string.stats_no_study)
                     },
             )
         }
@@ -668,13 +557,7 @@ private fun ActivityCalendar(
         color = MaterialTheme.colorScheme.tertiary,
         low = stringResource(R.string.stats_less),
         high = stringResource(R.string.stats_more),
-        summary =
-            pluralStringResource(
-                R.plurals.stats_calendar_activity_summary,
-                active,
-                whole(active.toLong(), locale),
-                pluralStringResource(R.plurals.stats_activities, maximum.toInt(), whole(maximum, locale)),
-            ),
+        summary = pluralStringResource(R.plurals.stats_calendar_activity_summary, active, whole(active.toLong(), locale)),
         inspector = inspector,
     )
 }
@@ -690,52 +573,14 @@ internal fun ScorePage(context: StatsContext) {
             .value.value ?: return StatsEmpty(context)
 
     Column(verticalArrangement = Arrangement.spacedBy(32.dp)) {
-        StatTiles(
-            columns = if (context.wide) 3 else 2,
-            tiles =
-                listOf(
-                    { modifier ->
-                        StatTile(
-                            label = stringResource(R.string.stats_score),
-                            value = metricPercent(score.score, locale),
-                            detail = stringResource(R.string.stats_right_answers),
-                            tone = StatTone.Success,
-                            icon = icon(R.drawable.ic_target),
-                            modifier = modifier,
-                        )
-                    },
-                    { modifier ->
-                        val correct = whole(score.correctAnswers, locale)
-                        val total = whole(score.totalAnswers, locale)
-                        StatTile(
-                            label = stringResource(R.string.stats_right),
-                            value = "$correct/$total",
-                            spokenValue = stringResource(R.string.stats_correct_of_total, correct, total),
-                            detail = stringResource(R.string.stats_of_all_answers),
-                            tone = StatTone.Success,
-                            icon = icon(R.drawable.ic_check_circle),
-                            modifier = modifier,
-                        )
-                    },
-                    { modifier ->
-                        StatTile(
-                            label = stringResource(R.string.stats_period),
-                            value =
-                                pluralStringResource(
-                                    R.plurals.stats_days,
-                                    SCORE_WINDOW_DAYS,
-                                    whole(SCORE_WINDOW_DAYS.toLong(), locale),
-                                ),
-                            detail = stringResource(R.string.stats_back_from_today),
-                            icon = icon(R.drawable.ic_date_range),
-                            modifier = modifier,
-                        )
-                    },
-                ),
+        StatTile(
+            label = pluralStringResource(R.plurals.stats_last_days, SCORE_WINDOW_DAYS, whole(SCORE_WINDOW_DAYS.toLong(), locale)),
+            value = metricPercent(score.score, locale),
+            detail = stringResource(R.string.stats_correct_of_total, whole(score.correctAnswers, locale), whole(score.totalAnswers, locale)),
+            tone = StatTone.Success,
+            icon = icon(R.drawable.ic_target),
         )
-
         ScoreChart(score)
-        StatsLine(stringResource(R.string.stats_score_line))
     }
 }
 
@@ -752,7 +597,6 @@ internal fun PatternsPage(context: StatsContext) {
             .collectShown()
             .value.value ?: return StatsEmpty(context)
     val summary = patternsSummary(patterns)
-    val answers = patterns.weekdays.sumOf { it.totalAnswers }
     val bestDay = (summary.days as? Verdict.Best)?.key
     val bestTime = (summary.times as? Verdict.Best)?.key
     val fullBar = if (context.wide) WIDE_PATTERN_BAR else PATTERN_BAR
@@ -773,7 +617,6 @@ internal fun PatternsPage(context: StatsContext) {
             fullBar = fullBar,
             inspector = context.inspector,
             modifier = modifier,
-            footer = (summary.days as? Verdict.Even)?.let { pluralStringResource(R.plurals.stats_days_even, it.points, it.points) },
         )
     }
     val day: @Composable (Modifier) -> Unit = { modifier ->
@@ -794,47 +637,11 @@ internal fun PatternsPage(context: StatsContext) {
             fullBar = fullBar,
             inspector = context.inspector,
             modifier = modifier,
-            footer = (summary.times as? Verdict.Even)?.let { pluralStringResource(R.plurals.stats_times_even, it.points, it.points) },
         )
     }
 
     Column(verticalArrangement = Arrangement.spacedBy(32.dp)) {
-        StatsLine(stringResource(R.string.stats_patterns_intro))
-        StatTiles(
-            columns = if (context.wide) 3 else 2,
-            tiles =
-                listOf(
-                    { modifier ->
-                        StatTile(
-                            label = stringResource(R.string.stats_best_day),
-                            value = bestDayName(summary.days) ?: DASH,
-                            detail = verdictDetail(summary.days),
-                            tone = StatTone.Success,
-                            icon = icon(R.drawable.ic_calendar_month),
-                            modifier = modifier,
-                        )
-                    },
-                    { modifier ->
-                        StatTile(
-                            label = stringResource(R.string.stats_best_time),
-                            value = bestTimeName(summary.times) ?: DASH,
-                            detail = verdictDetail(summary.times),
-                            tone = StatTone.Success,
-                            icon = icon(bestTime?.let(::timeIcon) ?: R.drawable.ic_schedule),
-                            modifier = modifier,
-                        )
-                    },
-                    { modifier ->
-                        StatTile(
-                            label = stringResource(R.string.stats_answers),
-                            value = whole(answers, locale),
-                            detail = stringResource(R.string.stats_last_90),
-                            icon = icon(R.drawable.ic_check_circle),
-                            modifier = modifier,
-                        )
-                    },
-                ),
-        )
+        Text(patternsSentence(summary), style = MaterialTheme.typography.titleMedium)
 
         BoxWithConstraints {
             if (maxWidth >= PATTERNS_BESIDE) {
@@ -849,8 +656,6 @@ internal fun PatternsPage(context: StatsContext) {
                 }
             }
         }
-
-        PatternsNote(summary = null, patterns.minimumAnswers)
     }
 }
 
@@ -910,26 +715,28 @@ private fun patternColumn(
     )
 }
 
-/** Without [summary] it leaves out what each chart says under itself. */
+/** Main's patterns sentence: the best day, then the best time, each said only once the answers show it. */
 @Composable
-private fun PatternsNote(
-    summary: PatternsSummary?,
-    minimumAnswers: Long,
-) {
-    val sentences =
-        listOfNotNull(
-            (summary?.days as? Verdict.Even)?.let { pluralStringResource(R.plurals.stats_days_even, it.points, it.points) },
-            (summary?.times as? Verdict.Even)?.let { pluralStringResource(R.plurals.stats_times_even, it.points, it.points) },
-            pluralStringResource(R.plurals.stats_min_answers, minimumAnswers.toInt(), minimumAnswers.toInt()),
-        )
-    StatsLine(sentences.joinSentences())
+private fun patternsSentence(summary: PatternsSummary): String {
+    val locale = currentLocale()
+    val day =
+        when (val days = summary.days) {
+            is Verdict.Best -> stringResource(R.string.stats_best_day_is, weekdayName(days.key, locale))
+            is Verdict.Even -> stringResource(R.string.stats_days_same)
+            Verdict.NotEnough -> null
+        }
+    val time =
+        when (val times = summary.times) {
+            is Verdict.Best -> stringResource(R.string.stats_best_time_is, timeName(times.key).lowercase(locale))
+            is Verdict.Even -> stringResource(R.string.stats_times_same)
+            Verdict.NotEnough -> null
+        }
+    return listOfNotNull(day, time).joinSentences().ifEmpty { stringResource(R.string.stats_answer_more) }
 }
 
 private sealed interface Verdict {
     data class Best(
         val key: String,
-        val score: Double,
-        val answers: Long,
     ) : Verdict
 
     data class Even(
@@ -957,8 +764,8 @@ private fun verdict(
 
 private fun patternsSummary(patterns: CurrentUserScorePatternsResponsePatterns) =
     PatternsSummary(
-        days = verdict(patterns.dayVerdict, patterns.strongestWeekday?.let { Verdict.Best(it.dayOfWeek.value, it.score, it.totalAnswers) }),
-        times = verdict(patterns.timeVerdict, patterns.strongestTime?.let { Verdict.Best(it.period.value, it.score, it.totalAnswers) }),
+        days = verdict(patterns.dayVerdict, patterns.strongestWeekday?.let { Verdict.Best(it.dayOfWeek.value) }),
+        times = verdict(patterns.timeVerdict, patterns.strongestTime?.let { Verdict.Best(it.period.value) }),
     )
 
 @Composable
@@ -976,29 +783,6 @@ private fun bestTimeName(verdict: Verdict): String? =
         is Verdict.Best -> timeName(verdict.key)
         Verdict.NotEnough -> null
     }
-
-@Composable
-private fun verdictDetail(verdict: Verdict): String =
-    when (verdict) {
-        is Verdict.Even -> {
-            pluralStringResource(R.plurals.stats_within_points, verdict.points, verdict.points)
-        }
-
-        Verdict.NotEnough -> {
-            stringResource(R.string.stats_not_enough)
-        }
-
-        is Verdict.Best -> {
-            pluralStringResource(
-                R.plurals.stats_score_answers,
-                verdict.answers.toInt(),
-                percent(verdict.score, currentLocale()),
-                whole(verdict.answers, currentLocale()),
-            )
-        }
-    }
-
-private fun Verdict.bestScore(locale: Locale): String? = (this as? Verdict.Best)?.let { percent(it.score, locale) }
 
 private fun weekdayName(
     key: String,
@@ -1039,6 +823,5 @@ private val PATTERNS_BESIDE = 720.dp
 private const val PERCENT = 100.0
 private const val DASH = "–"
 private const val LEVELS_PER_BELT = 10L
-private const val BRAIN_POWER_PER_LESSON = 10L
 private const val SCORE_WINDOW_DAYS = 90
 private const val PANEL_TINT = 0.1f

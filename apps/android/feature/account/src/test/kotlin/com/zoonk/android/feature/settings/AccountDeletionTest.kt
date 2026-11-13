@@ -32,7 +32,7 @@ import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class ProfileDeletionTest {
+class AccountDeletionTest {
     @get:Rule
     val folder = TemporaryFolder()
 
@@ -42,7 +42,7 @@ class ProfileDeletionTest {
     @After
     fun reset() = Dispatchers.resetMain()
 
-    private suspend fun TestScope.signedIn(): Pair<SessionStore, ProfileViewModel> {
+    private suspend fun TestScope.signedIn(): Pair<SessionStore, YourDataViewModel> {
         val dispatcher = StandardTestDispatcher(testScheduler)
         Dispatchers.setMain(dispatcher)
         val main = CoroutineScope(SupervisorJob() + dispatcher)
@@ -56,7 +56,7 @@ class ProfileDeletionTest {
             )
         sessions.restore()
         advanceUntilIdle()
-        return sessions to ProfileViewModel(AccountStore(api, sessions, AppCache(sessions, main)), ana, "ana@zoonk.test")
+        return sessions to YourDataViewModel(AccountStore(api, sessions, AppCache(sessions, main)), ana, "ana@zoonk.test")
     }
 
     @Test

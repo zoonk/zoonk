@@ -26,7 +26,6 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
@@ -39,13 +38,11 @@ import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
-import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonSize
-import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.GoalMark
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListDivider
@@ -65,13 +62,12 @@ import com.zoonk.android.ui.scaffold.detailPagePadding
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.zoonk
-import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.OwnedCertificate
 import kotlinx.coroutines.launch
 
 /**
  * Main's `/certificates`: every certificate the learner earned, newest first, each opening its page,
- * under the Plus notice while the learner isn't on Plus, since that's what issues them.
+ * where one that needs a subscription shows the gate.
  */
 @Composable
 fun CertificatesScreen(
@@ -80,8 +76,6 @@ fun CertificatesScreen(
 ) {
     val resource = app.certificates.certificates
     val state by resource.collectShown()
-    val summary by app.learnerSummary.summary.collectShown()
-    val showsPlus = summary.value?.let { it.tier != LearnerSummary.Tier.PLUS } == true
     val scope = rememberCoroutineScope()
 
     PageScaffold(
@@ -93,7 +87,7 @@ fun CertificatesScreen(
                 is LoadState.Loaded, LoadState.Empty -> {
                     BeforeFold { beforeFold ->
                         LazyColumn(beforeFold.widthIn(max = DETAIL_PAGE_WIDTH).fillMaxSize(), contentPadding = detailPagePadding()) {
-                            certificates(app, navigator, state.value.orEmpty(), showsPlus)
+                            certificates(app, navigator, state.value.orEmpty())
                         }
                     }
                 }
@@ -114,29 +108,14 @@ private fun androidx.compose.foundation.lazy.LazyListScope.certificates(
     app: AppContainer,
     navigator: AppNavigator,
     certificates: List<OwnedCertificate>,
-    showsPlus: Boolean,
 ) {
     item(key = "header", contentType = "header") {
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            if (certificates.isNotEmpty()) {
-                val count = certificates.size
-                Eyebrow(pluralStringResource(R.plurals.certificates_count, count, count), uppercase = false)
-            }
             Text(stringResource(R.string.certificates_title), Modifier.pageTitle(), style = MaterialTheme.typography.headlineMedium)
             Text(
                 stringResource(R.string.certificates_lead),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium,
-            )
-        }
-    }
-
-    if (showsPlus) {
-        item(key = "plus", contentType = "plus") {
-            CertificatesPlusNotice(
-                onSeePlus = { navigator.open(AppRoute.Subscription) },
-                modifier = Modifier.padding(top = 16.dp),
-                title = stringResource(R.string.certificates_plus_list_title),
             )
         }
     }
@@ -154,7 +133,7 @@ private fun androidx.compose.foundation.lazy.LazyListScope.certificates(
     }
 }
 
-/** Main's `CertificateItem`: its thumbnail, its name with the Plus mark while locked, and what it is and when. */
+/** Main's `CertificateItem`: its thumbnail (a blank sheet while it needs a subscription), its name, and its level and date. */
 @Composable
 private fun CertificateRow(
     app: AppContainer,
@@ -164,13 +143,12 @@ private fun CertificateRow(
     val name = certificate.naming
 
     ListRow(
-        headline = { Text(name.words()) },
+        headline = { Text(name.rowName()) },
         onClick = onOpen,
-        supporting = { Text(name.kindLine()) },
-        meta = if (name.locked) ({ PlusMark() }) else null,
+        supporting = { Text(name.rowLine()) },
         leading = {
             if (name.locked) {
-                LockedCertificate(name, Modifier.width(THUMB_WIDTH), corner = THUMB_CORNER, compact = true)
+                BlankCertificate(name, Modifier.width(THUMB_WIDTH), corner = THUMB_CORNER, compact = true)
             } else {
                 CertificatePicture(
                     certificate.pictureUrl,
@@ -185,8 +163,8 @@ private fun CertificateRow(
 }
 
 /**
- * Main's empty page: how certificates are earned, Continue learning, and under "Up next" each active
- * goal that earns one and how: a course's share of lessons done, or what a language level asks.
+ * Main's empty page: Continue learning, and under "Your next certificate" each active goal that
+ * earns one, with a course's share of lessons done.
  */
 @Composable
 private fun Empty(
@@ -203,18 +181,12 @@ private fun Empty(
             Modifier.padding(top = 24.dp).semantics { heading() },
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
         )
-        Text(
-            stringResource(R.string.certificates_empty_description),
-            Modifier.padding(top = 6.dp),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium,
-        )
-        Button(onClick = { navigator.showRoot(AppTab.Today) }, modifier = Modifier.padding(top = 20.dp), size = ButtonSize.Large) {
+        Button(onClick = { navigator.showRoot(AppTab.Today) }, modifier = Modifier.padding(top = 12.dp), size = ButtonSize.Large) {
             Text(stringResource(R.string.certificates_continue_learning))
         }
 
         if (upNext.isNotEmpty()) {
-            SectionHeader(stringResource(R.string.certificates_up_next), Modifier.padding(top = 40.dp, bottom = 8.dp))
+            SectionHeader(stringResource(R.string.certificates_your_next), Modifier.padding(top = 40.dp, bottom = 8.dp))
             Column(Modifier.bleed(LIST_ITEM_INSET)) {
                 upNext.forEachIndexed { index, item ->
                     if (index > 0) ListDivider()
@@ -234,9 +206,6 @@ private fun UpNextRow(item: CertificateUpNext) {
             Text(item.goal.displayName, Modifier.semantics { contentDescription = spoken })
         },
         leading = { GoalMark(item.goal.displayName, item.goal.languageFlag) },
-        supporting = {
-            Text(stringResource(if (progress == null) R.string.certificates_up_next_language else R.string.certificates_up_next_course))
-        },
         meta =
             progress?.let { share ->
                 {

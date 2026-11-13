@@ -61,9 +61,8 @@ import com.zoonk.android.feature.certificates.CertificateName
 import com.zoonk.android.feature.certificates.CertificateNameField
 import com.zoonk.android.feature.certificates.CertificateNameModel
 import com.zoonk.android.feature.certificates.CertificatePicture
-import com.zoonk.android.feature.certificates.CertificatesPlusNotice
 import com.zoonk.android.feature.certificates.LinkedInSheet
-import com.zoonk.android.feature.certificates.LockedCertificate
+import com.zoonk.android.feature.certificates.BlankCertificate
 import com.zoonk.android.feature.certificates.caption
 import com.zoonk.android.feature.certificates.certificateNameModel
 import com.zoonk.android.feature.certificates.fileName
@@ -94,8 +93,8 @@ import kotlin.time.TimeSource
  * write earned ([awarded], oldest first, so the newest shows on top and Share and LinkedIn act on
  * it). Their words come with the result; the pictures, links and the learner's current name come
  * from the learner's list, which a completion leaves stale. Closing marks them shown. One earned
- * without Plus shows locked, with the Plus notice: See Plus leaves without marking it shown, so it
- * plays again after the next task, unlocked once they subscribe. On an open book the certificate
+ * without a subscription shows its blank sheet and "See your certificate", which leaves for the gate
+ * without marking it shown, so it plays again after the next task, unlocked once they subscribe. On an open book the certificate
  * takes the page before the fold, and the words and Continue the page after it.
  */
 @Composable
@@ -262,7 +261,7 @@ private fun Sheet(
     modifier: Modifier = Modifier,
 ) {
     if (name.locked) {
-        LockedCertificate(name, modifier.fillMaxWidth().then(if (behind) Modifier.clearAndSetSemantics {} else Modifier))
+        BlankCertificate(name, modifier.fillMaxWidth().then(if (behind) Modifier.clearAndSetSemantics {} else Modifier))
     } else {
         CertificatePicture(
             url = certificate?.pictureUrl,
@@ -295,7 +294,9 @@ private fun Words(
             textAlign = TextAlign.Center,
         )
         if (awarded.last().locked) {
-            CertificatesPlusNotice(onSeePlus, Modifier.padding(top = 24.dp))
+            OutlinedButton(onClick = onSeePlus, modifier = Modifier.padding(top = 24.dp)) {
+                Text(stringResource(R.string.certificates_see_yours))
+            }
             return@Column
         }
 

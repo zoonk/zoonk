@@ -43,7 +43,7 @@ fun HelpScreen(
     navigator: AppNavigator,
 ) {
     val context = LocalContext.current
-    val socials = if (currentLocale().language == "pt") SOCIALS_PT else SOCIALS
+    val portuguese = currentLocale().language == "pt"
 
     PageScaffold(onBack = { navigator.back() }, title = { Text(stringResource(R.string.account_menu_help)) }) { padding ->
         Box(
@@ -72,8 +72,8 @@ fun HelpScreen(
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     SectionHeader(stringResource(R.string.feedback_follow_us))
                     FlowRow(Modifier.offset(x = -ICON_INSET)) {
-                        socials.forEach { social ->
-                            IconButton(onClick = { openWebPage(context, social.url) }) {
+                        SOCIALS.forEach { social ->
+                            IconButton(onClick = { openWebPage(context, if (portuguese) social.urlPt else social.url) }) {
                                 Icon(
                                     painterResource(social.icon),
                                     contentDescription = social.name,
@@ -93,25 +93,21 @@ private data class Social(
     val name: String,
     @param:DrawableRes val icon: Int,
     val url: String,
+    val urlPt: String = url,
 )
 
-/** Main's `getSocialProfiles`: the networks its help page lists, in its order, with the Brazilian accounts in Portuguese. */
+/** Main's `getSocialProfiles`: where Zoonk posts, in its order, with the Brazilian profiles in Portuguese. */
 private val SOCIALS =
     listOf(
-        Social("X", R.drawable.ic_brand_x, "https://x.com/zoonkcom"),
+        Social("X", R.drawable.ic_brand_x, "https://x.com/zoonkcom", "https://x.com/zoonkbr"),
         Social("LinkedIn", R.drawable.ic_brand_linkedin, "https://www.linkedin.com/company/zoonk"),
-        Social("Instagram", R.drawable.ic_brand_instagram, "https://www.instagram.com/zoonkcom"),
-        Social("Bluesky", R.drawable.ic_brand_bluesky, "https://bsky.app/profile/zoonk.bsky.social"),
-        Social("YouTube", R.drawable.ic_brand_youtube, "https://www.youtube.com/@zoonkcom"),
-    )
-
-private val SOCIALS_PT =
-    listOf(
-        Social("X", R.drawable.ic_brand_x, "https://x.com/zoonkbr"),
-        Social("LinkedIn", R.drawable.ic_brand_linkedin, "https://www.linkedin.com/company/zoonk"),
-        Social("Instagram", R.drawable.ic_brand_instagram, "https://www.instagram.com/zoonkbr"),
-        Social("Bluesky", R.drawable.ic_brand_bluesky, "https://bsky.app/profile/zoonkbr.bsky.social"),
-        Social("YouTube", R.drawable.ic_brand_youtube, "https://www.youtube.com/@zoonkbr"),
+        Social("GitHub", R.drawable.ic_brand_github, "https://github.com/zoonk"),
+        Social("Instagram", R.drawable.ic_brand_instagram, "https://www.instagram.com/zoonkcom", "https://www.instagram.com/zoonkbr"),
+        Social("YouTube", R.drawable.ic_brand_youtube, "https://www.youtube.com/@zoonkcom", "https://www.youtube.com/@zoonkbr"),
+        Social("Threads", R.drawable.ic_brand_threads, "https://www.threads.net/@zoonkcom", "https://www.threads.net/@zoonkbr"),
+        Social("Reddit", R.drawable.ic_brand_reddit, "https://www.reddit.com/r/zoonk", "https://www.reddit.com/r/ZoonkBrasil"),
+        Social("TikTok", R.drawable.ic_brand_tiktok, "https://www.tiktok.com/@zoonkcom", "https://www.tiktok.com/@zoonkbr"),
+        Social("Facebook", R.drawable.ic_brand_facebook, "https://www.facebook.com/zoonkcom", "https://www.facebook.com/zoonkbr"),
     )
 
 /** How far a 48dp target reaches past its 18dp mark on each side. */

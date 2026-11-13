@@ -23,7 +23,6 @@
   "reminders_remind_me": "0afa86587f02b93d695daee48985484dcf4a57197a636f0ec400cf47d9526242",
   "reminders_save": "9e604950a370a4c0faef4fe6b10ec17869b682d45306de18547127525a398ddf",
   "reminders_save_failed": "3f258696356444290a1b403aea58187994fa318a43d633ca38884866702e13ad",
-  "reminders_study_days": "4b5196df137c96ac14c378af611b4bf02101258949fbdc464a0f328b387ee148",
   "reminders_this_device": "d87fff155b56ba9d059aa0e4f32e2f401989ddccef1ab44a38458fea7e596f00",
   "reminders_time": "11972025c5144c6104076ec4845cc60dd849ce2f29f719122be2470ad7d33650",
   "reminders_time_title": "2aad43010734d81afe0f962d63f10802a9e5dd1a0db5e855ad271b640a4a6301",
@@ -70,8 +69,6 @@
     <!-- Guests have no email address yet. -->
     <string name="reminders_email_needs_account">E-posta hatırlatmaları almak için hesap oluştur</string>
     <string name="reminders_push">Anlık bildirimler</string>
-    <!-- Under the settings; "your plans" opens the plan, which sets the study days. -->
-    <string name="reminders_study_days">Planlarındaki çalışma günlerinde</string>
     <string name="reminders_quiet">Ara verdiğin için duraklatıldı. Çalışmaya dönünce yeniden açılır.</string>
     <string name="reminders_save_failed">Kaydedilemedi. Tekrar dene.</string>
     <!-- Push reminders go to another of the learner's devices; this one can take over. -->

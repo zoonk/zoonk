@@ -23,7 +23,6 @@
   "reminders_remind_me": "27145dfdad77ab91d5ed6139c46e00aa070693a80ff0c0ac37c312210081352f",
   "reminders_save": "36e89fa773b65ec0e3f9417c123d709a27e31d23bda3c96201a5ccb704f0805b",
   "reminders_save_failed": "29d20c4660cd4e73e03d7b11fd29c5ee40268ab4ac31afb0e5aee3fb2f5ab7ef",
-  "reminders_study_days": "c01e2c993be821286f98b771d66934c0dfe5de9f0017df73e886cc7204327ab1",
   "reminders_this_device": "187c1544847572de2a3332a3a6120ee8cc64b6970bcb8aad8e29ceffea42b808",
   "reminders_time": "987170573220412df7ece01908574d13d6859578133e7deaa9c4f3ad146433c4",
   "reminders_time_title": "ebd07990267e255f83b7a205d4200885f10d98c41be387524f1c10cbdc4afab2",
@@ -70,8 +69,6 @@
     <!-- Guests have no email address yet. -->
     <string name="reminders_email_needs_account">Crie uma conta para receber lembretes por e-mail</string>
     <string name="reminders_push">Notificações push</string>
-    <!-- Under the settings; "your plans" opens the plan, which sets the study days. -->
-    <string name="reminders_study_days">Nos seus dias de estudo, conforme seus planos</string>
     <string name="reminders_quiet">Pausados enquanto você não está por aqui. Voltam quando você estudar.</string>
     <string name="reminders_save_failed">Não foi possível salvar. Tente de novo.</string>
     <!-- Push reminders go to another of the learner's devices; this one can take over. -->

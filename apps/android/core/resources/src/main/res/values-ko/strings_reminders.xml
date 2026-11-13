@@ -23,7 +23,6 @@
   "reminders_remind_me": "135009e71183fcf256b4094f1e97214eb331e59aa00c0deeae9113cffad76e60",
   "reminders_save": "e2c57f30a65dda9d839cec48a5a5b5bb69c76e962cc0a020810a78dc39376502",
   "reminders_save_failed": "01f5072f961bc0ff6e2d5616e6b0a8f96d5b13fd1dfdcc46a2ebc0e818554a5b",
-  "reminders_study_days": "073484acd77b3b780e64979e6c9995a61a2e0cdc9d88566ac53ec5664f817bdd",
   "reminders_this_device": "b43f5915c9c2ae556fdc49ec1f81492cb8e003495b139587867193d6aae1703e",
   "reminders_time": "b283db11afc396bf766dfa2567f3778fbdcecf4102e06e48ab4b1a6e2b58d020",
   "reminders_time_title": "d35817898eb984cfd87d6381df1c15dce564d220ce82b0e098661d3b3efdfa72",
@@ -70,8 +69,6 @@
     <!-- Guests have no email address yet. -->
     <string name="reminders_email_needs_account">계정을 만들고 이메일 알림 받기</string>
     <string name="reminders_push">푸시 알림</string>
-    <!-- Under the settings; "your plans" opens the plan, which sets the study days. -->
-    <string name="reminders_study_days">계획에서 정한 학습일에</string>
     <string name="reminders_quiet">쉬는 동안 알림을 일시 중지했어요. 다시 공부하면 켜져요.</string>
     <string name="reminders_save_failed">저장하지 못했어요. 다시 시도해 보세요.</string>
     <!-- Push reminders go to another of the learner's devices; this one can take over. -->

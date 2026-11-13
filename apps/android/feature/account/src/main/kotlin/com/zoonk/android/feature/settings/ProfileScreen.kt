@@ -1,7 +1,5 @@
 package com.zoonk.android.feature.settings
 
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,12 +8,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,45 +18,27 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.autofill.ContentType
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.contentType
-import androidx.compose.ui.semantics.liveRegion
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
-import com.zoonk.android.app.openWebPage
 import com.zoonk.android.data.SessionState
-import com.zoonk.android.feature.account.AccountFailure
 import com.zoonk.android.feature.account.ProfileFields
 import com.zoonk.android.feature.account.ProfileFormViewModel
 import com.zoonk.android.feature.account.ProfileSaveFailure
-import com.zoonk.android.feature.subscription.webPlusDeletionNotice
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.navigation.AppTab
-import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
-import com.zoonk.android.ui.components.ButtonSize
-import com.zoonk.android.ui.components.DestructiveButton
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
-import com.zoonk.android.ui.components.ListRow
-import com.zoonk.android.ui.components.OutlinedButton
-import com.zoonk.android.ui.components.OutlinedTextField
-import com.zoonk.android.ui.components.PageHeader
-import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.scaffold.PageScaffold
 import kotlinx.coroutines.launch
 
-/** Main's profile page: name and username, the data download, and deleting the account. */
+/** Main's profile page: the name and the username. The data download and deleting the account are in Privacy. */
 @Composable
 fun ProfileScreen(
     app: AppContainer,
@@ -89,11 +66,7 @@ fun ProfileScreen(
                         .padding(vertical = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(28.dp),
             ) {
-                PageHeader(
-                    stringResource(R.string.settings_profile),
-                    stringResource(R.string.settings_profile_description),
-                    Modifier.padding(horizontal = LIST_ITEM_INSET),
-                )
+                PageTitleRow(stringResource(R.string.settings_profile), Modifier.padding(horizontal = LIST_ITEM_INSET))
 
                 when {
                     signedIn == null -> {}
@@ -112,7 +85,7 @@ fun ProfileScreen(
                     }
 
                     else -> {
-                        Profile(app, navigator, signedIn)
+                        Profile(app, signedIn)
                     }
                 }
             }
@@ -123,220 +96,28 @@ fun ProfileScreen(
 @Composable
 private fun Profile(
     app: AppContainer,
-    navigator: AppNavigator,
     signedIn: SessionState.SignedIn,
 ) {
-    val key = signedIn.session.localId
-    val user = signedIn.account.user
-    val form = viewModel(key = "profile-form:$key") { ProfileFormViewModel(app.account, user, createSavedStateHandle()) }
-    val profile = viewModel(key = "profile:$key") { ProfileViewModel(app.account, signedIn.session, user.email) }
-    val webPlusNotice = webPlusDeletionNotice(app.subscriptions.websiteSubscription)
-    val context = LocalContext.current
-    val export =
-        rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
-            if (uri != null) profile.export { context.contentResolver.openOutputStream(uri) }
-        }
-
-    SettingsSection(stringResource(R.string.settings_account)) {
-        Column(Modifier.padding(horizontal = LIST_ITEM_INSET, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            ProfileFields(form)
-            ProfileSaveFailure(form)
-            if (form.isSaved) {
-                Text(
-                    text = stringResource(R.string.settings_saved),
-                    modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
-            Button(
-                onClick = form::save,
-                enabled = form.canSave && form.isChanged,
-                busy = form.isSaving,
-                modifier = Modifier.align(Alignment.End),
-                leadingIcon = { ButtonIcon(R.drawable.ic_check) },
-                size = ButtonSize.Small,
-            ) {
-                Text(stringResource(R.string.settings_save))
-            }
-        }
+    val form = viewModel(key = "profile-form:${signedIn.session.localId}") {
+        ProfileFormViewModel(app.account, signedIn.account.user, createSavedStateHandle())
     }
 
-    SettingsSection(stringResource(R.string.settings_your_data)) {
-        ListRow(
-            headline = { Text(stringResource(R.string.settings_download_data)) },
-            supporting = { Text(stringResource(R.string.settings_download_data_description)) },
-            trailing = {
-                OutlinedButton(
-                    onClick = { export.launch(EXPORT_FILE_NAME) },
-                    busy = profile.isExporting,
-                    leadingIcon = { ButtonIcon(R.drawable.ic_download) },
-                    size = ButtonSize.Small,
-                ) {
-                    Text(stringResource(R.string.settings_download))
-                }
-            },
-        )
-        if (profile.exportFailed) Failure(stringResource(R.string.settings_download_failed), Modifier.padding(horizontal = LIST_ITEM_INSET))
+    // A save's answer is a snackbar, so Save and the rows under it stay where they are.
+    LaunchedEffect(form.isSaved) {
+        if (form.isSaved) app.scope.launch { app.snackbars.show(R.string.settings_saved) }
     }
 
-    SettingsSection(stringResource(R.string.settings_delete_account)) {
-        ListRow(
-            headline = { Text(stringResource(R.string.settings_delete_my_account)) },
-            supporting = { Text(stringResource(R.string.settings_delete_account_description)) },
-            trailing = {
-                DestructiveButton(onClick = profile::askToDelete, size = ButtonSize.Small) {
-                    Text(stringResource(R.string.settings_delete_ellipsis))
-                }
-            },
-        )
-    }
-
-    DeletionDialogs(app, navigator, profile, signedIn, webPlusNotice)
-}
-
-@Composable
-private fun DeletionDialogs(
-    app: AppContainer,
-    navigator: AppNavigator,
-    profile: ProfileViewModel,
-    signedIn: SessionState.SignedIn,
-    webPlusNotice: String?,
-) {
-    val email = signedIn.account.user.email
-    val context = LocalContext.current
-    val failure = profile.deletionFailure?.let { deletionFailureMessage(it) }
-
-    when (profile.deletionStep) {
-        DeletionStep.None -> {}
-
-        DeletionStep.Confirm -> {
-            AlertDialog(
-                onDismissRequest = profile::dismissDeletion,
-                title = { Text(stringResource(R.string.settings_delete_confirm_title)) },
-                text = {
-                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        Text(stringResource(R.string.settings_delete_confirm_description))
-                        webPlusNotice?.let { Text(it) }
-                        failure?.let { Failure(it) }
-                    }
-                },
-                confirmButton = { DeleteButton(R.string.settings_delete_my_account, profile.isDeleting, profile::delete) },
-                dismissButton = {
-                    TextButton(
-                        onClick = profile::dismissDeletion,
-                        enabled = !profile.isDeleting,
-                    ) { Text(stringResource(R.string.settings_cancel)) }
-                },
-            )
-        }
-
-        DeletionStep.Code -> {
-            val needsNewCode = profile.deletionFailure == AccountFailure.CodeExpired || profile.deletionFailure == AccountFailure.CodeLocked
-
-            AlertDialog(
-                onDismissRequest = profile::dismissDeletion,
-                title = { Text(stringResource(R.string.settings_delete_code_title)) },
-                text = {
-                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        Text(stringResource(R.string.settings_delete_code_description, email))
-                        OutlinedTextField(
-                            value = profile.code,
-                            onValueChange = profile::onCodeChange,
-                            modifier = Modifier.semantics { contentType = ContentType.SmsOtpCode },
-                            label = stringResource(R.string.account_code_label),
-                            enabled = !needsNewCode,
-                            isError = failure != null,
-                            singleLine = true,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
-                        )
-                        failure?.let { Failure(it) }
-                    }
-                },
-                confirmButton = {
-                    if (needsNewCode) {
-                        TextButton(onClick = profile::sendNewCode, enabled = !profile.isDeleting) {
-                            Text(stringResource(R.string.account_send_new_code))
-                        }
-                    } else {
-                        DeleteButton(R.string.settings_delete_verify, profile.isDeleting, profile::delete)
-                    }
-                },
-                dismissButton = {
-                    TextButton(
-                        onClick = profile::dismissDeletion,
-                        enabled = !profile.isDeleting,
-                    ) { Text(stringResource(R.string.settings_cancel)) }
-                },
-            )
-        }
-
-        DeletionStep.AppleNote -> {
-            AlertDialog(
-                onDismissRequest = {},
-                title = { Text(stringResource(R.string.settings_account_deleted_title)) },
-                text = { Text(stringResource(R.string.settings_apple_not_revoked)) },
-                confirmButton = { TextButton(onClick = profile::finish) { Text(stringResource(R.string.settings_done)) } },
-                dismissButton = {
-                    TextButton(onClick = { openWebPage(context, APPLE_ID_MANAGE_URL) }) {
-                        Text(stringResource(R.string.settings_manage_apple))
-                    }
-                },
-            )
-        }
-
-        // Leaves first: forgetting the session would take this page away before it could.
-        DeletionStep.Deleted -> {
-            LaunchedEffect(Unit) {
-                navigator.popToRoots()
-                navigator.showRoot(AppTab.Today)
-                app.scope.launch {
-                    app.account.forgetDeletedAccount(signedIn.session)
-                    app.snackbars.show(R.string.settings_account_deleted)
-                }
-            }
+    Column(Modifier.padding(horizontal = LIST_ITEM_INSET), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        ProfileFields(form)
+        ProfileSaveFailure(form)
+        Button(
+            onClick = form::save,
+            enabled = form.canSave && form.isChanged,
+            busy = form.isSaving,
+            modifier = Modifier.align(Alignment.End),
+            leadingIcon = { ButtonIcon(R.drawable.ic_check) },
+        ) {
+            Text(stringResource(R.string.settings_save))
         }
     }
 }
-
-@Composable
-private fun DeleteButton(
-    text: Int,
-    isDeleting: Boolean,
-    onClick: () -> Unit,
-) {
-    TextButton(
-        busy = isDeleting,
-        onClick = onClick,
-        colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error),
-    ) { Text(stringResource(text)) }
-}
-
-@Composable
-private fun deletionFailureMessage(failure: AccountFailure): String =
-    stringResource(
-        when (failure) {
-            AccountFailure.WrongCode -> R.string.account_failure_wrong_code
-            AccountFailure.CodeExpired -> R.string.account_failure_code_expired
-            AccountFailure.CodeLocked -> R.string.account_failure_code_locked
-            AccountFailure.RateLimited -> R.string.account_failure_rate_limited
-            AccountFailure.Network -> R.string.account_failure_network
-            else -> R.string.settings_delete_failed
-        },
-    )
-
-@Composable
-private fun Failure(
-    message: String,
-    modifier: Modifier = Modifier,
-) {
-    Text(
-        text = message,
-        modifier = modifier.semantics { liveRegion = LiveRegionMode.Polite },
-        color = MaterialTheme.colorScheme.error,
-        style = MaterialTheme.typography.bodyMedium,
-    )
-}
-
-private const val EXPORT_FILE_NAME = "zoonk-data.json"
-private const val APPLE_ID_MANAGE_URL = "https://account.apple.com/account/manage"

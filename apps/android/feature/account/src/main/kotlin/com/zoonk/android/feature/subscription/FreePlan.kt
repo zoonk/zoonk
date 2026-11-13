@@ -43,7 +43,6 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.spaceAfterSentence
-import com.zoonk.api.models.AllowanceItem
 import com.zoonk.api.models.FreePlan
 
 /** Main's FreePlan card: how a visitor starts, how a guest keeps going, or a Free account's use of it today. */
@@ -54,7 +53,6 @@ internal fun FreePlanCard(
     viewer: PlanViewer,
     navigator: AppNavigator,
     modifier: Modifier = Modifier,
-    messagesUsed: AllowanceItem? = null,
 ) {
     OutlinedCard(modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -63,7 +61,7 @@ internal fun FreePlanCard(
             when (viewer) {
                 PlanViewer.Visitor -> StartFree(stringResource(R.string.subscription_start_free)) { navigator.showRoot(AppTab.Today) }
                 PlanViewer.Guest -> StartFree(stringResource(R.string.limit_create_account)) { navigator.open(AppRoute.Login) }
-                PlanViewer.Free -> CurrentPlanUse(messagesUsed)
+                PlanViewer.Free -> CurrentPlan()
             }
             HorizontalDivider()
             PlanIncludes(
@@ -80,14 +78,6 @@ internal fun FreePlanCard(
                 items =
                     listOfNotNull(
                         stringResource(R.string.subscription_free_plan),
-                        limits.examPrepDays?.let {
-                            examPrep(
-                                it.toInt(),
-                                R.string.subscription_free_exam_week,
-                                R.string.subscription_free_exam_day,
-                                R.plurals.subscription_free_exam,
-                            )
-                        },
                         pluralStringResource(
                             R.plurals.subscription_free_buddy,
                             count(limits.tutorMessagesPerDay),
@@ -110,17 +100,12 @@ private fun ColumnScope.StartFree(
 }
 
 @Composable
-private fun ColumnScope.CurrentPlanUse(messagesUsed: AllowanceItem?) {
+private fun ColumnScope.CurrentPlan() {
     Text(
         stringResource(R.string.subscription_current_plan),
         Modifier.align(Alignment.CenterHorizontally),
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         style = MaterialTheme.typography.bodyMedium,
-    )
-    val limit = messagesUsed?.dailyLimit?.toInt() ?: return
-    Note(
-        pluralStringResource(R.plurals.subscription_messages_used, limit, messagesUsed.usedToday.toInt(), limit),
-        Modifier.align(Alignment.CenterHorizontally),
     )
 }
 
@@ -195,16 +180,7 @@ private fun FreePlanAnswer(
                 R.plurals.subscription_answer_free_lessons,
                 count(limits.lessonsPerMonth),
                 count(limits.lessonsPerMonth),
-                count(limits.lessonsPerDay),
             ),
-            limits.examPrepDays?.let {
-                examPrep(
-                    it.toInt(),
-                    R.string.subscription_answer_free_exam_week,
-                    R.string.subscription_answer_free_exam_day,
-                    R.plurals.subscription_answer_free_exam,
-                )
-            },
             stringResource(
                 R.string.subscription_answer_free_buddy_uploads,
                 pluralStringResource(
@@ -282,20 +258,4 @@ private fun goals(
     plural: Int = R.plurals.subscription_free_goals,
 ): String = pluralStringResource(plural, count(activeGoals), count(activeGoals))
 
-/** Main's "=7" and "one" cases: a week of exam prep reads as a week, and one day as a day. */
-@Composable
-private fun examPrep(
-    days: Int,
-    week: Int,
-    day: Int,
-    plural: Int,
-): String =
-    when (days) {
-        DAYS_IN_WEEK -> stringResource(week)
-        1 -> stringResource(day)
-        else -> pluralStringResource(plural, days, days)
-    }
-
 private fun count(limit: Long?): Int = limit?.toInt() ?: 0
-
-private const val DAYS_IN_WEEK = 7

@@ -128,6 +128,7 @@
     <string name="profile_questions_condition_note">어떤 점을 알아 두면 좋을까요?</string>
     <string name="profile_questions_support_title">어떤 방법이 공부에 도움이 되나요?</string>
     <string name="profile_questions_support_description">도움이 되는 건 모두 고르세요. 특정 유형에 해당하지 않아도, 진단을 받지 않았어도 괜찮아요.</string>
+    <!-- Asks which grammatical forms (feminine, masculine or neutral wording) the app should use for words about the learner, such as "you're right". Not a question about pronouns or identity. -->
     <string name="profile_questions_address_title">여성형, 남성형, 중립형 중 어떤 표현이 좋을까요?</string>
     <string name="profile_questions_address_description">짝꿍의 말과 피드백에 이 표현을 써요. 레슨은 그대로예요.</string>
     <string name="profile_questions_suggested">고른 항목에 보통 어떤 방법이 도움이 되는지 알아봤어요. 원하는 대로 바꿔 보세요.</string>
@@ -157,9 +158,11 @@
     <string name="profile_questions_row_activities">즐기는 활동</string>
     <string name="profile_questions_row_conditions">건강 상태</string>
     <string name="profile_questions_row_support">학습에 도움이 되는 것</string>
+    <!-- Which grammatical forms (feminine, masculine or neutral wording) the app uses for words about the learner. -->
     <string name="profile_questions_row_address">성별에 따른 표현</string>
     <string name="profile_questions_not_answered">답변 없음</string>
     <string name="profile_questions_not_shared">알려 주지 않음</string>
+    <!-- An answer the learner saved, without showing it. -->
     <string name="profile_questions_saved">저장됨</string>
     <string name="profile_questions_add">추가</string>
     <plurals name="profile_questions_conditions_saved">

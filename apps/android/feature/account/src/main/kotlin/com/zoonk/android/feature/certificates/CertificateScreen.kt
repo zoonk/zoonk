@@ -49,6 +49,8 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.catalog.courseLevelName
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.data.AnalyticsEvent
+import com.zoonk.android.data.TrackShown
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
@@ -78,7 +80,7 @@ import kotlinx.datetime.toJavaLocalDate
 /**
  * Main's `/c/<code>` for its owner: the certificate's headline, Share, Print, Download and Add to
  * LinkedIn, its picture, its details (the name, with Change, and the link, with Copy), what it
- * means and what it covers, or, earned without Plus, locked with the Plus notice. It reads the learner's list, so a
+ * means and what it covers, or, without a subscription, the gate. It reads the learner's list, so a
  * rename or a subscription shows here at once, and a locked one, which the public read refuses,
  * shows at all.
  */
@@ -107,8 +109,12 @@ fun CertificateScreen(
                 .imePadding(),
         ) {
             when {
+                certificate?.locked == true -> {
+                    CertificateGate(certificate) { navigator.open(AppRoute.Subscription) }
+                }
+
                 certificate != null -> {
-                    Certificate(app, certificate, actions) { navigator.open(AppRoute.Subscription) }
+                    Certificate(app, certificate, actions)
                 }
 
                 state is LoadState.Failed -> {
@@ -143,14 +149,12 @@ private fun Certificate(
     app: AppContainer,
     certificate: OwnedCertificate,
     actions: CertificateActions,
-    onSeePlus: () -> Unit,
 ) {
     // Above both layouts: folding moves the details between the one column and the page after the fold, and each keeps its scroll.
     val name = certificateNameModel(app)
     var linkedIn by rememberSaveable { mutableStateOf(false) }
     val pageScroll = rememberScrollState()
     val detailsScroll = rememberScrollState()
-    val naming = certificate.naming
     val details =
         @Composable { modifier: Modifier ->
             Column(modifier) {
@@ -167,22 +171,34 @@ private fun Certificate(
     ) { detailsBeside ->
         DetailColumn(pageScroll) {
             CertificateIntro(certificate)
-            OwnerActions(certificate, actions, name, onSeePlus, Modifier.padding(top = 24.dp)) { linkedIn = true }
-            if (naming.locked) {
-                LockedCertificate(naming, Modifier.padding(top = 32.dp).fillMaxWidth())
-            } else {
-                CertificatePicture(
-                    certificate.pictureUrl,
-                    app.images,
-                    certificate.pictureLabel(),
-                    Modifier.padding(top = 32.dp).fillMaxWidth(),
-                )
-            }
+            OwnerActions(certificate, actions, name, Modifier.padding(top = 24.dp)) { linkedIn = true }
+            CertificatePicture(
+                certificate.pictureUrl,
+                app.images,
+                certificate.pictureLabel(),
+                Modifier.padding(top = 32.dp).fillMaxWidth(),
+            )
             if (!detailsBeside) details(Modifier.padding(top = 28.dp))
         }
     }
 
-    if (linkedIn && !naming.locked) LinkedInSheet(certificate, onCopy = actions::copy, onDismiss = { linkedIn = false })
+    if (linkedIn) LinkedInSheet(certificate, onCopy = actions::copy, onDismiss = { linkedIn = false })
+}
+
+/** Main's `CertificateGate`: without a subscription, the gate is the page, and the blank sheet under it says which certificate is waiting. */
+@Composable
+private fun CertificateGate(
+    certificate: OwnedCertificate,
+    onSubscribe: () -> Unit,
+) {
+    TrackShown(AnalyticsEvent.SubscriptionGateShown)
+    DetailColumn(rememberScrollState()) {
+        Text(stringResource(R.string.certificates_gate_title), Modifier.pageTitle(), style = MaterialTheme.typography.displaySmall)
+        Button(onClick = onSubscribe, modifier = Modifier.padding(top = 24.dp).fillMaxWidth(), size = ButtonSize.Large) {
+            Text(stringResource(R.string.subscription_subscribe))
+        }
+        BlankCertificate(certificate.naming, Modifier.padding(top = 32.dp).fillMaxWidth())
+    }
 }
 
 @Composable
@@ -200,53 +216,46 @@ private fun DetailColumn(
     )
 }
 
-/** Main's `CertificateIntro`: a locked certificate isn't issued yet, so it claims neither the check nor the date. */
+/** Main's `CertificateIntro`. */
 @Composable
 private fun CertificateIntro(certificate: OwnedCertificate) {
-    val locked = certificate.locked
-
     Column {
-        if (!locked) {
-            Row(
-                Modifier.padding(bottom = 14.dp),
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Icon(
-                    painterResource(R.drawable.ic_verified),
-                    contentDescription = null,
-                    modifier = Modifier.size(16.dp),
-                    tint = MaterialTheme.colorScheme.tertiary,
-                )
-                Text(
-                    stringResource(R.string.certificates_verified),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
-        }
-        Text(certificate.sentence(), Modifier.pageTitle(), style = MaterialTheme.typography.displaySmall)
-        if (!locked) {
+        Row(
+            Modifier.padding(bottom = 14.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                painterResource(R.drawable.ic_verified),
+                contentDescription = null,
+                modifier = Modifier.size(16.dp),
+                tint = MaterialTheme.colorScheme.tertiary,
+            )
             Text(
-                stringResource(
-                    R.string.certificates_issued_on,
-                    formatDate(certificate.completedOn.toJavaLocalDate(), currentLocale(), DateStyle.LongYear),
-                ),
-                Modifier.padding(top = 10.dp),
+                stringResource(R.string.certificates_verified),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.zoonkType.lead,
+                style = MaterialTheme.typography.bodyMedium,
             )
         }
+        Text(certificate.sentence(), Modifier.pageTitle(), style = MaterialTheme.typography.displaySmall)
+        Text(
+            stringResource(
+                R.string.certificates_issued_on,
+                formatDate(certificate.completedOn.toJavaLocalDate(), currentLocale(), DateStyle.LongYear),
+            ),
+            Modifier.padding(top = 10.dp),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.zoonkType.lead,
+        )
     }
 }
 
-/** Main's `CertificateOwnerActions`: Share leads; without a name, the name comes first; locked, the Plus notice. */
+/** Main's `CertificateOwnerActions`: Share leads; without a name, the name comes first. */
 @Composable
 private fun OwnerActions(
     certificate: OwnedCertificate,
     actions: CertificateActions,
     name: CertificateNameModel,
-    onSeePlus: () -> Unit,
     modifier: Modifier = Modifier,
     onAddToLinkedIn: () -> Unit,
 ) {
@@ -254,10 +263,6 @@ private fun OwnerActions(
     val caption = certificate.caption()
 
     when {
-        certificate.locked -> {
-            CertificatesPlusNotice(onSeePlus, modifier)
-        }
-
         certificate.recipientName == null -> {
             CertificateNameField(current = null, name, modifier)
         }

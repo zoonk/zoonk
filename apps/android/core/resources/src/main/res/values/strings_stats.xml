@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="stats_all_goals">All goals</string>
     <string name="stats_open">Open Statistics</string>
     <string name="stats_overview">Overview</string>
     <string name="stats_level">Level</string>
@@ -8,93 +7,69 @@
     <string name="stats_activity">Activity</string>
     <string name="stats_score">Score</string>
     <string name="stats_patterns">Patterns</string>
-    <string name="stats_empty_title">Start learning to track your progress</string>
+    <string name="stats_empty_title">No statistics yet</string>
+    <string name="stats_empty_line">They show up after your first lesson.</string>
     <string name="stats_go_to_today">Go to Today</string>
     <string name="stats_not_yet">Not yet</string>
     <string name="stats_part_failed">We couldn\'t load this part.</string>
 
-    <string name="stats_energy_average">Average %1$s</string>
     <string name="stats_days_studied">Days studied</string>
-    <plurals name="stats_lessons_time">
-        <item quantity="one">%1$s lesson · %2$s</item>
-        <item quantity="other">%1$s lessons · %2$s</item>
-    </plurals>
-    <string name="stats_right_count">%1$s/%2$s right</string>
-    <string name="stats_right_last_90">Right answers in the last 90 days</string>
-    <string name="stats_score_90">Score · 90 days</string>
+    <string name="stats_score_90">Score · 90 days</string>
     <string name="stats_score_after_answers">Your score shows after your first answers.</string>
+    <!-- The Patterns row on a phone: the weekday the learner answers best, as in "Best on Thursday". -->
+    <string name="stats_best_on">Best on %1$s</string>
     <!-- Section header over when the learner answers best, by time of day and weekday, in the last 90 days. Not mistakes. -->
     <string name="stats_patterns_90">Patterns · 90 days</string>
     <string name="stats_see_all">See all</string>
     <string name="stats_best_day">Best day</string>
     <string name="stats_best_time">Best time</string>
-    <!-- Noun row label for how much the scores varied over the week; its value is the range from the lowest to the highest weekday score, such as "62%–80%". -->
-    <string name="stats_week_spread">Spread across the week</string>
-    <string name="stats_range">%1$s–%2$s</string>
 
-    <string name="stats_brain_power">Brain Power</string>
     <string name="stats_brain_power_amount">%1$s Brain Power</string>
-    <string name="stats_never_goes_down">Never goes down</string>
-    <string name="stats_next_level">Next level</string>
-    <string name="stats_max_level">Max level reached</string>
-    <string name="stats_to_level">To level %1$s</string>
-    <string name="stats_to_belt">To %1$s</string>
-    <string name="stats_belt_progression">Belt progression</string>
-    <string name="stats_level_of">Level %1$s of %2$s</string>
-    <string name="stats_to_go">%1$s to go</string>
-    <string name="stats_next_belt">Next belt</string>
-    <string name="stats_belt_at">%1$s at %2$s Brain Power</string>
     <!-- Shown instead of the next belt once the learner has earned every belt. -->
     <string name="stats_every_belt">Every belt earned</string>
+    <string name="stats_belt_line">You earn Brain Power for everything you study, and it never goes down.</string>
+    <!-- The points still needed for the belt's next number; %2$s is a belt and its number, such as "White belt 4", or the next belt's name. -->
+    <string name="stats_brain_power_to">%1$s Brain Power to %2$s</string>
+    <!-- %1$s and %2$s are belt names, such as "Yellow belt" and "White belt"; %3$s is a belt's last number, 10. -->
+    <string name="stats_belt_comes_after">%1$s comes after %2$s %3$s, at %4$s Brain Power</string>
     <string name="stats_belt_earned">Earned</string>
     <string name="stats_belt_current">Current</string>
-    <string name="stats_level_line">Every lesson adds %1$s Brain Power, and it never goes down.</string>
 
     <string name="stats_today">Today</string>
-    <string name="stats_average">Average</string>
-    <string name="stats_since_start">Since you started</string>
-    <string name="stats_full_energy">At 100%</string>
-    <string name="stats_full_energy_days">Days with full Energy</string>
-    <string name="stats_energy_line">Every lesson you finish raises your Energy. On days off it drops a little, and your belt and progress stay.</string>
+    <string name="stats_days_at_full">Days at 100%</string>
+    <string name="stats_energy_line">Energy goes up with every lesson and drops a little on days off.</string>
     <string name="stats_low">Low</string>
     <string name="stats_high">High</string>
 
-    <string name="stats_any_day_studied">Any day you studied</string>
     <string name="stats_lessons">Lessons</string>
-    <string name="stats_finished">Finished</string>
     <string name="stats_time">Time</string>
-    <string name="stats_studying_total">Studying in total</string>
     <string name="stats_past_year">Past 12 months</string>
     <string name="stats_less">Less</string>
     <string name="stats_more">More</string>
     <plurals name="stats_calendar_activity_summary">
-        <item quantity="one">%1$s day with activity in the past 12 months, the busiest with %2$s</item>
-        <item quantity="other">%1$s days with activity in the past 12 months, the busiest with %2$s</item>
-    </plurals>
-    <plurals name="stats_activities">
-        <item quantity="one">%1$s activity</item>
-        <item quantity="other">%1$s activities</item>
+        <item quantity="one">%1$s day with study in the past 12 months</item>
+        <item quantity="other">%1$s days with study in the past 12 months</item>
     </plurals>
     <!-- A calendar day's value, shown in a small tooltip under the day's date, for a day without any activity. -->
     <string name="stats_no_study">No study</string>
+    <!-- A calendar day's value for a day the learner studied without finishing a lesson. -->
+    <string name="stats_studied">Studied</string>
+    <plurals name="stats_lesson_count">
+        <item quantity="one">%1$s lesson</item>
+        <item quantity="other">%1$s lessons</item>
+    </plurals>
     <!-- A calendar day's value, shown in a small tooltip under the day's date, for a day without an Energy value. -->
     <string name="stats_no_energy">No Energy recorded</string>
     <!-- A calendar day's value, shown in a small tooltip under the day's date: the buddy's Energy that day, as in "72% Energy". -->
     <string name="stats_energy_amount">%1$s Energy</string>
-    <string name="stats_calendar_energy_summary">Energy over the past 12 months: %1$s today, %2$s on average since you started</string>
+    <string name="stats_calendar_energy_summary">Energy over the past 12 months: %1$s today</string>
 
-    <string name="stats_right_answers">Right answers</string>
-    <string name="stats_right">Right</string>
-    <string name="stats_of_all_answers">Of all your answers</string>
-    <string name="stats_correct_of_total">%1$s of %2$s</string>
-    <string name="stats_period">Period</string>
-    <!-- Under "Period", a number of days such as "90 days": the stats count those days back from today. -->
-    <string name="stats_back_from_today">Back from today</string>
-    <plurals name="stats_days">
-        <item quantity="one">%1$s day</item>
-        <item quantity="other">%1$s days</item>
+    <!-- The Score page's one tile: the days its number counts back from today, as in "Last 90 days". -->
+    <plurals name="stats_last_days">
+        <item quantity="one">Last %1$s day</item>
+        <item quantity="other">Last %1$s days</item>
     </plurals>
-    <string name="stats_score_line">Every answer counts the same, so harder lessons can lower your score for a while.</string>
+    <string name="stats_correct_of_total">%1$s of %2$s</string>
     <string name="stats_score_trend">Weekly score trend: %1$s. %2$s</string>
     <plurals name="stats_score_across">
         <item quantity="one">%1$s across %2$s answer</item>
@@ -106,17 +81,6 @@
     </plurals>
 
     <string name="stats_patterns_intro">When you answer best, over the last 90 days.</string>
-    <string name="stats_answers">Answers</string>
-    <string name="stats_last_90">In the last 90 days</string>
-    <string name="stats_not_enough">Not enough answers yet</string>
-    <plurals name="stats_within_points">
-        <item quantity="one">Within %1$d point</item>
-        <item quantity="other">Within %1$d points</item>
-    </plurals>
-    <plurals name="stats_score_answers">
-        <item quantity="one">%1$s · %2$s answer</item>
-        <item quantity="other">%1$s · %2$s answers</item>
-    </plurals>
     <plurals name="stats_answer_count">
         <item quantity="one">%1$s answer</item>
         <item quantity="other">%1$s answers</item>
@@ -131,22 +95,17 @@
     <string name="stats_throughout_day">Throughout the day</string>
     <string name="stats_any_day">Any day</string>
     <string name="stats_any_time">Any time</string>
+    <!-- %1$s is a weekday's full name, such as "Thursday". -->
+    <string name="stats_best_day_is">Your best day is %1$s.</string>
+    <string name="stats_days_same">You answer about the same every day.</string>
+    <!-- %1$s is a time of day in lowercase: morning, afternoon, evening or night. -->
+    <string name="stats_best_time_is">Your best time is the %1$s.</string>
+    <string name="stats_times_same">The time of day makes no difference.</string>
+    <string name="stats_answer_more">Answer more questions to see when you do best.</string>
     <!-- Answers given from midnight to 6 AM. -->
     <string name="stats_night">Night</string>
     <string name="stats_morning">Morning</string>
     <string name="stats_afternoon">Afternoon</string>
     <!-- Answers given from 6 PM to midnight. -->
     <string name="stats_evening">Evening</string>
-    <plurals name="stats_days_even">
-        <item quantity="one">Your days are within %1$d point of each other, so any day works.</item>
-        <item quantity="other">Your days are within %1$d points of each other, so any day works.</item>
-    </plurals>
-    <plurals name="stats_times_even">
-        <item quantity="one">Your times of day are within %1$d point of each other, so any time works.</item>
-        <item quantity="other">Your times of day are within %1$d points of each other, so any time works.</item>
-    </plurals>
-    <plurals name="stats_min_answers">
-        <item quantity="one">A day or a time of day needs %1$d answer to count, so one lucky answer never makes a pattern.</item>
-        <item quantity="other">A day or a time of day needs %1$d answers to count, so one lucky answer never makes a pattern.</item>
-    </plurals>
 </resources>

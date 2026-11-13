@@ -71,7 +71,6 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.pageTitle
-import com.zoonk.api.models.AllowanceItem
 import com.zoonk.api.models.FreePlan
 import com.zoonk.api.models.MeSubscription
 import com.zoonk.api.models.StripeSubscriptionCancellation
@@ -385,14 +384,7 @@ private fun Offer(
         navigator = navigator,
         onSubscribe = onSubscribe,
         onRetryFreePlan = { scope.launch { app.subscriptions.freePlan.refresh() } },
-        messagesUsed = if (viewer == PlanViewer.Free) messagesUsedToday(app) else null,
     )
-}
-
-@Composable
-private fun messagesUsedToday(app: AppContainer): AllowanceItem? {
-    val allowance by app.subscriptions.allowance.collectShown()
-    return allowance.value?.items?.firstOrNull { it.kind == AllowanceItem.Kind.TUTOR_MESSAGE }
 }
 
 /**
@@ -408,7 +400,6 @@ internal fun PlanOffer(
     navigator: AppNavigator,
     onSubscribe: ((PlusOffer) -> Unit)?,
     onRetryFreePlan: () -> Unit,
-    messagesUsed: AllowanceItem? = null,
 ) {
     val limits = freePlan.value
     val hasAccount = viewer == PlanViewer.Free
@@ -434,7 +425,6 @@ internal fun PlanOffer(
                                 viewer = viewer,
                                 navigator = navigator,
                                 modifier = Modifier.fillMaxHeight(),
-                                messagesUsed = messagesUsed,
                             )
                         }
 
@@ -534,7 +524,7 @@ private fun PlusPlanCard(
 
                 !hasAccount -> {
                     Button(onClick = { navigator.open(AppRoute.Login) }, modifier = Modifier.fillMaxWidth()) {
-                        Text(stringResource(R.string.subscription_get_plus))
+                        Text(stringResource(R.string.subscription_subscribe))
                     }
                 }
 

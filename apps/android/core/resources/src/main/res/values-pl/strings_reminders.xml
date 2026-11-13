@@ -23,7 +23,6 @@
   "reminders_remind_me": "bc35e045c2740891893842d2a6deecfc57f7c7182927a80a13e352300aad089d",
   "reminders_save": "2e30fdbc10a6eafe700670f2c2e1b1044e6914c3300fa41b9eadd59608edb2c9",
   "reminders_save_failed": "cd92582f68c98f6434180facfa4dccbae3fd4c2fa572caf27ecd028dcee089ea",
-  "reminders_study_days": "ba8dbfa74e3bf0e37fb82da12ec3c74c8facb83120ffe35c898682a5503a557e",
   "reminders_this_device": "26fca7cb9cfebc24775f6ac10f0fd2a35173f9fb7f8cc6acd22c5e3b51f94830",
   "reminders_time": "2277d4e638074366820cc19430030279c97d14657523f0e77b19c6d86d1301b1",
   "reminders_time_title": "84e62574c00ade6634e7954e35c10297bf9b70231b50d3be539d13fbc8073e9a",
@@ -70,8 +69,6 @@
     <!-- Guests have no email address yet. -->
     <string name="reminders_email_needs_account">Utwórz konto, aby dostawać przypomnienia e-mail</string>
     <string name="reminders_push">Powiadomienia push</string>
-    <!-- Under the settings; "your plans" opens the plan, which sets the study days. -->
-    <string name="reminders_study_days">W dni nauki ustalone w twoich planach</string>
     <string name="reminders_quiet">Wstrzymane na czas przerwy. Włączą się ponownie, gdy wrócisz do nauki.</string>
     <string name="reminders_save_failed">Nie udało się zapisać. Spróbuj ponownie.</string>
     <!-- Push reminders go to another of the learner's devices; this one can take over. -->
