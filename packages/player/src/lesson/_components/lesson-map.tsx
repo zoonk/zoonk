@@ -136,7 +136,7 @@ function MindMap({ ideas, title }: { ideas: readonly MapIdea[]; title: string })
               slot && (
                 <li
                   className={cn(
-                    "bg-card ring-border relative flex flex-col rounded-xl p-3 ring-1",
+                    "bg-card ring-border relative flex flex-col rounded-xl p-3 ring-1 ring-inset",
                     "@[22rem]/lesson-map:col-(--map-column) @[22rem]/lesson-map:row-(--map-row)",
                     slot.column === 0 &&
                       "@[22rem]/lesson-map:w-[calc((100%-0.75rem)/2)] @[22rem]/lesson-map:justify-self-center",

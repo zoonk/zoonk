@@ -40,9 +40,10 @@ export function readRoleFacts(): RoleFacts {
   };
 
   const main = document.querySelector("main");
+  const scope = main?.closest("[data-slot=task-frame]") ?? main;
 
   const actions = visible("[data-enter=bound], [data-enter=host]").filter(
-    (element) => main?.contains(element) && !element.matches(":disabled, [aria-disabled=true]"),
+    (element) => scope?.contains(element) && !element.matches(":disabled, [aria-disabled=true]"),
   );
 
   return {

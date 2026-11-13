@@ -146,7 +146,7 @@ export function PianoKeyboard({
               isInteractive && !disabled && "cursor-pointer",
               key.isBlack
                 ? "absolute top-0 z-10 h-[60%] rounded-b-lg bg-neutral-900 pb-1.5 dark:bg-neutral-950 dark:ring-1 dark:ring-neutral-600"
-                : "relative h-full flex-1 rounded-b-xl border border-neutral-300 bg-white first:rounded-tl-lg last:rounded-tr-lg dark:border-neutral-500 dark:bg-neutral-200",
+                : "relative h-full flex-1 rounded-b-xl border-y border-e border-neutral-300 bg-white first:rounded-tl-lg first:border-s last:rounded-tr-lg dark:border-neutral-500 dark:bg-neutral-200",
               isInteractive &&
                 !key.isBlack &&
                 "active:bg-neutral-100 motion-safe:transition-colors",

@@ -44,7 +44,7 @@ describe("rhythm key ownership", () => {
 
   it("lets the learner type spaces in the buddy during the sound check", async () => {
     openRhythm();
-    await page.getByRole("button", { name: "Start the sound check" }).click();
+    await page.getByRole("button", { exact: true, name: "Start" }).click();
     const buddy = page.getByRole("textbox", { name: "Buddy question" });
     await focusOn(buddy);
     await userEvent.keyboard("two words");
@@ -54,7 +54,7 @@ describe("rhythm key ownership", () => {
 
   it("leaves Space to popup controls and handled or modified keys, while the pad keeps Space", async () => {
     openRhythm();
-    await page.getByRole("button", { name: "Start the sound check" }).click();
+    await page.getByRole("button", { exact: true, name: "Start" }).click();
     const popup = page.getByRole("button", { name: "Popup action" });
     await focusOn(popup);
     expect(space(popup.element()).defaultPrevented).toBe(false);

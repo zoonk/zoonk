@@ -60,7 +60,7 @@ export function GridCaption({
   }
 
   return (
-    <p aria-live="polite" className="text-muted-foreground text-center text-sm tabular-nums">
+    <p aria-live="polite" className="text-muted-foreground text-sm tabular-nums">
       {text()}
     </p>
   );

@@ -116,7 +116,7 @@ test.describe("Language calls written ahead", () => {
     const run = await playCallRuns(page);
 
     await page.goto(`/checkpoint/${block.id}`);
-    await page.getByRole("button", { name: "Get the call ready" }).click();
+    await page.getByRole("button", { exact: true, name: "Start" }).click();
 
     await expect(page.getByText("This didn't finish")).toBeVisible();
 

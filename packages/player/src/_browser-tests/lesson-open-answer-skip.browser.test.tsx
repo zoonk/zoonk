@@ -1,6 +1,6 @@
 import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { describe, expect, it, vi } from "vitest";
-import { page } from "vitest/browser";
+import { page, userEvent } from "vitest/browser";
 import {
   buildAdapters,
   renderLessonPlayer,
@@ -29,7 +29,24 @@ function verdict(text: string) {
 }
 
 function writingSkippedNotice() {
-  return page.getByRole("status").filter({ hasText: "No more writing today." });
+  return page.getByRole("status").filter({ hasText: "Writing is off for today." });
+}
+
+const SKIP_WRITING = "Skip writing questions today";
+
+async function openScreenOptions() {
+  await page.getByRole("button", { name: "Screen options" }).click();
+  await expect.element(page.getByRole("menu")).toBeVisible();
+}
+
+async function closeScreenOptions() {
+  await userEvent.keyboard("{Escape}");
+  await expect.element(page.getByRole("menu")).not.toBeInTheDocument();
+}
+
+async function skipWritingToday() {
+  await openScreenOptions();
+  await page.getByRole("menuitem", { name: SKIP_WRITING }).click();
 }
 
 describe("open answer skip", () => {
@@ -53,11 +70,14 @@ describe("open answer skip", () => {
 
     await expect.element(page.getByText("In your own words")).toBeVisible();
     await expect.element(page.getByRole("button", { name: /^Check/u })).toBeDisabled();
-    await expect.element(page.getByRole("button", { name: "Can't write now" })).toBeVisible();
 
     await expect
       .element(page.getByRole("button", { name: "I don't know yet" }))
       .not.toBeInTheDocument();
+
+    await openScreenOptions();
+    await expect.element(page.getByRole("menuitem", { name: SKIP_WRITING })).toBeVisible();
+    await closeScreenOptions();
 
     await page.getByRole("button", { name: "Explain first" }).click();
     await expect.element(page.getByText("A cloud, not a little ball")).toBeVisible();
@@ -92,7 +112,7 @@ describe("open answer skip", () => {
     { kind: "a lesson", overrides: {} },
     { kind: "a language lesson", overrides: { language: "pt", targetLanguage: "en" } },
   ] as const)(
-    "leaves the writing out of $kind with Can't write now, unchecked, and of every lesson today",
+    "leaves the writing out of $kind with Skip writing questions today, unchecked, and of every lesson today",
     async ({ overrides }) => {
       const first = explanationStep();
       const second = explanationStep();
@@ -104,14 +124,13 @@ describe("open answer skip", () => {
 
       const adapters = buildAdapters(lesson);
       const { unmount } = renderLessonPlayer({ adapters, lesson });
-      const skip = page.getByRole("button", { name: "Can't write now" });
 
-      await expect.element(skip).toBeVisible();
-      await skip.click();
+      await expect.element(page.getByRole("textbox")).toBeVisible();
+      await skipWritingToday();
       await expect.element(page.getByRole("textbox")).not.toBeInTheDocument();
 
       await expect.element(writingSkippedNotice()).toBeVisible();
-      await expect.element(page.getByRole("button", { name: "Write again" })).toBeVisible();
+      await expect.element(page.getByRole("button", { name: "Turn back on" })).toBeVisible();
       await expect.element(page.getByRole("button", { name: /^Next/u })).toHaveFocus();
 
       await page.getByRole("button", { name: /^Next/u }).click();
@@ -134,18 +153,19 @@ describe("open answer skip", () => {
     },
   );
 
-  it("puts the writing back with Write again, for this lesson and the rest of today", async () => {
+  it("puts the writing back with Turn back on, for this lesson and the rest of today", async () => {
     const writing = explanationStep();
     const lesson = buildLesson([teachingStep("explanation"), writing, teachingStep("summary")]);
     const earlier = renderLessonPlayer({ lesson: buildLesson([explanationStep()]) });
 
-    await page.getByRole("button", { name: "Can't write now" }).click();
+    await skipWritingToday();
+    await expect.poll(() => isChosenToday(CANT_WRITE_TODAY)).toBe(true);
     earlier.unmount();
 
     const { unmount } = renderLessonPlayer({ lesson });
     await expect.element(writingSkippedNotice()).toBeVisible();
 
-    await page.getByRole("button", { name: "Write again" }).click();
+    await page.getByRole("button", { name: "Turn back on" }).click();
     await expect.element(writingSkippedNotice()).not.toBeInTheDocument();
     await expect.element(page.getByRole("button", { name: /^Next/u })).toHaveFocus();
     expect(isChosenToday(CANT_WRITE_TODAY)).toBe(false);
@@ -159,7 +179,7 @@ describe("open answer skip", () => {
     await expect.element(writingSkippedNotice()).not.toBeInTheDocument();
   });
 
-  it("keeps Write again after run start reconciles progress newer than the page", async () => {
+  it("keeps Turn back on after run start reconciles progress newer than the page", async () => {
     const quiz = teachingStep("check");
     const writing = explanationStep();
 
@@ -179,7 +199,7 @@ describe("open answer skip", () => {
 
     await expect.element(page.getByText("A cloud, not a little ball")).toBeVisible();
     await expect.element(writingSkippedNotice()).toBeVisible();
-    await page.getByRole("button", { name: "Write again" }).click();
+    await page.getByRole("button", { name: "Turn back on" }).click();
 
     await expect.element(page.getByRole("textbox")).toBeVisible();
     await expect.element(writingSkippedNotice()).not.toBeInTheDocument();
@@ -230,18 +250,20 @@ describe("open answer skip", () => {
     ]);
 
     renderLessonPlayer({ lesson });
-    await page.getByRole("button", { name: "Can't write now" }).click();
+    await skipWritingToday();
 
     await expect.element(page.getByRole("textbox", { name: question })).toBeVisible();
     await expect.element(page.getByRole("button", { name: /^Check/u })).toBeDisabled();
     await expect.element(page.getByText("In your own words")).not.toBeInTheDocument();
 
     await expect
-      .element(page.getByRole("button", { name: "Can't write now" }))
+      .element(page.getByRole("button", { name: "I don't know yet" }))
       .not.toBeInTheDocument();
 
+    await openScreenOptions();
+
     await expect
-      .element(page.getByRole("button", { name: "I don't know yet" }))
+      .element(page.getByRole("menuitem", { name: SKIP_WRITING }))
       .not.toBeInTheDocument();
   });
 });

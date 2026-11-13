@@ -13,6 +13,7 @@ import { type BaseMapDrawing } from "../_assets/base-maps/base-map-drawing";
 import { projectPlace } from "../_assets/base-maps/base-map-projection";
 import { loadBaseMap } from "../_assets/base-maps/load-base-map";
 import {
+  ACTIVITY_CARD_CLASS,
   ActivityCanvas,
   ActivityCanvasLabel,
   ActivityTextAlternative,
@@ -78,7 +79,7 @@ function PlaceDetails({ number, place }: { number: number; place: Place | null }
   }
 
   return (
-    <div className="bg-background flex gap-3 rounded-xl border p-3" data-slot="map-place-details">
+    <div className={cn(ACTIVITY_CARD_CLASS, "flex gap-3")} data-slot="map-place-details">
       <span className="bg-viz-accent text-background flex size-8 shrink-0 items-center justify-center rounded-full text-sm font-semibold tabular-nums">
         {number}
       </span>

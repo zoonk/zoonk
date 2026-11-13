@@ -9,7 +9,6 @@ import {
 } from "@zoonk/ui/components/drawer";
 import { type BuddyGlasses } from "@zoonk/utils/buddy";
 import { useExtracted } from "next-intl";
-import { ChangeSaveError } from "../_components/save-error";
 import { SheetHeader } from "../_components/sheet-header";
 import { BuddyGlassesPicker } from "./buddy-glasses-picker";
 import { type BuddyGlassesProgress } from "./buddy-status-view";
@@ -17,14 +16,12 @@ import { type LearnBuddy } from "./use-buddy-name";
 
 export function BuddyGlassesSheet({
   buddy,
-  failed,
   glasses,
   onOpenChange,
   onWear,
   open,
 }: {
   buddy: LearnBuddy;
-  failed: boolean;
   glasses: BuddyGlassesProgress[];
   onOpenChange: (open: boolean) => void;
   onWear: (glasses: BuddyGlasses) => void;
@@ -40,14 +37,12 @@ export function BuddyGlassesSheet({
           <DrawerDescription>
             {t({
               description: "The learner's buddy wears the glasses.",
-              message: "Pick a pair you've earned to wear it.",
+              message: "Pick a pair you've earned.",
             })}
           </DrawerDescription>
         </SheetHeader>
 
         <DrawerContent className="flex flex-col gap-3">
-          {failed && <ChangeSaveError />}
-
           <BuddyGlassesPicker
             kind={buddy.kind}
             look={buddy}

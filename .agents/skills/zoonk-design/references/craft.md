@@ -347,7 +347,7 @@ A sidebar's toggle, a task's ✕, a page's way back, a main action, a question's
 
 ### B2. Every shortcut shows its keycap
 
-On a device with a keyboard, a control that answers a key shows it: in the control, or in its tooltip when it's an icon button. The keycap's key does what a click does, and screen readers are told it (`aria-keyshortcuts`). Number keys answer a screen's one list of choices: its first nine rows show 1 to 9, and a number picks its row (a pick-one list) or ticks and unticks it (a pick-many list). A screen with several lists shows none, since nothing says which list 1 belongs to.
+On a device with a keyboard, a control that answers a key shows it: in the control, or in its tooltip when it's an icon button. The keycap's key does what a click does, and screen readers are told it (`aria-keyshortcuts`). Number keys answer a screen's one list of choices: its first nine rows show 1 to 9, and a number picks its row (a pick-one list) or ticks and unticks it (a pick-many list). A screen with several lists shows none, since nothing says which list 1 belongs to. A match is the exception, because its two columns are one answer: the numbers run once across both columns, the left one first (1 to 3, then 4 to 6), so a number never shows twice and the first nine entries answer a key; an entry already in a pair shows its left entry's number in its key's box and answers no key.
 
 - **Check.** For each keycap on screen, press its key: the same thing happens as on a click. For each key the screen answers, find its keycap.
 - **Usual break.** Enter bound and no ⏎ drawn. A number key bound on rows that draw no number. A keycap or an `aria-keyshortcuts` typed by hand, which drifts from the handler.
@@ -402,7 +402,7 @@ An app screen's one main action sits in `BottomBar`, pinned to the bottom of the
 
 ### R3. The line over a title is `Eyebrow`
 
-When a task's, a card's, a sheet's or a question's title has a small line over it, that line is `Eyebrow` (`SuccessEyebrow` for something done): an outlined chip, a label in sentence case, 12px over its title. A page with the app's header has no line over its title; what the line said goes under the title or leaves.
+When a task's, a card's, a sheet's or a question's title has a small line over it, that line is `Eyebrow` (`SuccessEyebrow` for something done): an outlined chip, a label in sentence case, 12px over its title. A page with the app's header has no line over its title; what the line said goes under the title or leaves. A chip earns its place only by saying what its title doesn't: over "Match each word to its meaning.", "Match pairs" repeats it and goes, while "Estimate first" over "How long is a million seconds?" says to guess before the answer shows and stays. An activity's title says what to do with the content and never how to work the screen, so an activity keeps a chip only when it names how the screen is worked ("Drag a corner", "Tap along", "Ear training") or what comes first ("Estimate first").
 
 - **Check.** Anything directly over a title is the chip, or nothing (`zoonk/one-eyebrow`, and a `verify:pages` lead for text over a title outside the piece).
 - **Usual break.** Gray or mono uppercase text over a title in one area and a chip in the next.

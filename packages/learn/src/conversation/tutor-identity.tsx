@@ -7,7 +7,8 @@ import { type LearnBuddy, resolveLearnBuddy, useBuddyName } from "../buddies/use
 
 export type { LearnBuddy } from "../buddies/use-buddy-name";
 
-export type TutorIdentity = { avatar: React.ReactNode; name: string };
+/** `avatar` marks the buddy's words; `figure` is the whole buddy, for a place it has to itself. */
+export type TutorIdentity = { avatar: React.ReactNode; figure: React.ReactNode; name: string };
 
 export function useTutorIdentity(buddy: LearnBuddy | null | undefined): TutorIdentity {
   const t = useExtracted();
@@ -15,8 +16,12 @@ export function useTutorIdentity(buddy: LearnBuddy | null | undefined): TutorIde
   const name = useBuddyName(resolved);
 
   return buddy === undefined
-    ? { avatar: null, name: t("Your buddy") }
-    : { avatar: <BuddyArt buddy={resolved} className="size-8" view="face" />, name };
+    ? { avatar: null, figure: null, name: t("Your buddy") }
+    : {
+        avatar: <BuddyArt buddy={resolved} className="size-8" view="face" />,
+        figure: <BuddyArt buddy={resolved} className="[--buddy-height:--spacing(24)]" fit="ink" />,
+        name,
+      };
 }
 
 export function TutorMessage({

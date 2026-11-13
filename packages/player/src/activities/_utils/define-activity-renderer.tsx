@@ -8,7 +8,7 @@ import { type ActivityBadgeKind } from "../_components/activity-badge";
 import { type ActivityRenderer, type AnyActivityRendererProps } from "../activity-renderer";
 
 export type ActivityRendererEntry<TId extends ActivityTemplateId> = {
-  badge: (content: ActivityStepContent) => ActivityBadgeKind;
+  badge: (content: ActivityStepContent) => ActivityBadgeKind | null;
   Canvas: (props: AnyActivityRendererProps) => React.ReactNode;
   checkFirst: (content: ActivityStepContent) => boolean;
   load: () => Promise<unknown>;
@@ -26,13 +26,18 @@ function isTemplate<TId extends ActivityTemplateId>(
   return content.template === template;
 }
 
+/**
+ * `badge` is the chip over the title, for an activity whose title can't say what it names: how the
+ * screen is worked, or what comes first. A chip that only names the task repeats the title, which
+ * says what to do, so most activities have none.
+ */
 export function defineActivityRenderer<TId extends ActivityTemplateId>({
   badge,
   checkFirst = () => false,
   load,
   template,
 }: {
-  badge: ActivityBadgeKind | ((content: ActivityContentFor<TId>) => ActivityBadgeKind);
+  badge?: ActivityBadgeKind | ((content: ActivityContentFor<TId>) => ActivityBadgeKind | null);
   checkFirst?: (content: ActivityContentFor<TId>) => boolean;
   load: () => Promise<ActivityRenderer<TId>>;
   template: TId;
@@ -52,12 +57,12 @@ export function defineActivityRenderer<TId extends ActivityTemplateId>({
     return <Renderer {...props} content={content} />;
   }
 
-  function badgeFor(content: ActivityStepContent): ActivityBadgeKind {
-    if (typeof badge === "string") {
-      return badge;
+  function badgeFor(content: ActivityStepContent): ActivityBadgeKind | null {
+    if (typeof badge !== "function") {
+      return badge ?? null;
     }
 
-    return isTemplate(content, template) ? badge(content) : "explore";
+    return isTemplate(content, template) ? badge(content) : null;
   }
 
   return {
