@@ -588,6 +588,20 @@
     letter-spacing: -0.006em;
   }
 
+  /* Preflight sets bold text to `bolder`, which is 700; the heaviest weight here is 600. */
+  b,
+  strong {
+    @apply font-semibold;
+  }
+
+  /* The browser draws its own filled calendar on a date field; this is Lucide's, in the muted tone. */
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    background: var(--muted-foreground);
+    cursor: pointer;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 2v4M16 2v4M3 10h18'/%3E%3Crect width='18' height='18' x='3' y='4' rx='2'/%3E%3C/svg%3E")
+      center / 1rem no-repeat;
+  }
+
   /* Browsers break Korean inside words by default; Korean wraps between them, at the spaces. */
   :lang(ko) {
     word-break: keep-all;
@@ -680,7 +694,8 @@
  * E2). An icon button is pulled out by its padding and its glyph's blank side, which Lucide draws
  * in 24ths of the icon: 1 at least, more for the narrow glyphs below. A text button names its
  * padding and border as `--edge-text` (`--edge-text-start` and `--edge-text-end` where an icon
- * tightens that side), and a narrow glyph at its edge adds its blank.
+ * tightens that side) and adds the blank of a glyph on the pulled side: a back chevron or a plus
+ * leads its label, the other chevrons trail it.
  *
  * `--edge-pull` ends a column: what ends there is hairlines and boxes, so the glyph's ink ends on
  * the box. `--edge-start` starts one: the letters under the glyph start inside their box (Geist's
@@ -690,15 +705,22 @@
  */
 @utility edge {
   --glyph-blank: 0;
-  --edge-blank: calc(var(--icon-size, 1rem) * var(--glyph-blank) / 24);
+  --glyph-blank-start: 0;
+  --glyph-blank-end: 0;
   --edge-icon: calc(
     (var(--control-size, var(--icon-size, 1rem)) - var(--icon-size, 1rem)) / 2 +
-      max(var(--edge-blank), var(--icon-size, 1rem) / 24)
+      var(--icon-size, 1rem) * max(var(--glyph-blank), 1) / 24
   );
   --edge-pull: round(
     down,
-    var(--edge-text-end, var(--edge-text, calc(var(--edge-icon) - var(--edge-blank)))) +
-      var(--edge-blank),
+    var(
+        --edge-text-end,
+        var(
+          --edge-text,
+          calc(var(--edge-icon) - var(--icon-size, 1rem) * var(--glyph-blank-end) / 24)
+        )
+      ) +
+      var(--icon-size, 1rem) * var(--glyph-blank-end) / 24,
     1px
   );
   --edge-start: round(
@@ -707,31 +729,38 @@
         --edge-text-start,
         var(
           --edge-text,
-          calc(var(--edge-icon) - var(--edge-blank) - var(--edge-under, 1rem) * 0.053)
+          calc(
+            var(--edge-icon) - var(--icon-size, 1rem) * var(--glyph-blank-start) / 24 -
+              var(--edge-under, 1rem) * 0.053
+          )
         )
       ) +
-      var(--edge-blank),
+      var(--icon-size, 1rem) * var(--glyph-blank-start) / 24,
     1px
   );
 
-  &:is(
-    .lucide-chevron-left,
-    .lucide-chevron-right,
-    :has(.lucide-chevron-left, .lucide-chevron-right)
-  ) {
+  &:is(.lucide-chevron-left, :has(.lucide-chevron-left)) {
     --glyph-blank: 8;
+    --glyph-blank-start: 8;
   }
 
-  &:is(
-    .lucide-chevron-down,
-    .lucide-chevron-up,
-    :has(.lucide-x, .lucide-chevron-down, .lucide-chevron-up)
-  ) {
+  &:is(.lucide-chevron-right, :has(.lucide-chevron-right)) {
+    --glyph-blank: 8;
+    --glyph-blank-end: 8;
+  }
+
+  &:is(.lucide-chevron-down, .lucide-chevron-up, :has(.lucide-chevron-down, .lucide-chevron-up)) {
+    --glyph-blank: 5;
+    --glyph-blank-end: 5;
+  }
+
+  &:has(.lucide-x) {
     --glyph-blank: 5;
   }
 
   &:has(.lucide-plus) {
     --glyph-blank: 4;
+    --glyph-blank-start: 4;
   }
 
   &:has(.lucide-ellipsis, .lucide-menu) {
@@ -746,7 +775,7 @@
 @utility text-display {
   font-size: 2.5rem;
   line-height: 2.75rem;
-  font-weight: 650;
+  font-weight: 600;
   letter-spacing: -0.04em;
   text-wrap: balance;
 
@@ -764,7 +793,7 @@
 @utility text-headline {
   font-size: 2.125rem;
   line-height: 2.375rem;
-  font-weight: 640;
+  font-weight: 600;
   letter-spacing: -0.035em;
   text-wrap: balance;
 
@@ -805,7 +834,7 @@
 @utility text-title {
   font-size: 1.875rem;
   line-height: 1.1;
-  font-weight: 620;
+  font-weight: 600;
   letter-spacing: -0.035em;
   text-wrap: balance;
 }
@@ -813,7 +842,7 @@
 @utility text-label {
   font-size: 0.71875rem;
   line-height: 1rem;
-  font-weight: 550;
+  font-weight: 500;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--faint);

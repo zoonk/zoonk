@@ -228,7 +228,12 @@ export function AlternativeButton({
 
   return (
     <form action={() => void other.run()} className="contents">
-      <EnterButton busy={other.isPending} icon={<PlayIcon aria-hidden="true" />} type="submit">
+      <EnterButton
+        busy={other.isPending}
+        enter="host"
+        icon={<PlayIcon aria-hidden="true" />}
+        type="submit"
+      >
         {reason === "instead"
           ? t("Instead: {title}", { title: title(alternative) })
           : t("While you wait: {title}", { title: title(alternative) })}

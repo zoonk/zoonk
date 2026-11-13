@@ -233,7 +233,6 @@ function LessonPlayerVisit({
       goalId={lessonGoalId}
       lesson={lesson}
       linkComponent={LearningLink}
-      onExit={() => router.push(routes.exit)}
       outline={outline}
       resume={resume}
       routes={routes}

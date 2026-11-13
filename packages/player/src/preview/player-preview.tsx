@@ -19,6 +19,7 @@ function PreviewLink({
   children,
   className,
   href,
+  onClick,
   ref,
 }: Parameters<PlayerLinkComponent>[0]) {
   return (
@@ -26,7 +27,10 @@ function PreviewLink({
       aria-keyshortcuts={keyShortcuts}
       className={className}
       href={href}
-      onClick={(event) => event.preventDefault()}
+      onClick={(event) => {
+        onClick?.(event);
+        event.preventDefault();
+      }}
       ref={ref}
     >
       {children}
@@ -44,10 +48,6 @@ const ROUTES = {
   signUp: "/",
   upgrade: "/",
 } as const;
-
-function noop() {
-  return null;
-}
 
 function previewAdapters(lesson: PlayableLibraryLesson): LessonPlayerAdapters {
   const local = localAdapters(lesson);
@@ -118,7 +118,6 @@ export function PlayerPreview({
         key={`${lesson.id}:${state}`}
         lesson={lesson}
         linkComponent={PreviewLink}
-        onExit={noop}
         routes={ROUTES}
         viewer={{ learnerId: PREVIEW_LEARNER_ID }}
       >

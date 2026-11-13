@@ -12,8 +12,7 @@ import { useSelectedLayoutSegment } from "next/navigation";
 
 type CategoryLink = { courseCount: number; key: CourseCategory; label: string };
 
-const ROW_BLEED_CLASS = "-mx-4 sm:-mx-0";
-const ROW_INSET_CLASS = "px-4 sm:px-0";
+const ROW_BLEED_CLASS = "-mx-4 [--scroll-inset:--spacing(4)] sm:mx-0 sm:[--scroll-inset:0px]";
 
 const CHIPS_FRAME_CLASS =
   "bg-background/95 supports-backdrop-filter:bg-background/80 sticky top-(--catalog-bar) z-20 -my-2 py-2 backdrop-blur lg:hidden";
@@ -71,11 +70,7 @@ function CategoryNavView(props: CategoryNavProps) {
           className={ROW_BLEED_CLASS}
           labels={{ left: t("Scroll left"), right: t("Scroll right") }}
         >
-          <HorizontalScrollContent
-            aria-label={t("Course categories")}
-            className={ROW_INSET_CLASS}
-            role="navigation"
-          >
+          <HorizontalScrollContent aria-label={t("Course categories")} role="navigation">
             {links.map((link) => (
               <Link
                 aria-current={link.current ? "page" : undefined}

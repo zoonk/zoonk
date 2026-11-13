@@ -15,10 +15,11 @@ function Tabs({ className, orientation = "horizontal", ...props }: TabsPrimitive
   );
 }
 
+/** The row reaches 10px past the column like a highlighted row, so the first label starts on the title's edge. */
 function TabsList({ className, ...props }: TabsPrimitive.List.Props) {
   return (
     <TabsPrimitive.List
-      className={cn(TAB_LIST_CLASS, className)}
+      className={cn(TAB_LIST_CLASS, "-mx-2.5", className)}
       data-slot="tabs-list"
       {...props}
     />

@@ -3,6 +3,16 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { buttonVariants } from "./button";
+
+/**
+ * The row's own small button, as tall as the chips it scrolls and on their line, at the row's
+ * end over the fade. `--scroll-inset` is the row's side padding, so the button ends on the column.
+ */
+const SCROLL_BUTTON_CLASS = cn(
+  buttonVariants({ size: "icon-sm", variant: "outline" }),
+  "bg-background hover:bg-muted absolute top-0 z-10 pointer-coarse:hidden",
+);
 
 function HorizontalScroll({
   className,
@@ -65,22 +75,22 @@ function HorizontalScroll({
       {canScrollLeft && (
         <button
           aria-label={labels.left}
-          className="border-border bg-background hover:bg-accent hit-area absolute top-1/2 left-3 z-10 flex size-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border shadow-sm transition-colors pointer-coarse:hidden"
+          className={cn(SCROLL_BUTTON_CLASS, "left-(--scroll-inset,0px)")}
           onClick={() => scroll("left")}
           type="button"
         >
-          <ChevronLeft className="text-muted-foreground size-4" />
+          <ChevronLeft />
         </button>
       )}
 
       {canScrollRight && (
         <button
           aria-label={labels.right}
-          className="border-border bg-background hover:bg-accent hit-area absolute top-1/2 right-3 z-10 flex size-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border shadow-sm transition-colors pointer-coarse:hidden"
+          className={cn(SCROLL_BUTTON_CLASS, "right-(--scroll-inset,0px)")}
           onClick={() => scroll("right")}
           type="button"
         >
-          <ChevronRight className="text-muted-foreground size-4" />
+          <ChevronRight />
         </button>
       )}
     </div>
@@ -90,7 +100,7 @@ function HorizontalScroll({
 function HorizontalScrollContent({ className, children, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("flex w-max min-w-full gap-2 px-4 pb-2", className)}
+      className={cn("flex w-max min-w-full gap-2 px-(--scroll-inset,0px) pb-2", className)}
       data-slot="horizontal-scroll-content"
       {...props}
     >

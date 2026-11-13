@@ -3,6 +3,7 @@
 import { type ChapterTestOutResult } from "@zoonk/core/learner/test-out/get";
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { AnswerOption, AnswerOptionGroup } from "../_components/answer-option";
@@ -195,7 +196,7 @@ export function ChoiceQuestion({
 
           return (
             <AnswerOption
-              aria-keyshortcuts={String(index + 1)}
+              aria-keyshortcuts={shortcutKeys("pick", index)}
               disabled={locked}
               key={option.key}
               marker={index + 1}

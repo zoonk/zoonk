@@ -1,8 +1,6 @@
 import { type MockScoring } from "@zoonk/core/exams/mocks/contract";
 import { type MockQuestion } from "@zoonk/core/exams/mocks/view-contract";
 
-export const FLAG_KEY = "f";
-
 export function getOptionMarks({
   format,
   scoring,

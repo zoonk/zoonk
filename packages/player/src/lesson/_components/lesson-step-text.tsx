@@ -38,20 +38,3 @@ export function LessonBody({ children }: { children: string }) {
 
 export const SCREEN_CHIP_CLASS =
   "text-muted-foreground ring-border inline-flex min-h-5.5 w-fit items-center gap-1.5 rounded-sm px-2 py-0.5 text-xs font-medium ring-1 ring-inset [&_svg]:size-3.5";
-
-export function LessonEyebrow({
-  children,
-  className,
-  icon,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  icon?: React.ReactNode;
-}) {
-  return (
-    <p className={cn(SCREEN_CHIP_CLASS, className)}>
-      {icon}
-      {children}
-    </p>
-  );
-}

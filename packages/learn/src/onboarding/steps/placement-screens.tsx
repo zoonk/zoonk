@@ -91,7 +91,7 @@ function PlacementOutcome({
       </OnboardingHeading>
       <OnboardingFooter>
         {failed && <ChangeSaveError />}
-        <OnboardingPrimaryButton autoFocus disabled={pending} onClick={onContinue}>
+        <OnboardingPrimaryButton autoFocus busy={pending} onClick={onContinue}>
           {action ?? t("See my plan")}
         </OnboardingPrimaryButton>
       </OnboardingFooter>

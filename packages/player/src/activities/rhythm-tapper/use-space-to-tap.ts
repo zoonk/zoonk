@@ -1,6 +1,6 @@
 "use client";
 
-import { useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
+import { useShortcut } from "@zoonk/ui/hooks/keyboard";
 import { usePlayerInteractionState } from "../../player-context";
 
 const SPACE_CONTROLS =
@@ -15,22 +15,18 @@ export function useSpaceToTap({
 }) {
   const interaction = usePlayerInteractionState();
 
-  useKeyboardCallback(
-    " ",
-    (event) => {
-      if (!enabled || interaction === "paused") {
-        return false;
-      }
+  useShortcut("tap", (event) => {
+    if (!enabled || interaction === "paused") {
+      return false;
+    }
 
-      const element = event.target instanceof Element ? event.target : document.activeElement;
-      const pad = element?.closest("[data-slot='rhythm-tap-pad']");
+    const element = event.target instanceof Element ? event.target : document.activeElement;
+    const pad = element?.closest("[data-slot='rhythm-tap-pad']");
 
-      if (!pad && element?.closest(SPACE_CONTROLS)) {
-        return false;
-      }
+    if (!pad && element?.closest(SPACE_CONTROLS)) {
+      return false;
+    }
 
-      onTap(event.timeStamp);
-    },
-    { mode: "none", screen: true },
-  );
+    onTap(event.timeStamp);
+  });
 }
