@@ -215,7 +215,7 @@ function MistakesInbox({
               </ListRowBody>
               <ChevronDownIcon
                 aria-hidden="true"
-                className="text-muted-foreground/60 size-4 shrink-0 self-center transition-transform group-aria-expanded/skill:rotate-180 motion-reduce:transition-none lg:hidden"
+                className="text-muted-foreground/60 edge -me-(--edge-pull) size-4 shrink-0 self-center transition-transform group-aria-expanded/skill:rotate-180 motion-reduce:transition-none lg:hidden"
               />
             </button>
 

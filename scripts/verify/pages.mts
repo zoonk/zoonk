@@ -10,6 +10,7 @@ import { readActionNames } from "./actions.mts";
 import { compareWithBaseline, comparisonRows, readBaseline } from "./baseline.mts";
 import { markBusy } from "./busy.mts";
 import { type Finding } from "./checks.mts";
+import { readTypeScale } from "./craft-scale.mts";
 import { checkExposure } from "./exposure.mts";
 import { type LoadReport, measureLoad, warmUp } from "./measure.mts";
 import { type SoakReport, judgeSoak, measureSoak, soakRows } from "./memory.mts";
@@ -39,8 +40,9 @@ const repository = resolve(import.meta.dirname, "../..");
 
 const { positionals, values } = parseArgs({ allowPositionals: true, options: PAGE_OPTIONS });
 
-const baseUrl =
-  values.url ?? getServiceUrl({ currentDirectory: repository, serviceName: values.app });
+const served = resolve(values.checkout ?? repository);
+
+const baseUrl = values.url ?? getServiceUrl({ currentDirectory: served, serviceName: values.app });
 
 const paths = positionals.length > 0 ? positionals : ["/"];
 const viewports = pick(values.viewports, VIEWPORT_NAMES, "viewport");
@@ -53,7 +55,7 @@ assertBrowserLaunchAllowed();
 
 const mailboxUrl =
   values.email || values.intruder
-    ? getMailboxCaptureUrl(getServiceUrl({ currentDirectory: repository, serviceName: "mailbox" }))
+    ? getMailboxCaptureUrl(getServiceUrl({ currentDirectory: served, serviceName: "mailbox" }))
     : "";
 
 const signedIn = values.email
@@ -92,7 +94,7 @@ const loadPerCore = () => (loadavg()[0] ?? 0) / availableParallelism();
 const BUSY_LOAD_PER_CORE = 3;
 const loadAtStart = loadPerCore();
 const browser = await chromium.launch();
-const actions = readActionNames(repository);
+const actions = readActionNames(served);
 
 const queries = values.queries ? resolve(values.queries) : undefined;
 
@@ -106,6 +108,7 @@ const target = {
   serverPid,
   storageState,
   throttle: values.throttle,
+  typeScale: readTypeScale(served),
 };
 
 function navigationMode(): NavigationMode {
@@ -158,7 +161,7 @@ try {
     );
 
     const production = loads.every((load) => load.production);
-    const unindexed = await findUnindexed(repository, { production, reads: summary.reads });
+    const unindexed = await findUnindexed(served, { production, reads: summary.reads });
 
     renders.push({
       findings: [...queryFindings(summary), ...unindexed],

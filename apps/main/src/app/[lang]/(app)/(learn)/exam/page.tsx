@@ -53,7 +53,7 @@ async function ExamContent() {
 
 function StatTileSkeleton() {
   return (
-    <div className="ring-border rounded-option flex flex-col gap-2.5 p-3 ring-1 ring-inset">
+    <div className="ring-border flex flex-col gap-2.5 rounded-xl p-3 ring-1 ring-inset">
       <Skeleton className="h-3 w-20 rounded-sm" />
       <Skeleton className="h-6 w-14 rounded-sm" />
       <Skeleton className="h-3 w-28 max-w-full rounded-sm" />
@@ -67,7 +67,7 @@ function SubjectRowSkeleton() {
       <span className="flex-1">
         <Skeleton className="h-3.5 w-32 max-w-full rounded-sm" />
       </span>
-      <Skeleton className="h-1 w-20 rounded-[2px] sm:w-36" />
+      <Skeleton className="h-1 w-20 rounded-xs sm:w-36" />
       <Skeleton className="h-3 w-8 rounded-sm" />
     </div>
   );

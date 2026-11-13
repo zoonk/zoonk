@@ -10,7 +10,7 @@ const SHEET_CLASS = {
   paper:
     "rounded-md shadow-[0_0_0_1px_oklch(0_0_0/7%),0_18px_40px_-18px_oklch(0_0_0/22%)] dark:shadow-[0_0_0_1px_oklch(1_0_0/10%)]",
   thumb:
-    "rounded-[4px] shadow-[0_0_0_1px_var(--color-border)] dark:shadow-[0_0_0_1px_oklch(1_0_0/10%)]",
+    "rounded-sm shadow-[0_0_0_1px_var(--color-border)] dark:shadow-[0_0_0_1px_oklch(1_0_0/10%)]",
 } as const;
 
 /**

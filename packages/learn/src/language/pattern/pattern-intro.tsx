@@ -35,7 +35,7 @@ function RuleExample({ example, rule }: { example: PatternExample | undefined; r
           ]}
         />
       )}
-      <p className="text-[0.9375rem] leading-relaxed text-pretty">{rule}</p>
+      <p className="text-reading leading-relaxed text-pretty">{rule}</p>
     </section>
   );
 }
@@ -61,7 +61,7 @@ export function PatternRule({ pattern }: { pattern: MistakePatternView }) {
   return (
     <div className="flex flex-col gap-3">
       <ContrastRows contrast={pattern.contrast} />
-      <p className="text-[0.8125rem] leading-relaxed text-pretty">{pattern.rule}</p>
+      <p className="text-compact leading-relaxed text-pretty">{pattern.rule}</p>
     </div>
   );
 }

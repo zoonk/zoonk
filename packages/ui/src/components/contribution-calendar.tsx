@@ -180,7 +180,7 @@ export function ContributionCalendarPeriod({
   return (
     <span
       className={cn(
-        "text-faint absolute top-0 left-0 font-mono text-[10px] whitespace-nowrap tabular-nums",
+        "text-faint text-2xs absolute top-0 left-0 font-mono whitespace-nowrap tabular-nums",
         className,
       )}
       data-slot="contribution-calendar-period"
@@ -198,7 +198,7 @@ export function ContributionCalendarDay({
   return (
     <ChartInspectorPoint
       aria-hidden="true"
-      className={cn("size-(--calendar-cell) shrink-0 rounded-[2px]", className)}
+      className={cn("size-(--calendar-cell) shrink-0 rounded-xs", className)}
       data-slot="contribution-calendar-day"
       {...props}
     />
@@ -214,7 +214,7 @@ export function ContributionCalendarLegend({
   return (
     <div
       className={cn(
-        "text-muted-foreground flex items-center justify-end gap-1 text-[0.6875rem]",
+        "text-muted-foreground text-2xs flex items-center justify-end gap-1",
         className,
       )}
       data-slot="contribution-calendar-legend"
@@ -242,7 +242,7 @@ export function ContributionCalendarLegendSwatch({ className, ...props }: Compon
   return (
     <span
       aria-hidden="true"
-      className={cn("size-2.5 rounded-[2px]", className)}
+      className={cn("size-2.5 rounded-xs", className)}
       data-slot="contribution-calendar-legend-swatch"
       {...props}
     />

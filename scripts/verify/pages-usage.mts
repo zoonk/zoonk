@@ -4,6 +4,7 @@ import { SCHEMES, VIEWPORT_NAMES } from "./viewports.mts";
 export const PAGE_OPTIONS = {
   app: { default: "main", type: "string" },
   baseline: { type: "string" },
+  checkout: { type: "string" },
   early: { default: false, type: "boolean" },
   email: { type: "string" },
   help: { default: false, short: "h", type: "boolean" },
@@ -38,5 +39,6 @@ dark, and writes a report of what it found. The verify skill's "Measuring pages"
   --viewports <list>      every screen by default (${VIEWPORT_NAMES.join(", ")})
   --schemes <list>        ${SCHEMES.join(", ")} by default
   --app <name>            the app to measure: main by default, or another such as api or admin
+  --checkout <dir>        measure another checkout's running app, with its build and type scale
   --url <url>             the app's URL, this checkout's by default
   --out <dir>             tmp/verify/<time> by default`;

@@ -161,7 +161,7 @@ function SubjectsSpecimen() {
     <div className="grid gap-4 sm:grid-cols-2">
       <Surface className="flex flex-col gap-2 p-4">
         <SubjectLabel subject="science">Science</SubjectLabel>
-        <p className="text-[0.9375rem] font-semibold">Quantum physics from scratch</p>
+        <p className="text-reading font-semibold">Quantum physics from scratch</p>
         <p className="text-muted-foreground font-mono text-xs">301 lessons · about 20 hr</p>
       </Surface>
       <ul className="flex flex-col gap-2 text-sm">

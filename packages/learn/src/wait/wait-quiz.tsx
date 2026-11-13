@@ -204,7 +204,7 @@ function QuizReveal({ card, pickedId }: { card: Card; pickedId: string }) {
   return (
     <div className="flex flex-col gap-1.5">
       <VerdictLabel verdict={right ? "guessRight" : "guess"} />
-      <p className="text-[0.9375rem] leading-normal text-pretty">{card.reveal}</p>
+      <p className="text-reading leading-normal text-pretty">{card.reveal}</p>
     </div>
   );
 }
@@ -237,7 +237,7 @@ export function WaitQuizSkeleton() {
 
       <div className="flex flex-col gap-2.5">
         {Array.from({ length: OPTION_COUNT }, (_, index) => (
-          <Skeleton className="rounded-option h-12.5 w-full" key={index} />
+          <Skeleton className="h-12.5 w-full rounded-xl" key={index} />
         ))}
       </div>
     </div>

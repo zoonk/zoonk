@@ -231,7 +231,7 @@ function ProgressCard({ progress }: { progress: Progress }) {
         </ul>
       )}
 
-      <p className="text-muted-foreground text-[0.8125rem] text-pretty">{line}</p>
+      <p className="text-muted-foreground text-compact text-pretty">{line}</p>
     </div>
   );
 }

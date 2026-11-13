@@ -100,7 +100,7 @@ export async function PlusQuestions({
   return (
     <section aria-labelledby={PLUS_QUESTIONS_ID} className={cn("flex flex-col gap-4", className)}>
       <div className="flex flex-col gap-1">
-        <h2 className="text-lg font-semibold tracking-tight" id={PLUS_QUESTIONS_ID}>
+        <h2 className="text-base font-semibold tracking-[-0.015em]" id={PLUS_QUESTIONS_ID}>
           {t("Common questions")}
         </h2>
         <p className="text-muted-foreground text-sm">

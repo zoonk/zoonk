@@ -7,16 +7,18 @@ import { getExtracted } from "next-intl/server";
 
 export async function LoginBarLink({
   className,
+  edge,
   variant = "ghost",
 }: {
   className?: string;
+  edge?: "end";
   variant?: "ghost" | "outline";
 }) {
   const t = await getExtracted();
 
   return (
     <CurrentPageLoginLink
-      className={cn(buttonVariants({ size: "bar", variant }), className)}
+      className={cn(buttonVariants({ edge, size: "bar", variant }), className)}
       icon={<LogInIcon aria-hidden="true" />}
     >
       {t("Log in")}
@@ -28,7 +30,7 @@ export function VisitorBarLinks({ className }: { className?: string }) {
   return (
     <div className={cn("flex items-center gap-1", className)}>
       <PricingBarLink className="max-sm:group-data-title-away/page-bar:hidden @max-2xs/page-bar:hidden" />
-      <LoginBarLink />
+      <LoginBarLink edge="end" />
     </div>
   );
 }

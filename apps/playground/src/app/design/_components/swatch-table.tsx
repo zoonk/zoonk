@@ -79,7 +79,7 @@ function Sample({ mode, token }: { mode: string; token: ColorToken }) {
 
 function Ratio({ ratio, text }: { ratio?: number; text?: boolean }) {
   if (ratio === undefined) {
-    return <span className="text-faint font-mono text-[0.6875rem]">…</span>;
+    return <span className="text-faint text-2xs font-mono">…</span>;
   }
 
   const minimum = text ? TEXT_MINIMUM : MARK_MINIMUM;
@@ -87,7 +87,7 @@ function Ratio({ ratio, text }: { ratio?: number; text?: boolean }) {
   return (
     <span
       className={cn(
-        "font-mono text-[0.6875rem] tabular-nums",
+        "text-2xs font-mono tabular-nums",
         ratio >= minimum ? "text-muted-foreground" : "text-warning-text",
       )}
       title={`${text ? "As text" : "As a mark"}: ${minimum}:1 asked`}
@@ -137,7 +137,7 @@ export function SwatchTable({
           role="row"
         >
           <div className="flex min-w-0 flex-col gap-1" role="rowheader">
-            <code className="font-mono text-[0.8125rem] font-medium">{token.name}</code>
+            <code className="text-compact font-mono font-medium">{token.name}</code>
             <p className="text-sm">{token.meaning}</p>
             <p className="text-muted-foreground text-xs leading-relaxed">{renderCode(token.use)}</p>
             {token.avoid && (

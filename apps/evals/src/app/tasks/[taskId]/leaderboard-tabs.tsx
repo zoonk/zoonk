@@ -63,7 +63,7 @@ export function LeaderboardTabs({
 
   return (
     <Tabs onValueChange={handleTabChange} value={currentTab}>
-      <TabsList variant="line">
+      <TabsList>
         <TabsTrigger value="battle">Judged side by side</TabsTrigger>
         <TabsTrigger value="regular">Scored one by one</TabsTrigger>
       </TabsList>

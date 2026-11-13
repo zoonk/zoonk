@@ -21,7 +21,7 @@ export const DAY_SEGMENT_SLOT = "today-day-segment";
 
 /** Its hit area reaches past the thin bar so a finger can land on it. */
 const TRIGGER_CLASS =
-  "relative flex min-w-1 grow basis-0 cursor-pointer rounded-[3px] outline-none transition-[filter] before:absolute before:-inset-x-px before:-inset-y-3 before:content-[''] hover:brightness-95 focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:hover:brightness-125";
+  "relative flex min-w-1 grow basis-0 cursor-pointer rounded-meter outline-none transition-[filter] before:absolute before:-inset-x-px before:-inset-y-3 before:content-[''] hover:brightness-95 focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:hover:brightness-125";
 
 function useKindNote() {
   const t = useExtracted();
