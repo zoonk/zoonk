@@ -142,7 +142,11 @@ export function ChoiceList<Value extends string>({
 
             <ListRowContent>
               <ListRowTitle>{choice.label}</ListRowTitle>
-              {choice.description && <ListRowDescription>{choice.description}</ListRowDescription>}
+              {choice.description && (
+                <ListRowDescription className="text-pretty">
+                  {choice.description}
+                </ListRowDescription>
+              )}
             </ListRowContent>
 
             {choice.trailing}
@@ -187,7 +191,11 @@ export function CheckList<Value extends string>({
           >
             <ListRowContent>
               <ListRowTitle>{choice.label}</ListRowTitle>
-              {choice.description && <ListRowDescription>{choice.description}</ListRowDescription>}
+              {choice.description && (
+                <ListRowDescription className="text-pretty">
+                  {choice.description}
+                </ListRowDescription>
+              )}
             </ListRowContent>
             <Checkbox
               checked={isPicked}

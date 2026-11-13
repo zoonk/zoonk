@@ -202,7 +202,7 @@ export function CountryPicker({
       overNested={overNested}
       suggestionsFirst
     >
-      <CommandDialogTitle className="not-sr-only px-4 pt-4 text-base font-semibold sm:px-4 sm:pt-3.5 sm:pb-1">
+      <CommandDialogTitle className="not-sr-only px-4 pt-4 text-lg leading-tight font-semibold sm:px-4 sm:pt-3.5 sm:pb-1">
         {title}
       </CommandDialogTitle>
 
