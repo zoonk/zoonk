@@ -4,6 +4,7 @@ import { type SyllabusSubject, type SyllabusView } from "@zoonk/core/view-models
 import { FlagIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { PageSectionFooter } from "../_components/page";
+import { QuestionsSourceText } from "../_components/questions-source-text";
 import { QuietDisclosure } from "../_components/quiet-disclosure";
 import { getSourceHost } from "../_utils/source-host";
 import { usePassMarksNote } from "../_utils/use-pass-marks-note";
@@ -16,36 +17,13 @@ export function useGroupName(group: SubjectGroup<SyllabusSectionSubject>): strin
 }
 
 export function QuestionsSourceNote({ source }: { source: SyllabusView["questionsSource"] }) {
-  const t = useExtracted();
-
   if (!source) {
     return null;
   }
 
-  const publisher = getSourceHost(source.url);
-
-  const link = (chunks: React.ReactNode) => (
-    <a
-      className="hover:text-foreground underline underline-offset-2"
-      href={source.url}
-      rel="noreferrer"
-      target="_blank"
-    >
-      {chunks}
-    </a>
-  );
-
   return (
     <PageSectionFooter>
-      {source.edition
-        ? t.rich(
-            "Questions per subject in the {edition}, as counted by <link>{publisher}</link>.",
-            { edition: source.edition, link, publisher },
-          )
-        : t.rich(
-            "Questions per subject in the latest exam, as counted by <link>{publisher}</link>.",
-            { link, publisher },
-          )}
+      <QuestionsSourceText source={source} />
     </PageSectionFooter>
   );
 }

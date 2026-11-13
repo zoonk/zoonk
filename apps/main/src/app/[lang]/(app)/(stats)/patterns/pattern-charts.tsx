@@ -38,7 +38,7 @@ export async function WeekPatterns({
     <PatternChart
       bestLabel={t("Best day")}
       columns={columns}
-      footer={footer}
+      footer={null}
       id="week-patterns"
       title={t("Throughout the week")}
     />
@@ -76,7 +76,7 @@ export async function DayPatterns({
     <PatternChart
       bestLabel={t("Best time")}
       columns={columns}
-      footer={footer}
+      footer={null}
       id="day-patterns"
       title={t("Throughout the day")}
     />

@@ -7,7 +7,6 @@ import { useEffect, useState, useTransition } from "react";
 import { useSentenceSpace } from "../_utils/locale";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
-import { FreeWeekOverNotice } from "./free-week-over";
 import { type HelpLimit, HelpLimitNotice } from "./help-limit-notice";
 import { KindDot } from "./kind-tile";
 import {
@@ -21,7 +20,7 @@ import { StatusRegion } from "./status-region";
 
 export type TestOutStart =
   | { limit: HelpLimit; status: "refused" }
-  | { status: "failed" | "plusRequired" | "started" };
+  | { status: "failed" | "started" };
 
 export function useTestOutStart(onStart: () => Promise<TestOutStart>) {
   const [result, setResult] = useState<TestOutStart | null>(null);
@@ -56,8 +55,6 @@ export function TestOutStartStatus({
       {shown?.status === "refused" && (
         <HelpLimitNotice limit={shown.limit} linkComponent={LearnLink} routes={routes} />
       )}
-
-      {shown?.status === "plusRequired" && <FreeWeekOverNotice />}
 
       {shown?.status === "failed" && (
         <p className="text-muted-foreground text-sm">

@@ -27,7 +27,13 @@ export function MarkedText({
   mark: React.ReactNode;
 }) {
   return (
-    <span className={cn("flex flex-wrap items-center gap-x-2 gap-y-1 wrap-break-word", className)}>
+    // The mark's box is taller than a title's line; its margin keeps the line, and so the row, the words' height.
+    <span
+      className={cn(
+        "flex flex-wrap items-center gap-x-2 gap-y-1 wrap-break-word *:not-first:-my-0.5",
+        className,
+      )}
+    >
       <span className="max-w-max min-w-0 flex-[1_1_min-content]">{children}</span>
       {mark}
     </span>

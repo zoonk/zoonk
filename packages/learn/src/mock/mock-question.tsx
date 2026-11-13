@@ -10,7 +10,7 @@ import { useExtracted } from "next-intl";
 import { useId } from "react";
 import { QuestionTitle } from "../_components/question-title";
 import { useAppLocale } from "../_utils/locale";
-import { useWritingName } from "../essay/essay-labels";
+import { ESSAY_FIELD_CLASS, useWritingName } from "../essay/essay-labels";
 import { EssayWordCount } from "../essay/essay-word-count";
 import { ItemSetStimulus } from "../questions/item-set-stimulus";
 import { ItemSupport } from "../questions/item-text";
@@ -98,7 +98,7 @@ function EssayAnswer({ question }: { question: MockQuestion }) {
         {writingName(runner.view.essayRubric ?? "custom")}
       </label>
       <Textarea
-        className="min-h-72 text-base leading-relaxed"
+        className={ESSAY_FIELD_CLASS}
         aria-describedby={`${textId}-count`}
         id={textId}
         maxLength={MAX_ESSAY_CHARACTERS}
