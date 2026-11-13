@@ -552,7 +552,6 @@ msgstr "No se pudo guardar. Inténtalo de nuevo."
 
 #: src/_components/sheet-header.tsx
 #: src/_components/suggestion.tsx
-#: src/appearance/buddy-settings.tsx
 #: src/certificates/certificate-linkedin.tsx
 #: src/certificates/certificate-name.tsx
 #: src/certificates/certificate-share.tsx
@@ -4044,6 +4043,11 @@ msgid "Quick explanation · {time}"
 msgstr "Explicación rápida · {time}"
 
 #: src/feedback/feedback-form-dialog.tsx
+msgctxt "feedback.rbrahO"
+msgid "Close"
+msgstr "Cerrar"
+
+#: src/feedback/feedback-form-dialog.tsx
 #: src/feedback/report-problem-item.tsx
 msgctxt "feedback.G5YSJR"
 msgid "Send feedback"
@@ -4053,11 +4057,6 @@ msgstr "Enviar comentarios"
 msgctxt "feedback.Kz11c4"
 msgid "Found a problem or have an idea? Tell us below or email hello@zoonk.com."
 msgstr "¿Encontraste un problema o tienes una idea? Cuéntanos en este formulario o escríbenos a contacto@zoonk.com."
-
-#: src/feedback/feedback-form-dialog.tsx
-msgctxt "feedback.rbrahO"
-msgid "Close"
-msgstr "Cerrar"
 
 #: src/feedback/feedback-form-dialog.tsx
 msgctxt "feedback.NDni4R"
