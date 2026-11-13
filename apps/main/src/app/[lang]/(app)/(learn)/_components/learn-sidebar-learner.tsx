@@ -145,7 +145,7 @@ function AccountTriggerWithLevel({
 
   return (
     <AccountTrigger name={name} said={said}>
-      <span className="text-muted-foreground flex shrink-0 items-center gap-1.5 pr-1 font-mono text-xs font-normal tabular-nums">
+      <span className="text-muted-foreground flex shrink-0 items-center gap-1.5 font-mono text-xs font-normal tabular-nums">
         <BeltLevel belt={belt} color={level.color} level={levelNumber} />
       </span>
     </AccountTrigger>
