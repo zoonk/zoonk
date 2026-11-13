@@ -1,7 +1,7 @@
 import { StatusMessage } from "@/components/errors/status-message";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { type SupportedLocale } from "@zoonk/utils/locale";
-import { ArrowRightIcon, SearchXIcon } from "lucide-react";
+import { SearchXIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 
 export async function NotFoundMessage({
@@ -23,7 +23,6 @@ export async function NotFoundMessage({
         // oxlint-disable-next-line next/no-html-link-for-pages -- A full load of the home page also resets whatever broke the route.
         <a className={buttonVariants({ size: "lg" })} href="/">
           {t("Go to the home page")}
-          <ArrowRightIcon aria-hidden="true" data-icon="inline-end" />
         </a>
       )}
     </StatusMessage>

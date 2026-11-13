@@ -6,15 +6,19 @@ import {
 } from "@/components/admin-detail";
 import { AdminSectionSkeleton } from "@/components/admin-section";
 import { getFeedbackMessage } from "@/data/feedback/get-feedback-message";
-import { capitalize, formatDateTime } from "@/lib/format";
+import { formatDateTime } from "@/lib/format";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { feedbackStatusLabels, getFeedbackLearnerLabel } from "../../_utils/feedback-labels";
+import {
+  feedbackStatusLabels,
+  getFeedbackLearnerLabel,
+  getFeedbackPlatform,
+} from "../../_utils/feedback-labels";
+import { MessageActions } from "./message-actions";
 import { type FeedbackMessage, MessageDetail } from "./message-detail";
-import { MessageStatusForm } from "./message-status-form";
 
 export async function generateMetadata({
   params,
@@ -69,11 +73,13 @@ async function MessageDetailContent({
   return (
     <>
       <AdminDetailHeader
-        actions={<MessageStatusForm currentStatus={message.status} messageId={message.id} />}
+        actions={
+          <MessageActions email={message.email} messageId={message.id} status={message.status} />
+        }
         facts={[
           feedbackStatusLabels[message.status],
           `Sent ${formatDateTime(message.createdAt)}`,
-          message.context.platform && capitalize(message.context.platform),
+          getFeedbackPlatform(message.context),
         ]}
         parents={MESSAGE_PARENTS}
         title={getMessageTitle(message)}
@@ -92,13 +98,11 @@ function MessageDetailSkeleton() {
       <AdminDetailHeaderSkeleton actions="buttons" parents={MESSAGE_PARENTS} />
 
       <AdminDetailBody>
-        <AdminSectionSkeleton>
-          <div className="flex max-w-3xl flex-col gap-2">
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-4/5" />
-          </div>
-        </AdminSectionSkeleton>
-        <AdminSectionSkeleton rows={7} />
+        <div className="flex max-w-3xl flex-col gap-2">
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-4/5" />
+        </div>
+        <AdminSectionSkeleton rows={2} />
       </AdminDetailBody>
     </>
   );

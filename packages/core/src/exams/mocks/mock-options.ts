@@ -269,7 +269,6 @@ function toSubjectOption({
 }
 
 export function listMockOptions({
-  dayInTurn,
   essays = [],
   goalAreas,
   listening = new Set(),
@@ -279,7 +278,6 @@ export function listMockOptions({
   typed = [],
   unpicked = [],
 }: {
-  dayInTurn: number | null;
   essays?: readonly MockEssayCandidate[];
   goalAreas: readonly string[];
   listening?: ReadonlySet<string>;
@@ -291,11 +289,9 @@ export function listMockOptions({
 }): MockOption[] {
   const subjects = structure ? getObjectiveSubjects({ goalAreas, structure }) : [];
   const days = getMockDays(structure);
-  const halfDay = days.includes(dayInTurn) ? dayInTurn : (days[0] ?? null);
-
   const shared = { essays, listening, speaking, structure, subjects, typed, unpicked };
   const full = days.map((day) => toDayOption({ ...shared, day, kind: "full" }));
-  const half = toDayOption({ ...shared, day: halfDay, kind: "half" });
+  const halves = days.map((day) => toDayOption({ ...shared, day, kind: "half" }));
 
   const wholes = subjects.filter((subject) => !isPartOfAnother({ subject, subjects }));
 
@@ -313,7 +309,7 @@ export function listMockOptions({
           .toSorted((first, second) => second.questions - first.questions)
       : [];
 
-  return [...full, half, ...bySubject]
+  return [...full, ...halves, ...bySubject]
     .filter((option) => option.questions > 0 || option.written.length > 0)
     .map((option) => ({ ...option, estimatedMinutes: estimateMockMinutes({ ...option, pace }) }));
 }

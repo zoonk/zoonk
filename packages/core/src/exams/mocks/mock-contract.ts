@@ -252,7 +252,14 @@ export const anytimeMockInputSchema = anytimeMockChoiceSchema
       .optional()
       .meta({
         description:
-          "Start with the questions there are when the bank holds fewer than the option asks; send it after a question-writing run finished",
+          "Start with the questions there are when the bank holds fewer than the option asks; send it only after the learner agreed to the `short` answer's numbers",
+      }),
+    afterWriting: z
+      .boolean()
+      .optional()
+      .meta({
+        description:
+          "This start follows a question-writing run (or a writing request that answered `ready`): never answers `needsQuestions`, so a mock still well short of its questions answers `short`",
       }),
   })
   .strict()

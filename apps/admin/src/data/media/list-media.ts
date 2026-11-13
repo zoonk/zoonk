@@ -17,19 +17,31 @@ const cachedListMedia = cacheAdminData(
       prisma.mediaAsset.count({ where }),
     ]);
 
-    // Counted for the page's assets only: a relation `_count` would count every asset's steps.
-    const steps = await prisma.step.groupBy({
-      _count: { id: true },
-      by: ["mediaAssetId"],
-      where: { mediaAssetId: { in: assets.map((asset) => asset.id) } },
-    });
+    const assetIds = assets.map((asset) => asset.id);
 
-    const stepsByAsset = new Map(steps.map((row) => [row.mediaAssetId, row._count.id]));
+    // For the page's assets only: a relation `_count` would count every asset's screens.
+    const [counts, firstUses] = await Promise.all([
+      prisma.step.groupBy({
+        _count: { id: true },
+        by: ["mediaAssetId"],
+        where: { mediaAssetId: { in: assetIds } },
+      }),
+      prisma.step.findMany({
+        distinct: ["mediaAssetId"],
+        orderBy: [{ mediaAssetId: "asc" }, { lessonId: "asc" }, { position: "asc" }],
+        select: { lesson: { select: { title: true } }, mediaAssetId: true },
+        where: { mediaAssetId: { in: assetIds } },
+      }),
+    ]);
+
+    const screensByAsset = new Map(counts.map((row) => [row.mediaAssetId, row._count.id]));
+    const lessonByAsset = new Map(firstUses.map((row) => [row.mediaAssetId, row.lesson.title]));
 
     return {
       assets: assets.map((asset) => ({
         ...asset,
-        _count: { steps: stepsByAsset.get(asset.id) ?? 0 },
+        _count: { steps: screensByAsset.get(asset.id) ?? 0 },
+        usedIn: lessonByAsset.get(asset.id) ?? null,
       })),
       total,
     };
