@@ -3160,12 +3160,12 @@ msgctxt "af7HsK"
 msgid "You skipped this essay."
 msgstr "You skipped this essay."
 
-#: src/essay/essay-feedback.tsx
+#: src/essay/essay-criteria-rows.tsx
 msgctxt "H9233U"
 msgid "Score by criterion"
 msgstr "Score by criterion"
 
-#: src/essay/essay-feedback.tsx
+#: src/essay/essay-criteria-rows.tsx
 msgctxt "LLXwbj"
 msgid "{score} of {max}"
 msgstr "{score} of {max}"
@@ -9137,6 +9137,13 @@ msgctxt "U5RRFl"
 msgid "Up from {before}"
 msgstr "Up from {before}"
 
+#: src/mock/mock-result-plan.tsx
+#: src/mock/mock-result-view.tsx
+#: src/plan/plan-properties.tsx
+msgctxt "ChuNUI"
+msgid "Your plan"
+msgstr "Your plan"
+
 #: src/mock/mock-result-points.tsx
 msgctxt "cT7Wf1"
 msgid "{unit, select, percent {At {score}, below the {minimum} it needs} other {{short, plural, one {# point} other {# points}} short of the {minimum} it needs}}"
@@ -9291,12 +9298,6 @@ msgstr "+{change} since the last one"
 msgctxt "J4q6jK"
 msgid "{change} since the last one"
 msgstr "{change} since the last one"
-
-#: src/mock/mock-result-view.tsx
-#: src/plan/plan-properties.tsx
-msgctxt "ChuNUI"
-msgid "Your plan"
-msgstr "Your plan"
 
 #: src/mock/mock-result-view.tsx
 msgctxt "InkuxH"

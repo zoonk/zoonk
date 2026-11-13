@@ -3160,12 +3160,12 @@ msgctxt "af7HsK"
 msgid "You skipped this essay."
 msgstr "이 에세이를 건너뛰었어요."
 
-#: src/essay/essay-feedback.tsx
+#: src/essay/essay-criteria-rows.tsx
 msgctxt "H9233U"
 msgid "Score by criterion"
 msgstr "평가 기준별 점수"
 
-#: src/essay/essay-feedback.tsx
+#: src/essay/essay-criteria-rows.tsx
 msgctxt "LLXwbj"
 msgid "{score} of {max}"
 msgstr "{score} / {max}"
@@ -9137,6 +9137,13 @@ msgctxt "U5RRFl"
 msgid "Up from {before}"
 msgstr ""
 
+#: src/mock/mock-result-plan.tsx
+#: src/mock/mock-result-view.tsx
+#: src/plan/plan-properties.tsx
+msgctxt "ChuNUI"
+msgid "Your plan"
+msgstr "내 계획"
+
 #: src/mock/mock-result-points.tsx
 msgctxt "cT7Wf1"
 msgid "{unit, select, percent {At {score}, below the {minimum} it needs} other {{short, plural, one {# point} other {# points}} short of the {minimum} it needs}}"
@@ -9291,12 +9298,6 @@ msgstr "지난 모의고사 대비 +{change}"
 msgctxt "J4q6jK"
 msgid "{change} since the last one"
 msgstr "지난 모의고사 대비 {change}"
-
-#: src/mock/mock-result-view.tsx
-#: src/plan/plan-properties.tsx
-msgctxt "ChuNUI"
-msgid "Your plan"
-msgstr "내 계획"
 
 #: src/mock/mock-result-view.tsx
 msgctxt "InkuxH"
