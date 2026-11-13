@@ -4,10 +4,8 @@ import { type PlanPhaseView } from "@zoonk/core/plans/view-contract";
 import { cn } from "@zoonk/ui/lib/utils";
 import { FlagIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { ListRowChevron } from "../_components/list-group";
-import { PlusMark } from "../_components/plus-lock";
+import { ListRowChevron, ListRowChevronSpace } from "../_components/list-group";
 import { DoneMark } from "../_components/status-mark";
-import { MarkedText } from "../_components/title-row";
 import { LearnLink } from "../learn-link";
 import { usePlanScreen } from "../plan/plan-context";
 import { usePhaseName } from "../plan/use-phase-name";
@@ -45,7 +43,7 @@ function PathLine({ walked }: { walked: boolean }) {
       aria-hidden="true"
       data-slot="path-line"
       className={cn(
-        "absolute top-8 -bottom-3 left-[7.5px] w-px",
+        "absolute top-9 -bottom-2 left-[7.5px] w-px",
         walked ? "bg-success/60" : "bg-border",
       )}
     />
@@ -95,15 +93,10 @@ const HEADER_CLASS = "flex min-h-11 w-full items-baseline gap-3 py-3 text-left";
 const HEADER_INTERACTIVE_CLASS =
   "focus-visible:ring-ring/50 hover:bg-muted/70 -mx-2.5 w-[calc(100%+1.25rem)] rounded-lg px-2.5 outline-none transition-colors focus-visible:ring-[3px]";
 
-function ChevronSpace() {
-  return <span aria-hidden="true" className="size-4 shrink-0" />;
-}
-
 function CompactPhaseNode({ links, phase }: { links: JourneyPathLinks; phase: PlanPhaseView }) {
   const { plan } = usePlanScreen();
   const mocksLine = usePhaseMocksLine();
   const { checkpoint, mocks, state } = phase;
-  const locked = plan.access.mocksRequirePlus;
   const forNextSitting = phase.kind === "afterExam";
   const isCurrent = state === "current";
   const hasEvents = isCurrent && (checkpoint !== null || mocks.nextDate !== null);
@@ -120,18 +113,16 @@ function CompactPhaseNode({ links, phase }: { links: JourneyPathLinks; phase: Pl
       <div className="flex min-w-0 flex-1 flex-col">
         <div className={HEADER_CLASS}>
           <PhaseTitle phase={phase} />
-          <ChevronSpace />
+          <ListRowChevronSpace />
         </div>
 
         {state === "upcoming" && mocks.count > 0 && (
           <p className="text-muted-foreground -mt-2.5 pb-1 text-xs">
-            <MarkedText mark={locked && <PlusMark />}>
-              {mocksLine({
-                count: mocks.count,
-                forNextSitting,
-                nextSitting: plan.schedule.nextSitting,
-              })}
-            </MarkedText>
+            {mocksLine({
+              count: mocks.count,
+              forNextSitting,
+              nextSitting: plan.schedule.nextSitting,
+            })}
           </p>
         )}
 
@@ -143,8 +134,6 @@ function CompactPhaseNode({ links, phase }: { links: JourneyPathLinks; phase: Pl
                   challengeHref={links.challenge}
                   date={mocks.nextDate}
                   examHref={links.exam}
-                  forNextSitting={forNextSitting}
-                  locked={locked}
                 />
               </li>
             )}
@@ -167,13 +156,11 @@ function FinishNode({ continues, examHref }: { continues: boolean; examHref: str
 
   const content = (
     <span className={HEADER_BODY_CLASS}>
-      <span className="text-sm font-medium">{goal.displayName}</span>
-      {examHref && <span className="text-muted-foreground text-xs">{t("About the exam")}</span>}
-      {date && (
-        <span className="text-muted-foreground basis-full font-mono text-xs tabular-nums">
-          {date}
-        </span>
-      )}
+      <span className="flex flex-col">
+        <span className="text-sm font-medium">{goal.displayName}</span>
+        {examHref && <span className="text-muted-foreground text-xs">{t("About the exam")}</span>}
+      </span>
+      {date && <span className={DATE_CLASS}>{date}</span>}
     </span>
   );
 
@@ -189,7 +176,7 @@ function FinishNode({ continues, examHref }: { continues: boolean; examHref: str
       ) : (
         <div className={HEADER_CLASS}>
           {content}
-          <ChevronSpace />
+          <ListRowChevronSpace />
         </div>
       )}
     </li>

@@ -20,7 +20,6 @@ import { PlanAim } from "./plan-aim";
 import { PlanBases } from "./plan-bases";
 import { PlanCountry } from "./plan-country";
 import { PlanDate } from "./plan-date";
-import { PlanEditRequest } from "./plan-edit-request";
 import { PlanEditorChange } from "./plan-editor-change";
 import { PlanEditorChangeProvider } from "./plan-editor-change-context";
 import {
@@ -31,7 +30,6 @@ import {
 import { PlanExamChoices } from "./plan-exam-choices";
 import { PlanLanguage } from "./plan-language";
 import { PlanSchedule } from "./plan-schedule";
-import { PlanSteering } from "./plan-steering";
 import { PlanTools } from "./plan-tools";
 import { PlanWrittenPractice } from "./written-cadence";
 
@@ -59,9 +57,7 @@ function EditorSections() {
         <PlanActivities />
       </div>
       <PlanWrittenPractice />
-      <PlanSteering />
       <PlanTools />
-      <PlanEditRequest />
     </>
   );
 }

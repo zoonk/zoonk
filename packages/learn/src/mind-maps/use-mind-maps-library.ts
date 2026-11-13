@@ -12,6 +12,7 @@ import {
   toMindMapsPage,
 } from "./_utils/mind-maps-page";
 import { type MindMapLibraryActions, type MindMapRequestOutcome } from "./mind-map-actions";
+import { shownStatus } from "./use-mind-map-request";
 import { type SavedMapTarget, useMindMapSaves } from "./use-mind-map-saves";
 
 const DRAWING_POLL_MS = 5000;
@@ -200,7 +201,7 @@ export function useMindMapsLibrary({
         isPending: sending.has(chapter.chapterId),
         limit: local?.limit ?? null,
         retry: start,
-        shown: local?.shown ?? chapter.status,
+        shown: local?.shown ?? shownStatus(chapter.status),
       };
     },
     saves,

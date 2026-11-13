@@ -43,9 +43,13 @@ function visibleText(button: HTMLElement) {
 }
 
 function cutOffLabels() {
-  const bar = document.querySelector("[data-slot='task-action-bar']");
+  const bar = document.querySelector("[data-slot='bottom-bar']");
 
-  const buttons = [...(bar?.querySelectorAll<HTMLElement>("a, button") ?? [])];
+  if (!bar) {
+    return ["the lesson has no bottom bar"];
+  }
+
+  const buttons = [...bar.querySelectorAll<HTMLElement>("a, button")];
   const cutOff: string[] = [];
 
   for (const button of buttons.filter((item) => item.getClientRects().length > 0)) {

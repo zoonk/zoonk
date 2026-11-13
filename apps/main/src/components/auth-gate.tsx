@@ -1,9 +1,9 @@
-import { AuthGateAction } from "@/components/auth-gate-action";
 import { ColumnScreen } from "@/components/public/column-screen";
 import { getAppLocale } from "@/i18n/locale";
 import { Link, getPathname } from "@/i18n/navigation";
 import { hasSessionCookie } from "@zoonk/auth/cookies";
 import { getSession } from "@zoonk/core/users/session";
+import { EnterLink } from "@zoonk/learn/enter-button";
 import { Page, PageHeader, PageHeaderContent, PageSubtitle, PageTitle } from "@zoonk/learn/page";
 import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { buttonVariants } from "@zoonk/ui/components/button";
@@ -16,20 +16,81 @@ import {
   EmptyTitle,
 } from "@zoonk/ui/components/empty";
 import { cn } from "@zoonk/ui/lib/utils";
-import { LockIcon } from "lucide-react";
+import { PendingLink } from "@zoonk/ui/patterns/links/pending";
+import { LockIcon, LogInIcon, UserPlusIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import { cookies } from "next/headers";
 
+type Gate = {
+  /** The page to come back to after logging in, localized and ready for a query. */
+  back: string;
+  kind: "account" | "ended" | "login";
+};
+
+/** A guest is asked for an account; a browser whose session ended is told so, since its plan is still there. */
+async function readGate({ ended, next }: { ended?: boolean; next: string }): Promise<Gate> {
+  const session = await getSession();
+  const locale = await getAppLocale();
+  const back = encodeURIComponent(getPathname({ href: next, locale }));
+
+  if (session?.user.isAnonymous) {
+    return { back, kind: "account" };
+  }
+
+  const isEnded = ended ?? (!session && hasSessionCookie(await cookies()));
+  return { back, kind: isEnded ? "ended" : "login" };
+}
+
+async function GateMessage({
+  children,
+  className,
+  gate,
+  heading: Heading = "h2",
+}: {
+  children?: React.ReactNode;
+  className?: string;
+  gate: Gate;
+  heading?: "h1" | "h2";
+}) {
+  const t = await getExtracted();
+
+  const words = {
+    account: {
+      description: t("Your plan and progress move to your account, safe on any device."),
+      title: t("Create an account to use this page"),
+    },
+    ended: { description: t("Log in to pick up your plan."), title: t("Your session ended") },
+    login: {
+      description: t("Log in to pick up where you left off, or start free."),
+      title: t("Log in to continue"),
+    },
+  }[gate.kind];
+
+  return (
+    <Empty className={className} data-account-ask>
+      <EmptyHeader>
+        <EmptyMedia variant="icon">
+          <LockIcon aria-hidden="true" />
+        </EmptyMedia>
+        <EmptyTitle>
+          <Heading>{words.title}</Heading>
+        </EmptyTitle>
+        <EmptyDescription>{words.description}</EmptyDescription>
+      </EmptyHeader>
+      {children && <EmptyContent>{children}</EmptyContent>}
+    </Empty>
+  );
+}
+
 /**
- * A page that needs an account. Inside another page the gate holds its own button; as the whole
- * screen (`bar`) its one way in is the bottom bar's main action, and the visitor's other way
- * ("Build my plan") stays in the page.
+ * The gate inside a page's own content, such as a step of onboarding, with its links under it; as
+ * the page's whole content (`bar`), its links are the bottom bar's.
  */
 export async function AuthGate({
   bar,
   className,
-  ended: knownEnded,
-  heading: Heading = "h2",
+  ended,
+  heading,
   next,
 }: {
   bar?: boolean;
@@ -39,67 +100,45 @@ export async function AuthGate({
   next: string;
 }) {
   const t = await getExtracted();
-  const session = await getSession();
-  const ended = knownEnded ?? (!session && hasSessionCookie(await cookies()));
-  const loginHref = `/login?next=${encodeURIComponent(getPathname({ href: next, locale: await getAppLocale() }))}`;
-  const guest = Boolean(session?.user.isAnonymous);
-
-  const main = (
-    <AuthGateAction href={loginHref}>{guest ? t("Create an account") : t("Log in")}</AuthGateAction>
-  );
-
-  const startLink = !guest && !ended && (
-    <Link className={buttonVariants({ size: "lg", variant: "outline" })} href="/start">
-      {t("Build my plan")}
-    </Link>
-  );
-
-  const words = guest ? (
-    <EmptyHeader>
-      <EmptyMedia variant="icon">
-        <LockIcon aria-hidden="true" />
-      </EmptyMedia>
-      <EmptyTitle>
-        <Heading>{t("Create an account to use this page")}</Heading>
-      </EmptyTitle>
-      <EmptyDescription>{t("You keep your plan and progress.")}</EmptyDescription>
-    </EmptyHeader>
-  ) : (
-    <EmptyHeader>
-      <EmptyMedia variant="icon">
-        <LockIcon aria-hidden="true" />
-      </EmptyMedia>
-      <EmptyTitle>
-        <Heading>{ended ? t("You've been logged out") : t("Log in to continue")}</Heading>
-      </EmptyTitle>
-      {ended && <EmptyDescription>{t("Log in to get back to your plan.")}</EmptyDescription>}
-    </EmptyHeader>
-  );
+  const gate = await readGate({ ended, next });
 
   if (bar) {
     return (
       <>
-        <Empty className={cn("flex-1", className)} data-account-ask>
-          {words}
-          {startLink && <EmptyContent>{startLink}</EmptyContent>}
-        </Empty>
-        <BottomBar>
-          <BottomBarActions>{main}</BottomBarActions>
-        </BottomBar>
+        <GateMessage className={cn("flex-1", className)} gate={gate} heading={heading} />
+        <GateBar gate={gate} />
       </>
     );
   }
 
+  const loginHref = `${getPathname({ href: "/login", locale: await getAppLocale() })}?next=${gate.back}`;
+
   return (
-    <Empty className={className} data-account-ask>
-      {words}
-      <EmptyContent>
+    <GateMessage className={className} gate={gate} heading={heading}>
+      {gate.kind === "account" ? (
+        <PendingLink
+          className={buttonVariants()}
+          data-account-offer
+          href={loginHref}
+          icon={<UserPlusIcon aria-hidden="true" />}
+        >
+          {t("Create an account")}
+        </PendingLink>
+      ) : (
         <div className="flex flex-wrap gap-2">
-          {main}
-          {startLink}
+          <PendingLink
+            className={buttonVariants()}
+            href={loginHref}
+            icon={<LogInIcon aria-hidden="true" />}
+          >
+            {t("Log in")}
+          </PendingLink>
+          <Link className={buttonVariants({ variant: "outline" })} href="/start">
+            {gate.kind === "ended" ? t("Start something new") : t("Start free")}
+          </Link>
         </div>
-      </EmptyContent>
-    </Empty>
+      )}
+    </GateMessage>
   );
 }
 
@@ -134,7 +173,31 @@ export function GatedPage({
   );
 }
 
-export function AuthGatePage({
+/** A whole page's gate: its ways in are the bottom bar's. */
+async function GateBar({ gate }: { gate: Gate }) {
+  const t = await getExtracted();
+
+  return (
+    <BottomBar>
+      <BottomBarActions>
+        {gate.kind !== "account" && (
+          <Link className={buttonVariants({ size: "xl", variant: "outline" })} href="/start">
+            {gate.kind === "ended" ? t("Start something new") : t("Start free")}
+          </Link>
+        )}
+
+        <EnterLink
+          data-account-offer={gate.kind === "account" || undefined}
+          href={`/login?next=${gate.back}`}
+        >
+          {gate.kind === "account" ? t("Create an account") : t("Log in")}
+        </EnterLink>
+      </BottomBarActions>
+    </BottomBar>
+  );
+}
+
+export async function AuthGatePage({
   description,
   ended,
   next,
@@ -145,9 +208,13 @@ export function AuthGatePage({
   next: string;
   title: string;
 }) {
+  const gate = await readGate({ ended, next });
+
   return (
     <GatedPage description={description} title={title}>
-      <AuthGate bar ended={ended} next={next} />
+      <GateMessage gate={gate} />
+
+      <GateBar gate={gate} />
     </GatedPage>
   );
 }

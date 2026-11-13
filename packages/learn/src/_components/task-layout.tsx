@@ -21,10 +21,14 @@ export function TaskBody({ className, ...props }: React.ComponentProps<"div">) {
 
 export const TASK_HEADER_BAR_CLASS = "flex w-full items-center gap-2 px-4 py-2 lg:px-6 xl:py-3";
 
-/** Where the sidebar's toggle closes the end side, what comes before it gives the edge up to it. */
+/**
+ * A side keeps the bar's first 36 px line, so a taller middle (a clock) never moves the close
+ * button, and a smaller button still centers on that line. Where the sidebar's toggle closes the
+ * end side, what comes before it gives the edge up to it.
+ */
 export const TASK_HEADER_SIDE_CLASS = {
-  end: "flex min-w-fit flex-1 basis-0 justify-end lg:group-data-aside/task:[&_.edge:not([data-slot=sidebar-toggle])]:me-0",
-  start: "flex min-w-fit flex-1 basis-0 justify-start",
+  end: "flex min-h-9 min-w-fit flex-1 basis-0 items-center justify-end self-start lg:group-data-aside/task:[&_.edge:not([data-slot=sidebar-toggle])]:me-0",
+  start: "flex min-h-9 min-w-fit flex-1 basis-0 items-center justify-start self-start",
 } as const;
 
 /** The bar's room over and under its buttons, for a foot that sits level with it. */
@@ -32,7 +36,7 @@ export const BAR_PADDING_CLASS = "pt-4 pb-[max(1rem,env(safe-area-inset-bottom))
 
 /** The kit's bottom bar on a task's column. */
 export function TaskActionBar(props: Omit<React.ComponentProps<typeof BottomBar>, "className">) {
-  return <BottomBar className={TASK_BAR_ROW_CLASS} data-slot="task-action-bar" {...props} />;
+  return <BottomBar className={TASK_BAR_ROW_CLASS} {...props} />;
 }
 
 export { BottomBarActions as TaskActions } from "@zoonk/ui/components/bottom-bar";
@@ -213,6 +217,22 @@ export function TaskAsideSection({
   );
 }
 
+const USUAL_OPTIONS = 4;
+
+/** A question while it loads: its title and its options, on the gaps the real ones keep. */
+export function QuestionSkeleton({ options = USUAL_OPTIONS }: { options?: number }) {
+  return (
+    <>
+      <Skeleton className="h-7 w-5/6" />
+      <div className="flex flex-col gap-2.5">
+        {Array.from({ length: options }, (_, index) => (
+          <Skeleton className="h-12 w-full rounded-xl" key={index} />
+        ))}
+      </div>
+    </>
+  );
+}
+
 export function TaskSkeleton({
   actions,
   aside,
@@ -239,12 +259,16 @@ export function TaskSkeleton({
       <div className="border-b border-transparent">
         <div className={TASK_HEADER_BAR_CLASS}>
           <div className={TASK_HEADER_SIDE_CLASS.start}>
-            <Skeleton className="-ml-2.5 size-9 rounded-lg" />
+            <Skeleton className="-ml-3 size-11 rounded-lg lg:-ml-2.5 lg:size-10" />
           </div>
           <div className="flex min-w-0 justify-center">{title}</div>
           <div className={TASK_HEADER_SIDE_CLASS.end}>
-            {menu && <Skeleton className={cn("-mr-2.5 size-9 rounded-lg", aside && "lg:mr-0")} />}
-            {aside && <Skeleton className="-mr-2.5 hidden size-9 rounded-lg lg:block" />}
+            {menu && (
+              <Skeleton
+                className={cn("-mr-3 size-11 rounded-lg lg:-mr-2.5 lg:size-10", aside && "lg:mr-0")}
+              />
+            )}
+            {aside && <Skeleton className="-mr-2.5 hidden size-10 rounded-lg lg:block" />}
           </div>
         </div>
 

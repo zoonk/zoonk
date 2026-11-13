@@ -43,6 +43,8 @@ export function usePlanPreview() {
 
     const result = data?.status === "settled" ? data.value : null;
     setPreview((current) => resolvePlanPreview({ current, preview: result, request }));
+
+    return result;
   };
 
   return {

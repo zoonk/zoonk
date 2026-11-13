@@ -11,13 +11,12 @@ export const PAGE_COLUMN_CLASS = "w-full min-w-0";
  */
 export const INBOX_PAGE_CLASS = "lg:max-w-[calc(24rem+1px+var(--container-column))]";
 
-/** A page that holds the bottom bar fills its frame, so the bar rests on the frame's bottom. */
 export function Page({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       className={cn(
         PAGE_COLUMN_CLASS,
-        "flex flex-col gap-7 has-[>[data-slot=bottom-bar]]:flex-1",
+        "flex flex-col gap-7 has-[>[data-slot=bottom-bar]]:flex-1 *:data-[slot=bottom-bar]:mt-auto",
         className,
       )}
       data-slot="page"

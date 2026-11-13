@@ -1,5 +1,6 @@
 import { type PlayableSpokenAnswerStep } from "@zoonk/core/lesson-player/playable-lesson";
 import { parseStepContent } from "@zoonk/core/library/steps/contract";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
 import {
@@ -74,7 +75,24 @@ describe("spoken answers", () => {
     });
 
     await sayIt();
-    admission.resolve({ period: "month", reason: "limitReached", tier: "free" });
+
+    admission.resolve({
+      availableAt: new Date(Date.now() + MS_PER_DAY).toISOString(),
+      period: "rolling30Days",
+      reason: "limitReached",
+      tier: "free",
+    });
+
+    await expect
+      .element(page.getByRole("heading", { name: "You've used your free lessons" }))
+      .toBeVisible();
+
+    await expect
+      .element(
+        page.getByText(/Your next free lesson opens tomorrow, or subscribe to keep going\.$/u),
+      )
+      .toBeVisible();
+
     await expect.element(page.getByRole("link", { name: "Subscribe" })).toBeVisible();
     expect(gradeSpokenAnswer).not.toHaveBeenCalled();
   });

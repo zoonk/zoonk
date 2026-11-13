@@ -1122,7 +1122,6 @@ msgstr "Per ora, {minutes, plural, one {# minuto} other {# minuti}} al giorno. P
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
 #: src/app/[lang]/(home)/page.tsx
 #: src/app/[lang]/learn/[lessonId]/guest-plan-start.tsx
-#: src/components/auth-gate.tsx
 #: src/components/pricing/free-plan.tsx
 #: src/components/pricing/plus-pricing.tsx
 #: src/components/public/goal-form.tsx
@@ -1860,7 +1859,6 @@ msgid "{count, plural, one {# answer} other {# answers}}, needs {minimum, number
 msgstr "{count, plural, one {# risposta} other {# risposte}}, ne servono {minimum, number} per rilevare una tendenza"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
-#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 msgctxt "HHFpcy"
 msgid "Best day"
@@ -1872,7 +1870,6 @@ msgid "Throughout the week"
 msgstr "Durante la settimana"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
-#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 msgctxt "dFW9lU"
 msgid "Best time"
@@ -1929,29 +1926,29 @@ msgid "A day or a time of day needs {count, plural, one {# answer} other {# answ
 msgstr "Consideriamo un giorno o una fascia oraria solo con almeno {count, plural, one {# risposta} other {# risposte}}, quindi una sola risposta giusta per caso non basta a indicare una tendenza."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "0Fab5z"
-msgid "Within {points, plural, =0 {# points} one {# point} other {# points}}"
-msgstr "Al massimo {points, plural, =0 {# punti} one {# punto} other {# punti}} di differenza"
+msgctxt "_GJimN"
+msgid "Your best day is {day}."
+msgstr "Il tuo giorno migliore è {day}."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "yJxUpG"
-msgid "Not enough answers yet"
-msgstr "Servono ancora altre risposte"
+msgctxt "ZTJDAv"
+msgid "You answer about the same every day."
+msgstr "Ottieni risultati simili ogni giorno."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "9DVTlI"
-msgid "{score} · {count, plural, one {# answer} other {# answers}}"
-msgstr "{score} · {count, plural, one {# risposta} other {# risposte}}"
+msgctxt "RF7ki8"
+msgid "Your best time is the {time}."
+msgstr "Rendi meglio di {time}."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "WDXXIC"
-msgid "In the last 90 days"
-msgstr "Negli ultimi 90 giorni"
+msgctxt "6hLEQI"
+msgid "The time of day makes no difference."
+msgstr "Il momento della giornata non fa differenza."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "2mUitd"
-msgid "Answers"
-msgstr "Risposte"
+msgctxt "IrWIWh"
+msgid "Answer more questions to see when you do best."
+msgstr "Rispondi ad altre domande per scoprire quando rendi meglio."
 
 #: src/app/[lang]/(app)/(stats)/score/page.tsx
 msgctxt "-JqpHp"
@@ -2878,9 +2875,9 @@ msgid "Terms of Use"
 msgstr "Termini di servizio"
 
 #: src/app/[lang]/test-out/[chapterId]/page.tsx
-msgctxt "5-s6we"
-msgid "Test out of a chapter"
-msgstr "Salta un capitolo con un test"
+msgctxt "su55__"
+msgid "Chapter test"
+msgstr "Test del capitolo"
 
 #: src/app/[lang]/test-out/[chapterId]/page.tsx
 #: src/components/catalog/chapter-strip.tsx
@@ -2931,19 +2928,29 @@ msgid "Page not found"
 msgstr "Pagina non trovata"
 
 #: src/components/auth-gate.tsx
+msgctxt "DrBO6u"
+msgid "Your plan and progress move to your account, safe on any device."
+msgstr "Il tuo piano e i tuoi progressi passano al tuo account, al sicuro su ogni dispositivo."
+
+#: src/components/auth-gate.tsx
 msgctxt "xhBZ5m"
 msgid "Create an account to use this page"
 msgstr "Crea un account per usare questa pagina"
 
 #: src/components/auth-gate.tsx
-msgctxt "UtuGCk"
-msgid "You keep your plan and progress."
-msgstr "Conservi il tuo piano e i tuoi progressi."
+msgctxt "pb0Q20"
+msgid "Log in to pick up your plan."
+msgstr "Accedi per riprendere il tuo piano."
 
 #: src/components/auth-gate.tsx
-msgctxt "bBaQAY"
-msgid "You've been logged out"
+msgctxt "HVR09O"
+msgid "Your session ended"
 msgstr "La tua sessione è terminata"
+
+#: src/components/auth-gate.tsx
+msgctxt "eSXQ3z"
+msgid "Log in to pick up where you left off, or start free."
+msgstr "Accedi per riprendere da dove avevi interrotto, oppure inizia gratis."
 
 #: src/components/auth-gate.tsx
 msgctxt "acWSVG"
@@ -2951,9 +2958,14 @@ msgid "Log in to continue"
 msgstr "Accedi per continuare"
 
 #: src/components/auth-gate.tsx
-msgctxt "e3Tyso"
-msgid "Log in to get back to your plan."
-msgstr "Accedi per tornare al tuo piano."
+msgctxt "77LoTm"
+msgid "Start something new"
+msgstr "Inizia qualcosa di nuovo"
+
+#: src/components/auth-gate.tsx
+msgctxt "i7IHHZ"
+msgid "Start free"
+msgstr "Inizia gratis"
 
 #: src/components/catalog/catalog-back-to-top.tsx
 msgctxt "Gs9Kfp"

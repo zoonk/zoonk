@@ -95,12 +95,12 @@ test.describe("Far topics", () => {
 
     await page.getByRole("button", { name: new RegExp(far.name, "u") }).click();
     const sheet = page.getByRole("dialog", { name: far.name });
-    const see = sheet.getByRole("button", { name: "See the lessons" });
+    const see = sheet.getByRole("button", { name: "Get them ready" });
     await expect(see).toBeVisible();
     expect(outline.requested).toBe(0);
 
     await see.click();
-    const preparing = sheet.getByRole("status").filter({ hasText: /Preparing the lessons/u });
+    const preparing = sheet.getByRole("status").filter({ hasText: /Getting your lessons ready/u });
     await expect(preparing).toBeVisible();
     expect(outline.requested).toBe(1);
 
@@ -118,7 +118,7 @@ test.describe("Far topics", () => {
     await release();
 
     const sheet = page.getByRole("dialog", { name: far.name });
-    await expect(sheet.getByRole("button", { name: "See the lessons" })).toBeVisible();
+    await expect(sheet.getByRole("button", { name: "Get them ready" })).toBeVisible();
 
     await page.context().close();
   });

@@ -4,7 +4,6 @@ import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
 import { Switch } from "@zoonk/ui/components/switch";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
-import { ChangeSaveError } from "../_components/save-error";
 import { useFormatIsoDate, useGoalDateValues } from "../_utils/iso-date";
 import { useSentenceSpace } from "../_utils/locale";
 import { useFormatDuration } from "../_utils/time-format";
@@ -148,7 +147,7 @@ export function FullCourseSwitch() {
   const descriptionId = useId();
   const course = useFullCourse();
   const text = useFullCourseText();
-  const { change, failed, isPending } = usePlanChange();
+  const { change, isPending } = usePlanChange();
 
   if (!course?.isExam) {
     return null;
@@ -173,8 +172,6 @@ export function FullCourseSwitch() {
       <p className="text-muted-foreground text-sm text-pretty" id={descriptionId}>
         {course.on ? text.onExam(course) : t("When off, your plan ends at the exam.")}
       </p>
-
-      {failed && <ChangeSaveError />}
     </div>
   );
 }

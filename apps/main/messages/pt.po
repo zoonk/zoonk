@@ -1122,7 +1122,6 @@ msgstr "Por enquanto, {minutes, plural, one {# minuto} other {# minutos}} por di
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
 #: src/app/[lang]/(home)/page.tsx
 #: src/app/[lang]/learn/[lessonId]/guest-plan-start.tsx
-#: src/components/auth-gate.tsx
 #: src/components/pricing/free-plan.tsx
 #: src/components/pricing/plus-pricing.tsx
 #: src/components/public/goal-form.tsx
@@ -1860,7 +1859,6 @@ msgid "{count, plural, one {# answer} other {# answers}}, needs {minimum, number
 msgstr "{count, plural, one {# resposta} other {# respostas}}, mínimo de {minimum, number} para indicar um padrão"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
-#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 msgctxt "HHFpcy"
 msgid "Best day"
@@ -1872,7 +1870,6 @@ msgid "Throughout the week"
 msgstr "Ao longo da semana"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
-#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 msgctxt "dFW9lU"
 msgid "Best time"
@@ -1929,29 +1926,29 @@ msgid "A day or a time of day needs {count, plural, one {# answer} other {# answ
 msgstr "Um dia ou horário precisa ter {count, plural, one {# resposta} other {# respostas}} para contar, então uma resposta de sorte não cria um padrão."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "0Fab5z"
-msgid "Within {points, plural, =0 {# points} one {# point} other {# points}}"
-msgstr "Diferença de até {points, plural, =0 {# pontos} one {# ponto} other {# pontos}}"
+msgctxt "_GJimN"
+msgid "Your best day is {day}."
+msgstr "Seu melhor dia é {day}."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "yJxUpG"
-msgid "Not enough answers yet"
-msgstr "Ainda não há respostas suficientes"
+msgctxt "ZTJDAv"
+msgid "You answer about the same every day."
+msgstr "Seu desempenho é parecido todos os dias."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "9DVTlI"
-msgid "{score} · {count, plural, one {# answer} other {# answers}}"
-msgstr "{score} · {count, plural, one {# resposta} other {# respostas}}"
+msgctxt "RF7ki8"
+msgid "Your best time is the {time}."
+msgstr "Você se sai melhor de {time}."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "WDXXIC"
-msgid "In the last 90 days"
-msgstr "Nos últimos 90 dias"
+msgctxt "6hLEQI"
+msgid "The time of day makes no difference."
+msgstr "O horário do dia não faz diferença."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "2mUitd"
-msgid "Answers"
-msgstr "Respostas"
+msgctxt "IrWIWh"
+msgid "Answer more questions to see when you do best."
+msgstr "Responda mais perguntas para ver quando você se sai melhor."
 
 #: src/app/[lang]/(app)/(stats)/score/page.tsx
 msgctxt "-JqpHp"
@@ -2878,9 +2875,9 @@ msgid "Terms of Use"
 msgstr "Termos de uso"
 
 #: src/app/[lang]/test-out/[chapterId]/page.tsx
-msgctxt "5-s6we"
-msgid "Test out of a chapter"
-msgstr "Teste para pular um capítulo"
+msgctxt "su55__"
+msgid "Chapter test"
+msgstr "Teste do capítulo"
 
 #: src/app/[lang]/test-out/[chapterId]/page.tsx
 #: src/components/catalog/chapter-strip.tsx
@@ -2931,19 +2928,29 @@ msgid "Page not found"
 msgstr "Página não encontrada"
 
 #: src/components/auth-gate.tsx
+msgctxt "DrBO6u"
+msgid "Your plan and progress move to your account, safe on any device."
+msgstr "Seu plano e seu progresso vão para sua conta e ficam seguros em qualquer dispositivo."
+
+#: src/components/auth-gate.tsx
 msgctxt "xhBZ5m"
 msgid "Create an account to use this page"
 msgstr "Crie uma conta para usar esta página"
 
 #: src/components/auth-gate.tsx
-msgctxt "UtuGCk"
-msgid "You keep your plan and progress."
-msgstr "Você mantém seu plano e seu progresso."
+msgctxt "pb0Q20"
+msgid "Log in to pick up your plan."
+msgstr "Entre para continuar seu plano."
 
 #: src/components/auth-gate.tsx
-msgctxt "bBaQAY"
-msgid "You've been logged out"
+msgctxt "HVR09O"
+msgid "Your session ended"
 msgstr "Sua sessão terminou"
+
+#: src/components/auth-gate.tsx
+msgctxt "eSXQ3z"
+msgid "Log in to pick up where you left off, or start free."
+msgstr "Entre para continuar de onde parou ou comece de graça."
 
 #: src/components/auth-gate.tsx
 msgctxt "acWSVG"
@@ -2951,9 +2958,14 @@ msgid "Log in to continue"
 msgstr "Entre para continuar"
 
 #: src/components/auth-gate.tsx
-msgctxt "e3Tyso"
-msgid "Log in to get back to your plan."
-msgstr "Entre para voltar ao seu plano."
+msgctxt "77LoTm"
+msgid "Start something new"
+msgstr "Começar algo novo"
+
+#: src/components/auth-gate.tsx
+msgctxt "i7IHHZ"
+msgid "Start free"
+msgstr "Começar grátis"
 
 #: src/components/catalog/catalog-back-to-top.tsx
 msgctxt "Gs9Kfp"

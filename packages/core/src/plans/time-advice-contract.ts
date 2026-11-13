@@ -78,14 +78,14 @@ const suggestedTimeSchema = z
   .default(null)
   .meta({
     description:
-      "The daily time to recommend and start the learner on, never more than 4 hours a day: recommendedMinutes when it's at most that, else most's minutes when they are, else 4 hours. Show recommendedMinutes (or most) beside a focus time, so the learner sees what everything takes and can pick it. Null without a date, while not ready, and when the date has passed. With studyDays, like them, the day the goals typed together share",
+      "The daily time to recommend and start the learner on, never more than 4 hours a day: recommendedMinutes when it's at most that, else most's minutes when they are, else 4 hours. It can be shorter than recommendedMinutes (or most), which is what everything takes. Null without a date, while not ready, and when the date has passed. With studyDays, like them, the day the goals typed together share",
   });
 
 const targetDateNamedMonthSchema = z
   .boolean()
   .meta({
     description:
-      "The date is the start of the month the learner named, standing for that month: say the month, not the day",
+      "The date is the start of the month the learner named, standing for that whole month, not that day",
   });
 
 export const planTimeAdviceSchema = z
@@ -148,7 +148,7 @@ export const planTimeToCoverSchema = z
       .default(null)
       .meta({
         description:
-          "When no daily time covers everything because part of it never fits, whatever the time (a whole day covers no more than half a day): the fewest daily minutes that cover as much as any time does, and that share in whole percents (at most 0.99). Say what those minutes cover rather than everything. Null when a time covers everything, when more time still helps (the date is too close), without a date and while not ready. With studyDays, the day the goals typed together share",
+          "When no daily time covers everything because part of it never fits, whatever the time (a whole day covers no more than half a day): the fewest daily minutes that cover as much as any time does, and that share in whole percents (at most 0.99), since those minutes don't cover everything. Null when a time covers everything, when more time still helps (the date is too close), without a date and while not ready. With studyDays, the day the goals typed together share",
       }),
     pastDate: z
       .boolean()

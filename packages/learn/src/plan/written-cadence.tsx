@@ -3,7 +3,6 @@
 import { type WrittenPractice } from "@zoonk/core/plans/written-practice-contract";
 import { RadioGroup, RadioGroupItem, RadioGroupOption } from "@zoonk/ui/components/radio-group";
 import { useExtracted, useFormatter } from "next-intl";
-import { ChangeSaveError } from "../_components/save-error";
 import { usePlanScreen } from "./plan-context";
 import { PLAN_OPTION_CLASS } from "./plan-option-styles";
 import { usePlanChange } from "./use-plan-change";
@@ -46,12 +45,10 @@ function isCadence(value: unknown): value is WrittenCadence {
 }
 
 export function WrittenCadenceChoice({
-  failed,
   onChange,
   pending,
   practice,
 }: {
-  failed: boolean;
   onChange: (cadence: WrittenCadence, answered: () => void) => void;
   pending: boolean;
   practice: WrittenPractice;
@@ -97,15 +94,13 @@ export function WrittenCadenceChoice({
       >
         {words.effect(choice.shown)}
       </p>
-
-      {failed && <ChangeSaveError />}
     </fieldset>
   );
 }
 
 export function PlanWrittenPractice() {
   const { plan } = usePlanScreen();
-  const { change, failed, isPending } = usePlanChange();
+  const { change, isPending } = usePlanChange();
   const practice = plan.writtenPractice;
 
   if (!practice) {
@@ -114,7 +109,6 @@ export function PlanWrittenPractice() {
 
   return (
     <WrittenCadenceChoice
-      failed={failed}
       onChange={(cadence, answered) => change([{ cadence, kind: "setWrittenCadence" }], answered)}
       pending={isPending}
       practice={practice}
