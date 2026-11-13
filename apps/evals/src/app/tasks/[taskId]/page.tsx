@@ -1,9 +1,4 @@
-import {
-  AppBreadcrumb,
-  AppBreadcrumbItemSkeleton,
-  HomeLinkBreadcrumb,
-  TaskPageBreadcrumb,
-} from "@/components/breadcrumb";
+import { EVALS_HOME, EvalPageTop, EvalPageTopSkeleton } from "@/components/eval-page-top";
 import { getBattleJudgeCost, getBattleLeaderboard } from "@/lib/battle-loader";
 import { formatLatencyBudget } from "@/lib/format";
 import { getLeaderboardEntries } from "@/lib/leaderboard";
@@ -13,18 +8,9 @@ import { supportsJudgeMode } from "@/lib/types";
 import { getModelsToRun, getModelsWithResults } from "@/lib/utils";
 import { RUNS_PER_TEST_CASE } from "@/tasks";
 import { GATEWAY_PRICES } from "@zoonk/ai/pricing/call-cost";
-import { BreadcrumbSeparator } from "@zoonk/ui/components/breadcrumb";
 import { buttonVariants } from "@zoonk/ui/components/button";
-import {
-  ContainerBody,
-  ContainerDescription,
-  ContainerHeader,
-  ContainerHeaderGroup,
-  ContainerHeaderSkeleton,
-  ContainerTitle,
-} from "@zoonk/ui/components/container";
+import { ContainerBody, ContainerDescription } from "@zoonk/ui/components/container";
 import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
-import { MessageSquareTextIcon, SwordsIcon } from "lucide-react";
 import { type Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -41,36 +27,23 @@ export async function generateMetadata({ params }: TaskRouteProps): Promise<Meta
   return { title: task.name };
 }
 
-async function TaskBreadcrumb({ params }: TaskRouteProps) {
-  const { task } = await getTaskRouteFromParams(params);
-
-  return <TaskPageBreadcrumb taskName={task.name} />;
-}
-
-async function TaskHeaderActions({ params }: TaskRouteProps) {
-  const { task, taskId } = await getTaskRouteFromParams(params);
-  const modelsReadyForBattle = await getModelsWithCompleteOutputs({ runsPerTestCase: 1, task });
-  const canRunBattle = modelsReadyForBattle.length >= 2;
-
+function TaskHeaderActions({ canRunBattle, taskId }: { canRunBattle: boolean; taskId: string }) {
   return (
-    // Hangs over the facts line's row, so the line sits where it does on a task with no buttons.
-    <div className="flex min-w-0 flex-wrap items-center gap-2 sm:-my-2.5 sm:justify-end">
-      {!canRunBattle && (
-        <p className="text-muted-foreground text-xs">A battle needs 2 models with every output.</p>
-      )}
-
-      <Link className={buttonVariants({ variant: "outline" })} href={`/tasks/${taskId}/battles`}>
-        <MessageSquareTextIcon className="size-4" />
+    <>
+      <Link
+        className={buttonVariants({ size: "sm", variant: "outline" })}
+        href={`/tasks/${taskId}/battles`}
+      >
         Judge comments
       </Link>
 
       <form action={runBattleModeAction}>
         <input name="taskId" type="hidden" value={taskId} />
-        <SubmitButton disabled={!canRunBattle} icon={<SwordsIcon />}>
+        <SubmitButton disabled={!canRunBattle} size="sm">
           Run battle
         </SubmitButton>
       </form>
-    </div>
+    </>
   );
 }
 
@@ -82,27 +55,36 @@ function formatTestCases(count: number): string {
 }
 
 async function TaskHeader({ params }: TaskRouteProps) {
-  const { task } = await getTaskRouteFromParams(params);
-
+  const { task, taskId } = await getTaskRouteFromParams(params);
   const judgeModeSupported = supportsJudgeMode(task);
 
-  return (
-    <ContainerHeader>
-      <ContainerHeaderGroup className="w-full">
-        <ContainerTitle>{task.name}</ContainerTitle>
-        <ContainerDescription className={PROSE_MEASURE_CLASS}>
-          {task.description}.
-        </ContainerDescription>
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <p className="text-muted-foreground font-mono text-xs">
-            {formatTestCases(task.testCases.length)}
-            {task.latencyBudget && ` · Latency budget: ${formatLatencyBudget(task.latencyBudget)}`}
-          </p>
+  const modelsReadyForBattle = judgeModeSupported
+    ? await getModelsWithCompleteOutputs({ runsPerTestCase: 1, task })
+    : [];
 
-          {judgeModeSupported && <TaskHeaderActions params={params} />}
-        </div>
-      </ContainerHeaderGroup>
-    </ContainerHeader>
+  const canRunBattle = modelsReadyForBattle.length >= 2;
+
+  return (
+    <EvalPageTop
+      actions={
+        judgeModeSupported && <TaskHeaderActions canRunBattle={canRunBattle} taskId={taskId} />
+      }
+      parent={EVALS_HOME}
+      title={task.name}
+    >
+      <ContainerDescription className={PROSE_MEASURE_CLASS}>
+        {task.description}.
+      </ContainerDescription>
+      <p className="text-muted-foreground font-mono text-xs">
+        {formatTestCases(task.testCases.length)}
+        {task.latencyBudget && ` · Latency budget: ${formatLatencyBudget(task.latencyBudget)}`}
+      </p>
+      {judgeModeSupported && !canRunBattle && (
+        <p className="text-muted-foreground text-xs">
+          Run battle needs 2 models with every output.
+        </p>
+      )}
+    </EvalPageTop>
   );
 }
 
@@ -149,16 +131,8 @@ async function TaskModels({ params }: TaskRouteProps) {
 export default function TaskPage({ params }: TaskRouteProps) {
   return (
     <main className="flex flex-col gap-4">
-      <AppBreadcrumb>
-        <HomeLinkBreadcrumb />
-        <BreadcrumbSeparator />
-        <Suspense fallback={<AppBreadcrumbItemSkeleton />}>
-          <TaskBreadcrumb params={params} />
-        </Suspense>
-      </AppBreadcrumb>
-
       {/* One boundary: the title, the table and the list arrive together, so none pushes another down. */}
-      <Suspense fallback={<ContainerHeaderSkeleton />}>
+      <Suspense fallback={<EvalPageTopSkeleton />}>
         <TaskHeader params={params} />
 
         <ContainerBody>

@@ -1,13 +1,8 @@
-import { AppBreadcrumb, HomePageBreadcrumb } from "@/components/breadcrumb";
+import { EvalPageTop } from "@/components/eval-page-top";
 import { countScoredModels } from "@/lib/task-results";
 import { TASK_GROUPS } from "@/tasks";
 import { buttonVariants } from "@zoonk/ui/components/button";
-import {
-  ContainerBody,
-  ContainerHeader,
-  ContainerHeaderGroup,
-  ContainerTitle,
-} from "@zoonk/ui/components/container";
+import { ContainerBody } from "@zoonk/ui/components/container";
 import "@zoonk/ui/globals.css";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -37,19 +32,14 @@ async function TaskFinderWithResults() {
 export default function Home() {
   return (
     <main className="flex flex-col gap-4">
-      <AppBreadcrumb>
-        <HomePageBreadcrumb />
-      </AppBreadcrumb>
-
-      <ContainerHeader className="items-center">
-        <ContainerHeaderGroup>
-          <ContainerTitle>Evals</ContainerTitle>
-        </ContainerHeaderGroup>
-
-        <Link className={buttonVariants({ size: "sm", variant: "outline" })} href="/audio-test">
-          Audio test
-        </Link>
-      </ContainerHeader>
+      <EvalPageTop
+        actions={
+          <Link className={buttonVariants({ size: "sm", variant: "outline" })} href="/audio-test">
+            Audio test
+          </Link>
+        }
+        title="Evals"
+      />
 
       <ContainerBody>
         <Suspense fallback={<TaskFinder groups={GROUPS} />}>

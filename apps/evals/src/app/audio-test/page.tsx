@@ -1,15 +1,5 @@
-import { AppBreadcrumb, HomeLinkBreadcrumb } from "@/components/breadcrumb";
-import {
-  BreadcrumbItem,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@zoonk/ui/components/breadcrumb";
-import {
-  ContainerBody,
-  ContainerHeader,
-  ContainerHeaderGroup,
-  ContainerTitle,
-} from "@zoonk/ui/components/container";
+import { EVALS_HOME, EvalPageTop } from "@/components/eval-page-top";
+import { ContainerBody } from "@zoonk/ui/components/container";
 import { type Metadata } from "next";
 import { AudioTestForm } from "./form";
 
@@ -17,22 +7,10 @@ export const metadata: Metadata = { title: "Audio test" };
 
 export default function AudioTestPage() {
   return (
-    <main className="flex flex-col gap-4">
-      <AppBreadcrumb>
-        <HomeLinkBreadcrumb />
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbPage>Audio test</BreadcrumbPage>
-        </BreadcrumbItem>
-      </AppBreadcrumb>
+    <main className="flex min-h-dvh flex-col gap-4">
+      <EvalPageTop parent={EVALS_HOME} title="Audio test" />
 
-      <ContainerHeader>
-        <ContainerHeaderGroup>
-          <ContainerTitle>Audio test</ContainerTitle>
-        </ContainerHeaderGroup>
-      </ContainerHeader>
-
-      <ContainerBody>
+      <ContainerBody className="sm:flex-1">
         <AudioTestForm />
       </ContainerBody>
     </main>

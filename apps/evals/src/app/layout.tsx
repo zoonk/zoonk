@@ -9,7 +9,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html className={FONT_VARIABLES} lang="en">
       <body className="font-sans antialiased">
-        <Container>{children}</Container>
+        <Container className="[--page-bottom:3rem] [--page-gutter:1rem] sm:[--page-gutter:2rem] lg:[--page-bottom:4rem] lg:[--page-gutter:2.5rem]">
+          {children}
+        </Container>
       </body>
     </html>
   );

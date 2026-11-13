@@ -1,10 +1,4 @@
-import {
-  AppBreadcrumb,
-  AppBreadcrumbItemSkeleton,
-  HomeLinkBreadcrumb,
-  ModelPageBreadcrumb,
-  TaskLinkBreadcrumb,
-} from "@/components/breadcrumb";
+import { EvalPageTop, EvalPageTopSkeleton } from "@/components/eval-page-top";
 import { getTaskResults } from "@/lib/eval-runner";
 import { aggregateEvalResults } from "@/lib/eval-summary";
 import { getModelById, getModelDisplayName } from "@/lib/models";
@@ -15,14 +9,7 @@ import {
 } from "@/lib/output-loader";
 import { createReviewExportEntries } from "@/lib/review-export";
 import { RUNS_PER_TEST_CASE } from "@/tasks";
-import { BreadcrumbSeparator } from "@zoonk/ui/components/breadcrumb";
-import {
-  ContainerBody,
-  ContainerHeader,
-  ContainerHeaderGroup,
-  ContainerHeaderSkeleton,
-  ContainerTitle,
-} from "@zoonk/ui/components/container";
+import { ContainerBody } from "@zoonk/ui/components/container";
 import { type Metadata } from "next";
 import { redirect } from "next/navigation";
 import { Suspense, cache } from "react";
@@ -57,44 +44,22 @@ export async function generateMetadata({ params }: TaskModelRouteProps): Promise
   return { title: `${getModelDisplayName(model)} on ${task.name}` };
 }
 
-function TaskModelBreadcrumbSkeleton() {
-  return (
-    <>
-      <AppBreadcrumbItemSkeleton className="w-32" />
-      <BreadcrumbSeparator />
-      <AppBreadcrumbItemSkeleton className="w-24" />
-    </>
-  );
-}
-
-async function TaskModelBreadcrumb({ params }: TaskModelRouteProps) {
-  const { model, task } = await getTaskModelRouteFromParams(params);
-
-  return (
-    <>
-      <TaskLinkBreadcrumb taskId={task.id} taskName={task.name} />
-      <BreadcrumbSeparator />
-      <ModelPageBreadcrumb modelName={getModelDisplayName(model)} />
-    </>
-  );
-}
-
 async function TaskModelHeader({ params }: TaskModelRouteProps) {
-  const { model, outputStatus, results, taskName } = await getTaskModelContentFromParams(params);
+  const { model, outputStatus, results, taskId, taskName } =
+    await getTaskModelContentFromParams(params);
+
   const scored = results?.results.length ?? 0;
 
   return (
-    <ContainerHeader>
-      <ContainerHeaderGroup>
-        <ContainerTitle>
-          {getModelDisplayName(model)} on {taskName}
-        </ContainerTitle>
-        <p className="text-muted-foreground font-mono text-xs">
-          {outputStatus.completedOutputs} of {outputStatus.totalOutputs} outputs written · {scored}{" "}
-          scored
-        </p>
-      </ContainerHeaderGroup>
-    </ContainerHeader>
+    <EvalPageTop
+      parent={{ href: `/tasks/${taskId}`, label: taskName }}
+      title={`${getModelDisplayName(model)} on ${taskName}`}
+    >
+      <p className="text-muted-foreground font-mono text-xs">
+        {outputStatus.completedOutputs} of {outputStatus.totalOutputs} outputs written · {scored}{" "}
+        scored
+      </p>
+    </EvalPageTop>
   );
 }
 
@@ -170,16 +135,8 @@ async function TaskModelResults({ params }: TaskModelRouteProps) {
 export default function TaskModelPage({ params }: TaskModelRouteProps) {
   return (
     <main className="flex flex-col gap-4">
-      <AppBreadcrumb>
-        <HomeLinkBreadcrumb />
-        <BreadcrumbSeparator />
-        <Suspense fallback={<TaskModelBreadcrumbSkeleton />}>
-          <TaskModelBreadcrumb params={params} />
-        </Suspense>
-      </AppBreadcrumb>
-
       {/* One boundary: every part reads the same results, so they arrive together and none pushes another. */}
-      <Suspense fallback={<ContainerHeaderSkeleton />}>
+      <Suspense fallback={<EvalPageTopSkeleton />}>
         <TaskModelHeader params={params} />
 
         <ContainerBody>
