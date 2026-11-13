@@ -9,7 +9,7 @@ import {
 import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
-import { DETAIL_PRIMARY_CLASS, PAGE_ARTICLE_CLASS } from "../_components/detail-page";
+import { DETAIL_PRIMARY_CLASS } from "../_components/detail-page";
 import { EnterButton } from "../_components/enter-button";
 import { HelpLimitNotice } from "../_components/help-limit-notice";
 import { Page } from "../_components/page";
@@ -43,7 +43,7 @@ export function ChooserLayout({
         asideClassName={asideClassName}
         asideLabel={t("The picked mock exam")}
       >
-        <article className={PAGE_ARTICLE_CLASS}>
+        <article className="flex min-w-0 flex-col">
           {bar}
           <Page className="gap-8">{children}</Page>
         </article>

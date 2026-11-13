@@ -192,7 +192,7 @@ export function placeFindings(page: PageWords): Finding[] {
   return page.kind === "app" && page.actionPinned === false
     ? [
         {
-          check: "Rule 4 main action",
+          check: "R2 main action pinned",
           level: "warn",
           message: `"${page.action ?? ""}" is the screen's one main action and isn't pinned in the bottom bar`,
         },
@@ -213,7 +213,7 @@ export function titleGapFindings(phone: PageWords, laptop: PageWords): Finding[]
 
   return [
     {
-      check: "Rule 3 page top",
+      check: "E8 page top",
       level: "warn",
       message: `the title has ${phone.titleGap} px above it on a phone and ${laptop.titleGap} px on a laptop: one page top, the same on both`,
       unit: "px",

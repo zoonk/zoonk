@@ -1,7 +1,8 @@
 "use client";
 
 import { usePathname } from "@/i18n/navigation";
-import { LearnBackLink, LearnSectionBar } from "@zoonk/learn/bar";
+import { LearnSectionBar } from "@zoonk/learn/bar";
+import { useExtracted } from "next-intl";
 
 export type SectionLink = { href: string; title: string };
 
@@ -18,39 +19,23 @@ function useSectionParent({ hub, parents }: SectionPlaces): SectionLink | undefi
   return parents?.find((parent) => pathname.startsWith(`${parent.href}/`)) ?? hub;
 }
 
+/** A `root` section's pages are in the sidebar, so from `lg` only a page under a parent links back. */
 export function SectionBarFrame({
-  backHref,
-  className,
   end,
+  root,
   ...places
-}: SectionPlaces & { backHref: string; className?: string; end?: React.ReactNode }) {
+}: SectionPlaces & { end?: React.ReactNode; root?: boolean }) {
+  const t = useExtracted();
   const parent = useSectionParent(places);
+  const isRoot = root && (!parent || parent === places.hub);
 
   return (
     <LearnSectionBar
-      backHref={backHref}
-      className={className}
+      back={{ href: "/today", label: t("Today") }}
       end={end}
       parent={parent && { href: parent.href, label: parent.title }}
+      root={isRoot}
       title={parent ? undefined : places.hub.title}
-    />
-  );
-}
-
-/** From a tablet up the bar is gone and the tabs mark the hub's pages, so only a page under a tab links back to it. */
-export function SectionParentLink(places: SectionPlaces) {
-  const parent = useSectionParent(places);
-
-  if (!parent || parent === places.hub) {
-    return null;
-  }
-
-  return (
-    <LearnBackLink
-      className="hidden self-start md:inline-flex"
-      crumb
-      href={parent.href}
-      label={parent.title}
     />
   );
 }

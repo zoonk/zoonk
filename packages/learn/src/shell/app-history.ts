@@ -72,8 +72,7 @@ function isOtherAppPage({
   );
 }
 
-/** The host calls it on each app page, grouping a section's pages by `section`. */
-export function markAppEntry(section?: string): void {
+function writeCurrentMark(fields: { name?: string; section?: string }): void {
   const navigation = getNavigation();
   const entry = navigation?.currentEntry;
 
@@ -83,11 +82,23 @@ export function markAppEntry(section?: string): void {
 
   const kept = new Set(navigation.entries().map((item) => item.key));
   const marks = Object.fromEntries(Object.entries(getMarks()).filter(([key]) => kept.has(key)));
+  const path = getPathname(entry.url);
+  const current = getAppMark(entry) ?? {};
 
   tabStorage.set(
     APP_ENTRIES_KEY,
-    JSON.stringify({ ...marks, [entry.key]: { path: getPathname(entry.url), section } }),
+    JSON.stringify({ ...marks, [entry.key]: { ...current, ...fields, path } }),
   );
+}
+
+/** The host calls it on each app page, grouping a section's pages by `section`. */
+export function markAppEntry(section?: string): void {
+  writeCurrentMark({ section });
+}
+
+/** A page's bar names its entry, so a back link that returns to it can say where it goes. */
+export function nameAppEntry(name: string): void {
+  writeCurrentMark({ name });
 }
 
 /** Returns whether it went back; otherwise the link navigates. */
@@ -133,17 +144,25 @@ export function subscribeToHistory(onChange: () => void): () => void {
   return () => controller.abort();
 }
 
-/** Returns whether it found an app page; otherwise the link goes to its default. */
-export function goBackToApp(): boolean {
-  const navigation = getNavigation();
+function findAppEntryBehind(navigation: Navigation | null): NavigationHistoryEntry | undefined {
   const index = navigation?.currentEntry?.index ?? 0;
   const entries = navigation?.entries().slice(0, index) ?? [];
   const here = getPathname(globalThis.location.href);
   const section = getAppSection(navigation?.currentEntry ?? null);
 
-  const entry = entries.findLast((candidate) =>
-    isOtherAppPage({ entry: candidate, here, section }),
-  );
+  return entries.findLast((candidate) => isOtherAppPage({ entry: candidate, here, section }));
+}
+
+/** The name of the page `goBackToApp` returns to, when that page's bar named it. */
+export function appBackName(): string | null {
+  const mark = getAppMark(findAppEntryBehind(getNavigation()) ?? null);
+  return mark && "name" in mark && typeof mark.name === "string" ? mark.name : null;
+}
+
+/** Returns whether it found an app page; otherwise the link goes to its default. */
+export function goBackToApp(): boolean {
+  const navigation = getNavigation();
+  const entry = findAppEntryBehind(navigation);
 
   if (!(navigation && entry)) {
     return false;
