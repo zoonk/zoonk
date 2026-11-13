@@ -5,7 +5,6 @@ import { getExtracted } from "next-intl/server";
 import { ExampleDayCard } from "./example-card";
 import { toExampleSteps } from "./example-steps";
 import { getHomeHeadline } from "./home-headline";
-import { HERO_GOAL_ID } from "./home-ids";
 import { getExampleSet } from "./landing-examples";
 import { LandingGoalBox } from "./landing-goal-box";
 
@@ -61,7 +60,7 @@ export async function HomeHero({ startPath }: { startPath: string }) {
         </p>
 
         <div className="mt-7 max-w-148 lg:mt-9">
-          <LandingGoalBox action={startPath} example="exam" id={HERO_GOAL_ID} />
+          <LandingGoalBox action={startPath} example="exam" id="goal" />
         </div>
       </div>
 

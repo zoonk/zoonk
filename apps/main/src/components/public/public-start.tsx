@@ -2,6 +2,7 @@ import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowRightIcon } from "lucide-react";
 import { type ReactNode } from "react";
+import { PageStartMark } from "./page-start";
 
 /** The start row's short note steps aside for it: the reason matters more than the reassurance. */
 export const START_FAILURE_SLOT = "start-failure";
@@ -51,6 +52,7 @@ export function StartBlock({
         className,
       )}
     >
+      <PageStartMark />
       {children}
 
       {note && (

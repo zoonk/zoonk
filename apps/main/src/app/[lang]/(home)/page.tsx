@@ -2,10 +2,9 @@ import { UsageDataNotice } from "@/app/[lang]/usage-data-notice";
 import { VisitorSummarySeed } from "@/components/learner/learner-summary-seed";
 import { JsonLd } from "@/components/public/json-ld";
 import { PUBLIC_CONTAINER_CLASS } from "@/components/public/landing-styles";
+import { StickyStartBar } from "@/components/public/page-start";
 import { PublicFooter } from "@/components/public/public-footer";
-import { PUBLIC_FOOTER_ID } from "@/components/public/public-ids";
 import { PublicViewTracker } from "@/components/public/public-view-tracker";
-import { StickyStartBar } from "@/components/public/sticky-start-bar";
 import { Link, getPathname } from "@/i18n/navigation";
 import { getLocalizedAlternates } from "@/lib/metadata/localized-url";
 import { HOME_JSON_LD } from "@/lib/public/structured-data";
@@ -22,7 +21,6 @@ import { FinalCall } from "./_components/final-call";
 import { HomeFaq } from "./_components/home-faq";
 import { HomeHeader } from "./_components/home-header";
 import { HomeHero } from "./_components/home-hero";
-import { FINAL_GOAL_ID, HERO_GOAL_ID } from "./_components/home-ids";
 import { LanguageSection } from "./_components/language-section";
 import { TopicSection } from "./_components/topic-section";
 
@@ -78,10 +76,7 @@ export default async function HomePage() {
 
       <PublicFooter pathname="/" />
 
-      <StickyStartBar
-        afterId={HERO_GOAL_ID}
-        hideWhileVisibleIds={[FINAL_GOAL_ID, PUBLIC_FOOTER_ID]}
-      >
+      <StickyStartBar className="sm:hidden">
         <Link className={cn(buttonVariants({ size: "lg" }), "w-full")} href="/start">
           {t("Build my plan")}
         </Link>

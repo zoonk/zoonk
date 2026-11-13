@@ -1,4 +1,5 @@
 import { CurrentPageLoginLink } from "@/components/current-page-login-link";
+import { VisitorStartButton } from "@/components/public/visitor-start";
 import { Link } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
 import { buttonVariants } from "@zoonk/ui/components/button";
@@ -40,6 +41,8 @@ async function VisitorAccount() {
           <span className="min-w-0 flex-1 truncate">{t("Pricing")}</span>
         </Link>
       </SidebarTooltip>
+
+      <VisitorStartButton />
 
       <SidebarTooltip label={t("Log in")}>
         <CurrentPageLoginLink

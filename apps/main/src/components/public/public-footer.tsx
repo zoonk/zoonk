@@ -3,7 +3,7 @@ import { ZoonkLogo } from "@zoonk/ui/components/zoonk-logo";
 import { getExtracted } from "next-intl/server";
 import { FooterLanguages } from "./footer-languages";
 import { PUBLIC_CONTAINER_CLASS } from "./landing-styles";
-import { PUBLIC_FOOTER_ID } from "./public-ids";
+import { PageStartMark } from "./page-start";
 
 /** Read once when the server starts, so rendering never depends on the clock. */
 const COPYRIGHT_YEAR = String(new Date().getFullYear());
@@ -15,7 +15,9 @@ export async function PublicFooter({ pathname }: { pathname?: string }) {
   const t = await getExtracted();
 
   return (
-    <footer className="border-t" id={PUBLIC_FOOTER_ID}>
+    <footer className="border-t">
+      {/* A phone's start bar would cover the footer's last row. */}
+      <PageStartMark />
       <div className={PUBLIC_CONTAINER_CLASS}>
         {/* The logo and the globe share a column, so the links and the languages start on one edge. */}
         <div className="text-muted-foreground grid grid-cols-[1.5rem_minmax(0,1fr)] items-start gap-x-7 py-6 text-sm">

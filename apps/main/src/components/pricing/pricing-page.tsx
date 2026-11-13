@@ -1,13 +1,11 @@
-import { FREE_PLAN_START_ID } from "@/components/pricing/free-plan";
+import { PlusAdds } from "@/components/pricing/plus-adds";
 import {
-  PRICING_CLOSE_ID,
   PricingClose,
   PricingHero,
   PricingPlans,
   PricingQuestions,
   getPlusPricingMetadata,
 } from "@/components/pricing/plus-pricing";
-import { PricingCovers } from "@/components/pricing/pricing-covers";
 import { PublicPage } from "@/components/public/public-page";
 import { getPlusPrices } from "@/data/subscriptions/get-plus-prices";
 import { getLocalizedAlternates } from "@/lib/metadata/localized-url";
@@ -34,13 +32,10 @@ export async function PricingPage({ currency }: { currency: string }) {
   const { monthlyPrice, yearlyPrice } = await getPlusPrices(readCurrency(currency));
 
   return (
-    <PublicPage
-      ownStart={{ againIds: [PRICING_CLOSE_ID], id: FREE_PLAN_START_ID }}
-      pathname="/pricing"
-    >
+    <PublicPage ownStart pathname="/pricing">
       <PricingHero />
       <PricingPlans monthlyPrice={monthlyPrice} yearlyPrice={yearlyPrice} />
-      <PricingCovers />
+      <PlusAdds />
       <PricingQuestions />
       <PricingClose hasChoice={Boolean(monthlyPrice && yearlyPrice)} />
     </PublicPage>

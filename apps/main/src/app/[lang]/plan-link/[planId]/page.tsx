@@ -26,8 +26,6 @@ type Props = PageProps<"/[lang]/plan-link/[planId]">;
 
 const MINUTES_PER_HOUR = 60;
 
-const PLAN_LINK_START_ID = "plan-link-start";
-
 function approximateMinutes(hours: number): number {
   const minutes = Math.round(hours * MINUTES_PER_HOUR);
   return minutes < MINUTES_PER_HOUR ? minutes : Math.round(hours) * MINUTES_PER_HOUR;
@@ -72,7 +70,7 @@ async function PlanLinkBody({ params }: Props) {
   );
 
   return (
-    <PublicPage ownStart={{ id: PLAN_LINK_START_ID }}>
+    <PublicPage ownStart>
       <section aria-labelledby="plan-link-title" className={cn(HERO_CLASS, "pb-24 sm:pb-32")}>
         <PlanLinkTracker planId={planId} />
 
@@ -105,7 +103,6 @@ async function PlanLinkBody({ params }: Props) {
               <Link
                 className={getStartControlClassName()}
                 href={getPlanLinkStartHref({ goal: outline.subject?.title ?? "", planId })}
-                id={PLAN_LINK_START_ID}
               >
                 {t({
                   description:

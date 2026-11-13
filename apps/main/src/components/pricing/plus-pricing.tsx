@@ -3,6 +3,7 @@ import {
   PUBLIC_BAND_CLASS,
   PUBLIC_CONTAINER_CLASS,
 } from "@/components/public/landing-styles";
+import { PageStartMark } from "@/components/public/page-start";
 import { getStartControlClassName } from "@/components/public/public-start";
 import { Link } from "@/i18n/navigation";
 import { getFreePlanLimits } from "@zoonk/core/entitlements/plan-limits";
@@ -32,10 +33,6 @@ export async function getPlusPricingMetadata(): Promise<Pick<Metadata, "descript
   };
 }
 
-function renderRest(chunks: ReactNode) {
-  return <span className="text-muted-foreground">{chunks}</span>;
-}
-
 export async function PricingHero() {
   const t = await getExtracted();
 
@@ -47,16 +44,18 @@ export async function PricingHero() {
       <p className={EYEBROW_CLASS}>{t("Pricing")}</p>
 
       <h1 className="text-headline mt-4 max-w-[16em]" id="pricing-title">
-        {t.rich("Start free. <rest>Plus when you want everything.</rest>", { rest: renderRest })}
+        {t({
+          description:
+            "The pricing page's headline. “Your date” is the day the reader is studying for: an exam, a move, a new job.",
+          message: "Follow your plan all the way to your date.",
+        })}
       </h1>
 
       <p className="text-lead mt-4 max-w-152">
         {t({
-          description:
-            "“Free” and “Plus” are the names of the two subscription tiers. {goals} is how many goals a learner without Plus can study at once, not how many new goals they start per day or month.",
+          description: "“Plus” is the name of the subscription.",
           message:
-            "Zoonk builds a study plan for each goal you set: an exam, a language, a new career. Free: {goals, plural, one {one goal} other {# goals}} at a time. Plus: every goal and every lesson.",
-          values: { goals: getFreePlanLimits().activeGoals ?? 0 },
+            "Plus has no monthly limit on lessons, so you study as much as each day's plan asks for.",
         })}
       </p>
     </section>
@@ -65,7 +64,7 @@ export async function PricingHero() {
 
 const PRICING_BILLING_SWITCH = "pricing-billing";
 
-export const PRICING_CLOSE_ID = "pricing-close";
+const PRICING_CLOSE_ID = "pricing-close";
 
 /** Side by side once each card fits its name and the billing switch on one row (`@3xl` in `plan-includes`). */
 const PLAN_CARDS_CLASS = "grid gap-4 @3xl:grid-cols-2";
@@ -140,6 +139,7 @@ async function VisitorPricingClose({ hasChoice }: { hasChoice: boolean }) {
       </h2>
 
       <div className="mt-7 flex flex-wrap justify-center gap-2">
+        <PageStartMark />
         <Link className={getStartControlClassName()} href="/start">
           {t("Build my plan")}
         </Link>

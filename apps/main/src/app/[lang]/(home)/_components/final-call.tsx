@@ -1,7 +1,6 @@
 import { PUBLIC_CONTAINER_CLASS } from "@/components/public/landing-styles";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted } from "next-intl/server";
-import { FINAL_GOAL_ID } from "./home-ids";
 import { LandingGoalBox } from "./landing-goal-box";
 
 const TITLE_ID = "final-call-title";
@@ -40,7 +39,7 @@ export async function FinalCall({ startPath }: { startPath: string }) {
           <LandingGoalBox
             action={startPath}
             example="language"
-            id={FINAL_GOAL_ID}
+            id="goal-again"
             noteClassName="text-center"
           />
         </div>
