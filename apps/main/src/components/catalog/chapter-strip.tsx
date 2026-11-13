@@ -63,7 +63,6 @@ function CourseMap({
               className={cn(
                 "hidden min-w-0 flex-col text-xs leading-4 sm:flex",
                 index < groups.length - 1 && "pe-2",
-                index === groups.length - 1 && index > 0 && "items-end text-right",
               )}
             >
               <span
@@ -172,6 +171,7 @@ export async function ChapterStrip({
                   aria-hidden="true"
                   className={cn(
                     "absolute top-2 left-2 -translate-x-1/2 -translate-y-1/2 bg-(--route-fill)",
+                    offset > 1 && "max-sm:top-[0.65rem]",
                     getRouteStationClass(isHere ? "page" : "stop"),
                   )}
                 />

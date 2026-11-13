@@ -18,8 +18,10 @@ export async function PublicFooter({ pathname }: { pathname?: string }) {
     <footer className="border-t" id={PUBLIC_FOOTER_ID}>
       <div className={PUBLIC_CONTAINER_CLASS}>
         {/* The logo and the globe share a column, so the links and the languages start on one edge. */}
-        <div className="text-muted-foreground grid grid-cols-[1.5rem_minmax(0,1fr)] items-center gap-x-7 gap-y-1 py-8 text-sm">
-          <ZoonkLogo className="text-foreground size-6" />
+        <div className="text-muted-foreground grid grid-cols-[1.5rem_minmax(0,1fr)] items-start gap-x-7 py-6 text-sm">
+          <span className="flex h-11 items-center">
+            <ZoonkLogo className="text-foreground size-6" />
+          </span>
 
           <div className="flex flex-wrap items-center gap-x-6">
             <nav aria-label={t("Footer")} className="flex flex-wrap gap-x-6">
@@ -40,7 +42,9 @@ export async function PublicFooter({ pathname }: { pathname?: string }) {
               </Link>
             </nav>
 
-            <p className="sm:ml-auto">{t("© {year} Zoonk", { year: COPYRIGHT_YEAR })}</p>
+            <p className="flex min-h-11 items-center sm:ml-auto">
+              {t("© {year} Zoonk", { year: COPYRIGHT_YEAR })}
+            </p>
           </div>
 
           <FooterLanguages pathname={pathname} />

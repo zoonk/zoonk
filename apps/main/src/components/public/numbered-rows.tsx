@@ -3,7 +3,7 @@ type NumberedRow = { description?: string; id: string; title: React.ReactNode };
 function NumberedRowContent({ number, row }: { number: number; row: NumberedRow }) {
   return (
     <>
-      <span className="text-faint w-5 shrink-0 font-mono text-xs leading-5 tabular-nums">
+      <span className="text-faint w-4 shrink-0 font-mono text-xs leading-5 tabular-nums">
         {number}
       </span>
 

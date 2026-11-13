@@ -103,8 +103,7 @@ const ZONE_CLASS = cn(
   "-mr-2.5 ml-[calc(-1*var(--route-inset)-0.625rem)] pr-2.5 pl-[calc(var(--route-inset)+0.625rem)]",
 );
 
-const ZONE_ROW_CLASS =
-  "relative flex gap-4 py-4 text-reading leading-snug font-semibold sm:text-base";
+const ZONE_ROW_CLASS = "relative flex gap-4 py-4 text-base leading-snug font-semibold sm:text-lg";
 
 function ZoneStation({ className }: { className?: string }) {
   return (

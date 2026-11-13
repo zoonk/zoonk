@@ -95,7 +95,7 @@ export async function OutlineChapterList({
 
       <CourseChapterFold
         chapterIds={folded.map((item) => item.chapterId)}
-        className="mt-1 ml-10"
+        className="mt-1 mb-4 ml-10"
         courseId={courseId}
         less={t("Show fewer chapters")}
         more={t("{count, plural, one {Show # more chapter} other {Show # more chapters}}", {

@@ -28,7 +28,7 @@ export async function ExampleCardHead({
   return (
     <div className="flex items-start justify-between gap-3">
       <div className="flex min-w-0 flex-col gap-0.5">
-        <p className="text-lg leading-snug font-semibold tracking-[-0.015em] text-pretty">
+        <p className="text-base leading-snug font-semibold tracking-[-0.015em] text-pretty">
           {title}
         </p>
         <p className="text-muted-foreground text-compact">

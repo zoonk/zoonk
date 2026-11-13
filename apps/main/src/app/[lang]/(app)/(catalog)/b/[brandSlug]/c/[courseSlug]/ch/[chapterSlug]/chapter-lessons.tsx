@@ -37,7 +37,7 @@ export async function ChapterLessons({
         </span>
       </div>
 
-      <ChapterLessonRows chapter={chapter} params={params} />
+      <ChapterLessonRows chapter={chapter} className="-mb-3" params={params} />
     </PageSection>
   );
 }

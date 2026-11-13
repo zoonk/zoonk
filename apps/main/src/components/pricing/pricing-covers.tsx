@@ -107,7 +107,7 @@ async function FreeMonth() {
   const perWeekday = Math.max(1, Math.round(perMonth / WEEKDAYS_A_MONTH));
 
   return (
-    <div className="flex flex-col gap-3 border-t pt-6">
+    <div className="flex flex-col gap-2 border-t pt-6">
       <p className="text-sm font-semibold">{t("Any other goal")}</p>
 
       <p className="text-muted-foreground text-compact">

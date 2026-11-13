@@ -24,7 +24,7 @@ function LanguageLinks({ pathname }: { pathname: string }) {
 
   return (
     <nav aria-label={t("Language")} className="col-span-2 grid grid-cols-subgrid">
-      <span className="flex h-11 items-center">
+      <span className="flex h-11 items-center justify-center">
         <GlobeIcon aria-hidden="true" className="size-4" />
       </span>
 

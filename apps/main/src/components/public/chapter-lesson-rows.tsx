@@ -14,10 +14,12 @@ const STATION_CLASS = "top-[1.375rem] left-(--route-x)";
 
 export async function ChapterLessonRows({
   chapter,
+  className,
   currentLessonId,
   params,
 }: {
   chapter: LibraryChapterRoute["chapter"];
+  className?: string;
   currentLessonId?: string;
   params: { brandSlug: string; courseSlug: string };
 }) {
@@ -25,7 +27,7 @@ export async function ChapterLessonRows({
   const last = chapter.lessons.length - 1;
 
   return (
-    <ol className={cn(ROUTE_CLASS, "flex flex-col")}>
+    <ol className={cn(ROUTE_CLASS, "flex flex-col", className)}>
       {chapter.lessons.map((lesson, index) => {
         const isCurrent = lesson.id === currentLessonId;
 

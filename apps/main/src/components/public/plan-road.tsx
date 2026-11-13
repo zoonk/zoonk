@@ -136,8 +136,8 @@ export function PlanRoad({
 
         <span className="flex items-baseline justify-between gap-3 text-xs">
           <span className="text-muted-foreground min-w-0 text-pretty">{caption}</span>
-          <span className="text-foreground flex shrink-0 items-center gap-1 font-mono tabular-nums">
-            <FlagIcon className="size-3" />
+          <span className="text-foreground flex shrink-0 items-baseline gap-1 font-mono tabular-nums">
+            <FlagIcon className="size-3 self-center" />
             {end}
           </span>
         </span>
