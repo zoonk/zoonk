@@ -238,13 +238,15 @@ function WordActions({
   }
 
   return (
-    <RecordButton
-      className="w-full"
-      disabled={round.isPending}
-      elapsedMs={mic.elapsedMs}
-      onStart={() => void mic.start()}
-      onStop={mic.stop}
-      recording={mic.status === "recording"}
-    />
+    <TaskActions>
+      <RecordButton
+        busy={mic.status === "acquiring"}
+        disabled={round.isPending}
+        elapsedMs={mic.elapsedMs}
+        onStart={() => void mic.start()}
+        onStop={mic.stop}
+        recording={mic.status === "recording"}
+      />
+    </TaskActions>
   );
 }

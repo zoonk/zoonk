@@ -2,11 +2,13 @@
 
 import { toListeningStep } from "@zoonk/core/lesson-player/grade";
 import { useNoSpeechMessage } from "@zoonk/learn/language/no-speech";
+import { MainActionInBar } from "@zoonk/learn/main-action-slot";
 import { useSpokenText } from "@zoonk/learn/rich-text/speech";
+import { RecordButton } from "@zoonk/learn/speech/record-button";
 import { Button } from "@zoonk/ui/components/button";
 import { useCanRecord, useVoiceRecorder } from "@zoonk/ui/hooks/voice-recorder";
 import { cn } from "@zoonk/ui/lib/utils";
-import { HeadphonesIcon, KeyboardIcon, MicIcon, SquareIcon } from "lucide-react";
+import { HeadphonesIcon, KeyboardIcon, MicIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useCallback, useState } from "react";
 import { InteractiveStepLayout } from "../../components/step-layouts";
@@ -19,15 +21,6 @@ import { CANT_TALK_TODAY, useTodayChoice } from "../use-today-choice";
 import { ExerciseStepView } from "./exercise-step";
 import { LessonAnswerField } from "./lesson-answer-field";
 import { type LessonStepViewProps, type StepOf } from "./lesson-step-view-props";
-
-const MS_PER_SECOND = 1000;
-const SECONDS_PER_MINUTE = 60;
-
-function formatSeconds(totalSeconds: number): string {
-  const minutes = Math.floor(totalSeconds / SECONDS_PER_MINUTE);
-  const seconds = totalSeconds % SECONDS_PER_MINUTE;
-  return `${minutes}:${String(seconds).padStart(2, "0")}`;
-}
 
 function TargetText({ step }: { step: StepOf<"spokenAnswer"> }) {
   const { romanization, targetText, translation } = step.content;
@@ -47,7 +40,8 @@ function TargetText({ step }: { step: StepOf<"spokenAnswer"> }) {
   );
 }
 
-function RecordButton({ onBlocked, stepId }: { onBlocked: () => void; stepId: string }) {
+/** Recording is this step's answer, so Record and Stop take the bar's place where Check is. */
+function RecordAnswer({ onBlocked, stepId }: { onBlocked: () => void; stepId: string }) {
   const t = useExtracted();
   const { actions, state } = useLessonPlayer();
 
@@ -59,7 +53,6 @@ function RecordButton({ onBlocked, stepId }: { onBlocked: () => void; stepId: st
 
   const recorder = useVoiceRecorder({ onRecorded });
   const isRecording = recorder.status === "recording";
-  const seconds = Math.floor(recorder.elapsedMs / MS_PER_SECOND);
 
   const startRecording = async () => {
     actions.startRecording();
@@ -75,25 +68,7 @@ function RecordButton({ onBlocked, stepId }: { onBlocked: () => void; stepId: st
   const limit = issue?.status === "noSpeech" ? null : issue;
 
   return (
-    <div className="flex flex-col items-start gap-2">
-      <Button
-        aria-pressed={isRecording}
-        className={cn(isRecording && "border-foreground ring-foreground ring-[0.5px]")}
-        disabled={recorder.status === "acquiring"}
-        focusableWhenDisabled
-        onClick={isRecording ? recorder.stop : () => void startRecording()}
-        size="lg"
-        variant="outline"
-      >
-        {isRecording ? <SquareIcon aria-hidden="true" /> : <MicIcon aria-hidden="true" />}
-        {isRecording ? t("Stop") : t("Record")}
-        {isRecording && (
-          <span className="text-muted-foreground font-mono text-xs tabular-nums">
-            {formatSeconds(seconds)}
-          </span>
-        )}
-      </Button>
-
+    <>
       <div aria-live="polite" className="flex flex-col">
         {limit ? (
           <LessonHelpLimitNotice limit={limit} />
@@ -104,7 +79,13 @@ function RecordButton({ onBlocked, stepId }: { onBlocked: () => void; stepId: st
               issue?.status === "noSpeech" && "text-destructive-text",
             )}
           >
-            {isIdle && (issue?.status === "noSpeech" ? noSpeech : t("Tap and say it out loud"))}
+            {isIdle &&
+              (issue?.status === "noSpeech"
+                ? noSpeech
+                : t({
+                    description: "“Record” is the label of the button that starts the recording.",
+                    message: "Tap Record and say it out loud",
+                  }))}
             {isRecording &&
               t({
                 description: "“Stop” is the label of the button that ends the recording.",
@@ -113,7 +94,17 @@ function RecordButton({ onBlocked, stepId }: { onBlocked: () => void; stepId: st
           </p>
         )}
       </div>
-    </div>
+
+      <MainActionInBar>
+        <RecordButton
+          busy={recorder.status === "acquiring"}
+          elapsedMs={recorder.elapsedMs}
+          onStart={() => void startRecording()}
+          onStop={recorder.stop}
+          recording={isRecording}
+        />
+      </MainActionInBar>
+    </>
   );
 }
 
@@ -290,7 +281,7 @@ export function SpokenAnswerStepView(props: LessonStepViewProps<StepOf<"spokenAn
           />
         </>
       ) : (
-        !isLocked && <RecordButton onBlocked={answerMode.onBlocked} stepId={step.id} />
+        !isLocked && <RecordAnswer onBlocked={answerMode.onBlocked} stepId={step.id} />
       )}
 
       <ModeSwitch answerMode={answerMode} isLocked={isLocked} />

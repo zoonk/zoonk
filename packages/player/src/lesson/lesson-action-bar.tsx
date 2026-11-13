@@ -1,5 +1,6 @@
 "use client";
 
+import { MainActionSlot } from "@zoonk/learn/main-action-slot";
 import {
   QuestionActions,
   QuestionBack,
@@ -114,14 +115,16 @@ export function LessonActionBar() {
         <PromptAudio />
         <DontKnow />
 
-        <QuestionMainAction
-          action={primary.label}
-          busy={primary.busy}
-          disabled={primary.disabled}
-          enter="host"
-          id={LESSON_PRIMARY_ID}
-          onClick={(event) => pressKeepingFocus(event, () => runPrimary({ actions, screen }))}
-        />
+        <MainActionSlot>
+          <QuestionMainAction
+            action={primary.label}
+            busy={primary.busy}
+            disabled={primary.disabled}
+            enter="host"
+            id={LESSON_PRIMARY_ID}
+            onClick={(event) => pressKeepingFocus(event, () => runPrimary({ actions, screen }))}
+          />
+        </MainActionSlot>
 
         <TutorAskButton />
       </QuestionActions>

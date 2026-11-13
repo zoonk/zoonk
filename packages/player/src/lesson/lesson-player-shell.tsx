@@ -1,5 +1,6 @@
 "use client";
 
+import { MainActionSlotProvider } from "@zoonk/learn/main-action-slot";
 import { getLessonCelebration } from "@zoonk/learn/session/lesson-celebration";
 import { MomentAfterCeremony } from "@zoonk/learn/session/moment-ceremony";
 import { getTaskAsideRootProps } from "@zoonk/learn/task-layout";
@@ -127,10 +128,12 @@ function LessonScreen({
     <Activity mode={isShown ? "visible" : "hidden"}>
       <LessonPlayerRuntimeContext value={isShown ? runtime : left}>
         <PlayerAudioProvider audioUrl={getPromptAudioUrl(step)}>
-          <div className="flex flex-1 flex-col">
-            <LessonStage isShown={isShown} step={step} turn={turn} />
-          </div>
-          {isShown && <LessonActionBar />}
+          <MainActionSlotProvider>
+            <div className="flex flex-1 flex-col">
+              <LessonStage isShown={isShown} step={step} turn={turn} />
+            </div>
+            {isShown && <LessonActionBar />}
+          </MainActionSlotProvider>
         </PlayerAudioProvider>
       </LessonPlayerRuntimeContext>
     </Activity>
