@@ -20,6 +20,8 @@ import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { trackServerEvent } from "../../analytics/server";
 import { lessonRunFixture } from "../../lesson-player/_test-utils/lesson-run-fixture";
 import { checkLessonStep } from "../../lesson-player/check-lesson-step";
+import { appliedFixFixture } from "../../staff/content-fixes/_test-utils/applied-fix";
+import { toJson } from "../../staff/content-fixes/_utils/resolved-change";
 import { gradeSpokenAnswer } from "./grade-spoken-answer";
 
 function sentTips() {
@@ -158,6 +160,58 @@ describe(gradeSpokenAnswer, () => {
     ).resolves.toStrictEqual({ status: "notFound" });
   });
 
+  it("doesn't score or save a take on a sentence fixed during the learner's open run, however old", async () => {
+    const [step, user] = await Promise.all([createSpokenStep(), userFixture()]);
+    mockSession(user.id);
+
+    await lessonRunFixture({
+      lessonId: step.lessonId,
+      startedAt: new Date(Date.now() - 2 * 3_600_000),
+      userId: user.id,
+    });
+
+    const fixed = {
+      language: "en",
+      prompt: "Pergunte quanto é o aluguel.",
+      targetText: "How much is the monthly rent?",
+      translation: "Quanto é o aluguel?",
+    };
+
+    await prisma.step.update({ data: { content: fixed }, where: { id: step.id } });
+
+    await appliedFixFixture({
+      changes: [
+        {
+          fields: [{ after: fixed, before: toJson(step.content), field: "content" }],
+          id: step.id,
+          model: "Step",
+          op: "set",
+        },
+      ],
+      unitId: step.lessonId,
+    });
+
+    mockTranscript("How much is the rent");
+    mockExplanation('Ouvimos "rent".');
+
+    const result = await gradeSpokenAnswer({ audio: AUDIO, fields: FIELDS, stepId: step.id });
+
+    expect(result).toMatchObject({
+      grade: {
+        attemptId: null,
+        checked: false,
+        explanation: null,
+        isCorrect: false,
+        words: [],
+        wordsToPractice: [],
+      },
+      status: "graded",
+    });
+
+    await expect(prisma.attempt.count({ where: { stepId: step.id } })).resolves.toBe(0);
+    await expect(prisma.mistake.count({ where: { stepId: step.id } })).resolves.toBe(0);
+  });
+
   it("grades a sentence said as expected and records the attempt, for guests too", async () => {
     const [step, guest] = await Promise.all([createSpokenStep(), userFixture()]);
     mockGuestSession(guest.id);
@@ -184,7 +238,9 @@ describe(gradeSpokenAnswer, () => {
 
     expect(vi.mocked(transcribeSpeech).mock.calls[0]?.[0]).not.toHaveProperty("model");
 
-    const attempt = await prisma.attempt.findUniqueOrThrow({ where: { id: grade?.attemptId } });
+    const attempt = await prisma.attempt.findUniqueOrThrow({
+      where: { id: grade?.attemptId ?? undefined },
+    });
 
     expect(attempt).toMatchObject({
       answer: { kind: "spoken", transcript: "How much is the rent" },
@@ -675,7 +731,7 @@ describe(gradeSpokenAnswer, () => {
       where: {
         id: {
           in: [own, foreign].flatMap((result) =>
-            result.status === "graded" ? [result.grade.attemptId] : [],
+            result.status === "graded" ? [result.grade.attemptId ?? []].flat() : [],
           ),
         },
       },

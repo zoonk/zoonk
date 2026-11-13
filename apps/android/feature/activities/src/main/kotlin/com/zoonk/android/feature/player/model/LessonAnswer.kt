@@ -286,10 +286,11 @@ fun LessonRunAnswerResult.toStepResult(isRecording: Boolean): StepResult =
 fun SpokenAnswerGrade.toStepResult(targetText: String): StepResult =
     StepResult(
         isCorrect = isCorrect,
+        checked = checked != false,
         answerText = transcript,
-        correctAnswer = targetText.takeUnless { isCorrect },
+        correctAnswer = targetText.takeUnless { isCorrect || checked == false },
         feedback = explanation,
         score = score,
-        attemptId = attemptId.toString(),
+        attemptId = attemptId?.toString(),
         heard = SpokenHeard(transcript, words, wordsToPractice),
     )

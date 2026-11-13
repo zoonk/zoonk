@@ -41816,9 +41816,15 @@
         "type": "object",
         "properties": {
           "attemptId": {
+            "nullable": true,
+            "description": "Null when the take wasn't saved",
             "type": "string",
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "checked": {
+            "description": "False when the sentence was corrected after the learner started the lesson: the take wasn't scored or saved and counts neither way. Absent when it was scored",
+            "type": "boolean"
           },
           "explanation": {
             "nullable": true,

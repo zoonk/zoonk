@@ -15,6 +15,7 @@ import { claimModelGrade } from "../learner/_utils/model-grading";
 import { getSession } from "../users/get-session";
 import { findClosingAnswer } from "./_utils/answer-recording";
 import { checkSaved, toCheckResult } from "./_utils/check-results";
+import { excuseFixedAnswer } from "./_utils/fixed-screens";
 import { type LessonAnswerVerdict, gradeLessonAnswer } from "./_utils/grade-lesson-answer";
 import { findPlayableStepRow, getAnswerSkillId } from "./_utils/lesson-rows";
 import {
@@ -275,6 +276,12 @@ export async function checkLessonStep({
     step,
     userId,
   });
+
+  const excused = saved ? null : await excuseFixedAnswer({ run, screen: row, verdict });
+
+  if (excused) {
+    return { result: toCheckResult({ savedMistake: false, verdict: excused }), status: "checked" };
+  }
 
   if (!verdict) {
     return { status: "invalid" };

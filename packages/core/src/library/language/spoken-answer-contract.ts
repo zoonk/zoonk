@@ -95,7 +95,14 @@ const spokenPracticeWordSchema = spokenWordResultSchema
 
 export const spokenAnswerGradeSchema = z
   .object({
-    attemptId: uuidSchema(),
+    attemptId: uuidSchema().nullable().meta({ description: "Null when the take wasn't saved" }),
+    checked: z
+      .boolean()
+      .optional()
+      .meta({
+        description:
+          "False when the sentence was corrected after the learner started the lesson: the take wasn't scored or saved and counts neither way. Absent when it was scored",
+      }),
     explanation: z
       .string()
       .nullable()

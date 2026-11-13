@@ -593,7 +593,13 @@ class LessonPlayerViewModel(
 
         return when (outcome) {
             is GradeOutcome.Graded -> {
-                dispatch(LessonAction.CheckResolved(stepId, outcome.value.toStepResult(spoken.content.targetText), counts = true))
+                dispatch(
+                    LessonAction.CheckResolved(
+                        stepId,
+                        outcome.value.toStepResult(spoken.content.targetText),
+                        counts = outcome.value.checked != false,
+                    ),
+                )
                 resendUnsaved()
                 GradeOutcome.Graded(Unit)
             }
