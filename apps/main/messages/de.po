@@ -1898,7 +1898,6 @@ msgid "{count, plural, one {# answer} other {# answers}}, needs {minimum, number
 msgstr "{count, plural, one {# Antwort} other {# Antworten}}, mindestens {minimum, number} nötig"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
-#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 msgctxt "HHFpcy"
 msgid "Best day"
@@ -1910,7 +1909,6 @@ msgid "Throughout the week"
 msgstr "Im Laufe der Woche"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
-#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 msgctxt "dFW9lU"
 msgid "Best time"
@@ -1967,29 +1965,29 @@ msgid "A day or a time of day needs {count, plural, one {# answer} other {# answ
 msgstr "Ein Tag oder eine Tageszeit wird erst ab {count, plural, one {# Antwort} other {# Antworten}} berücksichtigt. So entsteht kein Muster durch eine einzelne Antwort, die zufällig richtig war."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "0Fab5z"
-msgid "Within {points, plural, =0 {# points} one {# point} other {# points}}"
-msgstr "Unterschied von höchstens {points, plural, =0 {# Punkten} one {# Punkt} other {# Punkten}}"
+msgctxt "_GJimN"
+msgid "Your best day is {day}."
+msgstr "Dein bester Tag ist {day}."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "yJxUpG"
-msgid "Not enough answers yet"
-msgstr "Noch nicht genug Antworten"
+msgctxt "ZTJDAv"
+msgid "You answer about the same every day."
+msgstr "Du antwortest jeden Tag etwa gleich gut."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "9DVTlI"
-msgid "{score} · {count, plural, one {# answer} other {# answers}}"
-msgstr "{score} · {count, plural, one {# Antwort} other {# Antworten}}"
+msgctxt "RF7ki8"
+msgid "Your best time is the {time}."
+msgstr "Am besten schneidest du {time} ab."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "WDXXIC"
-msgid "In the last 90 days"
-msgstr "In den letzten 90 Tagen"
+msgctxt "6hLEQI"
+msgid "The time of day makes no difference."
+msgstr "Die Tageszeit macht keinen Unterschied."
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "2mUitd"
-msgid "Answers"
-msgstr "Antworten"
+msgctxt "IrWIWh"
+msgid "Answer more questions to see when you do best."
+msgstr "Beantworte mehr Fragen, um zu sehen, wann du am besten abschneidest."
 
 #: src/app/[lang]/(app)/(stats)/score/page.tsx
 msgctxt "-JqpHp"
@@ -2947,9 +2945,9 @@ msgid "Terms of Use"
 msgstr "Nutzungsbedingungen"
 
 #: src/app/[lang]/test-out/[chapterId]/page.tsx
-msgctxt "5-s6we"
-msgid "Test out of a chapter"
-msgstr "Kapitel durch einen Test überspringen"
+msgctxt "su55__"
+msgid "Chapter test"
+msgstr "Kapiteltest"
 
 #: src/app/[lang]/test-out/[chapterId]/page.tsx
 #: src/components/catalog/chapter-strip.tsx
