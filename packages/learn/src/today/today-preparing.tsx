@@ -33,7 +33,7 @@ export function TodayPreparing({
 
       <section className="max-w-column flex w-full flex-col gap-8">
         <GenerationWait kind="firstLesson" run={run}>
-          <h2 className="text-[0.9375rem] leading-snug font-semibold wrap-break-word">
+          <h2 className="text-reading leading-snug font-semibold wrap-break-word">
             {t("Building your {goal} plan", { goal: goalTitle })}
           </h2>
           <GenerationTimelineDescription>

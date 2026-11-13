@@ -61,7 +61,7 @@ export function WaitStatus({
       >
         <StatusMark done={done} share={value / 100} />
 
-        <span className="col-start-2 row-start-1 text-[0.9375rem] leading-5 font-medium">
+        <span className="text-reading col-start-2 row-start-1 leading-5 font-medium">
           {children}
           <span className="sr-only">{`, ${formatShare(done ? 1 : value / 100)}`}</span>
         </span>

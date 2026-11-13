@@ -20,7 +20,7 @@ export function SwipeScore({
 
   return (
     <div aria-live="polite" className="flex flex-col gap-1">
-      <p className="text-muted-foreground font-mono text-[0.8125rem] tabular-nums">
+      <p className="text-muted-foreground text-compact font-mono tabular-nums">
         {t("{count, plural, =0 {# right} one {# right} other {# right}}", { count: tally.right })}
         {" · "}
         {t("{count, plural, =0 {# wrong} one {# wrong} other {# wrong}}", { count: tally.wrong })}

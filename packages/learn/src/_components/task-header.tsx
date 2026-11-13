@@ -50,8 +50,6 @@ export function TaskHeaderSide({
   );
 }
 
-export const TASK_HEADER_ICON_CLASS = { end: "-mr-2.5", start: "-ml-2.5" } as const;
-
 /** A task's title, wherever its header shows one: the Study view's and its zoom alike. */
 export const TASK_TITLE_CLASS = "text-foreground text-sm leading-5 font-medium";
 
@@ -70,7 +68,7 @@ export function TaskHeaderTitle({
       {detail && (
         <p
           aria-live={announce ? "polite" : undefined}
-          className="text-muted-foreground font-mono text-[0.6875rem] leading-4 tabular-nums"
+          className="text-muted-foreground text-2xs font-mono leading-4 tabular-nums"
         >
           {detail}
         </p>

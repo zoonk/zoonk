@@ -2,11 +2,9 @@
 
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { useEscapeClick } from "@zoonk/ui/hooks/keyboard";
-import { cn } from "@zoonk/ui/lib/utils";
 import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import {
-  TASK_HEADER_ICON_CLASS,
   TaskHeader,
   TaskHeaderBar,
   TaskHeaderSegments,
@@ -26,10 +24,7 @@ export function QuestionBlockClose({ href }: { href: string }) {
     <LearnLink
       aria-keyshortcuts="Escape"
       aria-label={t("Close. Your answers are saved.")}
-      className={cn(
-        buttonVariants({ size: "icon", variant: "ghost" }),
-        TASK_HEADER_ICON_CLASS.start,
-      )}
+      className={buttonVariants({ edge: "start", size: "icon", variant: "ghost" })}
       href={href}
       prefetch={false}
       ref={closeRef}

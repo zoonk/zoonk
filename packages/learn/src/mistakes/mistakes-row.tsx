@@ -44,7 +44,7 @@ export function MistakesRow({
 
   return (
     <ListRowLink href={href}>
-      <ListRowLeading className="w-4 justify-center">
+      <ListRowLeading>
         <KindDot kind="mistakes" />
       </ListRowLeading>
       <ListRowBody>

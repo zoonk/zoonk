@@ -70,7 +70,7 @@ export function Checklist<Item extends string>({
               <button
                 aria-pressed={checked}
                 className={cn(
-                  "focus-visible:ring-ring/50 hover:before:bg-muted/70 relative isolate flex min-h-11 w-full items-start gap-3 py-2.75 text-left text-sm outline-none before:absolute before:-inset-x-2.5 before:inset-y-0.5 before:-z-10 before:rounded-[0.625rem] focus-visible:ring-[3px]",
+                  "focus-visible:ring-ring/50 hover:before:bg-muted/70 relative isolate flex min-h-11 w-full items-start gap-3 py-2.75 text-left text-sm outline-none before:absolute before:-inset-x-2.5 before:inset-y-0.5 before:-z-10 before:rounded-lg focus-visible:ring-[3px]",
                   checked && "text-muted-foreground",
                 )}
                 onClick={() => toggle(item)}

@@ -9,7 +9,6 @@ export function DoneMark({ className }: { className?: string }) {
       aria-hidden="true"
       className={cn("text-success size-4 shrink-0", className)}
       data-slot="done-mark"
-      strokeWidth={2.5}
     />
   );
 }

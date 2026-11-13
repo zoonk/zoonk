@@ -21,7 +21,7 @@ export function GoalMark({ goal }: { goal: GoalMarkGoal }) {
   return (
     <span
       aria-hidden="true"
-      className="bg-muted text-foreground ring-input grid size-4 shrink-0 place-items-center rounded-[0.3125rem] text-[0.625rem] leading-none font-bold uppercase ring-1 ring-inset"
+      className="bg-muted text-foreground ring-input text-2xs grid size-4 shrink-0 place-items-center rounded-sm leading-none font-bold uppercase ring-1 ring-inset"
     >
       {getFirstLetter(goal.displayName)}
     </span>

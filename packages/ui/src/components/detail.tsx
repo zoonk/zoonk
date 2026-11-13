@@ -7,11 +7,17 @@ import {
 import { cn } from "@zoonk/ui/lib/utils";
 import { EllipsisIcon } from "lucide-react";
 
+/**
+ * A "…" with no action beside it sits on the title's first line, at the column's end, at every
+ * width. The small line above the title is always the header's first row, so the title is its
+ * second.
+ */
 export function DetailHero({ className, ...props }: React.ComponentProps<"header">) {
   return (
     <header
       className={cn(
-        "flex min-w-0 flex-col gap-4 md:flex-row md:items-end md:justify-between md:gap-6",
+        "group/detail-hero flex min-w-0 flex-col gap-4 md:flex-row md:items-end md:justify-between md:gap-6",
+        "has-[>[data-slot=detail-actions]>[data-slot=dropdown-menu-trigger]:only-child]:grid has-[>[data-slot=detail-actions]>[data-slot=dropdown-menu-trigger]:only-child]:grid-cols-[minmax(0,1fr)_auto] has-[>[data-slot=detail-actions]>[data-slot=dropdown-menu-trigger]:only-child]:gap-x-4 has-[>[data-slot=detail-actions]>[data-slot=dropdown-menu-trigger]:only-child]:gap-y-1",
         className,
       )}
       data-slot="detail-hero"
@@ -20,12 +26,12 @@ export function DetailHero({ className, ...props }: React.ComponentProps<"header
   );
 }
 
-/** Keeps the eyebrow's line when a page has none, so every page's title starts at one height. */
 export function DetailHeroText({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       className={cn(
-        "flex min-w-0 flex-col gap-1 not-has-[>[data-slot=page-eyebrow]]:pt-5",
+        "flex min-w-0 flex-col gap-1",
+        "group-has-[>[data-slot=detail-actions]>[data-slot=dropdown-menu-trigger]:only-child]/detail-hero:contents group-has-[>[data-slot=detail-actions]>[data-slot=dropdown-menu-trigger]:only-child]/detail-hero:*:col-start-1",
         className,
       )}
       data-slot="detail-hero-text"
@@ -62,14 +68,20 @@ export function DetailFacts({ className, ...props }: React.ComponentProps<"p">) 
 export function DetailActions({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("flex flex-wrap items-center gap-2 md:shrink-0", className)}
+      className={cn(
+        "flex flex-wrap items-center gap-2 md:shrink-0",
+        "has-[>[data-slot=dropdown-menu-trigger]:only-child]:col-start-2 has-[>[data-slot=dropdown-menu-trigger]:only-child]:row-start-2 has-[>[data-slot=dropdown-menu-trigger]:only-child]:mt-[0.09375rem] has-[>[data-slot=dropdown-menu-trigger]:only-child]:self-start",
+        className,
+      )}
       data-slot="detail-actions"
       {...props}
     />
   );
 }
 
-export const DETAIL_MENU_TRIGGER_CLASS = "size-11 shrink-0";
+/** As tall as the action beside it; alone beside the title, a small button's 30px. */
+export const DETAIL_MENU_TRIGGER_CLASS =
+  "[--control-size:--spacing(11)] only:rounded-md only:[--control-size:--spacing(7.5)]";
 
 export function DetailMenu({ children, label }: { children: React.ReactNode; label: string }) {
   return (

@@ -14,7 +14,7 @@ export function CompletedLessonsRow({ href }: { href: string }) {
 
   return (
     <ListRowLink href={href}>
-      <ListRowLeading className="w-4 justify-center">
+      <ListRowLeading>
         <KindDot kind="lesson" />
       </ListRowLeading>
       <ListRowContent>

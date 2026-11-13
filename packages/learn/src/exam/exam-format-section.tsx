@@ -82,7 +82,7 @@ function DayRow({ day, numbered }: { day: ExamFormatDay; numbered: boolean }) {
         {numbered ? t("Day {number, number}", { number: day.day }) : null}
       </span>
       <span className={cn(TITLE_ROW_CLASS, "items-baseline")}>
-        <span className="text-[0.8125rem] font-medium">
+        <span className="text-compact font-medium">
           {day.date ? dayDate(day.date) : t("Day {number, number}", { number: day.day })}
         </span>
         <span className="text-muted-foreground font-mono text-xs tabular-nums empty:hidden">

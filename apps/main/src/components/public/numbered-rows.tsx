@@ -3,7 +3,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 type NumberedRow = { description?: string; id: string; title: React.ReactNode; trailing?: string };
 
 const ROW_CLASS =
-  "relative isolate flex items-start gap-3 py-3 before:pointer-events-none before:absolute before:-inset-x-2.5 before:inset-y-0.5 before:-z-10 before:rounded-[0.625rem] before:transition-colors";
+  "relative isolate flex items-start gap-3 py-3 before:pointer-events-none before:absolute before:-inset-x-2.5 before:inset-y-0.5 before:-z-10 before:rounded-lg before:transition-colors";
 
 const HIGHLIGHTED_ROW_CLASS = "before:bg-muted hover:before:bg-muted";
 

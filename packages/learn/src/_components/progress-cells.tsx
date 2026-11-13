@@ -18,7 +18,7 @@ export function ProgressCell({
   return (
     <span
       className={cn(
-        "flex h-2 min-w-0 flex-1 overflow-hidden rounded-[2px]",
+        "flex h-2 min-w-0 flex-1 overflow-hidden rounded-xs",
         planned ? "ring-success ring-1 ring-inset" : "bg-surface-3",
         className,
       )}

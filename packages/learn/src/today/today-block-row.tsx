@@ -22,10 +22,10 @@ import { useLessonGettingReady } from "./use-today-copy";
 export function getRowClass({ finished, isNext }: { finished: boolean; isNext: boolean }): string {
   return cn(
     "group/row relative isolate flex items-center gap-3 border-b last:border-b-0 has-[+[aria-current=step]]:border-b-0",
-    "has-[[data-slot=today-row-open]:hover]:before:bg-muted/70 before:pointer-events-none before:absolute before:inset-y-0.5 before:-z-10 before:rounded-[0.625rem] before:transition-colors",
+    "has-[[data-slot=today-row-open]:hover]:before:bg-muted/70 before:pointer-events-none before:absolute before:inset-y-0.5 before:-z-10 before:rounded-lg before:transition-colors",
     finished ? "py-[9px]" : "py-2.75",
     isNext
-      ? "bg-muted -mx-2.5 my-0.5 items-start rounded-[0.625rem] border-b-0 px-2.5 before:inset-x-0"
+      ? "bg-muted -mx-2.5 my-0.5 items-start rounded-lg border-b-0 px-2.5 before:inset-x-0"
       : "before:-inset-x-2.5",
   );
 }

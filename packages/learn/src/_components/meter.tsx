@@ -12,7 +12,7 @@ export function Meter({
   return (
     <Element
       aria-hidden="true"
-      className={cn("bg-surface-3 block h-1.5 overflow-hidden rounded-[3px]", className)}
+      className={cn("bg-surface-3 rounded-meter block h-1.5 overflow-hidden", className)}
       data-slot="meter"
       {...props}
     />
@@ -29,7 +29,7 @@ export function MeterFill({
 }: React.HTMLAttributes<HTMLElement> & { as?: MeterElement; share: number }) {
   return (
     <Element
-      className={cn("bg-foreground block h-full rounded-[3px]", className)}
+      className={cn("bg-foreground rounded-meter block h-full", className)}
       data-slot="meter-fill"
       style={{ ...style, width: `${Math.min(1, Math.max(0, share)) * PERCENT}%` }}
       {...props}
@@ -63,7 +63,7 @@ export function MeterPart({
 }: React.HTMLAttributes<HTMLElement> & { as?: MeterElement; weight?: number }) {
   return (
     <Element
-      className={cn("bg-surface-3 block h-full min-w-1 basis-0 rounded-[3px]", className)}
+      className={cn("bg-surface-3 rounded-meter block h-full min-w-1 basis-0", className)}
       data-slot="meter-part"
       style={{ ...style, flexGrow: Math.max(0, weight) }}
       {...props}

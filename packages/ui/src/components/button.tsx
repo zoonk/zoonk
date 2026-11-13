@@ -5,25 +5,28 @@ import { ArrowRightIcon, Loader2Icon } from "lucide-react";
 import { Skeleton } from "./skeleton";
 
 const buttonVariants = cva(
-  "group/button focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 hit-area press relative inline-flex shrink-0 items-center justify-center rounded-lg border bg-clip-padding text-sm font-medium whitespace-nowrap outline-none select-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 aria-busy:cursor-progress aria-disabled:not-aria-busy:pointer-events-none aria-disabled:not-aria-busy:opacity-50 aria-invalid:ring-[3px] *:data-[slot=shortcut-kbd]:order-last [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/button focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 hit-area press relative inline-flex shrink-0 items-center justify-center rounded-lg border text-sm font-medium whitespace-nowrap outline-none select-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 aria-busy:cursor-progress aria-disabled:not-aria-busy:pointer-events-none aria-disabled:not-aria-busy:opacity-50 aria-invalid:ring-[3px] *:data-[slot=shortcut-kbd]:order-last [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-(--icon-size,1rem)",
   {
     defaultVariants: { size: "default", variant: "default" },
     variants: {
+      edge: { end: "edge -me-(--edge-pull)", start: "edge -ms-(--edge-pull)" },
       size: {
         adaptive:
           "size-9 gap-1.5 px-3 has-data-[icon=inline-end]:pr-2.5 has-data-[icon=inline-start]:pl-2.5 sm:h-9 sm:w-auto",
-        bar: "h-11 gap-1.5 px-4 has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3 lg:h-10",
+        bar: "h-11 gap-1.5 px-4 [--edge-text:calc(--spacing(4)+1px)] has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3 lg:h-10",
         default:
-          "h-9 gap-1.5 px-3 has-data-[icon=inline-end]:pr-2.5 has-data-[icon=inline-start]:pl-2.5",
-        icon: "size-9",
-        "icon-bar": "size-11 lg:size-10",
-        "icon-lg": "size-10",
-        "icon-sm": "size-8 rounded-md",
-        "icon-xs": "size-6 rounded-md [&_svg:not([class*='size-'])]:size-3",
-        lg: "h-11 gap-2 px-4 has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3",
-        sm: "h-7.5 gap-1 rounded-md px-2.5 text-[0.8125rem] has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
-        xl: "h-11 gap-2 px-5 text-[0.9375rem] has-data-[icon=inline-end]:pr-4 has-data-[icon=inline-start]:pl-4",
-        xs: "h-6 gap-1 rounded-md px-2.5 text-xs has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2 [&_svg:not([class*='size-'])]:size-3",
+          "h-9 gap-1.5 px-3 [--edge-text:calc(--spacing(3)+1px)] has-data-[icon=inline-end]:pr-2.5 has-data-[icon=inline-start]:pl-2.5",
+        icon: "size-(--control-size) [--control-size:--spacing(9)]",
+        "icon-bar":
+          "size-(--control-size) [--control-size:--spacing(11)] [--icon-size:--spacing(5)] lg:[--control-size:--spacing(10)]",
+        "icon-lg": "size-(--control-size) [--control-size:--spacing(10)]",
+        "icon-sm": "size-(--control-size) rounded-md [--control-size:--spacing(7.5)]",
+        "icon-xs":
+          "size-(--control-size) rounded-md [--control-size:--spacing(6)] [--icon-size:--spacing(3)]",
+        lg: "h-11 gap-2 px-4 [--edge-text:calc(--spacing(4)+1px)] has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3",
+        sm: "text-compact h-7.5 gap-1 rounded-md px-2.5 [--edge-text:calc(--spacing(2.5)+1px)] has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
+        xl: "text-reading h-11 gap-2 px-5 [--edge-text:calc(--spacing(5)+1px)] has-data-[icon=inline-end]:pr-4 has-data-[icon=inline-start]:pl-4",
+        xs: "h-6 gap-1 rounded-md px-2.5 text-xs [--edge-text:calc(--spacing(2.5)+1px)] [--icon-size:--spacing(3)] has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
       },
       variant: {
         default:
@@ -35,7 +38,7 @@ const buttonVariants = cva(
         inverse:
           "bg-primary-foreground text-primary hover:bg-primary-foreground/90 focus-visible:border-primary-foreground/60 focus-visible:ring-primary-foreground/30 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90 dark:focus-visible:border-primary/60 dark:focus-visible:ring-primary/30 border-transparent",
         "inverse-outline":
-          "border-primary-foreground/30 bg-primary-foreground/5 text-primary-foreground hover:border-primary-foreground hover:bg-primary-foreground hover:text-primary focus-visible:border-primary-foreground/60 focus-visible:ring-primary-foreground/30 dark:border-primary/30 dark:bg-primary/5 dark:text-primary dark:hover:border-primary dark:hover:bg-primary dark:hover:text-primary-foreground dark:focus-visible:border-primary/60 dark:focus-visible:ring-primary/30",
+          "border-primary-foreground/30 bg-primary-foreground/5 text-primary-foreground hover:border-primary-foreground hover:bg-primary-foreground hover:text-primary focus-visible:border-primary-foreground/60 focus-visible:ring-primary-foreground/30 dark:border-primary/30 dark:bg-primary/5 dark:text-primary dark:hover:border-primary dark:hover:bg-primary dark:hover:text-primary-foreground dark:focus-visible:border-primary/60 dark:focus-visible:ring-primary/30 bg-clip-padding",
         // Underlined at rest: a touch screen has no hover to show it's a link.
         link: "text-foreground decoration-foreground/30 hover:decoration-foreground inline h-auto rounded-sm border-0 p-0 text-start whitespace-normal underline underline-offset-4 in-[p]:text-[length:inherit] has-data-[icon=inline-end]:pr-0 has-data-[icon=inline-start]:pl-0",
         outline:
@@ -133,12 +136,16 @@ function BusyContent({
 /**
  * `busy` while its own action runs: from the press it ignores presses and keeps focus and its look,
  * and a spinner takes its `icon`'s place, or covers its content when it has none.
+ *
+ * `edge` is for a bare (ghost) button that is the first or last thing in a bar, a header or a row:
+ * it puts the glyph's or the label's ink, not the button's box, on that edge.
  */
 function Button({
   busy,
   children,
   className,
   disabled,
+  edge,
   focusableWhenDisabled,
   icon,
   iconPosition,
@@ -151,7 +158,7 @@ function Button({
   return (
     <ButtonPrimitive
       aria-busy={busy || undefined}
-      className={cn(buttonVariants({ className, size, variant }), canBeBusy && "group/busy")}
+      className={cn(buttonVariants({ className, edge, size, variant }), canBeBusy && "group/busy")}
       data-slot="button"
       disabled={busy || disabled}
       focusableWhenDisabled={busy || focusableWhenDisabled}
@@ -170,10 +177,10 @@ function Button({
 
 type ButtonSkeletonProps = Pick<
   React.ComponentProps<typeof Button>,
-  "children" | "className" | "size" | "variant"
+  "children" | "className" | "edge" | "size" | "variant"
 >;
 
-function ButtonSkeleton({ children, className, size, variant }: ButtonSkeletonProps) {
+function ButtonSkeleton({ children, className, edge, size, variant }: ButtonSkeletonProps) {
   return (
     <Button
       aria-hidden="true"
@@ -182,6 +189,7 @@ function ButtonSkeleton({ children, className, size, variant }: ButtonSkeletonPr
         className,
       )}
       disabled
+      edge={edge}
       size={size}
       tabIndex={-1}
       type="button"

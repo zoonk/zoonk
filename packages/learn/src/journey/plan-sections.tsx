@@ -8,17 +8,12 @@ import {
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
 import { cn } from "@zoonk/ui/lib/utils";
-import {
-  ChevronRightIcon,
-  GraduationCapIcon,
-  HistoryIcon,
-  LibraryIcon,
-  NetworkIcon,
-} from "lucide-react";
+import { GraduationCapIcon, HistoryIcon, LibraryIcon, NetworkIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { DrawerCloseButton } from "../_components/details-drawer";
 import {
   ListGroup,
+  ListRowChevron,
   ListRowContent,
   ListRowIcon,
   ListRowLeading,
@@ -84,7 +79,7 @@ function PathLinkRow({
         {icon}
       </span>
       <span className="min-w-0 flex-1">{children}</span>
-      <ChevronRightIcon aria-hidden="true" className="text-muted-foreground/60 size-4 shrink-0" />
+      <ListRowChevron />
     </LearnLink>
   );
 }

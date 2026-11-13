@@ -2,7 +2,6 @@
 
 import { StatusRegion } from "@zoonk/learn/status-region";
 import {
-  TASK_HEADER_ICON_CLASS,
   TaskHeader,
   TaskHeaderBar,
   TaskHeaderSegments,
@@ -30,9 +29,8 @@ function LessonCloseLink() {
   const leave = useLeaveLesson();
 
   const className = cn(
-    buttonVariants({ size: "icon", variant: "ghost" }),
+    buttonVariants({ edge: "start", size: "icon", variant: "ghost" }),
     "shrink-0",
-    TASK_HEADER_ICON_CLASS.start,
   );
 
   const label = (

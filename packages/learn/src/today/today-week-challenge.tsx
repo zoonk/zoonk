@@ -66,7 +66,7 @@ function FullReviewRow({ date }: { date: Date }) {
 
   return (
     <ListRow className="border-t">
-      <ListRowLeading className="w-4 justify-center">
+      <ListRowLeading>
         <KindDot kind="review" />
       </ListRowLeading>
       <ChallengeLine
@@ -99,7 +99,7 @@ export function ChallengeRow({ challenge, date }: { challenge: Challenge; date: 
 
   const content = (
     <>
-      <ListRowLeading className="w-4 justify-center">
+      <ListRowLeading>
         <KindDot kind={getChallengeEventKind(challenge)} />
       </ListRowLeading>
       <ChallengeLine facts={facts.join(" · ")} name={name} />

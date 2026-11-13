@@ -16,7 +16,8 @@ export const cn = createCn({
       animate: ["settle", "pop", "fill", "spark"],
       container: ["column", "form", "wide"],
       ease: ["spring", "accelerate", "swing", "follow"],
-      radius: ["option"],
+      radius: ["meter"],
+      text: ["2xs", "compact", "reading"],
     },
   },
 });

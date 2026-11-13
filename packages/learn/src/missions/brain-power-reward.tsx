@@ -42,13 +42,13 @@ export function BrainPowerReward({
           )}
         >
           {earned ? (
-            <CheckIcon aria-hidden="true" className="size-3.5" strokeWidth={3} />
+            <CheckIcon aria-hidden="true" className="size-3" strokeWidth={3} />
           ) : (
             <BrainIcon aria-hidden="true" className="text-brain size-3.5" />
           )}
           {value}
         </span>
-        <span className="text-muted-foreground decoration-faint text-[0.6875rem] leading-none underline decoration-dotted underline-offset-2">
+        <span className="text-muted-foreground decoration-faint text-2xs leading-none underline decoration-dotted underline-offset-2">
           {t("Brain Power")}
         </span>
       </PopoverTrigger>

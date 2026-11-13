@@ -38,7 +38,7 @@ export function WeekdayToggles({
       <div className="grid max-w-sm grid-cols-7 gap-1.5">
         {EVERY_DAY.map((day) => (
           <WeekdayToggle
-            className="h-11 w-full min-w-0 rounded-lg px-0 font-mono text-[0.8125rem] font-medium uppercase"
+            className="text-compact h-11 w-full min-w-0 rounded-lg px-0 font-mono font-medium uppercase"
             display="narrow"
             key={day}
             onPressedChange={(next) =>

@@ -26,7 +26,8 @@ export function CertificatesBackLink({ href }: { href: string }) {
   return (
     <LearnLink
       className={buttonVariants({
-        className: "text-muted-foreground mb-3.5 -ml-2",
+        className: "text-muted-foreground mb-3.5",
+        edge: "start",
         size: "sm",
         variant: "ghost",
       })}
@@ -42,7 +43,7 @@ export function CertificateVerified() {
   const t = useExtracted();
 
   return (
-    <p className="text-muted-foreground inline-flex items-center gap-1.5 text-[0.8125rem]">
+    <p className="text-muted-foreground text-compact inline-flex items-center gap-1.5">
       <BadgeCheckIcon aria-hidden="true" className="text-success size-4" />
       {t("Verified certificate · issued by Zoonk")}
     </p>

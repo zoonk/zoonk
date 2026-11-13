@@ -53,7 +53,7 @@ export function MissionListRow({
 }) {
   const content = (
     <>
-      <ListRowLeading className="w-4 justify-center">{mark}</ListRowLeading>
+      <ListRowLeading>{mark}</ListRowLeading>
       <ListRowBody>
         <ListRowContent>
           <ListRowTitle className={cn(muted && "text-muted-foreground")}>

@@ -53,7 +53,7 @@ function ChallengeRow() {
 
   return (
     <ListRowLink href={actions.challengeHref(challenge.planItemId)}>
-      <ListRowLeading className="w-4 justify-center">
+      <ListRowLeading>
         <KindDot kind={getChallengeEventKind(challenge)} />
       </ListRowLeading>
       <ListRowContent>

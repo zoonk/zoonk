@@ -155,9 +155,9 @@ export function SidebarToggle({
 }
 
 const SEARCH_CLASS = {
-  bar: "h-11 rounded-[0.625rem] px-3 text-sm hover:bg-muted/60",
+  bar: "h-11 rounded-lg px-3 text-sm hover:bg-muted/60",
   sidebar: cn(
-    "sidebar-collapsed:text-muted-foreground sidebar-collapsed:ring-0 hover:bg-muted/60 h-8 gap-2.5 rounded-lg px-2 text-[0.8125rem]",
+    "sidebar-collapsed:text-muted-foreground sidebar-collapsed:ring-0 hover:bg-muted/60 text-compact h-8 gap-2.5 rounded-lg px-2",
     SIDEBAR_ICON_ONLY_CLASS,
   ),
 } as const;

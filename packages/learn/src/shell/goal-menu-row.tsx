@@ -9,7 +9,7 @@ import { GoalCountryName, GoalMark } from "./goal-mark";
 
 export type GoalKind = "exam" | "explain" | "language" | "learn";
 
-export const MENU_ROW_CLASS = "rounded-lg pl-2 text-[0.84375rem] pointer-fine:min-h-9";
+export const MENU_ROW_CLASS = "rounded-lg pl-2 text-compact pointer-fine:min-h-9";
 
 export const GOAL_ROW_CLASS = cn(MENU_ROW_CLASS, "gap-2.5 py-1.5");
 
@@ -53,7 +53,7 @@ export function WaitingOption({
           {goal.displayName}
           <GoalCountryName goal={goal} />
         </span>
-        <span className="text-muted-foreground font-mono text-[0.71875rem]">
+        <span className="text-muted-foreground text-2xs font-mono">
           {goal.locked ? lockedLine : t("Ready to start")}
         </span>
       </span>

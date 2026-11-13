@@ -89,7 +89,7 @@ export function DuelBriefing({ rule }: { rule: string }) {
   const hasTopics = useTopicsTitle() !== null;
 
   const ruleLine = (
-    <p className="text-muted-foreground text-[0.8125rem] leading-5 text-pretty">{rule}</p>
+    <p className="text-muted-foreground text-compact leading-5 text-pretty">{rule}</p>
   );
 
   if (!hasTopics) {

@@ -55,7 +55,7 @@ export function DiffLines({
   return (
     <ul
       className={cn(
-        "ring-border overflow-hidden rounded-[0.625rem] py-1 font-mono text-[0.78125rem] leading-[1.7] tabular-nums ring-1 ring-inset",
+        "ring-border overflow-hidden rounded-lg py-1 font-mono text-xs leading-[1.7] tabular-nums ring-1 ring-inset",
         className,
       )}
       data-slot="diff-lines"
