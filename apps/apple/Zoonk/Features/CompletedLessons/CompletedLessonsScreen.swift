@@ -17,7 +17,6 @@ struct CompletedLessonsScreen: View {
           .lonePage()
       }
     }
-    .navigationTitle(title)
     .barTitleAfterHero(
       String(
         localized: "Completed lessons", table: "CompletedLessons",

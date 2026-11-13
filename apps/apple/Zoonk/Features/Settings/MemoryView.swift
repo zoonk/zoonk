@@ -102,7 +102,6 @@ struct MemoryView: View {
         }
       }
     }
-    .navigationTitle(Text("Memory", tableName: "Settings", comment: "Title of the Memory page"))
     .barTitleAfterHero(
       String(localized: "Memory", table: "Settings", comment: "Title of the Memory page")
     )

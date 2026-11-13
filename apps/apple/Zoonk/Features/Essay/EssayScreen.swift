@@ -208,7 +208,7 @@ private struct EssayContent: View {
       }
 
       if writer.isWriting {
-        BusyButton(isBusy: writer.status == .grading, icon: .send) {
+        BusyButton(isBusy: writer.status == .grading) {
           Task { await writer.send() }
         } label: {
           if essay.drafts.isEmpty {

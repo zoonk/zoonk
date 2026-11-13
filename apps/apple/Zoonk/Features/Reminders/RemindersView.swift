@@ -63,9 +63,6 @@ struct RemindersView: View {
         SettingsSaveError()
       }
     }
-    .navigationTitle(
-      Text("Reminders", tableName: "Reminders", comment: "Title of the reminders settings page")
-    )
     .barTitleAfterHero(
       String(
         localized: "Reminders", table: "Reminders",

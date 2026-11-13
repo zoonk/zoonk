@@ -66,6 +66,7 @@ private struct ExamContent: View {
 }
 
 private struct ExamList: View {
+  @Environment(AppRouter.self) private var router
   let exam: ExamView
   let options: MockOptions?
   /// Above the split: folding iPhone Duo recreates its panes, and the result form and the speaking
@@ -94,10 +95,28 @@ private struct ExamList: View {
         about
       }
     }
+    .bottomBar {
+      if let options, options.offersMock, !exam.isLastDays {
+        Button {
+          if let running = options.running {
+            router.open(.mock(blockId: running.id))
+          } else {
+            router.open(.mockChooser)
+          }
+        } label: {
+          if options.running != nil {
+            Text("Continue your mock exam", tableName: "Exam", comment: "A running mock")
+          } else {
+            Text("Take a mock exam", tableName: "Exam", comment: "Opens the mock chooser")
+          }
+        }
+        .buttonStyle(.mainAction)
+        .keyboardShortcut(.defaultAction)
+      }
+    }
     .onDisappear {
       callStart.cancel()
     }
-    .navigationTitle(exam.examName)
     .barTitleAfterHero(exam.examName)
     .toolbar {
       ToolbarItem(placement: .topBarTrailing) {
@@ -128,7 +147,7 @@ private struct ExamList: View {
 
   @ViewBuilder
   private var moment: some View {
-    ExamHero(exam: exam, options: options)
+    ExamHero(exam: exam)
     ExamMomentSection(moment: exam.moment, checked: $checklist) {}
 
     if exam.takesResult {
@@ -156,14 +175,11 @@ private struct ExamList: View {
 }
 
 private struct ExamHero: View {
-  @Environment(\.dynamicTypeSize) private var typeSize
-  @Environment(AppRouter.self) private var router
   @Environment(PlanStore.self) private var plan
   @State private var usingDate = false
   @State private var dateFailed = false
   @State private var showsEstimate = false
   let exam: ExamView
-  let options: MockOptions?
 
   var body: some View {
     Section {
@@ -197,33 +213,6 @@ private struct ExamHero: View {
       }
       .listRowSeparator(.hidden)
 
-      if let options, options.offersMock, !exam.isLastDays {
-        Button {
-          if let running = options.running {
-            router.open(.mock(blockId: running.id))
-          } else {
-            router.open(.mockChooser)
-          }
-        } label: {
-          HStack {
-            Label {
-              if options.running != nil {
-                Text("Continue your mock exam", tableName: "Exam", comment: "A running mock")
-              } else {
-                Text("Take a mock exam", tableName: "Exam", comment: "Opens the mock chooser")
-              }
-            } icon: {
-              if !typeSize.isAccessibilitySize {
-                Image(systemName: "timer")
-              }
-            }
-          }
-          .frame(maxWidth: .infinity)
-        }
-        .buttonStyle(.mainAction)
-        .controlSize(.large)
-        .listRowSeparator(.hidden)
-      }
     }
 
     if let noticeDay = exam.noticeDay, let date = studyDate(noticeDay.date) {

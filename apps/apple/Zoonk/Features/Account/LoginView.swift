@@ -93,7 +93,6 @@ struct LoginView: View {
       .padding(24)
       .frame(maxWidth: .infinity)
     }
-    .navigationTitle(title)
     .barTitleAfterHero(title)
   }
 

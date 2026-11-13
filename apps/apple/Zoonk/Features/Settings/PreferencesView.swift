@@ -113,9 +113,6 @@ struct PreferencesView: View {
         SettingsSaveError()
       }
     }
-    .navigationTitle(
-      Text("Preferences", tableName: "Account", comment: "Title of the Preferences page")
-    )
     .barTitleAfterHero(
       String(localized: "Preferences", table: "Account", comment: "Title of the Preferences page")
     )

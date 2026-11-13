@@ -271,7 +271,7 @@ struct MindMapReader: View {
         }
       }
 
-      BusyButton(isBusy: false, icon: isLast ? .check : .forward) {
+      BusyButton(isBusy: false) {
         if isLast {
           dismiss()
         } else {

@@ -256,7 +256,7 @@ private struct MockTimeUpView: View {
     .navigationTitle(MockLabels.title(number: view.number))
     .safeAreaBar(edge: .bottom) {
       MockActionBar(run: run) {
-        BusyButton(isBusy: run.busy == .submit, icon: .forward) {
+        BusyButton(isBusy: run.busy == .submit) {
           Task { await run.submitSection() }
         } label: {
           if view.isLastSectionCurrent {
@@ -285,7 +285,7 @@ private struct MockGradingView: View {
     )
     .safeAreaBar(edge: .bottom) {
       MockActionBar(run: run) {
-        BusyButton(isBusy: run.busy == .finish, icon: .forward) {
+        BusyButton(isBusy: run.busy == .finish) {
           Task { await run.finish() }
         } label: {
           Text("See result", tableName: "Mock", comment: "Grades a handed-in mock")
@@ -385,7 +385,7 @@ private struct MockBreakView: View {
     }
     .safeAreaBar(edge: .bottom) {
       MockActionBar(run: run) {
-        BusyButton(isBusy: run.busy == .endBreak, icon: .play) {
+        BusyButton(isBusy: run.busy == .endBreak) {
           Task { await run.endBreak() }
         } label: {
           Text("Start now", tableName: "Mock", comment: "Ends a mock's break early")
@@ -464,7 +464,7 @@ private struct MockSpeakingView: View {
       MockActionBar(run: run) {
         if view.speaking == nil {
           if !run.isWritingPaper {
-            BusyButton(isBusy: run.busy == .startSpeaking, icon: .play) {
+            BusyButton(isBusy: run.busy == .startSpeaking) {
               Task { await run.startSpeaking() }
             } label: {
               Text("Start", tableName: "Mock", comment: "Starts mock speaking")
@@ -474,7 +474,7 @@ private struct MockSpeakingView: View {
             .disabled(run.pending(besides: .startSpeaking))
           }
         } else {
-          BusyButton(isBusy: run.busy == .submit, icon: .send) {
+          BusyButton(isBusy: run.busy == .submit) {
             confirmsHandIn = true
           } label: {
             handInLabel

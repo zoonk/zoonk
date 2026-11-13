@@ -29,7 +29,6 @@ struct CertificatesScreen: View {
         }
       }
     }
-    .navigationTitle(CertificatesHeader.title)
     .barTitleAfterHero(
       String(
         localized: "Certificates", table: "Certificates",
@@ -116,18 +115,6 @@ private struct EmptyCertificates: View {
           .typeStyle(.reading.weight(.semibold))
           .foregroundStyle(Color(.foreground))
           .accessibilityAddTraits(.isHeader)
-
-          Button {
-            router.sheet = nil
-            router.showRoot(of: .today)
-          } label: {
-            Text(
-              "Continue learning", tableName: "Certificates",
-              comment: "Goes to Today from the empty certificates page")
-          }
-          .buttonStyle(.mainAction)
-          .controlSize(.large)
-          .padding(.top, 14)
         }
         .listRowSeparator(.hidden)
       }
@@ -144,6 +131,18 @@ private struct EmptyCertificates: View {
               comment: "Heading over the learner's goals that can still earn a certificate"))
         }
       }
+    }
+    .bottomBar {
+      Button {
+        router.sheet = nil
+        router.showRoot(of: .today)
+      } label: {
+        Text(
+          "Continue learning", tableName: "Certificates",
+          comment: "Goes to Today from the empty certificates page")
+      }
+      .buttonStyle(.mainAction)
+      .keyboardShortcut(.defaultAction)
     }
     // The list too, so pull to refresh also brings back goals that failed to load.
     .loads(store.list, store.upNext)

@@ -176,7 +176,7 @@ struct MockRunnerView: View {
   }
 
   private var nextButton: some View {
-    BusyButton(isBusy: run.busy == .submit, icon: isLastQuestion ? .send : .forward) {
+    BusyButton(isBusy: run.busy == .submit) {
       if isLastQuestion {
         confirmsHandIn = true
       } else {
@@ -205,15 +205,15 @@ struct MockRunnerView: View {
 }
 
 private struct MockQuestionMeta: View {
-  @Environment(\.stacksContent) private var isStacked
   let run: MockRun
   let view: MockView
   let question: MockQuestion
 
   var body: some View {
     AccessibilityStack {
-      Text(question.area ?? "")
-        .lineLimit(isStacked ? nil : 1)
+      if let area = question.area {
+        Chip(Text(area))
+      }
       Spacer(minLength: 0)
       if question.format == .essay {
         Text("Written part", tableName: "Mock", comment: "A full mock's essay part")

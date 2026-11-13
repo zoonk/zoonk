@@ -177,26 +177,21 @@ private struct WeeklySummary: View {
         }
       }
     }
-    .safeAreaBar(edge: .bottom) {
+    .bottomBar {
       Button {
         router.showRoot(of: .today)
       } label: {
         Text("Done", tableName: "Session", comment: "Closes the weekly summary and opens Today")
-          .frame(maxWidth: .infinity)
       }
       .buttonStyle(.mainAction)
-      .controlSize(.large)
-      .scenePadding(.horizontal)
-      .padding(.vertical, 10)
-      .keepsOffFold()
+      .keyboardShortcut(.defaultAction)
     }
   }
 
   private var header: some View {
     VStack(alignment: .leading, spacing: 6) {
-      Text(weekRange)
-        .typeStyle(.eyebrow)
-        .foregroundStyle(.faint)
+      Chip(Text(weekRange))
+        .padding(.bottom, 6)
 
       title
         .typeStyle(.pageTitle)

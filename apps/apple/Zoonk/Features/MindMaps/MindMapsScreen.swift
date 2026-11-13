@@ -17,7 +17,6 @@ struct MindMapsScreen: View {
       let list = store.list(goalId: goal.id)
 
       content(list: list, goal: goal)
-        .navigationTitle(title)
         .barTitleAfterHero(
           String(localized: "Mind maps", table: "MindMaps", comment: "Title of the mind maps page")
         )
@@ -43,7 +42,7 @@ struct MindMapsScreen: View {
       ScrollViewReader { proxy in
         ZoonkList {
           Section {
-            header(maps, goal: goal, tab: shown)
+            PageHeader(title, supporting: Text(verbatim: goal.displayName))
 
             Picker(selection: $tab) {
               ForEach(GoalMindMaps.Tab.allCases, id: \.self) { tab in
@@ -77,6 +76,18 @@ struct MindMapsScreen: View {
         }
       }
       .lonePage()
+      // Study opens what the tab counts, where this device last was in it.
+      .bottomBar {
+        if count(shown, maps: maps) > 0 {
+          Button {
+            router.open(.mindMapStudy(goalId: goal.id, tab: shown))
+          } label: {
+            Text("Study", tableName: "MindMaps", comment: "Opens a tab's maps one per screen")
+          }
+          .buttonStyle(.mainAction)
+          .keyboardShortcut(.defaultAction)
+        }
+      }
     case .empty:
       ContentUnavailableView {
         Label {
@@ -97,21 +108,6 @@ struct MindMapsScreen: View {
       }
     case .idle, .loading:
       ProgressView()
-    }
-  }
-
-  /// Study opens what the tab counts, where this device last was in it.
-  private func header(_ maps: GoalMindMaps, goal: LearnerGoal, tab: GoalMindMaps.Tab) -> some View {
-    PageHeader(title, supporting: Text(verbatim: goal.displayName)) {
-      if count(tab, maps: maps) > 0 {
-        Button {
-          router.open(.mindMapStudy(goalId: goal.id, tab: tab))
-        } label: {
-          Text("Study", tableName: "MindMaps", comment: "Opens a tab's maps one per screen")
-        }
-        .buttonStyle(.mainAction)
-        .keyboardShortcut(.defaultAction)
-      }
     }
   }
 

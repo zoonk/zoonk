@@ -10,7 +10,6 @@ struct MockChooserScreen: View {
         MockChooserContent(goalId: goalId, options: exam.mockOptions(goalId: goalId))
       }
     }
-    .navigationTitle(Text("Take a mock exam", tableName: "Mock", comment: "Mock chooser title"))
     .barTitleAfterHero(
       String(localized: "Take a mock exam", table: "Mock", comment: "Mock chooser title"))
   }
@@ -122,6 +121,9 @@ private struct MockChooser: View {
         lastMockSection
       }
     }
+    .bottomBar(note: failure.map { FailureLine(message: $0) }) {
+      startAction
+    }
     .alert(
       Text(
         "Start a shorter mock exam?", tableName: "Mock",
@@ -153,18 +155,13 @@ private struct MockChooser: View {
     }
   }
 
-  /// Main's `ChooserHeader`: what the last Start found takes the line under the title, and Start
-  /// sits under it, above the choices.
   @ViewBuilder
   private var intro: some View {
     Section {
       PageHeader(
         Text("Take a mock exam", tableName: "Mock", comment: "Mock chooser title"),
-        supporting: line
+        supporting: detail
       )
-      .announcesAlert(failure)
-
-      startAction
 
       if shownStatus == .writing {
         writing
@@ -243,23 +240,18 @@ private struct MockChooser: View {
 
   @ViewBuilder
   private var startAction: some View {
-    Group {
-      if isOpen {
-        BusyButton(isBusy: busy, icon: .play) {
-          Task { await start() }
-        } label: {
-          startLabel
-        }
-        .buttonStyle(.mainAction)
-        .buttonSizing(.flexible)
-        .disabled(pickedOption == nil)
-        .keyboardShortcut(.defaultAction)
-      } else {
-        SeePlusButton().buttonStyle(.mainAction).frame(maxWidth: .infinity)
+    if isOpen {
+      BusyButton(isBusy: busy) {
+        Task { await start() }
+      } label: {
+        startLabel
       }
+      .buttonStyle(.mainAction)
+      .disabled(pickedOption == nil)
+      .keyboardShortcut(.defaultAction)
+    } else {
+      SeePlusButton().buttonStyle(.mainAction)
     }
-    .controlSize(.large)
-    .listRowSeparator(.hidden)
   }
 
   private var detail: Text {
@@ -307,16 +299,7 @@ private struct MockChooser: View {
     }
   }
 
-  /// Main's `ChooserLine`: the page's one line, or what the last Start found in its place.
-  private var line: Text {
-    if let failure {
-      return Text(failure).foregroundStyle(.destructiveText)
-    }
-
-    return detail
-  }
-
-  /// A Start that failed, read out as main's `role="alert"` is, since VoiceOver stays on Start.
+  /// A Start that failed, over the bar where Start was pressed; the bar's note reads it out.
   private var failure: String? {
     switch shownStatus {
     case .notEnoughQuestions?:

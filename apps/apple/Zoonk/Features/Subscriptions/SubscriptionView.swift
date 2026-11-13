@@ -23,7 +23,7 @@ struct SubscriptionScreen: View {
             .scenePadding()
           }
           .loads(settings.freePlan, refreshable: false)
-          .safeAreaBar(edge: .bottom) {
+          .bottomBar {
             Button {
               router.present(.signIn)
             } label: {
@@ -38,9 +38,7 @@ struct SubscriptionScreen: View {
               }
             }
             .buttonStyle(.mainAction)
-            .controlSize(.large)
-            .scenePadding()
-            .keepsOffFold()
+            .keyboardShortcut(.defaultAction)
           }
           .barName(Text.plus)
         }

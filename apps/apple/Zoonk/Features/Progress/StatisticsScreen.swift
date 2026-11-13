@@ -16,7 +16,6 @@ struct StatisticsScreen: View {
     } single: {
       StatsOverview()
     }
-    .navigationTitle(Text(AppTab.statistics.title))
     .barTitleAfterHero(String(localized: AppTab.statistics.title))
     .navigationDestination(for: StatsSection.self) { section in
       pushed(section)

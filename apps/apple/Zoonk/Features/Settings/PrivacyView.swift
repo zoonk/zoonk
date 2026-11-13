@@ -56,9 +56,6 @@ struct PrivacyView: View {
         SettingsSaveError()
       }
     }
-    .navigationTitle(
-      Text("Privacy", tableName: "Settings", comment: "Title of the Privacy page")
-    )
     .barTitleAfterHero(
       String(localized: "Privacy", table: "Settings", comment: "Title of the Privacy page")
     )

@@ -303,7 +303,7 @@ struct AccountSheet: View {
           tableName: "Account",
           comment: "Explains that a temporary account load failure did not remove the session")
       } actions: {
-        BusyButton(isBusy: session.isWorking, icon: .retry) {
+        BusyButton(isBusy: session.isWorking) {
           Task {
             await session.retryRestore()
           }

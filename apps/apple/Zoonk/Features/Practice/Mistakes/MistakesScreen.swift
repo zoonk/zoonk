@@ -45,7 +45,6 @@ struct MistakesScreen: View {
 
         Section {
           PageHeader(title, supporting: subtitle(shown.value).map { Text(verbatim: $0) })
-          header(shown.value)
         }
 
         if !isBeside {
@@ -60,8 +59,19 @@ struct MistakesScreen: View {
       }
       .loads(shown)
     }
-
-    .navigationTitle(title)
+    .bottomBar {
+      if (open.value?.availability.ready ?? 0) > 0 {
+        Button {
+          hooks.navigate(.mistakePractice(skillId: nil))
+        } label: {
+          Text(
+            "Practice mistakes", tableName: "Practice",
+            comment: "Starts practicing the notebook's ready mistakes.")
+        }
+        .buttonStyle(.mainAction)
+        .keyboardShortcut(.defaultAction)
+      }
+    }
     .barTitleAfterHero(
       String(
         localized: "Mistakes notebook", table: "Practice",
@@ -88,14 +98,6 @@ struct MistakesScreen: View {
     ].compactMap(\.self)
 
     return facts.isEmpty ? nil : facts.joinedFacts()
-  }
-
-  private func header(_ list: Components.Schemas.MistakeList?) -> some View {
-    NotebookHeader(list: list) { hooks.navigate(.mistakePractice(skillId: nil)) }
-      .listRowBackground(Color.clear)
-      .listRowSeparator(.hidden)
-      // The row's own side margins: at the cell's edge, a wrapped line's first letter was clipped.
-      .listRowInsets(.vertical, 8)
   }
 
   private func picker(counts: Components.Schemas.MistakeList.CountsPayload?) -> some View {
@@ -273,30 +275,6 @@ private struct MistakeListSections: View {
   }
 }
 
-private struct NotebookHeader: View {
-  let list: Components.Schemas.MistakeList?
-  let practice: () -> Void
-
-  var body: some View {
-    VStack(alignment: .leading, spacing: 12) {
-      if let list {
-        if list.availability.ready > 0 {
-          Button(action: practice) {
-            Text(
-              "Practice mistakes", tableName: "Practice",
-              comment: "Starts practicing the notebook's ready mistakes."
-            )
-            .frame(maxWidth: .infinity)
-          }
-          .buttonStyle(.mainAction)
-          .controlSize(.large)
-        }
-      }
-    }
-    .frame(maxWidth: .infinity, alignment: .leading)
-  }
-}
-
 private struct MistakeEntryView: View {
   let mistake: Components.Schemas.Mistake
   let labels: PracticeTrueFalseLabels
@@ -310,11 +288,7 @@ private struct MistakeEntryView: View {
       AccessibilityStack {
         Group {
           if let cause = causeLabel {
-            Label {
-              Text(cause)
-            } icon: {
-              Image(systemName: causeIcon)
-            }
+            Chip(Text(cause), systemImage: causeIcon)
           }
         }
         .frame(maxWidth: .infinity, alignment: .leading)

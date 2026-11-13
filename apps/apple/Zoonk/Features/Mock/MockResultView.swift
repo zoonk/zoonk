@@ -90,7 +90,7 @@ struct MockResultView: View {
         planSections
         reviewSections
       }
-      .safeAreaBar(edge: .bottom) { actionBar }
+      .bottomBar { actions }
     } single: {
       ReviewList(review: view.review, place: $choices.reviewPlace) {
         scoreSections
@@ -99,7 +99,7 @@ struct MockResultView: View {
         planSections
         reviewSections
       }
-      .safeAreaBar(edge: .bottom) { actionBar.keepsOffFold() }
+      .bottomBar { actions }
     }
     .announcesStatus(gradesEssays ? MockEssaySections.grading : nil)
     .navigationTitle(MockLabels.title(number: view.number))
@@ -222,13 +222,10 @@ struct MockResultView: View {
 
   }
 
-  private var actionBar: some View {
-    VStack(spacing: 8) {
-      mainAction
-      secondaryAction
-    }
-    .scenePadding(.horizontal)
-    .padding(.vertical, 10)
+  @ViewBuilder
+  private var actions: some View {
+    secondaryAction
+    mainAction
   }
 
   /// The questions answered wrong: the ones to fix. Blanks are reviewed but aren't mistakes.
@@ -255,7 +252,6 @@ struct MockResultView: View {
       }
     }
     .buttonStyle(.mainAction)
-    .controlSize(.large)
     .keyboardShortcut(.defaultAction)
   }
 
@@ -267,7 +263,7 @@ struct MockResultView: View {
       } label: {
         Text("Not now", tableName: "Mock", comment: "Leaves without reviewing")
       }
-      .buttonStyle(.borderless)
+      .buttonStyle(.outline)
     }
   }
 }
@@ -294,9 +290,8 @@ private struct MockScoreSections: View {
   private var scoreSection: some View {
     Section {
       VStack(alignment: .leading, spacing: 6) {
-        Text(MockLabels.title(number: view.number))
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
+        Chip(Text(MockLabels.title(number: view.number)))
+          .padding(.bottom, 6)
         Text(score.value)
           .typeStyle(.momentReadout)
         Text(detail)
@@ -1192,14 +1187,18 @@ private struct MockReviewSection: View {
           VStack(alignment: .leading, spacing: 2) {
             Group {
               if let area = item.area {
-                Text(
-                  "Question \(item.number)\u{00A0}· \(area)", tableName: "Mock", comment: "Review")
+                Chip(
+                  Text(
+                    "Question \(item.number)\u{00A0}· \(area)", tableName: "Mock",
+                    comment: "Review"))
               } else {
-                Text("Question \(item.number)", tableName: "Mock", comment: "A question by number")
+                Chip(
+                  Text(
+                    "Question \(item.number)", tableName: "Mock", comment: "A question by number")
+                )
               }
             }
-            .typeStyle(.data)
-            .foregroundStyle(.mutedForeground)
+            .padding(.bottom, 4)
             Text(ItemTextBlock.plain(item.question))
               .lineLimit(2)
           }
