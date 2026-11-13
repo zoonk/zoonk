@@ -8,13 +8,14 @@ import { useId, useState } from "react";
 import { ListGroup } from "../_components/list-group";
 import { SURFACE_CLASS, Surface } from "../_components/surface";
 import { TITLE_ROW_CLASS } from "../_components/title-row";
+import { BuddyArt } from "../buddies/buddy-art";
 import { type BuddyToday } from "../buddies/buddy-status-view";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { BrainPowerReward } from "./brain-power-reward";
 import { MissionStepLine, useMissionName, useMissionStateLabel } from "./mission-copy";
 import { type MissionLinks, type MissionView, useMissionOpen } from "./mission-links";
 import { MissionListRow, ProgressCount } from "./mission-list";
-import { BuddyFace, MissionMark } from "./mission-mark";
+import { MissionMark } from "./mission-mark";
 import { MissionTrack } from "./mission-track";
 
 export type MissionsDay = Pick<BuddyToday, "fullMeal"> & { missions: readonly MissionView[] };
@@ -194,7 +195,7 @@ export function MissionsCard({
     >
       <div className="flex items-start gap-3">
         {/* Hangs 4px out each side, so it centers on the rows' marks and the title starts with their names. */}
-        {showBuddy && <BuddyFace buddy={buddy} className="-mx-1 mt-0.5 size-6" />}
+        {showBuddy && <BuddyArt buddy={buddy} className="-mx-1 mt-0.5 size-6" view="face" />}
 
         <div className={cn(TITLE_ROW_CLASS, "min-w-0 flex-1 items-start gap-y-1")}>
           <MissionsHeading
