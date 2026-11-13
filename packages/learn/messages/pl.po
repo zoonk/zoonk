@@ -179,11 +179,10 @@ msgstr "Kontynuuj"
 #: src/challenge/challenge-footer.tsx
 #: src/conversation/tutor-feature-offers.tsx
 #: src/focus-test/focus-test-screens.tsx
-#: src/language/level-test/level-test-screens.tsx
 #: src/mock/mock-chooser.tsx
 #: src/mock/mock-speaking.tsx
-#: src/onboarding/steps/placement-screens.tsx
 #: src/onboarding/steps/reveal-body.tsx
+#: src/onboarding/test-outcome.tsx
 #: src/session/next-stop.tsx
 #: src/today/today-action.tsx
 #: src/today/today-focus-test.tsx
@@ -610,11 +609,6 @@ msgstr "Nie udało się przejść do tego kroku. Spróbuj ponownie."
 msgctxt "cyR7Kh"
 msgid "Back"
 msgstr "Wróć"
-
-#: src/_components/subscribe-gate.tsx
-msgctxt "gczcC5"
-msgid "Subscribe"
-msgstr "Subskrybuj"
 
 #: src/_components/suggestion.tsx
 msgctxt "FgydNe"
@@ -6842,14 +6836,6 @@ msgid "Use the app in {language}"
 msgstr "Ustaw język aplikacji: {language}"
 
 #: src/language/level-test/level-test-screens.tsx
-#: src/onboarding/steps/placement-screens.tsx
-#: src/onboarding/steps/step-form.tsx
-#: src/plan/plan-bases-choices.tsx
-msgctxt "_4tOwT"
-msgid "Skip"
-msgstr "Pomiń"
-
-#: src/language/level-test/level-test-screens.tsx
 msgctxt "oLlJZg"
 msgid "Find your level in {language}"
 msgstr "Sprawdź swój poziom: {language}"
@@ -10651,6 +10637,13 @@ msgctxt "h2ifto"
 msgid "How much time can you study each day?"
 msgstr "Ile czasu dziennie możesz poświęcić na naukę?"
 
+#: src/onboarding/steps/step-form.tsx
+#: src/onboarding/test-outcome.tsx
+#: src/plan/plan-bases-choices.tsx
+msgctxt "_4tOwT"
+msgid "Skip"
+msgstr "Pomiń"
+
 #. Headline when a screen failed to load. Next to it is a “Try again” button.
 #: src/onboarding/steps/step-parts.tsx
 msgctxt "jNPr7M"
@@ -11377,12 +11370,6 @@ msgid "Study everything"
 msgstr "Przerób cały materiał"
 
 #: src/plan/plan-past-date-suggestion.tsx
-#: src/today/today-day-status.tsx
-msgctxt "y7l0FJ"
-msgid "Keep studying them, or archive this goal?"
-msgstr "Chcesz dalej przerabiać te lekcje czy zarchiwizować ten cel?"
-
-#: src/plan/plan-past-date-suggestion.tsx
 msgctxt "oNLSka"
 msgid "Move your date so your time covers what's left."
 msgstr "Przesuń termin, żeby starczyło ci czasu na pozostały materiał."
@@ -11510,6 +11497,11 @@ msgstr "Zgodnie z planem"
 msgctxt "DCVgDx"
 msgid "Past your date"
 msgstr "Po terminie"
+
+#: src/plan/plan-status-label.tsx
+msgctxt "y7l0FJ"
+msgid "Keep studying them, or archive this goal?"
+msgstr "Chcesz dalej przerabiać te lekcje czy zarchiwizować ten cel?"
 
 #: src/plan/plan-status-label.tsx
 msgctxt "c1uCCY"
