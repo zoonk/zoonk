@@ -1783,6 +1783,21 @@ msgid "Simplified street plan, after John Snow's 1854 map."
 msgstr "Vereinfachter Straßenplan nach John Snows Karte von 1854."
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
+msgctxt "nDkRHw"
+msgid "{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}"
+msgstr "{matched, plural, one {# Paar von {total} gefunden} other {# Paare von {total} gefunden}}"
+
+#: src/activities/match-pairs/match-pairs-activity.tsx
+msgctxt "ZdoI92"
+msgid "{count, plural, one {# card has no match} other {# cards have no match}}"
+msgstr "{count, plural, one {Zu # Karte gibt es keine passende Karte} other {Zu # Karten gibt es keine passende Karte}}"
+
+#: src/activities/match-pairs/match-pairs-activity.tsx
+msgctxt "Z7Xcs6"
+msgid "Those two don't go together."
+msgstr "Diese beiden gehören nicht zusammen."
+
+#: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "HfJhT9"
 msgid "Matched {left} with {right}. {matched, plural, one {# of {total} pairs matched.} other {# of {total} pairs matched.}}"
 msgstr "{left} und {right} bilden ein Paar. {matched, plural, one {# Paar von {total} gefunden.} other {# Paare von {total} gefunden.}}"
@@ -1808,24 +1823,9 @@ msgid "{text}, no match"
 msgstr "{text}, keine passende Karte"
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "nDkRHw"
-msgid "{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}"
-msgstr "{matched, plural, one {# Paar von {total} gefunden} other {# Paare von {total} gefunden}}"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "ZdoI92"
-msgid "{count, plural, one {# card has no match} other {# cards have no match}}"
-msgstr "{count, plural, one {Zu # Karte gibt es keine passende Karte} other {Zu # Karten gibt es keine passende Karte}}"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "nuMsTW"
 msgid "Cards to match"
 msgstr "Karten zum Zuordnen"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "Z7Xcs6"
-msgid "Those two don't go together."
-msgstr "Diese beiden gehören nicht zusammen."
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "Dzn88L"

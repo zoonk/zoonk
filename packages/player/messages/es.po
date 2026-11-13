@@ -1783,6 +1783,21 @@ msgid "Simplified street plan, after John Snow's 1854 map."
 msgstr "Plano simplificado de calles, basado en el mapa de John Snow de 1854."
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
+msgctxt "nDkRHw"
+msgid "{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}"
+msgstr "{matched, plural, other {# de {total} pares emparejados}}"
+
+#: src/activities/match-pairs/match-pairs-activity.tsx
+msgctxt "ZdoI92"
+msgid "{count, plural, one {# card has no match} other {# cards have no match}}"
+msgstr "{count, plural, one {# tarjeta no tiene pareja} other {# tarjetas no tienen pareja}}"
+
+#: src/activities/match-pairs/match-pairs-activity.tsx
+msgctxt "Z7Xcs6"
+msgid "Those two don't go together."
+msgstr "Esas dos no forman pareja."
+
+#: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "HfJhT9"
 msgid "Matched {left} with {right}. {matched, plural, one {# of {total} pairs matched.} other {# of {total} pairs matched.}}"
 msgstr "Emparejaste {left} con {right}. {matched, plural, other {# de {total} pares emparejados.}}"
@@ -1808,24 +1823,9 @@ msgid "{text}, no match"
 msgstr "{text}, sin pareja"
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "nDkRHw"
-msgid "{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}"
-msgstr "{matched, plural, other {# de {total} pares emparejados}}"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "ZdoI92"
-msgid "{count, plural, one {# card has no match} other {# cards have no match}}"
-msgstr "{count, plural, one {# tarjeta no tiene pareja} other {# tarjetas no tienen pareja}}"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "nuMsTW"
 msgid "Cards to match"
 msgstr "Tarjetas para emparejar"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "Z7Xcs6"
-msgid "Those two don't go together."
-msgstr "Esas dos no forman pareja."
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "Dzn88L"

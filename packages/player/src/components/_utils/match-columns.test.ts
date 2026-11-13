@@ -4,7 +4,8 @@ import {
   buildMatchAttempt,
   buildRightMatchItems,
   getActiveKeyboardSide,
-  getItemVisualState,
+  getEntryState,
+  getPairIndex,
 } from "./match-columns";
 
 const left = buildLeftMatchItems([
@@ -39,7 +40,7 @@ describe("match columns", () => {
     const matched = buildMatchAttempt({ current: firstTwo!, selected: two! });
 
     const states = [firstTwo, secondTwo, three, two].map((item) =>
-      getItemVisualState({
+      getEntryState({
         correctMatches: [matched],
         flashingMatch: null,
         item: item!,
@@ -47,7 +48,19 @@ describe("match columns", () => {
       }),
     );
 
-    expect(states).toStrictEqual(["correct", "idle", "selected", "correct"]);
+    expect(states).toStrictEqual(["right", "idle", "selected", "right"]);
+  });
+
+  it("numbers both sides of a pair by its left entry's place", () => {
+    const [firstTwo, secondTwo] = left;
+    const [dos, three] = right;
+    const matched = buildMatchAttempt({ current: secondTwo!, selected: dos! });
+
+    const pairs = [firstTwo, secondTwo, dos, three].map((item) =>
+      getPairIndex({ correctMatches: [matched], item: item!, leftItems: left }),
+    );
+
+    expect(pairs).toStrictEqual([undefined, 1, 1, undefined]);
   });
 
   it("flashes only the two buttons of a wrong pair", () => {
@@ -56,10 +69,10 @@ describe("match columns", () => {
     const wrong = buildMatchAttempt({ current: secondTwo!, selected: three! });
 
     const states = [firstTwo, secondTwo, dos, three].map((item) =>
-      getItemVisualState({ correctMatches: [], flashingMatch: wrong, item: item!, selected: null }),
+      getEntryState({ correctMatches: [], flashingMatch: wrong, item: item!, selected: null }),
     );
 
-    expect(states).toStrictEqual(["idle", "incorrectFlash", "idle", "incorrectFlash"]);
+    expect(states).toStrictEqual(["idle", "wrong", "idle", "wrong"]);
   });
 
   it("points number keys at the column the next tap belongs to", () => {

@@ -1783,6 +1783,21 @@ msgid "Simplified street plan, after John Snow's 1854 map."
 msgstr "John Snow’un 1854 tarihli haritasına dayanan sadeleştirilmiş sokak planı."
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
+msgctxt "nDkRHw"
+msgid "{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}"
+msgstr "{matched, plural, other {# / {total} çift eşleştirildi}}"
+
+#: src/activities/match-pairs/match-pairs-activity.tsx
+msgctxt "ZdoI92"
+msgid "{count, plural, one {# card has no match} other {# cards have no match}}"
+msgstr "{count, plural, other {# kartın eşi yok}}"
+
+#: src/activities/match-pairs/match-pairs-activity.tsx
+msgctxt "Z7Xcs6"
+msgid "Those two don't go together."
+msgstr "Bu ikisi eşleşmiyor."
+
+#: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "HfJhT9"
 msgid "Matched {left} with {right}. {matched, plural, one {# of {total} pairs matched.} other {# of {total} pairs matched.}}"
 msgstr "{left} ile {right} eşleştirildi. {matched, plural, other {# / {total} çift eşleştirildi.}}"
@@ -1808,24 +1823,9 @@ msgid "{text}, no match"
 msgstr "{text}, eşi yok"
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "nDkRHw"
-msgid "{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}"
-msgstr "{matched, plural, other {# / {total} çift eşleştirildi}}"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "ZdoI92"
-msgid "{count, plural, one {# card has no match} other {# cards have no match}}"
-msgstr "{count, plural, other {# kartın eşi yok}}"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "nuMsTW"
 msgid "Cards to match"
 msgstr "Eşleştirilecek kartlar"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "Z7Xcs6"
-msgid "Those two don't go together."
-msgstr "Bu ikisi eşleşmiyor."
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "Dzn88L"

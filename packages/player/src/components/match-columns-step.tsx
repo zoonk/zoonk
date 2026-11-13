@@ -3,11 +3,9 @@
 import { parseStepContent } from "@zoonk/core/library/steps/contract";
 import { checkSingleMatchPair } from "@zoonk/core/player/contracts/check-answer";
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-lesson-data";
-import { Kbd } from "@zoonk/ui/components/kbd";
-import { LineMarker } from "@zoonk/ui/components/line-marker";
+import { MatchEntry } from "@zoonk/learn/match-entry";
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
-import { MAX_PICK_KEYS, shortcutKeys } from "@zoonk/ui/lib/shortcuts";
-import { cn } from "@zoonk/ui/lib/utils";
+import { MAX_PICK_KEYS } from "@zoonk/ui/lib/shortcuts";
 import { stripWrappingQuotes } from "@zoonk/utils/string";
 import { useExtracted } from "next-intl";
 import { useCallback, useMemo, useRef, useState } from "react";
@@ -15,7 +13,6 @@ import { useWebHaptics } from "web-haptics/react";
 import { usePlayerInteractionState } from "../player-context";
 import { type SelectedAnswer } from "../step-answer";
 import {
-  type ItemVisualState,
   type MatchAttempt,
   type MatchItemData,
   type MatchSelection,
@@ -25,9 +22,9 @@ import {
   buildRightMatchItems,
   buildSolvedMatchBoard,
   getActiveKeyboardSide,
-  getItemClassName,
-  getItemVisualState,
+  getEntryState,
   getKeyboardItems,
+  getPairIndex,
   isItemMatched,
   restoreMatches,
 } from "./_utils/match-columns";
@@ -36,45 +33,6 @@ import { QuestionText } from "./question-text";
 import { InteractiveStepLayout } from "./step-layouts";
 
 const FLASH_DURATION = 800;
-
-function MatchItem({
-  isShortcutActive,
-  label,
-  marker,
-  onTap,
-  state,
-}: {
-  isShortcutActive: boolean;
-  label: string;
-  marker: number;
-  onTap: () => void;
-  state: ItemVisualState;
-}) {
-  const isLocked = state === "correct" || state === "incorrectFlash";
-  const displayLabel = stripWrappingQuotes(label);
-  const shortcut = !isLocked && isShortcutActive ? shortcutKeys("pick", marker - 1) : undefined;
-
-  return (
-    <button
-      aria-keyshortcuts={shortcut}
-      aria-pressed={state === "selected"}
-      className={cn(
-        "focus-visible:outline-ring flex min-h-11 items-start gap-3 rounded-xl px-3 py-3.25 text-left leading-6 font-medium wrap-break-word transition-colors outline-none select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid sm:px-3.5",
-        getItemClassName(state),
-      )}
-      aria-disabled={isLocked || undefined}
-      disabled={isLocked}
-      onClick={onTap}
-      type="button"
-    >
-      <LineMarker aria-hidden="true">
-        <Kbd>{marker}</Kbd>
-      </LineMarker>
-
-      <span className="min-w-0">{displayLabel}</span>
-    </button>
-  );
-}
 
 export function MatchColumnsStep({
   onSelectAnswer,
@@ -194,14 +152,19 @@ export function MatchColumnsStep({
   }));
 
   function renderItem(side: MatchSide, item: MatchItemData, index: number) {
+    const state = getEntryState({ correctMatches: board.matches, flashingMatch, item, selected });
+
     return (
-      <MatchItem
-        isShortcutActive={activeKeyboardSide === side}
-        label={item.label}
-        marker={index + 1}
-        onTap={() => handleTap(item)}
-        state={getItemVisualState({ correctMatches: board.matches, flashingMatch, item, selected })}
-      />
+      <MatchEntry
+        disabled={state === "wrong"}
+        index={index}
+        keyActive={activeKeyboardSide === side}
+        onClick={() => handleTap(item)}
+        pair={getPairIndex({ correctMatches: board.matches, item, leftItems })}
+        state={state}
+      >
+        {stripWrappingQuotes(item.label)}
+      </MatchEntry>
     );
   }
 

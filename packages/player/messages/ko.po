@@ -1783,6 +1783,21 @@ msgid "Simplified street plan, after John Snow's 1854 map."
 msgstr "존 스노의 1854년 지도를 바탕으로 간략하게 그린 거리 지도예요."
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
+msgctxt "nDkRHw"
+msgid "{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}"
+msgstr "{matched, plural, other {#쌍 맞춤(총 {total}쌍)}}"
+
+#: src/activities/match-pairs/match-pairs-activity.tsx
+msgctxt "ZdoI92"
+msgid "{count, plural, one {# card has no match} other {# cards have no match}}"
+msgstr "{count, plural, other {짝이 없는 카드 #장}}"
+
+#: src/activities/match-pairs/match-pairs-activity.tsx
+msgctxt "Z7Xcs6"
+msgid "Those two don't go together."
+msgstr "두 카드는 짝이 아니에요."
+
+#: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "HfJhT9"
 msgid "Matched {left} with {right}. {matched, plural, one {# of {total} pairs matched.} other {# of {total} pairs matched.}}"
 msgstr "{left}와(과) {right}의 짝을 맞췄어요. {matched, plural, other {#쌍을 맞췄어요(총 {total}쌍).}}"
@@ -1808,24 +1823,9 @@ msgid "{text}, no match"
 msgstr "{text}, 짝 없음"
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "nDkRHw"
-msgid "{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}"
-msgstr "{matched, plural, other {#쌍 맞춤(총 {total}쌍)}}"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "ZdoI92"
-msgid "{count, plural, one {# card has no match} other {# cards have no match}}"
-msgstr "{count, plural, other {짝이 없는 카드 #장}}"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "nuMsTW"
 msgid "Cards to match"
 msgstr "짝을 맞출 카드"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "Z7Xcs6"
-msgid "Those two don't go together."
-msgstr "두 카드는 짝이 아니에요."
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "Dzn88L"

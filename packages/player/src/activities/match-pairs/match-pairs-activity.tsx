@@ -1,13 +1,17 @@
 "use client";
 
 import { useSentenceSpace } from "@zoonk/learn/locale";
+import { MatchEntry, type MatchEntryState } from "@zoonk/learn/match-entry";
 import { useSpokenText } from "@zoonk/learn/rich-text/speech";
+import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
+import { MAX_PICK_KEYS } from "@zoonk/ui/lib/shortcuts";
 import { CircleX } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { MatchBoard } from "../../components/match-board";
 import { NotQuiteLead } from "../../components/not-quite-lead";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
+import { usePlayerInteractionState } from "../../player-context";
 import {
   ActivityCanvas,
   ActivityCanvasLabel,
@@ -15,7 +19,6 @@ import {
 } from "../_components/activity-canvas";
 import { expectedInteraction } from "../_utils/activity-expected";
 import { type ActivityRendererProps } from "../activity-renderer";
-import { type MatchCardState, MatchPairsCard } from "./match-pairs-card";
 import {
   type MatchCard,
   arrangeMatchColumns,
@@ -37,6 +40,7 @@ type Selection = Record<Side, string | null>;
 type Miss = { explanation: string | null; left: string; right: string };
 
 const NO_SELECTION: Selection = { left: null, right: null };
+const SETTLED = new Set<MatchEntryState>(["none", "right"]);
 
 function cardState({
   card,
@@ -52,20 +56,56 @@ function cardState({
   progress: MatchProgress;
   selection: Selection;
   side: Side;
-}): MatchCardState {
+}): MatchEntryState {
   if (!card.isTrap && progress.matched.includes(card.id)) {
-    return "matched";
+    return "right";
   }
 
   if (card.isTrap && (isComplete || progress.traps.includes(card.id))) {
-    return "noMatch";
+    return "none";
   }
 
   if (miss?.[side] === card.id) {
-    return "missed";
+    return "wrong";
   }
 
   return selection[side] === card.id ? "selected" : "idle";
+}
+
+function MatchCount({ matched, total, traps }: { matched: number; total: number; traps: number }) {
+  const t = useExtracted();
+
+  return (
+    <ActivityCanvasLabel className="tabular-nums">
+      {t("{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}", {
+        matched,
+        total: String(total),
+      })}
+
+      {traps > 0 && (
+        <>
+          {" · "}
+          {t("{count, plural, one {# card has no match} other {# cards have no match}}", {
+            count: traps,
+          })}
+        </>
+      )}
+    </ActivityCanvasLabel>
+  );
+}
+
+function MissNote({ explanation }: { explanation: string | null }) {
+  const t = useExtracted();
+
+  return (
+    <div className="bg-destructive/10 flex gap-2.5 rounded-xl px-3.5 py-3 text-sm leading-snug">
+      <CircleX aria-hidden="true" className="text-destructive-text mt-0.5 size-4 shrink-0" />
+      <p>
+        <NotQuiteLead />{" "}
+        {explanation ? <LessonRichText text={explanation} /> : t("Those two don't go together.")}
+      </p>
+    </div>
+  );
 }
 
 export function MatchPairsActivity({
@@ -87,6 +127,7 @@ export function MatchPairsActivity({
   const [miss, setMiss] = useState<Miss | null>(null);
   const space = useSentenceSpace();
   const spoken = useSpokenText();
+  const interactionState = usePlayerInteractionState();
   const [announcement, setAnnouncement] = useState("");
   const pairs = expectedInteraction(expected, "assignment")?.pairs ?? null;
   const isComplete = progress.matched.length === pairIds.length;
@@ -148,47 +189,58 @@ export function MatchPairsActivity({
     setSelection(next);
   }
 
-  function cardLabel(card: MatchCard, state: MatchCardState): string {
+  function cardLabel(card: MatchCard, state: MatchEntryState): string {
     const text = spoken.inline(card.text);
 
-    if (state === "matched") {
+    if (state === "right") {
       return t("{text}, matched", { text });
     }
 
-    return state === "noMatch" ? t("{text}, no match", { text }) : text;
+    return state === "none" ? t("{text}, no match", { text }) : text;
   }
 
-  function cardButton(side: Side, card: MatchCard) {
-    const state = cardState({ card, isComplete, miss, progress, selection, side });
+  const keySide: Side = selection.left ? "right" : "left";
+  const keyCards = keySide === "left" ? left : right;
+
+  const stateOf = (side: Side, card: MatchCard) =>
+    cardState({ card, isComplete, miss, progress, selection, side });
+
+  useNumberKeys({
+    count: Math.min(keyCards.length, MAX_PICK_KEYS),
+    enabled: !isChecked && !isComplete && interactionState !== "paused",
+    onPick: (index) => {
+      const card = keyCards[index];
+
+      if (!card || SETTLED.has(stateOf(keySide, card))) {
+        return false;
+      }
+
+      pick(keySide, card);
+    },
+  });
+
+  function cardButton(side: Side, card: MatchCard, index: number) {
+    const state = stateOf(side, card);
 
     return (
-      <MatchPairsCard
-        isDisabled={isChecked || state === "matched" || state === "noMatch"}
+      <MatchEntry
+        className={state === "idle" ? "bg-background" : undefined}
+        disabled={isChecked}
+        index={index}
+        keyActive={keySide === side}
         label={cardLabel(card, state)}
-        onPick={() => pick(side, card)}
+        onClick={() => pick(side, card)}
+        pair={left.findIndex((other) => !other.isTrap && other.id === card.id)}
         state={state}
-        text={card.text}
-      />
+      >
+        <LessonRichText text={card.text} />
+      </MatchEntry>
     );
   }
 
   return (
     <ActivityCanvas className="gap-4" labelId={labelId}>
-      <ActivityCanvasLabel className="tabular-nums">
-        {t(
-          "{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}",
-          { matched: progress.matched.length, total: String(pairIds.length) },
-        )}
-
-        {trapCount > 0 && (
-          <>
-            {" · "}
-            {t("{count, plural, one {# card has no match} other {# cards have no match}}", {
-              count: trapCount,
-            })}
-          </>
-        )}
-      </ActivityCanvasLabel>
+      <MatchCount matched={progress.matched.length} total={pairIds.length} traps={trapCount} />
 
       <MatchBoard
         className="text-sm sm:text-base"
@@ -199,19 +251,7 @@ export function MatchPairsActivity({
         solvedRows={isComplete ? solvedRows({ left, right }) : undefined}
       />
 
-      {miss && (
-        <div className="bg-destructive/10 flex gap-2.5 rounded-xl px-3.5 py-3 text-sm leading-snug">
-          <CircleX aria-hidden="true" className="text-destructive-text mt-0.5 size-4 shrink-0" />
-          <p>
-            <NotQuiteLead />{" "}
-            {miss.explanation ? (
-              <LessonRichText text={miss.explanation} />
-            ) : (
-              t("Those two don't go together.")
-            )}
-          </p>
-        </div>
-      )}
+      {miss && <MissNote explanation={miss.explanation} />}
 
       {isChecked && pairs && (
         <MatchPairsResults

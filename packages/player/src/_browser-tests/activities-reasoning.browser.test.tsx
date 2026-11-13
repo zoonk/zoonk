@@ -258,6 +258,31 @@ describe("reasoning activities", () => {
     await expect.element(page.getByText("Look-alikes with no match")).toBeVisible();
   });
 
+  it("match pairs: the number keys pick from the column the next card belongs to, and a matched card answers none", async () => {
+    openActivity({ template: "matchPairs" });
+    const libreria = page.getByRole("button", { exact: true, name: "librería" });
+    const bookstore = page.getByRole("button", { exact: true, name: "bookstore" });
+    await expect.element(libreria).toHaveAttribute("aria-keyshortcuts", "1");
+    await expect.element(bookstore).not.toHaveAttribute("aria-keyshortcuts");
+
+    await press("2");
+    await expect.element(bookstore).toHaveAttribute("aria-keyshortcuts", "3");
+    await press("1");
+    const pregnant = page.getByRole("button", { name: "pregnant, matched" });
+    await expect.element(pregnant).toBeDisabled();
+
+    await press("2");
+    await press("1");
+    await expect.element(libreria).toHaveAttribute("aria-pressed", "true");
+    await press("1");
+    await expect.element(libreria).toHaveAttribute("aria-pressed", "true");
+    await press("3");
+
+    await expect
+      .element(page.getByText("2 of 3 pairs matched · 2 cards have no match", { exact: true }))
+      .toBeVisible();
+  });
+
   it("match pairs: puts each card beside its match and each look-alike in a row of its own once every pair is matched", async () => {
     openActivity({ template: "matchPairs" });
     const pairs = activityContentFixtures.matchPairs.fields.pairs;

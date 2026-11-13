@@ -1,13 +1,9 @@
 "use client";
 
-import { Kbd } from "@zoonk/ui/components/kbd";
-import { LineMarker } from "@zoonk/ui/components/line-marker";
-import { ignoreHeldEnter, useNumberKeys } from "@zoonk/ui/hooks/keyboard";
-import { pickKey, shortcutKeys } from "@zoonk/ui/lib/shortcuts";
-import { cn } from "@zoonk/ui/lib/utils";
+import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
 import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
-import { ANSWER_TONE } from "../../_components/answer-tone";
+import { MatchEntry } from "../../_components/match-entry";
 import { useFocusMainActionWhenComplete } from "../../_components/question-actions";
 import { toPlainItemLine } from "../../questions/_utils/item-text";
 import { ItemLine } from "../../questions/item-text";
@@ -16,36 +12,13 @@ type Matches = number[];
 
 const UNMATCHED = -1;
 
-/**
- * An entry starts with the key that picks it. Once matched, its pair's number takes the key's
- * place in the same box, so matching moves no text.
- */
-function EntryMarker({ index, pair }: { index: number; pair: number }) {
-  const key = pickKey(index);
+function getLeftState({ matched, selected }: { matched: boolean; selected: boolean }) {
+  if (matched) {
+    return "matched";
+  }
 
-  return (
-    <LineMarker aria-hidden="true" className="w-6 justify-center">
-      {pair === UNMATCHED && key && <Kbd>{key}</Kbd>}
-
-      {pair !== UNMATCHED && (
-        <span className="bg-foreground text-background flex size-6 items-center justify-center rounded-full font-mono text-xs font-medium tabular-nums">
-          {pair + 1}
-        </span>
-      )}
-    </LineMarker>
-  );
+  return selected ? "selected" : "idle";
 }
-
-function EntryText({ text }: { text: string }) {
-  return (
-    <span className="flex-1">
-      <ItemLine text={text} />
-    </span>
-  );
-}
-
-const entryClass =
-  "rounded-xl ring-input focus-visible:outline-ring flex min-h-12 w-full items-start gap-2 px-3 py-3 text-left text-sm font-medium ring-1 transition-colors outline-none ring-inset select-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 enabled:hover:bg-muted/60 disabled:cursor-default";
 
 /** The host gets the pairs once all are matched, null before. */
 export function MatchPairsQuestion({
@@ -118,24 +91,23 @@ export function MatchPairsQuestion({
   });
 
   return (
-    <div className="grid grid-cols-2 gap-3" ref={listRef}>
+    <div className="grid grid-cols-2 gap-2 text-sm" ref={listRef}>
       <ul aria-label={t("Match these")} className="flex flex-col gap-2">
         {left.map((entry, index) => (
           <li key={entry}>
-            <button
-              aria-keyshortcuts={
-                !disabled && selected === null ? shortcutKeys("pick", index) : undefined
-              }
-              aria-pressed={selected === index}
-              className={cn(entryClass, selected === index && ANSWER_TONE.picked)}
+            <MatchEntry
               disabled={disabled}
+              index={index}
+              keyActive={selected === null}
               onClick={() => pickLeft(index)}
-              onKeyDown={ignoreHeldEnter}
-              type="button"
+              pair={index}
+              state={getLeftState({
+                matched: matches[index] !== UNMATCHED,
+                selected: selected === index,
+              })}
             >
-              <EntryMarker index={index} pair={matches[index] === UNMATCHED ? UNMATCHED : index} />
-              <EntryText text={entry} />
-            </button>
+              <ItemLine text={entry} />
+            </MatchEntry>
           </li>
         ))}
       </ul>
@@ -143,32 +115,28 @@ export function MatchPairsQuestion({
       <ul aria-label={t("With these")} className="flex flex-col gap-2">
         {right.map((entry, index) => {
           const owner = matches.indexOf(index);
+          const matched = owner !== UNMATCHED;
 
           return (
             <li key={entry}>
-              <button
-                aria-keyshortcuts={
-                  !disabled && selected !== null && owner === UNMATCHED
-                    ? shortcutKeys("pick", index)
-                    : undefined
-                }
-                aria-label={
-                  owner === UNMATCHED
-                    ? toPlainItemLine(entry)
-                    : t("{entry}, matched with {other}", {
+              <MatchEntry
+                label={
+                  matched
+                    ? t("{entry}, matched with {other}", {
                         entry: toPlainItemLine(entry),
                         other: toPlainItemLine(left[owner] ?? ""),
                       })
+                    : toPlainItemLine(entry)
                 }
-                className={entryClass}
-                disabled={disabled || (selected === null && owner === UNMATCHED)}
+                disabled={disabled || (selected === null && !matched)}
+                index={index}
+                keyActive={selected !== null && !matched}
                 onClick={() => pickRight(index)}
-                onKeyDown={ignoreHeldEnter}
-                type="button"
+                pair={owner}
+                state={matched ? "matched" : "idle"}
               >
-                <EntryMarker index={index} pair={owner} />
-                <EntryText text={entry} />
-              </button>
+                <ItemLine text={entry} />
+              </MatchEntry>
             </li>
           );
         })}

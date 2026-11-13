@@ -1783,6 +1783,21 @@ msgid "Simplified street plan, after John Snow's 1854 map."
 msgstr "ジョン・スノウの1854年の地図をもとに簡略化した街路図です。"
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
+msgctxt "nDkRHw"
+msgid "{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}"
+msgstr "{matched, plural, other {#組のペアができました（全{total}組）}}"
+
+#: src/activities/match-pairs/match-pairs-activity.tsx
+msgctxt "ZdoI92"
+msgid "{count, plural, one {# card has no match} other {# cards have no match}}"
+msgstr "{count, plural, other {#枚のカードにはペアがありません}}"
+
+#: src/activities/match-pairs/match-pairs-activity.tsx
+msgctxt "Z7Xcs6"
+msgid "Those two don't go together."
+msgstr "この2枚はペアではありません。"
+
+#: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "HfJhT9"
 msgid "Matched {left} with {right}. {matched, plural, one {# of {total} pairs matched.} other {# of {total} pairs matched.}}"
 msgstr "{left}と{right}がペアになりました。{matched, plural, other {#組のペアができました（全{total}組）。}}"
@@ -1808,24 +1823,9 @@ msgid "{text}, no match"
 msgstr "{text}、ペアなし"
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "nDkRHw"
-msgid "{matched, plural, one {# of {total} pairs matched} other {# of {total} pairs matched}}"
-msgstr "{matched, plural, other {#組のペアができました（全{total}組）}}"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "ZdoI92"
-msgid "{count, plural, one {# card has no match} other {# cards have no match}}"
-msgstr "{count, plural, other {#枚のカードにはペアがありません}}"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "nuMsTW"
 msgid "Cards to match"
 msgstr "ペアにするカード"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "Z7Xcs6"
-msgid "Those two don't go together."
-msgstr "この2枚はペアではありません。"
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "Dzn88L"
