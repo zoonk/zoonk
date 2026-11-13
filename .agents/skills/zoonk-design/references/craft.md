@@ -375,6 +375,7 @@ Zoonk's own, never findings on a screen. If one looks wrong, report it once as `
 - A highlighted or hovered row reaches 10px past the column on both sides, so rows stay square and hairlines straight.
 - The current tab's fill reaches 10px past the column like a highlighted row, so the first tab's label starts on the title's edge.
 - A highlighted row's band is inset 2px top and bottom, so two highlighted rows in a list don't touch; the row is still its full height.
+- A highlighted term's band reaches 0.1em past its letters on both sides, so its letters sit where plain text would; at a line's start the band passes the column by that much.
 - A chat bubble has one small corner, its tail, on the side of who wrote it.
 - A control with no outline hangs its hover box past the column so its glyph's ink sits on the edge (`edge`).
 - In the player, ✕ and "…" sit in the window's corners, not on the column, and the main action sits in the bottom-right corner on wide screens.
