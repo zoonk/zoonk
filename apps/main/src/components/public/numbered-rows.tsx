@@ -1,3 +1,5 @@
+import { ListGroup, ListRow } from "@zoonk/learn/list";
+
 type NumberedRow = { description?: string; id: string; title: React.ReactNode };
 
 function NumberedRowContent({ number, row }: { number: number; row: NumberedRow }) {
@@ -21,12 +23,16 @@ function NumberedRowContent({ number, row }: { number: number; row: NumberedRow 
 
 export function NumberedRows({ rows }: { rows: NumberedRow[] }) {
   return (
-    <ol className="divided-rows flex flex-col">
-      {rows.map((row, index) => (
-        <li className="flex items-start gap-3 py-3" key={row.id}>
-          <NumberedRowContent number={index + 1} row={row} />
-        </li>
-      ))}
-    </ol>
+    <ListGroup>
+      <ol>
+        {rows.map((row, index) => (
+          <li key={row.id}>
+            <ListRow className="items-start py-3">
+              <NumberedRowContent number={index + 1} row={row} />
+            </ListRow>
+          </li>
+        ))}
+      </ol>
+    </ListGroup>
   );
 }
