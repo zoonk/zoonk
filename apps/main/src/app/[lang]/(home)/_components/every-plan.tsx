@@ -12,10 +12,11 @@ const ICON_CLASS = "text-muted-foreground size-4 sm:size-5";
 
 function EveryPlanItem({ mark, name, text }: { mark: ReactNode; name: string; text: string }) {
   return (
-    <li className="flex gap-4 border-t py-6 last:border-b md:nth-last-2:border-b xl:flex-col xl:gap-3.5 xl:border-b-0! xl:pt-7 xl:pb-0">
+    // Side by side, the marks, names and texts share rows, so a name on two lines moves no text.
+    <li className="flex gap-4 border-t py-6 last:border-b md:nth-last-2:border-b xl:row-span-3 xl:grid xl:grid-rows-subgrid xl:gap-0 xl:border-b-0! xl:pt-7 xl:pb-0">
       <span className="flex h-5.75 w-6 shrink-0 items-center">{mark}</span>
-      <div>
-        <p className="text-base leading-5.75 font-semibold tracking-[-0.015em] text-balance sm:text-lg">
+      <div className="xl:contents">
+        <p className="text-base leading-5.75 font-semibold tracking-[-0.015em] text-balance sm:text-lg xl:mt-3.5">
           {name}
         </p>
         <p className="text-muted-foreground text-reading mt-1 leading-5.75 text-pretty">{text}</p>

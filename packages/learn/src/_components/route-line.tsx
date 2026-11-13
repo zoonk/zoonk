@@ -119,14 +119,29 @@ function ZoneStation({ className }: { className?: string }) {
   );
 }
 
-function ZoneLabel({ aside, summary }: { aside?: ReactNode; summary: ReactNode }) {
+/** `closedDetail` comes last and leaves when the zone opens, so opening moves nothing in the label. */
+function ZoneLabel({
+  aside,
+  closedDetail,
+  summary,
+}: {
+  aside?: ReactNode;
+  closedDetail?: ReactNode;
+  summary: ReactNode;
+}) {
   return (
-    <span className="flex min-w-0 flex-1 flex-col gap-0.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
+    <span className="grid min-w-0 flex-1 gap-x-4 gap-y-1 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-baseline">
       <span className="text-pretty">{summary}</span>
 
       {aside && (
-        <span className="text-muted-foreground flex-none font-mono text-xs font-normal tabular-nums">
+        <span className="text-muted-foreground font-mono text-xs font-normal tabular-nums">
           {aside}
+        </span>
+      )}
+
+      {closedDetail && (
+        <span className="text-muted-foreground text-compact leading-snug font-normal text-pretty group-open/zone:hidden sm:col-start-1 sm:text-sm">
+          {closedDetail}
         </span>
       )}
     </span>
@@ -139,11 +154,13 @@ function ZoneLabel({ aside, summary }: { aside?: ReactNode; summary: ReactNode }
 export function RouteZone({
   aside,
   children,
+  closedDetail,
   open = false,
   summary,
 }: {
   aside?: ReactNode;
   children: ReactNode;
+  closedDetail?: ReactNode;
   open?: boolean;
   summary: ReactNode;
 }) {
@@ -156,7 +173,7 @@ export function RouteZone({
         )}
       >
         <ZoneStation className="group-open/zone:hidden" />
-        <ZoneLabel aside={aside} summary={summary} />
+        <ZoneLabel aside={aside} closedDetail={closedDetail} summary={summary} />
 
         <LineMarker>
           <FoldChevron />

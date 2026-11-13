@@ -8,7 +8,7 @@ import {
   OutlineChapterList,
   OutlineChapterRow,
   type OutlineParams,
-  ZoneChapterNames,
+  getZoneChapterNames,
 } from "./outline-chapter-row";
 
 const LEVEL_LINE_CLASS =
@@ -23,7 +23,7 @@ function LevelLabel({
   courseId: string;
   label: string;
   level: CourseLevel;
-  line: ReactNode;
+  line?: ReactNode;
 }) {
   return (
     <span className="flex flex-col gap-1">
@@ -92,17 +92,11 @@ export async function OutlineLevel({
       aside={t("{count, plural, one {# chapter} other {# chapters}}", {
         count: band.chapters.length,
       })}
+      closedDetail={getZoneChapterNames(band.chapters)}
       courseId={courseId}
       isFirst={isFirst}
       level={band.level}
-      summary={
-        <LevelLabel
-          courseId={courseId}
-          label={label}
-          level={band.level}
-          line={<ZoneChapterNames chapters={band.chapters} />}
-        />
-      }
+      summary={<LevelLabel courseId={courseId} label={label} level={band.level} />}
     >
       <OutlineChapterList
         courseId={courseId}

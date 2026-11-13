@@ -16,7 +16,9 @@ const PLAN_BODY_CLASS =
 function renderBig(chunks: ReactNode) {
   const parts: unknown[] = Array.isArray(chunks) ? chunks : [chunks];
   const text = parts.filter((part) => typeof part === "string").join("");
-  return <BigQuantity className="text-foreground text-5xl sm:text-[3.5rem]">{text}</BigQuantity>;
+  return (
+    <BigQuantity className="text-foreground text-[2.5rem] sm:text-[3.5rem]">{text}</BigQuantity>
+  );
 }
 
 /** Minutes stay exact until they're written, so the totals are the day's own time, never a sum of rounded rows. */

@@ -33,7 +33,7 @@ export function PlanPrice({ amount, per }: { amount: string; per?: string }) {
   return (
     <p className="flex items-baseline gap-2">
       <BigQuantity className="text-[2.5rem]">{amount}</BigQuantity>
-      {per && <span className="text-muted-foreground text-sm">{per}</span>}
+      {per && <span className="text-muted-foreground text-compact">{per}</span>}
     </p>
   );
 }

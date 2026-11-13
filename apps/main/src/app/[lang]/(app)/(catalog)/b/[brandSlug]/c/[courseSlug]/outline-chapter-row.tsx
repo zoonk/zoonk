@@ -17,15 +17,11 @@ const OUTLINE_SEPARATOR = "\u00A0· ";
 const CHAPTERS_NAMED = 3;
 
 /** A closed level or subject says what it holds; open, its rows do. */
-export function ZoneChapterNames({ chapters }: { chapters: OutlineChapter[] }) {
-  return (
-    <span className="text-muted-foreground text-compact leading-snug font-normal text-pretty group-open/zone:hidden sm:text-sm">
-      {chapters
-        .slice(0, CHAPTERS_NAMED)
-        .map((chapter) => chapter.title)
-        .join(OUTLINE_SEPARATOR)}
-    </span>
-  );
+export function getZoneChapterNames(chapters: OutlineChapter[]): string {
+  return chapters
+    .slice(0, CHAPTERS_NAMED)
+    .map((chapter) => chapter.title)
+    .join(OUTLINE_SEPARATOR);
 }
 
 const CHAPTERS_SHOWN = 6;

@@ -49,7 +49,7 @@ async function MockResult() {
           return (
             <div className="flex min-w-0 flex-col" key={score.label}>
               <p className="text-muted-foreground text-compact">{score.label}</p>
-              <p className="text-readout mt-1.5 text-[clamp(1.75rem,10.5cqi,3.75rem)] whitespace-nowrap">
+              <p className="text-readout mt-1.5 text-3xl whitespace-nowrap @sm:text-[2.5rem] @lg:text-[3.5rem]">
                 {number}
                 {unit && (
                   <span className="text-muted-foreground text-[max(0.3em,0.9375rem)] font-medium tracking-normal">
@@ -57,7 +57,7 @@ async function MockResult() {
                   </span>
                 )}
               </p>
-              <p className="text-muted-foreground mt-2 text-xs">
+              <p className="text-muted-foreground text-compact mt-2">
                 {t({
                   description:
                     "Exams report a score, a grade or a band (13–15/20, 2–3등급): use the word that fits your country's exam.",
