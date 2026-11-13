@@ -15,13 +15,11 @@ import {
 import { PlusMark } from "../_components/plus-lock";
 import { MarkedText } from "../_components/title-row";
 import { useBuddyName } from "../buddies/use-buddy-name";
+import { ExtraTimeButton } from "../session/extra-time-button";
 import { CatchUpLater } from "./today-catch-up";
 import { useTodayScreen } from "./today-context";
-import { TodayExtraTime } from "./today-extra-time";
 import { getChallengeEventKind, useWeekdayLabel } from "./today-week-challenge";
 import { useDayState, useTodayPastDate, useUpNextLessons } from "./use-today-copy";
-
-const SECONDARY_CLASS = "max-sm:h-11 max-sm:w-full max-sm:rounded-lg max-sm:text-sm sm:self-start";
 
 function MoreTime() {
   const t = useExtracted();
@@ -33,15 +31,15 @@ function MoreTime() {
   }
 
   return (
-    <TodayExtraTime
+    <ExtraTimeButton
       action={actions.addExtraTime}
-      className={SECONDARY_CLASS}
       label={
         today.studiedToday
           ? undefined
           : t("Study for {minutes} minutes", { minutes: String(extraTime.minutes) })
       }
       minutes={extraTime.minutes}
+      size="page"
     />
   );
 }
