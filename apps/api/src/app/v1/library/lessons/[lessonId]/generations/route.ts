@@ -1,11 +1,7 @@
 import { acceptedGeneration } from "@/lib/accepted-generation";
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import {
-  lessonSetAsideError,
-  plusRequiredError,
-  usageDecisionError,
-} from "@/lib/lesson-player-errors";
+import { lessonSetAsideError, usageDecisionError } from "@/lib/lesson-player-errors";
 import { startLessonWriting } from "@/lib/lesson-writing";
 import { lessonPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readPathParams } from "@/lib/request-input";
@@ -33,10 +29,6 @@ async function createLessonGeneration(
 
   if (result.status === "setAside") {
     return lessonSetAsideError();
-  }
-
-  if (result.status === "plusRequired") {
-    return plusRequiredError();
   }
 
   if (result.status === "ready") {

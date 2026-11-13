@@ -151,10 +151,6 @@ export function LessonAccessScreen({ refusal }: { refusal: LessonRunRefusal }) {
     return <SlowDown retryAfterSeconds={refusal.retryAfterSeconds} />;
   }
 
-  if (refusal.reason === "plusRequired") {
-    return <LimitReached limit={{ period: "month", status: "limitReached", tier: "free" }} />;
-  }
-
   if (refusal.reason === "limitReached") {
     return (
       <LimitReached

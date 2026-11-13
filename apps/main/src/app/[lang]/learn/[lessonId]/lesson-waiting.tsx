@@ -301,9 +301,7 @@ export function LessonWaiting({
     <LessonRouteFrame {...frame} footer={footer} lead={showsStart && <WaitNote state="notReady" />}>
       {showsStart && alternative && <ReadyLesson alternative={alternative} />}
 
-      {(request.status === "refused" ||
-        request.status === "plusRequired" ||
-        request.status === "setAside") && (
+      {(request.status === "refused" || request.status === "setAside") && (
         <>
           <LessonNotWrittenNotice
             className="rounded-none bg-transparent p-0"

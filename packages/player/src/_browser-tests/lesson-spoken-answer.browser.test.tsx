@@ -74,7 +74,7 @@ describe("spoken answers", () => {
     });
 
     await sayIt();
-    admission.resolve({ reason: "plusRequired" });
+    admission.resolve({ period: "month", reason: "limitReached", tier: "free" });
     await expect.element(page.getByRole("link", { name: "Subscribe" })).toBeVisible();
     expect(gradeSpokenAnswer).not.toHaveBeenCalled();
   });

@@ -6,10 +6,7 @@ import { useExtracted } from "next-intl";
 import { type ComponentProps } from "react";
 import { type LessonLimit, LessonLimitNotice } from "./help-limit-notice";
 
-export type LessonNotWritten =
-  | { limit: LessonLimit; status: "refused" }
-  | { status: "plusRequired" }
-  | { status: "setAside" };
+export type LessonNotWritten = { limit: LessonLimit; status: "refused" } | { status: "setAside" };
 
 type NoticeLinks = Pick<ComponentProps<typeof LessonLimitNotice>, "linkComponent" | "routes">;
 
@@ -38,13 +35,6 @@ export function LessonNotWrittenNotice({
             </form>
           )}
         </>
-      )}
-
-      {reason.status === "plusRequired" && (
-        <LessonLimitNotice
-          limit={{ period: "month", status: "limitReached", tier: "free" }}
-          {...links}
-        />
       )}
 
       {reason.status === "setAside" && (
