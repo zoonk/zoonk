@@ -92,7 +92,7 @@ export async function drawMindMapStep(input: {
   const drawn = await drawChapterMindMap(input);
 
   const { error } = await safeAsync(() =>
-    showChapterMindMap({ chapterId: input.chapterId, drawn }),
+    showChapterMindMap({ chapterId: input.chapterId, drawn, runId: input.analytics.runId }),
   );
 
   if (error) {
@@ -114,6 +114,7 @@ export async function checkMindMapStep(input: {
 export async function removeMindMapImageStep(input: {
   chapterId: string;
   imageUrl: string;
+  runId: string;
 }): Promise<void> {
   "use step";
 

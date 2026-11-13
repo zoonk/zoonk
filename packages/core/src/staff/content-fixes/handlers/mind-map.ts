@@ -2,6 +2,7 @@ import { mindMapStructureSchema } from "@zoonk/ai/tasks/mind-maps/schema";
 import { sql } from "@zoonk/db";
 import { after as afterResponse } from "next/server";
 import { startMindMapRedraw } from "../../../follow-ups/follow-up-starter";
+import { isMindMapRunActive } from "../../../mind-maps/_utils/mind-map-view";
 import { PRIVATE_CONTENT, toJson } from "../_utils/resolved-change";
 import { sharedRowHandler } from "./shared-row";
 
@@ -20,7 +21,7 @@ export const mindMapSet = sharedRowHandler({
           (row.chapter.ownerId || row.chapter.visibility !== "public"
             ? PRIVATE_CONTENT
             : undefined) ||
-          (row.status === "running"
+          (row.status === "running" && isMindMapRunActive({ now: new Date(), row })
             ? "Wait for the current mind-map run before fixing its text."
             : undefined),
         row: { structure: toJson(row.structure) },

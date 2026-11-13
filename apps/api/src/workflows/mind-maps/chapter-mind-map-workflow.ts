@@ -75,7 +75,12 @@ async function checkShownMindMap(run: MindMapRun): Promise<ChapterMindMapResult>
     return { hasImage: second.imageUrl !== null };
   }
 
-  await removeMindMapImageStep({ chapterId: run.chapterId, imageUrl: second.imageUrl });
+  await removeMindMapImageStep({
+    chapterId: run.chapterId,
+    imageUrl: second.imageUrl,
+    runId: run.analytics.runId,
+  });
+
   return { hasImage: false };
 }
 

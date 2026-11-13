@@ -2,12 +2,13 @@ import "server-only";
 import { type AiGenerationContext } from "@zoonk/ai/ai-generation-event";
 import { checkMindMapImage } from "@zoonk/ai/tasks/mind-maps/check";
 import { generateMindMapImage } from "@zoonk/ai/tasks/mind-maps/image";
-import { type MindMapStructure, mindMapStructureSchema } from "@zoonk/ai/tasks/mind-maps/schema";
+import { mindMapStructureSchema } from "@zoonk/ai/tasks/mind-maps/schema";
 import { generateMindMapStructure } from "@zoonk/ai/tasks/mind-maps/structure";
 import { prisma } from "@zoonk/db";
 import { logInfo } from "@zoonk/utils/logger";
 import { readStoredImage } from "../images/read-stored-image";
 import { loadMindMapSource } from "./_utils/load-mind-map-source";
+import { MIND_MAP_STALE_AFTER_MS } from "./_utils/mind-map-view";
 import { saveMindMapImage } from "./_utils/save-mind-map-image";
 
 export type MindMapAnalytics = Pick<AiGenerationContext, "distinctId" | "goalId"> & {
@@ -50,6 +51,20 @@ export async function holdChapterMindMap({
   });
 }
 
+/** A redraw nobody runs: owed and never tried, or tried by a run that stopped writing to the map. */
+function unclaimedRedraw(now: Date) {
+  return {
+    OR: [
+      { redrawAttemptedAt: null, status: "completed" as const },
+      {
+        status: "running" as const,
+        updatedAt: { lt: new Date(now.getTime() - MIND_MAP_STALE_AFTER_MS) },
+      },
+    ],
+    redrawOwedAt: { not: null },
+  };
+}
+
 /** Workflow bridge, not authorization; requires a learner-claimed run and preserves existing text on retries. */
 export async function writeChapterMindMapStructure({
   analytics,
@@ -66,18 +81,21 @@ export async function writeChapterMindMapStructure({
     throw new Error(`Chapter ${chapterId} has no mind map to write.`);
   }
 
+  const now = new Date();
+
   const claimed = await prisma.chapterMindMap.updateMany({
     data: {
       runId: analytics.runId,
-      ...(redraw ? { redrawAttemptedAt: new Date(), status: "running" } : {}),
+      ...(redraw ? { redrawAttemptedAt: now, status: "running", updatedAt: now } : {}),
     },
     where: {
       chapterId,
       ...(redraw
         ? {
-            OR: [{ redrawAttemptedAt: null, status: "completed" }, { runId: analytics.runId }],
-            redrawOwedAt: { not: null },
-            status: { in: ["completed", "running"] },
+            OR: [
+              unclaimedRedraw(now),
+              { redrawOwedAt: { not: null }, runId: analytics.runId, status: "running" },
+            ],
           }
         : { OR: [{ runId: null }, { runId: analytics.runId }], status: "running" }),
     },
@@ -123,7 +141,7 @@ const NO_IMAGE = {
   thumbnailUrl: null,
 } as const;
 
-export type DrawnMindMap = { image: Uint8Array; model: string; structure: MindMapStructure };
+export type DrawnMindMap = { image: Uint8Array; model: string };
 
 /** Workflow bridge, not authorization; without corrections returns null for an already-stored picture. Store in a separate durable step to avoid paying twice. */
 export async function drawChapterMindMap({
@@ -155,30 +173,32 @@ export async function drawChapterMindMap({
     structure: structure.data,
   });
 
-  return { image: data.image, model: provenance.model, structure: structure.data };
+  return { image: data.image, model: provenance.model };
 }
 
-/** Workflow bridge, not authorization; show immediately, then check text afterward. Null drawn only finishes an already-stored map. */
+/** Workflow bridge, not authorization; show immediately, then check text afterward. Null drawn only finishes an already-stored map. Writes nothing once runId lost the map. */
 export async function showChapterMindMap({
   chapterId,
   drawn,
+  runId,
 }: {
   chapterId: string;
   drawn: DrawnMindMap | null;
+  runId: string;
 }): Promise<void> {
   const map = await findMindMap(chapterId);
 
-  if (!map) {
-    throw new Error(`Chapter ${chapterId} has no mind map to show.`);
+  if (map?.runId !== runId) {
+    return;
   }
 
   if (!drawn) {
-    await prisma.chapterMindMap.update({
+    await prisma.chapterMindMap.updateMany({
       data: {
         generatedAt: map.generatedAt ?? new Date(),
         status: map.redrawOwedAt ? "running" : "completed",
       },
-      where: { chapterId },
+      where: { chapterId, runId },
     });
 
     return;
@@ -197,7 +217,7 @@ export async function showChapterMindMap({
       status: map.redrawOwedAt ? "running" : "completed",
       thumbnailUrl: saved.thumbnailUrl,
     },
-    where: { chapterId, structure: { equals: drawn.structure } },
+    where: { chapterId, runId },
   });
 }
 
@@ -238,15 +258,17 @@ export async function checkChapterMindMapImage({
   return { imageUrl: map.imageUrl, passed: data.passed, problems: data.problems };
 }
 
-/** Workflow bridge, not authorization; removes only the named current image link and preserves the file for open readers. */
+/** Workflow bridge, not authorization; removes only the named current image link of a map runId still owns and preserves the file for open readers. */
 export async function removeChapterMindMapImage({
   chapterId,
   imageUrl,
+  runId,
 }: {
   chapterId: string;
   imageUrl: string;
+  runId: string;
 }): Promise<void> {
-  await prisma.chapterMindMap.updateMany({ data: NO_IMAGE, where: { chapterId, imageUrl } });
+  await prisma.chapterMindMap.updateMany({ data: NO_IMAGE, where: { chapterId, imageUrl, runId } });
 }
 
 /** Workflow bridge, not authorization; runId must still own the map. */
@@ -285,7 +307,7 @@ export async function listOwedMindMapRedraws(): Promise<string[]> {
   const rows = await prisma.chapterMindMap.findMany({
     orderBy: { redrawOwedAt: "asc" },
     take: 100,
-    where: { redrawAttemptedAt: null, redrawOwedAt: { not: null }, status: "completed" },
+    where: unclaimedRedraw(new Date()),
   });
 
   return rows.map((row) => row.chapterId);

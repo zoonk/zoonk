@@ -49,7 +49,13 @@ function toMindMapImage(row: MindMapRow | null): ChapterMindMapView["image"] {
   };
 }
 
-function isRunActive({ now, row }: { now: Date; row: Pick<MindMapRow, "updatedAt"> }) {
+export function isMindMapRunActive({
+  now,
+  row,
+}: {
+  now: Date;
+  row: Pick<MindMapRow, "updatedAt">;
+}) {
   return now.getTime() - row.updatedAt.getTime() < MIND_MAP_STALE_AFTER_MS;
 }
 
@@ -85,7 +91,7 @@ export function getMindMapStatus({
     return "ready";
   }
 
-  if (owed || (row?.status === "running" && isRunActive({ now, row }))) {
+  if (owed || (row?.status === "running" && isMindMapRunActive({ now, row }))) {
     return lessonsToWrite > 0 ? "writingLessons" : "drawing";
   }
 
