@@ -85,7 +85,7 @@ export const PATTERNS: readonly Pattern[] = [
       "A second pinned bar built from classes.",
     ],
     follow: [
-      "`BottomBar` holds a screen's one main action, pinned at the bottom on a phone and a computer; `BottomBarActions` is its row, buttons 8px apart, the main action last.",
+      "`BottomBar` holds a screen's one main action, pinned at the bottom on a phone and a computer; `BottomBarActions` is its row, buttons 8px apart, the main action last. On a phone the row gives the main action what the other buttons leave, on a computer its own width at the end, so a screen never sizes it.",
       "What the last action couldn't do goes in `note`: it shows over the screen above the bar, and the buttons stay where they were.",
       "The frame tells the bar its padding and what is docked under it (`--page-gutter`, `--page-bottom`, `--page-dock`), so the same piece works in the app's shell and in a task.",
       "The buttons have the frame's gutter on all four sides: the bar sets the room over and under them from `--page-gutter`, never a screen.",
