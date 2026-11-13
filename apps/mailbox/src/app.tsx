@@ -127,7 +127,7 @@ function EmailListMessage({
         >
           {timeFormatter.format(new Date(email.receivedAt))}
         </time>
-        <span className="text-muted-foreground text-2xs truncate font-mono">
+        <span className="text-muted-foreground text-2xs truncate font-mono leading-5">
           {`${copy.to} ${email.to}`}
         </span>
         {code && (
@@ -165,7 +165,7 @@ function EmailPreview({ email }: { email: CapturedEmail }) {
 
   return (
     <MailboxPreview>
-      <header className="border-border flex flex-col gap-4 border-b p-5 md:px-6">
+      <header className="border-border flex flex-col gap-4 border-b px-4 py-5 md:px-6">
         {code && <SignInCode code={code} />}
 
         <div className="flex flex-col gap-1">
@@ -181,7 +181,7 @@ function EmailPreview({ email }: { email: CapturedEmail }) {
         </div>
       </header>
 
-      <div className="p-5 md:p-6">
+      <div className="p-4 md:p-6">
         {email.htmlBody ? (
           <iframe
             className="border-border block min-h-95 w-full rounded-xl border bg-white p-5 md:min-h-105"

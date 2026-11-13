@@ -18,7 +18,7 @@ export function MailboxHeader({ className, ...props }: ComponentProps<"header">)
   return (
     <header
       className={cn(
-        "border-border bg-background/90 z-10 flex min-h-18 flex-wrap items-center justify-between gap-3 border-b px-5 py-3 backdrop-blur-lg sm:flex-nowrap sm:py-4 md:px-6",
+        "border-border bg-background/90 z-10 flex min-h-18 flex-wrap items-center justify-between gap-3 border-b px-4 py-3 backdrop-blur-lg sm:flex-nowrap sm:py-4 md:px-6",
         className,
       )}
       {...props}
@@ -27,7 +27,7 @@ export function MailboxHeader({ className, ...props }: ComponentProps<"header">)
 }
 
 export function MailboxIdentity({ className, ...props }: ComponentProps<"div">) {
-  return <div className={cn("flex items-center gap-3.5", className)} {...props} />;
+  return <div className={cn("flex items-baseline gap-3.5", className)} {...props} />;
 }
 
 export function MailboxTitle({ children, className, ...props }: ComponentProps<"h1">) {
@@ -91,14 +91,16 @@ export function MailboxList({ className, ...props }: ComponentProps<"ol">) {
 }
 
 export function MailboxListItem({ className, ...props }: ComponentProps<"li">) {
-  return <li className={cn("border-border border-b", className)} {...props} />;
+  return (
+    <li className={cn("border-border border-b max-md:last:border-b-0", className)} {...props} />
+  );
 }
 
 export function MailboxMessageButton({ className, ...props }: ComponentProps<"button">) {
   return (
     <button
       className={cn(
-        "focus-visible:ring-ring aria-pressed:bg-muted hover:bg-muted grid w-full cursor-pointer grid-cols-[minmax(0,1fr)_auto] gap-x-4 gap-y-2 border-0 bg-transparent px-5 py-4 text-left transition-colors outline-none focus-visible:ring-2 focus-visible:ring-inset motion-reduce:transition-none md:px-6",
+        "focus-visible:ring-ring aria-pressed:bg-muted hover:bg-muted grid w-full cursor-pointer grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-4 gap-y-2 border-0 bg-transparent px-4 py-4 text-left transition-colors outline-none focus-visible:ring-2 focus-visible:ring-inset motion-reduce:transition-none md:px-6",
         className,
       )}
       type="button"
