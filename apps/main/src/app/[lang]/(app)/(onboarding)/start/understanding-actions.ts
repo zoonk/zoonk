@@ -1,7 +1,7 @@
 "use server";
 
 import { postAsLearner } from "@/lib/api/learner-api";
-import { type EntitlementTier } from "@zoonk/core/entitlements/contract";
+import { type AllowanceLimit, toCalendarPeriod } from "@zoonk/core/entitlements/contract";
 import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes";
 import {
   type OnboardingDraftView,
@@ -40,14 +40,12 @@ const limitSchema = z.object({
 
 const GOAL_LIMITS = new Set(["activeGoals", "goal"]);
 
-function toLimitOutcome(limit: {
-  period: "day" | "month" | "total";
-  resource: string;
-  tier: EntitlementTier;
-}): StartUnderstandingOutcome {
+function toLimitOutcome(
+  limit: Pick<AllowanceLimit, "period" | "tier"> & { resource: string },
+): StartUnderstandingOutcome {
   return GOAL_LIMITS.has(limit.resource)
     ? { status: "needsAccount" }
-    : { period: limit.period, status: "limitReached", tier: limit.tier };
+    : { period: toCalendarPeriod(limit.period), status: "limitReached", tier: limit.tier };
 }
 
 /** When the API's slow-down answer can't be read. */

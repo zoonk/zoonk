@@ -79,6 +79,15 @@ export function toAllowanceStop({
     return { period: null, reason: "slowDown", resetsAt: resetsAt.toISOString(), resource: null };
   }
 
+  if (decision.limit.period === "rolling30Days") {
+    return {
+      period: "rolling30Days",
+      reason: "limitReached",
+      resetsAt: decision.limit.availableAt.toISOString(),
+      resource: "lessonStart",
+    };
+  }
+
   const { period, resource } = decision.limit;
   const resets = getUsageResets(now);
   const resetsAt = period === "total" ? null : resets[period].toISOString();
