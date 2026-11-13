@@ -3,6 +3,7 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { SMALL_CHEVRON_CLASS } from "../_components/list-group";
 import { Meter, MeterFill } from "../_components/meter";
 import { PAGE_SECTION_TITLE_CLASS, PageSectionTitle } from "../_components/page";
 import { useFormatShare } from "../_utils/percent";
@@ -84,7 +85,10 @@ export function BuddyEnergy({
         <span className={PAGE_SECTION_TITLE_CLASS}>{t("{buddy}'s Energy", { buddy: name })}</span>
         <span className="text-compact flex items-center gap-0.5 font-mono font-medium tabular-nums">
           {formatShare(share)}
-          <ChevronRightIcon aria-hidden="true" className="text-muted-foreground/60 size-3.5" />
+          <ChevronRightIcon
+            aria-hidden="true"
+            className={cn(SMALL_CHEVRON_CLASS, "text-muted-foreground/60")}
+          />
         </span>
       </span>
 

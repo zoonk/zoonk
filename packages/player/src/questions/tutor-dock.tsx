@@ -111,7 +111,7 @@ function DockSuggestions({ buddy }: { buddy: TutorBuddy }) {
 
   return (
     <TutorSuggestions
-      className="bg-background px-5 pb-3"
+      className="bg-background px-6 pb-3"
       onSelect={(suggestion) => buddy.ask(suggestion)}
       suggestions={suggestions}
     />
@@ -135,7 +135,7 @@ function DockedConversation({ buddy }: { buddy: TutorBuddy }) {
       )}
       data-slot="tutor-docked-conversation"
     >
-      <div className="flex h-13 shrink-0 items-center justify-between gap-3 px-5 xl:h-15">
+      <div className="flex h-13 shrink-0 items-center justify-between gap-3 px-6 xl:h-15">
         <Button
           className="text-muted-foreground"
           edge="start"
@@ -189,7 +189,7 @@ function Dock({ buddy }: { buddy: TutorBuddy }) {
       >
         {suggests && <DockSuggestions buddy={buddy} />}
 
-        <div className={cn("bg-background px-5", BAR_PADDING_CLASS)}>
+        <div className={cn("bg-background px-6", BAR_PADDING_CLASS)}>
           {canAskQuestions ? <DockComposer buddy={buddy} /> : <DockSignUp buddy={buddy} />}
         </div>
       </div>

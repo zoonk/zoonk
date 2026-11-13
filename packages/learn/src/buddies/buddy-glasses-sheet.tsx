@@ -11,21 +11,18 @@ import {
 import { type BuddyGlasses } from "@zoonk/utils/buddy";
 import { useExtracted } from "next-intl";
 import { DrawerCloseButton } from "../_components/details-drawer";
-import { ChangeSaveError } from "../_components/save-error";
 import { BuddyGlassesPicker } from "./buddy-glasses-picker";
 import { type BuddyGlassesProgress } from "./buddy-status-view";
 import { type LearnBuddy } from "./use-buddy-name";
 
 export function BuddyGlassesSheet({
   buddy,
-  failed,
   glasses,
   onOpenChange,
   onWear,
   open,
 }: {
   buddy: LearnBuddy;
-  failed: boolean;
   glasses: BuddyGlassesProgress[];
   onOpenChange: (open: boolean) => void;
   onWear: (glasses: BuddyGlasses) => void;
@@ -50,8 +47,6 @@ export function BuddyGlassesSheet({
         </DrawerHeader>
 
         <DrawerContent className="flex flex-col gap-3">
-          {failed && <ChangeSaveError />}
-
           <BuddyGlassesPicker
             kind={buddy.kind}
             look={buddy}
