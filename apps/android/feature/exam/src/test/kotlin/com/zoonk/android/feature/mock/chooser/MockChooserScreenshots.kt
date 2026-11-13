@@ -6,7 +6,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onLast
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
@@ -174,7 +176,14 @@ class MockChooserScreenshots {
         compose.waitForIdle()
         act()
         compose.waitForIdle()
-        write(name, compose.onRoot().captureRender().asAndroidBitmap())
+        write(
+            name,
+            compose
+                .onAllNodes(isRoot())
+                .onLast()
+                .captureRender()
+                .asAndroidBitmap(),
+        )
     }
 
     private fun write(
