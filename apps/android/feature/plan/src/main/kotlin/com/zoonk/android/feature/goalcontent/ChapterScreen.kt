@@ -78,8 +78,8 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
-import com.zoonk.android.ui.scaffold.LoadedPage
 import com.zoonk.android.ui.scaffold.PageScaffold
+import com.zoonk.android.ui.scaffold.ResourceScaffold
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.ChapterLesson
@@ -163,7 +163,7 @@ internal fun ChapterContent(
     val scope = rememberCoroutineScope()
     val back: () -> Unit = { navigator.back() }
 
-    LoadedPage(
+    ResourceScaffold(
         state,
         onBack = back,
         onRetry = { scope.launch { resource.refresh() } },
@@ -277,7 +277,6 @@ private fun ChapterLesson.listed() =
         minutes = minutes.toInt(),
         done = state == ChapterLesson.State.DONE,
         next = state == ChapterLesson.State.NEXT,
-        plusRequired = plusRequired,
     )
 
 @Composable
@@ -356,7 +355,7 @@ private fun ChapterPractice(
     Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SectionHeader(stringResource(R.string.goalcontent_practice), Modifier.padding(horizontal = LIST_ITEM_INSET))
         Column {
-            if (canTestOut) TestOutRow(TestOutScope.Chapter, onOpen = actions.testOut, plusRequired = chapter.testOut.plusRequired)
+            if (canTestOut) TestOutRow(TestOutScope.Chapter, onOpen = actions.testOut)
             if (mistakes) {
                 if (canTestOut) HorizontalDivider()
                 PracticeChapterRow(practice, onPractice = actions.practice)

@@ -9,7 +9,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.zoonk.android.R
 import com.zoonk.android.feature.catalog.courseLevelName
-import com.zoonk.android.feature.subscription.ButtonPlusMark
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
@@ -50,10 +49,7 @@ internal fun StudyNextSuggestion(
                         busy = host.claimingCertificate,
                         secondary = next.nextLevel != null,
                         leadingIcon = { ButtonIcon(R.drawable.ic_workspace_premium) },
-                    ) {
-                        Text(it.actionLabel())
-                        if (it.unclaimed.isEmpty() && it.earned.any { earned -> earned.locked }) ButtonPlusMark()
-                    }
+                    ) { Text(it.actionLabel()) }
                 }
                 next.nextLevel?.let { level ->
                     SuggestionAction(onClick = host.onContinue, busy = starting, leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) }) {

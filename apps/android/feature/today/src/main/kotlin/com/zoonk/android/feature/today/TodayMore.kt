@@ -19,7 +19,6 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.KindDot
@@ -154,7 +153,6 @@ private fun ChallengeLink(
     LinkRow(
         text = stringResource(if (mock) R.string.today_see_day_mock else R.string.today_see_day_challenge, weekday),
         leading = { KindDot(if (mock) LearnKind.Mock else LearnKind.Challenge) },
-        trailing = if (challenge.access == TodayWeeklyChallenge.Access.PLUS_REQUIRED) ({ PlusMark() }) else null,
     ) { actions.navigate(AppRoute.Challenge(planItemId.toString(), model.day.sessionId?.toString())) }
 }
 

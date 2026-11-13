@@ -291,8 +291,6 @@
   "onboarding_reveal_estimated_notice_areas": "14b3912924ef24ffd3608af310d6287d7c4b8084f41519f8569cfd7b1f67020b",
   "onboarding_reveal_estimated_percent": "1367bf72e539876d063f27d3253e62f7727fb5420697f09f511ee9ffcce8f529",
   "onboarding_reveal_first_week": "3256d85e7b8f09778447e359c62df5ef943eff23cd954651042cb5868769fb2b",
-  "onboarding_reveal_free_week_over_body": "7cedcf18019188d23f94e7789e06052a0b61a138183bd3406f7cb588093df1a7",
-  "onboarding_reveal_free_week_over_title": "55479b4b1ecd5bdb190b5451e3176af3a4eeb93a6255890fd0c4f36262c41607",
   "onboarding_reveal_full_course": "066a40b5e7661698bbb1bbfe4fac9f784038d6f6fcc5d9773ed95a8b885998bc",
   "onboarding_reveal_full_course_finish": "aca83f93fb1ad754cb318167ddca91ed8a024295ab6e61b838a03f8721cb2fd1",
   "onboarding_reveal_full_course_finish_month": "edc3915f54d6e1c087c392a4ade73b2325e4e249e31384638ce95abb1ff4e528",
@@ -813,9 +811,6 @@
     <string name="onboarding_reveal_notice_day_guide">O calendário oficial da prova indica %1$s.</string>
     <!-- %1$s is a month and year, such as "March 2027". -->
     <string name="onboarding_reveal_no_sitting">Sem data de prova em %1$s</string>
-    <string name="onboarding_reveal_free_week_over_title">Sua semana grátis de preparo para a prova acabou</string>
-    <!-- "Reviews" are reviews of lessons already done, a free feature separate from fixing mistakes. -->
-    <string name="onboarding_reveal_free_week_over_body">As revisões e a correção dos seus erros continuam grátis. O Plus libera novas aulas, o restante do seu plano e simulados.</string>
     <!-- What the learner's time a day covers. %1$s is a duration, such as "30 min". -->
     <string name="onboarding_reveal_covers_nothing">%1$s por dia não é tempo suficiente para estudar o conteúdo do seu objetivo.</string>
     <string name="onboarding_reveal_covers_exam_deeper">Com %1$s por dia, você estuda todos os tópicos da prova e se aprofunda nos que mais caem.</string>

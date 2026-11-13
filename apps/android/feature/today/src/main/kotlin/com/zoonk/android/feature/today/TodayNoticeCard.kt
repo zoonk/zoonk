@@ -86,10 +86,6 @@ internal fun TodayNotice(
             read.today.exam?.let { ExamMomentNotice(it, state, layout, modifier) }
         }
 
-        Today.Notice.EXAM_ACCESS -> {
-            ExamAccessNotice(state, layout, modifier)
-        }
-
         Today.Notice.EXAM_CHOICE -> {
             ExamChoiceNotice(state, layout, modifier)
         }
@@ -135,7 +131,8 @@ internal fun TodayNotice(
             }
         }
 
-        null -> {}
+        // Core no longer picks the free week's notice; the API still lists it.
+        Today.Notice.EXAM_ACCESS, null -> {}
     }
 }
 
@@ -261,39 +258,12 @@ private fun ExamChoiceNotice(
 private fun TodayViewModel.heldNotice(read: TodayRead.Day) =
     noticeHold?.takeIf { it.goalId == read.today.goal.id && it.date == read.day.localDate }
 
-/** The notice Today shows, as main counts it: an insight, or Plus's gate on a free exam plan's ended first week. */
+/** The notice Today shows, as main counts it: an insight. */
 internal fun TodayViewModel.noticeEvent(read: TodayRead.Day): AnalyticsEvent? {
     val hold = heldNotice(read)
     return when (hold?.kind ?: read.today.notice) {
         Today.Notice.INSIGHT -> (read.today.insight ?: hold?.insight)?.let { AnalyticsEvent.InsightShown(it.id, it.kind) }
-        Today.Notice.EXAM_ACCESS -> AnalyticsEvent.SubscriptionGateShown.takeIf { read.day.examAccess.trialEnded }
         else -> null
-    }
-}
-
-@Composable
-private fun ExamAccessNotice(
-    state: TodayNoticeState,
-    layout: SuggestionLayout,
-    modifier: Modifier,
-) {
-    if (!state.read.day.examAccess.trialEnded) return
-
-    val title = stringResource(R.string.subscription_free_week_over_title)
-    val seePlus = stringResource(R.string.subscription_see_plus)
-    val openPlus = { state.navigate(AppRoute.Subscription) }
-
-    Suggestion(
-        label = stringResource(R.string.today_notice_exam_access),
-        summary = title,
-        layout = layout,
-        modifier = modifier,
-        mark = SuggestionMark.Symbol(R.drawable.ic_auto_awesome),
-        lineAction = { SuggestionAction(seePlus, openPlus, secondary = true) },
-    ) {
-        SuggestionHeader(title)
-        SuggestionDescription(stringResource(R.string.subscription_free_week_over_description))
-        SuggestionActions { SuggestionAction(seePlus, openPlus, secondary = true) }
     }
 }
 

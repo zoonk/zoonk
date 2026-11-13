@@ -291,8 +291,6 @@
   "onboarding_reveal_estimated_notice_areas": "34cc26a05af66f2ffdc162d2834b1ffc107a9b1fe90f6afba37e3aca7165999e",
   "onboarding_reveal_estimated_percent": "c1eb3c6df03b1b81c9d7525bbbc96ae553f4570913fe83946d5b6ad11f3d93b3",
   "onboarding_reveal_first_week": "c35993178389746031c07a54c1bc2a4e43344f00b49bdfe05c21eae9d26a106f",
-  "onboarding_reveal_free_week_over_body": "047294adb9430ff3db8cf0fcfa08d18d54facecfab5a85aa92bd58e4feb5abb9",
-  "onboarding_reveal_free_week_over_title": "f11082378a76360af9621c1dce678b380485e83f6c2d793d9335dc407c0cbce1",
   "onboarding_reveal_full_course": "b4d25714c94084919d7bbd9d240bb93df4e50496aaab3fbb6edee8e70c567d6c",
   "onboarding_reveal_full_course_finish": "f2f9b6469c043246d81471ec5a337bcc9d42c66e65f8d8edf41c236f0096a0ab",
   "onboarding_reveal_full_course_finish_month": "f25d053b78a1eaa4e536404c52b8f06fc65af221b14332cf5a94c2b6e4d69e59",
@@ -801,9 +799,6 @@
     <string name="onboarding_reveal_notice_day_guide">공식 시험 일정에 나온 날짜는 %1$s이에요.</string>
     <!-- %1$s is a month and year, such as "March 2027". -->
     <string name="onboarding_reveal_no_sitting">%1$s에는 시험 일정이 없어요</string>
-    <string name="onboarding_reveal_free_week_over_title">일주일간의 무료 시험 준비가 끝났어요</string>
-    <!-- "Reviews" are reviews of lessons already done, a free feature separate from fixing mistakes. -->
-    <string name="onboarding_reveal_free_week_over_body">복습과 오답 고치기는 계속 무료예요. Plus를 구독하면 새 레슨과 계획의 나머지 내용, 모의고사를 이용할 수 있어요.</string>
     <!-- What the learner's time a day covers. %1$s is a duration, such as "30 min". -->
     <string name="onboarding_reveal_covers_nothing">하루 %1$s만으로는 목표에 필요한 내용을 배울 시간이 부족해요.</string>
     <string name="onboarding_reveal_covers_exam_deeper">하루 %1$s씩 시험에 나오는 모든 주제를 공부하고, 가장 자주 출제되는 주제는 더 깊이 공부해요.</string>

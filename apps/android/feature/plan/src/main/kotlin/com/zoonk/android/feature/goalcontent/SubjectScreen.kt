@@ -48,8 +48,8 @@ import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatPercent
-import com.zoonk.android.ui.scaffold.LoadedPage
 import com.zoonk.android.ui.scaffold.PageScaffold
+import com.zoonk.android.ui.scaffold.ResourceScaffold
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.ExamDocument
@@ -104,7 +104,7 @@ internal fun SubjectContent(
     val state by syllabus.collectShown()
     val scope = rememberCoroutineScope()
 
-    LoadedPage(
+    ResourceScaffold(
         state,
         onBack = back,
         onRetry = { scope.launch { syllabus.refresh() } },

@@ -16,7 +16,7 @@ import com.zoonk.android.ui.components.PageLoading
  * exist or came back empty.
  */
 @Composable
-fun <T> LoadedPage(
+fun <T> ResourceScaffold(
     state: LoadState<T>,
     onBack: () -> Unit,
     onRetry: () -> Unit,
