@@ -440,5 +440,6 @@ Zoonk's own, never findings on a screen. If one looks wrong, report it once as `
 - Colored marks and words are soft until the device asks for more contrast. The main action is the text color.
 - Eyebrows and facts lines are mono, uppercase where the role says so.
 - A switch is a pill; meters are 6px with 3px corners.
+- A code's boxes are 56px tall, a little taller than wide, in two groups of three that together are as wide as the button under them: a code is drawn as tall boxes everywhere, and at a field's 44px they read as squares.
 - A caption directly under a full-width button is centered.
 - Characters and flags are pictures with their own shapes and blank margins.
