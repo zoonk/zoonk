@@ -7,10 +7,11 @@ import {
 import { ListRowButton, ListRowContent, ListRowLeading, ListRowTitle } from "@zoonk/learn/list";
 import { type TutorIdentity, useTutorIdentity } from "@zoonk/learn/tutor-identity";
 import { Button } from "@zoonk/ui/components/button";
+import { createOnDemand } from "@zoonk/ui/lib/on-demand";
 import { cn } from "@zoonk/ui/lib/utils";
 import { MessageCircleQuestionIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { Suspense, lazy, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { type LessonTutorConfig } from "../lesson/tutor/lesson-tutor-context";
 import {
   LessonQuestionHostProvider,
@@ -20,15 +21,10 @@ import { preloadTutorMarkdown } from "./tutor-markdown-preload";
 
 type ScreenTarget = Extract<TutorTarget, { kind: LessonQuestionScreenKind }>;
 
-const loadDrawer = () => import("./lesson-question-panel");
-
-const LessonQuestionDrawer = lazy(async () => {
-  const panel = await loadDrawer();
-  return { default: panel.LessonQuestionDrawer };
-});
+const questionPanel = createOnDemand(() => import("./lesson-question-panel"));
 
 function preloadDrawer() {
-  loadDrawer().catch(() => null);
+  void questionPanel.load();
   preloadTutorMarkdown();
 }
 
@@ -165,15 +161,13 @@ function ScreenTutorDrawer({
     setOpened(true);
   }
 
-  if (!opened) {
+  const Drawer = questionPanel.useModule({ enabled: opened })?.LessonQuestionDrawer;
+
+  if (!Drawer) {
     return null;
   }
 
-  return (
-    <Suspense fallback={null}>
-      <LessonQuestionDrawer identity={identity} navigation={navigation} open={state.isOpen} />
-    </Suspense>
-  );
+  return <Drawer identity={identity} navigation={navigation} open={state.isOpen} />;
 }
 
 function AskTutorProvider({
