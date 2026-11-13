@@ -113,8 +113,6 @@ struct SavedMindMap: Decodable, Equatable, Sendable {
 struct MindMapCreateOffer: Decodable, Equatable, Sendable {
   /// Chapters without a ready map or one on its way whose lessons are all written.
   let eligible: Int
-  /// Chapters without a map whose lessons aren't all written: each writes them from its own row.
-  let needLessons: Int
   /// How many of `eligible` one tap would start now, a failed map's free retry included.
   let startable: Int
   /// What stops a new map now; nil while the allowance has room for one more.

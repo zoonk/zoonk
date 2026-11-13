@@ -136,7 +136,7 @@ struct MindMapReader: View {
         }
       }
       .taskOptions(
-        label: Text("More options", tableName: "MindMaps", comment: "The reader's menu")
+        label: Text("Screen options", tableName: "MindMaps", comment: "The reader's menu")
       ) {
         menuItems(cards)
       }

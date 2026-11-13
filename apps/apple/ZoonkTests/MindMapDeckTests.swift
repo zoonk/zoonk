@@ -72,7 +72,7 @@ final class MindMapDeckTests: XCTestCase {
   ) -> GoalMindMaps {
     GoalMindMaps(
       chapters: chapters,
-      createOffer: MindMapCreateOffer(eligible: 0, needLessons: 0, startable: 0, stop: nil),
+      createOffer: MindMapCreateOffer(eligible: 0, startable: 0, stop: nil),
       firstTab: .chapters, lessonGroups: groups, saved: saved)
   }
 
