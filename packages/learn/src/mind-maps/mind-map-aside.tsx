@@ -12,7 +12,6 @@ import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { MindMapLimitNotice } from "../_components/help-limit-notice";
 import { KindDot } from "../_components/kind-tile";
-import { PlusMark } from "../_components/plus-lock";
 import { StatusRegion } from "../_components/status-region";
 import { Surface } from "../_components/surface";
 import { useLearnRoutes } from "../learn-context";
@@ -103,27 +102,6 @@ function StateHeading({ children }: { children: React.ReactNode }) {
   );
 }
 
-function LockedMap() {
-  const t = useExtracted();
-  const routes = useLearnRoutes();
-
-  return (
-    <LearnLink
-      className="hover:bg-muted/60 focus-visible:ring-ring -mx-2 flex flex-col rounded-lg px-2 py-1.5 outline-none focus-visible:ring-2"
-      data-slot="mind-map-locked"
-      href={routes.upgrade}
-    >
-      <StateHeading>
-        <p className="text-reading flex items-center justify-between gap-3 font-medium">
-          {t("Mind map")}
-          <PlusMark className="font-sans" />
-        </p>
-        <p className={STATE_TEXT_CLASS}>{t("Its main ideas in one picture")}</p>
-      </StateHeading>
-    </LearnLink>
-  );
-}
-
 function MapRequest({
   plus,
   request,
@@ -198,10 +176,6 @@ export function MindMapAside({
 
   if (shown === "unavailable") {
     return null;
-  }
-
-  if (shown === "plusRequired") {
-    return <LockedMap />;
   }
 
   if (shown === "ready" && view.outline) {

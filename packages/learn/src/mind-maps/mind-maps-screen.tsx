@@ -16,7 +16,6 @@ import {
   DetailLayout,
 } from "../_components/detail-page";
 import { EnterLink } from "../_components/enter-button";
-import { FreeWeekOverNotice } from "../_components/free-week-over";
 import { LIST_GROUP_CLASS } from "../_components/list-group";
 import { PageEyebrow, PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { PageTab, PageTabs, PageTabsGroup } from "../_components/page-tabs";
@@ -111,10 +110,6 @@ function ChaptersTab({ hrefs, library, subject, tier }: IndexTabProps & { tier: 
 
   return (
     <>
-      {index.some((chapter) => chapter.status === "plusRequired") && (
-        <FreeWeekOverNotice className="max-w-prose" />
-      )}
-
       {index.length > 0 ? (
         <MindMapIndex groups={groups} label={t("Chapter maps")} opensAt={subject} />
       ) : (
@@ -149,12 +144,7 @@ function LessonsTab({ hrefs, library, subject }: IndexTabProps) {
     })),
   }));
 
-  return (
-    <>
-      {rows.some((row) => row.locked > 0) && <FreeWeekOverNotice className="max-w-prose" />}
-      <MindMapIndex groups={groups} label={t("Lesson maps by chapter")} opensAt={subject} />
-    </>
-  );
+  return <MindMapIndex groups={groups} label={t("Lesson maps by chapter")} opensAt={subject} />;
 }
 
 function SavedTab({ hrefs, library }: TabProps) {

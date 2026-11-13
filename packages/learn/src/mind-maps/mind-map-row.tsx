@@ -4,7 +4,6 @@ import { type ChapterMindMapView } from "@zoonk/core/mind-maps/contract";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
-import { LockIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { MindMapLimitNotice } from "../_components/help-limit-notice";
@@ -16,11 +15,8 @@ import {
   ListRowContent,
   ListRowDescription,
   ListRowLeading,
-  ListRowLink,
   ListRowTitle,
-  ListRowTrailing,
 } from "../_components/list-group";
-import { PlusMark } from "../_components/plus-lock";
 import { StatusRegion } from "../_components/status-region";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
@@ -41,10 +37,6 @@ export const MIND_MAP_ROW_CLASS = "min-h-20";
 function SlotMark({ shown }: { shown: MindMapShown }) {
   if (shown === "drawing" || shown === "writingLessons") {
     return <Spinner className="text-muted-foreground size-4" role="presentation" />;
-  }
-
-  if (shown === "plusRequired") {
-    return <LockIcon className="text-muted-foreground size-4" />;
   }
 
   return <KindIcon kind="mindMap" />;
@@ -149,8 +141,6 @@ export function MindMapRowView({
     return null;
   }
 
-  const locked = shown === "plusRequired";
-
   // A lesson's end shows one row over "Up next", so it takes that row's mark and text edge.
   const alone = place === "finish";
   // Alone, the text starts at the row's top, so the action sits on the title's line with it.
@@ -186,16 +176,7 @@ export function MindMapRowView({
         </button>
       )}
 
-      {locked && (
-        <ListRowLink className={MIND_MAP_ROW_CLASS} href={routes.upgrade}>
-          {body}
-          <ListRowTrailing className={cn(alone && trailing)}>
-            <PlusMark className="font-sans" />
-          </ListRowTrailing>
-        </ListRowLink>
-      )}
-
-      {!ready && !locked && (
+      {!ready && (
         <div className={cn(LIST_ROW_CLASS, MIND_MAP_ROW_CLASS)}>
           {body}
           <span className={cn("flex shrink-0 items-center empty:hidden", alone && trailing)}>

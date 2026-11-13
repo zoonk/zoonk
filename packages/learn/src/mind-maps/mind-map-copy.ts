@@ -12,9 +12,9 @@ import { type MindMapShown } from "./use-mind-map-request";
 export type MindMapRowPlace = "chapter" | "finish" | "library";
 
 /** The Mind maps page says once, above its rows, what writing the lessons costs (`NotMadeYet`). */
-function useAvailableLine({ place, plus, shown, view }: MindMapCopyInput): string | null {
+function useAvailableLine({ place, plus, view }: MindMapCopyInput): string | null {
   const t = useExtracted();
-  const writesLessons = view.lessonsToWrite > 0 && shown !== "plusRequired";
+  const writesLessons = view.lessonsToWrite > 0;
 
   const count = view.lessonsToWrite;
 
