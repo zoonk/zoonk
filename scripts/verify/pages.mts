@@ -12,6 +12,7 @@ import { markBusy } from "./busy.mts";
 import { type Finding } from "./checks.mts";
 import { readTypeScale } from "./craft-scale.mts";
 import { checkExposure } from "./exposure.mts";
+import { readShortcuts } from "./keys.mts";
 import { type LoadReport, measureLoad, warmUp } from "./measure.mts";
 import { type SoakReport, judgeSoak, measureSoak, soakRows } from "./memory.mts";
 import { type NavigationMode } from "./navigation-checks.mts";
@@ -27,11 +28,13 @@ import {
 } from "./queries.mts";
 import { renderReport } from "./report.mts";
 import { redactQuery, savedRequest } from "./requests.mts";
+import { type RoleCapture, captureRoles, renderRoleSheets } from "./roles.mts";
 import { findServerPid } from "./server-process.mts";
 import { renderNavigationSheet, renderSheets } from "./sheets.mts";
 import { signIn } from "./sign-in.mts";
 import { walkStates } from "./states.mts";
 import { SCHEMES, THROTTLING, VIEWPORT_NAMES, type ViewportName, pick } from "./viewports.mts";
+import { titleGapFindings } from "./words.mts";
 
 /**
  * `pnpm verify:pages [path...]`, started by `verify-pages.mts`, which also prints its usage. The
@@ -107,6 +110,7 @@ const target = {
   out,
   queries,
   serverPid,
+  shortcuts: await readShortcuts(served),
   storageState,
   throttle: values.throttle,
   typeScale: readTypeScale(served),
@@ -125,6 +129,7 @@ const mode = navigationMode();
 const loads: LoadReport[] = [];
 const navigations: NavigationReport[] = [];
 const sheets: string[] = [];
+const roles: RoleCapture[] = [];
 let soak: SoakReport | null = null;
 const renders: RenderReport[] = [];
 
@@ -141,7 +146,17 @@ try {
 
       // Craft's X3 on the two sizes the craft read uses: what a person's taps and typing move.
       if (navigationViewports.includes(viewport)) {
-        load.findings.push(...(await walkStates(target, { path, viewport })));
+        load.findings.push(
+          ...(await walkStates(target, {
+            capture: values.roles
+              ? async (page, state) => {
+                  roles.push(...(await captureRoles(page, { out, path, state, viewport })));
+                }
+              : undefined,
+            path,
+            viewport,
+          })),
+        );
       }
 
       const failing = load.findings.filter((finding) => finding.level === "fail").length;
@@ -150,8 +165,22 @@ try {
         `${path} ${viewport}: ${failing} failing, ${load.findings.length - failing} to look at`,
       );
 
+      for (const finding of load.findings.filter((item) => item.level === "fail")) {
+        console.log(`  ${finding.check}: ${finding.message}`);
+      }
+
       loads.push(load);
     }
+
+    const phone = loads.find(
+      (load) => load.path === redactQuery(path) && load.viewport === "phone",
+    );
+
+    const laptop = loads.find(
+      (load) => load.path === redactQuery(path) && load.viewport === "laptop",
+    );
+
+    laptop?.findings.push(...(phone ? titleGapFindings(phone.words, laptop.words) : []));
   }
 
   if (values.nav && paths.length > 1) {
@@ -184,6 +213,14 @@ try {
   sheets.push(
     ...(await renderSheets(browser, { baseline: baseline?.loads ?? [], loads })),
     ...(await renderNavigationSheet(browser, { navigations, out })),
+    ...(values.roles
+      ? await renderRoleSheets(browser, {
+          captures: roles,
+          out,
+          paths,
+          viewports: navigationViewports,
+        })
+      : []),
   );
 } finally {
   await browser.close();

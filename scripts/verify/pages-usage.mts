@@ -14,6 +14,7 @@ export const PAGE_OPTIONS = {
   "no-prefetch": { default: false, type: "boolean" },
   out: { type: "string" },
   queries: { type: "string" },
+  roles: { default: false, type: "boolean" },
   schemes: { default: SCHEMES.join(","), type: "string" },
   soak: { type: "string" },
   throttle: { default: false, type: "boolean" },
@@ -35,6 +36,7 @@ dark, and writes a report of what it found. The verify skill's "Measuring pages"
   --baseline <dir>        compare with an earlier run's folder
   --soak <laps>           walk the paths that many times in one tab and compare memory
   --queries <file>        read the statements a server started with ZOONK_QUERY_LOG=<file> logged
+  --roles                 also save crops and comparison sheets of shared roles (buttons, bars, titles)
   --local-storage <n=v>   set a value the page keeps on the device; repeatable
   --viewports <list>      every screen by default (${VIEWPORT_NAMES.join(", ")})
   --schemes <list>        ${SCHEMES.join(", ")} by default
