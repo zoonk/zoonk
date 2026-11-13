@@ -617,6 +617,11 @@
       center / 1rem no-repeat;
   }
 
+  /* An empty date field shows its format where a text field shows a placeholder, so in its tone. */
+  input[type="date"][value=""] {
+    color: var(--muted-foreground);
+  }
+
   /* Browsers break Korean inside words by default; Korean wraps between them, at the spaces. */
   :lang(ko) {
     word-break: keep-all;
