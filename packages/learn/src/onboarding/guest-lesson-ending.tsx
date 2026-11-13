@@ -6,14 +6,15 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { PendingLink } from "@zoonk/ui/patterns/links/pending";
 import { BookOpenIcon, UserPlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { type ReactNode } from "react";
 import { MeterPart, MeterParts } from "../_components/meter";
 import { SURFACE_CLASS } from "../_components/surface";
+import { TASK_WRAPPING_ACTION_CLASS } from "../_components/task-layout";
 import { useFormatDuration } from "../_utils/time-format";
 
 const MINUTES_PER_HOUR = 60;
 
-function WhereItFits({ fit }: { fit: LessonFit }) {
+/** Where a visitor's lesson sits in its course, under the lesson's end. */
+export function GuestLessonFit({ fit }: { fit: LessonFit }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const { chapter, course } = fit;
@@ -64,31 +65,17 @@ function WhereItFits({ fit }: { fit: LessonFit }) {
   );
 }
 
-export function GuestLessonNext({
-  fit,
-  plan,
-  signUpHref,
-}: {
-  fit: LessonFit | null;
-  plan: ReactNode;
-  signUpHref: string;
-}) {
+/** The visitor's way to keep what they did, beside the lesson end's main action. */
+export function GuestSignUpLink({ signUpHref }: { signUpHref: string }) {
   const t = useExtracted();
 
   return (
-    <div className="flex flex-col gap-6" data-slot="guest-lesson-next">
-      {fit && <WhereItFits fit={fit} />}
-
-      <div className="flex flex-col gap-2">
-        {plan}
-        <PendingLink
-          className={cn(buttonVariants({ size: "lg", variant: "outline" }), "w-full")}
-          href={signUpHref}
-          icon={<UserPlusIcon aria-hidden="true" />}
-        >
-          {t("Create an account to save")}
-        </PendingLink>
-      </div>
-    </div>
+    <PendingLink
+      className={cn(buttonVariants({ size: "xl", variant: "outline" }), TASK_WRAPPING_ACTION_CLASS)}
+      href={signUpHref}
+      icon={<UserPlusIcon aria-hidden="true" />}
+    >
+      {t("Create an account to save")}
+    </PendingLink>
   );
 }
