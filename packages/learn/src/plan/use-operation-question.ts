@@ -83,7 +83,7 @@ function useTimeQuestion() {
     }
 
     if (operation.kind === "addLightWeek") {
-      return t("Take a lighter week from {date}?", {
+      return t("Take a lighter week from {date}, at half the time?", {
         date: formatDate(operation.startDate, "long"),
       });
     }
