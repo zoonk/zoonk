@@ -234,7 +234,7 @@ export function WaitQuizSkeleton() {
         <Skeleton className="h-6 w-2/3" />
       </div>
 
-      <div className="flex flex-col gap-2.5">
+      <div className="flex flex-col gap-2">
         {Array.from({ length: OPTION_COUNT }, (_, index) => (
           <Skeleton className="h-12.5 w-full rounded-xl" key={index} />
         ))}

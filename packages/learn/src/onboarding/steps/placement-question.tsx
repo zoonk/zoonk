@@ -277,8 +277,9 @@ export function PlacementQuestionScreen({
 
         <Button
           busy={pending && pressed === "stop"}
-          className="-ml-3 self-start"
+          className="self-start"
           disabled={pending}
+          edge="start"
           focusableWhenDisabled
           onClick={() => {
             setPressed("stop");
