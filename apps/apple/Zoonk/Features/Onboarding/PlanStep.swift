@@ -605,7 +605,7 @@ private struct PlanReveal: View {
       ZoonkList {
         heroSections(goal: goal, day: day)
       }
-      .safeAreaBar(edge: .bottom) { actions(day: day.value?.today) }
+      .bottomBar(note: barNote) { actions(day: day.value?.today) }
       // Adjust is see-through, so the plan scrolling under the bar stops at its edge.
       .scrollEdgeEffectStyle(.hard, for: .bottom)
     } secondary: {
@@ -617,7 +617,7 @@ private struct PlanReveal: View {
         heroSections(goal: goal, day: day)
         detailSections(context: context, structure: structure)
       }
-      .safeAreaBar(edge: .bottom) { actions(day: day.value?.today) }
+      .bottomBar(note: barNote) { actions(day: day.value?.today) }
       // Adjust is see-through, so the plan scrolling under the bar stops at its edge.
       .scrollEdgeEffectStyle(.hard, for: .bottom)
       .onboardingColumn()
@@ -707,71 +707,57 @@ private struct PlanReveal: View {
   }
 
   /// Main's `RevealActions`: pinned under the plan, and working from the moment's first frame.
+  @ViewBuilder
   private func actions(day: StudyDay?) -> some View {
-    VStack(spacing: 10) {
-      switch startFailure {
-      case .save:
-        FailureLine(
-          message: LocalizedStringResource(
-            "That didn't save. Try again.", table: "Onboarding",
-            comment: "A change couldn't be saved"))
-      case .open:
-        FailureLine(
-          message: LocalizedStringResource(
-            "We couldn't open this step. Try again.", table: "Today",
-            comment: "Under a step of the day, or a mission, that didn't open"))
-      case nil:
-        EmptyView()
-      }
+    Button {
+      adjusting = .top
+    } label: {
+      Text("Adjust", tableName: "Onboarding", comment: "Opens the plan's settings to change it")
+    }
+    .buttonStyle(.outline)
 
-      HStack(spacing: 10) {
-        Button {
-          adjusting = .top
-        } label: {
-          Text(
-            "Adjust", tableName: "Onboarding", comment: "Opens the plan's settings to change it")
-        }
-        .buttonStyle(.outline)
-        .fixedSize()
-
-        BusyButton(isBusy: opening != nil && openingRow == nil, icon: .play) {
-          start(on: day)
-        } label: {
-          if day?.blocks.contains(where: \.isFinished) == true {
-            Text(
-              "Continue", tableName: "Onboarding",
-              comment: "Opens the plan's next step once a lesson of its first day is done")
-          } else {
-            Text("Start", tableName: "Onboarding", comment: "Opens the plan's first step")
-          }
-        }
-        .buttonStyle(.mainAction)
-        .buttonSizing(.flexible)
-        .keyboardShortcut(.defaultAction)
-        .disabled(openingRow != nil)
-      }
-
-      if learner.summary.value?.identity.isAnonymous == true {
-        HStack(spacing: 8) {
-          Text(
-            "Save your plan so it's here next time.", tableName: "Onboarding",
-            comment: "A guest's plan isn't saved to an account yet")
-
-          Button {
-            router.present(.signIn)
-          } label: {
-            Text(
-              "Create an account", tableName: "Onboarding", comment: "Opens sign-up from the plan")
-          }
-        }
-        .typeStyle(.note)
-        .foregroundStyle(.mutedForeground)
+    BusyButton(isBusy: opening != nil && openingRow == nil) {
+      start(on: day)
+    } label: {
+      if day?.blocks.contains(where: \.isFinished) == true {
+        Text(
+          "Continue", tableName: "Onboarding",
+          comment: "Opens the plan's next step once a lesson of its first day is done")
+      } else {
+        Text("Start", tableName: "Onboarding", comment: "Opens the plan's first step")
       }
     }
-    .controlSize(.large)
-    .keepsOffFold()
-    .scenePadding(.horizontal)
-    .padding(.vertical, 10)
+    .buttonStyle(.mainAction)
+    .keyboardShortcut(.defaultAction)
+    .disabled(openingRow != nil)
+  }
+
+  /// What a tap couldn't do, or, for a guest, that the plan isn't saved yet.
+  private var barNote: BarNote? {
+    switch startFailure {
+    case .save:
+      return BarNote(
+        LocalizedStringResource(
+          "That didn't save. Try again.", table: "Onboarding",
+          comment: "A change couldn't be saved"))
+    case .open:
+      return BarNote(
+        LocalizedStringResource(
+          "We couldn't open this step. Try again.", table: "Today",
+          comment: "Under a step of the day, or a mission, that didn't open"))
+    case nil:
+      guard learner.summary.value?.identity.isAnonymous == true else { return nil }
+
+      return BarNote(
+        LocalizedStringResource(
+          "Save your plan so it's here next time.", table: "Onboarding",
+          comment: "A guest's plan isn't saved to an account yet"),
+        tone: .status,
+        action: BarNote.Action(
+          label: Text(
+            "Create an account", tableName: "Onboarding", comment: "Opens sign-up from the plan"),
+          perform: { router.present(.signIn) }))
+    }
   }
 
   @ViewBuilder

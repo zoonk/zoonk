@@ -42,7 +42,7 @@ struct CertificateCeremony: View {
         }
         .scenePadding()
       }
-      .safeAreaBar(edge: .bottom) { continueBar }
+      .bottomBar { continueButton }
     } single: {
       CenteredScroll {
         VStack(spacing: 0) {
@@ -54,7 +54,7 @@ struct CertificateCeremony: View {
         .frame(maxWidth: 600)
         .scenePadding()
       }
-      .safeAreaBar(edge: .bottom) { continueBar.keepsOffFold() }
+      .bottomBar { continueButton }
     }
     .landsActsOnInput()
     .celebratesOnce(id: top.code)
@@ -254,15 +254,12 @@ struct CertificateCeremony: View {
     .foregroundStyle(.mutedForeground)
   }
 
-  private var continueBar: some View {
+  private var continueButton: some View {
     Button(action: close) {
       Text("Continue", tableName: "Certificates", comment: "Closes the certificate's award moment")
-        .frame(maxWidth: .infinity)
     }
     .buttonStyle(.mainAction)
-    .controlSize(.large)
     .keyboardShortcut(.defaultAction)
-    .scenePadding()
   }
 
   private var title: String {
