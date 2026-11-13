@@ -13,7 +13,7 @@ export function TodayStatusLine({
 }) {
   return (
     <div
-      className={cn("flex items-start gap-3 border-y py-3", className)}
+      className={cn("flex items-center gap-3 border-y py-3", className)}
       data-slot="today-status-line"
       role="status"
     >
