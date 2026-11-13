@@ -29,7 +29,7 @@ export function BrainPowerReward({
   return (
     <Popover>
       <PopoverTrigger
-        className="hit-area focus-visible:ring-ring/50 relative flex shrink-0 flex-col items-end gap-0.5 rounded-md outline-none focus-visible:ring-[3px]"
+        className="hit-area focus-visible:ring-ring/50 relative ms-auto flex flex-wrap items-center justify-end gap-x-1.5 rounded-md outline-none focus-visible:ring-[3px]"
         data-slot="brain-power-reward"
       >
         {/* Earned, the chip is `brain-text`: the page's color on `brain` is under AA in light. */}

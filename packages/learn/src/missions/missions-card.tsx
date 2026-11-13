@@ -88,25 +88,31 @@ function MissionsTitle({ fold, won }: { fold: RowsFold | null; won: boolean }) {
   );
 }
 
+/** The title keeps its own line, so it stays whole beside the buddy in a side column. */
 function MissionsHeading({
   fold,
   missions,
+  reward,
   titleId,
   won,
 }: {
   fold: RowsFold | null;
   missions: readonly MissionView[];
+  reward: React.ReactNode;
   titleId: string;
   won: boolean;
 }) {
   return (
-    <div className="flex flex-col gap-0.5">
+    <div className="flex min-w-0 flex-1 flex-col gap-0.5">
       <h2 className="text-sm leading-snug font-semibold text-balance wrap-break-word" id={titleId}>
         <MissionsTitle fold={fold} won={won} />
       </h2>
-      <p className="text-muted-foreground text-xs leading-snug wrap-break-word tabular-nums empty:hidden">
-        <MissionsStatus missions={missions} />
-      </p>
+      <div className={cn(TITLE_ROW_CLASS, "gap-y-0.5")}>
+        <p className="text-muted-foreground text-xs leading-snug wrap-break-word tabular-nums empty:hidden">
+          <MissionsStatus missions={missions} />
+        </p>
+        {reward}
+      </div>
       {isFullMeal(missions) && (
         <span className="sr-only">
           <ProgressCount done={missions.length} total={missions.length} />
@@ -116,10 +122,17 @@ function MissionsHeading({
   );
 }
 
+/**
+ * The buddy and the rows' marks share one 24px column, so the title starts where the rows' names
+ * do. The header's slot is as tall as the title's line and the line under it, so the buddy centers
+ * on those two lines however many more a long title takes.
+ */
+const MARK_COLUMN_CLASS = "[&_[data-slot=list-row-leading]]:w-6";
+
 function MissionsLine({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
     <Surface
-      className={cn(TITLE_ROW_CLASS, "min-h-14 gap-y-1 px-4 py-2.5 text-sm", className)}
+      className={cn(TITLE_ROW_CLASS, "min-h-14 gap-y-1 p-4 text-sm", className)}
       data-slot="missions-card"
     >
       {children}
@@ -187,26 +200,26 @@ export function MissionsCard({
       aria-labelledby={titleId}
       className={cn(
         SURFACE_CLASS,
-        "flex flex-col px-4 pt-3.5",
-        open ? "pb-1" : "pb-3.5",
+        "flex flex-col px-4 pt-4",
+        open ? "pb-1.25" : "pb-4",
+        showBuddy && MARK_COLUMN_CLASS,
         className,
       )}
       data-slot="missions-card"
     >
-      <div className={cn(TITLE_ROW_CLASS, "items-start gap-y-1")}>
-        {/* Centers on the title and its count, whatever the reward beside them takes. */}
-        <div className="flex items-center gap-2.5 *:last:min-w-0">
-          {showBuddy && <BuddyArt buddy={buddy} className="size-6" view="face" />}
-          <MissionsHeading
-            fold={
-              foldRows ? { listId, onToggle: () => setUnfolded((value) => !value), open } : null
-            }
-            missions={missions}
-            titleId={titleId}
-            won={won}
-          />
-        </div>
-        <BrainPowerReward brainPower={brainPower} earned={won} points={points} />
+      <div className="flex items-start gap-3">
+        {showBuddy && (
+          <span className="flex h-10 w-6 shrink-0 items-center justify-center">
+            <BuddyArt buddy={buddy} className="size-6" view="face" />
+          </span>
+        )}
+        <MissionsHeading
+          fold={foldRows ? { listId, onToggle: () => setUnfolded((value) => !value), open } : null}
+          missions={missions}
+          reward={<BrainPowerReward brainPower={brainPower} earned={won} points={points} />}
+          titleId={titleId}
+          won={won}
+        />
       </div>
 
       <MissionTrack className="mt-3.5" missions={missions} />
