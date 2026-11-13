@@ -1,12 +1,16 @@
+import { AdminNameCell } from "@/components/admin-name-cell";
 import { AdminSection } from "@/components/admin-section";
 import { type AdminTableColumn, AdminTableColumns } from "@/components/admin-table-columns";
-import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
+import { AdminTableRow } from "@/components/admin-table-row";
 import { getSource } from "@/data/sources/get-source";
 import {
   MAX_SOURCE_CITATION_ROWS,
   listSourceCitations,
 } from "@/data/sources/list-source-citations";
+import { countryName } from "@/lib/country-name";
+import { formatCount } from "@/lib/format";
 import { ITEM_FORMAT_LABELS } from "@/lib/item-label";
+import { languageName } from "@/lib/language-filter";
 import { TableCell } from "@zoonk/ui/components/table";
 
 type SourceCitationRows = Awaited<ReturnType<typeof listSourceCitations>>;
@@ -18,9 +22,8 @@ const EXAM_COLUMNS: AdminTableColumn[] = [
 ];
 
 const ITEM_COLUMNS: AdminTableColumn[] = [
-  { label: "Citation" },
-  { label: "Skill" },
-  { label: "Format" },
+  { label: "Where it cites", twoLines: true },
+  { label: "Format", size: "wide" },
   { label: "Language" },
 ];
 
@@ -38,7 +41,13 @@ export async function SourceCitations({ sourceId }: { sourceId: string }) {
 
   return (
     <div className="flex flex-col gap-8">
-      <AdminSection title={`Exam blueprints (${examBlueprints.length})`}>
+      <AdminSection
+        title={
+          examBlueprints.length > 0
+            ? `Read by ${formatCount(examBlueprints.length, "exam")}`
+            : "Exams"
+        }
+      >
         <SourceExamsTable exams={examBlueprints} />
       </AdminSection>
 
@@ -48,7 +57,11 @@ export async function SourceCitations({ sourceId }: { sourceId: string }) {
             ? `Showing the latest ${MAX_SOURCE_CITATION_ROWS}.`
             : undefined
         }
-        title={`Items citing this source (${source._count.items})`}
+        title={
+          source._count.items > 0
+            ? `Cited by ${formatCount(source._count.items, "practice question")}`
+            : "Practice questions"
+        }
       >
         <SourceItemsTable items={items} />
       </AdminSection>
@@ -59,20 +72,15 @@ export async function SourceCitations({ sourceId }: { sourceId: string }) {
 function SourceExamsTable({ exams }: { exams: SourceCitationRows["examBlueprints"] }) {
   return (
     <AdminTableColumns
-      unsized
       columns={EXAM_COLUMNS}
-      emptyLabel="No exam blueprint was read from this source."
+      emptyLabel="No exam was read from this source."
       isEmpty={exams.length === 0}
     >
       {exams.map((exam) => (
         <AdminTableRow key={exam.id}>
-          <TableCell>
-            <AdminTableRowLink className="font-medium" href={`/exams/${exam.id}`} prefetch>
-              {exam.name}
-            </AdminTableRowLink>
-          </TableCell>
-          <TableCell>{exam.country}</TableCell>
-          <TableCell className="uppercase">{exam.language}</TableCell>
+          <AdminNameCell href={`/exams/${exam.id}`} title={exam.name} />
+          <TableCell>{countryName(exam.country)}</TableCell>
+          <TableCell>{languageName(exam.language)}</TableCell>
         </AdminTableRow>
       ))}
     </AdminTableColumns>
@@ -82,21 +90,19 @@ function SourceExamsTable({ exams }: { exams: SourceCitationRows["examBlueprints
 function SourceItemsTable({ items }: { items: SourceCitationRows["items"] }) {
   return (
     <AdminTableColumns
-      unsized
       columns={ITEM_COLUMNS}
-      emptyLabel="No item cites this source."
+      emptyLabel="No practice question cites this source."
       isEmpty={items.length === 0}
     >
       {items.map((item) => (
         <AdminTableRow key={item.id}>
-          <TableCell className="max-w-96 min-w-56 whitespace-normal">
-            <AdminTableRowLink href={`/items/${item.id}`} prefetch={false}>
-              {item.sourceCitation ?? "No citation"}
-            </AdminTableRowLink>
-          </TableCell>
-          <TableCell className="max-w-64 whitespace-normal">{item.skill.name}</TableCell>
+          <AdminNameCell
+            href={`/items/${item.id}`}
+            note={item.skill.name}
+            title={item.sourceCitation ?? "No passage named"}
+          />
           <TableCell>{ITEM_FORMAT_LABELS[item.format]}</TableCell>
-          <TableCell className="uppercase">{item.language}</TableCell>
+          <TableCell>{languageName(item.language)}</TableCell>
         </AdminTableRow>
       ))}
     </AdminTableColumns>
