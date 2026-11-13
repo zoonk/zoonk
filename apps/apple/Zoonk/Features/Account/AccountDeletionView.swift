@@ -32,16 +32,14 @@ struct AccountDeletionView: View {
 
   var body: some View {
     content
-      .navigationTitle(
-        Text(
-          "Delete account",
-          tableName: "Account",
+      .barTitleAfterHero(
+        String(
+          localized: "Delete account", table: "Account",
           comment: "Account deletion navigation title")
       )
-      .toolbarTitleDisplayMode(.inline)
       .confirmationDialog(
         Text(
-          "Delete your Zoonk account?",
+          "Delete your account?",
           tableName: "Account",
           comment: "Final confirmation title before permanent account deletion"),
         isPresented: $isConfirmingDeletion,
@@ -65,16 +63,9 @@ struct AccountDeletionView: View {
         }
       } message: {
         Text(
-          verbatim: [
-            String(
-              localized:
-                "This permanently deletes your profile, goals, plans, progress, memory and uploads. This can't be undone.",
-              table: "Account",
-              comment: "Explains the consequences of confirming permanent account deletion"),
-            webPlusNotice,
-          ]
-          .compactMap(\.self)
-          .joined(separator: "\n\n"))
+          verbatim: [deletedForGood, webPlusNotice]
+            .compactMap(\.self)
+            .joined(separator: "\n\n"))
       }
       .loads(settings.webPlus, refreshable: false)
       .onAppear {
@@ -101,58 +92,16 @@ struct AccountDeletionView: View {
   private var deletionForm: some View {
     ZoonkList {
       Section {
-        Label {
+        PageHeader(
           Text(
-            "Profile and account information",
-            tableName: "Account",
-            comment: "Account data removed during deletion")
-        } icon: {
-          Image(systemName: "person")
-        }
-
-        Label {
-          Text(
-            "Goals, plans and progress",
-            tableName: "Account",
-            comment: "Learning goals, study plans and progress removed during account deletion")
-        } icon: {
-          Image(systemName: "chart.line.uptrend.xyaxis")
-        }
-
-        Label {
-          Text(
-            "Memory and uploads",
-            tableName: "Account",
-            comment:
-              "What the app remembers about the learner and their uploaded files, removed during account deletion"
-          )
-        } icon: {
-          Image(systemName: "tray.full")
-        }
-      } header: {
-        SectionTitle(
-          Text(
-            "Permanently deleted",
-            tableName: "Account",
-            comment: "Heading above the data removed during account deletion"))
-      } footer: {
-        SectionFooter {
-          Text(
-            "Account deletion can't be undone.",
-            tableName: "Account",
-            comment: "Warns that account deletion is irreversible")
-        }
+            "Delete your account?", tableName: "Account",
+            comment: "Final confirmation title before permanent account deletion"),
+          supporting: Text(verbatim: deletedForGood))
       }
 
       if let storeSubscriptionProvider {
         Section {
           subscriptionManagementControl(for: storeSubscriptionProvider)
-        } header: {
-          SectionTitle(
-            Text(
-              "Subscription",
-              tableName: "Account",
-              comment: "Heading for mobile-store billing guidance during account deletion"))
         } footer: {
           SectionFooter {
             subscriptionDeletionMessage(for: storeSubscriptionProvider)
@@ -199,10 +148,7 @@ struct AccountDeletionView: View {
         .disabled(session.isWorking)
       } footer: {
         SectionFooter {
-          Text(
-            "Continue with Apple to confirm that this account is yours before deleting it.",
-            tableName: "Account",
-            comment: "Explains why Apple reauthorization is required for deletion")
+          logInAgainReason
         }
       }
     } else {
@@ -292,18 +238,9 @@ struct AccountDeletionView: View {
             comment: "Sends an email code for account deletion reauthorization")
         }
       }
-    } header: {
-      SectionTitle(
-        Text(
-          "Sign in again",
-          tableName: "Account",
-          comment: "Heading for email reauthentication before account deletion"))
     } footer: {
       SectionFooter {
-        Text(
-          "For your security, enter a new code sent to the email on this account.",
-          tableName: "Account",
-          comment: "Explains the email reauthentication requirement for account deletion")
+        logInAgainReason
       }
     }
   }
@@ -311,18 +248,10 @@ struct AccountDeletionView: View {
   private var deletedContent: some View {
     ContentUnavailableView {
       Label {
-        Text(
-          "Account deleted",
-          tableName: "Account",
-          comment: "Title shown after successful account deletion")
+        accountDeleted
       } icon: {
         Image(systemName: "checkmark.circle")
       }
-    } description: {
-      Text(
-        "Your Zoonk account and personalized data were permanently deleted.",
-        tableName: "Account",
-        comment: "Confirms that account data was permanently deleted")
     } actions: {
       Button(action: dismiss.callAsFunction) {
         Text("Done", tableName: "Account", comment: "Closes successful account deletion")
@@ -334,16 +263,13 @@ struct AccountDeletionView: View {
   private var manualAppleRevocationContent: some View {
     ContentUnavailableView {
       Label {
-        Text(
-          "Account deleted",
-          tableName: "Account",
-          comment: "Title shown after deletion when Apple authorization needs manual removal")
+        accountDeleted
       } icon: {
         Image(systemName: "checkmark.circle")
       }
     } description: {
       Text(
-        "Your Zoonk data was deleted, but Apple couldn't confirm that its authorization was removed. Remove Zoonk from Sign in with Apple to finish.",
+        "To finish, remove Zoonk from Sign in with Apple.",
         tableName: "Account",
         comment:
           "Explains that Zoonk deletion succeeded but Apple authorization needs manual removal")
@@ -365,6 +291,26 @@ struct AccountDeletionView: View {
         }
       }
     }
+  }
+
+  private var deletedForGood: String {
+    String(
+      localized:
+        "Your goals, plans, progress, memory and uploads are deleted for good. This can't be undone.",
+      table: "Account",
+      comment: "What deleting the account deletes, under its title and in its confirmation")
+  }
+
+  private var logInAgainReason: Text {
+    Text(
+      "For your safety, log in again, then delete your account.", tableName: "Account",
+      comment: "Why the learner logs in again before deleting their account")
+  }
+
+  private var accountDeleted: Text {
+    Text(
+      "Your account was deleted.", tableName: "Account",
+      comment: "Shown once the learner's account is deleted")
   }
 
   private var storeSubscriptionProvider: StoreSubscriptionProvider? {
@@ -433,16 +379,14 @@ struct AccountDeletionView: View {
     switch provider {
     case .apple:
       Text(
-        "Deleting your Zoonk account doesn't cancel App Store billing. Cancel the subscription first if you don't want it to renew.",
+        "Plus from the App Store keeps charging until you cancel it there.",
         tableName: "Account",
-        comment:
-          "Warns that App Store billing continues independently of Zoonk account deletion")
+        comment: "Before deleting the account, for Plus bought in the App Store")
     case .google:
       Text(
-        "Deleting your Zoonk account doesn't cancel Google Play billing. Use Google Play on an Android device to cancel it first if you don't want it to renew.",
+        "Plus from Google Play keeps charging until you cancel it there.",
         tableName: "Account",
-        comment:
-          "Warns that Google Play billing continues independently of Zoonk account deletion")
+        comment: "Before deleting the account, for Plus bought in Google Play")
     }
   }
 
