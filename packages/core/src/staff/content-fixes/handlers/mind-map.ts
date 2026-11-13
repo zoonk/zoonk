@@ -144,7 +144,7 @@ async function apply(tx: TransactionClient, stored: Stored, context: FixContext)
   const row = await tx.chapterMindMap.update({
     data: {
       ...(restored ?? NO_PICTURE),
-      redrawAttemptedAt: null,
+      redrawAttempts: 0,
       redrawOwedAt: restored ? null : context.now,
       runId: null,
       status: "completed",

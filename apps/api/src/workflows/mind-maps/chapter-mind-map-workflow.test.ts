@@ -142,7 +142,7 @@ describe(chapterMindMapWorkflow, () => {
       await expect(
         prisma.chapterMindMap.findUniqueOrThrow({ where: { chapterId: chapter.id } }),
       ).resolves.toMatchObject({
-        redrawAttemptedAt: expect.any(Date),
+        redrawAttempts: 1,
         redrawOwedAt: null,
         status: "completed",
         structure,

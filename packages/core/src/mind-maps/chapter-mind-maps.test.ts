@@ -668,6 +668,61 @@ describe("chapter mind maps", () => {
     });
   });
 
+  it("gives up a redraw whose runs keep dying, keeping the corrected outline until a later fix owes one again", async () => {
+    const { finished, map } = await drawnSharedMap();
+    await applyTitleFix(map.id);
+    const { isRunActive } = runsAlive();
+
+    const claims = [];
+
+    for (const runId of ["first-run", "second-run", "third-run", "fourth-run"]) {
+      // oxlint-disable-next-line no-await-in-loop -- each run claims after the one before it died
+      claims.push(await claimChapterMindMapRedraw({ chapterId: finished, isRunActive, runId }));
+    }
+
+    const exhausted = await prisma.chapterMindMap.findUniqueOrThrow({ where: { id: map.id } });
+    const owedAfterExhausted = await listOwedMindMapRedraws();
+
+    await signInProposer();
+
+    const fix = await proposeFix({
+      changes: [
+        {
+          id: map.id,
+          model: "ChapterMindMap",
+          set: { structure: { ...structure, title: "Corrected again" } },
+        },
+      ],
+      reason: "Fix the map title again.",
+    });
+
+    const approver = await signInApprover();
+    await approve({ fixId: fix.id, key: approver.key });
+
+    expect({
+      claims,
+      exhausted,
+      owedAfterExhausted,
+      owedAfterFix: await listOwedMindMapRedraws(),
+      reclaimed: await claimChapterMindMapRedraw({
+        chapterId: finished,
+        isRunActive,
+        runId: "fifth-run",
+      }),
+    }).toMatchObject({
+      claims: [true, true, true, false],
+      exhausted: {
+        imageUrl: null,
+        redrawOwedAt: null,
+        status: "completed",
+        structure: { ...structure, title: "Corrected outline" },
+      },
+      owedAfterExhausted: expect.not.arrayContaining([finished]),
+      owedAfterFix: expect.arrayContaining([finished]),
+      reclaimed: true,
+    });
+  });
+
   it("keeps the redraw owed when a fix lands while the learner's run checks its picture", async () => {
     const { analytics, finished, map } = await drawnSharedMap();
     vi.mocked(checkMindMapImage).mockResolvedValueOnce(failed);

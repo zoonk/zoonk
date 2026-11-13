@@ -50,7 +50,10 @@ export async function holdChapterMindMap({
   });
 }
 
-/** Workflow bridge, not authorization: claims an owed redraw for runId unless another live run owns the map. */
+/** A run that fails gives its redraw up itself; this ends the redraws whose runs keep dying before they can. */
+const MAX_REDRAW_ATTEMPTS = 3;
+
+/** Workflow bridge, not authorization: claims an owed redraw for runId unless another live run owns the map, and gives it up after its last attempt. */
 export async function claimChapterMindMapRedraw({
   chapterId,
   isRunActive,
@@ -79,18 +82,29 @@ export async function claimChapterMindMapRedraw({
     return false;
   }
 
+  const unowned = {
+    chapterId,
+    redrawOwedAt: { not: null },
+    ...(running
+      ? { runId: map.runId, status: "running" as const }
+      : { status: "completed" as const }),
+  };
+
   const claimed = await prisma.chapterMindMap.updateMany({
-    data: { redrawAttemptedAt: new Date(), runId, status: "running" },
-    where: {
-      chapterId,
-      redrawOwedAt: { not: null },
-      ...(running
-        ? { runId: map.runId, status: "running" }
-        : { redrawAttemptedAt: null, status: "completed" }),
-    },
+    data: { redrawAttempts: { increment: 1 }, runId, status: "running" },
+    where: { ...unowned, redrawAttempts: { lt: MAX_REDRAW_ATTEMPTS } },
   });
 
-  return claimed.count > 0;
+  if (claimed.count > 0) {
+    return true;
+  }
+
+  await prisma.chapterMindMap.updateMany({
+    data: { redrawOwedAt: null, status: "completed" },
+    where: { ...unowned, redrawAttempts: { gte: MAX_REDRAW_ATTEMPTS } },
+  });
+
+  return false;
 }
 
 /** Workflow bridge, not authorization; requires a learner-claimed run and preserves existing text on retries. */
@@ -319,10 +333,7 @@ export async function listOwedMindMapRedraws(): Promise<string[]> {
   const rows = await prisma.chapterMindMap.findMany({
     orderBy: { redrawOwedAt: "asc" },
     take: 100,
-    where: {
-      OR: [{ redrawAttemptedAt: null, status: "completed" }, { status: "running" }],
-      redrawOwedAt: { not: null },
-    },
+    where: { redrawOwedAt: { not: null } },
   });
 
   return rows.map((row) => row.chapterId);
