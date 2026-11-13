@@ -5,7 +5,7 @@ import { stripWrappingQuotes } from "@zoonk/utils/string";
 
 export const QUESTION_TEXT_CLASS = cn(
   LEARN_QUESTION_TEXT_CLASS,
-  "text-foreground in-data-[phase=feedback]:text-muted-foreground md:text-[1.3125rem]",
+  "text-foreground in-data-[phase=feedback]:text-muted-foreground",
 );
 
 export function ContextText({ children }: { children: React.ReactNode }) {

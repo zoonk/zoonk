@@ -104,7 +104,12 @@ export async function PatternsOverview({ patterns }: { patterns: ScorePatternsDa
       <PageSectionHeader>
         <PageSectionTitle id="overview-patterns">{t("Patterns · 90 days")}</PageSectionTitle>
         <Link
-          className={buttonVariants({ className: "-my-1 -mr-2.5", size: "sm", variant: "ghost" })}
+          className={buttonVariants({
+            className: "-my-1",
+            edge: "end",
+            size: "sm",
+            variant: "ghost",
+          })}
           href={getMenu("patterns").url}
           prefetch
         >

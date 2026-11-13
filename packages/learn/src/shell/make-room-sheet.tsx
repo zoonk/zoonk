@@ -165,7 +165,9 @@ export function MakeRoomSheet({
             </DrawerDescription>
           </div>
 
-          <DrawerClose render={<Button className="-mr-2 shrink-0" size="icon" variant="ghost" />}>
+          <DrawerClose
+            render={<Button className="shrink-0" edge="end" size="icon" variant="ghost" />}
+          >
             <XIcon aria-hidden="true" />
             <span className="sr-only">{t("Close")}</span>
           </DrawerClose>

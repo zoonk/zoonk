@@ -79,7 +79,7 @@ function CertificateItem({ facts, links }: ListedCertificate) {
             variant="thumb"
           />
         ) : (
-          <LockedCertificateSheet className="rounded-[4px] lg:rounded-md" facts={facts} />
+          <LockedCertificateSheet className="rounded-sm lg:rounded-md" facts={facts} />
         )}
       </span>
 
@@ -137,10 +137,10 @@ function GhostCertificate() {
       className="bg-ground border-input relative aspect-297/210 w-full max-w-104 rounded-lg border border-dashed"
     >
       {bars.map((bar) => (
-        <i className={`bg-surface-3 absolute left-[7%] block rounded-[4px] ${bar}`} key={bar} />
+        <i className={`bg-surface-3 absolute left-[7%] block rounded-sm ${bar}`} key={bar} />
       ))}
-      <i className="bg-input absolute top-[76%] left-[7%] block h-[2%] w-[86%] rounded-[4px]" />
-      <i className="bg-surface-3 absolute top-[82%] left-[83%] block h-[14%] w-[10%] rounded-[4px]" />
+      <i className="bg-input absolute top-[76%] left-[7%] block h-[2%] w-[86%] rounded-sm" />
+      <i className="bg-surface-3 absolute top-[82%] left-[83%] block h-[14%] w-[10%] rounded-sm" />
     </div>
   );
 }

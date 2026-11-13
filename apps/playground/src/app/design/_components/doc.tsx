@@ -5,7 +5,7 @@ export function DocHeader({ children, title }: React.PropsWithChildren<{ title: 
   return (
     <header className="max-w-column flex flex-col gap-2 pb-8">
       <h1 className="text-title">{title}</h1>
-      <div className="text-muted-foreground text-[0.9375rem] leading-6 text-pretty">
+      <div className="text-muted-foreground text-reading leading-6 text-pretty">
         {typeof children === "string" ? renderCode(children) : children}
       </div>
     </header>

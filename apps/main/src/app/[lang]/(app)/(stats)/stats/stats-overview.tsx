@@ -32,7 +32,7 @@ const PERCENT = 100;
 const TILES_CLASS = "gap-2 sm:grid-cols-4";
 
 const TILE_LINK_CLASS =
-  "focus-visible:ring-ring/50 rounded-sm outline-none after:absolute after:inset-0 after:rounded-option focus-visible:after:ring-[3px] focus-visible:after:ring-ring/50";
+  "focus-visible:ring-ring/50 rounded-sm outline-none after:absolute after:inset-0 after:rounded-xl focus-visible:after:ring-[3px] focus-visible:after:ring-ring/50";
 
 const TILE_CLASS = "hover:bg-muted/40 relative transition-colors";
 

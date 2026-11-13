@@ -224,7 +224,7 @@ function TopicGroupRow({
         <GroupLine group={group} showFrequency={showFrequency} />
         <ChevronDownIcon
           aria-hidden="true"
-          className="text-muted-foreground/60 size-4 shrink-0 self-center transition-transform group-data-panel-open/topic:rotate-180 motion-reduce:transition-none"
+          className="text-muted-foreground/60 edge -me-(--edge-pull) size-4 shrink-0 self-center transition-transform group-data-panel-open/topic:rotate-180 motion-reduce:transition-none"
         />
       </CollapsibleTrigger>
 

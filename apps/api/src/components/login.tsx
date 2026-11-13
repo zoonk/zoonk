@@ -25,7 +25,7 @@ export function LoginTitle({ children, className }: React.ComponentProps<"h1">) 
   return (
     <h1
       className={cn(
-        "text-[1.625rem] leading-[1.1] font-[620] tracking-[-0.035em] text-balance sm:text-[1.875rem]",
+        "text-2xl leading-[1.1] font-[620] tracking-[-0.035em] text-balance sm:text-3xl",
         className,
       )}
     >

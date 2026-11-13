@@ -27,8 +27,8 @@ function LogbookSkeleton() {
         <Skeleton className="h-5 w-1/2" />
       </div>
       <div className="grid w-full grid-cols-2 gap-2">
-        <Skeleton className="rounded-option h-20" />
-        <Skeleton className="rounded-option h-20" />
+        <Skeleton className="h-20 rounded-xl" />
+        <Skeleton className="h-20 rounded-xl" />
       </div>
     </TaskSkeleton>
   );

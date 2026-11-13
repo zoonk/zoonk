@@ -39,7 +39,7 @@ export default function ShapePage() {
         <div className="flex flex-col gap-3">
           {MEASURES.map((measure) => (
             <div className="flex flex-col gap-1" key={measure.name}>
-              <div className={cn("bg-surface-3 h-2 w-full rounded-[3px]", measure.className)} />
+              <div className={cn("bg-surface-3 rounded-meter h-2 w-full", measure.className)} />
               <p className="text-sm">
                 <span className="font-medium">{measure.name}</span>{" "}
                 <code className="text-muted-foreground font-mono text-xs">{measure.className}</code>

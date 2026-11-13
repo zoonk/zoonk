@@ -87,7 +87,7 @@ async function ChapterObjectives({
 
       <ul className="flex flex-col gap-3">
         {objectives.map((objective) => (
-          <li className="flex gap-3 text-[0.9375rem] leading-snug" key={objective}>
+          <li className="text-reading flex gap-3 leading-snug" key={objective}>
             <LineMarker>
               <CheckMark size="sm" />
             </LineMarker>
@@ -125,7 +125,7 @@ async function ChapterClosing({
             })}
       </h2>
 
-      <p className="text-muted-foreground max-w-column text-[0.9375rem] leading-relaxed text-pretty">
+      <p className="text-muted-foreground max-w-column text-reading leading-relaxed text-pretty">
         {startChapterId
           ? t("It follows the course from here, at your pace, with reviews before you forget.")
           : t("A few quick questions, then your plan and your first lesson.")}
@@ -215,7 +215,7 @@ export async function LibraryChapterPage({
 
         <div className={cn(COURSE_HERO_CLASS, tryLesson && COURSE_HERO_PAIR_CLASS)}>
           <section aria-labelledby={titleId} className="max-w-column flex min-w-0 flex-col">
-            <p className="text-muted-foreground flex flex-wrap items-center gap-x-2 text-sm sm:text-[15px]">
+            <p className="text-muted-foreground sm:text-reading flex flex-wrap items-center gap-x-2 text-sm">
               <SubjectGlyph subject={subject} />
               <PublicEyebrowLink href={getCourseHref(params)}>{course.title}</PublicEyebrowLink>
               {area && <span>{`· ${area}`}</span>}

@@ -30,7 +30,7 @@ export function Phrases({
       <ul aria-labelledby={titled ? titleId : undefined} className={LIST_GROUP_CLASS}>
         {conversation.hints.map((hint, index) => (
           <li
-            className="py-2.5 text-[0.9375rem] leading-snug text-pretty"
+            className="text-reading py-2.5 leading-snug text-pretty"
             // oxlint-disable-next-line react/no-array-index-key -- Phrases never move, and a generated list may repeat one.
             key={index}
             lang={conversation.targetLanguage}
