@@ -77,14 +77,24 @@ export function LearnShellMain({ children, className, ...props }: React.Componen
 }
 
 /**
+ * The bottom bar ends the main column, so it pins over that column and never covers the aside.
+ * Under 72rem the column dissolves into the page and the bar comes after the aside, so it stays
+ * pinned while the aside scrolls by; on a short page it rests on the frame's bottom.
+ */
+const WITH_BAR_COLUMN_CLASS =
+  "max-[72rem]:contents [&>[data-slot=bottom-bar]]:mt-auto max-[72rem]:[&>[data-slot=bottom-bar]]:order-last";
+
+/**
  * From 72rem the aside runs from the frame's top, beside a tab's bar too (`--frame-bar`), and its
- * first line of words centers on the bar's row (24px over a 20px line: y 34).
+ * first line of words centers on the bar's row (24px over a 20px line: y 34). `bottomBar` is the
+ * page's `BottomBar`.
  */
 export function PageWithAside({
   aside,
   asideClassName,
   asideLabel,
   asideRef,
+  bottomBar,
   children,
   className,
 }: {
@@ -92,6 +102,7 @@ export function PageWithAside({
   asideClassName?: string;
   asideLabel: string;
   asideRef?: React.Ref<HTMLElement>;
+  bottomBar?: React.ReactNode;
   children: React.ReactNode;
   className?: string;
 }) {
@@ -100,8 +111,15 @@ export function PageWithAside({
       className="flex w-full flex-1 flex-col gap-7 min-[72rem]:-mx-10 min-[72rem]:-mb-16 min-[72rem]:grid min-[72rem]:w-auto min-[72rem]:grid-cols-[minmax(0,1fr)_auto] min-[72rem]:gap-0"
       data-slot="page-with-aside"
     >
-      <div className={cn("flex min-w-0 flex-col min-[72rem]:px-10 min-[72rem]:pb-16", className)}>
+      <div
+        className={cn(
+          "flex min-w-0 flex-col min-[72rem]:px-10 min-[72rem]:pb-16",
+          bottomBar && WITH_BAR_COLUMN_CLASS,
+          className,
+        )}
+      >
         {children}
+        {bottomBar}
       </div>
 
       {aside && (
