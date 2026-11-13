@@ -1,6 +1,6 @@
 "use client";
 
-import { BusyContent, Button, FORWARD_ICON, buttonVariants } from "@zoonk/ui/components/button";
+import { BusyContent, Button, buttonVariants } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
@@ -13,10 +13,15 @@ import { cn, mergeRefs } from "@zoonk/ui/lib/utils";
  */
 export type Enter = "bound" | "host" | "off";
 
+type ButtonProps = React.ComponentProps<typeof Button>;
+
+const ENTER_HINT = <ShortcutKbd shortcut="main" tone="inverse" />;
+
 /**
  * A screen's main action, and the one home of Enter, the ⏎ hint and the busy look: a screen gets
- * all three by drawing it. Acting, it shows `busy` (a spinner in its icon's place) and blocks a
- * second press; it is never only disabled.
+ * all three by drawing it. Its one glyph is the ⏎ keycap, so it takes no icon; on a touch screen
+ * it is its label alone. Acting, it shows `busy` (a spinner in the keycap's place, or over the
+ * label where there is no keycap) and blocks a second press; it is never only disabled.
  */
 export function EnterButton({
   busy = false,
@@ -25,7 +30,7 @@ export function EnterButton({
   enter = "bound",
   ref,
   ...props
-}: Omit<React.ComponentProps<typeof Button>, "variant"> & { enter?: Enter }) {
+}: Omit<ButtonProps, "icon" | "iconPosition" | "keyHint" | "variant"> & { enter?: Enter }) {
   const enterRef = useEnterClick<HTMLButtonElement>({
     enabled: enter === "bound" && !disabled && !busy,
     focus: true,
@@ -38,11 +43,11 @@ export function EnterButton({
       data-enter={enter}
       disabled={disabled}
       focusableWhenDisabled
+      keyHint={enter === "off" ? undefined : ENTER_HINT}
       ref={mergeRefs(enterRef, ref)}
       {...props}
     >
       {children}
-      {enter !== "off" && <ShortcutKbd shortcut="main" tone="inverse" />}
     </Button>
   );
 }
@@ -56,25 +61,19 @@ export type EnterLinkHostProps = {
   ref?: React.Ref<HTMLAnchorElement>;
 };
 
-export type EnterLinkProps = Pick<React.ComponentProps<typeof Button>, "icon" | "iconPosition"> &
-  Pick<EnterLinkHostProps, "href" | "onClick" | "ref"> & {
-    children: React.ReactNode;
-    className?: string;
-    /** False while Enter must wait, such as during a goal switch. */
-    enabled?: boolean;
-    size?: "lg" | "xl";
-  };
+export type EnterLinkProps = Pick<EnterLinkHostProps, "href" | "onClick" | "ref"> & {
+  children: React.ReactNode;
+  className?: string;
+  /** False while Enter must wait, such as during a goal switch. */
+  enabled?: boolean;
+  size?: "lg" | "xl";
+};
 
-/**
- * The same main action as a link, drawn with the app's own `link`. It moves on, with the trailing
- * forward arrow, unless it's given another `icon` (null for none). Further props go to the link.
- */
+/** The same main action as a link, drawn with the app's own `link`. Further props go to the link. */
 export function EnterLink<Extra extends object>({
   children,
   className,
   enabled = true,
-  icon,
-  iconPosition,
   link: Link,
   ref,
   size = "lg",
@@ -93,10 +92,7 @@ export function EnterLink<Extra extends object>({
       data-enter="bound"
       ref={mergeRefs(enterRef, ref)}
     >
-      <BusyContent {...(icon === undefined ? FORWARD_ICON : { icon, iconPosition })}>
-        {children}
-        <ShortcutKbd shortcut="main" tone="inverse" />
-      </BusyContent>
+      <BusyContent keyHint={ENTER_HINT}>{children}</BusyContent>
     </Link>
   );
 }

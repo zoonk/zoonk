@@ -154,10 +154,8 @@ export function TaskMainButton({
   children,
   className,
   disabled = false,
-  icon,
-  iconPosition,
   onClick,
-}: Pick<React.ComponentProps<typeof EnterButton>, "icon" | "iconPosition"> & {
+}: {
   busy?: boolean;
   children: React.ReactNode;
   className?: string;
@@ -171,8 +169,6 @@ export function TaskMainButton({
       busy={busy}
       className={className}
       disabled={disabled || !mounted}
-      icon={icon}
-      iconPosition={iconPosition}
       onClick={onClick}
     >
       {children}
@@ -180,15 +176,13 @@ export function TaskMainButton({
   );
 }
 
-/** It moves on, with the trailing forward arrow, unless it's given another `icon`. */
 export function TaskMainLink({
   children,
   className,
   href,
   steadyMs = 0,
   toApp = false,
-  ...iconProps
-}: Pick<React.ComponentProps<typeof EnterButton>, "icon" | "iconPosition"> & {
+}: {
   children: React.ReactNode;
   className?: string;
   href: string;
@@ -212,7 +206,7 @@ export function TaskMainLink({
   };
 
   return (
-    <EnterLink className={className} href={href} onClick={onClick} {...iconProps}>
+    <EnterLink className={className} href={href} onClick={onClick}>
       {children}
     </EnterLink>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { PlayIcon, SkipForwardIcon } from "lucide-react";
+import { SkipForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { ChangeSaveError } from "../../_components/save-error";
 import { SuccessEyebrow } from "../../_components/success-eyebrow";
@@ -43,12 +43,7 @@ export function PlacementIntro({
       </OnboardingHeading>
 
       <OnboardingFooter>
-        <OnboardingPrimaryButton
-          busy={starting}
-          disabled={pending}
-          icon={<PlayIcon aria-hidden="true" />}
-          onClick={onStart}
-        >
+        <OnboardingPrimaryButton busy={starting} disabled={pending} onClick={onStart}>
           {t("Start")}
         </OnboardingPrimaryButton>
         <OnboardingSecondaryButton

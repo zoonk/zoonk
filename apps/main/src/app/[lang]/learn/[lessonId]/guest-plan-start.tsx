@@ -45,7 +45,7 @@ export function GuestPlanStart({ goal, start }: { goal: string; start: CourseSta
   }
 
   return (
-    <EnterLink className="w-full" href={getGoalStartHref(goal)} icon={null} link={Link}>
+    <EnterLink className="w-full" href={getGoalStartHref(goal)} link={Link}>
       {t("Build my plan")}
     </EnterLink>
   );

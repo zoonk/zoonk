@@ -7,7 +7,7 @@ import {
 } from "@zoonk/core/language/pronunciation/contract";
 import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
 import { DropdownMenuItem } from "@zoonk/ui/components/dropdown-menu";
-import { CheckIcon, RotateCcwIcon, SkipForwardIcon } from "lucide-react";
+import { RotateCcwIcon, SkipForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { FeedbackVerdict } from "../../_components/feedback-panel";
 import { MomentReadouts } from "../../_components/moment-readouts";
@@ -121,7 +121,7 @@ export function PronunciationReviewScreen({
           exitToApp
           footer={
             <TaskActions>
-              <TaskMainLink href={exitHref} icon={<CheckIcon aria-hidden="true" />} toApp>
+              <TaskMainLink href={exitHref} toApp>
                 {t("Done")}
               </TaskMainLink>
             </TaskActions>
@@ -229,11 +229,7 @@ function WordActions({
   if (!available) {
     return (
       <TaskActions>
-        <TaskMainButton
-          busy={round.isPending}
-          icon={<SkipForwardIcon aria-hidden="true" />}
-          onClick={round.next}
-        >
+        <TaskMainButton busy={round.isPending} onClick={round.next}>
           {t("Skip this word")}
         </TaskMainButton>
       </TaskActions>
