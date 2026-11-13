@@ -68,11 +68,24 @@ function toSwitcherWaitingGoals(goals: readonly LearnerSummaryWaitingGoal[]) {
   });
 }
 
+/** In the sidebar the 24px logo centers on the items' icons, like the account's picture. */
+function VisitorHomeLink({ placement }: { placement?: Placement }) {
+  if (placement !== "sidebar") {
+    return <PublicHomeLink />;
+  }
+
+  return (
+    <span className="flex px-1">
+      <PublicHomeLink />
+    </span>
+  );
+}
+
 function PendingGoalMenu({ placement = "bar" }: { placement?: Placement }) {
   return (
     <>
       <VisitorLook>
-        <PublicHomeLink />
+        <VisitorHomeLink placement={placement} />
       </VisitorLook>
       <div
         aria-hidden="true"
@@ -87,7 +100,7 @@ function GoalMenu({ placement }: { placement?: Placement }) {
   const navigation = useOnboardingNavigation();
 
   if (learner.status === "visitor") {
-    return <PublicHomeLink />;
+    return <VisitorHomeLink placement={placement} />;
   }
 
   if (learner.status !== "ready") {

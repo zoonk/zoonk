@@ -103,8 +103,9 @@ export const SIDEBAR_ITEM_CLASS = cn(
 export const SIDEBAR_COUNT_CLASS =
   "text-faint in-aria-[current=page]:text-muted-foreground in-data-[slot=tooltip-content]:text-background/70 font-mono text-xs tabular-nums in-data-[slot=tooltip-content]:ml-2";
 
+/** Its 24px picture hangs 4px out each side, so it centers on the items' icons and the name starts with their labels. */
 export const SIDEBAR_ACCOUNT_CLASS = cn(
-  "hover:bg-muted/60 aria-expanded:bg-muted focus-visible:ring-ring/50 hit-area text-compact relative flex h-11 w-full min-w-0 items-center gap-2.5 rounded-md px-1 text-left font-medium transition-colors outline-none focus-visible:ring-[3px]",
+  "hover:bg-muted/60 aria-expanded:bg-muted focus-visible:ring-ring/50 hit-area text-compact relative flex h-11 w-full min-w-0 items-center gap-2.5 rounded-md px-2 text-left font-medium transition-colors outline-none *:first:-mx-1 focus-visible:ring-[3px]",
   SIDEBAR_ICON_ONLY_CLASS,
 );
 
