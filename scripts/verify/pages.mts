@@ -185,6 +185,10 @@ try {
         `${path} ${viewport}: ${failing} failing, ${load.findings.length - failing} to look at`,
       );
 
+      for (const finding of load.findings.filter((item) => item.level === "fail")) {
+        console.log(`  ${finding.check}: ${finding.message}`);
+      }
+
       loads.push(load);
     }
 
