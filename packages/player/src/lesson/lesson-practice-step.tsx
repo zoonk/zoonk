@@ -79,7 +79,7 @@ function ChallengePracticeAction() {
       }
       busy={primary.busy}
       disabled={primary.disabled}
-      enter="off"
+      enter="host"
       id="challenge-practice-action"
       onPress={() => runPrimary({ actions, screen })}
     />
