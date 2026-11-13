@@ -132,7 +132,7 @@ export function SuggestionLine({ children, className, ...props }: React.Componen
       <div
         className={cn(
           FRAME_CLASS,
-          "flex min-h-12 items-center gap-2.5 py-2 pr-2 pl-3",
+          "flex min-h-12 items-center gap-3 py-2 pr-2 pl-4",
           LINE_CLASS,
           className,
         )}
@@ -187,7 +187,7 @@ export function SuggestionContent({
     <>
       <PresentationContext value="panel">
         <div
-          className={cn(FRAME_CLASS, "flex-col gap-2.5 p-3.5", PANEL_CLASS, className)}
+          className={cn(FRAME_CLASS, "flex-col gap-2.5 p-4", PANEL_CLASS, className)}
           data-slot="suggestion-panel"
         >
           {children}
