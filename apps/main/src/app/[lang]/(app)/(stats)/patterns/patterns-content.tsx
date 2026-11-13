@@ -15,10 +15,12 @@ import { getBestDayName, getBestTimeName } from "./pattern-summary";
 
 /** The page's finding, in words: when the learner answers best, or that it makes no difference. */
 async function PatternsFinding({ patterns }: { patterns: ScorePatternsData }) {
-  const t = await getExtracted();
   const { dayVerdict, timeVerdict } = patterns;
-  const dayName = await getBestDayName(dayVerdict);
-  const timeName = await getBestTimeName(timeVerdict);
+  const [t, dayName, timeName] = await Promise.all([
+    getExtracted(),
+    getBestDayName(dayVerdict),
+    getBestTimeName(timeVerdict),
+  ]);
 
   const day =
     dayVerdict.kind === "best"

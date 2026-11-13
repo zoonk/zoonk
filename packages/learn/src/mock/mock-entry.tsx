@@ -59,7 +59,6 @@ export function MockEntryRow({
   );
 }
 
-/** The exam page's main action, in its bottom bar. */
 export function MockEntryButton({
   hrefs,
   view,
