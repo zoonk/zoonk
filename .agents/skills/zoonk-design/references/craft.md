@@ -21,7 +21,7 @@ The [deliberate choices](#deliberate-choices) at the end are neither.
 
 ### E1. One start edge per column
 
-In a column, every block starts on the column's start edge or on the one inner edge where row text starts after a leading mark (28px in `ListRow`: a 16px mark and a 12px gap). A panel's content starts at the panel's padding.
+In a column, every block starts on the column's start edge or on the one inner edge where row text starts after a leading mark (28px in `ListRow`: a 16px mark and a 12px gap; 32px where the mark is a number keycap, which is 20px wide, as in answer options and lists that number keys answer). A panel's content starts at the panel's padding.
 
 - **Check.** Hold a ruler down the left side and count where text and boxes begin: the edge, the text-after-mark edge and one indent at most. In the page, each block's ink left minus the column's start edge is 0, 28 or the panel's padding.
 - **Usual break.** One row with a leading icon among rows without one. A chart or calendar with its own inner padding. An icon whose gap to its text differs from the rows above it.
