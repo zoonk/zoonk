@@ -89,8 +89,7 @@ struct ConversationIntro<Footer: View>: View {
   private var about: some View {
     Section {
       VStack(alignment: .leading, spacing: 8) {
-        eyebrow
-          .chip()
+        Chip(eyebrow)
           .padding(.bottom, 4)
 
         Text(intro.speakingTask?.task.name ?? intro.title)
@@ -292,7 +291,9 @@ struct CallMicrophoneOff: View {
 private struct SoundNote: View {
   var body: some View {
     Label {
-      Text("Turn your sound on.", tableName: "Voice", comment: "Before a call: what it needs from the learner's device")
+      Text(
+        "Turn your sound on.", tableName: "Voice",
+        comment: "Before a call: what it needs from the learner's device")
     } icon: {
       Image(systemName: "speaker.wave.2")
     }

@@ -344,7 +344,7 @@ private struct EssayContent: View {
     }
 
     if writer.isWriting, writer.status == .signUpRequired {
-      return HelpLimit.signUpRequired.message
+      return HelpLimit.signUpRequired.helpWords().said
     }
 
     if writer.isWriting, writer.status == .limitReached || essay.gradesLeft == 0 {

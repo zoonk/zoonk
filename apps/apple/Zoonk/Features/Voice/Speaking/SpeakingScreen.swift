@@ -232,7 +232,8 @@ private struct SpeakingPaperView: View {
         SubscribeGate(
           title: Text(
             "Speaking practice needs a subscription", tableName: "Voice",
-            comment: "A free learner tried to start an exam speaking task"))
+            comment: "A free learner tried to start an exam speaking task")
+        )
         .padding(.top, 4)
       } else {
         ButtonRow(spacing: 12) {

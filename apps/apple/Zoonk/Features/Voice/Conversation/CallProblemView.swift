@@ -31,12 +31,9 @@ struct CallProblemView: View {
     } description: {
       description
     }
-    .safeAreaBar(edge: .bottom) {
-      TaskActionBar {
-        actions
-          .buttonStyle(.mainAction)
-          .controlSize(.large)
-      }
+    .bottomBar {
+      actions
+        .buttonStyle(.mainAction)
     }
     .lonePage()
   }
@@ -80,14 +77,12 @@ struct CallProblemView: View {
         onAction(.takeover)
       } label: {
         CallRefusal.takeover
-          .frame(maxWidth: .infinity)
       }
     case .call(.connect, _), .call(.plusRequired, _):
       Button {
         onAction(.retry)
       } label: {
         Text("Try again", tableName: "Voice", comment: "Calls again")
-          .frame(maxWidth: .infinity)
       }
     case .call(.limit, let limit?) where limit.tier != .plus:
       CallLimitUpsell(limit: limit)
@@ -96,7 +91,6 @@ struct CallProblemView: View {
         onAction(.back)
       } label: {
         Text("Back", tableName: "Voice", comment: "Leaves the call")
-          .frame(maxWidth: .infinity)
       }
     }
   }
@@ -282,7 +276,9 @@ private enum CallRefusal {
   }
 
   static var takeover: Text {
-    Text("Start this call", tableName: "Voice", comment: "Ends the learner's other call and starts this one")
+    Text(
+      "Start this call", tableName: "Voice",
+      comment: "Ends the learner's other call and starts this one")
   }
 
   /// When the calls come back; a guest's way on is the button. Never says how much call time a
@@ -307,13 +303,10 @@ private struct CallLimitUpsell: View {
       } label: {
         Text(
           "Create a free account", tableName: "Voice",
-          comment: "Button to sign up after a guest used the free help"
-        )
-        .frame(maxWidth: .infinity)
+          comment: "Button to sign up after a guest used the free help")
       }
     case .free:
       SubscribeButton()
-        .frame(maxWidth: .infinity)
     case .plus:
       EmptyView()
     }

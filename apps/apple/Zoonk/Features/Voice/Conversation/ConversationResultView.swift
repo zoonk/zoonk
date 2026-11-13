@@ -68,7 +68,7 @@ struct ConversationResultView: View {
               Text("Try another mock", tableName: "Voice", comment: "Starts a new speaking mock")
             } else {
               Text(
-                "Try this task with a new card", tableName: "Voice",
+                "Try again", tableName: "Voice",
                 comment: "Starts the same exam task again with a new card")
             }
           }
@@ -137,9 +137,7 @@ struct ConversationResultView: View {
     } label: {
       Group {
         if let nextTask {
-          Text(
-            "Go to task \(nextTask.number)", tableName: "Voice",
-            comment: "Opens the speaking paper's next task")
+          Text("Next task", tableName: "Voice", comment: "Opens the speaking paper's next task")
         } else {
           Text("Continue", tableName: "Voice", comment: "Leaves a call's result")
         }
@@ -276,7 +274,7 @@ struct ConversationResultView: View {
       SectionFooter {
         if conversation.kind == .checkpoint, !result.passed {
           Text(
-            "Nothing is lost: the call comes back so you can try again.", tableName: "Voice",
+            "The call comes back so you can try again.", tableName: "Voice",
             comment: "A checkpoint call that didn't pass")
         } else if showsStars {
           Text(
