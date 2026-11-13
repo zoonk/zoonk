@@ -8,6 +8,7 @@ import { Link } from "@/i18n/navigation";
 import { useBeltLabel } from "@/lib/belt-label";
 import { getMenu } from "@/lib/menu";
 import { BeltIndicator } from "@zoonk/ui/components/belt-indicator";
+import { cn } from "@zoonk/ui/lib/utils";
 import { type BeltColor } from "@zoonk/utils/belt-level";
 import { useExtracted } from "next-intl";
 import { Suspense } from "react";
@@ -30,6 +31,9 @@ export function BeltLevel({
   );
 }
 
+/** The level's room, kept while the learner loads so the bar's end doesn't move when it arrives. */
+const LEVEL_BOX_CLASS = "h-9 min-w-12 shrink-0";
+
 function LevelLink({ level }: { level: { color: BeltColor; level: number } }) {
   const t = useExtracted();
   const belt = useBeltLabel(level.color);
@@ -37,7 +41,10 @@ function LevelLink({ level }: { level: { color: BeltColor; level: number } }) {
 
   return (
     <Link
-      className="text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-ring/50 hit-area text-compact relative flex h-9 shrink-0 items-center gap-1.5 rounded-lg px-2 font-mono tabular-nums transition-colors outline-none focus-visible:ring-[3px]"
+      className={cn(
+        LEVEL_BOX_CLASS,
+        "text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-ring/50 hit-area text-compact relative flex items-center justify-center gap-1.5 rounded-lg px-2 font-mono tabular-nums transition-colors outline-none focus-visible:ring-[3px]",
+      )}
       href={getMenu("stats").url}
       prefetch
       title={t("Statistics")}
@@ -60,7 +67,10 @@ function PendingBarEnd({ search, visitor }: BarEndProps) {
   return (
     <>
       <VisitorLook>{visitor}</VisitorLook>
-      <div className="signed-in:contents hidden">{search}</div>
+      <div className="signed-in:contents hidden">
+        {search}
+        <span aria-hidden="true" className={LEVEL_BOX_CLASS} />
+      </div>
       <PendingAccountAvatar className="size-7" />
     </>
   );

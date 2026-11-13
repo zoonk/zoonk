@@ -20,7 +20,7 @@ import {
   TodayScreenProvider,
 } from "./today-context";
 import { TodayHeading } from "./today-heading";
-import { TODAY_ACTION_CLASS, TODAY_ASIDE_CLASS, TODAY_MAIN_CLASS } from "./today-layout";
+import { TODAY_ASIDE_CLASS, TODAY_MAIN_CLASS } from "./today-layout";
 import { TodayMissions } from "./today-missions";
 import { TodayMore } from "./today-more";
 import { TodayNotice } from "./today-notice";
@@ -113,43 +113,43 @@ export function TodayScreen({
     <TodayScreenProvider
       value={{ actions, brainPower, buddy, missions, notices, planEnd, today, writingStalled }}
     >
-      <PageWithAside
-        aside={
-          <>
-            <TodayNotice className={NOTICE_CLASS} fallbackFocus={aside}>
-              {unfinishedGoal}
-            </TodayNotice>
-            <TodayMissions className={ASIDE_LEAD_CLASS} />
-            <TodayWeek className={ASIDE_LEAD_CLASS} />
-            <TodayPreparation
-              className={ASIDE_LEAD_CLASS}
-              knownLessons={knownLessons}
-              level={level}
-            />
-            <TodayPractice
-              completedLessons={completedLessons}
-              mistakes={mistakes}
-              mockEntry={mockEntry}
-              speakingEntry={speakingEntry}
-            />
-          </>
-        }
-        asideClassName={TODAY_ASIDE_CLASS}
-        asideLabel={t("Your week")}
-        asideRef={aside}
-      >
-        <Page data-slot="today">
-          {banner}
-          <section aria-label={t("Today's lessons")} className={TODAY_MAIN_CLASS}>
-            <TodayContinueProvider>
-              <TodayHeading className="[grid-area:head]" />
-              <TodayAction className={TODAY_ACTION_CLASS} />
-              <TodaySession className="mt-5 [grid-area:session]" />
-              <TodayMore className="mt-4 [grid-area:more]" />
-            </TodayContinueProvider>
-          </section>
-        </Page>
-      </PageWithAside>
+      <TodayContinueProvider>
+        <PageWithAside
+          aside={
+            <>
+              <TodayNotice className={NOTICE_CLASS} fallbackFocus={aside}>
+                {unfinishedGoal}
+              </TodayNotice>
+              <TodayMissions className={ASIDE_LEAD_CLASS} />
+              <TodayWeek className={ASIDE_LEAD_CLASS} />
+              <TodayPreparation
+                className={ASIDE_LEAD_CLASS}
+                knownLessons={knownLessons}
+                level={level}
+              />
+              <TodayPractice
+                completedLessons={completedLessons}
+                mistakes={mistakes}
+                mockEntry={mockEntry}
+                speakingEntry={speakingEntry}
+              />
+            </>
+          }
+          asideClassName={TODAY_ASIDE_CLASS}
+          asideLabel={t("Your week")}
+          asideRef={aside}
+          bottomBar={<TodayAction />}
+        >
+          <Page data-slot="today">
+            {banner}
+            <section aria-label={t("Today's lessons")} className={TODAY_MAIN_CLASS}>
+              <TodayHeading />
+              <TodaySession className="mt-5" />
+              <TodayMore className="mt-4" />
+            </section>
+          </Page>
+        </PageWithAside>
+      </TodayContinueProvider>
     </TodayScreenProvider>
   );
 }
