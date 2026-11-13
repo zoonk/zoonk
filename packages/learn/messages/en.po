@@ -554,7 +554,6 @@ msgstr "That didn't save. Try again."
 
 #: src/_components/sheet-header.tsx
 #: src/_components/suggestion.tsx
-#: src/appearance/buddy-settings.tsx
 #: src/certificates/certificate-linkedin.tsx
 #: src/certificates/certificate-name.tsx
 #: src/certificates/certificate-share.tsx
@@ -4015,6 +4014,11 @@ msgid "Quick explanation · {time}"
 msgstr "Quick explanation · {time}"
 
 #: src/feedback/feedback-form-dialog.tsx
+msgctxt "feedback.rbrahO"
+msgid "Close"
+msgstr "Close"
+
+#: src/feedback/feedback-form-dialog.tsx
 #: src/feedback/report-problem-item.tsx
 msgctxt "feedback.G5YSJR"
 msgid "Send feedback"
@@ -4024,11 +4028,6 @@ msgstr "Send feedback"
 msgctxt "feedback.Kz11c4"
 msgid "Found a problem or have an idea? Tell us below or email hello@zoonk.com."
 msgstr "Found a problem or have an idea? Tell us below or email hello@zoonk.com."
-
-#: src/feedback/feedback-form-dialog.tsx
-msgctxt "feedback.rbrahO"
-msgid "Close"
-msgstr "Close"
 
 #: src/feedback/feedback-form-dialog.tsx
 msgctxt "feedback.NDni4R"

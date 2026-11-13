@@ -1,3 +1,4 @@
+import { getFreePlanLimits } from "@zoonk/core/entitlements/plan-limits";
 import { UsageKind } from "@zoonk/db";
 import { z } from "zod";
 
@@ -47,7 +48,8 @@ export const allowanceResponseSchema = z
       .object({
         includesMockExams: z.boolean().meta({ description: "Whether mock exams are included" }),
         studyDays: limitSchema.meta({
-          description: "Days of an exam plan included, or null for all of it",
+          description:
+            "Always null. Exam goals use the shared lesson allowance without time-based expiry",
         }),
       })
       .meta({ description: "What exam prep the plan includes" }),
@@ -62,7 +64,6 @@ export const allowanceResponseSchema = z
     tier: z.enum(["free", "guest", "plus"]).meta({ description: "The learner's plan" }),
   })
   .meta({
-    description:
-      "New lessons started count toward the allowance, whether reused or generated. Quick explanations and reviews don't.",
+    description: `Signed-in free learners share ${getFreePlanLimits().lessonsPerMonth} distinct new lessons per UTC calendar month across every goal, including exams. Each lesson ID counts once, including generation ahead of study, whether reused or generated. Continuing or replaying an admitted lesson, practice and reviews do not count again. items[kind=lessonStart] supplies usedThisMonth, monthlyLimit and remaining; resets.month is the next UTC month boundary. A refused new start returns 402 USAGE_LIMIT_REACHED with details.limit resource=lessonStart, period=month, limit=${getFreePlanLimits().lessonsPerMonth}, tier=free. Other resources and guests retain their separate limits.`,
     id: "AllowanceResponse",
   });

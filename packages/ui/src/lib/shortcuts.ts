@@ -7,6 +7,8 @@ type Shortcut = {
   keys: readonly string[];
   /** Pressed with ⌘ on an Apple keyboard and Ctrl on the others. */
   mod?: true;
+  /** A character most keyboards type with Shift, so Shift never counts against it. */
+  typed?: true;
 };
 
 const NUMBER_KEYS = ["1", "2", "3", "4", "5", "6", "7", "8", "9"] as const;
@@ -17,9 +19,6 @@ const NUMBER_KEYS = ["1", "2", "3", "4", "5", "6", "7", "8", "9"] as const;
  * it, and `scripts/verify/shortcut-keys.test.mts` fails on a key bound or drawn anywhere else.
  */
 export const SHORTCUTS = {
-  answerBlank: { cap: "↓", does: "On a true or false card: leave it blank", keys: ["ArrowDown"] },
-  answerFalse: { cap: "←", does: "On a true or false card: answer False", keys: ["ArrowLeft"] },
-  answerTrue: { cap: "→", does: "On a true or false card: answer True", keys: ["ArrowRight"] },
   audio: { cap: "P", does: "Play or pause the screen's audio", keys: ["p", "P"] },
   flag: { cap: "F", does: "Flag this question in a mock exam", keys: ["f", "F"] },
   leave: {
@@ -33,14 +32,30 @@ export const SHORTCUTS = {
   previous: { cap: "←", does: "Go to the previous screen, question or map", keys: ["ArrowLeft"] },
   save: { cap: "S", does: "Save this mind map", keys: ["s", "S"] },
   search: { cap: "K", does: "Search or ask, on every page", keys: ["k", "K"], mod: true },
+  shortcuts: { cap: "?", does: "Show the keyboard shortcuts", keys: ["?"], typed: true },
   sidebar: { cap: "B", does: "Collapse or expand the sidebar on screen", keys: ["b"], mod: true },
   tap: { cap: "Space", does: "Tap the beat", keys: [" "] },
 } as const satisfies Record<string, Shortcut>;
 
 export type ShortcutName = keyof typeof SHORTCUTS;
 
+/**
+ * Where each key works, in the order the keyboard shortcuts panel lists them. Every key is in one
+ * group (`shortcuts.test.ts`), so the panel can't miss one.
+ */
+export const SHORTCUT_GROUPS = {
+  anywhere: ["search", "sidebar", "main", "leave", "shortcuts"],
+  study: ["next", "previous", "pick", "audio", "flag", "save", "tap"],
+} as const satisfies Record<string, readonly ShortcutName[]>;
+
+export type ShortcutGroup = keyof typeof SHORTCUT_GROUPS;
+
 export function isModShortcut(name: ShortcutName): boolean {
   return "mod" in SHORTCUTS[name];
+}
+
+export function isTypedShortcut(name: ShortcutName): boolean {
+  return "typed" in SHORTCUTS[name];
 }
 
 function keyName(key: string): string {
