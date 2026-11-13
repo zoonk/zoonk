@@ -4,7 +4,7 @@ import { Checkbox } from "@zoonk/ui/components/checkbox";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { RadioGroup, RadioGroupItem, RadioGroupOption } from "@zoonk/ui/components/radio-group";
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
-import { MAX_PICK_KEYS } from "@zoonk/ui/lib/shortcuts";
+import { MAX_PICK_KEYS, shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -30,10 +30,17 @@ export type Choice<Value extends string> = {
   value: Value;
 };
 
-function ChoiceRadio<Value extends string>({ value }: { value: Value }) {
+function ChoiceRadio<Value extends string>({
+  keyShortcuts,
+  value,
+}: {
+  keyShortcuts: string | undefined;
+  value: Value;
+}) {
   return (
     <span className="relative flex shrink-0 self-center">
       <RadioGroupItem
+        aria-keyshortcuts={keyShortcuts}
         className={cn(CHOICE_CONTROL_CLASS, "**:data-[slot=radio-group-indicator]:hidden")}
         value={value}
       />
@@ -175,7 +182,10 @@ export function ChoiceList<Value extends string>({
             </ListRowContent>
 
             {choice.trailing}
-            <ChoiceRadio value={choice.value} />
+            <ChoiceRadio
+              keyShortcuts={numberKeys ? shortcutKeys("pick", index) : undefined}
+              value={choice.value}
+            />
           </RadioGroupOption>
 
           {choice.after}
@@ -250,6 +260,7 @@ export function CheckList<Value extends string>({
               {choice.description && <ListRowDescription>{choice.description}</ListRowDescription>}
             </ListRowContent>
             <Checkbox
+              aria-keyshortcuts={numberKeys ? shortcutKeys("pick", index) : undefined}
               checked={isPicked}
               className={CHOICE_CONTROL_CLASS}
               disabled={isDisabled}
