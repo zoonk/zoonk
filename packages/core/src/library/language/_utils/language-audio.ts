@@ -4,6 +4,7 @@ import { prisma } from "@zoonk/db";
 import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
 import { logError } from "@zoonk/utils/logger";
 import { generateLanguageAudio } from "../../../audio/generate-language-audio";
+import { toAudioData } from "./audio-data";
 
 type AudioTarget = { id: string; text: string };
 
@@ -26,16 +27,6 @@ async function generateAudio({
   }
 
   return data;
-}
-
-export function toAudioData({ provenance, url }: VoicedClip) {
-  return {
-    audioGeneratedAt: new Date(provenance.generatedAt),
-    audioModel: provenance.model,
-    audioPromptVersion: provenance.promptVersion,
-    audioRunId: provenance.runId,
-    audioUrl: url,
-  };
 }
 
 async function fillWordAudio({

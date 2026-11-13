@@ -58,15 +58,16 @@ export default function ContentFixBatchPage({ params }: Props) {
   );
 }
 
-/** The reason most fixes share; a fix that gave its own shows it in its card. */
-function sharedReason(fixes: readonly BatchFix[]): string {
+/**
+ * The reason most fixes share; a fix that gave its own shows it in its card. Null when no two fixes
+ * share one: each fix then gave its own reason, and the batch's own reason isn't stored.
+ */
+function sharedReason(fixes: readonly BatchFix[]): string | null {
   const counts = Map.groupBy(fixes, (fix) => fix.reason);
 
-  const [reason] = [...counts.entries()].toSorted(
-    ([, left], [, right]) => right.length - left.length,
-  );
+  const [top] = [...counts.entries()].toSorted(([, left], [, right]) => right.length - left.length);
 
-  return reason?.[0] ?? "";
+  return top && (top[1].length > 1 || fixes.length === 1) ? top[0] : null;
 }
 
 function statusFacts(fixes: readonly BatchFix[]): string[] {
@@ -78,16 +79,22 @@ function statusFacts(fixes: readonly BatchFix[]): string[] {
   );
 }
 
-function Why({ fixes, reason }: { fixes: readonly BatchFix[]; reason: string }) {
+function Why({ fixes, reason }: { fixes: readonly BatchFix[]; reason: string | null }) {
   const [first] = fixes;
   const proposedIn = first?.proposerClientId === "admin" ? "Admin" : "the CLI";
 
   return (
     <AdminSection
-      description="Written by whoever proposed the batch. Check it against each fix below."
+      description={
+        reason
+          ? "Written by whoever proposed the batch. Check it against each fix below."
+          : "Each fix below gives its own reason."
+      }
       title="Reason"
     >
-      <p className="max-w-3xl leading-7 wrap-break-word whitespace-pre-wrap">{reason}</p>
+      {reason && (
+        <p className="max-w-3xl leading-7 wrap-break-word whitespace-pre-wrap">{reason}</p>
+      )}
 
       <DetailFields>
         <DetailField label="Proposed by">
@@ -107,12 +114,16 @@ function Why({ fixes, reason }: { fixes: readonly BatchFix[]; reason: string }) 
   );
 }
 
-function FixCard({ fix, index, reason }: { fix: BatchFix; index: number; reason: string }) {
+function FixCard({ fix, index, reason }: { fix: BatchFix; index: number; reason: string | null }) {
   return (
     <li className="flex flex-col gap-4 rounded-xl border p-4">
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
         <span className="text-muted-foreground font-mono text-xs">{index + 1}</span>
-        <Link className="font-medium hover:underline" href={`/content-fixes/${fix.id}`} prefetch>
+        <Link
+          className="hit-area relative font-medium hover:underline"
+          href={`/content-fixes/${fix.id}`}
+          prefetch
+        >
           {fix.location.trail.join(" › ") || "Deleted content"}
         </Link>
         <ContentFixStatusBadge status={fix.status} />

@@ -284,6 +284,58 @@ describe("reverting a batch", () => {
     expect(revert.status === "proposed" && revert.batchId).not.toBe(batch.batchId);
   });
 
+  it("leaves out a fix another revert already undid or is undoing", async () => {
+    const lessons = await threeLessons();
+    await signInProposer();
+    const batch = await proposeRenames(lessons.map((lesson) => lesson.id));
+    const [first, second, third] = batch.fixes.map((fix) => fix.id);
+    const { key } = await signInApprover();
+
+    await approveSelected({
+      batchId: batch.batchId,
+      fixIds: [first ?? "", second ?? "", third ?? ""],
+      key,
+    });
+
+    await signInProposer();
+    const undoFirst = await proposeContentFixRevert({ fixId: first ?? "", reason: "Wrong title." });
+
+    const undoSecond = await proposeContentFixRevert({
+      fixId: second ?? "",
+      reason: "Wrong title.",
+    });
+
+    if (undoFirst.status !== "proposed" || undoSecond.status !== "proposed") {
+      throw new Error("Expected both reverts to be proposed");
+    }
+
+    await signInApprover();
+
+    await approveSelected({
+      batchId: undoFirst.batchId,
+      fixIds: undoFirst.fixes.map((fix) => fix.id),
+      key,
+    });
+
+    await signInProposer();
+
+    await expect(
+      proposeContentFixRevert({ batchId: batch.batchId, reason: "The old titles were right." }),
+    ).resolves.toMatchObject({
+      fixes: [
+        { changes: [{ fields: [{ after: lessons[2].title, field: "title" }] }], revertsId: third },
+      ],
+      status: "proposed",
+    });
+
+    await expect(
+      proposeContentFixRevert({ batchId: batch.batchId, reason: "The old titles were right." }),
+    ).resolves.toMatchObject({
+      message: expect.stringContaining("already reverted or has a revert waiting"),
+      status: "invalid",
+    });
+  });
+
   it("applies two fixes of one lesson from one batch, one after the other", async () => {
     const { check, lesson } = await publishedLesson();
     await signInProposer();
