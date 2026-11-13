@@ -124,7 +124,7 @@ test.describe("Starting a course from its page", () => {
     const beforeLeaving = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
     await page.goto("/");
     await expect(page).toHaveURL(/\/today$/u);
-    const resume = page.getByRole("link", { name: "Continue setting up" });
+    const resume = page.getByRole("link", { name: /^Continue\b/u });
     await expect(resume).toHaveAttribute("href", `/start/${goalId}`);
     await expect(prisma.studySession.count({ where: { goalId } })).resolves.toBe(0);
 

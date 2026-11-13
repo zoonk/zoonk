@@ -234,7 +234,8 @@ export function GoalSwitcher({
           title={selected?.displayName}
         >
           {selected ? <GoalMark goal={selected} /> : <NoGoalMark />}
-          <span className="min-w-0 flex-1 truncate text-left">
+          {/* Clamped, not truncated: the cut falls after a whole word, never after a space. */}
+          <span className="line-clamp-1 min-w-0 flex-1 text-left wrap-break-word">
             {selected?.displayName ?? t("Start a goal")}
           </span>
           {/* After the title, so the trigger's name starts with the words on screen. */}
@@ -304,7 +305,7 @@ export function GoalSwitcher({
             render={<LearnLink href={newGoalHref} />}
           >
             <PlusIcon aria-hidden="true" className="text-muted-foreground" />
-            {t("Start a new goal")}
+            {t("New goal")}
           </DropdownMenuItem>
 
           <DropdownMenuItem
