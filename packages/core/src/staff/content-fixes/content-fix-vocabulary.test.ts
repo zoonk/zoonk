@@ -234,6 +234,107 @@ describe("word and sentence fixes", () => {
     });
   });
 
+  it("puts the original text and its clip back when a text fix is reverted", async () => {
+    const { word } = await languageLessonFixture();
+
+    const original = {
+      audioGeneratedAt: new Date("2026-01-01T00:00:00.000Z"),
+      audioModel: "old-voice",
+      audioPromptVersion: "v1",
+      audioRunId: "old-run",
+      audioUrl: "https://blob.test/original-rent.mp3",
+    };
+
+    await prisma.word.update({ data: original, where: { id: word.id } });
+
+    const { fix } = await proposeVoiceAndApprove({
+      changes: [{ id: word.id, model: "Word", set: { word: "rental" } }],
+      reason: "The lesson teaches the noun for a rented place.",
+    });
+
+    await signInProposer();
+    const revert = await revertFix({ fixId: fix.id, reason: "The old word was right." });
+
+    if (revert.status !== "proposed") {
+      throw new Error(`Expected a revert, got ${revert.status}`);
+    }
+
+    expect(revert.fix).toMatchObject({ voiceOwed: false });
+    expect(revert.fix.effects).not.toContainEqual(expect.objectContaining({ kind: "voiceOwed" }));
+
+    const { key } = await signInApprover();
+
+    await expect(approve({ fixId: revert.fix.id, key })).resolves.toMatchObject({
+      fix: { status: "applied" },
+    });
+
+    await expect(prisma.word.findUniqueOrThrow({ where: { id: word.id } })).resolves.toMatchObject({
+      ...original,
+      word: "rent",
+    });
+  });
+
+  it("goes stale when the clip changed after a text fix was proposed", async () => {
+    const { word } = await languageLessonFixture();
+    await signInProposer();
+
+    const fix = await proposeFix({
+      changes: [{ id: word.id, model: "Word", set: { word: "rental" } }],
+      reason: "The lesson teaches the noun for a rented place.",
+    });
+
+    mockVoice();
+    await voiceContentFix({ fixId: fix.id });
+
+    await prisma.word.update({
+      data: { audioUrl: "https://blob.test/newer-rent.mp3" },
+      where: { id: word.id },
+    });
+
+    const { key } = await signInApprover();
+
+    await expect(approve({ fixId: fix.id, key })).resolves.toMatchObject({
+      fix: { status: "stale" },
+    });
+
+    await expect(prisma.word.findUniqueOrThrow({ where: { id: word.id } })).resolves.toMatchObject({
+      audioUrl: "https://blob.test/newer-rent.mp3",
+      word: "rent",
+    });
+  });
+
+  it("goes stale when the clip changed after a text fix's revert was proposed", async () => {
+    const { word } = await languageLessonFixture();
+
+    const { fix } = await proposeVoiceAndApprove({
+      changes: [{ id: word.id, model: "Word", set: { word: "rental" } }],
+      reason: "The lesson teaches the noun for a rented place.",
+    });
+
+    await signInProposer();
+    const revert = await revertFix({ fixId: fix.id, reason: "The old word was right." });
+
+    if (revert.status !== "proposed") {
+      throw new Error(`Expected a revert, got ${revert.status}`);
+    }
+
+    await prisma.word.update({
+      data: { audioUrl: "https://blob.test/newer-rental.mp3" },
+      where: { id: word.id },
+    });
+
+    const { key } = await signInApprover();
+
+    await expect(approve({ fixId: revert.fix.id, key })).resolves.toMatchObject({
+      fix: { status: "stale" },
+    });
+
+    await expect(prisma.word.findUniqueOrThrow({ where: { id: word.id } })).resolves.toMatchObject({
+      audioUrl: "https://blob.test/newer-rental.mp3",
+      word: "rental",
+    });
+  });
+
   it("refuses new text another row of the language already holds, naming it", async () => {
     const { sentence, word } = await languageLessonFixture();
 
@@ -355,8 +456,6 @@ describe("word and sentence fixes", () => {
       throw new Error(`Expected a revert, got ${revert.status}`);
     }
 
-    mockVoice();
-    await voiceContentFix({ fixId: revert.fix.id });
     const { key } = await signInApprover();
 
     await expect(approve({ fixId: revert.fix.id, key })).resolves.toMatchObject({

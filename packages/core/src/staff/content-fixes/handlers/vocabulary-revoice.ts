@@ -5,17 +5,16 @@ import { z } from "zod";
 import { type Resolution, refuse } from "../_utils/resolved-change";
 import { readFixClip } from "../_utils/vocabulary-voice";
 import { type FixContext, defineFixHandler, idSchema } from "./fix-handler";
-import { TABLE, UNIT_KIND, type VocabularyModel, loadRow } from "./vocabulary-row";
-
-const clipSchema = z.object({
-  audioGeneratedAt: z.iso.datetime().nullable(),
-  audioModel: z.string().nullable(),
-  audioPromptVersion: z.string().nullable(),
-  audioRunId: z.string().nullable(),
-  audioUrl: z.string().nullable(),
-});
-
-type Clip = z.infer<typeof clipSchema>;
+import {
+  type Clip,
+  TABLE,
+  UNIT_KIND,
+  type VocabularyModel,
+  clipSchema,
+  loadClip,
+  loadRow,
+  toClipData,
+} from "./vocabulary-row";
 
 type RevoiceStored<Model extends VocabularyModel> = {
   before: Clip;
@@ -36,26 +35,6 @@ type RestoreProposed<Model extends VocabularyModel> = {
   model: Model;
   text: string;
 };
-
-const CLIP_COLUMNS = {
-  audioGeneratedAt: true,
-  audioModel: true,
-  audioPromptVersion: true,
-  audioRunId: true,
-  audioUrl: true,
-} as const;
-
-async function loadClip(
-  db: TransactionClient,
-  { id, model }: { id: string; model: VocabularyModel },
-): Promise<Clip | null> {
-  const row =
-    model === "Word"
-      ? await db.word.findUnique({ select: CLIP_COLUMNS, where: { id } })
-      : await db.sentence.findUnique({ select: CLIP_COLUMNS, where: { id } });
-
-  return row && { ...row, audioGeneratedAt: row.audioGeneratedAt?.toISOString() ?? null };
-}
 
 async function loadVoicedRow(
   db: TransactionClient,
@@ -136,10 +115,6 @@ async function applyRevoice(
 ): Promise<void> {
   const data = await readFixClip(tx, { fixId: context.fixId, text: stored.text });
   await writeClip(tx, { data, id: stored.id, model: stored.model });
-}
-
-function toClipData({ audioGeneratedAt, ...clip }: Clip) {
-  return { ...clip, audioGeneratedAt: audioGeneratedAt ? new Date(audioGeneratedAt) : null };
 }
 
 function vocabularyRevoice<Model extends VocabularyModel>(model: Model) {

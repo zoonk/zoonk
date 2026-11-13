@@ -16,12 +16,16 @@ import {
   toSetProposal,
 } from "./fix-handler";
 import {
+  type Clip,
   TABLE,
   TEXT_FIELD,
   UNIT_KIND,
   type VocabularyModel,
   type VocabularyRow,
+  clipSchema,
+  loadClip,
   loadRow,
+  toClipData,
 } from "./vocabulary-row";
 
 /** Text saved by a writer never has outer spaces, and a composed and decomposed accent read alike. */
@@ -108,16 +112,31 @@ async function textProblem(
     : null;
 }
 
+/**
+ * New text replaces the clip too. `after` is null for the clip the fix voices for it, and a revert
+ * puts the replaced clip back instead of recording the old text again.
+ */
+const clipChangeSchema = z.object({ after: clipSchema.nullable(), before: clipSchema });
+
 type SetStored<Model extends VocabularyModel> = {
+  clip?: z.infer<typeof clipChangeSchema>;
   fields: FieldChange[];
   id: string;
   model: Model;
   op: "set";
 };
 
+type SetProposed<Model extends VocabularyModel> = {
+  /** Only a revert sends it: the clip its old text had. */
+  restoredClip?: Clip;
+  id: string;
+  model: Model;
+  set: Record<string, unknown>;
+};
+
 async function resolveSet<Model extends VocabularyModel>(
   db: TransactionClient,
-  { id, model, set }: { id: string; model: Model; set: Record<string, unknown> },
+  { id, model, restoredClip, set }: SetProposed<Model>,
 ): Promise<Resolution<SetStored<Model>>> {
   const parsed = setValuesSchema.safeParse(set);
 
@@ -151,19 +170,20 @@ async function resolveSet<Model extends VocabularyModel>(
     return refuse(`${model} ${id} already has these values.`);
   }
 
-  const collision =
-    text !== undefined && text !== row.text
-      ? await textProblem(db, { id, model, row, text })
-      : null;
+  const changesText = text !== undefined && text !== row.text;
+  const collision = changesText ? await textProblem(db, { id, model, row, text }) : null;
 
   if (collision) {
     return refuse(collision);
   }
 
+  const before = changesText ? await loadClip(db, { id, model }) : null;
+  const clip = before ? { clip: { after: restoredClip ?? null, before } } : {};
+
   return {
     effects: [],
     ok: true,
-    stored: { fields, id, model, op: "set" },
+    stored: { ...clip, fields, id, model, op: "set" },
     unit: { id, kind: UNIT_KIND[model] },
   };
 }
@@ -173,13 +193,22 @@ function setValues(fields: readonly FieldChange[]) {
 }
 
 /**
- * New text takes the clip the fix voiced for it; a language with no voice keeps no clip, since an
- * old one would say the old text.
+ * New text takes the clip the fix voiced for it, or the one a revert puts back; a language with no
+ * voice keeps no clip, since an old one would say the old text.
  */
 async function clipData(
   tx: TransactionClient,
-  { context, row, text }: { context: FixContext; row: VocabularyRow; text: string },
+  {
+    after,
+    context,
+    row,
+    text,
+  }: { after: Clip | null; context: FixContext; row: VocabularyRow; text: string },
 ) {
+  if (after) {
+    return toClipData(after);
+  }
+
   if (!isTTSSupportedLanguage(row.targetLanguage)) {
     return {
       audioGeneratedAt: null,
@@ -210,7 +239,10 @@ async function applySet(
     throw new Error(`${stored.model} ${stored.id} is gone`);
   }
 
-  const voiced = typeof text === "string" ? await clipData(tx, { context, row, text }) : {};
+  const voiced =
+    typeof text === "string" && stored.clip
+      ? await clipData(tx, { after: stored.clip.after, context, row, text })
+      : {};
 
   if (stored.model === "Word") {
     await tx.word.update({
@@ -227,20 +259,17 @@ async function applySet(
   });
 }
 
-/** A new text owes a new clip, so the text and its clip count as one target. */
 function setTargets(stored: SetStored<VocabularyModel>) {
-  const changesText = stored.fields.some((field) => field.field === TEXT_FIELD[stored.model]);
-
   return [
     ...fieldTargets(stored),
-    ...(changesText ? [{ id: stored.id, model: stored.model, part: "audio" }] : []),
+    ...(stored.clip ? [{ id: stored.id, model: stored.model, part: "audio" }] : []),
   ];
 }
 
 const RULES = {
   Sentence:
-    "A shared sentence's text and romanization. New text can't match another sentence of the language. A new clip is voiced before it can be approved, and approving writes both. Every lesson showing it changes at once: its spoken screens copy the new text, and its word orders are written again.",
-  Word: "A shared word's text and romanization. New text can't match another word of the language, and a word-bank tile (a word no lesson links to) keeps its text. A new clip is voiced before it can be approved, and approving writes both. Pronunciation guides stay unless the fix sets them (WordPronunciation).",
+    "A shared sentence's text and romanization. New text can't match another sentence of the language. A new clip is voiced before it can be approved, and approving writes both; a revert puts the old text's clip back. Every lesson showing it changes at once: its spoken screens copy the new text, and its word orders are written again.",
+  Word: "A shared word's text and romanization. New text can't match another word of the language, and a word-bank tile (a word no lesson links to) keeps its text. A new clip is voiced before it can be approved, and approving writes both; a revert puts the old text's clip back. Pronunciation guides stay unless the fix sets them (WordPronunciation).",
 } as const satisfies Record<VocabularyModel, string>;
 
 function vocabularySet<Model extends VocabularyModel>(model: Model) {
@@ -253,9 +282,11 @@ function vocabularySet<Model extends VocabularyModel>(model: Model) {
       rules: RULES[model],
       schema: z.strictObject({ id: idSchema, model: z.literal(model), set: setFieldsSchema }),
     },
-    resolve: (db, proposed) => resolveSet(db, proposed),
-    revert: (db, stored) => resolveSet(db, toRevertedSet(stored)),
+    resolve: (db, proposed: SetProposed<Model>) => resolveSet(db, proposed),
+    revert: (db, stored) =>
+      resolveSet(db, { ...toRevertedSet(stored), restoredClip: stored.clip?.before }),
     stored: z.object({
+      clip: clipChangeSchema.optional(),
       fields: z.array(fieldChangeSchema).min(1),
       id: idSchema,
       model: z.literal(model),
@@ -263,7 +294,10 @@ function vocabularySet<Model extends VocabularyModel>(model: Model) {
     }),
     table: TABLE[model],
     targets: (stored) => setTargets(stored),
-    toProposed: (stored) => toSetProposal(stored),
+    toProposed: (stored) => ({
+      ...toSetProposal(stored),
+      restoredClip: stored.clip?.after ?? undefined,
+    }),
   });
 }
 

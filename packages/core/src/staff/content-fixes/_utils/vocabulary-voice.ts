@@ -21,8 +21,12 @@ function targetOf(change: StoredChange): VoiceTarget | null {
     return { id: change.id, model: change.model, text: change.text };
   }
 
+  if (change.op !== "set" || !("clip" in change) || change.clip?.after !== null) {
+    return null;
+  }
+
   const textField = change.model === "Word" ? "word" : "sentence";
-  const text = change.op === "set" && change.fields.find((field) => field.field === textField);
+  const text = change.fields.find((field) => field.field === textField);
 
   return text && typeof text.after === "string"
     ? { id: change.id, model: change.model, text: text.after }
@@ -38,8 +42,9 @@ async function loadVoice(db: TransactionClient, { id, model }: VoiceTarget) {
 }
 
 /**
- * The text a fix must voice before it can be approved: a word's or sentence's new text, or the
- * text it re-records. Null when it voices nothing or its language has no voice.
+ * The text a fix must voice before it can be approved: a word's or sentence's new text, unless a
+ * revert puts back the clip it had, or the text it re-records. Null when it voices nothing or its
+ * language has no voice.
  */
 export async function readVoiceTarget(
   db: TransactionClient,

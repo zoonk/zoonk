@@ -11,6 +11,7 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { diffWordsWithSpace } from "diff";
 import Link from "next/link";
 import { connection } from "next/server";
+import { RestoredClip } from "./content-fix-voice";
 
 const MODEL_LABELS: Record<StoredChange["model"], string> = {
   AnswerExplanation: "Answer explanation",
@@ -253,10 +254,18 @@ function OperationChange({
     case "setGraph":
     case "setOptions":
     case "setCitation":
-    case "set":
       return change.fields.map((field) => (
         <FieldChanges compact={compact} field={field} key={field.field} model={change.model} />
       ));
+    case "set":
+      return (
+        <>
+          {change.fields.map((field) => (
+            <FieldChanges compact={compact} field={field} key={field.field} model={change.model} />
+          ))}
+          <RestoredClip change={change} />
+        </>
+      );
     case "replace":
       return (
         <>
@@ -283,16 +292,7 @@ function OperationChange({
     case "revoice":
       return <p className="text-sm">Records a new clip of “{change.text}”.</p>;
     case "restoreClip":
-      return (
-        <div className="flex flex-col gap-1">
-          <p className="text-sm">Puts back the clip of “{change.text}” it had before.</p>
-          {change.after.audioUrl && (
-            <audio className="w-full max-w-md" controls preload="none" src={change.after.audioUrl}>
-              <track kind="captions" />
-            </audio>
-          )}
-        </div>
-      );
+      return <RestoredClip change={change} />;
     case "detachPicture":
       return (
         <p className="text-sm">

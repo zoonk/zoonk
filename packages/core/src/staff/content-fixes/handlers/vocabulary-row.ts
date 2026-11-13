@@ -1,4 +1,5 @@
 import { type TransactionClient, sql } from "@zoonk/db";
+import { z } from "zod";
 
 export type VocabularyModel = "Sentence" | "Word";
 
@@ -30,4 +31,38 @@ export async function loadRow(
   });
 
   return sentence && { ...sentence, text: sentence.sentence };
+}
+
+export const clipSchema = z.object({
+  audioGeneratedAt: z.iso.datetime().nullable(),
+  audioModel: z.string().nullable(),
+  audioPromptVersion: z.string().nullable(),
+  audioRunId: z.string().nullable(),
+  audioUrl: z.string().nullable(),
+});
+
+export type Clip = z.infer<typeof clipSchema>;
+
+const CLIP_COLUMNS = {
+  audioGeneratedAt: true,
+  audioModel: true,
+  audioPromptVersion: true,
+  audioRunId: true,
+  audioUrl: true,
+} as const;
+
+export async function loadClip(
+  db: TransactionClient,
+  { id, model }: { id: string; model: VocabularyModel },
+): Promise<Clip | null> {
+  const row =
+    model === "Word"
+      ? await db.word.findUnique({ select: CLIP_COLUMNS, where: { id } })
+      : await db.sentence.findUnique({ select: CLIP_COLUMNS, where: { id } });
+
+  return row && { ...row, audioGeneratedAt: row.audioGeneratedAt?.toISOString() ?? null };
+}
+
+export function toClipData({ audioGeneratedAt, ...clip }: Clip) {
+  return { ...clip, audioGeneratedAt: audioGeneratedAt ? new Date(audioGeneratedAt) : null };
 }
