@@ -10,7 +10,6 @@ import {
   shapeLeads,
   sizeLeads,
   spacingLeads,
-  titleLeads,
   typeLeads,
 } from "./craft.mts";
 
@@ -330,24 +329,8 @@ describe("a screen's leads", () => {
       ink: [],
       radius: RADIUS,
       texts: [],
-      titleTop: null,
     };
 
     assert.equal(craftFindings(page, TYPE_SCALE).length, 1);
-  });
-});
-
-describe("a page's title", () => {
-  it("passes a title 69 px under its frame's top, and a page with no shared page top", () => {
-    assert.deepEqual(titleLeads(69), []);
-    assert.deepEqual(titleLeads(69.6), []);
-    assert.deepEqual(titleLeads(null), []);
-  });
-
-  it("leads on a title a page pushed down or a frame padded", () => {
-    assert.deepEqual(
-      titleLeads(101).map((finding) => finding.check),
-      ["E8 titles at one height"],
-    );
   });
 });

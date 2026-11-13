@@ -17,8 +17,6 @@ export const ICON_STROKE = 2;
 export const THICKENED_MAX = 12;
 export const SPACING = [4, 8, 12, 16, 20, 24, 28, 32, 40, 48, 64, 96];
 export const SAME_WITHIN = 0.5;
-/** E8: 12 px, the page top's 44 px bar, its hairline, 12 px. */
-export const PAGE_TITLE_TOP = 69;
 
 /** The craft reference's "Within": the room an edge or a center line has. */
 export const CRAFT_LINES = {
@@ -56,7 +54,6 @@ const RULES = {
   E2: "E2 a bare glyph sits on the edge by its ink",
   E3: "E3 one end edge",
   E5: "E5 an icon and its text share a line",
-  E8: "E8 titles at one height",
   H1: "H1 one radius per role",
   H3: "H3 no pills, no mixed shapes",
   I2: "I2 sizes matched to the text",

@@ -71,8 +71,6 @@ export type CraftPage = {
   ink: Ink[];
   radius: number;
   texts: TextStyle[];
-  /** The `h1`'s top under its frame's top, on a page that draws the shared page top. */
-  titleTop: number | null;
 };
 
 type Box = { bottom: number; left: number; right: number; top: number };
@@ -658,14 +656,6 @@ export function readCraft(): CraftPage {
 
   const pageHeight = document.documentElement.scrollHeight;
 
-  const title = document.querySelector("[data-slot=page-header] h1");
-  const frame = title?.closest("[data-slot=page-top], main");
-
-  const titleTop =
-    title && frame && shown(title)
-      ? round(title.getBoundingClientRect().top - frame.getBoundingClientRect().top)
-      : null;
-
   const ink = [
     ...written.map((text) => text.ink),
     ...drawings.map((drawing) => drawing.ink),
@@ -687,6 +677,5 @@ export function readCraft(): CraftPage {
     ),
     radius,
     texts: written.map((text) => text.style),
-    titleTop,
   };
 }
