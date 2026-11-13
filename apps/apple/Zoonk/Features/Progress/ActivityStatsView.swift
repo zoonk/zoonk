@@ -27,30 +27,19 @@ private struct ActivityTiles: View {
         label: Text(
           "Days studied", tableName: "Progress", comment: "Tile: how many days the learner studied"),
         value: Text(summary.learningDays, format: .number),
-        systemImage: "calendar.badge.checkmark", tone: .success,
-        detail: Text(
-          "Any day you studied", tableName: "Progress",
-          comment: "Under the study days: what counts as one")
-      )
+        systemImage: "calendar.badge.checkmark", tone: .success)
 
       StatTile(
         label: Text(
           "Lessons", tableName: "Progress", comment: "Tile: how many lessons the learner finished"),
         value: Text(summary.totalLessonCompletions, format: .number),
-        systemImage: "book", tone: .success,
-        detail: Text(
-          "Finished", tableName: "Progress",
-          comment: "Under the lessons count: lessons finished, agreeing with lessons")
-      )
+        systemImage: "book", tone: .success)
 
       StatTile(
         label: Text(
           "Time", tableName: "Progress", comment: "Tile: how long the learner has studied in total"),
         quantity: progressLearningTime(summary.totalLearningSeconds),
-        systemImage: "clock",
-        detail: Text(
-          "Studying in total", tableName: "Progress", comment: "Under the learning time: all of it")
-      )
+        systemImage: "clock")
     }
   }
 }
@@ -102,8 +91,6 @@ struct ActivityCalendar: View {
   private func activityCount(_ count: Int) -> String {
     count == 0
       ? String(localized: "No study", table: "Progress", comment: "A calendar day without study")
-      : String(
-        localized: "\(count) activities", table: "Progress",
-        comment: "A calendar day's lessons, reviews and practice finished")
+      : String(localized: "Studied", table: "Progress", comment: "A calendar day with study")
   }
 }

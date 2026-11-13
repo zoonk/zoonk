@@ -6,13 +6,12 @@ struct EnergyStatsView: View {
   var body: some View {
     StatsContent(state: progress.energy.state, retry: { await progress.energy.refresh() }) {
       energy in
-      EnergyTiles(energy: energy)
-      EnergyCalendar(energy: energy)
       StatsLine(
         text: Text(
-          "Every lesson you finish raises your Energy. On days off it drops a little, and your belt and progress stay.",
-          tableName: "Progress",
-          comment: "Under the Energy calendar: how Energy moves and what never does"))
+          "Energy goes up with every lesson and drops a little on days off.",
+          tableName: "Progress", comment: "Under the Energy page's title: how Energy moves"))
+      EnergyTiles(energy: energy)
+      EnergyCalendar(energy: energy)
     }
     .loads(progress.energy)
   }
@@ -23,7 +22,7 @@ private struct EnergyTiles: View {
   @ScaledMetric(relativeTo: .body) private var minimumWidth = 150.0
 
   var body: some View {
-    StatTileGrid(columns: [3, 2, 1], minimumWidth: minimumWidth) {
+    StatTileGrid(columns: [2, 2, 1], minimumWidth: minimumWidth) {
       StatTile(
         label: Text(StatsSection.energy.title),
         value: Text(verbatim: wholePercent(energy.currentEnergy)),
@@ -33,32 +32,12 @@ private struct EnergyTiles: View {
 
       StatTile(
         label: Text(
-          "Average", tableName: "Progress", comment: "Tile: the learner's average Energy"),
-        value: Text(verbatim: energy.insights.map { metricPercent($0.averageEnergy) } ?? "–"),
-        systemImage: "gauge.with.dots.needle.50percent", tone: .energy,
-        detail: Text(
-          "Since you started", tableName: "Progress", comment: "Under the average Energy: over what"
-        )
-      )
-
-      StatTile(
-        label: Text(
-          "At 100%", tableName: "Progress",
+          "Days at 100%", tableName: "Progress",
           comment: "Tile: how many days the learner's Energy was full"),
-        quantity: energy.insights.map { dayCount($0.fullEnergyDays) } ?? "–",
-        systemImage: "battery.100percent", tone: .energy,
-        detail: Text(
-          "Days with full Energy", tableName: "Progress",
-          comment: "Under the days at full Energy: what they count")
-      )
+        value: Text(verbatim: energy.insights.map { $0.fullEnergyDays.formatted() } ?? "–"),
+        systemImage: "battery.100percent", tone: .energy)
     }
   }
-}
-
-func dayCount(_ count: Int) -> String {
-  count == 0
-    ? String(localized: "0 days", table: "Progress", comment: "A count of no days")
-    : String(localized: "\(count) days", table: "Progress", comment: "A count of days")
 }
 
 /// Softened at every step: most days sit in the upper steps, and at full strength they'd be the

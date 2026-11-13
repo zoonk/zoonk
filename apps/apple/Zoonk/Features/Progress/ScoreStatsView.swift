@@ -8,49 +8,29 @@ struct ScoreStatsView: View {
     StatsContent(state: progress.score.state, retry: { await progress.score.refresh() }) { score in
       ScoreTiles(performance: score.performance)
       ScoreTrendChart(score: score)
-      StatsLine(
-        text: Text(
-          "Every answer counts the same, so harder lessons can lower your score for a while.",
-          tableName: "Progress", comment: "Under the Score trend: what moves the score"))
     }
     .loads(progress.score)
   }
 }
 
+/// One tile, spanning its row.
 private struct ScoreTiles: View {
   let performance: ScorePerformance
   @ScaledMetric(relativeTo: .body) private var minimumWidth = 150.0
 
   var body: some View {
-    StatTileGrid(columns: [3, 2, 1], minimumWidth: minimumWidth) {
+    StatTileGrid(columns: [1], minimumWidth: minimumWidth) {
       StatTile(
-        label: Text(StatsSection.score.title),
+        label: Text(
+          "Last 90 days", tableName: "Progress",
+          comment: "Tile: the share of right answers over the last 90 days"),
         value: Text(verbatim: metricPercent(performance.score)),
         systemImage: "target", tone: .success,
         detail: Text(
-          "Right answers", tableName: "Progress", comment: "Under the Score: what it is a share of")
-      )
-
-      StatTile(
-        label: Text("Right", tableName: "Progress", comment: "Tile: right answers of all answers"),
-        value: Text(
-          verbatim:
-            "\(performance.correctAnswers.formatted())/\(performance.totalAnswers.formatted())"),
-        systemImage: "checkmark", tone: .success,
-        detail: Text(
-          "Of all your answers", tableName: "Progress", comment: "Under the right answers count"),
-        spokenValue: Text(
-          "\(performance.correctAnswers) of \(performance.totalAnswers)", tableName: "Progress",
-          comment: "Spoken right answers of all answers")
-      )
-
-      StatTile(
-        label: Text("Period", tableName: "Progress", comment: "Tile: the days Score counts"),
-        quantity: dayCount(90),
-        systemImage: "calendar",
-        detail: Text(
-          "Back from today", tableName: "Progress",
-          comment: "Under the Score's period: the days counted backward from today")
+          "\(performance.correctAnswers.formatted()) of \(performance.totalAnswers.formatted())",
+          tableName: "Progress",
+          comment:
+            "Under the share of right answers: right answers of all answers, as in 153 of 197")
       )
     }
   }

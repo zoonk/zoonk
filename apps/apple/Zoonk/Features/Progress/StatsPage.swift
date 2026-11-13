@@ -47,11 +47,15 @@ struct StatsEmpty: View {
     ContentUnavailableView {
       Label {
         Text(
-          "Start learning to track your progress", tableName: "Progress",
+          "No statistics yet", tableName: "Progress",
           comment: "Title shown on Statistics to a learner with nothing to count yet")
       } icon: {
         Image(systemName: "chart.bar")
       }
+    } description: {
+      Text(
+        "They show up after your first lesson.", tableName: "Progress",
+        comment: "Under the title of an empty Statistics page")
     } actions: {
       Button {
         router.showRoot(of: .today)
@@ -87,22 +91,16 @@ struct StatsFailure: View {
   var body: some View {
     ContentUnavailableView {
       Label {
-        if failure == .network {
-          Text(
-            "You're offline", tableName: "Progress",
-            comment: "Title shown when Statistics can't load without a connection")
-        } else {
-          Text(
-            "Statistics didn't load", tableName: "Progress",
-            comment: "Title shown when Statistics can't load because of a service error")
-        }
+        Text(
+          "This page didn't load", tableName: "Progress",
+          comment: "Title shown when a Statistics page can't load")
       } icon: {
         Image(systemName: failure == .network ? "wifi.exclamationmark" : "exclamationmark.triangle")
       }
     } description: {
       Text(
-        "Your progress is safe. Try again in a moment.", tableName: "Progress",
-        comment: "Recovery guidance when Statistics can't load")
+        "Check your connection and try again.", tableName: "Progress",
+        comment: "Under the title when a Statistics page can't load")
     } actions: {
       Button {
         Task {

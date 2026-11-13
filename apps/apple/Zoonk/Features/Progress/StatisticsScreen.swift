@@ -137,10 +137,9 @@ private struct OverviewTiles: View {
       if let level {
         TileLink(section: .level) {
           StatTile(
-            label: Text(StatsSection.level.title),
+            label: Text(level.belt.localizedTitle),
             value: Text(level.level, format: .number),
-            icon: { BeltDot(belt: level.belt) },
-            detail: Text(level.belt.localizedTitle)
+            icon: { BeltDot(belt: level.belt) }
           )
         }
       }
@@ -150,13 +149,7 @@ private struct OverviewTiles: View {
           StatTile(
             label: Text(StatsSection.energy.title),
             value: Text(verbatim: wholePercent(energy.currentEnergy)),
-            systemImage: "bolt.fill", tone: .energy,
-            detail: energy.insights.map {
-              Text(
-                "Average \(metricPercent($0.averageEnergy))", tableName: "Progress",
-                comment: "The learner's average Energy")
-            }
-          )
+            systemImage: "bolt.fill", tone: .energy)
         }
       }
 
@@ -166,41 +159,16 @@ private struct OverviewTiles: View {
             "Days studied", tableName: "Progress",
             comment: "Tile: how many days the learner studied"),
           value: Text(activity.learningDays, format: .number),
-          systemImage: "chart.bar.fill", tone: .success,
-          detail: Text(
-            verbatim:
-              "\(lessonCount)\u{00A0}· \(progressLearningTime(activity.totalLearningSeconds))")
-        )
+          systemImage: "chart.bar.fill", tone: .success)
       }
 
       TileLink(section: .score) {
         StatTile(
           label: Text(StatsSection.score.title),
-          value: score.map { Text(verbatim: metricPercent($0.score)) }
-            ?? Text("Not yet", tableName: "Progress", comment: "A stat without a value yet"),
-          systemImage: "target", tone: .success,
-          detail: score.map {
-            Text(
-              "\($0.correctAnswers.formatted())/\($0.totalAnswers.formatted()) right",
-              tableName: "Progress",
-              comment: "Under the Score: right answers of all answers (128/183 right)")
-          }
-            ?? Text(
-              "Right answers in the last 90 days", tableName: "Progress",
-              comment: "Under the Score before the learner has answers: what it will count")
-        )
+          value: Text(verbatim: score.map { metricPercent($0.score) } ?? "–"),
+          systemImage: "target", tone: .success)
       }
     }
-  }
-
-  private var lessonCount: String {
-    activity.totalLessonCompletions == 0
-      ? String(
-        localized: "0 lessons", table: "Progress",
-        comment: "Under the study days: no lessons finished")
-      : String(
-        localized: "\(activity.totalLessonCompletions) lessons", table: "Progress",
-        comment: "Under the study days: lessons finished")
   }
 }
 
@@ -246,16 +214,16 @@ private struct ScoreTrend: View {
   var body: some View {
     StatsBlock(
       title: Text(
-        "Score\u{00A0}· 90 days", tableName: "Progress",
-        comment: "Title of the Score trend on the overview"),
+        "Right answers\u{00A0}· 90 days", tableName: "Progress",
+        comment: "Title of the right answers trend on the overview"),
       trailing: number
     ) {
       if let score {
         ScoreTrendChart(score: score)
       } else {
         Text(
-          "Your score shows after your first answers.", tableName: "Progress",
-          comment: "In place of the Score trend before the learner has answers"
+          "Shows after your first answers.", tableName: "Progress",
+          comment: "In place of the right answers trend before the learner has answers"
         )
         .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
@@ -290,29 +258,16 @@ private struct PatternsOverview: View {
           Text(
             "Best day", tableName: "Progress",
             comment: "The day of the week the learner answers best"),
-          value: patterns?.bestDayName, share: patterns?.dayVerdict.best?.performance.score)
+          value: patterns?.bestDayName)
         Divider()
         row(
           Text(
             "Best time", tableName: "Progress",
             comment: "The part of the day the learner answers best"),
-          value: patterns?.bestTimeName, share: patterns?.timeVerdict.best?.performance.score)
-
-        if let spread = patterns?.weekSpreadText {
-          Divider()
-          row(
-            Text(
-              "Spread across the week", tableName: "Progress",
-              comment: "Row: the range from the week's lowest to highest day score, like 40–75%"),
-            value: spread, share: nil)
-        }
+          value: patterns?.bestTimeName)
       }
       .padding(.horizontal)
       .panel(cornerRadius: 16)
-
-      if let patterns {
-        PatternsNote(patterns: patterns)
-      }
     }
   }
 
@@ -328,21 +283,14 @@ private struct PatternsOverview: View {
     .buttonStyle(.borderless)
   }
 
-  private func row(_ label: Text, value: String?, share: Double?) -> some View {
+  private func row(_ label: Text, value: String?) -> some View {
     LabeledContent {
-      HStack(spacing: 12) {
-        Text(
-          value
-            ?? String(
-              localized: "Not yet", table: "Progress", comment: "A stat without a value yet")
-        )
-        .foregroundStyle(.primary)
-
-        if let share {
-          Text(wholePercent(share))
-            .monospacedDigit()
-        }
-      }
+      Text(
+        value
+          ?? String(
+            localized: "Not yet", table: "Progress", comment: "A stat without a value yet")
+      )
+      .foregroundStyle(.primary)
     } label: {
       label
     }
@@ -357,10 +305,13 @@ private struct PatternsLinkRow: View {
   let patterns: ScorePatterns?
 
   private var value: String {
-    let names = [patterns?.bestDayName, patterns?.bestTimeName].compactMap(\.self)
-    return names.isEmpty
-      ? String(localized: "Not yet", table: "Progress", comment: "A stat without a value yet")
-      : names.joinedFacts()
+    guard let day = patterns?.bestDayName else {
+      return String(localized: "Not yet", table: "Progress", comment: "A stat without a value yet")
+    }
+
+    return String(
+      localized: "Best on \(day)", table: "Progress",
+      comment: "Beside Patterns on the overview: the day of the week the learner answers best")
   }
 
   var body: some View {
