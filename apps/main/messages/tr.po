@@ -1910,21 +1910,6 @@ msgctxt "wmdZZD"
 msgid "Any time"
 msgstr "Günün her saati"
 
-#: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
-msgctxt "QF6BDw"
-msgid "Your days are within {points, plural, =0 {# points} one {# point} other {# points}} of each other, so any day works."
-msgstr "Günler arasındaki puan farkı en fazla {points, plural, =0 {# puan} other {# puan}}, bu yüzden her gün uygun."
-
-#: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
-msgctxt "S1QB1r"
-msgid "Your times of day are within {points, plural, =0 {# points} one {# point} other {# points}} of each other, so any time works."
-msgstr "Günün farklı saatleri arasındaki puan farkı en fazla {points, plural, =0 {# puan} other {# puan}}, bu yüzden her saat uygun."
-
-#: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
-msgctxt "1M3zAD"
-msgid "A day or a time of day needs {count, plural, one {# answer} other {# answers}} to count, so one lucky answer never makes a pattern."
-msgstr "Bir günün ya da saatin hesaba katılması için {count, plural, other {# cevap}} gerekir, bu yüzden şans eseri doğru verilen tek bir cevap bir eğilim oluşturmaz."
-
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
 msgctxt "_GJimN"
 msgid "Your best day is {day}."

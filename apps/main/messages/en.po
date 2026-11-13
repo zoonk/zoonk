@@ -1910,21 +1910,6 @@ msgctxt "wmdZZD"
 msgid "Any time"
 msgstr "Any time"
 
-#: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
-msgctxt "QF6BDw"
-msgid "Your days are within {points, plural, =0 {# points} one {# point} other {# points}} of each other, so any day works."
-msgstr "Your days are within {points, plural, =0 {# points} one {# point} other {# points}} of each other, so any day works."
-
-#: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
-msgctxt "S1QB1r"
-msgid "Your times of day are within {points, plural, =0 {# points} one {# point} other {# points}} of each other, so any time works."
-msgstr "Your times of day are within {points, plural, =0 {# points} one {# point} other {# points}} of each other, so any time works."
-
-#: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
-msgctxt "1M3zAD"
-msgid "A day or a time of day needs {count, plural, one {# answer} other {# answers}} to count, so one lucky answer never makes a pattern."
-msgstr "A day or a time of day needs {count, plural, one {# answer} other {# answers}} to count, so one lucky answer never makes a pattern."
-
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
 msgctxt "_GJimN"
 msgid "Your best day is {day}."
