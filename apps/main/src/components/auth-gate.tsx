@@ -53,6 +53,7 @@ export async function AuthGate({
         <EmptyContent>
           <PendingLink
             className={buttonVariants()}
+            data-account-offer
             href={loginHref}
             icon={<UserPlusIcon aria-hidden="true" />}
           >
