@@ -1,9 +1,9 @@
 "use client";
 
+import { AdminBarMenu } from "@/components/admin-bar-buttons";
 import { AdminConfirmDialog } from "@/components/admin-confirm-dialog";
 import { type SkillMergeTarget } from "@/data/skills/search-merge-targets";
 import { formatCount } from "@/lib/format";
-import { DetailMenu } from "@zoonk/ui/components/detail";
 import { DropdownMenuItem } from "@zoonk/ui/components/dropdown-menu";
 import { Input } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
@@ -23,12 +23,12 @@ export function SkillActionsMenu({ skillId, skillName }: { skillId: string; skil
 
   return (
     <>
-      <DetailMenu label="Skill actions" size="sm">
+      <AdminBarMenu label="Skill actions">
         <DropdownMenuItem onClick={() => setOpen(true)} variant="destructive">
           <MergeIcon aria-hidden="true" />
           Merge into another skill
         </DropdownMenuItem>
-      </DetailMenu>
+      </AdminBarMenu>
 
       <AdminConfirmDialog
         action={mergeSkillAction}

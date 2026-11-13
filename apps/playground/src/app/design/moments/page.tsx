@@ -3,15 +3,8 @@ import { BrainPowerReward } from "@zoonk/learn/brain-power-reward";
 import { MissionsRing } from "@zoonk/learn/missions-ring";
 import { Buddy } from "@zoonk/ui/components/buddy";
 import { type Metadata } from "next";
-import { PreviewIntlProvider } from "../../preview/preview-intl-provider";
-import {
-  DevOnlySpecimen,
-  DocHeader,
-  DocRules,
-  DocSection,
-  Specimen,
-  renderCode,
-} from "../_components/doc";
+import { NextIntlClientProvider } from "next-intl";
+import { DocHeader, DocRules, DocSection, Specimen, renderCode } from "../_components/doc";
 import { MotionSpecimen } from "../_components/motion-specimen";
 import {
   CeremonySpecimen,
@@ -51,12 +44,10 @@ function BuddyInRing({ done }: { done: number }) {
 
 function MissionsSpecimen() {
   return (
-    <DevOnlySpecimen>
-      <div className="flex flex-col gap-10">
-        <MissionsCompleteSpecimen />
-        <MissionsChips />
-      </div>
-    </DevOnlySpecimen>
+    <div className="flex flex-col gap-10">
+      <MissionsCompleteSpecimen />
+      <MissionsChips />
+    </div>
   );
 }
 
@@ -77,24 +68,14 @@ function MissionsChips() {
   );
 }
 
-function devOnly(Example: () => React.ReactNode) {
-  return function DevOnlyExample() {
-    return (
-      <DevOnlySpecimen>
-        <Example />
-      </DevOnlySpecimen>
-    );
-  };
-}
-
 const SPECIMENS: Record<string, { Example: () => React.ReactNode; replays: boolean }> = {
-  ceremony: { Example: devOnly(CeremonySpecimen), replays: false },
-  challenge: { Example: devOnly(ChallengeWonSpecimen), replays: true },
-  mission: { Example: devOnly(MissionDoneSpecimen), replays: true },
+  ceremony: { Example: CeremonySpecimen, replays: false },
+  challenge: { Example: ChallengeWonSpecimen, replays: true },
+  mission: { Example: MissionDoneSpecimen, replays: true },
   missions: { Example: MissionsSpecimen, replays: true },
-  mock: { Example: devOnly(MockEndSpecimen), replays: true },
-  reached: { Example: devOnly(ReachedSpecimen), replays: true },
-  "task-end": { Example: devOnly(TaskEndSpecimen), replays: true },
+  mock: { Example: MockEndSpecimen, replays: true },
+  reached: { Example: ReachedSpecimen, replays: true },
+  "task-end": { Example: TaskEndSpecimen, replays: true },
 };
 
 function MomentSpecimen({ id }: { id: string }) {
@@ -116,7 +97,7 @@ function MomentSpecimen({ id }: { id: string }) {
 
 export default function MomentsPage() {
   return (
-    <PreviewIntlProvider>
+    <NextIntlClientProvider>
       <DocHeader title="Special moments">
         The celebrations: a few earned moments, warmer and bolder than the rest of the app, which
         stays quiet so they stand out. They are one family, built the same way, and the exception,
@@ -133,6 +114,6 @@ export default function MomentsPage() {
           <p className="text-muted-foreground text-sm">Where: {renderCode(moment.where)}</p>
         </DocSection>
       ))}
-    </PreviewIntlProvider>
+    </NextIntlClientProvider>
   );
 }

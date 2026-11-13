@@ -82,26 +82,11 @@ export function DetailActions({ className, ...props }: React.ComponentProps<"div
 export const DETAIL_MENU_TRIGGER_CLASS =
   "[--control-size:--spacing(11)] only:rounded-md only:[--control-size:--spacing(7.5)]";
 
-/** `size="sm"` is for a header whose actions are small buttons: the menu is 30px beside them too. */
-export function DetailMenu({
-  children,
-  label,
-  size,
-}: {
-  children: React.ReactNode;
-  label: string;
-  size?: "sm";
-}) {
+export function DetailMenu({ children, label }: { children: React.ReactNode; label: string }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        render={
-          size === "sm" ? (
-            <Button size="icon-sm" variant="outline" />
-          ) : (
-            <Button className={DETAIL_MENU_TRIGGER_CLASS} size="icon" variant="outline" />
-          )
-        }
+        render={<Button className={DETAIL_MENU_TRIGGER_CLASS} size="icon" variant="outline" />}
       >
         <EllipsisIcon aria-hidden="true" />
         <span className="sr-only">{label}</span>

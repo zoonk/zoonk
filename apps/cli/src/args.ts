@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { parseArgs } from "node:util";
 import { usageError } from "./errors.ts";
+import { commandUsage } from "./help.ts";
 import { isRecord, parseJson } from "./http.ts";
 import { type OutputShape } from "./output.ts";
 
@@ -276,7 +277,7 @@ function checkArguments({ args, name, spec }: { args: string[]; name: string; sp
   const fits = expected === "at least one" ? args.length > 0 : args.length === expected;
 
   if (!fits) {
-    throw usageError(`"${name}" takes ${describeArguments(expected)}.`);
+    throw usageError(`"${name}" takes ${describeArguments(expected)}: ${commandUsage(name)}`);
   }
 }
 
@@ -298,6 +299,13 @@ function checkOptions({
   }
 }
 
+/** Node follows "Unknown option '--x'." with advice about positional arguments no command here takes. */
+function describeParseError(error: unknown): string {
+  const message = error instanceof Error ? error.message : String(error);
+
+  return /^Unknown option '[^']+'\./u.exec(message)?.[0] ?? message;
+}
+
 function parseCommandLine(argv: string[]) {
   try {
     return parseArgs({
@@ -315,7 +323,7 @@ function parseCommandLine(argv: string[]) {
       },
     });
   } catch (error) {
-    throw usageError(error instanceof Error ? error.message : String(error));
+    throw usageError(describeParseError(error));
   }
 }
 
