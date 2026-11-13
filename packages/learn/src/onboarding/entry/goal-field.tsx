@@ -136,7 +136,7 @@ export function GoalFieldText({
       autoComplete="off"
       className={cn(
         GOAL_FIELD_TEXT_CLASS,
-        "placeholder:text-muted-foreground contrast-more:placeholder:text-foreground/60 field-sizing-content max-h-48 min-h-11 w-full min-w-0 resize-none bg-transparent outline-none",
+        "placeholder:text-muted-foreground contrast-more:placeholder:text-foreground/60 field-sizing-content max-h-48 min-h-11 w-full min-w-0 resize-none bg-transparent outline-none placeholder:truncate",
         className,
       )}
       enterKeyHint="go"
