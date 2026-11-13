@@ -263,6 +263,36 @@ describe(checkItem, () => {
     ]);
   });
 
+  it("rejects math outside dollar signs in any text a learner sees, and passes it between them", () => {
+    const raw: MultipleChoice = {
+      ...multipleChoice,
+      context: "Simplify x^4 y when the bill is $5.",
+      options: [
+        { ...multipleChoice.options[0]!, reason: "The outlet holds C_A0." },
+        { ...multipleChoice.options[1]!, text: "E_a = 50 kJ/mol" },
+        multipleChoice.options[2]!,
+      ],
+    };
+
+    expect(checkItem({ item: raw, language: "en" })).toStrictEqual([
+      expect.stringContaining('"x^4"'),
+      expect.stringContaining('"C_A0"'),
+      expect.stringContaining('"E_a"'),
+    ]);
+
+    const typeset: MultipleChoice = {
+      ...raw,
+      context: String.raw`Simplify $x^4 y \cdot x^2$ when the bill is \$5.`,
+      options: [
+        { ...multipleChoice.options[0]!, reason: "The outlet holds $C_{A0}$." },
+        { ...multipleChoice.options[1]!, text: "$E_a$ = 50 kJ/mol" },
+        multipleChoice.options[2]!,
+      ],
+    };
+
+    expect(checkItem({ item: typeset, language: "en" })).toStrictEqual([]);
+  });
+
   it("rejects options that print the worked-out values deciding the answer", () => {
     const leaking: MultipleChoice = {
       context:

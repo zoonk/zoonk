@@ -1,5 +1,6 @@
 import { countWords, replaceEmDashes } from "@zoonk/utils/string";
-import { findPlaceholderText, findUnrenderedMarkdown } from "@zoonk/utils/text-flaws";
+import { findPlaceholderText } from "@zoonk/utils/text-flaws";
+import { findUnrenderedText } from "@zoonk/utils/unrendered-text";
 import { countListeningVoices } from "../audio/listening-voices";
 import { normalizeTypedAnswer } from "../grading/typed-answer-match";
 import { fitsTypedQuestion } from "./listening-answer-fit";
@@ -218,7 +219,7 @@ function findScriptProblems(set: ListeningSet): string[] {
     words > MAX_SCRIPT_WORDS && `The script has ${words} words; at most 1000.`,
     ...set.turns.flatMap((turn) => [
       ...findPlaceholderText(turn.text),
-      ...findUnrenderedMarkdown({ layout: "inline", text: turn.text }),
+      ...findUnrenderedText({ layout: "inline", text: turn.text }),
     ]),
   ].filter((problem) => typeof problem === "string");
 }
