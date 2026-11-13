@@ -337,6 +337,9 @@ importers:
       '@zoonk/tsconfig':
         specifier: workspace:*
         version: link:packages/tsconfig
+      jsdom:
+        specifier: 'catalog:'
+        version: 31.0.0(@napi-rs/canvas@1.1.0)(@noble/hashes@2.4.0)
       knip:
         specifier: 6.44.2
         version: 6.44.2

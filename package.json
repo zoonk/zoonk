@@ -70,6 +70,7 @@
     "@playwright/test": "catalog:",
     "@types/node": "catalog:",
     "@zoonk/tsconfig": "workspace:*",
+    "jsdom": "catalog:",
     "knip": "6.44.2",
     "neon": "9.2.0",
     "oxc-parser": "0.157.0",
