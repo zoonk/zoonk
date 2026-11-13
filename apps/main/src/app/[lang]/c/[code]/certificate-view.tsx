@@ -21,7 +21,6 @@ import { CertificatePrint } from "./certificate-print";
 
 const BAND_CLASS = cn(PUBLIC_CONTAINER_CLASS, "py-14 sm:py-16");
 
-/** `links` is null for a locked certificate, which only its owner sees. */
 export function CertificateView({
   facts,
   links,
@@ -29,7 +28,7 @@ export function CertificateView({
   startHref,
 }: {
   facts: CertificateFacts;
-  links: CertificateLinks | null;
+  links: CertificateLinks;
   owner: boolean;
   startHref: string | null;
 }) {
@@ -40,7 +39,7 @@ export function CertificateView({
       <section className="bg-ground">
         <div className={cn(PUBLIC_CONTAINER_CLASS, "pt-8 pb-14 sm:pt-12 sm:pb-16")}>
           {ownerActions && <CertificatesBackLink facts={facts} href="/certificates" />}
-          <CertificateIntro facts={facts} locked={!links} />
+          <CertificateIntro facts={facts} />
 
           {ownerActions && (
             <div className="mt-6">
@@ -70,7 +69,7 @@ export function CertificateView({
         </section>
       )}
 
-      {links && <CertificatePrint src={links.imageUrls.print} />}
+      <CertificatePrint src={links.imageUrls.print} />
     </>
   );
 }

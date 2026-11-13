@@ -6,9 +6,11 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { type CertificateLinks } from "@zoonk/utils/certificate-links";
 import { BadgeCheckIcon, ChevronLeftIcon, DownloadIcon, PrinterIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { EnterLink } from "../_components/enter-button";
+import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
+import { BlankCertificateSheet } from "./certificate-blank-sheet";
 import { useCertificateDate, useCertificateSentence } from "./certificate-labels";
-import { CertificatePlusNotice, LockedCertificateSheet } from "./certificate-lock";
 import { CertificateNameField, type SaveCertificateName } from "./certificate-name";
 import {
   AddToLinkedInButton,
@@ -43,16 +45,15 @@ function titleBearingClass(text: string) {
  * 40rem) starts its first letter further in, so the link moves by that letter's start, to a whole
  * pixel and never left of the edge.
  */
-export function CertificatesBackLink({ facts, href }: { facts: CertificateFacts; href: string }) {
+function BackLink({ href, title }: { href: string; title: string }) {
   const t = useExtracted();
-  const sentence = useCertificateSentence();
 
   return (
     <LearnLink
       className={buttonVariants({
         className: cn(
           "text-muted-foreground relative left-[round(var(--title-size)*var(--title-bearing),1px)] mb-3.5 [--title-size:2.125rem] sm:[--title-size:3rem]",
-          titleBearingClass(sentence(facts)),
+          titleBearingClass(title),
         ),
         edge: "start",
         size: "sm",
@@ -63,6 +64,32 @@ export function CertificatesBackLink({ facts, href }: { facts: CertificateFacts;
       <ChevronLeftIcon aria-hidden="true" data-icon="inline-start" />
       {t("Your certificates")}
     </LearnLink>
+  );
+}
+
+export function CertificatesBackLink({ facts, href }: { facts: CertificateFacts; href: string }) {
+  const sentence = useCertificateSentence();
+  return <BackLink href={href} title={sentence(facts)} />;
+}
+
+/**
+ * What a certificate's owner sees at its address without a subscription: the gate is the page, and
+ * the blank sheet under it says which certificate is waiting.
+ */
+export function CertificateGate({ facts, href }: { facts: CertificateFacts; href: string }) {
+  const t = useExtracted();
+  const routes = useLearnRoutes();
+  const title = t("Certificates need a subscription");
+
+  return (
+    <div className="flex flex-col items-start" data-slot="certificate-gate">
+      <BackLink href={href} title={title} />
+      <h1 className="text-headline max-w-4xl">{title}</h1>
+      <EnterLink className="mt-6 w-full sm:w-auto" href={routes.upgrade} icon={null} size="lg">
+        {t("Subscribe")}
+      </EnterLink>
+      <BlankCertificateSheet className="mt-8 max-w-150 rounded-xl" facts={facts} />
+    </div>
   );
 }
 
@@ -82,24 +109,21 @@ function keepWhole(chunks: React.ReactNode) {
   return <span className="whitespace-nowrap">{chunks}</span>;
 }
 
-/** A locked certificate (only its owner sees it) isn't issued yet, so it claims neither. */
-export function CertificateIntro({ facts, locked }: { facts: CertificateFacts; locked: boolean }) {
+export function CertificateIntro({ facts }: { facts: CertificateFacts }) {
   const t = useExtracted();
   const sentence = useCertificateSentence();
   const date = useCertificateDate();
 
   return (
     <div className="flex flex-col">
-      {!locked && <CertificateVerified />}
-      <h1 className={cn("text-headline max-w-4xl", !locked && "mt-3.5")}>{sentence(facts)}</h1>
-      {!locked && (
-        <p className="text-lead mt-2.5">
-          {t.rich("Certificate of completion, issued on <whole>{date}</whole>.", {
-            date: date.long(facts.completedOn),
-            whole: keepWhole,
-          })}
-        </p>
-      )}
+      <CertificateVerified />
+      <h1 className="text-headline mt-3.5 max-w-4xl">{sentence(facts)}</h1>
+      <p className="text-lead mt-2.5">
+        {t.rich("Certificate of completion, issued on <whole>{date}</whole>.", {
+          date: date.long(facts.completedOn),
+          whole: keepWhole,
+        })}
+      </p>
     </div>
   );
 }
@@ -111,14 +135,10 @@ export function CertificateOwnerActions({
   owner,
 }: {
   facts: CertificateFacts;
-  links: CertificateLinks | null;
+  links: CertificateLinks;
   owner: CertificateOwner;
 }) {
   const t = useExtracted();
-
-  if (!links) {
-    return <CertificatePlusNotice />;
-  }
 
   if (!facts.recipientName) {
     return <CertificateNameField current={null} save={owner.saveName} />;
@@ -154,14 +174,10 @@ export function CertificatePaper({
   links,
 }: {
   facts: CertificateFacts;
-  links: CertificateLinks | null;
+  links: CertificateLinks;
 }) {
   const sentence = useCertificateSentence();
   const date = useCertificateDate();
-
-  if (!links) {
-    return <LockedCertificateSheet className="rounded-xl" facts={facts} />;
-  }
 
   return (
     <a

@@ -6,7 +6,7 @@ import { getCourseStartHref } from "@/lib/public/public-hrefs";
 import { type CertificateFacts, normalizeCertificateCode } from "@zoonk/core/certificates/contract";
 import { listCurrentUserCertificates } from "@zoonk/core/certificates/list";
 import { getPublicCertificate } from "@zoonk/core/certificates/public";
-import { CertificateVerified } from "@zoonk/learn/certificates/page";
+import { CertificateGate, CertificateVerified } from "@zoonk/learn/certificates/page";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getCertificateLinks, getCertificateName } from "@zoonk/utils/certificate-links";
@@ -99,10 +99,20 @@ async function CertificateBody({ params }: Props) {
 
   const { facts } = read;
 
+  if (read.locked) {
+    return (
+      <section className="bg-ground">
+        <div className={cn(PUBLIC_CONTAINER_CLASS, "pt-8 pb-14 sm:pt-12 sm:pb-16")}>
+          <CertificateGate facts={facts} href="/certificates" />
+        </div>
+      </section>
+    );
+  }
+
   return (
     <CertificateView
       facts={facts}
-      links={read.locked ? null : getLinks(facts)}
+      links={getLinks(facts)}
       owner={read.owner}
       startHref={facts.courseId ? getCourseStartHref({ courseId: facts.courseId }) : null}
     />

@@ -24,20 +24,19 @@ import {
   PageSectionTitle,
   PageSubtitle,
 } from "../_components/page";
-import { PlusMark } from "../_components/plus-lock";
 import { useFormatShare } from "../_utils/percent";
 import { LearnLink } from "../learn-link";
 import { GoalCountryName, GoalMark } from "../shell/goal-mark";
 import { LearnPageBar } from "../shell/learn-bar";
+import { BlankCertificateSheet } from "./certificate-blank-sheet";
 import {
   useCertificateDate,
   useCertificateRowName,
   useCertificateSentence,
 } from "./certificate-labels";
-import { CertificatesPlusNotice, LockedCertificateSheet } from "./certificate-lock";
 import { CertificateSheet } from "./certificate-sheet";
 
-/** `links` is null exactly when the certificate is locked. */
+/** `links` is null exactly when its owner needs a subscription to open it. */
 export type ListedCertificate = { facts: OwnedCertificateFacts; links: CertificateLinks | null };
 
 /** A goal that can still earn a certificate: a course by finishing its plan, a language by levels. */
@@ -56,7 +55,7 @@ export type CertificateUpNext = {
 const LIST_ID = "certificates-list";
 const UP_NEXT_ID = "certificates-up-next";
 
-/** A locked one opens its owner's locked page, by its code: the same row, marked for Plus. */
+/** One without a subscription opens its page by its code, where the gate stands: the same row. */
 function CertificateItem({ facts, links }: ListedCertificate) {
   const rowName = useCertificateRowName();
   const sentence = useCertificateSentence();
@@ -79,14 +78,13 @@ function CertificateItem({ facts, links }: ListedCertificate) {
             variant="thumb"
           />
         ) : (
-          <LockedCertificateSheet className="rounded-sm lg:rounded-xl" facts={facts} />
+          <BlankCertificateSheet className="rounded-sm lg:rounded-xl" facts={facts} />
         )}
       </span>
 
       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
         <span className="group-hover:decoration-input text-sm leading-snug font-medium tracking-[-0.01em] text-pretty group-hover:underline group-hover:underline-offset-4">
           {name}
-          {!links && <PlusMark className="ml-2 align-middle" />}
         </span>
         <span className="text-muted-foreground text-xs leading-snug">
           {level && `${level} · `}
@@ -237,14 +235,11 @@ export function CertificatesScreen({
   back,
   certificates,
   continueHref,
-  plus,
   upNext,
 }: {
   back: string;
   certificates: ListedCertificate[];
   continueHref: string;
-  /** Whether the learner has Plus now; without it, new certificates come locked. */
-  plus: boolean;
   upNext: CertificateUpNext[];
 }) {
   return (
@@ -252,7 +247,6 @@ export function CertificatesScreen({
       <CertificatesHeader />
 
       <DetailContent>
-        {!plus && <CertificatesPlusNotice />}
         {certificates.length > 0 ? (
           <CertificateList certificates={certificates} />
         ) : (

@@ -1,5 +1,4 @@
 import { AuthGatePage } from "@/components/auth-gate";
-import { getCurrentPlusSubscription } from "@/data/subscriptions/get-current-plus-subscription";
 import { listCurrentUserCertificates } from "@zoonk/core/certificates/list";
 import { type GoalView } from "@zoonk/core/goals/contract";
 import { listCurrentUserGoals } from "@zoonk/core/goals/list-current-user";
@@ -39,10 +38,9 @@ function toUpNext(goals: GoalView[]): CertificateUpNext[] {
 }
 
 async function CertificatesContent() {
-  const [result, goals, plus] = await Promise.all([
+  const [result, goals] = await Promise.all([
     listCurrentUserCertificates(),
     listCurrentUserGoals(),
-    getCurrentPlusSubscription(),
   ]);
 
   if (result.status !== "ready") {
@@ -67,7 +65,6 @@ async function CertificatesContent() {
         links: facts.locked ? null : getCertificateLinks({ ...facts, origin }),
       }))}
       continueHref={BACK_HREF}
-      plus={Boolean(plus)}
       upNext={result.certificates.length > 0 ? [] : toUpNext(goals?.goals ?? [])}
     />
   );
