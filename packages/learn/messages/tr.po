@@ -112,12 +112,12 @@ msgstr "Çalışıldı"
 #: src/journey/roadmap-lane.tsx
 #: src/onboarding/steps/reveal-days.tsx
 #: src/session/session-queue.tsx
+#: src/shell/learn-bar.tsx
 #: src/shell/learn-navigation.tsx
 #: src/today/today-heading.tsx
 #: src/today/today-lessons-card.tsx
 #: src/today/today-preparing.tsx
 #: src/today/today-shell.tsx
-#: src/today/today-subject-rows.tsx
 msgctxt "zWgbGg"
 msgid "Today"
 msgstr "Bugün"
@@ -177,6 +177,7 @@ msgstr "Günlük çalışma süresi"
 #: src/session/question-block/block-body.tsx
 #: src/session/study-moment.tsx
 #: src/session/summary/summary-steps.tsx
+#: src/today/today-action.tsx
 msgctxt "acrOoz"
 msgid "Continue"
 msgstr "Devam et"
@@ -191,6 +192,8 @@ msgstr "Devam et"
 #: src/onboarding/steps/placement-screens.tsx
 #: src/onboarding/steps/reveal-body.tsx
 #: src/session/next-stop.tsx
+#: src/today/today-action.tsx
+#: src/today/today-suggested-goal.tsx
 msgctxt "mOFG3K"
 msgid "Start"
 msgstr "Başla"
@@ -229,7 +232,6 @@ msgstr "Ücretsiz sınava hazırlık haftan bitti"
 #: src/mock/mock-chooser-page.tsx
 #: src/onboarding/entry/goal-limit-notice.tsx
 #: src/questions/test-out-preparing.tsx
-#: src/today/today-exam-access.tsx
 msgctxt "xANHtD"
 msgid "See Plus"
 msgstr "Plus’ı incele"
@@ -558,7 +560,6 @@ msgstr "Kaydedilemedi. Tekrar dene."
 #: src/certificates/certificate-name.tsx
 #: src/certificates/certificate-share.tsx
 #: src/explain/explain-waiting.tsx
-#: src/journey/rename-goal-dialog.tsx
 #: src/memory/memory-fact-row.tsx
 #: src/mind-maps/mind-map-viewer.tsx
 #: src/plan/plan-editor.tsx
@@ -979,7 +980,7 @@ msgstr "Beyaz kuşak"
 #: src/_utils/use-choice-left-out.ts
 msgctxt "vYD7Jb"
 msgid "Pick one so your plan includes it."
-msgstr ""
+msgstr "Planında yer alması için birini seç."
 
 #: src/_utils/use-citation-label.ts
 msgctxt "VjK2d_"
@@ -1304,7 +1305,6 @@ msgstr "Öğrenmek istediğin şey"
 #: src/buddies/buddy-goal-start.tsx
 #: src/language/level-test/level-test-screens.tsx
 #: src/onboarding/entry/goal-entry.tsx
-#: src/today/today-suggested-goal.tsx
 msgctxt "UTU-oM"
 msgid "Build my plan"
 msgstr "Planımı oluştur"
@@ -2223,6 +2223,7 @@ msgstr "{lessons, plural, =0 {Yarın yeniden deneyebilirsin. Hiçbir şey kaybet
 #: src/syllabus/syllabus-section.tsx
 #: src/syllabus/syllabus-summary.tsx
 #: src/today/today-week-challenge.tsx
+#: src/today/use-row-label.ts
 msgctxt "UIUcbm"
 msgid "{count, plural, one {# question} other {# questions}}"
 msgstr "{count, plural, other {# soru}}"
@@ -2484,6 +2485,7 @@ msgstr "Ünite seçenekleri"
 #: src/chapter/chapter-header.tsx
 #: src/journey/plan-header.tsx
 #: src/language/unit/unit-header.tsx
+#: src/shell/learn-bar.tsx
 #: src/shell/learn-navigation.tsx
 #: src/syllabus/subject-screen.tsx
 msgctxt "fz0z4c"
@@ -2779,11 +2781,6 @@ msgctxt "odE1Ih"
 msgid "Completed lessons"
 msgstr "Tamamlanan dersler"
 
-#: src/completed-lessons/completed-lessons-row.tsx
-msgctxt "Sr-Gso"
-msgid "Go back to any lesson you've finished"
-msgstr "Tamamladığın derslerden istediğine geri dön"
-
 #: src/completed-lessons/completed-lessons-screen.tsx
 msgctxt "6dIxDP"
 msgid "Yesterday"
@@ -2847,23 +2844,23 @@ msgstr "{name} ile mesajlaş"
 #: src/plan/plan-country.tsx
 msgctxt "g0uUNM"
 msgid "Change country"
-msgstr ""
+msgstr "Ülkeyi değiştir"
 
 #: src/conversation/tutor-country-offer.tsx
 msgctxt "q6A4gA"
 msgid "We'll make a new plan for it. Finished lessons stay done."
-msgstr ""
+msgstr "Bu ülkeye göre yeni bir plan hazırlayacağız. Bitirdiğin dersleri tekrar yapman gerekmeyecek."
 
 #: src/conversation/tutor-country-offer.tsx
 msgctxt "Qo8YGk"
 msgid "Saved. We're getting your new plan ready. You can keep studying meanwhile."
-msgstr ""
+msgstr "Kaydedildi. Yeni planını hazırlıyoruz. Bu sırada çalışmaya devam edebilirsin."
 
 #. {country} is a country's name. It always follows the colon, so it never needs an article or a case.
 #: src/conversation/tutor-country-offer.tsx
 msgctxt "N6YBR8"
 msgid "Country: {country}"
-msgstr ""
+msgstr "Ülke: {country}"
 
 #: src/conversation/tutor-country-offer.tsx
 msgctxt "EWygiy"
@@ -3023,7 +3020,7 @@ msgstr "Bu önerinin yerini daha yeni bir öneri aldı."
 #: src/today/today-plan-change.tsx
 msgctxt "Md3Sb7"
 msgid "Use my date"
-msgstr ""
+msgstr "Tarihimi kullan"
 
 #: src/conversation/tutor-plan-change.tsx
 #: src/mock/mock-result-plan.tsx
@@ -3031,13 +3028,13 @@ msgstr ""
 #: src/today/today-plan-change.tsx
 msgctxt "ZPLfTK"
 msgid "Change my plan"
-msgstr ""
+msgstr "Planımı değiştir"
 
 #: src/conversation/tutor-plan-change.tsx
 #: src/today/today-plan-change.tsx
 msgctxt "VRiHEe"
 msgid "Keep official date"
-msgstr ""
+msgstr "Resmî tarihi koru"
 
 #: src/conversation/tutor-tool-offer.tsx
 msgctxt "mytixa"
@@ -4538,6 +4535,7 @@ msgstr "hazırlanıyor"
 
 #: src/generation/generation-wait.tsx
 #: src/journey/schedule-details.tsx
+#: src/today/today-week-day.tsx
 msgctxt "B7ijKz"
 msgid "done"
 msgstr "tamamlandı"
@@ -4799,7 +4797,6 @@ msgstr "Sınav mı, dil mi yoksa konu mu olduğunu kontrol ediyoruz…"
 #: src/generation/use-generation-copy.ts
 #: src/onboarding/steps/plan-building.tsx
 #: src/onboarding/steps/plan-wait.tsx
-#: src/today/today-preparing.tsx
 msgctxt "PBFmO0"
 msgid "Building your plan"
 msgstr "Planını hazırlıyoruz"
@@ -5029,11 +5026,11 @@ msgctxt "dhP2hY"
 msgid "Course complete"
 msgstr "Kurs tamamlandı"
 
-#. Shown when a free learner tries to resume a paused goal while following as many goals as the free plan allows at once. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress.
+#. Shown when a learner tries to resume a paused goal while already following as many goals at once as they can without a subscription. Pausing a goal keeps its progress.
 #: src/journey/goal-actions.tsx
-msgctxt "OO9Xhq"
-msgid "You're following as many goals as the free plan allows. Pause another goal to resume this one, or subscribe to follow more."
-msgstr ""
+msgctxt "7MouSk"
+msgid "You're following as many goals as you can for free. Pause another to resume this one, or subscribe."
+msgstr "Ücretsiz olarak aynı anda takip edebileceğin hedef sayısına ulaştın. Bu hedefe devam etmek için başka bir hedefi duraklat veya abone ol."
 
 #: src/journey/goal-actions.tsx
 #: src/journey/rename-goal-dialog.tsx
@@ -5099,7 +5096,7 @@ msgstr "Devam edene kadar hiçbir şey planlanmaz."
 #: src/syllabus/use-subject-progress.ts
 msgctxt "B3fpYI"
 msgid "{count, plural, one {# topic you already know} other {# topics you already know}}"
-msgstr ""
+msgstr "{count, plural, other {Zaten bildiğin # konu}}"
 
 #: src/journey/journey-chapters.tsx
 #: src/onboarding/steps/reveal-days.tsx
@@ -5119,12 +5116,12 @@ msgstr "{done, number} / {total, number}"
 #: src/syllabus/topic-note.tsx
 msgctxt "VPnXIm"
 msgid "Skipped · you already know it"
-msgstr ""
+msgstr "Atlandı · zaten biliyordun"
 
 #: src/journey/journey-chapters.tsx
 msgctxt "8beg4V"
 msgid "More on an earlier topic"
-msgstr ""
+msgstr "Önceki bir konunun devamı"
 
 #: src/journey/journey-chapters.tsx
 msgctxt "OGR3YM"
@@ -5189,7 +5186,7 @@ msgstr "İlerlemen"
 #: src/journey/journey-hero.tsx
 msgctxt "53oGbg"
 msgid "Your schedule"
-msgstr ""
+msgstr "Çalışma takvimin"
 
 #: src/journey/journey-menu.tsx
 msgctxt "jgL8u5"
@@ -5289,12 +5286,12 @@ msgstr "{count, plural, other {# deneme sınavı}}"
 #: src/journey/journey-phase-events.tsx
 msgctxt "0FC2at"
 msgid "{count, plural, one {# mock exam before your next exam date, {date}} other {# mock exams before your next exam date, {date}}}"
-msgstr ""
+msgstr "{count, plural, other {Bir sonraki sınavından önce # deneme sınavı (sınav tarihin: {date})}}"
 
 #: src/journey/journey-phase-events.tsx
 msgctxt "u82DIi"
 msgid "{count, plural, one {# mock exam before your next exam date} other {# mock exams before your next exam date}}"
-msgstr ""
+msgstr "{count, plural, other {Bir sonraki sınav tarihinden önce # deneme sınavı}}"
 
 #: src/journey/journey-phase-events.tsx
 #: src/journey/roadmap-full.tsx
@@ -5385,17 +5382,17 @@ msgstr "{date} tarihinde devam edecek"
 #: src/journey/path-phase-row.tsx
 msgctxt "oIX23Q"
 msgid "{count, plural, one {# lesson not studied} other {# lessons not studied}}"
-msgstr ""
+msgstr "{count, plural, other {Çalışılmamış # ders}}"
 
 #: src/journey/path-phase-row.tsx
 msgctxt "sk-jVa"
 msgid "The call isn't in your plan"
-msgstr ""
+msgstr "Sohbet planında yer almıyor"
 
 #: src/journey/path-phase-row.tsx
 msgctxt "xl2sjx"
 msgid "The Trickster isn't in your plan"
-msgstr ""
+msgstr "Hilebaz planında yer almıyor"
 
 #: src/journey/path-phase-row.tsx
 msgctxt "0PNU6K"
@@ -5413,13 +5410,11 @@ msgid "{total, plural, =0 {{done, number} of # lessons} one {{done, number} of #
 msgstr "{total, plural, =0 {{done, number} / # ders} other {{done, number} / # ders}}"
 
 #: src/journey/plan-header.tsx
-#: src/today/today-heading.tsx
 msgctxt "8PP61v"
 msgid "{days, plural, =0 {The day is here} one {# day left} other {# days left}}"
 msgstr "{days, plural, =0 {Beklenen gün geldi} other {# gün kaldı}}"
 
 #: src/journey/plan-header.tsx
-#: src/today/today-heading.tsx
 msgctxt "vjhiy6"
 msgid "{days, plural, one {~# day left} other {~# days left}}"
 msgstr "{days, plural, other {~# gün kaldı}}"
@@ -5466,7 +5461,7 @@ msgstr "Zihin haritaları"
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "6wpEuS"
 msgid "Take a full or half mock exam to see your estimated score."
-msgstr ""
+msgstr "Tahmini puanını görmek için tam veya yarım deneme sınavına gir."
 
 #: src/journey/preparation/preparation-details.tsx
 #: src/mock/mock-result-view.tsx
@@ -5482,22 +5477,22 @@ msgstr "{count, plural, one {Son deneme sınavına göre} other {Son # deneme s�
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "QexwxS"
 msgid "Each subject counts as much as it's worth on the exam. A subject's number is how much of it you've studied times how well you answer, and it stays under 75% until you take a mock exam."
-msgstr ""
+msgstr "Her branş sınavdaki ağırlığına göre hesaba katılır. Bir branşın değeri, çalıştığın kısmın oranıyla doğru cevap oranının çarpımıdır ve deneme sınavına girene kadar %75’in altında kalır."
 
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "Kch5Cx"
 msgid "The share of your plan's lessons you've studied or already knew. Right answers, what you remember and weekly challenges show how well you know them."
-msgstr ""
+msgstr "Planındaki derslerden çalıştıklarının veya önceden bildiklerinin oranı. Doğru cevapların, hatırladıkların ve haftalık meydan okumalar bu dersleri ne kadar iyi bildiğini gösterir."
 
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "J6PYLA"
 msgid "How it's calculated"
-msgstr ""
+msgstr "Nasıl hesaplanır"
 
 #: src/journey/preparation/use-preparation-parts.ts
 msgctxt "DVOdy2"
 msgid "Topics studied"
-msgstr ""
+msgstr "Çalışılan konular"
 
 #: src/journey/preparation/use-preparation-parts.ts
 #: src/mock/mock-result-view.tsx
@@ -5509,7 +5504,7 @@ msgstr "Doğru cevaplar"
 #: src/journey/preparation/use-preparation-parts.ts
 msgctxt "ntRjjB"
 msgid "Remembered"
-msgstr ""
+msgstr "Hatırlananlar"
 
 #: src/journey/preparation/use-preparation-parts.ts
 msgctxt "hK7cUG"
@@ -5519,27 +5514,27 @@ msgstr "Haftalık meydan okumalar"
 #: src/journey/preparation/use-still-needed.ts
 msgctxt "_jCIXm"
 msgid "Study the topics that count most"
-msgstr ""
+msgstr "En çok puan getiren konulara çalış"
 
 #: src/journey/preparation/use-still-needed.ts
 msgctxt "F8O7UW"
 msgid "Keep going with your lessons"
-msgstr ""
+msgstr "Derslerine devam et"
 
 #: src/journey/preparation/use-still-needed.ts
 msgctxt "fEvUvT"
 msgid "{count, plural, one {# topic, in your next reviews} other {# topics, in your next reviews}}"
-msgstr ""
+msgstr "{count, plural, other {Sonraki tekrarlarında # konu}}"
 
 #: src/journey/preparation/use-still-needed.ts
 msgctxt "9Aopkl"
 msgid "Review what you're starting to forget"
-msgstr ""
+msgstr "Unutmaya başladıklarını tekrar et"
 
 #: src/journey/preparation/use-still-needed.ts
 msgctxt "HRQ_zL"
 msgid "Needed to go past 75%"
-msgstr ""
+msgstr "%75’i aşmak için gerekli"
 
 #: src/journey/preparation/use-still-needed.ts
 msgctxt "xOPwTm"
@@ -5575,7 +5570,7 @@ msgstr "Sınav tarihi"
 #: src/plan-diff/use-change-rows.ts
 msgctxt "Humfno"
 msgid "End date"
-msgstr ""
+msgstr "Bitiş tarihi"
 
 #: src/journey/roadmap-full.tsx
 #: src/onboarding/steps/plan-shape.tsx
@@ -5632,7 +5627,7 @@ msgstr "{day}: {status}"
 #: src/journey/schedule-details.tsx
 msgctxt "hGQqkW"
 msgid "Schedule"
-msgstr ""
+msgstr "Takvim"
 
 #: src/journey/schedule-details.tsx
 #: src/onboarding/understood/use-understood-rows.ts
@@ -5698,7 +5693,7 @@ msgstr "{dateKind, select, month {{date} civarı} other {{date} civarı}}"
 #: src/journey/use-roadmap.ts
 msgctxt "nO5Gb7"
 msgid "Phase {number, number} of {total, number}"
-msgstr ""
+msgstr "Aşama {number, number} / {total, number}"
 
 #: src/language-aim/aim-picker.tsx
 msgctxt "OIMmZ8"
@@ -7813,9 +7808,9 @@ msgid "Couldn't remove this map. Try again."
 msgstr "Bu harita kaldırılamadı. Tekrar dene."
 
 #: src/missions/brain-power-reward.tsx
-msgctxt "b3Jpo7"
-msgid "What you've learned, in points: it raises your belt and grows your buddy. Answers, lessons and challenges add to it, and finishing today's missions adds +{points}."
-msgstr "Öğrendiklerinin puan karşılığı: kuşak atlamanı ve ders arkadaşının büyümesini sağlar. Cevaplar, dersler ve meydan okumalar puan kazandırır; bugünkü görevleri bitirince de +{points} kazanırsın."
+msgctxt "HCrEOP"
+msgid "Points for what you learn. They raise your belt and grow your buddy."
+msgstr "Öğrendikçe puan kazanırsın. Puanlar kuşak atlamanı ve ders arkadaşının büyümesini sağlar."
 
 #: src/missions/brain-power-reward.tsx
 msgctxt "JGTjfj"
@@ -7860,75 +7855,15 @@ msgid "Have your first call"
 msgstr "İlk sohbetini yap"
 
 #: src/missions/first-step-copy.tsx
-msgctxt "missions.BUTJD4"
-msgid "Take your first mock"
+msgctxt "missions.ePGEKw"
+msgid "Take your first mock exam"
 msgstr "İlk deneme sınavına gir"
 
 #: src/missions/first-step-copy.tsx
 #: src/missions/mission-copy.tsx
-msgctxt "missions.9qOzm_"
-msgid "Take on the Trickster"
-msgstr "Hilebaz’a meydan oku"
-
-#: src/missions/first-step-copy.tsx
-msgctxt "bz2BN8"
-msgid "With your first challenge, <mono>{date}</mono>"
-msgstr "İlk meydan okumanda, <mono>{date}</mono> tarihinde"
-
-#: src/missions/first-step-copy.tsx
-msgctxt "BgUc01"
-msgid "With your first challenge"
-msgstr "İlk meydan okumanda"
-
-#: src/missions/first-step-copy.tsx
-msgctxt "-DJ5Y5"
-msgid "On your first essay day"
-msgstr "İlk kompozisyon gününde"
-
-#: src/missions/first-step-copy.tsx
-msgctxt "RBXnZe"
-msgid "The day after your first mistake"
-msgstr "İlk hatandan sonraki gün"
-
-#: src/missions/first-step-copy.tsx
-msgctxt "xyUK7Y"
-msgid "When your first review is due"
-msgstr "İlk tekrarının zamanı geldiğinde"
-
-#: src/missions/first-step-copy.tsx
-msgctxt "cGp3F-"
-msgid "When your mistakes show a pattern"
-msgstr "Hataların tekrarlamaya başladığında"
-
-#: src/missions/first-step-copy.tsx
-msgctxt "RGbEQY"
-msgid "When you have call time again"
-msgstr "Yeniden sohbet süren olduğunda"
-
-#: src/missions/first-step-copy.tsx
-msgctxt "YGZZ9y"
-msgid "When you can ask again"
-msgstr "Tekrar soru sorabildiğinde"
-
-#: src/missions/first-step-copy.tsx
-msgctxt "RkPz67"
-msgid "On your next lesson day"
-msgstr "Bir sonraki ders gününde"
-
-#: src/missions/first-step-copy.tsx
-msgctxt "0rP6q7"
-msgid "When your plan has a mock"
-msgstr "Planında deneme sınavı olduğunda"
-
-#: src/missions/first-step-copy.tsx
-msgctxt "FNSnUK"
-msgid "One of today's missions"
-msgstr "Bugünkü görevlerden biri"
-
-#: src/missions/first-step-copy.tsx
-msgctxt "AwhX1o"
-msgid "Anytime"
-msgstr "İstediğin zaman"
+msgctxt "missions._N9GlC"
+msgid "Beat the Trickster"
+msgstr "Hilebaz’ı yen"
 
 #: src/missions/first-steps.tsx
 msgctxt "3_YJkO"
@@ -7936,9 +7871,14 @@ msgid "First steps"
 msgstr "İlk adımlar"
 
 #: src/missions/first-steps.tsx
-msgctxt "0HCcI5"
-msgid "You've tried everything your plan uses."
-msgstr "Planındaki her tür etkinliği denedin."
+msgctxt "584gds"
+msgid "{count, plural, one {# more opens as you go} other {# more open as you go}}"
+msgstr "{count, plural, other {İlerledikçe # görev daha açılır}}"
+
+#: src/missions/first-steps.tsx
+msgctxt "kNlVEU"
+msgid "You've tried everything."
+msgstr "Hepsini denedin."
 
 #: src/missions/mission-copy.tsx
 msgctxt "missions.QZSmDQ"
@@ -7981,8 +7921,8 @@ msgid "Weekly challenge"
 msgstr "Haftalık meydan okumaya katıl"
 
 #: src/missions/mission-copy.tsx
-msgctxt "missions.T8ny0q"
-msgid "Take the mock"
+msgctxt "missions.LIsld3"
+msgid "Take the mock exam"
 msgstr "Deneme sınavına gir"
 
 #. A mission to practice an essay.
@@ -7997,9 +7937,9 @@ msgid "{count, plural, one {Fix a mistake} other {Fix # mistakes}}"
 msgstr "{count, plural, one {Bir hatayı düzelt} other {# hatayı düzelt}}"
 
 #: src/missions/mission-copy.tsx
-msgctxt "missions.vuwclE"
-msgid "Pronunciation"
-msgstr "Telaffuz alıştırması yap"
+msgctxt "missions.YahrnI"
+msgid "Practice pronunciation"
+msgstr "Telaffuz pratiği yap"
 
 #: src/missions/mission-copy.tsx
 msgctxt "missions.x_ozmd"
@@ -8077,60 +8017,15 @@ msgid ", choose a call"
 msgstr ", bir sohbet seç"
 
 #: src/missions/mission-copy.tsx
-msgctxt "mQmNzY"
-msgid ", after this phase's lessons"
-msgstr ", bu aşamanın derslerinden sonra"
+msgctxt "J8WnXZ"
+msgid ", after today's lessons"
+msgstr ", bugünkü derslerden sonra"
 
 #: src/missions/mission-copy.tsx
-msgctxt "-d7MNH"
-msgid "After this phase's lessons"
-msgstr "Bu aşamanın derslerinden sonra"
-
-#: src/missions/mission-copy.tsx
-msgctxt "teh3kP"
-msgid "From your mistakes notebook"
-msgstr "Yanlış defterinden"
-
-#: src/missions/mission-copy.tsx
-msgctxt "QUXFCm"
-msgid "Due today"
-msgstr "Bugün yapılacak"
-
-#: src/missions/mission-copy.tsx
-msgctxt "2-8mko"
-msgid "Quick call · {unit}"
-msgstr "Kısa sohbet · {unit}"
-
-#: src/missions/mission-copy.tsx
-msgctxt "M62Zd9"
-msgid "A quick call"
-msgstr "Kısa bir sohbet"
-
-#: src/missions/mission-copy.tsx
-msgctxt "DBrHAL"
-msgid "Anything about today's lessons"
-msgstr "Bugünkü derslerle ilgili her şey"
-
-#: src/missions/mission-copy.tsx
-msgctxt "8zl1aR"
-msgid "{count, plural, one {The last lesson is in today's plan} other {The last # lessons are in today's plan}}"
-msgstr "{count, plural, one {Son ders bugünkü planda} other {Son # ders bugünkü planda}}"
-
-#: src/missions/mission-copy.tsx
-msgctxt "76vDAi"
-msgid "{title} (+{count, plural, one {# lesson} other {# lessons}})"
-msgstr "{title} (+{count, plural, other {# ders}})"
-
-#: src/missions/mission-copy.tsx
-msgctxt "tbs1gZ"
-msgid "Finish today's new lesson"
-msgstr "Bugünkü yeni dersi bitir"
-
-#. A mission to practice the area where the learner can improve the most.
-#: src/missions/mission-copy.tsx
-msgctxt "YiVZjK"
-msgid "Most room to grow"
-msgstr "En çok gelişebileceğin alan"
+#: src/today/use-row-label.ts
+msgctxt "L_nv1C"
+msgid "After today's lessons"
+msgstr "Bugünkü derslerden sonra"
 
 #: src/missions/mission-list.tsx
 msgctxt "l8GXmx"
@@ -8158,7 +8053,6 @@ msgid "{count, plural, one {# more for +{points} Brain Power} other {# more for 
 msgstr "{count, plural, other {# görev daha tamamlayınca +{points} Beyin Gücü kazanırsın}}"
 
 #: src/missions/mission-moment.tsx
-#: src/missions/missions-card.tsx
 msgctxt "aGylUw"
 msgid "You earned +{points} Brain Power."
 msgstr "+{points} Beyin Gücü kazandın."
@@ -8169,24 +8063,14 @@ msgid "Just done"
 msgstr "Az önce tamamlandı"
 
 #: src/missions/missions-card.tsx
-msgctxt "3-ihlA"
-msgid "{count, plural, one {# mission} other {# missions}}"
-msgstr "{count, plural, other {# görev}}"
-
-#: src/missions/missions-card.tsx
-msgctxt "4JBtJN"
-msgid "{count, plural, one {# left} other {# left}}"
-msgstr "{count, plural, other {# görev kaldı}}"
+msgctxt "deISVW"
+msgid "{done} of {total} done"
+msgstr "{done} / {total} tamamlandı"
 
 #: src/missions/missions-card.tsx
 msgctxt "0gBkBl"
 msgid "Missions done"
 msgstr "Görevler tamamlandı"
-
-#: src/missions/missions-card.tsx
-msgctxt "agm7r8"
-msgid "Today's missions start with today's session."
-msgstr "Bugünkü görevler bugünkü çalışmanla birlikte başlar."
 
 #. "It" is the question: it comes back in later practice.
 #: src/mistakes/drill/drill-answer-notes.tsx
@@ -8634,24 +8518,19 @@ msgid "time left"
 msgstr "kalan süre"
 
 #: src/mock/mock-entry.tsx
-msgctxt "gaCKXR"
-msgid "Whenever you want: a full exam day, half a day or one subject"
-msgstr "İstediğin zaman: tam gün, yarım gün veya tek branş"
+msgctxt "CfczSe"
+msgid "The full exam, half of it or one subject"
+msgstr "Sınavın tamamı, yarısı ya da tek bir branş"
 
 #: src/mock/mock-entry.tsx
-msgctxt "HVwCpv"
-msgid "Whenever you want: a full exam day or half a day"
-msgstr "İstediğin zaman: tam gün veya yarım gün"
+msgctxt "fWOwxQ"
+msgid "The full exam or half of it"
+msgstr "Sınavın tamamı ya da yarısı"
 
 #: src/mock/mock-entry.tsx
 msgctxt "v_VKuk"
 msgid "Continue your mock exam"
 msgstr "Deneme sınavına devam et"
-
-#: src/mock/mock-entry.tsx
-msgctxt "QJQ0Nr"
-msgid "It's where you left it"
-msgstr "Bıraktığın yerde duruyor"
 
 #: src/mock/mock-expired.tsx
 msgctxt "2E0g32"
@@ -10810,6 +10689,7 @@ msgid "Done. Your plan now covers your whole goal."
 msgstr "Tamam. Planın artık hedefinin tamamını kapsıyor."
 
 #: src/onboarding/steps/reveal-days.tsx
+#: src/today/today-week-challenge.tsx
 msgctxt "R-J5ox"
 msgid "Review"
 msgstr "Tekrar yap"
@@ -11244,143 +11124,143 @@ msgstr "{names} ve {count, plural, other {# konu daha}}"
 #: src/plan-diff/change-names.ts
 msgctxt "lwkzML"
 msgid "{names} and more"
-msgstr ""
+msgstr "{names} ve diğerleri"
 
 #: src/plan-diff/plan-effect-diff.tsx
 msgctxt "61Vs84"
 msgid "The numbers are different today."
-msgstr ""
+msgstr "Bugün sayılar farklı."
 
 #: src/plan-diff/plan-effect-diff.tsx
 msgctxt "3vidCV"
 msgid "See all changes"
-msgstr ""
+msgstr "Tüm değişiklikleri gör"
 
 #: src/plan-diff/use-change-consequence.ts
 msgctxt "oGZanC"
 msgid "{count, plural, one {You'll study # fewer lesson before your exam.} other {You'll study # fewer lessons before your exam.}}"
-msgstr ""
+msgstr "{count, plural, other {Sınavından önce # ders daha az çalışacaksın.}}"
 
 #: src/plan-diff/use-change-consequence.ts
 msgctxt "hWUm8T"
 msgid "{count, plural, one {You'll study # fewer lesson before your end date.} other {You'll study # fewer lessons before your end date.}}"
-msgstr ""
+msgstr "{count, plural, other {Bitiş tarihinden önce # ders daha az çalışacaksın.}}"
 
 #: src/plan-diff/use-change-consequence.ts
 msgctxt "owOJN0"
 msgid "{count, plural, one {You'll study # fewer lesson.} other {You'll study # fewer lessons.}}"
-msgstr ""
+msgstr "{count, plural, other {# ders daha az çalışacaksın.}}"
 
 #: src/plan-diff/use-change-consequence.ts
 msgctxt "jLX-HE"
 msgid "{count, plural, one {You'll study # more lesson before your exam.} other {You'll study # more lessons before your exam.}}"
-msgstr ""
+msgstr "{count, plural, other {Sınavından önce # ders daha fazla çalışacaksın.}}"
 
 #: src/plan-diff/use-change-consequence.ts
 msgctxt "cHhwpw"
 msgid "{count, plural, one {You'll study # more lesson before your end date.} other {You'll study # more lessons before your end date.}}"
-msgstr ""
+msgstr "{count, plural, other {Bitiş tarihinden önce # ders daha fazla çalışacaksın.}}"
 
 #: src/plan-diff/use-change-consequence.ts
 msgctxt "V266cw"
 msgid "{count, plural, one {You'll study # more lesson.} other {You'll study # more lessons.}}"
-msgstr ""
+msgstr "{count, plural, other {# ders daha fazla çalışacaksın.}}"
 
 #: src/plan-diff/use-change-consequence.ts
 msgctxt "9VnIZh"
 msgid "{count, plural, one {{topics} won't be in your plan.} other {{topics} won't be in your plan.}}"
-msgstr ""
+msgstr "{count, plural, other {{topics} planında yer almayacak.}}"
 
 #: src/plan-diff/use-change-consequence.ts
 msgctxt "O5GloM"
 msgid "{count, plural, one {{topics} will be added to your plan.} other {{topics} will be added to your plan.}}"
-msgstr ""
+msgstr "{count, plural, other {{topics} planına eklenecek.}}"
 
 #. {after} and {before} are days, like "May 5".
 #: src/plan-diff/use-change-consequence.ts
 msgctxt "fW_YDZ"
 msgid "Your plan will end on {after} instead of {before}."
-msgstr ""
+msgstr "Planın {after} tarihinde bitecek, {before} tarihinde değil."
 
 #. {after} and {before} are days, like "May 5".
 #: src/plan-diff/use-change-consequence.ts
 msgctxt "AVlXD0"
 msgid "{phase} will end on {after} instead of {before}."
-msgstr ""
+msgstr "{phase} aşaması {after} tarihinde bitecek, {before} tarihinde değil."
 
 #. {date} is a weekday and day, like "Monday, May 5".
 #: src/plan-diff/use-change-consequence.ts
 msgctxt "k2rsUl"
 msgid "Your next mock exam will be on {date}."
-msgstr ""
+msgstr "Bir sonraki deneme sınavın {date} tarihinde olacak."
 
 #. {day} is a weekday, like "Monday".
 #: src/plan-diff/use-change-consequence.ts
 msgctxt "doCZva"
 msgid "Your mock exams will be on {day}."
-msgstr ""
+msgstr "Deneme sınavların {day} günleri olacak."
 
 #. {day} is a weekday, like "Monday".
 #: src/plan-diff/use-change-consequence.ts
 msgctxt "UcCZ16"
 msgid "Your weekly challenge will be on {day}."
-msgstr ""
+msgstr "Haftalık meydan okuman {day} günü olacak."
 
 #: src/plan-diff/use-change-rows.ts
 msgctxt "yOT7kI"
 msgid "{count, plural, one {# fewer} other {# fewer}}"
-msgstr ""
+msgstr "{count, plural, other {# daha az}}"
 
 #: src/plan-diff/use-change-rows.ts
 #: src/plan/plan-suggestion-context.tsx
 msgctxt "GYQ3G4"
 msgid "{count, plural, one {# more} other {# more}}"
-msgstr ""
+msgstr "{count, plural, other {# daha fazla}}"
 
 #: src/plan-diff/use-change-rows.ts
 msgctxt "2gZdB5"
 msgid "Added to your plan"
-msgstr ""
+msgstr "Planına eklenenler"
 
 #: src/plan-diff/use-change-rows.ts
 msgctxt "Yv-EZa"
 msgid "Plan ends"
-msgstr ""
+msgstr "Planın bitişi"
 
 #: src/plan-diff/use-change-rows.ts
 msgctxt "awd0Xk"
 msgid "{name} ends"
-msgstr ""
+msgstr "{name} bitişi"
 
 #: src/plan-diff/use-change-rows.ts
 msgctxt "-pTI25"
 msgid "{name} starts"
-msgstr ""
+msgstr "{name} başlangıcı"
 
 #: src/plan-diff/use-change-rows.ts
 msgctxt "2A9FaL"
 msgid "{count, plural, =0 {# lessons to go} one {# lesson to go} other {# lessons to go}}"
-msgstr ""
+msgstr "{count, plural, =0 {# ders kaldı} other {# ders kaldı}}"
 
 #: src/plan-diff/use-change-rows.ts
 msgctxt "y6zY5Q"
 msgid "Next mock exam"
-msgstr ""
+msgstr "Sonraki deneme sınavı"
 
 #: src/plan-diff/use-change-rows.ts
 msgctxt "MBvJer"
 msgid "Starts with {subjects}"
-msgstr ""
+msgstr "{subjects} ile başlar"
 
 #: src/plan-diff/use-change-rows.ts
 msgctxt "GgV_JT"
 msgid "Review on {date}"
-msgstr ""
+msgstr "{date} tarihinde tekrar"
 
 #: src/plan-diff/use-change-rows.ts
 msgctxt "LcFFqV"
 msgid "New lessons start"
-msgstr ""
+msgstr "Yeni derslerin başlangıcı"
 
 #: src/plan/notice-day.tsx
 msgctxt "tI8qvu"
@@ -11452,19 +11332,19 @@ msgstr "Öneri al"
 #: src/plan/plan-bases-choices.tsx
 msgctxt "beOzyz"
 msgid "Every lesson"
-msgstr ""
+msgstr "Tüm dersler"
 
 #. Choice to study only the first, most important lessons of a prerequisite.
 #: src/plan/plan-bases-choices.tsx
 msgctxt "JAb8N8"
 msgid "First lessons only"
-msgstr ""
+msgstr "Yalnızca ilk dersler"
 
 #. Choice to study a prerequisite as one short lesson.
 #: src/plan/plan-bases-choices.tsx
 msgctxt "5EBgSS"
 msgid "One short lesson each"
-msgstr ""
+msgstr "Her biri için kısa bir ders"
 
 #: src/plan/plan-bases-choices.tsx
 msgctxt "VKfWR3"
@@ -11484,7 +11364,7 @@ msgstr "{name} (çalışıldı)"
 #: src/plan/plan-bases-choices.tsx
 msgctxt "fQZLRH"
 msgid "Mixed"
-msgstr ""
+msgstr "Karma"
 
 #: src/plan/plan-bases-choices.tsx
 msgctxt "V8qBJk"
@@ -11525,13 +11405,13 @@ msgstr "Seçimlerin"
 #: src/plan/plan-country.tsx
 msgctxt "4QudkV"
 msgid "Change your country?"
-msgstr ""
+msgstr "Ülkeni değiştirelim mi?"
 
 #. {country} is a country's name. It always follows the colon, so it never needs an article or a case.
 #: src/plan/plan-country.tsx
 msgctxt "4ncwjO"
 msgid "New country: {country}. We'll make a new plan for it. Finished lessons stay done."
-msgstr ""
+msgstr "Yeni ülke: {country}. Bu ülkeye göre yeni bir plan hazırlayacağız. Bitirdiğin dersler tamamlanmış sayılacak."
 
 #: src/plan/plan-coverage-suggestion.tsx
 msgctxt "TJo5E6"
@@ -11570,6 +11450,7 @@ msgid "No deadline: you study everything at your own pace. With a deadline, your
 msgstr "Son tarih yok: her şeyi kendi temponda çalışırsın. Son tarih belirlersen planın o zamana kadar en önemli konuları kapsar."
 
 #: src/plan/plan-editor.tsx
+#: src/today/today-heading.tsx
 msgctxt "v5e5kt"
 msgid "Adjust your plan"
 msgstr "Planını ayarla"
@@ -11594,7 +11475,7 @@ msgstr "Yaklaşık {month} ayında bitirirsin."
 #: src/plan/plan-fit-suggestion.tsx
 msgctxt "ylM0GM"
 msgid "{count, plural, one {You have time for # more lesson} other {You have time for # more lessons}}"
-msgstr ""
+msgstr "{count, plural, other {# ders daha için zamanın var}}"
 
 #: src/plan/plan-fit-suggestion.tsx
 #: src/plan/plan-offer-preview.tsx
@@ -11605,7 +11486,7 @@ msgstr "Planın güncellendi."
 #: src/plan/plan-fit-suggestion.tsx
 msgctxt "hKZBEc"
 msgid "Add to my plan"
-msgstr ""
+msgstr "Planıma ekle"
 
 #. Link that opens the Focus test, for a learner who has not taken it.
 #: src/plan/plan-focus-test.tsx
@@ -11704,22 +11585,22 @@ msgstr "Kapalıyken planın sınav tarihinde biter."
 #: src/plan/plan-notice.tsx
 msgctxt "GlgNJb"
 msgid "{count, plural, one {Every lesson is done. Win the challenge to finish your plan.} other {Every lesson is done. Win the challenges to finish your plan.}}"
-msgstr ""
+msgstr "{count, plural, one {Tüm dersleri bitirdin. Planını tamamlamak için meydan okumayı kazan.} other {Tüm dersleri bitirdin. Planını tamamlamak için meydan okumaları kazan.}}"
 
 #: src/plan/plan-notice.tsx
 msgctxt "WaA1zn"
 msgid "You have more lessons than days left. Add time a day or pick a later date."
-msgstr ""
+msgstr "Kalan gün sayısından fazla dersin var. Günlük çalışma süreni artır veya daha ileri bir tarih seç."
 
 #: src/plan/plan-notice.tsx
 msgctxt "Z7cgdl"
 msgid "They come first on Today."
-msgstr ""
+msgstr "Bu dersler Bugün sayfasında en başta yer alır."
 
 #: src/plan/plan-notice.tsx
 msgctxt "XVhC0H"
 msgid "{days, plural, one {Study {minutes, number} more min a day for # day to be up to date.} other {Study {minutes, number} more min a day for # days to be up to date.}}"
-msgstr ""
+msgstr "{days, plural, other {Günde {minutes, number} dk. daha çalışarak # günde arayı kapat.}}"
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/plan/plan-offer-preview.tsx
@@ -11743,23 +11624,23 @@ msgstr "Tüm konulara çalış"
 #: src/plan/plan-past-date-suggestion.tsx
 msgctxt "PpW8Dz"
 msgid "Move your end date to {date}?"
-msgstr ""
+msgstr "Bitiş tarihini {date} olarak değiştirelim mi?"
 
 #: src/plan/plan-past-date-suggestion.tsx
 #: src/plan/use-operation-question.ts
 msgctxt "oACP53"
 msgid "Keep studying after the exam?"
-msgstr ""
+msgstr "Sınavdan sonra çalışmaya devam etmek ister misin?"
 
 #: src/plan/plan-past-date-suggestion.tsx
 msgctxt "chLjlx"
 msgid "{count, plural, one {You have # lesson left. Keep studying it?} other {You have # lessons left. Keep studying them?}}"
-msgstr ""
+msgstr "{count, plural, one {# dersin kaldı. Bu derse çalışmaya devam etmek ister misin?} other {# dersin kaldı. Bu derslere çalışmaya devam etmek ister misin?}}"
 
 #: src/plan/plan-past-date-suggestion.tsx
 msgctxt "zBJlTm"
 msgid "{count, plural, one {You have # lesson left. A later end date fits it.} other {You have # lessons left. A later end date fits them.}}"
-msgstr ""
+msgstr "{count, plural, one {# dersin kaldı. Daha ileri bir bitiş tarihiyle bu dersi tamamlayabilirsin.} other {# dersin kaldı. Daha ileri bir bitiş tarihiyle bu dersleri tamamlayabilirsin.}}"
 
 #: src/plan/plan-past-date-suggestion.tsx
 msgctxt "t9hafN"
@@ -11769,7 +11650,7 @@ msgstr "Çalışmaya devam et"
 #: src/plan/plan-past-date-suggestion.tsx
 msgctxt "A4AeAM"
 msgid "Find a date"
-msgstr ""
+msgstr "Tarih bul"
 
 #: src/plan/plan-properties.tsx
 msgctxt "oOY_q2"
@@ -11809,22 +11690,22 @@ msgstr "Hepsi"
 #: src/plan/plan-rebuild-notice.tsx
 msgctxt "pTY-Gt"
 msgid "Getting your new plan ready"
-msgstr ""
+msgstr "Yeni planını hazırlıyoruz"
 
 #: src/plan/plan-rebuild-notice.tsx
 msgctxt "UyJ0-k"
 msgid "Keep studying this one until then."
-msgstr ""
+msgstr "O zamana kadar bu planla çalışmaya devam et."
 
 #: src/plan/plan-rebuild-notice.tsx
 msgctxt "w5tLGV"
 msgid "Your new plan couldn't be made"
-msgstr ""
+msgstr "Yeni planın hazırlanamadı"
 
 #: src/plan/plan-rebuild-notice.tsx
 msgctxt "qeSUI3"
 msgid "Your plan is as it was."
-msgstr ""
+msgstr "Planın değişmedi."
 
 #: src/plan/plan-rebuild-notice.tsx
 msgctxt "jvdY5E"
@@ -11839,22 +11720,22 @@ msgstr "Çalışma sürenin nelere yettiğini hesaplıyoruz…"
 #: src/plan/plan-status-label.tsx
 msgctxt "sKBfpV"
 msgid "{days, plural, one {# day ahead} other {# days ahead}}"
-msgstr ""
+msgstr "{days, plural, other {# gün önde}}"
 
 #: src/plan/plan-status-label.tsx
 msgctxt "2pL7R-"
 msgid "{lessons, plural, one {# lesson behind} other {# lessons behind}}"
-msgstr ""
+msgstr "{lessons, plural, other {# ders geride}}"
 
 #: src/plan/plan-status-label.tsx
 msgctxt "XBEzEj"
 msgid "{days, plural, one {# day behind} other {# days behind}}"
-msgstr ""
+msgstr "{days, plural, other {# gün geride}}"
 
 #: src/plan/plan-status-label.tsx
 msgctxt "KZW1X5"
 msgid "{count, plural, one {# challenge to go} other {# challenges to go}}"
-msgstr ""
+msgstr "{count, plural, other {# meydan okuma kaldı}}"
 
 #: src/plan/plan-status-label.tsx
 msgctxt "EQpfkS"
@@ -11864,37 +11745,37 @@ msgstr "Tamamlandı"
 #: src/plan/plan-status-label.tsx
 msgctxt "1f3FcP"
 msgid "Not enough time"
-msgstr ""
+msgstr "Zaman yetersiz"
 
 #: src/plan/plan-status-label.tsx
 msgctxt "aOfyGC"
 msgid "Up to date"
-msgstr ""
+msgstr "Yolunda"
 
 #: src/plan/plan-status-label.tsx
 msgctxt "yDYFFn"
 msgid "Date passed"
-msgstr ""
+msgstr "Hedef tarih geçti"
 
 #: src/plan/plan-status-label.tsx
 msgctxt "kWj6AT"
 msgid "{count, plural, one {Your exam date has passed with # lesson left.} other {Your exam date has passed with # lessons left.}}"
-msgstr ""
+msgstr "{count, plural, other {Sınav tarihin geçti ve # dersin kaldı.}}"
 
 #: src/plan/plan-status-label.tsx
 msgctxt "tMCWfy"
 msgid "Your exam date has passed"
-msgstr ""
+msgstr "Sınav tarihin geçti"
 
 #: src/plan/plan-status-label.tsx
 msgctxt "EedEYt"
 msgid "{count, plural, one {Your end date has passed with # lesson left.} other {Your end date has passed with # lessons left.}}"
-msgstr ""
+msgstr "{count, plural, other {Bitiş tarihin geçti ve # dersin kaldı.}}"
 
 #: src/plan/plan-status-label.tsx
 msgctxt "pOhULo"
 msgid "Your end date has passed"
-msgstr ""
+msgstr "Bitiş tarihin geçti"
 
 #: src/plan/plan-suggestion-context.tsx
 #: src/plan/plan-suggestion.tsx
@@ -11911,12 +11792,12 @@ msgstr "Plan güncellendi"
 #: src/plan/plan-suggestion.tsx
 msgctxt "xGiUnw"
 msgid "More lessons than days left"
-msgstr ""
+msgstr "Kalan gün sayısından fazla ders var"
 
 #: src/plan/plan-suggestion.tsx
 msgctxt "bgDfbl"
 msgid "Add time a day or pick a later date."
-msgstr ""
+msgstr "Günlük çalışma süreni artır ya da daha ileri bir tarih seç."
 
 #: src/plan/plan-tool-sheet.tsx
 msgctxt "LCDh_J"
@@ -12037,91 +11918,91 @@ msgstr "Hedefinle ilgili her konuyu, bitiş tarihi olmadan kendi temponda çalı
 #: src/plan/use-bases-texts.ts
 msgctxt "wkUyCk"
 msgid "We recommend every lesson. Your time covers them."
-msgstr ""
+msgstr "Tüm dersleri öneriyoruz. Zamanın hepsine yetiyor."
 
 #: src/plan/use-bases-texts.ts
 msgctxt "5yF3ST"
 msgid "We recommend one short lesson each, so there's time for the rest."
-msgstr ""
+msgstr "Diğer derslere de zaman kalsın diye her biri için kısa bir ders öneriyoruz."
 
 #: src/plan/use-bases-texts.ts
 msgctxt "jCiV53"
 msgid "We recommend the first lessons only."
-msgstr ""
+msgstr "Sadece ilk dersleri öneriyoruz."
 
 #: src/plan/use-bases-texts.ts
 msgctxt "c28kAC"
 msgid "{count, plural, one {# prerequisite} other {# prerequisites}} · your choices · {time}"
-msgstr ""
+msgstr "{count, plural, other {# ön bilgi}} · seçimlerin · {time}"
 
 #: src/plan/use-bases-texts.ts
 msgctxt "TnvUWN"
 msgid "{count, plural, one {# prerequisite} other {# prerequisites}} · every lesson · {time}"
-msgstr ""
+msgstr "{count, plural, other {# ön bilgi}} · tüm dersler · {time}"
 
 #: src/plan/use-bases-texts.ts
 msgctxt "BF1KGi"
 msgid "{count, plural, one {# prerequisite} other {# prerequisites}} · one short lesson each · {time}"
-msgstr ""
+msgstr "{count, plural, other {# ön bilgi}} · her biri için kısa bir ders · {time}"
 
 #: src/plan/use-bases-texts.ts
 msgctxt "TAEj0x"
 msgid "{count, plural, one {# prerequisite} other {# prerequisites}} · skipped"
-msgstr ""
+msgstr "{count, plural, other {# ön bilgi}} · atlandı"
 
 #: src/plan/use-bases-texts.ts
 msgctxt "i9cQu4"
 msgid "{count, plural, one {# prerequisite} other {# prerequisites}} · first lessons only · {time}"
-msgstr ""
+msgstr "{count, plural, other {# ön bilgi}} · sadece ilk dersler · {time}"
 
 #. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide. {date} is a day, like "May 5".
 #: src/plan/use-change-sentence.ts
 msgctxt "U_KFTb"
 msgid "{document, select, notice {Follow the exam's official guide, with the exam around {date}?} other {Follow the exam's official guide, with the exam around {date}?}}"
-msgstr ""
+msgstr "{document, select, notice {Planını resmî sınav ilanına göre düzenleyip sınav tarihini {date} civarına alalım mı?} other {Planını resmî sınav kılavuzuna göre düzenleyip sınav tarihini {date} civarına alalım mı?}}"
 
 #. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide. {date} is a day, like "May 5".
 #: src/plan/use-change-sentence.ts
 msgctxt "vRjVI1"
 msgid "{document, select, notice {Follow the exam's official guide, with the exam on {date}?} other {Follow the exam's official guide, with the exam on {date}?}}"
-msgstr ""
+msgstr "{document, select, notice {Planını resmî sınav ilanına göre düzenleyip sınav tarihini {date} olarak ayarlayalım mı?} other {Planını resmî sınav kılavuzuna göre düzenleyip sınav tarihini {date} olarak ayarlayalım mı?}}"
 
 #. In the "notice" form the document is the exam's public notice (Brazil's "edital"); otherwise it is an official guide.
 #: src/plan/use-change-sentence.ts
 msgctxt "fZ_NjG"
 msgid "{document, select, notice {Follow the exam's official guide?} other {Follow the exam's official guide?}}"
-msgstr ""
+msgstr "{document, select, notice {Resmî sınav ilanına göre ilerleyelim mi?} other {Resmî sınav kılavuzuna göre ilerleyelim mi?}}"
 
 #: src/plan/use-change-sentence.ts
 msgctxt "m8Su88"
 msgid "Move your exam date to around {date}?"
-msgstr ""
+msgstr "Sınav tarihini {date} civarına alalım mı?"
 
 #: src/plan/use-change-sentence.ts
 #: src/plan/use-operation-question.ts
 msgctxt "7WE3xg"
 msgid "{dateKind, select, exam {Move your exam date to {date}?} goal {Move your end date to {date}?} other {Move your date to {date}?}}"
-msgstr ""
+msgstr "{dateKind, select, exam {Sınav tarihini {date} olarak değiştirelim mi?} goal {Bitiş tarihini {date} olarak değiştirelim mi?} other {Tarihini {date} olarak değiştirelim mi?}}"
 
 #: src/plan/use-change-sentence.ts
 msgctxt "KoD1U9"
 msgid "Done. Today's lessons changed too."
-msgstr ""
+msgstr "Tamam. Bugünkü derslerin de değişti."
 
 #: src/plan/use-change-sentence.ts
 msgctxt "fpDDO_"
 msgid "Done. It starts on your next study day."
-msgstr ""
+msgstr "Tamam. Bir sonraki çalışma gününde başlayacak."
 
 #: src/plan/use-change-sentence.ts
 msgctxt "r84WhO"
 msgid "Done."
-msgstr ""
+msgstr "Tamam."
 
 #: src/plan/use-change-sentence.ts
 msgctxt "hDHAZM"
 msgid "Change your plan?"
-msgstr ""
+msgstr "Planını değiştirelim mi?"
 
 #: src/plan/use-change-sentence.ts
 msgctxt "tl9iG7"
@@ -12143,142 +12024,142 @@ msgstr "Planın değişti."
 #: src/plan/use-change-sentence.ts
 msgctxt "VDuR1W"
 msgid "The official exam date is {date}."
-msgstr ""
+msgstr "Sınavın resmî tarihi {date}."
 
 #: src/plan/use-operation-question.ts
 msgctxt "EP7Gpz"
 msgid "Add {topics} to your plan?"
-msgstr ""
+msgstr "Planına {topics} eklensin mi?"
 
 #: src/plan/use-operation-question.ts
 msgctxt "oeLkPK"
 msgid "Focus on {subjects}?"
-msgstr ""
+msgstr "{subjects} öncelikli olsun mu?"
 
 #: src/plan/use-operation-question.ts
 msgctxt "IhILju"
 msgid "Remove your focus?"
-msgstr ""
+msgstr "Öncelikleri kaldıralım mı?"
 
 #: src/plan/use-operation-question.ts
 msgctxt "WL0WWw"
 msgid "Less time for {subjects}?"
-msgstr ""
+msgstr "{subjects} için daha az zaman ayıralım mı?"
 
 #: src/plan/use-operation-question.ts
 msgctxt "WqIOkc"
 msgid "Take {subjects} out of your plan?"
-msgstr ""
+msgstr "Planından {subjects} çıkarılsın mı?"
 
 #: src/plan/use-operation-question.ts
 msgctxt "pFDR2w"
 msgid "Add {subjects} back to your plan?"
-msgstr ""
+msgstr "Planına {subjects} yeniden eklensin mi?"
 
 #: src/plan/use-operation-question.ts
 msgctxt "pATZcK"
 msgid "Skip the basics of {subjects}?"
-msgstr ""
+msgstr "{subjects} için temel bilgileri atlayalım mı?"
 
 #: src/plan/use-operation-question.ts
 msgctxt "yzWPVh"
 msgid "Start {subjects} from the basics?"
-msgstr ""
+msgstr "{subjects} için temelden başlayalım mı?"
 
 #: src/plan/use-operation-question.ts
 msgctxt "_zDz_e"
 msgid "Study {time} a day?"
-msgstr ""
+msgstr "Günde {time} çalışalım mı?"
 
 #: src/plan/use-operation-question.ts
 msgctxt "qhZ_eV"
 msgid "{count, plural, one {Make {days} a rest day?} other {Make {days} rest days?}}"
-msgstr ""
+msgstr "{count, plural, other {{days} dinlenme günü olsun mu?}}"
 
 #: src/plan/use-operation-question.ts
 msgctxt "iRxfqr"
 msgid "Study {time} on {days}?"
-msgstr ""
+msgstr "{time} çalışmayı {days} günleri için planlayalım mı?"
 
 #: src/plan/use-operation-question.ts
 msgctxt "D1Mn7p"
 msgid "Take a lighter week from {date}, at half the time?"
-msgstr ""
+msgstr "{date} tarihinden itibaren bir hafta çalışma süreni yarıya indirelim mi?"
 
 #: src/plan/use-operation-question.ts
 msgctxt "p6lRdj"
 msgid "Move this week's challenge to {date}?"
-msgstr ""
+msgstr "Bu haftaki meydan okumayı {date} tarihine alalım mı?"
 
 #: src/plan/use-operation-question.ts
 msgctxt "2s-lg0"
 msgid "Study without an end date?"
-msgstr ""
+msgstr "Bitiş tarihi olmadan çalışalım mı?"
 
 #: src/plan/use-operation-question.ts
 msgctxt "Q_ZMVF"
 msgid "End your plan at the exam?"
-msgstr ""
+msgstr "Planını sınav tarihinde bitirelim mi?"
 
 #: src/plan/use-operation-question.ts
 msgctxt "9Lad6A"
 msgid "More practice?"
-msgstr ""
+msgstr "Daha fazla alıştırma mı?"
 
 #: src/plan/use-operation-question.ts
 msgctxt "bq8SzH"
 msgid "More explanation?"
-msgstr ""
+msgstr "Daha fazla açıklama mı?"
 
 #: src/plan/use-operation-question.ts
 msgctxt "1O6Vbq"
 msgid "Harder lessons?"
-msgstr ""
+msgstr "Daha zor dersler mi?"
 
 #: src/plan/use-operation-question.ts
 msgctxt "74YmjL"
 msgid "Easier lessons?"
-msgstr ""
+msgstr "Daha kolay dersler mi?"
 
 #: src/plan/use-operation-question.ts
 msgctxt "gsoC3D"
 msgid "Back to the usual difficulty?"
-msgstr ""
+msgstr "Her zamanki zorluk düzeyine dönelim mi?"
 
 #: src/plan/use-operation-question.ts
 msgctxt "QuhpKB"
 msgid "Take {activities} out of your lessons?"
-msgstr ""
+msgstr "Derslerinden {activities} çıkarılsın mı?"
 
 #: src/plan/use-operation-question.ts
 msgctxt "hXKB4p"
 msgid "Bring {activities} back to your lessons?"
-msgstr ""
+msgstr "Derslerine {activities} yeniden eklensin mi?"
 
 #: src/plan/use-operation-question.ts
 msgctxt "JcSj1Q"
 msgid "Change your prerequisites?"
-msgstr ""
+msgstr "Ön bilgi tercihlerini değiştirelim mi?"
 
 #: src/plan/use-operation-question.ts
 msgctxt "Rbgsrw"
 msgid "Study up to {level}?"
-msgstr ""
+msgstr "{level} düzeyine kadar çalışalım mı?"
 
 #: src/plan/use-operation-question.ts
 msgctxt "etSQn0"
 msgid "Add the lessons your time fits?"
-msgstr ""
+msgstr "Sürenin yettiği dersleri ekleyelim mi?"
 
 #: src/plan/use-operation-statement.ts
 msgctxt "lhP9Vj"
 msgid "Harder lessons from now on."
-msgstr ""
+msgstr "Bundan sonra daha zor dersler."
 
 #: src/plan/use-operation-statement.ts
 msgctxt "HiqeC5"
 msgid "Easier lessons from now on."
-msgstr ""
+msgstr "Bundan sonra daha kolay dersler."
 
 #: src/plan/use-operation-statement.ts
 msgctxt "z8OoV5"
@@ -12289,17 +12170,17 @@ msgstr "Bundan sonra dersler her zamanki zorlukta olur."
 #: src/plan/use-operation-statement.ts
 msgctxt "BRMQFR"
 msgid "{document, select, notice {Your plan follows the exam's official guide.} other {Your plan follows the exam's official guide.}}"
-msgstr ""
+msgstr "{document, select, notice {Planın resmî sınav ilanına göre ilerliyor.} other {Planın resmî sınav kılavuzuna göre ilerliyor.}}"
 
 #: src/plan/use-operation-statement.ts
 msgctxt "TOJUUa"
 msgid "{count, plural, one {{topics} added to your plan.} other {{topics} added to your plan.}}"
-msgstr ""
+msgstr "{count, plural, other {{topics} planına eklendi.}}"
 
 #: src/plan/use-operation-statement.ts
 msgctxt "rl5o-A"
 msgid "Your focus: {subjects}."
-msgstr ""
+msgstr "Odağın: {subjects}."
 
 #: src/plan/use-operation-statement.ts
 msgctxt "eEjhoj"
@@ -12314,37 +12195,37 @@ msgstr "{subjects} için daha az zaman."
 #: src/plan/use-operation-statement.ts
 msgctxt "WfEaF5"
 msgid "{count, plural, one {{subjects} isn't in your plan.} other {{subjects} aren't in your plan.}}"
-msgstr ""
+msgstr "{count, plural, other {{subjects} planında yer almıyor.}}"
 
 #: src/plan/use-operation-statement.ts
 msgctxt "JRd4qM"
 msgid "{count, plural, one {{subjects} added to your plan.} other {{subjects} added to your plan.}}"
-msgstr ""
+msgstr "{count, plural, other {{subjects} planına eklendi.}}"
 
 #: src/plan/use-operation-statement.ts
 msgctxt "yFPguK"
 msgid "Your plan skips the basics of {subjects}."
-msgstr ""
+msgstr "Planın {subjects} ile ilgili temel konuları atlıyor."
 
 #: src/plan/use-operation-statement.ts
 msgctxt "S-SOzv"
 msgid "{count, plural, one {{subjects} starts from the basics.} other {{subjects} start from the basics.}}"
-msgstr ""
+msgstr "{count, plural, other {{subjects} için temel konulardan başlanıyor.}}"
 
 #: src/plan/use-operation-statement.ts
 msgctxt "oKdn3i"
 msgid "{count, plural, one {# with every lesson} other {# with every lesson}}"
-msgstr ""
+msgstr "{count, plural, other {# tanesi tüm dersleriyle}}"
 
 #: src/plan/use-operation-statement.ts
 msgctxt "LC1sYj"
 msgid "{count, plural, one {# with the first lessons only} other {# with the first lessons only}}"
-msgstr ""
+msgstr "{count, plural, other {# tanesi yalnızca ilk dersleriyle}}"
 
 #: src/plan/use-operation-statement.ts
 msgctxt "32u5L7"
 msgid "{count, plural, one {# with one short lesson} other {# with one short lesson}}"
-msgstr ""
+msgstr "{count, plural, other {# tanesi tek bir kısa dersle}}"
 
 #. Counts blocks of today's study session the learner skipped.
 #: src/plan/use-operation-statement.ts
@@ -12356,12 +12237,12 @@ msgstr "{count, plural, other {# atlandı}}"
 #: src/plan/use-operation-statement.ts
 msgctxt "kCS0RJ"
 msgid "Prerequisites: {parts}."
-msgstr ""
+msgstr "Ön bilgiler: {parts}."
 
 #: src/plan/use-operation-statement.ts
 msgctxt "8KCSND"
 msgid "You now study {time} a day."
-msgstr ""
+msgstr "Artık günde {time} çalışıyorsun."
 
 #: src/plan/use-operation-statement.ts
 msgctxt "gGz2WP"
@@ -12376,37 +12257,37 @@ msgstr "{days}: günde {time}"
 #: src/plan/use-operation-statement.ts
 msgctxt "nybPwt"
 msgid "A lighter week from {date}, at half the time."
-msgstr ""
+msgstr "{date} tarihinden itibaren bir hafta boyunca çalışma süren yarıya iniyor."
 
 #: src/plan/use-operation-statement.ts
 msgctxt "acLp-D"
 msgid "This week's challenge moved to {date}."
-msgstr ""
+msgstr "Bu haftaki meydan okuma {date} tarihine alındı."
 
 #: src/plan/use-operation-statement.ts
 msgctxt "EYPoni"
 msgid "{dateKind, select, exam {Exam date: {date}.} goal {End date: {date}.} other {Date moved to {date}.}}"
-msgstr ""
+msgstr "{dateKind, select, exam {Sınav tarihi: {date}.} goal {Bitiş tarihi: {date}.} other {Tarih {date} olarak değiştirildi.}}"
 
 #: src/plan/use-operation-statement.ts
 msgctxt "DxGmxU"
 msgid "Your plan has no end date."
-msgstr ""
+msgstr "Planının bitiş tarihi yok."
 
 #: src/plan/use-operation-statement.ts
 msgctxt "RnY04z"
 msgid "Your plan goes on after the exam."
-msgstr ""
+msgstr "Planın sınavdan sonra da devam ediyor."
 
 #: src/plan/use-operation-statement.ts
 msgctxt "JXOYRt"
 msgid "Your plan ends at the exam."
-msgstr ""
+msgstr "Planın sınav tarihinde bitiyor."
 
 #: src/plan/use-operation-statement.ts
 msgctxt "0qr5y7"
 msgid "Your lessons no longer have {activities}."
-msgstr ""
+msgstr "Derslerinde artık {activities} yok."
 
 #: src/plan/use-operation-statement.ts
 msgctxt "SHExgI"
@@ -12426,17 +12307,17 @@ msgstr "Bundan sonra daha fazla açıklama."
 #: src/plan/use-operation-statement.ts
 msgctxt "ennIrt"
 msgid "Level to reach: {level}."
-msgstr ""
+msgstr "Hedef seviye: {level}."
 
 #: src/plan/use-operation-statement.ts
 msgctxt "IQ6KGj"
 msgid "Lessons added to your plan."
-msgstr ""
+msgstr "Planına dersler eklendi."
 
 #: src/plan/use-operation-statement.ts
 msgctxt "zC0937"
 msgid "Your phase dates moved."
-msgstr ""
+msgstr "Planındaki aşamaların tarihleri değişti."
 
 #: src/plan/use-operation-statement.ts
 msgctxt "h71iYS"
@@ -12446,42 +12327,42 @@ msgstr "{group}: {subject}."
 #: src/plan/use-phase-dates-sentence.ts
 msgctxt "5B12nE"
 msgid "Move your phase dates later?"
-msgstr ""
+msgstr "Aşama tarihlerini ileri alalım mı?"
 
 #: src/plan/use-phase-dates-sentence.ts
 msgctxt "hMsz2_"
 msgid "That gives you time to finish each phase's lessons."
-msgstr ""
+msgstr "Böylece her aşamadaki dersleri bitirecek zamanın olur."
 
 #: src/plan/use-phase-dates-sentence.ts
 msgctxt "dpv6iX"
 msgid "{days, plural, one {Move the end of {phase} # day later?} other {Move the end of {phase} # days later?}}"
-msgstr ""
+msgstr "{days, plural, other {{phase} aşamasının bitişini # gün erteleyelim mi?}}"
 
 #: src/plan/use-phase-dates-sentence.ts
 msgctxt "HGzql1"
 msgid "That gives you time to finish its lessons."
-msgstr ""
+msgstr "Böylece o aşamadaki dersleri bitirecek zamanın olur."
 
 #: src/plan/use-phase-dates-sentence.ts
 msgctxt "ZVhIKc"
 msgid "Move your phase dates off rest days?"
-msgstr ""
+msgstr "Aşama tarihlerini dinlenme günleri dışına alalım mı?"
 
 #: src/plan/use-phase-dates-sentence.ts
 msgctxt "aaz24-"
 msgid "Move the end of {phase} off {day}?"
-msgstr ""
+msgstr "{phase} aşamasının bitişini {day} yerine başka bir güne alalım mı?"
 
 #: src/plan/use-phase-dates-sentence.ts
 msgctxt "Xs5viu"
 msgid "{day} is a day you don't study."
-msgstr ""
+msgstr "{day} günü çalışmıyorsun."
 
 #: src/plan/use-phase-dates-sentence.ts
 msgctxt "DdoYN0"
 msgid "Move your phase dates?"
-msgstr ""
+msgstr "Aşama tarihlerini değiştirelim mi?"
 
 #: src/plan/use-phase-name.ts
 msgctxt "planPhases.0LvMLZ"
@@ -12550,7 +12431,6 @@ msgstr "Deneme sınavı ve alıştırma"
 
 #: src/plan/use-short-plan.ts
 #: src/session/use-block-copy.ts
-#: src/today/today-week-challenge.tsx
 msgctxt "ZBDAJ7"
 msgid "Full review"
 msgstr "Genel tekrar"
@@ -12588,22 +12468,22 @@ msgstr "{first} – {last}"
 #: src/plan/use-system-change-sentence.ts
 msgctxt "6dw0H9"
 msgid "Your plan moved to fit the days you missed."
-msgstr ""
+msgstr "Planın çalışamadığın günlere göre yeniden düzenlendi."
 
 #: src/plan/use-system-change-sentence.ts
 msgctxt "gU3R5_"
 msgid "Your plan changed to match the time your lessons take."
-msgstr ""
+msgstr "Planın derslerinin süresine göre değiştirildi."
 
 #: src/plan/use-system-change-sentence.ts
 msgctxt "BEtnOi"
 msgid "{lessons, plural, one {You passed the test, so your plan skips # lesson.} other {You passed the test, so your plan skips # lessons.}}"
-msgstr ""
+msgstr "{lessons, plural, other {Testi geçtin, bu yüzden planında # ders atlanıyor.}}"
 
 #: src/plan/use-system-change-sentence.ts
 msgctxt "KjtC18"
 msgid "Your test answers changed your plan."
-msgstr ""
+msgstr "Testte verdiğin cevaplar planını değiştirdi."
 
 #: src/plan/use-system-name.ts
 msgctxt "JcZHkZ"
@@ -12635,11 +12515,11 @@ msgctxt "g7wBHi"
 msgid "We couldn't work out the time needed."
 msgstr "Gereken süreyi hesaplayamadık."
 
-#. A button that works out the daily time that covers the whole goal. Keep it apart from the "Study everything, even after the exam" switch: say "cover everything", not "study everything".
+#. A button that works out the daily time that covers the whole goal. The line above it says what's left uncovered.
 #: src/plan/use-time-to-cover.ts
-msgctxt "Yxy0ov"
-msgid "Find the time that covers everything"
-msgstr "Tüm konulara yetecek süreyi bul"
+msgctxt "8bQ4-P"
+msgid "Find the time"
+msgstr "Süreyi hesapla"
 
 #: src/plan/use-time-to-cover.ts
 msgctxt "fgq47T"
@@ -13446,10 +13326,9 @@ msgid "vector {base}"
 msgstr "{base} vektörü"
 
 #: src/session/extra-time-button.tsx
-#: src/today/today-extra-time.tsx
-msgctxt "a8JHBW"
-msgid "Study {minutes} more minutes"
-msgstr "{minutes} dakika daha çalış"
+msgctxt "dWsizD"
+msgid "Practice {minutes} more min"
+msgstr "{minutes} dk. daha çalış"
 
 #: src/session/failed-moment.tsx
 msgctxt "kapQxt"
@@ -13549,7 +13428,6 @@ msgid "Stop for today"
 msgstr "Bugünlük bitir"
 
 #: src/session/next-stop.tsx
-#: src/today/use-row-label.ts
 msgctxt "d562ST"
 msgid "Often tested"
 msgstr "Sınavlarda sık çıkar"
@@ -13807,7 +13685,6 @@ msgstr "{completed, plural, =0 {# / {total} tamamlandı} other {# / {total} tama
 #: src/session/session-header.tsx
 #: src/session/session-queue.tsx
 #: src/session/summary/summary-parts.tsx
-#: src/today/today-screen.tsx
 msgctxt "hnntJl"
 msgid "Today's session"
 msgstr "Bugünkü çalışma"
@@ -14020,11 +13897,11 @@ msgid ", {variety}"
 msgstr ", {variety}"
 
 #: src/shell/goal-menu-row.tsx
-msgctxt "goalSwitcher._G_fp6"
-msgid "Pause a goal or get Plus"
-msgstr "Bir hedefi duraklat veya Plus’a geç"
+msgctxt "goalSwitcher.J0jAqm"
+msgid "Pause a goal to start it"
+msgstr "Başlamak için bir hedefi duraklat"
 
-#. Status under a goal in the goal switcher that a guest typed with their goals but can't start yet, read like “Starts with Plus” under an account's waiting goal: a short status, not a button or a command. Without an account a learner follows one goal at a time; a “free account” (signed up, on the free plan, not the paid plan) follows more goals at once. This counts goals followed at the same time, not new goals started per day or month. The goal comes with them when they create the account. Tapping the row opens sign-up.
+#. A short status, not a button, under a goal a guest typed and can't start yet. Creating a free account lets them start it; tapping the row opens sign-up.
 #: src/shell/goal-menu-row.tsx
 msgctxt "goalSwitcher.VX7VBg"
 msgid "Starts with a free account"
@@ -14088,8 +13965,8 @@ msgid "Quick explanations"
 msgstr "Kısa açıklamalar"
 
 #: src/shell/goal-switcher.tsx
-msgctxt "goalSwitcher.QTg-WT"
-msgid "Start a new goal"
+msgctxt "goalSwitcher.Q25Oon"
+msgid "New goal"
 msgstr "Yeni bir hedefe başla"
 
 #: src/shell/goal-switcher.tsx
@@ -14123,14 +14000,14 @@ msgid "Make room for {goal}"
 msgstr "{goal} için yer aç"
 
 #: src/shell/make-room-sheet.tsx
-msgctxt "goalSwitcher.92OYJm"
-msgid "You're following as many goals as the free plan allows. Pause one to start {goal}. You can resume it later."
-msgstr "Ücretsiz paketteki hedef sınırına ulaştın. {goal} hedefine başlamak için birini duraklat. Duraklattığın hedefe daha sonra devam edebilirsin."
+msgctxt "goalSwitcher.4nd7tj"
+msgid "That's as many goals as you can study at once. Pause one to start this one."
+msgstr "Aynı anda çalışabileceğin hedef sayısına ulaştın. Bu hedefe başlamak için birini duraklat."
 
 #: src/shell/make-room-sheet.tsx
-msgctxt "goalSwitcher.0I_Rwu"
-msgid "Get Plus"
-msgstr "Plus’a geç"
+msgctxt "goalSwitcher.gczcC5"
+msgid "Subscribe"
+msgstr "Abone ol"
 
 #. Stops a recording. Hints tell the learner to press it by this name.
 #: src/speech/record-button.tsx
@@ -14173,19 +14050,19 @@ msgstr "Söylenenler:"
 #: src/syllabus/frequency-chip.tsx
 msgctxt "tSwkMF"
 msgid "Asked a lot"
-msgstr ""
+msgstr "Sık sorulan"
 
 #. On one exam's plan. {exams} names the learner's other exams that test some of the same topics.
 #: src/syllabus/shared-exams.tsx
 msgctxt "d1-Zc7"
 msgid "You study the topics shared with {exams} once."
-msgstr ""
+msgstr "{exams} ile ortak konuları bir kez çalışırsın."
 
 #. On one exam's plan, when the learner has several other exams that test some of the same topics.
 #: src/syllabus/shared-exams.tsx
 msgctxt "U3XN4Z"
 msgid "{count, plural, one {You study the topics shared with your # other exam once.} other {You study the topics shared with your # other exams once.}}"
-msgstr ""
+msgstr "{count, plural, other {Diğer # sınavınla ortak konuları bir kez çalışırsın.}}"
 
 #. Marks a subject on one exam's plan that the learner's other exams named in {exams} also test.
 #: src/syllabus/shared-exams.tsx
@@ -14222,12 +14099,12 @@ msgstr "{count, plural, other {# ünite tamamlandı}}"
 #: src/syllabus/subject-chapters.tsx
 msgctxt "duDcbL"
 msgid "{count, plural, one {# chapter you already know} other {# chapters you already know}}"
-msgstr ""
+msgstr "{count, plural, other {Zaten bildiğin # ünite}}"
 
 #: src/syllabus/subject-chapters.tsx
 msgctxt "oUXyHJ"
 msgid "{done, plural, one {# chapter done} other {# chapters done}}, {known, plural, one {# you already know} other {# you already know}}"
-msgstr ""
+msgstr "{done, plural, other {# ünite tamamlandı}}, {known, plural, other {# üniteyi zaten biliyordun}}"
 
 #: src/syllabus/subject-matrix.tsx
 msgctxt "f1GnB3"
@@ -14242,7 +14119,7 @@ msgstr "{count, number} başlığın tümünü gör"
 #: src/syllabus/subject-not-planned.tsx
 msgctxt "MaFsVi"
 msgid "Add it back"
-msgstr ""
+msgstr "Geri ekle"
 
 #: src/syllabus/subject-not-planned.tsx
 msgctxt "kK7vYa"
@@ -14252,12 +14129,12 @@ msgstr "Bu branşı planından çıkardın."
 #: src/syllabus/subject-not-planned.tsx
 msgctxt "Xs-i9Q"
 msgid "This subject isn't in your plan: not enough time before your exam."
-msgstr ""
+msgstr "Bu branş planında yok: sınavına kadar yeterli zaman yok."
 
 #: src/syllabus/subject-not-planned.tsx
 msgctxt "aqUWND"
 msgid "This subject isn't in your plan yet."
-msgstr ""
+msgstr "Bu branş henüz planında yok."
 
 #: src/syllabus/subject-screen.tsx
 msgctxt "BZdkSg"
@@ -14288,7 +14165,7 @@ msgstr "Materyalindeki konular"
 #: src/syllabus/subject-screen.tsx
 msgctxt "np_f3U"
 msgid "Topics on the exam"
-msgstr ""
+msgstr "Sınav konuları"
 
 #: src/syllabus/subject-screen.tsx
 #: src/syllabus/use-subject-progress.ts
@@ -14340,12 +14217,12 @@ msgstr "{total, plural, other {# ders}} · {done, plural, =0 {# tamamlandı} oth
 #: src/syllabus/syllabus-section.tsx
 msgctxt "fhwTpA"
 msgid "Sources"
-msgstr ""
+msgstr "Kaynaklar"
 
 #: src/syllabus/syllabus-notes.tsx
 msgctxt "ohA5d_"
 msgid "How often past exams asked each topic: {basis}, according to <link>{publisher}</link>."
-msgstr ""
+msgstr "Geçmiş sınavlarda her konunun sorulma sıklığı: {basis} (kaynak: <link>{publisher}</link>)."
 
 #: src/syllabus/syllabus-notes.tsx
 msgctxt "mNd4kZ"
@@ -14402,12 +14279,12 @@ msgstr "Planında {planned, number} / {total, plural, other {# konu}} var"
 #: src/syllabus/syllabus-summary.tsx
 msgctxt "AxYibj"
 msgid "{count, plural, one {# subject on the exam} other {# subjects on the exam}}"
-msgstr ""
+msgstr "{count, plural, other {Sınavda # branş}}"
 
 #: src/syllabus/syllabus-summary.tsx
 msgctxt "Jeb9y8"
 msgid "{total, plural, one {# topic} other {# topics}}, {leftOut, number} not in your plan"
-msgstr ""
+msgstr "{total, plural, other {# konu}}, {leftOut, number} tanesi planında yok"
 
 #: src/syllabus/syllabus-summary.tsx
 #: src/syllabus/use-subject-progress.ts
@@ -14428,33 +14305,35 @@ msgstr "Çalışacağın konular"
 #: src/syllabus/topic-note.tsx
 msgctxt "kIKTnm"
 msgid "Not in your plan · you took this subject out"
-msgstr ""
+msgstr "Planında yok · bu branşı plandan çıkardın"
 
 #: src/syllabus/topic-note.tsx
 msgctxt "Wz9Y3H"
 msgid "Skipped · you already know the basics"
-msgstr ""
+msgstr "Atlandı · temel bilgileri zaten biliyorsun"
 
 #: src/syllabus/topic-note.tsx
 msgctxt "QGcMHn"
 msgid "Skipped · your choice"
-msgstr ""
+msgstr "Atlandı · senin tercihin"
 
 #: src/syllabus/topic-note.tsx
 msgctxt "DQ_P5S"
 msgid "Not in your plan · your time doesn't cover it"
-msgstr ""
+msgstr "Planında yok · çalışma süren yetmiyor"
 
 #: src/syllabus/topic-note.tsx
+#: src/today/today-coming-lessons.tsx
+#: src/today/today-segment-popover.tsx
 #: src/topic-outline/use-far-topic-line.ts
 msgctxt "5CkyMG"
 msgid "Not ready yet"
-msgstr ""
+msgstr "Henüz hazır değil"
 
 #: src/syllabus/use-subject-progress.ts
 msgctxt "0O99bA"
 msgid "{count, plural, one {# lesson you already know} other {# lessons you already know}}"
-msgstr ""
+msgstr "{count, plural, other {Zaten bildiğin # ders}}"
 
 #: src/syllabus/use-subject-progress.ts
 msgctxt "jrDQIZ"
@@ -14462,23 +14341,13 @@ msgid "{total, plural, one {{done, number} of # lesson} other {{done, number} of
 msgstr "{total, plural, other {{done, number} / # ders}}"
 
 #: src/today/today-action.tsx
-msgctxt "AstaIr"
-msgid "Continue session"
-msgstr "Çalışmaya devam et"
+#: src/today/today-more.tsx
+msgctxt "6Jd28t"
+msgid "Practice {minutes} min"
+msgstr "{minutes} dk. pratik yap"
 
+#. Button that asks for today's lessons to be made ready.
 #: src/today/today-action.tsx
-msgctxt "J9JF-p"
-msgid "Start session"
-msgstr "Çalışmaya başla"
-
-#: src/today/today-action.tsx
-msgctxt "AFqHlU"
-msgid "Practice for {minutes} minutes"
-msgstr "{minutes} dakika pratik yap"
-
-#. Button that has Zoonk write today's lessons.
-#: src/today/today-action.tsx
-#: src/today/today-coming-lessons.tsx
 msgctxt "Nb8Jg7"
 msgid "Get today's lessons"
 msgstr "Bugünkü dersleri hazırlat"
@@ -14489,41 +14358,21 @@ msgid "We couldn't open your next lessons. Try again."
 msgstr "Sıradaki derslerini açamadık. Tekrar dene."
 
 #: src/today/today-block-row.tsx
-msgctxt "pPB2tF"
-msgid "{phase} · after this phase's lessons"
-msgstr "{phase} · bu aşamanın derslerinden sonra"
-
-#: src/today/today-block-row.tsx
 msgctxt "bUQLj8"
 msgid ", skipped"
 msgstr ", atlandı"
 
 #: src/today/today-block-row.tsx
+msgctxt "PFPoFb"
+msgid ", counts toward a mission"
+msgstr ", bir görevde ilerleme sağlar"
+
+#: src/today/today-block-row.tsx
 #: src/today/today-coming-lessons.tsx
 #: src/today/today-segment-popover.tsx
-msgctxt "FAa3OD"
-msgid "Being written for you…"
-msgstr "Senin için hazırlıyoruz…"
-
-#: src/today/today-catch-up.tsx
-msgctxt "46XG_j"
-msgid "{lessons, plural, one {Your next days start with the # lesson left to catch up.} other {Your next days start with the # lessons left to catch up.}}"
-msgstr "{lessons, plural, other {Önümüzdeki günlerde önce eksik kalan # dersi tamamlayacaksın.}}"
-
-#: src/today/today-catch-up.tsx
-msgctxt "KieifK"
-msgid "{lessons, plural, one {You can still catch up on # lesson today, if you have time.} other {You can still catch up on # lessons today, if you have time.}}"
-msgstr "{lessons, plural, other {Vaktin varsa bugün eksik kalan # dersi de tamamlayabilirsin.}}"
-
-#: src/today/today-catch-up.tsx
-msgctxt "3aXO5g"
-msgid "{lessons, plural, one {# more lesson to catch up comes first tomorrow.} other {# more lessons to catch up come first tomorrow.}}"
-msgstr "{lessons, plural, other {Yarın ilk iş eksik kalan # dersi daha tamamlayacaksın.}}"
-
-#: src/today/today-catch-up.tsx
-msgctxt "HK8HHp"
-msgid "Catch up today · +{time}"
-msgstr "Kalanları bugün tamamla · +{time}"
+msgctxt "2LhxfA"
+msgid "Getting ready…"
+msgstr "Hazırlıyoruz…"
 
 #: src/today/today-change-notice.tsx
 msgctxt "ZoDO4s"
@@ -14531,10 +14380,9 @@ msgid "What changed"
 msgstr "Neler değişti"
 
 #: src/today/today-coming-lessons.tsx
-#: src/today/today-segment-popover.tsx
-msgctxt "Ay_6I8"
-msgid "Not written yet."
-msgstr "Henüz hazırlanmadı."
+msgctxt "4bemPv"
+msgid "Get them now"
+msgstr "Şimdi hazırla"
 
 #: src/today/today-coming-lessons.tsx
 #: src/today/today-segment-popover.tsx
@@ -14553,15 +14401,25 @@ msgctxt "m9CrfE"
 msgid "{done, plural, =0 {# of {total, number} done} one {# of {total, number} done} other {# of {total, number} done}}"
 msgstr "{done, plural, =0 {# / {total, number} tamamlandı} other {# / {total, number} tamamlandı}}"
 
+#: src/today/today-day-progress.tsx
+msgctxt "OFFVnK"
+msgid "A shorter day"
+msgstr "Daha kısa bir gün"
+
+#: src/today/today-day-progress.tsx
+msgctxt "73UHV8"
+msgid "Your plan keeps time for the mock exam on {date}."
+msgstr "Planın {date} tarihindeki deneme sınavı için zaman ayırıyor."
+
 #: src/today/today-day-status.tsx
 msgctxt "XMRh7X"
 msgid "You studied on your day off."
 msgstr "Dinlenme gününde çalıştın."
 
 #: src/today/today-day-status.tsx
-msgctxt "QPZgh9"
-msgid "Today's session is complete."
-msgstr "Bugünkü çalışman tamamlandı."
+msgctxt "CZ9Ql4"
+msgid "You're done for today."
+msgstr "Bugünkü çalışmanı tamamladın."
 
 #: src/today/today-day-status.tsx
 msgctxt "9JilTp"
@@ -14569,19 +14427,9 @@ msgid "No study planned today."
 msgstr "Bugün planında çalışma yok."
 
 #: src/today/today-day-status.tsx
-msgctxt "n6t3BM"
-msgid "Welcome back! Your next lessons are here if you'd like to study."
-msgstr "Tekrar hoş geldin! Çalışmak istersen sıradaki derslerin burada."
-
-#: src/today/today-day-status.tsx
-msgctxt "lx6WCd"
-msgid "Your next lessons are here if you'd like to study."
-msgstr "Çalışmak istersen sıradaki derslerin burada."
-
-#: src/today/today-day-status.tsx
-msgctxt "xzdcrh"
-msgid "Welcome back! Today is a rest day in your plan, so enjoy it."
-msgstr "Tekrar hoş geldin! Planına göre bugün dinlenme günü, tadını çıkar."
+msgctxt "RC22zo"
+msgid "Your next lessons are below if you want to study."
+msgstr "Çalışmak istersen sıradaki derslerin aşağıda."
 
 #: src/today/today-day-status.tsx
 msgctxt "MdRa2K"
@@ -14604,45 +14452,29 @@ msgid "Getting today's lessons ready…"
 msgstr "Bugünkü dersleri hazırlıyoruz…"
 
 #: src/today/today-day-status.tsx
-msgctxt "JpvthH"
-msgid "They show up here on their own."
-msgstr "Hazır olunca burada otomatik olarak görünecekler."
+msgctxt "DI5PCI"
+msgid "Today's lessons aren't ready yet."
+msgstr "Bugünkü dersler henüz hazır değil."
 
 #: src/today/today-day-status.tsx
-msgctxt "OX1Nok"
-msgid "Adjust your plan to keep going."
-msgstr "Devam etmek için planını ayarla."
+msgctxt "bGbW_K"
+msgid "You finished your plan."
+msgstr "Planını tamamladın."
 
 #: src/today/today-day-status.tsx
-msgctxt "FyQP44"
-msgid "Today's lessons aren't written yet."
-msgstr "Bugünkü dersler henüz hazırlanmadı."
+msgctxt "brhjJ2"
+msgid "You're all caught up."
+msgstr "Planına yetiştin."
 
-#: src/today/today-day-status.tsx
-msgctxt "2PMQ3_"
-msgid "Nothing to review today."
-msgstr "Bugün tekrar edilecek bir şey yok."
+#: src/today/today-earlier-lessons.tsx
+msgctxt "JMtLiG"
+msgid "{lessons, plural, one {# lesson from earlier days} other {# lessons from earlier days}}"
+msgstr "{lessons, plural, other {Önceki günlerden # ders}}"
 
-#: src/today/today-day-status.tsx
-msgctxt "wqqp3S"
-msgid "Nothing new for today."
-msgstr "Bugün yeni ders yok."
-
-#: src/today/today-day-status.tsx
-msgctxt "vzcvDF"
-msgid "You've done every lesson in your plan, or already know it."
-msgstr "Planındaki tüm dersleri ya tamamladın ya da zaten biliyordun."
-
-#. Study left over, not a job: lessons left unfinished on earlier days. {count} is how many.
-#: src/today/today-earlier-work.tsx
-msgctxt "ylqDtY"
-msgid "Earlier unfinished work · {count}"
-msgstr "Önceki günlerden yarım kalan dersler · {count}"
-
-#: src/today/today-exam-access.tsx
-msgctxt "6cgB9d"
-msgid "Exam prep on the free plan"
-msgstr "Ücretsiz pakette sınava hazırlık"
+#: src/today/today-earlier-lessons.tsx
+msgctxt "dlS9NH"
+msgid "Add to today"
+msgstr "Bugüne ekle"
 
 #: src/today/today-exam-choice.tsx
 msgctxt "SVKPfj"
@@ -14657,22 +14489,22 @@ msgstr "Sınavın"
 #: src/today/today-falling-behind.tsx
 msgctxt "nnEO3o"
 msgid "{time} a day now covers {after} of the exam, down from {before}."
-msgstr ""
+msgstr "Günde {time} ile artık sınavın {after} kadarı planına sığıyor; önceden {before} kadarı sığıyordu."
 
 #: src/today/today-falling-behind.tsx
 msgctxt "OPF07J"
 msgid "{time} a day now covers {after} of your goal, down from {before}."
-msgstr ""
+msgstr "Günde {time} ile artık hedefinin {after} kadarı planına sığıyor; önceden {before} kadarı sığıyordu."
 
 #: src/today/today-falling-behind.tsx
 msgctxt "sS7-IQ"
 msgid "Add time"
-msgstr ""
+msgstr "Süre ekle"
 
 #: src/today/today-falling-behind.tsx
 msgctxt "UucZ2o"
 msgid "Keep studying after the exam"
-msgstr ""
+msgstr "Sınavdan sonra çalışmaya devam et"
 
 #. Keeps the learner's time a day as it is.
 #: src/today/today-falling-behind.tsx
@@ -14683,12 +14515,12 @@ msgstr "Günlük süreni koru"
 #: src/today/today-falling-behind.tsx
 msgctxt "-AN5eF"
 msgid "You missed a few days"
-msgstr ""
+msgstr "Birkaç gün ara verdin"
 
 #: src/today/today-falling-behind.tsx
 msgctxt "38ojSQ"
 msgid "Okay. Your time stays the same."
-msgstr ""
+msgstr "Tamam. Çalışma süren aynı kalıyor."
 
 #: src/today/today-falling-behind.tsx
 msgctxt "6WPC9q"
@@ -14713,29 +14545,19 @@ msgid "Your time can't cover everything before your exam. In about {time}, the F
 msgstr "Sınava kadar her şeye zamanın yetmiyor. Odak testi yaklaşık {time} içinde en çok neye çalışman gerektiğini gösterir."
 
 #: src/today/today-heading.tsx
-msgctxt "RlWvYP"
-msgid "Behind"
-msgstr "Geride"
+msgctxt "M3adyv"
+msgid "Not enough time left for all your lessons."
+msgstr "Tüm derslerini bitirmek için yeterli zaman kalmadı."
 
 #: src/today/today-heading.tsx
-msgctxt "FR3uzc"
-msgid "{exam} tomorrow"
-msgstr "{exam} yarın"
+msgctxt "RxQWR_"
+msgid "Welcome back. Today is short, so it's easy to start again."
+msgstr "Tekrar hoş geldin. Bugünkü çalışma kısa, kolayca yeniden başlayabilirsin."
 
 #: src/today/today-heading.tsx
-msgctxt "hKmRFY"
-msgid "{exam} today"
-msgstr "{exam} bugün"
-
-#: src/today/today-heading.tsx
-msgctxt "Ld_YBu"
-msgid "Saving time for {date}'s mock exam"
-msgstr "{date} tarihindeki deneme sınavı için zaman ayırıyoruz"
-
-#: src/today/today-heading.tsx
-msgctxt "dYEY9n"
-msgid "Lighter day: saving time for {date}'s mock exam"
-msgstr "Bugün daha hafif: {date} tarihindeki deneme sınavı için zaman ayırıyoruz"
+msgctxt "Viq1rs"
+msgid "{exam} in {days, plural, one {# day} other {# days}}"
+msgstr "{exam} için {days, plural, other {# gün kaldı}}"
 
 #: src/today/today-insight.tsx
 msgctxt "8owE4V"
@@ -14747,11 +14569,10 @@ msgctxt "xNg7nj"
 msgid "Keep it"
 msgstr "Böyle bırak"
 
-#. Study time is the time of day the learner studies. {time} is a time of day, like "20:00".
 #: src/today/today-insight.tsx
-msgctxt "YSLbSf"
-msgid "Move my study time to {time}"
-msgstr "Çalışma saatimi {time} yap"
+msgctxt "5cDa2C"
+msgid "Move it"
+msgstr "Taşı"
 
 #: src/today/today-insight.tsx
 msgctxt "NYTGIb"
@@ -14780,11 +14601,6 @@ msgstr "Not aldık."
 msgctxt "HEEfpS"
 msgid "From your recent answers"
 msgstr "Son cevaplarına göre"
-
-#: src/today/today-more.tsx
-msgctxt "4wC4V5"
-msgid "Study for {minutes} minutes"
-msgstr "{minutes} dakika çalış"
 
 #: src/today/today-more.tsx
 msgctxt "KnL14u"
@@ -14822,20 +14638,20 @@ msgid "Building your {goal} plan"
 msgstr "{goal} planını hazırlıyoruz"
 
 #: src/today/today-preparing.tsx
-msgctxt "YIDCBU"
-msgid "It usually takes a minute or two. Your first day opens here as soon as it's ready."
-msgstr "Genellikle bir iki dakika sürer. İlk günün hazır olur olmaz burada açılır."
-
-#: src/today/today-row-open.tsx
-msgctxt "PFPoFb"
-msgid ", counts toward a mission"
-msgstr ", bir görevde ilerleme sağlar"
+msgctxt "Xu-pMI"
+msgid "It takes a minute or two. Your first day opens here as soon as it's ready."
+msgstr "Bir iki dakika sürer. İlk günün hazır olur olmaz burada açılır."
 
 #: src/today/today-screen.tsx
 #: src/today/today-shell.tsx
 msgctxt "32z8oG"
 msgid "Your week"
 msgstr "Haftan"
+
+#: src/today/today-screen.tsx
+msgctxt "cBjaVC"
+msgid "Today's lessons"
+msgstr "Bugünkü dersler"
 
 #: src/today/today-segment-popover.tsx
 msgctxt "MDSrNP"
@@ -14909,9 +14725,9 @@ msgid "Up next in your plan"
 msgstr "Planında sıradakiler"
 
 #: src/today/today-week-challenge.tsx
-msgctxt "tfN79H"
-msgid "full review"
-msgstr "genel tekrar"
+msgctxt "bJtf06"
+msgid "review"
+msgstr "tekrar"
 
 #: src/today/today-week-challenge.tsx
 msgctxt "VNs9hR"
@@ -14924,14 +14740,9 @@ msgid "weekly challenge"
 msgstr "haftalık meydan okuma"
 
 #: src/today/today-week-challenge.tsx
-msgctxt "MuwOz5"
-msgid "every topic, your weakest first"
-msgstr "tüm konular, önce en çok zorlandıkların"
-
-#: src/today/today-week-day.tsx
-msgctxt "VlCnpE"
-msgid "daily time met"
-msgstr "günlük çalışma süresi tamamlandı"
+msgctxt "J3eMtx"
+msgid "every topic"
+msgstr "tüm konular"
 
 #: src/today/today-week-day.tsx
 msgctxt "F8phHs"
@@ -14944,9 +14755,9 @@ msgid "exam day"
 msgstr "sınav günü"
 
 #: src/today/today-week-day.tsx
-msgctxt "ndZ3YE"
-msgid "your goal's date"
-msgstr "hedef tarihin"
+msgctxt "WcEyrI"
+msgid "end date"
+msgstr "bitiş tarihi"
 
 #: src/today/today-week-day.tsx
 msgctxt "KQR6jo"
@@ -14954,9 +14765,14 @@ msgid "before your plan"
 msgstr "planının başlangıcından önce"
 
 #: src/today/today-week-day.tsx
-msgctxt "fy2sc9"
-msgid "after your date"
-msgstr "hedef tarihinden sonra"
+msgctxt "1RBuve"
+msgid "after your exam"
+msgstr "sınavından sonra"
+
+#: src/today/today-week-day.tsx
+msgctxt "coog-B"
+msgid "after your end date"
+msgstr "bitiş tarihinden sonra"
 
 #: src/today/today-week-day.tsx
 msgctxt "v_Mk8I"
@@ -14978,74 +14794,42 @@ msgctxt "9PPMqu"
 msgid "{time} planned"
 msgstr "{time} planlandı"
 
-#. A lesson left from an earlier day.
 #: src/today/use-row-label.ts
-msgctxt "afsNpC"
-msgid "Catching up · {subject}"
-msgstr "Önceki günden kalan · {subject}"
-
-#. A lesson left from an earlier day.
-#: src/today/use-row-label.ts
-msgctxt "tj4pFE"
-msgid "Catching up"
-msgstr "Önceki günden kalan"
-
-#: src/today/use-row-label.ts
-msgctxt "4qsWr2"
-msgid "{label} · often tested"
-msgstr "{label} · sınavlarda sık çıkar"
-
-#: src/today/use-today-copy.ts
-msgctxt "QyI7sJ"
-msgid "Welcome back! Today takes about {time}, so it's easy to pick up again."
-msgstr "Tekrar hoş geldin! Bugünkü çalışma yaklaşık {time} sürüyor, böylece kolayca devam edebilirsin."
-
-#: src/today/use-today-copy.ts
-msgctxt "x6Er4-"
-msgid "Welcome back! Today is lighter, about {time}, so it's easy to pick up again."
-msgstr "Tekrar hoş geldin! Bugünkü çalışma daha hafif ve yaklaşık {time} sürüyor, böylece kolayca devam edebilirsin."
-
-#: src/today/use-today-copy.ts
-msgctxt "d8NWNt"
-msgid "A new phase starts today, with an easy warm-up first."
-msgstr "Bugün yeni bir aşama başlıyor, ilk adım kolay bir ısınma."
-
-#: src/today/use-today-copy.ts
-msgctxt "RlVM-g"
-msgid "A fresh week. Today starts with an easy warm-up."
-msgstr "Yeni bir hafta. Bugün kolay bir ısınmayla başlıyorsun."
+msgctxt "OUc_Xr"
+msgid "Every topic"
+msgstr "Tüm konular"
 
 #: src/topic-outline/far-topic-sheet.tsx
 msgctxt "xYCwcS"
 msgid "Getting your lessons ready…"
-msgstr ""
+msgstr "Derslerini hazırlıyoruz…"
 
 #: src/topic-outline/far-topic-sheet.tsx
 msgctxt "6Jpy6P"
 msgid "This topic has no more lessons to get ready."
-msgstr ""
+msgstr "Bu konuda hazırlanacak başka ders yok."
 
 #: src/topic-outline/far-topic-sheet.tsx
 msgctxt "a5YKUq"
 msgid "Get them ready"
-msgstr ""
+msgstr "Dersleri hazırla"
 
 #: src/topic-outline/far-topic-sheet.tsx
 msgctxt "Wvd9Tn"
 msgid "Getting these lessons ready takes about half a minute."
-msgstr ""
+msgstr "Bu dersleri hazırlamak yaklaşık yarım dakika sürer."
 
 #. {start} is a day, like "Nov 5", or a month, like "December".
 #: src/topic-outline/use-far-topic-line.ts
 msgctxt "GNNk9G"
 msgid "{dateKind, select, month {Starts in {start}} other {Starts {start}}}"
-msgstr ""
+msgstr "{dateKind, select, month {{start} ayında başlar} other {{start} tarihinde başlar}}"
 
 #. {start} is a day, like "Nov 5", or a month, like "December".
 #: src/topic-outline/use-far-topic-line.ts
 msgctxt "83fmM5"
 msgid "{dateKind, select, month {{count} · starts in {start}} other {{count} · starts {start}}}"
-msgstr ""
+msgstr "{dateKind, select, month {{count} · {start} ayında başlar} other {{count} · {start} tarihinde başlar}}"
 
 #: src/wait/first-lesson-row.tsx
 msgctxt "22HeK6"
