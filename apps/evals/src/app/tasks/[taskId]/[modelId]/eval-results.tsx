@@ -27,7 +27,7 @@ export async function EvalResults({
       <IssuesSummary results={results.results} />
 
       <div className="flex flex-col gap-4">
-        <h2 className="text-lg font-semibold tracking-tight">Test Cases</h2>
+        <h2 className="text-lg font-semibold tracking-tight">Test cases</h2>
 
         <Accordion className="w-full">
           {outputs.outputs.map((output, index) => {

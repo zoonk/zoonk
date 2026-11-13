@@ -146,7 +146,7 @@ function ConfirmButton({
 
   if (destructive) {
     return (
-      <SubmitButton className="w-auto" disabled={disabled} variant="destructive">
+      <SubmitButton className="w-auto" disabled={disabled} size="lg" variant="destructive">
         {children}
       </SubmitButton>
     );

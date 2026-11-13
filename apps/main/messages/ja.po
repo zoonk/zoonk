@@ -461,6 +461,11 @@ msgid "Search or ask…"
 msgstr "検索・質問…"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
+msgctxt "BSij1a"
+msgid "close"
+msgstr "閉じる"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
 msgctxt "3ATcmQ"
 msgid "move"
 msgstr "移動"
@@ -469,11 +474,6 @@ msgstr "移動"
 msgctxt "-9qP4Y"
 msgid "open"
 msgstr "開く"
-
-#: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
-msgctxt "BSij1a"
-msgid "close"
-msgstr "閉じる"
 
 #: src/app/[lang]/(app)/(catalog)/_components/user-avatar-menu.tsx
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
@@ -540,7 +540,6 @@ msgid "Start the lesson"
 msgstr "レッスンを始める"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-first-screen.tsx
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "x5DbVQ"
 msgid "Start this lesson"
 msgstr "このレッスンを始める"
@@ -758,6 +757,7 @@ msgstr "うまくいきませんでした。もう一度お試しください。
 
 #: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
 #: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 #: src/app/auth/callback/route.ts
 #: src/components/errors/page-error-message.tsx
 #: src/components/public/course-start-failure.tsx
@@ -874,9 +874,9 @@ msgid "No answer was saved."
 msgstr "回答は保存されていません。"
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "zqnAPr"
-msgid "What you asked in your courses before we rewrote them. The lessons changed, so your questions stay here to reread."
-msgstr "コースの改訂前にした質問です。レッスンの内容が変わったため、ここで読み返せるように残しています。"
+msgctxt "aqjWQg"
+msgid "Questions you asked in lessons that have since changed."
+msgstr "レッスンの内容が変わる前にした質問です。"
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "YPd0dY"
@@ -2761,26 +2761,21 @@ msgctxt "ZGpU-B"
 msgid "Opening your lesson"
 msgstr "レッスンを開いています"
 
+#. Heading over a lesson or review the learner can start now, while or instead of the lesson that isn't ready.
+#: src/app/[lang]/learn/[lessonId]/lesson-ready-alternative.tsx
+msgctxt "9VWjJv"
+msgid "Ready to start now"
+msgstr "今すぐ始められます"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-ready-alternative.tsx
+msgctxt "P0sSfc"
+msgid "{count, plural, one {Review # idea} other {Review # ideas}}"
+msgstr "{count, plural, other {#項目を復習する}}"
+
 #: src/app/[lang]/learn/[lessonId]/lesson-route-frame.tsx
 msgctxt "A6lEGi"
 msgid "About this lesson"
 msgstr "このレッスンについて"
-
-#. Heading over a lesson or review the learner can start now, because this lesson couldn't be written.
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "27L4n6"
-msgid "Ready to do instead"
-msgstr "代わりに今できること"
-
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "aa5y6W"
-msgid "Ready while you wait"
-msgstr "待っている間にできること"
-
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "P0sSfc"
-msgid "{count, plural, one {Review # idea} other {Review # ideas}}"
-msgstr "{count, plural, other {#項目を復習する}}"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "4Wktrz"
@@ -2788,24 +2783,29 @@ msgid "Your lesson is ready"
 msgstr "レッスンの準備ができました"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "aWuC4D"
-msgid "Your lesson is ready. Start it whenever you like."
-msgstr "レッスンの準備ができました。好きなときに始められます。"
+msgctxt "uaZ--2"
+msgid "Getting your lesson ready"
+msgstr "レッスンを準備しています"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "ILYIbj"
-msgid "It usually takes a few minutes. The lesson opens here as soon as it's ready."
-msgstr "通常、数分ほどかかります。準備ができ次第、ここでレッスンが開きます。"
+msgctxt "zvNRS6"
+msgid "This lesson isn't ready yet"
+msgstr "このレッスンはまだ準備ができていません"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "Dr8j6a"
-msgid "This lesson isn't written yet"
-msgstr "このレッスンはまだ作成されていません"
+msgctxt "_LfrbS"
+msgid "We couldn't get this lesson ready"
+msgstr "このレッスンを準備できませんでした"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "BdqTEJ"
-msgid "Zoonk writes it when you start. It takes a few minutes."
-msgstr "始めると、Zoonkがレッスンを作成します。数分ほどかかります。"
+msgctxt "3x95yN"
+msgid "It takes a few minutes, and keeps going if you leave."
+msgstr "数分かかります。この画面を閉じても準備は続きます。"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+msgctxt "1H9PtO"
+msgid "Get it ready"
+msgstr "レッスンを準備する"
 
 #: src/app/[lang]/logbook/page.tsx
 msgctxt "_qTRbZ"

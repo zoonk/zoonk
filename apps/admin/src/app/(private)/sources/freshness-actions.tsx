@@ -1,9 +1,9 @@
 "use client";
 
 import { AdminActionSubmitButton } from "@/components/admin-action-submit-button";
+import { AdminBarMenu } from "@/components/admin-bar-buttons";
 import { AdminConfirmDialog } from "@/components/admin-confirm-dialog";
 import { type AdminActionState, useAdminActionState } from "@/lib/use-admin-action-state";
-import { DetailMenu } from "@zoonk/ui/components/detail";
 import { DropdownMenuItem } from "@zoonk/ui/components/dropdown-menu";
 import { showSuccessToast } from "@zoonk/ui/components/toast";
 import { CircleStopIcon, RefreshCwIcon } from "lucide-react";
@@ -58,17 +58,19 @@ export function FreshnessActions({
       <form action={checkNow}>
         <input name="command" type="hidden" value="checkNow" />
         {target}
-        <AdminActionSubmitButton icon={<RefreshCwIcon />}>Check now</AdminActionSubmitButton>
+        <AdminActionSubmitButton icon={<RefreshCwIcon />} size="bar">
+          Check now
+        </AdminActionSubmitButton>
       </form>
 
-      <DetailMenu label={targetKind === "exam" ? "Exam actions" : "Source actions"} size="sm">
+      <AdminBarMenu label={targetKind === "exam" ? "Exam actions" : "Source actions"}>
         {menuStart}
         <DropdownMenuItem onClick={() => setIsStopOpen(true)}>
           <CircleStopIcon aria-hidden="true" />
           Stop checking
         </DropdownMenuItem>
         {menuEnd}
-      </DetailMenu>
+      </AdminBarMenu>
 
       <AdminConfirmDialog
         action={sendFreshnessCommandAction}

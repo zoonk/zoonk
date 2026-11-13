@@ -21,7 +21,7 @@ The [deliberate choices](#deliberate-choices) at the end are neither.
 
 ### E1. One start edge per column
 
-In a column, every block starts on the column's start edge or on the one inner edge where row text starts after a leading mark (28px in `ListRow`: a 16px mark and a 12px gap). A panel's content starts at the panel's padding.
+In a column, every block starts on the column's start edge or on the one inner edge where row text starts after a leading mark (28px in `ListRow`: a 16px mark and a 12px gap; 32px where the mark is a number keycap, which is 20px wide, as in answer options and lists that number keys answer). A panel's content starts at the panel's padding.
 
 - **Check.** Hold a ruler down the left side and count where text and boxes begin: the edge, the text-after-mark edge and one indent at most. In the page, each block's ink left minus the column's start edge is 0, 28 or the panel's padding.
 - **Usual break.** One row with a leading icon among rows without one. A chart or calendar with its own inner padding. An icon whose gap to its text differs from the rows above it.
@@ -165,7 +165,7 @@ Borders and dividers are 1px. A 2px line means a pick or focus. Content casts no
 
 ### Z1. Heights from the set, one height per row
 
-A control's height is one of `Button`'s, and each height has one label size: 44px for a screen's action (`lg`) and for inputs, with a 15px label; 36px by default, 14px; 30px beside text (`sm`), 13px; 24px inside another control (`xs`), 12px. No call site sets a button's height, label size or weight. A top bar's button is 44px and 40px from `lg` (a 14px label there); a bottom bar's buttons are 44px at every width; chips are 22px. Controls on one row share one height, and an icon button is as tall as the button beside it (`icon-sm` beside `sm`, 30px). A page's "…" is as tall as the action beside it, and 30px alone beside the title (`DetailMenu`).
+A control's height is one of `Button`'s, and each height has one label size: 44px for a screen's action (`lg`) and for inputs, with a 15px label; 36px by default, 14px; 30px beside text (`sm`), 13px; 24px inside another control (`xs`), 12px. No call site sets a button's height, label size or weight. A top bar's button is 44px and 40px from `lg` (a 14px label there); a bottom bar's buttons are 44px at every width, and so are the buttons in a sheet's, a dialog's or a confirm's footer, its own bottom bar (`AlertDialogAction` and `AlertDialogCancel` are; a `DrawerFooter`'s buttons take `size="lg"`); chips are 22px. Controls on one row share one height, and an icon button is as tall as the button beside it (`icon-sm` beside `sm`, 30px). A page's "…" is as tall as the action beside it, and 30px alone beside the title (`DetailMenu`).
 
 - **Check.** In any row of controls, visible heights are equal within 0.5px, and each is in the set.
 - **Usual break.** A 44px select beside 36px buttons in a toolbar.
@@ -347,7 +347,7 @@ A sidebar's toggle, a task's ✕, a page's way back, a main action, a question's
 
 ### B2. Every shortcut shows its keycap
 
-On a device with a keyboard, a control that answers a key shows it: in the control, or in its tooltip when it's an icon button. The keycap's key does what a click does, and screen readers are told it (`aria-keyshortcuts`). Number keys answer a screen's one list of choices: its first nine rows show 1 to 9, and a number picks its row (a pick-one list) or ticks and unticks it (a pick-many list). A screen with several lists shows none, since nothing says which list 1 belongs to.
+On a device with a keyboard, a control that answers a key shows it: in the control, or in its tooltip when it's an icon button. The keycap's key does what a click does, and screen readers are told it (`aria-keyshortcuts`). Number keys answer a screen's one list of choices: its first nine rows show 1 to 9, and a number picks its row (a pick-one list) or ticks and unticks it (a pick-many list). A screen with several lists shows none, since nothing says which list 1 belongs to. A match is the exception, because its two columns are one answer: the numbers run once across both columns, the left one first (1 to 3, then 4 to 6), so a number never shows twice and the first nine entries answer a key; an entry already in a pair shows its left entry's number in its key's box and answers no key.
 
 - **Check.** For each keycap on screen, press its key: the same thing happens as on a click. For each key the screen answers, find its keycap.
 - **Usual break.** Enter bound and no ⏎ drawn. A number key bound on rows that draw no number. A keycap or an `aria-keyshortcuts` typed by hand, which drifts from the handler.
@@ -402,7 +402,7 @@ An app screen's one main action sits in `BottomBar`, pinned to the bottom of the
 
 ### R3. The line over a title is `Eyebrow`
 
-When a task's, a card's, a sheet's or a question's title has a small line over it, that line is `Eyebrow` (`SuccessEyebrow` for something done): an outlined chip, a label in sentence case, 12px over its title. A page with the app's header has no line over its title; what the line said goes under the title or leaves.
+When a task's, a card's, a sheet's or a question's title has a small line over it, that line is `Eyebrow` (`SuccessEyebrow` for something done): an outlined chip, a label in sentence case, 12px over its title. A page with the app's header has no line over its title; what the line said goes under the title or leaves. A chip earns its place only by saying what its title doesn't: over "Match each word to its meaning.", "Match pairs" repeats it and goes, while "Estimate first" over "How long is a million seconds?" says to guess before the answer shows and stays. An activity's title says what to do with the content and never how to work the screen, so an activity keeps a chip only when it names how the screen is worked ("Drag a corner", "Tap along", "Ear training") or what comes first ("Estimate first").
 
 - **Check.** Anything directly over a title is the chip, or nothing (`zoonk/one-eyebrow`, and a `verify:pages` lead for text over a title outside the piece).
 - **Usual break.** Gray or mono uppercase text over a title in one area and a chip in the next.

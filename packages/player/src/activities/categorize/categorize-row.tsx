@@ -81,7 +81,7 @@ export function CategorizeMoveRow({
         className={cn(
           "first:*:rounded-t-lg last:*:rounded-b-lg",
           isDragging &&
-            "bg-background ring-input relative z-10 rounded-lg border-transparent shadow-lg ring-1",
+            "bg-background ring-input relative z-10 rounded-lg border-transparent shadow-lg ring-1 ring-inset",
         )}
       >
         {/* Base UI opens a menu on press; the row opens it on click, so a press that moves can lift the row. */}

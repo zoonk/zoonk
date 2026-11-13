@@ -277,7 +277,7 @@ export function LessonAside() {
     );
   }
 
-  if (state.run.status === "refused" || !screen.step) {
+  if (!screen.step) {
     return <TaskAside label={t("Help with this screen")} />;
   }
 

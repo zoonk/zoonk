@@ -3,7 +3,7 @@
 import { useExtracted } from "next-intl";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { type TutorCardActions, type TutorCards, getTutorCards } from "./tutor-cards";
-import { useTutorIdentity } from "./tutor-identity";
+import { type TutorIdentity, useTutorIdentity } from "./tutor-identity";
 
 export type TutorSituation = { hasMistake: boolean; hasToday: boolean };
 
@@ -11,7 +11,7 @@ export type TutorConversationContent = TutorCards & {
   composerLabel: string;
   greeting: string;
   greetingAction?: React.ReactNode;
-  identity: { avatar: React.ReactNode; name: string };
+  identity: TutorIdentity;
   onAnswered?: () => void;
   onAsked?: () => void;
   placeholder: string;
@@ -65,7 +65,7 @@ export function useTutorConversationContent({
   // The hello says the buddy is an AI, since it opens every conversation (EU AI Act art. 50;
   // Decreto 12.880/2026 art. 11 for minors).
   const greeting = t(
-    "Hi! I'm {name}, your AI study buddy. Ask me anything about what you're studying, or tell me what you'd like to change in your plan.",
+    "Hi! I'm {name}, your AI study buddy. Ask me anything, or tell me what to change in your plan.",
     { name },
   );
 
@@ -73,7 +73,7 @@ export function useTutorConversationContent({
     composerLabel: t("Message {name}", { name }),
     greeting,
     identity,
-    placeholder: t("Ask a question or request a change"),
+    placeholder: t("Ask anything"),
     ...getTutorCards({ decide, tools }),
     suggestions,
   };

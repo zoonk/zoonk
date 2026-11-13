@@ -18,7 +18,6 @@ import { FirstStepsSection } from "../missions/first-steps";
 import { type MissionLinks } from "../missions/mission-links";
 import { MissionsCard } from "../missions/missions-card";
 import { BuddyEnergy, useGrowthLine } from "./buddy-day-parts";
-import { BuddyStageName } from "./buddy-labels";
 import { type BuddyStatusView } from "./buddy-status-view";
 import { MissionsRing } from "./missions-ring";
 import { type LearnBuddy } from "./use-buddy-name";
@@ -72,19 +71,15 @@ function BuddyTodaySheet({
         <SheetHeader>
           <div className="flex flex-col gap-1">
             <DrawerTitle>{t("{buddy} today", { buddy: name })}</DrawerTitle>
-            <DrawerDescription>
-              <BuddyStageName stage={status.stage} />
-              {" · "}
-              {growth}
-            </DrawerDescription>
+            <DrawerDescription>{growth}</DrawerDescription>
           </div>
         </SheetHeader>
 
         <DrawerContent className="flex flex-col gap-4 pt-2">
-          <BuddyEnergy href={energyHref} name={name} status={status} />
+          <BuddyEnergy className="-mb-2" href={energyHref} name={name} status={status} />
 
-          {(!today || today.missions.length > 0) && (
-            <div className="border-t pt-4">
+          {today && today.missions.length > 0 && (
+            <div className="border-t pt-5">
               <MissionsCard
                 brainPower={status.belt.totalBrainPower}
                 showBuddy={false}
@@ -96,7 +91,7 @@ function BuddyTodaySheet({
           )}
 
           {firstSteps && (
-            <div className="border-t pt-4">
+            <div className="border-t pt-5">
               <FirstStepsSection buddy={buddy} firstSteps={firstSteps} links={links} />
             </div>
           )}

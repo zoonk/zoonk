@@ -48,7 +48,7 @@ function BoardLayout<Item extends { id: string }>({
 }: BoardProps<Item>) {
   if (solvedRows) {
     return (
-      <div className="grid grid-cols-1 gap-4 @min-[20.5em]:grid-cols-2 @min-[20.5em]:gap-x-2.5 @min-[20.5em]:gap-y-2">
+      <div className="grid grid-cols-1 gap-4 @min-[20.5em]:grid-cols-2 @min-[20.5em]:gap-2">
         {solvedRows.map((row, index) => (
           <div
             className="grid grid-cols-1 gap-y-2 @min-[20.5em]:col-span-2 @min-[20.5em]:grid-cols-subgrid"
@@ -72,7 +72,7 @@ function BoardLayout<Item extends { id: string }>({
 
     return (
       <div
-        className="grid grid-cols-1 gap-4 @min-[20.5em]:grid-cols-2 @min-[20.5em]:gap-x-2.5 @min-[20.5em]:gap-y-2"
+        className="grid grid-cols-1 gap-4 @min-[20.5em]:grid-cols-2 @min-[20.5em]:gap-2"
         style={rowCount(Math.max(left.length, right.length))}
       >
         <Column className={column} items={left} renderItem={renderItem} side="left" />
@@ -82,7 +82,7 @@ function BoardLayout<Item extends { id: string }>({
   }
 
   return (
-    <div className="grid grid-cols-1 items-start gap-4 @min-[20.5em]:grid-cols-2 @min-[20.5em]:gap-2.5">
+    <div className="grid grid-cols-1 items-start gap-4 @min-[20.5em]:grid-cols-2 @min-[20.5em]:gap-2">
       <Column className="flex flex-col gap-2" items={left} renderItem={renderItem} side="left" />
       <Column className="flex flex-col gap-2" items={right} renderItem={renderItem} side="right" />
     </div>

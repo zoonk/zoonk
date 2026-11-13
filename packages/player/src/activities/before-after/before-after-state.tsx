@@ -91,7 +91,7 @@ function FactRow({
       {change && (
         <span
           className={cn(
-            "w-fit rounded-full px-2 py-0.5 text-xs font-semibold tabular-nums",
+            "w-fit rounded-md px-2 py-0.5 text-xs font-semibold tabular-nums",
             isHighlighted ? "bg-success/10 text-success-text" : "bg-background text-foreground",
           )}
         >

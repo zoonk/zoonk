@@ -122,7 +122,7 @@ msgid "Today"
 msgstr "Heute"
 
 #: src/_components/create-account-link.tsx
-#: src/_components/help-limit-notice.tsx
+#: src/language/conversation/call-problem.tsx
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "d82w2J"
 msgid "Create a free account"
@@ -132,6 +132,11 @@ msgstr "Kostenloses Konto erstellen"
 msgctxt "8kifjv"
 msgid "{time} (suggested)"
 msgstr "{time} (vorgeschlagen)"
+
+#: src/_components/daily-time-picker.tsx
+msgctxt "GUkMRc"
+msgid "{time} (covers everything)"
+msgstr "{time} (deckt alles ab)"
 
 #: src/_components/daily-time-picker.tsx
 #: src/onboarding/plan-receipt.tsx
@@ -149,6 +154,8 @@ msgstr "Tägliche Lernzeit"
 #: src/certificates/certificate-moment-parts.tsx
 #: src/challenge/challenge-footer.tsx
 #: src/checkpoints/checkpoint-result-view.tsx
+#: src/focus-test/focus-test-flow.tsx
+#: src/focus-test/focus-test-result.tsx
 #: src/focus-test/focus-test-screens.tsx
 #: src/journey/journey-planless.tsx
 #: src/language/conversation/conversation-result.tsx
@@ -162,7 +169,7 @@ msgstr "Tägliche Lernzeit"
 #: src/onboarding/steps/plan-wait.tsx
 #: src/onboarding/steps/reveal-body.tsx
 #: src/onboarding/steps/step-form.tsx
-#: src/onboarding/test-outcome.tsx
+#: src/onboarding/steps/subjects-level-step.tsx
 #: src/questions/test-out-run.tsx
 #: src/session/lesson-moment.tsx
 #: src/session/next-stop.tsx
@@ -178,14 +185,17 @@ msgstr "Weiter"
 #: src/_components/question-actions.tsx
 #: src/challenge/challenge-footer.tsx
 #: src/conversation/tutor-feature-offers.tsx
-#: src/focus-test/focus-test-screens.tsx
+#: src/explain/explain-waiting.tsx
+#: src/language/conversation/checkpoint-call-preparing.tsx
+#: src/language/exam-speaking/speaking-task-row.tsx
+#: src/language/level-test/level-test-screens.tsx
+#: src/language/progress/speaking-mock-card.tsx
 #: src/mock/mock-chooser.tsx
 #: src/mock/mock-speaking.tsx
+#: src/onboarding/steps/placement-screens.tsx
 #: src/onboarding/steps/reveal-body.tsx
-#: src/onboarding/test-outcome.tsx
 #: src/session/next-stop.tsx
 #: src/today/today-action.tsx
-#: src/today/today-focus-test.tsx
 #: src/today/today-suggested-goal.tsx
 msgctxt "mOFG3K"
 msgid "Start"
@@ -206,37 +216,25 @@ msgctxt "kwl__x"
 msgid "Finish to see how it went."
 msgstr "Schließ ab, um dein Ergebnis zu sehen."
 
-#: src/_components/free-week-over.tsx
-msgctxt "ra8gpz"
-msgid "Reviews and fixing your mistakes stay free. Plus opens new lessons, the rest of your plan and mock exams."
-msgstr "Wiederholungen und das Korrigieren deiner Fehler bleiben kostenlos. Mit Plus erhältst du Zugang zu neuen Lektionen, dem Rest deines Plans und Probeprüfungen."
-
-#. Also a compact row beside a button that shows two lines on a phone: keep it short.
-#: src/_components/free-week-over.tsx
-msgctxt "WCwsVK"
-msgid "Your free week of exam prep is over"
-msgstr "Deine kostenlose Woche zur Prüfungsvorbereitung ist vorbei"
+#: src/_components/help-limit-notice.tsx
+msgctxt "C84LQr"
+msgid "More next month."
+msgstr "Nächsten Monat gibt es mehr."
 
 #: src/_components/help-limit-notice.tsx
-#: src/_components/lesson-not-written-notice.tsx
-#: src/_components/plus-lock.tsx
-#: src/challenge/challenge-plus-lock.tsx
-#: src/conversation/tutor-feature-offers.tsx
-#: src/mock/mock-chooser-page.tsx
-#: src/onboarding/entry/goal-limit-notice.tsx
-#: src/plan/plan-suggestion.tsx
-#: src/questions/test-out-preparing.tsx
-msgctxt "xANHtD"
-msgid "See Plus"
-msgstr "Plus ansehen"
+msgctxt "i1JCVp"
+msgid "More tomorrow."
+msgstr "Morgen gibt es mehr."
 
 #: src/_components/help-limit-notice.tsx
-#: src/essay/essay-status-line.tsx
-#: src/language/level-test/level-test-questions.tsx
-#: src/language/pronunciation/pronunciation-word-card.tsx
-msgctxt "aFV0Wu"
-msgid "Create your free account to continue."
-msgstr "Erstelle dein kostenloses Konto, um weiterzumachen."
+msgctxt "64dPfY"
+msgid "More next month, or subscribe to keep going."
+msgstr "Nächsten Monat gibt es mehr. Mit einem Abo kannst du gleich weitermachen."
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "wwdPGH"
+msgid "More tomorrow, or subscribe to keep going."
+msgstr "Morgen gibt es mehr. Mit einem Abo kannst du gleich weitermachen."
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "X6_KO5"
@@ -244,119 +242,94 @@ msgid "Take a short break, then try again."
 msgstr "Mach eine kurze Pause und versuch es dann noch einmal."
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "a835fB"
-msgid "You've used the free help you can get without an account. Create a free account to keep going."
-msgstr "Du hast die kostenlose Hilfe aufgebraucht, die du ohne Konto nutzen kannst. Erstelle ein kostenloses Konto, um weiterzumachen."
+msgctxt "8vWw5H"
+msgid "This needs a free account"
+msgstr "Dafür brauchst du ein kostenloses Konto"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "PohtzH"
-msgid "You've used today's free help. Create a free account to keep going."
-msgstr "Du hast die kostenlose Hilfe für heute aufgebraucht. Erstelle ein kostenloses Konto, um weiterzumachen."
+msgctxt "TSBvtn"
+msgid "That's all you can try without an account"
+msgstr "Mehr kannst du ohne Konto nicht ausprobieren"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "qL6XFh"
-msgid "You've used today's help. It comes back tomorrow."
-msgstr "Du hast deine Hilfe für heute aufgebraucht. Morgen ist sie wieder verfügbar."
+msgctxt "Jqv4S8"
+msgid "No more messages this month"
+msgstr "Diesen Monat keine Nachrichten mehr"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "Nbhysd"
-msgid "You've used this month's help. It comes back next month, or get Plus to keep going now."
-msgstr "Du hast deine Hilfe für diesen Monat aufgebraucht. Nächsten Monat ist sie wieder verfügbar. Mit Plus kannst du sofort weitermachen."
+msgctxt "x0gg1d"
+msgid "No more messages today"
+msgstr "Heute keine Nachrichten mehr"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "IrT-wv"
-msgid "You've used today's help. It comes back tomorrow, or get Plus to keep going now."
-msgstr "Du hast deine Hilfe für heute aufgebraucht. Morgen ist sie wieder verfügbar. Mit Plus kannst du sofort weitermachen."
+msgctxt "z4UYJE"
+msgid "No more explanations this month"
+msgstr "Diesen Monat keine Erklärungen mehr"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "bexyPE"
-msgid "You've taken the lessons you can try without an account. Create a free account to keep going."
-msgstr "Du hast alle Lektionen ausprobiert, die ohne Konto verfügbar sind. Erstell ein kostenloses Konto, um weiterzulernen."
+msgctxt "cPoE5U"
+msgid "No more explanations today"
+msgstr "Heute keine Erklärungen mehr"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "4S5joP"
-msgid "That's all the new lessons for today. They open again tomorrow."
-msgstr "Für heute hast du alle neuen Lektionen ausgeschöpft. Morgen sind wieder neue verfügbar."
+msgctxt "6Tamx-"
+msgid "You've reached this month's limit"
+msgstr "Du hast dein Monatslimit erreicht"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "eN7gYB"
-msgid "That's all the new lessons for this month. They open again next month, or get Plus to keep going now."
-msgstr "Für diesen Monat hast du alle neuen Lektionen ausgeschöpft. Nächsten Monat sind wieder neue verfügbar. Mit Plus kannst du sofort weitermachen."
+msgctxt "Co4ZUv"
+msgid "You've reached today's limit"
+msgstr "Du hast dein Tageslimit erreicht"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "0MyU0B"
-msgid "That's all the new lessons for today. They open again tomorrow, or get Plus to keep going now."
-msgstr "Für heute hast du alle neuen Lektionen ausgeschöpft. Morgen sind wieder neue verfügbar. Mit Plus kannst du sofort weitermachen."
+msgctxt "j9Za23"
+msgid "No more new lessons today"
+msgstr "Heute keine neuen Lektionen mehr"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "qPpnU1"
-msgid "You've made the mind map you can try without an account. Create a free account to make more."
-msgstr "Du hast die Mindmap erstellt, die du ohne Konto ausprobieren kannst. Erstell ein kostenloses Konto, um weitere zu erstellen."
+msgctxt "2LDIQ9"
+msgid "No more lessons without an account"
+msgstr "Für weitere Lektionen brauchst du ein Konto"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "bQmT5n"
-msgid "That's all the new mind maps for this month. You can make more next month."
-msgstr "Du hast dein Limit für neue Mindmaps diesen Monat erreicht. Nächsten Monat kannst du weitere erstellen."
+msgctxt "2XtwRD"
+msgid "You've used this month's free lessons"
+msgstr "Deine kostenlosen Lektionen für diesen Monat sind aufgebraucht"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "GLw9_5"
-msgid "That's all the new mind maps for today. You can make more tomorrow."
-msgstr "Das waren alle neuen Mindmaps für heute. Morgen kannst du weitere erstellen."
+msgctxt "VGhCC9"
+msgid "No more new lessons this month"
+msgstr "Diesen Monat keine neuen Lektionen mehr"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "u_4tm2"
-msgid "That's all the new mind maps for this month. You can make more next month, or get Plus to keep going now."
-msgstr "Das waren alle neuen Mindmaps für diesen Monat. Nächsten Monat kannst du weitere erstellen. Mit Plus kannst du sofort weitermachen."
+msgctxt "jaoJk9"
+msgid "No more new mind maps today"
+msgstr "Heute keine neuen Mindmaps mehr"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "cCfk7n"
-msgid "That's all the new mind maps for today. You can make more tomorrow, or get Plus to keep going now."
-msgstr "Das waren alle neuen Mindmaps für heute. Morgen kannst du weitere erstellen. Mit Plus kannst du sofort weitermachen."
+msgctxt "NphhW6"
+msgid "No more mind maps without an account"
+msgstr "Für weitere Mindmaps brauchst du ein Konto"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "bruw1M"
-msgid "You've seen the topic you can see ahead of time without an account. Create a free account to see more."
-msgstr "Du hast das Thema angesehen, das du ohne Konto vorab sehen kannst. Erstelle ein kostenloses Konto, um weitere Themen anzusehen."
+msgctxt "6ootiC"
+msgid "No more new mind maps this month"
+msgstr "Diesen Monat keine neuen Mindmaps mehr"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "5kF1BD"
-msgid "That's all the topics you can see ahead of time today. You can see more tomorrow."
-msgstr "Das waren alle Themen, die du heute vorab ansehen kannst. Morgen kannst du weitere ansehen."
+msgctxt "o0NLBw"
+msgid "No more previews today"
+msgstr "Heute keine Vorschauen mehr"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "M4_IpE"
-msgid "That's all the topics you can see ahead of time this month. You can see more next month, or get Plus to keep going now."
-msgstr "Das waren alle Themen, die du diesen Monat vorab ansehen kannst. Nächsten Monat kannst du weitere ansehen. Mit Plus kannst du sofort weitermachen."
+msgctxt "bhVg5t"
+msgid "No more previews without an account"
+msgstr "Für weitere Vorschauen brauchst du ein Konto"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "DT3nPF"
-msgid "That's all the topics you can see ahead of time today. You can see more tomorrow, or get Plus to keep going now."
-msgstr "Das waren alle Themen, die du heute vorab ansehen kannst. Morgen kannst du weitere ansehen. Mit Plus kannst du sofort weitermachen."
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "eT5IDI"
-msgid "Speaking calls come with a free account. Create one to practice out loud."
-msgstr "Mit einem kostenlosen Konto kannst du Gespräche führen. Erstelle ein Konto, um laut zu sprechen und zu üben."
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "m-TWZq"
-msgid "Your calls come back next month."
-msgstr "Nächsten Monat kannst du wieder Gespräche führen."
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "kxATA3"
-msgid "Your calls come back tomorrow."
-msgstr "Morgen kannst du wieder Gespräche führen."
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "ee4-Qp"
-msgid "Your calls come back next month, or get Plus for higher call limits."
-msgstr "Nächsten Monat kannst du wieder Gespräche führen. Hol dir Plus für mehr Gespräche."
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "BCSjVA"
-msgid "Your calls come back tomorrow, or get Plus for higher call limits."
-msgstr "Morgen kannst du wieder Gespräche führen. Hol dir Plus für mehr Gespräche."
+msgctxt "-sI9v1"
+msgid "No more previews this month"
+msgstr "Diesen Monat keine Vorschauen mehr"
 
 #: src/_components/lesson-list.tsx
 msgctxt "2lvsw9"
@@ -390,6 +363,7 @@ msgstr "{done, number} von {total, number}"
 #: src/language/conversation/call-intro-footer.tsx
 #: src/language/conversation/call-problem.tsx
 #: src/language/conversation/dropped-call-screen.tsx
+#: src/language/exam-speaking/exam-speaking-result.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/mind-maps/finished-chapter-map.tsx
 #: src/mind-maps/mind-map-aside.tsx
@@ -418,9 +392,10 @@ msgid "This lesson isn't available"
 msgstr "Diese Lektion ist nicht verfügbar"
 
 #: src/_components/lesson-not-written-notice.tsx
-msgctxt "mrewuQ"
-msgid "It didn't pass our quality checks, so your plan goes on without it."
-msgstr "Sie hat unsere Qualitätsprüfung nicht bestanden, deshalb geht dein Plan ohne sie weiter."
+#: src/language/conversation/challenge-call-gate.tsx
+msgctxt "-rTwFN"
+msgid "Your plan goes on without it."
+msgstr "Dein Plan läuft auch ohne diesen Teil weiter."
 
 #: src/_components/lesson-summaries.tsx
 msgctxt "vc1FfA"
@@ -454,7 +429,6 @@ msgid "This is taking longer than usual. It opens on its own, no need to tap aga
 msgstr "Das dauert länger als üblich. Es öffnet sich von selbst, du musst nicht noch einmal tippen."
 
 #: src/_components/plus-lock.tsx
-#: src/conversation/tutor-feature-offers.tsx
 #: src/mind-maps/mind-map-index-rows.tsx
 msgctxt "lOdoIb"
 msgid "Plus"
@@ -464,6 +438,14 @@ msgstr "Plus"
 msgctxt "fi0FtL"
 msgid "Available with Plus"
 msgstr "Mit Plus verfügbar"
+
+#: src/_components/plus-lock.tsx
+#: src/_components/subscribe-gate.tsx
+#: src/conversation/tutor-feature-offers.tsx
+#: src/onboarding/entry/goal-limit-notice.tsx
+msgctxt "gczcC5"
+msgid "Subscribe"
+msgstr "Abonnieren"
 
 #: src/_components/practice-outcome-message.tsx
 #: src/_components/test-out-start-link.tsx
@@ -667,6 +649,18 @@ msgstr "Mach den Test und überspringe die Einheit"
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/_components/time-answer-lines.tsx
+msgctxt "JDCgAn"
+msgid "{dateKind, select, month {What it takes to cover all your exam topics by {date}.} other {What it takes to cover all your exam topics by {date}.}}"
+msgstr "{dateKind, select, month {So viel Zeit brauchst du, um bis {date} alle Prüfungsthemen durchzugehen.} other {So viel Zeit brauchst du, um bis zum {date} alle Prüfungsthemen durchzugehen.}}"
+
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
+#: src/_components/time-answer-lines.tsx
+msgctxt "jecJ21"
+msgid "{dateKind, select, month {What it takes to cover your whole goal by {date}.} other {What it takes to cover your whole goal by {date}.}}"
+msgstr "{dateKind, select, month {Was nötig ist, um bis {date} alle Inhalte für dein Ziel abzudecken.} other {Was nötig ist, um bis zum {date} alle Inhalte für dein Ziel abzudecken.}}"
+
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
+#: src/_components/time-answer-lines.tsx
 msgctxt "wtnatU"
 msgid "{dateKind, select, month {Covers all your exam topics by {date}.} other {Covers all your exam topics by {date}.}}"
 msgstr "{dateKind, select, month {Deckt bis {date} alle deine Prüfungsthemen ab.} other {Deckt bis zum {date} alle deine Prüfungsthemen ab.}}"
@@ -694,9 +688,9 @@ msgid "You finish around <date>{month}</date>."
 msgstr "Du bist ungefähr im <date>{month}</date> fertig."
 
 #: src/_components/time-answer-lines.tsx
-msgctxt "wRhIPZ"
-msgid "We can't estimate an end date. Try more time or more study days."
-msgstr "Wir können nicht abschätzen, wann du fertig wirst. Versuch es mit mehr Lernzeit oder mehr Lerntagen."
+msgctxt "Kz6oc0"
+msgid "We can't estimate a finish date for this schedule. Try more time or more study days."
+msgstr "Für diesen Zeitplan können wir kein Abschlussdatum schätzen. Versuch es mit mehr Zeit oder mehr Lerntagen."
 
 #: src/_components/time-answer-lines.tsx
 msgctxt "Hy8sTO"
@@ -704,11 +698,13 @@ msgid "Choose at least one study day."
 msgstr "Wähle mindestens einen Lerntag."
 
 #: src/_components/time-answer-lines.tsx
+#: src/_components/time-answer.tsx
 msgctxt "53o9vK"
 msgid "Working out the time your goal needs…"
 msgstr "Wir berechnen, wie viel Zeit du für dein Ziel brauchst…"
 
 #: src/_components/time-answer-lines.tsx
+#: src/_components/time-answer.tsx
 msgctxt "fiywvR"
 msgid "We couldn't work out the time your goal needs."
 msgstr "Wir konnten nicht berechnen, wie viel Zeit du für dein Ziel brauchst."
@@ -736,47 +732,79 @@ msgstr "Wir konnten nicht berechnen, wann du fertig wärst."
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/_components/time-answer-texts.ts
-msgctxt "hw11Lc"
-msgid "{dateKind, select, month {No time a day covers everything by {date}.} other {No time a day covers everything by {date}.}}"
-msgstr "{dateKind, select, month {Auch mit mehr Lernzeit pro Tag lässt sich bis {date} nicht alles abdecken.} other {Auch mit mehr Lernzeit pro Tag lässt sich bis zum {date} nicht alles abdecken.}}"
+msgctxt "zUbsmj"
+msgid "{dateKind, select, month {Not even a whole day covers everything in depth by {date}.} other {Not even a whole day covers everything in depth by {date}.}}"
+msgstr "{dateKind, select, month {Selbst wenn du den ganzen Tag lernst, reicht die Zeit bis {date} nicht, um alles gründlich durchzugehen.} other {Selbst wenn du den ganzen Tag lernst, reicht die Zeit bis zum {date} nicht, um alles gründlich durchzugehen.}}"
 
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". {time} is a daily study time, like "13 h 30 min".
 #: src/_components/time-answer-texts.ts
-msgctxt "DvdMdt"
-msgid "Covering everything takes about {time} a day."
-msgstr "Um alles abzudecken, brauchst du etwa {time} pro Tag."
+msgctxt "I9fMB3"
+msgid "{dateKind, select, month {Covering everything in depth by {date} takes about {time} a day, more than most people can keep up.} other {Covering everything in depth by {date} takes about {time} a day, more than most people can keep up.}}"
+msgstr "{dateKind, select, month {Um bis {date} alles gründlich durchzugehen, brauchst du etwa {time} pro Tag. Das ist mehr, als die meisten Menschen auf Dauer schaffen.} other {Um bis zum {date} alles gründlich durchzugehen, brauchst du etwa {time} pro Tag. Das ist mehr, als die meisten Menschen auf Dauer schaffen.}}"
 
+#. Part of the goal never fits, whatever the time, so this is the most any daily time covers. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". {time} is a daily study time, like "8 h"; {share} a percentage, like "99%".
 #: src/_components/time-answer-texts.ts
-msgctxt "nLHTU9"
-msgid "The most any time covers is about {share}, at {time} a day."
-msgstr "Maximal sind etwa {share} möglich, bei {time} pro Tag."
-
-#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
-#: src/_components/time-answer-texts.ts
-msgctxt "9JM38y"
-msgid "{dateKind, select, month {Covers about {share} of your exam topics by {date}.} other {Covers about {share} of your exam topics by {date}.}}"
-msgstr "{dateKind, select, month {Etwa {share} deiner Prüfungsthemen deckst du bis {date} ab.} other {Etwa {share} deiner Prüfungsthemen deckst du bis zum {date} ab.}}"
+msgctxt "MTkVRt"
+msgid "{dateKind, select, month {Covering as much as any daily time can by {date}, about {share} in depth, takes about {time} a day, more than most people can keep up.} other {Covering as much as any daily time can by {date}, about {share} in depth, takes about {time} a day, more than most people can keep up.}}"
+msgstr "{dateKind, select, month {Um bis {date} so viel wie überhaupt möglich abzudecken und dabei etwa {share} gründlich durchzuarbeiten, brauchst du etwa {time} am Tag. Das ist mehr, als die meisten auf Dauer schaffen.} other {Um bis zum {date} so viel wie überhaupt möglich abzudecken und dabei etwa {share} gründlich durchzuarbeiten, brauchst du etwa {time} am Tag. Das ist mehr, als die meisten auf Dauer schaffen.}}"
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/_components/time-answer-texts.ts
-msgctxt "qmspFK"
-msgid "{dateKind, select, month {Covers about {share} of your goal by {date}.} other {Covers about {share} of your goal by {date}.}}"
-msgstr "{dateKind, select, month {Etwa {share} deines Ziels erreichst du bis {date}.} other {Etwa {share} deines Ziels erreichst du bis zum {date}.}}"
+msgctxt "AVgtRb"
+msgid "{dateKind, select, month {Covers about {share} of your exam topics in depth by {date}, starting with what comes up most.} other {Covers about {share} of your exam topics in depth by {date}, starting with what comes up most.}}"
+msgstr "{dateKind, select, month {Deckt etwa {share} deiner Prüfungsthemen bis {date} gründlich ab, angefangen mit denen, die am häufigsten drankommen.} other {Deckt etwa {share} deiner Prüfungsthemen bis zum {date} gründlich ab, angefangen mit denen, die am häufigsten drankommen.}}"
+
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
+#: src/_components/time-answer-texts.ts
+msgctxt "Tampv1"
+msgid "{dateKind, select, month {Covers about {share} of your goal in depth by {date}, starting with what matters most.} other {Covers about {share} of your goal in depth by {date}, starting with what matters most.}}"
+msgstr "{dateKind, select, month {Deckt etwa {share} deines Ziels bis {date} gründlich ab, angefangen mit dem Wichtigsten.} other {Deckt etwa {share} deines Ziels bis zum {date} gründlich ab, angefangen mit dem Wichtigsten.}}"
+
+#. {share} is a percentage, like "32%": how much of everything gets studied in depth, not how many topics are reached.
+#: src/_components/time-answer-texts.ts
+msgctxt "llz5RA"
+msgid "Your plan then covers every exam topic, the ones asked most in more depth. That's about {share} of the exam studied in depth."
+msgstr "Dein Plan deckt dann alle Prüfungsthemen ab und behandelt die am häufigsten abgefragten ausführlicher. So lernst du etwa {share} des Prüfungsstoffs im Detail."
+
+#. {share} is a percentage, like "32%": how much of everything gets studied in depth, not how many topics are reached.
+#: src/_components/time-answer-texts.ts
+msgctxt "lKM-91"
+msgid "Your plan then starts with what the exam asks most, about {share} of it studied in depth. Topics it asks least may not fit."
+msgstr "Dein Plan beginnt dann mit den am häufigsten abgefragten Themen und behandelt etwa {share} des Prüfungsstoffs im Detail. Für die am seltensten abgefragten Themen reicht die Zeit möglicherweise nicht."
+
+#. {share} is a percentage, like "32%": how much of everything gets studied in depth, not how many topics are reached.
+#: src/_components/time-answer-texts.ts
+msgctxt "xjYmua"
+msgid "Your plan then covers every part of your goal, what matters most in more depth. That's about {share} of it studied in depth."
+msgstr "Dein Plan deckt dann alle Bereiche deines Ziels ab und behandelt die wichtigsten ausführlicher. So lernst du etwa {share} der Inhalte im Detail."
+
+#. {share} is a percentage, like "32%": how much of everything gets studied in depth, not how many topics are reached.
+#: src/_components/time-answer-texts.ts
+msgctxt "NaIXds"
+msgid "Your plan then starts with what matters most, about {share} of your goal studied in depth. The rest may not fit."
+msgstr "Dein Plan beginnt dann mit dem Wichtigsten für dein Ziel. Etwa {share} der Inhalte lernst du dabei im Detail. Für den Rest reicht die Zeit möglicherweise nicht."
 
 #: src/_components/time-answer-texts.ts
-msgctxt "LfzIDC"
-msgid "{time} a day covers about {share} of your exam topics"
-msgstr "Mit {time} pro Tag deckst du etwa {share} deiner Prüfungsthemen ab"
+msgctxt "QrYTpK"
+msgid "More study days would help."
+msgstr "Mehr Lerntage würden helfen."
 
+#. A sentence before what that time covers. {time} is a daily study time, like "4 h".
 #: src/_components/time-answer-texts.ts
-msgctxt "7ELL3j"
-msgid "{time} a day covers about {share} of your goal"
-msgstr "Mit {time} pro Tag erreichst du etwa {share} deines Ziels"
+msgctxt "IaAonA"
+msgid "We suggest {time} a day."
+msgstr "Wir empfehlen {time} pro Tag."
 
 #. The title of a suggestion to change the daily study time. {time} is like "4 h".
 #: src/_components/time-answer-texts.ts
 msgctxt "UE-bQq"
 msgid "We suggest {time} a day"
 msgstr "Wir empfehlen {time} pro Tag"
+
+#: src/_components/time-answer-texts.ts
+msgctxt "0CZ1fn"
+msgid "That's more than most people can keep up."
+msgstr "Das ist mehr, als die meisten Menschen auf Dauer schaffen."
 
 #: src/_components/time-answer.tsx
 msgctxt "AHugH9"
@@ -789,19 +817,20 @@ msgid "This goal gets {main} a day and your other goals {other} together."
 msgstr "Für dieses Ziel sind täglich {main} und für deine anderen Ziele zusammen {other} eingeplant."
 
 #: src/_components/time-answer.tsx
-msgctxt "NuWWsb"
-msgid "Use {time} to cover everything"
-msgstr "Mit {time} alles abdecken"
+msgctxt "PNv_qq"
+msgid "Use {time} a day to cover everything"
+msgstr "Mit {time} am Tag alles abdecken"
 
 #: src/_components/time-answer.tsx
-msgctxt "vNHEBC"
-msgid "Use the suggested {time}"
-msgstr "Vorschlag von {time} übernehmen"
+msgctxt "7NHdvs"
+msgid "Use the suggested {time} a day"
+msgstr "Empfohlene {time} pro Tag übernehmen"
 
+#. A button that changes the plan's daily time to the one just found.
 #: src/_components/time-answer.tsx
-msgctxt "LRCgmd"
-msgid "Use {time} to cover more"
-msgstr "Mit {time} mehr abdecken"
+msgctxt "Nm3oG2"
+msgid "Use {time} a day"
+msgstr "Täglich {time} einplanen"
 
 #. Verdict on an answer that is almost right.
 #: src/_components/verdict-label.tsx
@@ -1063,23 +1092,6 @@ msgstr "Brillen"
 
 #: src/appearance/buddy-settings.tsx
 #: src/certificates/certificate-name.tsx
-#: src/country/country-picker.tsx
-#: src/journey/goal-actions.tsx
-#: src/journey/rename-goal-dialog.tsx
-#: src/language/conversation/call-control.tsx
-#: src/memory/memory-fact-row.tsx
-#: src/onboarding/start-over-menu.tsx
-#: src/onboarding/understood/understood-row.tsx
-#: src/onboarding/understood/understood-words.tsx
-#: src/plan/plan-country.tsx
-#: src/plan/plan-tool-sheet.tsx
-#: src/plan/study-everything.tsx
-msgctxt "47FYwb"
-msgid "Cancel"
-msgstr "Abbrechen"
-
-#: src/appearance/buddy-settings.tsx
-#: src/certificates/certificate-name.tsx
 #: src/conversation/tutor-country-offer.tsx
 #: src/journey/rename-goal-dialog.tsx
 #: src/memory/memory-fact-row.tsx
@@ -1087,7 +1099,6 @@ msgstr "Abbrechen"
 #: src/onboarding/understood/understood-row.tsx
 #: src/plan/exam-choice-picks.tsx
 #: src/plan/plan-date.tsx
-#: src/plan/plan-focus.tsx
 #: src/plan/plan-tool-sheet.tsx
 #: src/profile-questions/about-you-question-screen.tsx
 msgctxt "jvo0vs"
@@ -1144,41 +1155,29 @@ msgid "Fully grown"
 msgstr "Ausgewachsen"
 
 #: src/buddies/buddy-day-parts.tsx
-msgctxt "AkmQot"
-msgid "Grows to Adult at {belt}"
-msgstr "Erreicht mit {belt} die Stufe Erwachsen"
+msgctxt "EcDZVd"
+msgid "Grows when you reach {belt}"
+msgstr "Wächst, wenn du diesen Gürtel erreichst: {belt}"
 
 #: src/buddies/buddy-day-parts.tsx
-msgctxt "e80zET"
-msgid "Grows to Young at {belt}"
-msgstr "Erreicht mit {belt} die Stufe Jung"
+msgctxt "gaCo5g"
+msgid "{buddy} is napping. Study to wake it up."
+msgstr "Schlafpause für {buddy}. Lern etwas, dann ist sie vorbei."
 
 #: src/buddies/buddy-day-parts.tsx
-msgctxt "j9234g"
-msgid "{buddy} took a nap. Anything you learn wakes it up."
-msgstr "{buddy} hat ein Nickerchen gemacht. Alles, was du lernst, weckt deinen Kumpel wieder auf."
+msgctxt "TTZGoJ"
+msgid "Study today to keep it up."
+msgstr "Lern heute, um die Energie hochzuhalten."
 
 #: src/buddies/buddy-day-parts.tsx
-msgctxt "KRzhMQ"
-msgid "You studied today, so Energy won't drop."
-msgstr "Du hast heute gelernt, deshalb sinkt die Energie nicht."
+msgctxt "RquZa1"
+msgid "{buddy}'s Energy"
+msgstr "Energie von {buddy}"
 
 #: src/buddies/buddy-day-parts.tsx
-msgctxt "ok24EC"
-msgid "Studying today keeps Energy up."
-msgstr "Wenn du heute lernst, bleibt die Energie erhalten."
-
-#: src/buddies/buddy-day-parts.tsx
-#: src/buddies/buddy-day.tsx
-#: src/buddies/buddy-today.tsx
-msgctxt "cVpmV7"
-msgid "Energy"
-msgstr "Energie"
-
-#: src/buddies/buddy-day-parts.tsx
-msgctxt "eiGdZK"
-msgid "Energy starts with your first lesson and grows as you learn."
-msgstr "Die Energie beginnt mit deiner ersten Lektion und steigt, wenn du lernst."
+msgctxt "Q88QPu"
+msgid "It starts with your first lesson."
+msgstr "Mit deiner ersten Lektion geht es los."
 
 #: src/buddies/buddy-day.tsx
 #: src/buddies/buddy-screen.tsx
@@ -1196,6 +1195,12 @@ msgstr "Woran sich {buddy} erinnert"
 msgctxt "ca-yU-"
 msgid "Weekly summary"
 msgstr "Wochenübersicht"
+
+#: src/buddies/buddy-day.tsx
+#: src/buddies/buddy-today.tsx
+msgctxt "cVpmV7"
+msgid "Energy"
+msgstr "Energie"
 
 #: src/buddies/buddy-day.tsx
 #: src/missions/missions-card.tsx
@@ -1217,9 +1222,9 @@ msgstr "{current} von {target} Wiederholungen"
 
 #. The learner's buddy wears the glasses.
 #: src/buddies/buddy-glasses-sheet.tsx
-msgctxt "O7-3Od"
-msgid "Pick a pair you've earned to wear it."
-msgstr "Wähl eine freigeschaltete Brille für deinen Kumpel aus."
+msgctxt "lw-2jH"
+msgid "Pick a pair you've earned."
+msgstr "Such dir eine Brille aus, die du dir verdient hast."
 
 #: src/buddies/buddy-goal-start.tsx
 #: src/onboarding/entry/goal-examples.tsx
@@ -1240,9 +1245,9 @@ msgid "Examples"
 msgstr "Beispiele"
 
 #: src/buddies/buddy-goal-start.tsx
-msgctxt "CDE6Me"
-msgid "Hi! I'm {name}, your AI study buddy. What do you want to learn, and by when? I'll turn it into a plan for every day until then."
-msgstr "Hi! Ich bin {name}, dein KI-Lernkumpel. Was möchtest du lernen und bis wann? Ich erstelle dir dafür einen Plan für jeden Tag bis dahin."
+msgctxt "Py3YsI"
+msgid "Hi! I'm {name}, your AI study buddy. Tell me what you want to learn, and I'll build your plan."
+msgstr "Hallo! Ich bin {name}, dein KI-Lernkumpel. Sag mir, was du lernen möchtest, und ich erstelle deinen Plan."
 
 #: src/buddies/buddy-goal-start.tsx
 #: src/buddies/buddy-screen.tsx
@@ -1261,6 +1266,7 @@ msgid "What you want to learn"
 msgstr "Was du lernen möchtest"
 
 #: src/buddies/buddy-goal-start.tsx
+#: src/language/level-test/level-test-screens.tsx
 #: src/onboarding/entry/goal-entry.tsx
 msgctxt "UTU-oM"
 msgid "Build my plan"
@@ -1362,9 +1368,9 @@ msgid "Round glasses"
 msgstr "Runde Brille"
 
 #: src/buddies/buddy-labels.tsx
-msgctxt "bg3OJE"
-msgid "Win your first phase challenge"
-msgstr "Gewinne deine erste Phasen-Herausforderung"
+msgctxt "0Ys5Rm"
+msgid "Win your first challenge"
+msgstr "Deine erste Herausforderung gewinnen"
 
 #: src/buddies/buddy-labels.tsx
 msgctxt "gltJSr"
@@ -1382,9 +1388,9 @@ msgid "Finish 50 reviews"
 msgstr "Schließe 50 Wiederholungen ab"
 
 #: src/buddies/buddy-labels.tsx
-msgctxt "JNjStC"
-msgid "Win the final challenge"
-msgstr "Gewinne die letzte Herausforderung"
+msgctxt "erG0QJ"
+msgid "Win your plan's last challenge"
+msgstr "Die letzte Herausforderung deines Plans gewinnen"
 
 #. How the learner gets the round glasses: every buddy has them.
 #: src/buddies/buddy-labels.tsx
@@ -1917,6 +1923,22 @@ msgid "Your full name"
 msgstr "Dein vollständiger Name"
 
 #: src/certificates/certificate-name.tsx
+#: src/country/country-picker.tsx
+#: src/journey/goal-actions.tsx
+#: src/journey/rename-goal-dialog.tsx
+#: src/language/conversation/call-control.tsx
+#: src/memory/memory-fact-row.tsx
+#: src/onboarding/start-over-menu.tsx
+#: src/onboarding/understood/understood-row.tsx
+#: src/onboarding/understood/understood-words.tsx
+#: src/plan/plan-country.tsx
+#: src/plan/plan-tool-sheet.tsx
+#: src/plan/study-everything.tsx
+msgctxt "47FYwb"
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: src/certificates/certificate-name.tsx
 msgctxt "Qcr1L3"
 msgid "It shows on every certificate and its link. Your buddy calls you by it too."
 msgstr "Er ist auf jedem Zertifikat und über dessen Link zu sehen. Dein Kumpel nennt dich auch so."
@@ -2088,6 +2110,7 @@ msgid "The unit's call"
 msgstr "Gespräch dieser Einheit"
 
 #: src/challenge/challenge-call-intro.tsx
+#: src/language/conversation/conversation-intro.tsx
 msgctxt "YAmuVo"
 msgid "{time} · Level {level}"
 msgstr "{time} · Level {level}"
@@ -2160,10 +2183,9 @@ msgstr "Auf Montag verschieben"
 
 #: src/challenge/challenge-footer.tsx
 #: src/conversation/tutor-tool-offer.tsx
-#: src/mock/mock-chooser-parts.tsx
-msgctxt "zgw8mc"
-msgid "Mock exams come with Plus: whenever you want, and every week in your plan."
-msgstr "Mit Plus kannst du Probeprüfungen machen, wann immer du möchtest, und jede Woche in deinem Plan."
+msgctxt "JUvBan"
+msgid "Mock exams need a subscription"
+msgstr "Für Probeprüfungen brauchst du ein Abo"
 
 #: src/challenge/challenge-footer.tsx
 #: src/checkpoints/checkpoint-duel-verdict.tsx
@@ -2178,6 +2200,7 @@ msgstr "{lessons, plural, =0 {Morgen gibt es einen neuen Versuch. Nichts geht ve
 #: src/session/use-block-copy.ts
 #: src/syllabus/subject-screen.tsx
 #: src/syllabus/syllabus-section.tsx
+#: src/syllabus/syllabus-summary.tsx
 #: src/today/today-week-challenge.tsx
 #: src/today/use-row-label.ts
 msgctxt "UIUcbm"
@@ -2376,12 +2399,8 @@ msgctxt "NaKnZr"
 msgid "Your plan moved later lessons to make room for it."
 msgstr "Dein Plan hat spätere Lektionen verschoben, um dafür Platz zu machen."
 
-#: src/challenge/challenge-plus-lock.tsx
-msgctxt "Q3_ibn"
-msgid "Challenge calls come with Plus. Your plan keeps going without them."
-msgstr "Gespräche für Herausforderungen sind in Plus enthalten. Dein Plan läuft auch ohne sie weiter."
-
 #: src/challenge/challenge-screen.tsx
+#: src/wait/lesson-wait-status.tsx
 msgctxt "FxoA1t"
 msgid "Getting your challenge ready"
 msgstr "Wir bereiten deine Herausforderung vor"
@@ -2408,6 +2427,7 @@ msgstr "Was er fragen wird"
 
 #: src/challenge/challenge-topics.tsx
 #: src/syllabus/subject-screen.tsx
+#: src/syllabus/syllabus-summary.tsx
 msgctxt "eNbJHf"
 msgid "{count, plural, one {# topic} other {# topics}}"
 msgstr "{count, plural, one {# Thema} other {# Themen}}"
@@ -2472,6 +2492,7 @@ msgid "Skills"
 msgstr "Fähigkeiten"
 
 #: src/chapter/chapter-screen.tsx
+#: src/language/pattern/language-pattern-screen.tsx
 #: src/language/unit/language-unit-screen.tsx
 #: src/plan/plan-properties.tsx
 #: src/plan/use-short-plan.ts
@@ -2753,9 +2774,9 @@ msgstr "Mehr anzeigen"
 
 #: src/conversation/tutor-composer.tsx
 #: src/conversation/tutor-conversation-content.tsx
-msgctxt "hxbNj_"
-msgid "Ask a question or request a change"
-msgstr "Stell eine Frage oder wünsch dir eine Änderung"
+msgctxt "zf_3aa"
+msgid "Ask anything"
+msgstr "Frag mich, was du möchtest"
 
 #: src/conversation/tutor-conversation-content.tsx
 msgctxt "pSjxNB"
@@ -2785,9 +2806,9 @@ msgid "I want to study less this week"
 msgstr "Ich möchte diese Woche weniger lernen"
 
 #: src/conversation/tutor-conversation-content.tsx
-msgctxt "V2JAKF"
-msgid "Hi! I'm {name}, your AI study buddy. Ask me anything about what you're studying, or tell me what you'd like to change in your plan."
-msgstr "Hi! Ich bin {name}, dein KI-Lernkumpel. Frag mich alles zu dem, was du gerade lernst, oder sag mir, was du an deinem Plan ändern möchtest."
+msgctxt "IihZBt"
+msgid "Hi! I'm {name}, your AI study buddy. Ask me anything, or tell me what to change in your plan."
+msgstr "Hallo! Ich bin {name}, dein KI-Lernkumpel. Frag mich, was du möchtest, oder sag mir, was sich an deinem Plan ändern soll."
 
 #: src/conversation/tutor-conversation-content.tsx
 msgctxt "Dij_iT"
@@ -2811,9 +2832,9 @@ msgid "Applying it rebuilds your plan for this country. The lessons you've finis
 msgstr "Wenn du das übernimmst, erstellen wir deinen Plan für dieses Land neu. Abgeschlossene Lektionen bleiben abgeschlossen."
 
 #: src/conversation/tutor-country-offer.tsx
-msgctxt "Ol1JfV"
-msgid "Saved. Your new plan is being prepared, and you can keep studying meanwhile."
-msgstr "Gespeichert. Wir bereiten deinen neuen Plan vor und du kannst währenddessen weiterlernen."
+msgctxt "BcB9ZH"
+msgid "Saved. Your new plan is getting ready, and you can keep studying."
+msgstr "Gespeichert. Wir bereiten deinen neuen Plan vor. Du kannst weiterlernen."
 
 #. {country} is a country's name. It always follows the colon, so it never needs an article or a case.
 #: src/conversation/tutor-country-offer.tsx
@@ -2847,11 +2868,10 @@ msgctxt "QTg-WT"
 msgid "Start a new goal"
 msgstr "Neues Ziel starten"
 
-#. On a locked card under the study buddy's answer, offering to start a new goal. The lock can come from the goals the learner follows at once or from the new goals they started recently, so it names neither. “Plus” is the name of the paid plan, not the word “more”.
 #: src/conversation/tutor-feature-offers.tsx
-msgctxt "cTQ_Wv"
-msgid "Starting another goal right now comes with Plus. Until then, keep going with your current goals."
-msgstr "Um jetzt ein weiteres Ziel zu starten, brauchst du Plus. Mach bis dahin mit deinen aktuellen Zielen weiter."
+msgctxt "cNbAST"
+msgid "Another goal now needs a subscription"
+msgstr "Für ein weiteres Ziel brauchst du jetzt ein Abo"
 
 #. Describes how often essay practice comes in the learner's plan.
 #: src/conversation/tutor-feature-offers.tsx
@@ -2872,9 +2892,9 @@ msgid "Practiced every week in your plan, each draft graded."
 msgstr "Dein Plan enthält jede Woche Schreibübungen. Jeder Entwurf wird bewertet."
 
 #: src/conversation/tutor-feature-offers.tsx
-msgctxt "hrZloU"
-msgid "Essay practice with grading comes with Plus."
-msgstr "Aufsätze üben und bewerten lassen ist in Plus enthalten."
+msgctxt "FP60i-"
+msgid "Essay practice needs a subscription"
+msgstr "Für Aufsatzübungen brauchst du ein Abo"
 
 #: src/conversation/tutor-feature-offers.tsx
 #: src/conversation/tutor-tool-offer.tsx
@@ -2924,9 +2944,9 @@ msgid "Memory"
 msgstr "Erinnerungen"
 
 #: src/conversation/tutor-feature-offers.tsx
-msgctxt "DvtV1I"
-msgid "Energy, level, right answers and when you study best."
-msgstr "Energie, Level, richtige Antworten und wann du am besten lernst."
+msgctxt "p1281P"
+msgid "Energy, belt, right answers and when you study best."
+msgstr "Energie, Gürtel, richtige Antworten und wann du am besten lernst."
 
 #: src/conversation/tutor-feature-offers.tsx
 msgctxt "H3eDAS"
@@ -2939,9 +2959,14 @@ msgid "Your plan and its billing."
 msgstr "Dein Tarif und seine Abrechnung."
 
 #: src/conversation/tutor-feature-offers.tsx
-msgctxt "TwAhhx"
-msgid "What Plus includes and its price."
-msgstr "Was Plus bietet und was es kostet."
+msgctxt "_xThLm"
+msgid "What it includes and its price."
+msgstr "Was enthalten ist und was es kostet."
+
+#: src/conversation/tutor-feature-offers.tsx
+msgctxt "R_6nsx"
+msgid "Subscription"
+msgstr "Abonnement"
 
 #: src/conversation/tutor-feature-offers.tsx
 msgctxt "0Azlrb"
@@ -3382,6 +3407,13 @@ msgid "That didn't go through. Your text is still here. Try again in a moment."
 msgstr "Das hat nicht geklappt. Dein Text ist noch da. Versuch es gleich noch einmal."
 
 #: src/essay/essay-status-line.tsx
+#: src/language/level-test/level-test-questions.tsx
+#: src/language/pronunciation/pronunciation-word-card.tsx
+msgctxt "aFV0Wu"
+msgid "Create your free account to continue."
+msgstr "Erstelle dein kostenloses Konto, um weiterzumachen."
+
+#: src/essay/essay-status-line.tsx
 msgctxt "Vl53xq"
 msgid "You've used today's essay grades. Your text stays here; send it tomorrow."
 msgstr "Du hast deine Bewertungen für heute aufgebraucht. Dein Text bleibt hier; schick ihn morgen ab."
@@ -3586,9 +3618,10 @@ msgid "{count, plural, one {# taken} other {# taken}}"
 msgstr "{count, plural, other {# absolviert}}"
 
 #: src/exam/exam-mocks-section.tsx
-msgctxt "R5ym3g"
-msgid "Mock exams come with Plus: whenever you want, every week in your plan, and your progress over time."
-msgstr "Mit Plus kannst du jederzeit Probeprüfungen machen, sie stehen jede Woche in deinem Plan und du siehst deine Entwicklung im Verlauf."
+#: src/mock/mock-chooser-parts.tsx
+msgctxt "dza30U"
+msgid "Mock exams come with Plus"
+msgstr "Probeprüfungen sind in Plus enthalten"
 
 #: src/exam/exam-moment-card.tsx
 msgctxt "DBeLXR"
@@ -3752,9 +3785,7 @@ msgctxt "HoIb1I"
 msgid "Time's up"
 msgstr "Die Zeit ist um"
 
-#. {time} is a duration with its unit, such as “9 min”.
 #: src/exam/exam-running-mock.tsx
-#: src/focus-test/use-focus-test-texts.ts
 #: src/session/session-queue.tsx
 #: src/today/today-day-progress.tsx
 msgctxt "HmaKic"
@@ -3850,8 +3881,10 @@ msgctxt "XffT_n"
 msgid "How the score works"
 msgstr "So funktioniert der Score"
 
+#. Beside a language goal's reason: a certificate's plan follows its exam.
 #: src/exam/exam-screen.tsx
 #: src/onboarding/entry/goal-examples.tsx
+#: src/onboarding/steps/reason-step.tsx
 msgctxt "Xy7a7A"
 msgid "Exam"
 msgstr "Prüfung"
@@ -3951,29 +3984,19 @@ msgid "1 quick question at the end"
 msgstr "1 kurze Frage zum Schluss"
 
 #: src/explain/explain-waiting.tsx
-msgctxt "mtY9st"
-msgid "I want to learn this in depth"
-msgstr "Ich möchte das Thema vertiefen"
+msgctxt "zfh8W-"
+msgid "Learn more about this"
+msgstr "Mehr dazu erfahren"
 
 #: src/explain/explain-waiting.tsx
-msgctxt "10s3bk"
-msgid "Still writing your explanation. It shows up here as soon as it's ready."
-msgstr "Wir erstellen deine Erklärung noch. Sie erscheint hier, sobald sie fertig ist."
+msgctxt "EQ-8cJ"
+msgid "Still getting your explanation ready."
+msgstr "Wir arbeiten noch an deiner Erklärung."
 
 #: src/explain/explain-waiting.tsx
 msgctxt "fL_sD1"
 msgid "This is taking longer than usual."
 msgstr "Das dauert länger als üblich."
-
-#: src/explain/explain-waiting.tsx
-msgctxt "SHh7sC"
-msgid "See explanation"
-msgstr "Erklärung ansehen"
-
-#: src/explain/explain-waiting.tsx
-msgctxt "aSCeTx"
-msgid "No plan to set up."
-msgstr "Du musst keinen Plan erstellen."
 
 #: src/explain/quick-explanation-label.ts
 msgctxt "fjrJL6"
@@ -4069,10 +4092,75 @@ msgctxt "29365H"
 msgid "Haven't studied most of this yet? That's fine. You can stop here and start learning."
 msgstr "Hast du das meiste davon noch nicht gelernt? Das ist in Ordnung. Du kannst hier aufhören und mit dem Lernen anfangen."
 
-#: src/focus-test/focus-test-proposal.tsx
-msgctxt "ZPLfTK"
-msgid "Change my plan"
-msgstr "Meinen Plan ändern"
+#: src/focus-test/focus-test-flow.tsx
+msgctxt "8Zf--i"
+msgid "Stop and use my answers"
+msgstr "Beenden und meine Antworten verwenden"
+
+#. Under “Focusing never removes a subject”. “The ones” are exam subjects. “Your time” is the study time the learner has before the exam.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "ebBs5s"
+msgid "The ones you need most get more time when your time can't cover everything."
+msgstr "Wenn deine Zeit nicht für alles reicht, bekommen die Fächer mehr Zeit, bei denen du sie am meisten brauchst."
+
+#. Title of a short fact about the Focus test. Say only this: giving some exam subjects more study time (focusing) is never what removes a subject from the study plan. Do not say that every subject stays in the plan or that no subject is left out: with very little study time a subject can still end up with no lessons. Use the same word for “focus” as “Change focus” and “Choose where to focus” do.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "auxYjk"
+msgid "Focusing never removes a subject"
+msgstr "Durch den Fokus wird nie ein Fach gestrichen"
+
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "3eMENr"
+msgid "The test starts with the subjects that weigh most in your exam."
+msgstr "Der Test beginnt mit den Fächern, die in deiner Prüfung am meisten zählen."
+
+#. Title of a short fact about the Focus test: its first questions are on the exam subjects that weigh most in the score.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "ia0ABg"
+msgid "What counts most comes first"
+msgstr "Was am meisten zählt, kommt zuerst"
+
+#. “I don't know yet” is the button on every Focus test question; use the same words as that button.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "r7JaA6"
+msgid "“I don't know yet” is a fine answer."
+msgstr "„Ich weiß es noch nicht“ ist völlig in Ordnung."
+
+#. Title of a short fact about the Focus test: it gives no grade or score.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "rIfFed"
+msgid "There's no grade"
+msgstr "Es gibt keine Note"
+
+#. Under “Stop anytime”: every Focus test answer is saved as soon as it is given.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "3YgnmP"
+msgid "Each answer is saved."
+msgstr "Jede Antwort wird gespeichert."
+
+#. Title of a short fact about the Focus test: the learner can stop it whenever they want.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "g1Knsp"
+msgid "Stop anytime"
+msgstr "Jederzeit aufhören"
+
+#. Under “A few more in your first week”. “These questions” are the Focus test's questions; “that” is the study sessions asking them.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "m3Cw5S"
+msgid "Your study sessions ask a few more of these questions. You can pause that."
+msgstr "In deinen Lerneinheiten kommen noch ein paar dieser Fragen dazu. Du kannst das pausieren."
+
+#. Title of a short fact about the Focus test: during the learner's first week, their study sessions ask a few more of its questions. “A few more” means questions.
+#: src/focus-test/focus-test-how-it-works.tsx
+msgctxt "Y6o_Rw"
+msgid "A few more in your first week"
+msgstr "Noch ein paar Fragen in deiner ersten Woche"
+
+#: src/focus-test/focus-test-how-it-works.tsx
+#: src/onboarding/how-it-works.tsx
+msgctxt "HK3ph8"
+msgid "How it works"
+msgstr "So funktioniert’s"
 
 #: src/focus-test/focus-test-proposal.tsx
 #: src/focus-test/focus-test-result.tsx
@@ -4096,21 +4184,52 @@ msgctxt "ZQfsV7"
 msgid "Your time can't cover everything before your exam."
 msgstr "Deine Lernzeit bis zur Prüfung reicht nicht für alles."
 
+#: src/focus-test/focus-test-proposal.tsx
+#: src/today/today-plan-change.tsx
+msgctxt "YWfqky"
+msgid "Update my plan"
+msgstr "Meinen Plan anpassen"
+
 #: src/focus-test/focus-test-result.tsx
+#: src/onboarding/steps/reveal-coverage.tsx
 msgctxt "s2lEZy"
 msgid "Change focus"
 msgstr "Schwerpunkte ändern"
 
+#. Under the switch “Ask a few more in my sessions”: sessions ask those questions only during the learner's first week.
 #: src/focus-test/focus-test-result.tsx
 msgctxt "fkY35_"
 msgid "During your first week"
 msgstr "In deiner ersten Woche"
 
-#. Label of an on/off switch on the Focus test's result. “A few more” means test questions, asked while the learner studies their lessons.
+#. Label of an on/off switch on the Focus test's result: whether the learner's study sessions ask a few more Focus test questions. “A few more” means questions.
 #: src/focus-test/focus-test-result.tsx
-msgctxt "4ag959"
-msgid "Ask a few more as I study"
-msgstr "Beim Lernen ein paar weitere Fragen stellen"
+msgctxt "ksG62i"
+msgid "Ask a few more in my sessions"
+msgstr "In meinen Lerneinheiten noch ein paar Fragen stellen"
+
+#. Shown with a check mark above the Focus test's result: the learner's answers were saved.
+#: src/focus-test/focus-test-result.tsx
+msgctxt "g2pcsk"
+msgid "Answers saved"
+msgstr "Antworten gespeichert"
+
+#. Headline of the Focus test's result, above a short numbered list of the exam subjects that need most of the learner's study time. It answers the invitation “Find out where to focus”. Keep it short. Use the same word for “focus” as “Change focus” and “Choose where to focus” do.
+#: src/focus-test/focus-test-result.tsx
+msgctxt "K9pcMz"
+msgid "Here's where to focus"
+msgstr "Darauf solltest du den Fokus legen"
+
+#: src/focus-test/focus-test-result.tsx
+#: src/onboarding/steps/placement-screens.tsx
+msgctxt "ZrB8AL"
+msgid "Your starting point is set"
+msgstr "Dein Ausgangspunkt steht fest"
+
+#: src/focus-test/focus-test-result.tsx
+msgctxt "qI81MQ"
+msgid "{count, plural, one {Your plan also skips # lesson you already know.} other {Your plan also skips # lessons you already know.}}"
+msgstr "{count, plural, one {Dein Plan überspringt außerdem # Lektion, die du schon kennst.} other {Dein Plan überspringt außerdem # Lektionen, die du schon kennst.}}"
 
 #. Button on the Focus test's result: continues the test with more questions.
 #: src/focus-test/focus-test-result.tsx
@@ -4118,10 +4237,23 @@ msgctxt "X1M8Kl"
 msgid "Answer more questions"
 msgstr "Weitere Fragen beantworten"
 
-#: src/focus-test/focus-test-result.tsx
-msgctxt "qI81MQ"
-msgid "{count, plural, one {Your plan also skips # lesson you already know.} other {Your plan also skips # lessons you already know.}}"
-msgstr "{count, plural, one {Dein Plan überspringt außerdem # Lektion, die du schon kennst.} other {Dein Plan überspringt außerdem # Lektionen, die du schon kennst.}}"
+#. Under the headline “Find out where to focus”. Says what the Focus test is, then why it helps: the study plan leaves out lessons on what the learner already knows.
+#: src/focus-test/focus-test-screens.tsx
+msgctxt "67jQK8"
+msgid "Quick questions on your exam's subjects. Your plan skips what you already know, so your time goes where you need it most."
+msgstr "Kurze Fragen zu deinen Prüfungsfächern. Dein Plan überspringt, was du schon weißt, damit mehr Zeit für das bleibt, was du am meisten brauchst."
+
+#: src/focus-test/focus-test-screens.tsx
+msgctxt "JFKisp"
+msgid "Quick questions on your exam's subjects. Your plan skips what you already know."
+msgstr "Kurze Fragen zu deinen Prüfungsfächern. Dein Plan überspringt, was du schon weißt."
+
+#: src/focus-test/focus-test-screens.tsx
+#: src/questions/test-out-preparing.tsx
+#: src/today/today-focus-test.tsx
+msgctxt "SKxNcp"
+msgid "Start the test"
+msgstr "Test starten"
 
 #: src/focus-test/focus-test-screens.tsx
 msgctxt "G9nQHt"
@@ -4135,7 +4267,6 @@ msgid "{count, plural, one {Your # answer is saved.} other {Your # answers are s
 msgstr "{count, plural, one {Deine # Antwort ist gespeichert.} other {Deine # Antworten sind gespeichert.}}"
 
 #: src/focus-test/focus-test-screens.tsx
-#: src/onboarding/steps/placement-screens.tsx
 msgctxt "n4uIps"
 msgid "Your answers are saved"
 msgstr "Deine Antworten sind gespeichert"
@@ -4166,38 +4297,41 @@ msgctxt "sgSz4r"
 msgid "{correct, plural, =0 {# of {total, number} right} one {# of {total, number} right} other {# of {total, number} right}}"
 msgstr "{correct, plural, =0 {# von {total, number} richtig} other {# von {total, number} richtig}}"
 
-#. A part of the exam the Focus test's questions can't ask about, such as the essay.
+#. A subject the Focus test hasn't asked a question about yet.
 #: src/focus-test/use-focus-test-texts.ts
-msgctxt "O7M3It"
-msgid "{part, select, written {Writing: not in this test} listening {Listening: not in this test} speaking {Speaking: not in this test} other {Practical part: not in this test}}"
-msgstr "{part, select, written {Schreiben: nicht in diesem Test} listening {Hören: nicht in diesem Test} speaking {Sprechen: nicht in diesem Test} other {Praktischer Teil: nicht in diesem Test}}"
+msgctxt "aFU9NJ"
+msgid "Not asked yet"
+msgstr "Noch nicht abgefragt"
+
+#. A part of the exam the Focus test's quick questions can't check, such as the essay.
+#: src/focus-test/use-focus-test-texts.ts
+msgctxt "DjRHAP"
+msgid "{part, select, written {Writing: not checked here} listening {Listening: not checked here} speaking {Speaking: not checked here} other {Practical part: not checked here}}"
+msgstr "{part, select, written {Schreiben: hier nicht geprüft} listening {Hören: hier nicht geprüft} speaking {Sprechen: hier nicht geprüft} other {Praktischer Teil: hier nicht geprüft}}"
+
+#. Headline that invites the learner to take the Focus test: quick questions that show which exam subjects need most of their study time. Keep it short: it is a headline, and it also sits on one line with a duration under “Focus test” in a list. Use the same word for “focus” as “Change focus” and “Choose where to focus” do.
+#: src/focus-test/use-focus-test-texts.ts
+msgctxt "sdUdiu"
+msgid "Find out where to focus"
+msgstr "Finde deinen Fokus"
+
+#. The same headline for a goal with no exam date or with a single subject: there the Focus test only finds what the learner already knows, so their plan starts in the right place.
+#: src/focus-test/use-focus-test-texts.ts
+msgctxt "Hz7C8k"
+msgid "Find out where to start"
+msgstr "Finde heraus, wo du anfangen solltest"
 
 #: src/focus-test/use-focus-test-texts.ts
-msgctxt "-5FSfX"
-msgid "Find what to study most"
-msgstr "Deine Lernschwerpunkte finden"
+#: src/mock/mock-chooser-picked.tsx
+msgctxt "rzrdrM"
+msgid "About {time}"
+msgstr "Etwa {time}"
 
+#. {time} is a duration with its unit, such as “9 min”: about how long the rest of the Focus test takes. Keep it short: it shares one line with another fact, such as “In progress”.
 #: src/focus-test/use-focus-test-texts.ts
-#: src/onboarding/steps/placement-screens.tsx
-msgctxt "LW1Em4"
-msgid "Skip what you already know"
-msgstr "Überspringen, was du schon kannst"
-
-#: src/focus-test/use-focus-test-texts.ts
-msgctxt "-nbx59"
-msgid "This test shows what you already know, so more of your time goes to what you need most. It never removes a subject."
-msgstr "Dieser Test zeigt, was du schon kannst. So bleibt mehr Zeit für das, was du am meisten brauchst. Dabei wird kein Fach gestrichen."
-
-#: src/focus-test/use-focus-test-texts.ts
-msgctxt "lcq8ee"
-msgid "This test shows what you already know, so your plan can skip it."
-msgstr "Dieser Test zeigt, was du schon kannst. Dein Plan kann diese Inhalte dann überspringen."
-
-#. {time} is a duration with its unit, such as “15 min”.
-#: src/focus-test/use-focus-test-texts.ts
-msgctxt "upCPiN"
-msgid "A {time} test shows what you already know, so more of your time goes to what you need most. It never removes a subject."
-msgstr "Ein Test, der {time} dauert, zeigt, was du schon kannst. So bleibt mehr Zeit für das, was du am meisten brauchst. Dabei wird kein Fach gestrichen."
+msgctxt "89t5lc"
+msgid "About {time} left"
+msgstr "Noch etwa {time}"
 
 #. Button that ends the Focus test with the answers given so far and shows its result.
 #: src/focus-test/use-focus-test-texts.ts
@@ -4205,36 +4339,36 @@ msgctxt "AcDjzM"
 msgid "See my result"
 msgstr "Mein Ergebnis ansehen"
 
+#. Under “Focus test” in a list: the learner started the test and has not finished it.
 #: src/focus-test/use-focus-test-texts.ts
 msgctxt "q1WWIr"
 msgid "In progress"
 msgstr "In Bearbeitung"
 
+#. Under “Focus test” in a list: the learner paused the Focus test questions that their study sessions ask.
+#: src/focus-test/use-focus-test-texts.ts
+msgctxt "KAccXF"
+msgid "Paused in your sessions"
+msgstr "In deinen Lerneinheiten pausiert"
+
+#. Under “Focus test” in a list, once the learner took the test: opens its result.
 #: src/focus-test/use-focus-test-texts.ts
 msgctxt "TZTNNl"
 msgid "See your result"
 msgstr "Dein Ergebnis ansehen"
 
 #: src/focus-test/use-result-line.ts
-msgctxt "2jwvQI"
-msgid "{count, plural, one {The test suggests this subject} other {The test suggests these # subjects}}"
-msgstr "{count, plural, one {Der Test schlägt dieses Fach vor} other {Der Test schlägt diese # Fächer vor}}"
+msgctxt "vKUJpo"
+msgid "{count, plural, one {Your plan skips # lesson you already know.} other {Your plan skips # lessons you already know.}}"
+msgstr "{count, plural, one {Dein Plan überspringt # Lektion, deren Inhalte du schon kennst.} other {Dein Plan überspringt # Lektionen, deren Inhalte du schon kennst.}}"
 
+#. The Focus test's result when no answer showed something the learner already knows: every exam subject starts at its first lessons.
 #: src/focus-test/use-result-line.ts
-msgctxt "JkvsQ2"
-msgid "{count, plural, one {Focus on this subject} other {Focus on these # subjects}}"
-msgstr "{count, plural, one {Konzentrier dich auf dieses Fach} other {Konzentrier dich auf diese # Fächer}}"
+msgctxt "PLJ-7h"
+msgid "Your plan starts each subject from the basics."
+msgstr "Dein Plan beginnt in jedem Fach mit den Grundlagen."
 
-#: src/focus-test/use-result-line.ts
-msgctxt "225sKn"
-msgid "{count, plural, one {Your plan skips # lesson you already know} other {Your plan skips # lessons you already know}}"
-msgstr "{count, plural, one {Dein Plan überspringt # Lektion, die du schon kennst} other {Dein Plan überspringt # Lektionen, die du schon kennst}}"
-
-#: src/focus-test/use-result-line.ts
-msgctxt "pqsk3u"
-msgid "Your plan starts from the basics"
-msgstr "Dein Plan beginnt mit den Grundlagen"
-
+#. After the learner agreed to give the listed exam subjects more time: the study plan changed.
 #: src/focus-test/use-result-line.ts
 msgctxt "G-NFHn"
 msgid "Your plan now gives these subjects more time."
@@ -4247,23 +4381,29 @@ msgctxt "PxpLj-"
 msgid "Your plan stays as it was."
 msgstr "Dein Plan bleibt, wie er war."
 
+#. Under “Here's where to focus”, above a list of exam subjects: the learner's study plan already gives them more time.
 #: src/focus-test/use-result-line.ts
 msgctxt "60Ever"
 msgid "Your plan gives these subjects more time."
 msgstr "Dein Plan sieht für diese Fächer mehr Zeit vor."
 
+#. Above the exam subjects the Focus test suggests: the learner picked other subjects to focus on, and the study plan keeps their pick. Use the same word for “focus” as “Change focus” and “Choose where to focus” do.
 #: src/focus-test/use-result-line.ts
-msgctxt "Y7U0Jy"
-msgid "Your plan keeps the focus you chose."
-msgstr "Dein Plan behält deinen gewählten Schwerpunkt bei."
+msgctxt "Q9-GXF"
+msgid "Your plan keeps the focus you chose. This is what the test suggests."
+msgstr "Dein Plan behält deinen gewählten Fokus bei. Das empfiehlt der Test."
 
+#. Above the exam subjects the Focus test suggests: the learner answered “Not now” to giving them more time, so the study plan was left unchanged.
 #: src/focus-test/use-result-line.ts
-#: src/mock/mock-result-plan.tsx
-#: src/plan/plan-bases-sheet.tsx
-#: src/plan/plan-offer-preview.tsx
-msgctxt "D0KGfN"
-msgid "Your plan stays as it is."
-msgstr "Dein Plan bleibt, wie er ist."
+msgctxt "wMXRsU"
+msgid "You kept your plan as it is. This is what the test suggests."
+msgstr "Du hast deinen Plan so gelassen, wie er ist. Das schlägt der Test vor."
+
+#. Under “Here's where to focus”, above a list of exam subjects: why the Focus test suggests these subjects, then the fact that focusing on them is never what removes a subject from the study plan. Do not say that every subject stays in the plan or that no subject is left out: with very little study time a subject can still end up with no lessons. Use the same word for “focus” as “Change focus” and “Choose where to focus” do.
+#: src/focus-test/use-result-line.ts
+msgctxt "98jjZc"
+msgid "Based on your answers and what counts most in your exam. Focusing never removes a subject."
+msgstr "Grundlage sind deine Antworten und das, was in deiner Prüfung am meisten zählt. Durch den Fokus wird nie ein Fach gestrichen."
 
 #: src/generation/call-generation-copy.ts
 msgctxt "jLGASr"
@@ -4426,7 +4566,6 @@ msgid "This didn't start"
 msgstr "Das wurde nicht gestartet"
 
 #: src/generation/lesson-generation-copy.ts
-#: src/wait/lesson-wait-status.tsx
 msgctxt "57Hm5c"
 msgid "Writing your lesson"
 msgstr "Wir erstellen deine Lektion"
@@ -4500,7 +4639,6 @@ msgstr "Wir prüfen die Antworten…"
 
 #: src/generation/lesson-generation-copy.ts
 #: src/generation/use-generation-copy.ts
-#: src/wait/lesson-wait-status.tsx
 msgctxt "VLjmPG"
 msgid "Writing your challenge"
 msgstr "Wir erstellen deine Herausforderung"
@@ -4582,9 +4720,9 @@ msgid "Putting them in the order it teaches…"
 msgstr "Wir ordnen die Themen so, wie sie im Material vorkommen…"
 
 #: src/generation/use-generation-copy.ts
-msgctxt "5pxECD"
-msgid "Choosing what to learn"
-msgstr "Wir wählen aus, was du lernst"
+msgctxt "j-JlEW"
+msgid "Mapping the skills it takes"
+msgstr "Wir ermitteln die nötigen Fähigkeiten"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "EWBWPU"
@@ -4592,9 +4730,9 @@ msgid "Listing what your goal asks for…"
 msgstr "Wir listen auf, was du für dein Ziel brauchst…"
 
 #: src/generation/use-generation-copy.ts
-msgctxt "ZPKQvS"
-msgid "Putting the topics in order…"
-msgstr "Wir legen die Reihenfolge der Themen fest…"
+msgctxt "mtbsWA"
+msgid "Putting the skills in order…"
+msgstr "Wir bringen die Fähigkeiten in eine Reihenfolge…"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "CC2CMl"
@@ -4935,7 +5073,7 @@ msgid "{count, plural, one {# skill you already know} other {# skills you alread
 msgstr "{count, plural, one {# Fähigkeit, die du schon kennst} other {# Fähigkeiten, die du schon kennst}}"
 
 #: src/journey/journey-chapters.tsx
-#: src/onboarding/steps/reveal-week.tsx
+#: src/onboarding/steps/reveal-days.tsx
 msgctxt "2DMbJf"
 msgid "More lessons"
 msgstr "Weitere Lektionen"
@@ -5020,7 +5158,7 @@ msgid "{studied, plural, =0 {No lessons studied yet} one {# lesson studied} othe
 msgstr "{studied, plural, =0 {Noch keine Lektionen gelernt} one {# Lektion gelernt} other {# Lektionen gelernt}}"
 
 #: src/journey/journey-hero.tsx
-#: src/language/level-test/level-test-screens.tsx
+#: src/language/progress/skill-levels-card.tsx
 #: src/onboarding/plan-receipt.tsx
 #: src/onboarding/steps/level-choices.tsx
 msgctxt "DejB0r"
@@ -5147,7 +5285,7 @@ msgstr "Probeprüfung für den nächsten Prüfungstermin"
 #: src/journey/journey-phase-events.tsx
 #: src/journey/roadmap-full.tsx
 #: src/mock/mock-frame.tsx
-#: src/onboarding/steps/reveal-week.tsx
+#: src/onboarding/steps/reveal-days.tsx
 #: src/session/use-block-copy.ts
 #: src/today/today-week-challenge.tsx
 msgctxt "6ppMud"
@@ -5618,6 +5756,7 @@ msgid "Exam day"
 msgstr "Prüfungstag"
 
 #: src/journey/roadmap-full.tsx
+#: src/plan/plan-properties.tsx
 msgctxt "h0He2G"
 msgid "Goal date"
 msgstr "Zieldatum"
@@ -5709,15 +5848,28 @@ msgctxt "uLO8Ma"
 msgid "Speak it fluently"
 msgstr "Fließend sprechen"
 
+#. Under a language level to aim for: the hours of study still needed to reach it, then when. {month} is a month and year, like "Nov 2027".
 #: src/language-aim/use-aim-words.ts
-msgctxt "7ncC9e"
-msgid "Around {month}"
-msgstr "Etwa im {month}"
+msgctxt "nxt5u1"
+msgid "About {hours} h more · around {month}"
+msgstr "Etwa {hours} Std. mehr · voraussichtlich {month}"
+
+#. Under a language level to aim for: the hours of study still needed to reach it.
+#: src/language-aim/use-aim-words.ts
+msgctxt "PSVY23"
+msgid "About {hours} h more"
+msgstr "Etwa {hours} Std. mehr"
 
 #: src/language-aim/use-aim-words.ts
-msgctxt "7T7vIF"
-msgid "Level to reach"
-msgstr "Angestrebtes Level"
+msgctxt "2B8IBO"
+msgid "About {hours} h of study"
+msgstr "Etwa {hours} h Lernzeit"
+
+#. The language level a course goes up to, like B1. Not the learner's goal: say it as the level they aim for.
+#: src/language-aim/use-aim-words.ts
+msgctxt "mI_0zG"
+msgid "Your aim"
+msgstr "Dein angestrebtes Level"
 
 #: src/language-aim/use-reason-copy.ts
 msgctxt "IZU_K4"
@@ -5761,10 +5913,9 @@ msgid "Pass a certificate"
 msgstr "Zertifikatsprüfung bestehen"
 
 #: src/language-aim/use-reason-copy.ts
-#: src/onboarding/steps/reason-step.tsx
-msgctxt "lZZnLn"
-msgid "In your own words"
-msgstr "In deinen eigenen Worten"
+msgctxt "RW_ehZ"
+msgid "In your own words. Aims for {level}"
+msgstr "In deinen eigenen Worten. Ziel: {level}"
 
 #: src/language-aim/use-reason-copy.ts
 #: src/onboarding/steps/question-steps.tsx
@@ -5779,15 +5930,15 @@ msgstr "Keine Präferenz"
 
 #. {taughtVariety} is a language with a country, written as it reads inside a sentence, such as “Spanish (Mexico)”.
 #: src/language-variety/country-field.tsx
-msgctxt "uvGkyf"
-msgid "Your practice calls and our answers to your questions use the country you choose. Lessons and their audio use {taughtVariety}."
-msgstr "Für deine Übungsgespräche und unsere Antworten auf deine Fragen verwenden wir die Sprachvariante des Landes, das du auswählst. Die Lektionen und ihre Audioaufnahmen sind auf {taughtVariety}."
+msgctxt "7XSTa1"
+msgid "Your buddy and practice calls use the country you choose. Lessons and their audio use {taughtVariety}."
+msgstr "Dein Kumpel und die Übungsgespräche verwenden die Sprachvariante des gewählten Landes. Lektionen und ihre Audios sind auf {taughtVariety}."
 
 #. {variety} and {taughtVariety} are a language with a country, written as they read inside a sentence, such as “Spanish (Argentina)” and “Spanish (Mexico)”.
 #: src/language-variety/use-variety-words.ts
-msgctxt "ydYyFm"
-msgid "Your practice calls and our answers to your questions use {variety}. Lessons and their audio use {taughtVariety}."
-msgstr "Für deine Übungsgespräche und unsere Antworten auf deine Fragen verwenden wir {variety}. Die Lektionen und ihre Audioaufnahmen sind auf {taughtVariety}."
+msgctxt "fryHAC"
+msgid "Your buddy and practice calls use {variety}. Lessons and their audio use {taughtVariety}."
+msgstr "Dein Kumpel und die Übungsgespräche verwenden {variety}. Die Lektionen und ihre Audioaufnahmen sind auf {taughtVariety}."
 
 #: src/language/_utils/use-skill-name.ts
 #: src/language/unit/unit-mistakes.tsx
@@ -6047,14 +6198,14 @@ msgid "We couldn't save the call."
 msgstr "Wir konnten das Gespräch nicht speichern."
 
 #: src/language/conversation/call-refusal-copy.ts
-msgctxt "1ZMIpa"
-msgid "It's open in another tab or on another device. Ending it from here skips its feedback."
-msgstr "Es ist in einem anderen Tab oder auf einem anderen Gerät geöffnet. Wenn du es hier beendest, erhältst du dafür kein Feedback."
+msgctxt "0QT9qQ"
+msgid "It's open in another tab or on another device. Starting this one ends it, without its feedback."
+msgstr "Es läuft in einem anderen Tab oder auf einem anderen Gerät. Wenn du dieses Gespräch startest, endet das andere ohne Rückmeldung."
 
 #: src/language/conversation/call-refusal-copy.ts
-msgctxt "0LuKMT"
-msgid "You're already in a call"
-msgstr "Du führst bereits ein Gespräch"
+msgctxt "mWWPs0"
+msgid "You're in another call"
+msgstr "Du bist gerade in einem anderen Gespräch"
 
 #. Under the title "Calls are paused": the pause applies to every learner, not only this one.
 #: src/language/conversation/call-refusal-copy.ts
@@ -6084,11 +6235,10 @@ msgctxt "ZXosfu"
 msgid "This call has ended"
 msgstr "Dieses Gespräch ist beendet"
 
-#. Another call is still running: this ends it and starts the call on this screen.
 #: src/language/conversation/call-refusal-copy.ts
-msgctxt "MAatFa"
-msgid "End that call and start this one"
-msgstr "Das andere Gespräch beenden und dieses starten"
+msgctxt "QGKgDY"
+msgid "Start this call"
+msgstr "Dieses Gespräch starten"
 
 #: src/language/conversation/call-stars-step.tsx
 msgctxt "T1FmHH"
@@ -6108,14 +6258,19 @@ msgid "Brain Power"
 msgstr "Brain Power"
 
 #: src/language/conversation/call-stars-step.tsx
-msgctxt "39TKEV"
-msgid "Nothing is lost: the call comes back so you can try again."
-msgstr "Nichts ist verloren: Das Gespräch kommt zurück, damit du es noch einmal versuchen kannst."
+msgctxt "0z6K11"
+msgid "The call comes back so you can try again."
+msgstr "Das Gespräch wird dir wieder angeboten, damit du es noch einmal versuchen kannst."
 
 #: src/language/conversation/call-stars-step.tsx
 msgctxt "AhtlEG"
 msgid "A star for finishing, one for getting everything across and one without Help."
 msgstr "Ein Stern fürs Abschließen, einer dafür, alles verständlich zu vermitteln, und einer fürs Gespräch ohne Hilfe."
+
+#: src/language/conversation/challenge-call-gate.tsx
+msgctxt "QJJTto"
+msgid "This call needs a subscription"
+msgstr "Für dieses Gespräch brauchst du ein Abo"
 
 #: src/language/conversation/checkpoint-call-preparing.tsx
 msgctxt "rMZfgB"
@@ -6123,61 +6278,20 @@ msgid "Getting your call ready"
 msgstr "Wir bereiten dein Gespräch vor"
 
 #: src/language/conversation/checkpoint-call-preparing.tsx
-msgctxt "dKxF7Y"
-msgid "It opens here as soon as it's ready."
-msgstr "Es öffnet sich hier, sobald es bereit ist."
+msgctxt "tXuVy9"
+msgid "This takes about half a minute."
+msgstr "Das dauert etwa eine halbe Minute."
 
 #: src/language/conversation/checkpoint-call-preparing.tsx
-msgctxt "3qV6d_"
-msgid "Get the call ready"
-msgstr "Gespräch vorbereiten"
-
-#: src/language/conversation/checkpoint-call-preparing.tsx
-msgctxt "XIsjEi"
-msgid "This challenge is a short call about the unit. It's written for your speaking level first, which takes up to half a minute."
-msgstr "Diese Herausforderung ist ein kurzes Gespräch über die Einheit. Wir bereiten es zuerst passend zu deinem Sprechniveau vor. Das dauert bis zu einer halben Minute."
-
-#: src/language/conversation/conversation-intro.tsx
-msgctxt "iZAPuC"
-msgid "{name} answers and speaks first."
-msgstr "{name} nimmt das Gespräch an und spricht zuerst."
-
-#: src/language/conversation/conversation-intro.tsx
-msgctxt "RjOSYE"
-msgid "Then it's your turn: answer out loud, or type if you can't talk."
-msgstr "Dann bist du dran: Antworte laut oder schreib, wenn du nicht sprechen kannst."
-
-#: src/language/conversation/conversation-intro.tsx
-msgctxt "fOxqWQ"
-msgid "When you've done everything, or after about {time}, {name} says goodbye and the call ends."
-msgstr "Sobald du alles erledigt hast, spätestens aber nach etwa {time}, verabschiedet sich {name} und das Gespräch endet."
-
-#: src/language/conversation/conversation-intro.tsx
-msgctxt "ho6R-9"
-msgid "How the call works"
-msgstr "So läuft das Gespräch ab"
-
-#: src/language/conversation/conversation-intro.tsx
-msgctxt "mLswLY"
-msgid "About {time} · Level {level}"
-msgstr "Etwa {time} · Level {level}"
-
-#: src/language/conversation/conversation-intro.tsx
-#: src/language/exam-speaking/exam-task-intro.tsx
-msgctxt "aRrvoE"
-msgid "It ends on its own after about {time}."
-msgstr "Das Gespräch endet nach etwa {time} von selbst."
+msgctxt "Qm5B78"
+msgid "A short voice call with an AI character, about this unit."
+msgstr "Ein kurzes Gespräch mit einer KI-Figur über diese Einheit."
 
 #: src/language/conversation/conversation-intro.tsx
 #: src/language/conversation/conversation-live.tsx
 msgctxt "yw3d7J"
 msgid "{role} · {place}"
 msgstr "{role} · {place}"
-
-#: src/language/conversation/conversation-intro.tsx
-msgctxt "kSgYCD"
-msgid "Turn your sound on. The microphone is on only during the call."
-msgstr "Schalt den Ton ein. Das Mikrofon ist nur während des Gesprächs eingeschaltet."
 
 #: src/language/conversation/conversation-labels.ts
 msgctxt "naDR8I"
@@ -6286,6 +6400,11 @@ msgstr "Gesprächsziele und Formulierungen"
 msgctxt "faIr2X"
 msgid "Listen to {text}"
 msgstr "{text} anhören"
+
+#: src/language/conversation/conversation-parts.tsx
+msgctxt "R_ySCr"
+msgid "Turn your sound on."
+msgstr "Schalt den Ton ein."
 
 #: src/language/conversation/conversation-result.tsx
 msgctxt "emrMOH"
@@ -6492,14 +6611,14 @@ msgid "With an examiner (AI)"
 msgstr "Mit einer prüfenden Person (KI)"
 
 #: src/language/exam-speaking/exam-speaking-labels.ts
-msgctxt "7ib7OG"
-msgid "other candidate"
-msgstr "andere teilnehmende Person"
+msgctxt "2-4KNJ"
+msgid "other candidate (AI)"
+msgstr "andere teilnehmende Person (KI)"
 
 #: src/language/exam-speaking/exam-speaking-labels.ts
-msgctxt "2C_0Qg"
-msgid "examiner"
-msgstr "prüfende Person"
+msgctxt "pNM8cw"
+msgid "examiner (AI)"
+msgstr "prüfende Person (KI)"
 
 #: src/language/exam-speaking/exam-speaking-labels.ts
 msgctxt "OO7BQP"
@@ -6532,19 +6651,15 @@ msgid "On these scales, {band} is the {level} level."
 msgstr "Auf diesen Skalen entspricht {band} dem Level {level}."
 
 #: src/language/exam-speaking/exam-speaking-result.tsx
-msgctxt "9aFaty"
-msgid "You said little in this task, so there wasn't much to judge. A longer try gives a closer estimate."
-msgstr "Du hast bei dieser Aufgabe wenig gesagt, daher gab es nicht viel zu beurteilen. Ein längerer Versuch ermöglicht eine genauere Einschätzung."
+msgctxt "2UvMo7"
+msgid "You said little, so this estimate is rough."
+msgstr "Du hast wenig gesprochen, daher ist das nur eine grobe Einschätzung."
 
 #: src/language/exam-speaking/exam-speaking-result.tsx
-msgctxt "1wB910"
-msgid "An estimate from one practice task, not an official score. How you sound is rated by how easy you are to understand, never by your accent."
-msgstr "Eine Schätzung anhand einer Übungsaufgabe, kein offizieller Score. Deine Aussprache wird danach bewertet, wie gut man dich versteht, nie nach deinem Akzent."
-
-#: src/language/exam-speaking/exam-speaking-result.tsx
-msgctxt "L39s5d"
-msgid "An estimate from one practice task, not an official score."
-msgstr "Eine Schätzung anhand einer Übungsaufgabe, kein offizieller Score."
+#: src/mock/mock-result-speaking.tsx
+msgctxt "p7Ub7O"
+msgid "An estimate, not an official score."
+msgstr "Eine Schätzung, kein offizieller Score."
 
 #: src/language/exam-speaking/exam-speaking-result.tsx
 msgctxt "1E_0vf"
@@ -6552,14 +6667,9 @@ msgid "This task has no estimate"
 msgstr "Für diese Aufgabe gibt es keine Schätzung"
 
 #: src/language/exam-speaking/exam-speaking-result.tsx
-msgctxt "WCEDWv"
-msgid "Try the task again when you're ready."
-msgstr "Versuch die Aufgabe noch einmal, wenn du bereit bist."
-
-#: src/language/exam-speaking/exam-speaking-result.tsx
-msgctxt "rNoi5I"
-msgid "Go to task {number}"
-msgstr "Zu Aufgabe {number}"
+msgctxt "gc2Yof"
+msgid "Next task"
+msgstr "Nächste Aufgabe"
 
 #: src/language/exam-speaking/exam-speaking-result.tsx
 #: src/language/exam-speaking/speaking-paper-section.tsx
@@ -6567,30 +6677,10 @@ msgctxt "uBvT9W"
 msgid "Your task opens as soon as its card is ready."
 msgstr "Deine Aufgabe öffnet sich, sobald die Aufgabenkarte bereit ist."
 
-#: src/language/exam-speaking/exam-speaking-result.tsx
-msgctxt "FjJT2V"
-msgid "Try this task with a new card"
-msgstr "Diese Aufgabe mit einer neuen Karte versuchen"
-
 #: src/language/exam-speaking/exam-task-intro.tsx
 msgctxt "X_5MNN"
 msgid "{exam} · Task {number} of {count}"
 msgstr "{exam} · Aufgabe {number} von {count}"
-
-#: src/language/exam-speaking/exam-task-intro.tsx
-msgctxt "esrHPV"
-msgid "{name} is an AI playing the other candidate, in place of a real one."
-msgstr "{name} ist eine KI und übernimmt die Rolle einer weiteren teilnehmenden Person."
-
-#: src/language/exam-speaking/exam-task-intro.tsx
-msgctxt "X9yT7-"
-msgid "{name} is an AI standing in for a human examiner."
-msgstr "{name} ist eine KI und übernimmt die Rolle einer menschlichen Prüfperson."
-
-#: src/language/exam-speaking/exam-task-intro.tsx
-msgctxt "WYHctN"
-msgid "It's practice: the estimate after it isn't an official score."
-msgstr "Das ist eine Übung: Die anschließende Schätzung ist kein offizieller Score."
 
 #: src/language/exam-speaking/exam-task-intro.tsx
 #: src/language/exam-speaking/speaking-card.tsx
@@ -6598,36 +6688,15 @@ msgctxt "x8XsYw"
 msgid "Your card"
 msgstr "Deine Karte"
 
-#: src/language/exam-speaking/exam-task-intro.tsx
-msgctxt "0hB88z"
-msgid "{name} opens the call, and your card stays on screen."
-msgstr "{name} eröffnet das Gespräch und deine Karte bleibt auf dem Bildschirm."
-
-#: src/language/exam-speaking/exam-task-intro.tsx
-#: src/language/exam-speaking/speaking-task-row.tsx
-msgctxt "3BtroM"
-msgid "Rated on {criteria}."
-msgstr "Bewertet nach {criteria}."
-
-#: src/language/exam-speaking/exam-task-intro.tsx
-msgctxt "bTCHop"
-msgid "Speak your answers: typed ones aren't rated on how you sound. The microphone is used only during the call."
-msgstr "Sprich deine Antworten: Bei getippten Antworten kann nicht bewertet werden, wie du klingst. Das Mikrofon wird nur während des Gesprächs verwendet."
+#: src/language/exam-speaking/prep-timer.tsx
+msgctxt "XHHPD9"
+msgid "Preparation time is over."
+msgstr "Die Vorbereitungszeit ist vorbei."
 
 #: src/language/exam-speaking/prep-timer.tsx
-msgctxt "9dFvSs"
-msgid "Preparation time is over. Start the call when you're ready."
-msgstr "Die Vorbereitungszeit ist vorbei. Starte das Gespräch, wenn du bereit bist."
-
-#: src/language/exam-speaking/prep-timer.tsx
-msgctxt "vKagbo"
-msgid "The exam gives {total} to prepare tasks {tasks} together, about {time} for this one."
-msgstr "In der Prüfung hast du {total}, um die Aufgaben {tasks} gemeinsam vorzubereiten, etwa {time} für diese Aufgabe"
-
-#: src/language/exam-speaking/prep-timer.tsx
-msgctxt "89N29y"
-msgid "The exam gives {time} to prepare with the card."
-msgstr "In der Prüfung hast du für die Vorbereitung mit der Karte {time}"
+msgctxt "q-Y54s"
+msgid "{time}, as in the exam"
+msgstr "{time}, wie in der Prüfung"
 
 #: src/language/exam-speaking/prep-timer.tsx
 msgctxt "rDyxKu"
@@ -6640,24 +6709,9 @@ msgid "Start again"
 msgstr "Von vorn beginnen"
 
 #: src/language/exam-speaking/speaking-paper-section.tsx
-msgctxt "l3c7Yz"
-msgid "Speaking practice comes with Plus: every task of the paper on a call, and an estimate on the official criteria after each one."
-msgstr "Sprechübungen sind in Plus enthalten: Übe jede Aufgabe des Prüfungsteils in einem Gespräch und erhalte danach eine Einschätzung anhand der offiziellen Kriterien."
-
-#: src/language/exam-speaking/speaking-paper-section.tsx
 msgctxt "cNEc28"
 msgid "The task didn't start. Try again in a moment."
 msgstr "Die Aufgabe konnte nicht gestartet werden. Versuch es gleich noch einmal."
-
-#: src/language/exam-speaking/speaking-paper-section.tsx
-msgctxt "prik_R"
-msgid "An AI stands in for the human examiner or the other candidate. Each try has a new card, and after it you get an estimate on the exam's official criteria, not an official score."
-msgstr "Eine KI übernimmt die Rolle der prüfenden Person oder der anderen Prüfungsteilnehmerin beziehungsweise des anderen Prüfungsteilnehmers. Bei jedem Versuch bekommst du eine neue Karte und danach eine Einschätzung anhand der offiziellen Prüfungskriterien, aber keinen offiziellen Score."
-
-#: src/language/exam-speaking/speaking-paper-section.tsx
-msgctxt "2TskYl"
-msgid "An AI stands in for the human examiner. Each try has a new card, and after it you get an estimate on the exam's official criteria, not an official score."
-msgstr "Eine KI übernimmt die Rolle der prüfenden Person. Bei jedem Versuch bekommst du eine neue Karte und danach eine Einschätzung anhand der offiziellen Prüfungskriterien, aber keinen offiziellen Score."
 
 #: src/language/exam-speaking/speaking-paper-section.tsx
 msgctxt "ki33-V"
@@ -6683,11 +6737,6 @@ msgstr "Sprechen üben"
 msgctxt "xeIdwV"
 msgid "{count, plural, one {# task} other {# tasks}} · {minutes} in the exam"
 msgstr "{count, plural, one {# Aufgabe} other {# Aufgaben}} · {minutes} in der Prüfung"
-
-#: src/language/exam-speaking/speaking-practice-screen.tsx
-msgctxt "4QnSdk"
-msgid "{exam} is an official exam. Practice its speaking tasks whether or not you plan to take it."
-msgstr "{exam} ist eine offizielle Prüfung. Übe die Sprechaufgaben, egal ob du die Prüfung ablegen möchtest oder nicht."
 
 #: src/language/exam-speaking/speaking-practice-screen.tsx
 #: src/mock/mock-result-speaking.tsx
@@ -6718,14 +6767,14 @@ msgid "Last try: no estimate"
 msgstr "Letzter Versuch: keine Einschätzung"
 
 #: src/language/exam-speaking/speaking-task-row.tsx
-msgctxt "XFriTs"
-msgid "Last try: {count} of {rated} at {level}"
-msgstr "Letzter Versuch: {count} von {rated} auf Niveau {level}"
+msgctxt "PMoeDJ"
+msgid "Last try: at {level} on {count} of {rated} criteria"
+msgstr "Letzter Versuch: {level} bei {count} von {rated} Kriterien"
 
 #: src/language/exam-speaking/speaking-task-row.tsx
-msgctxt "5TVi0H"
-msgid "Last try: {count} of {rated} near {level}"
-msgstr "Letzter Versuch: {count} von {rated} nahe Niveau {level}"
+msgctxt "FD6ztN"
+msgid "Last try: near {level} on {count} of {rated} criteria"
+msgstr "Letzter Versuch: nahe an {level} bei {count} von {rated} Kriterien"
 
 #: src/language/exam-speaking/speaking-task-row.tsx
 msgctxt "KYNzwA"
@@ -6733,14 +6782,19 @@ msgid "Last try: below {level}"
 msgstr "Letzter Versuch: unter Niveau {level}"
 
 #: src/language/exam-speaking/speaking-task-row.tsx
-msgctxt "6VCITb"
-msgid "Start this task"
-msgstr "Aufgabe starten"
+msgctxt "3BtroM"
+msgid "Rated on {criteria}."
+msgstr "Bewertet nach {criteria}."
 
 #: src/language/exam-speaking/speaking-task-row.tsx
-msgctxt "3VhW_2"
-msgid "See your last result"
-msgstr "Letztes Ergebnis ansehen"
+msgctxt "DMe1t1"
+msgid "Speaking practice needs a subscription"
+msgstr "Für Sprechübungen brauchst du ein Abo"
+
+#: src/language/exam-speaking/speaking-task-row.tsx
+msgctxt "h0uuWx"
+msgid "Last result"
+msgstr "Letztes Ergebnis"
 
 #: src/language/level-test/level-test-parts.tsx
 msgctxt "KlIXoI"
@@ -6791,19 +6845,20 @@ msgid "Press Record and say it out loud"
 msgstr "Drück auf „Aufnehmen“ und sprich den Satz laut aus"
 
 #: src/language/level-test/level-test-preparing.tsx
-msgctxt "FMLSDB"
-msgid "Your plan starts from the level you gave, and your first sessions fine-tune it."
-msgstr "Dein Plan beginnt auf dem Level, das du angegeben hast. In deinen ersten Lerneinheiten passen wir ihn genauer an."
+msgctxt "fLPXYn"
+msgid "The {language} test is new in your language, so its questions are being written now. It usually takes a minute or two, and only this once."
+msgstr "Der Test für {language} ist in deiner Sprache neu, deshalb erstellen wir jetzt die Fragen. Das dauert normalerweise ein bis zwei Minuten und ist nur dieses eine Mal nötig."
 
 #: src/language/level-test/level-test-preparing.tsx
+#: src/language/level-test/level-test-screens.tsx
 msgctxt "BTL1zh"
 msgid "Skip the test"
 msgstr "Test überspringen"
 
 #: src/language/level-test/level-test-preparing.tsx
-msgctxt "fLPXYn"
-msgid "The {language} test is new in your language, so its questions are being written now. It usually takes a minute or two, and only this once."
-msgstr "Der Test für {language} ist in deiner Sprache neu, deshalb erstellen wir jetzt die Fragen. Das dauert normalerweise ein bis zwei Minuten und ist nur dieses eine Mal nötig."
+msgctxt "FMLSDB"
+msgid "Your plan starts from the level you gave, and your first sessions fine-tune it."
+msgstr "Dein Plan beginnt auf dem Level, das du angegeben hast. In deinen ersten Lerneinheiten passen wir ihn genauer an."
 
 #: src/language/level-test/level-test-questions.tsx
 msgctxt "-JyB5g"
@@ -6816,11 +6871,6 @@ msgid "I didn't understand the audio"
 msgstr "Ich habe die Aufnahme nicht verstanden"
 
 #: src/language/level-test/level-test-questions.tsx
-msgctxt "TIG4Hb"
-msgid "Skip this part"
-msgstr "Diesen Teil überspringen"
-
-#: src/language/level-test/level-test-questions.tsx
 msgctxt "9Da2rt"
 msgid "Say it out loud"
 msgstr "Sag es laut"
@@ -6830,15 +6880,20 @@ msgctxt "chcgvC"
 msgid "We couldn't check that. Try again."
 msgstr "Wir konnten das nicht prüfen. Versuch es noch einmal."
 
+#: src/language/level-test/level-test-questions.tsx
+msgctxt "TIG4Hb"
+msgid "Skip this part"
+msgstr "Diesen Teil überspringen"
+
 #: src/language/level-test/level-test-screens.tsx
 msgctxt "H4wCrn"
 msgid "Use the app in {language}"
 msgstr "App auf {language} verwenden"
 
 #: src/language/level-test/level-test-screens.tsx
-msgctxt "oLlJZg"
-msgid "Find your level in {language}"
-msgstr "Dein Level in {language} herausfinden"
+msgctxt "kz1BXa"
+msgid "Let's see your level in {language}"
+msgstr "Finden wir dein Level in {language} heraus"
 
 #: src/language/level-test/level-test-screens.tsx
 msgctxt "OAt3qi"
@@ -6846,14 +6901,19 @@ msgid "About {time} of reading, listening and one sentence out loud, so your pla
 msgstr "Etwa {time} lang liest du, hörst zu und sprichst einen Satz laut, damit dein Plan auf deinem Level startet."
 
 #: src/language/level-test/level-test-screens.tsx
-msgctxt "4Itq02"
-msgid "New to its alphabet? Skip the test. Your first lesson teaches you to read it."
-msgstr "Du kennst das Alphabet noch nicht? Überspring den Test. In deiner ersten Lektion lernst du, es zu lesen."
+msgctxt "Lqi6Xz"
+msgid "New to its alphabet? Skip the test. Your first session starts with a short lesson on reading it."
+msgstr "Ist das Alphabet neu für dich? Überspring den Test. Deine erste Lerneinheit beginnt mit einer kurzen Lektion zum Lesen der Schrift."
 
 #: src/language/level-test/level-test-screens.tsx
-msgctxt "Z05RU-"
-msgid "Level test"
-msgstr "Einstufungstest"
+msgctxt "11ZJH9"
+msgid "Your level today"
+msgstr "Dein heutiges Level"
+
+#: src/language/level-test/level-test-screens.tsx
+msgctxt "T0g_dw"
+msgid "Based on the test. It gets more accurate every week."
+msgstr "Basierend auf dem Test. Die Einschätzung wird jede Woche genauer."
 
 #: src/language/no-speech-message.ts
 msgctxt "iJHEJT"
@@ -6872,11 +6932,6 @@ msgid "See the rule"
 msgstr "Regel ansehen"
 
 #: src/language/pattern/language-pattern-screen.tsx
-msgctxt "iXs0Jb"
-msgid "Practice this · {time}"
-msgstr "Das üben · {time}"
-
-#: src/language/pattern/language-pattern-screen.tsx
 #: src/language/pattern/pattern-intro.tsx
 msgctxt "uhjTvw"
 msgid "The rule"
@@ -6886,11 +6941,6 @@ msgstr "Die Regel"
 msgctxt "27c7dl"
 msgid "You've got this rule."
 msgstr "Du beherrschst diese Regel."
-
-#: src/language/pattern/pattern-drill.tsx
-msgctxt "AlkvFa"
-msgid "Knowing the rule is the first step. It gets easier each time you use it."
-msgstr "Die Regel zu kennen, ist der erste Schritt. Mit jeder Anwendung wird es leichter."
 
 #: src/language/pattern/pattern-drill.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
@@ -6985,24 +7035,24 @@ msgid "Estimated writing level: {level}"
 msgstr "Geschätztes Level im Schreiben: {level}"
 
 #: src/language/progress/skill-levels-card.tsx
-msgctxt "tli5KO"
-msgid "Your listening estimate went up to {level}"
-msgstr "Dein geschätztes Level im Hören ist auf {level} gestiegen"
+msgctxt "-OF3zL"
+msgid "Listening went up to {level}"
+msgstr "Dein Level im Hören ist auf {level} gestiegen"
 
 #: src/language/progress/skill-levels-card.tsx
-msgctxt "NHA9sL"
-msgid "Your reading estimate went up to {level}"
-msgstr "Dein geschätztes Level im Lesen ist auf {level} gestiegen"
+msgctxt "msgwoN"
+msgid "Reading went up to {level}"
+msgstr "Dein Level im Lesen ist auf {level} gestiegen"
 
 #: src/language/progress/skill-levels-card.tsx
-msgctxt "BYWqip"
-msgid "Your speaking estimate went up to {level}"
-msgstr "Dein geschätztes Level im Sprechen ist auf {level} gestiegen"
+msgctxt "rkXFzw"
+msgid "Speaking went up to {level}"
+msgstr "Dein Level im Sprechen ist auf {level} gestiegen"
 
 #: src/language/progress/skill-levels-card.tsx
-msgctxt "rafLc9"
-msgid "Your writing estimate went up to {level}"
-msgstr "Dein geschätztes Level im Schreiben ist auf {level} gestiegen"
+msgctxt "NRJ7bO"
+msgid "Writing went up to {level}"
+msgstr "Dein Level im Schreiben ist auf {level} gestiegen"
 
 #: src/language/progress/skill-levels-card.tsx
 msgctxt "Dy0WBR"
@@ -7014,27 +7064,16 @@ msgctxt "LPKiOF"
 msgid "down since the level test"
 msgstr "Seit dem Einstufungstest gesunken"
 
-#. Two or more skills' estimated CEFR levels rose since the level test. {skills} lists them: "Speaking and Writing".
+#. Two or more skills' levels rose since the level test. {skills} lists them: "Speaking and Writing".
 #: src/language/progress/skill-levels-card.tsx
-msgctxt "kzq7R0"
-msgid "{skills} estimates went up"
-msgstr "Die geschätzten Level für {skills} sind gestiegen"
+msgctxt "4DuYAS"
+msgid "{skills} went up"
+msgstr "Du hast dich beim {skills} verbessert"
 
 #: src/language/progress/skill-levels-card.tsx
-msgctxt "K_24wg"
-msgid "Levels move as you practice. They get more accurate every week."
-msgstr "Deine Level verändern sich beim Üben. Sie werden jede Woche genauer."
-
-#. Heads each skill's CEFR level (reading, listening, speaking, writing), estimated from the learner's answers to set how hard practice is.
-#: src/language/progress/skill-levels-card.tsx
-msgctxt "JinbRe"
-msgid "Practice estimates"
-msgstr "Geschätzte Level fürs Üben"
-
-#: src/language/progress/skill-levels-card.tsx
-msgctxt "Ep338j"
-msgid "These estimates guide practice difficulty. Certificates follow the lessons completed in your plan."
-msgstr "Diese Einschätzungen bestimmen, wie schwer die Übungen sind. Für Zertifikate zählen die abgeschlossenen Lektionen in deinem Plan."
+msgctxt "gShZPM"
+msgid "Your level shows here once you practice."
+msgstr "Dein Level erscheint hier, sobald du übst."
 
 #: src/language/progress/speaking-mock-card.tsx
 msgctxt "v806h7"
@@ -7045,11 +7084,6 @@ msgstr "Ein kurzer mündlicher Test mit einem Prüfer oder einer Prüferin. Dana
 msgctxt "pAwPcF"
 msgid "Repeat sentences, then a short interview with an examiner. After it, an estimated band from 1 to 6 for each criterion."
 msgstr "Wiederhole Sätze und führe danach ein kurzes Gespräch mit einem Prüfer oder einer Prüferin. Anschließend erhältst du für jedes Kriterium eine geschätzte Punktzahl von 1 bis 6."
-
-#: src/language/progress/speaking-mock-card.tsx
-msgctxt "LS2n2L"
-msgid "Start the mock"
-msgstr "Probeprüfung starten"
 
 #: src/language/progress/speaking-mock-card.tsx
 msgctxt "7BEgpM"
@@ -7065,11 +7099,6 @@ msgstr "Das klang richtig"
 msgctxt "kA_8QW"
 msgid "We heard “{heard}”"
 msgstr "Wir haben „{heard}“ gehört"
-
-#: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "zonHth"
-msgid "An accent never blocks you."
-msgstr "Ein Akzent steht dir nie im Weg."
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 msgctxt "XYrbkk"
@@ -7198,9 +7227,9 @@ msgid "Your call opens as soon as it's ready."
 msgstr "Dein Gespräch öffnet sich, sobald es bereit ist."
 
 #: src/language/unit/practice-conversation.tsx
-msgctxt "eAk2uA"
-msgid "Longer calls come with Plus."
-msgstr "Längere Gespräche gibt es mit Plus."
+msgctxt "uIeu_F"
+msgid "Longer calls need a subscription"
+msgstr "Für längere Gespräche brauchst du ein Abo"
 
 #: src/language/unit/practice-conversation.tsx
 msgctxt "ktIybS"
@@ -7243,9 +7272,9 @@ msgid "and {count, number} more"
 msgstr "und {count, number} weitere"
 
 #: src/language/units/alphabet-row.tsx
-msgctxt "sXh_zy"
-msgid "First in your next session · {time}"
-msgstr "Zuerst in deiner nächsten Lerneinheit · {time}"
+msgctxt "1Y0zuD"
+msgid "Your first lesson · {time}"
+msgstr "Deine erste Lektion · {time}"
 
 #: src/language/units/alphabet-row.tsx
 msgctxt "p3fcZv"
@@ -8441,6 +8470,13 @@ msgid "The question bank doesn't have more new ones for it yet."
 msgstr "Die Fragensammlung enthält dafür noch keine weiteren neuen Fragen."
 
 #: src/mock/mock-chooser-page.tsx
+#: src/plan/plan-suggestion.tsx
+#: src/questions/test-out-preparing.tsx
+msgctxt "xANHtD"
+msgid "See Plus"
+msgstr "Plus ansehen"
+
+#: src/mock/mock-chooser-page.tsx
 msgctxt "X00VNK"
 msgid "Preparing your mock exam"
 msgstr "Wir bereiten deine Probeprüfung vor"
@@ -8459,12 +8495,6 @@ msgstr "Zeitlimit"
 msgctxt "-LMjdj"
 msgid "Usually takes"
 msgstr "Dauert normalerweise"
-
-#: src/mock/mock-chooser-picked.tsx
-#: src/onboarding/steps/level-choices.tsx
-msgctxt "rzrdrM"
-msgid "About {time}"
-msgstr "Etwa {time}"
 
 #: src/mock/mock-chooser-picked.tsx
 msgctxt "TX7Ut7"
@@ -8791,6 +8821,7 @@ msgid "Now"
 msgstr "Jetzt"
 
 #: src/mock/mock-result-actions.tsx
+#: src/onboarding/steps/placement-screens.tsx
 msgctxt "_25l3n"
 msgid "See my plan"
 msgstr "Meinen Plan ansehen"
@@ -8939,6 +8970,13 @@ msgstr "Deine Antworten, bei denen du unsicher warst, haben dir trotzdem Punkte 
 msgctxt "_V7YRt"
 msgid "What the mock exam showed"
 msgstr "Was die Probeprüfung gezeigt hat"
+
+#: src/mock/mock-result-plan.tsx
+#: src/plan/plan-bases-sheet.tsx
+#: src/plan/plan-offer-preview.tsx
+msgctxt "D0KGfN"
+msgid "Your plan stays as it is."
+msgstr "Dein Plan bleibt, wie er ist."
 
 #: src/mock/mock-result-plan.tsx
 msgctxt "vWLkNP"
@@ -9106,11 +9144,6 @@ msgstr "Etwa {points} von {total}"
 msgctxt "rdlLKm"
 msgid "About {low} to {high} of {total}"
 msgstr "Etwa {low} bis {high} von {total}"
-
-#: src/mock/mock-result-speaking.tsx
-msgctxt "p7Ub7O"
-msgid "An estimate, not an official score."
-msgstr "Eine Schätzung, kein offizieller Score."
 
 #: src/mock/mock-result-speaking.tsx
 msgctxt "ohRjp5"
@@ -9385,19 +9418,19 @@ msgid "You picked {answer}"
 msgstr "Du hast {answer} ausgewählt"
 
 #: src/onboarding/entry/attach-panel.tsx
-msgctxt "lBAN40"
-msgid "No more material today. More tomorrow."
-msgstr "Heute kannst du kein weiteres Material hinzufügen. Morgen geht es weiter."
+msgctxt "PA4cyJ"
+msgid "You've added as much material as your plan allows today. Try again tomorrow."
+msgstr "Du hast heute so viel Material hinzugefügt, wie dein Tarif erlaubt. Versuch es morgen noch einmal."
 
 #: src/onboarding/entry/attach-panel.tsx
-msgctxt "OZTZJj"
-msgid "No more material this month. More next month, or subscribe to keep going."
-msgstr "Diesen Monat kannst du kein weiteres Material hinzufügen. Nächsten Monat geht es weiter, mit einem Abo auch sofort."
+msgctxt "68q-5-"
+msgid "You've added as much material as the free plan allows this month. Try again next month, or get Plus to keep going now."
+msgstr "Du hast diesen Monat so viel Material hinzugefügt, wie der Free-Tarif erlaubt. Versuch es nächsten Monat noch einmal oder hol dir Plus, um jetzt weiterzumachen."
 
 #: src/onboarding/entry/attach-panel.tsx
-msgctxt "fKoONz"
-msgid "No more material today. More tomorrow, or subscribe to keep going."
-msgstr "Heute kannst du kein weiteres Material hinzufügen. Morgen geht es weiter, mit einem Abo auch sofort."
+msgctxt "OQMTqa"
+msgid "You've added as much material as the free plan allows today. Try again tomorrow, or get Plus to keep going now."
+msgstr "Du hast heute so viel Material hinzugefügt, wie der Free-Tarif erlaubt. Versuch es morgen noch einmal oder hol dir Plus, um jetzt weiterzumachen."
 
 #: src/onboarding/entry/attach-panel.tsx
 msgctxt "yeNv9c"
@@ -9514,9 +9547,9 @@ msgstr "Ziel starten"
 
 #: src/onboarding/entry/goal-entry.tsx
 #: src/onboarding/onboarding-skeletons.tsx
-msgctxt "AaFZIp"
-msgid "What's your goal?"
-msgstr "Was ist dein Ziel?"
+msgctxt "WL2yxA"
+msgid "What do you want to achieve?"
+msgstr "Was möchtest du erreichen?"
 
 #: src/onboarding/entry/goal-entry.tsx
 msgctxt "iO-TCO"
@@ -9561,25 +9594,24 @@ msgid "How does inflation work?"
 msgstr "Wie funktioniert Inflation?"
 
 #: src/onboarding/entry/goal-limit-notice.tsx
+msgctxt "4RwuVD"
+msgid "No more new goals this month"
+msgstr "Diesen Monat kannst du keine neuen Ziele mehr starten"
+
+#: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "MO6156"
 msgid "Go to your Plan"
 msgstr "Zu deinem Plan"
 
 #: src/onboarding/entry/goal-limit-notice.tsx
-msgctxt "p9LATe"
-msgid "More goals at once with Plus"
-msgstr "Mehr Ziele gleichzeitig mit Plus"
+msgctxt "EreSqP"
+msgid "That's all the goals you can study at once"
+msgstr "Mehr Ziele kannst du nicht gleichzeitig verfolgen"
 
-#. Shown on the screen for typing a new goal, before the learner types, when a free learner already follows as many goals as the free plan allows at once. Quick questions are short explanations that don't take one of those goals. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress. “Plus” is the name of the paid plan, not the word “more”.
 #: src/onboarding/entry/goal-limit-notice.tsx
-msgctxt "tqq0xx"
-msgid "You're following as many goals as the free plan allows. To make room for another, pause one from the menu on your Plan. Quick questions work anytime."
-msgstr "Du verfolgst schon so viele Ziele gleichzeitig, wie der kostenlose Tarif erlaubt. Um Platz für ein weiteres Ziel zu machen, pausier ein Ziel über das Menü in deinem Plan. Kurze Fragen kannst du jederzeit stellen."
-
-#: src/onboarding/entry/goal-outcomes.tsx
-msgctxt "n-6wcY"
-msgid "Explain it"
-msgstr "Erklär es mir"
+msgctxt "1oUkSm"
+msgid "Pause one in your Plan, or subscribe to study more at once."
+msgstr "Pausier ein Ziel in deinem Plan oder schließ ein Abo ab, um mehr Ziele gleichzeitig zu verfolgen."
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "dl1he3"
@@ -9587,9 +9619,9 @@ msgid "A short explanation written for you, about 5 minutes."
 msgstr "Eine kurze Erklärung für dich, etwa 5 Min."
 
 #: src/onboarding/entry/goal-outcomes.tsx
-msgctxt "PDFZz6"
-msgid "Try another goal"
-msgstr "Anderes Ziel versuchen"
+msgctxt "n-6wcY"
+msgid "Explain it"
+msgstr "Erklär es mir"
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "dXKhtW"
@@ -9602,9 +9634,9 @@ msgid "Zoonk doesn't teach anything that could hurt you or others, gambling or w
 msgstr "Zoonk bringt dir nichts bei, was dir oder anderen schaden könnte, und auch keine Glücksspiele oder Tricks zum Schummeln. Möchtest du etwas anderes lernen?"
 
 #: src/onboarding/entry/goal-outcomes.tsx
-msgctxt "Bwx5dr"
-msgid "Write my goal again"
-msgstr "Mein Ziel noch einmal schreiben"
+msgctxt "PDFZz6"
+msgid "Try another goal"
+msgstr "Anderes Ziel versuchen"
 
 #: src/onboarding/entry/goal-outcomes.tsx
 #: src/onboarding/steps/question-steps.tsx
@@ -9618,6 +9650,11 @@ msgid "What do you want to learn or be able to do? For example: “pass the driv
 msgstr "Was möchtest du lernen oder können? Zum Beispiel: „die Führerscheinprüfung bestehen“, „Statistik für die Arbeit verstehen“ oder „auf meiner Reise Französisch sprechen“."
 
 #: src/onboarding/entry/goal-outcomes.tsx
+msgctxt "Bwx5dr"
+msgid "Write my goal again"
+msgstr "Mein Ziel noch einmal schreiben"
+
+#: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "2P4gfK"
 msgid "You're on the list. We'll let you know when lessons for playing are ready."
 msgstr "Du stehst auf der Liste. Wir sagen dir Bescheid, sobald die Lektionen zum Spielen bereit sind."
@@ -9627,26 +9664,32 @@ msgctxt "nOrf4S"
 msgid "Create an account so we can let you know."
 msgstr "Erstelle ein Konto, damit wir dir Bescheid sagen können."
 
+#. {instrument} names what the learner wants to play, or singing, like "guitar".
+#: src/onboarding/entry/goal-outcomes.tsx
+msgctxt "qG3mZH"
+msgid "Lessons for playing {instrument} are coming"
+msgstr "Praktische Lektionen für {instrument} kommen bald"
+
+#: src/onboarding/entry/goal-outcomes.tsx
+msgctxt "xR84Dg"
+msgid "To teach you to play, we need to hear you play, and we're still building that. Join the waitlist, and start with musicianship today: reading music, ear training and rhythm."
+msgstr "Um dir das Musizieren beizubringen, müssen wir dich dabei hören können. Daran arbeiten wir noch. Trag dich in die Warteliste ein und fang heute mit musikalischen Grundlagen an: Notenlesen, Gehörbildung und Rhythmus."
+
+#. {instrument} names what the learner wants to play, or singing, like "guitar".
+#: src/onboarding/entry/goal-outcomes.tsx
+msgctxt "irzzdg"
+msgid "Musicianship for {instrument}: hear chords, read short melodies and keep the beat. No microphone needed."
+msgstr "Musikalische Grundlagen für {instrument}: Akkorde erkennen, kurze Melodien lesen und den Takt halten. Kein Mikrofon nötig."
+
+#: src/onboarding/entry/goal-outcomes.tsx
+msgctxt "2zqqBZ"
+msgid "Start musicianship"
+msgstr "Musikalische Grundlagen lernen"
+
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "h6_d7P"
 msgid "Join the waitlist"
 msgstr "Auf die Warteliste setzen"
-
-#: src/onboarding/entry/goal-outcomes.tsx
-msgctxt "aeY0ZL"
-msgid "Start music basics"
-msgstr "Mit musikalischen Grundlagen beginnen"
-
-#. {instrument} names what the learner wants to play, or singing, like "guitar".
-#: src/onboarding/entry/goal-outcomes.tsx
-msgctxt "9zwyQT"
-msgid "We can't teach {instrument} yet"
-msgstr "Wir können dir {instrument} noch nicht beibringen"
-
-#: src/onboarding/entry/goal-outcomes.tsx
-msgctxt "UKaff7"
-msgid "You can start with the basics of music today: reading notes, rhythm and training your ear."
-msgstr "Du kannst heute mit den musikalischen Grundlagen anfangen: Noten lesen, Rhythmus verstehen und dein Gehör trainieren."
 
 #: src/onboarding/entry/guest-goal-gate.tsx
 msgctxt "lMKRgM"
@@ -9717,19 +9760,19 @@ msgid "What you want to do with your material"
 msgstr "Was du mit deinem Material tun möchtest"
 
 #: src/onboarding/entry/material-questions.tsx
-msgctxt "maqtwk"
-msgid "No more questions today. More tomorrow."
-msgstr "Heute kannst du keine weiteren Fragen stellen. Morgen geht es weiter."
+msgctxt "aS4jzc"
+msgid "You've asked as many questions as your plan allows today."
+msgstr "Du hast heute so viele Fragen gestellt, wie dein Tarif erlaubt."
 
 #: src/onboarding/entry/material-questions.tsx
-msgctxt "Iadu3J"
-msgid "No more questions this month. More next month, or subscribe to keep going."
-msgstr "Diesen Monat kannst du keine weiteren Fragen stellen. Nächsten Monat geht es weiter, mit einem Abo auch sofort."
+msgctxt "RvifHu"
+msgid "You've asked as many questions as the free plan allows this month. Ask again next month, or get Plus to keep going now."
+msgstr "Du hast diesen Monat so viele Fragen gestellt, wie der Free-Tarif erlaubt. Stell nächsten Monat wieder Fragen oder hol dir Plus, um jetzt weiterzumachen."
 
 #: src/onboarding/entry/material-questions.tsx
-msgctxt "Z_xQgo"
-msgid "No more questions today. More tomorrow, or subscribe to keep going."
-msgstr "Heute kannst du keine weiteren Fragen stellen. Morgen geht es weiter, mit einem Abo auch sofort."
+msgctxt "O1ZAsk"
+msgid "You've asked as many questions as the free plan allows today. Ask again tomorrow, or get Plus to keep going now."
+msgstr "Du hast heute so viele Fragen gestellt, wie der Free-Tarif erlaubt. Stell morgen wieder Fragen oder hol dir Plus, um jetzt weiterzumachen."
 
 #: src/onboarding/entry/material-questions.tsx
 msgctxt "KIdIMi"
@@ -9813,41 +9856,40 @@ msgctxt "l5pR0E"
 msgid "{exam, select, abitur {Pass the Abitur} bac {Pass the bac} enem {Pass the ENEM} exani {Pass the EXANI-II} kyotsu {Do well on the Common Test} matura {Pass the matura} maturita {Pass the maturità} suneung {Do well on the CSAT} yks {Do well on the YKS} other {Pass the SAT}}"
 msgstr "{exam, select, abitur {Abitur bestehen} bac {Bac bestehen} enem {ENEM bestehen} exani {EXANI-II bestehen} kyotsu {Beim Common Test gut abschneiden} matura {Matura bestehen} maturita {Maturità bestehen} suneung {Beim CSAT gut abschneiden} yks {Beim YKS gut abschneiden} other {SAT bestehen}}"
 
-#. Shown when a free learner tries to start a goal while following as many goals as the free plan allows at once. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress. “Plus” is the name of the paid plan, not the word “more”.
 #: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.u1Pjvx"
-msgid "You're following as many goals as the free plan allows. To make room for another, pause one of your goals from the menu on your Plan, or get Plus."
-msgstr "Du verfolgst schon so viele Ziele gleichzeitig, wie der kostenlose Tarif erlaubt. Um Platz für ein weiteres Ziel zu machen, pausier eines deiner Ziele über das Menü in deinem Plan oder hol dir Plus."
+msgctxt "goalErrors.a9a9_d"
+msgid "That's all the goals you can study at once. Pause one, or subscribe to study more."
+msgstr "Mehr Ziele kannst du nicht gleichzeitig verfolgen. Pausier ein Ziel oder schließ ein Abo ab, um mehr Ziele zu verfolgen."
 
 #: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.4-VMGC"
-msgid "You've asked as many new questions as the free plan allows today. Try again tomorrow, or get Plus to keep going now."
-msgstr "Du hast heute so viele neue Fragen gestellt, wie der Free-Tarif erlaubt. Versuch es morgen noch einmal oder hol dir Plus, um jetzt weiterzumachen."
+msgctxt "goalErrors.GZnNXl"
+msgid "No more quick explanations today. More tomorrow, or subscribe to keep going."
+msgstr "Heute gibt es keine Kurzerklärungen mehr. Morgen gibt es mehr. Mit einem Abo kannst du gleich weitermachen."
 
 #: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.WNi4ed"
-msgid "You've started as many new goals as your plan allows today. Try again tomorrow."
-msgstr "Du hast heute so viele neue Ziele gestartet, wie dein Tarif erlaubt. Versuch es morgen noch einmal."
+msgctxt "goalErrors.JsRkia"
+msgid "No more new goals today. More tomorrow."
+msgstr "Heute kannst du keine neuen Ziele mehr starten. Morgen geht es weiter."
 
 #: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.fvAhZI"
-msgid "Without an account, you can follow one goal. Create a free account to keep going."
-msgstr "Ohne Konto kannst du ein Ziel verfolgen. Erstelle ein kostenloses Konto, um weiterzumachen."
+msgctxt "goalErrors.2aNqX-"
+msgid "Without an account, you study one goal. Create a free account to start another."
+msgstr "Ohne Konto kannst du ein Ziel verfolgen. Erstell ein kostenloses Konto, um ein weiteres zu starten."
 
 #: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.HtlexK"
-msgid "You've asked as many new questions as the free plan allows this month. Try again next month, or get Plus to keep going now."
-msgstr "Du hast diesen Monat so viele neue Fragen gestellt, wie der Free-Tarif erlaubt. Versuch es nächsten Monat noch einmal oder hol dir Plus, um jetzt weiterzumachen."
+msgctxt "goalErrors.B_qpn8"
+msgid "No more quick explanations this month. More next month, or subscribe to keep going."
+msgstr "Diesen Monat gibt es keine Kurzerklärungen mehr. Nächsten Monat gibt es mehr. Mit einem Abo kannst du gleich weitermachen."
 
 #: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.h018_j"
-msgid "You've started as many new goals as the free plan allows this month. Try again next month, or get Plus to keep going now."
-msgstr "Du hast diesen Monat so viele neue Ziele gestartet, wie der Free-Tarif erlaubt. Versuch es nächsten Monat noch einmal oder hol dir Plus, um jetzt weiterzumachen."
+msgctxt "goalErrors.wjsNnL"
+msgid "No more new goals this month. More next month, or subscribe to keep going."
+msgstr "Diesen Monat kannst du keine neuen Ziele mehr starten. Nächsten Monat geht es weiter. Mit einem Abo kannst du gleich weitermachen."
 
 #: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.aFV0Wu"
-msgid "Create your free account to continue."
-msgstr "Erstelle dein kostenloses Konto, um weiterzumachen."
+msgctxt "goalErrors.MKCnRs"
+msgid "This needs a free account."
+msgstr "Dafür brauchst du ein kostenloses Konto."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.8iLlgO"
@@ -9855,24 +9897,14 @@ msgid "You're starting goals quickly. Try again in a few minutes."
 msgstr "Du startest gerade mehrere Ziele kurz hintereinander. Versuch es in ein paar Minuten noch einmal."
 
 #: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.YJn24E"
-msgid "Without an account, you can send a few new goals a day. Create a free account to keep going."
-msgstr "Ohne Konto kannst du pro Tag ein paar neue Ziele senden. Erstelle ein kostenloses Konto, um weiterzumachen."
+msgctxt "goalErrors.ib5oUK"
+msgid "No more new goals today without an account."
+msgstr "Ohne Konto kannst du heute keine neuen Ziele mehr starten."
 
 #: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.6K8kGV"
-msgid "You've sent as many new goals as your plan allows today. Try again tomorrow."
-msgstr "Du hast heute so viele neue Ziele gesendet, wie dein Tarif erlaubt. Versuch es morgen noch einmal."
-
-#: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.qlYDc1"
-msgid "You've sent as many new goals as the free plan allows this month. Try again next month, or get Plus to keep going now."
-msgstr "Du hast diesen Monat so viele neue Ziele gesendet, wie der Free-Tarif erlaubt. Versuch es nächsten Monat noch einmal oder hol dir Plus, um jetzt weiterzumachen."
-
-#: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.HeGg5v"
-msgid "You've sent as many new goals as the free plan allows today. Try again tomorrow, or get Plus to keep going now."
-msgstr "Du hast heute so viele neue Ziele gesendet, wie der Free-Tarif erlaubt. Versuch es morgen noch einmal oder hol dir Plus, um jetzt weiterzumachen."
+msgctxt "goalErrors.NIiMiz"
+msgid "No more new goals today. More tomorrow, or subscribe to keep going."
+msgstr "Heute kannst du keine neuen Ziele mehr starten. Morgen geht es weiter. Mit einem Abo kannst du gleich weitermachen."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.YYmbyX"
@@ -9890,14 +9922,19 @@ msgid "This is part of"
 msgstr "Das ist Teil von"
 
 #: src/onboarding/guest-lesson-ending.tsx
-msgctxt "W5Ff78"
-msgid "{chapters, plural, one {# chapter} other {# chapters}} · about {time}"
-msgstr "{chapters, plural, other {# Kapitel}} · etwa {time}"
+msgctxt "qU1rf9"
+msgid "{chapters, plural, one {# chapter} other {# chapters}} · about {time} at your pace"
+msgstr "{chapters, plural, other {# Kapitel}} · etwa {time} in deinem Tempo"
 
 #: src/onboarding/guest-lesson-ending.tsx
 msgctxt "ik72yw"
 msgid "{number, number} of {total, plural, one {# lesson} other {# lessons}}"
 msgstr "{number, number} von {total, plural, one {# Lektion} other {# Lektionen}}"
+
+#: src/onboarding/guest-lesson-ending.tsx
+msgctxt "xu1JYC"
+msgid "Save your progress and a quick review comes back to help it stick."
+msgstr "Speichere deinen Fortschritt und wiederhole das Gelernte später kurz, damit es hängen bleibt."
 
 #: src/onboarding/guest-lesson-ending.tsx
 msgctxt "oxr39K"
@@ -9919,15 +9956,10 @@ msgctxt "bL7-Qo"
 msgid "Get a plan with dates, and your first lesson"
 msgstr "Erhalte einen Plan mit Terminen und deine erste Lektion"
 
-#: src/onboarding/how-it-works.tsx
-msgctxt "HK3ph8"
-msgid "How it works"
-msgstr "So funktioniert’s"
-
 #: src/onboarding/library-course-offer.tsx
-msgctxt "OSlFuT"
-msgid "A course on this is ready now"
-msgstr "Dazu gibt es schon einen Kurs"
+msgctxt "u1Zt5F"
+msgid "A Library course fits your goal. Start it now"
+msgstr "Ein Kurs aus der Bibliothek passt zu deinem Ziel. Jetzt starten"
 
 #: src/onboarding/onboarding-bar.tsx
 msgctxt "jVVPcv"
@@ -9948,12 +9980,10 @@ msgid "Exam date"
 msgstr "Prüfungstermin"
 
 #: src/onboarding/plan-receipt.tsx
-#: src/onboarding/understood/understood-date-row.ts
-#: src/plan/plan-date.tsx
-#: src/plan/plan-properties.tsx
-msgctxt "Humfno"
-msgid "End date"
-msgstr "Endtermin"
+#: src/onboarding/steps/date-step.tsx
+msgctxt "P7PLVj"
+msgid "Date"
+msgstr "Datum"
 
 #: src/onboarding/plan-receipt.tsx
 msgctxt "qHAnd4"
@@ -10043,6 +10073,17 @@ msgctxt "bv5Y_i"
 msgid "Your buddy grows as you learn."
 msgstr "Dein Kumpel wächst, während du lernst."
 
+#. {country} is a country's name. It always follows the colon, so it never needs an article or a case.
+#: src/onboarding/steps/country-step.tsx
+msgctxt "IQvff3"
+msgid "If you skip: {country}"
+msgstr "Wenn du diesen Schritt überspringst: {country}"
+
+#: src/onboarding/steps/country-step.tsx
+msgctxt "neuUHE"
+msgid "What you learn here changes from country to country. You can change it later in your plan."
+msgstr "Was du hier lernst, hängt vom Land ab. Du kannst das Land später in deinem Plan ändern."
+
 #: src/onboarding/steps/country-step.tsx
 msgctxt "jFT6CV"
 msgid "Which country should your lessons be about?"
@@ -10050,7 +10091,6 @@ msgstr "Um welches Land soll es in deinen Lektionen gehen?"
 
 #: src/onboarding/steps/country-step.tsx
 #: src/onboarding/understood/understood-country-picker.tsx
-#: src/onboarding/understood/use-content-country-row.ts
 #: src/onboarding/understood/use-understood-rows.ts
 #: src/plan/plan-country.tsx
 #: src/plan/plan-language.tsx
@@ -10062,6 +10102,16 @@ msgstr "Land"
 msgctxt "4D1yJQ"
 msgid "Another country"
 msgstr "Anderes Land"
+
+#: src/onboarding/steps/date-step.tsx
+msgctxt "5ib3Bu"
+msgid "Your plan paces your lessons to end by then."
+msgstr "Dein Plan verteilt deine Lektionen so, dass du bis dahin fertig bist."
+
+#: src/onboarding/steps/date-step.tsx
+msgctxt "nUTsrg"
+msgid "Your plan paces your lessons to end by the first day."
+msgstr "Dein Plan verteilt deine Lektionen so, dass du bis zum ersten Tag fertig bist."
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "xM69fy"
@@ -10089,19 +10139,46 @@ msgid "{when, select, today {Your date is today, so there are no days left to pl
 msgstr "{when, select, today {Dein Termin ist heute, deshalb bleiben keine Tage mehr für deinen Plan.} other {Dein Termin am {date} ist vorbei.}}"
 
 #: src/onboarding/steps/date-step.tsx
+msgctxt "pwmWjt"
+msgid "Without a date, you study everything at your own pace, and we show when you reach each milestone."
+msgstr "Ohne Termin lernst du alles in deinem eigenen Tempo. Wir zeigen dir, wann du die einzelnen Meilensteine erreichst."
+
+#: src/onboarding/steps/date-step.tsx
+msgctxt "AxdCO1"
+msgid "Continue without a date"
+msgstr "Ohne Termin fortfahren"
+
+#: src/onboarding/steps/date-step.tsx
 msgctxt "xle5hd"
 msgid "Is there a date you're aiming for?"
 msgstr "Hast du einen bestimmten Termin im Blick?"
 
 #: src/onboarding/steps/date-step.tsx
-msgctxt "P7PLVj"
-msgid "Date"
-msgstr "Datum"
+msgctxt "__AV6U"
+msgid "Remove date"
+msgstr "Termin entfernen"
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "R8HSEX"
 msgid "Pick a date after today."
 msgstr "Wähle ein Datum nach dem heutigen Tag."
+
+#: src/onboarding/steps/exam-choice-step.tsx
+msgctxt "_7GRXH"
+msgid "The exam has {count, plural, one {# choice} other {# choices}} to make. Your plan and mocks follow your picks, and you can change them in your plan."
+msgstr "Für diese Prüfung triffst du {count, plural, one {# Entscheidung} other {# Entscheidungen}}. Dein Plan und deine Probeprüfungen richten sich nach deiner Auswahl, die du in deinem Plan ändern kannst."
+
+#. {group} is the notice's name for one of the exam's choices, such as the modules a course takes, which comes from the notice in its own language. {take} is how many of the options the exam's rules give each candidate
+#: src/onboarding/steps/exam-choice-step.tsx
+msgctxt "G_vCkI"
+msgid "The exam offers {count, plural, one {# option} other {# options}} for {group}, and each candidate takes {take, number} of them. Your plan and mocks follow the ones you pick, and you can change them in your plan."
+msgstr "Bei der Prüfung gibt es {count, plural, one {# Option} other {# Optionen}} für {group}. Jede teilnehmende Person wählt davon {take, number} aus. Dein Plan und deine Probeprüfungen richten sich nach deiner Auswahl, die du in deinem Plan ändern kannst."
+
+#. {group} is the notice's name for one of the exam's choices, such as a specialty or the foreign language, which comes from the notice in its own language
+#: src/onboarding/steps/exam-choice-step.tsx
+msgctxt "AdAHjB"
+msgid "The exam offers {count, plural, one {# option} other {# options}} for {group}. Your plan and mocks follow the one you pick, and you can change it in your plan."
+msgstr "Die Prüfung bietet {count, plural, one {# Option} other {# Optionen}} für {group}. Dein Plan und deine Probeprüfungen richten sich nach deiner Auswahl, die du in deinem Plan ändern kannst."
 
 #: src/onboarding/steps/exam-choice-step.tsx
 msgctxt "K8LmJV"
@@ -10118,6 +10195,14 @@ msgstr "{count, plural, one {Welche Prüfung wirst du ablegen?} other {Welche Pr
 msgctxt "cIh6nO"
 msgid "Pick up to {take, number}."
 msgstr "Wähl bis zu {take, number} aus."
+
+#: src/onboarding/steps/full-course-toggle.tsx
+#: src/plan/plan-coverage-suggestion.tsx
+#: src/plan/plan-full-course.tsx
+#: src/plan/plan-offer-preview.tsx
+msgctxt "ibF-ax"
+msgid "Study everything, even after the exam"
+msgstr "Alles lernen, auch nach der Prüfung"
 
 #: src/onboarding/steps/level-choices.tsx
 msgctxt "BY-vT3"
@@ -10161,14 +10246,19 @@ msgid "Only what's new or hard"
 msgstr "Nur was neu oder schwierig ist"
 
 #: src/onboarding/steps/level-choices.tsx
-msgctxt "P05JFf"
-msgid "Not sure, give me a short test"
-msgstr "Unsicher, kurzen Test machen"
+msgctxt "MLAAq8"
+msgid "Adapts to your answers, about {time}"
+msgstr "Passt sich deinen Antworten an, etwa {time}"
+
+#: src/onboarding/steps/level-choices.tsx
+msgctxt "PAwSdR"
+msgid "Not sure, give me a quick test"
+msgstr "Ich bin mir nicht sicher, teste mich kurz"
 
 #: src/onboarding/steps/notice-reading.tsx
-msgctxt "qcCnqJ"
-msgid "{document, select, notice {Finding the subjects and topics on the exam…} other {Finding the parts and topics the official guide lists…}}"
-msgstr "{document, select, notice {Wir ermitteln die Fächer und Themen der Prüfung…} other {Wir ermitteln die Bereiche und Themen im offiziellen Leitfaden…}}"
+msgctxt "xzvcZt"
+msgid "{document, select, notice {Finding the subjects and topics the notice lists…} other {Finding the parts and topics the official guide lists…}}"
+msgstr "{document, select, notice {Wir suchen die Fächer und Themen aus der Ausschreibung…} other {Wir suchen die Prüfungsteile und Themen aus dem offiziellen Leitfaden…}}"
 
 #: src/onboarding/steps/notice-reading.tsx
 msgctxt "IQRPXj"
@@ -10196,9 +10286,9 @@ msgid "The next edition's documents aren't out yet, so your plan follows the las
 msgstr "Die Unterlagen für die nächste Prüfung sind noch nicht veröffentlicht. Deshalb richtet sich dein Plan nach den Fächern und Themen der letzten Prüfung. Wir sagen dir Bescheid, wenn die neuen Unterlagen da sind. Das dauert normalerweise ein paar Minuten."
 
 #: src/onboarding/steps/notice-reading.tsx
-msgctxt "_Bb7oM"
-msgid "{document, select, notice {Your plan will follow the exam's subjects, topics and dates.} other {Your plan will follow the official guide's parts, topics and dates.}} This usually takes a few minutes."
-msgstr "{document, select, notice {Dein Plan richtet sich nach den Fächern, Themen und Terminen der Prüfung.} other {Dein Plan richtet sich nach den Bereichen, Themen und Terminen im offiziellen Leitfaden.}} Das dauert meist ein paar Minuten."
+msgctxt "24K7aX"
+msgid "{document, select, notice {Your plan will follow the notice's subjects, topics and dates.} other {Your plan will follow the official guide's parts, topics and dates.}} This usually takes a few minutes."
+msgstr "{document, select, notice {Dein Plan richtet sich nach den Fächern, Themen und Terminen in der Ausschreibung.} other {Dein Plan richtet sich nach den Prüfungsteilen, Themen und Terminen im offiziellen Leitfaden.}} Das dauert normalerweise ein paar Minuten."
 
 #: src/onboarding/steps/notice-reading.tsx
 #: src/onboarding/steps/plan-building.tsx
@@ -10233,24 +10323,55 @@ msgid "Question {number, number} of {total, number}"
 msgstr "Frage {number, number} von {total, number}"
 
 #: src/onboarding/steps/placement-question.tsx
-msgctxt "8Zf--i"
-msgid "Stop and use my answers"
-msgstr "Beenden und meine Antworten verwenden"
+msgctxt "76_ax9"
+msgid "Stop here and see my plan"
+msgstr "Hier aufhören und meinen Plan ansehen"
 
 #: src/onboarding/steps/placement-screens.tsx
-msgctxt "N7Heuq"
-msgid "A short test finds the lessons you don't need."
-msgstr "Ein kurzer Test zeigt, welche Lektionen du nicht brauchst."
+msgctxt "RMYAm8"
+msgid "Let's see what you already know"
+msgstr "Schauen wir, was du schon weißt"
 
 #: src/onboarding/steps/placement-screens.tsx
-msgctxt "252ZEd"
-msgid "There's no test for this goal yet. Your first few days show us what you already know."
-msgstr "Für dieses Ziel gibt es noch keinen Test. In den ersten Tagen sehen wir, was du schon weißt."
+msgctxt "BzVgDK"
+msgid "A few quick questions, so your plan skips what you already know. There's no score, and “I don't know yet” is a fine answer."
+msgstr "Ein paar kurze Fragen, damit dein Plan überspringt, was du schon weißt. Es gibt keinen Score und „Das weiß ich noch nicht“ ist eine gute Antwort."
 
 #: src/onboarding/steps/placement-screens.tsx
-msgctxt "TxdYgo"
-msgid "We'll find your level as you study"
-msgstr "Wir finden dein Level beim Lernen heraus"
+msgctxt "UaMtvq"
+msgid "Skip and start from the basics"
+msgstr "Überspringen und mit den Grundlagen beginnen"
+
+#: src/onboarding/steps/placement-screens.tsx
+msgctxt "PoSPxI"
+msgid "{count, plural, =0 {# questions answered} one {# question answered} other {# questions answered}}"
+msgstr "{count, plural, =0 {# Fragen beantwortet} one {# Frage beantwortet} other {# Fragen beantwortet}}"
+
+#: src/onboarding/steps/placement-screens.tsx
+msgctxt "HiDu8F"
+msgid "That's enough questions for today"
+msgstr "Das sind genug Fragen für heute"
+
+#: src/onboarding/steps/placement-screens.tsx
+msgctxt "_8ObLn"
+msgid "Your first sessions ask a few more to fine-tune your plan."
+msgstr "In deinen ersten Lerneinheiten stellen wir noch ein paar Fragen, um deinen Plan genauer abzustimmen."
+
+#. "It" is the learner's starting point, named in the title.
+#: src/onboarding/steps/placement-screens.tsx
+msgctxt "tZjvcn"
+msgid "It gets more accurate every day."
+msgstr "Wir schätzen deinen Ausgangspunkt jeden Tag genauer ein."
+
+#: src/onboarding/steps/placement-screens.tsx
+msgctxt "eaCfiI"
+msgid "Let's skip the questions"
+msgstr "Lass uns die Fragen überspringen"
+
+#: src/onboarding/steps/placement-screens.tsx
+msgctxt "XFK0hn"
+msgid "We couldn't prepare questions for this goal. Your first sessions will find your starting point instead."
+msgstr "Wir konnten für dieses Ziel keine Fragen vorbereiten. Stattdessen finden deine ersten Lerneinheiten deinen Ausgangspunkt heraus."
 
 #: src/onboarding/steps/placement-waiting.tsx
 msgctxt "kx8w4b"
@@ -10290,7 +10411,6 @@ msgid "One last question, then you'll see it."
 msgstr "Nur noch eine Frage, dann siehst du ihn."
 
 #: src/onboarding/steps/plan-building.tsx
-#: src/onboarding/steps/plan-start-notice.tsx
 msgctxt "ni-x13"
 msgid "Your answers are saved."
 msgstr "Deine Antworten sind gespeichert."
@@ -10300,17 +10420,39 @@ msgctxt "zCKNAZ"
 msgid "We're choosing what to learn first and fitting it into your days. A new subject can take a minute or two."
 msgstr "Wir wählen aus, was du zuerst lernst, und verteilen es auf deine Tage. Bei einem neuen Thema kann das ein bis zwei Minuten dauern."
 
+#: src/onboarding/steps/plan-shape.tsx
+msgctxt "VJVQGr"
+msgid "Weight by area"
+msgstr "Gewichtung nach Bereich"
+
+#: src/onboarding/steps/plan-shape.tsx
+msgctxt "pdnx1G"
+msgid "~{percent}"
+msgstr "~{percent}"
+
+#: src/onboarding/steps/plan-shape.tsx
+msgctxt "sDWtMl"
+msgid "{source, select, material {{count, plural, one {~ Estimated: your material doesn't say how much this area weighs.} other {~ Estimated: your material doesn't say how much these areas weigh.}}} guide {{count, plural, one {~ Estimated: the official guide doesn't say how much this area weighs.} other {~ Estimated: the official guide doesn't say how much these areas weigh.}}} other {{count, plural, one {~ Estimated: the notice doesn't say how much this area weighs.} other {~ Estimated: the notice doesn't say how much these areas weigh.}}}}"
+msgstr "{source, select, material {{count, plural, one {~ Geschätzt: Dein Material gibt nicht an, wie stark dieser Bereich gewichtet wird.} other {~ Geschätzt: Dein Material gibt nicht an, wie stark diese Bereiche gewichtet werden.}}} guide {{count, plural, one {~ Geschätzt: Der offizielle Leitfaden gibt nicht an, wie stark dieser Bereich gewichtet wird.} other {~ Geschätzt: Der offizielle Leitfaden gibt nicht an, wie stark diese Bereiche gewichtet werden.}}} other {{count, plural, one {~ Geschätzt: Die Ausschreibung gibt nicht an, wie stark dieser Bereich gewichtet wird.} other {~ Geschätzt: Die Ausschreibung gibt nicht an, wie stark diese Bereiche gewichtet werden.}}}}"
+
 #: src/onboarding/steps/plan-start-notice.tsx
-msgctxt "rXkqB0"
-msgid "Your plan didn't start"
-msgstr "Dein Plan wurde nicht gestartet"
+msgctxt "w_jfVo"
+msgid "We couldn't start building your plan"
+msgstr "Wir konnten die Erstellung deines Plans nicht starten"
 
 #: src/onboarding/steps/plan-start-notice.tsx
 msgctxt "9ypZc4"
 msgid "Building your plan stopped"
 msgstr "Die Erstellung deines Plans wurde unterbrochen"
 
+#. "It" is the learner's plan. "When you finish" means finishing these setup questions.
+#: src/onboarding/steps/plan-start-notice.tsx
+msgctxt "09Xo2h"
+msgid "Your answers are saved. Try again so it's ready when you finish."
+msgstr "Deine Antworten sind gespeichert. Versuch es noch einmal, damit dein Plan fertig ist, wenn du alle Fragen beantwortet hast."
+
 #: src/onboarding/steps/plan-wait.tsx
+#: src/onboarding/steps/schedule-step.tsx
 #: src/today/today-action.tsx
 #: src/today/today-progress-card.tsx
 msgctxt "SedhMm"
@@ -10334,20 +10476,20 @@ msgid "Lesson 1 is ready."
 msgstr "Lektion 1 ist bereit."
 
 #: src/onboarding/steps/profile-step.tsx
-#: src/questions/choice-questions-run.tsx
-msgctxt "-HTKTB"
-msgid "{current, number} of {total, number}"
-msgstr "{current, number} von {total, number}"
+msgctxt "js17JZ"
+msgid "Save and start lesson 1"
+msgstr "Speichern und Lektion 1 starten"
 
+#. Which of the questions about the learner this is, such as 4 of 10.
 #: src/onboarding/steps/profile-step.tsx
-msgctxt "c2z6MR"
-msgid "About you"
-msgstr "Über dich"
+msgctxt "1sbd7k"
+msgid "About you · {current, number} of {total, number}"
+msgstr "Über dich · {current, number} von {total, number}"
 
 #: src/onboarding/steps/question-steps.tsx
-msgctxt "l7i_x_"
-msgid "The big ideas, in short"
-msgstr "Das Wichtigste, kurz erklärt"
+msgctxt "LCLlDB"
+msgid "A short course: the big ideas, no formulas"
+msgstr "Ein kurzer Kurs: die Grundideen, ohne Formeln"
 
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "2ne17k"
@@ -10360,9 +10502,9 @@ msgid "The full path, from the basics to advanced"
 msgstr "Der ganze Weg, von den Grundlagen bis zu fortgeschrittenen Inhalten"
 
 #: src/onboarding/steps/question-steps.tsx
-msgctxt "70ejro"
-msgid "Understand it well"
-msgstr "Gründlich verstehen"
+msgctxt "NTnhyB"
+msgid "Understand it in depth"
+msgstr "Das Thema gründlich verstehen"
 
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "yI7Bsd"
@@ -10385,9 +10527,9 @@ msgid "Change careers"
 msgstr "Den Beruf wechseln"
 
 #: src/onboarding/steps/question-steps.tsx
-msgctxt "mSBFVD"
-msgid "Back to the level you had, after a short test"
-msgstr "Nach einem kurzen Test zurück auf dein früheres Level"
+msgctxt "ibbNWU"
+msgid "Back to the level you had, after a quick test"
+msgstr "Nach einem kurzen Test zurück zu deinem früheren Level"
 
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "Aicr0G"
@@ -10398,6 +10540,11 @@ msgstr "Gelerntes auffrischen"
 msgctxt "pHhNk1"
 msgid "Tell us later, in your own words"
 msgstr "Erzähl es uns später in deinen eigenen Worten"
+
+#: src/onboarding/steps/question-steps.tsx
+msgctxt "3ixkTn"
+msgid "It sets how deep your course goes, and so how long it is."
+msgstr "Das bestimmt, wie tief dein Kurs ins Thema geht, und damit seine Dauer."
 
 #. Asks what the learner hopes to get out of learning this subject.
 #: src/onboarding/steps/question-steps.tsx
@@ -10412,9 +10559,19 @@ msgid "What you want from it"
 msgstr "Was du dir davon erhoffst"
 
 #: src/onboarding/steps/question-steps.tsx
+msgctxt "eePhP0"
+msgid "It only changes where your plan starts."
+msgstr "Das bestimmt nur, wo dein Plan beginnt."
+
+#: src/onboarding/steps/question-steps.tsx
 msgctxt "8s-b4U"
 msgid "How much do you already know?"
 msgstr "Wie viel weißt du schon?"
+
+#: src/onboarding/steps/question-steps.tsx
+msgctxt "OPPtAp"
+msgid "It helps your plan focus on what counts most."
+msgstr "So kann sich dein Plan auf das Wichtigste konzentrieren."
 
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "m-5-7M"
@@ -10430,6 +10587,11 @@ msgstr "Z. B. Medizin, 750 Punkte"
 msgctxt "lGos3p"
 msgid "Which course and score are you aiming for?"
 msgstr "Welchen Studiengang und welchen Score strebst du an?"
+
+#: src/onboarding/steps/question-steps.tsx
+msgctxt "u-lm73"
+msgid "The notice can have a different exam for each position."
+msgstr "Je nach Stelle kann in der Ausschreibung eine andere Prüfung vorgesehen sein."
 
 #: src/onboarding/steps/question-steps.tsx
 #: src/onboarding/understood/use-understood-rows.ts
@@ -10453,10 +10615,36 @@ msgctxt "Y7fjZb"
 msgid "What score do you need?"
 msgstr "Welchen Score brauchst du?"
 
+#: src/onboarding/steps/question-steps.tsx
+msgctxt "1UCLOd"
+msgid "A couple of details make your plan fit better."
+msgstr "Ein paar Details helfen, deinen Plan besser auf dich abzustimmen."
+
+#. Hours of study, as a short figure like "190 h".
 #: src/onboarding/steps/reason-step.tsx
-msgctxt "P5KfyI"
-msgid "Which certificate?"
-msgstr "Welches Zertifikat?"
+msgctxt "VW5079"
+msgid "{hours} h"
+msgstr "{hours} h"
+
+#: src/onboarding/steps/reason-step.tsx
+msgctxt "PtLljQ"
+msgid "Which one?"
+msgstr "Welche?"
+
+#: src/onboarding/steps/reason-step.tsx
+msgctxt "1o8k0C"
+msgid "Your plan follows that exam's papers and score."
+msgstr "Dein Plan richtet sich nach den Prüfungsteilen und dem Score dieser Prüfung."
+
+#: src/onboarding/steps/reason-step.tsx
+msgctxt "lZZnLn"
+msgid "In your own words"
+msgstr "In deinen eigenen Worten"
+
+#: src/onboarding/steps/reason-step.tsx
+msgctxt "EXH9dO"
+msgid "Your answer sets how far your course goes."
+msgstr "Deine Antwort bestimmt, bis zu welchem Level dein Kurs geht."
 
 #: src/onboarding/steps/reason-step.tsx
 msgctxt "j4_o5O"
@@ -10467,6 +10655,11 @@ msgstr "Warum lernst du das?"
 msgctxt "GJAhWB"
 msgid "Why you're learning it"
 msgstr "Warum du die Sprache lernst"
+
+#: src/onboarding/steps/reason-step.tsx
+msgctxt "eAXPtf"
+msgid "Hours of study from scratch, practice included. Less if you already know some."
+msgstr "Stunden zum Lernen und Üben ohne Vorkenntnisse. Weniger, wenn du schon etwas kannst."
 
 #: src/onboarding/steps/reveal-body.tsx
 msgctxt "v9nycX"
@@ -10480,19 +10673,67 @@ msgid "Adjust"
 msgstr "Anpassen"
 
 #: src/onboarding/steps/reveal-body.tsx
+msgctxt "q_N3d-"
+msgid "What fits"
+msgstr "Was passt"
+
+#: src/onboarding/steps/reveal-body.tsx
 msgctxt "7T47RX"
 msgid "Choices"
 msgstr "Deine Auswahl"
 
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". {time} is a daily study time, like "4 hr"; {areas} lists up to three exam subjects.
 #: src/onboarding/steps/reveal-coverage.tsx
-msgctxt "sS7-IQ"
-msgid "Add time"
-msgstr "Lernzeit erhöhen"
+msgctxt "vVVeMO"
+msgid "{dateKind, select, month {At {time} a day, some topics won't fit before {date}. This plan gives {areas} more time.} other {At {time} a day, some topics won't fit before {date}. This plan gives {areas} more time.}}"
+msgstr "{dateKind, select, month {Bei {time} am Tag passen bis {date} nicht alle Themen in den Plan. Dieser Plan sieht mehr Zeit für {areas} vor.} other {Bei {time} am Tag passen bis zum {date} nicht alle Themen in den Plan. Dieser Plan sieht mehr Zeit für {areas} vor.}}"
+
+#: src/onboarding/steps/reveal-coverage.tsx
+msgctxt "m4vIdH"
+msgid "See what fits"
+msgstr "Ansehen, was in den Plan passt"
+
+#: src/onboarding/steps/reveal-coverage.tsx
+msgctxt "4znkhu"
+msgid "What your test changed"
+msgstr "Änderungen durch deinen Test ansehen"
+
+#: src/onboarding/steps/reveal-coverage.tsx
+msgctxt "0WvsUC"
+msgid "Done. Your plan now covers your whole goal."
+msgstr "Fertig. Dein Plan deckt jetzt dein gesamtes Ziel ab."
+
+#: src/onboarding/steps/reveal-days.tsx
+#: src/today/today-week-challenge.tsx
+msgctxt "R-J5ox"
+msgid "Review"
+msgstr "Wiederholen"
+
+#: src/onboarding/steps/reveal-days.tsx
+msgctxt "9MidH4"
+msgid "Challenge"
+msgstr "Herausforderung"
 
 #: src/onboarding/steps/reveal-days.tsx
 msgctxt "xmtnm9"
 msgid "Start here"
 msgstr "Hier starten"
+
+#: src/onboarding/steps/reveal-days.tsx
+msgctxt "Gg5U7i"
+msgid "Rest day"
+msgstr "Pausentag"
+
+#: src/onboarding/steps/reveal-days.tsx
+msgctxt "tWAtPK"
+msgid "Your first week"
+msgstr "Deine erste Woche"
+
+#: src/onboarding/steps/reveal-days.tsx
+#: src/onboarding/steps/reveal-readouts.tsx
+msgctxt "UA5qaX"
+msgid "{days, plural, one {# day} other {# days}}"
+msgstr "{days, plural, one {# Tag} other {# Tage}}"
 
 #: src/onboarding/steps/reveal-notice-day.tsx
 #: src/plan/notice-day.tsx
@@ -10511,6 +10752,16 @@ msgid "a day"
 msgstr "pro Tag"
 
 #: src/onboarding/steps/reveal-readouts.tsx
+msgctxt "xAwjqh"
+msgid "{count, plural, one {lesson, {done, number} done} other {lessons, {done, number} done}}"
+msgstr "{count, plural, one {Lektion, {done, number} abgeschlossen} other {Lektionen, {done, number} abgeschlossen}}"
+
+#: src/onboarding/steps/reveal-readouts.tsx
+msgctxt "BSAVzC"
+msgid "{count, plural, one {lesson} other {lessons}}"
+msgstr "{count, plural, one {Lektion} other {Lektionen}}"
+
+#: src/onboarding/steps/reveal-readouts.tsx
 msgctxt "4EBz1E"
 msgid "until the exam"
 msgstr "bis zur Prüfung"
@@ -10525,12 +10776,6 @@ msgctxt "4OjqDe"
 msgid "{days, plural, one {About # day} other {About # days}}"
 msgstr "{days, plural, one {Etwa # Tag} other {Etwa # Tage}}"
 
-#: src/onboarding/steps/reveal-readouts.tsx
-#: src/onboarding/steps/reveal-week.tsx
-msgctxt "UA5qaX"
-msgid "{days, plural, one {# day} other {# days}}"
-msgstr "{days, plural, one {# Tag} other {# Tage}}"
-
 #. Under the level a language plan reaches: when. {month} is a month and year, like "Nov 2027".
 #: src/onboarding/steps/reveal-readouts.tsx
 msgctxt "XvWNP2"
@@ -10542,26 +10787,15 @@ msgctxt "x0b1HZ"
 msgid "estimated finish"
 msgstr "voraussichtlicher Abschluss"
 
-#: src/onboarding/steps/reveal-week.tsx
-#: src/today/today-week-challenge.tsx
-msgctxt "R-J5ox"
-msgid "Review"
-msgstr "Wiederholen"
+#: src/onboarding/steps/role-step.tsx
+msgctxt "aTEFtd"
+msgid "The plan covers what that role needs on day one."
+msgstr "Der Plan vermittelt dir, was du für diese Tätigkeit ab dem ersten Tag brauchst."
 
-#: src/onboarding/steps/reveal-week.tsx
-msgctxt "9MidH4"
-msgid "Challenge"
-msgstr "Herausforderung"
-
-#: src/onboarding/steps/reveal-week.tsx
-msgctxt "Gg5U7i"
-msgid "Rest day"
-msgstr "Pausentag"
-
-#: src/onboarding/steps/reveal-week.tsx
-msgctxt "tWAtPK"
-msgid "Your first week"
-msgstr "Deine erste Woche"
+#: src/onboarding/steps/role-step.tsx
+msgctxt "Hm9NJC"
+msgid "We'll use cases from your work."
+msgstr "Wir nutzen Beispiele aus deinem Arbeitsalltag."
 
 #: src/onboarding/steps/role-step.tsx
 msgctxt "_1P3JX"
@@ -10617,20 +10851,28 @@ msgctxt "LHVFe7"
 msgid "E.g., reports, A/B tests"
 msgstr "Z. B. Berichte, A/B-Tests"
 
-#: src/onboarding/steps/schedule-step.tsx
-msgctxt "ZlcS6d"
-msgid "Change exam date"
-msgstr "Prüfungstermin ändern"
+#. Under "How far do you want to go?": where the learner starts and their daily time. {level} is their level when it is a CEFR label, like "B1+".
+#: src/onboarding/steps/schedule-aim.tsx
+msgctxt "YYDGLc"
+msgid "{level, select, none {From scratch, at {time} a day.} basic {From the basics, at {time} a day.} intermediate {From an intermediate level, at {time} a day.} advanced {From an advanced level, at {time} a day.} other {From {level}, at {time} a day.}}"
+msgstr "{level, select, none {Ohne Vorkenntnisse, mit {time} am Tag.} basic {Von den Grundlagen aus, mit {time} am Tag.} intermediate {Ab einem mittleren Level, mit {time} am Tag.} advanced {Ab einem fortgeschrittenen Level, mit {time} am Tag.} other {Ab {level}, mit {time} am Tag.}}"
 
-#: src/onboarding/steps/schedule-step.tsx
-msgctxt "eGfhjz"
-msgid "Change end date"
-msgstr "Endtermin ändern"
+#: src/onboarding/steps/schedule-focus-line.tsx
+msgctxt "odA2oU"
+msgid "With this time, we suggest giving {subjects} more attention."
+msgstr "Bei dieser Lernzeit empfehlen wir, dich mehr auf {subjects} zu konzentrieren."
 
+#. A link under the daily study time that opens the question about the goal's date, to change it.
 #: src/onboarding/steps/schedule-step.tsx
-msgctxt "Td7PW4"
-msgid "Choose an end date"
-msgstr "Endtermin wählen"
+msgctxt "pttbjJ"
+msgid "Change date"
+msgstr "Datum ändern"
+
+#. A link under the daily study time that opens the question about the goal's date, for a goal with none yet.
+#: src/onboarding/steps/schedule-step.tsx
+msgctxt "BJnENG"
+msgid "Choose a date"
+msgstr "Datum auswählen"
 
 #: src/onboarding/steps/schedule-step.tsx
 msgctxt "h2ifto"
@@ -10638,7 +10880,6 @@ msgid "How much time can you study each day?"
 msgstr "Wie viel Zeit kannst du jeden Tag lernen?"
 
 #: src/onboarding/steps/step-form.tsx
-#: src/onboarding/test-outcome.tsx
 #: src/plan/plan-bases-choices.tsx
 msgctxt "_4tOwT"
 msgid "Skip"
@@ -10664,14 +10905,19 @@ msgid "Time on weekends"
 msgstr "Lernzeit am Wochenende"
 
 #: src/onboarding/steps/subjects-level-step.tsx
-msgctxt "5Imb5S"
-msgid "Your plan skips their basics."
-msgstr "Dein Plan überspringt die Grundlagen dieser Fächer."
+msgctxt "PNR_JU"
+msgid "None of them yet"
+msgstr "Noch keines davon"
 
 #: src/onboarding/steps/subjects-level-step.tsx
-msgctxt "irvMbh"
-msgid "I'm new to all of them"
-msgstr "Alle Fächer sind neu für mich"
+msgctxt "W_KDmR"
+msgid "Your plan starts past their basics. A quick test places you in the rest."
+msgstr "Bei diesen Fächern lässt dein Plan die Grundlagen aus. Bei den übrigen zeigt ein kurzer Test, wo du einsteigst."
+
+#: src/onboarding/steps/subjects-level-step.tsx
+msgctxt "rdMu31"
+msgid "I'm starting from scratch"
+msgstr "Ich fange ganz von vorn an"
 
 #: src/onboarding/steps/subjects-level-step.tsx
 msgctxt "OpYINI"
@@ -10727,6 +10973,12 @@ msgid "{days, plural, one {# day left} other {# days left}}"
 msgstr "{days, plural, one {Noch # Tag} other {Noch # Tage}}"
 
 #: src/onboarding/understood/understood-date-row.ts
+#: src/plan/plan-date.tsx
+msgctxt "8_Da7A"
+msgid "Deadline"
+msgstr "Zieldatum"
+
+#: src/onboarding/understood/understood-date-row.ts
 msgctxt "oxqgs5"
 msgid "You pick this test's day when you book it. Booked already? Set it here."
 msgstr "Den Termin für diesen Test legst du bei der Buchung fest. Schon gebucht? Trag ihn hier ein."
@@ -10746,33 +10998,20 @@ msgctxt "8Km3jP"
 msgid "From its usual dates. We'll tell you when the official ones are out."
 msgstr "Basierend auf den üblichen Terminen. Wir sagen dir Bescheid, sobald die offiziellen Termine feststehen."
 
-#. Under the goals of a card that the free plan can't start now, below the ones it starts. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress, and a waiting goal can start once another is paused. “Plus” is the name of the paid plan, not the word “more”.
 #: src/onboarding/understood/understood-screen.tsx
-msgctxt "Hs12te"
-msgid "{count, plural, one {Following more goals at once comes with Plus. Until then, this goal waits in your goals.} other {Following more goals at once comes with Plus. Until then, these goals wait in your goals.}}"
-msgstr "{count, plural, one {Mit Plus kannst du mehr Ziele gleichzeitig verfolgen. Bis dahin wartet dieses Ziel in deiner Zielliste.} other {Mit Plus kannst du mehr Ziele gleichzeitig verfolgen. Bis dahin warten diese Ziele in deiner Zielliste.}}"
-
-#. Title of the note under the goals of a card a guest can't start yet, because without an account they follow one goal at a time. A “free account” is a signed-up account on the free plan, not the paid plan.
-#: src/onboarding/understood/understood-screen.tsx
-msgctxt "INXjEw"
-msgid "Available with a free account"
-msgstr "Mit kostenlosem Konto verfügbar"
-
-#. Under the goals of a card a guest can't start yet, below the one they start. Without an account a learner follows one goal at a time; a free account (signed up, on the free plan, not the paid plan) follows more. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. The waiting goals come with them when they create the account.
-#: src/onboarding/understood/understood-screen.tsx
-msgctxt "uRiE4s"
-msgid "{count, plural, one {Following more goals at once comes with a free account. Until then, this goal waits in your goals.} other {Following more goals at once comes with a free account. Until then, these goals wait in your goals.}}"
-msgstr "{count, plural, one {Mit einem kostenlosen Konto kannst du mehr Ziele gleichzeitig verfolgen. Bis dahin wartet dieses Ziel in deiner Zielliste.} other {Mit einem kostenlosen Konto kannst du mehr Ziele gleichzeitig verfolgen. Bis dahin warten diese Ziele in deiner Zielliste.}}"
+msgctxt "6hngG4"
+msgid "More goals at once need a subscription"
+msgstr "Für mehr Ziele gleichzeitig brauchst du ein Abo"
 
 #: src/onboarding/understood/understood-screen.tsx
-msgctxt "An59dM"
-msgid "Fix something"
-msgstr "Etwas korrigieren"
+msgctxt "0f32R8"
+msgid "{count, plural, one {Pause another goal to start this one.} other {Pause another goal to start these.}}"
+msgstr "{count, plural, one {Pausier ein anderes Ziel, um dieses Ziel zu starten.} other {Pausier ein anderes Ziel, um diese Ziele zu starten.}}"
 
 #: src/onboarding/understood/understood-screen.tsx
-msgctxt "pWjhwg"
-msgid "Looks right"
-msgstr "Das stimmt so"
+msgctxt "XR04oI"
+msgid "More goals at once come with a free account"
+msgstr "Mit einem kostenlosen Konto kannst du mehr Ziele gleichzeitig verfolgen"
 
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "N7XZZA"
@@ -10788,6 +11027,16 @@ msgstr "Diese Ziele teilen sich deine tägliche Lernzeit. Du kannst das alles sp
 msgctxt "uN-4n4"
 msgid "You can change all of this later."
 msgstr "Du kannst das alles später ändern."
+
+#: src/onboarding/understood/understood-screen.tsx
+msgctxt "pWjhwg"
+msgid "Looks right"
+msgstr "Das stimmt so"
+
+#: src/onboarding/understood/understood-screen.tsx
+msgctxt "An59dM"
+msgid "Fix something"
+msgstr "Etwas korrigieren"
 
 #: src/onboarding/understood/understood-source-link.tsx
 #: src/visuals/chart-visual.tsx
@@ -10827,10 +11076,22 @@ msgctxt "lbfh2z"
 msgid "Exam country"
 msgstr "Prüfungsland"
 
+#: src/onboarding/understood/use-content-country-row.ts
+#: src/plan/plan-country.tsx
+#: src/plan/plan-properties.tsx
+msgctxt "2NB2XO"
+msgid "Content country"
+msgstr "Land für die Inhalte"
+
 #: src/onboarding/understood/use-understood-rows.ts
 msgctxt "A3FR2N"
 msgid "You speak"
 msgstr "Du sprichst"
+
+#: src/onboarding/understood/use-understood-rows.ts
+msgctxt "O6G1Qp"
+msgid "Level you're aiming for"
+msgstr "Angestrebtes Level"
 
 #: src/onboarding/understood/use-understood-rows.ts
 msgctxt "GQ5B1n"
@@ -10949,9 +11210,9 @@ msgid "The exam's likely date is now {date}."
 msgstr "Die Prüfung findet jetzt voraussichtlich am {date} statt."
 
 #: src/plan/notice-day.tsx
-msgctxt "4Q_yNQ"
-msgid "The exam is on {date}."
-msgstr "Die Prüfung ist am {date}."
+msgctxt "I1NvJD"
+msgid "{document, select, notice {The exam notice says {date}.} other {The exam's official calendar says {date}.}}"
+msgstr "{document, select, notice {Laut Prüfungsausschreibung ist der Termin am {date}.} other {Laut offiziellem Prüfungskalender ist der Termin am {date}.}}"
 
 #: src/plan/notice-day.tsx
 msgctxt "78R32n"
@@ -10963,6 +11224,11 @@ msgctxt "wMxWx9"
 msgid "Use {date}"
 msgstr "{date} übernehmen"
 
+#: src/plan/notice-day.tsx
+msgctxt "NymqEe"
+msgid "{count, plural, one {Your plan keeps your date unless you switch to the closest one.} other {Your plan keeps your date unless you switch to one of the closest.}}"
+msgstr "{count, plural, one {Dein Plan behält dein Datum bei, solange du nicht zum nächstgelegenen Termin wechselst.} other {Dein Plan behält dein Datum bei, solange du nicht zu einem der nächstgelegenen Termine wechselst.}}"
+
 #: src/plan/plan-activities.tsx
 msgctxt "Np3v0G"
 msgid "New words"
@@ -10972,6 +11238,11 @@ msgstr "Neue Wörter"
 msgctxt "p2OROv"
 msgid "What you practice"
 msgstr "Was du übst"
+
+#: src/plan/plan-aim.tsx
+msgctxt "yEgtb-"
+msgid "How far your course goes, which sets how long your plan is."
+msgstr "Dein Kursziel bestimmt, wie lange dein Plan dauert."
 
 #: src/plan/plan-bases-advice.tsx
 #: src/plan/use-time-to-cover.ts
@@ -11174,11 +11445,11 @@ msgctxt "xZIG58"
 msgid "Rebuild plan"
 msgstr "Plan neu erstellen"
 
-#: src/plan/plan-country.tsx
-#: src/plan/plan-properties.tsx
-msgctxt "2NB2XO"
-msgid "Content country"
-msgstr "Land für die Inhalte"
+#: src/plan/plan-coverage-suggestion.tsx
+#: src/plan/plan-past-date-suggestion.tsx
+msgctxt "TJo5E6"
+msgid "Preview"
+msgstr "Vorschau"
 
 #: src/plan/plan-coverage.tsx
 msgctxt "qCWuYX"
@@ -11205,6 +11476,11 @@ msgstr "~{date}"
 msgctxt "3VeTk-"
 msgid "{month} for now. Pick the day when you know it."
 msgstr "Vorerst {month}. Wähle den Tag, sobald du ihn kennst."
+
+#: src/plan/plan-date.tsx
+msgctxt "7_AJHO"
+msgid "No deadline: you study everything at your own pace. With a deadline, your plan fits what matters most by then."
+msgstr "Ohne Zieldatum lernst du alles in deinem eigenen Tempo. Mit einem Zieldatum ist dein Plan so abgestimmt, dass du bis dahin das Wichtigste lernst."
 
 #: src/plan/plan-edit-request.tsx
 msgctxt "d42SLL"
@@ -11275,14 +11551,14 @@ msgid "Only {part}"
 msgstr "Nur {part}"
 
 #: src/plan/plan-focus.tsx
-msgctxt "ATMYyH"
-msgid "Nothing changed. {areas} already have every lesson in your plan."
-msgstr "Nichts geändert. Alle Lektionen für {areas} sind schon in deinem Plan."
+msgctxt "478TEb"
+msgid "Nothing changed: {areas} already have every lesson in your plan."
+msgstr "Nichts geändert: Alle Lektionen zu {areas} sind bereits in deinem Plan."
 
 #: src/plan/plan-focus.tsx
-msgctxt "2cb_Ay"
-msgid "Nothing changed. To fit more of {areas}, add time a day."
-msgstr "Nichts geändert. Erhöhe deine tägliche Lernzeit, um mehr von {areas} einzuplanen."
+msgctxt "85kuAM"
+msgid "Nothing changed: {areas} already start as early as what they build on allows, and your time has no room for more of them. More time a day brings more in."
+msgstr "Nichts geändert: {areas} beginnen bereits so früh, wie es die nötigen Grundlagen erlauben. In deiner verfügbaren Zeit ist kein Platz für weitere Lektionen dazu. Mit mehr Zeit pro Tag passen mehr hinein."
 
 #: src/plan/plan-focus.tsx
 msgctxt "hVJsz4"
@@ -11300,24 +11576,57 @@ msgid "Remove focus"
 msgstr "Schwerpunkt entfernen"
 
 #: src/plan/plan-focus.tsx
+msgctxt "MWvL4r"
+msgid "Focus on these"
+msgstr "Darauf konzentrieren"
+
+#: src/plan/plan-focus.tsx
 msgctxt "vCf1zw"
 msgid "Where to focus"
 msgstr "Dein Schwerpunkt"
 
 #: src/plan/plan-focus.tsx
-msgctxt "gUh9a6"
-msgid "The subjects you pick get more of your time."
-msgstr "Die ausgewählten Fächer bekommen mehr Lernzeit."
+msgctxt "WrlQpj"
+msgid "The subjects you pick come first and get more depth."
+msgstr "Die Themen, die du auswählst, kommen zuerst und werden vertieft."
+
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
+#: src/plan/plan-full-course.tsx
+msgctxt "9vcpVc"
+msgid "{dateKind, select, month {At {time} a day, you finish in {month}, after the exam on {date}.} other {At {time} a day, you finish in {month}, after the exam on {date}.}}"
+msgstr "{dateKind, select, month {Mit {time} am Tag bist du im {month} fertig, also nach der Prüfung im {date}.} other {Mit {time} am Tag bist du im {month} fertig, also nach der Prüfung am {date}.}}"
 
 #: src/plan/plan-full-course.tsx
-msgctxt "OgQI8B"
-msgid "You finish in {month}."
-msgstr "Du bist im {month} fertig."
+msgctxt "UlOt3a"
+msgid "At {time} a day, you finish in {month}."
+msgstr "Mit {time} am Tag bist du im {month} fertig."
 
 #: src/plan/plan-full-course.tsx
-msgctxt "UucZ2o"
-msgid "Keep studying after the exam"
-msgstr "Nach der Prüfung weiterlernen"
+#: src/plan/plan-offer-preview.tsx
+msgctxt "aIjU98"
+msgid "Until the exam, what comes up most comes first."
+msgstr "Bis zur Prüfung kommen die Themen zuerst, die am häufigsten drankommen."
+
+#: src/plan/plan-full-course.tsx
+msgctxt "uWL68n"
+msgid "Until the exam, what comes up most comes first. What doesn't fit comes after it."
+msgstr "Bis zur Prüfung kommen die Themen zuerst, die am häufigsten drankommen. Was nicht mehr hineinpasst, folgt danach."
+
+#: src/plan/plan-full-course.tsx
+msgctxt "Wkhove"
+msgid "Until the exam, nothing changes: what comes up most comes first, with mocks and the final stretch. What doesn't fit comes after it."
+msgstr "Bis zur Prüfung ändert sich nichts: Die Themen, die am häufigsten drankommen, stehen an erster Stelle, zusammen mit Probeprüfungen und dem Endspurt. Was nicht mehr hineinpasst, folgt danach."
+
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
+#: src/plan/plan-full-course.tsx
+msgctxt "2UFMxN"
+msgid "{dateKind, select, month {Your deadline of {date} comes off your plan. You can set one again anytime.} other {Your deadline of {date} comes off your plan. You can set one again anytime.}}"
+msgstr "{dateKind, select, month {Dein Zieltermin im {date} wird aus deinem Plan entfernt. Du kannst jederzeit wieder einen festlegen.} other {Dein Zieltermin am {date} wird aus deinem Plan entfernt. Du kannst jederzeit wieder einen festlegen.}}"
+
+#: src/plan/plan-full-course.tsx
+msgctxt "_KzTI7"
+msgid "When off, your plan ends at the exam."
+msgstr "Ist diese Option ausgeschaltet, endet dein Plan mit der Prüfung."
 
 #: src/plan/plan-notice.tsx
 msgctxt "3qUBgl"
@@ -11352,9 +11661,9 @@ msgid "Your plan then covers everything in depth."
 msgstr "Dein Plan behandelt dann alles ausführlich."
 
 #: src/plan/plan-offer-preview.tsx
-msgctxt "ni6NP4"
-msgid "{time} a day covers everything"
-msgstr "Mit {time} am Tag passt alles in deinen Plan"
+msgctxt "u6V8AA"
+msgid "{time} a day covers everything in depth"
+msgstr "Mit {time} täglich kannst du alles gründlich lernen"
 
 #: src/plan/plan-offer-preview.tsx
 #: src/plan/plan-past-date-suggestion.tsx
@@ -11370,27 +11679,15 @@ msgid "Study everything"
 msgstr "Alles lernen"
 
 #: src/plan/plan-past-date-suggestion.tsx
+#: src/plan/study-everything.tsx
+msgctxt "0kaP6f"
+msgid "Every topic, even after the exam, at your own pace."
+msgstr "Alle Themen in deinem Tempo, auch nach der Prüfung."
+
+#: src/plan/plan-past-date-suggestion.tsx
 msgctxt "oNLSka"
 msgid "Move your date so your time covers what's left."
 msgstr "Verschiebe dein Zieldatum, damit du genug Zeit für den Rest hast."
-
-#: src/plan/plan-past-date-suggestion.tsx
-#: src/plan/study-everything.tsx
-#: src/today/today-exam-over.tsx
-msgctxt "t9hafN"
-msgid "Keep studying"
-msgstr "Weiterlernen"
-
-#: src/plan/plan-past-date-suggestion.tsx
-msgctxt "TJo5E6"
-msgid "Preview"
-msgstr "Vorschau"
-
-#: src/plan/plan-past-date-suggestion.tsx
-#: src/today/today-exam-over.tsx
-msgctxt "rBTgSX"
-msgid "Archive goal"
-msgstr "Ziel archivieren"
 
 #: src/plan/plan-properties.tsx
 msgctxt "oOY_q2"
@@ -11497,11 +11794,6 @@ msgstr "Im Zeitplan"
 msgctxt "DCVgDx"
 msgid "Past your date"
 msgstr "Nach dem Zieldatum"
-
-#: src/plan/plan-status-label.tsx
-msgctxt "y7l0FJ"
-msgid "Keep studying them, or archive this goal?"
-msgstr "Mit den übrigen Lektionen weitermachen oder dieses Ziel archivieren?"
 
 #: src/plan/plan-status-label.tsx
 msgctxt "c1uCCY"
@@ -11688,14 +11980,9 @@ msgid "You'll use"
 msgstr "Das wirst du nutzen"
 
 #: src/plan/study-everything.tsx
-msgctxt "f0hmbu"
-msgid "You study every topic. What doesn't fit before the exam comes after it."
-msgstr "Du lernst alle Themen. Wofür vor der Prüfung die Zeit fehlt, kommt danach."
-
-#: src/plan/study-everything.tsx
-msgctxt "x7ZSzV"
-msgid "Every part of your goal, with no end date."
-msgstr "Alle Inhalte für dein Ziel, ohne Enddatum."
+msgctxt "_qzMWL"
+msgid "Every part of your goal, at your own pace, with no end date."
+msgstr "Alle Teile deines Ziels in deinem Tempo, ohne Enddatum."
 
 #: src/plan/use-area-sentence.ts
 msgctxt "joDSGq"
@@ -12482,20 +12769,27 @@ msgctxt "g7wBHi"
 msgid "We couldn't work out the time needed."
 msgstr "Wir konnten die benötigte Zeit nicht berechnen."
 
+#. A button that works out the daily time that covers the whole goal. Keep it apart from the "Study everything, even after the exam" switch: say "cover everything", not "study everything".
 #: src/plan/use-time-to-cover.ts
-msgctxt "sshiAK"
-msgid "Finding the time that covers everything…"
-msgstr "Wir ermitteln, wie viel Lernzeit du für alles brauchst…"
+msgctxt "Yxy0ov"
+msgid "Find the time that covers everything"
+msgstr "Tägliche Lernzeit für alle Inhalte berechnen"
+
+#: src/plan/use-time-to-cover.ts
+msgctxt "fgq47T"
+msgid "Finding the time…"
+msgstr "Wir ermitteln die benötigte Zeit…"
+
+#. {date} is a day, like "May 5".
+#: src/plan/use-time-to-cover.ts
+msgctxt "JgIAib"
+msgid "At {time} a day, your plan covers everything by {date}."
+msgstr "Mit {time} am Tag deckt dein Plan bis zum {date} alles ab."
 
 #: src/plan/use-time-to-cover.ts
 msgctxt "wo_0PK"
 msgid "We couldn't find a date that covers everything."
 msgstr "Wir konnten kein Datum finden, bis zu dem du alles durchgehen kannst."
-
-#: src/plan/use-time-to-cover.ts
-msgctxt "OgCCUY"
-msgid "See what changes"
-msgstr "Änderungen ansehen"
 
 #: src/plan/use-tool-sentence.ts
 msgctxt "MYXHu2"
@@ -12556,6 +12850,21 @@ msgid "Every week"
 msgstr "Jede Woche"
 
 #: src/plan/written-cadence.tsx
+msgctxt "4nWALq"
+msgid "The same practice in alternate weeks: less spread out, more at a time."
+msgstr "Die gleiche Übungsmenge alle zwei Wochen: weniger verteilt, dafür mehr auf einmal."
+
+#: src/plan/written-cadence.tsx
+msgctxt "m945jQ"
+msgid "Less spaced practice, concentrated in the final weeks before the exam."
+msgstr "Du übst weniger über die Zeit verteilt und mehr gebündelt in den letzten Wochen vor der Prüfung."
+
+#: src/plan/written-cadence.tsx
+msgctxt "v6FCRZ"
+msgid "Recommended: a little every week, which improves writing the most."
+msgstr "Empfohlen: jede Woche ein wenig üben, um dein Schreiben am meisten zu verbessern."
+
+#: src/plan/written-cadence.tsx
 msgctxt "XN8aC-"
 msgid "Writing practice every other week from now on."
 msgstr "Ab jetzt alle zwei Wochen Schreiben üben."
@@ -12574,11 +12883,6 @@ msgstr "Ab jetzt jede Woche Schreiben üben."
 msgctxt "9HOF1s"
 msgid "When to practice {parts}"
 msgstr "Wann du {parts} übst"
-
-#: src/plan/written-cadence.tsx
-msgctxt "1Jh2wI"
-msgid "Every week (recommended)"
-msgstr "Jede Woche (empfohlen)"
 
 #: src/profile-questions/about-you-screen.tsx
 msgctxt "BV0cQk"
@@ -12685,6 +12989,22 @@ msgctxt "AYPOzn"
 msgid "Memory is off, so Zoonk isn't using your day or what you do for fun. Turn it on in Memory to change them."
 msgstr "Das Gedächtnis ist ausgeschaltet, deshalb nutzt Zoonk deine Angaben zu Alltag und Freizeit nicht. Schalt es unter „Gedächtnis“ ein, um diese Angaben zu ändern."
 
+#. An option that declines a question: none of the listed options apply.
+#: src/profile-questions/profile-body-parts.ts
+msgctxt "hqA0RV"
+msgid "None of these"
+msgstr "Nichts davon"
+
+#: src/profile-questions/profile-body-parts.ts
+msgctxt "7BKHN3"
+msgid "Nothing to add"
+msgstr "Nichts hinzuzufügen"
+
+#: src/profile-questions/profile-body-parts.ts
+msgctxt "IhuLNc"
+msgid "Nothing in particular"
+msgstr "Nichts Bestimmtes"
+
 #: src/profile-questions/profile-body-parts.ts
 msgctxt "Tc5eNs"
 msgid "I'd rather not say"
@@ -12706,9 +13026,9 @@ msgid "Favorite shows, films, teams or channels (optional)"
 msgstr "Deine liebsten Sendungen, Filme, Teams oder Kanäle (optional)"
 
 #: src/profile-questions/profile-chip-bodies.tsx
-msgctxt "fuvkra"
-msgid "E.g., Star Trek, Formula 1"
-msgstr "Z. B. Star Trek, Formula 1"
+msgctxt "uL1Shr"
+msgid "E.g., Star Trek, Flamengo"
+msgstr "Z. B. Star Trek, Flamengo"
 
 #: src/profile-questions/profile-chip-bodies.tsx
 msgctxt "YRYwsW"
@@ -12716,9 +13036,9 @@ msgid "Favorite artists or podcasts (optional)"
 msgstr "Deine liebsten Künstler oder Podcasts (optional)"
 
 #: src/profile-questions/profile-chip-bodies.tsx
-msgctxt "X5qfRF"
-msgid "E.g., Coldplay, TED Talks Daily"
-msgstr "Z. B. Coldplay, TED Talks Daily"
+msgctxt "B1opZE"
+msgid "E.g., Coldplay, Radiolab"
+msgstr "Z. B. Coldplay, Radiolab"
 
 #: src/profile-questions/profile-chip-bodies.tsx
 msgctxt "kY8drg"
@@ -12779,6 +13099,11 @@ msgstr "{field}: Kurs oder Fach (optional)"
 msgctxt "BznyT3"
 msgid "E.g., journalism"
 msgstr "Z. B. Journalismus"
+
+#: src/profile-questions/profile-chips.tsx
+msgctxt "toYiVg"
+msgid "Pick up to 3."
+msgstr "Wähl bis zu 3 aus."
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "XnRQI7"
@@ -12843,34 +13168,39 @@ msgid "How should we address you?"
 msgstr "Wie sollen wir dich ansprechen?"
 
 #: src/profile-questions/profile-question-copy.ts
-msgctxt "_gt9hJ"
-msgid "We use this to pick examples you'll care about."
-msgstr "Damit wählen wir Beispiele aus, die dich interessieren."
+msgctxt "jA1Ffb"
+msgid "We'll use situations from your day in your examples."
+msgstr "Wir nutzen Situationen aus deinem Alltag für deine Beispiele."
 
 #: src/profile-questions/profile-question-copy.ts
-msgctxt "dQjzRr"
-msgid "Past or present, finished or not. Pick up to 3."
-msgstr "Früher oder heute, abgeschlossen oder nicht. Wähl bis zu 3 aus."
+msgctxt "Ol21xB"
+msgid "Pick up to 3. We'll use them in your examples."
+msgstr "Wähl bis zu 3 aus. Wir bauen sie in deine Beispiele ein."
 
 #: src/profile-questions/profile-question-copy.ts
-msgctxt "zJoq3-"
-msgid "Optional. We use what you pick to adapt the content to your needs. You can remove it anytime in Settings."
-msgstr "Optional. Deine Auswahl hilft uns, die Inhalte an deine Bedürfnisse anzupassen. Du kannst sie jederzeit in den Einstellungen entfernen."
+msgctxt "6E7bGb"
+msgid "Past or present, finished or not. It can be different from your work."
+msgstr "Früher oder heute, abgeschlossen oder nicht. Es muss nichts mit deiner Arbeit zu tun haben."
 
 #: src/profile-questions/profile-question-copy.ts
-msgctxt "FfWAhT"
-msgid "Pick anything that helps."
-msgstr "Wähl alles aus, was dir hilft."
+msgctxt "yqwphC"
+msgid "Optional. What you pick is saved to your profile so your buddy can adapt to you. You can remove it anytime in Settings."
+msgstr "Optional. Deine Auswahl wird in deinem Profil gespeichert, damit sich dein Kumpel auf dich einstellen kann. Du kannst sie jederzeit in den Einstellungen entfernen."
 
 #: src/profile-questions/profile-question-copy.ts
-msgctxt "toYiVg"
-msgid "Pick up to 3."
-msgstr "Wähl bis zu 3 aus."
+msgctxt "310Na4"
+msgid "Pick anything that helps. No label or diagnosis needed."
+msgstr "Wähl alles aus, was dir hilft. Du brauchst dafür keine Diagnose und musst dich keiner Kategorie zuordnen."
 
 #: src/profile-questions/profile-question-copy.ts
-msgctxt "xI6I3Q"
-msgid "We'll talk to you this way."
-msgstr "So sprechen wir dich an."
+msgctxt "oKsYFE"
+msgid "Your buddy and your feedback will talk to you this way. Lessons stay the same."
+msgstr "Dein Kumpel spricht dich so an. Auch die Rückmeldungen sind so formuliert. Die Lektionen bleiben gleich."
+
+#: src/profile-questions/profile-question-copy.ts
+msgctxt "vHNPYm"
+msgid "Pick up to 3. We'll use them for examples in your lessons."
+msgstr "Wähl bis zu 3 aus. Wir nutzen sie für Beispiele in deinen Lektionen."
 
 #: src/profile-questions/profile-row-bodies.tsx
 msgctxt "_UlXsX"
@@ -12893,14 +13223,19 @@ msgid "E.g., I understand diagrams better than text"
 msgstr "Z. B. verstehe ich Diagramme besser als Text"
 
 #: src/profile-questions/profile-row-bodies.tsx
-msgctxt "mM7GRS"
-msgid "We'll remember this. You can delete it anytime in Settings."
-msgstr "Wir merken uns das. Du kannst es jederzeit in den Einstellungen löschen."
+msgctxt "Wl4TYP"
+msgid "We'll remember this for your buddy. You can delete it in Memory."
+msgstr "Wir merken uns das für deinen Kumpel. Du kannst es unter „Erinnerungen“ löschen."
 
 #: src/profile-questions/profile-row-bodies.tsx
 msgctxt "opT2q1"
 msgid "We checked what often helps with what you picked. Change anything you like."
 msgstr "Wir haben ausgewählt, was bei deinen Angaben oft hilft. Pass alles an, wie du möchtest."
+
+#: src/questions/choice-questions-run.tsx
+msgctxt "-HTKTB"
+msgid "{current, number} of {total, number}"
+msgstr "{current, number} von {total, number}"
 
 #: src/questions/item-set-stimulus.tsx
 msgctxt "_pDdit"
@@ -12992,11 +13327,6 @@ msgstr "Was du beim Bestehen überspringst"
 msgctxt "2L2enW"
 msgid "A few questions on this chapter. Do well, and your plan skips what you already know."
 msgstr "Ein paar Fragen zu diesem Kapitel. Wenn du gut abschneidest, überspringt dein Plan, was du schon weißt."
-
-#: src/questions/test-out-preparing.tsx
-msgctxt "SKxNcp"
-msgid "Start the test"
-msgstr "Test starten"
 
 #: src/questions/test-out-preparing.tsx
 #: src/questions/test-out-run.tsx
@@ -14243,6 +14573,7 @@ msgid "Modules"
 msgstr "Module"
 
 #: src/syllabus/syllabus-section.tsx
+#: src/syllabus/syllabus-summary.tsx
 msgctxt "Cw_XA_"
 msgid "{count, plural, one {# topic from your material} other {# topics from your material}}"
 msgstr "{count, plural, one {# Thema aus deinem Material} other {# Themen aus deinem Material}}"
@@ -14253,9 +14584,61 @@ msgid "{subjects, plural, one {# subject} other {# subjects}} · {topics, plural
 msgstr "{subjects, plural, one {# Fach} other {# Fächer}} · {topics, plural, one {# Thema} other {# Themen}}"
 
 #: src/syllabus/syllabus-section.tsx
+#: src/syllabus/syllabus-summary.tsx
 msgctxt "IYzjIp"
 msgid "{count, plural, one {# module} other {# modules}}"
 msgstr "{count, plural, one {# Modul} other {# Module}}"
+
+#: src/syllabus/syllabus-summary-topics.tsx
+msgctxt "Swb9n_"
+msgid "Out of your plan"
+msgstr "Nicht in deinem Plan"
+
+#: src/syllabus/syllabus-summary.tsx
+msgctxt "JbrEuc"
+msgid "Most questions: {subjects}"
+msgstr "Die meisten Fragen: {subjects}"
+
+#: src/syllabus/syllabus-summary.tsx
+msgctxt "45YBLt"
+msgid "{count, plural, one {# topic, all in your plan} other {# topics, all in your plan}}"
+msgstr "{count, plural, one {# Thema, in deinem Plan} other {# Themen, alle in deinem Plan}}"
+
+#: src/syllabus/syllabus-summary.tsx
+msgctxt "71KM7R"
+msgid "{leftOut, number} of {total, plural, one {# topic doesn't} other {# topics don't}} fit in {time} a day"
+msgstr "Für {leftOut, number} von {total, plural, one {# Thema} other {# Themen}} reichen {time} am Tag nicht"
+
+#: src/syllabus/syllabus-summary.tsx
+msgctxt "jKplCa"
+msgid "{planned, number} of {total, plural, one {# topic} other {# topics}} in your plan"
+msgstr "{planned, number} von {total, plural, one {# Thema} other {# Themen}} in deinem Plan"
+
+#: src/syllabus/syllabus-summary.tsx
+msgctxt "PZqneq"
+msgid "{document, select, notice {{count, plural, one {# subject from the notice} other {# subjects from the notice}}} other {{count, plural, one {# part from the official guide} other {# parts from the official guide}}}}"
+msgstr "{document, select, notice {{count, plural, one {# Fach aus der Ausschreibung} other {# Fächer aus der Ausschreibung}}} other {{count, plural, one {# Teil aus dem offiziellen Leitfaden} other {# Teile aus dem offiziellen Leitfaden}}}}"
+
+#: src/syllabus/syllabus-summary.tsx
+msgctxt "qnBQra"
+msgid "{total, plural, one {# topic} other {# topics}}, {leftOut, number} out of your plan"
+msgstr "{total, plural, one {# Thema} other {# Themen}}, davon {leftOut, number} nicht in deinem Plan"
+
+#: src/syllabus/syllabus-summary.tsx
+#: src/syllabus/use-subject-progress.ts
+msgctxt "gdK5-t"
+msgid "{total, plural, one {# topic} other {# topics}}"
+msgstr "{total, plural, one {# Thema} other {# Themen}}"
+
+#: src/syllabus/syllabus-summary.tsx
+msgctxt "FblJsA"
+msgid "See topics"
+msgstr "Themen ansehen"
+
+#: src/syllabus/syllabus-summary.tsx
+msgctxt "3ju2Kq"
+msgid "What you'll study"
+msgstr "Was du lernen wirst"
 
 #: src/syllabus/topic-note.tsx
 msgctxt "10rODe"
@@ -14301,11 +14684,6 @@ msgstr "{count, plural, one {# Thema übersprungen, weil du es schon kennst} oth
 msgctxt "5jDXJt"
 msgid "{count, plural, one {# lesson skipped because you already know it} other {# lessons skipped because you already know them}}"
 msgstr "{count, plural, one {# Lektion übersprungen, weil du sie schon kennst} other {# Lektionen übersprungen, weil du sie schon kennst}}"
-
-#: src/syllabus/use-subject-progress.ts
-msgctxt "gdK5-t"
-msgid "{total, plural, one {# topic} other {# topics}}"
-msgstr "{total, plural, one {# Thema} other {# Themen}}"
 
 #: src/today/today-action.tsx
 #: src/today/today-more.tsx
@@ -14500,10 +14878,17 @@ msgctxt "44Z30Y"
 msgid "Noted. You can take the test from your plan."
 msgstr "Alles klar. Du kannst den Test über deinen Plan machen."
 
+#. One line on the Today page that suggests taking the Focus test: it shows which exam subjects need most study time.
 #: src/today/today-focus-test.tsx
 msgctxt "KYliMN"
 msgid "The Focus test shows what to study most."
 msgstr "Der Fokustest zeigt, welche Fächer die meiste Lernzeit brauchen."
+
+#. {time} is a duration with its unit, such as “15 min”: how long the Focus test takes. “Your time” is the study time the learner has before the exam.
+#: src/today/today-focus-test.tsx
+msgctxt "o-vRxa"
+msgid "Your time can't cover everything before your exam. In about {time}, the Focus test shows what to study most."
+msgstr "Deine Lernzeit bis zur Prüfung reicht nicht für alles. In etwa {time} zeigt der Fokustest, welche Fächer die meiste Lernzeit brauchen."
 
 #: src/today/today-heading.tsx
 msgctxt "M3adyv"
@@ -14577,11 +14962,6 @@ msgstr "Herausforderung am {day} ansehen"
 msgctxt "AYHJ_M"
 msgid "Practice with {name}"
 msgstr "Mit {name} üben"
-
-#: src/today/today-plan-change.tsx
-msgctxt "YWfqky"
-msgid "Update my plan"
-msgstr "Meinen Plan anpassen"
 
 #: src/today/today-plan-change.tsx
 msgctxt "BxNBZP"
@@ -14827,6 +15207,11 @@ msgstr "Deine erste Lektion"
 msgctxt "zbkRbA"
 msgid "Ready to start"
 msgstr "Startbereit"
+
+#: src/wait/lesson-wait-status.tsx
+msgctxt "uaZ--2"
+msgid "Getting your lesson ready"
+msgstr "Wir bereiten deine Lektion vor"
 
 #: src/wait/lesson-wait-status.tsx
 msgctxt "4Wktrz"

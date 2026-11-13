@@ -11,7 +11,6 @@ import { AnswersSaveError } from "../../_components/save-error";
 import { SheetHeader } from "../../_components/sheet-header";
 import { TaskHeaderMenu, TaskHeaderTitle } from "../../_components/task-header";
 import { TaskActions } from "../../_components/task-layout";
-import { useFormatDuration } from "../../_utils/time-format";
 import { type LearnBuddy } from "../../buddies/use-buddy-name";
 import { MomentAfterCeremony, type MomentCeremony } from "../../session/moment-ceremony";
 import { TaskFrame, TaskMainButton, TaskMainLink } from "../../shell/task-frame";
@@ -32,7 +31,6 @@ type LanguagePatternActions = {
 };
 
 const PERCENT = 100;
-const DRILL_MINUTES = 3;
 
 function DoneAction({ exitHref }: { exitHref: string }) {
   const t = useExtracted();
@@ -116,7 +114,6 @@ export function LanguagePatternScreen({
   renderCeremony?: MomentCeremony;
 }) {
   const t = useExtracted();
-  const formatDuration = useFormatDuration();
   const drill = usePatternDrill({ drill: pattern.drill, practice: actions.practice });
   const { step } = drill;
 
@@ -146,9 +143,7 @@ export function LanguagePatternScreen({
         exitToApp
         footer={
           <TaskActions>
-            <TaskMainButton onClick={drill.start}>
-              {t("Practice this · {time}", { time: formatDuration(DRILL_MINUTES) })}
-            </TaskMainButton>
+            <TaskMainButton onClick={drill.start}>{t("Practice")}</TaskMainButton>
           </TaskActions>
         }
         headerTitle={<TaskHeaderTitle title={t("Mistake pattern")} />}

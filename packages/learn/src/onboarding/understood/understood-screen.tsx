@@ -5,7 +5,7 @@ import { type OnboardingDraftEdit } from "@zoonk/core/view-models/onboarding/dra
 import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
 import { CreateAccountLink } from "../../_components/create-account-link";
-import { PlusNotice } from "../../_components/plus-lock";
+import { GateWords, SubscribeGate } from "../../_components/subscribe-gate";
 import { GoalLimitWall } from "../entry/goal-limit-notice";
 import { GoalActions, GoalErrorMessage } from "../entry/goal-outcomes";
 import { type GoalError } from "../goal-errors";
@@ -115,7 +115,7 @@ function LockedGoalCard({ goal }: { goal: UnderstoodGoalView }) {
   );
 }
 
-/** A guest's next step is a free account, which follows more goals at once; an account's is Plus. */
+/** A guest's next step is a free account, which studies more goals at once; an account's is subscribing. */
 function LockedGoalsNote({
   count,
   hasAccount,
@@ -128,37 +128,25 @@ function LockedGoalsNote({
   const t = useExtracted();
 
   if (hasAccount) {
-    return (
-      <PlusNotice cta={offersRemedy}>
-        {t({
-          description:
-            "Under the goals of a card that the free plan can't start now, below the ones it starts. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress, and a waiting goal can start once another is paused. “Plus” is the name of the paid plan, not the word “more”.",
-          message:
-            "{count, plural, one {Following more goals at once comes with Plus. Until then, this goal waits in your goals.} other {Following more goals at once comes with Plus. Until then, these goals wait in your goals.}}",
-          values: { count },
-        })}
-      </PlusNotice>
+    const title = t("More goals at once need a subscription");
+
+    const line = t(
+      "{count, plural, one {Pause another goal to start this one.} other {Pause another goal to start these.}}",
+      { count },
+    );
+
+    return offersRemedy ? (
+      <SubscribeGate title={title}>{line}</SubscribeGate>
+    ) : (
+      <GateWords line={line} title={title} />
     );
   }
 
   return (
-    <PlusNotice
-      action={offersRemedy && <CreateAccountLink />}
-      cta={false}
-      title={t({
-        description:
-          "Title of the note under the goals of a card a guest can't start yet, because without an account they follow one goal at a time. A “free account” is a signed-up account on the free plan, not the paid plan.",
-        message: "Available with a free account",
-      })}
-    >
-      {t({
-        description:
-          "Under the goals of a card a guest can't start yet, below the one they start. Without an account a learner follows one goal at a time; a free account (signed up, on the free plan, not the paid plan) follows more. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. The waiting goals come with them when they create the account.",
-        message:
-          "{count, plural, one {Following more goals at once comes with a free account. Until then, this goal waits in your goals.} other {Following more goals at once comes with a free account. Until then, these goals wait in your goals.}}",
-        values: { count },
-      })}
-    </PlusNotice>
+    <div className="flex flex-col items-start gap-2">
+      <GateWords title={t("More goals at once come with a free account")} />
+      {offersRemedy && <CreateAccountLink />}
+    </div>
   );
 }
 
