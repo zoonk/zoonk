@@ -5,7 +5,13 @@ import {
   useLayoutEffect,
   useRef,
 } from "react";
-import { SHORTCUTS, type ShortcutName, isModShortcut, shortcutKeys } from "../lib/shortcuts";
+import {
+  SHORTCUTS,
+  type ShortcutName,
+  isModShortcut,
+  isTypedShortcut,
+  shortcutKeys,
+} from "../lib/shortcuts";
 import { PopupShortcutLayer } from "./_utils/popup-shortcut-layer";
 import {
   SCREEN_ENTER_ATTRIBUTE,
@@ -145,6 +151,23 @@ const MOD_KEY = { mode: "any", modifiers: { ctrlKey: true, metaKey: true } } as 
 const SCREEN_KEY = { mode: "none", screen: true } as const;
 const FIELD_KEY = { mode: "none" } as const;
 
+const TYPED_KEY = {
+  modifiers: { altKey: false, ctrlKey: false, metaKey: false },
+  screen: true,
+} as const;
+
+function keyOptions(name: ShortcutName, fromField: boolean) {
+  if (isModShortcut(name)) {
+    return MOD_KEY;
+  }
+
+  if (isTypedShortcut(name)) {
+    return TYPED_KEY;
+  }
+
+  return fromField ? FIELD_KEY : SCREEN_KEY;
+}
+
 /**
  * Answers one of `SHORTCUTS`. A screen's key leaves itself to a field or a control in focus and
  * acts once however long it's held; `fromField` answers from inside a field too, for a screen whose
@@ -156,12 +179,10 @@ export function useShortcut(
   callback: (event: KeyboardEvent) => ShortcutResult,
   { enabled = true, fromField = false }: { enabled?: boolean; fromField?: boolean } = {},
 ) {
-  const screenKey = fromField ? FIELD_KEY : SCREEN_KEY;
-
   useKeyboardCallback(
     SHORTCUTS[name].keys,
     (event) => (enabled ? callback(event) : false),
-    isModShortcut(name) ? MOD_KEY : screenKey,
+    keyOptions(name, fromField),
   );
 }
 

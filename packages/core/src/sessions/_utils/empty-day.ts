@@ -30,25 +30,19 @@ export function getDayLessons({
   dayMinutes,
   lessonRoom,
   outlines,
-  trialEnded,
 }: {
   blocks: readonly unknown[];
   dayMinutes: number;
   lessonRoom: boolean;
   outlines: DayOutlines;
-  trialEnded: boolean;
 }): { emptyDay: EmptyDay | null; lessonsComing: boolean; lessonsToPrepare: boolean } {
   if (blocks.length === 0) {
     const emptyDay = toEmptyDay({ dayMinutes, outlines });
 
-    return {
-      emptyDay: trialEnded && emptyDay ? "nothingNew" : emptyDay,
-      lessonsComing: false,
-      lessonsToPrepare: false,
-    };
+    return { emptyDay, lessonsComing: false, lessonsToPrepare: false };
   }
 
-  const open = lessonRoom && !trialEnded;
+  const open = lessonRoom;
 
   return {
     emptyDay: null,

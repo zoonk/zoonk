@@ -359,7 +359,7 @@ describe("lesson by keyboard", () => {
       await answer.click();
       await userEvent.keyboard(RIGHT_TYPED);
 
-      await page.getByRole("button", { exact: true, name: "Leave" }).click();
+      await page.getByRole("link", { exact: true, name: "Leave" }).click();
       const leave = page.getByRole("alertdialog", { name: "Leave for now?" });
       await expect.element(leave).toBeVisible();
       await leave.getByRole("button", { name: "Keep writing" }).click();
@@ -399,7 +399,7 @@ describe("lesson by keyboard", () => {
     await expect.poll(() => checkStep.mock.calls.length).toBe(1);
     await expect.element(check).toHaveAttribute("aria-busy", "true");
     await expect.element(check).toBeDisabled();
-    await page.getByRole("button", { exact: true, name: "Leave" }).click();
+    await page.getByRole("link", { exact: true, name: "Leave" }).click();
     const leave = page.getByRole("alertdialog", { name: "Leave for now?" });
     await expect.element(leave).toBeVisible();
     await leave.getByRole("button", { name: "Keep writing" }).click();
@@ -414,7 +414,7 @@ describe("lesson by keyboard", () => {
     });
 
     await expect.element(answer).toHaveValue(RIGHT_TYPED);
-    await page.getByRole("button", { exact: true, name: "Leave" }).click();
+    await page.getByRole("link", { exact: true, name: "Leave" }).click();
     await expect.element(leave).toBeVisible();
     await leave.getByRole("button", { name: "Keep writing" }).click();
     await pressOnPage("Escape");

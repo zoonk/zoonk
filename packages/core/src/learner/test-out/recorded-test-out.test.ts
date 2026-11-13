@@ -14,7 +14,6 @@ import { getRecordedTestOut } from "./get-recorded-test-out";
 import { submitChapterTestOut } from "./submit-chapter-test-out";
 
 const NOW = new Date("2026-09-30T12:00:00Z");
-const DAY_MS = 86_400_000;
 
 async function plannedGoal({
   graph,
@@ -136,7 +135,7 @@ describe("a chapter test-out sent and read back", () => {
     await expect(countRecorded(user.id)).resolves.toStrictEqual(counted);
   });
 
-  it("says what a test recorded when sent again after its questions changed and its free week ended", async () => {
+  it("replays the recorded result after source questions change, including for an older exam goal", async () => {
     const { goal, questions, send, user } = await setup();
     const requestId = randomUUID();
     const first = await send({ requestId });
@@ -149,7 +148,7 @@ describe("a chapter test-out sent and read back", () => {
     await expect(send({ requestId })).resolves.toStrictEqual(sentAgain(first));
 
     await prisma.goal.update({
-      data: { createdAt: new Date(NOW.getTime() - 10 * DAY_MS), kind: "exam" },
+      data: { createdAt: new Date("2020-01-01T00:00:00Z"), kind: "exam" },
       where: { id: goal.id },
     });
 
