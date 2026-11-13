@@ -7,6 +7,7 @@ import { prisma } from "@zoonk/db";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { aiOrganizationFixture, organizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { languageLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { ONE_SECOND_RECORDING } from "@zoonk/testing/fixtures/recordings";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
@@ -210,6 +211,46 @@ describe(gradeSpokenAnswer, () => {
 
     await expect(prisma.attempt.count({ where: { stepId: step.id } })).resolves.toBe(0);
     await expect(prisma.mistake.count({ where: { stepId: step.id } })).resolves.toBe(0);
+  });
+
+  it("doesn't score a take on a screen whose sentence a fix changed during the open run", async () => {
+    const [user, { lesson, sentence, steps }] = await Promise.all([
+      userFixture(),
+      languageLessonFixture(),
+    ]);
+
+    const step = steps.find((candidate) => candidate.kind === "spokenAnswer");
+    mockSession(user.id);
+
+    await lessonRunFixture({ lessonId: lesson.id, userId: user.id });
+
+    await appliedFixFixture({
+      changes: [
+        {
+          fields: [
+            {
+              after: "How much is the monthly rent?",
+              before: sentence.sentence,
+              field: "sentence",
+            },
+          ],
+          id: sentence.id,
+          model: "Sentence",
+          op: "set",
+        },
+      ],
+      unit: "sentence",
+      unitId: sentence.id,
+    });
+
+    mockTranscript("How much is it");
+    mockExplanation('Ouvimos "it".');
+
+    await expect(
+      gradeSpokenAnswer({ audio: AUDIO, fields: FIELDS, stepId: step?.id ?? "" }),
+    ).resolves.toMatchObject({ grade: { attemptId: null, checked: false }, status: "graded" });
+
+    await expect(prisma.attempt.count({ where: { stepId: step?.id } })).resolves.toBe(0);
   });
 
   it("grades a sentence said as expected and records the attempt, for guests too", async () => {

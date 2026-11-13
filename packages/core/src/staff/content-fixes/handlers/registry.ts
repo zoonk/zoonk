@@ -5,10 +5,12 @@ import { blueprintSet, cutoffSet, weightsSet } from "./exam-facts";
 import { type FixHandler } from "./fix-handler";
 import { itemReplace, itemRestore, itemSet } from "./item-content";
 import { itemSetReplace, itemSetRestore } from "./item-set";
+import { lessonSentenceSet, lessonWordSet } from "./lesson-vocabulary";
 import { levelTestSet } from "./level-test";
 import { mindMapSet } from "./mind-map";
 import { stepAttachPicture, stepDetachPicture } from "./pictures";
 import { explanationSet, itemRetire, itemUnretire } from "./practice";
+import { pronunciationSet } from "./pronunciation";
 import { stepSet, variantSet } from "./screens";
 import {
   lessonSourcesSet,
@@ -19,6 +21,8 @@ import {
 } from "./shared-sources";
 import { mediaAltSet, scenarioSet, skillSet, tutorAnswerSet, warmUpSet } from "./shared-text";
 import { chapterSet, courseSet, lessonSet } from "./text-rows";
+import { sentenceRevoice, wordRevoice } from "./vocabulary-revoice";
+import { sentenceSet, wordSet } from "./vocabulary-rows";
 
 /**
  * Every model and operation a content fix can change. Adding one is adding its handler here: its
@@ -55,6 +59,13 @@ export const FIX_HANDLERS = [
   itemReplace,
   itemRestore,
   levelTestSet,
+  wordSet,
+  wordRevoice,
+  pronunciationSet,
+  lessonWordSet,
+  sentenceSet,
+  sentenceRevoice,
+  lessonSentenceSet,
 ] as const;
 
 /** What `pnpm zoonk staff models` tells an agent it may propose for each model. */

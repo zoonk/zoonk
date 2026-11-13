@@ -18,6 +18,7 @@ import { type StoredChange } from "../contract";
 import { type FixContext } from "../handlers/fix-handler";
 import { findStoredHandler } from "../handlers/registry";
 import { type FixUnit } from "./resolved-change";
+import { applyVocabularyUnit, findLessonsShowing, isVocabularyUnit } from "./vocabulary-unit";
 
 const UNIT_TABLES = {
   chapter: sql`library_chapters`,
@@ -28,9 +29,11 @@ const UNIT_TABLES = {
   lesson: sql`library_lessons`,
   levelTest: sql`language_level_tests`,
   mediaAsset: sql`media_assets`,
+  sentence: sql`sentences`,
   skill: sql`skills`,
   source: sql`sources`,
   warmUp: sql`warm_ups`,
+  word: sql`words`,
 } as const;
 
 /**
@@ -116,6 +119,10 @@ export async function applyFixChanges(
   if (unit.kind === "lesson") {
     await tx.lesson.update({ data: { updatedAt: context.now }, where: { id: unit.id } });
   }
+
+  if (isVocabularyUnit(unit)) {
+    await applyVocabularyUnit(tx, { changes, context, unit });
+  }
 }
 
 async function lessonCacheTags(lessonId: string): Promise<string[]> {
@@ -196,6 +203,12 @@ export async function getFixCacheTags(unit: FixUnit): Promise<string[]> {
 
   if (unit.kind === "lesson") {
     return [...new Set(await lessonCacheTags(unit.id))];
+  }
+
+  if (isVocabularyUnit(unit)) {
+    const lessonIds = await findLessonsShowing(prisma, unit);
+    const tags = await Promise.all(lessonIds.map((id) => lessonCacheTags(id)));
+    return [...new Set(tags.flat())];
   }
 
   if (unit.kind === "chapter") {

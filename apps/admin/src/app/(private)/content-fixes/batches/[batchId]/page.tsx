@@ -19,6 +19,7 @@ import { Suspense } from "react";
 import { ContentFixChanges } from "../../_components/content-fix-changes";
 import { RejectForm, ResumeApplying, ReviewDecision } from "../../_components/content-fix-decision";
 import { ContentFixEffects } from "../../_components/content-fix-effects";
+import { ContentFixVoice } from "../../_components/content-fix-voice";
 import { ContentFixStatusBadge, contentFixStatusLabels } from "../../content-fix-status";
 
 type Props = PageProps<"/content-fixes/batches/[batchId]">;
@@ -124,6 +125,7 @@ function FixCard({ fix, index, reason }: { fix: BatchFix; index: number; reason:
       {fix.staleReason && <p className="text-destructive-text text-sm">{fix.staleReason}</p>}
 
       <ContentFixChanges compact fix={fix} />
+      {fix.status === "proposed" && <ContentFixVoice fix={fix} />}
       <ContentFixEffects fix={fix} />
 
       {fix.status === "proposed" && (
@@ -138,13 +140,23 @@ function FixCard({ fix, index, reason }: { fix: BatchFix; index: number; reason:
 async function Decision({ batchId, fixes }: { batchId: string; fixes: readonly BatchFix[] }) {
   const passkey = await getStaffPasskeyStatus();
   const viewerId = passkey.status === "ready" ? passkey.userId : null;
-  const proposed = fixes.filter((fix) => fix.status === "proposed").map((fix) => fix.id);
+  const waiting = fixes.filter((fix) => fix.status === "proposed");
+  const proposed = waiting.filter((fix) => !fix.voiceOwedAt).map((fix) => fix.id);
+  const voicing = waiting.length - proposed.length;
 
   const mine = fixes.filter((fix) => fix.status === "approved" && fix.deciderId === viewerId);
 
   return (
     <div className="flex flex-col gap-6">
       {mine.length > 0 && <ResumeApplying batchId={batchId} count={mine.length} />}
+
+      {voicing > 0 && (
+        <p className="text-muted-foreground text-sm">
+          {voicing === 1
+            ? "1 fix waits for its new clip and can be approved once it's recorded."
+            : `${String(voicing)} fixes wait for their new clips and can be approved once they're recorded.`}
+        </p>
+      )}
 
       {proposed.length > 0 && (
         <ReviewDecision
@@ -160,7 +172,7 @@ async function Decision({ batchId, fixes }: { batchId: string; fixes: readonly B
         />
       )}
 
-      {proposed.length === 0 && mine.length === 0 && (
+      {waiting.length === 0 && mine.length === 0 && (
         <p className="text-muted-foreground text-sm">Every fix in this batch is decided.</p>
       )}
     </div>

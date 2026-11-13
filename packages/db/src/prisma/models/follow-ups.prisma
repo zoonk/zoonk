@@ -21,6 +21,8 @@ enum FollowUpKind {
   settleSessionPlan          @map("settle_session_plan")
   makeChapterMindMap         @map("make_chapter_mind_map")
   redrawChapterMindMap       @map("redraw_chapter_mind_map")
+  voiceContentFix            @map("voice_content_fix")
+  writeSentenceOrders        @map("write_sentence_orders")
 }
 
 /// Work owed after a learner's write; ended by the run that started it unless asked again since,

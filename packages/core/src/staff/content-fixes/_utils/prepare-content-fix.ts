@@ -1,19 +1,14 @@
 import { type TransactionClient } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
-import { CURRENT_STEPS, readStagedLessonVersion } from "../../../library/lessons/lesson-versions";
+import { CURRENT_STEPS } from "../../../library/lessons/lesson-versions";
 import { getScreenReadingTexts, holdsQuote } from "../../../library/steps/question-bases";
 import { type ContentFixEffect, type StoredChange, contentFixChangesSchema } from "../contract";
 import { type FixTarget } from "../handlers/fix-handler";
 import { numericScreenProblem } from "../handlers/numeric-screen";
 import { findStoredHandler, prepareProposedChange } from "../handlers/registry";
-import {
-  type FixUnit,
-  type Json,
-  PRIVATE_CONTENT,
-  type Refusal,
-  type Resolution,
-  refuse,
-} from "./resolved-change";
+import { lessonProblem } from "./lesson-problem";
+import { type FixUnit, type Json, type Refusal, type Resolution, refuse } from "./resolved-change";
+import { isVocabularyUnit, vocabularyEffects } from "./vocabulary-unit";
 
 export type PreparedFix = { changes: StoredChange[]; effects: ContentFixEffect[]; unit: FixUnit };
 
@@ -49,29 +44,6 @@ function overlapProblem(changes: readonly StoredChange[]): string | null {
   return new Set(keys).size === keys.length
     ? null
     : "Each row appears once in a fix; put all of a row's fields in one change.";
-}
-
-async function lessonProblem(db: TransactionClient, lessonId: string): Promise<string | null> {
-  const lesson = await db.lesson.findUnique({
-    select: { contentStatus: true, ownerId: true, visibility: true },
-    where: { id: lessonId },
-  });
-
-  if (!lesson) {
-    return `No Lesson with id ${lessonId}.`;
-  }
-
-  if (lesson.visibility === "private" || lesson.ownerId) {
-    return PRIVATE_CONTENT;
-  }
-
-  if (lesson.contentStatus !== "completed") {
-    return "Only a published lesson can be fixed; this one is still being written.";
-  }
-
-  return (await readStagedLessonVersion(lessonId, db))
-    ? "A new version of this lesson is waiting to replace it; fix it once that version is published."
-    : null;
 }
 
 function readBasis(content: unknown): { position: number; quote: string } | null {
@@ -247,7 +219,7 @@ export async function prepareContentFix(
 
   if (!first || units.size !== 1) {
     return refuse(
-      "One fix covers one lesson (with its screens), one chapter, one course, one practice question or one level test. Split it into one fix each.",
+      "One fix covers one lesson (with its screens), one chapter, one course, one practice question, one level test, or one word or sentence (with the lesson rows that use it). Split it into one fix each.",
     );
   }
 
@@ -267,6 +239,9 @@ export async function prepareContentFix(
     ...lessonVersion,
     ...accepted.flatMap((change) => change.effects),
     ...(await keptVariantEffects(db, stored)),
+    ...(isVocabularyUnit(first.unit)
+      ? await vocabularyEffects(db, { changes: stored, unit: first.unit })
+      : []),
   ];
 
   return { fix: { changes: stored, effects: uniqueEffects(effects), unit: first.unit }, ok: true };

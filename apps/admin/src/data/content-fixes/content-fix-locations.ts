@@ -203,17 +203,39 @@ async function loadShared(units: readonly Unit[]): Promise<[string, ContentFixLo
   ]);
 }
 
+async function loadVocabulary(units: readonly Unit[]): Promise<[string, ContentFixLocation][]> {
+  const [words, sentences] = await Promise.all([
+    prisma.word.findMany({
+      select: { id: true, targetLanguage: true, word: true },
+      where: { id: { in: idsOf(units, "word") } },
+    }),
+    prisma.sentence.findMany({
+      select: { id: true, sentence: true, targetLanguage: true },
+      where: { id: { in: idsOf(units, "sentence") } },
+    }),
+  ]);
+
+  return [
+    ...words.map((row) => ({ ...row, title: `Word “${row.word}”` })),
+    ...sentences.map((row) => ({ ...row, title: `Sentence “${row.sentence}”` })),
+  ].map((row) => [
+    row.id,
+    { adminHref: null, language: row.targetLanguage, mainUrl: null, trail: [row.title] },
+  ]);
+}
+
 const MISSING: ContentFixLocation = { adminHref: null, language: null, mainUrl: null, trail: [] };
 
 /** Where each fix's content lives now, read fresh: a fix keeps plain ids, so the content may be gone. */
 export async function loadContentFixLocations(units: readonly Unit[]) {
-  const [lessons, chapters, courses, items, levelTests, shared] = await Promise.all([
+  const [lessons, chapters, courses, items, levelTests, shared, vocabulary] = await Promise.all([
     loadLessons(idsOf(units, "lesson")),
     loadChapters(idsOf(units, "chapter")),
     loadCourses(idsOf(units, "course")),
     loadItems(idsOf(units, "item")),
     loadLevelTests(idsOf(units, "levelTest")),
     loadShared(units),
+    loadVocabulary(units),
   ]);
 
   const locations = new Map([
@@ -223,6 +245,7 @@ export async function loadContentFixLocations(units: readonly Unit[]) {
     ...items,
     ...levelTests,
     ...shared,
+    ...vocabulary,
   ]);
 
   return (unit: Unit): ContentFixLocation => locations.get(unit.unitId) ?? MISSING;

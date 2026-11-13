@@ -17,8 +17,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { ContentFixChanges } from "../_components/content-fix-changes";
-import { ResumeApplying, RevertForm, ReviewDecision } from "../_components/content-fix-decision";
+import {
+  RejectForm,
+  ResumeApplying,
+  RevertForm,
+  ReviewDecision,
+} from "../_components/content-fix-decision";
 import { ContentFixEffects } from "../_components/content-fix-effects";
+import { ContentFixVoice } from "../_components/content-fix-voice";
 import { contentFixStatusLabels } from "../content-fix-status";
 
 type Props = PageProps<"/content-fixes/[fixId]">;
@@ -199,6 +205,15 @@ async function Decision({ fix }: { fix: ContentFixDetail }) {
     return <Outcome fix={fix} viewerId={viewerId} />;
   }
 
+  if (fix.voiceOwedAt) {
+    return (
+      <div className="flex flex-col gap-4">
+        <ContentFixVoice fix={fix} />
+        <RejectForm fixId={fix.id} />
+      </div>
+    );
+  }
+
   return (
     <ReviewDecision
       approveLabel="Approve with passkey"
@@ -235,6 +250,7 @@ async function ContentFixContent({ params }: Pick<Props, "params">) {
           title="Changes"
         >
           <ContentFixChanges fix={fix} />
+          {fix.status === "proposed" && !fix.voiceOwedAt && <ContentFixVoice fix={fix} />}
         </AdminSection>
 
         <AdminSection title="What else approving does">

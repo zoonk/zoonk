@@ -4,13 +4,27 @@ import { type FixedRow, findRowsFixedSince } from "../../staff/content-fixes/fix
 import { NOT_CHECKED } from "./check-results";
 import { type LessonAnswerVerdict } from "./grade-lesson-answer";
 
-type Screen = { id: string; sentenceId: string | null; wordId: string | null };
+type Screen = { id: string; lessonId: string; sentenceId: string | null; wordId: string | null };
 
-function rowsOf(screen: Screen): FixedRow[] {
+/**
+ * A word screen grades the pick of its own word by id, so another word's fix, which changes only
+ * the wrong options shown with it, never makes a right pick wrong.
+ */
+function rowsOf({ id, lessonId, sentenceId, wordId }: Screen): FixedRow[] {
   return [
-    { id: screen.id, model: "Step" },
-    ...(screen.wordId ? [{ id: screen.wordId, model: "Word" }] : []),
-    ...(screen.sentenceId ? [{ id: screen.sentenceId, model: "Sentence" }] : []),
+    { id, model: "Step" },
+    ...(wordId
+      ? [
+          { id: wordId, model: "Word" },
+          { id: wordId, lessonId, model: "LessonWord" },
+        ]
+      : []),
+    ...(sentenceId
+      ? [
+          { id: sentenceId, model: "Sentence" },
+          { id: sentenceId, lessonId, model: "LessonSentence" },
+        ]
+      : []),
   ];
 }
 

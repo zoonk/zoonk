@@ -172,7 +172,7 @@ function resolveContent<Model extends ScreenModel>({
 }
 
 /** What a screen fix deletes: answers explained and tutor answers shared, written from the old screen. */
-async function writtenFromScreen(db: TransactionClient, stepId: string) {
+export async function writtenFromScreen(db: TransactionClient, stepId: string) {
   const [explanations, tutorAnswers] = await Promise.all([
     db.answerExplanation.count({ where: { stepId } }),
     db.tutorSharedAnswer.count({ where: { stepId } }),
@@ -188,7 +188,10 @@ async function writtenFromScreen(db: TransactionClient, stepId: string) {
   ];
 }
 
-async function deleteWrittenFromScreen(tx: TransactionClient, stepId: string): Promise<void> {
+export async function deleteWrittenFromScreen(
+  tx: TransactionClient,
+  stepId: string,
+): Promise<void> {
   await tx.answerExplanation.deleteMany({ where: { stepId } });
   await tx.tutorSharedAnswer.deleteMany({ where: { stepId } });
 }

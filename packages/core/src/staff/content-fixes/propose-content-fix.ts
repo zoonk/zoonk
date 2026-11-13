@@ -4,6 +4,7 @@ import { STAFF_PROPOSE_SCOPE } from "@zoonk/auth/cli-login-contract";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { unstable_rethrow } from "next/navigation";
+import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
 import { getStaffActor } from "../get-staff-actor";
 import { StaffInputError, parseStaffInput } from "../input";
 import { type ContentFixView, logContentFix, toContentFixView } from "./_utils/content-fix-view";
@@ -131,20 +132,34 @@ async function saveBatch(actor: Actor, proposals: readonly ProposedFix[]): Promi
   }
 
   const batchId = randomUUID();
+  const now = new Date();
 
-  const fixes = await prisma.contentFix.createManyAndReturn({
-    data: batch.prepared.map(({ fix, proposal }) => ({
-      batchId,
-      changes: fix.changes,
-      effects: fix.effects,
-      feedbackId: proposal.feedbackId,
-      proposerClientId: actor.clientId,
-      proposerId: actor.userId,
-      reason: proposal.reason,
-      revertsId: proposal.revertsId,
-      unit: fix.unit.kind,
-      unitId: fix.unit.id,
-    })),
+  const fixes = await prisma.$transaction(async (tx) => {
+    const created = await tx.contentFix.createManyAndReturn({
+      data: batch.prepared.map(({ fix, proposal }) => ({
+        batchId,
+        changes: fix.changes,
+        effects: fix.effects,
+        feedbackId: proposal.feedbackId,
+        proposerClientId: actor.clientId,
+        proposerId: actor.userId,
+        reason: proposal.reason,
+        revertsId: proposal.revertsId,
+        unit: fix.unit.kind,
+        unitId: fix.unit.id,
+        voiceOwedAt: fix.effects.some((effect) => effect.kind === "voiceOwed") ? now : null,
+      })),
+    });
+
+    await oweFollowUps({
+      db: tx,
+      followUps: created.flatMap((fix) =>
+        fix.voiceOwedAt ? [{ input: { fixId: fix.id }, kind: "voiceContentFix" as const }] : [],
+      ),
+      userId: actor.userId,
+    });
+
+    return created;
   });
 
   return {

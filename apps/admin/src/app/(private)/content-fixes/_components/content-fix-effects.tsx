@@ -92,6 +92,16 @@ function describeEffect({
       return "New practice asks the corrected copy instead. Sessions that already hold this question keep grading it, its answers and history stay with it, and its past mistakes no longer replay.";
     case "slugKept":
       return "The title changes, but the address keeps its old slug.";
+    case "voiceOwed":
+      return "A clip of the new text is recorded first, and you can hear it here. Approving writes the text and its clip together.";
+    case "lessonsUpdated":
+      return `${countOf({ count: effect.lessonIds.length, many: "lessons show", one: "lesson shows" })} it, and learners who open them next get the fix. Learners already in one aren't marked wrong for it.`;
+    case "spokenScreensCopied":
+      return `${countOf({ count: effect.stepIds.length, many: "spoken screens copy", one: "spoken screen copies" })} the sentence again.`;
+    case "sentenceOrdersOwed":
+      return `The other word orders accepted in ${countOf({ count: effect.lessonIds.length, many: "lessons", one: "lesson" })} are cleared and written again right after approval. Until then, those sentence screens wait.`;
+    case "pronunciationsKept":
+      return `The word's text changes, but ${countOf({ count: effect.count, many: "pronunciation guides stay", one: "pronunciation guide stays" })} as they are. Check they still match.`;
     default:
       return "";
   }

@@ -18,7 +18,14 @@ const feedbackSchema = idSchema.meta({ description: "The learner report this fix
 const changesSchema = z
   .array(
     z
-      .looseObject({ id: idSchema, model: z.string() })
+      .looseObject({
+        id: idSchema
+          .or(z.record(z.string(), idSchema))
+          .meta({
+            description: "The row's id, or a lesson row's key such as { lessonId, wordId }",
+          }),
+        model: z.string(),
+      })
       .meta({ description: "{ model, id, <operation> }, as pnpm zoonk staff models lists them" }),
   )
   .min(1)
@@ -135,6 +142,31 @@ const effectSchema = z.discriminatedUnion("kind", [
       model: z.enum(["Course", "Chapter", "Lesson"]),
     })
     .meta({ description: "The title changes but the address keeps its old slug" }),
+  z
+    .object({ id: idSchema, kind: z.literal("voiceOwed"), model: z.enum(["Word", "Sentence"]) })
+    .meta({
+      description:
+        "A clip of the new text is recorded before the fix can be approved; approving writes both",
+    }),
+  z
+    .object({ kind: z.literal("lessonsUpdated"), lessonIds: z.array(idSchema) })
+    .meta({ description: "Every lesson showing the word or sentence changes at once" }),
+  z
+    .object({ kind: z.literal("spokenScreensCopied"), stepIds: z.array(idSchema) })
+    .meta({
+      description: "Spoken screens copy the sentence's new text, translation or romanization",
+    }),
+  z
+    .object({ kind: z.literal("sentenceOrdersOwed"), lessonIds: z.array(idSchema) })
+    .meta({
+      description:
+        "The lessons' other accepted word orders are cleared and written again right after approval",
+    }),
+  z
+    .object({ count: z.int(), kind: z.literal("pronunciationsKept"), wordId: idSchema })
+    .meta({
+      description: "The word's pronunciation guides stay; set them in the fix to change them",
+    }),
 ]);
 
 export type ContentFixEffect = z.infer<typeof effectSchema>;

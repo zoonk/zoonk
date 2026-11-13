@@ -23,6 +23,8 @@ const mindMapLaunchSchema = z.object({
 });
 
 export const followUpSchema = z.discriminatedUnion("kind", [
+  z.object({ input: z.object({ fixId: uuidSchema() }), kind: z.literal("voiceContentFix") }),
+  z.object({ input: z.object({ lessonId: uuidSchema() }), kind: z.literal("writeSentenceOrders") }),
   z.object({
     input: z.object({ chapterId: uuidSchema(), fixId: uuidSchema() }),
     kind: z.literal("redrawChapterMindMap"),

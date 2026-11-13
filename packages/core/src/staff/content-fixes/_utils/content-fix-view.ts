@@ -2,6 +2,7 @@ import { type ContentFix } from "@zoonk/db";
 import { logInfo } from "@zoonk/utils/logger";
 import { batchOf, getContentFixReviewUrl } from "../batches";
 import { contentFixChangesSchema, contentFixEffectsSchema } from "../contract";
+import { contentFixVoiceSchema } from "../voice-schema";
 
 export function toContentFixView(fix: ContentFix) {
   return {
@@ -17,6 +18,8 @@ export function toContentFixView(fix: ContentFix) {
     status: fix.status,
     unit: fix.unit,
     unitId: fix.unitId,
+    voice: contentFixVoiceSchema.nullable().parse(fix.voice),
+    voiceOwed: fix.voiceOwedAt !== null,
   };
 }
 

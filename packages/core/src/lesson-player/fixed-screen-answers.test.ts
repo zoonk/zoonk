@@ -302,6 +302,106 @@ describe("answers to a screen fixed during the run", () => {
     },
   );
 
+  it("excuses a pick on a translation screen whose lesson word a fix changed, but not after another word's fix", async () => {
+    const [user, { lesson, steps, word }] = await Promise.all([
+      userFixture(),
+      languageLessonFixture(),
+    ]);
+
+    const step = stepOfKind(steps, "translation");
+    const run = await lessonRunFixture({ lessonId: lesson.id, userId: user.id });
+    mockSession(user.id);
+
+    const other = await prisma.word.create({
+      data: { organizationId: word.organizationId, targetLanguage: "en", word: "lease" },
+    });
+
+    await prisma.lessonWord.create({
+      data: {
+        lessonId: lesson.id,
+        model: "test",
+        position: 1,
+        promptVersion: "test",
+        runId: "test",
+        translation: "contrato",
+        wordId: other.id,
+      },
+    });
+
+    const lessonWordFix = (wordId: string) =>
+      appliedFixFixture({
+        changes: [
+          {
+            fields: [{ after: "o aluguel", before: "aluguel", field: "translation" }],
+            id: wordId,
+            lessonId: lesson.id,
+            model: "LessonWord",
+            op: "set",
+          },
+        ],
+        unit: "word",
+        unitId: wordId,
+      });
+
+    const wrongPick = () =>
+      answer({
+        runId: run.id,
+        stepId: step.id,
+        value: { kind: "translation", selectedOptionId: crypto.randomUUID() },
+      });
+
+    await lessonWordFix(other.id);
+
+    await expect(wrongPick()).resolves.toMatchObject({
+      result: { checked: true, isCorrect: false },
+      status: "checked",
+    });
+
+    await lessonWordFix(word.id);
+
+    await expect(wrongPick()).resolves.toMatchObject(EXCUSED);
+  });
+
+  it("excuses an arrangement on a listening screen whose lesson sentence a fix changed", async () => {
+    const [user, { lesson, sentence, steps }] = await Promise.all([
+      userFixture(),
+      languageLessonFixture(),
+    ]);
+
+    const run = await lessonRunFixture({ lessonId: lesson.id, userId: user.id });
+    mockSession(user.id);
+
+    await appliedFixFixture({
+      changes: [
+        {
+          fields: [
+            {
+              after: "Quanto custa o aluguel?",
+              before: "Quanto é o aluguel?",
+              field: "translation",
+            },
+          ],
+          id: sentence.id,
+          lessonId: lesson.id,
+          model: "LessonSentence",
+          op: "set",
+        },
+      ],
+      unit: "sentence",
+      unitId: sentence.id,
+    });
+
+    const step = stepOfKind(steps, "listening");
+
+    await expect(
+      answer({
+        runId: run.id,
+        stepId: step.id,
+        value: { arrangedWords: ["How", "much", "the", "rent?"], kind: "listening" },
+      }),
+    ).resolves.toMatchObject(EXCUSED);
+  });
+
   it("finishes a run whose fixed screen was excused, and shows that screen fresh on resume", async () => {
     const { lesson, steps, user } = await setupPlayableLesson({ steps: ["check", "fillBlank"] });
     const run = await startRun(lesson.id);

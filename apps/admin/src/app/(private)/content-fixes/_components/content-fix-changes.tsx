@@ -1,5 +1,5 @@
 import { AdminJson } from "@/components/admin-json";
-import { type ContentFixDetail } from "@/data/content-fixes/get-content-fix";
+import { type ContentFixDetail, rowKeyOf } from "@/data/content-fixes/get-content-fix";
 import { type StoredChange } from "@zoonk/core/staff/content-fixes/contract";
 import {
   type ContentValueChange,
@@ -24,8 +24,11 @@ const MODEL_LABELS: Record<StoredChange["model"], string> = {
   ItemSet: "Question set",
   LanguageLevelTest: "Level test",
   Lesson: "Lesson",
+  LessonSentence: "Lesson sentence",
   LessonSource: "Lesson citations",
+  LessonWord: "Lesson word",
   MediaAsset: "Media asset",
+  Sentence: "Sentence",
   Skill: "Skill",
   Source: "Source",
   SourceChangeNotice: "Source notice",
@@ -35,6 +38,8 @@ const MODEL_LABELS: Record<StoredChange["model"], string> = {
   TargetCutoff: "Target cutoff",
   TutorSharedAnswer: "Shared tutor answer",
   WarmUp: "Warm-up",
+  Word: "Word",
+  WordPronunciation: "Pronunciation guide",
 };
 
 type Side = "after" | "before";
@@ -249,6 +254,8 @@ function ChangeBody({ change, compact }: { change: StoredChange; compact: boolea
       return <p className="text-sm">Takes this question out of new practice.</p>;
     case "unretire":
       return <p className="text-sm">Puts this question back in new practice.</p>;
+    case "revoice":
+      return <p className="text-sm">Records a new clip of “{change.text}”.</p>;
     case "detachPicture":
       return (
         <p className="text-sm">
@@ -283,9 +290,9 @@ export async function ContentFixChanges({
   return (
     <ul className="flex flex-col gap-6">
       {fix.changes.map((change) => (
-        <li className="flex flex-col gap-1" key={`${change.id}:${change.op}`}>
+        <li className="flex flex-col gap-1" key={`${rowKeyOf(change)}:${change.op}`}>
           <h3 className="flex flex-wrap items-baseline gap-x-2 text-sm font-medium">
-            {fix.rowLabels.get(change.id) ?? MODEL_LABELS[change.model]}
+            {fix.rowLabels.get(rowKeyOf(change)) ?? MODEL_LABELS[change.model]}
             <span className="text-muted-foreground font-mono text-xs font-normal">{change.id}</span>
           </h3>
           <ChangeBody change={change} compact={compact} />

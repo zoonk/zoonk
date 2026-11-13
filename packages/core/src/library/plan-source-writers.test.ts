@@ -478,6 +478,14 @@ const REGISTRY: Record<string, Registration[]> = {
       writes: ["lesson.update"],
     },
   ],
+  "staff/content-fixes/_utils/vocabulary-unit.ts": [
+    {
+      fields: ["sentenceOrdersAttempts", "updatedAt"],
+      verdict: "excluded",
+      why: "a word or sentence fix bumps the player version and owes word orders again; plans read neither",
+      writes: ["lesson.updateMany"],
+    },
+  ],
   "staff/content-fixes/handlers/exam-facts.ts": [
     {
       verdict: "marks",
