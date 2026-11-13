@@ -1,10 +1,11 @@
-import { MEASURES, RADII, SHAPE_RULES } from "@/design-system/shape";
+import { CONTROL_RULES, EDGE_RULES, MEASURES, RADII, SHAPE_RULES } from "@/design-system/shape";
 import { kindFillClass } from "@zoonk/learn/kind-tile";
 import { MeterPart, MeterParts } from "@zoonk/learn/meter";
 import { Surface } from "@zoonk/learn/surface";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type Metadata } from "next";
 import { DocHeader, DocRules, DocSection, Specimen, renderCode } from "../_components/doc";
+import { ControlSizes, EdgesSpecimen } from "./specimens";
 
 export const metadata: Metadata = { title: "Spacing and shape" };
 
@@ -12,12 +13,30 @@ export default function ShapePage() {
   return (
     <>
       <DocHeader title="Spacing and shape">
-        A 4px grid, a few radii with one job each, measures for what has to stay readable, and no
-        shadows on content.
+        A 4px grid, two edges per column, four control heights, a few radii with one job each,
+        measures for what has to stay readable, and no shadows on content.
       </DocHeader>
 
       <DocSection title="Rules">
         <DocRules rules={SHAPE_RULES} />
+      </DocSection>
+
+      <DocSection
+        id="edges"
+        intro="A column's two edges, and how a control with no outline sits on them."
+        title="Edges"
+      >
+        <EdgesSpecimen />
+        <DocRules rules={EDGE_RULES} />
+      </DocSection>
+
+      <DocSection
+        id="control-heights"
+        intro="Four heights, each `Button` size's. A filled and an outlined button of one size are the same size."
+        title="Control heights"
+      >
+        <ControlSizes />
+        <DocRules rules={CONTROL_RULES} />
       </DocSection>
 
       <DocSection title="Radius">
@@ -27,7 +46,7 @@ export default function ShapePage() {
               <div className={cn("bg-muted ring-input h-16 ring-1 ring-inset", radius.className)} />
               <p className="text-sm font-medium">{radius.name}</p>
               <code className="text-muted-foreground font-mono text-xs">{radius.className}</code>
-              <p className="text-muted-foreground text-xs leading-relaxed">
+              <p className="text-muted-foreground text-xs leading-normal">
                 {renderCode(radius.use)}
               </p>
             </div>
