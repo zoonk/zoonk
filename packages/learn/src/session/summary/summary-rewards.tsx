@@ -44,7 +44,7 @@ function RewardsArt() {
   return (
     <BuddyArt
       buddy={learnerBuddy}
-      className="size-27"
+      className="h-28"
       expression="happy"
       label={t({
         description: "Image description: the buddy is happy with what the learner studied today.",
