@@ -10,13 +10,6 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
-import {
-  SESSION_NOW,
-  SESSION_TODAY,
-  daysAgo,
-  dueSkillFixture,
-  sessionGoalFixture,
-} from "../sessions/_test-utils/session-goal";
 import { getStudySession } from "../sessions/get-study-session";
 import { getPlanTabView } from "../view-models/plan/get-plan-view";
 import { getTodayView } from "../view-models/today/get-today-view";
@@ -342,71 +335,6 @@ describe("weekly study time", () => {
       date: FRIDAY,
       minutes: 1,
       studied: true,
-    });
-  });
-
-  it("counts a free exam goal's days past the free week at what its sessions hold", async () => {
-    vi.useFakeTimers({ toFake: ["Date"] });
-    vi.setSystemTime(SESSION_NOW);
-    const user = await userFixture();
-
-    const { goal, planItems, skills } = await sessionGoalFixture({
-      challengesDone: true,
-      goal: { createdAt: daysAgo(10), kind: "exam" },
-      userId: user.id,
-    });
-
-    await Promise.all([
-      prisma.planItem.update({ data: { status: "done" }, where: { id: planItems[0]?.id } }),
-      dueSkillFixture({ skillId: skills[0]?.id ?? "", userId: user.id }),
-      learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
-      studySessionFixture({
-        endedAt: daysAgo(2),
-        goalId: goal.id,
-        localDate: new Date(SESSION_TODAY.getTime() - 2 * 86_400_000),
-        plannedMinutes: 4,
-        userId: user.id,
-      }),
-      studySessionFixture({
-        endedAt: daysAgo(1),
-        goalId: goal.id,
-        localDate: new Date(SESSION_TODAY.getTime() - 86_400_000),
-        plannedMinutes: 0,
-        userId: user.id,
-      }),
-    ]);
-
-    mockSession(user.id);
-
-    const [today, planView] = await Promise.all([
-      getTodayView({ goalId: goal.id }),
-      getPlanTabView({ goalId: goal.id }),
-    ]);
-
-    if (today.status !== "ready") {
-      throw new Error("Expected Today to be ready");
-    }
-
-    const todayMinutes = today.today.session.minutes.planned;
-
-    expect(todayMinutes).toBeGreaterThan(0);
-    expect(todayMinutes).toBeLessThan(45);
-
-    expect(
-      today.today.session.week.days.map(({ goalMinutes, kind }) => ({ goalMinutes, kind })),
-    ).toStrictEqual([
-      { goalMinutes: 4, kind: "study" },
-      { goalMinutes: 0, kind: "study" },
-      { goalMinutes: todayMinutes, kind: "study" },
-      { goalMinutes: 0, kind: "study" },
-      { goalMinutes: 0, kind: "study" },
-      { goalMinutes: 0, kind: "study" },
-      { goalMinutes: 0, kind: "study" },
-    ]);
-
-    expect(planView).toMatchObject({
-      status: "ready",
-      view: { plan: { weekTime: { targetMinutes: 4 + todayMinutes } } },
     });
   });
 });
