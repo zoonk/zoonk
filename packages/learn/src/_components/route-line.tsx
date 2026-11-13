@@ -31,7 +31,7 @@ export function RouteStop({ className, ...props }: React.ComponentProps<"section
 }
 
 const STATIONS = {
-  end: "size-4 rounded-[4px] border-[3px] border-foreground",
+  end: "size-4 rounded-sm border-[3px] border-foreground",
   page: "size-4 rounded-full border-[3px] border-foreground sm:size-[1.125rem]",
   stop: "size-3.5 rounded-full border-[2.5px] border-subject",
 } as const;
@@ -104,7 +104,7 @@ const ZONE_CLASS = cn(
 );
 
 const ZONE_ROW_CLASS =
-  "relative flex gap-4 py-4 text-[0.9375rem] leading-snug font-semibold sm:text-base";
+  "relative flex gap-4 py-4 text-reading leading-snug font-semibold sm:text-base";
 
 function ZoneStation({ className }: { className?: string }) {
   return (

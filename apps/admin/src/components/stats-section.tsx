@@ -16,7 +16,7 @@ export function StatsSection({
     <section className="flex flex-col gap-3">
       <header className="flex flex-col gap-0.5">
         <h2 className="text-sm font-semibold">{title}</h2>
-        {subtitle && <p className="text-muted-foreground text-[0.8125rem]">{subtitle}</p>}
+        {subtitle && <p className="text-muted-foreground text-compact">{subtitle}</p>}
       </header>
 
       <div className={GRID_CLASS}>{children}</div>

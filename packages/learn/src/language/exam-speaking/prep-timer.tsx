@@ -29,7 +29,7 @@ function PrepTimeLeft({ deadline }: { deadline: number }) {
 
   if (leftMs === 0) {
     return (
-      <p className="text-[0.8125rem] leading-snug text-pretty">
+      <p className="text-compact leading-snug text-pretty">
         {t("Preparation time is over. Start the call when you're ready.")}
       </p>
     );
@@ -88,7 +88,7 @@ export function PrepTimer({
       <div className="flex items-center justify-between gap-4">
         <div className="flex min-w-0 flex-col gap-1">
           <p className="text-sm leading-5 font-medium">{t("Preparation")}</p>
-          <p className="text-muted-foreground text-[0.8125rem] leading-snug text-pretty">
+          <p className="text-muted-foreground text-compact leading-snug text-pretty">
             {prepLine(task)}
           </p>
         </div>

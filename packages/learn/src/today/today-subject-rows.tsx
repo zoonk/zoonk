@@ -60,10 +60,10 @@ function SubjectRow({ bar, subject, today }: SubjectRowView) {
 
   return (
     <li className="grid min-h-7.5 grid-cols-[minmax(0,1fr)_4.5rem_2.25rem] items-center gap-3 py-1">
-      <span className="line-clamp-2 text-[0.8125rem] leading-4" title={subject.name}>
+      <span className="text-compact line-clamp-2 leading-4" title={subject.name}>
         {subject.shortName}
         {today && (
-          <span className="text-muted-foreground ml-1.5 text-[0.625rem] font-medium tracking-[0.06em] uppercase">
+          <span className="text-muted-foreground text-2xs ml-1.5 font-medium tracking-[0.06em] uppercase">
             {t("Today")}
           </span>
         )}

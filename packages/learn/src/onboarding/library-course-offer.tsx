@@ -1,8 +1,9 @@
 "use client";
 
 import { type OnboardingLibraryCourse } from "@zoonk/core/view-models/onboarding/contract";
-import { BookOpenIcon, ChevronRightIcon } from "lucide-react";
+import { BookOpenIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { ListRowChevron } from "../_components/list-group";
 import { LearnLink } from "../learn-link";
 
 /** A quiet way out of a wait, while nothing is ready: a course that fits the goal now. */
@@ -28,7 +29,7 @@ export function LibraryCourseOffer({
           {t("A course on this is ready now")}
         </span>
       </span>
-      <ChevronRightIcon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
+      <ListRowChevron />
     </LearnLink>
   );
 }

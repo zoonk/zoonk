@@ -44,7 +44,7 @@ async function StepsGate({ goalId }: { goalId: string }) {
   const t = await getExtracted();
 
   return (
-    <OnboardingPage backHref="/" barEnd={<LoginBarLink className="lg:hidden" />}>
+    <OnboardingPage backHref="/" barEnd={<LoginBarLink className="lg:hidden" edge="end" />}>
       <OnboardingFrame>
         <OnboardingColumn>
           <OnboardingHeading>

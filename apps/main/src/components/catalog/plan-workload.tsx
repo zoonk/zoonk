@@ -61,7 +61,7 @@ export async function PlanWorkload({ exam, numbers }: { exam: boolean; numbers: 
   return (
     <div className="flex flex-col gap-3">
       <p className="flex items-baseline justify-between gap-3">
-        <span className="text-[0.9375rem] font-semibold">{t("What fills the time")}</span>
+        <span className="text-reading font-semibold">{t("What fills the time")}</span>
 
         {parts.length > 1 && (
           <span className={cn(NUMERIC_CLASS, "text-muted-foreground text-xs")}>
@@ -98,19 +98,19 @@ export async function PlanWorkload({ exam, numbers }: { exam: boolean; numbers: 
       </dl>
 
       {Math.round(workload.practiceMinutes) > 0 && (
-        <p className="text-muted-foreground pt-1 text-[13px] leading-relaxed text-pretty">
+        <p className="text-muted-foreground text-compact pt-1 leading-relaxed text-pretty">
           {t("What you studied comes back right before you'd forget it.")}
         </p>
       )}
 
       {afterDate > 0 && (
-        <p className="text-muted-foreground text-[13px] leading-relaxed text-pretty">
+        <p className="text-muted-foreground text-compact leading-relaxed text-pretty">
           {t("Of this, {time} comes after the exam.", { time: durationText(afterDate) })}
         </p>
       )}
 
       {workload.unwrittenLessonMinutes > 0 && (
-        <p className="text-muted-foreground text-[13px] leading-relaxed text-pretty">
+        <p className="text-muted-foreground text-compact leading-relaxed text-pretty">
           {t("Lessons not written yet are written as you reach them.")}
         </p>
       )}

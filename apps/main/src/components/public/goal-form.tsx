@@ -112,7 +112,7 @@ export function GoalForm({
         aria-live="polite"
         id={lineId}
         className={cn(
-          "text-muted-foreground -mt-1 text-[13px]",
+          "text-muted-foreground text-compact -mt-1",
           hinted && "text-foreground",
           !line && "sr-only",
         )}

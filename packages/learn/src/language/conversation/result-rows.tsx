@@ -43,7 +43,5 @@ export function ResultGroup({
 }
 
 export function EstimateNote({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="text-muted-foreground text-[0.8125rem] leading-snug text-pretty">{children}</p>
-  );
+  return <p className="text-muted-foreground text-compact leading-snug text-pretty">{children}</p>;
 }

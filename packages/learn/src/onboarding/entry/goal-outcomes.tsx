@@ -29,7 +29,7 @@ import {
 import { GoalLimitNotice, isPlusGoalLimit } from "./goal-limit-notice";
 
 const BUBBLE_CLASS =
-  "bg-muted self-end rounded-xl rounded-br-sm px-3.5 py-2.5 text-[15px] leading-relaxed text-pretty whitespace-pre-wrap";
+  "bg-muted self-end rounded-xl rounded-br-sm px-3.5 py-2.5 text-reading leading-relaxed text-pretty whitespace-pre-wrap";
 
 const ICON_CLASS = "text-muted-foreground flex [&_svg]:size-6";
 

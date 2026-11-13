@@ -7,7 +7,6 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { AnswersSaveError } from "../_components/save-error";
-import { TASK_HEADER_ICON_CLASS } from "../_components/task-header";
 import {
   TaskActionBar,
   TaskAside,
@@ -42,10 +41,7 @@ export type { MistakePracticeFeedback, MistakePracticeSummary } from "./mistake-
 
 type Run = ReturnType<typeof useMistakePractice>;
 
-const CLOSE_CLASS = cn(
-  buttonVariants({ size: "icon", variant: "ghost" }),
-  TASK_HEADER_ICON_CLASS.start,
-);
+const CLOSE_CLASS = buttonVariants({ edge: "start", size: "icon", variant: "ghost" });
 
 function EndButton({ backHref, run }: { backHref: string; run: Run }) {
   const t = useExtracted();
@@ -71,7 +67,7 @@ function EndButton({ backHref, run }: { backHref: string; run: Run }) {
     <Button
       aria-keyshortcuts="Escape"
       aria-label={t("End practice. What you answered counts.")}
-      className={TASK_HEADER_ICON_CLASS.start}
+      edge="start"
       disabled={phase.kind === "checking"}
       focusableWhenDisabled
       onClick={run.end}
@@ -104,7 +100,6 @@ function QuestionMenu({ run }: { run: Run }) {
     <ContentFeedbackMenu
       label={t("Question options")}
       screen="mistake-practice"
-      size="task"
       target={
         run.step.lesson
           ? { contentId: run.step.lesson.step.id, contentKind: "step" }

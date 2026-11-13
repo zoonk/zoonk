@@ -8,10 +8,8 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
-import { cn } from "@zoonk/ui/lib/utils";
 import { EllipsisIcon } from "lucide-react";
 import { useEffect, useId } from "react";
-import { TASK_HEADER_ICON_CLASS } from "../_components/task-header";
 import { useContentFeedback } from "./feedback-context";
 import { ReportProblemItem } from "./report-problem-item";
 
@@ -23,7 +21,7 @@ export function ContentFeedbackMenu({
 }: {
   label: string;
   screen: string;
-  size?: "detail" | "icon" | "icon-bar" | "task";
+  size?: "detail" | "icon" | "icon-bar";
   target: FeedbackTarget;
 }) {
   const feedback = useContentFeedback();
@@ -43,11 +41,7 @@ export function ContentFeedbackMenu({
           size === "detail" ? (
             <Button className={DETAIL_MENU_TRIGGER_CLASS} size="icon" variant="outline" />
           ) : (
-            <Button
-              className={cn("shrink-0", size === "task" && TASK_HEADER_ICON_CLASS.end)}
-              size={size === "task" ? "icon" : size}
-              variant="ghost"
-            />
+            <Button className="shrink-0" edge="end" size={size} variant="ghost" />
           )
         }
       >

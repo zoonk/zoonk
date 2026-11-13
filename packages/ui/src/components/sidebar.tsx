@@ -92,7 +92,7 @@ export const SIDEBAR_ICON_ONLY_CLASS =
   "sidebar-collapsed:justify-center sidebar-collapsed:*:not-first:sr-only";
 
 export const SIDEBAR_ITEM_CLASS = cn(
-  "text-muted-foreground hover:bg-muted/60 hover:text-foreground aria-[current=page]:bg-muted aria-[current=page]:text-foreground focus-visible:ring-ring/50 hit-area press relative flex h-8 min-w-0 items-center gap-2.5 rounded-md px-2 text-[0.84375rem] font-medium outline-none focus-visible:ring-[3px] [&>svg]:size-4 [&>svg]:shrink-0",
+  "text-muted-foreground hover:bg-muted/60 hover:text-foreground aria-[current=page]:bg-muted aria-[current=page]:text-foreground focus-visible:ring-ring/50 hit-area press text-compact relative flex h-8 min-w-0 items-center gap-2.5 rounded-md px-2 font-medium outline-none focus-visible:ring-[3px] [&>svg]:size-4 [&>svg]:shrink-0",
   SIDEBAR_ICON_ONLY_CLASS,
 );
 
@@ -104,7 +104,7 @@ export const SIDEBAR_COUNT_CLASS =
   "text-faint in-aria-[current=page]:text-muted-foreground in-data-[slot=tooltip-content]:text-background/70 font-mono text-xs tabular-nums in-data-[slot=tooltip-content]:ml-2";
 
 export const SIDEBAR_ACCOUNT_CLASS = cn(
-  "hover:bg-muted/60 aria-expanded:bg-muted focus-visible:ring-ring/50 hit-area relative flex h-11 w-full min-w-0 items-center gap-2.5 rounded-md px-1 text-left text-[0.84375rem] font-medium transition-colors outline-none focus-visible:ring-[3px]",
+  "hover:bg-muted/60 aria-expanded:bg-muted focus-visible:ring-ring/50 hit-area text-compact relative flex h-11 w-full min-w-0 items-center gap-2.5 rounded-md px-1 text-left font-medium transition-colors outline-none focus-visible:ring-[3px]",
   SIDEBAR_ICON_ONLY_CLASS,
 );
 

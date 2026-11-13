@@ -21,7 +21,7 @@ import { type ChapterWeeks, getChapterWeeksFormatter } from "./outline-weeks";
 const CHAPTERS_NAMED = 3;
 
 const LEVEL_LINE_CLASS =
-  "text-muted-foreground text-[13px] leading-snug font-normal text-pretty sm:text-sm";
+  "text-muted-foreground text-compact leading-snug font-normal text-pretty sm:text-sm";
 
 function LevelLabel({
   courseId,

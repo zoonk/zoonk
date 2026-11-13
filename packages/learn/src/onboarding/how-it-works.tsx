@@ -19,7 +19,7 @@ export function OnboardingHowItWorks({ hasAccount }: { hasAccount: boolean }) {
         {steps.map((step, index) => (
           <li
             aria-current={index === 0 ? "step" : undefined}
-            className="aria-[current=step]:before:bg-muted relative isolate flex min-h-11 items-baseline gap-3 py-2.5 text-sm before:absolute before:-inset-x-2.5 before:inset-y-0.5 before:-z-10 before:rounded-[0.625rem]"
+            className="aria-[current=step]:before:bg-muted relative isolate flex min-h-11 items-baseline gap-3 py-2.5 text-sm before:absolute before:-inset-x-2.5 before:inset-y-0.5 before:-z-10 before:rounded-lg"
             key={step}
           >
             <span

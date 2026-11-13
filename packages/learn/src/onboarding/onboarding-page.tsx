@@ -34,7 +34,7 @@ export function OnboardingSectionFrame({
         {header}
 
         <div className="flex flex-col" data-slot="onboarding-frame">
-          <OnboardingBarRow bar={bar} className="-ml-3 lg:ml-0" />
+          <OnboardingBarRow bar={bar} />
           {notice}
           {children}
         </div>
