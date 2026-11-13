@@ -15,15 +15,6 @@ type DuelOutcome = "lost" | "won";
 const STILL = { lost: "smug", won: "defeated" } as const;
 const ACT = { lost: "triumph", won: "defeat" } as const;
 
-/** One mark once a right answer lands, the second from half the shield on; the last one breaks it. */
-export function getShieldCracks({ broken, segments }: { broken: number; segments: number }) {
-  if (broken <= 0 || segments <= 0) {
-    return 0;
-  }
-
-  return broken * 2 >= segments ? 2 : 1;
-}
-
 /**
  * The Trickster behind his shield. A decided duel draws how it ended: the shield in two halves at
  * his feet, or whole in front of him. `reacts` plays that ending once, as the moment plays, and

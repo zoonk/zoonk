@@ -19,7 +19,8 @@ import {
   CheckpointReviewSection,
   useReviewedAnswers,
 } from "./checkpoint-review";
-import { TricksterArt, getShieldCracks } from "./trickster-art";
+import { getShieldCracks } from "./duel-ending";
+import { TricksterArt } from "./trickster-art";
 import {
   useCheckpointOutcome,
   useEarnedBrainPower,

@@ -20,7 +20,8 @@ import { NoVerdictStep } from "./checkpoint-empty";
 import { CheckpointFrame, useCheckpointError } from "./checkpoint-frame";
 import { useChallengeName } from "./checkpoint-labels";
 import { CheckpointOptions } from "./checkpoint-options";
-import { TricksterArt, getShieldCracks } from "./trickster-art";
+import { getShieldCracks } from "./duel-ending";
+import { TricksterArt } from "./trickster-art";
 import { TricksterShield, TricksterShieldPlates } from "./trickster-shield";
 import { useVerdictReactions } from "./use-verdict-reactions";
 

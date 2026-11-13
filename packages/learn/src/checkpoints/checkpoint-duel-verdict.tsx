@@ -5,7 +5,8 @@ import { useExtracted } from "next-intl";
 import { FeedbackExplanation, FeedbackPanel, FeedbackVerdict } from "../_components/feedback-panel";
 import { useCheckpointScreen } from "./checkpoint-context";
 import { getDuelScore } from "./checkpoint-duel-state";
-import { TricksterArt, getShieldCracks } from "./trickster-art";
+import { getShieldCracks } from "./duel-ending";
+import { TricksterArt } from "./trickster-art";
 
 function DecisionLine({ decision }: { decision: DuelDecision }) {
   const t = useExtracted();

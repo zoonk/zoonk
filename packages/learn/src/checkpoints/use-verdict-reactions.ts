@@ -1,24 +1,10 @@
 "use client";
 
-import { type DuelDecision } from "@zoonk/core/checkpoints/contract";
 import { type ActorHandle, type TricksterActName } from "@zoonk/ui/components/trickster-actor";
 import { useEffect, useRef } from "react";
 import { useCheckpointScreen } from "./checkpoint-context";
 import { getDuelScore } from "./checkpoint-duel-state";
-
-function getVerdictAct({
-  decision,
-  isCorrect,
-}: {
-  decision: DuelDecision | null;
-  isCorrect: boolean;
-}): TricksterActName {
-  if (decision) {
-    return decision === "won" ? "defeat" : "triumph";
-  }
-
-  return isCorrect ? "sly" : "smug";
-}
+import { getVerdictAct } from "./duel-ending";
 
 /** He reacts to each answer, and to the one that decides the duel with its ending. */
 export function useVerdictReactions() {
