@@ -1,3 +1,4 @@
+import { type LayoutShift } from "./checks.mts";
 import { type MainFrame } from "./content-frames.mts";
 
 /**
@@ -14,7 +15,7 @@ export type ProbeState = {
   longTasks: { at: number; duration: number }[];
   mainFrames: MainFrame[];
   pendingFrames: number[];
-  shifts: { at: number; sources: string[]; value: number }[];
+  shifts: LayoutShift[];
   skeletonFrames: number[];
   urls: { at: number; href: string }[];
 };
@@ -62,7 +63,7 @@ export function installProbe() {
   /** The DOM library doesn't type layout shifts yet. */
   type ShiftEntry = PerformanceEntry & {
     hadRecentInput: boolean;
-    sources?: { node?: Node | null }[];
+    sources?: { currentRect: DOMRectReadOnly; node?: Node | null; previousRect: DOMRectReadOnly }[];
     value: number;
   };
 
@@ -72,7 +73,11 @@ export function installProbe() {
       if (!entry.hadRecentInput) {
         state.shifts.push({
           at: entry.startTime,
-          sources: (entry.sources ?? []).map((source) => describe(source.node)),
+          sources: (entry.sources ?? []).map((source) => ({
+            down: Math.round(source.currentRect.y - source.previousRect.y),
+            node: describe(source.node),
+            right: Math.round(source.currentRect.x - source.previousRect.x),
+          })),
           value: entry.value,
         });
       }

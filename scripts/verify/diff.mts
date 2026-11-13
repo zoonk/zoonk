@@ -5,7 +5,7 @@ import { join, resolve } from "node:path";
 import { parseArgs } from "node:util";
 import { addsVulnerability, auditDependencies } from "./dependencies.mts";
 import { type ChangedFile, auditDiff, parseDiff, renderAudit } from "./diff-audit.mts";
-import { auditDuplicatedDefinitions } from "./duplication.mts";
+import { auditDuplication } from "./duplication.mts";
 import { auditStrings } from "./strings.mts";
 import { auditWaterfalls } from "./waterfalls.mts";
 
@@ -65,7 +65,7 @@ const files = [
 const flags = [
   ...auditDiff(files, (path) => /^\s*["']use client["']/mu.test(read(path))),
   ...auditWaterfalls(files, read),
-  ...auditDuplicatedDefinitions(
+  ...auditDuplication(
     files,
     git(["ls-files", "--cached", "--others", "--exclude-standard", "--", "apps", "packages"])
       .split("\n")

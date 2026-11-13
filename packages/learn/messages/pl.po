@@ -4677,6 +4677,54 @@ msgctxt "phPNe2"
 msgid "Checking the answers…"
 msgstr "Sprawdzamy odpowiedzi…"
 
+#: src/generation/lesson-generation-copy.ts
+#: src/generation/use-generation-copy.ts
+#: src/wait/lesson-wait-status.tsx
+msgctxt "VLjmPG"
+msgid "Writing your challenge"
+msgstr "Przygotowujemy twoje wyzwanie"
+
+#. A step Zoonk shows while it prepares a challenge, after "Writing the challenge": its check found a problem, so Zoonk fixes it and checks the challenge again.
+#: src/generation/lesson-generation-copy.ts
+msgctxt "V6oGV2"
+msgid "Fixing what the check found"
+msgstr "Poprawiamy wykryte błędy"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "411Jv_"
+msgid "Rewriting the parts that didn't add up…"
+msgstr "Poprawiamy niespójne fragmenty…"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "IxN_H4"
+msgid "Checking every path…"
+msgstr "Sprawdzamy każdą ścieżkę…"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "mpnHDw"
+msgid "Planning the challenge"
+msgstr "Planujemy wyzwanie"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "OvsNse"
+msgid "Picking the situation…"
+msgstr "Wybieramy sytuację…"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "VNxpbu"
+msgid "Mapping the choices you'll face…"
+msgstr "Ustalamy, przed jakimi wyborami staniesz…"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "wFWjvX"
+msgid "Writing the challenge"
+msgstr "Przygotowujemy wyzwanie"
+
+#: src/generation/lesson-generation-copy.ts
+msgctxt "ZM7ACn"
+msgid "Writing what each choice leads to…"
+msgstr "Przygotowujemy opis skutków każdego wyboru…"
+
 #: src/generation/use-generation-copy.ts
 msgctxt "K-ogAc"
 msgid "Writing question {number}…"
@@ -4922,11 +4970,6 @@ msgstr "Sprawdzamy fakty…"
 msgctxt "84wriC"
 msgid "Writing questions on this chapter"
 msgstr "Przygotowujemy pytania do tego rozdziału"
-
-#: src/generation/use-generation-copy.ts
-msgctxt "VLjmPG"
-msgid "Writing your challenge"
-msgstr "Przygotowujemy twoje wyzwanie"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "ACtRRt"

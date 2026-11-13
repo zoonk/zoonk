@@ -1,6 +1,7 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { io } from "next/cache";
+import { isChallengeIdentityKey } from "../library/challenges/challenge-lesson-spec";
 import {
   type LessonGenerationState,
   getLessonGenerationState,
@@ -13,6 +14,8 @@ type ReadyAlternative =
   | { dueSkills: number; kind: "review" };
 
 type LessonWaitingState = {
+  /** A challenge's run reports its own steps, so its wait shows the challenge's phases. */
+  kind: "challenge" | "lesson";
   status: LessonGenerationState["status"];
   /** The run writing the lesson: stream `/v1/generations/{generationId}/events` for live progress. */
   generationId: string | null;
@@ -85,11 +88,14 @@ export async function getLessonWaitingState({
     return { status: "notFound" };
   }
 
+  const kind = isChallengeIdentityKey(viewer.lesson.identityKey) ? "challenge" : "lesson";
+
   if (state.status === "ready") {
     return {
       state: {
         alternative: null,
         generationId: null,
+        kind,
         setAside: false,
         status: "ready",
         warmUpId: null,
@@ -107,6 +113,7 @@ export async function getLessonWaitingState({
     state: {
       alternative,
       generationId: state.status === "generating" ? state.runId : null,
+      kind,
       setAside: state.status === "failed" && state.setAside,
       status: state.status,
       warmUpId,

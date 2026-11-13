@@ -44,6 +44,7 @@ class LessonWritingViewModel(
     private val mutableWriting = MutableStateFlow<LessonWriting?>(null)
     private val mutableAlternative = MutableStateFlow<ReadyAlternative?>(null)
     private val mutableWarmUpId = MutableStateFlow<String?>(null)
+    private val mutableKind = MutableStateFlow(GenerationKind.Lesson)
     private var owner: AuthenticatedSession? = null
     private var work = openScope()
 
@@ -70,6 +71,9 @@ class LessonWritingViewModel(
 
     /** The goal's deck of guesses, only while its first lesson is written. */
     val warmUpId: StateFlow<String?> = mutableWarmUpId.asStateFlow()
+
+    /** Which steps the run reports, as the lesson's readiness says. */
+    val kind: StateFlow<GenerationKind> = mutableKind.asStateFlow()
 
     /** Reads whether a run already writes it; reading never starts one. */
     fun open() {
@@ -103,6 +107,7 @@ class LessonWritingViewModel(
                 }
             mutableAlternative.value = readiness?.alternative
             mutableWarmUpId.value = readiness?.warmUpId?.toString()
+            mutableKind.value = if (readiness?.kind == LessonReadiness.Kind.CHALLENGE) GenerationKind.Challenge else GenerationKind.Lesson
             val generationId = readiness?.generationId
 
             when {

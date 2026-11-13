@@ -291,11 +291,28 @@ describe(getLessonWaitingState, () => {
       state: {
         alternative: { kind: "lesson", lessonId: next.id, title: "Ready one" },
         generationId: runId,
+        kind: "lesson",
         setAside: false,
         status: "generating",
         warmUpId: null,
       },
       status: "ready",
+    });
+  });
+
+  it("tells a challenge apart, so its wait shows the challenge's own steps", async () => {
+    const { user } = await learnerWithPlan();
+
+    const challenge = await libraryLessonFixture({
+      contentRunId: randomUUID(),
+      contentStatus: "running",
+      identityKey: `challenge:${randomUUID()}`,
+    });
+
+    mockSession(user.id);
+
+    await expect(getLessonWaitingState({ lessonId: challenge.id })).resolves.toMatchObject({
+      state: { kind: "challenge", status: "generating" },
     });
   });
 
@@ -365,6 +382,7 @@ describe(getLessonWaitingState, () => {
       state: {
         alternative: { dueSkills: 1, kind: "review" },
         generationId: null,
+        kind: "lesson",
         status: "notStarted",
       },
     });
@@ -373,6 +391,7 @@ describe(getLessonWaitingState, () => {
       state: {
         alternative: null,
         generationId: null,
+        kind: "lesson",
         setAside: false,
         status: "ready",
         warmUpId: null,

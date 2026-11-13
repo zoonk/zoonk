@@ -1310,7 +1310,7 @@ private actor FirstLessonWritingTransport: ClientTransport {
       return (
         HTTPResponse(status: .ok, headerFields: headerFields),
         HTTPBody(
-          #"{"alternative": null, "generationId": "run-1", "setAside": false, "status": "\#(status)", "warmUpId": "019a482c-6a00-7000-8000-000000000001"}"#
+          #"{"alternative": null, "generationId": "run-1", "kind": "lesson", "setAside": false, "status": "\#(status)", "warmUpId": "019a482c-6a00-7000-8000-000000000001"}"#
         )
       )
     case "streamGenerationEvents":
