@@ -116,6 +116,10 @@ function RichBlockView({
   );
 }
 
+/** The size a lesson's own text reads at, in the player and wherever a page quotes a lesson. */
+export const LESSON_BODY_CLASS =
+  "text-foreground text-lg leading-relaxed md:text-xl md:leading-[1.6]";
+
 export function RichTextBlocks({
   className,
   htmlFor,

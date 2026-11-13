@@ -1,7 +1,7 @@
 import { getExtracted } from "next-intl/server";
 import { PlanIncludes } from "./plan-includes";
 
-/** Call minutes stay off it, as on every plan: Plus has higher call limits, never a number. */
+/** Call minutes stay off it, with or without Plus: Plus has higher call limits, never a number. */
 export async function PlusBenefits() {
   const t = await getExtracted();
 
@@ -11,7 +11,7 @@ export async function PlusBenefits() {
         { id: "exam", text: t("Your whole exam plan, every day to the exam") },
         { id: "mocks", text: t("Mock exams, timed like the real one") },
         { id: "buddy", text: t("An AI study buddy whenever you're stuck") },
-        { id: "calls", text: t("Higher limits for speaking calls") },
+        { id: "calls", text: t("More speaking practice calls") },
         { id: "certificates", text: t("A certificate for every level you finish") },
       ]}
       summary={t("Every goal · every lesson")}

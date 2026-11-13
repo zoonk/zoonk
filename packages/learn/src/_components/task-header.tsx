@@ -108,7 +108,14 @@ export function TaskHeaderMenu({
     <DropdownMenu onOpenChange={onOpenChange}>
       <DropdownMenuTrigger
         ref={trigger}
-        render={<Button className="shrink-0" edge="end" size={size} variant="ghost" />}
+        render={
+          <Button
+            className="shrink-0 in-data-task-header:[--icon-size:--spacing(5)]"
+            edge="end"
+            size={size}
+            variant="ghost"
+          />
+        }
       >
         <EllipsisIcon aria-hidden="true" />
         <span className="sr-only">{label ?? t("Screen options")}</span>
@@ -176,7 +183,7 @@ const DENSE_SEGMENTS = 40;
 
 const SEGMENT_CLASS: Record<TaskSegment, string> = {
   ahead: "bg-surface-3",
-  current: "ring-success ring-1 ring-inset",
+  current: "bg-success/40",
   done: "bg-success",
   read: "bg-foreground/25",
   right: "bg-success",
@@ -206,7 +213,7 @@ export function TaskHeaderSegments({
     >
       <span
         aria-hidden="true"
-        className={cn("flex h-1 w-full", segments.length > DENSE_SEGMENTS ? "gap-px" : "gap-[3px]")}
+        className={cn("flex h-1 w-full", segments.length > DENSE_SEGMENTS ? "gap-px" : "gap-0.5")}
       >
         {segments.map((segment, index) => (
           <span

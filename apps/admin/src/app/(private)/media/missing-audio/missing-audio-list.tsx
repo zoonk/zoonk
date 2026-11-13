@@ -18,8 +18,8 @@ import { MissingAudioUploadForm } from "./missing-audio-upload-form";
 const MISSING_AUDIO_COLUMNS: AdminTableColumn[] = [
   { label: "Text" },
   { label: "Language" },
-  { label: "Used in" },
-  { align: "right", label: "Audio" },
+  { label: "Used in", size: "text" },
+  { label: "Audio", size: "long" },
 ];
 
 function getQueueDescription(total: number): string | undefined {

@@ -13,19 +13,6 @@ import {
 import { TargetIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 
-function WithBar({ bar, children }: { bar?: React.ReactNode; children: React.ReactNode }) {
-  if (!bar) {
-    return children;
-  }
-
-  return (
-    <div className="flex flex-col gap-8">
-      {bar}
-      {children}
-    </div>
-  );
-}
-
 /** Someone without a session may have a goal in their account, so they're asked to log in first. */
 export async function LearnNoGoal({
   bar,
@@ -43,14 +30,16 @@ export async function LearnNoGoal({
 
   if (!session) {
     return (
-      <WithBar bar={bar}>
+      <>
+        {bar}
         <AuthGatePage description={description} next={next} title={title} />
-      </WithBar>
+      </>
     );
   }
 
   return (
-    <WithBar bar={bar}>
+    <>
+      {bar}
       <GatedPage description={description} title={title}>
         <Empty>
           <EmptyHeader>
@@ -71,6 +60,6 @@ export async function LearnNoGoal({
           </EmptyContent>
         </Empty>
       </GatedPage>
-    </WithBar>
+    </>
   );
 }

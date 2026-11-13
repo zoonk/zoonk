@@ -7,7 +7,7 @@ import { TableCell } from "@zoonk/ui/components/table";
 
 const NOTICE_COLUMNS: AdminTableColumn[] = [
   { label: "Date" },
-  { label: "Message" },
+  { fill: true, label: "Message" },
   { label: "Changed fields" },
   { label: "Provenance" },
 ];

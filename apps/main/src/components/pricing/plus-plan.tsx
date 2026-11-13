@@ -1,22 +1,22 @@
 import { NUMERIC_CLASS } from "@/components/public/landing-styles";
-import {
-  SEGMENTED_OPTION_CLASS,
-  SEGMENTED_TRACK_CLASS,
-  Variant,
-  VariantSwitch,
-  VariantSwitchOption,
-} from "@/components/public/variant-switch";
+import { Variant, VariantSwitch, VariantSwitchOption } from "@/components/public/variant-switch";
 import { getAppLocale } from "@/i18n/locale";
 import { Link, getPathname } from "@/i18n/navigation";
 import { SURFACE_CLASS } from "@zoonk/learn/surface";
-import { FORWARD_ICON, buttonVariants } from "@zoonk/ui/components/button";
+import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { PendingLink } from "@zoonk/ui/patterns/links/pending";
 import { type PriceInfo } from "@zoonk/utils/currency";
 import { getExtracted } from "next-intl/server";
 import { getMonthlyEquivalent, getYearlyPriceComparison } from "./billing-prices";
 import { PlanNextStep } from "./for-viewer";
-import { PLAN_CARD_CLASS, PLAN_NAME_ROW_CLASS, PLAN_PRICE_CLASS, PlanPrice } from "./plan-includes";
+import {
+  PLAN_CARD_CLASS,
+  PLAN_CARD_ROWS_CLASS,
+  PLAN_NAME_ROW_CLASS,
+  PLAN_PRICE_CLASS,
+  PlanPrice,
+} from "./plan-includes";
 import { formatPlanPrice } from "./plan-price";
 import { PlusBenefits } from "./plus-benefits";
 import { PLAN_ACTION_NOTE_CLASS, PLUS_CTA_CLASS } from "./plus-cta";
@@ -29,6 +29,16 @@ export type PlusViewerState =
   | { status: "visitor" };
 
 const PERIODS = ["monthly", "yearly"] as const;
+
+/**
+ * Not the tab piece: two joined buttons. The one to press is an outlined button, and the chosen one
+ * is filled, so which is which shows without comparing them.
+ */
+const BILLING_SWITCH_CLASS = "flex";
+
+const BILLING_OPTION_CLASS =
+  "text-compact border-input bg-background has-checked:border-foreground has-checked:bg-foreground has-checked:text-background has-focus-visible:ring-ring/50 hit-area not-has-checked:hover:bg-muted flex h-8 items-center gap-1.5 border px-3 font-medium whitespace-nowrap transition-colors first:rounded-l-lg last:-ml-px last:rounded-r-lg has-focus-visible:z-10 has-focus-visible:ring-[3px]";
+
 const DEFAULT_PERIOD = "monthly";
 const PLUS_PLAN_ID = "plus-plan";
 
@@ -61,16 +71,16 @@ export async function PlusLoginLink({
 
   if (!hasChoice) {
     return (
-      <PendingLink className={className} href={getHref()} {...FORWARD_ICON}>
-        {t("Get Plus")}
+      <PendingLink className={className} href={getHref()}>
+        {t("Subscribe")}
       </PendingLink>
     );
   }
 
   return PERIODS.map((period) => (
     <Variant as="span" className="contents" key={period} name={billingSwitch} value={period}>
-      <PendingLink className={className} href={getHref(period)} {...FORWARD_ICON}>
-        {t("Get Plus")}
+      <PendingLink className={className} href={getHref(period)}>
+        {t("Subscribe")}
       </PendingLink>
     </Variant>
   ));
@@ -101,7 +111,10 @@ async function PlusAction({
         className={cn(buttonVariants({ size: "lg", variant: "outline" }), PLUS_CTA_CLASS)}
         href="/subscription"
       >
-        {t("Manage your plan")}
+        {t({
+          description: "Button for a subscriber: opens the page where they change or cancel Plus.",
+          message: "Manage Plus",
+        })}
       </Link>
     );
   }
@@ -184,23 +197,23 @@ export async function PlusPlan({
   return (
     <section
       aria-labelledby={PLUS_PLAN_ID}
-      className={cn(SURFACE_CLASS, PLAN_CARD_CLASS, "ring-foreground/25")}
+      className={cn(SURFACE_CLASS, PLAN_CARD_CLASS, PLAN_CARD_ROWS_CLASS, "ring-foreground/25")}
     >
       <div className={PLAN_NAME_ROW_CLASS}>
-        <h2 className="text-base font-semibold tracking-[-0.015em]" id={PLUS_PLAN_ID}>
+        <h2 className="text-section" id={PLUS_PLAN_ID}>
           {t("Plus")}
         </h2>
 
         {hasChoice && (
           <VariantSwitch
             aria-label={t("Billing period")}
-            className={SEGMENTED_TRACK_CLASS}
+            className={BILLING_SWITCH_CLASS}
             defaultValue={defaultPeriod}
             name={billingSwitch}
             values={PERIODS}
           >
             <VariantSwitchOption
-              className={SEGMENTED_OPTION_CLASS}
+              className={BILLING_OPTION_CLASS}
               defaultValue={defaultPeriod}
               name={billingSwitch}
               value="monthly"
@@ -209,14 +222,14 @@ export async function PlusPlan({
             </VariantSwitchOption>
 
             <VariantSwitchOption
-              className={SEGMENTED_OPTION_CLASS}
+              className={BILLING_OPTION_CLASS}
               defaultValue={defaultPeriod}
               name={billingSwitch}
               value="yearly"
             >
               {t("Yearly")}
               {comparison && (
-                <span className="text-muted-foreground font-normal">
+                <span className="font-normal opacity-70">
                   {t("save {amount}", {
                     amount: formatPlanPrice({ locale, price: comparison.savings }),
                   })}
