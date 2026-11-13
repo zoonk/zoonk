@@ -12,8 +12,10 @@ import {
   type GoalAttachActions,
   type OnboardingRoutes,
 } from "../onboarding-actions";
+import { OnboardingColumn } from "../onboarding-frame";
 import { AttachPanel, SignUpPrompt } from "./attach-panel";
 import { GoalEntry } from "./goal-entry";
+import { GoalLimitNotice } from "./goal-limit-notice";
 import { type MaterialIntent, MaterialIntentChoice } from "./material-intent";
 
 function AttachedChips({
@@ -119,7 +121,7 @@ function GoalAttachments({
   );
 }
 
-export function AttachableGoalEntry({
+function AttachableGoalEntry({
   attach,
   attached,
   canAttach,
@@ -127,8 +129,6 @@ export function AttachableGoalEntry({
   error,
   fromSharedPlan,
   intent,
-  limited = false,
-  notice,
   onAttachedChange,
   onIntentChange,
   onSubmit,
@@ -141,8 +141,6 @@ export function AttachableGoalEntry({
   error: GoalError | null;
   fromSharedPlan: boolean;
   intent: MaterialIntent | null;
-  limited?: boolean;
-  notice?: React.ReactNode;
   onAttachedChange: (items: AttachedSource[]) => void;
   onIntentChange: (intent: MaterialIntent) => void;
   onSubmit: (goal: string) => void;
@@ -181,11 +179,23 @@ export function AttachableGoalEntry({
       defaultGoal={defaultGoal}
       error={error}
       fromSharedPlan={fromSharedPlan}
-      limited={limited}
-      notice={notice}
       onAttach={() => setOpen((previous) => !previous)}
       onSubmit={onSubmit}
       signUpHref={routes.signUp}
     />
+  );
+}
+
+/** A learner who can't start another goal now sees only that: no box to type in, no examples. */
+export function GoalStartEntry({
+  atGoalLimit,
+  ...entry
+}: React.ComponentProps<typeof AttachableGoalEntry> & { atGoalLimit: boolean }) {
+  return atGoalLimit ? (
+    <OnboardingColumn>
+      <GoalLimitNotice reason="activeGoals" upFront />
+    </OnboardingColumn>
+  ) : (
+    <AttachableGoalEntry {...entry} />
   );
 }

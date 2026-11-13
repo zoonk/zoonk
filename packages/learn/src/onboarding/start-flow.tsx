@@ -5,9 +5,8 @@ import { useEffect, useEffectEvent, useState } from "react";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { useDraftGoals } from "./entry/draft-goals";
 import { DraftScreen } from "./entry/draft-screen";
-import { AttachableGoalEntry } from "./entry/goal-attachments";
+import { GoalStartEntry } from "./entry/goal-attachments";
 import { GoalExamples } from "./entry/goal-examples";
-import { GoalLimitNotice, isPlusGoalLimit } from "./entry/goal-limit-notice";
 import { GuestGoalGate } from "./entry/guest-goal-gate";
 import { useSubmitGoal } from "./entry/material-goal";
 import { type MaterialIntent } from "./entry/material-intent";
@@ -270,7 +269,9 @@ function GoalStartFlow({
 
   const backToEntry = (words: string) => showEntry({ words });
 
-  const rail = (
+  const atGoalLimit = goalLimit === "activeGoals";
+
+  const rail = atGoalLimit ? null : (
     <>
       {state.kind === "entry" && <SectionExamples onPick={submit} />}
       <OnboardingHowItWorks hasAccount={canAttach} />
@@ -281,7 +282,8 @@ function GoalStartFlow({
     <OnboardingRailProvider rail={rail}>
       <OnboardingFrame bar={{ onBack: getBack({ backToEntry, state }) }}>
         {state.kind === "entry" && (
-          <AttachableGoalEntry
+          <GoalStartEntry
+            atGoalLimit={atGoalLimit}
             attach={actions.attach}
             attached={attached}
             canAttach={canAttach}
@@ -289,8 +291,6 @@ function GoalStartFlow({
             error={state.error}
             fromSharedPlan={fromSharedPlan}
             intent={intent}
-            limited={goalLimit !== null && isPlusGoalLimit(goalLimit)}
-            notice={goalLimit && <GoalLimitNotice reason={goalLimit} upFront />}
             onAttachedChange={setAttached}
             onIntentChange={setIntent}
             onSubmit={submit}
