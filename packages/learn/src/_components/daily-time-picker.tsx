@@ -145,7 +145,7 @@ function DailyTimeReadout({
     >
       <span aria-hidden="true" className="flex items-baseline gap-2">
         <BigQuantity className="text-5xl">{formatDuration(choice.value)}</BigQuantity>
-        <ChevronDownIcon className="text-muted-foreground size-5 shrink-0 translate-y-0.5" />
+        <ChevronDownIcon className="text-muted-foreground -ms-1.5 size-5 shrink-0 translate-y-1" />
         {waiting && <ShortcutKbd shortcut="main" />}
       </span>
 
@@ -183,7 +183,7 @@ export function DailyTimePicker({
   }
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-0.5">
       {/* The picker carries the name for screen readers (`label`); this is its visible title. */}
       <span aria-hidden="true" className="text-sm font-medium">
         {props.label}
