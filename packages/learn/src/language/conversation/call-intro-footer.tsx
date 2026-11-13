@@ -25,7 +25,7 @@ export type CallIntroFooterState = "failed" | "idle" | "plusRequired" | "startin
 const PROMPT_SHOWN_MS = 300;
 
 /** An examiner isn't someone the learner calls, so exams keep "Start the call". */
-export function callsCharacter(conversation: Pick<LanguageConversationIntro, "examTask" | "kind">) {
+function callsCharacter(conversation: Pick<LanguageConversationIntro, "examTask" | "kind">) {
   return !conversation.examTask && conversation.kind !== "speakingMock";
 }
 
