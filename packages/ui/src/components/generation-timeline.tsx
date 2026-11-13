@@ -64,10 +64,10 @@ function GenerationTimelineProgress({
       value={value}
       {...props}
     >
-      <span aria-hidden="true" className="flex h-1 min-w-0 flex-1 gap-[3px]">
+      <span aria-hidden="true" className="flex h-1.5 min-w-0 flex-1 gap-[3px]">
         {fills.map((fill, index) => (
           <span
-            className="bg-surface-3 flex min-w-0 overflow-hidden rounded-xs"
+            className="bg-surface-3 rounded-meter flex min-w-0 overflow-hidden"
             data-slot="generation-timeline-segment"
             // oxlint-disable-next-line react/no-array-index-key -- Segments are positions, not items.
             key={index}

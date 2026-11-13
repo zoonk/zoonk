@@ -4,6 +4,7 @@ import { type WarmUpSurface } from "@zoonk/core/analytics/events";
 import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
 import { Button } from "@zoonk/ui/components/button";
 import { useEnterKey, useEscapeClick } from "@zoonk/ui/hooks/keyboard";
+import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowRightIcon, ChevronLeftIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -248,7 +249,7 @@ export function WaitTopBarBack({ children }: { children: ReactNode }) {
 
   return (
     <Button
-      aria-keyshortcuts="Escape"
+      aria-keyshortcuts={shortcutKeys("leave")}
       aria-label={label}
       className="shrink-0"
       edge="start"

@@ -136,7 +136,7 @@ export function ChoiceList<Value extends string>({
           >
             {numberKeys && index < NUMBER_KEY_COUNT && (
               <ListRowLeading className="hidden w-5 justify-center pointer-fine:flex">
-                <ShortcutKbd>{index + 1}</ShortcutKbd>
+                <ShortcutKbd index={index} shortcut="pick" />
               </ListRowLeading>
             )}
 

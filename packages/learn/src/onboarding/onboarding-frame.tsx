@@ -1,7 +1,6 @@
 "use client";
 
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
-import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type ReactNode, useLayoutEffect } from "react";
 import { EnterButton } from "../_components/enter-button";
@@ -291,11 +290,9 @@ export function OnboardingActionsNote({ children }: { children: ReactNode }) {
 export function OnboardingPrimaryButton({
   children,
   ...props
-}: React.ComponentProps<typeof EnterButton>) {
-  const ref = useEnterClick<HTMLButtonElement>({ enabled: !props.disabled && !props.busy });
-
+}: Omit<React.ComponentProps<typeof EnterButton>, "enter" | "size">) {
   return (
-    <EnterButton {...props} ref={ref}>
+    <EnterButton {...props}>
       {children}
     </EnterButton>
   );

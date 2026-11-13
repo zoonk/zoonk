@@ -9,6 +9,7 @@ import {
   QuestionDontKnow,
   QuestionMainAction,
 } from "../_components/question-actions";
+import { QuestionEyebrow } from "../_components/question-title";
 import { AnswersSaveError, type UnsentAnswers } from "../_components/save-error";
 import { TaskHeaderTitle } from "../_components/task-header";
 import { ContentFeedbackMenu } from "../feedback/content-feedback-menu";
@@ -224,9 +225,9 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
       {question && (
         <div className="flex flex-col gap-4" ref={questionRef}>
           <div className="text-muted-foreground flex items-baseline justify-between gap-3 text-sm">
-            <p className={cn("min-w-0 text-pretty", aside && "with-aside:hidden")}>
+            <QuestionEyebrow className={cn("min-w-0", aside && "with-aside:hidden")}>
               {hint?.(question)}
-            </p>
+            </QuestionEyebrow>
             <p className="ml-auto shrink-0 font-mono text-xs tabular-nums">
               {t("{current, number} of {total, number}", { current, total })}
             </p>

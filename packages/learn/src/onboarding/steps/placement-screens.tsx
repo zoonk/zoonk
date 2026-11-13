@@ -74,7 +74,7 @@ export function PlacementDone({
 
   return (
     <TestOutcome
-      disabled={pending}
+      busy={pending}
       onContinue={onContinue}
       title={t("Your plan skips what you already know")}
     />
@@ -94,7 +94,7 @@ export function PlacementUnavailable({
 
   return (
     <TestOutcome
-      disabled={pending}
+      busy={pending}
       failed={failed}
       onContinue={onContinue}
       title={t("We couldn't make a test for this goal")}

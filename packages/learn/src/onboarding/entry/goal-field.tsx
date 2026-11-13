@@ -169,10 +169,13 @@ export function GoalFieldSubmit({
   children,
   className,
   ...props
-}: Omit<React.ComponentProps<typeof EnterButton>, "type">) {
+}: Omit<React.ComponentProps<typeof EnterButton>, "enter" | "size" | "type">) {
   return (
+    // Enter in the goal's field submits its form, so the key is the field's.
     <EnterButton
-      className={cn("shrink-0 grow-0 basis-auto rounded-md", className)}
+      className={cn("shrink-0 grow-0 basis-auto rounded-md px-4", className)}
+      enter="host"
+      size="lg"
       type="submit"
       {...FORWARD_ICON}
       {...props}

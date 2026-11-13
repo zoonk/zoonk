@@ -140,7 +140,7 @@ export function TestDone({
 
   return (
     <TestOutcome
-      disabled={pending}
+      busy={pending}
       failed={failed}
       onContinue={onContinue}
       subject={t("Level test")}

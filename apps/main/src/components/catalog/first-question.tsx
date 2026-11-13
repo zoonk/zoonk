@@ -3,7 +3,7 @@ import { StartLink, getSecondaryStartControlClassName } from "@/components/publi
 import { getAppLocale } from "@/i18n/locale";
 import { withOrigin } from "@/lib/public/public-hrefs";
 import { type PublicLibraryLesson } from "@zoonk/core/library/lessons/public";
-import { QuestionTitle } from "@zoonk/learn/question-title";
+import { QuestionEyebrow, QuestionTitle } from "@zoonk/learn/question-title";
 import { RichTextBlocks } from "@zoonk/learn/rich-text";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -55,8 +55,7 @@ async function QuestionScreen({
 
   return (
     <>
-      <p className="text-muted-foreground text-compact flex items-center gap-1.5 font-medium">
-        <SparklesIcon aria-hidden="true" className="size-3.5 flex-none" />
+      <QuestionEyebrow icon={<SparklesIcon aria-hidden="true" />}>
         {screen.guess
           ? t({
               description:
@@ -64,7 +63,7 @@ async function QuestionScreen({
               message: "Just a guess, it doesn't count",
             })
           : t("Quick question")}
-      </p>
+      </QuestionEyebrow>
 
       {screen.context && (
         <RichTextBlocks
