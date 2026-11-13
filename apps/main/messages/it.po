@@ -1330,11 +1330,6 @@ msgid "3-30 characters. Letters a–z, numbers, and underscores only."
 msgstr "3-30 caratteri. Solo lettere a–z, numeri e trattini bassi."
 
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
-msgctxt "jvo0vs"
-msgid "Save"
-msgstr "Salva"
-
-#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
 msgctxt "GrnZDN"
 msgid "Saved."
 msgstr "Salvato."
@@ -1343,6 +1338,11 @@ msgstr "Salvato."
 msgctxt "D4cYHr"
 msgid "Use 150 characters or fewer."
 msgstr "Usa al massimo 150 caratteri."
+
+#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
+msgctxt "jvo0vs"
+msgid "Save"
+msgstr "Salva"
 
 #: src/app/[lang]/(app)/(settings)/settings/about-you/page.tsx
 msgctxt "40quiV"

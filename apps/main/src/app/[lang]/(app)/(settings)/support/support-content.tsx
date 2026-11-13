@@ -10,12 +10,16 @@ import { Suspense } from "react";
 
 const FOLLOW_US_ID = "follow-us";
 
-async function ContactSupport() {
+async function ContactSupport({ children }: { children: React.ReactNode }) {
   const session = await getSession();
 
   const email = session && !session.user.isAnonymous ? session.user.email : null;
 
-  return <FeedbackForm context={{ screen: "support" }} defaultEmail={email} />;
+  return (
+    <FeedbackForm context={{ screen: "support" }} defaultEmail={email}>
+      {children}
+    </FeedbackForm>
+  );
 }
 
 async function FollowUs() {
@@ -65,11 +69,17 @@ export async function SupportContent() {
         {t("Ask a question, report a problem or share an idea. We answer by email.")}
       </p>
 
-      <Suspense fallback={<FeedbackFormSkeleton />}>
-        <ContactSupport />
+      <Suspense
+        fallback={
+          <FeedbackFormSkeleton>
+            <FollowUs />
+          </FeedbackFormSkeleton>
+        }
+      >
+        <ContactSupport>
+          <FollowUs />
+        </ContactSupport>
       </Suspense>
-
-      <FollowUs />
     </Page>
   );
 }

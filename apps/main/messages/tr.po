@@ -1330,11 +1330,6 @@ msgid "3-30 characters. Letters a–z, numbers, and underscores only."
 msgstr "3-30 karakter. Yalnızca a–z harfleri, rakamlar ve alt çizgi kullanılabilir."
 
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
-msgctxt "jvo0vs"
-msgid "Save"
-msgstr "Kaydet"
-
-#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
 msgctxt "GrnZDN"
 msgid "Saved."
 msgstr "Kaydedildi."
@@ -1343,6 +1338,11 @@ msgstr "Kaydedildi."
 msgctxt "D4cYHr"
 msgid "Use 150 characters or fewer."
 msgstr "En fazla 150 karakter kullan."
+
+#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
+msgctxt "jvo0vs"
+msgid "Save"
+msgstr "Kaydet"
 
 #: src/app/[lang]/(app)/(settings)/settings/about-you/page.tsx
 msgctxt "40quiV"

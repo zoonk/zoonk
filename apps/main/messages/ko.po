@@ -1330,11 +1330,6 @@ msgid "3-30 characters. Letters a–z, numbers, and underscores only."
 msgstr "3~30자. 영문 소문자(a–z), 숫자, 밑줄만 사용할 수 있어요."
 
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
-msgctxt "jvo0vs"
-msgid "Save"
-msgstr "저장"
-
-#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
 msgctxt "GrnZDN"
 msgid "Saved."
 msgstr "저장했어요."
@@ -1343,6 +1338,11 @@ msgstr "저장했어요."
 msgctxt "D4cYHr"
 msgid "Use 150 characters or fewer."
 msgstr "150자 이내로 입력해 주세요."
+
+#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
+msgctxt "jvo0vs"
+msgid "Save"
+msgstr "저장"
 
 #: src/app/[lang]/(app)/(settings)/settings/about-you/page.tsx
 msgctxt "40quiV"
