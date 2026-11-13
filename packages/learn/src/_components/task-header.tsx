@@ -105,7 +105,14 @@ export function TaskHeaderMenu({
     <DropdownMenu onOpenChange={onOpenChange}>
       <DropdownMenuTrigger
         ref={trigger}
-        render={<Button className="shrink-0" edge="end" size={size} variant="ghost" />}
+        render={
+          <Button
+            className="shrink-0 in-data-task-header:[--icon-size:--spacing(5)]"
+            edge="end"
+            size={size}
+            variant="ghost"
+          />
+        }
       >
         <EllipsisIcon aria-hidden="true" />
         <span className="sr-only">{label ?? t("Screen options")}</span>
@@ -203,7 +210,7 @@ export function TaskHeaderSegments({
     >
       <span
         aria-hidden="true"
-        className={cn("flex h-1 w-full", segments.length > DENSE_SEGMENTS ? "gap-px" : "gap-[3px]")}
+        className={cn("flex h-1 w-full", segments.length > DENSE_SEGMENTS ? "gap-px" : "gap-0.5")}
       >
         {segments.map((segment, index) => (
           <span

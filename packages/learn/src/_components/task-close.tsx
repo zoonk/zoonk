@@ -29,6 +29,9 @@ function isPlainClick(event: React.MouseEvent): boolean {
   return event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
 }
 
+/** A bar's bare glyph is 20px (craft I2). */
+const CLOSE_CLASS = "shrink-0 [--icon-size:--spacing(5)]";
+
 /**
  * A full-screen task's ✕, and Esc with it: the key presses the ✕, so both ask the same question
  * first (`confirm`), wait for the same saves (`beforeExit`) and land on the same page. It goes back
@@ -161,7 +164,7 @@ export function TaskClose({
         {tooltip(
           <Button
             {...shared}
-            className={cn("shrink-0", className)}
+            className={cn(CLOSE_CLASS, className)}
             disabled={disabled}
             edge="start"
             focusableWhenDisabled
@@ -189,7 +192,7 @@ export function TaskClose({
           {...shared}
           className={cn(
             buttonVariants({ edge: "start", size, variant: "ghost" }),
-            "shrink-0",
+            CLOSE_CLASS,
             className,
           )}
           href={href}

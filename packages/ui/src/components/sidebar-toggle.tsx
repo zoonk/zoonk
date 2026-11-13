@@ -168,7 +168,10 @@ function registerToggle(button: HTMLButtonElement, side: SidebarSide) {
 const TOGGLE = {
   end: {
     Icon: PanelRightIcon,
-    className: cn(buttonVariants({ size: "icon", variant: "ghost" }), "shrink-0"),
+    className: cn(
+      buttonVariants({ size: "icon", variant: "ghost" }),
+      "shrink-0 [--icon-size:--spacing(5)]",
+    ),
     tooltipSide: "bottom",
   },
   // Its glyph's ink ends on the sidebar's edge; collapsed, the toggle is the whole row.
