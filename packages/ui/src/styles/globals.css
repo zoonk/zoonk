@@ -95,6 +95,7 @@
   --color-success-text: var(--success-text);
   --color-border: var(--border);
   --color-input: var(--input);
+  --color-field: var(--field);
   --color-ring: var(--ring);
   --color-ground: var(--ground);
   --color-energy: var(--energy);
@@ -212,6 +213,16 @@
 :root {
   --radius: 0.625rem;
   --press-scale: 0.97;
+
+  /*
+   * What a page's frame tells the pieces that reach its edges (the page top's bar, the bottom
+   * bar): its side padding, its bottom padding, the height of what it docks under the page (a
+   * phone's tab bar), and the safe area the bottom bar still has to clear (none over a dock).
+   */
+  --page-gutter: 0px;
+  --page-bottom: 0px;
+  --page-dock: 0px;
+  --page-safe-bottom: env(safe-area-inset-bottom);
   --background: var(--color-white);
   --foreground: oklch(0.185 0.004 286);
   --card: var(--color-white);
@@ -240,6 +251,7 @@
   --ground: oklch(0.975 0.0015 106);
   --border: oklch(0 0 0 / 7%);
   --input: oklch(0 0 0 / 13%);
+  --field: oklch(0.185 0.004 286 / 50%);
   --ring: var(--color-primary);
   --energy: oklch(0.782 0.158 72.3);
   --brain: oklch(0.64 0.17 293);
@@ -306,6 +318,7 @@
     --ground: var(--color-neutral-100);
     --border: var(--color-neutral-950);
     --input: var(--color-neutral-950);
+    --field: var(--color-neutral-950);
     --ring: var(--color-primary);
     --energy: var(--color-amber-700);
     --brain: var(--color-violet-800);
@@ -353,6 +366,7 @@
     --ground: oklch(0.16 0.003 286);
     --border: oklch(1 0 0 / 7.5%);
     --input: oklch(1 0 0 / 13%);
+    --field: oklch(0.94 0.003 286 / 50%);
     --ring: var(--color-primary);
     --energy: oklch(0.782 0.158 72.3);
     --brain: oklch(0.75 0.13 293);
@@ -411,6 +425,7 @@
       --ground: var(--color-neutral-900);
       --border: var(--color-neutral-50);
       --input: var(--color-neutral-50);
+      --field: var(--color-neutral-50);
       --ring: var(--color-primary);
       --energy: var(--color-amber-200);
       --brain: var(--color-violet-200);
@@ -700,8 +715,9 @@
  * `--edge-pull` ends a column: what ends there is hairlines and boxes, so the glyph's ink ends on
  * the box. `--edge-start` starts one: the letters under the glyph start inside their box (Geist's
  * "S" by 0.053em, a stem by 0.08em, a diagonal by 0.02em), so the glyph stops that far short of the
- * box to sit with them; `--edge-under` is the size of the text on that edge. Both round down to a
- * whole pixel, so no part of the glyph crosses the edge at any pixel density.
+ * box to sit with them; `--edge-under` is the size of the text on that edge. A text button stops
+ * short the same way when a glyph leads its label. Both round down to a whole pixel, so no part of
+ * the glyph crosses the edge at any pixel density.
  */
 @utility edge {
   --glyph-blank: 0;
@@ -723,6 +739,7 @@
       var(--icon-size, 1rem) * var(--glyph-blank-end) / 24,
     1px
   );
+  --edge-short: calc(var(--edge-under, 1rem) * 0.053);
   --edge-start: round(
     down,
     var(
@@ -731,11 +748,12 @@
           --edge-text,
           calc(
             var(--edge-icon) - var(--icon-size, 1rem) * var(--glyph-blank-start) / 24 -
-              var(--edge-under, 1rem) * 0.053
+              var(--edge-short) * (1 - min(var(--glyph-blank-start), 1))
           )
         )
       ) +
-      var(--icon-size, 1rem) * var(--glyph-blank-start) / 24,
+      var(--icon-size, 1rem) * var(--glyph-blank-start) / 24 - var(--edge-short) *
+      min(var(--glyph-blank-start), 1),
     1px
   );
 
@@ -765,6 +783,22 @@
 
   &:has(.lucide-ellipsis, .lucide-menu) {
     --glyph-blank: 3;
+  }
+}
+
+/*
+ * The back link over a page's title lines up with the title's first letter, so the size of the text
+ * under it comes from the title's type role, never from the page.
+ */
+[data-slot="page-top-bar"] {
+  --edge-under: 1.875rem;
+
+  [data-slot="page-top"]:has([data-title="headline"]) & {
+    --edge-under: 2.125rem;
+
+    @media (width >= 40rem) {
+      --edge-under: 3rem;
+    }
   }
 }
 

@@ -1,3 +1,4 @@
+import { BottomBar } from "@zoonk/ui/components/bottom-bar";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useId } from "react";
@@ -26,29 +27,12 @@ export const TASK_HEADER_SIDE_CLASS = {
 
 export const BAR_PADDING_CLASS = "pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]";
 
-export const ACTION_BAR_SURFACE_CLASS = "bg-background border-border sticky bottom-0 z-20 border-t";
-
-export function TaskActionBar({ children, className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div className={cn(ACTION_BAR_SURFACE_CLASS, className)} data-slot="task-action-bar" {...props}>
-      <div
-        className={cn(TASK_BAR_ROW_CLASS, "flex flex-col gap-2 lg:items-end", BAR_PADDING_CLASS)}
-      >
-        {children}
-      </div>
-    </div>
-  );
+/** The kit's bottom bar on a task's column. */
+export function TaskActionBar(props: Omit<React.ComponentProps<typeof BottomBar>, "className">) {
+  return <BottomBar className={TASK_BAR_ROW_CLASS} data-slot="task-action-bar" {...props} />;
 }
 
-export function TaskActions({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      className={cn("flex w-full flex-wrap items-center gap-2 lg:justify-end", className)}
-      data-slot="task-actions"
-      {...props}
-    />
-  );
-}
+export { BottomBarActions as TaskActions } from "@zoonk/ui/components/bottom-bar";
 
 export const TASK_WRAPPING_ACTION_CLASS =
   "h-auto min-h-11 max-w-full shrink py-2 text-center text-balance whitespace-normal";

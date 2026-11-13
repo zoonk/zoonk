@@ -135,7 +135,7 @@ export function TaskFrame({
       </main>
 
       {footer && (
-        <TaskActionBar className="outline-none" ref={bar} tabIndex={-1}>
+        <TaskActionBar ref={bar} tabIndex={-1}>
           {footer}
         </TaskActionBar>
       )}
