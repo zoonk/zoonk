@@ -1,5 +1,11 @@
 package com.zoonk.android.feature.tutor
 
+import com.zoonk.android.data.TrackShown
+import com.zoonk.android.data.AnalyticsEvent
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
@@ -47,8 +53,7 @@ import com.zoonk.android.feature.conversation.PracticeCallSheet
 import com.zoonk.android.feature.conversation.rememberPracticeCallState
 import com.zoonk.android.feature.country.lessonLanguageLine
 import com.zoonk.android.feature.plan.varietyNote
-import com.zoonk.android.feature.subscription.PlusMark
-import com.zoonk.android.feature.subscription.PlusNotice
+import com.zoonk.android.feature.subscription.SubscribeGate
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LearnKind
@@ -169,8 +174,8 @@ internal fun TutorOffer(
                 modifier = modifier,
             ) {
                 OfferButton(
-                    stringResource(if (subscribed) R.string.tutor_offer_manage else R.string.tutor_offer_see_plus),
-                    onClick = routes.seePlus,
+                    stringResource(if (subscribed) R.string.tutor_offer_manage else R.string.subscription_subscribe),
+                    onClick = routes.subscribe,
                 )
             }
         }
@@ -190,12 +195,9 @@ private fun StartGoalOffer(
         description = stringResource(R.string.tutor_offer_goal, offer.goal),
         tile = { OfferIcon(R.drawable.ic_add) },
         modifier = modifier,
-        locked = locked,
     ) {
-        if (locked) {
-            PlusNotice(onSeePlus = routes.seePlus, inset = true, description = stringResource(R.string.tutor_offer_goal_limit))
-        } else {
-            OfferButton(stringResource(R.string.tutor_offer_start)) { routes.open(AppRoute.StartGoal(goal = offer.goal)) }
+        OfferAction(stringResource(R.string.tutor_offer_start), gate = if (locked) stringResource(R.string.tutor_offer_goal_gate) else null, routes) {
+            routes.open(AppRoute.StartGoal(goal = offer.goal))
         }
         offer.course?.let { CatalogCourseRow(it) { routes.open(AppRoute.CatalogCourse(it.id.toString())) } }
     }
@@ -312,12 +314,9 @@ private fun MockExamOffer(
             stringResource(if (offer.subjects.isEmpty()) R.string.tutor_offer_mock_description else R.string.tutor_offer_mock_by_subject),
         tile = { KindDot(LearnKind.Mock) },
         modifier = modifier,
-        locked = locked,
     ) {
-        if (locked) {
-            PlusNotice(onSeePlus = routes.seePlus, inset = true, description = stringResource(R.string.tutor_offer_mock_plus))
-        } else {
-            OfferButton(stringResource(R.string.tutor_offer_choose)) { routes.open(AppRoute.MockChooser) }
+        OfferAction(stringResource(R.string.tutor_offer_choose), gate = if (locked) stringResource(R.string.tutor_offer_mock_gate) else null, routes) {
+            routes.open(AppRoute.MockChooser)
         }
     }
 }
@@ -341,12 +340,9 @@ private fun EssayOffer(
         description = stringResource(cadence),
         tile = { KindDot(LearnKind.Essay) },
         modifier = modifier,
-        locked = locked,
     ) {
-        if (locked) {
-            PlusNotice(onSeePlus = routes.seePlus, inset = true, description = stringResource(R.string.tutor_offer_essay_plus))
-        } else {
-            OfferButton(stringResource(R.string.tutor_offer_open)) { routes.open(AppRoute.Subject(offer.subjectKey)) }
+        OfferAction(stringResource(R.string.tutor_offer_open), gate = if (locked) stringResource(R.string.tutor_offer_essay_gate) else null, routes) {
+            routes.open(AppRoute.Subject(offer.subjectKey))
         }
     }
 }
@@ -509,7 +505,6 @@ private fun OfferCard(
     description: String,
     tile: @Composable () -> Unit,
     modifier: Modifier = Modifier,
-    locked: Boolean = false,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     OutlinedCard(modifier.widthIn(max = TUTOR_CARD_MAX_WIDTH).fillMaxWidth()) {
@@ -522,14 +517,7 @@ private fun OfferCard(
                     }
                 Box(Modifier.size(OFFER_ICON_SIZE, titleLine), contentAlignment = Alignment.Center) { tile() }
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                    FlowRow(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(4.dp),
-                        itemVerticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(title, Modifier.semantics { heading() }, style = MaterialTheme.typography.titleSmall)
-                        if (locked) PlusMark()
-                    }
+                    Text(title, Modifier.semantics { heading() }, style = MaterialTheme.typography.titleSmall)
                     Text(description, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
                 }
             }
@@ -556,6 +544,24 @@ private fun OfferButton(
         onClick = onClick,
         busy = busy,
     ) { Text(label) }
+}
+
+/** The card's usual action; with a [gate], tapping it shows the gate in its place instead. */
+@Composable
+private fun OfferAction(
+    label: String,
+    gate: String?,
+    routes: TutorRoutes,
+    onClick: () -> Unit,
+) {
+    var gated by rememberSaveable { mutableStateOf(false) }
+
+    if (gated && gate != null) {
+        TrackShown(AnalyticsEvent.SubscriptionGateShown)
+        SubscribeGate(gate, routes.subscribe)
+    } else {
+        OfferButton(label) { if (gate != null) gated = true else onClick() }
+    }
 }
 
 internal val TUTOR_CARD_MAX_WIDTH = 520.dp

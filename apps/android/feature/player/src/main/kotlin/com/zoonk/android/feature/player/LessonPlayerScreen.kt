@@ -92,6 +92,7 @@ import com.zoonk.android.feature.player.engine.CompletionStatus
 import com.zoonk.android.feature.player.engine.LessonAction
 import com.zoonk.android.feature.player.engine.LessonNotice
 import com.zoonk.android.feature.player.engine.LessonPhase
+import com.zoonk.android.feature.player.engine.isNumberAnswer
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonRun
 import com.zoonk.android.feature.player.engine.LessonScreen
@@ -119,9 +120,11 @@ import com.zoonk.android.feature.player.steps.LocalScreenWork
 import com.zoonk.android.feature.player.steps.LocalStepViewHeight
 import com.zoonk.android.feature.player.steps.StepActions
 import com.zoonk.android.feature.player.steps.StepPart
+import com.zoonk.android.feature.player.steps.SpokenRecordAction
 import com.zoonk.android.feature.player.steps.StepView
 import com.zoonk.android.feature.player.steps.count
 import com.zoonk.android.feature.player.steps.keyPick
+import com.zoonk.android.feature.player.steps.recordsInBar
 import com.zoonk.android.feature.player.steps.rememberScreenWork
 import com.zoonk.android.feature.tutor.TutorOffer
 import com.zoonk.android.navigation.AppNavigator
@@ -297,8 +300,6 @@ fun LessonPlayer(
                 }
 
                 override fun dontKnow(stepId: String) = viewModel.dispatch(LessonAction.DontKnow(stepId))
-
-                override fun skipWriting() = viewModel.skipWriting()
 
                 override fun explainFirst() = viewModel.dispatch(LessonAction.ExplainFirst)
 
@@ -834,7 +835,7 @@ private fun Result(
                     explanation = explanations[step.id],
                     onExplain = viewModel::explainAnswer,
                     onCreateAccount = { exits.open(AppRoute.Login) },
-                    onSeePlus = { exits.open(AppRoute.Subscription) },
+                    onSubscribe = { exits.open(AppRoute.Subscription) },
                 )
             }
         }
@@ -877,8 +878,16 @@ private fun ActionBar(
             null
         }
 
+    val step = screen.step
+    val records = primary.label == PrimaryLabel.Check && !primary.busy && recordsInBar(step, actions)
+
     TaskActions(back) { width ->
         if (promptUrl != null && prompt != null) PromptAudioIconButton(promptUrl, prompt)
+        if (records && step != null) {
+            SpokenRecordAction(step, actions, width.focusRequester(primaryFocus))
+            ask()
+            return@TaskActions
+        }
         val label: @Composable RowScope.() -> Unit = { Text(stringResource(primary.label.text())) }
         val iconId = primary.label.icon()
         val icon: @Composable () -> Unit = { ButtonIcon(iconId) }
@@ -977,6 +986,17 @@ private fun ScreenMenu(
                 leadingIcon = { Icon(painterResource(R.drawable.ic_auto_awesome), contentDescription = null) },
             )
             HorizontalDivider()
+            val typed = screen?.step?.content as? StepContent.TypedAnswer
+            if (typed != null && state?.phase == LessonPhase.Playing && !isNumberAnswer(typed.content.acceptedAnswers)) {
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.player_cant_write_now)) },
+                    onClick = {
+                        open = false
+                        viewModel.skipWriting()
+                    },
+                    leadingIcon = { Icon(painterResource(R.drawable.ic_edit_off), contentDescription = null) },
+                )
+            }
             if (screen?.canKnowThis == true) {
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.player_know_this)) },

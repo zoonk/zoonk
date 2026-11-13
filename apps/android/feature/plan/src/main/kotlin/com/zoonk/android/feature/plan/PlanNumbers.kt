@@ -86,7 +86,6 @@ import com.zoonk.api.models.LanguagePlanLevel
 import com.zoonk.api.models.PlanDay
 import com.zoonk.api.models.PlanItem
 import com.zoonk.api.models.PreparationComponentsMocks
-import com.zoonk.api.models.SpeakingPaper
 import kotlinx.datetime.toJavaLocalDate
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -518,7 +517,6 @@ internal fun LanguageDetails(
     language.speaking?.let { paper ->
         SpeakingPracticeRow(
             paper.title,
-            paper.access == SpeakingPaper.Access.PLUS_REQUIRED,
             onOpen = links::speaking,
             modifier = Modifier.bleed(LIST_ITEM_INSET),
         )

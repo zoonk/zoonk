@@ -313,7 +313,7 @@ private fun StartActions(
                 refused,
                 LimitSubject.Help,
                 onCreateAccount = { navigator.open(AppRoute.Login) },
-                onSeePlus = { navigator.open(AppRoute.Subscription) },
+                onSubscribe = { navigator.open(AppRoute.Subscription) },
                 modifier = replacementModifier,
             )
         }

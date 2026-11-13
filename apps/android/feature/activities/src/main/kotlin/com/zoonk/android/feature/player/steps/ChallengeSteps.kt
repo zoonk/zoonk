@@ -203,12 +203,6 @@ private fun ChallengeIntro(
                 }
             }
         }
-
-        Text(
-            stringResource(if (content.team.any { it.ai }) R.string.player_challenge_help_ai else R.string.player_challenge_help),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium,
-        )
     }
 }
 

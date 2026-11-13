@@ -66,7 +66,9 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TaskSegment
-import com.zoonk.android.ui.components.needsAccount
+import com.zoonk.android.ui.components.LimitSubject
+import com.zoonk.android.ui.components.limitWords
+import com.zoonk.android.ui.components.stillReviewLine
 import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.components.taskOption
 import com.zoonk.android.ui.format.currentLocale
@@ -98,14 +100,14 @@ fun LessonResultNotes(
 private fun AccessLayout(
     icon: Int,
     title: String,
-    description: String,
+    description: String?,
     actions: @Composable ColumnScope.() -> Unit = {},
 ) {
     LessonColumnBeforeFold {
         Icon(painterResource(icon), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
         Column(Modifier.semantics { liveRegion = LiveRegionMode.Polite }, verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
-            Text(description, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
+            description?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge) }
         }
         Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp), content = actions)
     }
@@ -123,20 +125,16 @@ fun LessonAccessScreen(
             Limited(refusal.limit, onRetry, exits)
         }
 
+        // A refusal that still says the old free week draws the month's gate, so no screen says "free week".
         LessonRefusal.PlusRequired -> {
-            TrackShown(AnalyticsEvent.SubscriptionGateShown)
-            AccessLayout(
-                R.drawable.ic_auto_awesome,
-                stringResource(R.string.subscription_free_week_over_title),
-                stringResource(R.string.subscription_free_week_over_description),
-            ) { PlusActions(exits) }
+            Limited(Limit.Reached(LimitTier.Free, LimitPeriod.Month), onRetry, exits)
         }
 
         LessonRefusal.NotFound -> {
             AccessLayout(
                 R.drawable.ic_error,
                 stringResource(R.string.player_not_found_title),
-                stringResource(R.string.player_not_found_description),
+                null,
             ) {
                 Button(onClick = exits::close, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.player_back)) }
             }
@@ -165,55 +163,40 @@ fun LessonAccessScreen(
 }
 
 @Composable
-private fun ColumnScope.PlusActions(exits: LessonPlayerExits) {
-    Button(onClick = {
-        exits.open(AppRoute.Subscription)
-    }, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.player_see_plus)) }
-    OutlinedButton(onClick = exits::close, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.player_back)) }
-}
-
-@Composable
 private fun Limited(
     limit: Limit,
     onRetry: () -> Unit,
     exits: LessonPlayerExits,
 ) {
-    val tier = if (limit.needsAccount) LimitTier.Guest else (limit as? Limit.Reached)?.tier
-
-    when (tier) {
-        null -> {
-            SlowDown(((limit as? Limit.SlowDown)?.retryAfterSeconds ?: 0).toLong(), onRetry)
+    val reached =
+        when (limit) {
+            is Limit.SlowDown -> return SlowDown(limit.retryAfterSeconds.toLong(), onRetry)
+            Limit.SignUpRequired -> Limit.Reached(LimitTier.Guest, LimitPeriod.Total)
+            is Limit.Reached -> limit
         }
+    val title = limitWords(reached, LimitSubject.Lessons).title.orEmpty()
 
+    when (reached.tier) {
         LimitTier.Guest -> {
-            AccessLayout(
-                R.drawable.ic_person_add,
-                stringResource(R.string.player_guest_limit_title),
-                stringResource(R.string.player_guest_limit_description),
-            ) {
-                Button(onClick = {
-                    exits.open(AppRoute.Login)
-                }, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.player_create_free_account)) }
+            AccessLayout(R.drawable.ic_person_add, title, stringResource(R.string.player_guest_limit_description)) {
+                Button(onClick = { exits.open(AppRoute.Login) }, modifier = Modifier.fillMaxWidth()) {
+                    Text(stringResource(R.string.limit_create_account))
+                }
             }
         }
 
         LimitTier.Free -> {
             TrackShown(AnalyticsEvent.SubscriptionGateShown)
-            val month = (limit as? Limit.Reached)?.period == LimitPeriod.Month
-            AccessLayout(
-                R.drawable.ic_auto_awesome,
-                stringResource(if (month) R.string.player_free_limit_month_title else R.string.player_free_limit_day_title),
-                stringResource(if (month) R.string.player_free_limit_month_description else R.string.player_free_limit_day_description),
-            ) { PlusActions(exits) }
+            AccessLayout(R.drawable.ic_auto_awesome, title, stillReviewLine(reached)) {
+                Button(onClick = { exits.open(AppRoute.Subscription) }, modifier = Modifier.fillMaxWidth()) {
+                    Text(stringResource(R.string.subscription_subscribe))
+                }
+            }
         }
 
         LimitTier.Plus -> {
-            AccessLayout(
-                R.drawable.ic_hourglass_empty,
-                stringResource(R.string.player_plus_limit_title),
-                stringResource(R.string.player_plus_limit_description),
-            ) {
-                OutlinedButton(onClick = exits::close, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.player_back)) }
+            AccessLayout(R.drawable.ic_hourglass_empty, title, stillReviewLine(reached)) {
+                Button(onClick = exits::close, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.player_back)) }
             }
         }
     }

@@ -760,7 +760,7 @@ private fun LimitNotices() {
             Limit.Reached(LimitTier.Plus) to LimitSubject.Help,
             Limit.SlowDown(30) to LimitSubject.Lessons,
             Limit.Reached(LimitTier.Free, LimitPeriod.Day) to LimitSubject.Calls,
-        ).forEach { (limit, subject) -> LimitNotice(limit, subject, onCreateAccount = {}, onSeePlus = {}) }
+        ).forEach { (limit, subject) -> LimitNotice(limit, subject, onCreateAccount = {}, onSubscribe = {}) }
     }
 }
 
@@ -844,8 +844,8 @@ private fun Audio() {
             }
         }
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            RecordButton(VoiceRecorder.Status.Idle, level = { 0f }, onStart = {}, onStop = {})
-            RecordButton(VoiceRecorder.Status.Recording(SystemClock.elapsedRealtime() - 7_000), level = { 0.6f }, onStart = {}, onStop = {})
+            RecordButton(VoiceRecorder.Status.Idle, onStart = {}, onStop = {})
+            RecordButton(VoiceRecorder.Status.Recording(SystemClock.elapsedRealtime() - 7_000), onStart = {}, onStop = {})
         }
         VoiceAnswerRecorder(
             grade = { recording ->

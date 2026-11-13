@@ -49,6 +49,8 @@ import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.Limit
+import com.zoonk.android.ui.components.LimitPeriod
+import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.OutlinedButton
@@ -170,7 +172,7 @@ fun LessonWaitingScreen(
                             kind,
                             shown,
                             viewModel::retry,
-                            stringResource(if (hold.holding) R.string.warm_up_lesson_ready else R.string.player_writing_note),
+                            if (hold.holding) null else stringResource(R.string.player_writing_note),
                             progressShare = share,
                         )
                     }
@@ -230,7 +232,7 @@ fun LessonWritingProgress(
 
 /**
  * Main's `LessonNotWrittenNotice`: a lesson its checks set aside, the shared limit notice with a
- * slow-down's Try again, or Plus's free week being over; other refusals show nothing here.
+ * slow-down's Try again; other refusals show nothing here.
  */
 @Composable
 fun LessonNotWrittenNotice(
@@ -238,24 +240,21 @@ fun LessonNotWrittenNotice(
     onRetry: () -> Unit,
     onOpen: (AppRoute) -> Unit,
 ) {
-    when (val refusal = (writing as? LessonWriting.Refused)?.refusal) {
-        is LessonRefusal.Limited -> {
+    val limit =
+        when (val refusal = (writing as? LessonWriting.Refused)?.refusal) {
+            is LessonRefusal.Limited -> refusal.limit
+            LessonRefusal.PlusRequired -> Limit.Reached(LimitTier.Free, LimitPeriod.Month)
+            else -> null
+        }
+    when {
+        limit != null -> {
             LimitNotice(
-                limit = refusal.limit,
+                limit = limit,
                 subject = LimitSubject.Lessons,
                 onCreateAccount = { onOpen(AppRoute.Login) },
-                onSeePlus = { onOpen(AppRoute.Subscription) },
-                modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                onSubscribe = { onOpen(AppRoute.Subscription) },
             )
-            if (refusal.limit is Limit.SlowDown) OutlinedButton(onClick = onRetry) { Text(stringResource(R.string.player_try_again)) }
-        }
-
-        LessonRefusal.PlusRequired -> {
-            Notice(
-                stringResource(R.string.subscription_free_week_over_title),
-                stringResource(R.string.subscription_free_week_over_description),
-            )
-            OutlinedButton(onClick = { onOpen(AppRoute.Subscription) }) { Text(stringResource(R.string.player_see_plus)) }
+            if (limit is Limit.SlowDown) OutlinedButton(onClick = onRetry) { Text(stringResource(R.string.player_try_again)) }
         }
 
         else -> {

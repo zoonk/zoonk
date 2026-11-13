@@ -274,7 +274,7 @@ internal fun MindMapLimit(
         limit = limit,
         subject = subject,
         onCreateAccount = { navigate(AppRoute.Login) },
-        onSeePlus = { navigate(AppRoute.Subscription) },
+        onSubscribe = { navigate(AppRoute.Subscription) },
         modifier = modifier,
     )
 }
