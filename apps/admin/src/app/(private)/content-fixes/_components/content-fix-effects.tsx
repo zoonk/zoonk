@@ -33,7 +33,11 @@ function describeEffect({
   }
 }
 
-export function ContentFixEffects({ fix }: { fix: ContentFixDetail }) {
+export function ContentFixEffects({
+  fix,
+}: {
+  fix: Pick<ContentFixDetail, "effects" | "rowLabels">;
+}) {
   if (fix.effects.length === 0) {
     return <p className="text-muted-foreground text-sm">Nothing else changes.</p>;
   }

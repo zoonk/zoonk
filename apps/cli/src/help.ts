@@ -21,10 +21,14 @@ Staff (production data)
   staff count <model> [--where ...]       Number of records matching every --where
 
 Content fixes (proposed here, approved by a staff person in Admin with a passkey)
-  staff fixes propose <file.json>         Propose { reason, feedbackId?, changes: [...] } and print
-                                          the fix: its review link, each field's before and after,
-                                          and its effects. Nothing changes until it's approved.
+  staff fixes propose <file.json>         Propose { reason, feedbackId?, changes: [...] }, or a batch
+                                          { reason, fixes: [{ changes, reason? }, ...] } of up to 250,
+                                          and print the batch's review link and each fix: each
+                                          field's before and after, and its effects. Nothing changes
+                                          until it's approved.
   staff fixes revert <fixId> --reason "…" Propose putting back what an applied fix replaced
+  staff fixes revert --batch <batchId> --reason "…"
+                                          The same for every applied fix of a batch, as a new batch
 
 Data commands print JSON on stdout; messages and errors go to stderr.
 

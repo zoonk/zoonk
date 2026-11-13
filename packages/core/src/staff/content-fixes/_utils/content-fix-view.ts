@@ -1,14 +1,11 @@
 import { type ContentFix } from "@zoonk/db";
 import { logInfo } from "@zoonk/utils/logger";
-import { ADMIN_URL } from "@zoonk/utils/url";
+import { batchOf, getContentFixReviewUrl } from "../batches";
 import { contentFixChangesSchema, contentFixEffectsSchema } from "../contract";
-
-function getContentFixReviewUrl(fixId: string): string {
-  return new URL(`/content-fixes/${fixId}`, ADMIN_URL).toString();
-}
 
 export function toContentFixView(fix: ContentFix) {
   return {
+    batchId: batchOf(fix),
     changes: contentFixChangesSchema.parse(fix.changes),
     effects: contentFixEffectsSchema.parse(fix.effects),
     feedbackId: fix.feedbackId,
@@ -27,8 +24,9 @@ export type ContentFixView = ReturnType<typeof toContentFixView>;
 
 /** One line per proposal or decision: who, which fix and what happened, never the content itself. */
 export function logContentFix(entry: {
-  action: "approve" | "propose" | "reject" | "revert";
+  action: "apply" | "approve" | "propose" | "reject" | "resume" | "revert";
   actorUserId: string | null;
+  batchId?: string | null;
   clientId?: string | null;
   fixId?: string | null;
   outcome: string;
@@ -38,6 +36,7 @@ export function logContentFix(entry: {
     JSON.stringify({
       action: entry.action,
       actorUserId: entry.actorUserId,
+      batchId: entry.batchId ?? null,
       clientId: entry.clientId ?? null,
       durationMs: Math.round(performance.now() - entry.started),
       event: "staff.contentFix",

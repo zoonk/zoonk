@@ -151,7 +151,15 @@ function toValueChanges({
     : [whole];
 }
 
-function FieldChanges({ field, model }: { field: FieldChange; model: StoredChange["model"] }) {
+function FieldChanges({
+  compact,
+  field,
+  model,
+}: {
+  compact: boolean;
+  field: FieldChange;
+  model: StoredChange["model"];
+}) {
   const isJson = typeof field.before !== "string" && typeof field.after !== "string";
 
   return (
@@ -162,7 +170,7 @@ function FieldChanges({ field, model }: { field: FieldChange; model: StoredChang
         ))}
       </ul>
 
-      {isJson && (
+      {isJson && !compact && (
         <div className="grid gap-x-3 md:grid-cols-2">
           <AdminJson label={`Whole ${field.field} before`} value={field.before} />
           <AdminJson label={`Whole ${field.field} after`} value={field.after} />
@@ -180,11 +188,11 @@ function PictureLink({ mediaAssetId }: { mediaAssetId: string }) {
   );
 }
 
-function ChangeBody({ change }: { change: StoredChange }) {
+function ChangeBody({ change, compact }: { change: StoredChange; compact: boolean }) {
   switch (change.op) {
     case "set":
       return change.fields.map((field) => (
-        <FieldChanges field={field} key={field.field} model={change.model} />
+        <FieldChanges compact={compact} field={field} key={field.field} model={change.model} />
       ));
     case "retire":
       return <p className="text-sm">Takes this question out of new practice.</p>;
@@ -208,8 +216,17 @@ function ChangeBody({ change }: { change: StoredChange }) {
   }
 }
 
-/** jsdiff reads the clock for its time limit, which Next.js refuses while it prerenders a prefetch. */
-export async function ContentFixChanges({ fix }: { fix: ContentFixDetail }) {
+/**
+ * jsdiff reads the clock for its time limit, which Next.js refuses while it prerenders a prefetch.
+ * `compact` shows only the values that change, without each JSON field's whole before and after.
+ */
+export async function ContentFixChanges({
+  compact = false,
+  fix,
+}: {
+  compact?: boolean;
+  fix: Pick<ContentFixDetail, "changes" | "rowLabels">;
+}) {
   await connection();
 
   return (
@@ -220,7 +237,7 @@ export async function ContentFixChanges({ fix }: { fix: ContentFixDetail }) {
             {fix.rowLabels.get(change.id) ?? MODEL_LABELS[change.model]}
             <span className="text-muted-foreground font-mono text-xs font-normal">{change.id}</span>
           </h3>
-          <ChangeBody change={change} />
+          <ChangeBody change={change} compact={compact} />
         </li>
       ))}
     </ul>

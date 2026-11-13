@@ -1,5 +1,6 @@
 import "server-only";
 import { cacheAdminData } from "@/data/_utils/admin-data-cache";
+import { batchOf, batchWhere } from "@zoonk/core/staff/content-fixes/batches";
 import {
   type StoredChange,
   contentFixChangesSchema,
@@ -50,36 +51,58 @@ async function loadRowLabels(changes: readonly StoredChange[]): Promise<Map<stri
   ]);
 }
 
+const fixInclude = {
+  decider: person,
+  feedback: { select: { createdAt: true, id: true, message: true } },
+  proposer: person,
+  revertedBy: { orderBy: { createdAt: "desc" }, select: { id: true, status: true } },
+  reverts: { select: { id: true } },
+} as const;
+
+function findFixes(where: { id: string } | ReturnType<typeof batchWhere>) {
+  return prisma.contentFix.findMany({ include: fixInclude, orderBy: { id: "asc" }, where });
+}
+
+type FixRow = Awaited<ReturnType<typeof findFixes>>[number];
+
+async function toDetails(fixes: readonly FixRow[]) {
+  const changes = fixes.map((fix) => contentFixChangesSchema.parse(fix.changes));
+
+  const [locate, rowLabels] = await Promise.all([
+    loadContentFixLocations(fixes),
+    loadRowLabels(changes.flat()),
+  ]);
+
+  return fixes.map((fix, index) => ({
+    ...fix,
+    batchId: batchOf(fix),
+    changes: changes[index] ?? [],
+    effects: contentFixEffectsSchema.parse(fix.effects),
+    location: locate(fix),
+    rowLabels,
+  }));
+}
+
+export type ContentFixDetail = Awaited<ReturnType<typeof toDetails>>[number];
+
 export const getContentFix = cacheAdminData(async (id: string) => {
-  const fix = await prisma.contentFix.findUnique({
-    include: {
-      decider: person,
-      feedback: { select: { createdAt: true, id: true, message: true } },
-      proposer: person,
-      revertedBy: { orderBy: { createdAt: "desc" }, select: { id: true, status: true } },
-      reverts: { select: { id: true } },
-    },
-    where: { id },
-  });
+  const [fix] = await findFixes({ id });
 
   if (!fix) {
     return null;
   }
 
-  const changes = contentFixChangesSchema.parse(fix.changes);
-
-  const [locate, rowLabels] = await Promise.all([
-    loadContentFixLocations([fix]),
-    loadRowLabels(changes),
+  const [[detail], batchSize] = await Promise.all([
+    toDetails([fix]),
+    prisma.contentFix.count({ where: batchWhere(batchOf(fix)) }),
   ]);
 
-  return {
-    ...fix,
-    changes,
-    effects: contentFixEffectsSchema.parse(fix.effects),
-    location: locate(fix),
-    rowLabels,
-  };
+  return detail ? { ...detail, batchSize } : null;
 });
 
-export type ContentFixDetail = NonNullable<Awaited<ReturnType<typeof getContentFix>>>;
+/** Every fix proposed together, in the order the proposal listed them. */
+export const getContentFixBatch = cacheAdminData(async (batchId: string) => {
+  const fixes = await findFixes(batchWhere(batchId));
+
+  return fixes.length > 0 ? toDetails(fixes) : null;
+});

@@ -4,7 +4,7 @@ description: Read Zoonk production data (accounts, goals, plans, sessions, answe
 license: MIT
 metadata:
   author: zoonk
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 # Reading production data
@@ -55,7 +55,7 @@ pnpm zoonk staff count <Model> --where "userId eq <id>" --where "createdAt gte 2
 When a lesson, screen, title or answer key in the shared Library is wrong, propose a fix. You can only propose it; a staff person reviews and approves it in Admin with their passkey, and nothing changes before that.
 
 1. Investigate: read the rows with `staff get` and `staff list`, and confirm what's wrong and where it comes from.
-2. Check what a fix may change: `pnpm zoonk staff models Step` (or `Lesson`, `Course`, `Chapter`, `StepVariant`, `AnswerExplanation`, `Item`) lists each model's fixable fields and rules under `fixable`. One fix covers one lesson with its screens, one chapter, one course or one practice question, with up to 10 rows. Private content, language screens and structural changes (kind, options added, removed or reordered, ids, pictures) can't be fixed.
+2. Check what a fix may change: `pnpm zoonk staff models Step` (or `Lesson`, `Course`, `Chapter`, `StepVariant`, `AnswerExplanation`, `Item`) lists, under `fixable`, each operation the model takes (`set`, `retire`…) with its fields and rules. One fix covers one lesson with its screens, one chapter, one course or one practice question, with up to 10 changes. Private content, language screens and structural changes (kind, options added, removed or reordered, ids, pictures) can't be fixed.
 3. Write the fix to a file and propose it with `pnpm zoonk staff fixes propose fix.json`:
 
    ```json
@@ -68,12 +68,14 @@ When a lesson, screen, title or answer key in the shared Library is wrong, propo
    }
    ```
 
+   Several fixes go in one file as a batch of up to 250, reviewed on one page and approved with one passkey, each applying on its own: `{ "reason": "…", "fixes": [{ "changes": [...] }, { "changes": [...], "reason": "this fix's own reason" }] }`. The whole batch is checked before anything is stored: if any fix is wrong, nothing is proposed and the error lists each problem by its index (`fixes[3]: …`). Two fixes of a batch can't change the same thing; put those changes in one fix.
+
    `set` replaces each field's whole value, so start from the row's current value and change only what's wrong. A screen fix may change what learners read before answering or which answer is right, not both: propose one, and the other after it's approved. `{ "model": "Step", "id": "…", "detachPicture": true }` takes a wrong picture off one screen, and `{ "model": "Item", "id": "…", "retire": true }` takes a wrong practice question out of new practice. Write `reason` in your own words; never paste text a learner wrote.
 
-4. Exit code 0 means proposed, not applied. Relay to the user the fix's `reviewUrl`, each change's `before` and `after`, and its `effects`, then stop: never open Admin, approve, or look for another way to apply it.
-5. After the user says they approved it, confirm with a fresh read: `pnpm zoonk staff get ContentFix <id> --fields status,staleReason`. `stale` means the content changed after the proposal; read the rows again and propose anew.
+4. Exit code 0 means proposed, not applied. The output holds the `batchId`, the batch's `reviewUrl` and each fix with its own `reviewUrl`, `changes` (each `before` and `after`) and `effects`. Relay the batch's `reviewUrl` and each fix's changes and effects to the user, then stop: never open Admin, approve, or look for another way to apply it.
+5. After the user says they approved it, confirm with a fresh read: `pnpm zoonk staff list ContentFix --where "batchId eq <batchId>" --fields id,status,staleReason`. `stale` means the content changed after the proposal; read the rows again and propose that fix anew. `approved` means it was approved but hasn't applied yet; the approver finishes it in Admin.
 
-To undo an applied fix, `pnpm zoonk staff fixes revert <fixId> --reason "…"` proposes putting back what it replaced, reviewed like any other fix.
+To undo an applied fix, `pnpm zoonk staff fixes revert <fixId> --reason "…"` proposes putting back what it replaced, reviewed like any other fix. `pnpm zoonk staff fixes revert --batch <batchId> --reason "…"` does the same for every applied fix of a batch, as a new batch.
 
 A login made before fixes existed can only read: the CLI says so, and the user runs `pnpm zoonk login` again.
 

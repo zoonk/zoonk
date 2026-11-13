@@ -6,7 +6,7 @@ import {
 } from "@/components/admin-detail";
 import { AdminSection, AdminSectionSkeleton } from "@/components/admin-section";
 import { DetailField, DetailFields } from "@/components/detail-field";
-import { type ContentFixDetail, getContentFix } from "@/data/content-fixes/get-content-fix";
+import { getContentFix } from "@/data/content-fixes/get-content-fix";
 import { capitalize, formatDateTime } from "@/lib/format";
 import { getStaffPasskeyStatus } from "@zoonk/core/staff/content-fixes/decide";
 import { getEnvironment } from "@zoonk/utils/environment";
@@ -16,12 +16,14 @@ import { type Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { ContentFixChanges } from "../_components/content-fix-changes";
+import { ResumeApplying, RevertForm, ReviewDecision } from "../_components/content-fix-decision";
+import { ContentFixEffects } from "../_components/content-fix-effects";
 import { contentFixStatusLabels } from "../content-fix-status";
-import { ContentFixChanges } from "./content-fix-changes";
-import { RevertForm, ReviewDecision } from "./content-fix-decision";
-import { ContentFixEffects } from "./content-fix-effects";
 
 type Props = PageProps<"/content-fixes/[fixId]">;
+
+type ContentFixDetail = NonNullable<Awaited<ReturnType<typeof getContentFix>>>;
 
 const FIX_PARENTS = [{ href: "/content-fixes", label: "Content fixes" }];
 
@@ -116,6 +118,13 @@ function Why({ fix }: { fix: ContentFixDetail }) {
             in {proposedIn} · {formatDateTime(fix.createdAt)}
           </span>
         </DetailField>
+        {fix.batchSize > 1 && (
+          <DetailField label="Batch">
+            <Link className="underline" href={`/content-fixes/batches/${fix.batchId}`} prefetch>
+              All {fix.batchSize} fixes proposed with it
+            </Link>
+          </DetailField>
+        )}
         {fix.reverts && (
           <DetailField label="Reverts">
             <Link className="underline" href={`/content-fixes/${fix.reverts.id}`} prefetch>
@@ -138,12 +147,13 @@ function Why({ fix }: { fix: ContentFixDetail }) {
   );
 }
 
-function Outcome({ fix }: { fix: ContentFixDetail }) {
+function Outcome({ fix, viewerId }: { fix: ContentFixDetail; viewerId: string | null }) {
   const decided = [fix.decider?.name, formatDateTime(fix.decidedAt)].filter(Boolean).join(" · ");
   const reverts = fix.revertedBy.filter((revert) => revert.status !== "rejected");
 
   const messages = {
     applied: "Applied. Learners get the changed content.",
+    approved: "Approved with a passkey. It hasn't applied yet.",
     rejected: "Rejected. Nothing changed.",
     stale: `Stale. Nothing changed. ${fix.staleReason ?? ""}`,
   };
@@ -174,21 +184,28 @@ function Outcome({ fix }: { fix: ContentFixDetail }) {
       )}
 
       {fix.status === "applied" && <RevertForm fixId={fix.id} />}
+      {fix.status === "approved" && fix.deciderId === viewerId && (
+        <ResumeApplying batchId={fix.batchId} count={1} />
+      )}
     </div>
   );
 }
 
 async function Decision({ fix }: { fix: ContentFixDetail }) {
-  if (fix.status !== "proposed") {
-    return <Outcome fix={fix} />;
-  }
-
   const passkey = await getStaffPasskeyStatus();
+  const viewerId = passkey.status === "ready" ? passkey.userId : null;
+
+  if (fix.status !== "proposed") {
+    return <Outcome fix={fix} viewerId={viewerId} />;
+  }
 
   return (
     <ReviewDecision
-      fixId={fix.id}
+      approveLabel="Approve with passkey"
+      batchId={fix.batchId}
+      fixIds={[fix.id]}
       hasPasskey={passkey.status === "ready" && passkey.hasPasskey}
+      rejectFixId={fix.id}
       settingsUrl={getMainPageUrl({ locale: "en", path: "/profile" })}
     />
   );

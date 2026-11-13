@@ -1,5 +1,6 @@
 import "server-only";
 import { cacheAdminData } from "@/data/_utils/admin-data-cache";
+import { batchOf } from "@zoonk/core/staff/content-fixes/batches";
 import { prisma } from "@zoonk/db";
 import { loadContentFixLocations } from "./content-fix-locations";
 
@@ -7,6 +8,7 @@ const MAX_PENDING = 100;
 const MAX_DECIDED = 50;
 
 const fixSelect = {
+  batchId: true,
   createdAt: true,
   decidedAt: true,
   decider: { select: { name: true } },
@@ -22,6 +24,18 @@ const fixSelect = {
 export const countPendingContentFixes = cacheAdminData(() =>
   prisma.contentFix.count({ where: { status: "proposed" } }),
 );
+
+async function loadBatchSizes(batchIds: string[]): Promise<Map<string, number>> {
+  const groups = await prisma.contentFix.groupBy({
+    _count: { id: true },
+    by: ["batchId"],
+    where: { batchId: { in: [...new Set(batchIds)] } },
+  });
+
+  return new Map(
+    groups.flatMap((group) => (group.batchId ? [[group.batchId, group._count.id]] : [])),
+  );
+}
 
 /** Every fix waiting for a decision, then the latest decisions. */
 export const listContentFixes = cacheAdminData(async () => {
@@ -40,11 +54,22 @@ export const listContentFixes = cacheAdminData(async () => {
     }),
   ]);
 
-  const locate = await loadContentFixLocations([...pending, ...decided]);
+  const fixes = [...pending, ...decided];
+
+  const [locate, batchSizes] = await Promise.all([
+    loadContentFixLocations(fixes),
+    loadBatchSizes(fixes.map((fix) => batchOf(fix))),
+  ]);
+
+  const withPlace = (fix: (typeof fixes)[number]) => ({
+    ...fix,
+    batch: { id: batchOf(fix), size: batchSizes.get(batchOf(fix)) ?? 1 },
+    location: locate(fix),
+  });
 
   return {
-    decided: decided.map((fix) => ({ ...fix, location: locate(fix) })),
-    pending: pending.map((fix) => ({ ...fix, location: locate(fix) })),
+    decided: decided.map((fix) => withPlace(fix)),
+    pending: pending.map((fix) => withPlace(fix)),
   };
 });
 

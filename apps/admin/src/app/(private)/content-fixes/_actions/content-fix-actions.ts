@@ -25,20 +25,23 @@ function showDecision() {
 
 export type ApprovalStart =
   | { options: PasskeyApprovalOptions; status: "ready" }
-  | { status: "decided" | "failed" | "needsPasskey" };
+  | { status: "changed" | "failed" | "needsPasskey" };
 
-/** The challenge is stored on the fix; only applying it has to run in the API. */
-export async function startContentFixApprovalAction(fixId: string): Promise<ApprovalStart> {
+/** The challenge is stored on the selected fixes; only applying them has to run in the API. */
+export async function startContentFixApprovalAction(input: {
+  batchId: string;
+  fixIds: string[];
+}): Promise<ApprovalStart> {
   await assertAdmin();
-  const result = await getContentFixApprovalOptions(fixId);
+  const result = await getContentFixApprovalOptions(input);
 
   if (result.status === "ready" || result.status === "needsPasskey") {
     return result;
   }
 
-  if (result.status === "decided") {
+  if (result.status === "changed") {
     showDecision();
-    return { status: "decided" };
+    return { status: "changed" };
   }
 
   return { status: "failed" };
@@ -55,23 +58,25 @@ export type ApprovalOutcome =
   | { status: "approvalExpired" | "assertionInvalid" | "failed" };
 
 /**
- * Applies the fix in the API, which is the app that tells Main its cached content changed. The
+ * Applies fixes in the API, which is the app that tells Main its cached content changed. The
  * approver's own session token authorizes it there, and core checks the passkey assertion.
  */
-export async function approveContentFixAction(input: {
-  assertion: unknown;
-  fixId: string;
+async function decideInApi({
+  batchId,
+  body,
+}: {
+  batchId: string;
+  body: Record<string, unknown>;
 }): Promise<ApprovalOutcome> {
   const session = await assertAdmin();
-  const assertion = passkeyAssertionSchema.safeParse(input.assertion);
 
-  if (!isUuid(input.fixId) || !assertion.success) {
+  if (!isUuid(batchId)) {
     return { status: "failed" };
   }
 
   const response = await postAdminApi({
-    body: { assertion: assertion.data, decision: "approve" },
-    path: `/v1/content-fixes/${input.fixId}/decisions`,
+    body,
+    path: `/v1/content-fix-batches/${batchId}/decisions`,
     sessionToken: session.session.token,
   });
 
@@ -86,6 +91,25 @@ export async function approveContentFixAction(input: {
   }
 
   return decision.data;
+}
+
+export async function approveContentFixesAction(input: {
+  assertion: unknown;
+  batchId: string;
+}): Promise<ApprovalOutcome> {
+  const assertion = passkeyAssertionSchema.safeParse(input.assertion);
+
+  return assertion.success
+    ? decideInApi({
+        batchId: input.batchId,
+        body: { assertion: assertion.data, decision: "approve" },
+      })
+    : { status: "failed" };
+}
+
+/** Finishes what this approver already approved with a passkey, such as after a crash. */
+export async function resumeContentFixesAction(batchId: string): Promise<ApprovalOutcome> {
+  return decideInApi({ batchId, body: { decision: "resume" } });
 }
 
 export async function rejectContentFixAction(
@@ -115,9 +139,11 @@ export async function revertContentFixAction(
     reason: parseFormField(formData, "reason") ?? "",
   });
 
-  if (result.status === "proposed") {
+  const [revert] = result.status === "proposed" ? result.fixes : [];
+
+  if (revert) {
     showDecision();
-    redirect(`/content-fixes/${result.fix.id}`);
+    redirect(`/content-fixes/${revert.id}`);
   }
 
   return {

@@ -24,10 +24,6 @@ export const FIX_HANDLERS = [
   itemUnretire,
 ] as const;
 
-type Handler = (typeof FIX_HANDLERS)[number];
-
-export type FixableModel = Handler["model"];
-
 /** What `pnpm zoonk staff models` tells an agent it may propose for each model. */
 export const FIXABLE_MODELS: ReadonlyMap<
   string,

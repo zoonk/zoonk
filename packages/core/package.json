@@ -653,6 +653,7 @@
     "./sessions/summary": "./src/sessions/get-study-session-summary.ts",
     "./staff/actor": "./src/staff/get-staff-actor.ts",
     "./staff/cli-login": "./src/staff/decide-cli-login.ts",
+    "./staff/content-fixes/batches": "./src/staff/content-fixes/batches.ts",
     "./staff/content-fixes/contract": "./src/staff/content-fixes/contract.ts",
     "./staff/content-fixes/decide": "./src/staff/content-fixes/decide-content-fix.ts",
     "./staff/content-fixes/propose": "./src/staff/content-fixes/propose-content-fix.ts",

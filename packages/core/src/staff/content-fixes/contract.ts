@@ -1,10 +1,11 @@
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
+import { MAX_BATCH_FIXES } from "./batches";
 import { FIX_HANDLERS } from "./handlers/registry";
 
 /**
- * A typo repeated across a lesson's screens fits, and an approver can still read every row's
- * before and after in one sitting; a bigger rewrite is a new version of the lesson, not a fix.
+ * A review bound on what one fix asks the approver to read, not on what it depends on: a unit that
+ * must change several rows together carries them all.
  */
 const MAX_CONTENT_FIX_CHANGES = 10;
 
@@ -12,21 +13,49 @@ const MAX_REASON_LENGTH = 2000;
 
 const idSchema = uuidSchema();
 const reasonSchema = z.string().trim().min(1).max(MAX_REASON_LENGTH);
+const feedbackSchema = idSchema.meta({ description: "The learner report this fix answers" });
 
-const proposedChangeSchema = z
-  .looseObject({ id: idSchema, model: z.string() })
-  .meta({ description: "{ model, id, <operation> }; pnpm zoonk staff models lists each model's" });
+const changesSchema = z
+  .array(
+    z
+      .looseObject({ id: idSchema, model: z.string() })
+      .meta({ description: "{ model, id, <operation> }, as pnpm zoonk staff models lists them" }),
+  )
+  .min(1)
+  .max(MAX_CONTENT_FIX_CHANGES);
+
+const batchFixSchema = z.strictObject({
+  changes: changesSchema,
+  feedbackId: feedbackSchema.optional(),
+  reason: reasonSchema.optional().meta({ description: "This fix's own reason, if it differs" }),
+});
 
 export const contentFixProposalSchema = z
   .strictObject({
-    changes: z.array(proposedChangeSchema).min(1).max(MAX_CONTENT_FIX_CHANGES),
-    feedbackId: idSchema.optional().meta({ description: "The learner report this fix answers" }),
+    changes: changesSchema.optional().meta({ description: "One fix's changes" }),
+    feedbackId: feedbackSchema.optional(),
+    fixes: z
+      .array(batchFixSchema)
+      .min(1)
+      .max(MAX_BATCH_FIXES)
+      .optional()
+      .meta({ description: "A batch: fixes reviewed and approved together, each applied alone" }),
     reason: reasonSchema.meta({ description: "Why the content is wrong, in the proposer's words" }),
+  })
+  .refine((proposal) => (proposal.changes === undefined) !== (proposal.fixes === undefined), {
+    message: "Send changes for one fix or fixes for a batch, not both.",
   })
   .meta({ id: "ContentFixProposal" });
 
 export const contentFixRevertSchema = z
-  .strictObject({ fixId: idSchema, reason: reasonSchema })
+  .strictObject({
+    batchId: idSchema.optional().meta({ description: "Revert every applied fix of this batch" }),
+    fixId: idSchema.optional(),
+    reason: reasonSchema,
+  })
+  .refine((revert) => (revert.batchId === undefined) !== (revert.fixId === undefined), {
+    message: "Name one fixId or one batchId.",
+  })
   .meta({ id: "ContentFixRevert" });
 
 const storedChangeSchema = z.union(FIX_HANDLERS.map((handler) => handler.stored));
