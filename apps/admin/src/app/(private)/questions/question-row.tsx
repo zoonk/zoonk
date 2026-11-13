@@ -1,6 +1,7 @@
 import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
 import { AdminUserCell } from "@/components/admin-user-cell";
 import { type ListedLessonQuestion } from "@/data/questions/list-lesson-questions";
+import { formatDate } from "@/lib/format";
 import {
   getAdminQuestionLessonContext,
   getAdminQuestionStatusVariant,
@@ -54,7 +55,7 @@ export function QuestionRow({ question }: { question: ListedLessonQuestion }) {
             className="text-muted-foreground text-xs"
             dateTime={question.createdAt.toISOString()}
           >
-            {question.createdAt.toLocaleDateString()}
+            {formatDate(question.createdAt)}
           </time>
         </div>
       </TableCell>

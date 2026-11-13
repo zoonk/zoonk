@@ -1,5 +1,6 @@
 import { AdminTableRow, AdminTableRowLink } from "@/components/admin-table-row";
 import { type ListedCourse } from "@/data/courses/list-courses";
+import { formatDate } from "@/lib/format";
 import { TableCell } from "@zoonk/ui/components/table";
 
 export function CourseRow({ course }: { course: ListedCourse }) {
@@ -24,9 +25,7 @@ export function CourseRow({ course }: { course: ListedCourse }) {
         )}
       </TableCell>
 
-      <TableCell className="text-muted-foreground">
-        {new Date(course.createdAt).toLocaleDateString()}
-      </TableCell>
+      <TableCell className="text-muted-foreground">{formatDate(course.createdAt)}</TableCell>
     </AdminTableRow>
   );
 }

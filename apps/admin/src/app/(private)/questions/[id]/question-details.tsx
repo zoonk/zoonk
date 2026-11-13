@@ -2,6 +2,7 @@ import { DetailField, DetailFields } from "@/components/detail-field";
 import { getRunAiUsage } from "@/data/ai/get-run-ai-usage";
 import { type getLessonQuestion } from "@/data/questions/get-lesson-question";
 import { formatUsd } from "@/lib/ai-format";
+import { formatDateTime } from "@/lib/format";
 import {
   type AdminQuestionLessonContext,
   getAdminQuestionContextLabel,
@@ -65,7 +66,7 @@ export async function QuestionDetails({ question }: { question: LessonQuestionDe
         {usage?.costUsd === null || usage?.costUsd === undefined ? "—" : formatUsd(usage.costUsd)}
       </DetailField>
       <DetailField label="Finish reason">{question.finishReason ?? "—"}</DetailField>
-      <DetailField label="Updated">{question.updatedAt.toLocaleString()}</DetailField>
+      <DetailField label="Updated">{formatDateTime(question.updatedAt)}</DetailField>
     </DetailFields>
   );
 }

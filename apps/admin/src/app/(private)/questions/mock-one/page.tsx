@@ -81,7 +81,7 @@ export default async function BuddyQuestionMockPage({
             }
           >
             <AdminSection title="The buddy answered">
-              <div className="flex max-w-2xl flex-col gap-3 text-sm leading-6">
+              <div className="flex max-w-prose flex-col gap-3 text-sm leading-6">
                 <AdminAnswerMarkdown answer={saved.answer} />
               </div>
             </AdminSection>

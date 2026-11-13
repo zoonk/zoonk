@@ -40,7 +40,7 @@ function Screen({
           <span className="text-muted-foreground text-xs leading-5 font-medium">{kind}</span>
           <span className="text-muted-foreground shrink-0 text-xs">{answers}</span>
         </div>
-        <div className="max-w-column flex flex-col gap-3 text-sm leading-6">{children}</div>
+        <div className="flex max-w-prose flex-col gap-3 text-sm leading-6">{children}</div>
       </div>
     </li>
   );
