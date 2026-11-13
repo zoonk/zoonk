@@ -46197,9 +46197,19 @@
           "tier"
         ],
         "additionalProperties": false,
-        "description": "Signed-in free learners share 20 distinct new lessons per UTC calendar month across every goal, including exams. Each lesson ID counts once, including generation ahead of study, whether reused or generated. Continuing or replaying an admitted lesson, practice and reviews do not count again. items[kind=lessonStart] supplies usedThisMonth, monthlyLimit and remaining; resets.month is the next UTC month boundary. A refused new start returns 402 USAGE_LIMIT_REACHED with details.limit resource=lessonStart, period=month, limit=20, tier=free. Other resources and guests retain their separate limits."
+        "description": "Free learners share 20 distinct lesson admissions in the preceding 30 times 24 hours across all goals, including exams. The lessonStart entry returns usedLast30Days, rollingLimit, remaining and availableAt. A refused start returns 402 USAGE_LIMIT_REACHED with details.limit period=rolling30Days and availableAt, so no second read or client date arithmetic is needed. Claims exactly 30 days old are outside the window. Replays of an admitted lesson never count again, whatever its age. Generation ahead of study uses the same claim. Other resources retain UTC calendar-month limits and resets.month applies only to them."
       },
       "AllowanceItem": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/LessonAllowanceItem"
+          },
+          {
+            "$ref": "#/components/schemas/MonthlyAllowanceItem"
+          }
+        ]
+      },
+      "LessonAllowanceItem": {
         "type": "object",
         "properties": {
           "dailyLimit": {
@@ -46212,29 +46222,6 @@
           "fairUseDailyLimit": {
             "nullable": true,
             "description": "Above this many a day, new uses are spaced out instead of blocked",
-            "type": "integer",
-            "minimum": -9007199254740991,
-            "maximum": 9007199254740991
-          },
-          "kind": {
-            "type": "string",
-            "enum": [
-              "lessonStart",
-              "explanation",
-              "goal",
-              "tutorMessage",
-              "upload",
-              "conversation",
-              "assist",
-              "mindMap",
-              "outline",
-              "mockQuestions"
-            ],
-            "description": "What is counted"
-          },
-          "monthlyLimit": {
-            "nullable": true,
-            "description": "Hard cap per UTC month, or null",
             "type": "integer",
             "minimum": -9007199254740991,
             "maximum": 9007199254740991
@@ -46253,11 +46240,89 @@
             "minimum": -9007199254740991,
             "maximum": 9007199254740991
           },
-          "usedThisMonth": {
+          "usedToday": {
             "type": "integer",
             "minimum": -9007199254740991,
             "maximum": 9007199254740991,
-            "description": "Uses this UTC month"
+            "description": "Uses this UTC day"
+          },
+          "usedTotal": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991,
+            "description": "Uses ever"
+          },
+          "availableAt": {
+            "nullable": true,
+            "description": "Instant a new lesson becomes available when the rolling cap is reached; null while rolling capacity remains or the tier has no rolling cap. The twentieth-newest claim time plus 30 times 24 hours, including when existing usage exceeds 20",
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "lessonStart"
+            ]
+          },
+          "rollingLimit": {
+            "nullable": true,
+            "description": "Hard cap on new lesson claims in the preceding 30 times 24 hours; null for tiers without this cap",
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "usedLast30Days": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991,
+            "description": "Lesson claims strictly after now minus 30 times 24 hours, through now"
+          }
+        },
+        "required": [
+          "dailyLimit",
+          "fairUseDailyLimit",
+          "remaining",
+          "totalLimit",
+          "usedToday",
+          "usedTotal",
+          "availableAt",
+          "kind",
+          "rollingLimit",
+          "usedLast30Days"
+        ],
+        "additionalProperties": false
+      },
+      "MonthlyAllowanceItem": {
+        "type": "object",
+        "properties": {
+          "dailyLimit": {
+            "nullable": true,
+            "description": "Hard cap per UTC day, or null",
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "fairUseDailyLimit": {
+            "nullable": true,
+            "description": "Above this many a day, new uses are spaced out instead of blocked",
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "remaining": {
+            "nullable": true,
+            "description": "Uses left before a hard cap, or null",
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "totalLimit": {
+            "nullable": true,
+            "description": "Hard cap for as long as the account exists",
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
           },
           "usedToday": {
             "type": "integer",
@@ -46270,18 +46335,45 @@
             "minimum": -9007199254740991,
             "maximum": 9007199254740991,
             "description": "Uses ever"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "explanation",
+              "goal",
+              "tutorMessage",
+              "upload",
+              "conversation",
+              "assist",
+              "mindMap",
+              "outline",
+              "mockQuestions"
+            ]
+          },
+          "monthlyLimit": {
+            "nullable": true,
+            "description": "Hard cap per UTC calendar month, or null",
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "usedThisMonth": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991,
+            "description": "Uses this UTC calendar month"
           }
         },
         "required": [
           "dailyLimit",
           "fairUseDailyLimit",
-          "kind",
-          "monthlyLimit",
           "remaining",
           "totalLimit",
-          "usedThisMonth",
           "usedToday",
-          "usedTotal"
+          "usedTotal",
+          "kind",
+          "monthlyLimit",
+          "usedThisMonth"
         ],
         "additionalProperties": false
       },
@@ -80171,16 +80263,16 @@
             "minimum": -9007199254740991,
             "maximum": 9007199254740991
           },
-          "lessonsPerDay": {
+          "lessonsPer30Days": {
             "nullable": true,
-            "description": "Always null. Free lesson admission uses the monthly allowance",
+            "description": "20 distinct lessons across all goals in the preceding 30 times 24 hours; admitted lessons can be replayed without another charge",
             "type": "integer",
             "minimum": -9007199254740991,
             "maximum": 9007199254740991
           },
-          "lessonsPerMonth": {
+          "lessonsPerDay": {
             "nullable": true,
-            "description": "20 distinct lessons across all goals per UTC calendar month; admitted lessons can be replayed without another charge",
+            "description": "Always null. Free lesson admission uses the rolling 30-day allowance",
             "type": "integer",
             "minimum": -9007199254740991,
             "maximum": 9007199254740991
@@ -80204,8 +80296,8 @@
           "activeGoals",
           "examPrepDays",
           "guestLessons",
+          "lessonsPer30Days",
           "lessonsPerDay",
-          "lessonsPerMonth",
           "tutorMessagesPerDay",
           "uploadsPerDay"
         ],
@@ -82684,41 +82776,87 @@
         "additionalProperties": false
       },
       "AllowanceLimit": {
-        "type": "object",
-        "properties": {
-          "limit": {
-            "type": "integer",
-            "minimum": -9007199254740991,
-            "maximum": 9007199254740991
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "limit": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              "resource": {
+                "type": "string",
+                "description": "What ran out, such as goal or activeGoals"
+              },
+              "tier": {
+                "type": "string",
+                "enum": [
+                  "free",
+                  "guest",
+                  "plus"
+                ]
+              },
+              "availableAt": {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                "description": "The instant a new lesson is available, computed from the twentieth-newest claim in the rolling window"
+              },
+              "period": {
+                "type": "string",
+                "enum": [
+                  "rolling30Days"
+                ]
+              }
+            },
+            "required": [
+              "limit",
+              "resource",
+              "tier",
+              "availableAt",
+              "period"
+            ],
+            "additionalProperties": false
           },
-          "period": {
-            "type": "string",
-            "enum": [
-              "day",
-              "month",
-              "total"
-            ]
-          },
-          "resource": {
-            "type": "string",
-            "description": "What ran out, such as goal or activeGoals"
-          },
-          "tier": {
-            "type": "string",
-            "enum": [
-              "free",
-              "guest",
-              "plus"
-            ]
+          {
+            "type": "object",
+            "properties": {
+              "limit": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              "resource": {
+                "type": "string",
+                "description": "What ran out, such as goal or activeGoals"
+              },
+              "tier": {
+                "type": "string",
+                "enum": [
+                  "free",
+                  "guest",
+                  "plus"
+                ]
+              },
+              "period": {
+                "type": "string",
+                "enum": [
+                  "day",
+                  "month",
+                  "total"
+                ]
+              }
+            },
+            "required": [
+              "limit",
+              "resource",
+              "tier",
+              "period"
+            ],
+            "additionalProperties": false
           }
-        },
-        "required": [
-          "limit",
-          "period",
-          "resource",
-          "tier"
-        ],
-        "additionalProperties": false
+        ]
       },
       "GoalUpdateResponse": {
         "type": "object",
@@ -83013,7 +83151,7 @@
           },
           "plusRequired": {
             "type": "boolean",
-            "description": "Always false. New lessons use the shared monthly lesson allowance"
+            "description": "Always false. New lessons use the shared rolling 30-day lesson allowance"
           },
           "skillIds": {
             "type": "array",
@@ -84306,7 +84444,7 @@
               },
               "freeWeekOver": {
                 "type": "boolean",
-                "description": "Always false. Exam plans do not expire; new lessons use the shared monthly allowance"
+                "description": "Always false. Exam plans do not expire; new lessons use the shared rolling 30-day allowance"
               },
               "mocksRequirePlus": {
                 "type": "boolean"
@@ -88010,6 +88148,7 @@
             "enum": [
               "day",
               "month",
+              "rolling30Days",
               "total"
             ]
           },
@@ -88035,6 +88174,7 @@
             "type": "string",
             "enum": [
               "aiSpend",
+              "lessonStart",
               "mindMap"
             ]
           }

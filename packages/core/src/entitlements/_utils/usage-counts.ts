@@ -1,9 +1,12 @@
 import { type TransactionClient, type UsageKind } from "@zoonk/db";
+import { FREE_LESSON_LIMIT } from "../limits";
 import { countActiveGoals } from "./active-goals-left";
+import { type LessonStartUsage, loadLessonStartUsage } from "./lesson-start-usage";
 import { getUsagePeriodStarts } from "./usage-periods";
 
 export type UsageCounts = {
   activeGoals: number;
+  lessonStarts: LessonStartUsage;
   day: number;
   generatedTotal: number;
   lastUsedAt: Date | null;
@@ -16,10 +19,11 @@ export type UsageCounts = {
   total: number;
 };
 
-type KindUsage = Omit<UsageCounts, "activeGoals" | "spentTodayMicros">;
+type KindUsage = Omit<UsageCounts, "activeGoals" | "lessonStarts" | "spentTodayMicros">;
 
 export type UsageTotals = {
   activeGoals: number;
+  lessonStarts: LessonStartUsage;
   kinds: ReadonlyMap<UsageKind, KindUsage>;
   spentTodayMicros: number;
 };
@@ -79,7 +83,7 @@ export async function loadUsageTotals({
 }): Promise<UsageTotals> {
   const starts = getUsagePeriodStarts(now);
 
-  const [allTime, thisMonth, today, activeGoals] = await Promise.all([
+  const [allTime, thisMonth, today, activeGoals, lessonStarts] = await Promise.all([
     client.usageRecord.groupBy({
       _count: { id: true },
       _max: { createdAt: true },
@@ -99,6 +103,7 @@ export async function loadUsageTotals({
       where: { createdAt: { gte: starts.day }, userId },
     }),
     countActiveGoals({ db: client, userId }),
+    loadLessonStartUsage({ client, now, userId }),
   ]);
 
   const monthOf = new Map(thisMonth.map((group) => [group.kind, group]));
@@ -131,6 +136,7 @@ export async function loadUsageTotals({
   return {
     activeGoals,
     kinds,
+    lessonStarts,
     spentTodayMicros: today.reduce((sum, group) => sum + (group._sum.costMicros ?? 0), 0),
   };
 }
@@ -139,6 +145,7 @@ export function getUsageCounts(totals: UsageTotals, kind: UsageKind): UsageCount
   return {
     ...(totals.kinds.get(kind) ?? NO_USAGE),
     activeGoals: totals.activeGoals,
+    lessonStarts: totals.lessonStarts,
     spentTodayMicros: totals.spentTodayMicros,
   };
 }
@@ -189,6 +196,13 @@ export function addUsage({
         },
       ],
     ]),
+    lessonStarts:
+      kind === "lessonStart"
+        ? {
+            count: totals.lessonStarts.count + 1,
+            latest: [now, ...totals.lessonStarts.latest].slice(0, FREE_LESSON_LIMIT),
+          }
+        : totals.lessonStarts,
     spentTodayMicros: totals.spentTodayMicros + costMicros,
   };
 }

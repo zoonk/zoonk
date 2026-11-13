@@ -160,7 +160,7 @@ const savedMindMapSchema = z
 const mindMapAllowanceStopSchema = z
   .object({
     period: z
-      .enum(["day", "month", "total"])
+      .enum(["day", "month", "rolling30Days", "total"])
       .nullable()
       .meta({
         description:
@@ -180,7 +180,7 @@ const mindMapAllowanceStopSchema = z
           "When the allowance that stopped it comes back; null when it never does (`total`) or isn't known",
       }),
     resource: z
-      .enum(["aiSpend", "mindMap"])
+      .enum(["aiSpend", "lessonStart", "mindMap"])
       .nullable()
       .meta({ description: "What ran out: the learner's mind maps, or the day's AI budget" }),
   })
