@@ -475,7 +475,7 @@ const REGISTRY: Record<string, Registration[]> = {
   "staff/content-fixes/handlers/item-content.ts": [
     {
       verdict: "marks",
-      why: "bank item content, and which questions skill and exam plans pick",
+      why: "replacing or restoring a question changes which questions skill and exam plans pick",
       writes: ["item.create", "item.update"],
     },
   ],
@@ -1808,7 +1808,7 @@ async function itemFixCase(op: "retire" | "unretire"): Promise<WriterCase> {
   };
 }
 
-async function itemContentCase(op: "replace" | "restore" | "set"): Promise<WriterCase> {
+async function itemContentCase(op: "replace" | "restore"): Promise<WriterCase> {
   const [skill, blueprint] = await Promise.all([skillFixture(), examBlueprintFixture()]);
   const item = await itemFixture({ examBlueprintId: blueprint.id, skillId: skill.id });
 
@@ -1834,7 +1834,6 @@ async function itemContentCase(op: "replace" | "restore" | "set"): Promise<Write
   const changes: Record<typeof op, StoredChange> = {
     replace: { fields, id: item.id, model: "Item", op: "replace", replacementId: newId },
     restore: { id: item.id, model: "Item", op: "restore", retires: replacement.id },
-    set: { fields, id: item.id, model: "Item", op: "set" },
   };
 
   return {
@@ -1887,7 +1886,6 @@ const WRITER_CASES: Record<string, Record<string, () => Promise<WriterCase>>> = 
   "staff/content-fixes/handlers/item-content.ts": {
     "replace item": () => itemContentCase("replace"),
     "restore replaced item": () => itemContentCase("restore"),
-    "reword item": () => itemContentCase("set"),
   },
   "staff/content-fixes/handlers/practice.ts": {
     "restore item": () => itemFixCase("unretire"),
@@ -1920,6 +1918,43 @@ describe("content fixes to what plans don't read", () => {
 
     const before = await versions();
     await write();
+
+    await expect(versions()).resolves.toStrictEqual(before);
+  });
+
+  it("leave plans alone when a practice question is reworded in place", async () => {
+    const [skill, blueprint] = await Promise.all([skillFixture(), examBlueprintFixture()]);
+    const item = await itemFixture({ examBlueprintId: blueprint.id, skillId: skill.id });
+
+    const [plan, exam] = await Promise.all([
+      learnerPlan({ plan: { sourceSkillIds: [skill.id] } }),
+      examPlan(blueprint.id),
+    ]);
+
+    const versions = () =>
+      prisma.plan.findMany({
+        orderBy: { id: "asc" },
+        select: { inputVersion: true, sourceVersion: true },
+        where: { id: { in: [plan.id, exam.id] } },
+      });
+
+    const before = await versions();
+
+    await writeFix({
+      changes: [
+        {
+          fields: [{ after: { question: "Fixed" }, before: { question: "Old" }, field: "content" }],
+          id: item.id,
+          model: "Item",
+          op: "set",
+        },
+      ],
+      unit: { id: item.id, kind: "item" },
+    });
+
+    await expect(prisma.item.findUniqueOrThrow({ where: { id: item.id } })).resolves.toMatchObject({
+      content: { question: "Fixed" },
+    });
 
     await expect(versions()).resolves.toStrictEqual(before);
   });

@@ -210,7 +210,6 @@ export const itemSet = defineFixHandler({
   },
   model: "Item",
   op: "set",
-  planRoots: ({ id }) => ({ itemIds: [id] }),
   proposal: {
     fields: ["content"],
     rules:
