@@ -60,30 +60,33 @@ export function walkChallenge(
   return walk(content.startNodeId, choiceIds, []);
 }
 
-type PathSearch = { cycle: boolean; lengths: number[]; reached: Set<string> };
+export type ChallengePath = { endingId: string; steps: ChallengeStep[]; cycle: boolean };
 
-function explorePaths(content: ChallengeContent): PathSearch {
-  const search: PathSearch = { cycle: false, lengths: [], reached: new Set() };
-
-  const visit = (id: string, trail: readonly string[]) => {
-    search.reached.add(id);
+export function listChallengePaths(content: ChallengeContent): ChallengePath[] {
+  const visit = (id: string, steps: ChallengeStep[]): ChallengePath[] => {
     const node = findNode(content, id);
+    const cycle = steps.some((step) => step.node.id === id);
 
-    if (!node || trail.length > CHALLENGE_DECISIONS.max) {
-      search.lengths.push(trail.length);
-      return;
+    if (!node || steps.length > CHALLENGE_DECISIONS.max || cycle) {
+      return [{ cycle, endingId: id, steps }];
     }
 
-    if (trail.includes(id)) {
-      search.cycle = true;
-      return;
-    }
-
-    node.choices.forEach((choice) => visit(choice.next, [...trail, id]));
+    return node.choices.flatMap((choice) => visit(choice.next, [...steps, { choice, node }]));
   };
 
-  visit(content.startNodeId, []);
-  return search;
+  return visit(content.startNodeId, []);
+}
+
+function explorePaths(content: ChallengeContent) {
+  const paths = listChallengePaths(content);
+
+  return {
+    cycle: paths.some((path) => path.cycle),
+    lengths: paths.filter((path) => !path.cycle).map((path) => path.steps.length),
+    reached: new Set(
+      paths.flatMap((path) => [...path.steps.map((step) => step.node.id), path.endingId]),
+    ),
+  };
 }
 
 function referenceIssues(content: ChallengeContent): ChallengeGraphIssue[] {

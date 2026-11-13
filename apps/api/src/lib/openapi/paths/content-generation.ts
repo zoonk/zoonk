@@ -131,7 +131,7 @@ export const contentGenerationPaths = {
   "/library/lessons/{lessonId}/readiness": {
     get: {
       description:
-        "What a lesson page shows while a lesson isn't written yet: its status, the run writing it (stream GET /generations/{generationId}/events for live steps: `planLesson`, `writeLesson`, then `markLesson` and `drawPictures` side by side, either finishing first, and `lessonReady` once the lesson is complete) and a ready alternative from the learner's plan, so there is never a dead end. Uncached.",
+        "What a lesson page shows while a lesson isn't written yet: its status, the run writing it (stream GET /generations/{generationId}/events for live steps: `planLesson`, `writeLesson`, then `markLesson` and `drawPictures` side by side, either finishing first, and `lessonReady` once the lesson is complete; a `challenge` (its `kind`) reports `planChallenge`, `writeChallenge`, `reviewChallenge`, then `fixChallenge` and `recheckChallenge` when its check finds errors and the writer fixes them, `redraftChallenge` when the draft is held back and written again, and `lessonReady`) and a ready alternative from the learner's plan, so there is never a dead end. Uncached.",
       operationId: "getLibraryLessonReadiness",
       requestParams: { path: lessonPathParamsSchema },
       responses: {

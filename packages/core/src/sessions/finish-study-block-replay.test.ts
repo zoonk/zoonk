@@ -5,6 +5,7 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { revalidateTag } from "next/cache";
 import { describe, expect, it, vi } from "vitest";
 import { runDeferredWork } from "../_test-utils/deferred-work";
 import { mockSession } from "../_test-utils/mock-session";
@@ -216,6 +217,8 @@ describe("finishing a block that already finished", () => {
       where: { userId: day.user.id },
     });
 
+    vi.mocked(revalidateTag).mockClear();
+
     await expect(day.finish()).resolves.toMatchObject({
       completion: {
         ceremony: { key: "yellow", kind: "belt" },
@@ -223,6 +226,9 @@ describe("finishing a block that already finished", () => {
       },
       status: "ready",
     });
+
+    // Expiring tags from the finish would draw the session again over the moment and its ceremony.
+    expect(revalidateTag).not.toHaveBeenCalled();
 
     await expect(day.finish()).resolves.toMatchObject({
       completion: { ceremony: { key: "yellow", kind: "belt" }, reached: NOTHING },

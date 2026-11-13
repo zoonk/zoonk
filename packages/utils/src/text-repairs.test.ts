@@ -46,6 +46,13 @@ describe(repairMarkdown, () => {
       ["*about $x^2$ squared*", "about $x^2$ squared"],
       ["Use **$v = d / t$** to find speed.", "Use $v = d / t$ to find speed."],
       ["- **the $n$th term** grows", "- the $n$th term grows"],
+      [
+        "_$x$ is greater than 10 is neither true nor false.",
+        "$x$ is greater than 10 is neither true nor false.",
+      ],
+      ["_$x$ is greater than 10_ is open.", "$x$ is greater than 10 is open."],
+      ["*$x$ is even*", "$x$ is even"],
+      ["Take _the value $x$_ now.", "Take the value $x$ now."],
     ] as const;
 
     for (const [text, repaired] of stray) {

@@ -10,12 +10,10 @@ import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { refreshGoalPlan } from "../../plans/refresh-goal-plan";
 import { oweStartedDaySettlements } from "../../sessions/_utils/owe-started-day-settlements";
 import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
-import { type HeldBackDraft, MAX_LESSON_DRAFTS, parseHeldBackDrafts } from "./held-back-drafts";
+import { type HeldBackDraft, getLessonDraftLimit, parseHeldBackDrafts } from "./held-back-drafts";
 
 const OPEN_SESSION_STATUSES: StudySessionStatus[] = ["planned", "active"];
 
-/** Private content serves one learner, so only shared lessons receive fresh drafts. */
-const PRIVATE_LESSON_DRAFTS = 1;
 const PLAN_REFRESH_BATCH_SIZE = 4;
 
 class LessonClaimLostError extends Error {
@@ -201,8 +199,7 @@ export async function holdBackLessonDraft({
       const draft = { heldBackAt: now.toISOString(), model, problems, runId: workflowRunId };
       const drafts = [...previous, draft];
 
-      const setAside =
-        drafts.length >= (lesson.ownerId ? PRIVATE_LESSON_DRAFTS : MAX_LESSON_DRAFTS);
+      const setAside = drafts.length >= getLessonDraftLimit(lesson.ownerId);
 
       const dependentPlanIds = await lockPlanSourceWrite(tx, { lessonIds: [lessonId] });
 

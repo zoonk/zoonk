@@ -112,6 +112,39 @@ class GenerationKindTest {
     }
 
     @Test
+    fun aHeldBackChallengeKeepsWorkingOnItsFixUntilReady() {
+        val written =
+            arrayOf(
+                "writeLesson" to StepState.Started,
+                "planChallenge" to StepState.Completed,
+                "writeChallenge" to StepState.Completed,
+                "reviewChallenge" to StepState.Completed,
+            )
+
+        fun progress(vararg steps: Pair<String, StepState>) = GenerationKind.Challenge.progress(run(*written, *steps))
+
+        val fixing = progress("fixChallenge" to StepState.Started)
+        assertEquals(listOf("plan", "write", "fix"), fixing.phases.map { it.phase.id })
+        assertEquals(listOf(PhaseStatus.Completed, PhaseStatus.Completed, PhaseStatus.Active), fixing.phases.map { it.status })
+        assertEquals(125f / 150f, fixing.share)
+        assertEquals(1f, fixing.target)
+
+        val fixedAndRechecked = arrayOf("fixChallenge" to StepState.Completed, "recheckChallenge" to StepState.Completed)
+
+        val rechecked = progress(*fixedAndRechecked)
+        assertEquals(PhaseStatus.Active, rechecked.phases.last().status)
+        assertEquals(1f, rechecked.target)
+
+        val redrafting = progress(*fixedAndRechecked, "redraftChallenge" to StepState.Started)
+        assertEquals(listOf("plan", "write", "fix"), redrafting.phases.map { it.phase.id })
+        assertEquals(PhaseStatus.Active, redrafting.phases.last().status)
+
+        val ready = progress(*fixedAndRechecked, "lessonReady" to StepState.Started)
+        assertEquals(listOf(PhaseStatus.Completed, PhaseStatus.Completed, PhaseStatus.Completed), ready.phases.map { it.status })
+        assertEquals(1f, ready.share)
+    }
+
+    @Test
     fun aLessonsMarkingAndDrawingRunSideBySideEachDoneOnItsOwnSteps() {
         val written = arrayOf("planLesson" to StepState.Completed, "writeLesson" to StepState.Completed)
 
