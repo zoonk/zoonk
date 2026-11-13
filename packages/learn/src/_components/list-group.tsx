@@ -44,8 +44,7 @@ export const LIST_ROW_INTERACTIVE_CLASS = cn(
 export const CURRENT_ROW_CLASS = "before:bg-muted hover:before:bg-muted";
 
 /** A row's trailing chevron, its ink on the row's end edge. */
-export const ROW_CHEVRON_CLASS =
-  "text-muted-foreground/60 edge -me-(--edge-pull) size-4 shrink-0 self-center";
+export const ROW_CHEVRON_CLASS = "text-faint edge -me-(--edge-pull) size-4 shrink-0 self-center";
 
 /** The same chevron after a 12px line, such as a header's "1 of 4". */
 export const SMALL_CHEVRON_CLASS =

@@ -119,13 +119,8 @@ function PracticeChooser({
   const shown: MockChooserStatus =
     status.kind === "short" && !short ? { kind: "choosing" } : status;
 
-  const start = (enter: boolean) => (
-    <ChooserStartButton
-      busy={busy}
-      disabled={!option}
-      enter={enter}
-      onClick={() => option && onStart(option)}
-    >
+  const start = (
+    <ChooserStartButton busy={busy} disabled={!option} onClick={() => option && onStart(option)}>
       {t("Start")}
     </ChooserStartButton>
   );
@@ -142,7 +137,7 @@ function PracticeChooser({
       bar={bar}
     >
       <ChooserHeader
-        action={open ? start(true) : <ChooserPlusLink href={hrefs.plus} />}
+        action={open ? start : <ChooserPlusLink href={hrefs.plus} />}
         actionOnPhone={!open}
         detail={
           open
@@ -157,7 +152,7 @@ function PracticeChooser({
       <DetailContent>
         <ChooserRefusal busy={busy} status={shown} />
         <MockOptionLists onPick={setPicked} picked={picked} severalDays={severalDays} view={view} />
-        {open && <ChooserBottomBar>{start(false)}</ChooserBottomBar>}
+        {open && <ChooserBottomBar>{start}</ChooserBottomBar>}
       </DetailContent>
     </ChooserLayout>
   );

@@ -5,14 +5,13 @@ import {
   useLayoutEffect,
   useRef,
 } from "react";
+import { SHORTCUTS, type ShortcutName, isModShortcut, shortcutKeys } from "../lib/shortcuts";
 import { PopupShortcutLayer } from "./_utils/popup-shortcut-layer";
 import {
   SCREEN_ENTER_ATTRIBUTE,
   getNumberKeyIndex,
   isScreenShortcut,
 } from "./_utils/screen-shortcut";
-
-export const AUDIO_KEY = "p";
 
 /**
  * A held Enter acts once, as screen shortcuts do: put it on a control whose own Enter would act
@@ -26,7 +25,7 @@ export function ignoreHeldEnter(event: ReactKeyboardEvent) {
 
 const AUDIO_BUTTON = {
   [SCREEN_ENTER_ATTRIBUTE]: "",
-  "aria-keyshortcuts": AUDIO_KEY,
+  "aria-keyshortcuts": shortcutKeys("audio"),
   onKeyDown: ignoreHeldEnter,
 } as const;
 
@@ -95,8 +94,8 @@ function checkModifiers({
   return checks.every(Boolean);
 }
 
-export function useKeyboardCallback(
-  key: string,
+function useKeyboardCallback(
+  keys: readonly string[],
   callback: (event: KeyboardEvent) => ShortcutResult,
   options: {
     /** `all` (the default) needs every modifier, `any` one of them, `none` no modifier at all. */
@@ -122,7 +121,7 @@ export function useKeyboardCallback(
   // Before paint, so a key pressed as soon as its screen shows already works.
   useLayoutEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
-      if (event.key !== key) {
+      if (!keys.includes(event.key)) {
         return;
       }
 
@@ -139,7 +138,45 @@ export function useKeyboardCallback(
 
     globalThis.addEventListener("keydown", handleKeyDown);
     return () => globalThis.removeEventListener("keydown", handleKeyDown);
-  }, [key, mode, screen, inPopup, altKey, ctrlKey, metaKey, shiftKey]);
+  }, [keys, mode, screen, inPopup, altKey, ctrlKey, metaKey, shiftKey]);
+}
+
+const MOD_KEY = { mode: "any", modifiers: { ctrlKey: true, metaKey: true } } as const;
+const SCREEN_KEY = { mode: "none", screen: true } as const;
+const FIELD_KEY = { mode: "none" } as const;
+
+/**
+ * Answers one of `SHORTCUTS`. A screen's key leaves itself to a field or a control in focus and
+ * acts once however long it's held; `fromField` answers from inside a field too, for a screen whose
+ * only field always has focus. Return `false` when the action can't run, so the key keeps its
+ * default.
+ */
+export function useShortcut(
+  name: ShortcutName,
+  callback: (event: KeyboardEvent) => ShortcutResult,
+  { enabled = true, fromField = false }: { enabled?: boolean; fromField?: boolean } = {},
+) {
+  const screenKey = fromField ? FIELD_KEY : SCREEN_KEY;
+
+  useKeyboardCallback(
+    SHORTCUTS[name].keys,
+    (event) => (enabled ? callback(event) : false),
+    isModShortcut(name) ? MOD_KEY : screenKey,
+  );
+}
+
+/** A held Enter presses a focused button once, as it acts once on the screen. */
+export function useHeldEnterOnce() {
+  useKeyboardCallback(SHORTCUTS.main.keys, (event) => {
+    if (!event.repeat || !(event.target instanceof HTMLButtonElement)) {
+      return false;
+    }
+  });
+}
+
+/** A control one screen size hides (`lg:hidden`) answers no key: a key presses only what is drawn. */
+function isDrawn(element: HTMLElement | null): element is HTMLElement {
+  return element !== null && element.getClientRects().length > 0;
 }
 
 /** Return `false` when the action can't run, so Enter keeps its default. */
@@ -147,22 +184,27 @@ export function useEnterKey(
   callback: () => ShortcutResult,
   { enabled = true }: { enabled?: boolean } = {},
 ) {
-  useKeyboardCallback("Enter", () => (enabled ? callback() : false), {
-    mode: "none",
-    screen: true,
-  });
+  useShortcut("main", callback, { enabled });
 }
 
+/**
+ * Enter presses the control it's given, when it's drawn. `focus` moves focus there first, so the
+ * next Enter is the control's own.
+ */
 export function useEnterClick<Target extends HTMLElement>({
   enabled = true,
-}: { enabled?: boolean } = {}) {
+  focus = false,
+}: { enabled?: boolean; focus?: boolean } = {}) {
   const ref = useRef<Target>(null);
 
   useEnterKey(
     () => {
-      // A control CSS hides at this width isn't the one on screen, so Enter isn't its to take.
-      if (!ref.current || ref.current.getClientRects().length === 0) {
+      if (!isDrawn(ref.current)) {
         return false;
+      }
+
+      if (focus) {
+        ref.current.focus();
       }
 
       ref.current.click();
@@ -173,35 +215,32 @@ export function useEnterClick<Target extends HTMLElement>({
   return ref;
 }
 
-/** A screen's letter key, pressed in either case because Caps Lock sends the capital. */
-export function useLetterKey(letter: string, callback: () => ShortcutResult) {
-  const options = { mode: "none", screen: true } as const;
-  useKeyboardCallback(letter, callback, options);
-  useKeyboardCallback(letter.toUpperCase(), callback, options);
-}
-
 /** P plays or pauses the screen's audio. Spread the result on its button: Enter there runs the screen's main action, and plays only when there's none. */
 export function useAudioKey(toggle: () => ShortcutResult) {
-  useLetterKey(AUDIO_KEY, toggle);
+  useShortcut("audio", toggle);
   return AUDIO_BUTTON;
 }
 
-/** Only for a full-screen task whose leaving loses nothing. */
+/**
+ * Esc presses the control it's given, so it does exactly what a click there does (a question
+ * before leaving included) and nothing when the control isn't drawn.
+ */
 export function useEscapeClick<Target extends HTMLElement>({
   enabled = true,
-}: { enabled?: boolean } = {}) {
+  fromField = false,
+}: { enabled?: boolean; fromField?: boolean } = {}) {
   const ref = useRef<Target>(null);
 
-  useKeyboardCallback(
-    "Escape",
+  useShortcut(
+    "leave",
     () => {
-      if (!enabled || !ref.current) {
+      if (!isDrawn(ref.current)) {
         return false;
       }
 
       ref.current.click();
     },
-    { mode: "none", screen: true },
+    { enabled, fromField },
   );
 
   return ref;

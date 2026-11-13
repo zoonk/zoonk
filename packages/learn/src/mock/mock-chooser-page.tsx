@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@zoonk/ui/components/button";
 import {
   DetailActions,
   DetailHero,
@@ -11,14 +10,13 @@ import {
   GenerationTimelineDescription,
   GenerationTimelineTitle,
 } from "@zoonk/ui/components/generation-timeline";
-import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
-import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import { DETAIL_PRIMARY_CLASS, PAGE_ARTICLE_CLASS } from "../_components/detail-page";
+import { EnterButton, EnterLink } from "../_components/enter-button";
 import { HelpLimitNotice } from "../_components/help-limit-notice";
 import { Page, PageEyebrow } from "../_components/page";
 import { StatusRegion } from "../_components/status-region";
@@ -142,56 +140,40 @@ export function ChooserBottomBar({ children }: { children: ReactNode }) {
   );
 }
 
-/** Drawn twice (beside the title on wide screens, in the bottom bar otherwise); one takes Enter. */
 export function ChooserStartButton({
   busy,
   children,
   disabled = false,
-  enter = true,
   onClick,
 }: {
   busy: boolean;
   children: ReactNode;
   disabled?: boolean;
-  enter?: boolean;
   onClick: () => void;
 }) {
   const mounted = useIsMounted();
-  const isDisabled = disabled || !mounted;
-  const ref = useEnterClick<HTMLButtonElement>({ enabled: enter && !isDisabled && !busy });
 
   return (
-    <Button
-      aria-keyshortcuts={enter ? "Enter" : undefined}
+    <EnterButton
       busy={busy}
-      className={cn(DETAIL_PRIMARY_CLASS, "font-[560]")}
-      disabled={isDisabled}
-      focusableWhenDisabled
+      className={DETAIL_PRIMARY_CLASS}
+      disabled={disabled || !mounted}
       icon={<PlayIcon aria-hidden="true" />}
       onClick={onClick}
-      ref={ref}
       size="lg"
     >
       {children}
-      {enter && <ShortcutKbd tone="inverse">⏎</ShortcutKbd>}
-    </Button>
+    </EnterButton>
   );
 }
 
 export function ChooserPlusLink({ href }: { href: string }) {
   const t = useExtracted();
-  const ref = useEnterClick<HTMLAnchorElement>();
 
   return (
-    <LearnLink
-      aria-keyshortcuts="Enter"
-      className={cn(DETAIL_PRIMARY_CLASS, "font-[560]")}
-      href={href}
-      ref={ref}
-    >
+    <EnterLink className={DETAIL_PRIMARY_CLASS} href={href} icon={null} size="lg">
       {t("See Plus")}
-      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-    </LearnLink>
+    </EnterLink>
   );
 }
 

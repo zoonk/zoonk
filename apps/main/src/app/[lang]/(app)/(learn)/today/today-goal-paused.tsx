@@ -1,6 +1,7 @@
 import { Link } from "@/i18n/navigation";
 import { listCurrentUserGoals } from "@zoonk/core/goals/list-current-user";
 import { getGoalResumePreview } from "@zoonk/core/plans/resume-preview";
+import { EnterLink } from "@zoonk/learn/enter-button";
 import { ResumeEffect } from "@zoonk/learn/journey/resume-effect";
 import { TodayAtRest } from "@zoonk/learn/today/at-rest";
 import { buttonVariants } from "@zoonk/ui/components/button";
@@ -28,9 +29,9 @@ export async function TodayGoalPaused({ banner }: { banner: React.ReactNode }) {
       <TodayAtRest
         banner={banner}
         actions={
-          <Link className={buttonVariants({ size: "lg" })} href="/start">
+          <EnterLink href="/start" icon={null} size="lg">
             {t("Start a new goal")}
-          </Link>
+          </EnterLink>
         }
         clause={t("Start a new goal, or pick another one above.")}
         icon={<FlagIcon />}

@@ -9,6 +9,7 @@ import {
   QuestionDontKnow,
   QuestionMainAction,
 } from "../_components/question-actions";
+import { QuestionEyebrow } from "../_components/question-title";
 import { AnswersSaveError, type UnsentAnswers } from "../_components/save-error";
 import { TaskHeaderTitle } from "../_components/task-header";
 import { ContentFeedbackMenu } from "../feedback/content-feedback-menu";
@@ -225,14 +226,14 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
         <div className="flex flex-col gap-4" ref={questionRef}>
           <div className="text-muted-foreground flex items-baseline justify-between gap-3 text-sm">
             {/* Empty, it still gives the line a baseline, so the count doesn't move between questions. */}
-            <p
+            <QuestionEyebrow
               className={cn(
-                String.raw`min-w-0 text-pretty empty:before:content-['\200b']`,
+                String.raw`min-w-0 [&>span:empty]:before:content-['\200b']`,
                 aside && "with-aside:hidden",
               )}
             >
               {hint?.(question)}
-            </p>
+            </QuestionEyebrow>
             <p className="ml-auto shrink-0 font-mono text-xs tabular-nums">
               {t("{current, number} of {total, number}", { current, total })}
             </p>

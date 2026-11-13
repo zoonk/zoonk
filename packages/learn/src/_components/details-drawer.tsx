@@ -3,15 +3,12 @@
 import { Button } from "@zoonk/ui/components/button";
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
-  DrawerHeader,
   DrawerPopup,
   DrawerTitle,
   DrawerTrigger,
 } from "@zoonk/ui/components/drawer";
-import { XIcon } from "lucide-react";
-import { useExtracted } from "next-intl";
+import { SheetHeader } from "./sheet-header";
 import { TASK_OPTION_CLASS } from "./task-layout";
 
 const TRIGGER: Record<"link" | "option" | "secondary" | "small", React.ReactElement> = {
@@ -20,20 +17,6 @@ const TRIGGER: Record<"link" | "option" | "secondary" | "small", React.ReactElem
   secondary: <Button className="shrink-0" size="xl" variant="outline" />,
   small: <Button className="shrink-0" size="sm" variant="outline" />,
 };
-
-/** Takes only the title's line height, so it centers on the title even with a subtitle under it. */
-export function DrawerCloseButton() {
-  const t = useExtracted();
-
-  return (
-    <DrawerClose
-      render={<Button className="-my-1 shrink-0" edge="end" size="icon" variant="ghost" />}
-    >
-      <XIcon aria-hidden="true" />
-      <span className="sr-only">{t("Close")}</span>
-    </DrawerClose>
-  );
-}
 
 export function DetailsDrawer({
   children,
@@ -51,10 +34,9 @@ export function DetailsDrawer({
       <DrawerTrigger render={TRIGGER[trigger]}>{label}</DrawerTrigger>
 
       <DrawerPopup>
-        <DrawerHeader className="flex-row items-center justify-between gap-3">
-          <DrawerTitle className="text-xl font-semibold">{title}</DrawerTitle>
-          <DrawerCloseButton />
-        </DrawerHeader>
+        <SheetHeader>
+          <DrawerTitle>{title}</DrawerTitle>
+        </SheetHeader>
         <DrawerContent className="pt-2">{children}</DrawerContent>
       </DrawerPopup>
     </Drawer>

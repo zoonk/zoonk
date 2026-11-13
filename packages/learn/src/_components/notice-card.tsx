@@ -3,7 +3,7 @@ import { SURFACE_CLASS } from "./surface";
 
 const NOTICE_CARD_CLASS = cn(
   SURFACE_CLASS,
-  "text-foreground [&>svg]:text-muted-foreground text-compact flex items-start gap-3 px-3.5 py-3 leading-5 ring-inset [&>svg]:mt-0.5 [&>svg]:size-4 [&>svg]:shrink-0",
+  "text-foreground [&>svg]:text-muted-foreground text-compact flex items-start gap-3 px-4 py-3 leading-5 ring-inset [&>svg]:mt-0.5 [&>svg]:size-4 [&>svg]:shrink-0",
 );
 
 export function NoticeCard({ className, ...props }: React.ComponentProps<"div">) {

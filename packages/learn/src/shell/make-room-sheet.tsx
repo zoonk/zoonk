@@ -6,7 +6,6 @@ import {
   DrawerClose,
   DrawerContent,
   DrawerDescription,
-  DrawerHeader,
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
@@ -21,6 +20,7 @@ import {
   ListRowLeading,
   ListRowTitle,
 } from "../_components/list-group";
+import { SheetHeader } from "../_components/sheet-header";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { GoalCountryName, GoalMark } from "./goal-mark";
@@ -152,9 +152,9 @@ export function MakeRoomSheet({
   return (
     <Drawer onOpenChange={(open) => !isStarting && room.setOpen(open)} open={state.open}>
       <DrawerPopup>
-        <DrawerHeader className="flex-row items-start justify-between gap-3">
+        <SheetHeader>
           <div className="flex min-w-0 flex-col gap-1">
-            <DrawerTitle className="text-xl font-semibold text-balance">
+            <DrawerTitle className="text-balance">
               {t("Make room for {goal}", { goal })}
             </DrawerTitle>
             <DrawerDescription className="text-pretty">
@@ -171,7 +171,7 @@ export function MakeRoomSheet({
             <XIcon aria-hidden="true" />
             <span className="sr-only">{t("Close")}</span>
           </DrawerClose>
-        </DrawerHeader>
+        </SheetHeader>
 
         <DrawerContent className="flex flex-col gap-4 pt-2">
           <ListGroup aria-label={t("Your goals")} role="list" variant="panel">

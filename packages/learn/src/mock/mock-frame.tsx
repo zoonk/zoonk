@@ -33,7 +33,7 @@ function SaveStatusLine() {
           {t("Not saved yet · retrying")}
         </span>
         <Button className="shrink-0" onClick={runner.retrySaves} size="sm" variant="outline">
-          {t("Retry")}
+          {t("Try again")}
         </Button>
       </div>
     );
