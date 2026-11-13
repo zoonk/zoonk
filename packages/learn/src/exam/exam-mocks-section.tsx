@@ -23,13 +23,12 @@ function ExamMockRows() {
   ));
 }
 
-export function ExamMocks({ entry = false, offered }: { entry?: boolean; offered: boolean }) {
+export function ExamMocks({ entry = false }: { entry?: boolean }) {
   const t = useExtracted();
   const { exam } = useExamScreen();
-  const locked = exam.mocksRequirePlus && (exam.nextMock !== null || offered);
   const running = exam.runningMocks.length > 0;
 
-  if (!running && !exam.nextMock && exam.mocks.length === 0 && !locked && !entry) {
+  if (!running && !exam.nextMock && exam.mocks.length === 0 && !entry) {
     return null;
   }
 

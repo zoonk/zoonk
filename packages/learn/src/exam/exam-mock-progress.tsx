@@ -6,17 +6,11 @@ import { ArrowDownRightIcon, ArrowUpRightIcon, TimerIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { Meter, MeterFill } from "../_components/meter";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
-import { PlusMark } from "../_components/plus-lock";
 import { StatTile, StatTiles } from "../_components/stat-tile";
 import { TITLE_ROW_CLASS } from "../_components/title-row";
 import { getMockSubject } from "../mock/mock-labels";
 import { useExamScreen } from "./exam-context";
-import {
-  ProgressLineChart,
-  type ProgressPoint,
-  SampleProgressChart,
-  Sparkline,
-} from "./mock-progress-chart";
+import { ProgressLineChart, type ProgressPoint, Sparkline } from "./mock-progress-chart";
 
 type Progress = NonNullable<ExamView["progress"]>;
 type ProgressMock = Progress["mocks"][number];
@@ -25,15 +19,6 @@ type SubjectTrend = Progress["subjects"][number];
 const TITLE_ID = "exam-progress-title";
 
 const PERCENT = 100;
-
-const SAMPLE_MOCKS = 6;
-const SAMPLE_FIRST = 30;
-const SAMPLE_STEP = 7;
-
-const SAMPLE = Array.from(
-  { length: SAMPLE_MOCKS },
-  (_, index) => SAMPLE_FIRST + index * SAMPLE_STEP,
-);
 
 function useMockDate() {
   const format = useFormatter();
@@ -243,7 +228,7 @@ export function ExamMockProgress() {
   const t = useExtracted();
   const { exam } = useExamScreen();
 
-  if (!exam.mocksRequirePlus && !exam.progress) {
+  if (!exam.progress) {
     return null;
   }
 
@@ -252,17 +237,10 @@ export function ExamMockProgress() {
       <div className="flex flex-col gap-1">
         <PageSectionHeader>
           <PageSectionTitle id={TITLE_ID}>{t("Your progress")}</PageSectionTitle>
-          {!exam.progress && <PlusMark />}
         </PageSectionHeader>
-        {exam.progress && <OneMockMeasure progress={exam.progress} />}
+        <OneMockMeasure progress={exam.progress} />
       </div>
-      {exam.progress ? (
-        <ProgressCard progress={exam.progress} />
-      ) : (
-        <div data-slot="locked-progress">
-          <SampleProgressChart values={SAMPLE} />
-        </div>
-      )}
+      <ProgressCard progress={exam.progress} />
     </PageSection>
   );
 }

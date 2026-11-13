@@ -12,9 +12,7 @@ import {
   ListRowTitle,
   ListRowTrailing,
 } from "../_components/list-group";
-import { PlusMark } from "../_components/plus-lock";
 import { StatusMark } from "../_components/status-mark";
-import { MarkedText } from "../_components/title-row";
 import { useExamScreen } from "./exam-context";
 import { useExamDayDate } from "./exam-labels";
 
@@ -38,11 +36,7 @@ export function ExamNextMock({ current }: { current: boolean }) {
       </ListRowLeading>
       <ListRowBody>
         <ListRowContent>
-          <ListRowTitle>
-            <MarkedText mark={exam.mocksRequirePlus && <PlusMark />}>
-              {t("Next mock exam")}
-            </MarkedText>
-          </ListRowTitle>
+          <ListRowTitle>{t("Next mock exam")}</ListRowTitle>
           <ListRowDescription>
             {t("{count, plural, one {# question} other {# questions}}", { count: next.questions })}
           </ListRowDescription>

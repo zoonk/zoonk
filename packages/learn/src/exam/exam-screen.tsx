@@ -300,10 +300,7 @@ export function ExamScreen({
           <ExamNoticeDay />
           <ExamMoment />
           <ExamResultSection />
-          <ExamMocks
-            entry={isLastDays(exam.stage) && mockAction !== null}
-            offered={mockAction !== null}
-          />
+          <ExamMocks entry={isLastDays(exam.stage) && mockAction !== null} />
           <ExamMockProgress />
           {exam.format.length === 0 && <ExamMapSection />}
           <ExamSpeaking />

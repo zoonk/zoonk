@@ -6,14 +6,11 @@ import { useExtracted } from "next-intl";
 import { DETAIL_PRIMARY_CLASS } from "../_components/detail-page";
 import { KindDot } from "../_components/kind-tile";
 import {
-  ListRowBody,
   ListRowContent,
   ListRowLeading,
   ListRowLink,
   ListRowTitle,
-  ListRowTrailing,
 } from "../_components/list-group";
-import { PlusMark } from "../_components/plus-lock";
 import { LearnLink } from "../learn-link";
 
 /** The buddy's offer card names what a mock exam can be; the rows that open the chooser don't. */
@@ -56,16 +53,9 @@ export function MockEntryRow({
       <ListRowLeading>
         <KindDot kind="mock" />
       </ListRowLeading>
-      <ListRowBody>
-        <ListRowContent>
-          <ListRowTitle>{t("Take a mock exam")}</ListRowTitle>
-        </ListRowContent>
-        {view.access === "plusRequired" && (
-          <ListRowTrailing>
-            <PlusMark />
-          </ListRowTrailing>
-        )}
-      </ListRowBody>
+      <ListRowContent>
+        <ListRowTitle>{t("Take a mock exam")}</ListRowTitle>
+      </ListRowContent>
     </ListRowLink>
   );
 }
@@ -90,9 +80,6 @@ export function MockEntryButton({
     >
       <TimerIcon aria-hidden="true" className="size-4" />
       {view.running ? t("Continue your mock exam") : t("Take a mock exam")}
-      {view.access === "plusRequired" && !view.running && (
-        <PlusMark className="bg-primary-foreground/15 text-primary-foreground" />
-      )}
     </LearnLink>
   );
 }
