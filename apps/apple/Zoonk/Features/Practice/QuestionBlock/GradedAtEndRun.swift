@@ -133,7 +133,7 @@ struct GradedAtEndRun: View {
         ) { onFinish(answers) }
       } else if upcomingEnded, failures == 0 || isPending {
         if let upcomingLimit {
-          HelpLimitNotice(limit: upcomingLimit)
+          LimitNotice(limit: upcomingLimit)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
 
@@ -318,7 +318,7 @@ struct PracticeQuestionsPreparingView: View {
         }
       } else {
         if let limit {
-          HelpLimitNotice(limit: limit)
+          LimitNotice(limit: limit)
             .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityElement(children: .combine)
             .accessibilityFocused($focus, equals: .notice)
@@ -347,7 +347,7 @@ struct PracticeQuestionsPreparingView: View {
       // A failure line reads itself out beside the Start that comes back. A notice doesn't: beside
       // Start (a short break) it's read out; in Start's place (a limit, or Plus) it takes focus.
       if let limit, limit.isShortBreak {
-        announcePolitely(limit.message)
+        announcePolitely(limit.helpWords().said)
       } else if limit != nil || isPlusRequired {
         focus = .notice
       }

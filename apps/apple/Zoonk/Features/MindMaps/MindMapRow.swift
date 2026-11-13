@@ -54,7 +54,7 @@ struct MindMapRow: View {
       }
 
       if case .refused(let refusal) = failure {
-        HelpLimitNotice(limit: refusal.limit, message: refusal.message)
+        LimitNotice(limit: refusal.limit, words: refusal.words)
           .controlSize(.small)
       }
     }
@@ -373,81 +373,13 @@ extension MindMapSlot where Mark == EmptyView {
 }
 
 extension MindMapLimit {
-  /// Main's `MindMapLimitNotice` words: what ran out and when it comes back. The day's AI spend
-  /// keeps the help notice's own words.
-  var message: String? {
-    guard resource != .aiSpend else {
-      return nil
-    }
-
-    switch limit {
-    case .slowDown:
-      return String(
-        localized: "Take a short break, then try again.", table: "MindMaps",
-        comment: "Fair use asks the learner to wait a moment before another map")
-    case .signUpRequired:
-      return String(
-        localized: "Create your free account to continue.", table: "MindMaps",
-        comment: "A guest must create an account to make a map")
-    case .limitReached(let period, let tier):
-      return resource == .lessons ? Self.lessons(period, tier) : Self.maps(period, tier)
-    }
-  }
-
-  private static func maps(_ period: HelpLimit.Period, _ tier: LearnerTier) -> String {
-    switch (tier, period) {
-    case (.guest, _):
-      String(
-        localized:
-          "You've made the mind map you can try without an account. Create a free account to make more.",
-        table: "MindMaps", comment: "A guest made the one map they can without an account")
-    case (.plus, .month):
-      String(
-        localized: "That's all the new mind maps for this month. You can make more next month.",
-        table: "MindMaps", comment: "A Plus learner made this month's maps")
-    case (.plus, _):
-      String(
-        localized: "That's all the new mind maps for today. You can make more tomorrow.",
-        table: "MindMaps", comment: "A Plus learner made today's maps")
-    case (.free, .month):
-      String(
-        localized:
-          "That's all the new mind maps for this month. You can make more next month, or get Plus to keep going now.",
-        table: "MindMaps", comment: "A free learner made this month's maps")
-    case (.free, _):
-      String(
-        localized:
-          "That's all the new mind maps for today. You can make more tomorrow, or get Plus to keep going now.",
-        table: "MindMaps", comment: "A free learner made today's maps")
-    }
-  }
-
-  /// A map whose lessons aren't written writes them first, and they count as new lessons.
-  private static func lessons(_ period: HelpLimit.Period, _ tier: LearnerTier) -> String {
-    switch (tier, period) {
-    case (.guest, _):
-      String(
-        localized:
-          "You've taken the lessons you can try without an account. Create a free account to keep going.",
-        table: "MindMaps",
-        comment: "A guest's map needs new lessons, and they used the ones they can try")
-    case (.plus, _):
-      String(
-        localized: "That's all the new lessons for today. They open again tomorrow.",
-        table: "MindMaps",
-        comment: "A Plus learner's map needs new lessons, and they started today's")
-    case (.free, .month):
-      String(
-        localized:
-          "That's all the new lessons for this month. They open again next month, or get Plus to keep going now.",
-        table: "MindMaps",
-        comment: "A free learner's map needs new lessons, and they started this month's")
-    case (.free, _):
-      String(
-        localized:
-          "That's all the new lessons for today. They open again tomorrow, or get Plus to keep going now.",
-        table: "MindMaps",
-        comment: "A free learner's map needs new lessons, and they started today's")
+  /// Main's `MindMapLimitNotice` words: the maps, the lessons a map writes first (which count as
+  /// new lessons), or the day's AI spend.
+  var words: LimitWords {
+    switch resource {
+    case .aiSpend: limit.helpWords()
+    case .lessons: limit.lessonWords
+    case .mindMap: limit.mindMapWords
     }
   }
 }

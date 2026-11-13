@@ -550,7 +550,7 @@ private struct ListeningMessage: View {
 
     return VStack(alignment: .leading, spacing: 8) {
       if let limit {
-        HelpLimitNotice(limit: limit)
+        LimitNotice(limit: limit)
       } else {
         Text(audioDidntPlay)
           .typeStyle(.note)

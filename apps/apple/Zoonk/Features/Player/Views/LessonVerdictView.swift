@@ -263,7 +263,9 @@ private struct LessonExplainAnswerView: View {
             .typeStyle(.note)
             .foregroundStyle(.mutedForeground)
         case .refused(let refusal):
-          LessonHelpLimitNote(refusal: refusal)
+          if let limit = refusal.limit {
+            LimitNotice(limit: limit, kind: .explanations)
+          }
         default:
           EmptyView()
         }
@@ -275,7 +277,7 @@ private struct LessonExplainAnswerView: View {
   private var statusLine: String? {
     switch store.explanations[step.id] {
     case .failed: Self.failedLine
-    case .refused(let refusal): LessonHelpLimitNote.message(refusal)
+    case .refused(let refusal): refusal.limit?.helpWords(.explanations).said
     default: nil
     }
   }

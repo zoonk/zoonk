@@ -210,7 +210,7 @@ private struct PronunciationRoundView: View {
       if recorder.isDenied {
         MicrophoneOffView(description: Text(microphoneOff)) {}
       } else if case .limit(let limit) = notice {
-        HelpLimitNotice(limit: limit)
+        LimitNotice(limit: limit)
       } else if notice == .failed, round?.isPending != true, !recorder.isRecording {
         SaveFailureNotice(
           failures: round?.answerFailures ?? 0,
@@ -250,7 +250,7 @@ private struct PronunciationRoundView: View {
       }
 
       if case .limit(let limit) = notice {
-        return limit.message
+        return limit.helpWords().said
       }
 
       // A failure is a `FailureLine`, which reads itself out.

@@ -524,12 +524,12 @@
         MindMapRow(goalId: "debug", map: Self.map(.ready, id: "library-text"), place: .library)
 
         ForEach(Self.refusals, id: \.self) { resource in
-          HelpLimitNotice(
+          LimitNotice(
             limit: .limitReached(period: .day, tier: .free),
-            message: MindMapLimit(
+            words: MindMapLimit(
               limit: .limitReached(period: .day, tier: .free), resource: resource
             )
-            .message
+            .words
           )
           .controlSize(.small)
         }

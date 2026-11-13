@@ -279,7 +279,7 @@ struct ChallengeScreen: View {
       }
     } else if canStart(challenge) {
       if let writeLimit {
-        HelpLimitNotice(limit: writeLimit)
+        LimitNotice(limit: writeLimit)
           .frame(maxWidth: .infinity, alignment: .leading)
       }
 

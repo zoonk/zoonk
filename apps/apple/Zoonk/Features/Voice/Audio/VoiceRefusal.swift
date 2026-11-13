@@ -24,7 +24,7 @@ enum HelpLimit: Equatable, Sendable {
     }
   }
 
-  var offersPlus: Bool {
+  var offersSubscription: Bool {
     if case .limitReached(_, .free) = self {
       return true
     }
@@ -56,7 +56,7 @@ struct VoiceRefusal: Error, Equatable, Sendable {
   }
 
   /// Mirrors main's `readRefusedLimit`: 403 asks a guest to sign up, 402 a free learner to wait or
-  /// get Plus, a 429 is a short break or Plus's cap for today.
+  /// subscribe, a 429 is a short break or a subscriber's cap for today.
   var limit: HelpLimit? {
     guard [402, 403, 429].contains(status), !isPlusRequired else {
       return nil

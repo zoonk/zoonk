@@ -57,7 +57,7 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
   @ViewBuilder
   private var status: some View {
     if case .limit(let limit) = issue, !recorder.isRecording {
-      HelpLimitNotice(limit: limit)
+      LimitNotice(limit: limit)
     } else if issue == .failed, !recorder.isRecording, let hint {
       FailureLine(message: hint)
         .typeStyle(.note)
@@ -76,7 +76,7 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
     }
 
     if case .limit(let limit) = issue {
-      return limit.message
+      return limit.helpWords().said
     }
 
     // A failure is a `FailureLine`, which reads itself out.
