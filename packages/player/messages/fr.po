@@ -2079,7 +2079,6 @@ msgid "The music couldn't load. Check your connection and try again."
 msgstr "La musique n’a pas pu se charger. Vérifie ta connexion et réessaie."
 
 #: src/activities/notation-player/notation-player-activity.tsx
-#: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "q_uwLT"
 msgid "Stop"
 msgstr "Arrêter"
@@ -2517,12 +2516,12 @@ msgstr "Nous n’avons pas pu faire correspondre assez de frappes aux clics. Ré
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 msgctxt "NNlvmb"
 msgid "All set."
-msgstr ""
+msgstr "Tout est prêt."
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 msgctxt "Jk0E1p"
 msgid "Tap along with {count} clicks, so your taps are timed right."
-msgstr ""
+msgstr "Appuie au rythme des {count} clics pour bien synchroniser tes appuis."
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 msgctxt "sz0O7I"
@@ -2530,15 +2529,12 @@ msgid "Set up your sound"
 msgstr "Régler le son"
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
-#: src/lesson/lesson-action-bar.tsx
-#: src/lesson/lesson-practice-step.tsx
 msgctxt "mOFG3K"
 msgid "Start"
 msgstr "Commencer"
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 #: src/lesson/completion/lesson-completion-moment.tsx
-#: src/lesson/lesson-action-bar.tsx
 msgctxt "acrOoz"
 msgid "Continue"
 msgstr "Continuer"
@@ -3053,46 +3049,21 @@ msgid "Tap an idea to see what it covers"
 msgstr "Appuie sur une idée pour voir ce qu’elle aborde"
 
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "VdUknp"
-msgid "You can still review and practice your mistakes. More next month, or now with Plus."
-msgstr ""
-
-#: src/lesson/access/lesson-access-screen.tsx
-msgctxt "qbilHX"
-msgid "You can still review and practice your mistakes. More tomorrow, or now with Plus."
-msgstr ""
-
-#: src/lesson/access/lesson-access-screen.tsx
-msgctxt "VGhCC9"
-msgid "No more new lessons this month"
-msgstr ""
-
-#: src/lesson/access/lesson-access-screen.tsx
-msgctxt "j9Za23"
-msgid "No more new lessons today"
-msgstr ""
+msgctxt "q5JxBr"
+msgid "You can still review and practice your mistakes."
+msgstr "Tu peux toujours réviser tes leçons et tes erreurs."
 
 #: src/lesson/access/lesson-access-screen.tsx
 #: src/questions/lesson-question-errors.tsx
-msgctxt "xANHtD"
-msgid "See Plus"
-msgstr "Découvrir Plus"
+msgctxt "gczcC5"
+msgid "Subscribe"
+msgstr "S’abonner"
 
 #: src/lesson/access/lesson-access-screen.tsx
 #: src/questions/tutor-dock.tsx
 msgctxt "cyR7Kh"
 msgid "Back"
 msgstr "Retour"
-
-#: src/lesson/access/lesson-access-screen.tsx
-msgctxt "KFO_vV"
-msgid "Everything you learned comes with you."
-msgstr ""
-
-#: src/lesson/access/lesson-access-screen.tsx
-msgctxt "2LDIQ9"
-msgid "No more lessons without an account"
-msgstr ""
 
 #: src/lesson/access/lesson-access-screen.tsx
 #: src/questions/lesson-question-thread.tsx
@@ -3102,9 +3073,9 @@ msgid "Create a free account"
 msgstr "Créer un compte gratuit"
 
 #: src/lesson/access/lesson-access-screen.tsx
-msgctxt "M2VnuX"
-msgid "You can still review and practice your mistakes. More tomorrow."
-msgstr ""
+msgctxt "KFO_vV"
+msgid "Everything you learned comes with you."
+msgstr "Tu gardes tout ce que tu as appris."
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "ObBVZr"
@@ -3112,25 +3083,25 @@ msgid "We couldn't open this lesson"
 msgstr "Impossible d’ouvrir cette leçon"
 
 #: src/lesson/access/lesson-access-screen.tsx
+#: src/questions/lesson-question-errors.tsx
+msgctxt "odXlk8"
+msgid "Log in"
+msgstr "Se connecter"
+
+#: src/lesson/access/lesson-access-screen.tsx
 msgctxt "bBaQAY"
 msgid "You've been logged out"
-msgstr ""
+msgstr "Ta session est terminée"
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "t12Boe"
 msgid "This lesson isn't available"
-msgstr ""
-
-#: src/lesson/access/lesson-access-screen.tsx
-#: src/questions/lesson-question-errors.tsx
-msgctxt "odXlk8"
-msgid "Log in"
-msgstr ""
+msgstr "Cette leçon n’est pas disponible"
 
 #: src/lesson/access/lesson-slow-down.tsx
 msgctxt "z7s-vx"
 msgid "You opened a lot of lessons quickly. This one opens on its own in {seconds, plural, =0 {# seconds} one {# second} other {# seconds}}."
-msgstr ""
+msgstr "Tu as ouvert beaucoup de leçons en peu de temps. Celle-ci s’ouvrira automatiquement dans {seconds, plural, =0 {# seconde} one {# seconde} other {# secondes}}."
 
 #: src/lesson/access/lesson-slow-down.tsx
 msgctxt "bKi-gy"
@@ -3326,7 +3297,7 @@ msgstr "Également correct :"
 #: src/lesson/feedback/lesson-step-result.tsx
 msgctxt "WGhDaL"
 msgid "This question was already checked a few times today, so this answer doesn't count. Compare it with this one:"
-msgstr ""
+msgstr "Cette question a déjà été corrigée plusieurs fois aujourd’hui, donc ta réponse ne compte pas. Compare-la à celle-ci :"
 
 #: src/lesson/feedback/lesson-step-result.tsx
 msgctxt "bqVpRG"
@@ -3337,50 +3308,6 @@ msgstr "Orthographe :"
 msgctxt "mhiTW7"
 msgid "Correct answer"
 msgstr "Bonne réponse"
-
-#: src/lesson/lesson-action-bar.tsx
-msgctxt "RDZVQL"
-msgid "Check"
-msgstr "Vérifier"
-
-#: src/lesson/lesson-action-bar.tsx
-#: src/lesson/lesson-practice-step.tsx
-msgctxt "N2IrpM"
-msgid "Confirm"
-msgstr "Confirmer"
-
-#: src/lesson/lesson-action-bar.tsx
-#: src/lesson/steps/typed-answer-step.tsx
-msgctxt "h5CuXu"
-msgid "I don't know yet"
-msgstr "Je ne sais pas encore"
-
-#: src/lesson/lesson-action-bar.tsx
-#: src/mind-maps/mind-map-reader.tsx
-msgctxt "9-Ddtu"
-msgid "Next"
-msgstr "Suivant"
-
-#: src/lesson/lesson-action-bar.tsx
-msgctxt "BkQAJw"
-msgid "Show the next step"
-msgstr "Afficher l’étape suivante"
-
-#: src/lesson/lesson-action-bar.tsx
-msgctxt "ZLtyTD"
-msgid "See the answer"
-msgstr "Voir la réponse"
-
-#: src/lesson/lesson-action-bar.tsx
-#: src/lesson/lesson-practice-step.tsx
-msgctxt "zDR51u"
-msgid "See how it went"
-msgstr "Voir le résultat"
-
-#: src/lesson/lesson-action-bar.tsx
-msgctxt "QriCsD"
-msgid "Previous screen"
-msgstr "Écran précédent"
 
 #: src/lesson/lesson-aside.tsx
 #: src/lesson/steps/worked-example-content.tsx
@@ -3420,30 +3347,25 @@ msgctxt "chnAWh"
 msgid "Help with this screen"
 msgstr "Aide pour cet écran"
 
-#: src/lesson/lesson-leave.tsx
-msgctxt "-D1SOt"
-msgid "Leave for now?"
-msgstr "Quitter pour le moment ?"
-
-#: src/lesson/lesson-leave.tsx
-msgctxt "evHhXy"
-msgid "Your answer hasn't been checked, so it won't be kept."
-msgstr "Ta réponse n’a pas été vérifiée, elle ne sera donc pas conservée."
-
-#: src/lesson/lesson-leave.tsx
+#: src/lesson/lesson-player-header.tsx
 msgctxt "xNSBn4"
 msgid "Keep writing"
 msgstr "Continuer à écrire"
 
-#: src/lesson/lesson-leave.tsx
+#: src/lesson/lesson-player-header.tsx
 msgctxt "fnihsY"
 msgid "Leave"
 msgstr "Quitter"
 
 #: src/lesson/lesson-player-header.tsx
-msgctxt "fp5tEg"
-msgid "Close lesson"
-msgstr "Fermer la leçon"
+msgctxt "evHhXy"
+msgid "Your answer hasn't been checked, so it won't be kept."
+msgstr "Ta réponse n’a pas été vérifiée, elle ne sera donc pas conservée."
+
+#: src/lesson/lesson-player-header.tsx
+msgctxt "-D1SOt"
+msgid "Leave for now?"
+msgstr "Quitter pour le moment ?"
 
 #: src/lesson/lesson-player-header.tsx
 msgctxt "0WZ-rc"
@@ -3466,14 +3388,14 @@ msgid "Lesson content"
 msgstr "Contenu de la leçon"
 
 #: src/lesson/lesson-screen-menu.tsx
-msgctxt "y7b8vA"
-msgid "Screen options"
-msgstr "Options de l’écran"
-
-#: src/lesson/lesson-screen-menu.tsx
 msgctxt "_fpJc0"
 msgid "Made with AI. It may contain mistakes."
 msgstr "Créé avec l’IA. Peut contenir des erreurs."
+
+#: src/lesson/lesson-screen-menu.tsx
+msgctxt "GscVFm"
+msgid "Skip writing questions today"
+msgstr "Sauter les questions à l’écrit aujourd’hui"
 
 #: src/lesson/lesson-screen-menu.tsx
 msgctxt "JfMPi0"
@@ -3483,7 +3405,7 @@ msgstr "Je connais déjà"
 #: src/lesson/lesson-stage.tsx
 msgctxt "Bvu2Yr"
 msgid "Turn back on"
-msgstr ""
+msgstr "Réactiver"
 
 #: src/lesson/lesson-stage.tsx
 msgctxt "LnHBcu"
@@ -3508,7 +3430,7 @@ msgstr "Cette question attendait son image. Réponds-y pour terminer la leçon."
 #: src/lesson/lesson-stage.tsx
 msgctxt "36aQ8F"
 msgid "Writing is off for today."
-msgstr ""
+msgstr "Les questions à l’écrit sont désactivées pour aujourd’hui."
 
 #: src/lesson/lesson-stage.tsx
 msgctxt "N9yMCQ"
@@ -3553,7 +3475,7 @@ msgstr "Défi terminé"
 #: src/lesson/steps/challenge/challenge-debrief.tsx
 msgctxt "3SY66E"
 msgid "What you practiced"
-msgstr ""
+msgstr "Ce que tu as travaillé"
 
 #: src/lesson/steps/challenge/challenge-debrief.tsx
 msgctxt "gvZdep"
@@ -3636,15 +3558,11 @@ msgctxt "YAXwBl"
 msgid "Write your answer"
 msgstr "Écris ta réponse"
 
+#. “Record” is the label of the button that starts the recording.
 #: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "7Y6Yvq"
-msgid "Record"
-msgstr "Enregistrer"
-
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "Tljb7W"
-msgid "Tap and say it out loud"
-msgstr "Appuie et dis-le à voix haute"
+msgctxt "PDfU14"
+msgid "Tap Record and say it out loud"
+msgstr "Appuie sur Enregistrer et dis-le à voix haute"
 
 #. “Stop” is the label of the button that ends the recording.
 #: src/lesson/steps/spoken-answer-step.tsx
@@ -3683,11 +3601,6 @@ msgid "{count, plural, one {# idea to take from this lesson} other {# ideas to t
 msgstr "{count, plural, one {# idée à retenir de cette leçon} other {# idées à retenir de cette leçon}}"
 
 #: src/lesson/steps/typed-answer-step.tsx
-msgctxt "GscVFm"
-msgid "Skip writing questions today"
-msgstr ""
-
-#: src/lesson/steps/typed-answer-step.tsx
 msgctxt "lZZnLn"
 msgid "In your own words"
 msgstr "Avec tes propres mots"
@@ -3724,11 +3637,6 @@ msgid "You picked <strong>{answer}</strong> on “<question></question>”"
 msgstr "Tu as choisi <strong>{answer}</strong> pour « <question></question> »"
 
 #: src/mind-maps/mind-map-reader-menu.tsx
-msgctxt "IzCVhG"
-msgid "More options"
-msgstr "Plus d’options"
-
-#: src/mind-maps/mind-map-reader-menu.tsx
 msgctxt "pyQIKJ"
 msgid "Start from the first map"
 msgstr "Repartir de la première carte mentale"
@@ -3762,6 +3670,11 @@ msgstr "Il n’y a pas encore de cartes mentales à étudier ici."
 msgctxt "lvN_47"
 msgid "Previous map"
 msgstr "Carte mentale précédente"
+
+#: src/mind-maps/mind-map-reader.tsx
+msgctxt "9-Ddtu"
+msgid "Next"
+msgstr "Suivant"
 
 #: src/mind-maps/mind-map-slides.tsx
 msgctxt "Vxnu0A"
@@ -3897,12 +3810,12 @@ msgstr "⏎ envoyer · ⇧⏎ nouvelle ligne"
 #: src/questions/lesson-question-errors.tsx
 msgctxt "NYRAZH"
 msgid "You've been logged out."
-msgstr ""
+msgstr "Ta session est terminée."
 
 #: src/questions/lesson-question-errors.tsx
-msgctxt "2SD7dI"
-msgid "Asking questions comes with Plus."
-msgstr ""
+msgctxt "JGZkd5"
+msgid "Asking questions needs a subscription"
+msgstr "Il faut un abonnement pour poser des questions"
 
 #: src/questions/lesson-question-errors.tsx
 msgctxt "0-TBnr"

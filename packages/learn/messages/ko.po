@@ -123,6 +123,7 @@ msgstr "오늘"
 
 #: src/_components/create-account-link.tsx
 #: src/_components/help-limit-notice.tsx
+#: src/language/conversation/call-problem.tsx
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "d82w2J"
 msgid "Create a free account"
@@ -148,6 +149,7 @@ msgid "Time a day"
 msgstr "하루 학습 시간"
 
 #: src/_components/detail-page.tsx
+#: src/_components/question-actions.tsx
 #: src/_components/steps.tsx
 #: src/ceremonies/use-ceremony-copy.ts
 #: src/certificates/certificate-moment-parts.tsx
@@ -160,7 +162,6 @@ msgstr "하루 학습 시간"
 #: src/language/conversation/conversation-result.tsx
 #: src/language/conversation/speaking-mock-result.tsx
 #: src/language/exam-speaking/exam-speaking-result.tsx
-#: src/language/pattern/language-pattern-screen.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/language/unit/practice-conversation.tsx
 #: src/mock/mock-result-actions.tsx
@@ -174,7 +175,6 @@ msgstr "하루 학습 시간"
 #: src/session/lesson-moment.tsx
 #: src/session/next-stop.tsx
 #: src/session/question-block/block-body.tsx
-#: src/session/question-block/question-actions.tsx
 #: src/session/study-moment.tsx
 #: src/session/summary/summary-steps.tsx
 msgctxt "acrOoz"
@@ -182,6 +182,7 @@ msgid "Continue"
 msgstr "계속하기"
 
 #: src/_components/detail-page.tsx
+#: src/_components/question-actions.tsx
 #: src/challenge/challenge-footer.tsx
 #: src/conversation/tutor-feature-offers.tsx
 #: src/explain/explain-waiting.tsx
@@ -203,20 +204,6 @@ msgctxt "xJFp6i"
 msgid "{percent}% done"
 msgstr "{percent}% 완료"
 
-#: src/_components/details-drawer.tsx
-#: src/appearance/buddy-settings.tsx
-#: src/certificates/certificate-linkedin.tsx
-#: src/certificates/certificate-name.tsx
-#: src/certificates/certificate-share.tsx
-#: src/explain/explain-waiting.tsx
-#: src/journey/rename-goal-dialog.tsx
-#: src/memory/memory-fact-row.tsx
-#: src/mind-maps/mind-map-viewer.tsx
-#: src/plan/plan-editor.tsx
-msgctxt "rbrahO"
-msgid "Close"
-msgstr "닫기"
-
 #: src/_components/finish-ready.tsx
 msgctxt "MaLZrn"
 msgid "Nothing left to answer"
@@ -227,51 +214,26 @@ msgctxt "kwl__x"
 msgid "Finish to see how it went."
 msgstr "마치고 결과를 확인해 보세요."
 
-#: src/_components/free-week-over.tsx
-msgctxt "WJqIIW"
-msgid "Reviews and practice stay free. Plus opens the rest of your plan."
-msgstr ""
-
-#. Also a compact row beside a button that shows two lines on a phone: keep it short.
-#: src/_components/free-week-over.tsx
-msgctxt "WCwsVK"
-msgid "Your free week of exam prep is over"
-msgstr "일주일간의 무료 시험 준비가 끝났어요"
-
-#: src/_components/help-limit-notice.tsx
-#: src/_components/lesson-not-written-notice.tsx
-#: src/_components/plus-lock.tsx
-#: src/challenge/challenge-plus-lock.tsx
-#: src/conversation/tutor-feature-offers.tsx
-#: src/mock/mock-chooser-page.tsx
-#: src/onboarding/entry/goal-limit-notice.tsx
-#: src/plan/plan-suggestion.tsx
-#: src/questions/test-out-preparing.tsx
-#: src/today/today-exam-access.tsx
-msgctxt "xANHtD"
-msgid "See Plus"
-msgstr "Plus 알아보기"
-
 #: src/_components/help-limit-notice.tsx
 msgctxt "C84LQr"
 msgid "More next month."
-msgstr ""
+msgstr "다음 달에 다시 이용할 수 있어요."
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "i1JCVp"
 msgid "More tomorrow."
-msgstr ""
+msgstr "내일 다시 이용할 수 있어요."
 
 #: src/_components/help-limit-notice.tsx
 #: src/onboarding/entry/goal-limit-notice.tsx
-msgctxt "46p8ey"
-msgid "More next month, or now with Plus."
-msgstr ""
+msgctxt "64dPfY"
+msgid "More next month, or subscribe to keep going."
+msgstr "다음 달에 다시 이용할 수 있어요. 구독하면 지금 계속 이용할 수 있어요."
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "mLUJ0B"
-msgid "More tomorrow, or now with Plus."
-msgstr ""
+msgctxt "wwdPGH"
+msgid "More tomorrow, or subscribe to keep going."
+msgstr "내일 다시 이용할 수 있어요. 구독하면 지금 계속 이용할 수 있어요."
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "X6_KO5"
@@ -281,87 +243,92 @@ msgstr "잠깐 쉬었다가 다시 시도해 보세요."
 #: src/_components/help-limit-notice.tsx
 msgctxt "8vWw5H"
 msgid "This needs a free account"
-msgstr ""
+msgstr "무료 계정이 필요해요"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "TSBvtn"
 msgid "That's all you can try without an account"
-msgstr ""
+msgstr "계정 없이 체험할 수 있는 한도에 도달했어요"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "Jqv4S8"
 msgid "No more messages this month"
-msgstr ""
+msgstr "이번 달에는 메시지를 더 보낼 수 없어요"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "x0gg1d"
 msgid "No more messages today"
-msgstr ""
+msgstr "오늘은 메시지를 더 보낼 수 없어요"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "z4UYJE"
 msgid "No more explanations this month"
-msgstr ""
+msgstr "이번 달에는 설명을 더 요청할 수 없어요"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "cPoE5U"
 msgid "No more explanations today"
-msgstr ""
+msgstr "오늘은 설명을 더 요청할 수 없어요"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "6Tamx-"
 msgid "You've reached this month's limit"
-msgstr ""
+msgstr "이번 달 이용 한도에 도달했어요"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "Co4ZUv"
 msgid "You've reached today's limit"
-msgstr ""
+msgstr "오늘 이용 한도에 도달했어요"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "2LDIQ9"
 msgid "No more lessons without an account"
-msgstr ""
+msgstr "레슨을 더 시작하려면 계정이 필요해요"
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "2XtwRD"
+msgid "You've used this month's free lessons"
+msgstr "이번 달 무료 레슨을 모두 이용했어요"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "VGhCC9"
 msgid "No more new lessons this month"
-msgstr ""
+msgstr "이번 달에는 새 레슨을 더 시작할 수 없어요"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "j9Za23"
 msgid "No more new lessons today"
-msgstr ""
+msgstr "오늘은 새 레슨을 더 시작할 수 없어요"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "NphhW6"
 msgid "No more mind maps without an account"
-msgstr ""
+msgstr "마인드맵을 더 만들려면 계정이 필요해요"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "6ootiC"
 msgid "No more new mind maps this month"
-msgstr ""
+msgstr "이번 달에는 새 마인드맵을 더 만들 수 없어요"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "jaoJk9"
 msgid "No more new mind maps today"
-msgstr ""
+msgstr "오늘은 새 마인드맵을 더 만들 수 없어요"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "bhVg5t"
 msgid "No more previews without an account"
-msgstr ""
+msgstr "미리보기를 더 이용하려면 계정이 필요해요"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "-sI9v1"
 msgid "No more previews this month"
-msgstr ""
+msgstr "이번 달에는 미리보기를 더 이용할 수 없어요"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "o0NLBw"
 msgid "No more previews today"
-msgstr ""
+msgstr "오늘은 미리보기를 더 이용할 수 없어요"
 
 #: src/_components/lesson-list.tsx
 msgctxt "2lvsw9"
@@ -401,6 +368,7 @@ msgstr "{done, number}/{total, number}"
 #: src/mind-maps/mind-map-aside.tsx
 #: src/mind-maps/mind-map-row.tsx
 #: src/mind-maps/not-made-yet.tsx
+#: src/mock/mock-frame.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
 #: src/onboarding/steps/step-parts.tsx
 #: src/plan/plan-bases-advice.tsx
@@ -423,10 +391,10 @@ msgid "This lesson isn't available"
 msgstr "이 레슨은 이용할 수 없어요"
 
 #: src/_components/lesson-not-written-notice.tsx
-#: src/challenge/challenge-plus-lock.tsx
+#: src/language/conversation/challenge-call-gate.tsx
 msgctxt "-rTwFN"
 msgid "Your plan goes on without it."
-msgstr ""
+msgstr "이 활동 없이도 계획은 계속 진행돼요."
 
 #: src/_components/lesson-summaries.tsx
 msgctxt "vc1FfA"
@@ -460,7 +428,6 @@ msgid "This is taking longer than usual. It opens on its own, no need to tap aga
 msgstr "평소보다 오래 걸리고 있어요. 자동으로 열리니 다시 누르지 않아도 돼요."
 
 #: src/_components/plus-lock.tsx
-#: src/conversation/tutor-feature-offers.tsx
 #: src/mind-maps/mind-map-index-rows.tsx
 msgctxt "lOdoIb"
 msgid "Plus"
@@ -471,11 +438,71 @@ msgctxt "fi0FtL"
 msgid "Available with Plus"
 msgstr "Plus에서 이용 가능"
 
+#: src/_components/plus-lock.tsx
+#: src/_components/subscribe-gate.tsx
+#: src/conversation/tutor-feature-offers.tsx
+#: src/onboarding/entry/goal-limit-notice.tsx
+msgctxt "gczcC5"
+msgid "Subscribe"
+msgstr "구독하기"
+
 #: src/_components/practice-outcome-message.tsx
 #: src/_components/test-out-start-link.tsx
 msgctxt "kaDIbJ"
 msgid "That didn't work. Try again in a moment."
 msgstr "처리하지 못했어요. 잠시 후에 다시 시도해 보세요."
+
+#: src/_components/question-actions.tsx
+msgctxt "RDZVQL"
+msgid "Check"
+msgstr "확인"
+
+#: src/_components/question-actions.tsx
+msgctxt "N2IrpM"
+msgid "Confirm"
+msgstr "확인"
+
+#: src/_components/question-actions.tsx
+#: src/session/question-block/block-finish-ready.tsx
+#: src/session/summary/summary-actions.tsx
+msgctxt "2O2sfp"
+msgid "Finish"
+msgstr "마치기"
+
+#: src/_components/question-actions.tsx
+#: src/plan/plan-suggestion-context.tsx
+msgctxt "9-Ddtu"
+msgid "Next"
+msgstr "다음"
+
+#: src/_components/question-actions.tsx
+msgctxt "BkQAJw"
+msgid "Show the next step"
+msgstr "다음 풀이 과정 보기"
+
+#: src/_components/question-actions.tsx
+msgctxt "ZLtyTD"
+msgid "See the answer"
+msgstr "정답 보기"
+
+#: src/_components/question-actions.tsx
+#: src/challenge/challenge-footer.tsx
+#: src/language/pronunciation/pronunciation-review-screen.tsx
+#: src/mock/mock-screen.tsx
+msgctxt "zDR51u"
+msgid "See how it went"
+msgstr "결과 보기"
+
+#: src/_components/question-actions.tsx
+msgctxt "QriCsD"
+msgid "Previous screen"
+msgstr "이전 화면"
+
+#: src/_components/question-actions.tsx
+#: src/session/question-block/question-feedback.tsx
+msgctxt "h5CuXu"
+msgid "I don't know yet"
+msgstr "아직 모르겠어요"
 
 #: src/_components/save-error.tsx
 #: src/feedback/feedback-form-dialog.tsx
@@ -499,6 +526,21 @@ msgstr "전송하지 못했어요. 답은 그대로 남아 있어요."
 msgctxt "DxPDlc"
 msgid "That didn't save. Try again."
 msgstr "저장하지 못했어요. 다시 시도해 보세요."
+
+#: src/_components/sheet-header.tsx
+#: src/_components/suggestion.tsx
+#: src/appearance/buddy-settings.tsx
+#: src/certificates/certificate-linkedin.tsx
+#: src/certificates/certificate-name.tsx
+#: src/certificates/certificate-share.tsx
+#: src/explain/explain-waiting.tsx
+#: src/journey/rename-goal-dialog.tsx
+#: src/memory/memory-fact-row.tsx
+#: src/mind-maps/mind-map-viewer.tsx
+#: src/plan/plan-editor.tsx
+msgctxt "rbrahO"
+msgid "Close"
+msgstr "닫기"
 
 #: src/_components/skill-list.tsx
 #: src/session/summary/summary-parts.tsx
@@ -544,6 +586,7 @@ msgstr "이 단계를 열지 못했어요. 다시 시도해 보세요."
 #: src/language/conversation/call-problem.tsx
 #: src/mistakes/practice-done.tsx
 #: src/onboarding/onboarding-bar.tsx
+#: src/session/summary/summary-steps.tsx
 #: src/shell/learn-bar.tsx
 msgctxt "cyR7Kh"
 msgid "Back"
@@ -554,15 +597,27 @@ msgctxt "FgydNe"
 msgid "View"
 msgstr "보기"
 
+#: src/_components/task-close.tsx
+#: src/essay/essay-screen.tsx
+#: src/mock/mock-runner-view.tsx
+msgctxt "fnihsY"
+msgid "Leave"
+msgstr "나가기"
+
+#: src/_components/task-header.tsx
+msgctxt "eOJ4QU"
+msgid "Collapse sidebar"
+msgstr "사이드바 접기"
+
 #: src/_components/task-header.tsx
 msgctxt "1JgBls"
 msgid "Expand sidebar"
 msgstr "사이드바 펼치기"
 
 #: src/_components/task-header.tsx
-msgctxt "eOJ4QU"
-msgid "Collapse sidebar"
-msgstr "사이드바 접기"
+msgctxt "y7b8vA"
+msgid "Screen options"
+msgstr "화면 옵션"
 
 #: src/_components/test-out-start-link.tsx
 #: src/questions/test-out-preparing.tsx
@@ -1119,27 +1174,27 @@ msgstr "성장 완료"
 #: src/buddies/buddy-day-parts.tsx
 msgctxt "EcDZVd"
 msgid "Grows when you reach {belt}"
-msgstr ""
+msgstr "{belt}에 도달하면 성장해요"
 
 #: src/buddies/buddy-day-parts.tsx
 msgctxt "gaCo5g"
 msgid "{buddy} is napping. Study to wake it up."
-msgstr ""
+msgstr "{buddy}(이)가 낮잠을 자고 있어요. 공부해서 깨워 주세요."
 
 #: src/buddies/buddy-day-parts.tsx
 msgctxt "TTZGoJ"
 msgid "Study today to keep it up."
-msgstr ""
+msgstr "오늘 공부해서 에너지를 유지하세요."
 
 #: src/buddies/buddy-day-parts.tsx
 msgctxt "RquZa1"
 msgid "{buddy}'s Energy"
-msgstr ""
+msgstr "{buddy}의 에너지"
 
 #: src/buddies/buddy-day-parts.tsx
 msgctxt "Q88QPu"
 msgid "It starts with your first lesson."
-msgstr ""
+msgstr "첫 레슨부터 에너지가 생겨요."
 
 #: src/buddies/buddy-day.tsx
 #: src/buddies/buddy-screen.tsx
@@ -1186,7 +1241,7 @@ msgstr "복습 {current}회 / {target}회"
 #: src/buddies/buddy-glasses-sheet.tsx
 msgctxt "lw-2jH"
 msgid "Pick a pair you've earned."
-msgstr ""
+msgstr "얻은 안경 중에서 골라 보세요."
 
 #: src/buddies/buddy-goal-start.tsx
 #: src/onboarding/entry/goal-examples.tsx
@@ -1209,7 +1264,7 @@ msgstr "예시"
 #: src/buddies/buddy-goal-start.tsx
 msgctxt "Py3YsI"
 msgid "Hi! I'm {name}, your AI study buddy. Tell me what you want to learn, and I'll build your plan."
-msgstr ""
+msgstr "안녕하세요! 저는 AI 공부 짝꿍 {name}(이)라고 해요. 배우고 싶은 걸 알려 주시면 계획을 만들어 드릴게요."
 
 #: src/buddies/buddy-goal-start.tsx
 #: src/buddies/buddy-screen.tsx
@@ -1338,7 +1393,7 @@ msgstr "동그란 안경"
 #: src/buddies/buddy-labels.tsx
 msgctxt "0Ys5Rm"
 msgid "Win your first challenge"
-msgstr ""
+msgstr "첫 챌린지에서 승리하기"
 
 #: src/buddies/buddy-labels.tsx
 msgctxt "gltJSr"
@@ -1358,7 +1413,7 @@ msgstr "복습 50회 끝내기"
 #: src/buddies/buddy-labels.tsx
 msgctxt "erG0QJ"
 msgid "Win your plan's last challenge"
-msgstr ""
+msgstr "계획의 마지막 챌린지에서 승리하기"
 
 #. How the learner gets the round glasses: every buddy has them.
 #: src/buddies/buddy-labels.tsx
@@ -2135,19 +2190,9 @@ msgstr "월요일로 옮기기"
 
 #: src/challenge/challenge-footer.tsx
 #: src/conversation/tutor-tool-offer.tsx
-#: src/exam/exam-mocks-section.tsx
-#: src/mock/mock-chooser-parts.tsx
-msgctxt "dza30U"
-msgid "Mock exams come with Plus"
-msgstr ""
-
-#: src/challenge/challenge-footer.tsx
-#: src/checkpoints/checkpoint-duel-view.tsx
-#: src/language/pronunciation/pronunciation-review-screen.tsx
-#: src/mock/mock-screen.tsx
-msgctxt "zDR51u"
-msgid "See how it went"
-msgstr "결과 보기"
+msgctxt "JUvBan"
+msgid "Mock exams need a subscription"
+msgstr "모의고사를 보려면 구독이 필요해요"
 
 #: src/challenge/challenge-footer.tsx
 #: src/checkpoints/checkpoint-duel-verdict.tsx
@@ -2331,7 +2376,6 @@ msgstr "이 {duration} 모의고사를 {date} 계획에 넣을 시간이 없어�
 #: src/essay/essay-feedback.tsx
 #: src/onboarding/entry/guest-goal-gate.tsx
 #: src/session/open-next-step.tsx
-#: src/session/session-header.tsx
 msgctxt "OC7hHG"
 msgid "Back to Today"
 msgstr "오늘로 돌아가기"
@@ -2361,12 +2405,8 @@ msgctxt "NaKnZr"
 msgid "Your plan moved later lessons to make room for it."
 msgstr "챌린지를 넣을 수 있도록 이후 레슨 일정을 옮겼어요."
 
-#: src/challenge/challenge-plus-lock.tsx
-msgctxt "L6h9aE"
-msgid "This call comes with Plus"
-msgstr ""
-
 #: src/challenge/challenge-screen.tsx
+#: src/wait/lesson-wait-status.tsx
 msgctxt "FxoA1t"
 msgid "Getting your challenge ready"
 msgstr "챌린지를 준비하고 있어요"
@@ -2499,20 +2539,6 @@ msgstr "이유는 마지막에 확인할 수 있어요."
 msgctxt "e-k3Hd"
 msgid "Every question is answered."
 msgstr "모든 문제에 답했어요."
-
-#: src/checkpoints/checkpoint-duel-view.tsx
-#: src/mock/mock-runner-view.tsx
-#: src/plan/plan-suggestion-context.tsx
-#: src/questions/choice-questions-run.tsx
-msgctxt "9-Ddtu"
-msgid "Next"
-msgstr "다음"
-
-#: src/checkpoints/checkpoint-duel-view.tsx
-#: src/session/question-block/question-actions.tsx
-msgctxt "N2IrpM"
-msgid "Confirm"
-msgstr "확인"
 
 #: src/checkpoints/checkpoint-duel-view.tsx
 msgctxt "v5U-vD"
@@ -2760,7 +2786,7 @@ msgstr "더 보기"
 #: src/conversation/tutor-conversation-content.tsx
 msgctxt "zf_3aa"
 msgid "Ask anything"
-msgstr ""
+msgstr "무엇이든 물어보세요"
 
 #: src/conversation/tutor-conversation-content.tsx
 msgctxt "pSjxNB"
@@ -2792,7 +2818,7 @@ msgstr "이번 주에는 공부량을 줄이고 싶어요"
 #: src/conversation/tutor-conversation-content.tsx
 msgctxt "IihZBt"
 msgid "Hi! I'm {name}, your AI study buddy. Ask me anything, or tell me what to change in your plan."
-msgstr ""
+msgstr "안녕하세요! 저는 AI 공부 짝꿍 {name}(이)라고 해요. 무엇이든 물어보거나 계획에서 바꾸고 싶은 걸 알려 주세요."
 
 #: src/conversation/tutor-conversation-content.tsx
 msgctxt "Dij_iT"
@@ -2818,7 +2844,7 @@ msgstr "적용하면 이 나라에 맞춰 계획을 다시 만들어요. 끝낸 
 #: src/conversation/tutor-country-offer.tsx
 msgctxt "BcB9ZH"
 msgid "Saved. Your new plan is getting ready, and you can keep studying."
-msgstr ""
+msgstr "저장했어요. 새 계획을 준비하고 있어요. 그동안 계속 공부할 수 있어요."
 
 #. {country} is a country's name. It always follows the colon, so it never needs an article or a case.
 #: src/conversation/tutor-country-offer.tsx
@@ -2853,9 +2879,9 @@ msgid "Start a new goal"
 msgstr "새 목표 시작하기"
 
 #: src/conversation/tutor-feature-offers.tsx
-msgctxt "H0fdkU"
-msgid "Starting another goal now comes with Plus"
-msgstr ""
+msgctxt "cNbAST"
+msgid "Another goal now needs a subscription"
+msgstr "지금 목표를 하나 더 시작하려면 구독이 필요해요"
 
 #. Describes how often essay practice comes in the learner's plan.
 #: src/conversation/tutor-feature-offers.tsx
@@ -2876,9 +2902,9 @@ msgid "Practiced every week in your plan, each draft graded."
 msgstr "계획에 따라 매주 연습하고, 쓴 글마다 채점받아요."
 
 #: src/conversation/tutor-feature-offers.tsx
-msgctxt "yCVfFT"
-msgid "Essay practice comes with Plus"
-msgstr ""
+msgctxt "FP60i-"
+msgid "Essay practice needs a subscription"
+msgstr "에세이 연습에는 구독이 필요해요"
 
 #: src/conversation/tutor-feature-offers.tsx
 #: src/conversation/tutor-tool-offer.tsx
@@ -2930,7 +2956,7 @@ msgstr "메모리"
 #: src/conversation/tutor-feature-offers.tsx
 msgctxt "p1281P"
 msgid "Energy, belt, right answers and when you study best."
-msgstr ""
+msgstr "에너지, 띠, 정답 수와 공부가 가장 잘되는 시간대."
 
 #: src/conversation/tutor-feature-offers.tsx
 msgctxt "H3eDAS"
@@ -2943,9 +2969,14 @@ msgid "Your plan and its billing."
 msgstr "요금제와 결제 정보를 확인해요."
 
 #: src/conversation/tutor-feature-offers.tsx
-msgctxt "TwAhhx"
-msgid "What Plus includes and its price."
-msgstr "Plus에 포함된 기능과 가격을 확인해요."
+msgctxt "_xThLm"
+msgid "What it includes and its price."
+msgstr "이용 혜택과 가격."
+
+#: src/conversation/tutor-feature-offers.tsx
+msgctxt "R_6nsx"
+msgid "Subscription"
+msgstr "구독"
 
 #: src/conversation/tutor-feature-offers.tsx
 msgctxt "0Azlrb"
@@ -3371,13 +3402,6 @@ msgid "Keep writing"
 msgstr "계속 쓰기"
 
 #: src/essay/essay-screen.tsx
-#: src/shell/learn-bar.tsx
-#: src/shell/task-frame.tsx
-msgctxt "fnihsY"
-msgid "Leave"
-msgstr "나가기"
-
-#: src/essay/essay-screen.tsx
 msgctxt "QnB_s5"
 msgid "Your text stays on this device, here when you come back."
 msgstr "작성한 글은 이 기기에 저장돼 돌아오면 이어서 쓸 수 있어요."
@@ -3602,6 +3626,12 @@ msgstr "모의고사"
 msgctxt "9_WhRd"
 msgid "{count, plural, one {# taken} other {# taken}}"
 msgstr "{count, plural, other {#회 응시}}"
+
+#: src/exam/exam-mocks-section.tsx
+#: src/mock/mock-chooser-parts.tsx
+msgctxt "dza30U"
+msgid "Mock exams come with Plus"
+msgstr "모의고사는 Plus에 포함돼요"
 
 #: src/exam/exam-moment-card.tsx
 msgctxt "DBeLXR"
@@ -3966,12 +3996,12 @@ msgstr "마지막에 간단한 문제 1개"
 #: src/explain/explain-waiting.tsx
 msgctxt "zfh8W-"
 msgid "Learn more about this"
-msgstr ""
+msgstr "이 내용 자세히 알아보기"
 
 #: src/explain/explain-waiting.tsx
 msgctxt "EQ-8cJ"
 msgid "Still getting your explanation ready."
-msgstr ""
+msgstr "아직 설명을 준비하고 있어요."
 
 #: src/explain/explain-waiting.tsx
 msgctxt "fL_sD1"
@@ -4618,7 +4648,6 @@ msgstr "정답을 확인하고 있어요…"
 
 #: src/generation/lesson-generation-copy.ts
 #: src/generation/use-generation-copy.ts
-#: src/wait/lesson-wait-status.tsx
 msgctxt "VLjmPG"
 msgid "Writing your challenge"
 msgstr "챌린지를 만들고 있어요"
@@ -6184,12 +6213,12 @@ msgstr "대화를 저장하지 못했어요."
 #: src/language/conversation/call-refusal-copy.ts
 msgctxt "0QT9qQ"
 msgid "It's open in another tab or on another device. Starting this one ends it, without its feedback."
-msgstr ""
+msgstr "다른 탭이나 기기에서 대화가 진행 중이에요. 이 대화를 시작하면 기존 대화는 피드백 없이 끝나요."
 
 #: src/language/conversation/call-refusal-copy.ts
 msgctxt "mWWPs0"
 msgid "You're in another call"
-msgstr ""
+msgstr "다른 대화가 진행 중이에요"
 
 #. Under the title "Calls are paused": the pause applies to every learner, not only this one.
 #: src/language/conversation/call-refusal-copy.ts
@@ -6222,7 +6251,7 @@ msgstr "이 대화가 끝났어요"
 #: src/language/conversation/call-refusal-copy.ts
 msgctxt "QGKgDY"
 msgid "Start this call"
-msgstr ""
+msgstr "이 대화 시작하기"
 
 #: src/language/conversation/call-stars-step.tsx
 msgctxt "T1FmHH"
@@ -6244,12 +6273,17 @@ msgstr "두뇌력"
 #: src/language/conversation/call-stars-step.tsx
 msgctxt "0z6K11"
 msgid "The call comes back so you can try again."
-msgstr ""
+msgstr "이 대화가 다시 열리니 한 번 더 도전해 볼 수 있어요."
 
 #: src/language/conversation/call-stars-step.tsx
 msgctxt "AhtlEG"
 msgid "A star for finishing, one for getting everything across and one without Help."
 msgstr "대화를 마치면 별 1개, 할 말을 모두 전하면 1개, 도움 없이 해내면 1개를 받아요."
+
+#: src/language/conversation/challenge-call-gate.tsx
+msgctxt "QJJTto"
+msgid "This call needs a subscription"
+msgstr "이 대화에는 구독이 필요해요"
 
 #: src/language/conversation/checkpoint-call-preparing.tsx
 msgctxt "rMZfgB"
@@ -6259,12 +6293,12 @@ msgstr "대화를 준비하고 있어요"
 #: src/language/conversation/checkpoint-call-preparing.tsx
 msgctxt "tXuVy9"
 msgid "This takes about half a minute."
-msgstr ""
+msgstr "약 30초 걸려요."
 
 #: src/language/conversation/checkpoint-call-preparing.tsx
 msgctxt "Qm5B78"
 msgid "A short voice call with an AI character, about this unit."
-msgstr ""
+msgstr "이 단원의 내용을 주제로 AI 캐릭터와 나누는 짧은 음성 대화예요."
 
 #: src/language/conversation/conversation-intro.tsx
 #: src/language/conversation/conversation-live.tsx
@@ -6383,7 +6417,7 @@ msgstr "{text} 듣기"
 #: src/language/conversation/conversation-parts.tsx
 msgctxt "R_ySCr"
 msgid "Turn your sound on."
-msgstr ""
+msgstr "소리를 켜 주세요."
 
 #: src/language/conversation/conversation-result.tsx
 msgctxt "emrMOH"
@@ -6592,12 +6626,12 @@ msgstr "면접관(AI)과 함께"
 #: src/language/exam-speaking/exam-speaking-labels.ts
 msgctxt "2-4KNJ"
 msgid "other candidate (AI)"
-msgstr ""
+msgstr "다른 응시자(AI)"
 
 #: src/language/exam-speaking/exam-speaking-labels.ts
 msgctxt "pNM8cw"
 msgid "examiner (AI)"
-msgstr ""
+msgstr "면접관(AI)"
 
 #: src/language/exam-speaking/exam-speaking-labels.ts
 msgctxt "OO7BQP"
@@ -6632,7 +6666,7 @@ msgstr "이 평가 기준에서 {band}의 수준은 {level}에 해당해요."
 #: src/language/exam-speaking/exam-speaking-result.tsx
 msgctxt "2UvMo7"
 msgid "You said little, so this estimate is rough."
-msgstr ""
+msgstr "말한 내용이 적어서 대략적으로만 평가했어요."
 
 #: src/language/exam-speaking/exam-speaking-result.tsx
 #: src/mock/mock-result-speaking.tsx
@@ -6648,7 +6682,7 @@ msgstr "이 과제는 예상 점수가 없어요"
 #: src/language/exam-speaking/exam-speaking-result.tsx
 msgctxt "gc2Yof"
 msgid "Next task"
-msgstr ""
+msgstr "다음 과제"
 
 #: src/language/exam-speaking/exam-speaking-result.tsx
 #: src/language/exam-speaking/speaking-paper-section.tsx
@@ -6670,12 +6704,12 @@ msgstr "내 카드"
 #: src/language/exam-speaking/prep-timer.tsx
 msgctxt "XHHPD9"
 msgid "Preparation time is over."
-msgstr ""
+msgstr "준비 시간이 끝났어요."
 
 #: src/language/exam-speaking/prep-timer.tsx
 msgctxt "q-Y54s"
 msgid "{time}, as in the exam"
-msgstr ""
+msgstr "실제 시험과 같은 {time}"
 
 #: src/language/exam-speaking/prep-timer.tsx
 msgctxt "rDyxKu"
@@ -6686,11 +6720,6 @@ msgstr "준비 시작하기"
 msgctxt "JgLxsC"
 msgid "Start again"
 msgstr "다시 시작하기"
-
-#: src/language/exam-speaking/speaking-paper-section.tsx
-msgctxt "sfWMkK"
-msgid "Speaking practice comes with Plus"
-msgstr ""
 
 #: src/language/exam-speaking/speaking-paper-section.tsx
 msgctxt "cNEc28"
@@ -6753,12 +6782,12 @@ msgstr "지난 시도: 예상 점수 없음"
 #: src/language/exam-speaking/speaking-task-row.tsx
 msgctxt "PMoeDJ"
 msgid "Last try: at {level} on {count} of {rated} criteria"
-msgstr ""
+msgstr "지난 시도: {level} 수준에 도달한 평가 항목 {count}개(전체 {rated}개)"
 
 #: src/language/exam-speaking/speaking-task-row.tsx
 msgctxt "FD6ztN"
 msgid "Last try: near {level} on {count} of {rated} criteria"
-msgstr ""
+msgstr "지난 시도: {level} 수준에 가까운 평가 항목 {count}개(전체 {rated}개)"
 
 #: src/language/exam-speaking/speaking-task-row.tsx
 msgctxt "KYNzwA"
@@ -6771,9 +6800,14 @@ msgid "Rated on {criteria}."
 msgstr "{criteria} 기준으로 평가해요."
 
 #: src/language/exam-speaking/speaking-task-row.tsx
+msgctxt "DMe1t1"
+msgid "Speaking practice needs a subscription"
+msgstr "말하기 연습에는 구독이 필요해요"
+
+#: src/language/exam-speaking/speaking-task-row.tsx
 msgctxt "h0uuWx"
 msgid "Last result"
-msgstr ""
+msgstr "지난 결과 보기"
 
 #: src/language/level-test/level-test-parts.tsx
 msgctxt "KlIXoI"
@@ -6906,12 +6940,6 @@ msgid "Mistake pattern"
 msgstr "실수 패턴"
 
 #: src/language/pattern/language-pattern-screen.tsx
-#: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "y7b8vA"
-msgid "Screen options"
-msgstr "화면 옵션"
-
-#: src/language/pattern/language-pattern-screen.tsx
 msgctxt "ZZjlNy"
 msgid "See the rule"
 msgstr "규칙 보기"
@@ -6921,17 +6949,6 @@ msgstr "규칙 보기"
 msgctxt "uhjTvw"
 msgid "The rule"
 msgstr "규칙"
-
-#: src/language/pattern/language-pattern-screen.tsx
-msgctxt "q56JGx"
-msgid "See how you did"
-msgstr "결과 보기"
-
-#: src/language/pattern/language-pattern-screen.tsx
-#: src/session/question-block/question-actions.tsx
-msgctxt "RDZVQL"
-msgid "Check"
-msgstr "확인"
 
 #: src/language/pattern/pattern-drill.tsx
 msgctxt "27c7dl"
@@ -7033,22 +7050,22 @@ msgstr "쓰기 수준 추정치: {level}"
 #: src/language/progress/skill-levels-card.tsx
 msgctxt "-OF3zL"
 msgid "Listening went up to {level}"
-msgstr ""
+msgstr "듣기 실력이 {level}까지 올랐어요"
 
 #: src/language/progress/skill-levels-card.tsx
 msgctxt "msgwoN"
 msgid "Reading went up to {level}"
-msgstr ""
+msgstr "읽기 실력이 {level}까지 올랐어요"
 
 #: src/language/progress/skill-levels-card.tsx
 msgctxt "rkXFzw"
 msgid "Speaking went up to {level}"
-msgstr ""
+msgstr "말하기 실력이 {level}까지 올랐어요"
 
 #: src/language/progress/skill-levels-card.tsx
 msgctxt "NRJ7bO"
 msgid "Writing went up to {level}"
-msgstr ""
+msgstr "쓰기 실력이 {level}까지 올랐어요"
 
 #: src/language/progress/skill-levels-card.tsx
 msgctxt "Dy0WBR"
@@ -7064,12 +7081,12 @@ msgstr "레벨 테스트 이후 하락"
 #: src/language/progress/skill-levels-card.tsx
 msgctxt "4DuYAS"
 msgid "{skills} went up"
-msgstr ""
+msgstr "{skills} 실력이 올랐어요"
 
 #: src/language/progress/skill-levels-card.tsx
 msgctxt "gShZPM"
 msgid "Your level shows here once you practice."
-msgstr ""
+msgstr "연습하면 여기에 레벨이 표시돼요."
 
 #: src/language/progress/speaking-mock-card.tsx
 msgctxt "v806h7"
@@ -7223,9 +7240,9 @@ msgid "Your call opens as soon as it's ready."
 msgstr "준비가 끝나면 대화 화면이 바로 열려요."
 
 #: src/language/unit/practice-conversation.tsx
-msgctxt "mzSnv0"
-msgid "Longer calls come with Plus"
-msgstr ""
+msgctxt "uIeu_F"
+msgid "Longer calls need a subscription"
+msgstr "더 오래 대화하려면 구독이 필요해요"
 
 #: src/language/unit/practice-conversation.tsx
 msgctxt "ktIybS"
@@ -7270,7 +7287,7 @@ msgstr "외 {count, number}개"
 #: src/language/units/alphabet-row.tsx
 msgctxt "1Y0zuD"
 msgid "Your first lesson · {time}"
-msgstr ""
+msgstr "첫 레슨 · {time}"
 
 #: src/language/units/alphabet-row.tsx
 msgctxt "p3fcZv"
@@ -8198,11 +8215,6 @@ msgctxt "AmTEu0"
 msgid "The trap:"
 msgstr "함정:"
 
-#: src/mistakes/drill/drill-controls.tsx
-msgctxt "XUx7zX"
-msgid "I'm not sure"
-msgstr "잘 모르겠어요"
-
 #: src/mistakes/drill/drill-countdown.tsx
 msgctxt "XYckgX"
 msgid "{seconds, plural, one {# second left} other {# seconds left}}"
@@ -8280,14 +8292,9 @@ msgid "Open the lesson"
 msgstr "레슨 열기"
 
 #: src/mistakes/mistake-practice-run.tsx
-msgctxt "tsWXZT"
-msgid "Back to the notebook"
-msgstr "오답 노트로 돌아가기"
-
-#: src/mistakes/mistake-practice-run.tsx
-msgctxt "2LmYn_"
-msgid "End practice. What you answered counts."
-msgstr "연습 끝내기. 지금까지 푼 문제는 반영돼요."
+msgctxt "z2HeMD"
+msgid "Leave. What you answered counts."
+msgstr "나가기. 지금까지 푼 문제는 반영돼요."
 
 #: src/mistakes/mistake-practice-run.tsx
 #: src/mistakes/mistakes-notebook.tsx
@@ -8405,13 +8412,10 @@ msgid "The rest are still ready to practice."
 msgstr "나머지 문제는 언제든 연습할 수 있어요."
 
 #: src/mistakes/practice-step.tsx
-#: src/onboarding/steps/placement-question.tsx
-#: src/questions/choice-questions-run.tsx
 #: src/session/question-block/block-question.tsx
-#: src/session/question-block/question-feedback.tsx
-msgctxt "h5CuXu"
-msgid "I don't know yet"
-msgstr "아직 모르겠어요"
+msgctxt "XUx7zX"
+msgid "I'm not sure"
+msgstr "잘 모르겠어요"
 
 #. "Your notebook" is the learner's Mistakes notebook.
 #: src/mistakes/practice-step.tsx
@@ -8590,6 +8594,14 @@ msgid "The question bank doesn't have more new ones for it yet."
 msgstr "이 모의고사에 추가할 새 문제가 문제 은행에 아직 없어요."
 
 #: src/mock/mock-chooser-page.tsx
+#: src/plan/plan-suggestion.tsx
+#: src/questions/test-out-preparing.tsx
+#: src/today/today-exam-access.tsx
+msgctxt "xANHtD"
+msgid "See Plus"
+msgstr "Plus 알아보기"
+
+#: src/mock/mock-chooser-page.tsx
 msgctxt "X00VNK"
 msgid "Preparing your mock exam"
 msgstr "모의고사를 준비하고 있어요"
@@ -8679,11 +8691,6 @@ msgstr "답하지 않은 문제가 대부분이라 채점하지 않고 준비도
 msgctxt "UIkt52"
 msgid "Not saved yet · retrying"
 msgstr "아직 저장되지 않았어요 · 다시 시도하고 있어요"
-
-#: src/mock/mock-frame.tsx
-msgctxt "62nsdy"
-msgid "Retry"
-msgstr "다시 시도"
 
 #: src/mock/mock-frame.tsx
 msgctxt "gOsgur"
@@ -9396,6 +9403,21 @@ msgctxt "z1R1nT"
 msgid "Hand in this section"
 msgstr "이 파트 제출하기"
 
+#: src/mock/mock-runner-view.tsx
+msgctxt "r5QD8t"
+msgid "Stay"
+msgstr "계속 풀기"
+
+#: src/mock/mock-runner-view.tsx
+msgctxt "jOu95u"
+msgid "Your answers are saved. The clock keeps running while you're away."
+msgstr "답안은 저장되어 있어요. 자리를 비워도 시간은 계속 흘러요."
+
+#: src/mock/mock-runner-view.tsx
+msgctxt "N4BqWk"
+msgid "Leave the mock exam?"
+msgstr "모의고사에서 나갈까요?"
+
 #: src/mock/mock-screen.tsx
 msgctxt "Ly_Z1F"
 msgid "Mock exam handed in"
@@ -9704,7 +9726,7 @@ msgstr "인플레이션은 어떤 원리로 일어나나요?"
 #: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "4RwuVD"
 msgid "No more new goals this month"
-msgstr ""
+msgstr "이번 달에는 새 목표를 더 시작할 수 없어요"
 
 #: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "MO6156"
@@ -9714,12 +9736,12 @@ msgstr "내 계획으로 이동"
 #: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "EreSqP"
 msgid "That's all the goals you can study at once"
-msgstr ""
+msgstr "동시에 공부할 수 있는 목표 수를 다 채웠어요"
 
 #: src/onboarding/entry/goal-limit-notice.tsx
-msgctxt "6uyInV"
-msgid "Pause one in your Plan to start another. You can still get a quick explanation here."
-msgstr ""
+msgctxt "1oUkSm"
+msgid "Pause one in your Plan, or subscribe to study more at once."
+msgstr "계획에서 목표 하나를 일시 중지하거나 구독해서 더 많은 목표를 동시에 공부해 보세요."
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "dl1he3"
@@ -9965,39 +9987,39 @@ msgid "{exam, select, abitur {Pass the Abitur} bac {Pass the bac} enem {Pass the
 msgstr "{exam, select, abitur {Abitur 합격하기} bac {bac 합격하기} enem {ENEM 합격하기} exani {EXANI-II 합격하기} kyotsu {Common Test 잘 보기} matura {matura 합격하기} maturita {maturità 합격하기} suneung {수능 잘 보기} yks {YKS 잘 보기} other {SAT 합격하기}}"
 
 #: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.krgQ5A"
-msgid "That's all the goals you can study at once without Plus. Pause one to start another."
-msgstr ""
+msgctxt "goalErrors.a9a9_d"
+msgid "That's all the goals you can study at once. Pause one, or subscribe to study more."
+msgstr "동시에 공부할 수 있는 목표 수를 다 채웠어요. 목표 하나를 일시 중지하거나 구독해서 더 많은 목표를 공부해 보세요."
 
 #: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.0Kopob"
-msgid "No more quick explanations today. More tomorrow, or now with Plus."
-msgstr ""
+msgctxt "goalErrors.GZnNXl"
+msgid "No more quick explanations today. More tomorrow, or subscribe to keep going."
+msgstr "오늘은 간단한 설명을 더 볼 수 없어요. 내일 다시 볼 수 있어요. 구독하면 지금도 계속 볼 수 있어요."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.JsRkia"
 msgid "No more new goals today. More tomorrow."
-msgstr ""
+msgstr "오늘은 새 목표를 더 시작할 수 없어요. 내일 다시 시작할 수 있어요."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.2aNqX-"
 msgid "Without an account, you study one goal. Create a free account to start another."
-msgstr ""
+msgstr "계정이 없으면 목표 하나만 공부할 수 있어요. 다른 목표를 시작하려면 무료 계정을 만드세요."
 
 #: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.Elx6Ag"
-msgid "No more quick explanations this month. More next month, or now with Plus."
-msgstr ""
+msgctxt "goalErrors.B_qpn8"
+msgid "No more quick explanations this month. More next month, or subscribe to keep going."
+msgstr "이번 달에는 간단한 설명을 더 볼 수 없어요. 다음 달에 다시 볼 수 있어요. 구독하면 지금도 계속 볼 수 있어요."
 
 #: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.IF4cbu"
-msgid "No more new goals this month. More next month, or now with Plus."
-msgstr ""
+msgctxt "goalErrors.wjsNnL"
+msgid "No more new goals this month. More next month, or subscribe to keep going."
+msgstr "이번 달에는 새 목표를 더 시작할 수 없어요. 다음 달에 다시 시작할 수 있어요. 구독하면 지금도 시작할 수 있어요."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.MKCnRs"
 msgid "This needs a free account."
-msgstr ""
+msgstr "무료 계정이 필요해요."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.8iLlgO"
@@ -10007,12 +10029,12 @@ msgstr "짧은 시간에 여러 목표를 시작했어요. 몇 분 후에 다시
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.ib5oUK"
 msgid "No more new goals today without an account."
-msgstr ""
+msgstr "계정이 없으면 오늘은 새 목표를 더 시작할 수 없어요."
 
 #: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.pY1eVg"
-msgid "No more new goals today. More tomorrow, or now with Plus."
-msgstr ""
+msgctxt "goalErrors.NIiMiz"
+msgid "No more new goals today. More tomorrow, or subscribe to keep going."
+msgstr "오늘은 새 목표를 더 시작할 수 없어요. 내일 다시 시작할 수 있어요. 구독하면 지금도 시작할 수 있어요."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.YYmbyX"
@@ -11106,19 +11128,19 @@ msgid "From its usual dates. We'll tell you when the official ones are out."
 msgstr "예년 일정을 바탕으로 예상했어요. 공식 일정이 나오면 알려 드릴게요."
 
 #: src/onboarding/understood/understood-screen.tsx
-msgctxt "ICw4gy"
-msgid "More goals at once come with Plus"
-msgstr ""
+msgctxt "6hngG4"
+msgid "More goals at once need a subscription"
+msgstr "더 많은 목표를 동시에 공부하려면 구독이 필요해요"
 
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "0f32R8"
 msgid "{count, plural, one {Pause another goal to start this one.} other {Pause another goal to start these.}}"
-msgstr ""
+msgstr "{count, plural, other {이 목표를 시작하려면 다른 목표를 일시 중지하세요.}}"
 
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "XR04oI"
 msgid "More goals at once come with a free account"
-msgstr ""
+msgstr "무료 계정을 만들면 더 많은 목표를 동시에 공부할 수 있어요"
 
 #: src/onboarding/understood/understood-screen.tsx
 msgctxt "N7XZZA"
@@ -13344,13 +13366,6 @@ msgctxt "-HTKTB"
 msgid "{current, number} of {total, number}"
 msgstr "{current, number}/{total, number}"
 
-#: src/questions/choice-questions-run.tsx
-#: src/session/question-block/block-finish-ready.tsx
-#: src/session/summary/summary-actions.tsx
-msgctxt "2O2sfp"
-msgid "Finish"
-msgstr "마치기"
-
 #: src/questions/item-set-stimulus.tsx
 msgctxt "_pDdit"
 msgid "Question {position, number} of {count, number} on this recording"
@@ -13901,9 +13916,9 @@ msgid "Not today"
 msgstr "오늘은 건너뛰기"
 
 #: src/session/question-block/question-block-header.tsx
-msgctxt "JJytYK"
-msgid "Close. Your answers are saved."
-msgstr "닫기. 답은 저장되어 있어요."
+msgctxt "2vhowQ"
+msgid "Leave. Your answers are saved."
+msgstr "나가기. 답은 저장되어 있어요."
 
 #: src/session/question-block/question-block-status.tsx
 msgctxt "iMYxZV"
@@ -15410,14 +15425,14 @@ msgid "Ready to start"
 msgstr "시작 준비 완료"
 
 #: src/wait/lesson-wait-status.tsx
+msgctxt "uaZ--2"
+msgid "Getting your lesson ready"
+msgstr "레슨을 준비하고 있어요"
+
+#: src/wait/lesson-wait-status.tsx
 msgctxt "4Wktrz"
 msgid "Your lesson is ready"
 msgstr "레슨이 준비됐어요"
-
-#: src/wait/lesson-wait-status.tsx
-msgctxt "uaZ--2"
-msgid "Getting your lesson ready"
-msgstr ""
 
 #. The quiz is a short side game of questions shown while the learner waits for their course. Use the same word for it in every string about it.
 #: src/wait/wait-quiz.tsx
