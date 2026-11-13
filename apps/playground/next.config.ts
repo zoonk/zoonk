@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
   pageExtensions: ["ts", "tsx"],
   partialPrefetching: true,
   reactCompiler: true,
-  turbopack: { rules: tailwindRules },
+  turbopack: { rules: { ...tailwindRules } },
   typescript: { ignoreBuildErrors: true },
 };
 
