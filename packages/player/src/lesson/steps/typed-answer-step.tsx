@@ -3,40 +3,16 @@
 import { QuestionEyebrow } from "@zoonk/learn/question-title";
 import { useSpokenText } from "@zoonk/learn/rich-text/speech";
 import { LessonVisual } from "@zoonk/learn/visual";
-import { Button } from "@zoonk/ui/components/button";
-import { PenLineIcon, PenOffIcon } from "lucide-react";
+import { PenLineIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { InteractiveStepLayout } from "../../components/step-layouts";
 import { LessonContext, LessonQuestion } from "../_components/lesson-step-text";
 import { ScreenSupport } from "../_components/screen-support";
 import { splitQuestionData } from "../_utils/lesson-aside";
-import { focusLessonAfterTurn } from "../_utils/lesson-focus";
 import { isNumberAnswer } from "../_utils/number-answer";
 import { ExplainFirstButton } from "../controls/explain-first-button";
-import { useLessonPlayer, useLessonPlayerConfig } from "../lesson-player-context";
 import { LessonAnswerField } from "./lesson-answer-field";
 import { type LessonStepViewProps, type StepOf } from "./lesson-step-view-props";
-
-function SkipWritingButton() {
-  const t = useExtracted();
-  const { actions } = useLessonPlayer();
-
-  return (
-    <Button
-      className="w-fit"
-      edge="start"
-      onClick={() => {
-        actions.skipWriting();
-        focusLessonAfterTurn();
-      }}
-      size="sm"
-      variant="ghost"
-    >
-      <PenOffIcon aria-hidden="true" />
-      {t("Skip writing questions today")}
-    </Button>
-  );
-}
 
 export function TypedAnswerStepView({
   answer,
@@ -47,7 +23,6 @@ export function TypedAnswerStepView({
   const t = useExtracted();
   const spoken = useSpokenText();
   const text = answer?.kind === "typedAnswer" ? answer.text : "";
-  const { showWritingAlternatives = true } = useLessonPlayerConfig();
   const isNumber = isNumberAnswer(step.content.acceptedAnswers);
   const isExplanation = !isNumber && (step.content.acceptedAnswers ?? []).length === 0;
   const { data, question } = splitQuestionData(step.content.question);
@@ -77,10 +52,7 @@ export function TypedAnswerStepView({
         value={text}
       />
 
-      <div className="flex flex-col gap-3.5 empty:hidden">
-        <ExplainFirstButton />
-        {!isLocked && !isNumber && showWritingAlternatives && <SkipWritingButton />}
-      </div>
+      <ExplainFirstButton />
     </InteractiveStepLayout>
   );
 }
