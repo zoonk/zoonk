@@ -564,7 +564,6 @@ msgstr "Das wurde nicht gespeichert. Versuch es noch einmal."
 
 #: src/_components/sheet-header.tsx
 #: src/_components/suggestion.tsx
-#: src/appearance/buddy-settings.tsx
 #: src/certificates/certificate-linkedin.tsx
 #: src/certificates/certificate-name.tsx
 #: src/certificates/certificate-share.tsx
@@ -3994,6 +3993,11 @@ msgid "Quick explanation · {time}"
 msgstr "Kurze Erklärung · {time}"
 
 #: src/feedback/feedback-form-dialog.tsx
+msgctxt "feedback.rbrahO"
+msgid "Close"
+msgstr "Schließen"
+
+#: src/feedback/feedback-form-dialog.tsx
 #: src/feedback/report-problem-item.tsx
 msgctxt "feedback.G5YSJR"
 msgid "Send feedback"
@@ -4003,11 +4007,6 @@ msgstr "Feedback senden"
 msgctxt "feedback.Kz11c4"
 msgid "Found a problem or have an idea? Tell us below or email hello@zoonk.com."
 msgstr "Hast du ein Problem entdeckt oder eine Idee? Schreib uns unten oder per E-Mail an hello@zoonk.com."
-
-#: src/feedback/feedback-form-dialog.tsx
-msgctxt "feedback.rbrahO"
-msgid "Close"
-msgstr "Schließen"
 
 #: src/feedback/feedback-form-dialog.tsx
 msgctxt "feedback.NDni4R"

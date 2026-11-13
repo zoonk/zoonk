@@ -73,7 +73,6 @@ export function getChallengeTimings({
       reviewDay: items.some(
         (item) => item.kind === "review" && item.scheduledFor?.getTime() === date.getTime(),
       ),
-      trialEnded: false,
     })
       ? getGoalDayMinutes({ date, goal, planSettings: settings })
       : 0;

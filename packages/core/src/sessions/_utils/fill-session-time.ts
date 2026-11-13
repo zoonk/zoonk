@@ -101,11 +101,7 @@ export function fillRemainingLessonTime({
   ];
 
   const sum = filled.reduce((total, block) => total + block.estimatedMinutes, 0);
-
-  const newLessonsAllowed = canAddSessionLessons({
-    reviewDay: isSessionReviewDay(input),
-    trialEnded: input.examTrialEnded,
-  });
+  const newLessonsAllowed = canAddSessionLessons({ reviewDay: isSessionReviewDay(input) });
 
   const holdsMore =
     !input.mockReplacesDay &&

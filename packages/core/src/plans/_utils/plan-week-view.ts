@@ -15,16 +15,14 @@ import { type PlanReadItem } from "./plan-read-projection";
 import { projectSavedAllocationOn } from "./saved-allocation";
 import { isWorkFinished } from "./work-progress";
 
-type ItemAccess = { freeUntil: string | null; mocksRequirePlus: boolean };
+type ItemAccess = { mocksRequirePlus: boolean };
 
 function requiresPlus({ access, item }: { access: ItemAccess; item: PlanReadItem }): boolean {
   if (item.kind === "mock" && access.mocksRequirePlus) {
     return true;
   }
 
-  return Boolean(
-    access.freeUntil && item.scheduledFor && toIsoDate(item.scheduledFor) > access.freeUntil,
-  );
+  return false;
 }
 
 function toPlanItemView({

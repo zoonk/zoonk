@@ -58,7 +58,7 @@ export type Allowance = {
     usedSeconds: number;
     usedSecondsThisMonth: number;
   };
-  /** A null studyDays value includes the full exam plan. */
+  /** studyDays is always null; exam plans have no time-based expiry. */
   examPrep: { includesMockExams: boolean; studyDays: number | null };
   /** A guest's newly generated lessons; null for accounts. */
   generatedLessons: { limit: number; used: number } | null;

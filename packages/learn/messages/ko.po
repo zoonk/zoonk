@@ -564,7 +564,6 @@ msgstr "저장하지 못했어요. 다시 시도해 보세요."
 
 #: src/_components/sheet-header.tsx
 #: src/_components/suggestion.tsx
-#: src/appearance/buddy-settings.tsx
 #: src/certificates/certificate-linkedin.tsx
 #: src/certificates/certificate-name.tsx
 #: src/certificates/certificate-share.tsx
@@ -3994,6 +3993,11 @@ msgid "Quick explanation · {time}"
 msgstr "짧은 설명 · {time}"
 
 #: src/feedback/feedback-form-dialog.tsx
+msgctxt "feedback.rbrahO"
+msgid "Close"
+msgstr "닫기"
+
+#: src/feedback/feedback-form-dialog.tsx
 #: src/feedback/report-problem-item.tsx
 msgctxt "feedback.G5YSJR"
 msgid "Send feedback"
@@ -4003,11 +4007,6 @@ msgstr "의견 보내기"
 msgctxt "feedback.Kz11c4"
 msgid "Found a problem or have an idea? Tell us below or email hello@zoonk.com."
 msgstr "문제를 발견했거나 아이디어가 있나요? 아래에 남기거나 hello@zoonk.com으로 이메일을 보내 주세요."
-
-#: src/feedback/feedback-form-dialog.tsx
-msgctxt "feedback.rbrahO"
-msgid "Close"
-msgstr "닫기"
 
 #: src/feedback/feedback-form-dialog.tsx
 msgctxt "feedback.NDni4R"

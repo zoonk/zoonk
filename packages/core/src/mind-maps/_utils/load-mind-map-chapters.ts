@@ -1,7 +1,6 @@
 import "server-only";
 import { type GenerationStatus, type Goal, prisma, sql } from "@zoonk/db";
 import { type EntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
-import { loadExamPrepAccess, loadPlusOnlyLessonIds } from "../../sessions/_utils/plus-only-lessons";
 import { chapterLessonStats } from "./chapter-lesson-stats";
 import { type MindMapRow } from "./mind-map-view";
 import { mindMapScopeChapters } from "./scope-chapters";
@@ -32,7 +31,6 @@ export type MindMapChapterFacts = {
   lessonsToWrite: number;
   /** The learner's finish owes this map and no run has taken it yet. */
   owed: boolean;
-  /** Its lessons a free exam plan past its first week keeps for Plus. */
   plusLessonIds: string[];
   plusRequired: boolean;
   /** Internal scope order; display numbering must use loadChapterNumbering. */
@@ -110,26 +108,15 @@ function readChapterRows({
 export async function loadMindMapChapters({
   chapterIds,
   goal,
-  readViewer,
 }: {
   chapterIds?: readonly string[];
   goal: MindMapGoal;
   readViewer?: () => Promise<EntitlementViewer | null>;
 }): Promise<MindMapChapterFacts[]> {
-  const [chapters, access] = await Promise.all([
-    readChapterRows({ chapterIds, goalId: goal.id }),
-    loadExamPrepAccess({ goal, readViewer }),
-  ]);
-
-  const held = await loadPlusOnlyLessonIds({
-    access,
-    goalId: goal.id,
-    lessonIds: chapters.flatMap((chapter) => (chapter.canHaveMap ? chapter.lessonIds : [])),
-    userId: goal.userId,
-  });
+  const chapters = await readChapterRows({ chapterIds, goalId: goal.id });
 
   return chapters.map((chapter) => {
-    const plusLessonIds = chapter.lessonIds.filter((lessonId) => held.has(lessonId));
+    const plusLessonIds: string[] = [];
 
     return {
       canHaveMap: chapter.canHaveMap,
@@ -138,7 +125,7 @@ export async function loadMindMapChapters({
       lessonsToWrite: chapter.lessonsToWrite,
       owed: chapter.mapOwed,
       plusLessonIds,
-      plusRequired: plusLessonIds.length > 0,
+      plusRequired: false,
       position: chapter.position,
       row: toMindMapRow(chapter),
       title: chapter.title,

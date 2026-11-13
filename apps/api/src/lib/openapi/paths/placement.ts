@@ -9,7 +9,6 @@ import {
   placementSittingInputSchema,
 } from "@zoonk/core/learner/placement/focus-test-contract";
 import { chapterTestOutInputSchema } from "@zoonk/core/learner/test-out/contract";
-import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes";
 import { z } from "zod";
 import {
   placementAnswerResponseSchema,
@@ -47,7 +46,7 @@ const learnerErrors = {
 
 const testOutPlusRequired = {
   ...paymentRequiredResponse,
-  description: `A free exam plan past its first week takes the test-out with Plus only (\`testOut.plusRequired\` on the chapter): nothing is written, graded or skipped. Error code: ${LESSON_PLAYER_ERROR_CODES.plusRequired}.`,
+  description: "Reserved for subscription-only activities",
 } as const;
 
 export const placementPaths = {
@@ -105,7 +104,7 @@ export const placementPaths = {
   "/goals/{goalId}/chapters/{chapterId}/test-out/generations": {
     post: {
       description:
-        "Gets a chapter's test-out ready when the learner asks for it (never on a screen view). `ready` when it has a question for every skill it samples. Otherwise a run writes a few multiple-choice questions for each skill without one (shared with placement, reviews and practice) and answers 202; a second request joins that run. Each start counts as small AI help, so a refusal is `SLOW_DOWN` or `USAGE_LIMIT_REACHED`. Past a free exam plan's first week it answers 402 `PLUS_REQUIRED` and nothing is written.",
+        "Gets a chapter's test-out ready when the learner asks for it (never on a screen view). `ready` when it has a question for every skill it samples. Otherwise a run writes a few multiple-choice questions for each skill without one (shared with placement, reviews and practice) and answers 202; a second request joins that run. Each start counts as small AI help, so a refusal is `SLOW_DOWN` or `USAGE_LIMIT_REACHED`.",
       operationId: "createChapterTestOutGeneration",
       requestParams: { path: goalChapterPathParamsSchema },
       responses: {
@@ -128,7 +127,7 @@ export const placementPaths = {
         },
         "402": {
           ...paymentRequiredResponse,
-          description: `The learner's AI help allowance is spent, or a free exam plan past its first week takes the test-out with Plus only (${LESSON_PLAYER_ERROR_CODES.plusRequired})`,
+          description: "The learner's AI help allowance is spent",
         },
         "403": guestRefusalResponse,
         "429": tooManyRequestsResponse,
