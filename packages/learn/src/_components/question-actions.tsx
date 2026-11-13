@@ -1,11 +1,11 @@
 "use client";
 
-import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
+import { Button } from "@zoonk/ui/components/button";
 import { ShortcutTooltip } from "@zoonk/ui/components/shortcut-tooltip";
 import { ignoreHeldEnter } from "@zoonk/ui/hooks/keyboard";
 import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CheckIcon, ChevronLeftIcon, EyeIcon, HelpCircleIcon, PlayIcon } from "lucide-react";
+import { ChevronLeftIcon, HelpCircleIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef } from "react";
 import { EnterButton } from "./enter-button";
@@ -14,19 +14,16 @@ import { TASK_BACK_ACTION_CLASS, TaskActionLabel, TaskActions } from "./task-lay
 
 export const QUESTION_MAIN_ACTION_ID = "question-main-action";
 
-const ICONS = {
-  check: { icon: <CheckIcon aria-hidden="true" /> },
-  confirm: { icon: <CheckIcon aria-hidden="true" /> },
-  continue: FORWARD_ICON,
-  finish: FORWARD_ICON,
-  next: FORWARD_ICON,
-  nextStep: FORWARD_ICON,
-  seeAnswer: { icon: <EyeIcon aria-hidden="true" /> },
-  seeResult: FORWARD_ICON,
-  start: { icon: <PlayIcon aria-hidden="true" /> },
-} as const;
-
-export type QuestionAction = keyof typeof ICONS;
+export type QuestionAction =
+  | "check"
+  | "confirm"
+  | "continue"
+  | "finish"
+  | "next"
+  | "nextStep"
+  | "seeAnswer"
+  | "seeResult"
+  | "start";
 
 function useActionLabel(action: QuestionAction): string {
   const t = useExtracted();
@@ -145,11 +142,10 @@ export function QuestionMainAction({
   children,
   disabled = false,
   enter = "bound",
-  icon,
   id = QUESTION_MAIN_ACTION_ID,
   onPress,
   ...props
-}: Omit<React.ComponentProps<typeof EnterButton>, "iconPosition" | "size"> & {
+}: Omit<React.ComponentProps<typeof EnterButton>, "size"> & {
   action: QuestionAction;
   onPress?: () => void;
 }) {
@@ -164,7 +160,6 @@ export function QuestionMainAction({
       id={id}
       onClick={onPress}
       onKeyDown={ignoreHeldEnter}
-      {...(icon ? { icon } : ICONS[action])}
       {...props}
     >
       <TaskActionLabel>{children ?? label}</TaskActionLabel>

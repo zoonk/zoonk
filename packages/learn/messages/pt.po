@@ -503,12 +503,12 @@ msgstr "Próximo"
 #: src/_components/question-actions.tsx
 msgctxt "BkQAJw"
 msgid "Show the next step"
-msgstr ""
+msgstr "Mostrar o próximo passo"
 
 #: src/_components/question-actions.tsx
 msgctxt "ZLtyTD"
 msgid "See the answer"
-msgstr ""
+msgstr "Ver a resposta"
 
 #: src/_components/question-actions.tsx
 #: src/challenge/challenge-footer.tsx
@@ -521,7 +521,7 @@ msgstr "Ver como foi"
 #: src/_components/question-actions.tsx
 msgctxt "QriCsD"
 msgid "Previous screen"
-msgstr ""
+msgstr "Tela anterior"
 
 #: src/_components/question-actions.tsx
 #: src/session/question-block/question-feedback.tsx
@@ -1309,11 +1309,6 @@ msgstr "O que você quer aprender"
 msgctxt "UTU-oM"
 msgid "Build my plan"
 msgstr "Criar meu plano"
-
-#: src/buddies/buddy-header.tsx
-msgctxt "Dh-vx4"
-msgid "Your study buddy"
-msgstr "Seu parceiro de estudos"
 
 #: src/buddies/buddy-labels.tsx
 msgctxt "hn8Urr"
@@ -8288,7 +8283,7 @@ msgstr "Abrir a aula"
 #: src/mistakes/mistake-practice-run.tsx
 msgctxt "z2HeMD"
 msgid "Leave. What you answered counts."
-msgstr ""
+msgstr "Sair. Suas respostas continuam valendo."
 
 #: src/mistakes/mistake-practice-run.tsx
 #: src/mistakes/mistakes-notebook.tsx
@@ -9392,17 +9387,17 @@ msgstr "Entregar esta seção"
 #: src/mock/mock-runner-view.tsx
 msgctxt "r5QD8t"
 msgid "Stay"
-msgstr ""
+msgstr "Ficar"
 
 #: src/mock/mock-runner-view.tsx
 msgctxt "jOu95u"
 msgid "Your answers are saved. The clock keeps running while you're away."
-msgstr ""
+msgstr "Suas respostas estão salvas. O tempo continua correndo enquanto você estiver fora."
 
 #: src/mock/mock-runner-view.tsx
 msgctxt "N4BqWk"
 msgid "Leave the mock exam?"
-msgstr ""
+msgstr "Sair do simulado?"
 
 #: src/mock/mock-screen.tsx
 msgctxt "Ly_Z1F"
@@ -13635,9 +13630,14 @@ msgid "A few misses in a row. A short break often helps, and everything you did 
 msgstr "Alguns erros seguidos. Uma pausa curta costuma ajudar, e tudo o que você fez hoje conta."
 
 #: src/session/question-block/placement-note.tsx
-msgctxt "lTfSB-"
-msgid "Fine-tuning your plan. A miss here is never saved as a mistake."
-msgstr "Ajustando seu plano. Se você errar aqui, o erro não será salvo."
+msgctxt "l8gWNH"
+msgid "Fine-tuning your plan"
+msgstr "Ajustando seu plano"
+
+#: src/session/question-block/placement-note.tsx
+msgctxt "yHidq9"
+msgid "A miss here is never saved as a mistake."
+msgstr "Se você errar aqui, isso não fica salvo como erro."
 
 #: src/session/question-block/placement-note.tsx
 msgctxt "0z8Wa1"
@@ -13647,7 +13647,7 @@ msgstr "Hoje não"
 #: src/session/question-block/question-block-header.tsx
 msgctxt "2vhowQ"
 msgid "Leave. Your answers are saved."
-msgstr ""
+msgstr "Sair. Suas respostas estão salvas."
 
 #: src/session/question-block/question-block-status.tsx
 msgctxt "iMYxZV"

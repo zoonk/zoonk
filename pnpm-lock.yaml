@@ -1656,6 +1656,9 @@ importers:
       jsdom:
         specifier: 'catalog:'
         version: 31.0.0(@napi-rs/canvas@1.1.0)(@noble/hashes@2.4.0)
+      next:
+        specifier: 'catalog:'
+        version: 16.4.5(@opentelemetry/api@1.10.0)(@playwright/test@1.65.0)(@types/node@26.6.6)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       tailwindcss:
         specifier: 4.3.5
         version: 4.3.5

@@ -1,9 +1,8 @@
-import { FORWARD_ICON } from "@zoonk/ui/components/button";
 import { Input, InputError } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
-import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
+import { MainSubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 
 export function Setup({ children, className }: React.ComponentProps<"div">) {
   return <div className={cn("flex w-full flex-col gap-6", className)}>{children}</div>;
@@ -67,11 +66,7 @@ export function SetupError({
 }
 
 export function SetupSubmit({ children, ...props }: React.ComponentProps<"button">) {
-  return (
-    <SubmitButton full size="lg" {...FORWARD_ICON} {...props}>
-      {children}
-    </SubmitButton>
-  );
+  return <MainSubmitButton {...props}>{children}</MainSubmitButton>;
 }
 
 export function SetupFormSkeleton() {

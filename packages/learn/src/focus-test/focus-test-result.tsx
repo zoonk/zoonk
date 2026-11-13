@@ -6,10 +6,10 @@ import { Switch } from "@zoonk/ui/components/switch";
 import { Undo2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
+import { SuccessEyebrow } from "../_components/eyebrow";
 import { ListGroup, ListRowContent, ListRowLink, ListRowTitle } from "../_components/list-group";
 import { ChangeSaveError } from "../_components/save-error";
 import { SettingRow } from "../_components/setting-rows";
-import { SuccessEyebrow } from "../_components/success-eyebrow";
 import {
   OnboardingColumn,
   OnboardingDescription,
