@@ -69,12 +69,12 @@ const TASK_ASK_CLASS = cn(
 
 const BAR_ASK_CLASS = cn(
   "min-w-11 shrink",
-  "@max-3xs/page-bar:w-11 @max-3xs/page-bar:px-0",
+  "max-[18rem]:w-11 max-[18rem]:px-0",
   "max-sm:group-data-title-away/page-bar:w-11 max-sm:group-data-title-away/page-bar:px-0",
 );
 
 const BAR_ASK_LABEL_CLASS =
-  "truncate @max-3xs/page-bar:hidden max-sm:group-data-title-away/page-bar:hidden";
+  "truncate max-[18rem]:hidden max-sm:group-data-title-away/page-bar:hidden";
 
 function AskTutorRow({
   identity,

@@ -2,46 +2,22 @@
 
 import { type DayState } from "@zoonk/core/sessions/day-state";
 import { type TodayView } from "@zoonk/core/view-models/today/get";
-import { useExtracted } from "next-intl";
-import { useFormatDuration } from "../_utils/time-format";
+import { showsWelcomeBack } from "@zoonk/core/view-models/today/notice";
 import { useTodayScreen } from "./today-context";
-
-const NO_BREAK_SPACE = "\u00A0";
 
 export function isWelcomeBackDay(session: Pick<TodayView["session"], "freshStart">): boolean {
   return session.freshStart === "welcomeBack";
 }
 
 /**
- * A return after a break says how long the day takes, since "lighter" beside 12 activities said
- * nothing.
+ * The first visit after days away, until the learner starts: its welcome leads the day, and what
+ * else Today would say waits.
  */
-export function useFreshStartText(): string | null {
-  const t = useExtracted();
-  const formatDuration = useFormatDuration();
+export function useWelcomeBack(): boolean {
   const { today } = useTodayScreen();
-  const { freshStart, minutes } = today.session;
+  const { state } = today.session;
 
-  // The time stays on one line: "about 55" ending a line and "min" starting the next.
-  const time = formatDuration(minutes.planned).replaceAll(" ", NO_BREAK_SPACE);
-
-  switch (freshStart) {
-    case "welcomeBack":
-      // Past a free exam plan's first week, it's shorter for what Plus holds, not the break.
-      return today.session.examAccess.trialEnded
-        ? t("Welcome back! Today takes about {time}, so it's easy to pick up again.", { time })
-        : t("Welcome back! Today is lighter, about {time}, so it's easy to pick up again.", {
-            time,
-          });
-    case "newPhase":
-      return t("A new phase starts today, with an easy warm-up first.");
-    case "newWeek":
-      return t("A fresh week. Today starts with an easy warm-up.");
-    case null:
-      return null;
-    default:
-      return null;
-  }
+  return showsWelcomeBack(today) && state !== "ahead" && state !== "rest";
 }
 
 export function useSessionState() {
@@ -78,8 +54,8 @@ export function useTodayPastDate(): PastDate | null {
 type StopLesson = { kind: string; lessonId: string | null };
 
 /**
- * A lesson nobody has started writing is written when the learner opens it, so it never claims to
- * be in progress.
+ * A lesson nobody has started making is made when the learner opens it, so it never claims to be
+ * in progress.
  */
 export function isStopBeingWritten({
   block,
@@ -95,7 +71,7 @@ export function isStopBeingWritten({
   );
 }
 
-export function useLessonBeingWritten() {
+export function useLessonGettingReady() {
   const { today, writingStalled } = useTodayScreen();
 
   return (block: StopLesson): boolean =>

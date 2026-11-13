@@ -13,7 +13,7 @@ export function TodayStatusLine({
 }) {
   return (
     <div
-      className={cn("flex items-start gap-3 border-y py-3", className)}
+      className={cn("flex items-center gap-3 border-y py-3", className)}
       data-slot="today-status-line"
       role="status"
     >
@@ -39,21 +39,6 @@ export function TodayStatusSentence({ children }: { children: React.ReactNode })
   );
 }
 
-export function TodayStatusClause({
-  children,
-  mono = false,
-}: {
-  children: React.ReactNode;
-  mono?: boolean;
-}) {
-  return (
-    <span
-      className={cn(
-        "text-muted-foreground",
-        mono && "text-compact font-mono whitespace-nowrap tabular-nums",
-      )}
-    >
-      {children}
-    </span>
-  );
+export function TodayStatusClause({ children }: { children: React.ReactNode }) {
+  return <span className="text-muted-foreground">{children}</span>;
 }

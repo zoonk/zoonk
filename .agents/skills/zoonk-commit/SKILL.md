@@ -58,6 +58,8 @@ Describe the concrete problem and resulting behavior for a reviewer who has not 
 
 For each piece the PR adds or redraws (a component, a part of a screen, a rule), name where the product already does the same thing, or write "none found" with what you searched ([find the piece](../zoonk-design/SKILL.md#find-the-piece-before-you-build-one)). Reviewers compare the two.
 
+When agents asked for exceptions to a rule during the task, list each one and the answer it got under **Exceptions**, so the user can accept or overrule it ([exceptions](../../guides/orchestration.md#exceptions)).
+
 End with a short **Verification** section that tells the reviewer what was proven and what wasn't, in plain language rather than command lists or logs:
 
 - For user-facing changes, the [persona walkthroughs](../zoonk-persona-walkthrough/SKILL.md): which personas, which journeys including bad-day paths, what they exposed and what changed.
