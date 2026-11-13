@@ -31,7 +31,7 @@ export function CountryRowPicker({
       <Button
         aria-haspopup="dialog"
         aria-label={t("Edit {field}", { field: row.label })}
-        className="text-muted-foreground -my-1.5 shrink-0"
+        className="text-muted-foreground -my-2 shrink-0"
         onClick={() => {
           setFailed(false);
           setOpen(true);

@@ -280,6 +280,8 @@ export function InstrumentGoal({
         <GoalActions error={error} signUpHref={signUpHref}>
           <OnboardingSecondaryButton
             busy={isJoining}
+            // Both labels are long: on a phone each takes a line, so neither wraps.
+            className="max-lg:basis-full"
             disabled={waitlist === "joined"}
             icon={<BellIcon aria-hidden="true" />}
             onClick={onJoinWaitlist}

@@ -66,7 +66,7 @@ export function WrittenCadenceChoice({
       </legend>
 
       <RadioGroup
-        className="flex flex-wrap gap-2"
+        className="flex flex-col gap-2"
         disabled={pending}
         onValueChange={(value) => {
           if (isCadence(value) && value !== practice.cadence) {

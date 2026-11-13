@@ -3,7 +3,6 @@
 import { type GoalView } from "@zoonk/core/goals/contract";
 import { toLanguageAimView } from "@zoonk/core/language/aims";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
-import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { daysUntilIsoDate, useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
@@ -12,14 +11,7 @@ import { OnboardingRailSection } from "./onboarding-rail";
 import { useOwnLevelLabels } from "./steps/level-choices";
 import { useDetailRows, useLanguageRows } from "./understood/use-understood-rows";
 
-type ReceiptFact = {
-  count?: string;
-  id: string;
-  label: string;
-  mono?: boolean;
-  note?: string;
-  value: string;
-};
+type ReceiptFact = { count?: string; id: string; label: string; note?: string; value: string };
 
 function isAnswered({ goal, question }: { goal: GoalView; question: string }): boolean {
   const answered = goal.details.answered;
@@ -83,7 +75,6 @@ function useReceiptFacts(goal: GoalView): ReceiptFact[] {
     isAnswered({ goal, question: "schedule" }) && {
       id: "time",
       label: t("Time a day"),
-      mono: true,
       value: formatDuration(goal.dailyMinutes),
     },
   ];
@@ -105,14 +96,7 @@ export function PlanReceipt({ goal }: { goal: GoalView }) {
           >
             <dt className="text-muted-foreground text-compact">{fact.label}</dt>
             <dd className="flex min-w-0 flex-col gap-0.5">
-              <span
-                className={cn(
-                  "font-medium text-pretty wrap-break-word",
-                  fact.mono && "font-mono tabular-nums",
-                )}
-              >
-                {fact.value}
-              </span>
+              <span className="font-medium text-pretty wrap-break-word">{fact.value}</span>
               {fact.note && (
                 <span className="text-muted-foreground text-xs wrap-break-word">{fact.note}</span>
               )}

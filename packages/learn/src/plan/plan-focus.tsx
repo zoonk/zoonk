@@ -27,9 +27,12 @@ import { PlanChangeApplied } from "./plan-change-applied";
 import { type PlanChangeOutcome, usePlanScreen } from "./plan-context";
 import { usePlanChange } from "./use-plan-change";
 
+const CARD_ROW_CLASS =
+  "border-border bg-card hover:bg-muted/60 flex min-h-14 items-center gap-3 rounded-xl border px-4 py-3 text-left transition-colors motion-reduce:transition-none";
+
 const AREA_ROW_CLASS = cn(
-  "border-border bg-card flex min-h-14 cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 text-left transition-colors motion-reduce:transition-none",
-  "hover:bg-muted/60 has-focus-visible:ring-ring/50 has-focus-visible:ring-[3px] has-data-disabled:pointer-events-none",
+  CARD_ROW_CLASS,
+  "has-focus-visible:ring-ring/50 cursor-pointer has-focus-visible:ring-[3px] has-data-disabled:pointer-events-none",
   CHOICE_CARD_PICKED_CLASS,
 );
 
@@ -62,13 +65,16 @@ function FocusTestLink({ focusTest, href }: { focusTest: FocusTestSummary; href:
 
   return (
     <LearnLink
-      className="ring-input hover:bg-muted/70 focus-visible:ring-ring/50 flex min-h-14 items-center gap-3 rounded-xl px-3.5 py-2.5 ring-1 transition-colors outline-none ring-inset focus-visible:ring-[3px]"
+      className={cn(
+        CARD_ROW_CLASS,
+        "focus-visible:ring-ring/50 outline-none focus-visible:ring-[3px]",
+      )}
       href={href}
     >
       <CrosshairIcon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
       <span className="flex min-w-0 flex-1 flex-col">
-        <span className="text-sm font-medium">{t("Focus test")}</span>
-        <span className="text-muted-foreground text-xs">
+        <span className="text-base font-medium">{t("Focus test")}</span>
+        <span className="text-muted-foreground text-sm">
           <FactSegments facts={rowFacts(focusTest)} />
         </span>
       </span>

@@ -22,7 +22,7 @@ export function AimRowPicker({
       trigger={
         <Button
           aria-label={t("Edit {field}", { field: row.label })}
-          className="text-muted-foreground -my-1.5 shrink-0"
+          className="text-muted-foreground -my-2 shrink-0"
           edge="end"
           size="icon"
           variant="ghost"

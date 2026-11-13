@@ -2,6 +2,7 @@
 
 import { type ExamDocument } from "@zoonk/core/exams/document";
 import { type OnboardingLibraryCourse } from "@zoonk/core/view-models/onboarding/contract";
+import { FORWARD_ICON } from "@zoonk/ui/components/button";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { useExtracted } from "next-intl";
 import { use, useState } from "react";
@@ -137,7 +138,7 @@ function PlanWaitBar({
             : undefined
         }
       >
-        <OnboardingPrimaryButton onClick={release}>
+        <OnboardingPrimaryButton onClick={release} {...FORWARD_ICON}>
           {next === "plan" ? t("See your plan") : t("Continue")}
         </OnboardingPrimaryButton>
       </WaitBar>

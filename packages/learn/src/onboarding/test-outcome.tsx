@@ -1,5 +1,6 @@
 "use client";
 
+import { FORWARD_ICON } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import {
@@ -45,7 +46,14 @@ export function TestOutcome({
       bar={
         <OnboardingActions failed={failed}>
           {other}
-          <OnboardingPrimaryButton autoFocus busy={busy} disabled={disabled} onClick={onContinue}>
+          <OnboardingPrimaryButton
+            autoFocus
+            busy={busy}
+            disabled={disabled}
+            onClick={onContinue}
+            // "Continue" goes to the next screen, so it carries the arrow every Continue has; a label of its own (Done) doesn't.
+            {...(continueLabel ? {} : FORWARD_ICON)}
+          >
             {continueLabel ?? t("Continue")}
           </OnboardingPrimaryButton>
         </OnboardingActions>

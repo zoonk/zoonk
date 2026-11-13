@@ -42,10 +42,9 @@ function InterfaceOffer({
   return (
     <Button
       className="self-start"
-      edge="start"
       lang={language}
       onClick={() => onSwitch(language)}
-      variant="ghost"
+      variant="link"
     >
       {t("Use the app in {language}", {
         language: getLanguageNameInSentence({ targetLanguage: language, userLanguage: language }),
