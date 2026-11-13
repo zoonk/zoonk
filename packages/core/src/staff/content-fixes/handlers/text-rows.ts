@@ -1,20 +1,52 @@
 import { isDeepStrictEqual } from "node:util";
-import { type TransactionClient } from "@zoonk/db";
+import { type TransactionClient, sql } from "@zoonk/db";
+import { isJsonObject } from "@zoonk/utils/json";
+import { normalizeString } from "@zoonk/utils/string";
+import { z } from "zod";
 import { readSavedLessonMap } from "../../../library/lessons/lesson-map";
-import { type ContentFixEffect } from "../contract";
-import { FIXABLE_MODELS } from "../fixable-models";
 import {
   type Json,
   PRIVATE_CONTENT,
-  type ResolvedChange,
+  type Resolution,
   changedFields,
   nonEmptyText,
   refuse,
-} from "./resolved-change";
+} from "../_utils/resolved-change";
+import { type ContentFixEffect } from "../contract";
+import {
+  type FieldChange,
+  type PlanRoots,
+  defineFixHandler,
+  fieldChangeSchema,
+  fieldTargets,
+  idSchema,
+  setFieldsSchema,
+  toRevertedSet,
+  toSetProposal,
+} from "./fix-handler";
 
 type TextModel = "Chapter" | "Course" | "Lesson";
 
 const UNIT_KINDS = { Chapter: "chapter", Course: "course", Lesson: "lesson" } as const;
+
+const TABLES = {
+  Chapter: sql`library_chapters`,
+  Course: sql`courses`,
+  Lesson: sql`library_lessons`,
+} as const;
+
+const FIELDS = {
+  Chapter: ["title", "description"],
+  Course: ["title", "description"],
+  Lesson: ["title", "description", "summary"],
+} as const satisfies Record<TextModel, readonly string[]>;
+
+const RULES = {
+  Chapter: "Public chapters only. Its address keeps its slug.",
+  Course: "Public courses only. Its address keeps its slug.",
+  Lesson:
+    "A published public lesson with no new version waiting. summary keeps its shape and its ideas in order; each idea may change only its label and text.",
+} as const satisfies Record<TextModel, string>;
 
 function summaryProblem({ after, before }: { after: unknown; before: unknown }): string | null {
   const current = readSavedLessonMap(before);
@@ -134,11 +166,18 @@ function toEffects({
   ].filter((effect) => effect !== false);
 }
 
-export async function resolveTextRow(
+type TextStored<Model extends TextModel> = {
+  fields: FieldChange[];
+  id: string;
+  model: Model;
+  op: "set";
+};
+
+async function resolveTextRow<Model extends TextModel>(
   db: TransactionClient,
-  { id, model, set }: { id: string; model: TextModel; set: Record<string, Json> },
-): Promise<ResolvedChange> {
-  const fixable: readonly string[] = FIXABLE_MODELS[model].fields;
+  { id, model, set }: { id: string; model: Model; set: Record<string, Json> },
+): Promise<Resolution<TextStored<Model>>> {
+  const fixable: readonly string[] = FIELDS[model];
   const unknownField = Object.keys(set).find((field) => !fixable.includes(field));
 
   if (unknownField) {
@@ -183,3 +222,89 @@ export async function resolveTextRow(
     unit: { id, kind: UNIT_KINDS[model] },
   };
 }
+
+function textData(fields: readonly { after: unknown; field: string }[]) {
+  const values = new Map(fields.map((field) => [field.field, field.after]));
+  const title = values.get("title");
+  const description = values.get("description");
+  const summary = values.get("summary");
+
+  return {
+    ...(typeof title === "string" ? { normalizedTitle: normalizeString(title), title } : {}),
+    ...(typeof description === "string" ? { description } : {}),
+    ...(isJsonObject(summary) ? { summary } : {}),
+  };
+}
+
+function clearedDescription(fields: readonly { after: unknown; field: string }[]) {
+  return fields.some(({ after, field }) => field === "description" && after === null)
+    ? { description: null }
+    : {};
+}
+
+async function applyText(
+  tx: TransactionClient,
+  { fields, id, model }: { fields: readonly FieldChange[]; id: string; model: TextModel },
+): Promise<void> {
+  const where = { id };
+
+  if (model === "Course") {
+    await tx.course.update({ data: { ...textData(fields), ...clearedDescription(fields) }, where });
+    return;
+  }
+
+  if (model === "Chapter") {
+    await tx.chapter.update({ data: textData(fields), where });
+    return;
+  }
+
+  await tx.lesson.update({ data: textData(fields), where });
+}
+
+/** Plans read a chapter's or lesson's title, never its description or summary. */
+function textPlanRoots({
+  fields,
+  id,
+  model,
+}: {
+  fields: readonly FieldChange[];
+  id: string;
+  model: TextModel;
+}): PlanRoots {
+  const ids = fields.some(({ field }) => field === "title") ? [id] : [];
+
+  if (model === "Chapter") {
+    return { chapterIds: ids };
+  }
+
+  return model === "Lesson" ? { lessonIds: ids } : {};
+}
+
+function textRowHandler<Model extends TextModel>(model: Model) {
+  return defineFixHandler({
+    apply: (tx, stored) => applyText(tx, stored),
+    model,
+    op: "set",
+    planRoots: (stored) => textPlanRoots(stored),
+    proposal: {
+      fields: FIELDS[model],
+      rules: RULES[model],
+      schema: z.strictObject({ id: idSchema, model: z.literal(model), set: setFieldsSchema }),
+    },
+    resolve: (db, proposed) => resolveTextRow(db, proposed),
+    revert: (db, stored) => resolveTextRow(db, toRevertedSet(stored)),
+    stored: z.object({
+      fields: z.array(fieldChangeSchema).min(1),
+      id: idSchema,
+      model: z.literal(model),
+      op: z.literal("set"),
+    }),
+    table: TABLES[model],
+    targets: (stored) => fieldTargets(stored),
+    toProposed: (stored) => toSetProposal(stored),
+  });
+}
+
+export const courseSet = textRowHandler("Course");
+export const chapterSet = textRowHandler("Chapter");
+export const lessonSet = textRowHandler("Lesson");

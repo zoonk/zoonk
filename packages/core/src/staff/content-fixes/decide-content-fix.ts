@@ -19,7 +19,7 @@ import {
 } from "./_utils/apply-content-fix";
 import { changedSince } from "./_utils/changed-since";
 import { logContentFix } from "./_utils/content-fix-view";
-import { prepareContentFix, toProposedChanges } from "./_utils/prepare-content-fix";
+import { prepareContentFix, storedChange } from "./_utils/prepare-content-fix";
 import { type FixUnit } from "./_utils/resolved-change";
 import { type StaffSessionRefusal, getStaffSessionUser } from "./_utils/staff-session";
 import { type StoredChange, contentFixChangesSchema } from "./contract";
@@ -141,7 +141,10 @@ async function staleReasonFor(
     return STALE_CONTENT;
   }
 
-  const fresh = await prepareContentFix(tx, toProposedChanges(stored));
+  const fresh = await prepareContentFix(
+    tx,
+    stored.map((change) => storedChange(change)),
+  );
 
   if (!fresh.ok) {
     return fresh.problem;
@@ -208,7 +211,7 @@ function applyApproval({
       return { claimed: true, staleReason, status: "stale" };
     }
 
-    await applyFixChanges(tx, { changes, unit });
+    await applyFixChanges(tx, { changes, context: { fixId, now: new Date() }, unit });
     return { claimed: true, status: "applied", unit };
   });
 }

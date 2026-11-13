@@ -466,20 +466,24 @@ const REGISTRY: Record<string, Registration[]> = {
   ],
   "staff/content-fixes/_utils/apply-content-fix.ts": [
     {
-      verdict: "marks",
-      why: "retiring or restoring bank items changes skill and exam plans",
-      writes: ["item.update"],
-    },
-    {
-      verdict: "marks",
-      why: "chapter and lesson text and maps are plan inputs",
-      writes: ["chapter.update", "lesson.update"],
-    },
-    {
       fields: ["updatedAt"],
       verdict: "excluded",
       why: "screen-only fixes bump the player version without changing plan inputs",
       writes: ["lesson.update"],
+    },
+  ],
+  "staff/content-fixes/handlers/practice.ts": [
+    {
+      verdict: "marks",
+      why: "retiring or restoring bank items changes skill and exam plans",
+      writes: ["item.update"],
+    },
+  ],
+  "staff/content-fixes/handlers/text-rows.ts": [
+    {
+      verdict: "marks",
+      why: "chapter and lesson text and maps are plan inputs",
+      writes: ["chapter.update", "lesson.update"],
     },
   ],
 };
@@ -1674,7 +1678,7 @@ function writeFix({
   return writePlanInputs(async (tx) => {
     await lockFixPlans(tx, changes);
     await lockFixRows(tx, { changes, unit });
-    await applyFixChanges(tx, { changes, unit });
+    await applyFixChanges(tx, { changes, context: { fixId: randomUUID(), now: new Date() }, unit });
   });
 }
 
@@ -1828,11 +1832,13 @@ const WRITER_CASES: Record<string, Record<string, () => Promise<WriterCase>>> = 
   "library/media/check-image-asset.ts": { removeImageAsset: pictureCase },
   "library/quality/set-aside-published-lesson.ts": { setAsidePublishedLesson: setAsideCase },
   "library/review-flags/rewrite-flagged-drills.ts": { replaceFlaggedDrills: drillsCase },
-  "staff/content-fixes/_utils/apply-content-fix.ts": {
-    "chapter title": () => textFixCase("chapter", "title"),
-    "lesson title": () => textFixCase("lesson", "title"),
+  "staff/content-fixes/handlers/practice.ts": {
     "restore item": () => itemFixCase("unretire"),
     "retire item": () => itemFixCase("retire"),
+  },
+  "staff/content-fixes/handlers/text-rows.ts": {
+    "chapter title": () => textFixCase("chapter", "title"),
+    "lesson title": () => textFixCase("lesson", "title"),
   },
 };
 

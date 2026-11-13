@@ -1,6 +1,7 @@
 import { isDeepStrictEqual } from "node:util";
-import { type StepKind, type TransactionClient } from "@zoonk/db";
-import { shouldOmitNumberedPicture } from "../../../lesson-player/picture-policy";
+import { type StepKind, type TransactionClient, sql } from "@zoonk/db";
+import { isJsonObject } from "@zoonk/utils/json";
+import { z } from "zod";
 import { validateActivity } from "../../../library/activities/validate-activity";
 import { normalizeStepContentValue } from "../../../library/steps/contract/normalize-step-content";
 import {
@@ -8,15 +9,34 @@ import {
   safeParseStepContent,
 } from "../../../library/steps/contract/step-contract";
 import { isExerciseKind } from "../../../player/contracts/exercise-content";
-import { type ContentFixEffect } from "../contract";
-import { checkScreenContentChange } from "../screen-content-rules";
 import {
   type Json,
   NOT_CURRENT_SCREEN,
-  type ResolvedChange,
+  type Resolution,
   refuse,
   toJson,
-} from "./resolved-change";
+} from "../_utils/resolved-change";
+import { type ContentFixEffect } from "../contract";
+import { checkScreenContentChange } from "../screen-content-rules";
+import {
+  type FieldChange,
+  defineFixHandler,
+  fieldChangeSchema,
+  fieldTargets,
+  idSchema,
+  setFieldsSchema,
+  toRevertedSet,
+  toSetProposal,
+} from "./fix-handler";
+
+type ScreenModel = "Step" | "StepVariant";
+
+type ContentStored<Model extends ScreenModel> = {
+  fields: FieldChange[];
+  id: string;
+  model: Model;
+  op: "set";
+};
 
 type ScreenRow = {
   itemId: string | null;
@@ -28,7 +48,7 @@ type ScreenRow = {
   wordId: string | null;
 };
 
-const screenSelect = {
+export const screenSelect = {
   itemId: true,
   kind: true,
   lessonId: true,
@@ -72,7 +92,7 @@ function contentProblem({ content, kind }: { content: Json; kind: StepKind }): s
     : `content isn't a valid activity: ${activity.issues.map((issue) => issue.message).join("; ")}`;
 }
 
-function onlyContent(set: Record<string, Json>, model: "Step" | "StepVariant") {
+function onlyContent(set: Record<string, Json>, model: ScreenModel) {
   const fields = Object.keys(set);
 
   return fields.length === 1 && fields[0] === "content"
@@ -80,7 +100,7 @@ function onlyContent(set: Record<string, Json>, model: "Step" | "StepVariant") {
     : `A ${model} fix sets only content, the whole screen as JSON.`;
 }
 
-function resolveContent({
+function resolveContent<Model extends ScreenModel>({
   after: sent,
   before,
   id,
@@ -93,8 +113,8 @@ function resolveContent({
   id: string;
   kind: StepKind;
   lessonId: string;
-  model: "Step" | "StepVariant";
-}): ResolvedChange {
+  model: Model;
+}): Resolution<ContentStored<Model>> {
   const after = toJson(normalizeStepContentValue(sent));
   const invalid = contentProblem({ content: after, kind });
 
@@ -126,10 +146,10 @@ function resolveContent({
   };
 }
 
-export async function resolveStepContent(
+async function resolveStepContent(
   db: TransactionClient,
   { id, set }: { id: string; set: Record<string, Json> },
-): Promise<ResolvedChange> {
+): Promise<Resolution<ContentStored<"Step">>> {
   const fieldIssue = onlyContent(set, "Step");
 
   if (fieldIssue) {
@@ -177,10 +197,10 @@ export async function resolveStepContent(
   };
 }
 
-export async function resolveVariantContent(
+async function resolveVariantContent(
   db: TransactionClient,
   { id, set }: { id: string; set: Record<string, Json> },
-): Promise<ResolvedChange> {
+): Promise<Resolution<ContentStored<"StepVariant">>> {
   const fieldIssue = onlyContent(set, "StepVariant");
 
   if (fieldIssue) {
@@ -212,76 +232,65 @@ export async function resolveVariantContent(
   });
 }
 
-/** Takes the picture off this screen alone; the drawing and its other screens keep it. */
-export async function resolvePictureDetach(
-  db: TransactionClient,
-  id: string,
-): Promise<ResolvedChange> {
-  const step = await db.step.findUnique({
-    select: { ...screenSelect, content: true, mediaAssetId: true },
-    where: { id },
-  });
+function contentOf(fields: readonly FieldChange[]) {
+  const content = fields.find((field) => field.field === "content")?.after;
 
-  if (!step) {
-    return refuse(`No Step with id ${id}.`);
+  if (!isJsonObject(content)) {
+    throw new Error("A screen fix holds no content object");
   }
 
-  if (step.retiredAt || step.staged) {
-    return refuse(NOT_CURRENT_SCREEN);
-  }
-
-  if (!step.mediaAssetId) {
-    return refuse("This screen shows no picture to detach.");
-  }
-
-  const leftOut = shouldOmitNumberedPicture({
-    content: step.content,
-    imageAvailable: false,
-    imagePending: false,
-    kind: step.kind,
-  });
-
-  return {
-    effects: leftOut ? [{ kind: "screenLeftOut", stepId: id }] : [],
-    ok: true,
-    stored: { id, mediaAssetId: step.mediaAssetId, model: "Step", op: "detachPicture" },
-    unit: { id: step.lessonId, kind: "lesson" },
-  };
+  return content;
 }
 
-/** Reverts a detached picture: the same drawing goes back while the screen still has none. */
-export async function resolvePictureAttach(
-  db: TransactionClient,
-  { id, mediaAssetId }: { id: string; mediaAssetId: string },
-): Promise<ResolvedChange> {
-  const [step, asset] = await Promise.all([
-    db.step.findUnique({
-      select: { ...screenSelect, mediaAssetId: true, pictureRemovedAt: true },
-      where: { id },
-    }),
-    db.mediaAsset.findUnique({ select: { visibility: true }, where: { id: mediaAssetId } }),
-  ]);
+const contentStored = <Model extends ScreenModel>(model: Model) =>
+  z.object({
+    fields: z.array(fieldChangeSchema).min(1),
+    id: idSchema,
+    model: z.literal(model),
+    op: z.literal("set"),
+  });
 
-  if (!step) {
-    return refuse(`No Step with id ${id}.`);
-  }
+const SCREEN_RULES =
+  "A current screen of a published lesson; send the whole content. It keeps its fields, ids, option count and order, references and picture requests, and changes what learners read before answering or which answer is right, never both. Its saved answer explanations are deleted. Language screens and screens with a numeric practice question can't be fixed yet.";
 
-  if (step.retiredAt || step.staged) {
-    return refuse(NOT_CURRENT_SCREEN);
-  }
+export const stepSet = defineFixHandler({
+  apply: async (tx, stored) => {
+    await tx.step.update({ data: { content: contentOf(stored.fields) }, where: { id: stored.id } });
+    await tx.answerExplanation.deleteMany({ where: { stepId: stored.id } });
+  },
+  model: "Step",
+  op: "set",
+  proposal: {
+    fields: ["content"],
+    rules: SCREEN_RULES,
+    schema: z.strictObject({ id: idSchema, model: z.literal("Step"), set: setFieldsSchema }),
+  },
+  resolve: (db, proposed) => resolveStepContent(db, proposed),
+  revert: (db, stored) => resolveStepContent(db, toRevertedSet(stored)),
+  stored: contentStored("Step"),
+  table: sql`library_steps`,
+  targets: (stored) => fieldTargets(stored),
+  toProposed: (stored) => toSetProposal(stored),
+});
 
-  if (step.mediaAssetId || !step.pictureRemovedAt) {
-    return refuse("This screen's picture is no longer detached.");
-  }
-
-  if (asset?.visibility !== "public") {
-    return refuse("The picture this screen showed no longer exists.");
-  }
-
-  return {
-    effects: [],
-    ok: true,
-    stored: { id, mediaAssetId, model: "Step", op: "attachPicture" },
-    unit: { id: step.lessonId, kind: "lesson" },
-  };
-}
+export const variantSet = defineFixHandler({
+  apply: async (tx, stored) => {
+    await tx.stepVariant.update({
+      data: { content: contentOf(stored.fields) },
+      where: { id: stored.id },
+    });
+  },
+  model: "StepVariant",
+  op: "set",
+  proposal: {
+    fields: ["content"],
+    rules: "Same rules as its screen's content.",
+    schema: z.strictObject({ id: idSchema, model: z.literal("StepVariant"), set: setFieldsSchema }),
+  },
+  resolve: (db, proposed) => resolveVariantContent(db, proposed),
+  revert: (db, stored) => resolveVariantContent(db, toRevertedSet(stored)),
+  stored: contentStored("StepVariant"),
+  table: sql`step_variants`,
+  targets: (stored) => fieldTargets(stored),
+  toProposed: (stored) => toSetProposal(stored),
+});

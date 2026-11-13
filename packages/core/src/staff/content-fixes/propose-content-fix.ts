@@ -6,11 +6,14 @@ import { unstable_rethrow } from "next/navigation";
 import { getStaffActor } from "../get-staff-actor";
 import { StaffInputError, parseStaffInput } from "../input";
 import { type ContentFixView, logContentFix, toContentFixView } from "./_utils/content-fix-view";
-import { prepareContentFix } from "./_utils/prepare-content-fix";
+import {
+  type ChangeResolver,
+  inverseChange,
+  prepareContentFix,
+  proposedChange,
+} from "./_utils/prepare-content-fix";
 import { getStaffSessionUser } from "./_utils/staff-session";
 import {
-  type ProposedChange,
-  type StoredChange,
   contentFixChangesSchema,
   contentFixProposalSchema,
   contentFixRevertSchema,
@@ -24,7 +27,7 @@ type ProposeResult =
 type Actor = { clientId: string; userId: string };
 
 type Proposal = {
-  changes: readonly ProposedChange[];
+  changes: readonly ChangeResolver[];
   feedbackId?: string | null;
   reason: string;
   revertsId?: string;
@@ -62,27 +65,6 @@ async function saveProposal(actor: Actor, proposal: Proposal): Promise<ProposeRe
   return { fix: toContentFixView(fix), status: "proposed" };
 }
 
-function toInverse(change: StoredChange): ProposedChange {
-  switch (change.op) {
-    case "retire":
-      return { id: change.id, model: "Item", unretire: true };
-    case "unretire":
-      return { id: change.id, model: "Item", retire: true };
-    case "detachPicture":
-      return { attachPicture: change.mediaAssetId, id: change.id, model: "Step" };
-    case "attachPicture":
-      return { detachPicture: true, id: change.id, model: "Step" };
-    case "set":
-      return {
-        id: change.id,
-        model: change.model,
-        set: Object.fromEntries(change.fields.map((field) => [field.field, field.before])),
-      };
-    default:
-      throw new Error("Unknown stored change");
-  }
-}
-
 async function buildRevert(input: { fixId: string; reason: string }) {
   const original = await prisma.contentFix.findUnique({ where: { id: input.fixId } });
 
@@ -99,7 +81,7 @@ async function buildRevert(input: { fixId: string; reason: string }) {
 
   const changes = contentFixChangesSchema
     .parse(original.changes)
-    .map((change) => toInverse(change));
+    .map((change) => inverseChange(change));
 
   return { proposal: { changes, reason: input.reason, revertsId: original.id } };
 }
@@ -188,9 +170,16 @@ export function proposeContentFix(input: unknown): Promise<ProposeResult> {
   return runProposal({
     action: "propose",
     input,
-    toProposal: async (body) => ({
-      proposal: await parseStaffInput(contentFixProposalSchema, body),
-    }),
+    toProposal: async (body) => {
+      const proposal = await parseStaffInput(contentFixProposalSchema, body);
+
+      return {
+        proposal: {
+          ...proposal,
+          changes: proposal.changes.map((change) => proposedChange(change)),
+        },
+      };
+    },
   });
 }
 

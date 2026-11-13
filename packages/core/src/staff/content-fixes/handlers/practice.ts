@@ -1,18 +1,36 @@
-import { type TransactionClient } from "@zoonk/db";
+import { type TransactionClient, sql } from "@zoonk/db";
+import { z } from "zod";
 import { CURRENT_STEPS } from "../../../library/lessons/lesson-versions";
 import {
   type Json,
   NOT_CURRENT_SCREEN,
   PRIVATE_CONTENT,
-  type ResolvedChange,
+  type Resolution,
   nonEmptyText,
   refuse,
-} from "./resolved-change";
+} from "../_utils/resolved-change";
+import {
+  type FieldChange,
+  defineFixHandler,
+  fieldChangeSchema,
+  fieldTargets,
+  idSchema,
+  setFieldsSchema,
+  toRevertedSet,
+  toSetProposal,
+} from "./fix-handler";
 
-export async function resolveExplanation(
+type ExplanationStored = {
+  fields: FieldChange[];
+  id: string;
+  model: "AnswerExplanation";
+  op: "set";
+};
+
+async function resolveExplanation(
   db: TransactionClient,
   { id, set }: { id: string; set: Record<string, Json> },
-): Promise<ResolvedChange> {
+): Promise<Resolution<ExplanationStored>> {
   const fields = Object.keys(set);
 
   if (fields.length !== 1 || fields[0] !== "explanation") {
@@ -82,10 +100,12 @@ export async function resolveExplanation(
  * Only a question nothing else depends on: a current screen asking it would show it again, and a
  * set's questions share one passage.
  */
-export async function resolveItemRetire(
+type RetirementStored<Op extends "retire" | "unretire"> = { id: string; model: "Item"; op: Op };
+
+async function resolveItemRetire(
   db: TransactionClient,
   id: string,
-): Promise<ResolvedChange> {
+): Promise<Resolution<RetirementStored<"retire">>> {
   const item = await db.item.findUnique({
     select: {
       _count: { select: { steps: { where: CURRENT_STEPS } } },
@@ -127,10 +147,10 @@ export async function resolveItemRetire(
 }
 
 /** Reverts a retired question: it goes back to new practice only while it's still retired. */
-export async function resolveItemRestore(
+async function resolveItemRestore(
   db: TransactionClient,
   id: string,
-): Promise<ResolvedChange> {
+): Promise<Resolution<RetirementStored<"unretire">>> {
   const item = await db.item.findUnique({
     select: { retiredAt: true, skill: { select: { visibility: true } } },
     where: { id },
@@ -155,3 +175,85 @@ export async function resolveItemRestore(
     unit: { id, kind: "item" },
   };
 }
+
+function explanationOf(fields: readonly FieldChange[]): string {
+  const text = fields.find((field) => field.field === "explanation")?.after;
+
+  if (typeof text !== "string") {
+    throw new TypeError("An explanation fix holds no text");
+  }
+
+  return text;
+}
+
+export const explanationSet = defineFixHandler({
+  apply: async (tx, stored) => {
+    await tx.answerExplanation.update({
+      data: { explanation: explanationOf(stored.fields) },
+      where: { id: stored.id },
+    });
+  },
+  model: "AnswerExplanation",
+  op: "set",
+  proposal: {
+    fields: ["explanation"],
+    rules:
+      "The explanation of a current screen's answer, or of a question still in practice. Fix it with { model, id, set: { explanation } }.",
+    schema: z.strictObject({
+      id: idSchema,
+      model: z.literal("AnswerExplanation"),
+      set: setFieldsSchema,
+    }),
+  },
+  resolve: (db, proposed) => resolveExplanation(db, proposed),
+  revert: (db, stored) => resolveExplanation(db, toRevertedSet(stored)),
+  stored: z.object({
+    fields: z.array(fieldChangeSchema).min(1),
+    id: idSchema,
+    model: z.literal("AnswerExplanation"),
+    op: z.literal("set"),
+  }),
+  table: sql`answer_explanations`,
+  targets: (stored) => fieldTargets(stored),
+  toProposed: (stored) => toSetProposal(stored),
+});
+
+const retirementStored = <Op extends "retire" | "unretire">(op: Op) =>
+  z.object({ id: idSchema, model: z.literal("Item"), op: z.literal(op) });
+
+const retirementTarget = ({ id }: { id: string }) => [{ id, model: "Item", part: "retired" }];
+
+export const itemRetire = defineFixHandler({
+  apply: async (tx, stored, { now }) => {
+    await tx.item.update({ data: { retiredAt: now }, where: { id: stored.id } });
+  },
+  model: "Item",
+  op: "retire",
+  planRoots: ({ id }) => ({ itemIds: [id] }),
+  proposal: {
+    rules:
+      "{ model: 'Item', id, retire: true } takes a practice question out of new practice. Only one no current screen asks and that isn't in a set.",
+    schema: z.strictObject({ id: idSchema, model: z.literal("Item"), retire: z.literal(true) }),
+  },
+  resolve: (db, proposed) => resolveItemRetire(db, proposed.id),
+  revert: (db, stored) => resolveItemRestore(db, stored.id),
+  stored: retirementStored("retire"),
+  table: sql`items`,
+  targets: retirementTarget,
+  toProposed: ({ id }) => ({ id, model: "Item" as const, retire: true as const }),
+});
+
+export const itemUnretire = defineFixHandler({
+  apply: async (tx, stored) => {
+    await tx.item.update({ data: { retiredAt: null }, where: { id: stored.id } });
+  },
+  model: "Item",
+  op: "unretire",
+  planRoots: ({ id }) => ({ itemIds: [id] }),
+  resolve: (db, proposed: { id: string }) => resolveItemRestore(db, proposed.id),
+  revert: (db, stored) => resolveItemRetire(db, stored.id),
+  stored: retirementStored("unretire"),
+  table: sql`items`,
+  targets: retirementTarget,
+  toProposed: ({ id }) => ({ id }),
+});

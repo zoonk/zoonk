@@ -1,5 +1,6 @@
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
+import { FIX_HANDLERS } from "./handlers/registry";
 
 /**
  * A typo repeated across a lesson's screens fits, and an approver can still read every row's
@@ -9,52 +10,12 @@ const MAX_CONTENT_FIX_CHANGES = 10;
 
 const MAX_REASON_LENGTH = 2000;
 
-const SET_MODELS = [
-  "Course",
-  "Chapter",
-  "Lesson",
-  "Step",
-  "StepVariant",
-  "AnswerExplanation",
-] as const;
-
 const idSchema = uuidSchema();
-const setModelSchema = z.enum(SET_MODELS);
 const reasonSchema = z.string().trim().min(1).max(MAX_REASON_LENGTH);
 
-const setChangeSchema = z.strictObject({
-  id: idSchema,
-  model: setModelSchema,
-  set: z
-    .record(z.string(), z.json())
-    .refine((fields) => Object.keys(fields).length > 0, { message: "Set at least one field" })
-    .meta({ description: "Each field's whole new value" }),
-});
-
-const retireChangeSchema = z.strictObject({
-  id: idSchema,
-  model: z.literal("Item"),
-  retire: z.literal(true),
-});
-
-const detachPictureChangeSchema = z.strictObject({
-  detachPicture: z.literal(true),
-  id: idSchema,
-  model: z.literal("Step"),
-});
-
-const proposedChangeSchema = z.union([
-  setChangeSchema,
-  retireChangeSchema,
-  detachPictureChangeSchema,
-]);
-
-/** Only reverting a retired question or a detached picture builds these; the CLI can't send them. */
-type InverseChange =
-  | { id: string; model: "Item"; unretire: true }
-  | { attachPicture: string; id: string; model: "Step" };
-
-export type ProposedChange = z.infer<typeof proposedChangeSchema> | InverseChange;
+const proposedChangeSchema = z
+  .looseObject({ id: idSchema, model: z.string() })
+  .meta({ description: "{ model, id, <operation> }; pnpm zoonk staff models lists each model's" });
 
 export const contentFixProposalSchema = z
   .strictObject({
@@ -68,22 +29,7 @@ export const contentFixRevertSchema = z
   .strictObject({ fixId: idSchema, reason: reasonSchema })
   .meta({ id: "ContentFixRevert" });
 
-const fieldChangeSchema = z.object({ after: z.json(), before: z.json(), field: z.string() });
-
-const pictureChange = { id: idSchema, mediaAssetId: idSchema, model: z.literal("Step") };
-
-const storedChangeSchema = z.discriminatedUnion("op", [
-  z.object({
-    fields: z.array(fieldChangeSchema).min(1),
-    id: idSchema,
-    model: setModelSchema,
-    op: z.literal("set"),
-  }),
-  z.object({ id: idSchema, model: z.literal("Item"), op: z.literal("retire") }),
-  z.object({ id: idSchema, model: z.literal("Item"), op: z.literal("unretire") }),
-  z.object({ ...pictureChange, op: z.literal("detachPicture") }),
-  z.object({ ...pictureChange, op: z.literal("attachPicture") }),
-]);
+const storedChangeSchema = z.union(FIX_HANDLERS.map((handler) => handler.stored));
 
 export type StoredChange = z.infer<typeof storedChangeSchema>;
 

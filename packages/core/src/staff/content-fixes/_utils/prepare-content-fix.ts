@@ -2,61 +2,52 @@ import { type TransactionClient } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { CURRENT_STEPS, readStagedLessonVersion } from "../../../library/lessons/lesson-versions";
 import { getScreenReadingTexts, holdsQuote } from "../../../library/steps/question-bases";
-import { type ContentFixEffect, type ProposedChange, type StoredChange } from "../contract";
-import { resolveExplanation, resolveItemRestore, resolveItemRetire } from "./resolve-practice";
-import {
-  resolvePictureAttach,
-  resolvePictureDetach,
-  resolveStepContent,
-  resolveVariantContent,
-} from "./resolve-screen";
-import { resolveTextRow } from "./resolve-text-row";
+import { type ContentFixEffect, type StoredChange, contentFixChangesSchema } from "../contract";
+import { type FixTarget } from "../handlers/fix-handler";
+import { findStoredHandler, prepareProposedChange } from "../handlers/registry";
 import {
   type FixUnit,
   type Json,
   PRIVATE_CONTENT,
   type Refusal,
-  type ResolvedChange,
+  type Resolution,
   refuse,
 } from "./resolved-change";
 
 export type PreparedFix = { changes: StoredChange[]; effects: ContentFixEffect[]; unit: FixUnit };
 
-function resolveChange(db: TransactionClient, change: ProposedChange): Promise<ResolvedChange> {
-  if ("retire" in change) {
-    return resolveItemRetire(db, change.id);
-  }
+/** Reads what one change touches now and returns what it would write. */
+export type ChangeResolver = (db: TransactionClient) => Promise<Resolution<unknown>>;
 
-  if ("unretire" in change) {
-    return resolveItemRestore(db, change.id);
-  }
-
-  if ("detachPicture" in change) {
-    return resolvePictureDetach(db, change.id);
-  }
-
-  if ("attachPicture" in change) {
-    return resolvePictureAttach(db, { id: change.id, mediaAssetId: change.attachPicture });
-  }
-
-  if (change.model === "Step") {
-    return resolveStepContent(db, change);
-  }
-
-  if (change.model === "StepVariant") {
-    return resolveVariantContent(db, change);
-  }
-
-  if (change.model === "AnswerExplanation") {
-    return resolveExplanation(db, change);
-  }
-
-  return resolveTextRow(db, { id: change.id, model: change.model, set: change.set });
+export function proposedChange(change: unknown): ChangeResolver {
+  return (db) => prepareProposedChange(db, change);
 }
 
-function changeKey(change: ProposedChange): string {
-  const part = "detachPicture" in change || "attachPicture" in change ? "picture" : "fields";
-  return `${change.model}:${change.id}:${part}`;
+export function storedChange(change: StoredChange): ChangeResolver {
+  return (db) => findStoredHandler(change).reprepare(db, change);
+}
+
+export function inverseChange(change: StoredChange): ChangeResolver {
+  return (db) => findStoredHandler(change).revert(db, change);
+}
+
+export function targetsOf(change: StoredChange): FixTarget[] {
+  return findStoredHandler(change).targets(change);
+}
+
+function targetKey({ id, model, part }: FixTarget): string {
+  return `${model}:${id}:${part}`;
+}
+
+/** Two changes of one fix writing the same thing would leave only the last one's value. */
+function overlapProblem(changes: readonly StoredChange[]): string | null {
+  const keys = changes.flatMap((change) => [
+    ...new Set(targetsOf(change).map((target) => targetKey(target))),
+  ]);
+
+  return new Set(keys).size === keys.length
+    ? null
+    : "Each row appears once in a fix; put all of a row's fields in one change.";
 }
 
 async function lessonProblem(db: TransactionClient, lessonId: string): Promise<string | null> {
@@ -198,15 +189,9 @@ async function unitProblem(
  */
 export async function prepareContentFix(
   db: TransactionClient,
-  changes: readonly ProposedChange[],
+  resolvers: readonly ChangeResolver[],
 ): Promise<Refusal | { fix: PreparedFix; ok: true }> {
-  const keys = changes.map((change) => changeKey(change));
-
-  if (new Set(keys).size !== keys.length) {
-    return refuse("Each row appears once in a fix; put all of a row's fields in one change.");
-  }
-
-  const resolved = await Promise.all(changes.map((change) => resolveChange(db, change)));
+  const resolved = await Promise.all(resolvers.map((resolve) => resolve(db)));
   const refused = resolved.find((change) => !change.ok);
 
   if (refused && !refused.ok) {
@@ -223,8 +208,10 @@ export async function prepareContentFix(
     );
   }
 
-  const stored = accepted.map((change) => change.stored);
-  const problem = await unitProblem(db, { changes: stored, unit: first.unit });
+  const stored = contentFixChangesSchema.parse(accepted.map((change) => change.stored));
+
+  const problem =
+    overlapProblem(stored) ?? (await unitProblem(db, { changes: stored, unit: first.unit }));
 
   if (problem) {
     return refuse(problem);
@@ -241,30 +228,4 @@ export async function prepareContentFix(
     },
     ok: true,
   };
-}
-
-export function toProposedChanges(changes: readonly StoredChange[]): ProposedChange[] {
-  return changes.map((change): ProposedChange => {
-    if (change.op === "retire") {
-      return { id: change.id, model: "Item", retire: true };
-    }
-
-    if (change.op === "unretire") {
-      return { id: change.id, model: "Item", unretire: true };
-    }
-
-    if (change.op === "detachPicture") {
-      return { detachPicture: true, id: change.id, model: "Step" };
-    }
-
-    if (change.op === "attachPicture") {
-      return { attachPicture: change.mediaAssetId, id: change.id, model: "Step" };
-    }
-
-    return {
-      id: change.id,
-      model: change.model,
-      set: Object.fromEntries(change.fields.map((field) => [field.field, field.after])),
-    };
-  });
 }
