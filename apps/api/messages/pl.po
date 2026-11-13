@@ -9,19 +9,19 @@ msgstr ""
 #: src/app/auth/[locale]/layout.tsx
 msgctxt "dqGyqS"
 msgid "Log in to Zoonk"
-msgstr ""
+msgstr "Zaloguj się do Zoonka"
 
 #: src/app/auth/[locale]/login/email-login-form.tsx
 #: src/app/auth/[locale]/otp/otp-form.tsx
-msgctxt "l6T4xJ"
-msgid "Temporary email addresses don't work here. Use another email."
-msgstr ""
+msgctxt "Lgbcpa"
+msgid "Temporary emails don't work. Use another."
+msgstr "Nie przyjmujemy tymczasowych adresów e-mail. Podaj inny."
 
 #: src/app/auth/[locale]/login/email-login-form.tsx
 #: src/app/auth/[locale]/login/social-login.tsx
-msgctxt "1VqSb1"
-msgid "We couldn't log you in. Try again or email hello@zoonk.com."
-msgstr ""
+msgctxt "QDMzfE"
+msgid "We couldn't log you in. Try again."
+msgstr "Nie udało się zalogować. Spróbuj ponownie."
 
 #: src/app/auth/[locale]/login/email-login-form.tsx
 msgctxt "YRe93Y"
@@ -30,9 +30,9 @@ msgstr "Wpisz poprawny adres e-mail"
 
 #: src/app/auth/[locale]/login/email-login-form.tsx
 #: src/app/auth/[locale]/otp/otp-form.tsx
-msgctxt "hUjCDW"
-msgid "Too many tries. Wait a minute, then try again."
-msgstr "Zbyt wiele prób. Poczekaj minutę i spróbuj ponownie."
+msgctxt "b27sTL"
+msgid "Too many tries. Try again in a minute."
+msgstr "Zbyt wiele prób. Spróbuj ponownie za minutę."
 
 #: src/app/auth/[locale]/login/email-login-form.tsx
 msgctxt "sy-pv5"
@@ -55,12 +55,12 @@ msgstr "Kontynuuj"
 #: src/app/auth/[locale]/login/login-screen.tsx
 msgctxt "tUBpHv"
 msgid "Log in or create an account"
-msgstr ""
+msgstr "Zaloguj się lub utwórz konto"
 
 #: src/app/auth/[locale]/login/login-screen.tsx
-msgctxt "kTEtnT"
-msgid "That link expired. Log in again."
-msgstr ""
+msgctxt "B04QDm"
+msgid "Logging in took too long. Try again."
+msgstr "Logowanie trwało zbyt długo. Spróbuj ponownie."
 
 #: src/app/auth/[locale]/login/login-screen.tsx
 msgctxt "4wpUNc"
@@ -70,7 +70,7 @@ msgstr "Lub"
 #: src/app/auth/[locale]/login/login-screen.tsx
 msgctxt "V3Izs2"
 msgid "By continuing, you agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
-msgstr ""
+msgstr "Kontynuując, akceptujesz nasz <terms>Regulamin</terms> i naszą <privacy>Politykę prywatności</privacy>."
 
 #: src/app/auth/[locale]/login/social-login.tsx
 msgctxt "FJ6r9E"
@@ -83,6 +83,21 @@ msgid "Continue with Apple"
 msgstr "Kontynuuj z Apple"
 
 #: src/app/auth/[locale]/otp/otp-form.tsx
+msgctxt "bWxjFV"
+msgid "We couldn't send a new code. Try again."
+msgstr "Nie udało się wysłać nowego kodu. Spróbuj ponownie."
+
+#: src/app/auth/[locale]/otp/otp-form.tsx
+msgctxt "QNbzsf"
+msgid "Wait a minute, then ask for a new code."
+msgstr "Poczekaj minutę, a potem poproś o nowy kod."
+
+#: src/app/auth/[locale]/otp/otp-form.tsx
+msgctxt "s0lBqy"
+msgid "We sent you a new code."
+msgstr "Wysłaliśmy ci nowy kod."
+
+#: src/app/auth/[locale]/otp/otp-form.tsx
 msgctxt "_8e0dn"
 msgid "Something went wrong. Try again in a moment."
 msgstr "Coś poszło nie tak. Spróbuj ponownie za chwilę."
@@ -93,29 +108,14 @@ msgid "This code expired. Get a new one."
 msgstr "Ten kod wygasł. Poproś o nowy."
 
 #: src/app/auth/[locale]/otp/otp-form.tsx
-msgctxt "P-D93T"
-msgid "Too many wrong tries with this code. Get a new one."
-msgstr "Ten kod wpisano błędnie zbyt wiele razy. Poproś o nowy."
+msgctxt "5F-3fe"
+msgid "Too many wrong tries. Get a new code."
+msgstr "Zbyt wiele błędnych prób. Poproś o nowy kod."
 
 #: src/app/auth/[locale]/otp/otp-form.tsx
-msgctxt "AFMAKd"
-msgid "That code isn't right. Check the email and try again."
-msgstr "Kod się nie zgadza. Sprawdź wiadomość i spróbuj ponownie."
-
-#: src/app/auth/[locale]/otp/otp-form.tsx
-msgctxt "U2LhAf"
-msgid "We sent a new code to {email}."
-msgstr "Wysłaliśmy nowy kod na adres {email}."
-
-#: src/app/auth/[locale]/otp/otp-form.tsx
-msgctxt "E05GNf"
-msgid "Wait a minute before asking for another code."
-msgstr "Poczekaj minutę, zanim poprosisz o kolejny kod."
-
-#: src/app/auth/[locale]/otp/otp-form.tsx
-msgctxt "bWxjFV"
-msgid "We couldn't send a new code. Try again."
-msgstr "Nie udało się wysłać nowego kodu. Spróbuj ponownie."
+msgctxt "vnORxw"
+msgid "That code isn't right. Try again."
+msgstr "Ten kod jest nieprawidłowy. Spróbuj ponownie."
 
 #: src/app/auth/[locale]/otp/otp-form.tsx
 msgctxt "5UeJRL"
@@ -163,39 +163,9 @@ msgid "What should we call you?"
 msgstr "Jak mamy cię nazywać?"
 
 #: src/app/auth/[locale]/setup/setup-form.tsx
-msgctxt "1SvspN"
-msgid "Checking..."
-msgstr "Sprawdzamy…"
-
-#: src/app/auth/[locale]/setup/setup-form.tsx
-msgctxt "9N4_rz"
-msgid "{username} is available"
-msgstr "Nazwa {username} jest dostępna"
-
-#: src/app/auth/[locale]/setup/setup-form.tsx
-msgctxt "R76cpj"
-msgid "{username} is already taken"
-msgstr "Nazwa {username} jest już zajęta"
-
-#: src/app/auth/[locale]/setup/setup-form.tsx
-msgctxt "wubfpa"
-msgid "3-30 characters. Letters a–z, numbers, and underscores only."
-msgstr "3–30 znaków. Tylko litery a–z, cyfry i podkreślenia."
-
-#: src/app/auth/[locale]/setup/setup-form.tsx
-msgctxt "9j8lDu"
-msgid "Your username: @{username}"
-msgstr "Twoja nazwa użytkownika: @{username}"
-
-#: src/app/auth/[locale]/setup/setup-form.tsx
-msgctxt "UJWPJj"
-msgid "Change username"
-msgstr "Zmień nazwę użytkownika"
-
-#: src/app/auth/[locale]/setup/setup-form.tsx
-msgctxt "BY343C"
-msgid "Change"
-msgstr "Zmień"
+msgctxt "bz5AYp"
+msgid "We couldn't save your profile. Try again."
+msgstr "Nie udało się zapisać profilu. Spróbuj ponownie."
 
 #: src/app/auth/[locale]/setup/setup-form.tsx
 msgctxt "HAlOn1"
@@ -207,20 +177,10 @@ msgctxt "D4cYHr"
 msgid "Use 150 characters or fewer."
 msgstr "Wpisz maksymalnie 150 znaków."
 
-#: src/app/auth/[locale]/setup/setup-form.tsx
-msgctxt "JCIgkj"
-msgid "Username"
-msgstr "Nazwa użytkownika"
-
-#: src/app/auth/[locale]/setup/setup-form.tsx
-msgctxt "bz5AYp"
-msgid "We couldn't save your profile. Try again."
-msgstr "Nie udało się zapisać profilu. Spróbuj ponownie."
-
 #: src/app/auth/[locale]/untrusted-origin/page.tsx
 msgctxt "cUktz7"
 msgid "That link didn't work"
-msgstr ""
+msgstr "Ten link nie zadziałał"
 
 #: src/app/auth/[locale]/untrusted-origin/page.tsx
 msgctxt "15PZTm"
@@ -261,7 +221,7 @@ msgstr "Na ten cel masz dziś w planie {minutes, plural, one {# minutę} many {#
 #: src/lib/reminders/reminder-copy.ts
 msgctxt "T3CRm8"
 msgid "{minutes, plural, one {# minute} other {# minutes}} to study today."
-msgstr ""
+msgstr "Dziś {minutes, plural, one {# minuta} many {# minut} other {# minuty}} na naukę."
 
 #: src/lib/reminders/reminder-copy.ts
 msgctxt "jfc4ic"
@@ -297,7 +257,7 @@ msgstr "Na ten cel: {minutes, plural, one {# minuta} many {# minut} other {# min
 #: src/lib/reminders/reminder-copy.ts
 msgctxt "l22EVR"
 msgid "Open Zoonk"
-msgstr ""
+msgstr "Otwórz Zoonka"
 
 #: src/lib/reminders/reminder-copy.ts
 msgctxt "wdqkFx"

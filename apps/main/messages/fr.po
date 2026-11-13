@@ -397,8 +397,9 @@ msgid "Go to a page, run an action or ask a question."
 msgstr "Accède à une page, lance une action ou pose une question."
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
-#: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
+#: src/app/[lang]/(app)/(settings)/_components/sign-in-again-dialog.tsx
 #: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
+#: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
 msgctxt "47FYwb"
 msgid "Cancel"
 msgstr "Annuler"
@@ -431,14 +432,10 @@ msgctxt "6b2CRH"
 msgid "User menu"
 msgstr "Menu utilisateur"
 
+#. The plan's name beside Subscription in a menu, shown only to subscribers: the plan they have.
 #: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
 #: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
-#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
-#: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
-#: src/app/[lang]/(home)/_components/exam-section.tsx
-#: src/components/pricing/plus-plan.tsx
-#: src/components/pricing/pricing-covers.tsx
-msgctxt "lOdoIb"
+msgctxt "subscriberPlanName"
 msgid "Plus"
 msgstr "Plus"
 
@@ -1168,6 +1165,7 @@ msgstr "Pour l’instant, {minutes, plural, one {# minute} other {# minutes}} pa
 
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
 #: src/app/[lang]/learn/[lessonId]/guest-plan-start.tsx
+#: src/components/auth-gate.tsx
 #: src/components/public/goal-form.tsx
 #: src/components/public/start-plan-link.tsx
 msgctxt "UTU-oM"
@@ -1200,10 +1198,12 @@ msgctxt "G4ZsrK"
 msgid "Start with your goal"
 msgstr "Commence par ton objectif"
 
-#: src/app/[lang]/(app)/(settings)/_components/settings-eyebrow.tsx
-msgctxt "DId5yN"
-msgid "{email} · Plus"
-msgstr "{email} · Plus"
+#: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
+#: src/app/[lang]/(app)/(settings)/settings/privacy/page.tsx
+#: src/components/public/public-footer.tsx
+msgctxt "cXBJ7U"
+msgid "Privacy"
+msgstr "Confidentialité"
 
 #. Study reminders are off: the value beside the Reminders row in Settings
 #: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
@@ -1211,99 +1211,15 @@ msgctxt "remindersOff"
 msgid "Off"
 msgstr "Désactivés"
 
-#: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
-msgctxt "huX1mW"
-msgid "For your safety, log in again, then delete your account."
-msgstr "Pour ta sécurité, reconnecte-toi, puis supprime ton compte."
-
-#: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
-#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+#: src/app/[lang]/(app)/(settings)/_components/sign-in-again-dialog.tsx
 msgctxt "IPuXf7"
 msgid "Log in again"
 msgstr "Se reconnecter"
-
-#: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
-msgctxt "OR6zpA"
-msgid "We couldn't delete your account. Try again or email hello@zoonk.com."
-msgstr "Nous n’avons pas pu supprimer ton compte. Réessaie ou écris à hello@zoonk.com."
-
-#: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
-#: src/app/[lang]/(app)/(settings)/profile/page.tsx
-msgctxt "Sk9SL5"
-msgid "Delete my account"
-msgstr "Supprimer mon compte"
-
-#: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
-msgctxt "wyxJrL"
-msgid "Delete account"
-msgstr "Supprimer le compte"
-
-#: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
-msgctxt "lNbJX1"
-msgid "Delete…"
-msgstr "Supprimer…"
-
-#: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
-msgctxt "TcCxtt"
-msgid "Delete your account?"
-msgstr "Supprimer ton compte ?"
-
-#: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
-msgctxt "yF2UF2"
-msgid "Your goals, plans, progress, memory and uploads are deleted for good. This can't be undone."
-msgstr "Tes objectifs, tes plans, ta progression, ta mémoire et tes fichiers importés seront définitivement supprimés. Cette action est irréversible."
-
-#: src/app/[lang]/(app)/(settings)/profile/deletion-plus-notice.tsx
-msgctxt "B62Z1j"
-msgid "Deleting your account ends Plus right away."
-msgstr "La suppression de ton compte met immédiatement fin à Plus."
-
-#: src/app/[lang]/(app)/(settings)/profile/deletion-plus-notice.tsx
-msgctxt "eDC5E7"
-msgid "Plus from the App Store keeps charging until you cancel it there."
-msgstr "Tu continues à payer Plus tant que tu ne résilies pas ton abonnement dans l’App Store."
-
-#: src/app/[lang]/(app)/(settings)/profile/deletion-plus-notice.tsx
-msgctxt "_eCS12"
-msgid "Plus from Google Play keeps charging until you cancel it there."
-msgstr "Tu continues à payer Plus tant que tu ne résilies pas ton abonnement sur Google Play."
-
-#: src/app/[lang]/(app)/(settings)/profile/export-data-button.tsx
-#: src/app/[lang]/(app)/(settings)/profile/page.tsx
-msgctxt "RcXC-q"
-msgid "Download my data"
-msgstr "Télécharger mes données"
-
-#: src/app/[lang]/(app)/(settings)/profile/export-data-button.tsx
-msgctxt "5q3qC0"
-msgid "Download"
-msgstr "Télécharger"
-
-#: src/app/[lang]/(app)/(settings)/profile/export-data-button.tsx
-msgctxt "owirfw"
-msgid "We couldn't prepare the download. Try again."
-msgstr "Impossible de préparer le téléchargement. Réessaie."
 
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
 msgctxt "I4oZQq"
 msgid "Your name, username and account on Zoonk."
 msgstr "Ton nom, ton nom d’utilisateur et ton compte sur Zoonk."
-
-#: src/app/[lang]/(app)/(settings)/profile/page.tsx
-msgctxt "TwyMau"
-msgid "Account"
-msgstr "Compte"
-
-#: src/app/[lang]/(app)/(settings)/profile/page.tsx
-msgctxt "ZTyMjO"
-msgid "Your data"
-msgstr "Tes données"
-
-#: src/app/[lang]/(app)/(settings)/profile/page.tsx
-#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
-msgctxt "Vrz1pI"
-msgid "Your certificates and your buddy use this name."
-msgstr "Ce nom figure sur tes certificats et ton compagnon l’utilise."
 
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
@@ -1324,17 +1240,6 @@ msgid "Passkey"
 msgstr "Clé d’accès"
 
 #: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
-#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
-msgctxt "rbrahO"
-msgid "Close"
-msgstr "Fermer"
-
-#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
-msgctxt "2Hinlp"
-msgid "Rename passkey"
-msgstr "Renommer la clé d’accès"
-
-#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
 msgctxt "IKuKBl"
 msgid "Passkey name"
 msgstr "Nom de la clé d’accès"
@@ -1345,10 +1250,9 @@ msgid "Such as “MacBook” or “Phone”"
 msgstr "Par exemple « MacBook » ou « Téléphone »"
 
 #: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
-#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
-msgctxt "jvo0vs"
-msgid "Save"
-msgstr "Enregistrer"
+msgctxt "2Hinlp"
+msgid "Rename passkey"
+msgstr "Renommer la clé d’accès"
 
 #: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
 msgctxt "YhaU4B"
@@ -1364,11 +1268,6 @@ msgstr "Elle ne permettra plus d’approuver les corrections de contenu. Tu devr
 msgctxt "-G_yv9"
 msgid "Delete passkey"
 msgstr "Supprimer la clé d’accès"
-
-#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
-msgctxt "p_4dgc"
-msgid "For your safety, log in again, then add your passkey."
-msgstr "Pour ta sécurité, reconnecte-toi, puis ajoute ta clé d’accès."
 
 #: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
 msgctxt "AadXSK"
@@ -1427,6 +1326,11 @@ msgctxt "2_2yg-"
 msgid "Add"
 msgstr "Ajouter"
 
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "p_4dgc"
+msgid "For your safety, log in again, then add your passkey."
+msgstr "Pour ta sécurité, reconnecte-toi, puis ajoute ta clé d’accès."
+
 #: src/app/[lang]/(app)/(settings)/profile/passkeys-section.tsx
 msgctxt "ASrBq8"
 msgid "Passkeys"
@@ -1436,11 +1340,6 @@ msgstr "Clés d’accès"
 msgctxt "G9nqiW"
 msgid "You approve content fixes in Admin with a passkey."
 msgstr "Tu approuves les corrections de contenu dans Admin avec une clé d’accès."
-
-#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
-msgctxt "D4cYHr"
-msgid "Use 150 characters or fewer."
-msgstr "Utilise au maximum 150 caractères."
 
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
 msgctxt "1SvspN"
@@ -1463,9 +1362,19 @@ msgid "3-30 characters. Letters a–z, numbers, and underscores only."
 msgstr "3 à 30 caractères. Lettres de a à z, chiffres et tirets bas uniquement."
 
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
+msgctxt "jvo0vs"
+msgid "Save"
+msgstr "Enregistrer"
+
+#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
 msgctxt "GrnZDN"
 msgid "Saved."
 msgstr "Enregistré."
+
+#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
+msgctxt "D4cYHr"
+msgid "Use 150 characters or fewer."
+msgstr "Utilise au maximum 150 caractères."
 
 #: src/app/[lang]/(app)/(settings)/settings/about-you/page.tsx
 msgctxt "40quiV"
@@ -1477,12 +1386,6 @@ msgctxt "uOIiKt"
 msgid "Language and region"
 msgstr "Langue et région"
 
-#: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
-#: src/components/public/public-footer.tsx
-msgctxt "cXBJ7U"
-msgid "Privacy"
-msgstr "Confidentialité"
-
 #: src/app/[lang]/(app)/(settings)/settings/memory/page.tsx
 msgctxt "LCU3Qs"
 msgid "See, correct or delete what Zoonk remembers about you."
@@ -1493,15 +1396,96 @@ msgctxt "KTQxC5"
 msgid "What Zoonk remembers to give you examples and plans that fit your life."
 msgstr "Ce que Zoonk retient pour te proposer des exemples et des plans adaptés à ta vie."
 
+#: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
+msgctxt "OR6zpA"
+msgid "We couldn't delete your account. Try again or email hello@zoonk.com."
+msgstr "Nous n’avons pas pu supprimer ton compte. Réessaie ou écris à hello@zoonk.com."
+
+#: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
+msgctxt "Sk9SL5"
+msgid "Delete my account"
+msgstr "Supprimer mon compte"
+
+#: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
+msgctxt "wyxJrL"
+msgid "Delete account"
+msgstr "Supprimer le compte"
+
+#: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
+msgctxt "lNbJX1"
+msgid "Delete…"
+msgstr "Supprimer…"
+
+#: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
+msgctxt "TcCxtt"
+msgid "Delete your account?"
+msgstr "Supprimer ton compte ?"
+
+#: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
+msgctxt "yF2UF2"
+msgid "Your goals, plans, progress, memory and uploads are deleted for good. This can't be undone."
+msgstr "Tes objectifs, tes plans, ta progression, ta mémoire et tes fichiers importés seront définitivement supprimés. Cette action est irréversible."
+
+#: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
+msgctxt "huX1mW"
+msgid "For your safety, log in again, then delete your account."
+msgstr "Pour ta sécurité, reconnecte-toi, puis supprime ton compte."
+
+#. Shown only to subscribers, in the box that deletes their account.
+#: src/app/[lang]/(app)/(settings)/settings/privacy/deletion-plus-notice.tsx
+msgctxt "B62Z1j"
+msgid "Deleting your account ends Plus right away."
+msgstr "La suppression de ton compte met immédiatement fin à Plus."
+
+#. Shown only to subscribers, in the box that deletes their account.
+#: src/app/[lang]/(app)/(settings)/settings/privacy/deletion-plus-notice.tsx
+msgctxt "eDC5E7"
+msgid "Plus from the App Store keeps charging until you cancel it there."
+msgstr "Tu continues à payer Plus tant que tu ne résilies pas ton abonnement dans l’App Store."
+
+#. Shown only to subscribers, in the box that deletes their account.
+#: src/app/[lang]/(app)/(settings)/settings/privacy/deletion-plus-notice.tsx
+msgctxt "_eCS12"
+msgid "Plus from Google Play keeps charging until you cancel it there."
+msgstr "Tu continues à payer Plus tant que tu ne résilies pas ton abonnement sur Google Play."
+
+#: src/app/[lang]/(app)/(settings)/settings/privacy/export-data-row.tsx
+msgctxt "RcXC-q"
+msgid "Download my data"
+msgstr "Télécharger mes données"
+
+#: src/app/[lang]/(app)/(settings)/settings/privacy/page.tsx
+msgctxt "s8-igB"
+msgid "Your usage data, a copy of your data, and deleting your account."
+msgstr "Tes données d’utilisation, une copie de tes données et la suppression de ton compte."
+
+#: src/app/[lang]/(app)/(settings)/settings/privacy/page.tsx
+msgctxt "ZTyMjO"
+msgid "Your data"
+msgstr "Tes données"
+
 #: src/app/[lang]/(app)/(settings)/settings/reminders/page.tsx
 msgctxt "cwph5l"
 msgid "Choose when Zoonk reminds you to study, by email or push notification."
 msgstr "Choisis quand Zoonk te rappelle d’étudier, par e-mail ou notification."
 
 #: src/app/[lang]/(app)/(settings)/settings/reminders/page.tsx
-msgctxt "4jhMYU"
-msgid "One reminder on your study days, when you still have learning left."
-msgstr "Un rappel les jours d’étude, s’il te reste des choses à apprendre."
+msgctxt "vpgBNN"
+msgid "One reminder on your <plan>study days</plan>, if you're not done for the day."
+msgstr "Un rappel les <plan>jours d’étude</plan>, si tu n’as pas encore fini pour la journée."
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
+msgctxt "wBf7zr"
+msgid "We couldn't cancel Plus. Try again or email {email}."
+msgstr "Nous n’avons pas pu résilier Plus. Réessaie ou écris-nous à {email}."
+
+#. Zoonk's support address; your language may have its own.
+#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
+#: src/app/[lang]/(home)/_components/home-faq.tsx
+#: src/components/pricing/plus-questions.tsx
+msgctxt "ieflON"
+msgid "hello@zoonk.com"
+msgstr "hello@zoonk.com"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
 msgctxt "cEOHN2"
@@ -1524,19 +1508,6 @@ msgid "You keep Plus until the end of the period you already paid for."
 msgstr "Tu gardes Plus jusqu’à la fin de la période que tu as déjà payée."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
-msgctxt "wBf7zr"
-msgid "We couldn't cancel Plus. Try again or email {email}."
-msgstr "Nous n’avons pas pu résilier Plus. Réessaie ou écris-nous à {email}."
-
-#. Zoonk's support address; your language may have its own.
-#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
-#: src/app/[lang]/(home)/_components/home-faq.tsx
-#: src/components/pricing/plus-questions.tsx
-msgctxt "ieflON"
-msgid "hello@zoonk.com"
-msgstr "hello@zoonk.com"
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
 msgctxt "orvpWh"
 msgid "Go back"
 msgstr "Retour"
@@ -1547,9 +1518,14 @@ msgid "Plus ends on <mono>{date}</mono>."
 msgstr "Plus prend fin le <mono>{date}</mono>."
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
-msgctxt "Nhk7N-"
-msgid "Paid until <mono>{date}</mono>."
-msgstr "Payé jusqu’au <mono>{date}</mono>."
+msgctxt "AucmVG"
+msgid "Renews on <mono>{date}</mono>."
+msgstr "Renouvellement le <mono>{date}</mono>."
+
+#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+msgctxt "MUSFX9"
+msgid "You have Plus until <mono>{date}</mono>."
+msgstr "Tu as Plus jusqu’au <mono>{date}</mono>."
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 #: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
@@ -1558,14 +1534,18 @@ msgid "Your last renewal payment failed."
 msgstr "Le paiement de ton dernier renouvellement a échoué."
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
-msgctxt "AucmVG"
-msgid "Renews on <mono>{date}</mono>."
-msgstr "Renouvellement le <mono>{date}</mono>."
-
-#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 msgctxt "nQezuF"
 msgid "Bought on the website"
 msgstr "Souscrit sur le site web"
+
+#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
+#: src/app/[lang]/(home)/_components/exam-section.tsx
+#: src/components/pricing/plus-plan.tsx
+#: src/components/pricing/pricing-covers.tsx
+msgctxt "lOdoIb"
+msgid "Plus"
+msgstr "Plus"
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 msgctxt "1y_a8B"
@@ -1583,6 +1563,11 @@ msgid "What's included"
 msgstr "Ce qui est inclus"
 
 #: src/app/[lang]/(app)/(settings)/subscription/keep-plus-button.tsx
+msgctxt "S4ds_U"
+msgid "We couldn't keep Plus. Try again or email hello@zoonk.com."
+msgstr "Impossible de réactiver le renouvellement de Plus. Réessaie ou écris à hello@zoonk.com."
+
+#: src/app/[lang]/(app)/(settings)/subscription/keep-plus-button.tsx
 msgctxt "aSfGh6"
 msgid "Keep Plus, and it renews as before."
 msgstr "Garde Plus et ton abonnement se renouvellera comme avant."
@@ -1591,11 +1576,6 @@ msgstr "Garde Plus et ton abonnement se renouvellera comme avant."
 msgctxt "KLKQ8N"
 msgid "Keep Plus"
 msgstr "Garder Plus"
-
-#: src/app/[lang]/(app)/(settings)/subscription/keep-plus-button.tsx
-msgctxt "S4ds_U"
-msgid "We couldn't keep Plus. Try again or email hello@zoonk.com."
-msgstr "Impossible de réactiver le renouvellement de Plus. Réessaie ou écris à hello@zoonk.com."
 
 #: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
 msgctxt "3iCRcP"
@@ -1618,14 +1598,14 @@ msgid "You subscribed in Google Play."
 msgstr "Tu as souscrit ton abonnement sur Google Play."
 
 #: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
-msgctxt "YXWAG8"
-msgid "To change or cancel Plus, write to us."
-msgstr "Pour modifier ou résilier ton abonnement Plus, écris-nous."
+msgctxt "i6lXik"
+msgid "Zoonk added Plus to your account. To change it, write to us."
+msgstr "Zoonk a ajouté Plus à ton compte. Pour modifier cet abonnement, écris-nous."
 
 #: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
-msgctxt "9OuUCL"
-msgid "Get help"
-msgstr "Obtenir de l’aide"
+msgctxt "2OvvJx"
+msgid "Write to us"
+msgstr "Écris-nous"
 
 #: src/app/[lang]/(app)/(settings)/subscription/stripe-checkout-confirming.tsx
 msgctxt "kRo_Bd"
@@ -1643,9 +1623,14 @@ msgid "This takes a few seconds."
 msgstr "Ça prend quelques secondes."
 
 #: src/app/[lang]/(app)/(settings)/subscription/stripe-checkout-confirming.tsx
-msgctxt "_aglmH"
-msgid "If you paid, Plus will show up here soon."
-msgstr "Si tu as payé, Plus apparaîtra bientôt ici."
+msgctxt "rZZrf-"
+msgid "Plus will show up here once your payment is confirmed."
+msgstr "Plus s’affichera ici une fois ton paiement confirmé."
+
+#: src/app/[lang]/(app)/(settings)/subscription/stripe-checkout-confirming.tsx
+msgctxt "n1-iuP"
+msgid "Confirming your payment…"
+msgstr "Confirmation de ton paiement…"
 
 #: src/app/[lang]/(app)/(settings)/subscription/stripe-checkout-confirming.tsx
 msgctxt "1A8Z_l"
@@ -1678,6 +1663,11 @@ msgctxt "4IVFWL"
 msgid "Go to Today"
 msgstr "Aller à Aujourd’hui"
 
+#: src/app/[lang]/(app)/(stats)/_components/stats-calendar.tsx
+msgctxt "o0vS8L"
+msgid "Past 12 months"
+msgstr "12 derniers mois"
+
 #: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
 #: src/lib/public/public-labels.ts
 msgctxt "9uOFF3"
@@ -1685,9 +1675,12 @@ msgid "Overview"
 msgstr "Vue d’ensemble"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
-msgctxt "erSdxr"
-msgid "Belt"
-msgstr "Ceinture"
+#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
+#: src/app/[lang]/(app)/(stats)/level/page.tsx
+#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
+msgctxt "y1Qr81"
+msgid "Level"
+msgstr "Niveau"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
 #: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
@@ -1704,11 +1697,12 @@ msgid "Activity"
 msgstr "Activité"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
+#: src/app/[lang]/(app)/(stats)/score/page.tsx
 #: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-msgctxt "yQlMuI"
-msgid "Right answers"
-msgstr "Bonnes réponses"
+msgctxt "oLkLww"
+msgid "Score"
+msgstr "Score"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
 #: src/app/[lang]/(app)/(stats)/patterns/page.tsx
@@ -1722,24 +1716,6 @@ msgctxt "QbGIBZ"
 msgid "Your stats"
 msgstr "Tes stats"
 
-#. Legend of a heatmap, from the lightest to the darkest squares.
-#: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
-msgctxt "activityLegend.Xsvev8"
-msgid "Activity from less to more"
-msgstr "Niveau d’activité, du plus faible au plus élevé"
-
-#. The light end of a heatmap's legend: less activity.
-#: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
-msgctxt "activityLegend.mFYgAX"
-msgid "Less"
-msgstr "Moins"
-
-#. The dark end of a heatmap's legend: more activity.
-#: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
-msgctxt "activityLegend.I5NMJ8"
-msgid "More"
-msgstr "Plus"
-
 #: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
 msgctxt "cMaydB"
 msgid "Studied"
@@ -1751,15 +1727,27 @@ msgid "No study"
 msgstr "Pas étudié"
 
 #: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
-#: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
-msgctxt "o0vS8L"
-msgid "Past 12 months"
-msgstr "12 derniers mois"
-
-#: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
 msgctxt "MnYAxL"
 msgid "Activity by day"
 msgstr "Activité par jour"
+
+#. The dark end of a heatmap's legend: more activity.
+#: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
+msgctxt "activityLegend.I5NMJ8"
+msgid "More"
+msgstr "Plus"
+
+#. Legend of a heatmap, from the lightest to the darkest squares.
+#: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
+msgctxt "activityLegend.Xsvev8"
+msgid "Activity from less to more"
+msgstr "Niveau d’activité, du plus faible au plus élevé"
+
+#. The light end of a heatmap's legend: less activity.
+#: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
+msgctxt "activityLegend.mFYgAX"
+msgid "Less"
+msgstr "Moins"
 
 #: src/app/[lang]/(app)/(stats)/activity/activity-stats.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
@@ -1777,21 +1765,6 @@ msgctxt "LYW_o7"
 msgid "Your study days, lessons finished and time spent learning."
 msgstr "Tes jours d’étude, tes leçons terminées et le temps passé à apprendre."
 
-#: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
-msgctxt "jPmToJ"
-msgid "Energy intensity from low to high"
-msgstr "Intensité de l’Énergie, de faible à élevée"
-
-#: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
-msgctxt "477I0g"
-msgid "Low"
-msgstr "Faible"
-
-#: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
-msgctxt "AxMhQr"
-msgid "High"
-msgstr "Élevé"
-
 #. A calendar day's value, shown in a small tooltip under the day's date, for a day without an Energy value.
 #: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
 msgctxt "VmQeBl"
@@ -1808,6 +1781,21 @@ msgstr "{percentage} d’Énergie"
 msgctxt "0i1UHO"
 msgid "Energy by day"
 msgstr "Énergie par jour"
+
+#: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
+msgctxt "AxMhQr"
+msgid "High"
+msgstr "Élevé"
+
+#: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
+msgctxt "jPmToJ"
+msgid "Energy intensity from low to high"
+msgstr "Intensité de l’Énergie, de faible à élevée"
+
+#: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
+msgctxt "477I0g"
+msgid "Low"
+msgstr "Faible"
 
 #: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
 msgctxt "OiTvvB"
@@ -1838,12 +1826,6 @@ msgstr "Chaque leçon terminée augmente ton Énergie. Les jours de pause, elle 
 msgctxt "wSjCCg"
 msgid "Your Energy now and over the past 12 months."
 msgstr "Ton Énergie actuelle et son évolution sur les 12 derniers mois."
-
-#: src/app/[lang]/(app)/(stats)/layout.tsx
-#: src/app/[lang]/(app)/(stats)/stats/page.tsx
-msgctxt "5CNApj"
-msgid "All goals"
-msgstr "Tous les objectifs"
 
 #: src/app/[lang]/(app)/(stats)/level/belt-rack.tsx
 msgctxt "CIQa5T"
@@ -1906,12 +1888,6 @@ msgstr "Pour le niveau {level}"
 msgctxt "LEuDU7"
 msgid "Brain Power"
 msgstr "Puissance Mentale"
-
-#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
-#: src/app/[lang]/(app)/(stats)/level/page.tsx
-msgctxt "y1Qr81"
-msgid "Level"
-msgstr "Niveau"
 
 #: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
 msgctxt "pDD9dm"
@@ -2048,12 +2024,6 @@ msgctxt "-JqpHp"
 msgid "See your answer accuracy and weekly trend over the past 90 days."
 msgstr "Découvre ton taux de bonnes réponses et son évolution par semaine sur les 90 derniers jours."
 
-#: src/app/[lang]/(app)/(stats)/score/page.tsx
-#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
-msgctxt "oLkLww"
-msgid "Score"
-msgstr "Score"
-
 #: src/app/[lang]/(app)/(stats)/score/score-chart-figure.tsx
 msgctxt "33eat_"
 msgid "Weekly score trend"
@@ -2073,6 +2043,11 @@ msgstr "{label} : {score} sur {count, plural, one {# réponse} other {# répons
 msgctxt "q9WSEF"
 msgid "{count, plural, one {# answer} other {# answers}}"
 msgstr "{count, plural, one {# réponse} other {# réponses}}"
+
+#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
+msgctxt "yQlMuI"
+msgid "Right answers"
+msgstr "Bonnes réponses"
 
 #: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
 msgctxt "OLmtAV"
@@ -2130,6 +2105,11 @@ msgstr "Tout voir"
 msgctxt "lO7wKc"
 msgid "Not yet"
 msgstr "Pas encore"
+
+#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
+msgctxt "nr7tEh"
+msgid "Best on {day}"
+msgstr "Meilleurs résultats le {day}"
 
 #: src/app/[lang]/(app)/(stats)/stats/page.tsx
 msgctxt "Q0jtuV"
@@ -2564,7 +2544,6 @@ msgid "Zoonk: A plan for each day, all the way to your goal"
 msgstr "Zoonk : un plan pour chaque jour, jusqu’à ton objectif"
 
 #: src/app/[lang]/(home)/page.tsx
-#: src/components/auth-gate.tsx
 #: src/components/pricing/free-plan.tsx
 #: src/components/pricing/plus-pricing.tsx
 #: src/components/public/public-visitor-actions.tsx
@@ -2641,6 +2620,11 @@ msgstr "Partout"
 msgctxt "ugxven"
 msgid "While you study"
 msgstr "Pendant que tu étudies"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "rbrahO"
+msgid "Close"
+msgstr "Fermer"
 
 #: src/app/[lang]/c/[code]/certificate-not-found.tsx
 #: src/app/[lang]/c/[code]/page.tsx
@@ -2972,6 +2956,11 @@ msgid "This link is no longer active"
 msgstr "Ce lien n’est plus actif"
 
 #: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
+msgctxt "DxPDlc"
+msgid "That didn't save. Try again."
+msgstr "L’enregistrement a échoué. Réessaie."
+
+#: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
 msgctxt "c5ajtI"
 msgid "Turn off email reminders?"
 msgstr "Désactiver les rappels par e-mail ?"
@@ -2980,11 +2969,6 @@ msgstr "Désactiver les rappels par e-mail ?"
 msgctxt "XZ-Fx6"
 msgid "Turn off"
 msgstr "Désactiver"
-
-#: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
-msgctxt "DxPDlc"
-msgid "That didn't save. Try again."
-msgstr "L’enregistrement a échoué. Réessaie."
 
 #: src/app/[lang]/terms/page.tsx
 msgctxt "DaGtoz"
@@ -3013,9 +2997,9 @@ msgid "Usage data"
 msgstr "Données d’utilisation"
 
 #: src/app/[lang]/usage-data-notice.tsx
-msgctxt "LNn_TG"
-msgid "Can we see how you use Zoonk, with cookies and screen recordings, so we can improve it? <link>Privacy</link>"
-msgstr "Peut-on voir comment tu utilises Zoonk, à l’aide de cookies et d’enregistrements d’écran, pour l’améliorer ? <link>Confidentialité</link>"
+msgctxt "9LGL8u"
+msgid "Can we use cookies to see how you use Zoonk, so we can improve it? <link>Privacy</link>"
+msgstr "Peut-on utiliser des cookies pour comprendre comment tu utilises Zoonk et l’améliorer ? <link>Confidentialité</link>"
 
 #: src/app/[lang]/usage-data-notice.tsx
 msgctxt "pvtgR2"
@@ -3055,8 +3039,8 @@ msgid "Create an account to use this page"
 msgstr "Crée un compte pour utiliser cette page"
 
 #: src/components/auth-gate.tsx
-msgctxt "df7Wr-"
-msgid "Your plan and progress come with you."
+msgctxt "UtuGCk"
+msgid "You keep your plan and progress."
 msgstr "Tu gardes ton plan et ta progression."
 
 #: src/components/auth-gate.tsx
@@ -3073,11 +3057,6 @@ msgstr "Connecte-toi pour continuer"
 msgctxt "e3Tyso"
 msgid "Log in to get back to your plan."
 msgstr "Connecte-toi pour retrouver ton plan."
-
-#: src/components/auth-gate.tsx
-msgctxt "77LoTm"
-msgid "Start something new"
-msgstr "Commencer autre chose"
 
 #: src/components/catalog/area-study.ts
 msgctxt "ug2Ory"
