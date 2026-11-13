@@ -6,6 +6,7 @@ import { useEscapeClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { QuestionActions } from "../_components/question-actions";
 import { AnswersSaveError } from "../_components/save-error";
 import {
   TaskActionBar,
@@ -19,7 +20,6 @@ import { LearnLink } from "../learn-link";
 import { type QuestionTutor } from "../questions/question-tutor";
 import { usePreloadMath } from "../rich-text/use-preload-math";
 import { type MomentCeremony } from "../session/moment-ceremony";
-import { QuestionActionsRow } from "../session/question-block/question-actions";
 import { QuestionBlockHeader } from "../session/question-block/question-block-header";
 import { type LessonHref } from "./drill/drill-types";
 import {
@@ -169,9 +169,10 @@ function PracticeBody({
           {phase.kind === "answerFailed" && (
             <AnswersSaveError failures={run.state.failures} onRetry={run.retry} />
           )}
-          <QuestionActionsRow ask={askButton}>
+          <QuestionActions>
             <PracticeStepActions run={run} step={run.step} />
-          </QuestionActionsRow>
+            {askButton}
+          </QuestionActions>
         </TaskActionBar>
       )}
     </>
