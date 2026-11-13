@@ -2,7 +2,6 @@
 
 import { type MockQuestion } from "@zoonk/core/exams/mocks/view-contract";
 import { Button } from "@zoonk/ui/components/button";
-import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useShortcut } from "@zoonk/ui/hooks/keyboard";
 import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -98,7 +97,6 @@ function FlagButton() {
     >
       <FlagIcon aria-hidden="true" className={cn(flagged && "fill-current")} />
       {t("Flag")}
-      <ShortcutKbd shortcut="flag" />
     </Button>
   );
 }
