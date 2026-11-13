@@ -13,7 +13,7 @@ Build clean, subtle, harmonious interfaces. **Don't make me think:** make the pu
 
 ## Understand the task
 
-Start with the person's goal, knowledge, and context. Identify what they need to decide and what the product can handle for them. Choose the structure before the controls; a feature list is not an interface.
+Start with the person's goal, knowledge, and context. Identify what they need to decide and what the product can handle for them. Choose the structure before the controls; a feature list is not an interface. A Claude model designs, builds and judges a screen, never a GPT model: when none is free, the work waits or moves to another Claude account ([pick the model](../../guides/orchestration.md#pick-the-model)).
 
 Look up the design system first: what every token, type role, shape, pattern and special moment means lives in `apps/playground/src/design-system/` and shows live, in every mode, at `/design` in the playground (`http://playground.zoonk.localhost:1355/design` from the main checkout's `pnpm dev`); the values live in `packages/ui/src/styles/globals.css`. Inspect relevant screens in the current main app and reuse their patterns ([App patterns](references/app-patterns.md)) and [their pieces](#find-the-piece-before-you-build-one). Mockups are a starting point, not the target: judge a screen by using it, and rethink it when using it shows friction, even if the result looks nothing like the mockup. Question patterns that make the task harder. When the structure is uncertain, prototype with representative content before polishing.
 
