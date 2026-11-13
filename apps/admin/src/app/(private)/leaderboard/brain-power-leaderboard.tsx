@@ -12,6 +12,7 @@ import { getRollingUtcDateWindowStarts } from "@/lib/rolling-date-windows";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import Link from "next/link";
 import {
+  DEFAULT_LEADERBOARD_PERIOD,
   type LeaderboardPeriod,
   getLeaderboardPeriodDays,
   leaderboardPeriodDescriptions,
@@ -98,7 +99,7 @@ async function CachedBrainPowerLeaderboard({
         basePath="/leaderboard"
         limit={limit}
         page={page}
-        queryParams={{ period: period === "today" ? undefined : period }}
+        queryParams={{ period: period === DEFAULT_LEADERBOARD_PERIOD ? undefined : period }}
         totalPages={Math.ceil(total / limit)}
       />
     </>
