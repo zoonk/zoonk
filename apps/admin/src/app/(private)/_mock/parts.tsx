@@ -11,7 +11,7 @@ export function MockOptions({ options }: { options: MockOption[] }) {
   return (
     <ul className="flex flex-col gap-2">
       {options.map((option) => (
-        <li className="flex items-start gap-2.5" key={option.text}>
+        <li className="flex items-start gap-3" key={option.text}>
           {option.right ? (
             <CheckIcon
               aria-label="Right answer"

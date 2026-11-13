@@ -66,7 +66,8 @@ export function AdminDetailHeader({
       crumb={<AdminBreadcrumb current={title} parents={parents} />}
       title={<DetailTitle className={titleClassName}>{title}</DetailTitle>}
     >
-      <DetailFacts>
+      {/* A record's facts here are names, a plan and dates: words, so the text face (Main's are counts). */}
+      <DetailFacts className="font-sans">
         {alert && <span className="text-destructive-text">{alert}</span>}
         {alert && factsLine && <span aria-hidden="true">·</span>}
         {factsLine}

@@ -82,13 +82,16 @@ export async function ReviewFlagList() {
             <ul className="divide-y border-t">
               {group.map((flag) => (
                 <li
-                  className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 py-2.5 text-sm"
+                  className="flex flex-wrap items-start justify-between gap-x-6 gap-y-2 py-3 text-sm"
                   key={flag.id}
                 >
                   <div className="min-w-0 flex-1 basis-64">
                     <FlaggedContent flag={flag} />
                   </div>
-                  <ReviewFlagActions flagId={flag.id} />
+                  {/* 3 px up, so the 30 px buttons' labels share the first line's baseline, as in a table row. */}
+                  <div className="-mt-0.75">
+                    <ReviewFlagActions flagId={flag.id} />
+                  </div>
                 </li>
               ))}
             </ul>

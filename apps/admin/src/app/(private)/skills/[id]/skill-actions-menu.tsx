@@ -139,10 +139,11 @@ function MergeTargetPicker({
             className="flex items-start gap-3 border-b py-3 font-normal last:border-b-0"
             key={option.id}
           >
-            <RadioGroupItem value={option.id} />
+            {/* A row is a table's two-line row: a 20 px line and a 16 px one, the radio on the first. */}
+            <RadioGroupItem className="mt-0.5" value={option.id} />
             <span className="flex min-w-0 flex-col">
-              <span className="wrap-break-word">{option.name}</span>
-              <span className="text-muted-foreground text-xs">
+              <span className="leading-5 wrap-break-word">{option.name}</span>
+              <span className="text-muted-foreground text-xs leading-4">
                 {formatCount(option.learners, "learner")}
               </span>
             </span>
