@@ -2359,7 +2359,7 @@ msgstr "模試{number}"
 #: src/challenge/challenge-intro.tsx
 msgctxt "JbcAGc"
 msgid "You see your result at the end."
-msgstr ""
+msgstr "結果は最後に表示されます。"
 
 #: src/challenge/challenge-labels.tsx
 #: src/session/summary/summary-parts.tsx
@@ -3214,7 +3214,7 @@ msgstr "推定スコア（<mono>0</mono>〜<mono>{max}</mono>）"
 #: src/essay/essay-feedback.tsx
 msgctxt "vtwv7b"
 msgid "See comments"
-msgstr ""
+msgstr "コメントを見る"
 
 #: src/essay/essay-feedback.tsx
 msgctxt "wCgTu5"
@@ -3548,7 +3548,7 @@ msgstr "出題範囲"
 #: src/exam/exam-mock-progress.tsx
 msgctxt "6FKpJg"
 msgid "Better in {improved}. Work on {needsWork}."
-msgstr ""
+msgstr "{improved}は前回よりよくできました。{needsWork}に取り組みましょう。"
 
 #: src/exam/exam-mock-progress.tsx
 msgctxt "vkBVYU"
@@ -3558,7 +3558,7 @@ msgstr "{improved}のスコアが伸びています。"
 #: src/exam/exam-mock-progress.tsx
 msgctxt "G-LCea"
 msgid "Work on {needsWork}."
-msgstr ""
+msgstr "{needsWork}に取り組みましょう。"
 
 #: src/exam/exam-mock-progress.tsx
 msgctxt "OaOQn2"
@@ -3568,7 +3568,7 @@ msgstr "初回の模試からの変化："
 #: src/exam/exam-mock-progress.tsx
 msgctxt "ZedJ-b"
 msgid "Score in {mock}"
-msgstr ""
+msgstr "{mock}のスコア"
 
 #: src/exam/exam-mock-progress.tsx
 msgctxt "02vJWQ"
@@ -3583,7 +3583,7 @@ msgstr "初回から{change}"
 #: src/exam/exam-mock-progress.tsx
 msgctxt "EF93SC"
 msgid "Latest mock exam"
-msgstr ""
+msgstr "直近の模試"
 
 #: src/exam/exam-mock-progress.tsx
 msgctxt "ratpqs"
@@ -3612,12 +3612,12 @@ msgstr "模試"
 #: src/exam/exam-moment-card.tsx
 msgctxt "5LQ3R0"
 msgid "{days, plural, =0 {# days} one {# day} other {# days}} of study and {mocks, plural, one {# mock exam} other {# mock exams}} done."
-msgstr ""
+msgstr "{days, plural, =0 {#日間} other {#日間}}の学習と{mocks, plural, other {#回の模試}}を終えました。"
 
 #: src/exam/exam-moment-card.tsx
 msgctxt "czfb7X"
 msgid "{days, plural, =0 {# days} one {# day} other {# days}} of study done."
-msgstr ""
+msgstr "{days, plural, =0 {#日間} other {#日間}}の学習を終えました。"
 
 #: src/exam/exam-moment-card.tsx
 msgctxt "S-SzlM"
@@ -3627,7 +3627,7 @@ msgstr "この日のために準備してきました。"
 #: src/exam/exam-moment-card.tsx
 msgctxt "p_KXX2"
 msgid "From now on, review and mock exams."
-msgstr ""
+msgstr "これからは復習と模試に取り組みます。"
 
 #: src/exam/exam-moment-card.tsx
 #: src/today/today-exam-moment.tsx
@@ -3650,7 +3650,7 @@ msgstr "{exam}は今日です"
 #: src/exam/exam-moment-card.tsx
 msgctxt "26WdKI"
 msgid "Add your official result when it comes out."
-msgstr ""
+msgstr "公式の結果が出たら入力してください。"
 
 #: src/exam/exam-moment-card.tsx
 #: src/exam/exam-result-section.tsx
@@ -3672,7 +3672,7 @@ msgstr "試験を確認する"
 #: src/exam/exam-next-mock.tsx
 msgctxt "y6zY5Q"
 msgid "Next mock exam"
-msgstr ""
+msgstr "次の模試"
 
 #: src/exam/exam-result-section.tsx
 msgctxt "JoUgIU"
@@ -3766,17 +3766,17 @@ msgstr "{answered, number}問に回答済み（全{questions, number}問）"
 #: src/exam/exam-scoring-section.tsx
 msgctxt "5wOk8O"
 msgid "In your mock exams: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}} when not flagged, {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}} when flagged."
-msgstr ""
+msgstr "模試の結果：見直しなしは{sureRight, plural, =0 {#問正解（全{sureAnswered}問）} other {#問正解（全{sureAnswered}問）}}、見直しありは{unsureRight, plural, =0 {#問正解（全{unsureAnswered}問）} other {#問正解（全{unsureAnswered}問）}}でした。"
 
 #: src/exam/exam-scoring-section.tsx
 msgctxt "d5aD04"
 msgid "Your flagged answers cost more than they earn: leave those blank."
-msgstr ""
+msgstr "見直しにした問題では、得点より失点が多くなっています。そうした問題は空欄にしておきましょう。"
 
 #: src/exam/exam-scoring-section.tsx
 msgctxt "8ghbty"
 msgid "Your flagged answers still earn points: keep answering them."
-msgstr ""
+msgstr "見直しにした問題でも、得点が失点を上回っています。引き続き答えましょう。"
 
 #. {share} is a percentage, like "25%".
 #: src/exam/exam-scoring-section.tsx
@@ -3855,22 +3855,22 @@ msgstr "試験のオプション"
 #: src/exam/exam-screen.tsx
 msgctxt "1L3MIn"
 msgid "Day not set yet"
-msgstr ""
+msgstr "試験日未定"
 
 #: src/exam/exam-screen.tsx
 msgctxt "pV2uIU"
 msgid "We'll tell you the day once it's set."
-msgstr ""
+msgstr "試験日が決まり次第お知らせします。"
 
 #: src/exam/exam-screen.tsx
 msgctxt "sUmQE0"
 msgid "Estimated dates"
-msgstr ""
+msgstr "予想日程"
 
 #: src/exam/exam-screen.tsx
 msgctxt "TEnkdT"
 msgid "From past editions. We'll tell you when the official dates are out."
-msgstr ""
+msgstr "過去の実施日程からの予想です。正式な日程が発表されたらお知らせします。"
 
 #: src/exam/exam-screen.tsx
 #: src/onboarding/understood/understood-date-row.ts
@@ -6753,7 +6753,7 @@ msgstr "やり直す"
 #: src/language/exam-speaking/speaking-paper-section.tsx
 msgctxt "DMe1t1"
 msgid "Speaking practice needs a subscription"
-msgstr ""
+msgstr "スピーキングの練習にはサブスクリプションが必要です"
 
 #: src/language/exam-speaking/speaking-paper-section.tsx
 msgctxt "cNEc28"
@@ -7653,7 +7653,7 @@ msgstr "作成する"
 #: src/mind-maps/mind-map-copy.ts
 msgctxt "ZyyHnb"
 msgid "A mind map of its main ideas"
-msgstr ""
+msgstr "主なポイントをまとめたマインドマップ"
 
 #: src/mind-maps/mind-map-copy.ts
 msgctxt "AAKHvt"
@@ -7668,7 +7668,7 @@ msgstr "{count, plural, other {まず#レッスンを作成します。作成分
 #: src/mind-maps/mind-map-copy.ts
 msgctxt "uhTP9c"
 msgid "Shown as text"
-msgstr ""
+msgstr "テキストで表示"
 
 #: src/mind-maps/mind-map-copy.ts
 msgctxt "lY6tDJ"
@@ -7798,7 +7798,7 @@ msgstr "章のマップはまだありません。章を終えるたびに作成
 #: src/mind-maps/mind-maps-screen.tsx
 msgctxt "UpexRz"
 msgid "No lesson maps yet. Every lesson ends with one."
-msgstr ""
+msgstr "レッスンのマインドマップはまだありません。各レッスンの最後に表示されます。"
 
 #: src/mind-maps/mind-maps-screen.tsx
 msgctxt "6rPS8s"
@@ -7852,12 +7852,12 @@ msgstr "{count, plural, other {今すぐあと#章分のマップを作成でき
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "BekXxP"
 msgid "Other chapters"
-msgstr ""
+msgstr "ほかの章"
 
 #: src/mind-maps/not-made-yet.tsx
 msgctxt "Q3GPLT"
 msgid "Create all"
-msgstr ""
+msgstr "すべて作成する"
 
 #: src/mind-maps/use-mind-map-saves.ts
 msgctxt "U0yWHz"
@@ -7872,7 +7872,7 @@ msgstr "このマップの保存を解除できませんでした。もう一度
 #: src/missions/brain-power-reward.tsx
 msgctxt "HCrEOP"
 msgid "Points for what you learn. They raise your belt and grow your buddy."
-msgstr ""
+msgstr "学ぶともらえるポイントです。帯の昇級や相棒の成長につながります。"
 
 #: src/missions/brain-power-reward.tsx
 msgctxt "JGTjfj"
@@ -7925,7 +7925,7 @@ msgstr "初めての模試を受ける"
 #: src/missions/mission-copy.tsx
 msgctxt "missions._N9GlC"
 msgid "Beat the Trickster"
-msgstr ""
+msgstr "トリックスターに勝つ"
 
 #: src/missions/first-steps.tsx
 msgctxt "3_YJkO"
@@ -7935,12 +7935,12 @@ msgstr "はじめの一歩"
 #: src/missions/first-steps.tsx
 msgctxt "584gds"
 msgid "{count, plural, one {# more opens as you go} other {# more open as you go}}"
-msgstr ""
+msgstr "{count, plural, other {学習を進めると、さらに#個のミッションに挑戦できます}}"
 
 #: src/missions/first-steps.tsx
 msgctxt "kNlVEU"
 msgid "You've tried everything."
-msgstr ""
+msgstr "すべて体験しました。"
 
 #: src/missions/mission-copy.tsx
 msgctxt "missions.QZSmDQ"
@@ -7985,7 +7985,7 @@ msgstr "週間チャレンジ"
 #: src/missions/mission-copy.tsx
 msgctxt "missions.LIsld3"
 msgid "Take the mock exam"
-msgstr ""
+msgstr "模試を受ける"
 
 #. A mission to practice an essay.
 #: src/missions/mission-copy.tsx
@@ -8001,7 +8001,7 @@ msgstr "{count, plural, other {#個の間違いを克服する}}"
 #: src/missions/mission-copy.tsx
 msgctxt "missions.YahrnI"
 msgid "Practice pronunciation"
-msgstr ""
+msgstr "発音を練習する"
 
 #: src/missions/mission-copy.tsx
 msgctxt "missions.x_ozmd"
@@ -8081,13 +8081,13 @@ msgstr "、会話を選ぶ"
 #: src/missions/mission-copy.tsx
 msgctxt "J8WnXZ"
 msgid ", after today's lessons"
-msgstr ""
+msgstr "（今日のレッスンの後）"
 
 #: src/missions/mission-copy.tsx
 #: src/today/use-row-label.ts
 msgctxt "L_nv1C"
 msgid "After today's lessons"
-msgstr ""
+msgstr "今日のレッスンの後"
 
 #: src/missions/mission-list.tsx
 msgctxt "l8GXmx"
@@ -8214,7 +8214,7 @@ msgstr "明日から練習できます"
 #: src/mistakes/mistake-entry.tsx
 msgctxt "E7KLhm"
 msgid "Practice this topic"
-msgstr ""
+msgstr "このトピックを練習する"
 
 #: src/mistakes/mistake-entry.tsx
 msgctxt "UuiQw6"
@@ -8306,7 +8306,7 @@ msgstr "{count, plural, =0 {明日練習できる問題は#問です} other {明
 #: src/mistakes/notebook-availability-text.tsx
 msgctxt "LoO9E7"
 msgid "Practice opens tomorrow"
-msgstr ""
+msgstr "明日から練習できます"
 
 #: src/mistakes/practice-done.tsx
 msgctxt "_GkpAM"
@@ -8366,7 +8366,7 @@ msgstr "正解：{answer}"
 #: src/mistakes/use-cause-label.ts
 msgctxt "zQSk8k"
 msgid "Didn't know it"
-msgstr ""
+msgstr "知らなかった"
 
 #. Why the learner got a question wrong: they misread the question.
 #: src/mistakes/use-cause-label.ts
@@ -8400,7 +8400,7 @@ msgstr "未分類"
 #: src/mock/mock-answer-sheet.tsx
 msgctxt "0CHpAw"
 msgid "{answered, plural, =0 {# answered} one {# answered} other {# answered}}"
-msgstr ""
+msgstr "{answered, plural, =0 {#問に回答済み} other {#問に回答済み}}"
 
 #: src/mock/mock-answer-sheet.tsx
 #: src/mock/mock-chooser-picked.tsx
@@ -8419,7 +8419,7 @@ msgstr "第{number}問"
 #: src/mock/mock-answer-sheet.tsx
 msgctxt "TV9YpL"
 msgid "{flagged, plural, one {# flagged} other {# flagged}}"
-msgstr ""
+msgstr "{flagged, plural, other {#問が見直し対象}}"
 
 #: src/mock/mock-answer-sheet.tsx
 #: src/mock/mock-hand-in.tsx
@@ -8459,7 +8459,7 @@ msgstr "セクション"
 #: src/mock/mock-break.tsx
 msgctxt "xHFJ-7"
 msgid "Start now"
-msgstr ""
+msgstr "今すぐ始める"
 
 #: src/mock/mock-break.tsx
 msgctxt "gTq4jF"
@@ -8489,22 +8489,22 @@ msgstr "選んだ模試"
 #: src/mock/mock-chooser-page.tsx
 msgctxt "St9t1x"
 msgid "Not enough questions for this one yet. Pick another."
-msgstr ""
+msgstr "この模試はまだ問題が十分にそろっていません。ほかの模試を選んでください。"
 
 #: src/mock/mock-chooser-page.tsx
 msgctxt "njHHu_"
 msgid "We couldn't start the mock exam. Try again."
-msgstr ""
+msgstr "模試を開始できませんでした。もう一度試してください。"
 
 #: src/mock/mock-chooser-page.tsx
 msgctxt "JUvBan"
 msgid "Mock exams need a subscription"
-msgstr ""
+msgstr "模試にはサブスクリプションへの登録が必要です"
 
 #: src/mock/mock-chooser-page.tsx
 msgctxt "qFtRJW"
 msgid "Getting your mock exam ready…"
-msgstr ""
+msgstr "模試を準備しています…"
 
 #: src/mock/mock-chooser-page.tsx
 msgctxt "4FZiEz"
@@ -8540,7 +8540,7 @@ msgstr "1科目"
 #: src/mock/mock-chooser.tsx
 msgctxt "M9XI2S"
 msgid "Timed like the real exam. You see your result at the end."
-msgstr ""
+msgstr "本番と同じように制限時間があります。結果は最後に表示されます。"
 
 #: src/mock/mock-clock.tsx
 msgctxt "_Romna"
@@ -8550,12 +8550,12 @@ msgstr "残り時間"
 #: src/mock/mock-entry.tsx
 msgctxt "CfczSe"
 msgid "The full exam, half of it or one subject"
-msgstr ""
+msgstr "試験全体、半分、または1科目"
 
 #: src/mock/mock-entry.tsx
 msgctxt "fWOwxQ"
 msgid "The full exam or half of it"
-msgstr ""
+msgstr "試験全体または半分"
 
 #: src/mock/mock-entry.tsx
 msgctxt "v_VKuk"
@@ -8565,7 +8565,7 @@ msgstr "模試を再開する"
 #: src/mock/mock-expired.tsx
 msgctxt "lCUjGY"
 msgid "Take another"
-msgstr ""
+msgstr "別の模試を受ける"
 
 #: src/mock/mock-expired.tsx
 msgctxt "GGML-d"
@@ -8575,7 +8575,7 @@ msgstr "中断している間に制限時間が過ぎました"
 #: src/mock/mock-expired.tsx
 msgctxt "DyP46n"
 msgid "This one doesn't count."
-msgstr ""
+msgstr "今回の模試はカウントされません。"
 
 #: src/mock/mock-frame.tsx
 msgctxt "UIkt52"
@@ -8673,37 +8673,37 @@ msgstr "この問題の残り時間"
 #: src/mock/mock-notes.tsx
 msgctxt "8yPPsF"
 msgid "{name} isn't in it until you pick which one you take."
-msgstr ""
+msgstr "{name}は、どれを受けるか選ぶまで模試に含まれません。"
 
 #: src/mock/mock-notes.tsx
 msgctxt "9WllVa"
 msgid "{name} isn't in mock exams yet."
-msgstr ""
+msgstr "{name}はまだ模試に含まれていません。"
 
 #: src/mock/mock-notes.tsx
 msgctxt "FpHoaL"
 msgid "Listening isn't in mock exams yet."
-msgstr ""
+msgstr "リスニングはまだ模試に含まれていません。"
 
 #: src/mock/mock-notes.tsx
 msgctxt "CgXaJx"
 msgid "The speaking part isn't in mock exams yet."
-msgstr ""
+msgstr "スピーキングはまだ模試に含まれていません。"
 
 #: src/mock/mock-notes.tsx
 msgctxt "9R9ysB"
 msgid "{name} can't be part of a mock exam."
-msgstr ""
+msgstr "{name}を模試に含めることはできません。"
 
 #: src/mock/mock-notes.tsx
 msgctxt "C-di6H"
 msgid "The practical test can't be part of a mock exam."
-msgstr ""
+msgstr "実技試験を模試に含めることはできません。"
 
 #: src/mock/mock-notes.tsx
 msgctxt "XOPRn8"
 msgid "{name} is only in full mock exams."
-msgstr ""
+msgstr "{name}は試験全体を扱う模試にのみ含まれます。"
 
 #: src/mock/mock-notes.tsx
 msgctxt "jvTx9o"
@@ -8733,53 +8733,53 @@ msgstr "本番の試験の採点方法：{rule}"
 #: src/mock/mock-notes.tsx
 msgctxt "VKsBvN"
 msgid "The real exam ranks you against the other candidates."
-msgstr ""
+msgstr "本番では、ほかの受験者との比較で順位が決まります。"
 
 #: src/mock/mock-notes.tsx
 msgctxt "ICvZGI"
 msgid "This mock exam shows how many you got right."
-msgstr ""
+msgstr "この模試では正解数を表示します。"
 
 #: src/mock/mock-notes.tsx
 msgctxt "zzfogS"
 msgid "Your material doesn't say the test's size, so this mock exam used {count, plural, one {# question} other {# questions}} in {time}."
-msgstr ""
+msgstr "資料に試験の問題数や時間が書かれていないため、この模試は{count, plural, other {#問}}、制限時間{time}で実施しました。"
 
 #. The notice branch is for an exam whose official document is a public notice (Portuguese: edital).
 #: src/mock/mock-notes.tsx
 msgctxt "fag1EX"
 msgid "{document, select, notice {The official guide doesn't say the exam's size, so this mock exam used {count, plural, one {# question} other {# questions}} in {time}.} other {The official guide doesn't say the exam's size, so this mock exam used {count, plural, one {# question} other {# questions}} in {time}.}}"
-msgstr ""
+msgstr "{document, select, notice {要項に試験の問題数や時間が書かれていないため、この模試は{count, plural, other {#問}}、制限時間{time}で実施しました。} other {公式ガイドに試験の問題数や時間が書かれていないため、この模試は{count, plural, other {#問}}、制限時間{time}で実施しました。}}"
 
 #: src/mock/mock-notes.tsx
 msgctxt "A5qJXf"
 msgid "This mock exam had {count, plural, one {# of the exam's {total, number} questions} other {# of the exam's {total, number} questions}}."
-msgstr ""
+msgstr "この模試では{count, plural, other {#問を出題しました（本番は全{total, number}問）}}。"
 
 #: src/mock/mock-notes.tsx
 msgctxt "rDAHmY"
 msgid "{count, plural, one {# question was a repeat.} other {# questions were repeats.}}"
-msgstr ""
+msgstr "{count, plural, other {以前にも出た問題が#問ありました。}}"
 
 #: src/mock/mock-option-labels.ts
 msgctxt "8ChI8a"
 msgid "Half of day {day}"
-msgstr ""
+msgstr "{day}日目の半分"
 
 #: src/mock/mock-option-labels.ts
 msgctxt "qVp-s4"
 msgid "Half the exam"
-msgstr ""
+msgstr "試験の半分"
 
 #: src/mock/mock-option-labels.ts
 msgctxt "7vfinR"
 msgid "Day {day}, without {names}"
-msgstr ""
+msgstr "{day}日目（{names}を除く）"
 
 #: src/mock/mock-option-labels.ts
 msgctxt "auReBx"
 msgid "The full exam, without {names}"
-msgstr ""
+msgstr "試験全体（{names}を除く）"
 
 #: src/mock/mock-option-labels.ts
 msgctxt "ToH7SD"
@@ -8789,12 +8789,12 @@ msgstr "{day}日目"
 #: src/mock/mock-option-labels.ts
 msgctxt "aODKcZ"
 msgid "The full exam"
-msgstr ""
+msgstr "試験全体"
 
 #: src/mock/mock-option-labels.ts
 msgctxt "Iu6kfw"
 msgid "No written part"
-msgstr ""
+msgstr "記述式の問題なし"
 
 #: src/mock/mock-options.tsx
 #: src/session/question-block/true-false-question.tsx
@@ -8820,7 +8820,7 @@ msgstr "第{number}問（全{total}問）"
 #: src/mock/mock-result-actions.tsx
 msgctxt "hkWfVA"
 msgid "Review mistakes"
-msgstr ""
+msgstr "間違えた問題を見直す"
 
 #: src/mock/mock-result-answers.tsx
 #: src/session/summary/summary-parts.tsx
@@ -8846,7 +8846,7 @@ msgstr "未解答"
 #: src/mock/mock-result-answers.tsx
 msgctxt "z4KSsF"
 msgid "Blank answers count as wrong."
-msgstr ""
+msgstr "空欄は不正解として扱います。"
 
 #: src/mock/mock-result-breakdown.tsx
 #: src/mock/mock-result-points.tsx
@@ -8924,52 +8924,52 @@ msgstr "{count, plural, other {#問}}が未回答のまま時間切れになり�
 #: src/mock/mock-result-insights.tsx
 msgctxt "kMilyR"
 msgid "Easy questions"
-msgstr ""
+msgstr "簡単な問題"
 
 #: src/mock/mock-result-insights.tsx
 msgctxt "O8lrLi"
 msgid "You missed {count, plural, one {# easy question} other {# easy questions}}. Review those first."
-msgstr ""
+msgstr "簡単な問題で{count, plural, other {#問}}間違いがありました。まずはその問題から復習しましょう。"
 
 #: src/mock/mock-result-insights.tsx
 msgctxt "Gac05z"
 msgid "Flagged answers"
-msgstr ""
+msgstr "見直しの印を付けた解答"
 
 #: src/mock/mock-result-insights.tsx
 msgctxt "EnpXr5"
 msgid "Not flagged: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}}. Flagged: {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}}."
-msgstr ""
+msgstr "見直しなし：{sureRight, plural, =0 {#問正解（{sureAnswered}問中）} other {#問正解（{sureAnswered}問中）}}。見直しあり：{unsureRight, plural, =0 {#問正解（{unsureAnswered}問中）} other {#問正解（{unsureAnswered}問中）}}。"
 
 #: src/mock/mock-result-insights.tsx
 msgctxt "1yogM5"
 msgid "Leaving the flagged ones blank would have added {points, plural, one {# point} other {# points}}."
-msgstr ""
+msgstr "見直しの印を付けた問題を空欄にしていれば、スコアは{points, plural, other {#点}}高くなっていました。"
 
 #: src/mock/mock-result-insights.tsx
 msgctxt "ZkBfTU"
 msgid "Your flagged answers still earned points, so keep answering them."
-msgstr ""
+msgstr "見直しの印を付けた問題も得点につながっています。これからも答えていきましょう。"
 
 #: src/mock/mock-result-insights.tsx
 msgctxt "ozyRM9"
 msgid "What stood out"
-msgstr ""
+msgstr "結果のポイント"
 
 #: src/mock/mock-result-plan.tsx
 msgctxt "2eleN_"
 msgid "Your plan didn't need to change."
-msgstr ""
+msgstr "学習計画を変更する必要はありませんでした。"
 
 #: src/mock/mock-result-plan.tsx
 msgctxt "Y9CLHN"
 msgid "{count, plural, one {# lesson} other {# lessons}} skipped."
-msgstr ""
+msgstr "{count, plural, other {#レッスン}}をスキップしました。"
 
 #: src/mock/mock-result-plan.tsx
 msgctxt "DRJEUg"
 msgid "Your plan gives {area} more time."
-msgstr ""
+msgstr "学習計画では{area}にかける時間が増えます。"
 
 #: src/mock/mock-result-plan.tsx
 #: src/plan/use-short-list.ts
@@ -8980,27 +8980,27 @@ msgstr "{names}、ほか{count, plural, other {#トピック}}"
 #: src/mock/mock-result-plan.tsx
 msgctxt "KkKnIt"
 msgid "Skip them"
-msgstr ""
+msgstr "スキップする"
 
 #: src/mock/mock-result-plan.tsx
 msgctxt "htJVOu"
 msgid "Keep them"
-msgstr ""
+msgstr "計画に残す"
 
 #: src/mock/mock-result-plan.tsx
 msgctxt "wQhy25"
 msgid "You got everything right in {topics}."
-msgstr ""
+msgstr "{topics}は全問正解でした。"
 
 #: src/mock/mock-result-plan.tsx
 msgctxt "SvO1ek"
 msgid "Skip {count, plural, one {# lesson} other {# lessons}} you already know?"
-msgstr ""
+msgstr "すでに知っている内容の{count, plural, other {#レッスン}}をスキップしますか？"
 
 #: src/mock/mock-result-plan.tsx
 msgctxt "ZPLfTK"
 msgid "Change my plan"
-msgstr ""
+msgstr "学習計画を変更する"
 
 #: src/mock/mock-result-plan.tsx
 msgctxt "uFDpFL"
@@ -9010,7 +9010,7 @@ msgstr "学習計画を変えない"
 #: src/mock/mock-result-plan.tsx
 msgctxt "b4G-y7"
 msgid "You got {correct, plural, =0 {# of {total} right} one {# of {total} right} other {# of {total} right}} there."
-msgstr ""
+msgstr "この分野の正解数は{correct, plural, =0 {#問（全{total}問）} other {#問（全{total}問）}}でした。"
 
 #: src/mock/mock-result-plan.tsx
 msgctxt "1-4FCE"
@@ -9020,12 +9020,12 @@ msgstr "{area}にもっと時間をかけますか？"
 #: src/mock/mock-result-plan.tsx
 msgctxt "iaHiP_"
 msgid "Down from {before}"
-msgstr ""
+msgstr "{before}から低下"
 
 #: src/mock/mock-result-plan.tsx
 msgctxt "U5RRFl"
 msgid "Up from {before}"
-msgstr ""
+msgstr "{before}から上昇"
 
 #: src/mock/mock-result-plan.tsx
 #: src/mock/mock-result-view.tsx
@@ -9067,32 +9067,32 @@ msgstr "選択式試験の合計"
 #: src/mock/mock-result-points.tsx
 msgctxt "MOzagC"
 msgid "{unit, select, percent {At {score}. It needs {minimum}.} other {{short, plural, one {# point} other {# points}} short of the {minimum} it needs.}}"
-msgstr ""
+msgstr "{unit, select, percent {現在は{score}です。{minimum}が必要です。} other {{short, plural, other {#点}}不足しています。基準は{minimum}です。}}"
 
 #: src/mock/mock-result-points.tsx
 msgctxt "aYENhx"
 msgid "Below the minimum for the exam"
-msgstr ""
+msgstr "試験全体の基準点未満"
 
 #: src/mock/mock-result-points.tsx
 msgctxt "M2wfvY"
 msgid "Below the minimum in {name}"
-msgstr ""
+msgstr "{name}の基準点未満"
 
 #: src/mock/mock-result-points.tsx
 msgctxt "mvd45i"
 msgid "About {projected} of {max} points on the whole exam."
-msgstr ""
+msgstr "試験全体では約{projected}点（{max}点満点）の見込みです。"
 
 #: src/mock/mock-result-points.tsx
 msgctxt "W8LYHL"
 msgid "The objective tests together need {unit, select, percent {{minimum} of their points} other {{value, plural, one {# point} other {# points}}}}, and this mock exam doesn't have them all."
-msgstr ""
+msgstr "選択式の試験では合計で{unit, select, percent {満点の{minimum}} other {{value, plural, other {#点}}}}が必要ですが、この模試にはそのすべてが含まれていません。"
 
 #: src/mock/mock-result-points.tsx
 msgctxt "Z_itEC"
 msgid "{name} needs {unit, select, percent {{minimum} of its points} other {{value, plural, one {# point} other {# points}}}} and isn't in this mock exam."
-msgstr ""
+msgstr "{name}では{unit, select, percent {満点の{minimum}} other {{value, plural, other {#点}}}}が必要ですが、この模試には含まれていません。"
 
 #: src/mock/mock-result-points.tsx
 msgctxt "JOdrmN"
@@ -9157,12 +9157,12 @@ msgstr "得点"
 #: src/mock/mock-result-view.tsx
 msgctxt "lJdQ8R"
 msgid "Estimated {exam} score"
-msgstr ""
+msgstr "{exam}の推定スコア"
 
 #: src/mock/mock-result-view.tsx
 msgctxt "bYZf2G"
 msgid "Score out of {max}"
-msgstr ""
+msgstr "スコア（満点：{max}）"
 
 #: src/mock/mock-result-view.tsx
 msgctxt "yQlMuI"
@@ -9172,12 +9172,12 @@ msgstr "正解率"
 #: src/mock/mock-result-view.tsx
 msgctxt "I3yltc"
 msgid "You reached every minimum in this mock exam."
-msgstr ""
+msgstr "この模試では、すべての基準点に達しました。"
 
 #: src/mock/mock-result-view.tsx
 msgctxt "x2l-vn"
 msgid "Strongest: {best}. Work on: {worst}."
-msgstr ""
+msgstr "いちばん得意なのは{best}です。{worst}に力を入れましょう。"
 
 #: src/mock/mock-result-view.tsx
 msgctxt "uLf3MG"
@@ -9217,7 +9217,7 @@ msgstr "見直す問題"
 #: src/mock/mock-review.tsx
 msgctxt "xVvJB7"
 msgid "See answers"
-msgstr ""
+msgstr "解答を見る"
 
 #: src/mock/mock-runner-view.tsx
 msgctxt "rD-WPb"
@@ -9238,7 +9238,7 @@ msgstr "見直し"
 #: src/mock/mock-speaking.tsx
 msgctxt "mPbiU_"
 msgid "Hand in section"
-msgstr ""
+msgstr "このパートの解答を提出する"
 
 #: src/mock/mock-runner-view.tsx
 msgctxt "r5QD8t"
@@ -9258,7 +9258,7 @@ msgstr "模試を中断しますか？"
 #: src/mock/mock-screen.tsx
 msgctxt "4tdaRm"
 msgid "See result"
-msgstr ""
+msgstr "結果を見る"
 
 #: src/mock/mock-screen.tsx
 msgctxt "Ly_Z1F"
@@ -9285,27 +9285,27 @@ msgstr "セクション{number, number}"
 #: src/mock/mock-short-dialog.tsx
 msgctxt "HwbZRQ"
 msgid "Today this one has {count, number} of its {total, number} questions, about {time}. You can take the full one tomorrow."
-msgstr ""
+msgstr "今日は{count, number}問（全{total, number}問）で、所要時間は約{time}です。明日は全問に取り組めます。"
 
 #: src/mock/mock-short-dialog.tsx
 msgctxt "YIvNSi"
 msgid "Today this one has {count, number} of its {total, number} questions, about {time}. You can take the full one next month."
-msgstr ""
+msgstr "今日は{count, number}問（全{total, number}問）で、所要時間は約{time}です。来月は全問に取り組めます。"
 
 #: src/mock/mock-short-dialog.tsx
 msgctxt "Rr2HWA"
 msgid "Today this one has {count, number} of its {total, number} questions, about {time}."
-msgstr ""
+msgstr "今日は{count, number}問（全{total, number}問）で、所要時間は約{time}です。"
 
 #: src/mock/mock-short-dialog.tsx
 msgctxt "hLpiWW"
 msgid "Start a shorter mock exam?"
-msgstr ""
+msgstr "短めの模試を始めますか？"
 
 #: src/mock/mock-short-dialog.tsx
 msgctxt "ggPo6m"
 msgid "Pick another"
-msgstr ""
+msgstr "別の模試を選ぶ"
 
 #: src/mock/mock-speaking.tsx
 msgctxt "YaAVNM"
@@ -9315,7 +9315,7 @@ msgstr "タスク{number, number} · {time}"
 #: src/mock/mock-speaking.tsx
 msgctxt "xdlBRi"
 msgid "Do the tasks in order. Each one is a call."
-msgstr ""
+msgstr "タスクを順番に進めてください。各タスクで会話練習をします。"
 
 #: src/mock/mock-speaking.tsx
 msgctxt "fSmt4A"
@@ -9330,7 +9330,7 @@ msgstr "{count, plural, other {#件のタスクが終わっていないため、
 #: src/mock/mock-speaking.tsx
 msgctxt "nkxAft"
 msgid "Every task is done. After this, you can't do them again in this mock exam."
-msgstr ""
+msgstr "すべてのタスクが終わりました。提出後は、この模試のタスクをやり直せません。"
 
 #: src/mock/mock-speaking.tsx
 #: src/session/summary/summary-actions.tsx
@@ -13269,7 +13269,7 @@ msgstr "{count, plural, other {選択肢を#個選んでください。}}"
 #: src/questions/test-out-aside.tsx
 msgctxt "r3SOxo"
 msgid "{passMark, number}% right skips the chapter"
-msgstr ""
+msgstr "{passMark, number}%正解でこの章をスキップ"
 
 #: src/questions/test-out-aside.tsx
 msgctxt "4x1wtn"
@@ -13284,7 +13284,7 @@ msgstr "合格するとスキップできる内容"
 #: src/questions/test-out-preparing.tsx
 msgctxt "M-U3f0"
 msgid "A few questions on this chapter, with your results at the end. Do well, and your plan skips what you already know."
-msgstr ""
+msgstr "この章の問題を数問解くと、最後に結果がわかります。合格すると、すでに知っている内容を学習計画でスキップします。"
 
 #: src/questions/test-out-preparing.tsx
 msgctxt "Ge7HX4"
@@ -13310,12 +13310,12 @@ msgstr "レッスンが学習計画に戻りました。"
 #: src/questions/test-out-run.tsx
 msgctxt "ttohgu"
 msgid "{lessons, plural, =0 {Your plan already skips it.} one {Your plan skips # lesson you already know.} other {Your plan skips # lessons you already know.}}"
-msgstr ""
+msgstr "{lessons, plural, =0 {学習計画では、この章をすでにスキップしています。} other {学習計画で、すでに知っている#レッスンをスキップします。}}"
 
 #: src/questions/test-out-run.tsx
 msgctxt "zwHQ3W"
 msgid "You passed the test"
-msgstr ""
+msgstr "テストに合格しました"
 
 #: src/questions/test-out-run.tsx
 msgctxt "ABnCBH"
@@ -13562,7 +13562,7 @@ msgstr "ベクトル{base}"
 #: src/session/extra-time-button.tsx
 msgctxt "dWsizD"
 msgid "Practice {minutes} more min"
-msgstr ""
+msgstr "さらに{minutes}分練習する"
 
 #: src/session/failed-moment.tsx
 msgctxt "kapQxt"
@@ -14128,7 +14128,7 @@ msgstr "、{variety}"
 #: src/shell/goal-menu-row.tsx
 msgctxt "goalSwitcher.J0jAqm"
 msgid "Pause a goal to start it"
-msgstr ""
+msgstr "ほかの目標を1つ一時停止すると始められます"
 
 #. A short status, not a button, under a goal a guest typed and can't start yet. Creating a free account lets them start it; tapping the row opens sign-up.
 #: src/shell/goal-menu-row.tsx
@@ -14231,7 +14231,7 @@ msgstr "{goal}を始めるには"
 #: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.4nd7tj"
 msgid "That's as many goals as you can study at once. Pause one to start this one."
-msgstr ""
+msgstr "同時に学習できる目標の数が上限に達しています。この目標を始めるには、ほかの目標を1つ一時停止してください。"
 
 #: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.gczcC5"
@@ -14646,7 +14646,7 @@ msgstr "{count, plural, other {内容を知っていたため、#レッスンを
 #: src/today/today-more.tsx
 msgctxt "6Jd28t"
 msgid "Practice {minutes} min"
-msgstr ""
+msgstr "{minutes}分練習する"
 
 #. Button that asks for today's lessons to be made ready.
 #: src/today/today-action.tsx
@@ -14674,7 +14674,7 @@ msgstr "、ミッションの達成にカウントされます"
 #: src/today/today-segment-popover.tsx
 msgctxt "2LhxfA"
 msgid "Getting ready…"
-msgstr ""
+msgstr "準備しています…"
 
 #: src/today/today-change-notice.tsx
 msgctxt "ZoDO4s"
@@ -14684,7 +14684,7 @@ msgstr "変更内容"
 #: src/today/today-coming-lessons.tsx
 msgctxt "4bemPv"
 msgid "Get them now"
-msgstr ""
+msgstr "今すぐ準備する"
 
 #: src/today/today-coming-lessons.tsx
 #: src/today/today-segment-popover.tsx
@@ -14696,7 +14696,7 @@ msgstr "次のレッスン"
 #: src/today/today-segment-popover.tsx
 msgctxt "5CkyMG"
 msgid "Not ready yet"
-msgstr ""
+msgstr "まだ準備できていません"
 
 #: src/today/today-coming-lessons.tsx
 #: src/today/today-segment-popover.tsx
@@ -14712,12 +14712,12 @@ msgstr "{done, plural, =0 {#件完了、残り{total, number}件} other {#件完
 #: src/today/today-day-progress.tsx
 msgctxt "OFFVnK"
 msgid "A shorter day"
-msgstr ""
+msgstr "今日は学習時間が短めです"
 
 #: src/today/today-day-progress.tsx
 msgctxt "73UHV8"
 msgid "Your plan keeps time for the mock exam on {date}."
-msgstr ""
+msgstr "学習計画では、{date}の模試に使う時間を確保しています。"
 
 #: src/today/today-day-status.tsx
 msgctxt "XMRh7X"
@@ -14727,7 +14727,7 @@ msgstr "休みの日に学習しました。"
 #: src/today/today-day-status.tsx
 msgctxt "CZ9Ql4"
 msgid "You're done for today."
-msgstr ""
+msgstr "今日の学習は終わりました。"
 
 #: src/today/today-day-status.tsx
 msgctxt "9JilTp"
@@ -14737,7 +14737,7 @@ msgstr "今日は学習の予定がありません。"
 #: src/today/today-day-status.tsx
 msgctxt "RC22zo"
 msgid "Your next lessons are below if you want to study."
-msgstr ""
+msgstr "学習したいときは、下にある次のレッスンに進めます。"
 
 #: src/today/today-day-status.tsx
 msgctxt "MdRa2K"
@@ -14762,27 +14762,27 @@ msgstr "今日のレッスンを準備しています…"
 #: src/today/today-day-status.tsx
 msgctxt "DI5PCI"
 msgid "Today's lessons aren't ready yet."
-msgstr ""
+msgstr "今日のレッスンはまだ準備ができていません。"
 
 #: src/today/today-day-status.tsx
 msgctxt "bGbW_K"
 msgid "You finished your plan."
-msgstr ""
+msgstr "学習計画を完了しました。"
 
 #: src/today/today-day-status.tsx
 msgctxt "brhjJ2"
 msgid "You're all caught up."
-msgstr ""
+msgstr "今日までのレッスンはすべて終わっています。"
 
 #: src/today/today-earlier-lessons.tsx
 msgctxt "JMtLiG"
 msgid "{lessons, plural, one {# lesson from earlier days} other {# lessons from earlier days}}"
-msgstr ""
+msgstr "{lessons, plural, other {前日までの#レッスン}}"
 
 #: src/today/today-earlier-lessons.tsx
 msgctxt "dlS9NH"
 msgid "Add to today"
-msgstr ""
+msgstr "今日の学習に追加する"
 
 #: src/today/today-exam-choice.tsx
 msgctxt "SVKPfj"
@@ -14850,17 +14850,17 @@ msgstr "試験までにすべてを学ぶには、時間が足りません。約
 #: src/today/today-heading.tsx
 msgctxt "M3adyv"
 msgid "Not enough time left for all your lessons."
-msgstr ""
+msgstr "すべてのレッスンを終えるには、残り時間が足りません。"
 
 #: src/today/today-heading.tsx
 msgctxt "RxQWR_"
 msgid "Welcome back. Today is short, so it's easy to start again."
-msgstr ""
+msgstr "おかえりなさい。今日は短めの学習なので、気軽に再開できます。"
 
 #: src/today/today-heading.tsx
 msgctxt "Viq1rs"
 msgid "{exam} in {days, plural, one {# day} other {# days}}"
-msgstr ""
+msgstr "{exam}まであと{days, plural, other {#日}}"
 
 #: src/today/today-insight.tsx
 msgctxt "8owE4V"
@@ -14875,7 +14875,7 @@ msgstr "このままにする"
 #: src/today/today-insight.tsx
 msgctxt "5cDa2C"
 msgid "Move it"
-msgstr ""
+msgstr "変更する"
 
 #: src/today/today-insight.tsx
 msgctxt "NYTGIb"
@@ -14948,7 +14948,7 @@ msgstr "{goal}の学習計画を作成しています"
 #: src/today/today-preparing.tsx
 msgctxt "Xu-pMI"
 msgid "It takes a minute or two. Your first day opens here as soon as it's ready."
-msgstr ""
+msgstr "1〜2分ほどかかります。準備ができ次第、ここに初日の学習が表示されます。"
 
 #: src/today/today-screen.tsx
 #: src/today/today-shell.tsx
@@ -14959,7 +14959,7 @@ msgstr "今週の学習"
 #: src/today/today-screen.tsx
 msgctxt "cBjaVC"
 msgid "Today's lessons"
-msgstr ""
+msgstr "今日のレッスン"
 
 #: src/today/today-segment-popover.tsx
 msgctxt "MDSrNP"
@@ -15056,7 +15056,7 @@ msgstr "週間チャレンジ"
 #: src/today/today-week-challenge.tsx
 msgctxt "J3eMtx"
 msgid "every topic"
-msgstr ""
+msgstr "すべてのトピック"
 
 #: src/today/today-week-day.tsx
 msgctxt "F8phHs"
@@ -15071,7 +15071,7 @@ msgstr "試験日"
 #: src/today/today-week-day.tsx
 msgctxt "WcEyrI"
 msgid "end date"
-msgstr ""
+msgstr "終了日"
 
 #: src/today/today-week-day.tsx
 msgctxt "KQR6jo"
@@ -15081,12 +15081,12 @@ msgstr "学習計画の開始前"
 #: src/today/today-week-day.tsx
 msgctxt "1RBuve"
 msgid "after your exam"
-msgstr ""
+msgstr "試験後"
 
 #: src/today/today-week-day.tsx
 msgctxt "coog-B"
 msgid "after your end date"
-msgstr ""
+msgstr "終了日より後"
 
 #: src/today/today-week-day.tsx
 msgctxt "v_Mk8I"
@@ -15111,7 +15111,7 @@ msgstr "{time}の学習を予定"
 #: src/today/use-row-label.ts
 msgctxt "OUc_Xr"
 msgid "Every topic"
-msgstr ""
+msgstr "すべてのトピック"
 
 #: src/topic-outline/far-topic-sheet.tsx
 msgctxt "OA9N1Z"
