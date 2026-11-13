@@ -10,8 +10,8 @@ import {
   BAND_COLUMN_CLASS,
   BAND_ROWS_CLASS,
   BAND_STATE_CLASS,
+  BandName,
   getBandColumnsStyle,
-  getBandNameClass,
 } from "@zoonk/learn/roadmap-styles";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, FlagIcon } from "lucide-react";
@@ -65,10 +65,12 @@ function TodayTicks({ share }: { share: number }) {
 function RoadBandFace({ band }: { band: RoadBand }) {
   return (
     <span className={cn(BAND_CLASS, BAND_LOOK[band.state])}>
-      <span className={getBandNameClass(band.name)}>
-        {band.state === "done" && <CheckIcon aria-hidden="true" className={BAND_CHECK_CLASS} />}
-        {band.name}
-      </span>
+      <BandName
+        leading={
+          band.state === "done" && <CheckIcon aria-hidden="true" className={BAND_CHECK_CLASS} />
+        }
+        name={band.name}
+      />
       {band.todayShare !== undefined && <TodayTicks share={band.todayShare} />}
 
       {band.state === "current" && band.share !== undefined && band.share > 0 && (
