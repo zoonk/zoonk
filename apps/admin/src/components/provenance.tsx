@@ -38,7 +38,7 @@ export function ProvenanceFields({ provenance }: { provenance: ProvenanceValue }
     <DetailFields>
       {ids.map((field) => (
         <DetailField key={field.label} label={field.label}>
-          {field.value ? <span className="font-mono text-xs break-all">{field.value}</span> : "—"}
+          {field.value ?? "—"}
         </DetailField>
       ))}
       <DetailField label="Generated">{formatDateTime(provenance.generatedAt)}</DetailField>

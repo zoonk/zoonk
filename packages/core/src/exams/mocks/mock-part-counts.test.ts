@@ -67,7 +67,7 @@ const BANK: MockCandidate[] = Object.values(TESTS).flatMap((names) =>
 
 function planFullMock(structure: ExamStructure, half = false): string[] {
   const subjects = structure.subjects.map((item) => item.name);
-  const options = listMockOptions({ dayInTurn: null, goalAreas: subjects, structure });
+  const options = listMockOptions({ goalAreas: subjects, structure });
 
   const full = options.find((option) => option.kind === (half ? "half" : "full"));
 

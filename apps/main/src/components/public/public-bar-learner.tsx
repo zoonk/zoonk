@@ -31,9 +31,12 @@ export function PublicBarAccount({ visitor }: { visitor: ReactNode }) {
 
   if (learner.status === "ready") {
     return (
-      <LearnAvatarBelt color={learner.summary.level?.color ?? null}>
-        <UserAvatarMenu includeSearch />
-      </LearnAvatarBelt>
+      // The belt's dot hangs 2px past the picture; the margin keeps the pair inside the bar's column.
+      <span className="me-0.5 inline-flex">
+        <LearnAvatarBelt color={learner.summary.level?.color ?? null}>
+          <UserAvatarMenu includeSearch />
+        </LearnAvatarBelt>
+      </span>
     );
   }
 
