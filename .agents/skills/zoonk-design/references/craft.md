@@ -329,7 +329,7 @@ A screen that changes height or moves a neighbor when data, a picture or a font 
 
 ## Behavior
 
-What a control does when it's pressed, by key, click or tap, is part of how it's drawn: the same piece does the same thing on every screen. Each key the product answers is in one list in the kit (`SHORTCUTS`), which the handlers, the keycaps and what screen readers are told all read, and the piece that draws a control carries its key. The design site's Keyboard page shows the list.
+What a control does when it's pressed, by key, click or tap, is part of how it's drawn: the same piece does the same thing on every screen. Each key the product answers is in one list in the kit (`SHORTCUTS`), which the handlers, the keycaps and what screen readers are told all read, and the piece that draws a control carries its key. In the app, `?` opens the list (the palette finds it as "Keyboard shortcuts"); the design site's Keyboard page shows it too.
 
 ### B1. The same control answers the same keys everywhere
 
@@ -340,10 +340,10 @@ A sidebar's toggle, a task's ✕, a page's way back, a main action, a question's
 
 ### B2. Every shortcut shows its keycap
 
-On a device with a keyboard, a control that answers a key shows it: in the control, or in its tooltip when it's an icon button. The keycap's key does what a click does, and screen readers are told it (`aria-keyshortcuts`).
+On a device with a keyboard, a control that answers a key shows it: in the control, or in its tooltip when it's an icon button. The keycap's key does what a click does, and screen readers are told it (`aria-keyshortcuts`). Number keys answer a screen's one list of choices: its first nine rows show 1 to 9, and a number picks its row (a pick-one list) or ticks and unticks it (a pick-many list). A screen with several lists shows none, since nothing says which list 1 belongs to.
 
 - **Check.** For each keycap on screen, press its key: the same thing happens as on a click. For each key the screen answers, find its keycap.
-- **Usual break.** Enter bound and no ⏎ drawn. A keycap or an `aria-keyshortcuts` typed by hand, which drifts from the handler.
+- **Usual break.** Enter bound and no ⏎ drawn. A number key bound on rows that draw no number. A keycap or an `aria-keyshortcuts` typed by hand, which drifts from the handler.
 
 ### B3. A key presses only what is on screen
 
@@ -354,12 +354,12 @@ No key acts through a control the learner can't see. Where a back link is drawn 
 
 ### B4. A panel closes three ways
 
-A dialog, a sheet or a side panel closes with Esc, with a press outside it, and with a control you can see: its ✕ beside its title, one size in every panel. A sheet on a phone also closes with a swipe down. Only an alert that asks before something that can't be undone ignores a press outside.
+A dialog, a sheet or a side panel closes with Esc, with a press outside it, and with a control you can see: its ✕ beside its title, one size in every panel. A sheet on a phone also closes with a swipe down. Only a question that needs an answer (delete, hand in, leave with a loss) ignores a press outside and a swipe and has no ✕: its answers are its ways out, and Esc cancels.
 
-What opens decides its panel: an alert for a question before something that can't be undone; a bottom sheet on a phone and a centered dialog on a computer for a short form, a pick or a detail; a side panel on a computer only for something edited beside the page it changes; a menu or a popover for a few choices tied to a control. A bottom-docked box is a phone's shape (where the thumb is, closed with a swipe); on a computer the eyes and pointer are in the middle of the window.
+What opens decides its panel, and the screen's size decides its place. On a phone everything that opens over a page rises from the bottom: a short form, a pick or a detail as a sheet with a grab handle, and a question that needs an answer as a sheet without one, the confirm on top and "Cancel" under it. On a computer both are centered. A side panel is a computer's, only for something edited beside the page it changes (a sheet on a phone). A menu or a popover, for a few choices or one fact tied to a control, stays anchored to it at every size. A bottom-docked box is a phone's shape (where the thumb is, closed with a swipe); on a computer the eyes and pointer are in the middle of the window.
 
-- **Check.** Open it and close it each way. On a computer, find its ✕ without looking for a grab handle.
-- **Usual break.** A sheet with a grab handle and no ✕, docked at the bottom of a computer's window.
+- **Check.** Open it and close it each way. On a computer, find its ✕ without looking for a grab handle. On a phone, its bottom edge is the screen's.
+- **Usual break.** A sheet with a grab handle and no ✕, docked at the bottom of a computer's window. A dialog still centered on a phone.
 
 ### B5. Focus goes in, and comes back
 
@@ -393,7 +393,7 @@ The questions of [the craft read](../SKILL.md#the-craft-read), answered for one 
 12. **Balance.** One filled button? Anything empty, centered in a start-aligned column, or bleeding on one side only? (D3, D4, E7, E9)
 13. **States, if shown.** Is the selected, focused, disabled or busy thing drawn the system's way, and did anything move? (X1 to X3)
 14. **Siblings, if given.** Does each piece here look and act like the same piece on the existing screen that does the same thing: words, icon, size, place, state?
-15. **Keys and closes, at 1440.** Does the main action wear ⏎, and does each icon button whose tooltip is shown wear its key? Does every dialog, sheet and side panel have its ✕ beside its title, one size in each? Is a short form on a computer centered, not docked at the bottom? (B2, B4)
+15. **Keys and closes, at 1440.** Does the main action wear ⏎, and does each icon button whose tooltip is shown wear its key? Does every dialog, sheet and side panel have its ✕ beside its title, one size in each? Is a short form on a computer centered, not docked at the bottom? On a phone, does everything that opens over the page sit on the bottom edge, a question that needs an answer with its two answers stacked and no ✕? (B2, B4)
 
 A still picture can't show what a key does, where focus goes or whether Esc asks first (B1, B3, B5, B6): say so, and leave them to the walk in the running app.
 
