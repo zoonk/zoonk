@@ -7,10 +7,6 @@ type EvalParent<T extends string = string> = { href: Route<T>; label: string };
 
 export const EVALS_HOME: EvalParent = { href: "/", label: "Evals" };
 
-/**
- * The top of every evals page on the shared page top: the way back to the page it belongs to, the
- * page's own actions, then the title and what `children` says about it.
- */
 export function EvalPageTop<T extends string>({
   actions,
   children,
@@ -19,7 +15,6 @@ export function EvalPageTop<T extends string>({
 }: {
   actions?: React.ReactNode;
   children?: React.ReactNode;
-  /** The page this one belongs to. The home has none. */
   parent?: EvalParent<T>;
   title: React.ReactNode;
 }) {
