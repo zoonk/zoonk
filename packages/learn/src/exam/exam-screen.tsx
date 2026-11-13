@@ -9,15 +9,9 @@ import {
   DetailHeroText,
   DetailTitle,
 } from "@zoonk/ui/components/detail";
-import {
-  Popover,
-  PopoverContent,
-  PopoverDescription,
-  PopoverHeader,
-  PopoverTrigger,
-} from "@zoonk/ui/components/popover";
 import { useExtracted, useFormatter } from "next-intl";
 import { DetailAside, DetailContent, DetailLayout } from "../_components/detail-page";
+import { DetailsDrawer } from "../_components/details-drawer";
 import { FactSegments } from "../_components/task-meta";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { toLabelCase } from "../_utils/label-case";
@@ -119,19 +113,9 @@ function DateTag() {
   }
 
   return (
-    <Popover>
-      <PopoverTrigger
-        className="hit-area text-muted-foreground decoration-faint focus-visible:ring-ring/50 relative self-start rounded-md text-xs underline decoration-dotted underline-offset-2 outline-none focus-visible:ring-[3px]"
-        data-slot="exam-date-tag"
-      >
-        {tag.label}
-      </PopoverTrigger>
-      <PopoverContent align="start" className="w-64">
-        <PopoverHeader>
-          <PopoverDescription>{tag.text}</PopoverDescription>
-        </PopoverHeader>
-      </PopoverContent>
-    </Popover>
+    <DetailsDrawer label={tag.label} title={tag.label} trigger="tag">
+      <p className="text-muted-foreground text-pretty">{tag.text}</p>
+    </DetailsDrawer>
   );
 }
 

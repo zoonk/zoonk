@@ -11,11 +11,19 @@ import {
 import { SheetHeader } from "./sheet-header";
 import { TASK_OPTION_CLASS } from "./task-layout";
 
-const TRIGGER: Record<"link" | "option" | "secondary" | "small", React.ReactElement> = {
+type Trigger = "link" | "option" | "secondary" | "small" | "tag";
+
+const TRIGGER: Record<Trigger, React.ReactElement> = {
   link: <Button className="self-start" variant="link" />,
   option: <Button className={TASK_OPTION_CLASS} size="xl" variant="ghost" />,
   secondary: <Button className="shrink-0" size="xl" variant="outline" />,
   small: <Button className="shrink-0" size="sm" variant="outline" />,
+  tag: (
+    <button
+      className="hit-area text-muted-foreground decoration-faint focus-visible:ring-ring/50 relative self-start rounded-md text-xs underline decoration-dotted underline-offset-2 outline-none focus-visible:ring-[3px]"
+      type="button"
+    />
+  ),
 };
 
 export function DetailsDrawer({
@@ -27,7 +35,7 @@ export function DetailsDrawer({
   children: React.ReactNode;
   label: string;
   title: string;
-  trigger?: "link" | "option" | "secondary" | "small";
+  trigger?: Trigger;
 }) {
   return (
     <Drawer>
