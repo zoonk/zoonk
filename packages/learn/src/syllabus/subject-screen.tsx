@@ -1,6 +1,7 @@
 "use client";
 
 import { type SyllabusSubject, type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import {
   DetailActions,
   DetailFacts,
@@ -17,7 +18,6 @@ import {
   useDoneShare,
 } from "../_components/detail-page";
 import {
-  PageEyebrow,
   PageSection,
   PageSectionDetail,
   PageSectionHeader,
@@ -44,7 +44,11 @@ type SubjectHrefs = {
   mindMaps?: (subjectKey: string) => string;
 };
 
-function useKindWord({
+/**
+ * Where a subject comes from, when its name doesn't say: the exam area it belongs to, the
+ * learner's own material, or the plan's lessons beyond the exam's guide.
+ */
+function useOriginFact({
   fromMaterial,
   kind,
   subject,
@@ -52,7 +56,7 @@ function useKindWord({
   fromMaterial: boolean;
   kind: SyllabusView["kind"];
   subject: SyllabusSubject;
-}) {
+}): string | null {
   const t = useExtracted();
 
   if (subject.group) {
@@ -60,14 +64,10 @@ function useKindWord({
   }
 
   if (subject.source === "notice") {
-    return fromMaterial ? t("From your material") : t("Subject");
+    return fromMaterial ? t("From your material") : null;
   }
 
-  if (kind !== "notice") {
-    return t("Module");
-  }
-
-  return t("Also in your plan");
+  return kind === "notice" ? t("Also in your plan") : null;
 }
 
 function useWeightFact(subject: SyllabusSubject): string | null {
@@ -87,26 +87,28 @@ function useWeightFact(subject: SyllabusSubject): string | null {
   });
 }
 
-function useEyebrow(props: Parameters<typeof useKindWord>[0]): string {
-  const kindWord = useKindWord(props);
-  const weight = useWeightFact(props.subject);
-  return [kindWord, weight].filter(Boolean).join(" · ");
-}
-
 function SubjectFacts({
+  fromMaterial,
+  kind,
   sharedExams,
   subject,
 }: {
+  fromMaterial: boolean;
+  kind: SyllabusView["kind"];
   sharedExams: SyllabusView["sharedExams"];
   subject: SyllabusSubject;
 }) {
   const t = useExtracted();
   const doneShare = useDoneShare();
+  const origin = useOriginFact({ fromMaterial, kind, subject });
+  const weight = useWeightFact(subject);
   const known = useKnownLine()(subject);
   const alsoIn = useAlsoIn({ sharedExams, sharedWith: subject.sharedWith });
   const inLessons = !subject.notPlannedReason && subject.preparation === null;
 
   const facts = [
+    origin,
+    weight,
     subject.topics.length > 0 &&
       t("{count, plural, one {# topic} other {# topics}}", { count: subject.topics.length }),
     subject.chapters.length > 0 &&
@@ -123,51 +125,58 @@ function SubjectFacts({
   );
 }
 
-function SubjectActionsRow({
+/** The subject's main action, pinned under the page: its next chapter to study. */
+function SubjectBottomBar({
   chapterHref,
   subject,
 }: {
   chapterHref: (chapterId: string) => string;
   subject: SyllabusSubject;
 }) {
-  const t = useExtracted();
   const next = subject.chapters.find((chapter) => chapter.state !== "done" && chapter.chapterId);
   const nextId = subject.notPlannedReason ? null : (next?.chapterId ?? null);
 
+  if (!nextId) {
+    return null;
+  }
+
   return (
-    <DetailActions className="empty:hidden">
-      {nextId && (
+    <BottomBar>
+      <BottomBarActions>
         <DetailContinueLink href={chapterHref(nextId)} started={subject.lessonsDone > 0} />
-      )}
-      <ReportProblemMenu label={t("Subject options")} screen="subject" />
-    </DetailActions>
+      </BottomBarActions>
+    </BottomBar>
   );
 }
 
 function SubjectHeader({
-  chapterHref,
   fromMaterial,
   kind,
   sharedExams,
   subject,
 }: {
-  chapterHref: (chapterId: string) => string;
   fromMaterial: boolean;
   kind: SyllabusView["kind"];
   sharedExams: SyllabusView["sharedExams"];
   subject: SyllabusSubject;
 }) {
-  const eyebrow = useEyebrow({ fromMaterial, kind, subject });
+  const t = useExtracted();
 
   return (
     <DetailHero>
       <DetailHeroText>
-        <PageEyebrow>{eyebrow}</PageEyebrow>
         <DetailTitle>{subject.name}</DetailTitle>
-        <SubjectFacts sharedExams={sharedExams} subject={subject} />
+        <SubjectFacts
+          fromMaterial={fromMaterial}
+          kind={kind}
+          sharedExams={sharedExams}
+          subject={subject}
+        />
       </DetailHeroText>
 
-      <SubjectActionsRow chapterHref={chapterHref} subject={subject} />
+      <DetailActions>
+        <ReportProblemMenu label={t("Subject options")} screen="subject" />
+      </DetailActions>
     </DetailHero>
   );
 }
@@ -229,52 +238,58 @@ export function SubjectScreen({
   const t = useExtracted();
 
   return (
-    <DetailLayout
-      aside={
-        <SubjectAside ask={ask?.row} questionsSource={syllabus.questionsSource} subject={subject} />
-      }
-      asideLabel={t("About this subject")}
-      bar={
-        <LearnPageBar back={{ href: hrefs.back, label: t("Plan") }} title={subject.name}>
-          {ask && <div className="contents min-[72rem]:hidden">{ask.bar}</div>}
-        </LearnPageBar>
-      }
-      data-slot="subject"
-    >
-      <DetailAside>
-        <SubjectHeader
-          chapterHref={hrefs.chapter}
-          fromMaterial={syllabus.fromMaterial}
-          kind={syllabus.kind}
-          sharedExams={syllabus.sharedExams}
-          subject={subject}
-        />
-        <SubjectCoverage className="min-[72rem]:hidden" labelled subject={subject} />
-        <NotPlannedCallout actions={actions} adjustHref={hrefs.adjust} subject={subject} />
-        <SubjectWrittenPractice
-          actions={actions}
-          practice={syllabus.writtenPractice}
-          subject={subject}
-        />
-      </DetailAside>
-
-      <DetailContent>
-        <SubjectChapters
-          chapterHref={hrefs.chapter}
-          chapters={subject.chapters}
-          mindMapsHref={hrefs.mindMaps?.(subject.key) ?? null}
-        />
-
-        {subject.topics.length > 0 && (
-          <TopicsSection
-            chapterHref={hrefs.chapter}
-            fromMaterial={syllabus.fromMaterial}
+    <>
+      <DetailLayout
+        aside={
+          <SubjectAside
+            ask={ask?.row}
+            questionsSource={syllabus.questionsSource}
             subject={subject}
           />
-        )}
+        }
+        asideLabel={t("About this subject")}
+        bar={
+          <LearnPageBar back={{ href: hrefs.back, label: t("Plan") }} title={subject.name}>
+            {ask && <div className="contents min-[72rem]:hidden">{ask.bar}</div>}
+          </LearnPageBar>
+        }
+        data-slot="subject"
+      >
+        <DetailAside>
+          <SubjectHeader
+            fromMaterial={syllabus.fromMaterial}
+            kind={syllabus.kind}
+            sharedExams={syllabus.sharedExams}
+            subject={subject}
+          />
+          <SubjectCoverage className="min-[72rem]:hidden" labelled subject={subject} />
+          <NotPlannedCallout actions={actions} adjustHref={hrefs.adjust} subject={subject} />
+          <SubjectWrittenPractice
+            actions={actions}
+            practice={syllabus.writtenPractice}
+            subject={subject}
+          />
+        </DetailAside>
 
-        <SubjectMatrix matrix={subject.matrix} />
-      </DetailContent>
-    </DetailLayout>
+        <DetailContent>
+          <SubjectChapters
+            chapterHref={hrefs.chapter}
+            chapters={subject.chapters}
+            mindMapsHref={hrefs.mindMaps?.(subject.key) ?? null}
+          />
+
+          {subject.topics.length > 0 && (
+            <TopicsSection
+              chapterHref={hrefs.chapter}
+              fromMaterial={syllabus.fromMaterial}
+              subject={subject}
+            />
+          )}
+
+          <SubjectMatrix matrix={subject.matrix} />
+        </DetailContent>
+      </DetailLayout>
+      <SubjectBottomBar chapterHref={hrefs.chapter} subject={subject} />
+    </>
   );
 }

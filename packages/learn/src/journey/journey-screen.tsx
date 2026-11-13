@@ -30,7 +30,7 @@ import { type JourneyStanding, PlanNumbers } from "./journey-hero";
 import { type JourneyPathLinks, getPlanLibraryCourse } from "./journey-links";
 import { AdjustPlanButton, JourneyMenu } from "./journey-menu";
 import { NextOnPath } from "./next-on-path";
-import { PlanEyebrow, PlanHeader } from "./plan-header";
+import { PlanGoalLine, PlanHeader } from "./plan-header";
 import { PlanRoadmap } from "./plan-roadmap";
 import { MoreSection, PathSection, PhasesSheet } from "./plan-sections";
 
@@ -147,7 +147,7 @@ function JourneyBody({
         asideLabel={t("Your plan at a glance")}
       >
         <Page data-slot="journey">
-          <PlanHeader eyebrow={<PlanEyebrow />}>
+          <PlanHeader subtitle={<PlanGoalLine />}>
             <AdjustPlanButton onAdjust={() => editor.open()} />
             <JourneyMenu courseHref={courseHref} examHref={links.exam} goal={goalMenu} />
           </PlanHeader>
