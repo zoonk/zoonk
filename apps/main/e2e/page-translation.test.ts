@@ -12,5 +12,5 @@ test("a page the browser translates keeps working when React replaces the transl
   // The name's hint is bare text, which React removes itself when the error takes its place.
   await page.getByRole("textbox", { exact: true, name: "[Name]" }).fill("a".repeat(151));
   await expect(page.getByText("[Use ][150][ characters or fewer.]")).toBeVisible();
-  await expect(page.getByText(/Your certificates and your buddy use this name/u)).toBeHidden();
+  await expect(page.getByText(/Your buddy and all your certificates use this name/u)).toBeHidden();
 });
