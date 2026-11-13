@@ -5,7 +5,6 @@ import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CalendarCheckIcon, CalendarClockIcon, RotateCcwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { FreeWeekOverNotice } from "../_components/free-week-over";
 import { HelpLimitNotice } from "../_components/help-limit-notice";
 import { PlusNotice } from "../_components/plus-lock";
 import { ChangeSaveError } from "../_components/save-error";
@@ -193,7 +192,7 @@ function PlusRequiredNotice() {
     return <ChallengeCallPlusNotice />;
   }
 
-  return <FreeWeekOverNotice cta={false} />;
+  return null;
 }
 
 function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } {
@@ -279,12 +278,23 @@ export function ChallengeFooter() {
   const movable = useMovable();
   const { actions, line } = useStatusFooter();
   const startShows = challenge.status === "ready" && challenge.waitReason === null;
+  const moves = !startShows && movable;
+
+  // With nothing else to press, a computer reads the status and the move as one line.
+  if (moves && !actions) {
+    return (
+      <TaskActions className="max-lg:flex-col max-lg:items-stretch max-lg:gap-0 lg:gap-4">
+        <StatusRegion className="lg:me-auto">{line}</StatusRegion>
+        <MoveToMondayButton />
+      </TaskActions>
+    );
+  }
 
   return (
     <>
       <StatusRegion>{line}</StatusRegion>
       {actions}
-      {!startShows && movable && (
+      {moves && (
         <TaskActions>
           <MoveToMondayButton className="w-full lg:w-auto" />
         </TaskActions>
