@@ -224,19 +224,39 @@ async function loadVocabulary(units: readonly Unit[]): Promise<[string, ContentF
   ]);
 }
 
+async function loadBrands(units: readonly Unit[]): Promise<[string, ContentFixLocation][]> {
+  const [products, brands] = await Promise.all([
+    prisma.product.findMany({
+      select: { id: true, name: true, organization: { select: { name: true } } },
+      where: { id: { in: idsOf(units, "product") } },
+    }),
+    prisma.organization.findMany({
+      select: { id: true, name: true },
+      where: { id: { in: idsOf(units, "organization") } },
+    }),
+  ]);
+
+  return [
+    ...products.map((row) => ({ id: row.id, trail: [row.organization.name, row.name] })),
+    ...brands.map((row) => ({ id: row.id, trail: [row.name] })),
+  ].map((row) => [row.id, { adminHref: null, language: null, mainUrl: null, trail: row.trail }]);
+}
+
 const MISSING: ContentFixLocation = { adminHref: null, language: null, mainUrl: null, trail: [] };
 
 /** Where each fix's content lives now, read fresh: a fix keeps plain ids, so the content may be gone. */
 export async function loadContentFixLocations(units: readonly Unit[]) {
-  const [lessons, chapters, courses, items, levelTests, shared, vocabulary] = await Promise.all([
-    loadLessons(idsOf(units, "lesson")),
-    loadChapters(idsOf(units, "chapter")),
-    loadCourses(idsOf(units, "course")),
-    loadItems(idsOf(units, "item")),
-    loadLevelTests(idsOf(units, "levelTest")),
-    loadShared(units),
-    loadVocabulary(units),
-  ]);
+  const [lessons, chapters, courses, items, levelTests, shared, vocabulary, brands] =
+    await Promise.all([
+      loadLessons(idsOf(units, "lesson")),
+      loadChapters(idsOf(units, "chapter")),
+      loadCourses(idsOf(units, "course")),
+      loadItems(idsOf(units, "item")),
+      loadLevelTests(idsOf(units, "levelTest")),
+      loadShared(units),
+      loadVocabulary(units),
+      loadBrands(units),
+    ]);
 
   const graphs: [string, ContentFixLocation][] = units
     .filter((unit) => unit.unit === "examSkillGraph" || unit.unit === "languageSkillGraph")
@@ -259,6 +279,7 @@ export async function loadContentFixLocations(units: readonly Unit[]) {
     ...levelTests,
     ...shared,
     ...vocabulary,
+    ...brands,
   ]);
 
   return (unit: Unit): ContentFixLocation => locations.get(unit.unitId) ?? MISSING;

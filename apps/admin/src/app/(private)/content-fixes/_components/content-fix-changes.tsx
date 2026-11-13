@@ -30,6 +30,9 @@ const MODEL_LABELS: Record<StoredChange["model"], string> = {
   LessonSource: "Lesson citations",
   LessonWord: "Lesson word",
   MediaAsset: "Media asset",
+  Organization: "Brand",
+  Product: "Product",
+  ProductRelease: "Product release",
   Sentence: "Sentence",
   Skill: "Skill",
   Source: "Source",
@@ -213,21 +216,36 @@ function PictureLink({ mediaAssetId }: { mediaAssetId: string }) {
 }
 
 function ChangeBody({ change, compact }: { change: StoredChange; compact: boolean }) {
-  if (change.model === "ItemSet") {
-    return (
-      <>
-        <p>
-          {change.op === "replace"
-            ? "Replaces the whole set for future practice; open sessions keep their copy."
-            : "Restores the original set for future practice."}
-        </p>
-        <AdminJson label="Before" value={change.before} />
-        <AdminJson label="After" value={change.after} />
-      </>
-    );
-  }
+  return change.model === "ItemSet" ? (
+    <ItemSetChange change={change} />
+  ) : (
+    <OperationChange change={change} compact={compact} />
+  );
+}
 
+function ItemSetChange({ change }: { change: Extract<StoredChange, { model: "ItemSet" }> }) {
+  return (
+    <>
+      <p>
+        {change.op === "replace"
+          ? "Replaces the whole set for future practice; open sessions keep their copy."
+          : "Restores the original set for future practice."}
+      </p>
+      <AdminJson label="Before" value={change.before} />
+      <AdminJson label="After" value={change.after} />
+    </>
+  );
+}
+
+function OperationChange({
+  change,
+  compact,
+}: {
+  change: Exclude<StoredChange, { model: "ItemSet" }>;
+  compact: boolean;
+}) {
   switch (change.op) {
+    case "setCategories":
     case "setChapters":
     case "setLessons":
     case "setSkills":

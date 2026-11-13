@@ -134,6 +134,7 @@ export function sharedRowHandler<Model extends string, Op extends string = "set"
       roots: z.object({
         blueprintIds: z.array(idSchema).optional(),
         chapterIds: z.array(idSchema).optional(),
+        courseIds: z.array(idSchema).optional(),
         itemIds: z.array(idSchema).optional(),
         lessonIds: z.array(idSchema).optional(),
         skillIds: z.array(idSchema).optional(),

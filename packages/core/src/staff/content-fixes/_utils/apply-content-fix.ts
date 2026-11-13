@@ -34,6 +34,8 @@ const UNIT_TABLES = {
   lesson: sql`library_lessons`,
   levelTest: sql`language_level_tests`,
   mediaAsset: sql`media_assets`,
+  organization: sql`organizations`,
+  product: sql`products`,
   sentence: sql`sentences`,
   skill: sql`skills`,
   source: sql`sources`,
@@ -238,6 +240,16 @@ export async function getFixCacheTags(unit: FixUnit): Promise<string[]> {
 
   if (unit.kind === "chapter") {
     return getChapterCacheTags(unit.id);
+  }
+
+  if (unit.kind === "organization") {
+    const courses = await prisma.course.findMany({
+      select: { id: true },
+      where: { organizationId: unit.id },
+    });
+
+    const tags = await Promise.all(courses.map((course) => courseCacheTags(course.id)));
+    return [...new Set([COURSE_LIST_CACHE_TAG, ...tags.flat()])];
   }
 
   return unit.kind === "course" ? courseCacheTags(unit.id) : [];

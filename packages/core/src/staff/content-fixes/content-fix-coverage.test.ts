@@ -12,6 +12,7 @@ const PROPOSABLE = new Set(
 const FIXED_THROUGH: Record<string, string> = {
   ChapterLesson: "Chapter setLessons",
   ChapterSkill: "Chapter setSkills",
+  CourseCategory: "Course setCategories",
   CourseChapter: "Course setChapters",
   LessonSkill: "Lesson setSkills",
   SkillPrerequisite: "Skill setPrerequisites",
@@ -87,6 +88,8 @@ const NOT_FIXED: Record<string, string> = {
   OauthRefreshToken: SIGN_IN,
   OauthResource: SIGN_IN,
   OnboardingDraft: ONE_LEARNERS,
+  "Organization: an account's organization":
+    "Better Auth owns organizations research didn't write.",
   Passkey: SIGN_IN,
   Plan: ONE_LEARNERS,
   PlanChange: ONE_LEARNERS,
@@ -120,12 +123,7 @@ const NOT_FIXED: Record<string, string> = {
 };
 
 /** Shared rows learners see that no fix reaches yet. */
-const NO_FIX_PATH_YET: Record<string, string> = {
-  CourseCategory: "The catalog files a course under these.",
-  Organization: "A product's brand facts; Better Auth also writes these rows.",
-  Product: "Its name titles product courses; the daily sweep rereads only its releases.",
-  ProductRelease: "Its name and dates decide which course a goal follows.",
-};
+const NO_FIX_PATH_YET: Record<string, string> = {};
 
 const ITEM_SET = "ItemSet replace";
 const STEP_SET = "Step set";

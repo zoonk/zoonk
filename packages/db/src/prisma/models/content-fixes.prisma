@@ -22,6 +22,8 @@ enum ContentFixUnit {
   sentence
   examSkillGraph     @map("exam_skill_graph")
   languageSkillGraph @map("language_skill_graph")
+  product
+  organization
 }
 
 /// A reviewed change to shared Library content. Staff propose it from the CLI, and a staff person
