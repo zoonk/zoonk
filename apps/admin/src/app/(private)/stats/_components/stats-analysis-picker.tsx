@@ -44,8 +44,7 @@ export function StatsAnalysisPicker({
         render={
           <Button
             aria-label={`Choose analysis. Current: ${selectedView.label}`}
-            // The chevron trails the label, so the label, not a glyph, is what sits on the edge.
-            className="text-title -my-1 h-auto max-w-full justify-start border-0 px-2 py-1 text-left [--edge-text:--spacing(2)] [--glyph-blank:0]!"
+            className="text-title -my-1 h-auto max-w-full justify-start border-0 px-2 py-1 text-left [--edge-text:--spacing(2)]"
             edge="start"
             variant="ghost"
           />
