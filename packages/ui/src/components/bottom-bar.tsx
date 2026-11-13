@@ -9,8 +9,9 @@ const ROW_CLASS = "w-full px-(--page-gutter)";
  *
  * It reaches the frame's edges by the frame's own padding (`--page-gutter`, `--page-bottom`) and
  * rests on what the frame docks under it (`--page-dock`), so it's the same piece in the app's
- * shell and in a full-screen task. `className` is for the frame's wrapper, to give the row the
- * frame's column; a screen passes none.
+ * shell and in a full-screen task. Its buttons have the same room over and under them as at
+ * their sides on a phone, 16px. `className` is for the frame's wrapper, to give the row the
+ * frame's column and gutter; a screen passes none.
  */
 function BottomBar({
   children,
@@ -36,7 +37,7 @@ function BottomBar({
       <div
         className={cn(
           ROW_CLASS,
-          "flex flex-col gap-2 pt-3 pb-[max(0.75rem,var(--page-safe-bottom))] lg:items-end",
+          "flex flex-col gap-2 pt-4 pb-[max(1rem,var(--page-safe-bottom))] lg:items-end",
           className,
         )}
         data-slot="bottom-bar-row"
