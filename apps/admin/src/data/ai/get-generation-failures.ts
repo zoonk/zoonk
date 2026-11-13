@@ -4,7 +4,7 @@ import { prisma, sql } from "@zoonk/db";
 
 export const STUCK_RUNNING_MINUTES = 60;
 
-const LATEST_FAILURES_PER_WORKFLOW = 5;
+export const LATEST_FAILURES_PER_WORKFLOW = 50;
 
 export type GenerationWorkflow =
   | "lessonContent"
