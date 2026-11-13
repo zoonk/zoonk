@@ -339,6 +339,7 @@ The questions of [the craft read](../SKILL.md#the-craft-read), answered for one 
 11. **Icons.** One family, one line weight, sizes that match their text, the usual glyph for back, close, more and forward? (I1 to I5)
 12. **Balance.** One filled button? Anything empty, centered in a start-aligned column, or bleeding on one side only? (D3, D4, E7, E9)
 13. **States, if shown.** Is the selected, focused, disabled or busy thing drawn the system's way, and did anything move? (X1 to X3)
+14. **Siblings, if given.** Does each piece here look and act like the same piece on the existing screen that does the same thing: words, icon, size, place, state?
 
 Then one line: would a principal designer find anything to pick at here, and what first?
 
