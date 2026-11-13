@@ -1,6 +1,5 @@
 import { type TransactionClient, sql } from "@zoonk/db";
 import { z } from "zod";
-import { CURRENT_STEPS } from "../../../library/lessons/lesson-versions";
 import {
   type Json,
   NOT_CURRENT_SCREEN,
@@ -9,6 +8,7 @@ import {
   nonEmptyText,
   refuse,
 } from "../_utils/resolved-change";
+import { loadBankItem } from "./bank-item";
 import {
   type FieldChange,
   defineFixHandler,
@@ -96,46 +96,16 @@ async function resolveExplanation(
     : { effects: [], ok: true, stored, unit: { id: row.itemId, kind: "item" } };
 }
 
-/**
- * Only a question nothing else depends on: a current screen asking it would show it again, and a
- * set's questions share one passage.
- */
 type RetirementStored<Op extends "retire" | "unretire"> = { id: string; model: "Item"; op: Op };
 
 async function resolveItemRetire(
   db: TransactionClient,
   id: string,
 ): Promise<Resolution<RetirementStored<"retire">>> {
-  const item = await db.item.findUnique({
-    select: {
-      _count: { select: { steps: { where: CURRENT_STEPS } } },
-      retiredAt: true,
-      setId: true,
-      skill: { select: { visibility: true } },
-    },
-    where: { id },
-  });
+  const loaded = await loadBankItem(db, id);
 
-  if (!item) {
-    return refuse(`No Item with id ${id}.`);
-  }
-
-  if (item.skill.visibility === "private") {
-    return refuse(PRIVATE_CONTENT);
-  }
-
-  if (item.retiredAt) {
-    return refuse(`Item ${id} is already retired.`);
-  }
-
-  if (item.setId) {
-    return refuse(
-      "This question belongs to a set that shares one passage; retiring one alone is a later phase.",
-    );
-  }
-
-  if (item._count.steps > 0) {
-    return refuse("A current lesson screen asks this question; fix that screen instead.");
+  if (!loaded.ok) {
+    return loaded;
   }
 
   return {

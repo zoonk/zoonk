@@ -472,6 +472,13 @@ const REGISTRY: Record<string, Registration[]> = {
       writes: ["lesson.update"],
     },
   ],
+  "staff/content-fixes/handlers/item-content.ts": [
+    {
+      verdict: "marks",
+      why: "bank item content, and which questions skill and exam plans pick",
+      writes: ["item.create", "item.update"],
+    },
+  ],
   "staff/content-fixes/handlers/practice.ts": [
     {
       verdict: "marks",
@@ -1801,6 +1808,51 @@ async function itemFixCase(op: "retire" | "unretire"): Promise<WriterCase> {
   };
 }
 
+async function itemContentCase(op: "replace" | "restore" | "set"): Promise<WriterCase> {
+  const [skill, blueprint] = await Promise.all([skillFixture(), examBlueprintFixture()]);
+  const item = await itemFixture({ examBlueprintId: blueprint.id, skillId: skill.id });
+
+  const replacement = await itemFixture({
+    examBlueprintId: blueprint.id,
+    retiredAt: op === "restore" ? null : new Date(),
+    skillId: skill.id,
+  });
+
+  const [plan, exam] = await Promise.all([
+    learnerPlan({ plan: { sourceSkillIds: [skill.id] } }),
+    examPlan(blueprint.id),
+  ]);
+
+  if (op === "restore") {
+    await prisma.item.update({ data: { retiredAt: new Date() }, where: { id: item.id } });
+  }
+
+  const newId = randomUUID();
+
+  const fields = [{ after: { question: "Fixed" }, before: { question: "Old" }, field: "content" }];
+
+  const changes: Record<typeof op, StoredChange> = {
+    replace: { fields, id: item.id, model: "Item", op: "replace", replacementId: newId },
+    restore: { id: item.id, model: "Item", op: "restore", retires: replacement.id },
+    set: { fields, id: item.id, model: "Item", op: "set" },
+  };
+
+  return {
+    expectWritten: async () => {
+      await expect(
+        prisma.item.findUniqueOrThrow({ where: { id: item.id } }),
+      ).resolves.toMatchObject({ retiredAt: op === "replace" ? expect.any(Date) : null });
+
+      await expect(
+        prisma.plan.findUniqueOrThrow({ where: { id: exam.id } }),
+      ).resolves.toMatchObject({ sourceVersion: exam.sourceVersion + 1 });
+    },
+    plan,
+    root: skillRoot(skill.id),
+    write: () => writeFix({ changes: [changes[op]], unit: { id: item.id, kind: "item" } }),
+  };
+}
+
 const WRITER_CASES: Record<string, Record<string, () => Promise<WriterCase>>> = {
   "library/chapters/attach-course-chapter.ts": { attachChapterToCourse: attachCase },
   "library/curriculum/early-outline-chapter.ts": { findEarlyOutlineChapter: earlyOutlineCase },
@@ -1832,6 +1884,11 @@ const WRITER_CASES: Record<string, Record<string, () => Promise<WriterCase>>> = 
   "library/media/check-image-asset.ts": { removeImageAsset: pictureCase },
   "library/quality/set-aside-published-lesson.ts": { setAsidePublishedLesson: setAsideCase },
   "library/review-flags/rewrite-flagged-drills.ts": { replaceFlaggedDrills: drillsCase },
+  "staff/content-fixes/handlers/item-content.ts": {
+    "replace item": () => itemContentCase("replace"),
+    "restore replaced item": () => itemContentCase("restore"),
+    "reword item": () => itemContentCase("set"),
+  },
   "staff/content-fixes/handlers/practice.ts": {
     "restore item": () => itemFixCase("unretire"),
     "retire item": () => itemFixCase("retire"),

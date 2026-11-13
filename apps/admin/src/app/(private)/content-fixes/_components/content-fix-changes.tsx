@@ -88,8 +88,8 @@ function ValueChange({ change }: { change: ShownChange }) {
 
 type FieldChange = Extract<StoredChange, { op: "set" }>["fields"][number];
 
-function isScreen(model: StoredChange["model"]): boolean {
-  return model === "Step" || model === "StepVariant";
+function hasAnswerKey(model: StoredChange["model"]): boolean {
+  return model === "Step" || model === "StepVariant" || model === "Item";
 }
 
 /**
@@ -145,7 +145,7 @@ function toValueChanges({
     ? values.map((value) => ({
         ...value,
         about: findAbout({ content: field.before, path: value.path }),
-        isAnswerKey: value.isAnswerKey && isScreen(model),
+        isAnswerKey: value.isAnswerKey && hasAnswerKey(model),
         path: `${field.field}.${value.path}`,
       }))
     : [whole];
@@ -194,6 +194,25 @@ function ChangeBody({ change, compact }: { change: StoredChange; compact: boolea
       return change.fields.map((field) => (
         <FieldChanges compact={compact} field={field} key={field.field} model={change.model} />
       ));
+    case "replace":
+      return (
+        <>
+          <p className="text-sm">
+            Retires this question and asks a corrected copy,{" "}
+            <span className="font-mono text-xs">{change.replacementId}</span>, with these words.
+          </p>
+          {change.fields.map((field) => (
+            <FieldChanges compact={compact} field={field} key={field.field} model={change.model} />
+          ))}
+        </>
+      );
+    case "restore":
+      return (
+        <p className="text-sm">
+          Puts this question back in new practice and retires its replacement,{" "}
+          <span className="font-mono text-xs">{change.retires}</span>.
+        </p>
+      );
     case "retire":
       return <p className="text-sm">Takes this question out of new practice.</p>;
     case "unretire":

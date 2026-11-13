@@ -157,13 +157,20 @@ async function deletedExplanationProblem(
     return null;
   }
 
+  const itemIds = changes
+    .filter((change) => change.op === "set" && change.model === "Item")
+    .map((change) => change.id);
+
   const deleted = await db.answerExplanation.findFirst({
     select: { id: true },
-    where: { id: { in: explanationIds }, stepId: { in: [...screenContents(changes).keys()] } },
+    where: {
+      OR: [{ stepId: { in: [...screenContents(changes).keys()] } }, { itemId: { in: itemIds } }],
+      id: { in: explanationIds },
+    },
   });
 
   return deleted
-    ? `Fixing a screen deletes its saved answer explanations, AnswerExplanation ${deleted.id} among them. Leave that change out; a new one is written from the fixed screen.`
+    ? `Fixing a screen or a question deletes its saved answer explanations, AnswerExplanation ${deleted.id} among them. Leave that change out; a new one is written from the fixed content.`
     : null;
 }
 
@@ -171,6 +178,10 @@ async function unitProblem(
   db: TransactionClient,
   { changes, unit }: { changes: readonly StoredChange[]; unit: FixUnit },
 ): Promise<string | null> {
+  if (unit.kind === "item") {
+    return deletedExplanationProblem(db, changes);
+  }
+
   if (unit.kind !== "lesson") {
     return null;
   }

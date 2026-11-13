@@ -95,6 +95,17 @@ const effectSchema = z.discriminatedUnion("kind", [
     .object({ itemId: idSchema, kind: z.literal("itemRestored") })
     .meta({ description: "New practice can pick the item again" }),
   z
+    .object({ count: z.int(), itemId: idSchema, kind: z.literal("itemExplanationsDeleted") })
+    .meta({
+      description: "Explanations of wrong answers written from the old question are deleted",
+    }),
+  z
+    .object({ itemId: idSchema, kind: z.literal("itemReplaced"), replacementId: idSchema })
+    .meta({
+      description:
+        "New practice asks the replacement; answers, history and mistakes stay with the retired original, whose mistakes no longer replay",
+    }),
+  z
     .object({
       id: idSchema,
       kind: z.literal("slugKept"),

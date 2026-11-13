@@ -26,6 +26,10 @@ function describeEffect({
       return "New practice skips the question. Sessions that already hold it keep it.";
     case "itemRestored":
       return "New practice can pick the question again.";
+    case "itemExplanationsDeleted":
+      return `${String(effect.count)} saved ${effect.count === 1 ? "explanation" : "explanations"} of wrong answers to this question ${effect.count === 1 ? "is" : "are"} deleted. New ones are written from the fixed question.`;
+    case "itemReplaced":
+      return "New practice asks the corrected copy instead. Sessions that already hold this question keep grading it, its answers and history stay with it, and its past mistakes no longer replay.";
     case "slugKept":
       return "The title changes, but the address keeps its old slug.";
     default:
@@ -46,7 +50,7 @@ export function ContentFixEffects({
     <ul className="flex flex-col gap-2 text-sm">
       {fix.effects.map((effect) => (
         <li className="flex gap-2" key={JSON.stringify(effect)}>
-          {effect.kind === "answerKeyChanged" ? (
+          {effect.kind === "answerKeyChanged" || effect.kind === "itemReplaced" ? (
             <TriangleAlertIcon
               aria-hidden="true"
               className="text-destructive-text mt-0.5 size-4 shrink-0"
