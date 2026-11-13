@@ -12880,12 +12880,6 @@ msgctxt "BznyT3"
 msgid "E.g., journalism"
 msgstr "예: 언론학"
 
-#: src/profile-questions/profile-chips.tsx
-#: src/profile-questions/profile-question-copy.ts
-msgctxt "toYiVg"
-msgid "Pick up to 3."
-msgstr "3개까지 골라 주세요."
-
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "XnRQI7"
 msgid "What do you do now?"
@@ -12967,6 +12961,11 @@ msgstr "선택 사항이에요. 선택한 내용을 프로필에 저장해 짝�
 msgctxt "FfWAhT"
 msgid "Pick anything that helps."
 msgstr ""
+
+#: src/profile-questions/profile-question-copy.ts
+msgctxt "toYiVg"
+msgid "Pick up to 3."
+msgstr "3개까지 골라 주세요."
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "2423hY"

@@ -12880,12 +12880,6 @@ msgctxt "BznyT3"
 msgid "E.g., journalism"
 msgstr "E.g., journalism"
 
-#: src/profile-questions/profile-chips.tsx
-#: src/profile-questions/profile-question-copy.ts
-msgctxt "toYiVg"
-msgid "Pick up to 3."
-msgstr "Pick up to 3."
-
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "XnRQI7"
 msgid "What do you do now?"
@@ -12967,6 +12961,11 @@ msgstr "Optional. What you pick is saved to your profile so your buddy can adapt
 msgctxt "FfWAhT"
 msgid "Pick anything that helps."
 msgstr "Pick anything that helps."
+
+#: src/profile-questions/profile-question-copy.ts
+msgctxt "toYiVg"
+msgid "Pick up to 3."
+msgstr "Pick up to 3."
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "2423hY"

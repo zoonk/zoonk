@@ -12880,12 +12880,6 @@ msgctxt "BznyT3"
 msgid "E.g., journalism"
 msgstr "例：ジャーナリズム"
 
-#: src/profile-questions/profile-chips.tsx
-#: src/profile-questions/profile-question-copy.ts
-msgctxt "toYiVg"
-msgid "Pick up to 3."
-msgstr "3つまで選んでください。"
-
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "XnRQI7"
 msgid "What do you do now?"
@@ -12967,6 +12961,11 @@ msgstr "回答は任意です。選んだ内容はプロフィールに保存さ
 msgctxt "FfWAhT"
 msgid "Pick anything that helps."
 msgstr ""
+
+#: src/profile-questions/profile-question-copy.ts
+msgctxt "toYiVg"
+msgid "Pick up to 3."
+msgstr "3つまで選んでください。"
 
 #: src/profile-questions/profile-question-copy.ts
 msgctxt "2423hY"
