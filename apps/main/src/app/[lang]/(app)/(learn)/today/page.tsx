@@ -55,13 +55,13 @@ type Explanation = { id: string; title: string };
 
 /**
  * One row the learner taps to pick the explanation up, highlighted like Today's next row: the goal
- * box under it keeps the page's one filled button.
+ * box under it keeps the page's one filled button. It ends where the goal box ends.
  */
 async function ExplanationContinue({ explanation }: { explanation: Explanation }) {
   const t = await getExtracted();
 
   return (
-    <section aria-label={t("Your quick explanation")}>
+    <section aria-label={t("Your quick explanation")} className="lg:max-w-column">
       <LessonPlayerPreload />
       <ListGroup>
         <ListRowLink className={CURRENT_ROW_CLASS} href={`/explain/${explanation.id}`} prefetch>
