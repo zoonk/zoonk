@@ -5,9 +5,9 @@ import {
   type ServiceTier,
   chooseServiceTier,
 } from "@zoonk/ai/provider-options";
+import { type ChallengeCaseParams } from "@zoonk/ai/tasks/challenge/schema";
+import { loadChallengeLessonDraft } from "@zoonk/core/library/challenges/lesson-draft";
 import { parseChallengeLessonSpec } from "@zoonk/core/library/challenges/lesson-spec";
-import { writeChallengeLessonContent } from "@zoonk/core/library/challenges/write";
-import { getScopeModel } from "@zoonk/core/library/curriculum/scope";
 import {
   canRedraftLesson,
   getLessonGenerationState,
@@ -51,14 +51,21 @@ export type LanguageDraftStage = {
   status: "languageDrafted";
 };
 
+export type ChallengeDraftStage = {
+  params: ChallengeCaseParams;
+  review: boolean;
+  status: "challengeDraft";
+};
+
 type WriteResult =
   | Exclude<LessonWriteOutcome, { status: "heldBack" }>
   | { status: "heldBack" }
   | { draft: LessonDraftState; imageScope: ImageScope; status: "drafted" }
-  | LanguageDraftStage;
+  | LanguageDraftStage
+  | ChallengeDraftStage;
 export type LessonWriteStage =
   | LessonWriteOutcome
-  | Extract<WriteResult, { status: "drafted" | "languageDrafted" }>;
+  | Extract<WriteResult, { status: "drafted" | "languageDrafted" | "challengeDraft" }>;
 
 export type WriteInput = {
   analytics?: ContentAnalytics;
@@ -123,18 +130,15 @@ async function write({
   }
 
   if (parseChallengeLessonSpec(lesson.spec)) {
-    const challenge = await writeChallengeLessonContent({
+    const challenge = await loadChallengeLessonDraft({
       analytics,
       lessonId: input.lessonId,
-      model: getScopeModel(lesson),
       serviceTier,
       speed,
       workflowRunId: input.workflowRunId,
     });
 
-    return challenge.status === "published"
-      ? { check: null, imageScope: null, owesSentenceOrders: false, status: "published" }
-      : toOutcome(challenge.status);
+    return challenge ? { ...challenge, status: "challengeDraft" } : { status: "notWritten" };
   }
 
   const reuse = await loadLessonReuse({ forExam: input.forExam, lessonId: input.lessonId });
@@ -180,11 +184,13 @@ export async function writeLessonContentStep(input: WriteInput): Promise<LessonW
 
   const written = await write({ input, lesson });
 
-  if (written.status === "drafted" || written.status === "languageDrafted") {
+  if (
+    written.status === "drafted" ||
+    written.status === "languageDrafted" ||
+    written.status === "challengeDraft"
+  ) {
     return written;
   }
-
-  await stream.status({ entityId: input.lessonId, status: "completed", step: "writeLesson" });
 
   if (written.status !== "heldBack") {
     return written;
@@ -222,10 +228,9 @@ export async function checkLessonContentStep({
     return checked;
   }
 
-  await using stream = createStepStream<LessonStreamStep>();
-  await stream.status({ entityId: input.lessonId, status: "completed", step: "writeLesson" });
-
   if (checked.status === "published") {
+    await using stream = createStepStream<LessonStreamStep>();
+    await stream.status({ entityId: input.lessonId, status: "completed", step: "writeLesson" });
     return { check: checked.check, imageScope, owesSentenceOrders: false, status: "published" };
   }
 

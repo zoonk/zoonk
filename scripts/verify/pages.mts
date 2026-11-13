@@ -30,6 +30,7 @@ import { redactQuery, savedRequest } from "./requests.mts";
 import { findServerPid } from "./server-process.mts";
 import { renderNavigationSheet, renderSheets } from "./sheets.mts";
 import { signIn } from "./sign-in.mts";
+import { walkStates } from "./states.mts";
 import { SCHEMES, THROTTLING, VIEWPORT_NAMES, type ViewportName, pick } from "./viewports.mts";
 
 /**
@@ -137,6 +138,12 @@ try {
 
     for (const viewport of viewports) {
       const load = await measureLoad(target, { path, schemes, viewport });
+
+      // Craft's X3 on the two sizes the craft read uses: what a person's taps and typing move.
+      if (navigationViewports.includes(viewport)) {
+        load.findings.push(...(await walkStates(target, { path, viewport })));
+      }
+
       const failing = load.findings.filter((finding) => finding.level === "fail").length;
 
       console.log(

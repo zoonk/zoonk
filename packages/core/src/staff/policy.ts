@@ -54,6 +54,7 @@ const reviewedFields: Readonly<Record<string, readonly string[]>> = {
   StepExampleLine: ["contextKey"],
   StepSource: ["contentHash"],
   StepVariant: ["key"],
+  StepVariantGeneration: ["key"],
   TargetCutoff: ["targetKey"],
   TestSubmissionClaim: ["key"],
   WarmUp: ["identityKey"],

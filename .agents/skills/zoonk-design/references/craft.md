@@ -306,7 +306,7 @@ One filled button in view, outside a dialog. Around it, buttons step down: outli
 
 ### X1. Every control has every state
 
-A control has a rest, hover, pressed, keyboard-focus, disabled and busy look. Hover and pressed have more contrast than rest. Focus is a ring at least 2px thick with 3:1 contrast against what's around it, never clipped. What tells a control's shape or state apart from the page (an off switch's track, an empty radio's or checkbox's ring, a slider's thumb, a white belt's outline, a sheet's handle, a keycap's mark, a row's chevron) has 3:1 contrast too.
+A control has a rest, hover, pressed, keyboard-focus, disabled and busy look. A control that is acting is busy (a spinner in its icon's place, a second press blocked), never only disabled. Hover and pressed have more contrast than rest. Focus is a ring at least 2px thick with 3:1 contrast against what's around it, never clipped. What tells a control's shape or state apart from the page (an off switch's track, an empty radio's or checkbox's ring, a slider's thumb, a white belt's outline, a sheet's handle, a keycap's mark, a row's chevron) has 3:1 contrast too.
 
 - **Check.** In a focus screenshot the focused control is found at a glance; a disabled one reads as off, not broken.
 - **Usual break.** A hand-built clickable `div` with a hover fill and no focus ring.
@@ -322,8 +322,58 @@ A pick is a 2px ring in the text color on its tint (`ChoiceList`, `AnswerOption`
 
 Hover, focus, selected, busy and disabled never change a control's size or shift its neighbors.
 
-- **Check.** Between two state screenshots nothing else moves.
-- **Usual break.** A heavier weight or a thicker border on the selected item.
+A screen that changes height or moves a neighbor when data, a picture or a font arrives after the first paint breaks it too.
+
+- **Check.** Between two state screenshots nothing else moves. `verify:pages` measures it on the phone and the laptop: it types in each field, picks each choice, opens and closes each fold, tab, menu and dialog, hovers and presses each control, and leads to anything that moved or a control that changed size, with the pixels (it blocks every save, so a pick that saves shows what a failed save shows, and the lead says so); it also leads to any layout shift while the page loads. States it can't reach without submitting (saving, a check that calls the server, a busy button, a lesson's result) stay with the craft read: put their screenshots side by side.
+- **Usual break.** A heavier weight or a thicker border on the selected item. A hint that appears and pushes the form down. A spinner larger than the icon it replaces. A picture with no reserved size.
+
+## Behavior
+
+What a control does when it's pressed, by key, click or tap, is part of how it's drawn: the same piece does the same thing on every screen. Each key the product answers is in one list in the kit (`SHORTCUTS`), which the handlers, the keycaps and what screen readers are told all read, and the piece that draws a control carries its key. The design site's Keyboard page shows the list.
+
+### B1. The same control answers the same keys everywhere
+
+A sidebar's toggle, a task's ✕, a page's way back, a main action, a question's options, a "…" and a panel's close each do the same thing, by key and by click, on every screen that has one: ⌘B (Ctrl+B) collapses whichever sidebar is on screen, Esc presses a task's ✕, Enter presses the main action, ↑ and ↓ move between the options of a pick-one control.
+
+- **Check.** Name this screen's controls that exist on another screen. Press each one's key here and there: the same thing happens.
+- **Usual break.** A second copy of the control drawn without the piece that carries its key: a task's own sidebar toggle without ⌘B, a main button from `buttonVariants` that Enter doesn't press, a key bound in a screen's own file.
+
+### B2. Every shortcut shows its keycap
+
+On a device with a keyboard, a control that answers a key shows it: in the control, or in its tooltip when it's an icon button. The keycap's key does what a click does, and screen readers are told it (`aria-keyshortcuts`).
+
+- **Check.** For each keycap on screen, press its key: the same thing happens as on a click. For each key the screen answers, find its keycap.
+- **Usual break.** Enter bound and no ⏎ drawn. A keycap or an `aria-keyshortcuts` typed by hand, which drifts from the handler.
+
+### B3. A key presses only what is on screen
+
+No key acts through a control the learner can't see. Where a back link is drawn only on a phone, Esc goes back only on a phone.
+
+- **Check.** With nothing focused and nothing open, press Esc and Enter. If the screen changes, point at the control that did it.
+- **Usual break.** A back link hidden on a laptop that still answers Esc.
+
+### B4. A panel closes three ways
+
+A dialog, a sheet or a side panel closes with Esc, with a press outside it, and with a control you can see: its ✕ beside its title, one size in every panel. A sheet on a phone also closes with a swipe down. Only an alert that asks before something that can't be undone ignores a press outside.
+
+What opens decides its panel: an alert for a question before something that can't be undone; a bottom sheet on a phone and a centered dialog on a computer for a short form, a pick or a detail; a side panel on a computer only for something edited beside the page it changes; a menu or a popover for a few choices tied to a control. A bottom-docked box is a phone's shape (where the thumb is, closed with a swipe); on a computer the eyes and pointer are in the middle of the window.
+
+- **Check.** Open it and close it each way. On a computer, find its ✕ without looking for a grab handle.
+- **Usual break.** A sheet with a grab handle and no ✕, docked at the bottom of a computer's window.
+
+### B5. Focus goes in, and comes back
+
+A panel opens with focus on its first field, or on itself when it has none, and closes with focus back on what opened it. A task's "…" is the one exception: when it closes, focus goes back into the task (its main action when it can be pressed, otherwise its body), so Enter goes on with the task and doesn't reopen the menu.
+
+- **Check.** After opening, Tab stays inside the panel. After closing, the focused element is the trigger.
+- **Usual break.** Focus left on the page behind a dialog, or dropped to the top of the page on close.
+
+### B6. Esc does what ✕ does, and neither loses work
+
+On a task, Esc closes what is open; with nothing open, it presses ✕, so it goes where ✕ goes. Where leaving loses something (an answer not yet checked, unsent text, a running clock), ✕ and Esc both ask first, with the same question. Esc does nothing while a text field has focus.
+
+- **Check.** Type an answer, move focus off the field, press Esc: the same question ✕ asks. With nothing to lose, Esc and ✕ land on the same page.
+- **Usual break.** A switch that turns Esc off on one screen while ✕ beside it still leaves with one click; a task that asks on ✕ and leaves on Esc.
 
 ## The craft read
 
@@ -342,6 +392,10 @@ The questions of [the craft read](../SKILL.md#the-craft-read), answered for one 
 11. **Icons.** One family, one line weight, sizes that match their text, the usual glyph for back, close, more and forward? (I1 to I5)
 12. **Balance.** One filled button? Anything empty, centered in a start-aligned column, or bleeding on one side only? (D3, D4, E7, E9)
 13. **States, if shown.** Is the selected, focused, disabled or busy thing drawn the system's way, and did anything move? (X1 to X3)
+14. **Siblings, if given.** Does each piece here look and act like the same piece on the existing screen that does the same thing: words, icon, size, place, state?
+15. **Keys and closes, at 1440.** Does the main action wear ⏎, and does each icon button whose tooltip is shown wear its key? Does every dialog, sheet and side panel have its ✕ beside its title, one size in each? Is a short form on a computer centered, not docked at the bottom? (B2, B4)
+
+A still picture can't show what a key does, where focus goes or whether Esc asks first (B1, B3, B5, B6): say so, and leave them to the walk in the running app.
 
 Then one line: would a principal designer find anything to pick at here, and what first?
 
