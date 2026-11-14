@@ -555,10 +555,7 @@ private struct LessonUnavailableBody: View {
         localized: "Everything you learned comes with you.", table: "Player",
         comment: "A guest used the lessons they can try; signing up keeps their progress")
     case .limitReached:
-      let stillFree = String(
-        localized: "You can still review and practice your mistakes.", table: "Player")
-      return ([stillFree] + [noticeLine.map { String(localized: $0) }].compactMap(\.self))
-        .joinedSentences()
+      return noticeLine.map { String(localized: $0) }
     }
   }
 
