@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "@/i18n/navigation";
+import { answerHere, openingHere } from "@/lib/session/tap-answer";
 import { type ConversationConnection } from "@zoonk/learn/language/conversation";
 import { useCallback } from "react";
 import {
@@ -17,7 +18,14 @@ export function useOpenLanguageConversation({ from }: { from?: "exam" } = {}) {
 
   return useCallback(
     async (request: LanguageConversationRequest): Promise<OpenedCall | { limit: CallLimit }> => {
-      const started = await startLanguageConversationAction(request);
+      const answered = await answerHere(startLanguageConversationAction(request), openingHere());
+
+      // Leaving cancels following the start; the start itself still stands.
+      if (typeof answered === "boolean") {
+        return answered;
+      }
+
+      const started = answered.answer;
 
       if (!started) {
         return false;

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "@/i18n/navigation";
+import { answerHere, openingHere } from "@/lib/session/tap-answer";
 import { type TestOutStart } from "@zoonk/learn/chapter";
 import { useCallback } from "react";
 import { TEST_OUT_FROM_SESSION_PARAM, TEST_OUT_RUN_PARAM } from "./test-out-params";
@@ -19,7 +20,14 @@ export function useStartTestOut() {
       fromSession?: boolean;
       goalId: string;
     }): Promise<TestOutStart> => {
-      const writing = await requestTestOutWriting({ chapterId, goalId });
+      const asked = await answerHere(requestTestOutWriting({ chapterId, goalId }), openingHere());
+
+      // Leaving cancels following the start; the start itself still stands.
+      if (typeof asked === "boolean") {
+        return { status: asked ? "started" : "failed" };
+      }
+
+      const writing = asked.answer;
 
       if (writing.status === "refused") {
         return writing;

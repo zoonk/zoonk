@@ -5,6 +5,7 @@ import {
   playDuel,
 } from "./checkpoint-fixtures";
 import { expect, test } from "./fixtures";
+import { holdActionAnswer } from "./held-action";
 import { openAs, pressUntil } from "./study-day";
 
 const question = (number: number) => `Question ${number} of ${CHECKPOINT_QUESTIONS}`;
@@ -106,6 +107,25 @@ test.describe("A checkpoint from today's session", () => {
     await page.getByRole("button", { name: "Start" }).click();
     await expect(page).toHaveURL(checkpointUrl);
     await expect(page.getByRole("progressbar", { name: question(2) })).toBeAttached();
+
+    await page.context().close();
+  });
+
+  test("leaving while its challenge starts keeps the learner where they went", async ({
+    browser,
+  }) => {
+    const { boss, user } = await createCheckpointLearner();
+    const page = await openAs(browser, user);
+    await page.goto(`/challenge/${boss.id}`);
+    const start = await holdActionAnswer(page, `/challenge/${boss.id}`);
+
+    await page.getByRole("button", { name: "Start" }).click();
+    await start.held;
+    await page.getByRole("link", { name: "Leave" }).click();
+    await expect(page).toHaveURL(/\/today$/u);
+
+    expect(await start.release(/\/checkpoint\//u)).toBe(false);
+    await expect(page).toHaveURL(/\/today$/u);
 
     await page.context().close();
   });

@@ -3,6 +3,8 @@
 import { useRouter } from "@/i18n/navigation";
 import { MOCK_ENTRY_HREFS } from "@/lib/mocks/mock-entry-hrefs";
 import { type QuestionWriting, requestQuestionWriting } from "@/lib/questions/question-writing";
+import { answerHere, openingHere } from "@/lib/session/tap-answer";
+import { useResetWhenDone } from "@/lib/use-reset-when-done";
 import { useWorkflowRun } from "@/lib/workflow/use-workflow-run";
 import { type MockOptionView, type MockOptionsView } from "@zoonk/core/exams/mocks/contract";
 import {
@@ -85,33 +87,43 @@ function WritingMock({
 
 type Writing = { generationId: string; option: MockOptionView };
 
-export function MockChooserClient({
+type Here = () => Promise<boolean>;
+
+type MockChooserClientProps = { bar: React.ReactNode; goalId: string; view: MockOptionsView };
+
+function MockChooserVisit({
   bar,
   goalId,
+  onDone,
   view,
-}: {
-  bar: React.ReactNode;
-  goalId: string;
-  view: MockOptionsView;
-}) {
+}: MockChooserClientProps & { onDone: () => void }) {
   const router = useRouter();
   const [busy, startTransition] = useTransition();
   const [status, setStatus] = useState<MockChooserStatus>({ kind: "choosing" });
   const [writing, setWriting] = useState<Writing | null>(null);
 
-  /** A start the server couldn't answer is a failed start, never an error page. */
+  /**
+   * A start the server couldn't answer is a failed start, never an error page. Leaving cancels
+   * following it (null); the start itself still stands.
+   */
   const startMock = async ({
     acceptFewer,
+    here,
     option,
   }: {
     acceptFewer: boolean;
+    here: Here;
     option: MockOptionView;
-  }): Promise<MockStartOutcome> => {
-    const { data: outcome } = await safeAsync(() =>
-      startAnytimeMockAction(goalId, { ...toChoice(option), acceptFewer }),
+  }): Promise<MockStartOutcome | null> => {
+    const { data: answered } = await safeAsync(() =>
+      answerHere(startAnytimeMockAction(goalId, { ...toChoice(option), acceptFewer }), here),
     );
 
-    return outcome ?? { status: "failed" };
+    if (answered === true) {
+      return null;
+    }
+
+    return answered ? answered.answer : { status: "failed" };
   };
 
   const open = ({ option, outcome }: { option: MockOptionView; outcome: MockStartOutcome }) => {
@@ -124,11 +136,24 @@ export function MockChooserClient({
     setStatus(toStatus({ option, outcome }));
   };
 
-  const startWithWhatThereIs = async (option: MockOptionView) =>
-    open({ option, outcome: await startMock({ acceptFewer: true, option }) });
+  const startWithWhatThereIs = async (option: MockOptionView, here: Here) => {
+    const outcome = await startMock({ acceptFewer: true, here, option });
 
-  const write = async (option: MockOptionView) => {
-    const result = await requestMockWriting({ goalId, option });
+    if (outcome) {
+      open({ option, outcome });
+    }
+  };
+
+  const write = async (option: MockOptionView, here: Here) => {
+    const { data: asked } = await safeAsync(() =>
+      answerHere(requestMockWriting({ goalId, option }), here),
+    );
+
+    if (asked === true) {
+      return;
+    }
+
+    const result: QuestionWriting = asked ? asked.answer : { status: "failed" };
 
     if (result.status === "writing") {
       setWriting({ generationId: result.generationId, option });
@@ -145,21 +170,22 @@ export function MockChooserClient({
       return;
     }
 
-    await startWithWhatThereIs(option);
+    await startWithWhatThereIs(option, here);
   };
 
   const begin = (option: MockOptionView) =>
     startTransition(async () => {
+      onDone();
+      const here = openingHere();
       const acceptFewer = status.kind === "short" && status.optionKey === getMockOptionKey(option);
       setStatus({ kind: "choosing" });
-      const outcome = await startMock({ acceptFewer, option });
+      const outcome = await startMock({ acceptFewer, here, option });
 
-      if (outcome.status === "needsQuestions") {
-        await write(option);
-        return;
+      if (outcome?.status === "needsQuestions") {
+        await write(option, here);
+      } else if (outcome) {
+        open({ option, outcome });
       }
-
-      open({ option, outcome });
     });
 
   const screen = {
@@ -177,7 +203,7 @@ export function MockChooserClient({
   return (
     <WritingMock
       generationId={writing.generationId}
-      onReady={() => startTransition(() => startWithWhatThereIs(writing.option))}
+      onReady={() => startTransition(() => startWithWhatThereIs(writing.option, openingHere()))}
       restart={async () => {
         const again = await requestMockWriting({ goalId, option: writing.option });
         return again.status === "writing" ? again.generationId : null;
@@ -185,4 +211,10 @@ export function MockChooserClient({
       screen={screen}
     />
   );
+}
+
+/** Back or a link shows this page as it was left, so a visit that started a mock starts over. */
+export function MockChooserClient(props: MockChooserClientProps) {
+  const reset = useResetWhenDone();
+  return <MockChooserVisit key={reset.key} {...props} onDone={reset.done} />;
 }
