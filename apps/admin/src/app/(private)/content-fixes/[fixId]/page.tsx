@@ -5,16 +5,14 @@ import {
   AdminDetailHeaderSkeleton,
   AdminDetailPage,
 } from "@/components/admin-detail";
-import { AdminDisclosure } from "@/components/admin-json";
 import { AdminSection, AdminSectionSkeleton } from "@/components/admin-section";
 import { DetailField, DetailFields } from "@/components/detail-field";
 import { StateMark } from "@/components/state-mark";
 import { getContentFix, rowKeyOf } from "@/data/content-fixes/get-content-fix";
-import { capitalize, formatDate, formatDateTime } from "@/lib/format";
+import { formatDate, formatDateTime } from "@/lib/format";
 import { languagePairName } from "@/lib/language-filter";
 import { LINK_CLASS } from "@/lib/link-class";
-import { getEnvironment } from "@zoonk/utils/environment";
-import { MAIN_URL, getMainPageUrl } from "@zoonk/utils/url";
+import { getMainPageUrl } from "@zoonk/utils/url";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
 import Link from "next/link";
@@ -23,6 +21,7 @@ import { Suspense } from "react";
 import { ContentFixChanges } from "../_components/content-fix-changes";
 import { RevertForm, ReviewBar, ReviewBarSkeleton } from "../_components/content-fix-decision";
 import { ContentFixEffects } from "../_components/content-fix-effects";
+import { ContentFixTechnicalDetails, proposedFact } from "../_components/content-fix-facts";
 import { ContentFixVoice } from "../_components/content-fix-voice";
 import {
   contentFixState,
@@ -115,34 +114,27 @@ function Where({ fix }: { fix: ContentFixDetail }) {
         </DetailFields>
       </AdminSection>
 
-      <AdminDisclosure label="Technical details">
-        <div className="pb-2 text-sm">
-          <DetailFields>
-            <DetailField label="Environment" mono={false}>
-              {capitalize(getEnvironment())} · {new URL(MAIN_URL).host}
-            </DetailField>
-            <DetailField label="Fix id">{fix.id}</DetailField>
-            {fix.changes.map((change) => (
-              <DetailField key={`${rowKeyOf(change)}:${change.op}`} label="Changed row id">
-                {change.id}
-              </DetailField>
-            ))}
-            {fix.changes.map(correctedCopyId).map(
-              (id) =>
-                id && (
-                  <DetailField key={id} label="Corrected copy id">
-                    {id}
-                  </DetailField>
-                ),
-            )}
-            {[...fix.names].map(([id, name]) => (
-              <DetailField key={id} label={name}>
+      <ContentFixTechnicalDetails>
+        <DetailField label="Fix id">{fix.id}</DetailField>
+        {fix.changes.map((change) => (
+          <DetailField key={`${rowKeyOf(change)}:${change.op}`} label="Changed row id">
+            {change.id}
+          </DetailField>
+        ))}
+        {fix.changes.map(correctedCopyId).map(
+          (id) =>
+            id && (
+              <DetailField key={id} label="Corrected copy id">
                 {id}
               </DetailField>
-            ))}
-          </DetailFields>
-        </div>
-      </AdminDisclosure>
+            ),
+        )}
+        {[...fix.names].map(([id, name]) => (
+          <DetailField key={id} label={name}>
+            {id}
+          </DetailField>
+        ))}
+      </ContentFixTechnicalDetails>
     </>
   );
 }
@@ -256,7 +248,6 @@ function Outcome({ fix, viewer }: { fix: ContentFixDetail; viewer: ContentFixVie
 async function ContentFixContent({ params }: Pick<Props, "params">) {
   const [fix, viewer] = await Promise.all([readFix(params), readContentFixViewer()]);
   const isProposed = fix.status === "proposed";
-  const proposedIn = fix.proposerClientId === "admin" ? "Admin" : "the CLI";
 
   return (
     <>
@@ -264,7 +255,7 @@ async function ContentFixContent({ params }: Pick<Props, "params">) {
         alert={fix.status === "stale" ? contentFixStatusLabels.stale : null}
         facts={[
           fix.status !== "stale" && contentFixStatusLabels[contentFixState(fix)],
-          `Proposed ${formatDateTime(fix.createdAt)} by ${fix.proposer?.name ?? "a deleted account"} in ${proposedIn}`,
+          proposedFact(fix),
         ]}
         parents={FIX_PARENTS}
         title={getTitle(fix)}
