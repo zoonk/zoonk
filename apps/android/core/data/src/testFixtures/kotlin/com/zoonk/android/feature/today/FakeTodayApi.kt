@@ -1,7 +1,9 @@
 package com.zoonk.android.feature.today
 
 import com.zoonk.android.data.AuthenticatedSession
+import com.zoonk.android.feature.session.decodeFixture
 import com.zoonk.api.models.LanguageToday
+import com.zoonk.api.models.MemoryInsight
 import com.zoonk.api.models.MistakeListAvailability
 import com.zoonk.api.models.SuggestedGoal
 import com.zoonk.api.models.Today
@@ -56,11 +58,22 @@ class FakeTodayApi(
         goalId: UUID,
     ) = Unit
 
+    /** The quotes insight answers sent, in order. */
+    val insightQuotes = mutableListOf<String?>()
+
+    /** What an insight answer comes back as; the answered insight when null. */
+    var insightAnswer: MemoryInsight? = null
+
     override suspend fun answerInsight(
         session: AuthenticatedSession,
         insightId: UUID,
         accepted: Boolean,
-    ) = Unit
+        quote: String?,
+    ): MemoryInsight {
+        insightQuotes += quote
+        return insightAnswer
+            ?: decodeFixture("memory-insight", "id" to insightId.toString(), "status" to if (accepted) "accepted" else "dismissed")
+    }
 
     override suspend fun answerSuggestedGoal(
         session: AuthenticatedSession,

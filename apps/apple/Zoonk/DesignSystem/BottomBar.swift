@@ -4,8 +4,8 @@ extension View {
   /// Main's `BottomBar`: the one home of a screen's main action, pinned at the bottom in a
   /// `safeAreaBar`, so content scrolls under it with the system's edge effect. Its buttons are 44pt,
   /// 8pt apart in one row, the main action last and taking the room the others leave; at an
-  /// accessibility text size they stack, each as wide as the bar. On a regular width the main action
-  /// sits at the bar's end at its own width instead. Its one line (`note`) floats over the screen just
+  /// accessibility text size they stack, each as wide as the bar. On a wide bar the main action sits
+  /// at the bar's end at its own width instead. Its one line (`note`) floats over the screen just
   /// above the bar, so the bar and its buttons never move when it shows.
   func bottomBar<Actions: View>(
     note: BarNote? = nil, @ViewBuilder _ actions: () -> Actions
@@ -40,7 +40,9 @@ private struct BottomBar<Actions: View>: View {
   @Environment(\.barColumn) private var column
 
   @Environment(\.stacksContent) private var isStacked
-  @Environment(\.horizontalSizeClass) private var sizeClass
+  /// The bar's own width: a page beside another (an iPad's lesson spread) is as narrow as a phone,
+  /// whatever the window's size class says.
+  @State private var width: CGFloat = 0
 
   var body: some View {
     // A bar whose buttons all hide draws nothing, so it takes no room under the content.
@@ -53,7 +55,7 @@ private struct BottomBar<Actions: View>: View {
 
   private func bar(_ buttons: SubviewsCollection) -> some View {
     // Wide, a filling button would read as a banner across the page (main's E-102).
-    let isWide = sizeClass == .regular && !isStacked
+    let isWide = width >= wideBarWidth && !isStacked
 
     return AccessibilityStack(spacing: 8) {
       buttons
@@ -64,6 +66,11 @@ private struct BottomBar<Actions: View>: View {
     .environment(\.mainActionFillsRow, !isWide)
     .environment(\.mainActionMinWidth, isWide ? 160 : nil)
     .frame(maxWidth: .infinity, alignment: isWide ? .trailing : .center)
+    .onGeometryChange(for: CGFloat.self) {
+      $0.size.width
+    } action: {
+      width = $0
+    }
     .barColumn(column)
     .keepsOffFold()
     .overlay(alignment: .top) {
@@ -80,11 +87,14 @@ private struct BottomBar<Actions: View>: View {
   }
 }
 
+/// Main's `sm`, less the scene's margins.
+private let wideBarWidth: CGFloat = 600
+
 extension EnvironmentValues {
-  /// In a bottom bar on a compact width, the main action takes the room its row's other buttons
+  /// In a narrow bottom bar, the main action takes the room its row's other buttons
   /// leave.
   @Entry var mainActionFillsRow = false
-  /// In a bottom bar on a regular width, the main action's least width.
+  /// In a wide bottom bar, the main action's least width.
   @Entry var mainActionMinWidth: CGFloat?
 }
 

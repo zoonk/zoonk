@@ -378,7 +378,7 @@ class FocusTestScreenshots(
               "areaEnds":[{"area":"Administrative law","after":"2026-11-28","before":"2026-11-27","lessonsGained":1},
                {"area":"Mathematics","after":"2026-12-02","before":"2026-11-28","lessonsGained":1}],
               "areaLessons":[{"area":"Statistics","after":3,"before":6}]},
-             "examDocument":"guide","id":"6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1d01","kind":"edited","lessonsSkipped":0,"officialDate":null,
+             "examDocument":"guide","id":"6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1d01","kind":"edited","lessonsSkipped":0,"officialDate":null,"quote":"quote-shown",
              "operations":[{"kind":"focusAreas","areas":["Administrative law","Mathematics"]}],"reason":null,"seen":false,
              "source":"focusTest","status":"proposed","todaySession":null}
             """

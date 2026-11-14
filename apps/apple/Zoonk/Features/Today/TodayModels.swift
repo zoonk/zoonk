@@ -103,6 +103,7 @@ struct TodayView: Decodable, Equatable, Sendable {
     let kind: String
     let officialDate: OfficialDate?
     let operations: [PlanChangeOperation]
+    let quote: PlanChangeQuote
     let reason: String?
     let source: String
     let status: String

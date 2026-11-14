@@ -1,8 +1,7 @@
 import { defineRule } from "@oxlint/plugins";
 import { elementName } from "../utils/jsx.js";
 
-const MAIN_ACTIONS =
-  /^(?:EnterButton|MainSubmitButton|OnboardingPrimaryButton|QuestionMainAction|TaskMainButton)$/u;
+const MAIN_ACTIONS = /^(?:EnterButton|OnboardingPrimaryButton|QuestionMainAction|TaskMainButton)$/u;
 
 const BUSY = /^(?:is)?(?:pending|saving|submitting)$/iu;
 

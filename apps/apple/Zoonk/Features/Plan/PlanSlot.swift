@@ -580,10 +580,9 @@ struct PlanSuggestionSection: View {
   }
 }
 
+/// Its Resume is the Plan's bottom bar (`resumeGoalBar`), so the card only says what pausing means.
 private struct PlanPausedSlot: View {
   @Environment(PlanStore.self) private var store
-  @State private var isResuming = false
-  @State private var failure: GoalStatusOutcome?
 
   let context: PlanContext
 
@@ -614,47 +613,8 @@ private struct PlanPausedSlot: View {
       }
       .typeStyle(.note)
       .foregroundStyle(.mutedForeground)
-
-      Button {
-        Task { await resume() }
-      } label: {
-        Text("Resume", tableName: "Plan", comment: "Resumes the paused goal")
-      }
-      .buttonStyle(.outline)
-      .disabled(isResuming)
-
-      switch failure {
-      case .limitReached:
-        FailureLine(message: GoalError.resumeLimit)
-          .typeStyle(.note)
-      case .failed:
-        FailureLine(
-          message: LocalizedStringResource(
-            "That didn't save. Try again.", table: "Plan",
-            comment: "Resuming the paused goal didn't save")
-        )
-        .typeStyle(.note)
-      case .saved, nil:
-        EmptyView()
-      }
     }
     .loads(preview, refreshable: false)
-  }
-
-  private func resume() async {
-    isResuming = true
-    failure = nil
-
-    switch await store.setStatus(.active, goalId: context.goal.id) {
-    case .done(.saved), .obsolete:
-      break
-    case .done(let refused):
-      failure = refused
-    case .failed:
-      failure = .failed
-    }
-
-    isResuming = false
   }
 }
 

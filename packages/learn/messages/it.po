@@ -3194,6 +3194,7 @@ msgid "Leave for now?"
 msgstr "Vuoi uscire per ora?"
 
 #: src/essay/essay-skip-button.tsx
+#: src/onboarding/steps/placement-waiting.tsx
 #: src/onboarding/steps/step-form.tsx
 #: src/onboarding/test-outcome.tsx
 #: src/plan/plan-bases-choices.tsx
@@ -3406,19 +3407,16 @@ msgid "From now on, review and mock exams."
 msgstr "Da ora in poi, ripasso e simulazioni."
 
 #: src/exam/exam-moment-card.tsx
-#: src/today/today-exam-moment.tsx
 msgctxt "VYBPRQ"
 msgid "The final stretch"
 msgstr "L’ultimo tratto"
 
 #: src/exam/exam-moment-card.tsx
-#: src/today/today-exam-moment.tsx
 msgctxt "Qr0X96"
 msgid "{exam} is tomorrow"
 msgstr "{exam} è domani"
 
 #: src/exam/exam-moment-card.tsx
-#: src/today/today-exam-moment.tsx
 msgctxt "7OX7b1"
 msgid "{exam} is today"
 msgstr "{exam} è oggi"
@@ -3430,20 +3428,9 @@ msgstr "Aggiungi il risultato ufficiale quando viene pubblicato."
 
 #: src/exam/exam-moment-card.tsx
 #: src/exam/exam-result-section.tsx
-#: src/today/today-exam-moment.tsx
 msgctxt "yMXlRJ"
 msgid "How did it go?"
 msgstr "Com’è andata?"
-
-#: src/exam/exam-moment-card.tsx
-msgctxt "GDT0eI"
-msgid "Add your result"
-msgstr "Aggiungi il tuo risultato"
-
-#: src/exam/exam-moment-card.tsx
-msgctxt "0LZY2s"
-msgid "See your exam"
-msgstr "Vedi il tuo esame"
 
 #: src/exam/exam-next-mock.tsx
 #: src/plan-diff/use-change-rows.ts
@@ -3810,7 +3797,6 @@ msgstr "Non siamo riusciti a inviare il tuo messaggio. Riprova o scrivici a hell
 
 #: src/focus-test/focus-test-flow.tsx
 #: src/focus-test/focus-test-screens.tsx
-#: src/onboarding/steps/placement-waiting.tsx
 msgctxt "WYzHAI"
 msgid "Skip for now"
 msgstr "Salta per ora"
@@ -4403,9 +4389,10 @@ msgstr "Stiamo salvando il tuo piano…"
 
 #: src/generation/use-generation-copy.ts
 #: src/onboarding/steps/placement-waiting.tsx
-msgctxt "zI4cUg"
-msgid "Getting your questions ready"
-msgstr "Stiamo preparando le tue domande"
+#: src/questions/test-out-preparing.tsx
+msgctxt "Ge7HX4"
+msgid "Getting your test ready"
+msgstr "Stiamo preparando il tuo test"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "dw8Odu"
@@ -9553,30 +9540,20 @@ msgid "We'll find your level as you study"
 msgstr "Capiremo il tuo livello mentre studi"
 
 #: src/onboarding/steps/placement-waiting.tsx
-msgctxt "kx8w4b"
-msgid "They come from the material you added. Reading it takes a few minutes."
-msgstr "Si basano sul materiale che hai aggiunto. Ci serve qualche minuto per leggerlo."
+msgctxt "MwxYjr"
+msgid "Reading your material takes a few minutes."
+msgstr "Ci serve qualche minuto per leggere il tuo materiale."
 
 #. Shown while the learner waits for their first questions to be prepared. “This” is the wait.
 #: src/onboarding/steps/placement-waiting.tsx
-msgctxt "WFtloO"
-msgid "This usually takes a minute or two."
-msgstr "Di solito ci vuole un minuto o due."
+msgctxt "xBapiR"
+msgid "This takes a minute or two."
+msgstr "Ci vuole un minuto o due."
 
 #: src/onboarding/steps/placement-waiting.tsx
-msgctxt "QRwbAL"
-msgid "Your questions are ready"
-msgstr "Le tue domande sono pronte"
-
-#: src/onboarding/steps/placement-waiting.tsx
-msgctxt "7yADK5"
-msgid "Start them whenever you're ready."
-msgstr "Inizia quando vuoi."
-
-#: src/onboarding/steps/placement-waiting.tsx
-msgctxt "8S9f9-"
-msgid "Your first sessions will ask a few of these instead."
-msgstr "Ti faremo invece alcune di queste domande nelle prime sessioni."
+msgctxt "hzXWla"
+msgid "Your test is ready"
+msgstr "Il tuo test è pronto"
 
 #: src/onboarding/steps/plan-building.tsx
 msgctxt "JoLgk1"
@@ -10285,6 +10262,17 @@ msgctxt "LcFFqV"
 msgid "New lessons start"
 msgstr "Inizio delle nuove lezioni"
 
+#: src/plan/exam-over-actions.tsx
+msgctxt "rBTgSX"
+msgid "Archive goal"
+msgstr "Archivia l’obiettivo"
+
+#: src/plan/exam-over-actions.tsx
+#: src/plan/study-everything.tsx
+msgctxt "t9hafN"
+msgid "Keep studying"
+msgstr "Continua a studiare"
+
 #: src/plan/notice-day.tsx
 msgctxt "tI8qvu"
 msgid "The exam's likely date is now {date}."
@@ -10598,33 +10586,14 @@ msgid "Move your end date to {date}?"
 msgstr "Vuoi spostare la data di fine al {date}?"
 
 #: src/plan/plan-past-date-suggestion.tsx
-#: src/plan/use-operation-question.ts
-msgctxt "oACP53"
-msgid "Keep studying after the exam?"
-msgstr "Vuoi continuare a studiare dopo l’esame?"
-
-#: src/plan/plan-past-date-suggestion.tsx
 msgctxt "zBJlTm"
 msgid "{count, plural, one {You have # lesson left. A later end date fits it.} other {You have # lessons left. A later end date fits them.}}"
 msgstr "{count, plural, one {Ti resta # lezione. Posticipando la data di fine avrai il tempo di completarla.} other {Ti restano # lezioni. Posticipando la data di fine avrai il tempo di completarle.}}"
 
 #: src/plan/plan-past-date-suggestion.tsx
-#: src/plan/study-everything.tsx
-#: src/today/today-exam-over.tsx
-msgctxt "t9hafN"
-msgid "Keep studying"
-msgstr "Continua a studiare"
-
-#: src/plan/plan-past-date-suggestion.tsx
 msgctxt "A4AeAM"
 msgid "Find a date"
 msgstr "Trova una data"
-
-#: src/plan/plan-past-date-suggestion.tsx
-#: src/today/today-exam-over.tsx
-msgctxt "rBTgSX"
-msgid "Archive goal"
-msgstr "Archivia l’obiettivo"
 
 #: src/plan/plan-properties.tsx
 msgctxt "oOY_q2"
@@ -11069,6 +11038,11 @@ msgstr "Spostare la sfida di questa settimana al {date}?"
 msgctxt "2s-lg0"
 msgid "Study without an end date?"
 msgstr "Studiare senza una data di fine?"
+
+#: src/plan/use-operation-question.ts
+msgctxt "oACP53"
+msgid "Keep studying after the exam?"
+msgstr "Vuoi continuare a studiare dopo l’esame?"
 
 #: src/plan/use-operation-question.ts
 msgctxt "Q_ZMVF"
@@ -11985,11 +11959,6 @@ msgstr "Qualche domanda su questo capitolo, con i risultati alla fine. Se ottien
 msgctxt "SKxNcp"
 msgid "Start the test"
 msgstr "Inizia il test"
-
-#: src/questions/test-out-preparing.tsx
-msgctxt "Ge7HX4"
-msgid "Getting your test ready"
-msgstr "Stiamo preparando il tuo test"
 
 #: src/questions/test-out-preparing.tsx
 msgctxt "gb32bG"
@@ -13255,6 +13224,16 @@ msgstr "Aggiungi alle lezioni di oggi"
 msgctxt "SVKPfj"
 msgid "Exam choice"
 msgstr "Scelta dell’esame"
+
+#: src/today/today-exam-moment.tsx
+msgctxt "GDT0eI"
+msgid "Add your result"
+msgstr "Aggiungi il tuo risultato"
+
+#: src/today/today-exam-moment.tsx
+msgctxt "0LZY2s"
+msgid "See your exam"
+msgstr "Vedi il tuo esame"
 
 #: src/today/today-exam-moment.tsx
 msgctxt "9HjIgh"

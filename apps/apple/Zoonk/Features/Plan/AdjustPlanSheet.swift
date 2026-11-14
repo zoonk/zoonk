@@ -311,6 +311,8 @@ struct PlanEditorLatestSection: View {
       String(
         localized: "Undone. Your plan is back as it was.", table: "Plan",
         comment: "Says the latest plan change was undone")
+    case .saved(let sentence):
+      sentence
     case .unchanged:
       String(
         localized: "Your plan already works that way.", table: "Plan",

@@ -46,6 +46,7 @@
     <string name="load_failed_try_again">Try again</string>
     <string name="suggestion_view">View</string>
     <string name="suggestion_save_failed">That didn\'t save. Try again.</string>
+    <string name="suggestion_other_options">Other options</string>
     <!-- Above the options of an exam's choice when each candidate takes several of them, such as two of a course's modules. %1$d is how many, at least 2. -->
     <string name="exam_choice_pick_up_to">Pick up to %1$d.</string>
     <string name="disclosure_expanded">Expanded</string>

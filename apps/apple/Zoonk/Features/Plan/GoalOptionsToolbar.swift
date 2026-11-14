@@ -9,6 +9,7 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
   @State private var confirming: Confirmation?
   @State private var isArchiving = false
   @State private var failure: GoalStatusOutcome?
+  @State private var resumeFailure: GoalStatusOutcome?
   @State private var isSaving = false
   @State private var isRenaming = false
   @State private var name = ""
@@ -35,7 +36,9 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
         }
         .disabled(isSaving)
       }
-      .environment(\.resumeGoal, ResumeGoal(isBusy: isSaving, action: resume))
+      .environment(
+        \.resumeGoal, ResumeGoal(isBusy: isSaving, failure: resumeFailure, action: resume)
+      )
       .confirmationDialog(
         Text(
           "Resume your \(goal.displayName) goal?", tableName: "Plan",
@@ -90,14 +93,10 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
         Text("Couldn't save", tableName: "Plan", comment: "Title of an error saving the goal"),
         isPresented: hasFailed, presenting: failure
       ) { _ in
-      } message: { outcome in
-        if outcome == .limitReached {
-          Text(GoalError.resumeLimit)
-        } else {
-          Text(
-            "Check your connection and try again.", tableName: "Plan",
-            comment: "Explains a failed save")
-        }
+      } message: { _ in
+        Text(
+          "Check your connection and try again.", tableName: "Plan",
+          comment: "Explains a failed save")
       }
   }
 
@@ -168,6 +167,7 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
   /// Resuming asks first only when it changes the plan (the pause left lessons behind).
   private func resume() {
     Task {
+      resumeFailure = nil
       isSaving = true
       let preview = store.resumeChangesPlan(goalId: goal.id)
       await preview.load()
@@ -214,6 +214,11 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
         if status == .archived {
           router.showRoot(of: .today)
         }
+      // A failed resume is said over the paused page's bar, where its Resume is.
+      case .done(let refused) where status == .active:
+        resumeFailure = refused
+      case .failed where status == .active:
+        resumeFailure = .failed
       case .done(let refused):
         failure = refused
       case .failed:
@@ -263,7 +268,49 @@ extension View {
 /// The menu's "Resume this goal", for a page whose main action resumes its paused goal.
 struct ResumeGoal {
   var isBusy = false
+  var failure: GoalStatusOutcome?
   var action: () -> Void = {}
+}
+
+extension View {
+  /// A paused goal's page: "Resume" is its bottom bar's main action, and a refused resume is said
+  /// over the bar.
+  func resumeGoalBar(isShown: Bool = true) -> some View {
+    modifier(ResumeGoalBar(isShown: isShown))
+  }
+}
+
+private struct ResumeGoalBar: ViewModifier {
+  @Environment(\.resumeGoal) private var resumeGoal
+
+  let isShown: Bool
+
+  func body(content: Content) -> some View {
+    content
+      .bottomBar(note: isShown ? note : nil) {
+        if isShown {
+          BusyButton(isBusy: resumeGoal.isBusy, action: resumeGoal.action) {
+            Text("Resume", tableName: "Plan", comment: "Resumes the paused goal")
+          }
+          .buttonStyle(.mainAction)
+          .keyboardShortcut(.defaultAction)
+        }
+      }
+  }
+
+  private var note: BarNote? {
+    switch resumeGoal.failure {
+    case .limitReached:
+      BarNote(GoalError.resumeLimit)
+    case .failed:
+      BarNote(
+        LocalizedStringResource(
+          "That didn't save. Try again.", table: "Plan",
+          comment: "Resuming the paused goal didn't save"))
+    case .saved, nil:
+      nil
+    }
+  }
 }
 
 extension EnvironmentValues {

@@ -102,12 +102,17 @@ interface TodayApi {
         goalId: UUID,
     )
 
-    /** Accepting a plan change or a schedule idea applies it; dismissing an applied one undoes it. */
+    /**
+     * Accepting a plan change or a schedule idea applies it; dismissing an applied one undoes it. A plan
+     * change's [quote] is the one the learner saw: when its numbers moved, nothing applies and the insight
+     * comes back pending with today's.
+     */
     suspend fun answerInsight(
         session: AuthenticatedSession,
         insightId: UUID,
         accepted: Boolean,
-    )
+        quote: String?,
+    ): MemoryInsight
 
     /** Starts writing the day's lessons nobody is outlining yet; the next read says they're coming. */
     suspend fun prepareLessons(
@@ -212,9 +217,9 @@ class TodayStore(
     suspend fun answerInsight(
         insight: MemoryInsight,
         accepted: Boolean,
-    ): MutationResult<Unit> =
+    ): MutationResult<MemoryInsight> =
         cache.mutate(invalidating = setOf(DataDomain.Memory, DataDomain.Goals, DataDomain.UserSession)) {
-            api.answerInsight(it, insight.id, accepted)
+            api.answerInsight(it, insight.id, accepted, insight.planChange?.quote)
         }
 
     init {

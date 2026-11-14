@@ -65,6 +65,7 @@
   "not_found_title": "7c76fad69ccfab206d1daeb348478509cf70c273825f8cbf08cf64ae85dcbe7c",
   "player_not_saved": "3ef9a97073667e282b1ee412ab06c48d7c6f71b74e66d9ec7acbe7b0f8438bec",
   "player_not_saved_description": "73a2d464c119c7a41f90e7d08b4eb85e9a9fb3d2db0227b0be6e0646a774ca69",
+  "suggestion_other_options": "fda348302dcb64a9bbb7b8a50cd7a96bf957ee59e7e2c4daae10efce212904d4",
   "suggestion_save_failed": "cf84bd9a1f3bf0c8c3071f7530f4c3ca9586046a179c7579ecabd845dad930c8",
   "suggestion_view": "50eb71cd92f6c182f3d8422d630b5e5aa95bd81c7df3484085786ed0dac5e0ff",
   "task_leave": "e1bb1d841def987889c30c7e783fa24211f01266bb638d633c974d7082d6f4cf",
@@ -120,6 +121,7 @@
     <string name="load_failed_try_again">Noch einmal versuchen</string>
     <string name="suggestion_view">Ansehen</string>
     <string name="suggestion_save_failed">Das wurde nicht gespeichert. Versuch es noch einmal.</string>
+    <string name="suggestion_other_options">Weitere Optionen</string>
     <!-- Above the options of an exam's choice when each candidate takes several of them, such as two of a course's modules. %1$d is how many, at least 2. -->
     <string name="exam_choice_pick_up_to">Wähl bis zu %1$d aus.</string>
     <string name="disclosure_expanded">Aufgeklappt</string>

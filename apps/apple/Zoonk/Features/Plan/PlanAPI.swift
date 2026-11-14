@@ -35,8 +35,10 @@ protocol PlanAPIClient: Sendable {
   func preview(token: String, goalId: String, edits: [PlanEdit]) async throws -> PlanChangePreview?
   /// False when the change is out of date: answered elsewhere, or the plan moved on.
   /// The change as it stands after the answer; nil when it can't take that answer anymore.
-  func decide(token: String, goalId: String, changeId: String, decision: PlanChangeDecision)
-    async throws -> TodayView.PlanChange?
+  func decide(
+    token: String, goalId: String, changeId: String, decision: PlanChangeDecision,
+    quote: PlanChangeQuote?
+  ) async throws -> TodayView.PlanChange?
   /// The learner's switches on an exam goal's Focus test.
   func updateFocusTest(token: String, goalId: String, controls: FocusTestControls) async throws
     -> FocusTestSummary
@@ -69,18 +71,17 @@ struct PlanChangeResult: Decodable {
   let status: String
 
   var outcome: PlanChangeOutcome {
-    guard status == "applied", let change else {
+    guard status == "applied" else {
       return .unchanged
+    }
+
+    guard let change else {
+      return .saved
     }
 
     // The latest change, undone: what it says it did is what the plan no longer does.
     return change.status == "undone" ? .undone : .applied(change)
   }
-}
-
-private struct PlanDecision: Encodable {
-  let status: String
-  let timeZone: String
 }
 
 private struct ExamChoiceRequest: Encodable {
@@ -253,12 +254,11 @@ struct PlanAPI: PlanAPIClient {
     }
   }
 
-  /// Undoes the plan's latest change while the plan is still as it left it.
-  func decide(token: String, goalId: String, changeId: String, decision: PlanChangeDecision)
-    async throws -> TodayView.PlanChange?
-  {
-    let body: Components.Schemas.PlanChangeDecisionInput = try PracticeJSON.recode(
-      PlanDecision(status: decision.rawValue, timeZone: timeZone))
+  func decide(
+    token: String, goalId: String, changeId: String, decision: PlanChangeDecision,
+    quote: PlanChangeQuote?
+  ) async throws -> TodayView.PlanChange? {
+    let body = try PlanChangeDecisionBody(decision, quote: quote, timeZone: timeZone).input
 
     return try await clients.perform(token: token) { client in
       switch try await client.decidePlanChange(

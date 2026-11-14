@@ -8,7 +8,6 @@
   "onboarding_admission_title": "e112594df1cf0b65574c19ffbca67b64f69b072a7eea1977d5aeaf6f7f4528a1",
   "onboarding_aim_by_month": "e675f0231f55a5a23a3574d3040265d714a78e7614e10c66a0faaef3289b16ad",
   "onboarding_aim_change": "4bd8eba6f8237f2133fb6e63b917b39ea6e5f4cabfbe06e71a6d636e35c253df",
-  "onboarding_aim_changed": "a504d7b7ec36ec0e68423fb73c4fcc6cddab280bddcc02e8b04f458adef3437d",
   "onboarding_aim_description": "6e6ae7b2a3e65f29fd5c0d0a8c53fe99f05225c74c1b2ee4fe38934e72319f7e",
   "onboarding_aim_finish": "72d5a0be5414657fdba1c44532a2271032484984f2161e3f889b3d91723bdcbe",
   "onboarding_aim_fluent": "6f7bd2743ce37c4483d33f3bd34598a80aae8ee720ca5969e8a396a4731ab6aa",
@@ -1076,7 +1075,6 @@
     <string name="onboarding_aim_hours">%1$s h</string>
     <string name="onboarding_aim_by_month">d’ici %1$s</string>
     <string name="onboarding_aim_finish">Avec %1$s par jour, tu atteins %2$s vers %3$s.</string>
-    <string name="onboarding_aim_changed">Ton cours va maintenant jusqu’au niveau %1$s.</string>
     <string name="onboarding_reason_travel">Voyager</string>
     <string name="onboarding_reason_travel_description">Se débrouiller en voyage : commander, demander son chemin, bavarder</string>
     <string name="onboarding_reason_talk">Discuter avec les autres</string>

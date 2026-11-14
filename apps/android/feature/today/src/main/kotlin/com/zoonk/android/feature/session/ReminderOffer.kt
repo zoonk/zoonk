@@ -1,4 +1,4 @@
-package com.zoonk.android.feature.player
+package com.zoonk.android.feature.session
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -54,7 +54,7 @@ import java.time.LocalTime
 
 enum class OfferStep { Claiming, Asking, Blocked, PushOn, EmailOn, Gone }
 
-/** The study reminder offered once, under a finished plan lesson's result. */
+/** The study reminder offered once, on the day's summary, where the learner is done for the day. */
 class ReminderOfferViewModel(
     private val reminders: StudyReminderStore,
     time: String,
@@ -138,7 +138,7 @@ class ReminderOfferViewModel(
 }
 
 /**
- * Below the result, never in place of what comes next. "Remind me" asks Android for notifications
+ * Under what comes tomorrow, never in place of what comes next. "Remind me" asks Android for notifications
  * only then; while Android refuses, the learner can open its settings or, with an account, get
  * email instead.
  */
@@ -160,7 +160,7 @@ fun ReminderOfferCard(
 
     if (viewModel.step == OfferStep.Gone) return
 
-    // A learner who never scrolls to it keeps the offer for their next lesson.
+    // A learner who never scrolls to it keeps the offer for their next summary.
     OutlinedCard(Modifier.fillMaxWidth().onVisibilityChanged(minFractionVisible = 0.5f) { if (it) viewModel.seen() }) {
         Column(Modifier.padding(vertical = 16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             when (viewModel.step) {

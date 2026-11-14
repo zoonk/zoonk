@@ -129,7 +129,11 @@
       EarlierQuestionsPage(questions: [], nextCursor: nil)
     }
 
-    func answer(insightId: String, accepted: Bool, token: String) async throws {}
+    func answer(insightId: String, accepted: Bool, quote: PlanChangeQuote?, token: String)
+      async throws -> MemoryInsight?
+    {
+      nil
+    }
   }
 
   private struct UITestTutorAPI: TutorAPIClient {
@@ -154,7 +158,8 @@
     }
 
     func decidePlanChange(
-      goalId: String, changeId: String, decision: PlanChangeDecision, token: String
+      goalId: String, changeId: String, decision: PlanChangeDecision, quote: PlanChangeQuote?,
+      token: String
     ) async throws -> Components.Schemas.PlanChange {
       throw APIError.unavailable
     }

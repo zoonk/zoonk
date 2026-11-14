@@ -65,6 +65,7 @@
   "not_found_title": "77500c87e0e0c76b96c9a9c7edea8a9abc2a9bdb4458395d878d03cf6d3fb1c5",
   "player_not_saved": "dcc80df6f2a5384c98cda80cfc2ab4e33039705f9514cef9749c87720ad56d9a",
   "player_not_saved_description": "816fa818e6fc9ec18c9eb85c0e2688f5609b932ec18d5b4db24c97b46f3d9396",
+  "suggestion_other_options": "b6b0b751198600382742a58649f052733f3b0241adc5e971227421948657943a",
   "suggestion_save_failed": "9aca8605c468c764191eff43da8a238ec6c553833627b0753e98434a40e0a885",
   "suggestion_view": "743c145defd15c116fa22c75525a9a91b23f2113af5ef214a895f63ef25cd8a4",
   "task_leave": "950b4cd2095e47652c6ae141ea337527004653f31a3a8df7b95aad92ad56b593",
@@ -120,6 +121,7 @@
     <string name="load_failed_try_again">Spróbuj ponownie</string>
     <string name="suggestion_view">Zobacz</string>
     <string name="suggestion_save_failed">Nie udało się zapisać. Spróbuj ponownie.</string>
+    <string name="suggestion_other_options">Zobacz inne opcje</string>
     <!-- Above the options of an exam's choice when each candidate takes several of them, such as two of a course's modules. %1$d is how many, at least 2. -->
     <string name="exam_choice_pick_up_to">Wybierz maksymalnie %1$d.</string>
     <string name="disclosure_expanded">Rozwinięte</string>

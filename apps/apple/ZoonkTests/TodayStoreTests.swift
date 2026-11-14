@@ -662,6 +662,25 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertEqual(shown?.change.canUndo, true)
   }
 
+  func testAnAcceptSendsTheQuoteShownAndAsksAgainWhenTheNumbersMoved() async throws {
+    let proposed = try planChange(status: "proposed", quote: "q1")
+    let view = try today(session: day(blocks: [], nextPosition: nil), planChange: proposed)
+    let api = StudyAPIStub(
+      today: .day(view), decided: try planChange(status: "proposed", quote: "q2"))
+    let store = TodayStore(api: api, cache: signedInCache())
+    await store.today.load()
+
+    _ = await store.answer(proposed, with: .applied, in: view)
+    let shown = try XCTUnwrap(store.shownPlanChange(in: view))
+    _ = await store.answer(shown.change, with: .applied, in: view)
+    let sent = await api.sentQuotes
+
+    XCTAssertNil(shown.decision, "it asks again")
+    XCTAssertTrue(shown.repriced)
+    XCTAssertEqual(shown.change.quote, "q2")
+    XCTAssertEqual(sent, ["q1", "q2"])
+  }
+
   func testAChangeThePlanMovedPastLeavesWithoutAnError() async throws {
     let applied = try planChange(status: "applied", canUndo: true)
     let view = try today(session: day(blocks: [], nextPosition: nil))
@@ -879,11 +898,11 @@ private func day(
 }
 
 private func planChange(
-  status: String, canUndo: Bool = false, id: String = "c1"
+  status: String, canUndo: Bool = false, id: String = "c1", quote: String = "q1"
 ) throws -> TodayView.PlanChange {
   try decode(
     """
-    {"behind":null,"canApply":true,"canUndo":\(canUndo),"effect":null,"examDocument":"notice",
+    {"behind":null,"canApply":true,"canUndo":\(canUndo),"effect":null,"examDocument":"notice","quote":"\(quote)",
     "id":"\(id)","kind":"edited","officialDate":null,"operations":[],
     "reason":"Rest on Saturdays?","source":"memory","status":"\(status)","todaySession":null}
     """)
@@ -938,6 +957,7 @@ private actor StudyAPIStub: StudyAPIClient {
   private var today: TodayContent
   private let session: StudyDay?
   private var decided: TodayView.PlanChange?
+  private(set) var sentQuotes: [PlanChangeQuote?] = []
   private let holdsOpening: Bool
   private var heldOpening: CheckedContinuation<Void, Never>?
   private var openingWaiter: CheckedContinuation<Void, Never>?
@@ -1187,9 +1207,11 @@ private actor StudyAPIStub: StudyAPIClient {
   }
 
   func decidePlanChange(
-    token: String, goalID: String, changeID: String, decision: PlanChangeDecision
+    token: String, goalID: String, changeID: String, decision: PlanChangeDecision,
+    quote: PlanChangeQuote?
   ) async throws -> TodayView.PlanChange? {
-    decided
+    sentQuotes.append(quote)
+    return decided
   }
 }
 

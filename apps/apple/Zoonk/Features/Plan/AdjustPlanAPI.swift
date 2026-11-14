@@ -224,6 +224,8 @@ struct AppliedPlanChange: Decodable, Equatable, Identifiable, Sendable {
 
 enum PlanChangeOutcome: Equatable, Sendable {
   case applied(AppliedPlanChange)
+  /// Saved without moving a lesson (a focus taken back): the plan is read again.
+  case saved
   case invalid
   case unchanged
   /// It set back by hand what the latest change set, so core undid that change (`undoSetBack`).
