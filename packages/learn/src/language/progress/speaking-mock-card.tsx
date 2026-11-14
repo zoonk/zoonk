@@ -12,8 +12,9 @@ import {
   NoticeCardTitle,
 } from "../../_components/notice-card";
 import { WritingWait } from "../../generation/writing-wait";
+import { CallLimitReason } from "../conversation/call-limit-message";
 import { useSpeakingMockTitle } from "../conversation/conversation-labels";
-import { type CallStartOutcome, useCallStart } from "../conversation/use-call-start";
+import { type LimitedCallStart, useCallStart } from "../conversation/use-call-start";
 
 function useSpeakingMockDescription() {
   const t = useExtracted();
@@ -36,7 +37,7 @@ export function SpeakingMockCard({
   paused,
 }: {
   exam: SpeakingMockExam;
-  onStart: () => Promise<CallStartOutcome>;
+  onStart: () => Promise<LimitedCallStart>;
   paused: boolean;
 }) {
   const t = useExtracted();
@@ -92,6 +93,8 @@ export function SpeakingMockCard({
             >
               {t("Start")}
             </Button>
+
+            {call.limit && <CallLimitReason limit={call.limit} need="mock" role="alert" />}
 
             {call.failed && (
               <p className="text-destructive-text text-sm" role="alert">

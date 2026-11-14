@@ -3,13 +3,14 @@ import { type AllowanceItem, getReachedCap } from "./contract";
 
 function mindMaps(attrs: Partial<Exclude<AllowanceItem, { kind: "lessonStart" }>>): AllowanceItem {
   return {
+    availableAt: null,
     dailyLimit: 3,
     fairUseDailyLimit: null,
     kind: "mindMap",
-    monthlyLimit: 10,
     remaining: 1,
+    rollingLimit: 10,
     totalLimit: null,
-    usedThisMonth: 2,
+    usedLast30Days: 2,
     usedToday: 2,
     usedTotal: 2,
     ...attrs,
@@ -23,10 +24,11 @@ describe(getReachedCap, () => {
     ).toBeNull();
 
     const plus = mindMaps({
+      availableAt: null,
       dailyLimit: null,
       fairUseDailyLimit: 30,
-      monthlyLimit: null,
       remaining: null,
+      rollingLimit: null,
     });
 
     expect(
@@ -35,13 +37,14 @@ describe(getReachedCap, () => {
   });
 
   it("names the period that ran out: the day, then the month, then a guest's total", () => {
-    const today = mindMaps({ remaining: 0, usedThisMonth: 3, usedToday: 3, usedTotal: 3 });
-    const month = mindMaps({ remaining: 0, usedThisMonth: 10, usedToday: 1, usedTotal: 10 });
+    const today = mindMaps({ remaining: 0, usedLast30Days: 3, usedToday: 3, usedTotal: 3 });
+    const month = mindMaps({ remaining: 0, usedLast30Days: 10, usedToday: 1, usedTotal: 10 });
 
     const guest = mindMaps({
+      availableAt: null,
       dailyLimit: null,
-      monthlyLimit: null,
       remaining: 0,
+      rollingLimit: null,
       totalLimit: 1,
       usedTotal: 1,
     });
@@ -52,7 +55,7 @@ describe(getReachedCap, () => {
 
     expect(
       getReachedCap({ allowance: { items: [month], tier: "free" }, kind: "mindMap" }),
-    ).toMatchObject({ period: "month" });
+    ).toMatchObject({ period: "rolling30Days" });
 
     expect(
       getReachedCap({ allowance: { items: [guest], tier: "guest" }, kind: "mindMap" }),

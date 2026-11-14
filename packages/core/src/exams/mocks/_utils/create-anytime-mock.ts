@@ -1,7 +1,7 @@
 import "server-only";
 import { type Goal } from "@zoonk/db";
 import { MIN_CHECKPOINT_QUESTIONS } from "../../../checkpoints/checkpoint-rules";
-import { type UsagePeriod } from "../../../entitlements/contract";
+import { type AllowanceLimit, type UsagePeriod } from "../../../entitlements/contract";
 import { oweFollowUps } from "../../../follow-ups/owe-follow-ups";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
 import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
@@ -27,6 +27,7 @@ export type CreateAnytimeMockResult =
   | { status: "notEnoughQuestions" }
   | { status: "needsQuestions" }
   | {
+      availableAt?: Date | null;
       examQuestions: number;
       limit: UsagePeriod | null;
       minutes: number;
@@ -145,7 +146,7 @@ export async function createAnytimeMock({
   option: MockOption;
   setup: AnytimeMockSetup;
   userId: string;
-  writesCap: UsagePeriod | null;
+  writesCap: Pick<AllowanceLimit, "period" | "availableAt"> | null;
 }): Promise<CreateAnytimeMockResult> {
   const { candidates, plan } = await planFromBank({ goal, option, setup, userId });
   const planned = countPlannedQuestions(plan);
@@ -173,7 +174,9 @@ export async function createAnytimeMock({
     if (short) {
       return unchanged({
         examQuestions: option.questions,
-        limit: shortOfNew ? writesCap : null,
+        ...(shortOfNew &&
+          writesCap?.period === "rolling30Days" && { availableAt: writesCap.availableAt }),
+        limit: shortOfNew ? (writesCap?.period ?? null) : null,
         minutes: plan.minutes,
         questions: planned,
         status: "short",

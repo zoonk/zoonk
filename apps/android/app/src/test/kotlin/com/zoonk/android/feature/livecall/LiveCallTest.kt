@@ -785,7 +785,7 @@ class LiveCallTest {
     @Test
     fun aRefusedReservationShowsItsProblemOpensNoPeerAndReportsNoCall() =
         runTest(dispatcher) {
-            val limit = Limit.Reached(LimitTier.Free, LimitPeriod.Month)
+            val limit = Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days)
             client.reservations = ArrayDeque(listOf(CallReservation.Limited(limit)))
             val call = call()
             call.start(microphone = true)

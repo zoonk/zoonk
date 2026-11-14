@@ -581,10 +581,11 @@
     </plurals>
     <string name="plan_date_estimate">~%1$s</string>
     <string name="plan_date_estimate_spoken">Por volta de %1$s</string>
-    <!-- What a screen reader says for a phase's end beside its name. %1$s is a day, such as "Nov 10". -->
+    <!-- When a phase of the plan ends. %1$s is a day, like "Dec 12". -->
     <string name="plan_ends">Termina em %1$s</string>
-    <!-- What a screen reader says for a phase's estimated end beside its name. %1$s is a day, such as "Nov 10", or a month, such as "Jan". -->
+    <!-- When a phase of the plan is expected to end. %1$s is a day, like "Dec 12". -->
     <string name="plan_ends_about">Termina por volta de %1$s</string>
+    <!-- When a phase of the plan is expected to end. %1$s is a month, like "Jan". -->
     <string name="plan_ends_about_month">Termina por volta de %1$s</string>
     <string name="plan_date_range">%1$s – %2$s</string>
     <string name="plan_no_goal_description">Conte o que você quer aprender, e a gente planeja cada dia até você chegar lá.</string>

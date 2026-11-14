@@ -77,7 +77,7 @@ struct FarTopicSheet: View {
         }
 
         if case .limit(let limit) = request {
-          LimitNotice(limit: limit, words: limit.previewWords)
+          LimitNotice(limit: limit, kind: .previews)
         }
       }
     case .failed:
@@ -137,7 +137,7 @@ struct FarTopicSheet: View {
     case .loaded(let value) where value.status == "writing" || request == .writing:
       Self.writingLine
     case .loaded, .empty:
-      if case .limit(let limit) = request { limit.previewWords.said } else { nil }
+      if case .limit(let limit) = request { limit.words(.previews).said } else { nil }
     case .failed, .idle, .loading:
       nil
     }

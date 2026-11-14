@@ -66,7 +66,7 @@ const screenPictureSchema = z
       .string()
       .meta({
         description:
-          "What the picture shows, with every detail its question needs: show it in the picture's place until the picture is drawn and loaded",
+          "What the picture shows, with every detail its question needs, so the question can be answered without it",
       }),
     required: z
       .boolean()

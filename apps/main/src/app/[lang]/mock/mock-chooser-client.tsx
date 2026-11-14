@@ -4,7 +4,6 @@ import { useRouter } from "@/i18n/navigation";
 import { MOCK_ENTRY_HREFS } from "@/lib/mocks/mock-entry-hrefs";
 import { type QuestionWriting, requestQuestionWriting } from "@/lib/questions/question-writing";
 import { useWorkflowRun } from "@/lib/workflow/use-workflow-run";
-import { toCalendarPeriod } from "@zoonk/core/entitlements/contract";
 import { type MockOptionView, type MockOptionsView } from "@zoonk/core/exams/mocks/contract";
 import {
   MockChooserScreen,
@@ -59,9 +58,19 @@ async function requestMockWriting({
 function toStatus({ option, outcome }: { option: MockOptionView; outcome: MockStartOutcome }) {
   if (outcome.status === "short") {
     const { examQuestions, minutes, questions } = outcome;
-    const limit = outcome.limit && toCalendarPeriod(outcome.limit);
+    const availableAt = outcome.availableAt?.toISOString() ?? null;
     const optionKey = getMockOptionKey(option);
-    return { examQuestions, kind: "short", limit, minutes, optionKey, questions } as const;
+    const limit = outcome.limit ?? null;
+
+    return {
+      availableAt,
+      examQuestions,
+      kind: "short",
+      limit,
+      minutes,
+      optionKey,
+      questions,
+    } as const;
   }
 
   return outcome.status === "notEnoughQuestions"

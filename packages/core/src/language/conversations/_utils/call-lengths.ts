@@ -9,7 +9,11 @@ const DEFAULT_PRACTICE_MINUTES = 2;
 
 export type PracticeCallLengths = {
   defaultMinutes: number;
-  limit: { period: CallTimeLeft["period"] | "total"; tier: EntitlementTier } | null;
+  limit: {
+    availableAt?: string | null;
+    period: CallTimeLeft["period"] | "total";
+    tier: EntitlementTier;
+  } | null;
   minutes: number[];
   plusMinutes: number[];
 };
@@ -38,9 +42,11 @@ function getDefaultMinutes(minutes: readonly number[]): number {
 }
 
 export function toPracticeCallLengths({
+  availableAt,
   left,
   tier,
 }: {
+  availableAt?: Date | null;
   left: CallTimeLeft | null;
   tier: EntitlementTier;
 }): PracticeCallLengths {
@@ -56,7 +62,12 @@ export function toPracticeCallLengths({
   if (left && left.seconds <= 0) {
     return {
       defaultMinutes: DEFAULT_PRACTICE_MINUTES,
-      limit: { period: left.period, tier },
+      limit: {
+        ...(left.period === "rolling30Days" &&
+          availableAt !== undefined && { availableAt: availableAt?.toISOString() ?? null }),
+        period: left.period,
+        tier,
+      },
       minutes: [],
       plusMinutes: [],
     };

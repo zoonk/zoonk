@@ -575,10 +575,11 @@
     </plurals>
     <string name="plan_date_estimate">%1$sごろ</string>
     <string name="plan_date_estimate_spoken">%1$sごろ</string>
-    <!-- What a screen reader says for a phase's end beside its name. %1$s is a day, such as "Nov 10". -->
+    <!-- When a phase of the plan ends. %1$s is a day, like "Dec 12". -->
     <string name="plan_ends">%1$sに終了</string>
-    <!-- What a screen reader says for a phase's estimated end beside its name. %1$s is a day, such as "Nov 10", or a month, such as "Jan". -->
+    <!-- When a phase of the plan is expected to end. %1$s is a day, like "Dec 12". -->
     <string name="plan_ends_about">%1$sごろに終了</string>
+    <!-- When a phase of the plan is expected to end. %1$s is a month, like "Jan". -->
     <string name="plan_ends_about_month">%1$sごろに終了</string>
     <string name="plan_date_range">%1$s〜%2$s</string>
     <string name="plan_no_goal_description">学びたいことを教えてください。目標を達成するまで、毎日の学習計画を立てます。</string>

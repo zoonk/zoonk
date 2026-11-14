@@ -87,7 +87,6 @@
   "conversation_muted_detail": "4f370d985c18b248e428b2f81c3422321c3edd53e611d126e799fb9da0d8fb64",
   "conversation_near_level": "6cf46b27ff8779b399209323a24abc5a8c9836017b39cf74712e58c5b852e778",
   "conversation_next_task": "2ec51b024734e06d4042c339c6c45f956bb1e678e7ef72788dc550157fa7a7aa",
-  "conversation_no_calls_month": "c3920f2646adfb53b00a908c67333f445b6ad237f11772ea0726311a8bf691a6",
   "conversation_no_calls_today": "70ff6b94ad8a9a761dc80ecbc4265da01a5a51e9a69f4f527d2a78845986e509",
   "conversation_no_estimate_title": "b6acc32dddcfaf3495e0a435859fa71f0ba8946df603bbf68a82dea0c543774e",
   "conversation_no_score": "55f66da8f280d36902cbfcd6ce891674ff6a02f526333388d0486be5de8856a8",
@@ -240,7 +239,6 @@
     <string name="conversation_mute">Couper le micro</string>
     <string name="conversation_end">Terminer</string>
     <string name="conversation_no_calls_today">Plus d’appels disponibles aujourd’hui</string>
-    <string name="conversation_no_calls_month">Plus d’appels disponibles ce mois-ci</string>
     <string name="conversation_calls_need_account">Un compte gratuit est nécessaire pour passer des appels</string>
     <string name="conversation_ended_title">Cet appel est terminé</string>
     <string name="conversation_taken_over">Il s’est terminé quand tu as commencé un autre appel.</string>

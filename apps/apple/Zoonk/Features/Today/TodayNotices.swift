@@ -65,6 +65,7 @@ struct SuggestedGoalSection: View {
 struct SuggestedGoalButtons: View {
   @Environment(AppRouter.self) private var router
   @Environment(TodayStore.self) private var store
+  @State private var answering: Task<Void, Never>?
 
   let suggestion: SuggestedGoal
   let answer: SuggestedGoalAnswer
@@ -86,10 +87,13 @@ struct SuggestedGoalButtons: View {
     .buttonStyle(.mainAction)
     .keyboardShortcut(.defaultAction)
     .disabled(answer.answering == false)
+    .onDisappear { answering?.cancel() }
   }
 
   private func respond(accepted: Bool) {
-    Task { await answer.respond(to: suggestion, accepted: accepted, store: store, router: router) }
+    answering = Task {
+      await answer.respond(to: suggestion, accepted: accepted, store: store, router: router)
+    }
   }
 }
 
@@ -145,7 +149,7 @@ struct TodayExamChoiceSection: View {
 
         if change.canUndo {
           BusyButton(isBusy: editor.isSaving, icon: .undo) {
-            Task { await editor.undo() }
+            editor.run { await editor.undo() }
           } label: {
             Text("Undo", tableName: "Today", comment: "Undoes a plan change the learner applied")
           }
@@ -226,7 +230,7 @@ struct TodayExamChoiceSection: View {
     let editor = editor ?? PlanEditor(goalId: goalID, store: plans)
     self.editor = editor
 
-    Task {
+    editor.run {
       if await editor.chooseExamOptions(subjects, in: group),
         case .applied(_, let sentence) = editor.latest
       {

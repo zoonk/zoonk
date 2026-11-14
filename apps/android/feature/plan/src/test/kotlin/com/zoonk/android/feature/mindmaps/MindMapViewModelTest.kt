@@ -115,14 +115,15 @@ class MindMapViewModelTest {
     fun aRefusalOverTheLessonsItWouldWriteFirstIsWordedAsLessons() =
         runTest(dispatcher) {
             val (maps) = setUp()
-            api.create = { throw ApiException(ApiError.Unavailable, "USAGE_LIMIT_REACHED", 402, refusal("free", "month", "lessonStart")) }
+            api.create =
+                { throw ApiException(ApiError.Unavailable, "USAGE_LIMIT_REACHED", 402, refusal("free", "rolling30Days", "lessonStart")) }
 
             maps.create(chapterId)
             advanceUntilIdle()
 
             assertEquals(
                 MindMapLocal(
-                    limit = Limit.Reached(LimitTier.Free, LimitPeriod.Month),
+                    limit = Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days),
                     subject = LimitSubject.Lessons,
                 ),
                 maps.requests.value[chapterId]?.copy(since = 0),

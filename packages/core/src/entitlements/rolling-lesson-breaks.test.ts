@@ -37,8 +37,14 @@ function freeLedger({ now, starts }: { now: Date; starts: readonly Date[] }): Us
     prepared: new Map(),
     totals: {
       activeGoals: 0,
+      callSpend: [],
       kinds: new Map(),
-      lessonStarts: { count: inWindow.length, latest: inWindow.slice(0, LIMIT), prepared: 0 },
+      lessonStarts: {
+        count: inWindow.length,
+        latest: inWindow.slice(0, LIMIT),
+        latestPrepared: [],
+        prepared: 0,
+      },
       spentTodayMicros: 0,
     },
     viewer: { isGuest: false, tier: "free", userId: randomUUID() },
@@ -50,15 +56,17 @@ function decideStart(ledger: UsageLedger) {
     costMicros: 0,
     counts: {
       activeGoals: 0,
+      callSpend: [],
       day: 0,
       generatedTotal: 0,
       lastUsedAt: null,
       lessonStarts: ledger.totals.lessonStarts,
-      month: 0,
-      secondsThisMonth: 0,
+      rollingClaims: [],
+      secondsLast30Days: 0,
       secondsToday: 0,
       spentTodayMicros: 0,
       total: 0,
+      usedLast30Days: 0,
     },
     generated: false,
     kind: "lessonStart",
@@ -296,7 +304,13 @@ describe("admission against the database", () => {
     expect(decisions.filter((decision) => decision.status === "allowed")).toHaveLength(6);
 
     expect(decisions.find((decision) => decision.status !== "allowed")).toStrictEqual({
-      limit: { limit: 20, period: "rolling30Days", resource: "lessonPreparation", tier: "free" },
+      limit: {
+        availableAt: new Date(NOW.getTime() + 30 * 24 * 60 * 60 * 1000),
+        limit: 20,
+        period: "rolling30Days",
+        resource: "lessonPreparation",
+        tier: "free",
+      },
       status: "limitReached",
     });
 

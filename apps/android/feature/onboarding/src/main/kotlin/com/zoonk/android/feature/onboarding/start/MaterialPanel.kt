@@ -52,8 +52,10 @@ import com.zoonk.android.feature.onboarding.ChoiceList
 import com.zoonk.android.feature.onboarding.PickedFile
 import com.zoonk.android.feature.onboarding.Refusal
 import com.zoonk.android.feature.onboarding.WriteOutcome
+import com.zoonk.android.feature.onboarding.usedSentence
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.Eyebrow
+import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.materialCitationLabel
@@ -74,15 +76,15 @@ private val ACCEPTED_TYPES =
     )
 
 @Composable
-fun attachErrorMessage(outcome: WriteOutcome<*>): String =
-    stringResource(
-        when (val refusal = (outcome as? WriteOutcome.Refused)?.refusal) {
+fun attachErrorMessage(outcome: WriteOutcome<*>): String {
+    val refusal = (outcome as? WriteOutcome.Refused)?.refusal
+    if (refusal is Refusal.Limit && refusal.limit.reached.period != LimitPeriod.Day) {
+        return usedSentence(R.string.limit_uploads_used, refusal.limit.reached)
+    }
+    return stringResource(
+        when (refusal) {
             is Refusal.Limit -> {
-                when {
-                    refusal.limit.tier == "plus" -> R.string.onboarding_attach_limit_plus
-                    refusal.limit.period == "month" -> R.string.onboarding_attach_limit_month
-                    else -> R.string.onboarding_attach_limit_day
-                }
+                if (refusal.limit.tier == "plus") R.string.onboarding_attach_limit_plus else R.string.onboarding_attach_limit_day
             }
 
             Refusal.SlowDown -> {
@@ -106,6 +108,7 @@ fun attachErrorMessage(outcome: WriteOutcome<*>): String =
             }
         },
     )
+}
 
 enum class Pasting { Text, Link }
 
@@ -385,31 +388,38 @@ internal fun MaterialAnswer(outcome: WriteOutcome<com.zoonk.api.models.MaterialQ
     val answer = (outcome as? WriteOutcome.Done)?.value
     if (answer == null) {
         val refusal = (outcome as? WriteOutcome.Refused)?.refusal
+        val used = (refusal as? Refusal.Limit)?.limit?.reached?.takeIf { it.period != LimitPeriod.Day }
         Text(
             text =
-                stringResource(
-                    when (refusal) {
-                        is Refusal.Limit -> {
-                            when {
-                                refusal.limit.tier == "plus" -> R.string.onboarding_question_limit_plus
-                                refusal.limit.period == "month" -> R.string.onboarding_question_limit_month
-                                else -> R.string.onboarding_question_limit_day
+                if (used != null) {
+                    usedSentence(R.string.limit_questions_used, used)
+                } else {
+                    stringResource(
+                        when (refusal) {
+                            is Refusal.Limit -> {
+                                if (refusal.limit.tier ==
+                                    "plus"
+                                ) {
+                                    R.string.onboarding_question_limit_plus
+                                } else {
+                                    R.string.onboarding_question_limit_day
+                                }
                             }
-                        }
 
-                        Refusal.SignUpRequired -> {
-                            R.string.onboarding_question_sign_in
-                        }
+                            Refusal.SignUpRequired -> {
+                                R.string.onboarding_question_sign_in
+                            }
 
-                        Refusal.SlowDown -> {
-                            R.string.onboarding_question_slow_down
-                        }
+                            Refusal.SlowDown -> {
+                                R.string.onboarding_question_slow_down
+                            }
 
-                        else -> {
-                            R.string.onboarding_question_failed
-                        }
-                    },
-                ),
+                            else -> {
+                                R.string.onboarding_question_failed
+                            }
+                        },
+                    )
+                },
             color = MaterialTheme.colorScheme.error,
             style = MaterialTheme.typography.bodyMedium,
         )

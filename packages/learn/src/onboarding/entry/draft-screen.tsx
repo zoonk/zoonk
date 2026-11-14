@@ -10,7 +10,7 @@ import { type GoalError } from "../goal-errors";
 import {
   type AttachedSource,
   type CreateGoalsOutcome,
-  type GoalLimitReason,
+  type GoalLimit,
   type OnboardingActions,
   type OnboardingRoutes,
   type WaitlistOutcome,
@@ -31,6 +31,20 @@ type Creation = {
   isCreating: boolean;
   run: (run: () => Promise<CreateGoalsOutcome>) => void;
   startExplanation: (input: { draft: OnboardingDraftView; question: string }) => void;
+};
+
+type DraftStepProps = {
+  actions: OnboardingActions;
+  attached: AttachedSource[];
+  creation: Creation;
+  draft: OnboardingDraftView;
+  draftActions: DraftActions;
+  goalLimit: GoalLimit | null;
+  hasAccount: boolean;
+  intent: MaterialIntent | null;
+  onBack: () => void;
+  onRewrite: (words: string) => void;
+  routes: OnboardingRoutes;
 };
 
 function InstrumentDraft({
@@ -87,20 +101,7 @@ function ReadDraft({
   onRewrite,
   routes,
   understanding,
-}: {
-  actions: OnboardingActions;
-  attached: AttachedSource[];
-  creation: Creation;
-  draft: OnboardingDraftView;
-  draftActions: DraftActions;
-  goalLimit: GoalLimitReason | null;
-  hasAccount: boolean;
-  intent: MaterialIntent | null;
-  onBack: () => void;
-  onRewrite: (words: string) => void;
-  routes: OnboardingRoutes;
-  understanding: GoalUnderstandingView;
-}) {
+}: DraftStepProps & { understanding: GoalUnderstandingView }) {
   switch (understanding.status) {
     case "goals": {
       const card = toUnderstandingDraft({
@@ -170,20 +171,7 @@ export function DraftScreen({
   draftActions,
   sentAt,
   ...props
-}: {
-  actions: OnboardingActions;
-  attached: AttachedSource[];
-  creation: Creation;
-  draft: OnboardingDraftView;
-  draftActions: DraftActions;
-  goalLimit: GoalLimitReason | null;
-  hasAccount: boolean;
-  intent: MaterialIntent | null;
-  onBack: () => void;
-  onRewrite: (words: string) => void;
-  routes: OnboardingRoutes;
-  sentAt?: number;
-}) {
+}: DraftStepProps & { sentAt?: number }) {
   const understanding = draft.status === "understood" ? draft.understanding : null;
 
   if (!understanding) {

@@ -1,3 +1,4 @@
+import { USAGE_PERIODS } from "@zoonk/core/entitlements/contract";
 import { type GoalView, regionChoiceSchema } from "@zoonk/core/goals/contract";
 import { goalCountryFieldsSchema } from "@zoonk/core/goals/country-contract";
 import { planChangeSchema } from "@zoonk/core/plans/change-contract";
@@ -93,10 +94,10 @@ const allowanceLimitSchema = z
       .optional()
       .meta({
         description:
-          "The instant a rolling lessonStart or chapterLessons request fits, from recorded starts before the request; null for a chapterLessons request larger than the free plan; omitted for automatic lessonPreparation and calendar limits",
+          "The earliest instant the refused rolling request can be admitted against all its recorded caps, assuming no intervening use. Calls need positive time and money capacity and then run whole. Includes a currently blocking UTC-day reset. Null when waiting alone cannot admit the request; omitted for nonrolling limits.",
       }),
     limit: z.int(),
-    period: z.enum(["day", "month", "rolling30Days", "total"]),
+    period: z.enum(USAGE_PERIODS),
     resource: z
       .string()
       .meta({

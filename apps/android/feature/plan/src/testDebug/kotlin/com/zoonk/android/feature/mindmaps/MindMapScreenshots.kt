@@ -193,7 +193,7 @@ class MindMapScreenshots {
             reason: String,
             resource: String,
             period: String,
-        ) = """{"reason":"$reason","resource":$resource,"period":$period,"resetsAt":null}"""
+        ) = """{"reason":"$reason","resource":$resource,"period":$period,"availableAt":null}"""
 
         val CHAPTERS =
             listOf(
@@ -313,7 +313,7 @@ class MindMapScreenshots {
                     lessonsToWrite = 4,
                     local =
                         MindMapLocal(
-                            limit = Limit.Reached(LimitTier.Free, LimitPeriod.Month),
+                            limit = Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days),
                             subject = LimitSubject.Lessons,
                         ),
                 )

@@ -69,8 +69,8 @@ private enum ChooserStatus: Equatable {
   case choosing
   case writing
   case short(
-    optionId: String, examQuestions: Int, limit: MockStartOutcome.Limit?, minutes: Int,
-    questions: Int)
+    optionId: String, examQuestions: Int, limit: MockStartOutcome.Limit?, availableAt: Date?,
+    minutes: Int, questions: Int)
   case notEnoughQuestions
   case failed
   case refused(HelpLimit)
@@ -85,6 +85,7 @@ private struct MockChooser: View {
   @State private var status: ChooserStatus = .choosing
   @State private var busy = false
   @State private var isOnScreen = false
+  @State private var starting: Task<Void, Never>?
 
   let goalId: String
   let view: MockOptions
@@ -122,7 +123,10 @@ private struct MockChooser: View {
       startAction
     }
     .onAppear { isOnScreen = true }
-    .onDisappear { isOnScreen = false }
+    .onDisappear {
+      isOnScreen = false
+      starting?.cancel()
+    }
   }
 
   @ViewBuilder
@@ -140,7 +144,7 @@ private struct MockChooser: View {
 
     if case .refused(let limit)? = shownStatus {
       Section {
-        LimitNotice(limit: limit)
+        LimitNotice(limit: limit, kind: .mockExams)
       }
     }
 
@@ -207,7 +211,7 @@ private struct MockChooser: View {
     } else {
       BusyButton(isBusy: busy) {
         if isOpen {
-          Task { await start() }
+          starting = Task { await start() }
         } else {
           status = .plusRequired
         }
@@ -226,7 +230,7 @@ private struct MockChooser: View {
         presenting: shortNote
       ) { _ in
         Button {
-          Task { await start(acceptingFewer: true) }
+          starting = Task { await start(acceptingFewer: true) }
         } label: {
           Text("Start", tableName: "Mock", comment: "Starts the picked mock")
         }
@@ -267,23 +271,43 @@ private struct MockChooser: View {
 
   /// What the dialog says before a mock exam with fewer questions than it should starts.
   private var shortNote: String? {
-    guard case .short(_, let examQuestions, let limit, let minutes, let questions)? = shownStatus
+    guard
+      case .short(_, let examQuestions, let limit, let availableAt, let minutes, let questions)? =
+        shownStatus
     else { return nil }
 
     let time = MockLabels.duration(minutes: minutes)
+    let fullOn: HelpLimit.OpeningDay? =
+      switch limit {
+      case .day: .tomorrow
+      case .rolling30Days:
+        availableAt.map { HelpLimit.openingDay($0, now: .now, calendar: .current) }
+      case .total, nil: nil
+      }
 
-    return switch limit {
-    case .day:
+    return switch fullOn {
+    case .tomorrow:
       String(
         localized:
           "Today this one has \(questions) of its \(examQuestions) questions, about \(time). You can take the full one tomorrow.",
         table: "Mock", comment: "A mock exam shorter today, when today's writing is used up")
-    case .month:
+    case .today:
       String(
         localized:
-          "Today this one has \(questions) of its \(examQuestions) questions, about \(time). You can take the full one next month.",
-        table: "Mock", comment: "A mock exam shorter today, when this month's writing is used up")
-    case .total, nil:
+          "Today this one has \(questions) of its \(examQuestions) questions, about \(time). You can take the full one later today.",
+        table: "Mock",
+        comment:
+          "In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now."
+      )
+    case .on(let date):
+      String(
+        localized:
+          "Today this one has \(questions) of its \(examQuestions) questions, about \(time). You can take the full one on \(date).",
+        table: "Mock",
+        comment:
+          "In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now. {date} is a day and its month, such as \"November 22\" in English."
+      )
+    case .open, nil:
       String(
         localized:
           "Today this one has \(questions) of its \(examQuestions) questions, about \(time).",
@@ -295,7 +319,7 @@ private struct MockChooser: View {
   private var shownStatus: ChooserStatus? {
     switch status {
     case .choosing, .plusRequired: nil
-    case .short(let optionId, _, _, _, _) where optionId != pickedOption?.id: nil
+    case .short(let optionId, _, _, _, _, _) where optionId != pickedOption?.id: nil
     default: status
     }
   }
@@ -340,7 +364,7 @@ private struct MockChooser: View {
   private var outcome: [String] {
     switch status {
     case .refused(let limit):
-      return [limit.helpWords().said]
+      return [limit.words(.mockExams).said]
     case .choosing, .writing, .plusRequired, .notEnoughQuestions, .failed, .short:
       return []
     }
@@ -500,10 +524,10 @@ private struct MockChooser: View {
     case .done(.started(let id)):
       status = .choosing
       onStarted(id)
-    case .done(.short(let examQuestions, let limit, let minutes, let questions)):
+    case .done(.short(let examQuestions, let limit, let availableAt, let minutes, let questions)):
       status = .short(
         optionId: pickedOption.id, examQuestions: examQuestions, limit: limit,
-        minutes: minutes, questions: questions)
+        availableAt: availableAt, minutes: minutes, questions: questions)
     case .done(.notEnoughQuestions):
       status = .notEnoughQuestions
     case .done(.refused(let limit)):

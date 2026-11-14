@@ -19,6 +19,7 @@ final class PlanEditor {
 
   private let goalId: String
   private let store: PlanStore
+  @ObservationIgnored private let tasks = ScreenTasks()
   /// Whose date a statement names: the exam's or the goal's end date.
   let dateKind: GoalDateKind
 
@@ -26,6 +27,15 @@ final class PlanEditor {
     self.goalId = goalId
     self.store = store
     self.dateKind = dateKind
+  }
+
+  /// Runs a tap's change as the editor's screen's, which calls `cancel()` when it goes away.
+  func run(_ work: @escaping @MainActor () async -> Void) {
+    tasks.run(work)
+  }
+
+  func cancel() {
+    tasks.cancel()
   }
 
   /// What the plan says once the change is saved: each edit's statement, unless the caller has

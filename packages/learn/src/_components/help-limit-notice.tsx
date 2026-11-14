@@ -4,54 +4,56 @@ import { type EntitlementTier } from "@zoonk/core/entitlements/contract";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
-import { CreateAccountLink } from "./create-account-link";
 import {
-  isFreeLessonsUsed,
+  isRollingCap,
+  useComesBackLine,
+  useEnoughLine,
   useMapLessonsWords,
-  useNextFreeLessonLine,
   useOpeningDay,
-} from "./free-lessons-words";
+} from "./comes-back-words";
+import { CreateAccountLink } from "./create-account-link";
 import { GateWords, SubscribeAction } from "./subscribe-gate";
 
 type SignUpRequired = { status: "signUpRequired" };
 
-/** Without a `period`, the day's help is used up. */
-export type HelpLimit =
-  | { retryAfterSeconds: number; status: "slowDown" }
-  | { period?: "day" | "month" | "total"; status: "limitReached"; tier: EntitlementTier }
-  | SignUpRequired;
+type SlowDown = { retryAfterSeconds: number; status: "slowDown" };
 
-/** A cap counted by the day, by the month or once in total. */
-export type CalendarLimit =
-  | { retryAfterSeconds: number; status: "slowDown" }
-  | { period: "day" | "month" | "total"; status: "limitReached"; tier: EntitlementTier }
-  | SignUpRequired;
-
-/** The free plan's lessons come back one at a time: `availableAt` is the instant the next one opens. */
-export type FreeLessonsUsed = {
-  availableAt: string;
+/**
+ * A cap counted over the last 30 days, the rule for every monthly cap: each use comes back 30 days
+ * after it was made, and `availableAt` is the instant the next one does. Its words say "a month".
+ */
+type RollingCap = {
+  availableAt: string | null;
   period: "rolling30Days";
   status: "limitReached";
-  tier: "free";
+  tier: EntitlementTier;
 };
+
+/** A cap counted by the day, or once in total (a guest's). Without a `period`, the day's help is used up. */
+type FixedCap = { period?: "day" | "total"; status: "limitReached"; tier: EntitlementTier };
+
+export type HelpLimit = SlowDown | FixedCap | RollingCap | SignUpRequired;
+
+/** Only a free learner's lessons are counted over the last 30 days. */
+export type FreeLessonsUsed = RollingCap;
 
 /** Any other new lesson stops for the day (the day's AI budget), or for a guest until they make an account. */
 type LessonCap = { status: "limitReached"; tier: EntitlementTier };
 
-export type LessonLimit =
-  | { retryAfterSeconds: number; status: "slowDown" }
-  | LessonCap
-  | SignUpRequired
-  | FreeLessonsUsed;
+export type LessonLimit = SlowDown | LessonCap | SignUpRequired | FreeLessonsUsed;
 
 /** `resource` says what ran out: the maps, the lessons a map writes first, or the day's AI spend. */
-export type MindMapLimit = (CalendarLimit | FreeLessonsUsed) & {
+export type MindMapLimit = HelpLimit & {
   resource?: "aiSpend" | "chapterLessons" | "generatedLessons" | "lessonStart" | "mindMap";
 };
 
-export type OutlineLimit = CalendarLimit;
+export type OutlineLimit = HelpLimit;
 
-export type CallLimit = { period: "day" | "month" | "total"; tier: EntitlementTier };
+export type CallLimit = {
+  availableAt?: string | null;
+  period: "day" | "rolling30Days" | "total";
+  tier: EntitlementTier;
+};
 
 type LimitLink = (props: { children: ReactNode; className?: string; href: string }) => ReactNode;
 
@@ -61,13 +63,11 @@ type LimitNoticeProps = {
   routes: { signUp: string; upgrade: string };
 };
 
-/** What ran out as the title, and when it comes back as the one line under it. */
 export type LimitWords = { line?: string; title?: string };
 
-/** What the learner asked for when the day's help ran out; without it the notice names no kind. */
-export type HelpKind = "explanations" | "messages";
+/** What the learner asked for when the help ran out; without it the notice names no kind. */
+export type HelpKind = "explanations" | "messages" | "mockExams";
 
-/** What decides a notice's way on. */
 type NoticeLimit =
   | { status: "signUpRequired" | "slowDown" }
   | { status: "limitReached"; tier: EntitlementTier };
@@ -106,172 +106,124 @@ function LimitNoticeBody({
   );
 }
 
-type ReachedLimit = Extract<HelpLimit, { status: "limitReached" }>;
-
-function isMonthly(limit: ReachedLimit): boolean {
-  return limit.period === "month" || limit.period === "total";
+function toCapLimit(limit: CallLimit): HelpLimit {
+  return limit.period === "rolling30Days"
+    ? {
+        ...limit,
+        availableAt: limit.availableAt ?? null,
+        period: limit.period,
+        status: "limitReached",
+      }
+    : { period: limit.period, status: "limitReached", tier: limit.tier };
 }
 
-/** A guest's way on is the button, so their notice has no line. */
-function useComesBackLine() {
+type CapTitles = { day: string; guest: string; rolling: string };
+
+/**
+ * Every cap reads the same way: what ran out as the title and when more comes back as the line. A
+ * guest's title stands alone; a refusal that isn't a cap says what to do.
+ */
+function useCapWords(limit: HelpLimit, titles: CapTitles): LimitWords {
   const t = useExtracted();
+  const line = useComesBackLine(limit);
 
-  return (limit: ReachedLimit): string | undefined => {
-    if (limit.tier === "guest") {
-      return undefined;
-    }
+  if (limit.status === "slowDown") {
+    return { line: t("Take a short break, then try again.") };
+  }
 
-    if (limit.tier === "plus") {
-      return isMonthly(limit) ? t("More next month.") : t("More tomorrow.");
-    }
+  if (limit.status === "signUpRequired") {
+    return { title: t("This needs a free account") };
+  }
 
-    return isMonthly(limit)
-      ? t("More next month, or subscribe to keep going.")
-      : t("More tomorrow, or subscribe to keep going.");
-  };
+  if (limit.tier === "guest") {
+    return { title: titles.guest };
+  }
+
+  return { line, title: isRollingCap(limit) ? titles.rolling : titles.day };
 }
 
-function useRefusalWords() {
+function useHelpTitles(kind: HelpKind | undefined): CapTitles {
   const t = useExtracted();
+  const guest = t("That's all you can try without an account");
 
-  return (limit: Exclude<HelpLimit, ReachedLimit>): LimitWords =>
-    limit.status === "slowDown"
-      ? { line: t("Take a short break, then try again.") }
-      : { title: t("This needs a free account") };
-}
-
-function useHelpTitle(kind: HelpKind | undefined) {
-  const t = useExtracted();
-
-  return (limit: ReachedLimit): string => {
-    if (limit.tier === "guest") {
-      return t("That's all you can try without an account");
-    }
-
-    if (kind === "messages") {
-      return isMonthly(limit) ? t("No more messages this month") : t("No more messages today");
-    }
-
-    if (kind === "explanations") {
-      return isMonthly(limit)
-        ? t("No more explanations this month")
-        : t("No more explanations today");
-    }
-
-    return isMonthly(limit)
-      ? t("You've reached this month's limit")
-      : t("You've reached today's limit");
-  };
-}
-
-function useHelpWords(kind?: HelpKind) {
-  const refusal = useRefusalWords();
-  const comesBack = useComesBackLine();
-  const title = useHelpTitle(kind);
-
-  return (limit: HelpLimit): LimitWords =>
-    limit.status === "limitReached"
-      ? { line: comesBack(limit), title: title(limit) }
-      : refusal(limit);
+  switch (kind) {
+    case "messages":
+      return { day: t("No more messages today"), guest, rolling: t("You've used your messages") };
+    case "explanations":
+      return {
+        day: t("No more explanations today"),
+        guest,
+        rolling: t("You've used your explanations"),
+      };
+    case "mockExams":
+      return {
+        day: t("No more mock exams today"),
+        guest,
+        rolling: t("You've used your mock exams"),
+      };
+    case undefined:
+      return {
+        day: t("You've reached today's limit"),
+        guest,
+        rolling: t("You've reached your limit"),
+      };
+    default:
+      return kind satisfies never;
+  }
 }
 
 export function useHelpLimitWords(limit: HelpLimit, kind?: HelpKind): LimitWords {
-  return useHelpWords(kind)(limit);
-}
-
-type CapTitles = { day: string; guest: string; month: string };
-
-/** Every cap reads the same way: a guest's title alone, otherwise the title and when it comes back. */
-function useCapWords() {
-  const refusal = useRefusalWords();
-  const comesBack = useComesBackLine();
-
-  return (limit: CalendarLimit, titles: CapTitles): LimitWords => {
-    if (limit.status !== "limitReached") {
-      return refusal(limit);
-    }
-
-    if (limit.tier === "guest") {
-      return { title: titles.guest };
-    }
-
-    return { line: comesBack(limit), title: isMonthly(limit) ? titles.month : titles.day };
-  };
+  return useCapWords(limit, useHelpTitles(kind));
 }
 
 /** Whether a free learner's next lesson has opened since the refusal: the server then gets asked again. */
 export function useFreeLessonReady(limit: LessonLimit): boolean {
-  return useOpeningDay(isFreeLessonsUsed(limit) ? limit.availableAt : null) === "open";
+  return useOpeningDay(isRollingCap(limit) ? limit.availableAt : null) === "open";
 }
 
 export function useLessonLimitWords(limit: LessonLimit): LimitWords {
   const t = useExtracted();
-  const refusal = useRefusalWords();
-  const comesBack = useComesBackLine();
-  const nextFreeLesson = useNextFreeLessonLine();
-  const opensOn = useOpeningDay(isFreeLessonsUsed(limit) ? limit.availableAt : null);
+  const ready = useFreeLessonReady(limit);
 
-  if (opensOn === "open") {
-    return { title: t("Your next free lesson is ready") };
-  }
+  const words = useCapWords(limit, {
+    day: t("No more new lessons today"),
+    guest: t("No more lessons without an account"),
+    rolling: t("You've used your free lessons"),
+  });
 
-  if (isFreeLessonsUsed(limit)) {
-    return { line: nextFreeLesson(opensOn), title: t("You've used your free lessons") };
-  }
-
-  if (limit.status !== "limitReached") {
-    return refusal(limit);
-  }
-
-  if (limit.tier === "guest") {
-    return { title: t("No more lessons without an account") };
-  }
-
-  return {
-    line: comesBack({ period: "day", status: "limitReached", tier: limit.tier }),
-    title: t("No more new lessons today"),
-  };
+  return ready ? { title: t("Your next free lesson is ready") } : words;
 }
 
 function useMindMapRefusalWords(limit: MindMapLimit): LimitWords {
   const t = useExtracted();
-  const helpWords = useHelpWords();
-  const capWords = useCapWords();
+  const help = useHelpLimitWords(limit);
   const lesson = useLessonLimitWords(limit);
-  const mapLessons = useMapLessonsWords();
-  const opensOn = useOpeningDay(isFreeLessonsUsed(limit) ? limit.availableAt : null);
+  const mapLessons = useMapLessonsWords(limit);
 
-  if (limit.resource === "chapterLessons" && limit.status === "limitReached") {
-    return mapLessons(limit, opensOn);
+  const maps = useCapWords(limit, {
+    day: t("No more new mind maps today"),
+    guest: t("No more mind maps without an account"),
+    rolling: t("You've used your mind maps"),
+  });
+
+  if (limit.resource === "chapterLessons" && mapLessons) {
+    return mapLessons;
   }
 
-  if (
-    isFreeLessonsUsed(limit) ||
-    limit.resource === "lessonStart" ||
-    limit.resource === "generatedLessons"
-  ) {
+  if (limit.resource === "lessonStart" || limit.resource === "generatedLessons") {
     return lesson;
   }
 
-  if (limit.resource === "aiSpend") {
-    return helpWords(limit);
-  }
-
-  return capWords(limit, {
-    day: t("No more new mind maps today"),
-    guest: t("No more mind maps without an account"),
-    month: t("No more new mind maps this month"),
-  });
+  return limit.resource === "aiSpend" ? help : maps;
 }
 
 function useOutlineLimitWords(limit: OutlineLimit): LimitWords {
   const t = useExtracted();
-  const capWords = useCapWords();
 
-  return capWords(limit, {
+  return useCapWords(limit, {
     day: t("No more previews today"),
     guest: t("No more previews without an account"),
-    month: t("No more previews this month"),
+    rolling: t("You've used your previews"),
   });
 }
 
@@ -301,16 +253,28 @@ export function OutlineLimitNotice({
   return <LimitNoticeBody {...props} limit={limit} words={useOutlineLimitWords(limit)} />;
 }
 
-/** When a used-up cap comes back, for a screen or gate that draws its own way on. */
-export function useCapLine(limit: CallLimit): string | undefined {
-  const comesBack = useComesBackLine();
-  return comesBack({ period: limit.period, status: "limitReached", tier: limit.tier });
+/** When a used-up call cap comes back, for a screen or gate that draws its own way on. */
+export function useCallLimitLine(limit: CallLimit): string | undefined {
+  return useComesBackLine(toCapLimit(limit));
 }
 
-/** Its screen's title says what ran out, so this is only the line and the way on. */
-export function CallLimitNotice({ limit, ...props }: LimitNoticeProps & { limit: CallLimit }) {
-  const comesBack = useComesBackLine();
-  const reached: ReachedLimit = { period: limit.period, status: "limitReached", tier: limit.tier };
+export type CallNeed = "any" | "mock" | "task";
 
-  return <LimitNoticeBody {...props} limit={reached} words={{ line: comesBack(reached) }} />;
+/** Its screen's title says what ran out, so this is only the line and the way on. */
+export function CallLimitNotice({
+  limit,
+  need = "any",
+  ...props
+}: LimitNoticeProps & { limit: CallLimit; need?: CallNeed }) {
+  const reached = toCapLimit(limit);
+  const comesBack = useComesBackLine(reached);
+  const enough = useEnoughLine(reached);
+
+  return (
+    <LimitNoticeBody
+      {...props}
+      limit={reached}
+      words={{ line: need === "any" ? comesBack : enough }}
+    />
+  );
 }

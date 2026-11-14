@@ -17,7 +17,7 @@ export const weeklyStudyTimeSchema = z.object({
     .min(0)
     .meta({
       description:
-        "This goal's weekly time budget, including past session targets. Exact minutes may be fractional; format them as a human duration for display.",
+        "This goal's weekly time budget, including past session targets, in exact minutes, which may be fractional",
       examples: [EXAMPLE_WEEKLY_MINUTES],
     }),
 }) satisfies z.ZodType<WeeklyStudyTime>;

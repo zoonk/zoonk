@@ -3,9 +3,14 @@ import { SPEAKING_EXAM_LANGUAGES } from "@zoonk/ai/tasks/language/exam-speaking-
 import { isLiveCallAvailable } from "@zoonk/ai/tasks/language/live-call-session";
 import { type Goal, prisma } from "@zoonk/db";
 import { type CefrLevel } from "@zoonk/utils/cefr";
-import { getCallTimeLeft } from "../../../entitlements/_utils/evaluate-usage";
+import { readEntitlementViewer } from "../../../entitlements/_utils/entitlement-viewer";
+import { evaluateUsage } from "../../../entitlements/_utils/evaluate-usage";
+import { getUsageCounts } from "../../../entitlements/_utils/usage-counts";
 import { type AllowanceLimit } from "../../../entitlements/contract";
 import { getAllowance } from "../../../entitlements/get-allowance";
+import { getEstimatedCostMicros } from "../../../entitlements/limits";
+import { getRequestInstant } from "../../../learner/facts/request-instant";
+import { readUsageTotals } from "../../../learner/facts/usage-totals";
 import { getSpeakingLevel, toSpeakingLevel } from "../../conversations/_utils/conversation-goal";
 import { type SpeakingPaperView } from "../speaking-contract";
 import { type SpeakingFormat } from "../speaking-format";
@@ -124,24 +129,23 @@ export async function hasSpeakingAccess(): Promise<boolean> {
   return allowance?.examPrep.includesMockExams ?? false;
 }
 
-/** A task starts whole while any call time is left, like every call. */
-export async function findUsedUpCallTime(): Promise<AllowanceLimit | null> {
-  const allowance = await getAllowance();
+export async function findCallStartLimit(): Promise<AllowanceLimit | null> {
+  const viewer = await readEntitlementViewer();
 
-  if (!allowance) {
+  if (!viewer) {
     return null;
   }
 
-  const { callTime, tier } = allowance;
+  const [totals, now] = await Promise.all([readUsageTotals(viewer.userId), getRequestInstant()]);
 
-  const left = getCallTimeLeft({
+  const decision = evaluateUsage({
+    costMicros: getEstimatedCostMicros({ generated: false, kind: "conversation" }),
+    counts: getUsageCounts(totals, "conversation"),
+    generated: false,
     kind: "conversation",
-    tier,
-    usedThisMonth: callTime.usedSecondsThisMonth,
-    usedToday: callTime.usedSeconds,
+    now,
+    tier: viewer.tier,
   });
 
-  return left && left.seconds <= 0
-    ? { limit: left.limit, period: left.period, resource: "callSeconds", tier }
-    : null;
+  return decision.status === "limitReached" ? decision.limit : null;
 }

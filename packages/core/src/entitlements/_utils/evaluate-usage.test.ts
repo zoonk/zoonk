@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  USAGE_WINDOW_MS,
   getDailySpendBudgetMicros,
   getEstimatedCostMicros,
   getLiveCallCostMicros,
@@ -11,17 +12,21 @@ import { type UsageCounts } from "./usage-counts";
 const NOW = new Date("2026-09-15T12:00:00Z");
 
 function counts(overrides: Partial<UsageCounts>): UsageCounts {
+  const seconds = overrides.secondsLast30Days ?? 0;
+
   return {
     activeGoals: 0,
+    callSpend: [],
     day: 0,
     generatedTotal: 0,
     lastUsedAt: null,
-    lessonStarts: { count: 0, latest: [], prepared: 0 },
-    month: 0,
-    secondsThisMonth: 0,
+    lessonStarts: { count: 0, latest: [], latestPrepared: [], prepared: 0 },
+    rollingClaims: seconds > 0 ? [{ amount: seconds, at: NOW }] : [],
+    secondsLast30Days: 0,
     secondsToday: 0,
     spentTodayMicros: 0,
     total: 0,
+    usedLast30Days: 0,
     ...overrides,
   };
 }
@@ -33,8 +38,13 @@ describe(evaluateUsage, () => {
         costMicros: 0,
         counts: counts({
           day: 20,
-          lessonStarts: { count: 20, latest: Array.from({ length: 20 }, () => NOW), prepared: 0 },
-          month: 40,
+          lessonStarts: {
+            count: 20,
+            latest: Array.from({ length: 20 }, () => NOW),
+            latestPrepared: [],
+            prepared: 0,
+          },
+          usedLast30Days: 40,
         }),
         generated: false,
         kind: "lessonStart",
@@ -57,7 +67,7 @@ describe(evaluateUsage, () => {
     expect(
       evaluateUsage({
         costMicros: 0,
-        counts: counts({ activeGoals: 3, day: 3, month: 3, total: 3 }),
+        counts: counts({ activeGoals: 3, day: 3, total: 3, usedLast30Days: 3 }),
         generated: false,
         kind: "goal",
         now: NOW,
@@ -71,7 +81,7 @@ describe(evaluateUsage, () => {
     expect(
       evaluateUsage({
         costMicros: 0,
-        counts: counts({ activeGoals: 2, day: 3, month: 3, total: 3 }),
+        counts: counts({ activeGoals: 2, day: 3, total: 3, usedLast30Days: 3 }),
         generated: false,
         kind: "goal",
         now: NOW,
@@ -142,21 +152,21 @@ describe(evaluateUsage, () => {
   });
 });
 
-function plusLeft(usedThisMonth: number) {
-  return getCallTimeLeft({ kind: "conversation", tier: "plus", usedThisMonth, usedToday: 0 });
+function plusLeft(usedLast30Days: number) {
+  return getCallTimeLeft({ kind: "conversation", tier: "plus", usedLast30Days, usedToday: 0 });
 }
 
 describe(getCallTimeLeft, () => {
   it("names what's left of the month when it runs out before the day's", () => {
     expect([plusLeft(0), plusLeft(4500)]).toStrictEqual([
       { limit: 1200, period: "day", seconds: 1200 },
-      { limit: 5220, period: "month", seconds: 720 },
+      { limit: 5220, period: "rolling30Days", seconds: 720 },
     ]);
   });
 
   it("has nothing to cap for uses that don't run for a time", () => {
     expect(
-      getCallTimeLeft({ kind: "lessonStart", tier: "plus", usedThisMonth: 0, usedToday: 0 }),
+      getCallTimeLeft({ kind: "lessonStart", tier: "plus", usedLast30Days: 0, usedToday: 0 }),
     ).toBeNull();
   });
 });
@@ -181,23 +191,35 @@ describe("the plan's call time", () => {
     expect(
       (
         [
-          { secondsThisMonth: 299, tier: "free" },
-          { secondsThisMonth: 300, tier: "free" },
-          { secondsThisMonth: 5219, tier: "plus" },
-          { secondsThisMonth: 5220, tier: "plus" },
+          { secondsLast30Days: 299, tier: "free" },
+          { secondsLast30Days: 300, tier: "free" },
+          { secondsLast30Days: 5219, tier: "plus" },
+          { secondsLast30Days: 5220, tier: "plus" },
         ] as const
-      ).map(({ secondsThisMonth, tier }) =>
-        evaluateUsage({ ...claim, counts: counts({ secondsThisMonth }), tier }),
+      ).map(({ secondsLast30Days, tier }) =>
+        evaluateUsage({ ...claim, counts: counts({ secondsLast30Days }), tier }),
       ),
     ).toStrictEqual([
       { status: "allowed" },
       {
-        limit: { limit: 300, period: "month", resource: "callSeconds", tier: "free" },
+        limit: {
+          availableAt: new Date(NOW.getTime() + USAGE_WINDOW_MS),
+          limit: 300,
+          period: "rolling30Days",
+          resource: "callSeconds",
+          tier: "free",
+        },
         status: "limitReached",
       },
       { status: "allowed" },
       {
-        limit: { limit: 5220, period: "month", resource: "callSeconds", tier: "plus" },
+        limit: {
+          availableAt: new Date(NOW.getTime() + USAGE_WINDOW_MS),
+          limit: 5220,
+          period: "rolling30Days",
+          resource: "callSeconds",
+          tier: "plus",
+        },
         status: "limitReached",
       },
     ]);
@@ -228,27 +250,39 @@ describe("the plan's call time", () => {
   it("names the month when both run out, since tomorrow brings no calls back", () => {
     expect(
       [
-        { secondsThisMonth: 300, secondsToday: 120 },
-        { secondsThisMonth: 300, secondsToday: 300 },
+        { secondsLast30Days: 300, secondsToday: 120 },
+        { secondsLast30Days: 300, secondsToday: 300 },
       ].map((used) => evaluateUsage({ ...claim, counts: counts(used), tier: "free" })),
     ).toStrictEqual([
       {
-        limit: { limit: 300, period: "month", resource: "callSeconds", tier: "free" },
+        limit: {
+          availableAt: new Date(NOW.getTime() + USAGE_WINDOW_MS),
+          limit: 300,
+          period: "rolling30Days",
+          resource: "callSeconds",
+          tier: "free",
+        },
         status: "limitReached",
       },
       {
-        limit: { limit: 300, period: "month", resource: "callSeconds", tier: "free" },
+        limit: {
+          availableAt: new Date(NOW.getTime() + USAGE_WINDOW_MS),
+          limit: 300,
+          period: "rolling30Days",
+          resource: "callSeconds",
+          tier: "free",
+        },
         status: "limitReached",
       },
     ]);
   });
 
   it("keeps the talk in a month of Plus's call minutes within $6 even if every call is a minute long", () => {
-    const monthSeconds = getUsageRule({ kind: "conversation", tier: "plus" }).monthSeconds ?? 0;
+    const rolling30Days = getUsageRule({ kind: "conversation", tier: "plus" }).rolling30Days ?? 0;
 
     const oneMinuteCall = getLiveCallCostMicros(70);
 
-    expect((monthSeconds / 60) * oneMinuteCall).toBeLessThanOrEqual(6_000_000);
-    expect((monthSeconds / 60 + 1) * oneMinuteCall).toBeGreaterThan(6_000_000);
+    expect((rolling30Days / 60) * oneMinuteCall).toBeLessThanOrEqual(6_000_000);
+    expect((rolling30Days / 60 + 1) * oneMinuteCall).toBeGreaterThan(6_000_000);
   });
 });

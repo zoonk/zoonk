@@ -10,10 +10,10 @@ import com.zoonk.api.models.ChapterMindMap
 import com.zoonk.api.models.ChapterMindMapStatus
 import com.zoonk.api.models.GoalMindMap
 import com.zoonk.api.models.MindMapGeneration
-import com.zoonk.api.models.MonthlyAllowanceItem
 import java.text.Normalizer
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.toJavaInstant
 
 /** What a map's row says, from the server's status and what this screen asked for. */
 enum class MindMapShown {
@@ -102,20 +102,19 @@ val MindMapGeneration.Status.shown: MindMapShown
             MindMapGeneration.Status.DRAWING -> MindMapShown.Drawing
         }
 
-/** The allowance of [kind]: every kind but lessons, which count their last 30 days instead of the month. */
-fun AllowanceResponse.monthly(kind: MonthlyAllowanceItem.Kind): MonthlyAllowanceItem? =
-    items.firstNotNullOfOrNull { (it as? AllowanceItem.MonthlyAllowanceItemValue)?.value?.takeIf { item -> item.kind == kind } }
+/** The allowance of [kind]. */
+fun AllowanceResponse.item(kind: AllowanceItem.Kind): AllowanceItem? = items.firstOrNull { it.kind == kind }
 
 /** Main's `getReachedCap`: the learner's plan has no [kind] left now, and until when. */
-fun AllowanceResponse.reachedCap(kind: MonthlyAllowanceItem.Kind): Limit.Reached? {
-    val item = monthly(kind) ?: return null
+fun AllowanceResponse.reachedCap(kind: AllowanceItem.Kind): Limit.Reached? {
+    val item = item(kind) ?: return null
     val remaining = item.remaining
     if (remaining == null || remaining > 0) return null
 
     val period =
         when {
             usedUp(item.totalLimit, item.usedTotal) -> LimitPeriod.Total
-            usedUp(item.monthlyLimit, item.usedThisMonth) -> LimitPeriod.Month
+            usedUp(item.rollingLimit, item.usedLast30Days) -> LimitPeriod.Rolling30Days
             else -> LimitPeriod.Day
         }
     val tier =
@@ -124,7 +123,7 @@ fun AllowanceResponse.reachedCap(kind: MonthlyAllowanceItem.Kind): Limit.Reached
             AllowanceResponse.Tier.FREE -> LimitTier.Free
             AllowanceResponse.Tier.PLUS -> LimitTier.Plus
         }
-    return Limit.Reached(tier, period)
+    return Limit.Reached(tier, period, item.availableAt?.toJavaInstant())
 }
 
 private fun usedUp(

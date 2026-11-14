@@ -15,7 +15,8 @@ import {
   ListRowTitle,
 } from "../../_components/list-group";
 import { LearnPageBar } from "../../shell/learn-bar";
-import { type ExamTaskStart, SpeakingPaperSection } from "./speaking-paper-section";
+import { type LimitedCallStart } from "../conversation/use-call-start";
+import { SpeakingPaperSection } from "./speaking-paper-section";
 import { useTaskMinutes } from "./speaking-task-row";
 
 export function SpeakingPracticeRow({
@@ -52,7 +53,7 @@ export function SpeakingPracticeScreen({
   resultHref,
 }: {
   backHref: string;
-  onStart: (task: string) => Promise<ExamTaskStart>;
+  onStart: (task: string) => Promise<LimitedCallStart>;
   openTask: string | null;
   paper: SpeakingPaperView;
   resultHref: (conversationId: string) => string;
