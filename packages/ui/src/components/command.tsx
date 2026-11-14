@@ -92,12 +92,15 @@ function CommandDialogDescription({
   return <DialogDescription className={cn("sr-only", className)} {...props} />;
 }
 
-/** Its text stays 16px on phones so iOS Safari doesn't zoom in. */
+/**
+ * Its text stays 16px on phones so iOS Safari doesn't zoom in. `cancelLabel` closes the palette:
+ * the word after the field on a phone, and from `sm` the field's "Esc" keycap as a button.
+ */
 function CommandInput({
   cancelLabel,
   className,
   ...props
-}: AutocompleteInputProps & { cancelLabel?: string }) {
+}: AutocompleteInputProps & { cancelLabel: string }) {
   return (
     <div
       className="flex items-center gap-3 px-4 pt-2.5 pb-2 sm:border-b sm:p-0"
@@ -114,16 +117,18 @@ function CommandInput({
           data-slot="command-input"
           {...props}
         />
-        <Kbd aria-hidden="true" className="hidden sm:pointer-fine:inline-flex">
-          Esc
-        </Kbd>
+        <DialogClose
+          aria-keyshortcuts="Escape"
+          className="hit-area focus-visible:ring-ring/50 hover:[&>kbd]:text-foreground hover:[&>kbd]:ring-foreground/25 relative hidden shrink-0 rounded-sm outline-none focus-visible:ring-[3px] sm:inline-flex"
+        >
+          <span className="sr-only">{cancelLabel}</span>
+          <Kbd>Esc</Kbd>
+        </DialogClose>
       </div>
 
-      {cancelLabel && (
-        <DialogClose className="hit-area focus-visible:ring-ring/50 relative shrink-0 rounded-md text-sm font-medium outline-none focus-visible:ring-[3px] sm:hidden">
-          {cancelLabel}
-        </DialogClose>
-      )}
+      <DialogClose className="hit-area focus-visible:ring-ring/50 relative shrink-0 rounded-md text-sm font-medium outline-none focus-visible:ring-[3px] sm:hidden">
+        {cancelLabel}
+      </DialogClose>
     </div>
   );
 }
