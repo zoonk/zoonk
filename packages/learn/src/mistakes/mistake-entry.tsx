@@ -23,7 +23,7 @@ import {
 import { Eyebrow } from "../_components/eyebrow";
 import { QuestionTitle } from "../_components/question-title";
 import { TITLE_ROW_CLASS } from "../_components/title-row";
-import { useFormatMomentDay } from "../_utils/iso-date";
+import { useFormatMomentDate } from "../_utils/iso-date";
 import { LearnLink } from "../learn-link";
 import { ItemLine, ItemText } from "../questions/item-text";
 import { useTrueFalseLabels } from "../questions/use-true-false-labels";
@@ -182,7 +182,7 @@ export function MistakeEntryCard({
   mistake: MistakeEntry;
   trueFalseLabels: TrueFalseLabels;
 }) {
-  const entryDate = useFormatMomentDay();
+  const entryDate = useFormatMomentDate();
   const { answerText } = useTrueFalseLabels(trueFalseLabels);
   const { snapshot } = mistake;
   const answer = answerText({ answer: snapshot.answer, format: snapshot.format });

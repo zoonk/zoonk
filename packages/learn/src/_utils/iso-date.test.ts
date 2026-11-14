@@ -6,10 +6,9 @@ function formatInEnglish(
   style: Parameters<typeof getIsoDateOptions>[0]["style"],
   today: string,
 ) {
-  return new Intl.DateTimeFormat("en-US", {
-    ...getIsoDateOptions({ isoDate, style, today }),
-    timeZone: "UTC",
-  }).format(isoDateToUtc(isoDate));
+  return new Intl.DateTimeFormat("en-US", getIsoDateOptions({ isoDate, style, today })).format(
+    isoDateToUtc(isoDate),
+  );
 }
 
 describe(daysUntilIsoDate, () => {

@@ -2,7 +2,7 @@
 
 import { type MemoryFactView } from "@zoonk/core/memory/contract";
 import { useExtracted } from "next-intl";
-import { useFormatMomentDay } from "../_utils/iso-date";
+import { useFormatMomentDate } from "../_utils/iso-date";
 
 export type MemoryCategory = MemoryFactView["category"];
 
@@ -64,7 +64,7 @@ function useFactSourceName(fact: MemoryFactView): string {
 }
 
 export function MemoryFactSource({ fact }: { fact: MemoryFactView }) {
-  const formatDay = useFormatMomentDay();
+  const formatDay = useFormatMomentDate();
   const source = useFactSourceName(fact);
 
   return (

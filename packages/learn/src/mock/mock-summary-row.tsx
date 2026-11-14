@@ -13,7 +13,7 @@ import {
   ListRowTrailing,
 } from "../_components/list-group";
 import { StatusMark } from "../_components/status-mark";
-import { useFormatMomentDay } from "../_utils/iso-date";
+import { useFormatMomentDate } from "../_utils/iso-date";
 import { getMockSubject, useMockNumber } from "./mock-labels";
 
 function useMeasureText() {
@@ -46,7 +46,7 @@ export function MockSummaryRow({
   stacked?: boolean;
 }) {
   const t = useExtracted();
-  const formatDay = useFormatMomentDay();
+  const formatDay = useFormatMomentDate();
   const measure = useMeasureText();
   const date = formatDay(mock.finishedAt);
   const subject = getMockSubject(mock);

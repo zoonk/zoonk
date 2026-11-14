@@ -1,4 +1,4 @@
-import { isInAnotherYear } from "../_utils/iso-date";
+import { isInAnotherYear } from "@zoonk/utils/calendar-day";
 
 export type PlanDateStyle = "day" | "dayYear" | "month" | "monthYear";
 
