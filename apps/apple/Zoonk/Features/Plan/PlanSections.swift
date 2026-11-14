@@ -522,7 +522,7 @@ struct NextOnPathSection: View {
             row(
               title: Text(
                 "Mock exam", tableName: "Plan", comment: "The next mock exam on the path"),
-              detail: Text(PlanDate.text(mockDate, today: plan.today)), kind: .mock)
+              detail: .date(Text(PlanDate.text(mockDate, today: plan.today))), kind: .mock)
           }
         }
 
@@ -559,16 +559,14 @@ struct NextOnPathSection: View {
   }
 
   private func checkpointRow(_ checkpoint: PlanPhase.Checkpoint) -> some View {
-    Button {
-      router.open(.challenge(planItemId: checkpoint.planItemId))
-    } label: {
+    PlanRouteLink(route: .challenge(planItemId: checkpoint.planItemId)) {
       PlanChallengeLabel(
-        when: checkpoint.whenText(today: context.plan.today), explains: true,
+        when: checkpoint.when(today: context.plan.today), explains: true,
         isLanguage: context.goal.kind == .language)
     }
   }
 
-  private func row(title: Text, detail: Text?, kind: LearnKind) -> some View {
+  private func row(title: Text, detail: PlanWhen?, kind: LearnKind) -> some View {
     IconLabeledContent {
       detail
     } title: {
@@ -582,7 +580,7 @@ struct NextOnPathSection: View {
   @ViewBuilder
   private var finishRow: some View {
     let finish = IconLabeledContent {
-      planFinishText(context)
+      planFinish(context)
     } title: {
       Text(context.goal.displayName).foregroundStyle(.primary)
     } icon: {
@@ -607,24 +605,25 @@ struct NextOnPathSection: View {
   }
 }
 
-func planFinishText(_ context: PlanContext) -> Text? {
+func planFinish(_ context: PlanContext) -> PlanWhen? {
   let plan = context.plan
   let schedule = plan.schedule
 
   if let targetDate = schedule.targetDate {
     let month = schedule.targetDateNamedMonth
 
-    return schedule.targetDateEstimated
-      ? PlanDate.estimateText(targetDate, today: plan.today, month: month)
-      : Text(PlanDate.text(targetDate, today: plan.today, month: month))
+    return .date(
+      schedule.targetDateEstimated
+        ? PlanDate.estimateText(targetDate, today: plan.today, month: month)
+        : Text(PlanDate.text(targetDate, today: plan.today, month: month)))
   }
 
   if context.goal.kind == .exam {
-    return Text(
-      "Date to be confirmed", tableName: "Plan", comment: "An exam whose day isn't known yet")
+    return .words(
+      Text("Date to be confirmed", tableName: "Plan", comment: "An exam whose day isn't known yet"))
   }
 
-  return plan.estimate.endDate.map { PlanDate.estimateText($0, today: plan.today) }
+  return plan.estimate.endDate.map { .date(PlanDate.estimateText($0, today: plan.today)) }
 }
 
 /// The places a phone lists nowhere else: the lessons done, the mind maps and the exam's page.
@@ -766,7 +765,7 @@ struct PlanSettingsSection: View {
         : Text("No date", tableName: "Plan", comment: "A goal without a date")
     }
 
-    return planFinishText(context) ?? Text(verbatim: "")
+    return planFinish(context)?.text ?? Text(verbatim: "")
   }
 
   private func choiceValue(_ choice: GoalPlan.ExamChoice) -> Text {
