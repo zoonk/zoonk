@@ -127,12 +127,25 @@ class PlanScreenshots {
             mapOf(
                 "plan-sheet-pace" to { links -> PaceDetails(page, page.plan.status!!.pace, links, onAdjust = {}) },
                 "plan-sheet-progress" to
+                    { links -> PreparationDetails(Standing.Progress(progress(), done = 13, known = 0, total = 46), links) },
+                "plan-sheet-preparation-review" to
                     { links ->
                         PreparationDetails(
-                            progress(),
-                            forExam = false,
-                            lessons = Standing.Progress(progress(), done = 13, known = 0, total = 46),
-                            links = links,
+                            Standing.Preparation(
+                                progress(
+                                    mocks = """{"kind":"fullReviews","plusRequired":false,"taken":0,"value":0}""",
+                                    rule = "examWeighted",
+                                    fading = 0,
+                                ),
+                            ),
+                            links,
+                        )
+                    },
+                "plan-sheet-preparation-reviewed" to
+                    { links ->
+                        PreparationDetails(
+                            Standing.Preparation(progress(mocks = """{"kind":"fullReviews","plusRequired":false,"taken":2,"value":0.5}""")),
+                            links,
                         )
                     },
                 "plan-sheet-phase-details" to { links -> PhaseDetails(page, page.plan.phases[1], links) },

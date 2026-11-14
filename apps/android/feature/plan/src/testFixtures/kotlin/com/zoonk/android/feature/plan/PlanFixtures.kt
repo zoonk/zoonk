@@ -35,16 +35,20 @@ fun plan(extra: String = ""): Plan {
     return ApiJson.decodeFromJsonElement<Plan>(JsonObject(base + fields))
 }
 
-internal fun progress(): GoalProgress =
+internal fun progress(
+    mocks: String = """{"kind":"weeklyChallenges","plusRequired":false,"taken":1,"value":0.6}""",
+    rule: String = "solid",
+    fading: Int = 2,
+): GoalProgress =
     ApiJson.decodeFromString(
         """
         {"goal":{"id":"$GOAL","kind":"learn","targetDate":null,"title":"Learn Python","displayName":"Learn Python"},"mistakes":{"open":0},
-         "stillNeeded":{"areas":[],"left":12,"minutes":240,"rule":"solid"},
+         "stillNeeded":{"areas":[],"left":12,"minutes":240,"rule":"$rule"},
          "preparation":{"areas":[],"goalId":"$GOAL","sections":[],"stage":"building","value":0.42,"weekGain":0.03,
-          "skills":{"fading":2,"learning":3,"mastered":1,"new":10,"solid":2,"total":18},
+          "skills":{"fading":$fading,"learning":3,"mastered":1,"new":10,"solid":2,"total":18},
           "components":{"coverage":{"heaviest":{"studiedSkills":2,"totalSkills":5,"value":0.4},"studiedSkills":6,"totalSkills":18,"value":0.33},
            "mastery":{"answered":20,"correct":15,"evidence":0.5,"supported":0.7,"value":0.75},
-           "mocks":{"kind":"weeklyChallenges","plusRequired":false,"taken":1,"value":0.6},
+           "mocks":$mocks,
            "retention":{"studiedSkills":6,"value":0.8}}}}
         """.trimIndent(),
     )
