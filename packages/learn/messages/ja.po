@@ -2292,11 +2292,6 @@ msgid "{count, plural, one {# lesson} other {# lessons}}"
 msgstr "{count, plural, other {#レッスン}}"
 
 #: src/chapter/chapter-header.tsx
-msgctxt "uPK7mm"
-msgid "Chapter options"
-msgstr "章のオプション"
-
-#: src/chapter/chapter-header.tsx
 #: src/journey/plan-header.tsx
 #: src/language/unit/unit-header.tsx
 #: src/shell/learn-bar.tsx
@@ -2305,6 +2300,11 @@ msgstr "章のオプション"
 msgctxt "fz0z4c"
 msgid "Plan"
 msgstr "学習計画"
+
+#: src/chapter/chapter-header.tsx
+msgctxt "uPK7mm"
+msgid "Chapter options"
+msgstr "章のオプション"
 
 #: src/chapter/chapter-mistakes.tsx
 msgctxt "EwFu5D"
@@ -12929,11 +12929,6 @@ msgid "{count, plural, one {# chapter} other {# chapters}}"
 msgstr "{count, plural, other {#章}}"
 
 #: src/syllabus/subject-screen.tsx
-msgctxt "vx7zl3"
-msgid "Subject options"
-msgstr "科目のメニュー"
-
-#: src/syllabus/subject-screen.tsx
 msgctxt "NBKiJR"
 msgid "Topics in your material"
 msgstr "資料に含まれるトピック"
@@ -12953,6 +12948,11 @@ msgstr "{total, plural, other {{done, number} / #トピック}}"
 msgctxt "XHGiOR"
 msgid "About this subject"
 msgstr "この科目について"
+
+#: src/syllabus/subject-screen.tsx
+msgctxt "vx7zl3"
+msgid "Subject options"
+msgstr "科目のメニュー"
 
 #: src/syllabus/subject-topics.tsx
 msgctxt "fq8lB2"

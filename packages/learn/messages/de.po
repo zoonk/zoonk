@@ -2292,11 +2292,6 @@ msgid "{count, plural, one {# lesson} other {# lessons}}"
 msgstr "{count, plural, one {# Lektion} other {# Lektionen}}"
 
 #: src/chapter/chapter-header.tsx
-msgctxt "uPK7mm"
-msgid "Chapter options"
-msgstr "Kapiteloptionen"
-
-#: src/chapter/chapter-header.tsx
 #: src/journey/plan-header.tsx
 #: src/language/unit/unit-header.tsx
 #: src/shell/learn-bar.tsx
@@ -2305,6 +2300,11 @@ msgstr "Kapiteloptionen"
 msgctxt "fz0z4c"
 msgid "Plan"
 msgstr "Plan"
+
+#: src/chapter/chapter-header.tsx
+msgctxt "uPK7mm"
+msgid "Chapter options"
+msgstr "Kapiteloptionen"
 
 #: src/chapter/chapter-mistakes.tsx
 msgctxt "EwFu5D"
@@ -12929,11 +12929,6 @@ msgid "{count, plural, one {# chapter} other {# chapters}}"
 msgstr "{count, plural, other {# Kapitel}}"
 
 #: src/syllabus/subject-screen.tsx
-msgctxt "vx7zl3"
-msgid "Subject options"
-msgstr "Optionen für dieses Fach"
-
-#: src/syllabus/subject-screen.tsx
 msgctxt "NBKiJR"
 msgid "Topics in your material"
 msgstr "Themen in deinem Material"
@@ -12953,6 +12948,11 @@ msgstr "{total, plural, one {{done, number} von # Thema} other {{done, number} v
 msgctxt "XHGiOR"
 msgid "About this subject"
 msgstr "Über dieses Fach"
+
+#: src/syllabus/subject-screen.tsx
+msgctxt "vx7zl3"
+msgid "Subject options"
+msgstr "Optionen für dieses Fach"
 
 #: src/syllabus/subject-topics.tsx
 msgctxt "fq8lB2"

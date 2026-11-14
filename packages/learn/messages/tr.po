@@ -2292,11 +2292,6 @@ msgid "{count, plural, one {# lesson} other {# lessons}}"
 msgstr "{count, plural, other {# ders}}"
 
 #: src/chapter/chapter-header.tsx
-msgctxt "uPK7mm"
-msgid "Chapter options"
-msgstr "Ünite seçenekleri"
-
-#: src/chapter/chapter-header.tsx
 #: src/journey/plan-header.tsx
 #: src/language/unit/unit-header.tsx
 #: src/shell/learn-bar.tsx
@@ -2305,6 +2300,11 @@ msgstr "Ünite seçenekleri"
 msgctxt "fz0z4c"
 msgid "Plan"
 msgstr "Plan"
+
+#: src/chapter/chapter-header.tsx
+msgctxt "uPK7mm"
+msgid "Chapter options"
+msgstr "Ünite seçenekleri"
 
 #: src/chapter/chapter-mistakes.tsx
 msgctxt "EwFu5D"
@@ -12929,11 +12929,6 @@ msgid "{count, plural, one {# chapter} other {# chapters}}"
 msgstr "{count, plural, other {# ünite}}"
 
 #: src/syllabus/subject-screen.tsx
-msgctxt "vx7zl3"
-msgid "Subject options"
-msgstr "Branş seçenekleri"
-
-#: src/syllabus/subject-screen.tsx
 msgctxt "NBKiJR"
 msgid "Topics in your material"
 msgstr "Materyalindeki konular"
@@ -12953,6 +12948,11 @@ msgstr "{total, plural, other {{done, number} / # konu}}"
 msgctxt "XHGiOR"
 msgid "About this subject"
 msgstr "Bu branş hakkında"
+
+#: src/syllabus/subject-screen.tsx
+msgctxt "vx7zl3"
+msgid "Subject options"
+msgstr "Branş seçenekleri"
 
 #: src/syllabus/subject-topics.tsx
 msgctxt "fq8lB2"
