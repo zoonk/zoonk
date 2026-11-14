@@ -12,7 +12,7 @@ import { getAiSpendSummary } from "@/data/ai/get-ai-spend-summary";
 import { listAiSpendByModel } from "@/data/ai/list-ai-spend-by-model";
 import { listAiSpendByTask } from "@/data/ai/list-ai-spend-by-task";
 import { listDailyAiSpend } from "@/data/ai/list-daily-ai-spend";
-import { listTopAiSpenders } from "@/data/ai/list-top-ai-spenders";
+import { listTopAiSpendingGoals, listTopAiSpendingLearners } from "@/data/ai/list-top-ai-spenders";
 import { buildAdminHref } from "@/lib/admin-href";
 import {
   formatDollars,
@@ -194,13 +194,13 @@ async function loadRanking({ by, days }: Pick<View, "by" | "days">) {
     };
   }
 
-  const spenders = await listTopAiSpenders(days);
-
   if (by === "goal") {
+    const goals = await listTopAiSpendingGoals(days);
+
     return {
       columns: goalColumns,
       noun: "goal",
-      rows: spenders.goals.map((row) => (
+      rows: goals.map((row) => (
         <AdminTableRow key={row.id}>
           <TableCell className="text-foreground font-medium">
             {row.goal ? (
@@ -229,10 +229,12 @@ async function loadRanking({ by, days }: Pick<View, "by" | "days">) {
     };
   }
 
+  const learners = await listTopAiSpendingLearners(days);
+
   return {
     columns: learnerColumns,
     noun: "learner",
-    rows: spenders.learners.map((row) => (
+    rows: learners.map((row) => (
       <AdminTableRow key={row.id}>
         <AdminUserCell user={row.user} userId={row.id} />
         <TableCell numeric>{row.calls.toLocaleString("en")}</TableCell>
