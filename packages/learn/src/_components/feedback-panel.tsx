@@ -81,6 +81,14 @@ export function FeedbackExplanation({ className, ...props }: React.ComponentProp
   );
 }
 
+export function FeedbackAnswerLabel({ className, ...props }: React.ComponentProps<"span">) {
+  return <span className={cn("text-muted-foreground", className)} {...props} />;
+}
+
+export function FeedbackAnswerValue({ className, ...props }: React.ComponentProps<"span">) {
+  return <span className={cn("text-success-text font-medium", className)} {...props} />;
+}
+
 export function FeedbackNote({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p

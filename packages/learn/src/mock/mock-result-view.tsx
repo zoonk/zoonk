@@ -23,8 +23,9 @@ import { MockResultBreakdown, hasBreakdown, useMockRange } from "./mock-result-b
 import { MockResultDetails } from "./mock-result-details";
 import { useEssayItems } from "./mock-result-essays";
 import {
-  MockPlanAnswers,
+  MockPlanAccept,
   MockPlanChange,
+  MockPlanDecline,
   MockPlanStep,
   type PlanChange,
   PreparationMeter,
@@ -251,7 +252,10 @@ function useResultSteps(result: MockResult) {
     plan: [
       {
         content: <MockPlanStep change={change} preparation={preparation} />,
-        finalAction: hasPlanChange(change) && change.open && <MockPlanAnswers change={change} />,
+        finalAction: hasPlanChange(change) && change.open && <MockPlanAccept change={change} />,
+        finalSecondAction: hasPlanChange(change) && change.open && (
+          <MockPlanDecline change={change} />
+        ),
         id: "plan",
       },
     ],
@@ -288,12 +292,8 @@ function MockResultSteps({ result }: { result: MockResult }) {
       aside={aside}
       ask={ask}
       exitHref={hrefs.exit}
-      finalAction={
-        <>
-          <MockResultContinue />
-          <MockResultActions />
-        </>
-      }
+      finalAction={<MockResultActions />}
+      finalSecondAction={<MockResultContinue />}
       items={items}
     />
   );

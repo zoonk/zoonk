@@ -116,12 +116,17 @@ export function StudyNextSuggestion({
       <SlotContent>
         <SuggestionHeader>{title}</SuggestionHeader>
         {(next.nextLevel || certificates) && (
-          <SuggestionActions>
-            {certificates && (
-              <CertificateAction certificates={certificates} primary={!next.nextLevel} />
-            )}
-            {next.nextLevel && (
-              <ContinueAtNextLevel next={next.nextLevel} onContinue={onContinue} />
+          <SuggestionActions
+            main={
+              next.nextLevel ? (
+                <ContinueAtNextLevel next={next.nextLevel} onContinue={onContinue} />
+              ) : (
+                certificates && <CertificateAction certificates={certificates} primary />
+              )
+            }
+          >
+            {next.nextLevel && certificates && (
+              <CertificateAction certificates={certificates} primary={false} />
             )}
           </SuggestionActions>
         )}

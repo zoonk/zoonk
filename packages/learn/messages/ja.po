@@ -2510,8 +2510,10 @@ msgid "Not this time"
 msgstr "今回はクリアできませんでした"
 
 #: src/checkpoints/checkpoint-review.tsx
-msgctxt "CsqxCb"
-msgid "<label>Answer:</label> <answer></answer>"
+#: src/mistakes/mistake-entry.tsx
+#: src/questions/right-answer-line.tsx
+msgctxt "wS1KQ6"
+msgid "<label>Right answer:</label> <answer></answer>"
 msgstr "<label>正解：</label><answer></answer>"
 
 #: src/checkpoints/checkpoint-review.tsx
@@ -7585,12 +7587,6 @@ msgstr "本番と同じく、1問{seconds, number}秒で答えます。"
 msgctxt "rs59fn"
 msgid "Only answer when you're sure. Saying you're not sure is fine."
 msgstr "自信があるときだけ答えましょう。自信がないと言っても大丈夫です。"
-
-#: src/mistakes/mistake-entry.tsx
-#: src/questions/right-answer-line.tsx
-msgctxt "wS1KQ6"
-msgid "<label>Right answer:</label> <answer></answer>"
-msgstr "<label>正解：</label><answer></answer>"
 
 #: src/mistakes/mistake-entry.tsx
 msgctxt "Gr6IEG"

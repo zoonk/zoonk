@@ -6,7 +6,7 @@
   "goalcontent_also_in_exam_count": "9dbeb871cf82fbefb89916da19bd8ea7c0104c10cc441a2c901462e94594d155",
   "goalcontent_also_in_exams": "06a7196e96cd2c422024c7d45b187129ce2f2f3fa40772d183951c27fe13285a",
   "goalcontent_also_in_plan": "6b9fbc6d6a09382b62a2e01bf4bb8d5bb0e1bac0eea61a5de4febda9998d52dd",
-  "goalcontent_appears_a_lot": "878a004f7b98e067ba8f6ceec65ad0e1c57a730cb69433a0e97b649299bf295f",
+  "goalcontent_asked_a_lot": "e523cd4f3af78d7f105ec2698faccd2c98066245aa8e59b2b912586d7ba601e8",
   "goalcontent_beyond_guide": "311a3e5d5be9d693cce47e1aad5dec05318770797d40ad2905e2b145f7ff2839",
   "goalcontent_beyond_notice": "6c560c4130253cb9e06c1ec31324513d35d62b47f0e045d9219c42cf6576470a",
   "goalcontent_bring_back": "a9a42ab1b6759fd7ef628634a51e1ee5583d062ce763d2204fa8d495a4fe2a00",
@@ -305,12 +305,12 @@
     <string name="goalcontent_topic_skipped_base">Zgodnie z twoim wyborem pominięto te podstawy</string>
     <string name="goalcontent_topic_time">Nie mieści się w dostępnym czasie</string>
     <string name="goalcontent_topic_missing">Nie ma jeszcze lekcji na ten temat</string>
-    <!-- Marks a topic past exams asked a lot. -->
-    <string name="goalcontent_appears_a_lot">Często się pojawia</string>
-    <!-- %1$s is the "Appears a lot" mark. -->
+    <!-- Marks a topic that comes up often in the exam. -->
+    <string name="goalcontent_asked_a_lot">Często na egzaminie</string>
+    <!-- %1$s is the "Asked a lot" mark. -->
     <string name="goalcontent_frequency_material">Według twoich materiałów tematy z oznaczeniem „%1$s” często pojawiają się na egzaminach. Poświęcasz im więcej czasu.</string>
     <string name="goalcontent_frequency_past_exams">Tematy z oznaczeniem „%1$s” pojawiały się najczęściej na poprzednich egzaminach.</string>
-    <!-- %1$s is the "Appears a lot" mark, %2$s what the source counted, %3$s a link to the source's site. -->
+    <!-- %1$s is the "Asked a lot" mark, %2$s what the source counted, %3$s a link to the source's site. -->
     <string name="goalcontent_frequency_tagged_waits">Tematy z oznaczeniem „%1$s” pojawiały się najczęściej na poprzednich egzaminach (%2$s, źródło: %3$s). Te, które pojawiały się najrzadziej, czekają na później.</string>
     <string name="goalcontent_frequency_tagged">Tematy z oznaczeniem „%1$s” pojawiały się najczęściej na poprzednich egzaminach (%2$s, źródło: %3$s). Poświęcasz im więcej czasu.</string>
     <!-- %1$s is what the source counted, %2$s a link to the source's site. -->

@@ -39,6 +39,11 @@ export function hasIsoDatePassed({ isoDate, today }: { isoDate: string; today: D
   return countDaysUntil({ isoDate, today }) < 0;
 }
 
+/** A date in another year carries its year: "Nov 14" a year ahead reads as today. */
+export function isInAnotherYear({ isoDate, today }: { isoDate: string; today: string }): boolean {
+  return isoDate.slice(0, "YYYY".length) !== today.slice(0, "YYYY".length);
+}
+
 export function daysBetween(from: string, to: string): number {
   return Math.round((isoDateToUtc(to).getTime() - isoDateToUtc(from).getTime()) / MS_PER_DAY);
 }
@@ -53,7 +58,7 @@ type DateStyle =
   | "short"
   | "weekday"
   | "weekdayDay"
-  | "weekdayShort";
+  | "weekdayLongYear";
 
 const DATE_STYLES: Record<DateStyle, DateTimeFormatOptions> = {
   day: { day: "numeric", month: "short" },
@@ -65,17 +70,23 @@ const DATE_STYLES: Record<DateStyle, DateTimeFormatOptions> = {
   short: { day: "numeric", month: "short", year: "numeric" },
   weekday: { weekday: "long" },
   weekdayDay: { day: "numeric", month: "long", weekday: "long" },
-  weekdayShort: { weekday: "short" },
+  weekdayLongYear: { day: "numeric", month: "long", weekday: "long", year: "numeric" },
 };
 
 const YEAR_WHEN_ANOTHER_YEAR = new Set<DateStyle>(["day", "long"]);
 
-function getDateOptions({ date, style, today }: { date: Date; style: DateStyle; today?: string }) {
+function getDateOptions({
+  isoDate,
+  style,
+  today,
+}: {
+  isoDate: string;
+  style: DateStyle;
+  today: string;
+}) {
   const options = DATE_STYLES[style];
-  const year = today ? isoDateToUtc(today).getUTCFullYear() : new Date().getFullYear();
-  const isAnotherYear = date.getUTCFullYear() !== year;
 
-  return YEAR_WHEN_ANOTHER_YEAR.has(style) && isAnotherYear
+  return YEAR_WHEN_ANOTHER_YEAR.has(style) && isInAnotherYear({ isoDate, today })
     ? { ...options, year: "numeric" as const }
     : options;
 }
@@ -84,14 +95,11 @@ export function useFormatIsoDate() {
   const format = useFormatter();
   const plan = use(PlanScreenContext);
 
-  return (isoDate: string, style: DateStyle = "day") => {
-    const date = isoDateToUtc(isoDate);
-
-    return format.dateTime(date, {
-      ...getDateOptions({ date, style, today: plan?.today }),
+  return (isoDate: string, style: DateStyle = "day") =>
+    format.dateTime(isoDateToUtc(isoDate), {
+      ...getDateOptions({ isoDate, style, today: plan?.today ?? toLocalIsoDate(new Date()) }),
       timeZone: "UTC",
     });
-  };
 }
 
 /**
