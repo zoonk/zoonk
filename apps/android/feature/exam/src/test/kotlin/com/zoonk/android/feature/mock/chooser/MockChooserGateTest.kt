@@ -42,6 +42,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
 import java.util.UUID
 
 /**
@@ -120,6 +121,47 @@ class MockChooserGateTest {
         rule.runOnIdle { assertEquals(AppRoute.Subscription, navigator.currentRoute) }
     }
 
+    /** Enter on a focused control is that control's: the last mock opens, and no timed mock starts. */
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land")
+    fun enterOnTheLastMockOpensItAndStartsNothing() {
+        answer = { WITH_LAST }
+        show()
+
+        rule.onNodeWithText("Mock exam 2").requestFocus().performKeyInput { pressKey(Key.Enter) }
+
+        rule.runOnIdle {
+            assertEquals(AppRoute.Mock(LAST_BLOCK), navigator.currentRoute)
+            assertEquals(0, starts.started.size)
+        }
+    }
+
+    /** From the picks, Enter is the page's Start, as a radio passes Enter to main's screen. */
+    @Test
+    fun enterOnThePickStarts() {
+        answer = { OPEN }
+        show()
+
+        rule
+            .onAllNodes(isSelectable())
+            .onFirst()
+            .requestFocus()
+            .performKeyInput { pressKey(Key.Enter) }
+
+        rule.runOnIdle { assertEquals(1, starts.started.size) }
+    }
+
+    /** The bar's Start takes its own Enter, and the page doesn't start a second mock on top of it. */
+    @Test
+    fun enterOnTheFocusedStartStartsOnce() {
+        answer = { OPEN }
+        show()
+
+        rule.onNodeWithText("Start").requestFocus().performKeyInput { pressKey(Key.Enter) }
+
+        rule.runOnIdle { assertEquals(1, starts.started.size) }
+    }
+
     @Test
     fun aPurchaseLiftsTheGateAndKeepsThePick() {
         show()
@@ -193,5 +235,11 @@ class MockChooserGateTest {
     private companion object {
         val OPEN = mockOptions("")
         val LOCKED = mockOptions(""""access":"plusRequired"""")
+        const val LAST_BLOCK = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1a03"
+        val WITH_LAST =
+            mockOptions(
+                """"lastMock":{"blockId":"$LAST_BLOCK","correct":52,"examQuestions":180,"finishedAt":"2026-10-20T15:00:00Z",
+                "measure":52,"number":2,"purpose":"practice","scoring":"raw","shape":{"area":null,"day":1,"kind":"full"},"total":90}""",
+            )
     }
 }
