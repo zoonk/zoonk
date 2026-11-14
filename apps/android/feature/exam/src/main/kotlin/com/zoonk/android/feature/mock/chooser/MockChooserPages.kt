@@ -34,8 +34,10 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalDensity
@@ -168,12 +170,12 @@ internal fun PracticeChooser(
             Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     if (subjectChoices.isNotEmpty()) SectionHeader(stringResource(R.string.mock_chooser_the_exam))
-                    ChoiceRows(examChoices, picked) { picked = it }
+                    ChoiceRows(examChoices, picked, onEnter = mainAction) { picked = it }
                 }
                 if (subjectChoices.isNotEmpty()) {
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         SectionHeader(stringResource(R.string.mock_chooser_one_subject))
-                        ChoiceRows(subjectChoices, picked) { picked = it }
+                        ChoiceRows(subjectChoices, picked, onEnter = mainAction) { picked = it }
                     }
                 }
             }
@@ -267,14 +269,9 @@ private fun ChooserPage(
     aside: @Composable ColumnScope.() -> Unit,
     content: LazyListScope.(asideBeside: Boolean) -> Unit,
 ) {
-    Column(
-        // Enter takes the page's main action, as main's Start does; the arrows move the pick.
-        Modifier.onPreviewKeyEvent { event ->
-            val enter = event.key == Key.Enter || event.key == Key.NumPadEnter
-            if (enter && event.type == KeyEventType.KeyDown) onEnter()
-            enter
-        },
-    ) {
+    // Main's screen Enter: a focused control that acts (the last mock, the bar's button, a notice's
+    // action) keeps its own, and only an Enter none of them took starts; the picks hand theirs over.
+    Column(Modifier.onKeyEvent { event -> enterTakes(event, onEnter) }) {
         DetailPage(
             aside = aside,
             asideLabel = stringResource(R.string.mock_chooser_picked),
@@ -301,6 +298,16 @@ private fun StartFailed(failed: ChooserStatus.Failed) {
         color = MaterialTheme.colorScheme.error,
         style = MaterialTheme.typography.bodyMedium,
     )
+}
+
+/** Enter runs [action] once per press, as main's screen keys do, and is spent whether held or not. */
+private fun enterTakes(
+    event: KeyEvent,
+    action: () -> Unit,
+): Boolean {
+    if (event.key != Key.Enter && event.key != Key.NumPadEnter) return false
+    if (event.type == KeyEventType.KeyDown && event.nativeKeyEvent.repeatCount == 0) action()
+    return true
 }
 
 private fun Modifier.focus(requester: FocusRequester?): Modifier = requester?.let { focusRequester(it) } ?: this
@@ -346,11 +353,13 @@ private fun practiceChoices(
 private fun ChoiceRows(
     choices: List<RowChoice>,
     picked: String?,
+    onEnter: () -> Unit,
     onPick: (String) -> Unit,
 ) {
     BoxWithConstraints {
         val stacked = maxWidth < STACK_BELOW
-        Column(Modifier.selectableGroup()) {
+        // A pick is a radio, which main lets Enter pass to the screen's Start; the arrows move it.
+        Column(Modifier.selectableGroup().onPreviewKeyEvent { event -> enterTakes(event, onEnter) }) {
             choices.forEachIndexed { index, choice ->
                 if (index > 0) HorizontalDivider()
                 ChoiceRow(choice, selected = choice.key == picked, stacked = stacked) { onPick(choice.key) }

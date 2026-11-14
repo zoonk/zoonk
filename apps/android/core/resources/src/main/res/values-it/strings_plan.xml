@@ -235,6 +235,9 @@
   "plan_effect_topics_added": "213b9870dee9dc09c9aa7f439fd8d4a356c1b808af3d9937ebbbb087e528fc66",
   "plan_effect_topics_leave": "e1a1b3ed5eaf200cbcb2352ccb1ec6dfd3650ee11bbaeba24b75ea03361682a1",
   "plan_effect_weekly_challenge_on": "671f3dd7613b22ed86dadf2d6150201137ff77dadd3c3fd2a13fca3b656b1370",
+  "plan_ends": "67f9b19b47b57b88c1c81c91355f8ca3bab85ce7ac8c137fc3eb07a0058cc9e7",
+  "plan_ends_about": "3aefdcad28e6b749357444a6e0d4062d8aef0cd879e49dfb4526e01b761cce86",
+  "plan_ends_about_month": "38c35d8c48f81eb356b4ef5b447dc301ed11529d9233063b7c96cffb73c4edab",
   "plan_estimate_based_on": "b27935ff8e4ea2f3addebc90458090130c68b80be40876733af283270b5f3a80",
   "plan_estimate_based_on_last": "350dceddbcfa44bf83d870c49efd0aef3fc569acd27cccc79909924479b35573",
   "plan_estimate_based_on_reviews": "24c0dac88528b99b4816c9a8cf4eb7f96c41f7060246f0404203d802a3039431",
@@ -302,7 +305,6 @@
   "plan_keep_studying": "32260f5cb903766c4a408e7616dfb96099799ffffd1116f0929b32d359996a23",
   "plan_last_week_recap": "627d66bce43f462a74a4bc2a7b587bb2c7eb9ffdb5a4851b61fbfa3f764e3325",
   "plan_lessons": "a3dea9772a49b7321133098db86caebe5e3e7e915c264727e296fdde3fb04712",
-  "plan_lessons_count": "7c2455e1c17cc666d27e1f12c202fcfa46bb177a59eef353023552561e3897dc",
   "plan_lessons_done_of": "bb42f59dd67f83b8cc046a194e51de243a6124bf8158ea6b9c25f969bdd7feb3",
   "plan_lessons_left": "4c84fb2d05dc27aadfcefbb384c4d5dcb47c8272edbe3feceb53d238980193ee",
   "plan_lessons_not_studied": "625ab8178804004b64b955c8f1753933b3ee59e70d514cf53d6ebf920b4fedb5",
@@ -405,10 +407,6 @@
   "plan_roadmap_from": "b529b66d0597f15a6621063dd1a2903b31e8caf9f9c14f7e930f7a1217e1b02e",
   "plan_roadmap_phase_number": "9c546b52c23a6900f791623109b8e6715d3b18c7349ede5eb34c12774a3154f3",
   "plan_roadmap_phase_of": "67297c88e5a3cd63d06e7f589ffbf3c7eb6dc2276a0654b00b2484bd1a0ddc79",
-  "plan_roadmap_until": "1e1713ac9abdf6cd0ba4a0c936cc18beefd1861185f3dac52bccc6c3bfec5a16",
-  "plan_roadmap_until_about": "d1b1d5d30030d327bbdd7ba0599ead143b8431f7e21edc05a1be26f768bdf5a6",
-  "plan_roadmap_until_about_month": "298641e917bef1f29a058616a0bcc4f1bb27fb5a2be5f7b7b174b0c2289fae56",
-  "plan_roadmap_until_month": "3627d0470a565c35a83fa168ed08007c8d70d16849f0c53f8989fb930362d9f4",
   "plan_saturdays": "9b10d47ca38fd7c243a38ce4a1aec01d2bb35ca54f22144e1bc587c8bb2ae578",
   "plan_save": "803d34012863967f21e1c50fa0a9cb2c6d8e1209cb0c6970b2c24fe84512b39f",
   "plan_save_failed": "a236b52c95cf8195667e18ef3be6dcd3fd9890ded88bc0ea2bec732a86069e43",
@@ -534,11 +532,6 @@
   "plan_try_again": "c4ebae105c3c0e3321e00dc87036a29e2dc04dedc45fcde4a1d48d7159b3e47f",
   "plan_tuesdays": "065ac004c6df8ac4647e5d356a88e435cb2b09b6a2a16e6e441b67e1bbee4a7b",
   "plan_undo": "65c89ff7d7c757113c04628581db5981e870912e31025ab8d5098e7e9a0c13e7",
-  "plan_until": "44e83efc25866e7369983c0e25e9d68736e88af9bcd90c3805a125172b6f01a8",
-  "plan_until_estimate": "7808f56560d420d6dec4889aec09b1870a2be443c391fe63a46aa8ac2a9e76d5",
-  "plan_until_estimate_month": "94428cf6459c02ca5cb9377ede6e03bbe94b854759f3a11090d5e8a50f733540",
-  "plan_until_estimate_month_spoken": "70f9c9ce6e139ecdde73f387e43dd1c57e5235cb468369c65cdcbe85ce879711",
-  "plan_until_estimate_spoken": "7c08f7a44cd3eace3d534e1c404f3b0ae050c16057e020d17cb8761487fcf4fa",
   "plan_up_next": "a2a5aa71411354e8e224f40f9e9b448b5be36755eae4d7fd515c054fb1a603a3",
   "plan_up_next_suffix": "96a94ac67ecbd51701eab7233b917a103386e1959eefc26b12a13d6ddd69d9ba",
   "plan_updated": "2726d416e2818b5d69fc9ddbac02d282716e493f52a4be990fe34ecb0ead8264",
@@ -588,6 +581,11 @@
     </plurals>
     <string name="plan_date_estimate">~%1$s</string>
     <string name="plan_date_estimate_spoken">Circa %1$s</string>
+    <!-- What a screen reader says for a phase's end beside its name. %1$s is a day, such as "Nov 10". -->
+    <string name="plan_ends">Termina il %1$s</string>
+    <!-- What a screen reader says for a phase's estimated end beside its name. %1$s is a day, such as "Nov 10", or a month, such as "Jan". -->
+    <string name="plan_ends_about">Termina intorno al %1$s</string>
+    <string name="plan_ends_about_month">Termina verso %1$s</string>
     <string name="plan_date_range">%1$s – %2$s</string>
     <string name="plan_no_goal_description">Dicci cosa vuoi imparare e organizzeremo lo studio giorno per giorno fino al traguardo.</string>
     <string name="plan_setup_left_title">Qualche domanda e poi il tuo piano</string>
@@ -628,14 +626,6 @@
     </plurals>
     <string name="plan_roadmap_phase_of">fase %1$d di %2$d</string>
     <string name="plan_roadmap_from">Da %1$s</string>
-    <!-- %1$s is the day the plan ends, such as "Nov 3". -->
-    <string name="plan_roadmap_until">Fino al %1$s</string>
-    <!-- %1$s is the month the plan ends, such as "May" or "May 2027". -->
-    <string name="plan_roadmap_until_month">Fino a %1$s</string>
-    <!-- An estimated end. %1$s is the day the plan ends, such as "Nov 3". -->
-    <string name="plan_roadmap_until_about">Fino al %1$s circa</string>
-    <!-- An estimated end. %1$s is the month the plan ends, such as "May" or "May 2027". -->
-    <string name="plan_roadmap_until_about_month">Fino a %1$s circa</string>
     <string name="plan_today">Oggi</string>
     <string name="plan_mock_exam">Simulazione d’esame</string>
     <string name="plan_exam_day">Giorno dell’esame</string>
@@ -659,21 +649,11 @@
     <string name="plan_short_day">Giorno %1$d di %2$d</string>
     <string name="plan_short_days">Giorni %1$d–%2$d di %3$d</string>
     <string name="plan_your_path">Il tuo percorso</string>
-    <string name="plan_lessons_count">%1$d / %2$d</string>
     <plurals name="plan_lessons_done_of">
         <item quantity="one">%1$d lezione completata su %2$d</item>
         <item quantity="many">%1$d lezioni completate su %2$d</item>
         <item quantity="other">%1$d lezioni completate su %2$d</item>
     </plurals>
-    <string name="plan_until">fino al %1$s</string>
-    <!-- %1$s is a day, such as "Nov 10". -->
-    <string name="plan_until_estimate">fino al ~%1$s</string>
-    <!-- %1$s is a day, such as "Nov 10". -->
-    <string name="plan_until_estimate_spoken">fino a %1$s circa</string>
-    <!-- %1$s is a month, such as "Jan" or "Jan 2028", never a day. -->
-    <string name="plan_until_estimate_month">fino a ~%1$s</string>
-    <!-- %1$s is a month, such as "Jan" or "Jan 2028", never a day. -->
-    <string name="plan_until_estimate_month_spoken">fino a %1$s circa</string>
     <string name="plan_not_in_your_plan">Non è nel tuo piano</string>
     <plurals name="plan_lessons_not_studied">
         <item quantity="one">%d lezione non studiata</item>
