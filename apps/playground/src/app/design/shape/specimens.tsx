@@ -104,7 +104,7 @@ export function ControlSizes() {
 
         <div className="flex flex-wrap items-center gap-2">
           <Badge variant="secondary">New</Badge>
-          <Badge variant="outline">Plus</Badge>
+          <Badge variant="outline">Draft</Badge>
         </div>
       </div>
     </div>
