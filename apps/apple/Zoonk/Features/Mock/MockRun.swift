@@ -217,13 +217,11 @@ final class MockRun {
     return true
   }
 
-  /// Runs a tap's step as the mock screen's, which calls `cancelTaps()` when it closes.
+  /// Runs a tap's step, which the run owns rather than the screen: a section handed in on purpose
+  /// is handed in even if the mock closes meanwhile. ✕ waits for it, so only another place closing
+  /// the mock can; its step timeouts still cancel it.
   func start(_ step: @escaping @MainActor () async -> Void) {
     taps.run(step)
-  }
-
-  func cancelTaps() {
-    taps.cancel()
   }
 
   func submitSection() async {
