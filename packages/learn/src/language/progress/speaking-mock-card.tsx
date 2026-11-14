@@ -32,10 +32,12 @@ function useSpeakingMockDescription() {
 }
 
 export function SpeakingMockCard({
+  barHasMainAction,
   exam,
   onStart,
   paused,
 }: {
+  barHasMainAction?: boolean;
   exam: SpeakingMockExam;
   onStart: () => Promise<CallStartOutcome>;
   paused: boolean;
@@ -76,6 +78,7 @@ export function SpeakingMockCard({
       {!paused &&
         (call.writing ? (
           <WritingWait
+            barHasMainAction={barHasMainAction}
             className="pt-2"
             hint={t("Your mock opens as soon as it's ready.")}
             kind="speakingMock"

@@ -25,7 +25,7 @@ export function TryCallAgain({
   const call = useCallStart({ onStart: onTryAgain });
 
   if (call.writing) {
-    return <WritingWait hint={hint} kind={kind} writing={call.writing} />;
+    return <WritingWait barHasMainAction hint={hint} kind={kind} writing={call.writing} />;
   }
 
   return (

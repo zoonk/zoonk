@@ -1,13 +1,16 @@
 package com.zoonk.android.feature.session
 
+import android.graphics.Bitmap
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -22,6 +25,7 @@ import com.zoonk.android.feature.warmup.WARM_UP_ID
 import com.zoonk.android.feature.warmup.WarmUpStore
 import com.zoonk.android.feature.warmup.beekeepingDeck
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.Generation
 import com.zoonk.api.models.LessonReadiness
@@ -36,6 +40,9 @@ import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
+import org.robolectric.annotation.GraphicsMode
+import java.io.File
 import java.util.UUID
 
 @RunWith(AndroidJUnit4::class)
@@ -155,8 +162,8 @@ class NextStopTest {
         rule.mainClock.advanceTimeBy(6_000)
         rule.waitForIdle()
 
-        rule.onNodeWithText("This lesson is being written for you. It's usually ready in a few minutes.").assertExists()
-        rule.onNodeWithText("While you wait: Mixed practice").assertExists()
+        rule.onNodeWithText("It takes a few minutes.").assertExists()
+        rule.onNodeWithText("Practice now").assertExists()
         rule.onNodeWithText("Start").assertDoesNotExist()
         assertEquals(0, dayReads)
 
@@ -182,7 +189,7 @@ class NextStopTest {
         rule.mainClock.advanceTimeBy(6_000)
         rule.waitForIdle()
 
-        rule.onNodeWithText("Your lesson is ready.").assertExists()
+        rule.onNodeWithText("Your lesson is ready").assertExists()
         rule.onNodeWithText("Start").assertExists()
         rule.onNodeWithText("Here's the answer").assertExists()
         rule.onNodeWithText("Next guess").assertDoesNotExist()
@@ -197,7 +204,7 @@ class NextStopTest {
         rule.mainClock.advanceTimeBy(6_000)
         rule.waitForIdle()
 
-        rule.onNodeWithText("This lesson is being written for you. It's usually ready in a few minutes.").assertExists()
+        rule.onNodeWithText("It takes a few minutes.").assertExists()
         rule.onNodeWithText("Start").assertDoesNotExist()
 
         rule.mainClock.advanceTimeBy(5_000)
@@ -217,6 +224,39 @@ class NextStopTest {
 
         assertEquals(listOf(ana), signIn.expired)
         assertEquals(2, readinessReads)
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    fun theOtherStepIsNamedByWhatItStartsWhileTheLessonIsWrittenAndOnceItFailed() {
+        statuses += listOf(LessonReadiness.Status.GENERATING, LessonReadiness.Status.GENERATING, LessonReadiness.Status.FAILED)
+        shown = step(0, screen = StudyBlock.Screen.SESSION, lessonId = WRITTEN)
+        show(alternative = practice)
+        rule.mainClock.advanceTimeBy(6_000)
+        rule.waitForIdle()
+        shot("next-stop-writing-phone")
+
+        rule.onNodeWithText("Practice now").assertExists()
+
+        rule.mainClock.advanceTimeBy(5_000)
+        rule.waitForIdle()
+        shot("next-stop-writing-failed-phone")
+
+        rule.onNodeWithText("This didn't finish").assertExists()
+        rule.onNodeWithText("Practice now").assertExists()
+    }
+
+    /** A review picture of the screen, written only on demand: `-Pzoonk.shots=<folder>`. */
+    private fun shot(name: String) {
+        val folder = System.getProperty("zoonk.shots").orEmpty().ifEmpty { return }
+        File(folder, "$name.png").apply { parentFile?.mkdirs() }.outputStream().use {
+            rule
+                .onRoot()
+                .captureRender()
+                .asAndroidBitmap()
+                .compress(Bitmap.CompressFormat.PNG, 100, it)
+        }
     }
 
     @Test
@@ -277,7 +317,7 @@ class NextStopTest {
         rule.mainClock.advanceTimeBy(5_000)
         rule.waitForIdle()
 
-        rule.onNodeWithText("This lesson is being written for you. It's usually ready in a few minutes.").assertExists()
+        rule.onNodeWithText("It takes a few minutes.").assertExists()
 
         rule.mainClock.advanceTimeBy(5_000)
         rule.waitForIdle()
@@ -329,7 +369,7 @@ class NextStopTest {
         rule.mainClock.advanceTimeBy(6_000)
         rule.waitForIdle()
 
-        rule.onNodeWithText("This lesson is being written for you. It's usually ready in a few minutes.").assertExists()
+        rule.onNodeWithText("It takes a few minutes.").assertExists()
         rule.onNodeWithText("Start").assertDoesNotExist()
 
         rule.mainClock.advanceTimeBy(10_000)
@@ -345,7 +385,7 @@ class NextStopTest {
         rule.waitForIdle()
 
         rule.onNodeWithText("Start").assertExists()
-        rule.onNodeWithText("This lesson is being written for you. It's usually ready in a few minutes.").assertDoesNotExist()
+        rule.onNodeWithText("It takes a few minutes.").assertDoesNotExist()
 
         rule.mainClock.advanceTimeBy(5_000)
         rule.waitForIdle()
@@ -356,7 +396,7 @@ class NextStopTest {
     @Test
     fun workTappedWhileWaitingIsNeverDrawnAsTheReadyLesson() {
         show(alternative = practice)
-        rule.onNodeWithText("While you wait: Mixed practice").performClick()
+        rule.onNodeWithText("Practice now").performClick()
         rule.waitForIdle()
         shown = practice
         rule.waitForIdle()

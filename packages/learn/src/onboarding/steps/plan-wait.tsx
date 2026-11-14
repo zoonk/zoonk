@@ -179,16 +179,37 @@ function PlanWaitPage({
   const since = useMountTime().getTime();
   const flowRail = useOnboardingRail();
   const stop = holding ? null : getStop({ notice, run });
+  // "Start lesson 1" is the bar's main action then.
+  const barHasMainAction = firstLesson?.status === "ready";
 
   const progress = notice ? (
-    <NoticeReading {...notice} holding={holding} next={next} since={since} />
+    <NoticeReading
+      {...notice}
+      barHasMainAction={barHasMainAction}
+      holding={holding}
+      next={next}
+      since={since}
+    />
   ) : (
-    <PlanBuilding firstLesson={firstLesson} holding={holding} next={next} run={run} since={since} />
+    <PlanBuilding
+      barHasMainAction={barHasMainAction}
+      firstLesson={firstLesson}
+      holding={holding}
+      next={next}
+      run={run}
+      since={since}
+    />
   );
 
   const status = (() => {
     if (stop) {
-      return <GenerationFailureNotice failure={stop.failure} retry={stop.retry} />;
+      return (
+        <GenerationFailureNotice
+          barHasMainAction={barHasMainAction}
+          failure={stop.failure}
+          retry={stop.retry}
+        />
+      );
     }
 
     return notice ? (

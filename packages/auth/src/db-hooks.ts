@@ -45,7 +45,7 @@ export const ensureUserProgressAfterAuthCreate: UserCreateAfterHook = async (use
  * at the next sign-in.
  */
 export async function rememberHomeCountryAfterSessionCreate(
-  session: { impersonatedBy?: string | null; userId: string },
+  session: { createdAt: Date; impersonatedBy?: string | null; userId: string },
   context: GenericEndpointContext | null,
 ): Promise<void> {
   const homeCountry = context?.headers ? getIpCountry(context.headers) : null;
@@ -54,14 +54,18 @@ export async function rememberHomeCountryAfterSessionCreate(
     return;
   }
 
-  await safeAsync(() => fillEmptyHomeCountry({ homeCountry, userId: session.userId }));
+  await safeAsync(() =>
+    fillEmptyHomeCountry({ homeCountry, sessionStart: session.createdAt, userId: session.userId }),
+  );
 }
 
 async function fillEmptyHomeCountry({
   homeCountry,
+  sessionStart,
   userId,
 }: {
   homeCountry: string;
+  sessionStart: Date;
   userId: string;
 }) {
   const filled = await prisma.userLearningProfile.updateMany({
@@ -70,8 +74,10 @@ async function fillEmptyHomeCountry({
   });
 
   if (filled.count === 0) {
+    // Stamped with the session's start, which no later write can have: linking a guest replaces
+    // only a row still carrying that stamp on both timestamps, so one the learner changed stays.
     await prisma.userLearningProfile.createMany({
-      data: [{ homeCountry, userId }],
+      data: [{ createdAt: sessionStart, homeCountry, updatedAt: sessionStart, userId }],
       skipDuplicates: true,
     });
   }

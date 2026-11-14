@@ -22,15 +22,21 @@ export async function VisitorStartBar() {
   );
 }
 
-/** The sidebar's copy of it, over "Log in". A collapsed sidebar has no room for its words. */
+/**
+ * The sidebar's copy of it, first in the footer: the footer sits at the sidebar's end, so it grows up
+ * into empty space and "Send feedback" and "Log in" stay put. A collapsed sidebar has no room for its
+ * words.
+ */
 export async function VisitorStartButton() {
   const t = await getExtracted();
 
   return (
-    <ShownWhenStartAway className="sidebar-collapsed:hidden">
-      <FloatingStartLink className={cn(buttonVariants(), "w-full")}>
-        {t("Build my plan")}
-      </FloatingStartLink>
-    </ShownWhenStartAway>
+    <VisitorOnly>
+      <ShownWhenStartAway className="sidebar-collapsed:hidden pb-2" keepRoom={false}>
+        <FloatingStartLink className={cn(buttonVariants(), "w-full")}>
+          {t("Build my plan")}
+        </FloatingStartLink>
+      </ShownWhenStartAway>
+    </VisitorOnly>
   );
 }

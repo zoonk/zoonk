@@ -2130,11 +2130,11 @@ msgctxt "yyFZMH"
 msgid "Lessons are made with the latest AI models and checked before they reach you: we test their quality with several evaluations, and other models review the content. They follow your exam's subjects and topics. Mistakes are rare, but they can happen. See something wrong? Tell us from the lesson and we'll look into it."
 msgstr "Les leçons sont préparées avec les modèles d’IA les plus récents et vérifiées avant de t’être proposées : on teste leur qualité avec plusieurs évaluations, et d’autres modèles relisent le contenu. Elles portent sur les matières et les sujets de ton examen. Les erreurs sont rares, mais elles peuvent arriver. Tu vois une erreur ? Signale-la depuis la leçon et on vérifiera."
 
-#. In Brazilian Portuguese: “Dá para confiar em aulas criadas por IA?”
+#. A question in the landing page's FAQ, asked by the visitor. In Brazilian Portuguese: “Posso confiar em aulas criadas por IA?”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
-msgctxt "kf3mxX"
-msgid "Can you trust lessons made by AI?"
-msgstr "Les leçons créées par l’IA sont-elles fiables ?"
+msgctxt "RcBICI"
+msgid "Can I trust lessons made by AI?"
+msgstr "Puis-je faire confiance aux leçons créées par l’IA ?"
 
 #. In Brazilian Portuguese: “Os apps para iPhone e Android estão chegando. Por enquanto, o Zoonk funciona no navegador do celular e do computador, sem instalar nada.”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
@@ -2164,7 +2164,7 @@ msgctxt "r4pGG1"
 msgid "Any exam, such as {exams}. Also languages, a new career or any topic you want to learn. Write your goal in your own words."
 msgstr "Tous les examens, comme {exams}. Mais aussi les langues, un nouveau métier ou tout sujet que tu as envie d’étudier. Écris ton objectif avec tes mots."
 
-#. In Brazilian Portuguese: “Quais provas e objetivos dá para estudar?”
+#. A question in the landing page's FAQ, asked by the visitor. In Brazilian Portuguese: “Para quais provas e objetivos eu posso estudar?”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
 msgctxt "iJ_ZyQ"
 msgid "Which exams and goals can I study for?"

@@ -3,7 +3,7 @@
 import { useRouter } from "@/i18n/navigation";
 import { MOCK_ENTRY_HREFS } from "@/lib/mocks/mock-entry-hrefs";
 import { type QuestionWriting, requestQuestionWriting } from "@/lib/questions/question-writing";
-import { answerHere, openingHere } from "@/lib/session/tap-answer";
+import { answerHere, openingHere, stayingHere } from "@/lib/session/tap-answer";
 import { useResetWhenDone } from "@/lib/use-reset-when-done";
 import { useWorkflowRun } from "@/lib/workflow/use-workflow-run";
 import { type MockOptionView, type MockOptionsView } from "@zoonk/core/exams/mocks/contract";
@@ -12,7 +12,6 @@ import {
   type MockChooserStatus,
   getMockOptionKey,
 } from "@zoonk/learn/mock/chooser";
-import { useStillMounted } from "@zoonk/ui/hooks/still-here";
 import { safeAsync } from "@zoonk/utils/error";
 import { useState, useTransition } from "react";
 import { type MockStartOutcome, startAnytimeMockAction } from "./mock-start-actions";
@@ -37,7 +36,7 @@ async function requestMockWriting({
   option,
 }: {
   goalId: string;
-  isWanted: () => boolean;
+  isWanted: () => Promise<boolean>;
   option: MockOptionView;
 }): Promise<QuestionWriting> {
   const path: `/${string}` = `/goals/${encodeURIComponent(goalId)}/mocks/generations`;
@@ -54,7 +53,7 @@ async function requestMockWriting({
     }
 
     await wait(PREPARING_RETRY_MS);
-    return isWanted() ? ask(tries - 1) : writing;
+    return (await isWanted()) ? ask(tries - 1) : writing;
   };
 
   return ask(PREPARING_TRIES);
@@ -112,7 +111,6 @@ function MockChooserVisit({
   view,
 }: MockChooserClientProps & { onDone: () => void }) {
   const router = useRouter();
-  const isMounted = useStillMounted();
   const [busy, startTransition] = useTransition();
   const [status, setStatus] = useState<MockChooserStatus>({ kind: "choosing" });
   const [writing, setWriting] = useState<Writing | null>(null);
@@ -169,7 +167,7 @@ function MockChooserVisit({
 
   const write = async (option: MockOptionView, here: Here) => {
     const { data } = await safeAsync(() =>
-      answerHere(requestMockWriting({ goalId, isWanted: isMounted, option }), here),
+      answerHere(requestMockWriting({ goalId, isWanted: here, option }), here),
     );
 
     const asked = data ?? "failed";
@@ -240,7 +238,7 @@ function MockChooserVisit({
       restart={async () => {
         const again = await requestMockWriting({
           goalId,
-          isWanted: isMounted,
+          isWanted: stayingHere(),
           option: writing.option,
         });
 
