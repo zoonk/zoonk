@@ -33,7 +33,7 @@ struct LanguageVariety: Equatable, Sendable {
     note
       ?? String(
         localized:
-          "Your buddy and practice calls use the country you choose. Lessons and their audio use \(Locale.current.varietyNameInSentence(language: language, region: taughtRegion)).",
+          "Your practice calls and our answers to your questions use the country you choose. Lessons and their audio use \(Locale.current.varietyNameInSentence(language: language, region: taughtRegion)).",
         table: "Plan",
         comment:
           "Under the countries a language goal can choose from; the argument is the language as lessons teach it, like 'Spanish (Mexico)'"
@@ -56,7 +56,7 @@ func varietyNote(language: String, region: String?, taughtRegion: String?) -> St
 
   return String(
     localized:
-      "Your buddy and practice calls use \(chosen). Lessons and their audio use \(taught).",
+      "Your practice calls and our answers to your questions use \(chosen). Lessons and their audio use \(taught).",
     table: "Plan",
     comment:
       "Under a language goal's country; the arguments are a language with its country, like 'Spanish (Argentina)', then the one lessons teach, like 'Spanish (Mexico)'"

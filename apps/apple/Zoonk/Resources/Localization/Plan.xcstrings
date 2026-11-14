@@ -36579,130 +36579,6 @@
         }
       }
     },
-    "Your buddy and practice calls use %@. Lessons and their audio use %@." : {
-      "comment" : "Under a language goal's country; the arguments are a language with its country, like 'Spanish (Argentina)', then the one lessons teach, like 'Spanish (Mexico)'",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dein Kumpel und die Übungsgespräche verwenden %1$@. Die Lektionen und ihre Audioaufnahmen sind auf %2$@."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Your buddy and practice calls use %1$@. Lessons and their audio use %2$@."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu compañero y las llamadas de práctica usan %1$@. Las lecciones y su audio usan %2$@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ton compagnon et tes appels d’entraînement utilisent %1$@. Les leçons et leurs versions audio utilisent %2$@."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il tuo compagno e le conversazioni di allenamento usano %1$@. Le lezioni e il loro audio usano %2$@."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "相棒とのやり取りや会話練習では%1$@を使います。レッスンとその音声では%2$@を使います。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "짝꿍과 대화 연습에는 %1$@을(를) 사용해요. 레슨과 오디오에는 %2$@을(를) 사용해요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Z kumplem i podczas rozmów ćwiczeniowych używasz tej odmiany języka: %1$@. W lekcjach i ich nagraniach używamy odmiany: %2$@."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seu parceiro e as conversas de prática usam %1$@. As aulas e seus áudios usam %2$@."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ders arkadaşınla ve pratik sohbetlerinde %1$@ kullanılır. Derslerde ve seslendirmelerinde %2$@ kullanılır."
-          }
-        }
-      }
-    },
-    "Your buddy and practice calls use the country you choose. Lessons and their audio use %@." : {
-      "comment" : "Under the countries a language goal can choose from; the argument is the language as lessons teach it, like 'Spanish (Mexico)'",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dein Kumpel und die Übungsgespräche verwenden die Sprachvariante des gewählten Landes. Lektionen und ihre Audios sind auf %@."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu compañero y las llamadas de práctica usan la variante del país que elijas. Las lecciones y su audio usan %@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ton compagnon et les appels d’entraînement utilisent la variante du pays que tu choisis. Les leçons et leur audio sont en %@."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il tuo compagno di studio e le conversazioni di allenamento usano la variante del paese che scegli. Le lezioni e il relativo audio sono in %@."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "相棒とのやり取りや会話練習では、選んだ国の言葉を使います。レッスンとその音声では%@を使います。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "짝꿍과 연습 대화에는 선택한 국가가 반영돼요. 레슨과 오디오에는 %@을(를) 사용해요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wybrany kraj określa odmianę języka używaną przez twojego kumpla i w rozmowach ćwiczeniowych. Język lekcji i nagrań: %@."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O país que você escolher vale para seu parceiro e as conversas de prática. As aulas e seus áudios usam %@."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ders arkadaşın ve pratik sohbetlerin seçtiğin ülkeye göre uyarlanır. Derslerde ve ses kayıtlarında %@ kullanılır."
-          }
-        }
-      }
-    },
     "Your call opens as soon as it's ready." : {
       "comment" : "A practice call opens by itself once it's written",
       "localizations" : {
@@ -38939,6 +38815,124 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Planının bitiş tarihi %1$@ olarak değişiyor (önceki tarih: %2$@)."
+          }
+        }
+      }
+    },
+    "Your practice calls and our answers to your questions use %@. Lessons and their audio use %@." : {
+      "comment" : "Under a language goal's country; the arguments are a language with its country, like 'Spanish (Argentina)', then the one lessons teach, like 'Spanish (Mexico)'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für deine Übungsgespräche und unsere Antworten auf deine Fragen verwenden wir %1$@. Lektionen und ihre Audios sind auf %2$@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En tus llamadas de práctica y al responder tus preguntas usamos %1$@. Las lecciones y sus audios usan %2$@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tes appels d’entraînement et nos réponses à tes questions sont en %1$@. Les leçons et leur audio sont en %2$@."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le conversazioni di allenamento e le nostre risposte alle tue domande sono in %1$@. Le lezioni e i relativi audio sono in %2$@."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "会話練習と質問への回答では%1$@を使います。レッスンとその音声では%2$@を使います。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "대화 연습과 질문에 대한 답변은 %1$@ 기준이에요. 레슨과 음성은 %2$@ 기준이에요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "W rozmowach i odpowiedziach na twoje pytania używamy odmiany: %1$@. W lekcjach i nagraniach używamy odmiany: %2$@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suas conversas de prática e nossas respostas às suas perguntas usam %1$@. As aulas e seus áudios usam %2$@."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pratik yaptığın sohbetlerde ve sorularına verdiğimiz cevaplarda %1$@ kullanıyoruz. Derslerde ve ses kayıtlarında %2$@ kullanılıyor."
+          }
+        }
+      }
+    },
+    "Your practice calls and our answers to your questions use the country you choose. Lessons and their audio use %@." : {
+      "comment" : "Under the countries a language goal can choose from; the argument is the language as lessons teach it, like 'Spanish (Mexico)'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für deine Übungsgespräche und unsere Antworten auf deine Fragen verwenden wir die Sprachvariante des Landes, das du wählst. Lektionen und ihre Audios sind auf %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tus llamadas de práctica y nuestras respuestas a tus preguntas se adaptan al país que elijas. Las lecciones y sus audios usan %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tes appels d’entraînement et nos réponses à tes questions s’adaptent au pays que tu choisis. Les leçons et leur audio sont en %@."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nelle conversazioni di allenamento e nelle risposte alle tue domande usiamo la variante del paese che scegli. Le lezioni e i relativi audio sono in %@."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "会話練習と質問への回答では、選んだ国の言葉を使います。レッスンとその音声では%@を使います。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "선택한 나라에서 쓰는 말로 대화 연습을 하고 질문에 답해 드려요. 레슨과 음성은 %@ 기준이에요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "W rozmowach i odpowiedziach na twoje pytania używamy odmiany języka z wybranego kraju. W lekcjach i nagraniach używamy odmiany: %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suas conversas de prática e nossas respostas às suas perguntas seguem o jeito de falar do país que você escolher. As aulas e seus áudios usam %@."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pratik yaptığın sohbetlerde ve sorularına verdiğimiz cevaplarda seçtiğin ülkede konuşulan dili kullanıyoruz. Derslerde ve ses kayıtlarında %@ kullanılıyor."
           }
         }
       }
