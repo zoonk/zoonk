@@ -873,7 +873,7 @@ final class LessonPlayerLoadingTests: XCTestCase {
             {"error": {"code": "USAGE_LIMIT_REACHED", "message": "Limit reached",
              "details": {"limit": {"period": "month", "tier": "free", "resource": "aiSpend"}}}}
             """#,
-          status: .paymentRequired)))
+          status: .init(code: 402))))
 
     let outcome = try await api.explainAnswer(stepId: "step", answer: "answer", token: "token")
 
