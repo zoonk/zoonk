@@ -1,15 +1,27 @@
 import { useExtracted } from "next-intl";
-import { FeedbackExplanation } from "../_components/feedback-panel";
+import {
+  FeedbackAnswerLabel,
+  FeedbackAnswerValue,
+  FeedbackExplanation,
+} from "../_components/feedback-panel";
 
-/** One message around the answer, so each language owns the label's spacing and word order. */
+function answerLabel(words: React.ReactNode) {
+  return <FeedbackAnswerLabel>{words}</FeedbackAnswerLabel>;
+}
+
+/**
+ * The right answer after a miss, in every feedback panel. One message around the answer, so each
+ * language owns the label's spacing and word order.
+ */
 export function RightAnswerLine({ answer }: { answer: React.ReactNode }) {
   const t = useExtracted();
+  const value = <FeedbackAnswerValue>{answer}</FeedbackAnswerValue>;
 
   return (
     <FeedbackExplanation>
       {t.rich("<label>Right answer:</label> <answer></answer>", {
-        answer: () => answer,
-        label: (words) => words,
+        answer: () => value,
+        label: answerLabel,
       })}
     </FeedbackExplanation>
   );

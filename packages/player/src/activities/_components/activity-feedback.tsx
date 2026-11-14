@@ -2,8 +2,13 @@
 
 import { type ActivityAnswer } from "@zoonk/core/library/activities/answer-schema";
 import { type ActivityStepContent } from "@zoonk/core/library/activities/templates";
-import { FeedbackExplanation, FeedbackPanel } from "@zoonk/learn/feedback-panel";
+import {
+  FeedbackAnswerLabel,
+  FeedbackExplanation,
+  FeedbackPanel,
+} from "@zoonk/learn/feedback-panel";
 import { useFormatNumber } from "@zoonk/learn/format-number";
+import { RightAnswerLine } from "@zoonk/learn/right-answer-line";
 import { VerdictLabel } from "@zoonk/learn/verdict-label";
 import { exactFractionDigitsFor } from "@zoonk/utils/localized-number";
 import { useExtracted } from "next-intl";
@@ -33,8 +38,6 @@ function FeedbackText({ children }: { children: string }) {
 }
 
 function ChoiceFeedback({ answer, check }: { answer: ActivityAnswer | null; check: ChoiceCheck }) {
-  const t = useExtracted();
-
   const chosen = check.options.find(
     (option) => answer?.kind === "choice" && option.id === answer.optionId,
   );
@@ -47,12 +50,7 @@ function ChoiceFeedback({ answer, check }: { answer: ActivityAnswer | null; chec
 
       {correct && !chosen?.isCorrect && (
         <>
-          <FeedbackExplanation>
-            <span className="text-muted-foreground">{t("Correct answer:")}</span>{" "}
-            <span className="text-success-text font-medium">
-              <LessonRichText text={correct.text} />
-            </span>
-          </FeedbackExplanation>
+          <RightAnswerLine answer={<LessonRichText text={correct.text} />} />
 
           <FeedbackText>{correct.reason}</FeedbackText>
         </>
@@ -82,23 +80,20 @@ function NumericFeedback({
 
   return (
     <>
-      <dl className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
+      <div className="flex flex-wrap gap-x-4 gap-y-1">
         {answer?.kind === "numeric" && (
-          <div className="flex gap-1.5">
-            <dt className="text-muted-foreground">{t("Your answer:")}</dt>
-            <dd className="font-mono font-medium tabular-nums">{exact(answer.value)}</dd>
-          </div>
+          <FeedbackExplanation>
+            <FeedbackAnswerLabel>{t("Your answer:")}</FeedbackAnswerLabel>{" "}
+            <span className="font-mono font-medium tabular-nums">{exact(answer.value)}</span>
+          </FeedbackExplanation>
         )}
 
         {!isCorrect && (
-          <div className="flex gap-1.5">
-            <dt className="text-muted-foreground">{t("Answer:")}</dt>
-            <dd className="text-success-text font-mono font-medium tabular-nums">
-              {exact(check.answer)}
-            </dd>
-          </div>
+          <RightAnswerLine
+            answer={<span className="font-mono tabular-nums">{exact(check.answer)}</span>}
+          />
         )}
-      </dl>
+      </div>
 
       <FeedbackText>{check.explanation}</FeedbackText>
     </>
