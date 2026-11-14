@@ -52,7 +52,7 @@ async function QuestionContent({ params }: Props) {
 function QuestionSkeleton() {
   return (
     <div className="flex flex-col gap-6">
-      <Skeleton className="h-8 w-3/4" />
+      <Skeleton className="h-8 w-3/4 md:h-5" />
       <Skeleton className="h-4 w-full" />
       <Skeleton className="h-64 rounded-lg" />
     </div>
