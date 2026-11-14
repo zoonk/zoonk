@@ -31,10 +31,9 @@ extension Components.Schemas.OnboardingStep {
 /// One About you screen's answer as the learner makes it: built from what core saved, and turned
 /// back into the answer core takes, every field included.
 struct ProfileDraft: Equatable {
-  /// The rows that decline the question instead of answering it.
+  /// The row that declines a pick-one question instead of answering it. A question with several
+  /// picks declines by saving none.
   enum Decline: Equatable {
-    /// "None of these", "Nothing to add", "Nothing in particular".
-    case noneOfThese
     case ratherNotSay
   }
 
@@ -76,35 +75,32 @@ struct ProfileDraft: Equatable {
       if view.status == .declined && picks.isEmpty && text.isEmpty {
         switch view.id {
         case .addressForm, .work: .ratherNotSay
-        case .conditions: nil
-        default: .noneOfThese
+        default: nil
         }
       } else {
         nil
       }
   }
 
-  /// False when a chip screen already has its three picks, so the fourth doesn't toggle.
-  @discardableResult
-  mutating func toggle(_ id: String) -> Bool {
+  /// A chip screen that already has its three picks takes no fourth.
+  mutating func toggle(_ id: String) {
     decline = nil
 
     if let index = picks.firstIndex(of: id) {
       picks.remove(at: index)
-      return true
+      return
     }
 
     if question == .work || question == .addressForm {
       picks = [id]
-      return true
+      return
     }
 
     if let limit = question.pickLimit, picks.count >= limit {
-      return false
+      return
     }
 
     picks.append(id)
-    return true
   }
 
   /// Picking a declining row clears everything else, as any other pick clears it.
@@ -236,14 +232,10 @@ struct ProfileDraft: Equatable {
     ["answer": answer, "question": question.rawValue]
   }
 
-  /// Onboarding's Skip leaves a question for the next goal, but declines conditions, so a learner
-  /// who skips them isn't asked about their health at every new goal, and the address form, whose
-  /// Skip reads "I'd rather not say".
+  /// Onboarding's Skip declines the question, so the next goal doesn't ask it again. Core fills the
+  /// rest of the answer; what helps keeps its sound effects setting.
   var skipInput: [String: Any] {
-    switch question {
-    case .conditions, .addressForm: declining(.ratherNotSay).input
-    default: ["answer": NSNull(), "question": question.rawValue]
-    }
+    ["answer": ["declined": true], "question": question.rawValue]
   }
 }
 

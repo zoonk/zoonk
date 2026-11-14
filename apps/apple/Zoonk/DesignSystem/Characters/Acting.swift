@@ -9,7 +9,8 @@ enum CharacterPart: Hashable, Sendable {
   case browLeft, browRight
   case eyeLeft, eyeRight, pupilLeft, pupilRight, lidLeft, lidRight
   case mouth, mask, snore, sweat
-  case crown, sign, tail
+  case crown, tail
+  case shield, shieldLeft, shieldRight, shieldFracture, shieldGlint
 }
 
 struct ArtPair: Equatable, Sendable, ExpressibleByArrayLiteral {

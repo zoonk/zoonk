@@ -87,36 +87,32 @@ struct LevelTestStep: View {
         return true
       },
       trailing: {
-        skipSection
-      })
-  }
-
-  @ViewBuilder private var skipSection: some View {
-    if saveFailures > 0, !isSaving {
-      Section {
-        FailureLine(
-          message: LocalizedStringResource(
+        // The bar holds the way out; what skipping does is said at the end of the wait.
+        Section {
+          Text(
+            "Your plan starts from the level you gave, and your first sessions fine-tune it.",
+            tableName: "Onboarding", comment: "What skipping the level test does"
+          )
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
+          .listRowBackground(Color.clear)
+        }
+      }
+    )
+    .bottomBar(
+      note: saveFailures > 0 && !isSaving
+        ? BarNote(
+          LocalizedStringResource(
             "That didn't work. Try again in a moment.", table: "Onboarding",
             comment: "Starting or skipping the level test failed"))
-      }
-    }
-
-    Section {
+        : nil
+    ) {
       BusyButton(isBusy: isSaving, icon: .skip, action: finish) {
         Text(
           "Skip the test", tableName: "Onboarding", comment: "Skips a language goal's level test")
       }
       .buttonStyle(.outline)
-      .controlSize(.large)
       .buttonSizing(.flexible)
-      .listRowInsets(.vertical, 0)
-      .listRowBackground(Color.clear)
-    } footer: {
-      SectionFooter {
-        Text(
-          "Your plan starts from the level you gave, and your first sessions fine-tune it.",
-          tableName: "Onboarding", comment: "What skipping the level test does")
-      }
     }
   }
 
@@ -368,7 +364,7 @@ private struct LevelTestIntro: View {
     ZoonkList {
       StepHeader(
         title: Text(
-          "Let's see your level in \(Locale.current.languageName(targetLanguage))",
+          "Find your level in \(Locale.current.languageName(targetLanguage))",
           tableName: "Onboarding",
           comment: "Title of a language goal's level test"),
         description: Text(
@@ -379,7 +375,7 @@ private struct LevelTestIntro: View {
       if showAlphabetNote {
         Section {
           Text(
-            "New to its alphabet? Skip the test. Your first session starts with a short lesson on reading it.",
+            "New to its alphabet? Skip the test. Your first lesson teaches you to read it.",
             tableName: "Onboarding",
             comment:
               "The level test of a language with another alphabet: a learner new to the alphabet doesn't take it"
@@ -396,13 +392,6 @@ private struct LevelTestIntro: View {
         }
       }
 
-      StepButtons(
-        continueLabel: Text("Start", tableName: "Onboarding", comment: "Starts the level test"),
-        continueIcon: .play,
-        skipLabel: Text(
-          "Skip the test", tableName: "Onboarding", comment: "Skips a language goal's level test"),
-        onContinue: onStart, onSkip: onSkip)
-
       if offersOwnLanguage, let settings = URL(string: UIApplication.openSettingsURLString) {
         Section {
           Button {
@@ -415,6 +404,11 @@ private struct LevelTestIntro: View {
           }
         }
       }
+    }
+    .bottomBar {
+      StepButtons(
+        continueLabel: Text("Start", tableName: "Onboarding", comment: "Starts the level test"),
+        onContinue: onStart, onSkip: onSkip)
     }
     .onboardingColumn()
     .environment(\.isSavingAnswer, isStarting || isSaving)
@@ -648,14 +642,12 @@ private struct LevelTestDone: View {
   let onContinue: () -> Void
 
   var body: some View {
-    ZoonkList {
-      StepHeader(
-        title: Text(
-          "Your level today", tableName: "Onboarding", comment: "Title after the level test"),
-        description: Text(
-          "Based on the test. It gets more accurate every week.", tableName: "Onboarding",
-          comment: "Under the level test's result"))
-
+    TestOutcome(
+      subject: String(
+        localized: "Level test", table: "Onboarding", comment: "Over the level test's result"),
+      title: Text("Your level", tableName: "Onboarding", comment: "Title after the level test"),
+      isSaving: isSaving, failed: failed, onContinue: onContinue
+    ) {
       if !levels.isEmpty {
         Section {
           ForEach(levels) { level in
@@ -672,25 +664,7 @@ private struct LevelTestDone: View {
           }
         }
       }
-
-      if failed {
-        Section {
-          FailureLine(
-            message: LocalizedStringResource(
-              "That didn't work. Try again in a moment.", table: "Onboarding",
-              comment: "Starting or skipping the level test failed"))
-        }
-      }
-
-      StepButtons(
-        continueLabel: Text(
-          "Build my plan", tableName: "Onboarding", comment: "Ends the level test to build the plan"
-        ),
-        onContinue: onContinue
-      )
-      .environment(\.isSavingAnswer, isSaving)
     }
-    .onboardingColumn()
   }
 
   private func skillName(_ skill: LevelTest.Skill) -> Text {
