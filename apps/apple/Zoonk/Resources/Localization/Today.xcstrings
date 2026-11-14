@@ -18459,65 +18459,6 @@
         }
       }
     },
-    "That's as many goals as you can study at once. Pause another goal to resume this one." : {
-      "comment" : "Why resuming the goal failed: the learner studies as many goals at once as they can; it's about goals studied at the same time, not new goals started per day or month",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mehr Ziele kannst du nicht gleichzeitig verfolgen. Pausier ein anderes Ziel, um dieses fortzusetzen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Llegaste al límite de objetivos que puedes estudiar a la vez. Pausa otro objetivo para reanudar este."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as déjà le maximum d’objectifs en cours. Mets un autre objectif en pause pour reprendre celui-ci."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai raggiunto il limite di obiettivi che puoi portare avanti insieme. Metti in pausa un altro obiettivo per riprendere questo."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "同時に進められる目標の数が上限に達しています。この目標を再開するには、ほかの目標を一時停止してください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "동시에 공부할 수 있는 목표 수를 모두 채웠어요. 이 목표를 이어서 공부하려면 다른 목표를 일시 중지하세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Masz już tyle celów, ile możesz realizować naraz. Wstrzymaj inny cel, by wznowić ten."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você chegou ao limite de objetivos que pode estudar ao mesmo tempo. Pause outro objetivo para retomar este."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aynı anda çalışabileceğin hedef sayısına ulaştın. Bu hedefe devam etmek için başka bir hedefi duraklat."
-          }
-        }
-      }
-    },
     "The day is here" : {
       "comment" : "The goal's date",
       "localizations" : {

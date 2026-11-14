@@ -626,13 +626,7 @@ private struct PlanPausedSlot: View {
       switch failure {
       case .limitReached:
         FailureLine(
-          message: LocalizedStringResource(
-            "You're following as many goals as you can for free. Pause another to resume this one, or subscribe.",
-            table: "Plan",
-            comment:
-              "Shown when a learner tries to resume a paused goal while already following as many goals at once as they can without a subscription. Pausing a goal keeps its progress."
-          )
-        )
+          message: GoalError.resumeLimit)
         .typeStyle(.note)
       case .failed:
         FailureLine(

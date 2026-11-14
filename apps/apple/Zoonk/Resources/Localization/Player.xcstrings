@@ -888,279 +888,6 @@
         }
       }
     },
-    "%lld lessons moved to another day to fit your %@ today." : {
-      "comment" : "After a lesson is saved: lessons moved to another day so today's work fits the learner's daily time. The second argument is a duration like '4 hr'.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%#@lessons@ auf einen anderen Tag verschoben, damit du heute nicht länger als %2$@ lernst."
-          },
-          "substitutions" : {
-            "lessons" : {
-              "argNum" : 1,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg Lektion wurde"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg Lektionen wurden"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%#@lessons@ moved to another day to fit your %2$@ today."
-          },
-          "substitutions" : {
-            "lessons" : {
-              "argNum" : 1,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "new",
-                      "value" : "%arg lesson"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "new",
-                      "value" : "%arg lessons"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Se %#@lessons@ a otro día para ajustar tu estudio de hoy a %2$@."
-          },
-          "substitutions" : {
-            "lessons" : {
-              "argNum" : 1,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "pasó %arg lección"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "pasaron %arg lecciones"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%#@lessons@ à un autre jour pour ne pas dépasser %2$@ d’étude aujourd’hui."
-          },
-          "substitutions" : {
-            "lessons" : {
-              "argNum" : 1,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg leçon reportée"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg leçons reportées"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%#@lessons@ a un altro giorno per non superare %2$@ di studio oggi."
-          },
-          "substitutions" : {
-            "lessons" : {
-              "argNum" : 1,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg lezione spostata"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg lezioni spostate"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%#@lessons@を別の日に移して、今日の学習時間が%2$@に収まるようにしました。"
-          },
-          "substitutions" : {
-            "lessons" : {
-              "argNum" : 1,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%argレッスン"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%#@lessons@를 다른 날로 옮겨 오늘 학습 시간을 %2$@에 맞췄어요."
-          },
-          "substitutions" : {
-            "lessons" : {
-              "argNum" : 1,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "레슨 %arg개"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Przeniesiono %#@lessons@ na inny dzień, żeby dziś zmieścić się w %2$@ nauki."
-          },
-          "substitutions" : {
-            "lessons" : {
-              "argNum" : 1,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "few" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg lekcje"
-                    }
-                  },
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg lekcję"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg lekcji"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%#@lessons@ para outro dia, para o estudo de hoje caber em %2$@."
-          },
-          "substitutions" : {
-            "lessons" : {
-              "argNum" : 1,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg aula ficou"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg aulas ficaram"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%#@lessons@, bugünkü çalışmanı %2$@ içinde bitirebilmen için başka bir güne taşındı."
-          },
-          "substitutions" : {
-            "lessons" : {
-              "argNum" : 1,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg ders"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "%lld of %lld key points" : {
       "comment" : "How many key points a typed answer stated",
       "localizations" : {
@@ -3830,6 +3557,64 @@
         }
       }
     },
+    "Done" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fertig"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Listo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terminé"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fatto"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完了"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "완료"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gotowe"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Concluído"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tamamlandı"
+          }
+        }
+      }
+    },
     "Drag a corner" : {
       "comment" : "What the learner does in an activity, named above its prompt",
       "localizations" : {
@@ -5188,7 +4973,6 @@
       }
     },
     "Getting your challenge ready" : {
-      "comment" : "The challenge's status over the quiz while it's made",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5247,7 +5031,6 @@
       }
     },
     "Getting your lesson ready" : {
-      "comment" : "While a lesson is made",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -6133,65 +5916,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yanlış"
-          }
-        }
-      }
-    },
-    "It didn't pass our quality checks, so your plan goes on without it." : {
-      "comment" : "Every draft of a lesson was held back by its quality checks",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sie hat unsere Qualitätsprüfung nicht bestanden, deshalb geht dein Plan ohne sie weiter."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No pasó nuestros controles de calidad, así que tu plan sigue sin ella."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Elle n’a pas passé nos contrôles qualité, donc ton plan continue sans elle."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non ha superato i nostri controlli di qualità, quindi il tuo piano prosegue senza includerla."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "品質基準を満たさなかったため、このレッスンを含めずに学習計画を進めます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "품질 기준에 맞지 않아 이 레슨을 빼고 계획을 이어 가요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nie przeszła naszej kontroli jakości, więc twój plan jej nie uwzględnia."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ela não passou pelas nossas verificações de qualidade, então seu plano continua sem ela."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kalite kontrollerimizden geçemediği için planın bu ders olmadan devam ediyor."
           }
         }
       }
@@ -11219,8 +10943,65 @@
         }
       }
     },
+    "Start this challenge" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Herausforderung starten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empezar este desafío"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commencer ce défi"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inizia questa sfida"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このチャレンジを始める"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "챌린지 시작하기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rozpocznij wyzwanie"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Começar este desafio"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu meydan okumaya başla"
+          }
+        }
+      }
+    },
     "Start this lesson" : {
-      "comment" : "A visitor starts a public lesson as a guest\nStarts a lesson that isn't written yet: it's written, then opens",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -12163,6 +11944,64 @@
         }
       }
     },
+    "This challenge isn't ready yet" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Herausforderung ist noch nicht fertig"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este desafío aún no está listo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce défi n’est pas encore prêt"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questa sfida non è ancora pronta"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このチャレンジはまだ準備ができていません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "챌린지가 아직 준비되지 않았어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To wyzwanie nie jest jeszcze gotowe"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este desafio ainda não está pronto"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu meydan okuma henüz hazır değil"
+          }
+        }
+      }
+    },
     "This is part of" : {
       "comment" : "Above the course a guest's lesson is in",
       "localizations" : {
@@ -12282,7 +12121,6 @@
       }
     },
     "This lesson isn't ready yet" : {
-      "comment" : "Under a lesson's description, before the learner asks for it to be made",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -12329,7 +12167,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esta aula ainda não está pronta"
+            "value" : "Essa aula ainda não está pronta"
           }
         },
         "tr" : {
@@ -13402,13 +13240,70 @@
         }
       }
     },
-    "We couldn't get this lesson ready" : {
-      "comment" : "Making a lesson stopped; its retry is under the progress",
+    "We couldn't get this challenge ready" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wir konnten diese Lektion nicht fertigstellen"
+            "value" : "Wir konnten diese Herausforderung nicht fertigstellen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No pudimos preparar este desafío"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nous n’avons pas pu préparer ce défi"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non siamo riusciti a preparare questa sfida"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このチャレンジの準備ができませんでした"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "챌린지를 준비하지 못했어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie udało nam się przygotować tego wyzwania"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A gente não conseguiu preparar este desafio"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu meydan okumayı hazırlayamadık"
+          }
+        }
+      }
+    },
+    "We couldn't get this lesson ready" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir konnten diese Lektion nicht vorbereiten"
           }
         },
         "es" : {
@@ -13432,7 +13327,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "このレッスンを作成できませんでした"
+            "value" : "このレッスンを準備できませんでした"
           }
         },
         "ko" : {
@@ -13450,7 +13345,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não deu para preparar esta aula"
+            "value" : "A gente não conseguiu preparar essa aula"
           }
         },
         "tr" : {
@@ -15053,6 +14948,64 @@
         }
       }
     },
+    "Your challenge is ready" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Herausforderung ist fertig"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu desafío está listo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton défi est prêt"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La tua sfida è pronta"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "チャレンジの準備ができました"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "챌린지가 준비됐어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twoje wyzwanie jest gotowe"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu desafio está pronto"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meydan okuman hazır"
+          }
+        }
+      }
+    },
     "Your example: %@" : {
       "comment" : "VoiceOver label of the learner's personal example",
       "localizations" : {
@@ -15118,7 +15071,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deine Lektion steht bereit"
+            "value" : "Deine Lektion ist bereit"
           }
         },
         "es" : {

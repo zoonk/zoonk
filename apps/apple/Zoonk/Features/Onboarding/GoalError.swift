@@ -73,6 +73,12 @@ enum GoalLimitReason: Equatable, Sendable {
 /// A limit only an account lifts isn't an error: it says why, and creating a free account is the way
 /// on.
 struct GoalError: Equatable {
+  /// Main's `ResumeGoalBar`, for every tier: resuming a paused goal is refused at the goals studied
+  /// at once.
+  static let resumeLimit = LocalizedStringResource(
+    "That's as many goals as you can study at once. Pause another goal to resume this one.",
+    table: "Plan")
+
   let message: LocalizedStringResource
   var needsAccount = false
   var limit: GoalLimitReason?
