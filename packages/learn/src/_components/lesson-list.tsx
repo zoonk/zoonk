@@ -16,14 +16,9 @@ import {
 } from "./list-group";
 import { MeterPart, MeterParts } from "./meter";
 import { PageSection, PageSectionDetail, PageSectionHeader, PageSectionTitle } from "./page";
-import { PlusMark } from "./plus-lock";
 import { StatusMark } from "./status-mark";
 
-type ListedLesson = Pick<
-  ChapterLessonView,
-  "lessonId" | "minutes" | "state" | "title" | "written"
-> &
-  Partial<Pick<ChapterLessonView, "plusRequired">>;
+type ListedLesson = Pick<ChapterLessonView, "lessonId" | "minutes" | "state" | "title" | "written">;
 
 const LESSONS_TITLE_ID = "lesson-list-title";
 
@@ -73,12 +68,7 @@ function LessonRow({
             {lesson.title}
           </ListRowNumberedTitle>
         </ListRowContent>
-        {(lesson.plusRequired || lesson.minutes > 0) && (
-          <ListRowTrailing>
-            {lesson.plusRequired && <PlusMark className="font-sans" />}
-            {lesson.minutes > 0 && formatDuration(lesson.minutes)}
-          </ListRowTrailing>
-        )}
+        {lesson.minutes > 0 && <ListRowTrailing>{formatDuration(lesson.minutes)}</ListRowTrailing>}
       </ListRowBody>
     </ListRowLink>
   );

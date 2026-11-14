@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@zoonk/ui/lib/utils";
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { useExtracted } from "next-intl";
 import { createContext, use } from "react";
 import { EnterButton, EnterLink } from "../_components/enter-button";
@@ -14,11 +14,8 @@ import { useSessionAction } from "../session/use-session-action";
 import { useGoalSwitchPending } from "../shell/goal-switcher";
 import { useTodayScreen } from "./today-context";
 import { NEXT_TITLE_ID } from "./today-ids";
-import { TODAY_ACTION_STATUS_CLASS } from "./today-layout";
 import { useContinueSession } from "./use-continue-session";
 import { useDayState, useSessionState, useTodayPastDate, useUpNextLessons } from "./use-today-copy";
-
-const ACTION_CLASS = "w-full text-reading sm:w-auto";
 
 type SessionAction = ReturnType<typeof useSessionAction> & { wait: WaitState };
 
@@ -79,14 +76,12 @@ function useTodayContinueSpeaking(): boolean {
   return failed || wait !== "none";
 }
 
-/** Marked `data-speaking` while it says something. */
-export function TodayContinueStatus({ className }: { className?: string }) {
+function TodayContinueStatus() {
   const t = useExtracted();
   const { failed, wait } = useTodayContinue();
-  const speaking = useTodayContinueSpeaking();
 
   return (
-    <span className={className} data-speaking={speaking || undefined}>
+    <>
       <OpeningWaitLine wait={wait} />
 
       {failed && (
@@ -94,7 +89,16 @@ export function TodayContinueStatus({ className }: { className?: string }) {
           {t("We couldn't open the next step. Try again.")}
         </span>
       )}
-    </span>
+    </>
+  );
+}
+
+/** The page's one main action, in the shared bottom bar; what it couldn't do shows over the bar. */
+function TodayBar({ children, note }: { children: React.ReactNode; note?: React.ReactNode }) {
+  return (
+    <BottomBar note={note}>
+      <BottomBarActions>{children}</BottomBarActions>
+    </BottomBar>
   );
 }
 
@@ -104,16 +108,16 @@ function ContinueLink({ href }: { href: string }) {
   const switching = useGoalSwitchPending();
 
   return (
-    <EnterLink
-      aria-describedby={NEXT_TITLE_ID}
-      className={ACTION_CLASS}
-      enabled={!switching}
-      href={href}
-      lessonWritten={href.startsWith("/learn/")}
-      size="lg"
-    >
-      {started ? t("Continue") : t("Start")}
-    </EnterLink>
+    <TodayBar>
+      <EnterLink
+        aria-describedby={NEXT_TITLE_ID}
+        enabled={!switching}
+        href={href}
+        lessonWritten={href.startsWith("/learn/")}
+      >
+        {started ? t("Continue") : t("Start")}
+      </EnterLink>
+    </TodayBar>
   );
 }
 
@@ -122,28 +126,20 @@ function ContinueButton() {
   const { actions } = useTodayScreen();
   const { started } = useSessionState();
   const { isPending, run } = useTodayContinue();
+  const speaking = useTodayContinueSpeaking();
 
   if (actions.continueHref) {
     return <ContinueLink href={actions.continueHref} />;
   }
 
   return (
-    <>
+    <TodayBar note={speaking && <TodayContinueStatus />}>
       <form action={() => void run()} className="contents">
-        <EnterButton
-          aria-describedby={NEXT_TITLE_ID}
-          busy={isPending}
-          className={ACTION_CLASS}
-          enter="host"
-          size="lg"
-          type="submit"
-        >
+        <EnterButton aria-describedby={NEXT_TITLE_ID} busy={isPending} enter="host" type="submit">
           {started ? t("Continue") : t("Start")}
         </EnterButton>
       </form>
-
-      <TodayContinueStatus className={cn(TODAY_ACTION_STATUS_CLASS, "sm:hidden")} />
-    </>
+    </TodayBar>
   );
 }
 
@@ -153,15 +149,11 @@ function SummaryLink() {
   const switching = useGoalSwitchPending();
 
   return (
-    <EnterLink
-      className={ACTION_CLASS}
-      enabled={!switching}
-      href={actions.summaryHref}
-      prefetch={false}
-      size="lg"
-    >
-      {t("See today's summary")}
-    </EnterLink>
+    <TodayBar>
+      <EnterLink enabled={!switching} href={actions.summaryHref} prefetch={false}>
+        {t("See today's summary")}
+      </EnterLink>
+    </TodayBar>
   );
 }
 
@@ -175,17 +167,13 @@ function SaveAction({
   const { failed, isPending, run } = useSessionAction({ action });
 
   return (
-    <>
+    <TodayBar note={failed && <ChangeSaveError />}>
       <form action={() => void run()} className="contents">
-        <EnterButton busy={isPending} className={ACTION_CLASS} size="lg" type="submit">
+        <EnterButton busy={isPending} type="submit">
           {children}
         </EnterButton>
       </form>
-
-      <div className={TODAY_ACTION_STATUS_CLASS} data-speaking={failed || undefined}>
-        {failed && <ChangeSaveError />}
-      </div>
-    </>
+    </TodayBar>
   );
 }
 
@@ -222,35 +210,30 @@ function PrepareLessons() {
 function KeepLearning() {
   const t = useExtracted();
   const { failed, isPending, rowSent, run, wait } = useKeepLearning();
+  const speaking = failed || wait !== "none";
 
   return (
-    <>
+    <TodayBar
+      note={
+        speaking && (
+          <>
+            <OpeningWaitLine wait={wait} />
+
+            {failed && (
+              <span className="text-destructive-text" role="alert">
+                {t("We couldn't open your next lessons. Try again.")}
+              </span>
+            )}
+          </>
+        )
+      }
+    >
       <form action={() => void run()} className="contents">
-        <EnterButton
-          busy={isPending && !rowSent}
-          className={ACTION_CLASS}
-          disabled={rowSent}
-          enter="host"
-          size="lg"
-          type="submit"
-        >
+        <EnterButton busy={isPending && !rowSent} disabled={rowSent} enter="host" type="submit">
           {t("Keep learning")}
         </EnterButton>
       </form>
-
-      <span
-        className={TODAY_ACTION_STATUS_CLASS}
-        data-speaking={failed || wait !== "none" || undefined}
-      >
-        <OpeningWaitLine wait={wait} />
-
-        {failed && (
-          <span className="text-destructive-text" role="alert">
-            {t("We couldn't open your next lessons. Try again.")}
-          </span>
-        )}
-      </span>
-    </>
+    </TodayBar>
   );
 }
 
@@ -260,53 +243,43 @@ function SeePlanLink() {
   const switching = useGoalSwitchPending();
 
   return (
-    <EnterLink className={ACTION_CLASS} enabled={!switching} href={routes.journey} size="lg">
-      {t("See your plan")}
-    </EnterLink>
+    <TodayBar>
+      <EnterLink enabled={!switching} href={routes.journey}>
+        {t("See your plan")}
+      </EnterLink>
+    </TodayBar>
   );
 }
 
-export function TodayAction({ className }: { className?: string }) {
+/** Pinned at the page's bottom on a phone and a computer (rule 4); a day with nothing to start has none. */
+export function TodayAction() {
   const state = useDayState();
   const pastDate = useTodayPastDate();
   const keepLearning = useUpNextLessons().length > 0;
 
   if (pastDate) {
-    return (
-      <div className={cn("flex flex-col sm:items-end", className)} data-slot="today-action">
-        <SeePlanLink />
-      </div>
-    );
+    return <SeePlanLink />;
   }
 
   if (state === "prepare") {
-    return (
-      <div className={cn("flex flex-col sm:items-end", className)} data-slot="today-action">
-        <PrepareLessons />
-      </div>
-    );
+    return <PrepareLessons />;
   }
 
   if (keepLearning) {
-    return (
-      <div className={cn("flex flex-col sm:items-end", className)} data-slot="today-action">
-        <KeepLearning />
-      </div>
-    );
+    return <KeepLearning />;
   }
 
-  if (state !== "underway" && state !== "done" && state !== "ahead") {
-    return null;
+  if (state === "underway") {
+    return <ContinueButton />;
   }
 
-  return (
-    <div
-      className={cn("flex flex-col empty:hidden sm:items-end", className)}
-      data-slot="today-action"
-    >
-      {state === "underway" && <ContinueButton />}
-      {state === "done" && <SummaryLink />}
-      {state === "ahead" && <PracticeTime />}
-    </div>
-  );
+  if (state === "done") {
+    return <SummaryLink />;
+  }
+
+  if (state === "ahead") {
+    return <PracticeTime />;
+  }
+
+  return null;
 }

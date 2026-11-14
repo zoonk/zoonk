@@ -20,12 +20,10 @@ export function ContentCountryOffer({ offer, onApply, saved }: CountryOfferProps
 
   return (
     <ApplyOfferCard
-      applyLabel={t("Apply")}
+      applyLabel={t("Change country")}
       description={
         <>
-          {t(
-            "Applying it rebuilds your plan for this country. The lessons you've finished stay done.",
-          )}
+          {t("We'll make a new plan for it. Finished lessons stay done.")}
           {lessonLanguage && (
             <>
               <br />
@@ -41,7 +39,7 @@ export function ContentCountryOffer({ offer, onApply, saved }: CountryOfferProps
       title={t({
         description:
           "{country} is a country's name. It always follows the colon, so it never needs an article or a case.",
-        message: "Content country: {country}",
+        message: "Country: {country}",
         values: { country: offer.countryName },
       })}
     />

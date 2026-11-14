@@ -5,8 +5,8 @@ import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CalendarCheckIcon, CalendarClockIcon, RotateCcwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { FreeWeekOverNotice } from "../_components/free-week-over";
 import { HelpLimitNotice } from "../_components/help-limit-notice";
+import { ChangeSaveError } from "../_components/save-error";
 import { StatusRegion } from "../_components/status-region";
 import { GateWords, SubscribeMainAction } from "../_components/subscribe-gate";
 import { TaskActions } from "../_components/task-layout";
@@ -16,11 +16,11 @@ import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { TaskMainButton, TaskMainLink } from "../shell/task-frame";
 import { useChallengeScreen } from "./challenge-context";
-import { MoveFailed } from "./challenge-move-failed";
+import { useMoveFailed } from "./challenge-move-failed";
 
 function StatusLine({ children, icon }: { children: React.ReactNode; icon: React.ReactNode }) {
   return (
-    <p className="text-muted-foreground flex min-h-11 items-start gap-2 py-3 text-sm">
+    <p className="text-muted-foreground flex min-h-11 items-start gap-3 py-3 text-sm">
       <LineMarker aria-hidden="true">{icon}</LineMarker>
       <span className="text-pretty">{children}</span>
     </p>
@@ -49,15 +49,15 @@ function OpensLine() {
     );
   }
 
-  return <PhaseLessonsLine />;
+  return <LessonsFirstLine />;
 }
 
-function PhaseLessonsLine() {
+function LessonsFirstLine() {
   const t = useExtracted();
 
   return (
     <StatusLine icon={<CalendarClockIcon className="size-4" />}>
-      {t("Opens after this phase's lessons")}
+      {t("Opens when you finish the lessons before it")}
     </StatusLine>
   );
 }
@@ -73,21 +73,17 @@ function WaitingLine() {
 
   return (
     <StatusLine icon={<CalendarClockIcon className="size-4" />}>
-      {empty ? t("This challenge isn't ready yet.") : t("In your next session")}
+      {empty ? t("This challenge isn't ready yet.") : t("Next time you study")}
     </StatusLine>
   );
 }
 
-function StartProblem() {
+function useStartProblem(): React.ReactNode {
   const t = useExtracted();
   const { start } = useChallengeScreen();
 
   if (start.problem === "failed") {
-    return (
-      <p className="text-destructive-text text-sm" role="alert">
-        {t("That didn't go through. Try again in a moment.")}
-      </p>
-    );
+    return <ChangeSaveError>{t("That didn't go through. Try again in a moment.")}</ChangeSaveError>;
   }
 
   if (start.slow) {
@@ -103,23 +99,15 @@ function StartProblem() {
 
 function StartButton() {
   const t = useExtracted();
-  const { challenge, move, start } = useChallengeScreen();
+  const { move, start } = useChallengeScreen();
 
   return (
-    <>
-      <StartProblem />
-      <MoveFailed />
-      <TaskActions>
-        <MoveToMondayButton />
-        <TaskMainButton
-          busy={start.busy}
-          disabled={move.pending}
-          onClick={() => void start.start()}
-        >
-          {challenge.mock ? t("Start the mock exam") : t("Start")}
-        </TaskMainButton>
-      </TaskActions>
-    </>
+    <TaskActions>
+      <MoveToMondayButton />
+      <TaskMainButton busy={start.busy} disabled={move.pending} onClick={() => void start.start()}>
+        {t("Start")}
+      </TaskMainButton>
+    </TaskActions>
   );
 }
 
@@ -204,7 +192,7 @@ function PlusRequiredNotice() {
     return <ChallengeCallGate form="words" />;
   }
 
-  return <FreeWeekOverNotice cta={false} />;
+  return null;
 }
 
 function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } {
@@ -220,7 +208,14 @@ function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } 
     case "ready":
     case "started":
       if (challenge.waitReason) {
-        return { actions: null, line: <PhaseLessonsLine /> };
+        return {
+          actions: null,
+          line: (
+            <StatusLine icon={<CalendarClockIcon className="size-4" />}>
+              {t("After today's lessons")}
+            </StatusLine>
+          ),
+        };
       }
 
       if (challenge.status === "ready" && writing?.kind === "refused") {
@@ -240,7 +235,7 @@ function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } 
         line: (
           <StatusLine icon={<RotateCcwIcon className="size-4" />}>
             {t(
-              "{lessons, plural, =0 {New try tomorrow. Nothing is lost.} one {New try tomorrow, after # short lesson. Nothing is lost.} other {New try tomorrow, after # short lessons. Nothing is lost.}}",
+              "{lessons, plural, =0 {Rematch tomorrow.} one {Rematch tomorrow, after # short lesson.} other {Rematch tomorrow, after # short lessons.}}",
               { lessons: challenge.reinforcementLessons },
             )}
           </StatusLine>
@@ -260,18 +255,45 @@ function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } 
   }
 }
 
+export function useChallengeFooterNote(): React.ReactNode {
+  const { challenge } = useChallengeScreen();
+  const startProblem = useStartProblem();
+  const moveFailed = useMoveFailed();
+  const startShows = challenge.status === "ready" && challenge.waitReason === null;
+  const start = startShows ? startProblem : null;
+
+  return (
+    (start || moveFailed) && (
+      <>
+        {start}
+        {moveFailed}
+      </>
+    )
+  );
+}
+
 export function ChallengeFooter() {
   const { challenge } = useChallengeScreen();
   const movable = useMovable();
   const { actions, line } = useStatusFooter();
   const startShows = challenge.status === "ready" && challenge.waitReason === null;
+  const moves = !startShows && movable;
+
+  // With nothing else to press, a computer reads the status and the move as one line.
+  if (moves && !actions) {
+    return (
+      <TaskActions className="max-lg:flex-col max-lg:items-stretch max-lg:gap-0 lg:gap-4">
+        <StatusRegion className="lg:me-auto">{line}</StatusRegion>
+        <MoveToMondayButton />
+      </TaskActions>
+    );
+  }
 
   return (
     <>
       <StatusRegion>{line}</StatusRegion>
       {actions}
-      {!startShows && <MoveFailed />}
-      {!startShows && movable && (
+      {moves && (
         <TaskActions>
           <MoveToMondayButton className="w-full lg:w-auto" />
         </TaskActions>

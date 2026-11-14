@@ -233,7 +233,7 @@ test("a focus proposed on a plan already seen applies on the learner's tap, and 
   await expect(question(page, 2)).toBeVisible();
   await page.getByRole("button", { name: "Stop and use my answers" }).click();
 
-  const update = page.getByRole("button", { name: "Update my plan" });
+  const update = page.getByRole("button", { name: "Change my plan" });
   await expect(page.getByRole("heading", { name: "Give these subjects more time?" })).toBeVisible();
 
   await update.click();

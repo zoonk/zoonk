@@ -3,7 +3,8 @@
 import { type WrittenPractice } from "@zoonk/core/plans/written-practice-contract";
 import { type SyllabusSubject } from "@zoonk/core/view-models/syllabus/contract";
 import { safeAsync } from "@zoonk/utils/error";
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
+import { useChangeSaveFailed } from "../_components/save-error";
 import { WrittenCadenceChoice } from "../plan/written-cadence";
 import { type SubjectActions } from "./subject-not-planned";
 
@@ -16,7 +17,7 @@ export function SubjectWrittenPractice({
   practice: WrittenPractice | null;
   subject: SyllabusSubject;
 }) {
-  const [failed, setFailed] = useState(false);
+  const saveFailed = useChangeSaveFailed();
   const [isPending, startTransition] = useTransition();
 
   if (!practice || !subject.areas.some((area) => practice.parts.includes(area))) {
@@ -26,16 +27,16 @@ export function SubjectWrittenPractice({
   return (
     <div className="lg:max-w-xl">
       <WrittenCadenceChoice
-        failed={failed}
         onChange={(cadence, answered) => {
-          setFailed(false);
-
           startTransition(async () => {
             const { data: saved } = await safeAsync(() => actions.setWrittenCadence(cadence));
 
             // Updates after an `await` join the transition only when started in one again.
             startTransition(() => {
-              setFailed(!saved);
+              if (!saved) {
+                saveFailed();
+              }
+
               answered();
             });
           });

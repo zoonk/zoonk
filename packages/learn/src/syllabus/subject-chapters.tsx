@@ -67,13 +67,13 @@ function useDoneLine() {
 
     if (done === 0) {
       return t(
-        "{count, plural, one {# chapter skipped because you already know it} other {# chapters skipped because you already know them}}",
+        "{count, plural, one {# chapter you already know} other {# chapters you already know}}",
         { count: known },
       );
     }
 
     return t(
-      "{done, plural, one {# chapter done} other {# chapters done}}, {known, plural, one {# skipped because you already know it} other {# skipped because you already know them}}",
+      "{done, plural, one {# chapter done} other {# chapters done}}, {known, plural, one {# you already know} other {# you already know}}",
       { done, known },
     );
   };

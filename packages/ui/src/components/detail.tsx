@@ -6,17 +6,18 @@ import {
 } from "@zoonk/ui/components/dropdown-menu";
 import { cn } from "@zoonk/ui/lib/utils";
 import { EllipsisIcon } from "lucide-react";
+import { PAGE_HEADER_CLASS } from "./page-header-class";
 
 /**
  * A "…" with no action beside it sits on the title's first line, at the column's end, at every
- * width. The small line above the title is always the header's first row, so the title is its
- * second.
+ * width.
  */
 export function DetailHero({ className, ...props }: React.ComponentProps<"header">) {
   return (
     <header
       className={cn(
-        "group/detail-hero flex min-w-0 flex-col gap-4 md:flex-row md:items-end md:justify-between md:gap-6",
+        PAGE_HEADER_CLASS,
+        "group/detail-hero gap-4 md:flex-row md:items-end md:justify-between md:gap-6",
         "has-[>[data-slot=detail-actions]>[data-slot=dropdown-menu-trigger]:only-child]:grid has-[>[data-slot=detail-actions]>[data-slot=dropdown-menu-trigger]:only-child]:grid-cols-[minmax(0,1fr)_auto] has-[>[data-slot=detail-actions]>[data-slot=dropdown-menu-trigger]:only-child]:gap-x-4 has-[>[data-slot=detail-actions]>[data-slot=dropdown-menu-trigger]:only-child]:gap-y-1",
         className,
       )}
@@ -70,7 +71,7 @@ export function DetailActions({ className, ...props }: React.ComponentProps<"div
     <div
       className={cn(
         "flex flex-wrap items-center gap-2 md:shrink-0",
-        "has-[>[data-slot=dropdown-menu-trigger]:only-child]:col-start-2 has-[>[data-slot=dropdown-menu-trigger]:only-child]:row-start-2 has-[>[data-slot=dropdown-menu-trigger]:only-child]:mt-[0.09375rem] has-[>[data-slot=dropdown-menu-trigger]:only-child]:self-start",
+        "has-[>[data-slot=dropdown-menu-trigger]:only-child]:col-start-2 has-[>[data-slot=dropdown-menu-trigger]:only-child]:row-start-1 has-[>[data-slot=dropdown-menu-trigger]:only-child]:mt-[0.09375rem] has-[>[data-slot=dropdown-menu-trigger]:only-child]:self-start",
         className,
       )}
       data-slot="detail-actions"

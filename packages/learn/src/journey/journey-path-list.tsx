@@ -11,12 +11,12 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { FlagIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { ChapterMark } from "../_components/chapter-mark";
-import { ListRowChevron } from "../_components/list-group";
+import { ListRowChevron, ListRowChevronSpace } from "../_components/list-group";
 import { LearnLink } from "../learn-link";
 import { usePlanScreen } from "../plan/plan-context";
 import { PlanDateText } from "../plan/plan-date-text";
 import { usePhaseName } from "../plan/use-phase-name";
-import { JourneyChapters, WritingAheadLine } from "./journey-chapters";
+import { JourneyChapters } from "./journey-chapters";
 import { type JourneyPathLinks } from "./journey-links";
 import {
   CheckpointRow,
@@ -62,13 +62,12 @@ function PhaseColumns({
 const NESTED_CLASS = "flex flex-col pl-7";
 
 function OpenPhaseEvents({ links, phase }: { links: JourneyPathLinks; phase: PlanPhaseView }) {
-  const { goal } = usePlanScreen();
-
   return (
-    <div className={NESTED_CLASS}>
-      {phase.checkpoint && <CheckpointRow checkpoint={phase.checkpoint} links={links} />}
-      <WritingAheadLine chapters={phase.chapters} unit={goal.kind === "language"} />
-    </div>
+    phase.checkpoint && (
+      <div className={NESTED_CLASS}>
+        <CheckpointRow checkpoint={phase.checkpoint} links={links} />
+      </div>
+    )
   );
 }
 
@@ -129,7 +128,7 @@ function ChaptersPhase({
       <li aria-current={phase.state === "current" ? "step" : undefined} data-state={phase.state}>
         <div className={PHASE_ROW_CLASS}>
           {header}
-          <span aria-hidden="true" className="size-4 shrink-0" />
+          <ListRowChevronSpace />
         </div>
       </li>
     );
@@ -145,7 +144,8 @@ function ChaptersPhase({
           <FoldChevron />
         </CollapsibleTrigger>
 
-        <CollapsibleContent>
+        {/* The panel clips what it folds, so it reaches as far as an open row's highlight does. */}
+        <CollapsibleContent className="-mx-2.5 px-2.5">
           <div className={NESTED_CLASS}>
             <JourneyChapters
               chapters={phase.chapters}
@@ -210,7 +210,7 @@ function FinishItem() {
             />
           )}
         </span>
-        <span aria-hidden="true" className="size-4 shrink-0" />
+        <ListRowChevronSpace />
       </div>
     </li>
   );

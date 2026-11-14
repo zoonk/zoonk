@@ -79,7 +79,7 @@ test.describe("Buddy tab", () => {
       const asked = await stubBuddy({
         answers: [
           {
-            answer: `Done: I prepared it. Tap Apply to free your ${day}s.`,
+            answer: `Done: I prepared it. Tap Change my plan to free your ${day}s.`,
             planChange: toProposal(change),
           },
         ],
@@ -95,13 +95,22 @@ test.describe("Buddy tab", () => {
       await expect(conversation.getByRole("button", { name: "Send" })).toBeEnabled();
       await composer.press("Enter");
 
-      const card = conversation.getByRole("region", { name: "Change to your plan" });
-      await expect(card).toContainText(`${day}: rest day.`);
-      await expect(card.getByRole("button", { name: "Apply" })).toBeVisible();
+      // The card's title is the question while proposed and the statement once applied.
+      const card = conversation.getByRole("region", { name: new RegExp(day, "u") });
+      await expect(card).toHaveAccessibleName(`Make ${day} a rest day?`);
+      await expect(card.getByRole("button", { name: "Change my plan" })).toBeVisible();
       expect(asked).toStrictEqual([{ question: `No studying on ${day}s` }]);
       expect(await readChangeStatus(change.id)).toBe("proposed");
 
-      await card.getByRole("button", { name: "Apply" }).click();
+      // The fixture saves the change without its numbers, as one from an earlier day: the first
+      // tap works them out from today's plan and asks again; the second applies it.
+      await card.getByRole("button", { name: "Change my plan" }).click();
+      await expect(card.getByText("The numbers are different today.")).toBeVisible();
+      await expect(card).toHaveAccessibleName(`Make ${day} a rest day?`);
+      expect(await readChangeStatus(change.id)).toBe("proposed");
+
+      await card.getByRole("button", { name: "Change my plan" }).click();
+      await expect(card).toHaveAccessibleName(`${day}: rest day.`);
       await expect.poll(() => readChangeStatus(change.id)).toBe("applied");
 
       await expect
@@ -112,7 +121,8 @@ test.describe("Buddy tab", () => {
         .toBe(0);
 
       await card.getByRole("button", { name: "Undo" }).click();
-      await expect(card.getByRole("button", { name: "Apply" })).toBeVisible();
+      await expect(card).toHaveAccessibleName(`Make ${day} a rest day?`);
+      await expect(card.getByRole("button", { name: "Change my plan" })).toBeVisible();
       await expect.poll(() => readChangeStatus(change.id)).toBe("proposed");
     });
   });
@@ -126,7 +136,7 @@ test.describe("Buddy tab", () => {
 
       await prisma.lessonQuestion.create({
         data: {
-          answer: `Tap Apply to free your ${day}s.`,
+          answer: `Tap Change my plan to free your ${day}s.`,
           contextKind: "plan",
           contextSnapshot: {},
           goal: { connect: { id: user.goalId } },
@@ -142,11 +152,11 @@ test.describe("Buddy tab", () => {
       const release = await holdScripts(page);
       await page.goto("/buddy", { waitUntil: "domcontentloaded" });
 
-      const card = page.getByRole("region", { name: "Change to your plan" });
+      const card = page.getByRole("region", { name: `Make ${day} a rest day?` });
       await card.getByRole("button", { name: "Not now" }).click();
       await release();
 
-      await expect(card.getByRole("status")).toHaveText("Not applied. Your plan stays as it was.");
+      await expect(card.getByRole("status")).toHaveText("Your plan stays as it was.");
       await expect.poll(() => readChangeStatus(change.id)).toBe("declined");
     });
   });
@@ -243,7 +253,7 @@ test.describe("Buddy tab", () => {
       await stubBuddy({
         answers: [
           {
-            answer: "Tap Apply and I'll rebuild your plan for Germany.",
+            answer: "Tap Change country and I'll make your plan for Germany.",
             toolOffer: {
               country: "DE",
               countryName: "Alemanha",
@@ -264,14 +274,14 @@ test.describe("Buddy tab", () => {
       await expect(conversation.getByRole("button", { name: "Send" })).toBeEnabled();
       await conversation.getByRole("textbox", { name: /^Message /u }).press("Enter");
 
-      const germany = conversation.getByRole("region", { name: "Content country: Alemanha" });
+      const germany = conversation.getByRole("region", { name: "Country: Alemanha" });
       const status = germany.getByRole("status");
-      await expect(germany.getByRole("button", { name: "Apply" })).toBeVisible();
+      await expect(germany.getByRole("button", { name: "Change country" })).toBeVisible();
       await expect(status).toBeEmpty();
       expect(await readCountry()).toBe("PT");
       expect(await readRebuilds()).toBe(0);
 
-      await germany.getByRole("button", { name: "Apply" }).click();
+      await germany.getByRole("button", { name: "Change country" }).click();
 
       await expect(status).toHaveText(
         "Saved. Your new plan is getting ready, and you can keep studying.",

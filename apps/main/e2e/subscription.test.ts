@@ -108,7 +108,7 @@ test.describe("Subscription Page - With Plus Subscription", () => {
       .getByRole("link", { name: /^Subscription/u })
       .click();
 
-    await expect(page.getByRole("heading", { level: 1, name: "Plus" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 2, name: "Plus" })).toBeVisible();
 
     await expect(page.getByRole("button", { name: /^subscribe$/iu })).toHaveCount(0);
 
@@ -120,8 +120,8 @@ test.describe("Subscription Page - With Plus Subscription", () => {
     );
 
     await dialog.getByRole("button", { exact: true, name: "Cancel Plus" }).click();
-    await expect(page.getByText("Subscription ending", { exact: true })).toBeVisible();
-    await expect(page.getByText(/^Your subscription will end on/u)).toBeVisible();
+    await expect(page.getByText("Ending", { exact: true })).toBeVisible();
+    await expect(page.getByText(/^Plus ends on/u)).toBeVisible();
 
     await expect
       .poll(async () =>
@@ -153,15 +153,11 @@ test("an unpaid learner can cancel in Settings after reloading and stop charge r
   await page.getByRole("button", { exact: true, name: "Cancel Plus" }).click();
   const dialog = page.getByRole("alertdialog");
 
-  await expect(dialog).toContainText(
-    "Plus ends right away, and we stop retrying your renewal payment.",
-  );
+  await expect(dialog).toContainText("Plus ends right away, and you won't be charged again.");
 
   await dialog.getByRole("button", { exact: true, name: "Cancel Plus" }).click();
 
-  await expect(
-    page.getByRole("heading", { level: 1, name: "Subscribe to Zoonk Plus" }),
-  ).toBeVisible();
+  await expect(page.getByRole("button", { name: /^subscribe$/iu })).toBeVisible();
 
   await expect
     .poll(() =>
@@ -177,7 +173,7 @@ test("keeps website billing controls alongside a newer store purchase", async ({
   const store = await addNewerStoreSubscription(user.id);
   await page.goto("/subscription");
   await expect(page.getByRole("link", { exact: true, name: "Manage in App Store" })).toBeVisible();
-  const website = page.getByRole("region", { name: "Website subscription" });
+  const website = page.getByRole("region", { name: "Bought on the website" });
   await website.getByRole("button", { exact: true, name: "Cancel Plus" }).click();
 
   await page
@@ -185,7 +181,7 @@ test("keeps website billing controls alongside a newer store purchase", async ({
     .getByRole("button", { exact: true, name: "Cancel Plus" })
     .click();
 
-  await expect(website).toContainText("Your subscription will end on");
+  await expect(website).toContainText("Plus ends on");
   await website.getByRole("button", { exact: true, name: "Keep Plus" }).click();
   await expect(website.getByRole("button", { exact: true, name: "Cancel Plus" })).toBeVisible();
 
@@ -233,9 +229,7 @@ test.describe("Subscription Page - Back From Checkout", () => {
     await page.clock.install();
     await page.goto("/subscription?stripe_checkout=complete");
 
-    await expect(
-      page.getByRole("heading", { level: 1, name: "Confirming your subscription" }),
-    ).toBeVisible();
+    await expect(page.getByRole("heading", { level: 2, name: "Turning on Plus" })).toBeVisible();
 
     await expect(page.getByRole("button", { name: /^subscribe$/iu })).toHaveCount(0);
     // Its answer coming in is the signal: Playwright doesn't always see a streamed answer finish.
@@ -263,7 +257,7 @@ test.describe("Subscription Page - Back From Checkout", () => {
     await confirm();
     await Promise.all(heldChecks.map((route) => route.continue()));
 
-    await expect(page.getByRole("heading", { level: 1, name: "Plus" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 2, name: "Plus" })).toBeVisible();
     await context.close();
   });
 });

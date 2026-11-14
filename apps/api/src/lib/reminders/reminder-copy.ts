@@ -31,9 +31,7 @@ export async function loadReminderWords(locale: string) {
             minutes,
           }),
         (minutes: number) =>
-          t("{minutes, plural, one {# minute} other {# minutes}} today keeps your plan on track.", {
-            minutes,
-          }),
+          t("{minutes, plural, one {# minute} other {# minutes}} to study today.", { minutes }),
       ],
       partlyDone: [
         (left: number, done: number) =>
@@ -74,7 +72,7 @@ export async function loadReminderWords(locale: string) {
       ],
     },
     email: {
-      open: t("Open today's plan"),
+      open: t("Open Zoonk"),
       settings: t("Change reminder settings"),
       unsubscribe: t("Turn off email reminders"),
       why: t("You get this because you turned on study reminders in Zoonk."),

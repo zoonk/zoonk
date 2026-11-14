@@ -11,12 +11,10 @@ import { useAppLocale } from "../_utils/locale";
 function ShieldMeter({
   broken,
   className,
-  plateClassName,
   segments,
 }: {
   broken: number;
   className?: string;
-  plateClassName?: string;
   segments: number;
 }) {
   const t = useExtracted();
@@ -32,16 +30,15 @@ function ShieldMeter({
         "{cracked, plural, =0 {# of {segments} broken} one {# of {segments} broken} other {# of {segments} broken}}",
         { cracked, segments: String(segments) },
       )}
-      className={cn("flex", className)}
+      className={cn("flex h-1.5 gap-[3px]", className)}
       role="meter"
     >
       {Array.from({ length: segments }, (_, index) => (
         <span
           aria-hidden="true"
           className={cn(
-            "min-w-0 flex-1 rounded-xs transition-colors duration-150 motion-reduce:transition-none",
+            "rounded-meter min-w-0 flex-1 transition-colors duration-150 motion-reduce:transition-none",
             index < cracked ? "bg-success" : "bg-surface-3",
-            plateClassName,
           )}
           key={index}
         />
@@ -68,6 +65,8 @@ export function TricksterShield({
   const t = useExtracted();
   const locale = useAppLocale();
   const toGo = segments - Math.min(broken, segments);
+  const won = toGo === 0;
+  const lost = !won && held;
 
   return (
     <div
@@ -82,25 +81,27 @@ export function TricksterShield({
       />
       <Trickster className="size-4 shrink-0" view="face" />
 
-      <ShieldMeter
-        broken={broken}
-        className="h-1 flex-1 gap-[3px]"
-        plateClassName="h-1"
-        segments={segments}
-      />
+      <ShieldMeter broken={broken} className="flex-1" segments={segments} />
 
+      {/* Every label takes the same cell, so the track never changes width as the words do. */}
       <span
         aria-hidden="true"
-        className="text-muted-foreground shrink-0 font-mono text-xs whitespace-nowrap tabular-nums"
+        className="text-muted-foreground grid shrink-0 justify-items-end font-mono text-xs whitespace-nowrap tabular-nums *:col-start-1 *:row-start-1"
       >
-        {toGo === 0 && t("Broken")}
-        {toGo > 0 && held && t("Held")}
-        {toGo > 0 && !held && t("{count, plural, one {# to go} other {# to go}}", { count: toGo })}
+        <span className={cn(!won && "invisible")}>{t("You won")}</span>
+        <span className={cn(!lost && "invisible")}>{t("He won")}</span>
+        <span className={cn((won || lost) && "invisible")}>
+          {t({
+            description: "Right answers the learner still needs to beat the Trickster.",
+            message: "{count, plural, one {# more to win} other {# more to win}}",
+            values: { count: won ? segments : toGo },
+          })}
+        </span>
       </span>
     </div>
   );
 }
 
 export function TricksterShieldPlates({ broken, segments }: { broken: number; segments: number }) {
-  return <ShieldMeter broken={broken} className="gap-1" plateClassName="h-2" segments={segments} />;
+  return <ShieldMeter broken={broken} segments={segments} />;
 }

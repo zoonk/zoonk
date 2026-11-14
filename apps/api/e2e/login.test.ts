@@ -25,7 +25,7 @@ test.describe("Login Page", () => {
     await emailField.fill(email);
     await clickWithConnectionDown(sendCode);
 
-    await expect(page.getByText(/There was an error signing you in/u)).toBeVisible();
+    await expect(page.getByText(/We couldn't log you in/u)).toBeVisible();
     await expect(emailField).toHaveValue(email);
 
     await sendCode.click();

@@ -127,10 +127,9 @@ function useSummaryLines({
     return { detail: syllabus.topicsMapped ? coverage : null, title };
   }
 
-  const title = t(
-    "{document, select, notice {{count, plural, one {# subject from the notice} other {# subjects from the notice}}} other {{count, plural, one {# part from the official guide} other {# parts from the official guide}}}}",
-    { count: noticeSubjects, document: syllabus.examDocument },
-  );
+  const title = t("{count, plural, one {# subject on the exam} other {# subjects on the exam}}", {
+    count: noticeSubjects,
+  });
 
   // A notice that names its subjects without listing their topics (the OAB's first phase).
   if (syllabus.topicCount === 0) {
@@ -154,7 +153,7 @@ function useSubjectLine(subject: SyllabusSubject): string | null {
 
   const topics =
     leftOut > 0
-      ? t("{total, plural, one {# topic} other {# topics}}, {leftOut, number} out of your plan", {
+      ? t("{total, plural, one {# topic} other {# topics}}, {leftOut, number} not in your plan", {
           leftOut,
           total,
         })
@@ -199,16 +198,8 @@ function SummarySubject({ subject }: { subject: SyllabusSubject }) {
   );
 }
 
-function SummaryGroup({
-  document,
-  fromMaterial,
-  group,
-}: {
-  document: SyllabusView["examDocument"];
-  fromMaterial: boolean;
-  group: SubjectGroup;
-}) {
-  const name = useGroupName({ document, fromMaterial, group });
+function SummaryGroup({ group }: { group: SubjectGroup }) {
+  const name = useGroupName(group);
 
   return (
     <div className="flex flex-col gap-1">
@@ -244,12 +235,7 @@ export function SyllabusTopicsSheet({
         </SheetHeader>
         <DrawerContent className="flex flex-col gap-2 pt-1">
           {groups.map((group) => (
-            <SummaryGroup
-              document={syllabus.examDocument}
-              fromMaterial={syllabus.fromMaterial}
-              group={group}
-              key={group.extra ? "extra" : (group.name ?? "all")}
-            />
+            <SummaryGroup group={group} key={group.extra ? "extra" : (group.name ?? "all")} />
           ))}
           <QuestionsSourceNote source={syllabus.questionsSource} />
           <CourseWeightsNote subjects={syllabus.subjects} weights={syllabus.courseWeights} />

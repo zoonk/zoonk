@@ -10,7 +10,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { PanelLeftIcon, PanelRightIcon, SearchIcon } from "lucide-react";
 import { useEffect, useRef, useSyncExternalStore } from "react";
 import { POPUP_SELECTOR } from "../hooks/_utils/screen-shortcut";
-import { buttonVariants } from "./button";
+import { Button, buttonVariants } from "./button";
 import {
   SIDEBAR_ICON_ONLY_CLASS,
   SIDEBAR_ITEM_CLASS,
@@ -170,8 +170,8 @@ const TOGGLE = {
   end: {
     Icon: PanelRightIcon,
     className: cn(
-      buttonVariants({ edge: "end", size: "icon", variant: "ghost" }),
-      "shrink-0 [--glyph-blank:2] [--icon-size:--spacing(5)]",
+      buttonVariants({ edge: "end", size: "icon-bar", variant: "ghost" }),
+      "shrink-0 [--glyph-blank:2]",
     ),
     tooltipSide: "bottom",
   },
@@ -251,6 +251,7 @@ export function SidebarSearch({
 }) {
   const button = (
     <button
+      aria-haspopup="dialog"
       aria-keyshortcuts={shortcutKeys("search")}
       className={cn(
         "text-faint ring-input hover:text-foreground focus-visible:ring-ring/50 hit-area relative flex w-full items-center gap-2 ring-1 transition-colors outline-none ring-inset focus-visible:ring-[3px]",
@@ -284,5 +285,33 @@ export function SidebarSearch({
     >
       {button}
     </SidebarTooltip>
+  );
+}
+
+/** The bar's search icon where there is no sidebar: it opens the same palette as `SidebarSearch`. */
+export function BarSearch({
+  className,
+  edge,
+  label,
+  onClick,
+}: {
+  className?: string;
+  edge?: "start" | "end";
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <Button
+      aria-haspopup="dialog"
+      aria-keyshortcuts={shortcutKeys("search")}
+      className={className}
+      edge={edge}
+      onClick={onClick}
+      size="icon-bar"
+      variant="ghost"
+    >
+      <SearchIcon aria-hidden="true" />
+      <span className="sr-only">{label}</span>
+    </Button>
   );
 }

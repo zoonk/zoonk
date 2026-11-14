@@ -1,5 +1,3 @@
-import { cn } from "@zoonk/ui/lib/utils";
-
 /**
  * A title, the first child, then its short values, such as a date, a count, a score or actions, in
  * one element after it. The values sit beside the title while it keeps its whole width or 6rem, about
@@ -15,21 +13,3 @@ export const TITLE_ROW_CLASS =
 
 /** A title row's title that truncates beside its values, and reads in full once the row stacks. */
 export const TRUNCATED_TITLE_CLASS = "truncate stacked:whitespace-normal";
-
-/** Words with a mark after them, such as the Plus mark, which moves under them once their longest word wouldn't fit beside it. */
-export function MarkedText({
-  children,
-  className,
-  mark,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  mark: React.ReactNode;
-}) {
-  return (
-    <span className={cn("flex flex-wrap items-center gap-x-2 gap-y-1 wrap-break-word", className)}>
-      <span className="max-w-max min-w-0 flex-[1_1_min-content]">{children}</span>
-      {mark}
-    </span>
-  );
-}

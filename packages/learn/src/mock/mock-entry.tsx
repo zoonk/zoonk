@@ -1,20 +1,16 @@
 "use client";
 
 import { type MockOptionsView } from "@zoonk/core/exams/mocks/contract";
-import { TimerIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { DETAIL_PRIMARY_CLASS } from "../_components/detail-page";
+import { EnterLink } from "../_components/enter-button";
 import { KindDot } from "../_components/kind-tile";
 import {
-  ListRowBody,
   ListRowContent,
   ListRowLeading,
   ListRowLink,
   ListRowTitle,
-  ListRowTrailing,
 } from "../_components/list-group";
-import { PlusMark } from "../_components/plus-lock";
-import { LearnLink } from "../learn-link";
 
 /** The buddy's offer card names what a mock exam can be; the rows that open the chooser don't. */
 export function useMockEntryDescription({ bySubject }: { bySubject: boolean }): string {
@@ -56,16 +52,9 @@ export function MockEntryRow({
       <ListRowLeading>
         <KindDot kind="mock" />
       </ListRowLeading>
-      <ListRowBody>
-        <ListRowContent>
-          <ListRowTitle>{t("Take a mock exam")}</ListRowTitle>
-        </ListRowContent>
-        {view.access === "plusRequired" && (
-          <ListRowTrailing>
-            <PlusMark />
-          </ListRowTrailing>
-        )}
-      </ListRowBody>
+      <ListRowContent>
+        <ListRowTitle>{t("Take a mock exam")}</ListRowTitle>
+      </ListRowContent>
     </ListRowLink>
   );
 }
@@ -84,15 +73,12 @@ export function MockEntryButton({
   }
 
   return (
-    <LearnLink
+    <EnterLink
       className={DETAIL_PRIMARY_CLASS}
       href={view.running ? hrefs.mock(view.running.id) : hrefs.choose}
+      size="lg"
     >
-      <TimerIcon aria-hidden="true" className="size-4" />
       {view.running ? t("Continue your mock exam") : t("Take a mock exam")}
-      {view.access === "plusRequired" && !view.running && (
-        <PlusMark className="bg-primary-foreground/15 text-primary-foreground" />
-      )}
-    </LearnLink>
+    </EnterLink>
   );
 }

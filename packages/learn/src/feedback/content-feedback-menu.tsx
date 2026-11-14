@@ -10,12 +10,12 @@ import { ReportProblemItem } from "./report-problem-item";
 export function ContentFeedbackMenu({
   label,
   screen,
-  size = "icon",
+  size = "icon-bar",
   target,
 }: {
   label: string;
   screen: string;
-  size?: "detail" | "icon" | "icon-bar";
+  size?: "detail" | "icon-bar";
   target: FeedbackTarget;
 }) {
   const feedback = useContentFeedback();
@@ -32,7 +32,7 @@ export function ContentFeedbackMenu({
 
   if (size !== "detail") {
     return (
-      <TaskHeaderMenu className="w-60" label={label} onOpenChange={onOpenChange} size={size}>
+      <TaskHeaderMenu className="w-60" label={label} onOpenChange={onOpenChange}>
         <ReportProblemItem screen={screen} target={target} />
       </TaskHeaderMenu>
     );
@@ -45,11 +45,28 @@ export function ContentFeedbackMenu({
   );
 }
 
-export function ReportProblemMenu({ label, screen }: { label: string; screen: string }) {
+/** `place="bar"` is the page bar's borderless icon; the default is the bordered one beside a page's main button. */
+export function ReportProblemMenu({
+  label,
+  place = "detail",
+  screen,
+}: {
+  label: string;
+  place?: "bar" | "detail";
+  screen: string;
+}) {
   const feedback = useContentFeedback();
 
   if (!feedback) {
     return null;
+  }
+
+  if (place === "bar") {
+    return (
+      <TaskHeaderMenu className="w-60" label={label}>
+        <ReportProblemItem screen={screen} />
+      </TaskHeaderMenu>
+    );
   }
 
   return (

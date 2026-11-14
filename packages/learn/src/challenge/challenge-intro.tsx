@@ -10,65 +10,54 @@ import { TaskAsideContent } from "../_components/task-layout";
 import { TaskMeta } from "../_components/task-meta";
 import { useFormatShare } from "../_utils/percent";
 import { useFormatDuration } from "../_utils/time-format";
-import { useCheckpointEyebrow } from "../checkpoints/checkpoint-labels";
 import { TricksterArt } from "../checkpoints/trickster-art";
-import { useMockDaySizeLabel } from "../mock/mock-labels";
-import { MockLeftOutNote } from "../mock/mock-notes";
 import { type TaskFrameAside } from "../shell/task-frame";
 import { CallIntro, WonCallIntro } from "./challenge-call-intro";
 import { useChallengeScreen } from "./challenge-context";
-import { IntroHeading, useEyebrow, usePrizeFact, useQuestionsFact } from "./challenge-intro-parts";
+import {
+  IntroHeading,
+  usePrizeFact,
+  useQuestionsFact,
+  useRematchEyebrow,
+} from "./challenge-intro-parts";
 import { useChallengeWhen } from "./challenge-labels";
-import { ChallengeTopics, DuelBriefing, useTopicsTitle } from "./challenge-topics";
+import { ChallengeTopics, DuelTopics, useTopicsTitle } from "./challenge-topics";
 
 function useTricksterDetail(): string {
   const t = useExtracted();
   const { challenge } = useChallengeScreen();
+  const { passMark, questions } = challenge;
+  const sized = Boolean(questions && passMark);
 
-  if (challenge.recordings === null) {
-    return t("Questions on recordings from this phase, played as in the exam, with no hints.");
+  if (challenge.recordings !== 0) {
+    return sized
+      ? t(
+          "{count, plural, one {# question on a recording, played as in the exam. Get {passMark} right to win.} other {# questions on recordings, played as in the exam. Get {passMark} right to win.}}",
+          { count: questions ?? 0, passMark: String(passMark) },
+        )
+      : t("Questions on recordings, played as in the exam.");
   }
 
-  if (challenge.recordings > 0) {
-    return t(
-      "{count, plural, one {Questions on a recording from this phase, played as in the exam, with no hints.} other {Questions on # recordings from this phase, each played as in the exam, with no hints.}}",
-      { count: challenge.recordings },
-    );
-  }
-
-  return t("Mixed questions from this phase, with no hints.");
+  return sized
+    ? t(
+        "{count, plural, one {# question on what you just learned. Get {passMark} right to win.} other {# questions on what you just learned. Get {passMark} right to win.}}",
+        { count: questions ?? 0, passMark: String(passMark) },
+      )
+    : t("Questions on what you just learned.");
 }
 
 function TricksterIntro() {
   const t = useExtracted();
-  const { challenge } = useChallengeScreen();
-  const eyebrow = useEyebrow();
+  const eyebrow = useRematchEyebrow();
   const detail = useTricksterDetail();
-  const questions = useQuestionsFact();
   const prize = usePrizeFact();
 
   return (
     <StepCard>
       <TricksterArt reacts />
-      <IntroHeading detail={detail} eyebrow={eyebrow} title={t("The Trickster")} />
-
-      <TaskMeta
-        facts={[
-          challenge.questions !== null && challenge.questions > 0 && questions(challenge.questions),
-          challenge.passMark !== null &&
-            challenge.passMark > 0 &&
-            t("{count, plural, one {# right to win} other {# right to win}}", {
-              count: challenge.passMark,
-            }),
-        ]}
-        reward={prize}
-      />
-
-      <DuelBriefing
-        rule={t(
-          "You'll see right or wrong after each answer, and why at the end, with the traps he set. If he wins, you get a rematch the next day.",
-        )}
-      />
+      <IntroHeading detail={detail} eyebrow={eyebrow} title={t("Beat the Trickster")} />
+      <TaskMeta facts={[]} reward={prize} />
+      <DuelTopics />
     </StepCard>
   );
 }
@@ -76,13 +65,12 @@ function TricksterIntro() {
 function WonIntro() {
   const t = useExtracted();
   const { challenge } = useChallengeScreen();
-  const eyebrow = useCheckpointEyebrow(challenge);
   const { result } = challenge;
 
   return (
     <StepCard>
-      <TricksterArt beaten />
-      <IntroHeading eyebrow={eyebrow} title={t("You beat the Trickster!")} />
+      <TricksterArt cracks={2} outcome="won" />
+      <IntroHeading title={t("You beat the Trickster!")} />
 
       {result && (
         <TaskMeta
@@ -113,19 +101,19 @@ function WeeklyIntro() {
   return (
     <StepCard>
       <IntroHeading
-        detail={t("Questions from what you studied this week, with no hints.")}
+        detail={t("Questions on what you studied this week.")}
         title={t("Weekly challenge")}
-        when={challenge.startTime ? when : null}
       />
 
       <TaskMeta
         facts={[
+          challenge.startTime && when,
           challenge.questions !== null && challenge.questions > 0 && questions(challenge.questions),
         ]}
         reward={prize}
       />
 
-      <DuelBriefing rule={t("You'll see right or wrong after each answer, and why at the end.")} />
+      <DuelTopics />
     </StepCard>
   );
 }
@@ -140,8 +128,9 @@ function MockSections() {
   const t = useExtracted();
   const duration = useFormatDuration();
   const { challenge } = useChallengeScreen();
+  const written = challenge.written.filter((part) => part.asked);
 
-  if (challenge.sections.length + challenge.written.length <= 1) {
+  if (challenge.sections.length + written.length <= 1) {
     return null;
   }
 
@@ -166,7 +155,7 @@ function MockSections() {
           </span>
         </li>
       ))}
-      {challenge.written.map((part) => (
+      {written.map((part) => (
         <li
           className="border-border flex flex-col gap-1 border-b py-2.75 text-sm last:border-b-0"
           key={part.name}
@@ -180,13 +169,6 @@ function MockSections() {
             )}
           </span>
           <span className="text-muted-foreground text-xs">{describeTasks(part.tasks)}</span>
-          <span className="text-muted-foreground text-xs">
-            {part.asked
-              ? t("Written in the mock, graded by the exam's criteria after you hand it in.")
-              : t(
-                  "Written: you practice it in your essay sessions, graded by the exam's criteria.",
-                )}
-          </span>
         </li>
       ))}
     </ol>
@@ -217,44 +199,37 @@ function PenaltyRule() {
 
 function MockIntro() {
   const t = useExtracted();
-  const daySize = useMockDaySizeLabel();
   const duration = useFormatDuration();
   const { challenge } = useChallengeScreen();
   const when = useChallengeWhen(challenge);
   const questions = useQuestionsFact();
   const [section] = challenge.sections;
-  const objectiveOnly = challenge.leftOut.some((part) => part.part === "writtenInFull");
 
-  // Half a day isn't named by its day ("… e redação"), which would say its written part is asked.
-  const area =
-    challenge.sections.length === 1 && challenge.written.length === 0 && !objectiveOnly
+  // Named only when the mock exam is one subject: a day's name would list parts it may not ask.
+  const subject =
+    challenge.sections.length === 1 &&
+    challenge.written.length === 0 &&
+    !challenge.leftOut.some((part) => part.part === "writtenInFull")
       ? section?.name
       : null;
 
   return (
     <StepCard>
       <IntroHeading
-        detail={[challenge.examName, area].filter(Boolean).join(" · ")}
+        detail={subject}
         title={t("Mock exam {number}", { number: String(challenge.number ?? 1) })}
-        when={when}
       />
 
       <TaskMeta
         facts={[
+          when,
           challenge.questions !== null && challenge.questions > 0 && questions(challenge.questions),
           challenge.minutes !== null && duration(challenge.minutes),
-          !challenge.fullLength && daySize({ fullLength: false }),
-          objectiveOnly && t("Objective part only"),
         ]}
       />
 
       <TaskAsideContent className="flex w-full flex-col items-start gap-5">
         <MockSections />
-        <MockLeftOutNote
-          leftOut={challenge.leftOut.filter(
-            (part) => part.part !== "written" && part.part !== "writtenInFull",
-          )}
-        />
 
         <Callout>
           {challenge.netScored ? (
@@ -262,24 +237,20 @@ function MockIntro() {
           ) : (
             <EyeOffIcon aria-hidden="true" />
           )}
-          <p>
-            {challenge.netScored ? (
-              <PenaltyRule />
-            ) : (
-              t("Your result only shows at the end, like on exam day.")
-            )}
-          </p>
+          <p>{challenge.netScored ? <PenaltyRule /> : t("You see your result at the end.")}</p>
         </Callout>
       </TaskAsideContent>
     </StepCard>
   );
 }
 
-/** Every intro has one, so the route's skeleton draws it before knowing which challenge it is. */
-export function useChallengeIntroAside(): TaskFrameAside {
+/**
+ * The route's skeleton draws one before knowing which challenge it is; an intro with nothing to
+ * list drops it rather than keep an empty rail on screen.
+ */
+export function useChallengeIntroAside(): TaskFrameAside | null {
   const t = useExtracted();
   const { challenge } = useChallengeScreen();
-  const name = useCheckpointEyebrow(challenge);
   const callGoals = challenge.call?.goals && challenge.status !== "done";
 
   const title =
@@ -287,7 +258,7 @@ export function useChallengeIntroAside(): TaskFrameAside {
     (challenge.mock ? challenge.examName : null) ??
     (callGoals ? t("What to get across") : null);
 
-  return { label: title ?? name, title };
+  return title ? { label: title, title } : null;
 }
 
 export function ChallengeIntro() {

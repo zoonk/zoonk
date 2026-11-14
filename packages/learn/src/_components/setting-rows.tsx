@@ -70,27 +70,3 @@ export function SwitchSettingRow({
     </SettingRow>
   );
 }
-
-export function SelectSettingRow({
-  children,
-  description,
-  descriptionId,
-  label,
-  selectId,
-}: {
-  children: React.ReactNode;
-  description: string;
-  descriptionId: string;
-  label: string;
-  selectId: string;
-}) {
-  return (
-    <SettingRow
-      description={description}
-      descriptionId={descriptionId}
-      label={<label htmlFor={selectId}>{label}</label>}
-    >
-      {children}
-    </SettingRow>
-  );
-}

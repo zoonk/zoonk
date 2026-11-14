@@ -2,6 +2,7 @@
 
 import { createContext, use } from "react";
 import { type LearnBuddy } from "../../buddies/use-buddy-name";
+import { type ReminderOfferActions } from "../../reminders/reminder-offer";
 import { type MomentCeremony } from "../moment-ceremony";
 import { type StudySessionSummary } from "../session-types";
 
@@ -22,6 +23,7 @@ type SessionSummaryValue = {
   exitHref: string;
   goalKind: SummaryGoalKind;
   mistakesHref: string | null;
+  reminderActions?: ReminderOfferActions;
   signUpHref: string | null;
   stopped: boolean;
   summary: StudySessionSummary;

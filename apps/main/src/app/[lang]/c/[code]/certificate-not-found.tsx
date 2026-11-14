@@ -15,14 +15,11 @@ export async function CertificateNotFound() {
 
   return (
     <section className="bg-ground">
-      <div className={cn(PUBLIC_CONTAINER_CLASS, "pt-10 pb-28 sm:pt-24 sm:pb-48")}>
+      <div className={cn(PUBLIC_CONTAINER_CLASS, "py-12 sm:py-24")}>
         <div className="max-w-column">
           <h1 className="text-headline">{t("We couldn't find this certificate")}</h1>
           <p className="text-lead mt-2.5">
-            {t(
-              "Check the link. A certificate's link ends in its 12-character code, like {example}, and works with or without the dashes.",
-              { example: EXAMPLE_LINK },
-            )}
+            {t("Check the link. It ends in a code like {example}.", { example: EXAMPLE_LINK })}
           </p>
           {/* oxlint-disable-next-line next/no-html-link-for-pages -- A full load of the home page also resets whatever broke the route. */}
           <a
