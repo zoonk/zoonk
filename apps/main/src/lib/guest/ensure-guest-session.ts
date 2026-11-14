@@ -4,7 +4,7 @@ import { keepSessionToken, readBrowserSession } from "@/lib/workflow/auth-header
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 
-type GuestSession = { learnerId: string; status: "ready" } | { status: "failed" };
+export type GuestSession = { learnerId: string; status: "ready" } | { status: "failed" };
 
 const FAILED: GuestSession = { status: "failed" };
 

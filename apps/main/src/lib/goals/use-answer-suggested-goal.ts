@@ -2,6 +2,7 @@
 
 import { useRouter } from "@/i18n/navigation";
 import { getCourseStartHref, getGoalStartHref } from "@/lib/public/public-hrefs";
+import { answerHere, openingHere, stayingHere } from "@/lib/session/tap-answer";
 import { type SuggestedGoalView } from "@zoonk/core/goals/suggestions/contract";
 import { useCallback } from "react";
 import { answerSuggestedGoalAction } from "./suggested-goal-actions";
@@ -14,7 +15,20 @@ export function useAnswerSuggestedGoal({ hasGoal }: { hasGoal: boolean }) {
 
   return useCallback(
     async ({ status, suggestion }: SuggestedGoalAnswer): Promise<boolean> => {
-      const answered = await answerSuggestedGoalAction({ status, suggestionId: suggestion.id });
+      const refreshesOnly = status === "dismissed" && hasGoal;
+      const here = refreshesOnly ? stayingHere() : openingHere();
+
+      const reply = await answerHere(
+        answerSuggestedGoalAction({ status, suggestionId: suggestion.id }),
+        here,
+      );
+
+      // Leaving cancels following the answer; the answer itself still stands.
+      if (typeof reply === "boolean") {
+        return reply;
+      }
+
+      const answered = reply.answer;
 
       if (!answered) {
         return false;

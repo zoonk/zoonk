@@ -5,6 +5,7 @@ import { VisitorLook } from "@/components/learner/visitor-look";
 import { getStartControlClassName } from "@/components/public/public-start";
 import { Link, useRouter } from "@/i18n/navigation";
 import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
+import { answerHere, openingHere } from "@/lib/session/tap-answer";
 import { type LearnerSummaryGoal } from "@zoonk/core/learner/summary/contract";
 import { type CourseLevel } from "@zoonk/db/enums";
 import { RouteZone } from "@zoonk/learn/route-line";
@@ -158,9 +159,16 @@ export function CourseContinueLink({ courseId }: { courseId: string }) {
 
   const continueGoal = () => {
     startTransition(async () => {
-      const { data: switched } = await safeAsync(() => switchGoal(goal.id));
+      const { data: switched } = await safeAsync(() =>
+        answerHere(switchGoal(goal.id), openingHere()),
+      );
 
-      if (!switched) {
+      // Leaving cancels following the switch; the switch itself still stands.
+      if (switched === true) {
+        return;
+      }
+
+      if (!switched || !switched.answer) {
         showErrorToast(switchFailed);
         return;
       }

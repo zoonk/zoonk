@@ -109,9 +109,10 @@ export function getLearnerId(): LearnerId {
   return held ? held.userId : held;
 }
 
+/** While the browser knows no learner, a read on its way can name one, such as a guest just made. */
 async function getSettledLearnerId(): Promise<LearnerId> {
   const read = store.inFlight;
-  const unsettled = store.verifying !== null || getHeldIdentity() === undefined;
+  const unsettled = store.verifying !== null || !getHeldIdentity();
 
   if (read && unsettled) {
     await read.promise;

@@ -1,5 +1,12 @@
+import { type GuestSession } from "@/lib/guest/ensure-guest-session";
 import { describe, expect, it } from "vitest";
-import { answerHere, noteNavigationStart, openingHere, stayingHere } from "./tap-answer";
+import {
+  answerHere,
+  noteNavigationStart,
+  openingAsGuest,
+  openingHere,
+  stayingHere,
+} from "./tap-answer";
 
 const NEVER = new Promise<never>(() => {});
 
@@ -46,6 +53,15 @@ describe(answerHere, () => {
     noteNavigationStart();
 
     await expect(here()).resolves.toBe(false);
+    await expect(waiting).resolves.toBe(true);
+  });
+
+  it("counts a navigation started while a visitor's guest sign-in is still out as leaving", async () => {
+    const signIn = Promise.withResolvers<GuestSession>();
+    const waiting = answerHere(NEVER, openingAsGuest(signIn.promise));
+    noteNavigationStart();
+    signIn.resolve({ learnerId: "guest", status: "ready" });
+
     await expect(waiting).resolves.toBe(true);
   });
 

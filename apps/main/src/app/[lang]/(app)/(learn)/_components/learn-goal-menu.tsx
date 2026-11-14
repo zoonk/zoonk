@@ -4,6 +4,7 @@ import { useFrameLearner } from "@/components/learner/learner-seed-provider";
 import { VisitorLook } from "@/components/learner/visitor-look";
 import { PublicHomeLink } from "@/components/public/public-top-bar";
 import { noteAppWrite } from "@/lib/http/app-write-ledger";
+import { answerHere, openingHere } from "@/lib/session/tap-answer";
 import {
   type LearnerSummaryGoal,
   type LearnerSummaryWaitingGoal,
@@ -109,9 +110,23 @@ function GoalMenu({ placement }: { placement?: Placement }) {
       return false;
     }
 
-    const outcome = await noteAppWrite(
-      createOnboardingGoalsAction({ ...waiting.input, pauseGoalId, timeZone: getLocalTimeZone() }),
+    const answered = await answerHere(
+      noteAppWrite(
+        createOnboardingGoalsAction({
+          ...waiting.input,
+          pauseGoalId,
+          timeZone: getLocalTimeZone(),
+        }),
+      ),
+      openingHere(),
     );
+
+    // Leaving cancels following the start; the start itself still stands.
+    if (typeof answered === "boolean") {
+      return answered;
+    }
+
+    const outcome = answered.answer;
 
     if (outcome.status !== "created") {
       return false;

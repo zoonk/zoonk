@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "@/i18n/navigation";
+import { answerHere, openingHere } from "@/lib/session/tap-answer";
 import { useGoalSwitchTransition } from "@zoonk/learn/goal-switcher";
 import {
   NoticeCard,
@@ -26,9 +27,17 @@ export function ReminderGoalNotice({ goal }: { goal: ReminderGoal }) {
   const switchToGoal = () =>
     startSwitching(async () => {
       setFailed(false);
-      const { data: switched } = await safeAsync(() => switchGoal(goal.id));
 
-      if (switched) {
+      const { data: switched } = await safeAsync(() =>
+        answerHere(switchGoal(goal.id), openingHere()),
+      );
+
+      // Leaving cancels following the switch; the switch itself still stands.
+      if (switched === true) {
+        return;
+      }
+
+      if (switched && switched.answer) {
         router.replace("/today");
         return;
       }

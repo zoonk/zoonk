@@ -1,9 +1,11 @@
 "use client";
 
 import { useRouter } from "@/i18n/navigation";
+import { answerHere, openingHere } from "@/lib/session/tap-answer";
 import { DailyTimeField } from "@zoonk/learn/daily-time-picker";
 import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
+import { safeAsync } from "@zoonk/utils/error";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useExtracted } from "next-intl";
 import { useActionState, useId } from "react";
@@ -25,9 +27,16 @@ export function StartPlanForm({
     async (previous: StartPlanState, formData: FormData) => {
       formData.set("timeZone", getLocalTimeZone());
 
-      const result = await action(previous, formData).catch((): StartPlanState => ({
-        error: "failed",
-      }));
+      const { data: answered } = await safeAsync(() =>
+        answerHere(action(previous, formData), openingHere()),
+      );
+
+      // Leaving cancels following the start; the start itself still stands.
+      if (answered === true) {
+        return previous;
+      }
+
+      const result: StartPlanState = answered ? answered.answer : { error: "failed" };
 
       if (result && "started" in result) {
         router.push("/plan");

@@ -271,6 +271,21 @@ describe("learner a tap was made for", () => {
     await expect(stillHere()).resolves.toBe(false);
   });
 
+  it("is the guest a visitor's tap just signed in as, once the read that sign-in sent names them", async () => {
+    const { setHint } = stubPage({ seeded: false });
+    const reads = stubSummaryReads();
+    const store = await loadStore();
+
+    setHint("0");
+    store.ensureLearnerSummary();
+    setHint("1");
+    store.ensureLearnerSummary();
+    const asked = store.learnerStaying("guest")();
+    reads[0]?.resolve(answerFor(summaryOf("guest")));
+
+    await expect(asked).resolves.toBe(true);
+  });
+
   it("is the learner the page was drawn for while the browser knows no one yet", async () => {
     stubPage({ seeded: true });
     stubSummaryReads();

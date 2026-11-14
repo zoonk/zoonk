@@ -19,6 +19,7 @@ import {
 import { readWaitedLesson } from "@/lib/session/read-waited-lesson";
 import { sendStudyAnswer } from "@/lib/session/study-answer-request";
 import { finishStudyBlockAction } from "@/lib/session/study-session-actions";
+import { answerHere, openingHere } from "@/lib/session/tap-answer";
 import { useDayEntry, useDayTap } from "@/lib/session/use-day-entry";
 import { useDayTaps } from "@/lib/session/use-day-taps";
 import {
@@ -73,11 +74,20 @@ export function SessionBlockClient({
 
   /** The day is read by its goal, not by this block: a block left with no questions is gone from it. */
   const skipTestQuestions = async () => {
-    const saved = await updateFocusTestAction(goal.id, {
-      sessionQuestions: "skippedToday",
-      timeZone: getLocalTimeZone(),
-    });
+    const answered = await answerHere(
+      updateFocusTestAction(goal.id, {
+        sessionQuestions: "skippedToday",
+        timeZone: getLocalTimeZone(),
+      }),
+      openingHere(),
+    );
 
+    // Leaving cancels following the skip; the skip itself still stands.
+    if (typeof answered === "boolean") {
+      return answered;
+    }
+
+    const saved = answered.answer;
     const href = getSessionHref({ goalId: goal.id, limit: null });
 
     if (saved && href === getCurrentLocation()) {

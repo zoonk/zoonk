@@ -1,3 +1,4 @@
+import { type GuestSession } from "@/lib/guest/ensure-guest-session";
 import { learnerStaying } from "@/lib/learner/learner-store";
 
 const navigations = { count: 0, next: Promise.withResolvers<null>() };
@@ -9,20 +10,37 @@ export function noteNavigationStart(): void {
   navigations.next = Promise.withResolvers();
 }
 
+function staysSince(count: number, learner?: string): () => Promise<boolean> {
+  const learnerHere = learnerStaying(learner);
+  return async () => (await learnerHere()) && count === navigations.count;
+}
+
 /**
  * The learner stays while the one the tap was made for (`learner`, the one its page was drawn for,
  * when known) still holds the session and starts no navigation, even one still loading.
  */
 export function stayingHere(learner?: string): () => Promise<boolean> {
-  const learnerHere = learnerStaying(learner);
-  const { count } = navigations;
-  return async () => (await learnerHere()) && count === navigations.count;
+  return staysSince(navigations.count, learner);
 }
 
 /** A tap that opens something is the learner's newest intent: an open tapped before it gives way. */
 export function openingHere(learner?: string): () => Promise<boolean> {
   noteNavigationStart();
   return stayingHere(learner);
+}
+
+/**
+ * An open that signs a visitor in as a guest first: it holds to the learner that sign-in gives, not
+ * the visitor who tapped, and counts navigations from the tap, so leaving during the sign-in counts.
+ */
+export function openingAsGuest(signIn: Promise<GuestSession>): () => Promise<boolean> {
+  noteNavigationStart();
+  const { count } = navigations;
+
+  return async () => {
+    const guest = await signIn;
+    return staysSince(count, guest.status === "ready" ? guest.learnerId : undefined)();
+  };
 }
 
 /**
