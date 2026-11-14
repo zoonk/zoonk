@@ -2,12 +2,12 @@
 
 import { CurrentPageLoginLink } from "@/components/current-page-login-link";
 import { useRouter } from "@/i18n/navigation";
+import { ensureGuestSession } from "@/lib/guest/ensure-guest-session";
 import { getLessonWritingHref } from "@/lib/lessons/lesson-writing-href";
 import { askToWriteLesson } from "@/lib/lessons/lesson-writing-request";
 import { withOrigin } from "@/lib/public/public-hrefs";
+import { answerHere, openingAsGuest } from "@/lib/session/tap-answer";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
-import { useStillOnPage } from "@zoonk/ui/hooks/still-here";
-import { safeAsync } from "@zoonk/utils/error";
 import { LogInIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode, useRef, useState, useTransition } from "react";
@@ -19,7 +19,6 @@ function useLessonStart({ lessonId, origin }: { lessonId: string; origin: string
   const [failed, setFailed] = useState(false);
   const [requesting, setRequesting] = useState(false);
   const [navigating, startTransition] = useTransition();
-  const stillOnPage = useStillOnPage();
   const opening = useRef(false);
   const pending = requesting || navigating;
 
@@ -33,12 +32,14 @@ function useLessonStart({ lessonId, origin }: { lessonId: string; origin: string
 
     try {
       setFailed(false);
-      const isStillHere = stillOnPage();
-      const { data: answer } = await safeAsync(() => askToWriteLesson(lessonId));
+      const signIn = ensureGuestSession();
+      const asked = await answerHere(askToWriteLesson(lessonId), openingAsGuest(signIn));
 
-      if (!isStillHere()) {
+      if (asked === "left") {
         return;
       }
+
+      const answer = asked === "failed" ? null : asked.answer;
 
       if (!answer || answer.status === "failed") {
         setFailed(true);
