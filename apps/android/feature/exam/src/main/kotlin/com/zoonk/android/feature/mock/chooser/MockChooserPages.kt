@@ -100,16 +100,17 @@ internal fun PracticeChooser(
     val examChoices = practiceChoices(view.options.filter { it.kind != MockOption.Kind.AREA }, severalDays)
     val subjectChoices = practiceChoices(view.options.filter { it.kind == MockOption.Kind.AREA }, severalDays)
 
-    // A free learner meets the subscription when they press Start: the bar's button becomes Subscribe,
-    // until a purchase opens the mocks (the options reload when the subscription changes).
-    var triedLocked by rememberSaveable { mutableStateOf(false) }
-    val gated = triedLocked && !open
+    // The bar's button becomes Subscribe once a Start met the lock, until a purchase opens the mocks.
+    val triedLocked by viewModel.triedLocked.collectAsStateWithLifecycle()
+    val refusedOn by viewModel.refusedOn.collectAsStateWithLifecycle()
+    val gated = triedLocked && (!open || refusedOn === view)
     val mainAction = {
         if (gated) {
+            viewModel.leftForSubscription()
             navigator.open(AppRoute.Subscription)
         } else if (option != null && !busy) {
             onStart()
-            if (open) viewModel.start(option.shape, option.key) else triedLocked = true
+            if (open) viewModel.start(option.shape, option.key, view) else viewModel.tryLocked()
         }
     }
     val action: @Composable (Modifier) -> Unit = { modifier ->

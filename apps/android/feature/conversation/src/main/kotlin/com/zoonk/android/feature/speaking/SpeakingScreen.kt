@@ -247,7 +247,7 @@ fun SpeakingPaperSection(
     val openCall = { id: UUID -> open(AppRoute.Conversation(id.toString(), from = from)) }
     val startTask = { key: String ->
         started = key
-        model.start(CallRequest.ExamSpeaking(goalId, key))
+        model.start(CallRequest.ExamSpeaking(goalId, key), shown = paper)
     }
     val actions = SpeakingActions(start, open, openWeb)
     OpenStartedCall(model, openCall)
@@ -268,8 +268,13 @@ fun SpeakingPaperSection(
                 paused = paused,
                 busy = busy,
                 starting = model.state == CallStartModel.State.Starting && started == task.key,
+                refused =
+                    model.state == CallStartModel.State.PlusRequired && started == task.key && (locked || model.refusedOn === paper),
                 onStart = { startTask(task.key) },
-                onSubscribe = { open(AppRoute.Subscription) },
+                onSubscribe = {
+                    model.leftForSubscription()
+                    open(AppRoute.Subscription)
+                },
                 onLastResult = openCall,
             )
         }
@@ -360,15 +365,16 @@ private fun TaskRow(
     paused: Boolean,
     busy: Boolean,
     starting: Boolean,
+    refused: Boolean,
     onStart: () -> Unit,
     onSubscribe: () -> Unit,
     onLastResult: (UUID) -> Unit,
 ) {
     val locale = currentLocale()
     var open by rememberSaveable(task.key) { mutableStateOf(openAtFirst) }
-    // The gate shows once the learner tries a locked task, until a purchase reloads the paper open.
+    // The gate shows once the learner tries a locked task, or the server refused its start, until a purchase reloads the paper open.
     var triedLocked by rememberSaveable(task.key) { mutableStateOf(false) }
-    val gated = triedLocked && locked
+    val gated = (triedLocked && locked) || refused
     val requester = remember { BringIntoViewRequester() }
     LaunchedEffect(openAtFirst) { if (openAtFirst) requester.bringIntoView() }
     val level = paper.level.value

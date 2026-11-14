@@ -65,7 +65,7 @@ class CallStartModel(
     private val starter: CallStarter,
     kind: GenerationKind,
 ) : ViewModel() {
-    enum class State { Idle, Starting, Failed, Paused }
+    enum class State { Idle, Starting, Failed, Paused, PlusRequired }
 
     var state by mutableStateOf(State.Idle)
         private set
@@ -74,18 +74,30 @@ class CallStartModel(
     var limit by mutableStateOf<Limit.Reached?>(null)
         private set
 
+    /**
+     * What the screen showed when the server refused the start for a subscription. While it shows the
+     * same, the refusal alone shows the gate, so a reload that fails can't bring Start back; going to
+     * the subscription page ends it ([leftForSubscription]), and back on the screen its access decides.
+     */
+    var refusedOn by mutableStateOf<Any?>(null)
+        private set
+
     /** The call a start opened, until a screen showing then opens it with [OpenStartedCall]. */
     var started by mutableStateOf<UUID?>(null)
         private set
 
     val writing = starter.writingWaits.create(kind, viewModelScope)
 
-    fun start(request: CallRequest) {
+    fun start(
+        request: CallRequest,
+        shown: Any? = null,
+    ) {
         state = State.Starting
         limit = null
+        refusedOn = null
         viewModelScope.launch {
             val started = starter.start(request)
-            val answer = writing.answered((started as? CallStart.Writing)?.generationId) { start(request) }
+            val answer = writing.answered((started as? CallStart.Writing)?.generationId) { start(request, shown) }
             limit = (started as? CallStart.Limited)?.limit
             state =
                 when {
@@ -102,11 +114,20 @@ class CallStartModel(
                         State.Paused
                     }
 
+                    started == CallStart.PlusRequired -> {
+                        refusedOn = shown
+                        State.PlusRequired
+                    }
+
                     else -> {
                         State.Failed
                     }
                 }
         }
+    }
+
+    fun leftForSubscription() {
+        refusedOn = null
     }
 
     fun opened() {

@@ -10,6 +10,7 @@ import com.zoonk.android.data.GenerationSource
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.SessionSource
 import com.zoonk.android.ui.components.Limit
+import com.zoonk.api.models.MockOptions
 import com.zoonk.api.models.MockShape
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -53,6 +54,9 @@ class MockChooserViewModel(
     private val mutableStatus = MutableStateFlow<ChooserStatus>(ChooserStatus.Choosing)
     private val mutableBusy = MutableStateFlow(false)
     private val mutableOpened = MutableStateFlow<String?>(null)
+    private val mutableTriedLocked = MutableStateFlow(false)
+    private val mutableRefusedOn = MutableStateFlow<MockOptions?>(null)
+    private var startedOn: MockOptions? = null
     private var owner: AuthenticatedSession? = null
     private var writing: MockShape? = null
     private var generationId: String? = null
@@ -81,11 +85,36 @@ class MockChooserViewModel(
 
     val run: StateFlow<GenerationRun> = follower.run
 
+    /** The learner pressed Start on a locked mock, or the server refused a start: the gate shows while the mocks read locked. */
+    val triedLocked: StateFlow<Boolean> = mutableTriedLocked.asStateFlow()
+
+    /**
+     * The options a start the server refused for a subscription was made from. While the page shows
+     * them, the refusal alone shows the gate, so a reload that fails can't bring Start back; going to
+     * the subscription page ends it, and back here the options' access decides.
+     */
+    val refusedOn: StateFlow<MockOptions?> = mutableRefusedOn.asStateFlow()
+
+    fun tryLocked() {
+        mutableTriedLocked.value = true
+    }
+
+    fun leftForSubscription() {
+        mutableRefusedOn.value = null
+    }
+
     fun start(
         shape: MockShape,
         key: String,
+        shown: MockOptions,
     ) {
+        startedOn = shown
         begin(shape, key, MockStartAsk.First)
+    }
+
+    private fun refused() {
+        tryLocked()
+        mutableRefusedOn.value = startedOn
     }
 
     /** The learner agreed, in the confirmation, to start the shorter mock exam. */
@@ -186,8 +215,11 @@ class MockChooserViewModel(
                 mutableStatus.value = ChooserStatus.Refused(written.limit)
             }
 
-            // Plus required: the options read again shows the mock locked.
-            QuestionWriting.PlusRequired, null -> {
+            QuestionWriting.PlusRequired -> {
+                refused()
+            }
+
+            null -> {
                 return
             }
         }
@@ -212,15 +244,10 @@ class MockChooserViewModel(
         mutableStatus.value =
             when (outcome) {
                 is MockStartOutcome.Opened -> ChooserStatus.Choosing.also { mutableOpened.value = outcome.id }
-
                 is MockStartOutcome.Short -> ChooserStatus.Short(key, shape, outcome)
-
                 MockStartOutcome.NotEnoughQuestions -> ChooserStatus.Failed(notEnoughQuestions = true)
-
                 MockStartOutcome.NeedsQuestions -> ChooserStatus.Failed(notEnoughQuestions = false)
-
-                // The options read again shows the mock locked.
-                MockStartOutcome.PlusRequired -> ChooserStatus.Choosing
+                MockStartOutcome.PlusRequired -> ChooserStatus.Choosing.also { refused() }
             }
     }
 

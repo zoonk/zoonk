@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -294,7 +293,7 @@ fun LessonPlayer(
                     val primary = screen.primary?.takeIf { it.enabled } ?: return
 
                     when {
-                        primary.label == PrimaryLabel.DontKnowYet -> screen.step?.let { dontKnow(it.id) }
+                        primary.reveals -> screen.step?.let { dontKnow(it.id) }
                         primary.isCheck -> viewModel.check()
                         else -> viewModel.dispatch(LessonAction.Continue)
                     }
@@ -905,25 +904,12 @@ private fun ActionBar(
                 ask()
                 return@TaskActions
             }
-            val label: @Composable RowScope.() -> Unit = { Text(stringResource(primary.label.text())) }
-            if (primary.label == PrimaryLabel.DontKnowYet) {
-                OutlinedButton(
-                    onClick = actions::runPrimary,
-                    enabled = primary.enabled,
-                    busy = primary.busy,
-                    modifier = width.focusRequester(primaryFocus),
-                    leadingIcon = { ButtonIcon(R.drawable.ic_help) },
-                    content = label,
-                )
-            } else {
-                Button(
-                    busy = primary.busy,
-                    onClick = actions::runPrimary,
-                    modifier = width.focusRequester(primaryFocus),
-                    enabled = primary.enabled,
-                    content = label,
-                )
-            }
+            Button(
+                busy = primary.busy,
+                onClick = actions::runPrimary,
+                modifier = width.focusRequester(primaryFocus),
+                enabled = primary.enabled,
+            ) { Text(stringResource(primary.label.text())) }
             ask()
         }
     }
@@ -934,7 +920,6 @@ private fun PrimaryLabel.text(): Int =
         PrimaryLabel.Check -> R.string.player_action_check
         PrimaryLabel.Confirm -> R.string.player_action_confirm
         PrimaryLabel.Continue -> R.string.player_action_continue
-        PrimaryLabel.DontKnowYet -> R.string.player_dont_know_yet
         PrimaryLabel.Next -> R.string.player_action_next
         PrimaryLabel.NextStep -> R.string.player_action_next_step
         PrimaryLabel.SeeAnswer -> R.string.player_action_see_answer

@@ -440,18 +440,13 @@ internal fun EnergyPage(context: StatsContext) {
                 ),
         )
 
-        val newest =
-            energy.days
-                .lastOrNull()
-                ?.date
-                ?.toJavaLocalDate()
         val days =
             energy.days.map { day ->
                 val date = day.date.toJavaLocalDate()
                 CalendarDay(
                     date = date,
                     band = energyBand(day.energy),
-                    label = formatDate(date, locale, DateStyle.Day, today = newest ?: date),
+                    label = formatDate(date, locale, DateStyle.Day),
                     value =
                         day.energy?.let { stringResource(R.string.stats_energy_amount, metricPercent(it, locale)) }
                             ?: stringResource(R.string.stats_no_energy),
@@ -528,11 +523,6 @@ private fun ActivityCalendar(
     val locale = currentLocale()
     val maximum = activity.days.maxOfOrNull { it.activitiesCompleted } ?: 0
     val active = activity.days.count { it.activitiesCompleted > 0 }
-    val newest =
-        activity.days
-            .lastOrNull()
-            ?.date
-            ?.toJavaLocalDate()
     val days =
         activity.days.map { day ->
             val date = day.date.toJavaLocalDate()
@@ -540,7 +530,7 @@ private fun ActivityCalendar(
             CalendarDay(
                 date = date,
                 band = activityBand(day.activitiesCompleted, maximum),
-                label = formatDate(date, locale, DateStyle.Day, today = newest ?: date),
+                label = formatDate(date, locale, DateStyle.Day),
                 value =
                     when {
                         lessons > 0 -> pluralStringResource(R.plurals.stats_lesson_count, lessons.toInt(), whole(lessons, locale))

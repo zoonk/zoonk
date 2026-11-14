@@ -213,7 +213,7 @@ private fun dayTitle(
     when (day) {
         today -> stringResource(R.string.completed_lessons_today)
         today.minusDays(1) -> stringResource(R.string.completed_lessons_yesterday)
-        else -> formatDate(day, currentLocale(), if (day.year == today.year) DateStyle.WeekdayDay else DateStyle.WeekdayDayYear, today)
+        else -> formatDate(day, currentLocale(), DateStyle.WeekdayDay, today)
     }
 
 private const val LOAD_AHEAD = 4

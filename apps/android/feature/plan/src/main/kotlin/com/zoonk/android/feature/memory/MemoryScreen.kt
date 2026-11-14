@@ -59,14 +59,13 @@ import com.zoonk.android.ui.components.PageHeader
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatMomentDay
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.api.models.Memory
 import com.zoonk.api.models.MemoryCategory
 import com.zoonk.api.models.MemoryFact
 import com.zoonk.api.models.MemorySource
 import kotlinx.coroutines.launch
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 
 /** Main's memory page: the switch, what Zoonk remembers by label, and the download. */
 @Composable
@@ -344,17 +343,7 @@ private fun sourceName(fact: MemoryFact): String =
     )
 
 @Composable
-private fun factDate(fact: MemoryFact): String =
-    DateTimeFormatter
-        .ofPattern(
-            android.text.format.DateFormat
-                .getBestDateTimePattern(currentLocale(), "MMMd"),
-            currentLocale(),
-        ).format(
-            java.time.Instant
-                .ofEpochMilli(fact.createdAt.toEpochMilliseconds())
-                .atZone(ZoneId.systemDefault()),
-        )
+private fun factDate(fact: MemoryFact): String = formatMomentDay(fact.createdAt, currentLocale())
 
 private val ICON = 16.dp
 
