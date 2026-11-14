@@ -1724,65 +1724,6 @@
         }
       }
     },
-    "For new goals and your examples. It doesn't change the plans you already have." : {
-      "comment" : "What the country the learner lives in changes",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gilt für neue Ziele und deine Beispiele. Deine bestehenden Pläne ändern sich dadurch nicht."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Para tus nuevos objetivos y ejemplos. No cambia los planes que ya tienes."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pour tes nouveaux objectifs et tes exemples. Ce choix ne change pas tes plans actuels."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Per i nuovi obiettivi e gli esempi delle lezioni. Non modifica i piani che hai già."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新しい目標や学習で使う例に反映されます。現在の学習計画は変わりません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "새 목표와 예시에 적용돼요. 기존 계획은 바뀌지 않아요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dotyczy nowych celów i przykładów w lekcjach. Nie zmienia twoich obecnych planów."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vale para novos objetivos e para os seus exemplos. Não muda os planos que você já tem."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Yeni hedeflerin ve sana verilen örnekler için kullanılır. Mevcut planlarını değiştirmez."
-          }
-        }
-      }
-    },
     "From a call" : {
       "comment" : "Where a remembered fact came from: a live practice call. Use the word the app uses for these calls, and keep it apart from “From a chat”, a typed chat with the tutor.",
       "localizations" : {
@@ -4674,65 +4615,6 @@
         }
       }
     },
-    "Your buddy, lessons and language, the way you like them." : {
-      "comment" : "Under the Preferences page's title: what the page changes",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dein Kumpel, deine Lektionen und deine Sprache, so wie du sie magst."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu compañero, tus lecciones y tu idioma, a tu gusto."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ton compagnon, tes leçons et ta langue, comme tu les aimes."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il tuo compagno, le lezioni e la lingua, come vuoi tu."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "相棒やレッスン、言語を好みに合わせて設定できます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "짝꿍, 레슨, 언어를 원하는 대로 설정하세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twój kumpel, lekcje i język po twojemu."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seu parceiro, suas aulas e seu idioma, do seu jeito."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Arkadaşın, derslerin ve uygulama dilin tam istediğin gibi."
-          }
-        }
-      }
-    },
     "Your data" : {
       "comment" : "Preferences section about the learner's data",
       "localizations" : {
@@ -4847,65 +4729,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sen istemedikçe Zoonk sağlık, din gibi hassas konulardaki bilgilerini saklamaz."
-          }
-        }
-      }
-    },
-    "Zoonk follows your device's language. Change it for Zoonk alone in Settings." : {
-      "comment" : "Explains where the app's language is changed on iPhone and iPad",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk verwendet die Sprache deines Geräts. In den Einstellungen kannst du die Sprache nur für Zoonk ändern."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk usa el idioma de tu dispositivo. Cámbialo solo para Zoonk en Configuración."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk utilise la langue de ton appareil. Tu peux la changer uniquement pour Zoonk dans Réglages."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk usa la lingua del tuo dispositivo. Cambiala solo per Zoonk in Impostazioni."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonkはデバイスの言語に合わせて表示されます。Zoonkだけ別の言語にするには、「設定」で変更してください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk는 기기의 언어 설정을 따라요. 설정에서 Zoonk의 언어만 따로 바꾸세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk używa języka urządzenia. W Ustawieniach możesz zmienić język samego Zoonka."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O Zoonk usa o idioma do seu aparelho. Para mudar só o do Zoonk, vá aos Ajustes."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk cihazının dilini kullanır. Yalnızca Zoonk’un dilini değiştirmek için Ayarlar’a git."
           }
         }
       }

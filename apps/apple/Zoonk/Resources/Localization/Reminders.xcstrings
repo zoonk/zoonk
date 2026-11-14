@@ -60,65 +60,6 @@
         }
       }
     },
-    "At %@ on your study days, when you still have learning left." : {
-      "comment" : "What the reminder offer below a lesson promises",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "An deinen Lerntagen um %@, wenn du noch etwas zu lernen hast."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A las %@ en tus días de estudio, cuando aún te quede algo por estudiar."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "À %@, tes jours d’étude, s’il te reste des activités à faire."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alle %@ nei tuoi giorni di studio, se hai ancora qualcosa da studiare."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "学習する日の%@に、まだ学習が残っていればお知らせします。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "공부하기로 한 날에 할 공부가 남아 있으면 %@에 알려 드려요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O %@ w dni nauki, jeśli masz jeszcze coś do przerobienia."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Às %@ nos seus dias de estudo, se ainda tiver o que estudar."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Çalışma günlerinde, tamamlaman gerekenler kaldıysa %@ saatinde."
-          }
-        }
-      }
-    },
     "At %@ on your study days." : {
       "comment" : "What the reminder offer promises, before and after it's on; the argument is a time",
       "localizations" : {
@@ -532,65 +473,6 @@
         }
       }
     },
-    "On your study days, from your plans." : {
-      "comment" : "Under the reminder switches: which days reminders go out",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "An den Lerntagen in deinen Plänen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "En tus días de estudio, según tus planes."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Les jours d’étude prévus dans tes plans."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nei giorni di studio previsti dai tuoi piani."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "学習計画で決めた学習日にお知らせします。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "계획에 정해진 학습일에 알려 드려요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "W dni nauki wyznaczone w twoich planach."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nos dias de estudo definidos nos seus planos."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Planlarındaki çalışma günlerinde."
-          }
-        }
-      }
-    },
     "One reminder on your %@, if you're not done for the day." : {
       "comment" : "Under the reminders page's title: what reminders do; the argument is the link “study days”",
       "localizations" : {
@@ -646,65 +528,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Günlük çalışman bitmediyse %@ bir kez hatırlatırız."
-          }
-        }
-      }
-    },
-    "One reminder on your study days, when you still have learning left." : {
-      "comment" : "Under the reminders page's title: what reminders do",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Eine Erinnerung an deinen Lerntagen, wenn du noch etwas zu lernen hast."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Un recordatorio en tus días de estudio, si aún te queda algo por estudiar."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Un rappel les jours d’étude, s’il te reste des choses à apprendre."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Un promemoria nei tuoi giorni di studio, se hai ancora qualcosa da studiare."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "学習日にまだ学習が残っていれば、1回お知らせします。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "학습일에 할 공부가 남아 있으면 한 번 알려 드려요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Jedno przypomnienie w dni nauki, jeśli masz jeszcze coś do nauki."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Um lembrete nos seus dias de estudo, quando ainda tiver o que estudar."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Çalışma günlerinde, o günkü çalışman bitmediyse bir hatırlatma."
           }
         }
       }
@@ -1059,65 +882,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hatırlatmalar açık."
-          }
-        }
-      }
-    },
-    "See your plan" : {
-      "comment" : "Opens the Plan",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deinen Plan ansehen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ver tu plan"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Voir ton plan"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vedi il tuo piano"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "学習計画を見る"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "내 계획 보기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zobacz swój plan"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ver seu plano"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Planını gör"
           }
         }
       }
