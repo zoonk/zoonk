@@ -536,7 +536,7 @@ internal fun CheckpointRow(
         onClick = planItemId?.let { { links.challenge(it) } },
         indent = indent,
         leading = { Trickster(Modifier.size(markSize())) },
-        supporting = if (lines.isEmpty()) null else ({ Column { lines.forEach { Text(it) } } }),
+        supporting = if (lines.isEmpty()) null else ({ lines.forEach { Text(it) } }),
         meta =
             trailing?.let { { TrailingText(it) } },
     )

@@ -71,10 +71,8 @@ internal fun ContentCountryRow(
     ListRow(
         headline = { Text(stringResource(R.string.country_content_label)) },
         supporting = {
-            Column {
-                Text(country.name)
-                lessonLanguage?.let { Text(it) }
-            }
+            Text(country.name)
+            lessonLanguage?.let { Text(it) }
         },
         trailing = { Text(stringResource(R.string.onboarding_aim_change)) },
         chevron = false,

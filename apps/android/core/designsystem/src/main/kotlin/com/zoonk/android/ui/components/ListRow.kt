@@ -21,6 +21,7 @@ import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -58,11 +59,13 @@ import kotlin.math.roundToInt
  * into a spinner while it works ([BusyContent]); a row that isn't [enabled] dims, and with
  * [focusableWhenDisabled], as one waiting on another control's request, keeps its focus. Rows reach the list's edges and inset
  * their own content by [LIST_ITEM_INSET]; a nested row moves its mark and words in by [indent], so its highlight still
- * spans the list. [verticalAlignment] `Top` keeps the mark on the title's first line when lines
- * under it run long (main's `items-start`). A row that opens a page ends with main's chevron; one
+ * spans the list. [verticalAlignment] `Top` puts the words and the row's end at its top (main's
+ * `items-start`). A row that opens a page ends with main's chevron; one
  * that acts in place (a "Show more", logging out) passes [chevron] `false`, and one whose [trailing]
  * is a value rather than a control passes `true`. [onLongClick] opens what else a tappable row offers,
- * such as a menu, which TalkBack names with [onLongClickLabel].
+ * such as a menu, which TalkBack names with [onLongClickLabel]. The mark is centered on the words beside one
+ * or two lines (the title however it wraps, a value moved under it, each description) and on the first line
+ * beside three or more (E5); a lead that is text ([leadOnFirstLine], a number or a date) is always on the first.
  */
 @Composable
 fun ListRow(
@@ -79,6 +82,7 @@ fun ListRow(
     expanded: Boolean? = null,
     stateDescription: String? = null,
     leading: (@Composable () -> Unit)? = null,
+    leadOnFirstLine: Boolean = false,
     supporting: (@Composable () -> Unit)? = null,
     meta: (@Composable () -> Unit)? = null,
     trailing: (@Composable () -> Unit)? = null,
@@ -135,8 +139,12 @@ fun ListRow(
         horizontalArrangement = Arrangement.spacedBy(LEADING_GAP),
         verticalAlignment = verticalAlignment,
     ) {
+        val parts = remember { RowParts() }
+        if (meta == null) SideEffect { parts.stacked = false }
+        if (supporting == null) SideEffect { parts.descriptions = 0 }
         FirstLineMark(
             firstLine = MaterialTheme.typography.titleSmall,
+            onFirstLine = { leadOnFirstLine || parts.lines >= THREE_LINES },
             modifier = Modifier.weight(1f),
             mark =
                 leading?.let { mark ->
@@ -154,7 +162,7 @@ fun ListRow(
                     }
                 },
         ) {
-            Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
+            Column {
                 CompositionLocalProvider(LocalContentColor provides ink) {
                     ProvideTextStyle(MaterialTheme.typography.titleSmall) {
                         if (meta == null) {
@@ -166,6 +174,7 @@ fun ListRow(
                             }
                         } else {
                             TitleAndMeta(
+                                parts = parts,
                                 metaBusy = busy && !chevron,
                                 meta = {
                                     CompositionLocalProvider(LocalContentColor provides quiet) {
@@ -181,10 +190,7 @@ fun ListRow(
                 supporting?.let {
                     CompositionLocalProvider(LocalContentColor provides quiet) {
                         ProvideTextStyle(MaterialTheme.typography.bodySmall) {
-                            Column(
-                                Modifier.layoutPart(LayoutPart.LIST, LayoutPart.Part.Note),
-                                verticalArrangement = Arrangement.spacedBy(1.dp),
-                            ) { it() }
+                            Descriptions(parts, Modifier.layoutPart(LayoutPart.LIST, LayoutPart.Part.Note), it)
                         }
                     }
                 }
@@ -234,6 +240,7 @@ fun MarkedLine(
 ) {
     FirstLineMark(
         firstLine = firstLine,
+        onFirstLine = { true },
         modifier = modifier,
         mark = { Box(Modifier.widthIn(min = markSize()), contentAlignment = Alignment.Center) { mark() } },
         content = content,
@@ -241,13 +248,14 @@ fun MarkedLine(
 }
 
 /**
- * A mark beside words, centered on the words' first line (E6): a line as tall as [firstLine]'s at this text
- * size, from the words' top, so a wrapped label, a value under it or a note never moves the mark off it.
- * The words start [LEADING_GAP] past the mark.
+ * A mark beside words, where E5 puts it: centered on the words, or, when [onFirstLine] says so (a list row of
+ * three lines or more, a lead), centered on their first line, a line as tall as [firstLine]'s at this text
+ * size. The words start [LEADING_GAP] past the mark.
  */
 @Composable
 private fun FirstLineMark(
     firstLine: TextStyle,
+    onFirstLine: () -> Boolean,
     modifier: Modifier = Modifier,
     mark: (@Composable () -> Unit)?,
     content: @Composable () -> Unit,
@@ -264,19 +272,58 @@ private fun FirstLineMark(
         val markPlaceable = marks.first().measure(constraints.copy(minWidth = 0, minHeight = 0))
         val wordsWidth = (constraints.maxWidth - markPlaceable.width - gap).coerceAtLeast(0)
         val wordsPlaceable = words.first().measure(constraints.copy(minWidth = wordsWidth, maxWidth = wordsWidth, minHeight = 0))
-        // Whichever reaches higher above the line's middle sets the top.
-        val markTop = ((line - markPlaceable.height) / 2f).coerceAtLeast(0f).roundToInt()
-        val wordsTop = ((markPlaceable.height - line) / 2f).coerceAtLeast(0f).roundToInt()
-        val height = maxOf(markTop + markPlaceable.height, wordsTop + wordsPlaceable.height, constraints.minHeight)
+        // The words' measuring has just counted their lines.
+        val middle = if (onFirstLine()) line else wordsPlaceable.height
+        // Whichever reaches higher above the middle sets the top.
+        val markTop = ((middle - markPlaceable.height) / 2f).coerceAtLeast(0f).roundToInt()
+        val wordsTop = ((markPlaceable.height - middle) / 2f).coerceAtLeast(0f).roundToInt()
+        val drawn = maxOf(markTop + markPlaceable.height, wordsTop + wordsPlaceable.height)
+        // Taller than what it draws (the row's touch height): the mark and words stay together in the middle.
+        val height = maxOf(drawn, constraints.minHeight)
+        val inset = (height - drawn) / 2
         layout(constraints.maxWidth, height) {
-            markPlaceable.placeRelative(0, markTop)
-            wordsPlaceable.placeRelative(markPlaceable.width + gap, wordsTop)
+            markPlaceable.placeRelative(0, inset + markTop)
+            wordsPlaceable.placeRelative(markPlaceable.width + gap, inset + wordsTop)
+        }
+    }
+}
+
+/**
+ * What a row's words hold, counted as E5 counts lines: the title (wrapped or not), a value moved under it,
+ * and each description. Its layouts write it while they measure, before the mark is placed.
+ */
+private class RowParts {
+    var stacked = false
+    var descriptions = 0
+    val lines get() = 1 + (if (stacked) 1 else 0) + descriptions
+}
+
+/** A row's descriptions, one under another and 1dp under the title, counted for [RowParts]; none take no room. */
+@Composable
+private fun Descriptions(
+    parts: RowParts,
+    modifier: Modifier,
+    content: @Composable () -> Unit,
+) {
+    Layout(content, modifier) { measurables, constraints ->
+        val gap = 1.dp.roundToPx()
+        // A slot child that draws nothing is no description.
+        val placeables = measurables.map { it.measure(constraints.copy(minHeight = 0)) }.filter { it.height > 0 }
+        parts.descriptions = placeables.size
+        val height = placeables.sumOf { it.height + gap }
+        layout(placeables.maxOfOrNull { it.width } ?: 0, height) {
+            var y = gap
+            placeables.forEach {
+                it.placeRelative(0, y)
+                y += it.height + gap
+            }
         }
     }
 }
 
 @Composable
 private fun TitleAndMeta(
+    parts: RowParts,
     metaBusy: Boolean,
     meta: @Composable () -> Unit,
     title: @Composable () -> Unit,
@@ -303,6 +350,7 @@ private fun TitleAndMeta(
         val titleMeasurable = titles.first()
         val room = width - metaPlaceable.width - if (metaPlaceable.width > 0) gap else 0
         val beside = metaPlaceable.width == 0 || room >= minOf(titleMeasurable.maxIntrinsicWidth(Constraints.Infinity), width / 2)
+        parts.stacked = !beside
         if (beside) {
             val titlePlaceable = titleMeasurable.measure(Constraints(maxWidth = room.coerceAtLeast(0)))
             val height = maxOf(titlePlaceable.height, metaPlaceable.height)
@@ -333,6 +381,9 @@ fun Modifier.bleed(amount: Dp): Modifier =
         val placeable = measurable.measure(wide)
         layout(placeable.width - extra, placeable.height) { placeable.placeRelative(-amount.roundToPx(), 0) }
     }
+
+/** E5: beside three lines or more, a row's mark goes with the first. */
+private const val THREE_LINES = 3
 
 /** Main's `gap-3` between a row's mark and its words. */
 private val LEADING_GAP = 12.dp
