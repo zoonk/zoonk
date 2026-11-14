@@ -37,9 +37,6 @@ export function sortBulkChapters(chapters: readonly BulkChapter[]) {
     onItsWay: chapters
       .filter((chapter) => chapter.status === "drawing")
       .map((chapter) => chapter.chapterId),
-    plusRequired: chapters
-      .filter((chapter) => chapter.status === "plusRequired")
-      .map((chapter) => chapter.chapterId),
   };
 }
 

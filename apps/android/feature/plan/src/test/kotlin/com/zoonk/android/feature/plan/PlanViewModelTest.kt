@@ -73,7 +73,7 @@ class PlanViewModelTest {
 
             viewModel.setStatus(LearnerSummaryGoal.Status.ACTIVE)
 
-            assertEquals(PlanEvent.GoalLimitReached, viewModel.events.first())
+            assertEquals(ResumeFailure.GoalLimit, viewModel.resumeFailure.value)
         }
 
     @Test

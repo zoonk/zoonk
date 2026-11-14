@@ -100,14 +100,11 @@
   "tutor_placeholder_plan": "ae2ddfabf6cf3188243ad27630bcab16ec6a67bfd1c673cce96cabca2e6918ba",
   "tutor_placeholder_subject": "70aa84bd6c4ec981f2418d42e072bfa876a51b3b30e91931f1c4f51e4c07bfeb",
   "tutor_plan_change_apply": "8b615b7abd7db12eb9e56fc7ad1653ea9eb196d064774d999fa034fcda54e2d5",
-  "tutor_plan_change_declined": "4df7e86ccde20039c4ea9f23f40d0a7635e7132641fb7a3cdba097b12cfd209a",
+  "tutor_plan_change_declined": "ec46845e96858b345558887dac2e9b788343d685647a6fa4b5dbfb754565ce0b",
   "tutor_plan_change_failed": "f508da144dd1f2173dc6afac2f9e01e6e1db3c06ff76c1bb54bcd71247b8e045",
   "tutor_plan_change_not_now": "2c57ef5df9512626b13de0ab190d30d102d1ab35db2f9b58daa1342ed243886b",
-  "tutor_plan_change_one_week": "2f9b92e8c0c1f32a1f2dd98901ddf291de9dbd5a072c21ac4b718db9dc797ea1",
   "tutor_plan_change_replaced": "4cdf30816ee0f164a93bdeafb90a4b23718ea67375fe14fbd949469e00c80612",
-  "tutor_plan_change_title": "dd54b9b0c4adbaea8ee443701b92b163a9f731fec17c9e4be09691899751f3a5",
   "tutor_plan_change_undo": "5e3a2eb706643d9d7275775924cf2068cc2ee2e0234df28b477a4bb3a0b87bb5",
-  "tutor_plan_change_use_my_date": "3050354c611ea757b5c64215060e19ac6e9bf4e5410862fe090e02a1025ac438",
   "tutor_retry_last_question": "9bf4e66538dd4b8858ca6cbcd2858afaddca2f92435601221129a6e57d0f53e6",
   "tutor_send": "31695b9f0fa135fe3d76e2ed2c7ff1a109f499291fa478ed76a703a03fb5a4a8",
   "tutor_sign_in": "ffb5f1786dec16850155a0e4446df26edf7c9feb263341529ee7680b2686b4a1",
@@ -264,16 +261,10 @@
     <string name="tutor_offer_plus_subscribed">요금제와 결제 정보를 확인해요.</string>
     <!-- Button that opens the Zoonk Plus page, with what Plus includes and its price. Not "see more". -->
     <string name="tutor_offer_manage">관리</string>
-    <!-- A card's title naming the change the buddy suggests: a noun phrase, not an action. -->
-    <string name="tutor_plan_change_title">계획 변경안</string>
-    <!-- Beside the title of a change that lasts one week, like a lighter week. -->
-    <string name="tutor_plan_change_one_week">1주</string>
     <string name="tutor_plan_change_apply">적용</string>
     <string name="tutor_plan_change_not_now">나중에</string>
-    <!-- Applies the learner's own date over the one the exam notice or calendar sets. -->
-    <string name="tutor_plan_change_use_my_date">그래도 내가 정한 날짜 사용하기</string>
     <string name="tutor_plan_change_undo">실행 취소</string>
-    <string name="tutor_plan_change_declined">적용하지 않았어요. 계획은 그대로 유지돼요.</string>
+    <string name="tutor_plan_change_declined">계획은 그대로예요.</string>
     <string name="tutor_plan_change_replaced">새 제안으로 바뀌었어요.</string>
     <string name="tutor_plan_change_failed">저장하지 못했어요. 다시 시도해 보세요.</string>
     <!-- Above the questions asked that day, in the buddy's conversation. -->

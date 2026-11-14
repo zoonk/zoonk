@@ -11,7 +11,7 @@ function examDay(): DayViewFieldsInput {
     answers: [],
     current: true,
     dayMinutes: 40,
-    examAccess: { includesMockExams: false, trialEnded: false },
+    examAccess: { includesMockExams: false },
     lessonRoom: true,
     missions: [],
     outlines: "awaiting",

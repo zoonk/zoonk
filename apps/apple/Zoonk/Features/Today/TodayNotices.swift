@@ -18,15 +18,12 @@ struct TodaySourceChangeSection: View {
   }
 }
 
-/// A course the learner took before goals existed, offered as a goal to plan.
+/// A course the learner took before goals existed, offered as a goal to plan. On a Today with a goal
+/// it's a card with its buttons; for a learner with no goal its buttons are the page's bottom bar.
 struct SuggestedGoalSection: View {
-  @Environment(AppRouter.self) private var router
-  @Environment(TodayStore.self) private var store
-
   let suggestion: SuggestedGoal
-
-  @State private var answering: Bool?
-  @State private var failed = false
+  @Bindable var answer: SuggestedGoalAnswer
+  var buttonsInBar = false
 
   var body: some View {
     Section {
@@ -41,25 +38,11 @@ struct SuggestedGoalSection: View {
           .foregroundStyle(.mutedForeground)
       }
 
-      BusyButton(isBusy: answering == true) {
-        answer(accepted: true)
-      } label: {
-        Text("Start", tableName: "Today", comment: "Accepts the suggested goal")
+      if !buttonsInBar {
+        SuggestedGoalButtons(suggestion: suggestion, answer: answer)
+          .controlSize(.large)
+          .buttonSizing(.flexible)
       }
-      .buttonStyle(.mainAction)
-      .controlSize(.large)
-      .buttonSizing(.flexible)
-      .disabled(answering == false)
-
-      BusyButton(isBusy: answering == false) {
-        answer(accepted: false)
-      } label: {
-        Text("Not now", tableName: "Today", comment: "Dismisses the suggested goal")
-      }
-      .buttonStyle(.outline)
-      .controlSize(.large)
-      .buttonSizing(.flexible)
-      .disabled(answering == true)
     } header: {
       Label {
         Text(
@@ -70,36 +53,76 @@ struct SuggestedGoalSection: View {
       .sectionTitleStyle()
     } footer: {
       SectionFooter {
-        if failed {
-          FailureLine(
-            message: LocalizedStringResource(
-              "We couldn't save your answer. Try again.", table: "Today",
-              comment: "Answering the suggested goal failed"))
+        if answer.failed, !buttonsInBar {
+          FailureLine(message: SuggestedGoalAnswer.failure)
         }
       }
     }
   }
+}
 
-  private func answer(accepted: Bool) {
+/// Not now, then Start: the order the bottom bar puts them in, main action last.
+struct SuggestedGoalButtons: View {
+  @Environment(AppRouter.self) private var router
+  @Environment(TodayStore.self) private var store
+
+  let suggestion: SuggestedGoal
+  let answer: SuggestedGoalAnswer
+
+  var body: some View {
+    BusyButton(isBusy: answer.answering == false) {
+      respond(accepted: false)
+    } label: {
+      Text("Not now", tableName: "Today", comment: "Dismisses the suggested goal")
+    }
+    .buttonStyle(.outline)
+    .disabled(answer.answering == true)
+
+    BusyButton(isBusy: answer.answering == true) {
+      respond(accepted: true)
+    } label: {
+      Text("Start", tableName: "Today", comment: "Accepts the suggested goal")
+    }
+    .buttonStyle(.mainAction)
+    .keyboardShortcut(.defaultAction)
+    .disabled(answer.answering == false)
+  }
+
+  private func respond(accepted: Bool) {
+    Task { await answer.respond(to: suggestion, accepted: accepted, store: store, router: router) }
+  }
+}
+
+@MainActor
+@Observable
+final class SuggestedGoalAnswer {
+  static let failure = LocalizedStringResource(
+    "We couldn't save your answer. Try again.", table: "Today",
+    comment: "Answering the suggested goal failed")
+
+  private(set) var answering: Bool?
+  private(set) var failed = false
+
+  func respond(
+    to suggestion: SuggestedGoal, accepted: Bool, store: TodayStore, router: AppRouter
+  ) async {
     answering = accepted
     failed = false
 
-    Task {
-      let result = await store.answer(suggestion, accepted: accepted)
-      answering = nil
+    let result = await store.answer(suggestion, accepted: accepted)
+    answering = nil
 
-      switch result {
-      case .done where accepted:
-        if let courseID = suggestion.courseId {
-          router.open(.courseStart(courseId: courseID))
-        } else {
-          router.open(.startGoal(goal: suggestion.title))
-        }
-      case .failed:
-        failed = true
-      case .done, .obsolete:
-        break
+    switch result {
+    case .done where accepted:
+      if let courseID = suggestion.courseId {
+        router.open(.courseStart(courseId: courseID))
+      } else {
+        router.open(.startGoal(goal: suggestion.title))
       }
+    case .failed:
+      failed = true
+    case .done, .obsolete:
+      break
     }
   }
 }

@@ -84,7 +84,6 @@ export async function loadUnstartedDayView({
     lessonRoom: reserved,
     missions,
     outlines: reserved ? (day.plan.outlines ?? "idle") : null,
-    plusLessons: [],
     session: {
       blocks,
       freshStart: day.input.freshStart,

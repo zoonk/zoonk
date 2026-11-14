@@ -199,13 +199,14 @@ final class PlanStore {
   }
 
   /// Update my plan, Not now or Undo on a change the plan proposed. False when it's out of date.
-  func decide(goalId: String, changeId: String, decision: PlanChangeDecision) async
+  func decide(_ change: TodayView.PlanChange, goalId: String, decision: PlanChangeDecision) async
     -> MutationResult<TodayView.PlanChange?>
   {
     let api = api
     return await cache.mutate(invalidating: [.goals, .learnerModel, .userSession]) { identity in
       try await api.decide(
-        token: identity.bearerToken, goalId: goalId, changeId: changeId, decision: decision)
+        token: identity.bearerToken, goalId: goalId, changeId: change.id, decision: decision,
+        quote: change.quote)
     }
   }
 
@@ -221,7 +222,7 @@ final class PlanStore {
   ) async -> MutationResult<PlanChangeOutcome> {
     await write(request) { outcome in
       switch outcome {
-      case .applied, .undone: true
+      case .applied, .saved, .undone: true
       case .invalid, .unchanged: false
       }
     }

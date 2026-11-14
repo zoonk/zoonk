@@ -43,18 +43,10 @@ const mindMapImageSchema = z
   .meta({ id: "MindMapImage" });
 
 const mindMapStatusSchema = z
-  .enum([
-    "available",
-    "writingLessons",
-    "drawing",
-    "ready",
-    "failed",
-    "plusRequired",
-    "unavailable",
-  ])
+  .enum(["available", "writingLessons", "drawing", "ready", "failed", "unavailable"])
   .meta({
     description:
-      "`available`: no map yet and nobody making it; `POST .../mind-map/generations` makes it, writing the chapter's `lessonsToWrite` lessons first. `writingLessons`: on its way, writing those lessons first (a few minutes); GET the status again. `drawing`: on its way, being written and drawn (about half a minute), also when the learner just finished the chapter and its map is owed; GET the status again. `ready`: `outline`, and `image` unless its picture failed its text check twice. The words on a picture are checked after it's shown, so a ready map's `image` may change once, to a redrawn picture, or go. `failed`: the last attempt failed; POST again. `plusRequired`: the chapter's lessons are Plus-only for this learner, so its map is too, even one already made. `unavailable`: no map for this chapter (a language's unit, or nothing in its outline to draw from)",
+      "`available`: no map yet and nobody making it; `POST .../mind-map/generations` makes it, writing the chapter's `lessonsToWrite` lessons first. `writingLessons`: on its way, writing those lessons first (a few minutes); GET the status again. `drawing`: on its way, being written and drawn (about half a minute), also when the learner just finished the chapter and its map is owed; GET the status again. `ready`: `outline`, and `image` unless its picture failed its text check twice. The words on a picture are checked after it's shown, so a ready map's `image` may change once, to a redrawn picture, or go. `failed`: the last attempt failed; POST again. `unavailable`: no map for this chapter (a language's unit, or nothing in its outline to draw from)",
   });
 
 /** The width a map's small picture is stored at, which a client names in the picture's `srcset`. */
@@ -126,15 +118,14 @@ const lessonMapGroupSchema = z
       .min(1)
       .meta({
         description:
-          "The chapter's lessons with a written map, locked ones included, as `GET /goals/{goalId}/chapters/{chapterId}/lesson-maps` lists them, less any an earlier group already lists",
+          "The chapter's lessons with a written map, as `GET /goals/{goalId}/chapters/{chapterId}/lesson-maps` lists them, less any an earlier group already lists",
       }),
     lessonIds: z
       .array(uuidSchema())
       .meta({
         description:
-          "The lessons whose maps open (not `locked`), in chapter order: the maps the Lessons tab studies, which a reader opened with this list keeps as they were",
+          "The lessons whose maps open, in chapter order: the maps the Lessons tab studies, which a reader opened with this list keeps as they were",
       }),
-    locked: z.int().min(0).meta({ description: "Always zero. Chapter lessons do not expire" }),
   })
   .meta({ id: "LessonMapGroup" });
 
@@ -144,7 +135,7 @@ const savedMindMapSchema = z
       .boolean()
       .meta({
         description:
-          "It opens now: a chapter map that's `ready`, or a lesson map in this goal's scope that isn't locked. False when it can no longer open here (its chapter left the plan, its content went, it's locked for Plus); list those last, under no longer available, with a way to remove them",
+          "It opens now: a chapter map that's `ready`, or a lesson map in this goal's scope. False when it can no longer open here (its chapter left the plan, its content went); list those last, under no longer available, with a way to remove them",
       }),
     chapterId: uuidSchema()
       .nullable()
@@ -198,7 +189,7 @@ const mindMapCreateOfferSchema = z
       .min(0)
       .meta({
         description:
-          "Chapters without a ready map or one on its way (failed ones included), whose lessons are all written and that aren't locked: what `POST /goals/{goalId}/mind-maps/generations` makes",
+          "Chapters without a ready map or one on its way (failed ones included), whose lessons are all written: what `POST /goals/{goalId}/mind-maps/generations` makes",
       }),
     needLessons: z
       .int()
@@ -297,10 +288,10 @@ export const goalMindMapGenerationsSchema = z
         z.object({
           chapterId: uuidSchema(),
           reason: z
-            .enum(["allowance", "needsLessons", "plusRequired"])
+            .enum(["allowance", "needsLessons"])
             .meta({
               description:
-                "`allowance`: the learner's allowance ran out first (`stop`). `needsLessons`: its lessons aren't all written; its own `POST .../mind-map/generations` writes them. `plusRequired`: locked for Plus",
+                "`allowance`: the learner's allowance ran out first (`stop`). `needsLessons`: its lessons aren't all written; its own `POST .../mind-map/generations` writes them.",
             }),
         }),
       )

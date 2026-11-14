@@ -65,6 +65,7 @@
   "not_found_title": "1fb8cec8ca480ca78264b0eaa619f04f058c316fe639e6176734cf37f500d269",
   "player_not_saved": "935a3eb56de624d863959c0f9087faf9f745fdb110e86d99fa21d3c4ccb428fe",
   "player_not_saved_description": "c26124139fa6a455aacde74cc77c906102c28ccb4392a9856a1e5c027284f715",
+  "suggestion_other_options": "9c683e929b15323496bc6e9e27f462ef1e81d98936e85c0f8c6afa5d97950f18",
   "suggestion_save_failed": "8dd207612bb75af9bfd2bb062a4f24e8dd6206bb806ea1b7fb1bac9e5ac42e67",
   "suggestion_view": "3f7028098dd17111109fd0e1edbf9177e13d02d8d65ebd9138f484d9726af686",
   "task_leave": "86d332b8b850e31ef494d50c10cb5342fb3d3d85c1bc141f9d43476de9e86e23",
@@ -120,6 +121,7 @@
     <string name="load_failed_try_again">もう一度試す</string>
     <string name="suggestion_view">見る</string>
     <string name="suggestion_save_failed">保存できませんでした。もう一度お試しください。</string>
+    <string name="suggestion_other_options">ほかの選択肢</string>
     <!-- Above the options of an exam's choice when each candidate takes several of them, such as two of a course's modules. %1$d is how many, at least 2. -->
     <string name="exam_choice_pick_up_to">最大%1$d個まで選んでください。</string>
     <string name="disclosure_expanded">展開済み</string>

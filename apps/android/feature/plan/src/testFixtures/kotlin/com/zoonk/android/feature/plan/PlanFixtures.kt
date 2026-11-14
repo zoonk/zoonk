@@ -173,6 +173,9 @@ fun learnerSummary(
 
 internal const val CHANGE_ID = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1d01"
 
+/** The quote a change's card shows; an accept sends it back. */
+internal const val SHOWN_QUOTE = "quote-shown"
+
 /** A saved change; [effect] and [extra] are raw JSON fields. */
 internal fun planChange(
     operations: String = "[]",
@@ -181,11 +184,12 @@ internal fun planChange(
     extra: String = "",
     createdAt: String = "2026-10-28T12:00:00Z",
     id: String = CHANGE_ID,
+    quote: String = SHOWN_QUOTE,
 ): com.zoonk.api.models.PlanChange =
     ApiJson.decodeFromString(
         """
         {"canApply":true,"canUndo":true,"createdAt":"$createdAt","examDocument":"notice","id":"$id",
-         "kind":"edited","lessonsSkipped":0,"operations":$operations,"seen":false,"source":"learner","status":"$status"
+         "kind":"edited","lessonsSkipped":0,"operations":$operations,"quote":"$quote","seen":false,"source":"learner","status":"$status"
          ${effect?.let { ""","effect":$it""" }.orEmpty()}${if (extra.isEmpty()) "" else ",$extra"}}
         """.trimIndent(),
     )

@@ -31,9 +31,7 @@ function listOpenSaves({
       : [];
 
   const lessonSaves = lessonMaps
-    .filter(
-      (map) => !map.locked && saved.has(toSavedKey({ kind: "lesson", targetId: map.lessonId })),
-    )
+    .filter((map) => saved.has(toSavedKey({ kind: "lesson", targetId: map.lessonId })))
     .map((map) => ({
       available: true,
       chapterId,

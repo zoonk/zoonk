@@ -8,7 +8,6 @@
   "onboarding_admission_title": "0bfdfaa40aaeea412e663b95454c72b0ddfc02bb93ce664a4ea23bd522b0cc6c",
   "onboarding_aim_by_month": "d2ab1d5371bcdcbe606d8682c08d4e3ba0a88a6e88ea0c20e035baaad1387824",
   "onboarding_aim_change": "8dea3e4c220c46dfe31f216635ab735a559bded91e4b5d1a1373e04345b15e53",
-  "onboarding_aim_changed": "4a253c7d1784d76bf83a847c48b9557633a4537b87c4e55f187b4b4c9920b11d",
   "onboarding_aim_description": "8541cd8ebcacd93cb65b61f067f2d9e52045a10ebbfb6fb7b84ff740287fc65e",
   "onboarding_aim_finish": "f5103ece4d5b5b295af8d5d79767f31856276640dc7969571cf1a6070d0f8a08",
   "onboarding_aim_fluent": "905a1e4a8dde12006f4eb09ca0111da364dd8e9d704b6b6b04ef419cd4ced35f",
@@ -1032,7 +1031,6 @@
     <string name="onboarding_aim_hours">%1$s時間</string>
     <string name="onboarding_aim_by_month">%1$sまでに</string>
     <string name="onboarding_aim_finish">1日%1$sのペースなら、%2$sには%3$sごろに到達します。</string>
-    <string name="onboarding_aim_changed">コースで目指すレベルが%1$sになりました。</string>
     <string name="onboarding_reason_travel">旅行</string>
     <string name="onboarding_reason_travel_description">旅行先で注文したり、道を尋ねたり、ちょっと話したりする</string>
     <string name="onboarding_reason_talk">人と話す</string>

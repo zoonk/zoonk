@@ -60,19 +60,6 @@ struct TodayMoreSection: View {
     let state = view.session.state
 
     if !view.isPastDate && view.upNextLessons.isEmpty {
-      if state == .ahead && view.session.extraTime.available {
-        Section {
-          TodayMainAction(
-            kind: .practice(minutes: view.session.extraTime.minutes),
-            isBusy: busy == .keepLearning, failed: failed == .keepLearning, action: addTime
-          )
-          .disabled(busy != nil && busy != .keepLearning)
-        }
-        .listRowBackground(Color.clear)
-        .listRowInsets(.vertical, 0)
-        .listSectionSpacing(.compact)
-      }
-
       if hasRows(state) {
         Section {
           if state == .ahead {
@@ -92,7 +79,7 @@ struct TodayMoreSection: View {
             .tint(.primary)
           }
 
-          if (state == .done || state == .rest) && view.session.extraTime.available {
+          if state == .done && view.session.extraTime.available {
             Button(action: addTime) {
               Label {
                 VStack(alignment: .leading, spacing: 2) {
@@ -165,11 +152,11 @@ struct TodayMoreSection: View {
     switch state {
     case .ahead:
       true
-    case .done, .rest:
+    case .done:
       view.session.extraTime.available || view.session.catchUp?.later.offered == true
     case .underway:
       view.session.catchUp?.later.offered == true
-    case .prepare, .waiting:
+    case .prepare, .rest, .waiting:
       false
     }
   }
@@ -322,7 +309,8 @@ struct TodayPlanChangeSection: View {
     PlanEffectDiff(
       effect: change.effect, today: today,
       options: PlanChangeOptions(
-        byDate: view.goal.targetDate != nil, dateKind: GoalDateKind(isExam: isExam)))
+        byDate: view.goal.targetDate != nil, dateKind: GoalDateKind(isExam: isExam)),
+      repriced: shown.repriced)
 
     if let date = change.officialDate?.date {
       Text(

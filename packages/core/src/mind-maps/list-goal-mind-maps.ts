@@ -54,11 +54,9 @@ function toLessonGroups({
   return chapters.flatMap(({ chapterId }) => {
     const maps = lessonMaps.get(chapterId) ?? [];
 
-    const open = maps.filter((map) => !map.locked).map((map) => map.lessonId);
+    const open = maps.map((map) => map.lessonId);
 
-    return maps.length > 0
-      ? [{ chapterId, count: maps.length, lessonIds: open, locked: maps.length - open.length }]
-      : [];
+    return maps.length > 0 ? [{ chapterId, count: maps.length, lessonIds: open }] : [];
   });
 }
 
@@ -73,7 +71,7 @@ function chooseFirstTab({
     return "chapters";
   }
 
-  return lessonGroups.some((group) => group.count > group.locked) ? "lessons" : "chapters";
+  return lessonGroups.some((group) => group.count > 0) ? "lessons" : "chapters";
 }
 
 /**
@@ -95,7 +93,7 @@ export async function listGoalMindMaps(
   const { goal } = resolved;
 
   const [facts, numbering, now, savedRows, viewer] = await Promise.all([
-    loadMindMapChapters({ goal, readViewer: readEntitlementViewer }),
+    loadMindMapChapters({ goal }),
     loadChapterNumbering(goal),
     getRequestInstant(),
     readSavedMindMaps(goal.userId),

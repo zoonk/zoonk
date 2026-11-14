@@ -670,7 +670,8 @@ private final class TutorAPIStub: TutorAPIClient, @unchecked Sendable {
   }
 
   func decidePlanChange(
-    goalId: String, changeId: String, decision: PlanChangeDecision, token: String
+    goalId: String, changeId: String, decision: PlanChangeDecision, quote: PlanChangeQuote?,
+    token: String
   ) async throws -> Components.Schemas.PlanChange {
     if let decideFailure {
       throw decideFailure

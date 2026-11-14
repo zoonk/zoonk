@@ -56,6 +56,8 @@ data class TutorConversationState(
     val memoryUndos: Map<String, MemoryUndo> = emptyMap(),
     val decidingChanges: Set<UUID> = emptySet(),
     val failedDecisions: Set<UUID> = emptySet(),
+    /** Changes accepted after their numbers moved: each card asks again with today's. */
+    val repricedChanges: Set<UUID> = emptySet(),
     /** A setting card's (variety, content country, where you live) save in flight or failed, by its turn; whether it's saved is the setting itself. */
     val offerSaves: Map<String, OfferSave> = emptyMap(),
     val missionMoment: StudyMissionMoment? = null,
@@ -285,19 +287,23 @@ class TutorViewModel internal constructor(
     }
 
     fun decidePlanChange(
-        changeId: UUID,
+        change: PlanChange,
         status: PlanChangeDecisionInput.Status,
     ) {
         val goal = goalId ?: return
+        val changeId = change.id
         if (changeId in state.value.decidingChanges) return
         mutableState.update { it.copy(decidingChanges = it.decidingChanges + changeId, failedDecisions = it.failedDecisions - changeId) }
         viewModelScope.launch {
-            val result = store.decidePlanChange(UUID.fromString(goal), changeId, status)
-            if (result is MutationResult.Done) answered(result.value)
+            val result = store.decidePlanChange(UUID.fromString(goal), change, status)
+            val saved = (result as? MutationResult.Done)?.value
+            saved?.let { answered(it) }
+            val repriced = status == PlanChangeDecisionInput.Status.APPLIED && saved?.status == PlanChange.Status.PROPOSED
             mutableState.update {
                 it.copy(
                     decidingChanges = it.decidingChanges - changeId,
                     failedDecisions = if (result is MutationResult.Failed) it.failedDecisions + changeId else it.failedDecisions,
+                    repricedChanges = if (repriced) it.repricedChanges + changeId else it.repricedChanges - changeId,
                 )
             }
         }

@@ -18,7 +18,6 @@ type PreparationInput = {
   sectionWeights?: ReadonlyMap<string, number> | null;
   skills: readonly PreparationSkill[];
   testKind?: PreparationTestKind;
-  testPlusRequired?: boolean;
 };
 
 type MasteryEvidence = { answered: number; correct: number };

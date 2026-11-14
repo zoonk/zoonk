@@ -408,7 +408,7 @@ private struct RevealNoticeDay: View {
 
     Task {
       switch await plans.change(goalId: goalID, edits: [.targetDate(date)]) {
-      case .done(.applied), .done(.undone), .done(.unchanged), .obsolete: break
+      case .done(.applied), .done(.saved), .done(.undone), .done(.unchanged), .obsolete: break
       case .done(.invalid), .failed: failed = true
       }
 

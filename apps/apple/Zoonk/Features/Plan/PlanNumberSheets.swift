@@ -44,9 +44,13 @@ struct PlanStandingSheet: View {
         }
 
         calculated(
-          Text(
-            "Each subject counts as much as it's worth on the exam. A subject's number is how much of it you've studied times how well you answer, and it stays under 75% until you take a mock exam.",
-            tableName: "Plan", comment: "How the exam preparation number is worked out"))
+          preparation.components.mocks.kind == "fullReviews"
+            ? Text(
+              "Each subject counts as much as it's worth on the exam. A subject's number is how much of it you've studied times how well you answer, and it stays under 75% until you review every topic once.",
+              tableName: "Plan")
+            : Text(
+              "Each subject counts as much as it's worth on the exam. A subject's number is how much of it you've studied times how well you answer, and it stays under 75% until you take a mock exam.",
+              tableName: "Plan", comment: "How the exam preparation number is worked out"))
       } else if let lessons = syllabus?.lessons {
         let share = lessons.total > 0 ? min(1, Double(lessons.done) / Double(lessons.total)) : 0
 

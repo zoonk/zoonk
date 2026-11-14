@@ -7,6 +7,8 @@ export async function usageRecordsFixture({
 }: Partial<Omit<UsageRecord, "targetId">> & Pick<UsageRecord, "userId"> & { count: number }) {
   await prisma.usageRecord.createMany({
     data: Array.from({ length: count }, () => ({
+      countedAt:
+        !attrs.kind || attrs.kind === "lessonStart" ? (attrs.createdAt ?? new Date()) : null,
       kind: "lessonStart" as const,
       ...attrs,
       targetId: randomUUID(),

@@ -151,7 +151,15 @@ internal fun ColumnScope.FocusTestFlow(
                 test = shown.test,
                 plan =
                     plan?.let {
-                        PlanControls(vm.proposalAnswer, vm.deciding, vm.decisionFailed, vm::decide, it.onChangeFocus, it.questions)
+                        PlanControls(
+                            vm.proposalAnswer,
+                            vm.repricedProposal,
+                            vm.deciding,
+                            vm.decisionFailed,
+                            vm::decide,
+                            it.onChangeFocus,
+                            it.questions,
+                        )
                     },
                 canContinue = shown.test.offer != null,
                 pressed = vm.pressed,

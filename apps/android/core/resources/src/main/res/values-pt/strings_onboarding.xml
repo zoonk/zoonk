@@ -8,7 +8,6 @@
   "onboarding_admission_title": "533d1ff3d82d95c97357b73a8f54cf531823e9ebbc76edb1f62b869736bb904f",
   "onboarding_aim_by_month": "b04716d0fc346f07af8a0523116088ed88dbff418fd2885245e7744d899ba58f",
   "onboarding_aim_change": "06dcf7835c37e8393137ecc8dddfbf3a52775fc40bfc51a8daf54fbb8c92ab06",
-  "onboarding_aim_changed": "ee1962bf1a0229ff74f7905fafa1dd03232b28229844e43b8a4d76f486fccd42",
   "onboarding_aim_description": "91d16d5665305f13df6148d48d18d3ac3d1d121a63be5df12b8ba3e424914838",
   "onboarding_aim_finish": "728b777296e621093ebaba9e060c171a7b7817b30bfbe13977c7dfaa205345e8",
   "onboarding_aim_fluent": "c55e90fe88db9e214ca97903f34e834fce3b58838f73a853857e7acac233a153",
@@ -1076,7 +1075,6 @@
     <string name="onboarding_aim_hours">%1$s h</string>
     <string name="onboarding_aim_by_month">até %1$s</string>
     <string name="onboarding_aim_finish">Com %1$s por dia, você alcança %2$s por volta de %3$s.</string>
-    <string name="onboarding_aim_changed">Seu curso agora vai até %1$s.</string>
     <string name="onboarding_reason_travel">Viajar</string>
     <string name="onboarding_reason_travel_description">Se virar em viagens: fazer pedidos, perguntar o caminho, bater papo</string>
     <string name="onboarding_reason_talk">Conversar com as pessoas</string>

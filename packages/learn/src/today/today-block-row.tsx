@@ -7,7 +7,6 @@ import { KindMark } from "../_components/kind-tile";
 import { TestOutStartLink } from "../_components/test-out-start-link";
 import { TITLE_ROW_CLASS, TRUNCATED_TITLE_CLASS } from "../_components/title-row";
 import { useFormatDuration } from "../_utils/time-format";
-import { LearnLink } from "../learn-link";
 import { type MissionView } from "../missions/mission-links";
 import { BlockMark } from "../session/block-mark";
 import { type DayStep } from "../session/session-types";
@@ -264,36 +263,6 @@ export function PlanLessonRow({
           <RowTime minutes={minutes} />
         </span>
       </div>
-    </li>
-  );
-}
-
-/**
- * A lesson past what the learner's plan includes looks like any lesson and opens the subscription
- * page. Not part of the session: never the next block, no mission mark, and the day's segments,
- * time and action leave it out.
- */
-export function PlusLessonRow({ title }: { title: string }) {
-  const { actions } = useTodayScreen();
-
-  return (
-    <li
-      className={cn(
-        getRowClass({ finished: false, isNext: false }),
-        "has-[a:hover]:before:bg-muted/70",
-      )}
-    >
-      <span className="flex h-5 w-4 shrink-0 items-center justify-center">
-        <KindMark kind="lesson" />
-      </span>
-
-      <LearnLink
-        className={cn(ROW_OPEN_CLASS, "flex-1 items-center gap-3 after:-inset-x-2.5")}
-        href={actions.plusHref}
-        prefetch={false}
-      >
-        <span className="min-w-0 flex-1 truncate text-sm leading-5 font-medium">{title}</span>
-      </LearnLink>
     </li>
   );
 }

@@ -220,7 +220,8 @@ final class TutorConversation {
       invalidating: decision == .declined ? [] : [.goals, .userSession]
     ) { identity in
       try await api.decidePlanChange(
-        goalId: goalId, changeId: change.id, decision: decision, token: identity.bearerToken)
+        goalId: goalId, changeId: change.id, decision: decision, quote: change.quote,
+        token: identity.bearerToken)
     }
 
     switch result {

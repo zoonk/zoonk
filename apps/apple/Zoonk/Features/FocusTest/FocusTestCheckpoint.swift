@@ -20,6 +20,8 @@ struct FocusTestCheckpoint: View {
   @State private var answered: TodayView.PlanChange?
   @State private var deciding: PlanChangeDecision?
   @State private var decideFailed = false
+  /// An accept that found today's numbers differ: the proposal again, with them.
+  @State private var repriced: TodayView.PlanChange?
   /// What the sessions switch last saved on this visit.
   @State private var savedQuestions: FocusTestSessionQuestions?
   @State private var isSwitching = false
@@ -43,7 +45,7 @@ struct FocusTestCheckpoint: View {
   /// The focus the test proposes for a plan that's already there, until the learner answers it.
   private var waitingProposal: TodayView.PlanChange? {
     guard host == .plan, decision == nil, focus?.state == .proposed,
-      let proposal = focus?.proposal, proposal.canApply
+      let proposal = repriced ?? focus?.proposal, proposal.canApply
     else {
       return nil
     }
@@ -68,8 +70,10 @@ struct FocusTestCheckpoint: View {
       focusList
 
       Section {
-        PlanEffectDiff(effect: proposal.effect, today: PlanDate.isoDate(.now))
-          .listRowBackground(Color.clear)
+        PlanEffectDiff(
+          effect: proposal.effect, today: PlanDate.isoDate(.now), repriced: repriced != nil
+        )
+        .listRowBackground(Color.clear)
       }
 
       FocusTestSaveFailure(failed: decideFailed)
@@ -307,7 +311,9 @@ struct FocusTestCheckpoint: View {
     Task {
       defer { deciding = nil }
 
-      switch await plans.decide(goalId: goalID, changeId: change.id, decision: status) {
+      switch await plans.decide(change, goalId: goalID, decision: status) {
+      case .done(let saved?) where saved.status == "proposed":
+        repriced = saved
       case .done(let saved?):
         answered = saved
         decision = status

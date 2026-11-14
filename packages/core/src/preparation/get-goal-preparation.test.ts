@@ -319,7 +319,6 @@ describe(getGoalPreparation, () => {
 
     expect(preparation?.components.mocks).toStrictEqual({
       kind: "mockExams",
-      plusRequired: false,
       taken: 1,
       value: 0.6,
     });
@@ -758,7 +757,6 @@ describe(getGoalPreparation, () => {
 
     expect(preparation?.components.mocks).toStrictEqual({
       kind: "weeklyChallenges",
-      plusRequired: false,
       taken: 1,
       value: 0.8,
     });
@@ -775,7 +773,6 @@ describe(getGoalPreparation, () => {
 
     expect(before.status === "ready" && before.preparation.components.mocks).toStrictEqual({
       kind: "fullReviews",
-      plusRequired: false,
       taken: 0,
       value: null,
     });
@@ -806,7 +803,6 @@ describe(getGoalPreparation, () => {
 
     expect(preparation?.components.mocks).toStrictEqual({
       kind: "fullReviews",
-      plusRequired: false,
       taken: 1,
       value: 0.8,
     });
