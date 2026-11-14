@@ -489,7 +489,7 @@ struct QuestionBlockView: View {
 
     let sessionId = sessionId
     switch await practice.write(
-      .finished,
+      .finished, onPurpose: true,
       { identity in
         try await practice.api.stopSession(token: identity.bearerToken, sessionId: sessionId)
       })

@@ -20,7 +20,6 @@ struct MockScreen: View {
     .onAppear {
       run = run ?? MockRun(store: exam, blockId: blockId)
     }
-    .onDisappear { run?.cancelTaps() }
   }
 }
 

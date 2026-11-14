@@ -465,7 +465,8 @@ private struct PlanToolChoiceSheet: View {
         ToolbarItem(placement: .confirmationAction) {
           BusyButton(isBusy: editor.isSaving, role: .confirm, icon: .check) {
             saving = Task {
-              if await save() {
+              // Saved even when the sheet closed first; then there's nothing left to close.
+              if await save(), !Task.isCancelled {
                 dismiss()
               }
             }
