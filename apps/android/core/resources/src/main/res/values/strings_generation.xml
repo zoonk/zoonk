@@ -49,7 +49,7 @@
     <string name="generation_curriculum_plan_line_2">Spreading the skills over your days…</string>
     <string name="generation_curriculum_plan_line_3">Saving your plan…</string>
     <!-- The wait while placement questions are written. -->
-    <string name="generation_placement">Getting your questions ready</string>
+    <string name="generation_placement">Getting your test ready</string>
     <string name="generation_placement_questions">Writing your questions</string>
     <string name="generation_placement_questions_line">Picking the skills to ask about…</string>
     <!-- The wait while the first day of a plan is prepared. -->

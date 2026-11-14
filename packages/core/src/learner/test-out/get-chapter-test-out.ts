@@ -18,6 +18,8 @@ import {
 
 type ChapterTestOut = {
   chapterId: string;
+  /** The chapter's name, for a screen opened from somewhere that doesn't know it (Today's lesson row). */
+  chapterTitle: string;
   /** Request test-out generation when this list is nonempty. */
   needsItems: string[];
   passMark: number;
@@ -96,14 +98,19 @@ export async function loadChapterTestOut({
 
   const questionsPerSkill = getQuestionsPerSkill({ questions: count, skills: sampled.length });
 
-  const [items, structure] = await Promise.all([
+  const [items, structure, chapter] = await Promise.all([
     loadSkillItems({
       examBlueprintId: goal.examBlueprintId,
       skillIds: sampled.map((skill) => skill.id),
       userId,
     }),
     loadExamStructure(goal),
+    prisma.chapter.findUnique({ select: { title: true }, where: { id: chapterId } }),
   ]);
+
+  if (!chapter) {
+    return { status: "notFound" };
+  }
 
   const picks = sampled.map((skill) => ({
     itemIds: pickSkillItems({ count: questionsPerSkill, items, skillId: skill.id }),
@@ -131,6 +138,7 @@ export async function loadChapterTestOut({
     status: "ready",
     testOut: {
       chapterId,
+      chapterTitle: chapter.title,
       needsItems,
       passMark: TEST_OUT_PASS_MARK,
       questions,
