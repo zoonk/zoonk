@@ -183,6 +183,7 @@ private fun CheckpointRead(
     navigator: AppNavigator,
 ) {
     val loaded by viewModel.checkpoint.collectShown()
+    val fresh by viewModel.checkpoint.freshState.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
     // L9's call screen read this before handing over; a call that needs Plus opens the challenge's intro.
     val call by app.conversations
@@ -217,8 +218,12 @@ private fun CheckpointRead(
                 }
 
                 else -> {
-                    LaunchedEffect(checkpoint) { viewModel.begin(checkpoint) }
-                    RunLoading(navigator::closeTask)
+                    LaunchedEffect(checkpoint, fresh) { viewModel.begin(checkpoint) }
+                    if (fresh is LoadState.Failed) {
+                        RunLoadFailed(navigator::closeTask, onRetry = { scope.launch { viewModel.checkpoint.refresh() } })
+                    } else {
+                        RunLoading(navigator::closeTask)
+                    }
                 }
             }
         }
