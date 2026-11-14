@@ -218,7 +218,6 @@ msgstr "Scarica"
 
 #: src/_components/edit-text-dialog.tsx
 #: src/certificates/certificate-name.tsx
-#: src/country/country-picker.tsx
 #: src/journey/goal-actions.tsx
 #: src/language/conversation/call-control.tsx
 #: src/onboarding/start-over-menu.tsx
@@ -600,6 +599,7 @@ msgstr "Il salvataggio non è riuscito. Riprova."
 
 #: src/_components/sheet-header.tsx
 #: src/_components/suggestion.tsx
+#: src/country/country-picker.tsx
 #: src/explain/explain-waiting.tsx
 #: src/mind-maps/mind-map-viewer.tsx
 #: src/plan/plan-editor.tsx
