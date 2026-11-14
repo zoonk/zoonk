@@ -1212,7 +1212,7 @@
       }
     },
     "Available with Plus" : {
-      "comment" : "Title of the notice on a feature the learner's plan doesn't include\nWhat VoiceOver says for the Plus mark on a feature the learner's plan lacks",
+      "comment" : "Title of the notice on a feature the learner's plan doesn't include",
       "localizations" : {
         "de" : {
           "stringUnit" : {

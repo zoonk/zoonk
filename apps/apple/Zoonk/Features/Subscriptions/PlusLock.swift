@@ -1,25 +1,5 @@
 import SwiftUI
 
-/// Plus features are never hidden: free learners and guests see them with this mark, and they open
-/// as usual to a screen whose `PlusNotice` says what Plus unlocks.
-struct PlusMark: View {
-  var accessibilityLabel: Text?
-
-  var body: some View {
-    Text(
-      "Plus", tableName: "Subscriptions", comment: "Mark on a feature that comes with Zoonk Plus"
-    )
-    .chip()
-    .accessibilityElement(children: .ignore)
-    .accessibilityLabel(
-      accessibilityLabel
-        ?? Text(
-          "Available with Plus",
-          tableName: "Subscriptions",
-          comment: "What VoiceOver says for the Plus mark on a feature the learner's plan lacks"))
-  }
-}
-
 /// At most one on a screen, inline where the locked things are, never a pop-up. Main's
 /// `PlusNotice`: a panel with the sparkle on its title's line, in a list too.
 ///
@@ -72,7 +52,7 @@ struct PlusNotice<Action: View>: View {
         if showsSeePlus || Action.self != EmptyView.self {
           HStack {
             if showsSeePlus {
-              SeePlusButton(action: seePlus)
+              SubscribeButton(action: seePlus)
             }
             action
           }
@@ -101,18 +81,9 @@ extension PlusNotice where Action == EmptyView {
   }
 }
 
-/// Every action that leads to paying reads "Subscribe"; this name goes with `PlusNotice`.
-typealias SeePlusButton = SubscribeButton
-
 #Preview {
   ZoonkList {
     Section {
-      LabeledContent {
-        PlusMark()
-      } label: {
-        Text(verbatim: "Mock exams")
-      }
-
       PlusNotice(description: Text(verbatim: "Mock exams, timed like the real one"), isInset: true)
     }
 
