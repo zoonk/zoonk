@@ -94,7 +94,7 @@ export function SpeakingMockCard({
               {t("Start")}
             </Button>
 
-            {call.limit && <CallLimitReason limit={call.limit} need="mock" role="alert" />}
+            {call.limit && <CallLimitReason limit={call.limit} role="alert" />}
 
             {call.failed && (
               <p className="text-destructive-text text-sm" role="alert">

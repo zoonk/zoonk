@@ -120,9 +120,7 @@ export function SpeakingPaperSection({
         />
       )}
 
-      {call.limit && (
-        <CallLimitReason className="py-4" limit={call.limit} need="task" role="alert" />
-      )}
+      {call.limit && <CallLimitReason className="py-4" limit={call.limit} role="alert" />}
 
       {call.failed && (
         <p className="text-destructive-text px-1 text-sm" role="alert">

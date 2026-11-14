@@ -168,42 +168,6 @@ msgctxt "eFx_I9"
 msgid "Not enough free lessons for this map yet"
 msgstr "Aún no tienes suficientes lecciones gratis para este mapa"
 
-#. Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it.
-#: src/_components/comes-back-words.ts
-msgctxt "yWgcBI"
-msgid "You'll have enough on {date}."
-msgstr "Tendrás tiempo suficiente el {date}."
-
-#. Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it.
-#: src/_components/comes-back-words.ts
-msgctxt "aRxkUZ"
-msgid "You'll have enough later today."
-msgstr "Hoy más tarde tendrás tiempo suficiente."
-
-#. Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it.
-#: src/_components/comes-back-words.ts
-msgctxt "jYqTRI"
-msgid "You'll have enough tomorrow."
-msgstr "Mañana tendrás tiempo suficiente."
-
-#. Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it.
-#: src/_components/comes-back-words.ts
-msgctxt "yUB2A_"
-msgid "You'll have enough on {date}, or subscribe to keep going."
-msgstr "Tendrás tiempo suficiente el {date}, o puedes suscribirte para seguir."
-
-#. Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it.
-#: src/_components/comes-back-words.ts
-msgctxt "vEiMvb"
-msgid "You'll have enough later today, or subscribe to keep going."
-msgstr "Hoy más tarde tendrás tiempo suficiente, o puedes suscribirte para seguir."
-
-#. Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it.
-#: src/_components/comes-back-words.ts
-msgctxt "EiK7tf"
-msgid "You'll have enough tomorrow, or subscribe to keep going."
-msgstr "Mañana tendrás tiempo suficiente, o puedes suscribirte para seguir."
-
 #: src/_components/coverage-bar.tsx
 #: src/syllabus/subject-aside.tsx
 msgctxt "9U6D5-"
@@ -5668,16 +5632,6 @@ msgstr "Usaste todo tu tiempo de llamadas"
 msgctxt "fZ-NXt"
 msgid "Calls need a free account"
 msgstr "Necesitas una cuenta gratis para llamar"
-
-#: src/language/conversation/call-limit-message.tsx
-msgctxt "gHCTIf"
-msgid "Not enough call time for this mock exam"
-msgstr "No tienes suficiente tiempo de llamada para este simulacro"
-
-#: src/language/conversation/call-limit-message.tsx
-msgctxt "D43Ixe"
-msgid "Not enough call time for this task"
-msgstr "No tienes suficiente tiempo de llamada para esta tarea"
 
 #: src/language/conversation/call-objectives.tsx
 #: src/language/conversation/conversation-live.tsx

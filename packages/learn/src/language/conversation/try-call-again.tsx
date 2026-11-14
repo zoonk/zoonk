@@ -40,13 +40,7 @@ export function TryCallAgain({
       >
         {children}
       </Button>
-      {call.limit && (
-        <CallLimitReason
-          limit={call.limit}
-          need={kind === "examSpeaking" ? "task" : "mock"}
-          role="alert"
-        />
-      )}
+      {call.limit && <CallLimitReason limit={call.limit} role="alert" />}
       {call.failed && (
         <p className="text-destructive-text text-sm" role="alert">
           {t("The call didn't start. Try again in a moment.")}
