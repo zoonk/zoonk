@@ -1,7 +1,25 @@
 import { instant } from "@next/playwright";
 import { expectHydrated } from "@zoonk/e2e/hydration";
-import { expect, test } from "./fixtures";
+import { type Page, expect, test } from "./fixtures";
 import { createStudyDay, openAs } from "./study-day";
+
+/**
+ * `instant()` assumes the link's prefetch already finished, and Next.js starts a link's full prefetch
+ * after its segments, so a tap that only waits for hydration can come first and get the shell alone.
+ */
+async function waitForFullPrefetch(page: Page, pathname: string) {
+  const response = await page.waitForResponse((candidate) => {
+    const headers = candidate.request().headers();
+
+    return (
+      new URL(candidate.url()).pathname === pathname &&
+      Boolean(headers["next-router-prefetch"]) &&
+      !headers["next-router-segment-prefetch"]
+    );
+  });
+
+  await response.finished();
+}
 
 /**
  * Under `instant()` nothing the server reads at tap time arrives, so a read that drops out of the
@@ -11,6 +29,7 @@ test.describe("Today's instant tab", () => {
   test("a tap on Today shows the learner's day from its prefetch", async ({ browser }) => {
     const { user } = await createStudyDay();
     const page = await openAs(browser, user);
+    const prefetched = waitForFullPrefetch(page, "/today");
 
     await page.goto("/plan");
 
@@ -20,6 +39,7 @@ test.describe("Today's instant tab", () => {
 
     // A tap before hydration would load the page as a document, which the lock stops at its shell.
     await expectHydrated(today);
+    await prefetched;
 
     await instant(page, async () => {
       await today.click();
@@ -52,9 +72,11 @@ test.describe("a written lesson's combined start", () => {
       });
     });
 
+    const prefetched = waitForFullPrefetch(page, `/learn/${lesson.id}`);
     await page.goto("/today");
     const row = page.getByRole("link", { exact: true, name: lesson.title });
     await expectHydrated(row);
+    await prefetched;
 
     await instant(page, async () => {
       await row.click();
