@@ -12,6 +12,7 @@ import { StateMark } from "@/components/state-mark";
 import { getContentFix, rowKeyOf } from "@/data/content-fixes/get-content-fix";
 import { capitalize, formatDate, formatDateTime } from "@/lib/format";
 import { languagePairName } from "@/lib/language-filter";
+import { LINK_CLASS } from "@/lib/link-class";
 import { getStaffPasskeyStatus } from "@zoonk/core/staff/content-fixes/decide";
 import { getEnvironment } from "@zoonk/utils/environment";
 import { MAIN_URL, getMainPageUrl } from "@zoonk/utils/url";
@@ -65,8 +66,6 @@ export default function ContentFixPage({ params }: Props) {
     </AdminDetailPage>
   );
 }
-
-const LINK_CLASS = "hit-area relative underline underline-offset-3";
 
 function Where({ fix }: { fix: ContentFixDetail }) {
   const { adminHref, language, mainUrl, trail } = fix.location;
