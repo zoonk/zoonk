@@ -26,34 +26,27 @@ struct StatisticsScreen: View {
     }
   }
 
-  @ViewBuilder
   private func pushed(_ section: StatsSection) -> some View {
-    if section == .patterns {
-      page(section)
-        .navigationTitle(Text(section.title))
-        .navigationSubtitle(
-          Text(
-            "When you answer best, over the last 90 days.", tableName: "Progress"))
-    } else {
-      page(section)
-        .navigationTitle(Text(section.title))
-    }
+    page(section)
+      .barTitleAfterHero(String(localized: section.title))
   }
 
-  @ViewBuilder
   private func page(_ section: StatsSection) -> some View {
-    switch section {
-    case .level:
-      LevelStatsView()
-    case .energy:
-      EnergyStatsView()
-    case .activity:
-      ActivityStatsView()
-    case .score:
-      ScoreStatsView()
-    case .patterns:
-      PatternsStatsView()
+    Group {
+      switch section {
+      case .level:
+        LevelStatsView()
+      case .energy:
+        EnergyStatsView()
+      case .activity:
+        ActivityStatsView()
+      case .score:
+        ScoreStatsView()
+      case .patterns:
+        PatternsStatsView()
+      }
     }
+    .environment(\.statsSection, section)
   }
 }
 

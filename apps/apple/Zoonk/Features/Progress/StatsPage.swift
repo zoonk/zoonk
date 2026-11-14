@@ -3,9 +3,15 @@ import SwiftUI
 struct StatsPage<Content: View>: View {
   @ViewBuilder let content: Content
 
+  @Environment(\.statsSection) private var section
+
   var body: some View {
     ScrollView {
       VStack(alignment: .leading, spacing: 28) {
+        if let section {
+          PageHeader(Text(section.title), supporting: section.supporting.map { Text($0) })
+        }
+
         content
       }
       .frame(maxWidth: .infinity, alignment: .leading)
