@@ -37,6 +37,7 @@
   "player_challenge_much_higher": "91433a0f9a8f7bbd4c5fac584edc549959c35a6322c4a76669385c86eb9656b2",
   "player_challenge_much_lower": "b7d33b8d7f3fac21fc683167476f4cc405d923ef1cd6af3e7ae5f756facf4cfc",
   "player_challenge_no_change": "e61c09647c22d195038da994c86a6b93d0681fd7f17134617061889b39c3a6c2",
+  "player_challenge_not_written_title": "55c09640cdec472e78f2bd2276c5252caec14047be9329a8a87160d8ea601e36",
   "player_challenge_phase_fix": "4648200c8d1418812ef67b537716dda9c527783b6a81747ad24d877377b473fd",
   "player_challenge_phase_fix_line_1": "87121f37db8c7e9724ae57fb0b3c82400d8bc72eaf12dba007d48e85e852c471",
   "player_challenge_phase_plan": "8d050c57a9be422f1d9cee0cc518733eb0ba00408e71f29d36fb325528795536",
@@ -46,10 +47,12 @@
   "player_challenge_phase_write_line_1": "3dadd88b436e87a03daadfc00b88d439655102550df74f0f0257f0ccb48997e3",
   "player_challenge_phase_write_line_2": "32838daa6bf745c8868c99244a7cddb379863fa18f7784a99080c689ed04571f",
   "player_challenge_practice": "1f7f56cb9b0da2154b852f133928cd57ff2a42bb40cdd84028126b89e029ac18",
+  "player_challenge_ready": "e01816825c6706cc9487e9eafbb609e3297dbe990ae1585519b7c7d9001a4b70",
   "player_challenge_said": "1add01dfc3bccd1938f37331007c89e636bbd5c4784690152cff59ce24a68156",
   "player_challenge_scenario_complete": "be3b339d720266fa20fdb093075c8018616b79a62b8454c78bca188a7a1f2753",
   "player_challenge_skills": "1a5ec76e8abbf141416a7b3746c6edd7f03887832cddb48877466f949afba3d6",
   "player_challenge_team": "27f9089fe7cf68e2e99514aeb331791b02f2b83bc28894120845d48e2cc6e079",
+  "player_challenge_wait_stopped": "fab13bc1b3d67abcf00f5af795e2e2bb09279897af1a741828f038df2f152d2b",
   "player_challenge_what_happened": "6191605b83a9fe33fa5b1bf34de5030f3de37ad6fd131a0e0dbd051233c14412",
   "player_challenge_what_if": "048e1d23ccf365baef6e892ca6755f55a4a7e8f53f82333ca1489c00863184c3",
   "player_challenge_you": "efb9ee1c0404ae6052232f7a1ec08d79080f6027f031b58a30575acff8d58567",
@@ -153,6 +156,7 @@
   "player_spelled": "8e7c21678ecb3900843a76a0ff4dd9b89b7a2723b44c6b55c7f7f82b8fc89acf",
   "player_start_failed_description": "de98ee78104a4116a5718bf3a16dea6feb653ec201c26c6a2889a2c79bfaefe0",
   "player_start_failed_title": "89ce378768070c4170dd9e26f0764e74502e48fef689c48f566872bffd0d62ed",
+  "player_start_this_challenge": "3ea18dad1ca6928892c4ac0d5b88f926e47f375da80bdc38a76dc9779384f770",
   "player_start_this_lesson": "67a6672a5b07c3ee73fd46fcfd693d84218dedef0067cac5a9af3f3a416ace62",
   "player_still_checking": "148cccc6548151d5599617bbca4c6281fec412b78fc18b350e81a02ec731b4c1",
   "player_stop_failed": "63865b30383fc1d7e6ba798dde382a8e91b31875bf4a5615d98e2029da2a6da1",
@@ -290,6 +294,10 @@
     <string name="player_lesson_ready">レッスンの準備ができました</string>
     <string name="player_wait_stopped">このレッスンを準備できませんでした</string>
     <string name="player_start_this_lesson">このレッスンを始める</string>
+    <string name="player_challenge_not_written_title">このチャレンジはまだ準備ができていません</string>
+    <string name="player_challenge_ready">チャレンジの準備ができました</string>
+    <string name="player_challenge_wait_stopped">このチャレンジの準備ができませんでした</string>
+    <string name="player_start_this_challenge">このチャレンジを始める</string>
     <string name="player_writing_lesson">レッスンを作成しています</string>
     <string name="player_phase_plan">レッスンの構成を考えています</string>
     <string name="player_phase_plan_line_1">扱う内容を選んでいます…</string>
