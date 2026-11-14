@@ -114,6 +114,21 @@ export function getIsoDateOptions({
   return { ...getStyleOptions({ isoDate, style, today }), timeZone: "UTC" };
 }
 
+/** A range of calendar days, such as a week: both ends carry the year when either is in another year. */
+export function getIsoRangeOptions({
+  end,
+  start,
+  today,
+}: {
+  end: string;
+  start: string;
+  today: string;
+}): DateTimeFormatOptions {
+  const anotherYear = [start, end].some((isoDate) => isInAnotherYear({ isoDate, today }));
+
+  return { ...DATE_STYLES.day, timeZone: "UTC", ...(anotherYear && { year: "numeric" }) };
+}
+
 export function useFormatIsoDate() {
   const format = useFormatter();
   const today = useIsoToday();
