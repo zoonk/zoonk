@@ -494,7 +494,7 @@ internal class SlotAnswer(
 @Composable
 internal fun Slot.shownAnswer(item: SlotItem): SlotAnswer? {
     val answer = answer(item) ?: return null
-    val text = answer.change?.let { planChangeSentence(it) } ?: stringResource(R.string.plan_updated_sentence)
+    val text = answer.change?.let { planChangeSentence(it, page.dateKind) } ?: stringResource(R.string.plan_updated_sentence)
     return SlotAnswer(text, answer.change, edits) { focus.next = true }
 }
 

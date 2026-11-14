@@ -4,9 +4,9 @@
   "today_add_to_today": "9534c74430271e6a9ebb9344ff3ffddc510c1a61d80e4f3b1a0f691443dfef3f",
   "today_adjust_your_plan": "8e3a5c0dfd3221cac8857c4c5b4bbf695818a2231cc6ad69cdcb48fd248e491d",
   "today_already_know_this": "a129cbe426e9e7e6f73a44a37955be1288e5136938feada0b9272c530c0f7027",
-  "today_behind_exam": "63bf8e258047c1df40829867c507f18e1430d7848f85b56dbf3bf80ecbfadb43",
-  "today_behind_goal": "56469c0e264c68203f1d9e249cab9657ddb300d8bbf0b72c5da5439fade06df8",
-  "today_behind_kept": "17b61c0c08cbac8c4265f9978c0b8716884a84b813b719b4a680583d5e290f04",
+  "today_behind_exam": "7b55b82e15e0a8cab17aa5d11374765e7378504ee81473264eab3a283ae00b20",
+  "today_behind_goal": "eb2501d6cd7df2f3ef6873adb757459325f5610717a5328185d72f3f26bf55cf",
+  "today_behind_kept": "a9fcd3ea3974406c39559e4814bc3307f64d6fc1eda6300002929b89f1d346a3",
   "today_building_plan_detail": "ffad46f8ff6ba7fd77a4b1c3f243eaded2a992f6465acfd3e23150364db9040d",
   "today_building_plan_goal": "fe5bae3ef0de0849a08cf89c683c2eda6a63645dd66587702b79786d4f7828c8",
   "today_choose_focus": "b3c4fc556835875484b45956404dc2ca0bf2fd1da78a2046a02bacf5675a706f",
@@ -46,15 +46,16 @@
   "today_keep_learning": "d0c480c7bb1a1ee7ceb22c4f549e7c8a060561fb2351d19f71587a50e32b005b",
   "today_keep_learning_failed": "611c66399036ce71ba5683834434637354e8d128e10e10362523807204e1a668",
   "today_keep_my_time": "4bc812c2e3b1d950e32dc00dc5916ea07e0ed10333f5a13cd167c89592abe7ec",
+  "today_keep_studying_after_exam": "38570d951e1c4f7a8ecccb3a082803621b88d651584841641ba811ec4313ac3b",
   "today_lessons_not_written": "4cf68f708eacc44a4672cbb087108cf83257cd145ef0c659ae88480665c721e4",
+  "today_missed_days_title": "7df2f250631d9b2040ee5fe092816dbb32017905d931973831f0f67eb3115c46",
   "today_mistakes_notebook": "7b4022c4bb3a9e6a20a1844fcef3431fcd7e10009de031e5e2ff2f2941713e1c",
   "today_mistakes_ready": "924867ab1d5c7f2b7c229ab1e49a1bfd250047c83a1b108e057e6ab50998f91a",
   "today_mistakes_redo": "c53793107f5e8bdf4c05f908f0cc7fe4c65415808fe635660e5915afb4a1b9fd",
   "today_mistakes_return_tomorrow": "052a8946d4ea781649754978de08405fbe227f7c2144f1d9813ad25ef192ce88",
   "today_mistakes_tomorrow": "acedc1046c8adddd7c31be1b6f4ca5cb78bb8f90a5fe50555c03b86dcaedc9a8",
   "today_more_count": "e25386ee87d51212b85170167cb6fa4d3e5680e96aa8e029017645c8803e8e4f",
-  "today_more_time_a_day": "a3f6abf951a34248ea38bf31c8e517ae1f54851ffe68a253a7bdcbff92eaf759",
-  "today_more_time_or_later_date": "4847eea0f584e6eb61fdbf7a34499192050062ea470992e5c35b3f6ef97ff24c",
+  "today_more_time_a_day": "45d6cdadbde0956ab755a74d45726777c5fe5b5c8c1f455c720046f854f217bd",
   "today_new_goal": "72c7b614c87763ec0cc523c3d5ec43c725140a3cc2b15eb6cbdcd9555583d680",
   "today_next_suggestion": "fc2bd4a43d2f2f524059aa54aaff288b73e78ba68c1c7b95db7fa20813967aa8",
   "today_not_enough_time": "8572a3b1b0528dae6a31f7d7096db1e0ac3f67e9621446f83c92ec34717cc783",
@@ -71,12 +72,10 @@
   "today_paused_detail": "83b104f81cb9e7b7809b052f4f28a5c865dcd2436ae66c81d30596c2afe87ac4",
   "today_paused_goal": "2c041d7e45fdaff0675c34b561819b9f184e6abca5185974783eee3b943df509",
   "today_paused_this_goal": "7c5426d3d347644ab1f0c396b7be52ae43bf83cd027d1cac9dddf83390139fcd",
-  "today_plan_apply": "9d58c27b4f42b92f91cb914bc8b5330a36ac641ae09e6793fff014a1d82ede2e",
   "today_plan_finished": "c2604253fd65d81855d70ed5a7635d0ac34f83bb8a2d8d9c9ee4ec314a00d78d",
   "today_plan_keep_mine": "29edbc45315a5d5a796d73b4132d7a9295ad416b6e9079c630b099edf33dbc5f",
   "today_plan_stays": "d27364721dabf4b2f0853cb747f3b4e83e16eeef6b2f866a975d176dbd7500bc",
-  "today_plan_suggestion": "b5c5fc6cccb47a35e48b6879ea648e4bf24ce9141ecdc263b08027aca00714df",
-  "today_plan_use_my_date": "0d44ea7776504f407db895b2d2917ca21138f20bdf5612a28a3e41dc8d612211",
+  "today_plan_use_my_date": "06c841aa8658b1e20caab673eea0e667073573228f3dbeeea2f7be46370e4493",
   "today_practice_anytime": "4959d07c0fe2e78d3e8a44062a7d615e1ceae16564397028e4d7e763f414bc64",
   "today_practice_minutes": "ccf149314333b762abbd8410dc2a68b409b10edefe5e1d6332d82f45ae683b65",
   "today_practice_with_buddy": "96b438b91ba3638c8e00dfb8d262f8335aa81904ad802bce85444ece1ec30141",
@@ -342,23 +341,21 @@
     <string name="today_exam_choice_question_several">%1$s: które opcje wybierzesz?</string>
     <string name="today_exam_choice_choose">Wybierz</string>
     <string name="today_notice_plan_change">Proponowana zmiana</string>
-    <string name="today_plan_suggestion">Propozycja planu</string>
-    <string name="today_plan_apply">Zastosuj</string>
-    <string name="today_plan_use_my_date">Mimo to użyj mojej daty</string>
+    <string name="today_plan_use_my_date">Ustaw moją datę</string>
     <!-- Declines a suggested change to the plan's dates and keeps the learner's own plan. -->
     <string name="today_plan_keep_mine">Zachowaj mój plan</string>
     <string name="today_next_suggestion">Pokaż kolejną propozycję</string>
     <string name="today_notice_falling_behind">Zmiana planu</string>
-    <!-- %1$s is the learner's time a day, such as 30 min; %2$s and %3$s are shares, such as 72% and 80%. -->
-    <string name="today_behind_exam">Przy %1$s nauki dziennie plan obejmuje teraz %2$s zakresu egzaminu zamiast %3$s.</string>
-    <!-- %1$s is the learner's time a day, such as 30 min; %2$s and %3$s are shares, such as 72% and 80%. -->
-    <string name="today_behind_goal">Przy %1$s nauki dziennie plan obejmuje teraz %2$s twojego celu zamiast %3$s.</string>
-    <string name="today_more_time_a_day">Zwiększ dzienny czas nauki</string>
-    <string name="today_more_time_or_later_date">Zwiększ czas nauki lub wybierz późniejszy termin</string>
+    <string name="today_behind_exam">Przy %1$s nauki dziennie twój plan obejmuje teraz %2$s materiału do egzaminu zamiast %3$s.</string>
+    <string name="today_behind_goal">Przy %1$s nauki dziennie twój plan obejmuje teraz %2$s materiału zamiast %3$s.</string>
+    <string name="today_more_time_a_day">Zwiększ czas nauki</string>
     <string name="today_choose_focus">Wybierz, na czym się skupić</string>
     <string name="today_study_everything">Przerób cały materiał</string>
+    <string name="today_keep_studying_after_exam">Ucz się dalej po egzaminie</string>
+    <string name="today_missed_days_title">Kilka dni bez nauki</string>
+    <!-- Keeps the learner's time a day as it is. -->
     <string name="today_keep_my_time">Zachowaj obecny czas nauki</string>
-    <string name="today_behind_kept">W porządku. Czas nauki zostaje bez zmian, a najmniej ważne tematy omawiamy mniej szczegółowo.</string>
+    <string name="today_behind_kept">Okej. Twój czas nauki się nie zmienia.</string>
     <string name="today_connection_lost">Utracono połączenie</string>
     <string name="today_connection_lost_detail">Nie otrzymujemy już informacji o postępie. Przygotowywanie może nadal trwać.</string>
     <string name="today_reconnect">Połącz ponownie</string>

@@ -42,7 +42,6 @@ import com.zoonk.api.models.MemoryInsightPlanChange
 import com.zoonk.api.models.SuggestedGoal
 import com.zoonk.api.models.Today
 import com.zoonk.api.models.TodayFocusTest
-import kotlinx.datetime.toJavaLocalDate
 
 /** What a notice needs from the screen: its read, the answers it saves, and where it leads. */
 internal class TodayNoticeState(
@@ -168,11 +167,7 @@ private fun ExamChoiceNotice(
 
     if (made != null) {
         val sentence =
-            planChangeSentence(
-                made.change,
-                state.read.today.goal.targetDate
-                    ?.toJavaLocalDate(),
-            )
+            planChangeSentence(made.change, state.read.today.goal.dateKind)
         val undo: (@Composable () -> Unit)? =
             if (made.change.canUndo) {
                 {

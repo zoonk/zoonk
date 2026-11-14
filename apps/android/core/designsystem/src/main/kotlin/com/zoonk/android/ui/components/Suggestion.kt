@@ -10,12 +10,15 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -41,9 +44,11 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.paneTitle
+import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -386,3 +391,34 @@ private val PANEL_MARK = 18.dp
 /** From here two lines hold only the start of a summary, cutting off its key words. */
 private const val FULL_SUMMARY_FONT_SCALE = 1.3f
 private val SHEET_MARK = 24.dp
+
+/** Main's `SuggestionMenu`: "Other options", a quiet button for a suggestion's other ways on; each [SuggestionMenuItem] closes it with done before acting. */
+@Composable
+fun SuggestionMenu(options: @Composable (done: () -> Unit) -> Unit) {
+    var open by rememberSaveable { mutableStateOf(false) }
+
+    Box {
+        SuggestionAction(
+            onClick = { open = true },
+            modifier = Modifier.semantics { role = Role.DropdownList },
+            secondary = true,
+        ) {
+            Text(stringResource(R.string.suggestion_other_options))
+            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+            Icon(painterResource(R.drawable.ic_expand_more), contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
+        }
+        DropdownMenu(expanded = open, onDismissRequest = { open = false }) { options { open = false } }
+    }
+}
+
+@Composable
+fun SuggestionMenuItem(
+    text: String,
+    done: () -> Unit,
+    onClick: () -> Unit,
+) {
+    DropdownMenuItem(text = { Text(text) }, onClick = {
+        done()
+        onClick()
+    })
+}

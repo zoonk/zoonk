@@ -67,6 +67,7 @@
   "not_found_title": "6be6cc1e91ab29b4b09a3d4b085b009cdd3999e4c21f3e408311c581e03f4a94",
   "player_not_saved": "4e266e63c02e5ffacce35c878acfbef62defeeb19de316b042480e4dc9fd8393",
   "player_not_saved_description": "b82c75378ad1a68faaeea1ad108700349135a601eae32ce3b77e4b82b09f0eb4",
+  "suggestion_other_options": "64590f7781315c2d1ee56a351ba218e57d6e63697d8641f7d0580090bdb93c94",
   "suggestion_save_failed": "480f9201290520e75e0153ad10c21d55772b1d3ee204c42276469109145f20ab",
   "suggestion_view": "87e0754a658b539b073255533eaad7665d04cf81e81cefabfde2ef18471f35a7",
   "task_leave": "35cab1a652e1aed3abba5390d6e524cfee544775b6c5e81e98651f5c04fac094",
@@ -122,6 +123,7 @@
     <string name="load_failed_try_again">Intentar de nuevo</string>
     <string name="suggestion_view">Ver</string>
     <string name="suggestion_save_failed">No se pudo guardar. Inténtalo de nuevo.</string>
+    <string name="suggestion_other_options">Otras opciones</string>
     <!-- Above the options of an exam's choice when each candidate takes several of them, such as two of a course's modules. %1$d is how many, at least 2. -->
     <string name="exam_choice_pick_up_to">Elige hasta %1$d.</string>
     <string name="disclosure_expanded">Expandido</string>

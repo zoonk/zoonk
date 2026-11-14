@@ -100,14 +100,11 @@
   "tutor_placeholder_plan": "d8eaa7b7b32fbf5baccd39ab92e12928bb1e42765ae3432d95b2f60648a9b6bc",
   "tutor_placeholder_subject": "5c27a6d891af5fb81e89550198ebcb06bbe7626c3530e82426445ba806028db0",
   "tutor_plan_change_apply": "bcbb803b738c28f5854cd54dc1991890ac8841c68d89efa98c65b4a211a5761e",
-  "tutor_plan_change_declined": "f86b9c4152ced8dcb04acd6d1526db837f83969d76447d9f2da6b32931e81664",
+  "tutor_plan_change_declined": "6bd340c205bfae91d72670b88f30cfbca57ad82448406b58e307ee430680ad54",
   "tutor_plan_change_failed": "0e9ef311cec6f413c37b9f7b947b40b1746877051cd96d38a24446822e30e3c2",
   "tutor_plan_change_not_now": "0ef55904fd29d1d87d20ea620d5c7bd9b2adfba3ddaef6e11428eb25ef802aca",
-  "tutor_plan_change_one_week": "348f75cdd131a2f50f839f2b303cfc1bd431bc1bf64494a3500864badc1efca7",
   "tutor_plan_change_replaced": "7b2c5fdaee0ebbd95c45e9aa7a53d9af9e4d48889a9c51173abd283d855e9181",
-  "tutor_plan_change_title": "c86ff87fccdbd74b0ca8d36efdb8925f890536303fe4ba94c7d587cdefd972ec",
   "tutor_plan_change_undo": "303059a73c7b04dc7dee457b4e512e936fa699ecfcbf97d43b62c78a66c4f443",
-  "tutor_plan_change_use_my_date": "4e4fb53bf0dbf93757b7c8dee85a705ad102da5994ce3c0290936dc5546b08a5",
   "tutor_retry_last_question": "5ac1d9c02aa755d3d4b6518472cf219bc23679279996f8228fabd635d814035b",
   "tutor_send": "029efbce94f6801698e1c30b218000d859ff3a3623117559888368a14c810734",
   "tutor_sign_in": "bd58ccb559940daf845d4bc0249ebd7a00b98315e6de4f77d531e0758e955f48",
@@ -264,16 +261,10 @@
     <string name="tutor_offer_plus_subscribed">契約中のプランとお支払いを確認できます。</string>
     <!-- Button that opens the Zoonk Plus page, with what Plus includes and its price. Not "see more". -->
     <string name="tutor_offer_manage">管理する</string>
-    <!-- A card's title naming the change the buddy suggests: a noun phrase, not an action. -->
-    <string name="tutor_plan_change_title">学習計画の変更案</string>
-    <!-- Beside the title of a change that lasts one week, like a lighter week. -->
-    <string name="tutor_plan_change_one_week">1週間</string>
     <string name="tutor_plan_change_apply">適用する</string>
     <string name="tutor_plan_change_not_now">今はしない</string>
-    <!-- Applies the learner's own date over the one the exam notice or calendar sets. -->
-    <string name="tutor_plan_change_use_my_date">自分で指定した日付を優先する</string>
     <string name="tutor_plan_change_undo">元に戻す</string>
-    <string name="tutor_plan_change_declined">変更は適用していません。学習計画は元のままです。</string>
+    <string name="tutor_plan_change_declined">学習計画はそのままです。</string>
     <string name="tutor_plan_change_replaced">新しい提案に置き換わりました。</string>
     <string name="tutor_plan_change_failed">保存できませんでした。もう一度お試しください。</string>
     <!-- Above the questions asked that day, in the buddy's conversation. -->
