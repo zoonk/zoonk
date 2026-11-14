@@ -26,7 +26,9 @@ import com.zoonk.android.feature.player.language.rememberLessonLanguage
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.toApi
 import com.zoonk.android.feature.player.steps.StepActions
+import com.zoonk.android.feature.player.steps.SpokenRecordAction
 import com.zoonk.android.feature.player.steps.StepView
+import com.zoonk.android.feature.player.steps.recordsInBar
 import com.zoonk.android.feature.practice.DrillStage
 import com.zoonk.android.feature.practice.RunFrame
 import com.zoonk.android.feature.practice.RunMeter
@@ -127,6 +129,7 @@ internal fun MistakeLessonQuestion(
     val checked = state.run.phase is RunPhase.Checked
     val primary = screen.primary
     val primaryLabel = if (checked || primary?.isCheck == false) R.string.practice_continue else R.string.practice_check
+    val records = !checked && lesson.phase != LessonPhase.Checking && recordsInBar(task.step, actions)
     RunFrame(
         title = stringResource(R.string.mistakes_practice_title),
         question = null,
@@ -167,13 +170,17 @@ internal fun MistakeLessonQuestion(
                             )
                         }
                     }
-                    Button(
-                        onClick = actions::runPrimary,
-                        modifier = width,
-                        enabled = checked || (primary?.enabled == true && lesson.phase != LessonPhase.Checking),
-                        busy = lesson.phase == LessonPhase.Checking,
-                    ) {
-                        Text(stringResource(primaryLabel))
+                    if (records) {
+                        SpokenRecordAction(task.step, actions, width)
+                    } else {
+                        Button(
+                            onClick = actions::runPrimary,
+                            modifier = width,
+                            enabled = checked || (primary?.enabled == true && lesson.phase != LessonPhase.Checking),
+                            busy = lesson.phase == LessonPhase.Checking,
+                        ) {
+                            Text(stringResource(primaryLabel))
+                        }
                     }
                     if (task.tutorAvailable) {
                         val given = lesson.answers[task.step.id] ?: lesson.results[task.step.id]?.answerText?.let(LessonAnswer::Spoken)
