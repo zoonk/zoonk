@@ -195,6 +195,13 @@ test.describe("Starting a course from its page", () => {
       ),
     ).toBeVisible();
 
+    await expect(page.getByRole("link", { name: "Subscribe" })).toHaveAttribute(
+      "href",
+      "/subscription",
+    );
+
+    await expect(page.getByRole("link", { name: "Go to your Plan" })).toBeHidden();
+    await expect(page.getByRole("button", { name: /Build my plan/u })).toBeHidden();
     await expect(prisma.goal.count({ where: { primaryCourseId: course.id } })).resolves.toBe(0);
   });
 });
