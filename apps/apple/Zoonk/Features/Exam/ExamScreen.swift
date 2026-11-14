@@ -975,16 +975,8 @@ private struct SpeakingMockSection: View {
 
         switch start.refusal {
         case .limit(let limit):
-          FailureLine(
-            message: limit.isMonthly
-              ? limit.said(
-                under: LocalizedStringResource(
-                  "Not enough call time for this mock", table: "Voice",
-                  comment: "The call time left can't fit the mock"),
-                kind: .callTime)
-              : String(
-                localized: "Not enough call time today for this mock", table: "Exam",
-                comment: "The call time left today can't fit the mock"))
+          LimitNotice(limit: limit) { now in limit.enoughWords(.mock, now: now) }
+            .announcesAlert(limit.enoughWords(.mock).said)
         case nil:
           EmptyView()
         case .some:

@@ -3597,65 +3597,6 @@
         }
       }
     },
-    "Not enough call time today for this mock" : {
-      "comment" : "The call time left today can't fit the mock",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Heute reicht deine Gesprächszeit nicht mehr für diese Probeprüfung"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No te queda suficiente tiempo de llamada hoy para este simulacro"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pas assez de temps d’appel aujourd’hui pour cet examen blanc"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non resta abbastanza tempo di conversazione oggi per questa simulazione"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "この模試を受けるには、今日の残りの会話時間が足りません"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이 모의고사를 보기에는 오늘 남은 대화 시간이 부족해요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pozostały na dziś czas na rozmowy nie wystarczy na ten egzamin próbny"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O tempo de conversa restante hoje não é suficiente para este simulado"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bugün kalan sohbet süren bu deneme sınavına yetmiyor"
-          }
-        }
-      }
-    },
     "Not yet" : {
       "comment" : "Doesn't know yet",
       "localizations" : {

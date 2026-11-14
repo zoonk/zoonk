@@ -6849,6 +6849,65 @@
         }
       }
     },
+    "You'll have enough later today, or subscribe to keep going." : {
+      "comment" : "Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Im Laufe des Tages hast du wieder genug Gesprächszeit. Oder schließ ein Abo ab, um gleich weiterzumachen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoy más tarde tendrás tiempo suficiente, o puedes suscribirte para seguir."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu auras assez de temps d’appel plus tard dans la journée. Tu peux aussi t’abonner pour continuer."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avrai abbastanza tempo più tardi in giornata, oppure abbonati per continuare."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今日中に、必要な会話時間を使えるようになります。登録すれば、今すぐ続けられます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오늘 안에 대화 시간이 충분해져요. 구독하면 바로 이어갈 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jeszcze dziś będziesz mieć dość czasu. Możesz też wykupić pakiet, by kontynuować."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você vai ter tempo suficiente ainda hoje, ou pode assinar para continuar."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bugün ilerleyen saatlerde yeterli süren olacak. İstersen abone olup devam edebilirsin."
+          }
+        }
+      }
+    },
     "You'll have enough later today, or subscribe to make it now." : {
       "comment" : "Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet.",
       "localizations" : {
@@ -6904,6 +6963,124 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bugün ilerleyen saatlerde yeterli ücretsiz ders hakkın olacak. İstersen abone olup haritayı hemen oluşturabilirsin."
+          }
+        }
+      }
+    },
+    "You'll have enough later today." : {
+      "comment" : "Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Im Laufe des Tages hast du wieder genug Gesprächszeit."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoy más tarde tendrás tiempo suficiente."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu auras assez de temps d’appel plus tard dans la journée."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avrai abbastanza tempo più tardi in giornata."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今日中に、必要な会話時間を使えるようになります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오늘 안에 대화 시간이 충분해져요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jeszcze dziś będziesz mieć dość czasu."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você vai ter tempo suficiente ainda hoje."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bugün ilerleyen saatlerde yeterli süren olacak."
+          }
+        }
+      }
+    },
+    "You'll have enough on %@, or subscribe to keep going." : {
+      "comment" : "Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Am %@ hast du wieder genug Gesprächszeit. Oder schließ ein Abo ab, um gleich weiterzumachen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tendrás tiempo suficiente el %@, o puedes suscribirte para seguir."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu auras assez de temps d’appel le %@. Tu peux aussi t’abonner pour continuer."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avrai abbastanza tempo il %@, oppure abbonati per continuare."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@には、必要な会話時間を使えるようになります。登録すれば、今すぐ続けられます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@에는 대화 시간이 충분해져요. 구독하면 바로 이어갈 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ będziesz mieć dość czasu. Możesz też wykupić pakiet, by kontynuować."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você vai ter tempo suficiente em %@, ou pode assinar para continuar."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ tarihinde yeterli süren olacak. İstersen abone olup devam edebilirsin."
           }
         }
       }
@@ -6967,6 +7144,124 @@
         }
       }
     },
+    "You'll have enough on %@." : {
+      "comment" : "Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Am %@ hast du wieder genug Gesprächszeit."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tendrás tiempo suficiente el %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu auras assez de temps d’appel le %@."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avrai abbastanza tempo il %@."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@には、必要な会話時間を使えるようになります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@에는 대화 시간이 충분해져요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ będziesz mieć dość czasu."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você vai ter tempo suficiente em %@."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ tarihinde yeterli süren olacak."
+          }
+        }
+      }
+    },
+    "You'll have enough tomorrow, or subscribe to keep going." : {
+      "comment" : "Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Morgen hast du wieder genug Gesprächszeit. Oder schließ ein Abo ab, um gleich weiterzumachen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mañana tendrás tiempo suficiente, o puedes suscribirte para seguir."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu auras assez de temps d’appel demain. Tu peux aussi t’abonner pour continuer."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avrai abbastanza tempo domani, oppure abbonati per continuare."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "明日には、必要な会話時間を使えるようになります。登録すれば、今すぐ続けられます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "내일이면 대화 시간이 충분해져요. 구독하면 바로 이어갈 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jutro będziesz mieć dość czasu. Możesz też wykupić pakiet, by kontynuować."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você vai ter tempo suficiente amanhã, ou pode assinar para continuar."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yarın yeterli süren olacak. İstersen abone olup devam edebilirsin."
+          }
+        }
+      }
+    },
     "You'll have enough tomorrow, or subscribe to make it now." : {
       "comment" : "Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet.",
       "localizations" : {
@@ -7022,6 +7317,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yarın yeterli ücretsiz ders hakkın olacak. İstersen abone olup haritayı hemen oluşturabilirsin."
+          }
+        }
+      }
+    },
+    "You'll have enough tomorrow." : {
+      "comment" : "Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Morgen hast du wieder genug Gesprächszeit."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mañana tendrás tiempo suficiente."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu auras assez de temps d’appel demain."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avrai abbastanza tempo domani."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "明日には、必要な会話時間を使えるようになります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "내일이면 대화 시간이 충분해져요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jutro będziesz mieć dość czasu."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você vai ter tempo suficiente amanhã."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yarın yeterli süren olacak."
           }
         }
       }

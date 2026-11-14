@@ -212,12 +212,6 @@ extension HelpLimit {
     }
   }
 
-  /// A title of the screen's own over the day's line, as one sentence: a call's start names the
-  /// task, since the day waits for the call time it asked for.
-  func said(under title: LocalizedStringResource, kind: Kind? = nil, now: Date = .now) -> String {
-    LimitWords(title: title, line: words(kind, now: now).line).said
-  }
-
   /// `words` as one sentence, where a gate is one line.
   func sentence(_ kind: Kind? = nil, now: Date = .now) -> LocalizedStringResource {
     words(kind, now: now).sentence ?? Self.usedUpTitle(kind)
@@ -358,6 +352,89 @@ extension HelpLimit {
           "More on \(date), or subscribe to keep going.", table: "Subscriptions",
           comment:
             "The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: the day more comes back. {date} is a day and its month, such as \"November 22\" in English."
+        )
+    }
+  }
+
+  /// A call start of a set length: a speaking exam task or a speaking mock exam.
+  enum CallNeed {
+    case task
+    case mock
+  }
+
+  /// Main's `useEnoughLine`: a start of a set length that needs more call time than is left, which
+  /// may not be none, so these never say the learner used it. The title is the same for a day's cap
+  /// and the month's; the line says when the whole start fits.
+  func enoughWords(_ need: CallNeed, now: Date = .now, calendar: Calendar = .current)
+    -> LimitWords
+  {
+    switch self {
+    case .usedUp(.guest, _), .limitReached(_, .guest), .limitReached(.total, _), .slowDown,
+      .signUpRequired:
+      words(.callTime, now: now, calendar: calendar)
+    case .usedUp(let tier, let availableAt):
+      LimitWords(
+        title: Self.needTitle(need),
+        line: availableAt.map {
+          Self.enoughOn(Self.openingDay($0, now: now, calendar: calendar), tier: tier)
+        })
+    case .limitReached(.day, let tier):
+      LimitWords(title: Self.needTitle(need), line: Self.enoughOn(.tomorrow, tier: tier))
+    }
+  }
+
+  private static func needTitle(_ need: CallNeed) -> LocalizedStringResource {
+    switch need {
+    case .task:
+      LocalizedStringResource(
+        "Not enough call time for this task", table: "Voice",
+        comment: "The call time left can't fit this speaking exam task")
+    case .mock:
+      LocalizedStringResource("Not enough call time for this mock exam", table: "Voice")
+    }
+  }
+
+  private static func enoughOn(_ day: OpeningDay, tier: LearnerTier) -> LocalizedStringResource {
+    let isPlus = tier == .plus
+
+    switch day {
+    case .open:
+      return moreOn(.open, tier: tier)
+    case .today:
+      return isPlus
+        ? LocalizedStringResource(
+          "You'll have enough later today.", table: "Subscriptions",
+          comment:
+            "Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it."
+        )
+        : LocalizedStringResource(
+          "You'll have enough later today, or subscribe to keep going.", table: "Subscriptions",
+          comment:
+            "Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it."
+        )
+    case .tomorrow:
+      return isPlus
+        ? LocalizedStringResource(
+          "You'll have enough tomorrow.", table: "Subscriptions",
+          comment:
+            "Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it."
+        )
+        : LocalizedStringResource(
+          "You'll have enough tomorrow, or subscribe to keep going.", table: "Subscriptions",
+          comment:
+            "Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it."
+        )
+    case .on(let date):
+      return isPlus
+        ? LocalizedStringResource(
+          "You'll have enough on \(date).", table: "Subscriptions",
+          comment:
+            "Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it."
+        )
+        : LocalizedStringResource(
+          "You'll have enough on \(date), or subscribe to keep going.", table: "Subscriptions",
+          comment:
+            "Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it."
         )
     }
   }
