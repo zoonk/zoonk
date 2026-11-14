@@ -6,10 +6,6 @@ export type UsagePeriod = "day" | "month" | "rolling30Days" | "total";
 
 export type CalendarPeriod = Exclude<UsagePeriod, "rolling30Days">;
 
-/**
- * Only a new lesson is counted over rolling 30 days, and its gate gives the day from `availableAt`.
- * Every other cap names a calendar window, and this lets its screen take core's one period type.
- */
 export function toCalendarPeriod(period: UsagePeriod): CalendarPeriod {
   return period === "rolling30Days" ? "month" : period;
 }
@@ -24,13 +20,12 @@ type AllowanceResource =
   | "generatedLessons";
 
 export type AllowanceLimit = {
+  availableAt?: Date | null;
   limit: number;
+  period: UsagePeriod;
   resource: AllowanceResource;
   tier: EntitlementTier;
-} & (
-  | { availableAt: Date; period: "rolling30Days" }
-  | { availableAt?: null; period: CalendarPeriod }
-);
+};
 
 /** slowDown retries after retryAfterSeconds; limitReached waits for a cap reset. signUpRequired moves guest work into an account. */
 export type UsageDecision =
