@@ -2511,9 +2511,11 @@ msgid "Not this time"
 msgstr "Bu kez olmadı"
 
 #: src/checkpoints/checkpoint-review.tsx
-msgctxt "CsqxCb"
-msgid "<label>Answer:</label> <answer></answer>"
-msgstr "<label>Cevap:</label> <answer></answer>"
+#: src/mistakes/mistake-entry.tsx
+#: src/questions/right-answer-line.tsx
+msgctxt "wS1KQ6"
+msgid "<label>Right answer:</label> <answer></answer>"
+msgstr "<label>Doğru cevap:</label> <answer></answer>"
 
 #: src/checkpoints/checkpoint-review.tsx
 #: src/mistakes/mistake-practice-run.tsx
@@ -7575,12 +7577,6 @@ msgstr "Sınav günündeki gibi, soru başına {seconds, number} saniye."
 msgctxt "rs59fn"
 msgid "Only answer when you're sure. Saying you're not sure is fine."
 msgstr "Sadece eminsen cevapla. Emin olmadığını söylemen de sorun değil."
-
-#: src/mistakes/mistake-entry.tsx
-#: src/questions/right-answer-line.tsx
-msgctxt "wS1KQ6"
-msgid "<label>Right answer:</label> <answer></answer>"
-msgstr "<label>Doğru cevap:</label> <answer></answer>"
 
 #: src/mistakes/mistake-entry.tsx
 msgctxt "Gr6IEG"
