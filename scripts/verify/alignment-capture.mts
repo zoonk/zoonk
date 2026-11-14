@@ -78,6 +78,8 @@ export type Capture = {
   scale: number;
   /** The topmost dialog or sheet showing, or "page". */
   activeSurface: string;
+  /** False when the run reached the screen but not its scenario's proof (its words never showed). */
+  reached?: boolean;
   /** A gallery of the pieces shown side by side, not a screen: one filled action isn't judged. */
   specimen?: boolean;
   elements: CaptureElement[];
@@ -113,6 +115,8 @@ export function configurationName({ locale, pointer, size, textScale }: Configur
 
 export type AlignmentFile = {
   captures: Capture[];
+  /** The scenario ids this run was asked to capture: each must be captured, once, and known. */
+  required?: string[];
   /** Leads the platform found itself (inferred groups, empty room, cut off, the state walk). */
   discovery?: AlignmentFinding[];
   findings?: AlignmentFinding[];

@@ -24,7 +24,11 @@ export function summarize(
   const faults = (keep: (item: AlignmentFinding) => boolean) =>
     new Set(findings.filter((item) => keep(item)).map((item) => faultKey(item))).size;
 
-  const unresolved = faults((item) => item.level === "fail" && !item.exception);
+  // A missing scenario counts in its own clause, not as an unresolved finding.
+  const unresolved = faults(
+    (item) => item.level === "fail" && !item.exception && item.rule !== "scenario",
+  );
+
   const notMeasured = faults((item) => item.level === "not-measured" && !item.pending);
 
   return {

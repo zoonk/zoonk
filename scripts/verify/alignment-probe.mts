@@ -11,10 +11,13 @@ export type AlignmentPage = Pick<Capture, "activeSurface" | "elements">;
  */
 export function readAlignment({
   actions: controls,
+  anchors = [],
   pieces,
   surfaces,
 }: {
   actions: string;
+  /** A scenario's anchors: the first showing match of each is written for its state pair. */
+  anchors?: { id: string; web: string }[];
   pieces: { name: string; web: WebPiece }[];
   surfaces: string;
 }): AlignmentPage {
@@ -585,7 +588,34 @@ export function readAlignment({
       };
     });
 
-  return { activeSurface: top ? surfaceName(top) : "page", elements: [...elements, ...actions] };
+  const anchored = anchors.flatMap(({ id, web }): CaptureElement[] => {
+    const element = [...document.querySelectorAll(web)].find((candidate) => present(candidate));
+
+    if (!element) {
+      return [];
+    }
+
+    const ink = inkOf(element);
+
+    return [
+      {
+        anchor: id,
+        bounds: bounds(boxOf(element)),
+        group: null,
+        id: `anchor.${id}`,
+        ink: ink ? bounds(ink) : null,
+        name: name(element),
+        part: "anchor",
+        piece: "",
+        row: null,
+      },
+    ];
+  });
+
+  return {
+    activeSurface: top ? surfaceName(top) : "page",
+    elements: [...elements, ...actions, ...anchored],
+  };
 }
 
 /** The UI's locale is the path's first segment where it names one (`/pt/plan`). */

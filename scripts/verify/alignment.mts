@@ -10,6 +10,7 @@ import {
   rowName,
 } from "./alignment-geometry.mts";
 import { lineLeads } from "./alignment-line.mts";
+import { pairLeads, reconcile } from "./alignment-scenarios.mts";
 import { type Summary, summarize } from "./alignment-summary.mts";
 import {
   type AlignmentException,
@@ -180,10 +181,14 @@ export function evaluateFile(file: AlignmentFile): {
   findings: AlignmentFinding[];
   summary: Summary;
 } {
+  const scenarios = reconcile(file);
+
   const findings = applyExceptions([
     ...file.captures.flatMap((capture) => evaluateCapture(capture)),
+    ...pairLeads(file.captures),
+    ...scenarios.findings,
     ...(file.discovery ?? []),
   ]);
 
-  return { findings, summary: summarize(findings) };
+  return { findings, summary: summarize(findings, scenarios.missing) };
 }
