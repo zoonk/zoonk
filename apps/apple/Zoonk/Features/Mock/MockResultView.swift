@@ -839,7 +839,7 @@ private struct MockEssaySections: View {
             .foregroundStyle(.mutedForeground)
         }
         Button {
-          Task { await run.gradeEssays() }
+          run.start { await run.gradeEssays() }
         } label: {
           Text("Grade it", tableName: "Mock", comment: "Grades a mock's essays")
         }
@@ -1049,7 +1049,7 @@ private struct MockPlanAnswerButtons: View {
     .disabled(answers.applying)
 
     BusyButton(isBusy: answers.applying) {
-      Task { await apply() }
+      run.start { await apply() }
     } label: {
       offer == .skip
         ? Text("Skip them", tableName: "Mock", comment: "Takes the known lessons off the plan")

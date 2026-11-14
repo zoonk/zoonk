@@ -283,7 +283,7 @@ struct PlanSuggestionSection: View {
 
   private func undoButton(_ answer: PlanSlotAnswer) -> some View {
     Button {
-      Task {
+      answer.editor.run {
         await answer.editor.undo()
         // A failed Undo gets the whole moment again, so there's time to try once more.
         extend(answer)
@@ -592,7 +592,7 @@ struct PlanSuggestionSection: View {
       dateKind: GoalDateKind(isExam: context.goal.kind == .exam))
     answer = PlanSlotAnswer(key: key, item: item, editor: editor)
 
-    Task {
+    editor.run {
       if await write(editor) {
         store.setSuggestionState(key, saved)
       }
