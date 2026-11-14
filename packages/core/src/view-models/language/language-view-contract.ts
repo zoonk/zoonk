@@ -115,7 +115,14 @@ export const practiceCallSchema = z
     defaultMinutes: z.int(),
     limit: z
       .object({
-        availableAt: z.iso.datetime().nullable().optional(),
+        availableAt: z.iso
+          .datetime()
+          .nullable()
+          .optional()
+          .meta({
+            description:
+              "For `rolling30Days`: when call time comes back; null when none does. Absent for other periods",
+          }),
         period: z.enum(USAGE_PERIODS),
         tier: z.enum(["free", "guest", "plus"]),
       })
