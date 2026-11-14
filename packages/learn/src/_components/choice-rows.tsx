@@ -57,6 +57,7 @@ export function ChoiceRows<Value extends string>({
         <RadioGroupOption
           className={cn(CHOICE_ROW_CLASS, "font-normal")}
           data-highlighted={choice.value === value || undefined}
+          data-slot="choice-row"
           key={choice.value}
         >
           <ListRowBody

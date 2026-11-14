@@ -52,6 +52,7 @@ function AdminNav({ counts, onNavigate }: { counts: AdminNavCounts; onNavigate?:
             <Link
               aria-current={isActive(pathname, url) ? "page" : undefined}
               className={SIDEBAR_ITEM_CLASS}
+              data-slot="sidebar-item"
               href={url}
               onNavigate={onNavigate}
               prefetch

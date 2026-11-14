@@ -170,6 +170,7 @@ export function ChoiceList<Value extends string>({
             key={choice.value}
             className={CHOICE_ROW_CLASS}
             data-highlighted={choice.value === value || undefined}
+            data-slot="choice-row"
             onClick={() => pickByPointer(choice)}
             onPointerDown={() => {
               pointerPick.current = choice.value;
@@ -240,7 +241,7 @@ export function CheckList<Value extends string>({
   });
 
   return (
-    <div aria-label={label} className={LIST_GROUP_CLASS} role="group">
+    <div aria-label={label} className={LIST_GROUP_CLASS} data-slot="choice-list" role="group">
       {choices.map((choice, index) => {
         const isPicked = value.includes(choice.value);
         const isDisabled = isOff(choice);
@@ -249,6 +250,7 @@ export function CheckList<Value extends string>({
           <label
             className={cn(CHOICE_ROW_CLASS, isDisabled && "cursor-not-allowed opacity-50")}
             data-highlighted={isPicked || undefined}
+            data-slot="choice-row"
             key={choice.value}
           >
             <ChoiceRowText description={choice.description} index={index} numberKeys={numberKeys}>

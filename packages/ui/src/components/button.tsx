@@ -189,6 +189,7 @@ function Button({
       aria-busy={busy || undefined}
       className={cn(buttonVariants({ className, edge, size, variant }), canBeBusy && "group/busy")}
       data-slot="button"
+      data-variant={variant}
       disabled={busy || disabled}
       focusableWhenDisabled={busy || focusableWhenDisabled}
       {...props}
