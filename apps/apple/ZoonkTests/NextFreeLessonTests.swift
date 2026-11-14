@@ -31,6 +31,19 @@ final class NextFreeLessonTests: XCTestCase {
     XCTAssertNil(day(nil))
   }
 
+  /// Seen on December 28, a day in January names its year.
+  func testADayInAnotherYearNamesIt() throws {
+    let lateDecember = try XCTUnwrap(
+      calendar.date(from: DateComponents(year: 2026, month: 12, day: 28, hour: 10)))
+    let january = try XCTUnwrap(
+      calendar.date(from: DateComponents(year: 2027, month: 1, day: 4, hour: 9)))
+
+    XCTAssertEqual(
+      HelpLimit.nextFreeLesson(january, now: lateDecember, calendar: calendar)
+        .map { String(localized: $0) },
+      "Your next free lesson opens on January 4, 2027, or subscribe to keep going.")
+  }
+
   func testAnOpenedLessonStopsPromisingADay() {
     let limit = HelpLimit.freeLessonsUsed(opensAt: Date(timeIntervalSince1970: 1_794_607_200))
 

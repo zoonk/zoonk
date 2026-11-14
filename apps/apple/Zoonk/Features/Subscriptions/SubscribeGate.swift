@@ -312,10 +312,11 @@ extension HelpLimit {
     case 1: return .tomorrow
     default:
       return .on(
-        opensAt.formatted(
-          Date.FormatStyle(
+        PlanDate.momentDay(
+          opensAt,
+          style: Date.FormatStyle(
             locale: calendar.locale ?? .current, calendar: calendar, timeZone: calendar.timeZone
-          ).month(.wide).day()))
+          ).month(.wide).day(), now: now, calendar: calendar))
     }
   }
 

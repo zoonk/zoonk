@@ -243,7 +243,8 @@ enum PlanChangeEffect {
       return PlanChangeConsequence(
         key: "nextMock",
         text: String(
-          localized: "Your next mock exam will be on \(PlanDate.weekdayDay(mock.after)).",
+          localized:
+            "Your next mock exam will be on \(PlanDate.weekdayDay(mock.after, today: today)).",
           table: "Plan",
           comment:
             "A plan change's consequence: the next mock exam moves; the argument is a weekday and day like \"Monday, May 5\""

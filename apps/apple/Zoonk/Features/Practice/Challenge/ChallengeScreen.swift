@@ -188,7 +188,7 @@ struct ChallengeScreen: View {
       if let moved, let date = challenge.date {
         HStack(alignment: .firstTextBaseline) {
           VStack(alignment: .leading, spacing: 4) {
-            Text(movedTo(date))
+            Text(movedTo(date, today: challenge.today))
             Text(movedDetail(moved.effect))
               .typeStyle(.note)
               .foregroundStyle(.mutedForeground)
@@ -208,9 +208,9 @@ struct ChallengeScreen: View {
     .practiceActionsHidden(!hasActions(challenge))
   }
 
-  private func movedTo(_ day: String) -> String {
+  private func movedTo(_ day: String, today: String) -> String {
     String(
-      localized: "Moved to \(Self.weekdayDay(day))", table: "Practice",
+      localized: "Moved to \(PlanDate.weekdayDay(day, today: today))", table: "Practice",
       comment:
         "A weekly challenge moved later, to the next Monday; the argument is that day, like 'Monday, May 5'."
     )
@@ -598,14 +598,6 @@ struct ChallengeScreen: View {
     try? Date.ISO8601FormatStyle(timeZone: .gmt).year().month().day().parse(day)
   }
 
-  private static func weekdayDay(_ day: String) -> String {
-    guard let date = parseDay(day) else { return day }
-
-    var style = Date.FormatStyle.dateTime.weekday(.wide).month(.abbreviated).day()
-    style.timeZone = .gmt
-    return date.formatted(style)
-  }
-
   private func dayLabel(_ day: String, today: String) -> String {
     var calendar = Calendar(identifier: .gregorian)
     calendar.timeZone = .gmt
@@ -623,7 +615,7 @@ struct ChallengeScreen: View {
         localized: "Tomorrow", table: "Practice", comment: "A challenge planned for tomorrow.")
     }
 
-    return Self.weekdayDay(day)
+    return PlanDate.weekdayDay(day, today: today)
   }
 
   private func run(_ work: @escaping @MainActor () async -> Void) {
@@ -740,7 +732,8 @@ struct ChallengeScreen: View {
       await read()
 
       if let moved = self.moved, case .loaded(let challenge) = load, let date = challenge.date {
-        announcePolitely([movedTo(date), movedDetail(moved.effect)].joinedSentences())
+        announcePolitely(
+          [movedTo(date, today: challenge.today), movedDetail(moved.effect)].joinedSentences())
       }
     case .refused(.invalid(let reason)):
       moveProblem =

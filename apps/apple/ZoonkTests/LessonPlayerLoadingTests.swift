@@ -863,6 +863,30 @@ final class LessonPlayerLoadingTests: XCTestCase {
     XCTAssertEqual(summary.day?.reached?.level?.level, 3)
   }
 
+  /// Answer help is capped by the day and by the calendar month; only lesson caps lost the month.
+  func testAnExplanationRefusedForTheMonthComesBackNextMonth() async throws {
+    let api = LessonPlayerAPI(
+      clients: APIClientFactory(
+        baseURL: URL(string: "https://api.zoonk.test")!,
+        transport: JSONTransport(
+          body: #"""
+            {"error": {"code": "USAGE_LIMIT_REACHED", "message": "Limit reached",
+             "details": {"limit": {"period": "month", "tier": "free", "resource": "aiSpend"}}}}
+            """#,
+          status: .init(code: 402))))
+
+    let outcome = try await api.explainAnswer(stepId: "step", answer: "answer", token: "token")
+
+    guard case .refused(let refusal) = outcome else {
+      return XCTFail("Expected a refusal, got \(outcome)")
+    }
+
+    XCTAssertEqual(refusal.limit, .limitReached(period: .month, tier: .free))
+    XCTAssertEqual(
+      refusal.limit?.helpWords(.explanations).line.map { String(localized: $0) },
+      "More next month, or subscribe to keep going.")
+  }
+
   func testASavedLessonKeepsAFractionalDailyBudget() async throws {
     let response =
       sessionLessonCompletion
@@ -1423,13 +1447,14 @@ private struct UnexpectedLessonTransport: ClientTransport {
 
 private struct JSONTransport: ClientTransport {
   let body: String
+  var status: HTTPResponse.Status = .ok
 
   func send(
     _ request: HTTPRequest, body _: HTTPBody?, baseURL: URL, operationID: String
   ) async throws -> (HTTPResponse, HTTPBody?) {
     var headerFields = HTTPFields()
     headerFields[.contentType] = "application/json"
-    return (HTTPResponse(status: .ok, headerFields: headerFields), HTTPBody(body))
+    return (HTTPResponse(status: status, headerFields: headerFields), HTTPBody(body))
   }
 }
 

@@ -195,7 +195,7 @@
         } label: {
           Text(verbatim: "I don't know yet").frame(maxWidth: .infinity)
         }
-        .buttonStyle(.secondary)
+        .buttonStyle(.outline)
         .controlSize(.large)
 
         ButtonRow {
@@ -258,7 +258,7 @@
         } label: {
           Text(verbatim: "I don't know yet")
         }
-        .buttonStyle(.secondary)
+        .buttonStyle(.outline)
         .controlSize(.large)
         .buttonSizing(.flexible)
 
