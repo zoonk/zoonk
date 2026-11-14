@@ -15485,71 +15485,6 @@
         }
       }
     },
-    "Ends %@ instead of %@." : {
-      "comment" : "How a change moves the plan's end; the arguments are dates like 'May 5'",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Endet am %1$@ statt am %2$@."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Ends %1$@ instead of %2$@."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Termina el %1$@ en lugar del %2$@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Se termine le %1$@ au lieu du %2$@."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Termina il %1$@ anziché il %2$@."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "終了日が%1$@になります（変更前は%2$@）。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@에 끝나요(기존 %2$@)."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kończy się %1$@ zamiast %2$@."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Termina em %1$@, em vez de %2$@."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plan %1$@ tarihinde bitiyor; önceki bitiş tarihi %2$@."
-          }
-        }
-      }
-    },
     "Estimated listening level: %@" : {
       "comment" : "What VoiceOver says for a skill's row; the argument is a CEFR level, such as B2",
       "localizations" : {
@@ -19857,61 +19792,61 @@
         }
       }
     },
-    "Longer calls come with a subscription." : {
-      "comment" : "Says longer practice calls need a subscription",
+    "Longer calls need a subscription" : {
+      "comment" : "A free learner picked a practice call length their plan doesn't include",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Für längere Gespräche brauchst du ein Abo."
+            "value" : "Für längere Gespräche brauchst du ein Abo"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las llamadas más largas requieren una suscripción."
+            "value" : "Necesitas una suscripción para llamadas más largas"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il faut un abonnement pour des appels plus longs."
+            "value" : "Les appels plus longs nécessitent un abonnement"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Per conversazioni più lunghe serve un abbonamento."
+            "value" : "Per conversazioni più lunghe serve un abbonamento"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "もっと長く会話練習をするには、サブスクリプションへの登録が必要です。"
+            "value" : "より長い会話練習にはサブスクリプションが必要です"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "구독하면 더 오래 대화할 수 있어요."
+            "value" : "더 오래 대화하려면 구독이 필요해요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Subskrypcja daje dostęp do dłuższych rozmów."
+            "value" : "Dłuższe rozmowy wymagają subskrypcji"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conversas mais longas fazem parte da assinatura."
+            "value" : "Conversas mais longas exigem uma assinatura"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Daha uzun sohbetler için abonelik gerekir."
+            "value" : "Daha uzun sohbetler için abonelik gerekiyor"
           }
         }
       }
@@ -22191,65 +22126,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yeni kelimeler"
-          }
-        }
-      }
-    },
-    "Next" : {
-      "comment" : "Goes on to the next of the Plan's suggestions",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Weiter"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Siguiente"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Suivant"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Avanti"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "次へ"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "다음"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dalej"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Próxima"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sonrakine geç"
           }
         }
       }
@@ -36255,65 +36131,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kullanacakların"
-          }
-        }
-      }
-    },
-    "Your %@ deadline comes off your plan. You can set one again anytime." : {
-      "comment" : "Says the goal's deadline was dropped; the argument is the month the learner named, like 'May 2027'",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dein Termin für %@ wurde aus dem Plan entfernt. Du kannst jederzeit wieder einen festlegen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La fecha límite de %@ se elimina de tu plan. Puedes volver a fijar una cuando quieras."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "L’échéance prévue pour %@ a été retirée de ton plan. Tu peux en fixer une à tout moment."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La scadenza di %@ è stata rimossa dal tuo piano. Puoi impostarne un’altra quando vuoi."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "学習計画の期日（%@）を外します。いつでも設定し直せます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "계획에서 %@ 마감일이 없어져요. 언제든 다시 설정할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Z planu usunięto termin: %@. Możesz ustawić go ponownie w każdej chwili."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O prazo de %@ foi removido do seu plano. Você pode definir outro quando quiser."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Planındaki %@ hedef tarihi kaldırıldı. İstediğin zaman yeniden belirleyebilirsin."
           }
         }
       }

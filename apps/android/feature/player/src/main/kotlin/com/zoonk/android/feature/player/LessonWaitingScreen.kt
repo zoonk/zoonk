@@ -48,6 +48,7 @@ import com.zoonk.android.feature.warmup.rememberWaitQuiz
 import com.zoonk.android.feature.warmup.watchTouches
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitNotice
@@ -55,6 +56,7 @@ import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.freeLessonReady
 import com.zoonk.api.models.ReadyAlternative
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.seconds
@@ -305,7 +307,15 @@ fun LessonNotWrittenNotice(
                 onCreateAccount = { onOpen(AppRoute.Login) },
                 onSubscribe = { onOpen(AppRoute.Subscription) },
             )
-            if (limit is Limit.SlowDown) OutlinedButton(onClick = onRetry) { Text(stringResource(R.string.player_try_again)) }
+            when {
+                limit is Limit.SlowDown -> {
+                    OutlinedButton(onClick = onRetry, size = ButtonSize.Small) { Text(stringResource(R.string.player_try_again)) }
+                }
+
+                freeLessonReady(limit) -> {
+                    OutlinedButton(onClick = onRetry, size = ButtonSize.Small) { Text(stringResource(R.string.player_start_the_lesson)) }
+                }
+            }
         }
 
         else -> {

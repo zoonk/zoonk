@@ -495,15 +495,13 @@ struct LessonPlayerAPI: Sendable {
   }
 
   /// Reads a refused allowance or AI claim: `USAGE_LIMIT_REACHED` with `details.limit`,
-  /// `SLOW_DOWN` with `details.retryAfterSeconds`, `PLUS_REQUIRED`, or a guest's `SIGN_UP_REQUIRED`.
+  /// `SLOW_DOWN` with `details.retryAfterSeconds`, or a guest's `SIGN_UP_REQUIRED`.
   private static func refusal(_ error: Components.Schemas._Error?, status: Int) -> LessonRunRefusal
   {
     let code = error?.error.code
     let details = error?.error.details?.value as? [String: (any Sendable)?]
 
     switch code {
-    case "PLUS_REQUIRED":
-      return .plusRequired
     case "SLOW_DOWN":
       let seconds = (details?["retryAfterSeconds"] ?? nil) as? Int ?? 30
       return .slowDown(retryAfterSeconds: seconds)
@@ -523,6 +521,10 @@ struct LessonPlayerAPI: Sendable {
         switch periodName {
         case "month": .month
         case "total": .total
+        case "rolling30Days":
+          .last30Days(
+            opensAt: ((limit?["availableAt"] ?? details?["availableAt"] ?? nil) as? String).flatMap(
+              Date.init(serverInstant:)))
         default: .day
         }
       return .limitReached(tier: tier, period: period)

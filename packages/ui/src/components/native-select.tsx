@@ -1,3 +1,6 @@
+"use client";
+
+import { useKeptTyping } from "@zoonk/ui/hooks/kept-typing";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronDownIcon } from "lucide-react";
 import type * as React from "react";
@@ -24,6 +27,7 @@ function NativeSelect({
   size?: "sm" | "default";
 }) {
   const keepsFocus = Boolean(disabled) && focusableWhenDisabled;
+  const kept = useKeptTyping(props);
 
   return (
     <div
@@ -47,6 +51,7 @@ function NativeSelect({
           }
         }}
         {...props}
+        {...kept}
       />
       <ChevronDownIcon
         aria-hidden="true"

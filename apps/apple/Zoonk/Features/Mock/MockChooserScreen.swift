@@ -151,7 +151,7 @@ private struct MockChooser: View {
 
     if case .refused(let limit)? = shownStatus {
       Section {
-        HelpLimitNotice(limit: limit)
+        LimitNotice(limit: limit)
       }
     }
 
@@ -351,7 +351,7 @@ private struct MockChooser: View {
         more,
       ]
     case .refused(let limit):
-      return [limit.message]
+      return [limit.helpWords().said]
     case .choosing, .writing, .plusRequired, .notEnoughQuestions, .failed:
       return []
     }

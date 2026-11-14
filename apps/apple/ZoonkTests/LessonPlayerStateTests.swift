@@ -1385,11 +1385,13 @@ final class LessonPlayerHelpTests: XCTestCase {
     XCTAssertEqual(state.struggleOffer?.id, "explanation-2", "the last explanation before it")
   }
 
-  func testCantWriteNowLeavesTheWritingOutUntilWriteAgain() throws {
+  func testSkippingWritingTodayLeavesTheWritingOutUntilTurnedBackOn() throws {
     var state = LessonPlayerState(
       lessonId: "lesson", steps: [try step(typedAnswer), try step(check(id: "check"))])
+    XCTAssertTrue(state.canSkipWriting, "the menu offers it on an open written answer")
 
     state.skipWriting()
+    XCTAssertFalse(state.canSkipWriting, "not on the check that follows")
     XCTAssertEqual(state.currentStep?.id, "check")
     XCTAssertEqual(state.notice, .writingSkipped)
     XCTAssertEqual(state.skippedWritingStepIds, ["typed"])
@@ -1400,7 +1402,7 @@ final class LessonPlayerHelpTests: XCTestCase {
     XCTAssertNil(state.notice)
   }
 
-  func testCantWriteNowAsALessonOfOnlyWritingOpensWaitsForFinish() throws {
+  func testSkippingWritingInALessonOfOnlyWritingWaitsForFinish() throws {
     var state = LessonPlayerState(lessonId: "lesson", steps: [try step(typedAnswer)])
 
     state.skipWriting(opening: true)
@@ -1412,10 +1414,10 @@ final class LessonPlayerHelpTests: XCTestCase {
   func testTheOpeningGuessOffersTheRevealUntilSomethingIsPicked() throws {
     var state = LessonPlayerState(
       lessonId: "lesson", steps: [try step(guessHook), try step(check(id: "check"))])
-    XCTAssertTrue(state.revealsWithoutGuess, "\"I don't know yet\" with nothing picked")
+    XCTAssertTrue(state.revealsWithoutGuess, "\"See the answer\" reveals with nothing picked")
 
     state.select(.hookGuess(optionId: "wrong"), for: "guess")
-    XCTAssertFalse(state.revealsWithoutGuess, "\"See the answer\" once something is picked")
+    XCTAssertFalse(state.revealsWithoutGuess, "\"See the answer\" checks the pick")
   }
 
   func testARevealThatCountsNothingIsNeverAWrongAnswerInTheAbandonedStreak() throws {

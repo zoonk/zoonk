@@ -544,7 +544,7 @@ private struct ListeningMessage: View {
 
     return VStack(alignment: .leading, spacing: 8) {
       if let limit {
-        HelpLimitNotice(limit: limit)
+        LimitNotice(limit: limit)
       } else {
         Text(audioDidntPlay)
           .typeStyle(.note)
@@ -578,7 +578,7 @@ private struct ListeningMessage: View {
       return nil
     }
 
-    return limit?.message ?? audioDidntPlay
+    return limit?.helpWords().said ?? audioDidntPlay
   }
 
   private func play() {
@@ -599,6 +599,8 @@ private struct LevelTestSpeaking: View {
   let progress: Double
   let onTest: (LevelTest) -> Void
   let onSkip: () -> Void
+  /// Record and Stop are the step's main action, in its bottom bar beside "Skip this part".
+  @State private var recordInBar = RecordInBar()
 
   var body: some View {
     PracticeTaskLayout {
@@ -631,7 +633,12 @@ private struct LevelTestSpeaking: View {
       Button(action: onSkip) {
         Text("Skip this part", tableName: "Onboarding", comment: "Skips the level test's sentence")
       }
+      .buttonStyle(.outline)
+      .disabled(recordInBar.isChecking)
+
+      recordInBar.button
     }
+    .environment(recordInBar)
   }
 }
 

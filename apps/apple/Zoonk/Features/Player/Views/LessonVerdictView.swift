@@ -34,7 +34,7 @@ struct LessonVerdictView: View {
       if case .typedAnswer(let content) = step.content, !result.isCorrect {
         if !result.checked {
           Text(
-            "Each question is checked a few times a day. Compare your answer with this one:",
+            "This question was already checked a few times today, so this answer doesn't count. Compare it with this one:",
             tableName: "Player",
             comment: "A typed answer that wasn't graded, before the sample answer"
           )
@@ -263,7 +263,9 @@ private struct LessonExplainAnswerView: View {
             .typeStyle(.note)
             .foregroundStyle(.mutedForeground)
         case .refused(let refusal):
-          LessonHelpLimitNote(refusal: refusal)
+          if let limit = refusal.limit {
+            LimitNotice(limit: limit, kind: .explanations)
+          }
         default:
           EmptyView()
         }
@@ -275,7 +277,7 @@ private struct LessonExplainAnswerView: View {
   private var statusLine: String? {
     switch store.explanations[step.id] {
     case .failed: Self.failedLine
-    case .refused(let refusal): LessonHelpLimitNote.message(refusal)
+    case .refused(let refusal): refusal.limit?.helpWords(.explanations).said
     default: nil
     }
   }

@@ -120,7 +120,7 @@ private struct LessonPlayerContent: View {
           }
         }
         .taskOptions(
-          isShown: store.screen == .playing && store.state != nil,
+          isShown: store.screen == .playing && store.state != nil && !isRefused,
           label: Text("Screen options", tableName: "Player", comment: "The lesson's menu")
         ) {
           if let state = store.state {
@@ -221,14 +221,14 @@ private struct LessonPlayerContent: View {
     if let warmUp = store.warmUp, case .waiting(_, let writing) = store.screen {
       WaitHold(
         surface: .lessonWait, isReady: writing == .written,
-        announcement: LessonWaitingView.lessonReady
+        announcement: LessonWaitWords(store.writingKind).ready
       ) { stage in
         switch stage {
         case .waiting(let holding):
           LessonWaitingView(
-            outline: warmUp.outline, writing: writing, progress: store.writingProgress,
-            alternative: store.alternative, warmUpID: warmUp.deckID, goalID: store.goalID,
-            holding: holding
+            outline: warmUp.outline, kind: LessonWaitWords(store.writingKind), writing: writing,
+            progress: store.writingProgress, alternative: store.alternative,
+            warmUpID: warmUp.deckID, goalID: store.goalID, holding: holding
           ) {
             Task { await store.writeLesson() }
           }
@@ -268,8 +268,8 @@ private struct LessonPlayerContent: View {
       .lonePage()
     case .waiting(let outline, let writing):
       LessonWaitingView(
-        outline: outline, writing: writing, progress: store.writingProgress,
-        alternative: store.alternative, goalID: store.goalID
+        outline: outline, kind: LessonWaitWords(store.writingKind), writing: writing,
+        progress: store.writingProgress, alternative: store.alternative, goalID: store.goalID
       ) {
         Task { await store.writeLesson() }
       }
@@ -377,6 +377,20 @@ private struct LessonPlayerContent: View {
       }
     }
 
+    if state.canSkipWriting {
+      Button {
+        store.skipWriting()
+      } label: {
+        Label {
+          Text(
+            "Skip writing questions today", tableName: "Player",
+            comment: "In the lesson's menu: leaves written answers out for the rest of today")
+        } icon: {
+          Image(systemName: "pencil.slash")
+        }
+      }
+    }
+
     if state.canKnowThis {
       Button {
         store.knowThis()
@@ -419,15 +433,16 @@ private struct LessonPlayerContent: View {
   }
 
   private var segments: [TaskSegment]? {
-    guard let state = store.state, store.screen == .playing, state.phase != .completed else {
-      return nil
-    }
-
-    if case .refused = state.run {
+    guard let state = store.state, store.screen == .playing, state.phase != .completed, !isRefused
+    else {
       return nil
     }
 
     return state.segments
+  }
+
+  private var isRefused: Bool {
+    if case .refused = store.state?.run { true } else { false }
   }
 
   /// Words on the screen stay protected until their check saves; every other answer is already kept.

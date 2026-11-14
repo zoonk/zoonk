@@ -1,11 +1,24 @@
 package com.zoonk.android.ui.components
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
+import kotlinx.coroutines.delay
+import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 
-/** The day the next free lesson opens, in the learner's own calendar (main's `toOpeningDay`). */
+/** When the next free lesson opens, in the learner's own calendar (main's `toOpeningDay`). */
 sealed interface OpeningDay {
+    /** The instant has passed: the lesson can be asked for again. */
+    data object Open : OpeningDay
+
     data object Today : OpeningDay
 
     data object Tomorrow : OpeningDay
@@ -15,12 +28,12 @@ sealed interface OpeningDay {
     ) : OpeningDay
 }
 
-/** An instant already past opens "today": the lesson is there to start. */
 fun openingDay(
     at: Instant,
     now: Instant = Instant.now(),
     zone: ZoneId = ZoneId.systemDefault(),
 ): OpeningDay {
+    if (!at.isAfter(now)) return OpeningDay.Open
     val day = at.atZone(zone).toLocalDate()
     val today = now.atZone(zone).toLocalDate()
     return when {
@@ -28,4 +41,22 @@ fun openingDay(
         day == today.plusDays(1) -> OpeningDay.Tomorrow
         else -> OpeningDay.On(day)
     }
+}
+
+/**
+ * Main's `useOpeningDay`: the day follows the clock while the screen is open, so a passed instant stops
+ * being promised. It looks again at the instant and whenever the app comes back to the front (a phone
+ * that slept).
+ */
+@Composable
+fun rememberOpeningDay(at: Instant?): OpeningDay? {
+    var looks by remember(at) { mutableIntStateOf(0) }
+    LifecycleEventEffect(Lifecycle.Event.ON_START) { looks++ }
+    LaunchedEffect(at) {
+        while (at != null && at.isAfter(Instant.now())) {
+            delay(Duration.between(Instant.now(), at).toMillis().coerceAtLeast(1))
+            looks++
+        }
+    }
+    return remember(at, looks) { at?.let { openingDay(it) } }
 }
