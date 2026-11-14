@@ -32,7 +32,7 @@ export const studyBlockSchema = z
       .boolean()
       .meta({
         description:
-          "Offer this lesson's chapter test unless it was failed today without a lesson studied in that chapter since; available again on the next learner-local day. False for blocks without a lesson chapter",
+          "True while this lesson's chapter test is available: it wasn't failed today without a lesson studied in that chapter since. A failed one is available again on the next learner-local day. False for blocks without a lesson chapter",
       }),
     capsules: z.array(
       z.object({
@@ -70,7 +70,7 @@ export const studyBlockSchema = z
       .boolean()
       .meta({
         description:
-          "A practice block that only fixes the learner's mistakes (their drills, no practice questions): name it for that, not as mixed practice",
+          "A practice block that only fixes the learner's mistakes (their drills, no practice questions), unlike mixed practice",
       }),
     netScored: z
       .boolean()
@@ -109,7 +109,7 @@ export const studyBlockSchema = z
       .nullable()
       .meta({
         description:
-          "The goal's subject the block studies, by its short name (as `GET /v1/goals/{goalId}/syllabus` names it): label the block with it. Null for blocks that mix subjects, and for goals with fewer than two subjects",
+          "The goal's subject the block studies, by its short name (as `GET /v1/goals/{goalId}/syllabus` names it). Null for blocks that mix subjects, and for goals with fewer than two subjects",
       }),
     title: z.string().nullable(),
     topics: z
@@ -129,7 +129,7 @@ export const studyBlockSchema = z
       .boolean()
       .meta({
         description:
-          "A review of the learner's weakest studied topics, none of them due: a day with nothing due and nothing else to study gets it instead of staying empty. Say so rather than calling it due",
+          "A review of the learner's weakest studied topics, none of them due: a day with nothing due and nothing else to study gets it instead of staying empty",
       }),
   })
   .meta({ id: "StudyBlock" });

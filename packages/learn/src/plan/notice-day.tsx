@@ -6,7 +6,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { safeAsync } from "@zoonk/utils/error";
 import { CalendarCheckIcon, CalendarDaysIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { Fragment, useState, useTransition } from "react";
+import { Fragment, useTransition } from "react";
 import {
   NoticeCard,
   NoticeCardActions,
@@ -15,7 +15,7 @@ import {
   NoticeCardLeading,
   NoticeCardTitle,
 } from "../_components/notice-card";
-import { ChangeSaveError } from "../_components/save-error";
+import { useChangeSaveFailed } from "../_components/save-error";
 import { useFormatIsoDate } from "../_utils/iso-date";
 
 export function useNoticeDayText() {
@@ -114,14 +114,16 @@ function NoticeDayCard({
   onUse: () => Promise<boolean>;
 }) {
   const text = useNoticeDayText();
-  const [failed, setFailed] = useState(false);
+  const saveFailed = useChangeSaveFailed();
   const [isPending, startTransition] = useTransition();
 
   const use = () =>
     startTransition(async () => {
-      setFailed(false);
       const { data: saved } = await safeAsync(onUse);
-      setFailed(!saved);
+
+      if (!saved) {
+        saveFailed();
+      }
     });
 
   return (
@@ -133,8 +135,6 @@ function NoticeDayCard({
         <NoticeCardActions>
           <UseDateButton busy={isPending} onUse={use} variant="secondary" />
         </NoticeCardActions>
-
-        {failed && <ChangeSaveError className="mt-2" />}
       </NoticeCardContent>
     </NoticeCard>
   );
@@ -150,14 +150,16 @@ function NoSittingCard({
 }) {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
-  const [failed, setFailed] = useState(false);
+  const saveFailed = useChangeSaveFailed();
   const [isPending, startTransition] = useTransition();
 
   const use = (date: string) =>
     startTransition(async () => {
-      setFailed(false);
       const { data: saved } = await safeAsync(() => onUse(date));
-      setFailed(!saved);
+
+      if (!saved) {
+        saveFailed();
+      }
     });
 
   return (
@@ -192,8 +194,6 @@ function NoSittingCard({
             ))}
           </NoticeCardActions>
         </form>
-
-        {failed && <ChangeSaveError className="mt-2" />}
       </NoticeCardContent>
     </NoticeCard>
   );

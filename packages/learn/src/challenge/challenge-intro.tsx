@@ -11,8 +11,6 @@ import { TaskMeta } from "../_components/task-meta";
 import { useFormatShare } from "../_utils/percent";
 import { useFormatDuration } from "../_utils/time-format";
 import { TricksterArt } from "../checkpoints/trickster-art";
-import { useMockDaySizeLabel } from "../mock/mock-labels";
-import { MockLeftOutNote } from "../mock/mock-notes";
 import { type TaskFrameAside } from "../shell/task-frame";
 import { CallIntro, WonCallIntro } from "./challenge-call-intro";
 import { useChallengeScreen } from "./challenge-context";
@@ -130,8 +128,9 @@ function MockSections() {
   const t = useExtracted();
   const duration = useFormatDuration();
   const { challenge } = useChallengeScreen();
+  const written = challenge.written.filter((part) => part.asked);
 
-  if (challenge.sections.length + challenge.written.length <= 1) {
+  if (challenge.sections.length + written.length <= 1) {
     return null;
   }
 
@@ -156,7 +155,7 @@ function MockSections() {
           </span>
         </li>
       ))}
-      {challenge.written.map((part) => (
+      {written.map((part) => (
         <li
           className="border-border flex flex-col gap-1 border-b py-2.75 text-sm last:border-b-0"
           key={part.name}
@@ -170,13 +169,6 @@ function MockSections() {
             )}
           </span>
           <span className="text-muted-foreground text-xs">{describeTasks(part.tasks)}</span>
-          <span className="text-muted-foreground text-xs">
-            {part.asked
-              ? t("Written in the mock, graded by the exam's criteria after you hand it in.")
-              : t(
-                  "Written: you practice it in your essay sessions, graded by the exam's criteria.",
-                )}
-          </span>
         </li>
       ))}
     </ol>
@@ -207,24 +199,24 @@ function PenaltyRule() {
 
 function MockIntro() {
   const t = useExtracted();
-  const daySize = useMockDaySizeLabel();
   const duration = useFormatDuration();
   const { challenge } = useChallengeScreen();
   const when = useChallengeWhen(challenge);
   const questions = useQuestionsFact();
   const [section] = challenge.sections;
-  const objectiveOnly = challenge.leftOut.some((part) => part.part === "writtenInFull");
 
-  // Half a day isn't named by its day ("… e redação"), which would say its written part is asked.
-  const area =
-    challenge.sections.length === 1 && challenge.written.length === 0 && !objectiveOnly
+  // Named only when the mock exam is one subject: a day's name would list parts it may not ask.
+  const subject =
+    challenge.sections.length === 1 &&
+    challenge.written.length === 0 &&
+    !challenge.leftOut.some((part) => part.part === "writtenInFull")
       ? section?.name
       : null;
 
   return (
     <StepCard>
       <IntroHeading
-        detail={[challenge.examName, area].filter(Boolean).join(" · ")}
+        detail={subject}
         title={t("Mock exam {number}", { number: String(challenge.number ?? 1) })}
       />
 
@@ -233,18 +225,11 @@ function MockIntro() {
           when,
           challenge.questions !== null && challenge.questions > 0 && questions(challenge.questions),
           challenge.minutes !== null && duration(challenge.minutes),
-          !challenge.fullLength && daySize({ fullLength: false }),
-          objectiveOnly && t("Objective part only"),
         ]}
       />
 
       <TaskAsideContent className="flex w-full flex-col items-start gap-5">
         <MockSections />
-        <MockLeftOutNote
-          leftOut={challenge.leftOut.filter(
-            (part) => part.part !== "written" && part.part !== "writtenInFull",
-          )}
-        />
 
         <Callout>
           {challenge.netScored ? (
@@ -252,13 +237,7 @@ function MockIntro() {
           ) : (
             <EyeOffIcon aria-hidden="true" />
           )}
-          <p>
-            {challenge.netScored ? (
-              <PenaltyRule />
-            ) : (
-              t("Your result only shows at the end, like on exam day.")
-            )}
-          </p>
+          <p>{challenge.netScored ? <PenaltyRule /> : t("You see your result at the end.")}</p>
         </Callout>
       </TaskAsideContent>
     </StepCard>

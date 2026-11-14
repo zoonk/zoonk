@@ -75,8 +75,8 @@ export function PatternTableActivity(props: PatternTableProps) {
   return (
     <ActivityCanvas className="gap-4" labelId={labelId}>
       <div className="bg-background rounded-xl">
-        <div className="scroll-fade-x overflow-x-auto px-2 py-3">
-          <table className="w-full border-collapse text-base">
+        <div className="scroll-fade-x overflow-x-auto py-3">
+          <table className="w-full border-collapse text-base [&_tr>*:first-child]:ps-3 [&_tr>*:last-child]:pe-3">
             <PatternTableHead fields={fields} />
 
             <tbody className="divide-border divide-y">

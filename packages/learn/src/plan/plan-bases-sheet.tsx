@@ -3,20 +3,13 @@
 import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
 import { type PlanBaseView, type PlanBasesView } from "@zoonk/core/plans/view-contract";
 import { Button } from "@zoonk/ui/components/button";
-import {
-  Drawer,
-  DrawerContent,
-  DrawerDescription,
-  DrawerPopup,
-  DrawerTitle,
-} from "@zoonk/ui/components/drawer";
+import { Drawer, DrawerContent, DrawerPopup, DrawerTitle } from "@zoonk/ui/components/drawer";
 import { LayersIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
-import { ChangeSaveError } from "../_components/save-error";
+import { QUIET_ACTION_CLASS } from "../_components/quiet-disclosure";
 import { SheetHeader } from "../_components/sheet-header";
-import { useSentenceSpace } from "../_utils/locale";
-import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
+import { PlanEffectDiff, PlanEffectNote } from "../plan-diff/plan-effect-diff";
 import { BasesAdvice, useBasesAdvice } from "./plan-bases-advice";
 import {
   AllBasesChoice,
@@ -26,11 +19,10 @@ import {
   getSharedChoice,
   listOpen,
 } from "./plan-bases-choices";
-import { useBasesFootnote } from "./plan-bases-effect";
 import { PlanChangeApplied } from "./plan-change-applied";
 import { type PlanChangeOutcome, usePlanScreen } from "./plan-context";
 import { type PlanPreviewState, currentPlanPreview } from "./plan-preview-state";
-import { useKnownText, usePrerequisitesDescription } from "./use-bases-texts";
+import { usePlanDateKind } from "./use-change-sentence";
 import { usePlanChange } from "./use-plan-change";
 import { usePlanPreview, usePreviewBase } from "./use-plan-preview";
 
@@ -82,24 +74,20 @@ function usePreview(changed: { choice: BaseChoice; skillId: string }[]) {
 
 function BasesFooter({
   changed,
-  failed,
   isPending,
   onSave,
   onRetry,
   preview,
 }: {
   changed: { choice: BaseChoice; skillId: string }[];
-  failed: boolean;
   isPending: boolean;
   onSave: () => void;
   onRetry: () => void;
   preview: PlanPreviewState;
 }) {
   const t = useExtracted();
-  const footnote = useBasesFootnote();
-  const space = useSentenceSpace();
+  const dateKind = usePlanDateKind();
   const saveButton = useRef<HTMLButtonElement>(null);
-  const loading = preview.status === "idle" || preview.status === "loading";
 
   // Try again gives way to the check: the keyboard waits on Save, which opens once it's done.
   const retry = () => {
@@ -109,52 +97,53 @@ function BasesFooter({
 
   const changes = preview.status === "ready" && !preview.preview.unchanged ? preview.preview : null;
 
-  const notes = changes ? footnote({ ...changes, ready: true }) : [];
+  // The note's room is there before a pick, so picking, checking and the answer move nothing.
+  const note = () => {
+    if (changed.length === 0 || (preview.status === "ready" && preview.preview.unchanged)) {
+      return <PlanEffectNote>{t("Your plan stays as it is.")}</PlanEffectNote>;
+    }
+
+    if (preview.status === "failed") {
+      return (
+        <PlanEffectNote
+          action={
+            <button className={QUIET_ACTION_CLASS} onClick={retry} type="button">
+              {t("Try again")}
+            </button>
+          }
+        >
+          {t("We couldn't check what changes.")}
+        </PlanEffectNote>
+      );
+    }
+
+    return changes ? (
+      <PlanEffectDiff dateKind={dateKind} effect={changes.effect} />
+    ) : (
+      <PlanEffectNote busy>{t("Checking what changes…")}</PlanEffectNote>
+    );
+  };
 
   return (
     <div className="flex flex-col gap-3 border-t px-6 pt-4 pb-6">
-      {changed.length > 0 && (
-        <div
-          aria-busy={loading}
-          aria-live="polite"
-          className="text-muted-foreground flex flex-col gap-2 text-sm text-pretty aria-busy:opacity-60"
-        >
-          {loading && <p>{t("Checking what changes…")}</p>}
-          {preview.status === "failed" && (
-            <>
-              <p>{t("We couldn't check what changes.")}</p>
-              <Button className="self-start" onClick={retry} size="sm" variant="outline">
-                {t("Try again")}
-              </Button>
-            </>
-          )}
-          {preview.status === "ready" && preview.preview.unchanged && (
-            <p>{t("Your plan stays as it is.")}</p>
-          )}
-          {changes && <PlanEffectDiff effect={changes.effect} />}
-          {notes.length > 0 && <p className="text-xs leading-snug">{notes.join(space)}</p>}
-        </div>
-      )}
+      <div aria-live="polite">{note()}</div>
 
       <Button
-        disabled={isPending || changed.length === 0 || preview.status !== "ready"}
+        busy={isPending}
+        disabled={changed.length === 0 || preview.status !== "ready"}
         focusableWhenDisabled
         onClick={onSave}
         ref={saveButton}
       >
-        {t("Save choices")}
+        {t("Save")}
       </Button>
-
-      {failed && <ChangeSaveError />}
     </div>
   );
 }
 
 function BasesChoices({ bases, onDone }: { bases: PlanBasesView; onDone: () => void }) {
-  const t = useExtracted();
-  const knownText = useKnownText();
   const advice = useBasesAdvice();
-  const { change, failed, isPending } = usePlanChange();
+  const { change, isPending } = usePlanChange();
   const [draft, setDraft] = useState<Choices>(() => toChoices(bases.items));
   const [outcome, setOutcome] = useState<PlanChangeOutcome | null>(null);
   const choiceOf = (item: PlanBaseView) => draft.get(item.skillId) ?? item.choice;
@@ -172,7 +161,6 @@ function BasesChoices({ bases, onDone }: { bases: PlanBasesView; onDone: () => v
 
   const areas = [...Map.groupBy(bases.items, (item) => item.area)];
   const shared = getSharedChoice(listOpen(bases.items), choiceOf);
-  const someStudied = bases.items.some((item) => item.studied);
 
   const save = () => {
     if (isPending || preview.status !== "ready" || changed.length === 0) {
@@ -216,18 +204,6 @@ function BasesChoices({ bases, onDone }: { bases: PlanBasesView; onDone: () => v
             value={shared}
           />
 
-          {shared === null && (
-            <p className="text-muted-foreground text-sm text-pretty">
-              {t("Your prerequisites have different choices. Picking one above applies it to all.")}
-            </p>
-          )}
-
-          {someStudied && (
-            <p className="text-muted-foreground text-sm text-pretty">
-              {t("Prerequisites you've studied stay studied.")}
-            </p>
-          )}
-
           <BasesAdvice
             ask={() => void advice.ask()}
             followed={changed.length === 0 && shared !== null && shared === advice.recommended}
@@ -244,13 +220,10 @@ function BasesChoices({ bases, onDone }: { bases: PlanBasesView; onDone: () => v
             readOnly={isPending}
           />
         )}
-
-        <p className="text-muted-foreground text-sm text-pretty">{knownText(bases)}</p>
       </DrawerContent>
 
       <BasesFooter
         changed={changed}
-        failed={failed}
         isPending={isPending}
         onRetry={retry}
         onSave={save}
@@ -270,16 +243,12 @@ export function PlanBasesSheet({
   open: boolean;
 }) {
   const t = useExtracted();
-  const description = usePrerequisitesDescription();
 
   return (
     <Drawer onOpenChange={onOpenChange} open={open}>
       <DrawerPopup>
         <SheetHeader>
-          <div className="flex flex-col gap-1">
-            <DrawerTitle>{t("Prerequisites")}</DrawerTitle>
-            <DrawerDescription>{description}</DrawerDescription>
-          </div>
+          <DrawerTitle>{t("Prerequisites")}</DrawerTitle>
         </SheetHeader>
 
         {open && <BasesChoices bases={bases} onDone={() => onOpenChange(false)} />}

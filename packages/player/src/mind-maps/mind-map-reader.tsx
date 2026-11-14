@@ -180,7 +180,7 @@ function Reader({
               {...save}
               className="shrink-0"
               labelled={false}
-              size="icon"
+              size="icon-bar"
               variant="ghost"
             />
           )}

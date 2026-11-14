@@ -299,7 +299,7 @@ export const planChangeDecisionInputSchema = z
       .enum(["applied", "declined", "undone", "seen"])
       .meta({
         description:
-          'Accept or decline a proposed change, undo an applied one (a proposal the learner applied then waits for their answer again, status proposed, as before Apply; replaced when a newer proposal asks about the same thing), or mark an applied one as seen ("Got it"), so the plan stops showing it',
+          "Accept or decline a proposed change, undo an applied one (a proposal the learner applied then waits for their answer again, status proposed, as before Apply; replaced when a newer proposal asks about the same thing), or mark an applied one as seen, which sets its `seen`",
       }),
     surface: z
       .enum(["today", "tutor", "behind"])

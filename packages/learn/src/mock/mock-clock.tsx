@@ -53,7 +53,7 @@ export function useRefreshPastMockDeadline({
 
 const CLOCK_CLASS = {
   aside: { box: "items-start", time: "text-2xl leading-8" },
-  header: { box: "items-center", time: "text-2xl leading-8" },
+  header: { box: "items-center", time: "text-2xl leading-9" },
 } as const;
 
 /** A timer isn't a live region, so it never reads every second. */

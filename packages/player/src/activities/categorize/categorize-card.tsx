@@ -20,12 +20,15 @@ function CategorizeCardFace({
     <p
       {...dragProps}
       className={cn(
-        "bg-background ring-input flex items-center gap-2.5 rounded-xl py-4 ps-3 pe-4 text-lg leading-snug font-medium ring-1 [grid-area:1/1] ring-inset",
+        "bg-background ring-input flex items-center gap-3 rounded-xl py-4 ps-3.5 pe-4 text-lg leading-snug font-medium ring-1 [grid-area:1/1] ring-inset",
         isHeld ? "cursor-grab touch-manipulation select-none active:cursor-grabbing" : "invisible",
         isDragging && "relative z-10 shadow-lg",
       )}
     >
-      <GripVertical aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
+      {/* As wide as a group's number, so the card's text starts where the groups' does. */}
+      <span className="flex w-5 shrink-0 justify-center">
+        <GripVertical aria-hidden="true" className="text-muted-foreground size-4" />
+      </span>
 
       <span className="min-w-0">
         <LessonRichText text={item.text} />

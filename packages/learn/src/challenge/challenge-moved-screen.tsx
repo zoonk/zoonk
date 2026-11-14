@@ -8,7 +8,7 @@ import { StepCard, StepDetail, StepHeader, StepTitle } from "../_components/step
 import { TaskActions } from "../_components/task-layout";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { useSentenceSpace } from "../_utils/locale";
-import { useLessonsEffectText } from "../plan/use-effect-counts";
+import { usePlanChangeConsequence } from "../plan-diff/use-change-consequence";
 import { TaskFrame, TaskMainLink } from "../shell/task-frame";
 import { useChallengeScreen } from "./challenge-context";
 import { useMoveFailed } from "./challenge-move-failed";
@@ -22,8 +22,8 @@ export function ChallengeMovedScreen({
 }) {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
-  const lessonsText = useLessonsEffectText();
-  const leftOut = effect && effect.lessonsRemoved > 0 ? lessonsText(effect) : null;
+  const consequence = usePlanChangeConsequence()(effect);
+  const leftOut = consequence?.key === "notInPlan" ? consequence.text : null;
   const { challenge, hrefs, move } = useChallengeScreen();
   const moveFailed = useMoveFailed();
   const space = useSentenceSpace();

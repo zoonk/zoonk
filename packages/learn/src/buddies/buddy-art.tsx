@@ -5,14 +5,17 @@ import { type LearnBuddy, resolveLearnBuddy } from "./use-buddy-name";
 
 type ActorProps = React.ComponentProps<typeof BuddyActor>;
 
-/** The learner's buddy, wherever it shows: `view="face"` with a size below about 64px, the body with a height from there up. */
+/**
+ * The learner's buddy, wherever it shows: `view="face"` with a size below about 64px, the body
+ * with a height from there up. A body that stands alone takes `fit="ink"` and `--buddy-height`.
+ */
 export function BuddyArt({
   buddy: learnerBuddy,
   label = "",
   ...props
 }: { buddy: LearnBuddy | null } & Pick<
   ActorProps,
-  "className" | "expression" | "label" | "reaction" | "ref" | "studiedToday" | "view"
+  "className" | "expression" | "fit" | "label" | "reaction" | "ref" | "studiedToday" | "view"
 >) {
   const buddy = resolveLearnBuddy(learnerBuddy);
 

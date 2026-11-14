@@ -4,20 +4,48 @@ import { z } from "zod";
 
 const limitSchema = z.int().nullable();
 
+const allowanceItemBaseSchema = z.object({
+  dailyLimit: limitSchema.meta({ description: "Hard cap per UTC day, or null" }),
+  fairUseDailyLimit: limitSchema.meta({
+    description: "Above this many a day, new uses are spaced out instead of blocked",
+  }),
+  remaining: limitSchema.meta({ description: "Uses left before a hard cap, or null" }),
+  totalLimit: limitSchema.meta({ description: "Hard cap for as long as the account exists" }),
+  usedToday: z.int().meta({ description: "Uses this UTC day" }),
+  usedTotal: z.int().meta({ description: "Uses ever" }),
+});
+
 const allowanceItemSchema = z
-  .object({
-    dailyLimit: limitSchema.meta({ description: "Hard cap per UTC day, or null" }),
-    fairUseDailyLimit: limitSchema.meta({
-      description: "Above this many a day, new uses are spaced out instead of blocked",
-    }),
-    kind: z.enum(UsageKind).meta({ description: "What is counted" }),
-    monthlyLimit: limitSchema.meta({ description: "Hard cap per UTC month, or null" }),
-    remaining: limitSchema.meta({ description: "Uses left before a hard cap, or null" }),
-    totalLimit: limitSchema.meta({ description: "Hard cap for as long as the account exists" }),
-    usedThisMonth: z.int().meta({ description: "Uses this UTC month" }),
-    usedToday: z.int().meta({ description: "Uses this UTC day" }),
-    usedTotal: z.int().meta({ description: "Uses ever" }),
-  })
+  .union([
+    allowanceItemBaseSchema
+      .extend({
+        availableAt: z.iso
+          .datetime()
+          .nullable()
+          .meta({
+            description:
+              "Instant a new lesson becomes available when the rolling cap is reached; null while rolling capacity remains or the tier has no rolling cap. The twentieth-newest claim time plus 30 times 24 hours, including when existing usage exceeds 20",
+          }),
+        kind: z.literal("lessonStart"),
+        rollingLimit: limitSchema.meta({
+          description:
+            "Hard cap on new lesson claims in the preceding 30 times 24 hours; null for tiers without this cap",
+        }),
+        usedLast30Days: z
+          .int()
+          .meta({
+            description: "Lesson claims strictly after now minus 30 times 24 hours, through now",
+          }),
+      })
+      .meta({ id: "LessonAllowanceItem" }),
+    allowanceItemBaseSchema
+      .extend({
+        kind: z.enum(UsageKind).exclude(["lessonStart"]),
+        monthlyLimit: limitSchema.meta({ description: "Hard cap per UTC calendar month, or null" }),
+        usedThisMonth: z.int().meta({ description: "Uses this UTC calendar month" }),
+      })
+      .meta({ id: "MonthlyAllowanceItem" }),
+  ])
   .meta({ id: "AllowanceItem" });
 
 export const allowanceResponseSchema = z
@@ -64,6 +92,6 @@ export const allowanceResponseSchema = z
     tier: z.enum(["free", "guest", "plus"]).meta({ description: "The learner's plan" }),
   })
   .meta({
-    description: `Signed-in free learners share ${getFreePlanLimits().lessonsPerMonth} distinct new lessons per UTC calendar month across every goal, including exams. Each lesson ID counts once, including generation ahead of study, whether reused or generated. Continuing or replaying an admitted lesson, practice and reviews do not count again. items[kind=lessonStart] supplies usedThisMonth, monthlyLimit and remaining; resets.month is the next UTC month boundary. A refused new start returns 402 USAGE_LIMIT_REACHED with details.limit resource=lessonStart, period=month, limit=${getFreePlanLimits().lessonsPerMonth}, tier=free. Other resources and guests retain their separate limits.`,
+    description: `Free learners share ${getFreePlanLimits().lessonsPer30Days} distinct lesson admissions in the preceding 30 times 24 hours across all goals, including exams. The lessonStart entry returns usedLast30Days, rollingLimit, remaining and availableAt. A refused start returns 402 USAGE_LIMIT_REACHED with details.limit period=rolling30Days and availableAt, so no second read or client date arithmetic is needed. Claims exactly 30 days old are outside the window. Replays of an admitted lesson never count again, whatever its age. Generation ahead of study uses the same claim. Other resources retain UTC calendar-month limits and resets.month applies only to them.`,
     id: "AllowanceResponse",
   });

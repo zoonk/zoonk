@@ -1,14 +1,13 @@
+import { CheckItem } from "@/components/public/check-mark";
 import {
   DISCLOSURE_ANSWER_CLASS,
   DISCLOSURE_LINK_CLASS,
   PublicDisclosure,
+  renderHelpLink,
 } from "@/components/public/public-disclosure";
-import { getAppLocale } from "@/i18n/locale";
 import { Link } from "@/i18n/navigation";
 import { getFreePlanLimits } from "@zoonk/core/entitlements/plan-limits";
-import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
-import { getSentenceSpace } from "@zoonk/utils/locale";
 import { getExtracted } from "next-intl/server";
 import { type ReactNode } from "react";
 import { ForViewer } from "./for-viewer";
@@ -40,10 +39,10 @@ async function FreePlanAnswer({ viewerState }: { viewerState?: PlusViewerState }
     <p className={DISCLOSURE_ANSWER_CLASS}>
       {hasNoAccount(reader) && limits.guestLessons !== null
         ? t(
-            "Start free with {count, plural, one {# lesson} other {# lessons}}, no account needed. With a free account, you get:",
+            "You can try {count, plural, one {# lesson} other {# lessons}} with no account. With a free account, you get:",
             { count: limits.guestLessons },
           )
-        : t("With the free plan, you get:")}
+        : t("Without Plus, you get:")}
     </p>
   );
 
@@ -51,19 +50,20 @@ async function FreePlanAnswer({ viewerState }: { viewerState?: PlusViewerState }
     t("{count, plural, one {# goal} other {# goals}} at a time", {
       count: limits.activeGoals ?? 0,
     }),
-    t("{month, plural, one {# lesson} other {# lessons}} a month, up to {day, number} a day", {
-      day: limits.lessonsPerDay ?? 0,
-      month: limits.lessonsPerMonth ?? 0,
+    t(
+      "{month, plural, one {# lesson} other {# lessons}} a month, across all your goals, exams included",
+      { month: limits.lessonsPer30Days ?? 0 },
+    ),
+    t("An AI study buddy: {count, plural, one {# message} other {# messages}} a day", {
+      count: limits.tutorMessagesPerDay ?? 0,
     }),
-    t(
-      "{days, plural, =7 {The first week} one {The first day} other {The first # days}} of exam prep",
-      { days: limits.examPrepDays ?? 0 },
-    ),
-    t(
-      "{tutor, plural, one {# message to your buddy} other {# messages to your buddy}} and {uploads, plural, one {# upload} other {# uploads}} a day",
-      { tutor: limits.tutorMessagesPerDay ?? 0, uploads: limits.uploadsPerDay ?? 0 },
-    ),
-    t("Practice calls, with lower limits than Plus (exam speaking tasks come with Plus)"),
+    t({
+      description:
+        "What a learner without Plus gets: they can add files of their own (notes, a syllabus) for a goal to study from. {count} is how many a day.",
+      message: "Your own study material: {count, plural, one {# file} other {# files}} a day",
+      values: { count: limits.uploadsPerDay ?? 0 },
+    }),
+    t("Speaking practice calls, fewer than with Plus"),
   ];
 
   return (
@@ -72,12 +72,9 @@ async function FreePlanAnswer({ viewerState }: { viewerState?: PlusViewerState }
 
       <ul className="flex flex-col gap-2">
         {items.map((item) => (
-          <li className={cn(DISCLOSURE_ANSWER_CLASS, "flex gap-3")} key={item}>
-            <LineMarker>
-              <span aria-hidden="true" className="bg-foreground/35 size-1.5 rounded-full" />
-            </LineMarker>
-            <span>{keepNumbersWithWords(item)}</span>
-          </li>
+          <CheckItem className={DISCLOSURE_ANSWER_CLASS} key={item}>
+            {keepNumbersWithWords(item)}
+          </CheckItem>
         ))}
       </ul>
     </div>
@@ -87,43 +84,35 @@ async function FreePlanAnswer({ viewerState }: { viewerState?: PlusViewerState }
 /** Speaking calls have daily and monthly limits, said honestly but never in minutes, on any plan. */
 export async function PlusQuestions({
   className,
+  titleClassName = "text-base font-semibold tracking-[-0.015em]",
   viewerState,
 }: {
   className?: string;
+  titleClassName?: string;
   viewerState?: PlusViewerState;
 }) {
   const t = await getExtracted();
-  const space = getSentenceSpace(await getAppLocale());
-  // The address is a message of its own: each language writes to its own inbox (pt: contato@).
-  const email = t("hello@zoonk.com");
 
   return (
     <section aria-labelledby={PLUS_QUESTIONS_ID} className={cn("flex flex-col gap-4", className)}>
       <div className="flex flex-col gap-1">
-        <h2 className="text-base font-semibold tracking-[-0.015em]" id={PLUS_QUESTIONS_ID}>
+        <h2 className={titleClassName} id={PLUS_QUESTIONS_ID}>
           {t("Common questions")}
         </h2>
         <p className="text-muted-foreground text-sm">
-          {t("Still unsure?")}
-          {space}
-          <a
-            className="text-foreground underline-offset-4 hover:underline"
-            href={`mailto:${email}`}
-          >
-            {email}
-          </a>
+          {t.rich("Still unsure? <link>Ask us</link>.", { link: renderHelpLink })}
         </p>
       </div>
 
       <div>
-        <PublicDisclosure summary={t("What's in the free plan?")}>
+        <PublicDisclosure summary={t("What's free?")}>
           <FreePlanAnswer viewerState={viewerState} />
         </PublicDisclosure>
 
         <PublicDisclosure summary={t("Is Plus really unlimited?")}>
           <p className={DISCLOSURE_ANSWER_CLASS}>
             {t.rich(
-              "Almost. Lessons, goals and your buddy have limits only to stop bots and automated tools, not people learning. Speaking calls have daily and monthly limits, higher than on the free plan. <link>Read our fair use policy</link>.",
+              "For people learning, yes. Lessons, goals and the AI study buddy only have limits that stop bots and automated tools. Speaking calls have daily and monthly limits, higher than without Plus. <link>Read our fair use policy</link>.",
               { link: renderFairUseLink },
             )}
           </p>
@@ -131,17 +120,20 @@ export async function PlusQuestions({
 
         <PublicDisclosure summary={t("What happens if I cancel?")}>
           <p className={DISCLOSURE_ANSWER_CLASS}>
-            {t(
-              "You keep Plus until the end of the period you already paid for. Then you're back on the free plan, and your goals and progress stay with you.",
-            )}
+            {t({
+              description:
+                "“Back to free” means using Zoonk without paying again. Don't call it a “free plan” or use your language's word for the learner's study plan.",
+              message:
+                "You keep Plus until the end of the period you already paid for. Then you're back to free, and your goals and progress stay with you.",
+            })}
           </p>
         </PublicDisclosure>
 
         <PublicDisclosure summary={t("Can I get a refund?")}>
           <p className={DISCLOSURE_ANSWER_CLASS}>
-            {t(
-              "Write to us at {email} and we'll look into it. Purchases in the App Store or Google Play follow Apple's or Google's refund rules.",
-              { email },
+            {t.rich(
+              "<link>Write to us</link> and we'll look into it. Purchases in the App Store or Google Play follow Apple's or Google's refund rules.",
+              { link: renderHelpLink },
             )}
           </p>
         </PublicDisclosure>

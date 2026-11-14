@@ -22,6 +22,9 @@
 /* A title row (`TITLE_ROW_CLASS` in `@zoonk/learn`) too narrow for its text, about 20 characters of it, which large text or zoom causes on a phone: its values move under its title. */
 @custom-variant stacked (@container (width < 11rem));
 
+/* A list row's mark (`ListRowLeading` in `@zoonk/learn`) beside three lines or more: a title and two descriptions. */
+@custom-variant beside-three-lines (&:has(~ [data-slot=list-row-content] > :nth-child(3), ~ [data-slot=list-row-body] > [data-slot=list-row-content] > :nth-child(3)));
+
 /* `SidebarStateScript` marks `<html>` before the first paint. */
 @custom-variant sidebar-collapsed (&:where([data-sidebar-collapsed] [data-slot=sidebar], [data-sidebar-collapsed] [data-slot=sidebar] *));
 
@@ -617,6 +620,11 @@
       center / 1rem no-repeat;
   }
 
+  /* An empty date field shows its format where a text field shows a placeholder, so in its tone. */
+  input[type="date"][value=""] {
+    color: var(--muted-foreground);
+  }
+
   /* Browsers break Korean inside words by default; Korean wraps between them, at the spaces. */
   :lang(ko) {
     word-break: keep-all;
@@ -816,6 +824,11 @@
   @media (width >= 40rem) {
     font-size: 4rem;
     line-height: 4.25rem;
+  }
+
+  @media (width >= 80rem) {
+    font-size: 5.25rem;
+    line-height: 5.25rem;
   }
 }
 

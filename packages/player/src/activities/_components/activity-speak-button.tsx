@@ -28,7 +28,11 @@ export function ActivitySpeakButton({
       type="button"
       variant="outline"
     >
-      <SpeechStatusIcon idle={<Volume2 aria-hidden="true" className="size-5" />} state={state} />
+      <SpeechStatusIcon
+        className="size-5"
+        idle={<Volume2 aria-hidden="true" className="size-5" />}
+        state={state}
+      />
     </Button>
   );
 }

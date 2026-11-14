@@ -24,7 +24,7 @@ export function WordBank<Tile extends WordBankTile>({
   return (
     <div
       aria-label={t("Word bank")}
-      className="flex flex-wrap gap-2.5 max-lg:mt-auto"
+      className="flex flex-wrap gap-2 max-lg:mt-auto"
       data-slot="word-bank"
       role="group"
     >

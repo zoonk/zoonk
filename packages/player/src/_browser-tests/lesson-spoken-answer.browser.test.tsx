@@ -1,5 +1,6 @@
 import { type PlayableSpokenAnswerStep } from "@zoonk/core/lesson-player/playable-lesson";
 import { parseStepContent } from "@zoonk/core/library/steps/contract";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
 import {
@@ -74,8 +75,25 @@ describe("spoken answers", () => {
     });
 
     await sayIt();
-    admission.resolve({ reason: "plusRequired" });
-    await expect.element(page.getByRole("link", { name: /Plus/u })).toBeVisible();
+
+    admission.resolve({
+      availableAt: new Date(Date.now() + MS_PER_DAY).toISOString(),
+      period: "rolling30Days",
+      reason: "limitReached",
+      tier: "free",
+    });
+
+    await expect
+      .element(page.getByRole("heading", { name: "You've used your free lessons" }))
+      .toBeVisible();
+
+    await expect
+      .element(
+        page.getByText(/Your next free lesson opens tomorrow, or subscribe to keep going\.$/u),
+      )
+      .toBeVisible();
+
+    await expect.element(page.getByRole("link", { name: "Subscribe" })).toBeVisible();
     expect(gradeSpokenAnswer).not.toHaveBeenCalled();
   });
 
@@ -238,15 +256,9 @@ describe("spoken answers", () => {
     openSpokenLesson({ gradeSpokenAnswer });
     await sayIt();
 
-    await expect
-      .element(
-        page.getByText(
-          "You've used today's help. It comes back tomorrow, or get Plus to keep going now.",
-        ),
-      )
-      .toBeVisible();
+    await expect.element(page.getByText("You've reached today's limit")).toBeVisible();
 
-    await expect.element(page.getByRole("link", { name: "See Plus" })).toBeVisible();
+    await expect.element(page.getByRole("link", { name: "Subscribe" })).toBeVisible();
     await expect.element(page.getByRole("button", { name: "I can't talk now" })).toBeVisible();
   });
 

@@ -28,7 +28,7 @@ import {
   ScrollAreaViewport,
 } from "@zoonk/ui/components/scroll-area";
 import { cn } from "@zoonk/ui/lib/utils";
-import { SearchIcon } from "lucide-react";
+import { ArrowDownIcon, ArrowUpIcon, SearchIcon } from "lucide-react";
 import { useRef } from "react";
 import type * as React from "react";
 
@@ -56,7 +56,7 @@ function CommandDialog({
   return (
     <Dialog {...props}>
       <DialogPortal>
-        <DialogOverlay className="bg-black/15 supports-backdrop-filter:backdrop-blur-none dark:bg-black/50" />
+        <DialogOverlay />
         <DialogViewport className="flex items-start justify-center sm:px-4 sm:pt-[12vh] sm:pb-4">
           <DialogPopup
             finalFocus={finalFocus}
@@ -68,8 +68,8 @@ function CommandDialog({
             ref={popupRef}
             className={cn(
               "flex h-dvh w-full flex-col overflow-hidden pt-[env(safe-area-inset-top)]",
-              "sm:bg-popover sm:text-popover-foreground sm:ring-input sm:max-w-column sm:h-auto sm:max-h-[calc(100dvh-12vh-1rem)] sm:rounded-xl sm:pt-0 sm:shadow-[0_16px_48px_-12px_rgb(0_0_0/0.35)] sm:ring-1 sm:ring-inset",
-              "sm:dark:ring-foreground/20 sm:dark:shadow-[0_24px_64px_-12px_rgb(0_0_0/0.8)]",
+              "sm:bg-popover sm:text-popover-foreground sm:ring-input sm:max-w-column sm:h-auto sm:max-h-[calc(100dvh-12vh-1rem)] sm:rounded-xl sm:pt-0 sm:ring-1 sm:ring-inset",
+              "sm:dark:ring-foreground/20",
               className,
             )}
           >
@@ -103,7 +103,7 @@ function CommandInput({
       className="flex items-center gap-3 px-4 pt-2.5 pb-2 sm:border-b sm:p-0"
       data-slot="command-input-wrapper"
     >
-      <div className="ring-input focus-within:ring-foreground flex h-11 min-w-0 flex-1 items-center gap-2.5 rounded-lg px-3 ring-[1.5px] ring-inset sm:h-13 sm:rounded-none sm:px-4 sm:ring-0 sm:focus-within:ring-0">
+      <div className="ring-input focus-within:ring-foreground flex h-11 min-w-0 flex-1 items-center gap-2.5 rounded-lg px-3 ring-[1.5px] ring-inset sm:h-13 sm:gap-3 sm:rounded-none sm:px-5 sm:ring-0 sm:focus-within:ring-0">
         <SearchIcon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
         <Autocomplete.Input
           autoFocus
@@ -205,17 +205,32 @@ function CommandItem({ className, ...props }: AutocompleteItemProps) {
   );
 }
 
-function CommandFooter({ className, ...props }: React.ComponentProps<"div">) {
+/** The keys every palette answers, in its footer. The app passes the words in its own language. */
+function CommandKeyHints({ close, move, open }: { close: string; move: string; open: string }) {
   return (
     <div
       aria-hidden="true"
-      className={cn(
-        "text-faint text-2xs hidden h-9 shrink-0 items-center gap-3.5 border-t px-3.5 sm:pointer-fine:flex [&>span]:inline-flex [&>span]:items-center [&>span]:gap-1",
-        className,
-      )}
+      className="text-faint text-2xs hidden h-9 shrink-0 items-center gap-3.5 border-t px-5 sm:pointer-fine:flex [&>span]:inline-flex [&>span]:items-center [&>span]:gap-1"
       data-slot="command-footer"
-      {...props}
-    />
+    >
+      <span>
+        <Kbd>
+          <ArrowUpIcon />
+        </Kbd>
+        <Kbd>
+          <ArrowDownIcon />
+        </Kbd>
+        {move}
+      </span>
+      <span>
+        <Kbd>⏎</Kbd>
+        {open}
+      </span>
+      <span>
+        <Kbd>Esc</Kbd>
+        {close}
+      </span>
+    </div>
   );
 }
 
@@ -226,10 +241,10 @@ export {
   CommandDialog,
   CommandDialogDescription,
   CommandDialogTitle,
-  CommandFooter,
   CommandGroup,
   CommandGroupLabel,
   CommandInput,
   CommandItem,
+  CommandKeyHints,
   CommandList,
 };

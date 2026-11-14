@@ -29,7 +29,7 @@ function useStateCopy(shown: TopicOutlineShown): { action: string | null; messag
   const t = useExtracted();
 
   if (shown === "writing") {
-    return { action: null, message: t("Preparing the lessons… It takes about half a minute.") };
+    return { action: null, message: t("Getting your lessons ready…") };
   }
 
   if (shown === "unreachable") {
@@ -40,14 +40,12 @@ function useStateCopy(shown: TopicOutlineShown): { action: string | null; messag
   }
 
   if (shown === "unavailable") {
-    return { action: null, message: t("There's nothing left to prepare for this topic.") };
+    return { action: null, message: t("This topic has no more lessons to get ready.") };
   }
 
   return {
-    action: t("See the lessons"),
-    message: t(
-      "A topic's lessons are planned two weeks before you get to it. You can see this one's now.",
-    ),
+    action: t("Get them ready"),
+    message: t("Getting these lessons ready takes about half a minute."),
   };
 }
 

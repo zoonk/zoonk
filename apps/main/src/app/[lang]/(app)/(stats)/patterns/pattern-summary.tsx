@@ -34,9 +34,7 @@ export async function getBestTimeName(
   return verdict.kind === "best" ? (names.at(verdict.best.period) ?? null) : null;
 }
 
-export async function getEvenDaysNote(
-  verdict: ScorePatternsData["dayVerdict"],
-): Promise<string | null> {
+async function getEvenDaysNote(verdict: ScorePatternsData["dayVerdict"]): Promise<string | null> {
   const t = await getExtracted();
 
   return verdict.kind === "even"
@@ -47,9 +45,7 @@ export async function getEvenDaysNote(
     : null;
 }
 
-export async function getEvenTimesNote(
-  verdict: ScorePatternsData["timeVerdict"],
-): Promise<string | null> {
+async function getEvenTimesNote(verdict: ScorePatternsData["timeVerdict"]): Promise<string | null> {
   const t = await getExtracted();
 
   return verdict.kind === "even"

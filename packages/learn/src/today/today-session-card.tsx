@@ -7,7 +7,7 @@ import { type DayStep } from "../session/session-types";
 import { BlockRow, PlusLessonRow } from "./today-block-row";
 import { ComingLessonsRow } from "./today-coming-lessons";
 import { useTodayScreen } from "./today-context";
-import { DayOpenStatus, DayProgress } from "./today-day-progress";
+import { DayProgress } from "./today-day-progress";
 import { TodayDayStatus } from "./today-day-status";
 import { FoldRow } from "./today-fold-row";
 import { SESSION_LIST_ID } from "./today-ids";
@@ -169,7 +169,6 @@ export function TodaySession({ className }: { className?: string }) {
   return (
     <div className={cn("relative flex min-w-0 flex-col", className)} data-slot="today-session">
       <DayProgress />
-      <DayOpenStatus />
 
       <div className="mt-3 flex flex-col first:mt-0 empty:hidden" data-slot="today-list">
         <SessionQueue next={next} />

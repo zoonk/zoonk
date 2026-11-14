@@ -19,10 +19,7 @@ const reminderLocaleSchema = z
 
 const reminderTimeZoneSchema = z
   .string()
-  .meta({
-    description:
-      "The IANA zone reminders follow: the active goal's. Show it next to the time, named the platform's localized way",
-  });
+  .meta({ description: "The IANA zone reminders follow: the active goal's" });
 
 const pushPlatformSchema = z.enum(PushPlatform).meta({ id: "PushPlatform" });
 
@@ -117,7 +114,7 @@ export const studyReminderOfferResultSchema = z
       .boolean()
       .meta({
         description:
-          "True only for the call that marked the offer shown. False when it was already shown, here or on another device: don't show it",
+          "True only for the call that marked the offer shown. False when it was already shown, here or on another device",
       }),
   })
   .meta({ id: "StudyReminderOfferResult" });

@@ -21,7 +21,7 @@ export function StatusMessage({
         className,
       )}
     >
-      <span className="text-muted-foreground flex [&_svg]:size-8">{icon}</span>
+      <span className="text-muted-foreground flex [&_svg]:size-6">{icon}</span>
 
       <h1 className="text-title mt-5">{title}</h1>
 

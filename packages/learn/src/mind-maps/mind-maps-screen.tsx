@@ -1,13 +1,8 @@
 "use client";
 
 import { type EntitlementTier } from "@zoonk/core/entitlements/contract";
-import { Button } from "@zoonk/ui/components/button";
-import {
-  DetailActions,
-  DetailHero,
-  DetailHeroText,
-  DetailTitle,
-} from "@zoonk/ui/components/detail";
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
+import { DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
 import {
@@ -17,10 +12,14 @@ import {
   DetailLayout,
 } from "../_components/detail-page";
 import { EnterLink } from "../_components/enter-button";
-import { FreeWeekOverNotice } from "../_components/free-week-over";
 import { LIST_GROUP_CLASS } from "../_components/list-group";
-import { PageEyebrow, PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
-import { PageTab, PageTabs } from "../_components/page-tabs";
+import {
+  PageSection,
+  PageSectionHeader,
+  PageSectionTitle,
+  PageSubtitle,
+} from "../_components/page";
+import { PageTab, PageTabs, PageTabsGroup } from "../_components/page-tabs";
 import { LearnPageBar } from "../shell/learn-bar";
 import {
   MIND_MAP_TABS,
@@ -44,7 +43,7 @@ import {
   UnavailableMapRow,
 } from "./mind-map-index-rows";
 import { useMindMapPlace } from "./mind-map-resume";
-import { NotMadeYet } from "./not-made-yet";
+import { NotMadeYet, canMakeNow } from "./not-made-yet";
 import { type MindMapsLibrary, useMindMapsLibrary } from "./use-mind-maps-library";
 
 export type { MindMapLimit } from "../_components/help-limit-notice";
@@ -111,14 +110,12 @@ function ChaptersTab({ hrefs, library, subject, tier }: IndexTabProps & { tier: 
 
   return (
     <>
-      {index.some((chapter) => chapter.status === "plusRequired") && (
-        <FreeWeekOverNotice className="max-w-prose" />
-      )}
-
       {index.length > 0 ? (
         <MindMapIndex groups={groups} label={t("Chapter maps")} opensAt={subject} />
       ) : (
-        <EmptyTab>{t("No chapter maps yet. Every chapter you finish gets one.")}</EmptyTab>
+        !notMade.some((chapter) => canMakeNow(chapter)) && (
+          <EmptyTab>{t("No chapter maps yet. Every chapter you finish gets one.")}</EmptyTab>
+        )
       )}
 
       {notMade.length > 0 && <NotMadeYet chapters={notMade} library={library} tier={tier} />}
@@ -136,13 +133,7 @@ function LessonsTab({ hrefs, library, subject }: IndexTabProps) {
   });
 
   if (rows.length === 0) {
-    return (
-      <EmptyTab>
-        {t(
-          "No lesson maps yet. Each lesson ends with a small map of its ideas. They show here once your lessons are written.",
-        )}
-      </EmptyTab>
-    );
+    return <EmptyTab>{t("No lesson maps yet. Every lesson ends with one.")}</EmptyTab>;
   }
 
   const groups = groupBySubject(rows).map((group) => ({
@@ -153,12 +144,7 @@ function LessonsTab({ hrefs, library, subject }: IndexTabProps) {
     })),
   }));
 
-  return (
-    <>
-      {rows.some((row) => row.locked > 0) && <FreeWeekOverNotice className="max-w-prose" />}
-      <MindMapIndex groups={groups} label={t("Lesson maps by chapter")} opensAt={subject} />
-    </>
-  );
+  return <MindMapIndex groups={groups} label={t("Lesson maps by chapter")} opensAt={subject} />;
 }
 
 function SavedTab({ hrefs, library }: TabProps) {
@@ -275,29 +261,32 @@ export function MindMapsScreen({
   const current = tab ?? page.firstTab;
   const counts = countTabs(page);
 
+  const study = countDeck({ page, tab: current }) > 0 && (
+    <StudyLink goalId={page.goal.id} study={hrefs.study} view={current} />
+  );
+
   return (
     <DetailLayout
       bar={<LearnPageBar back={{ href: hrefs.back }} root title={t("Mind maps")} />}
+      bottomBar={
+        study && (
+          <BottomBar>
+            <BottomBarActions>{study}</BottomBarActions>
+          </BottomBar>
+        )
+      }
       data-slot="mind-maps"
     >
       <DetailAside>
         <DetailHero>
           <DetailHeroText>
-            <PageEyebrow>{page.goal.displayName}</PageEyebrow>
             <DetailTitle>{t("Mind maps")}</DetailTitle>
+            <PageSubtitle>{page.goal.displayName}</PageSubtitle>
           </DetailHeroText>
-
-          <DetailActions>
-            {countDeck({ page, tab: current }) > 0 ? (
-              <StudyLink goalId={page.goal.id} study={hrefs.study} view={current} />
-            ) : (
-              <Button className={DETAIL_PRIMARY_CLASS} disabled>
-                <StudyLabel />
-              </Button>
-            )}
-          </DetailActions>
         </DetailHero>
+      </DetailAside>
 
+      <PageTabsGroup>
         <PageTabs data-slot="mind-maps-tabs" label={t("Mind maps")}>
           {MIND_MAP_TABS.map((name) => (
             <PageTab
@@ -311,15 +300,17 @@ export function MindMapsScreen({
             </PageTab>
           ))}
         </PageTabs>
-      </DetailAside>
 
-      <DetailContent>
-        {current === "chapters" && (
-          <ChaptersTab hrefs={hrefs} library={library} subject={subject} tier={tier} />
-        )}
-        {current === "lessons" && <LessonsTab hrefs={hrefs} library={library} subject={subject} />}
-        {current === "saved" && <SavedTab hrefs={hrefs} library={library} />}
-      </DetailContent>
+        <DetailContent>
+          {current === "chapters" && (
+            <ChaptersTab hrefs={hrefs} library={library} subject={subject} tier={tier} />
+          )}
+          {current === "lessons" && (
+            <LessonsTab hrefs={hrefs} library={library} subject={subject} />
+          )}
+          {current === "saved" && <SavedTab hrefs={hrefs} library={library} />}
+        </DetailContent>
+      </PageTabsGroup>
     </DetailLayout>
   );
 }

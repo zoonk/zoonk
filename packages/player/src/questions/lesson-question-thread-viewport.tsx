@@ -25,7 +25,13 @@ function QuestionScrollTarget({ questionId }: { questionId: string | null | unde
   return null;
 }
 
-const THREAD_INSET_CLASS = "px-4 py-6 sm:px-5";
+/** The side edge of the ask sheet's thread and field. */
+export const THREAD_SIDE_CLASS = "px-4 sm:px-5";
+
+/** The thread's start edge alone, for the sheet's header: its end and its ✕ stay the sheet's. */
+export const THREAD_START_CLASS = "ps-4 sm:ps-5";
+
+const THREAD_INSET_CLASS = cn(THREAD_SIDE_CLASS, "py-6");
 
 const SHORT_PANEL_CLASS =
   "[@container(max-height:10rem)]:py-3 [@container(max-height:10rem)]:**:data-[slot=empty-icon]:hidden";

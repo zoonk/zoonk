@@ -85,13 +85,25 @@ export const goalListResponseSchema = z
   })
   .meta({ id: "GoalList" });
 
+const allowanceLimitBaseSchema = z.object({
+  limit: z.int(),
+  resource: z.string().meta({ description: "What ran out, such as goal or activeGoals" }),
+  tier: z.enum(["free", "guest", "plus"]),
+});
+
 const allowanceLimitSchema = z
-  .object({
-    limit: z.int(),
-    period: z.enum(["day", "month", "total"]),
-    resource: z.string().meta({ description: "What ran out, such as goal or activeGoals" }),
-    tier: z.enum(["free", "guest", "plus"]),
-  })
+  .union([
+    allowanceLimitBaseSchema.extend({
+      availableAt: z.iso
+        .datetime()
+        .meta({
+          description:
+            "The instant a new lesson is available, computed from the twentieth-newest claim in the rolling window",
+        }),
+      period: z.literal("rolling30Days"),
+    }),
+    allowanceLimitBaseSchema.extend({ period: z.enum(["day", "month", "total"]) }),
+  ])
   .meta({ id: "AllowanceLimit" });
 
 export const goalCreateResponseSchema = z

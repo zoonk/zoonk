@@ -48,7 +48,7 @@ function ScaleChip({
     <span className={cn("absolute", isLower ? "top-9" : "top-0")} ref={ref} style={{ left }}>
       <span
         className={cn(
-          "flex h-7 items-center gap-1 rounded-full px-2.5 text-sm font-medium whitespace-nowrap tabular-nums",
+          "flex h-7 items-center gap-1 rounded-md px-2.5 text-sm font-medium whitespace-nowrap tabular-nums",
           className,
         )}
       >
@@ -109,7 +109,7 @@ export function ActivityGuessScale({
       )}
 
       <ScaleChip
-        className="bg-background ring-foreground/10 ring-1"
+        className="bg-background text-muted-foreground"
         isLower={actualShare !== null}
         share={share}
         trackWidth={trackWidth}

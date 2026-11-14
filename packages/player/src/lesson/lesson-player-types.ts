@@ -37,8 +37,8 @@ type LessonPlayerTier = "free" | "guest" | "plus";
 export type LessonRunRefusal =
   | { reason: "failed" }
   | { period: "day" | "month" | "total"; reason: "limitReached"; tier: LessonPlayerTier }
+  | { availableAt: string; period: "rolling30Days"; reason: "limitReached"; tier: "free" }
   | { reason: "notFound" }
-  | { reason: "plusRequired" }
   | { reason: "slowDown"; retryAfterSeconds: number }
   | { reason: "unauthorized" };
 

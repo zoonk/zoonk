@@ -143,6 +143,6 @@ export const getScoreClassName = (score: number) => {
   return cn({
     "text-destructive-text": isBadScore,
     "text-success-text": isGoodScore,
-    "text-warning": isAverageScore,
+    "text-warning-text": isAverageScore,
   });
 };

@@ -11,7 +11,7 @@ export const planItemSchema = z
       .nullable()
       .meta({
         description:
-          "null for selected in-memory work until the learner opens the day; show the row without an action link",
+          "null for selected in-memory work until the learner opens the day: it has nothing to open yet",
       }),
     kind: z.enum(PlanItemKind),
     lessonId: uuidSchema().nullable(),
@@ -26,13 +26,13 @@ export const planItemSchema = z
       .string()
       .meta({
         description:
-          "The lesson's title; for a skill whose lessons are still being written, its course's (empty when unknown or for the goal's own course: say \"More lessons\")",
+          "The lesson's title; for a skill whose lessons are still being written, its course's (empty when unknown or for the goal's own course)",
       }),
     writing: z
       .boolean()
       .meta({
         description:
-          "A stand-in for a skill whose lessons are still being written; show it as being written, never by the skill's name",
+          "A stand-in for a skill whose lessons are still being written: `title` is its course's, never the skill's name",
       }),
   })
   .meta({ id: "PlanItem" });

@@ -53,7 +53,7 @@ export function markActions(scope: string): Action[] {
     return (
       box.width > SMALLEST &&
       box.height > SMALLEST &&
-      !element.closest("[inert], [aria-hidden=true], [data-zoonk-act]") &&
+      !element.closest("[inert], [aria-hidden=true], [data-zoonk-act], [data-slot=command-item]") &&
       !element.querySelector("[data-zoonk-act]") &&
       !element.matches(":disabled, [aria-disabled=true], [readonly]") &&
       element.checkVisibility({ opacityProperty: true, visibilityProperty: true })

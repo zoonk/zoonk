@@ -113,10 +113,10 @@ export const ONBOARDING_DRAFT_STATUSES = ["understanding", "understood", "failed
 export type OnboardingDraftView = {
   /**
    * How many more goals the learner's plan follows now: its cap less the active goals they follow,
-   * read with this view; null on Plus. Clients show and send only this many of the card's first
-   * goals; the rest are Plus's, shown locked, and stay on the draft to start from the learner's
-   * goals once one of the card's goals has started and another fits. At 0, clients show the plan's
-   * limit instead of confirming. When `goalId` is set, they open that goal's setup instead.
+   * read with this view; null on Plus. Only this many of the card's first goals can start now; the
+   * rest need Plus and stay on the draft to start from the learner's goals once one of the card's
+   * goals has started and another fits. At 0 none can start: the plan's limit is reached. When
+   * `goalId` is set, that goal's setup comes first.
    */
   activeGoalsLeft: number | null;
   /** The run reading the words; null when none is needed (a cached understanding) or none started. */

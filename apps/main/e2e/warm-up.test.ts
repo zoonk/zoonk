@@ -219,7 +219,7 @@ test("a learner who guessed on the session's first lesson wait keeps its finishe
   await expect(page.getByText("Good guess!")).toBeVisible();
 
   const steps = page.getByRole("list", { name: "Writing your lesson" }).getByRole("listitem");
-  await page.getByRole("button", { name: /^Writing your lesson/u }).click();
+  await page.getByRole("button", { name: /^Getting your lesson ready/u }).click();
 
   await expect(steps).toHaveText([
     /^Planning the lesson, done/u,

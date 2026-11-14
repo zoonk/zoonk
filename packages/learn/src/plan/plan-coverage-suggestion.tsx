@@ -218,7 +218,7 @@ export function CoverageSuggestion({ coverage }: { coverage: Coverage | null }) 
   const answered = found && coverage ? answerOffer({ covered, intent, time: found }) : null;
   const offer = courseOffer ?? answered;
   const item: SlotItem = { key: "coverage", kind: "coverage" };
-  const { apply, failed, isPending } = useApplyPreview(item);
+  const { apply, isPending } = useApplyPreview(item);
   const title = offer?.title ?? covered;
 
   const flags = getCardFlags({
@@ -257,7 +257,7 @@ export function CoverageSuggestion({ coverage }: { coverage: Coverage | null }) 
   };
 
   return (
-    <PlanChangeSuggestion failed={failed} item={item} title={title}>
+    <PlanChangeSuggestion item={item} title={title}>
       {lines.description.map((line) => (
         <SuggestionDescription key={line}>{line}</SuggestionDescription>
       ))}

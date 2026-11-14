@@ -3,8 +3,10 @@
 import { checkActivityAnswer } from "@zoonk/core/library/activities/answers";
 import { evaluateFormula } from "@zoonk/core/library/activities/expression/evaluate";
 import { useFormatNumber } from "@zoonk/learn/format-number";
+import { cn } from "@zoonk/ui/lib/utils";
 import { Lightbulb } from "lucide-react";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
+import { ACTIVITY_CARD_CLASS } from "../_components/activity-canvas";
 import { ActivityGuessReveal } from "../_components/activity-guess-reveal";
 import { computeActivityValue } from "../_utils/compute-activity-value";
 import { type ActivityRendererProps } from "../activity-renderer";
@@ -20,7 +22,7 @@ function GuessWorkings({ workings }: { workings: Workings }) {
   const format = useFormatNumber();
 
   return (
-    <ul className="bg-background flex flex-col gap-1 rounded-xl border px-4 py-3 text-sm tabular-nums">
+    <ul className={cn(ACTIVITY_CARD_CLASS, "flex flex-col gap-1 text-sm tabular-nums")}>
       {workings.map((working) => {
         const value = evaluateFormula(working.expression);
 
