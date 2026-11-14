@@ -484,7 +484,8 @@ struct OpeningClock<Content: View>: View {
             return
           }
 
-          try? await Task.sleep(for: .seconds(wake.timeIntervalSince(now)))
+          try? await Task.sleep(
+            for: .seconds(wake.timeIntervalSince(now)), tolerance: .seconds(1))
         }
       }
       .onChange(of: scenePhase) { _, phase in
