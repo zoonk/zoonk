@@ -165,11 +165,6 @@ extension TypeStyle {
     ).size().width
   }
 
-  /// How tall its capitals draw at this text size, to center text of two roles on each other.
-  func capHeight(_ dynamicTypeSize: DynamicTypeSize) -> Double {
-    pointSize(dynamicTypeSize) * face.capHeight
-  }
-
   fileprivate func pointSize(_ dynamicTypeSize: DynamicTypeSize) -> Double {
     UIFontMetrics(forTextStyle: relativeTo.uiTextStyle).scaledValue(
       for: size,
@@ -285,21 +280,6 @@ extension TypeStyle.Face {
 
   private static let sansLineHeight = lineHeight(of: "Geist-Regular")
   private static let monoLineHeight = lineHeight(of: "GeistMono-Regular")
-
-  /// Its capitals' height as a multiple of the size.
-  fileprivate var capHeight: Double {
-    switch self {
-    case .sans: Self.sansCapHeight
-    case .mono: Self.monoCapHeight
-    }
-  }
-
-  private static let sansCapHeight = capHeight(of: "Geist-Regular")
-  private static let monoCapHeight = capHeight(of: "GeistMono-Regular")
-
-  private static func capHeight(of postScriptName: String) -> Double {
-    (UIFont(name: postScriptName, size: 100)?.capHeight ?? 71) / 100
-  }
 
   private static func lineHeight(of postScriptName: String) -> Double {
     (UIFont(name: postScriptName, size: 100)?.lineHeight ?? 121) / 100

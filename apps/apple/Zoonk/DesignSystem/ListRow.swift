@@ -5,7 +5,6 @@ import SwiftUI
 /// a row's content, so a `NavigationLink` or a `Button` around it keeps the row's chevron and press.
 struct ListRow<Leading: View, Trailing: View>: View {
   @Environment(\.stacksContent) private var isStacked
-  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   let title: Text
   /// Main's `ListRowNumberedTitle`: a place in a list before the title, quiet and mono.
   var number: Int?
@@ -35,15 +34,20 @@ struct ListRow<Leading: View, Trailing: View>: View {
     if isStacked, Leading.self == EmptyView.self {
       words
     } else {
-      MarkedRow(alignment: alignment, stackedSpacing: 4) {
-        if Leading.self != EmptyView.self {
-          leading
-            .foregroundStyle(.mutedForeground)
-            .frame(minWidth: markWidth)
+      // The mark goes with the title's first line; the value centers on the row, as the chevron
+      // beside it does.
+      HStack(spacing: 12) {
+        MarkedRow(alignment: alignment, stackedSpacing: 4) {
+          if Leading.self != EmptyView.self {
+            leading
+              .foregroundStyle(.mutedForeground)
+              .frame(minWidth: markWidth)
+          }
+        } content: {
+          words
+        } end: {
         }
-      } content: {
-        words
-      } end: {
+
         if !isStacked {
           value
         }
@@ -79,17 +83,9 @@ struct ListRow<Leading: View, Trailing: View>: View {
   }
 
   private var value: some View {
-    // On the title's baseline the value's shorter capitals sat low against the chevron, which
-    // centers on the title's; this centers the value's on them too.
-    let lift =
-      (TypeStyle.rowTitle.capHeight(dynamicTypeSize) - TypeStyle.data.capHeight(dynamicTypeSize))
-      / 2
-
-    return
-      trailing
+    trailing
       .typeStyle(.data)
       .foregroundStyle(.mutedForeground)
-      .alignmentGuide(.firstTextBaseline) { $0[.firstTextBaseline] + lift }
   }
 
   @ViewBuilder private var titleText: some View {
