@@ -48,11 +48,7 @@ const studyDayProgressSchema = z
           "The share of the day's counted blocks done (`sessionBar`), floored: 0–99 until the session is complete and 100 only on `complete`. Null on `open` and when no block counts. Its meter draws one equal segment per counted block, so bar, count and percent agree.",
       }),
   })
-  .meta({
-    description:
-      "Today's session progress for a block's end screen, decided in core so every client reads the same numbers.",
-    id: "StudyDayProgress",
-  });
+  .meta({ description: "Today's session progress after this block.", id: "StudyDayProgress" });
 
 export type StudyDayProgress = z.infer<typeof studyDayProgressSchema>;
 

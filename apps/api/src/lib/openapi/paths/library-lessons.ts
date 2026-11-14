@@ -165,7 +165,7 @@ export const libraryLessonPaths = {
   "/library/lessons/{lessonId}/starts": {
     post: {
       description:
-        "Starts a run of the lesson for the learner or guest. A new lesson counts toward the allowance once; restarting it is free, and a second start within half an hour resumes the same run with its `answers`, so the app opens the lesson where the learner left off. A refused start is `SLOW_DOWN` (429, try again after `Retry-After`) or `USAGE_LIMIT_REACHED` with `details.limit`: 403 asks a guest to sign up, 402 a free learner to subscribe, 429 Plus to come back later.",
+        "Starts a run of the lesson for the learner or guest. A new lesson counts toward the allowance once; restarting it is free, and a second start within half an hour resumes the same run with its `answers`, where the learner left off. A refused start is `SLOW_DOWN` (429, try again after `Retry-After`) or `USAGE_LIMIT_REACHED` with `details.limit`: 403 asks a guest to sign up, 402 a free learner to subscribe, 429 Plus to come back later.",
       operationId: "createLibraryLessonStart",
       requestBody: {
         content: { "application/json": { schema: libraryLessonStartInputSchema } },
