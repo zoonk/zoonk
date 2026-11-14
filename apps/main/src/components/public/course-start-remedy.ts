@@ -1,4 +1,4 @@
-import { needsAccountFor } from "@zoonk/learn/onboarding/goal-errors";
+import { needsAccountFor } from "@zoonk/learn/onboarding/actions";
 import { type CourseStartFailure } from "./use-course-start";
 
 type CourseStartRemedy = "signUp" | "upgrade" | "retry" | null;

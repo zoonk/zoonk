@@ -9,7 +9,6 @@ import {
 } from "../_components/comes-back-words";
 import {
   type GoalLimit,
-  type GoalLimitReason,
   type StartUnderstandingOutcome,
   type UsageCap,
 } from "./onboarding-actions";
@@ -19,12 +18,6 @@ import {
  * pages too.
  */
 export type GoalError = { limit?: GoalLimit; message: LimitText; needsAccount: boolean };
-
-const ACCOUNT_REASONS = new Set<GoalLimitReason>(["guest", "signUpRequired"]);
-
-export function needsAccountFor(reason: GoalLimitReason): boolean {
-  return ACCOUNT_REASONS.has(reason);
-}
 
 function useNewGoalTitles() {
   const t = useExtracted("goalErrors");

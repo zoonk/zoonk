@@ -5,8 +5,8 @@ import { safeAsync } from "@zoonk/utils/error";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { type LimitText } from "../../_components/comes-back-words";
-import { type GoalError, needsAccountFor, useGoalLimitWords } from "../goal-errors";
-import { type CreateGoalsOutcome } from "../onboarding-actions";
+import { type GoalError, useGoalLimitWords } from "../goal-errors";
+import { type CreateGoalsOutcome, needsAccountFor } from "../onboarding-actions";
 
 function useCreateError() {
   const t = useExtracted();

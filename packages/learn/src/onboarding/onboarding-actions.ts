@@ -54,6 +54,12 @@ export type GoalLimitReason =
   | "signUpRequired"
   | "slowDown";
 
+const ACCOUNT_REASONS = new Set<GoalLimitReason>(["guest", "signUpRequired"]);
+
+export function needsAccountFor(reason: GoalLimitReason): boolean {
+  return ACCOUNT_REASONS.has(reason);
+}
+
 /** Why a goal can't start; a cap over the last 30 days also says when more comes back. */
 export type GoalLimit = { availableAt?: string | null; reason: GoalLimitReason };
 

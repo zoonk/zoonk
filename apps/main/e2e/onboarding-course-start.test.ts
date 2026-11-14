@@ -14,6 +14,7 @@ import {
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
+import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { startCourseWithLevel } from "./course-start";
 import { type Page, expect, test } from "./fixtures";
 
@@ -167,5 +168,33 @@ test.describe("Starting a course from its page", () => {
     await startFromHero(page, { link: "Continue your plan", name: course.title });
 
     await expect(page).toHaveURL(new RegExp(`/start/${goalId}$`, "u"));
+  });
+
+  test("a free learner who started every new goal they can this month sees when more come back", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    const { course } = await createOutlinedCourse();
+    const firstGoal = new Date(Date.now() - 10 * 86_400_000);
+    const moreOn = new Date(firstGoal.getTime() + 30 * 86_400_000);
+
+    await usageRecordsFixture({
+      count: 10,
+      createdAt: firstGoal,
+      kind: "goal",
+      userId: noProgressUser.id,
+    });
+
+    await page.goto(`/start/course/${course.id}?minutes=15`);
+
+    await expect(page.getByText("You've started all the new goals you can")).toBeVisible();
+
+    await expect(
+      page.getByText(
+        `More on ${moreOn.toLocaleDateString("en-US", { day: "numeric", month: "long" })}, or subscribe to keep going.`,
+      ),
+    ).toBeVisible();
+
+    await expect(prisma.goal.count({ where: { primaryCourseId: course.id } })).resolves.toBe(0);
   });
 });
