@@ -17,7 +17,7 @@ lint = "32.5.1"
 junit = "4.13.2"
 spotless = "8.11.0"
 
-robolectric = "4.17"
+robolectric = "4.18"
 
 commonmark = "0.32.0"
 
@@ -26,7 +26,7 @@ androidxBrowser = "1.10.0"
 androidxWindow = "1.5.1"
 composeAdaptive = "1.3.0"
 kotlinxCoroutines = "1.11.0"
-kotlinxSerialization = "1.12.0"
+kotlinxSerialization = "1.13.0"
 navigation3 = "1.2.1"
 
 # Data layer, API client and session.
@@ -61,15 +61,15 @@ webrtc = "150.7871.04"
 androidxWebkit = "1.18.0"
 
 # Study reminder pushes.
-firebaseMessaging = "26.0.1"
-googleServices = "4.5.0"
+firebaseMessaging = "26.0.2"
+googleServices = "4.6.0"
 
 # Crash and error reports.
-sentry = "8.63.0"
-sentryGradlePlugin = "6.26.0"
+sentry = "8.64.0"
+sentryGradlePlugin = "6.27.0"
 
 # Product analytics.
-posthog = "3.76.1"
+posthog = "3.77.1"
 
 [libraries]
 # Build logic.
