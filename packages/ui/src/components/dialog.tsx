@@ -1,14 +1,11 @@
 "use client";
 
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
-import { Button } from "@zoonk/ui/components/button";
 import { useHideElement } from "@zoonk/ui/hooks/hide-element";
 import { OVERLAY_DIM_CLASS } from "@zoonk/ui/lib/overlay-dim";
 import { cn } from "@zoonk/ui/lib/utils";
-import { XIcon } from "lucide-react";
 import { createContext, useContext } from "react";
 import { PopupShortcutLayer } from "../hooks/_utils/popup-shortcut-layer";
-import type * as React from "react";
 
 /** Lets the portal stay hidden after Next.js's Activity cleanup until a real reopen: https://github.com/vercel/next.js/issues/86577 */
 const DialogOpenContext = createContext<boolean | undefined>(undefined);
@@ -19,10 +16,6 @@ function Dialog({ open, ...props }: DialogPrimitive.Root.Props) {
       <DialogPrimitive.Root data-slot="dialog" open={open} {...props} />
     </DialogOpenContext.Provider>
   );
-}
-
-function DialogTrigger({ ...props }: DialogPrimitive.Trigger.Props) {
-  return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />;
 }
 
 function DialogPortal({ ...props }: DialogPrimitive.Portal.Props) {
@@ -61,45 +54,6 @@ function DialogOverlay({ className, ...props }: DialogPrimitive.Backdrop.Props) 
   );
 }
 
-function DialogContent({
-  className,
-  children,
-  closeLabel,
-  ...props
-}: DialogPrimitive.Popup.Props & { closeLabel?: string }) {
-  return (
-    <DialogPortal>
-      <DialogOverlay />
-      <DialogPrimitive.Popup
-        className={cn(
-          "data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 bg-background ring-foreground/10 data-closed:animate-out data-open:animate-in fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-6 rounded-2xl p-6 text-sm ring-1 duration-100 outline-none ring-inset sm:max-w-md",
-          className,
-        )}
-        data-slot="dialog-content"
-        {...props}
-      >
-        <PopupShortcutLayer value>{children}</PopupShortcutLayer>
-        {closeLabel && (
-          <DialogPrimitive.Close
-            data-slot="dialog-close"
-            render={
-              <Button
-                className="absolute top-5 right-6 [--icon-size:--spacing(5)]"
-                edge="end"
-                size="icon-sm"
-                variant="ghost"
-              />
-            }
-          >
-            <XIcon />
-            <span className="sr-only">{closeLabel}</span>
-          </DialogPrimitive.Close>
-        )}
-      </DialogPrimitive.Popup>
-    </DialogPortal>
-  );
-}
-
 function DialogPopup({ children, className, ...props }: DialogPrimitive.Popup.Props) {
   return (
     <DialogPrimitive.Popup
@@ -109,34 +63,6 @@ function DialogPopup({ children, className, ...props }: DialogPrimitive.Popup.Pr
     >
       <PopupShortcutLayer value>{children}</PopupShortcutLayer>
     </DialogPrimitive.Popup>
-  );
-}
-
-function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div className={cn("flex flex-col gap-2", className)} data-slot="dialog-header" {...props} />
-  );
-}
-
-function DialogFooter({
-  className,
-  closeLabel,
-  children,
-  ...props
-}: React.ComponentProps<"div"> & { closeLabel?: string }) {
-  return (
-    <div
-      className={cn("flex flex-col-reverse gap-2 sm:flex-row sm:justify-end", className)}
-      data-slot="dialog-footer"
-      {...props}
-    >
-      {children}
-      {closeLabel && (
-        <DialogPrimitive.Close render={<Button variant="outline" />}>
-          {closeLabel}
-        </DialogPrimitive.Close>
-      )}
-    </div>
   );
 }
 
@@ -166,14 +92,10 @@ function DialogDescription({ className, ...props }: DialogPrimitive.Description.
 export {
   Dialog,
   DialogClose,
-  DialogContent,
   DialogDescription,
-  DialogFooter,
-  DialogHeader,
   DialogOverlay,
   DialogPopup,
   DialogPortal,
   DialogTitle,
-  DialogTrigger,
   DialogViewport,
 };
