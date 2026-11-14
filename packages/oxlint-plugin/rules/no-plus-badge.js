@@ -1,19 +1,19 @@
 import { defineRule } from "@oxlint/plugins";
 import { elementName } from "../utils/jsx.js";
 
-const BADGE = new Set(["Badge", "LabelChip", "PlusMark"]);
+const BADGE = /(?:Badge|Chip)$/u;
 
 function text(node) {
-  if (node.type === "JSXText") {
-    return node.value.trim();
+  if (node.type === "JSXText" || node.type === "Literal") {
+    return node.value;
+  }
+
+  if (node.type === "JSXElement") {
+    return elementName(node.openingElement).endsWith("Icon") ? "" : childrenText(node.children);
   }
 
   if (node.type === "JSXExpressionContainer") {
     return text(node.expression);
-  }
-
-  if (node.type === "Literal") {
-    return node.value;
   }
 
   if (node.type === "CallExpression" && node.callee.name === "t") {
@@ -29,18 +29,18 @@ function text(node) {
   return null;
 }
 
+function childrenText(children) {
+  const parts = children.map((child) => text(child));
+  return parts.every((part) => typeof part === "string") ? parts.join("").trim() : null;
+}
+
 export default defineRule({
   createOnce(context) {
     return {
       JSXElement(node) {
-        const children = node.children.filter(
-          (child) => child.type !== "JSXText" || child.value.trim() !== "",
-        );
-
         if (
-          BADGE.has(elementName(node.openingElement)) &&
-          children.length === 1 &&
-          text(children[0]) === "Plus"
+          BADGE.test(elementName(node.openingElement)) &&
+          childrenText(node.children) === "Plus"
         ) {
           context.report({ messageId: "badge", node: node.openingElement });
         }

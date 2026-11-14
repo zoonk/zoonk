@@ -3,6 +3,7 @@
 import assert from "node:assert/strict";
 import { afterEach, beforeEach, describe, it, vi } from "vitest";
 import { readCraft } from "./craft-probe.mts";
+import { installPageHelpers } from "./page-helpers.mts";
 
 function box(element: Element) {
   const [left = 0, top = 0, width = 100, height = 40] = (
@@ -15,6 +16,7 @@ function box(element: Element) {
 }
 
 beforeEach(() => {
+  installPageHelpers();
   // jsdom has no layout or canvas; the fixture supplies measured boxes and painted colors.
   vi.spyOn(Element.prototype, "getBoundingClientRect").mockImplementation(function measuredBox(
     this: Element,
