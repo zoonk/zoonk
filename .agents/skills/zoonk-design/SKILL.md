@@ -46,7 +46,7 @@ These roles each have one piece and one way on every app screen. A screen never 
 
 A [marketing page](#marketing-pages) is outside the first and third rows: its top is the public header over a first screen with its own room, and its one action sits in the page, shown in `BottomBar` once the page's own has scrolled away.
 
-Lint, the catalog's word list and `pnpm verify:pages` hold part of these, and `pnpm verify:pages --roles` lays a role's instances side by side; [measuring pages](../verify/references/pages.md#what-it-judges) lists each check, what it tests and what it leaves to the reader (when a gate showed, a button's width while it works, a main action that doesn't bind Enter).
+Lint, the catalog's word list and `pnpm verify:pages` hold part of these, and `pnpm verify:pages --roles` lays a role's instances side by side; [measuring pages](../verify/references/pages.md#what-it-judges) lists each check, what it tests and what it leaves to the reader (when a gate showed, a button's width while it works).
 
 A rule holds on every screen. When one looks wrong for a screen, follow it and put the case to the user in your handoff: only the user grants an exception, and each one is listed in [craft](references/craft.md#exceptions-the-user-granted) so nobody "fixes" it later. A note that something was "kept on purpose" is not an exception; it's a finding. [Rethinking a screen](#rethink-when-stuck) changes its structure, never a role's way.
 

@@ -77,7 +77,7 @@ Only three things pass the column: a highlighted or hovered row (10px each side,
 
 A page's top is `PageTop` (in the app's frame the layout draws `PageTopBar` and the page its title in `PAGE_HEADER_CLASS`): the bar with the way back and the page's actions, then the title, 69px from the top on every page, on a phone and a computer. The bar keeps its room when it holds nothing, the frame has no top padding, no page pads or pushes its own title, and nothing sits over it. The way back is `BackLink` (I4), always with the page's name. A task keeps its own header with ✕. A [marketing page](../SKILL.md#marketing-pages), the blog and the design site are outside this rule: each keeps its site's header, with its titles at one height from one layout piece and a first screen's room set once per kind of page.
 
-- **Check.** The `h1`'s top per page and screen size: 69px from the frame's top, equal within 1px (`E8 page top`, `E8 named back link`, `zoonk/no-page-top-spacing`).
+- **Check.** The `h1`'s top per page and screen size: 69px from the frame's top, equal within 1px (`E8 page top`, `E8 page tops across pages`, `E8 named back link`, `zoonk/no-page-top-spacing`).
 - **Usual break.** `pt-5` on a header, top padding on the frame, or a bar hidden on a computer, so one page's title sits higher or lower. A second header component that decides the title's place again.
 
 ### E9. Start-aligned or centered, never both
@@ -358,7 +358,7 @@ A dialog, a sheet or a side panel closes with Esc, with a press outside it, and 
 
 What opens decides its panel, and the screen's size decides its place. On a phone everything that opens over a page rises from the bottom: a short form, a pick or a detail as a sheet with a grab handle (`Drawer`), and a question that needs an answer as a sheet without one, the confirm on top and "Cancel" under it (`AlertDialog`). On a computer both are centered. The piece decides, so no screen picks a dialog or a sheet itself. A side panel (`SidePanel`) is a computer's, only for something edited beside the page it changes (a sheet on a phone). A menu or a popover, for a few choices or one fact tied to a control, stays anchored to it; one that would hold a form (a field, a switch, a stepper, an "Apply") is a `Drawer`, and on a phone so is one too long to fit. A control that opens a panel through state says so (`aria-haspopup="dialog"`), as the kit's triggers do. A bottom-docked box is a phone's shape (where the thumb is, closed with a swipe); on a computer the eyes and pointer are in the middle of the window.
 
-- **Check.** Open it and close it each way. On a computer, find its ✕ without looking for a grab handle. On a phone, its bottom edge is the screen's (`Behavior: panels`, `Behavior: B4 phone sheets`; the walk closes with Esc only, so press ✕ and outside yourself).
+- **Check.** Open it and close it each way. On a computer, find its ✕ without looking for a grab handle. On a phone, its bottom edge is the screen's (`Behavior: panels`, `Behavior: B4 phone sheets`, `zoonk/no-hand-made-panel`; the walk closes with Esc only, so press ✕ and outside yourself).
 - **Usual break.** A sheet with a grab handle and no ✕, docked at the bottom of a computer's window. A dialog still centered on a phone.
 
 ### B5. Focus goes in, and comes back
@@ -390,7 +390,7 @@ Each role is drawn by its shared piece, with nothing added around it by the scre
 
 An app screen's one main action sits in `BottomBar`, pinned to the bottom of the screen on a phone and a computer, where the thumb is and where Enter's hint is found. A task's record or check button is its main action and sits there too. A screen with no main action has no bar; what opens over a page keeps its own footer. On a [marketing page](../SKILL.md#marketing-pages) the one action sits in the page, and the bar shows it once the page's own has scrolled away.
 
-- **Check.** The main action's box is inside the bar, and the bar's bottom is the screen's bottom (or the tab bar's top) before and after scrolling, at 390 and 1440 (`R2 main action pinned`, which judges only a screen with exactly one action that binds Enter).
+- **Check.** The main action's box is inside the bar, and the bar's bottom is the screen's bottom (or the tab bar's top) before and after scrolling, at 390 and 1440 (`R2 main action pinned`, `R2 primary action in page`).
 - **Usual break.** The action under the content on one screen, beside the title on the next, at the top on a computer.
 
 ### R3. The line over a title is `Eyebrow`
@@ -404,7 +404,7 @@ When a task's, a card's, a sheet's or a question's title has a small line over i
 
 A row, card, tab or button for a paid feature looks like its free neighbors: no badge, chip, lock or card that says it's paid. The subscription gate (`SubscribeGate`) shows once, in the feature's place, when the learner tries to use it. Its action reads "Subscribe".
 
-- **Check.** No row, chip or card says a feature is paid, and one gate shows (`zoonk/no-plus-badge`, `R4 one subscription gate`; `node scripts/verify/catalog-rules.mts` lists the words). Whether a gate shows before the learner asked for the feature is the reader's to judge.
+- **Check.** No row, chip or card says a feature is paid, and one gate shows (`zoonk/no-plus-badge`, `R4 one subscription gate`; `pnpm verify:catalog` fails the web's words). Whether a gate shows before the learner asked for the feature is the reader's to judge.
 - **Usual break.** A badge on the row and a notice on the page it opens. A card that announces the limit above a button that will show the gate anyway.
 
 ## The craft read
