@@ -5,6 +5,7 @@ import SwiftUI
 /// a row's content, so a `NavigationLink` or a `Button` around it keeps the row's chevron and press.
 struct ListRow<Leading: View, Trailing: View>: View {
   @Environment(\.stacksContent) private var isStacked
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   let title: Text
   /// Main's `ListRowNumberedTitle`: a place in a list before the title, quiet and mono.
   var number: Int?
@@ -81,6 +82,14 @@ struct ListRow<Leading: View, Trailing: View>: View {
     trailing
       .typeStyle(.data)
       .foregroundStyle(.mutedForeground)
+      // On the title's baseline the value's shorter capitals sat low against the chevron, which
+      // centers on the title's; this centers the value's on them too.
+      .alignmentGuide(.firstTextBaseline) { value in
+        value[.firstTextBaseline]
+          + (TypeStyle.rowTitle.capHeight(dynamicTypeSize)
+            - TypeStyle.data.capHeight(dynamicTypeSize))
+          / 2
+      }
   }
 
   @ViewBuilder private var titleText: some View {
