@@ -1653,61 +1653,60 @@
         }
       }
     },
-    "You've used this month's free lessons" : {
-      "comment" : "A free learner started all the new lessons their plan includes this month",
+    "You've used your free lessons" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast deine kostenlosen Lektionen für diesen Monat aufgebraucht"
+            "value" : "Deine kostenlosen Lektionen sind aufgebraucht"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ya usaste todas las lecciones gratis de este mes"
+            "value" : "Ya usaste tus lecciones gratis"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu as utilisé toutes tes leçons gratuites du mois"
+            "value" : "Tu as utilisé toutes tes leçons gratuites"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hai esaurito le lezioni gratuite di questo mese"
+            "value" : "Hai esaurito le tue lezioni gratuite"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "今月の無料レッスンをすべて利用しました"
+            "value" : "無料レッスンを使い切りました"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이번 달 무료 레슨을 모두 이용했어요"
+            "value" : "무료 레슨을 모두 이용했어요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wykorzystano wszystkie bezpłatne lekcje na ten miesiąc"
+            "value" : "Wykorzystano wszystkie bezpłatne lekcje"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você usou todas as aulas grátis deste mês"
+            "value" : "Você usou todas as suas aulas grátis"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bu ayki ücretsiz ders hakkın bitti"
+            "value" : "Ücretsiz derslerini kullandın"
           }
         }
       }
@@ -1767,6 +1766,181 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ücretsiz sınava hazırlık haftan bitti"
+          }
+        }
+      }
+    },
+    "Your next free lesson opens later today, or subscribe to keep going." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine nächste kostenlose Lektion wird heute noch freigeschaltet. Mit einem Abo kannst du gleich weiterlernen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu próxima lección gratis estará disponible hoy más tarde, o puedes suscribirte para seguir."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ta prochaine leçon gratuite sera disponible plus tard dans la journée. Tu peux aussi t’abonner pour continuer."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La tua prossima lezione gratuita sarà disponibile più tardi oggi, oppure puoi abbonarti per continuare."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "次の無料レッスンは今日中に受けられるようになります。登録すると、このまま学習を続けられます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다음 무료 레슨은 오늘 중에 열려요. 구독하면 계속 학습할 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kolejna bezpłatna lekcja będzie dostępna jeszcze dziś. Możesz też wykupić subskrypcję, by uczyć się dalej."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sua próxima aula grátis será liberada ainda hoje. Assine para continuar agora."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir sonraki ücretsiz dersin bugün ilerleyen saatlerde açılacak. Abone olup hemen devam edebilirsin."
+          }
+        }
+      }
+    },
+    "Your next free lesson opens on %@, or subscribe to keep going." : {
+      "comment" : "On the screen a free learner sees when their free lessons are used. {date} is a day and its month, such as \"November 22\" in English.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine nächste kostenlose Lektion wird am %@ freigeschaltet. Mit einem Abo kannst du gleich weiterlernen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu próxima lección gratis estará disponible el %@, o puedes suscribirte para seguir."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ta prochaine leçon gratuite sera disponible le %@. Tu peux aussi t’abonner pour continuer."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La tua prossima lezione gratuita sarà disponibile il %@, oppure puoi abbonarti per continuare."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "次の無料レッスンは%@から受けられます。登録すると、このまま学習を続けられます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다음 무료 레슨은 %@에 열려요. 구독하면 계속 학습할 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kolejna bezpłatna lekcja będzie dostępna %@. Możesz też wykupić subskrypcję, by uczyć się dalej."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sua próxima aula grátis será liberada em %@. Assine para continuar agora."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir sonraki ücretsiz dersin %@ tarihinde açılacak. Abone olup hemen devam edebilirsin."
+          }
+        }
+      }
+    },
+    "Your next free lesson opens tomorrow, or subscribe to keep going." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine nächste kostenlose Lektion wird morgen freigeschaltet. Mit einem Abo kannst du gleich weiterlernen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu próxima lección gratis estará disponible mañana, o puedes suscribirte para seguir."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ta prochaine leçon gratuite sera disponible demain. Tu peux aussi t’abonner pour continuer."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La tua prossima lezione gratuita sarà disponibile domani, oppure puoi abbonarti per continuare."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "次の無料レッスンは明日から受けられます。登録すると、このまま学習を続けられます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다음 무료 레슨은 내일 열려요. 구독하면 계속 학습할 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kolejna bezpłatna lekcja będzie dostępna jutro. Możesz też wykupić subskrypcję, by uczyć się dalej."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sua próxima aula grátis será liberada amanhã. Assine para continuar agora."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir sonraki ücretsiz dersin yarın açılacak. Abone olup hemen devam edebilirsin."
           }
         }
       }

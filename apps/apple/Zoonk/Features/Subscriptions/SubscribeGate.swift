@@ -192,6 +192,10 @@ extension HelpLimit {
         line: LocalizedStringResource(
           "Take a short break, then try again.", table: "Subscriptions",
           comment: "Fair use asks the learner to wait a moment before trying again"))
+    case .freeLessonsUsed(let opensAt):
+      LimitWords(
+        title: LocalizedStringResource("You've used your free lessons", table: "Subscriptions"),
+        line: Self.nextFreeLesson(opensAt))
     case .signUpRequired, .limitReached:
       LimitWords(
         title: LocalizedStringResource(
@@ -243,7 +247,44 @@ extension HelpLimit {
     return LimitWords(title: title, line: comesBack)
   }
 
-  /// A free learner's month of lessons is the plan's one allowance, so its title says so.
+  /// The day a free learner's next lesson opens, in their own time zone: no clock time, no count of
+  /// days. Without the instant, nothing about a day, never a guess.
+  static func nextFreeLesson(_ opensAt: Date?, now: Date = .now, calendar: Calendar = .current)
+    -> LocalizedStringResource?
+  {
+    guard let opensAt else {
+      return nil
+    }
+
+    let days =
+      calendar.dateComponents(
+        [.day], from: calendar.startOfDay(for: now), to: calendar.startOfDay(for: opensAt)
+      ).day ?? 0
+
+    switch days {
+    case ...0:
+      return LocalizedStringResource(
+        "Your next free lesson opens later today, or subscribe to keep going.",
+        table: "Subscriptions")
+    case 1:
+      return LocalizedStringResource(
+        "Your next free lesson opens tomorrow, or subscribe to keep going.",
+        table: "Subscriptions")
+    default:
+      let day = opensAt.formatted(
+        Date.FormatStyle(
+          locale: calendar.locale ?? .current, calendar: calendar, timeZone: calendar.timeZone
+        ).month(.wide).day())
+      return LocalizedStringResource(
+        "Your next free lesson opens on \(day), or subscribe to keep going.",
+        table: "Subscriptions",
+        comment:
+          "On the screen a free learner sees when their free lessons are used. {date} is a day and its month, such as \"November 22\" in English."
+      )
+    }
+  }
+
+  /// A free learner's lessons are the plan's one allowance, so its title says so.
   var lessonWords: LimitWords {
     guard case .limitReached(_, let tier) = self else {
       return refusalWords
@@ -255,12 +296,6 @@ extension HelpLimit {
         title: LocalizedStringResource(
           "No more lessons without an account", table: "Subscriptions",
           comment: "A guest took the lessons they can try without an account"))
-    case (.free, true):
-      return LimitWords(
-        title: LocalizedStringResource(
-          "You've used this month's free lessons", table: "Subscriptions",
-          comment: "A free learner started all the new lessons their plan includes this month"),
-        line: comesBack)
     case (_, true):
       return LimitWords(
         title: LocalizedStringResource(

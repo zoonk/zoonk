@@ -416,7 +416,7 @@ struct LessonUnavailableView: View {
           Text("Try again", tableName: "Player", comment: "Tries opening the lesson again")
         }
       }
-    case .plusRequired, .limitReached(tier: .free, _):
+    case .limitReached(tier: .free, _):
       SubscribeButton()
     case .limitReached(tier: .guest, _):
       SignUpButton()
@@ -442,7 +442,7 @@ struct LessonUnavailableView: View {
     case .notFound:
       LocalizedStringResource(
         "This lesson isn't available", table: "Player", comment: "The lesson doesn't exist anymore")
-    case .plusRequired, .limitReached:
+    case .limitReached:
       refusal.limit?.lessonWords.title
         ?? LocalizedStringResource(
           "We couldn't open this lesson", table: "Player", comment: "A lesson failed to open")
@@ -468,10 +468,9 @@ struct LessonUnavailableView: View {
       return String(
         localized: "Everything you learned comes with you.", table: "Player",
         comment: "A guest used the lessons they can try; signing up keeps their progress")
-    case .plusRequired, .limitReached:
+    case .limitReached:
       let stillFree = String(
-        localized: "You can still review and practice your mistakes.", table: "Player",
-        comment: "Under used-up lessons, before when they come back")
+        localized: "You can still review and practice your mistakes.", table: "Player")
       return ([stillFree] + [noticeLine.map { String(localized: $0) }].compactMap(\.self))
         .joinedSentences()
     }
@@ -481,7 +480,7 @@ struct LessonUnavailableView: View {
     switch refusal {
     case .failed, .notFound: "exclamationmark.circle"
     case .slowDown, .limitReached(.plus, _): "hourglass"
-    case .plusRequired, .limitReached(.free, _): "sparkles"
+    case .limitReached(.free, _): "sparkles"
     case .limitReached(.guest, _): "person.crop.circle.badge.plus"
     }
   }
@@ -605,10 +604,10 @@ extension LessonRunRefusal {
     switch self {
     case .slowDown(let seconds):
       .slowDown(retryAfterSeconds: seconds)
+    case .limitReached(_, .last30Days(let opensAt)):
+      .freeLessonsUsed(opensAt: opensAt)
     case .limitReached(let tier, let period):
       .limitReached(period: period.helpPeriod, tier: tier.learnerTier)
-    case .plusRequired:
-      .limitReached(period: .month, tier: .free)
     case .failed, .notFound:
       nil
     }
@@ -626,10 +625,11 @@ extension LessonRunRefusal.Tier {
 }
 
 extension LessonRunRefusal.Period {
+  /// `last30Days` is read as `freeLessonsUsed` before it gets here.
   fileprivate var helpPeriod: HelpLimit.Period {
     switch self {
     case .day: .day
-    case .month: .month
+    case .month, .last30Days: .month
     case .total: .total
     }
   }

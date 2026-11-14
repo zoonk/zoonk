@@ -14642,12 +14642,11 @@
       }
     },
     "You can still review and practice your mistakes." : {
-      "comment" : "Under used-up lessons, before when they come back",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du kannst weiterhin wiederholen und an deinen Fehlern arbeiten."
+            "value" : "Du kannst weiter wiederholen und an deinen Fehlern arbeiten."
           }
         },
         "es" : {
@@ -14665,7 +14664,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Puoi comunque ripassare e fare esercizi sui tuoi errori."
+            "value" : "Puoi ancora ripassare ed esercitarti sui tuoi errori."
           }
         },
         "ja" : {
@@ -14677,7 +14676,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "계속 복습하고 틀린 문제도 다시 풀 수 있어요."
+            "value" : "복습과 틀린 문제 연습은 계속할 수 있어요."
           }
         },
         "pl" : {
@@ -14689,7 +14688,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ainda dá para revisar e praticar o que você errou."
+            "value" : "Você ainda pode revisar e praticar o que você errou."
           }
         },
         "tr" : {

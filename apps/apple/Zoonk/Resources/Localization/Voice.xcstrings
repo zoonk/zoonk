@@ -6855,12 +6855,11 @@
       }
     },
     "Phrases you said well" : {
-      "comment" : "Over the phrases the learner said well in a call",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Formulierungen, die dir gut gelungen sind"
+            "value" : "Gelungene Formulierungen"
           }
         },
         "es" : {
@@ -6884,19 +6883,19 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "上手に言えたフレーズ"
+            "value" : "うまく言えたフレーズ"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "잘 말한 표현"
+            "value" : "잘 사용한 표현"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zwroty, które dobrze ci wyszły"
+            "value" : "Dobrze wypowiedziane zwroty"
           }
         },
         "pt" : {
@@ -6908,7 +6907,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "İyi söylediğin ifadeler"
+            "value" : "İyi kullandığın ifadeler"
           }
         }
       }

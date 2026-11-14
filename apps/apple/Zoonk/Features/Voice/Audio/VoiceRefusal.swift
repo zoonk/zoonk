@@ -11,7 +11,17 @@ enum HelpLimit: Equatable, Sendable {
 
   case slowDown(retryAfterSeconds: Int)
   case limitReached(period: Period, tier: LearnerTier)
+  /// A free learner's lessons of the last 30 days are used; `opensAt` is when the next one opens.
+  case freeLessonsUsed(opensAt: Date?)
   case signUpRequired
+
+  /// A reached limit as the server names it: a free learner's last 30 days come with the instant
+  /// the next lesson opens, every other limit with its period.
+  static func reached(period: String?, tier: LearnerTier, opensAt: Date?) -> HelpLimit {
+    period == "rolling30Days"
+      ? .freeLessonsUsed(opensAt: opensAt)
+      : .limitReached(period: period.flatMap(Period.init) ?? .day, tier: tier)
+  }
 
   var needsAccount: Bool {
     switch self {
@@ -19,17 +29,18 @@ enum HelpLimit: Equatable, Sendable {
       true
     case .limitReached(_, let tier):
       tier == .guest
-    case .slowDown:
+    case .slowDown, .freeLessonsUsed:
       false
     }
   }
 
   var offersSubscription: Bool {
-    if case .limitReached(_, .free) = self {
-      return true
+    switch self {
+    case .limitReached(_, .free), .freeLessonsUsed:
+      true
+    case .limitReached, .slowDown, .signUpRequired:
+      false
     }
-
-    return false
   }
 
   /// It passes on its own, so the learner tries again from the same screen.
@@ -75,13 +86,29 @@ struct VoiceRefusal: Error, Equatable, Sendable {
     }
 
     let limit = (object?["limit"] ?? nil) as? [String: (any Sendable)?] ?? object
-    let period = ((limit?["period"] ?? nil) as? String).flatMap(HelpLimit.Period.init) ?? .day
 
     let tier =
       ((limit?["tier"] ?? nil) as? String).flatMap(LearnerTier.init)
       ?? (status == 403 ? .guest : status == 402 ? .free : .plus)
 
-    return .limitReached(period: period, tier: tier)
+    return .reached(
+      period: (limit?["period"] ?? nil) as? String, tier: tier,
+      opensAt: ((limit?["availableAt"] ?? object?["availableAt"] ?? nil) as? String).flatMap(
+        Date.init(serverInstant:)))
+  }
+}
+
+extension Date {
+  /// An instant the server sends as ISO 8601 text, with or without fractions of a second.
+  init?(serverInstant text: String) {
+    guard
+      let date = (try? Date(text, strategy: .iso8601))
+        ?? (try? Date(text, strategy: Date.ISO8601FormatStyle(includingFractionalSeconds: true)))
+    else {
+      return nil
+    }
+
+    self = date
   }
 }
 

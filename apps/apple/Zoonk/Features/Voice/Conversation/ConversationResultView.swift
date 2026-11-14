@@ -318,9 +318,7 @@ private struct CallFeedbackSections: View {
             .typesettingLanguage(.init(identifier: language))
         }
       } header: {
-        Text(
-          "Phrases you said well", tableName: "Voice",
-          comment: "Over the phrases the learner said well in a call")
+        Text("Phrases you said well", tableName: "Voice")
       }
     }
 
