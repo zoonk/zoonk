@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// "See the lessons" writes the topic's lesson plan now, from the learner's tap.
+/// "Get them ready" writes the topic's lesson plan now, from the learner's tap.
 struct FarTopicSheet: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(\.planSheetOpen) private var sheetOpen
@@ -65,8 +65,8 @@ struct FarTopicSheet: View {
           .foregroundStyle(.mutedForeground)
         } else {
           Text(
-            "A topic's lessons are planned two weeks before you get to it. You can see this one's now.",
-            tableName: "Plan", comment: "Explains a far topic's lessons"
+            "Getting these lessons ready takes about half a minute.", tableName: "Plan",
+            comment: "Explains a topic whose lessons aren't ready yet"
           )
           .foregroundStyle(.mutedForeground)
         }
@@ -81,15 +81,16 @@ struct FarTopicSheet: View {
               Text("Try again", tableName: "Plan", comment: "Asks for a far topic's lessons again")
             } else {
               Text(
-                "See the lessons", tableName: "Plan", comment: "Writes a far topic's lessons now")
+                "Get them ready", tableName: "Plan",
+                comment: "Writes the lessons of a topic that aren't ready yet")
             }
           }
         }
       }
     case .failed:
       Text(
-        "There's nothing left to prepare for this topic.", tableName: "Plan",
-        comment: "A far topic with nothing to outline"
+        "These lessons aren't ready yet. Try again later.", tableName: "Plan",
+        comment: "A topic whose lessons can't be made ready now"
       )
       .foregroundStyle(.mutedForeground)
     case .idle, .loading:
@@ -121,8 +122,8 @@ struct FarTopicSheet: View {
 
   private static var writingLine: String {
     String(
-      localized: "Preparing the lessons… It takes about half a minute.", table: "Plan",
-      comment: "A far topic's lessons being written")
+      localized: "Getting your lessons ready…", table: "Plan",
+      comment: "A topic's lessons being made ready")
   }
 
   private static var limitLine: String {

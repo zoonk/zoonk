@@ -15,7 +15,7 @@ final class AppNavigationTests: XCTestCase {
     let links: [(String, AppLink)] = [
       ("https://www.zoonk.com/today", .tab(.today)),
       ("https://www.zoonk.com/pt/plan", .tab(.plan)),
-      ("https://www.zoonk.com/stats", .route(.statistics)),
+      ("https://www.zoonk.com/stats", .route(.statistics())),
       (
         "https://www.zoonk.com/plan/biology%20basics",
         .route(.subject(subjectKey: "biology basics"))

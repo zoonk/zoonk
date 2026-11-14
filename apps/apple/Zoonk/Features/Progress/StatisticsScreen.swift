@@ -2,7 +2,11 @@ import SwiftUI
 
 /// Every number covers all of the learner's goals.
 struct StatisticsScreen: View {
-  @State private var detail = StatsSection.level
+  @State private var detail: StatsSection
+
+  init(section: StatsSection? = nil) {
+    _detail = State(initialValue: section ?? .level)
+  }
 
   var body: some View {
     PaneSplit {
@@ -82,10 +86,7 @@ private struct StatsOverview: View {
     {
       StatsPage {
         PageHeader(
-          Text(AppTab.statistics.title),
-          eyebrow: Text(
-            "All goals", tableName: "Progress",
-            comment: "Under Statistics: its numbers cover every goal"))
+          Text(AppTab.statistics.title))
 
         OverviewTiles(
           activity: activity.summary, energy: progress.energy.value, level: progress.level.value,

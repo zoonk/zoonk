@@ -120,7 +120,7 @@
             HStack {
               TricksterCharacter()
               TricksterCharacter(beaten: true)
-              CharacterActor(art: TricksterArt(holdsSign: true), expression: .smug)
+              TricksterCharacter(won: true, cracks: 2)
             }
             .frame(height: 120)
 

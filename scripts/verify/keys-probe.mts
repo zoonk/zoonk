@@ -105,8 +105,6 @@ export function readHooks() {
     label: text(element),
   });
 
-  const mainActions = [...document.querySelectorAll("[data-slot=button][data-variant=default]")];
-
   return {
     bound: [...document.querySelectorAll("[data-enter=bound]")]
       .filter((element) => drawn(element) && !element.matches(":disabled, [aria-disabled=true]"))
@@ -144,18 +142,6 @@ export function readHooks() {
       .map((toggle) =>
         toggle instanceof HTMLElement ? (toggle.dataset.side ?? "start") : "start",
       ),
-    unbuilt:
-      document.querySelector("[data-enter]") === null
-        ? mainActions
-            .filter(
-              (element) =>
-                drawn(element) &&
-                element instanceof HTMLElement &&
-                ["lg", "xl"].includes(element.dataset.size ?? "") &&
-                !element.matches(":disabled"),
-            )
-            .map(text)
-        : [],
   };
 }
 
@@ -171,60 +157,131 @@ export function readSidebar(side: string) {
   ].join(" ");
 }
 
-export function readPanel(phone: boolean) {
+export function readPanel({
+  phone,
+  overlays,
+}: {
+  phone: boolean;
+  overlays: { panel: string; backdrop: string }[];
+}) {
   const LABEL_LENGTH = 40;
+  const LIGHT_DIM = 0.5;
+  const DARK_DIM = 0.7;
+  const selector = overlays.map(({ panel }) => `[data-slot=${panel}]`).join(", ");
 
-  const panel = [...document.querySelectorAll("[role=dialog], [role=alertdialog]")].find(
-    (element) => !element.closest("[data-slot=toast]") && element.checkVisibility(),
-  );
+  const visible = (element: Element) =>
+    element.checkVisibility() && element.getClientRects().length > 0;
+
+  const last = (query: string) =>
+    [...document.querySelectorAll<HTMLElement>(query)].toReversed().find(visible);
+
+  const known = last(selector);
+  const panel = known ?? last("[role=dialog], [role=alertdialog]");
 
   if (!panel) {
     return null;
   }
 
-  const drawn = (element: Element) => element.getClientRects().length > 0;
+  function alpha(color: string, black = false) {
+    if (color === "transparent") {
+      return 0;
+    }
+
+    const parts = color
+      .match(/[\d.]+%?/gu)
+      ?.map((part) => Number(part.replace(/%$/u, "")) / (part.endsWith("%") ? 100 : 1));
+
+    return parts?.length && (!black || parts.slice(0, 3).every((part) => part === 0))
+      ? (parts[3] ?? 1)
+      : null;
+  }
+
+  function dim(slot: string | undefined) {
+    const expected = matchMedia("(prefers-color-scheme: dark)").matches ? DARK_DIM : LIGHT_DIM;
+    const backdrop = slot ? last(`[data-slot=${slot}]`) : null;
+
+    if (backdrop?.matches("[data-starting-style], [data-ending-style]")) {
+      return null;
+    }
+
+    const style = backdrop ? getComputedStyle(backdrop) : null;
+    const opacity = style ? alpha(style.backgroundColor, true) : null;
+
+    return {
+      actual: style && opacity !== null ? opacity * Number(style.opacity || 1) : null,
+      blur: style?.backdropFilter || "none",
+      expected,
+    };
+  }
+
+  function edge() {
+    const content = panel?.querySelector("[data-slot=drawer-content]");
+    const footer = content?.nextElementSibling;
+
+    if (!content || !footer?.matches("[data-slot=drawer-footer]")) {
+      return null;
+    }
+
+    const style = getComputedStyle(content);
+    const overflowing = content.scrollHeight > content.clientHeight + 1;
+    const atEnd = content.scrollTop + content.clientHeight >= content.scrollHeight - 1;
+
+    return {
+      drawn:
+        style.borderBottomStyle === "solid" &&
+        Number(style.borderBottomWidth.replace(/px$/u, "")) === 1 &&
+        alpha(style.borderBottomColor) !== 0,
+      expected: overflowing && !atEnd,
+      padding: Number(getComputedStyle(footer).paddingTop.replace(/px$/u, "")),
+    };
+  }
+
   const box = panel.getBoundingClientRect();
-  const dialog = panel.getAttribute("role") === "dialog";
-  const popover = panel.matches("[data-slot=popover-content]");
-  const desktopPalette = !phone && panel.querySelector("[data-slot=command-input]") !== null;
-
-  const drawer =
-    panel.closest("[data-slot=drawer-popup]") ?? panel.querySelector("[data-slot=drawer-popup]");
-
+  const slot = panel.dataset.slot;
   const title = panel.querySelector("h2, [data-slot$=-title]")?.textContent.trim();
 
+  function centered() {
+    if (phone || slot !== "drawer-popup") {
+      return null;
+    }
+
+    return (
+      Math.abs((box.left + box.right) / 2 - innerWidth / 2) <= 2 &&
+      Math.abs((box.top + box.bottom) / 2 - innerHeight / 2) <= 2 &&
+      ![...(panel?.querySelectorAll("[data-slot=drawer-handle]") ?? [])].some(visible)
+    );
+  }
+
   return {
-    centered:
-      !phone && drawer
-        ? Math.abs((box.left + box.right) / 2 - innerWidth / 2) <= 2 &&
-          Math.abs((box.top + box.bottom) / 2 - innerHeight / 2) <= 2 &&
-          ![...panel.querySelectorAll("[data-slot=drawer-handle]")].some(drawn)
-        : null,
+    centered: centered(),
     closeDrawn: [
       ...panel.querySelectorAll(
-        "[data-slot=drawer-close], [data-slot=dialog-close], [data-slot$=-footer] button",
+        "[data-slot=drawer-close], [data-slot=dialog-close], [data-slot=side-panel-close], [data-slot$=-footer] button",
       ),
-    ].some(drawn),
-    focusInside: panel.contains(document.activeElement),
+    ].some(visible),
+    dim: known ? dim(overlays.find(({ panel: piece }) => piece === slot)?.backdrop) : null,
+    edge: edge(),
+    focusInside: known ? panel.contains(document.activeElement) : null,
     label: panel.getAttribute("aria-label") ?? title?.slice(0, LABEL_LENGTH) ?? "a panel",
-    needsClose:
-      dialog &&
-      !popover &&
-      !desktopPalette &&
-      !panel.closest("[data-slot=suggestion-sheet]") &&
-      !panel.querySelector("[data-slot=suggestion-sheet]"),
-    sheet: phone && dialog && !popover ? Math.abs(box.bottom - innerHeight) <= 2 : null,
+    needsClose: Boolean(known) && panel.getAttribute("role") === "dialog",
+    shared: Boolean(known),
+    sheet: known && phone ? Math.abs(box.bottom - innerHeight) <= 2 : null,
   };
 }
 
-/**
- * Whether Esc closed the panel and focus came back to what opened it; a task's menu gives focus to
- * the task instead.
- */
-export function focusReturned(opener: string) {
+/** Whether Esc closed a shared panel and restored its opener's focus. */
+export function focusReturned({
+  opener,
+  overlays,
+}: {
+  opener: string;
+  overlays: { panel: string }[];
+}) {
+  const selector = overlays.map(({ panel }) => `[data-slot=${panel}]`).join(", ");
+
   if (
-    [...document.querySelectorAll("[role=dialog], [role=alertdialog]")].some(
-      (panel) => !panel.closest("[data-slot=toast]") && panel.checkVisibility(),
+    [...document.querySelectorAll(selector)].some(
+      (panel) => panel.checkVisibility() && panel.getClientRects().length > 0,
     )
   ) {
     return false;

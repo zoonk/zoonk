@@ -7,7 +7,6 @@ struct ScheduleQuestion: View {
   /// What the learner set here before leaving to change their date.
   struct Draft {
     let days: [Int]
-    let fullCourse: Bool
     let picked: Int?
     let weekendOn: Bool
     let weekendPicked: Int?
@@ -22,12 +21,9 @@ struct ScheduleQuestion: View {
 
   @Environment(OnboardingStore.self) private var onboarding
   @Environment(PlanStore.self) private var plans
-  @Environment(\.isPaneSplit) private var isBesidePlan
-  @Environment(\.onboardingAside) private var aside
   @State private var found = PlanAsking<FindKey, TimeToCover, ContinuousClock>()
   @State private var advised = PlanAsking<AdviceKey, TimeAdvice, ContinuousClock>()
   @State private var picked: Int?
-  @State private var fullCourse: Bool
   @State private var days: [Int]
   @State private var weekendOn: Bool
   /// The weekend has a time of its own only once one is picked: switched on, it starts as the weekdays'.
@@ -68,8 +64,6 @@ struct ScheduleQuestion: View {
     let lastFound: TimeToCover?
     let minutes: Int?
     let advice: TimeAdvice?
-    /// The subjects the last time asked about would focus, kept while a new time is asked about.
-    let focusSubjects: [String]
     let adviceKey: AdviceKey
     let asksAdvice: Bool
     let line: ScheduleTime.Line
@@ -97,7 +91,6 @@ struct ScheduleQuestion: View {
     _weekendOn = State(initialValue: draft?.weekendOn ?? false)
     _weekendPicked = State(initialValue: draft?.weekendPicked)
     _picked = State(initialValue: draft?.picked)
-    _fullCourse = State(initialValue: draft?.fullCourse ?? false)
   }
 
   /// What the plan's answers say of it, as main's gate reads them: when the goal has no date, the
@@ -157,12 +150,24 @@ struct ScheduleQuestion: View {
 
   private func question(_ shown: Shown) -> some View {
     QuestionForm {
-      // The date and its days left inform the time to pick.
       StepHeader(
         title: Text(
           "How much time can you study each day?", tableName: "Onboarding",
-          comment: "Onboarding question"),
-        description: isBesidePlan ? nil : aside?.planFacts.map { Text(PlanFact.chips($0)) })
+          comment: "Onboarding question"))
+
+      // The answer leads: the time, then the one line on what it gets the learner.
+      Section {
+        VStack(alignment: .leading, spacing: 12) {
+          timeMenu(shown)
+          timeAnswer(shown)
+        }
+        .keepsBeforeHinge()
+        .listRowBackground(Color.clear)
+      }
+      .locksWhileSaving()
+
+      weekSection(shown)
+        .locksWhileSaving()
 
       if let languageAim = view.languageAimView, let aim = languageAim.aim,
         !languageAim.choices.isEmpty
@@ -171,45 +176,14 @@ struct ScheduleQuestion: View {
           .locksWhileSaving()
       }
 
-      // The days decide the time, and what the time covers arrives last, so nothing above it moves.
-      weekSection(shown)
-        .locksWhileSaving()
-
       Section {
-        VStack(alignment: .leading, spacing: 12) {
-          timeMenu(shown)
-
-          VStack(alignment: .leading, spacing: 0) {
-            timeAnswer(shown)
-            focusLine(shown)
-            dateLink(shown)
-          }
-        }
-        .keepsBeforeHinge()
-        .listRowBackground(Color.clear)
-      } header: {
-        // The picker carries the name for VoiceOver; this is its visible title.
-        SectionTitle(
-          Text(
-            "Time a day", tableName: "Onboarding", comment: "Label of the daily study time picker")
-        )
-        .accessibilityHidden(true)
-      }
-      .locksWhileSaving()
-
-      if isExam, goalDate(shown) != nil, showsFullCourse(shown) {
-        Section {
-          fullCourseToggle(shown)
-        }
-        .locksWhileSaving()
+        dateLink(shown)
+          .listRowBackground(Color.clear)
       }
     } buttons: {
       StepButtons(
         canContinue: ScheduleTime.canContinue(
-          hasDays: !days.isEmpty, minutes: shown.minutes, line: shown.line, picked: picked),
-        continueLabel: Text(
-          "See your plan", tableName: "Onboarding",
-          comment: "Answers the time question, the last one, and shows the plan")
+          hasDays: !days.isEmpty, minutes: shown.minutes, line: shown.line, picked: picked)
       ) {
         submit(shown)
       }
@@ -266,8 +240,7 @@ struct ScheduleQuestion: View {
 
     let adviceKey = AdviceKey(
       week: ScheduleTime.studyWeek(
-        days: days, minutes: minutes ?? view.recommendedMinutes, weekend: weekend,
-        fullCourse: isExam && fullCourse),
+        days: days, minutes: minutes ?? view.recommendedMinutes, weekend: weekend),
       minutes: minutes ?? view.recommendedMinutes, date: view.goal.targetDate,
       aim: view.languageAimView?.aim)
 
@@ -290,11 +263,9 @@ struct ScheduleQuestion: View {
 
     return Shown(
       dated: dated, found: current, lastFound: lastFound, minutes: minutes, advice: advice,
-      focusSubjects: (advised.last(for: adviceKey)?.focusSubjects ?? []).map(\.shown),
       adviceKey: adviceKey,
       asksAdvice: !days.isEmpty
-        && ScheduleTime.asksAboutTime(
-          dated: dated, found: current, fullCourse: isExam && fullCourse, minutes: minutes),
+        && ScheduleTime.asksAboutTime(dated: dated, found: current, minutes: minutes),
       line: line, answer: answer, updating: updating)
   }
 
@@ -345,7 +316,7 @@ struct ScheduleQuestion: View {
             timeChoices.map(\.minutes), with: minutes, marked.suggested, marked.full),
           id: \.self
         ) { time in
-          Text(TimeAnswer.choiceLabel(time, full: marked.full, suggested: marked.suggested))
+          Text(TimeAnswer.choiceLabel(time, suggested: marked.suggested))
             .tag(time)
         }
       } label: {
@@ -377,7 +348,7 @@ struct ScheduleQuestion: View {
       HStack(spacing: 12) {
         VStack(alignment: .leading, spacing: 2) {
           Text(
-            "Your aim", tableName: "Onboarding",
+            "Level to reach", tableName: "Onboarding",
             comment:
               "The language level a course goes up to, like B1. Not the learner's goal: the level they aim for."
           )
@@ -406,7 +377,6 @@ struct ScheduleQuestion: View {
 
       AimChoicesSheet(
         languageAim: languageAim,
-        fromLine: shown.minutes.map { aimFromLine(level: levelDetail, minutes: $0) },
         currentEnd: finishDate(shown),
         readEnd: { [onboarding, goalID = view.goal.id] aim in
           let advice = try? await onboarding.timeAdvice(
@@ -418,14 +388,6 @@ struct ScheduleQuestion: View {
       }
       .zoonkStyles()
     }
-  }
-
-  private var levelDetail: String? {
-    struct Details: Decodable {
-      let level: String?
-    }
-
-    return (try? PracticeJSON.recode(view.goal.details, as: Details.self))?.level
   }
 
   private func finishDate(_ shown: Shown) -> String? {
@@ -452,9 +414,6 @@ struct ScheduleQuestion: View {
 
     return TimeAnswer(
       date: goalDate(shown), exam: isExam, line: answer.line, minutes: shown.minutes,
-      note: ScheduleTime.fullTimeNote(
-        found: answer.found, line: answer.line,
-        studiesEveryDay: days.count == ScheduleTime.everyDay.count),
       offer: ScheduleTime.offer(found: answer.found, line: answer.line, minutes: shown.minutes),
       split: days.isEmpty
         ? nil
@@ -475,37 +434,12 @@ struct ScheduleQuestion: View {
     }
   }
 
-  /// Where a time that doesn't cover everything should go, for a learner whose Focus test has
-  /// answers.
-  @ViewBuilder
-  private func focusLine(_ shown: Shown) -> some View {
-    if !shown.focusSubjects.isEmpty {
-      Text(
-        "With this time, we suggest giving \(shown.focusSubjects.formatted(.list(type: .and))) more attention.",
-        tableName: "Onboarding",
-        comment: "Under the daily time: up to three subjects the plan would give more time"
-      )
-      .foregroundStyle(.mutedForeground)
-      .opacity(shown.updating ? 0.5 : 1)
-      .padding(.top, 8)
-    }
-  }
-
   private func dateLink(_ shown: Shown) -> some View {
     Button {
       onChangeDate(
-        Draft(
-          days: days, fullCourse: fullCourse, picked: picked, weekendOn: weekendOn,
-          weekendPicked: weekendPicked))
+        Draft(days: days, picked: picked, weekendOn: weekendOn, weekendPicked: weekendPicked))
     } label: {
-      (shown.dated
-        ? Text(
-          "Change date", tableName: "Onboarding",
-          comment: "Opens the date question from the daily time question, for a goal with a date")
-        : Text(
-          "Choose a date", tableName: "Onboarding",
-          comment: "Opens the date question from the daily time question, for a goal without a date"
-        ))
+      dateLinkLabel(dated: shown.dated)
         .underline()
         .multilineTextAlignment(.leading)
         .frame(minHeight: 44)
@@ -515,68 +449,27 @@ struct ScheduleQuestion: View {
     .buttonStyle(.borderless)
   }
 
-  /// An exam's switch shows while the time falls short, and stays while it's on.
-  private func showsFullCourse(_ shown: Shown) -> Bool {
-    let short: Bool =
-      switch shown.answer.line {
-      case .share, .focus: true
-      default: false
-      }
-
-    return short || ScheduleTime.keepsFullCourse(checked: fullCourse, line: shown.answer.line)
-  }
-
-  private func fullCourseToggle(_ shown: Shown) -> some View {
-    Toggle(isOn: $fullCourse) {
-      Text(
-        "Study everything, even after the exam", tableName: "Onboarding",
-        comment: "Switch for an exam plan that goes on after the exam")
-
-      if fullCourse {
-        Text(fullCourseText(shown))
-      }
-    }
-    .tint(.success)
-  }
-
-  private func fullCourseText(_ shown: Shown) -> String {
-    guard let end = shown.advice?.fullCourseEndDate, let minutes = shown.minutes,
-      let date = goalDate(shown)
-    else {
-      return String(
-        localized:
-          "Until the exam, what comes up most comes first. What doesn't fit comes after it.",
-        table: "Onboarding", comment: "What an exam plan that studies everything does")
+  private func dateLinkLabel(dated: Bool) -> Text {
+    if isExam {
+      return Text(
+        "Change exam date", tableName: "Onboarding",
+        comment: "Opens the date question from the daily time question, for an exam")
     }
 
-    let time = duration(minutes)
-    let finishMonth = PlanDate.longText(end, month: true)
-    let exam = PlanDate.longText(date.isoDate, month: date.namedMonth)
-    let finish =
-      date.namedMonth
-      ? String(
-        localized: "At \(time) a day, you finish in \(finishMonth), after the exam in \(exam).",
-        table: "Onboarding",
+    return dated
+      ? Text(
+        "Change end date", tableName: "Onboarding",
         comment:
-          "When an exam plan that studies everything ends; the second and third arguments are months like 'May 2027'"
-      )
-      : String(
-        localized: "At \(time) a day, you finish in \(finishMonth), after the exam on \(exam).",
-        table: "Onboarding",
+          "Opens the date question from the daily time question, for a goal with an end date")
+      : Text(
+        "Choose an end date", tableName: "Onboarding",
         comment:
-          "When an exam plan that studies everything ends; the second argument is a month like 'May 2027', the third a date like 'May 5, 2027'"
-      )
-
-    let until = String(
-      localized: "Until the exam, what comes up most comes first.", table: "Onboarding",
-      comment: "What an exam plan that studies everything does before the exam")
-
-    return [finish, until].joinedSentences()
+          "Opens the date question from the daily time question, for a goal without an end date")
   }
 
   private func weekSection(_ shown: Shown) -> some View {
     Section {
-      ForEach(orderedDays, id: \.self) { day in
+      ForEach(ScheduleTime.mondayFirst, id: \.self) { day in
         Toggle(
           Calendar.current.standaloneWeekdaySymbols[day],
           isOn: Binding(
@@ -586,36 +479,36 @@ struct ScheduleQuestion: View {
             }))
       }
 
-      if studiesOnWeekends {
-        Toggle(
-          isOn: Binding(
-            get: { weekendOn },
-            set: { on in
-              weekendOn = on
-              weekendPicked = nil
-            })
-        ) {
-          Text(
-            "Different time on weekends", tableName: "Onboarding",
-            comment: "Switch giving Saturday and Sunday their own study time")
-        }
+      // The switch keeps its place, off until a weekend day is studied, so picking one moves nothing.
+      Toggle(
+        isOn: Binding(
+          get: { studiesOnWeekends && weekendOn },
+          set: { on in
+            weekendOn = on
+            weekendPicked = nil
+          })
+      ) {
+        Text(
+          "Different time on weekends", tableName: "Onboarding",
+          comment: "Switch giving Saturday and Sunday their own study time")
+      }
+      .disabled(!studiesOnWeekends)
 
-        if weekendOn {
-          let current = weekendPicked ?? shown.minutes ?? view.recommendedMinutes
+      if studiesOnWeekends, weekendOn {
+        let current = weekendPicked ?? shown.minutes ?? view.recommendedMinutes
 
-          Picker(selection: Binding(get: { current }, set: { weekendPicked = $0 })) {
-            ForEach(ScheduleTime.dailyTimes(timeChoices.map(\.minutes), with: current), id: \.self)
-            { time in
-              Text(duration(time))
-                .tag(time)
-            }
-          } label: {
-            Text(
-              "Time on weekends", tableName: "Onboarding",
-              comment: "Picks the weekend's own time a day")
+        Picker(selection: Binding(get: { current }, set: { weekendPicked = $0 })) {
+          ForEach(ScheduleTime.dailyTimes(timeChoices.map(\.minutes), with: current), id: \.self) {
+            time in
+            Text(duration(time))
+              .tag(time)
           }
-          .pickerStyle(.menu)
+        } label: {
+          Text(
+            "Time on weekends", tableName: "Onboarding",
+            comment: "Picks the weekend's own time a day")
         }
+        .pickerStyle(.menu)
       }
     } header: {
       SectionTitle(
@@ -624,11 +517,6 @@ struct ScheduleQuestion: View {
         ))
     }
     .tint(.success)
-  }
-
-  private var orderedDays: [Int] {
-    let first = Calendar.current.firstWeekday - 1
-    return ScheduleTime.everyDay.map { (first + $0) % 7 }
   }
 
   private func submit(_ shown: Shown) {
@@ -646,10 +534,6 @@ struct ScheduleQuestion: View {
 
     if let weekend {
       input["weekendMinutes"] = weekend
-    }
-
-    if isExam {
-      input["fullCourse"] = ScheduleTime.keepsFullCourse(checked: fullCourse, line: shown.line)
     }
 
     onAnswer(input)

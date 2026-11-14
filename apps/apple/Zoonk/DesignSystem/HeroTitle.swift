@@ -1,8 +1,11 @@
 import SwiftUI
 
 extension View {
-  /// A page that heads itself with its own title: the bar names it once that title scrolls away.
-  /// The bar stays inline, since a large title would repeat the heading above it.
+  /// The screen frame for a page that heads itself with `PageHeader`: it names the page for the next
+  /// page's Back, VoiceOver and the iPad and iPhone Duo bars, and the bar shows the name once the
+  /// header's title scrolls away. The bar stays inline, since a large title would repeat the
+  /// heading; the system draws Back with the previous page's name, and nothing sets room over the
+  /// title.
   func barTitleAfterHero(_ title: String) -> some View {
     modifier(BarTitleAfterHero(title: title))
   }
@@ -31,19 +34,13 @@ private struct BarTitleAfterHero: ViewModifier {
   @State private var isHeroShown = true
 
   func body(content: Content) -> some View {
+    // The system's own title, taken out of the bar while the header shows it. A stand-in item in
+    // the title's place, even an invisible one, takes the room the system Back uses for the
+    // previous page's name.
     content
+      .navigationTitle(title)
       .toolbarTitleDisplayMode(.inline)
-      .toolbar {
-        // The principal item stands in for the title, which `toolbar(removing: .title)` would take
-        // with it.
-        ToolbarItem(placement: .principal) {
-          Text(title)
-            .typeStyle(.body.weight(.semibold))
-            .lineLimit(1)
-            .opacity(isHeroShown ? 0 : 1)
-            .accessibilityHidden(isHeroShown)
-        }
-      }
+      .toolbar(removing: isHeroShown ? .title : nil)
       .environment(\.isHeroTitleShown, $isHeroShown)
   }
 }

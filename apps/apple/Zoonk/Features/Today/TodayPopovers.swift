@@ -169,17 +169,17 @@ extension DaySegment {
       block.learnKind.purpose
     case .held(_, .toPrepare):
       String(
-        localized: "Not written yet.", table: "Today",
-        comment: "The day's next lessons, which nobody is writing yet")
+        localized: "Not ready yet", table: "Today",
+        comment: "The day's next lessons, which nobody has asked for yet")
     case .held(_, .beingWritten) where writingStalled:
       String(
         localized: "Taking longer than usual", table: "Today",
         comment: "The day's next lessons are taking long to outline")
     case .held(_, .beingWritten):
       String(
-        localized: "Being written for you…", table: "Today",
+        localized: "Getting ready…", table: "Today",
         comment:
-          "Under a lesson, or under the day's next lessons, while they're written right now. It can be one lesson or several."
+          "Under a lesson, or under the day's next lessons, while they're being made ready. It can be one lesson or several."
       )
     }
   }
