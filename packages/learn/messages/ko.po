@@ -10301,6 +10301,16 @@ msgctxt "LcFFqV"
 msgid "New lessons start"
 msgstr "새 레슨 시작"
 
+#: src/plan/exam-choice-question.tsx
+msgctxt "FXC8l3"
+msgid "{group}: which ones will you take?"
+msgstr "{group}: 어떤 항목을 선택할까요?"
+
+#: src/plan/exam-choice-question.tsx
+msgctxt "gDpw0U"
+msgid "{group}: which one will you take?"
+msgstr "{group}: 어떤 과목으로 시험을 볼 건가요?"
+
 #: src/plan/exam-over-actions.tsx
 msgctxt "rBTgSX"
 msgid "Archive goal"
@@ -10484,18 +10494,6 @@ msgstr "우선 {month}로 정해 뒀어요. 날짜를 알게 되면 선택하세
 msgctxt "v5e5kt"
 msgid "Adjust your plan"
 msgstr "계획 조정하기"
-
-#: src/plan/plan-exam-choices.tsx
-#: src/today/today-exam-choice.tsx
-msgctxt "FXC8l3"
-msgid "{group}: which ones will you take?"
-msgstr "{group}: 어떤 항목을 선택할까요?"
-
-#: src/plan/plan-exam-choices.tsx
-#: src/today/today-exam-choice.tsx
-msgctxt "gDpw0U"
-msgid "{group}: which one will you take?"
-msgstr "{group}: 어떤 과목으로 시험을 볼 건가요?"
 
 #: src/plan/plan-finish.tsx
 msgctxt "6Due7K"
