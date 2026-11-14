@@ -38,12 +38,7 @@ function freeLedger({ now, starts }: { now: Date; starts: readonly Date[] }): Us
     totals: {
       activeGoals: 0,
       kinds: new Map(),
-      lessonStarts: {
-        count: inWindow.length,
-        latest: inWindow.slice(0, LIMIT),
-        latestPrepared: [],
-        prepared: 0,
-      },
+      lessonStarts: { count: inWindow.length, latest: inWindow.slice(0, LIMIT), prepared: 0 },
       spentTodayMicros: 0,
     },
     viewer: { isGuest: false, tier: "free", userId: randomUUID() },
@@ -90,6 +85,11 @@ describe("the window", () => {
           }
 
           const { availableAt } = decision.limit;
+
+          if (!availableAt) {
+            throw new Error("Expected a counted-start availability date");
+          }
+
           const past = starts;
           expect(availableAt.getTime()).toBeGreaterThan(NOW.getTime());
 
@@ -130,6 +130,11 @@ describe("a map's bundle of lesson starts", () => {
     }
 
     const { availableAt } = refused.decision.limit;
+
+    if (!availableAt) {
+      throw new Error("Expected a bundle availability date");
+    }
+
     expect(availableAt).toStrictEqual(new Date(NOW.getTime() + 17 * DAY_MS));
 
     expect(
@@ -290,8 +295,8 @@ describe("admission against the database", () => {
 
     expect(decisions.filter((decision) => decision.status === "allowed")).toHaveLength(6);
 
-    expect(decisions.find((decision) => decision.status !== "allowed")).toMatchObject({
-      limit: { resource: "lessonPreparation" },
+    expect(decisions.find((decision) => decision.status !== "allowed")).toStrictEqual({
+      limit: { limit: 20, period: "rolling30Days", resource: "lessonPreparation", tier: "free" },
       status: "limitReached",
     });
 
