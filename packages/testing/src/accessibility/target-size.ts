@@ -1,4 +1,4 @@
-/** Zoonk's tap target rule sits above WCAG 2.2's 24 px floor (2.5.8), the only one axe checks. */
+/** Zoonk's tap target rule sits above WCAG 2.2's 24 px floor (2.5.8), which axe leaves off. */
 export const MIN_TARGET_PX = 44;
 
 const TARGET_LIMITS = {
