@@ -46,7 +46,7 @@ function LearnTopBar() {
         <PageTopBar
           actions={
             <PhoneOnly>
-              <LearnBarEnd search={<LearnBarSearch />} visitor={<VisitorBarLinks />} />
+              <LearnBarEnd visitor={<VisitorBarLinks />} />
             </PhoneOnly>
           }
           back={

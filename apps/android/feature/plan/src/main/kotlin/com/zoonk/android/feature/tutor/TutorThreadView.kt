@@ -411,12 +411,15 @@ private fun Answer(
 
         turn.status == TutorTurn.Status.Failed -> {
             turn.answer?.let { AnswerText(it, linksChecked, routes.open, { id -> vm.openBlock(turn.id, id) }, vm.noticeFor(turn), words) }
-            if (failure?.helpLimit != null) {
+            if (failure?.helpLimit != null || failure == TutorFailure.Unanswered) {
                 Text(
                     stringResource(R.string.tutor_not_answered),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium,
                 )
+                if (failure == TutorFailure.Unanswered) {
+                    FailureAction(failure, routes, onRetry = { vm.retryAnswer(turn.id) }, enabled = !busy && others == 0)
+                }
             } else {
                 Text(
                     text = if (failure.isGeneric) stringResource(R.string.tutor_answer_failed) else failureMessage(failure),
