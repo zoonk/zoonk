@@ -133,10 +133,15 @@ const TODAY_PREVIEW: PlanChangePreview = {
 
 /** The Plan's answers wait until the test releases them. */
 function renderPlan(children: React.ReactNode) {
-  const heldPreview = Promise.withResolvers<PlanChangePreview | null>();
   const heldChange = Promise.withResolvers<Awaited<ReturnType<PlanActions["change"]>>>();
   const change = vi.fn<PlanActions["change"]>(() => heldChange.promise);
-  const preview = vi.fn<PlanActions["preview"]>(() => heldPreview.promise);
+  const previewAnswers: PromiseWithResolvers<PlanChangePreview | null>[] = [];
+
+  const preview = vi.fn<PlanActions["preview"]>(() => {
+    const answer = Promise.withResolvers<PlanChangePreview | null>();
+    previewAnswers.push(answer);
+    return answer.promise;
+  });
 
   const actions: PlanActions = {
     adviseOnBases: async () => null,
@@ -165,7 +170,9 @@ function renderPlan(children: React.ReactNode) {
     change,
     preview,
     releaseChange: () => heldChange.resolve({ change: null, status: "applied" }),
-    releasePreview: () => heldPreview.resolve(TODAY_PREVIEW),
+    /** Answers the oldest check still waiting; `null` is a check that failed. */
+    releasePreview: (answer: PlanChangePreview | null = TODAY_PREVIEW) =>
+      previewAnswers.shift()?.resolve(answer),
     screen,
   };
 }
@@ -184,6 +191,12 @@ async function addFromSheet(held: ReturnType<typeof renderHeldOffer>) {
   await page.getByRole("button", { name: "View" }).click();
   await page.getByRole("button", { name: "Add to my plan" }).click();
   await expect.poll(() => held.preview).toHaveBeenCalledOnce();
+}
+
+async function tryAgain() {
+  const button = page.getByRole("dialog").getByRole("button", { name: "Try again" });
+  await expect.element(button).toBeVisible();
+  await button.click();
 }
 
 function BasesSheetHost() {
@@ -215,6 +228,7 @@ describe("the Plan's offer to fit more lessons", () => {
       held.release();
 
       await expect.poll(() => held.change).toHaveBeenCalledWith([{ kind: "fitLessons" }]);
+      expect(page.getByText("The numbers are different today.").query()).toBeNull();
       held.releaseChange();
       held.screen.unmount();
     });
@@ -248,14 +262,55 @@ describe("the Plan's offer to fit more lessons", () => {
   });
 });
 
+describe("the fit offer's Try again after a failed check", () => {
+  it("adds the lessons when today's numbers match the card", async () => {
+    await atViewport(PHONE, async () => {
+      const held = renderHeldOffer();
+      await addFromSheet(held);
+      held.releasePreview(null);
+
+      await tryAgain();
+      await expect.poll(() => held.preview).toHaveBeenCalledTimes(2);
+      held.releasePreview();
+
+      await expect.poll(() => held.change).toHaveBeenCalledOnce();
+      expect(page.getByText("The numbers are different today.").query()).toBeNull();
+      held.releaseChange();
+      await settle();
+
+      expect(held.change).toHaveBeenCalledOnce();
+      held.screen.unmount();
+    });
+  });
+
+  it("shows today's numbers to confirm when they differ from the card", async () => {
+    await atViewport(PHONE, async () => {
+      const held = renderHeldOffer();
+      await addFromSheet(held);
+      held.releasePreview(null);
+
+      await tryAgain();
+      await expect.poll(() => held.preview).toHaveBeenCalledTimes(2);
+      held.releasePreview({ ...TODAY_PREVIEW, effect: { ...FIT_EFFECT, lessonsAdded: 2 } });
+
+      const sheet = page.getByRole("dialog");
+      await expect.element(sheet.getByText("The numbers are different today.")).toBeVisible();
+      await expect.element(sheet.getByRole("button", { name: "Change my plan" })).toBeVisible();
+      expect(held.change).not.toHaveBeenCalled();
+      held.screen.unmount();
+    });
+  });
+});
+
 describe("the Plan's prerequisites sheet", () => {
   it("stays open when a save the learner closed answers after they open it again", async () => {
     await atViewport(PHONE, async () => {
       const held = renderPlan(<BasesSheetHost />);
-      held.releasePreview();
 
       await page.getByRole("button", { name: "Open prerequisites" }).click();
       await page.getByText("Every lesson").click();
+      await expect.poll(() => held.preview).toHaveBeenCalledOnce();
+      held.releasePreview();
       await page.getByRole("button", { name: "Save" }).click();
       await expect.poll(() => held.change).toHaveBeenCalledOnce();
 
