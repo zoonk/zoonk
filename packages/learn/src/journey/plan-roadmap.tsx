@@ -1,8 +1,9 @@
 "use client";
 
+import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { ListRowChevron, ListRowChevronSpace } from "../_components/list-group";
+import { ListRowChevronSpace } from "../_components/list-group";
 import { MeterPart, MeterParts } from "../_components/meter";
 import { StatusMark } from "../_components/status-mark";
 import { TITLE_ROW_CLASS, TRUNCATED_TITLE_CLASS } from "../_components/title-row";
@@ -81,7 +82,7 @@ function RoadmapCompact({
           </span>
           <span className="text-muted-foreground flex items-center gap-3 font-mono tabular-nums">
             {phaseWhen(position.phase)}
-            {onOpen ? <ListRowChevron /> : <ListRowChevronSpace />}
+            {onOpen ? <RowChevron /> : <ListRowChevronSpace />}
           </span>
         </span>
       )}
@@ -94,7 +95,7 @@ function RoadmapCompact({
               total: phases.length,
             })}
           </span>
-          <ListRowChevron />
+          <RowChevron />
         </span>
       )}
     </>

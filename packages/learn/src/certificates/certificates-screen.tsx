@@ -3,6 +3,7 @@
 import { type OwnedCertificateFacts } from "@zoonk/core/certificates/contract";
 import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
+import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { type CertificateLinks, getCertificatePath } from "@zoonk/utils/certificate-links";
 import { useExtracted } from "next-intl";
 import { DetailContent, DetailLayout } from "../_components/detail-page";
@@ -11,7 +12,6 @@ import {
   LIST_GROUP_CLASS,
   ListRow,
   ListRowBody,
-  ListRowChevron,
   ListRowContent,
   ListRowLeading,
   ListRowTitle,
@@ -93,7 +93,7 @@ function CertificateItem({ facts, links }: ListedCertificate) {
       </span>
 
       <span className="contents lg:hidden">
-        <ListRowChevron />
+        <RowChevron />
       </span>
     </LearnLink>
   );
