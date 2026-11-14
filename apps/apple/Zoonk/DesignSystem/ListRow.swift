@@ -79,17 +79,17 @@ struct ListRow<Leading: View, Trailing: View>: View {
   }
 
   private var value: some View {
-    trailing
+    // On the title's baseline the value's shorter capitals sat low against the chevron, which
+    // centers on the title's; this centers the value's on them too.
+    let lift =
+      (TypeStyle.rowTitle.capHeight(dynamicTypeSize) - TypeStyle.data.capHeight(dynamicTypeSize))
+      / 2
+
+    return
+      trailing
       .typeStyle(.data)
       .foregroundStyle(.mutedForeground)
-      // On the title's baseline the value's shorter capitals sat low against the chevron, which
-      // centers on the title's; this centers the value's on them too.
-      .alignmentGuide(.firstTextBaseline) { value in
-        value[.firstTextBaseline]
-          + (TypeStyle.rowTitle.capHeight(dynamicTypeSize)
-            - TypeStyle.data.capHeight(dynamicTypeSize))
-          / 2
-      }
+      .alignmentGuide(.firstTextBaseline) { $0[.firstTextBaseline] + lift }
   }
 
   @ViewBuilder private var titleText: some View {
