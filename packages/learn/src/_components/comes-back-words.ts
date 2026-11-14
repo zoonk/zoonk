@@ -166,7 +166,7 @@ export function useComesBackLine(limit: HelpLimit): string | undefined {
   return lineFor(limit, useOpeningDay(isRollingCap(limit) ? limit.availableAt : null));
 }
 
-export function useLimitSentence() {
+function useLimitSentence() {
   const t = useExtracted("limits");
 
   return ({ line, title }: LimitWords): string => {
