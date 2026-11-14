@@ -686,7 +686,7 @@ private actor MindMapsAPIStub: MindMapsAPIClient {
         ? []
         : [
           LessonMapGroup(
-            chapterId: "chapter", count: lessonIds.count, locked: 0, lessonIds: lessonIds)
+            chapterId: "chapter", count: lessonIds.count, lessonIds: lessonIds)
         ],
       saved: answered?.saved
         ?? (saved
@@ -718,7 +718,8 @@ private actor MindMapsAPIStub: MindMapsAPIClient {
     return ChapterLessonMaps(
       chapter: .init(id: chapterId, position: 1, title: "Chapter"),
       lessons: written.enumerated().map { index, id in
-        .init(lessonId: id, locked: false, map: nil, position: index + 1, saved: false, title: id)
+        .init(
+          lessonId: id, map: emptyLessonMap, position: index + 1, saved: false, title: id)
       })
   }
 
@@ -813,3 +814,6 @@ extension CurrentAccount {
       name: "Learner",
       username: "learner"))
 }
+
+private let emptyLessonMap = try! JSONDecoder().decode(
+  LessonSummary.self, from: Data(#"{"shape":"hub","ideas":[]}"#.utf8))

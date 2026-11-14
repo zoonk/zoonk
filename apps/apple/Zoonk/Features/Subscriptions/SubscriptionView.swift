@@ -914,17 +914,6 @@ private struct FreePlanCard: View {
             "A plan for your goal and your date", tableName: "Account",
             comment: "Free plan: a plan for the learner's goal"))
 
-        if let days = limits.examPrepDays {
-          item(
-            days == 7
-              ? Text(
-                "For an exam: the diagnostic, your plan and its first week", tableName: "Account",
-                comment: "Free plan: how much of an exam plan it includes")
-              : Text(
-                "For an exam: the diagnostic, your plan and its first \(days) days",
-                tableName: "Account", comment: "Free plan: how much of an exam plan it includes"))
-        }
-
         if let messages = limits.tutorMessagesPerDay {
           item(
             Text(
@@ -1054,24 +1043,6 @@ private struct PlusQuestions: View {
           Text(
             "\(month) lessons a month", tableName: "Account",
             comment: "Free plan: lessons a month"))
-      }
-
-      if let day = limits.lessonsPerDay {
-        bullet(
-          Text(
-            "Up to \(day) lessons a day", tableName: "Account", comment: "Free plan: lessons a day")
-        )
-      }
-
-      if let days = limits.examPrepDays {
-        bullet(
-          days == 7
-            ? Text(
-              "The first week of exam prep", tableName: "Account",
-              comment: "Free plan: how much of an exam plan it includes")
-            : Text(
-              "The first \(days) days of exam prep", tableName: "Account",
-              comment: "Free plan: how much of an exam plan it includes"))
       }
 
       if let messages = limits.tutorMessagesPerDay {

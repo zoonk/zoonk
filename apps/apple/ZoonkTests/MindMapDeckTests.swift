@@ -5,9 +5,8 @@ import XCTest
 final class MindMapDeckTests: XCTestCase {
   func testTheLessonsDeckIsTheLessonsTheListNamedSoMapsWrittenLaterDontMoveIt() {
     let maps = Self.maps(groups: [
-      LessonMapGroup(chapterId: "c1", count: 2, locked: 0, lessonIds: ["l2", "l3"]),
-      LessonMapGroup(chapterId: "c2", count: 3, locked: 3, lessonIds: []),
-      LessonMapGroup(chapterId: "c3", count: 3, locked: 1, lessonIds: ["l5", "l6"]),
+      LessonMapGroup(chapterId: "c1", count: 2, lessonIds: ["l2", "l3"]),
+      LessonMapGroup(chapterId: "c3", count: 2, lessonIds: ["l5", "l6"]),
     ])
 
     XCTAssertEqual(
@@ -57,8 +56,8 @@ final class MindMapDeckTests: XCTestCase {
 
   func testALessonInTwoChaptersOpensInTheChapterItWasReadIn() {
     let maps = Self.maps(groups: [
-      LessonMapGroup(chapterId: "c1", count: 1, locked: 0, lessonIds: ["l1"]),
-      LessonMapGroup(chapterId: "c2", count: 1, locked: 0, lessonIds: ["l1"]),
+      LessonMapGroup(chapterId: "c1", count: 1, lessonIds: ["l1"]),
+      LessonMapGroup(chapterId: "c2", count: 1, lessonIds: ["l1"]),
     ])
     let cards = MindMapDeck.cards(tab: .lessons, maps: maps)
     let second = MindMapCard.lesson(chapterId: "c2", lessonId: "l1")

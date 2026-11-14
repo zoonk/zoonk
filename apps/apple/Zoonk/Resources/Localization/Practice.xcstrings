@@ -4471,65 +4471,6 @@
         }
       }
     },
-    "Challenge calls come with Plus. Your plan keeps going without them." : {
-      "comment" : "A challenge call is Plus-only.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Herausforderungsgespräche gibt es mit Plus. Dein Plan geht auch ohne sie weiter."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Las llamadas de desafío están incluidas en Plus. Tu plan sigue adelante sin ellas."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Les appels défi sont inclus dans Plus. Ton plan continue sans eux."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le conversazioni di sfida sono incluse in Plus. Il tuo piano prosegue anche senza."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "会話チャレンジはPlusで利用できます。利用しなくても、学習計画は進められます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "챌린지 대화는 Plus에 포함돼요. 대화 없이도 계획은 계속 진행돼요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rozmowy w ramach wyzwań są dostępne w pakiecie Plus. Bez nich też możesz realizować swój plan."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "As conversas de desafio fazem parte do Plus. Seu plano continua sem elas."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Meydan okuma sohbetleri Plus’a dahil. Planın bunlar olmadan da devam eder."
-          }
-        }
-      }
-    },
     "Challenge passed" : {
       "comment" : "A finished challenge.",
       "localizations" : {
@@ -8235,65 +8176,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Deneme sınavı %lld"
-          }
-        }
-      }
-    },
-    "Mock exams come with Plus: whenever you want, and every week in your plan." : {
-      "comment" : "A mock exam challenge is Plus-only.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit Plus kannst du jederzeit Probeprüfungen machen, und jede Woche ist eine in deinem Plan."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus incluye simulacros de examen: cuando quieras y cada semana en tu plan."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Avec Plus, passe des examens blancs quand tu veux et chaque semaine dans ton plan."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con Plus hai le simulazioni: quando vuoi e ogni settimana nel tuo piano."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plusなら、好きなときに模試を受けられ、毎週の学習計画にも模試が入ります。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus를 구독하면 모의고사를 언제든 볼 수 있고, 계획에도 매주 포함돼요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Egzaminy próbne są w pakiecie Plus: kiedy chcesz i co tydzień w twoim planie."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Com o Plus, você faz simulados quando quiser e toda semana no seu plano."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus ile istediğin zaman deneme sınavı çözebilirsin. Planında da her hafta yer alır."
           }
         }
       }
@@ -12994,65 +12876,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sonucunu gör"
-          }
-        }
-      }
-    },
-    "See Plus" : {
-      "comment" : "Opens the Zoonk Plus subscription; Plus is its name, not \"more\".",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus ansehen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ver Plus"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Découvrir Plus"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Scopri Plus"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plusを見る"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus 알아보기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zobacz Plus"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Conhecer o Plus"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus’ı incele"
           }
         }
       }

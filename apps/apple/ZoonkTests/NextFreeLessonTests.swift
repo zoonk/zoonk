@@ -76,6 +76,28 @@ final class NextFreeLessonTests: XCTestCase {
     XCTAssertNil(wake(opening))
   }
 
+  /// The learner may still have lessons left, so a map's refusal never says they used them.
+  func testAMapWhoseLessonsDontFitSaysWhenItFits() throws {
+    let fits = try XCTUnwrap(
+      calendar.date(from: DateComponents(year: 2026, month: 11, day: 22, hour: 9)))
+    let dated = HelpLimit.freeLessonsUsed(opensAt: fits)
+    let text = { (words: LimitWords) in
+      [words.title, words.line].compactMap { $0.map { String(localized: $0) } }
+    }
+
+    XCTAssertEqual(
+      text(dated.mapLessonsWords(now: now, calendar: calendar)),
+      [
+        "Not enough free lessons for this map yet",
+        "You'll have enough on November 22, or subscribe to make it now.",
+      ])
+    XCTAssertEqual(
+      text(dated.mapLessonsWords(now: fits, calendar: calendar)), ["You can make this map now"])
+    XCTAssertEqual(
+      text(HelpLimit.limitReached(period: .total, tier: .free).mapLessonsWords()),
+      ["This map needs a subscription", "It writes more lessons than you get for free."])
+  }
+
   func testNoLessonIsRefusedForTheMonth() {
     let words = HelpLimit.limitReached(period: .month, tier: .plus).lessonWords()
 

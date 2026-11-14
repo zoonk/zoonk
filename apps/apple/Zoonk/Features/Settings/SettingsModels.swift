@@ -133,9 +133,7 @@ struct MemoryFact: Equatable, Identifiable, Sendable {
 /// What a free account can do; nil means no cap.
 struct FreePlan: Decodable, Equatable, Sendable {
   let activeGoals: Int?
-  let examPrepDays: Int?
   let guestLessons: Int?
-  let lessonsPerDay: Int?
   let lessonsPer30Days: Int?
   let tutorMessagesPerDay: Int?
   let uploadsPerDay: Int?

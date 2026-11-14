@@ -68,8 +68,6 @@ struct TestOutScreen: View {
                 comment: "Why a test-out has nothing to skip.")
             }
             .lonePage()
-          case .loaded(.plusRequired):
-            preparing(failure: PracticeAPIError.plusRequired)
           case .loaded(.test(let test)) where test.questions.isEmpty:
             preparing(failure: writeFailure)
           case .loaded(.test(let test)):
@@ -294,8 +292,6 @@ struct TestOutScreen: View {
       submitFailures = 0
       PracticeAnswerDraft.clear(key: draftKey)
       if let graded { result = graded } else { load = .loaded(.nothingToSkip) }
-    case .refused(.plusRequired):
-      load = .loaded(.plusRequired)
     case .refused, .failed:
       submitFailures += 1
     case .obsolete:

@@ -5,8 +5,6 @@ struct ChapterMindMap: Decodable, Equatable, Identifiable, Sendable {
     case available
     case drawing
     case failed
-    /// The chapter's lessons are Plus-only for this learner, so its map is too.
-    case plusRequired
     case ready
     /// A language's unit, or nothing in its outline to draw from: no row at all.
     case unavailable
@@ -77,14 +75,9 @@ struct ChapterMindMap: Decodable, Equatable, Identifiable, Sendable {
 /// A chapter with written lesson maps, as the Lessons tab lists it.
 struct LessonMapGroup: Decodable, Equatable, Sendable {
   let chapterId: String
-  /// Locked ones included.
   let count: Int
-  /// How many of them a free exam plan past its first week keeps for Plus.
-  let locked: Int
-  /// The ones that open, in chapter order: a reader opened with this list keeps these.
+  /// In chapter order: a reader opened with this list keeps these.
   let lessonIds: [String]
-
-  var opens: Int { lessonIds.count }
 }
 
 enum SavedMindMapKind: String, Codable, Hashable, Sendable {
@@ -192,9 +185,7 @@ struct ChapterLessonMaps: Decodable, Equatable, Sendable {
 
   struct Lesson: Decodable, Equatable, Identifiable, Sendable {
     let lessonId: String
-    let locked: Bool
-    /// Nil while it's locked.
-    let map: LessonSummary?
+    let map: LessonSummary
     let position: Int
     let saved: Bool
     let title: String
@@ -203,8 +194,7 @@ struct ChapterLessonMaps: Decodable, Equatable, Sendable {
 
     func saving(_ saved: Bool) -> Self {
       Self(
-        lessonId: lessonId, locked: locked, map: map, position: position, saved: saved, title: title
-      )
+        lessonId: lessonId, map: map, position: position, saved: saved, title: title)
     }
   }
 
@@ -212,11 +202,11 @@ struct ChapterLessonMaps: Decodable, Equatable, Sendable {
   let lessons: [Lesson]
 }
 
-/// Main's `MindMapLimit`, and what ran out: the maps, the lessons a map writes first, or the day's
-/// AI spend.
+/// Main's `MindMapLimit`, and what ran out: the maps, the lessons a map writes first (one start, or
+/// the whole map's that don't fit), or the day's AI spend.
 struct MindMapLimit: Equatable, Sendable {
   enum Resource: Hashable, Sendable {
-    case aiSpend, lessons, mindMap
+    case aiSpend, chapterLessons, lessons, mindMap
   }
 
   let limit: HelpLimit
@@ -231,7 +221,7 @@ enum MindMapRequestFailure: Equatable, Sendable {
 }
 
 enum MindMapRequest: Equatable, Sendable {
-  /// Ready, on its way, Plus-only or a chapter without one: reading it again says which.
+  /// Ready, on its way or a chapter without one: reading it again says which.
   case read
   case refused(MindMapLimit)
 }
