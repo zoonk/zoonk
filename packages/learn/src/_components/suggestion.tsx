@@ -155,7 +155,7 @@ export function SuggestionLine({ children, className, ...props }: React.Componen
 export function SuggestionSummary({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
-      className={cn("min-w-0 flex-1 text-sm leading-snug font-medium text-pretty", className)}
+      className={cn("min-w-0 flex-1 text-sm font-medium text-pretty", className)}
       data-slot="suggestion-summary"
       {...props}
     />
