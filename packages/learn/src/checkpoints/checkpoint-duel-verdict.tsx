@@ -3,28 +3,36 @@
 import { type DuelDecision } from "@zoonk/core/checkpoints/contract";
 import { useExtracted } from "next-intl";
 import { FeedbackExplanation, FeedbackPanel, FeedbackVerdict } from "../_components/feedback-panel";
-import { useSentenceSpace } from "../_utils/locale";
 import { useCheckpointScreen } from "./checkpoint-context";
 import { getDuelScore } from "./checkpoint-duel-state";
+import { getShieldCracks } from "./duel-ending";
+import { TricksterArt } from "./trickster-art";
 
 function DecisionLine({ decision }: { decision: DuelDecision }) {
   const t = useExtracted();
-  const { duel } = useCheckpointScreen();
-  const space = useSentenceSpace();
 
-  if (decision === "won") {
-    return t("His shield is broken. You won!");
-  }
+  return decision === "won"
+    ? t("His shield is broken. You won!")
+    : t("The Trickster won this time.");
+}
+
+/**
+ * How the duel ended, drawn where the learner just answered. A computer plays it on the Trickster
+ * in its side panel instead.
+ */
+function DuelEnding({ decision }: { decision: DuelDecision }) {
+  const { checkpoint, duel } = useCheckpointScreen();
+  const { correct } = getDuelScore({ checkpoint, state: duel.state });
 
   return (
-    <>
-      {t("His shield held this time.")}
-      {space}
-      {t(
-        "{lessons, plural, =0 {New try tomorrow. Nothing is lost.} one {New try tomorrow, after # short lesson. Nothing is lost.} other {New try tomorrow, after # short lessons. Nothing is lost.}}",
-        { lessons: duel.state.reinforcementLessons },
-      )}
-    </>
+    <div className="with-aside:hidden flex">
+      <TricksterArt
+        className="size-36 sm:size-36"
+        cracks={getShieldCracks({ broken: correct, segments: checkpoint.passMark })}
+        outcome={decision}
+        reacts
+      />
+    </div>
   );
 }
 
@@ -54,6 +62,8 @@ export function Verdict({
           <DecisionLine decision={decision} />
         </FeedbackExplanation>
       )}
+
+      {decision && <DuelEnding decision={decision} />}
     </FeedbackPanel>
   );
 }

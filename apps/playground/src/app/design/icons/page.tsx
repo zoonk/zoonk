@@ -2,7 +2,6 @@ import { ICON_MEANINGS, ICON_RULES, ICON_SIZES, type IconMeaning } from "@/desig
 import { KindMark, type LearnKind } from "@zoonk/learn/kind-tile";
 import { DoneMark, StatusMark } from "@zoonk/learn/status-mark";
 import {
-  ArrowRightIcon,
   BarChart3Icon,
   ChevronDownIcon,
   ChevronLeftIcon,
@@ -39,7 +38,6 @@ const KINDS: readonly { kind: LearnKind; label: string }[] = [
 ];
 
 const MEANING_ICONS: Record<IconMeaning["icon"], LucideIcon> = {
-  "arrow-right": ArrowRightIcon,
   "chevron-down": ChevronDownIcon,
   "chevron-left": ChevronLeftIcon,
   "chevron-right": ChevronRightIcon,

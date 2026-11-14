@@ -13,6 +13,10 @@ export function StatsPage({
   return (
     <Page data-slot="stats-page">
       <SectionPageHeader description={description} title={title} />
+      {/* On a computer the tab names the page, so the header hides; the page's one line still shows. */}
+      {description && (
+        <p className="text-muted-foreground hidden text-sm text-pretty md:block">{description}</p>
+      )}
       {children}
     </Page>
   );

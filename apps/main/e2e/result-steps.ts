@@ -46,15 +46,3 @@ export async function continueToStep(page: Page, name: RegExp | string) {
 
   await expect(heading).toBeVisible();
 }
-
-export async function continueToLastStep(
-  page: Page,
-  { keyboard = false }: { keyboard?: boolean } = {},
-) {
-  const { current, total } = await readStep(page);
-
-  for (let step = current; step < total; step += 1) {
-    // oxlint-disable-next-line no-await-in-loop -- One step at a time.
-    await nextStep(page, { keyboard });
-  }
-}

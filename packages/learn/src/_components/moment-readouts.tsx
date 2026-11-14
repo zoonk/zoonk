@@ -1,14 +1,50 @@
 "use client";
 
 import { CountUp } from "@zoonk/ui/components/count-up";
+import { useCelebration } from "@zoonk/ui/hooks/celebration";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted, useFormatter } from "next-intl";
+import { useEffect, useState } from "react";
+import { deviceStorage } from "../_utils/device-storage";
 import { TaskMeta } from "./task-meta";
+
+/** Under a moment's title, so the title leads. */
+const LINE_SIZE = "text-2xl";
+
+/** Where the number is the moment itself: the day's bonus, the day's total. */
+const HERO_SIZE = "text-[2.5rem]";
+
+const INTRO_KEY = "zoonk:brain-power-intro";
+
+/** Brain Power says what it is the first few times a learner earns it on this device. */
+const INTRO_TIMES = 1;
+
+function readIntroCount(): number {
+  return Number(deviceStorage.get(INTRO_KEY)) || 0;
+}
+
+/**
+ * Decided once per moment, when the learner's action opened it, so the line never leaves a moment
+ * it was drawn on.
+ */
+function useBrainPowerIntro(earned: boolean): boolean {
+  const fresh = useCelebration();
+  // oxlint-disable-next-line react/hook-use-state -- Read once as the moment opens, never updated.
+  const [shown] = useState(() => fresh && earned && readIntroCount() < INTRO_TIMES);
+
+  useEffect(() => {
+    if (shown) {
+      deviceStorage.set(INTRO_KEY, String(readIntroCount() + 1));
+    }
+  }, [shown]);
+
+  return shown;
+}
 
 function ReadoutNumber({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
-      className={cn("text-readout inline-block text-[2.5rem]", className)}
+      className={cn("text-readout me-[0.1em] inline-block", className)}
       data-slot="readout-number"
       {...props}
     />
@@ -16,7 +52,7 @@ function ReadoutNumber({ className, ...props }: React.ComponentProps<"span">) {
 }
 
 function scoreNumber(chunks: React.ReactNode) {
-  return <ReadoutNumber className="text-foreground">{chunks}</ReadoutNumber>;
+  return <ReadoutNumber className={cn("text-foreground", LINE_SIZE)}>{chunks}</ReadoutNumber>;
 }
 
 function readoutWords(chunks: React.ReactNode) {
@@ -25,13 +61,21 @@ function readoutWords(chunks: React.ReactNode) {
   );
 }
 
-export function BrainPowerReadout({ delayMs, points }: { delayMs?: number; points: number }) {
+export function BrainPowerReadout({
+  delayMs,
+  hero = false,
+  points,
+}: {
+  delayMs?: number;
+  hero?: boolean;
+  points: number;
+}) {
   const t = useExtracted();
   const format = useFormatter();
 
   return t.rich("<number>+{points}</number> <words>Brain Power</words>", {
     number: () => (
-      <ReadoutNumber className="text-brain-text">
+      <ReadoutNumber className={cn("text-brain-text", hero ? HERO_SIZE : LINE_SIZE)}>
         <CountUp delayMs={delayMs} format={(value) => `+${format.number(value)}`} value={points} />
       </ReadoutNumber>
     ),
@@ -40,7 +84,13 @@ export function BrainPowerReadout({ delayMs, points }: { delayMs?: number; point
   });
 }
 
-type MomentScore = { answered: number; correct: number; spoken?: boolean };
+type MomentScore = {
+  answered: number;
+  correct: number;
+  spoken?: boolean;
+  /** For a duel, which stops once it's decided: its right answers alone, with no "of". */
+  countOnly?: boolean;
+};
 
 function ScoreWords({ score }: { score: MomentScore }) {
   const t = useExtracted();
@@ -51,6 +101,15 @@ function ScoreWords({ score }: { score: MomentScore }) {
     correct: score.correct,
     number: scoreNumber,
   };
+
+  if (score.countOnly) {
+    return t.rich({
+      description: "How many answers the learner got right in a challenge.",
+      message:
+        "{correct, plural, =0 {<number>#</number> right} one {<number>#</number> right} other {<number>#</number> right}}",
+      values: { correct: score.correct, number: scoreNumber },
+    });
+  }
 
   return score.spoken
     ? t.rich({
@@ -81,8 +140,10 @@ export function MomentReadouts({
   facts?: readonly (string | false | null | undefined)[];
   score?: MomentScore | null;
 }) {
+  const t = useExtracted();
   const shownScore = score && score.answered > 0 ? score : null;
   const earned = brainPower > 0;
+  const intro = useBrainPowerIntro(earned);
 
   if (!shownScore && !earned && !facts.some(Boolean) && !children) {
     return null;
@@ -104,6 +165,12 @@ export function MomentReadouts({
             </p>
           )}
         </div>
+      )}
+
+      {intro && (
+        <p className="text-muted-foreground -mt-1.5 text-sm" data-slot="brain-power-intro">
+          {t("Points for what you learn.")}
+        </p>
       )}
 
       <TaskMeta facts={facts} />
