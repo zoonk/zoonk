@@ -137,7 +137,7 @@ describe("app history", () => {
     markAppEntry("(settings)");
     await Promise.resolve();
 
-    expect(onChange).toHaveBeenCalled();
+    expect(onChange).toHaveBeenCalledWith();
     expect(cameFromApp()).toBe(false);
     unsubscribe();
   });
