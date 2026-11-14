@@ -22,8 +22,9 @@
   "mock_chooser_preparing_detail": "7d92d53136c494f11b73e67984747d69335ac65f713b39475b469fde43d495dc",
   "mock_chooser_questions": "f10c6673df1d45f28d78961313ed1ad5271bc850979354ba31b36a5f9996110f",
   "mock_chooser_short_day": "ae6e7906ff42a2c3b843668cc3a58d6a204fc39d25d864250cfa02a7cc7221bd",
+  "mock_chooser_short_later_today": "d1d47b8d8e567212871f611695cfab973c6329f140f3a164b32ffebd40a36a92",
   "mock_chooser_short_line": "71ca3f961bbcbf206085a2637a609d3908598c38f1fb551da8cb1249834ce415",
-  "mock_chooser_short_month": "0cf72ed0de89f93f1f82d32a143ee0f4fd4cd57bcd9d24325b947ca7c05d4908",
+  "mock_chooser_short_on": "b4d0e2f3edece7a29fd438cf48a46a143611838f93ffdef4ec4cb7a823d9da2a",
   "mock_chooser_short_title": "f02c071adfc3964ea1d97a7436b102240a948aba8c86e8f33d683f43eeea9376",
   "mock_chooser_size_latest_exam": "49cf15d1d209c7bc2f8c27be74fa678b1c58fa348c61d8a7999e406164745264",
   "mock_chooser_size_past_edition": "89dd0d68d663a92b3733e98ff607e98a8f73da18833ab004430d1ec6ab312c18",
@@ -71,7 +72,9 @@
     <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
     <string name="mock_chooser_short_day">Hoje, esse simulado tem %1$s das %2$s questões e leva cerca de %3$s. Você pode fazer o completo amanhã.</string>
     <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
-    <string name="mock_chooser_short_month">Hoje, esse simulado tem %1$s das %2$s questões e leva cerca de %3$s. Você pode fazer o completo no mês que vem.</string>
+    <string name="mock_chooser_short_later_today">Hoje, este simulado tem %1$s das %2$s questões e dura cerca de %3$s. Você pode fazer a versão completa mais tarde, ainda hoje.</string>
+    <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min"; %4$s is a day and its month, such as "November 22" in English. -->
+    <string name="mock_chooser_short_on">Hoje, esse simulado tem %1$s das %2$s questões e leva cerca de %3$s. Você pode fazer o simulado completo em %4$s.</string>
     <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
     <string name="mock_chooser_short_line">Hoje, esse simulado tem %1$s das %2$s questões e leva cerca de %3$s.</string>
     <string name="mock_chooser_pick_another">Escolher outro</string>

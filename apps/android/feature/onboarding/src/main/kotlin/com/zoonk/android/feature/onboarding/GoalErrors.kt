@@ -1,25 +1,42 @@
 package com.zoonk.android.feature.onboarding
 
+import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.zoonk.android.R
 import com.zoonk.android.feature.mindmaps.monthly
+import com.zoonk.android.ui.components.Limit
+import com.zoonk.android.ui.components.LimitPeriod
+import com.zoonk.android.ui.components.LimitTier
+import com.zoonk.android.ui.components.comesBackLine
+import com.zoonk.android.ui.components.gateSentence
 import com.zoonk.api.models.AllowanceResponse
 import com.zoonk.api.models.MonthlyAllowanceItem
 
-enum class GoalLimitReason {
-    ActiveGoals,
-    DailyExplanations,
-    DailyGoals,
-    Guest,
-    MonthlyExplanations,
-    MonthlyGoals,
-    SignUpRequired,
-    SlowDown,
-    ;
+sealed interface GoalLimitReason {
+    data object ActiveGoals : GoalLimitReason
 
-    /** Lifted by Plus, not by waiting. */
-    val isPlusLimit get() = this == ActiveGoals || this == MonthlyGoals
+    data object DailyExplanations : GoalLimitReason
+
+    data object DailyGoals : GoalLimitReason
+
+    data object Guest : GoalLimitReason
+
+    /** Counted over the last 30 days; [limit] says when one more fits. */
+    data class MonthlyExplanations(
+        val limit: Limit.Reached,
+    ) : GoalLimitReason
+
+    data class MonthlyGoals(
+        val limit: Limit.Reached,
+    ) : GoalLimitReason
+
+    data object SignUpRequired : GoalLimitReason
+
+    data object SlowDown : GoalLimitReason
+
+    /** Lifted by Plus, not only by waiting. */
+    val isPlusLimit get() = this == ActiveGoals || (this is MonthlyGoals && limit.tier == LimitTier.Free)
 
     val needsAccount get() = this == Guest || this == SignUpRequired
 }
@@ -57,12 +74,30 @@ fun Refusal.goalLimitReason(): GoalLimitReason =
         }
 
         is Refusal.Limit -> {
-            val monthly = limit.period == "month"
+            val reached = limit.reached
+            val daily = reached.period == LimitPeriod.Day
             when {
-                limit.tier == "guest" -> GoalLimitReason.Guest
-                limit.resource == "activeGoals" -> GoalLimitReason.ActiveGoals
-                limit.resource == "explanation" -> if (monthly) GoalLimitReason.MonthlyExplanations else GoalLimitReason.DailyExplanations
-                else -> if (monthly) GoalLimitReason.MonthlyGoals else GoalLimitReason.DailyGoals
+                limit.tier == "guest" -> {
+                    GoalLimitReason.Guest
+                }
+
+                limit.resource == "activeGoals" -> {
+                    GoalLimitReason.ActiveGoals
+                }
+
+                limit.resource == "explanation" -> {
+                    if (daily) {
+                        GoalLimitReason.DailyExplanations
+                    } else {
+                        GoalLimitReason.MonthlyExplanations(
+                            reached,
+                        )
+                    }
+                }
+
+                else -> {
+                    if (daily) GoalLimitReason.DailyGoals else GoalLimitReason.MonthlyGoals(reached)
+                }
             }
         }
 
@@ -125,18 +160,23 @@ fun AllowanceResponse.goalStartLimit(): GoalLimitReason? {
 
 @Composable
 fun goalLimitMessage(reason: GoalLimitReason): String =
-    stringResource(
-        when (reason) {
-            GoalLimitReason.ActiveGoals -> R.string.onboarding_limit_active_goals
-            GoalLimitReason.DailyExplanations -> R.string.onboarding_limit_daily_explanations
-            GoalLimitReason.DailyGoals -> R.string.onboarding_limit_daily_goals
-            GoalLimitReason.Guest -> R.string.onboarding_limit_guest
-            GoalLimitReason.MonthlyExplanations -> R.string.onboarding_limit_monthly_explanations
-            GoalLimitReason.MonthlyGoals -> R.string.onboarding_limit_monthly_goals
-            GoalLimitReason.SignUpRequired -> R.string.onboarding_limit_sign_up_required
-            GoalLimitReason.SlowDown -> R.string.onboarding_limit_slow_down
-        },
-    )
+    when (reason) {
+        GoalLimitReason.ActiveGoals -> stringResource(R.string.onboarding_limit_active_goals)
+        GoalLimitReason.DailyExplanations -> stringResource(R.string.onboarding_limit_daily_explanations)
+        GoalLimitReason.DailyGoals -> stringResource(R.string.onboarding_limit_daily_goals)
+        GoalLimitReason.Guest -> stringResource(R.string.onboarding_limit_guest)
+        is GoalLimitReason.MonthlyExplanations -> usedSentence(R.string.limit_quick_explanations_used, reason.limit)
+        is GoalLimitReason.MonthlyGoals -> usedSentence(R.string.limit_goals_used, reason.limit)
+        GoalLimitReason.SignUpRequired -> stringResource(R.string.onboarding_limit_sign_up_required)
+        GoalLimitReason.SlowDown -> stringResource(R.string.onboarding_limit_slow_down)
+    }
+
+/** A cap used up over the last 30 days in one sentence: what ran out, then when more comes. */
+@Composable
+fun usedSentence(
+    @StringRes title: Int,
+    limit: Limit.Reached,
+): String = gateSentence(stringResource(title), comesBackLine(limit))
 
 @Composable
 fun goalErrorMessage(error: GoalError): String =
@@ -158,13 +198,12 @@ fun goalErrorMessage(error: GoalError): String =
         }
 
         is GoalError.ReadLimit -> {
-            stringResource(
-                when {
-                    error.limit.tier == "guest" -> R.string.onboarding_read_limit_guest
-                    error.limit.tier == "plus" -> R.string.onboarding_read_limit_plus
-                    error.limit.period == "month" -> R.string.onboarding_read_limit_free_month
-                    else -> R.string.onboarding_read_limit_free_day
-                },
-            )
+            val reached = error.limit.reached
+            when {
+                error.limit.tier == "guest" -> stringResource(R.string.onboarding_read_limit_guest)
+                reached.period != LimitPeriod.Day -> usedSentence(R.string.limit_goals_used, reached)
+                error.limit.tier == "plus" -> stringResource(R.string.onboarding_read_limit_plus)
+                else -> stringResource(R.string.onboarding_read_limit_free_day)
+            }
         }
     }

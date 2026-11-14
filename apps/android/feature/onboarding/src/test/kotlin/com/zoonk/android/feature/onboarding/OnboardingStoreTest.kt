@@ -7,6 +7,9 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.SignInResult
+import com.zoonk.android.ui.components.Limit
+import com.zoonk.android.ui.components.LimitPeriod
+import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.AllowanceResponse
 import com.zoonk.api.models.GoalCreateInput
@@ -192,7 +195,7 @@ class OnboardingStoreTest {
             ).goalStartLimit(),
         )
         assertEquals(
-            GoalLimitReason.MonthlyGoals,
+            GoalLimitReason.MonthlyGoals(Limit.Reached(LimitTier.Free, LimitPeriod.Month)),
             allowance(
                 "free",
                 """"dailyLimit":null,"monthlyLimit":3,"totalLimit":null,"usedToday":1,"usedThisMonth":3,"usedTotal":3""",

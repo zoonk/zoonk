@@ -153,7 +153,7 @@ internal fun ChallengeCallGate(onSubscribe: () -> Unit) {
 internal fun callLimitTitle(limit: Limit.Reached) =
     stringResource(
         when (limit.period) {
-            LimitPeriod.Month -> R.string.conversation_no_calls_month
+            LimitPeriod.Month, LimitPeriod.Rolling30Days -> R.string.limit_call_time_used
             LimitPeriod.Total -> R.string.conversation_calls_need_account
             else -> R.string.conversation_no_calls_today
         },

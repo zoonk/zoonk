@@ -14,8 +14,8 @@
   "speaking_mock_opens": "b85b2fe2ebac928cf3e6dabda9aa1e90ba81bba8cc87725ea804271667386a8b",
   "speaking_mock_start": "3621859d30ef9c17b98f443d4054779711132efd1723e3a249596a964392d0b2",
   "speaking_mock_toefl": "b1fb548943ac10fbcffc0cd9b2d70c2900f2e423a2bdc238fe00b505bbae0ddf",
+  "speaking_no_time": "e936b50d5601ac448052368896659c3276a2e94cc1f6472cf9b3de0194cb2ab9",
   "speaking_no_time_day": "5f8e86649def1815f2b51e4a5f1b3de7ab5040b6ec2bdbfee4c47818cdff9403",
-  "speaking_no_time_month": "9eb8095b2ac876dafe7ae62a5d1aea855030ec8354e43378b699892a44b62930",
   "speaking_official_format": "06452421850abec84cae151fd41eb12281f535024e84a9a9781c0a5245c42f0c",
   "speaking_opens_when_ready": "84e87ece43cf7dc37ca3344e90ad9cac918b5a12560a928e0c08da118745a763",
   "speaking_prep": "a589c6dca9bbe5bd6f7f4015676dbd3303f4aac58f7c9fdff5cf450d707dbdbd",
@@ -48,7 +48,7 @@
     <string name="speaking_section">スピーキング</string>
     <string name="speaking_gate">スピーキングの練習にはサブスクリプションが必要です</string>
     <string name="speaking_opens_when_ready">カードの準備ができ次第、タスクが開きます。</string>
-    <string name="speaking_no_time_month">このタスクを行うには、今月の残りの会話時間が足りません</string>
+    <string name="speaking_no_time">このタスクに必要な会話時間が足りません</string>
     <string name="speaking_no_time_day">このタスクを行うには、今日の残りの会話時間が足りません</string>
     <string name="speaking_start_failed">タスクを開始できませんでした。少し待ってからもう一度試してください。</string>
     <string name="speaking_official_format">公式の試験形式</string>

@@ -333,13 +333,7 @@ private fun StartState(
                 onSubscribe = { actions.open(AppRoute.Subscription) },
                 title =
                     stringResource(
-                        if (limit.period ==
-                            LimitPeriod.Month
-                        ) {
-                            R.string.speaking_no_time_month
-                        } else {
-                            R.string.speaking_no_time_day
-                        },
+                        if (limit.period == LimitPeriod.Day) R.string.speaking_no_time_day else R.string.speaking_no_time,
                     ),
             )
         }

@@ -12,6 +12,8 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.lifecycle.SavedStateHandle
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.data.ApiError
+import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
@@ -29,6 +31,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.flow
+import kotlinx.serialization.json.Json
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
@@ -38,6 +41,8 @@ import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import java.io.File
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 /**
@@ -77,6 +82,29 @@ class TutorScreenshots {
     @Test
     @Config(qualifiers = "w411dp-h3800dp-night-xhdpi")
     fun planChangesDark() = capture("tutor-plan-changes-dark", dark = true, turns = planChangeTurns())
+
+    /** A free learner's messages used up over the last 30 days: the notice in place of the composer, with the day more come back. */
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun messagesUsed() =
+        capture(
+            "tutor-messages-used-phone",
+            dark = false,
+            turns = listOf(turn("t0", TutorTurn.Status.Completed, "Black holes bend light around them.", "What do black holes do?")),
+            refusal =
+                ApiException(
+                    ApiError.Unavailable,
+                    "USAGE_LIMIT_REACHED",
+                    status = 402,
+                    details =
+                        Json.parseToJsonElement(
+                            """{"limit":{"availableAt":"${Instant.now().plus(
+                                9,
+                                ChronoUnit.DAYS,
+                            )}","limit":30,"period":"rolling30Days","resource":"tutorMessage","tier":"free"}}""",
+                        ),
+                ),
+        )
 
     private fun planChangeTurns() =
         listOf(
@@ -120,9 +148,11 @@ class TutorScreenshots {
                 ->
                 turn("offer$index", TutorTurn.Status.Completed, "Here.", toolOffer = offer(json))
             },
+        refusal: ApiException? = null,
     ) {
         val api = FakeTutorApi()
         api.thread = TutorThread(turns, hasMore = false, nextCursor = null)
+        api.refusal = refusal
         api.answers = {
             flow {
                 emit(TutorAnswerEvent.Text("Noted: you like space."))

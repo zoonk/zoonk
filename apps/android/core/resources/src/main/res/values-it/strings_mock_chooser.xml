@@ -22,8 +22,9 @@
   "mock_chooser_preparing_detail": "d209ab9ce72af963f56d85f60b28d733cdab7da60ea1cf2e7c28c7a6f21c1768",
   "mock_chooser_questions": "a5ad3aed6840e78c477c1921b7269c91c9a97ccc14fbd3f9e58b65c80e795614",
   "mock_chooser_short_day": "3f6548b3b7bed3467eea230953a004113a15675e30f9d52ff11fcc2ab0b2d0d5",
+  "mock_chooser_short_later_today": "33b8329f301aea4ba721fba9607378c18e9fd24ec8e28cf31e037af366c44262",
   "mock_chooser_short_line": "7fe464535b4fce24d9598cad89137348b3d88b99d3c7f6563cf33ed9a93917f8",
-  "mock_chooser_short_month": "1c225e52adb290c574e593735c93b1b218a0c997a3ba5b9f327b4c7c9f2a27fc",
+  "mock_chooser_short_on": "8d7628ab127ecfe66d8962a8e928265bb65037baff814c74b94f901842953fbe",
   "mock_chooser_short_title": "7a8401ada08d46b61465136de92f3065be6ab5e2e56cc8a10ef07b67791e8762",
   "mock_chooser_size_latest_exam": "7fb3bc7febaadf1d669d83b77d56f16483fd90e1c19ef6002038bac54f01b06d",
   "mock_chooser_size_past_edition": "736044dc678eb2c819dbeda907eb43e20e20bb0c0d96182d9106b4f2966d019f",
@@ -71,7 +72,9 @@
     <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
     <string name="mock_chooser_short_day">Oggi questa simulazione ha %1$s domande su %2$s e dura circa %3$s. Potrai fare quella completa domani.</string>
     <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
-    <string name="mock_chooser_short_month">Oggi questa simulazione ha %1$s domande su %2$s e dura circa %3$s. Potrai fare quella completa il mese prossimo.</string>
+    <string name="mock_chooser_short_later_today">Oggi questa simulazione include %1$s domande su %2$s e dura circa %3$s. Potrai svolgerla per intero più tardi oggi.</string>
+    <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min"; %4$s is a day and its month, such as "November 22" in English. -->
+    <string name="mock_chooser_short_on">Oggi questa simulazione ha %1$s domande su %2$s e dura circa %3$s. Puoi fare quella completa il %4$s.</string>
     <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
     <string name="mock_chooser_short_line">Oggi questa simulazione ha %1$s domande su %2$s e dura circa %3$s.</string>
     <string name="mock_chooser_pick_another">Scegline un’altra</string>

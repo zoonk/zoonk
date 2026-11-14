@@ -63,11 +63,15 @@ import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
+import com.zoonk.android.ui.components.OpeningDay
 import com.zoonk.android.ui.components.PageHeader
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.rememberOpeningDay
+import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.BottomBar
@@ -190,21 +194,29 @@ private fun ShortDialog(
     val count = formatNumber(short.questions.toDouble(), locale)
     val total = formatNumber(short.examQuestions.toDouble(), locale)
     val time = minutesText(short.minutes)
+    val full = rememberOpeningDay(short.availableAt.takeIf { short.limit == AnytimeMock.Limit.MONTH })
     AlertDialog(
         onDismissRequest = onPickAnother,
         title = { Text(stringResource(R.string.mock_chooser_short_title)) },
         text = {
             Text(
-                stringResource(
-                    when (short.limit) {
-                        AnytimeMock.Limit.DAY -> R.string.mock_chooser_short_day
-                        AnytimeMock.Limit.MONTH -> R.string.mock_chooser_short_month
-                        AnytimeMock.Limit.TOTAL, null -> R.string.mock_chooser_short_line
-                    },
-                    count,
-                    total,
-                    time,
-                ),
+                when {
+                    short.limit == AnytimeMock.Limit.DAY || full == OpeningDay.Tomorrow -> {
+                        stringResource(R.string.mock_chooser_short_day, count, total, time)
+                    }
+
+                    full == OpeningDay.Today -> {
+                        stringResource(R.string.mock_chooser_short_later_today, count, total, time)
+                    }
+
+                    full is OpeningDay.On -> {
+                        stringResource(R.string.mock_chooser_short_on, count, total, time, formatDate(full.date, locale, DateStyle.Long))
+                    }
+
+                    else -> {
+                        stringResource(R.string.mock_chooser_short_line, count, total, time)
+                    }
+                },
             )
         },
         confirmButton = { TextButton(onClick = onStart) { Text(stringResource(R.string.mock_chooser_start)) } },
@@ -301,7 +313,7 @@ private fun Refusal(
 ) {
     LimitNotice(
         limit = status.limit,
-        subject = LimitSubject.Help,
+        subject = LimitSubject.MockExams,
         onCreateAccount = { navigator.open(AppRoute.Login) },
         onSubscribe = { navigator.open(AppRoute.Subscription) },
         modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },

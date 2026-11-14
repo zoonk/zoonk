@@ -29,7 +29,6 @@
   "onboarding_attach_already_read": "b03bb4f8b7d5bfd17cfe8d9b1f967d28c56cbbb29feb3e4eaf7abc434607b7d1",
   "onboarding_attach_failed": "0464451e61c4d97e3517c7ef1e1b20cbf7e4fe4775c0206f841c66da061f3e36",
   "onboarding_attach_limit_day": "6c3e05aeef2c519a07e761be535794b5056d97d154d475f3d95929f1d65ced2b",
-  "onboarding_attach_limit_month": "301dc68d5f390314492ea9f096c61c922907cb0dfc3e1a2c0557ab47114f8630",
   "onboarding_attach_limit_plus": "fe3d7e552b88bbca4258f9043a49250a28c295b0715df92c6802de0d17185ddf",
   "onboarding_attach_sign_in": "ec5b3fdd06059fa9ffe08e23fb67552ccc3f06ab84ca209c66bfa025a877ec2d",
   "onboarding_attach_slow_down": "710b0f42fdb240d3fcd9461f8ae156f7c855320bceb4d162ffae9264328041ac",
@@ -159,8 +158,6 @@
   "onboarding_limit_daily_explanations": "dfe3e05af79fc47a80a2ce05fe3c9daf90768523b53a473a22fdf23499ec0250",
   "onboarding_limit_daily_goals": "b4e99cf3e9bc5a665415cfb7ba8f26872961893fd65e86a4124cd292788cfcc9",
   "onboarding_limit_guest": "609a5efc12907487641bda0aa43648aa7d5a9990cc40d670983b83c6691fc49c",
-  "onboarding_limit_monthly_explanations": "b680ea02bc1705b992b72fb94bc71e0a4c11494efd1ed7695d869a77dae4c0d7",
-  "onboarding_limit_monthly_goals": "79dc47bbe549585a58edb69af1f3be2266bcb3089b1e762215f87a7668c37327",
   "onboarding_limit_sign_up_required": "7a9e8d014c9eccbc139be7847a4019fc8d6e191e44430b8a9a798490bbcb68bb",
   "onboarding_limit_slow_down": "ff8e6e2fd6460e4961207bf545e44a27e56ffa5b7148990548c8eb4ebcf90079",
   "onboarding_link": "dc89554a4985acb3370e82071ac37936f03eb30706aafec2d6bea3f2d4e0c436",
@@ -169,8 +166,6 @@
   "onboarding_material_goal_exam": "d1de9ea4f7007ece2dcbd119af0bef11184344c2b807ea2ba36203e9325933cf",
   "onboarding_material_goal_understand": "d32bcb9ab2a44f4484ff0d1a42fd9a9ea13576e3641f8d3538148d90112c2404",
   "onboarding_material_sign_up": "64cc7f00339ae455522222d56dd0f44508dec23a2867fcfb4999a4ca701fd0b8",
-  "onboarding_month_goals_line": "32a37b402421fbeb1be0cd273f1037e19abb4d8dbe69e2219e6c3fef68b1441b",
-  "onboarding_month_goals_title": "23b372a0132b5665aeb84ba3196a3daf10e7161181878aa3d62fd58e4b79a857",
   "onboarding_more": "6075638bb61d25533d08d0d8c77992b5ee11a07d11c7a0fdc1800bc8a00ce3bb",
   "onboarding_musicianship_card": "436a54218ed49ea51bbb1cebd2544a83d771ea30430b7811f3f2028765686b74",
   "onboarding_musicianship_subject": "66e5f141b1f5ba58fb8e5b7b3763c52f7c551b150c2c231cc17198ef62c18bea",
@@ -233,7 +228,6 @@
   "onboarding_purpose_work_description": "e5d9f655f511cc5ab949e4c529f55070d6bdb36d49d778a547259dd01106a11b",
   "onboarding_question_failed": "45ce04ea91eef6a93432960318ca352fd8bded097714be6c1fc05309f096b1d3",
   "onboarding_question_limit_day": "8c1a782fe4fef575351324c897d93c03b8fadb4169c83b09b805d69790df7198",
-  "onboarding_question_limit_month": "dbafd294d0b20ce811ca804454cc7d81fd348219b0aa90e87257047715e27b0f",
   "onboarding_question_limit_plus": "23e9dd5edd100cec33fb7c7a10f8c70dd7f5c89d734879a4a88d1ca69d91a6f1",
   "onboarding_question_placeholder": "383b42f1e6b285722dab897ea8f03db13421b7ddc116d05a9ac5f70e7a6fe15a",
   "onboarding_question_sign_in": "57ff57f7ae7023d774b0eb332f8679cfe18035049a9d0bf323a25ee10a3f60a4",
@@ -243,7 +237,6 @@
   "onboarding_questions_title": "7e46d47a11325f2495423529413572391fe3c7c79f6faf9772fa7b181a53ba9f",
   "onboarding_read_again": "b9854ea28e1ca4ce1d2faef6e621101bdba74619673207171027e10d3ea8fee3",
   "onboarding_read_limit_free_day": "6925a1da2a87078bf06677c619592ac8978806bbde245e33bdd1efc575c11a55",
-  "onboarding_read_limit_free_month": "db7f3112fc3869a64cbc620a6a071aa1139b32382f9a3261710acd1c9504cdbc",
   "onboarding_read_limit_guest": "73391b71e2fbb9876a579f01864e25fd8324d5b48aaadacf9190e55eb9ba1c73",
   "onboarding_read_limit_plus": "b6ee871f2468115c69c8cd9b5ade0f8e3f40ad6c95afd50e3490870ce7805b6b",
   "onboarding_reason_certificate": "6b64bd63bf03cb8820711b5e4f9dcaa845bb29d68c780a727bd1bfcd92caaeda",
@@ -484,15 +477,12 @@
     <string name="onboarding_limit_daily_explanations">오늘은 간단한 설명을 더 볼 수 없어요. 내일 다시 보거나 구독해서 계속 이용해 보세요.</string>
     <string name="onboarding_limit_daily_goals">현재 요금제에서는 오늘 새 목표를 더 시작할 수 없어요. 내일 다시 시도해 보세요.</string>
     <string name="onboarding_limit_guest">계정이 없으면 목표 하나만 진행할 수 있어요. 계속하려면 무료 계정을 만드세요.</string>
-    <string name="onboarding_limit_monthly_explanations">이번 달에는 간단한 설명을 더 볼 수 없어요. 다음 달에 다시 보거나 구독해서 계속 이용해 보세요.</string>
-    <string name="onboarding_limit_monthly_goals">이번 달에는 새 목표를 더 추가할 수 없어요. 다음 달에 다시 추가하거나 구독해서 계속 이용해 보세요.</string>
     <!-- When a learner starts a goal while studying as many goals at once as they can. Pausing a goal keeps its progress. -->
     <string name="onboarding_limit_active_goals">동시에 학습할 수 있는 목표 수를 다 채웠어요. 목표 하나를 일시 중지하거나 구독해서 더 많은 목표를 학습해 보세요.</string>
     <string name="onboarding_limit_sign_up_required">계속 이용하려면 무료 계정을 만드세요.</string>
     <string name="onboarding_limit_slow_down">짧은 시간에 여러 목표를 시작했어요. 몇 분 후에 다시 시도해 보세요.</string>
     <string name="onboarding_read_limit_guest">계정이 없으면 하루에 새 목표를 몇 개만 보낼 수 있어요. 계속하려면 무료 계정을 만드세요.</string>
     <string name="onboarding_read_limit_plus">현재 요금제에서는 오늘 새 목표를 더 보낼 수 없어요. 내일 다시 시도해 보세요.</string>
-    <string name="onboarding_read_limit_free_month">이번 달에는 새 목표를 더 추가할 수 없어요. 다음 달에 다시 추가하거나 구독해서 계속 이용해 보세요.</string>
     <string name="onboarding_read_limit_free_day">오늘은 새 목표를 더 추가할 수 없어요. 내일 다시 추가하거나 구독해서 계속 이용해 보세요.</string>
     <string name="onboarding_error_one_moment">잠시만 기다려 주세요. 몇 초 후에 다시 시도해 보세요.</string>
     <string name="onboarding_error_could_not_read">목표를 읽지 못했어요. 잠시 후에 다시 시도해 보세요.</string>
@@ -506,8 +496,6 @@
     <!-- The new-goal page for a learner already studying as many goals at once as they can. -->
     <string name="onboarding_goals_at_once_title">동시에 학습할 수 있는 목표 수를 다 채웠어요</string>
     <string name="onboarding_goals_at_once_line">계획에서 목표 하나를 일시 중지해 주세요. 구독하면 더 많은 목표를 동시에 학습할 수 있어요.</string>
-    <string name="onboarding_month_goals_title">이번 달에는 새 목표를 더 추가할 수 없어요</string>
-    <string name="onboarding_month_goals_line">다음 달에 더 이용할 수 있어요. 구독하면 지금 계속할 수 있어요.</string>
     <string name="onboarding_create_account">무료 계정 만들기</string>
     <string name="onboarding_create_account_short">계정 만들기</string>
     <string name="onboarding_guest_gate_title">다른 목표를 시작하려면 무료 계정을 만드세요</string>
@@ -625,7 +613,6 @@
     <!-- Removes an attached file or text. %1$s is its title. -->
     <string name="onboarding_remove_material">%1$s 제거하기</string>
     <string name="onboarding_attach_limit_plus">오늘은 자료를 더 추가할 수 없어요. 내일 다시 추가해 보세요.</string>
-    <string name="onboarding_attach_limit_month">이번 달에는 자료를 더 추가할 수 없어요. 다음 달에 다시 추가해 보세요. 구독하면 계속 추가할 수 있어요.</string>
     <string name="onboarding_attach_limit_day">오늘은 자료를 더 추가할 수 없어요. 내일 다시 추가해 보세요. 구독하면 계속 추가할 수 있어요.</string>
     <string name="onboarding_attach_slow_down">짧은 시간에 자료를 여러 번 추가했어요. 몇 분 후에 다시 시도해 보세요.</string>
     <string name="onboarding_attach_unsupported">이 파일은 읽을 수 없어요. PDF, 사진, Word, PowerPoint 또는 텍스트로 다시 시도해 보세요.</string>
@@ -651,7 +638,6 @@
     <string name="onboarding_question_sign_in">자료에 대해 질문하려면 계정을 만드세요.</string>
     <string name="onboarding_question_slow_down">짧은 시간에 여러 번 질문하셨어요. 몇 분 후에 다시 시도해 보세요.</string>
     <string name="onboarding_question_limit_plus">오늘은 질문을 더 할 수 없어요. 내일 다시 질문해 보세요.</string>
-    <string name="onboarding_question_limit_month">이번 달에는 질문을 더 할 수 없어요. 다음 달에 다시 질문해 보세요. 구독하면 계속 질문할 수 있어요.</string>
     <string name="onboarding_question_limit_day">오늘은 질문을 더 할 수 없어요. 내일 다시 질문해 보세요. 구독하면 계속 질문할 수 있어요.</string>
     <!-- Placement: a few questions that find where the plan starts. -->
     <string name="onboarding_placement_title">이미 아는 내용을 확인해 볼게요</string>

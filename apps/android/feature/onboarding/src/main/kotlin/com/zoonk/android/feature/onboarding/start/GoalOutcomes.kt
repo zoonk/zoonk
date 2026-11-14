@@ -39,6 +39,7 @@ import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.comesBackLine
 import com.zoonk.android.ui.components.taskOption
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.ZoonkRadius
@@ -160,12 +161,12 @@ internal fun GoalLimitNotice(
 ) {
     if (!reason.isPlusLimit) return
 
-    if (reason != GoalLimitReason.ActiveGoals) {
+    if (reason is GoalLimitReason.MonthlyGoals) {
         SubscribeGate(
-            title = stringResource(R.string.onboarding_month_goals_title),
+            title = stringResource(R.string.limit_goals_used),
             onSubscribe = onSubscribe,
             modifier = modifier,
-            line = stringResource(R.string.onboarding_month_goals_line),
+            line = comesBackLine(reason.limit),
         )
         return
     }

@@ -14,8 +14,8 @@
   "speaking_mock_opens": "786189c30777e75141444b256bd017475dfd322ae1822b26903c7d3e5648ad5c",
   "speaking_mock_start": "5bb7ae2ec30190542c1151d75f7f2cb16633c015f9a039735765a8d3ffd0be54",
   "speaking_mock_toefl": "5d435fb4a499fcf48df5291bff5701f6a11c0e6143ca78bd1236783f8379972c",
+  "speaking_no_time": "a4fbdb267712625def1f3a87b51e7d4dc57787ac781170629b1e110c6bd8a4c2",
   "speaking_no_time_day": "e866b61a1d6f4507f33a6c9c6c2b30995b1ebd7c6174dc15692d0c448f7fc7c8",
-  "speaking_no_time_month": "3951d54a796f51f355af00a8e0d73002883c6bc7fcea0f2447d4d106b296a3b6",
   "speaking_official_format": "de08b343fa372f16db5228e6d8732e5dcc3b9561d1f9c487b366aee8faae4158",
   "speaking_opens_when_ready": "6985e32649cd619258908e9a35e4aa359cd082161d53bc04de573a5a90dbc5d1",
   "speaking_prep": "c2805ec6fe62f74a99feceb1f403a6a6310f568014bc11880b89c99669f597d2",
@@ -51,7 +51,7 @@
     <string name="speaking_section">Mówienie</string>
     <string name="speaking_gate">Ćwiczenie mówienia wymaga subskrypcji</string>
     <string name="speaking_opens_when_ready">Zadanie otworzy się, gdy tylko karta będzie gotowa.</string>
-    <string name="speaking_no_time_month">Pozostały w tym miesiącu czas na rozmowy nie wystarczy na to zadanie</string>
+    <string name="speaking_no_time">Za mało czasu na rozmowy, by wykonać to zadanie</string>
     <string name="speaking_no_time_day">Na dziś zostało za mało czasu na rozmowy, by wykonać to zadanie</string>
     <string name="speaking_start_failed">Nie udało się rozpocząć zadania. Spróbuj ponownie za chwilę.</string>
     <string name="speaking_official_format">Sprawdź oficjalny format</string>

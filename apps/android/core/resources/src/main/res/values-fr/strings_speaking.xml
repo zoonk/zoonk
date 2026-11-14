@@ -14,8 +14,8 @@
   "speaking_mock_opens": "3baa3e79c62e61aa339e1908d8260bb4630ccf26da09ed01f4270ef4e3a8dc45",
   "speaking_mock_start": "a663d6d258fbc9e59f7b153a62fa584529000510d6e1c1f31725fd38a514abb7",
   "speaking_mock_toefl": "2257efac20526eff40127fa89d2dfb7521057c7ecc58dca8d2f6d1112889f98b",
+  "speaking_no_time": "dacbe76c8586f7a10d5db083251c2f01342059d10086f9e69f903a7c36ce1c7b",
   "speaking_no_time_day": "46dd5e10bb9bd2d4a94628250e5fe635f02b33f760b10dd6e630d30e06263de2",
-  "speaking_no_time_month": "3ab2317e0710c11a0755fad2d46c595a8cd23da5c0412c2bc64800a664da463c",
   "speaking_official_format": "8cd2e239cb7aa6bc0ae74f5cb5c33a60cf98d5795549a22a34745c81b208b6a6",
   "speaking_opens_when_ready": "5ee7d40208bb672171d3a7456acf08a1c3472ba19685d3f029b7dd4335f3c3c1",
   "speaking_prep": "6124a46370b239138a3573f00a6d1d77b6b95b37047cb8bb86c29a54e352b389",
@@ -50,7 +50,7 @@
     <string name="speaking_section">Expression orale</string>
     <string name="speaking_gate">Il faut un abonnement pour s’entraîner à l’expression orale</string>
     <string name="speaking_opens_when_ready">Ta tâche s’ouvre dès que sa fiche est prête.</string>
-    <string name="speaking_no_time_month">Pas assez de temps d’appel ce mois-ci pour cette tâche</string>
+    <string name="speaking_no_time">Pas assez de temps d’appel pour cette tâche</string>
     <string name="speaking_no_time_day">Pas assez de temps d’appel aujourd’hui pour cette tâche</string>
     <string name="speaking_start_failed">La tâche n’a pas démarré. Réessaie dans un instant.</string>
     <string name="speaking_official_format">Format officiel</string>
