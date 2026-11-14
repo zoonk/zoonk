@@ -32,6 +32,7 @@ import com.zoonk.android.ui.components.SuggestionLayout
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
+import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.PlanBasesAdvice
 import com.zoonk.api.models.PlanCertificates
 import com.zoonk.api.models.PlanChangePreview
@@ -104,6 +105,18 @@ class PlanScreenshots {
     @Test
     @Config(qualifiers = "w1280dp-h900dp-land-night-xhdpi")
     fun expandedDark() = capture("plan-expanded-dark", dark = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h900dp-xxhdpi")
+    fun phonePaused() = capture("plan-paused-phone", paused = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h900dp-xxhdpi")
+    fun phonePausedAtTheGoalLimit() = capture("plan-paused-limit-phone", paused = true, failure = ResumeFailure.GoalLimit)
+
+    @Test
+    @Config(qualifiers = "w1280dp-h900dp-land-xhdpi")
+    fun expandedPaused() = capture("plan-paused-expanded", paused = true)
 
     /** Robolectric copies only the activity's window, so a sheet's content is drawn here as it shows in its sheet. */
     @Test
@@ -422,8 +435,6 @@ class PlanScreenshots {
                                     shot.edits,
                                     PlanLinks(navigator, page),
                                     Resume.Plain,
-                                    isSaving = false,
-                                    onSetStatus = {},
                                     onAdjust = {},
                                     layout = layout,
                                     host = shot.host,
@@ -709,8 +720,10 @@ class PlanScreenshots {
         name: String,
         dark: Boolean = false,
         moreContrast: Boolean = false,
+        paused: Boolean = false,
+        failure: ResumeFailure? = null,
     ) {
-        show(dark, moreContrast)
+        show(dark, moreContrast, paused, failure)
         compose.waitForIdle()
         write(name, compose.onRoot().captureRender().asAndroidBitmap())
     }
@@ -718,8 +731,10 @@ class PlanScreenshots {
     private fun show(
         dark: Boolean = false,
         moreContrast: Boolean = false,
+        paused: Boolean = false,
+        failure: ResumeFailure? = null,
     ) {
-        val page = page()
+        val page = page().let { if (paused) it.copy(goal = it.goal.copy(status = LearnerSummaryGoal.Status.PAUSED)) else it }
         compose.setContent {
             val navigator = rememberAppNavigator()
             ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
@@ -732,6 +747,7 @@ class PlanScreenshots {
                         resume = Resume.Plain,
                         isSaving = false,
                         onSetStatus = {},
+                        resumeFailure = failure,
                         onAdjust = {},
                     )
                 }

@@ -8,7 +8,6 @@
   "onboarding_admission_title": "27f5149104e6b839bbcb3d2d23b89870d751381a81a85f4b8d57134d7227eee4",
   "onboarding_aim_by_month": "9e3be8baf653b7a880d817be86f6468bc33f3fdd9b104280b73c3b2cbb3dd0a2",
   "onboarding_aim_change": "13c5eb7915a156cdbbadfa4b54d18a5970f24f33652a506f1024abd7e714b00a",
-  "onboarding_aim_changed": "46a961eb5d084d51558cf8af5cd15bcc4c4db88b662a108d19f0c32ea125d132",
   "onboarding_aim_description": "a4ab1cdbdeb0272ebb06dc35e2b74c39eb6df3b260a5d8a55c1790041234d1d0",
   "onboarding_aim_finish": "912cd220020465c9bf6deb713a35bedc33ab8ac4ec5b8074a21fad37533e5a80",
   "onboarding_aim_fluent": "55d71850c514f48ffb49e796bd77a52eff0436325fc459b96a134859f951a746",
@@ -1076,7 +1075,6 @@
     <string name="onboarding_aim_hours">%1$s h</string>
     <string name="onboarding_aim_by_month">para %1$s</string>
     <string name="onboarding_aim_finish">Con %1$s al día, llegas a %2$s hacia %3$s.</string>
-    <string name="onboarding_aim_changed">Tu curso ahora llega hasta %1$s.</string>
     <string name="onboarding_reason_travel">Viajar</string>
     <string name="onboarding_reason_travel_description">Desenvolverte al viajar: pedir comida, preguntar cómo llegar y conversar un poco</string>
     <string name="onboarding_reason_talk">Hablar con otras personas</string>

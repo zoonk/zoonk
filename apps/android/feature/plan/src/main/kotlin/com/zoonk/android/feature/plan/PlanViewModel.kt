@@ -35,7 +35,9 @@ import java.util.UUID
  * What a write did that the screen acts on: a refusal said in a snackbar (the menu that started it
  * has closed by then), or an archived goal, which leaves the Plan.
  */
-enum class PlanEvent { SaveFailed, GoalLimitReached, Archived }
+enum class PlanEvent { SaveFailed, Archived }
+
+enum class ResumeFailure { GoalLimit, Failed }
 
 /** A place that saves plan edits: each waits and fails on its own, as each of main's `usePlanChange` does. */
 enum class PlanPart {
@@ -78,6 +80,7 @@ class PlanViewModel(
     writingWaits: WritingWaits,
 ) : ViewModel() {
     private val saving = MutableStateFlow(false)
+    private val resumeFailureState = MutableStateFlow<ResumeFailure?>(null)
     private val notices = Channel<PlanEvent>(Channel.BUFFERED)
     private val savingParts = MutableStateFlow(emptySet<PlanPart>())
     private val askedOperations = MutableStateFlow(emptyMap<PlanPart, List<PlanOp>>())
@@ -96,6 +99,9 @@ class PlanViewModel(
     private var openings = 0
 
     val isSaving: StateFlow<Boolean> = saving.asStateFlow()
+
+    /** Why the bar's Resume didn't save, said over the bar until the next try. */
+    val resumeFailure: StateFlow<ResumeFailure?> = resumeFailureState.asStateFlow()
 
     val events: Flow<PlanEvent> = notices.receiveAsFlow()
 
@@ -160,6 +166,8 @@ class PlanViewModel(
     fun setStatus(status: LearnerSummaryGoal.Status) {
         if (saving.value) return
         saving.value = true
+        val resuming = status == LearnerSummaryGoal.Status.ACTIVE
+        if (resuming) resumeFailureState.value = null
         viewModelScope.launch {
             when (val result = store.setStatus(goalId, status)) {
                 is MutationResult.Done -> {
@@ -167,7 +175,11 @@ class PlanViewModel(
                 }
 
                 is MutationResult.Failed -> {
-                    notices.send(if (result.status == TOO_MANY_REQUESTS) PlanEvent.GoalLimitReached else PlanEvent.SaveFailed)
+                    if (resuming) {
+                        resumeFailureState.value = if (result.status == TOO_MANY_REQUESTS) ResumeFailure.GoalLimit else ResumeFailure.Failed
+                    } else {
+                        notices.send(PlanEvent.SaveFailed)
+                    }
                 }
 
                 MutationResult.Obsolete -> {}

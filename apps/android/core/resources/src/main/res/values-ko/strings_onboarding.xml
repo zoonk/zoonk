@@ -8,7 +8,6 @@
   "onboarding_admission_title": "92a0fcb7720c0af5cce006fee27090144423dd963587e1c0a2698eb574caf29f",
   "onboarding_aim_by_month": "8821a9447d5f6337619998c53d524300e2ee75f1f5ddb5cfbe5d542a653eb739",
   "onboarding_aim_change": "8146e604d16a766277aa5091b21e0e67d5fd8ca87052aec6c3b3ebdbdc18b0d5",
-  "onboarding_aim_changed": "d7a9144e8981971b229196bd5b8bffaed4a99afc95e725edaa1e27f372502e3c",
   "onboarding_aim_description": "788d63711e1a12694ceae6e754c02ed4a6d3a037542b20448831bc5ddfe78429",
   "onboarding_aim_finish": "e44e8df4c4e22a3174583b39d868aeb4489cbf1ccc69dfdbcf23de7748c53b67",
   "onboarding_aim_fluent": "9fb446e4280b44cd98c99707d2605a3f4c545c91ac0318c71a483f4a962f2824",
@@ -1032,7 +1031,6 @@
     <string name="onboarding_aim_hours">%1$s시간</string>
     <string name="onboarding_aim_by_month">%1$s까지</string>
     <string name="onboarding_aim_finish">하루에 %1$s씩 공부하면 %2$s에 %3$s쯤 도달해요.</string>
-    <string name="onboarding_aim_changed">이제 코스에서 %1$s까지 배워요.</string>
     <string name="onboarding_reason_travel">여행</string>
     <string name="onboarding_reason_travel_description">여행지에서 주문하기, 길 묻기, 가벼운 대화 나누기</string>
     <string name="onboarding_reason_talk">사람들과 대화하기</string>

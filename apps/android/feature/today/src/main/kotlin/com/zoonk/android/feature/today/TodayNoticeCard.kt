@@ -42,7 +42,6 @@ import com.zoonk.api.models.MemoryInsightPlanChange
 import com.zoonk.api.models.SuggestedGoal
 import com.zoonk.api.models.Today
 import com.zoonk.api.models.TodayFocusTest
-import kotlinx.datetime.toJavaLocalDate
 
 /** What a notice needs from the screen: its read, the answers it saves, and where it leads. */
 internal class TodayNoticeState(
@@ -168,11 +167,7 @@ private fun ExamChoiceNotice(
 
     if (made != null) {
         val sentence =
-            planChangeSentence(
-                made.change,
-                state.read.today.goal.targetDate
-                    ?.toJavaLocalDate(),
-            )
+            planChangeSentence(made.change, state.read.today.goal.dateKind)
         val undo: (@Composable () -> Unit)? =
             if (made.change.canUndo) {
                 {
@@ -344,12 +339,14 @@ private fun FocusTestNotice(
 
 @Composable
 private fun InsightNotice(
-    insight: MemoryInsight,
+    opened: MemoryInsight,
     state: TodayNoticeState,
     layout: SuggestionLayout,
     modifier: Modifier,
 ) {
     val viewModel = state.viewModel
+    val repriced = viewModel.repricedInsights[opened.id]
+    val insight = repriced ?: opened
     val answer = viewModel.insightAnswers[insight.id]
     val result = answer?.takeIf { it != InsightAnswer.Failed }?.let { insightResult(insight, it) }
     val label = stringResource(R.string.today_insight_label)
@@ -366,7 +363,7 @@ private fun InsightNotice(
     ) {
         SuggestionHeader(label)
         SuggestionDescription(insight.message)
-        if (proposed) PlanEffectDiff(insight.planChange?.effect, dateKind = state.read.today.goal.dateKind)
+        if (proposed) PlanEffectDiff(insight.planChange?.effect, dateKind = state.read.today.goal.dateKind, repriced = repriced != null)
         if (result != null) {
             SuggestionResult(result)
         } else {

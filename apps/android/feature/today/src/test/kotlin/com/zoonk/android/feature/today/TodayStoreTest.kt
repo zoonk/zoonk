@@ -9,6 +9,7 @@ import com.zoonk.android.feature.session.decodeFixture
 import com.zoonk.android.feature.session.fixture
 import com.zoonk.android.feature.session.toDayView
 import com.zoonk.api.models.LessonGenerationStatus
+import com.zoonk.api.models.MemoryInsight
 import com.zoonk.api.models.MistakeListAvailability
 import com.zoonk.api.models.StudyDay
 import com.zoonk.api.models.StudySession
@@ -102,7 +103,8 @@ class TodayStoreTest {
                 session: AuthenticatedSession,
                 insightId: UUID,
                 accepted: Boolean,
-            ) = Unit
+                quote: String?,
+            ): MemoryInsight = error("Not used")
 
             override suspend fun prepareLessons(
                 session: AuthenticatedSession,

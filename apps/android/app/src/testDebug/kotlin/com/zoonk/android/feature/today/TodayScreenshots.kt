@@ -303,6 +303,7 @@ class TodayScreenshots {
                         next = 0,
                         today =
                             mapOf(
+                                "notice" to "exam",
                                 "exam" to
                                     fixture(
                                         "exam-moment",
@@ -333,7 +334,11 @@ class TodayScreenshots {
                     day(
                         blocks = lessons(3),
                         next = 0,
-                        today = mapOf("examChoice" to examChoice("Língua estrangeira", listOf("Inglês", "Espanhol"), take = 1)),
+                        today =
+                            mapOf(
+                                "notice" to "examChoice",
+                                "examChoice" to examChoice("Língua estrangeira", listOf("Inglês", "Espanhol"), take = 1),
+                            ),
                     ),
                 "notice-exam-modules" to
                     day(
@@ -341,6 +346,7 @@ class TodayScreenshots {
                         next = 0,
                         today =
                             mapOf(
+                                "notice" to "examChoice",
                                 "examChoice" to
                                     examChoice("Módulos disciplinares", listOf("Biología", "Química", "Derecho", "Premedicina"), take = 2),
                             ),
@@ -380,6 +386,7 @@ class TodayScreenshots {
                         next = 0,
                         today =
                             mapOf(
+                                "notice" to "planChange",
                                 "planChange" to
                                     fixture(
                                         "plan-change",
@@ -396,6 +403,7 @@ class TodayScreenshots {
                         next = 0,
                         today =
                             mapOf(
+                                "notice" to "planChange",
                                 "planChange" to
                                     fixture(
                                         "plan-change",
@@ -418,6 +426,7 @@ class TodayScreenshots {
                         next = 0,
                         today =
                             mapOf(
+                                "notice" to "insight",
                                 "insight" to
                                     fixture(
                                         "memory-insight",

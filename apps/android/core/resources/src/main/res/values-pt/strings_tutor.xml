@@ -100,14 +100,11 @@
   "tutor_placeholder_plan": "97f82ec5a3b5e366fd57ef75338d1f4d0c5a2f05e64337f0074e8e34475ba604",
   "tutor_placeholder_subject": "7aae12a5c438a2cac0ffa8e9fe254274a20a4d49db5e2c3e645efb361c5b032b",
   "tutor_plan_change_apply": "37171734619f81b0673aea32618a89099fdef4c1c15c5cdfbb6c37bdfa1fd749",
-  "tutor_plan_change_declined": "3f29350b52a9b8634e1f57426423df1cc843a76e01579eee7a09141a1710b538",
+  "tutor_plan_change_declined": "180a821270e2dc4539965796fe64bac1ddd5839905b7939e803f0e54fb03beed",
   "tutor_plan_change_failed": "ba42f4579c7d213cd1f12dad76c11827508c1828f8c9ede7e4208592a7b19a1d",
   "tutor_plan_change_not_now": "dc8760a740ec2bda73f421bb812d7fc54bfe3cd36bf1d7dd80092c833a9179e4",
-  "tutor_plan_change_one_week": "8b6df215b87f64be185344f58d84f5482fa67a11fb96027cf464aa92f638c16b",
   "tutor_plan_change_replaced": "bc2b26f694f3873eaf4273d3515db9c8095f0e2974487af2ae003005fe13ae68",
-  "tutor_plan_change_title": "9d4883020bb2bdd8fb51b6753b9e841c38e5166d6d52497c9c9202a2bb1ab7ea",
   "tutor_plan_change_undo": "60449394825e714ca89c8b518cc50a0acf0dbc7cb4dd1419805085a05b5777d1",
-  "tutor_plan_change_use_my_date": "5a211c1caf706ce0d2b0643545ff58d9b30e085b5abd993722658088fba316fd",
   "tutor_retry_last_question": "7d7422e83a05503bf8e35ccb9180d13fd7161e627f94aa9ff6de1ff96551c246",
   "tutor_send": "1c376b22c0f727cbf3b299186108ef19abbe16c9036a33cbd1332edb31f6ff3f",
   "tutor_sign_in": "c57f729957cd41175b4e2100474b7af673e84ccde239c59d6721d61afa93351f",
@@ -270,16 +267,10 @@
     <string name="tutor_offer_plus_subscribed">Seu plano e a cobrança.</string>
     <!-- Button that opens the Zoonk Plus page, with what Plus includes and its price. Not "see more". -->
     <string name="tutor_offer_manage">Gerenciar</string>
-    <!-- A card's title naming the change the buddy suggests: a noun phrase, not an action. -->
-    <string name="tutor_plan_change_title">Alteração no seu plano</string>
-    <!-- Beside the title of a change that lasts one week, like a lighter week. -->
-    <string name="tutor_plan_change_one_week">1 semana</string>
     <string name="tutor_plan_change_apply">Aplicar</string>
     <string name="tutor_plan_change_not_now">Agora não</string>
-    <!-- Applies the learner's own date over the one the exam notice or calendar sets. -->
-    <string name="tutor_plan_change_use_my_date">Usar minha data mesmo assim</string>
     <string name="tutor_plan_change_undo">Desfazer</string>
-    <string name="tutor_plan_change_declined">Não foi aplicada. Seu plano continua como estava.</string>
+    <string name="tutor_plan_change_declined">Seu plano continua como estava.</string>
     <string name="tutor_plan_change_replaced">Uma sugestão mais recente substituiu esta.</string>
     <string name="tutor_plan_change_failed">Não foi possível salvar. Tente de novo.</string>
     <!-- Above the questions asked that day, in the buddy's conversation. -->

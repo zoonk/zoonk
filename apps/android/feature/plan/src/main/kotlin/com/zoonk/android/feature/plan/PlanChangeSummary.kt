@@ -51,7 +51,7 @@ fun PlanChangeSummary(
         )
         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Text(
-                text = if (undone) stringResource(R.string.plan_change_undone) else planChangeSentence(change),
+                text = if (undone) stringResource(R.string.plan_change_undone) else planChangeSentence(change, dateKind),
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Medium,
             )
