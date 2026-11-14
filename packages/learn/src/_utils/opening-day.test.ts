@@ -1,6 +1,6 @@
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { toOpeningDay, watchOpeningClock } from "./opening-day";
+import { toFirstRenderDay, toOpeningDay, watchOpeningClock } from "./opening-day";
 
 describe(toOpeningDay, () => {
   const now = new Date("2026-11-13T23:30:00.000Z");
@@ -31,6 +31,21 @@ describe(toOpeningDay, () => {
 
     expect(toOpeningDay({ availableAt: "soon", now, timeZone: "UTC" })).toBeNull();
     expect(toOpeningDay({ availableAt: null, now, timeZone: "UTC" })).toBeNull();
+  });
+});
+
+describe(toFirstRenderDay, () => {
+  it("names one day for a server and a browser in different zones, read from the instant alone", () => {
+    const availableAt = "2026-11-14T01:00:00.000Z";
+    const now = new Date("2026-11-13T23:30:00.000Z");
+
+    expect(toOpeningDay({ availableAt, now, timeZone: "UTC" })).not.toBe(
+      toOpeningDay({ availableAt, now, timeZone: "America/Sao_Paulo" }),
+    );
+
+    expect(toFirstRenderDay(availableAt)).toBe("2026-11-14");
+    expect(toFirstRenderDay("soon")).toBeNull();
+    expect(toFirstRenderDay(null)).toBeNull();
   });
 });
 

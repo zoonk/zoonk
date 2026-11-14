@@ -2,6 +2,7 @@
 
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
+import { useLiveWords } from "../../_components/comes-back-words";
 import { GateWords, SubscribeGate, SubscribeMainAction } from "../../_components/subscribe-gate";
 import { useLearnRoutes } from "../../learn-context";
 import { LearnLink } from "../../learn-link";
@@ -15,7 +16,7 @@ export function isPlusGoalLimit(reason: GoalLimitReason): boolean {
 
 /** What the gate says when the learner's plan has no room for another goal. */
 function usePlusLimitWords(limit: GoalLimit): { line?: string; title: string } | null {
-  const { line, title } = useGoalLimitWords()(limit);
+  const { line, title } = useLiveWords(useGoalLimitWords()(limit));
   return isPlusGoalLimit(limit.reason) && title ? { line, title } : null;
 }
 

@@ -8,7 +8,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowUpIcon, FileTextIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
-import { useCapSentence } from "../../_components/comes-back-words";
+import { toCapWords, useLimitText } from "../../_components/comes-back-words";
 import { SURFACE_CLASS } from "../../_components/surface";
 import { useAppLocale } from "../../_utils/locale";
 import { useCitationLabel } from "../../_utils/use-citation-label";
@@ -22,7 +22,6 @@ import {
   type AttachedSource,
   type MaterialQuestionOutcome,
   type OnboardingActions,
-  type UsageCap,
 } from "../onboarding-actions";
 import {
   OnboardingColumn,
@@ -35,15 +34,17 @@ import { TypedGoal } from "./goal-outcomes";
 
 type Turn = { id: string; outcome: MaterialQuestionOutcome; question: string };
 
-function useQuestionLimitMessage() {
+function useQuestionLimitText(outcome: MaterialQuestionOutcome): string {
   const t = useExtracted();
-  const capSentence = useCapSentence();
 
-  return (cap: UsageCap): string =>
-    capSentence(cap, {
-      day: t("No more questions today"),
-      rolling: t("You've used your questions"),
-    });
+  return useLimitText(
+    outcome.status === "limitReached"
+      ? toCapWords(outcome, {
+          day: t("No more questions today"),
+          rolling: t("You've used your questions"),
+        })
+      : null,
+  );
 }
 
 function TurnAnswer({
@@ -55,11 +56,9 @@ function TurnAnswer({
 }) {
   const t = useExtracted();
   const toLabel = useCitationLabel();
-  const toLimitMessage = useQuestionLimitMessage();
+  const limitReached = useQuestionLimitText(outcome);
 
   if (outcome.status !== "answered") {
-    const limitReached = outcome.status === "limitReached" ? toLimitMessage(outcome) : "";
-
     const messages: Record<Exclude<MaterialQuestionOutcome["status"], "answered">, string> = {
       failed: t("We couldn't answer that. Try again in a moment."),
       limitReached,
