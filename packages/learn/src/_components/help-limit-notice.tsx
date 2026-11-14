@@ -22,7 +22,7 @@ type SlowDown = { retryAfterSeconds: number; status: "slowDown" };
  * A cap counted over the last 30 days, the rule for every monthly cap: each use comes back 30 days
  * after it was made, and `availableAt` is the instant the next one does. Its words say "a month".
  */
-export type RollingCap = {
+type RollingCap = {
   availableAt: string | null;
   period: "rolling30Days";
   status: "limitReached";
@@ -123,7 +123,7 @@ type CapTitles = { day: string; guest: string; rolling: string };
  * Every cap reads the same way: what ran out as the title and when more comes back as the line. A
  * guest's title stands alone; a refusal that isn't a cap says what to do.
  */
-export function useCapWords(limit: HelpLimit, titles: CapTitles): LimitWords {
+function useCapWords(limit: HelpLimit, titles: CapTitles): LimitWords {
   const t = useExtracted();
   const line = useComesBackLine(limit);
 

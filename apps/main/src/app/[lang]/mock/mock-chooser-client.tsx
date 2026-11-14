@@ -61,6 +61,7 @@ function toStatus({ option, outcome }: { option: MockOptionView; outcome: MockSt
     const availableAt = outcome.availableAt?.toISOString() ?? null;
     const optionKey = getMockOptionKey(option);
     const limit = outcome.limit ?? null;
+
     return {
       availableAt,
       examQuestions,
