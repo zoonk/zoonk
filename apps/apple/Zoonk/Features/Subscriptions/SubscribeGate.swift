@@ -451,7 +451,7 @@ extension HelpLimit {
   }
 
   /// Main's `toOpeningDay`: the day something opens, in the learner's own time zone, with no clock
-  /// time and no count of days.
+  /// time, no count of days and no year, since a cap's day is never more than 30 days away.
   enum OpeningDay: Equatable {
     case open, today, tomorrow
     /// The day and its month in the learner's language, such as "November 22".
@@ -473,11 +473,10 @@ extension HelpLimit {
     case 1: return .tomorrow
     default:
       return .on(
-        PlanDate.momentDay(
-          availableAt,
-          style: Date.FormatStyle(
+        availableAt.formatted(
+          Date.FormatStyle(
             locale: calendar.locale ?? .current, calendar: calendar, timeZone: calendar.timeZone
-          ).month(.wide).day(), now: now, calendar: calendar))
+          ).month(.wide).day()))
     }
   }
 
