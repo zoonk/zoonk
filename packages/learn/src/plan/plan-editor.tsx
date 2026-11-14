@@ -76,7 +76,6 @@ function EditorPanel({ initialFocus, onOpenChange, open }: EditorFrameProps) {
       <SidePanelContent
         className="gap-0 shadow-none data-[side=right]:w-full data-[side=right]:sm:max-w-104"
         initialFocus={initialFocus}
-        overlayClassName="bg-black/20 supports-backdrop-filter:backdrop-blur-none dark:bg-black/25"
         side="right"
       >
         <PlanEditorChangeProvider>
