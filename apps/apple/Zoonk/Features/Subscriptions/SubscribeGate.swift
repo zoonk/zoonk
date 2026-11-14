@@ -420,7 +420,8 @@ extension HelpLimit {
   }
 
   private static func mapFitsWords(_ day: OpeningDay?) -> LimitWords {
-    let title = LocalizedStringResource("Not enough free lessons for this map yet", table: "Subscriptions")
+    let title = LocalizedStringResource(
+      "Not enough free lessons for this map yet", table: "Subscriptions")
 
     switch day {
     case .open:
