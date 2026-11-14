@@ -2,12 +2,15 @@
 
 import { type EntitlementTier } from "@zoonk/core/entitlements/contract";
 import { cn } from "@zoonk/ui/lib/utils";
-import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useExtracted } from "next-intl";
-import { type ReactNode, useCallback, useSyncExternalStore } from "react";
-import { useFormatIsoDate } from "../_utils/iso-date";
-import { type OpeningDay, toOpeningDay, watchOpeningClock } from "../_utils/opening-day";
+import { type ReactNode } from "react";
 import { CreateAccountLink } from "./create-account-link";
+import {
+  isFreeLessonsUsed,
+  useMapLessonsWords,
+  useNextFreeLessonLine,
+  useOpeningDay,
+} from "./free-lessons-words";
 import { GateWords, SubscribeAction } from "./subscribe-gate";
 
 type SignUpRequired = { status: "signUpRequired" };
@@ -59,7 +62,7 @@ type LimitNoticeProps = {
 };
 
 /** What ran out as the title, and when it comes back as the one line under it. */
-type LimitWords = { line?: string; title?: string };
+export type LimitWords = { line?: string; title?: string };
 
 /** What the learner asked for when the day's help ran out; without it the notice names no kind. */
 export type HelpKind = "explanations" | "messages";
@@ -196,65 +199,6 @@ function useCapWords() {
   };
 }
 
-function isFreeLessonsUsed(limit: LessonLimit): limit is FreeLessonsUsed {
-  return "period" in limit && limit.period === "rolling30Days";
-}
-
-/** Also tells the screen when the tab is seen again (a computer that slept). */
-function watchOpening(availableAt: string | null, notify: () => void) {
-  const stop = watchOpeningClock(availableAt, notify);
-  document.addEventListener("visibilitychange", notify);
-
-  return () => {
-    stop();
-    document.removeEventListener("visibilitychange", notify);
-  };
-}
-
-/**
- * The day follows the clock while the screen is open, so a passed instant stops being promised.
- * The server doesn't know the learner's time zone, so it draws the day in UTC and the browser
- * corrects it.
- */
-function useOpeningDay(availableAt: string | null): OpeningDay | null {
-  const subscribe = useCallback(
-    (notify: () => void) => watchOpening(availableAt, notify),
-    [availableAt],
-  );
-
-  return useSyncExternalStore(
-    subscribe,
-    () => toOpeningDay({ availableAt, now: new Date(), timeZone: getLocalTimeZone() }),
-    () => toOpeningDay({ availableAt, now: new Date(), timeZone: "UTC" }),
-  );
-}
-
-function useNextFreeLessonLine() {
-  const t = useExtracted();
-  const formatDate = useFormatIsoDate();
-
-  return (opensOn: OpeningDay | null): string | undefined => {
-    if (!opensOn) {
-      return undefined;
-    }
-
-    if (opensOn === "today") {
-      return t("Your next free lesson opens later today, or subscribe to keep going.");
-    }
-
-    if (opensOn === "tomorrow") {
-      return t("Your next free lesson opens tomorrow, or subscribe to keep going.");
-    }
-
-    return t({
-      description:
-        'On the screen a free learner sees when their free lessons are used. {date} is a day and its month, such as "November 22" in English.',
-      message: "Your next free lesson opens on {date}, or subscribe to keep going.",
-      values: { date: formatDate(opensOn, "dayMonth") },
-    });
-  };
-}
-
 /** Whether a free learner's next lesson has opened since the refusal: the server then gets asked again. */
 export function useFreeLessonReady(limit: LessonLimit): boolean {
   return useOpeningDay(isFreeLessonsUsed(limit) ? limit.availableAt : null) === "open";
@@ -294,6 +238,12 @@ function useMindMapRefusalWords(limit: MindMapLimit): LimitWords {
   const helpWords = useHelpWords();
   const capWords = useCapWords();
   const lesson = useLessonLimitWords(limit);
+  const mapLessons = useMapLessonsWords();
+  const opensOn = useOpeningDay(isFreeLessonsUsed(limit) ? limit.availableAt : null);
+
+  if (limit.resource === "chapterLessons" && limit.status === "limitReached") {
+    return mapLessons(limit, opensOn);
+  }
 
   if (
     isFreeLessonsUsed(limit) ||

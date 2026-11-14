@@ -257,6 +257,61 @@ msgctxt "kwl__x"
 msgid "Finish to see how it went."
 msgstr "마치고 결과를 확인해 보세요."
 
+#. On the screen a free learner sees when their free lessons are used. {date} is a day and its month, such as "November 22" in English.
+#: src/_components/free-lessons-words.ts
+msgctxt "wsvV5i"
+msgid "Your next free lesson opens on {date}, or subscribe to keep going."
+msgstr "다음 무료 레슨은 {date}에 열려요. 구독하면 계속 학습할 수 있어요."
+
+#: src/_components/free-lessons-words.ts
+msgctxt "sq9fni"
+msgid "Your next free lesson opens later today, or subscribe to keep going."
+msgstr "다음 무료 레슨은 오늘 중에 열려요. 구독하면 계속 학습할 수 있어요."
+
+#: src/_components/free-lessons-words.ts
+msgctxt "q6VpbS"
+msgid "Your next free lesson opens tomorrow, or subscribe to keep going."
+msgstr "다음 무료 레슨은 내일 열려요. 구독하면 계속 학습할 수 있어요."
+
+#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and this one has more lessons than a free learner can start.
+#: src/_components/free-lessons-words.ts
+msgctxt "BQZuQD"
+msgid "It writes more lessons than you get for free."
+msgstr "무료로 제공되는 것보다 더 많은 레슨을 만들어요."
+
+#: src/_components/free-lessons-words.ts
+msgctxt "PzQ0ot"
+msgid "This map needs a subscription"
+msgstr "이 마인드맵을 만들려면 구독이 필요해요"
+
+#: src/_components/free-lessons-words.ts
+msgctxt "Ekv-QL"
+msgid "You can make this map now"
+msgstr "이제 이 마인드맵을 만들 수 있어요"
+
+#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet. {date} is a day and its month, such as "November 22" in English.
+#: src/_components/free-lessons-words.ts
+msgctxt "MU7Wx6"
+msgid "You'll have enough on {date}, or subscribe to make it now."
+msgstr "{date}에는 필요한 만큼 무료 레슨을 이용할 수 있어요. 구독하면 지금 만들 수 있어요."
+
+#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet.
+#: src/_components/free-lessons-words.ts
+msgctxt "HwBdEe"
+msgid "You'll have enough later today, or subscribe to make it now."
+msgstr "오늘 중에 필요한 만큼 무료 레슨을 이용할 수 있어요. 구독하면 지금 만들 수 있어요."
+
+#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet.
+#: src/_components/free-lessons-words.ts
+msgctxt "CE0pGe"
+msgid "You'll have enough tomorrow, or subscribe to make it now."
+msgstr "내일이면 필요한 만큼 무료 레슨을 이용할 수 있어요. 구독하면 지금 만들 수 있어요."
+
+#: src/_components/free-lessons-words.ts
+msgctxt "eFx_I9"
+msgid "Not enough free lessons for this map yet"
+msgstr "이 마인드맵을 만들기에는 아직 무료 레슨이 부족해요"
+
 #: src/_components/help-limit-notice.tsx
 msgctxt "C84LQr"
 msgid "More next month."
@@ -321,22 +376,6 @@ msgstr "이번 달 이용 한도를 다 썼어요"
 msgctxt "Co4ZUv"
 msgid "You've reached today's limit"
 msgstr "오늘 이용 한도를 다 썼어요"
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "sq9fni"
-msgid "Your next free lesson opens later today, or subscribe to keep going."
-msgstr "다음 무료 레슨은 오늘 중에 열려요. 구독하면 계속 학습할 수 있어요."
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "q6VpbS"
-msgid "Your next free lesson opens tomorrow, or subscribe to keep going."
-msgstr "다음 무료 레슨은 내일 열려요. 구독하면 계속 학습할 수 있어요."
-
-#. On the screen a free learner sees when their free lessons are used. {date} is a day and its month, such as "November 22" in English.
-#: src/_components/help-limit-notice.tsx
-msgctxt "wsvV5i"
-msgid "Your next free lesson opens on {date}, or subscribe to keep going."
-msgstr "다음 무료 레슨은 {date}에 열려요. 구독하면 계속 학습할 수 있어요."
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "5SLMld"
