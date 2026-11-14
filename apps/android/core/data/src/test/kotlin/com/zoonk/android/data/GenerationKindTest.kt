@@ -1,5 +1,6 @@
 package com.zoonk.android.data
 
+import com.zoonk.android.R
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -32,6 +33,22 @@ class GenerationKindTest {
             )
         assertEquals(12_000L, progress.activeSince)
         assertNull(GenerationKind.Lesson.progress(run("planLesson" to StepState.Started)).activeSince)
+    }
+
+    @Test
+    fun theStepLabelNamesTheRunningStepThenDone() {
+        assertEquals(R.string.player_phase_plan, GenerationKind.Lesson.stepLabel(run("planLesson" to StepState.Started)))
+        assertEquals(
+            R.string.player_phase_write,
+            GenerationKind.Lesson.stepLabel(run("planLesson" to StepState.Completed, "writeLesson" to StepState.Started)),
+        )
+        assertEquals(R.string.player_challenge_phase_plan, GenerationKind.Challenge.stepLabel(run()))
+        assertEquals(R.string.player_done, GenerationKind.Lesson.stepLabel(run(status = GenerationRun.Status.Ready)))
+        assertNull(
+            GenerationKind.Lesson.stepLabel(
+                run("planLesson" to StepState.Started, status = GenerationRun.Status.Failed, failure = GenerationFailure.Generation),
+            ),
+        )
     }
 
     @Test
