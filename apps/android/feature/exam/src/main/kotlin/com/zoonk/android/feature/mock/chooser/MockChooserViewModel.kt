@@ -53,6 +53,7 @@ class MockChooserViewModel(
     private val mutableStatus = MutableStateFlow<ChooserStatus>(ChooserStatus.Choosing)
     private val mutableBusy = MutableStateFlow(false)
     private val mutableOpened = MutableStateFlow<String?>(null)
+    private val mutableTriedLocked = MutableStateFlow(false)
     private var owner: AuthenticatedSession? = null
     private var writing: MockShape? = null
     private var generationId: String? = null
@@ -80,6 +81,16 @@ class MockChooserViewModel(
     val opened: StateFlow<String?> = mutableOpened.asStateFlow()
 
     val run: StateFlow<GenerationRun> = follower.run
+
+    /**
+     * The learner pressed Start on a locked mock, or the server answered that it needs a subscription
+     * (its refusal reloads the options locked). The page shows the gate while the mocks stay locked.
+     */
+    val triedLocked: StateFlow<Boolean> = mutableTriedLocked.asStateFlow()
+
+    fun tryLocked() {
+        mutableTriedLocked.value = true
+    }
 
     fun start(
         shape: MockShape,
@@ -186,8 +197,11 @@ class MockChooserViewModel(
                 mutableStatus.value = ChooserStatus.Refused(written.limit)
             }
 
-            // Plus required: the options read again shows the mock locked.
-            QuestionWriting.PlusRequired, null -> {
+            QuestionWriting.PlusRequired -> {
+                tryLocked()
+            }
+
+            null -> {
                 return
             }
         }
@@ -219,8 +233,7 @@ class MockChooserViewModel(
 
                 MockStartOutcome.NeedsQuestions -> ChooserStatus.Failed(notEnoughQuestions = false)
 
-                // The options read again shows the mock locked.
-                MockStartOutcome.PlusRequired -> ChooserStatus.Choosing
+                MockStartOutcome.PlusRequired -> ChooserStatus.Choosing.also { tryLocked() }
             }
     }
 

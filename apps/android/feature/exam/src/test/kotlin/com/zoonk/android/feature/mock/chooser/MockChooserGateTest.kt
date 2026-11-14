@@ -50,10 +50,12 @@ class MockChooserGateTest {
             openWebPage = {},
         )
 
+    private val starts = FakeMockStartApi()
+
     private fun show() {
         val session = FakeSession(AuthenticatedSession("ana", "token", "local"))
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
-        val viewModel = MockChooserViewModel(GOAL, MockStarter(FakeMockStartApi(), cache), session) { ReadyRuns() }
+        val viewModel = MockChooserViewModel(GOAL, MockStarter(starts, cache), session) { ReadyRuns() }
         rule.setContent { ZoonkTheme { PracticeChooser(view.value, viewModel, navigator, rememberLazyListState()) } }
         rule.onAllNodes(isSelectable()).onFirst().performClick()
         rule.onNodeWithText("Start").performClick()
@@ -77,5 +79,30 @@ class MockChooserGateTest {
 
         rule.onNodeWithText("Subscribe").assertDoesNotExist()
         rule.onNodeWithText("Start").assertIsEnabled()
+    }
+
+    /** The options said open, then the subscription lapsed: the server's refusal shows the gate once they read locked. */
+    @Test
+    fun aStartTheServerRefusesShowsTheGate() {
+        view.value = mockOptions("")
+        starts.starts = listOf { throw refusal("PLUS_REQUIRED") }
+        show()
+
+        view.value = mockOptions(""""access":"plusRequired"""")
+
+        rule.onNodeWithText("Subscribe").assertExists()
+        rule.onNodeWithText("Start").assertDoesNotExist()
+    }
+
+    @Test
+    fun aWritingRequestTheServerRefusesShowsTheGate() {
+        view.value = mockOptions("")
+        starts.starts = listOf { NEEDS_QUESTIONS }
+        starts.writes = listOf { throw refusal("PLUS_REQUIRED") }
+        show()
+
+        view.value = mockOptions(""""access":"plusRequired"""")
+
+        rule.onNodeWithText("Subscribe").assertExists()
     }
 }
