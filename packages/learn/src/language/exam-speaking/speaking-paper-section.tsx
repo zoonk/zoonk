@@ -97,6 +97,14 @@ export function SpeakingPaperSection({
                 language={paper.language}
                 level={paper.level}
                 needsSubscription={paper.access === "plusRequired"}
+                note={
+                  startedTask === task.key && (
+                    <CallStartNote
+                      call={call}
+                      failed={t("The task didn't start. Try again in a moment.")}
+                    />
+                  )
+                }
                 onStart={() => {
                   selected.current = task.key;
                   setStartedTask(task.key);
@@ -119,12 +127,6 @@ export function SpeakingPaperSection({
           writing={call.writing}
         />
       )}
-
-      <CallStartNote
-        call={call}
-        className={call.limit ? "py-4" : "px-1"}
-        failed={t("The task didn't start. Try again in a moment.")}
-      />
 
       <PageSectionFooter>
         <a className="hit-area relative" href={paper.source} rel="noreferrer" target="_blank">
