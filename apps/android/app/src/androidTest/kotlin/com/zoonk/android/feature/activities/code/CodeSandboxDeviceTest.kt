@@ -141,7 +141,8 @@ class CodeSandboxDeviceTest {
 
         val started = System.nanoTime()
         assertEquals(RegexTest.Invalid, onMain { testRegex("a*".repeat(20) + "b", listOf("a".repeat(40)), emptyList()) })
-        assertTrue((System.nanoTime() - started) / 1_000_000 in 3_000L..6_000L)
+        assertTrue((System.nanoTime() - started) / 1_000_000 in 1_000L..3_000L)
         assertEquals(RegexTest.Empty, onMain { testRegex("", listOf("a"), emptyList()) })
+        assertEquals("ok\n", onMain(5.seconds) { runProgram("console.log('ok')", CodeLanguage.JavaScript) }.output)
     }
 }
