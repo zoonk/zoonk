@@ -246,13 +246,10 @@ fun SpeakingPaperSection(
     val model = viewModel(key = "speaking-start:$goalId") { CallStartModel(start, GenerationKind.ExamSpeaking) }
     val paused = paper.access == SpeakingPaper.Access.CALLS_PAUSED
     var started by rememberSaveable { mutableStateOf<String?>(null) }
-    // Tasks refused before the latest start: each keeps its notice while the limit holds.
-    var refusedBefore by rememberSaveable { mutableStateOf(emptyList<String>()) }
     val writing by model.writing.generationId.collectAsStateWithLifecycle()
     val busy = model.state == CallStartModel.State.Starting || writing != null
     val openCall = { id: UUID -> open(AppRoute.Conversation(id.toString(), from = from)) }
     val startTask = { key: String ->
-        if (model.limit != null) refusedBefore = (refusedBefore + listOfNotNull(started)).distinct()
         started = key
         model.start(CallRequest.ExamSpeaking(goalId, key), onRefused)
     }
@@ -279,12 +276,7 @@ fun SpeakingPaperSection(
                 onStart = { startTask(task.key) },
                 onSubscribe = { open(AppRoute.Subscription) },
                 onLastResult = openCall,
-                note =
-                    if (started == task.key || task.key in refusedBefore) {
-                        { StartNote(model, started == task.key, actions) }
-                    } else {
-                        null
-                    },
+                note = if (started == task.key) ({ StartNote(model, actions) }) else null,
             )
         }
         if (writing != null) {
@@ -325,11 +317,10 @@ internal fun CallsPaused(modifier: Modifier = Modifier) {
     }
 }
 
-/** Why a task's Start didn't open, under it: the limit that refused it, or, for the [latest] start, that it failed. */
+/** Why the last Start tapped didn't open, under its task: the limit that refused it, or that it failed. */
 @Composable
 private fun StartNote(
     model: CallStartModel,
-    latest: Boolean,
     actions: SpeakingActions,
 ) {
     val limit = model.limit
@@ -342,7 +333,7 @@ private fun StartNote(
             )
         }
 
-        model.state == CallStartModel.State.Failed && latest -> {
+        model.state == CallStartModel.State.Failed -> {
             Text(
                 stringResource(R.string.speaking_start_failed),
                 Modifier.semantics { liveRegion = LiveRegionMode.Polite },
