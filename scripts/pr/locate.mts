@@ -7,15 +7,30 @@ export function isRemote(picture: string): boolean {
   return /^[a-z][a-z0-9+.-]*:\/\//iu.test(picture);
 }
 
-const PICTURE_LINK =
-  /!\[[^\]]*\]\((?<markdown>[^)\s]+)(?:\s+"[^"]*")?\)|<img\b[^>]*\ssrc="(?<html>[^"]+)"/giu;
+/** The one form the check reads: `![description](path "optional title")`, the path unspaced. */
+const PICTURE = /!\[[^\]]*\]\((?<path>[^\s()<>]+)(?:\s+"[^"]*")?\)/gu;
 
-export function bodyPictures(markdown: string): string[] {
-  const links = [...markdown.matchAll(PICTURE_LINK)].map(
-    (match) => match.groups?.markdown ?? match.groups?.html ?? "",
+/** Every other way a body can show media, taken out in turn so each shows up once. */
+const OTHER_MEDIA = [
+  /<(?:audio|img|picture|source|video)\b[^>]*>/giu,
+  /!\[[^\]]*\](?:\[[^\]]*\]|\([^)]*\))?/gu,
+  /^ {0,3}\[[^\]]+\]:\s*\S+/gmu,
+  /\S+\.(?:avif|gif|jpe?g|mov|mp4|png|svg|webm|webp)\b/giu,
+];
+
+/** `unsupported` holds media written any other way, so it fails instead of going unchecked. */
+export function bodyMedia(markdown: string): { pictures: string[]; unsupported: string[] } {
+  const pictures = [...markdown.matchAll(PICTURE)].map((match) => match.groups?.path ?? "");
+
+  const { found } = OTHER_MEDIA.reduce(
+    ({ found: earlier, rest }, pattern) => ({
+      found: [...earlier, ...[...rest.matchAll(pattern)].map((match) => match[0].trim())],
+      rest: rest.replaceAll(pattern, " "),
+    }),
+    { found: new Array<string>(), rest: markdown.replaceAll(PICTURE, " ") },
   );
 
-  return [...new Set(links)];
+  return { pictures: [...new Set(pictures)], unsupported: [...new Set(found)] };
 }
 
 function foldersAbove(folder: string): string[] {

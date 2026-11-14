@@ -4,6 +4,7 @@ import { existsSync } from "node:fs";
 import { readFile, stat } from "node:fs/promises";
 import { join } from "node:path";
 import { promisify } from "node:util";
+import { inlineRscPayload } from "../verify/requests.mts";
 import { type Build } from "./media.mts";
 
 const run = promisify(execFile);
@@ -166,18 +167,35 @@ export async function readCheckoutBuild({
   return { app, changes, commit, current: fresh ? id.trim() : undefined };
 }
 
+function buildField(row: string): unknown {
+  try {
+    const root: unknown = JSON.parse(row.slice("0:".length));
+    return typeof root === "object" && root !== null ? Reflect.get(root, "b") : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 /**
- * Next.js writes the build id into each page's payload as `"b"` when no deployment id is set, as on
- * a local `next start` (`next dev` writes "development"). In the HTML it sits in an escaped string.
+ * Next.js writes the build id into the root row (`0:`) of the payload each page inlines, as `"b"`,
+ * when no deployment id is set, as on a local `next start`; `next dev` writes "development".
  */
+export function servedBuildId(html: string): string | undefined {
+  const ids = new Set(
+    inlineRscPayload(html)
+      .split("\n")
+      .filter((row) => row.startsWith("0:"))
+      .map((row) => buildField(row)),
+  );
+
+  const [id] = ids;
+  return ids.size === 1 && typeof id === "string" ? id : undefined;
+}
+
 export function bindBuild({ checkout, html }: { checkout: CheckoutBuild; html: string }): Build {
   const { current, ...build } = checkout;
-
-  const served =
-    current !== undefined &&
-    (html.includes(`\\"b\\":\\"${current}\\"`) || html.includes(`"b":"${current}"`));
-
-  return { ...build, id: served ? current : "unknown" };
+  const served = servedBuildId(html);
+  return { ...build, id: current !== undefined && served === current ? current : "unknown" };
 }
 
 export async function resolveCommit({

@@ -3,8 +3,8 @@ import { existsSync } from "node:fs";
 import { mkdir, readFile } from "node:fs/promises";
 import { dirname, extname, join, resolve } from "node:path";
 import { parseArgs } from "node:util";
-import { checkPictures, formatCheck } from "./check.mts";
-import { bodyPictures, findManifests, isRemote, manifestsAbove } from "./locate.mts";
+import { checkPictures } from "./check.mts";
+import { bodyMedia, findManifests, isRemote, manifestsAbove } from "./locate.mts";
 import {
   type Finding,
   type FindingState,
@@ -12,7 +12,6 @@ import {
   type ManifestItem,
   NATIVE_PLATFORMS,
   PLATFORMS,
-  type Read,
   SIDES,
   displayPath,
   pathWithin,
@@ -20,9 +19,11 @@ import {
   readOf,
   writeManifest,
 } from "./media.mts";
-import { resolveCommit, sha256File, sha256Text } from "./provenance.mts";
+import { resolveCommit, sha256File } from "./provenance.mts";
+import { type ReadFinding, parseFindings, recordReads } from "./read.mts";
+import { formatCheck } from "./report.mts";
 import { writeSection } from "./section.mts";
-import { readablePictures, writeReadingSheet } from "./tiles.mts";
+import { writeReadingSheet } from "./tiles.mts";
 
 const repository = resolve(import.meta.dirname, "../..");
 const CAPTURE = join(repository, "tmp/pr-media");
@@ -93,16 +94,21 @@ async function check({ positionals: [body], values }: Arguments) {
   const root = resolve(values.root ?? dirname(body));
   const markdown = await readFile(body, "utf8");
 
-  const pictures = bodyPictures(markdown).map((link) =>
-    isRemote(link) ? link : resolve(root, link),
-  );
+  const media = bodyMedia(markdown);
+  const pictures = media.pictures.map((link) => (isRemote(link) ? link : resolve(root, link)));
 
   const named = await Promise.all(
     values.manifests.map(async (folder) => findManifests(resolve(folder))),
   );
 
   const manifests = [...manifestsAbove(pictures), ...named.flat()];
-  const result = await checkPictures({ manifests, pictures, repository });
+
+  const result = await checkPictures({
+    manifests,
+    pictures,
+    repository,
+    unsupported: media.unsupported,
+  });
 
   console.log(formatCheck(result, root));
   return result.problems.length === 0;
@@ -118,97 +124,32 @@ async function refreshSection(root: string): Promise<boolean> {
   return written;
 }
 
-type ReadFinding = { files: string[]; finding: Finding };
-
-const FINDING_ID_LENGTH = 8;
-
-function isText(value: unknown): value is string {
-  return typeof value === "string" && value.length > 0;
-}
-
-/** One id per finding, shared by every picture it names, so resolving it resolves them all. */
-function toReadFinding(entry: unknown): ReadFinding | undefined {
-  if (typeof entry !== "object" || entry === null) {
-    return undefined;
-  }
-
-  const field = (key: string): unknown => Reflect.get(entry, key);
-
-  const [crop, file, measurement, text] = ["crop", "file", "measurement", "text"].map((key) =>
-    field(key),
-  );
-
-  const listed: unknown[] = Array.isArray(file) ? file : [file];
-  const files = listed.filter((name) => isText(name));
-
-  if (!isText(text) || files.length === 0 || files.length !== listed.length) {
-    return undefined;
-  }
-
-  const extra = { ...(isText(measurement) && { measurement }), ...(isText(crop) && { crop }) };
-  const id = sha256Text(JSON.stringify([files, text])).slice(0, FINDING_ID_LENGTH);
-  return { files, finding: { id, state: "open", text, ...extra } };
-}
-
 async function readFindingsFile(path: string | undefined): Promise<ReadFinding[]> {
   if (!path) {
     return [];
   }
 
   const parsed: unknown = JSON.parse(await readFile(path, "utf8"));
-  const entries = Array.isArray(parsed) ? parsed.map((entry) => toReadFinding(entry)) : [undefined];
-  const valid = entries.filter((entry) => entry !== undefined);
 
-  if (valid.length !== entries.length) {
+  return (
+    parseFindings(parsed) ??
     fail(
       `${path} must be a JSON array of { "file", "text" }, where "file" may list several pictures and "measurement" and "crop" are optional.`,
-    );
-  }
-
-  return valid;
+    )
+  );
 }
 
 async function recordRead({ positionals: [folder], values }: Arguments) {
-  const by = values.by ?? fail("Say who read the pictures with --by.");
+  const by = values.by ?? "";
   const root = resolve(folder ?? CAPTURE);
-  const pictures = await readablePictures(root);
-  const unread = pictures.filter(({ item }) => !readOf(item));
   const entries = await readFindingsFile(values.findings);
-  const known = new Set(unread.map(({ id }) => id));
-  const strays = entries.flatMap(({ files }) => files.filter((file) => !known.has(file)));
 
-  if (strays.length > 0) {
-    fail(`These findings name no unread after picture under ${root}: ${strays.join(", ")}`);
-  }
-
-  const at = new Date().toISOString();
-
-  for (const [manifest, list] of Map.groupBy(unread, (picture) => picture.folder)) {
-    const bySha = new Map(list.map((picture) => [picture.item.sha256, picture.id]));
-    // oxlint-disable-next-line no-await-in-loop -- One manifest at a time.
-    const items = (await readManifest(manifest)) ?? [];
-
-    const updated = items.map((item) => {
-      const id = bySha.get(item.sha256);
-
-      if (id === undefined) {
-        return item;
-      }
-
-      const findings = entries.flatMap(({ files, finding }) =>
-        files.includes(id) ? [finding] : [],
-      );
-
-      const read: Read = { at, by, findings };
-      return { ...item, read };
-    });
-
-    // oxlint-disable-next-line no-await-in-loop -- See above.
-    await writeManifest(manifest, updated);
-  }
+  const { already, read } = await recordReads({ by, entries, root }).catch((error: unknown) =>
+    fail(error instanceof Error ? error.message : String(error)),
+  );
 
   console.log(
-    `Recorded ${by}'s read of ${unread.length} pictures (${pictures.length - unread.length} already read), ${entries.length} findings.`,
+    `Recorded ${by.trim()}'s read of ${read} pictures (${already} already read), ${entries.length} findings.`,
   );
 
   return refreshSection(root);
@@ -283,9 +224,27 @@ async function hashPictures(files: string[], to: string) {
 }
 
 async function addToManifest(to: string, added: ManifestItem[]) {
-  const hashes = new Set(added.map((item) => item.sha256));
-  const kept = ((await readManifest(to)) ?? []).filter((item) => !hashes.has(item.sha256));
+  const files = new Set(added.map((item) => item.file));
+  const kept = ((await readManifest(to)) ?? []).filter((item) => !files.has(item.file));
   await writeManifest(to, [...kept, ...added]);
+}
+
+/** A capture that recorded these bytes as an after holds them to an after's bar. */
+async function capturedAsAfter(files: string[], to: string): Promise<string[]> {
+  const pictures = files.map((file) => resolve(file));
+  const searched = await Promise.all([findManifests(CAPTURE), findManifests(to)]);
+  const folders = [...new Set([...manifestsAbove(pictures), ...searched.flat()])];
+
+  const items = await Promise.all(
+    folders.map(async (folder) => (await readManifest(folder)) ?? []),
+  );
+
+  const afters = new Set(
+    items.flat().flatMap((item) => (item.side === "after" ? [item.sha256] : [])),
+  );
+
+  const hashes = await Promise.all(pictures.map(async (picture) => sha256File(picture)));
+  return pictures.filter((_, index) => afters.has(hashes[index] ?? ""));
 }
 
 async function recordPending({ positionals: files, values }: Arguments) {
@@ -322,6 +281,14 @@ async function recordBefore({ positionals: files, values }: Arguments) {
   }
 
   const to = resolve(values.to);
+  const afters = await capturedAsAfter(files, to);
+
+  if (afters.length > 0) {
+    fail(
+      `A capture already records these as after pictures, so they can't be registered as before pictures: ${afters.map((file) => displayPath(file)).join(", ")}`,
+    );
+  }
+
   await mkdir(to, { recursive: true });
   const pictures = await hashPictures(files, to);
 

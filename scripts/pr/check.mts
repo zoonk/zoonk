@@ -1,5 +1,5 @@
 import { existsSync } from "node:fs";
-import { relative, resolve } from "node:path";
+import { resolve } from "node:path";
 import { isRemote } from "./locate.mts";
 import {
   type AlignmentReport,
@@ -12,71 +12,7 @@ import {
   readOf,
 } from "./media.mts";
 import { commitIncludes, latestCommitSince, sha256File } from "./provenance.mts";
-
-/** In the order they print: what can't be bound first, then what a retake fixes, then the read. */
-const KINDS = [
-  { kind: "missing", label: "Not found", summary: "not found" },
-  {
-    kind: "remote",
-    label: "Not a local file: check the body before uploading",
-    summary: "not local",
-  },
-  {
-    kind: "changed",
-    label: "Changed since its capture: its bytes don't match its manifest",
-    summary: "changed since capture",
-  },
-  {
-    kind: "unrecorded",
-    label: "Not in any capture manifest: take it with pnpm pr:capture",
-    summary: "not in any capture manifest",
-  },
-  { kind: "pending", label: "Pending: no native capture record yet", summary: "pending" },
-  {
-    kind: "unknown-build",
-    label: "After picture from an unknown build: serve this checkout with pnpm start and retake",
-    summary: "from an unknown build",
-  },
-  {
-    kind: "uncommitted",
-    label: "After picture built with uncommitted changes: commit, rebuild and retake",
-    summary: "built with uncommitted changes",
-  },
-  {
-    kind: "stale",
-    label: "After picture older than a later commit to its app or the shared packages: retake",
-    summary: "stale",
-  },
-  {
-    kind: "unread",
-    label: "No read recorded: run pnpm pr:media tiles, read, then pnpm pr:media read",
-    summary: "with no read",
-  },
-  { kind: "finding", label: "Unresolved finding from the read", summary: "unresolved findings" },
-  {
-    kind: "fixed-not-retaken",
-    label: "Finding fixed after the picture was taken: retake",
-    summary: "fixed but not retaken",
-  },
-  {
-    kind: "alignment",
-    label: "Unresolved layout finding in the capture's alignment.json",
-    summary: "unresolved layout findings",
-  },
-  {
-    kind: "scenarios",
-    label: "Required scenarios the capture's alignment.json says are missing",
-    summary: "captures missing scenarios",
-  },
-] as const;
-
-type Kind = (typeof KINDS)[number]["kind"];
-
-type Problem = { detail?: string; kind: Kind; picture: string };
-
-type Reads = { carried: number; missing: number; new: number };
-
-export type CheckResult = { checked: number; problems: Problem[]; reads: Reads };
+import { type CheckResult, type Problem } from "./report.mts";
 
 type Entry = { folder: string; item: ManifestItem };
 
@@ -200,40 +136,64 @@ async function itemProblems({
     return [{ kind: "pending", picture }];
   }
 
-  const findings: Problem[] = item.read
-    ? await findingProblems({ findings: item.read.findings, git, item, picture })
+  const read = readOf(item);
+
+  const findings: Problem[] = read
+    ? await findingProblems({ findings: read.findings, git, item, picture })
     : [{ kind: "unread", picture }];
 
   return [...(await buildProblems({ git, item, picture })), ...findings];
 }
 
-/** Matched by bytes, so a capture copied elsewhere keeps its record. */
+/**
+ * Matched by bytes, so a capture copied elsewhere keeps its record. Every after record with those
+ * bytes applies, so no other record, whatever its order, excuses a picture an after holds to more.
+ */
 async function pictureProblems({
   byHash,
   byPath,
   git,
   picture,
 }: {
-  byHash: Map<string, Entry>;
+  byHash: Map<string, Entry[]>;
   byPath: Map<string, Entry>;
   git: Git;
   picture: string;
-}): Promise<{ entry?: Entry; problems: Problem[] }> {
+}): Promise<{ entries: Entry[]; problems: Problem[] }> {
   if (isRemote(picture)) {
-    return { problems: [{ kind: "remote", picture }] };
+    return { entries: [], problems: [{ kind: "remote", picture }] };
   }
 
   if (!existsSync(picture)) {
-    return { problems: [{ kind: "missing", picture }] };
+    return { entries: [], problems: [{ kind: "missing", picture }] };
   }
 
-  const entry = byHash.get(await sha256File(picture));
+  const sha256 = await sha256File(picture);
+  const own = byPath.get(picture);
 
-  if (!entry) {
-    return { problems: [{ kind: byPath.has(picture) ? "changed" : "unrecorded", picture }] };
+  if (own && own.item.sha256 !== sha256) {
+    return { entries: [], problems: [{ kind: "changed", picture }] };
   }
 
-  return { entry, problems: await itemProblems({ git, item: entry.item, picture }) };
+  const entries = byHash.get(sha256) ?? [];
+
+  if (entries.length === 0) {
+    return { entries, problems: [{ kind: "unrecorded", picture }] };
+  }
+
+  const afters = entries.filter(({ item }) => item.side === "after");
+
+  const problems = await Promise.all(
+    afters.map(async ({ item }) => itemProblems({ git, item, picture })),
+  );
+
+  const unique = new Map(problems.flat().map((problem) => [JSON.stringify(problem), problem]));
+  return { entries, problems: [...unique.values()] };
+}
+
+function measured({ alignment, items }: Manifest): boolean {
+  const { captures = [], findings = [] } = alignment;
+  return !items.some((item) => isRecorded(item)) || captures.length + findings.length > 0;
 }
 
 function alignmentProblems({ alignment, folder }: Manifest): Problem[] {
@@ -264,16 +224,18 @@ export async function checkPictures({
   manifests,
   pictures,
   repository,
+  unsupported = [],
 }: {
   manifests: string[];
   pictures: string[];
   repository: string;
+  unsupported?: string[];
 }): Promise<CheckResult> {
   const loaded = await loadManifests(manifests);
   const git = cachedGit(repository);
 
   const entries = loaded.flatMap(({ folder, items }) => items.map((item) => ({ folder, item })));
-  const byHash = new Map(entries.map((entry) => [entry.item.sha256, entry]));
+  const byHash = Map.groupBy(entries, (entry) => entry.item.sha256);
   const byPath = new Map(entries.map((entry) => [resolve(entry.folder, entry.item.file), entry]));
   const unique = [...new Set(pictures)];
 
@@ -281,8 +243,9 @@ export async function checkPictures({
     unique.map(async (picture) => pictureProblems({ byHash, byPath, git, picture })),
   );
 
-  const used = new Set(checked.flatMap(({ entry }) => (entry ? [entry.folder] : [])));
-  const after = checked.flatMap(({ entry }) => (entry?.item.side === "after" ? [entry.item] : []));
+  const matched = new Set(checked.flatMap(({ entries: found }) => found));
+  const used = new Set([...matched].map(({ folder }) => folder));
+  const after = [...matched].flatMap(({ item }) => (item.side === "after" ? [item] : []));
   const read = after.flatMap((item) => readOf(item) ?? []);
 
   const reads = {
@@ -291,43 +254,14 @@ export async function checkPictures({
     new: read.filter((record) => !record.carriedFrom).length,
   };
 
-  const fromAlignment = loaded
-    .filter(({ folder }) => used.has(folder))
-    .flatMap((manifest) => alignmentProblems(manifest));
+  const usedManifests = loaded.filter(({ folder }) => used.has(folder));
+  const fromAlignment = usedManifests.flatMap((manifest) => alignmentProblems(manifest));
+  const unreadable = unsupported.map((detail): Problem => ({ detail, kind: "unsupported" }));
 
   return {
     checked: unique.length,
-    problems: [...checked.flatMap(({ problems }) => problems), ...fromAlignment],
+    notMeasured: usedManifests.filter((manifest) => !measured(manifest)).length,
+    problems: [...unreadable, ...checked.flatMap(({ problems }) => problems), ...fromAlignment],
     reads,
   };
-}
-
-function kindOf(kind: Kind) {
-  const index = KINDS.findIndex((entry) => entry.kind === kind);
-  const { label, summary } = KINDS[index] ?? { label: kind, summary: kind };
-  return { index, label, summary };
-}
-
-export function formatCheck({ checked, problems, reads }: CheckResult, root: string): string {
-  const groups = [...Map.groupBy(problems, (problem) => problem.kind)].toSorted(
-    ([first], [second]) => kindOf(first).index - kindOf(second).index,
-  );
-
-  const shown = (picture: string) => (isRemote(picture) ? picture : relative(root, picture));
-
-  const lines = groups.flatMap(([kind, list]) => [
-    `${kindOf(kind).label} (${list.length})`,
-    ...list.map(({ detail, picture }) => `  ${shown(picture)}${detail ? `: ${detail}` : ""}`),
-  ]);
-
-  const summary =
-    groups.length === 0
-      ? `PASS: ${checked} pictures, each in a capture manifest; every after picture from a current, committed build and read`
-      : `FAIL: ${groups.map(([kind, list]) => `${list.length} ${kindOf(kind).summary}`).join("; ")}, of ${checked} pictures`;
-
-  const readLine =
-    reads.carried + reads.new + reads.missing > 0 &&
-    `Reads: ${reads.carried} carried over from a capture with the same pixels, ${reads.new} new, ${reads.missing} still to read`;
-
-  return [...lines, readLine, summary].filter(Boolean).join("\n");
 }

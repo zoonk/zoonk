@@ -1,9 +1,10 @@
 import { existsSync } from "node:fs";
 import { rm, writeFile } from "node:fs/promises";
 import { join, relative, resolve } from "node:path";
-import { type CheckResult, checkPictures, formatCheck } from "./check.mts";
+import { checkPictures } from "./check.mts";
 import { compareSides, describeChange } from "./compare.mts";
 import { SIDES, readCapture, renderMedia } from "./media.mts";
+import { type CheckResult, formatCheck } from "./report.mts";
 
 /**
  * Writes `media.md` only when every file it links passes the check, and removes an older one

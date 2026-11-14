@@ -81,6 +81,7 @@ export const MANIFEST = "capture.json";
  * relationship lane owns its shape (unresolved means failing and not excepted).
  */
 export type AlignmentReport = {
+  captures?: unknown[];
   findings?: { exception?: string; level: string; message: string }[];
   summary?: { scenariosMissing?: number | null; unresolved?: number };
 };
@@ -135,8 +136,10 @@ export async function writeManifest(folder: string, items: ManifestItem[]): Prom
   await writeFile(join(folder, MANIFEST), `${JSON.stringify(items, null, 2)}\n`);
 }
 
+/** A read counts only with the name of whoever read. */
 export function readOf(item: ManifestItem): Read | undefined {
-  return "read" in item ? item.read : undefined;
+  const read = "read" in item ? item.read : undefined;
+  return read?.by.trim() ? read : undefined;
 }
 
 export function isRecorded(item: ManifestItem): item is CaptureItem {

@@ -4,7 +4,7 @@ import { mkdirSync, mkdtempSync, utimesSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, it } from "vitest";
-import { bindBuild, readCheckoutBuild } from "./provenance.mts";
+import { bindBuild, readCheckoutBuild, servedBuildId } from "./provenance.mts";
 
 const MINUTE = 60_000;
 
@@ -32,17 +32,35 @@ function makeBuiltCheckout() {
   return { built, repository };
 }
 
-function servedPage(id: string): string {
-  return `<script>self.__next_f.push([1,"{\\"d\\":\\"$undefined\\",\\"b\\":\\"${id}\\"}"])</script>`;
+/** How `next start` sends a page: its payload rows in escaped strings, row 0 carrying the build. */
+function servedPage(rows: string[]): string {
+  return rows
+    .map((row) => `<script>self.__next_f.push([1,${JSON.stringify(row)}])</script>`)
+    .join("");
 }
 
 describe("the build a web picture shows", () => {
-  it("finds the checkout's build id where Next.js writes it into the page's HTML", async () => {
+  it("reads the build id only from the payload's root row, even split across scripts", () => {
+    const root = '0:{"P":null,"c":["","en","pricing"],"b":"abc123","u":"$@24"}\n';
+
+    assert.equal(servedBuildId(servedPage([root])), "abc123");
+    const half = Math.floor(root.length / 2);
+
+    assert.equal(servedBuildId(servedPage([root.slice(0, half), root.slice(half)])), "abc123");
+  });
+
+  it("calls the build unknown when only the page's text names it, or the payload says development", async () => {
     const { repository } = makeBuiltCheckout();
     const checkout = await readCheckoutBuild({ app: "main", repository });
-    assert.equal(bindBuild({ checkout, html: servedPage("abc123") }).id, "abc123");
-    assert.equal(bindBuild({ checkout, html: servedPage("development") }).id, "unknown");
-    assert.equal(bindBuild({ checkout, html: "<p>abc123</p>" }).id, "unknown");
+    const spoof = `<pre>{"b":"abc123"}</pre>${servedPage(['0:{"P":null,"b":"development"}\n'])}`;
+
+    assert.equal(
+      bindBuild({ checkout, html: servedPage(['0:{"P":null,"b":"abc123"}\n']) }).id,
+      "abc123",
+    );
+
+    assert.equal(bindBuild({ checkout, html: spoof }).id, "unknown");
+    assert.equal(bindBuild({ checkout, html: '<p>0:{"b":"abc123"}</p>' }).id, "unknown");
   });
 
   it("binds the served build only when it is this checkout's build, newer than its sources", async () => {
@@ -57,7 +75,11 @@ describe("the build a web picture shows", () => {
     const outdated = await readCheckoutBuild({ app: "main", repository });
 
     assert.equal(outdated.current, undefined);
-    assert.equal(bindBuild({ checkout: outdated, html: '"b":"abc123"' }).id, "unknown");
+
+    assert.equal(
+      bindBuild({ checkout: outdated, html: servedPage(['0:{"P":null,"b":"abc123"}\n']) }).id,
+      "unknown",
+    );
   });
 
   it("digests uncommitted changes to the app and packages, and only those", async () => {
