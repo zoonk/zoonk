@@ -6,7 +6,7 @@
   "goalcontent_also_in_exam_count": "f59428d55a41aec5a38f4c59d6762d34ecc6345951610c9f1c4d200e7c5b37c7",
   "goalcontent_also_in_exams": "238fa410145c103d7b1604b8a3b30c5a0bd382929cdef4850161d3d833a33f78",
   "goalcontent_also_in_plan": "40b142a39287bf335dded0d1b18aaee0c92192bb211858ffd656a437fe31fe0e",
-  "goalcontent_appears_a_lot": "d1d78d753889ed7d71556be7e106d0595a607f02436d2bd87fdc4a49c61f6c1e",
+  "goalcontent_asked_a_lot": "6cd96110390465ff7596adab5e83f579f88e99834c7905e40775df82559b7ac5",
   "goalcontent_beyond_guide": "4cd619bc3347242e1bc1dca0abc7fcdc3eca8b668dbcde6364e8385759825364",
   "goalcontent_beyond_notice": "f8b26d3c70cacac174b8937489e978db8cf9ac86a174d02a1c63ba1a75a86522",
   "goalcontent_bring_back": "9e0fcdb79b177344330ebab800560a23d819a83c70b92cf3134f705d446605eb",
@@ -265,12 +265,12 @@
     <string name="goalcontent_topic_skipped_base">Du hast diese Voraussetzung übersprungen</string>
     <string name="goalcontent_topic_time">Passt nicht in die Zeit, die du zur Verfügung hast</string>
     <string name="goalcontent_topic_missing">Noch keine Lektionen dazu</string>
-    <!-- Marks a topic past exams asked a lot. -->
-    <string name="goalcontent_appears_a_lot">Kommt häufig vor</string>
-    <!-- %1$s is the "Appears a lot" mark. -->
+    <!-- Marks a topic that comes up often in the exam. -->
+    <string name="goalcontent_asked_a_lot">Häufig abgefragt</string>
+    <!-- %1$s is the "Asked a lot" mark. -->
     <string name="goalcontent_frequency_material">Die mit %1$s markierten Themen kommen laut deinem Lernmaterial häufig vor. Du verbringst mehr Zeit damit.</string>
     <string name="goalcontent_frequency_past_exams">Die mit %1$s markierten Themen wurden in früheren Prüfungen am häufigsten abgefragt.</string>
-    <!-- %1$s is the "Appears a lot" mark, %2$s what the source counted, %3$s a link to the source's site. -->
+    <!-- %1$s is the "Asked a lot" mark, %2$s what the source counted, %3$s a link to the source's site. -->
     <string name="goalcontent_frequency_tagged_waits">Die mit %1$s markierten Themen wurden in früheren Prüfungen am häufigsten abgefragt (%2$s, laut %3$s). Die am seltensten abgefragten Themen kommen später dran.</string>
     <string name="goalcontent_frequency_tagged">Die mit %1$s markierten Themen wurden in früheren Prüfungen am häufigsten abgefragt (%2$s, laut %3$s). Du verbringst mehr Zeit damit.</string>
     <!-- %1$s is what the source counted, %2$s a link to the source's site. -->

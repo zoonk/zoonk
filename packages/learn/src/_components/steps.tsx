@@ -18,6 +18,7 @@ export type StepsItem = {
   action?: React.ReactNode;
   /** The last step's own actions, in place of `finalAction` while it asks something. */
   finalAction?: React.ReactNode;
+  finalSecondAction?: React.ReactNode;
   beside?: boolean;
   content: React.ReactNode;
   id: string;
@@ -29,6 +30,23 @@ export function focusStepTitle(container: HTMLElement | null) {
   container
     ?.querySelector<HTMLElement>(`[data-slot="${STEP_TITLE_SLOT}"]`)
     ?.focus({ preventScroll: true });
+}
+
+/** The last step's own actions replace the shared ones only on the arrangement where it's last. */
+function getFinalActions({
+  finalAction,
+  finalSecondAction,
+  isLastHere,
+  item,
+}: {
+  finalAction: React.ReactNode;
+  finalSecondAction: React.ReactNode;
+  isLastHere: boolean;
+  item: StepsItem;
+}) {
+  return isLastHere && item.finalAction
+    ? { main: item.finalAction, second: item.finalSecondAction }
+    : { main: finalAction, second: finalSecondAction };
 }
 
 function WideOnly({ children, when }: { children: React.ReactNode; when: boolean }) {
@@ -68,6 +86,7 @@ export function Steps({
   exitHref,
   finalAction,
   finalOptions,
+  finalSecondAction,
   items,
 }: {
   aside?: TaskFrameAside | null;
@@ -75,6 +94,11 @@ export function Steps({
   exitHref: string;
   finalAction: React.ReactNode;
   finalOptions?: React.ReactNode;
+  /**
+   * The bar's outlined second action on the last step (`BAR_SECOND_ACTION_CLASS`): first in the
+   * row, so on a phone, where it takes the line above, it's read first too.
+   */
+  finalSecondAction?: React.ReactNode;
   items: StepsItem[];
 }) {
   const t = useExtracted();
@@ -141,6 +165,8 @@ export function Steps({
     return null;
   }
 
+  const final = getFinalActions({ finalAction, finalSecondAction, isLastHere, item });
+
   return (
     <TaskFrame
       aside={aside}
@@ -149,6 +175,7 @@ export function Steps({
         showsStep ? (
           <>
             <TaskActions>
+              {isLastWide && <WideOnly when={!isLastHere}>{final.second}</WideOnly>}
               {phone.back !== -1 && <QuestionBack label={t("Back")} onClick={back} />}
               {item.action}
               {!isLastHere && (
@@ -159,11 +186,7 @@ export function Steps({
                   {t("Continue")}
                 </TaskMainButton>
               )}
-              {isLastWide && (
-                <WideOnly when={!isLastHere}>
-                  {(isLastHere && item.finalAction) || finalAction}
-                </WideOnly>
-              )}
+              {isLastWide && <WideOnly when={!isLastHere}>{final.main}</WideOnly>}
               {ask}
             </TaskActions>
             {item.option}

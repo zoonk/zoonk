@@ -7,8 +7,11 @@ import { LearnLink } from "../learn-link";
 import { TaskMainLink } from "../shell/task-frame";
 import { useMockScreen } from "./mock-context";
 
-/** On a phone the bar's second action takes the line above the main one and the way back. */
-export const BAR_SECOND_ACTION_CLASS = "shrink-0 max-lg:order-first max-lg:basis-full";
+/**
+ * On a phone the bar's second action takes the line above the main one and the way back, so it
+ * comes first in the row (`Steps`' `finalSecondAction`).
+ */
+export const BAR_SECOND_ACTION_CLASS = "shrink-0 max-lg:basis-full";
 
 function useMistakeCount(): number {
   const { runner } = useMockScreen();

@@ -33,7 +33,7 @@ export function SectionBarFrame({
     <LearnSectionBar
       back={{ href: "/today", label: t("Today") }}
       end={end}
-      parent={parent && { href: parent.href, label: parent.title }}
+      parent={parent && { href: parent.href, label: parent.title, tabs: parent === places.hub }}
       root={isRoot}
       title={parent ? undefined : places.hub.title}
     />

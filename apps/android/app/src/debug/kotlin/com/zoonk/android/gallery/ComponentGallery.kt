@@ -261,7 +261,7 @@ private fun ColorRoles() {
         Words("Your answer", colors.onErrorContainer, colors.errorContainer)
         Words("Field error", colors.error, colors.background)
         Words("+18 Brain Power", zoonk.brainText, colors.background)
-        Words("Appears a lot", zoonk.warningText, colors.background)
+        Words("Asked a lot", zoonk.warningText, colors.background)
         Words("Snackbar", colors.inverseOnSurface, colors.inverseSurface)
     }
 }

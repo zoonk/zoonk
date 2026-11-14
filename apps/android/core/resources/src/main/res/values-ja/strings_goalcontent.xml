@@ -6,7 +6,7 @@
   "goalcontent_also_in_exam_count": "766f7a1d63d1d796b324c05a74f318ed5caf031bbef95fb56698ce9f880c96c0",
   "goalcontent_also_in_exams": "c9cbe500ed3aac58c109401763a07807c8162086585902f3c0e781df1f23a02a",
   "goalcontent_also_in_plan": "55d5c2936f025723288b341c1d7764918faa742a0a0ea3fbb959b84c4dccee38",
-  "goalcontent_appears_a_lot": "4befbb131636e1e37eeec0b53f2383ed54b8eda972ad01e57a54408c054be1ec",
+  "goalcontent_asked_a_lot": "1e624477335a1f4cb46db144121721d07b8d3f63ec4c972d2e2c4f2709b99f3d",
   "goalcontent_beyond_guide": "5db5fc713491616b8fba6ae2a9114b3251a18c84701fa1552247e685bd58c80c",
   "goalcontent_beyond_notice": "7d02dd741b3596f35f381662a661272df25f1152130986755915b07de5cb154e",
   "goalcontent_bring_back": "200bd9282cc2c39490b00219ee80492d9b32fefd69b7f9ee912f174d53fdd416",
@@ -245,12 +245,12 @@
     <string name="goalcontent_topic_skipped_base">この前提知識をスキップすることにしました</string>
     <string name="goalcontent_topic_time">予定の学習時間では計画に入りきりません</string>
     <string name="goalcontent_topic_missing">このトピックのレッスンはまだありません</string>
-    <!-- Marks a topic past exams asked a lot. -->
-    <string name="goalcontent_appears_a_lot">よく出る</string>
-    <!-- %1$s is the "Appears a lot" mark. -->
+    <!-- Marks a topic that comes up often in the exam. -->
+    <string name="goalcontent_asked_a_lot">よく出る</string>
+    <!-- %1$s is the "Asked a lot" mark. -->
     <string name="goalcontent_frequency_material">「%1$s」は、資料でよく出るとされているトピックの印です。学習時間を多めに割り当てます。</string>
     <string name="goalcontent_frequency_past_exams">「%1$s」は、過去の試験で特によく出題されたトピックの印です。</string>
-    <!-- %1$s is the "Appears a lot" mark, %2$s what the source counted, %3$s a link to the source's site. -->
+    <!-- %1$s is the "Asked a lot" mark, %2$s what the source counted, %3$s a link to the source's site. -->
     <string name="goalcontent_frequency_tagged_waits">「%1$s」は、過去の試験で特によく出題されたトピックの印です（%2$s、出典：%3$s）。出題の少なかったトピックは後回しになります。</string>
     <string name="goalcontent_frequency_tagged">「%1$s」は、過去の試験で特によく出題されたトピックの印です（%2$s、出典：%3$s）。学習時間を多めに割り当てます。</string>
     <!-- %1$s is what the source counted, %2$s a link to the source's site. -->

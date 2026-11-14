@@ -46,7 +46,7 @@ function useActionLabel(action: QuestionAction): string {
 
 /**
  * The row a question is answered from, for a frame's pinned bar (`TaskFrame`'s `footer`,
- * `TaskActionBar`, onboarding's `bar`): the way back, "I don't know yet", the main action, then
+ * `TaskActionBar`, onboarding's `bar`): "I don't know yet", the way back, the main action, then
  * the screen's own extras. Focus lost with a control that left moves to the main action.
  */
 export function QuestionActions({ className, ...props }: React.ComponentProps<typeof TaskActions>) {
@@ -65,7 +65,7 @@ export function QuestionActions({ className, ...props }: React.ComponentProps<ty
     <TaskActions
       // On a phone a row that also holds the way back has no room for it, so it takes the line above.
       className={cn(
-        "has-data-[slot=question-back]:*:data-[slot=question-dont-know]:max-lg:order-first has-data-[slot=question-back]:*:data-[slot=question-dont-know]:max-lg:basis-full",
+        "has-data-[slot=question-back]:*:data-[slot=question-dont-know]:max-lg:basis-full",
         className,
       )}
       data-slot="question-actions"
