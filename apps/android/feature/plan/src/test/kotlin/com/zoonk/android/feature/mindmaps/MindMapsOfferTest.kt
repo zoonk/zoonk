@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.mindmaps
 
 import android.content.Context
+import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
@@ -41,8 +42,9 @@ class MindMapsOfferTest {
     private val api = FakeMindMapApi()
     private val session = AuthenticatedSession("ana", "token", "local")
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
-    private val chapters = listOf(mapJson(1, "Waves", "available"), mapJson(2, "Light", "available"))
-    private val fresh = goalMindMaps(chapters, offer = """{"eligible":2,"needLessons":0,"startable":2,"stop":null}""")
+    private val chapters =
+        listOf(mapJson(1, "Waves", "available"), mapJson(2, "Light", "available"), mapJson(3, "Optics", "available", lessonsToWrite = 2))
+    private val fresh = goalMindMaps(chapters, offer = """{"eligible":2,"needLessons":2,"startable":2,"stop":null}""")
 
     @After
     fun stop() = scope.cancel()
@@ -52,7 +54,7 @@ class MindMapsOfferTest {
             chapters,
             offer =
                 """
-                {"eligible":2,"needLessons":0,"startable":0,
+                {"eligible":2,"needLessons":2,"startable":0,
                 "stop":{"reason":"limitReached","resource":"mindMap","period":"rolling30Days","availableAt":"$at"}}
                 """.trimIndent(),
         )
@@ -84,10 +86,13 @@ class MindMapsOfferTest {
 
         waitFor("You've used your mind maps")
         compose.onNodeWithText("Create all").assertDoesNotExist()
+        val below = compose.onNodeWithText("Other chapters").getBoundsInRoot().top
 
         waitFor("Create all")
         compose.onNodeWithText("You've used your mind maps").assertDoesNotExist()
         compose.onNodeWithText("You can try again now.").assertDoesNotExist()
         assertEquals(2, api.lists)
+        // The gate's slot holds its height for this visit, so nothing below it moves without a tap.
+        assertEquals(below, compose.onNodeWithText("Other chapters").getBoundsInRoot().top)
     }
 }

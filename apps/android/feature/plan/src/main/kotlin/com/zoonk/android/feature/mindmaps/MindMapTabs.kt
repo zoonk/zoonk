@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
@@ -17,12 +18,16 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -206,8 +211,23 @@ private fun NotMadeSummary(
     later: List<GoalMindMap>,
     actions: TabActions,
 ) {
-    Column(Modifier.padding(top = 16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        if (mindMaps.createOffer.startable > 1) {
+    val offer = mindMaps.createOffer
+    // What stops a new map also takes the rows' Create away, so it shows whether or not a chapter is ready to make.
+    val limit =
+        offer.stop
+            ?.takeIf { offer.startable == 0L }
+            ?.limit(actions.state.tier)
+            ?.takeUnless { limitLifted(it) }
+    // Once the stop's day comes, what replaces it keeps its height for this visit, so nothing below moves without a tap.
+    var held by rememberSaveable { mutableIntStateOf(0) }
+    Column(
+        Modifier
+            .padding(top = 16.dp)
+            .onSizeChanged { if (limit != null) held = maxOf(held, it.height) }
+            .heightIn(min = with(LocalDensity.current) { held.toDp() }),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        if (offer.startable > 1) {
             OutlinedButton(
                 onClick = actions.page.createAll,
                 busy = actions.state.createAll == CreateAll.Pending,
@@ -215,7 +235,7 @@ private fun NotMadeSummary(
             ) { Text(stringResource(R.string.mindmaps_create_all)) }
         }
 
-        Box(Modifier.semantics { liveRegion = LiveRegionMode.Polite }) { NotMadeLine(mindMaps, later, actions) }
+        Box(Modifier.semantics { liveRegion = LiveRegionMode.Polite }) { NotMadeLine(mindMaps, later, limit, actions) }
     }
 }
 
@@ -228,18 +248,13 @@ private fun NotMadeSummary(
 private fun NotMadeLine(
     mindMaps: GoalMindMaps,
     later: List<GoalMindMap>,
+    limit: Limit?,
     actions: TabActions,
 ) {
     val offer = mindMaps.createOffer
     val locale = currentLocale()
     val onTheWay = later.count { it.status == GoalMindMap.Status.DRAWING || it.status == GoalMindMap.Status.WRITING_LESSONS }
     val failed = later.count { it.status == GoalMindMap.Status.FAILED }
-    // What stops a new map also takes the rows' Create away, so it shows whether or not a chapter is ready to make.
-    val limit =
-        offer.stop
-            ?.takeIf { offer.startable == 0L }
-            ?.limit(actions.state.tier)
-            ?.takeUnless { limitLifted(it) }
     val counted = @Composable { id: Int, count: Long -> pluralStringResource(id, count.toInt(), formatNumber(count.toDouble(), locale)) }
 
     val text =
