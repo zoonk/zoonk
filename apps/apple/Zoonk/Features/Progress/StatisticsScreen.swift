@@ -174,7 +174,7 @@ private struct TileLink<Tile: View>: View {
 
     StatsSectionLink(section: section) {
       tile
-        .contentShape(.hoverEffect, shape)
+        .contentShape([.interaction, .hoverEffect], shape)
         .hoverEffect(.highlight)
         .modifier(StatsSelection(section: section, shape: shape))
     }
