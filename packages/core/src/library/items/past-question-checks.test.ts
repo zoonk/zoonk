@@ -298,6 +298,80 @@ E 札幌。`;
     ).toStrictEqual([]);
   });
 
+  describe("code the copy puts in backticks", () => {
+    const CODE_PAPER = `Question 7
+Which command opens data/x_1.csv for reading?
+A open("data/x_1.csv", "r")
+B open("data/x_1.csv", "w")
+C read("data/x_1.csv")
+D load("data/x_1.csv")`;
+
+    const target = { ...TARGET, language: "en", optionCount: 4 };
+
+    function codeQuestion({ command, quote }: { command: string; quote: string }): PastQuestion {
+      const item = {
+        ...PRINTED_ITEM,
+        context: null,
+        options: [
+          `${quote}open("data/x_1.csv", "r")${quote}`,
+          `${quote}open("data/x_1.csv", "w")${quote}`,
+          `${quote}read("data/x_1.csv")${quote}`,
+          `${quote}load("data/x_1.csv")${quote}`,
+        ].map((text, index) => ({ ...PRINTED_ITEM.options[index]!, text })),
+        question: command,
+      };
+
+      return question({ citation: "Python exam, question 7", item, number: "7" });
+    }
+
+    it("accepts a file name and options the copy puts in backticks", () => {
+      expect(
+        checkPastQuestion({
+          paperText: CODE_PAPER,
+          question: codeQuestion({
+            command: "Which command opens `data/x_1.csv` for reading?",
+            quote: "`",
+          }),
+          target,
+        }).problems,
+      ).toStrictEqual([]);
+    });
+
+    it("refuses code changed inside its backticks", () => {
+      expect(
+        checkPastQuestion({
+          paperText: CODE_PAPER,
+          question: codeQuestion({
+            command: "Which command opens `data/x_2.csv` for reading?",
+            quote: "`",
+          }),
+          target,
+        }).problems,
+      ).toStrictEqual(["The command isn't in the paper as printed."]);
+    });
+
+    it("keeps backticks the paper prints", () => {
+      const paperText = CODE_PAPER.replace("opens data/x_1.csv", "opens `data/x_1.csv`");
+      const printed = "Which command opens `data/x_1.csv` for reading?";
+
+      expect(
+        checkPastQuestion({
+          paperText,
+          question: codeQuestion({ command: printed, quote: "`" }),
+          target,
+        }).problems,
+      ).toStrictEqual([]);
+
+      expect(
+        checkPastQuestion({
+          paperText: paperText.replace("for reading", "for `reading`"),
+          question: codeQuestion({ command: printed, quote: "`" }),
+          target,
+        }).problems,
+      ).toStrictEqual(["The command isn't in the paper as printed."]);
+    });
+  });
+
   describe("a table the paper's text gives as rows of pipes", () => {
     const TABLE_PAPER = `1 Which expression is equivalent to 2(x + 3)?
 Use this space for computations.
