@@ -10262,6 +10262,17 @@ msgctxt "LcFFqV"
 msgid "New lessons start"
 msgstr "Yeni derslerin başlangıcı"
 
+#: src/plan/exam-over-actions.tsx
+msgctxt "rBTgSX"
+msgid "Archive goal"
+msgstr "Hedefi arşivle"
+
+#: src/plan/exam-over-actions.tsx
+#: src/plan/study-everything.tsx
+msgctxt "t9hafN"
+msgid "Keep studying"
+msgstr "Çalışmaya devam et"
+
 #: src/plan/notice-day.tsx
 msgctxt "tI8qvu"
 msgid "The exam's likely date is now {date}."
@@ -10575,33 +10586,14 @@ msgid "Move your end date to {date}?"
 msgstr "Bitiş tarihini {date} olarak değiştirelim mi?"
 
 #: src/plan/plan-past-date-suggestion.tsx
-#: src/plan/use-operation-question.ts
-msgctxt "oACP53"
-msgid "Keep studying after the exam?"
-msgstr "Sınavdan sonra çalışmaya devam etmek ister misin?"
-
-#: src/plan/plan-past-date-suggestion.tsx
 msgctxt "zBJlTm"
 msgid "{count, plural, one {You have # lesson left. A later end date fits it.} other {You have # lessons left. A later end date fits them.}}"
 msgstr "{count, plural, one {# dersin kaldı. Daha ileri bir bitiş tarihiyle bu dersi tamamlayabilirsin.} other {# dersin kaldı. Daha ileri bir bitiş tarihiyle bu dersleri tamamlayabilirsin.}}"
 
 #: src/plan/plan-past-date-suggestion.tsx
-#: src/plan/study-everything.tsx
-#: src/today/today-exam-over.tsx
-msgctxt "t9hafN"
-msgid "Keep studying"
-msgstr "Çalışmaya devam et"
-
-#: src/plan/plan-past-date-suggestion.tsx
 msgctxt "A4AeAM"
 msgid "Find a date"
 msgstr "Tarih bul"
-
-#: src/plan/plan-past-date-suggestion.tsx
-#: src/today/today-exam-over.tsx
-msgctxt "rBTgSX"
-msgid "Archive goal"
-msgstr "Hedefi arşivle"
 
 #: src/plan/plan-properties.tsx
 msgctxt "oOY_q2"
@@ -11046,6 +11038,11 @@ msgstr "Bu haftaki meydan okumayı {date} tarihine alalım mı?"
 msgctxt "2s-lg0"
 msgid "Study without an end date?"
 msgstr "Bitiş tarihi olmadan çalışalım mı?"
+
+#: src/plan/use-operation-question.ts
+msgctxt "oACP53"
+msgid "Keep studying after the exam?"
+msgstr "Sınavdan sonra çalışmaya devam etmek ister misin?"
 
 #: src/plan/use-operation-question.ts
 msgctxt "Q_ZMVF"

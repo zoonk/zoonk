@@ -6,6 +6,7 @@ import { useLayoutEffect, useState } from "react";
 import { Page } from "../_components/page";
 import { usePoll } from "../_utils/use-poll";
 import { type AlphabetLink } from "../language/units/alphabet-row";
+import { PlanExamOverBar } from "../plan/exam-over-actions";
 import { PlanChoiceLines } from "../plan/plan-choice-lines";
 import {
   type PlanActions,
@@ -147,8 +148,12 @@ function JourneyBody({
         asideClassName="sm:max-[72rem]:grid sm:max-[72rem]:grid-cols-2 sm:max-[72rem]:items-start sm:max-[72rem]:gap-x-10"
         asideLabel={t("Your plan at a glance")}
         bottomBar={
-          paused &&
-          goalStatus && <ResumeGoalBar onResume={() => goalStatus.onSetStatus("active")} />
+          goalStatus && (
+            <JourneyBottomBar
+              examOver={goal.kind === "exam" && plan.status?.kind === "pastDate"}
+              goalStatus={goalStatus}
+            />
+          )
         }
       >
         <Page data-slot="journey">
@@ -255,4 +260,19 @@ export function JourneyScreen({
       </PlanSheetHosts>
     </PlanScreenProvider>
   );
+}
+
+/** A paused goal's bar resumes it; an exam that's over asks whether to keep studying. */
+function JourneyBottomBar({
+  examOver,
+  goalStatus,
+}: {
+  examOver: boolean;
+  goalStatus: GoalStatusControl;
+}) {
+  if (goalStatus.status === "paused") {
+    return <ResumeGoalBar onResume={() => goalStatus.onSetStatus("active")} />;
+  }
+
+  return examOver ? <PlanExamOverBar goalStatus={goalStatus} /> : null;
 }

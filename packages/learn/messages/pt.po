@@ -10262,6 +10262,17 @@ msgctxt "LcFFqV"
 msgid "New lessons start"
 msgstr "Novas aulas começam"
 
+#: src/plan/exam-over-actions.tsx
+msgctxt "rBTgSX"
+msgid "Archive goal"
+msgstr "Arquivar objetivo"
+
+#: src/plan/exam-over-actions.tsx
+#: src/plan/study-everything.tsx
+msgctxt "t9hafN"
+msgid "Keep studying"
+msgstr "Continuar estudando"
+
 #: src/plan/notice-day.tsx
 msgctxt "tI8qvu"
 msgid "The exam's likely date is now {date}."
@@ -10575,33 +10586,14 @@ msgid "Move your end date to {date}?"
 msgstr "Mudar a data final para {date}?"
 
 #: src/plan/plan-past-date-suggestion.tsx
-#: src/plan/use-operation-question.ts
-msgctxt "oACP53"
-msgid "Keep studying after the exam?"
-msgstr "Continuar estudando depois da prova?"
-
-#: src/plan/plan-past-date-suggestion.tsx
 msgctxt "zBJlTm"
 msgid "{count, plural, one {You have # lesson left. A later end date fits it.} other {You have # lessons left. A later end date fits them.}}"
 msgstr "{count, plural, one {Falta # aula. Adiar a data final dá tempo de terminar.} other {Faltam # aulas. Adiar a data final dá tempo de terminar.}}"
 
 #: src/plan/plan-past-date-suggestion.tsx
-#: src/plan/study-everything.tsx
-#: src/today/today-exam-over.tsx
-msgctxt "t9hafN"
-msgid "Keep studying"
-msgstr "Continuar estudando"
-
-#: src/plan/plan-past-date-suggestion.tsx
 msgctxt "A4AeAM"
 msgid "Find a date"
 msgstr "Encontrar uma data"
-
-#: src/plan/plan-past-date-suggestion.tsx
-#: src/today/today-exam-over.tsx
-msgctxt "rBTgSX"
-msgid "Archive goal"
-msgstr "Arquivar objetivo"
 
 #: src/plan/plan-properties.tsx
 msgctxt "oOY_q2"
@@ -11046,6 +11038,11 @@ msgstr "Mudar o desafio desta semana para {date}?"
 msgctxt "2s-lg0"
 msgid "Study without an end date?"
 msgstr "Estudar sem data para terminar?"
+
+#: src/plan/use-operation-question.ts
+msgctxt "oACP53"
+msgid "Keep studying after the exam?"
+msgstr "Continuar estudando depois da prova?"
 
 #: src/plan/use-operation-question.ts
 msgctxt "Q_ZMVF"

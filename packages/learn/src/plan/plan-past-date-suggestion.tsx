@@ -12,9 +12,7 @@ import {
 } from "../_components/suggestion";
 import { SuggestionMenu } from "../_components/suggestion-menu";
 import { useFormatIsoDate } from "../_utils/iso-date";
-import { ArchiveGoal } from "../journey/archive-goal";
 import { usePlanScreen } from "./plan-context";
-import { STUDY_AFTER_EXAM } from "./plan-full-course";
 import {
   CheckingChange,
   OfferPreview,
@@ -49,12 +47,34 @@ type DateSearch = "building" | "failed" | "finding" | "noDate" | null;
  * candidate date.
  */
 export function PastDateSuggestion({ item }: { item: Extract<SlotItem, { kind: "pastDate" }> }) {
+  const { goal } = usePlanScreen();
+
+  return goal.kind === "exam" ? (
+    <ExamOverSuggestion item={item} />
+  ) : (
+    <DateOverSuggestion item={item} />
+  );
+}
+
+/** An exam that's over: the page's bar holds its answers (`PlanExamOverBar`). */
+function ExamOverSuggestion({ item }: { item: Extract<SlotItem, { kind: "pastDate" }> }) {
+  const pastDateText = usePastDateText();
+  const { ask, title } = pastDateText({ isExam: true, lessons: item.lessons });
+
+  return (
+    <PlanChangeSuggestion item={item} mark={<CalendarClockIcon />} title={title}>
+      <SuggestionDescription>{ask}</SuggestionDescription>
+    </PlanChangeSuggestion>
+  );
+}
+
+function DateOverSuggestion({ item }: { item: Extract<SlotItem, { kind: "pastDate" }> }) {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
   const pastDateText = usePastDateText();
   const texts = useTimeToCoverTexts();
   const finder = useTimeToCover();
-  const { goal, plan } = usePlanScreen();
+  const { plan } = usePlanScreen();
   const { dismiss, host, preview: storedPreview, requestPreview } = usePlanSuggestionSlot();
   const { apply, isPending } = useApplyPreview(item);
   const [operations, setOperations] = useState<LearnerPlanOperation[] | null>(null);
@@ -62,17 +82,10 @@ export function PastDateSuggestion({ item }: { item: Extract<SlotItem, { kind: "
   // The search the learner waits for (0 for none), so one put off or superseded shows nothing.
   const waiting = useRef(0);
   const asked = useRef(0);
-  const isExam = goal.kind === "exam";
-  const { ask, title } = pastDateText({ isExam, lessons: item.lessons });
+  const { title } = pastDateText({ isExam: false, lessons: item.lessons });
   const preview = currentPlanPreview({ operations: operations ?? [], plan, state: storedPreview });
 
   const showChange = async () => {
-    if (isExam) {
-      setOperations(STUDY_AFTER_EXAM);
-      void requestPreview(STUDY_AFTER_EXAM);
-      return;
-    }
-
     asked.current += 1;
     const request = asked.current;
     waiting.current = request;
@@ -116,7 +129,7 @@ export function PastDateSuggestion({ item }: { item: Extract<SlotItem, { kind: "
   const question =
     moved?.kind === "setTargetDate" && moved.targetDate
       ? t("Move your end date to {date}?", { date: formatDate(moved.targetDate, "long") })
-      : t("Keep studying after the exam?");
+      : title;
 
   const body = () => {
     if (previewing) {
@@ -151,15 +164,12 @@ export function PastDateSuggestion({ item }: { item: Extract<SlotItem, { kind: "
       );
     }
 
-    const offerText =
-      ask ??
-      t(
-        "{count, plural, one {You have # lesson left. A later end date fits it.} other {You have # lessons left. A later end date fits them.}}",
-        { count: item.lessons },
-      );
+    const offerText = t(
+      "{count, plural, one {You have # lesson left. A later end date fits it.} other {You have # lessons left. A later end date fits them.}}",
+      { count: item.lessons },
+    );
 
     const retryText = search === "building" ? texts.building : t("We couldn't check what changes.");
-    const start = isExam ? t("Keep studying") : t("Find a date");
 
     return (
       <>
@@ -168,20 +178,10 @@ export function PastDateSuggestion({ item }: { item: Extract<SlotItem, { kind: "
         </SuggestionDescription>
         <SuggestionActions>
           <SuggestionAction action={() => void showChange()} key="preview">
-            {retry ? t("Try again") : start}
+            {retry ? t("Try again") : t("Find a date")}
           </SuggestionAction>
 
-          {isExam && host.goalStatus ? (
-            <ArchiveGoal goalTitle={goal.displayName} onSetStatus={host.goalStatus.onSetStatus}>
-              {(archive) => (
-                <SuggestionAction busy={archive.pending} onClick={archive.ask} variant="outline">
-                  {t("Archive goal")}
-                </SuggestionAction>
-              )}
-            </ArchiveGoal>
-          ) : (
-            <OtherOptions item={item} />
-          )}
+          <OtherOptions item={item} />
         </SuggestionActions>
       </>
     );

@@ -10262,6 +10262,17 @@ msgctxt "LcFFqV"
 msgid "New lessons start"
 msgstr "Początek nowych lekcji"
 
+#: src/plan/exam-over-actions.tsx
+msgctxt "rBTgSX"
+msgid "Archive goal"
+msgstr "Zarchiwizuj cel"
+
+#: src/plan/exam-over-actions.tsx
+#: src/plan/study-everything.tsx
+msgctxt "t9hafN"
+msgid "Keep studying"
+msgstr "Ucz się dalej"
+
 #: src/plan/notice-day.tsx
 msgctxt "tI8qvu"
 msgid "The exam's likely date is now {date}."
@@ -10575,33 +10586,14 @@ msgid "Move your end date to {date}?"
 msgstr "Przesunąć datę zakończenia na {date}?"
 
 #: src/plan/plan-past-date-suggestion.tsx
-#: src/plan/use-operation-question.ts
-msgctxt "oACP53"
-msgid "Keep studying after the exam?"
-msgstr "Uczyć się dalej po egzaminie?"
-
-#: src/plan/plan-past-date-suggestion.tsx
 msgctxt "zBJlTm"
 msgid "{count, plural, one {You have # lesson left. A later end date fits it.} other {You have # lessons left. A later end date fits them.}}"
 msgstr "{count, plural, one {Została ci # lekcja. Późniejszy termin zakończenia pozwala zmieścić ją w planie.} few {Zostały ci # lekcje. Późniejszy termin zakończenia pozwala zmieścić je w planie.} other {Zostało ci # lekcji. Późniejszy termin zakończenia pozwala zmieścić je w planie.}}"
 
 #: src/plan/plan-past-date-suggestion.tsx
-#: src/plan/study-everything.tsx
-#: src/today/today-exam-over.tsx
-msgctxt "t9hafN"
-msgid "Keep studying"
-msgstr "Ucz się dalej"
-
-#: src/plan/plan-past-date-suggestion.tsx
 msgctxt "A4AeAM"
 msgid "Find a date"
 msgstr "Znajdź datę"
-
-#: src/plan/plan-past-date-suggestion.tsx
-#: src/today/today-exam-over.tsx
-msgctxt "rBTgSX"
-msgid "Archive goal"
-msgstr "Zarchiwizuj cel"
 
 #: src/plan/plan-properties.tsx
 msgctxt "oOY_q2"
@@ -11046,6 +11038,11 @@ msgstr "Przenieść wyzwanie z tego tygodnia na {date}?"
 msgctxt "2s-lg0"
 msgid "Study without an end date?"
 msgstr "Uczyć się bez terminu zakończenia?"
+
+#: src/plan/use-operation-question.ts
+msgctxt "oACP53"
+msgid "Keep studying after the exam?"
+msgstr "Uczyć się dalej po egzaminie?"
 
 #: src/plan/use-operation-question.ts
 msgctxt "Q_ZMVF"

@@ -10262,6 +10262,17 @@ msgctxt "LcFFqV"
 msgid "New lessons start"
 msgstr "新しいレッスンの開始日"
 
+#: src/plan/exam-over-actions.tsx
+msgctxt "rBTgSX"
+msgid "Archive goal"
+msgstr "目標をアーカイブする"
+
+#: src/plan/exam-over-actions.tsx
+#: src/plan/study-everything.tsx
+msgctxt "t9hafN"
+msgid "Keep studying"
+msgstr "学習を続ける"
+
 #: src/plan/notice-day.tsx
 msgctxt "tI8qvu"
 msgid "The exam's likely date is now {date}."
@@ -10575,33 +10586,14 @@ msgid "Move your end date to {date}?"
 msgstr "終了日を{date}に変更しますか？"
 
 #: src/plan/plan-past-date-suggestion.tsx
-#: src/plan/use-operation-question.ts
-msgctxt "oACP53"
-msgid "Keep studying after the exam?"
-msgstr "試験後も学習を続けますか？"
-
-#: src/plan/plan-past-date-suggestion.tsx
 msgctxt "zBJlTm"
 msgid "{count, plural, one {You have # lesson left. A later end date fits it.} other {You have # lessons left. A later end date fits them.}}"
 msgstr "{count, plural, other {あと#レッスン残っています。終了日を延ばせば、すべて学習できます。}}"
 
 #: src/plan/plan-past-date-suggestion.tsx
-#: src/plan/study-everything.tsx
-#: src/today/today-exam-over.tsx
-msgctxt "t9hafN"
-msgid "Keep studying"
-msgstr "学習を続ける"
-
-#: src/plan/plan-past-date-suggestion.tsx
 msgctxt "A4AeAM"
 msgid "Find a date"
 msgstr "終了日を決める"
-
-#: src/plan/plan-past-date-suggestion.tsx
-#: src/today/today-exam-over.tsx
-msgctxt "rBTgSX"
-msgid "Archive goal"
-msgstr "目標をアーカイブする"
 
 #: src/plan/plan-properties.tsx
 msgctxt "oOY_q2"
@@ -11046,6 +11038,11 @@ msgstr "今週のチャレンジを{date}に変更しますか？"
 msgctxt "2s-lg0"
 msgid "Study without an end date?"
 msgstr "終了予定日を決めずに学習しますか？"
+
+#: src/plan/use-operation-question.ts
+msgctxt "oACP53"
+msgid "Keep studying after the exam?"
+msgstr "試験後も学習を続けますか？"
 
 #: src/plan/use-operation-question.ts
 msgctxt "Q_ZMVF"
