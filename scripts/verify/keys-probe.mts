@@ -275,8 +275,10 @@ export function readPanel({
 export function focusReturned({
   opener,
   overlays,
+  returnTo,
 }: {
   opener: string;
+  returnTo?: string;
   overlays: { panel: string }[];
 }) {
   const selector = overlays.map(({ panel }) => `[data-slot=${panel}]`).join(", ");
@@ -292,5 +294,7 @@ export function focusReturned({
     return Boolean(focused?.closest("[data-enter], [data-slot=task-frame-body]"));
   }
 
-  return trigger !== null && (trigger === focused || trigger.contains(focused));
+  return [trigger, returnTo ? document.querySelector(`[data-zoonk-act="${returnTo}"]`) : null].some(
+    (target) => target && (target === focused || target.contains(focused)),
+  );
 }

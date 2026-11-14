@@ -10,7 +10,6 @@ import noPlusBadge from "./rules/no-plus-badge.js";
 import noTFunctionAsArgument from "./rules/no-t-function-as-argument.js";
 import noUncaughtTransitionAwait from "./rules/no-uncaught-transition-await.js";
 import oneAnswerOption from "./rules/one-answer-option.js";
-import oneEyebrow from "./rules/one-eyebrow.js";
 import oneGlyphButton from "./rules/one-glyph-button.js";
 import oneQuestionActionBar from "./rules/one-question-action-bar.js";
 import paddingAroundMultilineStatements from "./rules/padding-around-multiline-statements.js";
@@ -28,7 +27,6 @@ export default eslintCompatPlugin({
     "no-hardcoded-aria-label": noHardcodedAriaLabel,
     "no-page-top-spacing": noPageTopSpacing,
     "no-plus-badge": noPlusBadge,
-    "one-eyebrow": oneEyebrow,
     "no-object-params-in-cache": noObjectParamsInCache,
     "no-t-function-as-argument": noTFunctionAsArgument,
     "no-uncaught-transition-await": noUncaughtTransitionAwait,

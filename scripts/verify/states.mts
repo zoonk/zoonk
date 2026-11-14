@@ -162,9 +162,7 @@ async function walk(
     if ((await page.locator(OVERLAY).count()) > 0) {
       const inside = await page.evaluate(markActions, OVERLAY.replaceAll(":visible", ""));
 
-      const choices = inside.filter(
-        (each) => each.kind !== "control" && each.kind !== "fold" && each.kind !== "overlay",
-      );
+      const choices = inside.filter((each) => each.kind !== "control" && each.kind !== "fold");
 
       coverage.actionsSkipped += inside.length - choices.length;
 
@@ -179,7 +177,7 @@ async function walk(
       async () => {
         const closed = await closeOverlay();
 
-        if (!closed && !panel) {
+        if (!closed && !panel && action.kind === "fold") {
           await element.click({ timeout: ACT_TIMEOUT_MS });
         }
 
@@ -192,7 +190,7 @@ async function walk(
       findings.push(
         ...panelFindings({
           ...panel,
-          focusBack: closedByWalk ? await focusCameBack(page, action.id) : null,
+          focusBack: closedByWalk ? await focusCameBack(page, action.id, action.returnTo) : null,
         }),
       );
     }

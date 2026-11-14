@@ -19,7 +19,7 @@ export type Moved = {
 /** A search field is a field whose list below it changes as a person types. */
 type ActionKind = "control" | "field" | "fold" | "overlay" | "pick" | "search";
 
-export type Action = { id: string; kind: ActionKind; label: string };
+export type Action = { id: string; kind: ActionKind; label: string; returnTo?: string };
 
 declare global {
   // oxlint-disable-next-line no-var -- A page global is declared with `var`.
@@ -98,7 +98,20 @@ export function markActions(scope: string): Action[] {
           element.dataset.zoonkAct = id;
         }
 
-        actions.push({ id, kind: kindOf(found), label: label(element) });
+        const menu = element.closest("[role=menu]");
+
+        const trigger = menu?.id
+          ? [...document.querySelectorAll("[aria-haspopup=menu]")].find((node) =>
+              node.getAttribute("aria-controls")?.split(/\s+/u).includes(menu.id),
+            )
+          : null;
+
+        actions.push({
+          id,
+          kind: kindOf(found),
+          label: label(element),
+          returnTo: trigger instanceof HTMLElement ? trigger.dataset.zoonkAct : undefined,
+        });
       }
     }
   }
