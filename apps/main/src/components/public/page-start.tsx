@@ -1,13 +1,18 @@
 "use client";
 
+import { Link } from "@/i18n/navigation";
+import { type getCourseStartHref, type getPlanLinkStartHref } from "@/lib/public/public-hrefs";
 import { BottomBar } from "@zoonk/ui/components/bottom-bar";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type ReactNode, useEffect, useRef, useSyncExternalStore } from "react";
 
 type MarkState = { isAbove: boolean; isOnScreen: boolean };
+type StartHref = ReturnType<typeof getCourseStartHref> | ReturnType<typeof getPlanLinkStartHref>;
 
 const marks = new Map<Element, MarkState>();
 const listeners = new Set<() => void>();
+
+const destinations: StartHref[] = [];
 
 let observer: IntersectionObserver | null = null;
 let isAway = false;
@@ -60,6 +65,42 @@ function mark(element: Element): () => void {
 function subscribe(listener: () => void): () => void {
   listeners.add(listener);
   return () => listeners.delete(listener);
+}
+
+function readDestination(): StartHref | null {
+  return destinations[0] ?? null;
+}
+
+/** Tells the floating start where the page's own goes (a course, its chapter and pace, or a shared plan), so both open the same thing. */
+export function PageStartDestination({ href }: { href: StartHref }) {
+  useEffect(() => {
+    destinations.push(href);
+    listeners.forEach((listener) => listener());
+
+    return () => {
+      destinations.splice(destinations.indexOf(href), 1);
+      listeners.forEach((listener) => listener());
+    };
+  }, [href]);
+
+  return null;
+}
+
+/** The floating copy of the page's start: where the page's own goes, or a new goal when the page names none. */
+export function FloatingStartLink({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  const destination = useSyncExternalStore(subscribe, readDestination, () => null);
+
+  return (
+    <Link className={className} href={destination ?? "/start"}>
+      {children}
+    </Link>
+  );
 }
 
 /**
