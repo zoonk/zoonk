@@ -14,6 +14,13 @@
   "limit_lessons_day": "8ab172fba4451d7f34fd0a9355e23e0e155bf6fa24cb73331bd84a61bb9c736d",
   "limit_lessons_free": "6b51bc943f5790aa5c6552ae32933b5f3876704e0cfef3d08fadb0a33c7378dc",
   "limit_lessons_guest": "a9f5d3034c7fb759a77ce27b8436c911f34e0fe86ae84c24ed4fc1880d5fc43b",
+  "limit_map_enough_on": "1644110f33bf1cdf783c7583a0e7ffa4ac606a3788588a40b3a27ccacc5c083d",
+  "limit_map_enough_today": "5777a8eaf190342654ac43150e8d17e47dd54b54cdea9aa6155744825b00b482",
+  "limit_map_enough_tomorrow": "1abc030bca71fc627f445ed9f7759d3848b01249401df10db6d22356b8c05299",
+  "limit_map_needs_subscription": "ba42fc32513961cde9521d5c97c89bd218d5c25af0afd81937eed9a74e8f8807",
+  "limit_map_needs_subscription_line": "36cf0c9162c5289f240aff979cb7917773e693ee8c70786e43636a4057ec52e4",
+  "limit_map_not_enough": "9e580be12dbc3bee490a0b74cc6135f6987306ee67e7bb419508674a235e4edd",
+  "limit_map_ready": "96a62948b2bb49461b17b3f83c01bc10c7ffe5f904581607c4ef062dfb0f66cf",
   "limit_messages_day": "079d624f0b139ff6e51f9faafcf25b12c975cfe2df5ba14f51860b36def16813",
   "limit_messages_month": "e2dc927dce2b527ee8766f9e2aff02362d5fadfc955e770b6b6f9d0b07b034e6",
   "limit_mind_maps_day": "70b8ca537b67c7817cce4a4f69a66d91a88a7912f3c08f79b8759065b175a858",
@@ -55,6 +62,17 @@
     <string name="limit_lessons_free">無料レッスンを使い切りました</string>
     <string name="limit_lessons_day">今日はこれ以上新しいレッスンを始められません</string>
     <string name="limit_lesson_ready">次の無料レッスンを始められます</string>
+    <string name="limit_map_not_enough">このマップの作成には、無料で使えるレッスン数がまだ足りません</string>
+    <!-- Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet. -->
+    <string name="limit_map_enough_today">今日中には無料で作成できるようになります。サブスクリプションに登録すれば、今すぐ作成できます。</string>
+    <!-- Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet. -->
+    <string name="limit_map_enough_tomorrow">明日には無料で作成できるようになります。サブスクリプションに登録すれば、今すぐ作成できます。</string>
+    <!-- Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet. {date} is a day and its month, such as "November 22" in English. -->
+    <string name="limit_map_enough_on">%1$sには無料で作成できるようになります。サブスクリプションに登録すれば、今すぐ作成できます。</string>
+    <string name="limit_map_ready">このマップを今すぐ作成できます</string>
+    <string name="limit_map_needs_subscription">このマップの作成にはサブスクリプションが必要です</string>
+    <!-- Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and this one has more lessons than a free learner can start. -->
+    <string name="limit_map_needs_subscription_line">このマップで作成されるレッスン数は、無料で使える数を超えています。</string>
     <string name="limit_mind_maps_guest">アカウントなしで作れるマインドマップはここまでです</string>
     <string name="limit_mind_maps_day">今日はこれ以上新しいマインドマップを作れません</string>
     <string name="limit_mind_maps_month">今月はこれ以上新しいマインドマップを作れません</string>

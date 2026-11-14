@@ -151,10 +151,9 @@ internal fun lesson(
     title: String,
     state: String,
     minutes: Int = 6,
-    plusRequired: Boolean = false,
 ) = """{"lessonId":"${lessonId(
     position,
-)}","minutes":$minutes,"plusRequired":$plusRequired,"skillIds":[],"state":"$state","title":"$title","written":true}"""
+)}","minutes":$minutes,"skillIds":[],"state":"$state","title":"$title","written":true}"""
 
 fun goalChapter(): GoalChapter =
     ApiJson.decodeFromString(
@@ -164,7 +163,7 @@ fun goalChapter(): GoalChapter =
          "counts":{"fading":1,"learning":1,"mastered":1,"new":1,"solid":0,"total":4},
          "goal":{"id":"$GOAL","kind":"exam","title":"Pass ENEM","displayName":"Pass ENEM"},
          "lessons":[${lesson(1, "What a wave carries", "done")},${lesson(2, "Frequency and pitch", "done", minutes = 8)},
-          ${lesson(3, "Echoes and resonance", "next")},${lesson(4, "The Doppler effect", "upcoming", plusRequired = true)},
+          ${lesson(3, "Echoes and resonance", "next")},${lesson(4, "The Doppler effect", "upcoming")},
           ${lesson(5, "Light as a wave", "upcoming", minutes = 0)}],
          "mistakes":{"open":3},
          "skills":[
@@ -174,7 +173,7 @@ fun goalChapter(): GoalChapter =
          "summaries":[{"ideas":["A wave carries **energy**, not matter.","Speed is $\\lambda f$."],"lessonId":"${lessonId(
             1,
         )}","title":"What a wave carries"}],
-         "testOut":{"available":true,"plusRequired":false}}
+         "testOut":{"available":true}}
         """.trimIndent(),
     )
 

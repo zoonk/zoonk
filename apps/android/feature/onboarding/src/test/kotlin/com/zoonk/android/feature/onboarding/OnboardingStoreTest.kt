@@ -177,7 +177,7 @@ class OnboardingStoreTest {
             ApiJson.decodeFromString(
                 """
                 {"tier":"$tier","activeGoals":$activeGoals,"callTime":{"limitSeconds":null,"monthLimitSeconds":null,"usedSeconds":0,"usedSecondsThisMonth":0},
-                 "examPrep":{"includesMockExams":false,"studyDays":null},"generatedLessons":null,"resets":{"day":"2026-10-29T00:00:00Z","month":"2026-11-01T00:00:00Z"},
+                 "examPrep":{"includesMockExams":false},"generatedLessons":null,"resets":{"day":"2026-10-29T00:00:00Z","month":"2026-11-01T00:00:00Z"},
                  "items":[{"kind":"goal",$goal,"fairUseDailyLimit":null,"remaining":null}]}
                 """.trimIndent(),
             )

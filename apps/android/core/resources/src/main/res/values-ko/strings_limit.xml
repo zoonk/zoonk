@@ -14,6 +14,13 @@
   "limit_lessons_day": "c07bea03c7c678bd1abca5479484a19aca1f6e757e871179bc013e0bdd2c0347",
   "limit_lessons_free": "820394a976a12d38d74a7538b20d7aa2646c79e43cb4329da83c8b660dd2a8d8",
   "limit_lessons_guest": "4f8e3607d1637ab18f3a0b5e216b0dee309ef7a318da002ab21a6fc2fbe7d950",
+  "limit_map_enough_on": "17d786758715c9b544bef5cb0c7109808c7b04f42af77dbc8166a38bf9f6095f",
+  "limit_map_enough_today": "4d6958908f38f4a9665e5f8b195f6ed267b0e4cde4dbad8e4724cf65f4bb4caa",
+  "limit_map_enough_tomorrow": "f4abde07b6e0491afbe3100bb3a550b21871b7c26be282e0c2f4faf12afffa01",
+  "limit_map_needs_subscription": "853a40f430f1a41adbbc62bdf34c62c5f547e38b5253534004f35f5c17a239e2",
+  "limit_map_needs_subscription_line": "82c48fbd6fd1cd577598c085106badd93f07fe1aa38781d90fe09fbd7710af51",
+  "limit_map_not_enough": "3cee9744620f242702376057fb4989db43d7756fa912a7322e3c578638c705e5",
+  "limit_map_ready": "ebcda25e5513180eab77a83712fee32219e7530712f2a6b7efed1feb65918830",
   "limit_messages_day": "8082d5b36cab73c46a02f81cfd8d7b565dbdfdf6e356c08e76194fec373cd2e9",
   "limit_messages_month": "f641183aede8579d4dc96657dd990a4018e1b6e9aa357117d19091bc7b77e9f2",
   "limit_mind_maps_day": "1bd4cf9bc9354df189e0ab31bdbebe14ea17dcbce35e38bdf739635a037005eb",
@@ -55,6 +62,17 @@
     <string name="limit_lessons_free">무료 레슨을 모두 이용했어요</string>
     <string name="limit_lessons_day">오늘은 새 레슨을 더 볼 수 없어요</string>
     <string name="limit_lesson_ready">다음 무료 레슨이 준비됐어요</string>
+    <string name="limit_map_not_enough">이 마인드맵을 만들기에는 아직 무료 레슨이 부족해요</string>
+    <!-- Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet. -->
+    <string name="limit_map_enough_today">오늘 중에 필요한 만큼 무료 레슨을 이용할 수 있어요. 구독하면 지금 만들 수 있어요.</string>
+    <!-- Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet. -->
+    <string name="limit_map_enough_tomorrow">내일이면 필요한 만큼 무료 레슨을 이용할 수 있어요. 구독하면 지금 만들 수 있어요.</string>
+    <!-- Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet. {date} is a day and its month, such as "November 22" in English. -->
+    <string name="limit_map_enough_on">%1$s에는 필요한 만큼 무료 레슨을 이용할 수 있어요. 구독하면 지금 만들 수 있어요.</string>
+    <string name="limit_map_ready">이제 이 마인드맵을 만들 수 있어요</string>
+    <string name="limit_map_needs_subscription">이 마인드맵을 만들려면 구독이 필요해요</string>
+    <!-- Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and this one has more lessons than a free learner can start. -->
+    <string name="limit_map_needs_subscription_line">무료로 제공되는 것보다 더 많은 레슨을 만들어요.</string>
     <string name="limit_mind_maps_guest">마인드맵을 더 만들려면 계정이 필요해요</string>
     <string name="limit_mind_maps_day">오늘은 새 마인드맵을 더 만들 수 없어요</string>
     <string name="limit_mind_maps_month">이번 달에는 새 마인드맵을 더 만들 수 없어요</string>
