@@ -180,7 +180,7 @@
   "player_write_again": "fa42da5fed440f6964bd7dd7e6000a52f5c55bd013f1f78fd4a5b782be9fb53f",
   "player_write_your_answer": "ea7425368ab44095ccb960186d0f95fc41ce3375196b52d4ea866e691d5c249f",
   "player_writing_lesson": "33802112560fc2e088175ea8d733afb25c0859a274f81e724861074716bcb5fc",
-  "player_writing_note": "575a9903d6947d8b44798457f52fb8fbba91bfef160a7bcea37c549311883c5c",
+  "player_writing_note": "4f6a23f58a6dab6ffb0dbbea52d5c96ec8a539b558b126ba2ef410c5e2bcfdda",
   "player_your_answer": "21798baaf43e884ed05469b1af23eb57f7a5b0b87ac863dee20844435b1c55a7",
   "player_your_example": "f7ea4aa643a7796ebcb2ba78ca80af58678b965b3841022c148bcdc10c19395f"
 }
@@ -321,7 +321,7 @@
     <!-- A step Zoonk shows while it prepares a challenge, after "Writing the challenge": its check found a problem, so Zoonk fixes it and checks the challenge again. -->
     <string name="player_challenge_phase_fix">Poprawiamy wykryte błędy</string>
     <string name="player_challenge_phase_fix_line_1">Poprawiamy niespójne fragmenty…</string>
-    <string name="player_writing_note">To potrwa kilka minut. Możesz wyjść, a my dokończymy.</string>
+    <string name="player_writing_note">To zajmuje kilka minut. Pracujemy dalej, nawet jeśli wyjdziesz.</string>
     <!-- Heading over a lesson or review the learner can start now, while or instead of the lesson that isn't ready. -->
     <string name="player_ready_now">Możesz zacząć już teraz</string>
     <plurals name="player_review_ideas">

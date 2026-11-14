@@ -75,7 +75,7 @@
   "player_explain_first": "0b313ff0964170472770cb0d0e823f7da32b1f5c9dcd6e7aed0d78ef66b26b02",
   "player_finish": "e50ca159f1b705ce86bbf721ec8e8636b3798ebc867490aed934c006ebbaa6cd",
   "player_from_the_lesson": "3e9a4085aa06a00f7be9dedd4abad6fe80d42d08f07c2b11ea35316c21421cb4",
-  "player_get_it_ready": "66525cf131ca891bf25666928391f8356fa1a090e01cce20891dac4c38e5d262",
+  "player_get_it_ready": "332ab8501c9127dde2e8cfd877f200b070af15ccbcae819e7a91985f3b161f83",
   "player_getting_challenge_ready": "5e907f2507204a25988c3c176a11b829af3dff26de0f3ea2f28ee0ec7dfb0bab",
   "player_getting_lesson_ready": "112956ec179f478d6a1024a92c25fe4d56066958f40bcacede6542cf070f1629",
   "player_guess_chip": "18013673888e94e1a92fc58755564b3bb06f4c0dfd04164dce775785f9b029dd",
@@ -135,7 +135,7 @@
   "player_previous_screen": "dabc83d0b1419f70c8814385e4c8cacf5f6edf7482e43ac81a4f02aca498d2de",
   "player_progress": "2a05bee810292dee286f90d397aca87da5c37ad7478653e8fb130ade5f9e186b",
   "player_quick_check": "87454c98036dfb171718231990e47babd9957357606091183f06df2c82cdcaac",
-  "player_ready_now": "a16e8a1d4350c14474c5b35ee7498cbfecae0cdf35b204aec33a751001bbf15b",
+  "player_ready_now": "6a18bb30970b5fca478993ecdb588e1b82af633689baf212e40080717c56d9ca",
   "player_review_ideas": "8531a5ec5d44163d7e991cdd1e8177791fa16b8992fefea4cbff545205d2fa2b",
   "player_save_failed": "e30cc356ad34049d72cbe3b4eb55e0a534b84e182cac1832817f2e53f25660e8",
   "player_saved_to_mistakes": "244b0be6e348b234e15371f7cf310f5244d89e1bf741599e0c0e3a01453fe057",
@@ -170,7 +170,7 @@
   "player_verdict_sample_answer": "641269ba9c886df36cfdb0deda865d476698085da77949d61bcd589708e31c45",
   "player_verdict_typo": "dfdf84daa98f7ec5150d2809cc8cabcc4336c8799328f6c1adf97c6322ca72ad",
   "player_verdict_unchecked": "e255fd20c1b1a98d98bf7398b50a73d4bdc8043f7093b09054d2dee3ad2b229e",
-  "player_wait_stopped": "79421f4a3cd5494b3a8c7dfcb300f0fd6099953d583d77d56e282f8ab4175fde",
+  "player_wait_stopped": "65d66193d37d47200630ea1d595ff13616e8f429586ab61779493805516306bc",
   "player_what_we_heard": "cff3bbaf96c5e8b75b6a790b8b0813e2f092631d9a00e3a448ab92985dbaa28c",
   "player_word_heard_as": "ae4cece2b468f7df9398da465e5b154ddef648b4ebbbae7bf9bfbd043efb97cc",
   "player_word_not_heard": "603917f3edd594514065c1dd88ca2fa9579f316fa4454fee07d1c8c8059ff9d0",
@@ -288,11 +288,11 @@
     <string name="player_your_answer">Sua resposta</string>
     <string name="player_write_your_answer">Escreva sua resposta</string>
     <string name="player_not_written_title">Esta aula ainda não está pronta</string>
-    <string name="player_get_it_ready">Preparar</string>
+    <string name="player_get_it_ready">Preparar a aula</string>
     <string name="player_getting_lesson_ready">Preparando sua aula</string>
     <string name="player_getting_challenge_ready">Preparando seu desafio</string>
     <string name="player_lesson_ready">Sua aula está pronta</string>
-    <string name="player_wait_stopped">A gente não conseguiu preparar esta aula</string>
+    <string name="player_wait_stopped">A gente não conseguiu preparar essa aula</string>
     <string name="player_start_this_lesson">Começar esta aula</string>
     <string name="player_writing_lesson">Criando sua aula</string>
     <string name="player_phase_plan">Planejando a aula</string>
@@ -321,7 +321,7 @@
     <string name="player_challenge_phase_fix_line_1">Refazendo as partes que não faziam sentido…</string>
     <string name="player_writing_note">Leva alguns minutos e continua mesmo se você sair.</string>
     <!-- Heading over a lesson or review the learner can start now, while or instead of the lesson that isn't ready. -->
-    <string name="player_ready_now">Já dá para começar</string>
+    <string name="player_ready_now">Para começar agora</string>
     <plurals name="player_review_ideas">
         <item quantity="one">Revisar %1$s ideia</item>
         <item quantity="many">Revisar %1$s ideias</item>

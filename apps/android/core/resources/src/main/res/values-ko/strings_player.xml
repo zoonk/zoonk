@@ -75,7 +75,7 @@
   "player_explain_first": "49c5fb6810ea4f51f90a2af048e1e1eb4ab982500da7e52de7b7cc50ce214af9",
   "player_finish": "0eb84a3e0c90061adce518b1af04d9115421c29fda41697d6f1a8d621a77b873",
   "player_from_the_lesson": "f7ebfc3a79c53236843b8d7692359028aa89df52fd702c5d8f6e5aa6dd9f94bb",
-  "player_get_it_ready": "ac76f4a383987267efe57a9b97d7284eec25c118d543c96a691ad2a8e287d74a",
+  "player_get_it_ready": "847652626a33813bfb4bab5a910a2c573c875a838ab760c4bc810062cc82f50f",
   "player_getting_challenge_ready": "d044e2dba5101b8dd3f8ffd2dffe6b03f5909a35d7c7a54ab2bd290d4935222b",
   "player_getting_lesson_ready": "71fe263efbd0e5a51507c2b92abf67a667f23c41787cf3951abc0a8d8cf6530f",
   "player_guess_chip": "13b685cc605e07731bfd0f1ba8973c59f6633864a668a35788da8c2df5bab055",
@@ -135,7 +135,7 @@
   "player_previous_screen": "2ccf2b04389a5cb4c61e6f0cb1af6622bba753fdab4e58fc670055801bfff733",
   "player_progress": "bac3125f2a55619e825aa6576d49c005f1deb1d517979d7cdabd33ca5b784692",
   "player_quick_check": "25207d6374ac2f52402778481bf6cb5a62d1fe6554e40ffdf40e25838ef9233c",
-  "player_ready_now": "9160bd375766b5c954cc87a27e80e8f864b31a7aa502e209220de212aab4ce31",
+  "player_ready_now": "f6bfb3ff7c6efea7e4ef0b58f3ada3ca33b0902b6b9ba039307cea8354d44ba4",
   "player_review_ideas": "aa6c1037d8c827cab9204117f9f72f5b2aea492b0b09038a44e58715e67afd5a",
   "player_save_failed": "e5c107216d6612c32f167bd53bc9cce7aa93ba4fb5e227cbd7dd10a95f3ec43a",
   "player_saved_to_mistakes": "c4186f157d6392212790c00ea0554633298de41115c383ba142eb5558a8d4ea0",
@@ -180,7 +180,7 @@
   "player_write_again": "23114fa7bf624154f7feaed69b457a27950cf9fe36692e8711dd2f164af63d7b",
   "player_write_your_answer": "92a5bf659c9f703f92af4e773e735b57f3be306937908e6b9cd2e293dc10b88e",
   "player_writing_lesson": "7e265e7c590bcfc2a1970cafa4ef7efdb5d20e507bdbf6fdbeaf225628360f7f",
-  "player_writing_note": "e678b54224a6d788555ead5ae85a1184e59b5f3188ff19761c6dd92980049b30",
+  "player_writing_note": "d5a15c866bf35a37588bbd9bf39434f1cabd4c9d179d10d1d68c21b5cf261ee3",
   "player_your_answer": "453009f5c086dbe11ade9c97cb00ab21eceb6d7ac4ddc5cbd580ab01f463e082",
   "player_your_example": "7ef76eadf639e079ecefddb83a9dec61c2afb5596f8e0dba2e7d106ddb35d1bf"
 }
@@ -284,7 +284,7 @@
     <string name="player_your_answer">내 답</string>
     <string name="player_write_your_answer">답을 써 주세요</string>
     <string name="player_not_written_title">이 레슨은 아직 준비되지 않았어요</string>
-    <string name="player_get_it_ready">준비하기</string>
+    <string name="player_get_it_ready">레슨 준비하기</string>
     <string name="player_getting_lesson_ready">레슨을 준비하고 있어요</string>
     <string name="player_getting_challenge_ready">챌린지를 준비하고 있어요</string>
     <string name="player_lesson_ready">레슨이 준비됐어요</string>
@@ -315,9 +315,9 @@
     <!-- A step Zoonk shows while it prepares a challenge, after "Writing the challenge": its check found a problem, so Zoonk fixes it and checks the challenge again. -->
     <string name="player_challenge_phase_fix">검토 중 발견한 문제를 고치고 있어요</string>
     <string name="player_challenge_phase_fix_line_1">앞뒤가 맞지 않는 부분을 다시 만들고 있어요…</string>
-    <string name="player_writing_note">몇 분 정도 걸려요. 화면을 닫아도 준비는 계속돼요.</string>
+    <string name="player_writing_note">준비하는 데 몇 분 정도 걸리고, 화면을 나가도 계속 진행돼요.</string>
     <!-- Heading over a lesson or review the learner can start now, while or instead of the lesson that isn't ready. -->
-    <string name="player_ready_now">지금 바로 시작할 수 있어요</string>
+    <string name="player_ready_now">지금 시작할 수 있어요</string>
     <plurals name="player_review_ideas">
         <item quantity="other">내용 %1$s개 복습하기</item>
     </plurals>

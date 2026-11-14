@@ -75,7 +75,7 @@
   "player_explain_first": "5b9aa5dc65c8aef8caf273d348e1267d056177048c2cd790b020b04eefb6aa34",
   "player_finish": "2dcd842590fba095a2a6d99452f5ea9f53de796a5cc9a31318998a078c7d4af7",
   "player_from_the_lesson": "3a565fff4028299241ec98cd4cc8f88e8adc36240969dd8144f2646531fd8198",
-  "player_get_it_ready": "7dc494174fa8336ccecabb24a2fe85a3b3f569f736ba98095d92bfdd2a597246",
+  "player_get_it_ready": "c0a4673ae0cd75b2dcee8cadb9fba94f9625c0119d296c7333c25a5e27fc7d18",
   "player_getting_challenge_ready": "706c8760667dfbbf12461c8b4753a0e7429bf7294f5174c6115c8cd97881a0b8",
   "player_getting_lesson_ready": "4575c7ebc017613b6407b52971a981b84c218dd973b9af75248465634f309bc3",
   "player_guess_chip": "0e10634ae8d21482a1e660ab582c535e3de5c24e33bfaabddaaa44e7a7ce7485",
@@ -180,7 +180,7 @@
   "player_write_again": "14c0f02277c8af4c8b675ad701d9123427834d65d683f0922e6a9ff21747e00d",
   "player_write_your_answer": "590d33de54161b510f73183165516b3a5bad0982a6142562c54bbb3057b4b67a",
   "player_writing_lesson": "0ad253d27c7eef2ba98d0a61196a3c6dc39cee4d2987a3ce384f560fbbc12fec",
-  "player_writing_note": "aac56be883b2cd5871f53912afffbddeff0ef2b72deb9daf6665687067541658",
+  "player_writing_note": "ff20d4777567c2acc41ef5f86eccb9343d59972f1e4c1a59f4c84325105a0542",
   "player_your_answer": "60152d094f6a12267c08383c768572d96cfe00da95b42b0179657c85daa7565c",
   "player_your_example": "07218821bdab393aa57c131208c026d5ff18a30efa710ce20901e6233613b728"
 }
@@ -288,7 +288,7 @@
     <string name="player_your_answer">Tu respuesta</string>
     <string name="player_write_your_answer">Escribe tu respuesta</string>
     <string name="player_not_written_title">Esta lección aún no está lista</string>
-    <string name="player_get_it_ready">Preparar</string>
+    <string name="player_get_it_ready">Prepararla</string>
     <string name="player_getting_lesson_ready">Preparando tu lección</string>
     <string name="player_getting_challenge_ready">Preparando tu desafío</string>
     <string name="player_lesson_ready">Tu lección está lista</string>
@@ -319,7 +319,7 @@
     <!-- A step Zoonk shows while it prepares a challenge, after "Writing the challenge": its check found a problem, so Zoonk fixes it and checks the challenge again. -->
     <string name="player_challenge_phase_fix">Corrigiendo los problemas encontrados</string>
     <string name="player_challenge_phase_fix_line_1">Preparando de nuevo las partes que no encajaban…</string>
-    <string name="player_writing_note">Tarda unos minutos y sigue aunque salgas.</string>
+    <string name="player_writing_note">Tarda unos minutos y seguimos preparándola aunque salgas.</string>
     <!-- Heading over a lesson or review the learner can start now, while or instead of the lesson that isn't ready. -->
     <string name="player_ready_now">Puedes empezar ahora</string>
     <plurals name="player_review_ideas">

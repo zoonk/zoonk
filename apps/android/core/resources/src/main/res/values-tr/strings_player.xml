@@ -180,7 +180,7 @@
   "player_write_again": "53de59a614de72dcb65c7c092efd01d2bf4473b281c9bad6509f68973463fd4f",
   "player_write_your_answer": "2bccbed46fb67a1c21ac7f7bec82bf53d3acdfefbc9d8bab6aebe58f0f16c701",
   "player_writing_lesson": "8975f01bba2c0faad3702827b546e4e78f406275856f78ebb131ea4578d4c8a7",
-  "player_writing_note": "c15404f1a21ef31afc2b7bcb0c8067cffc9522a7aef59f662ea1b6d806000585",
+  "player_writing_note": "9d086f682e583b14eddcd4646c0326fdc985b714839efa7e1bf9198910ec5f0a",
   "player_your_answer": "bbe8405a2b2d75235749e343b89c05b81a5186b28caff3190bad9bf9ee3db627",
   "player_your_example": "44f5c5ed55823b341689f4c53dd8c0356579472b905c2d4994804ccb12318a5c"
 }
@@ -317,7 +317,7 @@
     <!-- A step Zoonk shows while it prepares a challenge, after "Writing the challenge": its check found a problem, so Zoonk fixes it and checks the challenge again. -->
     <string name="player_challenge_phase_fix">Kontrolde bulunan sorunu düzeltme</string>
     <string name="player_challenge_phase_fix_line_1">Tutarsız kısımları yeniden hazırlıyoruz…</string>
-    <string name="player_writing_note">Birkaç dakika sürer, ayrılsan da hazırlamaya devam ederiz.</string>
+    <string name="player_writing_note">Birkaç dakika sürer, buradan ayrılsan da devam ederiz.</string>
     <!-- Heading over a lesson or review the learner can start now, while or instead of the lesson that isn't ready. -->
     <string name="player_ready_now">Hemen başlayabilirsin</string>
     <plurals name="player_review_ideas">
