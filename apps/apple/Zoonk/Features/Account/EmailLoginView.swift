@@ -121,7 +121,7 @@ struct EmailLoginView: View {
     .onChange(of: session.state) { _, state in
       dismissAfterSignIn(state)
     }
-    // The number pad has no Return key, so a complete code signs in on its own, as on main.
+    // The number pad has no Return key, so a complete code signs in on its own.
     .onChange(of: normalizedCode, signIn)
   }
 
