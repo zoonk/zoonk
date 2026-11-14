@@ -58,7 +58,6 @@ async function findCatalogCourse({
   };
 }
 
-/** Unavailable goal slots are shown locked, never hidden. */
 export async function offerStartGoal({
   goal,
   topic,
