@@ -35,7 +35,7 @@ export function ResumeGoalBar({
   onResume,
 }: {
   children?: React.ReactNode;
-  onResume: () => Promise<GoalStatusOutcome>;
+  onResume: () => Promise<GoalStatusOutcome | null>;
 }) {
   const t = useExtracted();
   const [outcome, setOutcome] = useState<GoalStatusOutcome | null>(null);

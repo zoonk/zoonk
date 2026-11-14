@@ -40,6 +40,56 @@ struct CodeActivityRunnerTests {
     #expect(result.output == "undefined undefined undefined undefined\n")
   }
 
+  private func regexFields(shouldMatch: [String], shouldNotMatch: [String]) throws
+    -> PatternTesterFields.Regex?
+  {
+    let fields = try JSONDecoder().decode(
+      PatternTesterFields.self,
+      from: JSONSerialization.data(
+        withJSONObject: [
+          "hints": [String](), "mode": "regex", "shouldMatch": shouldMatch,
+          "shouldNotMatch": shouldNotMatch, "solution": "", "task": "",
+        ] as [String: Any]))
+
+    guard case .regex(let regex) = fields else {
+      return nil
+    }
+
+    return regex
+  }
+
+  @Test func regexesMatchLikeCore() async throws {
+    let regex = try #require(
+      try regexFields(
+        shouldMatch: ["94103", "94103-1234"], shouldNotMatch: ["9410", "941031", "94103-12"]))
+    let preview = PatternRegexPreview()
+
+    let solved = try #require(await preview.test("^\\d{5}(-\\d{4})?$", regex: regex))
+    #expect((solved.shouldMatch + solved.shouldNotMatch).allSatisfy { $0.passes })
+    #expect(await preview.test("(\\d+)+", regex: regex) == nil, "an unsafe pattern doesn't run")
+    #expect(await preview.test("(", regex: regex) == nil, "a pattern that doesn't compile")
+
+    let results = try #require(await preview.test("\\d{5}", regex: regex))
+    #expect(results.shouldMatch.map(\.match) == [0..<5, 0..<5])
+    #expect(results.shouldNotMatch.map(\.passes) == [true, false, false])
+  }
+
+  @Test func aPatternThatBacktracksWithoutEndStopsAndTheNextOneIsTestedAtOnce() async throws {
+    let regex = try #require(
+      try regexFields(shouldMatch: ["aab"], shouldNotMatch: [String(repeating: "a", count: 32)]))
+    let preview = PatternRegexPreview()
+    _ = await preview.test("a", regex: regex)
+    let started = ContinuousClock.now
+
+    #expect(await preview.test(String(repeating: "a*", count: 12) + "b", regex: regex) == nil)
+    let stopped = ContinuousClock.now
+    #expect(stopped - started < .seconds(3))
+
+    let next = try #require(await preview.test("^a+b$", regex: regex))
+    #expect((next.shouldMatch + next.shouldNotMatch).allSatisfy { $0.passes })
+    #expect(ContinuousClock.now - stopped < .seconds(2))
+  }
+
   @Test func aClosedRunnerStartsOverOnTheNextRun() async {
     let runner = CodeProgramRunner(language: .javascript)
     _ = await runner.run("console.log(1)")

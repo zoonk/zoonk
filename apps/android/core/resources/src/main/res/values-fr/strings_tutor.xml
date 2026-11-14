@@ -71,7 +71,7 @@
   "tutor_offer_logbook_description": "4626c106fd6cc689f8f8695dd62a7605ad760e712cd2d51fab4a9f430d0d0d9d",
   "tutor_offer_manage": "dffa2e5a712f91f10cff1609989ceeacfc467bae22637dcc465cf5448d941c65",
   "tutor_offer_memory": "155213c0a47f41d8bdf42c5ccc4226b3db62362bf7f8877089d6b6c03f46135f",
-  "tutor_offer_memory_description": "b35f94177b772859b30fd53b50a488ddfca210e05f0ec20366a7ce4baf6b4d1f",
+  "tutor_offer_memory_description": "1c2501d63c78b846320eb4e2fd973f7268b5a6a2200752d706e06c1e2d04a4fb",
   "tutor_offer_mistakes": "442bb23d36523b5fa8fd40f5cca2af2e593d21f75c6752011dca6498ef4ddd62",
   "tutor_offer_mistakes_open": "ad96ff5dcef0c26365c022a5793e5f5f45cb74e70303aca89143df5a035a21ae",
   "tutor_offer_mock": "76cfdda71965fcc0f599d7ae23aa66fcf9427ee5ca04c5aa2ba4eb84d0359917",
@@ -255,7 +255,7 @@
     <!-- Describes the Logbook: what the learner did this week compared with the week before, and what comes next. -->
     <string name="tutor_offer_logbook_description">Ton activité cette semaine par rapport à la précédente, et ce qui t’attend ensuite.</string>
     <string name="tutor_offer_memory">Mémoire</string>
-    <string name="tutor_offer_memory_description">Consulte, corrige ou supprime ce que ton Compagnon retient de toi.</string>
+    <string name="tutor_offer_memory_description">Consulte, corrige ou supprime ce que ton compagnon retient de toi.</string>
     <string name="tutor_offer_stats">Statistiques</string>
     <string name="tutor_offer_stats_description">Énergie, ceinture, bonnes réponses et moments où tu étudies le mieux.</string>
     <!-- A card offering a language as one country speaks it; %1$s is that variety, such as "Spanish (Argentina)". -->

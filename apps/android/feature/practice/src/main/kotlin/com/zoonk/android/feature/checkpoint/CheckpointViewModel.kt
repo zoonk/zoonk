@@ -43,8 +43,9 @@ class CheckpointViewModel(
     private var sent: Answer? = null
     private var finishing: Job? = null
 
+    /** Only from a read made since the last answer: a kept one may ask again what was answered since. */
     fun begin(checkpoint: Checkpoint) {
-        if (mutableDuel.value != null) return
+        if (mutableDuel.value != null || this.checkpoint.freshState.value !is LoadState.Loaded) return
         mutableDuel.value = Duel(checkpoint.read(), DuelState.of(checkpoint))
         shownAt = now()
     }

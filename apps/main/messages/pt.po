@@ -903,7 +903,7 @@ msgstr "Seu parceiro"
 #: src/app/[lang]/(app)/(learn)/buddy/page.tsx
 msgctxt "6YPtag"
 msgid "Your buddy answers your questions and adjusts your plan."
-msgstr "Seu Parceiro responde às suas perguntas e ajusta seu plano."
+msgstr "Seu parceiro responde às suas perguntas e ajusta seu plano."
 
 #: src/app/[lang]/(app)/(learn)/buddy/page.tsx
 msgctxt "BV0cQk"
@@ -2101,7 +2101,7 @@ msgstr "Conte do seu jeito e responda umas perguntas rápidas. Depois, é só se
 #: src/app/[lang]/(home)/_components/home-faq.tsx
 msgctxt "RsvuP8"
 msgid "Yes. You start free, no account needed. A free account gives you {lessons, plural, one {# lesson} other {# lessons}} a month across all your goals, exams included, with {goals, plural, one {one goal} other {up to # goals}} at a time. No card needed."
-msgstr "Sim. Você começa grátis, sem precisar de conta. Com uma conta grátis, você tem {lessons, plural, one {# aula} other {# aulas}} por mês, somando todos os seus objetivos, incluindo provas, com {goals, plural, one {um objetivo} other {até # objetivos}} por vez. Não precisa de cartão."
+msgstr "Sim. Você começa grátis, sem precisar de conta. Com uma conta grátis, você tem {lessons, plural, one {# aula} other {# aulas}} por mês, somando todos os seus objetivos, incluindo provas, com {goals, plural, =1 {um objetivo} other {até # objetivos}} por vez. Não precisa de cartão."
 
 #: src/app/[lang]/(home)/_components/home-faq.tsx
 msgctxt "NNtrw6"
@@ -3083,7 +3083,7 @@ msgstr "O que o Plus oferece a mais"
 #: src/components/pricing/plus-adds.tsx
 msgctxt "QtkJr8"
 msgid "At {minutes, number} minutes a day, {lessons, plural, one {# lesson lasts} other {# lessons last}} {days, plural, =5 {about a week} =10 {about two weeks} one {a day} other {about # days of study}}."
-msgstr "Com {minutes, number} minutos por dia, {lessons, plural, one {# aula rende} other {# aulas rendem}} {days, plural, =5 {cerca de uma semana} =10 {cerca de duas semanas} one {um dia} other {cerca de # dias de estudo}}."
+msgstr "Com {minutes, number} minutos por dia, {lessons, plural, one {# aula rende} other {# aulas rendem}} {days, plural, =5 {cerca de uma semana} =10 {cerca de duas semanas} =1 {um dia} other {cerca de # dias de estudo}}."
 
 #: src/components/pricing/plus-adds.tsx
 msgctxt "Czc1c4"
@@ -3099,7 +3099,7 @@ msgstr "Exemplo · {time} por dia, cerca de {count, plural, one {# aula curta} 
 #: src/components/pricing/plus-adds.tsx
 msgctxt "tbnyhv"
 msgid "{lessons, plural, one {# lesson} other {# lessons}}: {days, plural, =5 {about the first week} =10 {about the first two weeks} one {the first day} other {the first # days of study}}"
-msgstr "{lessons, plural, one {# aula} other {# aulas}}: {days, plural, =5 {aproximadamente a primeira semana} =10 {aproximadamente as duas primeiras semanas} one {o primeiro dia} other {os primeiros # dias de estudo}}"
+msgstr "{lessons, plural, one {# aula} other {# aulas}}: {days, plural, =5 {aproximadamente a primeira semana} =10 {aproximadamente as duas primeiras semanas} =1 {o primeiro dia} other {os primeiros # dias de estudo}}"
 
 #: src/components/pricing/plus-adds.tsx
 msgctxt "kFIKxT"

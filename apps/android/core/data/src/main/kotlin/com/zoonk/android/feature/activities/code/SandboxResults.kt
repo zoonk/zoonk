@@ -106,7 +106,7 @@ sealed interface RegexTest {
     @SerialName("empty")
     data object Empty : RegexTest
 
-    /** Doesn't compile, or could backtrack for exponential time (core's `compileSafeRegex`). */
+    /** Doesn't compile, could backtrack for exponential time (core's `compileSafeRegex`), or ran past the sandbox's time limit. */
     @Serializable
     @SerialName("invalid")
     data object Invalid : RegexTest

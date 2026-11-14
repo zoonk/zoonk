@@ -59,14 +59,23 @@ export async function mergeLearningProfile({
   takeGuestAddressForm?: boolean;
   takeGuestSupport?: boolean;
 }) {
-  // Better Auth creates the account's session, and the session hook saves the sign-in's country,
-  // before it links the guest. A row made since that session began holds only that guess, not the
-  // account's choices, so the guest's row replaces it and keeps the guess only when it has no
-  // country. A country written since then into an older row is that guess too: the guest's wins.
+  // The session hook saves the sign-in's country before Better Auth links the guest. A row made
+  // since this session began that holds nothing but a country is that guess, so the guest's row
+  // replaces it and keeps the guess only when it has no country. A one-time token reuses an older
+  // session, so a row the learner filled in since then stays. A new setting joins this check.
   const [sessionRow] = await transaction.$queryRaw<{ home_country: string | null }[]>`
     DELETE FROM user_learning_profiles
     WHERE user_id = ${userId}::uuid
       AND created_at >= (SELECT created_at FROM sessions WHERE id = ${sessionId ?? null}::uuid)
+      AND cardinality(learning_needs) = 0
+      AND address_form IS NULL
+      AND buddy_kind IS NULL
+      AND buddy_name IS NULL
+      AND buddy_glasses = 'round'
+      AND active_goal_id IS NULL
+      AND memory_enabled
+      AND sounds_enabled
+      AND share_usage_data IS NULL
       AND EXISTS (SELECT 1 FROM user_learning_profiles WHERE user_id = ${guestUserId}::uuid)
     RETURNING home_country
   `;
@@ -95,11 +104,7 @@ export async function mergeLearningProfile({
       sounds_enabled = CASE WHEN ${takeGuestSupport} THEN EXCLUDED.sounds_enabled ELSE user_learning_profiles.sounds_enabled END,
       address_form = CASE WHEN ${takeGuestAddressForm} THEN EXCLUDED.address_form ELSE user_learning_profiles.address_form END,
       share_usage_data = COALESCE(user_learning_profiles.share_usage_data, EXCLUDED.share_usage_data),
-      home_country = CASE
-        WHEN user_learning_profiles.updated_at >= (SELECT created_at FROM sessions WHERE id = ${sessionId ?? null}::uuid)
-        THEN COALESCE(EXCLUDED.home_country, user_learning_profiles.home_country)
-        ELSE COALESCE(user_learning_profiles.home_country, EXCLUDED.home_country)
-      END,
+      home_country = COALESCE(user_learning_profiles.home_country, EXCLUDED.home_country),
       buddy_kind = COALESCE(user_learning_profiles.buddy_kind, EXCLUDED.buddy_kind),
       buddy_name = CASE WHEN user_learning_profiles.buddy_kind IS NOT NULL
         THEN user_learning_profiles.buddy_name ELSE EXCLUDED.buddy_name END,

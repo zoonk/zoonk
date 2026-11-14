@@ -27,8 +27,8 @@ function OpenDayStep({ beforeOpen, children, day, goalId, refresh }: DayStepOpen
   const open = async (step: DayStep): Promise<boolean> => {
     const ready = await answerHere(beforeOpen(), openingHere(userId));
 
-    if (typeof ready === "boolean" || !ready.answer) {
-      return ready === true;
+    if (typeof ready === "string" || !ready.answer) {
+      return ready === "left";
     }
 
     const href = getStudyLessonHref({ block: step, goalId, session: day });

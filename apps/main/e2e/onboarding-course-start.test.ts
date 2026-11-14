@@ -17,6 +17,7 @@ import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { startCourseWithLevel } from "./course-start";
 import { type Page, expect, test } from "./fixtures";
+import { holdActionAnswer } from "./held-action";
 
 const GOAL_URL = /\/start\/(?<goalId>[0-9a-f-]{36})$/u;
 
@@ -245,5 +246,25 @@ test.describe("Starting a course from its page", () => {
     await expect(gate).toBeHidden();
     await startCourseWithLevel(page);
     await readGoalId(page);
+  });
+
+  test("a visitor who goes back while the course starts stays there, and the start still stands", async ({
+    page,
+  }) => {
+    const { course, coursePath } = await createOutlinedCourse();
+
+    await page.goto(coursePath);
+    await startFromHero(page, { name: course.title });
+    await expect(page).toHaveURL(new RegExp(`/start/course/${course.id}\\?minutes=15$`, "u"));
+    const start = await holdActionAnswer(page, `/start/course/${course.id}*`);
+
+    await startCourseWithLevel(page);
+    await start.held;
+    await page.goBack();
+    await expect(page).toHaveURL((url) => url.pathname === coursePath);
+
+    expect(await start.release(GOAL_URL)).toBe(false);
+    await expect(page).toHaveURL((url) => url.pathname === coursePath);
+    await expect(prisma.goal.count({ where: { primaryCourseId: course.id } })).resolves.toBe(1);
   });
 });

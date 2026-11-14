@@ -1,5 +1,6 @@
 "use client";
 
+import { type MicrophoneProblem, getMicrophoneProblem } from "@zoonk/ui/hooks/voice-recorder";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { type SpeechSample, sampleSpeech } from "./speech-activity";
 
@@ -15,9 +16,6 @@ function closeContext(context: AudioContext) {
     void context.close().catch(() => null);
   }
 }
-
-/** `blocked`: the learner or the browser refused it. `unavailable`: there's none, or another app holds it. */
-export type MicrophoneProblem = "blocked" | "unavailable";
 
 export type CallAudio = {
   blocked: boolean;
@@ -56,8 +54,7 @@ export async function openCallAudio(): Promise<CallAudio | MicrophoneProblem> {
     };
   } catch (error) {
     closeContext(context);
-    const refused = error instanceof DOMException && error.name === "NotAllowedError";
-    return refused ? "blocked" : "unavailable";
+    return getMicrophoneProblem(error);
   }
 }
 

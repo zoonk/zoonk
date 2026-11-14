@@ -1,6 +1,6 @@
+import { type MicrophoneProblem } from "@zoonk/ui/hooks/voice-recorder";
 import { type LiveCallError } from "./live-call-lifecycle";
 import { type LiveCallPhase } from "./use-call-controls";
-import { type MicrophoneProblem } from "./use-call-microphone";
 
 /**
  * What the dropped screen shows: why the call can't go on (null keeps the plain "call dropped"

@@ -9,6 +9,8 @@ import {
   openActivity,
   press,
 } from "../_test-utils/activity-player";
+import { runProgram } from "../activities/_sandbox/run-program";
+import { REGEX_TIME_LIMIT_MS } from "../activities/_sandbox/sandbox-host";
 
 /** Pyodide downloads from the CDN on first use in each fresh browser page. */
 const PYTHON_TIMEOUT_MS = 60_000;
@@ -54,6 +56,19 @@ const formulaTester = {
     tolerance: { kind: "absolute", value: 0.01 },
   },
 };
+
+const runawayPatternTester = {
+  ...activityContentFixtures.patternTester,
+  fields: {
+    ...activityContentFixtures.patternTester.fields,
+    shouldMatch: ["aab"],
+    shouldNotMatch: ["a".repeat(30)],
+    solution: "^a+b$",
+    task: "Match a's that end in b.",
+  },
+};
+
+const BACKTRACKS_WITHOUT_END = `${"a*".repeat(10)}b`;
 
 function editableLine(line: number) {
   return page.getByRole("textbox", { name: `Line ${line}, yours to edit` });
@@ -294,5 +309,34 @@ describe("computing activities with a keyboard or a runaway program", () => {
     await focusOn(editableLine(2));
     await press("Enter");
     await expect.element(page.getByText("counted to 3", { exact: true })).toBeVisible();
+  });
+
+  it("pattern tester: a pattern that backtracks without end stops at the time limit, and the next run answers at once", async () => {
+    openActivity({ content: runawayPatternTester, template: "patternTester" });
+    const pattern = page.getByRole("textbox", { name: "Your pattern" });
+    const shouldNotMatch = page.getByRole("region", { name: "Should not match" });
+    const cantRun = page.getByText("This pattern can't run.");
+
+    await pattern.fill(BACKTRACKS_WITHOUT_END);
+    await pattern.fill("^a+b$");
+    await expect.element(shouldNotMatch).toMatchTextContent("1 of 1 pass");
+
+    await new Promise((resolve) => {
+      setTimeout(resolve, REGEX_TIME_LIMIT_MS * 2);
+    });
+
+    await expect.element(shouldNotMatch).toMatchTextContent("1 of 1 pass");
+    await expect.element(cantRun).not.toBeInTheDocument();
+
+    await pattern.fill(BACKTRACKS_WITHOUT_END);
+    await expect.element(cantRun, { timeout: REGEX_TIME_LIMIT_MS * 3 }).toBeVisible();
+
+    const started = performance.now();
+    await pattern.fill("^a+b$");
+    await expect.element(shouldNotMatch).toMatchTextContent("1 of 1 pass");
+    const printed = await runProgram({ code: 'console.log("ok")', language: "javascript" });
+
+    expect(printed.output).toBe("ok\n");
+    expect(performance.now() - started).toBeLessThan(REGEX_TIME_LIMIT_MS);
   });
 });

@@ -3946,7 +3946,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choisis ton Compagnon"
+            "value" : "Choisis ton compagnon"
           }
         },
         "it" : {
@@ -3976,7 +3976,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escolha seu Parceiro"
+            "value" : "Escolha seu parceiro"
           }
         },
         "tr" : {
@@ -25134,7 +25134,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton Compagnon grandit au fil de tes apprentissages."
+            "value" : "Ton compagnon grandit au fil de tes apprentissages."
           }
         },
         "it" : {
@@ -25164,7 +25164,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu Parceiro cresce enquanto você aprende."
+            "value" : "Seu parceiro cresce enquanto você aprende."
           }
         },
         "tr" : {
