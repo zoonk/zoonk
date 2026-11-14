@@ -13,24 +13,35 @@ import Foundation
 enum CodeWorkerSources {
   private static let pyodideIndexURL = "https://cdn.jsdelivr.net/pyodide/v314.0.8/full/"
 
-  /// The page that hosts the language's worker. `warmUp()` loads the runtime; `run(code)`
+  /// The page that hosts the language's worker. `warmUp()` loads the runtime; `run({ code })`
   /// resolves with how the run ended and what it printed.
   static func page(_ language: CodeLanguage, timeLimit: TimeInterval) -> String {
-    let runtime = language == .python ? pyodideIndexURL : ""
-    let worker = language == .python ? python : javascript
+    language == .python
+      ? page(kind: "python", worker: python, runtime: pyodideIndexURL, timeLimit: timeLimit)
+      : page(kind: "javascript", worker: javascript, runtime: "", timeLimit: timeLimit)
+  }
 
-    return """
-      <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: \(runtime); worker-src blob:; connect-src \(runtime.isEmpty ? "'none'" : runtime);">
-      <script>
-      "use strict";
-      const KIND = \(json(language.rawValue));
-      const SOURCE = \(json(worker));
-      const TIME_LIMIT_MS = \(Int(timeLimit * 1000));
-      const MAX_OUTPUT_LENGTH = 10000;
-      \(host)
-      \(consoleFormat)
-      </script>
-      """
+  /// The page that tests a regex in a worker: `run({ flags, samples, source })` resolves with
+  /// where it matches each sample, or with how the run ended.
+  static func regexPage(timeLimit: TimeInterval) -> String {
+    page(kind: "regex", worker: regex, runtime: "", timeLimit: timeLimit)
+  }
+
+  private static func page(
+    kind: String, worker: String, runtime: String, timeLimit: TimeInterval
+  ) -> String {
+    """
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: \(runtime); worker-src blob:; connect-src \(runtime.isEmpty ? "'none'" : runtime);">
+    <script>
+    "use strict";
+    const KIND = \(json(kind));
+    const SOURCE = \(json(worker));
+    const TIME_LIMIT_MS = \(Int(timeLimit * 1000));
+    const MAX_OUTPUT_LENGTH = 10000;
+    \(host)
+    \(consoleFormat)
+    </script>
+    """
   }
 
   private static func json(_ text: String) -> String {
@@ -62,9 +73,15 @@ enum CodeWorkerSources {
       if (host === current) host = null;
     }
 
-    async function warmUp() {
+    function getHost() {
+      if (KIND !== "python") return createHost();
       host = host ?? createHost();
-      const current = host;
+      return host;
+    }
+
+    async function warmUp() {
+      if (KIND !== "python") return true;
+      const current = getHost();
       const isReady = await current.ready;
       if (!isReady) discardHost(current);
       return isReady;
@@ -76,10 +93,13 @@ enum CodeWorkerSources {
       return { line: programLine ? Number(programLine) : null, message: lines.at(-1)?.trim() ?? traceback };
     }
 
-    /** One run in the warm worker. Output is kept when the program fails or runs out of time. */
-    async function run(code) {
-      if (!(await warmUp())) return { stop: "unavailable" };
-      const current = host;
+    /** One run, in Python's warm worker or a fresh one. Output is kept when it fails or runs out of time. */
+    async function run(request) {
+      const current = getHost();
+      if (!(await current.ready)) {
+        discardHost(current);
+        return { stop: "unavailable" };
+      }
       const id = nextId++;
       const streams = { stderr: "", stdout: "" };
 
@@ -87,13 +107,13 @@ enum CodeWorkerSources {
         function finish(outcome, keepWorker) {
           clearTimeout(timer);
           current.worker.removeEventListener("message", handleMessage);
-          if (!keepWorker || KIND === "javascript") discardHost(current);
+          if (!keepWorker || KIND !== "python") discardHost(current);
           resolve({ errorOutput: streams.stderr, output: streams.stdout.slice(0, MAX_OUTPUT_LENGTH), ...outcome });
         }
 
         function handleMessage({ data }) {
           if (data.id !== id) return;
-          if (data.type === "done") return finish({ stop: "done" }, true);
+          if (data.type === "done") return finish({ matches: data.matches, stop: "done" }, true);
           if (data.type === "error") {
             const error = KIND === "python" ? pythonError(data.message) : { line: data.line ?? null, message: data.message };
             return finish({ stop: "error", ...error }, true);
@@ -104,7 +124,7 @@ enum CodeWorkerSources {
 
         const timer = setTimeout(() => finish({ stop: "timeout" }, false), TIME_LIMIT_MS);
         current.worker.addEventListener("message", handleMessage);
-        current.worker.postMessage({ code, id });
+        current.worker.postMessage({ ...request, id });
       });
     }
     """#
@@ -287,6 +307,26 @@ enum CodeWorkerSources {
     };
 
     post({ type: "ready" });
+    """#
+
+  /// Main's `REGEX_WORKER_SOURCE`: where the regex matches each sample.
+  private static let regex = #"""
+    "use strict";
+    self.onmessage = (event) => {
+      const { flags, id, samples, source } = event.data;
+      try {
+        const regex = new RegExp(source, flags);
+        const matches = samples.map((sample) => {
+          const found = regex.exec(sample);
+          return found ? { end: found.index + found[0].length, start: found.index } : null;
+        });
+        self.postMessage({ id, matches, type: "done" });
+      } catch (error) {
+        self.postMessage({ id, message: String(error), type: "error" });
+      }
+    };
+
+    self.postMessage({ type: "ready" });
     """#
 
   /// Python through Pyodide, in a module worker. Booting takes a few seconds, so one worker is

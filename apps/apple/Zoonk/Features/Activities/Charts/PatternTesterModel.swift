@@ -1,5 +1,4 @@
 import Foundation
-import JavaScriptCore
 
 enum PatternTesterFields: Decodable, Hashable, Sendable {
   struct Hint: Decodable, Hashable, Sendable {
@@ -101,24 +100,12 @@ struct PatternSampleResult: Hashable, Sendable {
   let passes: Bool
 }
 
-/// Regular expressions tested exactly as core grades them: JavaScript's `RegExp` with the `u` flag
-/// (run in JavaScriptCore, so the syntax and matching are the same as on the server), and only
-/// patterns that can't backtrack for exponential time.
+/// Regular expressions tested exactly as core grades them: JavaScript's `RegExp` with the `u` flag,
+/// and only patterns that can't backtrack for exponential time.
 enum PatternRegex {
   typealias Results = (shouldMatch: [PatternSampleResult], shouldNotMatch: [PatternSampleResult])
 
   private static let maxLength = 200
-
-  private static let script = """
-    function zoonkTest(pattern, samples) {
-      let regex;
-      try { regex = new RegExp(pattern, "u"); } catch (error) { return null; }
-      return samples.map((sample) => {
-        const found = regex.exec(sample);
-        return found ? [found.index, found.index + found[0].length] : [-1, -1];
-      });
-    }
-    """
 
   /// Core's `compileSafeRegex` scan: a repeated group that itself repeats or alternates (like
   /// `(a+)+` or `(a|aa)*`) is refused, as are backreferences.
@@ -167,29 +154,39 @@ enum PatternRegex {
 
     return pattern.utf16.count <= maxLength && pattern.firstMatch(of: /\\[1-9k]/) == nil
   }
+}
 
-  /// Every sample tested; nil when the pattern is unsafe or doesn't compile.
-  static func test(_ pattern: String, regex: PatternTesterFields.Regex) -> Results? {
-    guard isSafe(pattern), let context = JSContext() else {
+/// Tests patterns in a worker on a hidden page, like main, so one that backtracks without end stops
+/// at main's `REGEX_TIME_LIMIT_MS` and reads as unable to run: grading stops a regex after 50 ms on
+/// the server, so it fails there too. Closing the preview, or dropping it, releases the page.
+@MainActor
+final class PatternRegexPreview {
+  private let page = CodeSandboxPage(html: CodeWorkerSources.regexPage(timeLimit: 1))
+
+  /// Every sample tested; nil when the pattern is unsafe, doesn't compile or runs out of time.
+  func test(_ pattern: String, regex: PatternTesterFields.Regex) async -> PatternRegex.Results? {
+    guard PatternRegex.isSafe(pattern) else {
       return nil
     }
 
-    context.evaluateScript(script)
     let samples = regex.shouldMatch + regex.shouldNotMatch
 
     guard
-      let found = context.objectForKeyedSubscript("zoonkTest")?
-        .call(withArguments: [pattern, samples]),
-      !found.isNull, let ranges = found.toArray() as? [[NSNumber]]
+      let result = try? await page.call(
+        "return await run({ flags: 'u', samples, source })",
+        arguments: ["samples": samples, "source": pattern]) as? [String: Any],
+      result["stop"] as? String == "done",
+      let matches = result["matches"] as? [Any]
     else {
       return nil
     }
 
-    let results = zip(samples, ranges).enumerated().map { index, item in
-      let (sample, range) = item
-      let start = range.first?.intValue ?? -1
-      let end = range.last?.intValue ?? -1
-      let match = start >= 0 ? start..<end : nil
+    let results = zip(samples, matches).enumerated().map { index, item in
+      let (sample, found) = item
+      let bounds = found as? [String: Any]
+      let match = (bounds?["start"] as? Int).flatMap { start in
+        (bounds?["end"] as? Int).map { start..<$0 }
+      }
       let shouldMatch = index < regex.shouldMatch.count
 
       return PatternSampleResult(
@@ -201,16 +198,9 @@ enum PatternRegex {
       Array(results.dropFirst(regex.shouldMatch.count))
     )
   }
-}
 
-/// JavaScriptCore can't stop a slow pattern, so the preview runs one at a time, off the main thread,
-/// and skips a pattern the learner changed while it waited. Core grades the answer, within its time
-/// limit.
-actor PatternRegexPreview {
-  static let shared = PatternRegexPreview()
-
-  func test(_ pattern: String, regex: PatternTesterFields.Regex) -> PatternRegex.Results? {
-    Task.isCancelled ? nil : PatternRegex.test(pattern, regex: regex)
+  func close() {
+    page.close()
   }
 }
 
