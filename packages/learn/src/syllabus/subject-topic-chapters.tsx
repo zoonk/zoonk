@@ -2,14 +2,20 @@
 
 import { type SyllabusChapter } from "@zoonk/core/view-models/syllabus/contract";
 import { cn } from "@zoonk/ui/lib/utils";
-import { BookOpenIcon, ChevronRightIcon } from "lucide-react";
+import { BookOpenIcon } from "lucide-react";
+import { ListRowChevron, ListRowChevronSpace } from "../_components/list-group";
 import { LearnLink } from "../learn-link";
 import { FarTopicSheet } from "../topic-outline/far-topic-sheet";
 import { useTopicOutlineActions } from "../topic-outline/topic-outline-actions";
 import { useWritingLine } from "../topic-outline/use-far-topic-line";
 
-const TOPIC_CHAPTER_CLASS =
-  "text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 -mx-2 flex min-h-11 items-center gap-2 rounded-lg px-2 text-sm transition-colors outline-none focus-visible:ring-[3px]";
+/** A chapter under its topic ends like the topic's own row: its words, then the chevron's slot. */
+const TOPIC_CHAPTER_ROW_CLASS = "text-muted-foreground flex min-h-11 items-center gap-3 text-sm";
+
+const TOPIC_CHAPTER_CLASS = cn(
+  TOPIC_CHAPTER_ROW_CLASS,
+  "hover:text-foreground focus-visible:ring-ring/50 -mx-2.5 rounded-lg px-2.5 transition-colors outline-none focus-visible:ring-[3px]",
+);
 
 function TopicChapterLink({
   chapter,
@@ -46,18 +52,25 @@ function TopicChapterLink({
           nextDate={chapter.nextDate}
           skillId={chapter.skillId}
           title={chapter.title}
-          trigger={<button className={cn(TOPIC_CHAPTER_CLASS, "w-full text-left")} type="submit" />}
+          trigger={
+            <button
+              className={cn(TOPIC_CHAPTER_CLASS, "w-[calc(100%+1.25rem)] text-left")}
+              type="submit"
+            />
+          }
         >
           {content}
           {line}
+          <ListRowChevronSpace />
         </FarTopicSheet>
       );
     }
 
     return (
-      <span className="text-muted-foreground flex min-h-11 items-center gap-2 text-sm">
+      <span className={TOPIC_CHAPTER_ROW_CLASS}>
         {content}
         {line}
+        <ListRowChevronSpace />
       </span>
     );
   }
@@ -65,7 +78,7 @@ function TopicChapterLink({
   return (
     <LearnLink className={TOPIC_CHAPTER_CLASS} href={chapterHref(chapter.chapterId)}>
       {content}
-      <ChevronRightIcon aria-hidden="true" className="size-4 shrink-0" />
+      <ListRowChevron />
     </LearnLink>
   );
 }

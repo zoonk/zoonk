@@ -9,6 +9,7 @@ import { ChoiceRows } from "../_components/choice-rows";
 import { Disclosure } from "../_components/disclosure";
 import { ListGroup, ListRowIcon } from "../_components/list-group";
 import { SettingRow } from "../_components/setting-rows";
+import { FactSegments } from "../_components/task-meta";
 import { useFormatDuration } from "../_utils/time-format";
 
 export type BaseChoice = PlanBaseView["choice"];
@@ -22,11 +23,17 @@ function useChoiceName() {
 
   const names: Record<BaseChoice, string> = {
     deep: t({
-      description: "Choice to study a prerequisite with all its lessons, in depth.",
-      message: "In depth",
+      description: "Choice to study a prerequisite with all its lessons.",
+      message: "Every lesson",
     }),
-    essential: t("Essentials"),
-    quick: t("Quick lesson"),
+    essential: t({
+      description: "Choice to study only the first, most important lessons of a prerequisite.",
+      message: "First lessons only",
+    }),
+    quick: t({
+      description: "Choice to study a prerequisite as one short lesson.",
+      message: "One short lesson each",
+    }),
     skip: t("Skip"),
   };
 
@@ -84,15 +91,7 @@ export function AllBasesChoice({
   const choiceName = useChoiceName();
   const formatDuration = useFormatDuration();
 
-  const descriptions: Record<BaseChoice, string> = {
-    deep: t("Every lesson"),
-    essential: t("The first third of the lessons"),
-    quick: t("One short lesson each"),
-    skip: t("Leave them out of your plan"),
-  };
-
   const choices = listOpenChoices(items).map((choice) => ({
-    description: descriptions[choice],
     label: choiceName(choice),
     mark: choice === recommended ? t("Recommended") : undefined,
     trailing:
@@ -149,7 +148,7 @@ function SubjectChoice({
     <SettingRow
       className="max-sm:flex-col max-sm:items-stretch max-sm:gap-y-0 max-sm:pb-3"
       description={
-        minutes > 0 ? t("{names} · {time}", { names, time: formatDuration(minutes) }) : names
+        <FactSegments facts={minutes > 0 ? [names, formatDuration(minutes)] : [names]} />
       }
       descriptionId={descriptionId}
       label={<label htmlFor={selectId}>{area}</label>}
@@ -174,7 +173,7 @@ function SubjectChoice({
       >
         {value === null && (
           <NativeSelectOption disabled value={MIXED}>
-            {t("Different choices")}
+            {t("Mixed")}
           </NativeSelectOption>
         )}
 

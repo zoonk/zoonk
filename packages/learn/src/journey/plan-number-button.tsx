@@ -14,11 +14,25 @@ export type PlanNumber = {
   value: React.ReactNode;
 };
 
+/**
+ * A number's label, value and foot share the rows of the list around it (`NUMBER_ROWS_CLASS`), so
+ * two numbers side by side keep their values on one line and their feet on another, whichever
+ * wraps.
+ */
+const ROWS_CLASS = "row-span-3 grid grid-rows-subgrid";
+
+export const NUMBER_ROWS_CLASS = "grid-rows-[auto_auto_auto]";
+export const NUMBER_ITEM_CLASS = ROWS_CLASS;
+
 const NUMBER_CLASS = {
-  stats:
-    "-m-2 w-[calc(100%+1rem)] rounded-lg p-2 hover:bg-muted/70 focus-visible:ring-ring/50 flex min-w-0 flex-col gap-1.5 text-left outline-none transition-colors focus-visible:ring-[3px]",
-  tiles:
-    "ring-border rounded-xl hover:bg-muted/50 focus-visible:ring-ring/50 flex h-full w-full min-w-0 flex-col gap-1.5 p-3 text-left ring-1 outline-none transition-colors ring-inset focus-visible:ring-[3px]",
+  stats: cn(
+    ROWS_CLASS,
+    "hover:bg-muted/70 focus-visible:ring-ring/50 -m-2 w-[calc(100%+1rem)] min-w-0 rounded-lg p-2 text-left transition-colors outline-none focus-visible:ring-[3px]",
+  ),
+  tiles: cn(
+    ROWS_CLASS,
+    "ring-border hover:bg-muted/50 focus-visible:ring-ring/50 w-full min-w-0 rounded-xl p-3 text-left ring-1 transition-colors outline-none ring-inset focus-visible:ring-[3px]",
+  ),
 } as const;
 
 export type PlanNumberVariant = keyof typeof NUMBER_CLASS;
@@ -40,10 +54,10 @@ export function NumberButton({
   return (
     <button aria-haspopup="dialog" className={NUMBER_CLASS[variant]} onClick={onOpen} type="button">
       <span className={NUMBER_LABEL_CLASS[variant]}>{number.label}</span>{" "}
-      {/* The spaces keep "Pace On pace" phrases apart for screen readers; the column hides them. */}
+      {/* The spaces keep "Schedule Up to date" apart for screen readers; the column hides them. */}
       <span
         className={cn(
-          "text-2xl leading-tight",
+          "mt-1.5 text-2xl leading-tight",
           number.numeric ? "text-readout" : "font-semibold tracking-[-0.03em]",
         )}
       >
@@ -53,16 +67,20 @@ export function NumberButton({
           number.value
         )}
       </span>
-      {number.share !== undefined && (
-        <Meter className="my-0.5">
-          <MeterFill className="bg-success" share={number.share} />
-        </Meter>
-      )}
-      {number.detail && (
-        <>
-          {" "}
-          <span className="text-muted-foreground text-xs leading-snug">{number.detail}</span>
-        </>
+      {(number.share !== undefined || number.detail) && (
+        <span className="mt-1.5 flex min-w-0 flex-col gap-1.5 self-end">
+          {number.share !== undefined && (
+            <Meter className="my-0.5">
+              <MeterFill className="bg-success" share={number.share} />
+            </Meter>
+          )}
+          {number.detail && (
+            <>
+              {" "}
+              <span className="text-muted-foreground text-xs leading-snug">{number.detail}</span>
+            </>
+          )}
+        </span>
       )}
     </button>
   );

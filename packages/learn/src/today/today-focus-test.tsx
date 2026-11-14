@@ -17,6 +17,7 @@ import {
   SuggestionResult,
   SuggestionSaveError,
   SuggestionSummary,
+  useMainActionVariant,
 } from "../_components/suggestion";
 import { useFocusTestLine, useFocusTestTitle } from "../focus-test/use-focus-test-texts";
 import { useTodayScreen } from "./today-context";
@@ -29,6 +30,7 @@ function FocusTestNotice({
   onDismiss: (kept: FocusTestOffer | null) => void;
 }) {
   const t = useExtracted();
+  const mainVariant = useMainActionVariant();
   const { actions } = useTodayScreen();
   const title = useFocusTestTitle();
   const line = useFocusTestLine();
@@ -85,8 +87,13 @@ function FocusTestNotice({
             <SuggestionDescription>{line.timed(offer.minutes)}</SuggestionDescription>
 
             <SuggestionActions>
-              <SuggestionAction action={start} busy={starting} disabled={busy}>
-                {t("Start")}
+              <SuggestionAction
+                action={start}
+                busy={starting}
+                disabled={busy}
+                variant={mainVariant}
+              >
+                {t("Start the test")}
               </SuggestionAction>
 
               <SuggestionAction action={dismiss} disabled={busy} variant="outline">

@@ -2998,24 +2998,14 @@ msgid "Page not found"
 msgstr "Page not found"
 
 #: src/components/auth-gate.tsx
-msgctxt "xhBZ5m"
-msgid "Create an account to use this page"
-msgstr "Create an account to use this page"
-
-#: src/components/auth-gate.tsx
 msgctxt "DrBO6u"
 msgid "Your plan and progress move to your account, safe on any device."
 msgstr "Your plan and progress move to your account, safe on any device."
 
 #: src/components/auth-gate.tsx
-msgctxt "HVR09O"
-msgid "Your session ended"
-msgstr "Your session ended"
-
-#: src/components/auth-gate.tsx
-msgctxt "acWSVG"
-msgid "Log in to continue"
-msgstr "Log in to continue"
+msgctxt "xhBZ5m"
+msgid "Create an account to use this page"
+msgstr "Create an account to use this page"
 
 #: src/components/auth-gate.tsx
 msgctxt "pb0Q20"
@@ -3023,9 +3013,19 @@ msgid "Log in to pick up your plan."
 msgstr "Log in to pick up your plan."
 
 #: src/components/auth-gate.tsx
+msgctxt "HVR09O"
+msgid "Your session ended"
+msgstr "Your session ended"
+
+#: src/components/auth-gate.tsx
 msgctxt "eSXQ3z"
 msgid "Log in to pick up where you left off, or start free."
 msgstr "Log in to pick up where you left off, or start free."
+
+#: src/components/auth-gate.tsx
+msgctxt "acWSVG"
+msgid "Log in to continue"
+msgstr "Log in to continue"
 
 #: src/components/auth-gate.tsx
 msgctxt "77LoTm"

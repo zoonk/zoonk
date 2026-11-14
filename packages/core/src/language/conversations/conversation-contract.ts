@@ -215,7 +215,7 @@ export const languageConversationSetupSchema = z
       .boolean()
       .meta({
         description:
-          "This connection continues the call's talk window after a drop: keep the call so far on screen and send its turns with the SDP offer. False when it opens a new call: start from nothing",
+          "True when this connection continues the call's talk window after a drop: the call so far still stands, and its turns go with the SDP offer. False when it opens a new call",
       }),
     deadlineAt: z.iso.datetime().meta({ description: "When the server hangs the call up" }),
     script: liveCallScriptSchema,

@@ -37,10 +37,7 @@ export function useBasesAdvice() {
     const data = await requestWithin(() => actions.adviseOnBases());
 
     if (data?.ready && data.recommended) {
-      setState({
-        advice: { daysLeft: data.daysLeft, recommended: data.recommended },
-        status: "answered",
-      });
+      setState({ advice: data.recommended, status: "answered" });
 
       return;
     }
@@ -48,7 +45,7 @@ export function useBasesAdvice() {
     setState({ status: data ? "building" : "failed" });
   };
 
-  return { ask, recommended: state.status === "answered" ? state.advice.recommended : null, state };
+  return { ask, recommended: state.status === "answered" ? state.advice : null, state };
 }
 
 export function BasesAdvice({

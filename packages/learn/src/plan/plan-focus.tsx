@@ -15,7 +15,6 @@ import { CheckIcon, CrosshairIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { createContext, use, useId, useState } from "react";
 import { ListRowChevron } from "../_components/list-group";
-import { ChangeSaveError } from "../_components/save-error";
 import { SheetHeader } from "../_components/sheet-header";
 import { FactSegments } from "../_components/task-meta";
 import { useFocusTestRowFacts } from "../focus-test/use-focus-test-texts";
@@ -129,7 +128,7 @@ function FocusChoices({ onSaved }: { onSaved: () => void }) {
   const format = useFormatter();
   const { focusTestHref, plan } = usePlanScreen();
   const testHref = plan.focusTest ? focusTestHref : undefined;
-  const { change, failed, isPending } = usePlanChange();
+  const { change, isPending } = usePlanChange();
   const areas = listFocusChoices(plan.areas);
   const current = areas.filter((area) => area.focused).map((area) => area.name);
   const [chosen, setChosen] = useState<string[]>(current);
@@ -213,8 +212,6 @@ function FocusChoices({ onSaved }: { onSaved: () => void }) {
         >
           {chosen.length === 0 && current.length > 0 ? t("Remove focus") : t("Save")}
         </Button>
-
-        {failed && <ChangeSaveError />}
       </div>
     </>
   );

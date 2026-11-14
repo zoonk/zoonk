@@ -2998,24 +2998,14 @@ msgid "Page not found"
 msgstr "페이지를 찾을 수 없어요"
 
 #: src/components/auth-gate.tsx
-msgctxt "xhBZ5m"
-msgid "Create an account to use this page"
-msgstr "이 페이지를 이용하려면 계정을 만드세요"
-
-#: src/components/auth-gate.tsx
 msgctxt "DrBO6u"
 msgid "Your plan and progress move to your account, safe on any device."
 msgstr "계획과 진도가 계정으로 옮겨져 어떤 기기에서든 안전하게 학습을 이어갈 수 있어요."
 
 #: src/components/auth-gate.tsx
-msgctxt "HVR09O"
-msgid "Your session ended"
-msgstr "로그인 세션이 끝났어요"
-
-#: src/components/auth-gate.tsx
-msgctxt "acWSVG"
-msgid "Log in to continue"
-msgstr "계속하려면 로그인하세요"
+msgctxt "xhBZ5m"
+msgid "Create an account to use this page"
+msgstr "이 페이지를 이용하려면 계정을 만드세요"
 
 #: src/components/auth-gate.tsx
 msgctxt "pb0Q20"
@@ -3023,9 +3013,19 @@ msgid "Log in to pick up your plan."
 msgstr "로그인해 계획을 이어가세요."
 
 #: src/components/auth-gate.tsx
+msgctxt "HVR09O"
+msgid "Your session ended"
+msgstr "로그인 세션이 끝났어요"
+
+#: src/components/auth-gate.tsx
 msgctxt "eSXQ3z"
 msgid "Log in to pick up where you left off, or start free."
 msgstr "로그인해 이어서 학습하거나 무료로 시작하세요."
+
+#: src/components/auth-gate.tsx
+msgctxt "acWSVG"
+msgid "Log in to continue"
+msgstr "계속하려면 로그인하세요"
 
 #: src/components/auth-gate.tsx
 msgctxt "77LoTm"

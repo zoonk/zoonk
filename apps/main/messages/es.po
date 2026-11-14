@@ -2998,24 +2998,14 @@ msgid "Page not found"
 msgstr "Página no encontrada"
 
 #: src/components/auth-gate.tsx
-msgctxt "xhBZ5m"
-msgid "Create an account to use this page"
-msgstr "Crea una cuenta para usar esta página"
-
-#: src/components/auth-gate.tsx
 msgctxt "DrBO6u"
 msgid "Your plan and progress move to your account, safe on any device."
 msgstr "Tu plan y tu progreso pasan a tu cuenta y se mantienen seguros en cualquier dispositivo."
 
 #: src/components/auth-gate.tsx
-msgctxt "HVR09O"
-msgid "Your session ended"
-msgstr "Tu sesión terminó"
-
-#: src/components/auth-gate.tsx
-msgctxt "acWSVG"
-msgid "Log in to continue"
-msgstr "Inicia sesión para continuar"
+msgctxt "xhBZ5m"
+msgid "Create an account to use this page"
+msgstr "Crea una cuenta para usar esta página"
 
 #: src/components/auth-gate.tsx
 msgctxt "pb0Q20"
@@ -3023,9 +3013,19 @@ msgid "Log in to pick up your plan."
 msgstr "Inicia sesión para retomar tu plan."
 
 #: src/components/auth-gate.tsx
+msgctxt "HVR09O"
+msgid "Your session ended"
+msgstr "Tu sesión terminó"
+
+#: src/components/auth-gate.tsx
 msgctxt "eSXQ3z"
 msgid "Log in to pick up where you left off, or start free."
 msgstr "Inicia sesión para seguir donde lo dejaste o empieza gratis."
+
+#: src/components/auth-gate.tsx
+msgctxt "acWSVG"
+msgid "Log in to continue"
+msgstr "Inicia sesión para continuar"
 
 #: src/components/auth-gate.tsx
 msgctxt "77LoTm"

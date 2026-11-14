@@ -35,6 +35,7 @@ export type FocusTestPlanActions = {
 
 export function useProposalAnswer(plan: FocusTestPlanActions | null) {
   const [answer, setAnswer] = useState<ProposalAnswer | null>(null);
+  const [repriced, setRepriced] = useState<Proposal | null>(null);
   const [failed, setFailed] = useState(false);
   const [pressed, setPressed] = useState<Decision | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -46,13 +47,16 @@ export function useProposalAnswer(plan: FocusTestPlanActions | null) {
       const change = (await plan?.decide({ changeId, status }).catch(() => null)) ?? null;
       setFailed(!change);
 
-      if (change) {
+      // Accepted, and still waiting: its numbers moved, so it asks again with today's.
+      if (change && status === "applied" && change.status === "proposed") {
+        setRepriced(change);
+      } else if (change) {
         setAnswer({ change, decision: status });
       }
     });
   };
 
-  return { answer, decide, failed, pressed: isPending ? pressed : null };
+  return { answer, decide, failed, pressed: isPending ? pressed : null, repriced };
 }
 
 export function FocusTestProposal({
@@ -60,12 +64,14 @@ export function FocusTestProposal({
   onDecide,
   pressed,
   proposal,
+  repriced,
   rows,
 }: {
   failed: boolean;
   onDecide: (status: Decision) => void;
   pressed: Decision | null;
   proposal: Proposal;
+  repriced: boolean;
   rows: readonly FocusRow[];
 }) {
   const t = useExtracted();
@@ -110,7 +116,7 @@ export function FocusTestProposal({
       </OnboardingHeading>
 
       <FocusSubjects rows={rows} />
-      <PlanEffectDiff effect={proposal.effect} />
+      <PlanEffectDiff dateKind="exam" effect={proposal.effect} repriced={repriced} />
     </OnboardingColumn>
   );
 }

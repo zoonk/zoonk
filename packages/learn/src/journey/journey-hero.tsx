@@ -18,9 +18,15 @@ import { CanDoList } from "../language/progress/can-do-list";
 import { LevelValue } from "../language/progress/level-value";
 import { SkillLevelsCard } from "../language/progress/skill-levels-card";
 import { SpeakingMockCard } from "../language/progress/speaking-mock-card";
-import { PaceDetails, usePaceNumber } from "./pace-details";
-import { NumberButton, type PlanNumber, type PlanNumberVariant } from "./plan-number-button";
+import {
+  NUMBER_ITEM_CLASS,
+  NUMBER_ROWS_CLASS,
+  NumberButton,
+  type PlanNumber,
+  type PlanNumberVariant,
+} from "./plan-number-button";
 import { PreparationDetails } from "./preparation/preparation-details";
+import { ScheduleDetails, useScheduleNumber } from "./schedule-details";
 
 const PERCENT = 100;
 
@@ -39,13 +45,8 @@ export type JourneyStanding =
       startSpeakingMock: () => Promise<CallStartOutcome>;
     };
 
-function WeekGain({ gain }: { gain: number }) {
+function WeekGain({ points }: { points: number }) {
   const t = useExtracted();
-  const points = Math.round(gain * PERCENT);
-
-  if (points === 0) {
-    return t("No change this week");
-  }
 
   return (
     <span className={cn(points > 0 && "text-success-text")}>
@@ -62,8 +63,10 @@ function useStandingNumber(standing: JourneyStanding): PlanNumber {
   const formatGoalProgress = useFormatGoalProgress();
 
   if (standing.kind === "preparation" && standing.forExam) {
+    const points = Math.round(standing.preparation.weekGain * PERCENT);
+
     return {
-      detail: <WeekGain gain={standing.preparation.weekGain} />,
+      detail: points === 0 ? null : <WeekGain points={points} />,
       label: t("Preparation"),
       numeric: true,
       share: standing.preparation.value,
@@ -111,9 +114,11 @@ function useStandingTitle(standing: JourneyStanding): string {
 
 function StandingBody({
   examHref,
+  number,
   standing,
 }: {
   examHref: string | null;
+  number: PlanNumber;
   standing: JourneyStanding;
 }) {
   if (standing.kind === "preparation") {
@@ -123,7 +128,9 @@ function StandingBody({
         forExam={standing.forExam}
         lessons={standing.lessons}
         preparation={standing.preparation}
+        share={number.share ?? 0}
         stillNeeded={standing.stillNeeded}
+        value={number.value}
       />
     );
   }
@@ -193,25 +200,26 @@ export function PlanNumbers({
   variant: PlanNumberVariant;
 }) {
   const t = useExtracted();
-  const [open, setOpen] = useState<"pace" | "standing" | null>(null);
+  const [open, setOpen] = useState<"schedule" | "standing" | null>(null);
   const title = useStandingTitle(standing);
   const standingNumber = useStandingNumber(standing);
-  const paceNumber = usePaceNumber({ paused, status: status ?? { kind: "onTrack" } });
+  const scheduleNumber = useScheduleNumber({ paused, status: status ?? { kind: "onTrack" } });
 
-  const sheetChange = (sheet: "pace" | "standing") => (next: boolean) =>
+  const sheetChange = (sheet: "schedule" | "standing") => (next: boolean) =>
     setOpen(next ? sheet : null);
 
   return (
     <>
       <ul
         className={cn(
-          "grid grid-cols-2 items-stretch",
-          variant === "tiles" ? "gap-2" : "gap-x-6",
+          "grid grid-cols-2",
+          NUMBER_ROWS_CLASS,
+          variant === "tiles" ? "gap-x-2" : "gap-x-6",
           className,
         )}
         data-slot="journey-standing"
       >
-        <li className={cn("min-w-0", !status && "col-span-2")}>
+        <li className={cn(NUMBER_ITEM_CLASS, "min-w-0", !status && "col-span-2")}>
           <NumberButton
             number={standingNumber}
             onOpen={() => setOpen("standing")}
@@ -219,23 +227,27 @@ export function PlanNumbers({
           />
         </li>
         {status && (
-          <li className="min-w-0">
-            <NumberButton number={paceNumber} onOpen={() => setOpen("pace")} variant={variant} />
+          <li className={cn(NUMBER_ITEM_CLASS, "min-w-0")}>
+            <NumberButton
+              number={scheduleNumber}
+              onOpen={() => setOpen("schedule")}
+              variant={variant}
+            />
           </li>
         )}
       </ul>
 
       <NumberSheet onOpenChange={sheetChange("standing")} open={open === "standing"} title={title}>
-        <StandingBody examHref={examHref} standing={standing} />
+        <StandingBody examHref={examHref} number={standingNumber} standing={standing} />
       </NumberSheet>
 
       {status && (
         <NumberSheet
-          onOpenChange={sheetChange("pace")}
-          open={open === "pace"}
-          title={t("Your pace")}
+          onOpenChange={sheetChange("schedule")}
+          open={open === "schedule"}
+          title={t("Your schedule")}
         >
-          <PaceDetails
+          <ScheduleDetails
             logbookHref={logbookHref}
             onAdjust={() => {
               setOpen(null);

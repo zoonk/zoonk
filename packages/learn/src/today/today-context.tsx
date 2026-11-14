@@ -1,6 +1,7 @@
 "use client";
 
 import { type SuggestedGoalView } from "@zoonk/core/goals/suggestions/contract";
+import { type MemoryInsightView } from "@zoonk/core/memory/contract";
 import { type PlanChangeDecisionInput, type PlanOperation } from "@zoonk/core/plans/contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { type TodayView } from "@zoonk/core/view-models/today/get";
@@ -20,10 +21,11 @@ export type TodayActions = {
   addExtraTime: () => Promise<boolean>;
   /** Today reads itself again once the goal is archived, and shows the learner's next goal. */
   archiveGoal: () => Promise<boolean>;
+  /** The insight as it stands after the answer; null when it wasn't saved. */
   answerInsight: (input: {
     insightId: string;
     status: "accepted" | "dismissed";
-  }) => Promise<boolean>;
+  }) => Promise<MemoryInsightView | null>;
   answerSuggestedGoal: (input: {
     status: "accepted" | "dismissed";
     suggestion: SuggestedGoalView;

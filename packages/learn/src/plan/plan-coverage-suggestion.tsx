@@ -218,7 +218,7 @@ export function CoverageSuggestion({ coverage }: { coverage: Coverage | null }) 
   const answered = found && coverage ? answerOffer({ covered, intent, time: found }) : null;
   const offer = courseOffer ?? answered;
   const item: SlotItem = { key: "coverage", kind: "coverage" };
-  const { apply, failed, isPending } = useApplyPreview(item);
+  const { apply, isPending } = useApplyPreview(item);
   const title = offer?.title ?? covered;
 
   const flags = getCardFlags({
@@ -260,7 +260,6 @@ export function CoverageSuggestion({ coverage }: { coverage: Coverage | null }) 
     // On a phone the tap on "View" asks for the time, so the sheet names it. A computer shows the
     // panel with no tap, and finding the time plans the goal many times: there the button asks.
     <PlanChangeSuggestion
-      failed={failed}
       item={item}
       onOpen={() => void finder.find()}
       summary={covered}

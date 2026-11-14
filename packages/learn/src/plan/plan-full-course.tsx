@@ -4,7 +4,6 @@ import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
 import { Switch } from "@zoonk/ui/components/switch";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
-import { ChangeSaveError } from "../_components/save-error";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { usePlanScreen } from "./plan-context";
 import { usePlanChange } from "./use-plan-change";
@@ -75,7 +74,7 @@ export function FullCourseSwitch() {
   const course = useFullCourse();
   const text = useFullCourseText();
   const label = useKeepStudyingLabel();
-  const { change, failed, isPending } = usePlanChange();
+  const { change, isPending } = usePlanChange();
 
   // What follows the exam is asked when its date passes; a plan that already goes on can stop here.
   if (!course?.isExam || !course.on) {
@@ -105,8 +104,6 @@ export function FullCourseSwitch() {
           {finish}
         </p>
       )}
-
-      {failed && <ChangeSaveError />}
     </div>
   );
 }

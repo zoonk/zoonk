@@ -11,10 +11,9 @@ import {
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
 import { Toggle } from "@zoonk/ui/components/toggle";
-import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
-import { ChangeSaveError } from "../_components/save-error";
+import { EnterButton } from "../_components/enter-button";
 import { SheetHeader } from "../_components/sheet-header";
 import { WritingWait } from "../generation/writing-wait";
 import { type Choice, ChoiceList } from "../onboarding/choice-list";
@@ -75,10 +74,9 @@ function ToolChoiceForm({ onClose, tool }: { onClose: () => void; tool: PlanTool
   const choices = useToolChoices();
   const [choice, setChoice] = useState<ToolChoice | null>(tool.choice);
   const [system, setSystem] = useState<ToolSystem | null>(tool.system);
-  const { choose, failed, isPending, writing } = useToolChoice();
+  const { choose, isPending, writing } = useToolChoice();
   const needsSystem = choice === "setup" && system === null;
-  const canSave = Boolean(choice) && !needsSystem && !isPending;
-  const saveRef = useEnterClick<HTMLButtonElement>({ enabled: canSave });
+  const canSave = Boolean(choice) && !needsSystem;
 
   const save = () => {
     if (choice && !needsSystem) {
@@ -115,15 +113,14 @@ function ToolChoiceForm({ onClose, tool }: { onClose: () => void; tool: PlanTool
         />
 
         {choice === "setup" && <SystemPicker onChange={setSystem} value={system} />}
-        {failed && <ChangeSaveError />}
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-2">
           <Button onClick={onClose} size="lg" type="button" variant="outline">
             {t("Cancel")}
           </Button>
-          <Button disabled={!canSave} focusableWhenDisabled ref={saveRef} size="lg" type="submit">
+          <EnterButton busy={isPending} disabled={!canSave} size="lg" type="submit">
             {t("Save")}
-          </Button>
+          </EnterButton>
         </div>
       </form>
     </DrawerContent>

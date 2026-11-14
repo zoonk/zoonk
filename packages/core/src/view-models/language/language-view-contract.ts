@@ -102,7 +102,7 @@ export type NoticedPattern = z.infer<typeof noticedPatternSchema>;
 
 const duePronunciationSchema = z.object({
   count: z.int().min(1),
-  words: z.array(z.string()).meta({ description: "The first few, to name on the row" }),
+  words: z.array(z.string()).meta({ description: "The first few" }),
 });
 
 export const practiceCallSchema = z
@@ -120,7 +120,7 @@ export const practiceCallSchema = z
       .nullable()
       .meta({
         description:
-          "When no call time is left: the call time that's used (today's, this month's, or a guest's plan without calls), to say until when calls come back. Never show how much call time a plan has",
+          "When no call time is left: which call time is used up (today's, this month's, or a guest's plan without calls), which is when calls come back",
       }),
     minutes: z
       .array(z.int())
@@ -131,12 +131,9 @@ export const practiceCallSchema = z
     paused: z
       .boolean()
       .meta({
-        description:
-          "Calls are currently paused for this learner; show this before choosing a call length",
+        description: "Calls are currently paused for this learner, whatever the call length",
       }),
-    plusMinutes: z
-      .array(z.int())
-      .meta({ description: "Longer lengths that come with Plus, shown locked with the Plus mark" }),
+    plusMinutes: z.array(z.int()).meta({ description: "Longer lengths that come with Plus" }),
   })
   .meta({ id: "LanguagePracticeCall" });
 
@@ -146,7 +143,7 @@ export const languageUnitViewSchema = z
       .boolean()
       .meta({
         description:
-          "Offer the unit's chapter test while lessons remain, unless it was failed today without a lesson studied in this unit since; available again on the next learner-local day",
+          "True while the unit's chapter test is available: lessons remain, and it wasn't failed today without a lesson studied in this unit since. A failed one is available again on the next learner-local day",
       }),
     conversation: practiceCallSchema,
     goalId: uuidSchema().nullable(),

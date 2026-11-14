@@ -1,4 +1,3 @@
-import { toCalendarPeriod } from "@zoonk/core/entitlements/contract";
 import {
   type GoalMindMapView,
   type GoalMindMapsView,
@@ -132,8 +131,18 @@ export function toMindMapLimit({
     return { retryAfterSeconds, status: "slowDown" };
   }
 
+  if (stop.period === "rolling30Days") {
+    return {
+      availableAt: stop.resetsAt ?? "",
+      period: "rolling30Days",
+      resource: "lessonStart",
+      status: "limitReached",
+      tier: "free",
+    };
+  }
+
   return {
-    period: toCalendarPeriod(stop.period ?? "day"),
+    period: stop.period ?? "day",
     resource: stop.resource ?? undefined,
     status: "limitReached",
     tier,

@@ -2998,24 +2998,14 @@ msgid "Page not found"
 msgstr "Page introuvable"
 
 #: src/components/auth-gate.tsx
-msgctxt "xhBZ5m"
-msgid "Create an account to use this page"
-msgstr "Crée un compte pour utiliser cette page"
-
-#: src/components/auth-gate.tsx
 msgctxt "DrBO6u"
 msgid "Your plan and progress move to your account, safe on any device."
 msgstr "Ton plan et ta progression sont transférés sur ton compte et restent en sécurité sur tous tes appareils."
 
 #: src/components/auth-gate.tsx
-msgctxt "HVR09O"
-msgid "Your session ended"
-msgstr "Ta session a pris fin"
-
-#: src/components/auth-gate.tsx
-msgctxt "acWSVG"
-msgid "Log in to continue"
-msgstr "Connecte-toi pour continuer"
+msgctxt "xhBZ5m"
+msgid "Create an account to use this page"
+msgstr "Crée un compte pour utiliser cette page"
 
 #: src/components/auth-gate.tsx
 msgctxt "pb0Q20"
@@ -3023,9 +3013,19 @@ msgid "Log in to pick up your plan."
 msgstr "Connecte-toi pour retrouver ton plan."
 
 #: src/components/auth-gate.tsx
+msgctxt "HVR09O"
+msgid "Your session ended"
+msgstr "Ta session a pris fin"
+
+#: src/components/auth-gate.tsx
 msgctxt "eSXQ3z"
 msgid "Log in to pick up where you left off, or start free."
 msgstr "Connecte-toi pour reprendre là où tu t’es arrêté, ou commence gratuitement."
+
+#: src/components/auth-gate.tsx
+msgctxt "acWSVG"
+msgid "Log in to continue"
+msgstr "Connecte-toi pour continuer"
 
 #: src/components/auth-gate.tsx
 msgctxt "77LoTm"
