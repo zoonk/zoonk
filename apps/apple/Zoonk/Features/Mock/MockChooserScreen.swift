@@ -190,6 +190,11 @@ private struct MockChooser: View {
 
     Section {
       ForEach(examOptions) { optionRow($0) }
+    } header: {
+      if !subjects.isEmpty {
+        SectionTitle(
+          Text("The exam", tableName: "Mock", comment: "Mock exams of a whole exam or exam day"))
+      }
     }
 
     if !subjects.isEmpty {
@@ -461,20 +466,18 @@ private struct MockChooser: View {
   }
 
   private func optionDetail(_ option: MockOption) -> String {
-    let covers = option.covers.map { $0.formatted(.list(type: .and)) }
-    let subjects =
-      severalDays && option.kind != .area && !option.areas.isEmpty
-      ? option.areas.formatted(.list(type: .and)) : nil
-    let asks = (covers.map { [$0] } ?? subjects.map { [$0] } ?? []) + option.written
-    let objective =
-      option.objectiveOnly && covers == nil
+    let subjects = severalDays && option.kind != .area ? option.areas : []
+    let parts = option.covers ?? subjects + option.written
+
+    if !parts.isEmpty {
+      return parts.formatted(.list(type: .and))
+    }
+
+    return option.objectiveOnly
       ? String(
         localized: "No written part", table: "Mock",
         comment: "A mock exam with only the exam's objective questions, without its essay")
-      : nil
-
-    return [asks.isEmpty ? nil : asks.formatted(.list(type: .and)), objective]
-      .compactMap { $0 }.joinedFacts()
+      : ""
   }
 
   /// `acceptingFewer` only after the learner pressed Start in the shorter mock exam's dialog.

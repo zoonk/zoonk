@@ -24,9 +24,13 @@ export function useFormatPlanDate() {
   const mountedAt = useMountTime();
   const today = plan?.today ?? toLocalIsoDate(mountedAt);
 
-  return (isoDate: string, { month = false }: { month?: boolean } = {}): string =>
+  return (
+    isoDate: string,
+    { month = false, weekday = false }: { month?: boolean; weekday?: boolean } = {},
+  ): string =>
     format.dateTime(isoDateToUtc(isoDate), {
       ...STYLE_OPTIONS[getPlanDateStyle({ isoDate, month, today })],
+      ...(weekday && { weekday: "short" }),
       timeZone: "UTC",
     });
 }

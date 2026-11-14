@@ -585,7 +585,7 @@ struct TodayExamMomentSection: View {
   }
 
   @ViewBuilder
-  private func details(_ words: (title: String, body: String?)) -> some View {
+  private func details(_ words: ExamMoment.Words) -> some View {
     Text(words.title)
       .typeStyle(.body.weight(.semibold))
       .foregroundStyle(Color(.foreground))
@@ -596,10 +596,7 @@ struct TodayExamMomentSection: View {
         .typeStyle(.data)
     }
 
-    if let body = words.body {
-      Text(body)
-        .foregroundStyle(.mutedForeground)
-    }
+    ExamMomentBody(words: words)
 
     ExamChecklistRows(moment: moment, checked: $checked)
 
