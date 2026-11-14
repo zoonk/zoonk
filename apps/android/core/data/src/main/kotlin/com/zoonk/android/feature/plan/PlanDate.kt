@@ -7,30 +7,29 @@ import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanDay
 import kotlinx.datetime.toJavaLocalDate
 import java.time.LocalDate
-import java.time.temporal.ChronoUnit
 import java.util.Date
 import java.util.Locale
-import kotlin.math.abs
+
+/** Main's `isInAnotherYear`: a date outside today's calendar year names its year, so it never reads as this year's. */
+fun isInAnotherYear(
+    date: LocalDate,
+    today: LocalDate,
+): Boolean = date.year != today.year
 
 /**
- * A day in the plan as main's `PlanDateText` writes it: "Nov 3", with the year only more than a
- * year away; [month] for a date standing for its month ("Nov").
+ * A day in the plan as main's `formatPlanDate` writes it: "Nov 3", with the year when it's in another
+ * year; [month] for a date standing for its month ("Nov"), [weekday] for an exam's day ("Sat, Nov 8").
  */
 fun formatPlanDate(
     date: LocalDate,
     today: LocalDate,
     locale: Locale,
     month: Boolean = false,
+    weekday: Boolean = false,
 ): String {
-    val near = abs(ChronoUnit.DAYS.between(today, date)) <= YEAR_AWAY_DAYS
-    val skeleton =
-        when {
-            month && near -> "MMM"
-            month -> "yMMM"
-            near -> "MMMd"
-            else -> "yMMMd"
-        }
-    return formatDay(date, skeleton, locale)
+    val year = if (isInAnotherYear(date, today)) "y" else ""
+    val day = if (month) "MMM" else "MMMd"
+    return formatDay(date, year + (if (weekday) "EEE" else "") + day, locale)
 }
 
 /** A calendar day carries no time zone, so it's formatted as a UTC instant in UTC. */
@@ -44,7 +43,6 @@ fun formatDay(
         .apply { timeZone = TimeZone.GMT_ZONE }
         .format(Date(date.toEpochDay() * MILLIS_PER_DAY))
 
-private const val YEAR_AWAY_DAYS = 365
 private const val MILLIS_PER_DAY = 86_400_000L
 
 val Plan.today: LocalDate

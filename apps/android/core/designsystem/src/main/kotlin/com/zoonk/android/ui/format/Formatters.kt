@@ -1,5 +1,6 @@
 package com.zoonk.android.ui.format
 
+import com.zoonk.android.feature.plan.isInAnotherYear
 import android.icu.math.BigDecimal
 import android.icu.text.DateFormat
 import android.icu.text.DateIntervalFormat
@@ -226,8 +227,6 @@ enum class DateStyle(
 
     /** "Wed, Oct 28": Today's date line. */
     WeekdayDayShort("MMMEEEd"),
-
-    WeekdayShort("EEE"),
 }
 
 fun formatDate(
@@ -236,7 +235,7 @@ fun formatDate(
     style: DateStyle = DateStyle.Day,
     today: LocalDate = LocalDate.now(),
 ): String {
-    val skeleton = if (style.yearWhenAnotherYear && date.year != today.year) "y${style.skeleton}" else style.skeleton
+    val skeleton = if (style.yearWhenAnotherYear && isInAnotherYear(date, today)) "y${style.skeleton}" else style.skeleton
     return formatUtc(Date(date.toEpochDay() * MILLIS_PER_DAY), skeleton, locale)
 }
 
