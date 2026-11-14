@@ -8890,7 +8890,7 @@
     },
     "/library/lessons/{lessonId}/starts": {
       "post": {
-        "description": "Starts a run of the lesson for the learner or guest. A new lesson counts toward the allowance once; restarting it is free, and a second start within half an hour resumes the same run with its `answers`, so the app opens the lesson where the learner left off. A refused start is `SLOW_DOWN` (429, try again after `Retry-After`) or `USAGE_LIMIT_REACHED` with `details.limit`: 403 asks a guest to sign up, 402 a free learner to subscribe, 429 Plus to come back later.",
+        "description": "Starts a run of the lesson for the learner or guest. A new lesson counts toward the allowance once; restarting it is free, and a second start within half an hour resumes the same run with its `answers`, where the learner left off. A refused start is `SLOW_DOWN` (429, try again after `Retry-After`) or `USAGE_LIMIT_REACHED` with `details.limit`: 403 asks a guest to sign up, 402 a free learner to subscribe, 429 Plus to come back later.",
         "operationId": "createLibraryLessonStart",
         "security": [
           {
@@ -11202,7 +11202,7 @@
     },
     "/questions/{questionId}/answers": {
       "post": {
-        "description": "Claims a pending or failed question and returns one grounded answer as an AI SDK UI message stream, whatever the question is about (a lesson, chapter, plan or mock). `lessonId` in the question routes is a Library lesson. A first question about a lesson screen that someone already asked there streams the saved shared answer right away, without counting against the allowance or reading memory. Otherwise the answer counts against the learner's tutor allowance (403 asks a guest to sign up, 402 a free learner to subscribe, 429 to slow down or come back after the limit resets, with `SLOW_DOWN` or `USAGE_LIMIT_REACHED` and details), and reads the learner's memory. Its `finish` event comes once the answer is saved, so the answer is done and the learner can ask again; a `data-memory` part may follow with what the exchange changed in memory (each change's `action`, `fact` and `previous` with `id` and `statement`), to show and undo with `POST /v1/me/memory/change-reversals`. In a goal's conversation with the buddy, a `data-plan-change` part carries the plan change the answer proposed (a `PlanChange` waiting for the learner's OK) as soon as it's saved; the question's `planChange` holds it too. A `data-plan-changes-replaced` part follows it with the `ids` of earlier proposals it replaced because it changes the same thing (their status is now `replaced`). When the buddy only acted (a plan change or an app tool) and wrote nothing, the answer is a short confirmation of what it put under it. The streamed text is provisional: right before `finish`, a `data-saved-answer` part carries the answer as it was saved (`answer`), its links checked, and replaces it. Only that text and answers read back from the questions routes link anything: a buddy answer links only the in-app paths of the web app it was given (pages such as `/today` or `/plan`, `/session?block={id}` for one of today's blocks, `/challenge/{planItemId}`), and the lesson tutor's only web addresses; render links from the streamed text as plain words.",
+        "description": "Claims a pending or failed question and returns one grounded answer as an AI SDK UI message stream, whatever the question is about (a lesson, chapter, plan or mock). `lessonId` in the question routes is a Library lesson. A first question about a lesson screen that someone already asked there streams the saved shared answer right away, without counting against the allowance or reading memory. Otherwise the answer counts against the learner's tutor allowance (403 asks a guest to sign up, 402 a free learner to subscribe, 429 to slow down or come back after the limit resets, with `SLOW_DOWN` or `USAGE_LIMIT_REACHED` and details), and reads the learner's memory. Its `finish` event comes once the answer is saved, so the answer is done and the learner can ask again; a `data-memory` part may follow with what the exchange changed in memory (each change's `action`, `fact` and `previous` with `id` and `statement`), which `POST /v1/me/memory/change-reversals` undoes. In a goal's conversation with the buddy, a `data-plan-change` part carries the plan change the answer proposed (a `PlanChange` waiting for the learner's OK) as soon as it's saved; the question's `planChange` holds it too. A `data-plan-changes-replaced` part follows it with the `ids` of earlier proposals it replaced because it changes the same thing (their status is now `replaced`). When the buddy only acted (a plan change or an app tool) and wrote nothing, the answer is a short confirmation of what it put under it. The streamed text is provisional: right before `finish`, a `data-saved-answer` part carries the answer as it was saved (`answer`), its links checked, and replaces it. Only that text and answers read back from the questions routes link anything: a buddy answer links only the in-app paths of the web app it was given (pages such as `/today` or `/plan`, `/session?block={id}` for one of today's blocks, `/challenge/{planItemId}`), and the lesson tutor's only web addresses. Links in the streamed text are unchecked.",
         "operationId": "createLessonQuestionAnswer",
         "security": [
           {
@@ -18593,7 +18593,7 @@
     },
     "/goals/{goalId}/mind-maps": {
       "get": {
-        "description": "A goal's Mind maps page. `chapters`: every chapter of the goal's scope that can have a map, finished or not (the plan's, and for a goal that follows a course every chapter of that course), in syllabus order, with its subject (an exam's notice subject or the plan's module) to group by, its number, whether the learner saved it, and its map's status, picture (`image.thumbnailUrl` for lists) and outline, so the chapter maps open with no further request. A chapter without one yet is `available` (POST `/goals/{goalId}/chapters/{chapterId}/mind-map/generations` makes it), `writingLessons`, `drawing`, or `failed`. Topics without a chapter yet and a language's units aren't listed. `lessonGroups`: each chapter's lesson maps, how many and which open (`GET /goals/{goalId}/chapters/{chapterId}/lesson-maps` reads them). `saved`: the Saved tab. `createOffer`: what `POST /goals/{goalId}/mind-maps/generations` would start now. `firstTab`: the tab to open first. While a map is `drawing` GET this again every 5 seconds, and every 15 while one is only `writingLessons`.",
+        "description": "A goal's Mind maps page. `chapters`: every chapter of the goal's scope that can have a map, finished or not (the plan's, and for a goal that follows a course every chapter of that course), in syllabus order, with its subject (an exam's notice subject or the plan's module), its number, whether the learner saved it, and its map's status, picture (`image.thumbnailUrl` for lists) and outline, so the chapter maps open with no further request. A chapter without one yet is `available` (POST `/goals/{goalId}/chapters/{chapterId}/mind-map/generations` makes it), `writingLessons`, `drawing`, or `failed`. Topics without a chapter yet and a language's units aren't listed. `lessonGroups`: each chapter's lesson maps, how many and which open (`GET /goals/{goalId}/chapters/{chapterId}/lesson-maps` reads them). `saved`: the maps the learner saved. `createOffer`: what `POST /goals/{goalId}/mind-maps/generations` would start now. `firstTab`: the tab to open first. While a map is `drawing` GET this again every 5 seconds, and every 15 while one is only `writingLessons`.",
         "operationId": "listGoalMindMaps",
         "security": [
           {
@@ -19651,7 +19651,7 @@
         }
       },
       "post": {
-        "description": "Starts one of the goal's mocks now (`shape` from the list), whenever and as often as the learner wants, its first section's clock running; then play it through /mocks/{id}. A running one is continued instead. It asks the shared bank's questions the learner never answered first. When the bank is short of them and the plan's fair use can have new ones written, it answers `needsQuestions`: POST /goals/{goalId}/mocks/generations, follow the run, and start again with `afterWriting`. A mock still well short of its questions with nothing to write now, or after the run, answers `short` with what it can ask (`questions` of `examQuestions`, in `minutes`): ask the learner, and start it with `acceptFewer` only if they agree, so a shorter mock never starts unannounced. Past fair use, or with `acceptFewer`, a mock of a subject or half a day asks questions the learner answered before for the rest, the missed ones first, then the ones answered longest ago (`reusedQuestions` on the mock); a full mock never does, so it asks fewer (`examQuestions` on the mock).",
+        "description": "Starts one of the goal's mocks now (`shape` from the list), whenever and as often as the learner wants, its first section's clock running; then play it through /mocks/{id}. A running one is continued instead. It asks the shared bank's questions the learner never answered first. When the bank is short of them and the plan's fair use can have new ones written, it answers `needsQuestions`: POST /goals/{goalId}/mocks/generations, follow the run, and start again with `afterWriting`. A mock still well short of its questions with nothing to write now, or after the run, answers `short` with what it can ask (`questions` of `examQuestions`, in `minutes`); `acceptFewer` starts it with those once the learner agreed, so a shorter mock never starts unannounced. Past fair use, or with `acceptFewer`, a mock of a subject or half a day asks questions the learner answered before for the rest, the missed ones first, then the ones answered longest ago (`reusedQuestions` on the mock); a full mock never does, so it asks fewer (`examQuestions` on the mock).",
         "operationId": "startAnytimeMock",
         "security": [
           {
@@ -23111,7 +23111,7 @@
     },
     "/me/study-reminder/offer": {
       "post": {
-        "description": "Send when the offer shows on the day's summary (`reminderOffer` in the session's summary). It's asked once per learner, so show it only when `claimed` is true.",
+        "description": "Send it as the offer (`reminderOffer` in the session's summary) is shown. A learner's offer is claimed once: `claimed` is true only for the call that claimed it.",
         "operationId": "claimCurrentUserStudyReminderOffer",
         "security": [
           {
@@ -24639,7 +24639,7 @@
     },
     "/study-sessions/{sessionId}/catch-up-blocks": {
       "post": {
-        "description": "\"Catch up today\": the lessons earlier days left that the day's normal time didn't fit (`catchUp.later` on the session) join the end of today's session, in plan order, so the learner is back on pace once they're done. Without it they come first on the next days. A finished day opens again. Only while the day offers it (`catchUp.later.offered`).",
+        "description": "Adds the lessons earlier days left that the day's normal time didn't fit (`catchUp.later` on the session) to the end of today's session, in plan order, so the learner is back on pace once they're done. Without it they come first on the next days. A finished day opens again. Only while the day offers it (`catchUp.later.offered`).",
         "operationId": "createStudyCatchUpBlocks",
         "security": [
           {
@@ -24743,7 +24743,7 @@
     },
     "/study-sessions/{sessionId}/extra-blocks": {
       "post": {
-        "description": "\"Keep learning\" after the day's session, or on a day the plan gives no time: the plan's next lessons, about ten minutes of them (`extraTime.lessons` lists them before the tap), studied a day early. With every lesson done, a bonus block of mixed practice instead, again with each tap, with capped Brain Power.",
+        "description": "More study after the day's session, or on a day the plan gives no time: the plan's next lessons, about ten minutes of them (`extraTime.lessons` lists them beforehand), studied a day early. With every lesson done, a bonus block of mixed practice instead, again with each call, with capped Brain Power.",
         "operationId": "createStudyExtraBlock",
         "security": [
           {
@@ -44041,7 +44041,7 @@
             "items": {
               "$ref": "#/components/schemas/OwnedCertificateFacts"
             },
-            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. They come before any milestone `ceremony`, locked ones included, and POST /me/certificates/{code}/views closes each one's moment. Pictures of an unlocked one: GET /certificates/{code}"
+            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first, locked ones included; usually empty. POST /me/certificates/{code}/views closes each one's moment. Pictures of an unlocked one: GET /certificates/{code}"
           },
           "reached": {
             "type": "object",
@@ -45620,7 +45620,7 @@
             "items": {
               "$ref": "#/components/schemas/OwnedCertificateFacts"
             },
-            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. They come before any milestone `ceremony`, locked ones included, and POST /me/certificates/{code}/views closes each one's moment. Pictures of an unlocked one: GET /certificates/{code}"
+            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first, locked ones included; usually empty. POST /me/certificates/{code}/views closes each one's moment. Pictures of an unlocked one: GET /certificates/{code}"
           },
           "reached": {
             "type": "object",
@@ -46092,7 +46092,7 @@
             "items": {
               "$ref": "#/components/schemas/OwnedCertificateFacts"
             },
-            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. They come before any milestone `ceremony`, locked ones included, and POST /me/certificates/{code}/views closes each one's moment. Pictures of an unlocked one: GET /certificates/{code}"
+            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first, locked ones included; usually empty. POST /me/certificates/{code}/views closes each one's moment. Pictures of an unlocked one: GET /certificates/{code}"
           },
           "reached": {
             "type": "object",
@@ -76216,7 +76216,7 @@
             "items": {
               "$ref": "#/components/schemas/OwnedCertificateFacts"
             },
-            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. They come before any milestone `ceremony`, locked ones included, and POST /me/certificates/{code}/views closes each one's moment. Pictures of an unlocked one: GET /certificates/{code}"
+            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first, locked ones included; usually empty. POST /me/certificates/{code}/views closes each one's moment. Pictures of an unlocked one: GET /certificates/{code}"
           },
           "reached": {
             "type": "object",
@@ -76474,7 +76474,7 @@
             "items": {
               "$ref": "#/components/schemas/OwnedCertificateFacts"
             },
-            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. They come before any milestone `ceremony`, locked ones included, and POST /me/certificates/{code}/views closes each one's moment. Pictures of an unlocked one: GET /certificates/{code}"
+            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first, locked ones included; usually empty. POST /me/certificates/{code}/views closes each one's moment. Pictures of an unlocked one: GET /certificates/{code}"
           },
           "checkpoint": {
             "nullable": true,
@@ -77238,7 +77238,7 @@
           "percent"
         ],
         "additionalProperties": false,
-        "description": "Today's session progress for a block's end screen, decided in core so every client reads the same numbers."
+        "description": "Today's session progress after this block."
       },
       "StudySessionMinutes": {
         "type": "object",
@@ -78081,7 +78081,7 @@
           "answerText"
         ],
         "additionalProperties": false,
-        "description": "The saved answer's result, built again from what was saved, so the screen opens answered without a new check. Its `isCorrect` and `score` are the saved verdict. `savedMistake` is false, and a typed answer has no model feedback, key points or corrections, since those aren't saved"
+        "description": "The saved answer's result, built again from what was saved, so a resumed run needs no new check. Its `isCorrect` and `score` are the saved verdict. `savedMistake` is false, and a typed answer has no model feedback, key points or corrections, since those aren't saved"
       },
       "LibraryLessonRetryable": {
         "type": "object",
@@ -81595,7 +81595,7 @@
           },
           "chapterTitle": {
             "type": "string",
-            "description": "The chapter's name: the test's screens are titled \"Test: {chapter}\""
+            "description": "The chapter's name"
           },
           "needsItems": {
             "type": "array",
@@ -81814,7 +81814,7 @@
             "items": {
               "$ref": "#/components/schemas/OwnedCertificateFacts"
             },
-            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. They come before any milestone `ceremony`, locked ones included, and POST /me/certificates/{code}/views closes each one's moment. Pictures of an unlocked one: GET /certificates/{code}"
+            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first, locked ones included; usually empty. POST /me/certificates/{code}/views closes each one's moment. Pictures of an unlocked one: GET /certificates/{code}"
           },
           "reached": {
             "type": "object",
@@ -85687,7 +85687,7 @@
                   "nextSession",
                   "queued"
                 ],
-                "description": "`date` shows the approximate date for a phase challenge, never earlier than tomorrow. `nextSession` means today's session holds it, or the day Today plans holds it before Start builds the session, so no estimate applies. A challenge tests only finished lessons, and no challenge or lesson waits for another challenge. `queued` is retained for older clients and is never returned. Always `date` once won, while locked."
+                "description": "`date`: an approximate date for a phase challenge, never earlier than tomorrow. `nextSession` means today's session holds it, or the day Today plans holds it before the session is built, so no estimate applies. A challenge tests only finished lessons, and no challenge or lesson waits for another challenge. `queued` is retained for older clients and is never returned. Always `date` once won, while locked."
               }
             },
             "required": [
@@ -88299,7 +88299,7 @@
         "properties": {
           "available": {
             "type": "boolean",
-            "description": "It opens now: a chapter map that's `ready`, or a lesson map in this goal's scope. False when it can no longer open here (its chapter left the plan, its content went); list those last, under no longer available, with a way to remove them"
+            "description": "It opens now: a chapter map that's `ready`, or a lesson map in this goal's scope. False when it can no longer open here (its chapter left the plan, its content went); its save can still be removed"
           },
           "chapterId": {
             "nullable": true,
@@ -88958,7 +88958,7 @@
             "items": {
               "$ref": "#/components/schemas/OwnedCertificateFacts"
             },
-            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. They come before any milestone `ceremony`, locked ones included, and POST /me/certificates/{code}/views closes each one's moment. Pictures of an unlocked one: GET /certificates/{code}"
+            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first, locked ones included; usually empty. POST /me/certificates/{code}/views closes each one's moment. Pictures of an unlocked one: GET /certificates/{code}"
           },
           "reached": {
             "type": "object",
@@ -89662,7 +89662,7 @@
             "items": {
               "$ref": "#/components/schemas/OwnedCertificateFacts"
             },
-            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. They come before any milestone `ceremony`, locked ones included, and POST /me/certificates/{code}/views closes each one's moment. Pictures of an unlocked one: GET /certificates/{code}"
+            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first, locked ones included; usually empty. POST /me/certificates/{code}/views closes each one's moment. Pictures of an unlocked one: GET /certificates/{code}"
           },
           "checklist": {
             "type": "array",
@@ -92808,7 +92808,7 @@
           },
           "emptyDay": {
             "nullable": true,
-            "description": "Why a day with study time has no blocks: `lessonsComing` while its lessons are still being outlined (the day fills in on its own; read it again), `lessonsToPrepare` when its lessons aren't written and nobody is outlining them (show one action that posts the goal's lesson preparation; the next read says `lessonsComing`; never post it on your own), `nothingNew` when every lesson of the plan is done or one the learner showed they know, so offer practice (`extraTime`), the week's challenge or the buddy instead. Null when the day has blocks or no study time",
+            "description": "Why a day with study time has no blocks: `lessonsComing` while its lessons are still being outlined (the day fills in on its own; read it again), `lessonsToPrepare` when its lessons aren't written and nobody is outlining them (the goal's lesson preparation writes them when the learner asks for it, never on its own; the next read says `lessonsComing`), `nothingNew` when every lesson of the plan is done or one the learner showed they know. Null when the day has blocks or no study time",
             "type": "string",
             "enum": [
               "lessonsComing",
@@ -92900,7 +92900,7 @@
           },
           "lessonsComing": {
             "type": "boolean",
-            "description": "The day has blocks and holds time for more lessons still being outlined: they join the end of its blocks on their own once they land (read it again), so say more is on the way. False otherwise, and on a day without blocks (`emptyDay` says why)"
+            "description": "The day has blocks and holds time for more lessons still being outlined: they join the end of its blocks on their own once they land (read it again). False otherwise, and on a day without blocks (`emptyDay` says why)"
           },
           "lessonsToPrepare": {
             "type": "boolean",
@@ -92996,7 +92996,7 @@
                     "goalMinutes": {
                       "type": "number",
                       "minimum": 0,
-                      "description": "What this goal's plan gives the day; 0 on a day without study. Exact minutes may be fractional; format them as a human duration for display.",
+                      "description": "What this goal's plan gives the day, in exact minutes, which may be fractional; 0 on a day without study",
                       "example": 15
                     },
                     "hitGoal": {
@@ -93158,7 +93158,7 @@
           },
           "emptyDay": {
             "nullable": true,
-            "description": "Why a day with study time has no blocks: `lessonsComing` while its lessons are still being outlined (the day fills in on its own; read it again), `lessonsToPrepare` when its lessons aren't written and nobody is outlining them (show one action that posts the goal's lesson preparation; the next read says `lessonsComing`; never post it on your own), `nothingNew` when every lesson of the plan is done or one the learner showed they know, so offer practice (`extraTime`), the week's challenge or the buddy instead. Null when the day has blocks or no study time",
+            "description": "Why a day with study time has no blocks: `lessonsComing` while its lessons are still being outlined (the day fills in on its own; read it again), `lessonsToPrepare` when its lessons aren't written and nobody is outlining them (the goal's lesson preparation writes them when the learner asks for it, never on its own; the next read says `lessonsComing`), `nothingNew` when every lesson of the plan is done or one the learner showed they know. Null when the day has blocks or no study time",
             "type": "string",
             "enum": [
               "lessonsComing",
@@ -93245,7 +93245,7 @@
           },
           "lessonsComing": {
             "type": "boolean",
-            "description": "The day has blocks and holds time for more lessons still being outlined: they join the end of its blocks on their own once they land (read it again), so say more is on the way. False otherwise, and on a day without blocks (`emptyDay` says why)"
+            "description": "The day has blocks and holds time for more lessons still being outlined: they join the end of its blocks on their own once they land (read it again). False otherwise, and on a day without blocks (`emptyDay` says why)"
           },
           "lessonsToPrepare": {
             "type": "boolean",
@@ -93320,7 +93320,7 @@
                     "goalMinutes": {
                       "type": "number",
                       "minimum": 0,
-                      "description": "What this goal's plan gives the day; 0 on a day without study. Exact minutes may be fractional; format them as a human duration for display.",
+                      "description": "What this goal's plan gives the day, in exact minutes, which may be fractional; 0 on a day without study",
                       "example": 15
                     },
                     "hitGoal": {
@@ -97069,7 +97069,7 @@
             "items": {
               "$ref": "#/components/schemas/OwnedCertificateFacts"
             },
-            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. They come before any milestone `ceremony`, locked ones included, and POST /me/certificates/{code}/views closes each one's moment. Pictures of an unlocked one: GET /certificates/{code}"
+            "description": "The learner's certificates whose award moment wasn't closed yet, oldest first, locked ones included; usually empty. POST /me/certificates/{code}/views closes each one's moment. Pictures of an unlocked one: GET /certificates/{code}"
           },
           "comesBack": {
             "type": "array",
@@ -97507,7 +97507,7 @@
           },
           "notice": {
             "default": null,
-            "description": "The one notice Today shows, the most pressing first: `exam` (its days and how it went), `planChange`, `insight`, `sourceChange`, `uploadRequest`, `examChoice`, `practice` (a language goal's noticed pattern or words to say again, from its Today view), `focusTest` or `suggestedGoal`. Keep the one shown while the learner stays, so answering it shows what the answer did; null when nothing needs saying",
+            "description": "Today's one notice, the most pressing first: `exam` (its days and how it went), `planChange`, `insight`, `sourceChange`, `uploadRequest`, `examChoice`, `practice` (a language goal's noticed pattern or words to say again, from its Today view), `focusTest` or `suggestedGoal`; null when none applies",
             "nullable": true,
             "type": "string",
             "enum": [

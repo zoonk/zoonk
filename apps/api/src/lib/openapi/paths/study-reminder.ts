@@ -64,7 +64,7 @@ export const studyReminderPaths = {
   "/me/study-reminder/offer": {
     post: {
       description:
-        "Send when the offer shows on the day's summary (`reminderOffer` in the session's summary). It's asked once per learner, so show it only when `claimed` is true.",
+        "Send it as the offer (`reminderOffer` in the session's summary) is shown. A learner's offer is claimed once: `claimed` is true only for the call that claimed it.",
       operationId: "claimCurrentUserStudyReminderOffer",
       requestBody: {
         content: { "application/json": { schema: studyReminderOfferClaimSchema } },

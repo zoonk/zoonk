@@ -107,7 +107,7 @@ export const studySessionResponseSchema = z
               .min(0)
               .meta({
                 description:
-                  "What this goal's plan gives the day; 0 on a day without study. Exact minutes may be fractional; format them as a human duration for display.",
+                  "What this goal's plan gives the day, in exact minutes, which may be fractional; 0 on a day without study",
                 examples: [EXAMPLE_DAILY_MINUTES],
               }),
             hitGoal: z.boolean(),

@@ -162,7 +162,7 @@ const restoredCheckResultSchema = lessonStepCheckResultSchema
   })
   .meta({
     description:
-      "The saved answer's result, built again from what was saved, so the screen opens answered without a new check. Its `isCorrect` and `score` are the saved verdict. `savedMistake` is false, and a typed answer has no model feedback, key points or corrections, since those aren't saved",
+      "The saved answer's result, built again from what was saved, so a resumed run needs no new check. Its `isCorrect` and `score` are the saved verdict. `savedMistake` is false, and a typed answer has no model feedback, key points or corrections, since those aren't saved",
     id: "LessonRunAnswerResult",
   });
 
