@@ -514,6 +514,21 @@ final class ResourceTests: XCTestCase {
     XCTAssertEqual(resource.state, .loaded(5))
   }
 
+  /// A server's refusal written into the shown value (a subscription needed) stays when the read
+  /// after it fails, and the next good read replaces it.
+  func testAnUpdateOutlivesAFailedReadUntilAGoodOne() async {
+    let resource = makeResource(
+      requests: Requests(results: [.success(1), .failure(APIError.network), .success(1)]))
+    await resource.load()
+
+    resource.update { _ in 0 }
+    await resource.refresh()
+    XCTAssertEqual(resource.state, .loaded(0))
+
+    await resource.refresh()
+    XCTAssertEqual(resource.state, .loaded(1))
+  }
+
   private func makeResource(
     requests: Requests,
     session: SessionStore = .preview(account: .resourceTestAccount),
