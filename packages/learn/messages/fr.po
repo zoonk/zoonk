@@ -5222,6 +5222,12 @@ msgctxt "Humfno"
 msgid "End date"
 msgstr "Date de fin"
 
+#. In the roadmap's legend, beside the flag at the day the plan finishes when the learner set no end date.
+#: src/journey/roadmap-full.tsx
+msgctxt "VnP0TP"
+msgid "You finish"
+msgstr "Tu termines"
+
 #: src/journey/roadmap-full.tsx
 #: src/onboarding/steps/plan-shape.tsx
 msgctxt "P7djTu"
