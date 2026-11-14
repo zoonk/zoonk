@@ -96,7 +96,7 @@ private fun ExamChoiceOptions(
 /**
  * Main's `ExamChoicePicks`: the options of a choice whose candidates take several, saved together so
  * the plan isn't rebuilt on every tick. [saving] is this Save's own request; [enabled] off waits for
- * another control's.
+ * another control's. Today draws [save] as its suggestions' main answer.
  */
 @Composable
 fun ExamChoicePicks(
@@ -104,6 +104,9 @@ fun ExamChoicePicks(
     saving: Boolean,
     onSave: (subjects: List<String>) -> Unit,
     enabled: Boolean = true,
+    save: @Composable (onClick: () -> Unit, enabled: Boolean) -> Unit = { onClick, canSave ->
+        Button(busy = saving, onClick = onClick, enabled = canSave) { Text(stringResource(R.string.plan_save)) }
+    },
 ) {
     var draft by rememberSaveable(choice.subjects) { mutableStateOf(choice.subjects) }
 
@@ -125,11 +128,7 @@ fun ExamChoicePicks(
                 )
             }
         }
-        Button(
-            busy = saving,
-            onClick = { onSave(draft) },
-            enabled = enabled && choice.canSave(draft),
-        ) { Text(stringResource(R.string.plan_save)) }
+        save({ onSave(draft) }, enabled && choice.canSave(draft))
     }
 }
 

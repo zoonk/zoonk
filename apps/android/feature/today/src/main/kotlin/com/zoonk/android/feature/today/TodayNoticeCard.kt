@@ -240,7 +240,9 @@ private fun ExamChoiceNotice(
         SuggestionHeader(question)
         SuggestionDescription(examChoiceLeftOut(choice))
         if (choice.take > 1) {
-            ExamChoicePicks(choice, saving, onSave = choose)
+            ExamChoicePicks(choice, saving, onSave = choose) { save, enabled ->
+                SuggestionMainAction(stringResource(R.string.plan_save), save, enabled, busy = saving)
+            }
         } else {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 choice.options.forEach { option ->
@@ -424,7 +426,10 @@ private fun InsightActions(
 
     SuggestionActions {
         // A tip's only answer is secondary, so Today's own action stays the screen's one filled button.
-        if (canAccept) SuggestionAction(accept, { viewModel.answerInsight(insight, accepted = true) }, enabled, secondary = dismiss == null)
+        if (canAccept) {
+            val onAccept = { viewModel.answerInsight(insight, accepted = true) }
+            if (dismiss == null) SuggestionAction(accept, onAccept, enabled, secondary = true) else SuggestionMainAction(accept, onAccept, enabled)
+        }
         dismiss?.let { SuggestionAction(it, { viewModel.answerInsight(insight, accepted = false) }, enabled, secondary = true) }
     }
 }
