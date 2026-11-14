@@ -21,40 +21,34 @@ export async function ManagedSubscription({
   });
 
   const description = getManagedSubscriptionDescription({
-    appleDescription: t(
-      "This subscription is managed through the App Store. To change or cancel it, use Apple's subscription settings.",
-    ),
-    googleDescription: t(
-      "This subscription is managed through Google Play. To change or cancel it, use Google Play.",
-    ),
+    appleDescription: t("You subscribed in the App Store."),
+    googleDescription: t("You subscribed in Google Play."),
     provider,
-    zoonkDescription: t(
-      "This subscription is managed by Zoonk. Contact support if you need help changing or canceling it.",
-    ),
+    zoonkDescription: t("Zoonk added Plus to your account. To change it, write to us."),
   });
 
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-muted-foreground text-sm">{description}</p>
+      <p className="text-muted-foreground text-sm text-pretty">{description}</p>
 
       <div className="flex flex-wrap gap-2">
-        {action && (
+        {action ? (
           <a
-            className={cn(buttonVariants({ size: "sm" }), "w-max")}
+            className={cn(buttonVariants({ size: "lg" }), "w-max")}
             href={action.href}
             rel="noopener noreferrer"
             target="_blank"
           >
             {actionLabel}
           </a>
+        ) : (
+          <Link
+            className={cn(buttonVariants({ size: "lg", variant: "outline" }), "w-max")}
+            href="/support"
+          >
+            {t("Write to us")}
+          </Link>
         )}
-
-        <Link
-          className={cn(buttonVariants({ size: "sm", variant: "outline" }), "w-max")}
-          href="/support"
-        >
-          {t("Contact support")}
-        </Link>
       </div>
     </div>
   );

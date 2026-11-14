@@ -1,8 +1,9 @@
 "use client";
 
-import { Button } from "@zoonk/ui/components/button";
+import { EnterButton } from "@zoonk/learn/enter-button";
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { cn } from "@zoonk/ui/lib/utils";
-import { RotateCwIcon, TriangleAlertIcon } from "lucide-react";
+import { TriangleAlertIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { StatusMessage } from "./status-message";
 
@@ -20,21 +21,27 @@ export function PageErrorMessage({
   const Root = inFrame ? "div" : "main";
 
   return (
-    <Root className={cn("flex w-full flex-col", inFrame ? "flex-1" : "min-h-dvh")}>
+    <Root
+      className={cn(
+        "flex w-full flex-col",
+        inFrame
+          ? "flex-1"
+          : "min-h-dvh [--page-gutter:--spacing(4)] sm:[--page-gutter:--spacing(8)]",
+      )}
+    >
       <StatusMessage
-        description={t(
-          "It might be your connection or a problem on our side. Trying again usually fixes it.",
-        )}
+        description={t("Check your connection and try again.")}
         icon={<TriangleAlertIcon aria-hidden="true" />}
         title={t("This page didn't load")}
       >
-        <Button onClick={onRetry} size="lg">
-          <RotateCwIcon aria-hidden="true" data-icon="inline-start" />
-          {t("Try again")}
-        </Button>
-
         {homeLink}
       </StatusMessage>
+
+      <BottomBar>
+        <BottomBarActions>
+          <EnterButton onClick={onRetry}>{t("Try again")}</EnterButton>
+        </BottomBarActions>
+      </BottomBar>
     </Root>
   );
 }

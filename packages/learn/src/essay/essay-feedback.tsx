@@ -8,6 +8,7 @@ import { DetailsDrawer } from "../_components/details-drawer";
 import { Eyebrow } from "../_components/eyebrow";
 import { PageSectionTitle } from "../_components/page";
 import {
+  LabeledStepTitle,
   StepCard,
   StepDetail,
   StepHeader,
@@ -69,15 +70,14 @@ export function EssayGradeCard({
   return (
     <StepCard>
       <StepHeader>
-        <Eyebrow>{writingName(rubric)}</Eyebrow>
-        <StepTitle>
+        <LabeledStepTitle label={writingName(rubric)}>
           <StepTitleNumber>
             {t("{low}–{high}", {
               high: formatScore(grade.range.high),
               low: formatScore(grade.range.low),
             })}
           </StepTitleNumber>
-        </StepTitle>
+        </LabeledStepTitle>
         <StepDetail className="text-sm">
           {t.rich("Estimated score, from <mono>0</mono> to <mono>{max}</mono>", {
             max: formatScore(grade.total.maxScore),

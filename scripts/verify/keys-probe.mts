@@ -15,6 +15,10 @@ declare global {
   var zoonkPressed: Pressed | undefined;
   // oxlint-disable-next-line no-var -- A page global is declared with `var`.
   var zoonkRecord: ((event: MouseEvent) => void) | undefined;
+  // oxlint-disable-next-line no-var -- A page global is declared with `var`.
+  var zoonkChecked: Set<Element> | undefined;
+  // oxlint-disable-next-line no-var -- A page global is declared with `var`.
+  var zoonkDescribePress: ((control: Element) => NonNullable<Pressed>) | undefined;
 }
 
 /** Blurs the page and records, then swallows, the next click a key causes. */
@@ -26,14 +30,10 @@ export function recordNextClick() {
     document.activeElement.blur();
   }
 
-  function record(event: MouseEvent) {
-    event.preventDefault();
-    event.stopImmediatePropagation();
+  globalThis.zoonkChecked = new Set(document.querySelectorAll(":checked, [aria-checked=true]"));
 
-    const control =
-      event.target instanceof Element ? event.target.closest("a, button, [role]") : null;
-
-    globalThis.zoonkPressed = control && {
+  function describe(control: Element): NonNullable<Pressed> {
+    return {
       drawn: control.getClientRects().length > 0,
       enter: control instanceof HTMLElement ? (control.dataset.enter ?? null) : null,
       id: control instanceof HTMLElement ? (control.dataset.zoonkKey ?? null) : null,
@@ -46,6 +46,23 @@ export function recordNextClick() {
     };
   }
 
+  globalThis.zoonkDescribePress = describe;
+
+  function record(event: MouseEvent) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    const host =
+      event.target instanceof Element ? event.target.closest("a, button, label, [role]") : null;
+
+    const control =
+      host instanceof HTMLLabelElement
+        ? (host.control ?? host.querySelector("[role=radio], [role=checkbox]"))
+        : host;
+
+    globalThis.zoonkPressed = control ? describe(control) : null;
+  }
+
   globalThis.zoonkRecord = record;
   document.addEventListener("click", record, { capture: true, once: true });
 }
@@ -55,7 +72,13 @@ export function takeRecordedClick(): Pressed {
     document.removeEventListener("click", globalThis.zoonkRecord, { capture: true });
   }
 
-  return globalThis.zoonkPressed ?? null;
+  const checked = [...document.querySelectorAll(":checked, [aria-checked=true]")].find(
+    (control) => !globalThis.zoonkChecked?.has(control),
+  );
+
+  return (
+    globalThis.zoonkPressed ?? (checked ? globalThis.zoonkDescribePress?.(checked) : null) ?? null
+  );
 }
 
 /** What the page draws: its sidebars, main actions, groups and keycaps, by the pieces' hooks. */
@@ -71,7 +94,7 @@ export function readHooks() {
       (element) => element.getBoundingClientRect().width > 0,
     );
 
-  [...document.querySelectorAll("a, button, [role]")].forEach((control, index) => {
+  [...document.querySelectorAll("a, button, input, [role]")].forEach((control, index) => {
     if (control instanceof HTMLElement) {
       control.dataset.zoonkKey = `key-${index}`;
     }
@@ -91,13 +114,18 @@ export function readHooks() {
     keycaps: [...document.querySelectorAll("[data-slot=shortcut-kbd][data-shortcut]")]
       .filter(drawn)
       .flatMap((keycap) => {
-        const control = keycap.closest("a, button, [role]");
+        const host = keycap.closest("a, button, label, [role]");
+
+        const control =
+          host instanceof HTMLLabelElement
+            ? (host.control ?? host.querySelector("[role=radio], [role=checkbox]"))
+            : host;
 
         return control && keycap instanceof HTMLElement
           ? [
               {
                 announced: control.getAttribute("aria-keyshortcuts"),
-                control: text(control),
+                control: text(control) || (host ? text(host) : ""),
                 id: control instanceof HTMLElement ? (control.dataset.zoonkKey ?? "") : "",
                 keycap: keycap.textContent.trim(),
                 name: keycap.dataset.shortcut ?? "",

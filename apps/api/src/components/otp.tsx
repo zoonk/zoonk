@@ -1,5 +1,3 @@
-import { EnterButton } from "@zoonk/ui/components/enter-button";
-import { InputError } from "@zoonk/ui/components/input";
 import {
   InputOTP,
   InputOTPGroup,
@@ -17,37 +15,8 @@ export function OTP({ children, className }: React.ComponentProps<"div">) {
   );
 }
 
-export function OTPHeader({ children, className }: React.ComponentProps<"header">) {
-  return <header className={cn("flex flex-col items-center gap-2", className)}>{children}</header>;
-}
-
-export function OTPTitle({ children, className }: React.ComponentProps<"h1">) {
-  return (
-    <h1
-      className={cn(
-        "text-2xl leading-[1.1] font-semibold tracking-[-0.035em] text-balance sm:text-3xl",
-        className,
-      )}
-    >
-      {children}
-    </h1>
-  );
-}
-
-export function OTPDescription({ children, className }: React.ComponentProps<"p">) {
-  return <p className={cn("text-muted-foreground text-sm text-balance", className)}>{children}</p>;
-}
-
 export function OTPDescriptionSkeleton() {
   return <Skeleton className="h-5 w-60 max-w-full rounded-md" />;
-}
-
-export function OTPForm({ children, className, ...props }: React.ComponentProps<"form">) {
-  return (
-    <form className={cn("flex w-full flex-col items-center gap-4", className)} {...props}>
-      {children}
-    </form>
-  );
 }
 
 export function OTPActions({ children, className }: React.ComponentProps<"div">) {
@@ -60,7 +29,7 @@ export function OTPLinks({ children, className }: React.ComponentProps<"p">) {
   return (
     <p
       className={cn(
-        "text-muted-foreground flex flex-wrap items-center justify-center gap-x-1 text-sm",
+        "text-muted-foreground mt-2 flex flex-wrap items-center justify-center gap-x-1 text-sm",
         className,
       )}
     >
@@ -90,21 +59,26 @@ function OTPGroupSkeleton() {
 
 export function OTPFormSkeleton() {
   return (
-    <div aria-hidden="true" className="flex w-full flex-col items-center gap-4">
+    <div aria-hidden="true" className="flex w-full flex-col items-center gap-2">
       <div className="flex w-full gap-3">
         <OTPGroupSkeleton />
         <OTPGroupSkeleton />
       </div>
 
+      <div className="mb-2 h-5" />
       <Skeleton className="h-11 w-full rounded-lg" />
-      <Skeleton className="my-3 h-5 w-52 rounded-md" />
+      <Skeleton className="mt-2 mb-3 h-5 w-52 rounded-md" />
     </div>
   );
 }
 
-export function OTPInput({ ...props }: Partial<Omit<InputOTPProps, "render">>) {
+export function OTPInput({
+  invalid = false,
+  ...props
+}: Partial<Omit<InputOTPProps, "render">> & { invalid?: boolean }) {
   return (
     <InputOTP
+      aria-invalid={invalid}
       maxLength={OTP_LENGTH}
       name="otp"
       pasteTransformer={keepDigits}
@@ -113,50 +87,15 @@ export function OTPInput({ ...props }: Partial<Omit<InputOTPProps, "render">>) {
       {...props}
     >
       <InputOTPGroup>
-        <InputOTPSlot index={0} />
-        <InputOTPSlot index={1} />
-        <InputOTPSlot index={2} />
+        <InputOTPSlot aria-invalid={invalid} index={0} />
+        <InputOTPSlot aria-invalid={invalid} index={1} />
+        <InputOTPSlot aria-invalid={invalid} index={2} />
       </InputOTPGroup>
       <InputOTPGroup>
-        <InputOTPSlot index={3} />
-        <InputOTPSlot index={4} />
-        <InputOTPSlot index={5} />
+        <InputOTPSlot aria-invalid={invalid} index={3} />
+        <InputOTPSlot aria-invalid={invalid} index={4} />
+        <InputOTPSlot aria-invalid={invalid} index={5} />
       </InputOTPGroup>
     </InputOTP>
-  );
-}
-
-export function OTPError({
-  children,
-  hasError,
-  ...props
-}: React.ComponentProps<"div"> & { hasError?: boolean }) {
-  if (!hasError) {
-    return null;
-  }
-
-  return <InputError {...props}>{children}</InputError>;
-}
-
-export function OTPSubmit({
-  children,
-  className,
-  isLoading,
-  disabled,
-  ...props
-}: React.ComponentProps<"button"> & { isLoading?: boolean }) {
-  return (
-    // Enter in the code's field submits its form, so the key is the field's.
-    <EnterButton
-      busy={isLoading ?? false}
-      className={cn("w-full", className)}
-      disabled={disabled}
-      enter="host"
-      size="lg"
-      type="submit"
-      {...props}
-    >
-      {children}
-    </EnterButton>
   );
 }

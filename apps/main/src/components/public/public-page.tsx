@@ -19,8 +19,10 @@ export function PublicPage({
   ownStart?: boolean;
   pathname?: string;
 }) {
+  // The bar's last button reaches into the gutter so its words end on the column's edge; clipping
+  // keeps that from scrolling the page sideways, as the app's own frame does.
   return (
-    <div className="flex min-h-dvh flex-col">
+    <div className="flex min-h-dvh flex-col overflow-x-clip">
       <UsageDataNotice className={PUBLIC_CONTAINER_CLASS} />
       <PublicHeader ownStart={ownStart} pathname={pathname} />
       <main className={cn("flex-1", className)}>{children}</main>
