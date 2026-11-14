@@ -2,7 +2,7 @@
 import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
-import { CATALOG_RULES, catalogRulesBroken } from "./rules/catalog.mts";
+import { CATALOG_RULES, SWITCHED_ON, catalogRulesBroken } from "./rules/catalog.mts";
 import { isCatalog, readCatalog } from "./strings.mts";
 
 export type Offender = {
@@ -27,6 +27,20 @@ export function catalogOffenders(catalogs: { content: string; path: string }[]):
   );
 }
 
+function platform(path: string): keyof typeof SWITCHED_ON {
+  if (path.endsWith(".po")) {
+    return "web";
+  }
+
+  return path.endsWith(".xcstrings") ? "apple" : "android";
+}
+
+export function catalogFailures(offenders: Offender[]): Offender[] {
+  return offenders.filter(({ path, rule }) =>
+    SWITCHED_ON[platform(path)].some((id) => id === rule),
+  );
+}
+
 export function treeCatalogs(repository = resolve(import.meta.dirname, "../..")) {
   return execFileSync("git", ["ls-files", "--", "apps", "packages"], {
     cwd: repository,
@@ -39,6 +53,7 @@ export function treeCatalogs(repository = resolve(import.meta.dirname, "../.."))
 
 if (import.meta.main) {
   const offenders = catalogOffenders(treeCatalogs());
+  process.exitCode = catalogFailures(offenders).length > 0 ? 1 : 0;
 
   for (const rule of CATALOG_RULES) {
     const here = offenders.filter((offender) => offender.rule === rule.id);
