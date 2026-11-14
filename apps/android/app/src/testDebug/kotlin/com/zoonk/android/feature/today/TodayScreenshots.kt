@@ -203,6 +203,7 @@ class TodayScreenshots {
                         com.zoonk.android.ui.characters
                             .BuddyLook(),
                     buddyName = "Zu",
+                    snackbars = app.snackbars,
                     refreshIfChanged = app.today::refreshIfChanged,
                     brainPower = 1240,
                     practice = {

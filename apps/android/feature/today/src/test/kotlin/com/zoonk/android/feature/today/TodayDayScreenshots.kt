@@ -8,6 +8,7 @@ import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.app.AppSnackbars
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
@@ -140,6 +141,7 @@ class TodayDayScreenshots {
                         PaddingValues(),
                         buddy = BuddyLook(),
                         buddyName = "Zu",
+                        snackbars = AppSnackbars(),
                         refreshIfChanged = { false },
                     )
                 }

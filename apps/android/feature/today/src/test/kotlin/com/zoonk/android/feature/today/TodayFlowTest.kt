@@ -30,6 +30,7 @@ import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.app.AppSnackbars
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
@@ -184,6 +185,7 @@ class TodayFlowTest {
                         language = null,
                         onboarding = onboarding,
                         plans = PlanStore(plans, cache),
+                        snackbars = AppSnackbars(),
                         refreshIfChanged = store::refreshIfChanged,
                     )
                 }
