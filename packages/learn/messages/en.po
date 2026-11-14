@@ -40,7 +40,7 @@ msgstr "Correct"
 #: src/onboarding/steps/reveal-days.tsx
 #: src/session/next-stop.tsx
 #: src/session/study-moment.tsx
-#: src/today/today-day-progress.tsx
+#: src/today/today-segment-popover.tsx
 #: src/week/logbook-sections.tsx
 msgctxt "nC-1Um"
 msgid "Up next"
@@ -73,7 +73,7 @@ msgstr "Skipped"
 #: src/mock/mock-speaking.tsx
 #: src/onboarding/steps/reveal-days.tsx
 #: src/plan/plan-change-applied.tsx
-#: src/today/today-day-progress.tsx
+#: src/today/today-segment-popover.tsx
 #: src/wait/first-lesson-row.tsx
 #: src/week/logbook-screen.tsx
 msgctxt "JXdbo8"
@@ -622,6 +622,7 @@ msgstr "Questions per subject in the latest exam, as counted by <link>{publisher
 #: src/_components/save-error.tsx
 #: src/feedback/feedback-form-dialog.tsx
 #: src/feedback/report-problem-item.tsx
+#: src/journey/journey-menu.tsx
 msgctxt "feedback.Hf_X9X"
 msgid "Report a problem"
 msgstr "Report a problem"
@@ -13095,6 +13096,7 @@ msgstr "Not in your plan · your time doesn't cover it"
 
 #: src/syllabus/topic-note.tsx
 #: src/today/today-coming-lessons.tsx
+#: src/today/today-segment-popover.tsx
 #: src/topic-outline/use-far-topic-line.ts
 msgctxt "5CkyMG"
 msgid "Not ready yet"
@@ -13150,6 +13152,7 @@ msgstr ", counts toward a mission"
 
 #: src/today/today-block-row.tsx
 #: src/today/today-coming-lessons.tsx
+#: src/today/today-segment-popover.tsx
 msgctxt "2LhxfA"
 msgid "Getting ready…"
 msgstr "Getting ready…"
@@ -13165,20 +13168,16 @@ msgid "Get them now"
 msgstr "Get them now"
 
 #: src/today/today-coming-lessons.tsx
-#: src/today/today-day-progress.tsx
+#: src/today/today-segment-popover.tsx
 msgctxt "FAEHQ7"
 msgid "Your next lessons"
 msgstr "Your next lessons"
 
 #: src/today/today-coming-lessons.tsx
+#: src/today/today-segment-popover.tsx
 msgctxt "Bhd3E-"
 msgid "Taking longer than usual"
 msgstr "Taking longer than usual"
-
-#: src/today/today-day-progress.tsx
-msgctxt "G-gCWb"
-msgid "{answered, number} of {count, plural, one {# question} other {# questions}}"
-msgstr "{answered, number} of {count, plural, one {# question} other {# questions}}"
 
 #: src/today/today-day-progress.tsx
 msgctxt "m9CrfE"
@@ -13429,6 +13428,41 @@ msgstr "Your week"
 msgctxt "cBjaVC"
 msgid "Today's lessons"
 msgstr "Today's lessons"
+
+#: src/today/today-segment-popover.tsx
+msgctxt "MDSrNP"
+msgid "Checks what you've learned so far."
+msgstr "Checks what you've learned so far."
+
+#: src/today/today-segment-popover.tsx
+msgctxt "jIBu7R"
+msgid "You put what you learned into your own words."
+msgstr "You put what you learned into your own words."
+
+#: src/today/today-segment-popover.tsx
+msgctxt "LjCPIV"
+msgid "Another try at questions you missed."
+msgstr "Another try at questions you missed."
+
+#: src/today/today-segment-popover.tsx
+msgctxt "hm2fwy"
+msgid "A practice exam, like the real one."
+msgstr "A practice exam, like the real one."
+
+#: src/today/today-segment-popover.tsx
+msgctxt "1zNtC7"
+msgid "New questions that mix what you've learned."
+msgstr "New questions that mix what you've learned."
+
+#: src/today/today-segment-popover.tsx
+msgctxt "LHmG9j"
+msgid "Brings back what you studied before you forget it."
+msgstr "Brings back what you studied before you forget it."
+
+#: src/today/today-segment-popover.tsx
+msgctxt "G-gCWb"
+msgid "{answered, number} of {count, plural, one {# question} other {# questions}}"
+msgstr "{answered, number} of {count, plural, one {# question} other {# questions}}"
 
 #: src/today/today-session-card.tsx
 msgctxt "RrxniK"
