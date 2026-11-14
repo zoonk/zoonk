@@ -1,7 +1,7 @@
 "use client";
 
 import { type ExamMockSummary } from "@zoonk/core/exams/view/contract";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import {
   ListRow,
   ListRowBody,
@@ -13,6 +13,7 @@ import {
   ListRowTrailing,
 } from "../_components/list-group";
 import { StatusMark } from "../_components/status-mark";
+import { useFormatMomentDay } from "../_utils/iso-date";
 import { getMockSubject, useMockNumber } from "./mock-labels";
 
 function useMeasureText() {
@@ -45,9 +46,9 @@ export function MockSummaryRow({
   stacked?: boolean;
 }) {
   const t = useExtracted();
-  const format = useFormatter();
+  const formatDay = useFormatMomentDay();
   const measure = useMeasureText();
-  const date = format.dateTime(new Date(mock.finishedAt), { day: "numeric", month: "short" });
+  const date = formatDay(mock.finishedAt);
   const subject = getMockSubject(mock);
 
   const content = (

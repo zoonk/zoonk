@@ -18,10 +18,14 @@ export const ANSWER_TAG_TONE: Record<AnswerOptionResult, string> = {
 
 export const ANSWER_TAG_CLASS = "min-w-0 text-2xs leading-snug font-medium";
 
-/** An answer is sized by its words, so a formula wider than the box scrolls inside it. */
+/**
+ * For a box holding `TagBesideOrUnder`: its answer is sized by its words, so a formula wider than
+ * the box scrolls inside it.
+ */
 export const ANSWER_FORMULA_CLASS = "@container [&_[data-slot=inline-math]]:max-w-[100cqi]";
 
 /** An answer's box without a text size, for a piece that takes the size of where it sits. */
-export const ANSWER_BOX_CLASS = `relative flex w-full items-start gap-3 rounded-xl px-3.5 py-3.25 text-left leading-6 font-medium text-pretty wrap-break-word ${ANSWER_FORMULA_CLASS}`;
+export const ANSWER_BOX_CLASS =
+  "relative flex w-full items-start gap-3 rounded-xl px-3.5 py-3.25 text-left leading-6 font-medium text-pretty wrap-break-word";
 
-export const ANSWER_OPTION_CLASS = `text-reading ${ANSWER_BOX_CLASS}`;
+export const ANSWER_OPTION_CLASS = `text-reading ${ANSWER_BOX_CLASS} ${ANSWER_FORMULA_CLASS}`;

@@ -19,6 +19,7 @@ import {
   PageSectionTitle,
   PageSubtitle,
 } from "../_components/page";
+import { getIsoDateOptions, isoDateToUtc } from "../_utils/iso-date";
 import { LearnLink } from "../learn-link";
 import { LearnPageBar } from "../shell/learn-bar";
 
@@ -26,10 +27,6 @@ export type CompletedLessonsHrefs = { back: string; lesson: (lessonId: string) =
 
 function groupByDay(lessons: readonly CompletedLesson[]) {
   return [...Map.groupBy(lessons, (lesson) => lesson.finishedOn).entries()];
-}
-
-function readIsoDay(day: string): Date {
-  return new Date(`${day}T00:00:00Z`);
 }
 
 /** Both days are learner-local `YYYY-MM-DD`, read at UTC midnight so no time zone moves them. */
@@ -48,15 +45,9 @@ function useDayTitle(today: string) {
       return t("Yesterday");
     }
 
-    const date = readIsoDay(day);
-    const thisYear = date.getUTCFullYear() === readIsoDay(today).getUTCFullYear();
-
-    return format.dateTime(date, {
-      day: "numeric",
-      month: "long",
+    return format.dateTime(isoDateToUtc(day), {
+      ...getIsoDateOptions({ isoDate: day, style: "weekdayDay", today }),
       timeZone: "UTC",
-      weekday: "long",
-      ...(!thisYear && { year: "numeric" }),
     });
   };
 }
