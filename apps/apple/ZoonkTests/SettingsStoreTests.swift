@@ -111,8 +111,8 @@ final class SettingsStoreTests: XCTestCase {
     let second = Task { await store.updatePreferences(.soundsEnabled(true)) }
     await waitUntil { store.preferences.value?.soundsEnabled == true }
     await api.releaseHeldUpdate(throwing: APIError.unavailable)
-    await first.value
-    await second.value
+    _ = await first.value
+    _ = await second.value
 
     XCTAssertEqual(store.preferences.value?.soundsEnabled, true)
     let updates = await api.updates
@@ -130,8 +130,8 @@ final class SettingsStoreTests: XCTestCase {
     let second = Task { await store.updatePreferences(.soundsEnabled(true)) }
     await waitUntil { store.preferences.value?.soundsEnabled == true }
     await api.releaseHeldUpdate(throwing: APIError.unavailable)
-    await first.value
-    await second.value
+    _ = await first.value
+    _ = await second.value
 
     XCTAssertEqual(store.preferences.value?.soundsEnabled, true, "neither limit saved")
   }
