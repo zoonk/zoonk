@@ -2,16 +2,26 @@ import assert from "node:assert/strict";
 import { describe, it } from "vitest";
 import { type CaptureItem, renderMedia } from "./media.mts";
 
+const COMMIT = "c0ffee0";
+const DIGEST = "d1ge57";
+
+const FACTS = {
+  build: { app: "main", commit: COMMIT, id: "build" },
+  locale: "en",
+  platform: "web",
+  pointer: "coarse",
+  scale: 3,
+  scheme: "light",
+  sha256: DIGEST,
+  side: "after",
+  steps: DIGEST,
+} as const;
+
 function shot(name: string, viewport: "laptop" | "phone" = "phone"): CaptureItem {
-  return { file: `${viewport}/light/${name}.png`, kind: "shot", name, scheme: "light", viewport };
+  return { ...FACTS, file: `${viewport}/light/${name}.png`, kind: "shot", name, viewport };
 }
 
-const VIDEO: CaptureItem = {
-  file: "phone/light.webm",
-  kind: "video",
-  scheme: "light",
-  viewport: "phone",
-};
+const VIDEO: CaptureItem = { ...FACTS, file: "phone/light.webm", kind: "video", viewport: "phone" };
 
 const SIDES = {
   after: [shot("today"), shot("plan"), shot("today", "laptop"), VIDEO],

@@ -1,5 +1,5 @@
 /* oxlint-disable no-await-in-loop -- One screen at a time: steps may change the learner's state. */
-import { mkdir, rename, rm, writeFile } from "node:fs/promises";
+import { mkdir, rename, rm } from "node:fs/promises";
 import { join, posix } from "node:path";
 import {
   type Browser,
@@ -9,13 +9,23 @@ import {
 } from "@playwright/test";
 import { openPage, waitForQuiet } from "../verify/browser.mts";
 import { type Scheme, VIEWPORTS, type ViewportName } from "../verify/viewports.mts";
-import { type CaptureItem, MANIFEST, type Side, fileName, pathShotName } from "./media.mts";
+import {
+  type CaptureItem,
+  type Read,
+  type Side,
+  fileName,
+  pathShotName,
+  readCapture,
+  writeManifest,
+} from "./media.mts";
+import { type CheckoutBuild, bindBuild, sha256File } from "./provenance.mts";
 
-/** Waits until the page stops changing, unless `settle` is false, as for a loading state. */
-type Shot = (
-  name: string,
-  options?: Omit<PageScreenshotOptions, "path"> & { settle?: boolean },
-) => Promise<void>;
+/**
+ * Waits until the page stops changing, unless `settle` is false, as for a loading state.
+ * `scenario` names the state shown, with the id every platform uses for it.
+ */
+type ShotOptions = Omit<PageScreenshotOptions, "path"> & { scenario?: string; settle?: boolean };
+type Shot = (name: string, options?: ShotOptions) => Promise<void>;
 
 /** A `--steps` module's default export, run once on each screen and scheme. */
 export type Steps = (scene: {
@@ -44,21 +54,49 @@ export function visitPaths(paths: string[]): Steps {
 type Scene = {
   baseUrl: string;
   browser: Browser;
+  checkout: CheckoutBuild;
+  side: Side;
   steps: Steps;
+  stepsDigest: string;
   storageState?: BrowserContextOptions["storageState"];
   video: boolean;
 };
 
+type WithoutHash<T> = T extends unknown ? Omit<T, "sha256"> : never;
+type Unhashed = WithoutHash<CaptureItem>;
+
+/**
+ * The HTML of the newest full page load, which names the build that served it; the page itself
+ * drops that payload once it hydrates.
+ */
+function watchDocuments(page: Page): () => Promise<string> {
+  const loads: Promise<string>[] = [];
+
+  page.on("response", (response) => {
+    if (response.request().resourceType() === "document" && response.frame() === page.mainFrame()) {
+      loads.push(response.text().catch(() => ""));
+    }
+  });
+
+  return async () => {
+    const pages = await Promise.all(loads);
+    return pages.findLast((html) => html.length > 0) ?? "";
+  };
+}
+
 async function captureScreen({
   baseUrl,
   browser,
+  checkout,
   folder,
   scheme,
+  side,
   steps,
+  stepsDigest,
   storageState,
   video,
   viewport,
-}: Scene & { folder: string; scheme: Scheme; viewport: ViewportName }): Promise<CaptureItem[]> {
+}: Scene & { folder: string; scheme: Scheme; viewport: ViewportName }): Promise<Unhashed[]> {
   const { context, page, traffic } = await openPage({
     actions: new Map(),
     baseUrl,
@@ -70,7 +108,29 @@ async function captureScreen({
   });
 
   const screen = posix.join(viewport, scheme);
-  const items: CaptureItem[] = [];
+  const items: Unhashed[] = [];
+  const { deviceScaleFactor = 1, hasTouch = false } = VIEWPORTS[viewport];
+
+  const lastDocument = watchDocuments(page);
+
+  const describe = async () => {
+    const [html, lang] = await Promise.all([
+      lastDocument(),
+      page.evaluate(() => document.documentElement.lang),
+    ]);
+
+    return {
+      build: bindBuild({ checkout, html }),
+      locale: lang || "unknown",
+      platform: "web" as const,
+      pointer: hasTouch ? ("coarse" as const) : ("fine" as const),
+      scale: deviceScaleFactor,
+      scheme,
+      side,
+      steps: stepsDigest,
+      viewport,
+    };
+  };
 
   if (video) {
     await page.screencast.start({
@@ -81,7 +141,7 @@ async function captureScreen({
     await page.screencast.showActions();
   }
 
-  const shot: Shot = async (text, { settle = true, ...options } = {}) => {
+  const shot: Shot = async (text, { scenario, settle = true, ...options }: ShotOptions = {}) => {
     const name = fileName(text);
     const file = posix.join(screen, `${name}.png`);
 
@@ -106,11 +166,15 @@ async function captureScreen({
       await page.screencast.showActions();
     }
 
-    items.push({ file, kind: "shot", name, scheme, viewport });
+    items.push({ ...(await describe()), file, kind: "shot", name, scenario });
   };
 
   try {
     await steps({ page, scheme, shot, viewport });
+
+    if (video) {
+      items.push({ ...(await describe()), file: `${screen}.webm`, kind: "video" });
+    }
   } finally {
     if (video) {
       await page.screencast.stop();
@@ -119,7 +183,26 @@ async function captureScreen({
     await context.close();
   }
 
-  return video ? [...items, { file: `${screen}.webm`, kind: "video", scheme, viewport }] : items;
+  return items;
+}
+
+/** A retake with the same bytes shows what was read, so it keeps that read. */
+async function hashItems({
+  folder,
+  items,
+  reads,
+}: {
+  folder: string;
+  items: Unhashed[];
+  reads: Map<string, Read>;
+}): Promise<CaptureItem[]> {
+  return Promise.all(
+    items.map(async (item) => {
+      const sha256 = await sha256File(join(folder, item.file));
+      const read = reads.get(sha256);
+      return { ...item, sha256, ...(read && { read }) };
+    }),
+  );
 }
 
 /**
@@ -129,26 +212,30 @@ async function captureScreen({
 export async function captureSide({
   out,
   schemes,
-  side,
   viewports,
   ...scene
-}: Scene & { out: string; schemes: Scheme[]; side: Side; viewports: ViewportName[] }): Promise<
-  CaptureItem[]
-> {
-  const folder = join(out, side);
-  const scratch = join(out, `${side}.partial`);
+}: Scene & { out: string; schemes: Scheme[]; viewports: ViewportName[] }): Promise<CaptureItem[]> {
+  const folder = join(out, scene.side);
+  const scratch = join(out, `${scene.side}.partial`);
   await rm(scratch, { force: true, recursive: true });
   await mkdir(scratch, { recursive: true });
 
-  const items: CaptureItem[] = [];
+  const unhashed: Unhashed[] = [];
 
   for (const viewport of viewports) {
     for (const scheme of schemes) {
-      items.push(...(await captureScreen({ ...scene, folder: scratch, scheme, viewport })));
+      unhashed.push(...(await captureScreen({ ...scene, folder: scratch, scheme, viewport })));
     }
   }
 
-  await writeFile(join(scratch, MANIFEST), `${JSON.stringify(items, null, 2)}\n`);
+  const previous = (await readCapture(folder)) ?? [];
+
+  const reads = new Map(
+    previous.flatMap((item) => (item.read ? [[item.sha256, item.read] as const] : [])),
+  );
+
+  const items = await hashItems({ folder: scratch, items: unhashed, reads });
+  await writeManifest(scratch, items);
   await rm(folder, { force: true, recursive: true });
   await rename(scratch, folder);
   return items;
