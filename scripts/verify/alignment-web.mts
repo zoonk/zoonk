@@ -128,6 +128,8 @@ export function readDiscovery(declaredGroups: string): DiscoveryLead[] {
         !drawn.includes(child) &&
         !declared(child) &&
         style.display !== "contents" &&
+        // Not rendered at all (a closed `<details>`'s answer keeps a size it never shows).
+        child.checkVisibility() &&
         Math.min(box.width, box.height) >= MIN_ROOM &&
         Number(style.flexGrow) === 0 &&
         !child.matches("script, style, template, slot") &&

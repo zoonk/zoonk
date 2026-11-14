@@ -75,6 +75,11 @@ export function readAlignment({
       return false;
     }
 
+    // Not rendered at all (a closed `<details>`'s answer) holds no room, though it keeps a size.
+    if (!element.checkVisibility()) {
+      return false;
+    }
+
     const visible = element.checkVisibility({ opacityProperty: true, visibilityProperty: true });
     return !visible || inkOf(element) === null;
   }
