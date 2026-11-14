@@ -14,7 +14,7 @@ class OpeningDayTest {
         val at = Instant.parse("2026-11-14T02:00:00Z")
         assertEquals(OpeningDay.Tomorrow, openingDay(at, now, ZoneId.of("UTC")))
         assertEquals(OpeningDay.Today, openingDay(at, now, ZoneId.of("America/Sao_Paulo")))
-        assertEquals(OpeningDay.On(LocalDate.of(2026, 11, 15)), openingDay(at, now, ZoneId.of("Asia/Tokyo")))
+        assertEquals(OpeningDay.Today, openingDay(at, now, ZoneId.of("Asia/Tokyo")))
     }
 
     @Test
