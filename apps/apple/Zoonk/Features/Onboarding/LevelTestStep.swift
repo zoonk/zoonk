@@ -599,7 +599,7 @@ private struct LevelTestSpeaking: View {
   let progress: Double
   let onTest: (LevelTest) -> Void
   let onSkip: () -> Void
-  /// Record and Stop are the step's main action, in its bottom bar beside "Skip this part".
+  /// Record and Stop are the step's main action, where the other questions put Confirm.
   @State private var recordInBar = RecordInBar()
 
   var body: some View {
@@ -630,13 +630,14 @@ private struct LevelTestSpeaking: View {
           }
         })
     } actions: {
-      Button(action: onSkip) {
-        Text("Skip this part", tableName: "Onboarding", comment: "Skips the level test's sentence")
-      }
-      .buttonStyle(.outline)
-      .disabled(recordInBar.isChecking)
-
       recordInBar.button
+        .controlSize(.large)
+        .buttonSizing(.flexible)
+
+      PracticeSecondaryButton(
+        title: LocalizedStringResource(
+          "Skip this part", table: "Onboarding", comment: "Skips the level test's sentence"),
+        icon: .skip, isDisabled: recordInBar.isChecking, action: onSkip)
     }
     .environment(recordInBar)
   }
