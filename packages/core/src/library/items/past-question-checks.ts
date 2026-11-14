@@ -1,5 +1,4 @@
 import { type PastQuestion, type PastQuestionFormat } from "@zoonk/ai/tasks/items/past-questions";
-import { parseInlineMarkupRanges } from "@zoonk/utils/inline-markup";
 import { NO_SPACE_SCRIPT } from "@zoonk/utils/string";
 import { checkItem } from "./item-checks";
 import { repairItem } from "./item-repairs";
@@ -81,7 +80,7 @@ function toComparablePaper(paperText: string): ComparablePaper {
  * quote matches as printed, or with page notes left out of both sides; a command every question
  * repeats ("Assinale a alternativa correta.") is a page note too, and matches as printed.
  */
-function isPrinted({ paper, text }: { paper: ComparablePaper; text: string }): boolean {
+function isQuoted({ paper, text }: { paper: ComparablePaper; text: string }): boolean {
   const lines = toComparableLines(text, /\n/u).filter((line) => !TABLE_DELIMITER_ROW.test(line));
   const quote = lines.join("");
   const withoutNotes = lines.filter((line) => !paper.notes.has(line)).join("");
@@ -90,21 +89,6 @@ function isPrinted({ paper, text }: { paper: ComparablePaper; text: string }): b
     (quote.length > 0 && paper.printed.includes(quote)) ||
     (withoutNotes.length > 0 && paper.withoutNotes.includes(withoutNotes))
   );
-}
-
-function withoutCodeMarks(text: string): string {
-  return parseInlineMarkupRanges(text)
-    .map((range) => (range.kind === "code" ? range.text : text.slice(range.start, range.end)))
-    .join("");
-}
-
-/**
- * The item rules ask for code, file names and links in backticks, which most papers print bare,
- * so a quote also matches with its backticks taken off; one that the paper prints still matches
- * as written.
- */
-function isQuoted({ paper, text }: { paper: ComparablePaper; text: string }): boolean {
-  return [text, withoutCodeMarks(text)].some((quote) => isPrinted({ paper, text: quote }));
 }
 
 function findLetterRuns(text: string): string[] {
