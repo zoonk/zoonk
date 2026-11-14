@@ -13,12 +13,14 @@ import com.zoonk.android.feature.livecall.LiveCallFailure
 import com.zoonk.android.feature.subscription.SubscribeGate
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.Limit
-import com.zoonk.android.ui.components.LimitActions
+import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitPeriod
+import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.components.comesBackLine
 import com.zoonk.android.ui.components.hasWayOn
 import com.zoonk.android.ui.components.limitLifted
+import com.zoonk.android.ui.components.limitWords
 import com.zoonk.android.ui.components.needsAccount
 
 /** Why a call stopped before its result: a failure, or a save the server refused. */
@@ -138,11 +140,14 @@ internal fun CallLimitMessage(
     modifier: Modifier = Modifier,
     inBar: Boolean = false,
 ) {
+    if (!inBar) {
+        LimitNotice(limit, LimitSubject.Calls, onCreateAccount, onSubscribe, modifier)
+        return
+    }
     CallOffMessage(callLimitTitle(limit), modifier) {
         comesBackLine(limit)?.let {
             Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
         }
-        if (!inBar) LimitActions(limit, onCreateAccount, onSubscribe)
     }
 }
 
@@ -158,14 +163,7 @@ internal fun ChallengeCallGate(onSubscribe: () -> Unit) {
 }
 
 @Composable
-internal fun callLimitTitle(limit: Limit.Reached) =
-    stringResource(
-        when (limit.period) {
-            LimitPeriod.Rolling30Days -> R.string.limit_call_time_used
-            LimitPeriod.Total -> R.string.conversation_calls_need_account
-            else -> R.string.conversation_no_calls_today
-        },
-    )
+internal fun callLimitTitle(limit: Limit.Reached) = limitWords(limit, LimitSubject.Calls).title.orEmpty()
 
 @Composable
 private fun ProblemMessage(

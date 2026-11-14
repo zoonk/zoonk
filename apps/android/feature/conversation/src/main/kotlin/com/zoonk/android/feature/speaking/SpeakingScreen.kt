@@ -276,9 +276,12 @@ fun SpeakingPaperSection(
                 onStart = { startTask(task.key) },
                 onSubscribe = { open(AppRoute.Subscription) },
                 onLastResult = openCall,
+                note = if (started == task.key) ({ StartNote(model, actions) }) else null,
             )
         }
-        StartState(model, writing != null, actions)
+        if (writing != null) {
+            WritingWait(model.writing, hint = stringResource(R.string.speaking_opens_when_ready), modifier = Modifier.padding(top = 16.dp))
+        }
         val official = stringResource(R.string.speaking_official_format)
         Text(
             buildAnnotatedString {
@@ -314,18 +317,14 @@ internal fun CallsPaused(modifier: Modifier = Modifier) {
     }
 }
 
+/** Why the last Start tapped didn't open, under its task: the limit that refused it, or that it failed. */
 @Composable
-private fun StartState(
+private fun StartNote(
     model: CallStartModel,
-    writing: Boolean,
     actions: SpeakingActions,
 ) {
     val limit = model.limit
     when {
-        writing -> {
-            WritingWait(model.writing, hint = stringResource(R.string.speaking_opens_when_ready), modifier = Modifier.padding(top = 16.dp))
-        }
-
         model.state == CallStartModel.State.Failed && limit != null -> {
             CallLimitMessage(
                 limit,
@@ -337,7 +336,7 @@ private fun StartState(
         model.state == CallStartModel.State.Failed -> {
             Text(
                 stringResource(R.string.speaking_start_failed),
-                Modifier.padding(top = 12.dp).semantics { liveRegion = LiveRegionMode.Polite },
+                Modifier.semantics { liveRegion = LiveRegionMode.Polite },
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodyMedium,
             )
@@ -359,6 +358,7 @@ private fun TaskRow(
     onStart: () -> Unit,
     onSubscribe: () -> Unit,
     onLastResult: (UUID) -> Unit,
+    note: (@Composable () -> Unit)?,
 ) {
     val locale = currentLocale()
     var open by rememberSaveable(task.key) { mutableStateOf(openAtFirst) }
@@ -450,6 +450,7 @@ private fun TaskRow(
                     }
                     lastResult?.invoke()
                 }
+                note?.invoke()
             }
         }
     }

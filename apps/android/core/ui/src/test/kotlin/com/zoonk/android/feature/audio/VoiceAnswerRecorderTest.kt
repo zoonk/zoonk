@@ -9,6 +9,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.lifecycle.Lifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.MutationResult
@@ -50,6 +51,28 @@ class VoiceAnswerRecorderTest {
         rule.onNodeWithText("Tap Record and say it out loud").assertIsDisplayed()
     }
 
+    /** The microphone turned off for good shows how to turn it on; back from Settings with it on, Record returns. */
+    @Test
+    fun theMicrophoneTurnedOnInSettingsBringsRecordBack() {
+        lateinit var model: VoiceAnswerModel
+        rule.setContent {
+            ZoonkTheme {
+                model = voiceAnswerModel(KEY)
+                VoiceAnswerRecorder<Unit>(grade = { GradeOutcome.Failed }, onGraded = {}, navigator = rememberAppNavigator(), key = KEY)
+            }
+        }
+        rule.runOnIdle { model.microphoneOff = true }
+        rule.onNodeWithText("The microphone is off").assertIsDisplayed()
+        rule.onNodeWithText("Record").assertDoesNotExist()
+
+        shadowOf(rule.activity.application).grantPermissions(Manifest.permission.RECORD_AUDIO)
+        rule.activityRule.scenario.moveToState(Lifecycle.State.STARTED)
+        rule.activityRule.scenario.moveToState(Lifecycle.State.RESUMED)
+
+        rule.onNodeWithText("Record").assertIsDisplayed()
+        rule.onNodeWithText("The microphone is off").assertDoesNotExist()
+    }
+
     @Test
     fun aGradingWriteSaysWhatTheRecorderShows() {
         fun refused(code: String) = MutationResult.Failed(ApiError.Unavailable, code, status = 429)
@@ -58,5 +81,9 @@ class VoiceAnswerRecorderTest {
         assertEquals(GradeOutcome.Limited(Limit.SlowDown(60)), refused("SLOW_DOWN").toGradeOutcome())
         assertEquals(GradeOutcome.Failed, MutationResult.Failed(ApiError.Network).toGradeOutcome())
         assertEquals(GradeOutcome.Obsolete, MutationResult.Obsolete.toGradeOutcome())
+    }
+
+    private companion object {
+        const val KEY = "microphone"
     }
 }
