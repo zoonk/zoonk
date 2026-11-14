@@ -1,9 +1,9 @@
 "use client";
 
+import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { ListRowChevron } from "../_components/list-group";
 import { ProgressRing } from "../_components/progress-ring";
 import { useFormatShare } from "../_utils/percent";
 import { type GenerationFirstLesson } from "../generation/generation-run";
@@ -68,7 +68,7 @@ export function WaitStatus({
         </span>
 
         <span className="col-start-3 row-start-1 flex justify-end self-center">
-          <ListRowChevron />
+          <RowChevron />
         </span>
 
         {line}
