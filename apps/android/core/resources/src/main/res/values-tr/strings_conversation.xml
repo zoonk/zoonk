@@ -87,7 +87,6 @@
   "conversation_muted_detail": "4964f42e74e69e586312b4bd7026ca529e85eae5d4c44eff420e82b3b6020f07",
   "conversation_near_level": "10720aeb5386e847e8731a75f8208c11aaaf9f03cbfeb7ebb81a4cbe48e231f0",
   "conversation_next_task": "f6845076ac0bc9c4ea27b191a6d51e8c501a5d4ab229aef585b6420011857459",
-  "conversation_no_calls_month": "6a9d72bf0983fb7dcf7123c7b218c87a8bde66c280bcdc6aa598e7e4d0940626",
   "conversation_no_calls_today": "ab466a24019f8b1f94926ea335ca769bdefa6b417e58c6edcd78c56920e2c5ba",
   "conversation_no_estimate_title": "fc9b6a0ea6af2c2f15cc3bee62b446a5f0c7b880863ed69d4976464b74426070",
   "conversation_no_score": "69391bc3cf607dfd2ff7995a36917b8d4166d0a6d1a92c80877580f2467f8f07",
@@ -240,7 +239,6 @@
     <string name="conversation_mute">Mikrofonu kapat</string>
     <string name="conversation_end">Bitir</string>
     <string name="conversation_no_calls_today">Bugünkü sohbet hakkın doldu</string>
-    <string name="conversation_no_calls_month">Bu ayki sohbet hakkın doldu</string>
     <string name="conversation_calls_need_account">Sohbet etmek için ücretsiz bir hesap gerekiyor</string>
     <string name="conversation_ended_title">Bu sohbet sona erdi</string>
     <string name="conversation_taken_over">Başka bir sohbet başlatınca sona erdi.</string>

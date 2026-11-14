@@ -282,11 +282,11 @@ internal fun MindMapAllowanceStop.limit(tier: LimitTier): Limit =
             Limit.Reached(
                 tier,
                 when (period) {
-                    MindMapAllowanceStop.Period.MONTH -> LimitPeriod.Month
+                    MindMapAllowanceStop.Period.ROLLING30_DAYS -> LimitPeriod.Rolling30Days
                     MindMapAllowanceStop.Period.TOTAL -> LimitPeriod.Total
                     MindMapAllowanceStop.Period.DAY, null -> LimitPeriod.Day
                 },
-                availableAt = resetsAt?.toJavaInstant(),
+                availableAt = availableAt?.toJavaInstant(),
             )
         }
     }

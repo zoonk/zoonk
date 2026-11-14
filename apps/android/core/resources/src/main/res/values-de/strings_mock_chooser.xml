@@ -22,8 +22,9 @@
   "mock_chooser_preparing_detail": "2cb577d6bbebfc8e5c85edb71136fc654c9eea31a474fa7ff5e257f31717fe60",
   "mock_chooser_questions": "bf852472dd68e5942093e6599899824fb3426bf4d1b40cfad6d807e6b322a47c",
   "mock_chooser_short_day": "821dc377090b61b91f1c21c2fbe33ef488640a82a27e84b9238d78ac9f895d1a",
+  "mock_chooser_short_later_today": "5adbacb9a27212a817188d85c267663f9e1610ba24bcdfaf14fa7a6377d4a5a0",
   "mock_chooser_short_line": "13fee417741b4d776d589096a9a55d81d240e899d9661f9117e67cb37083c345",
-  "mock_chooser_short_month": "1b468d099fc95db76e6cc46519d40ff795c9091029db5cc7fe17c77f9c550ff5",
+  "mock_chooser_short_on": "c14a0cd892ad518c5f32fea3575998cbbaea5e45883d6987c1bb1ae230a4f663",
   "mock_chooser_short_title": "031ecbc9143b5510ed96657b5ff4f75c673b685a26b69ce8e72f6b7bc817ab6d",
   "mock_chooser_size_latest_exam": "6ea8d941b3f274d7a73084f46e3de7241d480c56e1509d23cb2863b69a5ca114",
   "mock_chooser_size_past_edition": "7d25e6e0667ba198427340aebef4d8865a6f516f1b9bce256745492df3144e66",
@@ -69,8 +70,10 @@
     <string name="mock_chooser_short_title">Kürzere Probeprüfung starten?</string>
     <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
     <string name="mock_chooser_short_day">Diese Probeprüfung hat heute %1$s von %2$s Fragen und dauert etwa %3$s Morgen kannst du die ganze Probeprüfung machen.</string>
-    <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
-    <string name="mock_chooser_short_month">Diese Probeprüfung hat heute %1$s von %2$s Fragen und dauert etwa %3$s Nächsten Monat kannst du die ganze Probeprüfung machen.</string>
+    <!-- In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now. -->
+    <string name="mock_chooser_short_later_today">Diese Probeprüfung hat heute %1$s von %2$s Fragen und dauert etwa %3$s Die vollständige kannst du später am Tag machen.</string>
+    <!-- In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now. {date} is a day and its month, such as "November 22" in English. -->
+    <string name="mock_chooser_short_on">Diese Probeprüfung hat heute %1$s von %2$s Fragen und dauert etwa %3$s Die vollständige kannst du am %4$s machen.</string>
     <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
     <string name="mock_chooser_short_line">Diese Probeprüfung hat heute %1$s von %2$s Fragen und dauert etwa %3$s</string>
     <string name="mock_chooser_pick_another">Andere Probeprüfung wählen</string>

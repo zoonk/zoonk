@@ -29,7 +29,6 @@
   "onboarding_attach_already_read": "bc32e347dc72d1c7dc8e42dedd1ecfbbff09465a1ff87497defe1c1701c9d2bc",
   "onboarding_attach_failed": "fc4f3f21de4cc88c93ec8baf8b04ca35615e3512930de17585ab9dd9cda919c8",
   "onboarding_attach_limit_day": "964ba40c5708995bcd2d8e2bc9219318e6fde4126b3fbbf78d460a764aaeec7c",
-  "onboarding_attach_limit_month": "5c6fed76688d7da55160486ebb86e3ee18156a68d1bb6bb7d4bf3625ea4ebd15",
   "onboarding_attach_limit_plus": "db439fb76037575aeb5755cb0c5bbf8fd1c4588da3663e3f65e94844f9f94203",
   "onboarding_attach_sign_in": "f5b4499c94d31c04e3d7d31fe1b9c161ef4aa6861d2d64f621d2e77c6ed49e63",
   "onboarding_attach_slow_down": "31e6ea78bc736b762a1b8c2f28c178b8fd000961221b49517f95f78b6d9c7a58",
@@ -155,12 +154,9 @@
   "onboarding_level_test_description": "81c364adeef00b7b232f8960248f8d5f1c740afee9b5f7842fc7d888652bb4ef",
   "onboarding_level_title": "bca6c18b18ea9f42ee0a603c68803d4447da021f8dffc464c779b72041a56262",
   "onboarding_library_course_fits": "1c2ef15952bac2a92386137179367eff3e6f4757a698f45474d1e1fa3598b127",
-  "onboarding_limit_active_goals": "fea1c7f83096fa791729235cdd90b90aa9c0463d14ee55ae3dfd4d02aa57a983",
   "onboarding_limit_daily_explanations": "d22202d14ea8fb4f31609136f6b75d982b90efca94d5551b50219b8fd2925a06",
   "onboarding_limit_daily_goals": "27c2b8c2d1f629666da6dcd438aa73620eee9d0a3a96921a403821362e999182",
   "onboarding_limit_guest": "606bf0abec1818007ca7d552499db1b8629256186f22984ef2ca6573c0f920a0",
-  "onboarding_limit_monthly_explanations": "21b5f6f6e30c2916fd08900818e621b0f38c2f6a1eeaa2fb058145bd940c4922",
-  "onboarding_limit_monthly_goals": "5fe6d36158cf48e254bbf1aff05990d7b214c2c906e1e23d68f31b99651a3dca",
   "onboarding_limit_sign_up_required": "daa945d6ba31308c3e683363b0b6d5490e4aca083d7c8da92de7e565359df87a",
   "onboarding_limit_slow_down": "d9904fa5a20a3e21ef803d47a468d932fc5f1e40ed6e52dd1542cb98291b8520",
   "onboarding_link": "4185a0e212af9da8a10502ac3f0f5d325547dd89e70aaec31a9257e56f177826",
@@ -169,8 +165,6 @@
   "onboarding_material_goal_exam": "0bea8d99330a2088da1f0f92729292e71c57b01a64737b0d6513ba53dafaab63",
   "onboarding_material_goal_understand": "b887a98ac58e16bc3870eb86d8a4e30fa2085a0c9fa85904bdbd3ef2c6d75684",
   "onboarding_material_sign_up": "904e5cdcd5f9ee5f48e4c8476ab7416c6d565cd6243292a185e68dec61433772",
-  "onboarding_month_goals_line": "151ee9d5bb9778f1b0b6f2ea8698f767ef110f2a971dce66bff3c73c2f6220ef",
-  "onboarding_month_goals_title": "e37a6a5adb5786d5d1fa97a6e4ab5b6a9fb8efcc9078861f4dad22cedffc0902",
   "onboarding_more": "c1b6709c69e45bf7a32e1ffa1e484b1e889766d873f42059ca1a83e6c033b5e5",
   "onboarding_musicianship_card": "08a011eca940e1d5b5ac2df3812c741810b1f652685badc48c027a9ce493990a",
   "onboarding_musicianship_subject": "e8d9e0067be725df54f0ce978ff9992bc63f102b8b5ce6610cd85515d10d303e",
@@ -233,7 +227,6 @@
   "onboarding_purpose_work_description": "6a62cb20fb9337c99be1e04353a6f867eba658e78ac065b6caddd0cde1c0379e",
   "onboarding_question_failed": "6ffbb901ac4489e1ca5e38c345098bc15469a389ca812fa2f4f1271c96878d54",
   "onboarding_question_limit_day": "f6dfafba991c1fca83bc62016acc0e15b375591ace75796fba0c4142889873f0",
-  "onboarding_question_limit_month": "08e5607c7691e79a8f57804e90d24160cf255f7917ff8912c50f9d9eab5b8747",
   "onboarding_question_limit_plus": "507cdd488e51da50adea54ef2cb8a8e2b701837a7d3621cdfd524ca9bd49c22c",
   "onboarding_question_placeholder": "9e6163e32b9496d7767d44dcd5eafac461a7c22caaf0afb08f57c9b325a2dd43",
   "onboarding_question_sign_in": "685c9e263159d3949820696716a02882330628942afb202512d3f3bde8652411",
@@ -243,7 +236,6 @@
   "onboarding_questions_title": "166d58abf99004810464dfda7e5cf93d005a2062b73eccd73fc2599a6f91c7a9",
   "onboarding_read_again": "2d1e39f44d9e791d2b311bb517d0b1677572a5645291862271a2d12236f699e9",
   "onboarding_read_limit_free_day": "8b15b25f268cc435fa6210c9a834e6300ebc8aa0babc32f2a1cdd0f3210281e7",
-  "onboarding_read_limit_free_month": "e47ca70c3e27c1ca7354f528ddb5c319d4d9c79c89489dc40593803b1ea3f524",
   "onboarding_read_limit_guest": "48863644abd2217a2cba30f52d8d5a09b9034920711e284a6f49f0cbc7c16b60",
   "onboarding_read_limit_plus": "19e8f81cb2f96fe656e886edcd4e480717c11ff294fb39c92c8b1fc667e207e2",
   "onboarding_reason_certificate": "3dc65bd9b6565810b17bb348ce8003a6fa7cce4f98917240b718dd326f643742",
@@ -484,15 +476,10 @@
     <string name="onboarding_limit_daily_explanations">Bugünkü hızlı açıklama sınırına ulaştın. Yarın tekrar kullanabilir veya abone olup devam edebilirsin.</string>
     <string name="onboarding_limit_daily_goals">Paketinin günlük yeni hedef başlatma sınırına ulaştın. Yarın tekrar dene.</string>
     <string name="onboarding_limit_guest">Hesap oluşturmadan tek bir hedefi takip edebilirsin. Devam etmek için ücretsiz hesap oluştur.</string>
-    <string name="onboarding_limit_monthly_explanations">Bu ayki hızlı açıklama sınırına ulaştın. Gelecek ay tekrar kullanabilir veya abone olup devam edebilirsin.</string>
-    <string name="onboarding_limit_monthly_goals">Bu ayki yeni hedef sınırına ulaştın. Gelecek ay yenilerini ekleyebilir veya abone olup devam edebilirsin.</string>
-    <!-- When a learner starts a goal while studying as many goals at once as they can. Pausing a goal keeps its progress. -->
-    <string name="onboarding_limit_active_goals">Aynı anda çalışabileceğin hedef sınırına ulaştın. Birini duraklat veya daha fazla hedef üzerinde çalışmak için abone ol.</string>
     <string name="onboarding_limit_sign_up_required">Devam etmek için ücretsiz bir hesap oluştur.</string>
     <string name="onboarding_limit_slow_down">Peş peşe hedefler başlatıyorsun. Birkaç dakika sonra tekrar dene.</string>
     <string name="onboarding_read_limit_guest">Hesap oluşturmadan günde birkaç yeni hedef gönderebilirsin. Devam etmek için ücretsiz hesap oluştur.</string>
     <string name="onboarding_read_limit_plus">Paketinin günlük yeni hedef gönderme sınırına ulaştın. Yarın tekrar dene.</string>
-    <string name="onboarding_read_limit_free_month">Bu ayki yeni hedef sınırına ulaştın. Gelecek ay yenilerini ekleyebilir veya abone olup devam edebilirsin.</string>
     <string name="onboarding_read_limit_free_day">Bugünkü yeni hedef sınırına ulaştın. Yarın yenilerini ekleyebilir veya abone olup devam edebilirsin.</string>
     <string name="onboarding_error_one_moment">Biraz bekle. Birkaç saniye sonra tekrar dene.</string>
     <string name="onboarding_error_could_not_read">Hedefini okuyamadık. Biraz sonra tekrar dene.</string>
@@ -507,8 +494,6 @@
     <!-- The new-goal page for a learner already studying as many goals at once as they can. -->
     <string name="onboarding_goals_at_once_title">Aynı anda çalışabileceğin hedef sınırına ulaştın</string>
     <string name="onboarding_goals_at_once_line">Plan bölümünde bir hedefi duraklat veya aynı anda daha fazla hedef üzerinde çalışmak için abone ol.</string>
-    <string name="onboarding_month_goals_title">Bu ayki yeni hedef sınırına ulaştın</string>
-    <string name="onboarding_month_goals_line">Hakların gelecek ay yenilenir; devam etmek için abone ol.</string>
     <string name="onboarding_create_account">Ücretsiz hesap oluştur</string>
     <string name="onboarding_create_account_short">Hesap oluştur</string>
     <string name="onboarding_guest_gate_title">Başka bir hedefe başlamak için ücretsiz hesap oluştur</string>
@@ -627,7 +612,6 @@
     <!-- Removes an attached file or text. %1$s is its title. -->
     <string name="onboarding_remove_material">%1$s adlı materyali kaldır</string>
     <string name="onboarding_attach_limit_plus">Bugünkü materyal ekleme hakkın doldu. Yarın yenilenir.</string>
-    <string name="onboarding_attach_limit_month">Bu ayki materyal ekleme hakkın doldu. Gelecek ay yenilenir, istersen abone olup hemen devam edebilirsin.</string>
     <string name="onboarding_attach_limit_day">Bugünkü materyal ekleme hakkın doldu. Yarın yenilenir, istersen abone olup hemen devam edebilirsin.</string>
     <string name="onboarding_attach_slow_down">Kısa sürede çok materyal ekledin. Birkaç dakika sonra tekrar dene.</string>
     <string name="onboarding_attach_unsupported">Bu dosyayı okuyamıyoruz. PDF, fotoğraf, Word, PowerPoint veya metin eklemeyi dene.</string>
@@ -653,7 +637,6 @@
     <string name="onboarding_question_sign_in">Materyalin hakkında soru sormak için hesap oluştur.</string>
     <string name="onboarding_question_slow_down">Peş peşe soru soruyorsun. Birkaç dakika sonra tekrar dene.</string>
     <string name="onboarding_question_limit_plus">Bugünkü soru hakkın doldu. Yarın yenilenir.</string>
-    <string name="onboarding_question_limit_month">Bu ayki soru hakkın doldu. Gelecek ay yenilenir, istersen abone olup hemen devam edebilirsin.</string>
     <string name="onboarding_question_limit_day">Bugünkü soru hakkın doldu. Yarın yenilenir, istersen abone olup hemen devam edebilirsin.</string>
     <!-- Placement: a few questions that find where the plan starts. -->
     <string name="onboarding_placement_title">Neler bildiğine bakalım</string>

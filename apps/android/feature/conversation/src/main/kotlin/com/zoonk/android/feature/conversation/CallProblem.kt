@@ -128,10 +128,11 @@ internal fun CallLimitMessage(
     onSubscribe: () -> Unit,
     modifier: Modifier = Modifier,
     title: String? = null,
+    line: String? = comesBackLine(limit),
     inBar: Boolean = false,
 ) {
     CallOffMessage(title ?: callLimitTitle(limit), modifier) {
-        comesBackLine(limit)?.let {
+        line?.let {
             Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
         }
         if (!inBar) LimitActions(limit, onCreateAccount, onSubscribe)
@@ -153,7 +154,7 @@ internal fun ChallengeCallGate(onSubscribe: () -> Unit) {
 internal fun callLimitTitle(limit: Limit.Reached) =
     stringResource(
         when (limit.period) {
-            LimitPeriod.Month -> R.string.conversation_no_calls_month
+            LimitPeriod.Rolling30Days -> R.string.limit_call_time_used
             LimitPeriod.Total -> R.string.conversation_calls_need_account
             else -> R.string.conversation_no_calls_today
         },

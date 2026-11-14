@@ -87,7 +87,6 @@
   "conversation_muted_detail": "c2c6049a34a48c9235178390d9104ce51709369a8cccbd522cbb05216f5b3629",
   "conversation_near_level": "4a1c880574b8991fe9f507255211391b852d078088a7a51191bcd9c7c25a096d",
   "conversation_next_task": "d350540b31dd5056524b6492b34b492a4b994a4760b6f14cd1fee3dc36c74fd0",
-  "conversation_no_calls_month": "2ee3fe0b9cf6e5817aa7706b7ee31231fa09eec4092c340db287116515335e82",
   "conversation_no_calls_today": "890a9c99f8536bb817d8944124fd7cda15842b22941307ac9603c048808d2753",
   "conversation_no_estimate_title": "e4c6ee9884006a827fea0f5010d1d1fa2e3ebf6042f13a2f60e6c4429c5471f7",
   "conversation_no_score": "3a66ca07892d002cbb1f74f6b36b92bd9e8db70e3e91c842b84095eb6227a1fa",
@@ -240,7 +239,6 @@
     <string name="conversation_mute">마이크 끄기</string>
     <string name="conversation_end">끝내기</string>
     <string name="conversation_no_calls_today">오늘은 더 이상 대화할 수 없어요</string>
-    <string name="conversation_no_calls_month">이번 달은 더 이상 대화할 수 없어요</string>
     <string name="conversation_calls_need_account">대화하려면 무료 계정이 필요해요</string>
     <string name="conversation_ended_title">이 대화가 끝났어요</string>
     <string name="conversation_taken_over">다른 대화를 시작해서 이 대화가 끝났어요.</string>

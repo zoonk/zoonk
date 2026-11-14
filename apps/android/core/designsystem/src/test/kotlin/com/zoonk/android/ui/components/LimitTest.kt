@@ -20,8 +20,13 @@ class LimitTest {
         assertEquals(Limit.SignUpRequired, Limit.of(refusal("SIGN_UP_REQUIRED")))
         assertEquals(Limit.SlowDown(30), Limit.of(refusal("SLOW_DOWN", """{"retryAfterSeconds":30}""")))
         assertEquals(
-            Limit.Reached(LimitTier.Free, LimitPeriod.Month),
-            Limit.of(refusal("USAGE_LIMIT_REACHED", """{"limit":{"period":"month","tier":"free"}}""")),
+            Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days, Instant.parse("2026-12-29T12:00:00Z")),
+            Limit.of(
+                refusal(
+                    "USAGE_LIMIT_REACHED",
+                    """{"limit":{"availableAt":"2026-12-29T12:00:00.000Z","limit":10,"period":"rolling30Days","resource":"mindMap","tier":"free"}}""",
+                ),
+            ),
         )
         assertEquals(Limit.Reached(LimitTier.Guest), Limit.of(refusal("USAGE_LIMIT_REACHED", """{"limit":{"tier":"guest"}}""")))
     }

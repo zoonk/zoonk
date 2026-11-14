@@ -23,6 +23,7 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.contentOrNull
+import java.time.Instant
 import java.util.UUID
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -103,7 +104,8 @@ sealed interface CallReservation {
                 "CONVERSATION_LIMIT_REACHED" -> {
                     val limitPeriod = LimitPeriod.entries.firstOrNull { it.name.equals(period, ignoreCase = true) }
                     val tier = LimitTier.entries.firstOrNull { it.name.equals(details.field("tier"), ignoreCase = true) }
-                    if (limitPeriod != null && tier != null) Limited(Limit.Reached(tier, limitPeriod)) else Failed
+                    val availableAt = details.field("availableAt")?.let { runCatching { Instant.parse(it) }.getOrNull() }
+                    if (limitPeriod != null && tier != null) Limited(Limit.Reached(tier, limitPeriod, availableAt)) else Failed
                 }
 
                 "CONNECTION_LIMIT_REACHED" -> {

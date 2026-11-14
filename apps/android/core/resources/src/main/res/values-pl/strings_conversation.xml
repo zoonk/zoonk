@@ -87,7 +87,6 @@
   "conversation_muted_detail": "0478422df3ed68675b4b35db9ade783712de8d26efa4bdde7054a0317826c847",
   "conversation_near_level": "646ffde87d873d323ebb3577f9c8e03ca0383daad60dd083caf71e4615fc7c19",
   "conversation_next_task": "d56bca8206d1cfaf079631b20b70122f2d14278401360a99360533f326851c08",
-  "conversation_no_calls_month": "e7ff5a70a0ae7b079f667b1280729a9a49831397d60ac78427896b3cb3a90b45",
   "conversation_no_calls_today": "450d7004d8047e4258f448daef88b9337999434738a0da2210fd1ae5c8470d28",
   "conversation_no_estimate_title": "c2162bd49a1695e26d21b95347a2dc9a60581a4a032abedc5295582d06e3c1f9",
   "conversation_no_score": "9fa3a349722f614416bbb569009ccbfdc0db16257483ff3f40de2372b45d711d",
@@ -240,7 +239,6 @@
     <string name="conversation_mute">Wycisz</string>
     <string name="conversation_end">Zakończ</string>
     <string name="conversation_no_calls_today">Limit rozmów na dziś wyczerpany</string>
-    <string name="conversation_no_calls_month">Limit rozmów na ten miesiąc wyczerpany</string>
     <string name="conversation_calls_need_account">Do rozmów potrzebujesz bezpłatnego konta</string>
     <string name="conversation_ended_title">Ta rozmowa się zakończyła</string>
     <string name="conversation_taken_over">Zakończyła się po rozpoczęciu innej rozmowy.</string>

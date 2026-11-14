@@ -14,8 +14,8 @@
   "speaking_mock_opens": "df6de5e98cea9832f69ba9b09c21c2271f6c200a3bf34de1e5a70890e72b08ac",
   "speaking_mock_start": "2926b8d66c57c4b010c7136c35c83892722f57ab11031571a0641a215438ae34",
   "speaking_mock_toefl": "8c8df0a0ebc20838e3e64b65418593a50563ee02ee7be8036508cce4ea25c948",
-  "speaking_no_time_day": "9770e4471bc72142c3ecf4d4d23762b1b314d7600db5e962bd55c36bdba31313",
-  "speaking_no_time_month": "e54ebf57b154442b1cec4cec42aad223b16fd07bf7a13a8370ce0ecceae2fa42",
+  "speaking_no_time": "7abdc18c511073d7a4e6020fbf15b4904591e731251f11b72cf2af4a2f2206d1",
+  "speaking_no_time_mock": "f72ffd94e263a514af6279d81f77c5d365f991d257a2cb004781a73e5045cc96",
   "speaking_official_format": "3b629e14f488149d7c6b4ed89123d5e4d10666d0393a83f10ad6da7936090524",
   "speaking_opens_when_ready": "ae8a4bbb9491d05e2dae2e0d8eae2422a16a7705de0ccec5fd38f3c10087e539",
   "speaking_prep": "d9a4a21be823f6916f4f73a2402248f885fff60a65a7b39383eee8452b08b24d",
@@ -50,8 +50,8 @@
     <string name="speaking_section">Expresión oral</string>
     <string name="speaking_gate">La práctica de expresión oral requiere una suscripción</string>
     <string name="speaking_opens_when_ready">Tu tarea se abrirá en cuanto esté lista la tarjeta.</string>
-    <string name="speaking_no_time_month">No te queda suficiente tiempo de llamada este mes para esta tarea</string>
-    <string name="speaking_no_time_day">No te queda suficiente tiempo de llamada hoy para esta tarea</string>
+    <string name="speaking_no_time">No tienes suficiente tiempo de llamada para esta tarea</string>
+    <string name="speaking_no_time_mock">No tienes suficiente tiempo de llamada para este simulacro</string>
     <string name="speaking_start_failed">La tarea no se inició. Vuelve a intentarlo en un momento.</string>
     <string name="speaking_official_format">Formato oficial</string>
     <string name="speaking_start_task">Empezar</string>

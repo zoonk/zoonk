@@ -59,6 +59,7 @@ import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.api.models.LanguagePracticeCall
 import kotlinx.coroutines.launch
 import java.util.UUID
+import kotlin.time.toJavaInstant
 
 /** Main's `useCallStart`: a call that isn't written yet waits on the run writing it, then starts again. */
 class CallStartModel(
@@ -257,6 +258,7 @@ private fun CallSetup(
                 Limit.Reached(
                     LimitTier.entries.first { it.name.equals(limit.tier.value, ignoreCase = true) },
                     LimitPeriod.entries.first { it.name.equals(limit.period.value, ignoreCase = true) },
+                    limit.availableAt?.toJavaInstant(),
                 ),
                 onCreateAccount = { open(AppRoute.Login) },
                 onSubscribe = { open(AppRoute.Subscription) },
