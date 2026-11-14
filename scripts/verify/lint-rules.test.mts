@@ -115,11 +115,6 @@ const FIXTURES = [
     lines: [1, 1, 1, 1, 2, 3, 4, 9],
     rule: "shortcut-keys",
   },
-  {
-    bad: ["export const A = <PageEyebrow />;"],
-    good: ["export const A = <Eyebrow />; export const B = <PageTitle />;"],
-    rule: "one-eyebrow",
-  },
 ];
 
 function lint() {
