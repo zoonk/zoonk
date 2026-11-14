@@ -4606,12 +4606,6 @@ msgctxt "dhP2hY"
 msgid "Course complete"
 msgstr "코스 완료"
 
-#. Shown when a learner without a subscription tries to resume a paused goal while studying as many goals at once as they can. This counts goals studied at the same time, not new goals per day or month. Pausing a goal keeps its progress.
-#: src/journey/goal-actions.tsx
-msgctxt "-tmLeU"
-msgid "That's all the goals you can study at once. Pause another to resume this one, or subscribe to study more."
-msgstr "동시에 학습할 수 있는 목표 수를 다 채웠어요. 다른 목표를 일시 중지하면 이 목표를 다시 시작할 수 있고, 구독하면 더 많은 목표를 동시에 학습할 수 있어요."
-
 #: src/journey/goal-actions.tsx
 #: src/journey/rename-goal-dialog.tsx
 msgctxt "kvT_KU"
@@ -4639,7 +4633,7 @@ msgid "Resume your {goal} goal?"
 msgstr "{goal} 목표를 이어갈까요?"
 
 #: src/journey/goal-actions.tsx
-#: src/journey/journey-planless.tsx
+#: src/journey/resume-goal-bar.tsx
 msgctxt "3y9DGg"
 msgid "Resume"
 msgstr "이어가기"
@@ -5144,6 +5138,11 @@ msgstr "목표 이름"
 msgctxt "ViPPTn"
 msgid "Your plan picks up from today, starting with the lessons planned for the days you paused."
 msgstr "오늘부터 계획을 다시 이어 가요. 일시 중지한 기간에 예정되어 있던 레슨부터 시작해요."
+
+#: src/journey/resume-goal-bar.tsx
+msgctxt "DuuVCx"
+msgid "That's as many goals as you can study at once. Pause another goal to resume this one."
+msgstr "동시에 공부할 수 있는 목표 수를 모두 채웠어요. 이 목표를 이어서 공부하려면 다른 목표를 일시 중지하세요."
 
 #: src/journey/roadmap-full.tsx
 #: src/onboarding/plan-receipt.tsx

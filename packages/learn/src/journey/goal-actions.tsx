@@ -53,7 +53,7 @@ function useStatusError() {
   };
 }
 
-function useSetGoalStatus(onSetStatus: GoalStatusControl["onSetStatus"] | null) {
+export function useSetGoalStatus(onSetStatus: GoalStatusControl["onSetStatus"] | null) {
   const showError = useStatusError();
   const [isPending, startTransition] = useTransition();
 

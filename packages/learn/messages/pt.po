@@ -4606,12 +4606,6 @@ msgctxt "dhP2hY"
 msgid "Course complete"
 msgstr "Curso concluído"
 
-#. Shown when a learner without a subscription tries to resume a paused goal while studying as many goals at once as they can. This counts goals studied at the same time, not new goals per day or month. Pausing a goal keeps its progress.
-#: src/journey/goal-actions.tsx
-msgctxt "-tmLeU"
-msgid "That's all the goals you can study at once. Pause another to resume this one, or subscribe to study more."
-msgstr "Você chegou ao limite de objetivos que pode estudar ao mesmo tempo. Pause outro para retomar este ou assine para estudar mais."
-
 #: src/journey/goal-actions.tsx
 #: src/journey/rename-goal-dialog.tsx
 msgctxt "kvT_KU"
@@ -4639,7 +4633,7 @@ msgid "Resume your {goal} goal?"
 msgstr "Retomar seu objetivo de {goal}?"
 
 #: src/journey/goal-actions.tsx
-#: src/journey/journey-planless.tsx
+#: src/journey/resume-goal-bar.tsx
 msgctxt "3y9DGg"
 msgid "Resume"
 msgstr "Retomar"
@@ -5144,6 +5138,11 @@ msgstr "Nome"
 msgctxt "ViPPTn"
 msgid "Your plan picks up from today, starting with the lessons planned for the days you paused."
 msgstr "Seu plano continua a partir de hoje, começando pelas aulas planejadas para os dias em que você fez uma pausa."
+
+#: src/journey/resume-goal-bar.tsx
+msgctxt "DuuVCx"
+msgid "That's as many goals as you can study at once. Pause another goal to resume this one."
+msgstr "Você chegou ao limite de objetivos que pode estudar ao mesmo tempo. Pause outro objetivo para retomar este."
 
 #: src/journey/roadmap-full.tsx
 #: src/onboarding/plan-receipt.tsx
