@@ -5,11 +5,12 @@ import {
   type PlanPhaseCheckpointView,
   type PlanPhaseView,
 } from "@zoonk/core/plans/view-contract";
+import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { cn } from "@zoonk/ui/lib/utils";
 import { FlagIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { ChapterMark } from "../_components/chapter-mark";
-import { LIST_GROUP_CLASS, ListRowChevron, ListRowChevronSpace } from "../_components/list-group";
+import { LIST_GROUP_CLASS, ListRowChevronSpace } from "../_components/list-group";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { StatusMark } from "../_components/status-mark";
 import { TRUNCATED_TITLE_CLASS } from "../_components/title-row";
@@ -88,7 +89,7 @@ function NextChapterRow({
           </span>
         </span>
       </span>
-      <ListRowChevron />
+      <RowChevron />
     </LearnLink>
   );
 }
@@ -134,7 +135,7 @@ function FinishRow({ examHref }: { examHref: string | null }) {
   return (
     <LearnLink className={cn(PATH_ROW_CLASS, "hover:bg-muted/70")} href={examHref}>
       {content}
-      <ListRowChevron />
+      <RowChevron />
     </LearnLink>
   );
 }

@@ -3825,6 +3825,11 @@ msgid "myemail@gmail.com"
 msgstr "mojemail@gmail.com"
 
 #: src/feedback/feedback-form.tsx
+msgctxt "feedback.Xx0WZV"
+msgid "Send message"
+msgstr "Wyślij wiadomość"
+
+#: src/feedback/feedback-form.tsx
 msgctxt "feedback.lknSi2"
 msgid "This screen is attached"
 msgstr "Dołączono ten ekran"
@@ -3853,11 +3858,6 @@ msgstr "Wiadomość wysłana! Wkrótce odpowiemy."
 msgctxt "feedback.dpjZ-X"
 msgid "We couldn't send your message. Try again, or email us at hello@zoonk.com."
 msgstr "Nie udało się wysłać wiadomości. Spróbuj ponownie lub napisz do nas na hello@zoonk.com."
-
-#: src/feedback/feedback-form.tsx
-msgctxt "feedback.Xx0WZV"
-msgid "Send message"
-msgstr "Wyślij wiadomość"
 
 #: src/focus-test/focus-test-flow.tsx
 #: src/focus-test/focus-test-screens.tsx
@@ -4772,12 +4772,6 @@ msgctxt "dhP2hY"
 msgid "Course complete"
 msgstr "Kurs ukończony"
 
-#. Shown when a learner tries to resume a paused goal while already following as many goals at once as they can without a subscription. Pausing a goal keeps its progress.
-#: src/journey/goal-actions.tsx
-msgctxt "7MouSk"
-msgid "You're following as many goals as you can for free. Pause another to resume this one, or subscribe."
-msgstr "Masz już tyle aktywnych celów, ile możesz mieć bezpłatnie. Wstrzymaj inny cel, aby wznowić ten, lub wykup subskrypcję."
-
 #: src/journey/goal-actions.tsx
 #: src/journey/rename-goal-dialog.tsx
 msgctxt "kvT_KU"
@@ -4805,7 +4799,7 @@ msgid "Resume your {goal} goal?"
 msgstr "Wznowić realizację celu: {goal}?"
 
 #: src/journey/goal-actions.tsx
-#: src/journey/journey-planless.tsx
+#: src/journey/resume-goal-bar.tsx
 msgctxt "3y9DGg"
 msgid "Resume"
 msgstr "Wznów"
@@ -5310,6 +5304,11 @@ msgstr "Nazwa"
 msgctxt "ViPPTn"
 msgid "Your plan picks up from today, starting with the lessons planned for the days you paused."
 msgstr "Od dziś kontynuujesz plan, zaczynając od lekcji zaplanowanych na dni przerwy."
+
+#: src/journey/resume-goal-bar.tsx
+msgctxt "DuuVCx"
+msgid "That's as many goals as you can study at once. Pause another goal to resume this one."
+msgstr "To maksymalna liczba celów, które możesz realizować jednocześnie. Wstrzymaj inny cel, aby wznowić ten."
 
 #: src/journey/roadmap-full.tsx
 #: src/onboarding/plan-receipt.tsx
@@ -14156,6 +14155,11 @@ msgstr "Możesz już zacząć"
 msgctxt "uaZ--2"
 msgid "Getting your lesson ready"
 msgstr "Przygotowujemy twoją lekcję"
+
+#: src/wait/lesson-wait-status.tsx
+msgctxt "KPgx8T"
+msgid "Your challenge is ready"
+msgstr "Twoje wyzwanie jest gotowe"
 
 #: src/wait/lesson-wait-status.tsx
 msgctxt "4Wktrz"

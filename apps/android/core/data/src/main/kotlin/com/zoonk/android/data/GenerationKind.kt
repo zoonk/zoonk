@@ -556,6 +556,19 @@ fun GenerationKind.progress(run: GenerationRun): RunProgress {
     )
 }
 
+/** Main's `useGenerationStepLabel`: the step the run is on, in the words its progress lists it by, and "Done" once it's finished. */
+@StringRes
+fun GenerationKind.stepLabel(run: GenerationRun): Int? {
+    val progress = progress(run)
+    if (progress.share == 1f) return R.string.player_done
+    val following = run.status == GenerationRun.Status.Waiting || run.status == GenerationRun.Status.Following
+    return progress.phases
+        .firstOrNull { it.status == PhaseStatus.Active }
+        ?.phase
+        ?.label
+        ?.takeIf { following }
+}
+
 private fun stages(phases: List<GenerationPhase>): List<List<GenerationPhase>> =
     phases.fold(emptyList()) { stages, phase ->
         if (phase.alongside && stages.isNotEmpty()) stages.dropLast(1) + listOf(stages.last() + phase) else stages + listOf(listOf(phase))

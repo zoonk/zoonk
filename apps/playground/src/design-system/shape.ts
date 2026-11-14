@@ -27,7 +27,7 @@ export const RADII: readonly ShapeRule[] = [
 export const EDGE_RULES: readonly string[] = [
   "A column has one start edge and one end edge. Titles, text, rows and outlined controls line up on them by their box.",
   "A control with no outline lines up by what you see: `Button`'s `edge` (`start` or `end`) moves it out by the blank between its box and its glyph, so the glyph lines up with the letters on that edge, no part of it passes the edge, and the hover box hangs past it. No screen writes a margin for it.",
-  "A bare chevron at a row's or a fold's end takes the same utility (`edge -me-(--edge-pull)`), as `ListRowChevron` and `FoldChevron` do. A bare mark that starts a column takes `edge -ms-(--edge-start)`.",
+  "A bare chevron at a row's or a fold's end takes the same utility (`edge -me-(--edge-pull)`), as `RowChevron` and `FoldChevron` do. A bare mark that starts a column takes `edge -ms-(--edge-start)`.",
   "A highlighted or hovered row and the current tab's fill reach 10px past the column on both sides, so their words stay on the edge.",
   "A panel's line is inside its box (`ring-inset`), so a card is exactly as wide as its column.",
 ];

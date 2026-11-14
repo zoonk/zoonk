@@ -21,6 +21,7 @@ import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useState } from "react";
 import { type ReadyAlternative, ReadyLesson } from "./lesson-ready-alternative";
 import { LessonRouteFrame } from "./lesson-route-frame";
+import { StartLessonBar, WaitNote, type WaitState, useWaitWords } from "./lesson-wait-note";
 
 type LessonOutline = { description: string; estimatedMinutes: number; id: string; title: string };
 
@@ -55,11 +56,11 @@ function WritingProgress({
   run: GenerationRun;
   since: number;
 }) {
-  const t = useExtracted();
+  const words = useWaitWords(kind);
 
   return (
     <GenerationWait
-      doneLabel={holding ? t("Your lesson is ready") : undefined}
+      doneLabel={holding ? words.ready : undefined}
       kind={kind}
       run={holding ? toHeldRun(run) : run}
       since={since}
@@ -68,11 +69,19 @@ function WritingProgress({
 }
 
 /** Ready and held, the bar starts the lesson; before that it's the quiz's, or the screen's own. */
-function WritingWaitBar({ footer, holding }: { footer?: React.ReactNode; holding: boolean }) {
+function WritingWaitBar({
+  footer,
+  holding,
+  kind,
+}: {
+  footer?: React.ReactNode;
+  holding: boolean;
+  kind: LessonKind;
+}) {
   const { release, slotShown } = useWaitScreen();
 
   if (holding) {
-    return <StartLessonBar busy={false} onStart={release} ready />;
+    return <StartLessonBar busy={false} kind={kind} onStart={release} ready />;
   }
 
   if (footer || !slotShown) {
@@ -139,7 +148,7 @@ function WritingWait({
       <LessonRouteFrame
         {...frame}
         footer={<RetryBar onRetry={run.retry} />}
-        lead={<WaitNote state="stopped" />}
+        lead={<WaitNote kind={kind} state="stopped" />}
       >
         {alternative && <ReadyLesson alternative={alternative} />}
       </LessonRouteFrame>
@@ -150,8 +159,8 @@ function WritingWait({
     <WaitScreen deck={warmUp} goalId={frame.goalId} hold={hold} surface="lessonWait">
       <LessonRouteFrame
         {...frame}
-        footer={<WritingWaitBar footer={footer} holding={holding} />}
-        lead={<WaitNote state={state} />}
+        footer={<WritingWaitBar footer={footer} holding={holding} kind={kind} />}
+        lead={<WaitNote kind={kind} state={state} />}
       >
         <WaitContent
           progress={progress}
@@ -182,8 +191,6 @@ function RetryBar({ onRetry }: { onRetry?: () => void }) {
   );
 }
 
-type WaitState = "notReady" | "gettingReady" | "ready" | "stopped";
-
 function waitState({
   asked,
   holding,
@@ -202,50 +209,6 @@ function waitState({
   }
 
   return asked ? "gettingReady" : "notReady";
-}
-
-function WaitNote({ state }: { state: WaitState }) {
-  const t = useExtracted();
-
-  const title = {
-    gettingReady: t("Getting your lesson ready"),
-    notReady: t("This lesson isn't ready yet"),
-    ready: t("Your lesson is ready"),
-    stopped: t("We couldn't get this lesson ready"),
-  }[state];
-
-  return (
-    <div className="flex flex-col gap-2">
-      <h1 className="text-title">{title}</h1>
-      {(state === "notReady" || state === "gettingReady") && (
-        <p className="text-muted-foreground text-base leading-relaxed text-pretty">
-          {t("It takes a few minutes, and keeps going if you leave.")}
-        </p>
-      )}
-    </div>
-  );
-}
-
-function StartLessonBar({
-  busy,
-  onStart,
-  ready = false,
-}: {
-  busy: boolean;
-  onStart: () => void;
-  ready?: boolean;
-}) {
-  const t = useExtracted();
-
-  return (
-    <TaskActionBar>
-      <TaskActions>
-        <TaskMainButton busy={busy} onClick={onStart}>
-          {ready ? t("Start this lesson") : t("Get it ready")}
-        </TaskMainButton>
-      </TaskActions>
-    </TaskActionBar>
-  );
 }
 
 function isWriting(request: LessonRequest): boolean {
@@ -287,7 +250,7 @@ export function LessonWaiting({
   const showsStart = request.status === "idle" || (starting && request.status === "requesting");
 
   const footer = showsStart && (
-    <StartLessonBar busy={request.status === "requesting"} onStart={start} />
+    <StartLessonBar busy={request.status === "requesting"} kind={kind} onStart={start} />
   );
 
   if (isWriting(request)) {
@@ -306,7 +269,11 @@ export function LessonWaiting({
   }
 
   return (
-    <LessonRouteFrame {...frame} footer={footer} lead={showsStart && <WaitNote state="notReady" />}>
+    <LessonRouteFrame
+      {...frame}
+      footer={footer}
+      lead={showsStart && <WaitNote kind={kind} state="notReady" />}
+    >
       {showsStart && alternative && <ReadyLesson alternative={alternative} />}
 
       {(request.status === "refused" || request.status === "setAside") && (

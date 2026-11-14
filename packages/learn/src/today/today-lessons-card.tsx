@@ -4,7 +4,7 @@ import { type TodayView } from "@zoonk/core/view-models/today/get";
 import { useExtracted } from "next-intl";
 import { CoverageLegend } from "../_components/coverage-bar";
 import { LessonCells } from "../_components/progress-cells";
-import { useFormatGoalProgress } from "../_utils/percent";
+import { useFormatProgressShare } from "../_utils/percent";
 import { ProgressCard, useCardIds } from "./today-progress-card";
 
 type TodayLessons = Extract<NonNullable<TodayView["progress"]>, { measure: "lessons" }>["lessons"];
@@ -39,7 +39,7 @@ export function LessonsCard({
   value: number;
 }) {
   const t = useExtracted();
-  const formatGoalProgress = useFormatGoalProgress();
+  const formatProgressShare = useFormatProgressShare();
   const ids = useCardIds();
   const counts = getLessonCounts({ knownLessons, lessons });
 
@@ -65,7 +65,7 @@ export function LessonsCard({
           : null
       }
       title={t("Progress")}
-      value={formatGoalProgress(value)}
+      value={formatProgressShare(value)}
     >
       {counts.total > 0 && (
         <div className="flex flex-col gap-2.5">

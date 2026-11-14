@@ -46,7 +46,6 @@ import com.zoonk.android.feature.plan.lessonsStudied
 import com.zoonk.android.feature.plan.studiedLessonsLine
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.formatGoalProgress
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.format.formatProgressShare
@@ -103,7 +102,7 @@ private fun LessonsCard(
     ProgressCard(
         title = stringResource(R.string.today_progress),
         detail = studiedLessonsLine(lessons.done, counts.known),
-        value = formatGoalProgress(progress.value, currentLocale()),
+        value = formatProgressShare(progress.value, currentLocale()),
         onOpenPlan = onOpenPlan,
         modifier = modifier,
     ) {
