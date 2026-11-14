@@ -2990,71 +2990,6 @@
         }
       }
     },
-    "About %@ of %@" : {
-      "comment" : "A speaking paper's estimated points",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Etwa %1$@ von %2$@"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "About %1$@ of %2$@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aproximadamente %1$@ de %2$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Environ %1$@ sur %2$@"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Circa %1$@ su %2$@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "約%1$@／%2$@"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "약 %1$@ / %2$@"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Około %1$@ z %2$@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cerca de %1$@ de %2$@"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Yaklaşık %1$@ / %2$@"
-          }
-        }
-      }
-    },
     "About %@ of %@ points on the whole exam." : {
       "comment" : "A half mock's points projected onto the whole exam",
       "localizations" : {
@@ -3250,71 +3185,6 @@
         }
       }
     },
-    "About %@ to %@ of %@" : {
-      "comment" : "A speaking paper's estimated points range",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Etwa %1$@ bis %2$@ von %3$@"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "About %1$@ to %2$@ of %3$@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aproximadamente entre %1$@ y %2$@ de %3$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Environ %1$@ à %2$@ sur %3$@"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Da circa %1$@ a %2$@ su %3$@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "約%1$@〜%2$@／%3$@"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "약 %1$@~%2$@ / %3$@"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Około %1$@–%2$@ z %3$@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cerca de %1$@ a %2$@ de %3$@"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Yaklaşık %1$@–%2$@ / %3$@"
-          }
-        }
-      }
-    },
     "About this mock exam" : {
       "comment" : "Every caveat about a mock exam",
       "localizations" : {
@@ -3429,65 +3299,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bundan sonra cevaplarını değiştiremezsin."
-          }
-        }
-      }
-    },
-    "An estimate, not an official score." : {
-      "comment" : "Under a speaking paper's estimate",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Eine Schätzung, kein offizieller Score."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Una estimación, no un puntaje oficial."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Une estimation, pas un score officiel."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Una stima, non un punteggio ufficiale."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "公式のスコアではなく、推定値です。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "공식 점수가 아닌 예상 점수예요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "To wynik szacunkowy, nie oficjalny."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Uma estimativa, não uma pontuação oficial."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu bir tahmin, resmî puan değil."
           }
         }
       }
@@ -5215,6 +5026,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tahmini puan"
+          }
+        }
+      }
+    },
+    "Estimated score, from 0 to %@" : {
+      "comment" : "Under a speaking paper's estimated score",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geschätzter Score, von 0 bis %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Puntaje estimado, de 0 a %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Score estimé, de 0 à %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Punteggio stimato, da 0 a %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "推定スコア（0〜%@）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "예상 점수(0~%@)"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Szacowany wynik, od 0 do %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estimativa de pontuação, de 0 a %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tahmini puan, 0 ile %@ arasında"
           }
         }
       }
@@ -7458,65 +7328,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tahmin yok"
-          }
-        }
-      }
-    },
-    "No feedback until the end, like on exam day." : {
-      "comment" : "Under the answer sheet",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wie in der echten Prüfung bekommst du erst am Ende Feedback."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No recibirás comentarios hasta el final, como el día del examen."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pas de correction avant la fin, comme le jour de l’examen."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nessuna correzione fino alla fine, come il giorno dell’esame."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "本番と同じように、フィードバックは終了後に表示されます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "실제 시험처럼 끝날 때까지 피드백이 없어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dopiero na koniec dowiesz się, jak poszło, tak jak na egzaminie."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sem feedback até o fim, como no dia da prova."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sınav gününde olduğu gibi, sonuna kadar geri bildirim verilmez."
           }
         }
       }
@@ -10741,6 +10552,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "İşlem tamamlanamadı. Cevapların kaydedildi. Biraz sonra tekrar dene."
+          }
+        }
+      }
+    },
+    "The exam" : {
+      "comment" : "Mock exams of a whole exam or exam day",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Prüfung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El examen"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’examen"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’esame"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "試験全体"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "전체 시험"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Egzamin"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A prova"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sınav"
           }
         }
       }
@@ -14100,16 +13970,16 @@
         }
       }
     },
-    "Your material doesn't say how long the test is. This mock asks %lld questions in %@." : {
-      "comment" : "A class test's size",
+    "Your material doesn't say the test's size, so this mock exam used %lld questions in %@." : {
+      "comment" : "A mock exam's size when the learner's material for a class test doesn't state it",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Material gibt nicht an, wie lange der Test dauert. Diese Probeprüfung umfasst %#@questions@ in %2$@."
+            "value" : "Deine Unterlagen geben den Umfang des Tests nicht an. Deshalb hattest du in dieser Probeprüfung für %#@count@ %2$@ Zeit."
           },
           "substitutions" : {
-            "questions" : {
+            "count" : {
               "argNum" : 1,
               "formatSpecifier" : "lld",
               "variations" : {
@@ -14134,10 +14004,10 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Your material doesn't say how long the test is. This mock asks %#@questions@ in %2$@."
+            "value" : "Your material doesn't say the test's size, so this mock exam used %#@count@ in %2$@."
           },
           "substitutions" : {
-            "questions" : {
+            "count" : {
               "argNum" : 1,
               "formatSpecifier" : "lld",
               "variations" : {
@@ -14162,10 +14032,10 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu material no indica cuánto dura la prueba. Este simulacro tiene %#@questions@ para responder en %2$@."
+            "value" : "Tu material no indica qué tan largo es el examen, así que este simulacro incluyó %#@count@ en %2$@."
           },
           "substitutions" : {
-            "questions" : {
+            "count" : {
               "argNum" : 1,
               "formatSpecifier" : "lld",
               "variations" : {
@@ -14190,10 +14060,10 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tes documents ne précisent pas la durée du test. Cet examen blanc comporte %#@questions@ à faire en %2$@."
+            "value" : "Tes documents ne précisent pas le nombre de questions du contrôle, donc cet examen blanc proposait %#@count@ à faire en %2$@."
           },
           "substitutions" : {
-            "questions" : {
+            "count" : {
               "argNum" : 1,
               "formatSpecifier" : "lld",
               "variations" : {
@@ -14218,10 +14088,10 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il tuo materiale non indica la durata della prova. Questa simulazione prevede %#@questions@ in %2$@."
+            "value" : "Il tuo materiale non indica la lunghezza della prova, quindi questa simulazione prevedeva %#@count@ in %2$@."
           },
           "substitutions" : {
-            "questions" : {
+            "count" : {
               "argNum" : 1,
               "formatSpecifier" : "lld",
               "variations" : {
@@ -14246,10 +14116,10 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "資料には試験時間が記載されていません。この模試では%#@questions@を%2$@で解きます。"
+            "value" : "資料にテストの問題数が書かれていないため、この模試は%#@count@を%2$@で解く形式にしました。"
           },
           "substitutions" : {
-            "questions" : {
+            "count" : {
               "argNum" : 1,
               "formatSpecifier" : "lld",
               "variations" : {
@@ -14268,10 +14138,10 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "자료에 시험 시간이 나와 있지 않아요. 이 모의고사에서는 %#@questions@를 %2$@ 동안 풀어요."
+            "value" : "자료에 시험 분량이 나와 있지 않아 이번 모의고사는 %#@count@를 %2$@ 동안 풀도록 구성했어요."
           },
           "substitutions" : {
-            "questions" : {
+            "count" : {
               "argNum" : 1,
               "formatSpecifier" : "lld",
               "variations" : {
@@ -14290,10 +14160,10 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Twoje materiały nie określają długości sprawdzianu. Ten egzamin próbny ma %#@questions@ i daje %2$@ na odpowiedzi."
+            "value" : "Twoje materiały nie określają długości sprawdzianu, więc ten egzamin próbny obejmował %#@count@ z limitem %2$@ na rozwiązanie."
           },
           "substitutions" : {
-            "questions" : {
+            "count" : {
               "argNum" : 1,
               "formatSpecifier" : "lld",
               "variations" : {
@@ -14324,10 +14194,10 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu material não diz quanto tempo dura a prova. Este simulado tem %#@questions@ em %2$@."
+            "value" : "Seu material não informa o tamanho da prova, então este simulado teve %#@count@ em %2$@."
           },
           "substitutions" : {
-            "questions" : {
+            "count" : {
               "argNum" : 1,
               "formatSpecifier" : "lld",
               "variations" : {
@@ -14335,13 +14205,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg pergunta"
+                      "value" : "%arg questão"
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg perguntas"
+                      "value" : "%arg questões"
                     }
                   }
                 }
@@ -14352,10 +14222,10 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Materyalinde sınavın süresi belirtilmiyor. Bu deneme sınavında %#@questions@ için %2$@ süren var."
+            "value" : "Materyalinde sınavın uzunluğu belirtilmediği için bu deneme sınavında %#@count@ için %2$@ süre verildi."
           },
           "substitutions" : {
-            "questions" : {
+            "count" : {
               "argNum" : 1,
               "formatSpecifier" : "lld",
               "variations" : {

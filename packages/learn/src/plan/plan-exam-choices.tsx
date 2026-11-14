@@ -12,7 +12,6 @@ import {
   Suggestion,
   SuggestionAction,
   SuggestionActions,
-  SuggestionChoices,
   SuggestionDescription,
   SuggestionHeader,
   SuggestionLine,
@@ -20,6 +19,7 @@ import {
   SuggestionResult,
   SuggestionSummary,
 } from "../_components/suggestion";
+import { SuggestionChoices } from "../_components/suggestion-choices";
 import { useChoiceLeftOutLine } from "../_utils/use-choice-left-out";
 import { ExamChoicePicks } from "./exam-choice-picks";
 import { usePlanScreen } from "./plan-context";

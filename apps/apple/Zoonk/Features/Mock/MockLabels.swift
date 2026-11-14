@@ -168,8 +168,10 @@ struct MockSizeNote: View {
       return [
         String(
           localized:
-            "Your material doesn't say how long the test is. This mock asks \(questions) questions in \(time).",
-          table: "Mock", comment: "A class test's size")
+            "Your material doesn't say the test's size, so this mock exam used \(questions) questions in \(time).",
+          table: "Mock",
+          comment:
+            "A mock exam's size when the learner's material for a class test doesn't state it")
       ]
     }
 

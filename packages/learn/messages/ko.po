@@ -2510,8 +2510,10 @@ msgid "Not this time"
 msgstr "이번엔 아쉬워요"
 
 #: src/checkpoints/checkpoint-review.tsx
-msgctxt "CsqxCb"
-msgid "<label>Answer:</label> <answer></answer>"
+#: src/mistakes/mistake-entry.tsx
+#: src/questions/right-answer-line.tsx
+msgctxt "wS1KQ6"
+msgid "<label>Right answer:</label> <answer></answer>"
 msgstr "<label>정답:</label> <answer></answer>"
 
 #: src/checkpoints/checkpoint-review.tsx
@@ -7585,12 +7587,6 @@ msgstr "실제 시험처럼 한 문제당 {seconds, number}초예요."
 msgctxt "rs59fn"
 msgid "Only answer when you're sure. Saying you're not sure is fine."
 msgstr "확실할 때만 답하세요. 잘 모르겠다고 해도 괜찮아요."
-
-#: src/mistakes/mistake-entry.tsx
-#: src/questions/right-answer-line.tsx
-msgctxt "wS1KQ6"
-msgid "<label>Right answer:</label> <answer></answer>"
-msgstr "<label>정답:</label> <answer></answer>"
 
 #: src/mistakes/mistake-entry.tsx
 msgctxt "Gr6IEG"

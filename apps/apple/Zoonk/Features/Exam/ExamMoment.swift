@@ -41,10 +41,7 @@ struct ExamMomentSection<Action: View>: View {
               Text(verbatim: day)
                 .typeStyle(.data)
             }
-            if let body = words.body {
-              Text(body)
-                .foregroundStyle(.mutedForeground)
-            }
+            ExamMomentBody(words: words)
           }
         } icon: {
           Image(systemName: moment.icon)
@@ -142,38 +139,47 @@ extension ExamMoment {
   }
 
   /// Nil while it says nothing: before the final stretch, and once the result is in.
-  var words: (title: String, body: String?)? {
+  struct Words {
+    let title: String
+    /// What the learner did shows first, in the text color, when they did the work.
+    var lead: String?
+    var body: String?
+  }
+
+  var words: Words? {
     switch stage {
     case .finalStretch:
-      (
-        String(localized: "The final stretch", table: "Exam", comment: "The exam's last weeks"),
-        String(
+      Words(
+        title: String(
+          localized: "The final stretch", table: "Exam", comment: "The exam's last weeks"),
+        body: String(
           localized: "From now on, review and mock exams.", table: "Exam",
-          comment: "What the final stretch does")
-      )
+          comment: "What the final stretch does"))
     case .dayBefore:
-      (
-        String(
+      Words(
+        title: String(
           localized: "\(examName) is tomorrow", table: "Exam", comment: "The day before"),
-        work
-      )
+        lead: preparedLine, body: work)
     case .examDay:
-      (
-        String(localized: "\(examName) is today", table: "Exam", comment: "Exam day"),
-        work
-      )
+      Words(
+        title: String(localized: "\(examName) is today", table: "Exam", comment: "Exam day"),
+        lead: preparedLine, body: work)
     case .afterExam where !resultReported:
-      (
-        String(
+      Words(
+        title: String(
           localized: "How did it go?", table: "Exam",
           comment: "Asks how the exam went, once it's over"),
-        String(
+        body: String(
           localized: "Add your official result when it comes out.", table: "Exam",
-          comment: "Asks for the official result once the exam is over")
-      )
+          comment: "Asks for the official result once the exam is over"))
     case .preparing, .afterExam:
       nil
     }
+  }
+
+  private var preparedLine: String? {
+    prepared
+      ? String(localized: "You've prepared for this.", table: "Exam", comment: "Prepared") : nil
   }
 
   /// Today's list shows today's work, so the day before and exam day say only what was done.
@@ -191,18 +197,11 @@ extension ExamMoment {
         : nil,
     ].compactMap(\.self)
 
-    let done =
-      parts.isEmpty
+    return parts.isEmpty
       ? nil
       : String(
         localized: "\(parts.formatted(.list(type: .and))) done.", table: "Exam",
         comment: "What the learner did before the exam: days of study, mock exams or both")
-    let prepared =
-      prepared
-      ? String(localized: "You've prepared for this.", table: "Exam", comment: "Prepared") : nil
-    let sentences = [prepared, done].compactMap(\.self)
-
-    return sentences.isEmpty ? nil : sentences.joinedSentences()
   }
 
   func checklistLabel(_ item: ExamView.ChecklistItem) -> String {
@@ -241,4 +240,23 @@ func examTimeOfDay(_ text: String) -> String? {
   var style = Date.FormatStyle(timeZone: .gmt).hour().minute()
   style.calendar.timeZone = .gmt
   return date.formatted(style)
+}
+
+/// Main's `ExamMomentBody`: the lead in the text color, then what the learner did, muted, as one
+/// paragraph.
+struct ExamMomentBody: View {
+  let words: ExamMoment.Words
+
+  var body: some View {
+    if words.lead != nil || words.body != nil {
+      Text(paragraph)
+        .foregroundStyle(.mutedForeground)
+    }
+  }
+
+  private var paragraph: AttributedString {
+    var lead = AttributedString(words.lead.map { "\($0) " } ?? "")
+    lead.foregroundColor = Color(.foreground)
+    return lead + AttributedString(words.body ?? "")
+  }
 }

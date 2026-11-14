@@ -64,34 +64,35 @@ function panel(slot: string, content = "") {
 }
 
 describe("shared panel readings", () => {
-  it("reads a portaled menu inside a panel and requires its own focus and close", () => {
-    document.body.innerHTML = `<div data-slot="side-panel-content" role="dialog" tabindex="-1"><h2>Menu</h2><button data-zoonk-act="opener">Owner User</button></div>
+  it.each(["side-panel-content", "drawer-popup"])(
+    "reads a portaled menu inside %s and requires its own focus and close",
+    (slot) => {
+      document.body.innerHTML = `<div data-slot="${slot}" role="dialog" tabindex="-1"><h2>Menu</h2><button data-zoonk-act="opener">Owner User</button></div>
       <div data-slot="dropdown-menu-content" role="menu" tabindex="-1">Account</div>`;
 
-    const menu = element("[role=menu]");
-    menu.focus();
-    const facts = read(true);
-    assert.equal(facts.focusInside, true);
-    assert.equal(facts.needsClose, false);
-    assert.equal(facts.sheet, null);
-    assert.equal(facts.dim, null);
-    assert.deepEqual(panelFindings({ ...facts, focusBack: null }), []);
+      const menu = element("[role=menu]");
+      menu.focus();
+      const facts = read(true);
+      assert.equal(facts.focusInside, true);
+      assert.deepEqual([facts.needsClose, facts.sheet, facts.dim], [false, null, null]);
+      assert.deepEqual(panelFindings({ ...facts, focusBack: null }), []);
 
-    element("button").focus();
-    assert.equal(read(true).focusInside, false);
+      element("button").focus();
+      assert.equal(read(true).focusInside, false);
 
-    assert.ok(
-      panelFindings({ ...read(true), focusBack: null }).some(
-        ({ level, message }) => level === "fail" && message.includes("without taking focus"),
-      ),
-    );
+      assert.ok(
+        panelFindings({ ...read(true), focusBack: null }).some(
+          ({ level, message }) => level === "fail" && message.includes("without taking focus"),
+        ),
+      );
 
-    assert.equal(returned(), false);
-    menu.remove();
-    assert.equal(returned(), true);
-    element("[role=dialog]").focus();
-    assert.equal(returned(), false);
-  });
+      assert.equal(returned(), false);
+      menu.remove();
+      assert.equal(returned(), true);
+      element("[role=dialog]").focus();
+      assert.equal(returned(), false);
+    },
+  );
 
   it("reports unfamiliar dialog roles without imposing shared-piece behavior", () => {
     for (const slot of ["popover-content", "toast", "hand-drawn-panel"]) {
