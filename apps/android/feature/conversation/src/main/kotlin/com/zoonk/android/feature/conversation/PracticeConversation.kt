@@ -54,18 +54,20 @@ import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.WritingWait
+import com.zoonk.android.ui.components.limitLifted
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.api.models.LanguagePracticeCall
 import kotlinx.coroutines.launch
 import java.util.UUID
+import kotlin.time.toJavaInstant
 
 /** Main's `useCallStart`: a call that isn't written yet waits on the run writing it, then starts again. */
 class CallStartModel(
     private val starter: CallStarter,
     kind: GenerationKind,
 ) : ViewModel() {
-    enum class State { Idle, Starting, Failed, Paused }
+    enum class State { Idle, Starting, Failed, Paused, PlusRequired }
 
     var state by mutableStateOf(State.Idle)
         private set
@@ -80,12 +82,16 @@ class CallStartModel(
 
     val writing = starter.writingWaits.create(kind, viewModelScope)
 
-    fun start(request: CallRequest) {
+    /** [onRefused] writes a subscription refusal into the access the screen reads, which shows its gate. */
+    fun start(
+        request: CallRequest,
+        onRefused: suspend () -> Unit = {},
+    ) {
         state = State.Starting
         limit = null
         viewModelScope.launch {
             val started = starter.start(request)
-            val answer = writing.answered((started as? CallStart.Writing)?.generationId) { start(request) }
+            val answer = writing.answered((started as? CallStart.Writing)?.generationId) { start(request, onRefused) }
             limit = (started as? CallStart.Limited)?.limit
             state =
                 when {
@@ -102,10 +108,15 @@ class CallStartModel(
                         State.Paused
                     }
 
+                    started == CallStart.PlusRequired -> {
+                        State.PlusRequired
+                    }
+
                     else -> {
                         State.Failed
                     }
                 }
+            if (started == CallStart.PlusRequired) onRefused()
         }
     }
 
@@ -232,6 +243,15 @@ private fun CallSetup(
         state.sheetOpen = false
         open(AppRoute.Conversation(id.toString()))
     }
+    val offered =
+        call.limit?.let {
+            Limit.Reached(
+                LimitTier.entries.first { tier -> tier.name.equals(it.tier.value, ignoreCase = true) },
+                LimitPeriod.entries.first { period -> period.name.equals(it.period.value, ignoreCase = true) },
+                it.availableAt?.toJavaInstant(),
+            )
+        }
+    val limit = (model.limit.takeIf { model.state == CallStartModel.State.Failed } ?: offered)?.takeUnless { limitLifted(it) }
 
     when {
         call.paused -> {
@@ -242,16 +262,8 @@ private fun CallSetup(
             WritingWait(model.writing, hint = stringResource(R.string.conversation_opens_when_ready))
         }
 
-        call.limit != null -> {
-            val limit = requireNotNull(call.limit)
-            CallLimitMessage(
-                Limit.Reached(
-                    LimitTier.entries.first { it.name.equals(limit.tier.value, ignoreCase = true) },
-                    LimitPeriod.entries.first { it.name.equals(limit.period.value, ignoreCase = true) },
-                ),
-                onCreateAccount = { open(AppRoute.Login) },
-                onSubscribe = { open(AppRoute.Subscription) },
-            )
+        limit != null -> {
+            CallLimitMessage(limit, onCreateAccount = { open(AppRoute.Login) }, onSubscribe = { open(AppRoute.Subscription) })
         }
 
         else -> {
@@ -267,7 +279,7 @@ private fun CallSetup(
                 )
             }
             if (model.state == CallStartModel.State.Paused) CallsPausedMessage()
-            if (model.state == CallStartModel.State.Failed) {
+            if (model.state == CallStartModel.State.Failed && model.limit == null) {
                 Text(
                     stringResource(R.string.conversation_start_failed),
                     Modifier.semantics { liveRegion = LiveRegionMode.Polite },

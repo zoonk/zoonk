@@ -1,6 +1,7 @@
 "use client";
 
 import { type MissionMomentView } from "@zoonk/core/sessions/completion-contract";
+import { useLiveLimit } from "@zoonk/learn/help-limit";
 import { type TutorCards } from "@zoonk/learn/tutor-cards";
 import { TUTOR_COMPOSER_FRAME_CLASS } from "@zoonk/learn/tutor-composer";
 import { type TutorIdentity, TutorMessage } from "@zoonk/learn/tutor-identity";
@@ -61,7 +62,7 @@ const COMPOSER_POSITION =
 function LoadError() {
   const controller = useLessonQuestionController();
   const error = controller.state.requestError;
-  const limit = toHelpLimit(error);
+  const limit = useLiveLimit(toHelpLimit(error));
 
   if (limit) {
     return <QuestionLimitNotice limit={limit} />;

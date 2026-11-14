@@ -276,6 +276,7 @@ async function saveReleasesPage({
   }
 }
 
+/** The product before its releases, the order a content fix's approval locks them in. */
 async function finishReleases({
   productId,
   reading,
@@ -285,6 +286,7 @@ async function finishReleases({
   reading: ReleasesReading;
   tx: TransactionClient;
 }): Promise<SavedReleases> {
+  await tx.$queryRaw`SELECT id FROM products WHERE id = ${productId}::uuid FOR NO KEY UPDATE`;
   const newReleaseIds = await saveReleases({ productId, reading, tx });
   await saveReleasesPage({ productId, reading, tx });
 

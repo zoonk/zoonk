@@ -3,7 +3,7 @@ import { normalizeString } from "@zoonk/utils/string";
 import { z } from "zod";
 import { type PlanGraph } from "./plan-state";
 
-const courseWeightSubjectsSchema = z.array(
+export const courseWeightSubjectsSchema = z.array(
   z.object({ name: z.string(), weight: z.number().positive() }),
 );
 

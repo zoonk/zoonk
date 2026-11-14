@@ -67,24 +67,11 @@ msgid "Source:"
 msgstr "Source :"
 
 #: src/activities/_components/activity-feedback.tsx
-#: src/activities/labeled-diagram/diagram-slots.tsx
-#: src/activities/pattern-table/pattern-row.tsx
-msgctxt "QAJ_Tl"
-msgid "Correct answer:"
-msgstr "Bonne réponse :"
-
-#: src/activities/_components/activity-feedback.tsx
 #: src/activities/combination-grid/grid-board.tsx
 #: src/activities/labeled-diagram/diagram-slots.tsx
 msgctxt "3nOd8f"
 msgid "Your answer:"
 msgstr "Ta réponse :"
-
-#: src/activities/_components/activity-feedback.tsx
-#: src/lesson/feedback/lesson-step-result.tsx
-msgctxt "hmBFza"
-msgid "Answer:"
-msgstr "Réponse :"
 
 #: src/activities/_components/activity-feedback.tsx
 #: src/lesson/feedback/lesson-step-result.tsx
@@ -1308,6 +1295,12 @@ msgstr "Emplacement {number} :"
 msgctxt "uilHxe"
 msgid "Pick a name"
 msgstr "Choisis un nom"
+
+#: src/activities/labeled-diagram/diagram-slots.tsx
+#: src/activities/pattern-table/pattern-row.tsx
+msgctxt "QAJ_Tl"
+msgid "Correct answer:"
+msgstr "Bonne réponse :"
 
 #: src/activities/labeled-diagram/diagram-slots.tsx
 msgctxt "vjLo-k"
@@ -3158,6 +3151,12 @@ msgctxt "yDk4bj"
 msgid "Also correct:"
 msgstr "Également correct :"
 
+#. Under “Not checked this time”: we corrected this lesson question while the learner was in the lesson, so their answer isn't graded either way.
+#: src/lesson/feedback/lesson-step-result.tsx
+msgctxt "FtNhyg"
+msgid "This question was updated after you started, so this answer doesn't count."
+msgstr "Cette question a été mise à jour après que tu as commencé, donc cette réponse ne compte pas."
+
 #: src/lesson/feedback/lesson-step-result.tsx
 msgctxt "WGhDaL"
 msgid "This question was already checked a few times today, so this answer doesn't count. Compare it with this one:"
@@ -3453,6 +3452,11 @@ msgstr "Le dire à voix haute"
 msgctxt "QuYUAL"
 msgid "The microphone is blocked. Type your answer instead."
 msgstr "Le micro est bloqué. Écris plutôt ta réponse."
+
+#: src/lesson/steps/spoken-answer-step.tsx
+msgctxt "2Px63n"
+msgid "We can't use your microphone. Type your answer instead."
+msgstr "Impossible d’utiliser ton micro. Écris ta réponse à la place."
 
 #: src/lesson/steps/summary-step.tsx
 msgctxt "RrCui3"

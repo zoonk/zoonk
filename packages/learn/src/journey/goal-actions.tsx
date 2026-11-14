@@ -34,11 +34,12 @@ type GoalStatusChange = "active" | "archived" | "paused";
 export type GoalStatusOutcome = "failed" | "limitReached" | "saved";
 
 /**
- * The host reads the page again once a change is saved, and leaves it once the goal is archived.
+ * The host reads the page again once a change is saved, and leaves it once the goal is archived. A
+ * change answers null when the learner left before it did: the screen they left has nothing to say.
  */
 export type GoalStatusControl = {
   onRename?: (displayName: string) => Promise<boolean>;
-  onSetStatus: (status: GoalStatusChange) => Promise<GoalStatusOutcome>;
+  onSetStatus: (status: GoalStatusChange) => Promise<GoalStatusOutcome | null>;
   resume: boolean;
   status: "active" | "completed" | "paused";
 };
@@ -63,10 +64,12 @@ export function useSetGoalStatus(onSetStatus: GoalStatusControl["onSetStatus"] |
     }
 
     startTransition(async () => {
-      const { data: outcome } = await safeAsync(() => onSetStatus(status));
+      const { data: outcome, error } = await safeAsync(() => onSetStatus(status));
 
-      if (outcome !== "saved") {
-        showError(outcome ?? "failed");
+      if (error) {
+        showError("failed");
+      } else if (outcome && outcome !== "saved") {
+        showError(outcome);
       }
     });
   };
@@ -272,7 +275,7 @@ export function GoalPausedSuggestion({
         </div>
       </SuggestionLine>
 
-      <SlotContent>
+      <SlotContent statement>
         <SuggestionHeader>{title}</SuggestionHeader>
         <SuggestionDescription>{description}</SuggestionDescription>
       </SlotContent>

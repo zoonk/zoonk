@@ -56,7 +56,6 @@ struct TodayView: Decodable, Equatable, Sendable {
   /// Core picks the one notice Today shows, the most pressing first.
   enum Notice: String, Decodable, Sendable {
     case exam
-    case examAccess
     case examChoice
     case focusTest
     case insight

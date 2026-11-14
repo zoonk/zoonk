@@ -1,4 +1,5 @@
 import { type GeneratedMathProblem, type NumericEntry } from "@zoonk/ai/tasks/items/schemas";
+import { findMathSpans } from "@zoonk/utils/math-spans";
 import { evaluateFormula } from "../activities/expression/evaluate-expression";
 import { parseExpression } from "../activities/expression/parse-expression";
 import { sampleExpression } from "../activities/expression/sample-expression";
@@ -190,6 +191,30 @@ function checkStep({
   ];
 }
 
+/**
+ * A filled value is a localized number ("1,5", "12 345"), which a formula draws and reads as a list
+ * ("1, 5"), so values stay outside `$…$`.
+ */
+function findValuesInMath({
+  declared,
+  texts,
+}: {
+  declared: ReadonlySet<string>;
+  texts: readonly string[];
+}): string[] {
+  const names = texts.flatMap((text) =>
+    findMathSpans(text).flatMap((math) =>
+      getPlaceholders(math.content).filter(
+        (name) => declared.has(name) || name === RESULT_PLACEHOLDER,
+      ),
+    ),
+  );
+
+  return [...new Set(names)].map(
+    (name) => `Puts {${name}} inside $…$. Write a value's placeholder outside the formula.`,
+  );
+}
+
 export function checkMathProblem({
   context = null,
   entry = ANY_NUMBER,
@@ -243,5 +268,9 @@ export function checkMathProblem({
     ...math.steps.flatMap((step, index) =>
       checkStep({ context: { answer: correct, declared, values }, index, step }),
     ),
+    ...findValuesInMath({
+      declared,
+      texts: [context ?? "", question, ...math.steps.map((step) => step.text)],
+    }),
   ].filter((problem) => typeof problem === "string");
 }

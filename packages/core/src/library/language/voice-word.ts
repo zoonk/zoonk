@@ -2,7 +2,7 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
 import { generateLanguageAudio } from "../../audio/generate-language-audio";
-import { toAudioData } from "./_utils/language-audio";
+import { toAudioData } from "./_utils/audio-data";
 
 /** Internal, for the follow-up a pronunciation review owes. A failed voice throws, so the step retries. */
 export async function voiceWord({
@@ -34,5 +34,8 @@ export async function voiceWord({
     throw error;
   }
 
-  await prisma.word.updateMany({ data: toAudioData(data), where: { audioUrl: null, id: wordId } });
+  await prisma.word.updateMany({
+    data: toAudioData(data),
+    where: { audioUrl: null, id: wordId, word: word.word },
+  });
 }

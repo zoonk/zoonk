@@ -48,7 +48,7 @@ struct TodayDayView: View {
     ScrollViewReader { scroller in
       PaneSplit(primaryShare: 0.55) {
         ZoonkList {
-          header(actionInHeader: false)
+          header
           // It asks for a decision, so it leads the day where the day has room beside it.
           notice
           day
@@ -61,17 +61,14 @@ struct TodayDayView: View {
           TodayPracticeSection(view: view, language: language)
         }
       } single: {
-        // Main's tablet column heads the day with its action.
-        let actionInHeader = horizontalSizeClass == .regular
-
         ZoonkList {
-          header(actionInHeader: actionInHeader)
+          header
           day
           notice
           UnfinishedGoalSection()
 
           // Main's tablet column: missions beside the week, preparation beside practice.
-          if actionInHeader {
+          if horizontalSizeClass == .regular {
             BlockGridSection {
               aside
               TodayPracticeSection(view: view, language: language)
@@ -81,7 +78,7 @@ struct TodayDayView: View {
             TodayPracticeSection(view: view, language: language)
           }
         }
-        .modifier(actionBar.shown(!actionInHeader))
+        .modifier(actionBar)
       }
       // A new visit folds the day's later blocks out from under a learner who'd scrolled down them,
       // which the list alone leaves scrolled past them.
@@ -111,6 +108,13 @@ struct TodayDayView: View {
         holdShownNotice()
       }
     }
+    // Its open state is kept above the panes, so it outlives a proposal that's answered here, answered
+    // elsewhere or replaced by a newer edit; main's sheet closes with it.
+    .onChange(of: asksPlanChange) {
+      if !asksPlanChange {
+        disclosures.planChange = false
+      }
+    }
     .modifier(LanguageTodayLoading(goal: view.goal))
     .sheet(item: $adjusting) { section in
       TodayAdjustPlanSheet(goalID: view.goal.id, section: section)
@@ -128,10 +132,11 @@ struct TodayDayView: View {
     }
     .onDisappear {
       tapTask?.cancel()
+      examChoice?.cancel()
     }
   }
 
-  private func header(actionInHeader: Bool) -> some View {
+  private var header: some View {
     let lead = TodayDayLead(view: view, writingStalled: writingStalled)
 
     return Section {
@@ -139,17 +144,11 @@ struct TodayDayView: View {
         PageHeader(
           Text("Today", tableName: "Today", comment: "Today tab's title"), supporting: dayLine
         ) {
-          HStack(alignment: .lastTextBaseline, spacing: 16) {
-            if let dayTime {
-              if let mockDay = view.mockDay {
-                ShorterDayTime(time: dayTime, mockDay: mockDay)
-              } else {
-                BigQuantity(dayTime)
-              }
-            }
-
-            if actionInHeader, TodaySessionAction.offers(view) {
-              sessionAction(isInHeader: true)
+          if let dayTime {
+            if let mockDay = view.mockDay {
+              ShorterDayTime(time: dayTime, mockDay: mockDay)
+            } else {
+              BigQuantity(dayTime)
             }
           }
         }
@@ -199,10 +198,8 @@ struct TodayDayView: View {
       : nil
   }
 
-  /// On a phone the day's main action sits in the bottom bar; on a wider page, beside the title.
   private var actionBar: TodayActionBar {
-    TodayActionBar(
-      action: sessionAction(isInHeader: false), offers: TodaySessionAction.offers(view))
+    TodayActionBar(action: sessionAction, offers: TodaySessionAction.offers(view))
   }
 
   @ViewBuilder
@@ -225,11 +222,10 @@ struct TodayDayView: View {
       })
   }
 
-  private func sessionAction(isInHeader: Bool) -> TodaySessionAction {
+  private var sessionAction: TodaySessionAction {
     TodaySessionAction(
       view: view, busy: busy, failed: failed, open: open, prepare: prepareLessons,
-      keepLearning: keepLearning, keepStudying: keepStudying, archive: archive,
-      isInHeader: isInHeader)
+      keepLearning: keepLearning, keepStudying: keepStudying, archive: archive)
   }
 
   private func keepStudying() {
@@ -262,6 +258,11 @@ struct TodayDayView: View {
 
   private func prepareLessons() {
     perform(.prepare) { await store.prepareLessons(in: view) }
+  }
+
+  /// A proposal still waits for an answer, in the sheet its line opens.
+  private var asksPlanChange: Bool {
+    store.shownPlanChange(in: view).map { $0.decision == nil } ?? false
   }
 
   @ViewBuilder
@@ -319,21 +320,8 @@ struct TodayDayView: View {
       }
     case .exam:
       if let exam = view.exam {
-        ExamMomentSection(moment: exam, checked: $examChecklist) {
-          Button {
-            router.open(.exam)
-          } label: {
-            exam.stage == .afterExam
-              ? Text(
-                "Add your result", tableName: "Today",
-                comment: "Opens the exam to add the official result")
-              : Text("See your exam", tableName: "Today", comment: "Opens the exam")
-          }
-        }
+        TodayExamMomentSection(moment: exam, checked: $examChecklist)
       }
-    case .examAccess:
-      // The free week is gone (the free plan is 20 lessons a month): core no longer picks it.
-      EmptyView()
     case .examChoice:
       TodayExamChoiceSection(
         goalID: view.goal.id, choice: view.examChoice, editor: $examChoice,
@@ -658,17 +646,10 @@ private struct LanguageTodayLoading: ViewModifier {
 private struct TodayActionBar: ViewModifier {
   let action: TodaySessionAction
   let offers: Bool
-  var isShown = true
-
-  func shown(_ isShown: Bool) -> Self {
-    var bar = self
-    bar.isShown = isShown
-    return bar
-  }
 
   func body(content: Content) -> some View {
-    content.bottomBar(note: isShown ? action.failure.map { BarNote($0) } : nil) {
-      if isShown, offers {
+    content.bottomBar(note: action.failure.map { BarNote($0) }) {
+      if offers {
         action
       }
     }

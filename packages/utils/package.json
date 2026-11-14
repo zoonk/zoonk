@@ -73,6 +73,7 @@
     "./text-repairs": "./src/text-repairs.ts",
     "./time-zone": "./src/time-zone.ts",
     "./timeout": "./src/timeout.ts",
+    "./unrendered-text": "./src/unrendered-text.ts",
     "./upload": "./src/upload.ts",
     "./usage-data": "./src/usage-data.ts",
     "./uuid": "./src/uuid.ts",

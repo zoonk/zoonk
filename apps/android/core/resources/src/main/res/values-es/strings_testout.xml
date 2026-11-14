@@ -14,7 +14,6 @@
   "testout_passed": "88ba6d648d4f365d792d599af39b6192c4cf5fe041b7ac09478ddcb7f42ffe3f",
   "testout_rule": "03cfde08509f482014c8daf716b8be1f6d563ecc63b561b91f525758c196a28b",
   "testout_start": "917f1d50f3fa80816ec07b9739a2dc61128a2fa5023e98949ce576f6a35f9c9a",
-  "testout_this_chapter": "d59645865e336f44929124207bfb055de97f766160952e3ab3ca934df70f5166",
   "testout_title": "5c92355e107eff31f097cfd51bf32326ec6f970e1a756686e2c74ea6ab1aa284",
   "testout_writing": "d203b06aa867181093df2cfc838fa8e0a4ce5f13d4cd0ac6c89b32c1afe9bdbe",
   "testout_writing_detail": "253a3981433b50610ec8af7972831b9c25b7de14ab008fcecc9294431e279c63",
@@ -26,8 +25,6 @@
 <resources>
     <!-- A chapter test-out's title. %1$s is the chapter's name. -->
     <string name="testout_title">Prueba: %1$s</string>
-    <!-- Stands in for a chapter's name while it isn't known. -->
-    <string name="testout_this_chapter">Este capítulo</string>
     <string name="testout_intro_title">¿Ya lo sabes?</string>
     <string name="testout_intro_detail">Unas preguntas sobre este capítulo, con tus resultados al final. Si te va bien, tu plan se salta lo que ya sabes.</string>
     <string name="testout_start">Comenzar la prueba</string>

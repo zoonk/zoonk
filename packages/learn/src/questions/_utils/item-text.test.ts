@@ -114,3 +114,59 @@ describe(parseItemLine, () => {
     ]);
   });
 });
+
+describe("math in item text", () => {
+  it("reads $…$ as math in a line, a paragraph and a table cell, keeping prices as text", () => {
+    expect(parseItemLine(String.raw`$C_{A0} = 2$ mol/L costs $5 or \$10`)).toStrictEqual([
+      { kind: "math", text: "C_{A0} = 2" },
+      { kind: "text", text: " mol/L costs $5 or $10" },
+    ]);
+
+    expect(parseItemText("Simplify $x^4 y$\nwhen the bill is R$ 12.")).toStrictEqual([
+      {
+        kind: "paragraph",
+        lines: [
+          [
+            { kind: "text", text: "Simplify " },
+            { kind: "math", text: "x^4 y" },
+          ],
+          text(`when the bill is R$${NO_BREAK_SPACE}12.`),
+        ],
+      },
+    ]);
+
+    expect(parseItemText("| Rate |\n|---|\n| $E_a$ = 50 kJ/mol |")).toStrictEqual([
+      {
+        align: [null],
+        header: [text("Rate")],
+        kind: "table",
+        rows: [
+          [
+            [
+              { kind: "math", text: "E_a" },
+              { kind: "text", text: " = 50 kJ/mol" },
+            ],
+          ],
+        ],
+      },
+    ]);
+  });
+
+  it("leaves emphasis marks inside math to the formula", () => {
+    expect(parseItemLine("**Speed** is $a_1 * b_2$")).toStrictEqual([
+      { kind: "bold", text: "Speed" },
+      { kind: "text", text: " is " },
+      { kind: "math", text: "a_1 * b_2" },
+    ]);
+  });
+
+  it("keeps a dollar inside inline code as code", () => {
+    expect(parseItemLine("Match `^a$|^b$` against $x$.")).toStrictEqual([
+      { kind: "text", text: "Match " },
+      { kind: "code", text: "^a$|^b$" },
+      { kind: "text", text: " against " },
+      { kind: "math", text: "x" },
+      { kind: "text", text: "." },
+    ]);
+  });
+});

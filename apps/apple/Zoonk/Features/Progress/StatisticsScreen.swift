@@ -2,28 +2,42 @@ import SwiftUI
 
 /// Every number covers all of the learner's goals.
 struct StatisticsScreen: View {
-  @State private var detail: StatsSection
+  /// A sidebar's statistic: in one column it's its own page, with no overview behind it.
+  private let routed: StatsSection?
+  /// The one pick: beside the overview in two columns (Level when none), on top of it in one,
+  /// where Back clears it, so a resize keeps it either way.
+  @State private var picked: StatsSection?
 
   init(section: StatsSection? = nil) {
-    _detail = State(initialValue: section ?? .level)
+    routed = section
+    _picked = State(initialValue: section)
   }
 
   var body: some View {
     PaneSplit {
-      StatsOverview()
-        .environment(\.statsSectionOpen, StatsSectionOpen(shown: detail) { detail = $0 })
+      overview
+        .environment(\.statsSectionOpen, StatsSectionOpen(shown: picked ?? .level) { picked = $0 })
         // Each pane is about a phone wide, so the overview and the stat take their phone layouts.
         .environment(\.horizontalSizeClass, .compact)
     } secondary: {
-      page(detail)
+      page(picked ?? .level)
         .environment(\.horizontalSizeClass, .compact)
     } single: {
-      StatsOverview()
+      if let routed, picked == routed {
+        pushed(routed)
+      } else {
+        overview
+          .environment(\.statsSectionOpen, StatsSectionOpen(shown: nil) { picked = $0 })
+          .navigationDestination(item: $picked) { section in
+            pushed(section)
+          }
+      }
     }
-    .barTitleAfterHero(String(localized: AppTab.statistics.title))
-    .navigationDestination(for: StatsSection.self) { section in
-      pushed(section)
-    }
+  }
+
+  private var overview: some View {
+    StatsOverview()
+      .barTitleAfterHero(String(localized: AppTab.statistics.title))
   }
 
   private func pushed(_ section: StatsSection) -> some View {
@@ -174,7 +188,7 @@ private struct TileLink<Tile: View>: View {
 
     StatsSectionLink(section: section) {
       tile
-        .contentShape(.hoverEffect, shape)
+        .contentShape([.interaction, .hoverEffect], shape)
         .hoverEffect(.highlight)
         .modifier(StatsSelection(section: section, shape: shape))
     }

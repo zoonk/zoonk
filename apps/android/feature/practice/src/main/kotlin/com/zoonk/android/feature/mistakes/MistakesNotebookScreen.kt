@@ -63,7 +63,7 @@ import com.zoonk.android.feature.questions.ItemSetText
 import com.zoonk.android.feature.questions.ItemSupport
 import com.zoonk.android.feature.questions.ItemText
 import com.zoonk.android.feature.questions.TrueFalseWords
-import com.zoonk.android.feature.questions.plainItemLine
+import com.zoonk.android.feature.questions.itemLine
 import com.zoonk.android.feature.questions.savedAnswerText
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -81,10 +81,9 @@ import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.bleed
-import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
-import com.zoonk.android.ui.format.formatDate
+import com.zoonk.android.ui.format.formatMomentDay
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.scaffold.BottomBar
 import com.zoonk.android.ui.scaffold.PageScaffold
@@ -102,7 +101,6 @@ import com.zoonk.api.models.MistakeList
 import com.zoonk.api.models.MistakeStatus
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.time.ZoneId
 import java.util.UUID
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -625,18 +623,13 @@ private fun MistakeEntry(
     val snapshot = mistake.snapshot
     val fixed = mistake.status == MistakeStatus.FIXED
     val instant = mistake.fixedAt?.takeIf { fixed } ?: mistake.createdAt
-    val date =
-        java.time.Instant
-            .ofEpochMilli(instant.toEpochMilliseconds())
-            .atZone(ZoneId.systemDefault())
-            .toLocalDate()
     val skillId = mistake.skill?.id?.takeIf { mistake.practiceAvailable }
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
             Box(Modifier.weight(1f)) { mistake.cause?.let { CauseLabel(it) } }
             Text(
-                formatDate(date, currentLocale(), DateStyle.Day),
+                formatMomentDay(instant, currentLocale()),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.zoonkType.data,
             )
@@ -649,8 +642,12 @@ private fun MistakeEntry(
             contextStyle = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
         )
         RichText(snapshot.question, style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium))
-        snapshot.answer?.let { MistakeAnswer(plainItemLine(savedAnswerText(it, words)), right = false) }
-        snapshot.correctAnswer?.let { MistakeAnswer(plainItemLine(savedAnswerText(it, words)), right = true) }
+        snapshot.answer?.let { savedAnswerText(it, words, snapshot.format) }?.let {
+            if (snapshot.format in WRITTEN_ANSWER_FORMATS) MistakeAnswer(it, right = false) else MistakeAnswer(itemLine(it), right = false)
+        }
+        snapshot.correctAnswer?.let { savedAnswerText(it, words, snapshot.format) }?.let {
+            if (snapshot.format == "typed") MistakeAnswer(it, right = true) else MistakeAnswer(itemLine(it), right = true)
+        }
         snapshot.explanation?.let {
             ItemText(it, style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant))
         }
@@ -742,3 +739,9 @@ private val TOGGLE_HEIGHT = 32.dp
 private val INBOX_WIDTH = 840.dp
 private val SKILLS_WIDTH = 400.dp
 private val ENTRIES_WIDTH = 720.dp
+
+/**
+ * Words the learner typed or said are plain text, as is a typed question's accepted answer, so
+ * `__init__` keeps its underscores; other answers are item text with their math.
+ */
+private val WRITTEN_ANSWER_FORMATS = setOf("spoken", "spokenAnswer", "typed", "typedAnswer")

@@ -47,10 +47,6 @@ msgid "Up next"
 msgstr "次の学習"
 
 #: src/_components/chapter-mark.tsx
-#: src/journey/journey-chapters.tsx
-#: src/journey/journey-path.tsx
-#: src/journey/next-on-path.tsx
-#: src/journey/path-phase-row.tsx
 msgctxt "npC_pq"
 msgid "{total, plural, one {{done, number} of # lesson done} other {{done, number} of # lessons done}}"
 msgstr "{total, plural, other {{done, number}レッスン完了（全#レッスン）}}"
@@ -84,6 +80,93 @@ msgstr "完了"
 msgctxt "hd07WZ"
 msgid "{done} of {total}"
 msgstr "{done} / {total}"
+
+#. The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: the day more comes back. {date} is a day and its month, such as "November 22" in English.
+#: src/_components/comes-back-words.ts
+msgctxt "limits.i7_WBD"
+msgid "More on {date}, or subscribe to keep going."
+msgstr "{date}にまた利用できます。有料プランに登録すると、今すぐ続けられます。"
+
+#. The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back.
+#: src/_components/comes-back-words.ts
+msgctxt "limits.ecXEHc"
+msgid "More later today, or subscribe to keep going."
+msgstr "今日このあと、また利用できます。有料プランに登録すると、今すぐ続けられます。"
+
+#. The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back.
+#: src/_components/comes-back-words.ts
+msgctxt "limits.wwdPGH"
+msgid "More tomorrow, or subscribe to keep going."
+msgstr "明日また利用できます。有料プランに登録すると、今すぐ続けられます。"
+
+#. The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: the day more comes back. {date} is a day and its month, such as "November 22" in English.
+#: src/_components/comes-back-words.ts
+msgctxt "limits.LiccOr"
+msgid "More on {date}."
+msgstr "{date}にまた利用できます。"
+
+#. The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back.
+#: src/_components/comes-back-words.ts
+msgctxt "limits.zQZjeQ"
+msgid "More later today."
+msgstr "今日このあと、また利用できます。"
+
+#. The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back.
+#: src/_components/comes-back-words.ts
+msgctxt "limits.i1JCVp"
+msgid "More tomorrow."
+msgstr "明日また利用できます。"
+
+#. The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back.
+#: src/_components/comes-back-words.ts
+msgctxt "limits.d8xWY_"
+msgid "You can try again now."
+msgstr "今すぐもう一度試せます。"
+
+#. A notice that something the learner uses ran out, as one line: {title} says what ran out, such as "You've used your uploads", and {line} when more comes back, such as "More on November 22, or subscribe to keep going."
+#: src/_components/comes-back-words.ts
+msgctxt "limits.mEm9UA"
+msgid "{title}. {line}"
+msgstr "{title}。{line}"
+
+#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and this one has more lessons than a free learner can start.
+#: src/_components/comes-back-words.ts
+msgctxt "BQZuQD"
+msgid "It writes more lessons than you get for free."
+msgstr "このマップで作成されるレッスン数は、無料で使える数を超えています。"
+
+#: src/_components/comes-back-words.ts
+msgctxt "PzQ0ot"
+msgid "This map needs a subscription"
+msgstr "このマップの作成にはサブスクリプションが必要です"
+
+#: src/_components/comes-back-words.ts
+msgctxt "Ekv-QL"
+msgid "You can make this map now"
+msgstr "このマップを今すぐ作成できます"
+
+#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet. {date} is a day and its month, such as "November 22" in English.
+#: src/_components/comes-back-words.ts
+msgctxt "MU7Wx6"
+msgid "You'll have enough on {date}, or subscribe to make it now."
+msgstr "{date}には無料で作成できるようになります。サブスクリプションに登録すれば、今すぐ作成できます。"
+
+#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet.
+#: src/_components/comes-back-words.ts
+msgctxt "HwBdEe"
+msgid "You'll have enough later today, or subscribe to make it now."
+msgstr "今日中には無料で作成できるようになります。サブスクリプションに登録すれば、今すぐ作成できます。"
+
+#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet.
+#: src/_components/comes-back-words.ts
+msgctxt "CE0pGe"
+msgid "You'll have enough tomorrow, or subscribe to make it now."
+msgstr "明日には無料で作成できるようになります。サブスクリプションに登録すれば、今すぐ作成できます。"
+
+#: src/_components/comes-back-words.ts
+msgctxt "eFx_I9"
+msgid "Not enough free lessons for this map yet"
+msgstr "このマップの作成には、無料で使えるレッスン数がまだ足りません"
 
 #: src/_components/coverage-bar.tsx
 #: src/syllabus/subject-aside.tsx
@@ -126,7 +209,7 @@ msgid "Today"
 msgstr "今日"
 
 #: src/_components/create-account-link.tsx
-#: src/language/conversation/call-problem.tsx
+#: src/_components/subscribe-gate.tsx
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "d82w2J"
 msgid "Create a free account"
@@ -257,81 +340,6 @@ msgctxt "kwl__x"
 msgid "Finish to see how it went."
 msgstr "終了すると結果を確認できます。"
 
-#. On the screen a free learner sees when their free lessons are used. {date} is a day and its month, such as "November 22" in English.
-#: src/_components/free-lessons-words.ts
-msgctxt "wsvV5i"
-msgid "Your next free lesson opens on {date}, or subscribe to keep going."
-msgstr "次の無料レッスンは{date}から受けられます。登録すると、このまま学習を続けられます。"
-
-#: src/_components/free-lessons-words.ts
-msgctxt "sq9fni"
-msgid "Your next free lesson opens later today, or subscribe to keep going."
-msgstr "次の無料レッスンは今日中に受けられるようになります。登録すると、このまま学習を続けられます。"
-
-#: src/_components/free-lessons-words.ts
-msgctxt "q6VpbS"
-msgid "Your next free lesson opens tomorrow, or subscribe to keep going."
-msgstr "次の無料レッスンは明日から受けられます。登録すると、このまま学習を続けられます。"
-
-#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and this one has more lessons than a free learner can start.
-#: src/_components/free-lessons-words.ts
-msgctxt "BQZuQD"
-msgid "It writes more lessons than you get for free."
-msgstr "このマップで作成されるレッスン数は、無料で使える数を超えています。"
-
-#: src/_components/free-lessons-words.ts
-msgctxt "PzQ0ot"
-msgid "This map needs a subscription"
-msgstr "このマップの作成にはサブスクリプションが必要です"
-
-#: src/_components/free-lessons-words.ts
-msgctxt "Ekv-QL"
-msgid "You can make this map now"
-msgstr "このマップを今すぐ作成できます"
-
-#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet. {date} is a day and its month, such as "November 22" in English.
-#: src/_components/free-lessons-words.ts
-msgctxt "MU7Wx6"
-msgid "You'll have enough on {date}, or subscribe to make it now."
-msgstr "{date}には無料で作成できるようになります。サブスクリプションに登録すれば、今すぐ作成できます。"
-
-#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet.
-#: src/_components/free-lessons-words.ts
-msgctxt "HwBdEe"
-msgid "You'll have enough later today, or subscribe to make it now."
-msgstr "今日中には無料で作成できるようになります。サブスクリプションに登録すれば、今すぐ作成できます。"
-
-#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet.
-#: src/_components/free-lessons-words.ts
-msgctxt "CE0pGe"
-msgid "You'll have enough tomorrow, or subscribe to make it now."
-msgstr "明日には無料で作成できるようになります。サブスクリプションに登録すれば、今すぐ作成できます。"
-
-#: src/_components/free-lessons-words.ts
-msgctxt "eFx_I9"
-msgid "Not enough free lessons for this map yet"
-msgstr "このマップの作成には、無料で使えるレッスン数がまだ足りません"
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "C84LQr"
-msgid "More next month."
-msgstr "来月また利用できます。"
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "i1JCVp"
-msgid "More tomorrow."
-msgstr "明日また利用できます。"
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "64dPfY"
-msgid "More next month, or subscribe to keep going."
-msgstr "来月また利用できます。サブスクリプションに登録すれば、今すぐ続けられます。"
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "wwdPGH"
-msgid "More tomorrow, or subscribe to keep going."
-msgstr "明日また利用できます。サブスクリプションに登録すれば、今すぐ続けられます。"
-
 #: src/_components/help-limit-notice.tsx
 msgctxt "X6_KO5"
 msgid "Take a short break, then try again."
@@ -348,19 +356,14 @@ msgid "That's all you can try without an account"
 msgstr "アカウントなしで試せるのはここまでです"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "Jqv4S8"
-msgid "No more messages this month"
-msgstr "今月のメッセージ数が上限に達しました"
-
-#: src/_components/help-limit-notice.tsx
 msgctxt "x0gg1d"
 msgid "No more messages today"
 msgstr "今日のメッセージ数が上限に達しました"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "z4UYJE"
-msgid "No more explanations this month"
-msgstr "今月の解説の利用回数が上限に達しました"
+msgctxt "BRz34t"
+msgid "You've used your messages"
+msgstr "メッセージの利用上限に達しました"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "cPoE5U"
@@ -368,9 +371,19 @@ msgid "No more explanations today"
 msgstr "今日の解説の利用回数が上限に達しました"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "6Tamx-"
-msgid "You've reached this month's limit"
-msgstr "今月の利用上限に達しました"
+msgctxt "uycXLZ"
+msgid "You've used your explanations"
+msgstr "解説の利用上限に達しました"
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "uFNRuq"
+msgid "No more mock exams today"
+msgstr "今日はこれ以上模試を受けられません"
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "oTW-15"
+msgid "You've used your mock exams"
+msgstr "模試の利用上限に達しました"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "Co4ZUv"
@@ -378,14 +391,14 @@ msgid "You've reached today's limit"
 msgstr "今日の利用上限に達しました"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "5SLMld"
-msgid "Your next free lesson is ready"
-msgstr "次の無料レッスンを始められます"
+msgctxt "YaZomb"
+msgid "You've reached your limit"
+msgstr "利用上限に達しました"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "y0Yu1A"
-msgid "You've used your free lessons"
-msgstr "無料レッスンを使い切りました"
+msgctxt "j9Za23"
+msgid "No more new lessons today"
+msgstr "今日はこれ以上新しいレッスンを始められません"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "2LDIQ9"
@@ -393,9 +406,14 @@ msgid "No more lessons without an account"
 msgstr "アカウントなしで受けられるレッスンはここまでです"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "j9Za23"
-msgid "No more new lessons today"
-msgstr "今日はこれ以上新しいレッスンを始められません"
+msgctxt "y0Yu1A"
+msgid "You've used your free lessons"
+msgstr "無料レッスンを使い切りました"
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "5SLMld"
+msgid "Your next free lesson is ready"
+msgstr "次の無料レッスンを始められます"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "jaoJk9"
@@ -408,9 +426,9 @@ msgid "No more mind maps without an account"
 msgstr "アカウントなしで作れるマインドマップはここまでです"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "6ootiC"
-msgid "No more new mind maps this month"
-msgstr "今月はこれ以上新しいマインドマップを作れません"
+msgctxt "OztxNT"
+msgid "You've used your mind maps"
+msgstr "マインドマップの利用上限に達しました"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "o0NLBw"
@@ -423,9 +441,9 @@ msgid "No more previews without an account"
 msgstr "アカウントなしで見られるプレビューはここまでです"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "-sI9v1"
-msgid "No more previews this month"
-msgstr "今月のプレビューの利用回数が上限に達しました"
+msgctxt "-jMPMN"
+msgid "You've used your previews"
+msgstr "プレビューの利用上限に達しました"
 
 #: src/_components/lesson-list.tsx
 msgctxt "2lvsw9"
@@ -462,7 +480,7 @@ msgstr "レッスンを始める"
 #: src/_components/time-answer.tsx
 #: src/country/country-picker.tsx
 #: src/explain/explain-waiting.tsx
-#: src/generation/generation-wait.tsx
+#: src/generation/generation-failure-notice.tsx
 #: src/language/conversation/call-intro-footer.tsx
 #: src/language/conversation/call-problem.tsx
 #: src/language/conversation/dropped-call-screen.tsx
@@ -576,7 +594,6 @@ msgid "Finish"
 msgstr "終了する"
 
 #: src/_components/question-actions.tsx
-#: src/journey/preparation/preparation-details.tsx
 msgctxt "9-Ddtu"
 msgid "Next"
 msgstr "次へ"
@@ -622,7 +639,6 @@ msgstr "直近の試験の科目別問題数は、<link>{publisher}</link>の集
 #: src/_components/save-error.tsx
 #: src/feedback/feedback-form-dialog.tsx
 #: src/feedback/report-problem-item.tsx
-#: src/journey/journey-menu.tsx
 msgctxt "feedback.Hf_X9X"
 msgid "Report a problem"
 msgstr "問題を報告する"
@@ -702,6 +718,7 @@ msgstr "戻る"
 
 #: src/_components/subscribe-gate.tsx
 #: src/conversation/tutor-feature-offers.tsx
+#: src/language/unit/practice-conversation.tsx
 msgctxt "gczcC5"
 msgid "Subscribe"
 msgstr "登録する"
@@ -2512,9 +2529,11 @@ msgid "Not this time"
 msgstr "今回はクリアできませんでした"
 
 #: src/checkpoints/checkpoint-review.tsx
-msgctxt "hmBFza"
-msgid "Answer:"
-msgstr "答え："
+#: src/mistakes/mistake-entry.tsx
+#: src/questions/right-answer-line.tsx
+msgctxt "wS1KQ6"
+msgid "<label>Right answer:</label> <answer></answer>"
+msgstr "<label>正解：</label><answer></answer>"
 
 #: src/checkpoints/checkpoint-review.tsx
 #: src/mistakes/mistake-practice-run.tsx
@@ -4135,6 +4154,44 @@ msgctxt "vNw6Rg"
 msgid "Writing each card's instructions…"
 msgstr "各カードの指示文を作成しています…"
 
+#: src/generation/generation-failure-notice.tsx
+msgctxt "Eg11ZY"
+msgid "Reconnect"
+msgstr "再接続する"
+
+#: src/generation/generation-failure-notice.tsx
+msgctxt "53pCO9"
+msgid "We stopped getting updates. It may still be working."
+msgstr "進捗状況が届かなくなりました。準備は続いているかもしれません。"
+
+#: src/generation/generation-failure-notice.tsx
+msgctxt "CN_B_k"
+msgid "Connection lost"
+msgstr "接続が切れました"
+
+#: src/generation/generation-failure-notice.tsx
+#: src/onboarding/steps/step-parts.tsx
+#: src/wait/first-lesson-row.tsx
+msgctxt "YXnM-X"
+msgid "Something went wrong on our side."
+msgstr "こちら側で問題が発生しました。"
+
+#. Preparing this content failed. It is not still running.
+#: src/generation/generation-failure-notice.tsx
+msgctxt "0fLHBg"
+msgid "This didn't finish"
+msgstr "準備を完了できませんでした"
+
+#: src/generation/generation-failure-notice.tsx
+msgctxt "iKz0K6"
+msgid "We couldn't get this started."
+msgstr "準備を開始できませんでした。"
+
+#: src/generation/generation-failure-notice.tsx
+msgctxt "q8l1Sf"
+msgid "This didn't start"
+msgstr "準備を開始できませんでした"
+
 #: src/generation/generation-wait.tsx
 msgctxt "NhDwgx"
 msgid "in progress"
@@ -4156,44 +4213,6 @@ msgstr "ここで止まりました"
 msgctxt "wSt267"
 msgid "not started yet"
 msgstr "まだ始まっていません"
-
-#: src/generation/generation-wait.tsx
-msgctxt "Eg11ZY"
-msgid "Reconnect"
-msgstr "再接続する"
-
-#: src/generation/generation-wait.tsx
-msgctxt "53pCO9"
-msgid "We stopped getting updates. It may still be working."
-msgstr "進捗状況が届かなくなりました。準備は続いているかもしれません。"
-
-#: src/generation/generation-wait.tsx
-msgctxt "CN_B_k"
-msgid "Connection lost"
-msgstr "接続が切れました"
-
-#: src/generation/generation-wait.tsx
-#: src/onboarding/steps/step-parts.tsx
-#: src/wait/first-lesson-row.tsx
-msgctxt "YXnM-X"
-msgid "Something went wrong on our side."
-msgstr "こちら側で問題が発生しました。"
-
-#. Preparing this content failed. It is not still running.
-#: src/generation/generation-wait.tsx
-msgctxt "0fLHBg"
-msgid "This didn't finish"
-msgstr "準備を完了できませんでした"
-
-#: src/generation/generation-wait.tsx
-msgctxt "iKz0K6"
-msgid "We couldn't get this started."
-msgstr "準備を開始できませんでした。"
-
-#: src/generation/generation-wait.tsx
-msgctxt "q8l1Sf"
-msgid "This didn't start"
-msgstr "準備を開始できませんでした"
 
 #: src/generation/lesson-generation-copy.ts
 msgctxt "57Hm5c"
@@ -4705,13 +4724,6 @@ msgid "More lessons"
 msgstr "追加のレッスン"
 
 #: src/journey/journey-chapters.tsx
-#: src/journey/next-on-path.tsx
-#: src/journey/path-phase-row.tsx
-msgctxt "KcgJH7"
-msgid "{done, number} / {total, number}"
-msgstr "{done, number} / {total, number}"
-
-#: src/journey/journey-chapters.tsx
 #: src/syllabus/syllabus-chapter-row.tsx
 #: src/syllabus/topic-note.tsx
 msgctxt "VPnXIm"
@@ -4851,6 +4863,18 @@ msgctxt "L_oGIZ"
 msgid "Not in your plan"
 msgstr "学習計画に含まれていません"
 
+#: src/journey/journey-path.tsx
+#: src/journey/path-phase-row.tsx
+msgctxt "oIX23Q"
+msgid "{count, plural, one {# lesson not studied} other {# lessons not studied}}"
+msgstr "{count, plural, other {未学習の#レッスン}}"
+
+#: src/journey/journey-path.tsx
+#: src/journey/next-on-path.tsx
+msgctxt "8sxDix"
+msgid "Date to be confirmed"
+msgstr "日程未定"
+
 #. The name of a study step: a live voice call in the language being learned.
 #: src/journey/journey-phase-events.tsx
 #: src/journey/roadmap-full.tsx
@@ -4932,44 +4956,9 @@ msgid "Your plan at a glance"
 msgstr "学習計画の概要"
 
 #: src/journey/next-on-path.tsx
-#: src/journey/use-phase-when.ts
-msgctxt "8sxDix"
-msgid "Date to be confirmed"
-msgstr "日程未定"
-
-#: src/journey/next-on-path.tsx
 msgctxt "F1DaXB"
 msgid "Next on your path"
 msgstr "次のステップ"
-
-#. {date} is a month, like "Jan" or "Jan 2028", never a day.
-#: src/journey/path-phase-row.tsx
-msgctxt "0r6xAZ"
-msgid "until ~{date}"
-msgstr "{date}ごろまで"
-
-#. {date} is a month, like "Jan" or "Jan 2028", never a day.
-#: src/journey/path-phase-row.tsx
-msgctxt "JzTTux"
-msgid "until about {date}"
-msgstr "{date}ごろまで"
-
-#. {date} is a day, like "Nov 10".
-#: src/journey/path-phase-row.tsx
-msgctxt "phaseUntilAboutDay"
-msgid "until ~{date}"
-msgstr "{date}ごろまで"
-
-#. {date} is a day, like "Nov 10".
-#: src/journey/path-phase-row.tsx
-msgctxt "phaseUntilAboutDaySpoken"
-msgid "until about {date}"
-msgstr "{date}ごろまで"
-
-#: src/journey/path-phase-row.tsx
-msgctxt "oPz0RK"
-msgid "until {date}"
-msgstr "{date}まで"
 
 #: src/journey/path-phase-row.tsx
 msgctxt "M6MlNv"
@@ -4981,11 +4970,6 @@ msgstr "今日再開します"
 msgctxt "-DKe0Q"
 msgid "Continues {date}"
 msgstr "{date}に再開します"
-
-#: src/journey/path-phase-row.tsx
-msgctxt "oIX23Q"
-msgid "{count, plural, one {# lesson not studied} other {# lessons not studied}}"
-msgstr "{count, plural, other {未学習の#レッスン}}"
 
 #: src/journey/path-phase-row.tsx
 msgctxt "sk-jVa"
@@ -5011,6 +4995,24 @@ msgstr "{start}〜{end}"
 msgctxt "yYQBka"
 msgid "{total, plural, =0 {{done, number} of # lessons} one {{done, number} of # lesson} other {{done, number} of # lessons}}"
 msgstr "{total, plural, =0 {{done, number}レッスン完了（全#レッスン）} other {{done, number}レッスン完了（#レッスン中）}}"
+
+#: src/journey/phase-when.tsx
+#: src/plan/plan-date-text.tsx
+msgctxt "7KwTGn"
+msgid "~{date}"
+msgstr "{date}ごろ"
+
+#. In the month form, {date} is a month, like "Jan"; otherwise a day, like "Dec 12".
+#: src/journey/phase-when.tsx
+msgctxt "55jrFz"
+msgid "{dateKind, select, month {Ends about {date}} other {Ends about {date}}}"
+msgstr "{dateKind, select, month {{date}ごろに終了} other {{date}ごろに終了}}"
+
+#. When a phase of the plan ends. {date} is a day, like "Dec 12".
+#: src/journey/phase-when.tsx
+msgctxt "JQlKi_"
+msgid "Ends {date}"
+msgstr "{date}に終了"
 
 #: src/journey/plan-header.tsx
 msgctxt "8PP61v"
@@ -5067,15 +5069,20 @@ msgid "Take a full or half mock exam to see your estimated score."
 msgstr "通常の模試か半分の長さの模試を受けると、推定スコアがわかります。"
 
 #: src/journey/preparation/preparation-details.tsx
-#: src/mock/mock-result-view.tsx
-msgctxt "Psgvhk"
-msgid "Estimated score"
-msgstr "推定スコア"
+msgctxt "eMlJUc"
+msgid "{count, plural, one {Based on # review of every topic} other {Based on # reviews of every topic}}"
+msgstr "{count, plural, other {全トピックを#回復習した結果に基づいています}}"
 
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "DJCbLV"
 msgid "{count, plural, one {Based on your last mock exam} other {Based on your last # mock exams}}"
 msgstr "{count, plural, other {直近#回の模試の結果に基づいています}}"
+
+#: src/journey/preparation/preparation-details.tsx
+#: src/mock/mock-result-view.tsx
+msgctxt "Psgvhk"
+msgid "Estimated score"
+msgstr "推定スコア"
 
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "JcR3T_"
@@ -5091,6 +5098,12 @@ msgstr "試験で配点が高い科目ほど、大きく反映されます。科
 msgctxt "Kch5Cx"
 msgid "The share of your plan's lessons you've studied or already knew. Right answers, what you remember and weekly challenges show how well you know them."
 msgstr "学習計画のレッスンのうち、学習したものや、もともと知っていたものの割合です。正答率や覚えている内容、週間チャレンジの結果から、どれくらい身についているかがわかります。"
+
+#. A section heading over the next steps toward the learner's goal, such as "Take your first mock exam". Not a button.
+#: src/journey/preparation/preparation-details.tsx
+msgctxt "preparationNextSteps"
+msgid "Next"
+msgstr "次にすること"
 
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "J6PYLA"
@@ -5308,25 +5321,6 @@ msgstr "関連コース"
 msgctxt "uNzqcn"
 msgid "You finished your plan"
 msgstr "学習計画を完了しました"
-
-#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
-#: src/journey/use-phase-when.ts
-msgctxt "bs_tuX"
-msgid "{dateKind, select, month {Until about {date}} other {Until about {date}}}"
-msgstr "{dateKind, select, month {{date}ごろまで} other {{date}ごろまで}}"
-
-#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
-#: src/journey/use-phase-when.ts
-msgctxt "w5zaIw"
-msgid "{dateKind, select, month {Until {date}} other {Until {date}}}"
-msgstr "{dateKind, select, month {{date}まで} other {{date}まで}}"
-
-#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
-#: src/journey/use-phase-when.ts
-#: src/plan/plan-date-text.tsx
-msgctxt "IGvm5x"
-msgid "{dateKind, select, month {About {date}} other {About {date}}}"
-msgstr "{dateKind, select, month {{date}ごろ} other {{date}ごろ}}"
 
 #: src/journey/use-roadmap.ts
 msgctxt "nO5Gb7"
@@ -5631,9 +5625,9 @@ msgid "No more calls today"
 msgstr "今日はこれ以上会話できません"
 
 #: src/language/conversation/call-limit-message.tsx
-msgctxt "mFsER8"
-msgid "No more calls this month"
-msgstr "今月はこれ以上会話できません"
+msgctxt "fA3IHK"
+msgid "You've used your call time"
+msgstr "会話の利用時間が上限に達しました"
 
 #: src/language/conversation/call-limit-message.tsx
 msgctxt "fZ-NXt"
@@ -7578,14 +7572,9 @@ msgid "Only answer when you're sure. Saying you're not sure is fine."
 msgstr "自信があるときだけ答えましょう。自信がないと言っても大丈夫です。"
 
 #: src/mistakes/mistake-entry.tsx
-msgctxt "VM0Q1f"
-msgid "Right answer:"
-msgstr "正解："
-
-#: src/mistakes/mistake-entry.tsx
-msgctxt "h_bsq4"
-msgid "You answered:"
-msgstr "回答："
+msgctxt "Gr6IEG"
+msgid "<label>You answered:</label> <answer></answer>"
+msgstr "<label>回答：</label><answer></answer>"
 
 #: src/mistakes/mistake-entry.tsx
 msgctxt "BICox_"
@@ -7736,12 +7725,6 @@ msgstr "{count, plural, =0 {克服した間違いはありません} other {#個
 msgctxt "HvLGEN"
 msgid "Answer feedback"
 msgstr "回答へのフィードバック"
-
-#: src/mistakes/practice-step.tsx
-#: src/session/question-block/question-feedback.tsx
-msgctxt "amJs-w"
-msgid "Right answer: {answer}"
-msgstr "正解：{answer}"
 
 #. Why the learner got a question wrong: they didn't know the content yet. Not missing course content.
 #: src/mistakes/use-cause-label.ts
@@ -8656,10 +8639,17 @@ msgctxt "HwbZRQ"
 msgid "Today this one has {count, number} of its {total, number} questions, about {time}. You can take the full one tomorrow."
 msgstr "今日は{count, number}問（全{total, number}問）で、所要時間は約{time}です。明日は全問に取り組めます。"
 
+#. In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now.
 #: src/mock/mock-short-dialog.tsx
-msgctxt "YIvNSi"
-msgid "Today this one has {count, number} of its {total, number} questions, about {time}. You can take the full one next month."
-msgstr "今日は{count, number}問（全{total, number}問）で、所要時間は約{time}です。来月は全問に取り組めます。"
+msgctxt "3-UMw5"
+msgid "Today this one has {count, number} of its {total, number} questions, about {time}. You can take the full one later today."
+msgstr "今日の模試は{count, number}問（全{total, number}問中）で、所要時間は約{time}です。今日このあと、全問そろった模試を受けられます。"
+
+#. In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now. {date} is a day and its month, such as "November 22" in English.
+#: src/mock/mock-short-dialog.tsx
+msgctxt "mZQ7Qe"
+msgid "Today this one has {count, number} of its {total, number} questions, about {time}. You can take the full one on {date}."
+msgstr "今日の模試は{count, number}問（全{total, number}問中）で、所要時間は約{time}です。{date}に全問そろった模試を受けられます。"
 
 #: src/mock/mock-short-dialog.tsx
 msgctxt "Rr2HWA"
@@ -8727,19 +8717,14 @@ msgid "You picked {answer}"
 msgstr "「{answer}」を選びました"
 
 #: src/onboarding/entry/attach-panel.tsx
-msgctxt "lBAN40"
-msgid "No more material today. More tomorrow."
-msgstr "今日はこれ以上、資料を追加できません。明日また追加できます。"
+msgctxt "aw2Ukw"
+msgid "No more material today"
+msgstr "今日はこれ以上資料を追加できません"
 
 #: src/onboarding/entry/attach-panel.tsx
-msgctxt "OZTZJj"
-msgid "No more material this month. More next month, or subscribe to keep going."
-msgstr "今月はこれ以上、資料を追加できません。来月また追加できます。有料プランに登録すれば、今すぐ続けられます。"
-
-#: src/onboarding/entry/attach-panel.tsx
-msgctxt "fKoONz"
-msgid "No more material today. More tomorrow, or subscribe to keep going."
-msgstr "今日はこれ以上、資料を追加できません。明日また追加できます。有料プランに登録すれば、今すぐ続けられます。"
+msgctxt "g0Nshd"
+msgid "You've used your uploads"
+msgstr "アップロードの上限に達しました"
 
 #: src/onboarding/entry/attach-panel.tsx
 msgctxt "yeNv9c"
@@ -8909,21 +8894,6 @@ msgid "How does inflation work?"
 msgstr "インフレはどういう仕組みですか？"
 
 #: src/onboarding/entry/goal-limit-notice.tsx
-msgctxt "1oUkSm"
-msgid "Pause one in your Plan, or subscribe to study more at once."
-msgstr "学習計画で目標を1つ一時停止するか、サブスクリプションに登録して同時に取り組める目標を増やしてください。"
-
-#: src/onboarding/entry/goal-limit-notice.tsx
-msgctxt "EreSqP"
-msgid "That's all the goals you can study at once"
-msgstr "同時に取り組める目標の上限に達しました"
-
-#: src/onboarding/entry/goal-limit-notice.tsx
-msgctxt "4RwuVD"
-msgid "No more new goals this month"
-msgstr "今月はこれ以上、新しい目標を始められません"
-
-#: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "MO6156"
 msgid "Go to your Plan"
 msgstr "学習計画を見る"
@@ -9069,19 +9039,14 @@ msgid "What you want to do with your material"
 msgstr "資料を使ってやりたいこと"
 
 #: src/onboarding/entry/material-questions.tsx
-msgctxt "maqtwk"
-msgid "No more questions today. More tomorrow."
-msgstr "今日はこれ以上、質問できません。明日また質問できます。"
+msgctxt "TPgNQb"
+msgid "No more questions today"
+msgstr "今日の問題数の上限に達しました"
 
 #: src/onboarding/entry/material-questions.tsx
-msgctxt "Iadu3J"
-msgid "No more questions this month. More next month, or subscribe to keep going."
-msgstr "今月はこれ以上、質問できません。来月また質問できます。有料プランに登録すれば、今すぐ続けられます。"
-
-#: src/onboarding/entry/material-questions.tsx
-msgctxt "Z_xQgo"
-msgid "No more questions today. More tomorrow, or subscribe to keep going."
-msgstr "今日はこれ以上、質問できません。明日また質問できます。有料プランに登録すれば、今すぐ続けられます。"
+msgctxt "GYGZpe"
+msgid "You've used your questions"
+msgstr "問題数の上限に達しました"
 
 #: src/onboarding/entry/material-questions.tsx
 msgctxt "KIdIMi"
@@ -9166,19 +9131,29 @@ msgid "{exam, select, abitur {Pass the Abitur} bac {Pass the bac} enem {Pass the
 msgstr "{exam, select, abitur {Abiturに合格する} bac {bacに合格する} enem {ENEMに合格する} exani {EXANI-IIに合格する} kyotsu {共通テストでいい点を取る} matura {maturaに合格する} maturita {maturitàに合格する} suneung {수능でいい点を取る} yks {YKSでいい点を取る} other {SATに合格する}}"
 
 #: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.a9a9_d"
-msgid "That's all the goals you can study at once. Pause one, or subscribe to study more."
-msgstr "同時に取り組める目標の上限に達しました。どれかの目標を一時停止するか、サブスクリプションに登録して取り組める目標を増やしてください。"
+msgctxt "goalErrors.ngFchc"
+msgid "No more new goals today"
+msgstr "今日はこれ以上新しい目標を始められません"
 
 #: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.GZnNXl"
-msgid "No more quick explanations today. More tomorrow, or subscribe to keep going."
-msgstr "今日はこれ以上、クイック解説を利用できません。明日また利用できます。サブスクリプションに登録すれば、このまま続けられます。"
+msgctxt "goalErrors.ldHskD"
+msgid "You've started all the new goals you can"
+msgstr "新しく始められる目標の上限に達しました"
 
 #: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.JsRkia"
-msgid "No more new goals today. More tomorrow."
-msgstr "今日はこれ以上、新しい目標を始められません。明日また始められます。"
+msgctxt "goalErrors.1oUkSm"
+msgid "Pause one in your Plan, or subscribe to study more at once."
+msgstr "学習計画で目標を1つ一時停止するか、登録して同時に進める目標を増やしてください。"
+
+#: src/onboarding/goal-errors.ts
+msgctxt "goalErrors.EreSqP"
+msgid "That's all the goals you can study at once"
+msgstr "同時に進められる目標の上限に達しました"
+
+#: src/onboarding/goal-errors.ts
+msgctxt "goalErrors._8pCzX"
+msgid "No more quick explanations today"
+msgstr "今日はこれ以上クイック解説を利用できません"
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.2aNqX-"
@@ -9186,14 +9161,9 @@ msgid "Without an account, you study one goal. Create a free account to start an
 msgstr "アカウントなしで取り組める目標は1つです。別の目標を始めるには、無料アカウントを作成してください。"
 
 #: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.B_qpn8"
-msgid "No more quick explanations this month. More next month, or subscribe to keep going."
-msgstr "今月はこれ以上、クイック解説を利用できません。来月また利用できます。サブスクリプションに登録すれば、このまま続けられます。"
-
-#: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.wjsNnL"
-msgid "No more new goals this month. More next month, or subscribe to keep going."
-msgstr "今月はこれ以上、新しい目標を始められません。来月また始められます。サブスクリプションに登録すれば、このまま続けられます。"
+msgctxt "goalErrors.PrgRDF"
+msgid "You've used your quick explanations"
+msgstr "クイック解説の利用上限に達しました"
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.MKCnRs"
@@ -9209,11 +9179,6 @@ msgstr "短時間にいくつも目標を始めています。数分後にもう
 msgctxt "goalErrors.ib5oUK"
 msgid "No more new goals today without an account."
 msgstr "アカウントなしでは、今日はこれ以上、新しい目標を始められません。"
-
-#: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.NIiMiz"
-msgid "No more new goals today. More tomorrow, or subscribe to keep going."
-msgstr "今日はこれ以上、新しい目標を始められません。明日また始められます。サブスクリプションに登録すれば、このまま続けられます。"
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.YYmbyX"
@@ -10301,6 +10266,16 @@ msgctxt "LcFFqV"
 msgid "New lessons start"
 msgstr "新しいレッスンの開始日"
 
+#: src/plan/exam-choice-question.tsx
+msgctxt "FXC8l3"
+msgid "{group}: which ones will you take?"
+msgstr "{group}：どれを受験しますか？"
+
+#: src/plan/exam-choice-question.tsx
+msgctxt "gDpw0U"
+msgid "{group}: which one will you take?"
+msgstr "{group}はどの科目を受験しますか？"
+
 #: src/plan/exam-over-actions.tsx
 msgctxt "rBTgSX"
 msgid "Archive goal"
@@ -10469,10 +10444,11 @@ msgctxt "hzzrUH"
 msgid "Move your date to cover everything"
 msgstr "すべて学べるように期日を変更する"
 
+#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/plan/plan-date-text.tsx
-msgctxt "7KwTGn"
-msgid "~{date}"
-msgstr "{date}ごろ"
+msgctxt "IGvm5x"
+msgid "{dateKind, select, month {About {date}} other {About {date}}}"
+msgstr "{dateKind, select, month {{date}ごろ} other {{date}ごろ}}"
 
 #: src/plan/plan-date.tsx
 msgctxt "3VeTk-"
@@ -10484,18 +10460,6 @@ msgstr "ひとまず{month}に設定しています。日にちがわかった�
 msgctxt "v5e5kt"
 msgid "Adjust your plan"
 msgstr "学習計画の調整"
-
-#: src/plan/plan-exam-choices.tsx
-#: src/today/today-exam-choice.tsx
-msgctxt "FXC8l3"
-msgid "{group}: which ones will you take?"
-msgstr "{group}：どれを受験しますか？"
-
-#: src/plan/plan-exam-choices.tsx
-#: src/today/today-exam-choice.tsx
-msgctxt "gDpw0U"
-msgid "{group}: which one will you take?"
-msgstr "{group}はどの科目を受験しますか？"
 
 #: src/plan/plan-finish.tsx
 msgctxt "6Due7K"
@@ -10738,6 +10702,11 @@ msgstr "期日を過ぎた"
 msgctxt "y7l0FJ"
 msgid "Keep studying them, or archive this goal?"
 msgstr "残りのレッスンを続けますか、それともこの目標をアーカイブしますか？"
+
+#: src/plan/plan-status-label.tsx
+msgctxt "xNjzfh"
+msgid "{count, plural, one {You have # lesson left. Keep studying it, or archive this goal?} other {You have # lessons left. Keep studying them, or archive this goal?}}"
+msgstr "{count, plural, other {残りは#レッスンです。学習を続けますか、それともこの目標をアーカイブしますか？}}"
 
 #: src/plan/plan-status-label.tsx
 msgctxt "kWj6AT"
@@ -12330,6 +12299,7 @@ msgctxt "v8WYcE"
 msgid "It takes a few minutes."
 msgstr "数分かかります。"
 
+#. {title} is the name of one of the day's challenges, such as "Weekly challenge", never a course.
 #: src/session/next-stop-wait.tsx
 msgctxt "RBw4AC"
 msgid "Start {title}"
@@ -12803,6 +12773,12 @@ msgstr "{done, plural, =0 {今日は#件のミッションが完了（全{total}
 msgctxt "Uzc7nh"
 msgid "Learning tabs"
 msgstr "学習タブ"
+
+#. The search button at the end of the phone's tab bar, after the tabs.
+#: src/shell/learn-navigation.tsx
+msgctxt "xmcVZ0"
+msgid "Search"
+msgstr "検索"
 
 #: src/shell/make-room-sheet.tsx
 msgctxt "goalSwitcher.tFFMkF"

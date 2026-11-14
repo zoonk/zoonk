@@ -4,7 +4,7 @@
     <string name="challenge_writing_questions">Writing questions on what you studied</string>
     <string name="challenge_writing_line">Picking the skills to ask about…</string>
     <string name="challenge_writing_title">Getting your challenge ready</string>
-    <string name="challenge_writing_detail">We\'re writing its questions. It starts here when they\'re ready.</string>
+    <string name="challenge_writing_detail">It starts here when it\'s ready.</string>
 
     <!-- %1$s is the challenge's name, like "Phase 2 challenge". -->
     <string name="challenge_rematch">New try · %1$s</string>

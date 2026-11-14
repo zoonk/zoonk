@@ -105,11 +105,11 @@ function ContentCountryControl({ country }: { country: PlanContentCountry }) {
       startSaving(() => {
         setAsking(null);
 
-        if (!saved) {
+        if (saved) {
+          setOpen(false);
+        } else {
           saveFailed();
         }
-
-        setOpen(!saved);
       });
     });
   };

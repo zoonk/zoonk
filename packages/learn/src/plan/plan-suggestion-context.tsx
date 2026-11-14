@@ -109,9 +109,18 @@ export function SlotPager({ className }: { className?: string }) {
   );
 }
 
-export function SlotContent({ children }: { children: React.ReactNode }) {
+export function SlotContent({
+  children,
+  statement,
+}: {
+  children: React.ReactNode;
+  statement?: boolean;
+}) {
   return (
-    <SuggestionContent className="min-[72rem]:bg-transparent min-[72rem]:ring-0">
+    <SuggestionContent
+      className="min-[72rem]:bg-transparent min-[72rem]:ring-0"
+      statement={statement}
+    >
       {children}
     </SuggestionContent>
   );
@@ -160,6 +169,7 @@ export function PlanChangeSuggestion({
   title: string;
 }) {
   const t = useExtracted();
+  const { setPreview } = usePlanSuggestionSlot();
   const answer = useSlotAnswer(item);
   const undo = answer && <SlotUndo item={item} />;
 
@@ -168,6 +178,7 @@ export function PlanChangeSuggestion({
       answered={answer !== null}
       label={t("Plan suggestion")}
       mark={answer ? <DoneMark /> : mark}
+      onClose={setPreview}
       onOpen={onOpen}
     >
       <SuggestionLine>

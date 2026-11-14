@@ -9,6 +9,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@zoonk/ui/components/drawer";
+import { OVERLAY_ACTIONS_CLASS } from "@zoonk/ui/lib/overlay-actions";
 import { cn } from "@zoonk/ui/lib/utils";
 import { SparkleIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -55,6 +56,7 @@ export function Suggestion({
   focusOnMount = false,
   label,
   mark,
+  onClose,
   onOpen,
   ...props
 }: Omit<React.ComponentProps<"section">, "aria-label" | "ref"> & {
@@ -66,6 +68,8 @@ export function Suggestion({
   focusOnMount?: boolean;
   label: string;
   mark?: React.ReactNode;
+  /** The learner closed the sheet: work it was waiting on is no longer wanted. */
+  onClose?: () => void;
   /** The learner's tap on "View" opened the sheet: work the tap asked for can start. */
   onOpen?: () => void;
 }) {
@@ -89,10 +93,7 @@ export function Suggestion({
       <Drawer
         onOpenChange={(next) => {
           setOpen(next);
-
-          if (next) {
-            onOpen?.();
-          }
+          (next ? onOpen : onClose)?.();
         }}
         open={open}
       >
@@ -154,7 +155,7 @@ export function SuggestionLine({ children, className, ...props }: React.Componen
 export function SuggestionSummary({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
-      className={cn("min-w-0 flex-1 text-sm leading-snug font-medium text-pretty", className)}
+      className={cn("min-w-0 flex-1 text-sm font-medium text-pretty", className)}
       data-slot="suggestion-summary"
       {...props}
     />
@@ -162,9 +163,8 @@ export function SuggestionSummary({ className, ...props }: React.ComponentProps<
 }
 
 /**
- * A suggestion's main action on a page that has its own (Today's "Start session"): filled in the
- * sheet, which covers the page, and outline in the panel beside it, so the page keeps one filled
- * button.
+ * A suggestion's main action on a page that has its own main action: filled in the sheet, which
+ * covers the page, and outline in the panel beside it, so the page keeps one filled button.
  */
 export function useMainActionVariant(): "default" | "outline" {
   return use(PresentationContext) === "panel" ? "outline" : "default";
@@ -188,9 +188,12 @@ export function SuggestionOpen({ children }: { children?: React.ReactNode }) {
 export function SuggestionContent({
   children,
   className,
+  statement = false,
 }: {
   children: React.ReactNode;
   className?: string;
+  /** The line says it all and the page's own bar answers it, so the line opens no sheet. */
+  statement?: boolean;
 }) {
   const { answered, label, section } = useSuggestion();
 
@@ -207,16 +210,18 @@ export function SuggestionContent({
 
       {/* Closed by an answer, the sheet hands focus to the suggestion, since "View" is gone by
           then. */}
-      <DrawerPopup aria-label={label} finalFocus={answered ? section : true}>
-        <PresentationContext value="sheet">
-          <DrawerContent
-            className="flex flex-col gap-4 pt-4 pb-[max(1.5rem,env(safe-area-inset-bottom))]"
-            data-slot="suggestion-sheet"
-          >
-            {children}
-          </DrawerContent>
-        </PresentationContext>
-      </DrawerPopup>
+      {!statement && (
+        <DrawerPopup aria-label={label} finalFocus={answered ? section : true}>
+          <PresentationContext value="sheet">
+            <DrawerContent
+              className="flex flex-col gap-4 pt-4 pb-[max(1.5rem,env(safe-area-inset-bottom))]"
+              data-slot="suggestion-sheet"
+            >
+              {children}
+            </DrawerContent>
+          </PresentationContext>
+        </DrawerPopup>
+      )}
     </>
   );
 }
@@ -294,19 +299,34 @@ const ACTIONS_CLASS: Readonly<Record<Presentation, string>> = {
   line: "flex shrink-0 items-center gap-2",
   panel:
     "flex flex-wrap items-center gap-2 pt-1 [&>*]:h-auto [&>*]:min-h-7.5 [&>*]:max-w-full [&>*]:grow [&>*]:py-1 [&>*]:text-balance [&>*]:whitespace-normal",
-  sheet:
-    "flex gap-2 pt-1 [&>*:first-child]:h-auto [&>*:first-child]:min-h-11 [&>*:first-child]:min-w-0 [&>*:first-child]:flex-1 [&>*:first-child]:text-center [&>*:first-child]:text-balance [&>*:first-child]:whitespace-normal has-[>:nth-child(3_of_a,button)]:flex-col",
+  sheet: cn(OVERLAY_ACTIONS_CLASS, "pt-1"),
 };
 
-export function SuggestionActions({ className, ...props }: React.ComponentProps<"form">) {
+/**
+ * The answers by role: `main`, the other one, then `menu` ("Other options"). The line and the panel
+ * are part of the page and draw them in that order; the sheet is written as every sheet's foot is,
+ * ending with `main`.
+ */
+export function SuggestionActions({
+  children,
+  className,
+  main,
+  menu,
+  ...props
+}: React.ComponentProps<"form"> & { main?: React.ReactNode; menu?: React.ReactNode }) {
   const presentation = use(PresentationContext);
+  const sheet = presentation === "sheet";
 
   return (
     <form
       className={cn(ACTIONS_CLASS[presentation], "empty:hidden", className)}
       data-slot="suggestion-actions"
       {...props}
-    />
+    >
+      {sheet ? menu : main}
+      {children}
+      {sheet ? main : menu}
+    </form>
   );
 }
 

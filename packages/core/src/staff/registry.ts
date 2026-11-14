@@ -1,5 +1,5 @@
 import { type DatabaseModel, databaseSchema } from "@zoonk/db/schema";
-import { FIXABLE_MODELS } from "./content-fixes/fixable-models";
+import { FIXABLE_MODELS } from "./content-fixes/handlers/registry";
 import { staffCredentialPolicy } from "./policy";
 
 export const readableModels = databaseSchema.models.filter(
@@ -19,7 +19,7 @@ export function getEnumValues(type: string) {
 }
 
 function describeFixes(modelName: string) {
-  const fixable = Object.entries(FIXABLE_MODELS).find(([name]) => name === modelName)?.[1];
+  const fixable = FIXABLE_MODELS.get(modelName);
   return fixable ? { fixable } : {};
 }
 

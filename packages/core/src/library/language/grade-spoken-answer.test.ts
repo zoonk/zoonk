@@ -7,6 +7,7 @@ import { prisma } from "@zoonk/db";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { aiOrganizationFixture, organizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { languageLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { ONE_SECOND_RECORDING } from "@zoonk/testing/fixtures/recordings";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
@@ -20,7 +21,11 @@ import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { trackServerEvent } from "../../analytics/server";
 import { lessonRunFixture } from "../../lesson-player/_test-utils/lesson-run-fixture";
 import { checkLessonStep } from "../../lesson-player/check-lesson-step";
+import { appliedFixFixture } from "../../staff/content-fixes/_test-utils/applied-fix";
+import { toJson } from "../../staff/content-fixes/_utils/resolved-change";
 import { gradeSpokenAnswer } from "./grade-spoken-answer";
+
+const UUID = /^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/u;
 
 function sentTips() {
   return vi
@@ -156,6 +161,98 @@ describe(gradeSpokenAnswer, () => {
     await expect(
       gradeSpokenAnswer({ audio: AUDIO, fields: FIELDS, stepId: explanationStep.id }),
     ).resolves.toStrictEqual({ status: "notFound" });
+  });
+
+  it("doesn't score or save a take on a sentence fixed during the learner's open run, however old", async () => {
+    const [step, user] = await Promise.all([createSpokenStep(), userFixture()]);
+    mockSession(user.id);
+
+    await lessonRunFixture({
+      lessonId: step.lessonId,
+      startedAt: new Date(Date.now() - 2 * 3_600_000),
+      userId: user.id,
+    });
+
+    const fixed = {
+      language: "en",
+      prompt: "Pergunte quanto é o aluguel.",
+      targetText: "How much is the monthly rent?",
+      translation: "Quanto é o aluguel?",
+    };
+
+    await prisma.step.update({ data: { content: fixed }, where: { id: step.id } });
+
+    await appliedFixFixture({
+      changes: [
+        {
+          fields: [{ after: fixed, before: toJson(step.content), field: "content" }],
+          id: step.id,
+          model: "Step",
+          op: "set",
+        },
+      ],
+      unitId: step.lessonId,
+    });
+
+    mockTranscript("How much is the rent");
+    mockExplanation('Ouvimos "rent".');
+
+    const result = await gradeSpokenAnswer({ audio: AUDIO, fields: FIELDS, stepId: step.id });
+
+    expect(result).toMatchObject({
+      grade: {
+        attemptId: expect.stringMatching(UUID),
+        checked: false,
+        explanation: null,
+        isCorrect: false,
+        words: [],
+        wordsToPractice: [],
+      },
+      status: "graded",
+    });
+
+    await expect(prisma.attempt.count({ where: { stepId: step.id } })).resolves.toBe(0);
+    await expect(prisma.mistake.count({ where: { stepId: step.id } })).resolves.toBe(0);
+  });
+
+  it("doesn't score a take on a screen whose sentence a fix changed during the open run", async () => {
+    const [user, { lesson, sentence, steps }] = await Promise.all([
+      userFixture(),
+      languageLessonFixture(),
+    ]);
+
+    const step = steps.find((candidate) => candidate.kind === "spokenAnswer");
+    mockSession(user.id);
+
+    await lessonRunFixture({ lessonId: lesson.id, userId: user.id });
+
+    await appliedFixFixture({
+      changes: [
+        {
+          fields: [
+            {
+              after: "How much is the monthly rent?",
+              before: sentence.sentence,
+              field: "sentence",
+            },
+          ],
+          id: sentence.id,
+          model: "Sentence",
+          op: "set",
+        },
+      ],
+      unit: "sentence",
+      unitId: sentence.id,
+    });
+
+    mockTranscript("How much is it");
+    mockExplanation('Ouvimos "it".');
+
+    await expect(
+      gradeSpokenAnswer({ audio: AUDIO, fields: FIELDS, stepId: step?.id ?? "" }),
+    ).resolves.toMatchObject({ grade: { checked: false }, status: "graded" });
+
+    await expect(prisma.attempt.count({ where: { stepId: step?.id } })).resolves.toBe(0);
   });
 
   it("grades a sentence said as expected and records the attempt, for guests too", async () => {

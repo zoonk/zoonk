@@ -53,7 +53,32 @@ private struct MathSpan {
     (Array(#"\["#), Array(#"\]"#), true),
   ]
 
+  /// Inline code comes first, as in CommonMark, so a `$` inside it is code, never a delimiter.
   static func first(in text: [Character]) -> MathSpan? {
+    guard let code = code(in: text) else {
+      return firstOutsideCode(in: text)
+    }
+
+    return firstOutsideCode(in: Array(text[..<code.lowerBound]))
+      ?? first(in: Array(text[code.upperBound...])).map {
+        MathSpan(
+          content: $0.content, display: $0.display, start: $0.start + code.upperBound,
+          end: $0.end + code.upperBound)
+      }
+  }
+
+  /// `findCode` in `inline-markup.ts`: the first backtick to the next, with something between.
+  private static func code(in text: [Character]) -> Range<Int>? {
+    guard let start = text.firstIndex(of: "`"),
+      let end = text[(start + 1)...].firstIndex(of: "`"), end > start + 1
+    else {
+      return nil
+    }
+
+    return start..<(end + 1)
+  }
+
+  private static func firstOutsideCode(in text: [Character]) -> MathSpan? {
     let bracketed = brackets.compactMap { open, close, display -> MathSpan? in
       guard let start = text.firstIndex(of: open, from: 0),
         let end = text.firstIndex(of: close, from: start + open.count)

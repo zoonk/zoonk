@@ -14,7 +14,6 @@
   "testout_passed": "03b7105682dae75a93f571d8876f59a90fa01792eced8e763197f25c6c03398c",
   "testout_rule": "34946f08f7d166ac661bfc590ae2e33381eb4a91d654a5c9fedebaa8f9678e59",
   "testout_start": "606ad6dcc30a02dbb61cdd7ae77246f573a745d05337936f7c912f500a8ef976",
-  "testout_this_chapter": "4994ba88545f9969761dab04674fc2ce3096806c12e6503944b2caec2d6302ba",
   "testout_title": "d71b50bed0ecadade31482370ef199029edb7fe06c638ffdf25229979d10d16d",
   "testout_writing": "17e1d9c3c89cbaa887313d91f71d89a6dda951f171f50486b225c233033aac9e",
   "testout_writing_detail": "93074cad75decdcdc023c22a79d023424466dded5a594b038c3807288e921ad5",
@@ -26,8 +25,6 @@
 <resources>
     <!-- A chapter test-out's title. %1$s is the chapter's name. -->
     <string name="testout_title">Test: %1$s</string>
-    <!-- Stands in for a chapter's name while it isn't known. -->
-    <string name="testout_this_chapter">Bu ünite</string>
     <string name="testout_intro_title">Bunu zaten biliyor musun?</string>
     <string name="testout_intro_detail">Bu üniteyle ilgili birkaç soru var. Sonuçlarını en sonda göreceksin. Başarılı olursan planın zaten bildiklerini atlar.</string>
     <string name="testout_start">Testi başlat</string>

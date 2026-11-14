@@ -188,7 +188,7 @@ struct ChallengeScreen: View {
       if let moved, let date = challenge.date {
         HStack(alignment: .firstTextBaseline) {
           VStack(alignment: .leading, spacing: 4) {
-            Text(movedTo(date))
+            Text(movedTo(date, today: challenge.today))
             Text(movedDetail(moved.effect))
               .typeStyle(.note)
               .foregroundStyle(.mutedForeground)
@@ -208,9 +208,9 @@ struct ChallengeScreen: View {
     .practiceActionsHidden(!hasActions(challenge))
   }
 
-  private func movedTo(_ day: String) -> String {
+  private func movedTo(_ day: String, today: String) -> String {
     String(
-      localized: "Moved to \(Self.weekdayDay(day))", table: "Practice",
+      localized: "Moved to \(PlanDate.weekdayDay(day, today: today))", table: "Practice",
       comment:
         "A weekly challenge moved later, to the next Monday; the argument is that day, like 'Monday, May 5'."
     )
@@ -254,31 +254,35 @@ struct ChallengeScreen: View {
             : .checkpoint(blockId: blockId, sessionId: sessionId))
       }
     } else if canStart(challenge) {
-      if let writeLimit {
-        LimitNotice(limit: writeLimit)
-          .frame(maxWidth: .infinity, alignment: .leading)
-      }
+      // The gate takes the buttons' place until its day has come, then they take it back.
+      OpeningClock(availableAt: writeLimit?.availableAt) { now in
+        if let writeLimit, !writeLimit.isOpen(at: now) {
+          LimitNotice(limit: writeLimit)
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
 
-      if writeLimit?.isShortBreak ?? true {
-        PracticeActionRow {
-          if challenge.canMove, moved == nil {
-            PracticeSecondaryButton(
-              title: LocalizedStringResource(
-                "Move to Monday", table: "Practice",
-                comment: "Moves the weekly challenge to next Monday."),
-              icon: .setDate, isBusy: isMoving, isDisabled: isStarting
-            ) { run { await move() } }
+        if writeLimit?.letsTry(at: now) ?? true {
+          PracticeActionRow {
+            if challenge.canMove, moved == nil {
+              PracticeSecondaryButton(
+                title: LocalizedStringResource(
+                  "Move to Monday", table: "Practice",
+                  comment: "Moves the weekly challenge to next Monday."),
+                icon: .setDate, isBusy: isMoving, isDisabled: isStarting
+              ) { run { await move() } }
+            }
+
+            PracticeMainButton(
+              title: challenge.status == .started
+                ? LocalizedStringResource(
+                  "Continue", table: "Practice",
+                  comment: "Goes back into a challenge already started.")
+                : LocalizedStringResource(
+                  "Start", table: "Practice", comment: "Starts a challenge."),
+              icon: .play, isBusy: isStarting || isWriting,
+              isDisabled: isMoving
+            ) { run { await start(afterWriting: false) } }
           }
-
-          PracticeMainButton(
-            title: challenge.status == .started
-              ? LocalizedStringResource(
-                "Continue", table: "Practice",
-                comment: "Goes back into a challenge already started.")
-              : LocalizedStringResource("Start", table: "Practice", comment: "Starts a challenge."),
-            icon: .play, isBusy: isStarting || isWriting,
-            isDisabled: isMoving
-          ) { run { await start(afterWriting: false) } }
         }
       }
     } else {
@@ -598,14 +602,6 @@ struct ChallengeScreen: View {
     try? Date.ISO8601FormatStyle(timeZone: .gmt).year().month().day().parse(day)
   }
 
-  private static func weekdayDay(_ day: String) -> String {
-    guard let date = parseDay(day) else { return day }
-
-    var style = Date.FormatStyle.dateTime.weekday(.wide).month(.abbreviated).day()
-    style.timeZone = .gmt
-    return date.formatted(style)
-  }
-
   private func dayLabel(_ day: String, today: String) -> String {
     var calendar = Calendar(identifier: .gregorian)
     calendar.timeZone = .gmt
@@ -623,7 +619,7 @@ struct ChallengeScreen: View {
         localized: "Tomorrow", table: "Practice", comment: "A challenge planned for tomorrow.")
     }
 
-    return Self.weekdayDay(day)
+    return PlanDate.weekdayDay(day, today: today)
   }
 
   private func run(_ work: @escaping @MainActor () async -> Void) {
@@ -740,7 +736,8 @@ struct ChallengeScreen: View {
       await read()
 
       if let moved = self.moved, case .loaded(let challenge) = load, let date = challenge.date {
-        announcePolitely([movedTo(date), movedDetail(moved.effect)].joinedSentences())
+        announcePolitely(
+          [movedTo(date, today: challenge.today), movedDetail(moved.effect)].joinedSentences())
       }
     case .refused(.invalid(let reason)):
       moveProblem =
@@ -786,7 +783,7 @@ struct ChallengeScreen: View {
   private func movedDetail(_ effect: PlanEffect?) -> String {
     let leftOut = effect.flatMap {
       $0.lessonsRemoved > 0
-        ? PlanChangeEffect.consequence($0, today: PlanDate.isoDate(.now))?.text : nil
+        ? PlanChangeEffect.consequence($0, today: PlanDate.today())?.text : nil
     }
 
     return [

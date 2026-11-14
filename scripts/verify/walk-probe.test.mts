@@ -3,7 +3,6 @@ import assert from "node:assert/strict";
 import { afterEach, beforeEach, test, vi } from "vitest";
 import { focusReturned } from "./keys-probe.mts";
 import { type Target } from "./measure.mts";
-import { OVERLAYS } from "./overlays.mts";
 import { installPageHelpers } from "./page-helpers.mts";
 import { walkStates } from "./states.mts";
 
@@ -245,8 +244,10 @@ function menuClick(event: Event) {
   if (node.id === "menu-trigger") {
     document.body.insertAdjacentHTML(
       "beforeend",
-      '<div role="menu" id="options"><button id="edit" role="menuitem" aria-haspopup="dialog">Edit</button></div>',
+      '<div role="menu" id="options" tabindex="-1"><button id="edit" role="menuitem" aria-haspopup="dialog">Edit</button></div>',
     );
+
+    document.querySelector<HTMLElement>("[role=menu]")?.focus();
   }
 
   if (node.id === "edit") {
@@ -277,11 +278,11 @@ test("opens a menu item's panel and accepts focus on the surviving menu trigger"
 
   try {
     const report = await walkStates(target, { path: "/", viewport: "phone" });
-    assert.equal(report.panelsOpened, 1);
+    assert.equal(report.panelsOpened, 2);
     assert.ok(!report.findings.some(({ message }) => message.includes("focus")));
     assert.equal(document.querySelector("[role=menu]"), null);
     document.querySelector<HTMLElement>("#unrelated")?.focus();
-    assert.equal(focusReturned({ opener: "2", overlays: OVERLAYS, returnTo: "0" }), false);
+    assert.equal(focusReturned({ opener: "2", returnTo: "0" }), false);
   } finally {
     document.removeEventListener("click", menuClick);
     vi.unstubAllGlobals();

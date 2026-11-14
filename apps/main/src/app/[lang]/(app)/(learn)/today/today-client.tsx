@@ -20,6 +20,7 @@ import { getLessonAgainHref } from "@/lib/public/public-hrefs";
 import { type TapStep } from "@/lib/session/day-entry";
 import { getStudyLessonHref } from "@/lib/session/lesson-opening";
 import { answerMemoryInsightAction } from "@/lib/session/study-session-actions";
+import { answerHere, openingHere } from "@/lib/session/tap-answer";
 import { useDayTaps } from "@/lib/session/use-day-taps";
 import { useMissionLinks } from "@/lib/session/use-mission-links";
 import { getSessionHref } from "@/lib/session/use-study-navigation";
@@ -147,9 +148,13 @@ function useFocusTestSuggestionActions(goalId: string) {
     },
     /** The start is the learner's press here, so the test's page opens on its first question. */
     startFocusTest: async (): Promise<boolean> => {
-      const outcome = await getFocusTestActions(goalId).start();
+      const answered = await answerHere(getFocusTestActions(goalId).start(), openingHere());
 
-      if (outcome.status === "failed") {
+      if (typeof answered === "string") {
+        return answered === "left";
+      }
+
+      if (answered.answer.status === "failed") {
         return false;
       }
 

@@ -49,6 +49,11 @@ export function usePastDateText() {
       ? {
           /** The exam is over, so what's left is a choice: study on, or archive the goal. */
           ask: t("Keep studying them, or archive this goal?"),
+          /** The Plan's line, which has no lesson count around it. */
+          left: t(
+            "{count, plural, one {You have # lesson left. Keep studying it, or archive this goal?} other {You have # lessons left. Keep studying them, or archive this goal?}}",
+            { count: lessons },
+          ),
           sentence: t(
             "{count, plural, one {Your exam date has passed with # lesson left.} other {Your exam date has passed with # lessons left.}}",
             { count: lessons },
@@ -57,6 +62,7 @@ export function usePastDateText() {
         }
       : {
           ask: null,
+          left: null,
           sentence: t(
             "{count, plural, one {Your end date has passed with # lesson left.} other {Your end date has passed with # lessons left.}}",
             { count: lessons },

@@ -174,9 +174,6 @@ struct TodaySessionAction: View {
   let keepStudying: () -> Void
   /// After an exam's date, once confirmed.
   let archive: () -> Void
-  /// Beside the page's title rather than across the column.
-  var isInHeader = false
-
   private var session: StudyDay { view.session }
 
   /// Whether the day has one, so a place that holds it can leave itself out.
@@ -197,33 +194,29 @@ struct TodaySessionAction: View {
     }
   }
 
-  @State private var isArchiving = false
-
   private var asksAfterExam: Bool { view.isPastDate && view.goal.kind == .exam }
 
   var body: some View {
-    let action = action
-
-    action?.inHeader(isInHeader)
-      .disabled(busy != nil && action?.isBusy != true)
-
     if asksAfterExam {
-      BusyButton(isBusy: busy == .archive, icon: .archive) {
-        isArchiving = true
-      } label: {
-        Text("Archive goal", tableName: "Today", comment: "Archives the goal whose exam is over")
-      }
-      .buttonStyle(.outline)
-      .controlSize(.large)
-      .buttonSizing(isInHeader ? .fitted : .flexible)
-      .disabled(busy != nil && busy != .archive)
-      .archiveGoalConfirmation(named: view.goal.title, isPresented: $isArchiving, archive: archive)
+      examOver
+    } else {
+      let action = action
+
+      action
+        .disabled(busy != nil && action?.isBusy != true)
     }
+  }
+
+  private var examOver: some View {
+    ExamOverButtons(
+      goalName: view.goal.title,
+      pressed: busy == .archive ? .archive : busy == .keepStudying ? .keepStudying : nil,
+      archive: archive, keepStudying: keepStudying)
   }
 
   /// What failed, for the bottom bar's line: in the bar the button can't say it under itself.
   var failure: LocalizedStringResource? {
-    if failed == .archive {
+    if failed == .archive || failed == .keepStudying {
       return TodayMainAction.saveFailure
     }
 
@@ -232,12 +225,6 @@ struct TodaySessionAction: View {
 
   private var action: TodayMainAction? {
     let state = session.state
-
-    if asksAfterExam {
-      return TodayMainAction(
-        kind: .keepStudying, isBusy: busy == .keepStudying, failed: failed == .keepStudying,
-        action: keepStudying)
-    }
 
     if view.isPastDate {
       return TodayMainAction(kind: .seePlan, isBusy: false, failed: false) {
@@ -291,7 +278,6 @@ struct TodayMainAction: View {
   enum Kind {
     case continueSession
     case keepLearning
-    case keepStudying
     case practice(minutes: Int)
     case prepareLessons
     case seePlan
@@ -302,8 +288,6 @@ struct TodayMainAction: View {
   let kind: Kind
   let isBusy: Bool
   let failed: Bool
-  /// Beside the page's title, its own width, rather than across the column.
-  private var isInHeader = false
   let action: () -> Void
 
   init(kind: Kind, isBusy: Bool, failed: Bool, action: @escaping () -> Void) {
@@ -313,26 +297,11 @@ struct TodayMainAction: View {
     self.action = action
   }
 
-  func inHeader(_ isInHeader: Bool) -> Self {
-    var shown = self
-    shown.isInHeader = isInHeader
-    return shown
-  }
-
   var body: some View {
-    VStack(alignment: isInHeader ? .trailing : .center, spacing: 8) {
-      BusyButton(isBusy: isBusy, action: action) {
-        title
-      }
-      .buttonStyle(.mainAction)
-      .controlSize(.large)
-      .buttonSizing(isInHeader ? .fitted : .flexible)
-
-      if failed, isInHeader {
-        FailureLine(message: failure)
-          .typeStyle(.note)
-      }
+    BusyButton(isBusy: isBusy, action: action) {
+      title
     }
+    .buttonStyle(.mainAction)
   }
 
   static let saveFailure = LocalizedStringResource(
@@ -340,7 +309,7 @@ struct TodayMainAction: View {
 
   var failure: LocalizedStringResource {
     switch kind {
-    case .prepareLessons, .practice, .keepStudying:
+    case .prepareLessons, .practice:
       Self.saveFailure
     case .keepLearning:
       LocalizedStringResource(
@@ -359,10 +328,6 @@ struct TodayMainAction: View {
       Text("Continue", tableName: "Today", comment: "Continues today's session")
     case .keepLearning:
       Text("Keep learning", tableName: "Today", comment: "Adds the plan's next lessons")
-    case .keepStudying:
-      Text(
-        "Keep studying", tableName: "Today",
-        comment: "After an exam's date: keeps studying the lessons left")
     case .practice(let minutes):
       Text(
         "Practice \(minutes) min", tableName: "Today",
@@ -400,13 +365,11 @@ struct TodayDayLead: View {
 extension TodayView {
   /// The day is shorter to keep time for a mock exam on this day, like "May 5".
   var mockDay: String? {
-    guard let funding = mockFunding, session.state != .done, session.state != .rest,
-      let date = studyDate(funding.mockDate)
-    else {
+    guard let funding = mockFunding, session.state != .done, session.state != .rest else {
       return nil
     }
 
-    return date.formatted(.studyDay.month(.abbreviated).day())
+    return PlanDate.text(funding.mockDate, today: session.localDate)
   }
 }
 

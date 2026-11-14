@@ -19,6 +19,7 @@ export function getPartSetsFilter({
       { content: { equals: scriptLanguage, path: ["scriptLanguage"] } },
     ],
     examBlueprintId,
+    items: { some: { retiredAt: null } },
     kind: "audio" as const,
   };
 }

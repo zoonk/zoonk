@@ -13,8 +13,8 @@ import {
 } from "../../_components/feedback-panel";
 import { ItemCitationNote } from "../../_components/item-citation";
 import { useAppLocale } from "../../_utils/locale";
-import { toPlainItemLine } from "../../questions/_utils/item-text";
-import { ItemText } from "../../questions/item-text";
+import { ItemLine, ItemText } from "../../questions/item-text";
+import { RightAnswerLine } from "../../questions/right-answer-line";
 import { useTrueFalseLabels } from "../../questions/use-true-false-labels";
 import {
   type StudyAnswerFeedback,
@@ -22,35 +22,32 @@ import {
   type StudyQuestionAnswer,
 } from "../session-types";
 
-export function useAnswerText(trueFalseLabels: TrueFalseLabels) {
+/**
+ * An answer as feedback shows it: picked options, pairs and numbers as item text with their
+ * formulas, and a typed answer exactly as typed, since it's plain text (`__init__` keeps its
+ * underscores).
+ */
+export function useAnswerLine(trueFalseLabels: TrueFalseLabels) {
   const locale = useAppLocale();
   const { answerLabel } = useTrueFalseLabels(trueFalseLabels);
 
-  return function answerText({
+  function itemText({
     answer,
     question,
   }: {
-    answer: StudyQuestionAnswer | null;
+    answer: Exclude<StudyQuestionAnswer, { text: string }>;
     question: Pick<StudyQuestion, "options" | "left" | "right" | "unit">;
   }): string | null {
-    if (!answer) {
-      return null;
-    }
-
     if ("selectedIndex" in answer) {
       const option = question.options?.[answer.selectedIndex];
-      return option === undefined ? null : toPlainItemLine(option);
+      return option ?? null;
     }
 
     if ("selectedIndexes" in answer || "order" in answer) {
       const [picks, separator] =
         "order" in answer ? [answer.order, " → "] : [answer.selectedIndexes, "; "];
 
-      return picks.map((index) => toPlainItemLine(question.options?.[index] ?? "")).join(separator);
-    }
-
-    if ("text" in answer) {
-      return answer.text;
+      return picks.map((index) => question.options?.[index] ?? "").join(separator);
     }
 
     if ("isTrue" in answer) {
@@ -61,7 +58,7 @@ export function useAnswerText(trueFalseLabels: TrueFalseLabels) {
       return (question.left ?? [])
         .map((entry, index) => {
           const match = question.right?.[answer.matches[index] ?? -1] ?? "";
-          return `${toPlainItemLine(entry)} → ${toPlainItemLine(match)}`;
+          return `${entry} → ${match}`;
         })
         .join("; ");
     }
@@ -75,6 +72,25 @@ export function useAnswerText(trueFalseLabels: TrueFalseLabels) {
     }
 
     return null;
+  }
+
+  return function answerLine({
+    answer,
+    question,
+  }: {
+    answer: StudyQuestionAnswer | null;
+    question: Pick<StudyQuestion, "options" | "left" | "right" | "unit">;
+  }): React.ReactNode {
+    if (!answer) {
+      return null;
+    }
+
+    if ("text" in answer) {
+      return answer.text || null;
+    }
+
+    const text = itemText({ answer, question });
+    return text === null ? null : <ItemLine text={text} />;
   };
 }
 
@@ -87,7 +103,7 @@ export function WorkedSteps({ steps }: { steps: string[] }) {
 
   const lines = steps.map((step, index): DiffLine => ({
     kind: index === steps.length - 1 ? "added" : "context",
-    text: toPlainItemLine(step),
+    text: <ItemLine text={step} />,
   }));
 
   return (
@@ -108,8 +124,8 @@ function useCorrectAnswerLine({
   feedback: StudyAnswerFeedback;
   question: StudyQuestion;
   trueFalseLabels: TrueFalseLabels;
-}): string | null {
-  const answerText = useAnswerText(trueFalseLabels);
+}): React.ReactNode {
+  const answerLine = useAnswerLine(trueFalseLabels);
 
   if (
     feedback.isCorrect ||
@@ -119,7 +135,7 @@ function useCorrectAnswerLine({
     return null;
   }
 
-  return answerText({ answer: feedback.correctAnswer, question });
+  return answerLine({ answer: feedback.correctAnswer, question });
 }
 
 function MistakeNote({ feedback }: { feedback: StudyAnswerFeedback }) {
@@ -217,11 +233,7 @@ export function QuestionFeedback({
         {verdict.label}
       </FeedbackVerdict>
 
-      {correct && (
-        <FeedbackExplanation>
-          {t("Right answer: {answer}", { answer: correct })}
-        </FeedbackExplanation>
-      )}
+      {correct && <RightAnswerLine answer={correct} />}
 
       {feedback.explanation && (
         <FeedbackExplanation>

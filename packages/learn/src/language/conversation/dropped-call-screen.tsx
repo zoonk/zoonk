@@ -1,9 +1,10 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
+import { type MicrophoneProblem } from "@zoonk/ui/hooks/voice-recorder";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { type CallLimit } from "../../_components/help-limit-notice";
+import { type CallLimit, useLiveLimit } from "../../_components/help-limit-notice";
 import { TaskActions } from "../../_components/task-layout";
 import { TaskFrame, TaskMainButton } from "../../shell/task-frame";
 import { MicrophoneOff } from "./call-intro-footer";
@@ -12,7 +13,7 @@ import { useRefusalCopy } from "./call-refusal-copy";
 import { ChallengeCallGate } from "./challenge-call-gate";
 import { CallOffMessage, CallReason } from "./conversation-parts";
 import { type DroppedCall } from "./dropped-call";
-import { type CallAudio, type MicrophoneProblem, openTypedCallAudio } from "./use-call-microphone";
+import { type CallAudio, openTypedCallAudio } from "./use-call-microphone";
 
 function DroppedCallReason({
   limit,
@@ -124,11 +125,13 @@ export function DroppedCallScreen({
   title: string;
 }) {
   const t = useExtracted();
+  const liveLimit = useLiveLimit(limit);
+  const retry = dropped.reason === "limit" && limit && !liveLimit ? "callAgain" : dropped.retry;
 
   return (
     <TaskFrame
       exitHref={null}
-      footer={<DroppedCallActions {...actions} retry={dropped.retry} />}
+      footer={<DroppedCallActions {...actions} retry={retry} />}
       headerTitle={title}
     >
       <CallOffMessage title={t("The call dropped")}>

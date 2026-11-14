@@ -367,10 +367,11 @@ private struct RevealNoticeDay: View {
 
           failure
         }
-      } else if let noSitting = schedule.noSitting, let month = studyDate(noSitting.month) {
+      } else if let noSitting = schedule.noSitting {
+        let month = PlanDate.monthText(noSitting.month, today: PlanDate.today(), wide: true)
         Section {
           Text(
-            "No exam date in \(month.formatted(.studyDay.month(.wide)))", tableName: "Exam",
+            "No exam date in \(month)", tableName: "Exam",
             comment: "An exam with no sitting in the learner's month")
 
           ForEach(noSitting.closest, id: \.self) { closest in
@@ -549,7 +550,7 @@ struct NoticeReadingView: View {
     switch document {
     case .notice:
       return Text(
-        "Your plan will follow the notice's subjects, topics and dates. This usually takes a few minutes.",
+        "Your plan will follow the exam's subjects, topics and dates. This usually takes a few minutes.",
         tableName: "Onboarding", comment: "While an exam's public notice is read")
     case .guide:
       return Text(

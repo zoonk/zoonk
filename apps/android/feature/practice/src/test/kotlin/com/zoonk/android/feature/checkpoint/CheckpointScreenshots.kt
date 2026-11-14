@@ -6,6 +6,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
@@ -22,6 +23,7 @@ import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.feature.ceremonies.MomentBuddy
 import com.zoonk.android.feature.practice.studyFeedback
+import com.zoonk.android.feature.session.fixture
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
@@ -219,6 +221,99 @@ class CheckpointScreenshots {
                 .ApiException(com.zoonk.android.data.ApiError.Network)
         }, play = ::confirm)
 
+    private val defaultAnswers =
+        JsonArray(
+            listOf(Q1, Q2).mapIndexed { index, id ->
+                JsonObject(
+                    mapOf(
+                        "correctAnswer" to JsonObject(mapOf("selectedIndex" to JsonPrimitive(0))),
+                        "explanation" to JsonPrimitive("Mars orbits the Sun; the Moon orbits Earth."),
+                        "isCorrect" to JsonPrimitive(index == 0),
+                        "itemId" to JsonPrimitive(id),
+                        "workedSteps" to JsonArray(emptyList()),
+                    ),
+                )
+            },
+        )
+
+    private fun mathQuestion(
+        id: String,
+        format: String,
+        question: String,
+        options: List<String>? = null,
+    ) = fixture(
+        "checkpoint-question",
+        "itemId" to id,
+        "format" to format,
+        "question" to question,
+        "options" to options?.let { JsonArray(it.map(::JsonPrimitive)) },
+    )
+
+    private fun reviewAnswer(
+        id: String,
+        correct: Pair<String, JsonPrimitive>,
+        isCorrect: Boolean,
+        explanation: String,
+    ) = JsonObject(
+        mapOf(
+            "correctAnswer" to JsonObject(mapOf(correct)),
+            "explanation" to JsonPrimitive(explanation),
+            "isCorrect" to JsonPrimitive(isCorrect),
+            "itemId" to JsonPrimitive(id),
+            "workedSteps" to JsonArray(emptyList()),
+        ),
+    )
+
+    /** Math, a long formula, a number, a typed name and a true/false answer, as #2770 draws them. */
+    private val mathRead =
+        checkpoint(
+            mathQuestion(
+                M1,
+                "multipleChoice",
+                "Quais são as raízes de \$x^2 - 5x + 6 = 0\$?",
+                listOf("\$x = 2\$ e \$x = 3\$", "\$x = 1\$ e \$x = 6\$"),
+            ),
+            mathQuestion(
+                M2,
+                "multipleChoice",
+                "Qual expressão dá as raízes de \$ax^2 + bx + c = 0\$?",
+                listOf(
+                    "\$x = \\\\frac{-b \\\\pm \\\\sqrt{b^2 - 4ac}}{2a} \\\\text{, com } a \\\\neq 0 \\\\text{ e } \\\\Delta = b^2 - 4ac \\\\geq 0\$",
+                    "\$x = \\\\frac{b \\\\pm \\\\sqrt{b^2 + 4ac}}{2a}\$",
+                ),
+            ),
+            mathQuestion(M3, "numeric", "Quanto é \$\\\\frac{3}{4}\$ de \$80\$?"),
+            mathQuestion(M4, "typed", "Que método inicia um objeto em Python?"),
+            mathQuestion(M5, "trueFalse", "\$25\\\\%\$ de \$80\$ é \$25\$."),
+        )
+
+    private val mathAnswers =
+        JsonArray(
+            listOf(
+                reviewAnswer(M1, "selectedIndex" to JsonPrimitive(0), true, "Fatorando, \$(x - 2)(x - 3) = 0\$."),
+                reviewAnswer(M2, "selectedIndex" to JsonPrimitive(0), false, "É a fórmula de Bhaskara."),
+                reviewAnswer(M3, "number" to JsonPrimitive(60), false, "\$\\\\frac{3}{4} \\\\times 80 = 60\$."),
+                reviewAnswer(M4, "text" to JsonPrimitive("__init__"), false, "O nome tem dois sublinhados de cada lado."),
+                reviewAnswer(M5, "isTrue" to JsonPrimitive(false), true, "\$25\\\\%\$ de \$80\$ é \$20\$."),
+            ),
+        )
+
+    @Test
+    @Config(qualifiers = "w411dp-h2400dp-xxhdpi")
+    fun phoneResultMath() = showResult("checkpoint-math-phone", mathRead, answers = mathAnswers, openReview = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h2400dp-night-xxhdpi")
+    fun phoneResultMathDark() = showResult("checkpoint-math-phone-dark", mathRead, dark = true, answers = mathAnswers, openReview = true)
+
+    @Test
+    @Config(qualifiers = "w360dp-h2400dp-xxhdpi")
+    fun narrowResultMath() = showResult("checkpoint-math-narrow", mathRead, answers = mathAnswers, openReview = true)
+
+    @Test
+    @Config(qualifiers = "w1280dp-h1600dp-night-xhdpi")
+    fun tabletResultMathDark() = showResult("checkpoint-math-tablet-dark", mathRead, dark = true, answers = mathAnswers)
+
     private fun showResult(
         name: String,
         read: Checkpoint = checkpoint(),
@@ -226,21 +321,9 @@ class CheckpointScreenshots {
         fold: Boolean = false,
         dark: Boolean = false,
         rightToLeft: Boolean = false,
+        answers: JsonArray = defaultAnswers,
+        openReview: Boolean = false,
     ) {
-        val answers =
-            JsonArray(
-                listOf(Q1, Q2).mapIndexed { index, id ->
-                    JsonObject(
-                        mapOf(
-                            "correctAnswer" to JsonObject(mapOf("selectedIndex" to JsonPrimitive(0))),
-                            "explanation" to JsonPrimitive("Mars orbits the Sun; the Moon orbits Earth."),
-                            "isCorrect" to JsonPrimitive(index == 0),
-                            "itemId" to JsonPrimitive(id),
-                            "workedSteps" to JsonArray(emptyList()),
-                        ),
-                    )
-                },
-            )
         val completion: StudyBlockCompletion =
             com.zoonk.android.feature.session.decodeFixture(
                 "study-block-completion",
@@ -291,7 +374,12 @@ class CheckpointScreenshots {
         if (fold) rule.unfoldBook(folds)
         rule.mainClock.advanceTimeBy(10_000)
         rule.waitForIdle()
-        val bitmap = rule.onRoot().captureRender().asAndroidBitmap()
+        if (openReview) {
+            rule.onNodeWithText("Review the answers").performClick()
+            rule.mainClock.advanceTimeBy(1_000)
+            rule.waitForIdle()
+        }
+        val bitmap = (if (openReview) rule.onNode(isDialog()) else rule.onRoot()).captureRender().asAndroidBitmap()
         File(folder, "$name.png").apply { parentFile?.mkdirs() }.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
     }
 
@@ -421,3 +509,9 @@ private const val SMALL_BOOK = "w707dp-h823dp-xhdpi"
 private const val MEDIUM = "w700dp-h840dp-xhdpi"
 
 private val ZU = MomentBuddy(BuddyLook(), "Zu")
+
+private const val M1 = "00000000-0000-4000-8000-0000000000a1"
+private const val M2 = "00000000-0000-4000-8000-0000000000a2"
+private const val M3 = "00000000-0000-4000-8000-0000000000a3"
+private const val M4 = "00000000-0000-4000-8000-0000000000a4"
+private const val M5 = "00000000-0000-4000-8000-0000000000a5"

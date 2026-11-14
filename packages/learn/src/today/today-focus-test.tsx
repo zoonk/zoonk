@@ -86,16 +86,18 @@ function FocusTestNotice({
           <>
             <SuggestionDescription>{line.timed(offer.minutes)}</SuggestionDescription>
 
-            <SuggestionActions>
-              <SuggestionAction
-                action={start}
-                busy={starting}
-                disabled={busy}
-                variant={mainVariant}
-              >
-                {t("Start the test")}
-              </SuggestionAction>
-
+            <SuggestionActions
+              main={
+                <SuggestionAction
+                  action={start}
+                  busy={starting}
+                  disabled={busy}
+                  variant={mainVariant}
+                >
+                  {t("Start the test")}
+                </SuggestionAction>
+              }
+            >
               <SuggestionAction action={dismiss} disabled={busy} variant="outline">
                 {t("Not now")}
               </SuggestionAction>

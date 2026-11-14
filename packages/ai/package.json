@@ -202,12 +202,12 @@
     "typecheck": "tsrs --noEmit"
   },
   "dependencies": {
-    "@ai-sdk/anthropic": "4.0.98",
-    "@ai-sdk/gateway": "4.0.137",
-    "@ai-sdk/google": "4.0.113",
-    "@ai-sdk/openai": "4.0.110",
-    "@ai-sdk/provider-utils": "5.0.75",
-    "@audio/decode-wav": "2.0.0",
+    "@ai-sdk/anthropic": "4.0.105",
+    "@ai-sdk/gateway": "4.0.146",
+    "@ai-sdk/google": "4.0.121",
+    "@ai-sdk/openai": "4.0.118",
+    "@ai-sdk/provider-utils": "5.0.81",
+    "@audio/decode-wav": "2.0.1",
     "@zoonk/utils": "workspace:*",
     "ai": "catalog:",
     "wasm-media-encoders": "0.7.0"

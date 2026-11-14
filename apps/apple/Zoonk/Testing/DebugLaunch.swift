@@ -2,7 +2,9 @@
   import SwiftUI
 
   /// `ZOONK_DEBUG_LINK` opens an app path as a link to it would (`/learn/{id}`,
-  /// `/conversation/{id}`), since the simulator sends a local universal link to Safari.
+  /// `/conversation/{id}`, `/start/{goalId}`), since the simulator sends a local universal link to
+  /// Safari. The link is also a launch argument (`-ZOONK_DEBUG_LINK /start/{goalId}`), which device
+  /// tools can pass.
   /// `ZOONK_DEBUG_SIGN_IN_EMAIL` and `ZOONK_DEBUG_SIGN_IN_CODE` (a code from the local mailbox)
   /// sign in first. The link waits for that sign-in, since switching from a restored account
   /// closes every task the previous one had open.
@@ -27,7 +29,9 @@
         }
         .onChange(of: signInFinished && session.authenticatedSession != nil, initial: true) {
           _, isReady in
-          if isReady, !didOpen, let path = environment["ZOONK_DEBUG_LINK"],
+          if isReady, !didOpen,
+            let path = environment["ZOONK_DEBUG_LINK"]
+              ?? UserDefaults.standard.string(forKey: "ZOONK_DEBUG_LINK"),
             let url = URL(string: "https://zoonk.com\(path)")
           {
             didOpen = true

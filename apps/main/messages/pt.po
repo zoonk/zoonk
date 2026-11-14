@@ -903,7 +903,7 @@ msgstr "Seu parceiro"
 #: src/app/[lang]/(app)/(learn)/buddy/page.tsx
 msgctxt "6YPtag"
 msgid "Your buddy answers your questions and adjusts your plan."
-msgstr "Seu Parceiro responde às suas perguntas e ajusta seu plano."
+msgstr "Seu parceiro responde às suas perguntas e ajusta seu plano."
 
 #: src/app/[lang]/(app)/(learn)/buddy/page.tsx
 msgctxt "BV0cQk"
@@ -2101,7 +2101,7 @@ msgstr "Conte do seu jeito e responda umas perguntas rápidas. Depois, é só se
 #: src/app/[lang]/(home)/_components/home-faq.tsx
 msgctxt "RsvuP8"
 msgid "Yes. You start free, no account needed. A free account gives you {lessons, plural, one {# lesson} other {# lessons}} a month across all your goals, exams included, with {goals, plural, one {one goal} other {up to # goals}} at a time. No card needed."
-msgstr "Sim. Você começa grátis, sem precisar de conta. Com uma conta grátis, você tem {lessons, plural, one {# aula} other {# aulas}} por mês, somando todos os seus objetivos, incluindo provas, com {goals, plural, one {um objetivo} other {até # objetivos}} por vez. Não precisa de cartão."
+msgstr "Sim. Você começa grátis, sem precisar de conta. Com uma conta grátis, você tem {lessons, plural, one {# aula} other {# aulas}} por mês, somando todos os seus objetivos, incluindo provas, com {goals, plural, =1 {um objetivo} other {até # objetivos}} por vez. Não precisa de cartão."
 
 #: src/app/[lang]/(home)/_components/home-faq.tsx
 msgctxt "NNtrw6"
@@ -2130,11 +2130,11 @@ msgctxt "yyFZMH"
 msgid "Lessons are made with the latest AI models and checked before they reach you: we test their quality with several evaluations, and other models review the content. They follow your exam's subjects and topics. Mistakes are rare, but they can happen. See something wrong? Tell us from the lesson and we'll look into it."
 msgstr "As aulas são criadas com os modelos de IA mais recentes e conferidas antes de chegar até você: a gente testa a qualidade com várias avaliações, e outros modelos revisam o conteúdo. Elas seguem as matérias e os tópicos da sua prova. Erros são raros, mas podem acontecer. Viu algo errado? Avise a gente pela própria aula e vamos conferir."
 
-#. In Brazilian Portuguese: “Dá para confiar em aulas criadas por IA?”
+#. A question in the landing page's FAQ, asked by the visitor. In Brazilian Portuguese: “Posso confiar em aulas criadas por IA?”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
-msgctxt "kf3mxX"
-msgid "Can you trust lessons made by AI?"
-msgstr "Dá para confiar em aulas criadas por IA?"
+msgctxt "RcBICI"
+msgid "Can I trust lessons made by AI?"
+msgstr "Posso confiar em aulas criadas por IA?"
 
 #. In Brazilian Portuguese: “Os apps para iPhone e Android estão chegando. Por enquanto, o Zoonk funciona no navegador do celular e do computador, sem instalar nada.”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
@@ -2164,11 +2164,11 @@ msgctxt "r4pGG1"
 msgid "Any exam, such as {exams}. Also languages, a new career or any topic you want to learn. Write your goal in your own words."
 msgstr "Qualquer prova, como {exams}. Também idiomas, uma nova carreira ou qualquer assunto que você queira aprender. Escreva seu objetivo do seu jeito."
 
-#. In Brazilian Portuguese: “Quais provas e objetivos dá para estudar?”
+#. A question in the landing page's FAQ, asked by the visitor. In Brazilian Portuguese: “Para quais provas e objetivos eu posso estudar?”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
 msgctxt "iJ_ZyQ"
 msgid "Which exams and goals can I study for?"
-msgstr "Quais provas e objetivos dá para estudar?"
+msgstr "Para quais provas e objetivos eu posso estudar?"
 
 #: src/app/[lang]/(home)/_components/home-faq.tsx
 msgctxt "7Rm1x6"
@@ -2486,14 +2486,14 @@ msgid "It stays logged in on that computer until you log out there or leave it u
 msgstr "A sessão fica aberta nesse computador até você sair da conta por lá ou ficar 30 dias sem usar a CLI."
 
 #: src/app/[lang]/device/cli-login-form.tsx
-msgctxt "WCaf5C"
-msgid "Approve"
-msgstr "Aprovar"
-
-#: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "htvX-Z"
 msgid "Deny"
 msgstr "Negar"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "WCaf5C"
+msgid "Approve"
+msgstr "Aprovar"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "R-mNZZ"
@@ -3083,7 +3083,7 @@ msgstr "O que o Plus oferece a mais"
 #: src/components/pricing/plus-adds.tsx
 msgctxt "QtkJr8"
 msgid "At {minutes, number} minutes a day, {lessons, plural, one {# lesson lasts} other {# lessons last}} {days, plural, =5 {about a week} =10 {about two weeks} one {a day} other {about # days of study}}."
-msgstr "Com {minutes, number} minutos por dia, {lessons, plural, one {# aula rende} other {# aulas rendem}} {days, plural, =5 {cerca de uma semana} =10 {cerca de duas semanas} one {um dia} other {cerca de # dias de estudo}}."
+msgstr "Com {minutes, number} minutos por dia, {lessons, plural, one {# aula rende} other {# aulas rendem}} {days, plural, =5 {cerca de uma semana} =10 {cerca de duas semanas} =1 {um dia} other {cerca de # dias de estudo}}."
 
 #: src/components/pricing/plus-adds.tsx
 msgctxt "Czc1c4"
@@ -3099,7 +3099,7 @@ msgstr "Exemplo · {time} por dia, cerca de {count, plural, one {# aula curta} 
 #: src/components/pricing/plus-adds.tsx
 msgctxt "tbnyhv"
 msgid "{lessons, plural, one {# lesson} other {# lessons}}: {days, plural, =5 {about the first week} =10 {about the first two weeks} one {the first day} other {the first # days of study}}"
-msgstr "{lessons, plural, one {# aula} other {# aulas}}: {days, plural, =5 {aproximadamente a primeira semana} =10 {aproximadamente as duas primeiras semanas} one {o primeiro dia} other {os primeiros # dias de estudo}}"
+msgstr "{lessons, plural, one {# aula} other {# aulas}}: {days, plural, =5 {aproximadamente a primeira semana} =10 {aproximadamente as duas primeiras semanas} =1 {o primeiro dia} other {os primeiros # dias de estudo}}"
 
 #: src/components/pricing/plus-adds.tsx
 msgctxt "kFIKxT"

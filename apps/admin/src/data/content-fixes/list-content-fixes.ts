@@ -7,12 +7,14 @@ const MAX_PENDING = 100;
 const MAX_DECIDED = 50;
 
 const fixSelect = {
+  batchId: true,
   createdAt: true,
   decidedAt: true,
   decider: { select: { name: true } },
   id: true,
   proposer: { select: { name: true } },
   reason: true,
+  revertedBy: { select: { id: true, status: true }, where: { status: "applied" } },
   revertsId: true,
   status: true,
   unit: true,
@@ -36,11 +38,14 @@ export const listContentFixes = cacheAdminData(async () => {
     }),
   ]);
 
-  const locate = await loadContentFixLocations([...pending, ...decided]);
+  const fixes = [...pending, ...decided];
+
+  const locate = await loadContentFixLocations(fixes);
+  const withPlace = (fix: (typeof fixes)[number]) => ({ ...fix, location: locate(fix) });
 
   return {
-    decided: decided.map((fix) => ({ ...fix, location: locate(fix) })),
-    pending: pending.map((fix) => ({ ...fix, location: locate(fix) })),
+    decided: decided.map((fix) => withPlace(fix)),
+    pending: pending.map((fix) => withPlace(fix)),
   };
 });
 

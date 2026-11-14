@@ -1,6 +1,4 @@
-import { daysBetween } from "../_utils/iso-date";
-
-const YEAR_AWAY_DAYS = 365;
+import { isInAnotherYear } from "@zoonk/utils/calendar-day";
 
 export type PlanDateStyle = "day" | "dayYear" | "month" | "monthYear";
 
@@ -13,11 +11,11 @@ export function getPlanDateStyle({
   month?: boolean;
   today: string;
 }): PlanDateStyle {
-  const near = Math.abs(daysBetween(today, isoDate)) <= YEAR_AWAY_DAYS;
+  const anotherYear = isInAnotherYear({ isoDate, today });
 
   if (month) {
-    return near ? "month" : "monthYear";
+    return anotherYear ? "monthYear" : "month";
   }
 
-  return near ? "day" : "dayYear";
+  return anotherYear ? "dayYear" : "day";
 }

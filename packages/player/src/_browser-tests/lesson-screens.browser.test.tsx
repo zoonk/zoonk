@@ -280,6 +280,55 @@ describe("lesson screens", () => {
     await expect.element(page.getByRole("heading", { name: "Summary" })).toBeVisible();
   });
 
+  it("says why an answer to a screen fixed after the lesson started isn't counted, never wrong", async () => {
+    const lesson = buildLesson([teachingStep("typedAnswer"), teachingStep("summary")]);
+
+    const checkStep = vi.fn<LessonPlayerAdapters["checkStep"]>(() =>
+      Promise.resolve({
+        result: {
+          checked: false,
+          correctAnswer: null,
+          corrections: [],
+          expected: null,
+          feedback: null,
+          isCorrect: false,
+          keyPoints: null,
+          savedMistake: false,
+          score: null,
+          spelling: null,
+        },
+        status: "checked" as const,
+      }),
+    );
+
+    renderLessonPlayer({ adapters: buildAdapters(lesson, { checkStep }), lesson });
+
+    await page
+      .getByRole("textbox", { name: "In your own words: why is the electron drawn as a cloud?" })
+      .fill("It's the path it takes");
+
+    await page.getByRole("button", { name: /^Check/u }).click();
+    await expect.element(verdict("Not checked this time")).toBeVisible();
+
+    await expect
+      .element(
+        page
+          .getByRole("status")
+          .getByText("This question was updated after you started, so this answer doesn't count."),
+      )
+      .toBeVisible();
+
+    await expect.element(verdict("Not quite")).not.toBeInTheDocument();
+    await expect.element(page.getByText("Saved to your mistakes")).not.toBeInTheDocument();
+
+    await expect
+      .element(page.getByText("This question comes back at the end of the lesson"))
+      .not.toBeInTheDocument();
+
+    await page.getByRole("button", { name: /^Continue/u }).click();
+    await expect.element(page.getByRole("heading", { name: "Summary" })).toBeVisible();
+  });
+
   it("counts a typo as right and shows the spelling", async () => {
     const lesson = buildLesson([teachingStep("typedAnswer"), teachingStep("summary")]);
 

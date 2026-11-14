@@ -10,6 +10,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
+import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.Resource
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.minutes
@@ -49,10 +50,8 @@ internal fun pollWhile(
         lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             while (!stalled) {
                 delay(INTERVAL)
-                val revision = read.revision
                 val readAgain = poll()
-                // A refresh that fails keeps what's shown, so an unchanged revision is how a failure shows.
-                failures = if (read.revision == revision) failures + 1 else 0
+                failures = if (read.freshState.value is LoadState.Failed) failures + 1 else 0
                 unchanged = if (readAgain) 0 else unchanged + 1
                 stalled = failures >= MAX_FAILURES || unchanged >= READS_UNTIL_ASK_LAPSES
             }

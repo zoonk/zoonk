@@ -2130,11 +2130,11 @@ msgctxt "yyFZMH"
 msgid "Lessons are made with the latest AI models and checked before they reach you: we test their quality with several evaluations, and other models review the content. They follow your exam's subjects and topics. Mistakes are rare, but they can happen. See something wrong? Tell us from the lesson and we'll look into it."
 msgstr "Wir erstellen die Lektionen mit den neuesten KI-Modellen und prüfen sie, bevor du sie bekommst: Wir testen ihre Qualität mit mehreren Tests, und andere Modelle überprüfen die Inhalte. Sie richten sich nach den Fächern und Themen deiner Prüfung. Fehler sind selten, können aber vorkommen. Stimmt etwas nicht? Sag uns direkt in der Lektion Bescheid und wir schauen es uns an."
 
-#. In Brazilian Portuguese: “Dá para confiar em aulas criadas por IA?”
+#. A question in the landing page's FAQ, asked by the visitor. In Brazilian Portuguese: “Posso confiar em aulas criadas por IA?”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
-msgctxt "kf3mxX"
-msgid "Can you trust lessons made by AI?"
-msgstr "Kann man Lektionen vertrauen, die eine KI erstellt hat?"
+msgctxt "RcBICI"
+msgid "Can I trust lessons made by AI?"
+msgstr "Kann ich Lektionen vertrauen, die von KI erstellt wurden?"
 
 #. In Brazilian Portuguese: “Os apps para iPhone e Android estão chegando. Por enquanto, o Zoonk funciona no navegador do celular e do computador, sem instalar nada.”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
@@ -2164,7 +2164,7 @@ msgctxt "r4pGG1"
 msgid "Any exam, such as {exams}. Also languages, a new career or any topic you want to learn. Write your goal in your own words."
 msgstr "Jede Prüfung, zum Beispiel {exams}. Auch Sprachen, ein neuer Beruf oder jedes andere Thema, über das du etwas lernen möchtest. Schreib dein Ziel in deinen eigenen Worten auf."
 
-#. In Brazilian Portuguese: “Quais provas e objetivos dá para estudar?”
+#. A question in the landing page's FAQ, asked by the visitor. In Brazilian Portuguese: “Para quais provas e objetivos eu posso estudar?”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
 msgctxt "iJ_ZyQ"
 msgid "Which exams and goals can I study for?"
@@ -2486,14 +2486,14 @@ msgid "It stays logged in on that computer until you log out there or leave it u
 msgstr "Sie bleibt auf diesem Computer angemeldet, bis du dich dort abmeldest oder sie 30 Tage lang nicht nutzt."
 
 #: src/app/[lang]/device/cli-login-form.tsx
-msgctxt "WCaf5C"
-msgid "Approve"
-msgstr "Zulassen"
-
-#: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "htvX-Z"
 msgid "Deny"
 msgstr "Ablehnen"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "WCaf5C"
+msgid "Approve"
+msgstr "Zulassen"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "R-mNZZ"

@@ -7,7 +7,7 @@ import {
 import { AdminSectionSkeleton } from "@/components/admin-section";
 import { getCourse } from "@/data/courses/get-course";
 import { formatCount } from "@/lib/format";
-import { languageName } from "@/lib/language-filter";
+import { languagePairName } from "@/lib/language-filter";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -63,9 +63,7 @@ async function CourseContent({ params }: Pick<PageProps<"/courses/[id]">, "param
           <CourseEditButton course={{ id: course.id, slug: course.slug, title: course.title }} />
         }
         facts={[
-          course.targetLanguage
-            ? `${languageName(course.targetLanguage)}, taught in ${languageName(course.language)}`
-            : languageName(course.language),
+          languagePairName(course),
           course.isPublished ? "Published" : "Hidden from learners",
           course.visibility === "private" && "Private",
           formatCount(course.userCount, "learner"),

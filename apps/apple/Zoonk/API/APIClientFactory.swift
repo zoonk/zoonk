@@ -2,9 +2,6 @@ import Foundation
 import OpenAPIRuntime
 import OpenAPIURLSession
 
-/// The app target uses `SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated` because Swift OpenAPI
-/// Generator can't generate conformances for a default-`MainActor` module:
-/// https://github.com/apple/swift-openapi-generator/issues/796
 struct APIClientFactory {
   let serverURL: URL
   private let streamingTransport: any ClientTransport

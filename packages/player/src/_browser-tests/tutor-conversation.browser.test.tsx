@@ -6,6 +6,7 @@ import {
 } from "@zoonk/core/lesson-questions/contract";
 import { type TutorToolOffer } from "@zoonk/core/lesson-questions/tool-offer-contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
+import { NextIntlClientProvider } from "next-intl";
 import { Activity, type ReactNode, useState, useTransition } from "react";
 import { describe, expect, it, onTestFinished, vi } from "vitest";
 import { page, userEvent } from "vitest/browser";
@@ -207,6 +208,43 @@ describe("the buddy's conversation", () => {
     });
 
     expect(api.requests.thread).toBe(0);
+  });
+
+  it("tells the days apart in the zone the server draws them in, not the browser's", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date("2026-12-31T12:00:00Z"));
+
+    onTestFinished(() => {
+      vi.useRealTimers();
+    });
+
+    const api = stubTutorApi({});
+
+    const turn = (question: string, createdAt: string) => ({
+      ...api.question({ answer: TUTOR_ANSWER, question, status: "completed" }),
+      createdAt,
+    });
+
+    // In Kiritimati (UTC+14) now is Jan 1, 2027, and these are Dec 30 at 23:30, Dec 31 and Jan 1.
+    api.questions = [
+      turn("What is a share?", "2026-12-30T09:30:00Z"),
+      turn("What is a bond?", "2026-12-30T11:00:00Z"),
+      turn("What is a fund?", "2026-12-31T11:00:00Z"),
+    ];
+
+    renderConversation({
+      around: (conversation) => (
+        <NextIntlClientProvider locale="en" timeZone="Pacific/Kiritimati">
+          {conversation}
+        </NextIntlClientProvider>
+      ),
+      initialThread: { hasMore: false, nextCursor: null, questions: api.questions },
+    });
+
+    await expect.element(page.getByText("What is a fund?")).toBeVisible();
+    await expect.element(page.getByText("Wednesday, December 30, 2026")).toBeVisible();
+    await expect.element(page.getByText("Yesterday", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("Today", { exact: true })).toBeVisible();
   });
 
   it("opens at the latest turn again when the learner comes back to the page", async () => {

@@ -83,7 +83,8 @@ function useWaitingCheck({
   });
 }
 
-function useLooksStuck(lesson: NextStopLesson) {
+/** Nothing is on its way: the lesson failed, or its writing never started or went quiet. */
+export function useWritingFailed(lesson: NextStopLesson): boolean {
   const [stuckWhile, setStuckWhile] = useState<NextStopLesson | null>(null);
 
   useEffect(() => {
@@ -95,7 +96,7 @@ function useLooksStuck(lesson: NextStopLesson) {
     return () => clearTimeout(timer);
   }, [lesson]);
 
-  return stuckWhile === lesson;
+  return lesson === "failed" || stuckWhile === lesson;
 }
 
 /** A written lesson's page no longer names its run, so its held wait keeps the one it followed. */
@@ -110,11 +111,13 @@ function useHeldRunId({ generationId, held }: { generationId: string | null; hel
 }
 
 function WritingProgress({
+  barHasMainAction,
   held,
   kind,
   run,
   since,
 }: {
+  barHasMainAction: boolean;
   held: boolean;
   kind: LessonKind;
   run: GenerationRun;
@@ -123,7 +126,12 @@ function WritingProgress({
   const t = useExtracted();
 
   return (
-    <GenerationWait kind={kind} run={held ? toHeldRun(run) : run} since={since}>
+    <GenerationWait
+      barHasMainAction={barHasMainAction}
+      kind={kind}
+      run={held ? toHeldRun(run) : run}
+      since={since}
+    >
       {!held && (
         <GenerationTimelineDescription className="text-sm">
           {t("It takes a few minutes.")}
@@ -136,27 +144,31 @@ function WritingProgress({
 /** The lesson's writing as the wait screen shows it: a strip over the quiz, or its progress. */
 export function Waiting({
   actions,
+  barHasMainAction,
   block,
+  failed,
   generationId,
   kind,
   lesson,
 }: {
   actions: NextStopActions;
+  barHasMainAction: boolean;
   block: DayStep;
+  failed: boolean;
   generationId: string | null;
   kind: LessonKind;
   lesson: NextStopLesson;
 }) {
   const held = lesson === "ready";
-  const stuck = useLooksStuck(lesson);
   const runId = useHeldRunId({ generationId, held });
   const since = useMountTime().getTime();
 
   const poll = useWaitingCheck({ actions, block, generationId, lesson });
 
-  if (lesson === "failed" || stuck) {
+  if (failed) {
     const failure = (
       <GenerationFailureNotice
+        barHasMainAction={barHasMainAction}
         failure={lesson === "notStarted" ? "notStarted" : "generation"}
         retry={() => {
           poll.restart();
@@ -178,10 +190,22 @@ export function Waiting({
     >
       {(run) => (
         <WaitContent
-          progress={<WritingProgress held={held} kind={kind} run={run} since={since} />}
+          progress={
+            <WritingProgress
+              barHasMainAction={barHasMainAction}
+              held={held}
+              kind={kind}
+              run={run}
+              since={since}
+            />
+          }
           status={
             run.status === "failed" ? (
-              <GenerationFailureNotice failure={run.failure ?? "generation"} retry={run.retry} />
+              <GenerationFailureNotice
+                barHasMainAction={barHasMainAction}
+                failure={run.failure ?? "generation"}
+                retry={run.retry}
+              />
             ) : (
               <LessonWaitStatus holding={held} kind={kind} run={run} since={since} />
             )
@@ -220,7 +244,12 @@ function useAlternativeLabel() {
 
   return (alternative: DayStep): string => {
     if (alternative.checkpoint) {
-      return t("Start {title}", { title: title(alternative) });
+      return t({
+        description:
+          '{title} is the name of one of the day\'s challenges, such as "Weekly challenge", never a course.',
+        message: "Start {title}",
+        values: { title: title(alternative) },
+      });
     }
 
     if (alternative.kind === "review") {

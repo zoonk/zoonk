@@ -108,6 +108,9 @@ export function PageSectionHeader({ className, ...props }: React.ComponentProps<
 export const PAGE_SECTION_TITLE_CLASS =
   "min-w-0 text-sm leading-5 font-semibold tracking-[-0.01em] text-balance";
 
+/** A page under a section's tab: from a tablet up the section's header is its title, so its own steps down. */
+export const SECTION_SUBPAGE_TITLE_CLASS = "md:text-sm md:leading-5 md:tracking-[-0.01em]";
+
 export function PageSectionTitle({ children, className, ...props }: React.ComponentProps<"h2">) {
   return (
     <h2

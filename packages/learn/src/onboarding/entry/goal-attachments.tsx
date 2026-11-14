@@ -6,7 +6,7 @@ import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
 import { useFocusOnRemovedControl } from "../../_components/suggestion-focus";
 import { useAppLocale } from "../../_utils/locale";
-import { type GoalError } from "../goal-errors";
+import { type GoalError, useGoalLimitWords } from "../goal-errors";
 import {
   type AttachedSource,
   type GoalAttachActions,
@@ -20,7 +20,7 @@ import {
 } from "../onboarding-frame";
 import { AttachPanel, SignUpPrompt } from "./attach-panel";
 import { GoalEntry } from "./goal-entry";
-import { GoalLimitBar, useGoalLimitWords } from "./goal-limit-notice";
+import { GoalLimitBar } from "./goal-limit-notice";
 import { type MaterialIntent, MaterialIntentChoice } from "./material-intent";
 
 function AttachedChips({
@@ -199,14 +199,16 @@ export function GoalStartEntry({
   return atGoalLimit ? <GoalLimitScreen /> : <AttachableGoalEntry {...entry} />;
 }
 
+const AT_ACTIVE_GOALS = { reason: "activeGoals" } as const;
+
 function GoalLimitScreen() {
-  const words = useGoalLimitWords("activeGoals");
+  const words = useGoalLimitWords()(AT_ACTIVE_GOALS);
 
   return (
-    <OnboardingColumn bar={<GoalLimitBar reason="activeGoals" />}>
+    <OnboardingColumn bar={<GoalLimitBar limit={AT_ACTIVE_GOALS} />}>
       <OnboardingHeading>
-        <OnboardingTitle>{words?.title}</OnboardingTitle>
-        {words?.line && <OnboardingDescription>{words.line}</OnboardingDescription>}
+        <OnboardingTitle>{words.title}</OnboardingTitle>
+        {words.line && <OnboardingDescription>{words.line}</OnboardingDescription>}
       </OnboardingHeading>
     </OnboardingColumn>
   );

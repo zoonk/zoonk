@@ -35,7 +35,7 @@ struct AppTabView: View {
         }
       }
       .onChange(of: studyTabs) {
-        if router.selectedTab.studyRoute != nil, !studyTabs.contains(router.selectedTab) {
+        if AppTab.study.contains(router.selectedTab), !studyTabs.contains(router.selectedTab) {
           router.leaveStudyTab(keepingPlace: false)
         }
       }

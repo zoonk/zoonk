@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import { voiceListeningScript } from "@zoonk/ai/tasks/audio/listening";
 import { checkCoverage } from "@zoonk/ai/tasks/curriculum/coverage-check";
 import { type PastQuestion } from "@zoonk/ai/tasks/items/past-questions";
-import { type Plan, type TransactionClient, prisma } from "@zoonk/db";
+import { type ContentFixUnit, type Plan, type TransactionClient, prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import {
@@ -20,7 +20,12 @@ import {
 } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture, mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
 import { listeningSetFixture } from "@zoonk/testing/fixtures/listening";
-import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
+import {
+  itemFixture,
+  itemSetFixture,
+  skillFixture,
+  textSetContent,
+} from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
@@ -45,6 +50,7 @@ import {
   lockFixRows,
 } from "../staff/content-fixes/_utils/apply-content-fix";
 import { type StoredChange, contentFixChangesSchema } from "../staff/content-fixes/contract";
+import { prepareProposedChange } from "../staff/content-fixes/handlers/registry";
 import { getSession } from "../users/get-session";
 import { writePlanInputs } from "./_utils/plan-input-write";
 import { attachChapterToCourse } from "./chapters/attach-course-chapter";
@@ -466,20 +472,86 @@ const REGISTRY: Record<string, Registration[]> = {
   ],
   "staff/content-fixes/_utils/apply-content-fix.ts": [
     {
-      verdict: "marks",
-      why: "retiring or restoring bank items changes skill and exam plans",
-      writes: ["item.update"],
-    },
-    {
-      verdict: "marks",
-      why: "chapter and lesson text and maps are plan inputs",
-      writes: ["chapter.update", "lesson.update"],
-    },
-    {
       fields: ["updatedAt"],
       verdict: "excluded",
       why: "screen-only fixes bump the player version without changing plan inputs",
       writes: ["lesson.update"],
+    },
+  ],
+  "staff/content-fixes/_utils/vocabulary-unit.ts": [
+    {
+      fields: ["sentenceOrdersAttempts", "updatedAt"],
+      verdict: "excluded",
+      why: "a word or sentence fix bumps the player version and owes word orders again; plans read neither",
+      writes: ["lesson.updateMany"],
+    },
+  ],
+  "staff/content-fixes/handlers/exam-facts.ts": [
+    {
+      verdict: "marks",
+      why: "blueprint facts change plan inputs under the content-fix plan lock",
+      writes: ["examBlueprint.update"],
+    },
+  ],
+  "staff/content-fixes/handlers/item-content.ts": [
+    {
+      verdict: "marks",
+      why: "replacing or restoring a question changes which questions skill and exam plans pick",
+      writes: ["item.create", "item.update"],
+    },
+  ],
+  "staff/content-fixes/handlers/item-set.ts": [
+    {
+      verdict: "marks",
+      why: "whole-set replacement changes bank picks under the content-fix plan lock",
+      writes: ["itemSet.create", "item.create", "item.updateMany"],
+    },
+  ],
+  "staff/content-fixes/handlers/practice.ts": [
+    {
+      verdict: "marks",
+      why: "retiring or restoring bank items changes skill and exam plans",
+      writes: ["item.update"],
+    },
+  ],
+  "staff/content-fixes/handlers/shared-text.ts": [
+    {
+      verdict: "marks",
+      why: "skill text changes plan inputs under the content-fix plan lock",
+      writes: ["skill.update"],
+    },
+  ],
+  "staff/content-fixes/handlers/structure-graphs.ts": [
+    {
+      verdict: "marks",
+      why: "a shared exam graph change marks plans built from its blueprint",
+      writes: ["examSkillGraph.update"],
+    },
+  ],
+  "staff/content-fixes/handlers/structure-placements.ts": [
+    {
+      verdict: "marks",
+      why: "whole collection edits resolve old and new dependents before deletion",
+      writes: ["courseChapter.deleteMany", "raw:course_chapters"],
+    },
+  ],
+  "staff/content-fixes/handlers/structure-skills.ts": [
+    {
+      verdict: "marks",
+      why: "skill memberships resolve old and new dependents before deletion",
+      writes: [
+        "chapterSkill.deleteMany",
+        "chapterSkill.createMany",
+        "lessonSkill.deleteMany",
+        "lessonSkill.createMany",
+      ],
+    },
+  ],
+  "staff/content-fixes/handlers/text-rows.ts": [
+    {
+      verdict: "marks",
+      why: "chapter and lesson text and maps are plan inputs",
+      writes: ["chapter.update", "lesson.update"],
     },
   ],
 };
@@ -1669,12 +1741,12 @@ function writeFix({
   unit,
 }: {
   changes: StoredChange[];
-  unit: { id: string; kind: "chapter" | "lesson" | "item" };
+  unit: { id: string; kind: ContentFixUnit };
 }) {
   return writePlanInputs(async (tx) => {
     await lockFixPlans(tx, changes);
     await lockFixRows(tx, { changes, unit });
-    await applyFixChanges(tx, { changes, unit });
+    await applyFixChanges(tx, { changes, context: { fixId: randomUUID(), now: new Date() }, unit });
   });
 }
 
@@ -1797,6 +1869,199 @@ async function itemFixCase(op: "retire" | "unretire"): Promise<WriterCase> {
   };
 }
 
+async function itemContentCase(op: "replace" | "restore"): Promise<WriterCase> {
+  const [skill, blueprint] = await Promise.all([skillFixture(), examBlueprintFixture()]);
+  const item = await itemFixture({ examBlueprintId: blueprint.id, skillId: skill.id });
+
+  const replacement = await itemFixture({
+    examBlueprintId: blueprint.id,
+    retiredAt: op === "restore" ? null : new Date(),
+    skillId: skill.id,
+  });
+
+  const [plan, exam] = await Promise.all([
+    learnerPlan({ plan: { sourceSkillIds: [skill.id] } }),
+    examPlan(blueprint.id),
+  ]);
+
+  if (op === "restore") {
+    await prisma.item.update({ data: { retiredAt: new Date() }, where: { id: item.id } });
+  }
+
+  const newId = randomUUID();
+
+  const fields = [{ after: { question: "Fixed" }, before: { question: "Old" }, field: "content" }];
+
+  const changes: Record<typeof op, StoredChange> = {
+    replace: { fields, id: item.id, model: "Item", op: "replace", replacementId: newId },
+    restore: { id: item.id, model: "Item", op: "restore", retires: replacement.id },
+  };
+
+  return {
+    expectWritten: async () => {
+      await expect(
+        prisma.item.findUniqueOrThrow({ where: { id: item.id } }),
+      ).resolves.toMatchObject({ retiredAt: op === "replace" ? expect.any(Date) : null });
+
+      await expect(
+        prisma.plan.findUniqueOrThrow({ where: { id: exam.id } }),
+      ).resolves.toMatchObject({ sourceVersion: exam.sourceVersion + 1 });
+    },
+    plan,
+    root: skillRoot(skill.id),
+    write: () => writeFix({ changes: [changes[op]], unit: { id: item.id, kind: "item" } }),
+  };
+}
+
+async function sharedFixCase(model: "Skill" | "ExamBlueprint" | "ItemSet"): Promise<WriterCase> {
+  const skill = await skillFixture();
+
+  const blueprint = await examBlueprintFixture({
+    structure: { formats: [], mock: null, rules: [], subjects: [] },
+  });
+
+  const plan =
+    model === "ExamBlueprint"
+      ? await examPlan(blueprint.id)
+      : await learnerPlan({ plan: { sourceSkillIds: [skill.id] } });
+
+  const set = await itemSetFixture({ examBlueprintId: blueprint.id });
+  const setPlan = model === "ItemSet" ? await examPlan(blueprint.id) : null;
+  const item = await itemFixture({ setId: set.id, setPosition: 0, skillId: skill.id });
+
+  const proposal = {
+    ExamBlueprint: { id: blueprint.id, model: "ExamBlueprint", set: { name: "Corrected exam" } },
+    ItemSet: {
+      id: set.id,
+      model: "ItemSet",
+      replace: {
+        content: textSetContent("Corrected passage"),
+        questions: [{ content: item.content, id: item.id }],
+      },
+    },
+    Skill: { id: skill.id, model: "Skill", set: { name: "Corrected skill" } },
+  }[model];
+
+  const prepared = await prepareProposedChange(prisma, proposal);
+
+  if (!prepared.ok) {
+    throw new Error(prepared.problem);
+  }
+
+  const changes = contentFixChangesSchema.parse([prepared.stored]);
+
+  return {
+    expectWritten: async () => {
+      if (setPlan) {
+        await expect(
+          prisma.plan.findUniqueOrThrow({ where: { id: setPlan.id } }),
+        ).resolves.toMatchObject({ sourceVersion: setPlan.sourceVersion + 1 });
+      }
+
+      if (model === "Skill") {
+        await expect(
+          prisma.skill.findUniqueOrThrow({ where: { id: skill.id } }),
+        ).resolves.toMatchObject({ name: "Corrected skill" });
+      }
+
+      if (model === "ExamBlueprint") {
+        await expect(
+          prisma.examBlueprint.findUniqueOrThrow({ where: { id: blueprint.id } }),
+        ).resolves.toMatchObject({ name: "Corrected exam" });
+      }
+
+      if (model === "ItemSet") {
+        await expect(
+          prisma.item.findUniqueOrThrow({ where: { id: item.id } }),
+        ).resolves.toMatchObject({ retiredAt: expect.any(Date) });
+      }
+    },
+    plan,
+    root: model === "ExamBlueprint" ? blueprintRoot(blueprint.id) : skillRoot(skill.id),
+    write: () => writeFix({ changes, unit: prepared.unit }),
+  };
+}
+
+async function structureFixCase(
+  operation: "setSkills" | "setPrerequisites" | "setLessons" | "setChapters",
+): Promise<WriterCase> {
+  const [skill, other, lesson, chapter, course] = await Promise.all([
+    skillFixture(),
+    skillFixture(),
+    libraryLessonFixture({ contentStatus: "completed" }),
+    libraryChapterFixture(),
+    courseFixture(),
+  ]);
+
+  await chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id });
+  await lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id });
+  const plan = await learnerPlan({ plan: { sourceSkillIds: [skill.id] } });
+  const addedLesson = await libraryLessonFixture();
+
+  const proposals = {
+    setChapters: {
+      id: course.id,
+      model: "Course",
+      setChapters: [{ area: null, chapterId: chapter.id, level: "beginner" }],
+    },
+    setLessons: { id: chapter.id, model: "Chapter", setLessons: [lesson.id, addedLesson.id] },
+    setPrerequisites: { id: skill.id, model: "Skill", setPrerequisites: [other.id] },
+    setSkills: { id: lesson.id, model: "Lesson", setSkills: [other.id] },
+  };
+
+  const resolved = await prepareProposedChange(prisma, proposals[operation]);
+
+  if (!resolved.ok) {
+    throw new Error(resolved.problem);
+  }
+
+  const changes = contentFixChangesSchema.parse([resolved.stored]);
+
+  return {
+    expectWritten: async () => {},
+    plan,
+    root: skillRoot(skill.id),
+    write: () => writeFix({ changes, unit: resolved.unit }),
+  };
+}
+
+async function graphFixCase(): Promise<WriterCase> {
+  const blueprint = await examBlueprintFixture();
+  const skill = await skillFixture({ language: blueprint.language });
+  const plan = await examPlan(blueprint.id);
+
+  const graph = {
+    phases: [{ milestone: null, name: "Learn" }],
+    skills: [
+      { area: null, lessons: 1, name: skill.name, phase: 0, skillId: skill.id, weight: null },
+    ],
+  };
+
+  const row = await prisma.examSkillGraph.create({
+    data: { ...DATED_PROVENANCE, examBlueprintId: blueprint.id, graph },
+  });
+
+  const resolved = await prepareProposedChange(prisma, {
+    id: row.id,
+    model: "ExamSkillGraph",
+    setGraph: {
+      graph: { ...graph, skills: graph.skills.map((entry) => ({ ...entry, lessons: 2 })) },
+    },
+  });
+
+  if (!resolved.ok) {
+    throw new Error(resolved.problem);
+  }
+
+  return {
+    expectWritten: async () => {},
+    plan,
+    root: blueprintRoot(blueprint.id),
+    write: () =>
+      writeFix({ changes: contentFixChangesSchema.parse([resolved.stored]), unit: resolved.unit }),
+  };
+}
+
 const WRITER_CASES: Record<string, Record<string, () => Promise<WriterCase>>> = {
   "library/chapters/attach-course-chapter.ts": { attachChapterToCourse: attachCase },
   "library/curriculum/early-outline-chapter.ts": { findEarlyOutlineChapter: earlyOutlineCase },
@@ -1828,11 +2093,31 @@ const WRITER_CASES: Record<string, Record<string, () => Promise<WriterCase>>> = 
   "library/media/check-image-asset.ts": { removeImageAsset: pictureCase },
   "library/quality/set-aside-published-lesson.ts": { setAsidePublishedLesson: setAsideCase },
   "library/review-flags/rewrite-flagged-drills.ts": { replaceFlaggedDrills: drillsCase },
-  "staff/content-fixes/_utils/apply-content-fix.ts": {
-    "chapter title": () => textFixCase("chapter", "title"),
-    "lesson title": () => textFixCase("lesson", "title"),
+  "staff/content-fixes/handlers/exam-facts.ts": {
+    blueprintSet: () => sharedFixCase("ExamBlueprint"),
+  },
+  "staff/content-fixes/handlers/item-content.ts": {
+    "replace item": () => itemContentCase("replace"),
+    "restore replaced item": () => itemContentCase("restore"),
+  },
+  "staff/content-fixes/handlers/item-set.ts": { itemSetReplace: () => sharedFixCase("ItemSet") },
+  "staff/content-fixes/handlers/practice.ts": {
     "restore item": () => itemFixCase("unretire"),
     "retire item": () => itemFixCase("retire"),
+  },
+  "staff/content-fixes/handlers/shared-text.ts": { skillSet: () => sharedFixCase("Skill") },
+  "staff/content-fixes/handlers/structure-graphs.ts": { examGraph: graphFixCase },
+  "staff/content-fixes/handlers/structure-placements.ts": {
+    chapters: () => structureFixCase("setChapters"),
+    lessons: () => structureFixCase("setLessons"),
+  },
+  "staff/content-fixes/handlers/structure-skills.ts": {
+    memberships: () => structureFixCase("setSkills"),
+    prerequisites: () => structureFixCase("setPrerequisites"),
+  },
+  "staff/content-fixes/handlers/text-rows.ts": {
+    "chapter title": () => textFixCase("chapter", "title"),
+    "lesson title": () => textFixCase("lesson", "title"),
   },
 };
 
@@ -1857,6 +2142,43 @@ describe("content fixes to what plans don't read", () => {
 
     const before = await versions();
     await write();
+
+    await expect(versions()).resolves.toStrictEqual(before);
+  });
+
+  it("leave plans alone when a practice question is reworded in place", async () => {
+    const [skill, blueprint] = await Promise.all([skillFixture(), examBlueprintFixture()]);
+    const item = await itemFixture({ examBlueprintId: blueprint.id, skillId: skill.id });
+
+    const [plan, exam] = await Promise.all([
+      learnerPlan({ plan: { sourceSkillIds: [skill.id] } }),
+      examPlan(blueprint.id),
+    ]);
+
+    const versions = () =>
+      prisma.plan.findMany({
+        orderBy: { id: "asc" },
+        select: { inputVersion: true, sourceVersion: true },
+        where: { id: { in: [plan.id, exam.id] } },
+      });
+
+    const before = await versions();
+
+    await writeFix({
+      changes: [
+        {
+          fields: [{ after: { question: "Fixed" }, before: { question: "Old" }, field: "content" }],
+          id: item.id,
+          model: "Item",
+          op: "set",
+        },
+      ],
+      unit: { id: item.id, kind: "item" },
+    });
+
+    await expect(prisma.item.findUniqueOrThrow({ where: { id: item.id } })).resolves.toMatchObject({
+      content: { question: "Fixed" },
+    });
 
     await expect(versions()).resolves.toStrictEqual(before);
   });

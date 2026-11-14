@@ -238,6 +238,10 @@ private struct PlanContent: View {
       }
     }
     .resumeGoalBar(isShown: goal.status == .paused)
+    .examOverBar(
+      goal: goal,
+      isShown: goal.status != .paused && goal.kind == .exam && plan.status?.kind == .pastDate
+    )
     .barTitleAfterHero(String(localized: "Plan", table: "Plan", comment: "Title of the Plan tab"))
     .announcesStatus(rebuildStatus)
     .onChange(of: goal.contentCountry?.rebuild) { old, new in
@@ -253,7 +257,9 @@ private struct PlanContent: View {
     }
     .feedbackSheet(
       isPresented: $isReporting,
-      context: FeedbackContext(contentID: plan.planId, contentKind: .plan), isReport: true)
+      context: FeedbackContext(contentID: plan.planId, contentKind: .plan), isReport: true
+    )
+    .onDisappear { slotAnswer?.editor.cancel() }
   }
 
   @ViewBuilder private var rebuildNotice: some View {

@@ -15,14 +15,20 @@ import {
 } from "../../learner/_utils/answer-once";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { findClosingAnswer } from "../../lesson-player/_utils/answer-recording";
+import { findFixedScreenIds } from "../../lesson-player/_utils/fixed-screens";
 import { findPlayableStepRow, getAnswerSkillId } from "../../lesson-player/_utils/lesson-rows";
+import { findOpenLessonRun } from "../../lesson-player/_utils/lesson-runs";
 import { loadPlayableSteps } from "../../lesson-player/_utils/load-playable-steps";
 import { gradeSpokenMistake } from "../../mistakes/grade-spoken-mistake";
 import { type MistakeReplay } from "../../mistakes/mistake-replay";
 import { getSession } from "../../users/get-session";
 import { SPOKEN_EVIDENCE_SCORE, gradeSpokenRecording } from "./_utils/grade-spoken-recording";
 import { type SpokenAudio, isValidSpokenAudio } from "./_utils/hear-spoken-sentence";
-import { type GradeSpokenAnswerResult, type SpokenAnswerFields } from "./spoken-answer-contract";
+import {
+  type GradeSpokenAnswerResult,
+  type SpokenAnswerFields,
+  type SpokenAnswerGrade,
+} from "./spoken-answer-contract";
 
 async function findSpokenStep({ stepId, userId }: { stepId: string; userId: string }) {
   const row = await findPlayableStepRow({ stepId, userId });
@@ -57,6 +63,7 @@ async function findSpokenStep({ stepId, userId }: { stepId: string; userId: stri
     lessonId: row.lessonId,
     level: row.lesson.level,
     replay,
+    sentenceId: row.sentenceId,
     skillId: getAnswerSkillId({
       lessonSkillIds: row.lesson.skills.map((skill) => skill.skillId),
       stepSkillId: step.skillId,
@@ -64,7 +71,36 @@ async function findSpokenStep({ stepId, userId }: { stepId: string; userId: stri
     storedContent: row.content,
     targetLanguage: content.language,
     targetText: content.targetText,
+    wordId: row.wordId,
   };
+}
+
+type SpokenStep = NonNullable<Awaited<ReturnType<typeof findSpokenStep>>>;
+
+type RecordingGrade = NonNullable<Awaited<ReturnType<typeof gradeSpokenRecording>>>;
+
+/** Apps built before `checked` require an attempt id, so the unsaved take gets one nothing saved. */
+function notScored(grade: RecordingGrade): SpokenAnswerGrade {
+  return {
+    ...grade,
+    attemptId: crypto.randomUUID(),
+    checked: false,
+    explanation: null,
+    words: [],
+    wordsToPractice: [],
+  };
+}
+
+/** Speech isn't sent with its run, so the learner's open run of the lesson tells when they started. */
+async function isFixedDuringRun({ step, userId }: { step: SpokenStep; userId: string }) {
+  const run = await findOpenLessonRun({ lessonId: step.lessonId, userId });
+
+  if (!run) {
+    return false;
+  }
+
+  const fixed = await findFixedScreenIds({ screens: [step], startedAt: run.startedAt });
+  return fixed.has(step.id);
 }
 
 async function findOwnStudySessionId({
@@ -141,7 +177,11 @@ export async function gradeSpokenAnswer({
     return { status: "noSpeech" };
   }
 
-  const { explanation, transcript, wordsToPractice } = grade;
+  // The learner may be reading the sentence as it was before a fix: an answer it no longer
+  // matches is neither scored nor saved.
+  if (!grade.isCorrect && (await isFixedDuringRun({ step, userId }))) {
+    return { grade: notScored(grade), status: "graded" };
+  }
 
   const question = `${step.content.prompt}\n${step.targetText}`;
   const timeZone = getAnswerTimeZone({ goal: null, timeZone: fields.timeZone });
@@ -155,15 +195,15 @@ export async function gradeSpokenAnswer({
 
   const outcome = await recordAnswerOnce({
     answer: {
-      answer: { kind: "spoken", transcript },
+      answer: { kind: "spoken", transcript: grade.transcript },
       graded: { durationMs: fields.durationMs, isCorrect: grade.isCorrect, score: grade.score },
       language: step.learnerLanguage,
       mistake: {
         questionText: question,
         snapshot: {
-          answer: transcript,
+          answer: grade.transcript,
           correctAnswer: step.targetText,
-          explanation,
+          explanation: grade.explanation,
           format: "spoken",
           question,
           replay: step.replay,
@@ -199,11 +239,11 @@ export async function gradeSpokenAnswer({
       timeZone,
       userId,
       userLanguage: step.learnerLanguage,
-      words: wordsToPractice.map((word) => word.text),
+      words: grade.wordsToPractice.map((word) => word.text),
     });
   }
 
-  if (explanation) {
+  if (grade.explanation) {
     after(() =>
       trackLearnerEvents({
         events: [
@@ -220,12 +260,12 @@ export async function gradeSpokenAnswer({
   return {
     grade: {
       attemptId,
-      explanation,
+      explanation: grade.explanation,
       isCorrect: grade.isCorrect,
       score: grade.score,
-      transcript,
+      transcript: grade.transcript,
       words: grade.words,
-      wordsToPractice,
+      wordsToPractice: grade.wordsToPractice,
     },
     status: "graded",
   };

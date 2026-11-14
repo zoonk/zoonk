@@ -46,7 +46,7 @@ private struct EnergyCalendar: View {
   let energy: EnergyProgress
 
   var body: some View {
-    let formatDay = calendarDayFormatter(newest: energy.days.last?.date)
+    let today = PlanDate.today()
 
     StatsCalendar(
       title: Text(
@@ -66,7 +66,7 @@ private struct EnergyCalendar: View {
           date: day.date,
           step: CalendarSteps.energy(day.energy),
           detail: ChartPointDetail(
-            label: formatDay(day.date),
+            label: PlanDate.text(day.date.id, today: today),
             value: day.energy.map {
               String(
                 localized: "\(metricPercent($0)) Energy", table: "Progress",

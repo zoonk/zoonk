@@ -28,7 +28,10 @@ const bank: LevelTestBank = {
   speaking: TEST_LEVELS.map((level) => ({ level, sentence: `Say ${level}`, translation: "" })),
 };
 
-type Answer = Pick<LevelTestProgress["answers"][number], "answerIndex" | "id" | "skipped">;
+type Answer = Pick<
+  LevelTestProgress["answers"][number],
+  "answerIndex" | "correct" | "id" | "skipped"
+>;
 
 function progress(answers: Answer[] = []) {
   return { answers, speaking: null };
@@ -45,9 +48,9 @@ describe("level estimates", () => {
     const scores = getLevelTestScores({
       bank,
       progress: progress([
-        { answerIndex: 0, id: "reading-A2-0" },
-        { answerIndex: 1, id: "listening-A2-0" },
-        { answerIndex: null, id: "reading-B1-0" },
+        { answerIndex: 0, correct: true, id: "reading-A2-0" },
+        { answerIndex: 1, correct: false, id: "listening-A2-0" },
+        { answerIndex: null, correct: null, id: "reading-B1-0" },
       ]),
       start: A2,
     });
@@ -60,8 +63,8 @@ describe("level estimates", () => {
     const right = getLevelTestScores({
       bank,
       progress: progress([
-        { answerIndex: 0, id: "reading-A2-0" },
-        { answerIndex: 0, id: "reading-B1-0" },
+        { answerIndex: 0, correct: true, id: "reading-A2-0" },
+        { answerIndex: 0, correct: true, id: "reading-B1-0" },
       ]),
       start: A2,
     });
@@ -69,8 +72,8 @@ describe("level estimates", () => {
     const wrong = getLevelTestScores({
       bank,
       progress: progress([
-        { answerIndex: 1, id: "reading-A2-0" },
-        { answerIndex: null, id: "reading-A1-0" },
+        { answerIndex: 1, correct: false, id: "reading-A2-0" },
+        { answerIndex: null, correct: null, id: "reading-A1-0" },
       ]),
       start: A2,
     });
@@ -81,8 +84,8 @@ describe("level estimates", () => {
 
   it("doesn't move for a listening question skipped because its audio couldn't be made", () => {
     const skipped = progress([
-      { answerIndex: 0, id: "reading-A2-0" },
-      { answerIndex: null, id: "listening-A2-0", skipped: true },
+      { answerIndex: 0, correct: true, id: "reading-A2-0" },
+      { answerIndex: null, correct: null, id: "listening-A2-0", skipped: true },
     ]);
 
     expect(getLevelTestScores({ bank, progress: skipped, start: A2 }).listening).toBe(A2);
@@ -103,7 +106,7 @@ describe(getNextLevelTestStep, () => {
   it("takes turns between reading and listening", () => {
     const step = getNextLevelTestStep({
       bank,
-      progress: progress([{ answerIndex: 0, id: "reading-A2-0" }]),
+      progress: progress([{ answerIndex: 0, correct: true, id: "reading-A2-0" }]),
       start: A2,
     });
 
@@ -125,8 +128,8 @@ describe(getNextLevelTestStep, () => {
     const step = getNextLevelTestStep({
       bank,
       progress: progress([
-        { answerIndex: 0, id: "reading-A2-0" },
-        { answerIndex: 0, id: "listening-A2-0" },
+        { answerIndex: 0, correct: true, id: "reading-A2-0" },
+        { answerIndex: 0, correct: true, id: "listening-A2-0" },
       ]),
       start: A2,
     });
@@ -136,7 +139,11 @@ describe(getNextLevelTestStep, () => {
 
   it("asks for one sentence out loud after the questions, then ends", () => {
     const answers = ["reading", "listening"].flatMap((skill) =>
-      ["A2", "B1", "B2"].map((level) => ({ answerIndex: 0, id: `${skill}-${level}-0` })),
+      ["A2", "B1", "B2"].map((level) => ({
+        answerIndex: 0,
+        correct: true,
+        id: `${skill}-${level}-0`,
+      })),
     );
 
     const speaking = getNextLevelTestStep({ bank, progress: progress(answers), start: A2 });
@@ -159,9 +166,9 @@ describe(getLevelTestScores, () => {
       bank,
       progress: {
         answers: [
-          { answerIndex: 0, id: "reading-B1-0" },
-          { answerIndex: 0, id: "reading-B2-0" },
-          { answerIndex: 1, id: "listening-A2-0" },
+          { answerIndex: 0, correct: true, id: "reading-B1-0" },
+          { answerIndex: 0, correct: true, id: "reading-B2-0" },
+          { answerIndex: 1, correct: false, id: "listening-A2-0" },
         ],
         speaking: { level: "A2", score: 0.5 },
       },

@@ -87,12 +87,12 @@ async function finishAnimations(page: Page) {
   }, OVERLAYS);
 }
 
-export async function inspectPanel(page: Page, phone: boolean) {
+export async function inspectPanel(page: Page, phone: boolean, opener: string) {
   await finishAnimations(page);
-  return page.evaluate(readPanel, { overlays: OVERLAYS, phone });
+  return page.evaluate(readPanel, { opener, overlays: OVERLAYS, phone });
 }
 
 export async function focusCameBack(page: Page, opener: string, returnTo?: string) {
   await finishAnimations(page);
-  return page.evaluate(focusReturned, { opener, overlays: OVERLAYS, returnTo });
+  return page.evaluate(focusReturned, { opener, returnTo });
 }

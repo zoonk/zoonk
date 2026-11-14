@@ -20,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,6 +34,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.ButtonIcon
+import com.zoonk.android.ui.components.HeldSlot
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
@@ -43,6 +45,7 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.components.limitLifted
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatNumber
@@ -205,16 +208,25 @@ private fun NotMadeSummary(
     later: List<GoalMindMap>,
     actions: TabActions,
 ) {
-    Column(Modifier.padding(top = 16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        if (mindMaps.createOffer.startable > 1) {
-            OutlinedButton(
-                onClick = actions.page.createAll,
-                busy = actions.state.createAll == CreateAll.Pending,
-                leadingIcon = { ButtonIcon(R.drawable.ic_add) },
-            ) { Text(stringResource(R.string.mindmaps_create_all)) }
-        }
+    val offer = mindMaps.createOffer
+    // What stops a new map also takes the rows' Create away, so it shows whether or not a chapter is ready to make.
+    val limit =
+        offer.stop
+            ?.takeIf { offer.startable == 0L }
+            ?.limit(actions.state.tier)
+            ?.takeUnless { limitLifted(it) }
+    HeldSlot(gated = limit != null, Modifier.padding(top = 16.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            if (offer.startable > 1) {
+                OutlinedButton(
+                    onClick = actions.page.createAll,
+                    busy = actions.state.createAll == CreateAll.Pending,
+                    leadingIcon = { ButtonIcon(R.drawable.ic_add) },
+                ) { Text(stringResource(R.string.mindmaps_create_all)) }
+            }
 
-        Box(Modifier.semantics { liveRegion = LiveRegionMode.Polite }) { NotMadeLine(mindMaps, later, actions) }
+            Box(Modifier.semantics { liveRegion = LiveRegionMode.Polite }) { NotMadeLine(mindMaps, later, limit, actions) }
+        }
     }
 }
 
@@ -227,14 +239,13 @@ private fun NotMadeSummary(
 private fun NotMadeLine(
     mindMaps: GoalMindMaps,
     later: List<GoalMindMap>,
+    limit: Limit?,
     actions: TabActions,
 ) {
     val offer = mindMaps.createOffer
     val locale = currentLocale()
     val onTheWay = later.count { it.status == GoalMindMap.Status.DRAWING || it.status == GoalMindMap.Status.WRITING_LESSONS }
     val failed = later.count { it.status == GoalMindMap.Status.FAILED }
-    // What stops a new map also takes the rows' Create away, so it shows whether or not a chapter is ready to make.
-    val limit = offer.stop?.takeIf { offer.startable == 0L }?.limit(actions.state.tier)
     val counted = @Composable { id: Int, count: Long -> pluralStringResource(id, count.toInt(), formatNumber(count.toDouble(), locale)) }
 
     val text =
@@ -282,11 +293,11 @@ internal fun MindMapAllowanceStop.limit(tier: LimitTier): Limit =
             Limit.Reached(
                 tier,
                 when (period) {
-                    MindMapAllowanceStop.Period.MONTH -> LimitPeriod.Month
+                    MindMapAllowanceStop.Period.ROLLING30_DAYS -> LimitPeriod.Rolling30Days
                     MindMapAllowanceStop.Period.TOTAL -> LimitPeriod.Total
                     MindMapAllowanceStop.Period.DAY, null -> LimitPeriod.Day
                 },
-                availableAt = resetsAt?.toJavaInstant(),
+                availableAt = availableAt?.toJavaInstant(),
             )
         }
     }

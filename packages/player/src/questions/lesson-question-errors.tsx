@@ -14,7 +14,14 @@ export function toHelpLimit(error: LessonQuestionApiError | null): HelpLimit | n
   }
 
   if (error?.kind === "usageLimit") {
-    return { period: error.period, status: "limitReached", tier: error.tier };
+    return error.period === "rolling30Days"
+      ? {
+          availableAt: error.availableAt ?? null,
+          period: error.period,
+          status: "limitReached",
+          tier: error.tier,
+        }
+      : { period: error.period, status: "limitReached", tier: error.tier };
   }
 
   return null;
@@ -122,6 +129,20 @@ export function QuestionErrorAction({
   if (error?.kind === "unavailable") {
     return null;
   }
+
+  return <TryAgainButton className={className} disabled={disabled} onRetry={onRetry} />;
+}
+
+export function TryAgainButton({
+  className,
+  disabled = false,
+  onRetry,
+}: {
+  className?: string;
+  disabled?: boolean;
+  onRetry: () => void;
+}) {
+  const t = useExtracted();
 
   return (
     <Button

@@ -47,16 +47,14 @@ struct PlanPathRows: View {
       (phases.first { phase in phase.chapters.contains { $0.state == .current } }
       ?? phases.first { $0.state == .current })?.index
     let beforeFinish = phases.filter { $0.kind != .afterExam }
-    let last = beforeFinish.last?.index
 
     ForEach(beforeFinish) { phase in
       PlanPhaseRow(
-        context: context, phase: phase, isOpen: phase.index == open, isLast: phase.index == last,
-        brief: brief)
+        context: context, phase: phase, isOpen: phase.index == open, brief: brief)
     }
 
     IconLabeledContent {
-      planFinishText(context)
+      planFinish(context)
     } title: {
       Text(context.goal.displayName)
     } icon: {
@@ -66,7 +64,7 @@ struct PlanPathRows: View {
 
     ForEach(phases.filter { $0.kind == .afterExam }) { phase in
       PlanPhaseRow(
-        context: context, phase: phase, isOpen: phase.index == open, isLast: false, brief: brief)
+        context: context, phase: phase, isOpen: phase.index == open, brief: brief)
     }
   }
 }
@@ -88,7 +86,6 @@ private struct PlanPhaseRow: View {
   let context: PlanContext
   let phase: PlanPhase
   let isOpen: Bool
-  let isLast: Bool
   let brief: Bool
 
   private var disclosure: PlanStore.PhaseDisclosure {
@@ -223,28 +220,29 @@ private struct PlanPhaseRow: View {
         StatusMark(status: next ? .next : phase.mark)
       }
     } value: {
-      VStack(alignment: isStacked ? .leading : .trailing, spacing: 2) {
-        // A phase not started shows only its end.
-        if phase.lessonsTotal > 0, phase.state != .upcoming {
-          Text(
-            "\(phase.lessonsDone) / \(phase.lessonsTotal)", tableName: "Plan",
-            comment: "Lessons done of a phase's lessons"
-          )
-          .monospacedDigit()
-        }
-
-        if let until {
-          until
-            .typeStyle(.meta)
-        }
+      if let end {
+        Text(verbatim: end.shown)
+          .typeStyle(.data)
+          .accessibilityHidden(true)
       }
     }
     .accessibilityElement(children: .combine)
-    .accessibilityValue(phase.state == .current ? youAreHere : Text(verbatim: ""))
+    .accessibilityValue(Text(verbatim: spokenState))
   }
 
-  private var youAreHere: Text {
-    Text("You are here", tableName: "Plan", comment: "Spoken on the learner's current phase")
+  private var end: PhaseEnd? {
+    context.plan.phaseEnd(phase, goalKind: context.goal.kind)
+  }
+
+  /// "You are here" on the current phase, then its end.
+  private var spokenState: String {
+    let here =
+      phase.state == .current
+      ? String(
+        localized: "You are here", table: "Plan", comment: "Spoken on the learner's current phase")
+      : nil
+
+    return [here, end?.spoken].compactMap(\.self).joined(separator: ", ")
   }
 
   private var meta: Text? {
@@ -285,54 +283,6 @@ private struct PlanPhaseRow: View {
       : Text(
         "Continues \(PlanDate.text(next, today: context.plan.today))", tableName: "Plan",
         comment: "When the current phase's lessons continue; the argument is a date like 'May 5'")
-  }
-
-  private var until: Text? {
-    guard let endDate = phase.untilDate, phase.state == .current || phase.state == .upcoming,
-      !(isLast && phase.kind != .afterExam)
-    else {
-      return nil
-    }
-
-    let learns = phase.kind == .learn || phase.kind == .afterExam
-    let today = context.plan.today
-
-    if learns && phase.state == .upcoming {
-      let month = PlanDate.monthText(endDate, today: today)
-
-      return Text(
-        LocalizedStringResource(
-          "untilAboutMonth", defaultValue: "until ~\(month)", table: "Plan",
-          comment:
-            "When a phase ends, about; the argument is a month like 'Jan' or 'Jan 2028', never a day"
-        )
-      )
-      .accessibilityLabel(
-        Text(
-          LocalizedStringResource(
-            "untilAboutMonthSpoken", defaultValue: "until about \(month)", table: "Plan",
-            comment:
-              "When a phase ends, about, read aloud; the argument is a month like 'Jan' or 'Jan 2028', never a day"
-          )))
-    }
-
-    let day = PlanDate.text(endDate, today: today)
-
-    // The phase ends with its challenge, which has no booked day, only the plan's estimate.
-    if learns && phase.checkpoint?.state == .upcoming {
-      return Text(
-        "until ~\(day)", tableName: "Plan",
-        comment: "When a phase ends, about; the argument is a day like 'Nov 10'"
-      )
-      .accessibilityLabel(
-        Text(
-          "until about \(day)", tableName: "Plan",
-          comment: "When a phase ends, about, read aloud; the argument is a day like 'Nov 10'"))
-    }
-
-    return Text(
-      "until \(day)", tableName: "Plan",
-      comment: "When a phase ends; the argument is a date like 'May 5'")
   }
 }
 
@@ -376,14 +326,39 @@ private struct PlanChapterRow: View {
       } icon: {
         StatusMark(status: mark)
       }
-    } value: {
-      if chapter.lessonsTotal > 0, !chapter.writing, !chapter.isSkipped {
-        Text(
-          "\(chapter.lessonsDone) / \(chapter.lessonsTotal)", tableName: "Plan",
-          comment: "Lessons done of a chapter's lessons"
-        )
-        .monospacedDigit()
+      .accessibilityLabel { label in
+        if let markWords {
+          Text(markWords)
+        }
+
+        label
       }
+    } value: {
+      EmptyView()
+    }
+  }
+
+  /// What the mark says, read before the title: the row has no count.
+  private var markWords: LocalizedStringResource? {
+    switch mark {
+    case .next:
+      LocalizedStringResource(
+        "chapterMarkNext", defaultValue: "Up next", table: "Plan",
+        comment: "Spoken on the path's next chapter, before its title")
+    case .done:
+      LocalizedStringResource(
+        "chapterMarkDone", defaultValue: "Done", table: "Plan",
+        comment: "Spoken on a done chapter, before its title")
+    case .skipped:
+      LocalizedStringResource(
+        "chapterMarkSkipped", defaultValue: "Skipped", table: "Plan",
+        comment: "Spoken on a chapter the learner already knew, before its title")
+    case .todo where chapter.lessonsDone > 0 && chapter.lessonsTotal > 0 && !chapter.writing:
+      LocalizedStringResource(
+        "\(chapter.lessonsDone) of \(chapter.lessonsTotal) lessons done", table: "Plan",
+        comment: "Spoken on a started chapter, before its title")
+    case .todo:
+      nil
     }
   }
 
@@ -453,25 +428,47 @@ private struct PlanCheckpointRow: View {
     }
   }
 
-  private var when: Text? {
+  private var when: PlanWhen? {
     if checkpoint.state == .done {
-      return Text("Won", tableName: "Plan", comment: "A phase challenge the learner won")
+      return .words(Text("Won", tableName: "Plan", comment: "A phase challenge the learner won"))
     }
 
-    return checkpoint.whenText(today: today)
+    return checkpoint.when(today: today)
   }
 }
 
 extension PlanPhase.Checkpoint {
   /// When it comes. Dated today, the next session is today's, which may already be under way.
-  func whenText(today: String) -> Text? {
+  func when(today: String) -> PlanWhen? {
     switch when {
     case .nextSession where date == today:
-      Text("Today", tableName: "Plan", comment: "When the phase's challenge comes")
+      .words(Text("Today", tableName: "Plan", comment: "When the phase's challenge comes"))
     case .nextSession:
-      Text("In your next session", tableName: "Plan", comment: "When the phase's challenge comes")
+      .words(
+        Text("In your next session", tableName: "Plan", comment: "When the phase's challenge comes")
+      )
     case .date, .queued:
-      date.map { PlanDate.estimateText($0, today: today) }
+      date.map { .date(PlanDate.estimateText($0, today: today)) }
+    }
+  }
+}
+
+/// When something on the path comes: a date in the data face, like the phases' ends beside it, and
+/// words in the text face at the date's size.
+enum PlanWhen: View {
+  case date(Text)
+  case words(Text)
+
+  var body: some View {
+    switch self {
+    case .date(let text): text.typeStyle(.data)
+    case .words(let text): text.typeStyle(.meta)
+    }
+  }
+
+  var text: Text {
+    switch self {
+    case .date(let text), .words(let text): text
     }
   }
 }
@@ -733,7 +730,7 @@ func planChapterWindow(states: [PlanChapter.State]) -> Range<Int> {
 
 /// Says what a challenge is under its row, since a learner meets one before they've ever taken one.
 struct PlanChallengeLabel: View {
-  let when: Text?
+  let when: PlanWhen?
   let explains: Bool
   let isLanguage: Bool
 

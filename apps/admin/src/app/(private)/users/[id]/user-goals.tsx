@@ -3,6 +3,7 @@ import { GoalKindIcon } from "@/components/goal-kind-icon";
 import { StateMark } from "@/components/state-mark";
 import { type UserGoal, listUserGoals } from "@/data/users/list-user-goals";
 import { formatDate, toWords } from "@/lib/format";
+import { languagePairName } from "@/lib/language-filter";
 import { Meter, MeterFill } from "@zoonk/ui/components/meter";
 import {
   CalendarXIcon,
@@ -18,13 +19,7 @@ import {
 import Link from "next/link";
 
 function goalFacts(goal: UserGoal): string {
-  return [
-    toWords(goal.kind),
-    goal.targetLanguage
-      ? `${goal.language.toUpperCase()} → ${goal.targetLanguage.toUpperCase()}`
-      : goal.language.toUpperCase(),
-    goal.examBlueprint?.name,
-  ]
+  return [toWords(goal.kind), languagePairName(goal), goal.examBlueprint?.name]
     .filter(Boolean)
     .join(" · ");
 }

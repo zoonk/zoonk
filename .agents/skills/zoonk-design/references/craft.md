@@ -21,10 +21,10 @@ The [deliberate choices](#deliberate-choices) at the end are neither.
 
 ### E1. One start edge per column
 
-In a column, every block starts on the column's start edge or on the one inner edge where row text starts after a leading mark (28px in `ListRow`: a 16px mark and a 12px gap; 32px where the mark is a number keycap, which is 20px wide, as in answer options and lists that number keys answer). A panel's content starts at the panel's padding.
+In a column, every block starts on the column's start edge. A list whose rows show a leading mark has one more edge, where its labels start after the mark (28px in `ListRow`: a 16px mark and a 12px gap; 32px where the mark is a number keycap, which is 20px wide, as in answer options and lists that number keys answer). One list has one label edge, mark or no mark: a row without a mark keeps the mark's room empty while the list's other rows show theirs (the answers past the ninth, where number keys show), and gives it up when none do (the same list on a phone, where every label starts on the column's edge). A panel's content starts at the panel's padding.
 
-- **Check.** Hold a ruler down the left side and count where text and boxes begin: the edge, the text-after-mark edge and one indent at most. In the page, each block's ink left minus the column's start edge is 0, 28 or the panel's padding.
-- **Usual break.** One row with a leading icon among rows without one. A chart or calendar with its own inner padding. An icon whose gap to its text differs from the rows above it.
+- **Check.** Hold a ruler down the left side and count where text and boxes begin: the edge, a list's label edge and one indent at most. In the page, each block's ink left minus the column's start edge is 0, 28 or the panel's padding, and within one list every label's is the same, at every screen size and with and without a keyboard.
+- **Usual break.** One row with a leading icon among rows without one. A row that keeps an empty mark's room where no other row shows a mark, or loses it where they do. A chart or calendar with its own inner padding. An icon whose gap to its text differs from the rows above it.
 
 ### E2. A bare glyph sits on the edge by its ink
 
@@ -47,7 +47,7 @@ Trailing things end on the column's end edge: a header's detail, a row's value o
 
 ### E4. One axis for marks, one edge for labels
 
-In a list, a menu or the sidebar, every leading mark (icon, avatar, dot, goal mark, logo) is centered on one vertical line and every label starts on one edge.
+In a list, a menu or the sidebar, every leading mark (icon, avatar, dot, goal mark, logo) is centered on one vertical line and every label starts on one edge, the rows without a mark included ([E1](#e1-one-start-edge-per-column)).
 
 - **Check.** Marks' horizontal centers within 1px of each other; labels' ink lefts within 1px.
 - **Usual break.** Marks of three sizes each given the same gap, so their labels start in three places.
@@ -56,15 +56,15 @@ In a list, a menu or the sidebar, every leading mark (icon, avatar, dot, goal ma
 
 An icon beside one line of text is centered on that line. Beside a title with one description line it is centered on the row, as `ListRowIcon` draws it, level with the row's trailing value and chevron. Beside three or more lines (a title and two descriptions; a title that wraps still counts as one) it sits on the first, as `ListRowLeading` draws it, while the row's trailing value and chevron stay on the row's center: they belong to the whole row.
 
-- **Check.** Icon center to the line's center: 1px or less. One choice per list.
+- **Check.** Icon center to the middle of the line's capitals: 0.5px or less ([E6](#e6-one-line-one-middle)). One choice per list.
 - **Usual break.** `items-center` on a wrapper whose text wraps to four lines in a narrow aside.
 
-### E6. Shared baselines, tops and bottoms
+### E6. One line, one middle
 
-Texts of different sizes on one row share a baseline (a readout and its unit, a title and its count). A control and the text beside it share a center line. Siblings of one kind side by side (tiles, cards, buttons) share a top and a bottom. A row is aligned one way: when its text and controls are centered, its picture is too.
+On one line of a row, every part is level by the middle of its capitals: the label sets the line, and a lead, a mark, a value, a control and an end glyph put their middle on it, whatever their face or size. A small value on the label's baseline has its shorter capitals low beside the chevron, so text shares a baseline only with text of its own face and size, or inside one phrase (a readout and its unit). Geist's line is balanced on its capitals, so centering a part on the line (`items-center`, a box as tall as the line) is centering its capitals. When the row has more lines, a mark sits where [E5](#e5-an-icon-and-its-text-share-a-line) puts it, a lead that is text (a date before its day's lessons) goes with the label's first line, and a value and an end glyph sit on the row's center, level with each other. Siblings of one kind side by side (tiles, cards, buttons) share a top and a bottom. A row is aligned one way: when its text and controls are centered, its picture is too.
 
-- **Check.** Baselines within 1px; centers within 1px; siblings' visible boxes equal in top and height.
-- **Usual break.** `items-center` where `items-baseline` was needed. A character's picture on the row's bottom beside centered text.
+- **Check.** Each part's middle within 0.5px of the label's (a text's middle is its baseline less half its font's cap height, whatever its letters; a glyph's is its ink's); baselines inside a phrase within 0.5px; siblings' visible boxes equal in top and height.
+- **Usual break.** A small value or a date set on a larger label's baseline (`items-baseline`, a first-baseline stack). A lead centered on a row taller than its one-line label, so the two part ways. A character's picture on the row's bottom beside centered text.
 
 ### E7. Bleeds are declared, equal and symmetric
 
@@ -176,7 +176,7 @@ A page's "…", its way back, a sheet's close and a list's row are one size and 
 
 ### Z3. Targets are 44px and don't overlap
 
-Everything tappable takes 44 by 44px to press ([44px targets](app-patterns.md#what-every-page-shares)), and two press areas never overlap.
+Everything tappable takes 44 by 44px to press ([44px targets](app-patterns.md#what-every-page-shares)), and two press areas never overlap. Today's day bar is the [one exception](#exceptions-the-user-granted).
 
 - **Check.** Small controls side by side: their `hit-area`s don't intersect.
 - **Usual break.** Two 30px buttons 8px apart.
@@ -298,9 +298,9 @@ No rail, aside or panel is drawn with nothing in it.
 
 ### D4. One strongest thing
 
-A screen has one filled button, its main action. What asks its own question (a dialog, a suggestion) fills its own answer, small; a notice's buttons are outline wherever the page has a main action. Around them, buttons step down: outline, then ghost.
+A screen has one filled button, its main action. What covers the page (a dialog, a sheet) asks its own question and fills its own answer. A suggestion follows from that: its answer is filled in its sheet, which covers the page, and in its panel on a page with no main action of its own; in the panel beside a page that has one (Today's "Start") it is outline, so the page keeps one filled button (`useMainActionVariant`). A notice's buttons are outline wherever the page has a main action. Around them, buttons step down: outline, then ghost.
 
-- **Check.** Count the filled buttons on the screen, outside a dialog and a suggestion: one.
+- **Check.** Count the filled buttons on the screen, leaving out what covers it: one. In what covers it: one at most.
 
 ## States
 
@@ -411,11 +411,11 @@ A row, card, tab or button for a paid feature looks like its free neighbors: no 
 
 The questions of [the craft read](../SKILL.md#the-craft-read), answered for one screenshot, in this order, each with "fine" or a finding you can point at:
 
-1. **Left edge.** How many places do text and boxes start, and where? (E1, E4)
+1. **Left edge.** How many places do text and boxes start, and where? In each list, does every label start on one edge, the rows without a mark included? (E1, E4)
 2. **Top bar.** Does the back arrow or the close start where the title's first letter starts, and the right-hand "…" or avatar end on the content's right edge, with no part of either past the edge? (E2)
 3. **Right edge.** Do details, values, chevrons and buttons end on one line? (E3)
 4. **Rows.** In each list: marks on one axis, labels on one edge, icons level with their text, rows of one height, dividers of one length? (E4, E5, D1, D2)
-5. **Pairs.** Things side by side: same top, same bottom, same baseline? (E6, H4)
+5. **Pairs.** Things side by side: same top and bottom? On each row, are a small value's or a date's capitals level with the label's and the chevron's? (E6, H4)
 6. **Gaps.** In each group, is any gap unlike its neighbors? Is each title nearer its own content than what's above? (S2, S3, S4)
 7. **Corners.** Which radii can you tell apart, and what wears each? Any box of one job with other corners, any inner corner too round or too square, any pill? (H1, H2, H3)
 8. **Control sizes.** Which heights are on the screen? Any row with two? Any control unlike the same control elsewhere? (Z1, Z2, Z4)

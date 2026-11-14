@@ -51,6 +51,7 @@ export function CheckpointClient({
   const hrefs = useMemo(() => ({ continue: continueHref, exit: "/today" }), [continueHref]);
 
   return (
+    // A link back opens the duel as the server has it now; Back and forward keep the screen as it was.
     <CheckpointScreen
       actions={actions}
       buddy={buddy}
@@ -59,7 +60,7 @@ export function CheckpointClient({
       renderCeremony={(moments, onClose) => (
         <SessionCeremony buddy={buddy} moments={moments} onClose={onClose} />
       )}
-      key={checkpoint.questions.map((question) => question.itemId).join(",")}
+      key={`${router.bfcacheId}:${checkpoint.questions.map((question) => question.itemId).join(",")}`}
     />
   );
 }

@@ -39,6 +39,24 @@ describe(repairItem, () => {
     expect(checkItem({ item: repaired, language: "pt" })).toStrictEqual([]);
   });
 
+  it("puts a plain numeric power between dollar signs and leaves other raw math to the writer", () => {
+    const item = generatedMultipleChoice({
+      context: "The gap is 7 × 10^-5 m and the bill is $5.",
+      options: [option("2^11", true), option("x^4 y")],
+    });
+
+    const repaired = repairItem({ item, language: "en" });
+
+    expect(repaired).toMatchObject({
+      context: "The gap is 7 × $10^{-5}$ m and the bill is $5.",
+      options: [{ text: "$2^{11}$" }, { text: "x^4 y" }],
+    });
+
+    expect(checkItem({ item: repaired, language: "en" })).toStrictEqual([
+      expect.stringContaining('"x^4"'),
+    ]);
+  });
+
   it("drops an option written twice when the question keeps the options its exam asks for", () => {
     const options = ["5", "20", "15", "10", "5,0", "25"].map((text, index) =>
       option(text, index === 4),

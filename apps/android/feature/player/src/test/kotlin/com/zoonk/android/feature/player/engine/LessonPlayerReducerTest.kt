@@ -127,21 +127,20 @@ class LessonPlayerReducerTest {
     }
 
     @Test
-    fun offersIDontKnowYetUntilAGuessIsPickedThenSeeTheAnswerThenContinue() {
+    fun aGuessSaysSeeAnswerAndRevealsUntilOneIsPickedThenChecksThenContinue() {
         val steps = listOf(hookGuessStep("hook"), explanationStep("e1"))
         val fresh = play(steps)
 
-        assertEquals(PrimaryAction(isCheck = false, label = PrimaryLabel.DontKnowYet), fresh.screen().primary)
+        assertEquals(PrimaryAction(isCheck = false, label = PrimaryLabel.SeeAnswer, reveals = true), fresh.screen().primary)
 
         val picked = fresh.then(LessonAction.SelectAnswer("hook", LessonAnswer.Hook("yes")))
         assertEquals(PrimaryAction(isCheck = true, label = PrimaryLabel.SeeAnswer), picked.screen().primary)
         assertEquals(
-            PrimaryLabel.DontKnowYet,
+            PrimaryAction(isCheck = false, label = PrimaryLabel.SeeAnswer, reveals = true),
             picked
                 .then(LessonAction.SelectAnswer("hook", null))
                 .screen()
-                .primary
-                ?.label,
+                .primary,
         )
 
         assertEquals(

@@ -4,12 +4,11 @@ import { DetailField, DetailFields } from "@/components/detail-field";
 import { ProvenanceFields } from "@/components/provenance";
 import { type LibraryLessonDetail } from "@/data/lessons/get-library-lesson";
 import { formatCount, formatDateTime } from "@/lib/format";
+import { LINK_CLASS } from "@/lib/link-class";
 import Link from "next/link";
 import { LessonHeldBack } from "./lesson-held-back";
 
 type Lesson = LibraryLessonDetail["lesson"];
-
-const LINK_CLASS = "hit-area relative underline underline-offset-3";
 
 function LessonChapters({ lesson }: { lesson: Lesson }) {
   if (lesson.chapters.length === 0) {

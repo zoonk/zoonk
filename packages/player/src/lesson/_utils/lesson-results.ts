@@ -42,11 +42,12 @@ export function fromSpokenGrade({
   step: PlayableLibraryStep;
 }): LessonStepResult {
   const target = step.kind === "spokenAnswer" ? step.content.targetText : null;
+  const checked = grade.checked !== false;
 
   return {
     answerText: grade.transcript,
-    checked: true,
-    correctAnswer: grade.isCorrect ? null : target,
+    checked,
+    correctAnswer: grade.isCorrect || !checked ? null : target,
     corrections: [],
     expected: null,
     feedback: grade.explanation,

@@ -12,7 +12,7 @@ function wrap(text: string): string {
 
 function problem(written: string, latex?: string): string {
   const example = latex ? `, as $${latex}$` : "";
-  return String.raw`Shows math as raw text: "${written}". Write it between dollar signs${example}, outside bold or italics, and any other dollar sign in that line as \$.`;
+  return String.raw`Shows raw text that reads as math: "${written}". If it's math, write it between dollar signs${example}, outside bold or italics, and any other dollar sign in that line as \$. If it's code, a file name or a link, put it in backticks.`;
 }
 
 describe(findBareLatex, () => {
@@ -48,7 +48,92 @@ describe(findBareLatex, () => {
     expect(texts.flatMap((text) => find(text))).toStrictEqual([]);
   });
 
-  it("doesn't look for backslash commands, bare subscripts or spaced carets, which are as often something else", () => {
+  it("finds one letter with a bare subscript, and nothing it can wrap for the writer", () => {
+    const text = "At the inlet, C_A0 rises, (E_a) falls, F_Y(y) grows, x_1 is set and C_out drops.";
+
+    expect(find(text)).toStrictEqual([
+      problem("C_A0"),
+      problem("E_a"),
+      problem("F_Y(y)"),
+      problem("x_1"),
+      problem("C_out"),
+    ]);
+
+    expect(wrap(text)).toBe(text);
+  });
+
+  it("finds a one-letter subscript written against operators, brackets or punctuation", () => {
+    const text = "Use C_A0=2, then E_a/RT, 1/x_1, x_1+x_2, 2x_1 and (k_B·T).";
+
+    expect(find(text)).toStrictEqual([
+      problem("C_A0=2"),
+      problem("E_a/RT"),
+      problem("1/x_1"),
+      problem("x_1+x_2"),
+      problem("2x_1"),
+      problem("k_B·T"),
+    ]);
+
+    expect(findBareLatex({ layout: "inline", text: "C_A0 = 2" })).toStrictEqual([problem("C_A0")]);
+
+    expect(wrap(text)).toBe(text);
+  });
+
+  it("finds a one-letter subscript written against a coefficient, a difference or a short product", () => {
+    const text =
+      "Then kC_A², V = QX/[kC_A0(1 − X)], pK_a, kT_e, αC_A, ΔH_f, ΔG_rxn, Δx_1, δq_rev, ΔΔG_bind, ΔpK_a, RT_m and nRT_m.";
+
+    expect(find(text)).toStrictEqual([
+      problem("kC_A²"),
+      problem("QX/[kC_A0(1"),
+      problem("pK_a"),
+      problem("kT_e"),
+      problem("αC_A"),
+      problem("ΔH_f"),
+      problem("ΔG_rxn"),
+      problem("Δx_1"),
+      problem("δq_rev"),
+      problem("ΔΔG_bind"),
+      problem("ΔpK_a"),
+      problem("RT_m"),
+      problem("nRT_m"),
+    ]);
+
+    expect(wrap(text)).toBe(text);
+  });
+
+  it("leaves italics, names, code and math that hold an underscore", () => {
+    const texts = [
+      "Read _carefully_ and _a_ word, then _the whole phrase_.",
+      "Store it in user_id or max_value, and call `x_1 = load()`.",
+      String.raw`The rate is $k = A e^{-E_a/RT}$ and $C_{A0}$ is given.`,
+      "Set user_id=max_value+1 and keep CH_4/UTF_8 in db_1.",
+      "Call __init__ in snake_case, then read API_key, HTTP_proxy, PATH_info and SEEK_SET.",
+      "Rename myVar_1, parseJSON_data, iOS_version and macOS_14, and call `kC_A = 1`.",
+      "Join on customer_id, then sort_values('updated_at') and drop_duplicates by package_id.",
+      "Read weight_lb, contact_name, returned_on, due_on and daily_kwh with pd.to_numeric.",
+      "Merge with left_index=True, call loss_fn(predictions, y) and optimizer.zero_grad().",
+      "Set item_count = gene_reads // total_reads * 1_000_000 and call contar_ativos(status).",
+      "Label reads >sample_A, sample_B and sample_1, matched to NM_000546.6.",
+      "Mark it not_applicable or recorded_zero.",
+      "Open LaTeX_source.tex, build a NetworkX_graph and call getX_value.",
+    ];
+
+    expect(texts.flatMap((text) => find(text))).toStrictEqual([]);
+    expect(texts.flatMap((text) => findBareLatex({ layout: "inline", text }))).toStrictEqual([]);
+  });
+
+  it("asks for backticks around code, a file name or a link that reads as math", () => {
+    expect(find("Read x^2.y, 10^3.m and data/x_1.")).toStrictEqual([
+      problem("x^2.y"),
+      problem("10^3.m"),
+      problem("data/x_1"),
+    ]);
+
+    expect(find("Read `x^2.y`, `10^3.m` and `data/x_1`.")).toStrictEqual([]);
+  });
+
+  it("doesn't look for backslash commands, longer subscripted names or spaced carets, which are as often something else", () => {
     const texts = [
       String.raw`Open C:\log.txt or (logs\log.txt), read data\train.jsonl in src\utils.`,
       String.raw`In a regex, \S matches a non-space and \n starts a new line.`,

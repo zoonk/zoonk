@@ -50,6 +50,63 @@ export async function holdChapterMindMap({
   });
 }
 
+/** A run that fails gives its redraw up itself; this ends the redraws whose runs keep dying before they can. */
+const MAX_REDRAW_ATTEMPTS = 3;
+
+/** Workflow bridge, not authorization: claims an owed redraw for runId unless another live run owns the map, and gives it up after its last attempt. */
+export async function claimChapterMindMapRedraw({
+  chapterId,
+  isRunActive,
+  runId,
+}: {
+  chapterId: string;
+  isRunActive: (runId: string) => Promise<boolean>;
+  runId: string;
+}): Promise<boolean> {
+  const map = await prisma.chapterMindMap.findUnique({
+    select: { redrawOwedAt: true, runId: true, status: true },
+    where: { chapterId },
+  });
+
+  if (!map?.redrawOwedAt) {
+    return false;
+  }
+
+  const running = map.status === "running";
+
+  if (running && map.runId === runId) {
+    return true;
+  }
+
+  if (running && map.runId && (await isRunActive(map.runId))) {
+    return false;
+  }
+
+  const unowned = {
+    chapterId,
+    redrawOwedAt: { not: null },
+    ...(running
+      ? { runId: map.runId, status: "running" as const }
+      : { status: "completed" as const }),
+  };
+
+  const claimed = await prisma.chapterMindMap.updateMany({
+    data: { redrawAttempts: { increment: 1 }, runId, status: "running" },
+    where: { ...unowned, redrawAttempts: { lt: MAX_REDRAW_ATTEMPTS } },
+  });
+
+  if (claimed.count > 0) {
+    return true;
+  }
+
+  await prisma.chapterMindMap.updateMany({
+    data: { redrawOwedAt: null, status: "completed" },
+    where: { ...unowned, redrawAttempts: { gte: MAX_REDRAW_ATTEMPTS } },
+  });
+
+  return false;
+}
+
 /** Workflow bridge, not authorization; requires a learner-claimed run and preserves existing text on retries. */
 export async function writeChapterMindMapStructure({
   analytics,
@@ -57,17 +114,24 @@ export async function writeChapterMindMapStructure({
 }: {
   analytics: MindMapAnalytics;
   chapterId: string;
-}): Promise<void> {
+}): Promise<boolean> {
   const map = await findMindMap(chapterId);
 
   if (!map) {
     throw new Error(`Chapter ${chapterId} has no mind map to write.`);
   }
 
-  await prisma.chapterMindMap.update({ data: { runId: analytics.runId }, where: { chapterId } });
+  const claimed = await prisma.chapterMindMap.updateMany({
+    data: { runId: analytics.runId },
+    where: { OR: [{ runId: null }, { runId: analytics.runId }], chapterId, status: "running" },
+  });
+
+  if (claimed.count === 0) {
+    return false;
+  }
 
   if (map.structure) {
-    return;
+    return true;
   }
 
   const source = await loadMindMapSource(chapterId);
@@ -90,6 +154,8 @@ export async function writeChapterMindMapStructure({
     },
     where: { chapterId },
   });
+
+  return true;
 }
 
 const NO_IMAGE = {
@@ -119,7 +185,7 @@ export async function drawChapterMindMap({
     throw new Error(`Chapter ${chapterId}'s mind map has no text to draw.`);
   }
 
-  if (map.imageUrl && corrections.length === 0) {
+  if (map.runId !== analytics.runId || (map.imageUrl && corrections.length === 0)) {
     return null;
   }
 
@@ -135,24 +201,29 @@ export async function drawChapterMindMap({
   return { image: data.image, model: provenance.model };
 }
 
-/** Workflow bridge, not authorization; show immediately, then check text afterward. Null drawn only finishes an already-stored map. */
+/** Workflow bridge, not authorization; show immediately, then check text afterward. Null drawn only finishes an already-stored map. Writes nothing once runId lost the map. */
 export async function showChapterMindMap({
   chapterId,
   drawn,
+  runId,
 }: {
   chapterId: string;
   drawn: DrawnMindMap | null;
+  runId: string;
 }): Promise<void> {
   const map = await findMindMap(chapterId);
 
-  if (!map) {
-    throw new Error(`Chapter ${chapterId} has no mind map to show.`);
+  if (map?.runId !== runId) {
+    return;
   }
 
   if (!drawn) {
-    await prisma.chapterMindMap.update({
-      data: { generatedAt: map.generatedAt ?? new Date(), status: "completed" },
-      where: { chapterId },
+    await prisma.chapterMindMap.updateMany({
+      data: {
+        generatedAt: map.generatedAt ?? new Date(),
+        status: map.redrawOwedAt ? "running" : "completed",
+      },
+      where: { chapterId, runId },
     });
 
     return;
@@ -161,17 +232,17 @@ export async function showChapterMindMap({
   const ownerId = map.chapter.visibility === "private" ? map.chapter.ownerId : null;
   const saved = await saveMindMapImage({ image: drawn.image, ownerId });
 
-  await prisma.chapterMindMap.update({
+  await prisma.chapterMindMap.updateMany({
     data: {
       generatedAt: new Date(),
       imageHeight: saved.height,
       imageModel: drawn.model,
       imageUrl: saved.url,
       imageWidth: saved.width,
-      status: "completed",
+      status: map.redrawOwedAt ? "running" : "completed",
       thumbnailUrl: saved.thumbnailUrl,
     },
-    where: { chapterId },
+    where: { chapterId, runId },
   });
 }
 
@@ -212,15 +283,17 @@ export async function checkChapterMindMapImage({
   return { imageUrl: map.imageUrl, passed: data.passed, problems: data.problems };
 }
 
-/** Workflow bridge, not authorization; removes only the named current image link and preserves the file for open readers. */
+/** Workflow bridge, not authorization; removes only the named current image link of a map runId still owns and preserves the file for open readers. */
 export async function removeChapterMindMapImage({
   chapterId,
   imageUrl,
+  runId,
 }: {
   chapterId: string;
   imageUrl: string;
+  runId: string;
 }): Promise<void> {
-  await prisma.chapterMindMap.updateMany({ data: NO_IMAGE, where: { chapterId, imageUrl } });
+  await prisma.chapterMindMap.updateMany({ data: NO_IMAGE, where: { chapterId, imageUrl, runId } });
 }
 
 /** Workflow bridge, not authorization; runId must still own the map. */
@@ -232,7 +305,36 @@ export async function failChapterMindMap({
   runId: string;
 }): Promise<void> {
   await prisma.chapterMindMap.updateMany({
+    data: { redrawOwedAt: null, status: "completed" },
+    where: { chapterId, redrawOwedAt: { not: null }, runId },
+  });
+
+  await prisma.chapterMindMap.updateMany({
     data: { status: "failed" },
     where: { OR: [{ runId }, { runId: null }], chapterId, status: "running" },
   });
+}
+
+export async function finishChapterMindMapRedraw({
+  chapterId,
+  runId,
+}: {
+  chapterId: string;
+  runId: string;
+}): Promise<void> {
+  await prisma.chapterMindMap.updateMany({
+    data: { redrawOwedAt: null, status: "completed" },
+    where: { chapterId, runId },
+  });
+}
+
+/** Includes maps a live run still redraws, which a start under the map's run token joins. */
+export async function listOwedMindMapRedraws(): Promise<string[]> {
+  const rows = await prisma.chapterMindMap.findMany({
+    orderBy: { redrawOwedAt: "asc" },
+    take: 100,
+    where: { redrawOwedAt: { not: null } },
+  });
+
+  return rows.map((row) => row.chapterId);
 }

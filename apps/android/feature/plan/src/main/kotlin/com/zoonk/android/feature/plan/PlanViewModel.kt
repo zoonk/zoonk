@@ -15,6 +15,7 @@ import com.zoonk.api.models.PlanBasesAdvice
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangePreview
 import com.zoonk.api.models.PlanChangeResult
+import com.zoonk.api.models.PlanFitOffer
 import com.zoonk.api.models.PlanTimeToCover
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
@@ -35,7 +36,7 @@ import java.util.UUID
  * What a write did that the screen acts on: a refusal said in a snackbar (the menu that started it
  * has closed by then), or an archived goal, which leaves the Plan.
  */
-enum class PlanEvent { SaveFailed, Archived }
+enum class PlanEvent { Archived, }
 
 enum class ResumeFailure { GoalLimit, Failed }
 
@@ -78,6 +79,7 @@ class PlanViewModel(
     private val store: PlanStore,
     private val goalId: UUID,
     writingWaits: WritingWaits,
+    private val saveFailed: () -> Unit = {},
 ) : ViewModel() {
     private val saving = MutableStateFlow(false)
     private val resumeFailureState = MutableStateFlow<ResumeFailure?>(null)
@@ -178,7 +180,7 @@ class PlanViewModel(
                     if (resuming) {
                         resumeFailureState.value = if (result.status == TOO_MANY_REQUESTS) ResumeFailure.GoalLimit else ResumeFailure.Failed
                     } else {
-                        notices.send(PlanEvent.SaveFailed)
+                        saveFailed()
                     }
                 }
 
@@ -203,7 +205,7 @@ class PlanViewModel(
     /** Prepares the new country's plan again after that failed; a retry that doesn't start says so in a snackbar. */
     fun retryCountryRebuild() =
         saveGoal(PlanPart.CountryRebuild, saved = {}) {
-            store.retryCountryRebuild(goalId).also { if (it is MutationResult.Failed) notices.send(PlanEvent.SaveFailed) }
+            store.retryCountryRebuild(goalId).also { if (it is MutationResult.Failed) saveFailed() }
         }
 
     private fun saveGoal(
@@ -423,6 +425,53 @@ class PlanViewModel(
     fun clearSlotPreview() {
         slotPreviewState.value = PlanPreviewState.Idle
     }
+
+    /**
+     * Main's fit offer: adds its lessons when its numbers are today's, and applies the numbers a
+     * check showed instead on the next tap. Otherwise it checks today's first, in the slot's
+     * preview, and adds them only when they're the card's. Not now, closing the suggestion or
+     * leaving the Plan clears that preview, so a late answer adds nothing.
+     */
+    fun addFitOffer(
+        plan: Plan,
+        offer: PlanFitOffer,
+    ) {
+        val operations = offer.operations.map { it.op }
+        val shown = slotPreviewState.value.of(operations, plan)
+        if (offer.canApply || (shown is PlanPreviewState.Ready && !shown.preview.unchanged && shown.preview.effect != null)) {
+            addFitLessons(operations)
+            return
+        }
+
+        val request = PlanPreviewState.Loading(operations, plan)
+        slotPreviewState.value = request
+        viewModelScope.launch {
+            val result = store.preview(goalId, operations)
+            if (result is MutationResult.Obsolete) return@launch
+            val today = (result as? MutationResult.Done)?.value
+            val same = today != null && today.ready && !today.unchanged && today.effect == offer.effect
+            var wanted = false
+            slotPreviewState.update { current ->
+                wanted = current === request
+                if (wanted && same) PlanPreviewState.Idle else current.resolve(request, today)
+            }
+            if (wanted && same) addFitLessons(operations)
+        }
+    }
+
+    private fun addFitLessons(operations: List<PlanOp>) =
+        change(PlanPart.Suggestion, operations) { saved ->
+            when {
+                saved == null -> {
+                    saveFailed()
+                }
+
+                saved.status == PlanChangeResult.Status.APPLIED -> {
+                    clearSlotPreview()
+                    slotState.result = SlotResult(SlotItem.FitLessons, saved.change)
+                }
+            }
+        }
 
     private fun ask(
         state: MutableStateFlow<PlanPreviewState>,

@@ -37,6 +37,7 @@ import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitActions
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.limitLifted
 import com.zoonk.android.ui.components.limitWords
 import java.util.UUID
 
@@ -157,7 +158,9 @@ fun SpeechFailedNote(
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        val reason = limit?.let { limitWords(it, LimitSubject.Help).run { title ?: line } } ?: stringResource(R.string.audio_did_not_play)
+        // Once the day a cap gave comes, the note is the plain failure with its Try again.
+        val refusal = limit?.takeUnless { limitLifted(it) }
+        val reason = refusal?.let { limitWords(it, LimitSubject.Help).run { title ?: line } } ?: stringResource(R.string.audio_did_not_play)
         Text(
             text = if (text == null) reason else stringResource(R.string.audio_here_is_what_it_says, reason),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -170,16 +173,16 @@ fun SpeechFailedNote(
                 textAlign = TextAlign.Start,
             )
         }
-        if (limit == null || limit is Limit.SlowDown) {
+        if (refusal == null || refusal is Limit.SlowDown) {
             OutlinedButton(onClick = onRetry) {
                 Icon(painterResource(R.drawable.ic_refresh), contentDescription = null, modifier = Modifier.size(buttonIconSize()))
                 Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                 Text(stringResource(R.string.audio_try_again))
             }
         }
-        if (limit != null && navigator != null) {
+        if (refusal != null && navigator != null) {
             LimitActions(
-                limit,
+                refusal,
                 onCreateAccount = { navigator.open(AppRoute.Login) },
                 onSubscribe = { navigator.open(AppRoute.Subscription) },
             )

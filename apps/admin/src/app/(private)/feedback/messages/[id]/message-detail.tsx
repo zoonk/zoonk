@@ -4,6 +4,7 @@ import { ProvenanceFields } from "@/components/provenance";
 import { type getFeedbackMessage } from "@/data/feedback/get-feedback-message";
 import Link from "next/link";
 import { getFeedbackLearnerLabel, getFeedbackSubject } from "../../_utils/feedback-labels";
+import { LINK_CLASS } from "@/lib/link-class";
 
 export type FeedbackMessage = NonNullable<Awaited<ReturnType<typeof getFeedbackMessage>>>;
 
@@ -14,7 +15,7 @@ function MessageSender({ message }: { message: FeedbackMessage }) {
 
   return (
     <>
-      <Link className="underline underline-offset-3" href={`/users/${message.user.id}`} prefetch>
+      <Link className={LINK_CLASS} href={`/users/${message.user.id}`} prefetch>
         {getFeedbackLearnerLabel(message.user)}
       </Link>
       <span className="text-muted-foreground"> · {message.email ?? "no reply email"}</span>
@@ -30,7 +31,7 @@ function MessageSubject({ message }: { message: FeedbackMessage }) {
   }
 
   return (
-    <Link className="underline underline-offset-3" href={message.contentHref} prefetch>
+    <Link className={LINK_CLASS} href={message.contentHref} prefetch>
       {subject}
     </Link>
   );

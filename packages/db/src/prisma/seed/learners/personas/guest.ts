@@ -10,7 +10,7 @@ export const guest: SeedLearner = {
       key: "cloud-chances",
       seconds: 17,
       skill: "electron-cloud",
-      step: { lesson: "electron-cloud", position: 3 },
+      step: { lesson: "electron-cloud", position: 4 },
     },
     {
       answer: { selectedOptionId: "fast" },
@@ -33,7 +33,7 @@ export const guest: SeedLearner = {
       },
       seconds: 26,
       skill: "ground-state",
-      step: { lesson: "electron-cloud", position: 6 },
+      step: { lesson: "electron-cloud", position: 7 },
     },
   ],
   brainPower: 60,

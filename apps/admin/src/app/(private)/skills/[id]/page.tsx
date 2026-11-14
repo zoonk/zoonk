@@ -9,7 +9,7 @@ import { AdminSectionSkeleton } from "@/components/admin-section";
 import { AdminRecordTabs, readAdminTab } from "@/components/admin-tabs";
 import { getSkill } from "@/data/skills/get-skill";
 import { toWords } from "@/lib/format";
-import { languageName } from "@/lib/language-filter";
+import { languagePairName } from "@/lib/language-filter";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -74,9 +74,7 @@ async function SkillDetailContent({ params, searchParams }: PageProps<"/skills/[
       <AdminDetailHeader
         facts={[
           skill.level && toWords(skill.level),
-          skill.targetLanguage
-            ? `${languageName(skill.targetLanguage)}, taught in ${languageName(skill.language)}`
-            : languageName(skill.language),
+          languagePairName(skill),
           skill.visibility === "private" ? "Private" : "Open to everyone",
           skill.mergedInto && `Merged into ${skill.mergedInto.name}`,
         ]}

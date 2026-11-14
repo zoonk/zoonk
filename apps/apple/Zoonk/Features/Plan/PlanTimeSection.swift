@@ -61,7 +61,7 @@ struct PlanTimeSection: View {
               return
             }
 
-            Task { await setMinutes(minutes) }
+            editor.run { await setMinutes(minutes) }
           })
       ) {
         ForEach(
@@ -128,7 +128,7 @@ struct PlanTimeSection: View {
             asked = nil
             round += 1
           } onUseOffer: { minutes in
-            Task { await setMinutes(minutes) }
+            editor.run { await setMinutes(minutes) }
           }
         }
       }
@@ -165,7 +165,7 @@ struct PlanTimeSection: View {
 
   private func moveDate(to fittingDate: String) -> some View {
     Button {
-      Task { await editor.change([.targetDate(fittingDate)]) }
+      editor.run { await editor.change([.targetDate(fittingDate)]) }
     } label: {
       Text(
         "Move your date to \(PlanDate.text(fittingDate, today: plan.today))", tableName: "Plan",
@@ -236,7 +236,7 @@ struct PlanFullCourseSection: View {
                 if isOn {
                   ask()
                 } else {
-                  Task { await editor.change([.fullCourse(false)]) }
+                  editor.run { await editor.change([.fullCourse(false)]) }
                 }
               })
           ) {

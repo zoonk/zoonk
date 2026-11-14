@@ -1,21 +1,22 @@
-import { type InlineMarkup, parseInlineMarkup } from "@zoonk/utils/inline-markup";
 import {
   type MarkdownTableAlign,
   isMarkdownTableStart,
   readMarkdownTable,
 } from "@zoonk/utils/markdown-table";
+import { type RichInlineSegment } from "../../rich-text/rich-inline-segments";
+import { parseRichInline } from "../../rich-text/rich-text-parser";
 
 /**
- * Paragraphs, GFM pipe tables and inline code, bold and italics, as item writers are told; anything
- * else stays text.
+ * Paragraphs, GFM pipe tables, and lesson inline text (code, bold, italics and `$…$` math), as item
+ * writers are told; anything else stays text.
  */
 export type ItemTextBlock =
-  | { kind: "paragraph"; lines: InlineMarkup[][] }
+  | { kind: "paragraph"; lines: RichInlineSegment[][] }
   | {
       align: MarkdownTableAlign[];
-      header: InlineMarkup[][];
+      header: RichInlineSegment[][];
       kind: "table";
-      rows: InlineMarkup[][][];
+      rows: RichInlineSegment[][][];
     };
 
 const LINE_BREAKS = /\s*\r?\n\s*/gu;
@@ -29,22 +30,29 @@ function keepAmountsTogether(text: string): string {
     .replaceAll(AMOUNT_THEN_SIGN, `$<digit>${NO_BREAK_SPACE}`);
 }
 
-function parseInline(text: string): InlineMarkup[] {
-  return parseInlineMarkup(text).map((segment) =>
-    segment.kind === "code" ? segment : { ...segment, text: keepAmountsTogether(segment.text) },
+function isProse(segment: RichInlineSegment): boolean {
+  return segment.kind === "text" || segment.kind === "bold" || segment.kind === "italic";
+}
+
+function parseInline(text: string): RichInlineSegment[] {
+  return parseRichInline(text).map((segment) =>
+    isProse(segment) ? { ...segment, text: keepAmountsTogether(segment.text) } : segment,
   );
 }
 
-function toLines(segments: readonly InlineMarkup[]): InlineMarkup[][] {
-  return segments.reduce<InlineMarkup[][]>(
+function toLines(segments: readonly RichInlineSegment[]): RichInlineSegment[][] {
+  return segments.reduce<RichInlineSegment[][]>(
     (lines, segment) =>
-      segment.text.split("\n").reduce((current, text, index) => {
-        const piece = text ? [{ ...segment, text }] : [];
+      (isProse(segment) ? segment.text.split("\n") : [segment.text]).reduce(
+        (current, text, index) => {
+          const piece = text ? [{ ...segment, text }] : [];
 
-        return index === 0
-          ? [...current.slice(0, -1), [...(current.at(-1) ?? []), ...piece]]
-          : [...current, piece];
-      }, lines),
+          return index === 0
+            ? [...current.slice(0, -1), [...(current.at(-1) ?? []), ...piece]]
+            : [...current, piece];
+        },
+        lines,
+      ),
     [[]],
   );
 }
@@ -99,12 +107,6 @@ export function parseItemText(text: string): ItemTextBlock[] {
   return readBlocks(text.split(/\r?\n/u), 0);
 }
 
-export function parseItemLine(text: string): InlineMarkup[] {
+export function parseItemLine(text: string): RichInlineSegment[] {
   return parseInline(text.trim().replaceAll(LINE_BREAKS, " "));
-}
-
-export function toPlainItemLine(text: string): string {
-  return parseItemLine(text)
-    .map((segment) => segment.text)
-    .join("");
 }

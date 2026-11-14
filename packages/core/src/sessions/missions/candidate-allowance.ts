@@ -32,8 +32,8 @@ export function hasMissionAllowance({
       counts: {
         ...counts,
         day: counts.day + previousUses,
-        month: counts.month + previousUses,
         total: counts.total + previousUses,
+        usedLast30Days: counts.usedLast30Days + previousUses,
       },
       generated: false,
       kind,

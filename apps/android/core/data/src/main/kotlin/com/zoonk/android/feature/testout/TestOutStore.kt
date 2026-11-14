@@ -34,6 +34,7 @@ data class RecordKey(
 sealed interface TestOutRead {
     /** No [questions] yet: the learner's Start writes them. */
     data class Ready(
+        val chapterTitle: String,
         val passMark: Double,
         val questions: List<Question>,
         val words: TrueFalseWords,
@@ -76,6 +77,7 @@ class LiveTestOutApi(
         when (val read = perform { api.clients(session).learner.getChapterTestOut(key.goalId, key.chapterId) }) {
             is GetChapterTestOut200Response.ChapterTestOutValue -> {
                 TestOutRead.Ready(
+                    chapterTitle = read.value.chapterTitle,
                     passMark = read.value.passMark,
                     questions = read.value.questions.map { it.recode() },
                     words = read.value.trueFalseLabels.recode(),

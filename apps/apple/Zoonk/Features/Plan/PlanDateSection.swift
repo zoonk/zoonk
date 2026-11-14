@@ -52,7 +52,7 @@ struct PlanDateSection: View {
       if let picked, picked != saved, PlanDate.isoDate(picked) != schedule.targetDate || namedMonth
       {
         Button {
-          Task {
+          editor.run {
             if await save(PlanDate.isoDate(picked)) {
               saved = picked
             }
@@ -69,7 +69,7 @@ struct PlanDateSection: View {
             .foregroundStyle(.mutedForeground)
 
           Button {
-            Task { await save(noticeDay.date) }
+            editor.run { await save(noticeDay.date) }
           } label: {
             Text("Use this date", tableName: "Plan", comment: "Takes the notice's day as the date")
           }

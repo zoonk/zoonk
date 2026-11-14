@@ -2,7 +2,7 @@ import "server-only";
 import { z } from "zod";
 import { type LessonStepAnswer, type LibraryLessonRun, lessonStepAnswerSchema } from "../contract";
 import { type PlayableLibraryLesson, type PlayableLibraryStep } from "../playable-lesson";
-import { toCheckResult, toSavedVerdict } from "./check-results";
+import { NOT_CHECKED, toCheckResult, toSavedVerdict } from "./check-results";
 import { type LessonAnswerVerdict, gradeLessonAnswer } from "./grade-lesson-answer";
 import { type ProgressAttempt } from "./lesson-runs";
 
@@ -16,20 +16,7 @@ type RegradedAnswer = {
 
 const recordingSchema = z.object({ kind: z.literal("spoken"), transcript: z.string() });
 
-const UNGRADED_VERDICT: LessonAnswerVerdict = {
-  answerText: null,
-  checked: false,
-  correctAnswer: null,
-  corrections: [],
-  expected: null,
-  feedback: null,
-  isCorrect: false,
-  keyPoints: null,
-  score: null,
-  spelling: null,
-};
-
-const UNGRADED: RegradedAnswer = { answer: null, fromCode: false, verdict: UNGRADED_VERDICT };
+const UNGRADED: RegradedAnswer = { answer: null, fromCode: false, verdict: NOT_CHECKED };
 
 function readRecording({
   saved,
@@ -48,11 +35,7 @@ function readRecording({
 
   return {
     ...UNGRADED,
-    verdict: {
-      ...UNGRADED_VERDICT,
-      answerText: recording.data.transcript,
-      correctAnswer: targetText,
-    },
+    verdict: { ...NOT_CHECKED, answerText: recording.data.transcript, correctAnswer: targetText },
   };
 }
 

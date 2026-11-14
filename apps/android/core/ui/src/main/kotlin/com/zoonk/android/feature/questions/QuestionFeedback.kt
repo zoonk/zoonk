@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.questions
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -9,6 +10,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.LayoutDirection
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.DiffKind
@@ -20,6 +26,9 @@ import com.zoonk.android.ui.components.FeedbackTone
 import com.zoonk.android.ui.components.FeedbackVerdict
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMathAnswer
+import com.zoonk.android.ui.richtext.RichTextLine
+import com.zoonk.android.ui.richtext.SpokenText
+import com.zoonk.android.ui.theme.GeistMono
 
 /**
  * What a checked question got (main's `QuestionFeedback`): the verdict and any streak, the right
@@ -48,11 +57,7 @@ fun QuestionFeedback(
         )
 
         if (!feedback.isCorrect && question.format.showsRightAnswer) {
-            answerText(
-                feedback.correctAnswer,
-                question,
-                words,
-            )?.let { Text(stringResource(R.string.questions_right_answer, it), style = explanation) }
+            AnswerLine(R.string.questions_right_answer, feedback.correctAnswer, question, words, explanation)
         }
 
         feedback.explanation?.let { ItemText(it, style = explanation) }
@@ -82,9 +87,44 @@ fun verdict(
         else -> Verdict(stringResource(R.string.questions_not_quite), FeedbackTone.Wrong)
     }
 
+/**
+ * [label] around an answer: picked options, pairs and numbers as item text with their math, and a
+ * typed answer exactly as typed, since it's plain text (`__init__` keeps its underscores). With
+ * [mutedLabel], the label's words are muted and a number is set in mono, as main's checkpoint
+ * review draws its "Answer:" line.
+ */
+@Composable
+fun AnswerLine(
+    @StringRes label: Int,
+    answer: Answer?,
+    question: Question,
+    words: TrueFalseWords,
+    style: TextStyle,
+    mutedLabel: Boolean = false,
+) {
+    val text = answerText(answer, question, words) ?: return
+    if (!mutedLabel) {
+        val line = stringResource(label, text)
+        if (answer is Answer.Text) Text(line, style = style) else ItemLine(line, style = style)
+        return
+    }
+    val (before, after) = stringResource(label, ANSWER_MARK).split(ANSWER_MARK).let { it.first() to it.getOrElse(1) { "" } }
+    val shown = if (answer is Answer.Text) SpokenText(AnnotatedString(text)) else itemLine(text)
+    val muted = SpanStyle(color = MaterialTheme.colorScheme.onSurfaceVariant)
+    val line =
+        buildAnnotatedString {
+            withStyle(muted) { append(before) }
+            if (answer is Answer.Numeric) withStyle(SpanStyle(fontFamily = GeistMono)) { append(shown.text) } else append(shown.text)
+            withStyle(muted) { append(after) }
+        }
+    RichTextLine(SpokenText(line, shown.spoken?.let { before + it + after }), Modifier, style)
+}
+
+private const val ANSWER_MARK = "\uE000"
+
 /** An answer in words: an option's, steps in their order, pairs, a number with its unit. */
 @Composable
-fun answerText(
+private fun answerText(
     answer: Answer?,
     question: Question,
     words: TrueFalseWords,
@@ -98,15 +138,15 @@ fun answerText(
         }
 
         is Answer.Choice -> {
-            options.getOrNull(answer.index)?.let(::plainItemLine)
+            options.getOrNull(answer.index)
         }
 
         is Answer.Choices -> {
-            answer.indexes.joinToString("; ") { plainItemLine(options.getOrElse(it) { "" }) }
+            answer.indexes.joinToString("; ") { options.getOrElse(it) { "" } }
         }
 
         is Answer.Order -> {
-            answer.order.joinToString(" → ") { plainItemLine(options.getOrElse(it) { "" }) }
+            answer.order.joinToString(" → ") { options.getOrElse(it) { "" } }
         }
 
         is Answer.Text -> {
@@ -126,7 +166,7 @@ fun answerText(
             question.left
                 .orEmpty()
                 .mapIndexed { index, entry ->
-                    "${plainItemLine(entry)} → ${plainItemLine(right.getOrElse(answer.matches.getOrElse(index) { -1 }) { "" })}"
+                    "$entry → ${right.getOrElse(answer.matches.getOrElse(index) { -1 }) { "" }}"
                 }.joinToString("; ")
         }
     }
@@ -141,16 +181,8 @@ fun WorkedSteps(
     if (steps.isEmpty()) return
     val lines =
         steps.mapIndexed { index, step ->
-            DiffLine(
-                if (index ==
-                    steps.lastIndex
-                ) {
-                    DiffKind.Added
-                } else {
-                    DiffKind.Context
-                },
-                plainItemLine(step),
-            )
+            val line = itemLine(step)
+            DiffLine(if (index == steps.lastIndex) DiffKind.Added else DiffKind.Context, line.text, spoken = line.spoken)
         }
 
     // A formula reads left to right in every language.

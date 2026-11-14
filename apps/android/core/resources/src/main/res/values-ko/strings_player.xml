@@ -9,7 +9,6 @@
   "player_action_see_answer": "3e688b948a210965412162f49bc38759ff6c882a9025bc0f2d03382b43d99902",
   "player_action_see_how_it_went": "a9519967f27004f4bb76e201c9c4680eb3c663da756770c2b5cff6bdbcfd1f28",
   "player_action_start": "e2c9701c7258a63bd5a61ac0139cdd61e391ba01568124b9ac04bbf6ef7c98f6",
-  "player_activity_correct_answer": "a6a3ea520e00cc42543ce3d99d13e4129fe60f74c023b989067c69acb07228d8",
   "player_activity_example_data": "dd723799ce152b28251c1420f1343a4e2fa415986c49e53562ffdfb29bce035b",
   "player_activity_source": "a0694ea0103e19e0d81b5a56e32addc6f2bc81e053fbc25f3b58b6a90c469b91",
   "player_activity_your_answer": "ed08a1151a171117690bcb19b316e2ca00b4f7be83c0aa63878ab8cb2570a5e8",
@@ -61,7 +60,6 @@
   "player_citation_from_material": "108a1fde8b24f6841ff933d5575762d34b943986477f83a460d839506023df3b",
   "player_citation_not_in_material": "fab9784325bca754b4f352062babb82149b465b4b5f69053dd15770933062cf8",
   "player_comes_back_at_end": "fe1143921ac73e6fb2773d05cd9efefac819858de98b28756cc8cfa707cebd3e",
-  "player_correct_answer_label": "81b7b7930ecd21e4cb42a23e792d7fc458b2b1560edb4bb3ecf0ed4f408d23bc",
   "player_correction_right": "ed2d539af519be44a4505fdc0a891eb15901fd138e6a819e0f98b543f7267e4b",
   "player_correction_yours": "20e596a0138002191def30549074c66d29386725cb8ef0bc33e1ef3ffdf48fd5",
   "player_course_size": "391a02cb6e34185d525c024e19be2d62fb8075f03892d82889f5ffc58f7fd65e",
@@ -167,6 +165,7 @@
   "player_time_studied": "8d717833957281ebf127c7c0f566d662795543a96bcf9a0decffa53dbd368118",
   "player_try_again": "95737d2eb9a6f0f443a636e4cc818c39e187a282219e4a7012c86b1e02f40484",
   "player_unchecked_compare": "0bfe5624bad4fbe94f558d73c678a9302ac9aea43d0c996e04b2ad8dfc2a9400",
+  "player_unchecked_updated": "b8d5cec5d35c66705b66c37f91dfb90aa2dc878183cd4c261dcb8185325a79f7",
   "player_verdict_almost": "c2f9494c4261da5dcbb17f9182bd2df6263cf2b493934d4385d1aa062d6299e9",
   "player_verdict_correct": "3b18dcacc22a7fca60ebc67fdfc4003b0439827208dafd3cd53766035422657d",
   "player_verdict_guess": "a2883dfcd42122ead2739a5cde444120817bc556793779686900b8fddb839a59",
@@ -238,10 +237,12 @@
     <string name="player_verdict_incorrect">정답이 아니에요</string>
     <string name="player_verdict_sample_answer">이렇게 답하면 좋아요</string>
     <string name="player_verdict_typo">맞았어요, 철자만 확인해 보세요</string>
+    <!-- Verdict when the learner's answer wasn't checked this time. -->
     <string name="player_verdict_unchecked">이번에는 답을 확인하지 않았어요</string>
+    <!-- Under “Not checked this time”: we corrected this lesson question while the learner was in the lesson, so their answer isn't graded either way. -->
+    <string name="player_unchecked_updated">시작한 뒤에 이 문제가 업데이트되어 이번 답은 반영되지 않아요.</string>
     <string name="player_answer_feedback">답안 피드백</string>
     <string name="player_spelled">철자:</string>
-    <string name="player_correct_answer_label">정답:</string>
     <!-- After a right answer whose words came in another order, before the lesson's own version of the sentence, which is right too. -->
     <string name="player_also_correct_label">이 문장도 맞아요:</string>
     <string name="player_explain_answer">내 답 설명하기</string>
@@ -357,7 +358,6 @@
     <!-- %1$s names where an activity's data comes from, such as "World Bank (2023)". -->
     <string name="player_activity_source">출처: %1$s</string>
     <string name="player_activity_your_answer">내 답:</string>
-    <string name="player_activity_correct_answer">정답:</string>
     <!-- A work challenge's label: %1$s is where it happens, such as "Customer support". -->
     <string name="player_challenge_case">챌린지 · %1$s</string>
     <!-- A what-if scenario's label: %1$s is where it happens. -->

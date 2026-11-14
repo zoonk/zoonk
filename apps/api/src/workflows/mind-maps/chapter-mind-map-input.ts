@@ -5,6 +5,7 @@ import { type ContentAnalytics } from "../_shared/content-analytics";
 export type ChapterMindMapInput = {
   analytics?: ContentAnalytics;
   chapterId: string;
+  redraw?: boolean;
   lessons?: { forExam: boolean; ids: string[] };
 };
 

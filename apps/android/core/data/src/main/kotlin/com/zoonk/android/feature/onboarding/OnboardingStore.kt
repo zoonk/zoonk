@@ -16,6 +16,9 @@ import com.zoonk.android.feature.audio.VoiceRecording
 import com.zoonk.android.feature.audio.toGradeOutcome
 import com.zoonk.android.feature.onboarding.setup.LevelChoice
 import com.zoonk.android.feature.profile.profileQuestion
+import com.zoonk.android.ui.components.Limit
+import com.zoonk.android.ui.components.LimitPeriod
+import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.CreateUploadRequest
 import com.zoonk.api.models.CreateUploadRequestOneOf
@@ -60,6 +63,7 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.put
 import java.net.URI
 import java.net.URISyntaxException
+import java.time.Instant
 import java.util.TimeZone
 import java.util.UUID
 
@@ -514,13 +518,26 @@ class OnboardingStore(
         }
 }
 
-/** [period] is `day`, `month` or `total`; [resource] what ran out (`goal`, `activeGoals`, `upload`); [tier] `guest`, `free` or `plus`. */
+/**
+ * [period] is `day`, `rolling30Days` or `total`; [resource] what ran out (`goal`, `activeGoals`, `upload`); [tier] `guest`,
+ * `free` or `plus`; [availableAt] when one more fits, for a cap counted over the last 30 days.
+ */
 @Serializable
 data class UsageLimit(
     val period: String,
     val resource: String,
     val tier: String,
-)
+    val availableAt: String? = null,
+) {
+    /** As the app's limits word it, so every gate reads the same. */
+    val reached: Limit.Reached
+        get() =
+            Limit.Reached(
+                LimitTier.entries.firstOrNull { it.name.equals(tier, ignoreCase = true) } ?: LimitTier.Free,
+                LimitPeriod.entries.firstOrNull { it.name.equals(period, ignoreCase = true) },
+                availableAt?.let { runCatching { Instant.parse(it) }.getOrNull() },
+            )
+}
 
 @Serializable
 private class LimitDetails(

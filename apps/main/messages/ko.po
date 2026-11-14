@@ -2130,10 +2130,10 @@ msgctxt "yyFZMH"
 msgid "Lessons are made with the latest AI models and checked before they reach you: we test their quality with several evaluations, and other models review the content. They follow your exam's subjects and topics. Mistakes are rare, but they can happen. See something wrong? Tell us from the lesson and we'll look into it."
 msgstr "레슨은 최신 AI 모델로 만들어요. 여러 평가로 품질을 확인하고 다른 모델이 내용도 검토한 뒤 제공해 드려요. 준비하는 시험의 과목과 주제에 맞춰 만들어요. 오류는 드물지만 생길 수 있어요. 잘못된 내용을 발견했나요? 레슨에서 바로 알려 주시면 확인해 볼게요."
 
-#. In Brazilian Portuguese: “Dá para confiar em aulas criadas por IA?”
+#. A question in the landing page's FAQ, asked by the visitor. In Brazilian Portuguese: “Posso confiar em aulas criadas por IA?”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
-msgctxt "kf3mxX"
-msgid "Can you trust lessons made by AI?"
+msgctxt "RcBICI"
+msgid "Can I trust lessons made by AI?"
 msgstr "AI가 만든 레슨을 믿어도 되나요?"
 
 #. In Brazilian Portuguese: “Os apps para iPhone e Android estão chegando. Por enquanto, o Zoonk funciona no navegador do celular e do computador, sem instalar nada.”
@@ -2164,7 +2164,7 @@ msgctxt "r4pGG1"
 msgid "Any exam, such as {exams}. Also languages, a new career or any topic you want to learn. Write your goal in your own words."
 msgstr "{exams} 등 어떤 시험이든 좋아요. 언어 공부나 새로운 진로 준비는 물론, 배우고 싶은 어떤 주제든 좋아요. 목표를 자유롭게 적어 보세요."
 
-#. In Brazilian Portuguese: “Quais provas e objetivos dá para estudar?”
+#. A question in the landing page's FAQ, asked by the visitor. In Brazilian Portuguese: “Para quais provas e objetivos eu posso estudar?”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
 msgctxt "iJ_ZyQ"
 msgid "Which exams and goals can I study for?"
@@ -2486,14 +2486,14 @@ msgid "It stays logged in on that computer until you log out there or leave it u
 msgstr "그 컴퓨터에서 로그아웃하기 전까지 로그인 상태가 유지돼요. 다만 30일 동안 사용하지 않으면 자동으로 로그아웃돼요."
 
 #: src/app/[lang]/device/cli-login-form.tsx
-msgctxt "WCaf5C"
-msgid "Approve"
-msgstr "승인"
-
-#: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "htvX-Z"
 msgid "Deny"
 msgstr "거부"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "WCaf5C"
+msgid "Approve"
+msgstr "승인"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "R-mNZZ"

@@ -26,7 +26,7 @@ const marcos: SeedLearner = {
       },
       seconds: 18,
       skill: "ask-rent",
-      step: { lesson: "how-much-is-the-rent", position: 6 },
+      step: { lesson: "how-much-is-the-rent", position: 7 },
     },
     {
       answer: { selectedOptionId: "extra" },
@@ -35,7 +35,7 @@ const marcos: SeedLearner = {
       key: "utilities-extra",
       seconds: 25,
       skill: "rental-words",
-      step: { lesson: "how-much-is-the-rent", position: 10 },
+      step: { lesson: "how-much-is-the-rent", position: 11 },
     },
     {
       answer: { selectedIndex: 1 },
@@ -47,13 +47,13 @@ const marcos: SeedLearner = {
         cause: "misread",
         snapshot: {
           answer: "Só o aluguel do primeiro mês",
+          context: "The landlord asked for first and last month's rent.",
           correctAnswer: "O primeiro e o último mês de aluguel, pagos adiantado",
           explanation:
             "“Last month's rent” é o aluguel do último mês, pago adiantado junto com o primeiro.",
           format: "multipleChoice",
           misconception: "Ignorou o “last month's rent”",
-          question:
-            "The landlord asked for first and last month's rent. O que o proprietário pediu?",
+          question: "O que o proprietário pediu?",
         },
         status: "open",
       },

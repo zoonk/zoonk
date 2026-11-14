@@ -87,7 +87,6 @@
   "conversation_muted_detail": "4443ebf72c6816049b5d8591e1ecde4e05e154e2a01af37909d0d5f14c28fba9",
   "conversation_near_level": "05f66d79b2c4b0735640be5517f80dbb653ed8cda104d780a1ca47e98c9aaf13",
   "conversation_next_task": "85504305f544f48ea74d54ca660c5e01574a5d665e785bc04f1b9f4ac8d6f817",
-  "conversation_no_calls_month": "832a46e21e65f2493beb6563284ced6a8344a083bff3df19ca69ad042ea76eb6",
   "conversation_no_calls_today": "e0f24f7f3d427b42bb07746bd9962fe7945bf1d5d70a278416f0c3bdac2963a2",
   "conversation_no_estimate_title": "5cf59ffea672ab170ecb442fc8f115361f657a41598eba31d2f16b7bb0553db5",
   "conversation_no_score": "a4a725c32e9caf5504d7af9d90a51bcc94d9a248a587cfff9675a19870e02d1f",
@@ -240,7 +239,6 @@
     <string name="conversation_mute">Silenciar microfone</string>
     <string name="conversation_end">Encerrar</string>
     <string name="conversation_no_calls_today">Você já usou suas conversas de hoje</string>
-    <string name="conversation_no_calls_month">Você já usou suas conversas deste mês</string>
     <string name="conversation_calls_need_account">Para conversar, você precisa de uma conta grátis</string>
     <string name="conversation_ended_title">Esta conversa terminou</string>
     <string name="conversation_taken_over">Ela terminou quando você começou outra conversa.</string>

@@ -149,6 +149,7 @@ struct QuestionBlockView: View {
   @Environment(\.dismiss) private var dismiss
   @State private var stopFailed = false
   @State private var isStopping = false
+  @State private var stopping: Task<Void, Never>?
   @State private var showsSaveReport = false
   @FocusState private var focus: PracticeFocus?
   @AccessibilityFocusState private var voiceOverFocus: PracticeFocus?
@@ -193,6 +194,9 @@ struct QuestionBlockView: View {
     )
     .onChange(of: run.needsRefresh) { _, needsRefresh in
       if needsRefresh { onRefresh() }
+    }
+    .onDisappear {
+      stopping?.cancel()
     }
   }
 
@@ -289,7 +293,9 @@ struct QuestionBlockView: View {
       return [
         run.timedOut ? DrillAnswerNotes.timesUp : nil,
         String(localized: verdict(feedback, answer: answer).label),
-        correctLine(feedback, question: question).map(PracticeAnswerText.rightAnswerLine),
+        correctLine(feedback, question: question).map {
+          PracticeAnswerText.rightAnswerLine($0).said
+        },
         run.detail.isNetScored(question) ? run.state.netTally.line : nil,
       ].compactMap(\.self).joined(separator: "\n")
     default:
@@ -303,7 +309,8 @@ struct QuestionBlockView: View {
       notSure: answer.isDontKnow && !run.timedOut)
   }
 
-  private func correctLine(_ feedback: PracticeFeedback, question: PracticeQuestion) -> String? {
+  private func correctLine(_ feedback: PracticeFeedback, question: PracticeQuestion) -> RichInline?
+  {
     PracticeAnswerText.correctLine(
       feedbackIsCorrect: feedback.isCorrect, correctAnswer: feedback.correctAnswer,
       question: question, labels: run.detail.trueFalseLabels)
@@ -328,7 +335,9 @@ struct QuestionBlockView: View {
       }
 
       if feedback.pauseSuggested {
-        PauseSuggestionView(isStopping: isStopping, failed: stopFailed) { Task { await stop() } }
+        PauseSuggestionView(isStopping: isStopping, failed: stopFailed) {
+          stopping = Task { await stop() }
+        }
       }
     }
   }
@@ -480,7 +489,7 @@ struct QuestionBlockView: View {
 
     let sessionId = sessionId
     switch await practice.write(
-      .finished,
+      .finished, onPurpose: true,
       { identity in
         try await practice.api.stopSession(token: identity.bearerToken, sessionId: sessionId)
       })

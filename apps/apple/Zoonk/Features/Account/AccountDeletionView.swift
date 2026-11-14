@@ -20,6 +20,7 @@ struct AccountDeletionView: View {
   @Environment(SettingsStore.self) private var settings
   @State private var code = ""
   @State private var hasSentCode = false
+  @FocusState private var isCodeFocused: Bool
   @State private var isAppStoreSubscriptionManagementPresented = false
   @State private var isConfirmingDeletion = false
   @State private var isPerformingDeletion = false
@@ -79,8 +80,10 @@ struct AccountDeletionView: View {
   @ViewBuilder
   private var content: some View {
     switch phase {
-    case .ready, .emailReauthentication:
+    case .ready:
       deletionForm
+    case .emailReauthentication:
+      emailReauthenticationForm
     case .deleted:
       deletedContent
     case .deletedWithManualAppleRevocation:
@@ -90,24 +93,7 @@ struct AccountDeletionView: View {
 
   private var deletionForm: some View {
     ZoonkList {
-      Section {
-        PageHeader(
-          Text(
-            "Delete your account?", tableName: "Account",
-            comment: "Final confirmation title before permanent account deletion"),
-          supporting: Text(verbatim: deletedForGood))
-      }
-
-      if let storeSubscriptionProvider {
-        Section {
-          subscriptionManagementControl(for: storeSubscriptionProvider)
-        } footer: {
-          SectionFooter {
-            subscriptionDeletionMessage(for: storeSubscriptionProvider)
-          }
-        }
-      }
-
+      deletedData
       deletionActionSection
 
       if session.failure != nil {
@@ -118,11 +104,43 @@ struct AccountDeletionView: View {
     }
   }
 
+  private var emailReauthenticationForm: some View {
+    QuestionForm {
+      deletedData
+      emailReauthenticationSection
+    } buttons: {
+      AccountFailureMessage(failure: session.failure)
+      emailReauthenticationButtons
+    }
+    .onChange(of: hasSentCode) {
+      isCodeFocused = hasSentCode
+    }
+  }
+
+  @ViewBuilder
+  private var deletedData: some View {
+    Section {
+      PageHeader(
+        Text(
+          "Delete your account?", tableName: "Account",
+          comment: "Final confirmation title before permanent account deletion"),
+        supporting: Text(verbatim: deletedForGood))
+    }
+
+    if let storeSubscriptionProvider {
+      Section {
+        subscriptionManagementControl(for: storeSubscriptionProvider)
+      } footer: {
+        SectionFooter {
+          subscriptionDeletionMessage(for: storeSubscriptionProvider)
+        }
+      }
+    }
+  }
+
   @ViewBuilder
   private var deletionActionSection: some View {
-    if phase == .emailReauthentication {
-      emailReauthenticationSection
-    } else if hasAppleAccount {
+    if hasAppleAccount {
       Section {
         HStack {
           Spacer()
@@ -194,6 +212,7 @@ struct AccountDeletionView: View {
         }
         .keyboardType(.numberPad)
         .textContentType(.oneTimeCode)
+        .focused($isCodeFocused)
         .accessibilityLabel(
           Text(
             "Verification code",
@@ -201,8 +220,18 @@ struct AccountDeletionView: View {
             comment: "Account deletion verification code field label")
         )
         .disabled(session.isWorking)
+      }
+    } footer: {
+      SectionFooter {
+        logInAgainReason
+      }
+    }
+  }
 
-        BusyButton(isBusy: isPerformingDeletion, role: .destructive, isRow: true) {
+  private var emailReauthenticationButtons: some View {
+    Group {
+      if hasSentCode {
+        BusyButton(isBusy: isPerformingDeletion, role: .destructive) {
           pendingDeletion = .email
           isConfirmingDeletion = true
         } label: {
@@ -211,10 +240,10 @@ struct AccountDeletionView: View {
             tableName: "Account",
             comment: "Verifies the email code and permanently deletes the account")
         }
-        .foregroundStyle(.destructiveText)
+        .buttonStyle(.mainAction)
         .disabled((normalizedCode.count != 6 || session.isWorking) && !isPerformingDeletion)
 
-        BusyButton(isBusy: session.isWorking && !isPerformingDeletion, isRow: true) {
+        BusyButton(isBusy: session.isWorking && !isPerformingDeletion) {
           Task {
             await sendEmailCode()
           }
@@ -224,9 +253,10 @@ struct AccountDeletionView: View {
             tableName: "Account",
             comment: "Sends a replacement account deletion verification code")
         }
+        .buttonStyle(.ghost)
         .disabled(isPerformingDeletion)
       } else {
-        BusyButton(isBusy: session.isWorking, isRow: true) {
+        BusyButton(isBusy: session.isWorking) {
           Task {
             await sendEmailCode()
           }
@@ -236,12 +266,11 @@ struct AccountDeletionView: View {
             tableName: "Account",
             comment: "Sends an email code for account deletion reauthorization")
         }
-      }
-    } footer: {
-      SectionFooter {
-        logInAgainReason
+        .buttonStyle(.mainAction)
       }
     }
+    .buttonSizing(.flexible)
+    .controlSize(.large)
   }
 
   private var deletedContent: some View {

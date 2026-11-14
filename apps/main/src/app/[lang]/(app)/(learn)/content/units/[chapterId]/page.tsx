@@ -4,6 +4,7 @@ import { DetailSkeleton } from "@/components/learn/detail-skeleton";
 import { getTutorViewer } from "@/lib/learn/tutor-viewer";
 import { getLanguageUnitView } from "@zoonk/core/view-models/language/unit";
 import { getPlanTabView } from "@zoonk/core/view-models/plan/get";
+import { DrawnMath } from "@zoonk/learn/rich-text/drawn-math";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
@@ -48,11 +49,13 @@ async function UnitBody({ params }: Props) {
   }
 
   return (
-    <UnitScreenClient
-      tutor={tutor}
-      unit={result.unit}
-      upNext={isCurrentUnit({ chapterId, plan })}
-    />
+    <DrawnMath content={result.unit}>
+      <UnitScreenClient
+        tutor={tutor}
+        unit={result.unit}
+        upNext={isCurrentUnit({ chapterId, plan })}
+      />
+    </DrawnMath>
   );
 }
 

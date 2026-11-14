@@ -116,6 +116,60 @@ describe(checkScreenContentChange, () => {
       }),
     ).toMatchObject({ ok: false });
   });
+
+  it("reads a blank's sentence as its question and its answers as the key, which may change together", () => {
+    const before = {
+      answers: ["es"],
+      distractors: ["está", "son"],
+      feedback: "Ser describes what something is.",
+      template: "La casa [BLANK] grande.",
+    };
+
+    expect(
+      checkScreenContentChange({
+        after: { ...before, answers: ["está"], template: "La casa [BLANK] limpia hoy." },
+        before,
+        kind: "fillBlank",
+      }),
+    ).toStrictEqual({ changesAnswerKey: true, changesQuestion: true, ok: true });
+
+    expect(
+      checkScreenContentChange({
+        after: { ...before, feedback: "Ser describes what something is like." },
+        before,
+        kind: "fillBlank",
+      }),
+    ).toStrictEqual({ changesAnswerKey: false, changesQuestion: false, ok: true });
+  });
+
+  it("reads a match's pairs as its answer key", () => {
+    const before = { pairs: [{ left: "perro", right: "dog" }] };
+
+    expect(
+      checkScreenContentChange({
+        after: { pairs: [{ left: "perro", right: "a dog" }] },
+        before,
+        kind: "matchColumns",
+      }),
+    ).toStrictEqual({ changesAnswerKey: true, changesQuestion: false, ok: true });
+  });
+
+  it("lets a screen whose question another row decides change both, still refusing structure", () => {
+    const after = { ...withOptions([{ text: "6" }, { isCorrect: true }]), question: "2 + 4?" };
+
+    expect(
+      checkScreenContentChange({ after, before: check, keyedElsewhere: true, kind: "check" }),
+    ).toStrictEqual({ changesAnswerKey: true, changesQuestion: true, ok: true });
+
+    expect(
+      checkScreenContentChange({
+        after: withOptions([{ id: "c" }]),
+        before: check,
+        keyedElsewhere: true,
+        kind: "check",
+      }),
+    ).toMatchObject({ ok: false });
+  });
 });
 
 describe(listContentValueChanges, () => {
@@ -137,7 +191,91 @@ describe(listContentValueChanges, () => {
     ]);
   });
 
-  it("returns null for versions that don't share a shape", () => {
-    expect(listContentValueChanges({ after: { ...check, options: [] }, before: check })).toBeNull();
+  it("lists each value a replacement adds or removes, even when the shape changes", () => {
+    const added = { isCorrect: false, reason: "That's two and four.", text: "6" };
+
+    expect(
+      listContentValueChanges({
+        after: { ...check, options: [...check.options, added] },
+        before: { ...check, basis: null, options: check.options.slice(0, 1) },
+      }),
+    ).toStrictEqual([
+      {
+        after: { position: 0, quote: "Two and two make four." },
+        before: null,
+        isAnswerKey: false,
+        path: "basis",
+      },
+      { after: "b", before: undefined, isAnswerKey: false, path: "options.1.id" },
+      { after: false, before: undefined, isAnswerKey: true, path: "options.1.isCorrect" },
+      {
+        after: "That's two and three.",
+        before: undefined,
+        isAnswerKey: false,
+        path: "options.1.reason",
+      },
+      { after: "5", before: undefined, isAnswerKey: false, path: "options.1.text" },
+      { after: false, before: undefined, isAnswerKey: true, path: "options.2.isCorrect" },
+      {
+        after: "That's two and four.",
+        before: undefined,
+        isAnswerKey: false,
+        path: "options.2.reason",
+      },
+      { after: "6", before: undefined, isAnswerKey: false, path: "options.2.text" },
+    ]);
+  });
+
+  it("marks what grades a practice question in every format", () => {
+    const before = {
+      acceptedAnswers: ["four"],
+      isTrue: true,
+      keyPoints: ["Adds two and two"],
+      math: { answer: 4, solution: "a + b", steps: [{ expression: null, text: "Add them." }] },
+      options: [{ isCorrect: true, text: "4" }],
+      pairs: [{ left: "dos", right: "two" }],
+      question: "What is 2 + 2?",
+      sampleAnswer: "Four.",
+      select: 1,
+      statement: "Two and two make four.",
+      steps: ["Add", "Check"],
+    };
+
+    const after = {
+      acceptedAnswers: ["4"],
+      isTrue: false,
+      keyPoints: ["Sums two and two"],
+      math: { answer: 5, solution: "a + b + 1", steps: [{ expression: null, text: "Sum them." }] },
+      options: [{ isCorrect: false, text: "four" }],
+      pairs: [{ left: "dos", right: "2" }],
+      question: "What is two plus two?",
+      sampleAnswer: "It's four.",
+      select: "all",
+      statement: "Two and two make five.",
+      steps: ["Check", "Add"],
+    };
+
+    const keys = listContentValueChanges({ after, before, of: "item" }).map((change) => [
+      change.path,
+      change.isAnswerKey,
+    ]);
+
+    expect(Object.fromEntries(keys)).toStrictEqual({
+      "acceptedAnswers.0": true,
+      isTrue: true,
+      "keyPoints.0": true,
+      "math.answer": true,
+      "math.solution": true,
+      "math.steps.0.text": false,
+      "options.0.isCorrect": true,
+      "options.0.text": false,
+      "pairs.0.right": true,
+      question: false,
+      sampleAnswer: true,
+      select: true,
+      statement: false,
+      "steps.0": true,
+      "steps.1": true,
+    });
   });
 });

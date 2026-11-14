@@ -87,8 +87,7 @@ struct MindMapsAPI: MindMapsAPIClient {
     }
   }
 
-  /// A map that doesn't open anymore, or one locked for Plus, can't be saved: the screen says it
-  /// couldn't.
+  /// A map that doesn't open anymore can't be saved: the screen says it couldn't.
   func save(token: String, goalId: String, key: MindMapKey, saved: Bool) async throws -> Bool {
     try await clients.perform(token: token) { client in
       switch try await client.saveMindMap(
@@ -100,7 +99,7 @@ struct MindMapsAPI: MindMapsAPIClient {
       {
       case .ok(let response): return try response.body.json.saved
       case .unauthorized: throw APIError.unauthorized
-      case .notFound, .code402: throw APIError.notFound
+      case .notFound: throw APIError.notFound
       default: throw APIError.unavailable
       }
     }
@@ -117,8 +116,7 @@ struct MindMapsAPI: MindMapsAPIClient {
     }
   }
 
-  /// `PLUS_REQUIRED` is the map's own status, which the row reads; a limit names what ran out in
-  /// `details.limit.resource`.
+  /// A limit names what ran out in `details.limit.resource`.
   private static func refusal(_ error: Components.Schemas._Error?, status: Int) -> MindMapRequest {
     let refusal = voiceRefusal(status: status, error: error)
 
@@ -132,6 +130,7 @@ struct MindMapsAPI: MindMapsAPIClient {
     let ranOut: MindMapLimit.Resource =
       switch resource as? String {
       case "aiSpend": .aiSpend
+      case "chapterLessons": .chapterLessons
       case "lessonStart", "generatedLessons": .lessons
       default: .mindMap
       }

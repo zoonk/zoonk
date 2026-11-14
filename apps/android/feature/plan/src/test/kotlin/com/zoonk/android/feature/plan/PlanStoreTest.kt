@@ -53,6 +53,23 @@ class PlanStoreTest {
         }
 
     @Test
+    fun aPlanChangeAnsweredDuringAPollReadsThePlanInFull() =
+        runTest {
+            val api = FakePlanApi()
+            val store = store(api) { Instant.parse("2026-10-28T12:00:00Z") }
+            val resource = store.plan[goalId]
+            val screen = launch { resource.shown.collect {} }
+            advanceUntilIdle()
+
+            launch { store.refreshIfChanged(goalId) }
+            store.undo(goalId, UUID.randomUUID())
+            advanceUntilIdle()
+
+            assertEquals(2, api.plans)
+            screen.cancel()
+        }
+
+    @Test
     fun anyOtherReadReadsThePlanWithoutAsking() =
         runTest {
             val api = FakePlanApi()

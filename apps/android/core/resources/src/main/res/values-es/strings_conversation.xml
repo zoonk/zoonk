@@ -87,7 +87,6 @@
   "conversation_muted_detail": "6ba925faa7c5a561f536291c8c439568b66a27311cc960619a6aaa201ca3ca7b",
   "conversation_near_level": "a3de8a533df2357185aff69f0aa9caada0191f3e25868bbc900699e1c87bb54f",
   "conversation_next_task": "78eb6d18f1b52fdf750eacf5df24aa979cfe971c98e00bae2b916d26b0b4875a",
-  "conversation_no_calls_month": "d82c46d97a184310a070d6e41b7e7848463be94f8c851a9515b29e37e88b2ed5",
   "conversation_no_calls_today": "3e8bf8884961fdb196979afa7af913d530aaa6676456d809e05f97d2fb92a1a7",
   "conversation_no_estimate_title": "91511ce69d3f21f06814ae83c5797c8d81d18f8aaa57cc733444a290c21a2c35",
   "conversation_no_score": "53fb01c0e72d02ab97b77fd8786057c8736b5e6abf372b39d1cf10cb7f904e75",
@@ -240,7 +239,6 @@
     <string name="conversation_mute">Silenciar</string>
     <string name="conversation_end">Finalizar</string>
     <string name="conversation_no_calls_today">No quedan llamadas por hoy</string>
-    <string name="conversation_no_calls_month">No quedan llamadas este mes</string>
     <string name="conversation_calls_need_account">Necesitas una cuenta gratis para llamar</string>
     <string name="conversation_ended_title">Esta llamada terminó</string>
     <string name="conversation_taken_over">Terminó cuando iniciaste otra llamada.</string>

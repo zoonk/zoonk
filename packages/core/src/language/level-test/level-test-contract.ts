@@ -40,6 +40,11 @@ export const levelTestAnswerSchema = z.object({
     .min(0)
     .max(OPTIONS - 1)
     .nullable(),
+  /**
+   * The verdict when it was given, null for "I don't know": a later fix to the key never re-scores
+   * it. Answers saved before verdicts were kept have none and are graded by the key.
+   */
+  correct: z.boolean().nullable().optional(),
   durationMs: z.int().min(0).default(0),
   id: z.string(),
   skipped: z.boolean().optional(),
@@ -61,11 +66,18 @@ export const levelTestProgressSchema = z.object({
   scores: z
     .object({ listening: z.number(), reading: z.number(), speaking: z.number().optional() })
     .optional(),
+  /**
+   * The fixed sentence a take excused by a fix showed next. Takes of it are scored; a later fix to
+   * it excuses one more take.
+   */
+  shownFixedSentence: z.string().optional(),
   speaking: z
     .object({ level: z.enum(CEFR_LEVELS), score: z.number().min(0).max(1) })
     .nullable()
     .default(null),
   start: z.number().min(0).max(MAX_CEFR_SCORE).optional(),
+  /** When the first answer arrived; a fix to the bank after it never costs this test. */
+  startedAt: z.iso.datetime().optional(),
 });
 
 export type LevelTestProgress = z.infer<typeof levelTestProgressSchema> & { start: number };

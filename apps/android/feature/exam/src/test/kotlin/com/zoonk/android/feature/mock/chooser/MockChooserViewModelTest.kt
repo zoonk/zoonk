@@ -44,7 +44,7 @@ class MockChooserViewModelTest {
 
     private fun TestScope.viewModel(): MockChooserViewModel {
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))
-        return MockChooserViewModel(GOAL, MockStarter(api, cache), session) { runs }
+        return MockChooserViewModel(GOAL, MockStarter(api, cache), session, generations = { runs })
     }
 
     @Test
@@ -56,7 +56,7 @@ class MockChooserViewModelTest {
             viewModel.start(full, "full:1:")
             advanceUntilIdle()
             assertEquals(
-                ChooserStatus.Short("full:1:", full, MockStartOutcome.Short(40, 90, 130, AnytimeMock.Limit.DAY)),
+                ChooserStatus.Short("full:1:", full, MockStartOutcome.Short(40, 90, 130, AnytimeMock.Limit.DAY, availableAt = null)),
                 viewModel.status.value,
             )
             assertNull(viewModel.opened.value)

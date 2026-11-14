@@ -14,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -54,6 +55,7 @@ import com.zoonk.android.feature.certificates.naming
 import com.zoonk.android.feature.player.LessonNotWrittenNotice
 import com.zoonk.android.feature.player.LessonWriting
 import com.zoonk.android.feature.player.LessonWritingProgress
+import com.zoonk.android.feature.player.lessonWaitWords
 import com.zoonk.android.feature.today.TodayRead
 import com.zoonk.android.feature.today.stepsDone
 import com.zoonk.android.feature.warmup.WaitContent
@@ -73,6 +75,7 @@ import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.LocalMainActionInBar
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.TaskActionBar
@@ -334,7 +337,7 @@ private fun SessionSummaryContent(
  * The day's next step, or the one a tap opened when its lesson isn't made yet. That wait reads the
  * day again until the lesson is there, or only the lesson's readiness while a run writes it, then
  * says it's ready and focuses Start, never opening it on its own: the learner may be reading, or
- * doing what "While you wait" offered. [notWritten] says,
+ * doing the other step it offers. [notWritten] says,
  * in place of Start, why the API wouldn't write the lesson the tap asked for; [alternative] is work
  * to do meanwhile or instead. [refresh] is null on a day not opened yet, which has no lesson to
  * wait for; [onStop] once the session has work done. A goal's first lesson deals its guesses while
@@ -482,10 +485,7 @@ internal fun NextStop(
                                         enabled = !busy,
                                     ) {
                                         Text(
-                                            stringResource(
-                                                if (refusal != null) R.string.session_next_instead else R.string.session_next_while_waiting,
-                                                blockTitle(other),
-                                            ),
+                                            alternativeLabel(other),
                                         )
                                     }
                                 }
@@ -572,32 +572,35 @@ internal fun NextStop(
                                         waitKind,
                                         shown,
                                     )
-                                WaitContent(
-                                    quiz,
-                                    hold,
-                                    AnalyticsEvent.WarmUpSurface.LessonWait,
-                                    waitKind,
-                                    shown,
-                                    stringResource(if (ready) R.string.session_next_lesson_ready else R.string.session_next_writing_note),
-                                    goalId = goalId?.toString(),
-                                    progressShare = share,
-                                    onRetry = { retry() },
-                                ) {
-                                    LessonWritingProgress(
+                                val words = lessonWaitWords(waitKind)
+                                CompositionLocalProvider(LocalMainActionInBar provides (startsFor != null || instead != null)) {
+                                    WaitContent(
+                                        quiz,
+                                        hold,
+                                        AnalyticsEvent.WarmUpSurface.LessonWait,
                                         waitKind,
                                         shown,
-                                        {
-                                            if (run.failure ==
-                                                GenerationFailure.Connection
-                                            ) {
-                                                viewModel.reconnect()
-                                            } else {
-                                                retry()
-                                            }
-                                        },
-                                        stringResource(R.string.session_next_writing_note),
+                                        stringResource(if (ready) words.ready else words.gettingReady),
+                                        goalId = goalId?.toString(),
                                         progressShare = share,
-                                    )
+                                        onRetry = { retry() },
+                                    ) {
+                                        LessonWritingProgress(
+                                            waitKind,
+                                            shown,
+                                            {
+                                                if (run.failure ==
+                                                    GenerationFailure.Connection
+                                                ) {
+                                                    viewModel.reconnect()
+                                                } else {
+                                                    retry()
+                                                }
+                                            },
+                                            stringResource(R.string.session_next_writing_note).takeUnless { ready },
+                                            progressShare = share,
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -666,6 +669,15 @@ private fun ErrorLine(text: String) {
 private fun SessionLoading(onClose: () -> Unit) {
     TaskScaffold(onClose = onClose) { padding -> PageLoading(Modifier.padding(padding)) }
 }
+
+/** Main's `useAlternativeLabel`: a verb for what [step] starts; only a challenge needs its name. */
+@Composable
+private fun alternativeLabel(step: DayStep): String =
+    when {
+        step.checkpointFacts != null -> stringResource(R.string.session_next_start_title, blockTitle(step))
+        step.kind == StudyBlock.Kind.REVIEW -> stringResource(R.string.session_next_review_now)
+        else -> stringResource(R.string.session_next_practice_now)
+    }
 
 /** Main's `findAlternativeStudyBlock`: other work to do while [step]'s lesson waits, never work that waits itself. */
 private fun StudySession.alternativeTo(step: StudyBlock): DayStep? =

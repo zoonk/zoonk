@@ -13,8 +13,6 @@
     <string name="speaking_section">Speaking</string>
     <string name="speaking_gate">Speaking practice needs a subscription</string>
     <string name="speaking_opens_when_ready">Your task opens as soon as its card is ready.</string>
-    <string name="speaking_no_time_month">Not enough call time this month for this task</string>
-    <string name="speaking_no_time_day">Not enough call time today for this task</string>
     <string name="speaking_start_failed">The task didn\'t start. Try again in a moment.</string>
     <string name="speaking_official_format">Official format</string>
     <string name="speaking_start_task">Start</string>

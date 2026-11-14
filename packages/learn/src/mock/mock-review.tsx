@@ -21,6 +21,13 @@ function ReviewAnswers({ entry }: { entry: MockReviewEntry }) {
   const yours = entry.learnerAnswer;
   const right = entry.correctAnswer;
 
+  const line = (text: string) =>
+    entry.format === "typed" ? (
+      text
+    ) : (
+      <ItemLine text={answerText({ answer: text, format: entry.format }) ?? text} />
+    );
+
   return (
     <>
       {yours === null && (
@@ -30,12 +37,12 @@ function ReviewAnswers({ entry }: { entry: MockReviewEntry }) {
       <AnswerOptionGroup aria-label={t("Your answer and the right one")}>
         {yours !== null && (
           <AnswerOption disabled marker={<XIcon />} picked result="wrong">
-            <ItemLine text={answerText(yours) ?? yours} />
+            {line(yours)}
           </AnswerOption>
         )}
         {right !== null && (
           <AnswerOption disabled marker={<CheckIcon />} picked={false} result="right">
-            <ItemLine text={answerText(right) ?? right} />
+            {line(right)}
           </AnswerOption>
         )}
       </AnswerOptionGroup>

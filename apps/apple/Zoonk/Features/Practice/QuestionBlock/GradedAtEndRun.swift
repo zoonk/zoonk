@@ -11,7 +11,6 @@ struct GradedAtEndRun: View {
   var upcomingTotal: Int?
   /// The writing stopped short: the learner can finish with the answers given.
   var upcomingEnded = false
-  var upcomingLimit: HelpLimit?
   var isPending: Bool
   var failures: Int
   let onReport: () -> Void
@@ -132,11 +131,6 @@ struct GradedAtEndRun: View {
           icon: .forward, isBusy: isPending
         ) { onFinish(answers) }
       } else if upcomingEnded, failures == 0 || isPending {
-        if let upcomingLimit {
-          LimitNotice(limit: upcomingLimit)
-            .frame(maxWidth: .infinity, alignment: .leading)
-        }
-
         PracticeMainButton(
           title: LocalizedStringResource(
             "Finish with these answers", table: "Practice",
@@ -265,7 +259,6 @@ struct PracticeQuestionsPreparingView: View {
   let isWriting: Bool
   var failure: (any Error)?
   let start: () -> Void
-  @Environment(\.practiceHooks) private var hooks
   @AccessibilityFocusState private var focus: Focus?
 
   private enum Focus { case notice, start, title }
@@ -293,11 +286,7 @@ struct PracticeQuestionsPreparingView: View {
           ProgressView().padding(.top, 8)
         }
 
-        if isPlusRequired {
-          FreeWeekOverNotice(showsSeePlus: false)
-            .accessibilityElement(children: .combine)
-            .accessibilityFocused($focus, equals: .notice)
-        } else if failure != nil, limit == nil {
+        if failure != nil, limit == nil {
           FailureLine(
             message: LocalizedStringResource(
               "We couldn't write your test. Try again.", table: "Practice",
@@ -307,24 +296,16 @@ struct PracticeQuestionsPreparingView: View {
         }
       }
     } actions: {
-      if isPlusRequired {
-        PracticeMainButton(
-          title: LocalizedStringResource(
-            "See Plus", table: "Practice",
-            comment: "Opens the Zoonk Plus subscription; Plus is its name, not \"more\"."),
-          icon: .forward
-        ) {
-          hooks.navigate(.subscription)
-        }
-      } else {
-        if let limit {
+      // The gate takes Start's place until its day has come, then Start takes it back.
+      OpeningClock(availableAt: limit?.availableAt) { now in
+        if let limit, !limit.isOpen(at: now) {
           LimitNotice(limit: limit)
             .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityElement(children: .combine)
             .accessibilityFocused($focus, equals: .notice)
         }
 
-        if !isWriting, limit?.isShortBreak ?? true {
+        if !isWriting, limit?.letsTry(at: now) ?? true {
           PracticeMainButton(
             title: LocalizedStringResource(
               "Start the test", table: "Practice",
@@ -345,17 +326,13 @@ struct PracticeQuestionsPreparingView: View {
       guard refusal != nil else { return }
 
       // A failure line reads itself out beside the Start that comes back. A notice doesn't: beside
-      // Start (a short break) it's read out; in Start's place (a limit, or Plus) it takes focus.
+      // Start (a short break) it's read out; in Start's place (a limit) it takes focus.
       if let limit, limit.isShortBreak {
-        announcePolitely(limit.helpWords().said)
-      } else if limit != nil || isPlusRequired {
+        announcePolitely(limit.words().said)
+      } else if limit != nil {
         focus = .notice
       }
     }
-  }
-
-  private var isPlusRequired: Bool {
-    failure as? PracticeAPIError == .plusRequired
   }
 
   private var limit: HelpLimit? {

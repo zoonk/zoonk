@@ -218,7 +218,7 @@ internal fun MockResult(
             // Beside the main action on a wide layout and above it on a phone or a book's page, as main's `MockResultSkip`.
             val secondaryBeside = isWideLayout()
             val secondary = stringResource(R.string.mock_result_continue).takeUnless { placement || mistakes == 0 }
-            // Main's `MockPlanAnswers`: while the plan step asks, its answers are the bar's, in place of the way on.
+            // Main's `MockPlanDecline` and `MockPlanAccept`: while the plan step asks, its answers are the bar's, in place of the way on.
             val asking =
                 view.adapt
                     ?.let { adapt -> offers.open(adapt)?.let { offerCopy(it, adapt) to it } }

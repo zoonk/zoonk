@@ -20,7 +20,7 @@ export function TodayChangeNotice({ message }: { message: string }) {
         <SuggestionSummary className="text-foreground line-clamp-none">{message}</SuggestionSummary>
       </SuggestionLine>
 
-      <SuggestionContent>
+      <SuggestionContent statement>
         <SuggestionHeader>{t("What changed")}</SuggestionHeader>
         <SuggestionDescription className="text-foreground">{message}</SuggestionDescription>
       </SuggestionContent>

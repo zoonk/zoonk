@@ -107,9 +107,7 @@ describe("spoken answers", () => {
       .toBeVisible();
 
     await expect
-      .element(
-        page.getByText(/Your next free lesson opens tomorrow, or subscribe to keep going\.$/u),
-      )
+      .element(page.getByText(/More tomorrow, or subscribe to keep going\.$/u))
       .toBeVisible();
 
     await expect.element(page.getByRole("link", { name: "Subscribe" })).toBeVisible();
@@ -193,7 +191,7 @@ describe("spoken answers", () => {
 
     await expect
       .element(page.getByRole("status").filter({ hasText: "Not quite" }))
-      .toMatchTextContent(/Answer: Quanto é o aluguel\?/u);
+      .toMatchTextContent(/Right answer: Quanto é o aluguel\?/u);
   });
 
   it("saves the listening answer that replaced a slow spoken one only after that grade settles", async () => {

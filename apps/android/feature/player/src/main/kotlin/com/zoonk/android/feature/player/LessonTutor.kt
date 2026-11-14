@@ -179,5 +179,6 @@ internal fun LessonPlayerState.tutorScope(screen: LessonScreen): TutorScope {
 /** Main's miss, which words the ask button: a checked answer shown wrong, never a hook's guess. */
 internal fun LessonPlayerState.showsMiss(screen: LessonScreen): Boolean {
     val step = screen.step ?: return false
-    return phase == LessonPhase.Feedback && results[step.id]?.isCorrect == false && step.content.kind != StepKind.Hook
+    val result = results[step.id]
+    return phase == LessonPhase.Feedback && result != null && result.checked && !result.isCorrect && step.content.kind != StepKind.Hook
 }

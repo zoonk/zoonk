@@ -16,7 +16,12 @@ const RIGHT_BELOW_SHARE = 0.9;
 /** A learner's other skill stands in for the one a question tests, which a wide gap makes wrong. */
 const MAX_SKILL_GAP = 0.5;
 
-export type RecordedLevelTest = { answers: LevelTestProgress["answers"]; startScore: number };
+type JudgedLevelTest = { answers: LevelTestProgress["answers"]; startScore: number };
+
+export type RecordedLevelTest = {
+  answers: Omit<LevelTestProgress["answers"][number], "correct">[];
+  startScore: number;
+};
 
 export type LevelTestQuestionVerdict = {
   group: number;
@@ -28,7 +33,7 @@ export type LevelTestQuestionVerdict = {
 /** Each answer next to the level the learner showed on everything else in their test. */
 type JudgedAnswer = { answerIndex: number | null; rest: number };
 
-function getSkillGap({ bank, tests }: { bank: LevelTestBank; tests: RecordedLevelTest[] }) {
+function getSkillGap({ bank, tests }: { bank: LevelTestBank; tests: JudgedLevelTest[] }) {
   const gaps = tests.flatMap(({ answers, startScore }) => {
     if (estimatePooledScore({ answers, bank, start: startScore }).answered < MIN_GAP_ANSWERS) {
       return [];
@@ -53,7 +58,7 @@ function judgeAnswers({
 }: {
   bank: LevelTestBank;
   question: LevelTestQuestion;
-  tests: RecordedLevelTest[];
+  tests: JudgedLevelTest[];
 }): JudgedAnswer[] {
   return tests.flatMap(({ answers, startScore }) =>
     answers.flatMap((answer, index) => {
@@ -115,17 +120,37 @@ function judgeQuestion({
   return null;
 }
 
+/** Checking the bank's keys judges every answer by the key as it is now. */
+function judgeByKey({
+  bank,
+  test,
+}: {
+  bank: LevelTestBank;
+  test: RecordedLevelTest;
+}): JudgedLevelTest {
+  const keys = new Map(bank.questions.map((question) => [question.id, question.answerIndex]));
+
+  return {
+    ...test,
+    answers: test.answers.map((answer) => ({
+      ...answer,
+      correct: answer.answerIndex === null ? null : answer.answerIndex === keys.get(answer.id),
+    })),
+  };
+}
+
 /**
  * The bank's questions that learners' answers show to be wrong: a key learners at its level
  * mostly reject for one other option, or a level learners a band below mostly pass.
  */
 export function findWrongLevelTestQuestions({
   bank,
-  tests,
+  tests: recorded,
 }: {
   bank: LevelTestBank;
   tests: RecordedLevelTest[];
 }): { skillGap: number; verdicts: LevelTestQuestionVerdict[] } {
+  const tests = recorded.map((test) => judgeByKey({ bank, test }));
   const skillGap = getSkillGap({ bank, tests });
 
   if (Math.abs(skillGap) >= MAX_SKILL_GAP) {

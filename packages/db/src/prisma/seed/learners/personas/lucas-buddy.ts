@@ -32,12 +32,13 @@ export const lucasBuddy: SeedLearner = {
       mistake: {
         cause: "gap",
         snapshot: {
-          answer: "Verdadeiro",
-          correctAnswer: "Falso",
+          answer: "true",
+          correctAnswer: "false",
           explanation: "Uma luz mais forte tem mais fótons, não fótons mais fortes.",
           format: "trueFalse",
           misconception: "Acha que o brilho define a energia do fóton",
-          question: "Uma luz vermelha mais forte é feita de fótons com mais energia cada um.",
+          question:
+            "Uma luz vermelha mais forte é feita de fótons vermelhos com mais energia cada um.",
         },
         status: "open",
       },

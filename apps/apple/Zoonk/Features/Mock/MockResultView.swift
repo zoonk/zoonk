@@ -87,7 +87,7 @@ struct MockResultView: View {
       }
     } secondary: {
       ReviewList(review: view.review, place: $choices.reviewPlace) {
-        planSections
+        planSections(answersInBar: false)
         reviewSections
       }
       .bottomBar { actions }
@@ -96,10 +96,16 @@ struct MockResultView: View {
         scoreSections
         diagnosisSections
         partSections
-        planSections
+        planSections(answersInBar: true)
         reviewSections
       }
-      .bottomBar { actions }
+      .bottomBar {
+        if let offer = choices.plan.asking(view.adapt) {
+          MockPlanAnswerButtons(run: run, offer: offer, inBar: true, answers: $choices.plan)
+        } else {
+          actions
+        }
+      }
     }
     .announcesStatus(gradesEssays ? MockEssaySections.grading : nil)
     .navigationTitle(MockLabels.title(number: view.number))
@@ -185,7 +191,10 @@ struct MockResultView: View {
 
   @ViewBuilder
   private var partSections: some View {
-    DayMomentSections(result: view.day)
+    // A missed minimum's headline isn't followed by a celebration; the day's summary still shows it.
+    if view.result?.points?.missedMinimum == nil {
+      DayMomentSections(result: view.day)
+    }
 
     ForEach(Array(view.essays.enumerated()), id: \.element.id) { index, essay in
       MockEssaySections(
@@ -204,11 +213,11 @@ struct MockResultView: View {
   }
 
   @ViewBuilder
-  private var planSections: some View {
+  private func planSections(answersInBar: Bool) -> some View {
     if let adapt = view.adapt, adapt.skip != nil || adapt.focus != nil {
       MockPlanSection(
         run: run, adapt: adapt, preparation: view.result?.preparation,
-        answers: $choices.plan)
+        answersInBar: answersInBar, answers: $choices.plan)
     } else if let preparation = view.result?.preparation, preparation.after != preparation.before {
       MockPreparationSection(preparation: preparation)
     }
@@ -217,7 +226,8 @@ struct MockResultView: View {
   @ViewBuilder
   private var reviewSections: some View {
     if !view.review.isEmpty {
-      MockReviewSection(items: view.review, opened: $choices.opened)
+      MockReviewSection(
+        items: view.review, labels: view.trueFalseLabels, opened: $choices.opened)
     }
 
   }
@@ -261,7 +271,7 @@ struct MockResultView: View {
       Button {
         dismiss()
       } label: {
-        Text("Not now", tableName: "Mock", comment: "Leaves without reviewing")
+        Text("Continue", tableName: "Mock", comment: "Leaves a mock's result")
       }
       .buttonStyle(.outline)
     }
@@ -292,11 +302,20 @@ private struct MockScoreSections: View {
       VStack(alignment: .leading, spacing: 6) {
         Chip(Text(MockLabels.title(number: view.number)))
           .padding(.bottom, 6)
-        Text(score.value)
-          .typeStyle(.momentReadout)
-        Text(detail)
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
+        if let missed = result.points?.missedMinimum {
+          Text(missed.title)
+            .typeStyle(.pageTitle)
+            .foregroundStyle(.destructiveText)
+          Text(missed.line)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
+        } else {
+          Text(score.value)
+            .typeStyle(.momentReadout)
+          Text(detail)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
+        }
         if let delta {
           Label {
             Text(delta.text)
@@ -406,7 +425,16 @@ private struct MockScoreSections: View {
   }
 
   /// Main's one sentence under the number: every minimum reached, or the best and worst subjects.
+  /// A missed minimum's headline stands alone.
   private var verdict: String? {
+    if let points = result.points {
+      if points.missedMinimum != nil { return nil }
+
+      if points.reachedEveryMinimum {
+        return String(localized: "You reached every minimum in this mock exam.", table: "Mock")
+      }
+    }
+
     let shares = result.areas.filter { $0.total > 0 }.map {
       (name: $0.name, share: $0.correct / Double($0.total))
     }
@@ -756,7 +784,7 @@ private struct MockEssaySections: View {
   var body: some View {
     Section {
       VStack(alignment: .leading, spacing: 6) {
-        Text(essay.question)
+        LessonTextBlocks(essay.question)
           .typeStyle(.body.weight(.semibold))
         status
       }
@@ -811,7 +839,7 @@ private struct MockEssaySections: View {
             .foregroundStyle(.mutedForeground)
         }
         Button {
-          Task { await run.gradeEssays() }
+          run.start { await run.gradeEssays() }
         } label: {
           Text("Grade it", tableName: "Mock", comment: "Grades a mock's essays")
         }
@@ -828,8 +856,13 @@ private struct MockSpeakingSection: View {
   var body: some View {
     Section {
       VStack(alignment: .leading, spacing: 6) {
-        Text(estimateTitle)
-          .typeStyle(.readout)
+        if let range = estimateRange {
+          Text(range)
+            .typeStyle(.momentReadout)
+        } else {
+          Text("No estimate", tableName: "Mock", comment: "A speaking paper's estimate")
+            .typeStyle(.pageTitle)
+        }
         Group {
           Text(estimateDetail)
           if paper.estimate.typed, paper.estimate.points != nil {
@@ -867,22 +900,16 @@ private struct MockSpeakingSection: View {
     }
   }
 
-  private var estimateTitle: String {
-    guard let points = paper.estimate.points else {
-      return String(localized: "No estimate", table: "Mock", comment: "A speaking paper's estimate")
-    }
-
-    let total = number(paper.estimate.total)
+  private var estimateRange: String? {
+    guard let points = paper.estimate.points else { return nil }
 
     if points.low == points.high {
-      return String(
-        localized: "About \(number(points.low)) of \(total)", table: "Mock",
-        comment: "A speaking paper's estimated points")
+      return number(points.low)
     }
 
     return String(
-      localized: "About \(number(points.low)) to \(number(points.high)) of \(total)",
-      table: "Mock", comment: "A speaking paper's estimated points range")
+      localized: "\(number(points.low))–\(number(points.high))", table: "Mock",
+      comment: "An estimated score range, low to high")
   }
 
   private func number(_ value: Double) -> String {
@@ -892,8 +919,8 @@ private struct MockSpeakingSection: View {
   private var estimateDetail: String {
     if paper.estimate.points != nil {
       return String(
-        localized: "An estimate, not an official score.", table: "Mock",
-        comment: "Under a speaking paper's estimate")
+        localized: "Estimated score, from 0 to \(number(paper.estimate.total))", table: "Mock",
+        comment: "Under a speaking paper's estimated score")
     }
 
     if paper.tasks.contains(where: { $0.status != .completed }) {
@@ -985,6 +1012,79 @@ private struct MockPlanAnswers {
 
   var byOffer: [MockPlanOffer: Answer] = [:]
   var applying = false
+
+  static func offers(_ adapt: MockAdapt?) -> [MockPlanOffer] {
+    [adapt?.skip != nil ? .skip : nil, adapt?.focus != nil ? .focus : nil].compactMap { $0 }
+  }
+
+  /// The first question nobody answered; the second appears once the first is answered.
+  func asking(_ adapt: MockAdapt?) -> MockPlanOffer? {
+    Self.offers(adapt).first { offer in
+      switch byOffer[offer] {
+      case nil, .failed: true
+      default: false
+      }
+    }
+  }
+}
+
+/// A plan question's two answers: in the step on a wide screen, the bottom bar's on a phone (the no
+/// outlined, the yes the main action), so the bar never offers a way on while a question is open.
+private struct MockPlanAnswerButtons: View {
+  @Environment(ExamStore.self) private var exam
+  let run: MockRun
+  let offer: MockPlanOffer
+  let inBar: Bool
+  @Binding var answers: MockPlanAnswers
+
+  var body: some View {
+    Button {
+      answers.byOffer[offer] = .declined
+    } label: {
+      offer == .skip
+        ? Text("Keep them", tableName: "Mock", comment: "Keeps the known lessons")
+        : Text("Not now", tableName: "Mock", comment: "Declines giving a subject more time")
+    }
+    .buttonStyle(.outline)
+    .disabled(answers.applying)
+
+    BusyButton(isBusy: answers.applying) {
+      run.start { await apply() }
+    } label: {
+      offer == .skip
+        ? Text("Skip them", tableName: "Mock", comment: "Takes the known lessons off the plan")
+        : Text("Change my plan", tableName: "Mock", comment: "Gives a subject more time")
+    }
+    .modifier(MockPlanYesStyle(inBar: inBar))
+  }
+
+  private func apply() async {
+    answers.applying = true
+    defer { answers.applying = false }
+
+    let blockId = run.mock.value?.blockId ?? ""
+    let result = await exam.write(invalidating: [.goals, .learnerModel]) { api, token in
+      try await api.adaptPlan(token: token, blockId: blockId, offer: offer)
+    }
+
+    switch result {
+    case .done(let outcome): answers.byOffer[offer] = .outcome(outcome)
+    case .failed: answers.byOffer[offer] = .failed
+    case .obsolete: return
+    }
+  }
+}
+
+private struct MockPlanYesStyle: ViewModifier {
+  let inBar: Bool
+
+  func body(content: Content) -> some View {
+    if inBar {
+      content.buttonStyle(.mainAction).keyboardShortcut(.defaultAction)
+    } else {
+      content.buttonStyle(.outline)
+    }
+  }
 }
 
 private struct MockPlanSection: View {
@@ -992,23 +1092,12 @@ private struct MockPlanSection: View {
   let run: MockRun
   let adapt: MockAdapt
   let preparation: MockResult.Preparation?
+  let answersInBar: Bool
   @Binding var answers: MockPlanAnswers
 
-  private var offers: [MockPlanOffer] {
-    [adapt.skip != nil ? .skip : nil, adapt.focus != nil ? .focus : nil].compactMap { $0 }
-  }
+  private var offers: [MockPlanOffer] { MockPlanAnswers.offers(adapt) }
 
-  private var open: [MockPlanOffer] {
-    offers.filter { offer in
-      switch answers.byOffer[offer] {
-      case nil, .failed: true
-      default: false
-      }
-    }
-  }
-
-  /// The first question nobody answered; the second appears once the first is answered.
-  private var asking: MockPlanOffer? { open.first }
+  private var asking: MockPlanOffer? { answers.asking(adapt) }
 
   var body: some View {
     if let preparation, preparation.after != preparation.before {
@@ -1035,26 +1124,10 @@ private struct MockPlanSection: View {
               comment: "Applying the plan change failed"))
         }
 
-        ButtonRow {
-          BusyButton(isBusy: answers.applying) {
-            Task { await apply(offer) }
-          } label: {
-            offer == .skip
-              ? Text(
-                "Skip them", tableName: "Mock", comment: "Takes the known lessons off the plan")
-              : Text("Change my plan", tableName: "Mock", comment: "Gives a subject more time")
+        if !answersInBar {
+          ButtonRow {
+            MockPlanAnswerButtons(run: run, offer: offer, inBar: false, answers: $answers)
           }
-          .buttonStyle(.outline)
-
-          Button {
-            answers.byOffer[offer] = .declined
-          } label: {
-            offer == .skip
-              ? Text("Keep them", tableName: "Mock", comment: "Keeps the known lessons")
-              : Text("Not now", tableName: "Mock", comment: "Leaves without reviewing")
-          }
-          .buttonStyle(.borderless)
-          .disabled(answers.applying)
         }
       }
 
@@ -1099,25 +1172,16 @@ private struct MockPlanSection: View {
     }
   }
 
-  private func apply(_ offer: MockPlanOffer) async {
-    answers.applying = true
-    defer { answers.applying = false }
-
-    let blockId = run.mock.value?.blockId ?? ""
-    let result = await exam.write(invalidating: [.goals, .learnerModel]) { api, token in
-      try await api.adaptPlan(token: token, blockId: blockId, offer: offer)
-    }
-
-    switch result {
-    case .done(let outcome): answers.byOffer[offer] = .outcome(outcome)
-    case .failed: answers.byOffer[offer] = .failed
-    case .obsolete: return
-    }
-  }
-
-  /// After a yes, what changed; after a no, nothing.
+  /// After a yes, what changed; after one no, nothing, but a no to every question says so, since
+  /// a no saves nothing and the step would still read as an open question.
   private var statusLines: [String] {
-    offers.compactMap { offer -> String? in
+    if offers.allSatisfy({ answers.byOffer[$0] == .declined }) {
+      return [
+        String(localized: "Your plan stays as it is.", table: "Mock")
+      ]
+    }
+
+    return offers.compactMap { offer -> String? in
       switch answers.byOffer[offer] {
       case .outcome(.applied(let skipped)):
         offer == .skip
@@ -1141,6 +1205,7 @@ private struct MockReviewSection: View {
   @Environment(\.reviewRows) private var rows
 
   let items: [MockReviewItem]
+  let labels: PracticeTrueFalseLabels
   @Binding var opened: Set<String>
 
   var body: some View {
@@ -1149,25 +1214,21 @@ private struct MockReviewSection: View {
         DisclosureGroup(isExpanded: $opened.contains("review:\(item.id)")) {
           VStack(alignment: .leading, spacing: 8) {
             if let context = item.context {
-              ItemText(context).typeStyle(.reading).foregroundStyle(.mutedForeground)
+              LessonTextBlocks(context).typeStyle(.reading).foregroundStyle(.mutedForeground)
             }
-            ItemText(item.question)
+            LessonTextBlocks(item.question).typeStyle(.reading.weight(.semibold))
             if item.outcome == .blank {
               Text("You left it blank.", tableName: "Mock", comment: "A blank question")
                 .foregroundStyle(.mutedForeground)
-            } else if let answer = item.learnerAnswer {
-              Label {
-                Text(answer)
-              } icon: {
-                Image(systemName: "xmark").foregroundStyle(.destructive)
-              }
+            } else if let answer = TrueFalseWords.savedAnswer(
+              item.learnerAnswer, format: item.format, labels: labels)
+            {
+              MistakeAnswerRow(text: answer, isRight: false, isLiteral: item.format == "typed")
             }
-            if let correct = item.correctAnswer {
-              Label {
-                Text(correct)
-              } icon: {
-                Image(systemName: "checkmark").foregroundStyle(.success)
-              }
+            if let correct = TrueFalseWords.savedAnswer(
+              item.correctAnswer, format: item.format, labels: labels)
+            {
+              MistakeAnswerRow(text: correct, isRight: true, isLiteral: item.format == "typed")
             }
             if item.outcome == .partial {
               Text(
@@ -1177,7 +1238,7 @@ private struct MockReviewSection: View {
               .foregroundStyle(.mutedForeground)
             }
             if let explanation = item.explanation {
-              ItemText(explanation).typeStyle(.reading).foregroundStyle(.mutedForeground)
+              LessonTextBlocks(explanation).typeStyle(.reading).foregroundStyle(.mutedForeground)
             }
             if let citation = item.citation {
               CitationNote(citation: citation)
@@ -1199,8 +1260,11 @@ private struct MockReviewSection: View {
               }
             }
             .padding(.bottom, 4)
-            Text(ItemTextBlock.plain(item.question))
-              .lineLimit(2)
+            // Open, the whole question shows under it.
+            if !opened.contains("review:\(item.id)") {
+              LessonRichText(item.question)
+                .lineLimit(2)
+            }
           }
         }
         .id(item.id)

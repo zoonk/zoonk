@@ -1203,11 +1203,12 @@ const BANK: LevelTestBank = {
   speaking: TEST_LEVELS.map((level) => ({ level, sentence: `Say ${level}`, translation: "Diga" })),
 };
 
-type StoredAnswer = { answerIndex: number; id: string };
+type StoredAnswer = { answerIndex: number; correct: boolean; id: string };
 
 function answers(skill: "listening" | "reading"): StoredAnswer[] {
   return ["A2", "B1", "B2"].map((level, index) => ({
     answerIndex: 1,
+    correct: true,
     id: `${skill}-${level}-${index % 2}`,
   }));
 }

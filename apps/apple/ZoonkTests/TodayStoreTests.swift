@@ -222,26 +222,26 @@ final class TodayStoreTests: XCTestCase {
         today: TodayStore(api: api, cache: signedInCache())))
 
     let stayed = Task { await router.open(blockID: "b1") }
-    await api.waitForHeldOpening()
-    await api.releaseOpening()
+    await api.waitForHeldCall()
+    await api.releaseHeldCall()
 
     guard case .failed = await stayed.value else {
       return XCTFail("the answer the learner tapped in says the step didn't open")
     }
 
     let left = Task { await router.open(blockID: "b1") }
-    await api.waitForHeldOpening()
+    await api.waitForHeldCall()
     router.select(.plan)
-    await api.releaseOpening()
+    await api.releaseHeldCall()
 
     guard case .obsolete = await left.value else {
       return XCTFail("a screen the learner left says nothing")
     }
 
     let covered = Task { await router.open(blockID: "b1") }
-    await api.waitForHeldOpening()
+    await api.waitForHeldCall()
     router.present(.account())
-    await api.releaseOpening()
+    await api.releaseHeldCall()
 
     guard case .obsolete = await covered.value else {
       return XCTFail("a sheet the learner opened meanwhile hears nothing")
@@ -307,9 +307,9 @@ final class TodayStoreTests: XCTestCase {
     let store = TodayStore(api: api, cache: cache)
 
     let opening = Task { await store.open(lesson, as: .block, in: view) }
-    await api.waitForHeldOpening()
+    await api.waitForHeldCall()
     await cache.session.expire(try XCTUnwrap(cache.session.authenticatedSession))
-    await api.releaseOpening()
+    await api.releaseHeldCall()
     let result = await opening.value
 
     guard case .obsolete = result else {
@@ -494,6 +494,28 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertNil(lesson, "another learner may be signed in by now")
   }
 
+  func testAStopWhoseScreenClosedStillStopsAndLeavesWhatTheLearnerPlaysNext() async {
+    let api = StudyAPIStub(holdsStop: true)
+    let cache = signedInCache()
+    let store = StudySessionStore(api: api, cache: cache, today: TodayStore(api: api, cache: cache))
+    let playback = SessionPlayback()
+
+    let stop = Task { await store.stop(sessionID: "s1", in: playback) }
+    await api.waitForHeldCall()
+    playback.play(blockID: "b2")
+    stop.cancel()
+    await api.releaseHeldCall()
+    let result = await stop.value
+
+    XCTAssertEqual(playback.playingBlockID, "b2")
+    XCTAssertNil(playback.stoppedSessionID)
+    let stopped = await api.stoppedSessions
+    XCTAssertEqual(stopped, ["s1"], "the learner stopped on purpose")
+    guard case .obsolete = result else {
+      return XCTFail("a closed screen's stop publishes nothing")
+    }
+  }
+
   func testAFailedLessonItsChecksDidntSetAsideStaysOneToTryAgain() async throws {
     let read = try block(position: 0, kind: "learn", id: "b1", lessonID: "l1")
     let followed = try block(position: 1, kind: "learn", id: "b2", lessonID: "l2")
@@ -594,9 +616,9 @@ final class TodayStoreTests: XCTestCase {
       session: day(blocks: [block(position: 0, kind: "review")], nextPosition: 0))
 
     let opening = Task { await store.open(view.session.blocks[0], as: .next, in: view) }
-    await api.waitForHeldOpening()
+    await api.waitForHeldCall()
     await cache.session.expire(try XCTUnwrap(cache.session.authenticatedSession))
-    await api.releaseOpening()
+    await api.releaseHeldCall()
     let result = await opening.value
 
     guard case .obsolete = result else {
@@ -660,6 +682,41 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertEqual(shown?.decision, .applied)
     XCTAssertEqual(shown?.change.status, "applied")
     XCTAssertEqual(shown?.change.canUndo, true)
+  }
+
+  func testAnAcceptOrAnUndoOnTodayReadsTodayAgain() async throws {
+    let proposed = try planChange(status: "proposed")
+    let applied = try planChange(status: "applied", canUndo: true)
+    let view = try today(session: day(blocks: [], nextPosition: nil), planChange: proposed)
+    let api = StudyAPIStub(today: .day(view), decided: applied)
+    let store = TodayStore(api: api, cache: signedInCache())
+    await store.today.load()
+
+    _ = await store.answer(proposed, with: .applied, in: view)
+    await store.today.load()
+    _ = await store.answer(applied, with: .undone, in: view)
+    await store.today.load()
+
+    let reads = await api.todayReads
+    XCTAssertEqual(reads, 3, "the day's lessons follow each answer")
+  }
+
+  func testAPlanChangeSavedFromAnotherScreenReadsTodayAgain() async throws {
+    let view = try today(session: day(blocks: [], nextPosition: nil))
+    let api = StudyAPIStub(today: .day(view))
+    let cache = signedInCache()
+    let store = TodayStore(api: api, cache: cache)
+    let plans = PlanStore(api: PlanAPIStub(), cache: cache)
+    await store.today.load()
+
+    // The Focus test's proposal, then the Plan's editor.
+    _ = await plans.decide(try planChange(status: "proposed"), goalId: "g1", decision: .applied)
+    await store.today.load()
+    _ = await plans.change(goalId: "g1", edits: [.dailyMinutes(20)])
+    await store.today.load()
+
+    let reads = await api.todayReads
+    XCTAssertEqual(reads, 3, "Today's lessons follow a change saved anywhere")
   }
 
   func testAnAcceptSendsTheQuoteShownAndAsksAgainWhenTheNumbersMoved() async throws {
@@ -875,13 +932,13 @@ private func dayJSON(
   return """
     {"blocks":[\(blockList.joined(separator: ","))],"brainPower":0,"catchUp":null,"current":true,
     "dayEndsAt":1793242800000,"emptyDay":\(json(emptyDay)),
-    "examAccess":{"includesMockExams":true,"trialEnded":false},"examTomorrow":false,
+    "examAccess":{"includesMockExams":true},"examTomorrow":false,
     "extraTime":{"available":false,"lessons":[],"minutes":10,"reason":null},"freshStart":null,
     "fullMeal":{"bonus":50,"earned":false,"ready":false},"goalId":"\(goalID)",
     "lessonsComing":false,"lessonsToPrepare":false,
     "localDate":"\(localDate)","minutes":{"dailyGoal":15,"done":0,"left":15,"planned":15},
     "missions":[],"nextPosition":\(nextPosition.map(String.init) ?? "null"),
-    "pauseSuggested":false,"plusLessons":[],"sessionBar":{"completed":0,"total":1},"state":"\(state)",
+    "pauseSuggested":false,"sessionBar":{"completed":0,"total":1},"state":"\(state)",
     "week":{"days":[],"nextStudyDate":null},
     "status":"\(id == nil ? "unstarted" : "active")"\(id.map { ",\"id\":\"\($0)\"" } ?? "")}
     """
@@ -959,12 +1016,14 @@ private actor StudyAPIStub: StudyAPIClient {
   private var decided: TodayView.PlanChange?
   private(set) var sentQuotes: [PlanChangeQuote?] = []
   private let holdsOpening: Bool
-  private var heldOpening: CheckedContinuation<Void, Never>?
-  private var openingWaiter: CheckedContinuation<Void, Never>?
+  private let holdsStop: Bool
+  private var heldCall: CheckedContinuation<Void, Never>?
+  private var heldCallWaiter: CheckedContinuation<Void, Never>?
   private let holdsReadiness: Bool
   private var heldReadiness: CheckedContinuation<Void, Never>?
   private var readinessWaiter: CheckedContinuation<Void, Never>?
   private(set) var openedTargets: [String] = []
+  private(set) var stoppedSessions: [String] = []
   private(set) var openedBlocks: [String] = []
   private(set) var writtenLessons: [String] = []
   private(set) var preparedGoals: [String] = []
@@ -985,7 +1044,7 @@ private actor StudyAPIStub: StudyAPIClient {
     unwrittenLessons: Set<String> = [], unreachableLessons: Set<String> = [],
     readiness: Components.Schemas.LessonReadiness = .init(
       alternative: nil, generationId: nil, kind: .lesson, setAside: false, status: .ready),
-    holdsReadiness: Bool = false
+    holdsReadiness: Bool = false, holdsStop: Bool = false
   ) {
     self.unwrittenLessons = unwrittenLessons
     self.unreachableLessons = unreachableLessons
@@ -1000,6 +1059,7 @@ private actor StudyAPIStub: StudyAPIClient {
     self.extraBlock = extraBlock
     self.today = today
     self.holdsOpening = holdsOpening
+    self.holdsStop = holdsStop
   }
 
   func serve(_ today: TodayContent) {
@@ -1010,28 +1070,31 @@ private actor StudyAPIStub: StudyAPIClient {
     decided = change
   }
 
-  func waitForHeldOpening() async {
-    guard heldOpening == nil else {
+  func waitForHeldCall() async {
+    guard heldCall == nil else {
       return
     }
 
-    await withCheckedContinuation { openingWaiter = $0 }
+    await withCheckedContinuation { heldCallWaiter = $0 }
   }
 
-  func releaseOpening() {
-    heldOpening?.resume()
-    heldOpening = nil
+  func releaseHeldCall() {
+    heldCall?.resume()
+    heldCall = nil
   }
 
   private func holdIfAsked() async {
-    guard holdsOpening else {
-      return
+    if holdsOpening {
+      await hold()
     }
+  }
 
+  /// One call waits here until `releaseHeldCall()`.
+  private func hold() async {
     await withCheckedContinuation { continuation in
-      heldOpening = continuation
-      openingWaiter?.resume()
-      openingWaiter = nil
+      heldCall = continuation
+      heldCallWaiter?.resume()
+      heldCallWaiter = nil
     }
   }
 
@@ -1141,7 +1204,15 @@ private actor StudyAPIStub: StudyAPIClient {
   }
 
   func catchUp(token: String, sessionID: String, timeZone: String) async throws {}
-  func stop(token: String, sessionID: String, timeZone: String) async throws {}
+  func stop(token: String, sessionID: String, timeZone: String) async throws {
+    if holdsStop {
+      await hold()
+    }
+
+    // As URLSession does, a request whose task was canceled meanwhile doesn't arrive.
+    try Task.checkCancellation()
+    stoppedSessions.append(sessionID)
+  }
 
   func getSession(token: String, sessionID: String) async throws -> StudyDay {
     guard let session else {

@@ -2,6 +2,7 @@
 
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
 import { useExtracted } from "next-intl";
+import { readStatementAnswer } from "./_utils/statement-answer";
 
 export function useTrueFalseLabels(labels: TrueFalseLabels) {
   const t = useExtracted();
@@ -16,12 +17,19 @@ export function useTrueFalseLabels(labels: TrueFalseLabels) {
     return isTrue ? t("True") : t("False");
   }
 
-  function answerText(answer: string | null | undefined): string | null {
-    if (answer === "true" || answer === "false") {
-      return answerLabel(answer === "true");
+  function answerText({
+    answer,
+    format,
+  }: {
+    answer: string | null | undefined;
+    format: string | undefined;
+  }): string | null {
+    if (answer === null || answer === undefined) {
+      return null;
     }
 
-    return answer ?? null;
+    const isTrue = readStatementAnswer({ answer, format });
+    return isTrue === null ? answer : answerLabel(isTrue);
   }
 
   return { answerLabel, answerText };

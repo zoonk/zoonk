@@ -17,7 +17,9 @@ export function registerFollowUpStarter(starter: FollowUpStarter): void {
   globalThis.zoonkFollowUpStarter = starter;
 }
 
-async function askApiToStartFollowUps(userId: string): Promise<void> {
+async function askApiToStartFollowUps(
+  input: { userId: string } | { chapterId: string },
+): Promise<void> {
   const secret = process.env.APP_FOLLOW_UP_SECRET;
 
   if (!secret) {
@@ -27,7 +29,7 @@ async function askApiToStartFollowUps(userId: string): Promise<void> {
 
   const { data: response, error } = await safeAsync(async () =>
     fetch(`${API_URL}/internal/follow-ups`, {
-      body: JSON.stringify({ userId }),
+      body: JSON.stringify(input),
       cache: "no-store",
       headers: {
         ...(await getApiDeploymentHeaders()),
@@ -41,7 +43,7 @@ async function askApiToStartFollowUps(userId: string): Promise<void> {
   await response?.body?.cancel();
 
   if (error || !response.ok) {
-    logError(`Could not start learner ${userId}'s follow-ups.`, error ?? response.status);
+    logError("Could not start owed work.", error ?? response.status);
   }
 }
 
@@ -50,13 +52,17 @@ export async function startFollowUps(userId: string): Promise<void> {
   const starter = globalThis.zoonkFollowUpStarter;
 
   if (!starter) {
-    await askApiToStartFollowUps(userId);
+    await askApiToStartFollowUps({ userId });
     return;
   }
 
   const { error } = await safeAsync(() => starter(userId));
 
   if (error) {
-    logError(`Could not start learner ${userId}'s follow-ups.`, error);
+    logError("Could not start owed work.", error);
   }
+}
+
+export async function startMindMapRedraw(chapterId: string): Promise<void> {
+  await askApiToStartFollowUps({ chapterId });
 }

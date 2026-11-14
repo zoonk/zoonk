@@ -34,8 +34,10 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalDensity
@@ -63,11 +65,15 @@ import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
+import com.zoonk.android.ui.components.OpeningDay
 import com.zoonk.android.ui.components.PageHeader
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.rememberOpeningDay
+import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.BottomBar
@@ -100,23 +106,26 @@ internal fun PracticeChooser(
     val examChoices = practiceChoices(view.options.filter { it.kind != MockOption.Kind.AREA }, severalDays)
     val subjectChoices = practiceChoices(view.options.filter { it.kind == MockOption.Kind.AREA }, severalDays)
 
-    // A free learner meets the subscription when they press Start: the bar's button becomes Subscribe.
-    var gated by rememberSaveable { mutableStateOf(false) }
-    val start = {
-        option?.let {
+    // The bar's button becomes Subscribe once a Start met the lock, until a purchase opens the mocks.
+    val triedLocked by viewModel.triedLocked.collectAsStateWithLifecycle()
+    val gated = triedLocked && !open
+    val mainAction = {
+        if (gated) {
+            navigator.open(AppRoute.Subscription)
+        } else if (option != null && !busy) {
             onStart()
-            if (open) viewModel.start(it.shape, it.key) else gated = true
+            if (open) viewModel.start(option.shape, option.key) else viewModel.tryLocked()
         }
     }
     val action: @Composable (Modifier) -> Unit = { modifier ->
         if (gated) {
-            Button(onClick = { navigator.open(AppRoute.Subscription) }, modifier = modifier.focus(replacementFocus)) {
+            Button(onClick = mainAction, modifier = modifier.focus(replacementFocus)) {
                 Text(stringResource(R.string.subscription_subscribe))
             }
         } else {
             Button(
                 busy = busy,
-                onClick = { start() },
+                onClick = mainAction,
                 modifier = modifier.focus(replacementFocus),
                 enabled = option != null,
             ) { Text(stringResource(R.string.mock_chooser_start)) }
@@ -125,7 +134,7 @@ internal fun PracticeChooser(
 
     ChooserPage(
         listState = listState,
-        onEnter = { start() },
+        onEnter = mainAction,
         note =
             when {
                 gated -> ({ MockGate() })
@@ -161,12 +170,12 @@ internal fun PracticeChooser(
             Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     if (subjectChoices.isNotEmpty()) SectionHeader(stringResource(R.string.mock_chooser_the_exam))
-                    ChoiceRows(examChoices, picked) { picked = it }
+                    ChoiceRows(examChoices, picked, onEnter = mainAction) { picked = it }
                 }
                 if (subjectChoices.isNotEmpty()) {
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         SectionHeader(stringResource(R.string.mock_chooser_one_subject))
-                        ChoiceRows(subjectChoices, picked) { picked = it }
+                        ChoiceRows(subjectChoices, picked, onEnter = mainAction) { picked = it }
                     }
                 }
             }
@@ -187,21 +196,35 @@ private fun ShortDialog(
     val count = formatNumber(short.questions.toDouble(), locale)
     val total = formatNumber(short.examQuestions.toDouble(), locale)
     val time = minutesText(short.minutes)
+    val full = rememberOpeningDay(short.availableAt.takeIf { short.limit == AnytimeMock.Limit.ROLLING30_DAYS })
     AlertDialog(
         onDismissRequest = onPickAnother,
         title = { Text(stringResource(R.string.mock_chooser_short_title)) },
         text = {
             Text(
-                stringResource(
-                    when (short.limit) {
-                        AnytimeMock.Limit.DAY -> R.string.mock_chooser_short_day
-                        AnytimeMock.Limit.MONTH -> R.string.mock_chooser_short_month
-                        AnytimeMock.Limit.TOTAL, null -> R.string.mock_chooser_short_line
-                    },
-                    count,
-                    total,
-                    time,
-                ),
+                when {
+                    short.limit == AnytimeMock.Limit.DAY || full == OpeningDay.Tomorrow -> {
+                        stringResource(R.string.mock_chooser_short_day, count, total, time)
+                    }
+
+                    full == OpeningDay.Today -> {
+                        stringResource(R.string.mock_chooser_short_later_today, count, total, time)
+                    }
+
+                    full is OpeningDay.On -> {
+                        stringResource(
+                            R.string.mock_chooser_short_on,
+                            count,
+                            total,
+                            time,
+                            formatDate(full.date, locale, DateStyle.DayMonth),
+                        )
+                    }
+
+                    else -> {
+                        stringResource(R.string.mock_chooser_short_line, count, total, time)
+                    }
+                },
             )
         },
         confirmButton = { TextButton(onClick = onStart) { Text(stringResource(R.string.mock_chooser_start)) } },
@@ -252,14 +275,9 @@ private fun ChooserPage(
     aside: @Composable ColumnScope.() -> Unit,
     content: LazyListScope.(asideBeside: Boolean) -> Unit,
 ) {
-    Column(
-        // Enter takes the page's main action, as main's Start does; the arrows move the pick.
-        Modifier.onPreviewKeyEvent { event ->
-            val enter = event.key == Key.Enter || event.key == Key.NumPadEnter
-            if (enter && event.type == KeyEventType.KeyDown) onEnter()
-            enter
-        },
-    ) {
+    // Main's screen Enter: a focused control that acts (the last mock, the bar's button, a notice's
+    // action) keeps its own, and only an Enter none of them took starts; the picks hand theirs over.
+    Column(Modifier.onKeyEvent { event -> enterTakes(event, onEnter) }) {
         DetailPage(
             aside = aside,
             asideLabel = stringResource(R.string.mock_chooser_picked),
@@ -288,6 +306,16 @@ private fun StartFailed(failed: ChooserStatus.Failed) {
     )
 }
 
+/** Enter runs [action] once per press, as main's screen keys do, and is spent whether held or not. */
+private fun enterTakes(
+    event: KeyEvent,
+    action: () -> Unit,
+): Boolean {
+    if (event.key != Key.Enter && event.key != Key.NumPadEnter) return false
+    if (event.type == KeyEventType.KeyDown && event.nativeKeyEvent.repeatCount == 0) action()
+    return true
+}
+
 private fun Modifier.focus(requester: FocusRequester?): Modifier = requester?.let { focusRequester(it) } ?: this
 
 /** Fair use for new questions ran out: main's help limit notice with its way on. */
@@ -298,7 +326,7 @@ private fun Refusal(
 ) {
     LimitNotice(
         limit = status.limit,
-        subject = LimitSubject.Help,
+        subject = LimitSubject.MockExams,
         onCreateAccount = { navigator.open(AppRoute.Login) },
         onSubscribe = { navigator.open(AppRoute.Subscription) },
         modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
@@ -331,11 +359,13 @@ private fun practiceChoices(
 private fun ChoiceRows(
     choices: List<RowChoice>,
     picked: String?,
+    onEnter: () -> Unit,
     onPick: (String) -> Unit,
 ) {
     BoxWithConstraints {
         val stacked = maxWidth < STACK_BELOW
-        Column(Modifier.selectableGroup()) {
+        // A pick is a radio, which main lets Enter pass to the screen's Start; the arrows move it.
+        Column(Modifier.selectableGroup().onPreviewKeyEvent { event -> enterTakes(event, onEnter) }) {
             choices.forEachIndexed { index, choice ->
                 if (index > 0) HorizontalDivider()
                 ChoiceRow(choice, selected = choice.key == picked, stacked = stacked) { onPick(choice.key) }

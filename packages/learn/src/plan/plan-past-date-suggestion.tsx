@@ -6,9 +6,13 @@ import { CalendarClockIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
 import {
+  Suggestion,
   SuggestionAction,
   SuggestionActions,
   SuggestionDescription,
+  SuggestionHeader,
+  SuggestionLine,
+  SuggestionSummary,
 } from "../_components/suggestion";
 import { SuggestionMenu } from "../_components/suggestion-menu";
 import { useFormatIsoDate } from "../_utils/iso-date";
@@ -23,6 +27,7 @@ import { currentPlanPreview } from "./plan-preview-state";
 import { usePastDateText } from "./plan-status-label";
 import {
   PlanChangeSuggestion,
+  SlotContent,
   type SlotItem,
   usePlanSuggestionSlot,
 } from "./plan-suggestion-context";
@@ -56,15 +61,28 @@ export function PastDateSuggestion({ item }: { item: Extract<SlotItem, { kind: "
   );
 }
 
-/** An exam that's over: the page's bar holds its answers (`PlanExamOverBar`). */
+/**
+ * An exam that's over: a statement, since the page's bar asks the question (`PlanExamOverBar`) and
+ * a sheet over it couldn't answer.
+ */
 function ExamOverSuggestion({ item }: { item: Extract<SlotItem, { kind: "pastDate" }> }) {
   const pastDateText = usePastDateText();
-  const { ask, title } = pastDateText({ isExam: true, lessons: item.lessons });
+  const { left, title } = pastDateText({ isExam: true, lessons: item.lessons });
 
   return (
-    <PlanChangeSuggestion item={item} mark={<CalendarClockIcon />} title={title}>
-      <SuggestionDescription>{ask}</SuggestionDescription>
-    </PlanChangeSuggestion>
+    <Suggestion label={title} mark={<CalendarClockIcon />}>
+      <SuggestionLine>
+        <div>
+          <SuggestionSummary>{title}</SuggestionSummary>
+          <SuggestionDescription>{left}</SuggestionDescription>
+        </div>
+      </SuggestionLine>
+
+      <SlotContent statement>
+        <SuggestionHeader>{title}</SuggestionHeader>
+        <SuggestionDescription>{left}</SuggestionDescription>
+      </SlotContent>
+    </Suggestion>
   );
 }
 
@@ -152,10 +170,13 @@ function DateOverSuggestion({ item }: { item: Extract<SlotItem, { kind: "pastDat
       return (
         <>
           <SuggestionDescription role="status">{texts.noDate}</SuggestionDescription>
-          <SuggestionActions>
-            <SuggestionAction onClick={() => host.onEdit("date")}>
-              {t("Adjust plan")}
-            </SuggestionAction>
+          <SuggestionActions
+            main={
+              <SuggestionAction onClick={() => host.onEdit("date")}>
+                {t("Adjust plan")}
+              </SuggestionAction>
+            }
+          >
             <SuggestionAction onClick={() => dismiss(item.key)} variant="outline">
               {t("Not now")}
             </SuggestionAction>
@@ -176,13 +197,14 @@ function DateOverSuggestion({ item }: { item: Extract<SlotItem, { kind: "pastDat
         <SuggestionDescription role={retry ? "status" : undefined}>
           {retry ? retryText : offerText}
         </SuggestionDescription>
-        <SuggestionActions>
-          <SuggestionAction action={() => void showChange()} key="preview">
-            {retry ? t("Try again") : t("Find a date")}
-          </SuggestionAction>
-
-          <OtherOptions item={item} />
-        </SuggestionActions>
+        <SuggestionActions
+          main={
+            <SuggestionAction action={() => void showChange()} key="preview">
+              {retry ? t("Try again") : t("Find a date")}
+            </SuggestionAction>
+          }
+          menu={<OtherOptions item={item} />}
+        />
       </>
     );
   };

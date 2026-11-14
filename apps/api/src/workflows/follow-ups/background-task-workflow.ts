@@ -7,11 +7,13 @@ import {
   checkMistakePatternStep,
   claimDailyInsightStep,
   endWebPlusBesideStoreStep,
+  failContentFixVoiceStep,
   proposeOnboardingMemoryStep,
   proposeSessionMemoryStep,
   resolveMistakeCauseStep,
   saveDailyInsightStep,
   settleSessionDayStep,
+  voiceContentFixStep,
   voiceWordStep,
   writeDailyInsightStep,
 } from "./steps/background-task-steps";
@@ -30,6 +32,7 @@ export type BackgroundTask = Exclude<
       | "settleSessionPlan"
       | "reviewAlphabetLesson"
       | "writeLesson"
+      | "writeSentenceOrders"
       | "writeSpeakingPaper";
   }
 >;
@@ -54,6 +57,15 @@ async function checkDailyInsight({ input, userId }: InsightTask): Promise<void> 
   await saveDailyInsightStep({ claim, userId, written });
 }
 
+/** Once retries run out, the fix says so, since it can't be approved without its clip. */
+async function voiceContentFix(input: { fixId: string }): Promise<void> {
+  try {
+    await voiceContentFixStep(input);
+  } catch {
+    await failContentFixVoiceStep(input);
+  }
+}
+
 async function runTask(task: BackgroundTask): Promise<void> {
   const { userId } = task;
 
@@ -74,6 +86,8 @@ async function runTask(task: BackgroundTask): Promise<void> {
       return settleSessionDayStep({ ...task.input, userId });
     case "voiceWord":
       return voiceWordStep(task.input);
+    case "voiceContentFix":
+      return voiceContentFix(task.input);
     case "endWebPlusBesideStore":
       return endWebPlusBesideStoreStep(userId);
     case "askToCancelSecondStorePlus":

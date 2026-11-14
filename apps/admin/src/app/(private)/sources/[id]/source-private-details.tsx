@@ -2,6 +2,7 @@ import { AdminSection } from "@/components/admin-section";
 import { DetailField, DetailFields } from "@/components/detail-field";
 import { type AdminPrivateSource } from "@/data/sources/get-source";
 import { formatDateTime } from "@/lib/format";
+import { LINK_CLASS } from "@/lib/link-class";
 import Link from "next/link";
 
 /** A private upload's metadata only: its title, text and file are personal data. */
@@ -14,11 +15,7 @@ export function SourcePrivateDetails({ source }: { source: AdminPrivateSource })
       <DetailFields>
         <DetailField label="Owner">
           {source.owner ? (
-            <Link
-              className="hit-area relative underline underline-offset-3"
-              href={`/users/${source.owner.id}`}
-              prefetch
-            >
+            <Link className={LINK_CLASS} href={`/users/${source.owner.id}`} prefetch>
               {source.owner.name || source.owner.email}
             </Link>
           ) : null}

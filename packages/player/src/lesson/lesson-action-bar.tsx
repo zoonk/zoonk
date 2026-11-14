@@ -2,6 +2,7 @@
 
 import { MainActionSlot } from "@zoonk/learn/main-action-slot";
 import {
+  BackWithSecondAction,
   QuestionActions,
   QuestionBack,
   QuestionDontKnow,
@@ -105,15 +106,20 @@ export function LessonActionBar() {
   return (
     <TaskActionBar>
       <QuestionActions>
-        {screen.canGoBack && (
-          <QuestionBack
-            id={LESSON_BACK_ID}
-            onClick={(event) => pressKeepingFocus(event, actions.goBack)}
-          />
-        )}
+        <BackWithSecondAction
+          back={
+            screen.canGoBack && (
+              <QuestionBack
+                id={LESSON_BACK_ID}
+                onClick={(event) => pressKeepingFocus(event, actions.goBack)}
+              />
+            )
+          }
+        >
+          <DontKnow />
+        </BackWithSecondAction>
 
         <PromptAudio />
-        <DontKnow />
 
         <MainActionSlot>
           <QuestionMainAction

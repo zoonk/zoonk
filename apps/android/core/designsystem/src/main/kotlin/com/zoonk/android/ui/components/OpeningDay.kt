@@ -6,13 +6,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import kotlinx.coroutines.delay
+import java.time.Clock
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
+
+/** The time an opening day is read against; a test provides a clock that follows its own. */
+val LocalClock = staticCompositionLocalOf<Clock> { Clock.systemUTC() }
 
 /** When the next free lesson opens, in the learner's own calendar (main's `toOpeningDay`). */
 sealed interface OpeningDay {
@@ -66,14 +71,15 @@ fun nextLook(
  */
 @Composable
 fun rememberOpeningDay(at: Instant?): OpeningDay? {
+    val clock = LocalClock.current
     var looks by remember(at) { mutableIntStateOf(0) }
     LifecycleEventEffect(Lifecycle.Event.ON_START) { looks++ }
     LaunchedEffect(at) {
-        while (at != null && at.isAfter(Instant.now())) {
-            val now = Instant.now()
+        while (at != null && at.isAfter(clock.instant())) {
+            val now = clock.instant()
             delay(Duration.between(now, nextLook(at, now)).toMillis().coerceAtLeast(1))
             looks++
         }
     }
-    return remember(at, looks) { at?.let { openingDay(it) } }
+    return remember(at, looks) { at?.let { openingDay(it, clock.instant()) } }
 }

@@ -1,6 +1,7 @@
 import { fitOptions } from "@zoonk/ai/tasks/fit-options";
 import { normalizeTypedAnswer } from "@zoonk/ai/tasks/grading/typed-answer-match";
 import { type GeneratedItem, MAX_OPTIONS } from "@zoonk/ai/tasks/items/schemas";
+import { wrapBareLatex } from "@zoonk/utils/bare-latex";
 import { normalizeString } from "@zoonk/utils/string";
 import { repairMarkdown } from "@zoonk/utils/text-repairs";
 import { stripOptionLabels } from "../_utils/answer-options";
@@ -148,7 +149,9 @@ export function repairItem<TItem extends GeneratedItem>({
   language: string;
   optionCount?: number | null;
 }): TItem {
-  const written = mapItemWriting(item, ({ layout, text }) => repairMarkdown({ layout, text }));
+  const written = mapItemWriting(item, ({ layout, text }) =>
+    wrapBareLatex({ layout, text: repairMarkdown({ layout, text }) }),
+  );
 
   return { ...item, ...repairAnswers({ item: written, language, optionCount }) };
 }

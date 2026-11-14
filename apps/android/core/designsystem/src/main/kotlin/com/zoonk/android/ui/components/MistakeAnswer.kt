@@ -6,17 +6,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
+import com.zoonk.android.ui.richtext.RichTextLine
+import com.zoonk.android.ui.richtext.SpokenText
 import com.zoonk.android.ui.theme.ZoonkRadius
 
 @Composable
 fun MistakeAnswer(
-    text: String,
+    text: SpokenText,
     right: Boolean,
     modifier: Modifier = Modifier,
 ) {
@@ -33,7 +35,15 @@ fun MistakeAnswer(
                 .border(tone.border, shape)
                 .padding(horizontal = 14.dp, vertical = 12.dp)
                 .semantics(mergeDescendants = true) {},
-        content = { Text(text, color = tone.contentColor, style = MaterialTheme.typography.bodyLarge) },
+        content = { RichTextLine(text, Modifier, MaterialTheme.typography.bodyLarge.copy(color = tone.contentColor)) },
         tag = { AnswerTag(picked = !right, result = result) },
     )
 }
+
+/** An answer shown exactly as written, such as what the learner typed. */
+@Composable
+fun MistakeAnswer(
+    text: String,
+    right: Boolean,
+    modifier: Modifier = Modifier,
+) = MistakeAnswer(SpokenText(AnnotatedString(text)), right, modifier)

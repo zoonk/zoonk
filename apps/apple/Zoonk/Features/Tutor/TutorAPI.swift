@@ -524,7 +524,10 @@ extension TutorFailure {
         return
       }
 
-      self = .limitReached(period: limit.period, tier: tier)
+      self = .limit(
+        .reached(
+          period: limit.period, tier: tier,
+          availableAt: limit.availableAt.flatMap(Date.init(serverInstant:))))
     default:
       self = fallback
     }
@@ -533,8 +536,9 @@ extension TutorFailure {
 
 private struct UsageLimitDetails: Decodable {
   struct Limit: Decodable {
-    let period: TutorFailure.Period
+    let period: String
     let tier: String
+    let availableAt: String?
   }
 
   let limit: Limit

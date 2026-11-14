@@ -8,12 +8,12 @@ import { PendingLink } from "@zoonk/ui/patterns/links/pending";
 import { FileTextIcon, LinkIcon, UploadIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
+import { type LimitText, toCapWords, useLimitText } from "../../_components/comes-back-words";
 import { SURFACE_CLASS } from "../../_components/surface";
 import {
   type AttachOutcome,
   type AttachedSource,
   type GoalAttachActions,
-  type UsageCap,
 } from "../onboarding-actions";
 import { PasteLink } from "./paste-link";
 
@@ -23,28 +23,16 @@ const ACCEPTED_FILES =
 
 const PANEL_CLASS = cn(SURFACE_CLASS, "flex flex-col gap-3 p-4");
 
-function useAttachLimitMessage() {
-  const t = useExtracted();
-
-  return ({ period, tier }: UsageCap): string => {
-    if (tier === "plus") {
-      return t("No more material today. More tomorrow.");
-    }
-
-    return period === "month"
-      ? t("No more material this month. More next month, or subscribe to keep going.")
-      : t("No more material today. More tomorrow, or subscribe to keep going.");
-  };
-}
-
 function useAttachError() {
   const t = useExtracted();
-  const limitMessage = useAttachLimitMessage();
 
-  return (outcome: Exclude<AttachOutcome, { status: "attached" }>): string => {
+  return (outcome: Exclude<AttachOutcome, { status: "attached" }>): LimitText => {
     switch (outcome.status) {
       case "limitReached":
-        return limitMessage(outcome);
+        return toCapWords(outcome, {
+          day: t("No more material today"),
+          rolling: t("You've used your uploads"),
+        });
       case "slowDown":
         return t("You're adding material quickly. Try again in a few minutes.");
       case "unsupported":
@@ -130,7 +118,8 @@ export function AttachControls({ attach, autoFocus, language, onAttached }: Atta
   const fileId = useId();
   const errorFor = useAttachError();
   const [pasting, setPasting] = useState<"link" | "text" | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<LimitText | null>(null);
+  const errorText = useLimitText(error);
   const [isPending, startTransition] = useTransition();
 
   const toggle = (way: "link" | "text") => {
@@ -228,9 +217,12 @@ export function AttachControls({ attach, autoFocus, language, onAttached }: Atta
         </p>
       )}
 
-      {error && (
-        <p className="text-destructive-text text-sm" role="alert">
-          {error}
+      {errorText.text && (
+        <p
+          className={cn("text-destructive-text text-sm", errorText.hidden && "invisible")}
+          role="alert"
+        >
+          {errorText.text}
         </p>
       )}
     </>

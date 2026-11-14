@@ -276,6 +276,10 @@ private struct MistakeListSections: View {
 }
 
 private struct MistakeEntryView: View {
+  /// Words the learner typed or said are plain text, as is a typed question's accepted answer, so
+  /// `__init__` keeps its underscores; other answers are item text with their math.
+  private static let writtenAnswerFormats: Set = ["spoken", "spokenAnswer", "typed", "typedAnswer"]
+
   let mistake: Components.Schemas.Mistake
   let labels: PracticeTrueFalseLabels
   let continuesSet: Bool
@@ -309,18 +313,24 @@ private struct MistakeEntryView: View {
         image: try? snapshot.image.map { try PracticeJSON.recode($0.value1) },
         visual: try? snapshot.visual.map { try PracticeJSON.recode($0) })
 
-      ItemText(snapshot.question).typeStyle(.question)
+      QuestionTitle(text: snapshot.question, isHeading: false)
 
-      if let answer = TrueFalseWords.savedAnswer(snapshot.answer, labels: labels) {
-        MistakeAnswerRow(text: answer, isRight: false)
+      if let answer = TrueFalseWords.savedAnswer(
+        snapshot.answer, format: snapshot.format, labels: labels)
+      {
+        MistakeAnswerRow(
+          text: answer, isRight: false,
+          isLiteral: Self.writtenAnswerFormats.contains(snapshot.format ?? ""))
       }
 
-      if let correct = TrueFalseWords.savedAnswer(snapshot.correctAnswer, labels: labels) {
-        MistakeAnswerRow(text: correct, isRight: true)
+      if let correct = TrueFalseWords.savedAnswer(
+        snapshot.correctAnswer, format: snapshot.format, labels: labels)
+      {
+        MistakeAnswerRow(text: correct, isRight: true, isLiteral: snapshot.format == "typed")
       }
 
       if let explanation = snapshot.explanation {
-        ItemText(explanation).typeStyle(.note).foregroundStyle(.mutedForeground)
+        LessonTextBlocks(explanation).typeStyle(.note).foregroundStyle(.mutedForeground)
       }
 
       actions
@@ -372,10 +382,7 @@ private struct MistakeEntryView: View {
 
   private var entryDate: String {
     let date = mistake.status == .fixed ? (mistake.fixedAt ?? mistake.createdAt) : mistake.createdAt
-    let sameYear = Calendar.current.isDate(date, equalTo: .now, toGranularity: .year)
-    return sameYear
-      ? date.formatted(.dateTime.month(.abbreviated).day())
-      : date.formatted(.dateTime.month(.abbreviated).day().year())
+    return PlanDate.momentDay(date)
   }
 
   private var causeIcon: String {
@@ -417,10 +424,12 @@ private struct MistakeEntryView: View {
 struct MistakeAnswerRow: View {
   let text: String
   let isRight: Bool
+  /// Shows the text exactly as written, such as what the learner typed.
+  let isLiteral: Bool
 
   var body: some View {
     TagBesideOrUnder(
-      text: RichInline(text: ItemTextBlock.inline(text)),
+      text: isLiteral ? RichInline(text: AttributedString(text)) : LessonRichText.typeset(text),
       tag: AnyView(
         Text(
           isRight

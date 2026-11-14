@@ -235,8 +235,12 @@
   "plan_effect_topics_added": "f48224cbb1811617db82c0d65f6242093c4f09a2eb3ffa9ae53cab83cc597731",
   "plan_effect_topics_leave": "82186ce12909dfb0775f2459fc32c133760467189f7d2a741768a1f969d8e555",
   "plan_effect_weekly_challenge_on": "cc5a59abae731588852c76979b0d70740a1053ba352ba2bd2b39e19ca22a5668",
+  "plan_ends": "5def049b873d9eb1880115107b6ffd84a23a7bfbf127ae18502644934fe76f84",
+  "plan_ends_about": "b19f89fa742b76235a2417e1db38dbd2d54324f91aebbaeb55564d0525c277d7",
+  "plan_ends_about_month": "b4ec1f6c804f1783fc97b314ef4aa7ced8ead6aa40eb83f2a93e7221d9e0dbd0",
   "plan_estimate_based_on": "b14593d75b4fc7372750ea41d66985945d78d204f90b1803c6fb20f4cbd8d0f0",
   "plan_estimate_based_on_last": "c8c179b311fc90f9718d1091bc0d622bbce1ec382746e494b0cfb7931e1cc33f",
+  "plan_estimate_based_on_reviews": "62c1c11b470ea24370cc9581755ab487073ed4c878bbb1396f2eb769ed44b808",
   "plan_estimate_waits": "607190aa90db089b93f7347df8123c6a51f14ee59875b1c321b6d8aa4db56577",
   "plan_estimated_score": "f90fb5ba50c8f45f8991e390e36776ef59a920eb9690eb92a1ccff97659f94e9",
   "plan_every_day": "c23e7c3fe92da6e8043c7c59c08f7ea4f82da8e59b7b130e17eb5532437d32e2",
@@ -250,7 +254,7 @@
   "plan_exam_date": "c5711827dcfe7af649409c795ba6f776b9fb376b0594db29bf5e393671bf8ac7",
   "plan_exam_date_label": "dc2242ff6e25e8702d7df8f1a88c458921ceb67b30668213e99acd6551677f7d",
   "plan_exam_day": "98c5fcab7fc79810f39106060b3ef3c9c784fb654f8291ef3da0fa92c9f4e34e",
-  "plan_exam_over_ask": "192f2ad5a7c0c429560d5be87a195a6ccb06253dd457231784b4410bcc11c02e",
+  "plan_exam_over_left": "0a43e9ae2181732129e07c2462f661f9a73f94a7a1658b0241db20d1c4a5b334",
   "plan_eyebrow": "5ad77f73e20d2e27a61114b18878189c721782186081eac6eb34ee2a54d404d0",
   "plan_far_count_from": "fa4968a8c50f43078a70f2b1996476f71d9169ab9b322874b9a0f6e96004a2bb",
   "plan_far_count_from_month": "345db0f799c15d827459cf92df48d5544fdd3b19b4ba195d4182aba7e48cfe8f",
@@ -301,7 +305,6 @@
   "plan_keep_studying": "8472263ee8b0944d8959927aeda18f99380ddd8c9ccb6fd724fac14ee7941e3b",
   "plan_last_week_recap": "f18af2a2e609189b84e5b87444390f224a08e688969e4b6c81049499fab22102",
   "plan_lessons": "399b9b30b38d7aa4df256a358ad172dd4ef14a0ce6fd5dfe8cdc308fb442665f",
-  "plan_lessons_count": "8d57d9ecd3e068f4d6ea19ca1038d19ca6b091c0c5244831cdff8c0510925220",
   "plan_lessons_done_of": "f4c84491ff5aa95e5196c96cc7fa5d6d112bb1ddefe2dafe4097845afa0bea06",
   "plan_lessons_left": "d7d5a3253e27ad863442f62678ee6328a26c91cfa9f4f1cd421a23a6c20139f7",
   "plan_lessons_not_studied": "3660f13f86696ac1427fbfb84dc6cd036efb266691d4ea7aeaf0fc349537776d",
@@ -325,7 +328,7 @@
   "plan_more": "53098783eb9a7a0f072636c96d3db8ff30413fcb0dd28699cb9b90b21bb5d340",
   "plan_more_chapters": "ceb727843605f10bfe142bdb6c7a8eaf1706a8b463a99c301137d685b4418838",
   "plan_more_lessons": "d651013397d3881cd5ebe3e5cf7905bf8fe6f2063248a2b834af11b471b0ff28",
-  "plan_more_lessons_fit": "a63cb47521465a93737810dee538334b985c8df6f057bc6244932f1d708b8206",
+  "plan_more_lessons_fit": "8fe36fbb28b2d81d7608c7829874ca56816672e32ae301eeed90f8e20323de47",
   "plan_most_asked_first_until_exam": "af06c29be6624565f739ba90e9f159c07c3532c95ac711efc0aa357ee208152b",
   "plan_move_date": "2cc7d9370bc4826889bcd09a41bb7e0507abc985487fe8fed57768e466b81cec",
   "plan_move_date_to": "d6106c8611394f71f99454b610e51f86b842e0ab76f5269e924820cfbab45c64",
@@ -404,10 +407,6 @@
   "plan_roadmap_from": "6e9a0b2bb1689856969465cfd0310d9c1eb85f5605da0155f4d5640f6f638fef",
   "plan_roadmap_phase_number": "92af56a51ba841093d8bea712ef235ba1589da2ae0f5a5ba101a1ac6595d3d8c",
   "plan_roadmap_phase_of": "28f1b5fab3615d39ba482dcee31aa05b172e8118b0ee409cbae2d357db83117f",
-  "plan_roadmap_until": "5248d198ec8625d9fc14e4417607e6638bda1ed83d3e02621c43fc668b08514d",
-  "plan_roadmap_until_about": "b328717ffd86ec7e703a933b3f94540810160c09e7ffa3d580bf7aa447e018f9",
-  "plan_roadmap_until_about_month": "4959482fad47001f6227ae192e02c4cd87525657390c48ca520a0f3319a94d13",
-  "plan_roadmap_until_month": "dfae1d047d6e0d008389a33fc99f4c9f55c1c75f19d18bc1786c2d7320e9eeed",
   "plan_saturdays": "559f2c993c220c0436ba114094fbf9639fb3ad5df7ad78322d48a8d5451d5210",
   "plan_save": "86b23fd6fd36897c925d44abafbcbda79ca9c05864f390c4df7d9a3e53ee4564",
   "plan_save_failed": "c9ca9a36d9ab7b1437658292c5ef715c8dcac4f283a0cb3d07108a50ab0f9516",
@@ -533,11 +532,6 @@
   "plan_try_again": "fc5c3d3c62a460af29eaca964e028419c98e95ee889e220ab96886becea062fc",
   "plan_tuesdays": "b4d4a5a18cfc4342c67c82034c15133b10272cf12700cc3bfffa3167050bbfd3",
   "plan_undo": "5e442e7baf3aaa1913951e849a918f4f5e1ce0f8134016fe01ca8601b12a8b85",
-  "plan_until": "2de131639c9e65dcab2ddcebaa3bfe575fb55667386086c667285cccc366d9a3",
-  "plan_until_estimate": "f124b088946ddf1b3a14ab3c472b4cfc56bcd1597f4b4e4a70ca65c64bc5c477",
-  "plan_until_estimate_month": "2a0dcdba0c2190fe9d64cb6f11e15886bb1e3702dcb8c9d6a3259034de9e6007",
-  "plan_until_estimate_month_spoken": "6416996b26a517dc0a7740e0b90e6dc38a0e156f28bfce538e4d8a08afc3c9cc",
-  "plan_until_estimate_spoken": "cfc11388182f69f893d680f75409ce0a8e73abc956972da9d6e36d5d1bd17df7",
   "plan_up_next": "ecd9648c3d8c27ead92a901cc6cf33a94715d61d96ae3eb48737543fdaf5d048",
   "plan_up_next_suffix": "e22b4ff0b723eaebe9318a7f6cc6fd1d187d55c191cf55aae44e51f0493e351e",
   "plan_updated": "a1ca42a3bad1ae6ff3691011780975760ce44ad647b7c8647320aedbb5e3cac6",
@@ -590,6 +584,12 @@
     </plurals>
     <string name="plan_date_estimate">~%1$s</string>
     <string name="plan_date_estimate_spoken">Około %1$s</string>
+    <!-- When a phase of the plan ends. %1$s is a day, like "Dec 12". -->
+    <string name="plan_ends">Koniec: %1$s</string>
+    <!-- When a phase of the plan is expected to end. %1$s is a day, like "Dec 12". -->
+    <string name="plan_ends_about">Przewidywany koniec: %1$s</string>
+    <!-- When a phase of the plan is expected to end. %1$s is a month, like "Jan". -->
+    <string name="plan_ends_about_month">Przewidywany koniec: %1$s</string>
     <string name="plan_date_range">%1$s – %2$s</string>
     <string name="plan_no_goal_description">Powiedz nam, czego chcesz się nauczyć, a zaplanujemy każdy dzień aż do osiągnięcia celu.</string>
     <string name="plan_setup_left_title">Najpierw kilka pytań, potem twój plan</string>
@@ -631,14 +631,6 @@
     </plurals>
     <string name="plan_roadmap_phase_of">etap %1$d z %2$d</string>
     <string name="plan_roadmap_from">Od %1$s</string>
-    <!-- %1$s is the day the plan ends, such as "Nov 3". -->
-    <string name="plan_roadmap_until">Do %1$s</string>
-    <!-- %1$s is the month the plan ends, such as "May" or "May 2027". -->
-    <string name="plan_roadmap_until_month">Koniec: %1$s</string>
-    <!-- An estimated end. %1$s is the day the plan ends, such as "Nov 3". -->
-    <string name="plan_roadmap_until_about">Do około %1$s</string>
-    <!-- An estimated end. %1$s is the month the plan ends, such as "May" or "May 2027". -->
-    <string name="plan_roadmap_until_about_month">Przewidywany koniec: %1$s</string>
     <string name="plan_today">Dziś</string>
     <string name="plan_mock_exam">Egzamin próbny</string>
     <string name="plan_exam_day">Dzień egzaminu</string>
@@ -662,22 +654,12 @@
     <string name="plan_short_day">Dzień %1$d z %2$d</string>
     <string name="plan_short_days">Dni %1$d–%2$d z %3$d</string>
     <string name="plan_your_path">Twoja ścieżka</string>
-    <string name="plan_lessons_count">%1$d / %2$d</string>
     <plurals name="plan_lessons_done_of">
         <item quantity="one">Ukończono %1$d z %2$d lekcji</item>
         <item quantity="few">Ukończono %1$d z %2$d lekcji</item>
         <item quantity="many">Ukończono %1$d z %2$d lekcji</item>
         <item quantity="other">Ukończono %1$d z %2$d lekcji</item>
     </plurals>
-    <string name="plan_until">do %1$s</string>
-    <!-- %1$s is a day, such as "Nov 10". -->
-    <string name="plan_until_estimate">do ~%1$s</string>
-    <!-- %1$s is a day, such as "Nov 10". -->
-    <string name="plan_until_estimate_spoken">do około %1$s</string>
-    <!-- %1$s is a month, such as "Jan" or "Jan 2028", never a day. -->
-    <string name="plan_until_estimate_month">do ~%1$s</string>
-    <!-- %1$s is a month, such as "Jan" or "Jan 2028", never a day. -->
-    <string name="plan_until_estimate_month_spoken">do około %1$s</string>
     <string name="plan_not_in_your_plan">Poza twoim planem</string>
     <plurals name="plan_lessons_not_studied">
         <item quantity="one">%d nieprzerobiona lekcja</item>
@@ -918,6 +900,12 @@
         <item quantity="few">Na podstawie %d ostatnich egzaminów próbnych</item>
         <item quantity="many">Na podstawie %d ostatnich egzaminów próbnych</item>
         <item quantity="other">Na podstawie %d ostatnich egzaminów próbnych</item>
+    </plurals>
+    <plurals name="plan_estimate_based_on_reviews">
+        <item quantity="one">Podstawą jest %d powtórka każdego tematu</item>
+        <item quantity="few">Podstawą są %d powtórki każdego tematu</item>
+        <item quantity="many">Podstawą jest %d powtórek każdego tematu</item>
+        <item quantity="other">Podstawą jest %d powtórki każdego tematu</item>
     </plurals>
     <string name="plan_score_percent">%1$s%%</string>
     <string name="plan_score_percent_range">Od %1$s%% do %2$s%%</string>
@@ -1416,8 +1404,12 @@
     </plurals>
     <string name="plan_past_date_goal_title">Termin zakończenia minął</string>
     <string name="plan_past_date_exam_title">Termin egzaminu minął</string>
-    <!-- Under "Your exam date has passed": the lessons left are what "them" means. -->
-    <string name="plan_exam_over_ask">Uczyć się dalej czy zarchiwizować ten cel?</string>
+    <plurals name="plan_exam_over_left">
+        <item quantity="one">Została ci %d lekcja. Chcesz kontynuować naukę czy zarchiwizować ten cel?</item>
+        <item quantity="few">Zostały ci %d lekcje. Chcesz kontynuować naukę czy zarchiwizować ten cel?</item>
+        <item quantity="many">Zostało ci %d lekcji. Chcesz kontynuować naukę czy zarchiwizować ten cel?</item>
+        <item quantity="other">Zostało ci %d lekcji. Chcesz kontynuować naukę czy zarchiwizować ten cel?</item>
+    </plurals>
     <plurals name="plan_past_date_offer">
         <item quantity="one">Masz jeszcze %d lekcję. Późniejszy termin zakończenia daje na nią czas.</item>
         <item quantity="few">Masz jeszcze %d lekcje. Późniejszy termin zakończenia daje na nie czas.</item>

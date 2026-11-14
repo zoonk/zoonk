@@ -180,12 +180,10 @@ struct MindMapReader: View {
     case .lesson(let chapterId, let lessonId):
       let lessons = store.lessonMaps(goalId: goalId, chapterId: chapterId)
 
-      if let lesson = lessons.value?.lessons.first(where: { $0.lessonId == lessonId }),
-        let summary = lesson.map
-      {
+      if let lesson = lessons.value?.lessons.first(where: { $0.lessonId == lessonId }) {
         // The lesson player's map, as its last screen shows it, in the player's column.
         ScrollView {
-          LessonMapView(title: lesson.title, summary: summary)
+          LessonMapView(title: lesson.title, summary: lesson.map)
             .taskColumn(alignment: .leading)
         }
         .lonePage()

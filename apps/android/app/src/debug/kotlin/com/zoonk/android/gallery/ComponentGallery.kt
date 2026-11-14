@@ -177,6 +177,7 @@ internal val gallerySections =
         GallerySection("Answer tones") { Answers() },
         GallerySection("Lesson visuals") { LessonVisuals() },
         GallerySection("Question choices") { QuestionChoices() },
+        GallerySection("Question math") { QuestionMath() },
         GallerySection("Question statements") { QuestionStatements() },
         GallerySection("Question order and pairs") { QuestionOrderAndPairs() },
         GallerySection("Question fields") { QuestionFields() },
@@ -260,7 +261,7 @@ private fun ColorRoles() {
         Words("Your answer", colors.onErrorContainer, colors.errorContainer)
         Words("Field error", colors.error, colors.background)
         Words("+18 Brain Power", zoonk.brainText, colors.background)
-        Words("Appears a lot", zoonk.warningText, colors.background)
+        Words("Asked a lot", zoonk.warningText, colors.background)
         Words("Snackbar", colors.inverseOnSurface, colors.inverseSurface)
     }
 }
@@ -331,7 +332,7 @@ private fun Buttons() {
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Button(onClick = {}, size = size) { Text("Continue") }
                 OutlinedButton(onClick = {}, size = size) { Text("Adjust plan") }
-                SecondaryButton(onClick = {}, size = size) { Text("I don't know yet") }
+                SecondaryButton(onClick = {}, size = size) { Text("Use this date") }
                 TextButton(onClick = {}, size = size) { Text("Skip") }
                 DestructiveButton(onClick = {}, size = size) { Text("Delete") }
             }
@@ -339,7 +340,7 @@ private fun Buttons() {
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Button(onClick = {}, enabled = false) { Text("Continue") }
             OutlinedButton(onClick = {}, enabled = false) { Text("Adjust plan") }
-            SecondaryButton(onClick = {}, enabled = false) { Text("I don't know yet") }
+            SecondaryButton(onClick = {}, enabled = false) { Text("Use this date") }
             TextButton(onClick = {}, enabled = false) { Text("Skip") }
             DestructiveButton(onClick = {}, enabled = false) { Text("Delete") }
         }
@@ -417,7 +418,11 @@ private fun BusyButtons() {
                 busy = true,
                 leadingIcon = { ButtonIcon(R.drawable.ic_event_available) },
             ) { Text("Move to Monday") }
-            SecondaryButton(onClick = {}, busy = true, leadingIcon = { ButtonIcon(R.drawable.ic_help) }) { Text("I don't know yet") }
+            SecondaryButton(
+                onClick = {},
+                busy = true,
+                leadingIcon = { ButtonIcon(R.drawable.ic_event_available) },
+            ) { Text("Use this date") }
             TextButton(onClick = {}, busy = true, leadingIcon = { ButtonIcon(R.drawable.ic_undo) }) { Text("Undo") }
             DestructiveButton(onClick = {}, busy = true, leadingIcon = { ButtonIcon(R.drawable.ic_delete) }) { Text("Delete") }
             OutlinedButton(onClick = {}, busy = true, leadingIcon = { ButtonIcon(R.drawable.ic_download) }, size = ButtonSize.Small) {
@@ -755,7 +760,13 @@ private fun LimitNotices() {
     Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
         listOf(
             Limit.Reached(LimitTier.Guest, LimitPeriod.Day) to LimitSubject.Help,
-            Limit.Reached(LimitTier.Free, LimitPeriod.Month) to LimitSubject.Help,
+            Limit.Reached(
+                LimitTier.Free,
+                LimitPeriod.Rolling30Days,
+                java.time.Instant
+                    .now()
+                    .plusSeconds(9 * 86_400L),
+            ) to LimitSubject.Help,
             Limit.Reached(LimitTier.Plus) to LimitSubject.Help,
             Limit.SlowDown(30) to LimitSubject.Lessons,
             Limit.Reached(LimitTier.Free, LimitPeriod.Day) to LimitSubject.Calls,

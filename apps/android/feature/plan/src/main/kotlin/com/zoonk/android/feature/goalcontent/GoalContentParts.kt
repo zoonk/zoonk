@@ -190,11 +190,11 @@ internal fun topicMarkWords(mark: TopicMark?): String? =
         is TopicMark.InProgress -> stringResource(R.string.goalcontent_topic_in_progress)
     }
 
-/** "Appears a lot": a few words on a soft amber tint, never color alone. */
+/** "Asked a lot": a few words on a soft amber tint, never color alone. */
 @Composable
 internal fun FrequencyChip(modifier: Modifier = Modifier) {
     Text(
-        text = stringResource(R.string.goalcontent_appears_a_lot),
+        text = stringResource(R.string.goalcontent_asked_a_lot),
         modifier =
             modifier
                 .background(MaterialTheme.zoonk.warning.copy(alpha = CHIP_TINT_ALPHA), MaterialTheme.shapes.extraSmall)

@@ -54,40 +54,80 @@ val Limit.needsAccount: Boolean
 val Limit.hasWayOn: Boolean
     get() = needsAccount || (this is Limit.Reached && tier == LimitTier.Free)
 
-private val Limit.Reached.monthly: Boolean
-    get() = period == LimitPeriod.Month || period == LimitPeriod.Total
+/** Counted over the last 30 days, "a month" to the learner: each use comes back 30 days after it was made. */
+private val Limit.Reached.rolling: Boolean
+    get() = period == LimitPeriod.Rolling30Days
 
-/** A free learner's new lessons count their last 30 days (rule 16), so their gate gives the day the next one opens. */
+/** Used up for longer than a day: over the last 30 days, or for good. */
+private val Limit.Reached.usedUp: Boolean
+    get() = rolling || period == LimitPeriod.Total
+
 private val Limit.Reached.freeLessons: Boolean
-    get() = tier == LimitTier.Free && period == LimitPeriod.Rolling30Days
+    get() = tier == LimitTier.Free && rolling
 
-/** The day's sentence; none when the API gave no instant (never a guessed day) or the lesson is already open. */
+/**
+ * When more comes back: the day of [Limit.Reached.availableAt] in the learner's calendar, "later today" or
+ * "tomorrow" when it's that close, following the clock while it shows; a day's cap comes back tomorrow. Only a
+ * free learner is offered to subscribe. None for a guest, whose way on is an account, for a cap used up for good,
+ * or when the API gave no day (never a guessed one).
+ */
 @Composable
-private fun opensLine(day: OpeningDay?): String? =
-    when (day) {
-        null, OpeningDay.Open -> null
-        OpeningDay.Today -> stringResource(R.string.limit_lesson_opens_today)
-        OpeningDay.Tomorrow -> stringResource(R.string.limit_lesson_opens_tomorrow)
-        is OpeningDay.On -> stringResource(R.string.limit_lesson_opens_on, formatDate(day.date, currentLocale(), DateStyle.DayMonth))
+fun comesBackLine(limit: Limit.Reached): String? {
+    val daily = limit.period == null || limit.period == LimitPeriod.Day
+    val day = if (daily) OpeningDay.Tomorrow else rememberOpeningDay(limit.availableAt.takeIf { limit.rolling })
+    val free = limit.tier == LimitTier.Free
+    return when {
+        limit.tier == LimitTier.Guest || day == null -> {
+            null
+        }
+
+        day == OpeningDay.Open -> {
+            stringResource(R.string.limit_try_again_now)
+        }
+
+        day == OpeningDay.Today -> {
+            stringResource(if (free) R.string.limit_more_later_today_or_subscribe else R.string.limit_more_later_today)
+        }
+
+        day == OpeningDay.Tomorrow -> {
+            stringResource(if (free) R.string.limit_more_tomorrow_or_subscribe else R.string.limit_more_tomorrow)
+        }
+
+        else -> {
+            val date = formatDate((day as OpeningDay.On).date, currentLocale(), DateStyle.DayMonth)
+            stringResource(if (free) R.string.limit_more_on_or_subscribe else R.string.limit_more_on, date)
+        }
     }
+}
+
+/** A gate in one sentence, where there's room for only one (a toast, an error under a field): "{title}. {line}". */
+@Composable
+fun gateSentence(
+    title: String,
+    line: String?,
+): String = line?.let { stringResource(R.string.limit_sentence, title, it) } ?: title
+
+/**
+ * The day a cap counted over the last 30 days gave has come while its gate shows: the gate's way to try is back,
+ * so the next tap asks the server again, which decides. Never true for a day's cap or one with no day.
+ */
+@Composable
+fun limitLifted(limit: Limit?): Boolean =
+    limit is Limit.Reached && limit.rolling && rememberOpeningDay(limit.availableAt) == OpeningDay.Open
 
 /** Whether a free learner's next lesson has opened since the refusal: the server then gets asked again (main's `useFreeLessonReady`). */
 @Composable
-fun freeLessonReady(limit: Limit): Boolean =
-    limit is Limit.Reached && limit.freeLessons && rememberOpeningDay(limit.availableAt) == OpeningDay.Open
+fun freeLessonReady(limit: Limit): Boolean = limit is Limit.Reached && limit.freeLessons && limitLifted(limit)
 
-/**
- * Main's `useLessonLimitWords`: the free learner's 30 days with the day the next lesson opens, a guest's,
- * or the day's; a lesson is never refused for a month.
- */
+/** Main's `useLessonLimitWords`: the free learner's month with the day more comes back, a guest's, or the day's. */
 @Composable
 private fun lessonWords(limit: Limit.Reached): LimitWords {
     val opens = rememberOpeningDay(limit.availableAt.takeIf { limit.freeLessons })
     return when {
         opens == OpeningDay.Open -> LimitWords(stringResource(R.string.limit_lesson_ready), line = null)
-        limit.freeLessons -> LimitWords(stringResource(R.string.limit_lessons_free), opensLine(opens))
+        limit.freeLessons -> LimitWords(stringResource(R.string.limit_lessons_free), comesBackLine(limit))
         limit.tier == LimitTier.Guest -> LimitWords(stringResource(R.string.limit_lessons_guest), line = null)
-        else -> LimitWords(stringResource(R.string.limit_lessons_day), reachedLine(limit.tier, monthly = false))
+        else -> LimitWords(stringResource(R.string.limit_lessons_day), comesBackLine(limit))
     }
 }
 
@@ -111,31 +151,6 @@ fun limitWords(
                 LimitSubject.MapLessons -> mapLessonsWords(limit)
                 else -> LimitWords(reachedTitle(limit, subject)?.let { stringResource(it) }, comesBackLine(limit))
             }
-        }
-    }
-
-/** When it comes back; a guest's way on is the button, so their notice has no line. */
-@Composable
-fun comesBackLine(limit: Limit.Reached): String? = reachedLine(limit.tier, limit.monthly)
-
-@Composable
-private fun reachedLine(
-    tier: LimitTier,
-    monthly: Boolean,
-): String? =
-    when (tier) {
-        LimitTier.Guest -> {
-            null
-        }
-
-        LimitTier.Plus -> {
-            stringResource(if (monthly) R.string.limit_more_next_month else R.string.limit_more_tomorrow)
-        }
-
-        LimitTier.Free -> {
-            stringResource(
-                if (monthly) R.string.limit_more_next_month_or_subscribe else R.string.limit_more_tomorrow_or_subscribe,
-            )
         }
     }
 
@@ -179,21 +194,21 @@ private fun mapOpensLine(day: OpeningDay?): String? =
 fun stillReviewLine(limit: Limit.Reached): String =
     listOfNotNull(stringResource(R.string.limit_still_review), lessonWords(limit).line).joinToString(" ")
 
-/** Calls have no title here: their screen already says what ran out. Lessons read [lessonWords], a map's lessons [mapLessonsWords]. */
+/** Lessons read [lessonWords], a map's lessons [mapLessonsWords]. */
 @StringRes
 private fun reachedTitle(
     limit: Limit.Reached,
     subject: LimitSubject,
 ): Int? {
-    val month = limit.monthly
+    val used = limit.usedUp
     val guest = limit.tier == LimitTier.Guest
 
     return when (subject) {
         LimitSubject.Help -> {
             if (guest) {
                 R.string.limit_help_guest
-            } else if (month) {
-                R.string.limit_help_month
+            } else if (used) {
+                R.string.limit_help_used
             } else {
                 R.string.limit_help_day
             }
@@ -202,8 +217,8 @@ private fun reachedTitle(
         LimitSubject.Messages -> {
             if (guest) {
                 R.string.limit_help_guest
-            } else if (month) {
-                R.string.limit_messages_month
+            } else if (used) {
+                R.string.limit_messages_used
             } else {
                 R.string.limit_messages_day
             }
@@ -212,8 +227,8 @@ private fun reachedTitle(
         LimitSubject.Explanations -> {
             if (guest) {
                 R.string.limit_help_guest
-            } else if (month) {
-                R.string.limit_explanations_month
+            } else if (used) {
+                R.string.limit_explanations_used
             } else {
                 R.string.limit_explanations_day
             }
@@ -222,8 +237,8 @@ private fun reachedTitle(
         LimitSubject.MindMaps -> {
             if (guest) {
                 R.string.limit_mind_maps_guest
-            } else if (month) {
-                R.string.limit_mind_maps_month
+            } else if (used) {
+                R.string.limit_mind_maps_used
             } else {
                 R.string.limit_mind_maps_day
             }
@@ -232,14 +247,32 @@ private fun reachedTitle(
         LimitSubject.Outlines -> {
             if (guest) {
                 R.string.limit_outlines_guest
-            } else if (month) {
-                R.string.limit_outlines_month
+            } else if (used) {
+                R.string.limit_outlines_used
             } else {
                 R.string.limit_outlines_day
             }
         }
 
-        LimitSubject.Lessons, LimitSubject.MapLessons, LimitSubject.Calls -> {
+        LimitSubject.MockExams -> {
+            if (guest) {
+                R.string.limit_help_guest
+            } else if (used) {
+                R.string.limit_mock_exams_used
+            } else {
+                R.string.limit_help_day
+            }
+        }
+
+        LimitSubject.Calls -> {
+            when (limit.period) {
+                LimitPeriod.Rolling30Days -> R.string.limit_call_time_used
+                LimitPeriod.Total -> R.string.conversation_calls_need_account
+                else -> R.string.conversation_no_calls_today
+            }
+        }
+
+        LimitSubject.Lessons, LimitSubject.MapLessons -> {
             null
         }
     }

@@ -133,7 +133,7 @@ export const placementPaths = {
   "/goals/{goalId}/chapters/{chapterId}/test-out/results/{requestId}": {
     get: {
       description:
-        "A test-out the learner sent, as it was recorded: its score, the lessons it skipped, and whether that skip can still be undone or was undone. Show it again (after a reload, or from a link) instead of a new test, celebrating nothing. Nothing is written. 404 for a test never sent, another chapter's or another learner's.",
+        "A test-out the learner sent, as it was recorded: its score, the lessons it skipped, and whether that skip can still be undone or was undone. Read it again after a reload or from a link instead of starting a new test. Nothing is written. 404 for a test never sent, another chapter's or another learner's.",
       operationId: "getChapterTestOutResult",
       requestParams: { path: goalChapterTestOutResultPathParamsSchema },
       responses: {

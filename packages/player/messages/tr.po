@@ -67,24 +67,11 @@ msgid "Source:"
 msgstr "Kaynak:"
 
 #: src/activities/_components/activity-feedback.tsx
-#: src/activities/labeled-diagram/diagram-slots.tsx
-#: src/activities/pattern-table/pattern-row.tsx
-msgctxt "QAJ_Tl"
-msgid "Correct answer:"
-msgstr "Doğru cevap:"
-
-#: src/activities/_components/activity-feedback.tsx
 #: src/activities/combination-grid/grid-board.tsx
 #: src/activities/labeled-diagram/diagram-slots.tsx
 msgctxt "3nOd8f"
 msgid "Your answer:"
 msgstr "Cevabın:"
-
-#: src/activities/_components/activity-feedback.tsx
-#: src/lesson/feedback/lesson-step-result.tsx
-msgctxt "hmBFza"
-msgid "Answer:"
-msgstr "Cevap:"
 
 #: src/activities/_components/activity-feedback.tsx
 #: src/lesson/feedback/lesson-step-result.tsx
@@ -1308,6 +1295,12 @@ msgstr "{number} numaralı nokta:"
 msgctxt "uilHxe"
 msgid "Pick a name"
 msgstr "Bir ad seç"
+
+#: src/activities/labeled-diagram/diagram-slots.tsx
+#: src/activities/pattern-table/pattern-row.tsx
+msgctxt "QAJ_Tl"
+msgid "Correct answer:"
+msgstr "Doğru cevap:"
 
 #: src/activities/labeled-diagram/diagram-slots.tsx
 msgctxt "vjLo-k"
@@ -3158,6 +3151,12 @@ msgctxt "yDk4bj"
 msgid "Also correct:"
 msgstr "Bu da doğru:"
 
+#. Under “Not checked this time”: we corrected this lesson question while the learner was in the lesson, so their answer isn't graded either way.
+#: src/lesson/feedback/lesson-step-result.tsx
+msgctxt "FtNhyg"
+msgid "This question was updated after you started, so this answer doesn't count."
+msgstr "Bu soru sen başladıktan sonra güncellendi, bu yüzden bu cevap sayılmıyor."
+
 #: src/lesson/feedback/lesson-step-result.tsx
 msgctxt "WGhDaL"
 msgid "This question was already checked a few times today, so this answer doesn't count. Compare it with this one:"
@@ -3453,6 +3452,11 @@ msgstr "Yazmak yerine sesli söyle"
 msgctxt "QuYUAL"
 msgid "The microphone is blocked. Type your answer instead."
 msgstr "Mikrofona erişim engellendi. Bunun yerine cevabını yaz."
+
+#: src/lesson/steps/spoken-answer-step.tsx
+msgctxt "2Px63n"
+msgid "We can't use your microphone. Type your answer instead."
+msgstr "Mikrofonunu kullanamıyoruz. Bunun yerine cevabını yaz."
 
 #: src/lesson/steps/summary-step.tsx
 msgctxt "RrCui3"

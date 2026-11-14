@@ -81,15 +81,16 @@ class TestOutScreenshots {
             Question("00000000-0000-4000-8000-000000000003", QuestionFormat.MultipleChoice, "Q3", listOf("a", "b")),
         )
 
-    private val page = TestOutPage("Test: Porcentagem", "Porcentagem", lessonsLeft = 4)
-
-    private fun viewModel(passed: Boolean = true): TestOutViewModel {
+    private fun viewModel(
+        passed: Boolean = true,
+        chapter: String = "Porcentagem",
+    ): TestOutViewModel {
         val api =
             object : TestOutApi {
                 override suspend fun testOut(
                     session: AuthenticatedSession,
                     key: TestOutKey,
-                ) = TestOutRead.Ready(0.8, questions, TrueFalseWords.TrueFalse)
+                ) = TestOutRead.Ready(chapter, 0.8, questions, TrueFalseWords.TrueFalse)
 
                 override suspend fun writeQuestions(
                     session: AuthenticatedSession,
@@ -146,11 +147,13 @@ class TestOutScreenshots {
         name: String,
         writing: Boolean = false,
         fold: Boolean = false,
+        chapter: String = "Porcentagem",
     ) {
-        val viewModel = viewModel()
+        val viewModel = viewModel(chapter = chapter)
         rule.setContent {
             ZoonkTheme {
                 val ui by viewModel.ui.collectAsStateWithLifecycle()
+                val page = testOutPage(TestOutRead.Ready(chapter, 0.8, emptyList(), TrueFalseWords.TrueFalse), lessonsLeft = 4)
                 TestOutPreparing(viewModel, ui.copy(writing = writing), page.title, rememberAppNavigator())
             }
         }
@@ -158,18 +161,22 @@ class TestOutScreenshots {
         write(name)
     }
 
-    private fun run(name: String) {
-        val viewModel = viewModel()
+    private fun run(
+        name: String,
+        chapter: String = "Porcentagem",
+    ) {
+        val viewModel = viewModel(chapter = chapter)
         runBlocking { viewModel.testOut.load() }
         viewModel.begin(questions)
+        val test = TestOutRead.Ready(chapter, 0.8, questions, TrueFalseWords.TrueFalse)
         rule.setContent {
             ZoonkTheme {
                 val ui by viewModel.ui.collectAsStateWithLifecycle()
                 TestOutQuestions(
-                    TestOutRead.Ready(0.8, questions, TrueFalseWords.TrueFalse),
+                    test,
                     viewModel,
                     ui,
-                    page,
+                    testOutPage(test, lessonsLeft = 4),
                     AppContainer.preview(rule.activity),
                 ) {}
             }
@@ -217,6 +224,30 @@ class TestOutScreenshots {
     fun tabletRun() = run("tablet-run")
 
     @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun phoneRunDark() = run("phone-run-dark")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun phoneWritingDark() = intro("phone-writing-dark", writing = true)
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-night-xhdpi")
+    fun tabletRunDark() = run("tablet-run-dark")
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun tabletIntro() = intro("tablet-intro")
+
+    @Test
+    @Config(qualifiers = "de-w360dp-h780dp-xxhdpi")
+    fun narrowGermanLongTitleIntro() = intro("narrow-de-long-intro", chapter = LONG_GERMAN_CHAPTER)
+
+    @Test
+    @Config(qualifiers = "de-w360dp-h780dp-xxhdpi")
+    fun narrowGermanLongTitleRun() = run("narrow-de-long-run", chapter = LONG_GERMAN_CHAPTER)
+
+    @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun phonePassed() = result("phone-passed")
 
@@ -257,5 +288,9 @@ class TestOutScreenshots {
     fun bookPassedAtTwiceTheFontSize() {
         RuntimeEnvironment.setFontScale(2f)
         result("testout-book-passed-font200", fold = true)
+    }
+
+    private companion object {
+        const val LONG_GERMAN_CHAPTER = "Prozentrechnung im Alltag: Rabatte, Zinseszinsen und Mehrwertsteuer verstehen"
     }
 }

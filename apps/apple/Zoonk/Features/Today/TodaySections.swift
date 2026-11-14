@@ -251,8 +251,12 @@ struct TodayPlanChangeSection: View {
         } summary: {
           Text(title)
         } action: {
-          SuggestionOpen(isOpen: $isOpen) {
+          SuggestionOpen(
+            isOpen: $isOpen, note: failed ? BarNote(SuggestionSaveError.message) : nil
+          ) {
             proposal
+          } actions: {
+            proposalAnswers
           }
         }
         .listRowSeparator(.hidden)
@@ -320,28 +324,26 @@ struct TodayPlanChangeSection: View {
       .typeStyle(.note.weight(.medium))
     }
 
-    ButtonRow {
-      Button {
-        answer(.declined)
-      } label: {
-        declineLabel
-      }
-      .buttonStyle(.outline)
+  }
 
-      if change.canApply {
-        Button {
-          answer(.applied)
-        } label: {
-          applyLabel
-        }
-        .buttonStyle(.mainAction)
-        .buttonSizing(.flexible)
-      }
+  @ViewBuilder
+  private var proposalAnswers: some View {
+    Button {
+      answer(.declined)
+    } label: {
+      declineLabel
     }
+    .buttonStyle(.outline)
     .disabled(isSaving)
 
-    if failed {
-      SuggestionSaveError()
+    if change.canApply {
+      Button {
+        answer(.applied)
+      } label: {
+        applyLabel
+      }
+      .buttonStyle(.mainAction)
+      .disabled(isSaving)
     }
   }
 

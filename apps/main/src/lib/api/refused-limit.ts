@@ -1,6 +1,8 @@
+import { USAGE_PERIODS } from "@zoonk/core/entitlements/contract";
 import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes";
-import { type CalendarLimit, type FreeLessonsUsed } from "@zoonk/learn/help-limit";
+import { type HelpLimit } from "@zoonk/learn/help-limit";
 import { getNumber, getString, isJsonObject } from "@zoonk/utils/json";
+import { z } from "zod";
 
 const HTTP_PAYMENT_REQUIRED = 402;
 const HTTP_FORBIDDEN = 403;
@@ -9,7 +11,13 @@ const DEFAULT_RETRY_SECONDS = 60;
 const REFUSED_STATUSES = new Set([HTTP_PAYMENT_REQUIRED, HTTP_FORBIDDEN, HTTP_TOO_MANY_REQUESTS]);
 
 const TIERS = ["free", "guest", "plus"] as const;
-const PERIODS = ["day", "month", "total"] as const;
+
+export const refusedLimitSchema = z.object({
+  availableAt: z.string().nullish(),
+  period: z.enum(USAGE_PERIODS),
+  resource: z.string(),
+  tier: z.enum(TIERS),
+});
 
 function pick<Value extends string>(value: string | null, values: readonly Value[]) {
   return values.find((candidate) => candidate === value) ?? null;
@@ -41,7 +49,7 @@ export function readRefusedLimit({
 }: {
   body: unknown;
   status: number;
-}): CalendarLimit | null {
+}): HelpLimit | null {
   if (!REFUSED_STATUSES.has(status)) {
     return null;
   }
@@ -59,31 +67,10 @@ export function readRefusedLimit({
     };
   }
 
-  return {
-    period: pick(getString(limit, "period"), PERIODS) ?? "day",
-    status: "limitReached",
-    tier: readTier({ limit, status }),
-  };
-}
+  const period = pick(getString(limit, "period"), USAGE_PERIODS) ?? "day";
+  const tier = readTier({ limit, status });
 
-/** Only a new lesson is counted over the free plan's last 30 days, so only its refusal carries the instant. */
-export function readRefusedLessonLimit({
-  body,
-  status,
-}: {
-  body: unknown;
-  status: number;
-}): CalendarLimit | FreeLessonsUsed | null {
-  const { limit } = readLimitDetails(body);
-
-  if (REFUSED_STATUSES.has(status) && getString(limit, "period") === "rolling30Days") {
-    return {
-      availableAt: getString(limit, "availableAt") ?? "",
-      period: "rolling30Days",
-      status: "limitReached",
-      tier: "free",
-    };
-  }
-
-  return readRefusedLimit({ body, status });
+  return period === "rolling30Days"
+    ? { availableAt: getString(limit, "availableAt"), period, status: "limitReached", tier }
+    : { period, status: "limitReached", tier };
 }

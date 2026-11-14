@@ -195,6 +195,15 @@ export function AnswerOption({
 }
 
 /**
+ * The answer is sized by its words, where a percentage can't cap a formula, so a row holding one is
+ * a container and a formula wider than it scrolls inside it. A container's smallest width is zero,
+ * so a long formula stays beside the mark and only the tag moves under it; a row of words keeps its
+ * longest word whole.
+ */
+const ROW_FORMULA_CLASS =
+  "has-data-[slot=inline-math]:@container [&_[data-slot=inline-math]]:max-w-[100cqi]";
+
+/**
  * The tag moves under the answer rather than leave it less than half the row or narrower than its
  * longest word.
  */
@@ -211,6 +220,7 @@ export function TagBesideOrUnder({
     <span
       className={cn(
         "flex w-full grow basis-1/2 flex-wrap items-start justify-between gap-x-3 gap-y-1",
+        layout === "row" && ROW_FORMULA_CLASS,
         layout === "stacked" && "contents",
       )}
     >

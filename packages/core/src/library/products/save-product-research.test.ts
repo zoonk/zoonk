@@ -7,6 +7,7 @@ import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
+import { holdProductLock, waitForBlockedStatement } from "../../_test-utils/learner-lock";
 import { listGoalReferences } from "../curriculum/goal-references";
 import { countActiveSourceGoals } from "../exams/exam-learners";
 import { loadLessonDocuments } from "../lessons/_utils/lesson-sources";
@@ -287,6 +288,35 @@ describe(saveProductResearch, () => {
 });
 
 describe(saveProductReleases, () => {
+  it("waits for a fix approval that locked the product before writing its releases", async () => {
+    const input = await research();
+    const saved = await saveProductResearch(input);
+    const releaseIds = saved.releases.map((release) => release.id);
+
+    const approval = holdProductLock({
+      beforeCommit: (tx) =>
+        tx.$queryRaw`SELECT id FROM product_releases WHERE id = ANY(${releaseIds}::uuid[]) FOR NO KEY UPDATE`,
+      productId: saved.product.id,
+    });
+
+    const refresh = saveProductReleases({
+      productId: saved.product.id,
+      reading: {
+        ...input,
+        releases: input.releases.map((release) => ({
+          ...release,
+          supportEndsAt: new Date("2027-10-21"),
+        })),
+        releasesHash: `${input.releasesHash}-newer`,
+      },
+    });
+
+    await waitForBlockedStatement(await approval.pid, /\bproducts\b/u);
+    approval.release();
+
+    await expect(Promise.all([approval.done, refresh])).resolves.toHaveLength(2);
+  });
+
   it("adds what a changed releases page announces to a known product and moves its hash", async () => {
     const input = await research();
     const saved = await saveProductResearch(input);

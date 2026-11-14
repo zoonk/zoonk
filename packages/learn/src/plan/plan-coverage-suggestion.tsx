@@ -168,37 +168,42 @@ function CoverageBody({
   }
 
   return (
-    <SuggestionActions>
-      {/* One key for the main action in every state, so the button pressed keeps the keyboard. */}
-      {offer && (
-        <SuggestionAction action={() => void requestPreview(offer.operations)} key="find">
-          {texts.seeChanges}
-        </SuggestionAction>
-      )}
+    <SuggestionActions
+      main={
+        // One key for the main action in every state, so the button pressed keeps the keyboard.
+        <>
+          {offer && (
+            <SuggestionAction action={() => void requestPreview(offer.operations)} key="find">
+              {texts.seeChanges}
+            </SuggestionAction>
+          )}
 
-      {findsTime && (
-        <SuggestionAction action={() => ask(retry ? intent : "time")} busy={pending} key="find">
-          {retry ? texts.tryAgain : texts.seeChanges}
-        </SuggestionAction>
-      )}
+          {findsTime && (
+            <SuggestionAction action={() => ask(retry ? intent : "time")} busy={pending} key="find">
+              {retry ? texts.tryAgain : texts.seeChanges}
+            </SuggestionAction>
+          )}
 
-      {flags.studiesEverything && fullCourse && (
-        <SuggestionAction action={() => studyEverything(fullCourse)} key="find">
-          {keepStudying}
-        </SuggestionAction>
-      )}
-
+          {flags.studiesEverything && fullCourse && (
+            <SuggestionAction action={() => studyEverything(fullCourse)} key="find">
+              {keepStudying}
+            </SuggestionAction>
+          )}
+        </>
+      }
+      menu={
+        coverage && (
+          <OtherOptions
+            onMoveDate={moveDate ? () => ask("date") : null}
+            studyEverythingLeads={flags.studiesEverything && fullCourse !== null}
+          />
+        )
+      }
+    >
       {focusTestHref && (
         <SuggestionLinkAction href={focusTestHref} variant="outline">
           {takeFocusTest}
         </SuggestionLinkAction>
-      )}
-
-      {coverage && (
-        <OtherOptions
-          onMoveDate={moveDate ? () => ask("date") : null}
-          studyEverythingLeads={flags.studiesEverything && fullCourse !== null}
-        />
       )}
     </SuggestionActions>
   );

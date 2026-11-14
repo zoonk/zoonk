@@ -17,6 +17,7 @@ struct LessonCompletionView: View {
 
   @State private var isStopping = false
   @State private var stopFailed = false
+  @State private var stopping: Task<Void, Never>?
 
   var body: some View {
     PaneSplit {
@@ -55,6 +56,9 @@ struct LessonCompletionView: View {
       if status == .saved, soundsEnabled {
         LessonSounds.shared.play(.finish)
       }
+    }
+    .onDisappear {
+      stopping?.cancel()
     }
   }
 
@@ -357,7 +361,7 @@ struct LessonCompletionView: View {
     isStopping = true
     stopFailed = false
 
-    Task {
+    stopping = Task {
       switch await sessions.stop(sessionID: sessionID, in: router.playback) {
       case .done:
         close()
@@ -406,7 +410,7 @@ struct LessonUnavailableView: View {
   let retry: () -> Void
 
   var body: some View {
-    OpeningClock(opensAt: refusal.limit?.opensAt) { now in
+    OpeningClock(availableAt: refusal.limit?.availableAt) { now in
       LessonUnavailableBody(refusal: refusal, isNotice: isNotice, now: now, retry: retry)
     }
   }
@@ -426,7 +430,7 @@ private struct LessonUnavailableBody: View {
   let retry: () -> Void
 
   private var isReady: Bool {
-    refusal.limit?.freeLessonOpened(at: now) == true
+    refusal.limit?.isOpen(at: now) == true
   }
 
   var body: some View {
@@ -527,7 +531,7 @@ private struct LessonUnavailableBody: View {
       LocalizedStringResource(
         "This lesson isn't available", table: "Player", comment: "The lesson doesn't exist anymore")
     case .limitReached:
-      refusal.limit?.lessonWords(now: now).title
+      refusal.limit?.words(.lessons, now: now).title
         ?? LocalizedStringResource(
           "We couldn't open this lesson", table: "Player", comment: "A lesson failed to open")
     }
@@ -535,7 +539,7 @@ private struct LessonUnavailableBody: View {
 
   /// In place, a limit's line says only when lessons come back.
   private var noticeLine: LocalizedStringResource? {
-    refusal.limit?.lessonWords(now: now).line
+    refusal.limit?.words(.lessons, now: now).line
   }
 
   private var screenLine: String? {
@@ -661,8 +665,8 @@ extension LessonRunRefusal {
     switch self {
     case .slowDown(let seconds):
       .slowDown(retryAfterSeconds: seconds)
-    case .limitReached(_, .last30Days(let opensAt)):
-      .freeLessonsUsed(opensAt: opensAt)
+    case .limitReached(let tier, .last30Days(let availableAt)):
+      .usedUp(tier: tier.learnerTier, availableAt: availableAt)
     case .limitReached(let tier, let period):
       .limitReached(period: period.helpPeriod, tier: tier.learnerTier)
     case .failed, .notFound:
@@ -682,7 +686,7 @@ extension LessonRunRefusal.Tier {
 }
 
 extension LessonRunRefusal.Period {
-  /// `last30Days` is read as `freeLessonsUsed` before it gets here.
+  /// `last30Days` is read as `usedUp` before it gets here.
   fileprivate var helpPeriod: HelpLimit.Period {
     switch self {
     case .day, .last30Days: .day

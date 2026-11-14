@@ -2,7 +2,7 @@
 
 import { type ChapterMindMapView, type MindMapStatus } from "@zoonk/core/mind-maps/contract";
 import { useState, useTransition } from "react";
-import { type MindMapLimit } from "../_components/help-limit-notice";
+import { type MindMapLimit, useLiveLimit } from "../_components/help-limit-notice";
 import { usePoll } from "../_utils/use-poll";
 import { useReadOrder } from "../_utils/use-read-order";
 import { type MindMapActions, type MindMapRequestOutcome } from "./mind-map-actions";
@@ -15,6 +15,15 @@ const WRITING_POLL_MS = 15_000;
 export type MindMapShown = MindMapStatus | "refused" | "unreachable";
 
 export type MindMapRequest = ReturnType<typeof useMindMapRequest>;
+
+/** Once a refusal's instant passes, the map shows as it is on the server again, so it can be made. */
+export function useLiveRefusal(
+  { limit, shown }: { limit: MindMapLimit | null; shown: MindMapShown },
+  status: MindMapStatus,
+): { limit: MindMapLimit | null; shown: MindMapShown } {
+  const live = useLiveLimit(limit);
+  return shown === "refused" && limit && !live ? { limit: null, shown: status } : { limit, shown };
+}
 
 /** What only this device knows: the server keeps no refusal, and can't say it wasn't reached. */
 type Local = { limit?: MindMapLimit; shown: "refused" | "unreachable" };

@@ -1,5 +1,5 @@
 import "server-only";
-import { type CourseChapter, type CourseLevel, prisma } from "@zoonk/db";
+import { type CourseChapter, type CourseLevel, type TransactionClient, prisma } from "@zoonk/db";
 import { revalidateCourseContent } from "../../cache/revalidate-course-content";
 import { getCourseCurriculumCacheTag } from "../../cache/tags";
 import { assertPlacementVisibility } from "../_utils/placement-visibility";
@@ -32,14 +32,33 @@ export async function attachChapterToCourse({
   const placement = await writePlanInputs(async (tx) => {
     await lockPlanSourceWrite(tx, { chapterIds: [chapterId], courseIds: [courseId] });
 
-    return tx.courseChapter.upsert({
-      create: { area, chapterId, courseId, level, position },
-      update: { area, level, position },
-      where: { courseId_chapterId: { chapterId, courseId } },
-    });
+    return attachChapterToCourseInTransaction(tx, { area, chapterId, courseId, level, position });
   });
 
   await revalidateCourseContent([getCourseCurriculumCacheTag(courseId)]);
 
   return placement;
+}
+
+export function attachChapterToCourseInTransaction(
+  tx: TransactionClient,
+  {
+    area,
+    chapterId,
+    courseId,
+    level,
+    position,
+  }: {
+    area?: string | null;
+    chapterId: string;
+    courseId: string;
+    level: CourseLevel;
+    position: number;
+  },
+): Promise<CourseChapter> {
+  return tx.courseChapter.upsert({
+    create: { area, chapterId, courseId, level, position },
+    update: { area, level, position },
+    where: { courseId_chapterId: { chapterId, courseId } },
+  });
 }

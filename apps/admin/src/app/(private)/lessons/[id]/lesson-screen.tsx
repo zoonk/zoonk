@@ -2,6 +2,7 @@ import { AdminJson } from "@/components/admin-json";
 import { ContentWords } from "@/components/content-words";
 import { type LibraryLessonStep } from "@/data/lessons/get-library-lesson";
 import { formatCount, formatPercent, toWords } from "@/lib/format";
+import { LINK_CLASS } from "@/lib/link-class";
 import { isJsonObject } from "@zoonk/utils/json";
 import Link from "next/link";
 
@@ -29,8 +30,6 @@ function answersLabel(answers?: StepAnswers): string | null {
     ? "No answers yet"
     : `${formatCount(answers.total, "answer")} · ${formatPercent((answers.correct / answers.total) * PERCENT)} right`;
 }
-
-const LINK_CLASS = "hit-area relative underline underline-offset-3";
 
 function ScreenLinks({ step }: { step: LibraryLessonStep }) {
   if (!(step.skill || step.item || step.mediaAsset)) {

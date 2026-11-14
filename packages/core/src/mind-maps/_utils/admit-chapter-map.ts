@@ -45,6 +45,7 @@ export async function lockMindMapRows(
       imageHeight: true,
       imageUrl: true,
       imageWidth: true,
+      redrawOwedAt: true,
       status: true,
       structure: true,
       thumbnailUrl: true,

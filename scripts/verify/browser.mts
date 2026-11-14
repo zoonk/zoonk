@@ -15,6 +15,7 @@ import {
   stillAnimations,
 } from "../../packages/testing/src/accessibility/scan.ts";
 import {
+  MIN_TARGET_PX,
   TARGET_SELECTOR,
   findSmallTargets,
   sampleTargets,
@@ -233,7 +234,7 @@ async function scanAccessibility(page: Page, where: string) {
   return {
     failing: [
       ...describeViolations([...violations, ...frameViolations], where).failing,
-      ...targets.map((target) => `${where}: [target-size] ${target}`),
+      ...targets.map((target) => `Zoonk tap target (${MIN_TARGET_PX} px): ${target}`),
     ],
     regular: describeViolations(neutralTextOnly(regular), where).failing,
   };

@@ -1,16 +1,18 @@
 "use client";
 
 import { useLayoutEffect, useState } from "react";
+import { type CallLimit } from "../../_components/help-limit-notice";
 import { type ContentWriting } from "../../generation/writing-wait";
 
 /**
  * True once the call opens, false when it didn't start, `"paused"` when calls are paused for
- * everyone, or the run writing the call when it isn't written yet.
+ * everyone, the run writing the call when it isn't written yet, or the cap that refused it.
  */
-export type CallStartOutcome = boolean | "paused" | { generationId: string };
+export type CallStartOutcome = boolean | "paused" | { generationId: string } | { limit: CallLimit };
 
 type CallStartState =
   | { generationId: string; status: "writing" }
+  | { limit: CallLimit; status: "limited" }
   | { status: "failed" | "idle" | "opened" | "paused" | "starting" };
 
 const IDLE: CallStartState = { status: "idle" };
@@ -23,6 +25,10 @@ function settle({
   afterWrite: boolean;
   started: CallStartOutcome;
 }): CallStartState {
+  if (typeof started === "object" && "limit" in started) {
+    return { limit: started.limit, status: "limited" };
+  }
+
   if (started === "paused") {
     return { status: "paused" };
   }
@@ -66,6 +72,7 @@ export function useCallStart({ onStart }: { onStart: () => Promise<CallStartOutc
   return {
     failed: state.status === "failed",
     isStarting: state.status === "starting" || state.status === "opened",
+    limit: state.status === "limited" ? state.limit : null,
     paused: state.status === "paused",
     start: () => void start(false),
     writing,

@@ -352,7 +352,7 @@ private struct PatternRuleView: View {
         .typeStyle(.reading)
       }
 
-      ItemText(pattern.rule)
+      LessonTextBlocks(pattern.rule)
 
       if !pattern.contrast.isEmpty {
         VStack(alignment: .leading, spacing: 0) {

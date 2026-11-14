@@ -122,7 +122,7 @@ class LessonWritingViewModelTest {
     fun aFreeLearnerOutOfLessonsIsToldWhyAndASetAsideLessonSaysSo() =
         runTest(dispatcher) {
             api.readinessStates += listOf("notStarted", "notStarted")
-            val limit = Json.parseToJsonElement("""{"limit":{"tier":"free","period":"month"}}""")
+            val limit = Json.parseToJsonElement("""{"limit":{"tier":"free","period":"rolling30Days","resource":"lessonStart"}}""")
             api.writeResponse = { throw ApiException(ApiError.Unavailable, "USAGE_LIMIT_REACHED", 402, limit) }
             val writing = writing()
 
@@ -131,7 +131,7 @@ class LessonWritingViewModelTest {
             writing.start()
             advanceUntilIdle()
             assertEquals(
-                LessonWriting.Refused(LessonRefusal.Limited(Limit.Reached(LimitTier.Free, LimitPeriod.Month))),
+                LessonWriting.Refused(LessonRefusal.Limited(Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days))),
                 writing.writing.value,
             )
 

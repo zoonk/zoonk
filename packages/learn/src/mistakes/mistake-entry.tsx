@@ -12,12 +12,13 @@ import {
   TimerIcon,
   TriangleAlertIcon,
 } from "lucide-react";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { TagBesideOrUnder } from "../_components/answer-option";
 import { ANSWER_TAG_CLASS, ANSWER_TAG_TONE, ANSWER_TONE } from "../_components/answer-tone";
 import { Eyebrow } from "../_components/eyebrow";
 import { QuestionTitle } from "../_components/question-title";
 import { TITLE_ROW_CLASS } from "../_components/title-row";
+import { useFormatMomentDate } from "../_utils/iso-date";
 import { LearnLink } from "../learn-link";
 import { ItemLine, ItemText } from "../questions/item-text";
 import { useTrueFalseLabels } from "../questions/use-true-false-labels";
@@ -46,15 +47,8 @@ function MistakeCauseLabel({ cause }: { cause: MistakeEntry["cause"] }) {
   return <Eyebrow icon={<CauseIcon aria-hidden="true" />}>{causeLabel(cause)}</Eyebrow>;
 }
 
-function useEntryDate() {
-  const format = useFormatter();
-
-  return (date: Date) =>
-    format.dateTime(date, {
-      day: "numeric",
-      month: "short",
-      ...(date.getFullYear() === new Date().getFullYear() ? {} : { year: "numeric" }),
-    });
+function hiddenLabel(words: React.ReactNode) {
+  return <span className="sr-only">{words}</span>;
 }
 
 export function MistakeAnswer({
@@ -66,6 +60,7 @@ export function MistakeAnswer({
 }) {
   const t = useExtracted();
   const right = kind === "right";
+  const answer = () => children;
 
   return (
     <p
@@ -86,13 +81,26 @@ export function MistakeAnswer({
         }
       >
         <span>
-          <span className="sr-only">{right ? t("Right answer:") : t("You answered:")} </span>
-          {children}
+          {right
+            ? t.rich("<label>Right answer:</label> <answer></answer>", {
+                answer,
+                label: hiddenLabel,
+              })
+            : t.rich("<label>You answered:</label> <answer></answer>", {
+                answer,
+                label: hiddenLabel,
+              })}
         </span>
       </TagBesideOrUnder>
     </p>
   );
 }
+
+/**
+ * Words the learner typed or said are plain text, as is a typed question's accepted answer, so
+ * `__init__` keeps its underscores; other answers are item text with their formulas.
+ */
+const WRITTEN_ANSWER_FORMATS = new Set(["spoken", "spokenAnswer", "typed", "typedAnswer"]);
 
 type MistakeEntryLinks = { lesson: string | null; practiceSkill: string | null };
 
@@ -168,11 +176,11 @@ export function MistakeEntryCard({
   mistake: MistakeEntry;
   trueFalseLabels: TrueFalseLabels;
 }) {
-  const entryDate = useEntryDate();
+  const entryDate = useFormatMomentDate();
   const { answerText } = useTrueFalseLabels(trueFalseLabels);
   const { snapshot } = mistake;
-  const answer = answerText(snapshot.answer);
-  const correct = answerText(snapshot.correctAnswer);
+  const answer = answerText({ answer: snapshot.answer, format: snapshot.format });
+  const correct = answerText({ answer: snapshot.correctAnswer, format: snapshot.format });
   const date = mistake.status === "fixed" && mistake.fixedAt ? mistake.fixedAt : mistake.createdAt;
 
   return (
@@ -201,12 +209,16 @@ export function MistakeEntryCard({
         <div className="flex flex-col gap-2">
           {answer && (
             <MistakeAnswer kind="learner">
-              <ItemLine text={answer} />
+              {WRITTEN_ANSWER_FORMATS.has(snapshot.format ?? "") ? (
+                answer
+              ) : (
+                <ItemLine text={answer} />
+              )}
             </MistakeAnswer>
           )}
           {correct && (
             <MistakeAnswer kind="right">
-              <ItemLine text={correct} />
+              {snapshot.format === "typed" ? correct : <ItemLine text={correct} />}
             </MistakeAnswer>
           )}
         </div>

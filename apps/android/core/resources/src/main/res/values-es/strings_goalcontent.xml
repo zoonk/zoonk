@@ -6,7 +6,7 @@
   "goalcontent_also_in_exam_count": "547078b360662d92f0688839988a60b51b2bdeffaccc7d25a0bcc9930c59c7c4",
   "goalcontent_also_in_exams": "69a9986527fe42f2a0a71379363c6b59ac53116ba5f46f363cde81a72025f8b9",
   "goalcontent_also_in_plan": "cd78f0a78ab48deaf0852faa8b4c35dd9607aaec3901e43f146c9e5b406d12eb",
-  "goalcontent_appears_a_lot": "511ea3869397beb7cc2f171e3fd8dfddb56d70c43306373d8d9e41c6ce819a46",
+  "goalcontent_asked_a_lot": "bed7f38869c22c1b036cbd6f85a4a158cd46cc0b04694964aa42efcd1c5ed080",
   "goalcontent_beyond_guide": "79a05b4fb547e41dfc5f4957339d8c61bfb08c454efcdb682dbdb17ebedfa022",
   "goalcontent_beyond_notice": "d34e26a4dac5ff38f1f36f163c5abf59fbd0c290900770b164f6ce32db17ccb5",
   "goalcontent_bring_back": "4c8b90a166b057d6ec3d1cb065071fbff45fa0f774f288d3b7659e3c2350beef",
@@ -285,12 +285,12 @@
     <string name="goalcontent_topic_skipped_base">Elegiste saltar este requisito previo</string>
     <string name="goalcontent_topic_time">No cabe en el tiempo que tienes</string>
     <string name="goalcontent_topic_missing">Aún no hay lecciones sobre este tema</string>
-    <!-- Marks a topic past exams asked a lot. -->
-    <string name="goalcontent_appears_a_lot">Aparece mucho</string>
-    <!-- %1$s is the "Appears a lot" mark. -->
+    <!-- Marks a topic that comes up often in the exam. -->
+    <string name="goalcontent_asked_a_lot">Muy frecuente</string>
+    <!-- %1$s is the "Asked a lot" mark. -->
     <string name="goalcontent_frequency_material">Los temas marcados con %1$s son los que aparecen con frecuencia según tu material. Se les dedica más tiempo.</string>
     <string name="goalcontent_frequency_past_exams">Los temas marcados con %1$s son los más frecuentes en exámenes anteriores.</string>
-    <!-- %1$s is the "Appears a lot" mark, %2$s what the source counted, %3$s a link to the source's site. -->
+    <!-- %1$s is the "Asked a lot" mark, %2$s what the source counted, %3$s a link to the source's site. -->
     <string name="goalcontent_frequency_tagged_waits">Los temas marcados con %1$s son los más frecuentes en exámenes anteriores (%2$s, según %3$s). Los menos frecuentes quedan para después.</string>
     <string name="goalcontent_frequency_tagged">Los temas marcados con %1$s son los más frecuentes en exámenes anteriores (%2$s, según %3$s). Se les dedica más tiempo.</string>
     <!-- %1$s is what the source counted, %2$s a link to the source's site. -->

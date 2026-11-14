@@ -128,21 +128,22 @@ function InsightActions({
   const choices = useInsightChoices(insight);
 
   return (
-    <SuggestionActions>
-      {/* A tip's only answer is outline, so Today's own action stays the screen's one filled
-          button. */}
-      {(insight.kind !== "planChange" ||
-        insight.planChange?.status === "applied" ||
-        insight.planChange?.canApply) && (
-        <SuggestionAction
-          action={() => onAnswer("accepted")}
-          disabled={isPending}
-          variant={choices.dismiss ? "default" : "outline"}
-        >
-          {choices.accept}
-        </SuggestionAction>
-      )}
-
+    <SuggestionActions
+      main={
+        // A tip's only answer is outline, so Today's own action stays the screen's one filled button.
+        (insight.kind !== "planChange" ||
+          insight.planChange?.status === "applied" ||
+          insight.planChange?.canApply) && (
+          <SuggestionAction
+            action={() => onAnswer("accepted")}
+            disabled={isPending}
+            variant={choices.dismiss ? "default" : "outline"}
+          >
+            {choices.accept}
+          </SuggestionAction>
+        )
+      }
+    >
       {choices.dismiss && (
         <SuggestionAction
           action={() => onAnswer("dismissed")}

@@ -3,8 +3,12 @@ package com.zoonk.android.feature.plan
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import com.zoonk.android.R
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.theme.GeistMono
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanPhase
 import com.zoonk.api.models.PlanPhaseChaptersInner
@@ -12,10 +16,14 @@ import com.zoonk.api.models.ShortExamFocus
 import kotlinx.datetime.toJavaLocalDate
 import java.time.LocalDate
 
-/** A day of the plan as written ("Nov 3") and as read aloud, which says "about" for an estimate. */
+/**
+ * A day of the plan as written ("Nov 3") and as read aloud, which says "about" for an estimate. Words
+ * in a date's place ("Won", "Day 3") aren't [date], so they keep the text face.
+ */
 data class PlanDateWords(
     val text: String,
     val spoken: String,
+    val date: Boolean = false,
 )
 
 @Composable
@@ -27,26 +35,15 @@ fun planDate(
 ): PlanDateWords {
     val formatted = formatPlanDate(date, today, currentLocale(), month)
     return if (estimate) {
-        PlanDateWords(stringResource(R.string.plan_date_estimate, formatted), stringResource(R.string.plan_date_estimate_spoken, formatted))
+        PlanDateWords(
+            stringResource(R.string.plan_date_estimate, formatted),
+            stringResource(R.string.plan_date_estimate_spoken, formatted),
+            date = true,
+        )
     } else {
-        PlanDateWords(formatted, formatted)
+        PlanDateWords(formatted, formatted, date = true)
     }
 }
-
-@Composable
-internal fun roadmapUntil(
-    finish: PlanFinish,
-    today: LocalDate,
-): String =
-    stringResource(
-        when {
-            finish.estimate && finish.month -> R.string.plan_roadmap_until_about_month
-            finish.estimate -> R.string.plan_roadmap_until_about
-            finish.month -> R.string.plan_roadmap_until_month
-            else -> R.string.plan_roadmap_until
-        },
-        formatPlanDate(finish.date, today, currentLocale(), finish.month),
-    )
 
 /** Main's `usePhaseName`: exam phases have no name, so they're named by kind. */
 @Composable
@@ -154,14 +151,14 @@ fun farTopicLine(
     nextDate: LocalDate?,
     today: LocalDate = LocalDate.now(),
 ): String? {
-    val month = nextDate != null && (nextDate.year != today.year || nextDate.month != today.month)
+    val month = nextDate != null && (isInAnotherYear(nextDate, today) || nextDate.month != today.month)
     val start =
         nextDate?.let {
             val locale = currentLocale()
             when {
                 !month -> formatDay(it, "MMMd", locale)
-                it.year == today.year -> formatDay(it, "MMMM", locale)
-                else -> formatDay(it, "yMMMM", locale)
+                isInAnotherYear(it, today) -> formatDay(it, "yMMMM", locale)
+                else -> formatDay(it, "MMMM", locale)
             }
         }
     if (lessons == null) return start?.let { stringResource(if (month) R.string.plan_far_from_month else R.string.plan_far_from, it) }
@@ -180,3 +177,19 @@ fun lessonsDoneSpoken(
     done: Long,
     total: Long,
 ): String = pluralStringResource(R.plurals.plan_lessons_done_of, total.toInt(), done.toInt(), total.toInt())
+
+/** Main's values: the dates and times in [text] ([data]) in mono, the words around them in the text face. */
+internal fun withData(
+    text: String,
+    vararg data: String,
+): AnnotatedString =
+    buildAnnotatedString {
+        append(text)
+        data.filter { it.isNotEmpty() }.forEach { piece ->
+            var at = text.indexOf(piece)
+            while (at >= 0) {
+                addStyle(SpanStyle(fontFamily = GeistMono), at, at + piece.length)
+                at = text.indexOf(piece, at + piece.length)
+            }
+        }
+    }

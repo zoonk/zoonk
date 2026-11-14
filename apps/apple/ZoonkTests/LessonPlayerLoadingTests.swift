@@ -863,6 +863,32 @@ final class LessonPlayerLoadingTests: XCTestCase {
     XCTAssertEqual(summary.day?.reached?.level?.level, 3)
   }
 
+  /// Answer help's monthly cap gives the day an explanation comes back, as every monthly cap does.
+  func testAnExplanationRefusedForTheMonthSaysWhenItComesBack() async throws {
+    let api = LessonPlayerAPI(
+      clients: APIClientFactory(
+        baseURL: URL(string: "https://api.zoonk.test")!,
+        transport: JSONTransport(
+          body: #"""
+            {"error": {"code": "USAGE_LIMIT_REACHED", "message": "Limit reached",
+             "details": {"limit": {"period": "rolling30Days", "tier": "free",
+             "resource": "explanation", "availableAt": "2026-12-20T12:00:00.000Z"}}}}
+            """#,
+          status: .init(code: 402))))
+
+    let outcome = try await api.explainAnswer(stepId: "step", answer: "answer", token: "token")
+
+    guard case .refused(let refusal) = outcome else {
+      return XCTFail("Expected a refusal, got \(outcome)")
+    }
+
+    let availableAt = Date(timeIntervalSince1970: 1_797_768_000)
+    XCTAssertEqual(refusal.limit, .usedUp(tier: .free, availableAt: availableAt))
+    XCTAssertEqual(
+      refusal.limit?.words(.explanations, now: availableAt.addingTimeInterval(-30 * 86_400)).said,
+      "You've used your explanations. More on December 20, or subscribe to keep going.")
+  }
+
   func testASavedLessonKeepsAFractionalDailyBudget() async throws {
     let response =
       sessionLessonCompletion
@@ -1423,13 +1449,14 @@ private struct UnexpectedLessonTransport: ClientTransport {
 
 private struct JSONTransport: ClientTransport {
   let body: String
+  var status: HTTPResponse.Status = .ok
 
   func send(
     _ request: HTTPRequest, body _: HTTPBody?, baseURL: URL, operationID: String
   ) async throws -> (HTTPResponse, HTTPBody?) {
     var headerFields = HTTPFields()
     headerFields[.contentType] = "application/json"
-    return (HTTPResponse(status: .ok, headerFields: headerFields), HTTPBody(body))
+    return (HTTPResponse(status: status, headerFields: headerFields), HTTPBody(body))
   }
 }
 

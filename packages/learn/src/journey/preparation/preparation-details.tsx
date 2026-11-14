@@ -32,11 +32,29 @@ function EstimateWaits({ preparation }: { preparation: Preparation }) {
   );
 }
 
+/** Core counts a mock exam as a review of every topic, so a learner without mock exams reads the row's name. */
+function useEstimateSource({ count, preparation }: { count: number; preparation: Preparation }) {
+  const t = useExtracted();
+
+  if (preparation.components.mocks.kind === "fullReviews") {
+    return t(
+      "{count, plural, one {Based on # review of every topic} other {Based on # reviews of every topic}}",
+      { count },
+    );
+  }
+
+  return t(
+    "{count, plural, one {Based on your last mock exam} other {Based on your last # mock exams}}",
+    { count },
+  );
+}
+
 /** Always a range labeled "Estimated", so it never reads as a promise. */
 function EstimatedScore({ preparation }: { preparation: Preparation }) {
   const t = useExtracted();
   const scoreRange = useScoreRange();
   const score = preparation.estimatedScore;
+  const source = useEstimateSource({ count: score?.mocks ?? 0, preparation });
 
   if (!score) {
     return <EstimateWaits preparation={preparation} />;
@@ -47,12 +65,7 @@ function EstimatedScore({ preparation }: { preparation: Preparation }) {
       <p className="flex min-w-0 flex-col gap-1">
         <span className="text-label">{t("Estimated score")}</span>
         <span className="text-readout text-2xl leading-tight">{scoreRange(score)}</span>
-        <span className="text-muted-foreground text-xs">
-          {t(
-            "{count, plural, one {Based on your last mock exam} other {Based on your last # mock exams}}",
-            { count: score.mocks },
-          )}
-        </span>
+        <span className="text-muted-foreground text-xs">{source}</span>
       </p>
     </div>
   );
@@ -163,7 +176,14 @@ function StillNeeded({
 
   return (
     <section aria-labelledby="still-needed-title" className="flex flex-col gap-2">
-      <SectionLabel id="still-needed-title">{t("Next")}</SectionLabel>
+      <SectionLabel id="still-needed-title">
+        {t({
+          description:
+            'A section heading over the next steps toward the learner\'s goal, such as "Take your first mock exam". Not a button.',
+          id: "preparationNextSteps",
+          message: "Next",
+        })}
+      </SectionLabel>
       <ul className="flex flex-col [&>li+li]:border-t">
         {items.map((item) => (
           <li key={item.key}>

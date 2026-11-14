@@ -692,7 +692,8 @@ struct GoalStanding: Decodable, Equatable, Sendable {
   let preparation: Preparation?
 }
 
-/// Read and shown in UTC, so the day never moves with the device's zone.
+/// Read and shown in UTC, so the day never moves with the device's zone. Every day shown in words
+/// goes through here: a day in another year names it, one in this year doesn't (main's rule).
 enum PlanDate {
   private static let calendar: Calendar = {
     var calendar = Calendar(identifier: .gregorian)
@@ -718,7 +719,10 @@ enum PlanDate {
     return calendar.dateComponents([.day], from: start, to: end).day ?? 0
   }
 
-  static func text(_ isoDate: String, today: String, month: Bool = false) -> String {
+  /// "Nov 20", with the year when it isn't this year's, as main's plan dates.
+  static func text(
+    _ isoDate: String, today: String, month: Bool = false, weekday: Bool = false
+  ) -> String {
     guard let date = date(isoDate) else {
       return isoDate
     }
@@ -731,7 +735,11 @@ enum PlanDate {
 
     style = style.month(.abbreviated).day()
 
-    if isoDate.prefix(4) != today.prefix(4) {
+    if weekday {
+      style = style.weekday(.abbreviated)
+    }
+
+    if inAnotherYear(isoDate, today: today) {
       style = style.year()
     }
 
@@ -745,22 +753,57 @@ enum PlanDate {
     }
 
     let style = Date.FormatStyle(timeZone: .gmt).month(.wide).day()
-    return date.formatted(isoDate.prefix(4) == today.prefix(4) ? style : style.year())
+    return date.formatted(inAnotherYear(isoDate, today: today) ? style.year() : style)
   }
 
-  /// "Monday, May 5".
-  static func weekdayDay(_ isoDate: String) -> String {
-    date(isoDate)?.formatted(
-      Date.FormatStyle(timeZone: .gmt).weekday(.wide).month(.wide).day()) ?? isoDate
-  }
-
-  static func monthText(_ isoDate: String, today: String) -> String {
+  /// "Monday, May 5", with the year when it isn't this year's.
+  static func weekdayDay(_ isoDate: String, today: String) -> String {
     guard let date = date(isoDate) else {
       return isoDate
     }
 
-    let style = Date.FormatStyle(timeZone: .gmt).month(.abbreviated)
-    return date.formatted(isoDate.prefix(4) == today.prefix(4) ? style : style.year())
+    let style = Date.FormatStyle(timeZone: .gmt).weekday(.wide).month(.wide).day()
+    return date.formatted(inAnotherYear(isoDate, today: today) ? style.year() : style)
+  }
+
+  /// "Nov 3 – 9", with the year when either end isn't in this year.
+  static func range(from start: String, to end: String, today: String) -> String {
+    guard let first = date(start), let last = date(end), first <= last else {
+      return start
+    }
+
+    let style = Date.IntervalFormatStyle(timeZone: .gmt).month(.abbreviated).day()
+    let anotherYear = inAnotherYear(start, today: today) || inAnotherYear(end, today: today)
+    return (first..<last).formatted(anotherYear ? style.year() : style)
+  }
+
+  /// The learner's own calendar day, for a screen whose response carries no `today`.
+  static func today(_ now: Date = .now, in timeZone: TimeZone = .current) -> String {
+    LessonTodayChoices.day(of: now, in: timeZone)
+  }
+
+  /// A moment's day in the learner's zone, such as when a mock was finished: `style` without the
+  /// year, which it gets when the day isn't in this year (main's `useFormatMomentDay`).
+  static func momentDay(
+    _ moment: Date, style: Date.FormatStyle = .dateTime.month(.abbreviated).day(),
+    now: Date = .now, calendar: Calendar = .current
+  ) -> String {
+    let thisYear = calendar.component(.year, from: moment) == calendar.component(.year, from: now)
+    return moment.formatted(thisYear ? style : style.year())
+  }
+
+  /// "Nov", or "November" when `wide`, with the year when it isn't this year's.
+  static func monthText(_ isoDate: String, today: String, wide: Bool = false) -> String {
+    guard let date = date(isoDate) else {
+      return isoDate
+    }
+
+    let style = Date.FormatStyle(timeZone: .gmt).month(wide ? .wide : .abbreviated)
+    return date.formatted(inAnotherYear(isoDate, today: today) ? style.year() : style)
+  }
+
+  private static func inAnotherYear(_ isoDate: String, today: String) -> Bool {
+    isoDate.prefix(4) != today.prefix(4)
   }
 
   /// For a day picked in a GMT calendar.

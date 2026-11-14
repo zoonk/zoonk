@@ -54,12 +54,12 @@ describe("exact standalone bank mistake practice", () => {
     await expect.element(page.getByText("40 × 0.2 = 8")).toBeVisible();
   });
 
-  it("checks a typed bank answer and shows its correct original wording", async () => {
+  it("checks a typed bank answer and shows its correct original wording as typed", async () => {
     const answer = vi
       .fn<Actions["answer"]>()
       .mockResolvedValue({
         ...bankFeedback(),
-        correctAnswer: { text: "Mitochondrion" },
+        correctAnswer: { text: "__init__(self, **kwargs**)" },
         fixed: false,
         fixedMistakeIds: [],
         isCorrect: false,
@@ -71,11 +71,36 @@ describe("exact standalone bank mistake practice", () => {
     await page.getByRole("textbox").fill("Chloroplast");
     await page.getByRole("button", { name: /^Check/u }).click();
 
-    await expect.element(page.getByText("Right answer: Mitochondrion")).toBeVisible();
+    await expect.element(page.getByText("Right answer: __init__(self, **kwargs**)")).toBeVisible();
 
     expect(answer).toHaveBeenCalledWith(
       expect.objectContaining({ answer: { text: "Chloroplast" }, itemId: "original-bank-item" }),
     );
+  });
+
+  it("shows a question's formulas typeset from the first frame, and its feedback's", async () => {
+    const answer = vi
+      .fn<Actions["answer"]>()
+      .mockResolvedValue({
+        ...bankFeedback(),
+        correctAnswer: { selectedIndex: 0 },
+        explanation: String.raw`The exponents add up to $2^{11}$ ways.`,
+        fixed: false,
+        fixedMistakeIds: [],
+        isCorrect: false,
+        mistakeStatus: "open",
+      });
+
+    openPractice(null, { answer }, question("multipleChoice"));
+    await expect.element(page.getByRole("radio").first()).toBeVisible();
+    expect(document.querySelectorAll("math")).toHaveLength(4);
+    await expect.element(page.getByText("costs $5 or $10")).toBeVisible();
+
+    await page.getByRole("radio").nth(1).click();
+    await page.getByRole("button", { name: /^Check/u }).click();
+    const feedback = page.getByRole("region", { name: "Answer feedback" });
+    await expect.element(feedback).toBeVisible();
+    expect(feedback.element().querySelectorAll("math")).toHaveLength(1);
   });
 
   it("keeps the bank ordering controls and sends the selected order", async () => {

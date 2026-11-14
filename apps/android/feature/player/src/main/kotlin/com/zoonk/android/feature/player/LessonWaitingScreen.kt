@@ -261,7 +261,7 @@ private fun WaitNote(
     }
 }
 
-/** A lesson's run while it's written, and what that takes, on the lesson page and the session's next stop. */
+/** A lesson's run while it's written, and what that takes, on the lesson page and the session's next stop; [note] sits over its bar, as main's does. */
 @Composable
 fun LessonWritingProgress(
     kind: GenerationKind,
@@ -270,14 +270,15 @@ fun LessonWritingProgress(
     note: String?,
     progressShare: Float? = null,
 ) {
-    GenerationWait(kind, run, onRetry, share = progressShare)
-    if (note != null && run.status != GenerationRun.Status.Failed) {
-        Text(
-            note,
-            modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium,
-        )
+    GenerationWait(kind, run, onRetry, share = progressShare) {
+        if (note != null && run.status != GenerationRun.Status.Failed) {
+            Text(
+                note,
+                modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
     }
 }
 

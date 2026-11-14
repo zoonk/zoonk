@@ -1,7 +1,7 @@
 "use client";
 
 import { type Dialog } from "@base-ui/react/dialog";
-import { useLayoutEffect, useState } from "react";
+import { useCallback, useLayoutEffect, useState } from "react";
 
 type FinalFocus = Dialog.Popup.Props["finalFocus"];
 
@@ -11,26 +11,47 @@ function getMenuTrigger(element: Element | null): HTMLElement | null {
   return triggerId ? document.querySelector<HTMLElement>(`#${CSS.escape(triggerId)}`) : null;
 }
 
-function isOutsideMenus(element: Element | null): boolean {
-  return Boolean(element && element !== document.body && !element.closest("[role=menu]"));
+/**
+ * Focus has left a menu when it's on something other than the menu or its own trigger, such as a
+ * sheet one of its items opened or another menu. A menu closed before its popup took focus leaves
+ * it on the trigger. By then the popup is gone from the page, so it's the one kept from its mount.
+ */
+function hasLeftMenu(popup: HTMLElement | null): boolean {
+  const focused = document.activeElement;
+
+  if (!focused || focused === document.body || !popup) {
+    return false;
+  }
+
+  return !popup.contains(focused) && focused !== getMenuTrigger(popup);
 }
 
 /**
- * A menu's own `finalFocus` gives way when focus has already left the menu for something else,
- * such as a sheet one of its items opened. Base UI does that only for its default.
+ * A menu's own `finalFocus` gives way when focus has already left the menu. Base UI does that only
+ * for its default. Put the returned `popupRef` on the menu's popup.
  */
-export function yieldMenuFocus(finalFocus: FinalFocus): FinalFocus {
+export function useYieldMenuFocus(finalFocus: FinalFocus) {
+  const [popup, setPopup] = useState<HTMLElement | null>(null);
+
+  const popupRef = useCallback((node: HTMLElement | null) => {
+    if (node) {
+      setPopup(node);
+    }
+  }, []);
+
   if (finalFocus === undefined || typeof finalFocus === "boolean") {
-    return finalFocus;
+    return { finalFocus, popupRef };
   }
 
-  return (closeType) => {
-    if (isOutsideMenus(document.activeElement)) {
+  const yielding: FinalFocus = (closeType) => {
+    if (hasLeftMenu(popup)) {
       return false;
     }
 
     return typeof finalFocus === "function" ? finalFocus(closeType) : finalFocus.current;
   };
+
+  return { finalFocus: yielding, popupRef };
 }
 
 /**
@@ -48,7 +69,10 @@ export function useFocusAfterMenuItem(finalFocus: FinalFocus) {
   };
 }
 
-/** Its layout effect runs as the popup mounts, before the overlay moves focus into itself. */
+/**
+ * Its layout effect runs as the popup mounts, before the overlay moves focus into itself, and lets
+ * the trigger go when the popup unmounts, after the overlay has read where focus returns.
+ */
 export function MenuOpenerNotice({
   onOpen,
 }: {
@@ -56,6 +80,7 @@ export function MenuOpenerNotice({
 }) {
   useLayoutEffect(() => {
     onOpen(getMenuTrigger(document.activeElement));
+    return () => onOpen(null);
   }, [onOpen]);
 
   return null;

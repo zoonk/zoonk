@@ -69,8 +69,8 @@ private enum ChooserStatus: Equatable {
   case choosing
   case writing
   case short(
-    optionId: String, examQuestions: Int, limit: MockStartOutcome.Limit?, minutes: Int,
-    questions: Int)
+    optionId: String, examQuestions: Int, limit: MockStartOutcome.Limit?, availableAt: Date?,
+    minutes: Int, questions: Int)
   case notEnoughQuestions
   case failed
   case refused(HelpLimit)
@@ -85,6 +85,7 @@ private struct MockChooser: View {
   @State private var status: ChooserStatus = .choosing
   @State private var busy = false
   @State private var isOnScreen = false
+  @State private var starting: Task<Void, Never>?
 
   let goalId: String
   let view: MockOptions
@@ -121,29 +122,11 @@ private struct MockChooser: View {
     .bottomBar(note: barNote) {
       startAction
     }
-    .alert(
-      Text(
-        "Start a shorter mock exam?", tableName: "Mock",
-        comment: "Title of the shorter mock exam dialog"),
-      isPresented: Binding(get: { shortNote != nil }, set: { if !$0 { status = .choosing } }),
-      presenting: shortNote
-    ) { _ in
-      Button(role: .cancel) {
-        status = .choosing
-      } label: {
-        Text("Pick another", tableName: "Mock", comment: "Closes the shorter mock exam dialog")
-      }
-
-      Button {
-        Task { await start(acceptingFewer: true) }
-      } label: {
-        Text("Start", tableName: "Mock", comment: "Starts the picked mock")
-      }
-    } message: { note in
-      Text(note)
-    }
     .onAppear { isOnScreen = true }
-    .onDisappear { isOnScreen = false }
+    .onDisappear {
+      isOnScreen = false
+      starting?.cancel()
+    }
   }
 
   @ViewBuilder
@@ -161,7 +144,7 @@ private struct MockChooser: View {
 
     if case .refused(let limit)? = shownStatus {
       Section {
-        LimitNotice(limit: limit)
+        LimitNotice(limit: limit, kind: .mockExams)
       }
     }
 
@@ -190,6 +173,11 @@ private struct MockChooser: View {
 
     Section {
       ForEach(examOptions) { optionRow($0) }
+    } header: {
+      if !subjects.isEmpty {
+        SectionTitle(
+          Text("The exam", tableName: "Mock", comment: "Mock exams of a whole exam or exam day"))
+      }
     }
 
     if !subjects.isEmpty {
@@ -216,14 +204,14 @@ private struct MockChooser: View {
   /// A free learner sees the same page, and Start shows the gate in its place (main's chooser).
   @ViewBuilder
   private var startAction: some View {
-    if status == .plusRequired {
+    if isGated {
       SubscribeButton()
         .buttonStyle(.mainAction)
         .keyboardShortcut(.defaultAction)
     } else {
       BusyButton(isBusy: busy) {
         if isOpen {
-          Task { await start() }
+          starting = Task { await start() }
         } else {
           status = .plusRequired
         }
@@ -233,11 +221,37 @@ private struct MockChooser: View {
       .buttonStyle(.mainAction)
       .disabled(pickedOption == nil)
       .keyboardShortcut(.defaultAction)
+      .confirmationDialog(
+        Text(
+          "Start a shorter mock exam?", tableName: "Mock",
+          comment: "Title of the shorter mock exam dialog"),
+        isPresented: Binding(get: { shortNote != nil }, set: { if !$0 { status = .choosing } }),
+        titleVisibility: .visible,
+        presenting: shortNote
+      ) { _ in
+        Button {
+          starting = Task { await start(acceptingFewer: true) }
+        } label: {
+          Text("Start", tableName: "Mock", comment: "Starts the picked mock")
+        }
+
+        Button(role: .cancel) {
+          status = .choosing
+        } label: {
+          Text("Pick another", tableName: "Mock", comment: "Closes the shorter mock exam dialog")
+        }
+      } message: { note in
+        Text(note)
+      }
     }
   }
 
+  /// Start was pressed on a locked page, and it's still locked: a subscription bought meanwhile
+  /// brings Start back.
+  private var isGated: Bool { status == .plusRequired && !isOpen }
+
   private var barNote: BarNote? {
-    if status == .plusRequired {
+    if isGated {
       return BarNote(
         String(localized: "Mock exams need a subscription", table: "Mock"), tone: .status)
     }
@@ -257,23 +271,43 @@ private struct MockChooser: View {
 
   /// What the dialog says before a mock exam with fewer questions than it should starts.
   private var shortNote: String? {
-    guard case .short(_, let examQuestions, let limit, let minutes, let questions)? = shownStatus
+    guard
+      case .short(_, let examQuestions, let limit, let availableAt, let minutes, let questions)? =
+        shownStatus
     else { return nil }
 
     let time = MockLabels.duration(minutes: minutes)
+    let fullOn: HelpLimit.OpeningDay? =
+      switch limit {
+      case .day: .tomorrow
+      case .rolling30Days:
+        availableAt.map { HelpLimit.openingDay($0, now: .now, calendar: .current) }
+      case .total, nil: nil
+      }
 
-    return switch limit {
-    case .day:
+    return switch fullOn {
+    case .tomorrow:
       String(
         localized:
           "Today this one has \(questions) of its \(examQuestions) questions, about \(time). You can take the full one tomorrow.",
         table: "Mock", comment: "A mock exam shorter today, when today's writing is used up")
-    case .month:
+    case .today:
       String(
         localized:
-          "Today this one has \(questions) of its \(examQuestions) questions, about \(time). You can take the full one next month.",
-        table: "Mock", comment: "A mock exam shorter today, when this month's writing is used up")
-    case .total, nil:
+          "Today this one has \(questions) of its \(examQuestions) questions, about \(time). You can take the full one later today.",
+        table: "Mock",
+        comment:
+          "In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now."
+      )
+    case .on(let date):
+      String(
+        localized:
+          "Today this one has \(questions) of its \(examQuestions) questions, about \(time). You can take the full one on \(date).",
+        table: "Mock",
+        comment:
+          "In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now. {date} is a day and its month, such as \"November 22\" in English."
+      )
+    case .open, nil:
       String(
         localized:
           "Today this one has \(questions) of its \(examQuestions) questions, about \(time).",
@@ -285,7 +319,7 @@ private struct MockChooser: View {
   private var shownStatus: ChooserStatus? {
     switch status {
     case .choosing, .plusRequired: nil
-    case .short(let optionId, _, _, _, _) where optionId != pickedOption?.id: nil
+    case .short(let optionId, _, _, _, _, _) where optionId != pickedOption?.id: nil
     default: status
     }
   }
@@ -330,7 +364,7 @@ private struct MockChooser: View {
   private var outcome: [String] {
     switch status {
     case .refused(let limit):
-      return [limit.helpWords().said]
+      return [limit.words(.mockExams).said]
     case .choosing, .writing, .plusRequired, .notEnoughQuestions, .failed, .short:
       return []
     }
@@ -461,20 +495,18 @@ private struct MockChooser: View {
   }
 
   private func optionDetail(_ option: MockOption) -> String {
-    let covers = option.covers.map { $0.formatted(.list(type: .and)) }
-    let subjects =
-      severalDays && option.kind != .area && !option.areas.isEmpty
-      ? option.areas.formatted(.list(type: .and)) : nil
-    let asks = (covers.map { [$0] } ?? subjects.map { [$0] } ?? []) + option.written
-    let objective =
-      option.objectiveOnly && covers == nil
+    let subjects = severalDays && option.kind != .area ? option.areas : []
+    let parts = option.covers ?? subjects + option.written
+
+    if !parts.isEmpty {
+      return parts.formatted(.list(type: .and))
+    }
+
+    return option.objectiveOnly
       ? String(
         localized: "No written part", table: "Mock",
         comment: "A mock exam with only the exam's objective questions, without its essay")
-      : nil
-
-    return [asks.isEmpty ? nil : asks.formatted(.list(type: .and)), objective]
-      .compactMap { $0 }.joinedFacts()
+      : ""
   }
 
   /// `acceptingFewer` only after the learner pressed Start in the shorter mock exam's dialog.
@@ -492,16 +524,25 @@ private struct MockChooser: View {
     case .done(.started(let id)):
       status = .choosing
       onStarted(id)
-    case .done(.short(let examQuestions, let limit, let minutes, let questions)):
+    case .done(.short(let examQuestions, let limit, let availableAt, let minutes, let questions)):
       status = .short(
         optionId: pickedOption.id, examQuestions: examQuestions, limit: limit,
-        minutes: minutes, questions: questions)
+        availableAt: availableAt, minutes: minutes, questions: questions)
     case .done(.notEnoughQuestions):
       status = .notEnoughQuestions
     case .done(.refused(let limit)):
       status = .refused(limit)
     case .done(.plusRequired):
       status = .plusRequired
+      // The server's answer is the access now, even if the read after it fails; a later read
+      // (a subscription bought) replaces it.
+      let options = exam.mockOptions(goalId: goalId)
+      options.update { options in
+        var locked = options
+        locked.access = .plusRequired
+        return locked
+      }
+      await options.refresh()
     case .done(.needsQuestions), .failed:
       status = .failed
     case .obsolete:
@@ -528,7 +569,7 @@ struct MockSummaryRow: View {
         Text(MockLabels.title(number: mock.number)),
         description: Text(
           [
-            mock.finishedAt.formatted(.dateTime.month(.abbreviated).day()),
+            PlanDate.momentDay(mock.finishedAt),
             mock.shape?.kind == .area ? mock.shape?.area : nil,
           ]
           .compactMap { $0 }.joinedFacts())

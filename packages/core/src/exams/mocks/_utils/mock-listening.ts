@@ -55,7 +55,7 @@ export async function loadListeningCandidates({
         setPosition: true,
         skillId: true,
       },
-      where: { setId: { in: setIds } },
+      where: { retiredAt: null, setId: { in: setIds } },
     }),
     prisma.attempt.groupBy({ by: ["itemId"], where: { item: { setId: { in: setIds } }, userId } }),
   ]);

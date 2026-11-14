@@ -13,7 +13,7 @@ import { Spinner } from "@zoonk/ui/components/spinner";
 import { ListPlusIcon, RotateCwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactElement, type ReactNode, useRef, useState } from "react";
-import { OutlineLimitNotice } from "../_components/help-limit-notice";
+import { OutlineLimitNotice, useLiveLimit } from "../_components/help-limit-notice";
 import { ListGroup, ListRowContent, ListRowLink, ListRowTitle } from "../_components/list-group";
 import { SheetHeader } from "../_components/sheet-header";
 import { StatusRegion } from "../_components/status-region";
@@ -84,13 +84,10 @@ function FarTopicBody({
 }) {
   const routes = useLearnRoutes();
 
-  const { chapters, isPending, limit, request, retry, shown } = useTopicOutline({
-    actions,
-    onLanded,
-    open,
-    skillId,
-  });
+  const outline = useTopicOutline({ actions, onLanded, open, skillId });
 
+  const { chapters, isPending, request, retry, shown } = outline;
+  const limit = useLiveLimit(outline.limit);
   const copy = useStateCopy(shown);
 
   if (shown === "loading") {

@@ -15,7 +15,8 @@ struct LessonStepResult: Hashable, Sendable {
   var answerText: String?
   var correctAnswer: String?
   var feedback: String?
-  /// False for a typed answer the server recognized without grading it.
+  /// False for an answer the server didn't check: a typed answer it recognized without grading,
+  /// or an answer to a screen fixed after the learner started, which counts neither way.
   var checked = true
   var corrections: [Correction] = []
   var keyPoints: [KeyPoint]?
@@ -84,10 +85,11 @@ enum LessonRunRefusal: Hashable, Sendable, Error {
     case guest, free, plus
   }
 
+  /// The day's cap, a guest's for good, or a monthly cap, where each use comes back 30 days after
+  /// it was made and `availableAt` is when the next one does.
   enum Period: Hashable, Sendable {
     case day, total
-    /// A free learner's last 30 days, with the instant the next lesson opens.
-    case last30Days(opensAt: Date?)
+    case last30Days(availableAt: Date?)
   }
 
   case failed

@@ -212,7 +212,7 @@ const learnerSummarySchema = z
               .boolean()
               .meta({
                 description:
-                  "The plan follows no more goals at once: show it with the Plus lock, opening Plus",
+                  "True when the learner's plan follows no more goals at once: POST /goals lists it in `refused`",
               }),
           })
           .meta({ id: "LearnerSummaryWaitingGoal" }),

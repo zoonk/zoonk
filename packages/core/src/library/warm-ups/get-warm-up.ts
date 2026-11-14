@@ -1,6 +1,7 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
+import { cacheTag } from "next/cache";
 import { getSession } from "../../users/get-session";
 import { readReadyWarmUpId } from "./claim-warm-up";
 import { type WarmUpDeck, warmUpDeckSchema } from "./warm-up-contract";
@@ -10,9 +11,9 @@ export type WarmUpResult =
   | { status: "notFound" }
   | { status: "unauthorized" };
 
-/** Only a ready deck's id reaches this, and a ready deck never changes. */
 async function readWarmUpCards(warmUpId: string): Promise<WarmUpDeck> {
   "use cache";
+  cacheTag(`warm-up:${warmUpId}`);
 
   const deck = await prisma.warmUp.findUniqueOrThrow({
     select: { cards: true, id: true, language: true },

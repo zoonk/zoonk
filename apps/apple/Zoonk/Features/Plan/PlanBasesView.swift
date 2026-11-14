@@ -9,6 +9,7 @@ struct PlanBasesView: View {
   @State private var preview: PlanPreviewState = .checking
   @State private var previewAttempt = 0
   @State private var recommended: BaseChoice?
+  @State private var saving: Task<Void, Never>?
 
   let editor: PlanEditor
   let goal: LearnerGoal
@@ -127,7 +128,7 @@ struct PlanBasesView: View {
           }
 
           BusyButton(isBusy: editor.isSaving, isRow: true) {
-            Task { await save(changed, open: open) }
+            saving = Task { await save(changed, open: open) }
           } label: {
             Text("Save", tableName: "Plan", comment: "Saves the prerequisites' choices")
           }
@@ -142,6 +143,7 @@ struct PlanBasesView: View {
     .task {
       await advise()
     }
+    .onDisappear { saving?.cancel() }
     .task(
       id: PreviewKey(
         attempt: previewAttempt,

@@ -3,6 +3,7 @@ package com.zoonk.android.feature.today
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.data.value
 import com.zoonk.android.feature.focustest.unusedFocusTests
 import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanStore
@@ -18,6 +19,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
@@ -36,7 +38,11 @@ import org.junit.Test
 class TodayAcceptTest {
     private val dispatcher = StandardTestDispatcher()
     private val plans = FakePlanApi()
-    private val todayApi = FakeTodayApi(emptyList())
+    private val before = decodeFixture<Today>("today", "goal" to goalNamed("Before"))
+    private val after = decodeFixture<Today>("today", "goal" to goalNamed("After"))
+    private val todayApi = FakeTodayApi(listOf(before))
+    private lateinit var todayStore: TodayStore
+    private lateinit var planStore: PlanStore
     private val read = TodayRead.Day(decodeFixture<Today>("today"), day())
 
     @Before
@@ -48,10 +54,12 @@ class TodayAcceptTest {
     private fun today(): TodayViewModel {
         val cache = AppCache(FakeSession(AuthenticatedSession("ana", "token-a", "local-a")), CoroutineScope(SupervisorJob() + dispatcher))
         val study = FakeStudyApi()
+        todayStore = TodayStore(todayApi, cache, CoroutineScope(SupervisorJob() + dispatcher), timeZone = { "UTC" })
+        planStore = PlanStore(plans, cache)
         return TodayViewModel(
             StudyOpener(study, study::writeLesson, cache, timeZone = { "UTC" }),
-            TodayStore(todayApi, cache, CoroutineScope(SupervisorJob() + dispatcher), timeZone = { "UTC" }),
-            PlanStore(plans, cache),
+            todayStore,
+            planStore,
             unusedFocusTests(cache),
         )
     }
@@ -76,6 +84,67 @@ class TodayAcceptTest {
             assertEquals(listOf<String?>("quote-shown", "quote-today"), plans.decisionQuotes)
             assertEquals(PlanChange.Status.APPLIED, viewModel.planChangeAnswer?.change?.status)
             assertNull(viewModel.repricedChange)
+        }
+
+    @Test
+    fun anAcceptedPlanChangeReadsTheDayAgain() =
+        runTest(dispatcher) {
+            val viewModel = today()
+            val shown = backgroundScope.launch { todayStore.today.shown.collect {} }
+            advanceUntilIdle()
+            assertEquals("Before", shownGoal())
+            todayApi.answers = listOf(after)
+
+            viewModel.decidePlanChange(read, decodeFixture("plan-change", "canApply" to true), PlanChangeDecisionInput.Status.APPLIED)
+            advanceUntilIdle()
+
+            assertEquals("After", shownGoal())
+            shown.cancel()
+        }
+
+    @Test
+    fun anAcceptDuringAPollReadsTheDayInFull() =
+        runTest(dispatcher) {
+            val viewModel = today()
+            val shown = backgroundScope.launch { todayStore.today.shown.collect {} }
+            advanceUntilIdle()
+            todayApi.answers = listOf(after)
+
+            backgroundScope.launch { todayStore.refreshIfChanged() }
+            viewModel.decidePlanChange(read, decodeFixture("plan-change", "canApply" to true), PlanChangeDecisionInput.Status.APPLIED)
+            advanceUntilIdle()
+
+            assertEquals("After", shownGoal())
+            shown.cancel()
+        }
+
+    @Test
+    fun anUndonePlanChangeReadsTheDayAgain() =
+        runTest(dispatcher) {
+            today()
+            val shown = backgroundScope.launch { todayStore.today.shown.collect {} }
+            advanceUntilIdle()
+            assertEquals("Before", shownGoal())
+            todayApi.answers = listOf(after)
+
+            planStore.undo(read.today.goal.id, java.util.UUID.randomUUID())
+            advanceUntilIdle()
+
+            assertEquals("After", shownGoal())
+            shown.cancel()
+        }
+
+    private fun shownGoal() = (todayStore.today.state.value.value as? TodayRead.Day)?.today?.goal?.displayName
+
+    private fun goalNamed(name: String) =
+        buildJsonObject {
+            put("dateEstimated", false)
+            put("daysLeft", null as Int?)
+            put("id", "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d00")
+            put("kind", "learn")
+            put("targetDate", null as String?)
+            put("title", name)
+            put("displayName", name)
         }
 
     @Test

@@ -568,10 +568,10 @@ private struct MockAnswerSheet: View {
       } header: {
         SectionTitle(Text("Questions", tableName: "Mock", comment: "The answer sheet's questions"))
       } footer: {
-        SectionFooter {
-          Text(
-            "No feedback until the end, like on exam day.", tableName: "Mock",
-            comment: "Under the answer sheet")
+        if let tools = view.currentSection?.tools {
+          SectionFooter {
+            Label(tools, systemImage: "pencil.and.ruler")
+          }
         }
       }
 

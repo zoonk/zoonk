@@ -1,7 +1,7 @@
 "use client";
 
 import { getFromBrowser, postFromBrowser } from "@/lib/api/browser-api";
-import { readRefusedLessonLimit } from "@/lib/api/refused-limit";
+import { readRefusedLimit } from "@/lib/api/refused-limit";
 import {
   type ChapterMindMapView,
   type GoalMindMapGenerations,
@@ -65,7 +65,7 @@ async function requestMindMap(target: {
 
   const body: unknown = await response.json().catch(() => null);
 
-  const limit = readRefusedLessonLimit({ body, status: response.status });
+  const limit = readRefusedLimit({ body, status: response.status });
 
   if (limit) {
     return { limit: { ...limit, resource: readLimitResource(body) }, status: "refused" };

@@ -326,6 +326,13 @@ struct OnboardingLimit: Decodable, Equatable, Sendable {
   let period: String
   let resource: String
   let tier: String
+  var availableAt: String?
+
+  var help: HelpLimit {
+    .reached(
+      period: period, tier: LearnerTier(rawValue: tier) ?? .free,
+      availableAt: availableAt.flatMap(Date.init(serverInstant:)))
+  }
 
   /// A guest's one goal and the free plan's active goals are lifted by an account or Plus, not by waiting.
   var isGoalLimit: Bool { ["activeGoals", "goal"].contains(resource) }

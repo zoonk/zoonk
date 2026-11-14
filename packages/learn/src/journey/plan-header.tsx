@@ -50,18 +50,20 @@ export function PlanHeader({
   const t = useExtracted();
 
   return (
-    <PageHeaderContent>
-      <PageHeader className={cn(TITLE_ROW_CLASS, "gap-y-2")}>
-        <PageTitle className="outline-none" id={PLAN_TITLE_ID} tabIndex={-1}>
-          {t("Plan")}
-        </PageTitle>
+    <PageHeader>
+      <PageHeaderContent className="w-full">
+        <div className={cn(TITLE_ROW_CLASS, "gap-y-2")}>
+          <PageTitle className="outline-none" id={PLAN_TITLE_ID} tabIndex={-1}>
+            {t("Plan")}
+          </PageTitle>
 
-        <div className="flex flex-wrap items-center gap-2">{children}</div>
-      </PageHeader>
+          <div className="flex flex-wrap items-center gap-2">{children}</div>
+        </div>
 
-      <PageSubtitle>
-        <p>{subtitle}</p>
-      </PageSubtitle>
-    </PageHeaderContent>
+        <PageSubtitle>
+          <p>{subtitle}</p>
+        </PageSubtitle>
+      </PageHeaderContent>
+    </PageHeader>
   );
 }

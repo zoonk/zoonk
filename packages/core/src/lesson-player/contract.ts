@@ -88,7 +88,7 @@ export const lessonStepCheckResultSchema = z
       .boolean()
       .meta({
         description:
-          "False for a typed answer that wasn't checked: past a few graded answers to the same screen a day, code still recognizes an accepted answer, and anything else is neither right nor wrong, with the sample answer in `correctAnswer`. It isn't recorded and saves no mistake. True otherwise.",
+          "False when the answer wasn't checked, so show it as not checked, never as wrong. It isn't recorded and saves no mistake. Two cases: a typed answer past a few graded answers to the same screen a day (code still recognizes an accepted answer, and anything else comes with the sample answer in `correctAnswer`), and an answer that isn't right to a screen of any kind whose content, version, word or sentence a staff fix changed after the run started, since the learner may still be looking at the old screen (`correctAnswer` is null). True otherwise.",
       }),
     correctAnswer: z
       .string()
@@ -162,7 +162,7 @@ const restoredCheckResultSchema = lessonStepCheckResultSchema
   })
   .meta({
     description:
-      "The saved answer's result, built again from what was saved, so the screen opens answered without a new check. Its `isCorrect` and `score` are the saved verdict. `savedMistake` is false, and a typed answer has no model feedback, key points or corrections, since those aren't saved",
+      "The saved answer's result, built again from what was saved, so a resumed run needs no new check. Its `isCorrect` and `score` are the saved verdict. `savedMistake` is false, and a typed answer has no model feedback, key points or corrections, since those aren't saved",
     id: "LessonRunAnswerResult",
   });
 

@@ -137,7 +137,7 @@ struct MindMapsScreen: View {
     case .chapters:
       maps.chapters.count { $0.status == .ready }
     case .lessons:
-      maps.lessonGroups.reduce(0) { $0 + $1.opens }
+      maps.lessonGroups.reduce(0) { $0 + $1.lessonIds.count }
     case .saved:
       maps.saved.count { $0.available && store.isSaved($0.key, server: true) }
     }
@@ -165,7 +165,7 @@ private struct MindMapChaptersTab: View {
   let subjectKey: String?
 
   var body: some View {
-    let index = maps.chapters.filter { $0.status == .ready || $0.status == .plusRequired }
+    let index = maps.chapters.filter { $0.status == .ready }
 
     MindMapIndex(items: index, subject: \.subject, opensAt: subjectKey) { map in
       MindMapRow(goalId: goalId, map: map, place: .library)
@@ -196,16 +196,34 @@ private struct MindMapCreateSection: View {
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(MindMapsStore.self) private var store
   @State private var showsChapters = false
+  /// The block stays for the visit once it has shown the stop, so its held slot outlives the line.
+  @State private var showedStop = false
 
   let goalId: String
   let maps: GoalMindMaps
   let notMade: [ChapterMindMap]
 
+  /// The stop takes the rows' Create until its day has come; then Create is back, the stop's line
+  /// goes, and the offer is read again.
   var body: some View {
+    OpeningClock(availableAt: maps.createOffer.stop?.availableAt) { now in
+      let isOver = maps.createOffer.stop?.isOver(at: now) ?? false
+
+      section(canStart: maps.createOffer.stop == nil || isOver)
+        .task(id: isOver) {
+          if isOver {
+            await store.readOfferAgain(goalId: goalId, now: now)
+          }
+        }
+    }
+  }
+
+  /// A failed map's row keeps its Try again, whose retry is free.
+  @ViewBuilder
+  private func section(canStart: Bool) -> some View {
     let offer = maps.createOffer
-    let line = line(offer)
-    // A failed map's row keeps its Try again, whose retry is free.
-    let canStart = offer.stop == nil
+    let line = line(offer, canStart: canStart)
+    let isStopped = if case .stopped = line { true } else { false }
 
     let ready = notMade.filter { $0.lessonsToWrite == 0 && $0.status != .writingLessons }
     let others = notMade.filter { !ready.contains($0) }
@@ -215,23 +233,30 @@ private struct MindMapCreateSection: View {
         MindMapRow(goalId: goalId, map: map, place: .notMade(canStart: canStart))
       }
 
-      if offer.startable > 1 || line != nil {
-        VStack(alignment: .leading, spacing: 12) {
-          if offer.startable > 1 {
-            BusyButton(isBusy: store.creatingAll.contains(goalId), icon: .create) {
-              Task { await store.createAll(goalId: goalId) }
-            } label: {
-              Text(
-                "Create all", tableName: "MindMaps",
-                comment: "Makes every chapter map one tap can start now")
+      if offer.startable > 1 || line != nil || showedStop {
+        HeldSlot(gated: isStopped) {
+          VStack(alignment: .leading, spacing: 12) {
+            if offer.startable > 1 {
+              BusyButton(isBusy: store.creatingAll.contains(goalId), icon: .create) {
+                Task { await store.createAll(goalId: goalId) }
+              } label: {
+                Text(
+                  "Create all", tableName: "MindMaps",
+                  comment: "Makes every chapter map one tap can start now")
+              }
+              .buttonStyle(.outline)
+              .controlSize(.large)
+              .listRowButtonIcon()
             }
-            .buttonStyle(.outline)
-            .controlSize(.large)
-            .listRowButtonIcon()
-          }
 
-          if let line {
-            lineView(line)
+            if let line {
+              lineView(line)
+            }
+          }
+        }
+        .onChange(of: isStopped, initial: true) { _, stopped in
+          if stopped {
+            showedStop = true
           }
         }
         .listRowSeparator(.hidden)
@@ -254,6 +279,18 @@ private struct MindMapCreateSection: View {
         }
 
         if showsChapters {
+          // A row's Create spends lessons from a free learner's allowance, so the list says so once.
+          if learner.summary.value?.tier != .plus, others.contains(where: { $0.lessonsToWrite > 0 })
+          {
+            Text(
+              "Making one of these maps writes its lessons first, and they count toward your free lessons.",
+              tableName: "MindMaps"
+            )
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
+            .listRowSeparator(.hidden)
+          }
+
           ForEach(others) { map in
             MindMapRow(goalId: goalId, map: map, place: .notMade(canStart: canStart))
           }
@@ -273,7 +310,7 @@ private struct MindMapCreateSection: View {
     case fewer(Int)
   }
 
-  private func line(_ offer: MindMapCreateOffer) -> Line? {
+  private func line(_ offer: MindMapCreateOffer, canStart: Bool) -> Line? {
     let onTheWay = maps.chapters.count { $0.status.isOnItsWay }
     // Only the ones the button retries: a failed map whose lessons aren't written says so in its
     // own row.
@@ -291,7 +328,7 @@ private struct MindMapCreateSection: View {
       return .unfinished(unfinished)
     }
 
-    if offer.startable == 0, let stop = offer.stop {
+    if offer.startable == 0, !canStart, let stop = offer.stop {
       return .stopped(stop.limit(tier: learner.summary.value?.tier ?? .free))
     }
 
@@ -311,7 +348,7 @@ private struct MindMapCreateSection: View {
           "We couldn't reach the server. Check your connection.", table: "MindMaps",
           comment: "Asking for a map didn't reach the server"))
     case .stopped(let limit):
-      LimitNotice(limit: limit.limit, words: limit.words)
+      LimitNotice(limit: limit.limit, words: limit.words(now:))
     case .onTheWay, .unfinished, .fewer:
       Text(verbatim: note(line) ?? "")
         .typeStyle(.note)
@@ -379,7 +416,7 @@ private struct LessonGroupItem: Identifiable {
   var id: String { group.chapterId }
 }
 
-/// One row per chapter, opening the Lessons deck at its first map; all locked, it leads to Plus.
+/// One row per chapter, opening the Lessons deck at its first map.
 private struct LessonGroupRow: View {
   @Environment(AppRouter.self) private var router
 
@@ -388,18 +425,13 @@ private struct LessonGroupRow: View {
 
   var body: some View {
     Button {
-      if item.group.opens > 0 {
-        router.open(
-          .mindMapStudy(
-            goalId: goalId, tab: .lessons,
-            start: MindMapPosition(chapterId: item.group.chapterId)))
-      } else {
-        router.present(.subscription)
-      }
+      router.open(
+        .mindMapStudy(
+          goalId: goalId, tab: .lessons, start: MindMapPosition(chapterId: item.group.chapterId)))
     } label: {
       MarkedRow(alignment: .center) {
         MindMapSlot {
-          Image(systemName: item.group.opens > 0 ? LessonMapView.symbol : "lock")
+          Image(systemName: LessonMapView.symbol)
             .foregroundStyle(.mutedForeground)
         }
       } content: {

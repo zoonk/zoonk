@@ -303,6 +303,20 @@ describe(findListeningSetProblems, () => {
     expect(nine).toContain("Has 9 female speakers; only 8 voices tell them apart.");
   });
 
+  it("asks for notation in a spoken line to be written as the words a speaker says", () => {
+    const set = setOf({
+      turns: scriptOf([
+        ...LINES.slice(0, -1),
+        "Thursday the twelfth would be best. I'll bring the file, data/x_1.csv, with a_n in it.",
+      ]),
+    });
+
+    expect(findListeningSetProblems(set, REQUEST)).toStrictEqual([
+      `A spoken line has written notation a voice can't say: "data/x_1.csv". Write it as the words a speaker would say.`,
+      `A spoken line has written notation a voice can't say: "a_n". Write it as the words a speaker would say.`,
+    ]);
+  });
+
   it("counts the words of a script written without spaces", () => {
     const set = setOf({
       turns: scriptOf([

@@ -1,7 +1,7 @@
 import { type ConversationConnection } from "@zoonk/learn/language/conversation";
 import { getString, isJsonObject } from "@zoonk/utils/json";
 
-const periods = ["day", "month", "total"] as const;
+const periods = ["day", "rolling30Days", "total"] as const;
 const tiers = ["free", "guest", "plus"] as const;
 
 export function readConnectionRefusal(
@@ -24,7 +24,11 @@ export function readConnectionRefusal(
     case "CONVERSATION_LIMIT_REACHED": {
       const period = periods.find((value) => value === getString(details, "period"));
       const tier = tiers.find((value) => value === getString(details, "tier"));
-      return period && tier ? { limit: { period, tier }, status: "limit" } : { status: "failed" };
+      const availableAt = getString(details, "availableAt");
+
+      return period && tier
+        ? { limit: { availableAt, period, tier }, status: "limit" }
+        : { status: "failed" };
     }
     case "CONNECTION_LIMIT_REACHED":
       return getString(details, "period") === "conversation"

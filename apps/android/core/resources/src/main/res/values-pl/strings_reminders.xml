@@ -35,9 +35,11 @@
 <resources>
     <!-- The name of the app's notification channel in Android's settings. -->
     <string name="reminders_channel_name">Przypomnienia o nauce</string>
-    <!-- Under the channel's name in Android's settings, and under the Reminders page's title. -->
+    <!-- Under the channel's name in Android's settings. -->
     <string name="reminders_channel_description">Jedno przypomnienie w dni nauki, jeśli masz jeszcze coś do zrobienia na dziś.</string>
+    <!-- Under the reminders page's title: what reminders do; %1$s is the link "study days", which opens the Plan. -->
     <string name="reminders_line">Jedno przypomnienie w %1$s, jeśli masz jeszcze coś do zrobienia na dziś.</string>
+    <!-- Link to the Plan inside "One reminder on your study days…" -->
     <string name="reminders_study_days">dni nauki</string>
     <!-- A card under a finished lesson's result, offering a daily study reminder on the phone. -->
     <string name="reminders_offer_title">Chcesz przypomnienia o nauce?</string>

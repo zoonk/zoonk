@@ -27,4 +27,10 @@ describe(findMathSpans, () => {
   it("leaves an empty display pair as text without its closer opening another formula", () => {
     expect(formulas("$$ $$ is empty, but $$x$$ is not")).toStrictEqual(["x"]);
   });
+
+  it("never reads a dollar or bracket inside inline code as a math delimiter", () => {
+    expect(formulas("Match `^a$|^b$`, then $x$.")).toStrictEqual(["x"]);
+    expect(formulas("Print `echo $HOME` and `\\(x\\)` as written.")).toStrictEqual([]);
+    expect(formulas("The cost is $5; print `$HOME`.")).toStrictEqual([]);
+  });
 });

@@ -6,6 +6,12 @@ const MODELS = {
   models: [
     { fields: [{ name: "id" }], name: "Goal", relations: ["plan"] },
     { fields: [{ name: "goalId" }], name: "Plan", relations: ["goal"] },
+    {
+      fields: [{ name: "title" }],
+      fixable: [{ fields: ["title"], operation: "set", rules: "Public lessons only." }],
+      name: "Lesson",
+      relations: [],
+    },
   ],
 };
 
@@ -25,9 +31,10 @@ describe(shapeOutput, () => {
     ).toStrictEqual({ hasMore: true, records: [{ status: "active" }, { status: "active" }] });
   });
 
-  it("lists model names, or the named models' fields", () => {
+  it("lists model names and the fixable ones, or the named models' fields", () => {
     expect(shapeOutput({ body: MODELS, shape: { kind: "models", names: [] } })).toStrictEqual({
-      models: ["Goal", "Plan"],
+      fixable: ["Lesson"],
+      models: ["Goal", "Plan", "Lesson"],
     });
 
     expect(shapeOutput({ body: MODELS, shape: { kind: "models", names: ["Plan"] } })).toStrictEqual(

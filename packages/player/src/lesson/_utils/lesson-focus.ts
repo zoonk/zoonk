@@ -54,7 +54,11 @@ function updateThenFocus(update: () => void, getTarget: () => HTMLElement | null
   getTarget()?.focus({ preventScroll: true });
 }
 
-/** A tap or click leaves focus where the browser puts it, so Enter afterwards still runs the screen's main action. */
+/**
+ * A tap or click leaves focus where the browser puts it, so Enter afterwards still runs the screen's
+ * main action. A control its press hid lets go at once: the browser waits for its next frame, and a
+ * key pressed before then would press the hidden control again.
+ */
 export function updateKeepingFocus(
   event: Press,
   update: () => void,
@@ -65,7 +69,12 @@ export function updateKeepingFocus(
     return;
   }
 
-  update();
+  const control = event.currentTarget;
+  flushSync(update);
+
+  if (!isRendered(control)) {
+    control.blur();
+  }
 }
 
 /** Each screen has its own action bar, so a turn takes away the control that had focus. */

@@ -815,6 +815,65 @@
         }
       }
     },
+    "A course on this is ready now" : {
+      "comment" : "Under a Library course offered while the learner's plan is built",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dazu gibt es schon einen Kurs"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ya hay un curso sobre este tema"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un cours sur ce sujet est déjà disponible"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C’è già un corso su questo argomento"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この内容のコースを今すぐ始められます"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 주제를 바로 배울 수 있는 코스가 있어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kurs na ten temat jest już gotowy"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Já tem um curso pronto sobre isso"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu konuda hazır bir kurs var"
+          }
+        }
+      }
+    },
     "a day" : {
       "comment" : "Under the plan's time a day, as in \"15 min a day\"",
       "localizations" : {
@@ -870,65 +929,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "günde"
-          }
-        }
-      }
-    },
-    "A Library course fits your goal. Start it now" : {
-      "comment" : "Under a Library course offered while the learner's plan is built",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ein Kurs aus der Bibliothek passt zu deinem Ziel. Leg jetzt los"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Un curso de la Biblioteca encaja con tu objetivo. Empiézalo ahora"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Un cours de la Bibliothèque correspond à ton objectif. Commence-le maintenant"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Un corso della Biblioteca è adatto al tuo obiettivo. Inizialo ora"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "目標に合うライブラリのコースです。今すぐ始められます"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "목표에 맞는 라이브러리 코스예요. 지금 시작해 보세요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kurs z Biblioteki pasuje do twojego celu. Zacznij go teraz"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Um curso da Biblioteca combina com seu objetivo. Comece agora"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kütüphanedeki bir kurs hedefine uygun. Hemen başla"
           }
         }
       }
@@ -3946,7 +3946,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choisis ton Compagnon"
+            "value" : "Choisis ton compagnon"
           }
         },
         "it" : {
@@ -3976,7 +3976,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escolha seu Parceiro"
+            "value" : "Escolha seu parceiro"
           }
         },
         "tr" : {
@@ -4042,6 +4042,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Başlangıçtan ileri seviyeye kadar metinler seçiyoruz…"
+          }
+        }
+      }
+    },
+    "Choosing what to learn" : {
+      "comment" : "A step of the wait while a plan is built",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir wählen aus, was du lernst"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eligiendo qué aprender"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choix de ce que tu vas apprendre"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo scegliendo cosa imparerai"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学ぶ内容を選んでいます"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "배울 내용 정하기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wybieramy tematy do nauki"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escolhendo o que aprender"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Öğrenileceklerin seçimi"
           }
         }
       }
@@ -7787,61 +7846,61 @@
         }
       }
     },
-    "Getting your questions ready" : {
+    "Getting your test ready" : {
       "comment" : "Title while placement questions are written",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wir bereiten deine Fragen vor"
+            "value" : "Wir bereiten deinen Test vor"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Preparando tus preguntas"
+            "value" : "Preparando tu prueba"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Préparation de tes questions"
+            "value" : "Préparation de ton test"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stiamo preparando le tue domande"
+            "value" : "Stiamo preparando il tuo test"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "問題を準備しています"
+            "value" : "テストを準備しています"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "문제를 준비하고 있어요"
+            "value" : "테스트를 준비하고 있어요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Przygotowujemy dla ciebie pytania"
+            "value" : "Przygotowujemy twój test"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Preparando suas perguntas"
+            "value" : "Preparando seu teste"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sorularını hazırlıyoruz"
+            "value" : "Testini hazırlıyoruz"
           }
         }
       }
@@ -9085,65 +9144,6 @@
         }
       }
     },
-    "It only changes where your plan starts." : {
-      "comment" : "Under the level question",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Das beeinflusst nur, wo dein Plan beginnt."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Solo cambia el punto de partida de tu plan."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cela change seulement le point de départ de ton plan."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cambia solo il punto di partenza del tuo piano."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "学習計画をどこから始めるかだけが変わります。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "계획을 어디서 시작할지만 달라져요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "To wpływa tylko na to, od czego zacznie się twój plan."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Isso só muda o ponto de partida do seu plano."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sadece planının nereden başlayacağını değiştirir."
-          }
-        }
-      }
-    },
     "Join the waitlist" : {
       "comment" : "Joins the waitlist for lessons that teach playing an instrument",
       "localizations" : {
@@ -10025,65 +10025,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Onayla"
-          }
-        }
-      }
-    },
-    "Mapping the skills it takes" : {
-      "comment" : "A step of the wait while a plan is built",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir ermitteln die nötigen Fähigkeiten"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Identificando las habilidades necesarias"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Repérage des compétences nécessaires"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stiamo individuando le abilità necessarie"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "必要なスキルを整理しています"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "필요한 능력을 정리하고 있어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ustalamy, jakie umiejętności będą potrzebne"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mapeando as habilidades necessárias"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gereken becerileri belirliyoruz"
           }
         }
       }
@@ -10973,65 +10914,6 @@
         }
       }
     },
-    "No more material this month. More next month, or subscribe to keep going." : {
-      "comment" : "A free learner added as much material as allowed this month",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Diesen Monat kannst du kein weiteres Material hinzufügen. Nächsten Monat geht’s weiter oder mit einem Abo sofort."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No puedes agregar más material este mes. Puedes agregar más el próximo mes o suscribirte para seguir."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu ne peux plus ajouter de documents ce mois-ci. Tu pourras en ajouter le mois prochain, ou t’abonner pour continuer."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non puoi aggiungere altro materiale questo mese. Riprova il mese prossimo o abbonati per continuare."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今月はこれ以上資料を追加できません。来月また追加できます。登録すると今すぐ続けられます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이번 달에는 자료를 더 추가할 수 없어요. 다음 달에 다시 추가하거나 구독해서 계속 이용할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wykorzystano limit materiałów na ten miesiąc. Więcej dodasz w przyszłym miesiącu lub po wykupieniu subskrypcji."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você chegou ao limite de material deste mês. No mês que vem tem mais, ou assine para continuar."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu ayki materyal sınırına ulaştın. Gelecek ay ya da abone olarak hemen devam edebilirsin."
-          }
-        }
-      }
-    },
     "No more material today. More tomorrow, or subscribe to keep going." : {
       "comment" : "A free learner added as much material as allowed today",
       "localizations" : {
@@ -11146,124 +11028,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bugünkü materyal sınırına ulaştın. Yarın devam edebilirsin."
-          }
-        }
-      }
-    },
-    "No more new goals this month" : {
-      "comment" : "A free learner started as many new goals as their plan allows this month",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Diesen Monat keine neuen Ziele mehr"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No puedes crear más objetivos este mes"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu ne peux plus commencer de nouvel objectif ce mois-ci"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non puoi iniziare altri obiettivi questo mese"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今月はこれ以上新しい目標を始められません"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이번 달에는 새 목표를 더 시작할 수 없어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wykorzystano limit nowych celów na ten miesiąc"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você chegou ao limite de novos objetivos deste mês"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu ayki yeni hedef sınırına ulaştın"
-          }
-        }
-      }
-    },
-    "No more new goals this month. More next month, or subscribe to keep going." : {
-      "comment" : "A free learner sent as many goals as allowed this month\nA free learner started as many goals as allowed this month",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Diesen Monat kannst du keine neuen Ziele mehr starten. Nächsten Monat geht’s weiter oder mit einem Abo sofort."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No puedes crear más objetivos este mes. Puedes crear más el próximo mes o suscribirte para seguir."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu ne peux plus commencer de nouvel objectif ce mois-ci. Tu pourras en commencer le mois prochain, ou t’abonner pour continuer."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non puoi iniziare altri obiettivi questo mese. Riprova il mese prossimo o abbonati per continuare."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今月はこれ以上新しい目標を始められません。来月また始められます。登録すると今すぐ続けられます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이번 달에는 새 목표를 더 시작할 수 없어요. 다음 달에 새 목표를 시작하거나 구독해서 계속 이용할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wykorzystano limit nowych celów na ten miesiąc. Więcej dodasz w przyszłym miesiącu lub po wykupieniu subskrypcji."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você chegou ao limite de novos objetivos deste mês. No mês que vem tem mais, ou assine para continuar."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu ayki yeni hedef sınırına ulaştın. Gelecek ay ya da abone olarak hemen devam edebilirsin."
           }
         }
       }
@@ -11445,65 +11209,6 @@
         }
       }
     },
-    "No more questions this month. More next month, or subscribe to keep going." : {
-      "comment" : "A free learner asked as many material questions as allowed this month",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Diesen Monat kannst du keine weiteren Fragen stellen. Nächsten Monat geht’s weiter oder mit einem Abo sofort."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No puedes hacer más preguntas este mes. Puedes hacer más el próximo mes o suscribirte para seguir."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu ne peux plus poser de questions ce mois-ci. Tu pourras en poser le mois prochain, ou t’abonner pour continuer."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non puoi fare altre domande questo mese. Riprova il mese prossimo o abbonati per continuare."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今月はこれ以上質問できません。来月また質問できます。登録すると今すぐ続けられます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이번 달에는 더 질문할 수 없어요. 다음 달에 다시 질문하거나 구독해서 계속 이용할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wykorzystano limit pytań na ten miesiąc. Kolejne zadasz w przyszłym miesiącu lub po wykupieniu subskrypcji."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você chegou ao limite de perguntas deste mês. No mês que vem tem mais, ou assine para continuar."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu ayki soru sınırına ulaştın. Gelecek ay ya da abone olarak hemen devam edebilirsin."
-          }
-        }
-      }
-    },
     "No more questions today. More tomorrow, or subscribe to keep going." : {
       "comment" : "A free learner asked as many material questions as allowed today",
       "localizations" : {
@@ -11618,65 +11323,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bugünkü soru sınırına ulaştın. Yarın devam edebilirsin."
-          }
-        }
-      }
-    },
-    "No more quick explanations this month. More next month, or subscribe to keep going." : {
-      "comment" : "A free learner asked for as many quick explanations as allowed this month",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Diesen Monat kannst du keine weiteren Kurzerklärungen anfordern. Nächsten Monat geht’s weiter oder mit einem Abo sofort."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No puedes pedir más explicaciones rápidas este mes. Puedes pedir más el próximo mes o suscribirte para seguir."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu ne peux plus demander d’explications rapides ce mois-ci. Tu pourras en demander le mois prochain, ou t’abonner pour continuer."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non puoi chiedere altre spiegazioni rapide questo mese. Riprova il mese prossimo o abbonati per continuare."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今月はこれ以上クイック解説を作成できません。来月また作成できます。登録すると今すぐ続けられます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이번 달에는 간단한 설명을 더 요청할 수 없어요. 다음 달에 다시 요청하거나 구독해서 계속 이용할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wykorzystano limit szybkich wyjaśnień na ten miesiąc. Kolejne otrzymasz w przyszłym miesiącu lub po wykupieniu subskrypcji."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você chegou ao limite de explicações rápidas deste mês. No mês que vem tem mais, ou assine para continuar."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu ayki kısa açıklama sınırına ulaştın. Gelecek ay ya da abone olarak hemen devam edebilirsin."
           }
         }
       }
@@ -14873,6 +14519,65 @@
         }
       }
     },
+    "Reading your material takes a few minutes." : {
+      "comment" : "How long placement questions take to write from the learner's material",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Material zu lesen dauert ein paar Minuten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leer tu material toma unos minutos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La lecture de tes documents prend quelques minutes."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ci serve qualche minuto per leggere il tuo materiale."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "資料の読み取りには数分かかります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "자료를 읽는 데 몇 분 걸려요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przeczytanie twoich materiałów zajmuje kilka minut."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A leitura do seu material leva alguns minutos."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Materyalini okumamız birkaç dakika sürüyor."
+          }
+        }
+      }
+    },
     "Reading your material…" : {
       "comment" : "While a question about the learner's material is answered",
       "localizations" : {
@@ -15990,65 +15695,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Atla"
-          }
-        }
-      }
-    },
-    "Skip for now" : {
-      "comment" : "Skips placement while its questions are written",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vorerst überspringen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Saltar por ahora"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sauter pour l’instant"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Salta per ora"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今はスキップ"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "지금은 건너뛰기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Na razie pomiń"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pular por enquanto"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Şimdilik atla"
           }
         }
       }
@@ -17300,65 +16946,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Baştan başlayalım mı?"
-          }
-        }
-      }
-    },
-    "Start them whenever you're ready." : {
-      "comment" : "Under \"Your questions are ready\" on placement's wait",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Leg los, wenn du bereit bist."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Puedes empezar cuando quieras."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Commence quand tu veux."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inizia quando vuoi."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "準備ができたら、いつでも始められます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "준비되면 언제든 시작해 보세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zacznij, kiedy chcesz."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Comece quando quiser."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hazır olduğunda başlayabilirsin."
           }
         }
       }
@@ -19747,61 +19334,61 @@
         }
       }
     },
-    "This usually takes a minute or two." : {
-      "comment" : "How long placement questions take to write",
+    "This takes a minute or two." : {
+      "comment" : "How long placement questions take to write. \"This\" is the wait.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das dauert meist ein bis zwei Minuten."
+            "value" : "Das dauert ein bis zwei Minuten."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esto suele tardar uno o dos minutos."
+            "value" : "Esto tarda uno o dos minutos."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ça prend généralement une ou deux minutes."
+            "value" : "Ça prend une ou deux minutes."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Di solito ci vuole un minuto o due."
+            "value" : "Ci vuole un minuto o due."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "通常は1〜2分ほどかかります。"
+            "value" : "1〜2分ほどかかります。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "보통 1~2분 정도 걸려요."
+            "value" : "1~2분 정도 걸려요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zwykle zajmuje to minutę lub dwie."
+            "value" : "Zajmuje to minutę lub dwie."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Isso costuma levar um ou dois minutos."
+            "value" : "Isso leva um ou dois minutos."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bu genelde bir iki dakika sürer."
+            "value" : "Bu bir iki dakika sürer."
           }
         }
       }
@@ -20810,7 +20397,7 @@
       }
     },
     "Use %@ to cover everything" : {
-      "comment" : "Picks the time a day that covers the whole goal by its date; the argument is a time like '45 min'. Say \"cover everything\", not \"study everything\": studying after an exam is a different choice.",
+      "comment" : "Picks the time a day that covers the whole goal by its date; the argument is a time like '45 min'. Say \"cover everything\", not \"study everything\" : studying after an exam is a different choice.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -25547,7 +25134,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton Compagnon grandit au fil de tes apprentissages."
+            "value" : "Ton compagnon grandit au fil de tes apprentissages."
           }
         },
         "it" : {
@@ -25577,7 +25164,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu Parceiro cresce enquanto você aprende."
+            "value" : "Seu parceiro cresce enquanto você aprende."
           }
         },
         "tr" : {
@@ -26003,65 +25590,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "İlk dersin hazır"
-          }
-        }
-      }
-    },
-    "Your first sessions will ask a few of these instead." : {
-      "comment" : "Under Skip for now",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stattdessen kommen ein paar dieser Fragen in deinen ersten Lerneinheiten dran."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "En su lugar, te haremos algunas de estas preguntas en tus primeras sesiones."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tes premières séances te poseront quelques-unes de ces questions à la place."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nelle prime sessioni ti faremo invece alcune di queste domande."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "代わりに、最初の数回の学習でこれらの問題をいくつか出します。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "대신 처음 몇 번의 학습에서 이런 문제를 몇 개 풀어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zamiast tego zadamy ci kilka z tych pytań w pierwszych dniach nauki."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Suas primeiras sessões terão algumas dessas perguntas."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bunun yerine bu sorulardan birkaçını ilk çalışmalarında soracağız."
           }
         }
       }
@@ -26715,61 +26243,61 @@
         }
       }
     },
-    "Your plan will follow the notice's subjects, topics and dates. This usually takes a few minutes." : {
+    "Your plan will follow the exam's subjects, topics and dates. This usually takes a few minutes." : {
       "comment" : "While an exam's public notice is read",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Plan richtet sich nach den Fächern, Themen und Terminen der Prüfungsausschreibung. Das dauert normalerweise ein paar Minuten."
+            "value" : "Dein Plan wird sich nach den Fächern, Themen und Terminen der Prüfung richten. Das dauert meist ein paar Minuten."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu plan seguirá las materias, los temas y las fechas de la convocatoria. Esto suele tomar unos minutos."
+            "value" : "Tu plan se basará en las materias, los temas y las fechas del examen. Esto suele tardar unos minutos."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton plan suivra les domaines, les sujets et les dates de l’avis d’examen. Cela prend généralement quelques minutes."
+            "value" : "Ton plan suivra les matières, les sujets et les dates de l’examen. Cela prend généralement quelques minutes."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il tuo piano seguirà le materie, gli argomenti e le date del bando. Di solito ci mettiamo pochi minuti."
+            "value" : "Il tuo piano seguirà le materie, gli argomenti e le date dell’esame. Di solito ci vogliono pochi minuti."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "要項に記載された科目・トピック・日程に沿って学習計画を作成します。通常、数分かかります。"
+            "value" : "試験の科目とトピック、日程に沿って学習計画を立てます。通常は数分かかります。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "공고에 나온 과목과 주제, 날짜에 맞춰 계획을 세워요. 보통 몇 분 정도 걸려요."
+            "value" : "시험의 과목, 주제, 일정에 맞춰 계획을 세울 거예요. 보통 몇 분 정도 걸려요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "W twoim planie uwzględnimy przedmioty, tematy i terminy z ogłoszenia. Zwykle zajmuje to kilka minut."
+            "value" : "Twój plan uwzględni przedmioty, tematy i terminy egzaminu. Zwykle zajmuje to kilka minut."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu plano vai seguir as matérias, os tópicos e as datas do edital. Isso costuma levar alguns minutos."
+            "value" : "Seu plano vai seguir as matérias, os tópicos e as datas da prova. Isso costuma levar alguns minutos."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Planını ilandaki branşlara, konulara ve tarihlere göre hazırlıyoruz. Bu genellikle birkaç dakika sürer."
+            "value" : "Planın sınavın branşlarına, konularına ve tarihlerine göre hazırlanacak. Bu genellikle birkaç dakika sürer."
           }
         }
       }
@@ -26951,65 +26479,6 @@
         }
       }
     },
-    "Your questions are ready" : {
-      "comment" : "Title of placement's wait once its questions are ready, for a learner still guessing",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine Fragen sind fertig"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tus preguntas están listas"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tes questions sont prêtes"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le tue domande sono pronte"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "問題の準備ができました"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "문제가 준비됐어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twoje pytania są gotowe"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Suas perguntas estão prontas"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Soruların hazır"
-          }
-        }
-      }
-    },
     "Your role" : {
       "comment" : "Box for the learner's role at work\nRow with the learner's role at work",
       "localizations" : {
@@ -27124,6 +26593,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hedefin"
+          }
+        }
+      }
+    },
+    "Your test is ready" : {
+      "comment" : "Title of placement's wait once its questions are ready, for a learner still guessing",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Test ist fertig"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu prueba está lista"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton test est prêt"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo test è pronto"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "テストの準備ができました"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "테스트가 준비됐어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twój test jest gotowy"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu teste está pronto"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Testin hazır"
           }
         }
       }

@@ -3,7 +3,7 @@ import { type PlayableLibraryStep } from "@zoonk/core/lesson-player/playable-les
 import { NOTHING_REACHED } from "@zoonk/core/sessions/reached";
 import { type MistakePracticeFeedback, MistakePracticeRun } from "@zoonk/learn/mistakes/practice";
 import { LearnProvider } from "@zoonk/learn/provider";
-import { MathMarkupProvider } from "@zoonk/learn/rich-text/math-provider";
+import { DrawnMath } from "@zoonk/learn/rich-text/drawn-math";
 import { SpeechPlayerProvider } from "@zoonk/learn/speech/provider";
 import { type ComponentProps } from "react";
 import { vi } from "vitest";
@@ -53,6 +53,29 @@ export function openPractice(
   const finish = vi.fn<Actions["finish"]>().mockResolvedValue(null);
   const actions = { answer, finish, ...overrides };
 
+  const practice: ComponentProps<typeof MistakePracticeRun>["practice"] = [
+    {
+      cause: null,
+      drill: { kind: "retry", lesson: null, timeLimitSeconds: null },
+      lesson: step
+        ? {
+            language: "en",
+            lessonId: "original-lesson",
+            level: "beginner",
+            step,
+            targetLanguage: "en",
+          }
+        : null,
+      mistakeId: "original-mistake",
+      questions: question ? [question] : [],
+      snapshot: {
+        answer: "The earlier answer",
+        question: question?.question ?? "The original lesson question",
+      },
+      tutorAvailable: true,
+    },
+  ];
+
   render(
     <LearnProvider
       adapters={{
@@ -72,39 +95,18 @@ export function openPractice(
         },
       }}
     >
-      <MathMarkupProvider markup={{}}>
+      <DrawnMath content={practice}>
         <SpeechPlayerProvider voice={speechClips().voice}>
           <MistakePracticeRun
             actions={actions}
             backHref="/mistakes"
             lessonHref={null}
-            practice={[
-              {
-                cause: null,
-                drill: { kind: "retry", lesson: null, timeLimitSeconds: null },
-                lesson: step
-                  ? {
-                      language: "en",
-                      lessonId: "original-lesson",
-                      level: "beginner",
-                      step,
-                      targetLanguage: "en",
-                    }
-                  : null,
-                mistakeId: "original-mistake",
-                questions: question ? [question] : [],
-                snapshot: {
-                  answer: "The earlier answer",
-                  question: question?.question ?? "The original lesson question",
-                },
-                tutorAvailable: true,
-              },
-            ]}
+            practice={practice}
             renderLesson={(props) => <LessonPracticeStep {...props} />}
             trueFalseLabels="trueFalse"
           />
         </SpeechPlayerProvider>
-      </MathMarkupProvider>
+      </DrawnMath>
     </LearnProvider>,
   );
 
@@ -114,7 +116,7 @@ export function openPractice(
 export type Question = ComponentProps<
   typeof MistakePracticeRun
 >["practice"][number]["questions"][number];
-type Format = "numeric" | "typed" | "order" | "matchPairs";
+type Format = "numeric" | "typed" | "order" | "matchPairs" | "multipleChoice";
 
 export function bankQuestion(format: Format): Question {
   const base = {
@@ -138,6 +140,18 @@ export function bankQuestion(format: Format): Question {
       entry: { kind: "integer", places: null },
       format,
       question: "What is 20% of 40?",
+    };
+  }
+
+  if (format === "multipleChoice") {
+    return {
+      ...base,
+      context: String.raw`Simplify $x^4 y \cdot x^2$ when the bill is $5.`,
+      entry: null,
+      format,
+      options: ["$x^6 y$", "$C_{A0} = 2$ mol/L", "$E_a$ = 50 kJ/mol", "costs $5 or $10"],
+      question: "Which one is right?",
+      select: 1,
     };
   }
 

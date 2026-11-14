@@ -15,8 +15,10 @@
       if let section {
         content.fullScreenCover(isPresented: .constant(true)) {
           NavigationStack {
-            if section == "lessonGate" {
-              DebugLessonGate()
+            if section == "lessonGate" || section == "lessonGateLater" {
+              DebugLessonGate(opensIn: section == "lessonGate" ? 20 : 5 * 86_400)
+            } else if section == "limits" {
+              DebugLimits()
             } else if let writing = DebugLessonWait.writing(section) {
               DebugLessonWait(
                 writing: writing, kind: section.hasPrefix("challenge") ? .challenge : .lesson)
@@ -52,6 +54,7 @@
           GallerySection(id: "busy", title: "Busy") { BusySamples() }
           GallerySection(id: "chips", title: "Chips and subjects") { Chips() }
           ListSample()
+          GallerySection(id: "rowLine", title: "Row line") { RowLine() }
           GallerySection(id: "panels", title: "Panels and tiles") { Panels() }
           GallerySection(id: "meters", title: "Meters") { Meters() }
           GallerySection(id: "waits", title: "Waits") { Waits() }
@@ -59,6 +62,7 @@
           GallerySection(id: "options", title: "Answer options") { Options() }
           GallerySection(id: "fields", title: "Fields") { Fields() }
           GallerySection(id: "mindMaps", title: "Mind map rows") { MindMapRows() }
+          GallerySection(id: "planDates", title: "Plan path dates") { PlanPathDates() }
           GallerySection(id: "charts", title: "Lesson charts") { LessonCharts() }
         }
         .navigationTitle(Text(verbatim: "Design system"))
@@ -195,7 +199,7 @@
         } label: {
           Text(verbatim: "I don't know yet").frame(maxWidth: .infinity)
         }
-        .buttonStyle(.secondary)
+        .buttonStyle(.outline)
         .controlSize(.large)
 
         ButtonRow {
@@ -258,7 +262,7 @@
         } label: {
           Text(verbatim: "I don't know yet")
         }
-        .buttonStyle(.secondary)
+        .buttonStyle(.outline)
         .controlSize(.large)
         .buttonSizing(.flexible)
 
@@ -451,6 +455,28 @@
     }
   }
 
+  /// A row's value against its label and its chevron: one line, a title that wraps, a note under
+  /// it, and values without capitals, which sit where "Off" does.
+  private struct RowLine: View {
+    var body: some View {
+      row(Text(verbatim: "Reminders"), value: "Off")
+      row(Text(verbatim: "When ownership is diluted and new shares are sold"), value: "2 days")
+      row(Text(verbatim: "Memory"), description: Text(verbatim: "4 things Zu knows"), value: "yes")
+      row(Text(verbatim: "Lessons studied"), value: "12")
+    }
+
+    private func row(_ title: Text, description: Text? = nil, value: String) -> some View {
+      NavigationLink {
+        title
+      } label: {
+        ListRow(title, description: description) {
+        } trailing: {
+          Text(verbatim: value)
+        }
+      }
+    }
+  }
+
   private struct Panels: View {
     var body: some View {
       GroupBox {
@@ -522,29 +548,29 @@
         MindMapRow(goalId: "debug", map: Self.map(.ready, id: "finish-text"), place: .finish)
         MindMapRow(
           goalId: "debug", map: Self.map(.available, id: "library", lessons: 3), place: .library)
-        MindMapRow(
-          goalId: "debug", map: Self.map(.plusRequired, id: "library-plus"), place: .library)
         MindMapRow(goalId: "debug", map: Self.map(.ready, id: "library-text"), place: .library)
 
-        ForEach(Self.refusals, id: \.self) { resource in
-          LimitNotice(
-            limit: .limitReached(period: .day, tier: .free),
-            words: MindMapLimit(
-              limit: .limitReached(period: .day, tier: .free), resource: resource
-            )
-            .words
-          )
-          .controlSize(.small)
+        ForEach(Array(Self.refusals.enumerated()), id: \.offset) { _, refusal in
+          LimitNotice(limit: refusal.limit, words: refusal.words(now:))
+            .controlSize(.small)
         }
       }
     }
 
-    private static let refusals: [MindMapLimit.Resource] = [.mindMap, .lessons, .aiSpend]
+    private static let refusals = [
+      MindMapLimit(limit: .limitReached(period: .day, tier: .free), resource: .mindMap),
+      MindMapLimit(limit: .limitReached(period: .day, tier: .free), resource: .lessons),
+      MindMapLimit(limit: .limitReached(period: .day, tier: .free), resource: .aiSpend),
+      MindMapLimit(
+        limit: .usedUp(tier: .free, availableAt: .now.addingTimeInterval(3 * 86_400)),
+        resource: .chapterLessons),
+      MindMapLimit(limit: .limitReached(period: .total, tier: .free), resource: .chapterLessons),
+    ]
 
     private static let chapterStates = [
       map(.available, id: "available"), map(.available, id: "lessons", lessons: 3),
       map(.writingLessons, id: "writing", lessons: 3), map(.drawing, id: "drawing"),
-      map(.ready, id: "text"), map(.failed, id: "failed"), map(.plusRequired, id: "plus"),
+      map(.ready, id: "text"), map(.failed, id: "failed"),
     ]
 
     private static func map(
@@ -556,16 +582,97 @@
     }
   }
 
+  /// Each value a date's place on the Plan's path shows: a date in the data face, words in the
+  /// text face at the date's size.
+  private struct PlanPathDates: View {
+    var body: some View {
+      Group {
+        RoadmapPhaseRow(phase: Self.phase(0), when: .today, today: "2026-11-14")
+        RoadmapPhaseRow(phase: Self.phase(1), when: .starts("2027-02-17"), today: "2026-11-14")
+
+        ForEach(Array(Self.challengeDays.enumerated()), id: \.offset) { _, when in
+          PlanChallengeLabel(when: when, explains: false, isLanguage: false)
+        }
+
+        ForEach(Array(Self.finishDays.enumerated()), id: \.offset) { _, when in
+          IconLabeledContent {
+            when
+          } title: {
+            Text(verbatim: "ENEM 2027")
+          } icon: {
+            Image(systemName: "flag")
+          }
+        }
+      }
+    }
+
+    private static let challengeDays: [PlanWhen] = [
+      .date(PlanDate.estimateText("2027-02-16", today: "2026-11-14")),
+      .words(Text(verbatim: "Today")),
+      .words(Text(verbatim: "In your next session")),
+      .words(Text(verbatim: "Won")),
+    ]
+
+    private static let finishDays: [PlanWhen] = [
+      .date(PlanDate.estimateText("2027-11-14", today: "2026-11-14")),
+      .words(Text(verbatim: "Date to be confirmed")),
+    ]
+
+    private static func phase(_ index: Int) -> PlanPhase {
+      let json = """
+        { "challengeLeftOut": false, "chapters": [], "checkpoint": null, "endDate": null,
+          "index": \(index), "kind": "learn", "lessonsDone": 0, "lessonsTotal": 10,
+          "mocks": { "count": 0, "nextDate": null }, "name": "\(index == 0 ? "Foundations" : "Fill the gaps")",
+          "startDate": "2027-02-17", "state": "\(index == 0 ? "current" : "upcoming")" }
+        """
+      return try! JSONDecoder().decode(PlanPhase.self, from: Data(json.utf8))
+    }
+  }
+
   /// `ZOONK_DEBUG_GALLERY=lessonGate` opens the free lessons gate as a screen, and `lessonRefused`
-  /// in place on a lesson's wait; the next free lesson opens 20 seconds after launch.
+  /// in place on a lesson's wait; the next free lesson opens 20 seconds after launch, or five days
+  /// after with `lessonGateLater`.
   private struct DebugLessonGate: View {
-    static let refusal = LessonRunRefusal.limitReached(
-      tier: .free, period: .last30Days(opensAt: .now.addingTimeInterval(20)))
+    let opensIn: TimeInterval
+
+    static func refusal(opensIn: TimeInterval = 20) -> LessonRunRefusal {
+      .limitReached(tier: .free, period: .last30Days(availableAt: .now.addingTimeInterval(opensIn)))
+    }
 
     var body: some View {
-      LessonUnavailableView(refusal: Self.refusal) {}
+      LessonUnavailableView(refusal: Self.refusal(opensIn: opensIn)) {}
         .lonePage()
         .navigationBarTitleDisplayMode(.inline)
+    }
+  }
+
+  /// `ZOONK_DEBUG_GALLERY=limits` opens the buddy's and the explanations' monthly gates, free and
+  /// subscribed, as their screens draw them.
+  private struct DebugLimits: View {
+    static let later = Date.now.addingTimeInterval(5 * 86_400)
+
+    var body: some View {
+      ZoonkList {
+        Section {
+          TutorLimitNotice(failure: .limit(.usedUp(tier: .free, availableAt: Self.later)))
+        } header: {
+          Text(verbatim: "Buddy's messages, free")
+        }
+
+        Section {
+          TutorLimitNotice(failure: .limit(.usedUp(tier: .plus, availableAt: Self.later)))
+        } header: {
+          Text(verbatim: "Buddy's messages, Plus")
+        }
+
+        Section {
+          LimitNotice(limit: .usedUp(tier: .free, availableAt: Self.later), kind: .explanations)
+        } header: {
+          Text(verbatim: "Explanations, free")
+        }
+      }
+      .navigationTitle(Text(verbatim: "Limits"))
+      .navigationBarTitleDisplayMode(.inline)
     }
   }
 
@@ -583,7 +690,7 @@
       case "Unwritten": .notStarted
       case "Failed": .failed
       case "SetAside": .setAside
-      case "Refused": .refused(DebugLessonGate.refusal)
+      case "Refused": .refused(DebugLessonGate.refusal())
       default: nil
       }
     }

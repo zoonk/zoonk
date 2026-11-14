@@ -67,7 +67,7 @@ class TestOutViewModelTest {
     private val key = TestOutKey(UUID.fromString(GOAL), UUID.fromString(CHAPTER))
     private val questions =
         List(3) { Question("00000000-0000-4000-8000-00000000000$it", QuestionFormat.MultipleChoice, "Q$it", listOf("a", "b")) }
-    private var read: TestOutRead = TestOutRead.Ready(0.8, questions, TrueFalseWords.TrueFalse)
+    private var read: TestOutRead = TestOutRead.Ready("Porcentagem", 0.8, questions, TrueFalseWords.TrueFalse)
     private var write: () -> CreateChapterTestOutGeneration200Response = {
         CreateChapterTestOutGeneration200Response.TestOutGenerationValue(TestOutGeneration("gen-1", TestOutGeneration.Status.GENERATING))
     }
@@ -169,12 +169,12 @@ class TestOutViewModelTest {
     @Test
     fun startWritesTheQuestionsAndTheTestOpensWhenTheyAreReady() =
         runTest(dispatcher) {
-            read = TestOutRead.Ready(0.8, emptyList(), TrueFalseWords.TrueFalse)
+            read = TestOutRead.Ready("Porcentagem", 0.8, emptyList(), TrueFalseWords.TrueFalse)
             val viewModel = viewModel()
             viewModel.testOut.load()
             assertEquals(1, reads)
 
-            read = TestOutRead.Ready(0.8, questions, TrueFalseWords.TrueFalse)
+            read = TestOutRead.Ready("Porcentagem", 0.8, questions, TrueFalseWords.TrueFalse)
             viewModel.start()
             advanceUntilIdle()
 

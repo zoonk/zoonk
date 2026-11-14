@@ -188,11 +188,9 @@ struct PlacementStep: View {
       isActing: isStarting,
       skip: .init(
         label: Text(
-          "Skip for now", tableName: "Onboarding",
+          "Skip", tableName: "Onboarding",
           comment: "Skips placement while its questions are written"),
-        note: Text(
-          "Your first sessions will ask a few of these instead.", tableName: "Onboarding",
-          comment: "Under Skip for now"),
+        note: nil,
         isBusy: isSaving, failed: finishFailed
       ) {
         finish(fromScratch: false)

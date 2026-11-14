@@ -197,12 +197,13 @@ function ExamMoment() {
   );
 }
 
-function ExamSpeaking() {
+function ExamSpeaking({ barHasMainAction }: { barHasMainAction: boolean }) {
   const { actions, exam, hrefs, openSpeakingTask } = useExamScreen();
 
   if (exam.speaking) {
     return (
       <SpeakingPaperSection
+        barHasMainAction={barHasMainAction}
         onStart={actions.startExamTask}
         openTask={openSpeakingTask}
         paper={exam.speaking}
@@ -217,6 +218,7 @@ function ExamSpeaking() {
 
   return (
     <SpeakingMockCard
+      barHasMainAction={barHasMainAction}
       exam={exam.speakingMock}
       onStart={actions.startSpeakingMock}
       paused={exam.speakingMockPaused}
@@ -239,6 +241,7 @@ export function ExamScreen({
 }) {
   const t = useExtracted();
   const lastDays = isLastDays(exam.stage);
+  const barAction = lastDays ? null : mockAction;
 
   return (
     <ExamScreenProvider value={{ actions, exam, hrefs, openSpeakingTask }}>
@@ -252,10 +255,9 @@ export function ExamScreen({
         asideLabel={t("About the exam")}
         bar={<ExamBar />}
         bottomBar={
-          !lastDays &&
-          mockAction && (
+          barAction && (
             <BottomBar>
-              <BottomBarActions>{mockAction}</BottomBarActions>
+              <BottomBarActions>{barAction}</BottomBarActions>
             </BottomBar>
           )
         }
@@ -272,7 +274,7 @@ export function ExamScreen({
           <ExamMocks entry={lastDays && mockAction !== null} />
           <ExamMockProgress />
           {exam.format.length === 0 && <ExamMapSection />}
-          <ExamSpeaking />
+          <ExamSpeaking barHasMainAction={Boolean(barAction)} />
         </DetailContent>
       </DetailLayout>
     </ExamScreenProvider>

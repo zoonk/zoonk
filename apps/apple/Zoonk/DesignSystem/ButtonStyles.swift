@@ -11,9 +11,6 @@ struct ZoonkButtonStyle: ButtonStyle {
     case main
     /// See-through with the stronger line: main's `outline`.
     case outline
-    /// Ink words on a quiet fill: main's `secondary`, as the lesson's "I don't know yet" in place of
-    /// Check.
-    case secondary
     /// No line: main's `ghost`, a quiet option beside or under the main action.
     case ghost
   }
@@ -67,7 +64,6 @@ private struct ListRowButtonIcon: ViewModifier {
 extension ButtonStyle where Self == ZoonkButtonStyle {
   static var mainAction: ZoonkButtonStyle { ZoonkButtonStyle(variant: .main) }
   static var outline: ZoonkButtonStyle { ZoonkButtonStyle(variant: .outline) }
-  static var secondary: ZoonkButtonStyle { ZoonkButtonStyle(variant: .secondary) }
   static var ghost: ZoonkButtonStyle { ZoonkButtonStyle(variant: .ghost) }
 }
 
@@ -165,8 +161,6 @@ private struct ZoonkButton: View {
     switch variant {
     case .main:
       return isEnabled ? Color(.primary).opacity(isPressed ? 0.8 : 1) : .muted
-    case .secondary:
-      return Color(.secondary).opacity(isPressed ? 0.8 : 1)
     case .outline, .ghost:
       return isPressed ? .muted : .clear
     }

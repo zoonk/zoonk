@@ -79,9 +79,12 @@ final class TodayStore {
     }
   }
 
+  @ObservationIgnored private let saves: LearnerSaves
+
   init(api: any StudyAPIClient, cache: AppCache) {
     self.api = api
     self.cache = cache
+    saves = LearnerSaves(cache: cache)
     today = cache.resource(
       audience: .signedIn,
       domains: [.goals, .learningProfile, .userProgress, .userSession, .userSubscription]
@@ -396,10 +399,14 @@ final class TodayStore {
     return answered.value
   }
 
+  /// Saved even when Today goes away first; then it opens nothing (`LearnerSaves`).
   func answer(_ suggestion: SuggestedGoal, accepted: Bool) async -> MutationResult<Void> {
-    await cache.mutate(invalidating: [.goals]) { identity in
-      try await api.answerSuggestedGoal(
-        token: identity.bearerToken, suggestionID: suggestion.id, accepted: accepted)
+    let api = api
+    return await saves.save {
+      await self.cache.mutate(invalidating: [.goals]) { identity in
+        try await api.answerSuggestedGoal(
+          token: identity.bearerToken, suggestionID: suggestion.id, accepted: accepted)
+      }
     }
   }
 

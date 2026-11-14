@@ -29,8 +29,8 @@ function parseMarkup(text: string): RichInlineSegment[] {
 }
 
 /**
- * Math first, so emphasis markers never touch LaTeX, then inline code, so its punctuation stays
- * literal.
+ * Math first, so emphasis markers never touch LaTeX, then inline code; `findMath` already skips a
+ * `$` inside code, so code's punctuation stays literal.
  */
 export function parseRichInline(text: string): RichInlineSegment[] {
   const math = findMath(text);

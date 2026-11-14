@@ -101,10 +101,13 @@ export function OfferPreview({
         <PlanEffectNote className={EFFECT_ROOM_CLASS}>
           {t("We couldn't check what changes.")}
         </PlanEffectNote>
-        <SuggestionActions>
-          <SuggestionAction key="retry" onClick={onRetry}>
-            {t("Try again")}
-          </SuggestionAction>
+        <SuggestionActions
+          main={
+            <SuggestionAction key="retry" onClick={onRetry}>
+              {t("Try again")}
+            </SuggestionAction>
+          }
+        >
           <SuggestionAction key="not-now" onClick={() => setPreview()} variant="outline">
             {t("Not now")}
           </SuggestionAction>
@@ -135,13 +138,17 @@ export function OfferPreview({
         />
       )}
 
-      <SuggestionActions>
-        {/* Never applied before its effect is worked out, as Today's proposals. */}
-        {!unchanged && effect !== null && (
-          <SuggestionAction action={onApply} busy={pending}>
-            {t("Change my plan")}
-          </SuggestionAction>
-        )}
+      <SuggestionActions
+        main={
+          // Never applied before its effect is worked out, as Today's proposals.
+          !unchanged &&
+          effect !== null && (
+            <SuggestionAction action={onApply} busy={pending}>
+              {t("Change my plan")}
+            </SuggestionAction>
+          )
+        }
+      >
         <SuggestionAction disabled={pending} onClick={() => setPreview()} variant="outline">
           {t("Not now")}
         </SuggestionAction>
@@ -158,10 +165,13 @@ function CheckingActions({ onCancel }: { onCancel: () => void }) {
   const t = useExtracted();
 
   return (
-    <SuggestionActions>
-      <SuggestionAction disabled key="apply">
-        {t("Change my plan")}
-      </SuggestionAction>
+    <SuggestionActions
+      main={
+        <SuggestionAction disabled key="apply">
+          {t("Change my plan")}
+        </SuggestionAction>
+      }
+    >
       <SuggestionAction key="not-now" onClick={onCancel} variant="outline">
         {t("Not now")}
       </SuggestionAction>

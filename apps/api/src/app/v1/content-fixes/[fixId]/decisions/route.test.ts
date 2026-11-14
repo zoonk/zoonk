@@ -32,7 +32,7 @@ describe("POST /v1/content-fixes/{fixId}/decisions", () => {
     expect(response.status).toBe(401);
   });
 
-  it("refuses an approval without a passkey assertion", async () => {
+  it("approves only through its batch", async () => {
     sendStaffAuthorization();
 
     const response = await decisionRequest({ body: { decision: "approve" }, fixId: randomUUID() });

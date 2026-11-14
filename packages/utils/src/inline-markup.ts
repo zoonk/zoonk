@@ -14,7 +14,7 @@ function isWhitespace(character: string | undefined): boolean {
   return character === undefined || WHITESPACE.test(character);
 }
 
-function findCode(text: string): Span | null {
+export function findCode(text: string): Span | null {
   const start = text.indexOf("`");
   const end = start === -1 ? -1 : text.indexOf("`", start + 1);
 

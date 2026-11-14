@@ -1,6 +1,7 @@
 "use client";
 
 import { Drawer as DrawerPrimitive } from "@base-ui/react/drawer";
+import { OVERLAY_ACTIONS_CLASS } from "@zoonk/ui/lib/overlay-actions";
 import { OVERLAY_DIM_CLASS } from "@zoonk/ui/lib/overlay-dim";
 import { cn } from "@zoonk/ui/lib/utils";
 import { PopupShortcutLayer } from "../hooks/_utils/popup-shortcut-layer";
@@ -139,9 +140,8 @@ function DrawerHeader({
 
 /**
  * A sheet's foot, held under its content while that scrolls: one line that says what the actions
- * will do (`note`), then the actions. On a phone they stack full width with the last one (the main
- * action) on top; from `sm` they sit in a row at the end, in order. Its edge is the content's, drawn
- * only while something scrolls under it.
+ * will do (`note`), then the actions. Its edge is the content's, drawn only while something scrolls
+ * under it.
  */
 function DrawerFooter({
   children,
@@ -156,9 +156,7 @@ function DrawerFooter({
       {...props}
     >
       {note}
-      {children && (
-        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">{children}</div>
-      )}
+      {children && <div className={OVERLAY_ACTIONS_CLASS}>{children}</div>}
     </div>
   );
 }

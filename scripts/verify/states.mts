@@ -154,7 +154,7 @@ async function walk(
       STEP_SETTLE_MS,
     );
 
-    const panel = await inspectPanel(page, phone);
+    const panel = await inspectPanel(page, phone, action.id);
     coverage.panelsOpened += panel ? 1 : 0;
     await capture?.(page, `opening ${action.id}`);
 

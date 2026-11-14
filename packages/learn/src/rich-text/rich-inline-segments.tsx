@@ -1,6 +1,6 @@
 import { useMathMarkup } from "#math-renderer";
 import { Suspense } from "react";
-import { DisplayMath } from "./display-math";
+import { DisplayMath, InlineMath } from "./display-math";
 import { speakMath } from "./math-speech";
 import { MathMarkupView } from "./spoken-math";
 import { useMathWords } from "./use-spoken-text";
@@ -63,7 +63,11 @@ function RichInlineSegmentView({ segment }: { segment: RichInlineSegment }) {
       </Suspense>
     );
 
-    return segment.kind === "displayMath" ? <DisplayMath>{formula}</DisplayMath> : formula;
+    return segment.kind === "displayMath" ? (
+      <DisplayMath>{formula}</DisplayMath>
+    ) : (
+      <InlineMath>{formula}</InlineMath>
+    );
   }
 
   return <span>{segment.text}</span>;

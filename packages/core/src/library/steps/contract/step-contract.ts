@@ -45,6 +45,11 @@ export const stepContentSchemas = {
   workedExample: workedExampleContentSchema,
 } as const satisfies Record<StepKind, z.ZodType>;
 
+/** A screen that holds no content of its own: it shows its word or sentence row. */
+export function isRelationKind(kind: StepKind): boolean {
+  return stepContentSchemas[kind] === relationContentSchema;
+}
+
 type StepContentSchemas = typeof stepContentSchemas;
 
 export type StepContentByKind = { [TKind in StepKind]: z.output<StepContentSchemas[TKind]> };

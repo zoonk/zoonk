@@ -82,7 +82,10 @@ internal fun MockChooser(
 ) {
     val options = mockStore.options[goalId]
     val state by options.collectShown()
-    val viewModel = viewModel(key = "mock-chooser-$goalId") { MockChooserViewModel(goalId, starter, app.sessions, generations) }
+    val viewModel =
+        viewModel(
+            key = "mock-chooser-$goalId",
+        ) { MockChooserViewModel(goalId, starter, app.sessions, generations) { mockStore.refused(goalId) } }
     val opened by viewModel.opened.collectAsStateWithLifecycle()
     val status by viewModel.status.collectAsStateWithLifecycle()
     val run by viewModel.run.collectAsStateWithLifecycle()

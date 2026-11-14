@@ -35,7 +35,7 @@ export function CatalogBarContent({ visitor }: { visitor: React.ReactNode }) {
         <PhoneEnd>
           {learner.status === "ready" ? (
             <LearnAvatarBelt color={learner.summary.level?.color ?? null}>
-              <UserAvatarMenu includeSearch />
+              <UserAvatarMenu />
             </LearnAvatarBelt>
           ) : (
             <>

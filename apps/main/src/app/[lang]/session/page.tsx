@@ -32,6 +32,7 @@ import {
 import { getStudySessionSummary } from "@zoonk/core/sessions/summary";
 import { getSession } from "@zoonk/core/users/session";
 import { type LessonLimit } from "@zoonk/learn/help-limit";
+import { DrawnMath } from "@zoonk/learn/rich-text/drawn-math";
 import { type DayStep, type StudyBlock, type StudySession } from "@zoonk/learn/session/types";
 import { safeAsync } from "@zoonk/utils/error";
 import { type Metadata } from "next";
@@ -221,12 +222,14 @@ async function SavedDayView({
 
     return (
       <SessionMain>
-        <SessionBlockClient
-          detail={detail.detail}
-          goal={facts.goal}
-          session={session}
-          tutor={tutor}
-        />
+        <DrawnMath content={detail.detail}>
+          <SessionBlockClient
+            detail={detail.detail}
+            goal={facts.goal}
+            session={session}
+            tutor={tutor}
+          />
+        </DrawnMath>
       </SessionMain>
     );
   }

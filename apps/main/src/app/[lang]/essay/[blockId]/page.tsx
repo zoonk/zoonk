@@ -3,6 +3,7 @@ import { NotFoundPage } from "@/components/errors/not-found-page";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { TaskNotFound } from "@/components/learn/task-not-found";
 import { getEssay } from "@zoonk/core/exams/essays/get";
+import { DrawnMath } from "@zoonk/learn/rich-text/drawn-math";
 import { TaskSkeleton } from "@zoonk/learn/task-layout";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
@@ -58,7 +59,9 @@ async function EssayContent({ params }: Props) {
 
   return (
     <MainLearnProvider>
-      <EssayClient essay={result.essay} />
+      <DrawnMath content={result.essay}>
+        <EssayClient essay={result.essay} />
+      </DrawnMath>
     </MainLearnProvider>
   );
 }

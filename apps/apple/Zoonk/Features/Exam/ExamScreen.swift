@@ -155,8 +155,7 @@ private struct ExamList: View {
     }
   }
 
-  /// Main's order: the map with the mocks, then speaking, then its aside (the format, scoring and
-  /// the date note).
+  /// Main's order: the map with the mocks, then speaking, then its aside (the format and scoring).
   @ViewBuilder
   private var about: some View {
     if exam.format.isEmpty, let map = exam.map, !map.subjects.isEmpty {
@@ -170,7 +169,6 @@ private struct ExamList: View {
     }
 
     ExamScoringSection(exam: exam)
-    ExamDateNote(exam: exam)
   }
 }
 
@@ -178,7 +176,6 @@ private struct ExamHero: View {
   @Environment(PlanStore.self) private var plan
   @State private var usingDate = false
   @State private var dateFailed = false
-  @State private var showsEstimate = false
   let exam: ExamView
 
   var body: some View {
@@ -193,46 +190,26 @@ private struct ExamHero: View {
             .foregroundStyle(.mutedForeground)
         }
 
-        if exam.daysEstimated, !exam.namedMonth {
-          Button {
-            showsEstimate = true
-          } label: {
-            Text("Estimated dates", tableName: "Exam", comment: "Tag after estimated exam dates")
-              .typeStyle(.note)
-          }
-          .buttonStyle(.borderless)
-          .popover(isPresented: $showsEstimate) {
-            Text(
-              "From past editions. We'll tell you when the official dates are out.",
-              tableName: "Exam", comment: "Opened from the Estimated dates tag"
-            )
-            .padding()
-            .presentationCompactAdaptation(.popover)
-          }
-        }
+        ExamDateTag(exam: exam)
       }
       .listRowSeparator(.hidden)
 
     }
 
-    if let noticeDay = exam.noticeDay, let date = studyDate(noticeDay.date) {
+    if let noticeDay = exam.noticeDay, studyDate(noticeDay.date) != nil {
       Section {
         VStack(alignment: .leading, spacing: 8) {
-          let day = date.formatted(.studyDay.weekday(.wide).month(.wide).day())
+          let day = PlanDate.longDay(noticeDay.date, today: PlanDate.today())
           if noticeDay.estimated {
-            Text(
-              "The exam's likely date is now \(day).", tableName: "Exam",
-              comment:
-                "The exam's likely day, while the notice isn't out; the argument is a date like 'Tuesday, May 5'"
-            )
+            Text("The exam's likely date is now \(day).", tableName: "Exam")
           } else if exam.examDocument == .notice {
             Text(
               "The exam notice says \(day).", tableName: "Exam",
-              comment: "The notice's day; the argument is a date like 'Tuesday, May 5'")
+              comment: "The notice's day; the argument is a date like 'May 5'")
           } else {
             Text(
               "The exam's official calendar says \(day).", tableName: "Exam",
-              comment: "The official calendar's day; the argument is a date like 'Tuesday, May 5'")
+              comment: "The official calendar's day; the argument is a date like 'May 5'")
           }
           if dateFailed {
             FailureLine(
@@ -256,12 +233,12 @@ private struct ExamHero: View {
 
   @ViewBuilder
   private var noSittingSection: some View {
-    if exam.noticeDay == nil, let noSitting = exam.noSitting, let month = studyDate(noSitting.month)
-    {
+    if exam.noticeDay == nil, let noSitting = exam.noSitting {
+      let month = PlanDate.monthText(noSitting.month, today: PlanDate.today(), wide: true)
       Section {
         VStack(alignment: .leading, spacing: 4) {
           Text(
-            "No exam date in \(month.formatted(.studyDay.month(.wide)))", tableName: "Exam",
+            "No exam date in \(month)", tableName: "Exam",
             comment:
               "An exam with no sitting in the learner's month; the argument is a month like 'May'"
           )
@@ -311,12 +288,8 @@ private struct ExamHero: View {
       return nil
     }
 
-    return exam.daysEstimated
-      ? String(
-        localized: "about \(days) days left", table: "Exam",
-        comment: "Last fact under an exam's name when its dates are estimated")
-      : String(
-        localized: "\(days) days left", table: "Exam", comment: "Last fact under an exam's name")
+    return String(
+      localized: "\(days) days left", table: "Exam", comment: "Last fact under an exam's name")
   }
 
   private var facts: [String] {
@@ -329,10 +302,9 @@ private struct ExamHero: View {
 
     let times = Set(exam.days.map(\.startTime))
     let shared = times.count == 1 ? exam.days.first?.startTime : nil
-    let days = dates.map { day, date in
-      var style = Date.FormatStyle.studyDay.month(.abbreviated).day()
-      if dates.count == 1 { style = style.weekday(.abbreviated) }
-      let text = date.formatted(withFarOffYear(style, for: date))
+    let today = PlanDate.today()
+    let days = dates.map { day, _ in
+      let text = PlanDate.text(day.date, today: today, weekday: dates.count == 1)
       let time = shared == nil ? day.startTime.flatMap(examTimeOfDay) : nil
       return time.map { "\(text)\u{00A0}· \($0)" } ?? text
     }
@@ -358,39 +330,83 @@ private struct ExamHero: View {
   }
 }
 
-/// Main's date note at the end of the exam's aside: where the dates come from while they aren't
-/// official.
-private struct ExamDateNote: View {
+/// Main's `DateTag`: a small tag after the facts that opens one sentence on where the dates come
+/// from while they aren't set.
+private struct ExamDateTag: View {
+  @State private var isOpen = false
   let exam: ExamView
 
   var body: some View {
-    if let note {
-      Section {
-      } footer: {
-        SectionFooter {
-          Text(note)
+    if let tag {
+      Button {
+        isOpen = true
+      } label: {
+        Text(tag.label)
+          .typeStyle(.meta)
+          .foregroundStyle(.mutedForeground)
+          .underline(pattern: .dot, color: .faint)
+          // A 44pt target that leaves the tag right under the facts, like main's `hit-area`.
+          .padding(.vertical, 14)
+          .contentShape(.rect)
+          .padding(.vertical, -14)
+      }
+      .buttonStyle(.plain)
+      .sheet(isPresented: $isOpen) {
+        NavigationStack {
+          Text(tag.text)
+            .typeStyle(.body)
+            .foregroundStyle(.mutedForeground)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            .padding()
+            .navigationTitle(tag.label)
+            .toolbarTitleDisplayMode(.inline)
+            .toolbar {
+              ToolbarItem(placement: .cancellationAction) {
+                Button(role: .close) {
+                  isOpen = false
+                }
+              }
+            }
         }
+        .presentationDetents([.fraction(0.3), .medium])
+        .zoonkStyles()
       }
     }
   }
 
-  /// Estimated days say where they come from in their tag's popover.
-  private var note: String? {
-    guard exam.namedMonth, exam.noticeDay == nil, exam.noSitting == nil, !exam.days.isEmpty else {
-      return nil
+  private var tag: (label: String, text: String)? {
+    if exam.namedMonth {
+      return exam.noticeDay != nil || exam.noSitting != nil
+        ? nil
+        : (
+          String(localized: "Day not set yet", table: "Exam"),
+          String(localized: "We'll tell you the day once it's set.", table: "Exam")
+        )
     }
 
-    return String(
-      localized: "The month you told us. We'll tell you the day once it's set.", table: "Exam",
-      comment: "A named month, before the exam's day is set")
+    return exam.daysEstimated
+      ? (
+        String(
+          localized: "Estimated dates", table: "Exam", comment: "Tag after estimated exam dates"),
+        String(
+          localized: "From past editions. We'll tell you when the official dates are out.",
+          table: "Exam", comment: "Opened from the Estimated dates tag")
+      )
+      : nil
   }
 }
 
 /// The score is optional and so is knowing whether they passed; either is enough.
 private struct ExamResultSection: View {
+  private enum Field {
+    case score
+    case maxScore
+  }
+
   @Environment(ExamStore.self) private var store
   let exam: ExamView
   @Binding var form: ExamResultForm
+  @FocusState private var focusedField: Field?
 
   private var scale: String {
     exam.scoring.scale?.rawValue ?? (exam.scoring.method == .irt ? "irt" : "points")
@@ -436,12 +452,26 @@ private struct ExamResultSection: View {
         scoreLabel
       }
       .keyboardType(.decimalPad)
+      .focused($focusedField, equals: .score)
+      // The decimal pad has no Return key and covers the rows under the field, "Did you pass?" and
+      // Save among them, until it closes. Declared once: the bar serves both fields, and a section's
+      // modifier would repeat it on every row.
+      .toolbar {
+        ToolbarItemGroup(placement: .keyboard) {
+          Spacer()
+
+          Button(role: .confirm) {
+            focusedField = nil
+          }
+        }
+      }
 
       if scale == "points" {
         TextField(text: $form.maxScore) {
           Text("out of", tableName: "Exam", comment: "The score's maximum")
         }
         .keyboardType(.decimalPad)
+        .focused($focusedField, equals: .maxScore)
       }
 
       Picker(selection: $form.passed) {
@@ -588,8 +618,8 @@ private struct ExamMocksSection: View {
             ) {
               StatusMark(status: exam.runningMocks.isEmpty ? .next : .todo)
             } trailing: {
-              if let date = next.date.flatMap(studyDate) {
-                Text(date.formatted(.studyDay.weekday(.abbreviated).month(.abbreviated).day()))
+              if let date = next.date {
+                Text(PlanDate.text(date, today: PlanDate.today(), weekday: true))
               }
             }
             .disclosureChevron()
@@ -798,18 +828,14 @@ private struct ExamFormatSection: View {
 
   @ViewBuilder
   private func title(_ day: ExamView.FormatDay) -> some View {
-    let date = day.date.flatMap(studyDate)
-
     HStack(alignment: .firstTextBaseline) {
-      if exam.format.count > 1, date != nil {
+      if exam.format.count > 1, day.date != nil {
         Text("Day \(day.day)", tableName: "Exam", comment: "An exam day")
           .foregroundStyle(.mutedForeground)
       }
 
-      if let date {
-        Text(
-          date.formatted(
-            withFarOffYear(.studyDay.weekday(.abbreviated).month(.abbreviated).day(), for: date)))
+      if let date = day.date {
+        Text(PlanDate.text(date, today: PlanDate.today(), weekday: true))
       } else {
         Text("Day \(day.day)", tableName: "Exam", comment: "An exam day")
       }
@@ -829,12 +855,6 @@ private struct ExamFormatSection: View {
       "\(names)\u{00A0}· \(count)", tableName: "Exam",
       comment: "An exam day's parts, then how many questions they have")
   }
-}
-
-/// The Plan's date rule: the year shows beyond the next twelve months.
-private func withFarOffYear(_ style: Date.FormatStyle, for date: Date) -> Date.FormatStyle {
-  let farOff = Calendar.current.date(byAdding: .year, value: 1, to: .now) ?? .now
-  return date > farOff ? style.year() : style
 }
 
 private struct ExamMapSection: View {
@@ -975,14 +995,8 @@ private struct SpeakingMockSection: View {
 
         switch start.refusal {
         case .limit(let limit):
-          FailureLine(
-            message: limit.period == .month
-              ? String(
-                localized: "Not enough call time this month for this mock", table: "Exam",
-                comment: "The call time left this month can't fit the mock")
-              : String(
-                localized: "Not enough call time today for this mock", table: "Exam",
-                comment: "The call time left today can't fit the mock"))
+          LimitNotice(limit: limit, kind: .callTime)
+            .announcesAlert(limit.words(.callTime).said)
         case nil:
           EmptyView()
         case .some:
@@ -1013,17 +1027,23 @@ private struct ExamScoringSection: View {
                 calibration.sure.answered + calibration.unsure.answered > 0
               {
                 Text(
-                  "In your mock exams: sure, \(calibration.sure.right) of \(calibration.sure.answered) right. Unsure, \(calibration.unsure.right) of \(calibration.unsure.answered) right.",
-                  tableName: "Exam", comment: "Sure against unsure answers in mocks")
-                if calibration.advice == .blankUnsure {
-                  Text(
-                    "Your unsure answers cost more than they earn: leave those blank.",
-                    tableName: "Exam", comment: "Advice")
-                } else if calibration.advice == .keepAnswering {
-                  Text(
-                    "Your unsure answers still earn points: keep answering them.",
-                    tableName: "Exam", comment: "Advice")
+                  "In your mock exams: \(calibration.sure.right) of \(calibration.sure.answered) right when not flagged, \(calibration.unsure.right) of \(calibration.unsure.answered) right when flagged.",
+                  tableName: "Exam",
+                  comment:
+                    "Right answers in mock exams among questions not flagged, against flagged ones"
+                )
+                Group {
+                  if calibration.advice == .blankUnsure {
+                    Text(
+                      "Your flagged answers cost more than they earn: leave those blank.",
+                      tableName: "Exam", comment: "Advice")
+                  } else if calibration.advice == .keepAnswering {
+                    Text(
+                      "Your flagged answers still earn points: keep answering them.",
+                      tableName: "Exam", comment: "Advice")
+                  }
                 }
+                .foregroundStyle(.mutedForeground)
               }
             }
           } icon: {

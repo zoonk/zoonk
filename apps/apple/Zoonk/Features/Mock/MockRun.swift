@@ -53,6 +53,7 @@ final class MockRun {
   @ObservationIgnored private var shown: (itemId: String, at: ContinuousClock.Instant)?
   @ObservationIgnored private var unsavedText: MockDraft?
   @ObservationIgnored private var textTask: Task<Void, Never>?
+  @ObservationIgnored private let taps = ScreenTasks()
 
   init(store: ExamStore, blockId: String, now: @escaping () -> Date = { .now }) {
     self.store = store
@@ -214,6 +215,13 @@ final class MockRun {
     }
 
     return true
+  }
+
+  /// Runs a tap's step, which the run owns rather than the screen: a section handed in on purpose
+  /// is handed in even if the mock closes meanwhile. ✕ waits for it, so only another place closing
+  /// the mock can; its step timeouts still cancel it.
+  func start(_ step: @escaping @MainActor () async -> Void) {
+    taps.run(step)
   }
 
   func submitSection() async {

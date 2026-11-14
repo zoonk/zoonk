@@ -442,6 +442,8 @@ model LessonIcon {
 /// A private chapter's picture stays in its owner's private files. A picture with serious mistakes
 /// is drawn again; when that fails too, `imageUrl` is null and the outline is the map.
 model ChapterMindMap {
+  redrawOwedAt DateTime? @map("redraw_owed_at")
+  redrawAttempts Int @default(0) @map("redraw_attempts") @db.SmallInt
   id            String           @id @default(dbgenerated("uuidv7()")) @db.Uuid
   chapterId     String           @unique @map("chapter_id") @db.Uuid
   chapter       Chapter          @relation(fields: [chapterId], references: [id], onDelete: Cascade)

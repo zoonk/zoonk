@@ -36,6 +36,8 @@ const CASES = [
   "A byte order mark after $\uFEFFx$ isn't math",
   "A next-line mark after $\u0085x$ is math",
   "Display $$\u0085x\uFEFF$$ trims like JavaScript",
+  "Match `^a$|^b$` against $x$, but not `$y$`",
+  "The cost is $5; print `$HOME`.",
 ] as const;
 
 describe("lesson math as native players must split it", () => {

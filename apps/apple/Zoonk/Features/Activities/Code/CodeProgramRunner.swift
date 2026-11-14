@@ -43,27 +43,22 @@ struct CodeProgramRun: Equatable, Sendable {
 /// (`CodeWorkerSources`). Closing the runner, or dropping it, releases the page and everything in it.
 @MainActor
 final class CodeProgramRunner {
-  /// Nothing a page does is saved on the device; sharing one store lets a later activity reuse
-  /// what an earlier one cached.
-  private static let dataStore = WKWebsiteDataStore.nonPersistent()
-
-  private let language: CodeLanguage
-  private let timeLimit: TimeInterval
-  private var page: Task<WebPage, any Error>?
+  private let page: CodeSandboxPage
 
   init(language: CodeLanguage, timeLimit: TimeInterval? = nil) {
-    self.language = language
-    self.timeLimit = timeLimit ?? TimeInterval(language.timeLimitSeconds)
+    page = CodeSandboxPage(
+      html: CodeWorkerSources.page(
+        language, timeLimit: timeLimit ?? TimeInterval(language.timeLimitSeconds)))
   }
 
   /// False when the runtime didn't load, like when offline.
   func warmUp() async -> Bool {
-    (try? await call("return await warmUp()")) as? Bool ?? false
+    (try? await page.call("return await warmUp()")) as? Bool ?? false
   }
 
   func run(_ code: String) async -> CodeProgramRun {
     guard
-      let result = try? await call("return await run(code)", arguments: ["code": code])
+      let result = try? await page.call("return await run({ code })", arguments: ["code": code])
         as? [String: Any]
     else {
       return CodeProgramRun(stop: .unavailable)
@@ -78,11 +73,31 @@ final class CodeProgramRunner {
   }
 
   func close() {
+    page.close()
+  }
+}
+
+/// A hidden page hosting one of `CodeWorkerSources`' pages, loaded on the first call. Closing it,
+/// or dropping it, releases the page and everything in it.
+@MainActor
+final class CodeSandboxPage {
+  /// Nothing a page does is saved on the device; sharing one store lets a later activity reuse
+  /// what an earlier one cached.
+  private static let dataStore = WKWebsiteDataStore.nonPersistent()
+
+  private let html: String
+  private var page: Task<WebPage, any Error>?
+
+  init(html: String) {
+    self.html = html
+  }
+
+  func close() {
     page?.cancel()
     page = nil
   }
 
-  private func call(_ body: String, arguments: [String: Any] = [:]) async throws -> Any? {
+  func call(_ body: String, arguments: [String: Any] = [:]) async throws -> Any? {
     do {
       return try await loadedPage().callJavaScript(body, arguments: arguments)
     } catch {
@@ -97,7 +112,7 @@ final class CodeProgramRunner {
       return try await page.value
     }
 
-    let html = CodeWorkerSources.page(language, timeLimit: timeLimit)
+    let html = html
     let loading = Task {
       var configuration = WebPage.Configuration()
       configuration.websiteDataStore = Self.dataStore

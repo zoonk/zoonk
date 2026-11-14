@@ -165,12 +165,12 @@
     <string name="goalcontent_topic_skipped_base">You chose to skip this prerequisite</string>
     <string name="goalcontent_topic_time">Doesn\'t fit in the time you have</string>
     <string name="goalcontent_topic_missing">No lessons on it yet</string>
-    <!-- Marks a topic past exams asked a lot. -->
-    <string name="goalcontent_appears_a_lot">Appears a lot</string>
-    <!-- %1$s is the "Appears a lot" mark. -->
+    <!-- Marks a topic that comes up often in the exam. -->
+    <string name="goalcontent_asked_a_lot">Asked a lot</string>
+    <!-- %1$s is the "Asked a lot" mark. -->
     <string name="goalcontent_frequency_material">Topics marked %1$s are the ones your material says come up a lot. They get more of your time.</string>
     <string name="goalcontent_frequency_past_exams">Topics marked %1$s are the ones past exams asked most.</string>
-    <!-- %1$s is the "Appears a lot" mark, %2$s what the source counted, %3$s a link to the source's site. -->
+    <!-- %1$s is the "Asked a lot" mark, %2$s what the source counted, %3$s a link to the source's site. -->
     <string name="goalcontent_frequency_tagged_waits">Topics marked %1$s are the ones past exams asked most (%2$s, according to %3$s). The ones asked least are the ones that wait.</string>
     <string name="goalcontent_frequency_tagged">Topics marked %1$s are the ones past exams asked most (%2$s, according to %3$s). They get more of your time.</string>
     <!-- %1$s is what the source counted, %2$s a link to the source's site. -->

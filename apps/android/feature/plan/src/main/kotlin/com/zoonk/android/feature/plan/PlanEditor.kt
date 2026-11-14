@@ -116,6 +116,8 @@ internal data class PlanEdits(
     val adviseOnBases: suspend () -> PlanBasesAdvice? = { null },
     val sheetAnswers: Map<UUID, PlanChangeResult?> = emptyMap(),
     val answerSheet: (opening: UUID, PlanChangeResult?) -> Unit = { _, _ -> },
+    /** Said in the app's snackbars, since the save it reports can end after a recreated window took this one's place. */
+    val saveFailed: () -> Unit = {},
 ) {
     fun isPending(part: PlanPart) = part in pending
 

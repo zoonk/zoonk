@@ -145,12 +145,14 @@ export async function languageLessonFixture({
   sentenceAudioUrl = null,
   sentenceText = "How much is the rent?",
   sentenceTranslation = "Quanto é o aluguel?",
+  wordText = "rent",
   wordTranslation = "aluguel",
 }: {
   language?: string;
   sentenceAudioUrl?: string | null;
   sentenceText?: string;
   sentenceTranslation?: string;
+  wordText?: string;
   wordTranslation?: string;
 } = {}) {
   const organization = await organizationFixture();
@@ -168,7 +170,7 @@ export async function languageLessonFixture({
           },
         },
         targetLanguage: "en",
-        word: "rent",
+        word: wordText,
       },
     }),
     prisma.sentence.create({

@@ -35,7 +35,7 @@ describe("lesson feedback", () => {
       .toBeVisible();
 
     await expect.element(page.getByText("You chose:")).not.toBeInTheDocument();
-    await expect.element(page.getByText("Answer:")).not.toBeInTheDocument();
+    await expect.element(page.getByText("Right answer:")).not.toBeInTheDocument();
 
     await next();
     await answer(WRONG_OPTION, "Not quite");

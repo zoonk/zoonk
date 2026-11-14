@@ -112,6 +112,7 @@ struct AdjustPlanSheet: View {
       }
     }
     .presentationDetents([.medium, .large])
+    .onDisappear { editor.cancel() }
   }
 
   /// Main's `PlanAim`: how far a language course goes, applied with the editor's summary and Undo.
@@ -138,7 +139,7 @@ struct AdjustPlanSheet: View {
         return
       }
 
-      Task { await editor.change([.aim(choice.aim)]) }
+      editor.run { await editor.change([.aim(choice.aim)]) }
     } label: {
       VStack(alignment: .leading, spacing: 2) {
         AimName(aim: choice.aim)
@@ -174,7 +175,9 @@ struct AdjustPlanSheet: View {
             set: { on in
               let minutes = on ? plan.schedule.shape.minutes(for: weekday) : 0
 
-              Task { await editor.change([.weekdayMinutes(minutes, weekdays: [weekday])]) }
+              editor.run {
+                await editor.change([.weekdayMinutes(minutes, weekdays: [weekday])])
+              }
             })
         )
         // A plan needs at least one study day.
@@ -204,7 +207,7 @@ struct AdjustPlanSheet: View {
             weekendChoice = on
 
             if !on, shape.weekend != nil {
-              Task { await setWeekend(shape.weekdays) }
+              editor.run { await setWeekend(shape.weekdays) }
             }
           })
       ) {
@@ -222,7 +225,7 @@ struct AdjustPlanSheet: View {
                 return
               }
 
-              Task { await setWeekend(minutes) }
+              editor.run { await setWeekend(minutes) }
             })
         ) {
           ForEach(ScheduleTime.dailyTimes(plan.schedule.dailyTimes, with: current), id: \.self) {
@@ -275,7 +278,7 @@ struct PlanEditorLatestSection: View {
 
           if change.canUndo {
             Button {
-              Task { await editor.undo() }
+              editor.run { await editor.undo() }
             } label: {
               Text("Undo", tableName: "Plan", comment: "Undoes the latest plan change")
             }

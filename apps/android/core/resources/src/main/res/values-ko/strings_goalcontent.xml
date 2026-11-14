@@ -6,7 +6,7 @@
   "goalcontent_also_in_exam_count": "b61d23f5380bef9380f52cec3694faeafa4e8bd5ed7d2c20c8a1e21457a87a8a",
   "goalcontent_also_in_exams": "5413d76ed0c4e3fb9e8ac68b3c35d59b7d4706c033a649ab29be66270edfd508",
   "goalcontent_also_in_plan": "63280142ff0026005674a514ffcbb9f231d4173e1bbcf23eb3a06aec2f6a327d",
-  "goalcontent_appears_a_lot": "861b0f67e4b7a203e088462941b93973191ac9a82aa1597a87a4e527f247ec9e",
+  "goalcontent_asked_a_lot": "43b3da3cba0dbb63bf08613564c7066d71f8ac3a5e4f0881ebec7d51e482f1a7",
   "goalcontent_beyond_guide": "93b3c08ab7bb9ab49200c0147257543da2b501332e5f724e55c447731428323f",
   "goalcontent_beyond_notice": "b2f162c5011fef134d00411c49a54027508b1990440ddf2b856c33c3985592fe",
   "goalcontent_bring_back": "3702c3442d73545ef2ad9376edae31044dfd89ab6636f85c66ad692f93cb682c",
@@ -245,12 +245,12 @@
     <string name="goalcontent_topic_skipped_base">이 사전 지식은 건너뛰기로 했어요</string>
     <string name="goalcontent_topic_time">학습할 시간이 부족해요</string>
     <string name="goalcontent_topic_missing">아직 관련 레슨이 없어요</string>
-    <!-- Marks a topic past exams asked a lot. -->
-    <string name="goalcontent_appears_a_lot">자주 출제</string>
-    <!-- %1$s is the "Appears a lot" mark. -->
+    <!-- Marks a topic that comes up often in the exam. -->
+    <string name="goalcontent_asked_a_lot">자주 출제</string>
+    <!-- %1$s is the "Asked a lot" mark. -->
     <string name="goalcontent_frequency_material">자료에 따르면 %1$s 표시가 있는 주제가 자주 출제돼요. 이런 주제에 학습 시간을 더 배정해요.</string>
     <string name="goalcontent_frequency_past_exams">%1$s 표시가 있는 주제는 기출문제에 가장 자주 나온 주제예요.</string>
-    <!-- %1$s is the "Appears a lot" mark, %2$s what the source counted, %3$s a link to the source's site. -->
+    <!-- %1$s is the "Asked a lot" mark, %2$s what the source counted, %3$s a link to the source's site. -->
     <string name="goalcontent_frequency_tagged_waits">%1$s 표시가 있는 주제는 기출문제에 가장 자주 나온 주제예요(%2$s, 출처: %3$s). 가장 적게 나온 주제는 나중에 학습해요.</string>
     <string name="goalcontent_frequency_tagged">%1$s 표시가 있는 주제는 기출문제에 가장 자주 나온 주제예요(%2$s, 출처: %3$s). 이런 주제에 학습 시간을 더 배정해요.</string>
     <!-- %1$s is what the source counted, %2$s a link to the source's site. -->
