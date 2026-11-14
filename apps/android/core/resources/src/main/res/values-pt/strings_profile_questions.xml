@@ -26,11 +26,8 @@
   "profile_questions_memory_off": "e5d1d0ec46787d3c72d308e4801d34930684896e080202e1ba53af2978fa7b50",
   "profile_questions_never_ask": "8ad9dbe4eedfd39d9524afc42215a0637d0716cf4520f3b8c8873229e3c5dbf5",
   "profile_questions_never_ask_help": "4ba8996a0fabd5d89e66410b5d5c4542a7165db7108cb98399456ef6675d4933",
-  "profile_questions_none": "0934f62a5d3488250b86519b07667e37578c3e363ce5a9f226c52ee0b86bdb75",
   "profile_questions_not_answered": "e206ead9c60e5b6e2b8609c293f1c6922b594452ffd12356dc29c2555688b26d",
   "profile_questions_not_shared": "0b99c35d157c3f038a750e1c3bd9fcae424e816107834540c05895e29f5dbbf7",
-  "profile_questions_nothing_particular": "b531602116663f4a98c0fa056ca216ab2d34afcf67433ef499f709697fc96bca",
-  "profile_questions_nothing_to_add": "f70917e706cbbeede93a45004e85ce66b64ac12337f4b60c5078302fd69cdef9",
   "profile_questions_play_favorites": "491c47ac752e51df3dda6b64f3da8f1a908dc7573a3e6a8ee42976a617778746",
   "profile_questions_play_placeholder": "758c4fda50bd429a8b2c10e226401f1552d7342d704a89820fc97aaa1f465fd9",
   "profile_questions_play_title": "7e852ff47f9fde3f9f14d1c2cabc96e4b4a0d8350af0116a98351901ad3dfcc1",
@@ -100,10 +97,8 @@
     <string name="profile_questions_tools_description">Escolha até 3. A gente vai usar nos seus exemplos.</string>
     <string name="profile_questions_tools_other">Outros (opcional)</string>
     <string name="profile_questions_tools_placeholder">Ex.: Photoshop, Python, SAP</string>
-    <string name="profile_questions_none">Nenhuma dessas opções</string>
     <string name="profile_questions_studies_title">O que você já estudou?</string>
     <string name="profile_questions_studies_description">Vale o que você estuda ou já estudou, mesmo sem terminar. Pode ser diferente do seu trabalho.</string>
-    <string name="profile_questions_nothing_to_add">Nada a acrescentar</string>
     <string name="profile_questions_subject">%1$s: curso ou matéria (opcional)</string>
     <string name="profile_questions_which_field">Qual área?</string>
     <string name="profile_questions_subject_placeholder">Ex.: jornalismo</string>
@@ -132,7 +127,6 @@
     <string name="profile_questions_address_title">Como a gente fala com você?</string>
     <string name="profile_questions_address_description">A gente vai falar com você assim.</string>
     <string name="profile_questions_suggested">A gente pesquisou o que costuma ajudar com as opções que você escolheu. Mude o que quiser.</string>
-    <string name="profile_questions_nothing_particular">Nada em especial</string>
     <string name="profile_questions_something_else">+ Algo mais que ajuda</string>
     <string name="profile_questions_support_note">O que te ajuda, nas suas palavras (opcional)</string>
     <string name="profile_questions_support_placeholder">Ex.: entendo diagramas melhor do que textos</string>

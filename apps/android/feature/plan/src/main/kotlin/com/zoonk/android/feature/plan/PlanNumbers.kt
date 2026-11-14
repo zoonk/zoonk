@@ -27,14 +27,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -48,7 +45,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.toUpperCase
-import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.language.CanDoList
@@ -56,6 +52,7 @@ import com.zoonk.android.feature.language.LevelValue
 import com.zoonk.android.feature.language.SkillLevelsCard
 import com.zoonk.android.feature.speaking.SpeakingMockCard
 import com.zoonk.android.feature.speaking.SpeakingPracticeRow
+import com.zoonk.android.ui.components.DetailRow
 import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
@@ -64,6 +61,7 @@ import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.QuietDisclosure
 import com.zoonk.android.ui.components.Readout
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.bleed
@@ -79,7 +77,6 @@ import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.EstimatedScore
 import com.zoonk.api.models.GoalPreparation
-import com.zoonk.api.models.GoalProgress
 import com.zoonk.api.models.GoalProgressStillNeeded
 import com.zoonk.api.models.LanguagePlanLevel
 import com.zoonk.api.models.PlanDay
@@ -130,9 +127,8 @@ internal fun PlanNumbers(
             if (standing == null) return
             DetailsSheet(standingTitle(standing), onDismiss = { open = null }) {
                 when (standing) {
-                    is Standing.Preparation -> PreparationDetails(standing.progress, forExam = true, lessons = null, links = links)
-                    is Standing.Progress -> PreparationDetails(standing.progress, forExam = false, lessons = standing, links = links)
                     is Standing.Language -> LanguageDetails(standing, links)
+                    else -> PreparationDetails(standing, links)
                 }
             }
         }
@@ -518,17 +514,31 @@ internal fun LanguageDetails(
     }
 }
 
+/** The number that was tapped and what it's made of (main's `PreparationDetails`). */
 @Composable
 internal fun PreparationDetails(
-    progress: GoalProgress,
-    forExam: Boolean,
-    lessons: Standing.Progress?,
+    standing: Standing,
     links: PlanLinks,
 ) {
+    val (progress, lessons) =
+        when (standing) {
+            is Standing.Preparation -> standing.progress to null
+            is Standing.Progress -> standing.progress to standing
+            is Standing.Language -> return
+        }
     val preparation = progress.preparation ?: return
+    val forExam = standing is Standing.Preparation
+    val number = standingNumber(standing)
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Readout(number.value, style = MaterialTheme.typography.displaySmall)
+        number.share?.let { Meter(it) }
+    }
     if (forExam) EstimatedScoreBlock(preparation)
-    PreparationParts(preparation, forExam, lessons)
-    StillToDo(preparation, progress.stillNeeded, links)
+    PreparationParts(preparation, if (forExam) null else lessons)
+    NextSteps(preparation, progress.stillNeeded, forExam, links)
+    QuietDisclosure(stringResource(R.string.plan_how_calculated)) {
+        MetaLine(measureNote(preparation, forExam))
+    }
 }
 
 @Composable
@@ -588,277 +598,161 @@ private fun scoreRange(score: EstimatedScore): String {
     }
 }
 
-private data class PreparationPart(
-    val label: String,
-    val caption: String,
-    val value: Double?,
-)
-
+/** A part with nothing to show yet has no row. */
 @Composable
 private fun PreparationParts(
     preparation: GoalPreparation,
-    forExam: Boolean,
     lessons: Standing.Progress?,
 ) {
     val locale = currentLocale()
-    val components = preparation.components
-    val notYet = stringResource(R.string.plan_not_yet)
-    val first =
-        if (!forExam && lessons != null) {
-            PreparationPart(
-                stringResource(R.string.plan_lessons),
-                pluralStringResource(R.plurals.plan_lessons_of, lessons.total.toInt(), lessons.done.toInt(), lessons.total.toInt()),
-                if (lessons.total > 0) min(1.0, lessons.done.toDouble() / lessons.total) else 0.0,
-            )
-        } else {
-            PreparationPart(
-                stringResource(R.string.plan_coverage),
-                pluralStringResource(
-                    R.plurals.plan_coverage_caption,
-                    components.coverage.totalSkills.toInt(),
-                    components.coverage.studiedSkills.toInt(),
-                    components.coverage.totalSkills.toInt(),
-                ),
-                components.coverage.value,
-            )
-        }
-    val mastery = components.mastery
-    val retention = components.retention
-    val mocks = components.mocks
+    val coverage = preparation.components.coverage
+    val mastery = preparation.components.mastery
+    val retention = preparation.components.retention
+    val mocks = preparation.components.mocks
     val taken = mocks.taken.toInt()
-    val (testLabel, testCaption) =
-        when (mocks.kind) {
-            PreparationComponentsMocks.Kind.FULL_REVIEWS -> {
-                stringResource(R.string.plan_full_reviews) to pluralStringResource(R.plurals.plan_full_reviews_done, taken, taken)
-            }
 
-            PreparationComponentsMocks.Kind.WEEKLY_CHALLENGES -> {
-                stringResource(R.string.plan_weekly_challenges) to
-                    pluralStringResource(R.plurals.plan_weekly_challenges_count, taken, taken)
-            }
+    @Composable
+    fun count(
+        done: Long,
+        total: Long,
+    ) = stringResource(R.string.plan_done_of_total, formatNumber(done.toDouble(), locale), formatNumber(total.toDouble(), locale))
 
-            PreparationComponentsMocks.Kind.MOCK_EXAMS -> {
-                stringResource(R.string.plan_mock_exams) to pluralStringResource(R.plurals.plan_mock_exams_taken, taken, taken)
-            }
+    Column {
+        if (lessons != null) {
+            DetailRow(stringResource(R.string.plan_lessons), count(lessons.done, lessons.total), mono = true)
+        } else {
+            DetailRow(stringResource(R.string.plan_topics_studied), count(coverage.studiedSkills, coverage.totalSkills), mono = true)
         }
-    val parts =
-        listOf(
-            first,
-            PreparationPart(
-                stringResource(R.string.plan_mastery),
-                if (mastery.value ==
-                    null
-                ) {
-                    stringResource(R.string.plan_mastery_waits)
-                } else {
-                    pluralStringResource(
-                        R.plurals.plan_mastery_caption,
-                        mastery.answered.toInt(),
-                        mastery.correct.toInt(),
-                        mastery.answered.toInt(),
-                    )
-                },
-                // The headline's measure: a few right answers say less than many.
-                mastery.supported,
-            ),
-            PreparationPart(
-                stringResource(R.string.plan_long_term_memory),
-                if (retention.value == null) notYet else stringResource(R.string.plan_retention_caption),
-                retention.value,
-            ),
-            PreparationPart(testLabel, if (taken == 0) notYet else testCaption, mocks.value),
-        )
-
-    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        TwoColumnsWhenWordsFit {
-            parts.forEach { part ->
-                val value = part.value?.let { formatPercent(it, locale) }
-                Row(
-                    modifier = Modifier.semantics(mergeDescendants = true) {},
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    PartRing(part.value, value)
-                    Column {
-                        Text(part.label, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
-                        MetaLine(part.caption)
-                    }
-                }
-            }
+        if (mastery.value != null) {
+            DetailRow(stringResource(R.string.plan_right_answers), count(mastery.correct, mastery.answered), mono = true)
         }
-        MetaLine(
-            when {
-                !forExam -> {
-                    stringResource(R.string.plan_measure_progress)
-                }
-
-                preparation.components.mocks.kind == PreparationComponentsMocks.Kind.FULL_REVIEWS -> {
-                    stringResource(
-                        R.string.plan_measure_full_reviews,
+        retention.value?.let { DetailRow(stringResource(R.string.plan_remembered), formatPercent(it, locale), mono = true) }
+        if (taken > 0) {
+            when (mocks.kind) {
+                PreparationComponentsMocks.Kind.FULL_REVIEWS -> {
+                    DetailRow(
+                        stringResource(R.string.plan_reviews_of_every_topic),
+                        pluralStringResource(R.plurals.plan_reviews_done, taken, taken),
+                        mono = true,
                     )
                 }
 
-                else -> {
-                    stringResource(R.string.plan_measure_mocks)
+                PreparationComponentsMocks.Kind.MOCK_EXAMS -> {
+                    DetailRow(
+                        stringResource(R.string.plan_mock_exams),
+                        pluralStringResource(R.plurals.plan_tests_taken, taken, taken),
+                        mono = true,
+                    )
                 }
-            },
-        )
-    }
-}
 
-/** Two parts a row only while each part's words fit its half unbroken; one a row otherwise. */
-@Composable
-private fun TwoColumnsWhenWordsFit(content: @Composable () -> Unit) {
-    Layout(content) { measurables, constraints ->
-        val gap = PART_GAP.roundToPx()
-        val half = (constraints.maxWidth - gap) / 2
-        val columns = if (measurables.all { it.minIntrinsicWidth(Constraints.Infinity) <= half }) 2 else 1
-        val width = if (columns == 2) half else constraints.maxWidth
-        val rows = measurables.map { it.measure(Constraints.fixedWidth(width)) }.chunked(columns)
-        val height = rows.sumOf { row -> row.maxOf { it.height } } + gap * (rows.size - 1).coerceAtLeast(0)
-        layout(constraints.maxWidth, height) {
-            var y = 0
-            rows.forEach { row ->
-                row.forEachIndexed { index, part -> part.placeRelative(index * (width + gap), y) }
-                y += row.maxOf { it.height } + gap
+                PreparationComponentsMocks.Kind.WEEKLY_CHALLENGES -> {
+                    DetailRow(
+                        stringResource(R.string.plan_weekly_challenges),
+                        pluralStringResource(R.plurals.plan_tests_taken, taken, taken),
+                        mono = true,
+                    )
+                }
             }
         }
     }
 }
 
-private val PART_GAP = 16.dp
-
 @Composable
-private fun PartRing(
-    share: Double?,
-    value: String?,
-) {
-    val track = MaterialTheme.colorScheme.surfaceContainerHighest
-    val fill = MaterialTheme.colorScheme.tertiary
-    val style = MaterialTheme.typography.labelLarge.withTabularFigures()
-    Box(
-        modifier =
-            Modifier
-                .size(with(LocalDensity.current) { style.fontSize.toDp() * RING_TO_LABEL })
-                .drawBehind {
-                    val width = 4.dp.toPx()
-                    val inset = width / 2
-                    val arcSize = Size(size.width - width, size.height - width)
-                    drawArc(track, 0f, 360f, false, Offset(inset, inset), arcSize, style = Stroke(width))
-                    val sweep = 360f * (share ?: 0.0).coerceIn(0.0, 1.0).toFloat()
-                    if (sweep >
-                        0
-                    ) {
-                        drawArc(fill, -90f, sweep, false, Offset(inset, inset), arcSize, style = Stroke(width, cap = StrokeCap.Round))
-                    }
-                },
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(
-            text = value ?: "–",
-            style = style,
-            color = if (value == null) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
-        )
+private fun measureNote(
+    preparation: GoalPreparation,
+    forExam: Boolean,
+): String {
+    val threshold = formatPercent(TEST_THRESHOLD, currentLocale())
+    return when {
+        !forExam -> {
+            stringResource(R.string.plan_measure_progress)
+        }
+
+        preparation.components.mocks.kind == PreparationComponentsMocks.Kind.FULL_REVIEWS -> {
+            stringResource(R.string.plan_measure_review_once, threshold)
+        }
+
+        else -> {
+            stringResource(R.string.plan_measure_mock_exam, threshold)
+        }
     }
 }
 
-/** Main's 56dp ring around its 14sp percentage, kept in proportion at any text size. */
-private const val RING_TO_LABEL = 4
-
-private data class StillNeededItem(
+private data class NextStep(
     val kind: LearnKind,
     val label: String,
     val detail: String?,
-    val opensExam: Boolean,
+    val opensExam: Boolean = false,
 )
 
+/** At most two steps, the test's last: a learner without mock exams reviews every topic, as their day names it. */
 @Composable
-private fun StillToDo(
+private fun NextSteps(
     preparation: GoalPreparation,
     stillNeeded: GoalProgressStillNeeded,
+    forExam: Boolean,
     links: PlanLinks,
 ) {
-    val locale = currentLocale()
-    val items =
-        buildList {
-            if (stillNeeded.left > 0) {
-                val minutes = stillNeeded.minutes.toInt()
-                add(
-                    StillNeededItem(
-                        kind = LearnKind.Lesson,
-                        label =
-                            stringResource(
-                                if (stillNeeded.rule ==
-                                    GoalProgressStillNeeded.Rule.EXAM_WEIGHTED
-                                ) {
-                                    R.string.plan_still_topics_solid
-                                } else {
-                                    R.string.plan_still_skills_solid
-                                },
-                            ),
-                        detail =
-                            if (minutes >
-                                0
-                            ) {
-                                stringResource(R.string.plan_still_time_in_plan, formatMinutes(roundEstimate(minutes), locale))
-                            } else {
-                                null
-                            },
-                        opensExam = false,
-                    ),
-                )
+    val mocks = preparation.components.mocks
+    val fading = preparation.skills.fading.toInt()
+    val skills =
+        NextStep(
+            LearnKind.Lesson,
+            stringResource(
+                if (stillNeeded.rule == GoalProgressStillNeeded.Rule.EXAM_WEIGHTED) {
+                    R.string.plan_next_topics_count_most
+                } else {
+                    R.string.plan_next_keep_going
+                },
+            ),
+            detail = null,
+        ).takeIf { stillNeeded.left > 0 }
+    val memory =
+        NextStep(
+            LearnKind.Review,
+            stringResource(R.string.plan_next_review_forgetting),
+            pluralStringResource(R.plurals.plan_next_topics_in_reviews, fading, fading),
+        ).takeIf { fading > 0 }
+    val testDetail =
+        if (forExam && mocks.kind != PreparationComponentsMocks.Kind.WEEKLY_CHALLENGES) {
+            stringResource(R.string.plan_next_past_share, formatPercent(TEST_THRESHOLD, currentLocale()))
+        } else {
+            null
+        }
+    val test =
+        when (mocks.kind) {
+            PreparationComponentsMocks.Kind.FULL_REVIEWS -> {
+                NextStep(LearnKind.Practice, stringResource(R.string.plan_next_review_every_topic), testDetail)
             }
-            val fading = preparation.skills.fading.toInt()
-            if (fading > 0) {
-                add(
-                    StillNeededItem(
-                        LearnKind.Review,
-                        stringResource(R.string.plan_still_keep_fresh),
-                        pluralStringResource(R.plurals.plan_still_fading, fading, fading),
-                        opensExam = false,
-                    ),
-                )
-            }
-            val mocks = preparation.components.mocks
-            if (mocks.taken == 0L) {
-                val (kind, label) =
-                    when (mocks.kind) {
-                        PreparationComponentsMocks.Kind.FULL_REVIEWS -> {
-                            LearnKind.Practice to stringResource(R.string.plan_still_full_review)
-                        }
 
-                        PreparationComponentsMocks.Kind.MOCK_EXAMS -> {
-                            LearnKind.Mock to stringResource(R.string.plan_still_first_mock)
-                        }
-
-                        PreparationComponentsMocks.Kind.WEEKLY_CHALLENGES -> {
-                            LearnKind.Challenge to stringResource(R.string.plan_still_first_challenge)
-                        }
-                    }
-                add(StillNeededItem(kind, label, null, opensExam = kind == LearnKind.Mock))
+            PreparationComponentsMocks.Kind.MOCK_EXAMS -> {
+                NextStep(LearnKind.Mock, stringResource(R.string.plan_still_first_mock), testDetail, opensExam = true)
             }
-        }.take(MAX_STILL_SHOWN)
-    if (items.isEmpty()) return
+
+            PreparationComponentsMocks.Kind.WEEKLY_CHALLENGES -> {
+                NextStep(LearnKind.Challenge, stringResource(R.string.plan_still_first_challenge), testDetail)
+            }
+        }.takeIf { mocks.taken == 0L }
+    val steps = listOfNotNull(skills, memory, test).take(MAX_STEPS_SHOWN)
+    if (steps.isEmpty()) return
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        SectionHeader(stringResource(R.string.plan_still_to_do))
+        SectionHeader(stringResource(R.string.plan_next))
         Column(Modifier.bleed(LIST_ITEM_INSET)) {
-            items.forEach { item ->
+            steps.forEach { step ->
                 ListRow(
-                    headline = { Text(item.label) },
-                    onClick = if (item.opensExam && links.hasExam) links::exam else null,
-                    leading = { KindMark(item.kind) },
-                    supporting = item.detail?.let { { Text(it) } },
+                    headline = { Text(step.label) },
+                    onClick = if (step.opensExam && links.hasExam) links::exam else null,
+                    leading = { KindMark(step.kind) },
+                    supporting = step.detail?.let { { Text(it) } },
                 )
             }
         }
     }
 }
 
-private const val MAX_STILL_SHOWN = 2
-private const val DAY_RING_SHARE = 1.5f
-private const val MINUTES_PER_HOUR = 60
+private const val MAX_STEPS_SHOWN = 2
 
-/** Under two hours as is; beyond, to the hour, so an estimate never looks exact. */
-private fun roundEstimate(minutes: Int): Int =
-    if (minutes < 2 * MINUTES_PER_HOUR) minutes else ((minutes.toDouble() / MINUTES_PER_HOUR).roundToInt() * MINUTES_PER_HOUR)
+/** Core keeps a subject under this share until the learner takes their first test of it. */
+private const val TEST_THRESHOLD = 0.75
+private const val DAY_RING_SHARE = 1.5f

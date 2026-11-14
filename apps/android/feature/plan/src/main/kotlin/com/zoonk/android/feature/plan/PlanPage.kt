@@ -22,6 +22,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -66,6 +67,7 @@ import com.zoonk.api.models.LanguageProgress
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.Syllabus
+import kotlinx.coroutines.launch
 
 class PlanLinks(
     private val navigator: AppNavigator,
@@ -467,6 +469,8 @@ internal fun PlanContent(
                     ResumeGoalBar(enabled = resume != Resume.Pending, busy = isSaving, failure = resumeFailure) {
                         onSetStatus(LearnerSummaryGoal.Status.ACTIVE)
                     }
+                } else if (page.isExam && page.plan.status?.pace is Pace.PastDate) {
+                    ExamOverBar(page, edits, archiving = isSaving, onArchive = { onSetStatus(LearnerSummaryGoal.Status.ARCHIVED) })
                 }
             }
         }
@@ -598,6 +602,35 @@ internal fun standingOf(
     val lessons = syllabus?.lessons
     return Standing.Progress(progress, lessons?.done ?: 0, lessons?.known ?: 0, lessons?.total ?: 0)
 }
+
+/** Main's `PlanExamOverBar`: Today's answers after the exam's date, and a failed save in the shared toast. */
+@Composable
+private fun ExamOverBar(
+    page: PlanPageState,
+    edits: PlanEdits,
+    archiving: Boolean,
+    onArchive: () -> Unit,
+) {
+    val snackbars = LocalSnackbarHostState.current
+    val scope = rememberCoroutineScope()
+    val saveFailed = stringResource(R.string.plan_save_failed)
+
+    BottomBar {
+        ExamOverActions(
+            goalTitle = page.goal.displayName,
+            keeping = edits.isPending(PlanPart.FullCourse),
+            archiving = archiving,
+            onArchive = onArchive,
+            onKeepStudying = {
+                edits.change(PlanPart.FullCourse, STUDY_AFTER_EXAM) { answer ->
+                    if (answer == null) scope.launch { snackbars.showSnackbar(saveFailed) }
+                }
+            },
+        )
+    }
+}
+
+private val STUDY_AFTER_EXAM = listOf(PlanOp.FullCourse(true))
 
 /** Main's `ResumeGoalBar`: a paused goal's Resume as the page's main action, and why it didn't save over it. */
 @Composable

@@ -209,15 +209,11 @@ fun ProfileQuestionBody(
                     )
                 }
                 CheckList(
-                    choices =
-                        choices +
-                            listOfNotNull(
-                                Choice("_none", stringResource(R.string.profile_questions_nothing_particular)).takeUnless { declineAsSkip },
-                            ),
-                    value = draft.picks + if (draft.declined) listOf("_none") else emptyList(),
+                    choices = choices,
+                    value = draft.picks,
                     label = label,
                     readOnly = !enabled,
-                    onToggle = { id -> change(if (id == "_none") draft.decline() else draft.toggle(id)) },
+                    onToggle = { id -> change(draft.toggle(id)) },
                 )
                 if (memoryEnabled) {
                     if (noteOpen || draft.text.isNotEmpty()) {
@@ -252,13 +248,6 @@ fun ProfileQuestionBody(
                     )
                 }
                 if (question.id == ProfileQuestion.STUDIES) {
-                    if (!declineAsSkip) {
-                        ProfileChip(
-                            stringResource(R.string.profile_questions_nothing_to_add),
-                            draft.declined,
-                            enabled,
-                        ) { change(draft.decline()) }
-                    }
                     draft.picks.forEach { id ->
                         val field =
                             if (id ==
@@ -294,13 +283,6 @@ fun ProfileQuestionBody(
                         enabled,
                         placeholder = placeholder,
                     ) { change(draft.copy(text = it, declined = false)) }
-                    if (!declineAsSkip) {
-                        ProfileChip(
-                            stringResource(R.string.profile_questions_none),
-                            draft.declined,
-                            enabled,
-                        ) { change(draft.decline()) }
-                    }
                 }
             }
         }

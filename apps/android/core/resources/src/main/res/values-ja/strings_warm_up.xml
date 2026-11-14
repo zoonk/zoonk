@@ -14,7 +14,6 @@
   "warm_up_plan_waiting": "26d19ad5722cf08421adf9e228a406cd5df7cea4dc9b8b25e38275d85b8439e2",
   "warm_up_play_quiz": "6e7b084c9956300a69574ec0add3ff8ffe8d91c9877fb0705ed6ebe370c43027",
   "warm_up_questions_ready": "2c5b21d79d858aae9f041eab7bec1fad1384ea7ed0ff2a0f9700c842a5154abe",
-  "warm_up_questions_ready_description": "cd8e656e5097b126d05e39d8b04f91ee4348b07be652294cd1177266a2340a04",
   "warm_up_ready_to_start": "9f300ce72f61a3894867d49d030181712456bdc852736feba7a6d61d25830065",
   "warm_up_start_first_lesson": "302eef9be7657e3d58afddc53e541ef4c68f658d5ccd3ce96e89f74f6bed5dff",
   "warm_up_title": "ac07ef177f6e33d66c301ca54139982c534d66f83e0487ebe89447305bac29ad"
@@ -36,8 +35,6 @@
     <string name="warm_up_plan_ready_whenever">好きなときに見られます。</string>
     <!-- Title of the wait for a short level test's questions once they're ready and the learner is still guessing. -->
     <string name="warm_up_questions_ready">問題の準備ができました</string>
-    <!-- Under "Your questions are ready", above the button that starts the short level test. -->
-    <string name="warm_up_questions_ready_description">準備ができたら、いつでも始められます。</string>
     <string name="warm_up_back_to_quiz">クイズに戻る</string>
     <string name="warm_up_play_quiz">待ち時間にクイズをする</string>
     <string name="warm_up_first_lesson_writing">最初のレッスンを作成しています：%1$s</string>

@@ -14,7 +14,6 @@
   "warm_up_plan_waiting": "2d0f69248decf7de8d8cfd7cb29ada1f9a9a44c330c19e7c3e767dc67e30b0f9",
   "warm_up_play_quiz": "82de0e62e9a872f7fcd2997b0efd83e731b4643311ab765f9f7dc0aad7c9e5da",
   "warm_up_questions_ready": "916d897fba61dd02b853df9500cad66e0146580b4cc0e2ebcc6e400b03185db7",
-  "warm_up_questions_ready_description": "0fe6e516df22fe914bf15345950ca1649ef487ae9d2fd39aabfe7aa6fecd96ba",
   "warm_up_ready_to_start": "ae28bd23e127cf08cac58d00b839676e224c45fb39de97154a926ce9b5e065f6",
   "warm_up_start_first_lesson": "0f96d8e097fb248f44b5bf6ff56de8789dff0b7accc6a39037cfd4fa07d42da7",
   "warm_up_title": "6db3b05c2a7777da7ed369955ab617e84cdda2105ee24c69983d605a8de5e50f"
@@ -36,8 +35,6 @@
     <string name="warm_up_plan_ready_whenever">Guardalo quando vuoi.</string>
     <!-- Title of the wait for a short level test's questions once they're ready and the learner is still guessing. -->
     <string name="warm_up_questions_ready">Le tue domande sono pronte</string>
-    <!-- Under "Your questions are ready", above the button that starts the short level test. -->
-    <string name="warm_up_questions_ready_description">Inizia quando vuoi.</string>
     <string name="warm_up_back_to_quiz">Torna al quiz</string>
     <string name="warm_up_play_quiz">Fai un quiz mentre aspetti</string>
     <string name="warm_up_first_lesson_writing">Stiamo preparando la tua prima lezione: %1$s</string>

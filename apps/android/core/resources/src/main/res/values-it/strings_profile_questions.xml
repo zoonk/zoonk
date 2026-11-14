@@ -26,11 +26,8 @@
   "profile_questions_memory_off": "ec6704ea34b2904893a49ca50f05180d116d89cd364f22e5ff1dc6ef3d7dd31e",
   "profile_questions_never_ask": "62f2be5c98de8cd5150ab9e1a9e34fdba716a8a7b71558e7b455cabad6954cb8",
   "profile_questions_never_ask_help": "251a9c7c4c156c30fd2ecd2d7504062bc9a0aea02f4f5f64f1f04929995f1882",
-  "profile_questions_none": "15bb9e44d7eeef6bd8cb6dafc6cddd3f28d14e7006a5dc2e5565783f8e01409b",
   "profile_questions_not_answered": "562096448c056acedc5f35dfa768304f6e2d229ed1367a7293eade69c1e9b7a2",
   "profile_questions_not_shared": "ebb7f3e1c7139217739134523c3ae383dfc85cfd948102cbab141caed4940ebd",
-  "profile_questions_nothing_particular": "acd5ade6f007e23f2442c609a549c6418c96f8f2975e74542b3d2bb296ae707d",
-  "profile_questions_nothing_to_add": "b4cf2f0637c8017f3b421d0c6061c72d431c00a280ffb3dd61ec958afd4d1f05",
   "profile_questions_play_favorites": "229f39423005c9a03296c533e05f7fa2687f8eb79ef79ba38af86c4204056adc",
   "profile_questions_play_placeholder": "229bb16508930874ee0de3eb1ac6d4369e16f7eadb456cc70f067f8bf9070c12",
   "profile_questions_play_title": "4d01b762e24c1335e84cd6680d145b526c8c5bca37d5551e0cb270e34cf450ac",
@@ -100,10 +97,8 @@
     <string name="profile_questions_tools_description">Scegli fino a 3 opzioni. Le useremo nei tuoi esempi.</string>
     <string name="profile_questions_tools_other">Altro (facoltativo)</string>
     <string name="profile_questions_tools_placeholder">Es. Photoshop, Python, SAP</string>
-    <string name="profile_questions_none">Nessuna di queste opzioni</string>
     <string name="profile_questions_studies_title">Cosa hai studiato?</string>
     <string name="profile_questions_studies_description">Studi passati o in corso, conclusi o meno. Anche in un ambito diverso dal tuo lavoro.</string>
-    <string name="profile_questions_nothing_to_add">Non ho nulla da aggiungere</string>
     <string name="profile_questions_subject">%1$s: corso o materia (facoltativo)</string>
     <string name="profile_questions_which_field">In quale ambito?</string>
     <string name="profile_questions_subject_placeholder">Es. giornalismo</string>
@@ -132,7 +127,6 @@
     <string name="profile_questions_address_title">Come preferisci che ci rivolgiamo a te?</string>
     <string name="profile_questions_address_description">Ci rivolgeremo a te così.</string>
     <string name="profile_questions_suggested">Abbiamo verificato cosa aiuta di solito in base alle tue scelte. Cambia quello che vuoi.</string>
-    <string name="profile_questions_nothing_particular">Niente in particolare</string>
     <string name="profile_questions_something_else">+ Qualcos’altro che mi aiuta</string>
     <string name="profile_questions_support_note">Cosa ti aiuta, con parole tue (facoltativo)</string>
     <string name="profile_questions_support_placeholder">Per esempio, capisco meglio gli schemi che i testi</string>

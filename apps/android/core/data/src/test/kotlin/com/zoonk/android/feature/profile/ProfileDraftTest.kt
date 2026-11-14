@@ -80,10 +80,8 @@ class ProfileDraftTest {
     }
 
     @Test
-    fun exclusiveAnswersClearContentAndSoundPreferences() {
-        val draft = ProfileDraft(picks = listOf("noSoundEffects"), text = "Private note").decline()
-        assertTrue(draft.declined)
-        assertTrue(draft.picks.isEmpty())
+    fun aDeclinedSupportAnswerKeepsSoundEffectsOn() {
+        val draft = ProfileDraft(declined = true)
         assertEquals(
             ApiJson.parseToJsonElement("""{"question":"learningSupport","answer":{"declined":true,"soundEffects":true}}"""),
             draft.body(ProfileQuestion.LEARNING_SUPPORT, true),

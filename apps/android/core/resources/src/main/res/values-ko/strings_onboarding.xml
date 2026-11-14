@@ -192,22 +192,20 @@
   "onboarding_placement_false": "eaf48bf83c5097aa92e6cef95b7d4bea246027e62e1c25738fd23a2ef1a51ce3",
   "onboarding_placement_progress": "fa030ff8c14de3e93965f530516654a1d152f04efa31d38ef098df6545e952d1",
   "onboarding_placement_question_number": "d7d3b5a65553ceec49c944c0b8275bfdb1a23244b247e2861589c0f3d4ba9ad4",
+  "onboarding_placement_ready": "2d36e8b4313365d598fe0f9b19b80852dbd7f5718d911feab5b5e25ecf6120f9",
   "onboarding_placement_right": "7a7b2d286ea906414e15037e344704ed4f686ae27b67623738c5a868d42c1db9",
   "onboarding_placement_see_plan": "d29a79e38e85e162f8e88ef13f4a50b4421757b60a19696ecf3eb25a6d1d0ca9",
   "onboarding_placement_set_description": "64030e1a3d26b4c9c07ef224c3cd6473e06d8ea45d1fdf0984c65926f14c2afb",
   "onboarding_placement_set_title": "3aaedfc3bc054f835048286060e62e80947c3e9a6b747103c6d01aca00673eae",
   "onboarding_placement_skip_basics": "58d34b064d42f8231ffc5f011f5c75dc8f0f63b9120c34780372ccfb2a574d73",
-  "onboarding_placement_skip_for_now": "6567fcab5543012644d5bc84a850cfaf0a6d2be0cacc8a81117070876c0f20ea",
-  "onboarding_placement_skip_note": "232665612809bc66b27312f69d63ca8519caa9682007545e857a0f3d3e55f70a",
   "onboarding_placement_start": "1f828427bbdce05e1c0f2fa423ef43f0c425c3973e16b07922bfb729070b2d31",
   "onboarding_placement_stop": "67bd6db2861dbd2dacc44f587b684f8285eb1dd58fc3a7a706bdade4bb23d92d",
   "onboarding_placement_title": "acdb6700b66da4d5e1e1928dccae0dbc60e7d6612aa36ceb1b4b89a4bb772350",
   "onboarding_placement_true": "c872e46fbdc965984b41d78a1cda86d2de3279be370c0667d4eada144bc5772c",
   "onboarding_placement_unavailable_description": "a919acc588eb2e5d4ecbc8301bb75285d822b5d9425ea5ba58f2c7ecc3b9f57c",
   "onboarding_placement_unavailable_title": "53fc3229175254059a1b3d8ddbe4ceae90a0b8cdc3c24cca9b681922f55a2f7f",
-  "onboarding_placement_waiting_material": "13875ae4c16f03be4fb4dccdbfabaa776c31fbb9b1bb3d013e6c23f3b8c015c3",
-  "onboarding_placement_waiting_time": "dc197096cdf6e38715375472010ca1b1bff78a60a9016ec32a52dc1f0c2b043b",
-  "onboarding_placement_waiting_title": "c670ee548c2caf2e072b8277aead6b19394a0f6adbe45cc43207550bb97828f2",
+  "onboarding_placement_waiting_material": "b5685e7cc21bfcac74b019e622489c3f81ecc6bc2e8fbbc056d26c017f4662f6",
+  "onboarding_placement_waiting_time": "fe6da200e022e0348f749a4c667b3275f18b468082c1187d43fbf8c92f034770",
   "onboarding_placement_wrong": "c9bac29490f4a2bfff337fb88ff62813dc9877064e0169aa2e3e966e652898e6",
   "onboarding_placement_your_answer": "9d229aa7c2ea1ef86af59768e33ebf67265c2cc5beb3aa69db0d06574a4a26df",
   "onboarding_plan_answers_saved": "f7014a1763398a9a20426781bd023da07fd3ec5c9ef26fcc2b03d0e2bf538557",
@@ -664,11 +662,10 @@
     <string name="onboarding_placement_description">간단한 문제 몇 개로 이미 아는 내용을 확인하고 계획에서 건너뛰어요. 점수는 매기지 않으니 “아직 모르겠어요”라고 답해도 괜찮아요.</string>
     <string name="onboarding_placement_start">시작하기</string>
     <string name="onboarding_placement_skip_basics">건너뛰고 기초부터 시작하기</string>
-    <string name="onboarding_placement_waiting_title">문제를 준비하고 있어요</string>
-    <string name="onboarding_placement_waiting_material">추가한 자료를 바탕으로 문제를 만들고 있어요. 자료를 읽는 데 몇 분 걸려요.</string>
-    <string name="onboarding_placement_waiting_time">보통 1~2분 정도 걸려요.</string>
-    <string name="onboarding_placement_skip_for_now">일단 건너뛰기</string>
-    <string name="onboarding_placement_skip_note">대신 처음 몇 번의 학습에서 이 중 몇 문제를 풀게 돼요.</string>
+    <string name="onboarding_placement_waiting_material">자료를 읽는 데 몇 분 걸려요.</string>
+    <!-- Shown while the learner waits for their first questions to be prepared. "This" is the wait. -->
+    <string name="onboarding_placement_waiting_time">1~2분 정도 걸려요.</string>
+    <string name="onboarding_placement_ready">테스트가 준비됐어요</string>
     <!-- Beside the subject, above a placement question. %1$d is its number. -->
     <string name="onboarding_placement_question_number">%1$d번 문제</string>
     <string name="onboarding_placement_progress">답한 문제 수</string>

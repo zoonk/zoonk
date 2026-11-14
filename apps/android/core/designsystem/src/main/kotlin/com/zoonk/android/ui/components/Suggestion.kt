@@ -50,6 +50,7 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -195,6 +196,11 @@ fun SuggestionDescription(
 }
 
 @Composable
+fun SuggestionDescription(text: AnnotatedString) {
+    Text(text = text, style = bodyStyle(), color = MaterialTheme.colorScheme.onSurfaceVariant)
+}
+
+@Composable
 fun SuggestionResult(text: String) {
     Text(
         text = text,
@@ -223,6 +229,18 @@ fun SuggestionActions(content: @Composable () -> Unit) {
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) { content() }
     }
 }
+
+/**
+ * Main's `useMainActionVariant`: the main answer of a suggestion on a page whose bar holds the page's own main
+ * action (Today). It fills its sheet, and is outlined in a wide screen's side panel so it never competes with the bar.
+ */
+@Composable
+fun SuggestionMainAction(
+    text: String,
+    onClick: () -> Unit,
+    enabled: Boolean = true,
+    busy: Boolean = false,
+) = SuggestionAction(text, onClick, enabled = enabled, busy = busy, secondary = LocalPresentation.current == Presentation.Panel)
 
 /** On a line it's always [secondary], beside the summary. */
 @Composable

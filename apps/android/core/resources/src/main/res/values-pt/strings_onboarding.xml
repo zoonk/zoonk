@@ -192,22 +192,20 @@
   "onboarding_placement_false": "fa34c8a6a37680452aae488671acf1436a5860c97ad2fac8923cf23911605dff",
   "onboarding_placement_progress": "50c5851803e6e221f905ab08c0faeb028c01be2ad216dd3fb431d8625c8c3178",
   "onboarding_placement_question_number": "667c578cf73c18867dd4d7195f1da2709c636278e1537cec24ce0ea6bf86766f",
+  "onboarding_placement_ready": "1cecb0c2f019fb7b709dce0b3e1c7a5e5bef6c17bf60997a06ce2c872fc66831",
   "onboarding_placement_right": "fc74d7569abb1e7a0f762555d6e7db71ba8c9c1f87666d993911e3027443f90e",
   "onboarding_placement_see_plan": "2d10a9b929b78126692547378f1c6ea25de5969da3eeacfb23444e0f6f6ce9c0",
   "onboarding_placement_set_description": "997f5a116274f571c99951a3817f2253abbbd7532b8f01ec3131cdfd439c19c5",
   "onboarding_placement_set_title": "352d33f6595d7305d1fce4a485aa6f254306706681de94ad42e259fb79477828",
   "onboarding_placement_skip_basics": "a8f9ec2024f046808ca5b3250ee1ad7068237a1590479ede2e0d69ce3b1ca1ca",
-  "onboarding_placement_skip_for_now": "cee402ba455d22180377fa321483a6a39fb4839829a4879bba7a582ef23adf12",
-  "onboarding_placement_skip_note": "8723ca12d2ae55204af04ac57ca62336b1b98a6cc1582caed5317c1e142206b7",
   "onboarding_placement_start": "1e5994f0e178f165e949d72b6bef1a3a039ef5ad7da045e2dafbe723fc8696ef",
   "onboarding_placement_stop": "f85bd1a6712e4dc296d8645990d9089d269e11332dbf4be34864173f244f824f",
   "onboarding_placement_title": "eaf54d06bfc81a1bd60a79761a436c9f76dde1156a4dd50a304f93ee0d24859a",
   "onboarding_placement_true": "fad82db82db2575a949342914f22ba64571a47479d3cc686c7cca48c44218d81",
   "onboarding_placement_unavailable_description": "83816383280210a0c9c18ce1206b33b937bf1e284690f5fbdd43e27235de6cfa",
   "onboarding_placement_unavailable_title": "f9205287bd93aa49c4aa7af1f3dff7dab43954a7591d658dfbaf7cc7cba3681c",
-  "onboarding_placement_waiting_material": "1bfb9d35b4b56e0f2c7a66dc3975830ed4184f0edb9b3951e1bb1a676ea7a64f",
-  "onboarding_placement_waiting_time": "1df94faf5f58cf3b7766093166cbda762c1c769ffc215478cef1fce6a99e5a6b",
-  "onboarding_placement_waiting_title": "b263fca41f98a8302e6a320fec5620d5042a2dea264f34165771a3e2a5ddad87",
+  "onboarding_placement_waiting_material": "1550062cdc191bd064cea066eac8dd786ba4400b1167ca7c321be298d83ad0fd",
+  "onboarding_placement_waiting_time": "974fdebe3b4d8693011d4c37ef110b4ce76c3266c984f25d1ec8c63c87b91168",
   "onboarding_placement_wrong": "6806dd00064f57ef1ece1e0ad1f6448f0be3268bdc626495329bb48388f5b911",
   "onboarding_placement_your_answer": "1ceed805ebc1e4a822cad42691948838931225f6ff3383e3f1b1f8d3e4a73af0",
   "onboarding_plan_answers_saved": "f2ab23f1dbc700f0ec16476c270e53111ef80807740b233a55d132c63642b044",
@@ -670,11 +668,10 @@
     <string name="onboarding_placement_description">Algumas perguntas rápidas para seu plano pular o que você já sabe. Não tem pontuação, e tudo bem responder “Ainda não sei”.</string>
     <string name="onboarding_placement_start">Começar</string>
     <string name="onboarding_placement_skip_basics">Pular e começar pelo básico</string>
-    <string name="onboarding_placement_waiting_title">Preparando suas perguntas</string>
-    <string name="onboarding_placement_waiting_material">Elas vêm do material que você adicionou. A leitura leva alguns minutos.</string>
-    <string name="onboarding_placement_waiting_time">Isso costuma levar um ou dois minutos.</string>
-    <string name="onboarding_placement_skip_for_now">Pular por enquanto</string>
-    <string name="onboarding_placement_skip_note">Em vez disso, algumas dessas perguntas aparecerão nas suas primeiras sessões.</string>
+    <string name="onboarding_placement_waiting_material">A leitura do seu material leva alguns minutos.</string>
+    <!-- Shown while the learner waits for their first questions to be prepared. "This" is the wait. -->
+    <string name="onboarding_placement_waiting_time">Isso leva um ou dois minutos.</string>
+    <string name="onboarding_placement_ready">Seu teste está pronto</string>
     <!-- Beside the subject, above a placement question. %1$d is its number. -->
     <string name="onboarding_placement_question_number">Pergunta %1$d</string>
     <string name="onboarding_placement_progress">Perguntas respondidas</string>
