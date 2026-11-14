@@ -9,7 +9,6 @@ import {
   Suggestion,
   SuggestionAction,
   SuggestionActions,
-  SuggestionChoices,
   SuggestionContent,
   SuggestionDescription,
   SuggestionHeader,
@@ -19,6 +18,7 @@ import {
   SuggestionSaveError,
   SuggestionSummary,
 } from "../_components/suggestion";
+import { SuggestionChoices } from "../_components/suggestion-choices";
 import { useChoiceLeftOutLine } from "../_utils/use-choice-left-out";
 import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
 import { ExamChoicePicks } from "../plan/exam-choice-picks";
