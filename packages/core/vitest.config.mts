@@ -81,9 +81,7 @@ export default defineConfig({
         },
       },
     ],
-    // @vercel/functions' attachDatabasePool binds the pool's `connect` when @zoonk/db loads, so the
-    // database counters' driver patch has to load first.
-    setupFiles: ["@zoonk/testing/statement-counter", "./setup-tests.ts"],
+    setupFiles: ["./setup-tests.ts"],
     testTimeout: 15_000,
   },
 });

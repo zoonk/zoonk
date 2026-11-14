@@ -70,9 +70,7 @@ export default defineConfig({
       },
       { extends: true, test: { include: OWN_MOCKS, name: "own-mocks" } },
     ],
-    // @vercel/functions' attachDatabasePool binds the pool's `connect` when @zoonk/db loads, so the
-    // database counters' driver patch has to load first.
-    setupFiles: ["@zoonk/testing/statement-counter", "./setup-tests.ts"],
+    setupFiles: ["./setup-tests.ts"],
     // Tests read and write the real database; on CI two suites share a 4-vCPU runner, where a test
     // that takes a second locally takes four or five. A test that hangs still fails.
     testTimeout: 15_000,
