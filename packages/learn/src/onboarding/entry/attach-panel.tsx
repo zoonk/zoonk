@@ -8,6 +8,7 @@ import { PendingLink } from "@zoonk/ui/patterns/links/pending";
 import { FileTextIcon, LinkIcon, UploadIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
+import { useCapSentence } from "../../_components/comes-back-words";
 import { SURFACE_CLASS } from "../../_components/surface";
 import {
   type AttachOutcome,
@@ -25,16 +26,10 @@ const PANEL_CLASS = cn(SURFACE_CLASS, "flex flex-col gap-3 p-4");
 
 function useAttachLimitMessage() {
   const t = useExtracted();
+  const capSentence = useCapSentence();
 
-  return ({ period, tier }: UsageCap): string => {
-    if (tier === "plus") {
-      return t("No more material today. More tomorrow.");
-    }
-
-    return period === "month"
-      ? t("No more material this month. More next month, or subscribe to keep going.")
-      : t("No more material today. More tomorrow, or subscribe to keep going.");
-  };
+  return (cap: UsageCap): string =>
+    capSentence(cap, { day: t("No more material today"), rolling: t("You've used your uploads") });
 }
 
 function useAttachError() {

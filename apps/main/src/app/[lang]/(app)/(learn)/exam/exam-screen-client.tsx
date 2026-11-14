@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  useOpenLanguageConversation,
-  useStartLanguageConversation,
-} from "@/lib/language/use-start-language-conversation";
+import { useOpenLanguageConversation } from "@/lib/language/use-start-language-conversation";
 import { MOCK_ENTRY_HREFS } from "@/lib/mocks/mock-entry-hrefs";
 import { type MockOptionsView } from "@zoonk/core/exams/mocks/contract";
 import { type ExamView } from "@zoonk/core/exams/view/contract";
@@ -24,7 +21,6 @@ export function ExamScreenClient({
 }) {
   const { goalId } = exam;
   const searchParams = useSearchParams();
-  const startConversation = useStartLanguageConversation({ from: "exam" });
   const openConversation = useOpenLanguageConversation({ from: "exam" });
 
   const actions = useMemo<ExamActions>(
@@ -35,9 +31,9 @@ export function ExamScreenClient({
         return outcome?.status === "applied";
       },
       startExamTask: (task) => openConversation({ goalId, kind: "examSpeaking", task }),
-      startSpeakingMock: () => startConversation({ goalId, kind: "speakingMock" }),
+      startSpeakingMock: () => openConversation({ goalId, kind: "speakingMock" }),
     }),
-    [goalId, openConversation, startConversation],
+    [goalId, openConversation],
   );
 
   const hrefs: ExamHrefs = {

@@ -6,7 +6,7 @@ import { WorkflowRunFollower } from "@/lib/workflow/workflow-run-follower";
 import { type OnboardingDraftView } from "@zoonk/core/view-models/onboarding/contract";
 import { GenerationFollowerProvider } from "@zoonk/learn/generation/follower";
 import { StartFlow } from "@zoonk/learn/onboarding";
-import { type GoalLimitReason } from "@zoonk/learn/onboarding/actions";
+import { type GoalLimit } from "@zoonk/learn/onboarding/actions";
 import { OnboardingEmbedded } from "@zoonk/learn/onboarding/frame";
 import {
   WEB_ONBOARDING_ACTIONS,
@@ -28,7 +28,7 @@ export function StartClient({
   canAttach: boolean;
   defaultGoal: string;
   embedded?: boolean;
-  goalLimit: GoalLimitReason | null;
+  goalLimit: GoalLimit | null;
   header?: React.ReactNode;
   initialDraft: OnboardingDraftView | null;
   needsAccount: boolean;

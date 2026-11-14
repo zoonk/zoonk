@@ -13,7 +13,7 @@ import { getGoalBasesAdvice } from "@/lib/goals/goal-bases-advice";
 import { findGoalTimeToCover } from "@/lib/goals/goal-time-advice";
 import { readGoalGenerationId } from "@/lib/goals/read-goal-generation-id";
 import { readGoalRebuild } from "@/lib/goals/read-goal-rebuild";
-import { useStartLanguageConversation } from "@/lib/language/use-start-language-conversation";
+import { useOpenLanguageConversation } from "@/lib/language/use-start-language-conversation";
 import { useRefreshOnPlanChange } from "@/lib/learn/use-refresh-on-plan-change";
 import { useTopicOutlineActions } from "@/lib/topic-outlines/use-topic-outline-actions";
 import { useWorkflowRun } from "@/lib/workflow/use-workflow-run";
@@ -173,7 +173,7 @@ function useArrivalChoice(): string | null {
 }
 
 function useLanguageStanding(language: LanguageProgressView | null): JourneyStanding | null {
-  const startConversation = useStartLanguageConversation();
+  const openConversation = useOpenLanguageConversation();
 
   if (!language) {
     return null;
@@ -183,7 +183,7 @@ function useLanguageStanding(language: LanguageProgressView | null): JourneyStan
     kind: "language",
     language,
     speakingHref: "/speaking",
-    startSpeakingMock: () => startConversation({ goalId: language.goal.id, kind: "speakingMock" }),
+    startSpeakingMock: () => openConversation({ goalId: language.goal.id, kind: "speakingMock" }),
   };
 }
 

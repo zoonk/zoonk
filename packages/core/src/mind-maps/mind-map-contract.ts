@@ -136,7 +136,7 @@ const savedMindMapSchema = z
       .boolean()
       .meta({
         description:
-          "It opens now: a chapter map that's `ready`, or a lesson map in this goal's scope. False when it can no longer open here (its chapter left the plan, its content went); list those last, under no longer available, with a way to remove them",
+          "It opens now: a chapter map that's `ready`, or a lesson map in this goal's scope. False when it can no longer open here (its chapter left the plan, its content went); its save can still be removed",
       }),
     chapterId: uuidSchema()
       .nullable()

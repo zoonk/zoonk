@@ -2403,7 +2403,7 @@ export const TEST_CASES: GoalTutorCase[] = [
     id: "en-lookup-account",
     lookUps: {
       account: {
-        callMinutesLeft: { thisMonth: 0, today: 0 },
+        callMinutesLeft: { last30Days: 0, today: 0 },
         link: { kind: "page", page: "settings" },
         memory: { enabled: true, link: { kind: "page", page: "memory" } },
         plan: { link: { kind: "page", page: "subscription" }, tier: "free" },

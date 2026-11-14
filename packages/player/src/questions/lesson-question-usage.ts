@@ -13,7 +13,8 @@ const slowDownSchema = z.object({
 });
 
 const usageLimitSchema = z.object({
-  period: z.enum(["day", "month", "total"]),
+  availableAt: z.string().nullish(),
+  period: z.enum(["day", "rolling30Days", "total"]),
   tier: z.enum(["free", "guest", "plus"]),
 });
 
@@ -33,7 +34,7 @@ const usageErrorSchema = z.object({
 export type LessonQuestionUsageRefusal =
   | { kind: "signUpRequired" }
   | { kind: "slowDown"; retryAfterSeconds: number }
-  | { kind: "usageLimit"; period: "day" | "month" | "total"; tier: "free" | "guest" | "plus" };
+  | ({ kind: "usageLimit" } & z.infer<typeof usageLimitSchema>);
 
 export function getUsageRefusal(body: unknown): LessonQuestionUsageRefusal | null {
   const parsed = usageErrorSchema.safeParse(body);

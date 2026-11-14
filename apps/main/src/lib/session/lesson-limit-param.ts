@@ -17,7 +17,7 @@ export function toLessonLimitParam(limit: LessonLimit): string {
   }
 
   if ("availableAt" in limit) {
-    return `${FREE_LESSONS_USED_PREFIX}${Date.parse(limit.availableAt) || 0}`;
+    return `${FREE_LESSONS_USED_PREFIX}${Date.parse(limit.availableAt ?? "") || 0}`;
   }
 
   return limit.tier === "free" ? "free-day" : limit.tier;

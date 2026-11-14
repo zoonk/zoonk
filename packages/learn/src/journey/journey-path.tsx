@@ -53,7 +53,7 @@ function PathLine({ walked }: { walked: boolean }) {
   );
 }
 
-const DATE_CLASS = "text-muted-foreground text-right font-mono text-xs tabular-nums";
+const DATE_CLASS = "text-muted-foreground text-right text-xs";
 
 const HEADER_BODY_CLASS = cn(PATH_ROW_BODY_CLASS, "items-baseline gap-y-0.5");
 

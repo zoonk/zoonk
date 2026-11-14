@@ -21,16 +21,6 @@ import { getUsagePeriodStarts } from "./usage-periods";
 const MS_PER_SECOND = 1000;
 const SECONDS_PER_MINUTE = 60;
 
-/** Must escape the transaction so a refused reservation rolls back its claimed call time. */
-export class LiveCallReservationRefusedError extends Error {
-  readonly result: LiveCallRefusal;
-  constructor(result: LiveCallRefusal) {
-    super(result.status);
-    this.name = "LiveCallReservationRefusedError";
-    this.result = result;
-  }
-}
-
 type RequestedCall = { reconnect: boolean; seconds: number };
 
 /**

@@ -1,6 +1,7 @@
 "use client";
 
 import { useLayoutEffect, useState } from "react";
+import { type CallLimit } from "../../_components/help-limit-notice";
 import { type ContentWriting } from "../../generation/writing-wait";
 
 /**
@@ -9,8 +10,11 @@ import { type ContentWriting } from "../../generation/writing-wait";
  */
 export type CallStartOutcome = boolean | "paused" | { generationId: string };
 
+export type LimitedCallStart = CallStartOutcome | { limit: CallLimit };
+
 type CallStartState =
   | { generationId: string; status: "writing" }
+  | { limit: CallLimit; status: "limited" }
   | { status: "failed" | "idle" | "opened" | "paused" | "starting" };
 
 const IDLE: CallStartState = { status: "idle" };
@@ -21,8 +25,12 @@ function settle({
   started,
 }: {
   afterWrite: boolean;
-  started: CallStartOutcome;
+  started: LimitedCallStart;
 }): CallStartState {
+  if (typeof started === "object" && "limit" in started) {
+    return { limit: started.limit, status: "limited" };
+  }
+
   if (started === "paused") {
     return { status: "paused" };
   }
@@ -38,7 +46,7 @@ function settle({
   return { status: "failed" };
 }
 
-export function useCallStart({ onStart }: { onStart: () => Promise<CallStartOutcome> }) {
+export function useCallStart({ onStart }: { onStart: () => Promise<LimitedCallStart> }) {
   const [state, setState] = useState<CallStartState>(IDLE);
 
   // The router keeps the card's page while its call runs, so back on it that start is over; one
@@ -66,6 +74,7 @@ export function useCallStart({ onStart }: { onStart: () => Promise<CallStartOutc
   return {
     failed: state.status === "failed",
     isStarting: state.status === "starting" || state.status === "opened",
+    limit: state.status === "limited" ? state.limit : null,
     paused: state.status === "paused",
     start: () => void start(false),
     writing,

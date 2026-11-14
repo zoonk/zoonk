@@ -96,8 +96,9 @@ export function getBandColumnsStyle(weights: readonly number[]): CSSProperties {
 
 export const AXIS_CLASS = "@container/phase relative flex min-h-4 flex-wrap gap-x-2";
 
+/** A date carries its own data face (`PlanDateText`); a word on the axis, such as "Today", keeps the text face. */
 export const AXIS_TEXT_CLASS =
-  "text-faint max-w-[100cqw] shrink-0 font-mono text-2xs leading-4 text-balance whitespace-normal tabular-nums";
+  "text-faint max-w-[100cqw] shrink-0 text-2xs leading-4 text-balance whitespace-normal";
 
 const MIDDLE_SHARE = 0.5;
 
