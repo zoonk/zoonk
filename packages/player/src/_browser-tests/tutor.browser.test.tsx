@@ -1,5 +1,6 @@
 import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes";
 import { MemoryUpdated } from "@zoonk/learn/memory-updated";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { type Locator, page, userEvent } from "vitest/browser";
 import { expectAccessibleScreen } from "../_test-utils/accessibility";
@@ -345,6 +346,53 @@ describe("asking the tutor", () => {
     await expect.element(subscribe).toBeVisible();
     await expect.element(composer(sheet)).not.toBeInTheDocument();
     expect(api.requests.answer).toBe(1);
+  });
+
+  it("gives the day more messages come back once a free learner's messages for the month are used", async () => {
+    const { api, lesson } = lessonWithTutor();
+    const opens = new Date(Date.now() + 5 * MS_PER_DAY);
+    const day = new Intl.DateTimeFormat("en", { day: "numeric", month: "long" }).format(opens);
+
+    api.next("answer", () => {
+      api.questions = api.questions.map((question) => ({ ...question, status: "failed" as const }));
+
+      return Promise.resolve(
+        Response.json(
+          {
+            error: {
+              code: LESSON_PLAYER_ERROR_CODES.usageLimitReached,
+              details: {
+                limit: {
+                  availableAt: opens.toISOString(),
+                  limit: 100,
+                  period: "rolling30Days",
+                  resource: "tutorMessage",
+                  tier: "free",
+                },
+              },
+              message: "This plan's limit is reached",
+            },
+          },
+          { status: 402 },
+        ),
+      );
+    });
+
+    playLesson({ lesson });
+    const sheet = await openTutor();
+
+    await ask(sheet, "One more question this month.");
+
+    await expect
+      .element(sheet.getByRole("alert").filter({ hasText: /You've used your messages/u }))
+      .toBeVisible();
+
+    await expect
+      .element(sheet.getByText(`More on ${day}, or subscribe to keep going.`))
+      .toBeVisible();
+
+    await expect.element(sheet.getByRole("link", { name: "Subscribe" })).toBeVisible();
+    await expect.element(composer(sheet)).not.toBeInTheDocument();
   });
 
   it("lets the learner answer a question another client left unfinished when this one conflicts with it", async () => {

@@ -8,6 +8,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowUpIcon, FileTextIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
+import { useCapSentence } from "../../_components/comes-back-words";
 import { SURFACE_CLASS } from "../../_components/surface";
 import { useAppLocale } from "../../_utils/locale";
 import { useCitationLabel } from "../../_utils/use-citation-label";
@@ -21,6 +22,7 @@ import {
   type AttachedSource,
   type MaterialQuestionOutcome,
   type OnboardingActions,
+  type UsageCap,
 } from "../onboarding-actions";
 import {
   OnboardingColumn,
@@ -35,16 +37,13 @@ type Turn = { id: string; outcome: MaterialQuestionOutcome; question: string };
 
 function useQuestionLimitMessage() {
   const t = useExtracted();
+  const capSentence = useCapSentence();
 
-  return (outcome: MaterialQuestionOutcome): string => {
-    if (outcome.status !== "limitReached" || outcome.tier === "plus") {
-      return t("No more questions today. More tomorrow.");
-    }
-
-    return outcome.period === "month"
-      ? t("No more questions this month. More next month, or subscribe to keep going.")
-      : t("No more questions today. More tomorrow, or subscribe to keep going.");
-  };
+  return (cap: UsageCap): string =>
+    capSentence(cap, {
+      day: t("No more questions today"),
+      rolling: t("You've used your questions"),
+    });
 }
 
 function TurnAnswer({
@@ -59,7 +58,7 @@ function TurnAnswer({
   const toLimitMessage = useQuestionLimitMessage();
 
   if (outcome.status !== "answered") {
-    const limitReached = toLimitMessage(outcome);
+    const limitReached = outcome.status === "limitReached" ? toLimitMessage(outcome) : "";
 
     const messages: Record<Exclude<MaterialQuestionOutcome["status"], "answered">, string> = {
       failed: t("We couldn't answer that. Try again in a moment."),

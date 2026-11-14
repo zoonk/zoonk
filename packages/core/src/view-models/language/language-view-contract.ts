@@ -1,6 +1,7 @@
 import { MAX_CEFR_SCORE } from "@zoonk/utils/cefr";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
+import { USAGE_PERIODS } from "../../entitlements/contract";
 import { speakingMockExamSchema } from "../../language/conversations/conversation-contract";
 import { speakingPaperViewSchema } from "../../language/exam-speaking/speaking-contract";
 import { LANGUAGE_SKILLS } from "../../language/levels/skill-level-rules";
@@ -114,7 +115,8 @@ export const practiceCallSchema = z
     defaultMinutes: z.int(),
     limit: z
       .object({
-        period: z.enum(["day", "month", "total"]),
+        availableAt: z.iso.datetime().nullable().optional(),
+        period: z.enum(USAGE_PERIODS),
         tier: z.enum(["free", "guest", "plus"]),
       })
       .nullable()

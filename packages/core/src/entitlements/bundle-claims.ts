@@ -31,12 +31,7 @@ export async function openUsageLedgerInWrite({
   await lockUsageForViewer({ transaction, userId: viewer.userId });
 
   const [totals, targets] = await Promise.all([
-    loadUsageTotals({
-      client: transaction,
-      includeLessonStarts: viewer.tier === "free",
-      now,
-      userId: viewer.userId,
-    }),
+    loadUsageTotals({ client: transaction, now, userId: viewer.userId }),
     findClaimedTargets({ claims, client: transaction, userId: viewer.userId }),
   ]);
 

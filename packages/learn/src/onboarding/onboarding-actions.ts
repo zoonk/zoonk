@@ -28,7 +28,7 @@ export type StartUnderstandingOutcome =
   | { draft: OnboardingDraftView; status: "started" }
   | { draft: OnboardingDraftView; status: "startFailed" }
   | { retryAfterSeconds: number; status: "slowDown" }
-  | { period: "day" | "month" | "total"; status: "limitReached"; tier: EntitlementTier }
+  | ({ status: "limitReached" } & UsageCap)
   | { status: "needsAccount" }
   | { status: "signUpRequired" }
   | { status: "failed" };
@@ -54,6 +54,9 @@ export type GoalLimitReason =
   | "signUpRequired"
   | "slowDown";
 
+/** Why a goal can't start; a cap over the last 30 days also says when more comes back. */
+export type GoalLimit = { availableAt?: string | null; reason: GoalLimitReason };
+
 export type CreateGoalsOutcome =
   | {
       /** Null when nothing started: the start failed, or the goal was already the learner's. */
@@ -62,7 +65,7 @@ export type CreateGoalsOutcome =
       status: "created";
     }
   | { status: "failed" }
-  | { reason: GoalLimitReason; status: "limitReached" };
+  | ({ status: "limitReached" } & GoalLimit);
 
 export type AnswerOutcome =
   | { onboarding: OnboardingView; status: "saved" }
@@ -73,7 +76,12 @@ export type WaitlistOutcome = "failed" | "joined" | "signInRequired";
 
 export type AttachedSource = { id: string; title: string };
 
-export type UsageCap = { period: "day" | "month" | "total"; tier: EntitlementTier };
+/** `availableAt` is when a cap over the last 30 days gives back its next use. */
+export type UsageCap = {
+  availableAt?: string | null;
+  period: "day" | "rolling30Days" | "total";
+  tier: EntitlementTier;
+};
 
 export type AttachOutcome =
   | { source: AttachedSource; status: "attached" }

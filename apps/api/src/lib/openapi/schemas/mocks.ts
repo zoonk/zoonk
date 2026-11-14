@@ -1,3 +1,4 @@
+import { USAGE_PERIODS } from "@zoonk/core/entitlements/contract";
 import { examDocumentSchema } from "@zoonk/core/exams/document";
 import {
   type MockOptionView,
@@ -89,6 +90,14 @@ export const mockOptionsResponseSchema = z
 
 export const anytimeMockResponseSchema = z
   .object({
+    availableAt: z.iso
+      .datetime()
+      .nullable()
+      .optional()
+      .meta({
+        description:
+          "For a short mock stopped by the rolling question-writing cap: instant the full mock question-writing request can be admitted; absent when no rolling cap stopped it.",
+      }),
     examQuestions: z
       .number()
       .int()
@@ -101,7 +110,7 @@ export const anytimeMockResponseSchema = z
         description: "The mock's id (GET /v1/mocks/{id}); null for needsQuestions and short",
       }),
     limit: z
-      .enum(["day", "month", "total"])
+      .enum(USAGE_PERIODS)
       .nullable()
       .optional()
       .meta({

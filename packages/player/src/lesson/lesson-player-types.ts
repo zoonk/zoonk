@@ -11,6 +11,7 @@ import {
   type PlayableLibraryLesson,
 } from "@zoonk/core/lesson-player/playable-lesson";
 import { type SpokenAnswerGrade } from "@zoonk/core/library/language/spoken-answer-contract";
+import { type HelpLimit } from "@zoonk/learn/help-limit";
 
 export type {
   PlayableLanguageStep,
@@ -80,9 +81,7 @@ export type LessonCompletionOutcome =
   | { status: "failed" }
   | { status: "incomplete" };
 
-type HelpLimitOutcome =
-  | { period?: "day" | "month" | "total"; status: "limitReached"; tier: LessonPlayerTier }
-  | { status: "signUpRequired" };
+type HelpLimitOutcome = Exclude<HelpLimit, { status: "slowDown" }>;
 
 export type AnswerExplanationOutcome =
   | { explanation: string; status: "explained" }

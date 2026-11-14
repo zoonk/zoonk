@@ -1,7 +1,7 @@
 import "server-only";
 import { postAsLearner } from "@/lib/api/learner-api";
 import { type PlanLinkStartInput } from "@zoonk/core/plans/link-contract";
-import { type GoalLimitReason } from "@zoonk/learn/onboarding/actions";
+import { type GoalLimit } from "@zoonk/learn/onboarding/actions";
 import { z } from "zod";
 import { toGoalStartFailure } from "./goal-limit-reason";
 
@@ -12,7 +12,7 @@ const goalSchema = z.object({ id: z.string() });
 type PlanLinkStart =
   | { goalId: string; status: "created" }
   | { goalId: string; status: "owner" }
-  | { reason: GoalLimitReason; status: "limitReached" }
+  | ({ status: "limitReached" } & GoalLimit)
   | { status: "failed" };
 
 /** The API starts a new goal's run before it answers. */

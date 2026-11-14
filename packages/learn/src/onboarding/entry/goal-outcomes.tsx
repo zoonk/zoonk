@@ -51,10 +51,10 @@ export function GoalErrorMessage({ error }: { error: GoalError | null }) {
     return null;
   }
 
-  if (error.limit && isPlusGoalLimit(error.limit)) {
+  if (error.limit && isPlusGoalLimit(error.limit.reason)) {
     return (
       <div role="alert">
-        <GoalLimitNotice reason={error.limit} />
+        <GoalLimitNotice limit={error.limit} />
       </div>
     );
   }

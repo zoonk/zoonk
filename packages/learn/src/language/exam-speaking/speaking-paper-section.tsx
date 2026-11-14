@@ -4,7 +4,6 @@ import { type SpeakingPaperView } from "@zoonk/core/language/exam-speaking/contr
 import { PhoneOffIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useId, useRef, useState } from "react";
-import { type CallLimit } from "../../_components/help-limit-notice";
 import { ListGroup } from "../../_components/list-group";
 import {
   NoticeCard,
@@ -21,10 +20,8 @@ import {
 } from "../../_components/page";
 import { WritingWait } from "../../generation/writing-wait";
 import { CallLimitReason } from "../conversation/call-limit-message";
-import { type CallStartOutcome, useCallStart } from "../conversation/use-call-start";
+import { type LimitedCallStart, useCallStart } from "../conversation/use-call-start";
 import { TaskRow, getTaskRowId } from "./speaking-task-row";
-
-export type ExamTaskStart = CallStartOutcome | { limit: CallLimit };
 
 function useOpenTask(openTask: string | null) {
   useEffect(() => {
@@ -45,7 +42,7 @@ export function SpeakingPaperSection({
   resultHref,
   title,
 }: {
-  onStart: (task: string) => Promise<ExamTaskStart>;
+  onStart: (task: string) => Promise<LimitedCallStart>;
   openTask?: string | null;
   paper: SpeakingPaperView;
   resultHref: (conversationId: string) => string;
@@ -55,19 +52,9 @@ export function SpeakingPaperSection({
   const titleId = useId();
   const selected = useRef<string | null>(null);
   const [startedTask, setStartedTask] = useState<string | null>(null);
-  const [limit, setLimit] = useState<CallLimit | null>(null);
 
   const call = useCallStart({
-    onStart: async () => {
-      const started = selected.current ? await onStart(selected.current) : false;
-
-      if (typeof started === "boolean" || started === "paused" || "generationId" in started) {
-        return started;
-      }
-
-      setLimit(started.limit);
-      return false;
-    },
+    onStart: () => (selected.current ? onStart(selected.current) : Promise.resolve(false)),
   });
 
   const paused = paper.access === "callsPaused";
@@ -113,7 +100,6 @@ export function SpeakingPaperSection({
                 onStart={() => {
                   selected.current = task.key;
                   setStartedTask(task.key);
-                  setLimit(null);
                   call.start();
                 }}
                 paused={paused}
@@ -134,9 +120,11 @@ export function SpeakingPaperSection({
         />
       )}
 
-      {call.failed && limit && <CallLimitReason className="py-4" limit={limit} role="alert" />}
+      {call.limit && (
+        <CallLimitReason className="py-4" limit={call.limit} need="task" role="alert" />
+      )}
 
-      {call.failed && !limit && (
+      {call.failed && (
         <p className="text-destructive-text px-1 text-sm" role="alert">
           {t("The task didn't start. Try again in a moment.")}
         </p>
