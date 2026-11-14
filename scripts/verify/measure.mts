@@ -218,7 +218,7 @@ export async function measureLoad(
       findings: [
         ...judgeLoad(measurement),
         ...wordFindings(words),
-        ...placeFindings(words),
+        ...placeFindings(words, { app: target.app, path }),
         ...titleTopFindings(words),
         ...craftFindings(craft, target.typeScale),
         ...roleFindings(roles),
