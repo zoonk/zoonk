@@ -50,6 +50,7 @@
     <string name="player_verdict_incorrect">Not quite</string>
     <string name="player_verdict_sample_answer">Here\'s a good answer</string>
     <string name="player_verdict_typo">Right, watch the spelling</string>
+    <!-- Verdict when the learner's answer wasn't checked this time. -->
     <string name="player_verdict_unchecked">Not checked this time</string>
     <string name="player_answer_feedback">Answer feedback</string>
     <string name="player_spelled">Spelled:</string>
