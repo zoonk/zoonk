@@ -13688,6 +13688,65 @@
         }
       }
     },
+    "Choosing what to learn" : {
+      "comment" : "A phase of building the plan",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir wählen aus, was du lernst"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eligiendo qué aprender"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choix de ce que tu vas apprendre"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo scegliendo cosa imparerai"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学ぶ内容を選んでいます"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "배울 내용 정하기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wybieramy tematy do nauki"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escolhendo o que aprender"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Öğrenileceklerin seçimi"
+          }
+        }
+      }
+    },
     "Chromebook" : {
       "comment" : "A device's system",
       "localizations" : {
@@ -20291,65 +20350,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ günleri dinlenme günü olsun mu?"
-          }
-        }
-      }
-    },
-    "Mapping the skills it takes" : {
-      "comment" : "A phase of building the plan",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir ermitteln die nötigen Fähigkeiten"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Identificando las habilidades necesarias"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Identification des compétences nécessaires"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stiamo individuando le abilità necessarie"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "必要なスキルを整理しています"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "필요한 능력을 파악하고 있어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Określamy potrzebne umiejętności"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mapeando as habilidades necessárias"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gereken becerileri belirliyoruz"
           }
         }
       }

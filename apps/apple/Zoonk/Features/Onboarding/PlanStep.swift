@@ -549,7 +549,7 @@ struct NoticeReadingView: View {
     switch document {
     case .notice:
       return Text(
-        "Your plan will follow the notice's subjects, topics and dates. This usually takes a few minutes.",
+        "Your plan will follow the exam's subjects, topics and dates. This usually takes a few minutes.",
         tableName: "Onboarding", comment: "While an exam's public notice is read")
     case .guide:
       return Text(

@@ -125,65 +125,6 @@
         }
       }
     },
-    "A %@ test shows what you already know, so more of your time goes to what you need most. It never removes a subject." : {
-      "comment" : "What the Focus test is and why; the argument is how long it takes, such as \"15 min\"",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Der Test dauert %@ und zeigt, was du schon weißt. So bleibt mehr Zeit für das, was du am meisten brauchst. Dabei wird kein Fach entfernt."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Una prueba de %@ muestra lo que ya sabes para que dediques más tiempo a lo que más necesitas. No elimina ninguna materia."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Un test de %@ montre ce que tu sais déjà pour que tu consacres plus de temps à ce dont tu as le plus besoin. Il ne retire jamais de matière."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Un test di %@ mostra cosa sai già, così dedichi più tempo a ciò che ti serve di più. Non elimina mai nessuna materia."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@のテストですでに知っていることがわかるので、特に必要な内容にもっと時間をかけられます。科目を学習計画から外すことはありません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ 테스트로 이미 아는 내용을 확인해, 더 배워야 할 내용에 시간을 더 쓸 수 있어요. 어떤 과목도 제외하지 않아요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Test trwa %@ i pokazuje, co już umiesz, więc więcej czasu poświęcasz na to, czego najbardziej potrzebujesz. Nigdy nie usuwa z planu żadnego przedmiotu."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Um teste de %@ mostra o que você já sabe, para você dedicar mais tempo ao que mais precisa estudar. Ele nunca tira uma matéria do plano."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ süren bir test zaten bildiklerini gösterir. Böylece en çok ihtiyacın olan konulara daha fazla zaman ayrılır. Hiçbir branşı planından çıkarmaz."
-          }
-        }
-      }
-    },
     "Answer more questions" : {
       "comment" : "Opens another Focus test sitting from its result on the plan",
       "localizations" : {
@@ -663,6 +604,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Konzentrier dich auf diese %lld Fächer"
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Focus on this subject"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Focus on these %lld subjects"
+                }
+              }
+            }
           }
         },
         "es" : {
@@ -1845,6 +1804,24 @@
             "value" : "Der Test empfiehlt diese %lld Fächer"
           }
         },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "The test suggests this subject"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "The test suggests these %lld subjects"
+                }
+              }
+            }
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2897,6 +2874,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dein Plan überspringt %lld Lektionen, die du schon kennst"
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Your plan skips %lld lesson you already know"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Your plan skips %lld lessons you already know"
+                }
+              }
+            }
           }
         },
         "es" : {
