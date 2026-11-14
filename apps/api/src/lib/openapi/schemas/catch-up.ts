@@ -19,7 +19,7 @@ export const catchUpSchema = z
       })
       .meta({
         description:
-          "Lessons to catch up on that the day's normal time doesn't fit: they come first on the next days (none when examTomorrow), or join today on a tap while offered",
+          "Lessons to catch up on that the day's normal time doesn't fit: they come first on the next days (none when examTomorrow), or join today when the learner asks, while offered",
       }),
     lessonsLeft: z.number().int().min(1),
     positions: z.array(z.number().int().nonnegative()),

@@ -36294,7 +36294,7 @@
           },
           "waitReason": {
             "nullable": true,
-            "description": "Why it waits in today's day, the saved session or, before Start builds it, the day Today plans: earlier lessons (`lessons`) are still pending or active. The `challenge` enum value is retained for older clients and is never returned. Read it only when `status` is `ready` or `started`. Starting it then answers 409 `EARLIER_FIRST` with the same `details.reason`, unless a 402 (Plus required) or 403 (today's study time is used up) refusal comes first. Completed or skipped work releases it. Null when nothing before it waits",
+            "description": "Why it waits in today's day, the saved session or, before that session is built, the day Today plans: earlier lessons (`lessons`) are still pending or active. The `challenge` enum value is retained for older clients and is never returned. Read it only when `status` is `ready` or `started`. Starting it then answers 409 `EARLIER_FIRST` with the same `details.reason`, unless a 402 (Plus required) or 403 (today's study time is used up) refusal comes first. Completed or skipped work releases it. Null when nothing before it waits",
             "type": "string",
             "enum": [
               "lessons",
@@ -43849,7 +43849,7 @@
           },
           "limit": {
             "nullable": true,
-            "description": "When no call time is left: which call time is used up (today's, this month's, or a guest's plan without calls), which is when calls come back",
+            "description": "When no call time is left: which call time is used up (today's, the last 30 days', or a guest's plan without calls), which is when calls come back",
             "type": "object",
             "properties": {
               "availableAt": {
@@ -77100,7 +77100,7 @@
           },
           "percent": {
             "nullable": true,
-            "description": "The share of the day's counted blocks done (`sessionBar`), floored: 0–99 until the session is complete and 100 only on `complete`. Null on `open` and when no block counts. Its meter draws one equal segment per counted block, so bar, count and percent agree.",
+            "description": "The share of the day's counted blocks done (`sessionBar`), floored: 0–99 until the session is complete and 100 only on `complete`. Null on `open` and when no block counts. Every counted block weighs the same, so it agrees with `sessionBar`'s count.",
             "type": "integer",
             "minimum": 0,
             "maximum": 100
@@ -85098,7 +85098,7 @@
               "targetMinutes": {
                 "type": "number",
                 "minimum": 0,
-                "description": "This goal's weekly time budget, including past session targets. Exact minutes may be fractional; format them as a human duration for display.",
+                "description": "This goal's weekly time budget, including past session targets, in exact minutes, which may be fractional",
                 "example": 105
               }
             },
@@ -89420,7 +89420,7 @@
         "type": "object",
         "properties": {
           "availableAt": {
-            "description": "For a short mock stopped by the rolling question-writing cap: instant the full mock question-writing request can be admitted; absent when no rolling cap stopped it.",
+            "description": "For `short` when the rolling question-writing cap stopped it: when the full mock's questions can be written; absent otherwise",
             "nullable": true,
             "type": "string",
             "format": "date-time",
@@ -89440,7 +89440,7 @@
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "limit": {
-            "description": "For `short`: the plan's fair use for new mock questions is used for the day or the month, so new ones can be written once it renews; null when there's nothing more to write now",
+            "description": "For `short`: the fair use for new mock questions that is used up, so new ones can be written once it renews; null when there's nothing more to write now",
             "nullable": true,
             "type": "string",
             "enum": [
@@ -89469,7 +89469,7 @@
               "needsQuestions",
               "short"
             ],
-            "description": "`started`: the mock runs, its first section's clock going. `running`: one was running already; continue it. `needsQuestions`: the shared bank is short of questions the learner never answered and their plan can have new ones written: POST /goals/{goalId}/mocks/generations, follow the run, then start again with `afterWriting`. `short`: the bank holds well under the questions picked and none can be written now (or the run just wrote what it could): ask the learner first, saying how many it asks of the exam's and in how long, and start it with `acceptFewer` only if they agree"
+            "description": "`started`: the mock runs, its first section's clock going. `running`: one was running already; continue it. `needsQuestions`: the shared bank is short of questions the learner never answered and their plan can have new ones written: POST /goals/{goalId}/mocks/generations, follow the run, then start again with `afterWriting`. `short`: the bank holds well under the questions picked and none can be written now (or the run just wrote what it could): it can ask `questions` of `examQuestions`, in `minutes`, and `acceptFewer` starts it with those once the learner agreed"
           }
         },
         "required": [
@@ -92653,7 +92653,7 @@
                   "offered"
                 ],
                 "additionalProperties": false,
-                "description": "Lessons to catch up on that the day's normal time doesn't fit: they come first on the next days (none when examTomorrow), or join today on a tap while offered"
+                "description": "Lessons to catch up on that the day's normal time doesn't fit: they come first on the next days (none when examTomorrow), or join today when the learner asks, while offered"
               },
               "lessonsLeft": {
                 "type": "integer",
@@ -92711,7 +92711,7 @@
           },
           "examTomorrow": {
             "type": "boolean",
-            "description": "The goal's exam is tomorrow: nothing of the goal comes back tomorrow (its next lesson, a saved mistake, lessons to catch up), so don't point there"
+            "description": "The goal's exam is tomorrow: nothing of the goal comes back tomorrow (its next lesson, a saved mistake, lessons to catch up)"
           },
           "extraTime": {
             "$ref": "#/components/schemas/StudyExtraTime"
@@ -92785,7 +92785,7 @@
           },
           "lessonsToPrepare": {
             "type": "boolean",
-            "description": "The day has blocks and holds time for more lessons that aren't written while nobody is outlining them: list them after its blocks with one action that posts the goal's lesson preparation, as for an empty day's `lessonsToPrepare`, and the next read says `lessonsComing`. Never post it on your own. False otherwise, and on a day without blocks (`emptyDay` says why)"
+            "description": "The day has blocks and holds time for more lessons that aren't written while nobody is outlining them: the goal's lesson preparation writes them when the learner asks for it, never on its own, as for an empty day's `lessonsToPrepare`, and the next read says `lessonsComing`. False otherwise, and on a day without blocks (`emptyDay` says why)"
           },
           "localDate": {
             "type": "string",
@@ -92841,7 +92841,7 @@
           },
           "state": {
             "default": "underway",
-            "description": "Where the day stands, which decides what Today offers: `underway` (a block to start or continue), `done` (every block behind the learner), `waiting` (its lessons are still being outlined; read it again), `prepare` (its lessons wait for the learner to ask for them, see `emptyDay`), `ahead` (nothing new: practice, the week's challenge or the buddy instead) or `rest` (no study planned). Always sent",
+            "description": "Where the day stands: `underway` (a block to start or continue), `done` (every block behind the learner), `waiting` (its lessons are still being outlined; read it again), `prepare` (its lessons wait for the learner to ask for them, see `emptyDay`), `ahead` (nothing new to learn) or `rest` (no study planned). Always sent",
             "type": "string",
             "enum": [
               "ahead",
@@ -93061,7 +93061,7 @@
           },
           "examTomorrow": {
             "type": "boolean",
-            "description": "The goal's exam is tomorrow: nothing of the goal comes back tomorrow (its next lesson, a saved mistake, lessons to catch up), so don't point there"
+            "description": "The goal's exam is tomorrow: nothing of the goal comes back tomorrow (its next lesson, a saved mistake, lessons to catch up)"
           },
           "extraTime": {
             "$ref": "#/components/schemas/StudyExtraTime"
@@ -93130,7 +93130,7 @@
           },
           "lessonsToPrepare": {
             "type": "boolean",
-            "description": "The day has blocks and holds time for more lessons that aren't written while nobody is outlining them: list them after its blocks with one action that posts the goal's lesson preparation, as for an empty day's `lessonsToPrepare`, and the next read says `lessonsComing`. Never post it on your own. False otherwise, and on a day without blocks (`emptyDay` says why)"
+            "description": "The day has blocks and holds time for more lessons that aren't written while nobody is outlining them: the goal's lesson preparation writes them when the learner asks for it, never on its own, as for an empty day's `lessonsToPrepare`, and the next read says `lessonsComing`. False otherwise, and on a day without blocks (`emptyDay` says why)"
           },
           "localDate": {
             "type": "string",
@@ -93173,7 +93173,7 @@
           },
           "state": {
             "default": "underway",
-            "description": "Where the day stands, which decides what Today offers: `underway` (a block to start or continue), `done` (every block behind the learner), `waiting` (its lessons are still being outlined; read it again), `prepare` (its lessons wait for the learner to ask for them, see `emptyDay`), `ahead` (nothing new: practice, the week's challenge or the buddy instead) or `rest` (no study planned). Always sent",
+            "description": "Where the day stands: `underway` (a block to start or continue), `done` (every block behind the learner), `waiting` (its lessons are still being outlined; read it again), `prepare` (its lessons wait for the learner to ask for them, see `emptyDay`), `ahead` (nothing new to learn) or `rest` (no study planned). Always sent",
             "type": "string",
             "enum": [
               "ahead",
@@ -93555,7 +93555,7 @@
                   "offered"
                 ],
                 "additionalProperties": false,
-                "description": "Lessons to catch up on that the day's normal time doesn't fit: they come first on the next days (none when examTomorrow), or join today on a tap while offered"
+                "description": "Lessons to catch up on that the day's normal time doesn't fit: they come first on the next days (none when examTomorrow), or join today when the learner asks, while offered"
               },
               "lessonsLeft": {
                 "type": "integer",

@@ -45,7 +45,7 @@ const studyDayProgressSchema = z
       .nullable()
       .meta({
         description:
-          "The share of the day's counted blocks done (`sessionBar`), floored: 0–99 until the session is complete and 100 only on `complete`. Null on `open` and when no block counts. Its meter draws one equal segment per counted block, so bar, count and percent agree.",
+          "The share of the day's counted blocks done (`sessionBar`), floored: 0–99 until the session is complete and 100 only on `complete`. Null on `open` and when no block counts. Every counted block weighs the same, so it agrees with `sessionBar`'s count.",
       }),
   })
   .meta({ description: "Today's session progress after this block.", id: "StudyDayProgress" });
