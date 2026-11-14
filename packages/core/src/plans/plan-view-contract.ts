@@ -49,7 +49,7 @@ export type PlanChangeView = {
   lessonsSkipped: number;
   officialDate: { date: string; source: string | null } | null;
   operations: PlanOperation[];
-  quote: PlanChangeQuote | null;
+  quote: PlanChangeQuote;
   /** Null when the app words the change from `kind`, `operations` and `effect`. */
   reason: string | null;
   seen: boolean;

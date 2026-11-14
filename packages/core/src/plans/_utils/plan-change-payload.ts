@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { anyPlanOperationSchema } from "../plan-contract";
-import { planChangeQuoteSchema } from "../plan-decision-contract";
 import { type PlanEffect } from "../planner/plan-effect";
 import { planGraphSchema } from "../planner/plan-state";
+import { planPreviewBasisSchema } from "./plan-preview-basis";
 
 const PLAN_CHANGE_KINDS = [
   "coverageChanged",
@@ -99,7 +99,7 @@ const planChangePayloadSchema = z.object({
     .default(null),
   operations: z.array(anyPlanOperationSchema).default([]),
   planItemIds: z.array(z.string()).default([]),
-  previewBasis: planChangeQuoteSchema.nullable().default(null),
+  previewBasis: planPreviewBasisSchema.nullable().default(null),
   /** The product release a "What's new" offer is for, so a plan gets one offer per release. */
   releaseId: z.string().nullable().default(null),
   replannedSince: z.literal(true).optional(),

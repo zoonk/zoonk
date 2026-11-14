@@ -86,12 +86,7 @@ export const planChangeSchema = z
           "The exam day the notice officially sets, when the change moves the goal's date off it, so applying it keeps the learner's own date instead of the official one. Null otherwise",
       }),
     operations: z.array(anyPlanOperationSchema),
-    quote: planChangeQuoteSchema
-      .nullable()
-      .meta({
-        description:
-          "Which numbers `effect` shows. Accepting a proposal sends it back; it changes when accepting finds today's numbers differ. Null for a change with no worked-out `effect`",
-      }),
+    quote: planChangeQuoteSchema,
     reason: z
       .string()
       .nullable()
