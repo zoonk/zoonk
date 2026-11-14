@@ -21,6 +21,7 @@
     "./hooks/mount-time": "./src/hooks/use-mount-time.ts",
     "./hooks/scrolled": "./src/hooks/use-scrolled.ts",
     "./hooks/shortcut-label": "./src/hooks/use-shortcut-label.ts",
+    "./hooks/still-here": "./src/hooks/use-still-here.ts",
     "./hooks/taking-long": "./src/hooks/use-taking-long.ts",
     "./hooks/tick-count": "./src/hooks/use-tick-count.ts",
     "./hooks/voice-recorder": "./src/hooks/use-voice-recorder.ts",

@@ -2,6 +2,7 @@
 
 import { useRouter } from "@/i18n/navigation";
 import { type ConversationConnection } from "@zoonk/learn/language/conversation";
+import { useStillOnPage } from "@zoonk/ui/hooks/still-here";
 import { useCallback } from "react";
 import {
   type LanguageConversationRequest,
@@ -14,9 +15,11 @@ type OpenedCall = boolean | "paused" | { generationId: string };
 
 export function useOpenLanguageConversation({ from }: { from?: "exam" } = {}) {
   const router = useRouter();
+  const stillOnPage = useStillOnPage();
 
   return useCallback(
     async (request: LanguageConversationRequest): Promise<OpenedCall | { limit: CallLimit }> => {
+      const isStillHere = stillOnPage();
       const started = await startLanguageConversationAction(request);
 
       if (!started) {
@@ -27,10 +30,13 @@ export function useOpenLanguageConversation({ from }: { from?: "exam" } = {}) {
         return started;
       }
 
-      router.push(`/conversation/${started.conversationId}${from ? `?from=${from}` : ""}`);
+      if (isStillHere()) {
+        router.push(`/conversation/${started.conversationId}${from ? `?from=${from}` : ""}`);
+      }
+
       return true;
     },
-    [from, router],
+    [from, router, stillOnPage],
   );
 }
 
