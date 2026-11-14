@@ -14,7 +14,7 @@ import {
 import { WritingWait } from "../../generation/writing-wait";
 import { CallLimitReason } from "../conversation/call-limit-message";
 import { useSpeakingMockTitle } from "../conversation/conversation-labels";
-import { type LimitedCallStart, useCallStart } from "../conversation/use-call-start";
+import { type CallStartOutcome, useCallStart } from "../conversation/use-call-start";
 
 function useSpeakingMockDescription() {
   const t = useExtracted();
@@ -37,7 +37,7 @@ export function SpeakingMockCard({
   paused,
 }: {
   exam: SpeakingMockExam;
-  onStart: () => Promise<LimitedCallStart>;
+  onStart: () => Promise<CallStartOutcome>;
   paused: boolean;
 }) {
   const t = useExtracted();

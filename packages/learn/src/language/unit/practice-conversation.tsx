@@ -109,8 +109,12 @@ function CallSetup({
     );
   }
 
-  if (conversation.limit) {
-    return <CallLimitReason className="pt-4" limit={conversation.limit} />;
+  const limit = call.limit ?? conversation.limit;
+
+  if (limit) {
+    return (
+      <CallLimitReason className="pt-4" limit={limit} role={call.limit ? "alert" : undefined} />
+    );
   }
 
   const isLocked = conversation.plusMinutes.includes(minutes);

@@ -1,7 +1,7 @@
 "use client";
 
 import { MainAskTutor, type TutorViewer } from "@/components/learn/main-ask-tutor";
-import { useStartLanguageConversation } from "@/lib/language/use-start-language-conversation";
+import { useOpenLanguageConversation } from "@/lib/language/use-start-language-conversation";
 import { useStartTestOut } from "@/lib/test-out/use-start-test-out";
 import { type LanguageUnitView } from "@zoonk/core/view-models/language/contract";
 import { LanguageUnitScreen } from "@zoonk/learn/language/unit";
@@ -17,7 +17,7 @@ export function UnitScreenClient({
   unit: LanguageUnitView;
   upNext: boolean;
 }) {
-  const startConversation = useStartLanguageConversation();
+  const startConversation = useOpenLanguageConversation();
   const startTestOut = useStartTestOut();
   const { chapterId } = unit.unit;
   const goalId = unit.goalId ?? undefined;

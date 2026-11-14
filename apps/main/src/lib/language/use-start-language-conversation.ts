@@ -33,15 +33,3 @@ export function useOpenLanguageConversation({ from }: { from?: "exam" } = {}) {
     [from, router],
   );
 }
-
-export function useStartLanguageConversation(options: { from?: "exam" } = {}) {
-  const open = useOpenLanguageConversation(options);
-
-  return useCallback(
-    async (request: LanguageConversationRequest): Promise<OpenedCall> => {
-      const opened = await open(request);
-      return typeof opened === "object" && "limit" in opened ? false : opened;
-    },
-    [open],
-  );
-}
