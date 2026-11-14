@@ -245,6 +245,7 @@ internal fun MindMapsPage(
     PageScaffold(
         onBack = actions.back,
         title = { Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+        barWidth = DETAIL_PAGE_WIDTH,
         bottomBar =
             study?.let {
                 { TaskActions { main -> Button(onClick = it, modifier = main) { Text(stringResource(R.string.mindmaps_study)) } } }

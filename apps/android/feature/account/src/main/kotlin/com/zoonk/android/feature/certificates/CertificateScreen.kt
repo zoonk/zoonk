@@ -102,6 +102,7 @@ fun CertificateScreen(
     PageScaffold(
         onBack = { navigator.back() },
         title = { Text(stringResource(R.string.certificates_certificate)) },
+        barWidth = DETAIL_PAGE_WIDTH,
         bottomBar =
             if (certificate?.locked == true) {
                 {

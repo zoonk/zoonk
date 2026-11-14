@@ -52,6 +52,7 @@ fun HelpScreen(
     PageScaffold(
         onBack = { navigator.back() },
         title = { Text(stringResource(R.string.account_menu_help)) },
+        barWidth = 640.dp,
         bottomBar = { TaskActions { main -> SendButton(form, accountEmail, main) } },
     ) { padding ->
         Box(
