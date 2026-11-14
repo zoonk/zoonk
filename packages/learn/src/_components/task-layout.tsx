@@ -4,7 +4,8 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useId } from "react";
 import { PageSectionTitle } from "./page";
 
-export const TASK_COLUMN_CLASS = "max-w-column mx-auto w-full px-4";
+/** A column inside a task's body, such as a lesson step in mistake practice, is already in its gutter. */
+export const TASK_COLUMN_CLASS = "max-w-column mx-auto w-full px-4 in-data-[slot=task-body]:px-0";
 
 /**
  * A bar's buttons have the task's gutter on all four sides: 16px, and 24px from `lg`. Named as the
