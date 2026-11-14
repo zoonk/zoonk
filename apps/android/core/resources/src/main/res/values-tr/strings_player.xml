@@ -156,6 +156,7 @@
   "player_spelled": "36ac9717dd4e16d8eb8447fed3a4b86d5f895970ee2b5963b7eb3b222ce3b6c2",
   "player_start_failed_description": "e53a76b4a4dcc001a913241d8a9e77d781cc159f4bb14c70f58e402509b0e277",
   "player_start_failed_title": "ee9100adec2e2d0dd407ab0b6b5d0ffc7af06e4b5401d082970c88951beef496",
+  "player_start_the_lesson": "5d7595d1c2e8ce9ad395816bd89093767ed985ab1fa7fc2b55ec8fde9bf6db3a",
   "player_start_this_challenge": "71cadc3893049c544fb6b736da87fb750250c13fb947514b6fb08fdf359151c2",
   "player_start_this_lesson": "390cf859f433d3fd22db0d701f1c33cff598d1cacdfb27909156c23460d1da52",
   "player_still_checking": "cd641ccee08d2fbbba068b5a2c4aaf0696dca14795b31e66e4ba286e1e5d17b2",
@@ -300,6 +301,7 @@
     <string name="player_challenge_ready">Meydan okuman hazır</string>
     <string name="player_challenge_wait_stopped">Bu meydan okumayı hazırlayamadık</string>
     <string name="player_start_this_challenge">Bu meydan okumaya başla</string>
+    <string name="player_start_the_lesson">Derse başla</string>
     <string name="player_writing_lesson">Dersini hazırlıyoruz</string>
     <string name="player_phase_plan">Dersi planlıyoruz</string>
     <string name="player_phase_plan_line_1">Neleri işleyeceğimizi seçiyoruz…</string>
