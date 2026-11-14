@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.richtext.RichTextLine
 import com.zoonk.android.ui.richtext.SpokenText
@@ -38,3 +39,11 @@ fun MistakeAnswer(
         tag = { AnswerTag(picked = !right, result = result) },
     )
 }
+
+/** An answer shown exactly as written, such as what the learner typed. */
+@Composable
+fun MistakeAnswer(
+    text: String,
+    right: Boolean,
+    modifier: Modifier = Modifier,
+) = MistakeAnswer(SpokenText(AnnotatedString(text)), right, modifier)

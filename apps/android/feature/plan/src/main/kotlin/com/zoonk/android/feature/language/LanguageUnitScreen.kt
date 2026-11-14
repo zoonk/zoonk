@@ -59,7 +59,6 @@ import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
 import com.zoonk.android.feature.plan.planGoal
 import com.zoonk.android.feature.questions.ItemText
-import com.zoonk.android.feature.questions.itemLine
 import com.zoonk.android.feature.tutor.TutorAskButton
 import com.zoonk.android.feature.tutor.TutorScope
 import com.zoonk.android.navigation.AppNavigator
@@ -403,8 +402,8 @@ private fun UnitMistakes(mistakes: List<LanguageUnitMistakesInner>) {
                     style = MaterialTheme.typography.labelMedium,
                 )
                 ItemText(mistake.question, style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium))
-                mistake.answer?.let { MistakeAnswer(itemLine(it), right = false) }
-                mistake.correctAnswer?.let { MistakeAnswer(itemLine(it), right = true) }
+                mistake.answer?.let { MistakeAnswer(it, right = false) }
+                mistake.correctAnswer?.let { MistakeAnswer(it, right = true) }
                 mistake.explanation?.let {
                     CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurfaceVariant) {
                         ItemText(it, style = MaterialTheme.typography.bodyMedium)

@@ -74,7 +74,7 @@ import com.zoonk.android.feature.practice.SaveErrorText
 import com.zoonk.android.feature.practice.runAccount
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.AnswerCheck
-import com.zoonk.android.feature.questions.ItemLine
+import com.zoonk.android.feature.questions.AnswerLine
 import com.zoonk.android.feature.questions.ItemSupport
 import com.zoonk.android.feature.questions.ItemText
 import com.zoonk.android.feature.questions.Question
@@ -82,7 +82,6 @@ import com.zoonk.android.feature.questions.QuestionAnswer
 import com.zoonk.android.feature.questions.QuestionFormat
 import com.zoonk.android.feature.questions.QuestionTitle
 import com.zoonk.android.feature.questions.WorkedSteps
-import com.zoonk.android.feature.questions.answerText
 import com.zoonk.android.feature.session.DayMoment
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -943,9 +942,7 @@ private fun ReviewItem(
                     onSubmit = {},
                 )
             } else {
-                answerText(correct, question, duel.read.words)?.let {
-                    ItemLine(stringResource(R.string.checkpoint_answer, it), style = MaterialTheme.typography.bodyMedium)
-                }
+                AnswerLine(R.string.checkpoint_answer, correct, question, duel.read.words, MaterialTheme.typography.bodyMedium)
             }
             answer.explanation?.let { ItemText(it, style = MaterialTheme.typography.bodyMedium) }
             if (!answer.isCorrect) WorkedSteps(answer.workedSteps)

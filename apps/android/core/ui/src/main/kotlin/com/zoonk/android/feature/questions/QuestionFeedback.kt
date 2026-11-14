@@ -1,13 +1,16 @@
 package com.zoonk.android.feature.questions
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.LayoutDirection
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.DiffKind
@@ -47,11 +50,7 @@ fun QuestionFeedback(
         )
 
         if (!feedback.isCorrect && question.format.showsRightAnswer) {
-            answerText(
-                feedback.correctAnswer,
-                question,
-                words,
-            )?.let { ItemLine(stringResource(R.string.questions_right_answer, it), style = explanation) }
+            AnswerLine(R.string.questions_right_answer, feedback.correctAnswer, question, words, explanation)
         }
 
         feedback.explanation?.let { ItemText(it, style = explanation) }
@@ -82,11 +81,24 @@ fun verdict(
     }
 
 /**
- * An answer as item text (an option's, steps in their order, pairs, a number with its unit), for
- * [ItemLine] to show with its math.
+ * [label] around an answer: picked options, pairs and numbers as item text with their math, and a
+ * typed answer exactly as typed, since it's plain text (`__init__` keeps its underscores).
  */
 @Composable
-fun answerText(
+fun AnswerLine(
+    @StringRes label: Int,
+    answer: Answer?,
+    question: Question,
+    words: TrueFalseWords,
+    style: TextStyle,
+) {
+    val line = stringResource(label, answerText(answer, question, words) ?: return)
+    if (answer is Answer.Text) Text(line, style = style) else ItemLine(line, style = style)
+}
+
+/** An answer in words: an option's, steps in their order, pairs, a number with its unit. */
+@Composable
+private fun answerText(
     answer: Answer?,
     question: Question,
     words: TrueFalseWords,
