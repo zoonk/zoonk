@@ -18,10 +18,8 @@
     <string name="profile_questions_tools_description">Pick up to 3. We\'ll use them in your examples.</string>
     <string name="profile_questions_tools_other">Others (optional)</string>
     <string name="profile_questions_tools_placeholder">E.g., Photoshop, Python, SAP</string>
-    <string name="profile_questions_none">None of these</string>
     <string name="profile_questions_studies_title">What have you studied?</string>
     <string name="profile_questions_studies_description">Past or present, finished or not. It can be different from your work.</string>
-    <string name="profile_questions_nothing_to_add">Nothing to add</string>
     <string name="profile_questions_subject">%1$s: course or subject (optional)</string>
     <string name="profile_questions_which_field">Which field?</string>
     <string name="profile_questions_subject_placeholder">E.g., journalism</string>
@@ -50,7 +48,6 @@
     <string name="profile_questions_address_title">How should we address you?</string>
     <string name="profile_questions_address_description">We\'ll talk to you this way.</string>
     <string name="profile_questions_suggested">We checked what often helps with what you picked. Change anything you like.</string>
-    <string name="profile_questions_nothing_particular">Nothing in particular</string>
     <string name="profile_questions_something_else">+ Something else that helps</string>
     <string name="profile_questions_support_note">What helps you, in your words (optional)</string>
     <string name="profile_questions_support_placeholder">E.g., I understand diagrams better than text</string>

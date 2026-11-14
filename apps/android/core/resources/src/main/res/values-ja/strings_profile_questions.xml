@@ -26,11 +26,8 @@
   "profile_questions_memory_off": "3ca972e01235616efa2fd0e35d8b594bca9211e944a0d2700e173d4d5861beb1",
   "profile_questions_never_ask": "1db0a6a904b5a353c4710cd92dafa1f5c048c7ff7d8aa0cf4d940d90e57fa995",
   "profile_questions_never_ask_help": "f5f1b6eb740776e4ca4c25a9e955da3c60ba8b695f4ddbb059dfdd09b1ddc394",
-  "profile_questions_none": "ccf83ceb37d00d72223ea84ba50f57cb363e9c13783e536183fdcde073e6fafc",
   "profile_questions_not_answered": "8df80389d75674954b99b6213c99b639d2a4b1f2133489afa8aa2641e128b5e4",
   "profile_questions_not_shared": "b18646b3281bc9f0ba47c57f22dd55bc9a5f38763b5c3629f7708074e4e36b84",
-  "profile_questions_nothing_particular": "0444e29ce73f2eb0f95b71178c8f2dafc5d82cfb732f53f6849285d4463b4466",
-  "profile_questions_nothing_to_add": "6fb025b6d7e2fe7b0fe25012c9a3c7fd5dda16f8b56b8c1a5f9dc0f316869ecf",
   "profile_questions_play_favorites": "027870a17e03b26f4e7837c7291b8b695bcfb46f4e4ea549656700fbf8892418",
   "profile_questions_play_placeholder": "cb86540e90e1bbb7ab0ac3f1f0549105b4876c6262b12c09bac872a5e7d13327",
   "profile_questions_play_title": "c7462d30dff263920958a16e19a30b25a6467ef64f72e57b84e34734657ab883",
@@ -100,10 +97,8 @@
     <string name="profile_questions_tools_description">3つまで選べます。学習で使う例に取り入れます。</string>
     <string name="profile_questions_tools_other">その他（任意）</string>
     <string name="profile_questions_tools_placeholder">例：Photoshop、Python、SAP</string>
-    <string name="profile_questions_none">あてはまるものはない</string>
     <string name="profile_questions_studies_title">これまでにどんなことを学んできましたか？</string>
     <string name="profile_questions_studies_description">以前学んだことも、今学んでいることも含みます。学び終えていなくても、仕事と違う分野でも大丈夫です。</string>
-    <string name="profile_questions_nothing_to_add">特になし</string>
     <string name="profile_questions_subject">%1$s：コースや科目（任意）</string>
     <string name="profile_questions_which_field">どの分野ですか？</string>
     <string name="profile_questions_subject_placeholder">例：ジャーナリズム</string>
@@ -132,7 +127,6 @@
     <string name="profile_questions_address_title">どんな表現で話しかけてほしいですか？</string>
     <string name="profile_questions_address_description">このように話しかけます。</string>
     <string name="profile_questions_suggested">選んだ内容をもとに、どんな工夫が役立つことが多いかを調べました。自由に変更できます。</string>
-    <string name="profile_questions_nothing_particular">特になし</string>
     <string name="profile_questions_something_else">+ ほかに役立つこと</string>
     <string name="profile_questions_support_note">学びやすくなることを自分の言葉で（任意）</string>
     <string name="profile_questions_support_placeholder">例：文章より図のほうが理解しやすいです</string>

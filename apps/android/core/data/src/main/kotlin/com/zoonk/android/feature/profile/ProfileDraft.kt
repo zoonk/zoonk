@@ -51,8 +51,6 @@ data class ProfileDraft(
         return copy(picks = next, declined = false, subjects = subjects.filterKeys { it in next })
     }
 
-    fun decline(): ProfileDraft = ProfileDraft(declined = !declined)
-
     fun empty(
         question: ProfileQuestion,
         memoryEnabled: Boolean,

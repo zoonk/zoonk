@@ -26,11 +26,8 @@
   "profile_questions_memory_off": "7407adfd57d80ae92958572dfb0214b9a3c878b29ff8297c4859de15ce7688aa",
   "profile_questions_never_ask": "ff7c5c99d72752954b75e568b66374dd56d2a3f03b385a55e99fd91f4decde90",
   "profile_questions_never_ask_help": "7d4edf529e9dbc9abf2be62a23a498ab2f8cdecdb867cc39cd2b60398a81dd54",
-  "profile_questions_none": "d9de34a18e8f5f17c801ab25de84c6e68e016ed5a389379fa0be562899d41e00",
   "profile_questions_not_answered": "2758bf5e2d983f9f995fc0509e17c6f8e0bfe3e517209fd4038ca2239ab106e8",
   "profile_questions_not_shared": "f4501882e551306ac65e9123374a9614a7629e8d987be171e4b4c42a260c31eb",
-  "profile_questions_nothing_particular": "32e98f168c83ebb6f39e3b891ebd5426785d79a5df02b70447ad11ff7b943062",
-  "profile_questions_nothing_to_add": "ee6c84b5623061d8c0286aa8598fd35cce9d055630a02c0be55b12a7226e429e",
   "profile_questions_play_favorites": "f69b458922bea73a186068a9a006caf2046b132937e1558a8b2e537cce465127",
   "profile_questions_play_placeholder": "5791dd117aca29e3f8f8283c723d43857addf5cf2bd53aedec09b374d81bf93d",
   "profile_questions_play_title": "5a1598a5305f351cef5a9b3b1cf42ba745f8b53220f8ba680b232eb7de7da19c",
@@ -100,10 +97,8 @@
     <string name="profile_questions_tools_description">최대 3개까지 고르세요. 고른 항목을 예시에 활용할게요.</string>
     <string name="profile_questions_tools_other">기타 (선택)</string>
     <string name="profile_questions_tools_placeholder">예: Photoshop, Python, SAP</string>
-    <string name="profile_questions_none">해당하는 항목이 없어요</string>
     <string name="profile_questions_studies_title">무엇을 공부했나요?</string>
     <string name="profile_questions_studies_description">예전에 배웠거나 지금 배우는 것 모두 좋아요. 다 마치지 않았어도, 하는 일과 달라도 괜찮아요.</string>
-    <string name="profile_questions_nothing_to_add">추가할 내용이 없어요</string>
     <string name="profile_questions_subject">%1$s: 전공 또는 과목 (선택)</string>
     <string name="profile_questions_which_field">어떤 분야인가요?</string>
     <string name="profile_questions_subject_placeholder">예: 언론학</string>
@@ -132,7 +127,6 @@
     <string name="profile_questions_address_title">여성형, 남성형, 중립형 중 어떤 표현이 좋을까요?</string>
     <string name="profile_questions_address_description">이렇게 이야기할게요.</string>
     <string name="profile_questions_suggested">고른 항목에 보통 어떤 방법이 도움이 되는지 알아봤어요. 원하는 대로 바꿔 보세요.</string>
-    <string name="profile_questions_nothing_particular">특별히 없어요</string>
     <string name="profile_questions_something_else">+ 그 밖에 도움이 되는 방법</string>
     <string name="profile_questions_support_note">도움이 되는 방법을 자유롭게 적어 주세요 (선택 사항)</string>
     <string name="profile_questions_support_placeholder">예: 글보다 도표로 보면 더 잘 이해해요</string>
