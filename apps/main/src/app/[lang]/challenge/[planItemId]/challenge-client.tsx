@@ -3,6 +3,7 @@
 import { useRouter } from "@/i18n/navigation";
 import { STUDY_SESSION_PARAM } from "@/lib/lessons/lesson-player-params";
 import { requestQuestionWriting } from "@/lib/questions/question-writing";
+import { useResetWhenDone } from "@/lib/use-reset-when-done";
 import { useWorkflowRun } from "@/lib/workflow/use-workflow-run";
 import {
   type ChallengeDestination,
@@ -74,15 +75,18 @@ function WritingChallenge({
   return <ChallengeScreen {...screen} writing={{ kind: "writing", run }} />;
 }
 
-export function ChallengeClient({
-  challenge,
-  moved,
-  sessionId,
-}: {
+type ChallengeClientProps = {
   challenge: ChallengeView;
   moved: ComponentProps<typeof ChallengeScreen>["moved"];
   sessionId: string | null;
-}) {
+};
+
+function ChallengeVisit({
+  challenge,
+  moved,
+  onDone,
+  sessionId,
+}: ChallengeClientProps & { onDone: () => void }) {
   const router = useRouter();
   const locale = useAppLocale();
   const { planItemId } = challenge;
@@ -93,6 +97,8 @@ export function ChallengeClient({
 
   const { actions, openWritten, startAfterWriting } = useMemo(() => {
     const open = (started: Pick<ChallengeDestination, "blockId" | "kind">): StartOutcome => {
+      onDone();
+
       router.push(
         getBlockHref({ blockId: started.blockId, mock: started.kind === "mock", search }),
       );
@@ -153,6 +159,7 @@ export function ChallengeClient({
 
     const challengeActions: ChallengeActions = {
       move: async () => {
+        onDone();
         const outcome = await moveChallengeAction({ page, planItemId }, getLocalTimeZone());
 
         if (outcome === "notDone") {
@@ -172,7 +179,7 @@ export function ChallengeClient({
       openWritten: () => startOnce(true),
       startAfterWriting: () => start(true),
     };
-  }, [challenge.blockId, challenge.mock, page, planItemId, router, search, startRereading]);
+  }, [challenge.blockId, challenge.mock, onDone, page, planItemId, router, search, startRereading]);
 
   const hrefs = useMemo(
     () => ({
@@ -208,4 +215,10 @@ export function ChallengeClient({
       screen={screen}
     />
   );
+}
+
+/** Back or a link shows this page as it was left, so a visit that opened its block or moved it starts over. */
+export function ChallengeClient(props: ChallengeClientProps) {
+  const reset = useResetWhenDone();
+  return <ChallengeVisit key={reset.key} {...props} onDone={reset.done} />;
 }

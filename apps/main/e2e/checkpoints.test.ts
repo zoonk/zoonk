@@ -59,4 +59,26 @@ test.describe("A checkpoint from today's session", () => {
 
     await page.context().close();
   });
+
+  test("Back from the checkpoint its challenge opened finds the challenge ready to start", async ({
+    browser,
+  }) => {
+    const { block, boss, user } = await createCheckpointLearner();
+    const page = await openAs(browser, user);
+    const checkpointUrl = new RegExp(`/checkpoint/${block.id}$`, "u");
+    const firstQuestion = `Question 1 of ${CHECKPOINT_QUESTIONS}`;
+
+    await page.goto(`/challenge/${boss.id}`);
+    await page.getByRole("button", { name: "Start" }).click();
+    await expect(page).toHaveURL(checkpointUrl);
+    await expect(page.getByRole("progressbar", { name: firstQuestion })).toBeAttached();
+
+    await page.goBack();
+    await expect(page).toHaveURL(new RegExp(`/challenge/${boss.id}$`, "u"));
+    await page.getByRole("button", { name: "Start" }).click();
+    await expect(page).toHaveURL(checkpointUrl);
+    await expect(page.getByRole("progressbar", { name: firstQuestion })).toBeAttached();
+
+    await page.context().close();
+  });
 });
