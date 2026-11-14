@@ -1,5 +1,16 @@
 import { describe, expect, it } from "vitest";
-import { daysUntilIsoDate, hasIsoDatePassed } from "./iso-date";
+import { daysUntilIsoDate, getIsoDateOptions, hasIsoDatePassed, isoDateToUtc } from "./iso-date";
+
+function formatInEnglish(
+  isoDate: string,
+  style: Parameters<typeof getIsoDateOptions>[0]["style"],
+  today: string,
+) {
+  return new Intl.DateTimeFormat("en-US", {
+    ...getIsoDateOptions({ isoDate, style, today }),
+    timeZone: "UTC",
+  }).format(isoDateToUtc(isoDate));
+}
 
 describe(daysUntilIsoDate, () => {
   it("counts whole days from the viewer's calendar day, whatever the time of day", () => {
@@ -27,5 +38,21 @@ describe(hasIsoDatePassed, () => {
     expect(hasIsoDatePassed({ isoDate: "2026-10-12", today: lateOnTheDay })).toBe(false);
     expect(hasIsoDatePassed({ isoDate: "2026-10-12", today: earlyNextDay })).toBe(true);
     expect(hasIsoDatePassed({ isoDate: "2026-10-20", today: earlyNextDay })).toBe(false);
+  });
+});
+
+describe(getIsoDateOptions, () => {
+  const today = "2026-12-31";
+
+  it.each([
+    { expected: "Monday, January 4, 2027", style: "weekdayDay" },
+    { expected: "Jan 4, 2027", style: "day" },
+    { expected: "January 4, 2027", style: "long" },
+  ] as const)("names the year of a $style date in another year", ({ expected, style }) => {
+    expect(formatInEnglish("2027-01-04", style, today)).toBe(expected);
+  });
+
+  it("leaves the year out of a date this year", () => {
+    expect(formatInEnglish("2026-12-14", "weekdayDay", today)).toBe("Monday, December 14");
   });
 });

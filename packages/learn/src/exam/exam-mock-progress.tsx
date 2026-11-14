@@ -8,6 +8,7 @@ import { useExtracted, useFormatter } from "next-intl";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { StatTile, StatTiles } from "../_components/stat-tile";
 import { TITLE_ROW_CLASS } from "../_components/title-row";
+import { useFormatMomentDay } from "../_utils/iso-date";
 import { getMockSubject } from "../mock/mock-labels";
 import { useExamScreen } from "./exam-context";
 import { ProgressLineChart, type ProgressPoint, Sparkline } from "./mock-progress-chart";
@@ -21,10 +22,9 @@ const TITLE_ID = "exam-progress-title";
 const PERCENT = 100;
 
 function useMockDate() {
-  const format = useFormatter();
+  const formatDay = useFormatMomentDay();
 
-  return (mock: ProgressMock) =>
-    format.dateTime(new Date(mock.finishedAt), { day: "numeric", month: "short" });
+  return (mock: ProgressMock) => formatDay(mock.finishedAt);
 }
 
 function usePoints(progress: Progress): ProgressPoint[] {

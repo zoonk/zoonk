@@ -73,9 +73,9 @@ const DATE_STYLES: Record<DateStyle, DateTimeFormatOptions> = {
   weekdayLongYear: { day: "numeric", month: "long", weekday: "long", year: "numeric" },
 };
 
-const YEAR_WHEN_ANOTHER_YEAR = new Set<DateStyle>(["day", "long"]);
+const YEAR_WHEN_ANOTHER_YEAR = new Set<DateStyle>(["day", "long", "weekdayDay"]);
 
-function getDateOptions({
+export function getIsoDateOptions({
   isoDate,
   style,
   today,
@@ -97,9 +97,26 @@ export function useFormatIsoDate() {
 
   return (isoDate: string, style: DateStyle = "day") =>
     format.dateTime(isoDateToUtc(isoDate), {
-      ...getDateOptions({ isoDate, style, today: plan?.today ?? toLocalIsoDate(new Date()) }),
+      ...getIsoDateOptions({ isoDate, style, today: plan?.today ?? toLocalIsoDate(new Date()) }),
       timeZone: "UTC",
     });
+}
+
+/** The day a moment happened, in the viewer's zone: "Nov 8", or "Nov 8, 2025" in another year. */
+export function useFormatMomentDay() {
+  const format = useFormatter();
+
+  return (moment: Date | string): string => {
+    const date = new Date(moment);
+    const today = toLocalIsoDate(new Date());
+    const anotherYear = isInAnotherYear({ isoDate: toLocalIsoDate(date), today });
+
+    return format.dateTime(date, {
+      day: "numeric",
+      month: "short",
+      ...(anotherYear && { year: "numeric" }),
+    });
+  };
 }
 
 /**

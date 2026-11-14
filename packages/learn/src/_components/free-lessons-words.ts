@@ -69,7 +69,7 @@ function useDayLine() {
       return lines.tomorrow();
     }
 
-    return lines.onDate(formatDate(opensOn, "dayMonth"));
+    return lines.onDate(formatDate(opensOn, "long"));
   };
 }
 
