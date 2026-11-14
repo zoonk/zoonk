@@ -72,12 +72,14 @@ struct ConversationIntro<Footer: View>: View {
     } secondary: {
       ZoonkList {
         task
+        gate
       }
       .safeAreaBar(edge: .bottom) { startBar }
     } single: {
       ZoonkList {
         about
         task
+        gate
       }
       .safeAreaBar(edge: .bottom) { startBar.keepsOffFold() }
     }
@@ -161,13 +163,30 @@ struct ConversationIntro<Footer: View>: View {
     }
   }
 
+  /// A call that can't start needs no sound.
   @ViewBuilder
   private var note: some View {
-    SectionFooter {
-      if isLocked {
-        GateWords(title: CallStartFooter.lockedTitle, line: CallStartFooter.lockedLine)
-      } else {
+    if !isLocked {
+      SectionFooter {
         SoundNote()
+      }
+    }
+  }
+
+  /// What stopped, under the call it stopped, as a heading of its own so it never reads as a goal.
+  @ViewBuilder
+  private var gate: some View {
+    if isLocked {
+      Section {
+        VStack(alignment: .leading, spacing: 4) {
+          CallStartFooter.lockedTitle
+            .typeStyle(.section)
+
+          CallStartFooter.lockedLine
+            .foregroundStyle(.mutedForeground)
+        }
+        .listRowBackground(Color.clear)
+        .listRowSeparator(.hidden)
       }
     }
   }
