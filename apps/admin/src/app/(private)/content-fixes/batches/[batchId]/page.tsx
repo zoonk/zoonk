@@ -5,15 +5,12 @@ import {
   AdminDetailHeaderSkeleton,
   AdminDetailPage,
 } from "@/components/admin-detail";
-import { AdminDisclosure } from "@/components/admin-json";
 import { AdminSection, AdminSectionEmpty, AdminSectionSkeleton } from "@/components/admin-section";
 import { DetailField, DetailFields } from "@/components/detail-field";
 import { getContentFixBatch } from "@/data/content-fixes/get-content-fix";
-import { capitalize, formatDateTime } from "@/lib/format";
 import { languagePairName } from "@/lib/language-filter";
 import { LINK_CLASS } from "@/lib/link-class";
-import { getEnvironment } from "@zoonk/utils/environment";
-import { MAIN_URL, getMainPageUrl } from "@zoonk/utils/url";
+import { getMainPageUrl } from "@zoonk/utils/url";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
 import Link from "next/link";
@@ -22,6 +19,7 @@ import { Suspense } from "react";
 import { ContentFixChanges } from "../../_components/content-fix-changes";
 import { RejectForm, ReviewBar, ReviewBarSkeleton } from "../../_components/content-fix-decision";
 import { ContentFixEffects } from "../../_components/content-fix-effects";
+import { ContentFixTechnicalDetails, proposedFact } from "../../_components/content-fix-facts";
 import { ContentFixVoice } from "../../_components/content-fix-voice";
 import { sharedPlace, sharedReason } from "../../content-fix-batch";
 import { ContentFixStatusMark, contentFixState, findAppliedRevert } from "../../content-fix-status";
@@ -74,13 +72,10 @@ function waitingFixes(fixes: readonly BatchFix[]) {
 function batchFacts(fixes: readonly BatchFix[]): string[] {
   const [first] = fixes;
   const { waiting } = waitingFixes(fixes);
-  const proposedIn = first?.proposerClientId === "admin" ? "Admin" : "the CLI";
 
   return [
     waiting.length > 0 ? `${String(waiting.length)} waiting for review` : "All decided",
-    first
-      ? `Proposed ${formatDateTime(first.createdAt)} by ${first.proposer?.name ?? "a deleted account"} in ${proposedIn}`
-      : "",
+    first ? proposedFact(first) : "",
   ].filter(Boolean);
 }
 
@@ -99,16 +94,9 @@ function Where({ batchId, fixes }: { batchId: string; fixes: readonly BatchFix[]
         </DetailFields>
       </AdminSection>
 
-      <AdminDisclosure label="Technical details">
-        <div className="pb-2 text-sm">
-          <DetailFields>
-            <DetailField label="Environment" mono={false}>
-              {capitalize(getEnvironment())} · {new URL(MAIN_URL).host}
-            </DetailField>
-            <DetailField label="Batch id">{batchId}</DetailField>
-          </DetailFields>
-        </div>
-      </AdminDisclosure>
+      <ContentFixTechnicalDetails>
+        <DetailField label="Batch id">{batchId}</DetailField>
+      </ContentFixTechnicalDetails>
     </>
   );
 }
@@ -130,6 +118,8 @@ function fixesDescription({
       recording === 1 && "1 waits for its new clip and can be approved once it's recorded.",
       recording > 1 &&
         `${String(recording)} wait for their new clips and can be approved once they're recorded.`,
+      fixes.some((fix) => contentFixState(fix) === "applied") &&
+        "To undo an applied fix, open it and propose undoing it.",
       mine > 0 &&
         `${mine === 1 ? "1 fix" : `${String(mine)} fixes`} you approved didn't finish applying. Finish applying completes ${mine === 1 ? "it" : "them"} with no passkey and decides nothing else.`,
     ]
