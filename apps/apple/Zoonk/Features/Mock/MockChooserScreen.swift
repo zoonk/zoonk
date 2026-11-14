@@ -85,7 +85,6 @@ private struct MockChooser: View {
   @State private var status: ChooserStatus = .choosing
   @State private var busy = false
   @State private var isOnScreen = false
-  @AccessibilityFocusState private var isPlusNoticeFocused: Bool
 
   let goalId: String
   let view: MockOptions
@@ -106,7 +105,6 @@ private struct MockChooser: View {
       ZoonkList {
         intro
         choices
-        plusSection
       }
     } secondary: {
       ZoonkList {
@@ -117,11 +115,10 @@ private struct MockChooser: View {
       ZoonkList {
         intro
         choices
-        plusSection
         lastMockSection
       }
     }
-    .bottomBar(note: failure.map { BarNote($0) }) {
+    .bottomBar(note: barNote) {
       startAction
     }
     .alert(
@@ -147,12 +144,6 @@ private struct MockChooser: View {
     }
     .onAppear { isOnScreen = true }
     .onDisappear { isOnScreen = false }
-    // See Plus took the place of the Start the learner pressed.
-    .onChange(of: isOpen) {
-      if !isOpen, status == .plusRequired {
-        isPlusNoticeFocused = true
-      }
-    }
   }
 
   @ViewBuilder
@@ -211,22 +202,6 @@ private struct MockChooser: View {
   }
 
   @ViewBuilder
-  private var plusSection: some View {
-    if !isOpen {
-      Section {
-        PlusNotice(
-          description: Text(
-            "Mock exams come with Plus: whenever you want, and every week in your plan.",
-            tableName: "Mock", comment: "Mocks without Plus"),
-          showsSeePlus: false
-        )
-        .accessibilityElement(children: .combine)
-        .accessibilityFocused($isPlusNoticeFocused)
-      }
-    }
-  }
-
-  @ViewBuilder
   private var lastMockSection: some View {
     if let last = view.lastMock, let blockId = last.blockId {
       Section {
@@ -238,20 +213,36 @@ private struct MockChooser: View {
     }
   }
 
+  /// A free learner sees the same page, and Start shows the gate in its place (main's chooser).
   @ViewBuilder
   private var startAction: some View {
-    if isOpen {
+    if status == .plusRequired {
+      SubscribeButton()
+        .buttonStyle(.mainAction)
+        .keyboardShortcut(.defaultAction)
+    } else {
       BusyButton(isBusy: busy) {
-        Task { await start() }
+        if isOpen {
+          Task { await start() }
+        } else {
+          status = .plusRequired
+        }
       } label: {
         startLabel
       }
       .buttonStyle(.mainAction)
       .disabled(pickedOption == nil)
       .keyboardShortcut(.defaultAction)
-    } else {
-      SeePlusButton().buttonStyle(.mainAction)
     }
+  }
+
+  private var barNote: BarNote? {
+    if status == .plusRequired {
+      return BarNote(
+        String(localized: "Mock exams need a subscription", table: "Mock"), tone: .status)
+    }
+
+    return failure.map { BarNote($0) }
   }
 
   private var detail: Text {

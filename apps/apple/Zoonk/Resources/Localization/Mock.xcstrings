@@ -6863,65 +6863,6 @@
         }
       }
     },
-    "Mock exams come with Plus: whenever you want, and every week in your plan." : {
-      "comment" : "Mocks without Plus",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit Plus kannst du jederzeit Probeprüfungen machen und findest jede Woche eine in deinem Plan."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus incluye simulacros: cuando quieras y cada semana en tu plan."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Avec Plus, passe des examens blancs quand tu veux et chaque semaine dans ton plan."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con Plus hai le simulazioni: quando vuoi e ogni settimana nel tuo piano."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plusなら、いつでも模試を受けられます。学習計画にも毎週組み込まれます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus에서는 모의고사를 원할 때마다 볼 수 있고, 매주 계획에도 포함돼요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Egzaminy próbne są w pakiecie Plus: kiedy chcesz i co tydzień w twoim planie."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Com o Plus, você faz simulados quando quiser e toda semana no seu plano."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deneme sınavları Plus’a dahil: istediğin zaman çözebilir, her hafta planında bulabilirsin."
-          }
-        }
-      }
-    },
     "Mock exams didn't load" : {
       "comment" : "Loading failed",
       "localizations" : {
@@ -6977,6 +6918,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Deneme sınavları yüklenemedi"
+          }
+        }
+      }
+    },
+    "Mock exams need a subscription" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für Probeprüfungen brauchst du ein Abo"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Necesitas una suscripción para los simulacros"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il faut un abonnement pour les examens blancs"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Per le simulazioni serve un abbonamento"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模試にはサブスクリプションへの登録が必要です"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "모의고사는 구독이 필요해요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Egzaminy próbne wymagają subskrypcji"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Simulados exigem uma assinatura"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deneme sınavları için abonelik gerekiyor"
           }
         }
       }
