@@ -2486,14 +2486,14 @@ msgid "It stays logged in on that computer until you log out there or leave it u
 msgstr "그 컴퓨터에서 로그아웃하기 전까지 로그인 상태가 유지돼요. 다만 30일 동안 사용하지 않으면 자동으로 로그아웃돼요."
 
 #: src/app/[lang]/device/cli-login-form.tsx
-msgctxt "WCaf5C"
-msgid "Approve"
-msgstr "승인"
-
-#: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "htvX-Z"
 msgid "Deny"
 msgstr "거부"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "WCaf5C"
+msgid "Approve"
+msgstr "승인"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "R-mNZZ"
