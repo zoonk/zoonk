@@ -4,7 +4,6 @@ import { MeterPart, MeterParts } from "@zoonk/ui/components/meter";
 import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { ListRowChevronSpace } from "../_components/list-group";
 import { StatusMark } from "../_components/status-mark";
 import { TITLE_ROW_CLASS, TRUNCATED_TITLE_CLASS } from "../_components/title-row";
 import { getPhaseWeight, getShareInPhase } from "../plan/phase-weight";
@@ -13,6 +12,7 @@ import { PlanDateText } from "../plan/plan-date-text";
 import { usePhaseName } from "../plan/use-phase-name";
 import { type JourneyPathLinks } from "./journey-links";
 import { PATH_ROW_BODY_CLASS } from "./journey-phase-events";
+import { PhaseWhen } from "./phase-when";
 import { BandFace } from "./roadmap-band";
 import { RoadmapFull } from "./roadmap-full";
 import { PhaseAxis } from "./roadmap-lane";
@@ -23,7 +23,6 @@ import {
   BAND_STATE_CLASS,
   getBandColumnsStyle,
 } from "./roadmap-styles";
-import { usePhaseWhen } from "./use-phase-when";
 import {
   getLessonShare,
   useRoadmapFinish,
@@ -43,7 +42,6 @@ function RoadmapCompact({
   const t = useExtracted();
   const { phases } = useRoadmapPhases();
   const position = useRoadmapPosition();
-  const phaseWhen = usePhaseWhen();
 
   const content = (
     <>
@@ -80,9 +78,9 @@ function RoadmapCompact({
               >{` · ${position.name}`}</span>
             )}
           </span>
-          <span className="text-muted-foreground flex items-center gap-3 font-mono tabular-nums">
-            {phaseWhen(position.phase)}
-            {onOpen ? <RowChevron /> : <ListRowChevronSpace />}
+          <span className="text-muted-foreground flex items-center gap-3">
+            <PhaseWhen phase={position.phase} />
+            {onOpen && <RowChevron />}
           </span>
         </span>
       )}

@@ -25,21 +25,20 @@ import {
   PATH_ROW_CLASS,
   PATH_ROW_LEADING_CLASS,
 } from "./journey-phase-events";
-import { PhaseLessons, PhaseMark, PhaseName, PhaseUntil } from "./path-phase-row";
+import { PHASE_END_CLASS, PhaseMark, PhaseName } from "./path-phase-row";
 import { findOpenPhase, findOwnChapter, isNamedLikeAChapter } from "./path-phases";
+import { PhaseWhen } from "./phase-when";
 import { useRoadmapFinish } from "./use-roadmap";
 
 const PHASE_ROW_CLASS = cn(PATH_ROW_CLASS, "min-h-12");
 
 function PhaseColumns({
   byPlace = false,
-  isLast,
   nextChapter,
   open,
   phase,
 }: {
   byPlace?: boolean;
-  isLast: boolean;
   nextChapter?: PlanChapterView;
   open: boolean;
   phase: PlanPhaseView;
@@ -51,10 +50,7 @@ function PhaseColumns({
       </span>
       <span className={PATH_ROW_BODY_CLASS}>
         <PhaseName byPlace={byPlace} isNext={Boolean(nextChapter)} open={open} phase={phase} />
-        <span className="flex flex-wrap items-center gap-x-3 empty:hidden">
-          <PhaseLessons phase={phase} />
-          <PhaseUntil isLast={isLast} phase={phase} />
-        </span>
+        <PhaseWhen className={PHASE_END_CLASS} phase={phase} />
       </span>
     </>
   );
@@ -74,13 +70,11 @@ function OpenPhaseEvents({ links, phase }: { links: JourneyPathLinks; phase: Pla
 
 function ChapterPhase({
   chapter,
-  isLast,
   links,
   open,
   phase,
 }: {
   chapter: PlanChapterView & { chapterId: string };
-  isLast: boolean;
   links: JourneyPathLinks;
   open: boolean;
   phase: PlanPhaseView;
@@ -93,12 +87,7 @@ function ChapterPhase({
         className={cn(PHASE_ROW_CLASS, "hover:bg-muted/70", isNext && "bg-muted hover:bg-muted")}
         href={links.chapter(chapter.chapterId)}
       >
-        <PhaseColumns
-          isLast={isLast}
-          nextChapter={isNext ? chapter : undefined}
-          open={open}
-          phase={phase}
-        />
+        <PhaseColumns nextChapter={isNext ? chapter : undefined} open={open} phase={phase} />
         <RowChevron />
       </LearnLink>
 
@@ -109,20 +98,18 @@ function ChapterPhase({
 
 function ChaptersPhase({
   byPlace,
-  isLast,
   links,
   open,
   phase,
 }: {
   byPlace: boolean;
-  isLast: boolean;
   links: JourneyPathLinks;
   open: boolean;
   phase: PlanPhaseView;
 }) {
   const hasContent = phase.chapters.length > 0 || phase.checkpoint !== null;
 
-  const header = <PhaseColumns byPlace={byPlace} isLast={isLast} open={open} phase={phase} />;
+  const header = <PhaseColumns byPlace={byPlace} open={open} phase={phase} />;
 
   if (!hasContent) {
     return (
@@ -161,12 +148,10 @@ function ChaptersPhase({
 }
 
 function PhaseItem({
-  isLast,
   links,
   open,
   phase,
 }: {
-  isLast: boolean;
   links: JourneyPathLinks;
   open: boolean;
   phase: PlanPhaseView;
@@ -176,13 +161,13 @@ function PhaseItem({
   const own = findOwnChapter({ name, phase });
 
   if (own) {
-    return <ChapterPhase chapter={own} isLast={isLast} links={links} open={open} phase={phase} />;
+    return <ChapterPhase chapter={own} links={links} open={open} phase={phase} />;
   }
 
   return (
     <ChaptersPhase
       byPlace={isNamedLikeAChapter({ name, phase })}
-      isLast={isLast}
+
       links={links}
       open={open}
       phase={phase}
@@ -223,16 +208,9 @@ export function JourneyPathList({ links }: { links: JourneyPathLinks }) {
   const openIndex = findOpenPhase(plan.phases);
   const beforeFinish = plan.phases.filter((phase) => phase.kind !== "afterExam");
   const afterExam = plan.phases.filter((phase) => phase.kind === "afterExam");
-  const lastIndex = beforeFinish.at(-1)?.index;
 
   const toItem = (phase: PlanPhaseView) => (
-    <PhaseItem
-      isLast={phase.index === lastIndex}
-      key={phase.index}
-      links={links}
-      open={phase.index === openIndex}
-      phase={phase}
-    />
+    <PhaseItem key={phase.index} links={links} open={phase.index === openIndex} phase={phase} />
   );
 
   return (
