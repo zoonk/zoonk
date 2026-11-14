@@ -1,5 +1,5 @@
 import { type TransactionClient, UsageKind, sql } from "@zoonk/db";
-import { type EntitlementTier } from "../contract";
+import { type AllowanceLimit, type EntitlementTier } from "../contract";
 import {
   FAIR_USE_SPACING_SECONDS,
   FREE_LESSON_LIMIT,
@@ -166,12 +166,7 @@ export function getUsageOpening({
     return null;
   }
 
-  const claims =
-    kind === "lessonStart"
-      ? [...counts.lessonStarts.latest, ...(preparing ? counts.lessonStarts.latestPrepared : [])]
-          .toSorted((a, b) => b.getTime() - a.getTime())
-          .map((at) => ({ amount: 1, at }))
-      : counts.rollingClaims;
+  const claims = getRollingClaims({ counts, kind, preparing });
 
   const opening =
     rule.rolling30Days === undefined
@@ -261,4 +256,23 @@ function cannotOpen({
     (rule.fairUseDay !== undefined && required > rule.fairUseDay) ||
     costMicros > getDailySpendBudgetMicros(tier)
   );
+}
+
+export function getRollingLimitOpening(
+  input: UsageOpeningInput & Pick<AllowanceLimit, "limit" | "resource">,
+): Date | null {
+  const claims = input.resource === "aiSpend" ? input.counts.callSpend : getRollingClaims(input);
+  return getRollingAvailableAt({ claims, limit: input.limit, required: input.required });
+}
+
+function getRollingClaims({
+  counts,
+  kind,
+  preparing = false,
+}: Pick<UsageOpeningInput, "counts" | "kind" | "preparing">): readonly RollingClaim[] {
+  return kind === "lessonStart"
+    ? [...counts.lessonStarts.latest, ...(preparing ? counts.lessonStarts.latestPrepared : [])]
+        .toSorted((a, b) => b.getTime() - a.getTime())
+        .map((at) => ({ amount: 1, at }))
+    : counts.rollingClaims;
 }

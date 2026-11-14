@@ -94,7 +94,7 @@ const allowanceLimitSchema = z
       .optional()
       .meta({
         description:
-          "The earliest instant the refused rolling request can be admitted against all its recorded caps, assuming no intervening use. Calls need positive time and money capacity and then run whole. Includes a currently blocking UTC-day reset. Null when waiting alone cannot admit the request; omitted for nonrolling limits.",
+          "The earliest instant the refused request can be admitted against all its recorded caps, assuming no intervening use. Set when a rolling cap is full, including when a longer daily cap determines the reported period. Calls need positive time and money capacity and then run whole. Includes a currently blocking UTC-day reset. Null when waiting alone cannot admit the request; omitted when only daily or lifetime limits apply.",
       }),
     limit: z.int(),
     period: z.enum(USAGE_PERIODS),
