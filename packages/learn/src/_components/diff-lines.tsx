@@ -9,7 +9,7 @@ export type DiffLine = {
   tone?: DiffTone;
 };
 
-export type DiffTone = "bad" | "good" | "neutral";
+type DiffTone = "bad" | "good" | "neutral";
 
 const LINE_CLASS: Readonly<Record<DiffLine["kind"], string>> = {
   added: "bg-success/12 text-success-text",
@@ -55,14 +55,15 @@ export function DiffLines({
   return (
     <ul
       className={cn(
-        "ring-border overflow-hidden rounded-[0.625rem] py-1 font-mono text-[0.78125rem] leading-[1.7] tabular-nums ring-1 ring-inset",
+        "ring-border overflow-hidden rounded-lg font-mono text-xs leading-[1.7] tabular-nums ring-1 ring-inset",
         className,
       )}
       data-slot="diff-lines"
     >
       {lines.map((line, index) => (
         <li
-          className={cn("flex px-3 py-px", getLineClass(line))}
+          // The box's room is the first and last lines', so a tinted line reaches the box's edge.
+          className={cn("flex px-3 py-px first:pt-1.25 last:pb-1.25", getLineClass(line))}
           // oxlint-disable-next-line react/no-array-index-key -- Lines are positions in the change.
           key={index}
         >

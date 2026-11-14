@@ -4,27 +4,27 @@ import { Link, usePathname } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
 import { useContentFeedback } from "@zoonk/learn/feedback";
 import { SIDEBAR_COUNT_CLASS, SIDEBAR_ITEM_CLASS } from "@zoonk/ui/components/sidebar";
-import { SidebarSearch, SidebarTooltip } from "@zoonk/ui/components/sidebar-toggle";
+import { BarSearch, SidebarSearch, SidebarTooltip } from "@zoonk/ui/components/sidebar-toggle";
 import { openCommandPalette } from "@zoonk/ui/lib/command-palette-event";
 import { MessageSquareIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { Suspense } from "react";
 
-export function LearnSidebarSearch({
-  className,
-  placement,
-}: {
-  className?: string;
-  placement?: "bar" | "sidebar";
-}) {
+export function LearnSidebarSearch() {
+  const t = useExtracted();
+  return <SidebarSearch label={t("Search or ask…")} onClick={openCommandPalette} />;
+}
+
+/** Under `lg` there is no sidebar, so the bar's icon opens the same palette. */
+export function LearnBarSearch({ edge }: { edge?: "start" }) {
   const t = useExtracted();
 
   return (
-    <SidebarSearch
-      className={className}
-      label={t("Search or ask…")}
+    <BarSearch
+      className="text-muted-foreground"
+      edge={edge}
+      label={t("Search")}
       onClick={openCommandPalette}
-      placement={placement}
     />
   );
 }
@@ -52,24 +52,19 @@ export function LearnSidebarFeedback() {
 }
 
 type SidebarMenu =
-  | "certificates"
+  | "activity"
   | "completedLessons"
+  | "courses"
+  | "energy"
   | "exam"
+  | "level"
   | "mindMaps"
   | "mistakes"
-  | "speaking"
-  | "stats";
-
-const ALSO_CURRENT: Partial<Record<SidebarMenu, string[]>> = {
-  exam: ["/mock/new"],
-  stats: [
-    getMenu("activity").url,
-    getMenu("energy").url,
-    getMenu("level").url,
-    getMenu("patterns").url,
-    getMenu("score").url,
-  ],
-};
+  | "mock"
+  | "patterns"
+  | "pricing"
+  | "score"
+  | "speaking";
 
 function isUnder(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(`${href}/`);
@@ -108,7 +103,7 @@ function SidebarLinkView({ count, current, label, menu }: SidebarLinkProps & { c
 function CurrentSidebarLink(props: SidebarLinkProps) {
   const pathname = usePathname();
   const { url: href } = getMenu(props.menu);
-  const current = [href, ...(ALSO_CURRENT[props.menu] ?? [])].some((url) => isUnder(pathname, url));
+  const current = isUnder(pathname, href);
 
   return <SidebarLinkView {...props} current={current} />;
 }

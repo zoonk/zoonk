@@ -5,11 +5,10 @@ import { Button } from "@zoonk/ui/components/button";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { PlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useId } from "react";
 import { Disclosure } from "../_components/disclosure";
 import { MindMapLimitNotice } from "../_components/help-limit-notice";
 import { LIST_GROUP_CLASS, ListGroup } from "../_components/list-group";
-import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
+import { PageSection } from "../_components/page";
 import { StatusRegion } from "../_components/status-region";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
@@ -42,7 +41,7 @@ function NotMadeLine({
   const routes = useLearnRoutes();
   const mountedAt = useMountTime();
   const { bulk, follower, page } = library;
-  const { eligible, needLessons, startable, stop } = page.createOffer;
+  const { eligible, startable, stop } = page.createOffer;
   const shownStop = bulk.stop ?? (startsNoMap(page.createOffer) ? stop : null);
   const { failed, onTheWay } = countChapterMaps(chapters);
 
@@ -106,18 +105,40 @@ function NotMadeLine({
     );
   }
 
-  if (needLessons > 0) {
-    return (
-      <p className={LINE_CLASS}>
-        {t(
-          "{count, plural, one {# chapter needs its lessons written first.} other {# chapters need their lessons written first.}}",
-          { count: needLessons },
-        )}
-      </p>
-    );
-  }
-
   return null;
+}
+
+/** A chapter whose lessons are all written: its map is made, or being made, without writing any. */
+export function canMakeNow(chapter: MindMapsPageChapter): boolean {
+  return (
+    chapter.lessonsToWrite === 0 &&
+    (chapter.status === "available" || chapter.status === "drawing" || chapter.status === "failed")
+  );
+}
+
+function NotMadeRows({
+  chapters,
+  library,
+  plus,
+}: {
+  chapters: readonly MindMapsPageChapter[];
+  library: MindMapsLibrary;
+  plus: boolean;
+}) {
+  return (
+    <ul className={LIST_GROUP_CLASS}>
+      {chapters.map((chapter) => (
+        <li key={chapter.chapterId}>
+          <MindMapRowView
+            place="library"
+            plus={plus}
+            request={library.row(chapter)}
+            view={{ ...chapter, image: null, outline: null }}
+          />
+        </li>
+      ))}
+    </ul>
+  );
 }
 
 /**
@@ -134,18 +155,17 @@ export function NotMadeYet({
   tier: EntitlementTier;
 }) {
   const t = useExtracted();
-  const titleId = useId();
   const { bulk, page } = library;
-  const { needLessons, startable } = page.createOffer;
+  const { startable } = page.createOffer;
   const plus = tier === "plus";
+  const now = chapters.filter((chapter) => canMakeNow(chapter));
+  const later = chapters.filter((chapter) => !canMakeNow(chapter));
 
   return (
-    <PageSection aria-labelledby={titleId} data-slot="maps-not-made">
-      <PageSectionHeader>
-        <PageSectionTitle id={titleId}>{t("Not made yet")}</PageSectionTitle>
-      </PageSectionHeader>
+    <PageSection aria-label={t("Other chapters")} data-slot="maps-not-made">
+      {now.length > 0 && <NotMadeRows chapters={now} library={library} plus={plus} />}
 
-      {startable > 0 && (
+      {startable > 1 && (
         <Button
           busy={bulk.status === "sending"}
           className="self-start"
@@ -154,36 +174,32 @@ export function NotMadeYet({
           size="lg"
           variant="outline"
         >
-          {t("{count, plural, one {Create # chapter map} other {Create # chapter maps}}", {
-            count: startable,
-          })}
+          {t("Create all")}
         </Button>
       )}
 
       <StatusRegion>
-        <NotMadeLine chapters={chapters} library={library} tier={tier} />
+        <NotMadeLine chapters={later} library={library} tier={tier} />
       </StatusRegion>
 
-      <ListGroup>
-        <Disclosure aside={chapters.length} icon={null} title={t("Show chapters")}>
-          {!plus && needLessons > 0 && page.createOffer.stop === null && (
-            <p className={LINE_CLASS}>{t("Writing lessons counts toward your free lessons.")}</p>
-          )}
-
-          <ul className={LIST_GROUP_CLASS}>
-            {chapters.map((chapter) => (
-              <li key={chapter.chapterId}>
-                <MindMapRowView
-                  place="library"
-                  plus={plus}
-                  request={library.row(chapter)}
-                  view={{ ...chapter, image: null, outline: null }}
-                />
-              </li>
-            ))}
-          </ul>
-        </Disclosure>
-      </ListGroup>
+      {later.length > 0 && (
+        <ListGroup>
+          <Disclosure
+            aside={<span className="font-mono text-xs tabular-nums">{later.length}</span>}
+            icon={null}
+            title={t("Other chapters")}
+          >
+            {!plus && later.some((chapter) => chapter.lessonsToWrite > 0) && (
+              <p className={LINE_CLASS}>
+                {t(
+                  "Making one of these maps writes its lessons first, and they count toward your free lessons.",
+                )}
+              </p>
+            )}
+            <NotMadeRows chapters={later} library={library} plus={plus} />
+          </Disclosure>
+        </ListGroup>
+      )}
     </PageSection>
   );
 }

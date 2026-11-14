@@ -25,32 +25,25 @@ private struct ActivityTiles: View {
     StatTileGrid(columns: [3, 2, 1], minimumWidth: minimumWidth) {
       StatTile(
         label: Text(
-          "Days studied", tableName: "Progress", comment: "Tile: how many days the learner studied"),
+          "Days studied", tableName: "Progress",
+          comment:
+            "Tile: how many days the learner studied"),
         value: Text(summary.learningDays, format: .number),
-        systemImage: "calendar.badge.checkmark", tone: .success,
-        detail: Text(
-          "Any day you studied", tableName: "Progress",
-          comment: "Under the study days: what counts as one")
-      )
+        systemImage: "calendar.badge.checkmark", tone: .success)
 
       StatTile(
         label: Text(
           "Lessons", tableName: "Progress", comment: "Tile: how many lessons the learner finished"),
         value: Text(summary.totalLessonCompletions, format: .number),
-        systemImage: "book", tone: .success,
-        detail: Text(
-          "Finished", tableName: "Progress",
-          comment: "Under the lessons count: lessons finished, agreeing with lessons")
-      )
+        systemImage: "book", tone: .success)
 
       StatTile(
         label: Text(
-          "Time", tableName: "Progress", comment: "Tile: how long the learner has studied in total"),
+          "Time", tableName: "Progress",
+          comment:
+            "Tile: how long the learner has studied in total"),
         quantity: progressLearningTime(summary.totalLearningSeconds),
-        systemImage: "clock",
-        detail: Text(
-          "Studying in total", tableName: "Progress", comment: "Under the learning time: all of it")
-      )
+        systemImage: "clock")
     }
   }
 }
@@ -60,21 +53,26 @@ struct ActivityCalendar: View {
 
   var body: some View {
     let maximum = days.map(\.activitiesCompleted).max() ?? 0
-    let formatDay = calendarDayFormatter(newest: days.last?.date)
+    let today = PlanDate.today()
     let studied = days.count(where: { $0.activitiesCompleted > 0 })
 
     StatsCalendar(
       title: Text(
-        "Past 12 months", tableName: "Progress",
-        comment: "Title of a calendar of the past year's days"),
+        "Past 12 months", tableName: "Progress"),
       gridLabel: Text(
-        "Activity by day", tableName: "Progress", comment: "Spoken name of the study days calendar"),
+        "Activity by day", tableName: "Progress"),
       legendLabel: Text(
         "Activity from less to more", tableName: "Progress",
-        comment: "Spoken key of the study days calendar's shades"),
-      low: Text("Less", tableName: "Progress", comment: "Low end of the study days calendar's key"),
+        comment:
+          "Legend of a heatmap, from the lightest to the darkest squares."),
+      low: Text(
+        "Less", tableName: "Progress",
+        comment:
+          "The light end of a heatmap's legend: less activity."),
       high: Text(
-        "More", tableName: "Progress", comment: "High end of the study days calendar's key"),
+        "More", tableName: "Progress",
+        comment:
+          "The dark end of a heatmap's legend: more activity."),
       shades: [
         Color.surface3, Color.success.opacity(0.25), Color.success.opacity(0.45),
         Color.success.opacity(0.7), Color.success,
@@ -84,7 +82,8 @@ struct ActivityCalendar: View {
           date: day.date,
           step: CalendarSteps.activity(day.activitiesCompleted, maximum: maximum),
           detail: ChartPointDetail(
-            label: formatDay(day.date), value: activityCount(day.activitiesCompleted)),
+            label: PlanDate.text(day.date.id, today: today),
+            value: activityCount(day.activitiesCompleted)),
           value: Double(day.activitiesCompleted))
       },
       chartTitle: String(
@@ -102,8 +101,6 @@ struct ActivityCalendar: View {
   private func activityCount(_ count: Int) -> String {
     count == 0
       ? String(localized: "No study", table: "Progress", comment: "A calendar day without study")
-      : String(
-        localized: "\(count) activities", table: "Progress",
-        comment: "A calendar day's lessons, reviews and practice finished")
+      : String(localized: "Studied", table: "Progress", comment: "A calendar day with study")
   }
 }

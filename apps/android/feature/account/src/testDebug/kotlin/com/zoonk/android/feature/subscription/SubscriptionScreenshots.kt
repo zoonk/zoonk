@@ -26,7 +26,6 @@ import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
-import com.zoonk.api.models.AllowanceItem
 import com.zoonk.api.models.FreePlan
 import org.junit.Assume.assumeTrue
 import org.junit.Before
@@ -105,7 +104,6 @@ class SubscriptionScreenshots {
                                 navigator = rememberAppNavigator(),
                                 onSubscribe = {},
                                 onRetryFreePlan = {},
-                                messagesUsed = MESSAGES.takeIf { viewer == PlanViewer.Free },
                             )
                         }
                     }
@@ -126,10 +124,8 @@ class SubscriptionScreenshots {
 private val LIMITS =
     FreePlan(
         activeGoals = 1,
-        examPrepDays = 7,
         guestLessons = 3,
-        lessonsPerDay = 5,
-        lessonsPerMonth = 40,
+        lessonsPer30Days = 20,
         tutorMessagesPerDay = 10,
         uploadsPerDay = 1,
     )
@@ -139,17 +135,4 @@ private val OFFERS =
         PlusOffer(BillingPeriod.Monthly, "monthly", "$9.99", 9_990_000, "USD"),
         PlusOffer(BillingPeriod.Yearly, "yearly", "$79.99", 79_990_000, "USD"),
         product = Unit,
-    )
-
-private val MESSAGES =
-    AllowanceItem(
-        dailyLimit = 10,
-        fairUseDailyLimit = null,
-        kind = AllowanceItem.Kind.TUTOR_MESSAGE,
-        monthlyLimit = null,
-        remaining = 7,
-        totalLimit = null,
-        usedThisMonth = 3,
-        usedToday = 3,
-        usedTotal = 3,
     )

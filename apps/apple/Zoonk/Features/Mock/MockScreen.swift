@@ -146,63 +146,45 @@ struct MockClock: View {
   }
 }
 
-struct MockStepStatus: View {
-  let run: MockRun
-
-  var body: some View {
-    VStack(alignment: .leading, spacing: 6) {
-      switch run.queue.status {
-      case .retrying:
-        HStack {
-          Text(retrying)
-            .frame(maxWidth: .infinity, alignment: .leading)
-          Button {
-            run.queue.retryNow()
-          } label: {
-            Text("Retry", tableName: "Mock", comment: "Sends the waiting answers now")
-          }
-          .buttonStyle(.outline)
-          .controlSize(.small)
-        }
-        .foregroundStyle(.mutedForeground)
-      case .refused:
-        FailureLine(
-          message: LocalizedStringResource(
-            "Your last answer wasn't saved.", table: "Mock", comment: "A refused save"))
-      case .saved, .saving:
-        EmptyView()
-      }
-
-      if run.failed {
-        FailureLine(
-          message: run.queue.status == .saved
-            ? String(
-              localized: "That didn't go through. Your answers are saved. Try again in a moment.",
-              table: "Mock", comment: "A mock step failed; the answers are saved")
-            : String(
-              localized: "That didn't go through. Try again in a moment.", table: "Mock",
-              comment: "A mock step failed"))
-      } else if run.slow {
-        Text(slow)
-          .foregroundStyle(.mutedForeground)
-      }
+extension MockRun {
+  /// The one line over a mock step's buttons: what didn't go through first, then what it waits on.
+  var barNote: BarNote? {
+    if failed {
+      return BarNote(
+        queue.status == .saved
+          ? String(
+            localized: "That didn't go through. Your answers are saved. Try again in a moment.",
+            table: "Mock", comment: "A mock step failed; the answers are saved")
+          : String(
+            localized: "That didn't go through. Try again in a moment.", table: "Mock",
+            comment: "A mock step failed"))
     }
-    .typeStyle(.body)
-    .frame(maxWidth: .infinity, alignment: .leading)
-    .announcesStatus(run.queue.status == .retrying ? retrying : nil)
-    .announcesStatus(!run.failed && run.slow ? slow : nil)
-  }
 
-  private var retrying: String {
-    String(
-      localized: "Not saved yet\u{00A0}· retrying", table: "Mock",
-      comment: "An answer waits to save")
-  }
+    switch queue.status {
+    case .refused:
+      return BarNote(
+        LocalizedStringResource(
+          "Your last answer wasn't saved.", table: "Mock", comment: "A refused save"))
+    case .retrying:
+      return BarNote(
+        String(
+          localized: "Not saved yet\u{00A0}· retrying", table: "Mock",
+          comment: "An answer waits to save"),
+        tone: .status,
+        action: BarNote.Action(
+          label: Text("Retry", tableName: "Mock", comment: "Sends the waiting answers now"),
+          perform: { [queue] in queue.retryNow() }))
+    case .saved, .saving:
+      break
+    }
 
-  private var slow: String {
-    String(
-      localized: "Still handing it in. This is taking longer than usual.", table: "Mock",
-      comment: "A mock step is slow")
+    return slow
+      ? BarNote(
+        String(
+          localized: "Still handing it in. This is taking longer than usual.", table: "Mock",
+          comment: "A mock step is slow"),
+        tone: .status)
+      : nil
   }
 }
 
@@ -212,7 +194,11 @@ struct MockActionBar<Actions: View>: View {
 
   var body: some View {
     VStack(spacing: 10) {
-      MockStepStatus(run: run)
+      if let note = run.barNote {
+        note
+          .typeStyle(.body)
+          .frame(maxWidth: .infinity, alignment: .leading)
+      }
       HStack(spacing: 12) { actions }
     }
     .scenePadding(.horizontal)
@@ -250,26 +236,23 @@ private struct MockTimeUpView: View {
       title: Text("Time's up", tableName: "Mock", comment: "A mock section's time ran out"),
       detail: run.queue.status == .saved
         ? Text(
-          "Your answers so far are saved.", tableName: "Mock",
+          "Your answers are saved.", tableName: "Mock",
           comment: "Under time's up, once every answer is stored") : nil
     )
     .navigationTitle(MockLabels.title(number: view.number))
-    .safeAreaBar(edge: .bottom) {
-      MockActionBar(run: run) {
-        BusyButton(isBusy: run.busy == .submit, icon: .forward) {
-          Task { await run.submitSection() }
-        } label: {
-          if view.isLastSectionCurrent {
-            Text("See how it went", tableName: "Mock", comment: "Hands in the mock's last section")
-          } else {
-            Text("Continue", tableName: "Mock", comment: "Hands in a section after its time")
-          }
+    .bottomBar(note: run.barNote) {
+      BusyButton(isBusy: run.busy == .submit) {
+        Task { await run.submitSection() }
+      } label: {
+        if view.isLastSectionCurrent {
+          Text("See result", tableName: "Mock", comment: "Hands in the mock's last section")
+        } else {
+          Text("Continue", tableName: "Mock", comment: "Hands in a section after its time")
         }
-        .buttonStyle(.mainAction)
-        .controlSize(.large)
-        .disabled(run.pending(besides: .submit))
-        .keyboardShortcut(.defaultAction)
       }
+      .buttonStyle(.mainAction)
+      .disabled(run.pending(besides: .submit))
+      .keyboardShortcut(.defaultAction)
     }
     .lonePage()
   }
@@ -283,18 +266,15 @@ private struct MockGradingView: View {
       systemImage: "tray.and.arrow.down",
       title: Text("Mock exam handed in", tableName: "Mock", comment: "A mock waiting to be graded")
     )
-    .safeAreaBar(edge: .bottom) {
-      MockActionBar(run: run) {
-        BusyButton(isBusy: run.busy == .finish, icon: .forward) {
-          Task { await run.finish() }
-        } label: {
-          Text("See how it went", tableName: "Mock", comment: "Grades a handed-in mock")
-        }
-        .buttonStyle(.mainAction)
-        .controlSize(.large)
-        .disabled(run.pending(besides: .finish))
-        .keyboardShortcut(.defaultAction)
+    .bottomBar(note: run.barNote) {
+      BusyButton(isBusy: run.busy == .finish) {
+        Task { await run.finish() }
+      } label: {
+        Text("See result", tableName: "Mock", comment: "Grades a handed-in mock")
       }
+      .buttonStyle(.mainAction)
+      .disabled(run.pending(besides: .finish))
+      .keyboardShortcut(.defaultAction)
     }
     .lonePage()
   }
@@ -311,10 +291,10 @@ private struct MockExpiredView: View {
       title: Text(
         "Time ran out while you were away", tableName: "Mock", comment: "An abandoned mock"),
       detail: Text(
-        "With most of it unanswered, it isn't scored and doesn't change your preparation.",
+        "This one doesn't count.",
         tableName: "Mock", comment: "Why an abandoned mock has no result")
     )
-    .safeAreaBar(edge: .bottom) {
+    .bottomBar {
       Button {
         if let planItemId = view.planItemId {
           router.dismissTask()
@@ -323,12 +303,10 @@ private struct MockExpiredView: View {
           router.open(.mockChooser)
         }
       } label: {
-        Text("Take a new mock exam", tableName: "Mock", comment: "Starts over after expiring")
+        Text("Take another", tableName: "Mock", comment: "Starts over after expiring")
       }
       .buttonStyle(.mainAction)
-      .controlSize(.large)
-      .scenePadding(.horizontal)
-      .padding(.vertical, 10)
+      .keyboardShortcut(.defaultAction)
     }
     .lonePage()
   }
@@ -383,17 +361,14 @@ private struct MockBreakView: View {
       guard !Task.isCancelled else { return }
       await run.endBreak()
     }
-    .safeAreaBar(edge: .bottom) {
-      MockActionBar(run: run) {
-        BusyButton(isBusy: run.busy == .endBreak, icon: .play) {
-          Task { await run.endBreak() }
-        } label: {
-          Text("Start the next section", tableName: "Mock", comment: "Ends a mock's break early")
-        }
-        .buttonStyle(.mainAction)
-        .controlSize(.large)
-        .disabled(run.pending(besides: .endBreak))
+    .bottomBar(note: run.barNote) {
+      BusyButton(isBusy: run.busy == .endBreak) {
+        Task { await run.endBreak() }
+      } label: {
+        Text("Start now", tableName: "Mock", comment: "Ends a mock's break early")
       }
+      .buttonStyle(.mainAction)
+      .disabled(run.pending(besides: .endBreak))
     }
     .lonePage()
   }
@@ -437,8 +412,8 @@ private struct MockSpeakingView: View {
           if view.speaking != nil {
             if left > 0 {
               Text(
-                "Do the tasks in order. Each one is a call, and you come back here after it. \(left) tasks left.",
-                tableName: "Mock", comment: "Mock speaking tasks still to do")
+                "Do the tasks in order. Each one is a call.", tableName: "Mock",
+                comment: "Mock speaking tasks still to do")
             } else {
               Text(
                 "Every task is done. Hand in this section to go on.", tableName: "Mock",
@@ -460,29 +435,25 @@ private struct MockSpeakingView: View {
       .onDisappear { Task { await run.reload() } }
       .zoonkStyles()
     }
-    .safeAreaBar(edge: .bottom) {
-      MockActionBar(run: run) {
-        if view.speaking == nil {
-          if !run.isWritingPaper {
-            BusyButton(isBusy: run.busy == .startSpeaking, icon: .play) {
-              Task { await run.startSpeaking() }
-            } label: {
-              Text("Start the speaking part", tableName: "Mock", comment: "Starts mock speaking")
-            }
-            .buttonStyle(.mainAction)
-            .controlSize(.large)
-            .disabled(run.pending(besides: .startSpeaking))
-          }
-        } else {
-          BusyButton(isBusy: run.busy == .submit, icon: .send) {
-            confirmsHandIn = true
+    .bottomBar(note: run.barNote) {
+      if view.speaking == nil {
+        if !run.isWritingPaper {
+          BusyButton(isBusy: run.busy == .startSpeaking) {
+            Task { await run.startSpeaking() }
           } label: {
-            handInLabel
+            Text("Start", tableName: "Mock", comment: "Starts mock speaking")
           }
           .buttonStyle(.mainAction)
-          .controlSize(.large)
-          .disabled(run.pending(besides: .submit))
+          .disabled(run.pending(besides: .startSpeaking))
         }
+      } else {
+        BusyButton(isBusy: run.busy == .submit) {
+          confirmsHandIn = true
+        } label: {
+          handInLabel
+        }
+        .buttonStyle(.mainAction)
+        .disabled(run.pending(besides: .submit))
       }
     }
     .lonePage()
@@ -503,7 +474,7 @@ private struct MockSpeakingView: View {
           tableName: "Mock", comment: "Handing in speaking with tasks left")
       } else {
         Text(
-          "Every task is done. After this, you can't do them again in this mock.",
+          "Every task is done. After this, you can't do them again in this mock exam.",
           tableName: "Mock", comment: "Handing in speaking with every task done")
       }
     }
@@ -544,8 +515,8 @@ private struct MockSpeakingView: View {
 
   private var handInLabel: Text {
     view.isLastSectionCurrent
-      ? Text("Hand in the mock exam", tableName: "Mock", comment: "Hands in the last section")
-      : Text("Hand in this section", tableName: "Mock", comment: "Hands in a section")
+      ? Text("Hand in", tableName: "Mock", comment: "Hands in the last section")
+      : Text("Hand in section", tableName: "Mock", comment: "Hands in a section")
   }
 
   private var handInTitle: Text {

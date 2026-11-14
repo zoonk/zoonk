@@ -1,8 +1,6 @@
 "use client";
 
-import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useId } from "react";
-import { ChangeSaveError } from "../_components/save-error";
 import { AimChoices } from "../language-aim/aim-picker";
 import { useAimEnds } from "../language-aim/use-aim-ends";
 import { useAimWords } from "../language-aim/use-aim-words";
@@ -40,11 +38,10 @@ function useAimFinishes() {
 
 /** Only a tap, a number key or Enter applies an aim: the arrow keys move without re-planning. */
 export function PlanAim() {
-  const t = useExtracted();
   const labelId = useId();
   const words = useAimWords();
   const { plan } = usePlanScreen();
-  const { change, failed, isPending } = usePlanChange();
+  const { change, isPending } = usePlanChange();
   const languageAim = plan.languageAim;
   const choice = useTappedChoice(languageAim?.aim ?? null);
   const ends = useAimFinishes();
@@ -58,9 +55,6 @@ export function PlanAim() {
       <h3 className="text-sm font-medium" id={labelId}>
         {words.title}
       </h3>
-      <p className="text-muted-foreground text-sm">
-        {t("How far your course goes, which sets how long your plan is.")}
-      </p>
 
       <AimChoices
         numberKeys={false}
@@ -71,13 +65,11 @@ export function PlanAim() {
         }}
         options={languageAim.choices.map((item) => ({
           aim: item.aim,
-          detail: words.left({ endDate: ends[item.aim] ?? null, hours: item.hours }),
+          detail: words.around(ends[item.aim] ?? null),
         }))}
         pending={isPending}
         value={choice.shown}
       />
-
-      {failed && <ChangeSaveError />}
     </section>
   );
 }

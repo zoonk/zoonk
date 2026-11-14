@@ -129,7 +129,7 @@ test.describe("Course certificates", () => {
     }
   });
 
-  test("a free learner's certificate stays locked and theirs: See Plus doesn't close its moment", async ({
+  test("a free learner's certificate waits behind the gate and stays theirs, and leaving keeps its moment", async ({
     browser,
     noProgressUser,
     userWithoutProgress: page,
@@ -137,23 +137,21 @@ test.describe("Course certificates", () => {
     const { goal, lesson } = await createLastLessonGoal(noProgressUser.id);
     const moment = await finishLastLesson(page, lesson.id);
 
-    await expect(moment.getByText("Get your certificate with Plus")).toBeVisible();
     await expect(moment.getByRole("button", { name: "Share" })).toBeHidden();
 
-    await moment.getByRole("link", { name: "See Plus" }).click();
-    await expect(page).toHaveURL(/\/subscription$/u);
+    await moment.getByRole("link", { name: "See your certificate" }).click();
+
+    await expect(
+      page.getByRole("heading", { level: 1, name: "Certificates need a subscription" }),
+    ).toBeVisible();
+
+    await expect(page.getByRole("button", { name: "Share" })).toBeHidden();
 
     const certificate = await readCertificate(goal.id);
     expect(certificate.shownAt).toBeNull();
 
-    await page.goto(`/c/${certificate.code}`);
-
-    await expect(
-      page.getByRole("heading", { level: 1, name: /Atoms up close · Beginner$/u }),
-    ).toBeVisible();
-
-    await expect(page.getByText("Get your certificate with Plus")).toBeVisible();
-    await expect(page.getByRole("button", { name: "Share" })).toBeHidden();
+    await page.getByRole("link", { name: "Subscribe" }).click();
+    await expect(page).toHaveURL(/\/subscription$/u);
 
     const visitor = await browser.newContext();
     const visitorPage = await visitor.newPage();

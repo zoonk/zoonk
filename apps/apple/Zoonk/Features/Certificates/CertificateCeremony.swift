@@ -42,7 +42,7 @@ struct CertificateCeremony: View {
         }
         .scenePadding()
       }
-      .safeAreaBar(edge: .bottom) { continueBar }
+      .bottomBar { barButtons }
     } single: {
       CenteredScroll {
         VStack(spacing: 0) {
@@ -54,7 +54,7 @@ struct CertificateCeremony: View {
         .frame(maxWidth: 600)
         .scenePadding()
       }
-      .safeAreaBar(edge: .bottom) { continueBar.keepsOffFold() }
+      .bottomBar { barButtons }
     }
     .landsActsOnInput()
     .celebratesOnce(id: top.code)
@@ -117,7 +117,7 @@ struct CertificateCeremony: View {
         .multilineTextAlignment(.center)
         .accessibilityAddTraits(.isHeader)
 
-      // The Plus notice says how to get a locked one.
+      // A locked one's gate says what it needs instead.
       if !top.locked {
         Text(line)
           .typeStyle(.reading)
@@ -131,8 +131,15 @@ struct CertificateCeremony: View {
   @ViewBuilder
   private func learnerPart(_ certificate: Certificate?) -> some View {
     if top.locked {
-      CertificatePlusNotice(seePlus: onSeePlus)
-        .padding(.top, 18)
+      // The gate itself, since the learner opened the certificate: no card about a paid plan.
+      Text(
+        "Certificates need a subscription", tableName: "Certificates",
+        comment: "On a certificate a learner earned without a subscription"
+      )
+      .typeStyle(.reading)
+      .foregroundStyle(.mutedForeground)
+      .multilineTextAlignment(.center)
+      .padding(.top, 18)
     } else if name.isEmpty || isEditingName {
       CertificateNameEditor(name: $nameDraft, current: name) {
         isEditingName = false
@@ -239,15 +246,29 @@ struct CertificateCeremony: View {
     .foregroundStyle(.mutedForeground)
   }
 
-  private var continueBar: some View {
-    Button(action: close) {
-      Text("Continue", tableName: "Certificates", comment: "Closes the certificate's award moment")
-        .frame(maxWidth: .infinity)
+  /// A locked certificate's gate makes Subscribe the main action, and Continue steps aside.
+  @ViewBuilder
+  private var barButtons: some View {
+    if top.locked {
+      Button(action: close) {
+        Text(
+          "Continue", tableName: "Certificates", comment: "Closes the certificate's award moment")
+      }
+      .buttonStyle(.outline)
+
+      Button(action: onSeePlus) {
+        Text("Subscribe", tableName: "Certificates", comment: "Opens the subscription page")
+      }
+      .buttonStyle(.mainAction)
+      .keyboardShortcut(.defaultAction)
+    } else {
+      Button(action: close) {
+        Text(
+          "Continue", tableName: "Certificates", comment: "Closes the certificate's award moment")
+      }
+      .buttonStyle(.mainAction)
+      .keyboardShortcut(.defaultAction)
     }
-    .buttonStyle(.mainAction)
-    .controlSize(.large)
-    .keyboardShortcut(.defaultAction)
-    .scenePadding()
   }
 
   private var title: String {
@@ -303,29 +324,6 @@ struct CertificateCeremony: View {
   private func close() {
     store.closeMoments(certificates.map(\.code))
     onClose()
-  }
-}
-
-/// What a locked certificate says wherever it shows; the list's one notice covers all of them. See
-/// Plus opens Plus unless `seePlus` leaves the screen first.
-struct CertificatePlusNotice: View {
-  var isList = false
-  var seePlus: (() -> Void)?
-
-  var body: some View {
-    PlusNotice(
-      title: isList
-        ? Text(
-          "Certificates come with Plus", tableName: "Certificates",
-          comment: "Title of the notice at the top of the learner's certificates without Plus")
-        : Text(
-          "Get your certificate with Plus", tableName: "Certificates",
-          comment: "Title of the notice on a certificate the learner earned without Plus"),
-      description: Text(
-        "Plus gives you a certificate for every level you finish, to print and share. Certificates you get stay yours if Plus ends.",
-        tableName: "Certificates",
-        comment: "What Plus does for certificates, on one the learner earned without Plus"),
-      seePlus: seePlus)
   }
 }
 

@@ -15,7 +15,6 @@ import { readFocusTestSummary } from "../../learner/placement/focus-test-summary
 import { getOwnLevel } from "../../learner/placement/placement-contract";
 import { getMinutesPerItem, getPlanStatus } from "../../preparation/plan-status";
 import { loadStudyWeek } from "../../progress/_utils/load-study-week";
-import { getExamPrepAccess, getFreeWeekEnd } from "../../sessions/_utils/exam-access";
 import { getNoticeWaitState } from "../notice-wait";
 import { type PlanDayView, type PlanView } from "../plan-view-contract";
 import { getSkillArea } from "../planner/graph-areas";
@@ -68,24 +67,13 @@ function buildAreas({
 
 async function getAccess(context: PlanReadContext): Promise<PlanView["access"]> {
   if (context.goal.kind !== "exam") {
-    return { freeUntil: null, freeWeekOver: false, mocksRequirePlus: false };
+    return { mocksRequirePlus: false };
   }
 
   const allowance = await getAllowance();
   const examPrep = allowance?.examPrep ?? null;
 
-  const freeUntil = getFreeWeekEnd({ examPrep, goal: context.goal, timeZone: context.timeZone });
-
-  return {
-    freeUntil: freeUntil ? toIsoDate(freeUntil) : null,
-    freeWeekOver: getExamPrepAccess({
-      examPrep,
-      goal: context.goal,
-      timeZone: context.timeZone,
-      today: context.today,
-    }).trialEnded,
-    mocksRequirePlus: !(examPrep?.includesMockExams ?? false),
-  };
+  return { mocksRequirePlus: !(examPrep?.includesMockExams ?? false) };
 }
 
 async function loadChapterTitles(chapterIds: string[]): Promise<Map<string, string>> {
@@ -101,20 +89,18 @@ function readPlanStatus({
   phaseChallengesRequired,
   catchUp,
   context,
-  freeWeekOver,
   studiesPastTarget,
 }: {
   phaseChallengesRequired: boolean;
   catchUp: number;
   context: PlanReadContext;
-  freeWeekOver: boolean;
   studiesPastTarget: boolean;
 }): PlanView["status"] {
   const { goal, items, phases, plan, today } = context;
 
   return getPlanStatus({
     catchUp,
-    freeWeekOver,
+
     goalKind: goal.kind,
     items,
     minutesPerItem: getMinutesPerItem({
@@ -204,13 +190,7 @@ export async function buildPlanView({
     taughtSkillIds,
     challengeResults,
   ] = await Promise.all([
-    loadPlanChangeViews({
-      context: savedContext,
-      goal,
-      now,
-      planId: context.plan.id,
-      planVersion: context.plan.version,
-    }),
+    loadPlanChangeViews({ goal, now, planId: context.plan.id, planVersion: context.plan.version }),
     getAccess(context),
     loadChapterTitles(chapterIds),
     loadPlanCourse({ goal, items }),
@@ -251,7 +231,6 @@ export async function buildPlanView({
   const status = readPlanStatus({
     catchUp: catchUp.length,
     context,
-    freeWeekOver: access.freeWeekOver,
     phaseChallengesRequired,
     studiesPastTarget: fullCourse,
   });

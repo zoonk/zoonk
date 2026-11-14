@@ -45,7 +45,7 @@ function shapeModels(body: Record<string, unknown>, names: string[]) {
 
   if (unknown.length > 0) {
     throw new CliError(
-      `No readable model named ${unknown.join(", ")}. Run \`pnpm zoonk staff models\` to list them.`,
+      `No model named ${unknown.join(", ")}. Run \`pnpm zoonk staff models\` to list the ones you can read.`,
       EXIT_CODES.usage,
     );
   }

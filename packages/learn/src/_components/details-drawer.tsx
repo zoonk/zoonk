@@ -3,33 +3,28 @@
 import { Button } from "@zoonk/ui/components/button";
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
-  DrawerHeader,
   DrawerPopup,
   DrawerTitle,
   DrawerTrigger,
 } from "@zoonk/ui/components/drawer";
-import { XIcon } from "lucide-react";
-import { useExtracted } from "next-intl";
+import { SheetHeader } from "./sheet-header";
 import { TASK_OPTION_CLASS } from "./task-layout";
 
-const TRIGGER: Record<"link" | "option" | "secondary", React.ReactElement> = {
+type Trigger = "link" | "option" | "secondary" | "small" | "tag";
+
+const TRIGGER: Record<Trigger, React.ReactElement> = {
   link: <Button className="self-start" variant="link" />,
   option: <Button className={TASK_OPTION_CLASS} size="xl" variant="ghost" />,
   secondary: <Button className="shrink-0" size="xl" variant="outline" />,
+  small: <Button className="shrink-0" size="sm" variant="outline" />,
+  tag: (
+    <button
+      className="hit-area text-muted-foreground decoration-faint focus-visible:ring-ring/50 relative self-start justify-self-start rounded-md text-xs underline decoration-dotted underline-offset-2 outline-none focus-visible:ring-[3px]"
+      type="button"
+    />
+  ),
 };
-
-export function DrawerCloseButton() {
-  const t = useExtracted();
-
-  return (
-    <DrawerClose render={<Button className="-mr-2 shrink-0" size="icon" variant="ghost" />}>
-      <XIcon aria-hidden="true" />
-      <span className="sr-only">{t("Close")}</span>
-    </DrawerClose>
-  );
-}
 
 export function DetailsDrawer({
   children,
@@ -40,17 +35,16 @@ export function DetailsDrawer({
   children: React.ReactNode;
   label: string;
   title: string;
-  trigger?: "link" | "option" | "secondary";
+  trigger?: Trigger;
 }) {
   return (
     <Drawer>
       <DrawerTrigger render={TRIGGER[trigger]}>{label}</DrawerTrigger>
 
       <DrawerPopup>
-        <DrawerHeader className="flex-row items-center justify-between gap-3">
-          <DrawerTitle className="text-xl font-semibold">{title}</DrawerTitle>
-          <DrawerCloseButton />
-        </DrawerHeader>
+        <SheetHeader>
+          <DrawerTitle>{title}</DrawerTitle>
+        </SheetHeader>
         <DrawerContent className="pt-2">{children}</DrawerContent>
       </DrawerPopup>
     </Drawer>

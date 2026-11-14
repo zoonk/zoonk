@@ -130,7 +130,6 @@ internal fun ColumnScope.StepForm(
                 modifier = Modifier.fillMaxWidth(),
                 enabled = canContinue && !pending,
                 focusableWhenDisabled = pending,
-                trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
             ) {
                 Text(continueLabel ?: stringResource(R.string.onboarding_continue))
             }

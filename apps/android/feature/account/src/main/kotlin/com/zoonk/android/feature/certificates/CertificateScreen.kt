@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -43,7 +42,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.TrackShown
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.catalog.courseLevelName
@@ -52,12 +53,15 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
+import com.zoonk.android.ui.components.DetailRow
 import com.zoonk.android.ui.components.EmptyState
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
+import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.components.StatusMark
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
@@ -68,7 +72,7 @@ import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.DETAIL_PAGE_WIDTH
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
-import com.zoonk.android.ui.scaffold.detailPagePadding
+import com.zoonk.android.ui.scaffold.pagePadding
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.OwnedCertificate
@@ -78,7 +82,7 @@ import kotlinx.datetime.toJavaLocalDate
 /**
  * Main's `/c/<code>` for its owner: the certificate's headline, Share, Print, Download and Add to
  * LinkedIn, its picture, its details (the name, with Change, and the link, with Copy), what it
- * means and what it covers, or, earned without Plus, locked with the Plus notice. It reads the learner's list, so a
+ * means and what it covers, or, without a subscription, the gate. It reads the learner's list, so a
  * rename or a subscription shows here at once, and a locked one, which the public read refuses,
  * shows at all.
  */
@@ -98,6 +102,19 @@ fun CertificateScreen(
     PageScaffold(
         onBack = { navigator.back() },
         title = { Text(stringResource(R.string.certificates_certificate)) },
+        barWidth = DETAIL_PAGE_WIDTH,
+        bottomBar =
+            if (certificate?.locked == true) {
+                {
+                    TaskActions { main ->
+                        Button(onClick = { navigator.open(AppRoute.Subscription) }, modifier = main) {
+                            Text(stringResource(R.string.subscription_subscribe))
+                        }
+                    }
+                }
+            } else {
+                null
+            },
     ) { padding ->
         Box(
             Modifier
@@ -107,8 +124,12 @@ fun CertificateScreen(
                 .imePadding(),
         ) {
             when {
+                certificate?.locked == true -> {
+                    CertificateGate(certificate)
+                }
+
                 certificate != null -> {
-                    Certificate(app, certificate, actions) { navigator.open(AppRoute.Subscription) }
+                    Certificate(app, certificate, actions)
                 }
 
                 state is LoadState.Failed -> {
@@ -121,7 +142,7 @@ fun CertificateScreen(
                             icon = R.drawable.ic_workspace_premium,
                             title = stringResource(R.string.certificates_not_found),
                             description = stringResource(R.string.not_found_description),
-                            modifier = beforeFold.padding(detailPagePadding()),
+                            modifier = beforeFold.padding(pagePadding()),
                         )
                     }
                 }
@@ -143,14 +164,12 @@ private fun Certificate(
     app: AppContainer,
     certificate: OwnedCertificate,
     actions: CertificateActions,
-    onSeePlus: () -> Unit,
 ) {
     // Above both layouts: folding moves the details between the one column and the page after the fold, and each keeps its scroll.
     val name = certificateNameModel(app)
     var linkedIn by rememberSaveable { mutableStateOf(false) }
     val pageScroll = rememberScrollState()
     val detailsScroll = rememberScrollState()
-    val naming = certificate.naming
     val details =
         @Composable { modifier: Modifier ->
             Column(modifier) {
@@ -167,22 +186,28 @@ private fun Certificate(
     ) { detailsBeside ->
         DetailColumn(pageScroll) {
             CertificateIntro(certificate)
-            OwnerActions(certificate, actions, name, onSeePlus, Modifier.padding(top = 24.dp)) { linkedIn = true }
-            if (naming.locked) {
-                LockedCertificate(naming, Modifier.padding(top = 32.dp).fillMaxWidth())
-            } else {
-                CertificatePicture(
-                    certificate.pictureUrl,
-                    app.images,
-                    certificate.pictureLabel(),
-                    Modifier.padding(top = 32.dp).fillMaxWidth(),
-                )
-            }
+            OwnerActions(certificate, actions, name, Modifier.padding(top = 24.dp)) { linkedIn = true }
+            CertificatePicture(
+                certificate.pictureUrl,
+                app.images,
+                certificate.pictureLabel(),
+                Modifier.padding(top = 32.dp).fillMaxWidth(),
+            )
             if (!detailsBeside) details(Modifier.padding(top = 28.dp))
         }
     }
 
-    if (linkedIn && !naming.locked) LinkedInSheet(certificate, onCopy = actions::copy, onDismiss = { linkedIn = false })
+    if (linkedIn) LinkedInSheet(certificate, onCopy = actions::copy, onDismiss = { linkedIn = false })
+}
+
+/** Main's `CertificateGate`: without a subscription, the gate is the page, and the blank sheet under it says which certificate is waiting. */
+@Composable
+private fun CertificateGate(certificate: OwnedCertificate) {
+    TrackShown(AnalyticsEvent.SubscriptionGateShown)
+    DetailColumn(rememberScrollState()) {
+        PageTitleRow(stringResource(R.string.certificates_gate_title))
+        BlankCertificate(certificate.naming, Modifier.padding(top = 24.dp).fillMaxWidth())
+    }
 }
 
 @Composable
@@ -194,59 +219,52 @@ private fun DetailColumn(
         Modifier
             .fillMaxSize()
             .verticalScroll(scroll)
-            .padding(detailPagePadding())
+            .padding(pagePadding())
             .widthIn(max = DETAIL_PAGE_WIDTH),
         content = content,
     )
 }
 
-/** Main's `CertificateIntro`: a locked certificate isn't issued yet, so it claims neither the check nor the date. */
+/** Main's `CertificateIntro`. */
 @Composable
 private fun CertificateIntro(certificate: OwnedCertificate) {
-    val locked = certificate.locked
-
     Column {
-        if (!locked) {
-            Row(
-                Modifier.padding(bottom = 14.dp),
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Icon(
-                    painterResource(R.drawable.ic_verified),
-                    contentDescription = null,
-                    modifier = Modifier.size(16.dp),
-                    tint = MaterialTheme.colorScheme.tertiary,
-                )
-                Text(
-                    stringResource(R.string.certificates_verified),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
-        }
-        Text(certificate.sentence(), Modifier.pageTitle(), style = MaterialTheme.typography.displaySmall)
-        if (!locked) {
+        Row(
+            Modifier.padding(bottom = 14.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                painterResource(R.drawable.ic_verified),
+                contentDescription = null,
+                modifier = Modifier.size(16.dp),
+                tint = MaterialTheme.colorScheme.tertiary,
+            )
             Text(
-                stringResource(
-                    R.string.certificates_issued_on,
-                    formatDate(certificate.completedOn.toJavaLocalDate(), currentLocale(), DateStyle.LongYear),
-                ),
-                Modifier.padding(top = 10.dp),
+                stringResource(R.string.certificates_verified),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.zoonkType.lead,
+                style = MaterialTheme.typography.bodyMedium,
             )
         }
+        Text(certificate.sentence(), Modifier.pageTitle(), style = MaterialTheme.typography.displaySmall)
+        Text(
+            stringResource(
+                R.string.certificates_issued_on,
+                formatDate(certificate.completedOn.toJavaLocalDate(), currentLocale(), DateStyle.LongYear),
+            ),
+            Modifier.padding(top = 10.dp),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.zoonkType.lead,
+        )
     }
 }
 
-/** Main's `CertificateOwnerActions`: Share leads; without a name, the name comes first; locked, the Plus notice. */
+/** Main's `CertificateOwnerActions`: Share leads; without a name, the name comes first. */
 @Composable
 private fun OwnerActions(
     certificate: OwnedCertificate,
     actions: CertificateActions,
     name: CertificateNameModel,
-    onSeePlus: () -> Unit,
     modifier: Modifier = Modifier,
     onAddToLinkedIn: () -> Unit,
 ) {
@@ -254,10 +272,6 @@ private fun OwnerActions(
     val caption = certificate.caption()
 
     when {
-        certificate.locked -> {
-            CertificatesPlusNotice(onSeePlus, modifier)
-        }
-
         certificate.recipientName == null -> {
             CertificateNameField(current = null, name, modifier)
         }
@@ -269,7 +283,6 @@ private fun OwnerActions(
                     modifier = Modifier.fillMaxWidth(),
                     enabled = actions.busy == null,
                     busy = actions.busy == CertificateAction.Share,
-                    leadingIcon = { ButtonIcon(R.drawable.ic_share) },
                     size = ButtonSize.Large,
                 ) {
                     ActionText(stringResource(R.string.certificates_share))
@@ -518,49 +531,6 @@ private fun CertificateCovered(
 /** Main's `roundStudyMinutes`: the plan's estimate, so whole hours past the first one. */
 internal fun roundStudyMinutes(minutes: Long): Long =
     if (minutes < MINUTES_PER_HOUR) minutes else Math.round(minutes / MINUTES_PER_HOUR.toDouble()) * MINUTES_PER_HOUR
-
-/**
- * Main's `DetailRow`: a fact's label and its value at the row's end, with the [action] that changes
- * or copies it. A value that doesn't fit beside its label goes under it, so a large font never
- * splits a date or a code mid-word.
- */
-@Composable
-private fun DetailRow(
-    label: String,
-    value: String,
-    mono: Boolean = false,
-    action: (@Composable () -> Unit)? = null,
-) {
-    HorizontalDivider()
-    Row(
-        Modifier.fillMaxWidth().padding(vertical = if (action == null) 10.dp else 0.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        FlowRow(
-            Modifier.weight(1f).semantics(mergeDescendants = true) {},
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            Text(
-                label,
-                Modifier.padding(end = 16.dp).alignByBaseline(),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-            Text(
-                value,
-                Modifier.alignByBaseline(),
-                style =
-                    if (mono) {
-                        MaterialTheme.zoonkType.data.copy(color = MaterialTheme.colorScheme.onSurface)
-                    } else {
-                        MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium)
-                    },
-            )
-        }
-        action?.invoke()
-    }
-}
 
 private const val MINUTES_PER_HOUR = 60
 private const val SECONDS_PER_MINUTE = 60

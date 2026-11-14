@@ -8,24 +8,21 @@
         <item quantity="one">%1$d task · %2$s in the exam</item>
         <item quantity="other">%1$d tasks · %2$s in the exam</item>
     </plurals>
-    <string name="speaking_official">%1$s is an official exam. Practice its speaking tasks whether or not you plan to take it.</string>
     <string name="speaking_tasks">Tasks</string>
     <!-- The exam page's speaking section, with the paper's title beside it. -->
     <string name="speaking_section">Speaking</string>
-    <string name="speaking_plus">Speaking practice comes with Plus: every task of the paper on a call, and an estimate on the official criteria after each one.</string>
+    <string name="speaking_gate">Speaking practice needs a subscription</string>
     <string name="speaking_opens_when_ready">Your task opens as soon as its card is ready.</string>
     <string name="speaking_no_time_month">Not enough call time this month for this task</string>
     <string name="speaking_no_time_day">Not enough call time today for this task</string>
     <string name="speaking_start_failed">The task didn\'t start. Try again in a moment.</string>
-    <string name="speaking_footer_partner">An AI stands in for the human examiner or the other candidate. Each try has a new card, and after it you get an estimate on the exam\'s official criteria, not an official score.</string>
-    <string name="speaking_footer">An AI stands in for the human examiner. Each try has a new card, and after it you get an estimate on the exam\'s official criteria, not an official score.</string>
     <string name="speaking_official_format">Official format</string>
-    <string name="speaking_start_task">Start this task</string>
-    <string name="speaking_last_result">See your last result</string>
+    <string name="speaking_start_task">Start</string>
+    <string name="speaking_last_result">Last result</string>
     <string name="speaking_last_none">Last try: no estimate</string>
-    <!-- How many criteria were at the exam's level on the last try, such as "Last try: 3 of 4 at B2". -->
-    <string name="speaking_last_at">Last try: %1$s of %2$s at %3$s</string>
-    <string name="speaking_last_near">Last try: %1$s of %2$s near %3$s</string>
+    <!-- How many criteria were at the exam's level on the last try, such as "Last try: at B2 on 3 of 4 criteria". -->
+    <string name="speaking_last_at">Last try: at %3$s on %1$s of %2$s criteria</string>
+    <string name="speaking_last_near">Last try: near %3$s on %1$s of %2$s criteria</string>
     <string name="speaking_last_below">Last try: below %1$s</string>
     <!-- Preparation time shared by several tasks, such as "20 min to prepare tasks 1 and 2". -->
     <string name="speaking_prep_shared">%1$s to prepare tasks %2$s</string>
@@ -38,7 +35,7 @@
     <string name="speaking_mock_ielts">A short speaking test with an examiner. After it, an estimated band for each criterion.</string>
     <!-- A band is the exam's score for each criterion. -->
     <string name="speaking_mock_toefl">Repeat sentences, then a short interview with an examiner. After it, an estimated band from 1 to 6 for each criterion.</string>
-    <string name="speaking_mock_start">Start the mock</string>
+    <string name="speaking_mock_start">Start</string>
     <string name="speaking_mock_opens">Your mock opens as soon as it\'s ready.</string>
     <string name="speaking_mock_failed">The mock didn\'t start. Try again in a moment.</string>
     <string name="speaking_writing_mock">Writing your mock</string>

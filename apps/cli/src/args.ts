@@ -1,7 +1,9 @@
 import { readFileSync } from "node:fs";
 import { parseArgs } from "node:util";
 import { usageError } from "./errors.ts";
+import { commandUsage } from "./help.ts";
 import { isRecord, parseJson } from "./http.ts";
+import { type Note, proposalNote, revertNote, withdrawalNote } from "./notes.ts";
 import { type OutputShape } from "./output.ts";
 import { parseOrder, parseWhereOptions, splitList } from "./query-options.ts";
 
@@ -13,7 +15,9 @@ export type Command =
   | { name: "help" }
   | { name: "login" }
   | { name: "logout" }
-  | { name: "request"; request: ApiRequest; shape?: OutputShape };
+  | { name: "request"; note?: Note; request: ApiRequest; shape?: OutputShape };
+
+type RequestCommand = Extract<Command, { name: "request" }>;
 
 type Options = {
   batch?: string;
@@ -88,7 +92,7 @@ function readJsonObject(path: string): Record<string, unknown> {
 
 function requireReason(reason: string | undefined): string {
   if (!reason?.trim()) {
-    throw usageError(`Say why with --reason "<why the fix is wrong>".`);
+    throw usageError(`"staff fixes revert" needs a reason: ${commandUsage("staff fixes revert")}`);
   }
 
   return reason;
@@ -106,17 +110,19 @@ function fixTarget({
   const [fixId, ...extra] = args;
 
   if (extra.length > 0 || (fixId === undefined) === (batch === undefined)) {
-    throw usageError(`"staff fixes ${command}" takes one fix id, or --batch <batchId>.`);
+    throw usageError(
+      `"staff fixes ${command}" takes one fix id or --batch <batchId>: ${commandUsage(`staff fixes ${command}`)}`,
+    );
   }
 
   return fixId === undefined ? { batchId: batch } : { fixId };
 }
 
-function get(path: string, shape?: OutputShape): Command {
+function get(path: string, shape?: OutputShape): RequestCommand {
   return { name: "request", request: { method: "GET", path }, shape };
 }
 
-function post(path: string, body: Record<string, unknown>, shape?: OutputShape): Command {
+function post(path: string, body: Record<string, unknown>, shape?: OutputShape): RequestCommand {
   return { name: "request", request: { body, method: "POST", path }, shape };
 }
 
@@ -183,7 +189,10 @@ const COMMANDS = new Map<string, CommandSpec>([
     "staff fixes propose",
     {
       arguments: 1,
-      build: ([file = ""]) => post("/staff/content-fixes", readJsonObject(file)),
+      build: ([file = ""]) => ({
+        ...post("/staff/content-fixes", readJsonObject(file)),
+        note: proposalNote,
+      }),
       options: [],
     },
   ],
@@ -191,11 +200,13 @@ const COMMANDS = new Map<string, CommandSpec>([
     "staff fixes revert",
     {
       arguments: "any",
-      build: (args, { batch, reason }) =>
-        post("/staff/content-fixes/revert", {
+      build: (args, { batch, reason }) => ({
+        ...post("/staff/content-fixes/revert", {
           ...fixTarget({ args, batch, command: "revert" }),
           reason: requireReason(reason),
         }),
+        note: revertNote,
+      }),
       options: ["batch", "reason"],
     },
   ],
@@ -203,8 +214,10 @@ const COMMANDS = new Map<string, CommandSpec>([
     "staff fixes withdraw",
     {
       arguments: "any",
-      build: (args, { batch }) =>
-        post("/staff/content-fixes/withdraw", fixTarget({ args, batch, command: "withdraw" })),
+      build: (args, { batch }) => ({
+        ...post("/staff/content-fixes/withdraw", fixTarget({ args, batch, command: "withdraw" })),
+        note: withdrawalNote,
+      }),
       options: ["batch"],
     },
   ],
@@ -254,7 +267,7 @@ function checkArguments({ args, name, spec }: { args: string[]; name: string; sp
   const fits = expected === "at least one" ? args.length > 0 : args.length === expected;
 
   if (!fits) {
-    throw usageError(`"${name}" takes ${describeArguments(expected)}.`);
+    throw usageError(`"${name}" takes ${describeArguments(expected)}: ${commandUsage(name)}`);
   }
 }
 
@@ -276,6 +289,18 @@ function checkOptions({
   }
 }
 
+/** Node's parse errors add advice (about positional arguments, or `--x=-XYZ`) no command here needs. */
+function describeParseError(error: unknown): string {
+  const message = error instanceof Error ? error.message : String(error);
+  const unknown = /^Unknown option '[^']+'\./u.exec(message)?.[0];
+
+  const missing =
+    /^Option '(?<option>--[a-z]+)(?: <value>)?' argument (?:missing|is ambiguous)/u.exec(message)
+      ?.groups?.option;
+
+  return unknown ?? (missing ? `${missing} needs a value.` : message);
+}
+
 function parseCommandLine(argv: string[]) {
   try {
     return parseArgs({
@@ -294,7 +319,7 @@ function parseCommandLine(argv: string[]) {
       },
     });
   } catch (error) {
-    throw usageError(error instanceof Error ? error.message : String(error));
+    throw usageError(describeParseError(error));
   }
 }
 

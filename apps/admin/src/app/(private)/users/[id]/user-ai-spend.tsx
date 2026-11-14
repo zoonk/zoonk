@@ -1,41 +1,44 @@
-import { AdminSection } from "@/components/admin-section";
-import { type AdminTableColumn, AdminTableColumns } from "@/components/admin-table-columns";
+import { AdminSection, AdminSectionEmpty } from "@/components/admin-section";
+import { AiTaskName } from "@/components/ai-task-name";
+import { BarList } from "@/components/bar-list";
+import { STAT_TILES_CLASS, StatTile } from "@/components/stat-tile";
 import { getUserAiSpend } from "@/data/ai/get-user-ai-spend";
-import { formatUsd } from "@/lib/ai-format";
-import { TableCell, TableRow } from "@zoonk/ui/components/table";
+import { formatDollars, formatUsd } from "@/lib/ai-format";
 import { sumOf } from "@zoonk/utils/number";
+import { CpuIcon, HashIcon } from "lucide-react";
 
-const columns: AdminTableColumn[] = [
-  { label: "Task" },
-  { align: "right", label: "Calls" },
-  { align: "right", label: "Cost" },
-];
-
+/** What this learner's own AI calls cost: the total, then the tasks it went to, most first. */
 export async function UserAiSpend({ userId }: { userId: string }) {
   "use cache: private";
 
   const { days, tasks } = await getUserAiSpend(userId);
+  const calls = sumOf(tasks.map((row) => row.calls));
 
   return (
-    <AdminSection description={`Last ${days} days, per task.`} title="AI spend">
-      <AdminTableColumns columns={columns} emptyLabel="No AI calls." isEmpty={tasks.length === 0}>
-        {tasks.map((row) => (
-          <TableRow key={row.task}>
-            <TableCell className="font-mono text-xs">{row.task}</TableCell>
-            <TableCell className="text-right tabular-nums">{row.calls.toLocaleString()}</TableCell>
-            <TableCell className="text-right tabular-nums">{formatUsd(row.costUsd)}</TableCell>
-          </TableRow>
-        ))}
-        <TableRow className="font-medium">
-          <TableCell>All tasks</TableCell>
-          <TableCell className="text-right tabular-nums">
-            {sumOf(tasks.map((row) => row.calls)).toLocaleString()}
-          </TableCell>
-          <TableCell className="text-right tabular-nums">
-            {formatUsd(sumOf(tasks.map((row) => row.costUsd)))}
-          </TableCell>
-        </TableRow>
-      </AdminTableColumns>
+    <AdminSection title={`AI spend, last ${days} days`}>
+      {tasks.length === 0 ? (
+        <AdminSectionEmpty>No AI calls.</AdminSectionEmpty>
+      ) : (
+        <>
+          <div className={STAT_TILES_CLASS}>
+            <StatTile
+              icon={<CpuIcon />}
+              title="Spend"
+              value={formatDollars(sumOf(tasks.map((row) => row.costUsd)))}
+            />
+            <StatTile icon={<HashIcon />} title="Calls" value={calls.toLocaleString("en")} />
+          </div>
+
+          <BarList
+            rows={tasks.map((row) => ({
+              display: formatUsd(row.costUsd),
+              key: row.task,
+              name: <AiTaskName task={row.task} />,
+              value: row.costUsd,
+            }))}
+          />
+        </>
+      )}
     </AdminSection>
   );
 }

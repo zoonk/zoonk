@@ -41,11 +41,11 @@
   "essay_rewrite_label": "4654f71e580d3450e41fc907c12100df0293aeb48ff8e74586224f050681d2b6",
   "essay_scale": "0bde6db6bf66866b978bc72127ad46f532d856fde6445bacfc6cf9d931094e43",
   "essay_score_of": "5ecd3430bfa212b660e7a02292e772773246c8c35aa3331e175fe05e78233261",
-  "essay_see_comments": "666825d0fdf2dac4c575fe3b26d1e73f1302b2c66ed87869d533adba6724244b",
+  "essay_see_comments": "fb08822e3f1e67e39f418fc3a1a92f4fc1ab708c1f65986cfe15356cf2b3b890",
   "essay_see_grade": "6674663c4a920d6827269788aff0608dbf9cf7a7ecf8c0a54b6b7705c1e08dea",
   "essay_send": "4ae87040227699f06e3821de0be1116395620418699febe321c22e805569d3d3",
   "essay_send_failed": "eab999a6d7f51d76ee55b50bff100c053362019d7ed6bed028b5fd5305422fe9",
-  "essay_skip_rewrite": "1c85f023b330eeaac562a5b773bd790e78ecf9bdfa5ada037201b8d377a22222",
+  "essay_skip_rewrite": "539fbb845e730a567ade28dcaa5547e89893dfa7847abfc9fa782829f88e1c53",
   "essay_skipped": "220fac68806b898c9405950e022ac84016c6f7f3ed10557abcebedafd60ff3b1",
   "essay_supporting_texts": "8d688c6a53df30f5ca5b96733c3ba7f39a9bd81ae2452ef8f74382bb8f5e92f7",
   "essay_the_case": "9a10e9991739366cdf7955b2e0c37ed8fac83061f2b76a223201c6db8b3e8029",
@@ -108,7 +108,7 @@
     <string name="essay_limit_reached">今日の小論文の採点回数を使い切りました。文章はここに残るので、明日送信してください。</string>
     <string name="essay_grading">各評価基準に沿って小論文を評価しています。最大30秒かかります。</string>
     <string name="essay_grading_slow">引き続き採点しています。いつもより時間がかかっています。</string>
-    <string name="essay_skip_rewrite">書き直しをスキップする</string>
+    <string name="essay_skip_rewrite">スキップ</string>
     <string name="essay_grade_rewrite">書き直した文章を採点する</string>
     <string name="essay_send">採点に送る</string>
     <string name="essay_leave_title">いったん中断しますか？</string>
@@ -121,7 +121,7 @@
     <string name="essay_too_short_detail">小論文を最後まで書いてから、もう一度送信してください。</string>
     <string name="essay_rewrite">書き直す</string>
     <string name="essay_finish_failed">うまくいきませんでした。少し待ってからもう一度試してください。</string>
-    <string name="essay_see_comments">各評価基準のコメントを見る</string>
+    <string name="essay_see_comments">コメントを見る</string>
     <string name="essay_comments">コメント</string>
     <string name="essay_proposal_elements">提案の5つの要素</string>
     <!-- One of the five elements of an ENEM essay's intervention proposal: who carries it out. -->

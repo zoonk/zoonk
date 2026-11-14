@@ -12,6 +12,7 @@ import {
   XIcon,
 } from "lucide-react";
 import { type ReactNode } from "react";
+import { FRAME_GUTTER_CLASS } from "./bottom-bar";
 import { Button } from "./button";
 
 const toast = ToastPrimitive.createToastManager();
@@ -22,12 +23,26 @@ const DEFAULT_TOAST_TITLE_RENDER = <div />;
 const TOAST_CLASS =
   "group/toast bg-popover text-popover-foreground focus-visible:border-ring focus-visible:ring-ring/50 pointer-events-auto absolute right-0 bottom-0 z-[calc(1000-var(--toast-index))] h-(--height) w-full origin-bottom transform-[translateX(var(--toast-swipe-movement-x))_translateY(calc(var(--toast-swipe-movement-y)-(var(--toast-index)*var(--peek))-(var(--shrink)*var(--height))))_scale(var(--scale))] rounded-lg border shadow-[0_4px_12px_rgb(0_0_0/0.1)] will-change-transform outline-none select-none [--gap:0.75rem] [--height:var(--toast-frontmost-height,var(--toast-height))] [--offset-y:calc(var(--toast-offset-y)*-1+calc(var(--toast-index)*var(--gap)*-1)+var(--toast-swipe-movement-y))] [--peek:0.75rem] [--scale:calc(max(0,1-(var(--toast-index)*0.1)))] [--shrink:calc(1-var(--scale))] [transition:transform_500ms_cubic-bezier(0.22,1,0.36,1),opacity_500ms,height_150ms] after:absolute after:top-full after:left-0 after:h-[calc(var(--gap)+1px)] after:w-full after:content-[''] focus-visible:ring-[3px] data-expanded:h-(--toast-height) data-expanded:transform-[translateX(var(--toast-swipe-movement-x))_translateY(var(--offset-y))] data-limited:opacity-0 data-starting-style:transform-[translateY(150%)] data-ending-style:data-[swipe-direction=down]:transform-[translateY(calc(var(--toast-swipe-movement-y)+150%))] data-expanded:data-ending-style:data-[swipe-direction=down]:transform-[translateY(calc(var(--toast-swipe-movement-y)+150%))] data-ending-style:data-[swipe-direction=left]:transform-[translateX(calc(var(--toast-swipe-movement-x)-150%))_translateY(var(--offset-y))] data-expanded:data-ending-style:data-[swipe-direction=left]:transform-[translateX(calc(var(--toast-swipe-movement-x)-150%))_translateY(var(--offset-y))] data-ending-style:data-[swipe-direction=right]:transform-[translateX(calc(var(--toast-swipe-movement-x)+150%))_translateY(var(--offset-y))] data-expanded:data-ending-style:data-[swipe-direction=right]:transform-[translateX(calc(var(--toast-swipe-movement-x)+150%))_translateY(var(--offset-y))] data-ending-style:data-[swipe-direction=up]:transform-[translateY(calc(var(--toast-swipe-movement-y)-150%))] data-expanded:data-ending-style:data-[swipe-direction=up]:transform-[translateY(calc(var(--toast-swipe-movement-y)-150%))] [&[data-ending-style]:not([data-limited]):not([data-swipe-direction])]:transform-[translateY(150%)]";
 
-/** A margin, not `bottom`, lifts toasts above a bottom tab bar, since it adds to `bottom` at every width. */
-const TOAST_VIEWPORT_CLASS =
-  "pointer-events-none fixed inset-x-4 bottom-4 z-50 mx-auto w-auto max-w-[356px] outline-none sm:right-8 sm:bottom-8 sm:left-auto sm:mx-0 sm:w-full max-lg:in-[body:has([data-bottom-bar])]:mb-[calc(4rem+env(safe-area-inset-bottom))]";
+/**
+ * Toasts rise above a phone's tab bar and above a page's bottom bar, 12px over its top, so they never
+ * cover its main action. The bar is as tall as its 44px row plus the frame's gutter over and under
+ * it, so the viewport takes the frame's gutter too and the lift follows it at every size.
+ */
+const TOAST_VIEWPORT_CLASS = cn(
+  "pointer-events-none fixed inset-x-4 z-60 mx-auto w-auto max-w-[356px] outline-none sm:right-8 sm:left-auto sm:mx-0 sm:w-full",
+  FRAME_GUTTER_CLASS,
+  "bottom-[calc(var(--toast-over-tabs)+max(var(--toast-inset),var(--toast-over-bar)))] [--toast-inset:1rem] [--toast-over-bar:0px] [--toast-over-tabs:0px] sm:[--toast-inset:2rem]",
+  "in-[body:has([data-slot=bottom-bar])]:[--toast-over-bar:calc(max(1rem,var(--page-gutter))+2.75rem+max(1rem,var(--page-gutter),env(safe-area-inset-bottom))+1px+0.75rem)]",
+  "max-lg:in-[body:has([data-bottom-bar])]:[--toast-over-tabs:calc(4rem+env(safe-area-inset-bottom))]",
+);
 
-function showSuccessToast(title: ReactNode) {
-  return toast.add({ title, type: "success" });
+/** `action` is the one thing to do about what just happened, such as Undo. */
+function showSuccessToast(title: ReactNode, action?: { label: ReactNode; onClick: () => void }) {
+  return toast.add({
+    actionProps: action && { children: action.label, onClick: action.onClick },
+    title,
+    type: "success",
+  });
 }
 
 function showErrorToast(title: ReactNode) {
@@ -62,7 +77,7 @@ function ToastContent({ className, ...props }: ToastPrimitive.Content.Props) {
   return (
     <ToastPrimitive.Content
       className={cn(
-        "flex h-full items-start gap-1.5 overflow-hidden p-4 text-[13px] leading-5 transition-opacity duration-250 ease-out data-behind:opacity-0 data-expanded:opacity-100",
+        "text-compact flex h-full items-start gap-1.5 overflow-hidden p-4 leading-5 transition-opacity duration-250 ease-out data-behind:opacity-0 data-expanded:opacity-100",
         className,
       )}
       data-slot="toast-content"
@@ -78,7 +93,7 @@ function ToastTitle({
 }: ToastPrimitive.Title.Props) {
   return (
     <ToastPrimitive.Title
-      className={cn("text-[13px] leading-5 font-medium", className)}
+      className={cn("text-compact leading-5 font-medium", className)}
       data-slot="toast-title"
       render={render}
       {...props}
@@ -89,7 +104,7 @@ function ToastTitle({
 function ToastDescription({ className, ...props }: ToastPrimitive.Description.Props) {
   return (
     <ToastPrimitive.Description
-      className={cn("text-muted-foreground text-[13px] leading-[1.4]", className)}
+      className={cn("text-muted-foreground text-compact leading-[1.4]", className)}
       data-slot="toast-description"
       {...props}
     />
@@ -121,7 +136,7 @@ function ToastClose({
     <ToastPrimitive.Close
       aria-label="Close toast"
       className={cn(
-        "text-muted-foreground hover:text-foreground -mr-1 size-5 shrink-0 after:absolute after:-inset-2 after:content-['']",
+        "text-muted-foreground hover:text-foreground edge -me-(--edge-pull) shrink-0 [--control-size:--spacing(5)] after:absolute after:-inset-2 after:content-['']",
         className,
       )}
       data-slot="toast-close"

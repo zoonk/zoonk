@@ -1,4 +1,5 @@
 import { readQueryParam } from "@/lib/query-param";
+import { type Route } from "next";
 
 export const DEFAULT_COMPLETED_LESSONS_THRESHOLD = 10;
 export const DEFAULT_LEARNING_DAYS_THRESHOLD = 3;
@@ -57,20 +58,20 @@ export function getLearnerMilestoneCopy({
 }) {
   if (kind === "learningDays") {
     return {
-      emptyMessage: `No users have completed lessons on ${threshold} or more days yet.`,
-      help: `Users who completed lessons on at least ${threshold} different days, all time`,
-      inputLabel: "Learning days",
-      pageTitle: `${threshold}+ Learning Days`,
-      tableCaption: `Users who completed lessons on at least ${threshold} different days.`,
+      emptyMessage: `No learner has studied on ${threshold} or more days yet.`,
+      help: `Learners who completed lessons on at least ${threshold} different days, all time`,
+      listTitle: "Learners by days studied",
+      pageTitle: `${threshold}+ days studied`,
+      unit: "days",
     };
   }
 
   return {
-    emptyMessage: `No users have completed ${threshold} or more lessons yet.`,
-    help: `Users who completed at least ${threshold} lessons, all time`,
-    inputLabel: "Completed lessons",
-    pageTitle: `${threshold}+ Completed Lessons`,
-    tableCaption: `Users who completed at least ${threshold} lessons.`,
+    emptyMessage: `No learner has completed ${threshold} or more lessons yet.`,
+    help: `Learners who completed at least ${threshold} lessons, all time`,
+    listTitle: "Learners by lessons completed",
+    pageTitle: `${threshold}+ lessons completed`,
+    unit: "lessons",
   };
 }
 
@@ -80,7 +81,7 @@ export function buildLearnerMilestoneUsersHref({
 }: {
   kind: LearnerMilestoneKind;
   threshold: number;
-}) {
+}): Route {
   const params = new URLSearchParams({ kind, threshold: threshold.toString() });
 
   return `/stats/engagement/learners?${params.toString()}`;

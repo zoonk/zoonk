@@ -10,12 +10,15 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -41,10 +44,13 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.paneTitle
+import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -72,7 +78,8 @@ sealed interface SuggestionMark {
  * [SuggestionLayout.Panel] it shows [content] in full. Once [answered], [summary] is the answer's
  * result, read out when it shows, an open sheet closes, and a keyboard's or screen reader's focus
  * moves to it, as the control they used is gone. While [failed], a line reads the save error in
- * place of [summary], as main's does when its [lineAction] didn't save.
+ * place of [summary], as main's does when its [lineAction] didn't save. [lineDescription] goes under the
+ * line's summary, for a suggestion whose line says all there is (main's `SuggestionLine` with a description).
  */
 @Composable
 fun Suggestion(
@@ -84,6 +91,7 @@ fun Suggestion(
     answered: Boolean = false,
     failed: Boolean = false,
     lineAction: (@Composable () -> Unit)? = { SuggestionOpen() },
+    lineDescription: String? = null,
     content: @Composable SuggestionContentScope.() -> Unit,
 ) {
     var open by rememberSaveable { mutableStateOf(false) }
@@ -102,7 +110,7 @@ fun Suggestion(
     CompositionLocalProvider(LocalFrame provides frame) {
         when (layout) {
             SuggestionLayout.Line -> {
-                SuggestionLine(summary, answered, failed, modifier, lineAction)
+                SuggestionLine(summary, answered, failed, modifier, lineAction, lineDescription)
                 if (open) SuggestionSheet(label, onClose = { open = false }, onFocus = { moveFocus(sheetFocus) }, content)
             }
 
@@ -188,6 +196,11 @@ fun SuggestionDescription(
 }
 
 @Composable
+fun SuggestionDescription(text: AnnotatedString) {
+    Text(text = text, style = bodyStyle(), color = MaterialTheme.colorScheme.onSurfaceVariant)
+}
+
+@Composable
 fun SuggestionResult(text: String) {
     Text(
         text = text,
@@ -216,6 +229,18 @@ fun SuggestionActions(content: @Composable () -> Unit) {
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) { content() }
     }
 }
+
+/**
+ * Main's `useMainActionVariant`: the main answer of a suggestion on a page whose bar holds the page's own main
+ * action (Today). It fills its sheet, and is outlined in a wide screen's side panel so it never competes with the bar.
+ */
+@Composable
+fun SuggestionMainAction(
+    text: String,
+    onClick: () -> Unit,
+    enabled: Boolean = true,
+    busy: Boolean = false,
+) = SuggestionAction(text, onClick, enabled = enabled, busy = busy, secondary = LocalPresentation.current == Presentation.Panel)
 
 /** On a line it's always [secondary], beside the summary. */
 @Composable
@@ -256,7 +281,6 @@ fun SuggestionAction(
             modifier = modifier.then(width),
             enabled = enabled,
             busy = busy,
-            leadingIcon = leadingIcon,
             content = content,
         )
     }
@@ -269,6 +293,7 @@ private fun SuggestionLine(
     failed: Boolean,
     modifier: Modifier,
     action: (@Composable () -> Unit)?,
+    description: String?,
 ) {
     // With nothing to open, the line is all there is to read.
     val whole = answered || action == null
@@ -280,31 +305,40 @@ private fun SuggestionLine(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Mark(PANEL_MARK)
-                Text(
-                    text = if (failed) stringResource(R.string.suggestion_save_failed) else summary,
-                    modifier =
-                        Modifier
-                            .weight(1f)
-                            .focusRequester(LocalFrame.current.focus)
-                            .focusable()
-                            .then(
-                                when {
-                                    failed -> Modifier.semantics { liveRegion = LiveRegionMode.Assertive }
-                                    answered -> Modifier.semantics { liveRegion = LiveRegionMode.Polite }
-                                    else -> Modifier
-                                },
-                            ),
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = if (answered) FontWeight.Medium else null,
-                    color =
-                        when {
-                            failed -> MaterialTheme.colorScheme.error
-                            whole -> MaterialTheme.colorScheme.onSurface
-                            else -> MaterialTheme.colorScheme.onSurfaceVariant
-                        },
-                    maxLines = if (whole || LocalDensity.current.fontScale > FULL_SUMMARY_FONT_SCALE) Int.MAX_VALUE else 2,
-                    overflow = TextOverflow.Ellipsis,
-                )
+                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    Text(
+                        text = if (failed) stringResource(R.string.suggestion_save_failed) else summary,
+                        modifier =
+                            Modifier
+                                .focusRequester(LocalFrame.current.focus)
+                                // A statement (nothing to open, nothing answered) is read, never a stop for the keyboard.
+                                .then(if (whole && !answered && !failed) Modifier else Modifier.focusable())
+                                .then(
+                                    when {
+                                        failed -> Modifier.semantics { liveRegion = LiveRegionMode.Assertive }
+                                        answered -> Modifier.semantics { liveRegion = LiveRegionMode.Polite }
+                                        else -> Modifier
+                                    },
+                                ),
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = if (answered) FontWeight.Medium else null,
+                        color =
+                            when {
+                                failed -> MaterialTheme.colorScheme.error
+                                whole -> MaterialTheme.colorScheme.onSurface
+                                else -> MaterialTheme.colorScheme.onSurfaceVariant
+                            },
+                        maxLines = if (whole || LocalDensity.current.fontScale > FULL_SUMMARY_FONT_SCALE) Int.MAX_VALUE else 2,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    description?.let {
+                        Text(
+                            it,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
                 action?.invoke()
             }
         }
@@ -376,3 +410,34 @@ private val PANEL_MARK = 18.dp
 /** From here two lines hold only the start of a summary, cutting off its key words. */
 private const val FULL_SUMMARY_FONT_SCALE = 1.3f
 private val SHEET_MARK = 24.dp
+
+/** Main's `SuggestionMenu`: "Other options", a quiet button for a suggestion's other ways on; each [SuggestionMenuItem] closes it with done before acting. */
+@Composable
+fun SuggestionMenu(options: @Composable (done: () -> Unit) -> Unit) {
+    var open by rememberSaveable { mutableStateOf(false) }
+
+    Box {
+        SuggestionAction(
+            onClick = { open = true },
+            modifier = Modifier.semantics { role = Role.DropdownList },
+            secondary = true,
+        ) {
+            Text(stringResource(R.string.suggestion_other_options))
+            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+            Icon(painterResource(R.drawable.ic_expand_more), contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
+        }
+        DropdownMenu(expanded = open, onDismissRequest = { open = false }) { options { open = false } }
+    }
+}
+
+@Composable
+fun SuggestionMenuItem(
+    text: String,
+    done: () -> Unit,
+    onClick: () -> Unit,
+) {
+    DropdownMenuItem(text = { Text(text) }, onClick = {
+        done()
+        onClick()
+    })
+}

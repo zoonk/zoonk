@@ -5,10 +5,6 @@ import SwiftUI
 enum OnboardingAside {
   case howItWorks
   case planSoFar([PlanFact])
-
-  var planFacts: [PlanFact]? {
-    if case .planSoFar(let facts) = self { facts } else { nil }
-  }
 }
 
 extension EnvironmentValues {

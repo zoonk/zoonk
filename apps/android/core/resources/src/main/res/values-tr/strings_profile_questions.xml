@@ -5,11 +5,11 @@
   "profile_questions_activities_placeholder": "fdd40cca761222e5632bc44a79a3d4d144ab45cbe1f66dcb9c5a341b64208848",
   "profile_questions_activities_title": "61f58f998b64f088580cd78ebaabcbf6d61755ec5da99fa50d232b7697a1f975",
   "profile_questions_add": "4238e8fa919a305c4f74c19bf8c197c18de1696a7e4ce9abb25af15bf27d1e90",
-  "profile_questions_address_description": "6cbcd791fc6f8b6d352f4c7b4dc8891d3d1c6972e6f16e647dccd8fadcf67aba",
+  "profile_questions_address_description": "8f147636e5d0991fa1d8fc1b02bdfb29933886e4f41af2c619e4c0ace842f504",
   "profile_questions_address_title": "e71d318fde0e986d61f15900981456887390aa0cf5494e8451e839884e062f88",
   "profile_questions_cap": "8a9fb1ca1e5b0404ad8b1c9a2afbe6603f8fb338197bcc8b208902c938e64b14",
   "profile_questions_condition_note": "e2afcfb8dc366b8d5242621ff58d9f10e105e50a2641c356ae45916ff1a11747",
-  "profile_questions_conditions_description": "5acac66642b7fc048952295bc54b737b80f7f710d064bfdb6e320d0b0d183c66",
+  "profile_questions_conditions_description": "624689c00ff76a75f543fb53ce9f25e18db4490010d4915390f82e31a8dd1fd7",
   "profile_questions_conditions_saved": "d02301ea727807ab8ab8bcdebe5f53d7a4664a334020b076280acde3e3310489",
   "profile_questions_conditions_title": "cadb145425011809388e2f2954eeae01a2623c2f822159185a52edce89777602",
   "profile_questions_description": "e4dd3264821529a6cf32dfbefe7576c1b99cbdde5c277f5127b5ba2738090cd4",
@@ -21,16 +21,13 @@
   "profile_questions_job_placeholder": "65be8768dd5f0866015f9196f2b7a905d1b8376b6dd931ffe556b2af832959bd",
   "profile_questions_lesson_ready": "9652974b5c0042e721988347358993c971b959387df944eb7dca33270069c04a",
   "profile_questions_listen_favorites": "2ea429b58cf8f1f1469126bc2483a45bb41bf1cc615a185d8ba4aa64b02d134e",
-  "profile_questions_listen_placeholder": "54732ffe3c8ededfa98efe2da98fca9a2f47445dd21c61c34ee27f4da139c6cc",
+  "profile_questions_listen_placeholder": "fe7eef03989765fe7cb61d070842dc076081a23c738ac3f434129e6fc2da18df",
   "profile_questions_listen_title": "4c315ea4aed585affde8550d257af98f24b16a9c7eb6c5c7471ba104e2990c28",
   "profile_questions_memory_off": "1725bdca0763985d75c106a68a8a56f54be38694c546c5810879434194279385",
   "profile_questions_never_ask": "d1033f19a6e2b55d742785d5eabc4391676f8856a71b71a81fa06ea49376cf45",
   "profile_questions_never_ask_help": "c803f87c70811f05eb5cef757aaf1e581d8290f1dc8a34b703fe78ae9e8aa4df",
-  "profile_questions_none": "37dee02859c6b23c19c7133c4f0dcd282df4ec35c990c28e52a87d2a30210003",
   "profile_questions_not_answered": "9dcafae723752f7f5bfcdc05f805484362a09487e8e0692ea25b2c4698d02139",
   "profile_questions_not_shared": "d72342c170736a73d0405e39f04c56989e4e381e2d69972dbdce688920225990",
-  "profile_questions_nothing_particular": "bb95297e67ed74b52505267b2ead47dac5855926572d91330a95c51bfb598dbf",
-  "profile_questions_nothing_to_add": "fea28cfb03fc8f67fd8e29f6d1b9ac30aea60221563c982ec884ba27aa8d1a57",
   "profile_questions_play_favorites": "9b4198512dc5389a69d69cc0665d1005960e000f400418bdcd550cf283910506",
   "profile_questions_play_placeholder": "4c8ced0377e6733b89a84dc74eee4440b5d65304d02103761febda4ebc2cc474",
   "profile_questions_play_title": "16b7eeb2b3e58c1a805a65a3aa9655b7173a3a115e7513c94061c26057408995",
@@ -63,7 +60,7 @@
   "profile_questions_suggested": "c5d98123f25d54c0f5ceee312031f2f5ed9660f51413caf9d4bf8b8e37390ac5",
   "profile_questions_support_description": "43bee5205d202d89cb777a70ce9f323fa50174bd4d524f7e1750685c80e5a29b",
   "profile_questions_support_note": "d79babdbb0b05ab43c11f38e677b63c29c3a12435b92657ef5d607b56e3253f6",
-  "profile_questions_support_note_help": "5987ac8b390099c4ae1e75642905e7f2ca0cd51d671b1af75ccc9007f8fb292b",
+  "profile_questions_support_note_help": "490094cf8e0badf8594511c3d7fb0e09b0c343174ce94ab300e701dee9fb380c",
   "profile_questions_support_placeholder": "3cd2038085f57512e8b9f67839b9ec62264b8f400cc7d8b2f24738b623a8c1b5",
   "profile_questions_support_title": "6488b1e8816c173042d4c824c2d76c0c80eff315e3bef1c14a1fbfd3bbe7856c",
   "profile_questions_title": "abda59ef7fe3ccced5a0ac2d892f5c575b09136e1805b3262110c13cec4e7dfc",
@@ -72,7 +69,7 @@
   "profile_questions_tools_placeholder": "4466f004b14875dceee71ce974f79a85d4bed2f87cf0a1d4344e180e35efa80a",
   "profile_questions_tools_title": "de543972e1c7693d24ca698d38f4a4936da1d61b82e1a498ca207bcef1f1d8b8",
   "profile_questions_watch_favorites": "a38d59dfb2c335a8bb45d1da3fa6183fecbf19cd6a8de307f84d52a36a22524b",
-  "profile_questions_watch_placeholder": "e745416e1b4bdf1d4f68ecc299ee2f5ebf19aaa3ae2404312b8f8f892536048d",
+  "profile_questions_watch_placeholder": "ff796cc230c2c6c9fe663cf433128164751636a9a3175d13c3a810b1195cdecc",
   "profile_questions_watch_title": "3230e0d6113f843a5b72eea77cd4bb07d8fa09b7b770312b408b456974185584",
   "profile_questions_which_field": "db95afab247fb0637c378803b28107f537ada99bd115c2d17559b9ae976be21c",
   "profile_questions_work_description": "b572c8f2f765abb6a053b9bb42eccbebb8e0c52e121e319d30f9caf04693a460",
@@ -100,20 +97,18 @@
     <string name="profile_questions_tools_description">En fazla 3 tane seç. Bunları örneklerinde kullanacağız.</string>
     <string name="profile_questions_tools_other">Diğerleri (isteğe bağlı)</string>
     <string name="profile_questions_tools_placeholder">Örn. Photoshop, Python, SAP</string>
-    <string name="profile_questions_none">Bunların hiçbiri</string>
     <string name="profile_questions_studies_title">Hangi alanlarda eğitim aldın?</string>
     <string name="profile_questions_studies_description">Geçmişte aldığın ya da şu an devam ettiğin eğitimler olabilir. Bitirmiş olman veya işinle ilgili olması gerekmez.</string>
-    <string name="profile_questions_nothing_to_add">Ekleyeceğim bir şey yok</string>
     <string name="profile_questions_subject">%1$s: program veya alan (isteğe bağlı)</string>
     <string name="profile_questions_which_field">Hangi alan?</string>
     <string name="profile_questions_subject_placeholder">Örn. gazetecilik</string>
     <string name="profile_questions_interest_description">En fazla 3 tane seç. Bunları derslerindeki örneklerde kullanacağız.</string>
     <string name="profile_questions_watch_title">Neler izlemeyi seversin?</string>
     <string name="profile_questions_watch_favorites">En sevdiğin diziler, filmler, takımlar veya kanallar (isteğe bağlı)</string>
-    <string name="profile_questions_watch_placeholder">Örn. Star Trek, Flamengo</string>
+    <string name="profile_questions_watch_placeholder">Örn. Star Trek, Formula 1</string>
     <string name="profile_questions_listen_title">Neler dinlemeyi seversin?</string>
     <string name="profile_questions_listen_favorites">En sevdiğin sanatçılar veya podcastler (isteğe bağlı)</string>
-    <string name="profile_questions_listen_placeholder">Örn. Coldplay, Radiolab</string>
+    <string name="profile_questions_listen_placeholder">Örn. Coldplay, TED Talks Daily</string>
     <string name="profile_questions_play_title">Neler oynamayı seversin?</string>
     <string name="profile_questions_play_favorites">En sevdiğin oyunlar (isteğe bağlı)</string>
     <string name="profile_questions_play_placeholder">Örn. Catan, Valorant</string>
@@ -124,18 +119,18 @@
     <string name="profile_questions_activities_favorites">Başka nelere ilgi duyuyorsun? (isteğe bağlı)</string>
     <string name="profile_questions_activities_placeholder">Örn. ekmek yapmak, arabalar, astronomi</string>
     <string name="profile_questions_conditions_title">Bunlardan biri senin için geçerli mi?</string>
-    <string name="profile_questions_conditions_description">İsteğe bağlı. Seçtiklerin, ders arkadaşının sana uyum sağlayabilmesi için profiline kaydedilir. Bunları istediğin zaman Ayarlar’dan kaldırabilirsin.</string>
+    <string name="profile_questions_conditions_description">İsteğe bağlı. Seçimlerini içeriği ihtiyaçlarına göre uyarlamak için kullanıyoruz. İstediğin zaman Ayarlar’dan kaldırabilirsin.</string>
     <string name="profile_questions_condition_note">Bilmemiz gereken neler var?</string>
     <string name="profile_questions_support_title">Öğrenmeni neler kolaylaştırır?</string>
     <string name="profile_questions_support_description">Sana yardımcı olan her şeyi seç. Herhangi bir durum belirtmen ya da tanı almış olman gerekmez.</string>
+    <!-- Asks which grammatical forms (feminine, masculine or neutral wording) the app should use for words about the learner, such as "you're right". Not a question about pronouns or identity. -->
     <string name="profile_questions_address_title">Sana nasıl hitap edelim?</string>
-    <string name="profile_questions_address_description">Ders arkadaşın sana bu şekilde hitap edecek, geri bildirimler de buna göre yazılacak. Dersler aynı kalacak.</string>
+    <string name="profile_questions_address_description">Sana böyle hitap edeceğiz.</string>
     <string name="profile_questions_suggested">Seçtiğin durumlarda genelde nelerin işe yaradığına baktık. İstediğini değiştirebilirsin.</string>
-    <string name="profile_questions_nothing_particular">Özel bir şey yok</string>
     <string name="profile_questions_something_else">+ İşime yarayan başka bir şey</string>
     <string name="profile_questions_support_note">Sana neyin yardımcı olduğunu kendi sözlerinle anlat (isteğe bağlı)</string>
     <string name="profile_questions_support_placeholder">Örneğin, şemaları metinlerden daha iyi anlıyorum</string>
-    <string name="profile_questions_support_note_help">Bunu arkadaşın için aklımızda tutacağız. Bellek bölümünden silebilirsin.</string>
+    <string name="profile_questions_support_note_help">Bunu aklımızda tutacağız. İstediğin zaman Ayarlar’dan silebilirsin.</string>
     <string name="profile_questions_lesson_ready">1. ders hazır.</string>
     <string name="profile_questions_start_lesson">1. derse başla</string>
     <string name="profile_questions_save_start_lesson">Kaydet ve 1. derse başla</string>
@@ -157,9 +152,11 @@
     <string name="profile_questions_row_activities">Yapmayı sevdiklerin</string>
     <string name="profile_questions_row_conditions">Sağlık durumun</string>
     <string name="profile_questions_row_support">Öğrenmene yardımcı olan şeyler</string>
+    <!-- Which grammatical forms (feminine, masculine or neutral wording) the app uses for words about the learner. -->
     <string name="profile_questions_row_address">Sana hitap şeklimiz</string>
     <string name="profile_questions_not_answered">Cevaplanmadı</string>
     <string name="profile_questions_not_shared">Anlatılmadı</string>
+    <!-- An answer the learner saved, without showing it. -->
     <string name="profile_questions_saved">Kaydedildi</string>
     <string name="profile_questions_add">Ekle</string>
     <plurals name="profile_questions_conditions_saved">

@@ -36,9 +36,9 @@ export function toMindMapsPage(mindMaps: GoalMindMapsView): MindMapsPage {
   };
 }
 
-/** A map the learner can open, or one Plus keeps: what the list of maps shows. */
+/** A map the learner can open: what the list of maps shows. */
 function isIndexed(chapter: MindMapsPageChapter): boolean {
-  return chapter.status === "ready" || chapter.status === "plusRequired";
+  return chapter.status === "ready";
 }
 
 export function splitChapters(chapters: readonly MindMapsPageChapter[]) {
@@ -49,27 +49,26 @@ export function splitChapters(chapters: readonly MindMapsPageChapter[]) {
 }
 
 export function countChapterMaps(chapters: readonly MindMapsPageChapter[]) {
-  const open = chapters.filter((chapter) => chapter.status !== "plusRequired");
-
   return {
     /**
      * Only the failed maps creating all chapter maps retries. One whose chapter still needs its
      * lessons shows in its own row, with that row's Try again.
      */
-    failed: open.filter((chapter) => chapter.status === "failed" && chapter.lessonsToWrite === 0)
-      .length,
-    onTheWay: open.filter(
+    failed: chapters.filter(
+      (chapter) => chapter.status === "failed" && chapter.lessonsToWrite === 0,
+    ).length,
+    onTheWay: chapters.filter(
       (chapter) => chapter.status === "drawing" || chapter.status === "writingLessons",
     ).length,
-    ready: open.filter((chapter) => chapter.status === "ready").length,
-    total: open.length,
+    ready: chapters.filter((chapter) => chapter.status === "ready").length,
+    total: chapters.length,
   };
 }
 
 export function countTabs(page: MindMapsPage): Record<MindMapTab, number> {
   return {
     chapters: countChapterMaps(page.chapters).ready,
-    lessons: page.lessonGroups.reduce((total, group) => total + group.count - group.locked, 0),
+    lessons: page.lessonGroups.reduce((total, group) => total + group.count, 0),
     saved: page.saved.length,
   };
 }

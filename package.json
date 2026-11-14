@@ -60,6 +60,7 @@
     "test:watch": "turbo test:watch",
     "typecheck": "turbo typecheck && tsrs --project scripts/tsconfig.json",
     "verify:diff": "node scripts/verify/diff.mts",
+    "verify:catalog": "node scripts/verify/catalog-rules.mts",
     "verify:pages": "node scripts/verify/pages.mts",
     "worktree:setup": "node scripts/worktree/setup.mts",
     "zoonk": "node apps/cli/src/main.ts"
@@ -70,6 +71,7 @@
     "@playwright/test": "catalog:",
     "@types/node": "catalog:",
     "@zoonk/tsconfig": "workspace:*",
+    "jsdom": "catalog:",
     "knip": "6.44.2",
     "neon": "9.2.0",
     "oxc-parser": "0.157.0",

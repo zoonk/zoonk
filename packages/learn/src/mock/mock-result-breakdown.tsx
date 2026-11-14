@@ -5,8 +5,8 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
+  FoldChevron,
 } from "@zoonk/ui/components/collapsible";
-import { ChevronDownIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { StepRow, StepRows } from "../_components/step-card";
 import { useMockNumber } from "./mock-labels";
@@ -67,12 +67,9 @@ function TopicRows({ topics }: { topics: readonly Topic[] }) {
       <TopicList topics={first} />
       {rest.length > 0 && (
         <Collapsible>
-          <CollapsibleTrigger className="group/more text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 flex min-h-10 items-center gap-1 rounded-lg text-sm font-medium outline-none focus-visible:ring-[3px]">
+          <CollapsibleTrigger className="text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 flex min-h-10 items-center gap-1 rounded-lg text-sm font-medium outline-none focus-visible:ring-[3px]">
             {t("{count, plural, one {# more topic} other {# more topics}}", { count: rest.length })}
-            <ChevronDownIcon
-              aria-hidden="true"
-              className="size-4 transition-transform group-data-panel-open/more:rotate-180 motion-reduce:transition-none"
-            />
+            <FoldChevron inline />
           </CollapsibleTrigger>
           <CollapsibleContent>
             <TopicList topics={rest} />
@@ -100,15 +97,12 @@ function AreaRow({ area, topics }: { area: Area; topics: readonly Topic[] }) {
   return (
     <li className="border-border border-b last:border-b-0">
       <Collapsible>
-        <CollapsibleTrigger className="group/area focus-visible:ring-ring/50 flex min-h-12 w-full items-center gap-3 rounded-lg py-3 text-left text-sm outline-none focus-visible:ring-[3px]">
+        <CollapsibleTrigger className="focus-visible:ring-ring/50 flex min-h-12 w-full items-center gap-3 rounded-lg py-3 text-left text-sm outline-none focus-visible:ring-[3px]">
           <span className="min-w-0 flex-1 font-medium">{area.name}</span>
           <span className="shrink-0 font-mono text-xs tabular-nums">{score}</span>
-          <ChevronDownIcon
-            aria-hidden="true"
-            className="text-muted-foreground size-4 shrink-0 transition-transform group-data-panel-open/area:rotate-180 motion-reduce:transition-none"
-          />
+          <FoldChevron />
         </CollapsibleTrigger>
-        <CollapsibleContent className="h-(--collapsible-panel-height) overflow-hidden transition-[height] duration-200 ease-out data-ending-style:h-0 data-starting-style:h-0 motion-reduce:transition-none">
+        <CollapsibleContent>
           <div className="pb-2 pl-4">
             <TopicRows topics={topics} />
           </div>
@@ -127,14 +121,14 @@ export function MockResultBreakdown({ result }: { result: MockResult }) {
 
   if (result.areas.length <= 1) {
     return (
-      <ResultSection title={t("By topic")}>
+      <ResultSection rows title={t("By topic")}>
         <TopicRows topics={result.topics} />
       </ResultSection>
     );
   }
 
   return (
-    <ResultSection title={t("By area")}>
+    <ResultSection rows title={t("By subject")}>
       <StepRows>
         {result.areas.map((area) => (
           <AreaRow

@@ -56,12 +56,11 @@
   "activities_music_same_notes_guitar": "d1038ef70ed89cb67c1246cb7563a7e0eb55f8dc07a1628e47e5554e211760d2",
   "activities_music_show_as": "e128675d5537672c791c2475214b5898c0f71c5de6d441f176f3875063324199",
   "activities_music_skip_for_now": "c9fde4476f854c126b94a7cc34b3a324e4cee196e5a21e93b7a79043fe9204fa",
+  "activities_music_sound_check_done": "ee15ef8a8fcdf88536486f00145414b5c2ca4af2e26018600eb097a306e75f7c",
   "activities_music_sound_check_failed": "ae77b65bd63b9a6a6100d1c83af1eb60fe1aa073a5f2854eed8f5335badd9345",
-  "activities_music_sound_check_intro": "eb1904ed2d4145382b4794d1b501a23c588afb25bacbd4c98bdd016e34b232cb",
-  "activities_music_sound_check_late": "669acd6e1b7f022f942ab993eefbbba5495f6cf3418338e7d9529321a8c3f560",
+  "activities_music_sound_check_intro": "0cde17e32e7d7a7e574f0459552303fa2fa77f019dba1120a70a55e8be87d22f",
   "activities_music_sound_check_listen": "7a1c0893dfcee3ef9af8ade6477a38115472bb8f8800c59710115e3abd93b06a",
-  "activities_music_sound_check_on_time": "81ec56a70792cc6eb878e6e983191d8c6ad353007410ffca99ae259ebf058f14",
-  "activities_music_sound_check_start": "50bfe9beb6db43035e68b0f173639c587d0ec5a84a19fb82bf128e3459cb3213",
+  "activities_music_sound_check_start": "86257b0951c036d8fa3e4921d490f5f3db8254b4e57fbd5a337694c56e8fdf9f",
   "activities_music_sound_check_tap": "7822ccf68b1693dd31264c47c279e1951b622549bc87598cd3b505473fb3a433",
   "activities_music_sound_check_title": "32d407ef6610442df5d7a9541113e5b08caf17eb1d979e3b6754a47ac161a96a",
   "activities_music_sound_notes": "c6788398b1b1b926e406da3ab6fc3664aaeaf483fb4d9a1d362b524ea343ef5b",
@@ -241,18 +240,16 @@
     <!-- The title of the one-time check of how late this device plays sound. -->
     <string name="activities_music_sound_check_title">Configure o som</string>
     <plurals name="activities_music_sound_check_intro">
-        <item quantity="one">Fones de ouvido podem reproduzir o som com um pequeno atraso. Toque uma vez junto com %1$d clique, e a marcação dos ritmos neste dispositivo será razoavelmente precisa.</item>
-        <item quantity="many">Fones de ouvido podem reproduzir o som com um pequeno atraso. Toque uma vez junto com %1$d cliques, e a marcação dos ritmos neste dispositivo será razoavelmente precisa.</item>
-        <item quantity="other">Fones de ouvido podem reproduzir o som com um pequeno atraso. Toque uma vez junto com %1$d cliques, e a marcação dos ritmos neste dispositivo será razoavelmente precisa.</item>
+        <item quantity="one">Toque no ritmo de %1$d clique para ajustar o tempo dos seus toques.</item>
+        <item quantity="many">Toque no ritmo de %1$d cliques para ajustar o tempo dos seus toques.</item>
+        <item quantity="other">Toque no ritmo de %1$d cliques para ajustar o tempo dos seus toques.</item>
     </plurals>
     <string name="activities_music_sound_check_listen">Escute os cliques…</string>
     <!-- Which click to tap with now, like "Tap with each click · 2 of 6". -->
     <string name="activities_music_sound_check_tap">Toque a cada clique · %1$d de %2$d</string>
     <string name="activities_music_sound_check_failed">Não conseguimos sincronizar toques suficientes com os cliques. Tente de novo, tocando junto com cada um.</string>
-    <string name="activities_music_sound_check_on_time">O som neste dispositivo chega no tempo certo.</string>
-    <!-- How late this device plays sound, like "about 120 ms late". -->
-    <string name="activities_music_sound_check_late">O som neste dispositivo chega com cerca de %1$d ms de atraso. Os ritmos aqui compensam esse atraso.</string>
-    <string name="activities_music_sound_check_start">Iniciar teste de som</string>
+    <string name="activities_music_sound_check_done">Tudo certo.</string>
+    <string name="activities_music_sound_check_start">Começar</string>
     <string name="activities_music_skip_for_now">Pular por enquanto</string>
     <string name="activities_music_continue">Continuar</string>
 </resources>

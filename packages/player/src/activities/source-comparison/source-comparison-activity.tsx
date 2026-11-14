@@ -7,6 +7,7 @@ import { BookOpenText, ScrollText } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import {
+  ACTIVITY_CARD_CLASS,
   ActivityCanvas,
   ActivityCanvasLabel,
   ActivityTextAlternative,
@@ -108,10 +109,7 @@ function SourceCard({
     .join(", ");
 
   return (
-    <article
-      aria-label={source.author}
-      className="bg-background flex flex-col gap-2 rounded-xl border p-3.5"
-    >
+    <article aria-label={source.author} className={cn(ACTIVITY_CARD_CLASS, "flex flex-col gap-2")}>
       <header className="flex items-center gap-2.5">
         <span className="bg-viz-accent-soft text-viz-accent flex size-8 shrink-0 items-center justify-center rounded-full">
           <Icon aria-hidden="true" className="size-4" />
@@ -122,7 +120,7 @@ function SourceCard({
         </div>
       </header>
 
-      <blockquote className="text-[15px] leading-8">
+      <blockquote className="text-reading leading-8">
         {splitExcerpt(source.excerpt, source.passages).map((segment, segmentIndex) => {
           const passage = source.passages.find((item) => item.id === segment.passageId);
 

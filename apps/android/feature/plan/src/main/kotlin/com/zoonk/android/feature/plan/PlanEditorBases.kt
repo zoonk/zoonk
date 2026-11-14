@@ -37,21 +37,19 @@ import com.zoonk.android.R
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.DisclosureRow
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
-import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
-import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.api.models.PlanBase
 import com.zoonk.api.models.PlanBaseMinutes
 import com.zoonk.api.models.PlanBases
 import com.zoonk.api.models.PlanBasesAdvice
 import com.zoonk.api.models.PlanChangePreview
-import com.zoonk.api.models.PlanChangePreviewFeasibility
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -67,7 +65,7 @@ internal fun PlanBases(
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SectionLabel(stringResource(R.string.plan_prerequisites))
         Text(basesSummary(bases), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        OutlinedButton(onClick = { drafts.bases = BasesDraft() }) { Text(stringResource(R.string.plan_choose_prerequisites)) }
+        OutlinedButton(onClick = { drafts.bases = BasesDraft() }) { Text(stringResource(R.string.plan_choice_change)) }
     }
 
     drafts.bases?.let { draft ->
@@ -78,7 +76,7 @@ internal fun PlanBases(
 }
 
 /**
- * Main's `PlanBasesSheet`: the choices stay a draft, previewed as they change, until Save choices.
+ * Main's `PlanBasesSheet`: the choices stay a draft, previewed as they change, until Save.
  * The app recommends a choice only when the learner asks.
  */
 @Composable
@@ -108,7 +106,6 @@ internal fun ColumnScope.BasesChoices(
     val check = rememberPreviewCheck(page, edits, operations, attempt)
     val recommended = (advice as? Advice.Answered)?.recommended
     val title = stringResource(R.string.plan_prerequisites)
-    val description = stringResource(if (page.isExam) R.string.plan_prerequisites_exam else R.string.plan_prerequisites_goal)
 
     if (edits.sheetKept(draft.opening)) {
         LaunchedEffect(draft.opening) { onDone() }
@@ -116,7 +113,7 @@ internal fun ColumnScope.BasesChoices(
     }
     val applied = edits.sheetApplied(draft.opening)
     if (applied != null) {
-        PlanChangeApplied(page, title, description, applied, R.drawable.ic_layers, onUndo = { edits.undo(applied.change) }, onDone = onDone)
+        PlanChangeApplied(page, title, null, applied, R.drawable.ic_layers, onUndo = { edits.undo(applied.change) }, onDone = onDone)
         return
     }
 
@@ -132,16 +129,13 @@ internal fun ColumnScope.BasesChoices(
 
     PlanSheetContent(
         title = title,
-        description = description,
+        description = null,
         body = {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 AllBasesChoice(bases.items, shared, recommended, enabled = !pending, onChoose = { choose(bases.items, it) })
-                if (shared == null) Note(stringResource(R.string.plan_bases_differ))
-                if (bases.items.any { it.studied }) Note(stringResource(R.string.plan_bases_studied_stay))
                 BasesAdvice(
                     advice = advice,
                     followed = changed.isEmpty() && shared != null && shared == recommended,
-                    isExam = page.isExam,
                     onAsk = {
                         advice = Advice.Pending(retrying = advice as? Advice.Failure)
                         scope.launch { advice = adviceOf(edits.adviseOnBases()) }
@@ -158,17 +152,15 @@ internal fun ColumnScope.BasesChoices(
                     onChoose = ::choose,
                 )
             }
-            Note(knownText(bases))
         },
         actions = {
-            if (operations.isNotEmpty()) PreviewOutcome(page, check, onRetry = { attempt++ })
+            if (operations.isNotEmpty()) PreviewOutcome(page.dateKind, check, onRetry = { attempt++ })
             Button(
                 busy = pending,
                 onClick = { edits.change(PlanPart.Bases, operations) { edits.answerSheet(draft.opening, it) } },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = operations.isNotEmpty() && check is Check.Ready,
-                leadingIcon = { ButtonIcon(R.drawable.ic_check) },
-            ) { Text(stringResource(R.string.plan_save_choices)) }
+            ) { Text(stringResource(R.string.plan_save)) }
             if (edits.sheetFailed(PlanPart.Bases, draft.opening)) SaveFailedText()
         },
     )
@@ -190,11 +182,11 @@ private fun AllBasesChoice(
             openChoices(items).forEach { choice ->
                 ChoiceRow(
                     label = baseChoiceName(choice),
-                    description = baseChoiceDescription(choice),
+                    description = null,
                     selected = choice == value,
                     onSelect = { onChoose(choice) },
                     enabled = enabled,
-                    mark = if (choice == recommended) ({ LabelChip(stringResource(R.string.plan_recommended)) }) else null,
+                    mark = if (choice == recommended) ({ Eyebrow(stringResource(R.string.plan_recommended)) }) else null,
                     trailing =
                         if (choice == PlanBase.Choice.SKIP) {
                             null
@@ -291,7 +283,6 @@ private fun SubjectChoice(
 private fun BasesAdvice(
     advice: Advice,
     followed: Boolean,
-    isExam: Boolean,
     onAsk: () -> Unit,
 ) {
     val failure = (advice as? Advice.Pending)?.retrying ?: advice as? Advice.Failure
@@ -302,7 +293,7 @@ private fun BasesAdvice(
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         if (advice is Advice.Answered) {
-            val text = adviceText(advice, isExam)
+            val text = adviceText(advice.recommended)
             Note(
                 text = if (followed) joinSentences(text, stringResource(R.string.plan_recommendation_followed)) else text,
                 modifier = Modifier.focusRequester(answer).focusable(),
@@ -334,7 +325,7 @@ private fun BasesAdvice(
 
 @Composable
 private fun PreviewOutcome(
-    page: PlanPageState,
+    dateKind: GoalDateKind,
     check: Check,
     onRetry: () -> Unit,
 ) {
@@ -357,10 +348,7 @@ private fun PreviewOutcome(
                 if (preview.unchanged) {
                     Note(stringResource(R.string.plan_stays_as_it_is))
                 } else {
-                    PlanEffectDiff(preview.effect)
-                    basesFootnote(page, preview).takeIf { it.isNotEmpty() }?.let {
-                        Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    }
+                    PlanEffectDiff(preview.effect, dateKind = dateKind)
                 }
             }
         }
@@ -398,7 +386,6 @@ private sealed interface Advice {
 
     data class Answered(
         val recommended: PlanBase.Choice,
-        val daysLeft: Long?,
     ) : Advice
 }
 
@@ -407,7 +394,7 @@ private fun adviceOf(advice: PlanBasesAdvice?): Advice {
     return when {
         advice == null -> Advice.Failed
         !advice.ready || recommended == null -> Advice.Building
-        else -> Advice.Answered(PlanBase.Choice.valueOf(recommended.name), advice.daysLeft)
+        else -> Advice.Answered(PlanBase.Choice.valueOf(recommended.name))
     }
 }
 
@@ -447,93 +434,14 @@ private fun rememberPreviewCheck(
 private const val PREVIEW_DELAY_MS = 300L
 
 @Composable
-private fun basesFootnote(
-    page: PlanPageState,
-    preview: PlanChangePreview,
-): String {
-    val added =
-        preview.effect
-            ?.topicsAdded
-            .orEmpty()
-            .flatMap { it.topics }
-    val leftOut =
-        preview.effect
-            ?.topicsLeftOut
-            .orEmpty()
-            .flatMap { it.topics }
-
-    return listOfNotNull(
-        if (added.isEmpty()) {
-            null
-        } else {
-            pluralStringResource(
-                R.plurals.plan_bases_topics_come_in,
-                added.size,
-                added.size,
-                shortList(added, ListKind.Topics),
-            )
+private fun adviceText(recommended: PlanBase.Choice): String =
+    stringResource(
+        when (recommended) {
+            PlanBase.Choice.DEEP -> R.string.plan_recommend_deep
+            PlanBase.Choice.QUICK -> R.string.plan_recommend_quick
+            else -> R.string.plan_recommend_essential
         },
-        if (leftOut.isEmpty()) {
-            null
-        } else {
-            pluralStringResource(
-                R.plurals.plan_bases_topics_leave,
-                leftOut.size,
-                leftOut.size,
-                shortList(leftOut, ListKind.Topics),
-            )
-        },
-        preview.feasibility?.let { coverageLine(page, it) },
-    ).joinSentences()
-}
-
-@Composable
-private fun coverageLine(
-    page: PlanPageState,
-    feasibility: PlanChangePreviewFeasibility,
-): String {
-    if (feasibility.fits) return stringResource(R.string.plan_bases_everything_fits)
-    val locale = currentLocale()
-    val after = formatPercent(feasibility.coveredShare, locale)
-    val before = formatPercent(page.plan.feasibility?.coveredShare ?: 0.0, locale)
-    val exam = feasibility.measure == PlanChangePreviewFeasibility.Measure.EXAM
-
-    return when {
-        after == before -> stringResource(if (exam) R.string.plan_bases_exam_share_same else R.string.plan_bases_goal_share_same, after)
-        else -> stringResource(if (exam) R.string.plan_bases_exam_share else R.string.plan_bases_goal_share, after, before)
-    }
-}
-
-@Composable
-private fun adviceText(
-    advice: Advice.Answered,
-    isExam: Boolean,
-): String {
-    val days = advice.daysLeft
-    return when {
-        advice.recommended == PlanBase.Choice.DEEP -> {
-            stringResource(R.string.plan_recommend_deep)
-        }
-
-        advice.recommended == PlanBase.Choice.QUICK && days != null -> {
-            pluralStringResource(
-                if (isExam) R.plurals.plan_recommend_quick_exam else R.plurals.plan_recommend_quick_goal,
-                days.toInt(),
-                days.toInt(),
-            )
-        }
-
-        else -> {
-            stringResource(if (isExam) R.string.plan_recommend_essential_exam else R.string.plan_recommend_essential_goal)
-        }
-    }
-}
-
-@Composable
-private fun knownText(bases: PlanBases): String {
-    val known = bases.knownCount.toInt()
-    return if (known > 0) pluralStringResource(R.plurals.plan_bases_known, known, known) else stringResource(R.string.plan_bases_show_known)
-}
+    )
 
 @Composable
 private fun basesSummary(bases: PlanBases): String {
@@ -563,17 +471,6 @@ private fun baseChoiceName(choice: PlanBase.Choice) =
             PlanBase.Choice.ESSENTIAL -> R.string.plan_base_essential
             PlanBase.Choice.QUICK -> R.string.plan_base_quick
             PlanBase.Choice.SKIP -> R.string.plan_base_skip
-        },
-    )
-
-@Composable
-private fun baseChoiceDescription(choice: PlanBase.Choice) =
-    stringResource(
-        when (choice) {
-            PlanBase.Choice.DEEP -> R.string.plan_base_deep_description
-            PlanBase.Choice.ESSENTIAL -> R.string.plan_base_essential_description
-            PlanBase.Choice.QUICK -> R.string.plan_base_quick_description
-            PlanBase.Choice.SKIP -> R.string.plan_base_skip_description
         },
     )
 

@@ -1,14 +1,15 @@
 import {
   AdminDetailBody,
+  AdminDetailColumns,
   AdminDetailHeader,
   AdminDetailHeaderSkeleton,
   AdminDetailPage,
 } from "@/components/admin-detail";
-import { AdminSection, AdminSectionSkeleton } from "@/components/admin-section";
+import { AdminSection, AdminSectionEmpty, AdminSectionSkeleton } from "@/components/admin-section";
 import { DetailField, DetailFields } from "@/components/detail-field";
 import { getContentFixBatch } from "@/data/content-fixes/get-content-fix";
-import { formatDateTime } from "@/lib/format";
-import { getStaffPasskeyStatus } from "@zoonk/core/staff/content-fixes/decide";
+import { languagePairName } from "@/lib/language-filter";
+import { LINK_CLASS } from "@/lib/link-class";
 import { getMainPageUrl } from "@zoonk/utils/url";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
@@ -16,20 +17,13 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { ContentFixChanges } from "../../_components/content-fix-changes";
-import {
-  RejectBatchForm,
-  RejectForm,
-  ResumeApplying,
-  ReviewDecision,
-} from "../../_components/content-fix-decision";
+import { RejectForm, ReviewBar, ReviewBarSkeleton } from "../../_components/content-fix-decision";
 import { ContentFixEffects } from "../../_components/content-fix-effects";
+import { ContentFixTechnicalDetails, proposedFact } from "../../_components/content-fix-facts";
 import { ContentFixVoice } from "../../_components/content-fix-voice";
-import {
-  ContentFixStatusBadge,
-  contentFixState,
-  contentFixStatusLabels,
-  findAppliedRevert,
-} from "../../content-fix-status";
+import { sharedPlace, sharedReason } from "../../content-fix-batch";
+import { ContentFixStatusMark, contentFixState, findAppliedRevert } from "../../content-fix-status";
+import { readContentFixViewer } from "../../content-fix-viewer";
 
 type Props = PageProps<"/content-fixes/batches/[batchId]">;
 
@@ -67,196 +61,239 @@ export default function ContentFixBatchPage({ params }: Props) {
   );
 }
 
-/**
- * The reason most fixes share; a fix that gave its own shows it in its card. Null when no two fixes
- * share one: each fix then gave its own reason, and the batch's own reason isn't stored.
- */
-function sharedReason(fixes: readonly BatchFix[]): string | null {
-  const counts = Map.groupBy(fixes, (fix) => fix.reason);
+/** Waiting for review, and of those, the ones a passkey can approve now (not waiting for a clip). */
+function waitingFixes(fixes: readonly BatchFix[]) {
+  const waiting = fixes.filter((fix) => fix.status === "proposed");
+  const approvable = waiting.filter((fix) => !fix.voiceOwedAt).map((fix) => fix.id);
 
-  const [top] = [...counts.entries()].toSorted(([, left], [, right]) => right.length - left.length);
-
-  return top && (top[1].length > 1 || fixes.length === 1) ? top[0] : null;
+  return { approvable, waiting };
 }
 
-function statusFacts(fixes: readonly BatchFix[]): string[] {
-  const counts = Map.groupBy(fixes, (fix) => contentFixState(fix));
-
-  return [...counts.entries()].map(
-    ([state, entries]) =>
-      `${String(entries.length)} ${contentFixStatusLabels[state].toLowerCase()}`,
-  );
-}
-
-function Why({ fixes, reason }: { fixes: readonly BatchFix[]; reason: string | null }) {
+function batchFacts(fixes: readonly BatchFix[]): string[] {
   const [first] = fixes;
-  const proposedIn = first?.proposerClientId === "admin" ? "Admin" : "the CLI";
+  const { waiting } = waitingFixes(fixes);
+
+  return [
+    waiting.length > 0 ? `${String(waiting.length)} waiting for review` : "All decided",
+    first ? proposedFact(first) : "",
+  ].filter(Boolean);
+}
+
+function Where({ batchId, fixes }: { batchId: string; fixes: readonly BatchFix[] }) {
+  const place = sharedPlace(fixes.map((fix) => fix.location.trail)).join(" › ");
+  const [first] = fixes;
 
   return (
-    <AdminSection
-      description={
-        reason
-          ? "Written by whoever proposed the batch. Check it against each fix below."
-          : "Each fix below gives its own reason."
-      }
-      title="Reason"
-    >
-      {reason && (
-        <p className="max-w-3xl leading-7 wrap-break-word whitespace-pre-wrap">{reason}</p>
-      )}
+    <>
+      <AdminSection title="Where">
+        <DetailFields>
+          <DetailField label="Content">{place || "Several places"}</DetailField>
+          <DetailField label="Language">
+            {first?.location.language ? languagePairName(first.location) : null}
+          </DetailField>
+        </DetailFields>
+      </AdminSection>
 
-      <DetailFields>
-        <DetailField label="Proposed by">
-          {first?.proposer ? (
-            <Link className="hover:underline" href={`/users/${first.proposer.id}`} prefetch>
-              {first.proposer.name}
-            </Link>
-          ) : (
-            "Deleted account"
-          )}{" "}
-          <span className="text-muted-foreground">
-            in {proposedIn} · {first ? formatDateTime(first.createdAt) : ""}
-          </span>
-        </DetailField>
-      </DetailFields>
-    </AdminSection>
+      <ContentFixTechnicalDetails>
+        <DetailField label="Batch id">{batchId}</DetailField>
+      </ContentFixTechnicalDetails>
+    </>
   );
 }
 
-function FixCard({ fix, index, reason }: { fix: BatchFix; index: number; reason: string | null }) {
-  const revert = findAppliedRevert(fix);
+function fixesDescription({
+  fixes,
+  mine,
+}: {
+  fixes: readonly BatchFix[];
+  mine: number;
+}): string | undefined {
+  const { approvable, waiting } = waitingFixes(fixes);
+  const recording = waiting.length - approvable.length;
 
   return (
-    <li className="flex flex-col gap-4 rounded-xl border p-4">
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-        <span className="text-muted-foreground font-mono text-xs">{index + 1}</span>
-        <Link
-          className="hit-area relative font-medium hover:underline"
-          href={`/content-fixes/${fix.id}`}
-          prefetch
-        >
-          {fix.location.trail.join(" › ") || "Deleted content"}
-        </Link>
-        <ContentFixStatusBadge state={contentFixState(fix)} />
-        {revert && (
+    [
+      waiting.length > 0 &&
+        "Each fix applies on its own. Reject the ones you don't want, then approve the rest.",
+      recording === 1 && "1 waits for its new clip and can be approved once it's recorded.",
+      recording > 1 &&
+        `${String(recording)} wait for their new clips and can be approved once they're recorded.`,
+      fixes.some((fix) => contentFixState(fix) === "applied") &&
+        "To undo an applied fix, open it and propose undoing it.",
+      mine > 0 &&
+        `${mine === 1 ? "1 fix" : `${String(mine)} fixes`} you approved didn't finish applying. Finish applying completes ${mine === 1 ? "it" : "them"} with no passkey and decides nothing else.`,
+    ]
+      .filter(Boolean)
+      .join(" ") || undefined
+  );
+}
+
+/**
+ * A fix waiting for review shows what it changes; a decided one is its place and outcome, with the
+ * rest one tap away on its own page.
+ */
+function FixRow({ fix, reason }: { fix: BatchFix; reason: string | null }) {
+  const revert = findAppliedRevert(fix);
+  const isWaiting = fix.status === "proposed";
+
+  return (
+    <li className="flex flex-col gap-3 py-4">
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex min-w-0 flex-col gap-1">
           <Link
-            className="hit-area relative text-sm underline"
-            href={`/content-fixes/${revert.id}`}
+            className="hit-area relative font-medium wrap-break-word hover:underline"
+            href={`/content-fixes/${fix.id}`}
             prefetch
           >
-            See its revert
+            {fix.location.trail.join(" › ") || "Deleted content"}
           </Link>
+          <p className="text-sm">
+            <ContentFixStatusMark state={contentFixState(fix)} />
+            {fix.staleReason && <span className="text-muted-foreground"> · {fix.staleReason}</span>}
+            {revert && (
+              <>
+                <span className="text-muted-foreground"> · </span>
+                <Link className={LINK_CLASS} href={`/content-fixes/${revert.id}`} prefetch>
+                  The fix that undoes it
+                </Link>
+              </>
+            )}
+          </p>
+        </div>
+
+        {/* 3 px up, so the 30 px button's label shares the title's first line, as in a table row. */}
+        {isWaiting && (
+          <div className="-mt-0.75 shrink-0">
+            <RejectForm fixId={fix.id} size="sm" />
+          </div>
         )}
       </div>
 
       {fix.reason !== reason && (
-        <p className="text-sm wrap-break-word whitespace-pre-wrap">{fix.reason}</p>
+        <p className="max-w-2xl text-sm leading-6 wrap-break-word whitespace-pre-wrap">
+          {fix.reason}
+        </p>
       )}
 
-      {fix.staleReason && <p className="text-destructive-text text-sm">{fix.staleReason}</p>}
-
-      <ContentFixChanges compact fix={fix} />
-      {fix.status === "proposed" && <ContentFixVoice fix={fix} />}
-      <ContentFixEffects fix={fix} />
-
-      {fix.status === "proposed" && (
-        <div className="flex flex-wrap items-center gap-2">
-          <RejectForm fixId={fix.id} />
-        </div>
+      {isWaiting && (
+        <>
+          <ContentFixChanges compact fix={fix} />
+          <ContentFixVoice fix={fix} />
+          <div className="flex flex-col gap-2">
+            <span className="text-muted-foreground text-xs">What else approving does</span>
+            <ContentFixEffects fix={fix} />
+          </div>
+        </>
       )}
     </li>
   );
 }
 
-function rejectLabel({
+function Fixes({
   fixes,
-  waiting,
+  mine,
+  reason,
 }: {
   fixes: readonly BatchFix[];
-  waiting: readonly BatchFix[];
-}): string | null {
-  if (waiting.length === 0 || fixes.length === 1) {
-    return null;
-  }
-
-  return waiting.length === fixes.length
-    ? `Reject all ${String(waiting.length)}`
-    : `Reject the remaining ${String(waiting.length)}`;
-}
-
-async function Decision({ batchId, fixes }: { batchId: string; fixes: readonly BatchFix[] }) {
-  const passkey = await getStaffPasskeyStatus();
-  const viewerId = passkey.status === "ready" ? passkey.userId : null;
-  const waiting = fixes.filter((fix) => fix.status === "proposed");
-  const proposed = waiting.filter((fix) => !fix.voiceOwedAt).map((fix) => fix.id);
-  const voicing = waiting.length - proposed.length;
-
-  const mine = fixes.filter((fix) => fix.status === "approved" && fix.deciderId === viewerId);
-
+  mine: number;
+  reason: string | null;
+}) {
   return (
-    <div className="flex flex-col gap-6">
-      {mine.length > 0 && <ResumeApplying batchId={batchId} count={mine.length} />}
-
-      {voicing > 0 && (
-        <p className="text-muted-foreground text-sm">
-          {voicing === 1
-            ? "1 fix waits for its new clip and can be approved once it's recorded."
-            : `${String(voicing)} fixes wait for their new clips and can be approved once they're recorded.`}
-        </p>
-      )}
-
-      {proposed.length > 0 && (
-        <ReviewDecision
-          approveLabel={
-            proposed.length === fixes.length
-              ? `Approve all ${String(proposed.length)} with passkey`
-              : `Approve the remaining ${String(proposed.length)} with passkey`
-          }
-          batchId={batchId}
-          fixIds={proposed}
-          hasPasskey={passkey.status === "ready" && passkey.hasPasskey}
-          settingsUrl={getMainPageUrl({ locale: "en", path: "/profile" })}
-        />
-      )}
-
-      <RejectBatchForm batchId={batchId} label={rejectLabel({ fixes, waiting })} />
-
-      {waiting.length === 0 && mine.length === 0 && (
-        <p className="text-muted-foreground text-sm">Every fix in this batch is decided.</p>
-      )}
-    </div>
+    <AdminSection description={fixesDescription({ fixes, mine })} title="Fixes">
+      <ol className="divide-y border-t">
+        {fixes.map((fix) => (
+          <FixRow fix={fix} key={fix.id} reason={reason} />
+        ))}
+      </ol>
+    </AdminSection>
   );
 }
 
+function rejectFor(fixes: readonly BatchFix[]) {
+  const { waiting } = waitingFixes(fixes);
+  const [only] = waiting;
+
+  if (!only) {
+    return;
+  }
+
+  if (fixes.length === 1) {
+    return { fixId: only.id };
+  }
+
+  return {
+    batchId: only.batchId,
+    label:
+      waiting.length === fixes.length
+        ? `Reject all ${String(waiting.length)}`
+        : `Reject the remaining ${String(waiting.length)}`,
+  };
+}
+
+function approveLabel({
+  approvable,
+  fixes,
+}: {
+  approvable: readonly string[];
+  fixes: readonly BatchFix[];
+}): string {
+  if (fixes.length === 1) {
+    return "Approve with passkey";
+  }
+
+  return approvable.length === fixes.length
+    ? `Approve all ${String(approvable.length)} with passkey`
+    : `Approve the remaining ${String(approvable.length)} with passkey`;
+}
+
 async function BatchContent({ params }: Pick<Props, "params">) {
-  const { batchId, fixes } = await readBatch(params);
+  const [{ batchId, fixes }, viewer] = await Promise.all([
+    readBatch(params),
+    readContentFixViewer(),
+  ]);
+
   const reason = sharedReason(fixes);
+  const { approvable, waiting } = waitingFixes(fixes);
+  const mine = fixes.filter((fix) => fix.status === "approved" && fix.deciderId === viewer.id);
 
   return (
     <>
       <AdminDetailHeader
-        facts={statusFacts(fixes)}
+        facts={batchFacts(fixes)}
         parents={BATCH_PARENTS}
         title={getTitle(fixes)}
       />
 
-      <AdminDetailBody>
-        <Why fixes={fixes} reason={reason} />
+      {/* The batch's decision: reject what's left, then approve it with a passkey. With nothing left
+          to approve, whoever approved fixes that didn't apply finishes them here. */}
+      <AdminDetailBody
+        bar={
+          waiting.length > 0 || mine.length > 0 ? (
+            <ReviewBar
+              approveLabel={approveLabel({ approvable, fixes })}
+              batchId={batchId}
+              finishing={mine.length}
+              fixIds={approvable}
+              hasPasskey={viewer.hasPasskey}
+              reject={rejectFor(fixes)}
+              settingsUrl={getMainPageUrl({ locale: "en", path: "/profile" })}
+            />
+          ) : null
+        }
+      >
+        <AdminDetailColumns aside={<Where batchId={batchId} fixes={fixes} />}>
+          <AdminSection title="Why">
+            {reason ? (
+              <p className="max-w-2xl text-sm leading-6 wrap-break-word whitespace-pre-wrap">
+                {reason}
+              </p>
+            ) : (
+              <AdminSectionEmpty>Each fix gives its own reason, below.</AdminSectionEmpty>
+            )}
+          </AdminSection>
 
-        <AdminSection
-          description="Each fix applies on its own. Reject any you don't want, then approve the rest at once, or reject them all below."
-          title="Fixes"
-        >
-          <ol className="flex flex-col gap-4">
-            {fixes.map((fix, index) => (
-              <FixCard fix={fix} index={index} key={fix.id} reason={reason} />
-            ))}
-          </ol>
-        </AdminSection>
-
-        <AdminSection title="Decision">
-          <Decision batchId={batchId} fixes={fixes} />
-        </AdminSection>
+          <Fixes fixes={fixes} mine={mine.length} reason={reason} />
+        </AdminDetailColumns>
       </AdminDetailBody>
     </>
   );
@@ -267,9 +304,11 @@ function BatchSkeleton() {
     <>
       <AdminDetailHeaderSkeleton parents={BATCH_PARENTS} />
 
-      <AdminDetailBody>
-        <AdminSectionSkeleton rows={2} />
-        <AdminSectionSkeleton description rows={8} />
+      <AdminDetailBody bar={<ReviewBarSkeleton batch />}>
+        <AdminDetailColumns aside={<AdminSectionSkeleton rows={2} />}>
+          <AdminSectionSkeleton rows={2} />
+          <AdminSectionSkeleton description rows={8} />
+        </AdminDetailColumns>
       </AdminDetailBody>
     </>
   );

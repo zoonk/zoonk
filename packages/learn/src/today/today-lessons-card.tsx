@@ -4,20 +4,19 @@ import { type TodayView } from "@zoonk/core/view-models/today/get";
 import { useExtracted } from "next-intl";
 import { CoverageLegend } from "../_components/coverage-bar";
 import { LessonCells } from "../_components/progress-cells";
-import { useFormatGoalProgress } from "../_utils/percent";
+import { useFormatProgressShare } from "../_utils/percent";
 import { ProgressCard, useCardIds } from "./today-progress-card";
-import { SubjectRows, type TodaySyllabus, useSubjectRows } from "./today-subject-rows";
 
 type TodayLessons = Extract<NonNullable<TodayView["progress"]>, { measure: "lessons" }>["lessons"];
 
 function getLessonCounts({
+  knownLessons,
   lessons,
-  syllabus,
 }: {
+  knownLessons: number;
   lessons: TodayLessons;
-  syllabus: TodaySyllabus | null;
 }) {
-  const known = Math.min(lessons.done, syllabus?.lessons.known ?? 0);
+  const known = Math.min(lessons.done, knownLessons);
 
   return {
     known,
@@ -29,20 +28,20 @@ function getLessonCounts({
 
 export function LessonsCard({
   className,
+  knownLessons,
   lessons,
-  syllabus,
   value,
 }: {
   className?: string;
+  /** Lessons the learner skipped because they already knew them. */
+  knownLessons: number;
   lessons: TodayLessons;
-  syllabus: TodaySyllabus | null;
   value: number;
 }) {
   const t = useExtracted();
-  const formatGoalProgress = useFormatGoalProgress();
+  const formatProgressShare = useFormatProgressShare();
   const ids = useCardIds();
-  const rows = useSubjectRows(syllabus);
-  const counts = getLessonCounts({ lessons, syllabus });
+  const counts = getLessonCounts({ knownLessons, lessons });
 
   const states = [
     "studied" as const,
@@ -66,7 +65,7 @@ export function LessonsCard({
           : null
       }
       title={t("Progress")}
-      value={formatGoalProgress(value)}
+      value={formatProgressShare(value)}
     >
       {counts.total > 0 && (
         <div className="flex flex-col gap-2.5">
@@ -74,8 +73,6 @@ export function LessonsCard({
           {states.length > 1 && <CoverageLegend states={states} />}
         </div>
       )}
-
-      <SubjectRows labelledBy={ids.title} rows={rows} />
     </ProgressCard>
   );
 }

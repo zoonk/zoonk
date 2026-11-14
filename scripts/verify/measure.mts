@@ -13,6 +13,9 @@ import {
 } from "./browser.mts";
 import { type Finding, type LoadMeasurement, judgeLoad, totalBlockingTime } from "./checks.mts";
 import { measureFrames } from "./content-frames.mts";
+import { readCraft } from "./craft-probe.mts";
+import { craftFindings } from "./craft.mts";
+import { type Shortcuts } from "./keys.mts";
 import {
   findOverflow,
   findTruncated,
@@ -29,21 +32,35 @@ import {
   redactQuery,
   summarizePrefetches,
 } from "./requests.mts";
+import { readRoleFacts, roleFindings } from "./role-checks.mts";
 import { readCpuMs } from "./server-process.mts";
+import { type WalkCoverage } from "./states.mts";
 import { LOAD_TIMEOUT_MS } from "./tap.mts";
 import { type Scheme, type ViewportName } from "./viewports.mts";
+import {
+  type PageWords,
+  pageKind,
+  placeFindings,
+  readWords,
+  summarizeWords,
+  titleTopFindings,
+  wordFindings,
+} from "./words.mts";
 
 export const NETWORK_IDLE_MS = 15_000;
 
 export type Target = {
   actions: Map<string, string>;
+  app: string;
   queries?: string;
   baseUrl: string;
   browser: Browser;
   out: string;
   serverPid: number | null;
+  shortcuts: Shortcuts | null;
   storageState?: BrowserContextOptions["storageState"];
   throttle: boolean;
+  typeScale: number[];
 };
 
 export type LoadReport = LoadMeasurement & {
@@ -56,6 +73,8 @@ export type LoadReport = LoadMeasurement & {
   path: string;
   screenshots: string[];
   viewport: ViewportName;
+  words: PageWords;
+  walk?: WalkCoverage;
 };
 
 const QUERY_HASH_LENGTH = 8;
@@ -105,10 +124,12 @@ async function readLoadedPage(page: Page, traffic: Traffic) {
     blankSeenMs: probe?.blankFrames[0] ?? null,
     blockingMs: probe ? totalBlockingTime(probe.longTasks, fcpMs) : null,
     bytes: await page.evaluate(transferredBytes),
+    craft: await page.evaluate(readCraft),
     fcpMs,
     lcpMs: probe?.lcp ?? null,
     overflow: await page.evaluate(findOverflow),
     production: !(await page.evaluate(isNextDev)),
+    roles: await page.evaluate(readRoleFacts),
     shifts: probe?.shifts ?? [],
     skeletonLastMs: probe?.skeletonFrames.at(-1) ?? null,
     skeletonSeenMs: probe?.skeletonFrames[0] ?? null,
@@ -117,6 +138,7 @@ async function readLoadedPage(page: Page, traffic: Traffic) {
     unprefetchedLinks: links
       .filter((link) => !prefetched.has(link))
       .map((link) => redactQuery(link)),
+    words: await page.evaluate(readWords),
   };
 }
 
@@ -167,7 +189,8 @@ export async function measureLoad(
 
     const appearances = await checkSchemes(page, { name, schemes });
 
-    const { bytes, timeOrigin: _, ...measured } = loaded;
+    const { bytes, craft, roles, timeOrigin: _, words: text, ...measured } = loaded;
+    const words = summarizeWords(text, pageKind(target.app, path));
 
     const measurement: LoadMeasurement = {
       ...measured,
@@ -192,13 +215,21 @@ export async function measureLoad(
         count: statements.length,
         ms: statements.reduce((total, statement) => total + statement.ms, 0),
       },
-      findings: judgeLoad(measurement),
+      findings: [
+        ...judgeLoad(measurement),
+        ...wordFindings(words),
+        ...placeFindings(words, { app: target.app, path }),
+        ...titleTopFindings(words),
+        ...craftFindings(craft, target.typeScale),
+        ...roleFindings(roles),
+      ],
       frames: paints,
       framesDirectory: `${name}-frames`,
       mainThreadMs,
       path: redactQuery(path),
       screenshots: appearances.screenshots,
       viewport,
+      words,
     };
   } finally {
     await context.close();

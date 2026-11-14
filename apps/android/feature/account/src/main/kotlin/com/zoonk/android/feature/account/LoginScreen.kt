@@ -256,8 +256,6 @@ fun CodeEntry(
             stringResource(R.string.account_send_new_code),
             isWorking = work == SignInWork.Resend,
             onClick = signIn::resendCode,
-            leadingIcon = { ButtonIcon(R.drawable.ic_send) },
-            trailingIcon = null,
         )
     } else {
         WorkingButton(stringResource(R.string.account_continue), isWorking = work == SignInWork.CheckCode, onClick = signIn::checkCode)
@@ -301,7 +299,6 @@ private fun ProfileSetup(
 @Composable
 fun ProfileSetupForm(form: ProfileFormViewModel) {
     Title(stringResource(R.string.account_setup_title))
-    Description(stringResource(R.string.account_setup_description))
     ProfileFields(form, isSetup = true)
     ProfileSaveFailure(form)
     WorkingButton(stringResource(R.string.account_continue), isWorking = form.isSaving, enabled = form.canSave, onClick = { form.save() })
@@ -378,16 +375,12 @@ private fun WorkingButton(
     isWorking: Boolean,
     onClick: () -> Unit,
     enabled: Boolean = true,
-    leadingIcon: (@Composable () -> Unit)? = null,
-    trailingIcon: (@Composable () -> Unit)? = { ButtonIcon(R.drawable.ic_arrow_forward) },
 ) {
     Button(
         busy = isWorking,
         onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
         enabled = enabled,
-        leadingIcon = leadingIcon,
-        trailingIcon = trailingIcon,
     ) { Text(text) }
 }
 

@@ -90,7 +90,7 @@ private struct LevelButton: View {
     let belt = level.belt
 
     Button {
-      router.open(.statistics)
+      router.open(.statistics())
     } label: {
       HStack(spacing: 6) {
         BeltDot(belt: belt)
@@ -101,7 +101,7 @@ private struct LevelButton: View {
     }
     .accessibilityLabel(
       Text(
-        "\(Text(belt.localizedTitle)), level \(level.level). Statistics", tableName: "Navigation",
+        "\(Text(belt.localizedTitle)) \(level.level). Statistics", tableName: "Navigation",
         comment:
           "Spoken label of the toolbar button with the learner's belt and level, which opens their statistics"
       ))
@@ -245,9 +245,9 @@ private struct GoalSwitcher: View {
                   )
                 } else if goal.locked {
                   Text(
-                    "Pause a goal or get Plus", tableName: "Navigation",
+                    "Pause a goal to start it", tableName: "Navigation",
                     comment:
-                      "Under a goal in the goal switcher that waits for room on the free plan; Plus is the subscription's name, not \"more\""
+                      "Under a goal in the goal switcher that waits for room: another goal must be paused first"
                   )
                 } else {
                   Text(
@@ -287,7 +287,7 @@ private struct GoalSwitcher: View {
           } label: {
             Label {
               Text(
-                "Start a new goal", tableName: "Navigation",
+                "New goal", tableName: "Navigation",
                 comment: "Goal switcher option that starts another goal")
             } icon: {
               Image(systemName: "plus")
@@ -446,7 +446,7 @@ private func daysLeft(until targetDate: String?) -> Int? {
     return nil
   }
 
-  let days = PlanDate.days(from: isoDay(.now), to: targetDate)
+  let days = PlanDate.days(from: PlanDate.today(), to: targetDate)
   return days >= 0 ? days : nil
 }
 

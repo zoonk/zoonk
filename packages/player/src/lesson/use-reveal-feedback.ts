@@ -16,7 +16,7 @@ const MARGIN = 16;
 
 function getVisibleArea(scroller: HTMLElement) {
   const box = scroller.getBoundingClientRect();
-  const bar = scroller.querySelector<HTMLElement>('[data-slot="lesson-action-bar"]');
+  const bar = scroller.querySelector<HTMLElement>('[data-slot="bottom-bar"]');
   const isStuck = bar ? getComputedStyle(bar).position === "sticky" : false;
 
   return { bottom: box.bottom - (isStuck && bar ? bar.offsetHeight : 0), top: box.top };
@@ -59,7 +59,7 @@ function getScrollDelta(scroller: HTMLElement): number {
   }
 
   const keepsQuestion = question.top - visible.top - MARGIN;
-  const showsVerdict = verdict.bottom - visible.bottom + MARGIN;
+  const showsVerdict = verdict.bottom - visible.bottom;
 
   return whole > keepsQuestion && keepsQuestion >= 0 && showsVerdict <= keepsQuestion
     ? keepsQuestion

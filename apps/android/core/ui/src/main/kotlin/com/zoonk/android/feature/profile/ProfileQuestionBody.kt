@@ -114,7 +114,11 @@ fun ProfileQuestionBody(
         when (question.id) {
             ProfileQuestion.WORK -> {
                 ChoiceList(
-                    choices = choices + Choice("_declined", stringResource(R.string.profile_questions_prefer_not)),
+                    choices =
+                        choices +
+                            listOfNotNull(
+                                Choice("_declined", stringResource(R.string.profile_questions_prefer_not)).takeUnless { declineAsSkip },
+                            ),
                     value = if (draft.declined) "_declined" else draft.picks.firstOrNull(),
                     label = label,
                     readOnly = !enabled,
@@ -205,11 +209,11 @@ fun ProfileQuestionBody(
                     )
                 }
                 CheckList(
-                    choices = choices + Choice("_none", stringResource(R.string.profile_questions_nothing_particular)),
-                    value = draft.picks + if (draft.declined) listOf("_none") else emptyList(),
+                    choices = choices,
+                    value = draft.picks,
                     label = label,
                     readOnly = !enabled,
-                    onToggle = { id -> change(if (id == "_none") draft.decline() else draft.toggle(id)) },
+                    onToggle = { id -> change(draft.toggle(id)) },
                 )
                 if (memoryEnabled) {
                     if (noteOpen || draft.text.isNotEmpty()) {
@@ -244,11 +248,6 @@ fun ProfileQuestionBody(
                     )
                 }
                 if (question.id == ProfileQuestion.STUDIES) {
-                    ProfileChip(
-                        stringResource(R.string.profile_questions_nothing_to_add),
-                        draft.declined,
-                        enabled,
-                    ) { change(draft.decline()) }
                     draft.picks.forEach { id ->
                         val field =
                             if (id ==
@@ -284,7 +283,6 @@ fun ProfileQuestionBody(
                         enabled,
                         placeholder = placeholder,
                     ) { change(draft.copy(text = it, declined = false)) }
-                    ProfileChip(stringResource(R.string.profile_questions_none), draft.declined, enabled) { change(draft.decline()) }
                 }
             }
         }

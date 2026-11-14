@@ -64,17 +64,17 @@ function GenerationTimelineProgress({
       value={value}
       {...props}
     >
-      <span aria-hidden="true" className="flex h-1 min-w-0 flex-1 gap-[3px]">
+      <span aria-hidden="true" className="flex h-1.5 min-w-0 flex-1 gap-0.5">
         {fills.map((fill, index) => (
           <span
-            className="bg-surface-3 flex min-w-0 overflow-hidden rounded-xs"
+            className="bg-surface-3 rounded-meter flex min-w-0 overflow-hidden"
             data-slot="generation-timeline-segment"
             // oxlint-disable-next-line react/no-array-index-key -- Segments are positions, not items.
             key={index}
             style={{ flexGrow: Math.max(1, weights[index] ?? 1) }}
           >
             <span
-              className="bg-success h-full transition-[width] duration-700 ease-out motion-reduce:transition-none"
+              className="bg-success rounded-meter h-full transition-[width] duration-700 ease-out motion-reduce:transition-none"
               style={{ width: `${fill * 100}%` }}
             />
           </span>
@@ -134,10 +134,11 @@ function GenerationTimelineStepIndicator({ className, ...props }: React.Componen
       data-slot="generation-timeline-step-indicator"
       {...props}
     >
-      <span className="ring-faint size-2 rounded-full ring-1 group-data-[status=active]/generation-timeline-step:hidden group-data-[status=completed]/generation-timeline-step:hidden group-data-[status=failed]/generation-timeline-step:hidden" />
-      <span className="bg-foreground hidden size-2 rounded-full group-data-[status=active]/generation-timeline-step:block" />
+      {/* One 10px mark in every state: the ring, the dot, and the ink of the check and the alert. */}
+      <span className="ring-faint size-2.5 rounded-full ring-1 ring-inset group-data-[status=active]/generation-timeline-step:hidden group-data-[status=completed]/generation-timeline-step:hidden group-data-[status=failed]/generation-timeline-step:hidden" />
+      <span className="bg-foreground hidden size-2.5 rounded-full group-data-[status=active]/generation-timeline-step:block" />
       <CheckIcon className="text-success hidden size-4 group-data-[status=completed]/generation-timeline-step:block" />
-      <CircleAlertIcon className="text-destructive-text hidden size-4 group-data-[status=failed]/generation-timeline-step:block" />
+      <CircleAlertIcon className="text-destructive-text hidden size-3 group-data-[status=failed]/generation-timeline-step:block" />
     </span>
   );
 }

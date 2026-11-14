@@ -70,6 +70,31 @@ function useContinueItem(today: LearnerSummary["today"]): PaletteItem | null {
   });
 }
 
+/** The sidebar's Stats group, which a phone has no room for: search finds each page by name. */
+function useStatsPages({ searching }: { searching: boolean }): PaletteItem[] {
+  const t = useExtracted();
+
+  if (!searching) {
+    return [];
+  }
+
+  return [
+    createNavigationPaletteItem({ id: "level", label: t("Level"), menu: getMenu("level") }),
+    createNavigationPaletteItem({ id: "energy", label: t("Energy"), menu: getMenu("energy") }),
+    createNavigationPaletteItem({
+      id: "patterns",
+      label: t("Patterns"),
+      menu: getMenu("patterns"),
+    }),
+    createNavigationPaletteItem({ id: "score", label: t("Score"), menu: getMenu("score") }),
+    createNavigationPaletteItem({
+      id: "activity",
+      label: t("Activity"),
+      menu: getMenu("activity"),
+    }),
+  ];
+}
+
 export function useLearnerPaletteGroups({
   learner,
   searching,
@@ -80,6 +105,7 @@ export function useLearnerPaletteGroups({
   const t = useExtracted();
   const continueItem = useContinueItem(learner?.today ?? null);
   const buddy = useBuddyName(learner?.buddy ?? null);
+  const statsPages = useStatsPages({ searching });
 
   if (!learner) {
     return null;
@@ -162,8 +188,13 @@ export function useLearnerPaletteGroups({
         label: t("Mind maps"),
         menu: getMenu("mindMaps"),
       }),
-    createNavigationPaletteItem({ id: "logbook", label: t("Logbook"), menu: getMenu("logbook") }),
+    createNavigationPaletteItem({
+      id: "logbook",
+      label: t("Weekly summary"),
+      menu: getMenu("logbook"),
+    }),
     createNavigationPaletteItem({ id: "stats", label: t("Statistics"), menu: getMenu("stats") }),
+    ...statsPages,
     searching &&
       createNavigationPaletteItem({
         id: "courses",

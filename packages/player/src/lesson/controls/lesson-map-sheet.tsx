@@ -1,11 +1,12 @@
 "use client";
 
 import { type LessonMap as LessonMapData } from "@zoonk/core/library/lessons/map";
+import { SheetHeader } from "@zoonk/learn/sheet-header";
 import { Button } from "@zoonk/ui/components/button";
 import {
   Drawer,
   DrawerContent,
-  DrawerHeader,
+  DrawerFooter,
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
@@ -30,19 +31,22 @@ export function LessonMapSheet({
   return (
     <Drawer onOpenChange={onOpenChange} open={open}>
       <DrawerPopup finalFocus={getLessonFocusTarget}>
-        <DrawerHeader>
-          <DrawerTitle className="flex items-center gap-2 text-lg font-semibold">
+        <SheetHeader>
+          <DrawerTitle className="flex items-center gap-2">
             <NetworkIcon aria-hidden="true" className="size-5" />
             {t("Lesson map")}
           </DrawerTitle>
-        </DrawerHeader>
+        </SheetHeader>
 
-        <DrawerContent className="flex flex-col gap-6">
+        <DrawerContent>
           <LessonMap map={map} title={title} />
-          <Button className="w-full" onClick={() => onOpenChange(false)} size="lg">
+        </DrawerContent>
+
+        <DrawerFooter>
+          <Button onClick={() => onOpenChange(false)} size="lg">
             {t("Got it")}
           </Button>
-        </DrawerContent>
+        </DrawerFooter>
       </DrawerPopup>
     </Drawer>
   );

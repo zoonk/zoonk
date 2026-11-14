@@ -6,9 +6,9 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
+  FoldChevron,
 } from "@zoonk/ui/components/collapsible";
-import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronDownIcon, NetworkIcon, PlusIcon } from "lucide-react";
+import { NetworkIcon, PlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import {
@@ -67,13 +67,13 @@ function useDoneLine() {
 
     if (done === 0) {
       return t(
-        "{count, plural, one {# chapter skipped because you already know it} other {# chapters skipped because you already know them}}",
+        "{count, plural, one {# chapter you already know} other {# chapters you already know}}",
         { count: known },
       );
     }
 
     return t(
-      "{done, plural, one {# chapter done} other {# chapters done}}, {known, plural, one {# skipped because you already know it} other {# skipped because you already know them}}",
+      "{done, plural, one {# chapter done} other {# chapters done}}, {known, plural, one {# you already know} other {# you already know}}",
       { done, known },
     );
   };
@@ -90,19 +90,16 @@ function DoneChapters({
 
   return (
     <Collapsible>
-      <CollapsibleTrigger className={cn(LIST_ROW_INTERACTIVE_CLASS, "group/done")}>
+      <CollapsibleTrigger className={LIST_ROW_INTERACTIVE_CLASS}>
         <ListRowLeading>
           <StatusMark status={chapters.every((chapter) => chapter.known) ? "skipped" : "done"} />
         </ListRowLeading>
         <ListRowContent>
           <ListRowTitle className="text-muted-foreground">{doneLine(chapters)}</ListRowTitle>
         </ListRowContent>
-        <ChevronDownIcon
-          aria-hidden="true"
-          className="text-muted-foreground/60 size-4 shrink-0 self-center transition-transform group-data-panel-open/done:rotate-180 motion-reduce:transition-none"
-        />
+        <FoldChevron />
       </CollapsibleTrigger>
-      <CollapsibleContent className="h-(--collapsible-panel-height) overflow-hidden transition-[height] duration-200 ease-out data-ending-style:h-0 data-starting-style:h-0 motion-reduce:transition-none">
+      <CollapsibleContent>
         <ul className="flex flex-col [&>li]:border-t">
           <ChapterRows chapterHref={chapterHref} chapters={chapters} />
         </ul>
@@ -116,7 +113,7 @@ function MindMapsLink({ href }: { href: string }) {
 
   return (
     <LearnLink
-      className={cn(buttonVariants({ size: "sm", variant: "ghost" }), "-my-1 -mr-2.5")}
+      className={buttonVariants({ className: "-my-1", edge: "end", size: "sm", variant: "ghost" })}
       href={href}
     >
       <NetworkIcon aria-hidden="true" data-icon="inline-start" />

@@ -6,32 +6,29 @@ import {
   CommandDialog,
   CommandDialogDescription,
   CommandDialogTitle,
-  CommandFooter,
   CommandGroup,
   CommandGroupLabel,
   CommandInput,
   CommandItem,
+  CommandKeyHints,
   CommandList,
 } from "@zoonk/ui/components/command";
-import { Kbd } from "@zoonk/ui/components/kbd";
 import { useCommandPaletteSearch } from "@zoonk/ui/hooks/command-palette-search";
 import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
 import { listenForCommandPaletteOpen } from "@zoonk/ui/lib/command-palette-event";
 import { safeAsync } from "@zoonk/utils/error";
-import { ArrowDownIcon, ArrowUpIcon, FileIcon, type LucideIcon } from "lucide-react";
+import { FileIcon, type LucideIcon } from "lucide-react";
 import { type Route } from "next";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { searchAdminAction } from "./_actions/search-admin";
-import { adminNavigation } from "./admin-navigation";
+import { adminPages } from "./admin-navigation";
 
 type PaletteItem = { detail?: string; href: Route; icon?: LucideIcon; label: string };
 type PaletteGroup = { items: PaletteItem[]; label: string };
 
-const PAGES = adminNavigation.flatMap((group) =>
-  group.items.map(({ icon, label, url }) => ({ href: url, icon, label })),
-);
+const PAGES = adminPages.map(({ icon, label, url }) => ({ href: url, icon, label }));
 
 const EMPTY_RESULTS: { error: boolean; groups: PaletteGroup[]; query: string } = {
   error: false,
@@ -85,7 +82,7 @@ function Palette({ currentUrl }: { currentUrl: string }) {
     >
       <CommandDialogTitle>Search admin</CommandDialogTitle>
       <CommandDialogDescription>
-        Go to a page or find a user, course, lesson or skill.
+        Go to a page, or find a user, course, lesson or skill by name.
       </CommandDialogDescription>
       <Command
         autoHighlight="always"
@@ -103,54 +100,60 @@ function Palette({ currentUrl }: { currentUrl: string }) {
           maxLength={100}
           placeholder="Search pages and records…"
         />
-        <div
-          aria-live="polite"
-          className="text-muted-foreground h-7 shrink-0 px-4 py-1 text-xs"
-          role="status"
-        >
-          {takingLong && "Searching…"}
-          {!searching && failed && "Search couldn't load. Edit your search to retry."}
-          {empty &&
-            (trimmedQuery.length < 2
-              ? "Type at least 2 characters to find records."
-              : "No results found.")}
+        {/* One box of a set height, so the palette doesn't resize as words and rows come and go. */}
+        <div className="flex min-h-0 flex-1 flex-col sm:h-[min(60vh,28rem)] sm:flex-none">
+          <div
+            aria-live="polite"
+            className="text-muted-foreground shrink-0 px-4 text-xs not-empty:pt-4 sm:px-5"
+            role="status"
+          >
+            {takingLong && "Searching…"}
+            {!searching && failed && "Search couldn't load. Edit your search to retry."}
+            {empty &&
+              (trimmedQuery.length < 2
+                ? "Type at least 2 characters to find records."
+                : "No results found.")}
+          </div>
+          <CommandList>
+            {groups.map((group) => (
+              <PaletteResults
+                closePalette={closePalette}
+                currentUrl={currentUrl}
+                group={group}
+                key={group.label}
+              />
+            ))}
+          </CommandList>
         </div>
-        <CommandList className="min-h-[min(60vh,28rem)]">
-          {groups.map((group) => (
-            <CommandGroup items={group.items} key={group.label}>
-              <CommandGroupLabel>{group.label}</CommandGroupLabel>
-              <CommandCollection>
-                {(item: PaletteItem) => (
-                  <PaletteOption
-                    closePalette={closePalette}
-                    currentUrl={currentUrl}
-                    item={item}
-                    key={item.href}
-                  />
-                )}
-              </CommandCollection>
-            </CommandGroup>
-          ))}
-        </CommandList>
       </Command>
-      <CommandFooter>
-        <span>
-          <Kbd>
-            <ArrowUpIcon />
-          </Kbd>
-          <Kbd>
-            <ArrowDownIcon />
-          </Kbd>{" "}
-          move
-        </span>
-        <span>
-          <Kbd>⏎</Kbd> open
-        </span>
-        <span>
-          <Kbd>Esc</Kbd> close
-        </span>
-      </CommandFooter>
+      <CommandKeyHints close="close" move="move" open="open" />
     </CommandDialog>
+  );
+}
+
+function PaletteResults({
+  closePalette,
+  currentUrl,
+  group,
+}: {
+  closePalette: () => void;
+  currentUrl: string;
+  group: PaletteGroup;
+}) {
+  return (
+    <CommandGroup items={group.items}>
+      <CommandGroupLabel>{group.label}</CommandGroupLabel>
+      <CommandCollection>
+        {(item: PaletteItem) => (
+          <PaletteOption
+            closePalette={closePalette}
+            currentUrl={currentUrl}
+            item={item}
+            key={item.href}
+          />
+        )}
+      </CommandCollection>
+    </CommandGroup>
   );
 }
 

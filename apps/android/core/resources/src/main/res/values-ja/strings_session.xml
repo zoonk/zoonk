@@ -3,27 +3,19 @@
 {
   "session_block_bonus_practice": "7acb70ec455d62ddaec46c1d6d4c244e607873441e1b0081b4c228de0c053c39",
   "session_block_bonus_practice_areas": "1d549e095bf03946375537146a044660e7e5e7599e1dc1468151aeba4ed7e8ce",
-  "session_block_challenge_questions": "b1842dc3cfcdf7d140d7eb37a9337ca22eb671bae6ae936d63f5f12d34962833",
-  "session_block_challenge_rematch": "d798fb6ae4a41d40d700fd53d7671fe581cdf115f48000cd8cc3b1787a960eea",
-  "session_block_final_challenge": "1eab071edc1dd0d6fa7b29555759019d623d15cb3193af70e676894e12ee29e2",
-  "session_block_full_review": "bfb5bee572a99f681bb8ba264ecb09df4a13e2811f090f422e6f9362a131dd84",
-  "session_block_full_review_questions": "8b7ec16ee3f52971d808c99c2364d6da4096d771d188ebb709558e2a5dda9f08",
-  "session_block_live_call": "7a51c934889d18f89df5fec7cced858d9b3dda9601b7f88753349dd47f382121",
+  "session_block_call": "3c604bab94afc1e55a5ea21da5fd768fa695ade70571a480bbe033bfb6bdae17",
+  "session_block_full_review_questions": "ad899fe177bbf628e3ec25890665696e51f6690a20bdf7b2acc4e065ba09bc3a",
   "session_block_mixed_practice": "116633e5d5dcb2f448e50cbc681f066c4b9a50a59f78d99f30edd20b741d5233",
   "session_block_mock_exam": "b9820a751100d25e7046770f76957341249b20d8e838e55fbe93e1ff29cd8a50",
   "session_block_new_lesson": "383378c88f087e4117e55bf453b8dee5ed49831035bd20947e24529e69090448",
-  "session_block_phase_challenge": "6f157f39edc4baa3397a7eb1afd03f745f9fe51f18f658026bede3f9229ac262",
-  "session_block_phase_live_call": "9651e472217ac216f416cbe114863a0b5579d3c4f7f60e39c289c30ebdc2b50e",
-  "session_block_phase_questions": "3a510acc8171cbd28c54424c5e3a8d1bbc76248e18cfb0c7c792fccc5ad2d02b",
   "session_block_practice_areas": "9dbf0c6084a5cca5f639779d63245459ceb22a9da77be200691d8c6dbfc24681",
   "session_block_practice_mistakes": "754c728302275e2acf7cacd2b0eedda0a435f85744e09674b43cf5e223646d98",
   "session_block_questions": "cc4a08a3b4ea318fd88af2095e1b260c6aec625ab9943331a2249d300af470f2",
-  "session_block_quick_review": "7a71440adea91607633ed8ec8d294a1c9239ee6046c7b7058345c55ce259755b",
+  "session_block_rematch": "bdd8b3e5244ea2dde6ad1503e049c41cc530a1fc60fa9af45ed58778cf8d42ea",
   "session_block_rematch_lesson": "f7ce493a739d5dedd6a04ae2362d6a2a99acbc53beca1f1c6767738db499a997",
+  "session_block_review": "4b7f4d080a0f534a6ff786c0d9ee413d2a1b933464af8f56e4a11b529d4842c2",
   "session_block_review_topics": "282b4c61cccc5e9c7d62c08689006d61d8ce244e857d6deb18cbfa6342153bdb",
-  "session_block_review_topics_and_known": "67ae8034b076a7f11e0043e8302cc1c2e9cb7d005ab25fac73b9f6317610d85c",
-  "session_block_reviews": "ec2614700d3cee34fa95376c81bfcf7ded2cc3018e5c958105e762daddb6c2cb",
-  "session_block_weakest": "7104403a7c7182b7fafc25aacb60a838086a168c49458e6472d8a994ed7f3101",
+  "session_block_weakest": "800791a9f39f6f6a52a48993a28abbba292597add8c32abd803fe45c2d3adfad",
   "session_block_weekly_challenge": "ec1586be9f1bd39b81aed0eeab687c10613e18aebc2dec18fec79576c631dd92",
   "session_block_what_you_know": "18d36f3a50e7473f4c70af5421894bcbfb67dca65c339b5c45b9356c462d1822",
   "session_block_writing_practice": "b94c5974b1edaae1a9c9994e1c7e2cdfdc24a2482bedeb8e5d77e10cd4f6b42d",
@@ -94,18 +86,17 @@
 }
 -->
 <resources>
+    <string name="session_block_review">復習</string>
+    <!-- A second go at the Trickster after losing. -->
+    <string name="session_block_rematch">再挑戦</string>
+    <!-- A language plan's live call with the Trickster. -->
+    <string name="session_block_call">会話</string>
     <string name="session_block_mock_exam">模試</string>
     <string name="session_block_weekly_challenge">週間チャレンジ</string>
-    <string name="session_block_final_challenge">最終チャレンジ</string>
-    <string name="session_block_challenge_rematch">2回目のチャレンジ</string>
-    <string name="session_block_phase_challenge">フェーズチャレンジ</string>
     <!-- The first week's warm-up: only placement's questions, which check rather than review. -->
     <string name="session_block_what_you_know">すでに知っていること</string>
-    <string name="session_block_reviews">復習</string>
-    <string name="session_block_quick_review">さっと復習</string>
     <string name="session_block_new_lesson">新しいレッスン</string>
     <string name="session_block_writing_practice">ライティング練習</string>
-    <string name="session_block_full_review">総復習</string>
     <string name="session_block_practice_mistakes">間違えたところの練習</string>
     <string name="session_block_bonus_practice">追加の練習</string>
     <string name="session_block_mixed_practice">総合練習</string>
@@ -118,28 +109,15 @@
         <item quantity="other">%d問</item>
     </plurals>
     <plurals name="session_block_weakest">
-        <item quantity="other">今日の復習はありません · 特に苦手なトピックから%d問</item>
+        <item quantity="other">特に苦手な内容から%d問</item>
     </plurals>
     <!-- %2$s lists the topics reviewed, such as "Fractions, Ratios and 2 more topics". -->
     <plurals name="session_block_review_topics">
         <item quantity="other">%1$d問 · %2$s</item>
     </plurals>
-    <plurals name="session_block_review_topics_and_known">
-        <item quantity="other">%1$d問 · %2$sと、すでに知っていること</item>
-    </plurals>
-    <!-- %2$s is the phase's name. -->
-    <plurals name="session_block_phase_questions">
-        <item quantity="other">%2$s · %1$d問、ヒントなし</item>
-    </plurals>
-    <!-- %1$s is the phase's name; a language unit's challenge is a live call with the Trickster. -->
-    <string name="session_block_phase_live_call">%1$s · リアルタイムの会話</string>
-    <string name="session_block_live_call">リアルタイムの会話</string>
-    <plurals name="session_block_challenge_questions">
-        <item quantity="other">%d問、ヒントなし</item>
-    </plurals>
-    <!-- %d is the review's total number of questions, not a count per topic; the review covers every topic, weakest first. -->
+    <!-- %d is the review's total number of questions, not a count per topic; the review covers every topic. -->
     <plurals name="session_block_full_review_questions">
-        <item quantity="other">全トピックから計%d問、苦手な順に</item>
+        <item quantity="other">すべてのトピックから合計%d問</item>
     </plurals>
     <!-- %1$s names the first topics; %2$d counts the rest. -->
     <plurals name="session_topics_and_more">

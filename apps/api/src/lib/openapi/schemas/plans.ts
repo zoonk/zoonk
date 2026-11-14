@@ -77,16 +77,7 @@ const dailyTimesSchema = z
 
 export const planResponseSchema = z
   .object({
-    access: z.object({
-      freeUntil: isoDateSchema.nullable().meta({ description: "Last day a free exam plan covers" }),
-      freeWeekOver: z
-        .boolean()
-        .meta({
-          description:
-            "A free exam plan past its first week: its new lessons, practice, challenges and mocks come with Plus, while reviews and fixing mistakes stay free",
-        }),
-      mocksRequirePlus: z.boolean(),
-    }),
+    access: z.object({ mocksRequirePlus: z.boolean() }),
     areas: z.array(planAreaSchema),
     bases: planBasesSchema
       .nullable()
@@ -194,7 +185,7 @@ export const planResponseSchema = z
         .boolean()
         .meta({
           description:
-            "The date is the start of the month the learner named, standing for that month: say the month, not the day",
+            "The date is the start of the month the learner named, and stands for that month, not that day",
         }),
       weekdayMinutes: z.array(z.int()).meta({ description: "Sunday first; 0 for rest days" }),
     }),

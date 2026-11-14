@@ -20,7 +20,6 @@ import {
   conflictResponse,
   jsonResponse,
   notFoundResponse,
-  paymentRequiredResponse,
   unauthorizedResponse,
   unprocessableEntityResponse,
   validationErrorResponse,
@@ -221,17 +220,13 @@ export const studySessionPaths = {
   "/study-sessions/{sessionId}/catch-up-blocks": {
     post: {
       description:
-        "\"Catch up today\": the lessons earlier days left that the day's normal time didn't fit (`catchUp.later` on the session) join the end of today's session, in plan order, so the learner is back on pace once they're done. Without it they come first on the next days. A finished day opens again. Only while the day offers it (`catchUp.later.offered`); past a free exam plan's first week its new lessons come with Plus, these too.",
+        "\"Catch up today\": the lessons earlier days left that the day's normal time didn't fit (`catchUp.later` on the session) join the end of today's session, in plan order, so the learner is back on pace once they're done. Without it they come first on the next days. A finished day opens again. Only while the day offers it (`catchUp.later.offered`).",
       operationId: "createStudyCatchUpBlocks",
       requestBody: timeZoneBody,
       requestParams: { path: studySessionPathParamsSchema },
       responses: {
         "200": jsonResponse(studySessionResponseSchema, "The session with the lessons added"),
         ...readErrors,
-        "402": {
-          ...paymentRequiredResponse,
-          description: `A free exam plan past its first week: its new lessons come with Plus (\`examAccess.trialEnded\`). Error code: ${studySessionErrorCodes.plusRequired}.`,
-        },
         "422": {
           ...unprocessableEntityResponse,
           description: `Nothing to add to today: no lessons left to catch up on, or the day doesn't offer them (\`catchUp.later.offered\` is false or \`catchUp\` is null). Error code: ${studySessionErrorCodes.nothingToCatchUp}.`,
@@ -245,7 +240,7 @@ export const studySessionPaths = {
   "/study-sessions/{sessionId}/extra-blocks": {
     post: {
       description:
-        "\"Keep learning\" after the day's session, or on a day the plan gives no time: the plan's next lessons, about ten minutes of them (`extraTime.lessons` lists them before the tap), studied a day early. With every lesson done, a bonus block of mixed practice instead, again with each tap, with capped Brain Power. A free exam plan past its first week has none (`plusRequired`): its practice and new lessons come with Plus.",
+        "\"Keep learning\" after the day's session, or on a day the plan gives no time: the plan's next lessons, about ten minutes of them (`extraTime.lessons` lists them before the tap), studied a day early. With every lesson done, a bonus block of mixed practice instead, again with each tap, with capped Brain Power.",
       operationId: "createStudyExtraBlock",
       requestBody: timeZoneBody,
       requestParams: { path: studySessionPathParamsSchema },

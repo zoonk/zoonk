@@ -70,14 +70,13 @@ private struct OnboardingDetail: Decodable {
   }
 }
 
-/// A question's list, with its buttons pinned under it so they stay in reach however long the list
-/// is. While an answer saves (`sendsAnswer`), its fields lock (`locksWhileSaving`) and only the
+/// A question's list, with its buttons in the bottom bar so they stay in reach however long the
+/// list is. While an answer saves (`sendsAnswer`), its fields lock (`locksWhileSaving`) and only the
 /// button that sent it spins; the list itself stays enabled, so that button keeps its focus. A failed
-/// save says so over the buttons.
+/// save says so over the bar.
 struct QuestionForm<Content: View, Buttons: View>: View {
   @ViewBuilder let content: Content
   @ViewBuilder let buttons: Buttons
-  private var hasButtons = true
 
   @Environment(\.answerFailure) private var failure
 
@@ -91,19 +90,8 @@ struct QuestionForm<Content: View, Buttons: View>: View {
       content
     }
     .scrollDismissesKeyboard(.interactively)
-    .safeAreaBar(edge: .bottom) {
-      if hasButtons || failure != nil {
-        VStack(spacing: 12) {
-          if let failure {
-            FailureLine(message: failure)
-          }
-
-          buttons
-        }
-        .keepsOffFold()
-        .scenePadding(.horizontal)
-        .padding(.vertical, 10)
-      }
+    .bottomBar(note: failure.map { BarNote($0) }) {
+      buttons
     }
     // Skip's outline is see-through, so what scrolls under the bar stops at its edge.
     .scrollEdgeEffectStyle(.hard, for: .bottom)
@@ -113,7 +101,6 @@ struct QuestionForm<Content: View, Buttons: View>: View {
 extension QuestionForm where Buttons == EmptyView {
   init(@ViewBuilder content: () -> Content) {
     self.init(content: content) {}
-    hasButtons = false
   }
 }
 
@@ -179,60 +166,36 @@ struct StepSender {
 struct StepHeader: View {
   var subject: String?
   let title: Text
-  let description: Text?
+  var description: Text?
+
+  @Environment(\.onboardingAside) private var aside
+
+  /// Setup's steps put their titles at one height, chip or not; the same screens elsewhere, such
+  /// as About you in Settings, are pages, with nothing over their titles.
+  private var keepsChipRoom: Bool {
+    if case .planSoFar = aside { true } else { false }
+  }
 
   var body: some View {
     Section {
-      PageHeader(title, eyebrow: subject.map { Text(verbatim: $0) }, supporting: description)
-        .listRowBackground(Color.clear)
+      PageHeader(
+        title, chip: subject.map { Chip(Text(verbatim: $0)) }, keepsChipRoom: keepsChipRoom,
+        supporting: description
+      )
+      .listRowBackground(Color.clear)
     }
   }
 }
 
-/// A step's Continue, with an optional Skip under it: a list's last section, or a `QuestionForm`'s
-/// pinned bar.
+/// A step's Skip and Continue, for a screen's bottom bar: `.bottomBar { StepButtons(...) }`, or a
+/// `QuestionForm`'s `buttons`. Continue is the main action, so it is its label alone; Skip may carry
+/// one icon. Either one's request is `isSavingAnswer`; the one pressed spins.
 struct StepButtons: View {
   var canContinue = true
   var canSkip = true
   var continueLabel: Text?
-  var continueIcon: ActionIcon? = .forward
   var skipLabel: Text?
-  var skipIcon: ActionIcon? = .skip
-  var note: Text?
-  let onContinue: () -> Void
-  var onSkip: (() -> Void)?
-
-  var body: some View {
-    Section {
-      StepButtonStack(
-        canContinue: canContinue, canSkip: canSkip, continueLabel: continueLabel,
-        continueIcon: continueIcon, skipLabel: skipLabel, skipIcon: skipIcon,
-        onContinue: onContinue, onSkip: onSkip
-      )
-      .keepsOffFold()
-      .listRowInsets(.vertical, 0)
-      .listRowBackground(Color.clear)
-    } footer: {
-      SectionFooter {
-        if let note {
-          note
-            .frame(maxWidth: .infinity)
-            .multilineTextAlignment(.center)
-        }
-      }
-    }
-  }
-}
-
-/// A label passed in takes its own icon, or none where no idea fits it; the defaults are Continue's
-/// forward arrow and Skip's. Either one's request is `isSavingAnswer`; the one pressed spins.
-struct StepButtonStack: View {
-  var canContinue = true
-  var canSkip = true
-  var continueLabel: Text?
-  var continueIcon: ActionIcon? = .forward
-  var skipLabel: Text?
-  var skipIcon: ActionIcon? = .skip
+  var skipIcon: ActionIcon?
   let onContinue: () -> Void
   var onSkip: (() -> Void)?
 
@@ -243,32 +206,29 @@ struct StepButtonStack: View {
     let proceeds = sender.sent(.proceed, isSaving: isSaving)
     let skips = sender.sent(.skip, isSaving: isSaving)
 
-    VStack(spacing: 12) {
-      BusyButton(isBusy: proceeds, icon: continueIcon) {
-        sender.press(.proceed)
-        onContinue()
+    if let onSkip {
+      BusyButton(isBusy: skips, icon: skipIcon) {
+        sender.press(.skip)
+        onSkip()
       } label: {
-        continueLabel
-          ?? Text("Continue", tableName: "Onboarding", comment: "Saves an onboarding answer")
+        skipLabel
+          ?? Text(
+            "Skip", tableName: "Onboarding", comment: "Skips an optional onboarding question")
       }
-      .buttonStyle(.mainAction)
-      .disabled((!canContinue || isSaving) && !proceeds)
-
-      if let onSkip {
-        BusyButton(isBusy: skips, icon: skipIcon) {
-          sender.press(.skip)
-          onSkip()
-        } label: {
-          skipLabel
-            ?? Text(
-              "Skip", tableName: "Onboarding", comment: "Skips an optional onboarding question")
-        }
-        .buttonStyle(.outline)
-        .disabled((!canSkip || isSaving) && !skips)
-      }
+      .buttonStyle(.outline)
+      .disabled((!canSkip || isSaving) && !skips)
     }
-    .buttonSizing(.flexible)
-    .controlSize(.large)
+
+    BusyButton(isBusy: proceeds) {
+      sender.press(.proceed)
+      onContinue()
+    } label: {
+      continueLabel
+        ?? Text("Continue", tableName: "Onboarding", comment: "Saves an onboarding answer")
+    }
+    .buttonStyle(.mainAction)
+    .disabled((!canContinue || isSaving) && !proceeds)
+    .keyboardShortcut(.defaultAction)
     .onChange(of: isSaving) {
       if !isSaving {
         sender.saveEnded()
@@ -287,7 +247,6 @@ struct ChoiceRows<Value: Hashable>: View {
   let choices: [Choice]
   var picked: Value?
   var header: Text?
-  var footer: Text?
   /// The next question replaces this one, so VoiceOver says what was picked as it goes.
   var movesOn = false
   let onPick: (Value) -> Void
@@ -331,16 +290,12 @@ struct ChoiceRows<Value: Hashable>: View {
       if let header {
         SectionTitle(header)
       }
-    } footer: {
-      SectionFooter {
-        footer
-      }
     }
   }
 }
 
 /// Main's `CountryStep`: a pick waits for Continue, since a mis-tap would start a course about the
-/// wrong country. Skip keeps the language's own country, which the line above the buttons names.
+/// wrong country. Skip keeps the language's own country.
 private struct CountryQuestion: View {
   let view: GoalOnboarding
   let subject: String
@@ -360,9 +315,7 @@ private struct CountryQuestion: View {
         title: Text(
           "Which country should your lessons be about?", tableName: "Onboarding",
           comment: "Onboarding question for a goal whose content changes from country to country"),
-        description: Text(
-          "What you learn here changes from country to country. You can change it later in your plan.",
-          tableName: "Onboarding", comment: "Under the content country question"))
+        description: nil)
 
       Section {
         ForEach(choices) { choice in
@@ -418,23 +371,22 @@ private struct CountryQuestion: View {
         }
       }
       .locksWhileSaving()
-    } buttons: {
-      VStack(alignment: .leading, spacing: 12) {
-        if let notice {
-          Text(notice)
-            .typeStyle(.note)
-            .foregroundStyle(.mutedForeground)
-        }
 
-        StepButtonStack(canContinue: picked != nil) {
-          if let picked {
-            onAnswer(["country": picked.code, "question": "contentCountry"])
-          }
-        } onSkip: {
-          onAnswer(["question": "contentCountry"])
-        }
+      if let notice {
+        Text(notice)
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
+          .listRowSeparator(.hidden)
+          .announcesStatus(notice)
       }
-      .announcesStatus(notice)
+    } buttons: {
+      StepButtons(canContinue: picked != nil) {
+        if let picked {
+          onAnswer(["country": picked.code, "question": "contentCountry"])
+        }
+      } onSkip: {
+        onAnswer(["question": "contentCountry"])
+      }
     }
   }
 
@@ -459,17 +411,7 @@ private struct CountryQuestion: View {
   }
 
   private var notice: String? {
-    if let variety = picked?.lessonVariety {
-      return lessonLanguageLine(variety)
-    }
-
-    return defaultCountry.map { country in
-      String(
-        localized: "If you skip: \(country.name)", table: "Onboarding",
-        comment:
-          "Above the content country question's buttons: the country Skip keeps; the argument is a country's name, such as Brazil"
-      )
-    }
+    picked?.lessonVariety.map(lessonLanguageLine)
   }
 }
 
@@ -484,9 +426,7 @@ private struct PurposeQuestion: View {
         title: Text(
           "What do you want from it?", tableName: "Onboarding",
           comment: "Onboarding question: what the learner hopes to get from learning it"),
-        description: Text(
-          "It sets how deep your course goes, and so how long it is.", tableName: "Onboarding",
-          comment: "Under the purpose question"))
+        description: nil)
 
       ChoiceRows(
         choices: [
@@ -495,13 +435,13 @@ private struct PurposeQuestion: View {
             label: String(
               localized: "Get an overview", table: "Onboarding", comment: "Purpose choice"),
             detail: Text(
-              "A short course: the big ideas, no formulas", tableName: "Onboarding",
+              "The big ideas, in short", tableName: "Onboarding",
               comment: "Purpose choice detail")
           ),
           .init(
             value: "deep",
             label: String(
-              localized: "Understand it in depth", table: "Onboarding", comment: "Purpose choice"),
+              localized: "Understand it well", table: "Onboarding", comment: "Purpose choice"),
             detail: Text(
               "The full path, from the basics to advanced", tableName: "Onboarding",
               comment: "Purpose choice detail")),
@@ -524,7 +464,7 @@ private struct PurposeQuestion: View {
             label: String(
               localized: "Refresh what I studied", table: "Onboarding", comment: "Purpose choice"),
             detail: Text(
-              "Back to the level you had, after a quick test", tableName: "Onboarding",
+              "Back to the level you had, after a short test", tableName: "Onboarding",
               comment: "Purpose choice detail")),
           .init(
             value: "other",
@@ -543,8 +483,9 @@ private struct PurposeQuestion: View {
   }
 }
 
-/// Main's `ReasonStep`: each reason with the level it aims for and its hours from scratch. One with
-/// a level moves on when it's picked; a certificate and Something else ask for words first.
+/// Main's `ReasonStep`: each reason with the level it aims for. One with a level moves on when it's
+/// picked; a certificate and Something else ask for words first, in a box under the list, so no row
+/// moves.
 private struct ReasonQuestion: View {
   let subject: String
   let reasons: [LanguageAimView.Reason]
@@ -560,9 +501,7 @@ private struct ReasonQuestion: View {
         title: Text(
           "Why are you learning it?", tableName: "Onboarding",
           comment: "Onboarding question for a language goal"),
-        description: Text(
-          "Your answer sets how far your course goes.", tableName: "Onboarding",
-          comment: "Under the language reason question"))
+        description: nil)
 
       Section {
         ForEach(reasons, id: \.reason) { reason in
@@ -573,20 +512,16 @@ private struct ReasonQuestion: View {
           }
           .pickedRow(picked == reason.reason)
           .accessibilityAddTraits(picked == reason.reason ? .isSelected : [])
-
-          if picked == reason.reason, Self.asksWords(reason.reason) {
-            wordsField(reason.reason)
-          }
-        }
-      } footer: {
-        SectionFooter {
-          Text(
-            "Hours of study from scratch, practice included. Less if you already know some.",
-            tableName: "Onboarding",
-            comment: "Under the reasons to learn a language, with their hours")
         }
       }
       .locksWhileSaving()
+
+      if let picked, Self.asksWords(picked) {
+        Section {
+          wordsField(picked)
+        }
+        .locksWhileSaving()
+      }
 
     } buttons: {
       if let picked, Self.asksWords(picked) {
@@ -609,7 +544,7 @@ private struct ReasonQuestion: View {
     if !Self.asksWords(reason) {
       announcePolitely(
         String(
-          localized: "You picked \(Self.copy(reason, aim: nil).label)", table: "Onboarding",
+          localized: "You picked \(Self.copy(reason).label)", table: "Onboarding",
           comment: "VoiceOver, as a one-answer question moves on: the answer picked"))
       answer(reason)
     }
@@ -626,7 +561,7 @@ private struct ReasonQuestion: View {
   }
 
   private func row(_ reason: LanguageAimView.Reason) -> some View {
-    let copy = Self.copy(reason.reason, aim: reason.aim)
+    let copy = Self.copy(reason.reason)
 
     return HStack(spacing: 12) {
       VStack(alignment: .leading, spacing: 2) {
@@ -643,14 +578,6 @@ private struct ReasonQuestion: View {
         if let aim = reason.aim {
           Text(verbatim: aim)
             .foregroundStyle(Color(.foreground))
-
-          if let hours = reason.hours {
-            Text(
-              "\(hours.formatted()) h", tableName: "Onboarding",
-              comment: "Hours of study, as a short figure like '190 h'"
-            )
-            .foregroundStyle(.mutedForeground)
-          }
         } else {
           Text(
             "Exam", tableName: "Onboarding",
@@ -667,20 +594,11 @@ private struct ReasonQuestion: View {
   @ViewBuilder
   private func wordsField(_ reason: String) -> some View {
     if reason == "certificate" {
-      VStack(alignment: .leading, spacing: 8) {
-        LabeledField(
-          label: Text(
-            "Which one?", tableName: "Onboarding",
-            comment: "Box for the certificate a language learner wants to pass"),
-          prompt: nil, text: $words)
-
-        Text(
-          "Your plan follows that exam's papers and score.", tableName: "Onboarding",
-          comment: "Under the certificate a language learner wants to pass"
-        )
-        .typeStyle(.note)
-        .foregroundStyle(.mutedForeground)
-      }
+      LabeledField(
+        label: Text(
+          "Which certificate?", tableName: "Onboarding",
+          comment: "Box for the certificate a language learner wants to pass"),
+        prompt: nil, text: $words)
     } else {
       LabeledField(
         label: Text(
@@ -691,7 +609,7 @@ private struct ReasonQuestion: View {
   }
 
   /// Main's `useReasonCopy`.
-  private static func copy(_ reason: String, aim: String?) -> (label: String, description: String) {
+  private static func copy(_ reason: String) -> (label: String, description: String) {
     let description =
       switch reason {
       case "travel":
@@ -716,8 +634,8 @@ private struct ReasonQuestion: View {
           comment: "Under the Pass a certificate reason")
       default:
         String(
-          localized: "In your own words. Aims for \(aim ?? "")", table: "Onboarding",
-          comment: "Under the Something else reason; the argument is a language level like B1")
+          localized: "In your own words", table: "Onboarding",
+          comment: "Under the Something else reason")
       }
 
     return (languageReasonLabel(reason) ?? reason, description)
@@ -742,13 +660,7 @@ private struct RoleQuestion: View {
             comment: "Onboarding question for a career change")
           : Text(
             "What do you do at work?", tableName: "Onboarding", comment: "Onboarding question"),
-        description: isCareerChange
-          ? Text(
-            "The plan covers what that role needs on day one.", tableName: "Onboarding",
-            comment: "Under the career change question")
-          : Text(
-            "We'll use cases from your work.", tableName: "Onboarding",
-            comment: "Under the work role question"))
+        description: nil)
 
       Section {
         if isCareerChange {
@@ -845,7 +757,7 @@ private struct TextQuestion: View {
 
   var body: some View {
     QuestionForm {
-      StepHeader(subject: subject, title: title, description: description)
+      StepHeader(subject: subject, title: title, description: nil)
 
       Section {
         LabeledField(label: label, prompt: prompt, text: $text)
@@ -882,19 +794,6 @@ private struct TextQuestion: View {
     }
   }
 
-  private var description: Text {
-    switch kind {
-    case .admission, .score:
-      Text(
-        "It helps your plan focus on what counts most.", tableName: "Onboarding",
-        comment: "Under the exam target question")
-    case .position:
-      Text(
-        "The notice can have a different exam for each position.", tableName: "Onboarding",
-        comment: "Under the position question")
-    }
-  }
-
   private var label: Text {
     switch kind {
     case .admission, .score:
@@ -920,8 +819,8 @@ private struct TextQuestion: View {
   }
 }
 
-/// A deadline is optional: without one, the learner studies everything at their own pace. Like
-/// main, there's no date until the learner chooses one.
+/// A date is optional: Skip goes on without one. Like main, there's no date until the learner
+/// chooses one, and Continue needs one.
 private struct DateQuestion: View {
   let subject: String
   let examDays: Components.Schemas.Onboarding.ExamDaysPayload?
@@ -960,18 +859,13 @@ private struct DateQuestion: View {
     {
       examDate(examDays, first: first, firstDay: firstDay)
     } else {
-      let withoutDate = String(
-        localized: LocalizedStringResource(
-          "Without a date, you study everything at your own pace, and we show when you reach each milestone.",
-          table: "Onboarding", comment: "Under the date question"))
-
       QuestionForm {
         StepHeader(
           subject: subject,
           title: Text(
             "Is there a date you're aiming for?", tableName: "Onboarding",
             comment: "Onboarding question"),
-          description: Text([passedNote, withoutDate].compactMap { $0 }.joinedSentences()))
+          description: passedNote.map { Text($0) })
 
         Section {
           if let date {
@@ -1010,16 +904,12 @@ private struct DateQuestion: View {
         }
         .locksWhileSaving()
       } buttons: {
-        StepButtons(
-          continueLabel: date == nil
-            ? Text(
-              "Continue without a date", tableName: "Onboarding",
-              comment: "Saves the goal without a date")
-            : nil
-        ) {
-          onAnswer([
-            "question": "targetDate", "targetDate": date.map { isoDay($0) as Any } ?? NSNull(),
-          ])
+        StepButtons(canContinue: date != nil) {
+          if let date {
+            onAnswer(["question": "targetDate", "targetDate": isoDay(date)])
+          }
+        } onSkip: {
+          onAnswer(["question": "targetDate", "targetDate": NSNull()])
         }
       }
     }
@@ -1051,10 +941,11 @@ private struct DateQuestion: View {
   @ViewBuilder
   private func noSittingRows(for date: Date) -> some View {
     if case .noSitting(let month, let closest) = problem,
-      isoDay(date).prefix(7) == month.prefix(7), let monthDay = studyDate(month)
+      isoDay(date).prefix(7) == month.prefix(7)
     {
       Text(
-        "No exam date in \(monthDay.formatted(.studyDay.month(.wide)))", tableName: "Exam",
+        "No exam date in \(PlanDate.monthText(month, today: PlanDate.today(), wide: true))",
+        tableName: "Exam",
         comment: "An exam with no sitting in the learner's month")
 
       ForEach(closest, id: \.self) { sitting in
@@ -1079,17 +970,6 @@ private struct DateQuestion: View {
   ) -> some View {
     let second = examDays.days.dropFirst().first.flatMap(UnderstoodRows.day)
     let date = firstDay.formatted(.dateTime.day().month(.wide).year())
-    let ready =
-      second == nil
-      ? String(
-        localized: LocalizedStringResource(
-          "Your plan paces your lessons to end by then.", table: "Onboarding",
-          comment: "Under the exam's date"
-        ))
-      : String(
-        localized: LocalizedStringResource(
-          "Your plan paces your lessons to end by the first day.", table: "Onboarding",
-          comment: "Under an exam's dates over several days"))
     let estimated =
       examDays.estimated
       ? String(
@@ -1097,6 +977,7 @@ private struct DateQuestion: View {
           "This is the expected date until the notice confirms it.", table: "Onboarding",
           comment: "Under an exam date estimated from past years"))
       : nil
+    let notes = [passedNote, estimated].compactMap { $0 }
 
     QuestionForm {
       StepHeader(
@@ -1107,12 +988,11 @@ private struct DateQuestion: View {
             tableName: "Onboarding",
             comment: "An exam held over two days")
         } ?? Text("Your exam is on \(date)", tableName: "Onboarding", comment: "An exam's date"),
-        description: Text([passedNote, ready, estimated].compactMap { $0 }.joinedSentences()))
+        description: notes.isEmpty ? nil : Text(notes.joinedSentences()))
     } buttons: {
       StepButtons(
         skipLabel: Text(
-          "Another date", tableName: "Onboarding", comment: "Picks another date than the exam's"),
-        skipIcon: nil
+          "Another date", tableName: "Onboarding", comment: "Picks another date than the exam's")
       ) {
         onAnswer(["question": "targetDate", "targetDate": first])
       } onSkip: {
@@ -1203,9 +1083,7 @@ private struct FollowUpsQuestion: View {
         title: Text(
           "Tell us a bit more", tableName: "Onboarding",
           comment: "Onboarding question about an unusual goal"),
-        description: Text(
-          "A couple of details make your plan fit better.", tableName: "Onboarding",
-          comment: "Under the follow-up questions"))
+        description: nil)
 
       ForEach(questions.indices, id: \.self) { index in
         Section {
@@ -1226,33 +1104,6 @@ private struct FollowUpsQuestion: View {
       }
     }
   }
-}
-
-func examChoiceQuestionDescription(_ choices: [Components.Schemas.ExamChoice]) -> String {
-  if choices.count == 1, let choice = choices.first, choice.take > 1 {
-    return String(
-      localized:
-        "The exam offers \(choice.options.count) options for \(choice.group), and each candidate takes \(choice.take) of them. Your plan and mocks follow the ones you pick, and you can change them in your plan.",
-      table: "Onboarding",
-      comment:
-        "Under the exam choice question. The second argument is the notice's name for the choice, such as the modules a course takes, in the notice's own language; the third is how many of the options each candidate takes"
-    )
-  }
-
-  if choices.count == 1, let choice = choices.first {
-    return String(
-      localized:
-        "The exam offers \(choice.options.count) options for \(choice.group). Your plan and mocks follow the one you pick, and you can change it in your plan.",
-      table: "Onboarding",
-      comment:
-        "Under the exam choice question. The second argument is the notice's name for the choice, such as a specialty or the foreign language, in the notice's own language"
-    )
-  }
-
-  return String(
-    localized:
-      "The exam has \(choices.count) choices to make. Your plan and mocks follow your picks, and you can change them in your plan.",
-    table: "Onboarding", comment: "Under the exam choice question, for several choices")
 }
 
 private struct ExamChoiceQuestion: View {
@@ -1288,18 +1139,12 @@ private struct ExamChoiceQuestion: View {
             "Which ones will you take?", tableName: "Onboarding",
             comment:
               "Asks which of an exam's optional subjects the learner takes, for several choices"),
-        description: Text(examChoiceQuestionDescription(choices)))
+        description: nil)
 
       ForEach(choices, id: \.group) { choice in
         let options = choice.options.map {
           GoalPlan.ExamChoice.Option(name: $0.name, shortName: $0.shortName)
         }
-        let leftOut = Text(
-          ExamChoiceLeftOut(
-            examPoints: choice.leftOut.examPoints, examQuestions: choice.leftOut.examQuestions,
-            name: choice.leftOut.name, points: choice.leftOut.points,
-            questions: choice.leftOut.questions
-          ).line)
 
         if choice.take > 1 {
           Section {
@@ -1315,10 +1160,6 @@ private struct ExamChoiceQuestion: View {
                 set: { picks[choice.group] = $0 }))
           } header: {
             SectionTitle(Text(choice.group))
-          } footer: {
-            SectionFooter {
-              leftOut
-            }
           }
         } else {
           ChoiceRows(
@@ -1330,7 +1171,6 @@ private struct ExamChoiceQuestion: View {
             },
             picked: picks[choice.group]?.first,
             header: Text(choice.group),
-            footer: leftOut,
             movesOn: takes == 1
           ) { name in
             picks[choice.group] = [name]
@@ -1368,7 +1208,7 @@ private struct ExamChoiceQuestion: View {
   }
 }
 
-/// "Not sure" is still an answer: a quick test finds it.
+/// "Not sure" is still an answer: a short test finds it.
 private struct LevelQuestion: View {
   let subject: String
   let testMinutes: Int
@@ -1380,9 +1220,7 @@ private struct LevelQuestion: View {
         subject: subject,
         title: Text(
           "How much do you already know?", tableName: "Onboarding", comment: "Onboarding question"),
-        description: Text(
-          "It only changes where your plan starts.", tableName: "Onboarding",
-          comment: "Under the level question"))
+        description: nil)
 
       ChoiceRows(choices: LevelChoices.all(testMinutes: testMinutes), movesOn: true) { level in
         onAnswer(["level": LevelChoices.answer(level) ?? NSNull(), "question": "level"])
@@ -1415,7 +1253,7 @@ enum LevelChoices {
   /// "Not sure": placement finds the level instead.
   private static let quickTest = "quickTest"
 
-  /// The quick test gives its length once it's known: a course start reads it with its course.
+  /// The short test gives its length once it's known: a course start reads it with its course.
   static func all(testMinutes: Int?) -> [ChoiceRows<String>.Choice] {
     [
       .init(
@@ -1443,12 +1281,12 @@ enum LevelChoices {
       .init(
         value: quickTest,
         label: String(
-          localized: "Not sure, give me a quick test", table: "Onboarding",
+          localized: "Not sure, give me a short test", table: "Onboarding",
           comment: "Level choice"),
         detail: testMinutes.map { minutes in
           Text(
-            "Adapts to your answers, about \(Duration.seconds(minutes * 60), format: .units(allowed: [.minutes], width: .wide))",
-            tableName: "Onboarding", comment: "Level choice detail; the time a quick test takes")
+            "About \(studyDuration(minutes: minutes))", tableName: "Onboarding",
+            comment: "Level choice detail: how long the short test takes, such as \"4 min\"")
         }),
     ]
   }
@@ -1474,10 +1312,9 @@ private struct SubjectsLevelQuestion: View {
           "Which subjects do you already know well?", tableName: "Onboarding",
           comment: "Onboarding question for an exam with several subjects"),
         description: Text(
-          "Your plan starts past their basics. A quick test places you in the rest.",
-          tableName: "Onboarding",
+          "Your plan skips their basics.", tableName: "Onboarding",
           comment:
-            "Under the known subjects question: the plan skips the basics of the subjects picked, and a test finds the level in the others"
+            "Under the known subjects question: the plan skips the basics of the subjects picked"
         ))
 
       Section {
@@ -1504,15 +1341,9 @@ private struct SubjectsLevelQuestion: View {
 
     } buttons: {
       StepButtons(
-        continueLabel: known.isEmpty
-          ? Text(
-            "None of them yet", tableName: "Onboarding",
-            comment: "Continues without any of the listed subjects known well")
-          : nil,
         skipLabel: Text(
-          "I'm starting from scratch", tableName: "Onboarding",
-          comment: "Says the learner knows none of the exam yet"),
-        skipIcon: nil
+          "I'm new to all of them", tableName: "Onboarding",
+          comment: "Says the learner knows none of the exam's subjects yet")
       ) {
         onAnswer([
           "knownSubjects": subjects.map(\.name).filter(known.contains), "level": NSNull(),

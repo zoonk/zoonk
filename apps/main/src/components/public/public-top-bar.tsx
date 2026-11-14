@@ -21,12 +21,29 @@ export function PublicHomeLink() {
 }
 
 /** Pages that never show the account menu use it directly, so its code never ships to them. */
-export function PublicTopBar({ actions, start }: { actions: ReactNode; start?: ReactNode }) {
+export function PublicTopBar({
+  actions,
+  nav,
+  start,
+}: {
+  actions: ReactNode;
+  nav?: ReactNode;
+  start?: ReactNode;
+}) {
   return (
     <PublicTopBarSurface>
-      <div className={cn(PUBLIC_CONTAINER_CLASS, "flex h-14 items-center gap-8 sm:h-[72px]")}>
+      {/* From tablet width the links sit in the middle, so a learner's name or menu swapping in at either end moves nothing. */}
+      <div
+        className={cn(
+          PUBLIC_CONTAINER_CLASS,
+          "flex h-14 items-center gap-3 sm:grid sm:h-[72px] sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] sm:gap-4",
+        )}
+      >
         <div className="flex min-w-0 items-center">{start ?? <PublicHomeLink />}</div>
-        <div className="ml-auto flex shrink-0 items-center gap-2">{actions}</div>
+        {nav && <nav className="flex shrink-0 items-center">{nav}</nav>}
+        <div className="ml-auto flex shrink-0 items-center gap-2 sm:col-start-3 sm:justify-self-end">
+          {actions}
+        </div>
       </div>
     </PublicTopBarSurface>
   );

@@ -6,7 +6,7 @@
   "goalcontent_also_in_exam_count": "b99e38ce17c607fa171a2b1c4b35b783b0b427b74372cf01b3cfe1c916f19e59",
   "goalcontent_also_in_exams": "cb509c44a2b9ffe6b9b605e29a90a097d60129edb6ceabf3c9dbf17b5b2b313c",
   "goalcontent_also_in_plan": "0d6be97279fc0db18500117b2271abe42f235c2e5b1e6c3b020540643c8e1f42",
-  "goalcontent_appears_a_lot": "e429d92222de9ec090cea92d5051b02b3db77f5104ce6167b38248d46841c918",
+  "goalcontent_asked_a_lot": "17e2735e0aae19e452a8b2c59c911e16da3435e2967cbf78f69071ea584bb06d",
   "goalcontent_beyond_guide": "bb7b439bfac35c1e8886411f7229d7cf34357e8c50288d6cb2dbc72f2545287e",
   "goalcontent_beyond_notice": "19df225c4881ea106b11798758e1e50609b09dc849362ab7e7949c2ab8b262fa",
   "goalcontent_bring_back": "168bcf60c5a43fecfe1831ba2af400dcc316f4b7b76bd47fa67db01fb150920d",
@@ -31,7 +31,7 @@
   "goalcontent_frequency_tagged": "c10ed4da55d3ebcbc187a4e838ddb97c028d6349041505ad791621c5a342b6cc",
   "goalcontent_frequency_tagged_waits": "65516360cbb720ef1f863db307571584faa43a3846e1791feca1abf61ae163b7",
   "goalcontent_frequency_waits": "a842ccf0909a65201bf6b4857cbf0619ed8012caf96589147d307648ed81c65f",
-  "goalcontent_from_material": "22386e38313619e5e5303f6a5b21cc425fa3df91f10fb709468b5f42a9fdbd6f",
+  "goalcontent_from_material": "e9a6aa83e053e233201f68734bf278f4de079db2f16c55486ce26381dc59ea4c",
   "goalcontent_known": "cb122bc8d3c484b098cea468d717a6746e996027a7874563d91af727c1344701",
   "goalcontent_known_before": "108925565797050857efd7ebd89d2d012c477f294361f5dcb4b018f365dce41f",
   "goalcontent_lesson_count": "16d1b6edf799d0afa1015884a7c873c960cd10f6fd39fa72a5f9793ad4f1e961",
@@ -42,14 +42,13 @@
   "goalcontent_mastery_pending": "c2caed35893b8ac5d64ea5dbc1dc05079070633abaaad14507121f123f7cf3af",
   "goalcontent_mastery_right": "4f2d0f36ae5fdfd1b4a28615c8846faea3296934384d7ed1ff25412b2a32714d",
   "goalcontent_material_topic_count": "b9eb557a43f24ee45041947df1737be1a590e9552f95970501b59ad40522b78d",
-  "goalcontent_matrix_title": "6f7650c3ff248d8e40e7971c4d71e8b99132ab2cad391f97faacf2a19549a653",
-  "goalcontent_module": "8db49d508c765da1319b58afeba877f1a8082337cc3e131dac6b62aba4fafd10",
+  "goalcontent_matrix_title": "4559c2dfde4991d835fb252acec75a37903cb2ed9e22e2f0fcae3f4a2dd5c94a",
   "goalcontent_module_count": "b9cf48c969d9adf6c91de1456e8d26cdfc6ef63b5dc67d107f0584641af27123",
   "goalcontent_modules": "2e572634fda3c9d8d4ffae63172a20f574ecf32e25207e92cd24416ceb57f100",
   "goalcontent_more_chapters": "be0f07e4fe6809e7e6417d847e7d132b242160f18107030bc8441857105eeaaf",
   "goalcontent_new": "714772bd836c498ac08e65e5bf2aea7525aa62bbaac35091127c1e77d88f77b8",
   "goalcontent_next_date": "c48a0132f455a6ee37762741d6169cfb093f547026b8091caa12560eff3835ff",
-  "goalcontent_not_in_plan": "04ac6507011ee904cdd270153af1164a5a275c44898aa2ec53c9a7898557ebe9",
+  "goalcontent_not_in_plan": "e8ea036a740f088f95a6856b9a18b5aa164186649f1654cad50e475a4b0196b5",
   "goalcontent_percent_done": "771311628be3bcafd45ca6a8adc426fa09e3a1b6672d2e623ae9a0a85f86623a",
   "goalcontent_practice": "684706db3beab299a139c57b7f6df96b6199b529109d312b38045f80cd11c497",
   "goalcontent_practice_chapter": "8619fe7f85de82b9dfd0340005f1462dedb6295c67f2f116fea135ce61e11662",
@@ -75,17 +74,15 @@
   "goalcontent_skipped_known": "3d995d7764c4539a9e83a52c3e0ebe3dcd13532f292e4b9d77286d94b3ea7d99",
   "goalcontent_start": "da74b1d50d8751f9a5a5fed95a80ca4922f32194fb191b465094c04588475fbb",
   "goalcontent_studied": "c393780a2165d31e2db22d51214e3b2cf68e46d425fb015295d3c1aad2e3690d",
-  "goalcontent_subject": "69b4a4bffba40e9692603a6961555ff12492a840f1a25aa2ee3d96357ffa4199",
-  "goalcontent_subject_chapter": "eee50cf56b5b23acee4e7fcfcff00c913c958000bb13ab386c7d402cc6253a1e",
   "goalcontent_subject_count": "b7068b733119eb7baef29e60be0c6798f2553c701890abcba6f15779071bdabd",
   "goalcontent_subject_missing": "464de09f49d155efcb86bcd12e841e27db6a0314157271fed3bc07a31172de72",
-  "goalcontent_subject_skipped": "5097705846702e7944af517925a2d7f4e089bb3d25abbd9178ba41612b63037e",
+  "goalcontent_subject_skipped": "3c7f82504b7a6fe2ffc2b4fa1d2285da7e716d39cf7c0a6b7d47cb5f1f2def9d",
   "goalcontent_subject_time": "30c11649317c75fc9cd76d03fe12c300aa9eba9282d0bed78bbb4ddb26d12b5e",
   "goalcontent_subjects": "9387e6e35a57bfde615cbb5e2d1e4f0f4e23ebb44348c999310e93ad6d354931",
   "goalcontent_to_review": "66842a155cc165e17c7eb6d6df4e5c25dad4963fdbcc1adee36c34d6c4a6206b",
   "goalcontent_topic_count": "daee3b00ec2a2388f8f43af26f9b810e9e6fbf0b79183a59ec18ca96b884d6a3",
   "goalcontent_topic_in_progress": "7fe035831627f4d2fe183bca79cea30e4b8737a5e344d4caa7c332246acf7bda",
-  "goalcontent_topic_known": "fe5cfa2e0607caca05f4a2e83d818e8e53c9240b8aac814b76bfb68db9a7c0fe",
+  "goalcontent_topic_known": "d0e44d86a500ddf335fb265749ee578242e86023b2ac88e701eda006f8594450",
   "goalcontent_topic_known_practice": "42c18391602aa9506d4597f4d38cadbf1f5f82e255121db8e5b157c51211011e",
   "goalcontent_topic_known_reviews": "3112fb44d36d199c01e01ad5d4a2a475913b06126fc354814306985290d74cf1",
   "goalcontent_topic_missing": "7113ce3f5fda7b4df2232c1c6239093c44c69fc7cd813bdc2eb7717e19f79a0c",
@@ -175,7 +172,7 @@
     <!-- A subject's first answers to unseen questions that were right: "6 of 8 right". -->
     <string name="goalcontent_mastery_right">%1$s bonnes réponses sur %2$s</string>
     <string name="goalcontent_mastery_pending">S’affiche après quelques questions d’entraînement</string>
-    <string name="goalcontent_not_in_plan">Absent de ton plan</string>
+    <string name="goalcontent_not_in_plan">Pas dans ton plan</string>
     <!-- A group of subjects the plan adds outside what the learner's own material lists. -->
     <string name="goalcontent_also_in_plan">Aussi dans ton plan</string>
     <!-- A group of subjects the plan adds outside an exam's public notice. -->
@@ -209,11 +206,7 @@
         <item quantity="many">Aussi au programme de %d examens</item>
         <item quantity="other">Aussi au programme de %d examens</item>
     </plurals>
-    <!-- Eyebrow of a subject's page for a subject of an exam's notice. -->
-    <string name="goalcontent_subject">Matière</string>
-    <!-- Eyebrow of a subject's page for a module of the learner's plan. -->
-    <string name="goalcontent_module">Module</string>
-    <string name="goalcontent_from_material">Issu de tes documents</string>
+    <string name="goalcontent_from_material">Dans tes documents</string>
     <!-- How much of the exam a subject is: "20% of the exam". -->
     <string name="goalcontent_share_of_exam">%1$s de l’examen</string>
     <plurals name="goalcontent_topics_known_skipped">
@@ -248,7 +241,7 @@
         <item quantity="many">%d leçons passées</item>
         <item quantity="other">%d leçons passées</item>
     </plurals>
-    <string name="goalcontent_subject_skipped">Tu as retiré cette matière de ton plan.</string>
+    <string name="goalcontent_subject_skipped">Tu as retiré ce sujet de ton plan.</string>
     <string name="goalcontent_subject_time">Tu n’as pas assez de temps pour cette matière.</string>
     <string name="goalcontent_subject_missing">Ton plan ne couvre pas encore cette matière.</string>
     <string name="goalcontent_adjust_plan">Ajuster le plan</string>
@@ -282,7 +275,7 @@
     <!-- A chapter's lessons and those done: "6 lessons · 2 done". -->
     <string name="goalcontent_lessons_done">%1$s · tu en as terminé %2$s</string>
     <!-- A topic's state for screen readers. -->
-    <string name="goalcontent_topic_known">Tu connais déjà ce sujet</string>
+    <string name="goalcontent_topic_known">Tu le sais déjà</string>
     <string name="goalcontent_topic_in_progress">En cours</string>
     <string name="goalcontent_topic_to_study">À étudier</string>
     <string name="goalcontent_topic_known_reviews">Tu connais déjà ce sujet · il revient dans tes révisions</string>
@@ -292,22 +285,20 @@
     <string name="goalcontent_topic_skipped_base">Tu as choisi de passer ce prérequis</string>
     <string name="goalcontent_topic_time">Tu n’as pas assez de temps pour ce sujet</string>
     <string name="goalcontent_topic_missing">Pas encore de leçons sur ce sujet</string>
-    <!-- Marks a topic past exams asked a lot. -->
-    <string name="goalcontent_appears_a_lot">Revient souvent</string>
-    <!-- %1$s is the "Appears a lot" mark. -->
+    <!-- Marks a topic that comes up often in the exam. -->
+    <string name="goalcontent_asked_a_lot">Tombe souvent</string>
+    <!-- %1$s is the "Asked a lot" mark. -->
     <string name="goalcontent_frequency_material">Les sujets marqués %1$s sont ceux qui reviennent souvent d’après tes documents. Tu y consacres plus de temps.</string>
     <string name="goalcontent_frequency_past_exams">Les sujets marqués %1$s sont ceux qui sont le plus souvent tombés aux examens précédents.</string>
-    <!-- %1$s is the "Appears a lot" mark, %2$s what the source counted, %3$s a link to the source's site. -->
+    <!-- %1$s is the "Asked a lot" mark, %2$s what the source counted, %3$s a link to the source's site. -->
     <string name="goalcontent_frequency_tagged_waits">Les sujets marqués %1$s sont ceux qui sont le plus souvent tombés aux examens précédents (%2$s, d’après %3$s). Ceux qui reviennent le moins souvent attendent.</string>
     <string name="goalcontent_frequency_tagged">Les sujets marqués %1$s sont ceux qui sont le plus souvent tombés aux examens précédents (%2$s, d’après %3$s). Tu y consacres plus de temps.</string>
     <!-- %1$s is what the source counted, %2$s a link to the source's site. -->
     <string name="goalcontent_frequency_waits">Les sujets qui sont le moins souvent tombés aux examens précédents attendent (%1$s, d’après %2$s).</string>
     <string name="goalcontent_frequency_most">Tu consacres plus de temps aux sujets qui sont le plus souvent tombés aux examens précédents (%1$s, d’après %2$s).</string>
     <!-- A section of a subject listing its skills matrix (ENEM's competencies and abilities). -->
-    <string name="goalcontent_matrix_title">Sur quoi portent les questions</string>
+    <string name="goalcontent_matrix_title">Ce que demandent les questions</string>
     <string name="goalcontent_see_all">Voir les %1$s</string>
-    <!-- Eyebrow of a chapter's page: "Biology · Chapter 4". -->
-    <string name="goalcontent_subject_chapter">%1$s · Chapitre %2$s</string>
     <string name="goalcontent_chapter_number">Chapitre %1$s</string>
     <string name="goalcontent_progress">Progression</string>
     <string name="goalcontent_practice">S’entraîner</string>

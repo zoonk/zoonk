@@ -11,44 +11,46 @@ function toSpend(row: SpenderRow) {
   return { calls: Number(row.calls), costUsd: row.cost_usd ?? 0, id: row.id };
 }
 
-export const listTopAiSpenders = cacheAdminData(async (days: number) => {
+export const listTopAiSpendingGoals = cacheAdminData(async (days: number) => {
   const since = await getAiSpendSince(days);
 
-  const [goalRows, learnerRows] = await Promise.all([
-    prisma.$queryRaw<SpenderRow[]>`
-      SELECT goal_id AS id, COUNT(*) AS calls, SUM(cost_usd) AS cost_usd
-      FROM ai_calls
-      WHERE created_at >= ${since} AND goal_id IS NOT NULL
-      GROUP BY goal_id
-      ORDER BY SUM(cost_usd) DESC NULLS LAST
-      LIMIT ${TOP_SPENDERS}
-    `,
-    prisma.$queryRaw<SpenderRow[]>`
-      SELECT user_id AS id, COUNT(*) AS calls, SUM(cost_usd) AS cost_usd
-      FROM ai_calls
-      WHERE created_at >= ${since} AND user_id IS NOT NULL
-      GROUP BY user_id
-      ORDER BY SUM(cost_usd) DESC NULLS LAST
-      LIMIT ${TOP_SPENDERS}
-    `,
-  ]);
+  const rows = await prisma.$queryRaw<SpenderRow[]>`
+    SELECT goal_id AS id, COUNT(*) AS calls, SUM(cost_usd) AS cost_usd
+    FROM ai_calls
+    WHERE created_at >= ${since} AND goal_id IS NOT NULL
+    GROUP BY goal_id
+    ORDER BY SUM(cost_usd) DESC NULLS LAST
+    LIMIT ${TOP_SPENDERS}
+  `;
 
-  const [goals, users] = await Promise.all([
-    prisma.goal.findMany({
-      select: { id: true, kind: true, title: true, user: { select: { email: true, id: true } } },
-      where: { id: { in: goalRows.map((row) => row.id) } },
-    }),
-    prisma.user.findMany({
-      select: { email: true, id: true, isAnonymous: true, name: true },
-      where: { id: { in: learnerRows.map((row) => row.id) } },
-    }),
-  ]);
+  const goals = await prisma.goal.findMany({
+    select: { id: true, kind: true, title: true, user: { select: { email: true, id: true } } },
+    where: { id: { in: rows.map((row) => row.id) } },
+  });
 
   const goalsById = new Map(goals.map((goal) => [goal.id, goal]));
+
+  return rows.map((row) => ({ ...toSpend(row), goal: goalsById.get(row.id) ?? null }));
+});
+
+export const listTopAiSpendingLearners = cacheAdminData(async (days: number) => {
+  const since = await getAiSpendSince(days);
+
+  const rows = await prisma.$queryRaw<SpenderRow[]>`
+    SELECT user_id AS id, COUNT(*) AS calls, SUM(cost_usd) AS cost_usd
+    FROM ai_calls
+    WHERE created_at >= ${since} AND user_id IS NOT NULL
+    GROUP BY user_id
+    ORDER BY SUM(cost_usd) DESC NULLS LAST
+    LIMIT ${TOP_SPENDERS}
+  `;
+
+  const users = await prisma.user.findMany({
+    select: { email: true, id: true, isAnonymous: true, name: true },
+    where: { id: { in: rows.map((row) => row.id) } },
+  });
+
   const usersById = new Map(users.map((user) => [user.id, user]));
 
-  return {
-    goals: goalRows.map((row) => ({ ...toSpend(row), goal: goalsById.get(row.id) ?? null })),
-    learners: learnerRows.map((row) => ({ ...toSpend(row), user: usersById.get(row.id) ?? null })),
-  };
+  return rows.map((row) => ({ ...toSpend(row), user: usersById.get(row.id) ?? null }));
 });

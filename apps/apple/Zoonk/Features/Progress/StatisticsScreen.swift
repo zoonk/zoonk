@@ -2,56 +2,65 @@ import SwiftUI
 
 /// Every number covers all of the learner's goals.
 struct StatisticsScreen: View {
-  @State private var detail = StatsSection.level
+  /// A sidebar's statistic: in one column it's its own page, with no overview behind it.
+  private let routed: StatsSection?
+  /// The one pick: beside the overview in two columns (Level when none), on top of it in one,
+  /// where Back clears it, so a resize keeps it either way.
+  @State private var picked: StatsSection?
+
+  init(section: StatsSection? = nil) {
+    routed = section
+    _picked = State(initialValue: section)
+  }
 
   var body: some View {
     PaneSplit {
-      StatsOverview()
-        .environment(\.statsSectionOpen, StatsSectionOpen(shown: detail) { detail = $0 })
+      overview
+        .environment(\.statsSectionOpen, StatsSectionOpen(shown: picked ?? .level) { picked = $0 })
         // Each pane is about a phone wide, so the overview and the stat take their phone layouts.
         .environment(\.horizontalSizeClass, .compact)
     } secondary: {
-      page(detail)
+      page(picked ?? .level)
         .environment(\.horizontalSizeClass, .compact)
     } single: {
-      StatsOverview()
-    }
-    .navigationTitle(Text(AppTab.statistics.title))
-    .barTitleAfterHero(String(localized: AppTab.statistics.title))
-    .navigationDestination(for: StatsSection.self) { section in
-      pushed(section)
+      if let routed, picked == routed {
+        pushed(routed)
+      } else {
+        overview
+          .environment(\.statsSectionOpen, StatsSectionOpen(shown: nil) { picked = $0 })
+          .navigationDestination(item: $picked) { section in
+            pushed(section)
+          }
+      }
     }
   }
 
-  @ViewBuilder
+  private var overview: some View {
+    StatsOverview()
+      .barTitleAfterHero(String(localized: AppTab.statistics.title))
+  }
+
   private func pushed(_ section: StatsSection) -> some View {
-    if section == .patterns {
-      page(section)
-        .navigationTitle(Text(section.title))
-        .navigationSubtitle(
-          Text(
-            "When you answer best, over the last 90 days.", tableName: "Progress",
-            comment: "Under the Patterns title on a phone: what the patterns cover"))
-    } else {
-      page(section)
-        .navigationTitle(Text(section.title))
-    }
+    page(section)
+      .barTitleAfterHero(String(localized: section.title))
   }
 
-  @ViewBuilder
   private func page(_ section: StatsSection) -> some View {
-    switch section {
-    case .level:
-      LevelStatsView()
-    case .energy:
-      EnergyStatsView()
-    case .activity:
-      ActivityStatsView()
-    case .score:
-      ScoreStatsView()
-    case .patterns:
-      PatternsStatsView()
+    Group {
+      switch section {
+      case .level:
+        LevelStatsView()
+      case .energy:
+        EnergyStatsView()
+      case .activity:
+        ActivityStatsView()
+      case .score:
+        ScoreStatsView()
+      case .patterns:
+        PatternsStatsView()
+      }
     }
+    .environment(\.statsSection, section)
   }
 }
 
@@ -82,10 +91,7 @@ private struct StatsOverview: View {
     {
       StatsPage {
         PageHeader(
-          Text(AppTab.statistics.title),
-          eyebrow: Text(
-            "All goals", tableName: "Progress",
-            comment: "Under Statistics: its numbers cover every goal"))
+          Text(AppTab.statistics.title))
 
         OverviewTiles(
           activity: activity.summary, energy: progress.energy.value, level: progress.level.value,
@@ -150,13 +156,7 @@ private struct OverviewTiles: View {
           StatTile(
             label: Text(StatsSection.energy.title),
             value: Text(verbatim: wholePercent(energy.currentEnergy)),
-            systemImage: "bolt.fill", tone: .energy,
-            detail: energy.insights.map {
-              Text(
-                "Average \(metricPercent($0.averageEnergy))", tableName: "Progress",
-                comment: "The learner's average Energy")
-            }
-          )
+            systemImage: "bolt.fill", tone: .energy)
         }
       }
 
@@ -166,41 +166,16 @@ private struct OverviewTiles: View {
             "Days studied", tableName: "Progress",
             comment: "Tile: how many days the learner studied"),
           value: Text(activity.learningDays, format: .number),
-          systemImage: "chart.bar.fill", tone: .success,
-          detail: Text(
-            verbatim:
-              "\(lessonCount)\u{00A0}· \(progressLearningTime(activity.totalLearningSeconds))")
-        )
+          systemImage: "chart.bar.fill", tone: .success)
       }
 
       TileLink(section: .score) {
         StatTile(
           label: Text(StatsSection.score.title),
-          value: score.map { Text(verbatim: metricPercent($0.score)) }
-            ?? Text("Not yet", tableName: "Progress", comment: "A stat without a value yet"),
-          systemImage: "target", tone: .success,
-          detail: score.map {
-            Text(
-              "\($0.correctAnswers.formatted())/\($0.totalAnswers.formatted()) right",
-              tableName: "Progress",
-              comment: "Under the Score: right answers of all answers (128/183 right)")
-          }
-            ?? Text(
-              "Right answers in the last 90 days", tableName: "Progress",
-              comment: "Under the Score before the learner has answers: what it will count")
-        )
+          value: Text(verbatim: score.map { metricPercent($0.score) } ?? "–"),
+          systemImage: "target", tone: .success)
       }
     }
-  }
-
-  private var lessonCount: String {
-    activity.totalLessonCompletions == 0
-      ? String(
-        localized: "0 lessons", table: "Progress",
-        comment: "Under the study days: no lessons finished")
-      : String(
-        localized: "\(activity.totalLessonCompletions) lessons", table: "Progress",
-        comment: "Under the study days: lessons finished")
   }
 }
 
@@ -213,7 +188,7 @@ private struct TileLink<Tile: View>: View {
 
     StatsSectionLink(section: section) {
       tile
-        .contentShape(.hoverEffect, shape)
+        .contentShape([.interaction, .hoverEffect], shape)
         .hoverEffect(.highlight)
         .modifier(StatsSelection(section: section, shape: shape))
     }
@@ -290,29 +265,16 @@ private struct PatternsOverview: View {
           Text(
             "Best day", tableName: "Progress",
             comment: "The day of the week the learner answers best"),
-          value: patterns?.bestDayName, share: patterns?.dayVerdict.best?.performance.score)
+          value: patterns?.bestDayName)
         Divider()
         row(
           Text(
             "Best time", tableName: "Progress",
             comment: "The part of the day the learner answers best"),
-          value: patterns?.bestTimeName, share: patterns?.timeVerdict.best?.performance.score)
-
-        if let spread = patterns?.weekSpreadText {
-          Divider()
-          row(
-            Text(
-              "Spread across the week", tableName: "Progress",
-              comment: "Row: the range from the week's lowest to highest day score, like 40–75%"),
-            value: spread, share: nil)
-        }
+          value: patterns?.bestTimeName)
       }
       .padding(.horizontal)
       .panel(cornerRadius: 16)
-
-      if let patterns {
-        PatternsNote(patterns: patterns)
-      }
     }
   }
 
@@ -328,21 +290,14 @@ private struct PatternsOverview: View {
     .buttonStyle(.borderless)
   }
 
-  private func row(_ label: Text, value: String?, share: Double?) -> some View {
+  private func row(_ label: Text, value: String?) -> some View {
     LabeledContent {
-      HStack(spacing: 12) {
-        Text(
-          value
-            ?? String(
-              localized: "Not yet", table: "Progress", comment: "A stat without a value yet")
-        )
-        .foregroundStyle(.primary)
-
-        if let share {
-          Text(wholePercent(share))
-            .monospacedDigit()
-        }
-      }
+      Text(
+        value
+          ?? String(
+            localized: "Not yet", table: "Progress", comment: "A stat without a value yet")
+      )
+      .foregroundStyle(.primary)
     } label: {
       label
     }
@@ -357,10 +312,13 @@ private struct PatternsLinkRow: View {
   let patterns: ScorePatterns?
 
   private var value: String {
-    let names = [patterns?.bestDayName, patterns?.bestTimeName].compactMap(\.self)
-    return names.isEmpty
-      ? String(localized: "Not yet", table: "Progress", comment: "A stat without a value yet")
-      : names.joinedFacts()
+    guard let day = patterns?.dayVerdict.best?.weekday.localizedTitle() else {
+      return String(localized: "Not yet", table: "Progress", comment: "A stat without a value yet")
+    }
+
+    return String(
+      localized: "Best on \(day)", table: "Progress",
+      comment: "Beside Patterns on the overview: the day of the week the learner answers best")
   }
 
   var body: some View {

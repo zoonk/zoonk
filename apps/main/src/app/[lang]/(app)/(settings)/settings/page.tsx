@@ -1,11 +1,7 @@
 import { UserAvatar } from "@/app/[lang]/(app)/(catalog)/_components/user-avatar";
-import { getAppLocale } from "@/i18n/locale";
 import { getMenu } from "@/lib/menu";
-import { getCurrentUserMemory } from "@zoonk/core/memory/get";
-import { getLearningProfile } from "@zoonk/core/profile/get";
 import { getStudyReminder } from "@zoonk/core/reminders/get";
 import { getSession } from "@zoonk/core/users/session";
-import { BuddyTabName } from "@zoonk/learn/buddy";
 import {
   ListGroup,
   ListRowContent,
@@ -15,7 +11,6 @@ import {
 } from "@zoonk/learn/list";
 import { Page, PageHeader, PageHeaderContent, PageTitle } from "@zoonk/learn/page";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { LOCALE_LABELS, isValidLocale } from "@zoonk/utils/locale";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
@@ -52,35 +47,14 @@ async function AccountRow() {
 }
 
 async function SettingsHubContent() {
-  const locale = await getAppLocale();
-
-  const [shown, profile, memory, reminder] = await Promise.all([
-    getSettingsPagesShown(),
-    getLearningProfile(),
-    getCurrentUserMemory(),
-    getStudyReminder(),
-  ]);
-
-  const language = isValidLocale(locale) ? LOCALE_LABELS[locale] : locale;
+  const [shown, reminder] = await Promise.all([getSettingsPagesShown(), getStudyReminder()]);
 
   return (
     <>
       <AccountRow />
       <SettingsHubLists
         {...shown}
-        memoryCount={memory?.facts.length}
         reminders={reminder && { on: reminder.email.on || reminder.push.on, time: reminder.time }}
-        preferencesSummary={
-          <>
-            {profile?.buddy && (
-              <>
-                <BuddyTabName buddy={profile.buddy} />
-                {" · "}
-              </>
-            )}
-            {language}
-          </>
-        }
       />
     </>
   );
@@ -119,7 +93,8 @@ export default async function SettingsPage() {
         </Suspense>
       </Page>
 
-      <div className="max-w-form hidden md:block">
+      {/* Not a box of its own, so the first page sits in the section like on its own URL. */}
+      <div className="hidden md:contents">
         <Suspense fallback={<SettingsHubSkeleton />}>
           <FirstSettingsPage />
         </Suspense>

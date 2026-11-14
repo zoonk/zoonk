@@ -1,66 +1,72 @@
 "use client";
 
 import { type ExamMomentView } from "@zoonk/core/exams/view/contract";
-import { CalendarHeartIcon, FlagIcon, MessageCircleQuestionIcon, MoonIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import {
   Suggestion,
+  SuggestionActions,
   SuggestionContent,
+  SuggestionDescription,
+  SuggestionHeader,
   SuggestionLine,
+  SuggestionLinkAction,
   SuggestionOpen,
   SuggestionSummary,
+  useMainActionVariant,
 } from "../_components/suggestion";
-import { ExamMomentCard } from "../exam/exam-moment-card";
+import { ExamChecklist } from "../exam/exam-checklist";
+import {
+  EXAM_MOMENT_ICONS,
+  ExamMomentBody,
+  ExamMomentDay,
+  useExamMomentCopy,
+} from "../exam/exam-moment-card";
 import { useTodayScreen } from "./today-context";
 
-const ICONS = {
-  afterExam: MessageCircleQuestionIcon,
-  dayBefore: MoonIcon,
-  examDay: CalendarHeartIcon,
-  finalStretch: FlagIcon,
-} as const;
-
-function useMomentTitle() {
+function ExamMomentAction({ afterExam, href }: { afterExam: boolean; href: string }) {
   const t = useExtracted();
 
-  return (moment: Pick<ExamMomentView, "examName" | "stage">): string => {
-    switch (moment.stage) {
-      case "dayBefore":
-        return t("{exam} is tomorrow", { exam: moment.examName });
-      case "examDay":
-        return t("{exam} is today", { exam: moment.examName });
-      case "afterExam":
-        return t("How did it go?");
-      case "finalStretch":
-        return t("The final stretch");
-      default:
-        return t("The final stretch");
-    }
-  };
+  return (
+    <SuggestionLinkAction href={href} variant={useMainActionVariant()}>
+      {afterExam ? t("Add your result") : t("See your exam")}
+    </SuggestionLinkAction>
+  );
 }
 
-export function TodayExamMoment() {
+function ExamMomentSuggestion({ href, moment }: { href: string; moment: ExamMomentView }) {
   const t = useExtracted();
-  const momentTitle = useMomentTitle();
-  const { actions, today } = useTodayScreen();
-  const moment = today.exam;
+  const copy = useExamMomentCopy(moment);
 
-  if (!moment) {
+  if (!copy) {
     return null;
   }
 
-  const Icon = ICONS[moment.stage];
+  const Icon = EXAM_MOMENT_ICONS[moment.stage];
 
   return (
     <Suggestion data-slot="today-exam-moment" label={t("Your exam")} mark={<Icon />}>
       <SuggestionLine>
-        <SuggestionSummary>{momentTitle(moment)}</SuggestionSummary>
+        <SuggestionSummary>{copy.title}</SuggestionSummary>
         <SuggestionOpen />
       </SuggestionLine>
 
       <SuggestionContent>
-        <ExamMomentCard href={actions.examHref} moment={moment} />
+        <SuggestionHeader>{copy.title}</SuggestionHeader>
+        <ExamMomentDay moment={moment} />
+        <SuggestionDescription>
+          <ExamMomentBody copy={copy} />
+        </SuggestionDescription>
+        <ExamChecklist items={moment.checklist} tools={moment.tools} />
+        <SuggestionActions>
+          <ExamMomentAction afterExam={moment.stage === "afterExam"} href={href} />
+        </SuggestionActions>
       </SuggestionContent>
     </Suggestion>
   );
+}
+
+export function TodayExamMoment() {
+  const { actions, today } = useTodayScreen();
+
+  return today.exam && <ExamMomentSuggestion href={actions.examHref} moment={today.exam} />;
 }

@@ -1,7 +1,8 @@
 import { type PlayableSpokenAnswerStep } from "@zoonk/core/lesson-player/playable-lesson";
 import { parseStepContent } from "@zoonk/core/library/steps/contract";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { page } from "vitest/browser";
+import { page, userEvent } from "vitest/browser";
 import {
   buildAdapters,
   renderLessonPlayer,
@@ -62,6 +63,25 @@ describe("spoken answers", () => {
     vi.restoreAllMocks();
   });
 
+  it("keeps focus on the main action while a recording is checked, and on Record if the check fails", async () => {
+    allowMicrophone();
+    const pending = Promise.withResolvers<SpokenAnswerOutcome>();
+    const gradeSpokenAnswer = vi.fn<GradeSpokenAnswer>(() => pending.promise);
+    openSpokenLesson({ gradeSpokenAnswer });
+
+    await page.getByRole("button", { name: "Record" }).click();
+    const stop = page.getByRole("button", { name: /^Stop/u });
+    await expect.element(stop).toBeVisible();
+    (stop.element() as HTMLButtonElement).focus();
+    await userEvent.keyboard("{Enter}");
+    await expect.poll(() => gradeSpokenAnswer.mock.calls.length).toBe(1);
+
+    await expect.element(page.getByRole("button", { name: /^Check/u })).toHaveFocus();
+
+    pending.resolve({ status: "failed" });
+    await expect.element(page.getByRole("button", { name: /^Record/u })).toHaveFocus();
+  });
+
   it("never sends a spoken grade when the pending start is refused", async () => {
     allowMicrophone();
     const lesson = buildLesson([spokenSentenceStep(), teachingStep("summary")]);
@@ -74,8 +94,25 @@ describe("spoken answers", () => {
     });
 
     await sayIt();
-    admission.resolve({ reason: "plusRequired" });
-    await expect.element(page.getByRole("link", { name: /Plus/u })).toBeVisible();
+
+    admission.resolve({
+      availableAt: new Date(Date.now() + MS_PER_DAY).toISOString(),
+      period: "rolling30Days",
+      reason: "limitReached",
+      tier: "free",
+    });
+
+    await expect
+      .element(page.getByRole("heading", { name: "You've used your free lessons" }))
+      .toBeVisible();
+
+    await expect
+      .element(
+        page.getByText(/Your next free lesson opens tomorrow, or subscribe to keep going\.$/u),
+      )
+      .toBeVisible();
+
+    await expect.element(page.getByRole("link", { name: "Subscribe" })).toBeVisible();
     expect(gradeSpokenAnswer).not.toHaveBeenCalled();
   });
 
@@ -156,7 +193,7 @@ describe("spoken answers", () => {
 
     await expect
       .element(page.getByRole("status").filter({ hasText: "Not quite" }))
-      .toMatchTextContent(/Answer: Quanto é o aluguel\?/u);
+      .toMatchTextContent(/Right answer: Quanto é o aluguel\?/u);
   });
 
   it("saves the listening answer that replaced a slow spoken one only after that grade settles", async () => {
@@ -238,15 +275,9 @@ describe("spoken answers", () => {
     openSpokenLesson({ gradeSpokenAnswer });
     await sayIt();
 
-    await expect
-      .element(
-        page.getByText(
-          "You've used today's help. It comes back tomorrow, or get Plus to keep going now.",
-        ),
-      )
-      .toBeVisible();
+    await expect.element(page.getByText("You've reached today's limit")).toBeVisible();
 
-    await expect.element(page.getByRole("link", { name: "See Plus" })).toBeVisible();
+    await expect.element(page.getByRole("link", { name: "Subscribe" })).toBeVisible();
     await expect.element(page.getByRole("button", { name: "I can't talk now" })).toBeVisible();
   });
 

@@ -2,12 +2,12 @@
 
 import { Buddy } from "@zoonk/ui/components/buddy";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
+import { Meter, MeterFill } from "@zoonk/ui/components/meter";
 import { RadioGroup, RadioGroupItem, RadioGroupOption } from "@zoonk/ui/components/radio-group";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type BuddyGlasses, type BuddyKind } from "@zoonk/utils/buddy";
 import { LockIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { Meter, MeterFill } from "../_components/meter";
 import { CHOICE_CARD_PICKED_CLASS } from "../onboarding/choice-styles";
 import { BuddyGlassesHowToEarn, BuddyGlassesName } from "./buddy-labels";
 import { type BuddyLook } from "./buddy-picker";
@@ -113,6 +113,7 @@ export function BuddyGlassesPicker({
             glasses={option.glasses}
             kind={kind}
             studiedToday={look.studiedToday}
+            view="face"
           />
 
           <span className="flex min-w-0 flex-1 flex-col gap-0.5">

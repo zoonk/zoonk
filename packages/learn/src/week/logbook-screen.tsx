@@ -1,25 +1,21 @@
 "use client";
 
-import { PlayIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { useEffect } from "react";
-import { Steps, type StepsItem } from "../_components/steps";
+import { StepCard } from "../_components/step-card";
+import { TaskActions } from "../_components/task-layout";
+import { getIsoRangeOptions, useIsoToday } from "../_utils/iso-date";
 import { useLearnAnalytics } from "../learn-context";
-import { TaskMainLink } from "../shell/task-frame";
+import { TaskFrame, TaskMainLink } from "../shell/task-frame";
 import {
   type LogbookHrefs,
   LogbookProvider,
   type WeeklyRecapView,
   useLogbook,
 } from "./logbook-context";
-import {
-  LearnedStep,
-  NextWeekStep,
-  QuietWeekStep,
-  TurnaroundStep,
-  WeekStep,
-  hasLearned,
-} from "./logbook-sections";
+import { WeekHeader, WeekRings, WeekRows, WeekTiles } from "./logbook-sections";
+
+const ISO_DAY_LENGTH = "YYYY-MM-DD".length;
 
 /**
  * Node's ICU puts thin spaces around the dash and browsers plain ones, so the spaces are normalized
@@ -27,48 +23,38 @@ import {
  */
 function useWeekRange(): string {
   const format = useFormatter();
+  const today = useIsoToday();
   const { recap } = useLogbook();
+  const start = recap.weekStart.toISOString().slice(0, ISO_DAY_LENGTH);
+  const end = recap.weekEnd.toISOString().slice(0, ISO_DAY_LENGTH);
 
   return format
-    .dateTimeRange(recap.weekStart, recap.weekEnd, {
-      day: "numeric",
-      month: "short",
-      timeZone: "UTC",
-    })
+    .dateTimeRange(recap.weekStart, recap.weekEnd, getIsoRangeOptions({ end, start, today }))
     .replaceAll("\u2009", " ");
 }
 
-function useWeekItems(): StepsItem[] {
-  const { recap } = useLogbook();
-  const range = useWeekRange();
-
-  if (!recap.ready || recap.week.daysStudied.length === 0) {
-    return [{ content: <QuietWeekStep range={range} />, id: "week" }];
-  }
-
-  return [
-    { content: <WeekStep range={range} />, id: "week" },
-    recap.turnaround && { content: <TurnaroundStep />, id: "turnaround" },
-    hasLearned(recap) && { content: <LearnedStep />, id: "learned" },
-    recap.nextFocus && { content: <NextWeekStep title={recap.nextFocus.title} />, id: "next" },
-  ].filter((item) => item !== null && item !== false);
-}
-
-function WeeklySummarySteps() {
+function WeeklySummary() {
   const t = useExtracted();
-  const { hrefs } = useLogbook();
-  const items = useWeekItems();
+  const { hrefs, recap } = useLogbook();
+  const range = useWeekRange();
+  const studied = recap.ready && recap.week.daysStudied.length > 0;
 
   return (
-    <Steps
+    <TaskFrame
       exitHref={hrefs.close}
-      finalAction={
-        <TaskMainLink href={hrefs.start} icon={<PlayIcon aria-hidden="true" />}>
-          {t("Let's go")}
-        </TaskMainLink>
+      footer={
+        <TaskActions>
+          <TaskMainLink href={hrefs.start}>{t("Done")}</TaskMainLink>
+        </TaskActions>
       }
-      items={items}
-    />
+    >
+      <StepCard>
+        <WeekRings />
+        <WeekHeader range={range} />
+        {studied && <WeekTiles />}
+        {studied && <WeekRows />}
+      </StepCard>
+    </TaskFrame>
   );
 }
 
@@ -90,7 +76,7 @@ export function LogbookScreen({
 
   return (
     <LogbookProvider value={{ hrefs, learnerName, recap }}>
-      <WeeklySummarySteps />
+      <WeeklySummary />
     </LogbookProvider>
   );
 }

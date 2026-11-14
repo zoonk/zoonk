@@ -7,7 +7,6 @@ import { type UsageDecision } from "../entitlements/contract";
 import { findActiveGoalId } from "../goals/_utils/goal-view";
 import { getLearnerTimeZone } from "../learner/_utils/goal-time-zone";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
-import { isLessonPlusOnly } from "../sessions/_utils/plus-only-lessons";
 import { saveDayBeforeActivity } from "../sessions/ensure-study-session";
 import { type StudyBlockOpening } from "../sessions/open-block-contract";
 import { startLearningEvent } from "../stats/record-learning-event";
@@ -37,12 +36,10 @@ import { type LibraryLessonRun, type LibraryLessonStartInput } from "./contract"
 
 const LIBRARY_LESSON_KIND = "library";
 
-/** `plusRequired`: a free exam plan past its first week holds this new lesson of its plan for Plus. */
 export type LibraryLessonStartOutcome =
   | Exclude<UsageDecision, { status: "allowed" }>
   | { run: LibraryLessonRun; status: "started" }
   | { status: "notFound" }
-  | { status: "plusRequired" }
   | { opening: StudyBlockOpening; status: "opened" }
   | { status: "retryable" };
 
@@ -265,10 +262,6 @@ export async function startLibraryLesson({
 
   // Quick explanations already claimed their own allowance and must not consume a lesson allowance too.
   if (!isOwnExplanation(lesson)) {
-    if (await isLessonPlusOnly({ lessonId: lesson.id, timeZone: input.timeZone, userId })) {
-      return { status: "plusRequired" };
-    }
-
     const usage = await claimUsage({ kind: "lessonStart", targetId: lesson.id });
 
     if (usage.status !== "allowed") {

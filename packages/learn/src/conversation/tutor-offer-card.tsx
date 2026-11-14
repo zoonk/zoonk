@@ -3,8 +3,8 @@
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { useId } from "react";
-import { PlusMark } from "../_components/plus-lock";
+import { useId, useState } from "react";
+import { SubscribeGate } from "../_components/subscribe-gate";
 import { SURFACE_CLASS } from "../_components/surface";
 import { LearnLink } from "../learn-link";
 
@@ -13,14 +13,15 @@ export const TUTOR_CARD_WIDTH_CLASS = "w-full max-w-130";
 export function OfferCard({
   children,
   description,
-  locked = false,
+  note,
   ref,
   tile,
   title,
 }: {
   children: React.ReactNode;
   description: React.ReactNode;
-  locked?: boolean;
+  /** How it went, in the description's place and type once the card is used. */
+  note?: React.ReactNode;
   /** For a card whose button leaves once it's used, so focus can stay on the card. */
   ref?: React.Ref<HTMLElement>;
   tile: React.ReactNode;
@@ -42,11 +43,13 @@ export function OfferCard({
       <div className="flex items-start gap-3">
         <span className="flex h-5 shrink-0 items-center">{tile}</span>
         <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-          <h3 className="flex flex-wrap items-center gap-x-2 gap-y-1" id={titleId}>
-            <span className="text-sm font-medium text-balance">{title}</span>
-            {locked && <PlusMark />}
+          <h3 className="text-sm font-medium text-balance" id={titleId}>
+            {title}
           </h3>
-          <p className="text-muted-foreground text-[0.8125rem] text-pretty">{description}</p>
+          {description && (
+            <p className="text-muted-foreground text-compact text-pretty">{description}</p>
+          )}
+          {note}
         </div>
       </div>
       {children}
@@ -62,6 +65,38 @@ export function OfferLink({ children, href }: { children: React.ReactNode; href:
     >
       {children}
     </LearnLink>
+  );
+}
+
+function focusWayOn(gate: HTMLElement | null) {
+  gate?.querySelector("a")?.focus();
+}
+
+/**
+ * A card's one action. One the learner's plan doesn't include looks like any other: pressing it
+ * puts the gate, titled `gate`, in its place.
+ */
+export function OfferAction({
+  children,
+  gate,
+  href,
+}: {
+  children: React.ReactNode;
+  gate: string | null;
+  href: string;
+}) {
+  const [gated, setGated] = useState(false);
+
+  if (!gate) {
+    return <OfferLink href={href}>{children}</OfferLink>;
+  }
+
+  return gated ? (
+    <div ref={focusWayOn}>
+      <SubscribeGate title={gate} />
+    </div>
+  ) : (
+    <OfferButton onClick={() => setGated(true)}>{children}</OfferButton>
   );
 }
 

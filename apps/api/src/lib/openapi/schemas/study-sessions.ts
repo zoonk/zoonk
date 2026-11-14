@@ -38,11 +38,11 @@ export const extraTimeSchema = z
       }),
     minutes: z.number().int().min(0),
     reason: z
-      .enum(["dayOver", "nothingToStudy", "plusRequired", "sessionNotFinished"])
+      .enum(["dayOver", "nothingToStudy", "sessionNotFinished"])
       .nullable()
       .meta({
         description:
-          "Why it isn't offered: the session's day is over (more time goes to today's), nothing is left to practice or learn, a free exam plan's first week is over (its practice and new lessons come with Plus), or the session isn't finished",
+          "Why it isn't offered: the session's day is over (more time goes to today's), nothing is left to practice or learn, or the session isn't finished",
       }),
   })
   .meta({ id: "StudyExtraTime" });
@@ -66,7 +66,7 @@ export const studySessionResponseSchema = z
         "Epoch milliseconds when this current day gives way, including a carried session after midnight",
       ),
     emptyDay: emptyDaySchema,
-    examAccess: z.object({ includesMockExams: z.boolean(), trialEnded: z.boolean() }),
+    examAccess: z.object({ includesMockExams: z.boolean() }),
     examTomorrow: examTomorrowSchema,
     extraTime: extraTimeSchema,
     freshStart: z.enum(StudyFreshStart).nullable(),
@@ -92,12 +92,6 @@ export const studySessionResponseSchema = z
     nextBlockId: idSchema.nullable(),
     nextPosition: z.number().int().nonnegative().nullable(),
     pauseSuggested: z.boolean(),
-    plusLessons: z
-      .array(z.object({ title: z.string() }))
-      .meta({
-        description:
-          "The lessons the plan dates on this day that a free exam plan past its first week holds for Plus, by the title the plan shows. They aren't part of the session: list them after its blocks, locked, with a way to Plus, as Plus learners see them open. Empty on any other plan",
-      }),
     sessionBar: z
       .object({ completed: z.number().int().min(0), total: z.number().int().min(0) })
       .meta({ description: "One step per block still in the day, filled as blocks are done" }),
@@ -113,7 +107,7 @@ export const studySessionResponseSchema = z
               .min(0)
               .meta({
                 description:
-                  "What this goal's plan gives the day; 0 on a day without study. Past a free exam goal's free week, a day counts only what its saved or planned session holds, and a later day counts nothing. Exact minutes may be fractional; format them as a human duration for display.",
+                  "What this goal's plan gives the day; 0 on a day without study. Exact minutes may be fractional; format them as a human duration for display.",
                 examples: [EXAMPLE_DAILY_MINUTES],
               }),
             hitGoal: z.boolean(),

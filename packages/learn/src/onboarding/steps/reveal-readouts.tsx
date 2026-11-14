@@ -1,16 +1,13 @@
 "use client";
 
-import { CountUp } from "@zoonk/ui/components/count-up";
+import { BigQuantity } from "@zoonk/ui/components/big-quantity";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
-import { BEAT_MS } from "@zoonk/ui/lib/motion";
-import { useExtracted, useFormatter } from "next-intl";
-import { BigQuantity } from "../../_components/big-quantity";
+import { useExtracted } from "next-intl";
 import { daysUntilIsoDate, isoDateToUtc, useFormatIsoDate } from "../../_utils/iso-date";
 import { useAppLocale } from "../../_utils/locale";
 import { useFormatDuration } from "../../_utils/time-format";
 import { usePlanScreen } from "../../plan/plan-context";
 import { useStudyDaysText } from "../../plan/use-study-days-text";
-import { useRevealPhases } from "./plan-shape";
 import { getAimAhead } from "./schedule-aim";
 
 const READOUT_CLASS = "text-readout text-2xl leading-tight";
@@ -53,34 +50,6 @@ function TimeReadout() {
   );
 }
 
-/** The count lands on the moment's second beat, after the check. */
-function LessonsReadout() {
-  const t = useExtracted();
-  const format = useFormatter();
-  const phases = useRevealPhases();
-  const total = phases.reduce((sum, phase) => sum + phase.lessonsTotal, 0);
-  const done = phases.reduce((sum, phase) => sum + phase.lessonsDone, 0);
-
-  if (total === 0) {
-    return null;
-  }
-
-  return (
-    <Readout
-      label={
-        done > 0
-          ? t(
-              "{count, plural, one {lesson, {done, number} done} other {lessons, {done, number} done}}",
-              { count: total, done },
-            )
-          : t("{count, plural, one {lesson} other {lessons}}", { count: total })
-      }
-    >
-      <CountUp delayMs={BEAT_MS} format={(value) => format.number(value)} value={total} />
-    </Readout>
-  );
-}
-
 /** The month reads first and big, its year small, in the locale's order. */
 function MonthYear({ isoDate }: { isoDate: string }) {
   const locale = useAppLocale();
@@ -94,7 +63,7 @@ function MonthYear({ isoDate }: { isoDate: string }) {
   return parts.map((part, index) =>
     part.type === "year" ? (
       // oxlint-disable-next-line react/no-array-index-key -- the parts are fixed for this date
-      <span className="text-muted-foreground text-[0.8125rem] font-medium" key={index}>
+      <span className="text-muted-foreground text-compact font-medium" key={index}>
         {part.value}
       </span>
     ) : (
@@ -153,7 +122,6 @@ export function RevealReadouts() {
   return (
     <div className="grid auto-cols-fr grid-flow-col border-y [&>*+*]:border-s">
       <TimeReadout />
-      <LessonsReadout />
       <FinishReadout />
     </div>
   );

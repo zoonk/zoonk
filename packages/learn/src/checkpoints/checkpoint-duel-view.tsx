@@ -1,25 +1,26 @@
 "use client";
 
 import { type CheckpointQuestion } from "@zoonk/core/checkpoints/contract";
-import { FORWARD_ICON } from "@zoonk/ui/components/button";
-import { BrainIcon, CheckIcon } from "lucide-react";
+import { BrainIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
+import { QuestionActions, QuestionMainAction } from "../_components/question-actions";
+import { QuestionTitle } from "../_components/question-title";
 import { StepRow, StepRows } from "../_components/step-card";
 import { TaskHeaderSegments, TaskHeaderTitle, type TaskSegment } from "../_components/task-header";
-import { TaskActions } from "../_components/task-layout";
 import { TaskMeta } from "../_components/task-meta";
 import { ItemSetStimulus } from "../questions/item-set-stimulus";
-import { ItemStem, ItemSupport, QUESTION_TEXT_CLASS } from "../questions/item-text";
+import { ItemSupport } from "../questions/item-text";
 import { NumericAnswerField } from "../questions/numeric-answer-field";
 import { TypedAnswerField } from "../questions/typed-answer-field";
-import { type TaskFrameAside, TaskMainButton } from "../shell/task-frame";
+import { type TaskFrameAside } from "../shell/task-frame";
 import { useCheckpointScreen } from "./checkpoint-context";
 import { getCurrentQuestion, getDuelScore } from "./checkpoint-duel-state";
 import { DuelOver, Verdict } from "./checkpoint-duel-verdict";
 import { NoVerdictStep } from "./checkpoint-empty";
-import { CheckpointError, CheckpointFrame } from "./checkpoint-frame";
-import { phaseNumber, useCheckpointEyebrow } from "./checkpoint-labels";
+import { CheckpointFrame, useCheckpointError } from "./checkpoint-frame";
+import { useChallengeName } from "./checkpoint-labels";
 import { CheckpointOptions } from "./checkpoint-options";
+import { getShieldCracks } from "./duel-ending";
 import { TricksterArt } from "./trickster-art";
 import { TricksterShield, TricksterShieldPlates } from "./trickster-shield";
 import { useVerdictReactions } from "./use-verdict-reactions";
@@ -119,9 +120,7 @@ function QuestionCard({ question }: { question: CheckpointQuestion }) {
   return (
     <div className="flex flex-col gap-4" data-slot="checkpoint-question">
       <ItemSupport context={question.context} image={question.image} visual={question.visual} />
-      <div className={QUESTION_TEXT_CLASS}>
-        <ItemStem text={question.question} heading="h2" />
-      </div>
+      <QuestionTitle text={question.question} />
 
       <DuelAnswer question={question} verdict={verdict} />
       {verdict && <Verdict decision={decision} isCorrect={verdict.isCorrect} />}
@@ -154,40 +153,27 @@ function DuelRecording({ question }: { question: CheckpointQuestion }) {
 }
 
 function DuelAction() {
-  const t = useExtracted();
   const { duel } = useCheckpointScreen();
   const { question, score } = useDuelNumbers();
   const { feedback, pending, selected } = duel.state;
   const answered = !question || feedback !== null;
-  const nextLabel = score.done ? t("See how it went") : t("Next");
+  const nextAction = score.done ? "seeResult" : "next";
 
   return (
-    <TaskMainButton
+    <QuestionMainAction
+      action={answered ? nextAction : "confirm"}
       busy={pending}
       disabled={!answered && !selected}
-      onClick={() => void (answered ? duel.next() : duel.confirm())}
-      {...(answered ? FORWARD_ICON : { icon: <CheckIcon aria-hidden="true" /> })}
-    >
-      {answered ? nextLabel : t("Confirm")}
-    </TaskMainButton>
+      onPress={() => void (answered ? duel.next() : duel.confirm())}
+    />
   );
-}
-
-function reward(chunks: React.ReactNode) {
-  return <span className="text-brain-text">{chunks}</span>;
 }
 
 function PrizeRow() {
   const t = useExtracted();
   const { checkpoint } = useCheckpointScreen();
   const points = useFormatter().number(checkpoint.reward.brainPower);
-  const phase = phaseNumber(checkpoint);
   const isWeekly = checkpoint.kind === "weekly";
-
-  const value =
-    phase && checkpoint.reward.phaseComplete
-      ? t.rich("<reward>+{points}</reward> · phase {phase} done", { phase, points, reward })
-      : reward(t("+{points}", { points }));
 
   return (
     <StepRows>
@@ -206,8 +192,8 @@ function PrizeRow() {
                 message: "Winning",
               })}
         </span>
-        <span className="text-muted-foreground shrink-0 font-mono text-xs tabular-nums">
-          {value}
+        <span className="text-brain-text shrink-0 font-mono text-xs tabular-nums">
+          {t("+{points}", { points })}
         </span>
       </StepRow>
     </StepRows>
@@ -225,19 +211,25 @@ function TricksterPanel() {
   return (
     <>
       <div className="flex flex-col gap-4">
-        <TricksterArt className="size-26 sm:size-26" ref={trickster} />
+        <TricksterArt
+          breaks={score.decision === "won"}
+          className="size-26 sm:size-26"
+          cracks={getShieldCracks({ broken, segments: checkpoint.passMark })}
+          ref={trickster}
+        />
 
         <section className="flex flex-col gap-3">
-          <h3 className="text-[0.9375rem] font-[560]">{t("The Trickster's shield")}</h3>
+          <h3 className="text-sm font-medium">{t("The Trickster's shield")}</h3>
           <TricksterShieldPlates broken={score.correct} segments={checkpoint.passMark} />
           <TaskMeta
             facts={[
-              t("{count, plural, =0 {# broken} one {# broken} other {# broken}}", {
-                count: broken,
-              }),
               !score.decision &&
                 toGo > 0 &&
-                t("{count, plural, one {# to go} other {# to go}}", { count: toGo }),
+                t({
+                  description: "Right answers the learner still needs to beat the Trickster.",
+                  message: "{count, plural, one {# more to win} other {# more to win}}",
+                  values: { count: toGo },
+                }),
               !score.decision &&
                 t(
                   "{count, plural, =0 {No questions left} one {# question left} other {# questions left}}",
@@ -246,12 +238,6 @@ function TricksterPanel() {
             ]}
           />
         </section>
-
-        <p className="text-muted-foreground text-[0.8125rem] leading-5 text-pretty">
-          {t(
-            "No hints. You'll see right or wrong after each answer, and why at the end, with the traps he set.",
-          )}
-        </p>
       </div>
 
       {score.decision !== "lost" && <PrizeRow />}
@@ -259,28 +245,14 @@ function TricksterPanel() {
   );
 }
 
-function WeeklyPanel() {
-  const t = useExtracted();
-
-  return (
-    <>
-      <p className="text-muted-foreground text-[0.8125rem] leading-5 text-pretty">
-        {t("No hints. You'll see right or wrong after each answer, and why at the end.")}
-      </p>
-
-      <PrizeRow />
-    </>
-  );
-}
-
 function useDuelAside(): TaskFrameAside {
   const t = useExtracted();
   const { checkpoint } = useCheckpointScreen();
-  const name = useCheckpointEyebrow(checkpoint);
+  const name = useChallengeName(checkpoint);
   const isBoss = checkpoint.kind !== "weekly";
 
   return {
-    children: isBoss ? <TricksterPanel /> : <WeeklyPanel />,
+    children: isBoss ? <TricksterPanel /> : <PrizeRow />,
     label: name,
     meta: isBoss
       ? t("{count, plural, one {# right to win} other {# right to win}}", {
@@ -296,6 +268,8 @@ export function CheckpointDuelView() {
   const { checkpoint } = useCheckpointScreen();
   const { position, question, score, segments, total } = useDuelNumbers();
   const aside = useDuelAside();
+  const error = useCheckpointError();
+  const name = useChallengeName(checkpoint);
   const isBoss = checkpoint.kind !== "weekly";
   const empty = total === 0;
   const current = Math.min(position + 1, total);
@@ -324,14 +298,12 @@ export function CheckpointDuelView() {
     <CheckpointFrame
       aside={empty ? null : aside}
       footer={
-        <>
-          <CheckpointError />
-          <TaskActions>
-            <DuelAction />
-          </TaskActions>
-        </>
+        <QuestionActions>
+          <DuelAction />
+        </QuestionActions>
       }
-      headerTitle={<TaskHeaderTitle title={isBoss ? t("The Trickster") : t("Weekly challenge")} />}
+      footerNote={error}
+      headerTitle={<TaskHeaderTitle title={name} />}
       progress={empty ? undefined : progress}
     >
       {question && <DuelRecording question={question} />}

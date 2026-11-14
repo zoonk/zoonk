@@ -5,7 +5,6 @@ import { safeAsync } from "@zoonk/utils/error";
 import { AwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
-import { PlusMark } from "../_components/plus-lock";
 import { DoneMark } from "../_components/status-mark";
 import {
   Suggestion,
@@ -67,7 +66,7 @@ function ClaimAction({
   );
 }
 
-/** A locked certificate opens its locked page; the mark says Plus unlocks it. */
+/** A locked certificate opens its locked page, where the gate is. */
 function ViewAction({
   variant,
   view,
@@ -80,13 +79,6 @@ function ViewAction({
   return (
     <SuggestionLinkAction href={view.href} variant={variant}>
       {view.several ? t("View certificates") : t("View certificate")}
-      {view.locked && (
-        <PlusMark
-          className={
-            variant === "default" ? "bg-primary-foreground/15 text-primary-foreground" : undefined
-          }
-        />
-      )}
     </SuggestionLinkAction>
   );
 }

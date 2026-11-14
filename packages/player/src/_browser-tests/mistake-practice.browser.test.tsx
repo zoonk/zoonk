@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { page, userEvent } from "vitest/browser";
+import { atViewport } from "../_test-utils/browser-viewport";
 import {
   type Actions,
   practiceFeedback as feedback,
@@ -43,9 +44,29 @@ describe("exact lesson mistake practice", () => {
       expect.objectContaining({ itemId: expect.any(String) }),
     );
 
-    await page.getByRole("button", { name: "End practice. What you answered counts." }).click();
+    await page.getByRole("button", { name: "Leave. What you answered counts." }).click();
     await expect.element(page.getByRole("heading", { name: "Practice done" })).toBeVisible();
     expect(actions.finish).toHaveBeenCalledWith({ answerIds: ["saved-answer"] });
+  });
+
+  it("draws a lesson's question on the same edges as its feedback, on a phone", async () => {
+    await atViewport({ height: 844, width: 390 }, async () => {
+      openPractice(teachingStep("check"));
+
+      const option = page.getByRole("radio", {
+        name: "Where the electron is most likely to be found",
+      });
+
+      await option.click();
+      await page.getByRole("button", { name: /^Check/u }).click();
+      const verdict = page.getByRole("region", { name: "Answer feedback" });
+      await expect.element(verdict).toBeVisible();
+
+      const answer = option.element().getBoundingClientRect();
+      const card = verdict.element().getBoundingClientRect();
+
+      expect([answer.left, answer.right]).toStrictEqual([card.left, card.right]);
+    });
   });
 
   it("keeps a typed draft and resends the same attempt after a lost response", async () => {

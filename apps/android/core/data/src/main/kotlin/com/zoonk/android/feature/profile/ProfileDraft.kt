@@ -51,8 +51,6 @@ data class ProfileDraft(
         return copy(picks = next, declined = false, subjects = subjects.filterKeys { it in next })
     }
 
-    fun decline(): ProfileDraft = ProfileDraft(declined = !declined)
-
     fun empty(
         question: ProfileQuestion,
         memoryEnabled: Boolean,
@@ -162,14 +160,6 @@ fun suggestedSupports(conditions: List<String>): List<String> =
                 else -> emptyList()
             }
         }.distinct()
-
-fun profileSkip(question: ProfileQuestion): OnboardingAnswerInput =
-    ApiJson.decodeFromJsonElement(
-        buildJsonObject {
-            put("question", question.value)
-            put("answer", kotlinx.serialization.json.JsonNull)
-        },
-    )
 
 fun profileSkipAll(forever: Boolean): OnboardingAnswerInput =
     ApiJson.decodeFromJsonElement(

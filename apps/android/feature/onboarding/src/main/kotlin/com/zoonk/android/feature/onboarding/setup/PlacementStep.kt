@@ -214,7 +214,6 @@ private fun ColumnScope.PlacementIntro(
                 onClick = onStart,
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !pending,
-                leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
             ) {
                 Text(stringResource(R.string.onboarding_placement_start))
             }
@@ -240,8 +239,8 @@ internal fun ColumnScope.PlacementWaiting(
     pending: Boolean,
     failed: Boolean,
     onSkip: () -> Unit,
-    skipLabel: String = stringResource(R.string.onboarding_placement_skip_for_now),
-    skipNote: String? = stringResource(R.string.onboarding_placement_skip_note),
+    skipLabel: String = stringResource(R.string.onboarding_skip),
+    skipNote: String? = null,
 ) {
     var patient by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
@@ -250,7 +249,7 @@ internal fun ColumnScope.PlacementWaiting(
     }
 
     val shown = if (hold.holding) run.copy(status = GenerationRun.Status.Ready, failure = null) else run
-    val title = stringResource(if (hold.holding) R.string.warm_up_questions_ready else R.string.onboarding_placement_waiting_title)
+    val title = stringResource(if (hold.holding) R.string.onboarding_placement_ready else R.string.generation_placement)
     SetupWait(
         shown,
         GenerationKind.Placement,
@@ -259,9 +258,9 @@ internal fun ColumnScope.PlacementWaiting(
         hold,
         stringResource(R.string.onboarding_continue),
         onRetry,
-        afterWait = {
-            if (!hold.holding && (patient || run.status == GenerationRun.Status.Failed)) {
-                OnboardingActions {
+        skip =
+            if (patient || run.status == GenerationRun.Status.Failed) {
+                {
                     FinishFailed(failed)
                     TextButton(
                         busy = pending,
@@ -281,19 +280,18 @@ internal fun ColumnScope.PlacementWaiting(
                         )
                     }
                 }
-            }
-        },
+            } else {
+                null
+            },
     ) { share ->
         GenerationWait(GenerationKind.Placement, shown, onRetry, share = share) {
             OnboardingHeading(
                 title,
-                stringResource(
-                    when {
-                        hold.holding -> R.string.warm_up_questions_ready_description
-                        READS_MATERIAL_STEP in run.steps -> R.string.onboarding_placement_waiting_material
-                        else -> R.string.onboarding_placement_waiting_time
-                    },
-                ),
+                when {
+                    hold.holding -> null
+                    READS_MATERIAL_STEP in run.steps -> stringResource(R.string.onboarding_placement_waiting_material)
+                    else -> stringResource(R.string.onboarding_placement_waiting_time)
+                },
             )
         }
     }
@@ -583,7 +581,6 @@ private fun ColumnScope.PlacementOutcome(
                 busy = pending,
                 onClick = onContinue,
                 modifier = Modifier.fillMaxWidth(),
-                trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
             ) {
                 Text(action)
             }

@@ -4,7 +4,7 @@ description: Use when designing, reviewing, or implementing Android UI or featur
 license: MIT
 metadata:
   author: zoonk
-  version: "3.1.0"
+  version: "3.2.1"
 ---
 
 # Android Material Guidelines
@@ -18,7 +18,7 @@ This skill is a workflow, not a frozen copy of Google's Android or Material Desi
 3. If a Material page requires JavaScript, use the official Material sitemap to find the current page:
    - `https://m3.material.io/sitemap.xml`
 4. Choose the default Material or AndroidX component first, styled only through `MaterialTheme` roles and [the design-system mapping](references/design-system.md). Only build custom UI when no platform component can carry the design, and give it the same accessibility, input, and adaptive behavior as the platform one.
-5. Before finishing, review the work against the relevant Android form-factor page, Material foundation pages, and component pages, and compare its meaning (hierarchy, states, colors' jobs) with the matching `main` screen.
+5. Before finishing, review the work against the relevant Android form-factor page, Material foundation pages, and component pages, and compare its meaning (hierarchy, states, colors' jobs) and its words with the matching `main` screen: the copy is main's, written to zoonk-design's [Words](../zoonk-design/SKILL.md#words), and a Material slot with room for a sentence (supporting text, a dialog's body) doesn't earn one.
 
 ## Product Rule
 
@@ -46,6 +46,21 @@ Examples of native behavior:
 - Prefer components in the stable Material 3 release the Compose BOM brings. Don't opt into `@ExperimentalMaterial3ExpressiveApi` or other experimental Material APIs; Expressive components come in when they're stable.
 - Support dark theme, accessibility, font scaling, contrast, reduced motion (the animator duration scale), system gestures, predictive back, edge-to-edge behavior, and proper system bar handling; the defaults above provide most of it.
 - Keep platform differences intentional. Look and behavior follow Android; the meaning stays Zoonk's.
+
+## Roles
+
+Zoonk's [roles](../zoonk-design/SKILL.md#find-the-piece-before-you-build-one) each have one piece and one way on every screen. Here they are Material's pieces:
+
+- **A page's top and the way back:** `PageScaffold`'s top app bar with Material's back icon (`autoMirrored`) and predictive back, the same on every pushed page; the page's title in `PageTitleRow` or `PageHeader` right under it, with no eyebrow and no padding of the screen's own above it. A task keeps its close in `TaskScaffold`.
+- **The main action:** one main `Button` in `BottomBar` (`PageScaffold(bottomBar = …)`; `TaskActionBar` with `TaskActions` in a task), at the bottom on every screen that has one, at every window size; never under the content on one screen and docked on the next. It fills its line on a phone or a book's page and sits at the bar's end at its own width where the bar is wider. An error or status goes in the bar's `note`. A screen with no main action has no bar: a setting that is one switch or pick saves as it changes, and only a form the learner types into has "Save".
+- **What opens over a page:** a modal bottom sheet on a compact window and Material's dialog on a wider one, chosen by the window's size class in one place; an `AlertDialog` only for a question that needs an answer (delete, hand in, leave with a loss).
+- **A button:** its label and at most one symbol, and no arrow on a main action. While it works, the progress indicator takes the symbol's place and the button keeps its width.
+- **The small line over a title:** the `Eyebrow` chip (`SuccessEyebrow` for something done), written as a sentence, never `zoonkType.eyebrow`'s mono uppercase.
+- **Paying:** the action reads "Subscribe". A paid feature's row or card looks like any other (no "Plus" chip, no notice in a list), and the subscription gate (`SubscribeGate`: `GateWords` and "Subscribe") shows once, in the feature's place, when the learner starts it.
+- **A page's loading, failed and not-found states:** `ResourceScaffold`, which takes the loaded content; no page switches on `LoadState.Failed` itself.
+- **Words:** main's. "Your buddy", a buddy's name or a feature's name only after the screen that introduces it; before that, "we". A step with Skip has no "none" option.
+
+Compare a role across the app the way [the role read](../zoonk-design/references/craft.md#the-role-read) does on the web: renders of every screen that draws it, side by side.
 
 ## Book foldables
 

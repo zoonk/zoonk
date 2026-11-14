@@ -11,30 +11,33 @@ import { type MindMapShown } from "./use-mind-map-request";
  */
 export type MindMapRowPlace = "chapter" | "finish" | "library";
 
-/** The Mind maps page says once, above its rows, what writing the lessons costs (`NotMadeYet`). */
-function useAvailableLine({ place, plus, shown, view }: MindMapCopyInput): string | null {
+/**
+ * Wherever its button writes lessons for a learner with a limit on them, the row says what that
+ * spends. On the Mind maps page the list says once what writing lessons spends (`NotMadeYet`), so a
+ * row gives only its count.
+ */
+function useAvailableLine({ place, plus, view }: MindMapCopyInput): string | null {
   const t = useExtracted();
-  const writesLessons = view.lessonsToWrite > 0 && shown !== "plusRequired";
-
   const count = view.lessonsToWrite;
 
-  if (writesLessons && place === "library") {
+  if (count > 0 && !plus && place === "library") {
     return t("{count, plural, one {# lesson to write} other {# lessons to write}}", { count });
   }
 
-  if (writesLessons) {
-    return plus
-      ? t(
-          "{count, plural, one {# lesson gets written first, so it takes a few minutes.} other {# lessons get written first, so it takes a few minutes.}}",
-          { count },
-        )
-      : t(
-          "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}",
-          { count },
-        );
+  if (count > 0 && !plus) {
+    return t(
+      "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}",
+      { count },
+    );
   }
 
-  return place === "library" ? null : t("Its main ideas in one picture");
+  if (place === "library") {
+    return null;
+  }
+
+  return place === "finish"
+    ? t("A mind map of its main ideas")
+    : t("Its main ideas in one picture");
 }
 
 export type MindMapCopyInput = {
@@ -48,7 +51,7 @@ function useReadyLine({ place, view }: MindMapCopyInput): string | null {
   const t = useExtracted();
 
   if (!view.image) {
-    return t("Its picture had mistakes, so here's the mind map as text.");
+    return t("Shown as text");
   }
 
   if (place === "finish") {

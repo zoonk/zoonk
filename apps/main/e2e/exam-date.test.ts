@@ -151,7 +151,7 @@ test.describe("Exam date", () => {
 
       const editor = page.getByRole("dialog", { name: "Adjust your plan" });
       const date = editor.getByLabel("Exam date");
-      const offerText = `The exam notice says ${longDate(noticeDay)}.`;
+      const offerText = `The exam is on ${longDate(noticeDay)}.`;
       const offer = editor.getByText(offerText, { exact: true });
 
       await expect(date).toHaveValue(ownDay);

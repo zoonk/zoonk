@@ -18,7 +18,7 @@ type BulkChapter = { chapterId: string; lessonsToWrite: number; status: MindMapS
 
 /**
  * What "Create all chapter maps" does with each chapter, in the order given: it makes `eligible`
- * maps (none ready or on its way, every lesson written, not locked) and joins `onItsWay` ones. It
+ * maps (none ready or on its way, every lesson written) and joins `onItsWay` ones. It
  * never writes lessons, since each costs far more than a map: `needLessons` chapters wait for their
  * own request, which writes them first.
  */
@@ -36,9 +36,6 @@ export function sortBulkChapters(chapters: readonly BulkChapter[]) {
       .map((chapter) => chapter.chapterId),
     onItsWay: chapters
       .filter((chapter) => chapter.status === "drawing")
-      .map((chapter) => chapter.chapterId),
-    plusRequired: chapters
-      .filter((chapter) => chapter.status === "plusRequired")
       .map((chapter) => chapter.chapterId),
   };
 }
@@ -77,6 +74,10 @@ export function toAllowanceStop({
   if (decision.status === "slowDown") {
     const resetsAt = new Date(now.getTime() + decision.retryAfterSeconds * MS_PER_SECOND);
     return { period: null, reason: "slowDown", resetsAt: resetsAt.toISOString(), resource: null };
+  }
+
+  if (decision.limit.period === "rolling30Days") {
+    throw new Error("A map-only claim cannot reach the rolling lesson limit");
   }
 
   const { period, resource } = decision.limit;

@@ -5,8 +5,8 @@ import {
   isProfileQuestion,
 } from "@zoonk/core/profile/questions/contract";
 import { getProfileQuestions } from "@zoonk/core/profile/questions/get";
+import { AboutYouQuestionSkeleton } from "@zoonk/learn/about-you/question";
 import { Page } from "@zoonk/learn/page";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -49,20 +49,10 @@ async function QuestionContent({ params }: Props) {
   );
 }
 
-function QuestionSkeleton() {
-  return (
-    <div className="flex flex-col gap-6">
-      <Skeleton className="h-8 w-3/4" />
-      <Skeleton className="h-4 w-full" />
-      <Skeleton className="h-64 rounded-lg" />
-    </div>
-  );
-}
-
 export default function AboutYouQuestionPage(props: Props) {
   return (
-    <Page className="max-w-form">
-      <Suspense fallback={<QuestionSkeleton />}>
+    <Page measure="form">
+      <Suspense fallback={<AboutYouQuestionSkeleton />}>
         <QuestionContent {...props} />
       </Suspense>
     </Page>

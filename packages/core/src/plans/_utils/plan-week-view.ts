@@ -15,24 +15,12 @@ import { type PlanReadItem } from "./plan-read-projection";
 import { projectSavedAllocationOn } from "./saved-allocation";
 import { isWorkFinished } from "./work-progress";
 
-type ItemAccess = { freeUntil: string | null; mocksRequirePlus: boolean };
-
-function requiresPlus({ access, item }: { access: ItemAccess; item: PlanReadItem }): boolean {
-  if (item.kind === "mock" && access.mocksRequirePlus) {
-    return true;
-  }
-
-  return Boolean(
-    access.freeUntil && item.scheduledFor && toIsoDate(item.scheduledFor) > access.freeUntil,
-  );
-}
-
 function toPlanItemView({
   access,
   item,
   skillAreas,
 }: {
-  access: ItemAccess;
+  access: Pick<PlanView["access"], "mocksRequirePlus">;
   item: PlanReadItem;
   skillAreas: SkillAreas;
 }): PlanItemView {
@@ -45,7 +33,7 @@ function toPlanItemView({
     kind: item.kind,
     lessonId: item.lessonId,
     minutes: itemMinutes === null || itemMinutes === undefined ? null : Math.round(itemMinutes),
-    requiresPlus: requiresPlus({ access, item }),
+    requiresPlus: item.kind === "mock" && access.mocksRequirePlus,
     scheduledFor: item.scheduledFor ? toIsoDate(item.scheduledFor) : null,
     skillId: item.skillId,
     status: item.status,
@@ -87,7 +75,7 @@ function getDayState({
 }
 
 type DaysInput = {
-  access: ItemAccess;
+  access: Pick<PlanView["access"], "mocksRequirePlus">;
   calendar: StudyCalendar;
   exam: ExamDayRules | null;
   items: readonly PlanReadItem[];
@@ -163,7 +151,7 @@ export function buildFundedMocksView({
   skillAreas,
   today,
 }: {
-  access: ItemAccess;
+  access: Pick<PlanView["access"], "mocksRequirePlus">;
   funding: readonly MockFunding[];
   items: readonly PlanReadItem[];
   skillAreas: SkillAreas;

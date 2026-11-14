@@ -9,7 +9,7 @@ import { useExtracted } from "next-intl";
 import { ChoiceList } from "../onboarding/choice-list";
 import { TextField } from "../onboarding/steps/text-field";
 import { type BodyProps, setText, useExclusiveLabels, usePicker } from "./profile-body-parts";
-import { ProfileChip, ProfileChips } from "./profile-chips";
+import { ProfileChips } from "./profile-chips";
 import { type ChipQuestion, toggleProfileExclusive, toggleProfilePick } from "./profile-draft";
 
 function useFavoritesField(question: ChipQuestion) {
@@ -21,12 +21,12 @@ function useFavoritesField(question: ChipQuestion) {
     case "watch":
       return {
         label: t("Favorite shows, films, teams or channels (optional)"),
-        placeholder: t("E.g., Star Trek, Flamengo"),
+        placeholder: t("E.g., Star Trek, Formula 1"),
       };
     case "listen":
       return {
         label: t("Favorite artists or podcasts (optional)"),
-        placeholder: t("E.g., Coldplay, Radiolab"),
+        placeholder: t("E.g., Coldplay, TED Talks Daily"),
       };
     case "play":
       return { label: t("Favorite games (optional)"), placeholder: t("E.g., Catan, Valorant") };
@@ -49,12 +49,10 @@ export function ChipBody(props: BodyProps & { chip: ChipQuestion; label: string 
   const { draft, question } = props;
   const picker = usePicker(props);
   const field = useFavoritesField(props.chip);
-  const exclusiveLabels = useExclusiveLabels();
 
   return (
     <>
       <ProfileChips
-        capped={picker.capped}
         label={props.label}
         onToggle={picker.toggle}
         options={question.options.map((option) => ({
@@ -72,38 +70,30 @@ export function ChipBody(props: BodyProps & { chip: ChipQuestion; label: string 
         placeholder={field.placeholder}
         value={draft.text}
       />
-
-      <div className="flex">
-        <ProfileChip
-          label={exclusiveLabels.none}
-          onToggle={() => picker.exclusive("none")}
-          pressed={draft.exclusive === "none"}
-        />
-      </div>
     </>
   );
 }
 
-export function WorkBody(props: BodyProps & { jobPrefill: string | null; label: string }) {
+export function WorkBody(
+  props: BodyProps & { declineAsSkip: boolean; jobPrefill: string | null; label: string },
+) {
   const t = useExtracted();
   const { draft, jobPrefill, question } = props;
   const exclusiveLabels = useExclusiveLabels();
   const status = draft.exclusive ?? draft.picks[0] ?? null;
 
   const jobField = (
-    <div className="pb-3 pl-1">
-      <TextField
-        autoFocus={false}
-        description={
-          jobPrefill && draft.text === jobPrefill ? t("From your earlier answer") : undefined
-        }
-        label={t("Your job (optional)")}
-        maxLength={MAX_PROFILE_JOB_LENGTH}
-        onChange={(text) => setText(props, text)}
-        placeholder={t("E.g., software engineer, nurse")}
-        value={draft.text}
-      />
-    </div>
+    <TextField
+      autoFocus={false}
+      description={
+        jobPrefill && draft.text === jobPrefill ? t("From your earlier answer") : undefined
+      }
+      label={t("Your job (optional)")}
+      maxLength={MAX_PROFILE_JOB_LENGTH}
+      onChange={(text) => setText(props, text)}
+      placeholder={t("E.g., software engineer, nurse")}
+      value={draft.text}
+    />
   );
 
   return (
@@ -117,10 +107,9 @@ export function WorkBody(props: BodyProps & { jobPrefill: string | null; label: 
           label: option.label,
           value: option.id,
         })),
-        { label: exclusiveLabels.ratherNot, value: "ratherNot" },
+        ...(props.declineAsSkip ? [] : [{ label: exclusiveLabels.ratherNot, value: "ratherNot" }]),
       ]}
       label={props.label}
-      numberKeys={false}
       onChange={(value) =>
         props.onChange(
           value === "ratherNot"
@@ -166,7 +155,6 @@ export function StudiesBody(props: BodyProps & { label: string }) {
   const t = useExtracted();
   const { draft, question } = props;
   const picker = usePicker(props);
-  const exclusiveLabels = useExclusiveLabels();
   const labelOf = (id: string) => question.options.find((option) => option.id === id)?.label ?? id;
 
   const setSubject = (field: string, subject: string) =>
@@ -180,7 +168,6 @@ export function StudiesBody(props: BodyProps & { label: string }) {
   return (
     <>
       <ProfileChips
-        capped={picker.capped}
         label={props.label}
         onToggle={picker.toggle}
         options={question.options.map((option) => ({
@@ -189,14 +176,6 @@ export function StudiesBody(props: BodyProps & { label: string }) {
           pressed: draft.studies.some((study) => study.field === option.id),
         }))}
       />
-
-      <div className="flex">
-        <ProfileChip
-          label={exclusiveLabels.nothing}
-          onToggle={() => picker.exclusive("nothing")}
-          pressed={draft.exclusive === "nothing"}
-        />
-      </div>
 
       {draft.studies.map((study) => (
         <TextField

@@ -6,12 +6,12 @@ import { EMPTY_WEEK } from "./session-view";
 
 const TODAY = new Date("2026-10-17T00:00:00Z");
 
-function examDay({ trialEnded }: { trialEnded: boolean }): DayViewFieldsInput {
+function examDay(): DayViewFieldsInput {
   return {
     answers: [],
     current: true,
     dayMinutes: 40,
-    examAccess: { includesMockExams: !trialEnded, trialEnded },
+    examAccess: { includesMockExams: false },
     lessonRoom: true,
     missions: [],
     outlines: "awaiting",
@@ -40,11 +40,6 @@ function examDay({ trialEnded }: { trialEnded: boolean }): DayViewFieldsInput {
   };
 }
 
-function emptyExamDay({ trialEnded }: { trialEnded: boolean }): DayViewFieldsInput {
-  const day = examDay({ trialEnded });
-  return { ...day, session: { ...day.session, blocks: [] } };
-}
-
 function dayOf({
   kinds,
   lessonRoom = true,
@@ -54,7 +49,7 @@ function dayOf({
   lessonRoom?: boolean;
   outlines: DayOutlines;
 }) {
-  const day = examDay({ trialEnded: false });
+  const day = examDay();
   const [block] = day.session.blocks;
   const blocks = kinds.flatMap((kind, position) => (block ? [{ ...block, kind, position }] : []));
 
@@ -69,16 +64,6 @@ function dayOf({
 }
 
 describe(toDayViewFields, () => {
-  it("promises no lessons to come on a free exam plan past its first week", () => {
-    expect(toDayViewFields(examDay({ trialEnded: true })).lessonsComing).toBe(false);
-    expect(toDayViewFields(examDay({ trialEnded: false })).lessonsComing).toBe(true);
-  });
-
-  it("says an empty day on a free exam plan past its first week has nothing new, never lessons on the way", () => {
-    expect(toDayViewFields(emptyExamDay({ trialEnded: true })).emptyDay).toBe("nothingNew");
-    expect(toDayViewFields(emptyExamDay({ trialEnded: false })).emptyDay).toBe("lessonsComing");
-  });
-
   it("treats a day with only practice like an empty day: coming while outlined, asked for while idle", () => {
     expect(dayOf({ kinds: [], outlines: "awaiting" }).emptyDay).toBe("lessonsComing");
     expect(dayOf({ kinds: [], outlines: "idle" }).emptyDay).toBe("lessonsToPrepare");

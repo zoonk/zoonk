@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@zoonk/ui/components/button";
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import {
   Field,
   FieldContent,
@@ -11,11 +11,11 @@ import {
 import { Input } from "@zoonk/ui/components/input";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { Textarea } from "@zoonk/ui/components/textarea";
-import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 import { parseFormField } from "@zoonk/utils/form";
-import { PaperclipIcon, SendIcon } from "lucide-react";
+import { PaperclipIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useActionState, useEffect, useId, useState } from "react";
+import { EnterButton } from "../_components/enter-button";
 import { type ContentFeedbackContextValue, useContentFeedback } from "./feedback-context";
 import { type FeedbackFormContext } from "./feedback-contract";
 
@@ -117,29 +117,40 @@ async function sendMessage({
 
 type FeedbackFormLayout = "dialog" | "page";
 
-function SendButton({ disabled, pending }: { disabled: boolean; pending: boolean }) {
+/**
+ * The form's main action, in the dialog and on the page alike. Enter presses it from anywhere but
+ * the message, which keeps Enter for a new line, as every text area does.
+ */
+function SendButton({ busy, disabled, form }: { busy: boolean; disabled: boolean; form?: string }) {
   const t = useExtracted("feedback");
 
   return (
-    <Button
-      busy={pending}
-      disabled={disabled}
-      focusableWhenDisabled
-      icon={<SendIcon aria-hidden="true" />}
-      size="sm"
-      type="submit"
-    >
+    <EnterButton busy={busy} disabled={disabled} form={form} type="submit">
       {t("Send message")}
-    </Button>
+    </EnterButton>
   );
 }
 
+function ScreenAttached() {
+  const t = useExtracted("feedback");
+
+  return (
+    <span className="flex items-center gap-2">
+      <PaperclipIcon aria-hidden="true" className="size-3.5" />
+      {t("This screen is attached")}
+    </span>
+  );
+}
+
+/** On a page, `children` sit between the form and the bar, whose Send belongs to the form alone. */
 export function FeedbackForm({
+  children,
   context,
   defaultEmail,
   layout = "page",
   onSent,
 }: {
+  children?: React.ReactNode;
   context: FeedbackFormContext;
   defaultEmail?: string | null;
   layout?: FeedbackFormLayout;
@@ -148,6 +159,7 @@ export function FeedbackForm({
   const t = useExtracted("feedback");
   const feedback = useContentFeedback();
   const messageId = useId();
+  const formId = useId();
   const viewerEmail = useViewerEmail({ defaultEmail, feedback });
   const [typedEmail, setTypedEmail] = useState("");
   const email = (viewerEmail ?? typedEmail).trim();
@@ -178,72 +190,77 @@ export function FeedbackForm({
   );
 
   return (
-    <form action={formAction} className="flex w-full flex-col gap-6">
-      <Field>
-        <FieldContent>
-          <FieldLabel htmlFor={messageId}>{t("Message")}</FieldLabel>
-          <Textarea
-            className="min-h-32"
-            defaultValue={unsentMessage}
-            id={messageId}
-            name="message"
-            placeholder={t("How can we help you?")}
-            required
-          />
+    <>
+      <form action={formAction} className="flex w-full flex-col gap-6" id={formId}>
+        <Field>
+          <FieldContent>
+            <FieldLabel htmlFor={messageId}>{t("Message")}</FieldLabel>
+            <Textarea
+              className="min-h-32"
+              defaultValue={unsentMessage}
+              id={messageId}
+              name="message"
+              placeholder={t("How can we help you?")}
+              required
+            />
 
-          <FieldDynamicDescription
-            successMessage={
-              status === "success"
-                ? t("Message sent successfully! We'll get back to you soon.")
-                : null
-            }
-          >
-            {context.contentId && (
-              <span className="flex items-center gap-2">
-                <PaperclipIcon aria-hidden="true" className="size-3.5" />
-                {t("This screen is attached")}
-              </span>
+            <FieldDynamicDescription
+              successMessage={
+                status === "success"
+                  ? t("Message sent successfully! We'll get back to you soon.")
+                  : null
+              }
+            >
+              {context.contentId && <ScreenAttached />}
+            </FieldDynamicDescription>
+
+            {status === "error" && (
+              <FieldError>
+                {t("We couldn't send your message. Try again, or email us at hello@zoonk.com.")}
+              </FieldError>
             )}
-          </FieldDynamicDescription>
+          </FieldContent>
+        </Field>
 
-          {status === "error" && (
-            <FieldError>
-              {t("We couldn't send your message. Try again, or email us at hello@zoonk.com.")}
-            </FieldError>
-          )}
-        </FieldContent>
-      </Field>
+        {viewerEmail === null && (
+          <EmailField onChange={setTypedEmail} required={!isSaveReport} value={typedEmail} />
+        )}
 
-      {viewerEmail === null && (
-        <EmailField onChange={setTypedEmail} required={!isSaveReport} value={typedEmail} />
+        {layout === "dialog" && (
+          <div className="flex sm:justify-end">
+            <SendButton busy={isPending} disabled={viewerEmail === undefined} />
+          </div>
+        )}
+      </form>
+
+      {children}
+
+      {layout === "page" && (
+        <BottomBar>
+          <BottomBarActions>
+            <SendButton busy={isPending} disabled={viewerEmail === undefined} form={formId} />
+          </BottomBarActions>
+        </BottomBar>
       )}
-
-      {layout === "page" ? (
-        <div className="flex flex-col items-end border-t pt-3">
-          <SendButton disabled={viewerEmail === undefined} pending={isPending} />
-        </div>
-      ) : (
-        <div className="flex justify-end">
-          <SubmitButton disabled={viewerEmail === undefined} icon={<SendIcon aria-hidden="true" />}>
-            {t("Send message")}
-          </SubmitButton>
-        </div>
-      )}
-    </form>
+    </>
   );
 }
 
-export function FeedbackFormSkeleton() {
+export function FeedbackFormSkeleton({ children }: { children?: React.ReactNode }) {
   return (
-    <div className="flex w-full flex-col gap-6">
-      <div className="flex flex-col gap-2">
+    <>
+      <div className="flex w-full flex-col gap-2">
         <Skeleton className="h-4 w-24" />
         <Skeleton className="h-32 w-full rounded-xl" />
       </div>
 
-      <div className="flex flex-col items-end border-t pt-3">
-        <Skeleton className="h-7.5 w-28 rounded-md" />
-      </div>
-    </div>
+      {children}
+
+      <BottomBar>
+        <BottomBarActions>
+          <Skeleton className="h-11 w-full rounded-md sm:w-36" />
+        </BottomBarActions>
+      </BottomBar>
+    </>
   );
 }

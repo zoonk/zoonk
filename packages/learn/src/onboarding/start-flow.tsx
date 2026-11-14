@@ -5,9 +5,8 @@ import { useEffect, useEffectEvent, useState } from "react";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { useDraftGoals } from "./entry/draft-goals";
 import { DraftScreen } from "./entry/draft-screen";
-import { AttachableGoalEntry } from "./entry/goal-attachments";
+import { GoalStartEntry } from "./entry/goal-attachments";
 import { GoalExamples } from "./entry/goal-examples";
-import { GoalLimitNotice } from "./entry/goal-limit-notice";
 import { GuestGoalGate } from "./entry/guest-goal-gate";
 import { useSubmitGoal } from "./entry/material-goal";
 import { type MaterialIntent } from "./entry/material-intent";
@@ -163,6 +162,11 @@ type GoalStartFlowProps = {
   takesHandedOffGoal?: boolean;
 };
 
+/** Embedded in another page, the goal box has no room for examples, so they go beside it. */
+function SectionExamples({ onPick }: { onPick: (goal: string) => void }) {
+  return useOnboardingSection() ? <GoalExamples onPick={onPick} /> : null;
+}
+
 function GoalStartFlow({
   actions,
   buddy,
@@ -175,7 +179,6 @@ function GoalStartFlow({
   routes,
   takesHandedOffGoal = false,
 }: GoalStartFlowProps) {
-  const section = useOnboardingSection();
   const creation = useGoalCreation();
   const { createExplanation } = useDraftGoals(actions);
   const [attached, setAttached] = useState<AttachedSource[]>([]);
@@ -266,9 +269,11 @@ function GoalStartFlow({
 
   const backToEntry = (words: string) => showEntry({ words });
 
-  const rail = (
+  const atGoalLimit = goalLimit === "activeGoals";
+
+  const rail = atGoalLimit ? null : (
     <>
-      {section && state.kind === "entry" && <GoalExamples onPick={submit} />}
+      {state.kind === "entry" && <SectionExamples onPick={submit} />}
       <OnboardingHowItWorks hasAccount={canAttach} />
     </>
   );
@@ -277,7 +282,8 @@ function GoalStartFlow({
     <OnboardingRailProvider rail={rail}>
       <OnboardingFrame bar={{ onBack: getBack({ backToEntry, state }) }}>
         {state.kind === "entry" && (
-          <AttachableGoalEntry
+          <GoalStartEntry
+            atGoalLimit={atGoalLimit}
             attach={actions.attach}
             attached={attached}
             canAttach={canAttach}
@@ -285,7 +291,6 @@ function GoalStartFlow({
             error={state.error}
             fromSharedPlan={fromSharedPlan}
             intent={intent}
-            notice={goalLimit && <GoalLimitNotice reason={goalLimit} upFront />}
             onAttachedChange={setAttached}
             onIntentChange={setIntent}
             onSubmit={submit}

@@ -41,7 +41,6 @@ const FREE_CAPS = [
   { day: 100, kind: "assist", month: 500 },
   { day: 5, kind: "explanation", month: 20 },
   { day: 3, kind: "goal", month: 10 },
-  { day: 20, kind: "lessonStart", month: 40 },
   { day: 3, kind: "mindMap", month: 10 },
   { day: 10, kind: "tutorMessage", month: 100 },
   { day: 3, kind: "upload", month: 10 },
@@ -63,7 +62,7 @@ describe(claimUsage, () => {
     await expect(startLesson()).resolves.toStrictEqual({ status: "unauthorized" });
   });
 
-  it("counts every new lesson a free learner starts, reused or generated, up to 20 a day", async () => {
+  it("counts every new lesson a free learner starts, reused or generated, up to 20 in thirty days", async () => {
     const user = await useLearner();
 
     await expect(startLesson({ generated: false })).resolves.toStrictEqual({ status: "allowed" });
@@ -71,7 +70,13 @@ describe(claimUsage, () => {
     await usageRecordsFixture({ count: 18, createdAt: NOW, userId: user.id });
 
     await expect(startLesson()).resolves.toStrictEqual({
-      limit: { limit: 20, period: "day", resource: "lessonStart", tier: "free" },
+      limit: {
+        availableAt: new Date("2026-10-15T12:00:00Z"),
+        limit: 20,
+        period: "rolling30Days",
+        resource: "lessonStart",
+        tier: "free",
+      },
       status: "limitReached",
     });
 
@@ -87,6 +92,26 @@ describe(claimUsage, () => {
 
     await expect(startLesson({ lessonId })).resolves.toStrictEqual({ status: "allowed" });
     await expect(prisma.usageRecord.count({ where: { userId: user.id } })).resolves.toBe(20);
+  });
+
+  it("replays the same start concurrently and waits thirty days instead of resetting on the first", async () => {
+    const user = await useLearner();
+    await usageRecordsFixture({ count: 19, createdAt: EARLIER_THIS_MONTH, userId: user.id });
+    const lessonId = randomUUID();
+    const decisions = await Promise.all(Array.from({ length: 5 }, () => startLesson({ lessonId })));
+    expect(decisions.every((decision) => decision.status === "allowed")).toBe(true);
+    await expect(prisma.usageRecord.count({ where: { userId: user.id } })).resolves.toBe(20);
+    vi.setSystemTime(new Date("2026-09-30T23:59:59Z"));
+
+    await expect(startLesson()).resolves.toMatchObject({
+      limit: { limit: 20, period: "rolling30Days" },
+      status: "limitReached",
+    });
+
+    vi.setSystemTime(new Date("2026-10-01T00:00:00Z"));
+    await expect(startLesson()).resolves.toMatchObject({ status: "limitReached" });
+    vi.setSystemTime(new Date("2026-10-03T09:00:00Z"));
+    await expect(startLesson()).resolves.toStrictEqual({ status: "allowed" });
   });
 
   it("keeps quick explanations out of the lesson allowance", async () => {
@@ -371,9 +396,9 @@ describe(claimUsage, () => {
     await expect(startLesson({ generated: false })).resolves.toStrictEqual({ status: "allowed" });
   });
 
-  it("never lets parallel starts pass the daily cap together", async () => {
+  it("never lets parallel starts pass the rolling cap together", async () => {
     const user = await useLearner();
-    await usageRecordsFixture({ count: 19, createdAt: NOW, userId: user.id });
+    await usageRecordsFixture({ count: 19, createdAt: EARLIER_THIS_MONTH, userId: user.id });
 
     const decisions = await Promise.all(Array.from({ length: 5 }, () => startLesson()));
 

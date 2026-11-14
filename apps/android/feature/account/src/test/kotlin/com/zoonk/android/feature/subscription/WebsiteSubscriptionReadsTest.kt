@@ -72,7 +72,7 @@ class WebsiteSubscriptionReadsTest {
         rule.setContent {
             ZoonkTheme {
                 if (profile) {
-                    webPlusDeletionNotice(store.websiteSubscription)?.let { Text(it) }
+                    deletionPlusNotices(store.websiteSubscription, provider = null).forEach { Text(it) }
                 } else {
                     val state by store.websiteSubscription.collectShown()
                     val cancellation = WebPlusCancellationViewModel(store::cancelWebPlus, store::keepWebPlus)

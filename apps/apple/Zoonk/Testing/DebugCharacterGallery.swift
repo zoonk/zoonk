@@ -3,8 +3,8 @@
 
   /// `ZOONK_DEBUG_CHARACTERS=ceremony` opens a milestone's ceremony instead, `=moments` a
   /// result's missions, and `=certificates` the award moment of the certificates the local API
-  /// serves for the codes in `ZOONK_DEBUG_CERTIFICATES`, oldest first and comma-separated; also a
-  /// launch argument (`-ZOONK_DEBUG_CHARACTERS moments`).
+  /// serves for the codes in `ZOONK_DEBUG_CERTIFICATES`, oldest first and comma-separated. Both are
+  /// also launch arguments (`-ZOONK_DEBUG_CHARACTERS moments`).
   struct DebugCharacterGallery: ViewModifier {
     private let mode =
       ProcessInfo.processInfo.environment["ZOONK_DEBUG_CHARACTERS"]
@@ -120,7 +120,7 @@
             HStack {
               TricksterCharacter()
               TricksterCharacter(beaten: true)
-              CharacterActor(art: TricksterArt(holdsSign: true), expression: .smug)
+              TricksterCharacter(won: true, cracks: 2)
             }
             .frame(height: 120)
 
@@ -197,7 +197,9 @@
     @Environment(CertificatesStore.self) private var store
     @State private var index = 0
 
-    private let codes = (ProcessInfo.processInfo.environment["ZOONK_DEBUG_CERTIFICATES"] ?? "")
+    private let codes =
+      (ProcessInfo.processInfo.environment["ZOONK_DEBUG_CERTIFICATES"]
+      ?? UserDefaults.standard.string(forKey: "ZOONK_DEBUG_CERTIFICATES") ?? "")
       .split(separator: ",").map(String.init)
 
     var body: some View {

@@ -9,7 +9,7 @@ export function PublicTopBarSurface({ className, ...props }: React.ComponentProp
   return (
     <header
       className={cn(
-        "bg-background/85 supports-backdrop-filter:bg-background/70 sticky top-0 z-40 border-b backdrop-blur-md transition-colors motion-reduce:transition-none",
+        "bg-background/85 supports-backdrop-filter:bg-background/70 sticky top-0 z-40 overflow-x-clip border-b backdrop-blur-md transition-colors motion-reduce:transition-none",
         scrolled ? "border-border" : "border-transparent",
         className,
       )}

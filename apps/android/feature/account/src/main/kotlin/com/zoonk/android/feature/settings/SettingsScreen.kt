@@ -5,9 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -30,25 +28,20 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.account.AccountAvatar
 import com.zoonk.android.feature.reminders.reminderTime
-import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.ui.characters.BuddyKind
-import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.components.TextButton
-import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.StudyReminder
 import kotlinx.coroutines.launch
 
 /**
- * Main's settings hub: the account, then Preferences, Reminders and Memory, then Subscription and Help, and
+ * Main's settings hub: the account, then Preferences, Reminders, About you, Memory and Privacy, then Subscription and Help, and
  * Log out. A guest is offered an account instead of logging out, which would lose their plan.
  */
 @Composable
@@ -57,8 +50,7 @@ fun SettingsScreen(
     navigator: AppNavigator,
 ) {
     val session by app.sessions.state.collectAsStateWithLifecycle()
-    val summary by app.learnerSummary.summary.collectShown()
-    val memory by app.memory.memory.collectShown()
+    val learner by app.learnerSummary.summary.collectShown()
     val reminder by app.reminders.reminder.collectShown()
     val signedIn = session as? SessionState.SignedIn
     val account = signedIn?.takeUnless { it.isGuest }?.account?.user
@@ -91,10 +83,7 @@ fun SettingsScreen(
         ) {
             Column(
                 modifier =
-                    Modifier
-                        .widthIn(max = 640.dp)
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp),
+                    Modifier.settingsColumn(),
                 verticalArrangement = Arrangement.spacedBy(24.dp),
             ) {
                 PageTitleRow(stringResource(R.string.account_menu_settings), Modifier.padding(horizontal = LIST_ITEM_INSET))
@@ -125,7 +114,6 @@ fun SettingsScreen(
                     PageRow(
                         title = stringResource(R.string.settings_preferences),
                         selected = navigator.currentRoute == AppRoute.Preferences,
-                        summary = preferencesSummary(summary.value),
                     ) { open(AppRoute.Preferences) }
                     ListDivider()
                     PageRow(
@@ -135,30 +123,28 @@ fun SettingsScreen(
                     ) { open(AppRoute.Reminders) }
                     ListDivider()
                     PageRow(
-                        title = stringResource(R.string.settings_memory),
-                        selected = navigator.currentRoute == AppRoute.Memory,
-                        count =
-                            memory.value
-                                ?.facts
-                                ?.size
-                                ?.let { formatNumber(it.toDouble(), currentLocale()) },
-                    ) { open(AppRoute.Memory) }
-                    ListDivider()
-                    PageRow(
                         title = stringResource(R.string.profile_questions_title),
                         selected = navigator.currentRoute == AppRoute.AboutYou || navigator.currentRoute is AppRoute.ProfileQuestionEdit,
                     ) { open(AppRoute.AboutYou) }
+                    ListDivider()
+                    PageRow(
+                        title = stringResource(R.string.settings_memory),
+                        selected = navigator.currentRoute == AppRoute.Memory,
+                    ) { open(AppRoute.Memory) }
+                    ListDivider()
+                    PageRow(
+                        title = stringResource(R.string.settings_privacy),
+                        selected = navigator.currentRoute == AppRoute.PrivacySettings,
+                    ) { open(AppRoute.PrivacySettings) }
                 }
 
                 Column {
                     PageRow(
                         title = stringResource(R.string.account_menu_subscription),
                         selected = navigator.currentRoute == AppRoute.Subscription,
-                        mark =
-                            if (account != null && summary.value?.tier == LearnerSummary.Tier.PLUS) {
-                                { PlusMark(label = stringResource(R.string.subscription_plus)) }
-                            } else {
-                                null
+                        summary =
+                            stringResource(R.string.subscription_plus).takeIf {
+                                account != null && learner.value?.tier == LearnerSummary.Tier.PLUS
                             },
                     ) { open(AppRoute.Subscription) }
                     ListDivider()
@@ -197,26 +183,15 @@ fun SettingsScreen(
 private fun remindersSummary(reminder: StudyReminder): String =
     if (reminder.email.on || reminder.push.on) reminderTime(reminder.time) else stringResource(R.string.settings_reminders_off)
 
-/** The buddy's name and the app's language, as main's hub sums up Preferences. */
-@Composable
-private fun preferencesSummary(summary: LearnerSummary?): String {
-    val language = appLanguageName(currentLocale())
-    // Main's `BuddyTabName`: the buddy's own name, or its kind's when the learner gave it none.
-    val buddy = summary?.buddy?.let { buddyName(BuddyKind.of(it.kind.value), it.name) }
-    return if (buddy == null) language else stringResource(R.string.settings_preferences_summary, buddy, language)
-}
-
 /**
  * A settings page in the hub (main's `SettingsGroup` row): its name, and at its end a [summary] in
- * words, a [count] in mono figures or a [mark]. The page shown beside the hub is the highlighted row.
+ * words. The page shown beside the hub is the highlighted row.
  */
 @Composable
 private fun PageRow(
     title: String,
     selected: Boolean,
     summary: String? = null,
-    count: String? = null,
-    mark: (@Composable () -> Unit)? = null,
     onClick: () -> Unit,
 ) {
     val words = MaterialTheme.typography.bodySmall
@@ -226,12 +201,7 @@ private fun PageRow(
         onClick = onClick,
         highlighted = selected,
         meta =
-            when {
-                mark != null -> mark
-                count != null -> ({ Text(count) })
-                summary != null -> ({ Text(summary, style = words, maxLines = 1, overflow = TextOverflow.Ellipsis) })
-                else -> null
-            },
+            summary?.let { { Text(it, style = words, maxLines = 1, overflow = TextOverflow.Ellipsis) } },
     )
 }
 
@@ -240,8 +210,9 @@ private val SETTINGS_PAGES =
         AppRoute.Profile,
         AppRoute.Preferences,
         AppRoute.Reminders,
-        AppRoute.Memory,
         AppRoute.AboutYou,
+        AppRoute.Memory,
+        AppRoute.PrivacySettings,
         AppRoute.Subscription,
         AppRoute.Help,
         AppRoute.Licenses,

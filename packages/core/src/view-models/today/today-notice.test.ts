@@ -17,11 +17,7 @@ function today(overrides: Partial<Today> = {}): Today {
     focusTest: null,
     insight: null,
     planChange: null,
-    session: {
-      blocks: [{ status: "pending" }],
-      examAccess: { trialEnded: false },
-      freshStart: null,
-    },
+    session: { blocks: [{ status: "pending" }], freshStart: null },
     studiedToday: false,
     suggestedGoal: null,
     ...overrides,
@@ -40,14 +36,19 @@ function pick({
 
 const welcomeBack = (overrides: Partial<Today["session"]> = {}): Today["session"] => ({
   blocks: [{ status: "pending" }],
-  examAccess: { trialEnded: false },
   freshStart: "welcomeBack",
   ...overrides,
 });
 
 const insightChange = (status: "applied" | "proposed"): Today["insight"] => ({
   kind: "planChange",
-  planChange: { canApply: status === "proposed", effect: null, id: "insight-change", status },
+  planChange: {
+    canApply: status === "proposed",
+    effect: null,
+    id: "insight-change",
+    quote: "quote",
+    status,
+  },
 });
 
 const planChange = (status: "applied" | "proposed", id = "change"): Today["planChange"] => ({
@@ -75,46 +76,18 @@ describe(pickTodayNotice, () => {
 
   it("puts a plan change waiting for an OK before a changed exam notice", () => {
     expect(
-      pick({
-        host: { sourceChange: true },
-        view: { planChange: planChange("proposed"), session: welcomeBack() },
-      }),
+      pick({ host: { sourceChange: true }, view: { planChange: planChange("proposed") } }),
     ).toBe("planChange");
 
     expect(
       pick({ host: { sourceChange: true }, view: { insight: insightChange("proposed") } }),
     ).toBe("insight");
 
-    expect(pick({ host: { sourceChange: true }, view: { session: welcomeBack() } })).toBe(
-      "sourceChange",
-    );
+    expect(pick({ host: { sourceChange: true } })).toBe("sourceChange");
 
     expect(pick({ host: { sourceChange: true }, view: { planChange: fallingBehind } })).toBe(
       "planChange",
     );
-  });
-
-  it("says a free exam plan's first week is over before anything that asks more of the plan", () => {
-    const trialEnded = welcomeBack({ examAccess: { trialEnded: true }, freshStart: null });
-
-    expect(pick({ view: { planChange: fallingBehind, session: trialEnded } })).toBe("examAccess");
-
-    expect(
-      pick({
-        host: { sourceChange: true },
-        view: { insight: insightChange("proposed"), session: trialEnded },
-      }),
-    ).toBe("examAccess");
-
-    expect(
-      pick({
-        view: {
-          exam: { resultReported: false, stage: "examDay" },
-          planChange: planChange("proposed"),
-          session: trialEnded,
-        },
-      }),
-    ).toBe("exam");
   });
 
   it("puts the exam's own days first, and its final stretch after a changed notice", () => {
@@ -142,15 +115,15 @@ describe(pickTodayNotice, () => {
     expect(pick({ view: { exam: { resultReported: true, stage: "afterExam" } } })).toBeNull();
   });
 
-  it("keeps a change already made, a tip and a language's practice below the exam plan's end", () => {
-    const trialEnded = welcomeBack({ examAccess: { trialEnded: true }, freshStart: null });
+  it("keeps a change already made, a tip and a language's practice in their priority order", () => {
+    const ordinarySession = welcomeBack({ freshStart: null });
 
     expect(
       pick({
         host: { practice: true },
-        view: { planChange: planChange("applied"), session: trialEnded },
+        view: { planChange: planChange("applied"), session: ordinarySession },
       }),
-    ).toBe("examAccess");
+    ).toBe("planChange");
 
     expect(pick({ host: { practice: true }, view: { planChange: planChange("applied") } })).toBe(
       "planChange",
@@ -160,7 +133,7 @@ describe(pickTodayNotice, () => {
       "insight",
     );
 
-    expect(pick({ host: { practice: true }, view: { session: welcomeBack() } })).toBe("practice");
+    expect(pick({ host: { practice: true } })).toBe("practice");
   });
 
   it("lets an insight say a plan change it explains, so the change never shows twice", () => {
@@ -174,12 +147,52 @@ describe(pickTodayNotice, () => {
     expect(pick({ view: { ...explained, planChange: planChange("proposed") } })).toBe("planChange");
   });
 
-  it("leaves the welcome back to the session, so no notice ever hides it", () => {
-    expect(pick({ view: { session: welcomeBack() } })).toBeNull();
+  it("holds everything but the exam's own days while the day welcomes the learner back", () => {
+    const waiting = {
+      examChoice: { group: "Língua Estrangeira" },
+      insight: insightChange("proposed"),
+      planChange: fallingBehind,
+    };
 
-    expect(pick({ view: { session: welcomeBack({ examAccess: { trialEnded: true } }) } })).toBe(
-      "examAccess",
+    const host = { practice: true, sourceChange: true, uploadRequest: true };
+
+    expect(pick({ host, view: { ...waiting, session: welcomeBack() } })).toBeNull();
+
+    expect(
+      pick({
+        host,
+        view: {
+          ...waiting,
+          exam: { resultReported: false, stage: "finalStretch" },
+          session: welcomeBack(),
+        },
+      }),
+    ).toBeNull();
+
+    expect(
+      pick({
+        host,
+        view: {
+          ...waiting,
+          exam: { resultReported: false, stage: "dayBefore" },
+          session: welcomeBack(),
+        },
+      }),
+    ).toBe("exam");
+  });
+
+  it("shows what waited once the learner starts or has studied today", () => {
+    const started = welcomeBack({ blocks: [{ status: "completed" }, { status: "pending" }] });
+
+    expect(pick({ view: { planChange: planChange("proposed"), session: started } })).toBe(
+      "planChange",
     );
+
+    expect(
+      pick({
+        view: { planChange: planChange("proposed"), session: welcomeBack(), studiedToday: true },
+      }),
+    ).toBe("planChange");
   });
 
   it("asks for an exam choice left for later after what waits for an OK, before a change already made", () => {
@@ -189,7 +202,6 @@ describe(pickTodayNotice, () => {
     expect(pick({ view: { examChoice, planChange: planChange("proposed") } })).toBe("planChange");
     expect(pick({ host: { uploadRequest: true }, view: { examChoice } })).toBe("uploadRequest");
     expect(pick({ view: { examChoice, planChange: planChange("applied") } })).toBe("examChoice");
-    expect(pick({ view: { examChoice, session: welcomeBack() } })).toBe("examChoice");
   });
 
   it("offers a course from before goals only when nothing else needs saying", () => {

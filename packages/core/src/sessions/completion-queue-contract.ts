@@ -17,25 +17,25 @@ const studyDayProgressSchema = z
         }),
         lessonsLeft: countSchema.meta({
           description:
-            "Carried lessons still to do: the number Today shows as lessons to catch up.",
+            "Carried lessons still to do, the same number Today counts as lessons to catch up.",
         }),
       })
       .nullable()
       .meta({
         description:
-          "The lessons earlier days left (the plan's latest missed-days change, the same lessons Today counts as behind), for a small line under the block's facts. Static: it holds what the completion read, so never count it down on the client. Null when nothing is carried, on a welcome-back session, once a free exam plan's first week is over, or when none are left and none were caught up today. `lessonsLeft` 0 with `doneToday` above 0 means every carried lesson is done.",
+          "The lessons earlier days left (the plan's latest missed-days change, the same lessons Today counts as behind). It holds what the completion read and doesn't change after it. Null when nothing is carried, on a welcome-back session, or when none are left and none were caught up today. `lessonsLeft` 0 with `doneToday` above 0 means every carried lesson is done.",
       }),
     lead: z
       .enum(["done", "left", "open", "complete"])
       .meta({
         description:
-          "Which count leads the day's line: `done` shows `sessionBar.completed` of `sessionBar.total` while the blocks done are no more than the blocks left (the midpoint included); `left` shows the blocks left once past the midpoint, with the done count as its caption; `open` shows only the blocks done, because the day holds time for lessons not on the queue yet and has no honest total; `complete` once the session is complete.",
+          "Where the day stands: `done` while the blocks done (`sessionBar.completed`) are no more than the blocks left (the midpoint included); `left` once past the midpoint; `open` while the day holds time for lessons not on the queue yet, so it has no honest total; `complete` once the session is complete.",
       }),
     lessonsComing: z
       .boolean()
       .meta({
         description:
-          "On `open`, whether the held lessons are being written now and join the queue on their own, so the line can say more are coming. False when they wait for the learner to ask for them, and outside `open`.",
+          "On `open`, whether the held lessons are being written now and join the queue on their own. False when they wait for the learner to ask for them, and outside `open`.",
       }),
     percent: z
       .number()
@@ -50,7 +50,7 @@ const studyDayProgressSchema = z
   })
   .meta({
     description:
-      "Today's session progress for a block's end screen, decided in core so every client says the same thing.",
+      "Today's session progress for a block's end screen, decided in core so every client reads the same numbers.",
     id: "StudyDayProgress",
   });
 
@@ -81,7 +81,7 @@ export const studyCompletionQueueShape = {
   dayProgress: studyDayProgressSchema,
   deferredLessonsCount: countSchema.meta({
     description:
-      "Lessons moved from the unstarted tail to a later study day by this completion. Persisted with the completion and replayed on retries; show a quiet completion-screen notice only when positive.",
+      "Lessons moved from the unstarted tail to a later study day by this completion. Persisted with the completion and replayed on retries. Zero when nothing moved.",
   }),
   finishedChapterId: uuidSchema().nullable(),
   goalId: uuidSchema().nullable(),

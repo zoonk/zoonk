@@ -7,11 +7,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.feature.focustest.FocusTestStore
+import com.zoonk.android.feature.plan.PlanOp
 import com.zoonk.android.feature.plan.PlanStore
+import com.zoonk.android.feature.plan.ResumeFailure
 import com.zoonk.android.feature.session.DayStep
 import com.zoonk.android.feature.session.StudyOpener
 import com.zoonk.android.feature.session.introTo
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.MemoryInsight
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeDecisionInput
@@ -204,6 +207,7 @@ class TodayViewModel(
         failed = null
         noticeHold = null
         planChangeAnswer = null
+        repricedChange = null
         planChangeFailedOn = null
         examChoiceMade = null
         examChoiceFailedOn = null
@@ -219,6 +223,10 @@ class TodayViewModel(
 
     /** A plan change answered here, so its card says what the answer did after Today moves on. */
     var planChangeAnswer by mutableStateOf<PlanChangeAnswer?>(null)
+        private set
+
+    /** An accept whose numbers moved since the card showed them: the card asks again with today's. */
+    var repricedChange by mutableStateOf<RepricedChange?>(null)
         private set
 
     /** The goal and day whose plan change didn't save, so the error shows on that notice only. */
@@ -241,13 +249,15 @@ class TodayViewModel(
         planChangeFailedOn = null
 
         viewModelScope.launch {
-            val result = plans.decideChange(on.goalId, change.id, status)
+            val result = plans.decideChange(on.goalId, change, status)
             isSavingPlanChange = false
             if (visit != started) return@launch
             when (result) {
                 is MutationResult.Done -> {
-                    planChangeAnswer =
-                        result.value.takeIf { it.status != PlanChange.Status.PROPOSED }?.let { PlanChangeAnswer(on, status, it) }
+                    val saved = result.value
+                    val proposed = saved.status == PlanChange.Status.PROPOSED
+                    planChangeAnswer = PlanChangeAnswer(on, status, saved).takeIf { !proposed }
+                    repricedChange = RepricedChange(on, saved).takeIf { proposed && status == PlanChangeDecisionInput.Status.APPLIED }
                 }
 
                 is MutationResult.Failed -> {
@@ -308,6 +318,35 @@ class TodayViewModel(
     var examChoiceFailedOn by mutableStateOf<NoticeVisit?>(null)
         private set
 
+    /** The answer saving after a goal's exam date passed; it stays once saved, until Today shows the goal's new day. */
+    var examOverAnswer by mutableStateOf<ExamOverAnswer?>(null)
+        private set
+
+    fun keepStudying(
+        goalId: UUID,
+        failed: () -> Unit,
+    ) = answerExamOver(ExamOverAnswer(goalId, archive = false), failed) { plans.change(goalId, listOf(PlanOp.FullCourse(true))) }
+
+    fun archiveGoal(
+        goalId: UUID,
+        failed: () -> Unit,
+    ) = answerExamOver(ExamOverAnswer(goalId, archive = true), failed) { plans.setStatus(goalId, LearnerSummaryGoal.Status.ARCHIVED) }
+
+    private fun answerExamOver(
+        answer: ExamOverAnswer,
+        failed: () -> Unit,
+        write: suspend () -> MutationResult<*>,
+    ) {
+        if (examOverAnswer?.goalId == answer.goalId) return
+        examOverAnswer = answer
+
+        viewModelScope.launch {
+            val result = write()
+            if (result !is MutationResult.Done) examOverAnswer = null
+            if (result is MutationResult.Failed) failed()
+        }
+    }
+
     var isSavingExamChoice by mutableStateOf(false)
         private set
 
@@ -348,7 +387,7 @@ class TodayViewModel(
         examChoiceFailedOn = null
 
         viewModelScope.launch {
-            val result = plans.decideChange(made.visit.goalId, made.change.id, PlanChangeDecisionInput.Status.UNDONE)
+            val result = plans.undo(made.visit.goalId, made.change.id)
             isSavingExamChoice = false
             if (visit != started) return@launch
             when (result) {
@@ -372,6 +411,10 @@ class TodayViewModel(
     var isAnsweringInsight by mutableStateOf(false)
         private set
 
+    /** Plan change insights accepted after their numbers moved, as they now stand: each asks again with today's. */
+    var repricedInsights by mutableStateOf(mapOf<UUID, MemoryInsight>())
+        private set
+
     fun answerInsight(
         insight: MemoryInsight,
         accepted: Boolean,
@@ -381,12 +424,16 @@ class TodayViewModel(
         insightAnswers -= insight.id
 
         viewModelScope.launch {
+            val result = store.answerInsight(insight, accepted)
+            val repriced = (result as? MutationResult.Done)?.value?.takeIf { accepted && it.status == MemoryInsight.Status.PENDING }
             val answer =
-                when (store.answerInsight(insight, accepted)) {
-                    is MutationResult.Done -> if (accepted) InsightAnswer.Accepted else InsightAnswer.Dismissed
-                    is MutationResult.Failed -> InsightAnswer.Failed
-                    MutationResult.Obsolete -> null
+                when {
+                    repriced != null -> null
+                    result is MutationResult.Done -> if (accepted) InsightAnswer.Accepted else InsightAnswer.Dismissed
+                    result is MutationResult.Failed -> InsightAnswer.Failed
+                    else -> null
                 }
+            repricedInsights = if (repriced != null) repricedInsights + (insight.id to repriced) else repricedInsights - insight.id
             answer?.let { insightAnswers += insight.id to it }
             isAnsweringInsight = false
         }
@@ -455,8 +502,6 @@ class TodayViewModel(
     }
 }
 
-enum class ResumeFailure { Failed, GoalLimit }
-
 /** A tap's destination; one made on a day opens only while Today still shows that goal and day. */
 data class TodayRoute(
     val route: AppRoute,
@@ -480,6 +525,11 @@ data class PlanChangeAnswer(
     val change: PlanChange,
 )
 
+data class RepricedChange(
+    val visit: NoticeVisit,
+    val change: PlanChange,
+)
+
 data class FocusTestDismissed(
     val visit: NoticeVisit,
     val test: TodayFocusTest,
@@ -488,4 +538,9 @@ data class FocusTestDismissed(
 data class ExamChoiceMade(
     val visit: NoticeVisit,
     val change: PlanChange,
+)
+
+data class ExamOverAnswer(
+    val goalId: UUID,
+    val archive: Boolean,
 )

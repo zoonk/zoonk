@@ -10,46 +10,32 @@ import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { CheckList } from "../onboarding/choice-list";
 import { TextField } from "../onboarding/steps/text-field";
-import { type BodyProps, setText, useExclusiveLabels, usePicker } from "./profile-body-parts";
-import { type ProfileExclusive } from "./profile-draft";
+import { type BodyProps, setText, usePicker } from "./profile-body-parts";
 
 function changedRow(previous: readonly string[], next: readonly string[]): string | undefined {
   return next.find((id) => !previous.includes(id)) ?? previous.find((id) => !next.includes(id));
 }
 
-const NO_EXCLUSIVES: ProfileExclusive[] = [];
-
-function RowsBody({
-  exclusives = NO_EXCLUSIVES,
-  ...props
-}: BodyProps & { exclusives?: ProfileExclusive[]; label: string }) {
+function RowsBody(props: BodyProps & { label: string }) {
   const { draft, question } = props;
-  const exclusiveLabels = useExclusiveLabels();
-  const value = draft.exclusive ? [draft.exclusive] : draft.picks;
   const picker = usePicker(props);
 
   return (
     <CheckList
-      choices={[
-        ...question.options.map((option) => ({
-          description: option.description ?? undefined,
-          label: option.label,
-          value: option.id,
-        })),
-        ...exclusives.map((exclusive) => ({ label: exclusiveLabels[exclusive], value: exclusive })),
-      ]}
+      choices={question.options.map((option) => ({
+        description: option.description ?? undefined,
+        label: option.label,
+        value: option.id,
+      }))}
       label={props.label}
       onChange={(next) => {
-        const changed = changedRow(value, next);
-        const exclusive = exclusives.find((id) => id === changed);
+        const changed = changedRow(draft.picks, next);
 
-        if (exclusive) {
-          picker.exclusive(exclusive);
-        } else if (changed) {
+        if (changed) {
           picker.toggle(changed);
         }
       }}
-      value={value}
+      value={draft.picks}
     />
   );
 }
@@ -86,7 +72,7 @@ function SupportNote(props: BodyProps) {
     return (
       <div className="flex">
         <Button
-          className="-ml-2.5"
+          edge="start"
           icon={<PlusIcon aria-hidden="true" />}
           onClick={() => setOpen(true)}
           type="button"
@@ -104,7 +90,7 @@ function SupportNote(props: BodyProps) {
       <Textarea
         aria-describedby={helpId}
         autoFocus
-        className="text-base md:text-[0.9375rem]"
+        className="md:text-reading text-base"
         id={noteId}
         maxLength={MAX_MEMORY_STATEMENT_LENGTH}
         onChange={(event) => setText(props, event.target.value)}
@@ -112,7 +98,7 @@ function SupportNote(props: BodyProps) {
         value={props.draft.text}
       />
       <p className="text-muted-foreground text-sm" id={helpId}>
-        {t("We'll remember this for your buddy. You can delete it in Memory.")}
+        {t("We'll remember this. You can delete it anytime in Settings.")}
       </p>
     </div>
   );
@@ -129,7 +115,7 @@ export function SupportBody(props: BodyProps & { label: string; prechecked: bool
         </p>
       )}
 
-      <RowsBody {...props} exclusives={["nothingInParticular"]} />
+      <RowsBody {...props} />
 
       {props.memoryEnabled && <SupportNote {...props} />}
     </>

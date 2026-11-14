@@ -2,7 +2,6 @@
 
 import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
-import { ChangeSaveError } from "../../_components/save-error";
 import { useSentenceSpace } from "../../_utils/locale";
 import { NoSittingWords, useNoticeDayText } from "../../plan/notice-day";
 import { usePlanScreen } from "../../plan/plan-context";
@@ -13,7 +12,7 @@ export function RevealNoticeDay() {
   const noticeDayText = useNoticeDayText();
   const space = useSentenceSpace();
   const { plan } = usePlanScreen();
-  const { change, failed, isPending } = usePlanChange();
+  const { change, isPending } = usePlanChange();
   const { noSitting, noticeDay } = plan.schedule;
 
   if (plan.notice === "usual" || (!noticeDay && !noSitting)) {
@@ -27,7 +26,7 @@ export function RevealNoticeDay() {
       <form className="text-muted-foreground text-sm text-pretty" data-slot="notice-day">
         {noticeDay ? (
           <>
-            <span>{noticeDayText({ ...noticeDay, document: plan.examDocument })}</span>
+            <span>{noticeDayText(noticeDay)}</span>
             {space}
             <Button
               busy={isPending}
@@ -42,8 +41,6 @@ export function RevealNoticeDay() {
           noSitting && <NoSittingWords disabled={isPending} noSitting={noSitting} onUse={use} />
         )}
       </form>
-
-      {failed && <ChangeSaveError />}
     </div>
   );
 }

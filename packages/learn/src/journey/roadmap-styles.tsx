@@ -12,10 +12,62 @@ export const BAND_STATE_CLASS: Record<PlanPhaseView["state"], string> = {
   upcoming: "bg-muted text-muted-foreground",
 };
 
+/** One cell: the name and anything that only sizes the band (`BAND_SIZER_CLASS`) share it. */
 export const BAND_CLASS =
-  "relative flex min-h-8 min-w-min items-center gap-1 rounded-md px-2.5 py-1 text-left text-[0.78125rem] font-medium";
+  "relative grid min-h-7.5 min-w-min items-center rounded-md px-2.5 py-1 text-left text-xs font-medium";
 
-export const BAND_NAME_CLASS = "min-w-0 leading-4 text-balance hyphens-auto";
+const BAND_CELL_CLASS = "col-start-1 row-start-1";
+
+const BAND_NAME_CLASS = cn(BAND_CELL_CLASS, "leading-4 text-balance");
+
+const ONE_LINE_NAME_LENGTH = 16;
+
+/** A short name is one part; a longer one is cut between words where its longer part is shortest. */
+function splitBandName(name: string): [string, string | null] {
+  const words = name.split(" ");
+
+  if (name.length <= ONE_LINE_NAME_LENGTH || words.length === 1) {
+    return [name, null];
+  }
+
+  const cuts = words.slice(1).map((_word, index) => {
+    const first = words.slice(0, index + 1).join(" ");
+    const second = words.slice(index + 1).join(" ");
+    return { first, longest: Math.max(first.length, second.length), second };
+  });
+
+  const best = cuts.reduce((shortest, cut) => (cut.longest < shortest.longest ? cut : shortest));
+  return [best.first, best.second];
+}
+
+const BAND_NAME_PART_CLASS = "inline-block whitespace-nowrap";
+
+/**
+ * A phase's name in parts that never break inside, so a short phase's band grows to its name: a
+ * short name keeps one line and a longer one takes two at most. `leading` stays with the first
+ * word.
+ */
+export function BandName({ leading, name }: { leading?: React.ReactNode; name: string }) {
+  const [first, second] = splitBandName(name);
+
+  return (
+    <span className={BAND_NAME_CLASS}>
+      <span className={BAND_NAME_PART_CLASS}>
+        {leading}
+        {first}
+      </span>
+      {second && (
+        <>
+          {" "}
+          <span className={BAND_NAME_PART_CLASS}>{second}</span>
+        </>
+      )}
+    </span>
+  );
+}
+
+/** Invisible text in the band's cell: the band is never narrower than it. */
+export const BAND_SIZER_CLASS = cn(BAND_CELL_CLASS, "invisible h-0 whitespace-nowrap");
 
 /** Inline in the name, so a narrow band's lines get its whole width. */
 export const BAND_CHECK_CLASS = "mr-1 inline size-3.5 align-[-0.1875rem]";
@@ -45,7 +97,7 @@ export function getBandColumnsStyle(weights: readonly number[]): CSSProperties {
 export const AXIS_CLASS = "@container/phase relative flex min-h-4 flex-wrap gap-x-2";
 
 export const AXIS_TEXT_CLASS =
-  "text-faint max-w-[100cqw] shrink-0 font-mono text-[0.6875rem] leading-4 text-balance whitespace-normal tabular-nums";
+  "text-faint max-w-[100cqw] shrink-0 font-mono text-2xs leading-4 text-balance whitespace-normal tabular-nums";
 
 const MIDDLE_SHARE = 0.5;
 

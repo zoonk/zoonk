@@ -1,9 +1,9 @@
 "use client";
 
+import { MeterPart, MeterParts } from "@zoonk/ui/components/meter";
+import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { MeterPart, MeterParts } from "../_components/meter";
 import { StatusMark } from "../_components/status-mark";
 import { TITLE_ROW_CLASS, TRUNCATED_TITLE_CLASS } from "../_components/title-row";
 import { getPhaseWeight, getShareInPhase } from "../plan/phase-weight";
@@ -12,6 +12,7 @@ import { PlanDateText } from "../plan/plan-date-text";
 import { usePhaseName } from "../plan/use-phase-name";
 import { type JourneyPathLinks } from "./journey-links";
 import { PATH_ROW_BODY_CLASS } from "./journey-phase-events";
+import { PhaseWhen } from "./phase-when";
 import { BandFace } from "./roadmap-band";
 import { RoadmapFull } from "./roadmap-full";
 import { PhaseAxis } from "./roadmap-lane";
@@ -66,25 +67,20 @@ function RoadmapCompact({
 
       {position && (
         <span className={cn(TITLE_ROW_CLASS, "w-full items-baseline text-xs")}>
-          <span className="flex flex-wrap items-baseline">
-            <span
-              className={cn(TRUNCATED_TITLE_CLASS, "max-w-max min-w-0 grow basis-24 font-medium")}
-            >
-              {position.name}
-            </span>
-            {position.day && (
-              <span className="text-muted-foreground whitespace-pre-wrap">{` · ${position.day}`}</span>
+          <span className="flex min-w-0 flex-wrap items-baseline">
+            <span className="font-medium">{position.place}</span>
+            {position.name && (
+              <span
+                className={cn(
+                  TRUNCATED_TITLE_CLASS,
+                  "text-muted-foreground max-w-max min-w-0 grow basis-24 whitespace-pre",
+                )}
+              >{` · ${position.name}`}</span>
             )}
           </span>
-          <span className="text-muted-foreground flex items-center gap-0.5 font-mono tabular-nums">
-            <span aria-hidden="true">
-              {t("{number, number} of {total, number}", {
-                number: position.number,
-                total: position.total,
-              })}
-            </span>
-            <span className="sr-only">{position.place}</span>
-            {onOpen && <ChevronRightIcon aria-hidden="true" className="size-3.5" />}
+          <span className="text-muted-foreground flex items-center gap-3">
+            <PhaseWhen phase={position.phase} />
+            {onOpen && <RowChevron />}
           </span>
         </span>
       )}
@@ -97,7 +93,7 @@ function RoadmapCompact({
               total: phases.length,
             })}
           </span>
-          <ChevronRightIcon aria-hidden="true" className="size-3.5 shrink-0" />
+          <RowChevron />
         </span>
       )}
     </>
@@ -115,7 +111,7 @@ function RoadmapCompact({
     <button
       aria-haspopup="dialog"
       className={cn(
-        "focus-visible:ring-ring/50 hover:bg-muted/70 -mx-2.5 flex min-h-11 flex-col gap-2 rounded-[0.625rem] px-2.5 py-1.5 text-left transition-colors outline-none focus-visible:ring-[3px]",
+        "focus-visible:ring-ring/50 hover:bg-muted/70 -mx-2.5 flex min-h-11 flex-col gap-2 rounded-lg px-2.5 py-1.5 text-left transition-colors outline-none focus-visible:ring-[3px]",
         className,
       )}
       data-slot="plan-roadmap"
@@ -220,7 +216,7 @@ function RoadmapReveal() {
                 aria-current={phase.state === "current" ? "step" : undefined}
                 className={cn(BAND_CLASS, BAND_STATE_CLASS[phase.state])}
               >
-                <BandFace phase={phase} />
+                <BandFace isLast={position === phases.length - 1} phase={phase} />
               </span>
 
               {dated && phase.startDate && (

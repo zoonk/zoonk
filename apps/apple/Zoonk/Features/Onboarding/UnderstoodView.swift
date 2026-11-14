@@ -194,25 +194,26 @@ private struct UnderstoodCard: View {
         if let shownError {
           GoalErrorSection(error: shownError)
         }
-
-        if shownError?.needsAccount != true {
-          StepButtons(
-            canContinue: !rewriting,
-            canSkip: !isCreating && !rewriting,
-            continueLabel: Text(
-              "Looks right", tableName: "Onboarding",
-              comment: "Confirms what was understood and creates the goals"),
-            continueIcon: .check,
-            skipLabel: Text(
-              "Fix something", tableName: "Onboarding",
-              comment: "Opens the typed words to change and read again"),
-            skipIcon: nil,
-            onContinue: onConfirm
-          ) {
-            rewriting = true
-          }
-          .environment(\.isSavingAnswer, isCreating)
+      }
+    }
+    .bottomBar {
+      if !(startable.isEmpty && !isGuest), shownError?.limit?.isPlusLimit != true,
+        shownError?.needsAccount != true
+      {
+        StepButtons(
+          canContinue: !rewriting,
+          canSkip: !isCreating && !rewriting,
+          continueLabel: Text(
+            "Looks right", tableName: "Onboarding",
+            comment: "Confirms what was understood and creates the goals"),
+          skipLabel: Text(
+            "Fix something", tableName: "Onboarding",
+            comment: "Opens the typed words to change and read again"),
+          onContinue: onConfirm
+        ) {
+          rewriting = true
         }
+        .environment(\.isSavingAnswer, isCreating)
       }
     }
     .sheet(item: $choosingCountry) { choice in
@@ -244,7 +245,7 @@ private struct UnderstoodCard: View {
         selected: ContentCountry(goal.contentCountry)?.code
       ) { choice in
         // Nothing is built yet, so a pick saves on the draft without asking.
-        await save(field: .contentCountry, goal: index, value: choice?.code)
+        await save(field: .contentCountry, goal: index, value: choice.code)
       }
       .zoonkStyles()
     }
@@ -321,6 +322,7 @@ private struct UnderstoodCard: View {
 }
 
 /// A guest's next step is a free account, which follows more goals at once; an account's is Plus.
+/// Main's note under the goals a card can't start yet: the gate, in place.
 private struct LockedGoalsNote: View {
   let count: Int
   let isGuest: Bool
@@ -330,60 +332,54 @@ private struct LockedGoalsNote: View {
 
   var body: some View {
     if !isGuest {
-      PlusNotice(description: plusDescription, showsSeePlus: offersRemedy)
-    } else if offersRemedy {
-      PlusNotice(title: guestTitle, description: guestDescription, showsSeePlus: false) {
-        Button {
-          router.present(.signIn)
-        } label: {
-          Text(
-            "Create a free account", tableName: "Onboarding",
-            comment: "Opens sign-up; a guest's plan and progress come with them")
-        }
+      if offersRemedy {
+        SubscribeGate(title: subscriberTitle, line: pauseLine)
+      } else {
+        GateWords(title: subscriberTitle, line: pauseLine)
       }
     } else {
-      PlusNotice(title: guestTitle, description: guestDescription, showsSeePlus: false)
+      VStack(alignment: .leading, spacing: 8) {
+        GateWords(title: guestTitle)
+
+        if offersRemedy {
+          Button {
+            router.present(.signIn)
+          } label: {
+            Text(
+              "Create a free account", tableName: "Onboarding",
+              comment: "Opens sign-up; a guest's plan and progress come with them")
+          }
+          .buttonStyle(.outline)
+          .controlSize(.small)
+        }
+      }
     }
   }
 
-  private var plusDescription: Text {
+  private var subscriberTitle: Text {
+    Text(
+      "More goals at once need a subscription", tableName: "Onboarding",
+      comment:
+        "Over the goals a card can't start yet, because the learner studies as many goals at once as their plan allows; they wait in their goal list"
+    )
+  }
+
+  private var pauseLine: Text {
     count == 1
       ? Text(
-        "Following more goals at once comes with Plus. Until then, this goal waits in your goals.",
-        tableName: "Onboarding",
-        comment:
-          "Under the one goal the free plan can't follow yet, because the learner follows as many goals at once as it allows; the goal waits in their goal list. It's about goals followed at the same time, not new goals started per day or month. Plus is the subscription's name, not \"more\""
-      )
+        "Pause another goal to start this one.", tableName: "Onboarding",
+        comment: "Under the one goal a card can't start yet; pausing a goal keeps its progress")
       : Text(
-        "Following more goals at once comes with Plus. Until then, these goals wait in your goals.",
-        tableName: "Onboarding",
-        comment:
-          "Under the goals the free plan can't follow yet, because the learner follows as many goals at once as it allows; they wait in their goal list. It's about goals followed at the same time, not new goals started per day or month. Plus is the subscription's name, not \"more\""
-      )
+        "Pause another goal to start these.", tableName: "Onboarding",
+        comment: "Under the goals a card can't start yet; pausing a goal keeps its progress")
   }
 
   private var guestTitle: Text {
     Text(
-      "Available with a free account", tableName: "Onboarding",
+      "More goals at once come with a free account", tableName: "Onboarding",
       comment:
-        "Title of the note under the goals of a card a guest can't start yet, because without an account they follow one goal at a time. A free account is a signed-up account on the free plan, not the paid plan"
+        "Over the goals a card a guest can't start yet: without an account they study one goal at a time; the goals wait and come with them when they sign up"
     )
-  }
-
-  private var guestDescription: Text {
-    count == 1
-      ? Text(
-        "Following more goals at once comes with a free account. Until then, this goal waits in your goals.",
-        tableName: "Onboarding",
-        comment:
-          "Under the one goal a guest can't start yet, because without an account they follow one goal at a time; a free account (signed up, on the free plan, not the paid plan) follows more. It's about goals followed at the same time, not new goals started per day or month. The goal waits in their goal list and comes with them when they create the account"
-      )
-      : Text(
-        "Following more goals at once comes with a free account. Until then, these goals wait in your goals.",
-        tableName: "Onboarding",
-        comment:
-          "Under the goals a guest can't start yet, because without an account they follow one goal at a time; a free account (signed up, on the free plan, not the paid plan) follows more. It's about goals followed at the same time, not new goals started per day or month. The goals wait in their goal list and come with them when they create the account"
-      )
   }
 }
 
@@ -525,7 +521,7 @@ private struct UnderstoodRowView: View {
           Button {
             use(date)
           } label: {
-            Text(UnderstoodRows.day(date)?.formatted(.dateTime.day().month(.abbreviated)) ?? date)
+            Text(PlanDate.text(date, today: PlanDate.today()))
           }
         }
       }
@@ -814,13 +810,13 @@ private struct ExplainOutcome: View {
       if let error {
         GoalErrorSection(error: error)
       }
-
+    }
+    .bottomBar {
       if error?.needsAccount != true {
         StepButtons(
           continueLabel: Text(
             "Explain it", tableName: "Onboarding",
             comment: "Starts a quick explanation of the learner's question"),
-          continueIcon: .explain,
           onContinue: onStart
         )
         .environment(\.isSavingAnswer, isStarting)
@@ -886,13 +882,13 @@ private struct InstrumentOutcome: View {
       if let error {
         GoalErrorSection(error: error)
       }
-
+    }
+    .bottomBar {
       if error?.needsAccount != true {
         StepButtons(
           canSkip: waitlist != .joined,
           continueLabel: Text(
             "Start musicianship", tableName: "Onboarding", comment: "Starts a musicianship goal"),
-          continueIcon: .play,
           skipLabel: Text(
             "Join the waitlist", tableName: "Onboarding",
             comment: "Joins the waitlist for lessons that teach playing an instrument"),
@@ -950,12 +946,12 @@ private struct DeclinedOutcome: View {
           tableName: "Onboarding", comment: "Why a goal is declined"))
 
       TypedGoalSection(goal: goal)
-
+    }
+    .bottomBar {
       StepButtons(
         continueLabel: Text(
           "Try another goal", tableName: "Onboarding",
           comment: "Goes back to write a different goal"),
-        continueIcon: nil,
         onContinue: onRetry)
     }
   }
@@ -976,12 +972,12 @@ private struct UnclearOutcome: View {
           tableName: "Onboarding", comment: "Asks for a clearer goal, with examples"))
 
       TypedGoalSection(goal: goal)
-
+    }
+    .bottomBar {
       StepButtons(
         continueLabel: Text(
           "Write my goal again", tableName: "Onboarding",
           comment: "Goes back to write the goal with more detail"),
-        continueIcon: nil,
         onContinue: onRetry)
     }
   }

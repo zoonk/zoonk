@@ -1,6 +1,124 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%@ Energy" : {
+      "comment" : "The buddy's Energy beside its bolt, such as \"68% Energy\"",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ Energie"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ de Energía"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ d’Énergie"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ di Energia"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エネルギー%@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "에너지 %@"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ Energii"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ de Energia"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ Enerji"
+          }
+        }
+      }
+    },
+    "%@ is napping. Study to wake it up." : {
+      "comment" : "The buddy naps; the argument is its name",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ macht ein Nickerchen. Lernen macht wieder wach."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ está tomando una siesta. Estudia para que despierte."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ fait la sieste. Étudie pour l’aider à se réveiller."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ fa un pisolino. Studia e si sveglierà."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@はお昼寝中です。学習すると目を覚まします。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@(이)가 낮잠을 자고 있어요. 공부해서 깨워 주세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ drzemie. Poucz się, żeby przerwać drzemkę."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ está cochilando. Estude para espantar o sono."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ uyukluyor. Uyandırmak için ders çalış."
+          }
+        }
+      }
+    },
     "%@ today" : {
       "comment" : "Title of the buddy's day; the argument is its name",
       "localizations" : {
@@ -60,61 +178,61 @@
         }
       }
     },
-    "%@ took a nap. Anything you learn wakes it up." : {
-      "comment" : "The buddy naps; the argument is its name",
+    "%@'s Energy" : {
+      "comment" : "The buddy's Energy; the argument is its name",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ macht ein Nickerchen. Wenn du etwas lernst, wacht dein Kumpel wieder auf."
+            "value" : "Energie von %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ se tomó una siesta. Basta con aprender algo para que despierte."
+            "value" : "Energía de %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ fait une sieste. Il suffit d’apprendre quelque chose pour le réveiller."
+            "value" : "Énergie de %@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ fa un pisolino. Basta imparare qualcosa e si sveglia."
+            "value" : "Energia di %@"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@はお昼寝中です。何か学ぶと目を覚まします。"
+            "value" : "%@のエネルギー"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@(이)가 낮잠을 자고 있어요. 무엇이든 배우면 깨어나요."
+            "value" : "%@의 에너지"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ drzemie. Wystarczy nauczyć się czegoś, by przerwać drzemkę."
+            "value" : "Energia: %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ tirou uma soneca. Aprender qualquer coisa faz %1$@ acordar."
+            "value" : "Energia de %@"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ uykuya daldı. Bir şey öğrenince uyanır."
+            "value" : "%@ · Enerji"
           }
         }
       }
@@ -245,6 +363,267 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tüm görevlerin tamamlandığı %1$lld / %2$lld gün"
+          }
+        }
+      }
+    },
+    "%lld of %lld missions" : {
+      "comment" : "Today's missions done, such as \"0 of 3 missions\"",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld von %#@missions@"
+          },
+          "substitutions" : {
+            "missions" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg Mission"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg Missionen"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld of %#@missions@"
+          },
+          "substitutions" : {
+            "missions" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg mission"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg missions"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld de %#@missions@"
+          },
+          "substitutions" : {
+            "missions" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg misión"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg misiones"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld sur %#@missions@"
+          },
+          "substitutions" : {
+            "missions" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg mission"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg missions"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld su %#@missions@"
+          },
+          "substitutions" : {
+            "missions" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg missione"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg missioni"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ミッションを%1$lld件達成（全%#@missions@）"
+          },
+          "substitutions" : {
+            "missions" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg件"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "미션 %1$lld개 완료, 총 %#@missions@"
+          },
+          "substitutions" : {
+            "missions" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg개"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld z %#@missions@"
+          },
+          "substitutions" : {
+            "missions" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg misji"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld de %#@missions@"
+          },
+          "substitutions" : {
+            "missions" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg missão"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg missões"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld / %#@missions@"
+          },
+          "substitutions" : {
+            "missions" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg görev"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -432,61 +811,61 @@
         }
       }
     },
-    "Ask a question or request a change" : {
+    "Ask anything" : {
       "comment" : "Placeholder of the buddy's composer: it answers and changes the plan",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stell eine Frage oder wünsch dir eine Änderung"
+            "value" : "Frag mich, was du möchtest"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Haz una pregunta o pide un cambio"
+            "value" : "Pregunta lo que quieras"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pose une question ou demande une modification"
+            "value" : "Demande-moi ce que tu veux"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fai una domanda o chiedi una modifica"
+            "value" : "Chiedimi quello che vuoi"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "質問や変えたいことを入力"
+            "value" : "何でも聞いてください"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "질문하거나 계획 변경을 요청해 보세요"
+            "value" : "무엇이든 물어보세요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zadaj pytanie lub poproś o zmianę"
+            "value" : "Pytaj o wszystko"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Faça uma pergunta ou peça uma mudança"
+            "value" : "Pergunte o que quiser"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bir soru sor veya değişiklik iste"
+            "value" : "Aklına geleni sor"
           }
         }
       }
@@ -1441,120 +1820,257 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Energie %1$@, %2$lld von %3$lld Missionen"
+            "value" : "Energie %1$@, %2$lld von %#@missions@"
+          },
+          "substitutions" : {
+            "missions" : {
+              "argNum" : 3,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg Mission"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg Missionen"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Energy %1$@, %2$lld of %3$lld missions"
+            "value" : "Energy %1$@, %2$lld of %#@missions@"
+          },
+          "substitutions" : {
+            "missions" : {
+              "argNum" : 3,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg mission"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg missions"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Energía %1$@, %2$lld de %3$lld misiones"
+            "value" : "Energía %1$@, %2$lld de %#@missions@"
+          },
+          "substitutions" : {
+            "missions" : {
+              "argNum" : 3,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg misión"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg misiones"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Énergie %1$@, %2$lld missions sur %3$lld"
+            "value" : "Énergie %1$@, %2$lld sur %#@missions@"
+          },
+          "substitutions" : {
+            "missions" : {
+              "argNum" : 3,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg mission"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg missions"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Energia %1$@, %2$lld missioni su %3$lld"
+            "value" : "Energia %1$@, %2$lld su %#@missions@"
+          },
+          "substitutions" : {
+            "missions" : {
+              "argNum" : 3,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg missione"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg missioni"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "エネルギー：%1$@、ミッション達成数：%2$lld／%3$lld"
+            "value" : "エネルギー%1$@、ミッションを%2$lld件達成（全%#@missions@）"
+          },
+          "substitutions" : {
+            "missions" : {
+              "argNum" : 3,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg件"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "에너지 %1$@, 미션 %2$lld개 완료, 전체 %3$lld개"
+            "value" : "에너지 %1$@, 미션 %2$lld개 완료, 총 %#@missions@"
+          },
+          "substitutions" : {
+            "missions" : {
+              "argNum" : 3,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg개"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Energia %1$@, %2$lld z %3$lld misji"
+            "value" : "Energia %1$@, %2$lld z %#@missions@"
+          },
+          "substitutions" : {
+            "missions" : {
+              "argNum" : 3,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg misji"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Energia %1$@, %2$lld de %3$lld missões"
+            "value" : "Energia %1$@, %2$lld de %#@missions@"
+          },
+          "substitutions" : {
+            "missions" : {
+              "argNum" : 3,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg missão"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg missões"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enerji %1$@, %2$lld / %3$lld görev"
-          }
-        }
-      }
-    },
-    "Energy starts with your first lesson and grows as you learn." : {
-      "comment" : "Energy before the first lesson",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine erste Lektion gibt deinem Kumpel Energie. Sie wächst, während du lernst."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La Energía empieza con tu primera lección y crece a medida que aprendes."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu gagnes de l’Énergie dès ta première leçon et à mesure que tu apprends."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "L’Energia arriva con la tua prima lezione e cresce mentre impari."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "最初のレッスンでエネルギーがたまり始め、学ぶほど増えていきます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "첫 레슨부터 에너지가 생기고 배울수록 늘어나요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Energia pojawia się wraz z pierwszą lekcją i rośnie, gdy się uczysz."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A Energia começa com sua primeira aula e cresce conforme você aprende."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enerji ilk dersinle başlar ve öğrendikçe artar."
+            "value" : "Enerji %1$@, %2$lld / %#@missions@"
+          },
+          "substitutions" : {
+            "missions" : {
+              "argNum" : 3,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg görev"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -2208,238 +2724,179 @@
         }
       }
     },
-    "Grows to Adult at %@" : {
-      "comment" : "The buddy's next stage; the argument is a belt",
+    "Grows when you reach %@" : {
+      "comment" : "When the buddy grows next; the argument is a belt, such as \"Orange belt\"",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ab %@: Erwachsen"
+            "value" : "Wächst, wenn du diesen Gürtel erreichst: %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Llega a la etapa adulta con %@"
+            "value" : "Crece cuando alcanzas el %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Devient adulte au niveau %@"
+            "value" : "Grandit quand tu atteins le niveau %@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diventa Adulto alla %@"
+            "value" : "Cresce quando raggiungi la %@"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@でおとなに成長"
+            "value" : "%@になると成長します"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@에 도달하면 어른으로 자라요"
+            "value" : "%@에 도달하면 자라요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Etap Dorosły po zdobyciu pasa: %@"
+            "value" : "Urośnie po osiągnięciu poziomu: %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Chega à fase adulta em %@"
+            "value" : "Cresce quando você chega à %@"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ seviyesinde Yetişkin olur"
+            "value" : "%@ kazandığında büyür"
           }
         }
       }
     },
-    "Grows to Young at %@" : {
-      "comment" : "The buddy's next stage; the argument is a belt",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ab %@: Jung"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Llega a la etapa juvenil con %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Passe au stade jeune au niveau %@"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Diventa Giovane alla %@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@でこどもに成長"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@에 도달하면 어린이로 자라요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Etap Nastolatek po zdobyciu pasa: %@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Chega à fase jovem em %@"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ seviyesinde Genç olur"
-          }
-        }
-      }
-    },
-    "Hi! I'm %@, your AI study buddy. Ask me anything about what you're studying, or tell me what you'd like to change in your plan." : {
+    "Hi! I'm %@, your AI study buddy. Ask me anything, or tell me what to change in your plan." : {
       "comment" : "The buddy's hello at the top of its conversation; the argument is its name",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hi! Ich bin %@, dein KI-Lernkumpel. Frag mich alles zu dem, was du lernst, oder sag mir, was du an deinem Plan ändern möchtest."
+            "value" : "Hi! Ich bin %@, dein KI-Lernkumpel. Frag mich, was du möchtest, oder sag mir, was ich an deinem Plan ändern soll."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¡Hola! Soy %@, tu compañero de estudio con IA. Pregúntame lo que quieras sobre lo que estás estudiando o dime qué te gustaría cambiar en tu plan."
+            "value" : "¡Hola! Soy %@, tu compañero de estudio con IA. Pregúntame lo que quieras o dime qué cambiar en tu plan."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Salut ! Je suis %@, ton compagnon d’étude IA. Pose-moi tes questions sur ce que tu étudies, ou dis-moi ce que tu aimerais changer dans ton plan."
+            "value" : "Salut ! Moi, c’est %@, ton compagnon d’étude IA. Pose-moi toutes tes questions ou dis-moi quoi changer dans ton plan."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ciao! Sono %@, il tuo compagno di studio con l’IA. Chiedimi quello che vuoi su ciò che stai studiando o dimmi cosa vorresti cambiare nel tuo piano."
+            "value" : "Ciao! Sono %@, il tuo compagno di studio con l’IA. Chiedimi quello che vuoi o dimmi cosa cambiare nel tuo piano."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "こんにちは！わたしは%@、AIの学習の相棒です。学んでいることは何でも聞いてください。学習計画で変えたいことも教えてください。"
+            "value" : "こんにちは！わたしは%@です。学習の相棒としてお手伝いするAIです。何でも聞いてください。学習計画で変えたいことも教えてください。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "안녕하세요! 저는 AI 공부 짝꿍 %@(이)라고 해요. 공부하다 궁금한 건 무엇이든 물어보거나, 계획에서 바꾸고 싶은 점을 알려 주세요."
+            "value" : "안녕하세요! 저는 AI 공부 짝꿍 %@(이)라고 해요. 무엇이든 물어보거나 계획에서 바꾸고 싶은 점을 알려 주세요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cześć! Tu %@, twój kumpel do nauki z AI. Pytaj śmiało o to, czego się uczysz, albo powiedz, co chcesz zmienić w swoim planie."
+            "value" : "Cześć! Tu %@, twój kumpel do nauki z AI. Pytaj o wszystko albo powiedz, co zmienić w twoim planie."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Oi! Sou %@, seu Parceiro de estudos com IA. Me pergunte o que quiser sobre o que você está estudando ou me conte o que gostaria de mudar no seu plano."
+            "value" : "Oi! Sou %@, uma IA que te ajuda a estudar. Pergunte o que quiser ou me diga o que mudar no seu plano."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Merhaba! Ben %@, yapay zekâ destekli ders arkadaşın. Çalıştığın konularla ilgili bana istediğini sor veya planında neleri değiştirmek istediğini söyle."
+            "value" : "Merhaba! Ben %@, yapay zekâ destekli ders arkadaşın. Aklına geleni sor ya da planında neleri değiştirmemi istediğini söyle."
           }
         }
       }
     },
-    "Hi! I'm %@, your AI study buddy. What do you want to learn, and by when? I'll turn it into a plan for every day until then." : {
+    "Hi! I'm %@, your AI study buddy. Tell me what you want to learn, and I'll build your plan." : {
       "comment" : "The buddy's hello before the learner has a goal; the argument is its name",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hi! Ich bin %@, dein KI-Lernkumpel. Was möchtest du lernen und bis wann? Ich erstelle dir einen Plan für jeden Tag bis dahin."
+            "value" : "Hi! Ich bin %@, dein KI-Lernkumpel. Sag mir, was du lernen möchtest, und ich erstelle deinen Plan."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¡Hola! Soy %@, tu compañero de estudio con IA. ¿Qué quieres aprender y para cuándo? Te prepararé un plan para cada día hasta esa fecha."
+            "value" : "¡Hola! Soy %@, tu compañero de estudio con IA. Dime qué quieres aprender y prepararé tu plan."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Salut ! Je suis %@, ton compagnon d’étude IA. Qu’est-ce que tu veux apprendre, et pour quand ? Je te préparerai un plan pour chaque jour d’ici là."
+            "value" : "Salut ! Moi, c’est %@, ton compagnon d’étude IA. Dis-moi ce que tu veux apprendre et je créerai ton plan."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ciao! Sono %@, il tuo compagno di studio con l’IA. Cosa vuoi imparare ed entro quando? Creerò un piano per ogni giorno fino a quella data."
+            "value" : "Ciao! Sono %@, il tuo compagno di studio con l’IA. Dimmi cosa vuoi imparare e creerò il tuo piano."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "こんにちは！わたしは%@、AIの学習の相棒です。何を、いつまでに学びたいですか？その日までの毎日の学習計画を作ります。"
+            "value" : "こんにちは！わたしは%@です。学習の相棒としてお手伝いするAIです。学びたいことを教えてください。学習計画を作ります。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "안녕하세요! 저는 AI 공부 짝꿍 %@(이)라고 해요. 무엇을 언제까지 배우고 싶으세요? 그날까지 하루하루 공부할 계획을 만들어 드릴게요."
+            "value" : "안녕하세요! 저는 AI 공부 짝꿍 %@(이)라고 해요. 배우고 싶은 것을 알려 주시면 계획을 세워 드릴게요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cześć! Tu %@, twój kumpel do nauki z AI. Czego chcesz się nauczyć i do kiedy? Ułożę ci plan na każdy dzień aż do tego terminu."
+            "value" : "Cześć! Tu %@, twój kumpel do nauki z AI. Powiedz, czego chcesz się nauczyć, a ułożę ci plan."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Oi! Sou %@, seu Parceiro de estudos com IA. O que você quer aprender e até quando? Vou criar um plano para cada dia até lá."
+            "value" : "Oi! Sou %@, uma IA que te ajuda a estudar. Me diga o que você quer aprender e eu monto seu plano."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Merhaba! Ben %@, yapay zekâ destekli ders arkadaşın. Ne öğrenmek istiyorsun ve ne zamana kadar? O güne kadar her gün ne çalışacağını gösteren bir plan hazırlayacağım."
+            "value" : "Merhaba! Ben %@, yapay zekâ destekli ders arkadaşın. Ne öğrenmek istediğini söyle, planını oluşturayım."
           }
         }
       }
@@ -2499,6 +2956,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu hafta daha az çalışmak istiyorum"
+          }
+        }
+      }
+    },
+    "It starts with your first lesson." : {
+      "comment" : "The buddy's Energy before the first lesson",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit deiner ersten Lektion geht’s los."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empieza con tu primera lección."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tout commence avec ta première leçon."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si attiva con la tua prima lezione."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最初のレッスンからエネルギーがたまり始めます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "첫 레슨부터 에너지가 채워져요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Energia pojawi się po pierwszej lekcji."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Começa na sua primeira aula."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İlk dersinle başlar."
           }
         }
       }
@@ -2739,61 +3255,61 @@
         }
       }
     },
-    "Move my study time to %@" : {
-      "comment" : "Accepts a schedule idea: moves the time of day the learner studies; the argument is a clock time like 20:00",
+    "Move it" : {
+      "comment" : "Accepts a schedule idea: moves the time of day the learner studies to the time the sentence above names",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Meine Lernzeit auf %@ verschieben"
+            "value" : "Verschieben"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Establecer %@ como mi hora de estudio"
+            "value" : "Cambiar el horario"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Déplacer mon heure d’étude à %@"
+            "value" : "Changer l’horaire"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sposta l’orario di studio alle %@"
+            "value" : "Spostalo"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "学習する時刻を%@に変える"
+            "value" : "その時刻に変更する"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "학습 시간대를 %@(으)로 바꾸기"
+            "value" : "시간 바꾸기"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zmień moją godzinę nauki na %@"
+            "value" : "Zmień godzinę"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mudar meu horário de estudo para %@"
+            "value" : "Mudar horário"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Çalışma saatimi %@ olarak değiştir"
+            "value" : "Bu saate al"
           }
         }
       }
@@ -3624,61 +4140,120 @@
         }
       }
     },
-    "Pick a pair you've earned to wear it." : {
+    "Pick a pair you've earned." : {
       "comment" : "What the glasses list does",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wähle eine freigeschaltete Brille aus, damit dein Kumpel sie trägt."
+            "value" : "Wähl eine Brille aus, die du dir verdient hast."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elige unos lentes que hayas ganado para ponérselos a tu compañero."
+            "value" : "Elige unos lentes que hayas ganado."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choisis une paire que tu as gagnée pour la porter."
+            "value" : "Choisis une paire que tu as gagnée."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Scegli un paio di occhiali che hai conquistato e falli indossare al tuo compagno."
+            "value" : "Scegli un paio che hai sbloccato."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "手に入れたメガネを選ぶと、相棒にかけられます。"
+            "value" : "手に入れたメガネから選んでください。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "얻은 안경을 골라 짝꿍에게 씌워 주세요."
+            "value" : "얻은 안경 중에서 골라 보세요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wybierz zdobyte okulary, by je założyć."
+            "value" : "Wybierz jedne ze zdobytych okularów."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escolha um óculos que você conquistou para usar."
+            "value" : "Escolha um par de óculos que você conquistou."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Takmak için kazandığın gözlüklerden birini seç."
+            "value" : "Kazandığın gözlüklerden birini seç."
+          }
+        }
+      }
+    },
+    "Questions you asked in lessons that have since changed." : {
+      "comment" : "What the earlier questions page holds",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Fragen aus Lektionen, die inzwischen geändert wurden."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preguntas que hiciste en lecciones que luego cambiaron."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les questions que tu as posées dans des leçons qui ont changé depuis."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le domande che hai fatto nelle lezioni che nel frattempo sono cambiate."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "内容が変わったレッスンで、以前にした質問です。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "지금은 내용이 바뀐 레슨에서 했던 질문이에요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twoje pytania z lekcji, które później się zmieniły."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perguntas que você fez em aulas que mudaram desde então."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sonradan değişen derslerde sorduğun sorular."
           }
         }
       }
@@ -4096,61 +4671,61 @@
         }
       }
     },
-    "Studying today keeps Energy up." : {
-      "comment" : "Energy drops without studying today",
+    "Study today to keep it up." : {
+      "comment" : "The buddy's Energy drops without studying today",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wenn du heute lernst, bleibt die Energie erhalten."
+            "value" : "Lern heute, damit die Energie nicht sinkt."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estudiar hoy evita que baje la Energía."
+            "value" : "Estudia hoy para mantenerla."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Étudier aujourd’hui préserve ton Énergie."
+            "value" : "Étudie aujourd’hui pour qu’elle reste au même niveau."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Studiare oggi mantiene alta l’Energia."
+            "value" : "Studia oggi per mantenerla alta."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "今日学習すると、エネルギーを保てます。"
+            "value" : "今日の学習でエネルギーを保ちましょう。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "오늘 공부하면 에너지가 유지돼요."
+            "value" : "오늘 공부해서 에너지를 유지해 보세요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dzisiejsza nauka zapobiega spadkowi Energii."
+            "value" : "Poucz się dziś, żeby utrzymać poziom energii."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estudar hoje mantém a Energia em alta."
+            "value" : "Estude hoje para manter a energia."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bugün çalışırsan Enerji düşmez."
+            "value" : "Enerjisini korumak için bugün ders çalış."
           }
         }
       }
@@ -4745,65 +5320,6 @@
         }
       }
     },
-    "What you asked in your courses before we rewrote them. The lessons changed, so your questions stay here to reread." : {
-      "comment" : "What the earlier questions page holds",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine Fragen aus deinen Kursen, bevor wir sie neu erstellt haben. Die Lektionen haben sich geändert, deshalb kannst du deine Fragen hier noch einmal lesen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lo que preguntaste en tus cursos antes de que los preparáramos de nuevo. Las lecciones cambiaron, así que tus preguntas siguen aquí para que puedas volver a leerlas."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Les questions que tu as posées dans tes cours avant que nous les réécrivions. Les leçons ont changé, mais tes questions restent ici pour que tu puisses les relire."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le domande che hai fatto nei tuoi corsi prima che li rifacessimo. Le lezioni sono cambiate, quindi le tue domande restano qui per poterle rileggere."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "コースを作り直す前にした質問です。レッスンの内容が変わったため、ここに残して読み返せるようにしています。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "코스를 새로 만들기 전에 했던 질문이에요. 레슨이 바뀌어서 다시 읽을 수 있도록 여기에 남겨 뒀어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twoje pytania z wcześniejszych wersji kursów. Lekcje się zmieniły, więc pytania zostają tutaj i możesz je ponownie przeczytać."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O que você perguntou nos seus cursos antes de a gente refazer eles. As aulas mudaram, então suas perguntas ficam aqui para você reler."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kurslarını yeniden hazırlamadan önce sorduğun sorular. Dersler değişti ama sorularını tekrar okuyabilmen için burada tutuyoruz."
-          }
-        }
-      }
-    },
     "What you want to learn" : {
       "comment" : "Placeholder of the goal field",
       "localizations" : {
@@ -5040,6 +5556,65 @@
         }
       }
     },
+    "Win your first challenge" : {
+      "comment" : "How the star glasses are earned",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine erste Herausforderung gewinnen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gana tu primer desafío"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gagner ton premier défi"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vinci la tua prima sfida"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "初めてのチャレンジに勝つ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "첫 챌린지에서 이기기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wygraj pierwsze wyzwanie"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vença seu primeiro desafio"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İlk meydan okumanı kazan"
+          }
+        }
+      }
+    },
     "Win your first phase challenge" : {
       "comment" : "How the star glasses are earned",
       "localizations" : {
@@ -5099,6 +5674,65 @@
         }
       }
     },
+    "Win your plan's last challenge" : {
+      "comment" : "How the monocle is earned",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Letzte Herausforderung deines Plans gewinnen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gana el último desafío de tu plan"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gagner le dernier défi de ton plan"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vinci l’ultima sfida del tuo piano"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習計画の最後のチャレンジに勝つ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계획의 마지막 챌린지에서 이기기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wygraj ostatnie wyzwanie w swoim planie"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vença o último desafio do seu plano"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planının son meydan okumasını kazan"
+          }
+        }
+      }
+    },
     "You have no earlier questions." : {
       "comment" : "The learner has no earlier questions",
       "localizations" : {
@@ -5154,65 +5788,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Daha önce sorduğun soru yok."
-          }
-        }
-      }
-    },
-    "You studied today, so Energy won't drop." : {
-      "comment" : "Energy holds today",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du hast heute gelernt, deshalb sinkt die Energie nicht."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Estudiaste hoy, así que la Energía no bajará."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as étudié aujourd’hui, donc l’Énergie ne baissera pas."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai studiato oggi, quindi l’Energia non calerà."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今日は学習したので、エネルギーは下がりません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "오늘 공부해서 에너지가 줄지 않아요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dzięki dzisiejszej nauce Energia nie spadnie."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você estudou hoje, então a Energia não vai cair."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bugün çalıştığın için Enerji düşmeyecek."
           }
         }
       }
@@ -5508,65 +6083,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Planın olduğu gibi kaldı."
-          }
-        }
-      }
-    },
-    "Your study buddy · %@" : {
-      "comment" : "What the buddy is, and its stage",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dein Lernkumpel · %@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu compañero de estudio · %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ton compagnon d’étude · %@"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il tuo compagno di studio · %@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "学習の相棒・%@"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "내 공부 짝꿍 · %@"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twój kumpel do nauki · %@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seu parceiro de estudo · %@"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ders arkadaşın · %@"
           }
         }
       }

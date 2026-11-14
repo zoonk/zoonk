@@ -1,13 +1,9 @@
 "use client";
 
-import { buttonVariants } from "@zoonk/ui/components/button";
-import { useEscapeClick } from "@zoonk/ui/hooks/keyboard";
-import { cn } from "@zoonk/ui/lib/utils";
-import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
+import { TaskClose } from "../_components/task-close";
 import {
-  TASK_HEADER_ICON_CLASS,
   TaskHeader,
   TaskHeaderBar,
   TaskHeaderSegments,
@@ -15,7 +11,6 @@ import {
   TaskHeaderTitle,
   type TaskSegment,
 } from "../_components/task-header";
-import { LearnLink } from "../learn-link";
 import { WaitTopBarBack } from "../wait/wait-screen";
 import { type SessionQueueRow } from "./session-queue-rows";
 
@@ -92,7 +87,6 @@ export function SessionHeader({
 }) {
   const t = useExtracted();
   const label = useSessionProgressLabel({ lessonsComing, sessionBar });
-  const closeRef = useEscapeClick<HTMLAnchorElement>();
   const { segments, weights } = getSessionSegments({ queue, sessionBar });
 
   return (
@@ -100,23 +94,11 @@ export function SessionHeader({
       <TaskHeaderBar>
         <TaskHeaderSide align="start">
           <WaitTopBarBack>
-            <LearnLink
-              aria-keyshortcuts="Escape"
-              aria-label={t("Back to Today")}
-              className={cn(
-                buttonVariants({ size: "icon", variant: "ghost" }),
-                TASK_HEADER_ICON_CLASS.start,
-              )}
-              href={exitHref}
-              prefetch={false}
-              ref={closeRef}
-            >
-              <XIcon aria-hidden="true" />
-            </LearnLink>
+            <TaskClose href={exitHref} prefetch={false} />
           </WaitTopBarBack>
         </TaskHeaderSide>
 
-        <TaskHeaderTitle title={t("Today's session")} />
+        <TaskHeaderTitle title={t("Today")} />
 
         <TaskHeaderSide align="end">{menu}</TaskHeaderSide>
       </TaskHeaderBar>

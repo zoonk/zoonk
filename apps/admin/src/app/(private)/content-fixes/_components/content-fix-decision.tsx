@@ -3,13 +3,19 @@
 import { AdminActionSubmitButton } from "@/components/admin-action-submit-button";
 import { useAdminActionState } from "@/lib/use-admin-action-state";
 import { signWithPasskey } from "@zoonk/auth/passkey-browser";
-import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
+import { Button, ButtonSkeleton } from "@zoonk/ui/components/button";
+import { EnterButton, EnterLink, type EnterLinkHostProps } from "@zoonk/ui/components/enter-button";
 import { Input } from "@zoonk/ui/components/input";
+import { showSuccessToast } from "@zoonk/ui/components/toast";
+import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
-import { FingerprintIcon, KeyRoundIcon, PlayIcon, Undo2Icon, XIcon } from "lucide-react";
-import { useActionState, useId } from "react";
+import { Undo2Icon } from "lucide-react";
+import { useActionState, useId, useState } from "react";
+import { useFormStatus } from "react-dom";
 import {
   type ApprovalOutcome,
+  type BatchRejectState,
   approveContentFixesAction,
   rejectContentFixAction,
   rejectContentFixBatchAction,
@@ -23,6 +29,7 @@ type ApprovalNotice =
   | "changed"
   | "expired"
   | "failed"
+  | "finishFailed"
   | "needsPasskey"
   | "notSigned"
   | "refused";
@@ -33,6 +40,7 @@ const NOTICES: Record<ApprovalNotice, string> = {
   changed: "This changed since you opened the page, so nothing was approved. Check it again.",
   expired: "That took too long, so nothing changed. Approve again.",
   failed: "Couldn't approve. Check that the API is running, then try again.",
+  finishFailed: "Couldn't finish applying. Check that the API is running, then try again.",
   needsPasskey: "You have no passkey yet. Add one, then approve.",
   notSigned: "Your passkey didn't confirm, so nothing changed. Approve again.",
   refused: "That passkey wasn't accepted, so nothing changed. Use one of your own passkeys.",
@@ -49,6 +57,8 @@ function toNotice(outcome: ApprovalOutcome): ApprovalNotice | null {
 
   return outcome.status === "assertionInvalid" ? "refused" : "failed";
 }
+
+type Selection = { batchId: string; fixIds: string[] };
 
 /** Null when the page itself shows what happened: each fix applied, went stale or was decided. */
 async function approve(selection: Selection): Promise<ApprovalNotice | null> {
@@ -69,39 +79,62 @@ async function approve(selection: Selection): Promise<ApprovalNotice | null> {
 
 const INITIAL_STATE = { error: null, submissionId: 0 };
 
-type Selection = { batchId: string; fixIds: string[] };
+/** Passkeys are added in Main's settings, another app, so a plain link. */
+function SettingsLink({ children, ...props }: EnterLinkHostProps) {
+  return <a {...props}>{children}</a>;
+}
 
-export function RejectForm({ fixId }: { fixId: string }) {
-  const [state, formAction] = useAdminActionState({
+/**
+ * A phone's bar grows only its main action, which sits in a `<form className="contents">` here,
+ * out of the bar's reach: these buttons fill their line themselves, and a secondary does when it
+ * shares a line the main action left (`sharedLine`).
+ */
+const FILL_LINE_CLASS = "max-lg:grow";
+
+function RejectButton({
+  children,
+  className,
+  size,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  size: "sm" | "xl";
+}) {
+  const status = useFormStatus();
+
+  return (
+    <Button busy={status.pending} className={className} size={size} type="submit" variant="outline">
+      {children}
+    </Button>
+  );
+}
+
+/** One fix: in the bar on its own page (`xl`), or on its row of a batch (`sm`). */
+export function RejectForm({
+  className,
+  fixId,
+  size = "xl",
+}: {
+  className?: string;
+  fixId: string;
+  size?: "sm" | "xl";
+}) {
+  const [, formAction] = useAdminActionState({
     action: rejectContentFixAction,
     initialState: INITIAL_STATE,
   });
 
   return (
-    <>
-      <form action={formAction}>
-        <input name="fixId" type="hidden" value={fixId} />
-        <AdminActionSubmitButton icon={<XIcon />} size="lg">
-          Reject
-        </AdminActionSubmitButton>
-      </form>
-
-      <span
-        aria-live="polite"
-        className="text-destructive-text basis-full text-sm empty:hidden"
-        key={state.submissionId}
-      >
-        {state.error}
-      </span>
-    </>
+    <form action={formAction} className="contents">
+      <input name="fixId" type="hidden" value={fixId} />
+      <RejectButton className={className} size={size}>
+        Reject
+      </RejectButton>
+    </form>
   );
 }
 
-function rejectedNotice(rejected: number | null): string | null {
-  if (rejected === null) {
-    return null;
-  }
-
+function rejectedNotice(rejected: number): string {
   if (rejected === 0) {
     return "Nothing was left to reject.";
   }
@@ -111,139 +144,194 @@ function rejectedNotice(rejected: number | null): string | null {
 
 /**
  * Rejects every fix of the batch still waiting for review; one that's approved, applied or stale
- * keeps where it stands. It stays on the page once nothing waits, so its count stays readable.
+ * keeps where it stands. The count is a toast, since the bar leaves once nothing waits.
  */
-export function RejectBatchForm({ batchId, label }: { batchId: string; label: string | null }) {
-  const [state, formAction] = useAdminActionState({
-    action: rejectContentFixBatchAction,
+function RejectBatchForm({
+  batchId,
+  className,
+  label,
+}: {
+  batchId: string;
+  className?: string;
+  label: string;
+}) {
+  const [, formAction] = useAdminActionState({
+    action: async (previous: BatchRejectState, formData: FormData) => {
+      const next = await rejectContentFixBatchAction(previous, formData);
+
+      if (next.rejected !== null) {
+        showSuccessToast(rejectedNotice(next.rejected));
+      }
+
+      return next;
+    },
     initialState: { ...INITIAL_STATE, rejected: null },
   });
 
-  const notice = rejectedNotice(state.rejected);
-
   return (
-    <div className="flex flex-col gap-2">
-      {label && (
-        <form action={formAction}>
-          <input name="batchId" type="hidden" value={batchId} />
-          <AdminActionSubmitButton icon={<XIcon />} size="lg">
-            {label}
-          </AdminActionSubmitButton>
-        </form>
-      )}
-
-      <p aria-live="polite" className="text-sm empty:hidden" key={state.submissionId}>
-        {state.error ? <span className="text-destructive-text">{state.error}</span> : notice}
-      </p>
-    </div>
+    <form action={formAction} className="contents">
+      <input name="batchId" type="hidden" value={batchId} />
+      <RejectButton className={className} size="xl">
+        {label}
+      </RejectButton>
+    </form>
   );
 }
 
-function PasskeySetupLink({ settingsUrl }: { settingsUrl: string }) {
-  return (
-    <a className={buttonVariants({ size: "lg" })} href={settingsUrl}>
-      <KeyRoundIcon aria-hidden="true" />
-      Add a passkey to approve
-    </a>
-  );
-}
+type Reject = { batchId: string; label: string } | { fixId: string };
 
-function Notice({ notice }: { notice: ApprovalNotice | null }) {
-  return (
-    notice &&
-    notice !== "needsPasskey" && (
-      <p className="text-destructive-text text-sm" role="alert">
-        {NOTICES[notice]}
-      </p>
-    )
-  );
+/**
+ * A batch's labels are long ("Approve all 3 with passkey"), so on a phone its approval takes a
+ * line of its own and the other actions share the one above it, as do Finish applying and Reject
+ * beside an approval. A single fix's Reject and approval fit one line.
+ */
+function phoneLines({
+  finishing,
+  fixIds,
+  reject,
+}: {
+  finishing: number;
+  fixIds: readonly string[];
+  reject?: Reject;
+}) {
+  const stacked = (reject && "label" in reject) || (finishing > 0 && fixIds.length > 0);
+
+  return {
+    approveClass: cn(FILL_LINE_CLASS, stacked && "max-lg:basis-full"),
+    sharedLine: stacked ? FILL_LINE_CLASS : undefined,
+  };
 }
 
 /**
- * Approving applies only the fixes the approver read here: the challenge their passkey signs is
- * stored on exactly `fixIds`.
+ * The page's one decision, in the shared bottom bar: reject, then approve with a passkey (the way
+ * to add one, without a passkey). Approving applies only the fixes the approver read here: the
+ * challenge their passkey signs is stored on exactly `fixIds`, and it also finishes what they
+ * approved before. "Finish applying" finishes the `finishing` fixes the viewer approved that didn't
+ * apply, such as after a crash, with no passkey and nothing else decided: the bar's other action
+ * beside an approval, its main action when nothing is left to approve. What an action couldn't do
+ * shows in the bar's note.
  */
-export function ReviewDecision({
+export function ReviewBar({
   approveLabel,
   batchId,
+  finishing = 0,
   fixIds,
   hasPasskey,
-  rejectFixId,
+  reject,
   settingsUrl,
 }: Selection & {
   approveLabel: string;
+  finishing?: number;
   hasPasskey: boolean;
-  rejectFixId?: string;
+  reject?: Reject;
   settingsUrl: string;
 }) {
-  const [notice, approveAction, isApproving] = useActionState(async () => {
+  // The note speaks for the action pressed last, so an older one's message never hides it.
+  const [lastAction, setLastAction] = useState<"approve" | "finish">("approve");
+
+  const [approveNotice, approveAction, isApproving] = useActionState(async () => {
+    setLastAction("approve");
     const { data, error } = await safeAsync(() => approve({ batchId, fixIds }));
     return error ? "failed" : data;
   }, null);
 
-  const needsPasskey = !hasPasskey || notice === "needsPasskey";
+  const [finishNotice, finishAction, isFinishing] = useActionState(async () => {
+    setLastAction("finish");
+    const { data, error } = await safeAsync(() => resumeContentFixesAction(batchId));
+    const notice = error || !data ? "failed" : toNotice(data);
+    return notice === "failed" ? "finishFailed" : notice;
+  }, null);
+
+  const notice = lastAction === "finish" ? finishNotice : approveNotice;
+  const needsPasskey = !hasPasskey || approveNotice === "needsPasskey";
+  const { approveClass, sharedLine } = phoneLines({ finishing, fixIds, reject });
 
   return (
-    <div className="flex flex-col gap-3">
-      <div className="flex flex-wrap items-center gap-2">
-        {needsPasskey ? (
-          <PasskeySetupLink settingsUrl={settingsUrl} />
-        ) : (
-          <form action={approveAction}>
+    <BottomBar
+      note={
+        notice ? (
+          <p className="text-destructive-text" role="alert">
+            {NOTICES[notice]}
+          </p>
+        ) : null
+      }
+    >
+      <BottomBarActions>
+        {reject && "fixId" in reject && <RejectForm className={sharedLine} fixId={reject.fixId} />}
+        {reject && "label" in reject && (
+          <RejectBatchForm batchId={reject.batchId} className={sharedLine} label={reject.label} />
+        )}
+
+        {finishing > 0 && fixIds.length > 0 && (
+          <form action={finishAction} className="contents">
             <Button
-              busy={isApproving}
-              icon={<FingerprintIcon aria-hidden="true" />}
-              size="lg"
+              busy={isFinishing}
+              className={sharedLine}
+              size="xl"
               type="submit"
+              variant="outline"
             >
-              {approveLabel}
+              Finish applying
             </Button>
           </form>
         )}
 
-        {rejectFixId && <RejectForm fixId={rejectFixId} />}
-      </div>
+        {fixIds.length > 0 && needsPasskey && (
+          <EnterLink className={approveClass} href={settingsUrl} link={SettingsLink} size="xl">
+            Add a passkey to approve
+          </EnterLink>
+        )}
 
-      <p className="text-muted-foreground max-w-2xl text-sm text-pretty">
-        {needsPasskey
-          ? "Approving takes a passkey, so only you can apply a fix. Add one in your Zoonk settings, then come back to this page."
-          : "Approving applies exactly the changes above, once you confirm with your passkey. Each fix applies on its own, and one whose content changed since it was proposed changes nothing. Rejecting changes nothing."}
-      </p>
+        {fixIds.length > 0 && !needsPasskey && (
+          <form action={approveAction} className="contents">
+            <EnterButton busy={isApproving} className={approveClass} size="xl" type="submit">
+              {approveLabel}
+            </EnterButton>
+          </form>
+        )}
 
-      <Notice notice={notice} />
-    </div>
+        {finishing > 0 && fixIds.length === 0 && (
+          <form action={finishAction} className="contents">
+            <EnterButton busy={isFinishing} className={FILL_LINE_CLASS} size="xl" type="submit">
+              Finish applying
+            </EnterButton>
+          </form>
+        )}
+      </BottomBarActions>
+    </BottomBar>
   );
 }
 
-/** For fixes a passkey approved but that didn't finish applying, such as after a crash. */
-export function ResumeApplying({ batchId, count }: { batchId: string; count: number }) {
-  const [notice, resumeAction, isResuming] = useActionState(async () => {
-    const { data, error } = await safeAsync(() => resumeContentFixesAction(batchId));
-    return error || !data ? "failed" : toNotice(data);
-  }, null);
+/** Holds the bar's height while the passkey read streams, so nothing moves when it lands. */
+export function ReviewBarSkeleton({ batch = false }: { batch?: boolean }) {
+  const { approveClass, sharedLine } = phoneLines({
+    finishing: 0,
+    fixIds: [],
+    reject: batch ? { batchId: "", label: "" } : undefined,
+  });
 
   return (
-    <div className="flex flex-col gap-3">
-      <p className="text-sm">
-        You approved {count === 1 ? "a fix that hasn't" : `${String(count)} fixes that haven't`}{" "}
-        applied yet. Finishing needs no passkey, and nothing else joins them.
-      </p>
-
-      <form action={resumeAction}>
-        <Button busy={isResuming} icon={<PlayIcon aria-hidden="true" />} size="lg" type="submit">
-          Finish applying
-        </Button>
-      </form>
-
-      <Notice notice={notice} />
-    </div>
+    <BottomBar aria-hidden="true">
+      <BottomBarActions>
+        <ButtonSkeleton className={sharedLine} size="xl" variant="outline">
+          {batch ? "Reject all" : "Reject"}
+        </ButtonSkeleton>
+        <ButtonSkeleton className={approveClass} size="xl">
+          {batch ? "Approve all with passkey" : "Approve with passkey"}
+        </ButtonSkeleton>
+      </BottomBarActions>
+    </BottomBar>
   );
 }
 
 export function RevertForm({ fixId }: { fixId: string }) {
   const reasonId = useId();
 
-  const [state, formAction] = useAdminActionState({
+  // React resets uncontrolled fields after a form action, and a refused undo keeps what was typed.
+  // An accepted one opens the new fix's page.
+  const [reason, setReason] = useState("");
+
+  const [, formAction] = useAdminActionState({
     action: revertContentFixAction,
     initialState: INITIAL_STATE,
   });
@@ -256,25 +344,24 @@ export function RevertForm({ fixId }: { fixId: string }) {
           <label className="text-sm font-medium" htmlFor={reasonId}>
             Why undo it?
           </label>
-          <Input id={reasonId} maxLength={2000} name="reason" required />
+          <Input
+            id={reasonId}
+            maxLength={2000}
+            name="reason"
+            onChange={(event) => setReason(event.target.value)}
+            required
+            value={reason}
+          />
         </div>
         <AdminActionSubmitButton icon={<Undo2Icon />} size="lg">
-          Propose a revert
+          Propose undoing it
         </AdminActionSubmitButton>
       </form>
 
       <p className="text-muted-foreground text-sm text-pretty">
-        A revert is a new fix that puts back what this one replaced. It opens for review and changes
+        Undoing is a new fix that puts back what this one replaced. It waits for review and changes
         nothing until it&apos;s approved with a passkey.
       </p>
-
-      <span
-        aria-live="polite"
-        className="text-destructive-text text-sm empty:hidden"
-        key={state.submissionId}
-      >
-        {state.error}
-      </span>
     </div>
   );
 }

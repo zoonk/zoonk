@@ -16,11 +16,9 @@ import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
@@ -46,13 +44,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.SnackbarHost
-import com.zoonk.android.ui.components.TASK_MARGIN
 import com.zoonk.android.ui.components.TextButton
 
 /** What leaving a task asks first when it would leave unsent work behind, in the screen's own words. */
@@ -243,7 +239,7 @@ private fun TaskAsideRail(aside: TaskAside) {
                     )
                     if (aside.footer != null) SnackbarHost(LocalSnackbarHostState.current, Modifier.align(Alignment.BottomCenter))
                 }
-                aside.footer?.let { TaskBottomBar(it, horizontalPadding = ASIDE_MARGIN) }
+                aside.footer?.let { TaskBottomBar(it) }
             }
         }
     }
@@ -252,22 +248,6 @@ private fun TaskAsideRail(aside: TaskAside) {
 private val ASIDE_MARGIN = 24.dp
 
 @Composable
-private fun TaskBottomBar(
-    content: @Composable () -> Unit,
-    horizontalPadding: Dp = TASK_MARGIN,
-) {
-    DockedActionBar {
-        Box(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .windowInsetsPadding(
-                        WindowInsets.safeDrawing
-                            .only(WindowInsetsSides.Bottom + WindowInsetsSides.Horizontal)
-                            .union(WindowInsets.ime),
-                    ).padding(horizontal = horizontalPadding, vertical = 16.dp),
-        ) {
-            content()
-        }
-    }
+private fun TaskBottomBar(content: @Composable () -> Unit) {
+    BottomBar { content() }
 }

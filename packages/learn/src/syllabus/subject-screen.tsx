@@ -1,13 +1,8 @@
 "use client";
 
 import { type SyllabusSubject, type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
-import {
-  DetailActions,
-  DetailFacts,
-  DetailHero,
-  DetailHeroText,
-  DetailTitle,
-} from "@zoonk/ui/components/detail";
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
+import { DetailFacts, DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
 import { useExtracted, useFormatter } from "next-intl";
 import {
   DetailAside,
@@ -17,7 +12,6 @@ import {
   useDoneShare,
 } from "../_components/detail-page";
 import {
-  PageEyebrow,
   PageSection,
   PageSectionDetail,
   PageSectionHeader,
@@ -32,8 +26,7 @@ import { SubjectMatrix } from "./subject-matrix";
 import { NotPlannedCallout, type SubjectActions } from "./subject-not-planned";
 import { SubjectTopics } from "./subject-topics";
 import { SubjectWrittenPractice } from "./subject-written-practice";
-import { TopicFrequencyNote } from "./syllabus-notes";
-import { KnownTopicsReturnContext } from "./topic-note";
+import { TopicFrequencySource } from "./syllabus-notes";
 import { getSubjectBar, getSubjectShare, useKnownLine } from "./use-subject-progress";
 
 const TOPICS_TITLE_ID = "subject-topics-title";
@@ -45,17 +38,19 @@ type SubjectHrefs = {
   mindMaps?: (subjectKey: string) => string;
 };
 
-function useKindWord({
-  document,
+/**
+ * Where a subject comes from, when its name doesn't say: the exam area it belongs to, the
+ * learner's own material, or the plan's lessons beyond the exam's guide.
+ */
+function useOriginFact({
   fromMaterial,
   kind,
   subject,
 }: {
-  document: SyllabusView["examDocument"];
   fromMaterial: boolean;
   kind: SyllabusView["kind"];
   subject: SyllabusSubject;
-}) {
+}): string | null {
   const t = useExtracted();
 
   if (subject.group) {
@@ -63,18 +58,10 @@ function useKindWord({
   }
 
   if (subject.source === "notice") {
-    return fromMaterial ? t("From your material") : t("Subject");
+    return fromMaterial ? t("From your material") : null;
   }
 
-  if (kind !== "notice") {
-    return t("Module");
-  }
-
-  return fromMaterial
-    ? t("Also in your plan")
-    : t("{document, select, notice {Beyond the notice} other {Beyond the official guide}}", {
-        document,
-      });
+  return kind === "notice" ? t("Also in your plan") : null;
 }
 
 function useWeightFact(subject: SyllabusSubject): string | null {
@@ -94,26 +81,28 @@ function useWeightFact(subject: SyllabusSubject): string | null {
   });
 }
 
-function useEyebrow(props: Parameters<typeof useKindWord>[0]): string {
-  const kindWord = useKindWord(props);
-  const weight = useWeightFact(props.subject);
-  return [kindWord, weight].filter(Boolean).join(" · ");
-}
-
 function SubjectFacts({
+  fromMaterial,
+  kind,
   sharedExams,
   subject,
 }: {
+  fromMaterial: boolean;
+  kind: SyllabusView["kind"];
   sharedExams: SyllabusView["sharedExams"];
   subject: SyllabusSubject;
 }) {
   const t = useExtracted();
   const doneShare = useDoneShare();
+  const origin = useOriginFact({ fromMaterial, kind, subject });
+  const weight = useWeightFact(subject);
   const known = useKnownLine()(subject);
   const alsoIn = useAlsoIn({ sharedExams, sharedWith: subject.sharedWith });
   const inLessons = !subject.notPlannedReason && subject.preparation === null;
 
   const facts = [
+    origin,
+    weight,
     subject.topics.length > 0 &&
       t("{count, plural, one {# topic} other {# topics}}", { count: subject.topics.length }),
     subject.chapters.length > 0 &&
@@ -130,65 +119,62 @@ function SubjectFacts({
   );
 }
 
-function SubjectActionsRow({
+/** The subject's main action, pinned under the page: its next chapter to study. */
+function SubjectBottomBar({
   chapterHref,
   subject,
 }: {
   chapterHref: (chapterId: string) => string;
   subject: SyllabusSubject;
 }) {
-  const t = useExtracted();
   const next = subject.chapters.find((chapter) => chapter.state !== "done" && chapter.chapterId);
   const nextId = subject.notPlannedReason ? null : (next?.chapterId ?? null);
 
+  if (!nextId) {
+    return null;
+  }
+
   return (
-    <DetailActions className="empty:hidden">
-      {nextId && (
+    <BottomBar>
+      <BottomBarActions>
         <DetailContinueLink href={chapterHref(nextId)} started={subject.lessonsDone > 0} />
-      )}
-      <ReportProblemMenu label={t("Subject options")} screen="subject" />
-    </DetailActions>
+      </BottomBarActions>
+    </BottomBar>
   );
 }
 
 function SubjectHeader({
-  chapterHref,
-  document,
   fromMaterial,
   kind,
   sharedExams,
   subject,
 }: {
-  chapterHref: (chapterId: string) => string;
-  document: SyllabusView["examDocument"];
   fromMaterial: boolean;
   kind: SyllabusView["kind"];
   sharedExams: SyllabusView["sharedExams"];
   subject: SyllabusSubject;
 }) {
-  const eyebrow = useEyebrow({ document, fromMaterial, kind, subject });
-
   return (
     <DetailHero>
       <DetailHeroText>
-        <PageEyebrow>{eyebrow}</PageEyebrow>
         <DetailTitle>{subject.name}</DetailTitle>
-        <SubjectFacts sharedExams={sharedExams} subject={subject} />
+        <SubjectFacts
+          fromMaterial={fromMaterial}
+          kind={kind}
+          sharedExams={sharedExams}
+          subject={subject}
+        />
       </DetailHeroText>
-
-      <SubjectActionsRow chapterHref={chapterHref} subject={subject} />
     </DetailHero>
   );
 }
 
 function TopicsSection({
   chapterHref,
-  document,
   fromMaterial,
   subject,
 }: {
   chapterHref: (chapterId: string) => string;
-  document: SyllabusView["examDocument"];
   fromMaterial: boolean;
   subject: SyllabusSubject;
 }) {
@@ -198,12 +184,7 @@ function TopicsSection({
     <PageSection aria-labelledby={TOPICS_TITLE_ID}>
       <PageSectionHeader>
         <PageSectionTitle id={TOPICS_TITLE_ID}>
-          {fromMaterial
-            ? t("Topics in your material")
-            : t(
-                "{document, select, notice {Topics in the notice} other {Topics in the official guide}}",
-                { document },
-              )}
+          {fromMaterial ? t("Topics in your material") : t("Topics on the exam")}
         </PageSectionTitle>
         <PageSectionDetail>
           {subject.topicsStudied === null
@@ -221,7 +202,7 @@ function TopicsSection({
         topics={subject.topics}
       />
 
-      <TopicFrequencyNote fromMaterial={fromMaterial} subject={subject} />
+      <TopicFrequencySource source={subject.topicFrequencySource} />
     </PageSection>
   );
 }
@@ -239,13 +220,7 @@ export function SubjectScreen({
   subject: SyllabusSubject;
   syllabus: Pick<
     SyllabusView,
-    | "examDocument"
-    | "fromMaterial"
-    | "kind"
-    | "knownTopicsReturn"
-    | "questionsSource"
-    | "sharedExams"
-    | "writtenPractice"
+    "fromMaterial" | "kind" | "questionsSource" | "sharedExams" | "writtenPractice"
   >;
 }) {
   const t = useExtracted();
@@ -259,14 +234,14 @@ export function SubjectScreen({
       bar={
         <LearnPageBar back={{ href: hrefs.back, label: t("Plan") }} title={subject.name}>
           {ask && <div className="contents min-[72rem]:hidden">{ask.bar}</div>}
+          <ReportProblemMenu label={t("Subject options")} screen="subject" />
         </LearnPageBar>
       }
+      bottomBar={<SubjectBottomBar chapterHref={hrefs.chapter} subject={subject} />}
       data-slot="subject"
     >
       <DetailAside>
         <SubjectHeader
-          chapterHref={hrefs.chapter}
-          document={syllabus.examDocument}
           fromMaterial={syllabus.fromMaterial}
           kind={syllabus.kind}
           sharedExams={syllabus.sharedExams}
@@ -289,14 +264,11 @@ export function SubjectScreen({
         />
 
         {subject.topics.length > 0 && (
-          <KnownTopicsReturnContext value={syllabus.knownTopicsReturn}>
-            <TopicsSection
-              chapterHref={hrefs.chapter}
-              document={syllabus.examDocument}
-              fromMaterial={syllabus.fromMaterial}
-              subject={subject}
-            />
-          </KnownTopicsReturnContext>
+          <TopicsSection
+            chapterHref={hrefs.chapter}
+            fromMaterial={syllabus.fromMaterial}
+            subject={subject}
+          />
         )}
 
         <SubjectMatrix matrix={subject.matrix} />

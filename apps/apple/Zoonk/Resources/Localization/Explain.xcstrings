@@ -237,65 +237,6 @@
         }
       }
     },
-    "I want to learn this in depth" : {
-      "comment" : "Starts a plan from a quick explanation",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ich möchte das ausführlich lernen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aprender esto a fondo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Je veux approfondir ce sujet"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Voglio approfondire questo argomento"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "もっと深く学ぶ"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "더 깊이 배우고 싶어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Chcę zgłębić ten temat"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quero aprender isso a fundo"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bunu derinlemesine öğrenmek istiyorum"
-          }
-        }
-      }
-    },
     "I want to understand %@ in depth" : {
       "comment" : "A goal typed for the learner from a quick explanation's topic, mid-sentence",
       "localizations" : {
@@ -355,61 +296,61 @@
         }
       }
     },
-    "No plan to set up." : {
-      "comment" : "Under a quick explanation's title",
+    "Learn more about this" : {
+      "comment" : "Starts a plan from a quick explanation",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du musst keinen Plan erstellen."
+            "value" : "Mehr darüber lernen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No necesitas crear un plan."
+            "value" : "Aprender más sobre esto"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pas de plan à préparer."
+            "value" : "En apprendre plus sur ce sujet"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nessun piano da configurare."
+            "value" : "Approfondisci questo argomento"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "学習計画を立てる必要はありません。"
+            "value" : "もっと詳しく学ぶ"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "계획을 세우지 않아도 돼요."
+            "value" : "이 주제 더 배우기"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nie musisz układać planu."
+            "value" : "Dowiedz się więcej na ten temat"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sem precisar montar um plano."
+            "value" : "Aprender mais sobre isso"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plan oluşturmana gerek yok."
+            "value" : "Bu konuda daha fazlasını öğren"
           }
         }
       }
@@ -656,120 +597,120 @@
         }
       }
     },
-    "See explanation" : {
+    "Start" : {
       "comment" : "Plays a written quick explanation",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erklärung ansehen"
+            "value" : "Abspielen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ver explicación"
+            "value" : "Iniciar"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Voir l’explication"
+            "value" : "Commencer"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vedi la spiegazione"
+            "value" : "Avvia"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "解説を見る"
+            "value" : "再生する"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "설명 보기"
+            "value" : "재생하기"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zobacz wyjaśnienie"
+            "value" : "Odtwórz"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ver explicação"
+            "value" : "Começar"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Açıklamayı oku"
+            "value" : "Başla"
           }
         }
       }
     },
-    "Still writing your explanation. It shows up here as soon as it's ready." : {
+    "Still getting your explanation ready." : {
       "comment" : "Under a quick explanation that's still being written",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wir erstellen noch deine Erklärung. Sie erscheint hier, sobald sie fertig ist."
+            "value" : "Wir bereiten deine Erklärung noch vor."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aún estamos preparando tu explicación. Aparecerá aquí en cuanto esté lista."
+            "value" : "Aún estamos preparando tu explicación."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton explication est encore en préparation. Elle apparaîtra ici dès qu’elle sera prête."
+            "value" : "Ton explication est encore en préparation."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stiamo ancora preparando la tua spiegazione. La vedrai qui appena sarà pronta."
+            "value" : "Stiamo ancora preparando la tua spiegazione."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "まだ解説を作成しています。できあがりしだい、ここに表示されます。"
+            "value" : "引き続き解説を準備しています。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "아직 설명을 만들고 있어요. 준비되면 바로 여기서 볼 수 있어요."
+            "value" : "아직 설명을 준비하고 있어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wciąż przygotowujemy twoje wyjaśnienie. Pojawi się tutaj, gdy tylko będzie gotowe."
+            "value" : "Wciąż przygotowujemy twoje wyjaśnienie."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sua explicação ainda está sendo criada. Ela aparece aqui assim que estiver pronta."
+            "value" : "Ainda preparando sua explicação."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Açıklamanı hâlâ hazırlıyoruz. Hazır olur olmaz burada görünecek."
+            "value" : "Açıklamanı hazırlamaya devam ediyoruz."
           }
         }
       }

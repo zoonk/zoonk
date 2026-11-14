@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// "See the lessons" writes the topic's lesson plan now, from the learner's tap.
+/// "Get them ready" writes the topic's lesson plan now, from the learner's tap.
 struct FarTopicSheet: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(\.planSheetOpen) private var sheetOpen
@@ -13,7 +13,8 @@ struct FarTopicSheet: View {
 
   private enum Request: Equatable {
     case idle
-    case limit
+    case limit(HelpLimit)
+    case unavailable
     case unreachable
     case writing
   }
@@ -57,23 +58,10 @@ struct FarTopicSheet: View {
         }
     case .loaded, .empty:
       Section {
-        if request == .unreachable {
-          Text(
-            "We couldn't reach the server. Check your connection.", tableName: "Plan",
-            comment: "A far topic's lessons couldn't be asked for"
-          )
+        message
           .foregroundStyle(.mutedForeground)
-        } else {
-          Text(
-            "A topic's lessons are planned two weeks before you get to it. You can see this one's now.",
-            tableName: "Plan", comment: "Explains a far topic's lessons"
-          )
-          .foregroundStyle(.mutedForeground)
-        }
 
-        if request == .limit {
-          PlusNotice(description: Text(Self.limitLine))
-        } else {
+        if request != .unavailable {
           Button {
             Task { await ask(outline) }
           } label: {
@@ -81,20 +69,56 @@ struct FarTopicSheet: View {
               Text("Try again", tableName: "Plan", comment: "Asks for a far topic's lessons again")
             } else {
               Text(
-                "See the lessons", tableName: "Plan", comment: "Writes a far topic's lessons now")
+                "Get them ready", tableName: "Plan",
+                comment: "Writes the lessons of a topic that aren't ready yet")
             }
           }
+          .disabled(isCapped)
+        }
+
+        if case .limit(let limit) = request {
+          LimitNotice(limit: limit, words: limit.previewWords)
         }
       }
     case .failed:
       Text(
-        "There's nothing left to prepare for this topic.", tableName: "Plan",
-        comment: "A far topic with nothing to outline"
+        "These lessons aren't ready yet. Try again later.", tableName: "Plan",
+        comment: "A topic whose lessons can't be made ready now"
       )
       .foregroundStyle(.mutedForeground)
     case .idle, .loading:
       ProgressView()
     }
+  }
+
+  private var message: Text {
+    switch request {
+    case .unreachable:
+      Text(
+        "We couldn't reach the server. Check your connection.", tableName: "Plan",
+        comment: "A far topic's lessons couldn't be asked for")
+    case .unavailable:
+      Text(
+        "This topic has no more lessons to get ready.", tableName: "Plan",
+        comment: "A far topic the plan has nothing left to write for")
+    case .idle, .limit, .writing:
+      Text(
+        "Getting these lessons ready takes about half a minute.", tableName: "Plan",
+        comment: "Explains a topic whose lessons aren't ready yet")
+    }
+  }
+
+  /// A short break lets the learner ask again; a used-up cap doesn't.
+  private var isCapped: Bool {
+    guard case .limit(let limit) = request else {
+      return false
+    }
+
+    if case .slowDown = limit {
+      return false
+    }
+
+    return true
   }
 
   private var writing: some View {
@@ -113,7 +137,7 @@ struct FarTopicSheet: View {
     case .loaded(let value) where value.status == "writing" || request == .writing:
       Self.writingLine
     case .loaded, .empty:
-      request == .limit ? Self.limitLine : nil
+      if case .limit(let limit) = request { limit.previewWords.said } else { nil }
     case .failed, .idle, .loading:
       nil
     }
@@ -121,14 +145,8 @@ struct FarTopicSheet: View {
 
   private static var writingLine: String {
     String(
-      localized: "Preparing the lessons… It takes about half a minute.", table: "Plan",
-      comment: "A far topic's lessons being written")
-  }
-
-  private static var limitLine: String {
-    String(
-      localized: "Your plan prepared all it can for now.", table: "Plan",
-      comment: "Says the learner's plan reached its outlines")
+      localized: "Getting your lessons ready…", table: "Plan",
+      comment: "A topic's lessons being made ready")
   }
 
   private func ask(_ outline: Resource<SkillOutline>) async {
@@ -142,7 +160,8 @@ struct FarTopicSheet: View {
 
     switch answer {
     case .done(.started): request = .writing
-    case .done(.limit): request = .limit
+    case .done(.limit(let limit)): request = .limit(limit)
+    case .done(.unavailable): request = .unavailable
     case .failed: request = .unreachable
     case .obsolete: break
     }

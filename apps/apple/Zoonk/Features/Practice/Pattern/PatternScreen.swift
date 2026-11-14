@@ -93,9 +93,7 @@ struct PatternScreen: View {
         } actions: {
           PracticeMainButton(
             title: LocalizedStringResource(
-              "Practice this\u{00A0}· \(Duration.seconds(180).formatted(.units(allowed: [.minutes], width: .abbreviated)))",
-              table: "Practice",
-              comment: "Starts a mistake pattern's drill, with how long it takes."),
+              "Practice", table: "Practice", comment: "Starts a mistake pattern's drill."),
             icon: .play
           ) {
             step = .question(0)
@@ -116,10 +114,7 @@ struct PatternScreen: View {
               ? LocalizedStringResource(
                 "You've got this rule.", table: "Practice",
                 comment: "End of a pattern drill, all right.")
-              : LocalizedStringResource(
-                "Knowing the rule is the first step. It gets easier each time you use it.",
-                table: "Practice",
-                comment: "End of a pattern drill with misses."))
+              : nil)
           PracticeResultNumbers(
             correct: result.correct, total: result.total, brainPower: result.brainPower,
             day: DayResult(result))
@@ -169,7 +164,7 @@ struct PatternScreen: View {
         PracticeMainButton(
           title: isLast
             ? LocalizedStringResource(
-              "See how you did", table: "Practice",
+              "See how it went", table: "Practice",
               comment: "Ends a pattern drill to see its result.")
             : LocalizedStringResource(
               "Continue", table: "Practice", comment: "Moves on after a grade."),
@@ -302,11 +297,6 @@ private struct PatternIntroView: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 24) {
       VStack(alignment: .leading, spacing: 8) {
-        Text(
-          "We noticed a pattern", tableName: "Practice",
-          comment: "Eyebrow over a noticed mistake pattern."
-        )
-        .typeStyle(.note.weight(.medium)).foregroundStyle(.mutedForeground)
         Text(pattern.title).typeStyle(.heroTitle)
         Text(
           "It came up \(pattern.occurrences) times in your recent answers.", tableName: "Practice",

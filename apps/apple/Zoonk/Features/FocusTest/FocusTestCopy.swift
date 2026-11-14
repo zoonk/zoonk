@@ -1,43 +1,54 @@
 import SwiftUI
 
-/// The Focus test's words that more than one screen says: its name with what it costs, its line on
-/// the plan, the result's reason and a subject's state.
+/// The Focus test's words that more than one screen says: its name with what it costs, what it is
+/// and why, its line on the plan and a subject's state.
 enum FocusTestCopy {
   static let name = LocalizedStringResource(
     "Focus test", table: "FocusTest", comment: "Title of an exam goal's Focus test")
 
-  static func about(minutes: Int) -> String {
+  static func timeLeft(minutes: Int) -> String {
     String(
-      localized: "About \(studyDuration(minutes: minutes))", table: "FocusTest",
-      comment: "About how long a Focus test sitting takes, such as \"About 15 min\"")
+      localized: "\(studyDuration(minutes: minutes)) left", table: "FocusTest",
+      comment: "How long the rest of an open Focus test takes, such as \"9 min left\"")
   }
 
-  static func aboutLeft(minutes: Int) -> String {
-    String(
-      localized: "About \(studyDuration(minutes: minutes)) left", table: "FocusTest",
-      comment: "About how long the rest of an open Focus test takes, such as \"About 9 min left\"")
-  }
-
-  /// "Focus test · About 15 min", over the offer.
+  /// "Focus test · 15 min", over the offer.
   static func offered(minutes: Int) -> String {
-    [String(localized: name), about(minutes: minutes)].joinedFacts()
+    [String(localized: name), studyDuration(minutes: minutes)].joinedFacts()
   }
 
-  /// "Focus test · About 13 min left", over an open sitting the learner came back to.
+  /// "Focus test · 13 min left", over an open sitting the learner came back to.
   static func left(minutes: Int) -> String {
-    [String(localized: name), aboutLeft(minutes: minutes)].joinedFacts()
+    [String(localized: name), timeLeft(minutes: minutes)].joinedFacts()
   }
 
-  /// One subject, or no date, leaves nothing to focus on: the test only finds where to start.
+  /// One subject, or no date, leaves nothing to focus on: the test only finds what to skip.
   static func title(findsFocus: Bool) -> LocalizedStringResource {
     findsFocus
       ? LocalizedStringResource(
-        "Find out where to focus", table: "FocusTest",
+        "Find what to study most", table: "FocusTest",
         comment: "What the Focus test does, for an exam with a date and more than one subject")
       : LocalizedStringResource(
-        "Find out where to start", table: "FocusTest",
+        "Skip what you already know", table: "FocusTest",
         comment: "What the Focus test does, for an exam without a date or with one subject")
   }
+
+  /// What the test is and why, wherever it's offered with its time over it. "It never removes a
+  /// subject" is exact: focusing gives some subjects more time and takes none out.
+  static func offerLine(findsFocus: Bool) -> LocalizedStringResource {
+    findsFocus
+      ? LocalizedStringResource(
+        "This test shows what you already know, so more of your time goes to what you need most. It never removes a subject.",
+        table: "FocusTest",
+        comment: "What the Focus test is and why, for an exam with a date and more than one subject"
+      )
+      : LocalizedStringResource(
+        "This test shows what you already know, so your plan can skip it.", table: "FocusTest",
+        comment: "What the Focus test is and why, for an exam without a date or with one subject")
+  }
+
+  static let start = LocalizedStringResource(
+    "Start", table: "FocusTest", comment: "Starts the Focus test")
 
   /// Leaves the test with the answers it has, for its result.
   /// The test's actions, from its own table wherever they show, Today included, so each language
@@ -59,39 +70,30 @@ enum FocusTestCopy {
     "Take the Focus test", table: "FocusTest",
     comment: "Opens the Focus test for a learner whose time doesn't cover the exam")
 
-  /// Why the result names these subjects, in onboarding and on a plan that makes no claim about them.
-  static let basedOnAnswers = LocalizedStringResource(
-    "Based on your answers and what counts most in your exam. Focusing never removes a subject.",
-    table: "FocusTest", comment: "Under the Focus test's result: why these subjects")
-
   /// The test's one line on the plan: what tapping its row gives.
   static func planLine(_ summary: FocusTestSummary) -> String {
     switch summary.state {
     case .notStarted:
       return
         ([String(localized: title(findsFocus: summary.suggestsFocus))]
-        + (summary.offer.map { [about(minutes: $0.minutes)] } ?? [])).joinedFacts()
+        + (summary.offer.map { [studyDuration(minutes: $0.minutes)] } ?? [])).joinedFacts()
     case .sitting where summary.offer != nil:
       return [
         String(
           localized: "In progress", table: "FocusTest",
           comment: "The Focus test's line on the plan while a sitting is open"),
-        aboutLeft(minutes: summary.offer?.minutes ?? 0),
+        timeLeft(minutes: summary.offer?.minutes ?? 0),
       ].joinedFacts()
     case .sitting, .checked:
-      return summary.sessionQuestions == .paused
-        ? String(
-          localized: "Paused in your sessions", table: "FocusTest",
-          comment:
-            "The Focus test's line on the plan once the learner paused its questions in sessions")
-        : String(
-          localized: "See your result", table: "FocusTest",
-          comment: "The Focus test's line on the plan once it's taken: opens its result")
+      return String(
+        localized: "See your result", table: "FocusTest",
+        comment: "The Focus test's line on the plan once it's taken: opens its result")
     }
   }
 
-  /// How a subject's answers went, in the result's list of every subject.
-  static func state(of subject: FocusTest.Subject) -> String {
+  /// How a subject's answers went, in the result's list of every subject; nothing for one with no
+  /// answers.
+  static func state(of subject: FocusTest.Subject) -> String? {
     switch subject.state {
     case .answered where subject.asked == subject.dontKnow:
       String(
@@ -105,27 +107,26 @@ enum FocusTestCopy {
           "How many of a subject's chosen Focus test answers were right; \"I don't know yet\" isn't counted"
       )
     case .notAsked:
-      String(
-        localized: "Not asked yet", table: "FocusTest",
-        comment: "A subject the Focus test hasn't asked a question about yet")
+      nil
     case .notChecked:
       switch subject.part {
       case .written:
         String(
-          localized: "Writing: not checked here", table: "FocusTest",
-          comment: "A written part of the exam, such as the essay, that the Focus test can't check")
+          localized: "Writing: not in this test", table: "FocusTest",
+          comment:
+            "A written part of the exam, such as the essay, that the Focus test can't ask about")
       case .listening:
         String(
-          localized: "Listening: not checked here", table: "FocusTest",
-          comment: "A listening part of the exam that the Focus test can't check")
+          localized: "Listening: not in this test", table: "FocusTest",
+          comment: "A listening part of the exam that the Focus test can't ask about")
       case .speaking:
         String(
-          localized: "Speaking: not checked here", table: "FocusTest",
-          comment: "A speaking part of the exam that the Focus test can't check")
+          localized: "Speaking: not in this test", table: "FocusTest",
+          comment: "A speaking part of the exam that the Focus test can't ask about")
       case .practical, nil:
         String(
-          localized: "Practical part: not checked here", table: "FocusTest",
-          comment: "A practical part of the exam that the Focus test can't check")
+          localized: "Practical part: not in this test", table: "FocusTest",
+          comment: "A practical part of the exam that the Focus test can't ask about")
       }
     }
   }

@@ -3,12 +3,10 @@ package com.zoonk.android.feature.exam
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -16,13 +14,10 @@ import com.zoonk.android.R
 import com.zoonk.android.feature.mock.MockListRow
 import com.zoonk.android.feature.mock.MockSummaryRow
 import com.zoonk.android.feature.mock.factsUnderLines
-import com.zoonk.android.feature.mock.mockDaySize
 import com.zoonk.android.feature.mock.mockMeasure
-import com.zoonk.android.feature.mock.mockShapeLabel
+import com.zoonk.android.feature.mock.mockSubject
 import com.zoonk.android.feature.mock.mockTitle
 import com.zoonk.android.feature.mock.rememberNow
-import com.zoonk.android.feature.subscription.PlusMark
-import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.MarkStatus
@@ -40,31 +35,21 @@ import kotlin.math.ceil
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
-/** A Free learner sees mocks marked Plus wherever the plan or the page offers one. */
-private fun ExamView.mocksLocked(mockOffered: Boolean): Boolean = mocksRequirePlus && (nextMock != null || mockOffered)
+/** [entry] is the small "Take a mock exam" under the list, on the days the page has no main action. */
+internal fun ExamView.showsMocks(entry: Boolean): Boolean = runningMocks.isNotEmpty() || nextMock != null || mocks.isNotEmpty() || entry
 
-internal fun ExamView.showsMocks(mockOffered: Boolean): Boolean =
-    runningMocks.isNotEmpty() || nextMock != null || mocks.isNotEmpty() || mocksLocked(mockOffered)
-
-/** Main's `ExamMocks`: the mocks running, the plan's next one and those taken, newest first. */
+/** Main's `ExamMocks`: the mock exams running, the plan's next one and those taken, newest first. */
 @Composable
 internal fun ExamMocksSection(
     exam: ExamView,
-    mockOffered: Boolean,
+    entry: (@Composable () -> Unit)?,
     navigator: AppNavigator,
 ) {
     val running = exam.runningMocks.isNotEmpty()
     val next = exam.nextMock
-    val locked = exam.mocksLocked(mockOffered)
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        SectionHeader(
-            stringResource(R.string.exam_mocks_title),
-            detail =
-                exam.mocks.size
-                    .takeIf { it > 0 }
-                    ?.let { pluralStringResource(R.plurals.exam_mocks_taken, it, it) },
-        )
+        SectionHeader(stringResource(R.string.exam_mocks_title))
 
         val clocks = exam.runningMocks.map { runningMockClock(it.deadline) }
         val nextDate = next?.date?.let { examDayDate(it.toJavaLocalDate(), LocalDate.now(), currentLocale()) }
@@ -79,7 +64,7 @@ internal fun ExamMocksSection(
                         add((index == 0) to { RunningMockRow(mock, clocks[index], current = index == 0, stacked, onOpen = open) })
                     }
                     if (next != null) {
-                        add(!running to { NextMockRow(exam, next, nextDate, current = !running, stacked, navigator) })
+                        add(!running to { NextMockRow(next, nextDate, current = !running, stacked, navigator) })
                     }
                     exam.mocks.forEach { mock ->
                         val open = mock.blockId?.let { { navigator.open(AppRoute.Mock(it.toString())) } }
@@ -94,18 +79,12 @@ internal fun ExamMocksSection(
             }
         }
 
-        if (locked) {
-            PlusNotice(
-                onSeePlus = { navigator.open(AppRoute.Subscription) },
-                description = stringResource(R.string.exam_mocks_plus),
-            )
-        }
+        entry?.invoke()
     }
 }
 
 @Composable
 private fun NextMockRow(
-    exam: ExamView,
     next: ExamViewNextMock,
     date: String?,
     current: Boolean,
@@ -113,12 +92,7 @@ private fun NextMockRow(
     navigator: AppNavigator,
 ) {
     MockListRow(
-        headline = {
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                Text(mockDaySize(fullLength = next.fullLength))
-                if (exam.mocksRequirePlus) PlusMark()
-            }
-        },
+        headline = { Text(stringResource(R.string.exam_next_mock)) },
         supporting = pluralStringResource(R.plurals.exam_questions, next.questions.toInt(), next.questions.toInt()),
         trailing = date,
         leading = { StatusMark(if (current) MarkStatus.Next else MarkStatus.Todo) },
@@ -137,7 +111,7 @@ private fun RunningMockRow(
     onOpen: () -> Unit,
 ) {
     val locale = currentLocale()
-    val shape = mockShapeLabel(mock.purpose == ExamViewRunningMocksInner.Purpose.PLACEMENT, mock.shape)
+    val subject = mockSubject(mock.shape)
     val answered =
         stringResource(
             R.string.exam_mock_answered,
@@ -147,7 +121,7 @@ private fun RunningMockRow(
 
     MockListRow(
         headline = { Text(mockTitle(mock.number)) },
-        supporting = if (shape.isEmpty()) answered else stringResource(R.string.mock_row_detail, shape, answered),
+        supporting = if (subject.isEmpty()) answered else stringResource(R.string.mock_row_detail, subject, answered),
         trailing = clock,
         leading = { StatusMark(if (current) MarkStatus.Next else MarkStatus.Todo) },
         onClick = onOpen,

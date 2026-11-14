@@ -7,15 +7,15 @@ import {
   Drawer,
   DrawerContent,
   DrawerDescription,
-  DrawerHeader,
+  DrawerFooter,
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
 import { Toggle } from "@zoonk/ui/components/toggle";
-import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
-import { ChangeSaveError } from "../_components/save-error";
+import { useId, useState } from "react";
+import { EnterButton } from "../_components/enter-button";
+import { SheetHeader } from "../_components/sheet-header";
 import { WritingWait } from "../generation/writing-wait";
 import { type Choice, ChoiceList } from "../onboarding/choice-list";
 import { useSystemName } from "./use-system-name";
@@ -75,10 +75,10 @@ function ToolChoiceForm({ onClose, tool }: { onClose: () => void; tool: PlanTool
   const choices = useToolChoices();
   const [choice, setChoice] = useState<ToolChoice | null>(tool.choice);
   const [system, setSystem] = useState<ToolSystem | null>(tool.system);
-  const { choose, failed, isPending, writing } = useToolChoice();
+  const { choose, isPending, writing } = useToolChoice();
   const needsSystem = choice === "setup" && system === null;
-  const canSave = Boolean(choice) && !needsSystem && !isPending;
-  const saveRef = useEnterClick<HTMLButtonElement>({ enabled: canSave });
+  const canSave = Boolean(choice) && !needsSystem;
+  const formId = useId();
 
   const save = () => {
     if (choice && !needsSystem) {
@@ -99,34 +99,36 @@ function ToolChoiceForm({ onClose, tool }: { onClose: () => void; tool: PlanTool
   }
 
   return (
-    <DrawerContent>
-      <form
-        className="flex flex-col gap-5"
-        onSubmit={(event) => {
-          event.preventDefault();
-          save();
-        }}
-      >
-        <ChoiceList
-          choices={choices}
-          label={t("How will you use it?")}
-          onChange={setChoice}
-          value={choice}
-        />
+    <>
+      <DrawerContent>
+        <form
+          className="flex flex-col gap-5"
+          id={formId}
+          onSubmit={(event) => {
+            event.preventDefault();
+            save();
+          }}
+        >
+          <ChoiceList
+            choices={choices}
+            label={t("How will you use it?")}
+            onChange={setChoice}
+            value={choice}
+          />
 
-        {choice === "setup" && <SystemPicker onChange={setSystem} value={system} />}
-        {failed && <ChangeSaveError />}
+          {choice === "setup" && <SystemPicker onChange={setSystem} value={system} />}
+        </form>
+      </DrawerContent>
 
-        <div className="grid grid-cols-2 gap-3">
-          <Button onClick={onClose} size="lg" type="button" variant="outline">
-            {t("Cancel")}
-          </Button>
-          <Button disabled={!canSave} focusableWhenDisabled ref={saveRef} size="lg" type="submit">
-            {t("Save")}
-          </Button>
-        </div>
-      </form>
-    </DrawerContent>
+      <DrawerFooter>
+        <Button onClick={onClose} size="lg" type="button" variant="outline">
+          {t("Cancel")}
+        </Button>
+        <EnterButton busy={isPending} disabled={!canSave} form={formId} size="lg" type="submit">
+          {t("Save")}
+        </EnterButton>
+      </DrawerFooter>
+    </>
   );
 }
 
@@ -149,10 +151,10 @@ export function PlanToolSheet({
       open={tool !== null}
     >
       <DrawerPopup>
-        <DrawerHeader>
-          <DrawerTitle className="text-xl font-semibold">{tool?.name}</DrawerTitle>
+        <SheetHeader>
+          <DrawerTitle>{tool?.name}</DrawerTitle>
           <DrawerDescription>{t("How will you use it?")}</DrawerDescription>
-        </DrawerHeader>
+        </SheetHeader>
 
         {tool && <ToolChoiceForm key={tool.name} onClose={onClose} tool={tool} />}
       </DrawerPopup>

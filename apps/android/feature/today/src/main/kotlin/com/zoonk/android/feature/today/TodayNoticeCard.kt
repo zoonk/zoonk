@@ -2,28 +2,26 @@ package com.zoonk.android.feature.today
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.data.AnalyticsEvent
-import com.zoonk.android.data.collectShown
-import com.zoonk.android.data.value
-import com.zoonk.android.feature.exam.ExamMomentCard
+import com.zoonk.android.feature.exam.ExamChecklist
+import com.zoonk.android.feature.exam.examDayText
 import com.zoonk.android.feature.exam.examMomentTitle
+import com.zoonk.android.feature.exam.examMomentWords
 import com.zoonk.android.feature.exam.icon
 import com.zoonk.android.feature.language.LanguagePracticeNotice
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.plan.ExamChoicePicks
 import com.zoonk.android.feature.plan.PlanEffectDiff
-import com.zoonk.android.feature.plan.PlanEnd
-import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.plan.examChoiceLeftOut
 import com.zoonk.android.feature.plan.planChangeAppliedLine
-import com.zoonk.android.feature.plan.planChangeProposalEffect
 import com.zoonk.android.feature.plan.planChangeSentence
 import com.zoonk.android.feature.research.SourceChangeNotice
 import com.zoonk.android.feature.research.UploadRequestNotice
@@ -35,12 +33,14 @@ import com.zoonk.android.ui.components.SuggestionActions
 import com.zoonk.android.ui.components.SuggestionDescription
 import com.zoonk.android.ui.components.SuggestionHeader
 import com.zoonk.android.ui.components.SuggestionLayout
+import com.zoonk.android.ui.components.SuggestionMainAction
 import com.zoonk.android.ui.components.SuggestionMark
 import com.zoonk.android.ui.components.SuggestionOpen
 import com.zoonk.android.ui.components.SuggestionResult
 import com.zoonk.android.ui.components.SuggestionSaveError
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
+import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.ExamMoment
 import com.zoonk.api.models.LanguageToday
 import com.zoonk.api.models.MemoryInsight
@@ -48,7 +48,6 @@ import com.zoonk.api.models.MemoryInsightPlanChange
 import com.zoonk.api.models.SuggestedGoal
 import com.zoonk.api.models.Today
 import com.zoonk.api.models.TodayFocusTest
-import kotlinx.datetime.toJavaLocalDate
 
 /** What a notice needs from the screen: its read, the answers it saves, and where it leads. */
 internal class TodayNoticeState(
@@ -57,7 +56,6 @@ internal class TodayNoticeState(
     val settled: Boolean,
     val viewModel: TodayViewModel,
     val navigate: (AppRoute) -> Unit,
-    val plans: PlanStore? = null,
     val language: LanguageToday? = null,
     val onboarding: OnboardingStore? = null,
 )
@@ -84,10 +82,6 @@ internal fun TodayNotice(
     when (hold?.kind ?: picked) {
         Today.Notice.EXAM -> {
             read.today.exam?.let { ExamMomentNotice(it, state, layout, modifier) }
-        }
-
-        Today.Notice.EXAM_ACCESS -> {
-            ExamAccessNotice(state, layout, modifier)
         }
 
         Today.Notice.EXAM_CHOICE -> {
@@ -139,6 +133,7 @@ internal fun TodayNotice(
     }
 }
 
+/** Main's `TodayExamMoment`: built from the suggestion's pieces like every other one; the exam page keeps the card. */
 @Composable
 private fun ExamMomentNotice(
     moment: ExamMoment,
@@ -146,20 +141,29 @@ private fun ExamMomentNotice(
     layout: SuggestionLayout,
     modifier: Modifier,
 ) {
+    val words = examMomentWords(moment) ?: return
+    val title = examMomentTitle(moment)
+    val afterExam = moment.stage == ExamMoment.Stage.AFTER_EXAM
+
     Suggestion(
         label = stringResource(R.string.today_notice_exam),
-        summary = examMomentTitle(moment),
+        summary = title,
         layout = layout,
         modifier = modifier,
         mark = SuggestionMark.Symbol(moment.stage.icon),
     ) {
-        ExamMomentCard(
-            moment,
-            onOpen = {
+        SuggestionHeader(title)
+        moment.day?.takeUnless { afterExam }?.let {
+            Text(examDayText(it), style = MaterialTheme.typography.bodyMedium.withTabularFigures())
+        }
+        SuggestionDescription(words)
+        ExamChecklist(moment.checklist, moment.tools)
+        SuggestionActions {
+            SuggestionMainAction(stringResource(if (afterExam) R.string.exam_add_result else R.string.exam_see_exam), {
                 close()
                 state.navigate(AppRoute.Exam)
-            },
-        )
+            })
+        }
     }
 }
 
@@ -178,11 +182,7 @@ private fun ExamChoiceNotice(
 
     if (made != null) {
         val sentence =
-            planChangeSentence(
-                made.change,
-                state.read.today.goal.targetDate
-                    ?.toJavaLocalDate(),
-            )
+            planChangeSentence(made.change, state.read.today.goal.dateKind)
         val undo: (@Composable () -> Unit)? =
             if (made.change.canUndo) {
                 {
@@ -208,8 +208,7 @@ private fun ExamChoiceNotice(
             lineAction = undo,
         ) {
             SuggestionResult(sentence)
-            planChangeProposalEffect(made.change.effect, planEnd(state), besideDiff = true)?.let { SuggestionDescription(it) }
-            PlanEffectDiff(made.change.effect)
+            PlanEffectDiff(made.change.effect, dateKind = state.read.today.goal.dateKind)
             undo?.let { SuggestionActions { it() } }
             if (viewModel.examChoiceFailedOn == state.read.noticeVisit()) SuggestionSaveError()
         }
@@ -261,39 +260,12 @@ private fun ExamChoiceNotice(
 private fun TodayViewModel.heldNotice(read: TodayRead.Day) =
     noticeHold?.takeIf { it.goalId == read.today.goal.id && it.date == read.day.localDate }
 
-/** The notice Today shows, as main counts it: an insight, or Plus's gate on a free exam plan's ended first week. */
+/** The notice Today shows, as main counts it: an insight. */
 internal fun TodayViewModel.noticeEvent(read: TodayRead.Day): AnalyticsEvent? {
     val hold = heldNotice(read)
     return when (hold?.kind ?: read.today.notice) {
         Today.Notice.INSIGHT -> (read.today.insight ?: hold?.insight)?.let { AnalyticsEvent.InsightShown(it.id, it.kind) }
-        Today.Notice.EXAM_ACCESS -> AnalyticsEvent.SubscriptionGateShown.takeIf { read.day.examAccess.trialEnded }
         else -> null
-    }
-}
-
-@Composable
-private fun ExamAccessNotice(
-    state: TodayNoticeState,
-    layout: SuggestionLayout,
-    modifier: Modifier,
-) {
-    if (!state.read.day.examAccess.trialEnded) return
-
-    val title = stringResource(R.string.subscription_free_week_over_title)
-    val seePlus = stringResource(R.string.subscription_see_plus)
-    val openPlus = { state.navigate(AppRoute.Subscription) }
-
-    Suggestion(
-        label = stringResource(R.string.today_notice_exam_access),
-        summary = title,
-        layout = layout,
-        modifier = modifier,
-        mark = SuggestionMark.Symbol(R.drawable.ic_auto_awesome),
-        lineAction = { SuggestionAction(seePlus, openPlus, secondary = true) },
-    ) {
-        SuggestionHeader(title)
-        SuggestionDescription(stringResource(R.string.subscription_free_week_over_description))
-        SuggestionActions { SuggestionAction(seePlus, openPlus, secondary = true) }
     }
 }
 
@@ -361,7 +333,7 @@ private fun FocusTestNotice(
         } else {
             SuggestionDescription(stringResource(R.string.focustest_suggestion_body, formatMinutes(test.minutes.toInt(), currentLocale())))
             SuggestionActions {
-                SuggestionAction(
+                SuggestionMainAction(
                     text = stringResource(R.string.focustest_start),
                     onClick = {
                         close()
@@ -382,17 +354,18 @@ private fun FocusTestNotice(
 
 @Composable
 private fun InsightNotice(
-    insight: MemoryInsight,
+    opened: MemoryInsight,
     state: TodayNoticeState,
     layout: SuggestionLayout,
     modifier: Modifier,
 ) {
     val viewModel = state.viewModel
+    val repriced = viewModel.repricedInsights[opened.id]
+    val insight = repriced ?: opened
     val answer = viewModel.insightAnswers[insight.id]
     val result = answer?.takeIf { it != InsightAnswer.Failed }?.let { insightResult(insight, it) }
     val label = stringResource(R.string.today_insight_label)
     val proposed = insight.planChange?.status == MemoryInsightPlanChange.Status.PROPOSED
-    val effect = if (proposed) planChangeProposalEffect(insight.planChange?.effect, planEnd(state)) else null
 
     Suggestion(
         label = label,
@@ -405,7 +378,7 @@ private fun InsightNotice(
     ) {
         SuggestionHeader(label)
         SuggestionDescription(insight.message)
-        effect?.let { SuggestionDescription(it) }
+        if (proposed) PlanEffectDiff(insight.planChange?.effect, dateKind = state.read.today.goal.dateKind, repriced = repriced != null)
         if (result != null) {
             SuggestionResult(result)
         } else {
@@ -477,21 +450,4 @@ private fun insightResult(
             stringResource(R.string.today_noted)
         }
     }
-}
-
-/** A plan with a date says what a change does to it; one without reads its estimated end from the plan. */
-@Composable
-internal fun planEnd(state: TodayNoticeState): PlanEnd {
-    val goal = state.read.today.goal
-    val plans = state.plans
-    if (goal.targetDate != null || plans == null) return PlanEnd(goal.targetDate?.toJavaLocalDate(), null)
-    val plan by plans.plan[goal.id].collectShown()
-    return PlanEnd(
-        null,
-        plan.value
-            ?.plan
-            ?.estimate
-            ?.endDate
-            ?.toJavaLocalDate(),
-    )
 }

@@ -11,9 +11,6 @@ struct ZoonkButtonStyle: ButtonStyle {
     case main
     /// See-through with the stronger line: main's `outline`.
     case outline
-    /// Ink words on a quiet fill: main's `secondary`, as the lesson's "I don't know yet" in place of
-    /// Check.
-    case secondary
     /// No line: main's `ghost`, a quiet option beside or under the main action.
     case ghost
   }
@@ -67,7 +64,6 @@ private struct ListRowButtonIcon: ViewModifier {
 extension ButtonStyle where Self == ZoonkButtonStyle {
   static var mainAction: ZoonkButtonStyle { ZoonkButtonStyle(variant: .main) }
   static var outline: ZoonkButtonStyle { ZoonkButtonStyle(variant: .outline) }
-  static var secondary: ZoonkButtonStyle { ZoonkButtonStyle(variant: .secondary) }
   static var ghost: ZoonkButtonStyle { ZoonkButtonStyle(variant: .ghost) }
 }
 
@@ -76,6 +72,8 @@ private struct ZoonkButton: View {
   @Environment(\.isBusy) private var isBusy
   @Environment(\.controlSize) private var controlSize
   @Environment(\.buttonSizing) private var sizing
+  @Environment(\.mainActionFillsRow) private var fillsRow
+  @Environment(\.mainActionMinWidth) private var mainMinWidth
   @Environment(\.colorScheme) private var colorScheme
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -87,14 +85,15 @@ private struct ZoonkButton: View {
     let shape = RoundedRectangle(
       cornerRadius: isSmall && !isIcon ? Radius.md : Radius.lg, style: .continuous)
 
-    configuration.label
+    labelOnlyIfMain(configuration.label)
+      .environment(\.showsButtonIcon, !isLabelOnly)
       .typeStyle(isSmall ? .smallButton : .button)
       .multilineTextAlignment(.center)
       .foregroundStyle(label)
       .padding(.horizontal, isIcon ? 0 : ZoonkButtonStyle.horizontalPadding(controlSize))
       .padding(.vertical, isIcon ? 0 : 6)
-      .frame(minWidth: isIcon ? height : nil, minHeight: height)
-      .frame(maxWidth: sizing == .flexible && !isIcon ? .infinity : nil)
+      .frame(minWidth: isIcon ? height : variant == .main ? mainMinWidth : nil, minHeight: height)
+      .frame(maxWidth: fills && !isIcon ? .infinity : nil)
       .background(fill, in: shape)
       .overlay {
         if variant == .outline && !isDestructive {
@@ -107,6 +106,20 @@ private struct ZoonkButton: View {
       .animation(.easeOut(duration: 0.15), value: isPressed)
       .contentShape(MinimumHitArea())
   }
+
+  /// A main action is its label alone (main's rule 6): any icon its label carries stays off it.
+  private var isLabelOnly: Bool { variant == .main && !isIcon }
+
+  @ViewBuilder
+  private func labelOnlyIfMain(_ label: ButtonStyleConfiguration.Label) -> some View {
+    if isLabelOnly {
+      label.labelStyle(.titleOnly)
+    } else {
+      label
+    }
+  }
+
+  private var fills: Bool { sizing == .flexible || (variant == .main && fillsRow) }
 
   /// A busy button keeps its look even where its container is disabled, such as a form that locks
   /// while its answer saves: only its spinner says it's working.
@@ -148,8 +161,6 @@ private struct ZoonkButton: View {
     switch variant {
     case .main:
       return isEnabled ? Color(.primary).opacity(isPressed ? 0.8 : 1) : .muted
-    case .secondary:
-      return Color(.secondary).opacity(isPressed ? 0.8 : 1)
     case .outline, .ghost:
       return isPressed ? .muted : .clear
     }

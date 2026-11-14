@@ -13,14 +13,23 @@ import { getString, isJsonObject } from "@zoonk/utils/json";
 import { logError } from "@zoonk/utils/logger";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 
-function readTier(value: unknown): "free" | "guest" | "plus" {
-  const tier = isJsonObject(value) ? getString(value.limit, "tier") : null;
-  return tier === "free" || tier === "plus" ? tier : "guest";
-}
+type LimitRefusal = Extract<LessonStartOutcome, { reason: "limitReached" }>;
 
-function readPeriod(value: unknown): "day" | "month" | "total" {
-  const period = isJsonObject(value) ? getString(value.limit, "period") : null;
-  return period === "month" || period === "total" ? period : "day";
+function readLimit(body: unknown): LimitRefusal {
+  const limit = isJsonObject(body) ? body.limit : null;
+  const period = getString(limit, "period");
+  const tier = getString(limit, "tier");
+
+  if (period === "rolling30Days") {
+    return {
+      availableAt: getString(limit, "availableAt") ?? "",
+      period,
+      reason: "limitReached",
+      tier: "free",
+    };
+  }
+
+  return { reason: "limitReached", tier: tier === "free" || tier === "plus" ? tier : "guest" };
 }
 
 function toStartOutcome({
@@ -56,10 +65,10 @@ function toStartOutcome({
   }
 
   if (status === "limitReached") {
-    return { period: readPeriod(body), reason: "limitReached", tier: readTier(body) };
+    return readLimit(body);
   }
 
-  return status === "unauthorized" || status === "notFound" || status === "plusRequired"
+  return status === "unauthorized" || status === "notFound"
     ? { reason: status }
     : { reason: "failed" };
 }

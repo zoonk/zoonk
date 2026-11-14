@@ -10,7 +10,7 @@ import { getCheckpoint } from "@zoonk/core/checkpoints/get";
 import { openLanguageCheckpointCall } from "@zoonk/core/language/conversations/start";
 import { getSession } from "@zoonk/core/users/session";
 import { DrawnMath } from "@zoonk/learn/rich-text/drawn-math";
-import { TaskSkeleton } from "@zoonk/learn/task-layout";
+import { QuestionSkeleton, TaskSkeleton } from "@zoonk/learn/task-layout";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
@@ -39,13 +39,7 @@ function CheckpointSkeleton() {
       progress
       title={<Skeleton className="h-4 w-28" />}
     >
-      <Skeleton className="h-7 w-5/6" />
-      <div className="flex flex-col gap-2.5">
-        <Skeleton className="rounded-option h-12 w-full" />
-        <Skeleton className="rounded-option h-12 w-full" />
-        <Skeleton className="rounded-option h-12 w-full" />
-        <Skeleton className="rounded-option h-12 w-full" />
-      </div>
+      <QuestionSkeleton />
     </TaskSkeleton>
   );
 }

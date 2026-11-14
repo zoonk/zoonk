@@ -215,7 +215,6 @@ private fun ColumnScope.LevelTestIntro(
                 onClick = onStart,
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !pending,
-                leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
             ) {
                 Text(stringResource(R.string.onboarding_placement_start))
             }
@@ -270,25 +269,23 @@ private fun ColumnScope.LevelTestWaiting(
         hold,
         stringResource(R.string.onboarding_continue),
         onRetry,
-        afterWait = {
-            OnboardingActions {
-                FinishFailed(failed)
-                TextButton(
-                    busy = pending,
-                    onClick = onSkip,
-                    modifier = Modifier.fillMaxWidth(),
-                    leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
-                ) {
-                    Text(stringResource(R.string.onboarding_language_test_skip))
-                }
-                Text(
-                    text = stringResource(R.string.onboarding_language_test_skip_note),
-                    modifier = Modifier.fillMaxWidth(),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
+        skip = {
+            FinishFailed(failed)
+            TextButton(
+                busy = pending,
+                onClick = onSkip,
+                modifier = Modifier.fillMaxWidth(),
+                leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
+            ) {
+                Text(stringResource(R.string.onboarding_language_test_skip))
             }
+            Text(
+                text = stringResource(R.string.onboarding_language_test_skip_note),
+                modifier = Modifier.fillMaxWidth(),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodyMedium,
+            )
         },
     ) { share ->
         GenerationWait(GenerationKind.LevelTestBank, run, onRetry, share = share) {
@@ -512,7 +509,6 @@ private fun ColumnScope.LevelTestDone(
                 busy = pending,
                 onClick = onContinue,
                 modifier = Modifier.fillMaxWidth(),
-                trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
             ) {
                 Text(stringResource(R.string.onboarding_language_test_build_plan))
             }

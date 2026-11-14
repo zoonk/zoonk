@@ -90,7 +90,6 @@ import com.zoonk.android.ui.components.GoalRing
 import com.zoonk.android.ui.components.GoalRingTrack
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.KindMark
-import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.LessonVisual
 import com.zoonk.android.ui.components.LevelBar
@@ -120,6 +119,7 @@ import com.zoonk.android.ui.components.Readout
 import com.zoonk.android.ui.components.SecondaryButton
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StatusMark
+import com.zoonk.android.ui.components.SuccessEyebrow
 import com.zoonk.android.ui.components.Suggestion
 import com.zoonk.android.ui.components.SuggestionAction
 import com.zoonk.android.ui.components.SuggestionActions
@@ -261,7 +261,7 @@ private fun ColorRoles() {
         Words("Your answer", colors.onErrorContainer, colors.errorContainer)
         Words("Field error", colors.error, colors.background)
         Words("+18 Brain Power", zoonk.brainText, colors.background)
-        Words("Appears a lot", zoonk.warningText, colors.background)
+        Words("Asked a lot", zoonk.warningText, colors.background)
         Words("Snackbar", colors.inverseOnSurface, colors.inverseSurface)
     }
 }
@@ -307,7 +307,6 @@ private fun TypeRoles() {
     val muted = MaterialTheme.colorScheme.onSurfaceVariant
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Eyebrow("Tue, Nov 3 · ~376 days left")
         PageTitleRow("Today") { Readout("43 min left") }
         Text("Quantum physics from scratch", style = type.displaySmall)
         Text("Subjects", style = type.titleLarge)
@@ -333,7 +332,7 @@ private fun Buttons() {
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Button(onClick = {}, size = size) { Text("Continue") }
                 OutlinedButton(onClick = {}, size = size) { Text("Adjust plan") }
-                SecondaryButton(onClick = {}, size = size) { Text("I don't know yet") }
+                SecondaryButton(onClick = {}, size = size) { Text("Use this date") }
                 TextButton(onClick = {}, size = size) { Text("Skip") }
                 DestructiveButton(onClick = {}, size = size) { Text("Delete") }
             }
@@ -341,7 +340,7 @@ private fun Buttons() {
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Button(onClick = {}, enabled = false) { Text("Continue") }
             OutlinedButton(onClick = {}, enabled = false) { Text("Adjust plan") }
-            SecondaryButton(onClick = {}, enabled = false) { Text("I don't know yet") }
+            SecondaryButton(onClick = {}, enabled = false) { Text("Use this date") }
             TextButton(onClick = {}, enabled = false) { Text("Skip") }
             DestructiveButton(onClick = {}, enabled = false) { Text("Delete") }
         }
@@ -412,14 +411,18 @@ private fun MaterialComponents() {
 private fun BusyButtons() {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Button(onClick = {}, busy = true, leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) }) { Text("Start session") }
-            Button(onClick = {}, busy = true, trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) }) { Text("Continue") }
+            Button(onClick = {}, busy = true) { Text("Start session") }
+            Button(onClick = {}, busy = true) { Text("Continue") }
             OutlinedButton(
                 onClick = {},
                 busy = true,
                 leadingIcon = { ButtonIcon(R.drawable.ic_event_available) },
             ) { Text("Move to Monday") }
-            SecondaryButton(onClick = {}, busy = true, leadingIcon = { ButtonIcon(R.drawable.ic_help) }) { Text("I don't know yet") }
+            SecondaryButton(
+                onClick = {},
+                busy = true,
+                leadingIcon = { ButtonIcon(R.drawable.ic_event_available) },
+            ) { Text("Use this date") }
             TextButton(onClick = {}, busy = true, leadingIcon = { ButtonIcon(R.drawable.ic_undo) }) { Text("Undo") }
             DestructiveButton(onClick = {}, busy = true, leadingIcon = { ButtonIcon(R.drawable.ic_delete) }) { Text("Delete") }
             OutlinedButton(onClick = {}, busy = true, leadingIcon = { ButtonIcon(R.drawable.ic_download) }, size = ButtonSize.Small) {
@@ -428,7 +431,7 @@ private fun BusyButtons() {
         }
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             OutlinedButton(onClick = {}, busy = true, leadingIcon = { ButtonIcon(R.drawable.ic_help) }) { Text("I'm not sure") }
-            Button(onClick = {}, enabled = false, focusableWhenDisabled = true, leadingIcon = { ButtonIcon(R.drawable.ic_check) }) {
+            Button(onClick = {}, enabled = false, focusableWhenDisabled = true) {
                 Text("Check")
             }
             OutlinedButton(onClick = {}, busy = true) { Text("Show more") }
@@ -480,10 +483,10 @@ private fun Navigation() {
 @Composable
 private fun Chips() {
     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        LabelChip("Plus")
-        LabelChip("1 week")
-        LabelChip("Focus")
-        LabelChip(text = formatMinutes(12, currentLocale()), icon = R.drawable.ic_timer)
+        Eyebrow("1 week")
+        Eyebrow("Focus")
+        SuccessEyebrow("Now you know")
+        Eyebrow(text = formatMinutes(12, currentLocale()), icon = R.drawable.ic_timer)
     }
 }
 
@@ -761,7 +764,7 @@ private fun LimitNotices() {
             Limit.Reached(LimitTier.Plus) to LimitSubject.Help,
             Limit.SlowDown(30) to LimitSubject.Lessons,
             Limit.Reached(LimitTier.Free, LimitPeriod.Day) to LimitSubject.Calls,
-        ).forEach { (limit, subject) -> LimitNotice(limit, subject, onCreateAccount = {}, onSeePlus = {}) }
+        ).forEach { (limit, subject) -> LimitNotice(limit, subject, onCreateAccount = {}, onSubscribe = {}) }
     }
 }
 
@@ -845,8 +848,8 @@ private fun Audio() {
             }
         }
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            RecordButton(VoiceRecorder.Status.Idle, level = { 0f }, onStart = {}, onStop = {})
-            RecordButton(VoiceRecorder.Status.Recording(SystemClock.elapsedRealtime() - 7_000), level = { 0.6f }, onStart = {}, onStop = {})
+            RecordButton(VoiceRecorder.Status.Idle, onStart = {}, onStop = {})
+            RecordButton(VoiceRecorder.Status.Recording(SystemClock.elapsedRealtime() - 7_000), onStart = {}, onStop = {})
         }
         VoiceAnswerRecorder(
             grade = { recording ->

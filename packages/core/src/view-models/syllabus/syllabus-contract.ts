@@ -32,13 +32,13 @@ const syllabusChapterSchema = z
       .boolean()
       .meta({
         description:
-          "A topic whose lessons aren't written yet and start after the two weeks the plan writes ahead: say the lessons the plan teaches it (`plannedLessons`, about that many) and when it starts (`nextDate`), not that they're on the way. False for every other row",
+          "A topic whose lessons aren't written yet and start after the two weeks the plan writes ahead; `plannedLessons` is about how many it will have and `nextDate` when it starts. False for every other row",
       }),
     known: z
       .boolean()
       .meta({
         description:
-          "Done only because the learner showed they know it: every lesson tested out, none studied. Say it was skipped, apart from the chapters done",
+          "Done only because the learner showed they know it: every lesson tested out, none studied, so it was skipped, not studied",
       }),
     lessonsDone: countSchema,
     lessonsTotal: countSchema,
@@ -51,7 +51,7 @@ const syllabusChapterSchema = z
       .nullable()
       .meta({
         description:
-          "A topic's lessons the plan teaches while they aren't written yet, after its cuts and base choices. Null for a chapter, and for a topic of a plan saved before it stored them (until its next change): say no count then",
+          "A topic's lessons the plan teaches while they aren't written yet, after its cuts and base choices. Null for a chapter, and for a topic of a plan saved before it stored them (until its next change), when the count isn't known",
       }),
     position: z
       .int()
@@ -92,7 +92,7 @@ const syllabusTopicSchema = z
       .nullable()
       .meta({
         description:
-          'How often past exams asked it, from a reading of past papers or a source that counted them (the subject\'s `topicFrequencySource` cites the latter): `high` is shown as "Appears a lot". Null when nothing says',
+          "How often past exams asked it, from a reading of past papers or a source that counted them (the subject's `topicFrequencySource` cites the latter). Null when nothing says",
       }),
     heading: z
       .string()
@@ -111,7 +111,7 @@ const syllabusTopicSchema = z
       .nullable()
       .meta({
         description:
-          "From the plan's lessons on it. `known`: the learner showed they know it (a right answer in placement or a test, or a test-out), so the plan has no lessons on it; practice still asks it, and a miss brings its lessons back. In a subject the learner took out, a topic they studied lessons of keeps `studied` (or `known`) and its `chapters`, with `notPlannedReason` `skipped`. A topic whose lessons left were set aside after missed days is out for time (`notPlannedReason` `time`): `notPlanned`, or `inProgress` with the `chapters` the learner studied of it. Null when the plan doesn't say which skills teach which topic (plans made before topics were mapped): show the topic without a status",
+          "From the plan's lessons on it. `known`: the learner showed they know it (a right answer in placement or a test, or a test-out), so the plan has no lessons on it; practice still asks it, and a miss brings its lessons back. In a subject the learner took out, a topic they studied lessons of keeps `studied` (or `known`) and its `chapters`, with `notPlannedReason` `skipped`. A topic whose lessons left were set aside after missed days is out for time (`notPlannedReason` `time`): `notPlanned`, or `inProgress` with the `chapters` the learner studied of it. Null when the plan doesn't say which skills teach which topic (plans made before topics were mapped): the topic has no status then",
       }),
   })
   .meta({ id: "SyllabusTopic" });
@@ -148,7 +148,7 @@ const syllabusSubjectSchema = z
     }),
     lessonsKnown: countSchema.meta({
       description:
-        'Its lessons the learner skipped because they showed they know them (tested out); a miss on one of those topics brings them back to study, lowering this, never `lessonsDone`. Show apart: "25 skipped because you know them"',
+        "Its lessons the learner skipped because they showed they know them (tested out); a miss on one of those topics brings them back to study, lowering this, never `lessonsDone`. Not part of `lessonsDone`",
     }),
     lessonsTotal: countSchema.meta({
       description:
@@ -159,7 +159,7 @@ const syllabusSubjectSchema = z
       .nullable()
       .meta({
         description:
-          "An exam subject's first answers to questions never seen before that say how well it's known, once it has the few its `preparation` needs to count mastery: show as \"6 of 8 right\". Null before, while its preparation counts no mastery yet: say it shows after a few practice questions. Null too whenever `preparation` is null",
+          "An exam subject's first answers to questions never seen before that say how well it's known, once it has the few its `preparation` needs to count mastery: how many were right, of how many. Null before, while its preparation counts no mastery yet, and whenever `preparation` is null",
       }),
     matrix: z
       .array(z.string())
@@ -176,7 +176,7 @@ const syllabusSubjectSchema = z
       .nullable()
       .meta({
         description:
-          "An exam goal's preparation in this subject, on the same scale as the goal's (`GET /v1/goals/{goalId}/preparation`): the goal's rule on the subject's skills and answers, with the goal's mock exams, which test every subject. The goal's preparation is its subjects' together, each counting by how much it weighs, so it never sits outside them. Show it as the subject's number and bar, with `mastery` saying how much of it practice backs. A subject out of the plan (`notPlannedReason`) that the goal still counts (left out for time, its basics passed or its bases skipped, the exam testing it, with a section that weighs in the goal) has it too: show the number muted beside why it's out, with no bar. Null for other goals, whose subjects' progress is their lessons (`lessonsDone` and `lessonsKnown` of `lessonsTotal`), and for a subject out of the plan the goal doesn't count (`skipped` by the learner, `missing`, or weighing nothing in the goal)",
+          "An exam goal's preparation in this subject, on the same scale as the goal's (`GET /v1/goals/{goalId}/preparation`): the goal's rule on the subject's skills and answers, with the goal's mock exams, which test every subject. The goal's preparation is its subjects' together, each counting by how much it weighs, so it never sits outside them. `mastery` says how much of it practice backs. A subject out of the plan (`notPlannedReason`) that the goal still counts (left out for time, its basics passed or its bases skipped, the exam testing it, with a section that weighs in the goal) has it too. Null for other goals, whose subjects' progress is their lessons (`lessonsDone` and `lessonsKnown` of `lessonsTotal`), and for a subject out of the plan the goal doesn't count (`skipped` by the learner, `missing`, or weighing nothing in the goal)",
       }),
     questions: countSchema
       .nullable()
@@ -210,7 +210,7 @@ const syllabusSubjectSchema = z
       .nullable()
       .meta({
         description:
-          "Topics `known` (the learner showed they know them), shown apart from the ones studied; null when the plan doesn't map topics",
+          "Topics `known` (the learner showed they know them), which aren't among the ones studied; null when the plan doesn't map topics",
       }),
     topicsStudied: countSchema
       .nullable()
@@ -249,10 +249,7 @@ export const syllabusViewSchema = z
       }),
     knownTopicsReturn: z
       .enum(["practice", "reviews"])
-      .meta({
-        description:
-          "Where a `known` topic comes back to be confirmed: `practice`, or `reviews` for a free exam plan past its first week, whose practice is Plus (the quick review asks it then)",
-      }),
+      .meta({ description: "Where a known topic comes back to be confirmed. Always practice" }),
     lessons: z
       .object({
         done: countSchema.meta({ description: "Studied or skipped as known" }),

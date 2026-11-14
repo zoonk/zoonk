@@ -128,14 +128,9 @@ private struct TodayStartGoal: View {
           router.open(.explain(goalId: explanation.id))
         } label: {
           Text(
-            "Continue explanation", tableName: "Today",
+            "Continue", tableName: "Today",
             comment: "Opens the learner's unfinished quick explanation")
         }
-      } header: {
-        SectionTitle(
-          Text(
-            "Your quick explanation", tableName: "Today",
-            comment: "The learner's unfinished quick explanation"))
       }
     }
 
@@ -151,10 +146,11 @@ struct UnfinishedGoalSection: View {
   var body: some View {
     if let draft = onboarding.resume.value?.draft {
       Section {
-        Text(draft.prompt)
+        VStack(alignment: .leading, spacing: 2) {
+          Text(draft.prompt)
+          UnfinishedGoalLine()
+        }
         ContinueDraftButton(draft: draft)
-      } header: {
-        UnfinishedGoalTitle()
       }
     }
   }
@@ -167,15 +163,15 @@ private struct UnfinishedGoalPanel: View {
   var body: some View {
     if let draft = onboarding.resume.value?.draft {
       GroupBox {
-        Text(draft.prompt)
-          .lineLimit(3)
-          .foregroundStyle(.mutedForeground)
+        VStack(alignment: .leading, spacing: 2) {
+          Text(draft.prompt)
+            .lineLimit(3)
+          UnfinishedGoalLine()
+        }
 
         ContinueDraftButton(draft: draft)
           .buttonStyle(.outline)
           .controlSize(.small)
-      } label: {
-        UnfinishedGoalTitle()
       }
       .groupBoxStyle(.panel)
       .padding(.horizontal, 16)
@@ -184,11 +180,14 @@ private struct UnfinishedGoalPanel: View {
   }
 }
 
-private struct UnfinishedGoalTitle: View {
+private struct UnfinishedGoalLine: View {
   var body: some View {
-    SectionTitle(
-      Text(
-        "What you wrote", tableName: "Onboarding", comment: "Header over the learner's typed goal"))
+    Text(
+      "You didn't finish setting this up.", tableName: "Today",
+      comment: "Under a goal the learner typed and didn't confirm"
+    )
+    .typeStyle(.note)
+    .foregroundStyle(.mutedForeground)
   }
 }
 
@@ -210,10 +209,14 @@ private struct ContinueDraftButton: View {
 
 private struct TodaySuggestedGoal: View {
   let suggestion: SuggestedGoal
+  @State private var answer = SuggestedGoalAnswer()
 
   var body: some View {
     ZoonkList {
-      SuggestedGoalSection(suggestion: suggestion)
+      SuggestedGoalSection(suggestion: suggestion, answer: answer, buttonsInBar: true)
+    }
+    .bottomBar(note: answer.failed ? BarNote(SuggestedGoalAnswer.failure) : nil) {
+      SuggestedGoalButtons(suggestion: suggestion, answer: answer)
     }
     .navigationSubtitle(
       Text("Welcome back", tableName: "Today", comment: "Greets a learner back with no goal"))
@@ -249,11 +252,8 @@ private struct TodayPreparing: View {
           } icon: {
             Image(systemName: "map")
           }
-        } description: {
-          Text(
-            "Look it over before you start.", tableName: "Today",
-            comment: "Why Today waits for the learner to see their new plan")
-        } actions: {
+        }
+        .bottomBar {
           Button {
             router.open(.goalSetup(goalId: goalID))
           } label: {
@@ -262,7 +262,7 @@ private struct TodayPreparing: View {
               comment: "Opens the goal's plan before its first day")
           }
           .buttonStyle(.mainAction)
-          .controlSize(.large)
+          .keyboardShortcut(.defaultAction)
         }
       } else if answersLeft {
         ContentUnavailableView {
@@ -273,30 +273,29 @@ private struct TodayPreparing: View {
           } icon: {
             Image(systemName: "list.bullet.clipboard")
           }
-        } description: {
-          Text(
-            "It's built from what you tell us.", tableName: "Today",
-            comment: "Why the goal's questions matter; \"It\" is the learner's plan")
-        } actions: {
+        }
+        .bottomBar {
           Button {
             router.open(.goalSetup(goalId: goalID))
           } label: {
-            Text("Continue setting up", tableName: "Today", comment: "Opens the goal's questions")
+            Text("Continue", tableName: "Today", comment: "Opens the goal's questions")
           }
           .buttonStyle(.mainAction)
-          .controlSize(.large)
+          .keyboardShortcut(.defaultAction)
         }
       } else {
         ContentUnavailableView {
           Label {
-            Text("Building your plan", tableName: "Today", comment: "A plan is being built")
+            Text(
+              "Building your \(displayName) plan", tableName: "Today",
+              comment: "A plan is being built for the goal")
           } icon: {
             ProgressView()
           }
         } description: {
           Text(
-            "Building your \(displayName) plan", tableName: "Today",
-            comment: "A plan is being built for the goal")
+            "It takes a minute or two. Your first day opens here as soon as it's ready.",
+            tableName: "Today", comment: "While a goal's plan is being built")
         } actions: {
           if stoppedFollowing {
             Button {
@@ -381,11 +380,8 @@ private struct TodayGoalPaused: View {
         } icon: {
           Image(systemName: "flag.checkered")
         }
-      } description: {
-        Text(
-          "Start a new goal, or pick another one above.", tableName: "Today",
-          comment: "Today for a finished goal")
-      } actions: {
+      }
+      .bottomBar {
         newGoal(prominent: true)
       }
     } else {
@@ -418,40 +414,38 @@ private struct TodayGoalPaused: View {
             "Your plan picks up from today, starting with the lessons planned for the days you paused.",
             tableName: "Today", comment: "What resuming the paused goal moves")
         }
-
-        if failure == .limitReached {
-          FailureLine(
-            message: LocalizedStringResource(
-              "You're following as many goals as the free plan allows. Pause another goal to resume this one, or get Plus to follow more.",
-              table: "Today",
-              comment:
-                "Why resuming the goal failed: the learner follows as many goals at once as the free plan allows; it's about goals followed at the same time, not new goals started per day or month. Pausing a goal keeps its progress. Plus is the subscription's name, not \"more\""
-            ))
-        } else if failure != nil {
-          FailureLine(
-            message: LocalizedStringResource(
-              "Couldn't save. Check your connection and try again.", table: "Today",
-              comment: "Resuming the goal failed"))
-        }
       }
-    } actions: {
+    }
+    .bottomBar(note: failureNote) {
+      newGoal(prominent: goal == nil)
+
       if let goal {
-        Button {
+        BusyButton(isBusy: isResuming) {
           resume(goal)
         } label: {
-          Text("Resume \(goal.displayName)", tableName: "Today", comment: "Resumes the paused goal")
-            .lineLimit(1)
+          Text("Resume", tableName: "Today", comment: "Resumes the paused goal")
         }
         .buttonStyle(.mainAction)
-        .controlSize(.large)
-        .disabled(isResuming)
+        .keyboardShortcut(.defaultAction)
       }
-
-      newGoal(prominent: goal == nil)
     }
     .modifier(ResumePreviewLoading(goalID: goal?.id))
     .onDisappear {
       resumeTask?.cancel()
+    }
+  }
+
+  private var failureNote: BarNote? {
+    switch failure {
+    case .limitReached:
+      BarNote(GoalError.resumeLimit)
+    case nil:
+      nil
+    default:
+      BarNote(
+        LocalizedStringResource(
+          "Couldn't save. Check your connection and try again.", table: "Today",
+          comment: "Resuming the goal failed"))
     }
   }
 
@@ -464,9 +458,9 @@ private struct TodayGoalPaused: View {
     }
 
     if prominent {
-      button.buttonStyle(.mainAction).controlSize(.large)
+      button.buttonStyle(.mainAction).keyboardShortcut(.defaultAction)
     } else {
-      button.buttonStyle(.outline).controlSize(.large)
+      button.buttonStyle(.outline)
     }
   }
 

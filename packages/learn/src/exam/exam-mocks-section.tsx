@@ -1,14 +1,11 @@
 "use client";
 
+import { buttonVariants } from "@zoonk/ui/components/button";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { LIST_GROUP_CLASS } from "../_components/list-group";
-import {
-  PageSection,
-  PageSectionDetail,
-  PageSectionHeader,
-  PageSectionTitle,
-} from "../_components/page";
-import { PlusNotice } from "../_components/plus-lock";
+import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
+import { LearnLink } from "../learn-link";
 import { MockSummaryRow } from "../mock/mock-summary-row";
 import { useExamScreen } from "./exam-context";
 import { ExamNextMock } from "./exam-next-mock";
@@ -26,13 +23,12 @@ function ExamMockRows() {
   ));
 }
 
-export function ExamMocks({ offered }: { offered: boolean }) {
+export function ExamMocks({ entry = false }: { entry?: boolean }) {
   const t = useExtracted();
   const { exam } = useExamScreen();
-  const locked = exam.mocksRequirePlus && (exam.nextMock !== null || offered);
   const running = exam.runningMocks.length > 0;
 
-  if (!running && !exam.nextMock && exam.mocks.length === 0 && !locked) {
+  if (!running && !exam.nextMock && exam.mocks.length === 0 && !entry) {
     return null;
   }
 
@@ -40,11 +36,6 @@ export function ExamMocks({ offered }: { offered: boolean }) {
     <PageSection aria-labelledby={MOCKS_TITLE_ID}>
       <PageSectionHeader>
         <PageSectionTitle id={MOCKS_TITLE_ID}>{t("Mock exams")}</PageSectionTitle>
-        {exam.mocks.length > 0 && (
-          <PageSectionDetail>
-            {t("{count, plural, one {# taken} other {# taken}}", { count: exam.mocks.length })}
-          </PageSectionDetail>
-        )}
       </PageSectionHeader>
 
       {(running || exam.nextMock || exam.mocks.length > 0) && (
@@ -63,12 +54,13 @@ export function ExamMocks({ offered }: { offered: boolean }) {
         </ol>
       )}
 
-      {locked && (
-        <PlusNotice>
-          {t(
-            "Mock exams come with Plus: whenever you want, every week in your plan, and your progress over time.",
-          )}
-        </PlusNotice>
+      {entry && (
+        <LearnLink
+          className={cn(buttonVariants({ size: "sm", variant: "outline" }), "self-start")}
+          href="/mock/new"
+        >
+          {t("Take a mock exam")}
+        </LearnLink>
       )}
     </PageSection>
   );

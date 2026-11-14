@@ -20,6 +20,8 @@ struct FocusTestCheckpoint: View {
   @State private var answered: TodayView.PlanChange?
   @State private var deciding: PlanChangeDecision?
   @State private var decideFailed = false
+  /// An accept that found today's numbers differ: the proposal again, with them.
+  @State private var repriced: TodayView.PlanChange?
   /// What the sessions switch last saved on this visit.
   @State private var savedQuestions: FocusTestSessionQuestions?
   @State private var isSwitching = false
@@ -43,7 +45,7 @@ struct FocusTestCheckpoint: View {
   /// The focus the test proposes for a plan that's already there, until the learner answers it.
   private var waitingProposal: TodayView.PlanChange? {
     guard host == .plan, decision == nil, focus?.state == .proposed,
-      let proposal = focus?.proposal, proposal.canApply
+      let proposal = repriced ?? focus?.proposal, proposal.canApply
     else {
       return nil
     }
@@ -68,17 +70,18 @@ struct FocusTestCheckpoint: View {
       focusList
 
       Section {
-        PlanEffectDiff(effect: proposal.effect, today: PlanDate.isoDate(.now))
-          .listRowBackground(Color.clear)
+        PlanEffectDiff(
+          effect: proposal.effect, today: PlanDate.today(), repriced: repriced != nil
+        )
+        .listRowBackground(Color.clear)
       }
 
       FocusTestSaveFailure(failed: decideFailed)
-
+    }
+    .bottomBar {
       StepButtons(
         continueLabel: Text(FocusTestCopy.updatePlan),
-        continueIcon: nil,
         skipLabel: Text(FocusTestCopy.notNow),
-        skipIcon: nil,
         onContinue: { decide(.applied, on: proposal) },
         onSkip: { decide(.declined, on: proposal) })
     }
@@ -94,22 +97,10 @@ struct FocusTestCheckpoint: View {
     return ZoonkList {
       Section {
         PageHeader(
-          rows.isEmpty
-            ? Text(
-              "Your starting point is set", tableName: "FocusTest",
-              comment: "Title of the Focus test's result when it has no subjects to focus on")
-            : Text(
-              "Here's where to focus", tableName: "FocusTest",
-              comment: "Title of the Focus test's result: the subjects to give more time"),
-          eyebrow: host == .onboarding
-            ? Text(
-              "Answers saved", tableName: "FocusTest",
-              comment:
-                "Over the Focus test's result in onboarding: nothing the learner answered was lost")
-            : Text(FocusTestCopy.name),
-          supporting: Text(line(hasRows: !rows.isEmpty, lessonsSkipped: lessonsSkipped))
+          title(rows: rows.count, lessonsSkipped: lessonsSkipped),
+          chip: Chip(Text(FocusTestCopy.name)),
+          supporting: rows.isEmpty ? nil : line.map { Text($0) }
         )
-        .eyebrowDone(host == .onboarding)
         .listRowBackground(Color.clear)
 
         if decision == .applied, let answered, answered.canUndo {
@@ -149,14 +140,14 @@ struct FocusTestCheckpoint: View {
       }
 
       FocusTestSaveFailure(failed: failed || decideFailed)
-
+    }
+    .bottomBar {
       StepButtons(
         continueLabel: host == .onboarding
           ? Text(FocusTestCopy.continueLabel)
           : Text(
             "Done", tableName: "FocusTest",
             comment: "Leaves the Focus test's result for the plan"),
-        continueIcon: host == .onboarding ? .forward : .check,
         skipLabel: Text(
           "Answer more questions", tableName: "FocusTest",
           comment: "Opens another Focus test sitting from its result on the plan"),
@@ -184,18 +175,36 @@ struct FocusTestCheckpoint: View {
     }
   }
 
-  /// What the plan does with the subjects, said once under the title.
-  private func line(hasRows: Bool, lessonsSkipped: Int) -> String {
-    guard hasRows else {
+  /// The result is the headline: the subjects to focus on, or where the plan starts.
+  private func title(rows: Int, lessonsSkipped: Int) -> Text {
+    guard rows > 0 else {
       return lessonsSkipped > 0
-        ? String(
-          localized: "Your plan skips \(lessonsSkipped) lessons you already know.",
-          table: "FocusTest", comment: "Where the plan starts after the Focus test")
-        : String(
-          localized: "Your plan starts each subject from the basics.", table: "FocusTest",
-          comment: "Where the plan starts after the Focus test, with nothing to skip yet")
+        ? Text(
+          "Your plan skips \(lessonsSkipped) lessons you already know", tableName: "FocusTest",
+          comment: "Title of the Focus test's result with no subjects to focus on")
+        : Text(
+          "Your plan starts from the basics", tableName: "FocusTest",
+          comment:
+            "Title of the Focus test's result with no subjects to focus on and nothing to skip")
     }
 
+    switch focus?.state {
+    case .handPicked, .declined:
+      return Text(
+        "The test suggests these \(rows) subjects", tableName: "FocusTest",
+        comment:
+          "Title of the Focus test's result when the plan doesn't follow it: the learner chose their own focus or said Not now"
+      )
+    case .current, .ifTimeShort, .proposed, .suggested, nil:
+      return Text(
+        "Focus on these \(rows) subjects", tableName: "FocusTest",
+        comment: "Title of the Focus test's result: the subjects to give more time")
+    }
+  }
+
+  /// What the plan did with the subjects, said once under the title; nothing when it's only a
+  /// suggestion so far.
+  private var line: String? {
     if let decision {
       return Self.answerLine(decision)
     }
@@ -207,16 +216,14 @@ struct FocusTestCheckpoint: View {
         comment: "Under the Focus test's result when the plan already follows it")
     case .handPicked:
       return String(
-        localized: "Your plan keeps the focus you chose. This is what the test suggests.",
-        table: "FocusTest",
+        localized: "Your plan keeps the focus you chose.", table: "FocusTest",
         comment: "Under the Focus test's result beside a focus the learner chose")
     case .declined:
       return String(
-        localized: "You kept your plan as it is. This is what the test suggests.",
-        table: "FocusTest",
+        localized: "Your plan stays as it is.", table: "FocusTest",
         comment: "Under the Focus test's result after the learner said Not now to it, or undid it")
     case .ifTimeShort, .proposed, .suggested, nil:
-      return String(localized: FocusTestCopy.basedOnAnswers)
+      return nil
     }
   }
 
@@ -271,8 +278,10 @@ struct FocusTestCheckpoint: View {
             get: { questions != .paused },
             set: { setQuestions($0 ? .on : .paused, from: questions) }),
           title: Text(
-            "Ask a few more in my sessions", tableName: "FocusTest",
-            comment: "Switch on the Focus test's result: sessions ask a few of its questions"),
+            "Ask a few more as I study", tableName: "FocusTest",
+            comment:
+              "Switch on the Focus test's result: \"a few more\" are test questions, asked while the learner studies their lessons"
+          ),
           description: Text(
             "During your first week", tableName: "FocusTest",
             comment: "Under the switch for the Focus test's questions in sessions")
@@ -302,7 +311,9 @@ struct FocusTestCheckpoint: View {
     Task {
       defer { deciding = nil }
 
-      switch await plans.decide(goalId: goalID, changeId: change.id, decision: status) {
+      switch await plans.decide(change, goalId: goalID, decision: status) {
+      case .done(let saved?) where saved.status == "proposed":
+        repriced = saved
       case .done(let saved?):
         answered = saved
         decision = status

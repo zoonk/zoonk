@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "pronunciation_accent": "ee2b7cd29db587159add25e039fcdaaf16b9551abfd33182392615971f097f81",
   "pronunciation_continue": "8dd5f087670b30801618d8224a5f64ea11ad4675843051882d66cdf5c94be897",
   "pronunciation_done": "553bf1e6c41559c70790808ca98742dbb745e6a0e2abb44908b9def3a7228204",
   "pronunciation_failed": "628819987733f1b00adefa951f4c64f9c8849140fa324e41ca926db05fc26fae",
@@ -59,7 +58,6 @@
     <string name="pronunciation_no_words">Bugün tekrar söylemen gereken kelime yok.</string>
     <string name="pronunciation_practice_done">Alıştırma tamamlandı</string>
     <string name="pronunciation_nothing_said">Bu kez hiçbir şey söylemedin</string>
-    <string name="pronunciation_accent">Aksanın sana asla engel olmaz.</string>
     <!-- Closes the finished round. -->
     <string name="pronunciation_done">Kapat</string>
 </resources>

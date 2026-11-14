@@ -7,13 +7,11 @@ import {
 import {
   Drawer,
   DrawerContent,
-  DrawerHeader,
   DrawerPopup,
   DrawerTitle,
   DrawerTrigger,
 } from "@zoonk/ui/components/drawer";
 import { useExtracted } from "next-intl";
-import { DrawerCloseButton } from "../_components/details-drawer";
 import {
   ListGroup,
   ListRow,
@@ -24,6 +22,7 @@ import {
   ListRowTitle,
   ListRowTrailing,
 } from "../_components/list-group";
+import { SheetHeader } from "../_components/sheet-header";
 import { getSubjectName, useSubjectStateText } from "./use-focus-test-texts";
 
 export function FocusSubjects({ rows }: { rows: readonly FocusRow[] }) {
@@ -47,7 +46,7 @@ export function FocusSubjects({ rows }: { rows: readonly FocusRow[] }) {
 }
 
 function SubjectRow({ subject }: { subject: FocusTestSubject }) {
-  const stateText = useSubjectStateText();
+  const state = useSubjectStateText()(subject);
 
   return (
     <ListRow>
@@ -55,7 +54,7 @@ function SubjectRow({ subject }: { subject: FocusTestSubject }) {
         <ListRowContent>
           <ListRowTitle className="font-normal">{getSubjectName(subject)}</ListRowTitle>
         </ListRowContent>
-        <ListRowTrailing>{stateText(subject)}</ListRowTrailing>
+        {state && <ListRowTrailing>{state}</ListRowTrailing>}
       </ListRowBody>
     </ListRow>
   );
@@ -93,10 +92,9 @@ export function FocusTestSubjectsSheet({ subjects }: { subjects: readonly FocusT
       </DrawerTrigger>
 
       <DrawerPopup>
-        <DrawerHeader className="flex-row items-center justify-between gap-3">
-          <DrawerTitle className="text-xl font-semibold">{t("Subjects")}</DrawerTitle>
-          <DrawerCloseButton />
-        </DrawerHeader>
+        <SheetHeader>
+          <DrawerTitle>{t("Subjects")}</DrawerTitle>
+        </SheetHeader>
 
         <DrawerContent className="pt-1">
           <SubjectRows subjects={subjects} />

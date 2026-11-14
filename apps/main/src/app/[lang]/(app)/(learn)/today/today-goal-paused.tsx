@@ -1,12 +1,15 @@
+import { setGoalStatusAction } from "@/app/[lang]/(app)/(learn)/_components/goal-status-action";
 import { Link } from "@/i18n/navigation";
 import { listCurrentUserGoals } from "@zoonk/core/goals/list-current-user";
 import { getGoalResumePreview } from "@zoonk/core/plans/resume-preview";
+import { EnterLink } from "@zoonk/learn/enter-button";
 import { ResumeEffect } from "@zoonk/learn/journey/resume-effect";
+import { ResumeGoalBar } from "@zoonk/learn/journey/resume-goal-bar";
 import { TodayAtRest } from "@zoonk/learn/today/at-rest";
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { FlagIcon, PauseIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
-import { ResumeGoalButton } from "./resume-goal-button";
 
 async function loadResumePreview(goal: { id: string; status: string } | undefined) {
   if (goal?.status !== "paused") {
@@ -27,15 +30,15 @@ export async function TodayGoalPaused({ banner }: { banner: React.ReactNode }) {
     return (
       <TodayAtRest
         banner={banner}
-        actions={
-          <Link className={buttonVariants({ size: "lg" })} href="/start">
-            {t("Start a new goal")}
-          </Link>
+        bottomBar={
+          <BottomBar>
+            <BottomBarActions>
+              <EnterLink href="/start">{t("New goal")}</EnterLink>
+            </BottomBarActions>
+          </BottomBar>
         }
-        clause={t("Start a new goal, or pick another one above.")}
         icon={<FlagIcon />}
         sentence={t("You finished your {goal} goal.", { goal: goal.displayName })}
-        state={t("Finished")}
         title={t("Today")}
       />
     );
@@ -44,16 +47,20 @@ export async function TodayGoalPaused({ banner }: { banner: React.ReactNode }) {
   return (
     <TodayAtRest
       banner={banner}
-      actions={
-        <>
-          {goal && <ResumeGoalButton goalId={goal.id} goalTitle={goal.displayName} key={goal.id} />}
-          <Link
-            className={buttonVariants({ size: "lg", variant: goal ? "outline" : "default" })}
-            href="/start"
-          >
-            {t("New goal")}
-          </Link>
-        </>
+      bottomBar={
+        goal ? (
+          <ResumeGoalBar key={goal.id} onResume={setGoalStatusAction.bind(null, goal.id, "active")}>
+            <Link className={buttonVariants({ size: "xl", variant: "outline" })} href="/start">
+              {t("New goal")}
+            </Link>
+          </ResumeGoalBar>
+        ) : (
+          <BottomBar>
+            <BottomBarActions>
+              <EnterLink href="/start">{t("New goal")}</EnterLink>
+            </BottomBarActions>
+          </BottomBar>
+        )
       }
       clause={t("Nothing is planned until you resume it.")}
       detail={<ResumeEffect preview={resume} />}
@@ -63,7 +70,6 @@ export async function TodayGoalPaused({ banner }: { banner: React.ReactNode }) {
           ? t("Your {goal} goal is paused.", { goal: goal.displayName })
           : t("This goal is paused.")
       }
-      state={t("Paused")}
       title={t("Today")}
     />
   );

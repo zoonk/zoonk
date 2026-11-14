@@ -41,11 +41,11 @@
   "essay_rewrite_label": "1e02dda255a3d80aaf8997886c5bd80b006993fecc61cc6b412fa9e4707a4644",
   "essay_scale": "f7acab4ee798c94699eb75eaf623069fca2b0a67e729fb9c41af48731bac05c6",
   "essay_score_of": "4fa1b62ffeef28f08e5f752dfebbb0c4950fcf8558da842500c714c59fff7227",
-  "essay_see_comments": "65b6dc9bdbc8ced9d3ac30a0240a09e1725280f4a7570ea4fc52b5e068daa7de",
+  "essay_see_comments": "2d59bc624418f208fde75f5277ed47f39818fe697477b02d74af6c30dd2f9ff7",
   "essay_see_grade": "64ab7a9be69ed5743ebe6790ed0fa2a4978b5208514ffcc1f5d704d1ab79172f",
   "essay_send": "92f5b2831d8a26ac5b14a59afad77d9fd5a1098b2dd5073f7a3ff8ef90a00291",
   "essay_send_failed": "0a398e9aaef27bcfcffcbc8deb71532e325af4b7c7b281ef081894c4fe75e584",
-  "essay_skip_rewrite": "8a3340451ce89f60d20c15c913864222bf72afac8b9b95037fdf0d733fe0fa67",
+  "essay_skip_rewrite": "87e827e59ec06c6b4e759ac2dc521a832e41c48471fa8fcb19db092fc55475ff",
   "essay_skipped": "7e18004453348ee31350773d8774eac143565a80a44b4a614ef1f0a43aa26216",
   "essay_supporting_texts": "e5948a078a130f89745541ab5414510956c3f29ceeb11c5fba3ea98ae0539ac6",
   "essay_the_case": "4672cb4881d950aa3d7bd3cda871fa846f00f688166efa740d9cd81f84d72e24",
@@ -108,7 +108,7 @@
     <string name="essay_limit_reached">오늘 에세이 채점 횟수를 다 썼어요. 쓴 글은 그대로 남아 있으니 내일 보내세요.</string>
     <string name="essay_grading">평가 기준별로 에세이를 살펴보고 있어요. 최대 30초가 걸릴 수 있어요.</string>
     <string name="essay_grading_slow">아직 채점하고 있어요. 평소보다 시간이 더 걸리고 있어요.</string>
-    <string name="essay_skip_rewrite">고쳐 쓰기 건너뛰기</string>
+    <string name="essay_skip_rewrite">건너뛰기</string>
     <string name="essay_grade_rewrite">수정한 글 채점하기</string>
     <string name="essay_send">채점 요청하기</string>
     <string name="essay_leave_title">잠시 나갈까요?</string>
@@ -121,7 +121,7 @@
     <string name="essay_too_short_detail">에세이를 끝까지 쓴 뒤 다시 보내세요.</string>
     <string name="essay_rewrite">고쳐 쓰기</string>
     <string name="essay_finish_failed">처리하지 못했어요. 잠시 후에 다시 시도해 보세요.</string>
-    <string name="essay_see_comments">평가 기준별 의견 보기</string>
+    <string name="essay_see_comments">피드백 보기</string>
     <string name="essay_comments">평가 의견</string>
     <string name="essay_proposal_elements">제안의 다섯 가지 요소</string>
     <!-- One of the five elements of an ENEM essay's intervention proposal: who carries it out. -->

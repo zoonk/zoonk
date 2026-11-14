@@ -72,7 +72,6 @@ import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.components.Eyebrow
-import com.zoonk.android.ui.components.GenerationFailureNotice
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
@@ -93,6 +92,7 @@ import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.LessonReadiness
 import com.zoonk.api.models.StudyBlock
 import com.zoonk.api.models.StudyDay
+import com.zoonk.api.models.StudyReminderOffer
 import com.zoonk.api.models.StudySession
 import com.zoonk.api.models.TodayGoal
 import kotlinx.coroutines.delay
@@ -299,6 +299,9 @@ private fun SessionSummaryContent(
     val firstVisit = remember(summary.sessionId, summary.brainPower) { app.studySessions.firstVisit(summary.sessionId, summary.brainPower) }
     val day = session.toDayView()
     val goalId = session.goalId
+    // Showing the offer claims it, so a re-read summary comes back without one; it stays for this visit.
+    val offered = rememberSaveable(summary.sessionId) { summary.reminderOffer?.let { listOf(it.time, it.timeZone) }.orEmpty() }
+    val reminderOffer = offered.takeIf { it.size == 2 }?.let { (time, zone) -> StudyReminderOffer(time = time, timeZone = zone) }
 
     CelebrationScope(play = firstVisit) {
         SessionSummary(
@@ -322,6 +325,7 @@ private fun SessionSummaryContent(
                     signUp = { navigator.open(AppRoute.Login) },
                     finish = navigator::closeTask,
                 ),
+            reminderOffer = reminderOffer?.let { offer -> { ReminderOfferCard(app, offer) } },
         )
     }
 }
@@ -458,7 +462,6 @@ internal fun NextStop(
                                         },
                                         modifier = main.focusRequester(startFocus),
                                         enabled = !busy,
-                                        leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
                                     ) {
                                         Text(
                                             stringResource(
@@ -477,7 +480,6 @@ internal fun NextStop(
                                         onClick = { goalId?.let { viewModel.start(day, other, it) } },
                                         modifier = main,
                                         enabled = !busy,
-                                        leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
                                     ) {
                                         Text(
                                             stringResource(

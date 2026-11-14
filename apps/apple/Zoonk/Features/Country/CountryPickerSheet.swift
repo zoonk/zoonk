@@ -9,18 +9,16 @@ struct CountryPickerSheet: View {
   let suggested: [CountryChoice]
   /// The current value's code; nil when nothing is set.
   let selected: String?
-  /// Settings can clear the country; a goal's is always a real one.
-  var offersNotSet = false
   /// Picking another country rebuilds the plan, so the learner confirms it first.
   var confirmsRebuild = false
   /// False when it didn't save.
-  let save: (CountryChoice?) async -> Bool
+  let save: (CountryChoice) async -> Bool
 
   @Environment(CountryCatalogStore.self) private var catalogs
   @Environment(\.dismiss) private var dismiss
   @State private var query = ""
   /// The pick being saved; nil while nothing is.
-  @State private var saving: CountryChoice??
+  @State private var saving: CountryChoice?
   @State private var confirming: CountryChoice?
   @State private var failed = false
 
@@ -58,8 +56,10 @@ struct CountryPickerSheet: View {
       .announcesStatus(resultCount(catalog))
       .alert(
         Text(
-          "Change the content country?", tableName: "Plan",
-          comment: "Title of the question before a goal's plan is rebuilt for another country"),
+          "Switch to \(confirming?.name ?? "")?", tableName: "Plan",
+          comment:
+            "Title of the question before a goal's plan is made again for another country; the argument is a country's name, such as Portugal"
+        ),
         isPresented: Binding(get: { confirming != nil }, set: { if !$0 { confirming = nil } }),
         presenting: confirming
       ) { choice in
@@ -72,12 +72,12 @@ struct CountryPickerSheet: View {
           commit(choice)
         } label: {
           Text(
-            "Rebuild plan", tableName: "Plan",
-            comment: "Confirms a new content country, which rebuilds the goal's plan")
+            "Switch", tableName: "Plan",
+            comment: "Confirms a new country, which makes the goal a new plan")
         }
       } message: { choice in
         Text(
-          "New country: \(choice.name). Your plan will be rebuilt for it. The lessons you've finished stay done, and you can keep studying your current plan until the new one is ready.",
+          "We'll make a new plan for \(choice.name). Finished lessons stay done.",
           tableName: "Plan",
           comment:
             "Body of the question before a goal's plan is rebuilt for another country; the argument is a country's name, such as Portugal"
@@ -99,16 +99,6 @@ struct CountryPickerSheet: View {
 
   @ViewBuilder
   private func browsing(_ catalog: Resource<[CountryChoice]>) -> some View {
-    if offersNotSet {
-      Section {
-        row(
-          nil,
-          name: Text(
-            "Not set", tableName: "Settings",
-            comment: "Where the learner lives, when they haven't said"))
-      }
-    }
-
     if !suggested.isEmpty {
       Section {
         ForEach(suggested) { choice in
@@ -222,20 +212,19 @@ struct CountryPickerSheet: View {
         comment: "VoiceOver, as a country search changes: how many countries it found")
   }
 
-  private func row(_ choice: CountryChoice?, name: Text? = nil) -> some View {
-    let current = saving ?? selected.map { code in CountryChoice(code: code, name: "") }
-    let isSelected = current?.code == choice?.code
+  private func row(_ choice: CountryChoice) -> some View {
+    let isSelected = (saving?.code ?? selected) == choice.code
 
     return Button {
       pick(choice)
     } label: {
       HStack(alignment: .firstTextBaseline) {
-        (name ?? Text(choice?.name ?? ""))
+        Text(choice.name)
           .typeStyle(.rowTitle)
           .foregroundStyle(Color(.foreground))
           .frame(maxWidth: .infinity, alignment: .leading)
 
-        if choice?.isHome == true {
+        if choice.isHome {
           homeTag
             .typeStyle(.meta)
             .foregroundStyle(.mutedForeground)
@@ -244,7 +233,7 @@ struct CountryPickerSheet: View {
       .contentShape(.rect)
     }
     .pickedRow(isSelected)
-    .accessibilityLabel(label(choice, name: name))
+    .accessibilityLabel(label(choice))
     .accessibilityAddTraits(isSelected ? .isSelected : [])
   }
 
@@ -254,12 +243,8 @@ struct CountryPickerSheet: View {
       comment: "Tag beside the country the learner said they live in, in a list of countries")
   }
 
-  private func label(_ choice: CountryChoice?, name: Text?) -> Text {
-    guard let choice else {
-      return name ?? Text(verbatim: "")
-    }
-
-    return choice.isHome
+  private func label(_ choice: CountryChoice) -> Text {
+    choice.isHome
       ? Text(
         "\(choice.name), where you live", tableName: "Plan",
         comment:
@@ -268,22 +253,22 @@ struct CountryPickerSheet: View {
       : Text(choice.name)
   }
 
-  private func pick(_ choice: CountryChoice?) {
+  private func pick(_ choice: CountryChoice) {
     guard saving == nil else {
       return
     }
 
-    if choice?.code == selected {
+    if choice.code == selected {
       dismiss()
-    } else if confirmsRebuild, let choice {
+    } else if confirmsRebuild {
       confirming = choice
     } else {
       commit(choice)
     }
   }
 
-  private func commit(_ choice: CountryChoice?) {
-    saving = .some(choice)
+  private func commit(_ choice: CountryChoice) {
+    saving = choice
 
     Task {
       if await save(choice) {

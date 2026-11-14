@@ -2,6 +2,7 @@ package com.zoonk.android.feature.player.steps
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.text.KeyboardOptions
@@ -83,10 +84,10 @@ import com.zoonk.android.feature.player.model.NumericCheck
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepResult
 import com.zoonk.android.feature.player.revealPart
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.FeedbackPanel
 import com.zoonk.android.ui.components.FeedbackTone
 import com.zoonk.android.ui.components.FeedbackVerdict
-import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.PictureFrame
 import com.zoonk.android.ui.format.currencyFor
@@ -198,7 +199,7 @@ internal fun ActivityView(
     QuestionScene {
         if (part.showsScreen) {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                renderer?.badge?.invoke(content.content)?.let { LabelChip(stringResource(it.label), icon = it.icon) }
+                renderer?.badge?.invoke(content.content)?.let { Eyebrow(stringResource(it.label), icon = it.icon) }
                 QuestionText(frame.prompt)
             }
             StepPicture(step, PictureFrame.Question)
@@ -398,7 +399,7 @@ private fun ActivityFeedback(
 
                 chosen?.let { FeedbackText(it.reason) }
                 if (correct != null && chosen?.isCorrect != true) {
-                    LabeledLine(stringResource(R.string.player_activity_correct_answer), correct.text)
+                    RightAnswerLine(correct.text)
                     FeedbackText(correct.reason)
                 }
             }
@@ -409,20 +410,18 @@ private fun ActivityFeedback(
                 val value = answer.numericValue
                 val digits = exactFractionDigitsFor(numeric.answer, numeric.allowed, value ?: numeric.answer)
 
-                value?.let {
-                    LabeledLine(
-                        stringResource(R.string.player_activity_your_answer),
-                        formatAmount(it, locale, numeric.unit, maximumFractionDigits = digits),
-                        tabular = true,
-                        isRight = false,
-                    )
-                }
-                if (!isCorrect) {
-                    LabeledLine(
-                        stringResource(R.string.player_correct_answer_label),
-                        formatAmount(numeric.answer, locale, numeric.unit, maximumFractionDigits = digits),
-                        tabular = true,
-                    )
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), itemVerticalAlignment = Alignment.CenterVertically) {
+                    value?.let {
+                        LabeledLine(
+                            stringResource(R.string.player_activity_your_answer),
+                            formatAmount(it, locale, numeric.unit, maximumFractionDigits = digits),
+                            tabular = true,
+                        )
+                    }
+                    if (!isCorrect) {
+                        if (value != null) Text("·", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        RightAnswerLine(formatAmount(numeric.answer, locale, numeric.unit, maximumFractionDigits = digits), tabular = true)
+                    }
                 }
                 FeedbackText(numeric.explanation)
             }
@@ -444,14 +443,13 @@ private fun LabeledLine(
     label: String,
     answer: String,
     tabular: Boolean = false,
-    isRight: Boolean = true,
 ) {
     val style = MaterialTheme.typography.bodyMedium
     Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
         Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, style = style)
         Text(
             answer,
-            color = if (isRight) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurface,
+            color = MaterialTheme.colorScheme.onSurface,
             style = (if (tabular) style.withTabularFigures() else style).copy(fontWeight = FontWeight.Medium),
         )
     }

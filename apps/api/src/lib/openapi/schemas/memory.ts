@@ -1,4 +1,5 @@
 import { memoryCategorySchema, memorySourceSchema } from "@zoonk/core/memory/contract";
+import { planChangeQuoteSchema } from "@zoonk/core/plans/decision-contract";
 import { planEffectSchema } from "@zoonk/core/plans/effect-contract";
 import { MemoryFactStatus, MemoryInsightKind, MemoryInsightStatus, MemoryOrigin } from "@zoonk/db";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
@@ -106,11 +107,17 @@ export const memoryInsightSchema = z
     message: z.string().meta({ description: "One or two sentences in the learner's language" }),
     planChange: z
       .object({
-        canApply: z.boolean(),
+        canApply: z
+          .boolean()
+          .meta({
+            description:
+              "True for a proposed change that has an `effect`. Accepting the insight works the change out against today's plan: when that differs from `effect`, nothing is applied and the insight comes back still `pending`, with today's `effect`",
+          }),
         effect: planEffectSchema
           .nullable()
           .meta({ description: "Lessons the change adds and how it moves the plan's end date" }),
         id: uuidSchema(),
+        quote: planChangeQuoteSchema,
         status: z
           .enum(["applied", "proposed"])
           .meta({

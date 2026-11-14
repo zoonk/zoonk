@@ -5,8 +5,8 @@
   "goalcontent_also": "6e6eb5196914a4e0d147bc256934a39dadb96c4fb47be6f2b59b9a9e2123a043",
   "goalcontent_also_in_exam_count": "b319c8bf446c2cc25408ce4e98195208b09d93ae55c0001b45ee8f50d1b8e8d2",
   "goalcontent_also_in_exams": "b893196db94fd4cf59e1de9ab211f8f56509d1e5834f8eee6959ea936319c773",
-  "goalcontent_also_in_plan": "110153ee5e8cbbbe23a0c04c941f19c20903d3bb72ea00c014969d5f83dbda59",
-  "goalcontent_appears_a_lot": "b40e7ddcbd875eca662cc145aa8ae5b2580be28fb09072e14c900665f0ae58f1",
+  "goalcontent_also_in_plan": "f06b362de814c0f403dfc4cf0f63457b5519ae4088da6cbb6bf2cb1792e98749",
+  "goalcontent_asked_a_lot": "d86f0fc3be1c1058005d7138c4655856f166cbb3c0bd3f6a9a80fdac5e574aff",
   "goalcontent_beyond_guide": "989967682bdbf3f8d7951a6230865af3b4f86cec33fb6cf67d1f8b2c4fb8a5af",
   "goalcontent_beyond_notice": "6cfb8f635eb19d69e7251e58f00a9c0621c54b99fde3a86a0525b7cc3c7a3f07",
   "goalcontent_bring_back": "6b56364d43374b204e1335e4a7d479d9063773e4e7a6f32d18227570c59bbb82",
@@ -42,8 +42,7 @@
   "goalcontent_mastery_pending": "70c8b4c49bd199361f41dbf3dc2c7500814ba27d32550a158354d248e658fc5f",
   "goalcontent_mastery_right": "343ef601077b48bc752d3960da3011747f24f05a9bf8cca46b23f3edf93be782",
   "goalcontent_material_topic_count": "e839f6dc6ef7f24eb77780973d1f7c900149426f01b4547e2b97c2f5ba0cdff1",
-  "goalcontent_matrix_title": "dc852a02e0adc20eb6a02dfcc51107ad26c61c6f6fe19ddbe864a36deb1a92f8",
-  "goalcontent_module": "984c2d7581fa7ffd04a1c0493974c10f1a803d90aaedff6aa10d5c5791271653",
+  "goalcontent_matrix_title": "70a62fcd8fa9b6f8a93c4fd81b8c2c8a5bbfcbdac2913caaba0424de09570e88",
   "goalcontent_module_count": "58109cb58a65e0bfab9ff266cb5aa9ef27fb25d0a23860f890e75600622e17d0",
   "goalcontent_modules": "fd5ee7a77628ff793c52a7856d78007b0c660186b8c6b8085c05f0001ae5b9c3",
   "goalcontent_more_chapters": "0fba75557ce1fb2a6344b53c3726fe490235a05e05d9fa41605e5a1d02a5c510",
@@ -75,8 +74,6 @@
   "goalcontent_skipped_known": "753d9ca0509ba763ec31d6827a3de970556490ff5fc1df43ecd66cceedba6eb8",
   "goalcontent_start": "f7ad2965f13dfc17a2aed81b6d6b8ced8eaee68137dd71c1be689ab332628eaa",
   "goalcontent_studied": "a343b22f5e86829b4b3d93f9c2a2a496302d3015a7b7923743b6ae5650212739",
-  "goalcontent_subject": "ccfa913f7a81fca291728d29a2b0947bd82be4bc96eb2548d7bce539b856d706",
-  "goalcontent_subject_chapter": "f5f9450bbb1958b8a37f103a6d7e6c5671ea9620297da297144f5309abe92816",
   "goalcontent_subject_count": "240c585c5f049fcb075f02dfe2355fe75d8983215fdd7a8a4c6789c431047103",
   "goalcontent_subject_missing": "3848c562734b405aae7a49ec0fef40ee917c51124cf36d43f3aafbd0fff76b96",
   "goalcontent_subject_skipped": "6a0a79650c550a312d99f69590ee5205ccc6a32bce19973b0b3a176f0fde841c",
@@ -85,7 +82,7 @@
   "goalcontent_to_review": "46685571d62ca93f7c0059bca795672761e089c99d124ef28cfc2a27368d58ed",
   "goalcontent_topic_count": "b6fb659c24ecf82b635f725b954f903c26d5f304d52546da78f34a5bc58b6fe4",
   "goalcontent_topic_in_progress": "557e9f9903691af0336a30728f99be8ad3d1740061080bdbee24c9f285556582",
-  "goalcontent_topic_known": "8574c6fe27816c98874f25efde95609c03ee0d5be49024eb3682e4ee25607c55",
+  "goalcontent_topic_known": "a560c347e01f60132b992252bb7adf30dfcbde4a8e90980525869918dd8f7ef3",
   "goalcontent_topic_known_practice": "7660a30fa4485ce34ab2f64bf1e4d1042850c4f4591fa66b873b74f57b222bf5",
   "goalcontent_topic_known_reviews": "50bcc24f0d6f30ffe2d1403906861bddbdfde1f67a8996effd11a21a86d02dc0",
   "goalcontent_topic_missing": "f81f73b4dcad3a4362b97899815d5071dc1d80bb4c996b9b3d080317a44144a1",
@@ -167,7 +164,7 @@
     <string name="goalcontent_mastery_pending">Birkaç alıştırma sorusu çözdükten sonra görünür</string>
     <string name="goalcontent_not_in_plan">Planında yok</string>
     <!-- A group of subjects the plan adds outside what the learner's own material lists. -->
-    <string name="goalcontent_also_in_plan">Planındaki ek branşlar</string>
+    <string name="goalcontent_also_in_plan">Planında da var</string>
     <!-- A group of subjects the plan adds outside an exam's public notice. -->
     <string name="goalcontent_beyond_notice">İlanın kapsamı dışında</string>
     <!-- A group of subjects the plan adds outside a language certificate's official guide. -->
@@ -196,10 +193,6 @@
         <item quantity="one">%d sınavla da ortak</item>
         <item quantity="other">%d sınavla da ortak</item>
     </plurals>
-    <!-- Eyebrow of a subject's page for a subject of an exam's notice. -->
-    <string name="goalcontent_subject">Branş</string>
-    <!-- Eyebrow of a subject's page for a module of the learner's plan. -->
-    <string name="goalcontent_module">Modül</string>
     <string name="goalcontent_from_material">Materyalinden</string>
     <!-- How much of the exam a subject is: "20% of the exam". -->
     <string name="goalcontent_share_of_exam">Sınavdaki payı: %1$s</string>
@@ -262,7 +255,7 @@
     <!-- A chapter's lessons and those done: "6 lessons · 2 done". -->
     <string name="goalcontent_lessons_done">%1$s · %2$s tanesi tamamlandı</string>
     <!-- A topic's state for screen readers. -->
-    <string name="goalcontent_topic_known">Bunu biliyorsun</string>
+    <string name="goalcontent_topic_known">Bunu zaten biliyorsun</string>
     <string name="goalcontent_topic_in_progress">Devam ediyor</string>
     <string name="goalcontent_topic_to_study">Çalışılacak</string>
     <string name="goalcontent_topic_known_reviews">Bunu biliyorsun · tekrarlarında karşına çıkar</string>
@@ -272,22 +265,20 @@
     <string name="goalcontent_topic_skipped_base">Bu ön bilgiyi atlamayı seçtin</string>
     <string name="goalcontent_topic_time">Ayırdığın süreye sığmıyor</string>
     <string name="goalcontent_topic_missing">Bu konuda henüz ders yok</string>
-    <!-- Marks a topic past exams asked a lot. -->
-    <string name="goalcontent_appears_a_lot">Sık çıkıyor</string>
-    <!-- %1$s is the "Appears a lot" mark. -->
+    <!-- Marks a topic that comes up often in the exam. -->
+    <string name="goalcontent_asked_a_lot">Sık sorulan</string>
+    <!-- %1$s is the "Asked a lot" mark. -->
     <string name="goalcontent_frequency_material">Materyalinde sık çıktığı belirtilen konular %1$s ile işaretlenir. Bu konulara daha fazla zaman ayrılır.</string>
     <string name="goalcontent_frequency_past_exams">Geçmiş sınavlarda en çok sorulan konular %1$s ile işaretlenir.</string>
-    <!-- %1$s is the "Appears a lot" mark, %2$s what the source counted, %3$s a link to the source's site. -->
+    <!-- %1$s is the "Asked a lot" mark, %2$s what the source counted, %3$s a link to the source's site. -->
     <string name="goalcontent_frequency_tagged_waits">Geçmiş sınavlarda en çok sorulan konular %1$s ile işaretlenir (%2$s; kaynak: %3$s). En az sorulan konular sonraya kalır.</string>
     <string name="goalcontent_frequency_tagged">Geçmiş sınavlarda en çok sorulan konular %1$s ile işaretlenir (%2$s; kaynak: %3$s). Bu konulara daha fazla zaman ayrılır.</string>
     <!-- %1$s is what the source counted, %2$s a link to the source's site. -->
     <string name="goalcontent_frequency_waits">Geçmiş sınavlarda en az sorulan konular sonraya kalır (%1$s; kaynak: %2$s).</string>
     <string name="goalcontent_frequency_most">Geçmiş sınavlarda en çok sorulan konulara daha fazla zaman ayrılır (%1$s; kaynak: %2$s).</string>
     <!-- A section of a subject listing its skills matrix (ENEM's competencies and abilities). -->
-    <string name="goalcontent_matrix_title">Soruların ölçtüğü beceriler</string>
+    <string name="goalcontent_matrix_title">Sorularda istenenler</string>
     <string name="goalcontent_see_all">Tümünü gör (%1$s)</string>
-    <!-- Eyebrow of a chapter's page: "Biology · Chapter 4". -->
-    <string name="goalcontent_subject_chapter">%1$s · Ünite %2$s</string>
     <string name="goalcontent_chapter_number">Ünite %1$s</string>
     <string name="goalcontent_progress">İlerleme</string>
     <string name="goalcontent_practice">Alıştırma</string>

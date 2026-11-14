@@ -7,12 +7,16 @@ import { type TaskFrameAside } from "../shell/task-frame";
 
 const PERCENT = 100;
 
-export function useTestOutRule(passMark: number): string {
+export function useTestOutRule(passMark: number) {
   const t = useExtracted();
+  const percent = Math.round(passMark * PERCENT);
 
-  return t("{passMark, number}% right skips the chapter. No feedback until the end.", {
-    passMark: Math.round(passMark * PERCENT),
-  });
+  return {
+    label: t("{passMark, number}% right skips the chapter", { passMark: percent }),
+    rule: t("{passMark, number}% right skips the chapter. No feedback until the end.", {
+      passMark: percent,
+    }),
+  };
 }
 
 export function useTestOutAside({
@@ -43,7 +47,7 @@ export function useTestOutAside({
           </StepRow>
         </StepRows>
 
-        <p className="text-muted-foreground text-[0.8125rem] leading-5 text-pretty">{rule}</p>
+        <p className="text-muted-foreground text-compact leading-5 text-pretty">{rule}</p>
       </>
     ),
     label: t("What a pass skips"),

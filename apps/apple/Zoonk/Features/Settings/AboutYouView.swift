@@ -48,7 +48,6 @@ struct AboutYouView: View {
           [.addressForm, .conditions, .learningSupport], in: profile)
       }
     }
-    .navigationTitle(aboutYouTitle)
     .barTitleAfterHero(
       String(localized: "About you", table: "AboutYou", comment: "Title of the About you page")
     )
@@ -128,8 +127,7 @@ struct AboutYouQuestionView: View {
           StepButtons(
             canContinue: canEdit && draft.wrappedValue.isComplete,
             continueLabel: Text(
-              "Save", tableName: "AboutYou", comment: "Saves an About you answer"),
-            continueIcon: nil
+              "Save", tableName: "AboutYou", comment: "Saves an About you answer")
           ) {
             save(draft.wrappedValue)
           }

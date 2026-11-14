@@ -21,20 +21,6 @@ const fixSelect = {
   unitId: true,
 } as const;
 
-export const countPendingContentFixes = cacheAdminData(() =>
-  prisma.contentFix.count({ where: { status: "proposed" } }),
-);
-
-async function loadBatchSizes(batchIds: string[]): Promise<Map<string, number>> {
-  const groups = await prisma.contentFix.groupBy({
-    _count: { id: true },
-    by: ["batchId"],
-    where: { batchId: { in: [...new Set(batchIds)] } },
-  });
-
-  return new Map(groups.map((group) => [group.batchId, group._count.id]));
-}
-
 /** Every fix waiting for a decision, then the latest decisions. */
 export const listContentFixes = cacheAdminData(async () => {
   const [pending, decided] = await Promise.all([
@@ -54,16 +40,8 @@ export const listContentFixes = cacheAdminData(async () => {
 
   const fixes = [...pending, ...decided];
 
-  const [locate, batchSizes] = await Promise.all([
-    loadContentFixLocations(fixes),
-    loadBatchSizes(fixes.map((fix) => fix.batchId)),
-  ]);
-
-  const withPlace = (fix: (typeof fixes)[number]) => ({
-    ...fix,
-    batchSize: batchSizes.get(fix.batchId) ?? 1,
-    location: locate(fix),
-  });
+  const locate = await loadContentFixLocations(fixes);
+  const withPlace = (fix: (typeof fixes)[number]) => ({ ...fix, location: locate(fix) });
 
   return {
     decided: decided.map((fix) => withPlace(fix)),

@@ -129,6 +129,23 @@ class MindMapViewModelTest {
             )
         }
 
+    /** FP's `chapterLessons`: the map's own lessons don't fit, which is never worded as used-up free lessons. */
+    @Test
+    fun aMapWhoseLessonsDontFitKeepsItsOwnSubject() =
+        runTest(dispatcher) {
+            val (maps) = setUp()
+            api.create =
+                { throw ApiException(ApiError.Unavailable, "USAGE_LIMIT_REACHED", 402, refusal("free", "total", "chapterLessons")) }
+
+            maps.create(chapterId)
+            advanceUntilIdle()
+
+            assertEquals(
+                MindMapLocal(limit = Limit.Reached(LimitTier.Free, LimitPeriod.Total), subject = LimitSubject.MapLessons),
+                maps.requests.value[chapterId]?.copy(since = 0),
+            )
+        }
+
     @Test
     fun aPollStoppedWhileItReadsTheLockAgainLeavesNoLockAfterBuyingPlus() =
         runTest(dispatcher) {
@@ -152,7 +169,7 @@ class MindMapViewModelTest {
             val maps = MindMapViewModel(heldStore, ana, goalId, { current }, io = dispatcher)
             api.chapter = { chapterMindMap("drawing") }
             heldStore.chapter[key].load()
-            api.statuses.add(ChapterMindMapStatus.Status.PLUS_REQUIRED)
+            api.statuses.add(ChapterMindMapStatus.Status.UNAVAILABLE)
             hold = true
 
             // Leaving the screen stops the poll while it reads the map again; the row still shows what the reads say.
@@ -170,7 +187,7 @@ class MindMapViewModelTest {
         }
 
     @Test
-    fun aPollAnsweredBeforeBuyingPlusCantLockTheMapReadAfterIt() =
+    fun aPollAnsweredBeforeANewerReadCantOverrideIt() =
         runTest(dispatcher) {
             val (_, _, cache) = setUp()
             val asked = CompletableDeferred<Unit>()
@@ -201,7 +218,7 @@ class MindMapViewModelTest {
             slowStore.chapter[key].load()
             api.chapter = { throw ApiException(ApiError.Network) }
             api.mindMaps = { throw ApiException(ApiError.Network) }
-            answer.complete(ChapterMindMapStatus.Status.PLUS_REQUIRED)
+            answer.complete(ChapterMindMapStatus.Status.UNAVAILABLE)
             follow.join()
 
             assertEquals(MindMapShown.Ready, shownMindMap(slowStore.chapterShown(), maps.requests.value[chapterId]))
@@ -262,47 +279,6 @@ class MindMapViewModelTest {
             advanceUntilIdle()
 
             assertEquals(LimitSubject.Help, maps.requests.value[chapterId]?.subject)
-        }
-
-    @Test
-    fun aPlusOnlyChapterShowsItsLockUntilBuyingPlusReadsItAgain() =
-        runTest(dispatcher) {
-            val (maps, store, cache) = setUp()
-            val shown = launch { store.chapter[key].shown.collect {} }
-            advanceUntilIdle()
-            api.create = { throw ApiException(ApiError.Unavailable, "PLUS_REQUIRED", 402) }
-            api.chapter = { chapterMindMap("plusRequired") }
-
-            maps.create(chapterId)
-            advanceUntilIdle()
-
-            assertEquals(MindMapShown.PlusRequired, shownMindMap(store.chapterShown(), maps.requests.value[chapterId]))
-
-            api.chapter = { chapterMindMap("available") }
-            cache.invalidate(setOf(DataDomain.UserSubscription))
-            advanceUntilIdle()
-
-            assertEquals(MindMapShown.Available, shownMindMap(store.chapterShown(), maps.requests.value[chapterId]))
-            shown.cancel()
-        }
-
-    @Test
-    fun aPollThatEndsLockedLeavesTheRowToTheReads() =
-        runTest(dispatcher) {
-            val (maps, store, cache) = setUp()
-            val shown = launch { store.chapter[key].shown.collect {} }
-            advanceUntilIdle()
-            api.chapter = { chapterMindMap("plusRequired") }
-            api.statuses.add(ChapterMindMapStatus.Status.PLUS_REQUIRED)
-
-            maps.follow(chapterId, MindMapShown.Drawing)
-            advanceUntilIdle()
-            api.chapter = { chapterMindMap("available") }
-            cache.invalidate(setOf(DataDomain.UserSubscription))
-            advanceUntilIdle()
-
-            assertEquals(MindMapShown.Available, shownMindMap(store.chapterShown(), maps.requests.value[chapterId]))
-            shown.cancel()
         }
 
     @Test

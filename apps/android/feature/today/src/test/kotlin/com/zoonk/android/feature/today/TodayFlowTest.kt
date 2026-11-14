@@ -50,6 +50,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.models.MemoryInsight
 import com.zoonk.api.models.MistakeListAvailability
 import com.zoonk.api.models.OpenStudyDayRequest
 import com.zoonk.api.models.OpenedStudyDay
@@ -213,26 +214,6 @@ class TodayFlowTest {
 
         rule.onAllNodes(normalizedDescription("0 of 1 done")).assertCountEquals(0)
     }
-
-    @Test
-    @Config(qualifiers = "w411dp-h3000dp")
-    fun aFoldHidingOnlyPlusLessonsOmitsHeldTime() {
-        show("blocks" to sevenMinuteLessons(4), "lessonsComing" to true, "plusLessons" to plusLessons(), "minutes" to timeLeft(240.0))
-
-        rule.onAllNodes(normalizedText("+4 more")).assertCountEquals(1)
-        rule.onAllNodes(normalizedText("3 hr 32 min")).assertCountEquals(0)
-    }
-
-    @Test
-    @Config(qualifiers = "w411dp-h3000dp")
-    fun aFoldHidingOnlyPlusLessonsOmitsFractionalTime() {
-        show("blocks" to sevenMinuteLessons(5), "plusLessons" to plusLessons(), "minutes" to timeLeft(35.3))
-
-        rule.onAllNodes(normalizedText("+4 more")).assertCountEquals(1)
-        rule.onAllNodes(normalizedText("0 min") or normalizedText("18 sec")).assertCountEquals(0)
-    }
-
-    private fun plusLessons() = JsonArray(List(4) { index -> buildJsonObject { put("title", "Plus lesson ${index + 1}") } })
 
     private fun normalizedDescription(text: String) =
         SemanticsMatcher("description: $text") { node ->
@@ -530,7 +511,7 @@ class TodayFlowTest {
         show("blocks" to practiceOnly(), "lessonsComing" to true)
 
         rule.mainClock.advanceTimeBy(10.minutes.plus(30.seconds).inWholeMilliseconds)
-        rule.onNodeWithText("Being written for you…").assertExists()
+        rule.onNodeWithText("Getting ready…").assertExists()
 
         rule.mainClock.advanceTimeBy(5.minutes.inWholeMilliseconds)
         rule.onNodeWithText("Taking longer than usual").assertExists()
@@ -551,7 +532,7 @@ class TodayFlowTest {
         rule.mainClock.advanceTimeBy(10.seconds.inWholeMilliseconds)
         todayApi.changed = false
         rule.mainClock.advanceTimeBy(10.minutes.inWholeMilliseconds)
-        rule.onNodeWithText("Being written for you…").assertExists()
+        rule.onNodeWithText("Getting ready…").assertExists()
 
         rule.mainClock.advanceTimeBy(6.minutes.inWholeMilliseconds)
         rule.onNodeWithText("Taking longer than usual").assertExists()
@@ -743,7 +724,8 @@ class TodayFlowTest {
             session: AuthenticatedSession,
             insightId: UUID,
             accepted: Boolean,
-        ) = Unit
+            quote: String?,
+        ): MemoryInsight = error("Not used")
 
         override suspend fun prepareLessons(
             session: AuthenticatedSession,

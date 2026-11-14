@@ -91,11 +91,11 @@ extension StudyMission {
         ? String(
           localized: "Rematch the Trickster", table: "Today", comment: "Mission: a rematch")
         : String(
-          localized: "Take on the Trickster", table: "Today", comment: "Mission: a phase challenge")
+          localized: "Beat the Trickster", table: "Today", comment: "Mission: a phase challenge")
     case .weeklyChallenge:
       String(localized: "Weekly challenge", table: "Today", comment: "The week's challenge block")
     case .mock:
-      String(localized: "Take the mock", table: "Today", comment: "Mission: a mock exam")
+      String(localized: "Take the mock exam", table: "Today", comment: "Mission: a mock exam")
     case .essay:
       String(localized: "Practice writing", table: "Today", comment: "Mission: write an essay")
     case .practice:
@@ -105,7 +105,8 @@ extension StudyMission {
     case .pattern:
       String(localized: "Practice a pattern", table: "Today", comment: "Mission: a pattern")
     case .pronunciation:
-      String(localized: "Pronunciation", table: "Today", comment: "Mission: pronunciation")
+      String(
+        localized: "Practice pronunciation", table: "Today", comment: "Mission: pronunciation")
     case .call:
       String(localized: "Have a call", table: "Today", comment: "Mission: a practice call")
     case .askBuddy:
@@ -117,79 +118,6 @@ extension StudyMission {
       } ?? String(localized: "Practice", table: "Today", comment: "Mission: practice")
     }
   }
-
-  /// Mirrors main's `useMissionStep`: only Today knows the block a mission opens.
-  func step(block: StudyBlock?) -> String? {
-    if waitReason != nil {
-      return String(
-        localized: "After this phase's lessons", table: "Today",
-        comment: "A phase challenge waiting for its phase's lessons")
-    }
-
-    switch kind {
-    case .fixMistake:
-      return String(
-        localized: "From your mistakes notebook", table: "Today", comment: "Where a mission is done"
-      )
-    case .pattern:
-      return detail?.patternTitle
-    case .pronunciation:
-      return String(localized: "Due today", table: "Today", comment: "Pronunciation mission")
-    case .call:
-      return detail?.chapterTitle.map {
-        String(
-          localized: "Quick call\u{00A0}· \($0)", table: "Today", comment: "A call mission's unit")
-      } ?? String(localized: "A quick call", table: "Today", comment: "A call mission")
-    case .askBuddy:
-      return String(
-        localized: "Anything about today's lessons", table: "Today", comment: "Ask buddy mission")
-    case .finishChapter:
-      return chapterStep
-    default:
-      break
-    }
-
-    if let title = detail?.title {
-      return title
-    }
-
-    if let block, kind != .weeklyChallenge, kind != .mock {
-      return block.displayTitle
-    }
-
-    switch kind {
-    case .review:
-      return (minutes ?? 0) > 5
-        ? String(localized: "Reviews", table: "Today", comment: "A review block longer than 5 min")
-        : String(localized: "Quick review", table: "Today", comment: "A short review block")
-    case .somethingNew:
-      return String(
-        localized: "Finish today's new lesson", table: "Today",
-        comment: "Mission: the step that finishes the day's new lesson")
-    case .weakSpot:
-      return String(
-        localized: "Most room to grow", table: "Today",
-        comment: "Mission: the area where the learner has the most to gain")
-    default:
-      return nil
-    }
-  }
-
-  private var chapterStep: String {
-    let more = total - done - 1
-
-    guard let title = detail?.title else {
-      return String(
-        localized: "The last \(total - done) lessons are in today's plan", table: "Today",
-        comment: "Mission to finish a chapter whose remaining lessons are all in today's plan")
-    }
-
-    return more > 0
-      ? String(
-        localized: "\(title) (+\(more) lessons)", table: "Today",
-        comment: "The chapter's next lesson, then how many more the mission needs")
-      : title
-  }
 }
 
 struct MissionRow: View {
@@ -197,7 +125,6 @@ struct MissionRow: View {
 
   let mission: StudyMission
   let buddyName: String
-  var block: StudyBlock?
   /// Its place among the missions a result just completed, which stamp in one after another.
   var justDone: Int?
   var isBusy = false
@@ -250,10 +177,13 @@ struct MissionRow: View {
         .typeStyle(.note)
       }
 
-      if !mission.isDone, !detail.isEmpty {
-        Text(verbatim: detail.joinedFacts())
-          .typeStyle(.data)
-          .foregroundStyle(.mutedForeground)
+      if !mission.isDone, waits {
+        Text(
+          "After today's lessons", tableName: "Today",
+          comment: "A challenge that opens once the lessons before it are done"
+        )
+        .typeStyle(.meta)
+        .foregroundStyle(.mutedForeground)
       }
     }
   }
@@ -264,12 +194,6 @@ struct MissionRow: View {
       Text("Just done", tableName: "Today", comment: "A mission the result just completed")
         .typeStyle(.meta.weight(.medium))
         .foregroundStyle(.successText)
-    }
-
-    if !mission.isDone, !waits, mission.opens?.kind == "block" {
-      Image(systemName: "target")
-        .foregroundStyle(.brain)
-        .accessibilityHidden(true)
     }
 
     if opensSomewhere {
@@ -292,30 +216,6 @@ struct MissionRow: View {
       KindMark(kind: mission.kind.learnKind)
     }
   }
-
-  private var detail: [String] {
-    var parts: [String] = []
-
-    if mission.total > 1 {
-      parts.append("\(mission.done)/\(mission.total)")
-    }
-
-    if let step = mission.step(block: block) {
-      parts.append(step)
-    }
-
-    if let minutes = mission.minutes, minutes > 0 {
-      let duration = studyDuration(minutes: max(1, Int(minutes.rounded())))
-      parts.append(
-        mission.kind.isEstimated
-          ? String(
-            localized: "~\(duration)", table: "Today",
-            comment: "About how long a mission outside the day's blocks takes, as in ~5 min")
-          : duration)
-    }
-
-    return parts
-  }
 }
 
 extension StudyMission.Kind {
@@ -333,11 +233,4 @@ extension StudyMission.Kind {
     }
   }
 
-  /// Mirrors main's `ESTIMATED_KINDS`: done outside the day's blocks, so its minutes are an estimate.
-  var isEstimated: Bool {
-    switch self {
-    case .askBuddy, .call, .fixMistake, .pattern, .pronunciation: true
-    default: false
-    }
-  }
 }

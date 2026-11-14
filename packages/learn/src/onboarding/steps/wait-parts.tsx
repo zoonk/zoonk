@@ -1,15 +1,16 @@
 "use client";
 
-import { buttonVariants } from "@zoonk/ui/components/button";
-import { ShortcutKbd } from "@zoonk/ui/components/kbd";
-import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
-import { cn } from "@zoonk/ui/lib/utils";
-import { PlayIcon } from "lucide-react";
 import { type ReactNode } from "react";
+import { EnterLink } from "../../_components/enter-button";
 import { PageSectionTitle } from "../../_components/page";
-import { LearnLink } from "../../learn-link";
 import { useWaitBack, useWaitPlace } from "../../wait/wait-screen";
-import { OnboardingDescription, OnboardingHeading, OnboardingTitle } from "../onboarding-frame";
+import {
+  OnboardingActions,
+  OnboardingActionsNote,
+  OnboardingDescription,
+  OnboardingHeading,
+  OnboardingTitle,
+} from "../onboarding-frame";
 import {
   OnboardingScreenProvider,
   useOnboardingHost,
@@ -37,28 +38,35 @@ export function WaitHeading({ description, title }: { description: ReactNode; ti
   );
 }
 
-/** A wait's bar: the Library's way out on the left, a note over the slot's action on the right. */
+/** A wait's bar: its actions, with the Library's way out before them on a computer's row. */
 export function WaitBar({
   children,
+  failed,
   library,
   note,
 }: {
   children: ReactNode;
+  failed?: boolean;
   library?: ReactNode;
-  note?: string;
+  note?: string | null;
 }) {
-  return (
-    <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between lg:gap-6">
-      {library}
+  const actions = (
+    <OnboardingActions
+      failed={failed}
+      note={note && <OnboardingActionsNote>{note}</OnboardingActionsNote>}
+    >
+      {children}
+    </OnboardingActions>
+  );
 
-      <div className={cn("flex flex-col gap-2 lg:items-end", !library && "lg:ml-auto")}>
-        {note && (
-          <p className="text-muted-foreground text-center text-sm text-pretty lg:text-right">
-            {note}
-          </p>
-        )}
-        {children}
-      </div>
+  if (!library) {
+    return actions;
+  }
+
+  return (
+    <div className="flex w-full flex-col gap-3 lg:flex-row lg:items-center lg:justify-between lg:gap-6">
+      {library}
+      <div className="flex flex-col gap-2 not-has-[a,button,p]:hidden lg:items-end">{actions}</div>
     </div>
   );
 }
@@ -82,18 +90,9 @@ export function WaitBackToQuiz({ children }: { children: ReactNode }) {
 
 /** A written lesson the wait offers, its main action: Enter opens it as it does a button. */
 export function WaitLinkAction({ children, href }: { children: ReactNode; href: string }) {
-  const ref = useEnterClick<HTMLAnchorElement>();
-
   return (
-    <LearnLink
-      className={cn(buttonVariants({ size: "lg" }), "w-full font-[560] lg:w-auto lg:min-w-40")}
-      href={href}
-      lessonWritten
-      ref={ref}
-    >
-      <PlayIcon aria-hidden="true" data-icon="inline-start" />
+    <EnterLink href={href} lessonWritten>
       {children}
-      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-    </LearnLink>
+    </EnterLink>
   );
 }

@@ -1,9 +1,9 @@
 "use client";
 
 import { type SyllabusSubject, type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
+import { BigQuantity } from "@zoonk/ui/components/big-quantity";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { BigQuantity } from "../_components/big-quantity";
 import { CoverageBar } from "../_components/coverage-bar";
 import { DetailAsideSection, DetailProperties, DetailProperty } from "../_components/detail-page";
 import { ListGroup } from "../_components/list-group";
@@ -25,13 +25,15 @@ function getCoverage(subject: SyllabusSubject) {
 function SubjectMastery({ mastery }: { mastery: SyllabusSubject["mastery"] }) {
   const t = useExtracted();
 
+  if (!mastery) {
+    return null;
+  }
+
   return (
-    <p className="flex flex-col gap-0.5 text-[0.71875rem]" data-slot="subject-mastery">
-      <span className="font-medium">{t("Mastery")}</span>
+    <p className="text-2xs flex flex-col gap-0.5" data-slot="subject-mastery">
+      <span className="font-medium">{t("Right answers")}</span>
       <span className="text-muted-foreground tabular-nums">
-        {mastery
-          ? t("{correct, number} of {answered, number} right", mastery)
-          : t("Shows after a few practice questions")}
+        {t("{done, number} of {total, number}", { done: mastery.correct, total: mastery.answered })}
       </span>
     </p>
   );
@@ -55,9 +57,7 @@ function SubjectPreparation({
     <div className={cn("flex flex-col gap-2", className)} data-slot="subject-preparation">
       {labelled && <span className={PAGE_SECTION_TITLE_CLASS}>{t("Preparation")}</span>}
 
-      <BigQuantity className={labelled ? "text-2xl" : "text-[2rem]"}>
-        {formatShare(share)}
-      </BigQuantity>
+      <BigQuantity className={labelled ? "text-2xl" : "text-3xl"}>{formatShare(share)}</BigQuantity>
       <CoverageBar studied={share} />
 
       <SubjectMastery mastery={mastery} />
@@ -106,7 +106,7 @@ export function SubjectCoverage({
   return (
     <div className={cn("flex flex-col gap-2", className)} data-slot="subject-coverage">
       <CoverageBar known={coverage.known} studied={coverage.studied} />
-      <ul className="text-muted-foreground flex flex-wrap items-center gap-x-3 gap-y-1 text-[0.71875rem]">
+      <ul className="text-muted-foreground text-2xs flex flex-wrap items-center gap-x-3 gap-y-1">
         {parts.map((part) => (
           <li className="flex items-center gap-1.5" key={part.label}>
             <span aria-hidden="true" className={cn("size-1.5 rounded-full", part.dot)} />
@@ -180,10 +180,8 @@ function SubjectDetails({
       )}
 
       {subject.lessonsKnown > 0 && (
-        <DetailProperty label={t("Known before")}>
-          {t("{count, plural, one {# lesson skipped} other {# lessons skipped}}", {
-            count: subject.lessonsKnown,
-          })}
+        <DetailProperty label={t("Skipped")}>
+          {t("{count, plural, one {# lesson} other {# lessons}}", { count: subject.lessonsKnown })}
         </DetailProperty>
       )}
     </DetailProperties>

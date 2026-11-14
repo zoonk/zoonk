@@ -39,7 +39,7 @@ test.describe("Placement and the plan", () => {
     await page.getByRole("button", { name: "I don't know yet" }).click();
     await expect(page.getByText("Question 3", { exact: true })).toBeVisible();
 
-    const stop = page.getByRole("button", { name: "Stop here and see my plan" });
+    const stop = page.getByRole("button", { name: "Stop and use my answers" });
     await expect(stop).toBeEnabled();
     await stop.click();
 
@@ -123,7 +123,7 @@ test("keeps the learner's time when saving it fails, and saves it on the next tr
   });
 
   await page.goto(`/start/${goal.id}`);
-  await page.getByRole("button", { name: "Skip and start from the basics" }).click();
+  await page.getByRole("button", { exact: true, name: "Skip" }).click();
 
   await expect(
     page.getByRole("heading", { name: "How much time can you study each day?" }),
@@ -146,12 +146,12 @@ test("keeps the learner's time when saving it fails, and saves it on the next tr
     await route.continue();
   });
 
-  await page.getByRole("button", { exact: true, name: "See your plan" }).click();
+  await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
   await expect(page.getByRole("alert").filter({ hasText: "That didn't save." })).toBeVisible();
   await expect(page.getByLabel("Time a day", { exact: true })).toHaveValue("45");
 
-  await page.getByRole("button", { exact: true, name: "See your plan" }).click();
+  await page.getByRole("button", { exact: true, name: "Continue" }).click();
   await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
   await expect(page.getByText("45 min", { exact: true })).toBeVisible();
   await expect(page.getByRole("alert").filter({ hasText: "That didn't save." })).toBeHidden();
@@ -200,10 +200,10 @@ test("waits for the time new study days need before saving the suggestion", asyn
   });
 
   await page.goto(`/start/${goal.id}`);
-  await page.getByRole("button", { name: "Skip and start from the basics" }).click();
+  await page.getByRole("button", { exact: true, name: "Skip" }).click();
 
   const time = page.getByLabel("Time a day", { exact: true });
-  const next = page.getByRole("button", { exact: true, name: "See your plan" });
+  const next = page.getByRole("button", { exact: true, name: "Continue" });
 
   await expect(time).toHaveValue("30");
   await page.getByRole("button", { exact: true, name: "Friday" }).click();

@@ -24,12 +24,13 @@ export type TutorBuddy = {
   docked: boolean;
   drawerOpen: boolean;
   identity: TutorIdentity;
-  missed: boolean;
   navigation: LessonQuestionNavigation;
   /** Fills the composer with the suggestion, for the learner to send. */
   open: (suggestion?: LessonScreenSuggestion) => void;
   /** Sends the suggestion at once, so the buddy starts answering as it opens; while an earlier question is unanswered, fills the composer instead. */
   openAndAsk: (suggestion: LessonScreenSuggestion) => void;
+  /** For a button that opens it: a sheet is a dialog; docked beside the lesson, it is none. */
+  popup: "dialog" | undefined;
   /** What the screen's own button asks ("I didn't get this" asks the simpler take), so the aside's suggestions leave it out. */
   screenSuggestion?: LessonScreenSuggestion;
   suggests: boolean;
@@ -45,13 +46,12 @@ export function TutorBuddyProvider({
   children,
   context,
   identity,
-  missed,
   navigation,
   quote,
   screenSuggestion,
   suggests,
   visit,
-}: Pick<TutorBuddy, "identity" | "missed" | "navigation" | "screenSuggestion" | "suggests"> & {
+}: Pick<TutorBuddy, "identity" | "navigation" | "screenSuggestion" | "suggests"> & {
   children: React.ReactNode;
   context: LessonQuestionContext | null;
   quote: React.ReactNode;
@@ -104,7 +104,6 @@ export function TutorBuddyProvider({
       docked,
       drawerOpen,
       identity,
-      missed,
       navigation,
       open: (suggestion) => {
         const offered = show(suggestion);
@@ -133,6 +132,7 @@ export function TutorBuddyProvider({
 
         void askAbout({ context, question: offered.label, suggestion: offered.id });
       },
+      popup: asideShown ? undefined : "dialog",
       screenSuggestion,
       suggests: suggests && state.questions.length === 0,
     };
@@ -147,7 +147,6 @@ export function TutorBuddyProvider({
     docked,
     drawerOpen,
     identity,
-    missed,
     navigation,
     open,
     screenSuggestion,

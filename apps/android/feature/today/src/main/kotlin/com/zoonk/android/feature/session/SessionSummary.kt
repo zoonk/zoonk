@@ -118,6 +118,7 @@ internal fun SessionSummary(
     busy: SessionAction?,
     failed: SessionAction?,
     actions: SummaryActions,
+    reminderOffer: (@Composable () -> Unit)? = null,
 ) {
     ResultScreen {
         var onRewards by rememberSaveable { mutableStateOf(false) }
@@ -169,7 +170,7 @@ internal fun SessionSummary(
                             SessionNumbers(summary, facts, brainPowerTile = false)
                             EarnedToday(summary, facts, buddy, buddyName)
                         },
-                        next = { Onward(summary, facts) },
+                        next = { Onward(summary, facts, reminderOffer) },
                     )
                 } else {
                     Column(
@@ -186,7 +187,7 @@ internal fun SessionSummary(
                                     if (rewardsShown) {
                                         RewardsStep(summary, facts, buddy, buddyName)
                                     } else {
-                                        DoneStep(summary, facts, wide)
+                                        DoneStep(summary, facts, wide, reminderOffer)
                                     }
                                 }
                             }
@@ -204,11 +205,12 @@ private fun DoneStep(
     summary: StudySessionSummary,
     facts: SummaryFacts,
     wide: Boolean,
+    reminderOffer: (@Composable () -> Unit)?,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
         DoneTitle(summary, facts)
         SessionNumbers(summary, facts, brainPowerTile = !wide)
-        Onward(summary, facts)
+        Onward(summary, facts, reminderOffer)
     }
 }
 
@@ -242,6 +244,7 @@ private fun DoneTitle(
 private fun Onward(
     summary: StudySessionSummary,
     facts: SummaryFacts,
+    reminderOffer: (@Composable () -> Unit)?,
 ) {
     SkillRises(summary)
     summary.tomorrow?.takeIf { !facts.stopped }?.let { tomorrow ->
@@ -249,6 +252,7 @@ private fun Onward(
             SummaryRow(R.drawable.ic_menu_book) { Text(tomorrow.title, style = MaterialTheme.typography.bodyLarge) }
         }
     }
+    reminderOffer?.invoke()
 }
 
 @Composable

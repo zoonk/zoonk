@@ -1,6 +1,7 @@
 package com.zoonk.android.ui.scaffold
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -14,11 +15,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.window.core.layout.WindowSizeClass
 
 /**
  * A page a tab or another page opened: its top bar with the way back, [title] and [actions]. A page
  * that leads its content with its title (`PageTitleRow`, as main's pages do) shows [title] in the bar
- * only once that heading scrolls under it.
+ * only once that heading scrolls under it. A page's main action goes in [bottomBar], pinned to the
+ * bottom in the [BottomBar], with its buttons in `TaskActions { main -> … }` so on a wide window the main
+ * action sits at its own width at the end of the page's column; [barWidth] is that column's width, so the
+ * bar stays under what it acts on. The page lays out its content in [pagePadding].
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -27,6 +34,8 @@ fun PageScaffold(
     modifier: Modifier = Modifier,
     title: @Composable () -> Unit = {},
     actions: @Composable RowScope.() -> Unit = {},
+    bottomBar: (@Composable ColumnScope.() -> Unit)? = null,
+    barWidth: Dp = Dp.Unspecified,
     content: @Composable (PaddingValues) -> Unit,
 ) {
     val focus = rememberTitleFocus()
@@ -54,6 +63,26 @@ fun PageScaffold(
                 actions = actions,
             )
         },
+        bottomBar = { bottomBar?.let { BottomBar(columnWidth = barWidth, content = it) } },
         content = { padding -> CompositionLocalProvider(LocalTitleFocus provides focus) { content(padding) } },
     )
 }
+
+/**
+ * The room around a page's content: Material's margins at the sides ([pageMargin]), a little over its
+ * title under the top bar and more under its last line. Every page and tab root lays its content out
+ * in it, so their titles start at one height; no screen sets its own.
+ */
+@Composable
+fun pagePadding(): PaddingValues {
+    val margin = pageMargin()
+    return PaddingValues(start = margin, end = margin, top = PAGE_TOP, bottom = PAGE_BOTTOM)
+}
+
+/** Material's window margin: 16dp on a phone, 24dp from medium windows up. */
+@Composable
+fun pageMargin(): Dp =
+    if (windowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)) 24.dp else 16.dp
+
+private val PAGE_TOP = 8.dp
+private val PAGE_BOTTOM = 24.dp

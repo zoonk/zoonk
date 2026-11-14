@@ -16,11 +16,11 @@
   "account_email_placeholder": "01c131d33fff4602d2c0517edfe2496bc86f5e94f6c230e08cc99d239a5f56f1",
   "account_failure_code_expired": "aef011d3285c1cbf9722d5c95d28283960e347c5f5e7c836c6105f5335924e2c",
   "account_failure_code_locked": "d1580bb63673947d56c0359302a5469c4348308d285eba83a5b9af48ff7f8276",
-  "account_failure_disposable_email": "fff08b68fca835d04039a136013c8b80d57c76e20877081bb6677316a7fa601a",
+  "account_failure_disposable_email": "84d7ae2871186a4d233f47faa7691fe214ec32ddd7bc55a902934b1318cf8221",
   "account_failure_invalid_email": "1cf01975360541bc1acf114940e34d49f84a0b8a25ccddea2cb3d7a0a1755813",
   "account_failure_network": "73a0ce17ab37059d4d7e1aa48173396016857923b4bb6341d06629f268302568",
   "account_failure_rate_limited": "85349131339502a936151cb54d29bf39f2cf170cc2ef8ccf13352b59ca9a3eb4",
-  "account_failure_sign_in": "742cf1ced57c1fc520228bb7fca48955a6a745a8d5e8f0bac5b2f4a009c806de",
+  "account_failure_sign_in": "ff101673baeaa038fa762e7de179b27a266cdf750810a2e8c865082558e561a0",
   "account_failure_wrong_code": "9fd78da940f0c5ce80c25e9161f627c2dda26df8630f938d3b420cb334e9a333",
   "account_menu_create_account": "c8c3b0efc1e7fa0c40dd43148a8f4a6549c287be112f170ac83c825dfd8d2c12",
   "account_menu_help": "401f7733fdf3b8b3a2231c943cef42067f0e5b2849bc9e633604e41f528a600b",
@@ -29,7 +29,7 @@
   "account_menu_settings": "21d08ec5f6e0424f0d3581f0fcb71ceb060e6cf07515ed39f7853fa259db3a97",
   "account_menu_subscription": "6d617322af0513eea71ac1b24b6de8204801d2e3243ab0cd2cbda44c99d434d0",
   "account_name": "a971d665052f1cea5a5fa46427cc8b6566eb89ff45ae67cdf7140b08e23e3639",
-  "account_name_description": "063481ca506c3f037488f666d47cf10cd482a6289f5418f71ac4438a12399c0d",
+  "account_name_description": "98b3286ae4d160ae093bf3a2b64b68d977d3d7b77ad20539236b4c77285e6387",
   "account_name_too_long": "097d61277cca2dd3b6e22a84d03c4160c556afc32e9182c58178ca688e446393",
   "account_new_code_failed": "b0f17daf116254d6c8483e0f461e4fece62dd6ca671833f13e433168b30cef00",
   "account_new_code_sent": "44f922d7e20c9c4e9247d8a6300d00be3d2c50a36745487360366504bb1de7af",
@@ -39,10 +39,9 @@
   "account_save_failed": "faa4f133049e993ad65e6e1fd2f0185d64997f2a4f6b63e2f77b042fa04f2e05",
   "account_send_again": "46cd8a4fe281f4eef8ac293275a35329a0dd176f35ea5e4383ca846677ecb911",
   "account_send_new_code": "8444432817461e82976edd49f2c97ec8832dfa28716cff0c6c56ff53f9064aea",
-  "account_setup_description": "a7f2b73e2ab6e0ed8544514d692d21ddb0e55e717a839bab86cc980797facb6a",
   "account_setup_title": "6c9db8178c527543a91ccc3cdaeded7274d2c905a7149606cc63dd0bc0b66566",
-  "account_sign_in_expired": "ecd48f149f04e6de811479bcdae0745269166abe4fba5e84b258ae13a701ce07",
-  "account_sign_in_title": "494c3f9dc27675971ea98eceb3df807ea9ad963ed3b20a2edfb215a59409095a",
+  "account_sign_in_expired": "1f7d5baa3270b577943fd99b3ae8fe7a1bf29e7f2ff1c2b2bc37a3d9f82051c3",
+  "account_sign_in_title": "766014847fedf3392ffb681d7a6481477f94a92752ae58b3f4bc64ab391364a7",
   "account_sign_out_failed": "3b97805b8c6fff1f7a72c970d7eedafe0800f043be6fa450db894dca83053d49",
   "account_terms": "2d580ce8f3ede796e0c614b1434626c5e0a4a910ef0d78c750a3f5f050822eae",
   "account_unavailable_description": "0549951a312b698362fc35161394cc9c7bac1fd2876d27948ed143932d5c4cfe",
@@ -64,8 +63,8 @@
     <string name="account_welcome_note">アカウントなしで無料で始められます。</string>
     <string name="account_terms">利用規約</string>
     <string name="account_privacy">プライバシーポリシー</string>
-    <string name="account_sign_in_title">ログインまたはアカウント作成</string>
-    <string name="account_sign_in_expired">ログインの有効期限が切れました。もう一度お試しください。</string>
+    <string name="account_sign_in_title">ログイン・アカウント作成</string>
+    <string name="account_sign_in_expired">リンクの有効期限が切れました。もう一度ログインしてください。</string>
     <string name="account_continue_with_google">Googleで続ける</string>
     <string name="account_continue_with_apple">Appleで続ける</string>
     <string name="account_or">または</string>
@@ -87,17 +86,16 @@
     <string name="account_new_code_wait">コードの再送は1分待ってからお試しください。</string>
     <string name="account_new_code_failed">新しいコードを送信できませんでした。もう一度お試しください。</string>
     <string name="account_failure_invalid_email">有効なメールアドレスを入力してください</string>
-    <string name="account_failure_disposable_email">使い捨てのメールアドレスは使えません。別のメールアドレスか、プライバシー保護用のエイリアスを使ってください。</string>
+    <string name="account_failure_disposable_email">使い捨てのメールアドレスは使えません。別のメールアドレスを使ってください。</string>
     <string name="account_failure_network">Zoonkに接続できませんでした。通信状況を確認して、もう一度お試しください。</string>
     <string name="account_failure_rate_limited">試行回数の上限に達しました。1分待ってからもう一度お試しください。</string>
     <string name="account_failure_wrong_code">コードが違います。メールを確認して、もう一度入力してください。</string>
     <string name="account_failure_code_expired">このコードの有効期限が切れました。新しいコードを取得してください。</string>
     <string name="account_failure_code_locked">このコードは入力ミスが続いたため使えません。新しいコードを取得してください。</string>
-    <string name="account_failure_sign_in">ログイン中にエラーが発生しました。もう一度試すか、hello@zoonk.comにお問い合わせください</string>
+    <string name="account_failure_sign_in">ログインできませんでした。もう一度試すか、hello@zoonk.comまでメールでお問い合わせください。</string>
     <string name="account_setup_title">何とお呼びすればいいですか？</string>
-    <string name="account_setup_description">名前とユーザー名は後からプロフィールで変更できます。</string>
     <string name="account_name">名前</string>
-    <string name="account_name_description">Zoonkや相棒が呼びかけるときの名前で、証明書にも記載されます。</string>
+    <string name="account_name_description">相棒からの呼びかけや、すべての証明書に使う名前です。</string>
     <string name="account_name_too_long">150文字以内で入力してください。</string>
     <string name="account_username">ユーザー名</string>
     <!-- %1$s is a username. -->

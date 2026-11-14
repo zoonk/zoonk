@@ -32,6 +32,35 @@ msgctxt "PlBReU"
 msgid "Log out"
 msgstr "ログアウト"
 
+#: src/app/[lang]/(app)/(catalog)/_components/catalog-bar-content.tsx
+msgctxt "ejEGdx"
+msgid "Home"
+msgstr "ホーム"
+
+#: src/app/[lang]/(app)/(catalog)/_components/catalog-bar-content.tsx
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
+#: src/app/[lang]/(app)/(catalog)/courses/layout.tsx
+#: src/components/catalog/catalog-not-found.tsx
+msgctxt "s-Ncqj"
+msgid "Explore courses"
+msgstr "コースを探す"
+
+#: src/app/[lang]/(app)/(catalog)/_components/catalog-bar-content.tsx
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(learn)/_components/learn-tab-navigation.tsx
+#: src/app/[lang]/(app)/(learn)/today/page.tsx
+#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
+#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
+#: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
+#: src/app/[lang]/(home)/_components/example-card.tsx
+#: src/app/[lang]/session/page.tsx
+#: src/components/learn/section-layout.tsx
+msgctxt "zWgbGg"
+msgid "Today"
+msgstr "今日"
+
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
 msgctxt "C81_uG"
 msgid "Logout"
@@ -43,17 +72,6 @@ msgid "Home page"
 msgstr "ホーム"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
-#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
-#: src/app/[lang]/(app)/(catalog)/courses/layout.tsx
-#: src/app/[lang]/(app)/(catalog)/courses/page.tsx
-#: src/components/catalog/catalog-not-found.tsx
-msgctxt "s-Ncqj"
-msgid "Explore courses"
-msgstr "コースを探す"
-
-#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
-#: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
 #: src/app/[lang]/(app)/(learn)/_components/learn-no-goal.tsx
 msgctxt "ng8fsM"
 msgid "Start a goal"
@@ -61,7 +79,7 @@ msgstr "目標を始める"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
 #: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
-#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 #: src/components/pricing/plus-pricing.tsx
 #: src/components/public/public-footer.tsx
 #: src/components/public/public-nav-links.tsx
@@ -86,6 +104,18 @@ msgstr "bug, バグ, 不具合, 問題, 報告, アイデア, 提案, 機能リ�
 msgctxt "G5YSJR"
 msgid "Send feedback"
 msgstr "フィードバックを送る"
+
+#. Words people type to find Keyboard shortcuts in the search, never shown. Add the words people use in this language.
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+msgctxt "zK0l0A"
+msgid "keys, hotkeys, keyboard"
+msgstr "キー, ホットキー, キーボード, ショートカット, ショートカットキー"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "vzYPVX"
+msgid "Keyboard shortcuts"
+msgstr "キーボードショートカット"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
 msgctxt "tv5FG3"
@@ -165,6 +195,52 @@ msgctxt "u82Vi2"
 msgid "Continue today's session"
 msgstr "今日の学習を続ける"
 
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+#: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
+#: src/app/[lang]/(app)/(stats)/level/page.tsx
+#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
+msgctxt "y1Qr81"
+msgid "Level"
+msgstr "レベル"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+#: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
+#: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
+#: src/app/[lang]/(app)/(stats)/energy/page.tsx
+#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
+msgctxt "cVpmV7"
+msgid "Energy"
+msgstr "エネルギー"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+#: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
+#: src/app/[lang]/(app)/(stats)/patterns/page.tsx
+#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
+msgctxt "BCauSf"
+msgid "Patterns"
+msgstr "傾向"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+#: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
+#: src/app/[lang]/(app)/(stats)/score/page.tsx
+#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
+#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
+msgctxt "oLkLww"
+msgid "Score"
+msgstr "スコア"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+#: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
+#: src/app/[lang]/(app)/(stats)/activity/page.tsx
+msgctxt "ZmlNQ3"
+msgid "Activity"
+msgstr "学習量"
+
 #. The sizes of mock exam the learner can take: the full exam, half of it, or one subject.
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 msgctxt "Zu-MTq"
@@ -188,24 +264,12 @@ msgid "Ask {buddy}…"
 msgstr "{buddy}に聞く…"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
-#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "QTg-WT"
 msgid "Start a new goal"
 msgstr "新しい目標を始める"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
-#: src/app/[lang]/(app)/(learn)/today/page.tsx
-#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
-#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
-#: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
-#: src/app/[lang]/(home)/_components/example-card.tsx
-#: src/components/catalog/course-plan-window.tsx
-#: src/components/pricing/pricing-covers.tsx
-msgctxt "zWgbGg"
-msgid "Today"
-msgstr "今日"
-
-#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(learn)/_components/learn-tab-navigation.tsx
 #: src/app/[lang]/(app)/(learn)/plan/[subject]/page.tsx
 #: src/app/[lang]/(app)/(learn)/plan/page.tsx
 #: src/app/[lang]/(app)/(learn)/plan/plan-no-goal.tsx
@@ -236,7 +300,6 @@ msgstr "完了したレッスン"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
-#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 #: src/app/[lang]/(app)/(learn)/certificates/page.tsx
 msgctxt "lX2csU"
 msgid "Certificates"
@@ -244,6 +307,7 @@ msgstr "証明書"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+#: src/app/[lang]/(app)/(learn)/mock/new/page.tsx
 msgctxt "Xy7a7A"
 msgid "Exam"
 msgstr "試験"
@@ -264,13 +328,12 @@ msgstr "マインドマップ"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/logbook/page.tsx
-msgctxt "_qTRbZ"
-msgid "Logbook"
-msgstr "学習記録"
+msgctxt "ca-yU-"
+msgid "Weekly summary"
+msgstr "週間まとめ"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-bar-end.tsx
-#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 #: src/app/[lang]/(app)/(stats)/layout.tsx
 #: src/app/[lang]/(app)/(stats)/stats/page.tsx
 msgctxt "H3eDAS"
@@ -332,6 +395,9 @@ msgstr "メモリ"
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
 #: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
 #: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/stripe-checkout-confirming.tsx
+#: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
 msgctxt "R_6nsx"
 msgid "Subscription"
 msgstr "サブスクリプション"
@@ -375,6 +441,7 @@ msgid "We couldn't switch goals. Try again."
 msgstr "目標を切り替えられませんでした。もう一度試してください。"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
 msgctxt "60v8Pt"
 msgid "Search or ask"
 msgstr "検索・質問"
@@ -385,8 +452,9 @@ msgid "Go to a page, run an action or ask a question."
 msgstr "ページを開いたり、操作を実行したり、質問したりできます。"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
-#: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
+#: src/app/[lang]/(app)/(settings)/_components/sign-in-again-dialog.tsx
 #: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
+#: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
 msgctxt "47FYwb"
 msgid "Cancel"
 msgstr "キャンセル"
@@ -399,6 +467,11 @@ msgid "Search or ask…"
 msgstr "検索・質問…"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
+msgctxt "BSij1a"
+msgid "close"
+msgstr "閉じる"
+
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
 msgctxt "3ATcmQ"
 msgid "move"
 msgstr "移動"
@@ -408,36 +481,21 @@ msgctxt "-9qP4Y"
 msgid "open"
 msgstr "開く"
 
-#: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
-msgctxt "BSij1a"
-msgid "close"
-msgstr "閉じる"
-
 #: src/app/[lang]/(app)/(catalog)/_components/user-avatar-menu.tsx
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 msgctxt "6b2CRH"
 msgid "User menu"
 msgstr "ユーザーメニュー"
 
+#. The plan's name beside Subscription in a menu, shown only to subscribers: the plan they have.
 #: src/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu.tsx
 #: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
-#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
-#: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
-#: src/app/[lang]/(home)/_components/exam-section.tsx
-#: src/components/pricing/plus-plan.tsx
-#: src/components/pricing/pricing-covers.tsx
-msgctxt "lOdoIb"
+msgctxt "subscriberPlanName"
 msgid "Plus"
 msgstr "Plus"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-lessons.tsx
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-chapter-aside.tsx
-#: src/components/catalog/chapter-strip.tsx
-msgctxt "BGwIJy"
-msgid "Chapter {number} of {total}"
-msgstr "第{number}章（全{total}章）"
-
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/chapter-lessons.tsx
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
 msgctxt "t_2u2K"
 msgid "{count, plural, one {# short lesson} other {# short lessons}}"
 msgstr "{count, plural, other {短時間で学べる#レッスン}}"
@@ -446,18 +504,28 @@ msgstr "{count, plural, other {短時間で学べる#レッスン}}"
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/library-lesson-page.tsx
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 #: src/app/[lang]/(app)/(stats)/activity/activity-stats.tsx
-#: src/components/catalog/plan-workload.tsx
 msgctxt "iqLF8D"
 msgid "Lessons"
 msgstr "レッスン"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-chapter-aside.tsx
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-plan-day.tsx
+#: src/components/catalog/chapter-strip.tsx
+msgctxt "BGwIJy"
+msgid "Chapter {number} of {total}"
+msgstr "第{number}章（全{total}章）"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-chapter-aside.tsx
+#: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
 #: src/app/[lang]/(home)/_components/career-section.tsx
 #: src/components/catalog/course-plan-window.tsx
 msgctxt "n7xPkB"
 msgid "{count, plural, one {# lesson} other {# lessons}}"
 msgstr "{count, plural, other {#レッスン}}"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-course-start.tsx
+msgctxt "Ethu_P"
+msgid "Keep going with {course}"
+msgstr "{course}の学習を続ける"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-first-screen.tsx
 msgctxt "QNnsRX"
@@ -476,15 +544,10 @@ msgid "Start the lesson"
 msgstr "レッスンを始める"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-first-screen.tsx
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+#: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
 msgctxt "x5DbVQ"
 msgid "Start this lesson"
 msgstr "このレッスンを始める"
-
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-more.tsx
-msgctxt "h4RNnR"
-msgid "{count, plural, one {# idea} other {# ideas}}"
-msgstr "{count, plural, other {#個の学習ポイント}}"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-more.tsx
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
@@ -499,51 +562,24 @@ msgid "{count, plural, one {# lesson} other {# lessons}} · {duration}"
 msgstr "{count, plural, other {#レッスン}} · {duration}"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-more.tsx
-msgctxt "qCHG2P"
-msgid "Chapter {number}: {chapter}"
-msgstr "第{number}章：{chapter}"
+msgctxt "DybWe7"
+msgid "Lessons in {chapter}"
+msgstr "{chapter}のレッスン"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-more.tsx
 msgctxt "AvS60l"
 msgid "Go to the chapter"
 msgstr "章を見る"
 
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-plan-day.tsx
-msgctxt "f-_t_p"
-msgid "This lesson is part of the {course} course."
-msgstr "このレッスンは{course}コースに含まれています。"
-
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-plan-day.tsx
-#: src/components/catalog/course-plan-window.tsx
-msgctxt "TEMmOs"
-msgid "Example plan"
-msgstr "学習計画の例"
-
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-plan-day.tsx
-#: src/components/catalog/course-plan-window.tsx
-msgctxt "JZFs07"
-msgid "An example. Your plan follows your answers, so it can start later and end sooner."
-msgstr "これは一例です。学習計画は回答に合わせて変わるので、途中から始めて早めに終えられることもあります。"
-
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-plan-day.tsx
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/course-start.tsx
-#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/page.tsx
-#: src/app/[lang]/(home)/_components/landing-goal-box.tsx
-#: src/components/pricing/plus-pricing.tsx
-msgctxt "npIkqE"
-msgid "Start free, no account needed."
-msgstr "アカウントなしで無料で始められます。"
+msgctxt "gd9eyd"
+msgid "Its lessons get ready when you start."
+msgstr "始めると、この章のレッスンを用意します。"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
-msgctxt "XUON71"
-msgid "Start here and Zoonk writes its lessons for your level."
-msgstr "ここから始めると、Zoonkが今のレベルに合わせてこの章のレッスンを作成します。"
-
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
-msgctxt "LxAk-r"
-msgid "Your plan from this chapter"
-msgstr "この章からの学習計画"
+msgctxt "lwelz-"
+msgid "Start from this chapter"
+msgstr "この章から始める"
 
 #. Heading over the ways to start a plan. “your level” is what the learner already knows.
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
@@ -553,9 +589,9 @@ msgid "Start today, at your level"
 msgstr "今の理解度に合わせて、今日から始める"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
-msgctxt "H_k_3P"
-msgid "It follows the course from here, at your pace, with reviews before you forget."
-msgstr "ここから自分のペースでコースを進め、忘れる前に復習できる計画です。"
+msgctxt "pnV8VJ"
+msgid "You get a plan for each day, from this chapter to the end of the course."
+msgstr "この章からコースの最後まで、1日ごとの学習計画を用意します。"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
@@ -600,16 +636,6 @@ msgctxt "SFqn9B"
 msgid "Try a lesson"
 msgstr "レッスンを試す"
 
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
-msgctxt "VO_HQW"
-msgid "Your plan until {date}, at {time} a day"
-msgstr "{date}まで、1日{time}の学習計画"
-
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
-msgctxt "ZSMfHW"
-msgid "Your plan at {minutes, plural, one {# minute} other {# minutes}} a day, from scratch"
-msgstr "1日{minutes, plural, other {#分}}でゼロから学ぶ学習計画"
-
 #. Heading over the list of the course's chapters and lessons. Not the learner's study plan, so use a different word than “plan”.
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
 msgctxt "rEPdIs"
@@ -625,17 +651,11 @@ msgctxt "GG6-cA"
 msgid "{count, plural, one {# chapter} other {# chapters}}"
 msgstr "{count, plural, other {#章}}"
 
-#. After the course's chapter count. Zoonk writes more lessons as learners reach them, so this counts only those written until now.
+#. Describes what happens once the learner builds a plan; not a command. The learner builds and Zoonk gets the lessons ready, so use a different verb for each.
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
-msgctxt "5RluHj"
-msgid "{count, plural, one {# lesson written so far} other {# lessons written so far}}"
-msgstr "{count, plural, other {これまでに#レッスンを作成済み}}"
-
-#. Describes what happens once the learner builds a plan; not a command. The learner builds and Zoonk writes, so use a different verb for each.
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
-msgctxt "bdvt9X"
-msgid "Build your plan and Zoonk writes this course's chapters and lessons for you, starting at your level."
-msgstr "学習計画を立てると、Zoonkが今のレベルに合わせて、このコースの章とレッスンを作成します。"
+msgctxt "yjO9gi"
+msgid "Build your plan and Zoonk gets this course's lessons ready, starting from what you already know."
+msgstr "学習計画を立てると、Zoonkが今の知識に合わせて、このコースのレッスンを用意します。"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
 msgctxt "FwtWUq"
@@ -654,27 +674,12 @@ msgstr "コースのオプション"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
 #: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 #: src/components/public/public-footer.tsx
 #: src/components/public/public-nav-links.tsx
 msgctxt "R85gsW"
 msgid "Courses"
 msgstr "コース"
-
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-areas.tsx
-msgctxt "xbvV6c"
-msgid "{count, plural, one {# chapter left out} other {# chapters left out}}"
-msgstr "{count, plural, other {#章が計画に入りきりませんでした}}"
-
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-areas.tsx
-#: src/components/catalog/area-study.ts
-msgctxt "IldniG"
-msgid "Left out"
-msgstr "入りきらない"
-
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-areas.tsx
-msgctxt "ArogzQ"
-msgid "{count, plural, =0 {# of {total, number} lessons} one {# of {total, number} lessons} other {# of {total, number} lessons}}"
-msgstr "{count, plural, =0 {#レッスン（全{total, number}レッスン中）} other {#レッスン／全{total, number}レッスン}}"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-chapter-row.tsx
 msgctxt "OGR3YM"
@@ -686,53 +691,33 @@ msgctxt "IiIBmN"
 msgid "{count, plural, one {Show # more chapter} other {Show # more chapters}}"
 msgstr "{count, plural, other {さらに#章表示する}}"
 
-#. Under the name of a course's level, such as Intermediate, that has no chapters yet. “it” is that level.
+#. Under the name of a course's level, such as Intermediate, whose chapters aren't listed yet: they are ready by the time a learner reaches that level.
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-levels.tsx
-msgctxt "H7iemn"
-msgid "Not written yet. Zoonk writes its chapters as learners reach it."
-msgstr "まだ作成されていません。学習者がこのレベルに進むと、Zoonkが章を作成します。"
-
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-levels.tsx
-msgctxt "wieA_m"
-msgid "week {week, number}"
-msgstr "{week, number}週目"
-
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-levels.tsx
-msgctxt "rci8_D"
-msgid "weeks {first, number}–{last, number}"
-msgstr "{first, number}〜{last, number}週目"
-
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-weeks.ts
-msgctxt "434gtt"
-msgid "Week {week, number}"
-msgstr "{week, number}週目"
-
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-weeks.ts
-#: src/components/catalog/area-study.ts
-msgctxt "v1x8m2"
-msgid "quick lessons and lessons written as you reach them"
-msgstr "クイックレッスンと、学習が進むにつれて作成されるレッスン"
-
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-weeks.ts
-msgctxt "YFq7jF"
-msgid "quick lessons"
-msgstr "クイックレッスン"
-
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-weeks.ts
-#: src/components/catalog/area-study.ts
-msgctxt "Xa1Q8P"
-msgid "lessons written as you reach them"
-msgstr "学習が進むにつれて作成されるレッスン"
+msgctxt "dQiHV0"
+msgid "Ready when you get there."
+msgstr "このレベルに進むころには準備が整っています。"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
-msgctxt "6CUqWy"
-msgid "Learn {course} in short lessons, with a plan that starts at your level and fits your schedule. Start free. {description}"
-msgstr "短いレッスンで{course}を学べます。今のレベルから始められ、予定に合った学習計画で進められます。無料で始められます。{description}"
+msgctxt "kIwawn"
+msgid "{description} An online course in short lessons, with a study plan for each day that starts from what you already know. Start free."
+msgstr "{description}今の知識に合わせた毎日の学習計画で、短いレッスンを進めるオンライン講座です。無料で始められます。"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
-msgctxt "gyGolN"
-msgid "Learn {course}"
-msgstr "{course}を学ぶ"
+msgctxt "77gc9A"
+msgid "Learn {course} online in short lessons, with a study plan for each day that starts from what you already know. Start free."
+msgstr "{course}をオンラインで学べます。今の知識に合わせた毎日の学習計画で、短いレッスンを進めていきます。無料で始められます。"
+
+#. A search result's title for an exam's page. {course} is the exam's name, such as “SAT” or “ENEM”. Use the words people in your country type when they look for help studying for an exam.
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
+msgctxt "t9ye2P"
+msgid "{course} prep: study plan and lessons"
+msgstr "{course}対策：学習計画とレッスン"
+
+#. A search result's title for a course's page. {course} is the course's name. Use the words people in your country type when they look for a course on the internet.
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
+msgctxt "_qSEiw"
+msgid "Learn {course}: online course"
+msgstr "{course}を学ぶオンライン講座"
 
 #: src/app/[lang]/(app)/(catalog)/courses/category-nav.tsx
 msgctxt "zQvVDJ"
@@ -755,14 +740,15 @@ msgid "Course categories"
 msgstr "コースのカテゴリ"
 
 #: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
-msgctxt "zJxO2f"
-msgid "No courses"
-msgstr "コースがありません"
+msgctxt "g3A2Pq"
+msgid "No courses here yet"
+msgstr "まだコースがありません"
 
+#. Under “No courses here yet” on a list of courses with nothing in it. “The box above” is the goal box at the top of the same page, where the visitor types what they want to learn and presses “Build my plan”.
 #: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
-msgctxt "Wc7aau"
-msgid "No courses available yet."
-msgstr "利用できるコースはまだありません。"
+msgctxt "ARz6VZ"
+msgid "Write what you want to learn in the box above, and Zoonk builds a plan for it."
+msgstr "上の入力欄に学びたいことを書くと、Zoonkが学習計画を作成します。"
 
 #: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
 msgctxt "T0mfNV"
@@ -776,6 +762,7 @@ msgstr "うまくいきませんでした。もう一度お試しください。
 
 #: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
 #: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
+#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 #: src/app/auth/callback/route.ts
 #: src/components/errors/page-error-message.tsx
 #: src/components/public/course-start-failure.tsx
@@ -789,9 +776,15 @@ msgid "Start from a course, or tell Zoonk what you're getting ready for."
 msgstr "コースを選んで始めるか、何に向けて準備しているかをZoonkに教えてください。"
 
 #: src/app/[lang]/(app)/(catalog)/courses/page.tsx
-msgctxt "WgPMAP"
-msgid "Explore all Zoonk courses to learn anything using AI. Find interactive lessons to learn subjects like science, math, technology, and more."
-msgstr "Zoonkの全コースから、AIで好きなことを学べるレッスンを探せます。科学や数学、テクノロジーなどを、やり取りしながら学べます。"
+msgctxt "Fw97dy"
+msgid "Online courses to learn with AI: science, math, languages, exam prep and more. Pick one and get a study plan for each day, in short interactive lessons. Start free."
+msgstr "科学、数学、語学、試験対策などをAIと学ぶオンライン講座です。講座を選ぶと毎日の学習計画が作られ、短いレッスンで問題に答えながら学べます。無料で始められます。"
+
+#. A search result's title for the list of every course.
+#: src/app/[lang]/(app)/(catalog)/courses/page.tsx
+msgctxt "OvhCe0"
+msgid "Online courses with a study plan for each day"
+msgstr "毎日の学習計画で学べるオンライン講座"
 
 #: src/app/[lang]/(app)/(learn)/_components/learn-bar-end.tsx
 msgctxt "yAw6p8"
@@ -815,6 +808,28 @@ msgid "Tell us what you want to learn, and we'll plan every day until you get th
 msgstr "学びたいことを教えてください。目標を達成するまで、毎日の学習計画を立てます。"
 
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+#: src/app/[lang]/mock/[blockId]/page.tsx
+msgctxt "6ppMud"
+msgid "Mock exam"
+msgstr "模試"
+
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+msgctxt "U86B6w"
+msgid "Stats"
+msgstr "統計"
+
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+msgctxt "UTFsoN"
+msgid "Study"
+msgstr "学習"
+
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+msgctxt "tKMlOc"
+msgid "Menu"
+msgstr "メニュー"
+
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
+#: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
 msgctxt "vj_mVz"
 msgid "{belt}, level {level}"
 msgstr "{belt}、レベル{level}"
@@ -824,10 +839,10 @@ msgctxt "zF7Cth"
 msgid "Guest"
 msgstr "ゲスト"
 
-#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
-msgctxt "UTFsoN"
-msgid "Study"
-msgstr "学習"
+#: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-links.tsx
+msgctxt "xmcVZ0"
+msgid "Search"
+msgstr "検索"
 
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar.tsx
 msgctxt "JZy6jo"
@@ -843,11 +858,6 @@ msgstr "サイドバーを折りたたむ"
 msgctxt "1JgBls"
 msgid "Expand sidebar"
 msgstr "サイドバーを展開する"
-
-#: src/app/[lang]/(app)/(learn)/_components/learn-tab-navigation.tsx
-msgctxt "CPAYvm"
-msgid "{count, plural, one {# activity left} other {# activities left}}"
-msgstr "{count, plural, other {残り#件のアクティビティ}}"
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "ijwVvk"
@@ -870,9 +880,9 @@ msgid "No answer was saved."
 msgstr "回答は保存されていません。"
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
-msgctxt "zqnAPr"
-msgid "What you asked in your courses before we rewrote them. The lessons changed, so your questions stay here to reread."
-msgstr "コースの改訂前にした質問です。レッスンの内容が変わったため、ここで読み返せるように残しています。"
+msgctxt "aqjWQg"
+msgid "Questions you asked in lessons that have since changed."
+msgstr "レッスンの内容が変わる前にした質問です。"
 
 #: src/app/[lang]/(app)/(learn)/buddy/earlier-questions/page.tsx
 msgctxt "YPd0dY"
@@ -993,11 +1003,6 @@ msgid "Quick explanation"
 msgstr "クイック解説"
 
 #: src/app/[lang]/(app)/(learn)/today/page.tsx
-msgctxt "kgu6gE"
-msgid "Continue explanation"
-msgstr "解説を続ける"
-
-#: src/app/[lang]/(app)/(learn)/today/page.tsx
 msgctxt "B1ehqx"
 msgid "Each day's lessons, reviews and practice for your goal."
 msgstr "目標に向けて、毎日レッスンや復習、練習に取り組めます。"
@@ -1008,35 +1013,14 @@ msgid "Your study reminder was for {goal}."
 msgstr "「{goal}」の学習リマインダーでした。"
 
 #: src/app/[lang]/(app)/(learn)/today/reminder-goal-notice.tsx
-msgctxt "h6bnZW"
-msgid "Switch to this goal"
-msgstr "この目標に切り替える"
-
-#. Shown when a free learner tries to resume a paused goal while following as many goals as the free plan allows at once. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress. “Plus” is the name of the paid plan, not the word “more”.
-#: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
-msgctxt "hnzjLt"
-msgid "You're following as many goals as the free plan allows. Pause another goal to resume this one, or get Plus to follow more."
-msgstr "無料プランで同時に進められる目標の上限に達しています。ほかの目標を一時停止すると、この目標を再開できます。Plusに登録すれば、より多くの目標を同時に進められます。"
-
-#: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
-msgctxt "4CJCep"
-msgid "Resume {goal}"
-msgstr "「{goal}」を再開する"
-
-#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
-msgctxt "kL0PL2"
-msgid "Start a new goal, or pick another one above."
-msgstr "新しい目標を始めるか、上でほかの目標を選んでください。"
+msgctxt "n1Whvj"
+msgid "Switch"
+msgstr "切り替える"
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "PcSnMu"
 msgid "You finished your {goal} goal."
 msgstr "目標「{goal}」を達成しました。"
-
-#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
-msgctxt "EQpfkS"
-msgid "Finished"
-msgstr "完了"
 
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "MsEnHi"
@@ -1053,20 +1037,10 @@ msgctxt "ND345k"
 msgid "This goal is paused."
 msgstr "この目標は一時停止中です。"
 
-#: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
-msgctxt "C2iTEH"
-msgid "Paused"
-msgstr "一時停止中"
-
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
 msgctxt "SedhMm"
 msgid "See your plan"
 msgstr "学習計画を見る"
-
-#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
-msgctxt "7aP-Hw"
-msgid "Look it over before you start."
-msgstr "始める前に目を通してください。"
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
 msgctxt "_V80Fi"
@@ -1074,39 +1048,25 @@ msgid "Your {goal} plan is ready."
 msgstr "「{goal}」の学習計画ができました。"
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
-msgctxt "yKjBeN"
-msgid "Plan ready"
-msgstr "学習計画の準備完了"
-
-#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
-msgctxt "nggkj2"
-msgid "Continue setting up"
-msgstr "設定を続ける"
-
-#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
-msgctxt "DchlAP"
-msgid "It's built from what you tell us."
-msgstr "回答をもとに学習計画を作成します。"
+#: src/app/[lang]/(app)/(learn)/today/unfinished-goal-notice.tsx
+msgctxt "acrOoz"
+msgid "Continue"
+msgstr "続ける"
 
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
 msgctxt "CIgx3N"
 msgid "Your {goal} plan needs a few more answers."
 msgstr "「{goal}」の学習計画は、あと数問に答えると完成します。"
 
-#: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
-msgctxt "dMgVfu"
-msgid "Setting up"
-msgstr "設定中"
+#: src/app/[lang]/(app)/(learn)/today/unfinished-goal-notice.tsx
+msgctxt "_pSoTA"
+msgid "A goal you started"
+msgstr "設定を始めた目標"
 
 #: src/app/[lang]/(app)/(learn)/today/unfinished-goal-notice.tsx
-msgctxt "YC2aql"
-msgid "What you wrote"
-msgstr "入力した内容"
-
-#: src/app/[lang]/(app)/(learn)/today/unfinished-goal-notice.tsx
-msgctxt "acrOoz"
-msgid "Continue"
-msgstr "続ける"
+msgctxt "jAiADb"
+msgid "You didn't finish setting this up."
+msgstr "この目標の設定がまだ終わっていません。"
 
 #: src/app/[lang]/(app)/(onboarding)/focus-test/page.tsx
 msgctxt "-3M8u-"
@@ -1139,27 +1099,28 @@ msgid "How much do you already know?"
 msgstr "どのくらい知っていますか？"
 
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
-msgctxt "eePhP0"
-msgid "It only changes where your plan starts."
-msgstr "学習計画をどこから始めるかだけが変わります。"
-
-#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
 msgctxt "C1D9a4"
 msgid "Your plan follows this course, in the time you have each day."
 msgstr "毎日使える時間に合わせて、このコースを進める学習計画です。"
 
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
-msgctxt "6CVLNb"
-msgid "{minutes, plural, one {# minute} other {# minutes}} a day for now. You can change it in the next steps."
-msgstr "まずは1日{minutes, plural, other {#分}}です。この後のステップで変更できます。"
-
-#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
 #: src/app/[lang]/learn/[lessonId]/guest-plan-start.tsx
+#: src/components/auth-gate.tsx
+#: src/components/pricing/free-plan.tsx
+#: src/components/pricing/plus-pricing.tsx
 #: src/components/public/goal-form.tsx
+#: src/components/public/public-start-bar.tsx
+#: src/components/public/public-visitor-actions.tsx
 #: src/components/public/start-plan-link.tsx
+#: src/components/public/visitor-start.tsx
 msgctxt "UTU-oM"
 msgid "Build my plan"
 msgstr "学習計画を作成する"
+
+#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
+msgctxt "54WyfN"
+msgid "{minutes, plural, one {# minute} other {# minutes}} a day. You can change it later."
+msgstr "1日{minutes, plural, other {#分}}です。あとで変更できます。"
 
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
 #: src/app/[lang]/learn/[lessonId]/guest-plan-start.tsx
@@ -1177,6 +1138,14 @@ msgctxt "9m9h0p"
 msgid "Start a course"
 msgstr "コースを始める"
 
+#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/page.tsx
+#: src/app/[lang]/(home)/_components/landing-goal-box.tsx
+#: src/components/pricing/plus-pricing.tsx
+#: src/components/public/start-free-note.tsx
+msgctxt "npIkqE"
+msgid "Start free, no account needed."
+msgstr "アカウントなしで無料で始められます。"
+
 #: src/app/[lang]/(app)/(onboarding)/start/page.tsx
 msgctxt "j8Jfmw"
 msgid "Write what you want to achieve in your own words. Zoonk asks only what's missing and builds a plan for your time. Start free, no account needed."
@@ -1187,10 +1156,12 @@ msgctxt "G4ZsrK"
 msgid "Start with your goal"
 msgstr "目標から始める"
 
-#: src/app/[lang]/(app)/(settings)/_components/settings-eyebrow.tsx
-msgctxt "DId5yN"
-msgid "{email} · Plus"
-msgstr "{email} · Plus"
+#: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
+#: src/app/[lang]/(app)/(settings)/settings/privacy/page.tsx
+#: src/components/public/public-footer.tsx
+msgctxt "cXBJ7U"
+msgid "Privacy"
+msgstr "プライバシーポリシー"
 
 #. Study reminders are off: the value beside the Reminders row in Settings
 #: src/app/[lang]/(app)/(settings)/_components/settings-links.tsx
@@ -1198,102 +1169,15 @@ msgctxt "remindersOff"
 msgid "Off"
 msgstr "オフ"
 
-#: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
-msgctxt "Bq4K5C"
-msgid "For your safety, sign in again, then delete your account."
-msgstr "安全のため、もう一度ログインしてからアカウントを削除してください。"
-
-#: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
-#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
-msgctxt "scfgdM"
-msgid "Sign in again"
+#: src/app/[lang]/(app)/(settings)/_components/sign-in-again-dialog.tsx
+msgctxt "IPuXf7"
+msgid "Log in again"
 msgstr "もう一度ログインする"
-
-#: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
-msgctxt "OR6zpA"
-msgid "We couldn't delete your account. Try again or email hello@zoonk.com."
-msgstr "アカウントを削除できませんでした。もう一度試すか、hello@zoonk.comまでメールでご連絡ください。"
-
-#: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
-#: src/app/[lang]/(app)/(settings)/profile/page.tsx
-msgctxt "wyxJrL"
-msgid "Delete account"
-msgstr "アカウントの削除"
-
-#: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
-#: src/app/[lang]/(app)/(settings)/profile/page.tsx
-msgctxt "YRbz6b"
-msgid "Deletes your account and everything in it for good. Plus from the App Store or Google Play has to be canceled there."
-msgstr "アカウントとすべてのデータを完全に削除します。App StoreやGoogle Playで登録したPlusは、登録したストアで解約する必要があります。"
-
-#: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
-#: src/app/[lang]/(app)/(settings)/profile/page.tsx
-msgctxt "Sk9SL5"
-msgid "Delete my account"
-msgstr "アカウントを削除する"
-
-#: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
-msgctxt "lNbJX1"
-msgid "Delete…"
-msgstr "削除…"
-
-#: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
-msgctxt "TcCxtt"
-msgid "Delete your account?"
-msgstr "アカウントを削除しますか？"
-
-#: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
-msgctxt "yF2UF2"
-msgid "Your goals, plans, progress, memory and uploads are deleted for good. This can't be undone."
-msgstr "目標、学習計画、進捗、メモリ、アップロードしたファイルが完全に削除されます。元には戻せません。"
-
-#: src/app/[lang]/(app)/(settings)/profile/deletion-plus-notice.tsx
-msgctxt "B62Z1j"
-msgid "Deleting your account ends Plus right away."
-msgstr "アカウントを削除すると、Plusもすぐに終了します。"
-
-#: src/app/[lang]/(app)/(settings)/profile/export-data-button.tsx
-#: src/app/[lang]/(app)/(settings)/profile/page.tsx
-msgctxt "_nHp1D"
-msgid "Everything Zoonk keeps about you, as one file"
-msgstr "Zoonkに保存されている情報をすべて1つのファイルにまとめます"
-
-#: src/app/[lang]/(app)/(settings)/profile/export-data-button.tsx
-#: src/app/[lang]/(app)/(settings)/profile/page.tsx
-msgctxt "RcXC-q"
-msgid "Download my data"
-msgstr "データをダウンロードする"
-
-#: src/app/[lang]/(app)/(settings)/profile/export-data-button.tsx
-msgctxt "5q3qC0"
-msgid "Download"
-msgstr "ダウンロード"
-
-#: src/app/[lang]/(app)/(settings)/profile/export-data-button.tsx
-msgctxt "owirfw"
-msgid "We couldn't prepare the download. Try again."
-msgstr "ダウンロードの準備ができませんでした。もう一度お試しください。"
 
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
 msgctxt "I4oZQq"
 msgid "Your name, username and account on Zoonk."
 msgstr "Zoonkでの名前、ユーザー名、アカウントの設定です。"
-
-#: src/app/[lang]/(app)/(settings)/profile/page.tsx
-msgctxt "TwyMau"
-msgid "Account"
-msgstr "アカウント"
-
-#: src/app/[lang]/(app)/(settings)/profile/page.tsx
-msgctxt "ZTyMjO"
-msgid "Your data"
-msgstr "データ"
-
-#: src/app/[lang]/(app)/(settings)/profile/page.tsx
-#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
-msgctxt "1aCPlI"
-msgid "How Zoonk and your buddy call you, and the name on your certificates."
-msgstr "Zoonkや相棒が呼びかけるときの名前で、証明書にも記載されます。"
 
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
@@ -1303,36 +1187,15 @@ msgstr "名前"
 
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
-msgctxt "wubfpa"
-msgid "3-30 characters. Letters a–z, numbers, and underscores only."
-msgstr "3〜30文字。半角英小文字（a–z）、数字、アンダースコアのみ使えます。"
-
-#: src/app/[lang]/(app)/(settings)/profile/page.tsx
-#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
 msgctxt "JCIgkj"
 msgid "Username"
 msgstr "ユーザー名"
-
-#: src/app/[lang]/(app)/(settings)/profile/page.tsx
-msgctxt "1VpnDN"
-msgid "Your name, username and account."
-msgstr "名前、ユーザー名、アカウントの設定です。"
 
 #. The name of a passkey the person hasn't named yet, in their list of passkeys.
 #: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
 msgctxt "unnamedPasskey"
 msgid "Passkey"
 msgstr "パスキー"
-
-#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
-msgctxt "rbrahO"
-msgid "Close"
-msgstr "閉じる"
-
-#: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
-msgctxt "2Hinlp"
-msgid "Rename passkey"
-msgstr "パスキー名の変更"
 
 #: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
 msgctxt "IKuKBl"
@@ -1345,10 +1208,9 @@ msgid "Such as “MacBook” or “Phone”"
 msgstr "「MacBook」や「スマートフォン」など"
 
 #: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
-#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
-msgctxt "jvo0vs"
-msgid "Save"
-msgstr "保存する"
+msgctxt "2Hinlp"
+msgid "Rename passkey"
+msgstr "パスキー名の変更"
 
 #: src/app/[lang]/(app)/(settings)/profile/passkey-dialogs.tsx
 msgctxt "YhaU4B"
@@ -1364,11 +1226,6 @@ msgstr "このパスキーではコンテンツの修正を承認できなくな
 msgctxt "-G_yv9"
 msgid "Delete passkey"
 msgstr "パスキーを削除する"
-
-#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
-msgctxt "xEwuru"
-msgid "For your safety, sign in again, then add your passkey."
-msgstr "安全のため、もう一度ログインしてからパスキーを追加してください。"
 
 #: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
 msgctxt "AadXSK"
@@ -1427,6 +1284,11 @@ msgctxt "2_2yg-"
 msgid "Add"
 msgstr "追加"
 
+#: src/app/[lang]/(app)/(settings)/profile/passkey-list.tsx
+msgctxt "p_4dgc"
+msgid "For your safety, log in again, then add your passkey."
+msgstr "安全のため、もう一度ログインしてからパスキーを追加してください。"
+
 #: src/app/[lang]/(app)/(settings)/profile/passkeys-section.tsx
 msgctxt "ASrBq8"
 msgid "Passkeys"
@@ -1436,11 +1298,6 @@ msgstr "パスキー"
 msgctxt "G9nqiW"
 msgid "You approve content fixes in Admin with a passkey."
 msgstr "Adminでは、パスキーを使ってコンテンツの修正を承認します。"
-
-#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
-msgctxt "D4cYHr"
-msgid "Use 150 characters or fewer."
-msgstr "150文字以内で入力してください。"
 
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
 msgctxt "1SvspN"
@@ -1458,30 +1315,34 @@ msgid "{username} is already taken"
 msgstr "{username}はすでに使われています"
 
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
+msgctxt "wubfpa"
+msgid "3-30 characters. Letters a–z, numbers, and underscores only."
+msgstr "3〜30文字。半角英小文字（a–z）、数字、アンダースコアのみ使えます。"
+
+#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
 msgctxt "GrnZDN"
 msgid "Saved."
 msgstr "保存しました。"
 
+#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
+msgctxt "D4cYHr"
+msgid "Use 150 characters or fewer."
+msgstr "150文字以内で入力してください。"
+
+#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
+msgctxt "jvo0vs"
+msgid "Save"
+msgstr "保存する"
+
 #: src/app/[lang]/(app)/(settings)/settings/about-you/page.tsx
-msgctxt "JXl2gz"
-msgid "What you tell us here shapes your examples and your buddy. Everything is optional."
-msgstr "ここで教えてくれたことを、学習で使う例や相棒に反映します。回答はすべて任意です。"
+msgctxt "40quiV"
+msgid "Your answers shape your examples and your buddy. Everything is optional."
+msgstr "回答は、学習で使う例や相棒に反映されます。回答はすべて任意です。"
 
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 msgctxt "uOIiKt"
 msgid "Language and region"
 msgstr "言語と地域"
-
-#: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
-#: src/components/public/public-footer.tsx
-msgctxt "cXBJ7U"
-msgid "Privacy"
-msgstr "プライバシーポリシー"
-
-#: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
-msgctxt "BbrYZc"
-msgid "Your buddy, lessons and language, the way you like them."
-msgstr "相棒やレッスン、言語を好みに合わせて設定できます。"
 
 #: src/app/[lang]/(app)/(settings)/settings/memory/page.tsx
 msgctxt "LCU3Qs"
@@ -1493,15 +1354,93 @@ msgctxt "KTQxC5"
 msgid "What Zoonk remembers to give you examples and plans that fit your life."
 msgstr "生活に合った例や学習計画を用意するために、Zoonkが覚えている情報です。"
 
+#: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
+msgctxt "OR6zpA"
+msgid "We couldn't delete your account. Try again or email hello@zoonk.com."
+msgstr "アカウントを削除できませんでした。もう一度試すか、hello@zoonk.comまでメールでご連絡ください。"
+
+#: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
+msgctxt "Sk9SL5"
+msgid "Delete my account"
+msgstr "アカウントを削除する"
+
+#: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
+msgctxt "wyxJrL"
+msgid "Delete account"
+msgstr "アカウントの削除"
+
+#: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
+msgctxt "lNbJX1"
+msgid "Delete…"
+msgstr "削除…"
+
+#: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
+msgctxt "TcCxtt"
+msgid "Delete your account?"
+msgstr "アカウントを削除しますか？"
+
+#: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
+msgctxt "yF2UF2"
+msgid "Your goals, plans, progress, memory and uploads are deleted for good. This can't be undone."
+msgstr "目標、学習計画、進捗、メモリ、アップロードしたファイルが完全に削除されます。元には戻せません。"
+
+#: src/app/[lang]/(app)/(settings)/settings/privacy/delete-account-row.tsx
+msgctxt "huX1mW"
+msgid "For your safety, log in again, then delete your account."
+msgstr "安全のため、もう一度ログインしてからアカウントを削除してください。"
+
+#. Shown only to subscribers, in the box that deletes their account.
+#: src/app/[lang]/(app)/(settings)/settings/privacy/deletion-plus-notice.tsx
+msgctxt "B62Z1j"
+msgid "Deleting your account ends Plus right away."
+msgstr "アカウントを削除すると、Plusもすぐに終了します。"
+
+#. Shown only to subscribers, in the box that deletes their account.
+#: src/app/[lang]/(app)/(settings)/settings/privacy/deletion-plus-notice.tsx
+msgctxt "eDC5E7"
+msgid "Plus from the App Store keeps charging until you cancel it there."
+msgstr "App Storeで登録したPlusは、App Storeで解約するまで請求が続きます。"
+
+#. Shown only to subscribers, in the box that deletes their account.
+#: src/app/[lang]/(app)/(settings)/settings/privacy/deletion-plus-notice.tsx
+msgctxt "_eCS12"
+msgid "Plus from Google Play keeps charging until you cancel it there."
+msgstr "Google Playで登録したPlusは、Google Playで解約するまで請求が続きます。"
+
+#: src/app/[lang]/(app)/(settings)/settings/privacy/export-data-row.tsx
+msgctxt "RcXC-q"
+msgid "Download my data"
+msgstr "データをダウンロードする"
+
+#: src/app/[lang]/(app)/(settings)/settings/privacy/page.tsx
+msgctxt "s8-igB"
+msgid "Your usage data, a copy of your data, and deleting your account."
+msgstr "利用状況のデータ、データのコピー、アカウントの削除について。"
+
+#: src/app/[lang]/(app)/(settings)/settings/privacy/page.tsx
+msgctxt "ZTyMjO"
+msgid "Your data"
+msgstr "データ"
+
 #: src/app/[lang]/(app)/(settings)/settings/reminders/page.tsx
 msgctxt "cwph5l"
 msgid "Choose when Zoonk reminds you to study, by email or push notification."
 msgstr "Zoonkからメールやプッシュ通知で学習のお知らせを受け取る時刻を設定できます。"
 
 #: src/app/[lang]/(app)/(settings)/settings/reminders/page.tsx
-msgctxt "4jhMYU"
-msgid "One reminder on your study days, when you still have learning left."
-msgstr "学習日にまだ学習が残っていれば、1回お知らせします。"
+msgctxt "vpgBNN"
+msgid "One reminder on your <plan>study days</plan>, if you're not done for the day."
+msgstr "<plan>学習する日</plan>に、その日の学習がまだ終わっていなければ1回お知らせします。"
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
+msgctxt "wBf7zr"
+msgid "We couldn't cancel Plus. Try again or email {email}."
+msgstr "Plusを解約できませんでした。もう一度試すか、{email}までメールでご連絡ください。"
+
+#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
+msgctxt "ieflON"
+msgid "hello@zoonk.com"
+msgstr "hello@zoonk.com"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
 msgctxt "cEOHN2"
@@ -1514,9 +1453,9 @@ msgid "Cancel Plus?"
 msgstr "Plusを解約しますか？"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
-msgctxt "OHwgQT"
-msgid "Plus ends right away, and we stop retrying your renewal payment."
-msgstr "Plusはすぐに終了し、更新料金の再請求も停止します。"
+msgctxt "nPxPkN"
+msgid "Plus ends right away, and you won't be charged again."
+msgstr "Plusはすぐに終了し、それ以降は請求されません。"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
 msgctxt "ZwO-lB"
@@ -1524,32 +1463,24 @@ msgid "You keep Plus until the end of the period you already paid for."
 msgstr "お支払い済みの期間が終わるまで、引き続きPlusを利用できます。"
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
-msgctxt "wBf7zr"
-msgid "We couldn't cancel Plus. Try again or email {email}."
-msgstr "Plusを解約できませんでした。もう一度試すか、{email}までメールでご連絡ください。"
-
-#. Zoonk's support address; your language may have its own.
-#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
-#: src/app/[lang]/(home)/_components/home-faq.tsx
-#: src/components/pricing/plus-questions.tsx
-msgctxt "ieflON"
-msgid "hello@zoonk.com"
-msgstr "hello@zoonk.com"
-
-#: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
 msgctxt "orvpWh"
 msgid "Go back"
 msgstr "戻る"
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
-msgctxt "qO091u"
-msgid "Your subscription will end on <mono>{date}</mono>."
-msgstr "サブスクリプションは<mono>{date}</mono>に終了します。"
+msgctxt "YrbiTE"
+msgid "Plus ends on <mono>{date}</mono>."
+msgstr "Plusは<mono>{date}</mono>に終了します。"
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
-msgctxt "xWINkR"
-msgid "Current billing period ends on <mono>{date}</mono>."
-msgstr "現在の請求期間は<mono>{date}</mono>に終了します。"
+msgctxt "AucmVG"
+msgid "Renews on <mono>{date}</mono>."
+msgstr "<mono>{date}</mono>に更新されます。"
+
+#: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
+msgctxt "MUSFX9"
+msgid "You have Plus until <mono>{date}</mono>."
+msgstr "Plusは<mono>{date}</mono>まで利用できます。"
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
 #: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
@@ -1558,18 +1489,21 @@ msgid "Your last renewal payment failed."
 msgstr "前回の更新料金を決済できませんでした。"
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
-msgctxt "AucmVG"
-msgid "Renews on <mono>{date}</mono>."
-msgstr "<mono>{date}</mono>に更新されます。"
+msgctxt "nQezuF"
+msgid "Bought on the website"
+msgstr "ウェブサイトで購入"
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
-msgctxt "iwAsxo"
-msgid "Website subscription"
-msgstr "ウェブサイトでのサブスクリプション"
+#: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
+#: src/components/pricing/plus-adds.tsx
+#: src/components/pricing/plus-plan.tsx
+msgctxt "lOdoIb"
+msgid "Plus"
+msgstr "Plus"
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
-msgctxt "CrGYez"
-msgid "Subscription ending"
+msgctxt "1y_a8B"
+msgid "Ending"
 msgstr "終了予定"
 
 #: src/app/[lang]/(app)/(settings)/subscription/current-plan.tsx
@@ -1582,25 +1516,20 @@ msgctxt "oESc06"
 msgid "What's included"
 msgstr "プランの内容"
 
-#: src/app/[lang]/(app)/(settings)/subscription/free-plan-usage.tsx
-msgctxt "kkHvAa"
-msgid "<mono>{used, number}/{limit, number}</mono> buddy messages used today"
-msgstr "今日の相棒とのメッセージ利用数：<mono>{used, number}/{limit, number}</mono>件"
+#: src/app/[lang]/(app)/(settings)/subscription/keep-plus-button.tsx
+msgctxt "S4ds_U"
+msgid "We couldn't keep Plus. Try again or email hello@zoonk.com."
+msgstr "Plusを継続できませんでした。もう一度試すか、hello@zoonk.comまでメールでご連絡ください。"
 
 #: src/app/[lang]/(app)/(settings)/subscription/keep-plus-button.tsx
-msgctxt "lRRr8l"
-msgid "Changed your mind? Keep Plus, and it renews as before."
-msgstr "気が変わりましたか？Plusを継続すると、これまでどおり自動更新されます。"
+msgctxt "aSfGh6"
+msgid "Keep Plus, and it renews as before."
+msgstr "Plusを継続すると、これまでと同じように自動更新されます。"
 
 #: src/app/[lang]/(app)/(settings)/subscription/keep-plus-button.tsx
 msgctxt "KLKQ8N"
 msgid "Keep Plus"
 msgstr "Plusを継続する"
-
-#: src/app/[lang]/(app)/(settings)/subscription/keep-plus-button.tsx
-msgctxt "S4ds_U"
-msgid "We couldn't keep Plus. Try again or email hello@zoonk.com."
-msgstr "Plusを継続できませんでした。もう一度試すか、hello@zoonk.comまでメールでご連絡ください。"
 
 #: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
 msgctxt "3iCRcP"
@@ -1613,59 +1542,54 @@ msgid "Manage in Google Play"
 msgstr "Google Playで管理する"
 
 #: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
-msgctxt "Tp4wJB"
-msgid "This subscription is managed through the App Store. To change or cancel it, use Apple's subscription settings."
-msgstr "このサブスクリプションはApp Storeで管理されています。変更や解約は、Appleのサブスクリプション設定で行ってください。"
+msgctxt "L-MTMb"
+msgid "You subscribed in the App Store."
+msgstr "App Storeで登録しています。"
 
 #: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
-msgctxt "unNUPf"
-msgid "This subscription is managed through Google Play. To change or cancel it, use Google Play."
-msgstr "このサブスクリプションはGoogle Playで管理されています。変更や解約は、Google Playで行ってください。"
+msgctxt "9SMM0b"
+msgid "You subscribed in Google Play."
+msgstr "Google Playで登録しています。"
 
 #: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
-msgctxt "P0ZHma"
-msgid "This subscription is managed by Zoonk. Contact support if you need help changing or canceling it."
-msgstr "このサブスクリプションはZoonkが管理しています。変更や解約でお困りの場合は、サポートにお問い合わせください。"
+msgctxt "i6lXik"
+msgid "Zoonk added Plus to your account. To change it, write to us."
+msgstr "ZoonkがアカウントにPlusを追加しました。変更するには、お問い合わせください。"
 
 #: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
-msgctxt "5CI3KH"
-msgid "Contact support"
-msgstr "サポートに問い合わせる"
+msgctxt "2OvvJx"
+msgid "Write to us"
+msgstr "問い合わせる"
 
 #: src/app/[lang]/(app)/(settings)/subscription/stripe-checkout-confirming.tsx
-msgctxt "bF03Os"
-msgid "Confirming your subscription"
-msgstr "サブスクリプションを確認しています"
+msgctxt "kRo_Bd"
+msgid "Turning on Plus"
+msgstr "Plusを有効にしています"
 
 #: src/app/[lang]/(app)/(settings)/subscription/stripe-checkout-confirming.tsx
-msgctxt "weaUjp"
-msgid "Still confirming your subscription"
-msgstr "引き続きサブスクリプションを確認しています"
+msgctxt "IKKpDh"
+msgid "Still working on it"
+msgstr "引き続き処理しています"
 
 #: src/app/[lang]/(app)/(settings)/subscription/stripe-checkout-confirming.tsx
-msgctxt "7lERBM"
-msgid "Stripe is confirming your payment. It usually takes a few seconds."
-msgstr "Stripeでお支払いを確認しています。通常は数秒で完了します。"
+msgctxt "keMwvL"
+msgid "This takes a few seconds."
+msgstr "数秒かかります。"
 
 #: src/app/[lang]/(app)/(settings)/subscription/stripe-checkout-confirming.tsx
-msgctxt "gDgnVG"
-msgid "This is taking longer than usual. If your payment went through, Plus shows up here as soon as Stripe confirms it."
-msgstr "通常より時間がかかっています。お支払いが完了していれば、Stripeで確認が取れ次第、ここにPlusが表示されます。"
+msgctxt "rZZrf-"
+msgid "Plus will show up here once your payment is confirmed."
+msgstr "お支払いが確認でき次第、ここにPlusが表示されます。"
 
 #: src/app/[lang]/(app)/(settings)/subscription/stripe-checkout-confirming.tsx
-msgctxt "QI17io"
-msgid "Checking with Stripe…"
-msgstr "Stripeに確認しています…"
+msgctxt "n1-iuP"
+msgid "Confirming your payment…"
+msgstr "お支払いを確認しています…"
 
 #: src/app/[lang]/(app)/(settings)/subscription/stripe-checkout-confirming.tsx
 msgctxt "1A8Z_l"
 msgid "Check again"
 msgstr "もう一度確認する"
-
-#: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
-msgctxt "uPJSSB"
-msgid "Subscribe to Zoonk Plus"
-msgstr "Zoonk Plusに登録する"
 
 #: src/app/[lang]/(app)/(settings)/support/page.tsx
 #: src/app/[lang]/(app)/(settings)/support/support-content.tsx
@@ -1679,14 +1603,24 @@ msgid "Follow us"
 msgstr "フォローする"
 
 #: src/app/[lang]/(app)/(stats)/_components/progress-empty-state.tsx
-msgctxt "FVh2Tr"
-msgid "Start learning to track your progress"
-msgstr "学習を始めると進み具合を確認できます"
+msgctxt "40z5xB"
+msgid "No statistics yet"
+msgstr "統計はまだありません"
+
+#: src/app/[lang]/(app)/(stats)/_components/progress-empty-state.tsx
+msgctxt "EpdL-z"
+msgid "They show up after your first lesson."
+msgstr "最初のレッスンを終えると表示されます。"
 
 #: src/app/[lang]/(app)/(stats)/_components/progress-empty-state.tsx
 msgctxt "4IVFWL"
 msgid "Go to Today"
 msgstr "「今日」へ移動する"
+
+#: src/app/[lang]/(app)/(stats)/_components/stats-calendar.tsx
+msgctxt "o0vS8L"
+msgid "Past 12 months"
+msgstr "過去12か月"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
 #: src/lib/public/public-labels.ts
@@ -1695,46 +1629,30 @@ msgid "Overview"
 msgstr "概要"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
-#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
-#: src/app/[lang]/(app)/(stats)/level/page.tsx
-#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-msgctxt "y1Qr81"
-msgid "Level"
-msgstr "レベル"
-
-#: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
-#: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
-#: src/app/[lang]/(app)/(stats)/energy/page.tsx
-#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-msgctxt "cVpmV7"
-msgid "Energy"
-msgstr "エネルギー"
-
-#: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
-#: src/app/[lang]/(app)/(stats)/activity/page.tsx
-msgctxt "ZmlNQ3"
-msgid "Activity"
-msgstr "学習量"
-
-#: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
-#: src/app/[lang]/(app)/(stats)/score/page.tsx
-#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
-#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-msgctxt "oLkLww"
-msgid "Score"
-msgstr "スコア"
-
-#: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
-#: src/app/[lang]/(app)/(stats)/patterns/page.tsx
-#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
-msgctxt "BCauSf"
-msgid "Patterns"
-msgstr "傾向"
-
-#: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
 msgctxt "QbGIBZ"
 msgid "Your stats"
 msgstr "学習データ"
+
+#: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
+msgctxt "cMaydB"
+msgid "Studied"
+msgstr "学習済み"
+
+#: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
+msgctxt "eos-eP"
+msgid "No study"
+msgstr "学習なし"
+
+#: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
+msgctxt "MnYAxL"
+msgid "Activity by day"
+msgstr "日ごとの学習量"
+
+#. The dark end of a heatmap's legend: more activity.
+#: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
+msgctxt "activityLegend.I5NMJ8"
+msgid "More"
+msgstr "多い"
 
 #. Legend of a heatmap, from the lightest to the darkest squares.
 #: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
@@ -1748,49 +1666,11 @@ msgctxt "activityLegend.mFYgAX"
 msgid "Less"
 msgstr "少ない"
 
-#. The dark end of a heatmap's legend: more activity.
-#: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
-msgctxt "activityLegend.I5NMJ8"
-msgid "More"
-msgstr "多い"
-
-#. A calendar day's value, shown in a small tooltip under the day's date: the activities the learner completed that day.
-#: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
-msgctxt "FjcEak"
-msgid "{count, plural, =0 {No study} one {# activity} other {# activities}}"
-msgstr "{count, plural, =0 {学習なし} other {#件の学習}}"
-
-#: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
-#: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
-msgctxt "o0vS8L"
-msgid "Past 12 months"
-msgstr "過去12か月"
-
-#: src/app/[lang]/(app)/(stats)/activity/activity-chart.tsx
-msgctxt "MnYAxL"
-msgid "Activity by day"
-msgstr "日ごとの学習量"
-
-#: src/app/[lang]/(app)/(stats)/activity/activity-stats.tsx
-msgctxt "RZVnqi"
-msgid "Any day you studied"
-msgstr "学習したすべての日"
-
 #: src/app/[lang]/(app)/(stats)/activity/activity-stats.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
 msgctxt "CjJYVQ"
 msgid "Days studied"
 msgstr "学習日数"
-
-#: src/app/[lang]/(app)/(stats)/activity/activity-stats.tsx
-msgctxt "-ZYXXk"
-msgid "{count, plural, =0 {Finished} one {Finished} other {Finished}}"
-msgstr "{count, plural, =0 {完了なし} other {完了}}"
-
-#: src/app/[lang]/(app)/(stats)/activity/activity-stats.tsx
-msgctxt "jfPES_"
-msgid "Studying in total"
-msgstr "これまでの学習時間"
 
 #: src/app/[lang]/(app)/(stats)/activity/activity-stats.tsx
 msgctxt "ug01Mk"
@@ -1801,21 +1681,6 @@ msgstr "時間"
 msgctxt "LYW_o7"
 msgid "Your study days, lessons finished and time spent learning."
 msgstr "学習日数、完了したレッスン数、学習時間がわかります。"
-
-#: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
-msgctxt "jPmToJ"
-msgid "Energy intensity from low to high"
-msgstr "エネルギーの低い順"
-
-#: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
-msgctxt "477I0g"
-msgid "Low"
-msgstr "低い"
-
-#: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
-msgctxt "AxMhQr"
-msgid "High"
-msgstr "高い"
 
 #. A calendar day's value, shown in a small tooltip under the day's date, for a day without an Energy value.
 #: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
@@ -1834,46 +1699,51 @@ msgctxt "0i1UHO"
 msgid "Energy by day"
 msgstr "日別のエネルギー"
 
-#: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
-msgctxt "OiTvvB"
-msgid "Since you started"
-msgstr "学習を始めてから"
+#: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
+msgctxt "AxMhQr"
+msgid "High"
+msgstr "高い"
+
+#: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
+msgctxt "jPmToJ"
+msgid "Energy intensity from low to high"
+msgstr "エネルギーの低い順"
+
+#: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
+msgctxt "477I0g"
+msgid "Low"
+msgstr "低い"
 
 #: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
-msgctxt "FnRTEV"
-msgid "Average"
-msgstr "平均"
-
-#: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
-msgctxt "WUD69_"
-msgid "Days with full Energy"
-msgstr "エネルギーが満タンの日"
-
-#: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
-msgctxt "1bzMX0"
-msgid "At 100%"
-msgstr "100%の日数"
-
-#: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
-msgctxt "y6wXa9"
-msgid "Every lesson you finish raises your Energy. On days off it drops a little, and your belt and progress stay."
-msgstr "レッスンを終えるたびにエネルギーが上がります。休みの日は少し下がりますが、帯や学習の進み具合は変わりません。"
+msgctxt "bPZR0t"
+msgid "Days at 100%"
+msgstr "100%を達成した日数"
 
 #: src/app/[lang]/(app)/(stats)/energy/page.tsx
 msgctxt "wSjCCg"
 msgid "Your Energy now and over the past 12 months."
 msgstr "現在と過去12か月のエネルギーを確認できます。"
 
+#: src/app/[lang]/(app)/(stats)/energy/page.tsx
+msgctxt "1lqd7i"
+msgid "Energy goes up with every lesson and drops a little on days off."
+msgstr "エネルギーはレッスンを終えるたびに増え、休みの日は少し減ります。"
+
 #: src/app/[lang]/(app)/(stats)/layout.tsx
 #: src/app/[lang]/(app)/(stats)/stats/page.tsx
-msgctxt "5CNApj"
-msgid "All goals"
-msgstr "すべての目標"
+msgctxt "bNNnKJ"
+msgid "Across all your goals"
+msgstr "すべての目標をまとめて"
 
 #: src/app/[lang]/(app)/(stats)/level/belt-rack.tsx
 msgctxt "CIQa5T"
 msgid "{color, select, white {White} yellow {Yellow} orange {Orange} green {Green} blue {Blue} purple {Purple} brown {Brown} red {Red} gray {Gray} black {Black} other {Belt}}"
 msgstr "{color, select, white {白帯} yellow {黄帯} orange {オレンジ帯} green {緑帯} blue {青帯} purple {紫帯} brown {茶帯} red {赤帯} gray {グレー帯} black {黒帯} other {帯}}"
+
+#: src/app/[lang]/(app)/(stats)/level/belt-rack.tsx
+msgctxt "GfOLmq"
+msgid "Belts"
+msgstr "帯一覧"
 
 #: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
 msgctxt "SeonFl"
@@ -1881,71 +1751,35 @@ msgid "Every belt earned"
 msgstr "すべての帯を獲得済み"
 
 #: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
-msgctxt "e6TtsL"
-msgid "Next belt"
-msgstr "次の帯"
+msgctxt "mixXPJ"
+msgid "<mono>{points}</mono> Brain Power to {belt}"
+msgstr "あと<mono>{points}</mono>脳力で{belt}"
 
 #: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
-msgctxt "0ZGPb-"
-msgid "{belt} at <mono>{points}</mono> Brain Power"
-msgstr "{belt}は脳力<mono>{points}</mono>で獲得"
-
-#. The Brain Power the learner still needs to earn the next belt.
-#: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
-msgctxt "dzpvr6"
-msgid "{points, plural, one {<mono>#</mono> to go} other {<mono>#</mono> to go}}"
-msgstr "{points, plural, other {あと<mono>#</mono>}}"
+msgctxt "kWRGGq"
+msgid "<mono>{points}</mono> Brain Power to level {level}"
+msgstr "あと<mono>{points}</mono>脳力でレベル{level}"
 
 #: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
-msgctxt "3DtX17"
-msgid "Belt progression"
-msgstr "帯の昇級"
+msgctxt "2Zh-AP"
+msgid "{points} Brain Power"
+msgstr "脳力{points}"
 
+#. {next} is a belt's name, such as "Yellow belt". {count} is a belt's last level, 10.
 #: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
-msgctxt "EX6xiz"
-msgid "Level <mono>{level}</mono> of {count}"
-msgstr "レベル<mono>{level}</mono>（全{count}段階）"
-
-#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
-msgctxt "pgt3eW"
-msgid "Max level reached"
-msgstr "最高レベルに到達"
-
-#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
-msgctxt "Cm04Yp"
-msgid "Next level"
-msgstr "次のレベル"
-
-#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
-msgctxt "cmc2-s"
-msgid "{color, select, yellow {To Yellow belt} orange {To Orange belt} green {To Green belt} blue {To Blue belt} purple {To Purple belt} brown {To Brown belt} red {To Red belt} gray {To Gray belt} black {To Black belt} other {To the next belt}}"
-msgstr "{color, select, yellow {黄帯まで} orange {オレンジ帯まで} green {緑帯まで} blue {青帯まで} purple {紫帯まで} brown {茶帯まで} red {赤帯まで} gray {グレー帯まで} black {黒帯まで} other {次の帯まで}}"
-
-#. Label above the points still needed to reach that level.
-#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
-msgctxt "57EFxN"
-msgid "To level {level}"
-msgstr "レベル{level}まで"
-
-#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
-msgctxt "LEuDU7"
-msgid "Brain Power"
-msgstr "脳力"
-
-#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
-msgctxt "pDD9dm"
-msgid "Never goes down"
-msgstr "減ることはありません"
-
-#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
-msgctxt "wbDtI_"
-msgid "Every lesson adds {points} Brain Power, and it never goes down."
-msgstr "レッスンを終えるたびに脳力が{points}増え、減ることはありません。"
+msgctxt "7StCko"
+msgid "{next} comes after level {count}, at <mono>{points}</mono> Brain Power"
+msgstr "{next}になるのはレベル{count}の次、<mono>{points}</mono>脳力に達したときです"
 
 #: src/app/[lang]/(app)/(stats)/level/page.tsx
 msgctxt "Wzw2i9"
 msgid "Your belt, level and Brain Power."
 msgstr "帯・レベル・脳力を確認できます。"
+
+#: src/app/[lang]/(app)/(stats)/level/page.tsx
+msgctxt "IxxQzi"
+msgid "You earn Brain Power for everything you study, and it never goes down."
+msgstr "学ぶたびに脳力が増え、減ることはありません。"
 
 #: src/app/[lang]/(app)/(stats)/patterns/page.tsx
 msgctxt "eBJm5e"
@@ -1955,7 +1789,7 @@ msgstr "過去90日間で、正答率が最も高かった曜日や時間帯を�
 #: src/app/[lang]/(app)/(stats)/patterns/page.tsx
 msgctxt "SXjWkq"
 msgid "When you answer best, over the last 90 days."
-msgstr "過去90日間で、正答率が最も高かった曜日や時間帯です。"
+msgstr "過去90日間で、スコアが高かった曜日や時間帯です。"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-chart.tsx
 msgctxt "VcCKQU"
@@ -1969,7 +1803,6 @@ msgid "{count, plural, one {# answer} other {# answers}}, needs {minimum, number
 msgstr "{count, plural, other {#件の回答}}、傾向の判定には{minimum, number}件必要"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
-#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 msgctxt "HHFpcy"
 msgid "Best day"
@@ -1981,7 +1814,6 @@ msgid "Throughout the week"
 msgstr "曜日別"
 
 #: src/app/[lang]/(app)/(stats)/patterns/pattern-charts.tsx
-#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 msgctxt "dFW9lU"
 msgid "Best time"
@@ -2022,45 +1854,30 @@ msgctxt "wmdZZD"
 msgid "Any time"
 msgstr "いつでも"
 
-#: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
-msgctxt "QF6BDw"
-msgid "Your days are within {points, plural, =0 {# points} one {# point} other {# points}} of each other, so any day works."
-msgstr "曜日ごとのスコアの差は{points, plural, =0 {#ポイント} other {#ポイント以内}}なので、どの曜日でも大丈夫です。"
-
-#: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
-msgctxt "S1QB1r"
-msgid "Your times of day are within {points, plural, =0 {# points} one {# point} other {# points}} of each other, so any time works."
-msgstr "時間帯ごとのスコアの差は{points, plural, =0 {#ポイント} other {#ポイント以内}}なので、どの時間帯でも大丈夫です。"
-
-#: src/app/[lang]/(app)/(stats)/patterns/pattern-summary.tsx
-msgctxt "1M3zAD"
-msgid "A day or a time of day needs {count, plural, one {# answer} other {# answers}} to count, so one lucky answer never makes a pattern."
-msgstr "集計には曜日や時間帯ごとに{count, plural, other {#件の回答}}が必要なので、たまたま1回正解しただけでは傾向は決まりません。"
+#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
+msgctxt "_GJimN"
+msgid "Your best day is {day}."
+msgstr "いちばん成績がよい曜日は{day}です。"
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "0Fab5z"
-msgid "Within {points, plural, =0 {# points} one {# point} other {# points}}"
-msgstr "差は{points, plural, =0 {#ポイント} other {#ポイント以内}}"
+msgctxt "ZTJDAv"
+msgid "You answer about the same every day."
+msgstr "どの曜日も成績はほぼ同じです。"
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "yJxUpG"
-msgid "Not enough answers yet"
-msgstr "回答数がまだ足りません"
+msgctxt "RF7ki8"
+msgid "Your best time is the {time}."
+msgstr "いちばん成績がよい時間帯は{time}です。"
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "9DVTlI"
-msgid "{score} · {count, plural, one {# answer} other {# answers}}"
-msgstr "{score} · {count, plural, other {#件の回答}}"
+msgctxt "6hLEQI"
+msgid "The time of day makes no difference."
+msgstr "時間帯による成績の差はありません。"
 
 #: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "WDXXIC"
-msgid "In the last 90 days"
-msgstr "過去90日間"
-
-#: src/app/[lang]/(app)/(stats)/patterns/patterns-content.tsx
-msgctxt "2mUitd"
-msgid "Answers"
-msgstr "回答数"
+msgctxt "IrWIWh"
+msgid "Answer more questions to see when you do best."
+msgstr "問題にもっと答えると、いちばん成績がよい曜日や時間帯がわかります。"
 
 #: src/app/[lang]/(app)/(stats)/score/page.tsx
 msgctxt "-JqpHp"
@@ -2088,39 +1905,9 @@ msgid "{count, plural, one {# answer} other {# answers}}"
 msgstr "{count, plural, other {#問に回答}}"
 
 #: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
-msgctxt "yQlMuI"
-msgid "Right answers"
-msgstr "正解率"
-
-#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
-msgctxt "OLmtAV"
-msgid "Of all your answers"
-msgstr "すべての回答のうち"
-
-#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
-msgctxt "gAnLDP"
-msgid "Right"
-msgstr "正解"
-
-#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
-msgctxt "3YnSzO"
-msgid "{correct} of {total}"
-msgstr "{correct} / {total}"
-
-#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
-msgctxt "60UdOE"
-msgid "Back from today"
-msgstr "今日からさかのぼって"
-
-#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
-msgctxt "jCNpEL"
-msgid "Period"
-msgstr "期間"
-
-#: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
-msgctxt "Ip-YhF"
-msgid "Every answer counts the same, so harder lessons can lower your score for a while."
-msgstr "どの回答もスコアに同じように反映されるため、難しいレッスンでは一時的にスコアが下がることがあります。"
+msgctxt "ElicHU"
+msgid "{correct} of {total} right in the last {days} days"
+msgstr "{correct}／{total}問正解（過去{days}日間）"
 
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
@@ -2129,14 +1916,9 @@ msgid "Score · 90 days"
 msgstr "スコア · 90日間"
 
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
-msgctxt "eIGEJG"
-msgid "Your score shows after your first answers."
-msgstr "最初に回答するとスコアが表示されます。"
-
-#: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
-msgctxt "kV-RMr"
-msgid "{low}–{high}"
-msgstr "{low}〜{high}"
+msgctxt "h8AhL5"
+msgid "Shows after your first answers."
+msgstr "初めて問題に答えると表示されます。"
 
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
@@ -2150,40 +1932,19 @@ msgid "See all"
 msgstr "すべて見る"
 
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
-#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
 msgctxt "lO7wKc"
 msgid "Not yet"
 msgstr "まだありません"
 
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
-msgctxt "McGBe4"
-msgid "Spread across the week"
-msgstr "曜日別スコアの幅"
+msgctxt "nr7tEh"
+msgid "Best on {day}"
+msgstr "最も好調なのは{day}"
 
 #: src/app/[lang]/(app)/(stats)/stats/page.tsx
 msgctxt "Q0jtuV"
 msgid "Your belt, Energy, study days, right answers and when you do best."
 msgstr "帯やエネルギー、学習日数、正解数、よい成績を出せる曜日や時間帯を確認できます。"
-
-#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-msgctxt "AezvZG"
-msgid "Average {value}"
-msgstr "平均 {value}"
-
-#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-msgctxt "I5Pid5"
-msgid "{lessons, plural, =0 {# lessons} one {# lesson} other {# lessons}} · {time}"
-msgstr "{lessons, plural, =0 {#レッスン} other {#レッスン}} · {time}"
-
-#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-msgctxt "_qHKLY"
-msgid "{correct, plural, =0 {<mono>#/{total}</mono> right} one {<mono>#/{total}</mono> right} other {<mono>#/{total}</mono> right}}"
-msgstr "{correct, plural, =0 {<mono>#/{total}</mono> 正解} other {<mono>#/{total}</mono> 正解}}"
-
-#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-msgctxt "Y_aK5B"
-msgid "Right answers in the last 90 days"
-msgstr "過去90日間の正解率"
 
 #. Ends a plan row for a topic the plan skips because the learner already knows it. In Brazilian Portuguese: “Você já sabe”.
 #: src/app/[lang]/(home)/_components/career-section.tsx
@@ -2244,11 +2005,11 @@ msgctxt "s-aYFw"
 msgid "What's left comes first the next day. If a date changes, your plan tells you."
 msgstr "終わらなかった分は、翌日の最初に回します。日程が変わったら、お知らせします。"
 
-#. In Brazilian Portuguese: “Traz de volta antes de você esquecer”.
+#. In Brazilian Portuguese: “Revisa antes de você esquecer”.
 #: src/app/[lang]/(home)/_components/every-plan.tsx
-msgctxt "oUlIsv"
-msgid "It brings things back before you forget"
-msgstr "忘れる前に復習できます"
+msgctxt "Mpxf-A"
+msgid "It reviews before you forget"
+msgstr "忘れる前に復習"
 
 #. In Brazilian Portuguese: “Revisões rápidas na hora certa, e cada erro volta para você praticar até acertar.”
 #: src/app/[lang]/(home)/_components/every-plan.tsx
@@ -2256,22 +2017,17 @@ msgctxt "iegI6Q"
 msgid "Quick reviews at the right time, and every mistake comes back for you to practice until you get it right."
 msgstr "ちょうどよいタイミングで短く復習します。間違えた問題は、正解できるまで繰り返し練習できます。"
 
-#. Zu is the study buddy's name. In Brazilian Portuguese: “Travou? Pergunte para Zu”.
+#. In Brazilian Portuguese: “Travou? É só perguntar”.
 #: src/app/[lang]/(home)/_components/every-plan.tsx
-msgctxt "eeEgWZ"
-msgid "Stuck? Ask Zu"
-msgstr "困ったら、ズーに聞けます"
+msgctxt "yUieOB"
+msgid "Stuck? Just ask"
+msgstr "つまずいたら、気軽に質問"
 
-#. Zu is the study buddy's name; the question is the one the learner is answering. In Brazilian Portuguese: “Zu, seu parceiro de estudos, explica ali mesmo na questão, do jeito mais simples que você precisar.”
+#. The question is the one the learner is answering. In Brazilian Portuguese: “A gente explica ali mesmo na questão, do jeito mais simples que você precisar.”
 #: src/app/[lang]/(home)/_components/every-plan.tsx
-msgctxt "M1vnV7"
-msgid "Zu, your study buddy, explains right there in the question, as simply as you need."
-msgstr "学習の相棒ズーが、その問題の画面で、わかるまでやさしく説明します。"
-
-#: src/app/[lang]/(home)/_components/exam-section.tsx
-msgctxt "fi0FtL"
-msgid "Available with Plus"
-msgstr "Plusで利用できます"
+msgctxt "m1tYsa"
+msgid "We explain right there in the question, as simply as you need."
+msgstr "問題の画面で、わかるまでかみくだいて説明します。"
 
 #: src/app/[lang]/(home)/_components/exam-section.tsx
 msgctxt "cpAOYg"
@@ -2284,26 +2040,22 @@ msgctxt "Psgvhk"
 msgid "Estimated score"
 msgstr "推定スコア"
 
+#. Before the topics a mock exam's answers were mostly right on. In Brazilian Portuguese: “<b>Indo bem:</b> {topics}”.
 #: src/app/[lang]/(home)/_components/exam-section.tsx
-msgctxt "RIwxqi"
-msgid "<b>Solid:</b> {topics}"
-msgstr "<b>定着：</b>{topics}"
+msgctxt "-MT1aQ"
+msgid "<b>Going well:</b> {topics}"
+msgstr "<b>よくできている分野：</b>{topics}"
 
 #: src/app/[lang]/(home)/_components/exam-section.tsx
 msgctxt "28PXed"
 msgid "<b>To review:</b> {topics}"
 msgstr "<b>要復習：</b>{topics}"
 
-#. In Brazilian Portuguese: “<b>7 erros</b> foram para o seu caderno de erros”.
+#. In Brazilian Portuguese: “<b>7 erros</b> guardados para você praticar”.
 #: src/app/[lang]/(home)/_components/exam-section.tsx
-msgctxt "Qfdzfp"
-msgid "<b>{count, plural, one {# mistake} other {# mistakes}}</b> went to your mistakes notebook"
-msgstr "<b>{count, plural, other {#件の間違い}}</b>を間違いノートに保存しました"
-
-#: src/app/[lang]/(home)/_components/exam-section.tsx
-msgctxt "mM0WGu"
-msgid "The score is only an estimate, made from your answers. Mock exams are available with Plus."
-msgstr "スコアは回答をもとにした推定値です。模試はPlusで利用できます。"
+msgctxt "B0EkLo"
+msgid "<b>{count, plural, one {# mistake} other {# mistakes}}</b> saved for you to practice"
+msgstr "<b>{count, plural, other {#件の間違い}}</b>を練習用に保存しました"
 
 #. A section label for goals like school-leaving, entrance and civil service exams. In Brazilian Portuguese: “Provas e concursos”.
 #: src/app/[lang]/(home)/_components/exam-section.tsx
@@ -2347,9 +2099,9 @@ msgid "Tell us in your own words and answer a few quick questions. Then just fol
 msgstr "自分の言葉で目標を教えて、簡単な質問にいくつか答えてください。あとは、毎日の計画に沿って進めるだけです。"
 
 #: src/app/[lang]/(home)/_components/home-faq.tsx
-msgctxt "60PJVp"
-msgid "You start free, no account needed. With a free account, you follow {goals, plural, one {one goal} other {# goals}} at a time, with a limit on lessons and on messages to Zu. For an exam, the diagnostic, the plan and {days, plural, =7 {the first week} one {the first day} other {the first # days}} of study are free. No card needed."
-msgstr "アカウントなしで無料で始められます。無料アカウントでは、同時に{goals, plural, other {#個の目標}}に取り組めますが、レッスン数とズーへのメッセージ数には上限があります。試験対策では、診断と学習計画、{days, plural, =7 {最初の1週間} other {最初の#日分}}の学習が無料です。クレジットカードは不要です。"
+msgctxt "RsvuP8"
+msgid "Yes. You start free, no account needed. A free account gives you {lessons, plural, one {# lesson} other {# lessons}} a month across all your goals, exams included, with {goals, plural, one {one goal} other {up to # goals}} at a time. No card needed."
+msgstr "はい。アカウントなしで、無料で始められます。無料のアカウントを作ると、試験対策を含むすべての目標で、月に{lessons, plural, other {#レッスン}}学べます。同時に取り組める目標は{goals, plural, other {最大#個}}です。クレジットカードは不要です。"
 
 #: src/app/[lang]/(home)/_components/home-faq.tsx
 msgctxt "NNtrw6"
@@ -2357,26 +2109,26 @@ msgid "Is Zoonk free?"
 msgstr "Zoonkは無料ですか？"
 
 #: src/app/[lang]/(home)/_components/home-faq.tsx
-msgctxt "vD4YoD"
-msgid "Plus is a subscription. It unlocks every goal and every lesson, the full plan up to exam day, mock exams timed like the real exam, Zu whenever you need it and higher limits on practice conversations. You see your whole plan before you pay, and you can cancel anytime."
-msgstr "Plusはサブスクリプションです。すべての目標に取り組めて、すべてのレッスン、試験当日までの学習計画、本番と同じ制限時間の模試を利用できます。必要なときはいつでもズーに相談でき、会話練習の利用上限も増えます。支払う前に計画全体を確認でき、いつでも解約できます。"
+msgctxt "FeMMSb"
+msgid "Every lesson and every goal, with no monthly limit. For an exam, that's your whole plan up to exam day, with mock exams timed like the real one. You also get help whenever you're stuck and more speaking practice. You see your whole plan before you pay, and you can cancel anytime."
+msgstr "レッスン数も目標数も、月ごとの上限はありません。試験対策なら、本番と同じ制限時間の模試も含め、試験当日までの学習計画を最後まで進められます。つまずいたときはいつでもサポートを受けられ、会話練習もより多くできます。支払い前に学習計画の全体を確認でき、いつでも解約できます。"
 
 #: src/app/[lang]/(home)/_components/home-faq.tsx
+#: src/components/public/start-free-note.tsx
 msgctxt "iES0bT"
 msgid "See prices"
 msgstr "料金を見る"
 
-#. In Brazilian Portuguese: “O que o Plus tem a mais?”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
-msgctxt "-VOkdd"
-msgid "What does Plus add?"
-msgstr "Plusで何が使えるようになりますか？"
+msgctxt "tk_pDR"
+msgid "What do I get if I subscribe?"
+msgstr "登録すると何ができますか？"
 
-#. “Report a problem” is the app's menu item for reporting a lesson: use the exact words your language's app uses for it (in Korean “문제 신고하기”). In Brazilian Portuguese: “As aulas são criadas com os modelos de IA mais recentes e conferidas antes de chegar até você: a gente testa a qualidade com várias avaliações, e outros modelos revisam o conteúdo. Elas seguem as matérias e os tópicos da sua prova. Erros são raros, mas podem acontecer. Viu algo errado? Toque em “Relatar um problema”.”
+#. In Brazilian Portuguese: “As aulas são criadas com os modelos de IA mais recentes e conferidas antes de chegar até você: a gente testa a qualidade com várias avaliações, e outros modelos revisam o conteúdo. Elas seguem as matérias e os tópicos da sua prova. Erros são raros, mas podem acontecer. Viu algo errado? Avise a gente pela própria aula e vamos conferir.”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
-msgctxt "NlHQkl"
-msgid "Lessons are made with the latest AI models and checked before they reach you: we test their quality with several evaluations, and other models review the content. They follow your exam's subjects and topics. Mistakes are rare, but they can happen. See something wrong? Tap “Report a problem”."
-msgstr "レッスンは最新のAIモデルで作成し、届ける前に確認しています。いくつかの方法で品質を評価し、ほかのAIモデルでも内容を確認しています。試験の科目やトピックに沿った内容です。まれに間違いが含まれることもあります。間違いを見つけましたか？「問題を報告する」をタップしてください。"
+msgctxt "yyFZMH"
+msgid "Lessons are made with the latest AI models and checked before they reach you: we test their quality with several evaluations, and other models review the content. They follow your exam's subjects and topics. Mistakes are rare, but they can happen. See something wrong? Tell us from the lesson and we'll look into it."
+msgstr "レッスンは最新のAIモデルで作成し、お届けする前にチェックしています。複数の評価で品質を確かめ、別のモデルでも内容を見直しています。試験の科目やトピックに沿った内容です。間違いはめったにありませんが、起こる可能性はあります。間違いを見つけたら、レッスン内からお知らせください。内容を確認します。"
 
 #. In Brazilian Portuguese: “Dá para confiar em aulas criadas por IA?”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
@@ -2396,9 +2148,9 @@ msgid "Is there an app?"
 msgstr "アプリはありますか？"
 
 #: src/app/[lang]/(home)/_components/home-faq.tsx
-msgctxt "Prj5qS"
-msgid "What's left comes first the next day. If a date changes, your plan tells you. You can also change your daily time whenever you want."
-msgstr "残った分は翌日の学習の最初に入ります。日程に変更があれば、学習計画でお知らせします。1日の学習時間もいつでも変更できます。"
+msgctxt "sD9IL-"
+msgid "What's left comes first the next day. If a date changes, your plan tells you. You can also change how long you study each day whenever you want."
+msgstr "残った分は翌日の最初に学びます。日程が変わる場合は、学習計画でお知らせします。1日の学習時間も、いつでも変更できます。"
 
 #. In Brazilian Portuguese: “E se eu faltar um dia?”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
@@ -2424,31 +2176,15 @@ msgid "Frequently asked questions"
 msgstr "よくある質問"
 
 #: src/app/[lang]/(home)/_components/home-faq.tsx
-msgctxt "kxCNVz"
-msgid "Still have questions? Write to <email></email>."
-msgstr "ほかにも質問がありますか？<email></email>までお問い合わせください。"
+msgctxt "vtHw2p"
+msgid "Still have questions? <link>Ask us</link>."
+msgstr "ほかにも質問がありますか？<link>お問い合わせ</link>ください。"
 
 #. The landing's headline: the goals people come with, one per line, then a line for any other goal. Each line must fit on one line of a phone at a very large size, so keep every line as short as {exam} and in the same form: {exam} is the first goal, already written for your country, such as “Passar no concurso” or “共通テスト対策”. Keep the language branches as they are: the page suggests a language other than its own. In Brazilian Portuguese: “<line>{exam}.</line> <line>Falar inglês.</line> <line>Mudar de carreira.</line> <more>Ou o que quiser.</more>”
 #: src/app/[lang]/(home)/_components/home-headline.tsx
 msgctxt "dvqrv8"
 msgid "<line>{exam}.</line> <line>{language, select, spanish {Speak Spanish.} other {Speak English.}}</line> <line>Switch careers.</line> <more>Or anything else.</more>"
 msgstr "<line>{exam}。</line> <line>{language, select, spanish {スペイン語会話。} other {英会話。}}</line> <line>キャリアチェンジ。</line> <more>ほかの目標も。</more>"
-
-#: src/app/[lang]/(home)/_components/home-hero.tsx
-msgctxt "planPhases.6RRX7X"
-msgid "Foundations"
-msgstr "基礎"
-
-#: src/app/[lang]/(home)/_components/home-hero.tsx
-msgctxt "xIp2Nz"
-msgid "day {number, number}"
-msgstr "{number, number}日目"
-
-#. Which of the example plan's phases it's in, under a meter of its phases.
-#: src/app/[lang]/(home)/_components/home-hero.tsx
-msgctxt "dQg5Ol"
-msgid "{number, number} of {total, number}"
-msgstr "{number, number}／{total, number}"
 
 #. The landing's subhead, under a headline listing goals. In Brazilian Portuguese: “Conte seu objetivo e a data. O Zoonk monta um plano para cada dia, do tamanho do seu tempo, começando pelo que você já sabe.”
 #: src/app/[lang]/(home)/_components/home-hero.tsx
@@ -2596,35 +2332,96 @@ msgstr "{subjects}。知りたいことを書くと、内容を章に分け、�
 
 #. In Brazilian Portuguese: “Por curiosidade, um curso do zero.”
 #: src/app/[lang]/(home)/_components/topic-section.tsx
-msgctxt "90-P9S"
-msgid "Just curious? A course from scratch."
-msgstr "気になることを、ゼロから学べるコースに。"
+msgctxt "Sb5-4T"
+msgid "Just curious? A course from scratch."
+msgstr "気になることを、ゼロから学べる講座に。"
 
-#. The landing's description for search results. In Brazilian Portuguese: “Conte seu objetivo e a data. O Zoonk monta um plano para cada dia, do tamanho do seu tempo, começando pelo que você já sabe. Comece grátis, sem precisar de conta.”
+#. The landing's description for search results. In Brazilian Portuguese: “Conte seu objetivo e a data. O Zoonk monta um plano de estudos para cada dia, do tamanho do seu tempo, começando pelo que você já sabe. Comece grátis, sem precisar de conta.”
 #: src/app/[lang]/(home)/page.tsx
-msgctxt "ZkT2Hl"
-msgid "Tell Zoonk your goal and the date. It builds a plan for each day that fits your time and starts from what you already know. Start free, no account needed."
-msgstr "Zoonkに目標と達成したい日を教えてください。すでに知っていることをもとに、使える時間に合った毎日の学習計画を作成します。アカウントを作らず、無料で始められます。"
+msgctxt "1WFn_i"
+msgid "Tell Zoonk your goal and the date. It builds a study plan for each day that fits your time and starts from what you already know. Start free, no account needed."
+msgstr "目標と達成したい日をZoonkに教えてください。今の知識と毎日使える時間に合わせて、1日ごとの学習計画を作成します。アカウントなしで、無料で始められます。"
 
-#. The landing's title. In Brazilian Portuguese: “Zoonk: um plano para cada dia até o seu objetivo”.
+#. The landing's title. In Brazilian Portuguese: “Zoonk: um plano de estudos para cada dia até o seu objetivo”.
 #: src/app/[lang]/(home)/page.tsx
-msgctxt "lQh01O"
-msgid "Zoonk: A plan for each day, all the way to your goal"
-msgstr "Zoonk：目標達成まで、毎日の学習計画を"
-
-#: src/app/[lang]/(home)/page.tsx
-#: src/components/auth-gate.tsx
-#: src/components/pricing/free-plan.tsx
-#: src/components/pricing/plus-pricing.tsx
-#: src/components/public/public-visitor-actions.tsx
-msgctxt "i7IHHZ"
-msgid "Start free"
-msgstr "無料で始める"
+msgctxt "_TPRmU"
+msgid "Zoonk: A study plan for each day, all the way to your goal"
+msgstr "Zoonk：目標達成まで、毎日の学習計画"
 
 #: src/app/[lang]/account-deleted-toast.tsx
 msgctxt "H30ctc"
 msgid "Your account was deleted."
 msgstr "アカウントを削除しました。"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "e6UnhT"
+msgid "Play or pause the audio"
+msgstr "音声を再生・一時停止する"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "PpAjCi"
+msgid "Flag a question in a mock exam"
+msgstr "模試の問題に見直しの印を付ける"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "uY3Caj"
+msgid "Close or leave"
+msgstr "閉じる・終了する"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "ofKpWV"
+msgid "Press the main button"
+msgstr "メインボタンを押す"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "9-Ddtu"
+msgid "Next"
+msgstr "次へ"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "fMeAJ8"
+msgid "Pick an answer"
+msgstr "答えを選ぶ"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "cyR7Kh"
+msgid "Back"
+msgstr "戻る"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "eUyM74"
+msgid "Save a mind map"
+msgstr "マインドマップを保存する"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "odxPY5"
+msgid "Show this list"
+msgstr "この一覧を表示する"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "KYN6t2"
+msgid "Show or hide the sidebar"
+msgstr "サイドバーの表示を切り替える"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "GvB3Jb"
+msgid "Tap the beat"
+msgstr "リズムに合わせてタップする"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "FVLl2T"
+msgid "Anywhere"
+msgstr "どの画面でも"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "ugxven"
+msgid "While you study"
+msgstr "学習中"
+
+#: src/app/[lang]/app-keyboard-shortcuts-dialog.tsx
+msgctxt "rbrahO"
+msgid "Close"
+msgstr "閉じる"
 
 #: src/app/[lang]/c/[code]/certificate-not-found.tsx
 #: src/app/[lang]/c/[code]/page.tsx
@@ -2633,9 +2430,9 @@ msgid "We couldn't find this certificate"
 msgstr "この証明書が見つかりませんでした"
 
 #: src/app/[lang]/c/[code]/certificate-not-found.tsx
-msgctxt "pFjRPG"
-msgid "Check the link. A certificate's link ends in its 12-character code, like {example}, and works with or without the dashes."
-msgstr "リンクを確認してください。証明書のリンクには、{example}のように末尾に12文字のコードが入ります。ハイフンがあってもなくても開けます。"
+msgctxt "_knGOK"
+msgid "Check the link. It ends in a code like {example}."
+msgstr "リンクを確認してください。末尾は{example}のようなコードです。"
 
 #: src/app/[lang]/c/[code]/certificate-not-found.tsx
 msgctxt "15PZTm"
@@ -2689,14 +2486,14 @@ msgid "It stays logged in on that computer until you log out there or leave it u
 msgstr "そのパソコンではログイン状態が続きます。そこでログアウトするか、CLIを30日間使わないと解除されます。"
 
 #: src/app/[lang]/device/cli-login-form.tsx
-msgctxt "WCaf5C"
-msgid "Approve"
-msgstr "承認する"
-
-#: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "htvX-Z"
 msgid "Deny"
 msgstr "拒否する"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "WCaf5C"
+msgid "Approve"
+msgstr "承認する"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "R-mNZZ"
@@ -2802,67 +2599,81 @@ msgctxt "ZGpU-B"
 msgid "Opening your lesson"
 msgstr "レッスンを開いています"
 
-#: src/app/[lang]/learn/[lessonId]/lesson-route-frame.tsx
-msgctxt "cyR7Kh"
-msgid "Back"
-msgstr "戻る"
+#. Heading over a lesson or review the learner can start now, while or instead of the lesson that isn't ready.
+#: src/app/[lang]/learn/[lessonId]/lesson-ready-alternative.tsx
+msgctxt "9VWjJv"
+msgid "Ready to start now"
+msgstr "今すぐ始められます"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-ready-alternative.tsx
+msgctxt "P0sSfc"
+msgid "{count, plural, one {Review # idea} other {Review # ideas}}"
+msgstr "{count, plural, other {#項目を復習する}}"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-route-frame.tsx
 msgctxt "A6lEGi"
 msgid "About this lesson"
 msgstr "このレッスンについて"
 
-#. Heading over a lesson or review the learner can start now, because this lesson couldn't be written.
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "27L4n6"
-msgid "Ready to do instead"
-msgstr "代わりに今できること"
+#: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
+msgctxt "FxoA1t"
+msgid "Getting your challenge ready"
+msgstr "チャレンジを準備しています"
 
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "aa5y6W"
-msgid "Ready while you wait"
-msgstr "待っている間にできること"
+#: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
+msgctxt "Hi1o2F"
+msgid "This challenge isn't ready yet"
+msgstr "このチャレンジはまだ準備ができていません"
 
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "P0sSfc"
-msgid "{count, plural, one {Review # idea} other {Review # ideas}}"
-msgstr "{count, plural, other {#項目を復習する}}"
+#: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
+msgctxt "KPgx8T"
+msgid "Your challenge is ready"
+msgstr "チャレンジの準備ができました"
 
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+#: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
+msgctxt "erF9ms"
+msgid "Start this challenge"
+msgstr "このチャレンジを始める"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
+msgctxt "NEAV17"
+msgid "We couldn't get this challenge ready"
+msgstr "このチャレンジの準備ができませんでした"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
+msgctxt "uaZ--2"
+msgid "Getting your lesson ready"
+msgstr "レッスンを準備しています"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
+msgctxt "zvNRS6"
+msgid "This lesson isn't ready yet"
+msgstr "このレッスンはまだ準備ができていません"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
 msgctxt "4Wktrz"
 msgid "Your lesson is ready"
 msgstr "レッスンの準備ができました"
 
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "aWuC4D"
-msgid "Your lesson is ready. Start it whenever you like."
-msgstr "レッスンの準備ができました。好きなときに始められます。"
+#: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
+msgctxt "_LfrbS"
+msgid "We couldn't get this lesson ready"
+msgstr "このレッスンを準備できませんでした"
 
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "ILYIbj"
-msgid "It usually takes a few minutes. The lesson opens here as soon as it's ready."
-msgstr "通常、数分ほどかかります。準備ができ次第、ここでレッスンが開きます。"
+#: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
+msgctxt "3x95yN"
+msgid "It takes a few minutes, and keeps going if you leave."
+msgstr "数分かかります。この画面を閉じても準備は続きます。"
 
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "Dr8j6a"
-msgid "This lesson isn't written yet"
-msgstr "このレッスンはまだ作成されていません"
-
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "BdqTEJ"
-msgid "Zoonk writes it when you start. It takes a few minutes."
-msgstr "始めると、Zoonkがレッスンを作成します。数分ほどかかります。"
+#: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
+msgctxt "1H9PtO"
+msgid "Get it ready"
+msgstr "レッスンを準備する"
 
 #: src/app/[lang]/mistakes/practice/page.tsx
 msgctxt "HGnX5e"
 msgid "Practice mistakes"
 msgstr "間違えたところの練習"
-
-#: src/app/[lang]/mock/[blockId]/page.tsx
-#: src/components/pricing/pricing-covers.tsx
-msgctxt "6ppMud"
-msgid "Mock exam"
-msgstr "模試"
 
 #: src/app/[lang]/pattern/[patternId]/page.tsx
 msgctxt "KS_o38"
@@ -2880,30 +2691,37 @@ msgid "A study plan"
 msgstr "学習計画"
 
 #: src/app/[lang]/plan-link/[planId]/page.tsx
-msgctxt "TTuJ75"
-msgid "~{time}"
-msgstr "約{time}"
+msgctxt "t9b6Rt"
+msgid "You get your own plan for the same subject. It starts from what you already know."
+msgstr "同じ科目で自分用の学習計画を立てられます。今の知識に合ったところから始められます。"
 
 #: src/app/[lang]/plan-link/[planId]/page.tsx
-msgctxt "4zm4MM"
-msgid "You get your own plan for the same subject, at your own pace. A few questions then skip what you already know."
-msgstr "同じ科目で、自分のペースに合った学習計画を作成します。いくつかの問題に答えると、すでに知っている内容はスキップされます。"
+msgctxt "wInDqV"
+msgid "Someone shared their study plan with you"
+msgstr "学習計画が共有されました"
 
 #: src/app/[lang]/plan-link/[planId]/page.tsx
-msgctxt "ql_IXy"
-msgid "A study plan someone shared with you"
-msgstr "ほかの人が共有した学習計画"
+msgctxt "Gi84AL"
+msgid "Zoonk builds you your own study plan for the same subject, for the time you have each day. Start free, no account needed."
+msgstr "同じ科目で、1日の学習時間に合った自分だけの学習計画をZoonkが作成します。アカウントなしで、無料で始められます。"
 
+#. Button under a study plan someone else shared: the reader gets a plan of their own for the same subject.
 #: src/app/[lang]/plan-link/[planId]/page.tsx
 #: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
-msgctxt "8jQqTq"
-msgid "Start from this plan"
-msgstr "この学習計画をもとに始める"
+msgctxt "_vV4SU"
+msgid "Start my own plan"
+msgstr "自分の学習計画を始める"
 
 #: src/app/[lang]/plan-link/[planId]/page.tsx
-msgctxt "7ip5wV"
-msgid "~{time} of study · {phases, plural, one {# phase} other {# phases}} · {skills, plural, one {# skill} other {# skills}}"
-msgstr "約{time}の学習 · {phases, plural, other {#フェーズ}} · {skills, plural, other {#スキル}}"
+msgctxt "S2_N87"
+msgid "~{time} of study"
+msgstr "学習時間：約{time}"
+
+#. Heading over the list of a shared study plan's parts. “it” is the plan.
+#: src/app/[lang]/plan-link/[planId]/page.tsx
+msgctxt "3g1S8B"
+msgid "What's in it"
+msgstr "学習計画の内容"
 
 #: src/app/[lang]/plan-link/[planId]/start-plan-form.tsx
 msgctxt "3aNmDX"
@@ -2930,11 +2748,6 @@ msgctxt "mSmk6Q"
 msgid "Say it again"
 msgstr "もう一度声に出して言う"
 
-#: src/app/[lang]/session/page.tsx
-msgctxt "hnntJl"
-msgid "Today's session"
-msgstr "今日の学習"
-
 #: src/app/[lang]/study-reminders/unsubscribe/page.tsx
 msgctxt "QacXkK"
 msgid "Email reminders"
@@ -2956,9 +2769,9 @@ msgid "This link is no longer active"
 msgstr "このリンクはもう使えません"
 
 #: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
-msgctxt "OqrvHM"
-msgid "Your other reminder settings haven't changed. You'll still get sign-in codes."
-msgstr "ほかのリマインダー設定はそのままです。ログインコードは引き続き届きます。"
+msgctxt "DxPDlc"
+msgid "That didn't save. Try again."
+msgstr "保存できませんでした。もう一度お試しください。"
 
 #: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
 msgctxt "c5ajtI"
@@ -2969,11 +2782,6 @@ msgstr "メールでのリマインダーをオフにしますか？"
 msgctxt "XZ-Fx6"
 msgid "Turn off"
 msgstr "オフにする"
-
-#: src/app/[lang]/study-reminders/unsubscribe/unsubscribe-form.tsx
-msgctxt "DxPDlc"
-msgid "That didn't save. Try again."
-msgstr "保存できませんでした。もう一度お試しください。"
 
 #: src/app/[lang]/terms/page.tsx
 msgctxt "DaGtoz"
@@ -2986,9 +2794,9 @@ msgid "Terms of Use"
 msgstr "利用規約"
 
 #: src/app/[lang]/test-out/[chapterId]/page.tsx
-msgctxt "5-s6we"
-msgid "Test out of a chapter"
-msgstr "テストで章をスキップする"
+msgctxt "su55__"
+msgid "Chapter test"
+msgstr "章のテスト"
 
 #: src/app/[lang]/test-out/[chapterId]/page.tsx
 #: src/components/catalog/chapter-strip.tsx
@@ -3002,9 +2810,9 @@ msgid "Usage data"
 msgstr "利用状況データ"
 
 #: src/app/[lang]/usage-data-notice.tsx
-msgctxt "pu2Edv"
-msgid "Can we use cookies and session replays to see how you use Zoonk, so we can improve it? <link>Privacy</link>"
-msgstr "Zoonkの改善のため、クッキーと操作の記録・再生を使って利用状況を確認してもよいですか？<link>プライバシー</link>"
+msgctxt "9LGL8u"
+msgid "Can we use cookies to see how you use Zoonk, so we can improve it? <link>Privacy</link>"
+msgstr "Zoonkの改善のため、クッキーを使って利用状況を調べてもよいですか？<link>プライバシー</link>"
 
 #: src/app/[lang]/usage-data-notice.tsx
 msgctxt "pvtgR2"
@@ -3038,60 +2846,33 @@ msgctxt "QRccCM"
 msgid "Page not found"
 msgstr "ページが見つかりません"
 
+#. Under the title, for a guest: what they had before keeps going once they create an account.
+#: src/components/auth-gate.tsx
+msgctxt "df7Wr-"
+msgid "Your plan and progress come with you."
+msgstr "学習計画と進捗はそのまま引き継がれます。"
+
 #: src/components/auth-gate.tsx
 msgctxt "xhBZ5m"
 msgid "Create an account to use this page"
 msgstr "このページを使うにはアカウントの作成が必要です"
 
+#. Under "You've been logged out". Their plan is still saved; logging in shows it again.
 #: src/components/auth-gate.tsx
-msgctxt "DrBO6u"
-msgid "Your plan and progress move to your account, safe on any device."
-msgstr "学習計画と進捗がアカウントに引き継がれ、どの端末からでも安心して学習を続けられます。"
+msgctxt "e3Tyso"
+msgid "Log in to get back to your plan."
+msgstr "ログインすると、学習計画に戻れます。"
 
+#. Title on a page that needs an account, once the learner is logged out of Zoonk. Not about a study session, which the app also calls a session.
 #: src/components/auth-gate.tsx
-msgctxt "HVR09O"
-msgid "Your session ended"
-msgstr "セッションが終了しました"
+msgctxt "bBaQAY"
+msgid "You've been logged out"
+msgstr "ログアウトしました"
 
 #: src/components/auth-gate.tsx
 msgctxt "acWSVG"
 msgid "Log in to continue"
 msgstr "ログインして続ける"
-
-#: src/components/auth-gate.tsx
-msgctxt "pb0Q20"
-msgid "Log in to pick up your plan."
-msgstr "ログインすると、学習計画を再開できます。"
-
-#: src/components/auth-gate.tsx
-msgctxt "eSXQ3z"
-msgid "Log in to pick up where you left off, or start free."
-msgstr "ログインして続きから再開することも、無料で始めることもできます。"
-
-#: src/components/auth-gate.tsx
-msgctxt "77LoTm"
-msgid "Start something new"
-msgstr "新しいことを始める"
-
-#: src/components/catalog/area-study.ts
-msgctxt "ug2Ory"
-msgid "{count, plural, one {# quick lesson} other {# quick lessons}}"
-msgstr "{count, plural, other {#件のクイックレッスン}}"
-
-#: src/components/catalog/area-study.ts
-msgctxt "T9NkkS"
-msgid "{fitting, plural, =0 {# of {total, number} lessons fit} one {# of {total, number} lessons fit} other {# of {total, number} lessons fit}}"
-msgstr "{fitting, plural, =0 {計画に入るのは#レッスン（全{total, number}レッスン中）} other {#レッスンが計画に入ります（全{total, number}レッスン中）}}"
-
-#: src/components/catalog/area-study.ts
-msgctxt "XP3dEr"
-msgid "{count, plural, one {+ # quick lesson} other {+ # quick lessons}}"
-msgstr "{count, plural, other {+ #件のクイックレッスン}}"
-
-#: src/components/catalog/area-study.ts
-msgctxt "pJM3om"
-msgid "{time} of study"
-msgstr "{time}の学習"
 
 #: src/components/catalog/catalog-back-to-top.tsx
 msgctxt "Gs9Kfp"
@@ -3099,89 +2880,68 @@ msgid "Back to top"
 msgstr "ページの先頭に戻る"
 
 #: src/components/catalog/catalog-hero.tsx
-msgctxt "Q4d9LI"
-msgid "With Zoonk, your plan starts at this chapter and fits your schedule."
-msgstr "Zoonkでは、この章から始める学習計画を、予定に合わせて立てます。"
+msgctxt "rU0EEc"
+msgid "Zoonk builds you a study plan for each day. It fits your time and starts at this chapter."
+msgstr "Zoonkが毎日の学習計画を作成します。学習に使える時間に合わせて、この章から始められます。"
 
 #: src/components/catalog/catalog-hero.tsx
-msgctxt "Deu0Hn"
-msgid "With Zoonk, your plan starts at your level and fits your schedule."
-msgstr "Zoonkでは、今のレベルから始める学習計画を、予定に合わせて立てます。"
+msgctxt "ISy5Wj"
+msgid "Zoonk builds you a study plan for each day until your exam. It fits your time and starts from what you already know."
+msgstr "Zoonkが試験当日までの毎日の学習計画を作成します。学習に使える時間に合わせて、今の知識に合ったところから始められます。"
 
+#: src/components/catalog/catalog-hero.tsx
+msgctxt "zfy4zA"
+msgid "Zoonk builds you a study plan for each day. It fits your time and starts from what you already know."
+msgstr "Zoonkが毎日の学習計画を作成します。学習に使える時間に合わせて、今の知識に合ったところから始められます。"
+
+#. Heading over a map showing where this chapter sits in its course. {course} is the course's name.
 #: src/components/catalog/chapter-strip.tsx
-msgctxt "ZmNtfT"
-msgid "Where this chapter sits in the course"
-msgstr "コース内でのこの章の位置づけ"
+msgctxt "ZUPmG0"
+msgid "Part of {course}"
+msgstr "「{course}」の一部"
 
 #: src/components/catalog/chapter-strip.tsx
 msgctxt "7-fN2b"
 msgid "After this chapter"
 msgstr "この章の次"
 
-#: src/components/catalog/course-exam-eyebrow.tsx
+#: src/components/catalog/course-exam-date.tsx
 msgctxt "U-M99k"
 msgid "Exam around {dates} · {days, plural, =0 {today} one {about # day left} other {about # days left}}"
 msgstr "試験日：{dates}ごろ · {days, plural, =0 {今日} other {あと約#日}}"
 
-#: src/components/catalog/course-exam-eyebrow.tsx
+#: src/components/catalog/course-exam-date.tsx
 msgctxt "_of7g2"
 msgid "Exam on {dates} · {days, plural, =0 {today} one {# day left} other {# days left}}"
 msgstr "試験日：{dates} · {days, plural, =0 {今日} other {あと#日}}"
 
+#. Heading over the lessons a new learner would study on the first day of this course.
 #: src/components/catalog/course-plan-window.tsx
-msgctxt "aaZjUM"
-msgid "{weeks, plural, one {<big>~#</big> week} other {<big>~#</big> weeks}}"
-msgstr "{weeks, plural, other {<big>約#</big>週間}}"
-
-#: src/components/catalog/course-plan-window.tsx
-msgctxt "BzWLOy"
-msgid "to finish the whole course at {minutes, plural, one {# minute} other {# minutes}} a day, Monday to Friday, from scratch."
-msgstr "月曜から金曜まで1日{minutes, plural, other {#分}}ずつ、ゼロから学んでコース全体を終えるまでの目安です。"
-
-#: src/components/catalog/course-plan-window.tsx
-msgctxt "JR79VT"
-msgid "Starting today, you'd finish around <strong>{month}</strong>."
-msgstr "今日から始めると、<strong>{month}</strong>ごろに終えられる見込みです。"
+msgctxt "tRuiZ_"
+msgid "Your first day"
+msgstr "1日目のレッスン"
 
 #: src/components/catalog/course-plan-window.tsx
 msgctxt "lM5n28"
 msgid "+ {count, plural, one {# more lesson} other {# more lessons}}"
 msgstr "+ {count, plural, other {#レッスン}}"
 
+#. Heading on a course's page: how long the whole course takes to finish.
 #: src/components/catalog/course-plan-window.tsx
-msgctxt "vEgeBR"
-msgid "by {date}, at {time} a day, Monday to Friday, what comes up most first: {count, plural, =0 {lessons} one {# lesson} other {# lessons}} already in the course, and more written as you reach them."
-msgstr "{date}まで、月曜から金曜に1日{time}、よく出る内容から優先して学びます。コースにある{count, plural, =0 {レッスン} other {#レッスン}}に加え、学習の進み具合に合わせて新しいレッスンが作成されます。"
+msgctxt "ZUdvBz"
+msgid "How long it takes"
+msgstr "学習にかかる期間"
 
 #: src/components/catalog/course-plan-window.tsx
-msgctxt "lhlS-t"
-msgid "by {date}, at {time} a day, Monday to Friday, in quick lessons on what comes up most. The full lessons come once there's more time."
-msgstr "{date}まで、月曜から金曜に1日{time}、よく出る内容をクイックレッスンで学びます。時間に余裕ができたら、詳しいレッスンで学びます。"
+msgctxt "aaZjUM"
+msgid "{weeks, plural, one {<big>~#</big> week} other {<big>~#</big> weeks}}"
+msgstr "{weeks, plural, other {<big>約#</big>週間}}"
 
+#. Under a big number of weeks (“~32 weeks”): how long the course takes when studying this many minutes a day.
 #: src/components/catalog/course-plan-window.tsx
-msgctxt "ngWcm1"
-msgid "by {date}, at {time} a day, Monday to Friday, what comes up most first: {count, number} of the course's {total, plural, one {# lesson} other {# lessons}}."
-msgstr "{date}まで、月曜から金曜に1日{time}、よく出る内容から優先して{count, number}レッスンを学びます。コース全体は{total, plural, other {#レッスン}}です。"
-
-#: src/components/catalog/course-plan-window.tsx
-msgctxt "zC104g"
-msgid "Not all of it fits by then. Before you start, you see how much fits at your level and your time."
-msgstr "その日までの計画には、すべての内容は入りきりません。始める前に、今のレベルと学習時間でどこまで学べるか確認できます。"
-
-#: src/components/catalog/course-plan-window.tsx
-msgctxt "Pq4Zco"
-msgid "That's every topic in the course, in depth."
-msgstr "このコースのすべてのトピックを詳しく学べます。"
-
-#: src/components/catalog/course-plan-window.tsx
-msgctxt "e1oyF_"
-msgid "That's every exam topic in the course, in depth."
-msgstr "このコースで扱う試験のトピックをすべて詳しく学べます。"
-
-#: src/components/catalog/course-plan-window.tsx
-msgctxt "YTiAat"
-msgid "<big>{time}</big> of study"
-msgstr "<big>{time}</big>の学習"
+msgctxt "WfiCTB"
+msgid "Studying {minutes, plural, one {# minute} other {# minutes}} a day. Your plan skips what you already know, so it can take less."
+msgstr "1日{minutes, plural, other {#分}}学習する場合の目安です。学習計画では知っている内容をスキップするので、もっと短くなることもあります。"
 
 #: src/components/catalog/course-progress.tsx
 msgctxt "YdCF9O"
@@ -3210,9 +2970,9 @@ msgid "Your answer starts the {minutes}-minute lesson."
 msgstr "答えると、{minutes}分のレッスンが始まります。"
 
 #: src/components/catalog/first-question.tsx
-msgctxt "E07b8i"
-msgid "Your choice opens the {minutes}-minute lesson. Check your answer there."
-msgstr "選ぶと、{minutes}分のレッスンが開きます。そこで答え合わせをしましょう。"
+msgctxt "_RN6WO"
+msgid "Your answer starts the lesson."
+msgstr "答えるとレッスンが始まります。"
 
 #: src/components/catalog/first-question.tsx
 msgctxt "KUHspv"
@@ -3224,65 +2984,15 @@ msgctxt "7U_QZr"
 msgid "You've started this lesson. It picks up where you left off."
 msgstr "このレッスンは学習中です。前回の続きから再開できます。"
 
-#: src/components/catalog/plan-workload.tsx
-msgctxt "tc8knM"
-msgid "Lessons not written yet"
-msgstr "未作成のレッスン"
-
-#: src/components/catalog/plan-workload.tsx
-msgctxt "7o2WBm"
-msgid "Reviews and practice"
-msgstr "復習と練習"
-
-#: src/components/catalog/plan-workload.tsx
-msgctxt "lH5xFH"
-msgid "Challenges and mock exams"
-msgstr "チャレンジと模試"
-
-#: src/components/catalog/plan-workload.tsx
-msgctxt "___zLu"
-msgid "Challenges"
-msgstr "チャレンジ"
-
-#: src/components/catalog/plan-workload.tsx
-msgctxt "5nUlrS"
-msgid "What fills the time"
-msgstr "学習時間の内訳"
-
-#: src/components/catalog/plan-workload.tsx
-msgctxt "wk-8Dt"
-msgid "{time} in all"
-msgstr "合計{time}"
-
-#: src/components/catalog/plan-workload.tsx
-msgctxt "RYqUsZ"
-msgid "What you studied comes back right before you'd forget it."
-msgstr "忘れる直前に、学んだことが復習に出てきます。"
-
-#: src/components/catalog/plan-workload.tsx
-msgctxt "GDUlmD"
-msgid "Of this, {time} comes after the exam."
-msgstr "このうち{time}は、試験後の学習時間です。"
-
-#: src/components/catalog/plan-workload.tsx
-msgctxt "3MtrI6"
-msgid "Lessons not written yet are written as you reach them."
-msgstr "未作成のレッスンは、取り組む順番が来たときに作成されます。"
-
 #: src/components/catalog/try-lesson.tsx
 msgctxt "iHnKCj"
 msgid "Try a lesson · free · {time}"
 msgstr "レッスンを試す · 無料 · {time}"
 
-#: src/components/catalog/try-lesson.tsx
-msgctxt "tTC5l3"
-msgid "{chapter} · lesson {number, number}"
-msgstr "{chapter} · レッスン{number, number}"
-
 #: src/components/errors/page-error-message.tsx
-msgctxt "R6Dkep"
-msgid "It might be your connection or a problem on our side. Trying again usually fixes it."
-msgstr "通信環境やサービス側に問題があるかもしれません。もう一度試すと、たいていは解決します。"
+msgctxt "xUnZ3u"
+msgid "Check your connection and try again."
+msgstr "インターネット接続を確認して、もう一度試してください。"
 
 #: src/components/errors/page-error-message.tsx
 msgctxt "9nolIL"
@@ -3315,13 +3025,20 @@ msgctxt "d82w2J"
 msgid "Create a free account"
 msgstr "無料アカウントを作成する"
 
+#. On the Free card, in the button's place, for a learner who doesn't have Plus: it tells them this card is what they have today. Don't call it a “plan” or use your language's word for the learner's study plan.
 #: src/components/pricing/free-plan.tsx
-msgctxt "m5_Dxl"
-msgid "Your current plan"
-msgstr "現在のプラン"
+msgctxt "RRkxkO"
+msgid "What you have now"
+msgstr "現在利用中"
+
+#. On the Free card, in the button's place, for a learner who has Plus: everything listed on this card is part of what they already have.
+#: src/components/pricing/free-plan.tsx
+msgctxt "gptbpf"
+msgid "Included in Plus"
+msgstr "Plusに含まれています"
 
 #: src/components/pricing/free-plan.tsx
-#: src/components/pricing/pricing-covers.tsx
+#: src/components/pricing/plus-adds.tsx
 msgctxt "tf1lIh"
 msgid "Free"
 msgstr "無料プラン"
@@ -3337,24 +3054,57 @@ msgid "A plan for your goal and your date"
 msgstr "目標と期日に合わせた学習計画"
 
 #: src/components/pricing/free-plan.tsx
-msgctxt "Bj_ci-"
-msgid "For an exam: the diagnostic, your plan and {days, plural, =7 {its first week} one {its first day} other {its first # days}}"
-msgstr "試験対策：診断、学習計画、{days, plural, =7 {最初の週（#日間）} other {最初の#日間}}の学習"
-
-#: src/components/pricing/free-plan.tsx
+#: src/components/pricing/plus-questions.tsx
 msgctxt "5ZDN6U"
 msgid "An AI study buddy: {count, plural, one {# message} other {# messages}} a day"
 msgstr "学習の相棒となるAI：{count, plural, other {1日#通のメッセージ}}"
 
 #: src/components/pricing/free-plan.tsx
-msgctxt "JfcsFI"
-msgid "Speaking practice calls, with lower limits than Plus"
-msgstr "スピーキング練習の会話（利用上限はPlusより少なめ）"
+msgctxt "72Jr7b"
+msgid "Speaking practice calls"
+msgstr "会話練習"
 
 #: src/components/pricing/free-plan.tsx
 msgctxt "kTr3m7"
 msgid "{goals, plural, one {# goal} other {# goals}} · {lessons, plural, one {# lesson} other {# lessons}} a month"
 msgstr "{goals, plural, other {#個の目標}} · 月{lessons, plural, other {#レッスン}}"
+
+#: src/components/pricing/plus-adds.tsx
+msgctxt "RdGReZ"
+msgid "Week {number, number}"
+msgstr "{number, number}週目"
+
+#. Small label over a section that shows what a subscription adds.
+#: src/components/pricing/plus-adds.tsx
+msgctxt "o8LYvC"
+msgid "What Plus adds"
+msgstr "Plusでできること"
+
+#: src/components/pricing/plus-adds.tsx
+msgctxt "QtkJr8"
+msgid "At {minutes, number} minutes a day, {lessons, plural, one {# lesson lasts} other {# lessons last}} {days, plural, =5 {about a week} =10 {about two weeks} one {a day} other {about # days of study}}."
+msgstr "1日{minutes, number}分の学習なら、{lessons, plural, other {#レッスンで}}{days, plural, =5 {約1週間} =10 {約2週間} other {約#日間}}学べます。"
+
+#: src/components/pricing/plus-adds.tsx
+msgctxt "Czc1c4"
+msgid "A month of a plan"
+msgstr "1か月分の学習計画"
+
+#. Under a picture of a month of study: the example it draws. {time} is a duration such as “15 min”.
+#: src/components/pricing/plus-adds.tsx
+msgctxt "ag_ax6"
+msgid "Example · {time} a day, about {count, plural, one {# short lesson} other {# short lessons}}"
+msgstr "例・1日{time}、{count, plural, other {短いレッスンを約#レッスン}}"
+
+#: src/components/pricing/plus-adds.tsx
+msgctxt "tbnyhv"
+msgid "{lessons, plural, one {# lesson} other {# lessons}}: {days, plural, =5 {about the first week} =10 {about the first two weeks} one {the first day} other {the first # days of study}}"
+msgstr "{lessons, plural, other {#レッスン}}：{days, plural, =5 {最初の約1週間分} =10 {最初の約2週間分} other {最初の約#日分}}"
+
+#: src/components/pricing/plus-adds.tsx
+msgctxt "kFIKxT"
+msgid "Every lesson, all month"
+msgstr "1か月間、すべてのレッスン"
 
 #: src/components/pricing/plus-benefits.tsx
 msgctxt "ktRBJl"
@@ -3372,9 +3122,9 @@ msgid "An AI study buddy whenever you're stuck"
 msgstr "困ったときはいつでも、AIが学習の相棒に"
 
 #: src/components/pricing/plus-benefits.tsx
-msgctxt "GEER8U"
-msgid "Higher limits for speaking calls"
-msgstr "スピーキング練習の会話をより多く利用できます"
+msgctxt "K8v_UD"
+msgid "More speaking practice calls"
+msgstr "会話練習をもっと"
 
 #: src/components/pricing/plus-benefits.tsx
 msgctxt "udRZBr"
@@ -3387,14 +3137,17 @@ msgid "Every goal · every lesson"
 msgstr "すべての目標 · すべてのレッスン"
 
 #: src/components/pricing/plus-plan.tsx
-msgctxt "0I_Rwu"
-msgid "Get Plus"
-msgstr "Plusに登録する"
+#: src/components/pricing/subscribe-button.tsx
+#: src/components/public/course-start-failure.tsx
+msgctxt "gczcC5"
+msgid "Subscribe"
+msgstr "登録する"
 
+#. Button for a subscriber: opens the page where they change or cancel Plus.
 #: src/components/pricing/plus-plan.tsx
-msgctxt "PFGLfW"
-msgid "Manage your plan"
-msgstr "プランを管理する"
+msgctxt "ANGKKx"
+msgid "Manage Plus"
+msgstr "Plusの契約を管理する"
 
 #: src/components/pricing/plus-plan.tsx
 msgctxt "Lxn0Fm"
@@ -3448,35 +3201,36 @@ msgid "Cancel anytime."
 msgstr "いつでも解約できます。"
 
 #: src/components/pricing/plus-pricing.tsx
-msgctxt "jPlE1k"
-msgid "Get ready for your exam, new job or move with Zoonk Plus: unlimited lessons and goals, full exam prep with mock exams and your AI study buddy. Start free."
-msgstr "Zoonk Plusで試験や新しい仕事、引っ越しに備えられます。レッスンも目標も無制限で、模試を含む充実した試験対策とAIの相棒が学習を支えます。無料で始められます。"
+msgctxt "JtSBO2"
+msgid "Zoonk is free for {lessons, plural, one {# lesson} other {# lessons}} a month. Zoonk Plus has no monthly limit and adds mock exams and an AI study buddy whenever you're stuck. Pay monthly or yearly, cancel anytime."
+msgstr "Zoonkは月{lessons, plural, other {#レッスン}}まで無料で学べます。Zoonk Plusなら月ごとの上限がなく、模試も利用できます。困ったときは、学習の相棒となるAIにいつでも相談できます。月払い・年払いを選べて、いつでも解約できます。"
 
 #: src/components/pricing/plus-pricing.tsx
-msgctxt "DfjjXa"
-msgid "Zoonk Plus: plans and pricing"
-msgstr "Zoonk Plus：プランと料金"
+msgctxt "ViRhm-"
+msgid "Zoonk pricing: free and Plus plans"
+msgstr "Zoonkの料金：無料プランとPlus"
 
+#. The pricing page's headline. “Your date” is the day the reader is studying for: an exam, a move, a new job.
 #: src/components/pricing/plus-pricing.tsx
-msgctxt "rmN6Kk"
-msgid "Start free. <rest>Plus when you want everything.</rest>"
-msgstr "まずは無料で始めましょう。<rest>すべて使いたくなったらPlusへ。</rest>"
+msgctxt "hCsrai"
+msgid "Follow your study plan all the way to your date."
+msgstr "目標の日まで、学習計画に沿って学べます。"
 
-#. “Free” and “Plus” are the names of the two subscription tiers. {goals} is how many goals the free plan follows at once (goals active on the learner's plan), not how many new goals it starts per day or month.
+#. “Plus” is the name of the subscription.
 #: src/components/pricing/plus-pricing.tsx
-msgctxt "brY8f_"
-msgid "Free covers {goals, plural, one {one goal} other {up to # goals}} at a time. Plus covers every goal, all the way to the big day."
-msgstr "無料プランでは、同時に{goals, plural, other {最大#件の目標}}に取り組めます。Plusなら、すべての目標を目標の日までずっとサポートします。"
+msgctxt "YpTetq"
+msgid "Plus has no monthly limit on lessons, so you study as much as each day asks for, up to your exam, your move or your new job."
+msgstr "Plusは月ごとのレッスン数に上限がないので、試験や引っ越し、新しい仕事の初日まで、毎日必要なだけ学べます。"
 
 #: src/components/pricing/plus-questions.tsx
-msgctxt "1vrigA"
-msgid "Start free with {count, plural, one {# lesson} other {# lessons}}, no account needed. With a free account, you get:"
-msgstr "アカウント登録なしで{count, plural, other {#レッスン}}を無料で体験できます。無料アカウントでは、次の内容を利用できます："
+msgctxt "Jp-smP"
+msgid "You can try {count, plural, one {# lesson} other {# lessons}} with no account. With a free account, you get:"
+msgstr "アカウントなしで{count, plural, other {#レッスン}}を試せます。無料のアカウントを作ると、次のことができます："
 
 #: src/components/pricing/plus-questions.tsx
-msgctxt "PKf2T8"
-msgid "With the free plan, you get:"
-msgstr "無料プランでは、次の内容を利用できます："
+msgctxt "kiG6Kc"
+msgid "Without Plus, you get:"
+msgstr "Plusなしでできること："
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "Uoc-Co"
@@ -3484,25 +3238,20 @@ msgid "{count, plural, one {# goal} other {# goals}} at a time"
 msgstr "{count, plural, other {一度に#個の目標}}"
 
 #: src/components/pricing/plus-questions.tsx
-#: src/components/pricing/pricing-covers.tsx
-msgctxt "dkfN6h"
-msgid "{month, plural, one {# lesson} other {# lessons}} a month, up to {day, number} a day"
-msgstr "月に{month, plural, other {#レッスン}}、1日{day, number}レッスンまで"
+msgctxt "m3zLAp"
+msgid "{month, plural, one {# lesson} other {# lessons}} a month, across all your goals, exams included"
+msgstr "試験対策を含むすべての目標で、月{month, plural, other {#レッスン}}"
+
+#. What a learner without Plus gets: they can add files of their own (notes, a syllabus) for a goal to study from. {count} is how many a day.
+#: src/components/pricing/plus-questions.tsx
+msgctxt "9xIjV0"
+msgid "Your own study material: {count, plural, one {# file} other {# files}} a day"
+msgstr "自分の資料を追加：1日{count, plural, other {#ファイル}}"
 
 #: src/components/pricing/plus-questions.tsx
-msgctxt "PVvHeY"
-msgid "{days, plural, =7 {The first week} one {The first day} other {The first # days}} of exam prep"
-msgstr "{days, plural, =7 {試験対策の初週（#日間）} other {試験対策の最初の#日間}}"
-
-#: src/components/pricing/plus-questions.tsx
-msgctxt "FZOFIX"
-msgid "{tutor, plural, one {# message to your buddy} other {# messages to your buddy}} and {uploads, plural, one {# upload} other {# uploads}} a day"
-msgstr "1日あたり{tutor, plural, other {相棒へのメッセージ#件}}と{uploads, plural, other {アップロード#回}}"
-
-#: src/components/pricing/plus-questions.tsx
-msgctxt "QKrdr3"
-msgid "Practice calls, with lower limits than Plus (exam speaking tasks come with Plus)"
-msgstr "会話練習（利用上限はPlusより低く、試験のスピーキングタスクはPlusで利用できます）"
+msgctxt "jug76X"
+msgid "Speaking practice calls, fewer than with Plus"
+msgstr "会話練習（Plusより利用回数は少なめ）"
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "uUjwhB"
@@ -3510,14 +3259,14 @@ msgid "Common questions"
 msgstr "よくある質問"
 
 #: src/components/pricing/plus-questions.tsx
-msgctxt "XPjDwN"
-msgid "Still unsure?"
-msgstr "まだ迷っていますか？"
+msgctxt "JlrCSV"
+msgid "Still unsure? <link>Ask us</link>."
+msgstr "まだ気になることがありますか？<link>お問い合わせ</link>ください。"
 
 #: src/components/pricing/plus-questions.tsx
-msgctxt "jVRlNg"
-msgid "What's in the free plan?"
-msgstr "無料プランでは何が使えますか？"
+msgctxt "vtGEce"
+msgid "What's free?"
+msgstr "何が無料で使えますか？"
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "zAc0Zf"
@@ -3525,19 +3274,20 @@ msgid "Is Plus really unlimited?"
 msgstr "Plusは本当に無制限ですか？"
 
 #: src/components/pricing/plus-questions.tsx
-msgctxt "flRDel"
-msgid "Almost. Lessons, goals and your buddy have limits only to stop bots and automated tools, not people learning. Speaking calls have daily and monthly limits, higher than on the free plan. <link>Read our fair use policy</link>."
-msgstr "ほぼ無制限です。レッスンや目標、相棒の利用上限は、ボットや自動化ツールを防ぐためのもので、学習する人の利用を制限するためではありません。会話練習には1日・1か月ごとの利用上限がありますが、無料プランより多く利用できます。<link>適正利用ポリシーを読む</link>。"
+msgctxt "gYe6Af"
+msgid "For people learning, yes. Lessons, goals and the AI study buddy only have limits that stop bots and automated tools. Speaking calls have daily and monthly limits, higher than without Plus. <link>Read our fair use policy</link>."
+msgstr "はい。人が学ぶために使うなら無制限です。レッスンや目標、学習の相棒となるAIの制限は、ボットや自動化ツールの利用を防ぐためだけのものです。会話練習には1日ごとと月ごとの上限があり、Plusに登録していない場合より多く利用できます。詳しくは<link>適正利用ポリシー</link>をご覧ください。"
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "jNjtlE"
 msgid "What happens if I cancel?"
 msgstr "解約するとどうなりますか？"
 
+#. “Back to free” means using Zoonk without paying again. Don't call it a “free plan” or use your language's word for the learner's study plan.
 #: src/components/pricing/plus-questions.tsx
-msgctxt "z1FMPn"
-msgid "You keep Plus until the end of the period you already paid for. Then you're back on the free plan, and your goals and progress stay with you."
-msgstr "お支払い済みの期間が終わるまでPlusを利用できます。その後は無料プランに戻りますが、目標や学習の進捗はそのまま残ります。"
+msgctxt "4DkB8X"
+msgid "You keep Plus until the end of the period you already paid for. Then you're back to free, and your goals and progress stay with you."
+msgstr "お支払い済みの期間が終わるまでPlusを利用できます。その後は無料での利用に戻り、目標や学習の進み具合はそのまま残ります。"
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "94whIk"
@@ -3545,69 +3295,9 @@ msgid "Can I get a refund?"
 msgstr "返金は受けられますか？"
 
 #: src/components/pricing/plus-questions.tsx
-msgctxt "Ko-avu"
-msgid "Write to us at {email} and we'll look into it. Purchases in the App Store or Google Play follow Apple's or Google's refund rules."
-msgstr "{email}までメールでお問い合わせください。内容を確認します。App StoreやGoogle Playでの購入には、AppleやGoogleの返金規定が適用されます。"
-
-#: src/components/pricing/pricing-covers.tsx
-msgctxt "4YTeTA"
-msgid "{days, plural, =7 {Diagnostic and week 1} one {Diagnostic and day 1} other {Diagnostic and the first # days}}"
-msgstr "{days, plural, =7 {診断と初週（#日間）} other {診断と最初の#日間}}"
-
-#: src/components/pricing/pricing-covers.tsx
-msgctxt "NsXWWN"
-msgid "Closing gaps"
-msgstr "苦手の克服"
-
-#: src/components/pricing/pricing-covers.tsx
-msgctxt "KV-O0y"
-msgid "Practice"
-msgstr "演習"
-
-#: src/components/pricing/pricing-covers.tsx
-msgctxt "Csk9Zg"
-msgid "Final review"
-msgstr "仕上げの復習"
-
-#: src/components/pricing/pricing-covers.tsx
-msgctxt "avI1bO"
-msgid "An exam plan"
-msgstr "試験に向けた学習計画"
-
-#: src/components/pricing/pricing-covers.tsx
-msgctxt "2ZZIpk"
-msgid "{days, plural, =7 {Free: the diagnostic and week 1 · Plus: every week after it to exam day, with mock exams} one {Free: the diagnostic and day 1 · Plus: every day after it to exam day, with mock exams} other {Free: the diagnostic and the first # days · Plus: every day after them to exam day, with mock exams}}"
-msgstr "{days, plural, =7 {無料プラン：診断と初週（#日間） · Plus：翌週から試験当日まで、毎週の学習と模試} other {無料プラン：診断と最初の#日間 · Plus：その翌日から試験当日まで、毎日の学習と模試}}"
-
-#: src/components/pricing/pricing-covers.tsx
-msgctxt "Q-aTo1"
-msgid "Exam day"
-msgstr "試験当日"
-
-#: src/components/pricing/pricing-covers.tsx
-msgctxt "x-wBHO"
-msgid "Any other goal"
-msgstr "試験以外の目標"
-
-#: src/components/pricing/pricing-covers.tsx
-msgctxt "KshPEJ"
-msgid "{count, plural, one {About one short lesson each weekday.} other {About # short lessons each weekday.}}"
-msgstr "{count, plural, other {平日なら1日あたり、短いレッスンを約#回受けられます。}}"
-
-#: src/components/pricing/pricing-covers.tsx
-msgctxt "en1DQp"
-msgid "What free covers"
-msgstr "無料で利用できる内容"
-
-#: src/components/pricing/pricing-covers.tsx
-msgctxt "XnAqzA"
-msgid "See your whole plan before you pay."
-msgstr "お支払い前に、学習計画の全体を確認できます。"
-
-#: src/components/pricing/pricing-covers.tsx
-msgctxt "PH2HUb"
-msgid "For an exam, the diagnostic, your plan and its first week are free. Plus keeps you going to exam day, with mock exams along the way."
-msgstr "試験対策では、診断と学習計画、最初の1週間の学習を無料で利用できます。Plusなら、模試を交えながら試験当日まで学習を続けられます。"
+msgctxt "C0JMHR"
+msgid "<link>Write to us</link> and we'll look into it. Purchases in the App Store or Google Play follow Apple's or Google's refund rules."
+msgstr "<link>お問い合わせ</link>いただければ、内容を確認します。App StoreまたはGoogle Playでの購入には、AppleまたはGoogleの返金規定が適用されます。"
 
 #: src/components/pricing/subscribe-button.tsx
 msgctxt "iB3ixY"
@@ -3630,24 +3320,9 @@ msgid "You already have Plus."
 msgstr "Plusに登録済みです。"
 
 #: src/components/pricing/subscribe-button.tsx
-msgctxt "gczcC5"
-msgid "Subscribe"
-msgstr "登録する"
-
-#: src/components/pricing/subscribe-button.tsx
 msgctxt "qQDa8p"
 msgid "Unable to start checkout. Contact us at hello@zoonk.com"
 msgstr "お支払い手続きを開始できませんでした。hello@zoonk.comまでお問い合わせください"
-
-#: src/components/progress/progress-day-count-label.ts
-msgctxt "r9koty"
-msgid "{count, plural, =0 {# days} one {# day} other {# days}}"
-msgstr "{count, plural, =0 {#日} other {#日間}}"
-
-#: src/components/public/course-start-failure.tsx
-msgctxt "xANHtD"
-msgid "See Plus"
-msgstr "Plusの詳細を見る"
 
 #: src/components/public/course-start-failure.tsx
 msgctxt "MO6156"
@@ -3797,14 +3472,15 @@ msgid "Technology"
 msgstr "テクノロジー"
 
 #: src/lib/categories/category.ts
-msgctxt "XL8IWT"
-msgid "{category} courses. The best {category} online courses, interactive lessons to learn."
-msgstr "{category}のコースです。最高の{category}のオンラインコースで、問題に答えながら学べます。"
+msgctxt "0KMh43"
+msgid "Online {category} courses with short interactive lessons and a study plan for each day that starts from what you already know. Start free."
+msgstr "短いレッスンで問題に答えながら学ぶ、{category}のオンラインコースです。すでに知っていることに合わせた毎日の学習計画で進められます。無料で始められます。"
 
+#. A search result's title for the courses of one category. {category} is its name, such as “Science” or “Languages”.
 #: src/lib/categories/category.ts
-msgctxt "4HKnmB"
-msgid "{category} Courses"
-msgstr "{category}のコース"
+msgctxt "DIfdxJ"
+msgid "{category} courses online"
+msgstr "{category}のオンラインコース"
 
 #: src/lib/categories/category.ts
 msgctxt "BBu_dn"

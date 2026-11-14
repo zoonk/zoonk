@@ -4,6 +4,7 @@ import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
+import { PageSectionDetail, PageSectionHeader, PageSectionTitle } from "./page";
 import { DoneMark } from "./status-mark";
 
 function CheckMark({ checked }: { checked: boolean }) {
@@ -52,14 +53,12 @@ export function Checklist<Item extends string>({
 
   return (
     <section aria-labelledby={titleId} className="flex flex-col gap-3">
-      <div className="flex items-baseline justify-between gap-2">
-        <h2 className="text-label" id={titleId}>
-          {title}
-        </h2>
-        <span className="text-muted-foreground font-mono text-xs tabular-nums" aria-live="polite">
+      <PageSectionHeader>
+        <PageSectionTitle id={titleId}>{title}</PageSectionTitle>
+        <PageSectionDetail aria-live="polite">
           {t("{done} of {total}", { done: String(done.size), total: String(items.length) })}
-        </span>
-      </div>
+        </PageSectionDetail>
+      </PageSectionHeader>
 
       <ul className="flex flex-col [&>li+li]:border-t">
         {items.map((item) => {
@@ -70,7 +69,7 @@ export function Checklist<Item extends string>({
               <button
                 aria-pressed={checked}
                 className={cn(
-                  "focus-visible:ring-ring/50 hover:before:bg-muted/70 relative isolate flex min-h-11 w-full items-start gap-3 py-2.75 text-left text-sm outline-none before:absolute before:-inset-x-2.5 before:inset-y-0.5 before:-z-10 before:rounded-[0.625rem] focus-visible:ring-[3px]",
+                  "focus-visible:ring-ring/50 hover:before:bg-muted/70 relative isolate flex min-h-11 w-full items-start gap-3 py-2.75 text-left text-sm outline-none before:absolute before:-inset-x-2.5 before:inset-y-0.5 before:-z-10 before:rounded-lg focus-visible:ring-[3px]",
                   checked && "text-muted-foreground",
                 )}
                 onClick={() => toggle(item)}

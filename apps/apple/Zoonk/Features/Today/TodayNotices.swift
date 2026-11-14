@@ -18,15 +18,12 @@ struct TodaySourceChangeSection: View {
   }
 }
 
-/// A course the learner took before goals existed, offered as a goal to plan.
+/// A course the learner took before goals existed, offered as a goal to plan. On a Today with a goal
+/// it's a card with its buttons; for a learner with no goal its buttons are the page's bottom bar.
 struct SuggestedGoalSection: View {
-  @Environment(AppRouter.self) private var router
-  @Environment(TodayStore.self) private var store
-
   let suggestion: SuggestedGoal
-
-  @State private var answering: Bool?
-  @State private var failed = false
+  @Bindable var answer: SuggestedGoalAnswer
+  var buttonsInBar = false
 
   var body: some View {
     Section {
@@ -41,25 +38,11 @@ struct SuggestedGoalSection: View {
           .foregroundStyle(.mutedForeground)
       }
 
-      BusyButton(isBusy: answering == true, icon: .forward) {
-        answer(accepted: true)
-      } label: {
-        Text("Build my plan", tableName: "Today", comment: "Accepts the suggested goal")
+      if !buttonsInBar {
+        SuggestedGoalButtons(suggestion: suggestion, answer: answer)
+          .controlSize(.large)
+          .buttonSizing(.flexible)
       }
-      .buttonStyle(.mainAction)
-      .controlSize(.large)
-      .buttonSizing(.flexible)
-      .disabled(answering == false)
-
-      BusyButton(isBusy: answering == false, icon: .dismiss) {
-        answer(accepted: false)
-      } label: {
-        Text("Not now", tableName: "Today", comment: "Dismisses the suggested goal")
-      }
-      .buttonStyle(.outline)
-      .controlSize(.large)
-      .buttonSizing(.flexible)
-      .disabled(answering == true)
     } header: {
       Label {
         Text(
@@ -70,36 +53,76 @@ struct SuggestedGoalSection: View {
       .sectionTitleStyle()
     } footer: {
       SectionFooter {
-        if failed {
-          FailureLine(
-            message: LocalizedStringResource(
-              "We couldn't save your answer. Try again.", table: "Today",
-              comment: "Answering the suggested goal failed"))
+        if answer.failed, !buttonsInBar {
+          FailureLine(message: SuggestedGoalAnswer.failure)
         }
       }
     }
   }
+}
 
-  private func answer(accepted: Bool) {
+/// Not now, then Start: the order the bottom bar puts them in, main action last.
+struct SuggestedGoalButtons: View {
+  @Environment(AppRouter.self) private var router
+  @Environment(TodayStore.self) private var store
+
+  let suggestion: SuggestedGoal
+  let answer: SuggestedGoalAnswer
+
+  var body: some View {
+    BusyButton(isBusy: answer.answering == false) {
+      respond(accepted: false)
+    } label: {
+      Text("Not now", tableName: "Today", comment: "Dismisses the suggested goal")
+    }
+    .buttonStyle(.outline)
+    .disabled(answer.answering == true)
+
+    BusyButton(isBusy: answer.answering == true) {
+      respond(accepted: true)
+    } label: {
+      Text("Start", tableName: "Today", comment: "Accepts the suggested goal")
+    }
+    .buttonStyle(.mainAction)
+    .keyboardShortcut(.defaultAction)
+    .disabled(answer.answering == false)
+  }
+
+  private func respond(accepted: Bool) {
+    Task { await answer.respond(to: suggestion, accepted: accepted, store: store, router: router) }
+  }
+}
+
+@MainActor
+@Observable
+final class SuggestedGoalAnswer {
+  static let failure = LocalizedStringResource(
+    "We couldn't save your answer. Try again.", table: "Today",
+    comment: "Answering the suggested goal failed")
+
+  private(set) var answering: Bool?
+  private(set) var failed = false
+
+  func respond(
+    to suggestion: SuggestedGoal, accepted: Bool, store: TodayStore, router: AppRouter
+  ) async {
     answering = accepted
     failed = false
 
-    Task {
-      let result = await store.answer(suggestion, accepted: accepted)
-      answering = nil
+    let result = await store.answer(suggestion, accepted: accepted)
+    answering = nil
 
-      switch result {
-      case .done where accepted:
-        if let courseID = suggestion.courseId {
-          router.open(.courseStart(courseId: courseID))
-        } else {
-          router.open(.startGoal(goal: suggestion.title))
-        }
-      case .failed:
-        failed = true
-      case .done, .obsolete:
-        break
+    switch result {
+    case .done where accepted:
+      if let courseID = suggestion.courseId {
+        router.open(.courseStart(courseId: courseID))
+      } else {
+        router.open(.startGoal(goal: suggestion.title))
       }
+    case .failed:
+      failed = true
+    case .done, .obsolete:
+      break
     }
   }
 }
@@ -452,8 +475,27 @@ struct TodayFocusTestSection: View {
               "The Focus test shows what to study most.", tableName: "Today",
               comment: "Today's suggestion of the Focus test, in one line")
           } action: {
-            SuggestionOpen(isOpen: $isOpen) {
+            SuggestionOpen(
+              isOpen: $isOpen, note: failed ? BarNote(SuggestionSaveError.message) : nil
+            ) {
               details(shown)
+            } actions: {
+              BusyButton(isBusy: isDismissing) {
+                dismiss()
+              } label: {
+                Text(FocusTestCopy.notNow)
+              }
+              .buttonStyle(.outline)
+              .disabled(isDismissing)
+
+              Button {
+                isOpen = false
+                router.open(.focusTest(goalId: goalID, startsTest: true))
+              } label: {
+                Text("Start", tableName: "Today", comment: "Starts the Focus test")
+              }
+              .buttonStyle(.mainAction)
+              .disabled(isDismissing)
             }
           }
           .listRowSeparator(.hidden)
@@ -466,7 +508,7 @@ struct TodayFocusTestSection: View {
   }
 
   private static let noted = LocalizedStringResource(
-    "Noted. You can take the test from your plan.", table: "Today",
+    "You can take the test from your plan.", table: "Today",
     comment: "After the learner dismissed Today's suggestion of the Focus test")
 
   @ViewBuilder
@@ -476,35 +518,12 @@ struct TodayFocusTestSection: View {
       .foregroundStyle(Color(.foreground))
 
     Text(
-      "Your time can't cover everything before your exam. In about \(studyDuration(minutes: shown.minutes)), the Focus test shows what to study most.",
+      "A \(studyDuration(minutes: shown.minutes)) test shows what you already know, so more of your time goes to what you need most. It never removes a subject.",
       tableName: "Today",
-      comment: "Why Today suggests the Focus test; then about how long it takes, such as \"15 min\""
+      comment:
+        "What the Focus test is and why, on Today; the argument is how long it takes, such as \"15 min\""
     )
     .foregroundStyle(.mutedForeground)
-
-    ButtonRow {
-      Button {
-        isOpen = false
-        router.open(.focusTest(goalId: goalID, startsTest: true))
-      } label: {
-        Text("Start the test", tableName: "FocusTest", comment: "Starts the Focus test")
-          .frame(maxWidth: .infinity)
-      }
-      .buttonStyle(.mainAction)
-
-      BusyButton(isBusy: isDismissing) {
-        dismiss()
-      } label: {
-        Text(FocusTestCopy.notNow)
-          .frame(maxWidth: .infinity)
-      }
-      .buttonStyle(.outline)
-    }
-    .disabled(isDismissing)
-
-    if failed {
-      SuggestionSaveError()
-    }
   }
 
   private func dismiss() {
@@ -529,6 +548,71 @@ struct TodayFocusTestSection: View {
       case .obsolete:
         break
       }
+    }
+  }
+}
+
+/// The exam's last days and "How did it go?", a suggestion like the others: its line, then a sheet
+/// with the day's checklist and the way to the exam.
+struct TodayExamMomentSection: View {
+  @Environment(AppRouter.self) private var router
+  @State private var isOpen = false
+
+  let moment: ExamMoment
+  /// Kept above the panes while the learner stays, as the Exam screen keeps its own.
+  @Binding var checked: Set<ExamView.ChecklistItem>
+
+  var body: some View {
+    if let words = moment.words {
+      Section {
+        SuggestionLine {
+          SuggestionMark(kind: .symbol(moment.icon))
+        } summary: {
+          Text(words.title)
+        } action: {
+          SuggestionOpen(isOpen: $isOpen) {
+            details(words)
+          } actions: {
+            Button {
+              isOpen = false
+              router.open(.exam)
+            } label: {
+              if moment.stage == .afterExam {
+                Text(
+                  "Add your result", tableName: "Today",
+                  comment: "Opens the exam to add the official result")
+              } else {
+                Text("See your exam", tableName: "Today", comment: "Opens the exam")
+              }
+            }
+            .buttonStyle(.mainAction)
+          }
+        }
+        .listRowSeparator(.hidden)
+      }
+    }
+  }
+
+  @ViewBuilder
+  private func details(_ words: ExamMoment.Words) -> some View {
+    Text(words.title)
+      .typeStyle(.body.weight(.semibold))
+      .foregroundStyle(Color(.foreground))
+      .accessibilityAddTraits(.isHeader)
+
+    if let day = moment.dayLine {
+      Text(verbatim: day)
+        .typeStyle(.data)
+    }
+
+    ExamMomentBody(words: words)
+
+    ExamChecklistRows(moment: moment, checked: $checked)
+
+    if let tools = moment.toolsLine {
+      Text(tools)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
     }
   }
 }

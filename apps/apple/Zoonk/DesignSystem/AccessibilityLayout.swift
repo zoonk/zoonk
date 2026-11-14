@@ -89,6 +89,7 @@ extension View {
     modifier(AccessibilityButtonShape())
       .labelStyle(StackingLabelStyle())
       .groupBoxStyle(.panel)
+      .disclosureGroupStyle(.fold)
       .typeStyle(.body)
   }
 }

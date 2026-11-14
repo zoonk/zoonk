@@ -143,7 +143,7 @@ export const lessonStepCheckResultSchema = z
       .nullable()
       .meta({
         description:
-          "A typed answer that was right apart from a typo: the right spelling to show. A typo isn't a mistake.",
+          "A typed answer that was right apart from a typo: the right spelling. A typo isn't a mistake.",
       }),
   })
   .meta({ id: "LessonStepCheckResult" });
@@ -162,7 +162,7 @@ const restoredCheckResultSchema = lessonStepCheckResultSchema
   })
   .meta({
     description:
-      "The saved answer's result, built again from what was saved: show the screen answered with it, without checking again. Its `isCorrect` and `score` are the saved verdict. `savedMistake` is false, and a typed answer has no model feedback, key points or corrections, since those aren't saved",
+      "The saved answer's result, built again from what was saved, so the screen opens answered without a new check. Its `isCorrect` and `score` are the saved verdict. `savedMistake` is false, and a typed answer has no model feedback, key points or corrections, since those aren't saved",
     id: "LessonRunAnswerResult",
   });
 
@@ -172,7 +172,7 @@ const lessonRunAnswerSchema = z.object({
     .nullable()
     .meta({
       description:
-        "What the learner answered, to show on the screen with `result`. Null for a recording (its words are `result.answerText`) and for an answer that no longer fits the screen",
+        "What the learner answered, which `result` judged. Null for a recording (its words are `result.answerText`) and for an answer that no longer fits the screen",
     }),
   answeredAt: z.iso
     .datetime()
@@ -213,7 +213,7 @@ export const libraryLessonRunSchema = z
       })
       .meta({
         description:
-          "Where Hyperdrive stood when the run started, to show it live with the server's rule (a resumed run replays its `answers` on top)",
+          "Where Hyperdrive stood when the run started, so it can be followed live with the server's rule (a resumed run replays its `answers` on top)",
       }),
     optionalStepIds: z
       .array(uuidSchema())
@@ -223,7 +223,7 @@ export const libraryLessonRunSchema = z
       .boolean()
       .meta({
         description:
-          "True when the learner already finished this lesson: its end offers no next lesson",
+          "True when the learner already finished this lesson, so no next lesson follows it",
       }),
     runId: uuidSchema().meta({ description: "Send it with every answer and with the completion" }),
     sessionId: uuidSchema()

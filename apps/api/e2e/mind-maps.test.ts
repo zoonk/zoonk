@@ -19,7 +19,6 @@ import {
 } from "@zoonk/testing/fixtures/library-lessons";
 import { skillsFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { MS_PER_DAY } from "@zoonk/utils/date";
 import { mindMapGenerationSchema } from "../src/lib/openapi/schemas/mind-maps";
 import { createAuthenticatedApiContext } from "./helpers/auth";
 import { readBody } from "./helpers/response";
@@ -263,7 +262,6 @@ test.describe("Mind maps API", () => {
       lessons: [
         {
           lessonId: finishedLesson.id,
-          locked: false,
           map: { ideas: [{ about: null, icon: null, text: "A cell has parts." }], shape: "hub" },
           position: 1,
           saved: false,
@@ -305,9 +303,7 @@ test.describe("Mind maps API", () => {
         schema: goalMindMapsSchema,
       }),
     ).resolves.toMatchObject({
-      lessonGroups: [
-        { chapterId: finished.id, count: 1, lessonIds: [finishedLesson.id], locked: 0 },
-      ],
+      lessonGroups: [{ chapterId: finished.id, count: 1, lessonIds: [finishedLesson.id] }],
       saved: [
         {
           available: true,
@@ -318,30 +314,6 @@ test.describe("Mind maps API", () => {
         },
       ],
     });
-
-    await apiContext.dispose();
-  });
-
-  test("refuses a Plus-only chapter's map on a free exam plan past its first week", async () => {
-    const { apiContext, user } = await createAuthenticatedApiContext({
-      baseURL,
-      prefix: "mind-map-plus",
-    });
-
-    const { current, goal } = await createGoal(user.id);
-
-    await prisma.goal.update({
-      data: { createdAt: new Date(Date.now() - 30 * MS_PER_DAY), kind: "exam" },
-      where: { id: goal.id },
-    });
-
-    const refused = await apiContext.post(
-      `/v1/goals/${goal.id}/chapters/${current.id}/mind-map/generations`,
-    );
-
-    expect(refused.status()).toBe(PAYMENT_REQUIRED);
-    await expect(refused.json()).resolves.toMatchObject({ error: { code: "PLUS_REQUIRED" } });
-    await expect(prisma.usageRecord.count({ where: { userId: user.id } })).resolves.toBe(0);
 
     await apiContext.dispose();
   });

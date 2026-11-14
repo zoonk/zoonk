@@ -1,29 +1,19 @@
 "use client";
 
-import { Button } from "@zoonk/ui/components/button";
-import {
-  DetailActions,
-  DetailHero,
-  DetailHeroText,
-  DetailTitle,
-} from "@zoonk/ui/components/detail";
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
+import { DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
 import {
   GenerationTimelineDescription,
   GenerationTimelineTitle,
 } from "@zoonk/ui/components/generation-timeline";
-import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
-import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
-import { cn } from "@zoonk/ui/lib/utils";
-import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import { DETAIL_PRIMARY_CLASS } from "../_components/detail-page";
+import { EnterButton } from "../_components/enter-button";
 import { HelpLimitNotice } from "../_components/help-limit-notice";
-import { Page, PageEyebrow } from "../_components/page";
-import { StatusRegion } from "../_components/status-region";
-import { useSentenceSpace } from "../_utils/locale";
-import { useFormatDuration } from "../_utils/time-format";
+import { Page } from "../_components/page";
+import { GateWords, SubscribeMainAction } from "../_components/subscribe-gate";
 import { type GenerationRun } from "../generation/generation-run";
 import { GenerationWait } from "../generation/generation-wait";
 import { useLearnRoutes } from "../learn-context";
@@ -31,17 +21,17 @@ import { LearnLink } from "../learn-link";
 import { PageWithAside } from "../shell/learn-shell";
 import { type MockChooserStatus } from "./mock-chooser-parts";
 
-type MockShortStatus = Extract<MockChooserStatus, { kind: "short" }>;
-
 export function ChooserLayout({
   aside,
   asideClassName,
   bar,
+  bottomBar,
   children,
 }: {
   aside?: ReactNode;
   asideClassName?: string;
   bar: ReactNode;
+  bottomBar?: ReactNode;
   children: ReactNode;
 }) {
   const t = useExtracted();
@@ -51,8 +41,9 @@ export function ChooserLayout({
       aside={aside}
       asideClassName={asideClassName}
       asideLabel={t("The picked mock exam")}
+      bottomBar={bottomBar}
     >
-      <article className="flex min-w-0 flex-col gap-8">
+      <article className="flex min-w-0 flex-col">
         {bar}
         <Page className="gap-8">{children}</Page>
       </article>
@@ -65,140 +56,90 @@ function useFailureText() {
 
   return (reason: Extract<MockChooserStatus, { kind: "failed" }>["reason"]): string =>
     reason === "notEnoughQuestions"
-      ? t("There aren't enough questions for this mock yet. Try the full exam or another subject.")
-      : t("We couldn't start the mock. Try again.");
+      ? t("Not enough questions for this one yet. Pick another.")
+      : t("We couldn't start the mock exam. Try again.");
 }
 
-function ShortText({ status }: { status: MockShortStatus }) {
-  const t = useExtracted();
-  const space = useSentenceSpace();
-  const duration = useFormatDuration();
-
-  const size = {
-    questions: status.questions,
-    time: duration(status.minutes),
-    total: status.examQuestions,
-  };
-
-  return (
-    <>
-      {t(
-        "{questions, plural, one {# of the {total, number} questions is ready now} other {# of the {total, number} questions are ready now}}, so this mock takes about {time}.",
-        size,
-      )}
-      {space}
-      {status.limit === "day" && t("More can be written for your mocks tomorrow.")}
-      {status.limit === "month" && t("More can be written for your mocks next month.")}
-      {status.limit !== "day" &&
-        status.limit !== "month" &&
-        t("The question bank doesn't have more new ones for it yet.")}
-    </>
-  );
-}
-
-function ChooserLine({ detail, status }: { detail: string; status: MockChooserStatus }) {
-  const failureText = useFailureText();
-
-  return (
-    <p
-      className={cn(
-        "pt-1 text-sm text-pretty",
-        status.kind === "failed" ? "text-destructive-text" : "text-muted-foreground",
-      )}
-      role="status"
-    >
-      {status.kind === "short" && <ShortText status={status} />}
-      {status.kind === "failed" && failureText(status.reason)}
-      {status.kind !== "short" && status.kind !== "failed" && detail}
-    </p>
-  );
-}
-
-export function ChooserHeader({
-  action,
-  detail,
-  eyebrow,
-  status,
-  title,
-}: {
-  action: ReactNode;
-  detail: string;
-  eyebrow: string;
-  status: MockChooserStatus;
-  title: string;
-}) {
+export function ChooserHeader({ detail, title }: { detail: string; title: string }) {
   return (
     <DetailHero>
       <DetailHeroText>
-        <PageEyebrow>{eyebrow}</PageEyebrow>
         <DetailTitle>{title}</DetailTitle>
-        <ChooserLine detail={detail} status={status} />
+        <p className="text-muted-foreground pt-1 text-sm text-pretty">{detail}</p>
       </DetailHeroText>
-
-      <DetailActions>{action}</DetailActions>
     </DetailHero>
   );
 }
 
-export function ChooserStartButton({
-  busy,
-  children,
-  disabled = false,
-  onClick,
-}: {
-  busy: boolean;
-  children: ReactNode;
-  disabled?: boolean;
-  onClick: () => void;
-}) {
-  const mounted = useIsMounted();
-  const isDisabled = disabled || !mounted;
-  const ref = useEnterClick<HTMLButtonElement>({ enabled: !isDisabled && !busy });
-
-  return (
-    <Button
-      aria-keyshortcuts="Enter"
-      busy={busy}
-      className={cn(DETAIL_PRIMARY_CLASS, "font-[560]")}
-      disabled={isDisabled}
-      focusableWhenDisabled
-      icon={<PlayIcon aria-hidden="true" />}
-      onClick={onClick}
-      ref={ref}
-      size="lg"
-    >
-      {children}
-      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-    </Button>
-  );
-}
-
-export function ChooserPlusLink({ href }: { href: string }) {
+/** Why Start didn't start, read out as it shows: over the bar, where the learner pressed. */
+function useChooserNote({ busy, gated, status }: ChooserBarProps): ReactNode {
   const t = useExtracted();
-  const ref = useEnterClick<HTMLAnchorElement>();
+  const routes = useLearnRoutes();
+  const failureText = useFailureText();
 
-  return (
-    <LearnLink
-      aria-keyshortcuts="Enter"
-      className={cn(DETAIL_PRIMARY_CLASS, "font-[560]")}
-      href={href}
-      ref={ref}
-    >
-      {t("See Plus")}
-      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-    </LearnLink>
-  );
+  if (gated) {
+    return (
+      <div role="alert">
+        <GateWords title={t("Mock exams need a subscription")} />
+      </div>
+    );
+  }
+
+  if (busy) {
+    return null;
+  }
+
+  if (status.kind === "refused") {
+    return (
+      <div role="alert">
+        <HelpLimitNotice limit={status.limit} linkComponent={LearnLink} routes={routes} />
+      </div>
+    );
+  }
+
+  if (status.kind === "failed") {
+    return (
+      <p className="text-destructive-text text-sm text-pretty" role="alert">
+        {failureText(status.reason)}
+      </p>
+    );
+  }
+
+  return null;
 }
 
-export function ChooserRefusal({ busy, status }: { busy: boolean; status: MockChooserStatus }) {
-  const routes = useLearnRoutes();
+type ChooserBarProps = { busy: boolean; gated: boolean; status: MockChooserStatus };
+
+/** Start on every screen size, after the list: the choice comes before the action. */
+export function ChooserBar({
+  busy,
+  disabled,
+  gated,
+  onStart,
+  status,
+}: ChooserBarProps & { disabled: boolean; onStart: () => void }) {
+  const t = useExtracted();
+  const mounted = useIsMounted();
+  const note = useChooserNote({ busy, gated, status });
 
   return (
-    <StatusRegion>
-      {!busy && status.kind === "refused" && (
-        <HelpLimitNotice limit={status.limit} linkComponent={LearnLink} routes={routes} />
+    <BottomBar note={note}>
+      {gated ? (
+        <SubscribeMainAction />
+      ) : (
+        <BottomBarActions>
+          <EnterButton
+            busy={busy}
+            className={DETAIL_PRIMARY_CLASS}
+            disabled={disabled || !mounted}
+            onClick={onStart}
+            size="lg"
+          >
+            {t("Start")}
+          </EnterButton>
+        </BottomBarActions>
       )}
-    </StatusRegion>
+    </BottomBar>
   );
 }
 
@@ -210,7 +151,7 @@ export function MockWriting({ bar, run }: { bar: ReactNode; run: GenerationRun }
       <GenerationWait kind="mockQuestions" run={run}>
         {/* oxlint-disable-next-line jsx-a11y/heading-has-content -- The title's text is its children. */}
         <GenerationTimelineTitle render={<h1 />}>
-          {t("Preparing your mock exam")}
+          {t("Getting your mock exam ready…")}
         </GenerationTimelineTitle>
         <GenerationTimelineDescription>
           {t(

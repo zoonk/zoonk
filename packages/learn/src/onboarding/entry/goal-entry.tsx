@@ -7,9 +7,11 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { PaperclipIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
+import { EnterButton } from "../../_components/enter-button";
 import { PageSectionTitle } from "../../_components/page";
 import { type GoalError } from "../goal-errors";
 import {
+  OnboardingActions,
   OnboardingColumn,
   OnboardingDescription,
   OnboardingHeading,
@@ -27,11 +29,23 @@ import {
 import { GoalErrorAlert } from "./goal-outcomes";
 import { useLocalGoalExample } from "./use-local-goal-example";
 
-function SubmitButton() {
+/** In a section the box holds its own button; on its own page the button is the page's main action. */
+function SubmitButton({ form }: { form?: string }) {
   const t = useExtracted();
   const ref = useEnterClick<HTMLButtonElement>();
 
-  return <GoalFieldSubmit ref={ref}>{t("Build my plan")}</GoalFieldSubmit>;
+  if (!form) {
+    return <GoalFieldSubmit ref={ref}>{t("Build my plan")}</GoalFieldSubmit>;
+  }
+
+  return (
+    <OnboardingActions>
+      {/* Enter in the goal's field submits its form, so the key is the field's. */}
+      <EnterButton enter="host" form={form} ref={ref} type="submit">
+        {t("Build my plan")}
+      </EnterButton>
+    </OnboardingActions>
+  );
 }
 
 export function GoalEntry({
@@ -42,7 +56,6 @@ export function GoalEntry({
   defaultGoal,
   error,
   fromSharedPlan = false,
-  notice,
   onAttach,
   onSubmit,
   signUpHref,
@@ -54,7 +67,6 @@ export function GoalEntry({
   defaultGoal: string;
   error: GoalError | null;
   fromSharedPlan?: boolean;
-  notice?: React.ReactNode;
   onAttach?: () => void;
   onSubmit: (goal: string) => void;
   signUpHref: string;
@@ -63,15 +75,19 @@ export function GoalEntry({
   const section = useOnboardingSection();
   const example = useLocalGoalExample();
   const inputId = useId();
+  const formId = useId();
   const goal = useGoalFieldAction({ canSendEmpty: canSubmitEmpty, onSend: onSubmit });
 
   return (
-    <OnboardingColumn className={cn(section && "gap-4")}>
+    <OnboardingColumn
+      bar={!section && <SubmitButton form={formId} />}
+      className={cn(section && "gap-4")}
+    >
       {section ? (
         <PageSectionTitle>{t("Start a goal")}</PageSectionTitle>
       ) : (
         <OnboardingHeading>
-          <OnboardingTitle>{t("What do you want to achieve?")}</OnboardingTitle>
+          <OnboardingTitle>{t("What's your goal?")}</OnboardingTitle>
           <OnboardingDescription>
             {fromSharedPlan
               ? t(
@@ -82,9 +98,11 @@ export function GoalEntry({
         </OnboardingHeading>
       )}
 
-      {notice}
-
-      <GoalField action={goal.action} className="@container grid grid-cols-[minmax(0,1fr)_auto]">
+      <GoalField
+        action={goal.action}
+        className="@container grid grid-cols-[minmax(0,1fr)_auto]"
+        id={formId}
+      >
         <div className="col-span-2 flex min-w-0 items-start gap-2 pr-2.5 @xl:col-span-1 @xl:pr-0">
           <GoalFieldLabel htmlFor={inputId}>{t("I want to")}</GoalFieldLabel>
 
@@ -104,12 +122,13 @@ export function GoalEntry({
           />
         </div>
 
-        <div className="col-span-2 flex items-end justify-end gap-1 @xl:col-span-1">
+        <div className="col-span-2 flex items-center justify-end gap-1 empty:hidden @xl:col-span-1">
           {onAttach && (
             <Button
               aria-expanded={attachOpen}
               aria-label={t("Study your own material")}
-              className="text-muted-foreground mr-auto -ml-2.5 size-11 shrink-0 @xl:mr-0 @xl:ml-0"
+              className="text-muted-foreground mr-auto shrink-0 @xl:ms-0 @xl:mr-0"
+              edge="start"
               onClick={onAttach}
               ref={attachRef}
               size="icon-lg"
@@ -120,7 +139,7 @@ export function GoalEntry({
             </Button>
           )}
 
-          <SubmitButton />
+          {section && <SubmitButton />}
         </div>
       </GoalField>
 

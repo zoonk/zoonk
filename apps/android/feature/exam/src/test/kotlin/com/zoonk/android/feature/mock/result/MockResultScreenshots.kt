@@ -81,18 +81,39 @@ class MockResultScreenshots {
         capture("result-phone-2-plan", continues = 1)
     }
 
-    @Test
-    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
-    fun phoneNext() {
-        show(enem())
-        capture("result-phone-3-next", continues = 2)
+    private fun reviewMath(
+        name: String,
+        dark: Boolean = false,
+        inline: Boolean = false,
+    ) {
+        show(finishedMock(extra = """"review":$MATH_REVIEW"""), dark = dark)
+        if (inline) return capture(name)
+        compose.onNodeWithText("See answers").performClick()
+        compose.waitForIdle()
+        write(name, compose.onNode(isDialog()).captureRender().asAndroidBitmap())
     }
+
+    @Test
+    @Config(qualifiers = "w411dp-h2600dp-xxhdpi")
+    fun phoneReviewMath() = reviewMath("result-math-phone")
+
+    @Test
+    @Config(qualifiers = "w411dp-h2600dp-night-xxhdpi")
+    fun phoneReviewMathDark() = reviewMath("result-math-phone-dark", dark = true)
+
+    @Test
+    @Config(qualifiers = "w360dp-h2800dp-xxhdpi")
+    fun narrowReviewMath() = reviewMath("result-math-narrow")
+
+    @Test
+    @Config(qualifiers = "w1280dp-h2400dp-night-xhdpi")
+    fun tabletReviewMathDark() = reviewMath("result-math-tablet-dark", dark = true, inline = true)
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun phoneReview() {
         show(enem())
-        compose.onNodeWithText("See the 2 questions").performClick()
+        compose.onNodeWithText("See answers").performClick()
         compose.waitForIdle()
         write("result-phone-review-sheet", compose.onNode(isDialog()).captureRender().asAndroidBitmap())
     }
@@ -145,7 +166,7 @@ class MockResultScreenshots {
     fun phoneLastStepAtTwiceTheFontSize() {
         RuntimeEnvironment.setFontScale(2f)
         show(enem())
-        capture("result-phone-font200-last", continues = 2)
+        capture("result-phone-font200-last", continues = 1)
     }
 
     @Test
@@ -190,7 +211,7 @@ class MockResultScreenshots {
                 afterFinish = essaysOnly(pendingEssay()),
             )
         api.gradeGate = CompletableDeferred()
-        compose.onNodeWithText("See how it went").performClick()
+        compose.onNodeWithText("See result").performClick()
         capture("result-essay-grading")
     }
 
@@ -199,7 +220,7 @@ class MockResultScreenshots {
     fun essayLimitReached() {
         val api = show(runningMock(current = "null"), afterFinish = essaysOnly(pendingEssay()))
         api.gradeOutcome = EssayGradeOutcome.LimitReached
-        compose.onNodeWithText("See how it went").performClick()
+        compose.onNodeWithText("See result").performClick()
         capture("result-essay-limit")
     }
 
@@ -434,6 +455,25 @@ class MockResultScreenshots {
         const val BOOK = "w852dp-h883dp-xhdpi"
         const val GALAXY = "w707dp-h823dp-xhdpi"
         const val MEDIUM = "w700dp-h840dp-xhdpi"
+
+        /** Math, a long formula, a number, a typed name and a true/false answer, as #2770 draws them. */
+        const val MATH_REVIEW =
+            """[{"area":"Mathematics","citation":null,"context":null,"correctAnswer":"${'$'}x = 2${'$'} e ${'$'}x = 3${'$'}","explanation":"Fatorando, ${'$'}(x - 2)(x - 3) = 0${'$'}.",
+            "format":"multipleChoice","itemId":"00000000-0000-4000-8000-0000000000e1","learnerAnswer":"${'$'}x = 1${'$'} e ${'$'}x = 6${'$'}","number":1,"outcome":"wrong",
+            "question":"Quais são as raízes de ${'$'}x^2 - 5x + 6 = 0${'$'}?","set":null},
+            {"area":"Mathematics","citation":null,"context":null,"correctAnswer":"${'$'}x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a} \\text{, com } a \\neq 0 \\text{ e } \\Delta = b^2 - 4ac \\geq 0${'$'}","explanation":"É a fórmula de Bhaskara.",
+            "format":"multipleChoice","itemId":"00000000-0000-4000-8000-0000000000e2","learnerAnswer":"${'$'}x = \\frac{b \\pm \\sqrt{b^2 + 4ac}}{2a}${'$'}","number":2,"outcome":"wrong",
+            "question":"Qual expressão dá as raízes de ${'$'}ax^2 + bx + c = 0${'$'}?","set":null},
+            {"area":"Mathematics","citation":null,"context":null,"correctAnswer":"60","explanation":"${'$'}\\frac{3}{4} \\times 80 = 60${'$'}.",
+            "format":"numeric","itemId":"00000000-0000-4000-8000-0000000000e3","learnerAnswer":"45","number":3,"outcome":"wrong",
+            "question":"Quanto é ${'$'}\\frac{3}{4}${'$'} de ${'$'}80${'$'}?","set":null},
+            {"area":"Mathematics","citation":null,"context":null,"correctAnswer":"__init__","explanation":"O nome tem dois sublinhados de cada lado.",
+            "format":"typed","itemId":"00000000-0000-4000-8000-0000000000e4","learnerAnswer":"init","number":4,"outcome":"wrong",
+            "question":"Que método inicia um objeto em Python?","set":null},
+            {"area":"Mathematics","citation":null,"context":null,"correctAnswer":"false","explanation":"${'$'}25\\%${'$'} de ${'$'}80${'$'} é ${'$'}20${'$'}.",
+            "format":"trueFalse","itemId":"00000000-0000-4000-8000-0000000000e5","learnerAnswer":"true","number":5,"outcome":"wrong",
+            "question":"${'$'}25\\%${'$'} de ${'$'}80${'$'} é ${'$'}25${'$'}.","set":null}]"""
+
         const val STATEMENT =
             """{"area":"Mathematics","citation":null,"context":null,"correctAnswer":"false","explanation":"Zero is even.",
             "format":"trueFalse","itemId":"$ITEM_TWO","learnerAnswer":"true","number":2,"outcome":"wrong",

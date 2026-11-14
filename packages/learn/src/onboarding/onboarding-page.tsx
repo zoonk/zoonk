@@ -4,7 +4,6 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import { Page } from "../_components/page";
-import { ACTION_BAR_SURFACE_CLASS, BAR_PADDING_CLASS } from "../_components/task-layout";
 import { PageWithAside } from "../shell/learn-shell";
 import { OnboardingBarRow, OnboardingPageBar } from "./onboarding-bar";
 import { type OnboardingBar, useOnboardingScreen } from "./onboarding-host";
@@ -34,7 +33,7 @@ export function OnboardingSectionFrame({
         {header}
 
         <div className="flex flex-col" data-slot="onboarding-frame">
-          <OnboardingBarRow bar={bar} className="-ml-3 lg:ml-0" />
+          <OnboardingBarRow bar={bar} />
           {notice}
           {children}
         </div>
@@ -49,14 +48,10 @@ const WIDE_ASIDE_CLASS =
 
 const SCREEN_MEASURE_CLASS = "lg:mx-auto lg:max-w-column";
 
-/**
- * Reaches past the page's own padding (the shell's, or the column's beside an aside), so its
- * hairline runs across the page and it rests on the screen's bottom edge.
- */
-const BOTTOM_BAR_CLASS = cn(
-  ACTION_BAR_SURFACE_CLASS,
-  BAR_PADDING_CLASS,
-  "-mx-4 -mb-12 px-4 empty:hidden sm:-mx-8 sm:px-8 lg:-mx-10 lg:-mb-16 lg:px-10",
+/** The bar's buttons end where the screen's centered column does, as a measured page's do. */
+const BAR_AT_MEASURE_CLASS = cn(
+  "lg:**:data-[slot=bottom-bar-row]:mx-auto lg:**:data-[slot=bottom-bar-row]:max-w-[calc(var(--container-column)+2*var(--page-gutter))]",
+  "lg:**:data-[slot=bottom-bar-note]:*:*:mx-auto lg:**:data-[slot=bottom-bar-note]:*:*:max-w-[calc(var(--container-column)+2*var(--page-gutter))]",
 );
 
 export function OnboardingScreenPage({
@@ -82,7 +77,7 @@ export function OnboardingScreenPage({
       aside={rail}
       asideClassName={wide ? WIDE_ASIDE_CLASS : "hidden min-[72rem]:flex"}
       asideLabel={t("Getting started")}
-      className="flex-1 gap-4"
+      className={cn("flex-1 gap-1 lg:gap-4", !wide && BAR_AT_MEASURE_CLASS)}
     >
       <OnboardingPageBar backHref={backHref} bar={bar} barEnd={barEnd} />
 
@@ -91,11 +86,7 @@ export function OnboardingScreenPage({
         {children}
       </Page>
 
-      {bottomBar && (
-        <div className={BOTTOM_BAR_CLASS} data-slot="onboarding-bottom-bar">
-          {bottomBar}
-        </div>
-      )}
+      {bottomBar}
     </PageWithAside>
   );
 }

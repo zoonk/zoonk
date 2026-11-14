@@ -1,17 +1,52 @@
+import { PAGE_HEADER_CLASS } from "@zoonk/ui/components/page-header-class";
 import { cn } from "@zoonk/ui/lib/utils";
+
+export { PageTitle } from "@zoonk/ui/components/page-top";
 
 export const PAGE_COLUMN_CLASS = "w-full min-w-0";
 
 /**
- * The list (20rem), the gap and the pane's inset (4rem), its hairline (1px), then an entry at the
- * column's measure.
+ * A narrower measure for the page's content (`--page-measure`). Its bottom bar still spans the
+ * page's room, so every bar is as wide as the frame lets it be, and the bar's buttons end where the
+ * content does.
  */
-export const INBOX_PAGE_CLASS = "lg:max-w-[calc(24rem+1px+var(--container-column))]";
+const MEASURE_CLASS = {
+  form: "[--page-measure:var(--container-form)]",
+  /**
+   * A list on a computer: the list (20rem), the gap and the pane's inset (4rem), its hairline
+   * (1px), then an entry at the column's measure.
+   */
+  list: "lg:[--page-measure:calc(24rem+1px+var(--container-column))]",
+} as const;
 
-export function Page({ className, ...props }: React.ComponentProps<"div">) {
+export type PageMeasure = keyof typeof MEASURE_CLASS;
+
+/** Sets the measure for what's inside, where the content takes `MEASURED_CLASS`. */
+export function pageMeasureClass(measure: PageMeasure): string {
+  return cn(
+    MEASURE_CLASS[measure],
+    "**:data-[slot=bottom-bar-row]:max-w-[calc(var(--page-measure)+2*var(--page-gutter))]",
+  );
+}
+
+export const MEASURED_CLASS = "max-w-(--page-measure)";
+
+export function Page({
+  className,
+  measure,
+  ...props
+}: React.ComponentProps<"div"> & { measure?: PageMeasure }) {
   return (
     <div
-      className={cn(PAGE_COLUMN_CLASS, "flex flex-col gap-7", className)}
+      className={cn(
+        PAGE_COLUMN_CLASS,
+        "flex flex-col gap-7 has-[>[data-slot=bottom-bar]]:flex-1 *:data-[slot=bottom-bar]:mt-auto",
+        measure && [
+          pageMeasureClass(measure),
+          "[&>*:not([data-slot=bottom-bar],.contents)]:max-w-(--page-measure)",
+        ],
+        className,
+      )}
       data-slot="page"
       {...props}
     />
@@ -30,35 +65,7 @@ export function PageHeader({ className, ...props }: React.ComponentProps<"header
 
 export function PageHeaderContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
-    <div
-      className={cn(
-        "flex min-w-0 flex-col gap-1 not-has-[>[data-slot=page-eyebrow]]:pt-5",
-        className,
-      )}
-      data-slot="page-header-content"
-      {...props}
-    />
-  );
-}
-
-export function PageEyebrow({ className, ...props }: React.ComponentProps<"p">) {
-  return (
-    <p
-      className={cn(
-        "text-faint font-mono text-xs leading-4 uppercase max-sm:text-[0.71875rem]",
-        className,
-      )}
-      data-slot="page-eyebrow"
-      {...props}
-    />
-  );
-}
-
-export function PageTitle({ children, className, ...props }: React.ComponentProps<"h1">) {
-  return (
-    <h1 className={cn("text-title", className)} data-slot="page-title" {...props}>
-      {children}
-    </h1>
+    <div className={cn(PAGE_HEADER_CLASS, className)} data-slot="page-header-content" {...props} />
   );
 }
 
@@ -101,6 +108,9 @@ export function PageSectionHeader({ className, ...props }: React.ComponentProps<
 export const PAGE_SECTION_TITLE_CLASS =
   "min-w-0 text-sm leading-5 font-semibold tracking-[-0.01em] text-balance";
 
+/** A page under a section's tab: from a tablet up the section's header is its title, so its own steps down. */
+export const SECTION_SUBPAGE_TITLE_CLASS = "md:text-sm md:leading-5 md:tracking-[-0.01em]";
+
 export function PageSectionTitle({ children, className, ...props }: React.ComponentProps<"h2">) {
   return (
     <h2
@@ -126,7 +136,7 @@ export function PageSectionDetail({ className, ...props }: React.ComponentProps<
 export function PageSectionLabel({ children, className, ...props }: React.ComponentProps<"h3">) {
   return (
     <h3
-      className={cn("text-muted-foreground -mb-1 pt-1 text-[0.8125rem] font-medium", className)}
+      className={cn("text-muted-foreground text-compact -mb-1 pt-1 font-medium", className)}
       data-slot="page-section-label"
       {...props}
     >
@@ -139,7 +149,7 @@ export function PageSectionFooter({ className, ...props }: React.ComponentProps<
   return (
     <p
       className={cn(
-        "text-muted-foreground max-w-column text-[0.8125rem] leading-snug [&_a]:underline [&_a]:underline-offset-2",
+        "text-muted-foreground max-w-column text-compact leading-snug [&_a]:underline [&_a]:underline-offset-2",
         className,
       )}
       data-slot="page-section-footer"

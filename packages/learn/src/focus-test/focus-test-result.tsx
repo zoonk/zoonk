@@ -9,17 +9,8 @@ import { useId, useState, useTransition } from "react";
 import { ListGroup, ListRowContent, ListRowLink, ListRowTitle } from "../_components/list-group";
 import { ChangeSaveError } from "../_components/save-error";
 import { SettingRow } from "../_components/setting-rows";
-import { SuccessEyebrow } from "../_components/success-eyebrow";
-import {
-  OnboardingColumn,
-  OnboardingDescription,
-  OnboardingFooter,
-  OnboardingHeading,
-  OnboardingPrimaryButton,
-  OnboardingSecondaryButton,
-  OnboardingSubject,
-  OnboardingTitle,
-} from "../onboarding/onboarding-frame";
+import { OnboardingDescription, OnboardingSecondaryButton } from "../onboarding/onboarding-frame";
+import { TestOutcome } from "../onboarding/test-outcome";
 import {
   type FocusTestPlanActions,
   FocusTestProposal,
@@ -28,7 +19,7 @@ import {
 } from "./focus-test-proposal";
 import { FocusSubjects, FocusTestSubjectsSheet } from "./focus-test-subjects";
 import { type Pressed } from "./use-focus-test";
-import { useResultLine } from "./use-result-line";
+import { useResultWords } from "./use-result-line";
 
 export type FocusTestHost = "onboarding" | "plan";
 
@@ -75,18 +66,14 @@ function ResultRows({
 
         {sessionQuestions !== "off" && (
           <SettingRow
-            description={t({
-              description:
-                "Under the switch “Ask a few more in my sessions”: sessions ask those questions only during the learner's first week.",
-              message: "During your first week",
-            })}
+            description={t("During your first week")}
             descriptionId={noteId}
             label={
               <span className="font-normal" id={labelId}>
                 {t({
                   description:
-                    "Label of an on/off switch on the Focus test's result: whether the learner's study sessions ask a few more Focus test questions. “A few more” means questions.",
-                  message: "Ask a few more in my sessions",
+                    "Label of an on/off switch on the Focus test's result. “A few more” means test questions, asked while the learner studies their lessons.",
+                  message: "Ask a few more as I study",
                 })}
               </span>
             }
@@ -133,41 +120,24 @@ function FocusTestResult({
   undoing: boolean;
 }) {
   const t = useExtracted();
-  const line = useResultLine();
+  const words = useResultWords();
   const focus = focusTest.checkpoint?.focus ?? null;
   const lessonsSkipped = focusTest.checkpoint?.lessonsSkipped ?? 0;
   // A goal still being set up has no plan page to choose a focus on.
   const changesFocus = focus !== null && focus.state !== "ifTimeShort";
+  const line = focus && words.line(focus.state);
 
   return (
-    <OnboardingColumn>
-      <OnboardingHeading>
-        {host === "onboarding" ? (
-          <SuccessEyebrow>
-            {t({
-              description:
-                "Shown with a check mark above the Focus test's result: the learner's answers were saved.",
-              message: "Answers saved",
-            })}
-          </SuccessEyebrow>
-        ) : (
-          <OnboardingSubject>{t("Focus test")}</OnboardingSubject>
-        )}
-
-        <OnboardingTitle>
-          {focus
-            ? t({
-                description:
-                  "Headline of the Focus test's result, above a short numbered list of the exam subjects that need most of the learner's study time. It answers the invitation “Find out where to focus”. Keep it short. Use the same word for “focus” as “Change focus” and “Choose where to focus” do.",
-                message: "Here's where to focus",
-              })
-            : t("Your starting point is set")}
-        </OnboardingTitle>
-
-        {answer ? (
+    <TestOutcome
+      busy={pressed === "main"}
+      continueLabel={host === "onboarding" ? undefined : t("Done")}
+      disabled={pressed === "other"}
+      failed={failed}
+      lead={
+        answer ? (
           <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 pt-1">
             <OnboardingDescription role="status">
-              {line.answered(answer.decision)}
+              {words.answered(answer.decision)}
             </OnboardingDescription>
 
             {answer.decision === "applied" && answer.change.canUndo && (
@@ -183,12 +153,29 @@ function FocusTestResult({
             )}
           </div>
         ) : (
-          <OnboardingDescription>
-            {focus ? line.suggested(focus.state) : line.startingPoint(lessonsSkipped)}
-          </OnboardingDescription>
-        )}
-      </OnboardingHeading>
-
+          line && <OnboardingDescription>{line}</OnboardingDescription>
+        )
+      }
+      onContinue={onDone}
+      other={
+        host === "plan" &&
+        focusTest.offer && (
+          <OnboardingSecondaryButton
+            busy={pressed === "other"}
+            disabled={pressed === "main"}
+            onClick={onContinueTest}
+          >
+            {t({
+              description:
+                "Button on the Focus test's result: continues the test with more questions.",
+              message: "Answer more questions",
+            })}
+          </OnboardingSecondaryButton>
+        )
+      }
+      subject={t("Focus test")}
+      title={words.title({ focus, lessonsSkipped })}
+    >
       {focus && <FocusSubjects rows={focus.rows} />}
 
       {focus && lessonsSkipped > 0 && (
@@ -201,33 +188,7 @@ function FocusTestResult({
       )}
 
       {plan && <ResultRows changesFocus={changesFocus} focusTest={focusTest} plan={plan} />}
-
-      <OnboardingFooter>
-        {failed && <ChangeSaveError />}
-        <OnboardingPrimaryButton
-          autoFocus
-          busy={pressed === "main"}
-          disabled={pressed === "other"}
-          onClick={onDone}
-        >
-          {host === "onboarding" ? t("Continue") : t("Done")}
-        </OnboardingPrimaryButton>
-
-        {host === "plan" && focusTest.offer && (
-          <OnboardingSecondaryButton
-            busy={pressed === "other"}
-            disabled={pressed === "main"}
-            onClick={onContinueTest}
-          >
-            {t({
-              description:
-                "Button on the Focus test's result: continues the test with more questions.",
-              message: "Answer more questions",
-            })}
-          </OnboardingSecondaryButton>
-        )}
-      </OnboardingFooter>
-    </OnboardingColumn>
+    </TestOutcome>
   );
 }
 
@@ -252,17 +213,26 @@ export function FocusTestCheckpoint({
   plan: FocusTestPlanActions | null;
   pressed: Pressed;
 }) {
-  const { answer, decide, failed: answerFailed, pressed: decision } = useProposalAnswer(plan);
+  const {
+    answer,
+    decide,
+    failed: answerFailed,
+    pressed: decision,
+    repriced,
+  } = useProposalAnswer(plan);
+
   const focus = focusTest.checkpoint?.focus ?? null;
-  const proposal = plan && focus?.proposal?.canApply ? focus.proposal : null;
+  const waiting = repriced ?? focus?.proposal;
+  const proposal = plan && waiting?.canApply ? waiting : null;
 
   if (focus && proposal && !answer) {
     return (
       <FocusTestProposal
         failed={answerFailed}
-        onDecide={(status) => decide(proposal.id, status)}
+        onDecide={(status) => decide(proposal, status)}
         pressed={decision}
         proposal={proposal}
+        repriced={repriced !== null}
         rows={focus.rows}
       />
     );
@@ -270,7 +240,7 @@ export function FocusTestCheckpoint({
 
   const undo = () => {
     if (answer) {
-      decide(answer.change.id, "undone");
+      decide(answer.change, "undone");
     }
   };
 

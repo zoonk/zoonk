@@ -35,7 +35,7 @@ struct AppTabView: View {
         }
       }
       .onChange(of: studyTabs) {
-        if router.selectedTab.studyRoute != nil, !studyTabs.contains(router.selectedTab) {
+        if AppTab.study.contains(router.selectedTab), !studyTabs.contains(router.selectedTab) {
           router.leaveStudyTab(keepingPlace: false)
         }
       }
@@ -92,6 +92,21 @@ struct AppTabView: View {
           Text("Study", tableName: "Navigation", comment: "Sidebar section with the study places")
         }
         .defaultVisibility(.hidden, for: .tabBar)
+
+        TabSection {
+          ForEach(AppTab.stats, id: \.self) { tab in
+            Tab(value: tab) {
+              TabRoot(tab: tab, tabBarPlacement: $tabBarPlacement)
+            } label: {
+              TabLabel(tab: tab)
+            }
+          }
+        } header: {
+          Text(
+            "Stats", tableName: "Navigation",
+            comment: "Sidebar section with a page for each of the learner's statistics")
+        }
+        .defaultVisibility(.hidden, for: .tabBar)
       }
     }
     // No `defaultTabBarPlacement(.sidebar)`: on the open iPhone Duo a sidebar would take the room
@@ -121,7 +136,7 @@ struct AppTabView: View {
 
     return AppTab.study.filter { tab in
       switch tab {
-      case .exam: places?.exam == true
+      case .exam, .mockExam: places?.exam == true
       case .speaking: places?.speaking == true
       case .mindMaps: places?.mindMaps == true
       case .completedLessons: places?.completedLessons == true

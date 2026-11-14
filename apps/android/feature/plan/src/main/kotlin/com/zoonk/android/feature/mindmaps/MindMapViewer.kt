@@ -77,7 +77,7 @@ import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.DETAIL_PAGE_WIDTH
 import com.zoonk.android.ui.scaffold.TaskScaffold
-import com.zoonk.android.ui.scaffold.detailPagePadding
+import com.zoonk.android.ui.scaffold.pagePadding
 import com.zoonk.api.models.ChapterMindMap
 import com.zoonk.api.models.GoalMindMap
 import com.zoonk.api.models.MindMapImage
@@ -296,7 +296,7 @@ private fun OutlineOnly(
     Box(modifier.verticalScroll(rememberScrollState())) {
         BeforeFold { beforeFold ->
             Column(
-                beforeFold.widthIn(max = DETAIL_PAGE_WIDTH).padding(detailPagePadding()),
+                beforeFold.widthIn(max = DETAIL_PAGE_WIDTH).padding(pagePadding()),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 if (noted) {

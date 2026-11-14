@@ -7,7 +7,6 @@
   "warm_up_first_lesson_screens": "8e4ffd81fbca60e78fca3d88fec01fde0f32e69d9476ee05bb88a09413e4448c",
   "warm_up_first_lesson_writing": "e878c449ec50d1c2d16fd257732bdecea687a25356b9e33dfc6e3366202cea8c",
   "warm_up_guess_hint": "0672dad56d7ba6722154e5d23cd3f9c7a9d6314318c163e6159345d671f7c24d",
-  "warm_up_lesson_ready": "1185ac246fb18333ce90aba91911d5d7c9e079e53e633021e118468b176a5c56",
   "warm_up_next": "d0158be36da63d97113f14bc49b8113e74ada446d12eb642389105ea4004e575",
   "warm_up_plan_ready": "2421219dd41f631bde1c1c28349cd70d23bfac2ec9d57e739c2648007f79d587",
   "warm_up_plan_ready_one_question": "389cfece76a0c2ec43f232d6e72f1d6b875a163ea00f53e341fa2a3bc008bc8f",
@@ -15,7 +14,6 @@
   "warm_up_plan_waiting": "aa80dfdd0d7d52c739886454261a3b025bddb00ddcb671a1adf12f7a0100799d",
   "warm_up_play_quiz": "d340e5fd0d674b32810219a3bb1154fd6bbca3b5541ae8b28e18dfdb6b5237c2",
   "warm_up_questions_ready": "80d27f79fd20716358b60a96ef3ff0c95bf0a248c70f08c70adfcc2054fc9b6f",
-  "warm_up_questions_ready_description": "f7a7dbd8badb51cb07bd6e61c6d46b9bf7d7492f336869bbb4f0d20041187f63",
   "warm_up_ready_to_start": "4d143375a0a56066db3c6eeb701a611b02ed34c8dca03a981336e1637dca1ca1",
   "warm_up_start_first_lesson": "2ee233688ce01d1255eeafb1f71275ba458eef2e1b06230202114ee7a78e8d75",
   "warm_up_title": "d38f89a062deeb279ecec4bb1c632d228c727bfcf358992e46ee6daf06880b81"
@@ -37,10 +35,6 @@
     <string name="warm_up_plan_ready_whenever">Hazır olduğunda planına bakabilirsin.</string>
     <!-- Title of the wait for a short level test's questions once they're ready and the learner is still guessing. -->
     <string name="warm_up_questions_ready">Soruların hazır</string>
-    <!-- Under "Your questions are ready", above the button that starts the short level test. -->
-    <string name="warm_up_questions_ready_description">Hazır olduğunda başlayabilirsin.</string>
-    <!-- Replaces the note under a lesson's writing progress once it's written and the learner is still guessing. -->
-    <string name="warm_up_lesson_ready">Dersin hazır. İstediğin zaman başlayabilirsin.</string>
     <string name="warm_up_back_to_quiz">Bilgi yarışmasına dön</string>
     <string name="warm_up_play_quiz">Beklerken bilgi yarışması oyna</string>
     <string name="warm_up_first_lesson_writing">İlk dersini hazırlıyoruz: %1$s</string>

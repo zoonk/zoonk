@@ -2,7 +2,7 @@
 
 import { useExtracted } from "next-intl";
 import { TimeSelect } from "../../_components/daily-time-picker";
-import { WeekdayToggle } from "../../_components/weekday-toggle";
+import { WEEKDAY_GRID_CLASS, WeekdayToggle } from "../../_components/weekday-toggle";
 import { WeekendTime } from "../../_components/weekend-time";
 
 const DAYS_PER_WEEK = 7;
@@ -35,11 +35,9 @@ export function WeekdayToggles({
   return (
     <fieldset className="flex flex-col gap-2">
       <legend className="mb-2 text-sm font-medium">{t("Study days")}</legend>
-      <div className="grid max-w-sm grid-cols-7 gap-1.5">
+      <div className={WEEKDAY_GRID_CLASS}>
         {EVERY_DAY.map((day) => (
           <WeekdayToggle
-            className="h-11 w-full min-w-0 rounded-lg px-0 font-mono text-[0.8125rem] font-medium uppercase"
-            display="narrow"
             key={day}
             onPressedChange={(next) =>
               onChange(
@@ -49,7 +47,6 @@ export function WeekdayToggles({
               )
             }
             pressed={days.includes(day)}
-            variant="outline"
             weekday={day}
           />
         ))}
@@ -60,11 +57,13 @@ export function WeekdayToggles({
 
 export function WeekendMinutes({
   checked,
+  disabled,
   minutes,
   onChange,
   onCheckedChange,
 }: {
   checked: boolean;
+  disabled: boolean;
   minutes: number;
   onChange: (minutes: number) => void;
   onCheckedChange: (checked: boolean) => void;
@@ -75,6 +74,7 @@ export function WeekendMinutes({
     <WeekendTime
       checked={checked}
       className="text-sm font-medium"
+      disabled={disabled}
       onCheckedChange={onCheckedChange}
     >
       <TimeSelect label={t("Time on weekends")} onChange={onChange} value={minutes} />

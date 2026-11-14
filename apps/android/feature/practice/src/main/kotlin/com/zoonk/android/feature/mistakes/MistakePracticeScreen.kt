@@ -1,15 +1,12 @@
 package com.zoonk.android.feature.mistakes
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -44,12 +41,9 @@ import com.zoonk.android.feature.session.missionMomentFacts
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.TaskNotFound
-import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.MomentReadouts
 import com.zoonk.android.ui.components.MomentScore
-import com.zoonk.android.ui.components.StatusMessage
-import com.zoonk.android.ui.scaffold.TaskScaffold
 import kotlinx.coroutines.launch
 import java.util.UUID
 
@@ -221,7 +215,6 @@ private fun PracticeDone(
             title = stringResource(R.string.practice_done_title),
             action = stringResource(R.string.navigation_back),
             saving = end == null,
-            actionLeadingIcon = { ButtonIcon(R.drawable.ic_arrow_back) },
             onClose = onClose,
             detail = if (end != null && note != null) stringResource(note) else null,
         ) {
@@ -243,12 +236,11 @@ private fun PracticeDone(
 
 @Composable
 internal fun NothingToPractice(onClose: () -> Unit) {
-    TaskScaffold(onClose = onClose) { padding ->
-        StatusMessage(
-            icon = R.drawable.ic_edit_square,
-            title = stringResource(R.string.mistakes_nothing_title),
-            description = stringResource(R.string.mistakes_nothing_description),
-            modifier = Modifier.padding(padding),
-        ) { Button(onClick = onClose) { Text(stringResource(R.string.navigation_back)) } }
-    }
+    RunFinished(
+        title = stringResource(R.string.mistakes_nothing_title),
+        action = stringResource(R.string.navigation_back),
+        saving = false,
+        onClose = onClose,
+        detail = stringResource(R.string.mistakes_nothing_description),
+    ) {}
 }

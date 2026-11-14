@@ -59,15 +59,17 @@ private struct ChapterLandingList: View {
       }
     } secondary: {
       ZoonkList {
+        learn
         strip
-        learnAndStart
+        closing
       }
     } single: {
       ZoonkList {
         header
-        strip
         lessons
-        learnAndStart
+        learn
+        strip
+        closing
       }
     }
   }
@@ -119,7 +121,8 @@ private struct ChapterLandingList: View {
             .foregroundStyle(.mutedForeground)
         }
 
-        PlanLine(startsHere: startsHere)
+        PlanLine(
+          start: startsHere ? .chapter : course?.course.isExam == true ? .examCourse : .course)
 
         ChapterStart(
           chapter: chapter, hasLesson: hasLesson, startsHere: startsHere,
@@ -143,12 +146,12 @@ private struct ChapterLandingList: View {
     if hasLesson {
       ChapterLessonsSection(
         chapter: chapter, lessons: detail.lessons.sorted { $0.position < $1.position },
-        number: index.map { $0 + 1 }, total: outline.count)
+        number: index.map { $0 + 1 })
     }
   }
 
   @ViewBuilder
-  private var learnAndStart: some View {
+  private var learn: some View {
     if let objectives = detail.chapter?.objectives, !objectives.isEmpty {
       Section {
         ForEach(objectives, id: \.self) { CheckLine(text: $0) }
@@ -158,13 +161,15 @@ private struct ChapterLandingList: View {
             "What you'll learn", tableName: "Courses", comment: "Header of what a chapter teaches"))
       }
     }
+  }
 
+  private var closing: some View {
     Section {
       VStack(alignment: .leading, spacing: 8) {
         Group {
           if startsHere {
             Text(
-              "Your plan from this chapter", tableName: "Courses",
+              "Start from this chapter", tableName: "Courses",
               comment: "A chapter page's last call, when the plan starts there")
           } else {
             Text(
@@ -178,7 +183,7 @@ private struct ChapterLandingList: View {
         Group {
           if startsHere {
             Text(
-              "It follows the course from here, at your pace, with reviews before you forget.",
+              "You get a plan for each day, from this chapter to the end of the course.",
               tableName: "Courses", comment: "Under a chapter page's last call")
           } else {
             Text(
@@ -211,7 +216,7 @@ private struct ChapterStart: View {
       note: hasLesson
         ? nil
         : Text(
-          "Start here and Zoonk writes its lessons for your level.", tableName: "Courses",
+          "Its lessons get ready when you start.", tableName: "Courses",
           comment: "Under a chapter's start when its lessons aren't written yet"))
   }
 }
@@ -241,8 +246,8 @@ private struct ChapterStrip: View {
 
     Section {
       Text(
-        "Where this chapter sits in the course", tableName: "Courses",
-        comment: "Header of where a chapter sits in its course"
+        "Part of \(course.title)", tableName: "Courses",
+        comment: "Header of where a chapter sits in its course; the argument is the course's name"
       )
       .typeStyle(.section)
       .foregroundStyle(Color(.foreground))
@@ -332,7 +337,6 @@ private struct ChapterLessonsSection: View {
   let chapter: ChapterReference
   let lessons: [CourseLesson]
   let number: Int?
-  let total: Int
 
   var body: some View {
     Section {
@@ -370,13 +374,8 @@ private struct ChapterLessonsSection: View {
       localized: "\(lessons.count) short lessons", table: "Courses",
       comment: "How many lessons a course or a chapter has")
     let minutes = catalogDurationText(minutes: lessons.reduce(0) { $0 + $1.estimatedMinutes })
-    let position = number.map {
-      String(
-        localized: "Chapter \($0.formatted()) of \(total.formatted())", table: "Courses",
-        comment: "Where a chapter sits in its course")
-    }
 
-    return [position, lessonsText, minutes].compactMap(\.self).joinedFacts()
+    return [lessonsText, minutes].joinedFacts()
   }
 }
 

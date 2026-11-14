@@ -16,7 +16,7 @@ function getAlphabetContent(step: SerializedStep) {
 
 function AlphabetSymbol({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-[4rem] leading-none font-semibold" dir="auto">
+    <p className="text-readout text-5xl" dir="auto">
       {children}
     </p>
   );

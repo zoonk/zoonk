@@ -8,10 +8,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
@@ -58,13 +56,12 @@ import com.zoonk.android.feature.country.choices
 import com.zoonk.android.feature.country.shownLanguage
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.ui.characters.Buddy
+import com.zoonk.android.ui.characters.BuddyCrop
 import com.zoonk.android.ui.characters.BuddyGlasses
 import com.zoonk.android.ui.characters.BuddyKind
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.characters.buddyName
-import com.zoonk.android.ui.characters.buddyStageName
 import com.zoonk.android.ui.characters.look
-import com.zoonk.android.ui.characters.worn
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
@@ -72,7 +69,7 @@ import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
-import com.zoonk.android.ui.components.PageHeader
+import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.scaffold.PageScaffold
@@ -108,9 +105,7 @@ class PreferencesViewModel(
 
     fun setSoundsEnabled(enabled: Boolean) = save { profile.setSoundsEnabled(enabled) }
 
-    fun setShareUsageData(share: Boolean) = save { profile.setShareUsageData(share) }
-
-    fun setHomeCountry(country: CountryChoice?) = save { profile.setHomeCountry(country) }
+    fun setHomeCountry(country: CountryChoice) = save { profile.setHomeCountry(country) }
 
     fun setBuddy(
         kind: BuddyKind,
@@ -139,8 +134,8 @@ class PreferencesViewModel(
 }
 
 /**
- * Main's preferences: the buddy, lesson sounds, a daily limit and sharing usage data, then the app's
- * language, which Android's own per-app language setting changes. Visitors only get the language.
+ * Main's preferences: the buddy and lesson sounds, then the app's language, which Android's own per-app
+ * language setting changes, and where the learner lives. Visitors only get the language.
  */
 @Composable
 fun PreferencesScreen(
@@ -172,24 +167,16 @@ fun PreferencesScreen(
         ) {
             Column(
                 modifier =
-                    Modifier
-                        .widthIn(max = 640.dp)
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp),
+                    Modifier.settingsColumn(),
                 verticalArrangement = Arrangement.spacedBy(28.dp),
             ) {
-                PageHeader(
-                    stringResource(R.string.settings_preferences),
-                    stringResource(R.string.settings_preferences_description),
-                    Modifier.padding(horizontal = LIST_ITEM_INSET),
-                )
+                PageTitleRow(stringResource(R.string.settings_preferences), Modifier.padding(horizontal = LIST_ITEM_INSET))
 
                 when (val state = profile) {
                     is LoadState.Loaded -> {
                         val look = summary.value?.buddy?.look() ?: BuddyLook()
                         BuddySection(state.value, look, preferences)
                         LessonsSection(state.value, preferences)
-                        UsageDataSection(state.value, summary.value?.analytics?.usageDataSharing, preferences)
                     }
 
                     is LoadState.Failed -> {
@@ -222,11 +209,8 @@ private fun BuddySection(
 
     SettingsSection(stringResource(R.string.settings_preferences_buddy)) {
         ListRow(
-            leading = { Buddy(look, Modifier.size(36.dp)) },
+            leading = { Buddy(look, Modifier.size(32.dp), crop = BuddyCrop.Face) },
             headline = { Text(buddyName(kind, profile.buddy.name), maxLines = 1, overflow = TextOverflow.Ellipsis) },
-            supporting = {
-                Text(stringResource(R.string.settings_preferences_buddy_line, buddyStageName(look.stage), stringResource(glasses.worn)))
-            },
             trailing = {
                 OutlinedButton(onClick = { preferences.editBuddy(true) }, size = ButtonSize.Small) { Text(stringResource(editLabel)) }
             },
@@ -260,26 +244,6 @@ internal fun LessonsSection(
                 onCheckedChange = preferences::setSoundsEnabled,
             )
         }
-    }
-}
-
-/**
- * The learner's own choice, which shows at once when they change it; with none yet, what the summary
- * resolved for where they are, which is off where the law asks first.
- */
-@Composable
-internal fun UsageDataSection(
-    profile: LearningProfile,
-    usageDataSharing: Boolean?,
-    preferences: PreferencesViewModel,
-) {
-    SettingsSection(stringResource(R.string.settings_your_data)) {
-        SwitchRow(
-            title = stringResource(R.string.settings_preferences_share_usage_data),
-            description = stringResource(R.string.settings_preferences_share_usage_data_description),
-            checked = profile.shareUsageData ?: (usageDataSharing == true),
-            onCheckedChange = preferences::setShareUsageData,
-        )
     }
 }
 
@@ -323,7 +287,6 @@ internal fun LanguageSection(
             if (perAppLanguage) {
                 ListRow(
                     headline = { Text(stringResource(R.string.settings_preferences_app_language)) },
-                    supporting = { Text(stringResource(R.string.settings_preferences_on_this_device)) },
                     trailing = { SettingValue(appLanguageName(currentLocale())) },
                     onClick = {
                         context.startActivity(
@@ -338,7 +301,7 @@ internal fun LanguageSection(
     }
 }
 
-/** Where the learner lives: a pick saves at once, and "Not set" clears it. New goals and examples follow it; no plan changes. */
+/** Where the learner lives, from where they signed in until they change it: a pick saves at once. "Not set" shows only when nobody knows. */
 @Composable
 private fun HomeCountryRow(
     profile: LearningProfile,
@@ -349,7 +312,7 @@ private fun HomeCountryRow(
 
     ListRow(
         headline = { Text(title) },
-        supporting = { Text(stringResource(R.string.settings_home_country_description)) },
+        supporting = { Text(stringResource(R.string.settings_home_country_why)) },
         trailing = { SettingValue(profile.homeCountryName ?: stringResource(R.string.settings_home_country_none)) },
         onClick = { choosing = true },
         chevron = true,
@@ -360,19 +323,18 @@ private fun HomeCountryRow(
             suggested = profile.suggested.choices(),
             language = shownLanguage(),
             selected = profile.homeCountry,
-            onPick = {
+            onPick = { picked ->
                 choosing = false
-                preferences.setHomeCountry(it)
+                picked?.let(preferences::setHomeCountry)
             },
             onDismiss = { choosing = false },
-            allowNone = true,
         )
     }
 }
 
 /** As each language names itself, with the country Zoonk writes it for where it has more than one. */
 @Composable
-internal fun appLanguageName(locale: Locale): String =
+private fun appLanguageName(locale: Locale): String =
     when (locale.language) {
         "en" -> stringResource(R.string.settings_app_language_en)
         "es" -> stringResource(R.string.settings_app_language_es)

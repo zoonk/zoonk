@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// Every certificate the learner earned, newest first, in one list. Without Plus, one notice says
-/// what Plus does for them, and the locked ones carry its mark.
+/// Every certificate the learner earned, newest first, in one list. One earned without a
+/// subscription looks like any other.
 struct CertificatesScreen: View {
   @Environment(CertificatesStore.self) private var store
   @ScaledMetric(relativeTo: .body) private var pictureWidth = 72.0
@@ -13,8 +13,7 @@ struct CertificatesScreen: View {
       switch store.list.state {
       case .loaded(let certificates):
         ZoonkList {
-          CertificatesHeader(count: certificates.count)
-          CertificatesPlusSection()
+          CertificatesHeader()
 
           Section {
             ForEach(certificates) { certificate in
@@ -30,7 +29,6 @@ struct CertificatesScreen: View {
         }
       }
     }
-    .navigationTitle(CertificatesHeader.title)
     .barTitleAfterHero(
       String(
         localized: "Certificates", table: "Certificates",
@@ -44,7 +42,7 @@ struct CertificatesScreen: View {
       open(certificate.id)
     } label: {
       ListRow(
-        Text(certificate.facts.name), description: Text(certificate.facts.summary),
+        Text(certificate.facts.rowName), description: Text(certificate.facts.rowLine),
         alignment: .center
       ) {
         Group {
@@ -58,9 +56,7 @@ struct CertificatesScreen: View {
         .frame(width: pictureWidth)
         .accessibilityHidden(true)
       } trailing: {
-        if certificate.facts.locked {
-          PlusMark()
-        }
+        EmptyView()
       }
       .disclosureChevron()
     }
@@ -84,36 +80,13 @@ private struct CertificatesHeader: View {
   static let title = Text(
     "Certificates", tableName: "Certificates", comment: "Title of the learner's certificates")
 
-  /// Nil while there are none.
-  var count: Int?
-
   var body: some View {
     Section {
       PageHeader(
         Self.title,
-        eyebrow: count.map {
-          Text(
-            "\($0) certificates", tableName: "Certificates",
-            comment: "Over the learner's certificates: how many they have")
-        },
         supporting: Text(
-          "A certificate for every level and plan you finish.", tableName: "Certificates",
-          comment: "Under the learner's certificates: what earns one")
+          "A certificate for every level and plan you finish.", tableName: "Certificates")
       )
-      .eyebrowAsWritten()
-    }
-  }
-}
-
-/// While the learner isn't on Plus, in the empty state too.
-private struct CertificatesPlusSection: View {
-  @Environment(LearnerSummaryStore.self) private var learner
-
-  var body: some View {
-    if let tier = learner.summary.value?.tier, tier != .plus {
-      Section {
-        CertificatePlusNotice(isList: true)
-      }
     }
   }
 }
@@ -127,7 +100,6 @@ private struct EmptyCertificates: View {
   var body: some View {
     ZoonkList {
       CertificatesHeader()
-      CertificatesPlusSection()
 
       Section {
         VStack(alignment: .leading, spacing: 6) {
@@ -136,31 +108,11 @@ private struct EmptyCertificates: View {
             .padding(.bottom, 18)
 
           Text(
-            "No certificates yet", tableName: "Certificates",
-            comment: "Title when the learner has no certificate"
+            "No certificates yet", tableName: "Certificates"
           )
           .typeStyle(.reading.weight(.semibold))
           .foregroundStyle(Color(.foreground))
           .accessibilityAddTraits(.isHeader)
-
-          Text(
-            "Your certificates show up here when you finish a level or a plan.",
-            tableName: "Certificates", comment: "How the learner earns certificates"
-          )
-          .typeStyle(.body)
-          .foregroundStyle(.mutedForeground)
-
-          Button {
-            router.sheet = nil
-            router.showRoot(of: .today)
-          } label: {
-            Text(
-              "Continue learning", tableName: "Certificates",
-              comment: "Goes to Today from the empty certificates page")
-          }
-          .buttonStyle(.mainAction)
-          .controlSize(.large)
-          .padding(.top, 14)
         }
         .listRowSeparator(.hidden)
       }
@@ -173,10 +125,21 @@ private struct EmptyCertificates: View {
         } header: {
           SectionTitle(
             Text(
-              "Up next", tableName: "Certificates",
-              comment: "Heading over the learner's goals that can still earn a certificate"))
+              "Your next certificate", tableName: "Certificates"))
         }
       }
+    }
+    .bottomBar {
+      Button {
+        router.sheet = nil
+        router.showRoot(of: .today)
+      } label: {
+        Text(
+          "Continue learning", tableName: "Certificates",
+          comment: "Goes to Today from the empty certificates page")
+      }
+      .buttonStyle(.mainAction)
+      .keyboardShortcut(.defaultAction)
     }
     // The list too, so pull to refresh also brings back goals that failed to load.
     .loads(store.list, store.upNext)
@@ -228,7 +191,7 @@ private struct UpNextRow: View {
   @ScaledMetric(relativeTo: .caption) private var meterWidth = 64.0
 
   var body: some View {
-    ListRow(title, description: description) {
+    ListRow(title) {
       GoalMark(title: goal.displayName, flag: goal.languageFlag.flatMap(flagEmoji))
     } trailing: {
       if let progress = goal.progress {
@@ -260,17 +223,7 @@ private struct UpNextRow: View {
         + String(
           localized: ", \(variety)", table: "Certificates",
           comment:
-            "Read by VoiceOver right after a goal's name: the language and country the learner chose, such as Spanish (Argentina)"
+            "Read by screen readers right after a goal's name. {variety} is the language and country the learner chose, such as “Spanish (Argentina)”."
         ))
-  }
-
-  private var description: Text {
-    goal.progress == nil
-      ? Text(
-        "Comes when you finish a level, studying at least half of it", tableName: "Certificates",
-        comment: "Under a language goal on the empty certificates page: when it earns one")
-      : Text(
-        "Your certificate comes when you finish the plan", tableName: "Certificates",
-        comment: "Under a course goal on the empty certificates page: when it earns one")
   }
 }

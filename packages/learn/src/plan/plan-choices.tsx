@@ -7,7 +7,6 @@ import {
   ListGroup,
   ListRowButton,
   ListRowContent,
-  ListRowDescription,
   ListRowIcon,
   ListRowLeading,
   ListRowTitle,
@@ -27,7 +26,7 @@ export function PlanChoices() {
 
   return (
     <ListGroup aria-label={t("Your choices")} role="group">
-      <ListRowButton onClick={() => setBasesOpen(true)}>
+      <ListRowButton aria-haspopup="dialog" onClick={() => setBasesOpen(true)}>
         <ListRowLeading>
           <ListRowIcon>
             <LayersIcon />
@@ -35,7 +34,6 @@ export function PlanChoices() {
         </ListRowLeading>
         <ListRowContent>
           <ListRowTitle>{summaryText(bases)}</ListRowTitle>
-          <ListRowDescription>{t("Change how you study them.")}</ListRowDescription>
         </ListRowContent>
       </ListRowButton>
 

@@ -5,12 +5,14 @@ import { type CertificateLinks } from "@zoonk/utils/certificate-links";
 const SCREEN_WIDTH = 2246;
 const SCREEN_HEIGHT = 1588;
 
-/** The document stays white in dark mode, as a PDF viewer shows it: an edge instead of a shadow. */
+/**
+ * The document stays white in dark mode, as a PDF viewer shows it: an edge instead of a shadow. The
+ * edge is drawn inside the picture, so the sheet ends on the column's edge.
+ */
 const SHEET_CLASS = {
   paper:
-    "rounded-md shadow-[0_0_0_1px_oklch(0_0_0/7%),0_18px_40px_-18px_oklch(0_0_0/22%)] dark:shadow-[0_0_0_1px_oklch(1_0_0/10%)]",
-  thumb:
-    "rounded-[4px] shadow-[0_0_0_1px_var(--color-border)] dark:shadow-[0_0_0_1px_oklch(1_0_0/10%)]",
+    "rounded-md shadow-[0_18px_40px_-18px_oklch(0_0_0/22%)] outline-1 -outline-offset-1 outline-[oklch(0_0_0/7%)] dark:shadow-none dark:outline-[oklch(1_0_0/10%)]",
+  thumb: "rounded-sm outline-1 -outline-offset-1 outline-border dark:outline-[oklch(1_0_0/10%)]",
 } as const;
 
 /**

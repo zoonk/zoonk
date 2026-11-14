@@ -1,15 +1,20 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerPopup,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@zoonk/ui/components/drawer";
+import { EnterButton } from "@zoonk/ui/components/enter-button";
 import { Input } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
-import {
-  Popover,
-  PopoverContent,
-  PopoverHeader,
-  PopoverTitle,
-  PopoverTrigger,
-} from "@zoonk/ui/components/popover";
+import { Toggle } from "@zoonk/ui/components/toggle";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { CalendarIcon, ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -50,6 +55,7 @@ export function StatsPeriodPicker({
   statsPeriod: StatsPeriod;
 }) {
   const router = useRouter();
+  const [open, setOpen] = useState(false);
   const [customRangeError, setCustomRangeError] = useState<string>();
   const startValue = statsPeriod.current.start.toISOString().slice(0, 10);
   const endValue = statsPeriod.chartEnd.toISOString().slice(0, 10);
@@ -58,6 +64,7 @@ export function StatsPeriodPicker({
 
   function selectPreset(period: AdminStatsPeriod) {
     setCustomRangeError(undefined);
+    setOpen(false);
     router.push(`${path}?${getPresetSearchParams({ currentQuery, period }).toString()}`);
   }
 
@@ -85,6 +92,7 @@ export function StatsPeriodPicker({
     }
 
     setCustomRangeError(undefined);
+    setOpen(false);
 
     const searchParams = new URLSearchParams(currentQuery);
     searchParams.set("period", "custom");
@@ -95,104 +103,202 @@ export function StatsPeriodPicker({
   }
 
   return (
-    <Popover key={`${statsPeriod.period}-${statsPeriod.offset}-${statsPeriod.periodLabel}`}>
-      <PopoverTrigger
+    <Drawer
+      key={`${statsPeriod.period}-${statsPeriod.offset}-${statsPeriod.periodLabel}`}
+      onOpenChange={(next) => {
+        setOpen(next);
+        setCustomRangeError(undefined);
+      }}
+      open={open}
+    >
+      <DrawerTrigger
         render={
           <Button
             aria-label={`Choose period. Current: ${statsPeriod.periodLabel}`}
             className="max-w-full justify-between sm:max-w-64"
-            variant="ghost"
+            size="bar"
+            variant="outline"
           />
         }
       >
-        <CalendarIcon aria-hidden />
+        <CalendarIcon aria-hidden className="max-sm:hidden" />
         <span className="truncate">{statsPeriod.periodLabel}</span>
         <ChevronDownIcon aria-hidden />
-      </PopoverTrigger>
+      </DrawerTrigger>
 
-      <PopoverContent align="end" className="w-[min(22rem,calc(100vw-2rem))] gap-5">
-        <PopoverHeader>
-          <PopoverTitle>Period</PopoverTitle>
-        </PopoverHeader>
+      <DrawerPopup className="sm:max-w-sm">
+        <DrawerHeader closeLabel="Close">
+          <DrawerTitle>Period</DrawerTitle>
+        </DrawerHeader>
 
-        <div aria-label="Period presets" className="grid grid-cols-3 gap-1" role="group">
-          {PERIODS.map((period) => (
-            <Button
-              key={period.value}
-              onClick={() => selectPreset(period.value)}
-              size="sm"
-              variant={statsPeriod.period === period.value ? "default" : "ghost"}
-            >
-              {period.label}
-            </Button>
-          ))}
-        </div>
+        <form className="contents" onSubmit={submitCustomPeriod}>
+          <DrawerContent className="flex flex-col gap-5 pt-2">
+            <PeriodPresets current={statsPeriod.period} onSelect={selectPreset} />
 
-        {canPage ? (
-          <div className="border-border/60 flex items-center justify-between border-y py-3">
-            <Button
-              aria-label="Previous period"
-              onClick={() => movePeriod(statsPeriod.offset + 1)}
-              size="icon-sm"
-              variant="ghost"
-            >
-              <ChevronLeftIcon aria-hidden />
-            </Button>
-            <span className="text-sm font-medium">{statsPeriod.periodLabel}</span>
-            <Button
-              aria-label="Next period"
-              disabled={statsPeriod.offset === 0}
-              onClick={() => movePeriod(statsPeriod.offset - 1)}
-              size="icon-sm"
-              variant="ghost"
-            >
-              <ChevronRightIcon aria-hidden />
-            </Button>
-          </div>
-        ) : null}
-
-        <form className="flex flex-col gap-3" onSubmit={submitCustomPeriod}>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="stats-start-date">From</Label>
-              <Input
-                aria-describedby={customRangeError ? CUSTOM_RANGE_ERROR_ID : undefined}
-                aria-invalid={Boolean(customRangeError)}
-                defaultValue={startValue}
-                id="stats-start-date"
-                max={latestCustomDate}
-                name="start"
-                onChange={() => setCustomRangeError(undefined)}
-                required
-                type="date"
+            {canPage ? (
+              <PeriodStepper
+                label={statsPeriod.periodLabel}
+                offset={statsPeriod.offset}
+                onMove={movePeriod}
               />
-            </div>
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="stats-end-date">To</Label>
-              <Input
-                aria-describedby={customRangeError ? CUSTOM_RANGE_ERROR_ID : undefined}
-                aria-invalid={Boolean(customRangeError)}
-                defaultValue={endValue}
-                id="stats-end-date"
-                max={latestCustomDate}
-                name="end"
-                onChange={() => setCustomRangeError(undefined)}
-                required
-                type="date"
-              />
-            </div>
-          </div>
-          {customRangeError ? (
-            <p className="text-destructive-text text-sm" id={CUSTOM_RANGE_ERROR_ID} role="alert">
-              {customRangeError}
-            </p>
-          ) : null}
-          <Button type="submit" variant="outline">
-            Apply custom range
-          </Button>
+            ) : null}
+
+            <CustomRangeFields
+              end={endValue}
+              error={customRangeError}
+              latest={latestCustomDate}
+              onEdit={() => setCustomRangeError(undefined)}
+              start={startValue}
+            />
+          </DrawerContent>
+
+          <DrawerFooter>
+            <DrawerClose render={<Button size="lg" type="button" variant="outline" />}>
+              Cancel
+            </DrawerClose>
+            <EnterButton type="submit">Apply dates</EnterButton>
+          </DrawerFooter>
         </form>
-      </PopoverContent>
-    </Popover>
+      </DrawerPopup>
+    </Drawer>
+  );
+}
+
+function PeriodPresets({
+  current,
+  onSelect,
+}: {
+  current: AdminStatsPeriod;
+  onSelect: (period: AdminStatsPeriod) => void;
+}) {
+  return (
+    <div aria-label="Period presets" className="grid grid-cols-3 gap-1" role="group">
+      {PERIODS.map((period) => (
+        <Toggle
+          key={period.value}
+          onPressedChange={() => onSelect(period.value)}
+          pressed={current === period.value}
+          size="lg"
+        >
+          {period.label}
+        </Toggle>
+      ))}
+    </div>
+  );
+}
+
+/** Older periods first: the offset counts back from the current one. */
+function PeriodStepper({
+  label,
+  offset,
+  onMove,
+}: {
+  label: string;
+  offset: number;
+  onMove: (offset: number) => void;
+}) {
+  return (
+    <div className="flex items-center justify-between border-y py-1">
+      <Button
+        aria-label="Previous period"
+        onClick={() => onMove(offset + 1)}
+        size="icon"
+        type="button"
+        variant="ghost"
+      >
+        <ChevronLeftIcon aria-hidden />
+      </Button>
+      <span className="text-sm font-medium">{label}</span>
+      <Button
+        aria-label="Next period"
+        disabled={offset === 0}
+        onClick={() => onMove(offset - 1)}
+        size="icon"
+        type="button"
+        variant="ghost"
+      >
+        <ChevronRightIcon aria-hidden />
+      </Button>
+    </div>
+  );
+}
+
+function CustomRangeFields({
+  end,
+  error,
+  latest,
+  onEdit,
+  start,
+}: {
+  end: string;
+  error?: string;
+  latest: string;
+  onEdit: () => void;
+  start: string;
+}) {
+  return (
+    <>
+      <div className="grid grid-cols-2 gap-3">
+        <DateField
+          defaultValue={start}
+          error={error}
+          id="stats-start-date"
+          label="From"
+          latest={latest}
+          name="start"
+          onEdit={onEdit}
+        />
+        <DateField
+          defaultValue={end}
+          error={error}
+          id="stats-end-date"
+          label="To"
+          latest={latest}
+          name="end"
+          onEdit={onEdit}
+        />
+      </div>
+
+      {/* A line that is always there, so the error moves nothing when it appears. */}
+      <p className="text-destructive-text min-h-5 text-sm" id={CUSTOM_RANGE_ERROR_ID} role="alert">
+        {error}
+      </p>
+    </>
+  );
+}
+
+function DateField({
+  defaultValue,
+  error,
+  id,
+  label,
+  latest,
+  name,
+  onEdit,
+}: {
+  defaultValue: string;
+  error?: string;
+  id: string;
+  label: string;
+  latest: string;
+  name: string;
+  onEdit: () => void;
+}) {
+  return (
+    <div className="flex flex-col gap-2">
+      <Label htmlFor={id}>{label}</Label>
+      <Input
+        aria-describedby={error ? CUSTOM_RANGE_ERROR_ID : undefined}
+        aria-invalid={Boolean(error)}
+        defaultValue={defaultValue}
+        id={id}
+        max={latest}
+        name={name}
+        onChange={onEdit}
+        required
+        type="date"
+      />
+    </div>
   );
 }
 

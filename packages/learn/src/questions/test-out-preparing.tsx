@@ -4,9 +4,7 @@ import {
   GenerationTimelineDescription,
   GenerationTimelineTitle,
 } from "@zoonk/ui/components/generation-timeline";
-import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { FreeWeekOverNotice } from "../_components/free-week-over";
 import { type HelpLimit, HelpLimitNotice } from "../_components/help-limit-notice";
 import { StatusRegion } from "../_components/status-region";
 import { StepCard, StepDetail, StepHeader } from "../_components/step-card";
@@ -16,7 +14,7 @@ import { type GenerationRun } from "../generation/generation-run";
 import { GenerationWait } from "../generation/generation-wait";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
-import { TaskFrame, TaskMainButton, TaskMainLink } from "../shell/task-frame";
+import { TaskFrame, TaskMainButton } from "../shell/task-frame";
 
 function TestOutCard() {
   const t = useExtracted();
@@ -27,7 +25,7 @@ function TestOutCard() {
         <h2 className="text-title">{t("Already know this?")}</h2>
         <StepDetail>
           {t(
-            "A few questions on this chapter. Do well, and your plan skips what you already know.",
+            "A few questions on this chapter, with your results at the end. Do well, and your plan skips what you already know.",
           )}
         </StepDetail>
       </StepHeader>
@@ -38,12 +36,10 @@ function TestOutCard() {
 function TestOutStart({
   limit,
   onStart,
-  plusRequired,
   starting,
 }: {
   limit: HelpLimit | null;
   onStart: () => void;
-  plusRequired: boolean;
   starting: boolean;
 }) {
   const t = useExtracted();
@@ -52,21 +48,12 @@ function TestOutStart({
   return (
     <>
       <StatusRegion>
-        {plusRequired && <FreeWeekOverNotice cta={false} />}
-        {!plusRequired && limit && (
-          <HelpLimitNotice limit={limit} linkComponent={LearnLink} routes={routes} />
-        )}
+        {limit && <HelpLimitNotice limit={limit} linkComponent={LearnLink} routes={routes} />}
       </StatusRegion>
 
-      {plusRequired && (
+      {!limit && (
         <TaskActions>
-          <TaskMainLink href={routes.upgrade}>{t("See Plus")}</TaskMainLink>
-        </TaskActions>
-      )}
-
-      {!plusRequired && !limit && (
-        <TaskActions>
-          <TaskMainButton busy={starting} icon={<PlayIcon aria-hidden="true" />} onClick={onStart}>
+          <TaskMainButton busy={starting} onClick={onStart}>
             {t("Start the test")}
           </TaskMainButton>
         </TaskActions>
@@ -80,14 +67,12 @@ export function TestOutPreparing({
   closeHref,
   limit,
   onStart,
-  plusRequired = false,
   run,
   starting,
 }: {
   chapterTitle: string;
   closeHref: string;
   limit: HelpLimit | null;
-  plusRequired?: boolean;
   onStart: () => void;
   run: GenerationRun | null;
   starting: boolean;
@@ -97,17 +82,8 @@ export function TestOutPreparing({
   return (
     <TaskFrame
       exitHref={closeHref}
-      footer={
-        !run && (
-          <TestOutStart
-            limit={limit}
-            onStart={onStart}
-            plusRequired={plusRequired}
-            starting={starting}
-          />
-        )
-      }
-      headerTitle={<TaskHeaderTitle title={t("Test out: {chapter}", { chapter: chapterTitle })} />}
+      footer={!run && <TestOutStart limit={limit} onStart={onStart} starting={starting} />}
+      headerTitle={<TaskHeaderTitle title={t("Test: {chapter}", { chapter: chapterTitle })} />}
     >
       {run ? (
         <GenerationWait kind="testOutQuestions" run={run}>

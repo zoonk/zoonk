@@ -20,7 +20,6 @@ import { writeLearnerChange } from "../_utils/write-learner-change";
 import { type ItemAnswerInput } from "../contract";
 import { recordLearnerAnswer } from "../record-learner-answer";
 import { countSkippableItems, getChapterSkills } from "./_utils/chapter-items";
-import { isTestOutPlusOnly } from "./_utils/test-out-access";
 import { loadTestOutPlan } from "./_utils/test-out-plan";
 import {
   type TestOutReceipt,
@@ -46,7 +45,6 @@ export type SubmitChapterTestOutResult =
   | { status: "invalidItem" }
   | { status: "notFound" }
   | { status: "nothingToSkip" }
-  | { status: "plusRequired" }
   | { status: "unauthorized" };
 
 type GradedAnswer = { answer: ItemAnswerInput; item: ChoiceItem } & ReturnType<
@@ -228,10 +226,6 @@ async function submitOwnedTestOut({
 
   if (countSkippableItems({ plan, skills: chapterSkills }) === 0) {
     return { status: "nothingToSkip" };
-  }
-
-  if (await isTestOutPlusOnly(goal)) {
-    return { status: "plusRequired" };
   }
 
   const graded = await gradeAnswers({

@@ -9,6 +9,7 @@ import {
   ListRow,
   ListRowBody,
   ListRowButton,
+  ListRowChevronSpace,
   ListRowContent,
   ListRowDescription,
   ListRowLeading,
@@ -36,7 +37,7 @@ function ChapterLine({ chapter }: { chapter: SyllabusChapter }) {
   const writingLine = useWritingLine();
 
   if (chapter.known) {
-    return <ListRowDescription>{t("Skipped because you already know it")}</ListRowDescription>;
+    return <ListRowDescription>{t("Skipped · you already know it")}</ListRowDescription>;
   }
 
   if (chapter.writing) {
@@ -78,6 +79,7 @@ export function SyllabusChapterRow({
       <ListRowBody>
         <ListRowContent>
           <ListRowNumberedTitle
+            description={<ChapterLine chapter={chapter} />}
             number={chapter.position}
             textClassName={cn(
               "line-clamp-2",
@@ -86,7 +88,6 @@ export function SyllabusChapterRow({
           >
             {chapter.title}
           </ListRowNumberedTitle>
-          <ChapterLine chapter={chapter} />
         </ListRowContent>
         <ListRowTrailing>
           <ChapterMeta chapter={chapter} />
@@ -114,7 +115,12 @@ export function SyllabusChapterRow({
   }
 
   if (!href) {
-    return <ListRow className={className}>{content}</ListRow>;
+    return (
+      <ListRow className={className}>
+        {content}
+        <ListRowChevronSpace />
+      </ListRow>
+    );
   }
 
   return (

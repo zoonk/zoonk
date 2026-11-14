@@ -13,8 +13,6 @@ import com.zoonk.android.ui.format.joinSentences
 import com.zoonk.api.models.ExamDocument
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanEffect
-import com.zoonk.api.models.PlanEffectAreaLessonsInner
-import com.zoonk.api.models.PlanEffectWeeklyEvents
 import kotlinx.datetime.toJavaLocalDate
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -30,39 +28,53 @@ import kotlin.math.abs
 
 private val NEVER_APPLIED = setOf(PlanChange.Status.PROPOSED, PlanChange.Status.DECLINED, PlanChange.Status.REPLACED)
 
-/** Main's `useChangeSentence`. [targetDate] is the goal's date while it's ahead, so system changes count by it. */
+/** What a plan change says: [title], the question a proposal asks or what an applied change did, and at most one [why]. */
+data class ChangeWords(
+    val title: String,
+    val why: String?,
+)
+
+/**
+ * Main's `useChangeWords`: a change nobody applied yet asks a question in the learner's words; once
+ * applied it says what it did. What it moves is never said here: that's its effect ([PlanEffectDiff]).
+ */
+@Composable
+fun planChangeWords(
+    change: PlanChange,
+    dateKind: GoalDateKind = GoalDateKind.Unknown,
+): ChangeWords {
+    val ops = change.operations.map { it.op }
+    val first = ops.firstOrNull()
+
+    systemChangeSentence(change)?.let { return ChangeWords(it, null) }
+    if (change.source == OWN_LEVEL_SOURCE && first is PlanOp.AddSkills) {
+        return ChangeWords(stringResource(R.string.plan_change_own_level_first, shortList(first.names, ListKind.Topics)), null)
+    }
+    if (change.source == FOCUS_TEST_SOURCE && first is PlanOp.FocusAreas && first.areas.isNotEmpty()) {
+        return ChangeWords(stringResource(R.string.plan_change_focus_test, joinList(first.areas)), null)
+    }
+
+    val statements = @Composable { ops.map { operationStatement(it, change.examDocument, dateKind) }.joinSentences() }
+    if (change.status !in NEVER_APPLIED) {
+        return ChangeWords(if (ops.isEmpty()) stringResource(R.string.plan_change_changed) else statements(), null)
+    }
+
+    if (change.source == NOTICE_SOURCE) return ChangeWords(guideQuestion(ops, change.examDocument), change.reason)
+    if (change.source == PHASE_DATES_SOURCE) {
+        val phaseDates = phaseDatesQuestion(change.effect)
+        return ChangeWords(phaseDates.title, change.reason ?: phaseDates.why)
+    }
+    val own = first?.takeIf { ops.size == 1 }?.let { operationQuestion(it, dateKind) }
+    if (own != null) return ChangeWords(own, change.reason)
+    return ChangeWords(stringResource(R.string.plan_ask_change), change.reason ?: statements().ifEmpty { null })
+}
+
+/** The title alone, where a change shows in one line. */
 @Composable
 fun planChangeSentence(
     change: PlanChange,
-    targetDate: LocalDate? = null,
-): String {
-    change.reason?.let { return it }
-    val ops = change.operations.map { it.op }
-    val effect = change.effect
-    val neverApplied = change.status in NEVER_APPLIED
-
-    if (change.source == NOTICE_SOURCE) return noticeSentence(ops, change.examDocument)
-    if (change.source == PHASE_DATES_SOURCE && neverApplied) return phaseDatesSentence(effect)
-
-    val first = ops.firstOrNull()
-    if (change.source == OWN_LEVEL_SOURCE && first is PlanOp.AddSkills) {
-        return stringResource(R.string.plan_change_own_level_first, shortList(first.names, ListKind.Topics))
-    }
-    if (change.source == REBALANCE_SOURCE && first is PlanOp.FocusAreas) {
-        return stringResource(R.string.plan_change_rebalance, joinList(first.areas))
-    }
-    if (change.source == FOCUS_TEST_SOURCE && first is PlanOp.FocusAreas && first.areas.isNotEmpty()) {
-        return stringResource(R.string.plan_change_focus_test, joinList(first.areas))
-    }
-
-    systemChangeSentence(change, effect, targetDate)?.let { return it }
-    if (ops.isEmpty()) return coverageSentence(effect)
-
-    return ops
-        .map { op ->
-            (if (neverApplied) proposedOperationSentence(op) else null) ?: operationSentence(op, change.examDocument)
-        }.joinSentences()
-}
+    dateKind: GoalDateKind = GoalDateKind.Unknown,
+): String = planChangeWords(change, dateKind).title
 
 /** Main's `useAppliedLine`: whether today's session took the change. */
 @Composable
@@ -75,84 +87,12 @@ fun planChangeAppliedLine(todaySession: PlanChange.TodaySession?): String =
         },
     )
 
-/**
- * Main's `useAppliedEffectText`: what an applied change moved. A plan with a date says its new end
- * only when it goes on past the exam; one whose date the change removed says the month it ends.
- */
-@Composable
-fun planChangeAppliedEffect(
-    change: PlanChange,
-    targetDate: LocalDate?,
-    fullCourse: Boolean,
-): String? = effectSentences(change.effect, appliedEndText(change, targetDate, fullCourse))
-
-/**
- * Main's `useProposalEffectText`, for a change offered before it's applied. [current] is the plan's end shown now, for a plan
- * without a date. A focus change says what its [focused] subjects gain before when they start, since a start moved later
- * reads like a loss when it leads; what another subject loses keeps its place.
- */
-@Composable
-fun planChangeProposalEffect(
-    effect: PlanEffect?,
-    current: PlanEnd? = null,
-    besideDiff: Boolean = false,
-    byDate: Boolean = true,
-    focused: List<String> = emptyList(),
-): String? {
-    val end = if (current != null) planEndEffect(effect, current) else changeEffectText(effect)
-    return effectSentences(effect, end, besideDiff = besideDiff, byDate = byDate, focused = focused)
-}
-
-/** The subjects a focus change gives more time. */
-val PlanChange.focusedAreas: List<String> get() = operations.mapNotNull { it.op as? PlanOp.FocusAreas }.flatMap { it.areas }
-
-/** The plan's date and estimated end, as shown before a change. */
-data class PlanEnd(
-    val targetDate: LocalDate?,
-    val endDate: LocalDate?,
-)
-
-/**
- * Main's tutor footnote: what a change moves beyond its diff (an area's end that stays, starts,
- * reviews, the lessons it names, topics in and out). A focus says what each subject gains before
- * when it starts.
- */
-@Composable
-fun planChangeFootnote(change: PlanChange): String? {
-    val effect = change.effect ?: return null
-    val ends = effect.areaEnds.orEmpty()
-    val focused = change.focusedAreas
-    val estimated = effect.lessonsAddedEstimated == true
-    val gains = ends.filter { it.area in focused && (it.lessonsGained ?: 0) > 0 && it.after > it.before }
-    val sentences =
-        listOfNotNull(
-            // An end that moves is in the diff, but a focus still says what its subjects gain first.
-            *areaEndTexts(gains, estimated).toTypedArray(),
-            *areaStartTexts(effect).toTypedArray(),
-            // An end that stays says why.
-            *areaEndTexts(ends.filter { it.after == it.before }, estimated).toTypedArray(),
-            reviewFirstText(effect),
-            lessonsText(effect, named = true),
-            addedTopicsStartText(effect),
-            topicsLeaveText(effect),
-        )
-    return sentences.takeIf { it.isNotEmpty() }?.joinSentences()
-}
-
 /** For a waiting change that would set the exam's official date: what the notice or calendar says. */
 @Composable
 fun planChangeOfficialDateLine(change: PlanChange): String? {
     val official = change.officialDate?.takeIf { change.status == PlanChange.Status.PROPOSED } ?: return null
-    val date = longDate(official.date.toJavaLocalDate())
-    return stringResource(
-        if (change.examDocument == ExamDocument.NOTICE) R.string.plan_change_notice_sets_date else R.string.plan_change_calendar_sets_date,
-        date,
-    )
+    return stringResource(R.string.plan_change_official_date, longDate(official.date.toJavaLocalDate()))
 }
-
-@Composable
-fun planChangeKeepOfficialDateLabel(document: ExamDocument): String =
-    stringResource(if (document == ExamDocument.NOTICE) R.string.plan_change_keep_notice_date else R.string.plan_change_keep_official_date)
 
 /** A full-course exam plan may grow past its date, so its count isn't one by the date. */
 fun countsByDate(
@@ -181,16 +121,12 @@ internal fun shownEndMove(effect: PlanEffect?): Pair<LocalDate, LocalDate>? {
 private const val NOTICE_SOURCE = "notice"
 private const val PHASE_DATES_SOURCE = "phaseDates"
 private const val OWN_LEVEL_SOURCE = "ownLevel"
-private const val REBALANCE_SOURCE = "preparation"
 
 /** A focus the learner's Focus test answers suggest, which they apply as "Update my plan". */
 const val FOCUS_TEST_SOURCE = "focusTest"
 
 @Composable
 internal fun longDate(date: LocalDate): String = formatDate(date, currentLocale(), DateStyle.Long)
-
-@Composable
-private fun weekdayDayDate(date: LocalDate): String = formatDate(date, currentLocale(), DateStyle.WeekdayDay)
 
 /** Sunday is 0, as the API counts weekdays. */
 @Composable
@@ -244,35 +180,34 @@ internal fun topicWords(name: String): String = (ITEM_NUMBER.matchEntire(name) ?
 private val ITEM_NUMBER = Regex("""^\s*(\d{1,3}(?:\.\d{1,3})*)\.?\s+(\S.*)$""", RegexOption.DOT_MATCHES_ALL)
 private val ITEM_CODE = Regex("""^\s*([A-Z]{1,3}\d{1,3})\s*[-–—:]\s+(\S.*)$""", RegexOption.DOT_MATCHES_ALL)
 
+/** Main's `useGuideQuestion`: following the exam's guide, its date, or both. */
 @Composable
-private fun noticeSentence(
+private fun guideQuestion(
     ops: List<PlanOp>,
     document: ExamDocument,
 ): String {
-    val notice = document == ExamDocument.NOTICE
     val follows = ops.any { it is PlanOp.FollowNotice }
     val day = ops.filterIsInstance<PlanOp.NoticeDate>().firstOrNull()
     val date = day?.let { longDate(it.date) }
 
     return when {
-        follows && day != null && day.estimated -> {
-            stringResource(if (notice) R.string.plan_change_read_notice_around else R.string.plan_change_read_guide_around, date!!)
-        }
-
-        follows && day != null -> {
-            stringResource(if (notice) R.string.plan_change_read_notice_on else R.string.plan_change_read_guide_on, date!!)
+        follows && date != null -> {
+            stringResource(
+                if (day.estimated) R.string.plan_ask_follow_guide_around else R.string.plan_ask_follow_guide_on,
+                date,
+            )
         }
 
         follows -> {
-            stringResource(if (notice) R.string.plan_change_read_notice else R.string.plan_change_read_guide)
+            stringResource(R.string.plan_ask_follow_guide)
         }
 
-        day != null -> {
-            noticeDayText(day.date, day.estimated, document)
+        date != null -> {
+            stringResource(if (day.estimated) R.string.plan_ask_exam_date_around else R.string.plan_ask_exam_date, date)
         }
 
         else -> {
-            followsNotice(document)
+            stringResource(R.string.plan_change_follows_guide)
         }
     }
 }
@@ -289,89 +224,151 @@ fun noticeDayText(
         else -> stringResource(R.string.plan_change_calendar_says, longDate(date))
     }
 
+/** Main's `useOperationQuestion`: a change nobody applied yet is a question; null when the operation has none of its own. */
 @Composable
-private fun followsNotice(document: ExamDocument): String =
-    stringResource(if (document == ExamDocument.NOTICE) R.string.plan_change_follows_notice else R.string.plan_change_follows_guide)
-
-/** For a change never applied: "Daily time: 40 min.", never "changed to" unless the learner said yes. */
-@Composable
-private fun proposedOperationSentence(op: PlanOp): String? =
-    when (op) {
-        is PlanOp.Aim -> {
-            stringResource(R.string.onboarding_aim_changed, op.aim)
+private fun operationQuestion(
+    op: PlanOp,
+    dateKind: GoalDateKind,
+): String? {
+    val locale = currentLocale()
+    return when (op) {
+        is PlanOp.AddSkills -> {
+            stringResource(R.string.plan_ask_add_topics, shortList(op.names, ListKind.Topics))
         }
 
-        is PlanOp.DailyMinutes -> {
-            stringResource(R.string.plan_change_daily_time, formatMinutes(op.minutes, currentLocale()))
+        is PlanOp.FocusAreas -> {
+            if (op.areas.isEmpty()) {
+                stringResource(
+                    R.string.plan_ask_remove_focus,
+                )
+            } else {
+                stringResource(R.string.plan_ask_focus, focusNames(op))
+            }
         }
 
-        is PlanOp.MoveWeeklyEvent -> {
-            stringResource(R.string.plan_change_weekly_challenge, longDate(op.to))
-        }
-
-        is PlanOp.TargetDate -> {
-            op.date?.let { stringResource(R.string.plan_change_goal_date, longDate(it)) }
-        }
-
-        is PlanOp.NoticeDate -> {
-            stringResource(R.string.plan_change_goal_date, longDate(op.date))
-        }
-
-        is PlanOp.SkipActivities -> {
-            stringResource(R.string.plan_change_leave_out, activityList(op.activities))
-        }
-
-        is PlanOp.RestoreActivities -> {
-            stringResource(R.string.plan_change_back_in_lessons, activityList(op.activities))
+        is PlanOp.ReduceAreas -> {
+            stringResource(R.string.plan_ask_less_time, joinList(op.areas))
         }
 
         is PlanOp.SkipAreas -> {
-            stringResource(R.string.plan_change_leave_out_of_plan, joinList(op.areas))
+            stringResource(R.string.plan_ask_skip_areas, joinList(op.areas))
         }
 
         is PlanOp.RestoreAreas -> {
-            stringResource(R.string.plan_change_back_in_plan, joinList(op.areas))
+            stringResource(R.string.plan_ask_restore_areas, joinList(op.areas))
         }
 
-        is PlanOp.AddSkills -> {
-            stringResource(R.string.plan_change_add_to_plan, shortList(op.names, ListKind.Topics))
+        is PlanOp.AreaStart -> {
+            stringResource(if (op.pastBasics) R.string.plan_ask_skip_basics else R.string.plan_ask_from_basics, joinList(op.areas))
+        }
+
+        is PlanOp.DailyMinutes -> {
+            stringResource(R.string.plan_ask_daily_time, formatMinutes(op.minutes, locale))
+        }
+
+        is PlanOp.WeekdayMinutes -> {
+            val days = joinList(op.weekdays.map { weekdayName(it) })
+            when {
+                op.minutes != 0 -> stringResource(R.string.plan_ask_days_time, formatMinutes(op.minutes, locale), days)
+                op.weekdays.size == 1 -> stringResource(R.string.plan_ask_rest_day, days)
+                else -> stringResource(R.string.plan_ask_rest_days, days)
+            }
+        }
+
+        is PlanOp.LightWeek -> {
+            stringResource(R.string.plan_ask_light_week, longDate(op.startDate))
+        }
+
+        is PlanOp.MoveWeeklyEvent -> {
+            stringResource(R.string.plan_ask_move_challenge, longDate(op.to))
+        }
+
+        is PlanOp.TargetDate -> {
+            op.date?.let { dateQuestion(it, dateKind) } ?: stringResource(R.string.plan_ask_no_end_date)
+        }
+
+        is PlanOp.NoticeDate -> {
+            dateQuestion(op.date, dateKind)
+        }
+
+        is PlanOp.FullCourse -> {
+            stringResource(if (op.fullCourse) R.string.plan_ask_keep_studying else R.string.plan_ask_end_at_exam)
         }
 
         is PlanOp.PracticeBias -> {
-            stringResource(
-                if (op.bias ==
-                    "morePractice"
-                ) {
-                    R.string.plan_change_suggest_more_practice
-                } else {
-                    R.string.plan_change_suggest_more_explanation
-                },
-            )
+            stringResource(if (op.bias == "morePractice") R.string.plan_ask_more_practice else R.string.plan_ask_more_explanation)
         }
 
         is PlanOp.DifficultyBias -> {
             stringResource(
                 when (op.bias) {
-                    "harder" -> R.string.plan_change_suggest_harder
-                    "easier" -> R.string.plan_change_suggest_easier
-                    else -> R.string.plan_change_suggest_usual_difficulty
+                    "harder" -> R.string.plan_ask_harder
+                    "easier" -> R.string.plan_ask_easier
+                    else -> R.string.plan_ask_usual_difficulty
                 },
             )
+        }
+
+        is PlanOp.SkipActivities -> {
+            stringResource(R.string.plan_ask_skip_activities, activityList(op.activities))
+        }
+
+        is PlanOp.RestoreActivities -> {
+            stringResource(R.string.plan_ask_restore_activities, activityList(op.activities))
+        }
+
+        is PlanOp.BaseChoices -> {
+            stringResource(R.string.plan_ask_prerequisites)
+        }
+
+        is PlanOp.Aim -> {
+            stringResource(R.string.plan_ask_aim, op.aim)
+        }
+
+        PlanOp.FitLessons -> {
+            stringResource(R.string.plan_ask_fit_lessons)
         }
 
         else -> {
             null
         }
     }
+}
 
 @Composable
-private fun operationSentence(
+private fun dateQuestion(
+    date: LocalDate,
+    dateKind: GoalDateKind,
+): String =
+    stringResource(
+        when (dateKind) {
+            GoalDateKind.Exam -> R.string.plan_ask_exam_date
+            GoalDateKind.Goal -> R.string.plan_ask_end_date
+            GoalDateKind.Unknown -> R.string.plan_ask_date
+        },
+        longDate(date),
+    )
+
+/** A focus names its subjects by the parts the learner sees. */
+@Composable
+private fun focusNames(op: PlanOp.FocusAreas): String =
+    joinList(
+        op.areas.map { area ->
+            op.parts.firstOrNull { it.area == area }?.name
+                ?: area
+        },
+    )
+
+/** Main's `useOperationStatement`: what an applied operation did. */
+@Composable
+private fun operationStatement(
     op: PlanOp,
     document: ExamDocument,
+    dateKind: GoalDateKind,
 ): String =
     when (op) {
         is PlanOp.Aim -> {
-            stringResource(R.string.onboarding_aim_changed, op.aim)
+            stringResource(R.string.plan_change_aim, op.aim)
         }
 
         is PlanOp.DailyMinutes -> {
@@ -422,15 +419,15 @@ private fun operationSentence(
         }
 
         is PlanOp.AddSkills -> {
-            pluralStringResource(R.plurals.plan_change_skills_come_in, op.names.size, shortList(op.names, ListKind.Topics))
+            stringResource(R.string.plan_change_topics_added, shortList(op.names, ListKind.Topics))
         }
 
         PlanOp.FollowNotice -> {
-            followsNotice(document)
+            stringResource(R.string.plan_change_follows_guide)
         }
 
         is PlanOp.NoticeDate -> {
-            stringResource(R.string.plan_change_date_moved, longDate(op.date))
+            dateStatement(op.date, dateKind)
         }
 
         is PlanOp.Tools -> {
@@ -446,12 +443,11 @@ private fun operationSentence(
         }
 
         is PlanOp.ExamChoice -> {
-            stringResource(R.string.plan_change_exam_choice, joinList(op.subjects), op.group)
+            stringResource(R.string.plan_change_exam_choice, op.group, joinList(op.subjects))
         }
 
         is PlanOp.TargetDate -> {
-            op.date?.let { stringResource(R.string.plan_change_date_moved, longDate(it)) }
-                ?: stringResource(R.string.plan_change_no_deadline)
+            op.date?.let { dateStatement(it, dateKind) } ?: stringResource(R.string.plan_change_no_deadline)
         }
 
         is PlanOp.FullCourse -> {
@@ -463,13 +459,12 @@ private fun operationSentence(
         }
 
         is PlanOp.FocusAreas -> {
-            val names = op.areas.map { area -> op.parts.firstOrNull { it.area == area }?.name ?: area }
-            if (names.isEmpty()) {
+            if (op.areas.isEmpty()) {
                 stringResource(
                     R.string.plan_change_no_focus,
                 )
             } else {
-                stringResource(R.string.plan_change_more_time_for, joinList(names))
+                stringResource(R.string.plan_change_more_time_for, focusNames(op))
             }
         }
 
@@ -478,16 +473,29 @@ private fun operationSentence(
         }
 
         is PlanOp.SkipAreas -> {
-            stringResource(R.string.plan_change_areas_left_out, joinList(op.areas))
+            stringResource(
+                if (op.areas.size ==
+                    1
+                ) {
+                    R.string.plan_change_area_left_out
+                } else {
+                    R.string.plan_change_areas_left_out_many
+                },
+                joinList(op.areas),
+            )
         }
 
         is PlanOp.RestoreAreas -> {
-            stringResource(R.string.plan_change_areas_back, joinList(op.areas))
+            stringResource(R.string.plan_change_topics_added, joinList(op.areas))
         }
 
         is PlanOp.AreaStart -> {
             stringResource(
-                if (op.pastBasics) R.string.plan_change_start_past_basics else R.string.plan_change_start_from_basics,
+                when {
+                    op.pastBasics -> R.string.plan_change_start_past_basics
+                    op.areas.size == 1 -> R.string.plan_change_area_from_basics
+                    else -> R.string.plan_change_areas_from_basics
+                },
                 joinList(op.areas),
             )
         }
@@ -496,6 +504,20 @@ private fun operationSentence(
             stringResource(R.string.plan_change_changed)
         }
     }
+
+@Composable
+private fun dateStatement(
+    date: LocalDate,
+    dateKind: GoalDateKind,
+): String =
+    stringResource(
+        when (dateKind) {
+            GoalDateKind.Exam -> R.string.plan_change_exam_date
+            GoalDateKind.Goal -> R.string.plan_change_end_date
+            GoalDateKind.Unknown -> R.string.plan_change_date_moved
+        },
+        longDate(date),
+    )
 
 @Composable
 private fun activityList(activities: List<String>): String =
@@ -534,7 +556,7 @@ private fun baseChoicesSentence(choices: List<BaseChoice>): String {
         if (essential > 0) pluralStringResource(R.plurals.plan_change_bases_essential, essential, essential) else null,
         if (quick > 0) pluralStringResource(R.plurals.plan_change_bases_quick, quick, quick) else null,
         if (skip > 0) pluralStringResource(R.plurals.plan_change_bases_skip, skip, skip) else null,
-    ).joinSentences()
+    ).let { stringResource(R.string.plan_change_bases, joinList(it)) }
 }
 
 @Composable
@@ -560,34 +582,36 @@ fun systemName(system: String): String =
         else -> stringResource(R.string.plan_system_windows)
     }
 
+/** Main's `useSystemChangeSentence`: a change the plan made by itself says why in one sentence; what moved is its effect. */
 @Composable
-private fun systemChangeSentence(
-    change: PlanChange,
-    effect: PlanEffect?,
-    targetDate: LocalDate?,
-): String? {
-    fun join(vararg parts: String?) = parts.filterNotNull().joinSentences()
+private fun systemChangeSentence(change: PlanChange): String? {
+    val effect = change.effect
     return when (change.kind) {
         "missedDays" -> {
-            join(stringResource(R.string.plan_change_missed_days), phaseEndsText(effect), topicsMoved(effect))
+            stringResource(R.string.plan_change_missed_days)
         }
 
         "estimateUpdated" -> {
-            join(estimateSentence(effect, targetDate), phaseEndsText(effect)).ifEmpty { null }
+            if (effect != null &&
+                effect.lessonsAdded != effect.lessonsRemoved
+            ) {
+                stringResource(R.string.plan_change_estimate_updated)
+            } else {
+                null
+            }
         }
 
         "testedOut" -> {
             val lessons = change.lessonsSkipped.toInt()
-            join(pluralStringResource(R.plurals.plan_change_tested_out, lessons, lessons), topicsMoved(effect))
+            pluralStringResource(R.plurals.plan_change_tested_out, lessons, lessons)
         }
 
-        // Its own sentence names the topics it brings back.
         "relearn" -> {
-            join(relearnSentence(effect), topicsMoved(effect, added = false))
+            relearnSentence(effect)
         }
 
         "coverageChanged" -> {
-            coverageSentence(effect)
+            stringResource(if (effect?.fromPlacement == true) R.string.plan_change_from_test else R.string.plan_change_changed)
         }
 
         else -> {
@@ -612,339 +636,48 @@ private fun relearnSentence(effect: PlanEffect?): String {
 private const val MAX_NAMED_TOPICS = 3
 private const val MAX_NAMED_SUBJECTS = 3
 
+/** Main's `usePhaseDatesQuestion`: one thing moves, which, and why in the learner's terms; the moved dates are the change's effect. */
 @Composable
-private fun estimateSentence(
-    effect: PlanEffect?,
-    targetDate: LocalDate?,
-): String? {
-    val more = ((effect?.lessonsAdded ?: 0) - (effect?.lessonsRemoved ?: 0)).toInt()
-    if (more == 0) return null
-    val about = effect?.lessonsAddedEstimated == true
-    val count =
-        if (!countsByDate(effect, targetDate)) {
-            when {
-                more < 0 -> pluralStringResource(R.plurals.plan_change_goal_takes_fewer, -more, -more)
-                about -> pluralStringResource(R.plurals.plan_change_goal_takes_about_more, more, more)
-                else -> pluralStringResource(R.plurals.plan_change_goal_takes_more, more, more)
-            }
-        } else {
-            when {
-                more < 0 -> pluralStringResource(R.plurals.plan_change_no_longer_fit, -more, -more)
-                about -> pluralStringResource(R.plurals.plan_change_about_more_fit, more, more)
-                else -> pluralStringResource(R.plurals.plan_change_more_fit, more, more)
-            }
-        }
-    return joinSentences(count, stringResource(R.string.plan_change_time_lessons_need))
-}
-
-/**
- * Main's `useTopicsMovedSentence`: `added = false` leaves out the topics it brings in, for a change
- * whose sentence names them; [named] caps the names said.
- */
-@Composable
-fun topicsMoved(
-    effect: PlanEffect?,
-    added: Boolean = true,
-    named: Int = NAMED,
-): String? {
-    val out = effect?.topicsLeftOut.orEmpty().flatMap { it.topics }
-    val back = if (added) effect?.topicsAdded.orEmpty().flatMap { it.topics } else emptyList()
-    val sentences =
-        listOfNotNull(
-            if (out.isNotEmpty()) {
-                pluralStringResource(
-                    R.plurals.plan_change_topics_no_longer_fit,
-                    out.size,
-                    shortList(out, ListKind.Topics, named),
-                )
-            } else {
-                null
-            },
-            if (back.isNotEmpty()) {
-                pluralStringResource(
-                    R.plurals.plan_change_topics_now_fit,
-                    back.size,
-                    shortList(back, ListKind.Topics, named),
-                )
-            } else {
-                null
-            },
-        )
-    return sentences.takeIf { it.isNotEmpty() }?.joinSentences()
-}
-
-@Composable
-private fun coverageSentence(effect: PlanEffect?): String {
-    val sentence =
-        if (effect?.fromPlacement == true) {
-            val back = effect.topicsAdded.orEmpty().flatMap { it.topics }
-            val out = effect.topicsLeftOut.orEmpty().flatMap { it.topics }
-            val lines =
-                listOfNotNull(
-                    if (back.isNotEmpty()) stringResource(R.string.plan_change_now_in_plan, shortList(back, ListKind.Topics)) else null,
-                    if (out.isNotEmpty()) stringResource(R.string.plan_change_out_of_plan, shortList(out, ListKind.Topics)) else null,
-                )
-            if (lines.isEmpty()) null else (listOf(stringResource(R.string.plan_change_placement_changed)) + lines).joinSentences()
-        } else {
-            topicsMoved(effect)
-        }
-    return sentence ?: stringResource(R.string.plan_change_changed)
-}
-
-@Composable
-private fun phaseDatesSentence(effect: PlanEffect?): String {
+private fun phaseDatesQuestion(effect: PlanEffect?): ChangeWords {
     val moves = effect?.phaseEnds.orEmpty()
     val late = moves.filter { it.lessonsFirst == true }
     val resting = moves.filter { it.restDay == true }
-    val outcomes = effect?.outcomesAdded.orEmpty()
     val first = late.firstOrNull()
     val rest = resting.firstOrNull()
     return when {
         late.size > 1 -> {
-            stringResource(R.string.plan_change_phase_dates_late_many)
+            ChangeWords(stringResource(R.string.plan_ask_phase_dates_later), stringResource(R.string.plan_why_phase_dates_later))
         }
 
         first != null -> {
             val days = ChronoUnit.DAYS.between(first.before.toJavaLocalDate(), first.after.toJavaLocalDate()).toInt()
-            pluralStringResource(R.plurals.plan_change_phase_dates_late_one, days, first.name, days)
+            ChangeWords(
+                pluralStringResource(R.plurals.plan_ask_phase_end_later, days, first.name, days),
+                stringResource(R.string.plan_why_phase_end_later),
+            )
         }
 
         resting.size > 1 -> {
-            pluralStringResource(R.plurals.plan_change_phase_dates_rest_many, resting.size, resting.size)
+            ChangeWords(stringResource(R.string.plan_ask_phase_dates_off_rest), null)
         }
 
         rest != null -> {
-            stringResource(R.string.plan_change_phase_dates_rest_one, rest.name, weekdayDayDate(rest.before.toJavaLocalDate()))
-        }
-
-        outcomes.isNotEmpty() -> {
-            stringResource(R.string.plan_change_phase_dates_outcomes, joinList(outcomes))
-        }
-
-        (effect?.lessonsAdded ?: 0) > 0 -> {
-            stringResource(R.string.plan_change_phase_dates_lessons)
+            val day =
+                weekdayName(
+                    rest.before
+                        .toJavaLocalDate()
+                        .dayOfWeek.value % 7,
+                )
+            ChangeWords(
+                stringResource(R.string.plan_ask_phase_end_off_rest, rest.name, day),
+                stringResource(R.string.plan_why_phase_end_off_rest, day.replaceFirstChar { it.titlecase(currentLocale()) }),
+            )
         }
 
         else -> {
-            stringResource(R.string.plan_change_phase_dates_room)
+            ChangeWords(stringResource(R.string.plan_ask_phase_dates), null)
         }
     }
-}
-
-@Composable
-private fun phaseEndsText(effect: PlanEffect?): String? {
-    val move = effect?.phaseEnds?.singleOrNull() ?: return null
-    return stringResource(
-        R.string.plan_change_phase_ends,
-        move.name,
-        longDate(move.after.toJavaLocalDate()),
-        longDate(move.before.toJavaLocalDate()),
-    )
-}
-
-@Composable
-internal fun phaseEndRows(effect: PlanEffect?): List<String> {
-    val moves = effect?.phaseEnds.orEmpty()
-    if (moves.size < 2) return emptyList()
-    return moves.map {
-        stringResource(
-            R.string.plan_change_phase_end_row,
-            it.name,
-            longDate(it.after.toJavaLocalDate()),
-            longDate(it.before.toJavaLocalDate()),
-        )
-    }
-}
-
-@Composable
-private fun changeEffectText(effect: PlanEffect?): String? {
-    val (before, after) = shownEndMove(effect) ?: return null
-    return stringResource(R.string.plan_change_ends_instead, longDate(after), longDate(before))
-}
-
-/** Only a plan without a date says its new end, and only while the change starts from the end the plan shows now. */
-@Composable
-private fun planEndEffect(
-    effect: PlanEffect?,
-    current: PlanEnd,
-): String? {
-    val (before, after) = shownEndMove(effect) ?: return null
-    val end = current.endDate ?: return null
-    if (current.targetDate != null) return null
-    val locale = currentLocale()
-    val today = LocalDate.now()
-    val afterText = formatPlanDate(after, today, locale)
-    val beforeText = formatPlanDate(before, today, locale)
-    if (beforeText != formatPlanDate(end, today, locale) || afterText == beforeText) return null
-    return stringResource(R.string.plan_change_ends_around_instead, afterText, beforeText)
-}
-
-/** A plan the change took the date off says its end by month: "instead of" the last lesson's day misread as the deadline. */
-@Composable
-private fun appliedEndText(
-    change: PlanChange,
-    targetDate: LocalDate?,
-    fullCourse: Boolean,
-): String? {
-    val effect = change.effect
-    val after = effect?.endDateAfter?.toJavaLocalDate() ?: return null
-    if (targetDate != null && !fullCourse) return null
-    val removesDate =
-        change.operations.map { it.op }.any { (it is PlanOp.TargetDate && it.date == null) || (it is PlanOp.FullCourse && it.fullCourse) }
-    val locale = currentLocale()
-    if (removesDate) return stringResource(R.string.plan_change_finish_around, formatDate(after, locale, DateStyle.Month))
-    val before = effect.endDateBefore?.toJavaLocalDate() ?: return null
-    shownEndMove(effect) ?: return null
-    val byMonth = targetDate != null
-
-    fun shown(date: LocalDate) = if (byMonth) formatDate(date, locale, DateStyle.Month) else formatPlanDate(date, LocalDate.now(), locale)
-    val afterText = shown(after)
-    val beforeText = shown(before)
-    if (afterText == beforeText) return null
-    return stringResource(
-        if (byMonth) R.string.plan_change_ends_around_instead_month else R.string.plan_change_ends_around_instead,
-        afterText,
-        beforeText,
-    )
-}
-
-@Composable
-private fun effectSentences(
-    effect: PlanEffect?,
-    endText: String?,
-    besideDiff: Boolean = false,
-    byDate: Boolean = true,
-    focused: List<String> = emptyList(),
-): String? {
-    val (focusedEnds, otherEnds) = effect?.areaEnds.orEmpty().partition { it.area in focused }
-    val (focusedLessons, otherLessons) = effect?.areaLessons.orEmpty().partition { it.area in focused }
-    val estimated = effect?.lessonsAddedEstimated == true
-    val sentences =
-        listOfNotNull(
-            *areaEndTexts(focusedEnds, estimated).toTypedArray(),
-            *areaLessonTexts(focusedLessons).toTypedArray(),
-            *areaStartTexts(effect).toTypedArray(),
-            *areaEndTexts(otherEnds, estimated).toTypedArray(),
-            *areaLessonTexts(otherLessons).toTypedArray(),
-            reviewFirstText(effect),
-            weeklyEventsText(effect),
-            nextMockText(effect),
-            lessonsText(effect, byDate = byDate, named = besideDiff),
-            phaseEndsText(effect),
-            addedTopicsStartText(effect),
-            topicsLeaveText(effect),
-            endText,
-        )
-    return sentences.takeIf { it.isNotEmpty() }?.joinSentences()
-}
-
-/** The learner is the subject, so an area's name never needs a verb to agree with it. */
-@Composable
-private fun areaStartTexts(effect: PlanEffect?): List<String> {
-    val ends = effect?.areaEnds.orEmpty()
-    val starts =
-        effect?.areaStarts.orEmpty().filter { start ->
-            start.after != start.before || (effect?.reviewFirst == null && ends.none { it.area == start.area })
-        }
-    return starts.mapNotNull { start ->
-        val after = start.after?.toJavaLocalDate() ?: return@mapNotNull null
-        val before = start.before?.toJavaLocalDate()
-        when {
-            before == null -> stringResource(R.string.plan_change_start_area_on, start.area, longDate(after))
-            before != after -> stringResource(R.string.plan_change_start_area_instead, start.area, longDate(after), longDate(before))
-            else -> stringResource(R.string.plan_change_still_start_area, start.area, longDate(after))
-        }
-    }
-}
-
-@Composable
-private fun areaEndTexts(
-    ends: List<com.zoonk.api.models.PlanEffectAreaEndsInner>,
-    estimated: Boolean,
-): List<String> =
-    ends.map { end ->
-        val after = end.after.toJavaLocalDate()
-        val before = end.before.toJavaLocalDate()
-        val gained = (end.lessonsGained ?: 0).toInt()
-        val afterText = longDate(after)
-        val beforeText = longDate(before)
-        when {
-            after == before -> {
-                stringResource(R.string.plan_change_still_finish_area, end.area, afterText)
-            }
-
-            gained > 0 && after.isAfter(before) -> {
-                if (estimated) {
-                    pluralStringResource(R.plurals.plan_change_area_gets_about_more, gained, end.area, gained, afterText, beforeText)
-                } else {
-                    pluralStringResource(R.plurals.plan_change_area_gets_more, gained, end.area, gained, afterText, beforeText)
-                }
-            }
-
-            gained < 0 && after.isBefore(before) -> {
-                pluralStringResource(R.plurals.plan_change_area_fewer, -gained, end.area, -gained, afterText, beforeText)
-            }
-
-            else -> {
-                stringResource(R.string.plan_change_finish_area_instead, end.area, afterText, beforeText)
-            }
-        }
-    }
-
-@Composable
-private fun areaLessonTexts(lessons: List<PlanEffectAreaLessonsInner>): List<String> =
-    lessons.map {
-        pluralStringResource(R.plurals.plan_change_area_lessons_to_go, it.after.toInt(), it.area, it.after.toInt(), it.before.toInt())
-    }
-
-@Composable
-private fun addedTopicsStartText(effect: PlanEffect?): String? {
-    val start = effect?.addedTopicsStart?.toJavaLocalDate() ?: return null
-    return stringResource(
-        if (effect.addedTopicsBeforeBasics ==
-            true
-        ) {
-            R.string.plan_change_new_lessons_before_basics
-        } else {
-            R.string.plan_change_new_lessons_start
-        },
-        longDate(start),
-    )
-}
-
-@Composable
-private fun reviewFirstText(effect: PlanEffect?): String? {
-    val review = effect?.reviewFirst ?: return null
-    return stringResource(R.string.plan_change_review_first, longDate(review.date.toJavaLocalDate()), joinList(review.areas))
-}
-
-@Composable
-private fun weeklyEventsText(effect: PlanEffect?): String? {
-    val moved = effect?.weeklyEvents ?: return null
-    val day = weekdayName(moved.after.toInt())
-    return stringResource(
-        if (moved.kind ==
-            PlanEffectWeeklyEvents.Kind.MOCK
-        ) {
-            R.string.plan_change_weekly_mocks_move
-        } else {
-            R.string.plan_change_weekly_challenges_move
-        },
-        day,
-    )
-}
-
-@Composable
-private fun nextMockText(effect: PlanEffect?): String? {
-    val moved = effect?.nextMock ?: return null
-    return stringResource(R.string.plan_change_next_mock_moves, weekdayDayDate(moved.after.toJavaLocalDate()))
-}
-
-@Composable
-private fun topicsLeaveText(effect: PlanEffect?): String? {
-    val topics = effect?.topicsLeftOut.orEmpty().flatMap { it.topics }
-    if (topics.isEmpty()) return null
-    return pluralStringResource(R.plurals.plan_change_topics_leave, topics.size, topics.size, shortList(topics, ListKind.Topics))
 }
 
 /**

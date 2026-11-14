@@ -11,6 +11,7 @@ import { lockUsageForViewer } from "./usage-lock";
 /** Retries of a used target are free; claims acquire the learner's lock before the usage lock. */
 export async function claimUsageForViewer({
   generated,
+  preparing = false,
   kind,
   now,
   seconds,
@@ -18,6 +19,7 @@ export async function claimUsageForViewer({
   viewer,
 }: {
   generated: boolean;
+  preparing?: boolean;
   kind: UsageKind;
   now: Date;
   seconds?: number;
@@ -31,6 +33,7 @@ export async function claimUsageForViewer({
       generated,
       kind,
       now,
+      preparing,
       seconds,
       targetId,
       transaction,

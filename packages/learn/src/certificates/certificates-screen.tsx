@@ -1,45 +1,42 @@
 "use client";
 
 import { type OwnedCertificateFacts } from "@zoonk/core/certificates/contract";
-import { buttonVariants } from "@zoonk/ui/components/button";
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { Meter, MeterFill } from "@zoonk/ui/components/meter";
+import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { type CertificateLinks, getCertificatePath } from "@zoonk/utils/certificate-links";
-import { ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { DetailContent, DetailLayout } from "../_components/detail-page";
+import { EnterLink } from "../_components/enter-button";
 import {
   LIST_GROUP_CLASS,
   ListRow,
   ListRowBody,
   ListRowContent,
-  ListRowDescription,
   ListRowLeading,
   ListRowTitle,
   ListRowTrailing,
 } from "../_components/list-group";
-import { Meter, MeterFill } from "../_components/meter";
 import {
-  PageEyebrow,
   PageSection,
   PageSectionHeader,
   PageSectionTitle,
   PageSubtitle,
 } from "../_components/page";
-import { PlusMark } from "../_components/plus-lock";
 import { useFormatShare } from "../_utils/percent";
 import { LearnLink } from "../learn-link";
 import { GoalCountryName, GoalMark } from "../shell/goal-mark";
 import { LearnPageBar } from "../shell/learn-bar";
+import { BlankCertificateSheet } from "./certificate-blank-sheet";
 import {
   useCertificateDate,
-  useCertificateName,
+  useCertificateRowName,
   useCertificateSentence,
 } from "./certificate-labels";
-import { CertificatesPlusNotice, LockedCertificateSheet } from "./certificate-lock";
 import { CertificateSheet } from "./certificate-sheet";
 
-/** `links` is null exactly when the certificate is locked. */
+/** `links` is null exactly when its owner needs a subscription to open it. */
 export type ListedCertificate = { facts: OwnedCertificateFacts; links: CertificateLinks | null };
 
 /** A goal that can still earn a certificate: a course by finishing its plan, a language by levels. */
@@ -58,12 +55,12 @@ export type CertificateUpNext = {
 const LIST_ID = "certificates-list";
 const UP_NEXT_ID = "certificates-up-next";
 
-/** A locked one opens its owner's locked page, by its code: the same row, marked for Plus. */
+/** One without a subscription opens its page by its code, where the gate stands: the same row. */
 function CertificateItem({ facts, links }: ListedCertificate) {
-  const certificateName = useCertificateName();
-  const t = useExtracted();
+  const rowName = useCertificateRowName();
   const sentence = useCertificateSentence();
   const date = useCertificateDate();
+  const { level, name } = rowName(facts);
 
   return (
     <LearnLink
@@ -75,32 +72,29 @@ function CertificateItem({ facts, links }: ListedCertificate) {
         {links ? (
           <CertificateSheet
             alt={sentence(facts)}
-            className="lg:rounded-md"
+            className="lg:rounded-xl"
             loading="lazy"
             images={links.imageUrls}
             variant="thumb"
           />
         ) : (
-          <LockedCertificateSheet className="rounded-[4px] lg:rounded-md" facts={facts} />
+          <BlankCertificateSheet className="rounded-sm lg:rounded-xl" facts={facts} />
         )}
       </span>
 
       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <span className="group-hover:decoration-input text-sm leading-snug font-[550] tracking-[-0.01em] text-pretty group-hover:underline group-hover:underline-offset-4">
-          {certificateName(facts)}
-          {!links && <PlusMark className="ml-2 align-middle" />}
+        <span className="group-hover:decoration-input text-sm leading-snug font-medium tracking-[-0.01em] text-pretty group-hover:underline group-hover:underline-offset-4">
+          {name}
         </span>
         <span className="text-muted-foreground text-xs leading-snug">
-          {t("Certificate of completion")}
-          {" · "}
-          <span className="font-mono tabular-nums">{date.short(facts.completedOn)}</span>
+          {level && `${level} · `}
+          <span className="tabular-nums">{date.short(facts.completedOn)}</span>
         </span>
       </span>
 
-      <ChevronRightIcon
-        aria-hidden="true"
-        className="text-muted-foreground/60 size-4 shrink-0 lg:hidden"
-      />
+      <span className="contents lg:hidden">
+        <RowChevron />
+      </span>
     </LearnLink>
   );
 }
@@ -136,19 +130,18 @@ function GhostCertificate() {
   return (
     <div
       aria-hidden="true"
-      className="bg-ground border-input relative aspect-297/210 w-full max-w-104 rounded-lg border border-dashed"
+      className="bg-ground border-input relative aspect-297/210 w-full max-w-104 rounded-xl border border-dashed"
     >
       {bars.map((bar) => (
-        <i className={`bg-surface-3 absolute left-[7%] block rounded-[4px] ${bar}`} key={bar} />
+        <i className={`bg-surface-3 absolute left-[7%] block rounded-sm ${bar}`} key={bar} />
       ))}
-      <i className="bg-input absolute top-[76%] left-[7%] block h-[2%] w-[86%] rounded-[4px]" />
-      <i className="bg-surface-3 absolute top-[82%] left-[83%] block h-[14%] w-[10%] rounded-[4px]" />
+      <i className="bg-input absolute top-[76%] left-[7%] block h-[2%] w-[86%] rounded-sm" />
+      <i className="bg-surface-3 absolute top-[82%] left-[83%] block h-[14%] w-[10%] rounded-sm" />
     </div>
   );
 }
 
 function UpNextRow({ item }: { item: CertificateUpNext }) {
-  const t = useExtracted();
   const formatShare = useFormatShare();
 
   return (
@@ -162,11 +155,6 @@ function UpNextRow({ item }: { item: CertificateUpNext }) {
             {item.goal.displayName}
             <GoalCountryName goal={item.goal} />
           </ListRowTitle>
-          <ListRowDescription>
-            {item.progress === null
-              ? t("Comes when you finish a level, studying at least half of it")
-              : t("Your certificate comes when you finish the plan")}
-          </ListRowDescription>
         </ListRowContent>
         {item.progress !== null && (
           <ListRowTrailing>
@@ -181,37 +169,22 @@ function UpNextRow({ item }: { item: CertificateUpNext }) {
   );
 }
 
-function EmptyCertificates({
-  continueHref,
-  upNext,
-}: {
-  continueHref: string;
-  upNext: CertificateUpNext[];
-}) {
+function EmptyCertificates({ upNext }: { upNext: CertificateUpNext[] }) {
   const t = useExtracted();
 
   return (
-    <div className="flex max-w-xl flex-col gap-10">
+    <div className="flex max-w-104 flex-col gap-10">
       <div className="flex flex-col items-start">
         <GhostCertificate />
-        <h2 className="mt-6 text-base font-semibold tracking-[-0.01em]">
+        <h2 className="mt-6 text-lg font-semibold tracking-[-0.01em]">
           {t("No certificates yet")}
         </h2>
-        <p className="text-muted-foreground mt-1.5 text-sm text-pretty">
-          {t("Your certificates show up here when you finish a level or a plan.")}
-        </p>
-        <LearnLink
-          className={buttonVariants({ className: "mt-5", size: "lg" })}
-          href={continueHref}
-        >
-          {t("Continue learning")}
-        </LearnLink>
       </div>
 
       {upNext.length > 0 && (
         <PageSection aria-labelledby={UP_NEXT_ID}>
           <PageSectionHeader>
-            <PageSectionTitle id={UP_NEXT_ID}>{t("Up next")}</PageSectionTitle>
+            <PageSectionTitle id={UP_NEXT_ID}>{t("Your next certificate")}</PageSectionTitle>
           </PageSectionHeader>
           <ul className={LIST_GROUP_CLASS}>
             {upNext.map((item) => (
@@ -226,18 +199,12 @@ function EmptyCertificates({
   );
 }
 
-/** The eyebrow keeps its line while loading and when empty, so the title never moves. */
-export function CertificatesHeader({ count }: { count: number | null }) {
+export function CertificatesHeader() {
   const t = useExtracted();
 
   return (
     <DetailHero>
       <DetailHeroText>
-        <PageEyebrow className="flex min-h-4 items-center normal-case">
-          {count === null && <Skeleton className="h-3 w-28 rounded-sm" />}
-          {Boolean(count) &&
-            t("{count, plural, one {# certificate} other {# certificates}}", { count: count ?? 0 })}
-        </PageEyebrow>
         <DetailTitle>{t("Certificates")}</DetailTitle>
         <PageSubtitle>{t("A certificate for every level and plan you finish.")}</PageSubtitle>
       </DetailHeroText>
@@ -254,28 +221,35 @@ export function CertificatesScreen({
   back,
   certificates,
   continueHref,
-  plus,
   upNext,
 }: {
   back: string;
   certificates: ListedCertificate[];
   continueHref: string;
-  /** Whether the learner has Plus now; without it, new certificates come locked. */
-  plus: boolean;
   upNext: CertificateUpNext[];
 }) {
-  return (
-    <DetailLayout bar={<CertificatesBar back={back} />} data-slot="certificates">
-      <CertificatesHeader count={certificates.length} />
+  const t = useExtracted();
+  const empty = certificates.length === 0;
 
-      <DetailContent>
-        {!plus && <CertificatesPlusNotice />}
-        {certificates.length > 0 ? (
-          <CertificateList certificates={certificates} />
+  return (
+    <DetailLayout bar={<CertificatesBar back={back} />} className="flex-1" data-slot="certificates">
+      <CertificatesHeader />
+
+      <DetailContent className="flex-1">
+        {empty ? (
+          <EmptyCertificates upNext={upNext} />
         ) : (
-          <EmptyCertificates continueHref={continueHref} upNext={upNext} />
+          <CertificateList certificates={certificates} />
         )}
       </DetailContent>
+
+      {empty && (
+        <BottomBar>
+          <BottomBarActions>
+            <EnterLink href={continueHref}>{t("Continue learning")}</EnterLink>
+          </BottomBarActions>
+        </BottomBar>
+      )}
     </DetailLayout>
   );
 }

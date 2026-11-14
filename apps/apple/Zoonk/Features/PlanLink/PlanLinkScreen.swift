@@ -87,38 +87,23 @@ struct PlanLinkScreen: View {
 
     return ZoonkList {
       Section {
-        VStack(alignment: .leading, spacing: 6) {
-          Text(
-            "A study plan someone shared with you", tableName: "PlanLink",
-            comment: "Eyebrow over a shared plan's subject"
-          )
-          .typeStyle(.rowTitle)
-          .foregroundStyle(.mutedForeground)
-          Group {
-            if let subject = outline.subject?.title {
-              Text(subject)
-            } else {
-              Text(
-                "A study plan", tableName: "PlanLink", comment: "A shared plan without a subject")
-            }
-          }
-          .typeStyle(.heroTitle)
-          .accessibilityAddTraits(.isHeader)
+        PageHeader(
+          outline.subject.map { Text($0.title) }
+            ?? Text(
+              "A study plan", tableName: "PlanLink", comment: "A shared plan without a subject"),
+          chip: Chip(
+            Text(
+              "Shared with you", tableName: "PlanLink",
+              comment: "Chip over a study plan someone shared with the learner")),
+          supporting: outline.subject?.description.map { Text($0) })
 
-          if let description = outline.subject?.description {
-            Text(description)
-              .typeStyle(.lead)
-              .foregroundStyle(.mutedForeground)
-          }
-
-          Text(
-            "You get your own plan for the same subject, at your own pace. A few questions then skip what you already know.",
-            tableName: "PlanLink", comment: "What starting from a shared plan does"
-          )
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
-        }
-        .listRowBackground(Color.clear)
+        Text(
+          "You get your own plan for the same subject, at your own pace. A few questions then skip what you already know.",
+          tableName: "PlanLink", comment: "What starting from a shared plan does"
+        )
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
+        .listRowSeparator(.hidden)
       }
 
       Section {
@@ -131,25 +116,6 @@ struct PlanLinkScreen: View {
             "How much time a day?", tableName: "PlanLink",
             comment: "Label of the daily time picker for a shared plan")
         }
-      }
-
-      if let error {
-        Section {
-          FailureLine(message: error.message)
-        }
-      }
-
-      Section {
-        BusyButton(isBusy: isStarting, icon: .forward, action: start) {
-          Text(
-            "Start from this plan", tableName: "PlanLink",
-            comment: "Starts the learner's own plan from a shared one")
-        }
-        .buttonStyle(.mainAction)
-        .controlSize(.large)
-        .buttonSizing(.flexible)
-        .listRowInsets(.vertical, 0)
-        .listRowBackground(Color.clear)
       }
 
       Section {
@@ -177,11 +143,20 @@ struct PlanLinkScreen: View {
       } footer: {
         SectionFooter {
           Text(
-            "~\(studyDuration(minutes: max(1, minutes(outline.hours)))) of study\u{00A0}· \(outline.phases.count) phases\u{00A0}· \(outline.skillCount) skills",
+            "~\(studyDuration(minutes: max(1, minutes(outline.hours)))) of study\u{00A0}· \(outline.phases.count) phases\u{00A0}· \(outline.skillCount) topics",
             tableName: "PlanLink",
-            comment: "A shared plan's size: its study time, phases and skills")
+            comment: "A shared plan's size: its study time, phases and topics")
         }
       }
+    }
+    .bottomBar(note: error.map { BarNote($0.message) }) {
+      BusyButton(isBusy: isStarting, action: start) {
+        Text(
+          "Start from this plan", tableName: "PlanLink",
+          comment: "Starts the learner's own plan from a shared one")
+      }
+      .buttonStyle(.mainAction)
+      .keyboardShortcut(.defaultAction)
     }
   }
 

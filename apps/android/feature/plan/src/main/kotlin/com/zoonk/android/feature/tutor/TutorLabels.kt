@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.LimitSubject
-import com.zoonk.android.ui.components.limitMessage
+import com.zoonk.android.ui.components.limitWords
 
 @Composable
 internal fun askLabel(
@@ -70,7 +70,7 @@ internal fun aboutLabel(about: TutorTurn.About): String =
 
 @Composable
 internal fun failureMessage(failure: TutorFailure?): String {
-    failure?.helpLimit?.let { return limitMessage(it, LimitSubject.Help) }
+    failure?.helpLimit?.let { return limitWords(it, LimitSubject.Messages).run { title ?: line.orEmpty() } }
 
     return stringResource(
         when (failure) {

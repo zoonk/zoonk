@@ -1,11 +1,17 @@
 import { type UsageKind } from "@zoonk/db";
-import { type AllowanceLimit, type EntitlementTier, type UsageDecision } from "../contract";
+import {
+  type AllowanceLimit,
+  type CalendarPeriod,
+  type EntitlementTier,
+  type UsageDecision,
+} from "../contract";
 import {
   FAIR_USE_SPACING_SECONDS,
   getActiveGoalLimit,
   getDailySpendBudgetMicros,
   getUsageRule,
 } from "../limits";
+import { getLessonAvailableAt } from "./lesson-start-usage";
 import { type UsageCounts } from "./usage-counts";
 
 const MS_PER_SECOND = 1000;
@@ -14,12 +20,16 @@ type UsageClaim = {
   costMicros: number;
   counts: UsageCounts;
   generated: boolean;
+  preparing?: boolean;
   kind: UsageKind;
   now: Date;
   tier: EntitlementTier;
 };
 
-type LimitCheck = Omit<AllowanceLimit, "tier"> & { used: number };
+type LimitCheck = Omit<AllowanceLimit, "availableAt" | "period" | "tier"> & {
+  period: CalendarPeriod;
+  used: number;
+};
 
 function getLimitChecks({ counts, generated, kind, tier }: UsageClaim): LimitCheck[] {
   const rule = getUsageRule({ kind, tier });
@@ -107,6 +117,22 @@ function findCallTimeLimit({ counts, kind, tier }: UsageClaim): AllowanceLimit |
 }
 
 function findReachedLimit(claim: UsageClaim): AllowanceLimit | null {
+  const rollingLimit = getUsageRule(claim).rolling30Days;
+
+  if (
+    rollingLimit !== undefined &&
+    claim.counts.lessonStarts.count + (claim.preparing ? claim.counts.lessonStarts.prepared : 0) >=
+      rollingLimit
+  ) {
+    return {
+      ...(!claim.preparing && { availableAt: getLessonAvailableAt(claim.counts.lessonStarts) }),
+      limit: rollingLimit,
+      period: "rolling30Days",
+      resource: claim.preparing ? "lessonPreparation" : claim.kind,
+      tier: claim.tier,
+    };
+  }
+
   const reached = getLimitChecks(claim).find((check) => check.used >= check.limit);
 
   if (reached) {

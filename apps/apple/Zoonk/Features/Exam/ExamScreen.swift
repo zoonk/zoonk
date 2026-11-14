@@ -66,6 +66,7 @@ private struct ExamContent: View {
 }
 
 private struct ExamList: View {
+  @Environment(AppRouter.self) private var router
   let exam: ExamView
   let options: MockOptions?
   /// Above the split: folding iPhone Duo recreates its panes, and the result form and the speaking
@@ -94,10 +95,28 @@ private struct ExamList: View {
         about
       }
     }
+    .bottomBar {
+      if let options, options.offersMock, !exam.isLastDays {
+        Button {
+          if let running = options.running {
+            router.open(.mock(blockId: running.id))
+          } else {
+            router.open(.mockChooser)
+          }
+        } label: {
+          if options.running != nil {
+            Text("Continue your mock exam", tableName: "Exam", comment: "A running mock")
+          } else {
+            Text("Take a mock exam", tableName: "Exam", comment: "Opens the mock chooser")
+          }
+        }
+        .buttonStyle(.mainAction)
+        .keyboardShortcut(.defaultAction)
+      }
+    }
     .onDisappear {
       callStart.cancel()
     }
-    .navigationTitle(exam.examName)
     .barTitleAfterHero(exam.examName)
     .toolbar {
       ToolbarItem(placement: .topBarTrailing) {
@@ -128,7 +147,7 @@ private struct ExamList: View {
 
   @ViewBuilder
   private var moment: some View {
-    ExamHero(exam: exam, options: options)
+    ExamHero(exam: exam)
     ExamMomentSection(moment: exam.moment, checked: $checklist) {}
 
     if exam.takesResult {
@@ -136,8 +155,7 @@ private struct ExamList: View {
     }
   }
 
-  /// Main's order: the map with the mocks, then speaking, then its aside (the format, scoring and
-  /// the date note).
+  /// Main's order: the map with the mocks, then speaking, then its aside (the format and scoring).
   @ViewBuilder
   private var about: some View {
     if exam.format.isEmpty, let map = exam.map, !map.subjects.isEmpty {
@@ -151,23 +169,19 @@ private struct ExamList: View {
     }
 
     ExamScoringSection(exam: exam)
-    ExamDateNote(exam: exam)
   }
 }
 
 private struct ExamHero: View {
-  @Environment(\.dynamicTypeSize) private var typeSize
-  @Environment(AppRouter.self) private var router
   @Environment(PlanStore.self) private var plan
   @State private var usingDate = false
   @State private var dateFailed = false
   let exam: ExamView
-  let options: MockOptions?
 
   var body: some View {
     Section {
       VStack(alignment: .leading, spacing: 0) {
-        PageHeader(Text(exam.examName), eyebrow: eyebrow)
+        PageHeader(Text(exam.examName))
 
         // Main's `DetailFacts`: mono data under the title, which a header's supporting line isn't.
         if !facts.isEmpty {
@@ -175,59 +189,27 @@ private struct ExamHero: View {
             .typeStyle(.data)
             .foregroundStyle(.mutedForeground)
         }
+
+        ExamDateTag(exam: exam)
       }
       .listRowSeparator(.hidden)
 
-      if let options, options.offersMock {
-        Button {
-          if let running = options.running {
-            router.open(.mock(blockId: running.id))
-          } else {
-            router.open(.mockChooser)
-          }
-        } label: {
-          HStack {
-            Label {
-              if options.running != nil {
-                Text("Continue your mock exam", tableName: "Exam", comment: "A running mock")
-              } else {
-                Text("Take a mock exam", tableName: "Exam", comment: "Opens the mock chooser")
-              }
-            } icon: {
-              if !typeSize.isAccessibilitySize {
-                Image(systemName: "timer")
-              }
-            }
-            if options.access == .plusRequired, options.running == nil {
-              PlusMark()
-            }
-          }
-          .frame(maxWidth: .infinity)
-        }
-        .buttonStyle(.mainAction)
-        .controlSize(.large)
-        .listRowSeparator(.hidden)
-      }
     }
 
-    if let noticeDay = exam.noticeDay, let date = studyDate(noticeDay.date) {
+    if let noticeDay = exam.noticeDay, studyDate(noticeDay.date) != nil {
       Section {
         VStack(alignment: .leading, spacing: 8) {
-          let day = date.formatted(.studyDay.weekday(.wide).month(.wide).day())
+          let day = PlanDate.longDay(noticeDay.date, today: PlanDate.today())
           if noticeDay.estimated {
-            Text(
-              "The exam's likely date is now \(day).", tableName: "Exam",
-              comment:
-                "The exam's likely day, while the notice isn't out; the argument is a date like 'Tuesday, May 5'"
-            )
+            Text("The exam's likely date is now \(day).", tableName: "Exam")
           } else if exam.examDocument == .notice {
             Text(
               "The exam notice says \(day).", tableName: "Exam",
-              comment: "The notice's day; the argument is a date like 'Tuesday, May 5'")
+              comment: "The notice's day; the argument is a date like 'May 5'")
           } else {
             Text(
               "The exam's official calendar says \(day).", tableName: "Exam",
-              comment: "The official calendar's day; the argument is a date like 'Tuesday, May 5'")
+              comment: "The official calendar's day; the argument is a date like 'May 5'")
           }
           if dateFailed {
             FailureLine(
@@ -251,12 +233,12 @@ private struct ExamHero: View {
 
   @ViewBuilder
   private var noSittingSection: some View {
-    if exam.noticeDay == nil, let noSitting = exam.noSitting, let month = studyDate(noSitting.month)
-    {
+    if exam.noticeDay == nil, let noSitting = exam.noSitting {
+      let month = PlanDate.monthText(noSitting.month, today: PlanDate.today(), wide: true)
       Section {
         VStack(alignment: .leading, spacing: 4) {
           Text(
-            "No exam date in \(month.formatted(.studyDay.month(.wide)))", tableName: "Exam",
+            "No exam date in \(month)", tableName: "Exam",
             comment:
               "An exam with no sitting in the learner's month; the argument is a month like 'May'"
           )
@@ -300,15 +282,14 @@ private struct ExamHero: View {
     }
   }
 
-  private var eyebrow: Text {
-    guard let days = exam.daysLeft, days > 0 else {
-      return Text("Exam", tableName: "Exam", comment: "Eyebrow over the exam's name")
+  /// The day before, on the day and after, the moment card says where the learner is instead.
+  private var daysLeft: String? {
+    guard let days = exam.daysLeft, days > 0, !exam.isLastDays else {
+      return nil
     }
 
-    return exam.daysEstimated
-      ? Text(
-        "Exam\u{00A0}· About \(days) days left", tableName: "Exam", comment: "Estimated days left")
-      : Text("Exam\u{00A0}· \(days) days left", tableName: "Exam", comment: "Days left to the exam")
+    return String(
+      localized: "\(days) days left", table: "Exam", comment: "Last fact under an exam's name")
   }
 
   private var facts: [String] {
@@ -316,14 +297,14 @@ private struct ExamHero: View {
 
     if exam.namedMonth {
       return dates.map { $0.1.formatted(.studyDay.month(.wide).year()) }
+        + [daysLeft].compactMap(\.self)
     }
 
     let times = Set(exam.days.map(\.startTime))
     let shared = times.count == 1 ? exam.days.first?.startTime : nil
-    let days = dates.map { day, date in
-      var style = Date.FormatStyle.studyDay.month(.abbreviated).day()
-      if dates.count == 1 { style = style.weekday(.abbreviated) }
-      let text = date.formatted(withFarOffYear(style, for: date))
+    let today = PlanDate.today()
+    let days = dates.map { day, _ in
+      let text = PlanDate.text(day.date, today: today, weekday: dates.count == 1)
       let time = shared == nil ? day.startTime.flatMap(examTimeOfDay) : nil
       return time.map { "\(text)\u{00A0}· \($0)" } ?? text
     }
@@ -334,14 +315,7 @@ private struct ExamHero: View {
       facts.append(time)
     }
 
-    if exam.daysEstimated, !exam.namedMonth {
-      facts.append(
-        String(
-          localized: "estimated from past editions", table: "Exam",
-          comment: "The exam's days are an estimate"))
-    }
-
-    return facts
+    return facts + [daysLeft].compactMap(\.self)
   }
 
   private func useDate(_ date: String) async {
@@ -350,52 +324,75 @@ private struct ExamHero: View {
     defer { usingDate = false }
 
     switch await plan.change(goalId: exam.goalId, edits: [.targetDate(date)]) {
-    case .done(.applied), .done(.undone), .done(.unchanged), .obsolete: break
+    case .done(.applied), .done(.saved), .done(.undone), .done(.unchanged), .obsolete: break
     case .done(.invalid), .failed: dateFailed = true
     }
   }
 }
 
-/// Main's date note at the end of the exam's aside: where the dates come from while they aren't
-/// official.
-private struct ExamDateNote: View {
+/// Main's `DateTag`: a small tag after the facts that opens one sentence on where the dates come
+/// from while they aren't set.
+private struct ExamDateTag: View {
+  @State private var isOpen = false
   let exam: ExamView
 
   var body: some View {
-    if let note {
-      Section {
-      } footer: {
-        SectionFooter {
-          Text(note)
+    if let tag {
+      Button {
+        isOpen = true
+      } label: {
+        Text(tag.label)
+          .typeStyle(.meta)
+          .foregroundStyle(.mutedForeground)
+          .underline(pattern: .dot, color: .faint)
+          // A 44pt target that leaves the tag right under the facts, like main's `hit-area`.
+          .padding(.vertical, 14)
+          .contentShape(.rect)
+          .padding(.vertical, -14)
+      }
+      .buttonStyle(.plain)
+      .sheet(isPresented: $isOpen) {
+        NavigationStack {
+          Text(tag.text)
+            .typeStyle(.body)
+            .foregroundStyle(.mutedForeground)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            .padding()
+            .navigationTitle(tag.label)
+            .toolbarTitleDisplayMode(.inline)
+            .toolbar {
+              ToolbarItem(placement: .cancellationAction) {
+                Button(role: .close) {
+                  isOpen = false
+                }
+              }
+            }
         }
+        .presentationDetents([.fraction(0.3), .medium])
+        .zoonkStyles()
       }
     }
   }
 
-  private var note: String? {
-    guard !exam.days.isEmpty else { return nil }
-    let notice = exam.examDocument == .notice
-
+  private var tag: (label: String, text: String)? {
     if exam.namedMonth {
-      guard exam.noticeDay == nil, exam.noSitting == nil else { return nil }
-      return notice
-        ? String(
-          localized: "The month you told us. We'll tell you the day once the notice sets it.",
-          table: "Exam", comment: "A named month, before the notice")
-        : String(
-          localized:
-            "The month you told us. We'll tell you the day once the official calendar sets it.",
-          table: "Exam", comment: "A named month, before the calendar")
+      return exam.noticeDay != nil || exam.noSitting != nil
+        ? nil
+        : (
+          String(localized: "Day not set yet", table: "Exam"),
+          String(localized: "We'll tell you the day once it's set.", table: "Exam")
+        )
     }
 
-    guard exam.daysEstimated else { return nil }
-    return notice
-      ? String(
-        localized: "Estimated from past editions. We'll tell you when the official notice is out.",
-        table: "Exam", comment: "Estimated days, before the notice")
-      : String(
-        localized: "Estimated from past editions. We'll tell you when the official dates are out.",
-        table: "Exam", comment: "Estimated days, before the calendar")
+    return exam.daysEstimated
+      ? (
+        String(
+          localized: "Estimated dates", table: "Exam", comment: "Tag after estimated exam dates"),
+        String(
+          localized: "From past editions. We'll tell you when the official dates are out.",
+          table: "Exam", comment: "Opened from the Estimated dates tag")
+      )
+      : nil
   }
 }
 
@@ -556,7 +553,7 @@ private struct ExamMocksSection: View {
 
   var body: some View {
     if !exam.runningMocks.isEmpty || exam.nextMock != nil || !exam.mocks.isEmpty
-      || exam.mocksRequirePlus
+      || offersMockHere
     {
       Section {
         ForEach(exam.runningMocks) { mock in
@@ -594,15 +591,15 @@ private struct ExamMocksSection: View {
           } label: {
             ListRow(
               mockTitle(
-                MockLabels.daySize(fullLength: next.fullLength, day: nil),
+                MockLabels.title(number: exam.mocks.count + exam.runningMocks.count + 1),
                 isNext: exam.runningMocks.isEmpty),
               description: Text(
                 "\(next.questions) questions", tableName: "Exam", comment: "Next mock size")
             ) {
               StatusMark(status: exam.runningMocks.isEmpty ? .next : .todo)
             } trailing: {
-              if let date = next.date.flatMap(studyDate) {
-                Text(date.formatted(.studyDay.weekday(.abbreviated).month(.abbreviated).day()))
+              if let date = next.date {
+                Text(PlanDate.text(date, today: PlanDate.today(), weekday: true))
               }
             }
             .disclosureChevron()
@@ -616,23 +613,34 @@ private struct ExamMocksSection: View {
           }
         }
 
-        if exam.mocksRequirePlus {
-          PlusNotice(
-            description: Text(
-              "Mock exams come with Plus: whenever you want, every week in your plan, and your progress over time.",
-              tableName: "Exam", comment: "What mocks with Plus unlock"))
+        // From the day before on, the page has no main button: the mock exam waits here, small.
+        if offersMockHere {
+          Button {
+            router.open(.mockChooser)
+          } label: {
+            Text("Take a mock exam", tableName: "Exam", comment: "Opens the mock chooser")
+          }
+          .buttonStyle(.outline)
+          .controlSize(.small)
+          .listRowSeparator(.hidden)
         }
       } header: {
-        SectionTitle(
-          Text("Mock exams", tableName: "Exam", comment: "The exam's mocks")
-        ) {
-          if !exam.mocks.isEmpty {
-            Text("\(exam.mocks.count) taken", tableName: "Exam", comment: "Mocks taken")
-              .monospacedDigit()
-          }
-        }
+        SectionTitle(Text("Mock exams", tableName: "Exam", comment: "The exam's mocks"))
       }
     }
+  }
+}
+
+extension ExamView {
+  /// The day before, exam day and after it.
+  fileprivate var isLastDays: Bool {
+    stage == .dayBefore || stage == .examDay || stage == .afterExam
+  }
+}
+
+extension ExamMocksSection {
+  fileprivate var offersMockHere: Bool {
+    exam.isLastDays && options?.offersMock == true && exam.runningMocks.isEmpty
   }
 }
 
@@ -652,23 +660,23 @@ private struct ExamProgressSection: View {
   @ScaledMetric(relativeTo: .body) private var minimumWidth = 150.0
 
   var body: some View {
-    if let progress = exam.progress, let latest = latestMock(progress) {
+    if let progress = exam.progress, !exam.mocks.isEmpty, let latest = latestMock(progress) {
       Section {
-        StatTileGrid(columns: [2, 1], minimumWidth: minimumWidth) {
-          StatTile(
-            label: Text("Latest mock", tableName: "Exam", comment: "The latest mock's score"),
-            quantity: (Double(latest.percent) / 100).formatted(.percent), systemImage: "timer",
-            detail: Text(latestDetail(progress, latest: latest)))
-
-          if let best = bestArea(progress) {
-            StatTile(
-              label: Text("Best area", tableName: "Exam", comment: "The subject that went best"),
-              quantity: (Double(best.percent) / 100).formatted(.percent), systemImage: "trophy",
-              tone: .success, detail: Text(best.name))
-          }
+        if let line = progressLine(progress) {
+          Text(line)
+            .typeStyle(.body.weight(.medium))
+            .foregroundStyle(Color(.foreground))
         }
 
         if progress.mocks.count > 1, let first = progress.mocks.first {
+          StatTileGrid(columns: [1], minimumWidth: minimumWidth) {
+            StatTile(
+              label: Text(
+                "Latest mock exam", tableName: "Exam", comment: "The latest mock exam's score"),
+              quantity: (Double(latest.percent) / 100).formatted(.percent), systemImage: "timer",
+              detail: Text(since(latest.percent - first.percent)))
+          }
+
           Chart(progress.mocks) { mock in
             LineMark(
               x: .value(
@@ -700,6 +708,10 @@ private struct ExamProgressSection: View {
             Text(
               "Your mock exam scores, from \(first.percent)% to \(latest.percent)%",
               tableName: "Exam", comment: "The mock score chart"))
+        } else {
+          Text(latestName(latest))
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
         }
 
         let trends = progress.subjects.contains { $0.change != nil }
@@ -710,17 +722,7 @@ private struct ExamProgressSection: View {
             name: subject.name, share: share, change: subject.change, showsChange: trends)
         }
       } header: {
-        SectionTitle(
-          Text("How your mocks went", tableName: "Exam", comment: "Mock progress section")
-        ) {
-          if exam.mocksRequirePlus {
-            PlusMark()
-          }
-        }
-      } footer: {
-        SectionFooter {
-          Text(progressLine(progress))
-        }
+        SectionTitle(Text("Your progress", tableName: "Exam", comment: "Mock progress section"))
       }
     }
   }
@@ -730,66 +732,43 @@ private struct ExamProgressSection: View {
     progress.mocks.last { $0.shape?.kind != .area } ?? progress.mocks.last
   }
 
-  private func latestDetail(_ progress: ExamView.Progress, latest: ExamView.Progress.Point)
-    -> String
-  {
+  /// "Right answers in Mock exam 1", over the subjects when it's the only one.
+  private func latestName(_ latest: ExamView.Progress.Point) -> String {
     let name = [
       MockLabels.title(number: latest.number),
       latest.shape?.kind == .area ? latest.shape?.area : nil,
     ].compactMap { $0 }.joinedFacts()
 
-    let score =
-      exam.scoring.method == .net
-      ? String(localized: "Net score in \(name)", table: "Exam", comment: "The latest net score")
+    return exam.scoring.method == .net
+      ? String(
+        localized: "Score in \(name)", table: "Exam",
+        comment: "The latest score, where a wrong answer takes a point off")
       : String(
         localized: "Right answers in \(name)", table: "Exam", comment: "The latest right answers")
+  }
 
-    guard progress.mocks.count > 1, let first = progress.mocks.first else { return score }
-    let change = latest.percent - first.percent
-    let since = String(
+  private func since(_ change: Int) -> String {
+    String(
       localized: "\(change > 0 ? "+\(change)" : "\(change)") since the first", table: "Exam",
       comment: "The change since the first mock")
-    return "\(score)\n\(since)"
   }
 
-  /// None with one subject or a tie at the top.
-  private func bestArea(_ progress: ExamView.Progress) -> (name: String, percent: Int)? {
-    let latest = progress.subjects.compactMap { subject in
-      subject.percents.last.map { (name: subject.name, percent: $0) }
-    }
-    .sorted { $0.percent > $1.percent }
-
-    guard latest.count > 1, latest[0].percent != latest[1].percent else { return nil }
-    return latest[0]
-  }
-
-  private func progressLine(_ progress: ExamView.Progress) -> String {
-    guard progress.mocks.count > 1 else {
-      return String(
-        localized: "Take another mock exam to see how your score changes.", table: "Exam",
-        comment: "After the first mock")
-    }
-
+  /// Nothing when no subject moved.
+  private func progressLine(_ progress: ExamView.Progress) -> String? {
     let improved = progress.improved.formatted(.list(type: .and))
     let needsWork = progress.needsWork.formatted(.list(type: .and))
 
     switch (progress.improved.isEmpty, progress.needsWork.isEmpty) {
     case (false, false):
       return String(
-        localized: "Better in \(improved). Still needs work: \(needsWork).", table: "Exam",
+        localized: "Better in \(improved). Work on \(needsWork).", table: "Exam",
         comment: "Mock trends")
     case (false, true):
       return String(localized: "Better in \(improved).", table: "Exam", comment: "Mock trends")
     case (true, false):
-      return String(
-        localized: "Still needs work: \(needsWork).", table: "Exam", comment: "Mock trends")
+      return String(localized: "Work on \(needsWork).", table: "Exam", comment: "Mock trends")
     case (true, true):
-      return progress.subjects.contains { $0.change != nil }
-        ? String(
-          localized: "No subject has changed much yet.", table: "Exam", comment: "Mock trends")
-        : String(
-          localized: "Trends by subject show once your mocks ask enough new questions of each one.",
-          table: "Exam", comment: "Mock trends need more mocks")
+      return nil
     }
   }
 }
@@ -829,18 +808,14 @@ private struct ExamFormatSection: View {
 
   @ViewBuilder
   private func title(_ day: ExamView.FormatDay) -> some View {
-    let date = day.date.flatMap(studyDate)
-
     HStack(alignment: .firstTextBaseline) {
-      if exam.format.count > 1, date != nil {
+      if exam.format.count > 1, day.date != nil {
         Text("Day \(day.day)", tableName: "Exam", comment: "An exam day")
           .foregroundStyle(.mutedForeground)
       }
 
-      if let date {
-        Text(
-          date.formatted(
-            withFarOffYear(.studyDay.weekday(.abbreviated).month(.abbreviated).day(), for: date)))
+      if let date = day.date {
+        Text(PlanDate.text(date, today: PlanDate.today(), weekday: true))
       } else {
         Text("Day \(day.day)", tableName: "Exam", comment: "An exam day")
       }
@@ -860,12 +835,6 @@ private struct ExamFormatSection: View {
       "\(names)\u{00A0}· \(count)", tableName: "Exam",
       comment: "An exam day's parts, then how many questions they have")
   }
-}
-
-/// The Plan's date rule: the year shows beyond the next twelve months.
-private func withFarOffYear(_ style: Date.FormatStyle, for date: Date) -> Date.FormatStyle {
-  let farOff = Calendar.current.date(byAdding: .year, value: 1, to: .now) ?? .now
-  return date > farOff ? style.year() : style
 }
 
 private struct ExamMapSection: View {
@@ -1001,7 +970,7 @@ private struct SpeakingMockSection: View {
             router.open(.conversation(conversationId: $0))
           }
         } label: {
-          Text("Start the mock", tableName: "Exam", comment: "Starts the speaking mock")
+          Text("Start", tableName: "Exam", comment: "Starts the speaking mock exam")
         }
 
         switch start.refusal {
@@ -1044,17 +1013,23 @@ private struct ExamScoringSection: View {
                 calibration.sure.answered + calibration.unsure.answered > 0
               {
                 Text(
-                  "In your mock exams: sure, \(calibration.sure.right) of \(calibration.sure.answered) right. Unsure, \(calibration.unsure.right) of \(calibration.unsure.answered) right.",
-                  tableName: "Exam", comment: "Sure against unsure answers in mocks")
-                if calibration.advice == .blankUnsure {
-                  Text(
-                    "Your unsure answers cost more than they earn: leave those blank.",
-                    tableName: "Exam", comment: "Advice")
-                } else if calibration.advice == .keepAnswering {
-                  Text(
-                    "Your unsure answers still earn points: keep answering them.",
-                    tableName: "Exam", comment: "Advice")
+                  "In your mock exams: \(calibration.sure.right) of \(calibration.sure.answered) right when not flagged, \(calibration.unsure.right) of \(calibration.unsure.answered) right when flagged.",
+                  tableName: "Exam",
+                  comment:
+                    "Right answers in mock exams among questions not flagged, against flagged ones"
+                )
+                Group {
+                  if calibration.advice == .blankUnsure {
+                    Text(
+                      "Your flagged answers cost more than they earn: leave those blank.",
+                      tableName: "Exam", comment: "Advice")
+                  } else if calibration.advice == .keepAnswering {
+                    Text(
+                      "Your flagged answers still earn points: keep answering them.",
+                      tableName: "Exam", comment: "Advice")
+                  }
                 }
+                .foregroundStyle(.mutedForeground)
               }
             }
           } icon: {

@@ -6,19 +6,23 @@ import {
   DrawerClose,
   DrawerContent,
   DrawerDescription,
-  DrawerHeader,
+  DrawerFooter,
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
 import { LibraryBigIcon, ListPlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { createContext, use, useEffect, useEffectEvent, useState } from "react";
-import { DrawerCloseButton } from "../_components/details-drawer";
-import { ChangeSaveError } from "../_components/save-error";
+import { SheetHeader } from "../_components/sheet-header";
 import { useCloseSuggestionSheet } from "../_components/suggestion";
 import { PlanChangeApplied } from "./plan-change-applied";
 import { type PlanChangeOutcome, usePlanScreen } from "./plan-context";
-import { type FullCourse, useFullCourse, useFullCourseText } from "./plan-full-course";
+import {
+  type FullCourse,
+  useFullCourse,
+  useFullCourseText,
+  useKeepStudyingLabel,
+} from "./plan-full-course";
 import { currentPlanPreview } from "./plan-preview-state";
 import { usePlanChange } from "./use-plan-change";
 import { usePlanPreview, usePreviewBase } from "./use-plan-preview";
@@ -54,7 +58,7 @@ function useFullCourseEnd({ asking, course }: { asking: boolean; course: FullCou
 function FullCourseChoice({ course, onDone }: { course: FullCourse; onDone: () => void }) {
   const t = useExtracted();
   const text = useFullCourseText();
-  const { change, failed, isPending } = usePlanChange();
+  const { change, isPending } = usePlanChange();
   const [outcome, setOutcome] = useState<PlanChangeOutcome | null>(null);
   const end = useFullCourseEnd({ asking: !isPending && outcome === null, course });
   const finish = text.finish({ ...course, endDate: end.endDate });
@@ -83,20 +87,19 @@ function FullCourseChoice({ course, onDone }: { course: FullCourse; onDone: () =
             {t("Checking what changes…")}
           </p>
         )}
-        <p className="text-muted-foreground text-sm text-pretty">{text.rule(course)}</p>
       </DrawerContent>
 
-      <div className="flex flex-col gap-2 border-t px-6 pt-4 pb-6">
+      <DrawerFooter>
+        <DrawerClose render={<Button size="lg" variant="outline" />}>{t("Cancel")}</DrawerClose>
         <Button
           busy={isPending}
           icon={<ListPlusIcon aria-hidden="true" />}
           onClick={() => void choose()}
+          size="lg"
         >
-          {t("Study everything")}
+          {course.isExam ? t("Keep studying") : t("Study everything")}
         </Button>
-        <DrawerClose render={<Button variant="outline" />}>{t("Cancel")}</DrawerClose>
-        {failed && <ChangeSaveError />}
-      </div>
+      </DrawerFooter>
     </>
   );
 }
@@ -111,22 +114,22 @@ function StudyEverythingSheet({
   shown: Shown;
 }) {
   const t = useExtracted();
+  const keepStudying = useKeepStudyingLabel();
   const { course, open } = shown;
 
   return (
     <Drawer onOpenChange={onOpenChange} open={open}>
       <DrawerPopup>
-        <DrawerHeader className="flex-row items-start justify-between gap-3">
+        <SheetHeader>
           <div className="flex flex-col gap-1">
-            <DrawerTitle className="text-xl font-semibold">{t("Study everything")}</DrawerTitle>
+            <DrawerTitle>{course.isExam ? keepStudying : t("Study everything")}</DrawerTitle>
             <DrawerDescription>
               {course.isExam
-                ? t("Every topic, even after the exam, at your own pace.")
-                : t("Every part of your goal, at your own pace, with no end date.")}
+                ? t("You study every topic. What doesn't fit before the exam comes after it.")
+                : t("Every part of your goal, with no end date.")}
             </DrawerDescription>
           </div>
-          <DrawerCloseButton />
-        </DrawerHeader>
+        </SheetHeader>
 
         {open && <FullCourseChoice course={course} onDone={() => onOpenChange(false)} />}
       </DrawerPopup>
@@ -185,17 +188,19 @@ export function useStudyEverythingFromSuggestion(): (course: FullCourse) => void
 
 export function StudyEverything({ course }: { course: FullCourse }) {
   const t = useExtracted();
+  const keepStudying = useKeepStudyingLabel();
   const open = useStudyEverything();
 
   return (
     <Button
+      aria-haspopup="dialog"
       className="self-start"
       onClick={() => open(course)}
       size="sm"
       type="button"
       variant="outline"
     >
-      {t("Study everything")}
+      {course.isExam ? keepStudying : t("Study everything")}
     </Button>
   );
 }

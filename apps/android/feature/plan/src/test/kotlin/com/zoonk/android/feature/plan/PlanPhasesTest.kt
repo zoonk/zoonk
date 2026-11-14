@@ -24,7 +24,6 @@ class PlanPhasesTest {
     fun todayIsADayOfTheCurrentPhase() {
         val phase = plan.phases[1]
 
-        assertEquals(PhaseDay(14, 27), phase.dayOf(LocalDate.of(2026, 10, 28)))
         assertEquals(13f / 27, phase.shareAt(LocalDate.of(2026, 10, 28), DayPart.Start))
         assertEquals(1f, phase.shareAt(LocalDate.of(2026, 12, 1), DayPart.End))
     }

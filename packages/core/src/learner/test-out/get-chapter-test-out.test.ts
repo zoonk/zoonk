@@ -24,4 +24,20 @@ describe(getChapterTestOut, () => {
     expect(counts.writes).toBe(0);
     expect(counts.result.status).toBe("ready");
   });
+
+  it("names the chapter, for screens opened without it", async () => {
+    const user = await userFixture();
+
+    const { goal, chapters } = await learnerGoalFixture({
+      itemsPerSkill: 2,
+      phases: [4, 2],
+      userId: user.id,
+    });
+
+    mockSession(user.id);
+
+    const result = await getChapterTestOut({ chapterId: chapters[0]!.id, goalId: goal.id });
+
+    expect(result.status === "ready" && result.testOut.chapterTitle).toBe(chapters[0]!.title);
+  });
 });

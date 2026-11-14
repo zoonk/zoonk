@@ -1,11 +1,13 @@
 "use client";
 
 import { type SuggestedGoalView } from "@zoonk/core/goals/suggestions/contract";
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { Button } from "@zoonk/ui/components/button";
 import { safeAsync } from "@zoonk/utils/error";
 import { CompassIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
+import { EnterButton } from "../_components/enter-button";
 import { ChangeSaveError } from "../_components/save-error";
 import {
   Suggestion,
@@ -19,8 +21,8 @@ import {
   SuggestionSaveError,
   SuggestionSummary,
 } from "../_components/suggestion";
-import { useSentenceSpace } from "../_utils/locale";
 import { useTodayScreen } from "./today-context";
+import { TodayStatusClause, TodayStatusLine, TodayStatusSentence } from "./today-status-line";
 
 type SuggestedGoalAnswer = "accepted" | "dismissed";
 
@@ -61,11 +63,13 @@ function SuggestedGoalCard({
         <SuggestionHeader>{question}</SuggestionHeader>
         <SuggestionDescription>{t("Build a plan in 1 minute.")}</SuggestionDescription>
 
-        <SuggestionActions>
-          <SuggestionAction action={() => answer("accepted")} disabled={isPending}>
-            {t("Build my plan")}
-          </SuggestionAction>
-
+        <SuggestionActions
+          main={
+            <SuggestionAction action={() => answer("accepted")} disabled={isPending}>
+              {t("Start")}
+            </SuggestionAction>
+          }
+        >
           <SuggestionAction
             action={() => answer("dismissed")}
             disabled={isPending}
@@ -80,6 +84,7 @@ function SuggestedGoalCard({
     </Suggestion>
   );
 }
+/** The page for a learner without a goal: its last child, so its two answers sit in the page's bar. */
 export function SuggestedGoalOffer({
   onAnswer,
   suggestion,
@@ -89,45 +94,35 @@ export function SuggestedGoalOffer({
 }) {
   const t = useExtracted();
   const { answer, failed, isPending } = useSuggestedGoalAnswer(onAnswer);
-  const space = useSentenceSpace();
 
   return (
-    <section aria-label={t("Suggested goal")} className="flex flex-col gap-4">
-      <div className="flex items-start gap-3 border-y py-3">
-        <CompassIcon aria-hidden="true" className="text-muted-foreground mt-0.5 size-4 shrink-0" />
-        <p className="text-sm leading-5 text-pretty">
-          <span className="font-medium">
+    <>
+      <section aria-label={t("Suggested goal")}>
+        <TodayStatusLine icon={<CompassIcon />}>
+          <TodayStatusSentence>
             {t("Continue {course}?", { course: suggestion.title })}
-          </span>
-          {space}
-          <span className="text-muted-foreground">{t("Build a plan in 1 minute.")}</span>
-        </p>
-      </div>
+          </TodayStatusSentence>
+          <TodayStatusClause>{t("Build a plan in 1 minute.")}</TodayStatusClause>
+        </TodayStatusLine>
+      </section>
 
-      <form className="flex gap-2 [&>*:first-child]:flex-1 sm:[&>*:first-child]:flex-none">
-        <Button
-          disabled={isPending}
-          focusableWhenDisabled
-          formAction={() => answer("accepted")}
-          size="lg"
-          type="submit"
-        >
-          {t("Build my plan")}
-        </Button>
-        <Button
-          disabled={isPending}
-          focusableWhenDisabled
-          formAction={() => answer("dismissed")}
-          size="lg"
-          type="submit"
-          variant="outline"
-        >
-          {t("Not now")}
-        </Button>
-      </form>
-
-      {failed && <ChangeSaveError />}
-    </section>
+      <BottomBar note={failed && <ChangeSaveError />}>
+        <BottomBarActions>
+          <Button
+            disabled={isPending}
+            focusableWhenDisabled
+            onClick={() => answer("dismissed")}
+            size="xl"
+            variant="outline"
+          >
+            {t("Not now")}
+          </Button>
+          <EnterButton busy={isPending} onClick={() => answer("accepted")}>
+            {t("Start")}
+          </EnterButton>
+        </BottomBarActions>
+      </BottomBar>
+    </>
   );
 }
 

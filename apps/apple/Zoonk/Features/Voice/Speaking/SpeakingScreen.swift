@@ -35,6 +35,8 @@ private struct SpeakingPaperView: View {
   @State private var writingTask: String?
   @State private var startFailure: StartFailure?
   @State private var start: Task<Void, Never>?
+  /// The task a learner without a subscription tried to start: its buttons give way to the gate.
+  @State private var gatedTask: String?
 
   let goalId: String
   let paper: Resource<Components.Schemas.SpeakingPaper>
@@ -109,9 +111,6 @@ private struct SpeakingPaperView: View {
   private func exam(_ paper: Components.Schemas.SpeakingPaper) -> some View {
     Section {
       VStack(alignment: .leading, spacing: 6) {
-        Text("Exam-style speaking", tableName: "Voice", comment: "Eyebrow over the exam's name")
-          .typeStyle(.data)
-          .foregroundStyle(.faint)
         Text(paper.title)
           .typeStyle(.section)
         Text(
@@ -121,12 +120,6 @@ private struct SpeakingPaperView: View {
         )
         .typeStyle(.data)
         .foregroundStyle(.mutedForeground)
-        Text(
-          "\(paper.title) is an official exam. Practice its speaking tasks whether or not you plan to take it.",
-          tableName: "Voice", comment: "The exam is official; practicing doesn't mean taking it"
-        )
-        .typeStyle(.note)
-        .foregroundStyle(.mutedForeground)
       }
       .listRowBackground(Color.clear)
       .listRowSeparator(.hidden)
@@ -135,14 +128,7 @@ private struct SpeakingPaperView: View {
 
   @ViewBuilder
   private func access(_ paper: Components.Schemas.SpeakingPaper) -> some View {
-    if paper.access == .plusRequired {
-      Section {
-        PlusNotice(
-          description: Text(
-            "Speaking practice comes with Plus: every task of the paper on a call, and an estimate on the official criteria after each one.",
-            tableName: "Voice", comment: "Speaking practice needs Plus"))
-      }
-    } else if paper.access == .callsPaused {
+    if paper.access == .callsPaused {
       Section {
         Label {
           VStack(alignment: .leading, spacing: 2) {
@@ -180,16 +166,6 @@ private struct SpeakingPaperView: View {
     } footer: {
       SectionFooter {
         VStack(alignment: .leading, spacing: 8) {
-          if paper.tasks.contains(where: { $0.role == .partner }) {
-            Text(
-              "An AI stands in for the human examiner or the other candidate. Each try has a new card, and after it you get an estimate on the exam's official criteria, not an official score.",
-              tableName: "Voice", comment: "What a practice exam task with a partner is")
-          } else {
-            Text(
-              "An AI stands in for the human examiner. Each try has a new card, and after it you get an estimate on the exam's official criteria, not an official score.",
-              tableName: "Voice", comment: "What a practice exam task is")
-          }
-
           if let source = URL(string: paper.source) {
             Link(destination: source) {
               Text(
@@ -224,7 +200,10 @@ private struct SpeakingPaperView: View {
   private func taskDetails(
     _ task: Components.Schemas.SpeakingPaperTask, paper: Components.Schemas.SpeakingPaper
   ) -> some View {
-    let locked = paper.access != .open
+    let locked = paper.access == .plusRequired
+    // Tried while locked: a subscription that opens the paper takes the gate away.
+    let isGated = gatedTask == task.key && locked
+    let showsStart = paper.access != .callsPaused && writingTask != task.key && !isGated
 
     return VStack(alignment: .leading, spacing: 8) {
       if !task.criteria.isEmpty {
@@ -252,27 +231,43 @@ private struct SpeakingPaperView: View {
             comment: "An exam task opens by itself once its card is written"))
       }
 
-      ButtonRow(spacing: 12) {
-        if !locked && writingTask != task.key {
-          BusyButton(isBusy: startingTask == task.key, icon: .play) {
-            start = Task { await startTask(task.key) }
-          } label: {
-            Text("Start this task", tableName: "Voice", comment: "Starts an exam speaking task")
-          }
-          .buttonStyle(.mainAction)
-          .disabled(startingTask != nil && startingTask != task.key)
-        }
-
-        if let lastTry = task.lastTry {
-          Button {
-            router.open(.conversation(conversationId: lastTry.conversationId))
-          } label: {
-            Text("See your last result", tableName: "Voice", comment: "Opens a task's last result")
-          }
-          .buttonStyle(.outline)
-        }
+      if isGated {
+        SubscribeGate(
+          title: Text(
+            "Speaking practice needs a subscription", tableName: "Voice",
+            comment: "A free learner tried to start an exam speaking task")
+        )
+        .padding(.top, 4)
       }
-      .padding(.top, 4)
+
+      // The gate takes Start's place only; the last result stays one tap away.
+      if showsStart || task.lastTry != nil {
+        ButtonRow(spacing: 12) {
+          if showsStart {
+            BusyButton(isBusy: startingTask == task.key, icon: .play) {
+              if locked {
+                gatedTask = task.key
+              } else {
+                start = Task { await startTask(task.key) }
+              }
+            } label: {
+              Text("Start", tableName: "Voice", comment: "Starts an exam speaking task")
+            }
+            .buttonStyle(.mainAction)
+            .disabled(startingTask != nil && startingTask != task.key)
+          }
+
+          if let lastTry = task.lastTry {
+            Button {
+              router.open(.conversation(conversationId: lastTry.conversationId))
+            } label: {
+              Text("Last result", tableName: "Voice", comment: "Opens a task's last result")
+            }
+            .buttonStyle(.outline)
+          }
+        }
+        .padding(.top, 4)
+      }
 
       // Only the open task starts, so a failure is said right under its button.
       if let startFailure {
@@ -332,13 +327,13 @@ private struct SpeakingPaperView: View {
 
     if lastTry.atLevel > 0 {
       return String(
-        localized: "Last try: \(lastTry.atLevel) of \(lastTry.rated) at \(level)", table: "Voice",
-        comment: "Criteria rated at the exam's level on the last try")
+        localized: "Last try: at \(level) on \(lastTry.atLevel) of \(lastTry.rated) criteria",
+        table: "Voice", comment: "Criteria rated at the exam's level on the last try")
     }
 
     return lastTry.nearLevel > 0
       ? String(
-        localized: "Last try: \(lastTry.nearLevel) of \(lastTry.rated) near \(level)",
+        localized: "Last try: near \(level) on \(lastTry.nearLevel) of \(lastTry.rated) criteria",
         table: "Voice",
         comment: "Criteria rated near the exam's level on the last try")
       : String(
@@ -362,9 +357,20 @@ private struct SpeakingPaperView: View {
     case .done(.done(let id)):
       router.open(.conversation(conversationId: id))
     case .done(.refused(let refusal)):
-      if case .limit(let limit) = CallReservation(refusal: refusal) {
+      switch CallReservation(refusal: refusal) {
+      case .limit(let limit):
         startFailure = .limit(limit)
-      } else {
+      case .plusRequired:
+        gatedTask = task
+        // The server's answer is the access now, even if the read after it fails; a later read
+        // (a subscription bought) replaces it.
+        paper.update { paper in
+          var locked = paper
+          locked.access = .plusRequired
+          return locked
+        }
+        await paper.refresh()
+      default:
         startFailure = .failed
       }
     case .failed:

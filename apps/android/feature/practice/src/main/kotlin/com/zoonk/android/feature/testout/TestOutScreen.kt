@@ -48,10 +48,10 @@ import com.zoonk.android.feature.practice.RunIntro
 import com.zoonk.android.feature.practice.RunLoadFailed
 import com.zoonk.android.feature.practice.RunLoading
 import com.zoonk.android.feature.practice.RunPage
-import com.zoonk.android.feature.practice.UndoAction
+import com.zoonk.android.feature.practice.UndoButton
+import com.zoonk.android.feature.practice.UndoFailed
 import com.zoonk.android.feature.practice.UndoState
 import com.zoonk.android.feature.session.DayMoment
-import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
@@ -121,18 +121,12 @@ fun TestOutScreen(
     val ui by viewModel.ui.collectAsStateWithLifecycle()
     LifecycleEventEffect(Lifecycle.Event.ON_STOP) { viewModel.onStop() }
     val plan by app.plans.plan[goalId].collectShown()
-    val chapter =
+    val lessonsLeft =
         plan.value
             ?.plan
             ?.phases
             ?.let { planChapter(it, chapterId) }
-    val chapterTitle = chapter?.title ?: stringResource(R.string.testout_this_chapter)
-    val page =
-        TestOutPage(
-            title = if (plan.isSettled) stringResource(R.string.testout_title, chapterTitle) else "",
-            chapterTitle = chapterTitle,
-            lessonsLeft = chapter?.lessonsLeft,
-        )
+            ?.lessonsLeft
 
     val showChapter = { navigator.open(AppRoute.Chapter(route.chapterId)) }
 
@@ -143,7 +137,7 @@ fun TestOutScreen(
     when {
         outcome != null -> TestOutResult(outcome, ui, viewModel, app, close, navigator::open)
         sent != null && !ui.sending -> RecordedTestOut(viewModel, sent, close)
-        else -> TestOutBody(viewModel, ui, page, app, navigator, showChapter)
+        else -> TestOutBody(viewModel, ui, lessonsLeft, app, navigator, showChapter)
     }
 }
 
@@ -153,8 +147,11 @@ internal data class TestOutPage(
     val lessonsLeft: Int?,
 )
 
-/** Waits only while nothing is known, so the title doesn't name a placeholder before the chapter. */
-private val LoadState<*>.isSettled: Boolean get() = this != LoadState.Idle && this != LoadState.Loading
+@Composable
+internal fun testOutPage(
+    test: TestOutRead.Ready,
+    lessonsLeft: Int?,
+) = TestOutPage(stringResource(R.string.testout_title, test.chapterTitle), test.chapterTitle, lessonsLeft)
 
 @Composable
 private fun RecordedTestOut(
@@ -177,7 +174,7 @@ private fun RecordedTestOut(
 private fun TestOutBody(
     viewModel: TestOutViewModel,
     ui: TestOutUi,
-    page: TestOutPage,
+    lessonsLeft: Int?,
     app: AppContainer,
     navigator: AppNavigator,
     showChapter: () -> Unit,
@@ -190,15 +187,12 @@ private fun TestOutBody(
         is LoadState.Loaded -> {
             when (val test = read.value) {
                 is TestOutRead.Ready -> {
+                    val page = testOutPage(test, lessonsLeft)
                     if (test.questions.isEmpty() || ui.writing) {
-                        TestOutPreparing(viewModel, ui, page.title, plusRequired = false, navigator)
+                        TestOutPreparing(viewModel, ui, page.title, navigator)
                     } else {
                         TestOutQuestions(test, viewModel, ui, page, app, close)
                     }
-                }
-
-                TestOutRead.PlusRequired -> {
-                    TestOutPreparing(viewModel, ui, page.title, plusRequired = true, navigator)
                 }
 
                 TestOutRead.NothingToSkip -> {
@@ -231,17 +225,14 @@ internal fun TestOutPreparing(
     viewModel: TestOutViewModel,
     ui: TestOutUi,
     title: String,
-    plusRequired: Boolean,
     navigator: AppNavigator,
 ) {
     val run by viewModel.run.collectAsStateWithLifecycle()
     val waiting = ui.writing || ui.startFailed
-    val locked = plusRequired || ui.plusRequired
     val focus =
         rememberPressFocus(
             when {
                 waiting -> "wait"
-                locked -> "plus"
                 ui.refused != null -> "limit"
                 else -> "start"
             },
@@ -262,7 +253,7 @@ internal fun TestOutPreparing(
             if (waiting) {
                 null
             } else {
-                { TaskActionBar { StartActions(ui, locked, navigator, focus.requester, start) } }
+                { TaskActionBar { StartActions(ui, navigator, focus.requester, start) } }
             },
     ) {
         if (waiting) {
@@ -286,7 +277,6 @@ internal fun TestOutPreparing(
 @Composable
 private fun StartActions(
     ui: TestOutUi,
-    plusRequired: Boolean,
     navigator: AppNavigator,
     replacementFocus: FocusRequester,
     onStart: () -> Unit,
@@ -294,26 +284,12 @@ private fun StartActions(
     val refused = ui.refused
     val replacementModifier = Modifier.focusRequester(replacementFocus).semantics(mergeDescendants = true) {}.focusable()
     when {
-        plusRequired -> {
-            PlusNotice(
-                onSeePlus = null,
-                title = stringResource(R.string.subscription_free_week_over_title),
-                description = stringResource(R.string.subscription_free_week_over_description),
-                modifier = replacementModifier,
-            )
-            TaskActions { width ->
-                Button(onClick = { navigator.open(AppRoute.Subscription) }, modifier = width) {
-                    Text(stringResource(R.string.testout_see_plus))
-                }
-            }
-        }
-
         refused != null -> {
             LimitNotice(
                 refused,
                 LimitSubject.Help,
                 onCreateAccount = { navigator.open(AppRoute.Login) },
-                onSeePlus = { navigator.open(AppRoute.Subscription) },
+                onSubscribe = { navigator.open(AppRoute.Subscription) },
                 modifier = replacementModifier,
             )
         }
@@ -324,7 +300,6 @@ private fun StartActions(
                     busy = ui.starting,
                     onClick = onStart,
                     modifier = width.focusRequester(replacementFocus),
-                    leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
                 ) {
                     Text(stringResource(R.string.testout_start))
                 }
@@ -362,7 +337,8 @@ internal fun TestOutQuestions(
         onAnswer = { question, answer -> viewModel.answer(test.questions, question, answer) },
         onSend = viewModel::retrySend,
         onClose = onClose,
-        hint = { rule },
+        // The rule shows over the first question only; the others keep its line so the count never moves.
+        hint = { question -> rule.takeIf { question == test.questions.first() } },
         aside = { TestOutAside(page, rule) },
     )
 }
@@ -415,18 +391,14 @@ internal fun TestOutResult(
             title = stringResource(if (outcome.passed) R.string.testout_passed else R.string.testout_not_passed),
             action = stringResource(R.string.testout_continue),
             saving = false,
-            actionTrailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
             onClose = onClose,
             detail = detail,
             actions = {
+                UndoFailed(ui.undo)
                 TaskActions { width ->
-                    Button(
-                        onClick = onClose,
-                        modifier = width,
-                        trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
-                    ) { Text(stringResource(R.string.testout_continue)) }
+                    if (canUndo) UndoButton(ui.undo, viewModel::undo)
+                    Button(onClick = onClose, modifier = width) { Text(stringResource(R.string.testout_continue)) }
                 }
-                if (canUndo) UndoAction(ui.undo, viewModel::undo)
             },
         ) {
             MomentReadouts(brainPower = 0, facts = listOf(scoreLine(outcome)))

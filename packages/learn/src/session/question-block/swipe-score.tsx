@@ -17,10 +17,12 @@ export function SwipeScore({
 }) {
   const t = useExtracted();
   const tally = getNetTally({ answers, questions: detail.questions });
+  // The rule is said once, on the block's first question; the count stays on every one.
+  const started = tally.right + tally.wrong + tally.blank > 0;
 
   return (
     <div aria-live="polite" className="flex flex-col gap-1">
-      <p className="text-muted-foreground font-mono text-[0.8125rem] tabular-nums">
+      <p className="text-muted-foreground text-compact font-mono tabular-nums">
         {t("{count, plural, =0 {# right} one {# right} other {# right}}", { count: tally.right })}
         {" · "}
         {t("{count, plural, =0 {# wrong} one {# wrong} other {# wrong}}", { count: tally.wrong })}
@@ -29,9 +31,11 @@ export function SwipeScore({
           {t("net {net}", { net: String(tally.right - tally.wrong) })}
         </span>
       </p>
-      <p className="text-muted-foreground text-xs">
-        {t("A wrong answer cancels a right one. Not sure? Leave it blank.")}
-      </p>
+      {!started && (
+        <p className="text-muted-foreground text-xs">
+          {t("A wrong answer cancels a right one. Not sure? Leave it blank.")}
+        </p>
+      )}
     </div>
   );
 }

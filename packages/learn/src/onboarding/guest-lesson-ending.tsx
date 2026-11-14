@@ -2,24 +2,26 @@
 
 import { type LessonFit } from "@zoonk/core/view-models/onboarding/get-lesson-fit";
 import { buttonVariants } from "@zoonk/ui/components/button";
+import { MeterPart, MeterParts } from "@zoonk/ui/components/meter";
 import { cn } from "@zoonk/ui/lib/utils";
 import { PendingLink } from "@zoonk/ui/patterns/links/pending";
-import { BookOpenIcon, CalendarClockIcon, UserPlusIcon } from "lucide-react";
+import { BookOpenIcon, UserPlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { type ReactNode } from "react";
-import { MeterPart, MeterParts } from "../_components/meter";
+import { SURFACE_CLASS } from "../_components/surface";
+import { TASK_WRAPPING_ACTION_CLASS } from "../_components/task-layout";
 import { useFormatDuration } from "../_utils/time-format";
 
 const MINUTES_PER_HOUR = 60;
 
-function WhereItFits({ fit }: { fit: LessonFit }) {
+/** Where a visitor's lesson sits in its course, under the lesson's end. */
+export function GuestLessonFit({ fit }: { fit: LessonFit }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const { chapter, course } = fit;
   const lessons = Math.max(1, chapter.lessonCount);
 
   return (
-    <section className="bg-card ring-border flex flex-col gap-3 rounded-xl p-4 ring-1">
+    <section className={cn(SURFACE_CLASS, "flex flex-col gap-3 p-4")}>
       <p className="text-muted-foreground text-sm">{t("This is part of")}</p>
 
       {course && (
@@ -28,15 +30,12 @@ function WhereItFits({ fit }: { fit: LessonFit }) {
           <span className="flex min-w-0 flex-col">
             <span className="font-semibold">{course.title}</span>
             <span className="text-muted-foreground text-sm">
-              {t(
-                "{chapters, plural, one {# chapter} other {# chapters}} · about {time} at your pace",
-                {
-                  chapters: course.chapterCount,
-                  time: formatDuration(
-                    Math.max(1, Math.round(course.minutes / MINUTES_PER_HOUR)) * MINUTES_PER_HOUR,
-                  ),
-                },
-              )}
+              {t("{chapters, plural, one {# chapter} other {# chapters}} · about {time}", {
+                chapters: course.chapterCount,
+                time: formatDuration(
+                  Math.max(1, Math.round(course.minutes / MINUTES_PER_HOUR)) * MINUTES_PER_HOUR,
+                ),
+              })}
             </span>
           </span>
         </div>
@@ -66,36 +65,17 @@ function WhereItFits({ fit }: { fit: LessonFit }) {
   );
 }
 
-export function GuestLessonNext({
-  fit,
-  plan,
-  signUpHref,
-}: {
-  fit: LessonFit | null;
-  plan: ReactNode;
-  signUpHref: string;
-}) {
+/** The visitor's way to keep what they did, beside the lesson end's main action. */
+export function GuestSignUpLink({ signUpHref }: { signUpHref: string }) {
   const t = useExtracted();
 
   return (
-    <div className="flex flex-col gap-6" data-slot="guest-lesson-next">
-      {fit && <WhereItFits fit={fit} />}
-
-      <p className="text-muted-foreground flex items-start gap-2 text-sm">
-        <CalendarClockIcon aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
-        {t("Save your progress and a quick review comes back to help it stick.")}
-      </p>
-
-      <div className="flex flex-col gap-2">
-        {plan}
-        <PendingLink
-          className={cn(buttonVariants({ size: "lg", variant: "outline" }), "w-full")}
-          href={signUpHref}
-          icon={<UserPlusIcon aria-hidden="true" />}
-        >
-          {t("Create an account to save")}
-        </PendingLink>
-      </div>
-    </div>
+    <PendingLink
+      className={cn(buttonVariants({ size: "xl", variant: "outline" }), TASK_WRAPPING_ACTION_CLASS)}
+      href={signUpHref}
+      icon={<UserPlusIcon aria-hidden="true" />}
+    >
+      {t("Create an account to save")}
+    </PendingLink>
   );
 }

@@ -59,11 +59,14 @@ async function moveUsageRecords({ guestUserId, transaction, userId }: GuestLinkC
       WHERE user_id = ${guestUserId}::uuid
       RETURNING *
     )
-    INSERT INTO usage_records (id, user_id, kind, target_id, generated, cost_micros, seconds, created_at)
-    SELECT id, ${userId}::uuid, kind, target_id, generated, cost_micros, seconds, created_at
+    INSERT INTO usage_records (id, user_id, kind, target_id, generated, cost_micros, seconds, created_at, counted_at)
+    SELECT id, ${userId}::uuid, kind, target_id, generated, cost_micros, seconds, created_at, counted_at
     FROM guest_rows
     ORDER BY kind, target_id
-    ON CONFLICT (user_id, kind, target_id) DO NOTHING
+    ON CONFLICT (user_id, kind, target_id) DO UPDATE
+    SET counted_at = LEAST(usage_records.counted_at, EXCLUDED.counted_at)
+    WHERE EXCLUDED.counted_at IS NOT NULL
+      AND (usage_records.counted_at IS NULL OR EXCLUDED.counted_at < usage_records.counted_at)
   `;
 }
 

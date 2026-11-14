@@ -1,6 +1,6 @@
 "use client";
 
-import { PlayIcon, TimerOffIcon } from "lucide-react";
+import { TimerOffIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { StepCard, StepDetail, StepHeader, StepTitle } from "../_components/step-card";
 import { TaskActions } from "../_components/task-layout";
@@ -14,12 +14,9 @@ export function MockExpired() {
 
   return (
     <MockFrame
-      closeOnEscape
       footer={
         <TaskActions>
-          <TaskMainLink href={hrefs.again} icon={<PlayIcon aria-hidden="true" />}>
-            {t("Take a new mock exam")}
-          </TaskMainLink>
+          <TaskMainLink href={hrefs.again}>{t("Take another")}</TaskMainLink>
         </TaskActions>
       }
     >
@@ -29,9 +26,7 @@ export function MockExpired() {
         <StepHeader>
           <MockEyebrow />
           <StepTitle>{t("Time ran out while you were away")}</StepTitle>
-          <StepDetail>
-            {t("With most of it unanswered, it isn't scored and doesn't change your preparation.")}
-          </StepDetail>
+          <StepDetail>{t("This one doesn't count.")}</StepDetail>
         </StepHeader>
       </StepCard>
     </MockFrame>

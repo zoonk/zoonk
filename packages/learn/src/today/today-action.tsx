@@ -1,28 +1,22 @@
 "use client";
 
-import { BusyContent, Button, FORWARD_ICON, buttonVariants } from "@zoonk/ui/components/button";
-import { ShortcutKbd } from "@zoonk/ui/components/kbd";
-import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
-import { cn } from "@zoonk/ui/lib/utils";
-import { ListPlusIcon, PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { createContext, use } from "react";
+import { EnterButton, EnterLink } from "../_components/enter-button";
 import { OpeningWaitLine } from "../_components/opening-wait-line";
 import { ChangeSaveError } from "../_components/save-error";
 import { usePendingSender } from "../_utils/use-pending-sender";
 import { useSlowWait } from "../_utils/use-slow-wait";
 import { type WaitState } from "../_utils/wait-state";
 import { useLearnRoutes } from "../learn-context";
-import { LearnLink } from "../learn-link";
 import { useSessionAction } from "../session/use-session-action";
 import { useGoalSwitchPending } from "../shell/goal-switcher";
+import { TodayBar } from "./today-bar";
 import { useTodayScreen } from "./today-context";
+import { TodayExamOver } from "./today-exam-over";
 import { NEXT_TITLE_ID } from "./today-ids";
-import { TODAY_ACTION_STATUS_CLASS } from "./today-layout";
 import { useContinueSession } from "./use-continue-session";
 import { useDayState, useSessionState, useTodayPastDate, useUpNextLessons } from "./use-today-copy";
-
-const ACTION_CLASS = "w-full text-[0.9375rem] sm:w-auto";
 
 type SessionAction = ReturnType<typeof useSessionAction> & { wait: WaitState };
 
@@ -78,19 +72,17 @@ export function useKeepLearning(): KeepLearningAction {
   return useTodayContinue().keep;
 }
 
-export function useTodayContinueSpeaking(): boolean {
+function useTodayContinueSpeaking(): boolean {
   const { failed, wait } = useTodayContinue();
   return failed || wait !== "none";
 }
 
-/** Marked `data-speaking` while it says something. */
-export function TodayContinueStatus({ className }: { className?: string }) {
+function TodayContinueStatus() {
   const t = useExtracted();
   const { failed, wait } = useTodayContinue();
-  const speaking = useTodayContinueSpeaking();
 
   return (
-    <span className={className} data-speaking={speaking || undefined}>
+    <>
       <OpeningWaitLine wait={wait} />
 
       {failed && (
@@ -98,7 +90,7 @@ export function TodayContinueStatus({ className }: { className?: string }) {
           {t("We couldn't open the next step. Try again.")}
         </span>
       )}
-    </span>
+    </>
   );
 }
 
@@ -106,21 +98,18 @@ function ContinueLink({ href }: { href: string }) {
   const t = useExtracted();
   const { started } = useSessionState();
   const switching = useGoalSwitchPending();
-  const ref = useEnterClick<HTMLAnchorElement>({ enabled: !switching });
 
   return (
-    <LearnLink
-      aria-describedby={NEXT_TITLE_ID}
-      className={cn(buttonVariants({ size: "lg" }), ACTION_CLASS)}
-      href={href}
-      lessonWritten={href.startsWith("/learn/")}
-      ref={ref}
-    >
-      <BusyContent icon={<PlayIcon aria-hidden="true" />}>
-        {started ? t("Continue session") : t("Start session")}
-        <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-      </BusyContent>
-    </LearnLink>
+    <TodayBar>
+      <EnterLink
+        aria-describedby={NEXT_TITLE_ID}
+        enabled={!switching}
+        href={href}
+        lessonWritten={href.startsWith("/learn/")}
+      >
+        {started ? t("Continue") : t("Start")}
+      </EnterLink>
+    </TodayBar>
   );
 }
 
@@ -129,30 +118,20 @@ function ContinueButton() {
   const { actions } = useTodayScreen();
   const { started } = useSessionState();
   const { isPending, run } = useTodayContinue();
+  const speaking = useTodayContinueSpeaking();
 
   if (actions.continueHref) {
     return <ContinueLink href={actions.continueHref} />;
   }
 
   return (
-    <>
+    <TodayBar note={speaking && <TodayContinueStatus />}>
       <form action={() => void run()} className="contents">
-        <Button
-          aria-describedby={NEXT_TITLE_ID}
-          aria-keyshortcuts="Enter"
-          busy={isPending}
-          className={ACTION_CLASS}
-          icon={<PlayIcon aria-hidden="true" />}
-          size="lg"
-          type="submit"
-        >
-          {started ? t("Continue session") : t("Start session")}
-          <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-        </Button>
+        <EnterButton aria-describedby={NEXT_TITLE_ID} busy={isPending} enter="host" type="submit">
+          {started ? t("Continue") : t("Start")}
+        </EnterButton>
       </form>
-
-      <TodayContinueStatus className={cn(TODAY_ACTION_STATUS_CLASS, "sm:hidden")} />
-    </>
+    </TodayBar>
   );
 }
 
@@ -160,46 +139,33 @@ function SummaryLink() {
   const t = useExtracted();
   const { actions } = useTodayScreen();
   const switching = useGoalSwitchPending();
-  const ref = useEnterClick<HTMLAnchorElement>({ enabled: !switching });
 
   return (
-    <LearnLink
-      className={cn(buttonVariants({ size: "lg" }), ACTION_CLASS)}
-      href={actions.summaryHref}
-      prefetch={false}
-      ref={ref}
-    >
-      <BusyContent {...FORWARD_ICON}>
+    <TodayBar>
+      <EnterLink enabled={!switching} href={actions.summaryHref} prefetch={false}>
         {t("See today's summary")}
-        <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-      </BusyContent>
-    </LearnLink>
+      </EnterLink>
+    </TodayBar>
   );
 }
 
 function SaveAction({
   action,
   children,
-  icon,
 }: {
   action: () => Promise<boolean>;
   children: React.ReactNode;
-  icon: React.ReactNode;
 }) {
   const { failed, isPending, run } = useSessionAction({ action });
 
   return (
-    <>
+    <TodayBar note={failed && <ChangeSaveError />}>
       <form action={() => void run()} className="contents">
-        <Button busy={isPending} className={ACTION_CLASS} icon={icon} size="lg" type="submit">
+        <EnterButton busy={isPending} type="submit">
           {children}
-        </Button>
+        </EnterButton>
       </form>
-
-      <div className={TODAY_ACTION_STATUS_CLASS} data-speaking={failed || undefined}>
-        {failed && <ChangeSaveError />}
-      </div>
-    </>
+    </TodayBar>
   );
 }
 
@@ -213,8 +179,8 @@ function PracticeTime() {
   }
 
   return (
-    <SaveAction action={actions.addExtraTime} icon={<PlayIcon aria-hidden="true" />}>
-      {t("Practice for {minutes} minutes", { minutes: String(extraTime.minutes) })}
+    <SaveAction action={actions.addExtraTime}>
+      {t("Practice {minutes} min", { minutes: String(extraTime.minutes) })}
     </SaveAction>
   );
 }
@@ -224,9 +190,9 @@ function PrepareLessons() {
   const { actions } = useTodayScreen();
 
   return (
-    <SaveAction action={actions.prepareLessons} icon={<ListPlusIcon aria-hidden="true" />}>
+    <SaveAction action={actions.prepareLessons}>
       {t({
-        description: "Button that has Zoonk write today's lessons.",
+        description: "Button that asks for today's lessons to be made ready.",
         message: "Get today's lessons",
       })}
     </SaveAction>
@@ -236,38 +202,30 @@ function PrepareLessons() {
 function KeepLearning() {
   const t = useExtracted();
   const { failed, isPending, rowSent, run, wait } = useKeepLearning();
+  const speaking = failed || wait !== "none";
 
   return (
-    <>
+    <TodayBar
+      note={
+        speaking && (
+          <>
+            <OpeningWaitLine wait={wait} />
+
+            {failed && (
+              <span className="text-destructive-text" role="alert">
+                {t("We couldn't open your next lessons. Try again.")}
+              </span>
+            )}
+          </>
+        )
+      }
+    >
       <form action={() => void run()} className="contents">
-        <Button
-          aria-keyshortcuts="Enter"
-          busy={isPending && !rowSent}
-          className={ACTION_CLASS}
-          disabled={rowSent}
-          focusableWhenDisabled
-          icon={<PlayIcon aria-hidden="true" />}
-          size="lg"
-          type="submit"
-        >
+        <EnterButton busy={isPending && !rowSent} disabled={rowSent} enter="host" type="submit">
           {t("Keep learning")}
-          <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-        </Button>
+        </EnterButton>
       </form>
-
-      <span
-        className={TODAY_ACTION_STATUS_CLASS}
-        data-speaking={failed || wait !== "none" || undefined}
-      >
-        <OpeningWaitLine wait={wait} />
-
-        {failed && (
-          <span className="text-destructive-text" role="alert">
-            {t("We couldn't open your next lessons. Try again.")}
-          </span>
-        )}
-      </span>
-    </>
+    </TodayBar>
   );
 }
 
@@ -275,63 +233,48 @@ function SeePlanLink() {
   const t = useExtracted();
   const routes = useLearnRoutes();
   const switching = useGoalSwitchPending();
-  const ref = useEnterClick<HTMLAnchorElement>({ enabled: !switching });
 
   return (
-    <LearnLink
-      className={cn(buttonVariants({ size: "lg" }), ACTION_CLASS)}
-      href={routes.journey}
-      ref={ref}
-    >
-      <BusyContent {...FORWARD_ICON}>
+    <TodayBar>
+      <EnterLink enabled={!switching} href={routes.journey}>
         {t("See your plan")}
-        <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-      </BusyContent>
-    </LearnLink>
+      </EnterLink>
+    </TodayBar>
   );
 }
 
-export function TodayAction({ className }: { className?: string }) {
+/** Pinned at the page's bottom on a phone and a computer (rule 4); a day with nothing to start has none. */
+export function TodayAction() {
+  const { today } = useTodayScreen();
   const state = useDayState();
   const pastDate = useTodayPastDate();
   const keepLearning = useUpNextLessons().length > 0;
 
   if (pastDate) {
-    return (
-      <div className={cn("flex flex-col sm:items-end", className)} data-slot="today-action">
-        <SeePlanLink />
-      </div>
-    );
+    return today.goal.kind === "exam" ? <TodayExamOver /> : <SeePlanLink />;
   }
 
   if (state === "prepare") {
-    return (
-      <div className={cn("flex flex-col sm:items-end", className)} data-slot="today-action">
-        <PrepareLessons />
-      </div>
-    );
+    return <PrepareLessons />;
   }
 
   if (keepLearning) {
-    return (
-      <div className={cn("flex flex-col sm:items-end", className)} data-slot="today-action">
-        <KeepLearning />
-      </div>
-    );
+    return <KeepLearning />;
   }
 
-  if (state !== "underway" && state !== "done" && state !== "ahead") {
-    return null;
+  if (state === "underway") {
+    return <ContinueButton />;
   }
 
-  return (
-    <div
-      className={cn("flex flex-col empty:hidden sm:items-end", className)}
-      data-slot="today-action"
-    >
-      {state === "underway" && <ContinueButton />}
-      {state === "done" && <SummaryLink />}
-      {state === "ahead" && <PracticeTime />}
-    </div>
-  );
+  if (state === "done") {
+    return <SummaryLink />;
+  }
+
+  // With nothing new on the list, practice is the day's one action; once the day is done it is
+  // only an extra, so it stays in the page.
+  if (state === "ahead" || state === "rest") {
+    return <PracticeTime />;
+  }
+
+  return null;
 }

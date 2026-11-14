@@ -78,10 +78,9 @@ private struct CourseLandingList: View {
 
     CourseHeroSection(detail: detail, exam: example?.exam, goal: goal)
 
-    if let pace = example?.pace {
+    if let pace = example?.pace, case .toEnd(let weeks, let firstDay) = pace.estimate.reach {
       CoursePlanSections(
-        chapters: detail.chapters, estimate: pace.estimate, exam: example?.exam,
-        isExam: detail.course.isExam, minutes: pace.minutes)
+        chapters: detail.chapters, firstDay: firstDay, minutes: pace.minutes, weeks: weeks)
     }
   }
 
@@ -92,8 +91,7 @@ private struct CourseLandingList: View {
     CourseFitSections(landingPage: detail.course.landingPage)
 
     CourseOutlineSections(
-      detail: detail, estimate: example?.pace?.estimate, exam: example?.exam,
-      lead: outlineLead, minutes: example?.pace?.minutes,
+      detail: detail, estimate: example?.pace?.estimate, lead: outlineLead,
       learner: OutlineLearner(
         signedIn: session.authenticatedSession != nil, summary: learner.summary.state,
         courseID: detail.course.id),
@@ -173,7 +171,7 @@ private struct CourseHeroSection: View {
           ContentCountryFacts(country: country)
         }
 
-        PlanLine(startsHere: false)
+        PlanLine(start: detail.course.isExam ? .examCourse : .course)
 
         CatalogStartActions(
           courseID: detail.course.id, goal: goal, tryLessonID: detail.tryLessonID
@@ -236,7 +234,8 @@ private struct CourseExamEyebrow: View {
   }
 
   private var dates: String {
-    exam.days.compactMap(catalogDay).formatted(.list(type: .and))
+    let today = PlanDate.today()
+    return exam.days.map { PlanDate.text($0, today: today) }.formatted(.list(type: .and))
   }
 
   private var daysLeft: String {
@@ -255,32 +254,28 @@ private struct CourseExamEyebrow: View {
   }
 }
 
-/// Read at UTC midnight, so no time zone moves it to another day.
-func catalogDay(_ isoDate: String) -> String? {
-  let style = Date.ISO8601FormatStyle(timeZone: .gmt).year().month().day()
-
-  guard let date = try? style.parse(isoDate) else {
-    return nil
+struct PlanLine: View {
+  enum Start {
+    case chapter, course, examCourse
   }
 
-  var format = Date.FormatStyle.dateTime.month(.abbreviated).day()
-  format.timeZone = .gmt
-  return date.formatted(format)
-}
-
-struct PlanLine: View {
-  let startsHere: Bool
+  let start: Start
 
   var body: some View {
     Label {
-      if startsHere {
+      switch start {
+      case .chapter:
         Text(
-          "With Zoonk, your plan starts at this chapter and fits your schedule.",
+          "Zoonk builds you a study plan for each day. It fits your time and starts at this chapter.",
           tableName: "Courses", comment: "On a chapter's page, what Zoonk does with it")
-      } else {
+      case .course:
         Text(
-          "With Zoonk, your plan starts at your level and fits your schedule.",
+          "Zoonk builds you a study plan for each day. It fits your time and starts from what you already know.",
           tableName: "Courses", comment: "On a course's page, what Zoonk does with it")
+      case .examCourse:
+        Text(
+          "Zoonk builds you a study plan for each day until your exam. It fits your time and starts from what you already know.",
+          tableName: "Courses", comment: "On an exam course's page, what Zoonk does with it")
       }
     } icon: {
       Image(systemName: "map")

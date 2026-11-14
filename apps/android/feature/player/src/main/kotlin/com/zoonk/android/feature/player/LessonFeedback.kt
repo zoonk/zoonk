@@ -32,6 +32,8 @@ import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepKind
 import com.zoonk.android.feature.player.model.StepResult
+import com.zoonk.android.feature.player.steps.FeedbackAnswer
+import com.zoonk.android.feature.player.steps.RightAnswerLine
 import com.zoonk.android.feature.player.steps.count
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.FeedbackNote
@@ -44,7 +46,7 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.richtext.RichInlineText
 import com.zoonk.android.ui.richtext.RichText
 
-private enum class Verdict(
+internal enum class Verdict(
     val label: Int,
     val tone: FeedbackTone,
 ) {
@@ -58,13 +60,17 @@ private enum class Verdict(
     Unchecked(R.string.player_verdict_unchecked, FeedbackTone.Neutral),
 }
 
-private fun verdictOf(
-    step: LessonStep,
+/**
+ * Main's verdict: an answer the server didn't check is never right or wrong, whatever the step's kind; only
+ * "I don't know yet" shows its sample instead.
+ */
+internal fun verdictOf(
+    kind: StepKind,
     result: StepResult,
 ): Verdict =
     when {
-        step.kind == StepKind.Hook -> if (result.isCorrect) Verdict.GuessRight else Verdict.Guess
-        !result.checked -> if (result.answerText == null) Verdict.SampleAnswer else Verdict.Unchecked
+        kind == StepKind.Hook -> if (result.isCorrect) Verdict.GuessRight else Verdict.Guess
+        !result.checked -> if (result.answerText == null && result.correctAnswer != null) Verdict.SampleAnswer else Verdict.Unchecked
         result.isCorrect -> if (result.spelling != null) Verdict.Typo else Verdict.Correct
         (result.score ?: 0.0) > 0 -> Verdict.Almost
         else -> Verdict.Incorrect
@@ -100,7 +106,7 @@ fun LessonStepResultView(
     hyperdriveStreak: Int?,
     explainAnswer: @Composable () -> Unit = {},
 ) {
-    val verdict = verdictOf(step, result)
+    val verdict = verdictOf(step.kind, result)
     val keyPoints = shownKeyPoints(result)
 
     FeedbackPanel(label = stringResource(R.string.player_answer_feedback)) {
@@ -112,15 +118,25 @@ fun LessonStepResultView(
             end = hyperdriveStreak?.let { stringResource(R.string.player_hyperdrive_streak, count(it)) },
         )
 
-        result.spelling?.let { LabeledAnswer(stringResource(R.string.player_spelled), it) }
+        // A screen a staff fix changed after the learner started: why it doesn't count, and nothing else.
+        if (verdict == Verdict.Unchecked && result.correctAnswer == null) {
+            Text(
+                stringResource(R.string.player_unchecked_updated),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            return@FeedbackPanel
+        }
+
+        result.spelling?.let { FeedbackAnswer(stringResource(R.string.player_spelled), it) }
         if (result.corrections.isNotEmpty()) Corrections(result.corrections)
 
         val showsCorrectAnswer =
             result.correctAnswer != null && !result.isCorrect && result.checked && step.isLanguageStep &&
                 step.kind !in OPTION_LANGUAGE_KINDS
-        if (showsCorrectAnswer) LabeledAnswer(stringResource(R.string.player_correct_answer_label), result.correctAnswer.orEmpty())
+        if (showsCorrectAnswer) RightAnswerLine(result.correctAnswer.orEmpty())
         if (result.isCorrect && result.checked) {
-            result.correctAnswer?.let { LabeledAnswer(stringResource(R.string.player_also_correct_label), it) }
+            result.correctAnswer?.let { FeedbackAnswer(stringResource(R.string.player_also_correct_label), it) }
         }
 
         SampleAnswer(result)
@@ -148,7 +164,7 @@ internal fun ExplainAnswer(
     explanation: AnswerExplanation?,
     onExplain: () -> Unit,
     onCreateAccount: () -> Unit,
-    onSeePlus: () -> Unit,
+    onSubscribe: () -> Unit,
 ) {
     val loading = explanation == AnswerExplanation.Loading
 
@@ -182,29 +198,11 @@ internal fun ExplainAnswer(
             }
 
             is AnswerExplanation.Refused -> {
-                LimitNotice(explanation.limit, LimitSubject.Help, onCreateAccount, onSeePlus)
+                LimitNotice(explanation.limit, LimitSubject.Explanations, onCreateAccount, onSubscribe)
             }
 
             else -> {}
         }
-    }
-}
-
-@Composable
-private fun LabeledAnswer(
-    label: String,
-    answer: String,
-) {
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
-        RichInlineText(
-            text = answer,
-            style =
-                MaterialTheme.typography.bodyMedium.copy(
-                    color = MaterialTheme.colorScheme.onTertiaryContainer,
-                    fontWeight = FontWeight.Medium,
-                ),
-        )
     }
 }
 

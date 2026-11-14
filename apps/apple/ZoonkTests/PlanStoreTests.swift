@@ -235,7 +235,8 @@ private final class TestClock {
   }
 }
 
-private actor PlanAPIStub: PlanAPIClient {
+/// Also Today's tests', for plan changes saved from the Plan's screens.
+actor PlanAPIStub: PlanAPIClient {
   struct Calls {
     var changed = 0
     var changes: [[PlanEdit]] = []
@@ -277,9 +278,10 @@ private actor PlanAPIStub: PlanAPIClient {
     return changeOutcome
   }
 
-  func decide(token: String, goalId: String, changeId: String, decision: PlanChangeDecision)
-    async throws -> TodayView.PlanChange?
-  {
+  func decide(
+    token: String, goalId: String, changeId: String, decision: PlanChangeDecision,
+    quote: PlanChangeQuote?
+  ) async throws -> TodayView.PlanChange? {
     calls.undone.append(changeId)
     guard undoes else {
       return nil
@@ -290,7 +292,7 @@ private actor PlanAPIStub: PlanAPIClient {
 
   private static let undoneChange = Data(
     #"""
-    {"behind":null,"canApply":false,"canUndo":false,"effect":null,"examDocument":"notice",
+    {"behind":null,"canApply":false,"canUndo":false,"effect":null,"examDocument":"notice","quote":"q1",
     "id":"change-1","kind":"edited","officialDate":null,"operations":[],"reason":null,
     "source":"planEdit","status":"undone","todaySession":null}
     """#.utf8)
@@ -351,7 +353,7 @@ private actor PlanAPIStub: PlanAPIClient {
     throw APIError.notFound
   }
   func createOutline(token: String, goalId: String, skillId: String) async throws -> OutlineRequest
-  { .limit }
+  { .unavailable }
 }
 
 extension AppliedPlanChange {
@@ -363,7 +365,7 @@ extension GoalPlan {
   fileprivate static func stub(planId: String) throws -> GoalPlan {
     let json = """
       {
-        "access": { "freeWeekOver": false, "mocksRequirePlus": false },
+        "access": { "mocksRequirePlus": false },
         "areas": [], "bases": null, "course": null, "end": null,
         "estimate": { "endDate": null, "fullCourseEndDate": null },
         "examChoices": [], "examDocument": "notice", "feasibility": null, "fitOffer": null, "goalId": "goal",

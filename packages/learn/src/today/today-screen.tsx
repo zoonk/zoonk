@@ -19,21 +19,18 @@ import {
   type TodayHostNotices,
   TodayScreenProvider,
 } from "./today-context";
-import { TodayEarlierWork } from "./today-earlier-work";
 import { TodayHeading } from "./today-heading";
-import { TODAY_ACTION_CLASS, TODAY_ASIDE_CLASS, TODAY_MAIN_CLASS } from "./today-layout";
+import { TODAY_ASIDE_CLASS, TODAY_MAIN_CLASS } from "./today-layout";
 import { TodayMissions } from "./today-missions";
 import { TodayMore } from "./today-more";
 import { TodayNotice } from "./today-notice";
 import { TodayPractice } from "./today-practice";
 import { TodayPreparation } from "./today-preparation";
 import { TodaySession } from "./today-session-card";
-import { type TodaySyllabus } from "./today-subject-rows";
 import { TodayWeek } from "./today-week";
 import { isStopBeingWritten } from "./use-today-copy";
 
 export type { TodayHostNotices } from "./today-context";
-export type { TodaySyllabus } from "./today-subject-rows";
 
 const WRITING_REFRESH_MS = 5000;
 
@@ -41,7 +38,7 @@ const WRITING_REFRESH_MS = 5000;
 const WRITING_WAIT_MS = OUTLINE_STALE_AFTER_MS + WRITING_REFRESH_MS;
 const NO_MISTAKES: MistakeAvailability = { ready: 0, tomorrow: 0 };
 
-const NOTICE_CLASS = "max-[72rem]:-mt-7 sm:col-span-2";
+const NOTICE_CLASS = "max-[72rem]:-mt-4 sm:col-span-2";
 
 const ASIDE_LEAD_CLASS = "min-[72rem]:order-first";
 
@@ -55,21 +52,13 @@ function isWaitingForLessons(today: TodayView): boolean {
   return beingWritten || today.session.lessonsComing || today.session.state === "waiting";
 }
 
-function TodaySessionWithEarlierWork() {
-  return (
-    <div className="mt-5 [grid-area:session]">
-      <TodayEarlierWork />
-      <TodaySession />
-    </div>
-  );
-}
-
 export function TodayScreen({
   actions,
   banner = null,
   brainPower = null,
   buddy,
   completedLessons = false,
+  knownLessons = 0,
   level = null,
   missions = null,
   mistakes = NO_MISTAKES,
@@ -78,7 +67,6 @@ export function TodayScreen({
   planEnd = null,
   readAt,
   speakingEntry = null,
-  syllabus = null,
   today,
   unfinishedGoal = null,
 }: {
@@ -88,6 +76,7 @@ export function TodayScreen({
   brainPower?: number | null;
   buddy: LearnBuddy | null;
   completedLessons?: boolean;
+  knownLessons?: number;
   level?: LanguageTodayView["level"];
   missions?: MissionsDay | null;
   mistakes?: MistakeAvailability;
@@ -97,7 +86,6 @@ export function TodayScreen({
   /** Each new read waits a full window again, for whatever it shows waiting. */
   readAt: number;
   speakingEntry?: React.ReactNode;
-  syllabus?: TodaySyllabus | null;
   today: TodayView;
   /** A goal the learner typed and hasn't confirmed, offered with the day's notice. */
   unfinishedGoal?: React.ReactNode;
@@ -125,39 +113,43 @@ export function TodayScreen({
     <TodayScreenProvider
       value={{ actions, brainPower, buddy, missions, notices, planEnd, today, writingStalled }}
     >
-      <PageWithAside
-        aside={
-          <>
-            <TodayNotice className={NOTICE_CLASS} fallbackFocus={aside}>
-              {unfinishedGoal}
-            </TodayNotice>
-            <TodayMissions className={ASIDE_LEAD_CLASS} />
-            <TodayWeek className={ASIDE_LEAD_CLASS} />
-            <TodayPreparation className={ASIDE_LEAD_CLASS} level={level} syllabus={syllabus} />
-            <TodayPractice
-              completedLessons={completedLessons}
-              mistakes={mistakes}
-              mockEntry={mockEntry}
-              speakingEntry={speakingEntry}
-            />
-          </>
-        }
-        asideClassName={TODAY_ASIDE_CLASS}
-        asideLabel={t("Your week")}
-        asideRef={aside}
-      >
-        <Page data-slot="today">
-          {banner}
-          <section aria-label={t("Today's session")} className={TODAY_MAIN_CLASS}>
-            <TodayContinueProvider>
-              <TodayHeading className="[grid-area:head]" />
-              <TodayAction className={TODAY_ACTION_CLASS} />
-              <TodaySessionWithEarlierWork />
-              <TodayMore className="mt-4 [grid-area:more]" />
-            </TodayContinueProvider>
-          </section>
-        </Page>
-      </PageWithAside>
+      <TodayContinueProvider>
+        <PageWithAside
+          aside={
+            <>
+              <TodayNotice className={NOTICE_CLASS} fallbackFocus={aside}>
+                {unfinishedGoal}
+              </TodayNotice>
+              <TodayMissions className={ASIDE_LEAD_CLASS} />
+              <TodayWeek className={ASIDE_LEAD_CLASS} />
+              <TodayPreparation
+                className={ASIDE_LEAD_CLASS}
+                knownLessons={knownLessons}
+                level={level}
+              />
+              <TodayPractice
+                completedLessons={completedLessons}
+                mistakes={mistakes}
+                mockEntry={mockEntry}
+                speakingEntry={speakingEntry}
+              />
+            </>
+          }
+          asideClassName={TODAY_ASIDE_CLASS}
+          asideLabel={t("Your week")}
+          asideRef={aside}
+          bottomBar={<TodayAction />}
+        >
+          <Page data-slot="today">
+            {banner}
+            <section aria-label={t("Today's lessons")} className={TODAY_MAIN_CLASS}>
+              <TodayHeading />
+              <TodaySession className="mt-5" />
+              <TodayMore className="mt-4" />
+            </section>
+          </Page>
+        </PageWithAside>
+      </TodayContinueProvider>
     </TodayScreenProvider>
   );
 }

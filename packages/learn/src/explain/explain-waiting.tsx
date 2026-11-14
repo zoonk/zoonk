@@ -9,6 +9,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { CircleHelpIcon, GraduationCapIcon, RotateCwIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode, useEffect, useRef, useState, useTransition } from "react";
+import { Eyebrow } from "../_components/eyebrow";
 import {
   ListGroup,
   ListRowContent,
@@ -23,12 +24,11 @@ import { GenerationWait } from "../generation/generation-wait";
 import { useRefreshUntilShown } from "../generation/use-refresh-until-shown";
 import { LearnLink } from "../learn-link";
 import {
+  OnboardingActions,
   OnboardingColumn,
-  OnboardingFooter,
   OnboardingFrame,
   OnboardingHeading,
   OnboardingPrimaryButton,
-  OnboardingSubject,
   OnboardingTitle,
 } from "../onboarding/onboarding-frame";
 import { useQuickExplanationLabel } from "./quick-explanation-label";
@@ -49,7 +49,7 @@ function Outline({ titles }: { titles: string[] }) {
     <ol aria-label={t("What's coming")} className="flex flex-col text-sm [&>li+li]:border-t">
       {rows.map((row) => (
         <li className="flex min-h-11 items-center gap-3 py-2" key={row.id}>
-          <span className="text-faint w-4 shrink-0 font-mono text-xs tabular-nums">
+          <span className="text-faint w-4 shrink-0 text-center font-mono text-xs tabular-nums">
             {row.number}
           </span>
           {row.title ?? (
@@ -81,7 +81,7 @@ export function ExplainDeeperLink({ description, href }: { description: string; 
           </ListRowIcon>
         </ListRowLeading>
         <ListRowContent>
-          <ListRowTitle>{t("I want to learn this in depth")}</ListRowTitle>
+          <ListRowTitle>{t("Learn more about this")}</ListRowTitle>
           <ListRowDescription>{description}</ListRowDescription>
         </ListRowContent>
       </ListRowLink>
@@ -135,7 +135,7 @@ function SlowWait({ onRetry }: { onRetry: () => Promise<boolean> }) {
         tabIndex={-1}
       >
         {joined || isRetrying
-          ? t("Still writing your explanation. It shows up here as soon as it's ready.")
+          ? t("Still getting your explanation ready.")
           : t("This is taking longer than usual.")}
       </p>
 
@@ -182,19 +182,28 @@ export function ExplainWaiting({
         end: (
           <LearnLink
             aria-label={t("Close")}
-            className={buttonVariants({ size: "icon-bar", variant: "ghost" })}
+            className={buttonVariants({ edge: "end", size: "icon-bar", variant: "ghost" })}
             href={closeHref}
           >
-            <XIcon aria-hidden="true" className="size-5" />
+            <XIcon aria-hidden="true" />
           </LearnLink>
         ),
       }}
     >
-      <OnboardingColumn>
+      <OnboardingColumn
+        bar={
+          ready && (
+            <OnboardingActions>
+              <OnboardingPrimaryButton autoFocus onClick={onStart}>
+                {t("Start")}
+              </OnboardingPrimaryButton>
+            </OnboardingActions>
+          )
+        }
+      >
         <OnboardingHeading>
-          <OnboardingSubject>{quickExplanation}</OnboardingSubject>
+          <Eyebrow>{quickExplanation}</Eyebrow>
           <OnboardingTitle>{explanation.title}</OnboardingTitle>
-          <p className="text-muted-foreground text-sm">{t("No plan to set up.")}</p>
         </OnboardingHeading>
 
         {!ready && <GenerationWait kind="explanation" run={progress ?? UNFOLLOWED_RUN} />}
@@ -207,14 +216,6 @@ export function ExplainWaiting({
         {deeper}
 
         {!ready && !failed && <SlowWait onRetry={onRetry} />}
-
-        {ready && (
-          <OnboardingFooter>
-            <OnboardingPrimaryButton autoFocus onClick={onStart}>
-              {t("See explanation")}
-            </OnboardingPrimaryButton>
-          </OnboardingFooter>
-        )}
       </OnboardingColumn>
     </OnboardingFrame>
   );

@@ -4,41 +4,32 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { Loader2Icon, TargetIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { KindMark } from "../_components/kind-tile";
-import { PlusMark } from "../_components/plus-lock";
 import { TestOutStartLink } from "../_components/test-out-start-link";
 import { TITLE_ROW_CLASS, TRUNCATED_TITLE_CLASS } from "../_components/title-row";
 import { useFormatDuration } from "../_utils/time-format";
-import { LearnLink } from "../learn-link";
-import { useWaitLine } from "../missions/mission-copy";
 import { type MissionView } from "../missions/mission-links";
 import { BlockMark } from "../session/block-mark";
 import { type DayStep } from "../session/session-types";
-import { getChallengePhase, useBlockDetail, useBlockTitle } from "../session/use-block-copy";
+import { useBlockTitle } from "../session/use-block-copy";
 import { useTodayScreen } from "./today-context";
 import { NEXT_TITLE_ID } from "./today-ids";
 import { getLessonAgainId, isFinished } from "./today-queue";
 import { LessonAgainLink, ROW_OPEN_CLASS, RowOpen } from "./today-row-open";
-import { useRowLabel } from "./use-row-label";
-import { useLessonBeingWritten } from "./use-today-copy";
+import { useStepLabel } from "./use-row-label";
+import { useLessonGettingReady } from "./use-today-copy";
 
-function useWaitLabel() {
-  const t = useExtracted();
-  const waitLine = useWaitLine();
-
-  return (block: DayStep): string => {
-    const phase = getChallengePhase(block);
-    return phase ? t("{phase} · after this phase's lessons", { phase }) : waitLine();
-  };
-}
+/** A row's mark and minutes center on a row of one or two lines and sit on the first of three. */
+const THREE_LINES_CLASS = "has-[[data-slot=today-row-lines]>:nth-child(3)]:items-start";
 
 export function getRowClass({ finished, isNext }: { finished: boolean; isNext: boolean }): string {
   return cn(
-    "group/row relative isolate flex items-center gap-3 border-b last:border-b-0 has-[+[aria-current=step]]:border-b-0",
-    "has-[[data-slot=today-row-open]:hover]:before:bg-muted/70 before:pointer-events-none before:absolute before:inset-y-0.5 before:-z-10 before:rounded-[0.625rem] before:transition-colors",
+    "group/row relative isolate flex min-h-11 items-center gap-3 border-b last:border-b-0 has-[+[aria-current=step]]:border-b-0",
+    "has-[[data-slot=today-row-open]:hover]:before:bg-muted/70 before:pointer-events-none before:absolute before:inset-y-0.5 before:-z-10 before:rounded-lg before:transition-colors",
     finished ? "py-[9px]" : "py-2.75",
     isNext
-      ? "bg-muted -mx-2.5 my-0.5 items-start rounded-[0.625rem] border-b-0 px-2.5 before:inset-x-0"
+      ? "bg-muted -mx-2.5 my-0.5 rounded-lg border-b-0 px-2.5 before:inset-x-0"
       : "before:-inset-x-2.5",
+    THREE_LINES_CLASS,
   );
 }
 
@@ -62,9 +53,35 @@ function RowTime({ minutes }: { minutes: number }) {
   );
 }
 
+function opensStep(opens: MissionView["opens"], step: DayStep): boolean {
+  if (opens?.kind !== "block") {
+    return false;
+  }
+
+  return "blockId" in opens
+    ? "id" in step && opens.blockId === step.id
+    : opens.ref.position === step.position;
+}
+
+/** A step still to do that one of today's open missions asks for. */
+function useCountsTowardMission() {
+  const { missions } = useTodayScreen();
+
+  return (step: DayStep): boolean =>
+    Boolean(
+      !missions?.fullMeal.earned &&
+      !isFinished(step) &&
+      missions?.missions.some(
+        (mission) =>
+          mission.status === "todo" && !mission.waitReason && opensStep(mission.opens, step),
+      ),
+    );
+}
+
 function RowName({ block, isNext }: { block: DayStep; isNext: boolean }) {
   const t = useExtracted();
   const title = useBlockTitle();
+  const countsTowardMission = useCountsTowardMission()(block);
 
   return (
     <span
@@ -77,6 +94,7 @@ function RowName({ block, isNext }: { block: DayStep; isNext: boolean }) {
       {title(block)}
       {block.status === "completed" && <span className="sr-only">{t(", done")}</span>}
       {block.status === "skipped" && <span className="sr-only">{t(", skipped")}</span>}
+      {countsTowardMission && <span className="sr-only">{t(", counts toward a mission")}</span>}
     </span>
   );
 }
@@ -86,27 +104,18 @@ const ROW_LINE_CLASS = cn(TRUNCATED_TITLE_CLASS, "text-muted-foreground text-xs 
 function RowLines({ block, isNext }: { block: DayStep; isNext: boolean }) {
   const t = useExtracted();
   const { actions } = useTodayScreen();
-  const detail = useBlockDetail();
-  const isBeingWritten = useLessonBeingWritten();
-  const rowLabel = useRowLabel();
-  const waitLabel = useWaitLabel();
-  const reviewDetail = block.weakest || block.fullReview ? detail(block) : null;
-
-  const label = isBeingWritten(block) ? t("Being written for you…") : rowLabel(block);
-  const line = block.waitReason ? waitLabel(block) : label;
+  const isGettingReady = useLessonGettingReady();
+  const stepLabel = useStepLabel();
+  const line = isGettingReady(block) ? t("Getting ready…") : stepLabel(block);
 
   return (
     <>
       {line && <span className={ROW_LINE_CLASS}>{line}</span>}
 
-      {reviewDetail && (
-        <span className="text-muted-foreground text-xs leading-4">{reviewDetail}</span>
-      )}
-
       {isNext && block.canTestOut && block.chapterId && (
         <div className="relative">
           <TestOutStartLink
-            className="pt-1.5 text-xs"
+            className="text-xs leading-4"
             onStart={() => actions.startTestOut(block.chapterId ?? "")}
           />
         </div>
@@ -115,38 +124,13 @@ function RowLines({ block, isNext }: { block: DayStep; isNext: boolean }) {
   );
 }
 
-export function opensStep(opens: MissionView["opens"], step: DayStep): boolean {
-  if (opens?.kind !== "block") {
-    return false;
-  }
-
-  return "blockId" in opens
-    ? "id" in step && opens.blockId === step.id
-    : opens.ref.position === step.position;
-}
-
-function useCountsTowardMission() {
-  const { missions } = useTodayScreen();
-
-  return (step: DayStep): boolean =>
-    Boolean(
-      !missions?.fullMeal.earned &&
-      missions?.missions.some(
-        (mission) =>
-          mission.status === "todo" && !mission.waitReason && opensStep(mission.opens, step),
-      ),
-    );
-}
-
 function RowTarget({
   block,
-  countsTowardMission,
   isNext,
   lessonAgainId,
   opens,
 }: {
   block: DayStep;
-  countsTowardMission: boolean;
   isNext: boolean;
   lessonAgainId: string | null;
   opens: boolean;
@@ -166,7 +150,7 @@ function RowTarget({
   }
 
   return (
-    <RowOpen block={block} countsTowardMission={countsTowardMission} isNext={isNext}>
+    <RowOpen block={block} isNext={isNext}>
       {name}
     </RowOpen>
   );
@@ -198,19 +182,13 @@ export function BlockRow({
       )}
       data-slot={isNext ? "today-next" : undefined}
     >
-      <span className="flex h-5 w-3 shrink-0 items-center justify-center">
+      <span className="flex h-5 w-4 shrink-0 items-center justify-center">
         <BlockMark block={block} />
       </span>
 
-      <div className={cn(TITLE_ROW_CLASS, "min-w-0 flex-1", isNext && "items-start")}>
-        <div className="flex flex-col gap-px">
-          <RowTarget
-            block={block}
-            countsTowardMission={countsTowardMission}
-            isNext={isNext}
-            lessonAgainId={lessonAgainId}
-            opens={opens}
-          />
+      <div className={cn(TITLE_ROW_CLASS, "min-w-0 flex-1", THREE_LINES_CLASS)}>
+        <div className="flex flex-col gap-px" data-slot="today-row-lines">
+          <RowTarget block={block} isNext={isNext} lessonAgainId={lessonAgainId} opens={opens} />
 
           {!finished && <RowLines block={block} isNext={isNext} />}
         </div>
@@ -261,7 +239,7 @@ export function PlanLessonRow({
         isNext && disabled && !busy && "opacity-50",
       )}
     >
-      <span className="flex h-5 w-3 shrink-0 items-center justify-center">
+      <span className="flex h-5 w-4 shrink-0 items-center justify-center">
         <KindMark kind="lesson" />
       </span>
 
@@ -285,36 +263,6 @@ export function PlanLessonRow({
           <RowTime minutes={minutes} />
         </span>
       </div>
-    </li>
-  );
-}
-
-/**
- * Not part of the session: never the next block, no mission mark, and the day's segments, time and
- * action leave it out.
- */
-export function PlusLessonRow({ title }: { title: string }) {
-  const { actions } = useTodayScreen();
-
-  return (
-    <li
-      className={cn(
-        getRowClass({ finished: false, isNext: false }),
-        "has-[a:hover]:before:bg-muted/70",
-      )}
-    >
-      <span className="flex h-5 w-3 shrink-0 items-center justify-center">
-        <KindMark kind="lesson" />
-      </span>
-
-      <LearnLink
-        className={cn(ROW_OPEN_CLASS, "flex-1 items-center gap-3 after:-inset-x-2.5")}
-        href={actions.plusHref}
-        prefetch={false}
-      >
-        <span className="min-w-0 flex-1 truncate text-sm leading-5 font-medium">{title}</span>
-        <PlusMark />
-      </LearnLink>
     </li>
   );
 }

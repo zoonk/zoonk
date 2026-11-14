@@ -321,6 +321,7 @@ object AppLink {
         when (page) {
             "appearance" -> AppRoute.Preferences
             "memory" -> AppRoute.Memory
+            "privacy" -> AppRoute.PrivacySettings
             "reminders" -> AppRoute.Reminders
             "about-you" -> AppRoute.AboutYou
             else -> null

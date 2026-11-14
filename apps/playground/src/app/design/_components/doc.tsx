@@ -1,11 +1,20 @@
+import { SURFACE_CLASS } from "@zoonk/learn/surface";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, XIcon } from "lucide-react";
 
+/** The site's prose is 14 to 15 px, so the 40rem reading column would run past 90 characters. */
+const DOC_MEASURE = "max-w-lg";
+
+/** Every table on the site starts its second column on the same line. */
+export const DOC_TABLE_ROW = "grid gap-x-6 gap-y-1 border-t py-3 text-sm leading-5.5";
+export const DOC_THREE_COLUMNS = "lg:grid-cols-[14rem_minmax(0,1fr)_minmax(0,1fr)]";
+export const DOC_TABLE_HEAD = "text-faint hidden gap-x-6 pb-2 text-xs lg:grid";
+
 export function DocHeader({ children, title }: React.PropsWithChildren<{ title: string }>) {
   return (
-    <header className="max-w-column flex flex-col gap-2 pb-8">
+    <header className={cn(DOC_MEASURE, "flex flex-col gap-2 pb-8")}>
       <h1 className="text-title">{title}</h1>
-      <div className="text-muted-foreground text-[0.9375rem] leading-6 text-pretty">
+      <div className="text-muted-foreground text-reading leading-6 text-pretty">
         {typeof children === "string" ? renderCode(children) : children}
       </div>
     </header>
@@ -21,10 +30,12 @@ export function DocSection({
 }: React.PropsWithChildren<{ className?: string; id?: string; intro?: string; title: string }>) {
   return (
     <section className={cn("flex flex-col gap-4 pb-12", className)} id={id}>
-      <div className="max-w-column flex flex-col gap-1">
+      <div className={cn(DOC_MEASURE, "flex flex-col gap-1")}>
         <h2 className="text-section">{title}</h2>
         {intro && (
-          <p className="text-muted-foreground text-sm leading-6 text-pretty">{renderCode(intro)}</p>
+          <p className="text-muted-foreground text-sm leading-5.5 text-pretty">
+            {renderCode(intro)}
+          </p>
         )}
       </div>
       {children}
@@ -32,11 +43,19 @@ export function DocSection({
   );
 }
 
+/** A list's mark starts on the column's edge and its text 28px in, as `ListRow`'s does. */
+const LIST_ITEM = "flex gap-3";
+
 export function DocRules({ rules }: { rules: readonly string[] }) {
   return (
-    <ul className="max-w-column flex list-disc flex-col gap-1.5 pl-5 text-sm leading-6">
+    <ul className={cn(DOC_MEASURE, "flex flex-col gap-2 text-sm leading-5.5")}>
       {rules.map((rule) => (
-        <li key={rule}>{renderCode(rule)}</li>
+        <li className={LIST_ITEM} key={rule}>
+          <span aria-hidden="true" className="flex h-5.5 w-4 shrink-0 items-center">
+            <span className="size-1 rounded-full bg-current" />
+          </span>
+          <span>{renderCode(rule)}</span>
+        </li>
       ))}
     </ul>
   );
@@ -44,35 +63,18 @@ export function DocRules({ rules }: { rules: readonly string[] }) {
 
 export function Specimen({ children, className }: React.PropsWithChildren<{ className?: string }>) {
   return (
-    <div className={cn("ring-border rounded-xl p-5 ring-1 sm:p-6", className)} data-slot="specimen">
+    <div className={cn(SURFACE_CLASS, "p-5 sm:p-6", className)} data-slot="specimen">
       {children}
     </div>
   );
 }
 
-/**
- * Only the dev server runs next-intl's `useExtracted` without its compiler, so a production build
- * shows a note here instead of failing.
- */
-export function DevOnlySpecimen({ children }: React.PropsWithChildren) {
-  if (process.env.NODE_ENV !== "production") {
-    return children;
-  }
-
-  return (
-    <p className="text-muted-foreground text-sm">
-      This specimen&apos;s components speak through next-intl; run the playground with `pnpm dev` to
-      see them.
-    </p>
-  );
-}
-
 export function DoDont({ avoid, follow }: { avoid: readonly string[]; follow: readonly string[] }) {
   return (
-    <div className="grid gap-4 text-sm leading-6 sm:grid-cols-2">
-      <ul className="flex flex-col gap-1.5">
+    <div className="grid gap-4 text-sm leading-5.5 sm:grid-cols-2">
+      <ul className="flex flex-col gap-2">
         {follow.map((item) => (
-          <li className="flex gap-2" key={item}>
+          <li className={LIST_ITEM} key={item}>
             <CheckIcon aria-hidden="true" className="text-success mt-1 size-4 shrink-0" />
             <span>
               <span className="sr-only">Do: </span>
@@ -81,9 +83,9 @@ export function DoDont({ avoid, follow }: { avoid: readonly string[]; follow: re
           </li>
         ))}
       </ul>
-      <ul className="flex flex-col gap-1.5">
+      <ul className="flex flex-col gap-2">
         {avoid.map((item) => (
-          <li className="flex gap-2" key={item}>
+          <li className={LIST_ITEM} key={item}>
             <XIcon aria-hidden="true" className="text-destructive mt-1 size-4 shrink-0" />
             <span>
               <span className="sr-only">Don&apos;t: </span>
@@ -96,11 +98,13 @@ export function DoDont({ avoid, follow }: { avoid: readonly string[]; follow: re
   );
 }
 
+const CODE_CHIP = "bg-muted rounded px-1 py-0.5 font-mono text-xs leading-none";
+
 export function renderCode(text: string): React.ReactNode {
   return text.split(/(?<code>`[^`]+`)/u).map((part, index) =>
     part.startsWith("`") ? (
       // oxlint-disable-next-line react/no-array-index-key -- the parts are fixed for this text
-      <code className="bg-muted rounded px-1 py-0.5 font-mono text-[0.85em]" key={index}>
+      <code className={CODE_CHIP} key={index}>
         {part.slice(1, -1)}
       </code>
     ) : (

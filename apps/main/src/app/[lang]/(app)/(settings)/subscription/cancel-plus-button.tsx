@@ -3,6 +3,7 @@
 import { useRouter } from "@/i18n/navigation";
 import {
   AlertDialog,
+  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -11,7 +12,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@zoonk/ui/components/alert-dialog";
-import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { buttonVariants } from "@zoonk/ui/components/button";
+import { showErrorToast } from "@zoonk/ui/components/toast";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import { type CancelPlusResult, cancelPlusAction } from "./cancel-plus-action";
@@ -21,26 +23,32 @@ export function CancelPlusButton({ endsNow = false }: { endsNow?: boolean }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [pending, startTransition] = useTransition();
-  const [result, setResult] = useState<CancelPlusResult | null>(null);
 
   const cancel = () => {
     startTransition(async () => {
       const outcome = await cancelPlusAction().catch((): CancelPlusResult => "failed");
-      setResult(outcome);
 
-      if (outcome !== "failed") {
-        setOpen(false);
+      if (outcome === "failed") {
+        showErrorToast(
+          t("We couldn't cancel Plus. Try again or email {email}.", {
+            email: t("hello@zoonk.com"),
+          }),
+        );
 
-        if (outcome === "unavailable") {
-          router.refresh();
-        }
+        return;
+      }
+
+      setOpen(false);
+
+      if (outcome === "unavailable") {
+        router.refresh();
       }
     });
   };
 
   return (
     <AlertDialog onOpenChange={setOpen} open={open}>
-      <AlertDialogTrigger className={buttonVariants({ size: "sm", variant: "outline" })}>
+      <AlertDialogTrigger className={buttonVariants({ size: "lg", variant: "outline" })}>
         {t("Cancel Plus")}
       </AlertDialogTrigger>
       <AlertDialogContent>
@@ -48,22 +56,15 @@ export function CancelPlusButton({ endsNow = false }: { endsNow?: boolean }) {
           <AlertDialogTitle>{t("Cancel Plus?")}</AlertDialogTitle>
           <AlertDialogDescription>
             {endsNow
-              ? t("Plus ends right away, and we stop retrying your renewal payment.")
+              ? t("Plus ends right away, and you won't be charged again.")
               : t("You keep Plus until the end of the period you already paid for.")}
           </AlertDialogDescription>
         </AlertDialogHeader>
-        {result === "failed" && (
-          <p className="text-destructive-text text-sm" role="alert">
-            {t("We couldn't cancel Plus. Try again or email {email}.", {
-              email: t("hello@zoonk.com"),
-            })}
-          </p>
-        )}
         <AlertDialogFooter>
           <AlertDialogCancel disabled={pending}>{t("Go back")}</AlertDialogCancel>
-          <Button busy={pending} onClick={cancel}>
+          <AlertDialogAction busy={pending} onClick={cancel}>
             {t("Cancel Plus")}
-          </Button>
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

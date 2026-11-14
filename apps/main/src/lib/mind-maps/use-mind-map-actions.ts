@@ -1,8 +1,7 @@
 "use client";
 
 import { getFromBrowser, postFromBrowser } from "@/lib/api/browser-api";
-import { readRefusedLimit } from "@/lib/api/refused-limit";
-import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes";
+import { readRefusedLessonLimit } from "@/lib/api/refused-limit";
 import {
   type ChapterMindMapView,
   type GoalMindMapGenerations,
@@ -28,7 +27,13 @@ import { useMemo } from "react";
 
 const HTTP_UNPROCESSABLE = 422;
 
-const LIMIT_RESOURCES = ["aiSpend", "generatedLessons", "lessonStart", "mindMap"] as const;
+const LIMIT_RESOURCES = [
+  "aiSpend",
+  "chapterLessons",
+  "generatedLessons",
+  "lessonStart",
+  "mindMap",
+] as const;
 
 function goalPath(goalId: string) {
   return `/v1/goals/${encodeURIComponent(goalId)}` as const;
@@ -60,11 +65,7 @@ async function requestMindMap(target: {
 
   const body: unknown = await response.json().catch(() => null);
 
-  if (getString(getError(body), "code") === LESSON_PLAYER_ERROR_CODES.plusRequired) {
-    return { status: "plusRequired" };
-  }
-
-  const limit = readRefusedLimit({ body, status: response.status });
+  const limit = readRefusedLessonLimit({ body, status: response.status });
 
   if (limit) {
     return { limit: { ...limit, resource: readLimitResource(body) }, status: "refused" };

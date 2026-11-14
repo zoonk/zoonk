@@ -145,7 +145,7 @@ internal fun MockRunnerView(
                     if (!beside) {
                         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                             QuestionMap(run, onPick = viewModel::go)
-                            SheetLegend()
+                            SheetLegend(run.counts.flagged)
                             MovesNote(run.moves)
                         }
                     }
@@ -389,21 +389,19 @@ private fun RunnerActions(
                 text =
                     when {
                         !last -> stringResource(R.string.mock_next)
-                        run.isLastSection -> stringResource(R.string.mock_hand_in_mock)
+                        run.isLastSection -> stringResource(R.string.mock_hand_in)
                         else -> stringResource(R.string.mock_hand_in_section)
                     },
                 busy = handingIn,
                 enabled = !run.pending && run.moves.canAdvance,
                 onClick = { if (last) onHandIn() else viewModel.go(run.position + 1) },
                 modifier = width,
-                leadingIcon = if (last) ({ ButtonIcon(R.drawable.ic_send) }) else null,
-                trailingIcon = if (last) null else ({ ButtonIcon(R.drawable.ic_arrow_forward) }),
             )
         }
     }
 }
 
-/** Main's `MockQuestionMap`: the nine questions around the one on screen, to jump between. */
+/** Main's `MockQuestionMap`: the stretch of seven questions that holds the one on screen, to jump between. */
 @Composable
 private fun QuestionMap(
     run: MockRun,
@@ -411,21 +409,23 @@ private fun QuestionMap(
 ) {
     if (run.questions.size <= 1) return
     BoxWithConstraints {
-        // Main's strip shows nine; a phone fits fewer once each is a separate 48dp target.
+        // Main's strip shows seven; a narrow window fits fewer once each is a separate 48dp target.
         val perRow = ((maxWidth + MAP_GAP) / (MAP_TARGET + MAP_GAP)).toInt().coerceIn(1, MAP_ROW)
         val start = run.position / perRow * perRow
         val shown = run.questions.drop(start).take(perRow)
         Row(horizontalArrangement = Arrangement.spacedBy(MAP_GAP)) {
             shown.forEachIndexed { offset, question ->
-                QuestionCell(run, start + offset, question, onPick, Modifier.weight(1f), compact = true)
+                QuestionCell(run, start + offset, question, onPick, Modifier.weight(1f))
             }
             repeat(perRow - shown.size) { Box(Modifier.weight(1f)) }
         }
     }
 }
 
+/** How many questions are flagged, under the map: nothing until one is. */
 @Composable
-internal fun SheetLegend() {
+internal fun SheetLegend(flagged: Int) {
+    if (flagged == 0) return
     val style = MaterialTheme.typography.bodySmall
     val density = LocalDensity.current
     val glyph = with(density) { style.fontSize.toDp() }
@@ -434,7 +434,11 @@ internal fun SheetLegend() {
     // The mark sits on the first line and grows with the words.
     Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.Top) {
         FlagGlyph(Modifier.padding(top = (line - glyph) / 2).size(glyph))
-        Text(stringResource(R.string.mock_legend), color = MaterialTheme.colorScheme.onSurfaceVariant, style = style)
+        Text(
+            pluralStringResource(R.plurals.mock_flagged_count, flagged, flagged),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = style,
+        )
     }
 }
 
@@ -538,14 +542,14 @@ private fun AnswerSheet(
                     run.questions.withIndex().chunked(perRow).forEach { row ->
                         Row(horizontalArrangement = Arrangement.spacedBy(SHEET_GAP)) {
                             row.forEach { (index, question) ->
-                                QuestionCell(run, index, question, onPick, Modifier.weight(1f), compact = false)
+                                QuestionCell(run, index, question, onPick, Modifier.weight(1f))
                             }
                             repeat(perRow - row.size) { Box(Modifier.weight(1f)) }
                         }
                     }
                 }
             }
-            SheetLegend()
+            SheetLegend(run.counts.flagged)
             if (withMoves) MovesNote(run.moves)
         }
         SheetNotes(run)
@@ -555,34 +559,15 @@ private fun AnswerSheet(
 
 @Composable
 private fun SheetNotes(run: MockRun) {
-    val tools = run.currentSection?.tools
-    val examQuestions = run.view.examQuestions
-    val reused = run.view.reusedQuestions.toInt()
-    val questions = run.view.questions.toInt()
-    val lines =
-        listOfNotNull(
-            tools?.let { R.drawable.ic_edit_square to it },
-            examQuestions?.takeIf { it > questions }?.let {
-                null to
-                    pluralStringResource(R.plurals.mock_short, questions, questions, it.toInt())
-            },
-            reused.takeIf { it > 0 }?.let { R.drawable.ic_history to pluralStringResource(R.plurals.mock_reused, it, it) },
+    val tools = run.currentSection?.tools ?: return
+    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+        Icon(
+            painterResource(R.drawable.ic_edit_square),
+            contentDescription = null,
+            modifier = Modifier.size(16.dp),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-    if (lines.isEmpty()) return
-    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        lines.forEach { (icon, text) ->
-            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                icon?.let {
-                    Icon(
-                        painterResource(it),
-                        contentDescription = null,
-                        modifier = Modifier.size(16.dp),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-                Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
-            }
-        }
+        Text(tools, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
     }
 }
 
@@ -642,14 +627,10 @@ internal fun SheetSections(
 
 @Composable
 private fun sheetCounts(counts: SectionCounts): String =
-    stringResource(
-        R.string.mock_row_detail,
-        pluralStringResource(R.plurals.mock_answered_count, counts.answered, counts.answered),
-        pluralStringResource(R.plurals.mock_flagged_count, counts.flagged, counts.flagged),
-    )
+    pluralStringResource(R.plurals.mock_answered_count, counts.answered, counts.answered)
 
-private const val MAP_ROW = 9
-private val MAP_GAP = 6.dp
+private const val MAP_ROW = 7
+private val MAP_GAP = 8.dp
 private val MAP_TARGET = 48.dp
 private val SHEET_GAP = 8.dp
 private const val LARGE_FONT_SCALE = 1.5f

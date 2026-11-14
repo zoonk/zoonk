@@ -1,10 +1,5 @@
 import { MIN_PATTERN_ANSWERS, type ScorePerformance } from "@zoonk/core/progress/score-performance";
-import {
-  PageSection,
-  PageSectionFooter,
-  PageSectionHeader,
-  PageSectionTitle,
-} from "@zoonk/learn/page";
+import { PageSection, PageSectionHeader, PageSectionTitle } from "@zoonk/learn/page";
 import {
   ChartInspector,
   ChartInspectorPoint,
@@ -29,13 +24,13 @@ const COLUMN_CLASS = "flex min-w-0 flex-col items-center gap-2 pt-1 pb-2";
 const PLOT_CLASS =
   "border-border flex h-[calc(var(--pattern-bar)+3rem)] w-full flex-col items-center justify-end gap-1 border-b";
 
-const BAR_CLASS = "w-full max-w-8 shrink-0 rounded-t-[3px]";
+const BAR_CLASS = "w-full max-w-8 shrink-0 rounded-t-meter";
 
 const CHIP_CLASS = "flex size-9 items-center justify-center rounded-full";
 
 const NAME_CLASS = "max-w-full truncate px-0.5 text-xs leading-4";
 
-const CAPTION_CLASS = "-mt-1.5 text-[0.6875rem] leading-4";
+const CAPTION_CLASS = "-mt-1.5 text-2xs leading-4";
 
 const DASH = "–";
 
@@ -208,13 +203,11 @@ function PatternColumn({
 export async function PatternChart({
   bestLabel,
   columns,
-  footer,
   id,
   title,
 }: {
   bestLabel: string;
   columns: PatternColumnView[];
-  footer?: string | null;
   id: string;
   title: string;
 }) {
@@ -254,8 +247,6 @@ export async function PatternChart({
 
         <ChartInspectorTooltip within={PROGRESS_CONTENT_SELECTOR} />
       </ChartInspector>
-
-      {footer && <PageSectionFooter>{footer}</PageSectionFooter>}
     </PageSection>
   );
 }

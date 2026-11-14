@@ -174,8 +174,6 @@ fun RunFinished(
     onClose: () -> Unit,
     detail: String? = null,
     headerTitle: String? = null,
-    actionLeadingIcon: (@Composable () -> Unit)? = null,
-    actionTrailingIcon: (@Composable () -> Unit)? = null,
     actions: (@Composable () -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
@@ -193,8 +191,6 @@ fun RunFinished(
                                 busy = saving,
                                 onClick = onClose,
                                 modifier = width,
-                                leadingIcon = actionLeadingIcon,
-                                trailingIcon = actionTrailingIcon,
                             ) { Text(action) }
                         }
                     }

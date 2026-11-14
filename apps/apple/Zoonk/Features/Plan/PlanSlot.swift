@@ -1,26 +1,24 @@
 import SwiftUI
 
-/// The most pressing first, in main's order.
+/// The most pressing first, in main's order. Being behind is the Schedule tile's, not a
+/// suggestion: there's nothing to answer.
 enum PlanSlotItem: Hashable {
-  case behind(String)
   case choice(GoalPlan.ExamChoice)
   case courseComplete
   case coverage(String)
   case finished
   case fitLessons
-  case freeWeekOver
-  case pastDate(String)
+  case pastDate
   case paused
   case tooTight
 
   /// `courseComplete` while a finished part's certificate isn't written yet.
   static func items(
-    plan: GoalPlan, isPaused: Bool, isExam: Bool, courseComplete: Bool
+    plan: GoalPlan, isPaused: Bool, courseComplete: Bool
   ) -> [PlanSlotItem] {
-    let fix = planPaceFix(plan, isExam: isExam)
     let status = plan.status?.kind
     let finished = plan.end != nil
-    let open = !plan.access.freeWeekOver && status != .pastDate
+    let open = status != .pastDate
     let coverage = planCoverageText(plan)
     let timeItems: [PlanSlotItem] = [
       open && plan.fitOffer != nil ? .fitLessons : nil,
@@ -29,35 +27,29 @@ enum PlanSlotItem: Hashable {
 
     var items: [PlanSlotItem] = !finished && courseComplete ? [.courseComplete] : []
 
+    // A paused goal and a passed date are what the page asks about first (the bar answers both on an
+    // exam).
     if isPaused {
       items.append(.paused)
     }
 
-    items += plan.examChoices.filter(\.subjects.isEmpty).map { .choice($0) }
-
-    if status == .pastDate, let fix {
-      items.append(.pastDate(fix.text))
+    if status == .pastDate {
+      items.append(.pastDate)
     }
+
+    items += plan.examChoices.filter(\.subjects.isEmpty).map { .choice($0) }
 
     if finished {
       items += timeItems
       items.append(.finished)
     }
 
-    if status == .needsAdjusting, fix != nil {
+    if status == .needsAdjusting {
       items.append(.tooTight)
-    }
-
-    if status == .behind, let fix {
-      items.append(.behind(fix.text))
     }
 
     if !finished {
       items += timeItems
-    }
-
-    if plan.access.freeWeekOver {
-      items.append(.freeWeekOver)
     }
 
     return items
@@ -77,7 +69,8 @@ struct PlanSlotAnswer {
   var isOver: Bool { until.map { $0 <= .now } ?? false }
 }
 
-/// One thing at a time, paged as main's slot is: "Not now" puts one off for as long as the app runs.
+/// One thing at a time, with "{count} more" bringing up the next, as main's slot does: "Not now"
+/// puts one off for as long as the app runs.
 /// An answer that changes the plan says what it did, with Undo, for a moment. In the page's column
 /// it's main's suggestion line, its summary with "View" opening the whole suggestion in a sheet,
 /// which the screen presents (`sheetItem`); beside the page (`isInline`) it's the whole suggestion.
@@ -90,7 +83,6 @@ struct PlanSuggestionSection: View {
 
   private static let resultSeconds: TimeInterval = 8
 
-  @Environment(AppRouter.self) private var router
   @Environment(PlanStore.self) private var store
   @Environment(\.dismiss) private var dismiss
   @AccessibilityFocusState private var focus: Focus?
@@ -119,8 +111,7 @@ struct PlanSuggestionSection: View {
     let unclaimed =
       isExam ? store.planEnd(goalId: context.goal.id).value?.certificates?.unclaimed ?? [] : []
     let items = PlanSlotItem.items(
-      plan: context.plan, isPaused: context.isPaused, isExam: isExam,
-      courseComplete: !unclaimed.isEmpty
+      plan: context.plan, isPaused: context.isPaused, courseComplete: !unclaimed.isEmpty
     ).filter { !state.dismissed.contains($0) }
     let answer = currentAnswer
     let applied: (change: AppliedPlanChange, sentence: String)? =
@@ -142,8 +133,15 @@ struct PlanSuggestionSection: View {
 
     return Group {
       if isShowing {
-        slot(item)
-        answerFailure(item)
+        if item == .finished {
+          SuggestionSheetBody {
+            slot(item)
+          }
+        } else {
+          slot(item)
+            .environment(
+              \.suggestionSheetNote, failed(item) ? BarNote(SuggestionSaveError.message) : nil)
+        }
       }
     }
     .disabled(currentAnswer?.editor.isSaving == true)
@@ -173,6 +171,9 @@ struct PlanSuggestionSection: View {
           } else if isInline {
             slot(item)
             answerFailure(item)
+          } else if isStatement(item) {
+            slot(item)
+              .accessibilityFocused($focus, equals: .item)
           } else {
             let summary = summary(item)
 
@@ -182,15 +183,8 @@ struct PlanSuggestionSection: View {
               summary.text
                 .accessibilityFocused($focus, equals: .item)
             } action: {
-              // Main's free-week line offers Plus itself; the others open in full.
-              if item == .freeWeekOver {
-                SeePlusButton()
-                  .buttonStyle(.outline)
-                  .controlSize(.small)
-              } else {
-                SuggestionViewButton {
-                  context.show(.suggestion(item))
-                }
+              SuggestionViewButton {
+                context.show(.suggestion(item))
               }
             }
           }
@@ -302,11 +296,14 @@ struct PlanSuggestionSection: View {
 
   @ViewBuilder
   private func answerFailure(_ item: PlanSlotItem) -> some View {
-    if currentAnswer?.item == item, currentAnswer?.editor.latest == nil,
-      currentAnswer?.editor.failed == true
-    {
+    if failed(item) {
       SuggestionSaveError()
     }
+  }
+
+  private func failed(_ item: PlanSlotItem) -> Bool {
+    currentAnswer?.item == item && currentAnswer?.editor.latest == nil
+      && currentAnswer?.editor.failed == true
   }
 
   /// Clears the answer once its moment is over, later while the learner is on it or its Undo is
@@ -346,57 +343,34 @@ struct PlanSuggestionSection: View {
   @ViewBuilder
   private func pager(index: Int, count: Int, isHidden: Bool) -> some View {
     if count > 1 {
-      pages(index: index, count: count)
-        .opacity(isHidden ? 0 : 1)
-        .allowsHitTesting(!isHidden)
-        .accessibilityHidden(isHidden)
-    }
-  }
+      HStack {
+        Spacer()
 
-  private func pages(index: Int, count: Int) -> some View {
-    HStack(spacing: 0) {
-      Spacer()
+        Button {
+          move(to: index + 1, count: count)
+        } label: {
+          HStack(spacing: 4) {
+            Text(
+              "\(count - 1) more", tableName: "Plan",
+              comment:
+                "Brings up the next of the Plan's suggestions; the number is how many others there are"
+            )
 
-      pageButton(
-        Text(
-          "Previous", tableName: "Plan",
-          comment: "Goes back to the previous of the Plan's suggestions"),
-        systemImage: "chevron.left"
-      ) {
-        move(to: index - 1, count: count)
-      }
-
-      Text(
-        "\(index + 1) of \(count)", tableName: "Plan",
-        comment: "The suggestion shown of the Plan's suggestions"
-      )
-      .typeStyle(.data)
-      .foregroundStyle(.mutedForeground)
-
-      pageButton(
-        Text("Next", tableName: "Plan", comment: "Goes on to the next of the Plan's suggestions"),
-        systemImage: "chevron.right"
-      ) {
-        move(to: index + 1, count: count)
-      }
-    }
-  }
-
-  private func pageButton(
-    _ title: Text, systemImage: String, action: @escaping () -> Void
-  ) -> some View {
-    Button(action: action) {
-      Label {
-        title
-      } icon: {
-        Image(systemName: systemImage)
-          .typeStyle(.body)
-          .frame(minWidth: 44, minHeight: 44)
+            Image(systemName: "chevron.forward")
+              .imageScale(.small)
+              .accessibilityHidden(true)
+          }
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
+          .frame(minHeight: 44)
           .contentShape(.rect)
+        }
+        .buttonStyle(.borderless)
       }
-      .labelStyle(.iconOnly)
+      .opacity(isHidden ? 0 : 1)
+      .allowsHitTesting(!isHidden)
+      .accessibilityHidden(isHidden)
     }
-    .buttonStyle(.borderless)
   }
 
   private func move(to index: Int, count: Int) {
@@ -424,111 +398,91 @@ struct PlanSuggestionSection: View {
     )
   }
 
+  /// The page's bottom bar answers it, so its line says everything and opens nothing.
+  private func isStatement(_ item: PlanSlotItem) -> Bool {
+    item == .paused || (item == .pastDate && context.goal.kind == .exam)
+  }
+
   @ViewBuilder
   private func slot(_ item: PlanSlotItem) -> some View {
+    let offers = PlanSlotActions(
+      apply: { edits in apply(item) { await $0.change(edits) } },
+      notNow: { notNow(item) })
+
     switch item {
     case .paused:
-      PlanPausedSlot(context: context)
+      PlanPausedSlot(context: context, isLine: !isInline)
     case .choice(let choice) where choice.take > 1:
-      card(
-        title: choiceTitle(choice), mark: .symbol("signpost.right"),
-        description: Text(choice.leftOut.line),
-        options: {
-          Text.examPickLimit(choice.take)
-            .typeStyle(.note)
-            .foregroundStyle(.mutedForeground)
-
-          ExamOptionToggles(
-            options: choice.options, take: choice.take,
-            picked: Binding(
-              get: { draft(choice) },
-              set: { names in
-                store.setSuggestionState(store.suggestionKey(goalId: context.goal.id)) {
-                  $0.choiceDrafts[choice.group] = names
-                }
-              }))
-        },
-        actions: {
-          Button {
-            choose(draft(choice), in: choice, item: item)
-          } label: {
-            Text(
-              "Save", tableName: "Plan", comment: "Saves the options picked for an exam's choice")
-          }
-          .disabled(draft(choice).isEmpty)
-        })
-    case .choice(let choice):
-      card(
+      PlanSlotCard(
         title: choiceTitle(choice), mark: .symbol("signpost.right"),
         description: Text(choice.leftOut.line)
       ) {
-        Menu {
+        Text.examPickLimit(choice.take)
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
+
+        ExamOptionToggles(
+          options: choice.options, take: choice.take,
+          picked: Binding(
+            get: { draft(choice) },
+            set: { names in
+              store.setSuggestionState(store.suggestionKey(goalId: context.goal.id)) {
+                $0.choiceDrafts[choice.group] = names
+              }
+            }))
+      } actions: {
+        Button {
+          choose(draft(choice), in: choice, item: item)
+        } label: {
+          Text(
+            "Save", tableName: "Plan", comment: "Saves the options picked for an exam's choice")
+        }
+        .buttonStyle(.mainAction)
+        .disabled(draft(choice).isEmpty)
+      }
+    case .choice(let choice):
+      PlanSlotCard(
+        title: choiceTitle(choice), mark: .symbol("signpost.right"),
+        description: Text(choice.leftOut.line)
+      ) {
+        // Equal picks: one under the other in their order, none drawn as the main answer.
+        VStack(spacing: 8) {
           ForEach(choice.options, id: \.self) { option in
             Button(option.name) {
               choose([option.name], in: choice, item: item)
             }
+            .buttonStyle(.outline)
+            .buttonSizing(.flexible)
           }
-        } label: {
-          Text("Choose", tableName: "Plan", comment: "Opens an exam choice's options")
         }
+        .controlSize(.large)
+      } actions: {
+        EmptyView()
       }
-    case .pastDate(let text):
-      card(
-        title: Text(
-          "Your date came", tableName: "Plan",
-          comment: "Title of the Plan's notice when the goal's date came"),
-        mark: .symbol("calendar.badge.clock"), description: Text(text)
-      ) {
-        Button {
-          context.adjust(.date)
-        } label: {
-          Text("Change the date", tableName: "Plan", comment: "Opens the plan's date to change it")
-        }
-
-        notNow(item)
+    case .pastDate:
+      if context.goal.kind == .exam {
+        PlanExamOverSlot(context: context, isLine: !isInline)
+      } else {
+        PlanPastDateSlot(context: context, actions: offers)
       }
     case .fitLessons:
-      fitLessons(item)
-    case .coverage(let text):
-      card(title: Text(text), mark: .sparkle, description: nil) {
-        Button {
-          context.adjust(.time)
-        } label: {
-          Text(
-            "Change time a day", tableName: "Plan",
-            comment: "Opens the plan's study time a day to change it")
-        }
-
-        // Where the time should go, for a learner who hasn't taken the Focus test.
-        if context.plan.focusTest?.notStartedOffer != nil {
-          Button {
-            router.open(.focusTest(goalId: context.goal.id))
-          } label: {
-            Text(FocusTestCopy.takeTest)
-          }
-        }
-
-        notNow(item)
+      if let offer = context.plan.fitOffer {
+        PlanFitSlot(context: context, offer: offer, title: fitTitle(offer), actions: offers)
       }
+    case .coverage(let text):
+      PlanCoverageSlot(context: context, title: text, asksAtOnce: !isInline, actions: offers)
     case .courseComplete:
-      VStack(alignment: .leading, spacing: 8) {
-        Label {
-          completeTitle
-            .typeStyle(.body.weight(.semibold))
-        } icon: {
-          StatusMark(status: .done)
-        }
-
+      PlanSlotCard(title: completeTitle, mark: .done, description: nil) {
         CertificateClaimButton(context: context)
       }
     case .finished:
       PlanFinishedSlot(context: context)
     case .tooTight:
-      card(
-        title: Text(
-          "Your plan no longer fits", tableName: "Plan",
-          comment: "Title of the Plan's notice when the plan no longer fits"),
-        mark: .symbol("calendar.badge.clock"), description: nil
+      PlanSlotCard(
+        title: Text(tooTightTitle), mark: .symbol("calendar.badge.clock"),
+        description: Text(
+          "Add time a day or pick a later date.", tableName: "Plan",
+          comment: "Under the Plan's notice when the plan has more lessons than days left")
       ) {
         Button {
           context.adjust(.top)
@@ -536,29 +490,27 @@ struct PlanSuggestionSection: View {
           Text(
             "Adjust plan", tableName: "Plan", comment: "Opens the plan's settings to change them")
         }
+        .buttonStyle(.mainAction)
       }
-    case .behind(let text):
-      card(
-        title: Text(
-          "A little to catch up", tableName: "Plan",
-          comment: "Title of the Plan's notice when behind"),
-        mark: .symbol("calendar.badge.clock"), description: Text(text)
-      ) {
-        Button {
-          router.select(.today)
-        } label: {
-          Text(
-            "Go to Today", tableName: "Plan", comment: "Opens Today, which puts what's behind first"
-          )
-        }
-      }
-    case .freeWeekOver:
-      FreeWeekOverNotice(isInset: true)
     }
   }
 
-  /// What the line says for each suggestion, as main's `SuggestionSummary`: its title, or for a pace
-  /// that's behind, how to catch up.
+  private func header(_ title: Text, icon: some View) -> some View {
+    Label {
+      title.typeStyle(.body.weight(.semibold))
+    } icon: {
+      icon
+    }
+    .accessibilityFocused($focus, equals: .item)
+  }
+
+  private var tooTightTitle: String {
+    String(
+      localized: "More lessons than days left", table: "Plan",
+      comment: "Title of the Plan's notice when the plan has more lessons than days left")
+  }
+
+  /// What the line says for each suggestion, as main's `SuggestionSummary`: its title.
   private func summary(_ item: PlanSlotItem) -> (text: Text, mark: SuggestionMark.Kind) {
     switch item {
     case .paused:
@@ -570,12 +522,7 @@ struct PlanSuggestionSection: View {
     case .choice(let choice):
       (choiceTitle(choice), .symbol("signpost.right"))
     case .pastDate:
-      (
-        Text(
-          "Your date came", tableName: "Plan",
-          comment: "Title of the Plan's notice when the goal's date came"),
-        .symbol("calendar.badge.clock")
-      )
+      (Text(planPastDateTitle(isExam: context.goal.kind == .exam)), .symbol("calendar.badge.clock"))
     case .fitLessons:
       (context.plan.fitOffer.map(fitTitle) ?? Text(verbatim: ""), .sparkle)
     case .coverage(let text):
@@ -588,16 +535,7 @@ struct PlanSuggestionSection: View {
         .done
       )
     case .tooTight:
-      (
-        Text(
-          "Your plan no longer fits", tableName: "Plan",
-          comment: "Title of the Plan's notice when the plan no longer fits"),
-        .symbol("calendar.badge.clock")
-      )
-    case .behind(let text):
-      (Text(text), .symbol("calendar.badge.clock"))
-    case .freeWeekOver:
-      (Text(FreeWeekOverNotice.title), .symbol("sparkles"))
+      (Text(tooTightTitle), .symbol("calendar.badge.clock"))
     }
   }
 
@@ -617,107 +555,17 @@ struct PlanSuggestionSection: View {
   private func fitTitle(_ offer: GoalPlan.FitOffer) -> Text {
     guard offer.fits, let covers = planCoversEverythingText(context.plan) else {
       return Text(
-        "\(offer.effect.lessonsAdded) more lessons fit in your time", tableName: "Plan",
-        comment: "Title of the offer that brings more lessons in")
+        "You have time for \(offer.effect.lessonsAdded) more lessons", tableName: "Plan",
+        comment: "Title of the offer that brings into the plan more lessons the learner's time fits"
+      )
     }
 
     return covers
   }
 
-  @ViewBuilder
-  private func fitLessons(_ item: PlanSlotItem) -> some View {
-    if let offer = context.plan.fitOffer {
-      let title = fitTitle(offer)
-
-      card(
-        title: title, mark: .sparkle,
-        description: topicsMoved(offer.effect).map(Text.init),
-        effect: offer.effect
-      ) {
-        if offer.canApply {
-          Button {
-            applyOffer(offer, item: item)
-          } label: {
-            Text("Apply", tableName: "Plan", comment: "Applies a plan offer")
-          }
-        }
-
-        notNow(item)
-      }
-    }
-  }
-
-  private func card(
-    title: Text, mark: SuggestionMark.Kind, description: Text?, effect: PlanEffect? = nil,
-    @ViewBuilder options: () -> some View = { EmptyView() },
-    @ViewBuilder actions: () -> some View
-  ) -> some View {
-    VStack(alignment: .leading, spacing: 8) {
-      header(title, icon: SuggestionMark(kind: mark))
-
-      if let description {
-        description
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
-      }
-
-      PlanEffectDiff(effect: effect, today: context.plan.today)
-
-      options()
-
-      ButtonRow {
-        actions()
-      }
-      .buttonStyle(.outline)
-    }
-  }
-
-  private func header(_ title: Text, icon: some View) -> some View {
-    Label {
-      title.typeStyle(.body.weight(.semibold))
-    } icon: {
-      icon
-    }
-    .accessibilityFocused($focus, equals: .item)
-  }
-
-  /// Main's `useTopicsMovedSentence`, naming two topics.
-  private func topicsMoved(_ effect: PlanEffect) -> String? {
-    let out = (effect.topicsLeftOut ?? []).flatMap(\.topics)
-    let back = (effect.topicsAdded ?? []).flatMap(\.topics)
-    let outList = planTopicList(out, named: 2)
-    let backList = planTopicList(back, named: 2)
-    let sentences = [
-      out.isEmpty
-        ? nil
-        : out.count == 1
-          ? String(
-            localized: "\(outList) no longer fits by your date.", table: "Plan",
-            comment: "One topic a change leaves out of what the goal's date covers")
-          : String(
-            localized: "\(outList) no longer fit by your date.", table: "Plan",
-            comment: "Topics a change leaves out of what the goal's date covers, listed"),
-      back.isEmpty
-        ? nil
-        : back.count == 1
-          ? String(
-            localized: "\(backList) now fits by your date.", table: "Plan",
-            comment: "One topic a change brings into what the goal's date covers")
-          : String(
-            localized: "\(backList) now fit by your date.", table: "Plan",
-            comment: "Topics a change brings into what the goal's date covers, listed"),
-    ].compactMap(\.self)
-
-    return sentences.isEmpty ? nil : sentences.joinedSentences()
-  }
-
-  private func notNow(_ item: PlanSlotItem) -> some View {
-    Button {
-      store.setSuggestionState(store.suggestionKey(goalId: context.goal.id)) {
-        $0.dismissed.insert(item)
-      }
-    } label: {
-      Text("Not now", tableName: "Plan", comment: "Puts a suggestion off")
+  private func notNow(_ item: PlanSlotItem) {
+    store.setSuggestionState(store.suggestionKey(goalId: context.goal.id)) {
+      $0.dismissed.insert(item)
     }
   }
 
@@ -733,24 +581,15 @@ struct PlanSuggestionSection: View {
     }
   }
 
-  /// Main words the change from its one operation, `fitLessons`.
-  private func applyOffer(_ offer: GoalPlan.FitOffer, item: PlanSlotItem) {
-    apply(item) { editor in
-      await editor.change(
-        offer.operations.map { .operation($0) },
-        sentence: String(
-          localized: "The lessons your time fits come into your plan.", table: "Plan",
-          comment: "Says a plan change brought in the lessons the learner's study time fits"))
-    }
-  }
-
   /// A new editor for each answer, so the last answer's result never shows as this one's.
   private func apply(
     _ item: PlanSlotItem, _ write: @escaping (PlanEditor) async -> Bool,
     saved: @escaping (inout PlanStore.SuggestionState) -> Void = { _ in }
   ) {
     let key = store.suggestionKey(goalId: context.goal.id)
-    let editor = PlanEditor(goalId: context.goal.id, store: store)
+    let editor = PlanEditor(
+      goalId: context.goal.id, store: store,
+      dateKind: GoalDateKind(isExam: context.goal.kind == .exam))
     answer = PlanSlotAnswer(key: key, item: item, editor: editor)
 
     Task {
@@ -761,88 +600,71 @@ struct PlanSuggestionSection: View {
   }
 }
 
+/// Its Resume is the Plan's bottom bar (`resumeGoalBar`), so it only says what pausing means.
 private struct PlanPausedSlot: View {
   @Environment(PlanStore.self) private var store
-  @State private var isResuming = false
-  @State private var failure: GoalStatusOutcome?
 
   let context: PlanContext
+  var isLine = false
 
   var body: some View {
     let preview = store.resumeChangesPlan(goalId: context.goal.id)
 
-    VStack(alignment: .leading, spacing: 8) {
-      Label {
-        Text(
-          "Your \(context.goal.displayName) goal is paused", tableName: "Plan",
-          comment: "Title of the Plan's notice for a paused goal"
-        )
-        .typeStyle(.body.weight(.semibold))
-      } icon: {
-        SuggestionMark(kind: .symbol("pause"))
-      }
-
-      Group {
-        if preview.value == true {
-          Text(
-            "Your plan picks up from today, starting with the lessons planned for the days you paused.",
-            tableName: "Plan", comment: "Explains how resuming the paused goal changes its plan")
-        } else {
-          Text(
-            "Nothing is planned until you resume it.", tableName: "Plan",
-            comment: "Explains a paused goal")
-        }
-      }
-      .typeStyle(.note)
-      .foregroundStyle(.mutedForeground)
-
-      Button {
-        Task { await resume() }
-      } label: {
-        Text("Resume", tableName: "Plan", comment: "Resumes the paused goal")
-      }
-      .buttonStyle(.outline)
-      .disabled(isResuming)
-
-      switch failure {
-      case .limitReached:
-        FailureLine(
-          message: LocalizedStringResource(
-            "You're following as many goals as the free plan allows. Pause another goal to resume this one, or get Plus to follow more.",
-            table: "Plan",
-            comment:
-              "Explains why resuming a goal failed: the learner follows as many goals at once as the free plan allows; it's about goals followed at the same time, not new goals started per day or month. Pausing a goal keeps its progress. Plus is the subscription's name, not \"more\""
-          )
-        )
-        .typeStyle(.note)
-      case .failed:
-        FailureLine(
-          message: LocalizedStringResource(
-            "That didn't save. Try again.", table: "Plan",
-            comment: "Resuming the paused goal didn't save")
-        )
-        .typeStyle(.note)
-      case .saved, nil:
-        EmptyView()
-      }
-    }
+    PlanStatement(
+      mark: .symbol("pause"),
+      title: Text(
+        "Your \(context.goal.displayName) goal is paused", tableName: "Plan",
+        comment: "Title of the Plan's notice for a paused goal"),
+      description: preview.value == true
+        ? Text(
+          "Your plan picks up from today, starting with the lessons planned for the days you paused.",
+          tableName: "Plan", comment: "Explains how resuming the paused goal changes its plan")
+        : Text(
+          "Nothing is planned until you resume it.", tableName: "Plan",
+          comment: "Explains a paused goal"),
+      isLine: isLine
+    )
     .loads(preview, refreshable: false)
   }
+}
 
-  private func resume() async {
-    isResuming = true
-    failure = nil
+/// A suggestion whose answers are the page's bottom bar: it says what's so and opens nothing. In
+/// the page's column it's a suggestion line with no "View"; beside the page, the card's words.
+struct PlanStatement: View {
+  let mark: SuggestionMark.Kind
+  let title: Text
+  let description: Text
+  var isLine = false
 
-    switch await store.setStatus(.active, goalId: context.goal.id) {
-    case .done(.saved), .obsolete:
-      break
-    case .done(let refused):
-      failure = refused
-    case .failed:
-      failure = .failed
+  var body: some View {
+    if isLine {
+      SuggestionLine {
+        SuggestionMark(kind: mark)
+      } summary: {
+        VStack(alignment: .leading, spacing: 2) {
+          title
+          description
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
+        }
+        .accessibilityElement(children: .combine)
+      } action: {
+        EmptyView()
+      }
+    } else {
+      VStack(alignment: .leading, spacing: 8) {
+        Label {
+          title
+            .typeStyle(.body.weight(.semibold))
+        } icon: {
+          SuggestionMark(kind: mark)
+        }
+
+        description
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
+      }
     }
-
-    isResuming = false
   }
 }
 
@@ -928,16 +750,10 @@ private struct PlanCertificatesButton: View {
   }
 
   private func label(_ title: Text) -> some View {
-    HStack {
-      Label {
-        title
-      } icon: {
-        Image(systemName: "rosette")
-      }
-
-      if earned.contains(where: \.locked) {
-        PlusMark()
-      }
+    Label {
+      title
+    } icon: {
+      Image(systemName: "rosette")
     }
   }
 }

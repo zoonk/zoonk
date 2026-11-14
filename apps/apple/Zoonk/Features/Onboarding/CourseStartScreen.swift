@@ -56,9 +56,7 @@ struct CourseStartScreen: View {
           title: Text(
             "How much do you already know?", tableName: "Onboarding", comment: "Onboarding question"
           ),
-          description: Text(
-            "It only changes where your plan starts.", tableName: "Onboarding",
-            comment: "Under the level question"))
+          description: nil)
 
         ChoiceRows(
           choices: LevelChoices.all(testMinutes: course.value?.course.quickTestMinutes),
@@ -70,17 +68,23 @@ struct CourseStartScreen: View {
         GoalErrorSection(error: error)
       }
 
+      if session.authenticatedSession == nil {
+        Text(
+          "Start free, no account needed.", tableName: "Onboarding",
+          comment: "Under a course's Build my plan for a visitor"
+        )
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
+        .listRowSeparator(.hidden)
+      }
+    }
+    .bottomBar {
       if error?.needsAccount != true, error?.limit?.isPlusLimit != true {
         StepButtons(
           canContinue: chapterId != nil || level != nil,
           continueLabel: Text(
             "Build my plan", tableName: "Onboarding",
             comment: "Starts a course as the learner's goal"),
-          note: session.authenticatedSession == nil
-            ? Text(
-              "Start free, no account needed.", tableName: "Onboarding",
-              comment: "Under a course's Build my plan for a visitor")
-            : nil,
           onContinue: start
         )
         .environment(\.isSavingAnswer, isStarting)

@@ -1,9 +1,8 @@
 "use client";
 
-import { useMindMapAlt } from "@zoonk/learn/mind-maps/description";
 import { MindMapOutline } from "@zoonk/learn/mind-maps/outline";
 import { type MindMapSave } from "@zoonk/learn/mind-maps/save";
-import { toMindMapSrc } from "@zoonk/learn/mind-maps/urls";
+import { MindMapThumbnail } from "@zoonk/learn/mind-maps/thumbnail";
 import { MindMapViewer } from "@zoonk/learn/mind-maps/viewer";
 import { TASK_COLUMN_CLASS } from "@zoonk/learn/task-layout";
 import { Button } from "@zoonk/ui/components/button";
@@ -16,7 +15,6 @@ import { LessonMap } from "../lesson/_components/lesson-map";
 import { SWIPE_THROUGH } from "../lesson/use-swipe-navigation";
 import { type ChapterSlide, type LessonMindMap } from "./mind-map-deck";
 
-const THUMBNAIL_WIDTH = 640;
 const COLUMN_CLASS = cn(TASK_COLUMN_CLASS, "flex flex-col gap-5 pt-4 pb-8");
 const NOTE_CLASS = "text-muted-foreground text-sm text-pretty";
 
@@ -54,7 +52,6 @@ export function ChapterMapSlide({ save, slide }: { save: MindMapSave; slide: Cha
   const t = useExtracted();
   const [isZoomed, setIsZoomed] = useState(false);
   const { image, outline, title } = slide;
-  const alt = useMindMapAlt({ outline, title });
 
   if (!image) {
     return (
@@ -69,25 +66,25 @@ export function ChapterMapSlide({ save, slide }: { save: MindMapSave; slide: Cha
 
   return (
     <div
-      className="max-w-column mx-auto grid w-full gap-6 px-4 pt-4 pb-8 min-[72rem]:max-w-304 min-[72rem]:grid-cols-[minmax(0,1fr)_22rem] min-[72rem]:items-start min-[72rem]:gap-10 min-[72rem]:px-6"
+      className={cn(
+        TASK_COLUMN_CLASS,
+        "grid gap-6 pt-4 pb-8 min-[72rem]:max-w-304 min-[72rem]:grid-cols-[minmax(0,1fr)_22rem] min-[72rem]:items-start min-[72rem]:gap-10 min-[72rem]:px-6",
+      )}
       data-slot="chapter-map-slide"
     >
       <button
+        aria-haspopup="dialog"
         className="focus-visible:ring-ring/50 w-full cursor-zoom-in justify-self-center rounded-xl outline-none focus-visible:ring-[3px] min-[72rem]:sticky min-[72rem]:top-4 min-[72rem]:max-w-[calc(100dvh-13rem)]"
         onClick={() => setIsZoomed(true)}
         type="button"
         {...SWIPE_THROUGH}
       >
-        {/* oxlint-disable-next-line next/no-img-element -- @zoonk/player doesn't depend on next/image; maps are stored, optimized webp files. */}
-        <img
-          alt={alt}
-          className="ring-border bg-card aspect-square h-auto w-full rounded-xl object-contain ring-1"
-          decoding="async"
-          height={image.height}
+        <MindMapThumbnail
+          className="outline-border bg-card aspect-square h-auto w-full rounded-xl object-contain outline -outline-offset-1"
+          image={image}
+          outline={outline}
           sizes="(min-width: 72rem) 50rem, 100vw"
-          src={toMindMapSrc(image.url)}
-          srcSet={`${toMindMapSrc(image.thumbnailUrl)} ${THUMBNAIL_WIDTH}w, ${toMindMapSrc(image.url)} ${image.width}w`}
-          width={image.width}
+          title={title}
         />
       </button>
 
@@ -108,7 +105,7 @@ export function ChapterMapSlide({ save, slide }: { save: MindMapSave; slide: Cha
 function LessonMapSkeleton() {
   return (
     <div aria-busy="true" className="flex w-full flex-col items-center gap-5">
-      <Skeleton className="h-9 w-48 rounded-[9px]" />
+      <Skeleton className="h-9 w-48 rounded-lg" />
       <div className="grid w-full grid-cols-1 gap-x-3 gap-y-5 min-[26rem]:grid-cols-2">
         <Skeleton className="h-28 rounded-xl" />
         <Skeleton className="h-28 rounded-xl" />

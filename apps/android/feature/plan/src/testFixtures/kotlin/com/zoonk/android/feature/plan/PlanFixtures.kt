@@ -21,7 +21,7 @@ fun plan(extra: String = ""): Plan {
         ApiJson
             .parseToJsonElement(
                 """
-                {"access":{"freeWeekOver":false,"mocksRequirePlus":false},"areas":[],"changes":[],
+                {"access":{"mocksRequirePlus":false},"areas":[],"changes":[],
                  "estimate":{"remainingHours":10,"totalHours":12},"examChoices":[],"examDocument":"guide",
                  "fundedMocks":[],"goalId":"$GOAL","phases":[],"planId":"$PLAN_ID","ready":true,
                  "schedule":{"dailyMinutes":20,"dailyTimes":$DAILY_TIMES,"fullCourse":false,"lightWeeks":[],"studyDays":5,
@@ -35,16 +35,20 @@ fun plan(extra: String = ""): Plan {
     return ApiJson.decodeFromJsonElement<Plan>(JsonObject(base + fields))
 }
 
-internal fun progress(): GoalProgress =
+internal fun progress(
+    mocks: String = """{"kind":"weeklyChallenges","taken":1,"value":0.6}""",
+    rule: String = "solid",
+    fading: Int = 2,
+): GoalProgress =
     ApiJson.decodeFromString(
         """
         {"goal":{"id":"$GOAL","kind":"learn","targetDate":null,"title":"Learn Python","displayName":"Learn Python"},"mistakes":{"open":0},
-         "stillNeeded":{"areas":[],"left":12,"minutes":240,"rule":"solid"},
+         "stillNeeded":{"areas":[],"left":12,"minutes":240,"rule":"$rule"},
          "preparation":{"areas":[],"goalId":"$GOAL","sections":[],"stage":"building","value":0.42,"weekGain":0.03,
-          "skills":{"fading":2,"learning":3,"mastered":1,"new":10,"solid":2,"total":18},
+          "skills":{"fading":$fading,"learning":3,"mastered":1,"new":10,"solid":2,"total":18},
           "components":{"coverage":{"heaviest":{"studiedSkills":2,"totalSkills":5,"value":0.4},"studiedSkills":6,"totalSkills":18,"value":0.33},
            "mastery":{"answered":20,"correct":15,"evidence":0.5,"supported":0.7,"value":0.75},
-           "mocks":{"kind":"weeklyChallenges","plusRequired":false,"taken":1,"value":0.6},
+           "mocks":$mocks,
            "retention":{"studiedSkills":6,"value":0.8}}}}
         """.trimIndent(),
     )
@@ -173,6 +177,9 @@ fun learnerSummary(
 
 internal const val CHANGE_ID = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1d01"
 
+/** The quote a change's card shows; an accept sends it back. */
+internal const val SHOWN_QUOTE = "quote-shown"
+
 /** A saved change; [effect] and [extra] are raw JSON fields. */
 internal fun planChange(
     operations: String = "[]",
@@ -181,11 +188,12 @@ internal fun planChange(
     extra: String = "",
     createdAt: String = "2026-10-28T12:00:00Z",
     id: String = CHANGE_ID,
+    quote: String = SHOWN_QUOTE,
 ): com.zoonk.api.models.PlanChange =
     ApiJson.decodeFromString(
         """
         {"canApply":true,"canUndo":true,"createdAt":"$createdAt","examDocument":"notice","id":"$id",
-         "kind":"edited","lessonsSkipped":0,"operations":$operations,"seen":false,"source":"learner","status":"$status"
+         "kind":"edited","lessonsSkipped":0,"operations":$operations,"quote":"$quote","seen":false,"source":"learner","status":"$status"
          ${effect?.let { ""","effect":$it""" }.orEmpty()}${if (extra.isEmpty()) "" else ",$extra"}}
         """.trimIndent(),
     )

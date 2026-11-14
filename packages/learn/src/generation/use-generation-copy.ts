@@ -36,10 +36,10 @@ function useGoalPhaseCopy() {
       lines: [t("Finding the topics it covers…"), t("Putting them in the order it teaches…")],
     },
     skills: {
-      label: t("Mapping the skills it takes"),
+      label: t("Choosing what to learn"),
       lines: [
         t("Listing what your goal asks for…"),
-        t("Putting the skills in order…"),
+        t("Putting the topics in order…"),
         t("Checking nothing important is missing…"),
       ],
     },
@@ -94,7 +94,7 @@ function usePlacementCopy(): KindCopy<"placement"> {
   const goal = useGoalPhaseCopy();
 
   return {
-    name: t("Getting your questions ready"),
+    name: t("Getting your test ready"),
     phases: {
       ...goal,
       questions: {

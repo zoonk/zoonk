@@ -8,9 +8,9 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
+  FoldChevron,
 } from "@zoonk/ui/components/collapsible";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronDownIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import {
   LIST_GROUP_CLASS,
@@ -220,16 +220,13 @@ function TopicGroupRow({
 
   return (
     <Collapsible>
-      <CollapsibleTrigger className={cn(LIST_ROW_INTERACTIVE_CLASS, "group/topic")}>
+      <CollapsibleTrigger className={LIST_ROW_INTERACTIVE_CLASS}>
         <GroupLine group={group} showFrequency={showFrequency} />
-        <ChevronDownIcon
-          aria-hidden="true"
-          className="text-muted-foreground/60 size-4 shrink-0 self-center transition-transform group-data-panel-open/topic:rotate-180 motion-reduce:transition-none"
-        />
+        <FoldChevron />
       </CollapsibleTrigger>
 
-      <CollapsibleContent className="h-(--collapsible-panel-height) overflow-hidden transition-[height] duration-200 ease-out data-ending-style:h-0 data-starting-style:h-0 motion-reduce:transition-none">
-        <div className="flex flex-col pr-4 pb-2 pl-13">
+      <CollapsibleContent>
+        <div className="flex flex-col pb-2 pl-7">
           {group.children.length > 0 && (
             <ul className="flex flex-col">
               {group.children.map((child) => (

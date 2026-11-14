@@ -245,7 +245,7 @@ internal fun ExplainWaiting(
     ) { padding ->
         Column(Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState())) {
             LessonColumnBeforeFold {
-                ExplainHeading(explanation.title, subtitle = stringResource(R.string.explain_no_plan))
+                ExplainHeading(explanation.title)
                 if (!ready) GenerationWait(GenerationKind.Explanation, run, onRetry = viewModel::retry)
                 Outline(explanation.outline)
                 DeeperRow(explanation, navigator)

@@ -1,5 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { goBackToApp, markAppEntry } from "./app-history";
+import {
+  appBackName,
+  backLinkName,
+  cameFromApp,
+  goBackToApp,
+  markAppEntry,
+  nameAppEntry,
+  subscribeToHistory,
+} from "./app-history";
 
 /** Only the browser boundary is faked: Next's replace clears an entry's Navigation API state. */
 function browserHistory() {
@@ -95,5 +103,75 @@ describe("app history", () => {
 
     expect(goBackToApp()).toBe(true);
     expect(history.traverseTo).toHaveBeenCalledWith(plan.key);
+  });
+
+  it("names the page leaving Settings returns to, whichever marks it first", () => {
+    const history = browserHistory();
+    history.open("/today");
+    nameAppEntry("Today");
+    markAppEntry();
+    history.open("/plan");
+    nameAppEntry("Plan");
+    markAppEntry();
+    history.open("/settings");
+    markAppEntry("(settings)");
+    nameAppEntry("Settings");
+    history.open("/settings/appearance");
+    markAppEntry("(settings)");
+
+    expect(appBackName()).toBe("Plan");
+  });
+
+  it("keeps the server's answer until the page marks its own section, then tells its readers", async () => {
+    const history = browserHistory();
+    history.open("/profile");
+    markAppEntry("(settings)");
+    history.open("/settings/memory");
+    const onChange = vi.fn();
+    const unsubscribe = subscribeToHistory(onChange);
+    await Promise.resolve();
+    onChange.mockClear();
+
+    expect(cameFromApp()).toBe(false);
+    expect(appBackName()).toBeNull();
+
+    markAppEntry("(settings)");
+    await Promise.resolve();
+
+    expect(onChange).toHaveBeenCalledWith();
+    expect(cameFromApp()).toBe(false);
+    unsubscribe();
+  });
+
+  it("says an earlier page has no name rather than giving it the link's own", () => {
+    const history = browserHistory();
+    history.open("/today");
+    markAppEntry();
+    nameAppEntry("Today");
+    const privacy = history.open("/settings/privacy");
+    markAppEntry("(settings)");
+    history.open("/mistakes");
+    markAppEntry();
+    nameAppEntry("Mistakes notebook");
+
+    expect(appBackName()).toBe("");
+    expect(goBackToApp()).toBe(true);
+    expect(history.traverseTo).toHaveBeenCalledWith(privacy.key);
+  });
+
+  it("has no name to give when nothing in the app came before", () => {
+    const history = browserHistory();
+    history.open("/settings");
+    markAppEntry("(settings)");
+
+    expect(appBackName()).toBeNull();
+  });
+
+  it("names the page a back link goes to, and no page when it can't say which", () => {
+    expect(backLinkName({ appBack: "Today", own: "Plan", toApp: true })).toBe("Today");
+    expect(backLinkName({ appBack: "", own: "Today", toApp: true })).toBeNull();
+    expect(backLinkName({ appBack: null, own: "Today", toApp: true })).toBe("Today");
+    expect(backLinkName({ appBack: null, toApp: true })).toBeNull();
+    expect(backLinkName({ appBack: "Zu", own: "Plan", toApp: false })).toBe("Plan");
   });
 });

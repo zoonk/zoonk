@@ -6,7 +6,6 @@ import { Input } from "@zoonk/ui/components/input";
 import { ignoreHeldEnter } from "@zoonk/ui/hooks/keyboard";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
-import { ChangeSaveError } from "../_components/save-error";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { UseDateButton, useNoticeDayText } from "./notice-day";
 import { usePlanScreen } from "./plan-context";
@@ -19,25 +18,17 @@ function useDateNote() {
   const formatDate = useFormatIsoDate();
 
   return function dateNote({
-    isExam,
     namedMonth,
     targetDate,
   }: {
-    isExam: boolean;
     namedMonth: boolean;
     targetDate: string | null;
   }): string | null {
-    if (namedMonth && targetDate) {
-      return t("{month} for now. Pick the day when you know it.", {
-        month: formatDate(targetDate, "month"),
-      });
-    }
-
-    return targetDate || isExam
-      ? null
-      : t(
-          "No deadline: you study everything at your own pace. With a deadline, your plan fits what matters most by then.",
-        );
+    return namedMonth && targetDate
+      ? t("{month} for now. Pick the day when you know it.", {
+          month: formatDate(targetDate, "month"),
+        })
+      : null;
   };
 }
 
@@ -69,7 +60,7 @@ export function PlanDate() {
   const inputId = useId();
   const noteId = useId();
   const { goal, plan, today } = usePlanScreen();
-  const { change, failed, isPending } = usePlanChange();
+  const { change, isPending } = usePlanChange();
   const noticeDayText = useNoticeDayText();
   const { noticeDay, targetDate, targetDateNamedMonth } = plan.schedule;
   const namedMonth = targetDateNamedMonth && targetDate !== null;
@@ -91,7 +82,7 @@ export function PlanDate() {
     return outcome?.status === "applied";
   };
 
-  const note = noteFor({ isExam: goal.kind === "exam", namedMonth, targetDate });
+  const note = noteFor({ namedMonth, targetDate });
   const bounds = getTargetDateBounds(today);
   // A month's first day is a day of its own once the learner picks it.
   const canSave = value !== "" && (namedMonth || value !== targetDate) && value >= bounds.min;
@@ -99,7 +90,7 @@ export function PlanDate() {
   return (
     <div className="flex flex-col gap-2">
       <label className="text-sm font-medium" htmlFor={inputId}>
-        {goal.kind === "exam" ? t("Exam date") : t("Deadline")}
+        {goal.kind === "exam" ? t("Exam date") : t("End date")}
       </label>
 
       {note && (
@@ -131,7 +122,7 @@ export function PlanDate() {
           value={value}
         />
         {canSave && (
-          <Button disabled={isPending} focusableWhenDisabled type="submit" variant="outline">
+          <Button busy={isPending} type="submit" variant="outline">
             {t("Save")}
           </Button>
         )}
@@ -139,16 +130,12 @@ export function PlanDate() {
 
       {noticeDay && (
         <div className="flex flex-col items-start gap-2 text-sm">
-          <p className="text-muted-foreground">
-            {noticeDayText({ ...noticeDay, document: plan.examDocument })}
-          </p>
+          <p className="text-muted-foreground">{noticeDayText(noticeDay)}</p>
           <UseDateButton disabled={isPending} onUse={() => void setDate(noticeDay.date)} />
         </div>
       )}
 
       {course && !course.isExam && <StudyEverything course={course} />}
-
-      {failed && <ChangeSaveError />}
     </div>
   );
 }

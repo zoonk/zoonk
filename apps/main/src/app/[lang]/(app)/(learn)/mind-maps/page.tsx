@@ -4,7 +4,7 @@ import { getCurrentGoal } from "@/lib/learn/current-goal";
 import { getAllowance } from "@zoonk/core/entitlements/get-allowance";
 import { listGoalMindMaps } from "@zoonk/core/mind-maps/list";
 import { toMindMapsPage } from "@zoonk/learn/mind-maps/page";
-import { PAGE_COLUMN_CLASS, PageTitle } from "@zoonk/learn/page";
+import { MEASURED_CLASS, PAGE_COLUMN_CLASS, PageTitle, pageMeasureClass } from "@zoonk/learn/page";
 import { DetailHero, DetailHeroText } from "@zoonk/ui/components/detail";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -28,7 +28,7 @@ async function MindMapsBody() {
 
     return (
       <LearnNoGoal
-        bar={<JourneyPageBar root />}
+        bar={<JourneyPageBar root title={t("Mind maps")} />}
         description={t("Each chapter's ideas on one map, to review how they connect.")}
         next="/mind-maps"
         title={t("Mind maps")}
@@ -66,20 +66,34 @@ function MapRowSkeleton() {
   );
 }
 
+function SubtitleSkeleton() {
+  return (
+    <span className="flex h-6 items-center pt-1">
+      <Skeleton className="h-3.5 w-32 rounded-sm" />
+    </span>
+  );
+}
+
 async function MindMapsSkeleton() {
   const t = await getExtracted();
 
   return (
     <div aria-busy="true" className="flex flex-col gap-8">
       <JourneyPageBar root />
-      <div className={cn(PAGE_COLUMN_CLASS, "flex flex-col gap-8")}>
+      <div
+        className={cn(
+          PAGE_COLUMN_CLASS,
+          pageMeasureClass("list"),
+          MEASURED_CLASS,
+          "flex flex-col gap-8",
+        )}
+      >
         <div className="flex flex-col gap-5">
           <DetailHero>
             <DetailHeroText>
-              <Skeleton className="my-0.5 h-3 w-32 rounded-sm" />
               <PageTitle>{t("Mind maps")}</PageTitle>
+              <SubtitleSkeleton />
             </DetailHeroText>
-            <Skeleton className="h-11 w-full rounded-lg md:w-28" />
           </DetailHero>
           <div className="flex gap-1">
             <Skeleton className="h-8 w-24 rounded-md" />

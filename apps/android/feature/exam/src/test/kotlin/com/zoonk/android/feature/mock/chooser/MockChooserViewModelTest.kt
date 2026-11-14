@@ -44,26 +44,31 @@ class MockChooserViewModelTest {
 
     private fun TestScope.viewModel(): MockChooserViewModel {
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))
-        return MockChooserViewModel(GOAL, MockStarter(api, cache), session) { runs }
+        return MockChooserViewModel(GOAL, MockStarter(api, cache), session, generations = { runs })
     }
 
     @Test
-    fun aShortMockStartsWithFewerQuestionsOnlyOnTheSecondTapOfTheSameOption() =
+    fun aShortMockStartsWithFewerQuestionsOnlyOnceTheLearnerAgrees() =
         runTest(dispatcher) {
             api.starts = listOf({ short() }, { short() }, { started() })
             val viewModel = viewModel()
 
             viewModel.start(full, "full:1:")
             advanceUntilIdle()
-            assertEquals(ChooserStatus.Short("full:1:", MockStartOutcome.Short(40, 90, 130, AnytimeMock.Limit.DAY)), viewModel.status.value)
+            assertEquals(
+                ChooserStatus.Short("full:1:", full, MockStartOutcome.Short(40, 90, 130, AnytimeMock.Limit.DAY)),
+                viewModel.status.value,
+            )
             assertNull(viewModel.opened.value)
 
+            viewModel.stayChoosing()
+            assertEquals(ChooserStatus.Choosing, viewModel.status.value)
             viewModel.start(math, "area::Mathematics")
             advanceUntilIdle()
-            viewModel.start(math, "area::Mathematics")
+            viewModel.startShort()
             advanceUntilIdle()
 
-            assertEquals(listOf(full to false, math to false, math to true), api.started)
+            assertEquals(listOf(full to MockStartAsk.First, math to MockStartAsk.First, math to MockStartAsk.AcceptFewer), api.started)
             assertEquals(STARTED, viewModel.opened.value)
         }
 
@@ -82,7 +87,7 @@ class MockChooserViewModelTest {
             advanceUntilIdle()
 
             assertEquals(listOf("run-1"), runs.followed)
-            assertEquals(listOf(full to false, full to true), api.started)
+            assertEquals(listOf(full to MockStartAsk.First, full to MockStartAsk.AfterWriting), api.started)
             assertEquals(STARTED, viewModel.opened.value)
         }
 
@@ -96,7 +101,7 @@ class MockChooserViewModelTest {
             viewModel.start(full, "full:1:")
             viewModel.onShown(false)
             advanceUntilIdle()
-            assertEquals(listOf(full to false), api.started)
+            assertEquals(listOf(full to MockStartAsk.First), api.started)
             assertNull(viewModel.opened.value)
 
             viewModel.onShown(true)
@@ -118,7 +123,7 @@ class MockChooserViewModelTest {
             viewModel.onShown(true)
             advanceUntilIdle()
 
-            assertEquals(listOf(full to false), api.started)
+            assertEquals(listOf(full to MockStartAsk.First), api.started)
             assertNull(viewModel.opened.value)
             assertEquals(ChooserStatus.Choosing, viewModel.status.value)
         }
@@ -133,7 +138,7 @@ class MockChooserViewModelTest {
             advanceUntilIdle()
 
             assertEquals(emptyList<String>(), runs.followed)
-            assertEquals(listOf(full to false, full to true), api.started)
+            assertEquals(listOf(full to MockStartAsk.First, full to MockStartAsk.AfterWriting), api.started)
             assertEquals(STARTED, viewModel.opened.value)
         }
 

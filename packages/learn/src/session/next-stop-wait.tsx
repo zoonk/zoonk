@@ -3,7 +3,6 @@
 import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
 import { GenerationTimelineDescription } from "@zoonk/ui/components/generation-timeline";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
-import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useState } from "react";
 import { EnterButton } from "../_components/enter-button";
@@ -127,7 +126,7 @@ function WritingProgress({
     <GenerationWait kind={kind} run={held ? toHeldRun(run) : run} since={since}>
       {!held && (
         <GenerationTimelineDescription className="text-sm">
-          {t("This lesson is being written for you. It's usually ready in a few minutes.")}
+          {t("It takes a few minutes.")}
         </GenerationTimelineDescription>
       )}
     </GenerationWait>
@@ -214,30 +213,42 @@ export function NotWritten({
   );
 }
 
-/**
- * The block's name follows a label: inside a sentence, "Do What you already know" read wrong in
- * every language.
- */
-export function AlternativeButton({
-  actions,
-  alternative,
-  reason,
-}: {
-  actions: NextStopActions;
-  alternative: DayStep;
-  reason: "instead" | "whileWaiting";
-}) {
+/** A verb for what the learner can do meanwhile; only an unusual step needs its name. */
+function useAlternativeLabel() {
   const t = useExtracted();
   const title = useBlockTitle();
 
+  return (alternative: DayStep): string => {
+    if (alternative.checkpoint) {
+      return t("Start {title}", { title: title(alternative) });
+    }
+
+    if (alternative.kind === "review") {
+      return t("Review now");
+    }
+
+    if (alternative.kind === "learn") {
+      return t("Next lesson");
+    }
+
+    return t("Practice now");
+  };
+}
+
+export function AlternativeButton({
+  actions,
+  alternative,
+}: {
+  actions: NextStopActions;
+  alternative: DayStep;
+}) {
+  const label = useAlternativeLabel();
   const other = useSessionAction({ action: () => actions.start(alternative), enterKey: true });
 
   return (
     <form action={() => void other.run()} className="contents">
-      <EnterButton busy={other.isPending} icon={<PlayIcon aria-hidden="true" />} type="submit">
-        {reason === "instead"
-          ? t("Instead: {title}", { title: title(alternative) })
-          : t("While you wait: {title}", { title: title(alternative) })}
+      <EnterButton busy={other.isPending} enter="host" type="submit">
+        {label(alternative)}
       </EnterButton>
     </form>
   );

@@ -9,6 +9,7 @@ import com.zoonk.android.data.KeyedResources
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.perform
 import com.zoonk.android.feature.mock.notAnExamAsNull
+import com.zoonk.android.feature.speaking.locked
 import com.zoonk.api.models.ExamResult
 import com.zoonk.api.models.ExamResultInput
 import com.zoonk.api.models.ExamView
@@ -74,6 +75,13 @@ class ExamStore(
 ) {
     val exam: KeyedResources<UUID, ExamView> =
         cache.keyed(Audience.SignedIn, EXAM_DOMAINS) { session, goalId -> session?.let { api.exam(it, goalId, timeZone()) } }
+
+    /** As [com.zoonk.android.feature.speaking.SpeakingStore.refused], for the paper the exam page shows. */
+    suspend fun speakingRefused(goalId: UUID) {
+        val resource = exam[goalId]
+        resource.update { view -> view.speaking?.let { view.copy(speaking = it.locked()) } ?: view }
+        resource.refresh()
+    }
 
     /** Core's `reportExamResult` revalidates the learner model, which the exam's read carries. */
     suspend fun report(

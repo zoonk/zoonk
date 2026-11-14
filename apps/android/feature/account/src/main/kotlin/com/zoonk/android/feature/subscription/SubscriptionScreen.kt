@@ -65,13 +65,12 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
-import com.zoonk.android.ui.components.LabelChip
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.scaffold.PageScaffold
-import com.zoonk.android.ui.scaffold.pageTitle
-import com.zoonk.api.models.AllowanceItem
 import com.zoonk.api.models.FreePlan
 import com.zoonk.api.models.MeSubscription
 import com.zoonk.api.models.StripeSubscriptionCancellation
@@ -239,12 +238,12 @@ internal fun WebPlusPlan(
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), itemVerticalAlignment = Alignment.CenterVertically) {
             Text(
                 stringResource(if (standalone) R.string.subscription_plus else R.string.subscription_website),
-                if (standalone) Modifier.pageTitle() else Modifier.semantics { heading() },
-                style = if (standalone) MaterialTheme.typography.headlineMedium else MaterialTheme.typography.titleMedium,
+                Modifier.semantics { heading() },
+                style = if (standalone) MaterialTheme.typography.titleLarge else MaterialTheme.typography.titleMedium,
             )
             if (standalone && subscription.state != State.UNPAID) {
                 val label = if (subscription.state == State.ENDING) R.string.subscription_ending else R.string.subscription_active
-                LabelChip(stringResource(label))
+                Eyebrow(stringResource(label))
             }
         }
         val dateLine =
@@ -269,7 +268,10 @@ private fun PageColumn(
     maxWidth: Dp = PAGE_WIDTH,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    Column(Modifier.widthIn(max = maxWidth).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(24.dp), content = content)
+    Column(Modifier.widthIn(max = maxWidth).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(24.dp)) {
+        PageTitleRow(stringResource(R.string.account_menu_subscription))
+        content()
+    }
 }
 
 @Composable
@@ -285,10 +287,10 @@ internal fun CurrentPlan(
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), itemVerticalAlignment = Alignment.CenterVertically) {
             Text(
                 stringResource(R.string.subscription_plus),
-                Modifier.pageTitle(),
-                style = MaterialTheme.typography.headlineMedium,
+                Modifier.semantics { heading() },
+                style = MaterialTheme.typography.titleLarge,
             )
-            LabelChip(stringResource(if (isEnding) R.string.subscription_ending else R.string.subscription_active))
+            Eyebrow(stringResource(if (isEnding) R.string.subscription_ending else R.string.subscription_active))
         }
         dateLine(subscription)?.let {
             Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
@@ -385,14 +387,7 @@ private fun Offer(
         navigator = navigator,
         onSubscribe = onSubscribe,
         onRetryFreePlan = { scope.launch { app.subscriptions.freePlan.refresh() } },
-        messagesUsed = if (viewer == PlanViewer.Free) messagesUsedToday(app) else null,
     )
-}
-
-@Composable
-private fun messagesUsedToday(app: AppContainer): AllowanceItem? {
-    val allowance by app.subscriptions.allowance.collectShown()
-    return allowance.value?.items?.firstOrNull { it.kind == AllowanceItem.Kind.TUTOR_MESSAGE }
 }
 
 /**
@@ -408,7 +403,6 @@ internal fun PlanOffer(
     navigator: AppNavigator,
     onSubscribe: ((PlusOffer) -> Unit)?,
     onRetryFreePlan: () -> Unit,
-    messagesUsed: AllowanceItem? = null,
 ) {
     val limits = freePlan.value
     val hasAccount = viewer == PlanViewer.Free
@@ -417,12 +411,6 @@ internal fun PlanOffer(
         val sideBySide = minOf(maxWidth, TWO_PLANS_WIDTH) >= PLAN_MIN_WIDTH * LocalDensity.current.fontScale * 2 + PLAN_GAP
 
         PageColumn(maxWidth = if (sideBySide) TWO_PLANS_WIDTH else PAGE_WIDTH) {
-            Text(
-                stringResource(R.string.subscription_offer_title),
-                Modifier.pageTitle(),
-                style = MaterialTheme.typography.headlineMedium,
-            )
-
             PlanColumns(sideBySide, verticalSpacing = 24.dp) {
                 PlusPlanCard(offers, purchase, hasAccount, navigator, onSubscribe)
                 Box {
@@ -434,7 +422,6 @@ internal fun PlanOffer(
                                 viewer = viewer,
                                 navigator = navigator,
                                 modifier = Modifier.fillMaxHeight(),
-                                messagesUsed = messagesUsed,
                             )
                         }
 
@@ -534,7 +521,7 @@ private fun PlusPlanCard(
 
                 !hasAccount -> {
                     Button(onClick = { navigator.open(AppRoute.Login) }, modifier = Modifier.fillMaxWidth()) {
-                        Text(stringResource(R.string.subscription_get_plus))
+                        Text(stringResource(R.string.subscription_subscribe))
                     }
                 }
 
@@ -544,7 +531,6 @@ private fun PlusPlanCard(
                         onClick = { offer?.let { onSubscribe?.invoke(it) } },
                         modifier = Modifier.fillMaxWidth(),
                         enabled = offer != null && onSubscribe != null,
-                        trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
                     ) { Text(stringResource(R.string.subscription_subscribe)) }
                 }
             }

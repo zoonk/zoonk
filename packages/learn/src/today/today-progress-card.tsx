@@ -1,10 +1,10 @@
 "use client";
 
+import { BigQuantity } from "@zoonk/ui/components/big-quantity";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
-import { BigQuantity } from "../_components/big-quantity";
 import {
   PageSection,
   PageSectionDetail,
@@ -15,11 +15,11 @@ import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 
 const CARD_CLASS =
-  "relative isolate max-sm:hidden before:pointer-events-none before:absolute before:-inset-x-2.5 before:-inset-y-2 before:-z-10 before:rounded-[0.625rem] before:transition-colors has-[a:hover]:before:bg-muted/70 has-[a:focus-visible]:before:ring-[3px] has-[a:focus-visible]:before:ring-ring/50";
+  "relative isolate max-sm:hidden before:pointer-events-none before:absolute before:-inset-x-2.5 before:-inset-y-2 before:-z-10 before:rounded-lg before:transition-colors has-[a:hover]:before:bg-muted/70 has-[a:focus-visible]:before:ring-[3px] has-[a:focus-visible]:before:ring-ring/50";
 
 /** Its box covers the whole card, so the card is one target. */
 const LINK_CLASS =
-  "text-muted-foreground hover:text-foreground inline-flex items-center gap-1 self-start text-[0.8125rem] transition-colors outline-none after:absolute after:-inset-x-2.5 after:-inset-y-2 after:rounded-[0.625rem] after:content-['']";
+  "text-muted-foreground hover:text-foreground inline-flex items-center gap-1 self-start text-compact transition-colors outline-none after:absolute after:-inset-x-2.5 after:-inset-y-2 after:rounded-lg after:content-['']";
 
 export function ProgressCard({
   children,
@@ -66,7 +66,7 @@ export function ProgressCard({
         {detail && <PageSectionDetail id={detailId}>{detail}</PageSectionDetail>}
       </PageSectionHeader>
 
-      <p className="text-readout pt-0.5 pb-1 text-[2rem]" id={ids.value}>
+      <p className="text-readout pt-0.5 pb-1 text-3xl" id={ids.value}>
         {typeof value === "string" ? <BigQuantity>{value}</BigQuantity> : value}
       </p>
 

@@ -10,7 +10,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -22,16 +21,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.plan.PlanEffectDiff
-import com.zoonk.android.feature.plan.PlanOp
-import com.zoonk.android.feature.plan.op
 import com.zoonk.android.feature.plan.planChangeAppliedLine
-import com.zoonk.android.feature.plan.planChangeFootnote
-import com.zoonk.android.feature.plan.planChangeKeepOfficialDateLabel
 import com.zoonk.android.feature.plan.planChangeOfficialDateLine
-import com.zoonk.android.feature.plan.planChangeSentence
+import com.zoonk.android.feature.plan.planChangeWords
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
-import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeDecisionInput.Status as Decision
@@ -42,37 +36,31 @@ internal fun TutorPlanChange(
     change: PlanChange,
     deciding: Boolean,
     failed: Boolean,
+    repriced: Boolean,
     onDecide: (Decision) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val proposed = change.status == PlanChange.Status.PROPOSED
     val applied = change.status == PlanChange.Status.APPLIED
-    val oneWeek = change.operations.map { it.op }.any { it is PlanOp.LightWeek || it is PlanOp.MoveWeeklyEvent }
+    val words = planChangeWords(change)
 
     OutlinedCard(modifier.widthIn(max = TUTOR_CARD_MAX_WIDTH).fillMaxWidth()) {
         Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        stringResource(R.string.tutor_plan_change_title),
-                        Modifier.weight(1f).semantics { heading() },
-                        style = MaterialTheme.typography.titleSmall,
-                    )
-                    if (oneWeek) LabelChip(stringResource(R.string.tutor_plan_change_one_week))
-                }
                 // A change that left the plan as it was steps back in the conversation.
                 Text(
-                    planChangeSentence(change),
+                    words.title,
+                    Modifier.semantics { heading() },
                     color = if (proposed || applied) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.titleSmall,
                 )
+                words.why?.takeIf { proposed }?.let {
+                    Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+                }
             }
 
             if (proposed) {
-                PlanEffectDiff(change.effect)
-                planChangeFootnote(change)?.let {
-                    Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
-                }
+                PlanEffectDiff(change.effect, repriced = repriced)
             }
             planChangeOfficialDateLine(
                 change,
@@ -127,7 +115,7 @@ private fun Decisions(
                     Button(onClick = { onDecide(Decision.APPLIED) }, enabled = !deciding, modifier = width) {
                         ButtonLabel(
                             stringResource(
-                                if (overridesOfficialDate) R.string.tutor_plan_change_use_my_date else R.string.tutor_plan_change_apply,
+                                if (overridesOfficialDate) R.string.today_plan_use_my_date else R.string.plan_apply,
                             ),
                         )
                     }
@@ -137,7 +125,7 @@ private fun Decisions(
                 OutlinedButton(onClick = { onDecide(Decision.DECLINED) }, enabled = !deciding, modifier = width) {
                     ButtonLabel(
                         if (overridesOfficialDate) {
-                            planChangeKeepOfficialDateLabel(change.examDocument)
+                            stringResource(R.string.plan_change_keep_official_date)
                         } else {
                             stringResource(R.string.tutor_plan_change_not_now)
                         },
@@ -151,9 +139,10 @@ private fun Decisions(
                     decline(Modifier.fillMaxWidth())
                 }
             } else {
+                // "Change my plan" takes the room "Not now" leaves.
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     apply(Modifier.weight(1f))
-                    decline(Modifier.weight(1f))
+                    decline(Modifier)
                 }
             }
         }

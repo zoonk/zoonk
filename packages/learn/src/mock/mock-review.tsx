@@ -5,43 +5,14 @@ import { CheckIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { AnswerOption, AnswerOptionGroup } from "../_components/answer-option";
 import { DetailsDrawer } from "../_components/details-drawer";
+import { Eyebrow } from "../_components/eyebrow";
 import { ItemCitationNote } from "../_components/item-citation";
 import { ContentFeedbackMenu } from "../feedback/content-feedback-menu";
-import { readStatementAnswer } from "../questions/_utils/statement-answer";
 import { ItemSetStimulus } from "../questions/item-set-stimulus";
 import { ItemLine, ItemStem, ItemText } from "../questions/item-text";
 import { useTrueFalseLabels } from "../questions/use-true-false-labels";
 import { useMockScreen } from "./mock-context";
-import { getOptionMarks } from "./mock-keys";
 import { ResultSection } from "./mock-result-section";
-
-/**
- * The review has a pick's words but not its number, so answers other than a statement's are marked
- * by how they went.
- */
-function AnswerMark({
-  answer,
-  entry,
-  right,
-}: {
-  answer: string;
-  entry: MockReviewEntry;
-  right: boolean;
-}) {
-  const { runner } = useMockScreen();
-  const isTrue = readStatementAnswer({ answer, format: entry.format });
-  const marks = getOptionMarks({ format: entry.format, scoring: runner.view.scoring });
-
-  if (isTrue !== null && marks === "numbers") {
-    return isTrue ? 1 : 2;
-  }
-
-  if (isTrue !== null) {
-    return isTrue ? <CheckIcon /> : <XIcon />;
-  }
-
-  return right ? <CheckIcon /> : <XIcon />;
-}
 
 function ReviewAnswers({ entry }: { entry: MockReviewEntry }) {
   const t = useExtracted();
@@ -59,26 +30,18 @@ function ReviewAnswers({ entry }: { entry: MockReviewEntry }) {
 
   return (
     <>
-      {yours === null && <p className="text-muted-foreground text-sm">{t("You left it blank.")}</p>}
+      {yours === null && (
+        <p className="text-muted-foreground text-reading">{t("You left it blank.")}</p>
+      )}
 
       <AnswerOptionGroup aria-label={t("Your answer and the right one")}>
         {yours !== null && (
-          <AnswerOption
-            disabled
-            marker={<AnswerMark answer={yours} entry={entry} right={false} />}
-            picked
-            result="wrong"
-          >
+          <AnswerOption disabled marker={<XIcon />} picked result="wrong">
             {line(yours)}
           </AnswerOption>
         )}
         {right !== null && (
-          <AnswerOption
-            disabled
-            marker={<AnswerMark answer={right} entry={entry} right />}
-            picked={false}
-            result="right"
-          >
+          <AnswerOption disabled marker={<CheckIcon />} picked={false} result="right">
             {line(right)}
           </AnswerOption>
         )}
@@ -93,11 +56,11 @@ function ReviewEntry({ continued, entry }: { continued: boolean; entry: MockRevi
   return (
     <li className="border-border flex flex-col gap-3 border-b py-5 first:pt-0 last:border-b-0">
       <div className="flex items-center justify-between gap-2">
-        <p className="text-muted-foreground font-mono text-xs tabular-nums">
+        <Eyebrow>
           {entry.area
             ? t("Question {number} · {area}", { area: entry.area, number: String(entry.number) })
             : t("Question {number}", { number: String(entry.number) })}
-        </p>
+        </Eyebrow>
         <ContentFeedbackMenu
           label={t("Question options")}
           screen="mock-review"
@@ -105,17 +68,19 @@ function ReviewEntry({ continued, entry }: { continued: boolean; entry: MockRevi
         />
       </div>
       {entry.set && <ItemSetStimulus continued={continued} set={entry.set} />}
-      {entry.context && <ItemText className="text-muted-foreground text-sm" text={entry.context} />}
-      <div className="font-medium">
+      {entry.context && (
+        <ItemText className="text-muted-foreground text-reading" text={entry.context} />
+      )}
+      <div className="text-reading font-semibold">
         <ItemStem text={entry.question} />
       </div>
       {entry.outcome === "partial" && (
-        <p className="text-muted-foreground text-sm">
+        <p className="text-muted-foreground text-reading">
           {t("Partly right: it earned part of its points.")}
         </p>
       )}
       <ReviewAnswers entry={entry} />
-      {entry.explanation && <ItemText className="text-sm" text={entry.explanation} />}
+      {entry.explanation && <ItemText className="text-reading" text={entry.explanation} />}
       {entry.citation && (
         <ItemCitationNote citation={entry.citation} className="text-muted-foreground" />
       )}
@@ -149,7 +114,7 @@ export function MockReviewSection() {
   }
 
   return (
-    <ResultSection title={t("Questions to review")}>
+    <ResultSection rows title={t("Questions to review")}>
       <MockReviewList />
     </ResultSection>
   );
@@ -165,12 +130,7 @@ export function MockReviewDrawer() {
   }
 
   return (
-    <DetailsDrawer
-      label={t("{count, plural, one {See the question} other {See the # questions}}", {
-        count: review.length,
-      })}
-      title={t("Questions to review")}
-    >
+    <DetailsDrawer label={t("See answers")} title={t("Questions to review")} trigger="small">
       <MockReviewList />
     </DetailsDrawer>
   );

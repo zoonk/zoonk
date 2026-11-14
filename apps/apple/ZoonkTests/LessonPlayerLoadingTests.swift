@@ -849,8 +849,8 @@ final class LessonPlayerLoadingTests: XCTestCase {
       return XCTFail("Expected a completed lesson, got \(outcome)")
     }
 
-    XCTAssertEqual(summary.brainPower, 12, "the day's bonus shows with the missions")
-    XCTAssertEqual(summary.block?.deferredLessonsCount, 0)
+    XCTAssertEqual(
+      summary.brainPower, 62, "a new level wins the moment, so the missions' bonus counts here")
     XCTAssertEqual(summary.block?.minutes.left, 20)
     XCTAssertEqual(summary.block?.sessionBar, SessionBar(completed: 1, total: 3))
     XCTAssertEqual(
@@ -863,10 +863,33 @@ final class LessonPlayerLoadingTests: XCTestCase {
     XCTAssertEqual(summary.day?.reached?.level?.level, 3)
   }
 
-  func testASavedLessonKeepsTheDeferredCountAndFractionalDailyBudget() async throws {
+  /// Answer help is capped by the day and by the calendar month; only lesson caps lost the month.
+  func testAnExplanationRefusedForTheMonthComesBackNextMonth() async throws {
+    let api = LessonPlayerAPI(
+      clients: APIClientFactory(
+        baseURL: URL(string: "https://api.zoonk.test")!,
+        transport: JSONTransport(
+          body: #"""
+            {"error": {"code": "USAGE_LIMIT_REACHED", "message": "Limit reached",
+             "details": {"limit": {"period": "month", "tier": "free", "resource": "aiSpend"}}}}
+            """#,
+          status: .init(code: 402))))
+
+    let outcome = try await api.explainAnswer(stepId: "step", answer: "answer", token: "token")
+
+    guard case .refused(let refusal) = outcome else {
+      return XCTFail("Expected a refusal, got \(outcome)")
+    }
+
+    XCTAssertEqual(refusal.limit, .limitReached(period: .month, tier: .free))
+    XCTAssertEqual(
+      refusal.limit?.helpWords(.explanations).line.map { String(localized: $0) },
+      "More next month, or subscribe to keep going.")
+  }
+
+  func testASavedLessonKeepsAFractionalDailyBudget() async throws {
     let response =
       sessionLessonCompletion
-      .replacingOccurrences(of: "\"deferredLessonsCount\":0", with: "\"deferredLessonsCount\":3")
       .replacingOccurrences(of: "\"dailyGoal\":30", with: "\"dailyGoal\":240.5")
     let api = LessonPlayerAPI(
       clients: APIClientFactory(
@@ -877,7 +900,6 @@ final class LessonPlayerLoadingTests: XCTestCase {
     guard case .completed(let summary) = outcome else {
       return XCTFail("Expected a saved lesson")
     }
-    XCTAssertEqual(summary.block?.deferredLessonsCount, 3)
     XCTAssertEqual(summary.block?.minutes.dailyGoal, 240.5)
   }
 
@@ -1425,13 +1447,14 @@ private struct UnexpectedLessonTransport: ClientTransport {
 
 private struct JSONTransport: ClientTransport {
   let body: String
+  var status: HTTPResponse.Status = .ok
 
   func send(
     _ request: HTTPRequest, body _: HTTPBody?, baseURL: URL, operationID: String
   ) async throws -> (HTTPResponse, HTTPBody?) {
     var headerFields = HTTPFields()
     headerFields[.contentType] = "application/json"
-    return (HTTPResponse(status: .ok, headerFields: headerFields), HTTPBody(body))
+    return (HTTPResponse(status: status, headerFields: headerFields), HTTPBody(body))
   }
 }
 

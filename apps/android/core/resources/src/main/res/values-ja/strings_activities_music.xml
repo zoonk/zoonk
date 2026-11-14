@@ -56,12 +56,11 @@
   "activities_music_same_notes_guitar": "43f42afaaee61685fb9df3040de7ca947d1353b4c5b8a1dd29b00d9ecc4015ef",
   "activities_music_show_as": "a0c193d6ec6f45b91b81819660f38863bcd531647226f2f35e0f29f989c8fb69",
   "activities_music_skip_for_now": "424c433e9f9c8f701442efd9a0b8c112821af3cbb0e2e6c1d088e5d900031b62",
+  "activities_music_sound_check_done": "2e456077239fbd65836c474b6ecef963775962cb00d5e6a8c5ca42933a59573a",
   "activities_music_sound_check_failed": "01e2cb0af93b803a01fed314e4af05cbd2d7627df9cf0054eaf7b7803d16b3f1",
-  "activities_music_sound_check_intro": "ef55aa19a044a129e4e5047e683005a1578dc4faca13dc8ac3f87b8d3e54e5bc",
-  "activities_music_sound_check_late": "810a4c2bfe6cfe77122cbf533e8ba411eb7d7ca3947f767e8fbd566fc7f21197",
+  "activities_music_sound_check_intro": "db4b23fe4f952d3341d34fc405188b2b2bb7e94f835e45d22491d94293f56345",
   "activities_music_sound_check_listen": "6ae4f40cb5e68850b2219b09e99e8d9602bef79d979b55a1f0d5cfdf25baa9a0",
-  "activities_music_sound_check_on_time": "dc2940c4ca94667b5cc9bda4e63b79ef13281baffc91017cf4aef8211bf42eb4",
-  "activities_music_sound_check_start": "dd1b5fc08f3acc94e8669a35a49d5543582d17fcef921f99ee07c8d192b342da",
+  "activities_music_sound_check_start": "aa3375e8774890661d898e79ba5d89bca4b1fdd9870b0e85f46a254681aa034c",
   "activities_music_sound_check_tap": "eae8aaf5e406ffc777460524cffa9eb592e98f1719adc3c3f6faeb65fa203ca0",
   "activities_music_sound_check_title": "e99b2cf62b922f114e9ec860366090065053460ae98b1b5880bc1c3f548ede7e",
   "activities_music_sound_notes": "81bf03150c31ab3bd9b11103226cc525d746a304b080e32a30c4e456baaac2ce",
@@ -229,16 +228,14 @@
     <!-- The title of the one-time check of how late this device plays sound. -->
     <string name="activities_music_sound_check_title">音のタイミングを調整</string>
     <plurals name="activities_music_sound_check_intro">
-        <item quantity="other">ヘッドホンでは音が少し遅れて聞こえることがあります。一度、%1$d回のクリック音に合わせてタップすると、この端末でリズムを正しく判定できるようになります。</item>
+        <item quantity="other">タップのタイミングを調整するため、%1$d回のクリック音に合わせてタップしてください。</item>
     </plurals>
     <string name="activities_music_sound_check_listen">クリック音を聞いてください…</string>
     <!-- Which click to tap with now, like "Tap with each click · 2 of 6". -->
     <string name="activities_music_sound_check_tap">クリック音に合わせてタップ · %1$d回目（全%2$d回）</string>
     <string name="activities_music_sound_check_failed">クリック音とタップのタイミングを十分に確認できませんでした。もう一度、音が鳴るたびにタップしてみてください。</string>
-    <string name="activities_music_sound_check_on_time">この端末では音が遅れずに聞こえます。</string>
-    <!-- How late this device plays sound, like "about 120 ms late". -->
-    <string name="activities_music_sound_check_late">この端末の音には約%1$dミリ秒の遅れがあります。ここでのリズム練習では、この遅れを補正します。</string>
-    <string name="activities_music_sound_check_start">音の確認を始める</string>
+    <string name="activities_music_sound_check_done">準備ができました。</string>
+    <string name="activities_music_sound_check_start">始める</string>
     <string name="activities_music_skip_for_now">今はスキップする</string>
     <string name="activities_music_continue">続ける</string>
 </resources>

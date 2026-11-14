@@ -1,4 +1,5 @@
 import "server-only";
+import { isDeepStrictEqual } from "node:util";
 import { type PlanChange, prisma } from "@zoonk/db";
 import { trackPlanEdited } from "../analytics/track-plan-edited";
 import { oweGoalLessons } from "../follow-ups/owe-goal-lessons";
@@ -10,15 +11,21 @@ import { computeChange } from "./_utils/compute-change";
 import { followPlanToday } from "./_utils/follow-plan-today";
 import { findOwnedPlan, loadPlanChangeView } from "./_utils/owned-plan";
 import { applyChangeOperations } from "./_utils/part-areas";
-import { parsePlanChangePayload, toPlanChangePayload } from "./_utils/plan-change-payload";
+import {
+  type PlanChangePayload,
+  parsePlanChangePayload,
+  toPlanChangePayload,
+} from "./_utils/plan-change-payload";
+import { getPlanChangeQuote } from "./_utils/plan-change-quote";
 import { canUndoChange } from "./_utils/plan-change-view";
 import { type PlanContext } from "./_utils/plan-context";
+import { getPlanPreviewBasis, isCurrentPlanPreview } from "./_utils/plan-preview-basis";
 import { replaceWaitingProposals } from "./_utils/replace-waiting-proposals";
 import { revalidatePlanTags } from "./_utils/replan";
 import { getChangePlanning } from "./_utils/steered-areas";
 import { undoChange } from "./_utils/undo-change";
 import { PlanConflictError, withPlanRetry } from "./plan-conflict";
-import { type PlanChangeDecisionInput } from "./plan-contract";
+import { type PlanChangeDecision, type PlanChangeQuote } from "./plan-decision-contract";
 import { type PlanChangeView } from "./plan-view-contract";
 import { type PlanOperationError } from "./planner/plan-operations";
 
@@ -29,7 +36,58 @@ export type PlanChangeDecisionResult =
 
 type Decision = { change: PlanChange; context: PlanContext };
 
-async function acceptProposal({ change, context }: Decision) {
+/** Nothing was applied: the proposal now holds today's numbers, for the learner to answer again. */
+const REPRICED = { status: "repriced" } as const;
+
+/**
+ * A proposal's numbers were worked out for one study day and one version of the plan. Accepted
+ * later, it applies only when today's numbers are the ones the learner saw.
+ */
+async function repriceProposal({
+  change,
+  context,
+  effect,
+}: Decision & { effect: PlanChangePayload["effect"] }) {
+  const payload = parsePlanChangePayload(change.payload);
+
+  const priced = parsePlanChangePayload(
+    toPlanChangePayload({ ...payload, effect, previewBasis: getPlanPreviewBasis(context) }),
+  );
+
+  if (
+    isCurrentPlanPreview({ basis: payload.previewBasis, context }) ||
+    isDeepStrictEqual(priced.effect, payload.effect)
+  ) {
+    return null;
+  }
+
+  const refusal = await writeLearnerChange({ userId: context.goal.userId }, async (tx) => {
+    const { count } = await tx.planChange.updateMany({
+      data: { payload: toPlanChangePayload(priced) },
+      where: { id: change.id, planId: context.plan.id, status: "proposed" },
+    });
+
+    return count === 0 ? unchanged({ status: "conflict" as const }) : null;
+  });
+
+  if (refusal) {
+    return refusal;
+  }
+
+  revalidatePlanTags(context.goal.userId);
+
+  return REPRICED;
+}
+
+/**
+ * Applies only the numbers the learner saw: `quote` must be the proposal's current one, so another
+ * tab still showing the earlier numbers, or a retried request, gets today's numbers to answer.
+ */
+async function acceptProposal({
+  change,
+  context,
+  quote,
+}: Decision & { quote: PlanChangeQuote | null }) {
   const payload = parsePlanChangePayload(change.payload);
 
   const result = await applyChangeOperations({
@@ -42,11 +100,26 @@ async function acceptProposal({ change, context }: Decision) {
     return { error: result.error, status: "invalid" as const };
   }
 
-  const { bringsBackSetAside, computed, effect } = await computeChange({
+  const {
+    bringsBackSetAside,
+    computed,
+    effect,
+    unchanged: changesNothing,
+  } = await computeChange({ context, operations: result.operations, state: result.state });
+
+  const repriced = await repriceProposal({
+    change,
     context,
-    operations: result.operations,
-    state: result.state,
+    effect: changesNothing ? null : effect,
   });
+
+  if (repriced) {
+    return repriced;
+  }
+
+  if (quote !== getPlanChangeQuote(payload.effect)) {
+    return REPRICED;
+  }
 
   await commitPlan({
     change: null,
@@ -169,7 +242,7 @@ async function markSeen({ change, context }: Decision) {
   return null;
 }
 
-async function decide({ decision, input }: { decision: Decision; input: PlanChangeDecisionInput }) {
+async function decide({ decision, input }: { decision: Decision; input: PlanChangeDecision }) {
   const { change } = decision;
 
   if (input.status === "seen") {
@@ -181,7 +254,9 @@ async function decide({ decision, input }: { decision: Decision; input: PlanChan
       return { status: "conflict" as const };
     }
 
-    return input.status === "applied" ? acceptProposal(decision) : decline(decision);
+    return input.status === "applied"
+      ? acceptProposal({ ...decision, quote: input.quote })
+      : decline(decision);
   }
 
   if (!canUndoChange({ change, planVersion: decision.context.plan.version })) {
@@ -199,7 +274,7 @@ export async function decidePlanChange({
 }: {
   changeId: string;
   goalId: string;
-  input: PlanChangeDecisionInput;
+  input: PlanChangeDecision;
   trackAnalytics?: boolean;
 }): Promise<PlanChangeDecisionResult> {
   return withPlanRetry(async () => {
@@ -218,6 +293,10 @@ export async function decidePlanChange({
     }
 
     const refusal = await decide({ decision: { change, context: owned.context }, input });
+
+    if (refusal?.status === "repriced") {
+      return { change: await loadPlanChangeView(change.id), status: "updated" as const };
+    }
 
     if (refusal) {
       return refusal;

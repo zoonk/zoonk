@@ -12,6 +12,7 @@ import { LessonPracticeStep } from "@zoonk/player/lesson/practice";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { type ComponentProps } from "react";
 import { finishMistakePracticeAction } from "./practice-actions";
+import { PracticeSkeleton } from "./practice-skeleton";
 
 type RunProps = ComponentProps<typeof MistakePracticeRun>;
 
@@ -28,7 +29,11 @@ export function MistakePracticeClient({
 }) {
   const lessonHref = useLessonPlayerHref();
   const questionTutor = useQuestionTutor(tutor);
-  const reset = useResetWhenDone();
+  const reset = useResetWhenDone(practice);
+
+  if (reset.stale) {
+    return <PracticeSkeleton />;
+  }
 
   return (
     <MistakePracticeRun

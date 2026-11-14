@@ -662,6 +662,60 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertEqual(shown?.change.canUndo, true)
   }
 
+  func testAnAcceptOrAnUndoOnTodayReadsTodayAgain() async throws {
+    let proposed = try planChange(status: "proposed")
+    let applied = try planChange(status: "applied", canUndo: true)
+    let view = try today(session: day(blocks: [], nextPosition: nil), planChange: proposed)
+    let api = StudyAPIStub(today: .day(view), decided: applied)
+    let store = TodayStore(api: api, cache: signedInCache())
+    await store.today.load()
+
+    _ = await store.answer(proposed, with: .applied, in: view)
+    await store.today.load()
+    _ = await store.answer(applied, with: .undone, in: view)
+    await store.today.load()
+
+    let reads = await api.todayReads
+    XCTAssertEqual(reads, 3, "the day's lessons follow each answer")
+  }
+
+  func testAPlanChangeSavedFromAnotherScreenReadsTodayAgain() async throws {
+    let view = try today(session: day(blocks: [], nextPosition: nil))
+    let api = StudyAPIStub(today: .day(view))
+    let cache = signedInCache()
+    let store = TodayStore(api: api, cache: cache)
+    let plans = PlanStore(api: PlanAPIStub(), cache: cache)
+    await store.today.load()
+
+    // The Focus test's proposal, then the Plan's editor.
+    _ = await plans.decide(try planChange(status: "proposed"), goalId: "g1", decision: .applied)
+    await store.today.load()
+    _ = await plans.change(goalId: "g1", edits: [.dailyMinutes(20)])
+    await store.today.load()
+
+    let reads = await api.todayReads
+    XCTAssertEqual(reads, 3, "Today's lessons follow a change saved anywhere")
+  }
+
+  func testAnAcceptSendsTheQuoteShownAndAsksAgainWhenTheNumbersMoved() async throws {
+    let proposed = try planChange(status: "proposed", quote: "q1")
+    let view = try today(session: day(blocks: [], nextPosition: nil), planChange: proposed)
+    let api = StudyAPIStub(
+      today: .day(view), decided: try planChange(status: "proposed", quote: "q2"))
+    let store = TodayStore(api: api, cache: signedInCache())
+    await store.today.load()
+
+    _ = await store.answer(proposed, with: .applied, in: view)
+    let shown = try XCTUnwrap(store.shownPlanChange(in: view))
+    _ = await store.answer(shown.change, with: .applied, in: view)
+    let sent = await api.sentQuotes
+
+    XCTAssertNil(shown.decision, "it asks again")
+    XCTAssertTrue(shown.repriced)
+    XCTAssertEqual(shown.change.quote, "q2")
+    XCTAssertEqual(sent, ["q1", "q2"])
+  }
+
   func testAChangeThePlanMovedPastLeavesWithoutAnError() async throws {
     let applied = try planChange(status: "applied", canUndo: true)
     let view = try today(session: day(blocks: [], nextPosition: nil))
@@ -856,13 +910,13 @@ private func dayJSON(
   return """
     {"blocks":[\(blockList.joined(separator: ","))],"brainPower":0,"catchUp":null,"current":true,
     "dayEndsAt":1793242800000,"emptyDay":\(json(emptyDay)),
-    "examAccess":{"includesMockExams":true,"trialEnded":false},"examTomorrow":false,
+    "examAccess":{"includesMockExams":true},"examTomorrow":false,
     "extraTime":{"available":false,"lessons":[],"minutes":10,"reason":null},"freshStart":null,
     "fullMeal":{"bonus":50,"earned":false,"ready":false},"goalId":"\(goalID)",
     "lessonsComing":false,"lessonsToPrepare":false,
     "localDate":"\(localDate)","minutes":{"dailyGoal":15,"done":0,"left":15,"planned":15},
     "missions":[],"nextPosition":\(nextPosition.map(String.init) ?? "null"),
-    "pauseSuggested":false,"plusLessons":[],"sessionBar":{"completed":0,"total":1},"state":"\(state)",
+    "pauseSuggested":false,"sessionBar":{"completed":0,"total":1},"state":"\(state)",
     "week":{"days":[],"nextStudyDate":null},
     "status":"\(id == nil ? "unstarted" : "active")"\(id.map { ",\"id\":\"\($0)\"" } ?? "")}
     """
@@ -879,11 +933,11 @@ private func day(
 }
 
 private func planChange(
-  status: String, canUndo: Bool = false, id: String = "c1"
+  status: String, canUndo: Bool = false, id: String = "c1", quote: String = "q1"
 ) throws -> TodayView.PlanChange {
   try decode(
     """
-    {"behind":null,"canApply":true,"canUndo":\(canUndo),"effect":null,"examDocument":"notice",
+    {"behind":null,"canApply":true,"canUndo":\(canUndo),"effect":null,"examDocument":"notice","quote":"\(quote)",
     "id":"\(id)","kind":"edited","officialDate":null,"operations":[],
     "reason":"Rest on Saturdays?","source":"memory","status":"\(status)","todaySession":null}
     """)
@@ -938,6 +992,7 @@ private actor StudyAPIStub: StudyAPIClient {
   private var today: TodayContent
   private let session: StudyDay?
   private var decided: TodayView.PlanChange?
+  private(set) var sentQuotes: [PlanChangeQuote?] = []
   private let holdsOpening: Bool
   private var heldOpening: CheckedContinuation<Void, Never>?
   private var openingWaiter: CheckedContinuation<Void, Never>?
@@ -1187,9 +1242,11 @@ private actor StudyAPIStub: StudyAPIClient {
   }
 
   func decidePlanChange(
-    token: String, goalID: String, changeID: String, decision: PlanChangeDecision
+    token: String, goalID: String, changeID: String, decision: PlanChangeDecision,
+    quote: PlanChangeQuote?
   ) async throws -> TodayView.PlanChange? {
-    decided
+    sentQuotes.append(quote)
+    return decided
   }
 }
 

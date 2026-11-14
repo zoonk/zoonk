@@ -24,7 +24,7 @@ struct LessonPlayerState: Equatable, Sendable {
     case answerNotSaved
     /// A question left out because its picture never came is back, since the picture came.
     case pictureReady
-    /// "Can't write now" left the lesson's writing out; "Write again" puts it back.
+    /// "Skip writing questions today" left the lesson's writing out; "Turn back on" puts it back.
     case writingSkipped
   }
 
@@ -101,7 +101,8 @@ struct LessonPlayerState: Equatable, Sendable {
   private(set) var revealed: [String: Int] = [:]
   /// Screens that can't be played after all (a question about a picture that never came).
   private(set) var unavailableStepIds: [String] = []
-  /// Writing left out of this run, without a verdict ("I don't know yet", "Can't write now").
+  /// Writing left out of this run, without a verdict ("I don't know yet", "Skip writing questions
+  /// today").
   private(set) var skippedWritingStepIds: [String] = []
   private(set) var writingRestore: WritingRestore?
   /// Questions answered after "Explain first", so memory rates them as helped.
@@ -299,6 +300,15 @@ struct LessonPlayerState: Equatable, Sendable {
   var canKnowThis: Bool {
     phase == .playing && quickCheck == nil && !isRefused && currentStep?.kind == .explanation
       && !quickCheckQueue.isEmpty
+  }
+
+  /// The "…" menu's "Skip writing questions today", on a written answer that's still open.
+  var canSkipWriting: Bool {
+    guard phase == .playing, let step = currentStep, step.isWriting else {
+      return false
+    }
+
+    return answers[step.id] == nil
   }
 
   /// "Explain first" on a question that comes before its explanation.

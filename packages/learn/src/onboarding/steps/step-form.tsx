@@ -1,15 +1,13 @@
 "use client";
 
-import { FORWARD_ICON } from "@zoonk/ui/components/button";
-import { cn } from "@zoonk/ui/lib/utils";
 import { SkipForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { CLEAR_OF_PINNED_ACTIONS_CLASS } from "../../_components/pinned-actions";
+import { useId } from "react";
 import { usePendingSender } from "../../_utils/use-pending-sender";
 import {
+  OnboardingActions,
   OnboardingColumn,
   OnboardingDescription,
-  OnboardingFooter,
   OnboardingHeading,
   OnboardingPrimaryButton,
   OnboardingSecondaryButton,
@@ -22,12 +20,13 @@ export function StepForm({
   children,
   continueLabel,
   description,
-  formNoValidate,
   notice,
   onContinue,
   onSkip,
   pending,
+  position,
   rail,
+  skipIcon,
   skipLabel,
   subject,
   title,
@@ -36,18 +35,22 @@ export function StepForm({
   children?: React.ReactNode;
   continueLabel?: string;
   description?: React.ReactNode;
-  formNoValidate?: boolean;
-  /** A quiet line above the buttons, so it never moves the choices. */
+  /** A quiet line over the buttons, so it never moves the choices. */
   notice?: React.ReactNode;
   onContinue: () => void;
   onSkip?: () => void;
   pending: boolean;
+  /** Where the learner is in a run of steps ("4 of 10"), beside the subject. */
+  position?: string;
   rail?: React.ReactNode;
+  /** The second action's glyph, for one that isn't a skip. */
+  skipIcon?: React.ReactNode;
   skipLabel?: string;
   subject?: string;
   title: string;
 }) {
   const t = useExtracted();
+  const formId = useId();
   const [sender, setSender] = usePendingSender<"continue" | "skip">(pending);
 
   const send = (by: "continue" | "skip", action: () => void) => {
@@ -56,9 +59,35 @@ export function StepForm({
   };
 
   return (
-    <OnboardingColumn rail={rail}>
+    <OnboardingColumn
+      bar={
+        <OnboardingActions note={notice}>
+          {onSkip && (
+            <OnboardingSecondaryButton
+              busy={sender === "skip"}
+              disabled={pending}
+              icon={skipIcon ?? <SkipForwardIcon aria-hidden="true" />}
+              onClick={() => send("skip", onSkip)}
+            >
+              {skipLabel ?? t("Skip")}
+            </OnboardingSecondaryButton>
+          )}
+
+          <OnboardingPrimaryButton
+            busy={sender === "continue"}
+            disabled={!canContinue || pending}
+            form={formId}
+            type="submit"
+          >
+            {continueLabel ?? t("Continue")}
+          </OnboardingPrimaryButton>
+        </OnboardingActions>
+      }
+      rail={rail}
+    >
       <form
         className="flex flex-1 flex-col gap-6"
+        id={formId}
         onSubmit={(event) => {
           event.preventDefault();
 
@@ -67,40 +96,13 @@ export function StepForm({
           }
         }}
       >
-        <div className={cn("contents", CLEAR_OF_PINNED_ACTIONS_CLASS)}>
-          <OnboardingHeading>
-            {subject && <OnboardingSubject>{subject}</OnboardingSubject>}
-            <OnboardingTitle>{title}</OnboardingTitle>
-            {description && <OnboardingDescription>{description}</OnboardingDescription>}
-          </OnboardingHeading>
+        <OnboardingHeading>
+          {subject && <OnboardingSubject position={position}>{subject}</OnboardingSubject>}
+          <OnboardingTitle>{title}</OnboardingTitle>
+          {description && <OnboardingDescription>{description}</OnboardingDescription>}
+        </OnboardingHeading>
 
-          {children}
-        </div>
-
-        <OnboardingFooter pinned>
-          {notice}
-          <OnboardingPrimaryButton
-            busy={sender === "continue"}
-            disabled={!canContinue || pending}
-            formNoValidate={formNoValidate}
-            type="submit"
-            {...FORWARD_ICON}
-          >
-            {continueLabel ?? t("Continue")}
-          </OnboardingPrimaryButton>
-
-          {onSkip && (
-            <OnboardingSecondaryButton
-              busy={sender === "skip"}
-              disabled={pending}
-              icon={<SkipForwardIcon aria-hidden="true" />}
-              onClick={() => send("skip", onSkip)}
-              type="button"
-            >
-              {skipLabel ?? t("Skip")}
-            </OnboardingSecondaryButton>
-          )}
-        </OnboardingFooter>
+        {children}
       </form>
     </OnboardingColumn>
   );

@@ -1,28 +1,24 @@
 "use client";
 
 import { type MockOptionsView } from "@zoonk/core/exams/mocks/contract";
-import { TimerIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { DETAIL_PRIMARY_CLASS } from "../_components/detail-page";
+import { EnterLink } from "../_components/enter-button";
 import { KindDot } from "../_components/kind-tile";
 import {
-  ListRowBody,
   ListRowContent,
-  ListRowDescription,
   ListRowLeading,
   ListRowLink,
   ListRowTitle,
-  ListRowTrailing,
 } from "../_components/list-group";
-import { PlusMark } from "../_components/plus-lock";
-import { LearnLink } from "../learn-link";
 
+/** The buddy's offer card names what a mock exam can be; the rows that open the chooser don't. */
 export function useMockEntryDescription({ bySubject }: { bySubject: boolean }): string {
   const t = useExtracted();
 
   return bySubject
-    ? t("Whenever you want: a full exam day, half a day or one subject")
-    : t("Whenever you want: a full exam day or half a day");
+    ? t("The full exam, half of it or one subject")
+    : t("The full exam or half of it");
 }
 
 export function MockEntryRow({
@@ -33,10 +29,6 @@ export function MockEntryRow({
   view: MockOptionsView;
 }) {
   const t = useExtracted();
-
-  const description = useMockEntryDescription({
-    bySubject: view.options.some((option) => option.kind === "area"),
-  });
 
   if (!view.running && view.options.length === 0) {
     return null;
@@ -50,7 +42,6 @@ export function MockEntryRow({
         </ListRowLeading>
         <ListRowContent>
           <ListRowTitle>{t("Continue your mock exam")}</ListRowTitle>
-          <ListRowDescription>{t("It's where you left it")}</ListRowDescription>
         </ListRowContent>
       </ListRowLink>
     );
@@ -61,17 +52,9 @@ export function MockEntryRow({
       <ListRowLeading>
         <KindDot kind="mock" />
       </ListRowLeading>
-      <ListRowBody>
-        <ListRowContent>
-          <ListRowTitle>{t("Take a mock exam")}</ListRowTitle>
-          <ListRowDescription>{description}</ListRowDescription>
-        </ListRowContent>
-        {view.access === "plusRequired" && (
-          <ListRowTrailing>
-            <PlusMark />
-          </ListRowTrailing>
-        )}
-      </ListRowBody>
+      <ListRowContent>
+        <ListRowTitle>{t("Take a mock exam")}</ListRowTitle>
+      </ListRowContent>
     </ListRowLink>
   );
 }
@@ -90,15 +73,12 @@ export function MockEntryButton({
   }
 
   return (
-    <LearnLink
+    <EnterLink
       className={DETAIL_PRIMARY_CLASS}
       href={view.running ? hrefs.mock(view.running.id) : hrefs.choose}
+      size="lg"
     >
-      <TimerIcon aria-hidden="true" className="size-4" />
       {view.running ? t("Continue your mock exam") : t("Take a mock exam")}
-      {view.access === "plusRequired" && !view.running && (
-        <PlusMark className="bg-primary-foreground/15 text-primary-foreground" />
-      )}
-    </LearnLink>
+    </EnterLink>
   );
 }

@@ -3,9 +3,10 @@
 import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
 import { safeAsync } from "@zoonk/utils/error";
 import { settleWithin } from "@zoonk/utils/timeout";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { usePlanScreen } from "./plan-context";
 import { type PlanPreviewState, isSamePreviewPlan, resolvePlanPreview } from "./plan-preview-state";
+import { createPreviewRequests } from "./preview-requests";
 
 const PREVIEW_TIMEOUT_MS = 45_000;
 
@@ -25,24 +26,30 @@ export function usePreviewBase(): object {
   return changed ? plan : base;
 }
 
+/** `requestPreview` resolves to `null` once the request is cancelled or replaced. */
 export function usePlanPreview() {
   const { actions, plan } = usePlanScreen();
   const [preview, setPreview] = useState<PlanPreviewState>({ status: "idle" });
+  const requests = useRef(createPreviewRequests());
 
   if (preview.status !== "idle" && !isSamePreviewPlan({ current: plan, previous: preview.plan })) {
     setPreview({ status: "idle" });
   }
 
-  const requestPreview = async (operations: LearnerPlanOperation[]) => {
+  const requestPreview = (operations: LearnerPlanOperation[]) => {
     const request = { operations, plan, status: "loading" } as const;
     setPreview(request);
 
-    const { data } = await safeAsync(() =>
-      settleWithin({ ms: PREVIEW_TIMEOUT_MS, request: () => actions.preview(operations) }),
-    );
+    return requests.current.run(request, async () => {
+      const { data } = await safeAsync(() =>
+        settleWithin({ ms: PREVIEW_TIMEOUT_MS, request: () => actions.preview(operations) }),
+      );
 
-    const result = data?.status === "settled" ? data.value : null;
-    setPreview((current) => resolvePlanPreview({ current, preview: result, request }));
+      const result = data?.status === "settled" ? data.value : null;
+      setPreview((current) => resolvePlanPreview({ current, preview: result, request }));
+
+      return result;
+    });
   };
 
   return {
@@ -51,6 +58,9 @@ export function usePlanPreview() {
         ? ({ status: "idle" } as const)
         : preview,
     requestPreview,
-    setPreview: () => setPreview({ status: "idle" }),
+    setPreview: () => {
+      requests.current.cancel();
+      setPreview({ status: "idle" });
+    },
   };
 }

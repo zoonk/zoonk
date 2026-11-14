@@ -1,30 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="limit_create_account">Create a free account</string>
-    <string name="limit_see_plus">See Plus</string>
     <string name="limit_slow_down">Take a short break, then try again.</string>
-    <string name="limit_sign_up_required">Create your free account to continue.</string>
-    <string name="limit_help_guest_total">You\'ve used the free help you can get without an account. Create a free account to keep going.</string>
-    <string name="limit_help_guest_day">You\'ve used today\'s free help. Create a free account to keep going.</string>
-    <string name="limit_help_plus">You\'ve used today\'s help. It comes back tomorrow.</string>
-    <string name="limit_help_free_month">You\'ve used this month\'s help. It comes back next month, or get Plus to keep going now.</string>
-    <string name="limit_help_free_day">You\'ve used today\'s help. It comes back tomorrow, or get Plus to keep going now.</string>
-    <string name="limit_lessons_guest">You\'ve taken the lessons you can try without an account. Create a free account to keep going.</string>
-    <string name="limit_lessons_plus">That\'s all the new lessons for today. They open again tomorrow.</string>
-    <string name="limit_lessons_free_month">That\'s all the new lessons for this month. They open again next month, or get Plus to keep going now.</string>
-    <string name="limit_lessons_free_day">That\'s all the new lessons for today. They open again tomorrow, or get Plus to keep going now.</string>
-    <string name="limit_mind_maps_guest">You\'ve made the mind map you can try without an account. Create a free account to make more.</string>
-    <string name="limit_mind_maps_plus">That\'s all the new mind maps for today. You can make more tomorrow.</string>
-    <string name="limit_mind_maps_plus_month">That\'s all the new mind maps for this month. You can make more next month.</string>
-    <string name="limit_mind_maps_free_month">That\'s all the new mind maps for this month. You can make more next month, or get Plus to keep going now.</string>
-    <string name="limit_mind_maps_free_day">That\'s all the new mind maps for today. You can make more tomorrow, or get Plus to keep going now.</string>
-    <string name="limit_outlines_guest">You\'ve seen the topic you can see ahead of time without an account. Create a free account to see more.</string>
-    <string name="limit_outlines_plus">That\'s all the topics you can see ahead of time today. You can see more tomorrow.</string>
-    <string name="limit_outlines_free_month">That\'s all the topics you can see ahead of time this month. You can see more next month, or get Plus to keep going now.</string>
-    <string name="limit_outlines_free_day">That\'s all the topics you can see ahead of time today. You can see more tomorrow, or get Plus to keep going now.</string>
-    <string name="limit_calls_guest">Speaking calls come with a free account. Create one to practice out loud.</string>
-    <string name="limit_calls_plus_month">Your calls come back next month.</string>
-    <string name="limit_calls_plus_day">Your calls come back tomorrow.</string>
-    <string name="limit_calls_free_month">Your calls come back next month, or get Plus for higher call limits.</string>
-    <string name="limit_calls_free_day">Your calls come back tomorrow, or get Plus for higher call limits.</string>
+    <string name="limit_sign_up_required">This needs a free account</string>
+    <string name="limit_more_tomorrow">More tomorrow.</string>
+    <string name="limit_more_next_month">More next month.</string>
+    <string name="limit_more_tomorrow_or_subscribe">More tomorrow, or subscribe to keep going.</string>
+    <string name="limit_more_next_month_or_subscribe">More next month, or subscribe to keep going.</string>
+    <string name="limit_still_review">You can still review and practice your mistakes.</string>
+    <string name="limit_lesson_opens_today">Your next free lesson opens later today, or subscribe to keep going.</string>
+    <string name="limit_lesson_opens_tomorrow">Your next free lesson opens tomorrow, or subscribe to keep going.</string>
+    <!-- On the screen a free learner sees when their free lessons are used. {date} is a day and its month, such as "November 22" in English. -->
+    <string name="limit_lesson_opens_on">Your next free lesson opens on %1$s, or subscribe to keep going.</string>
+    <string name="limit_help_guest">That\'s all you can try without an account</string>
+    <string name="limit_help_day">You\'ve reached today\'s limit</string>
+    <string name="limit_help_month">You\'ve reached this month\'s limit</string>
+    <string name="limit_messages_day">No more messages today</string>
+    <string name="limit_messages_month">No more messages this month</string>
+    <string name="limit_explanations_day">No more explanations today</string>
+    <string name="limit_explanations_month">No more explanations this month</string>
+    <string name="limit_lessons_guest">No more lessons without an account</string>
+    <string name="limit_lessons_free">You\'ve used your free lessons</string>
+    <string name="limit_lessons_day">No more new lessons today</string>
+    <string name="limit_lesson_ready">Your next free lesson is ready</string>
+    <string name="limit_map_not_enough">Not enough free lessons for this map yet</string>
+    <!-- Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet. -->
+    <string name="limit_map_enough_today">You\'ll have enough later today, or subscribe to make it now.</string>
+    <!-- Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet. -->
+    <string name="limit_map_enough_tomorrow">You\'ll have enough tomorrow, or subscribe to make it now.</string>
+    <!-- Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet. {date} is a day and its month, such as "November 22" in English. -->
+    <string name="limit_map_enough_on">You\'ll have enough on %1$s, or subscribe to make it now.</string>
+    <string name="limit_map_ready">You can make this map now</string>
+    <string name="limit_map_needs_subscription">This map needs a subscription</string>
+    <!-- Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and this one has more lessons than a free learner can start. -->
+    <string name="limit_map_needs_subscription_line">It writes more lessons than you get for free.</string>
+    <string name="limit_mind_maps_guest">No more mind maps without an account</string>
+    <string name="limit_mind_maps_day">No more new mind maps today</string>
+    <string name="limit_mind_maps_month">No more new mind maps this month</string>
+    <string name="limit_outlines_guest">No more previews without an account</string>
+    <string name="limit_outlines_day">No more previews today</string>
+    <string name="limit_outlines_month">No more previews this month</string>
 </resources>

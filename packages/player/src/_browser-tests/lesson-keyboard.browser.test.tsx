@@ -118,6 +118,11 @@ function countPlays() {
   return plays;
 }
 
+/** A formula becomes a tab stop once it has been measured against its column. */
+function formulaStops() {
+  return document.querySelectorAll("[data-slot='display-math'] > [tabindex]");
+}
+
 describe("lesson by keyboard", () => {
   afterEach(() => {
     vi.restoreAllMocks();
@@ -231,10 +236,9 @@ describe("lesson by keyboard", () => {
       await press("Enter");
       await expect.element(page.getByText("A line that fits.")).toBeVisible();
 
-      const stops = document.querySelectorAll("[data-slot='display-math'] > [tabindex]");
-      expect(stops).toHaveLength(1);
+      await expect.poll(() => formulaStops()).toHaveLength(1);
 
-      const formula = page.elementLocator(stops[0]!);
+      const formula = page.elementLocator(formulaStops()[0]!);
       await tabTo(formula);
       expect(formula.element().scrollLeft).toBe(0);
 
@@ -359,7 +363,7 @@ describe("lesson by keyboard", () => {
       await answer.click();
       await userEvent.keyboard(RIGHT_TYPED);
 
-      await page.getByRole("button", { name: "Close lesson" }).click();
+      await page.getByRole("link", { exact: true, name: "Leave" }).click();
       const leave = page.getByRole("alertdialog", { name: "Leave for now?" });
       await expect.element(leave).toBeVisible();
       await leave.getByRole("button", { name: "Keep writing" }).click();
@@ -399,7 +403,7 @@ describe("lesson by keyboard", () => {
     await expect.poll(() => checkStep.mock.calls.length).toBe(1);
     await expect.element(check).toHaveAttribute("aria-busy", "true");
     await expect.element(check).toBeDisabled();
-    await page.getByRole("button", { name: "Close lesson" }).click();
+    await page.getByRole("link", { exact: true, name: "Leave" }).click();
     const leave = page.getByRole("alertdialog", { name: "Leave for now?" });
     await expect.element(leave).toBeVisible();
     await leave.getByRole("button", { name: "Keep writing" }).click();
@@ -414,7 +418,7 @@ describe("lesson by keyboard", () => {
     });
 
     await expect.element(answer).toHaveValue(RIGHT_TYPED);
-    await page.getByRole("button", { name: "Close lesson" }).click();
+    await page.getByRole("link", { exact: true, name: "Leave" }).click();
     await expect.element(leave).toBeVisible();
     await leave.getByRole("button", { name: "Keep writing" }).click();
     await pressOnPage("Escape");
@@ -424,7 +428,7 @@ describe("lesson by keyboard", () => {
 
     await page.getByRole("button", { exact: true, name: "Check" }).click();
     await expect.element(verdict("Correct!")).toBeVisible();
-    await expect.element(page.getByRole("link", { name: "Close lesson" })).toBeVisible();
+    await expect.element(page.getByRole("link", { exact: true, name: "Leave" })).toBeVisible();
     await pressOnPage("Escape");
     expect(onExit).toHaveBeenCalledOnce();
     await expect.element(leave).not.toBeInTheDocument();
@@ -588,7 +592,7 @@ describe("lesson by keyboard", () => {
     openLesson({ steps: [teachingStep("explanation")] });
 
     await expect
-      .element(page.getByRole("link", { name: "Close lesson" }))
+      .element(page.getByRole("link", { exact: true, name: "Leave" }))
       .toHaveAttribute("aria-keyshortcuts", "Escape");
   });
 

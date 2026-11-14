@@ -1,3 +1,4 @@
+/* oxlint-disable unicorn/no-process-exit -- Help and invalid options exit the CLI before browser setup. */
 /* oxlint-disable no-console, no-await-in-loop -- This CLI measures one page load at a time, in order, and prints its report. */
 import { mkdir, writeFile } from "node:fs/promises";
 import { availableParallelism, loadavg } from "node:os";
@@ -10,11 +11,15 @@ import { readActionNames } from "./actions.mts";
 import { compareWithBaseline, comparisonRows, readBaseline } from "./baseline.mts";
 import { markBusy } from "./busy.mts";
 import { type Finding } from "./checks.mts";
+import { readTypeScale } from "./craft-scale.mts";
 import { checkExposure } from "./exposure.mts";
+import { readShortcuts } from "./keys.mts";
 import { type LoadReport, measureLoad, warmUp } from "./measure.mts";
 import { type SoakReport, judgeSoak, measureSoak, soakRows } from "./memory.mts";
 import { type NavigationMode } from "./navigation-checks.mts";
 import { type NavigationReport, measureNavigations } from "./navigations.mts";
+import { pageTopComparisons } from "./page-top-comparisons.mts";
+import { PAGE_OPTIONS, USAGE } from "./pages-usage.mts";
 import {
   type RenderReport,
   findUnindexed,
@@ -25,40 +30,35 @@ import {
 } from "./queries.mts";
 import { renderReport } from "./report.mts";
 import { redactQuery, savedRequest } from "./requests.mts";
+import { type RoleCapture, captureRoles, renderRoleSheets } from "./roles.mts";
 import { findServerPid } from "./server-process.mts";
 import { renderNavigationSheet, renderSheets } from "./sheets.mts";
 import { signIn } from "./sign-in.mts";
+import { walkStates } from "./states.mts";
 import { SCHEMES, THROTTLING, VIEWPORT_NAMES, type ViewportName, pick } from "./viewports.mts";
 
-/**
- * `pnpm verify:pages [path...]`; `--nav` also taps through the paths in order. The verify skill
- * explains when to run it and how to read it.
- */
 const repository = resolve(import.meta.dirname, "../..");
 
-const { positionals, values } = parseArgs({
-  allowPositionals: true,
-  options: {
-    app: { default: "main", type: "string" },
-    baseline: { type: "string" },
-    early: { default: false, type: "boolean" },
-    email: { type: "string" },
-    intruder: { type: "string" },
-    "local-storage": { multiple: true, type: "string" },
-    nav: { default: false, type: "boolean" },
-    "no-prefetch": { default: false, type: "boolean" },
-    out: { type: "string" },
-    queries: { type: "string" },
-    schemes: { default: SCHEMES.join(","), type: "string" },
-    soak: { type: "string" },
-    throttle: { default: false, type: "boolean" },
-    url: { type: "string" },
-    viewports: { default: VIEWPORT_NAMES.join(","), type: "string" },
-  },
-});
+function options() {
+  try {
+    return parseArgs({ allowPositionals: true, options: PAGE_OPTIONS });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error(`${message.split(" To specify a positional argument")[0]}\n\n${USAGE}`);
+    process.exit(2);
+  }
+}
 
-const baseUrl =
-  values.url ?? getServiceUrl({ currentDirectory: repository, serviceName: values.app });
+const { positionals, values } = options();
+
+if (values.help) {
+  console.log(USAGE);
+  process.exit(0);
+}
+
+const served = resolve(values.checkout ?? repository);
+
+const baseUrl = values.url ?? getServiceUrl({ currentDirectory: served, serviceName: values.app });
 
 const paths = positionals.length > 0 ? positionals : ["/"];
 const viewports = pick(values.viewports, VIEWPORT_NAMES, "viewport");
@@ -71,7 +71,7 @@ assertBrowserLaunchAllowed();
 
 const mailboxUrl =
   values.email || values.intruder
-    ? getMailboxCaptureUrl(getServiceUrl({ currentDirectory: repository, serviceName: "mailbox" }))
+    ? getMailboxCaptureUrl(getServiceUrl({ currentDirectory: served, serviceName: "mailbox" }))
     : "";
 
 const signedIn = values.email
@@ -110,19 +110,22 @@ const loadPerCore = () => (loadavg()[0] ?? 0) / availableParallelism();
 const BUSY_LOAD_PER_CORE = 3;
 const loadAtStart = loadPerCore();
 const browser = await chromium.launch();
-const actions = readActionNames(repository);
+const actions = readActionNames(served);
 
 const queries = values.queries ? resolve(values.queries) : undefined;
 
 const target = {
   actions,
+  app: values.app,
   baseUrl,
   browser,
   out,
   queries,
   serverPid,
+  shortcuts: await readShortcuts(served),
   storageState,
   throttle: values.throttle,
+  typeScale: readTypeScale(served),
 };
 
 function navigationMode(): NavigationMode {
@@ -138,6 +141,7 @@ const mode = navigationMode();
 const loads: LoadReport[] = [];
 const navigations: NavigationReport[] = [];
 const sheets: string[] = [];
+const roles: RoleCapture[] = [];
 let soak: SoakReport | null = null;
 const renders: RenderReport[] = [];
 
@@ -151,11 +155,32 @@ try {
 
     for (const viewport of viewports) {
       const load = await measureLoad(target, { path, schemes, viewport });
+
+      // Craft's X3 on the two sizes the craft read uses: what a person's taps and typing move.
+      if (navigationViewports.includes(viewport)) {
+        const { findings, ...coverage } = await walkStates(target, {
+          capture: values.roles
+            ? async (page, state) => {
+                roles.push(...(await captureRoles(page, { out, path, state, viewport })));
+              }
+            : undefined,
+          path,
+          viewport,
+        });
+
+        load.walk = coverage;
+        load.findings.push(...findings);
+      }
+
       const failing = load.findings.filter((finding) => finding.level === "fail").length;
 
       console.log(
         `${path} ${viewport}: ${failing} failing, ${load.findings.length - failing} to look at`,
       );
+
+      for (const finding of load.findings.filter((item) => item.level === "fail")) {
+        console.log(`  ${finding.check}: ${finding.message}`);
+      }
 
       loads.push(load);
     }
@@ -175,7 +200,7 @@ try {
     );
 
     const production = loads.every((load) => load.production);
-    const unindexed = await findUnindexed(repository, { production, reads: summary.reads });
+    const unindexed = await findUnindexed(served, { production, reads: summary.reads });
 
     renders.push({
       findings: [...queryFindings(summary), ...unindexed],
@@ -191,6 +216,14 @@ try {
   sheets.push(
     ...(await renderSheets(browser, { baseline: baseline?.loads ?? [], loads })),
     ...(await renderNavigationSheet(browser, { navigations, out })),
+    ...(values.roles
+      ? await renderRoleSheets(browser, {
+          captures: roles,
+          out,
+          paths,
+          viewports: navigationViewports,
+        })
+      : []),
   );
 } finally {
   await browser.close();
@@ -243,6 +276,10 @@ const report = renderReport({
           },
         ]
       : []),
+    ...pageTopComparisons(loads).map(({ finding, path, viewport }) => ({
+      findings: [finding],
+      place: { page: path, screen: viewport },
+    })),
     ...(comparison?.findings ?? []).map(({ finding, path, viewport }) => ({
       findings: judge([finding]),
       place: { page: path, screen: viewport },

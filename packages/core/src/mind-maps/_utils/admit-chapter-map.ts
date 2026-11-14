@@ -76,7 +76,6 @@ export async function admitChapterMap(
     lessonsToWrite: lessonIds.length,
     now: ledger.now,
     owed: false,
-    plusRequired: false,
     row,
   });
 

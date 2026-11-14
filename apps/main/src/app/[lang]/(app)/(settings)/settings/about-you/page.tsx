@@ -13,9 +13,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
 
   return {
-    description: t(
-      "What you tell us here shapes your examples and your buddy. Everything is optional.",
-    ),
+    description: t("Your answers shape your examples and your buddy. Everything is optional."),
     robots: { follow: false, index: false },
     title: t("About you"),
   };
@@ -48,11 +46,11 @@ export default async function AboutYouPage() {
   const t = await getExtracted();
 
   return (
-    <Page className="max-w-form">
+    <Page measure="form">
       <SectionPageHeader title={t("About you")} />
 
       <p className="text-muted-foreground -mt-4 text-sm text-pretty md:mt-0">
-        {t("What you tell us here shapes your examples and your buddy. Everything is optional.")}
+        {t("Your answers shape your examples and your buddy. Everything is optional.")}
       </p>
 
       <Suspense fallback={<AboutYouSkeleton />}>

@@ -3,7 +3,6 @@
 import { type WrittenPractice } from "@zoonk/core/plans/written-practice-contract";
 import { RadioGroup, RadioGroupItem, RadioGroupOption } from "@zoonk/ui/components/radio-group";
 import { useExtracted, useFormatter } from "next-intl";
-import { ChangeSaveError } from "../_components/save-error";
 import { usePlanScreen } from "./plan-context";
 import { PLAN_OPTION_CLASS } from "./plan-option-styles";
 import { usePlanChange } from "./use-plan-change";
@@ -22,12 +21,6 @@ export function useWrittenCadenceWords() {
     weekly: t("Every week"),
   };
 
-  const effects: Record<WrittenCadence, string> = {
-    biweekly: t("The same practice in alternate weeks: less spread out, more at a time."),
-    finalWeeks: t("Less spaced practice, concentrated in the final weeks before the exam."),
-    weekly: t("Recommended: a little every week, which improves writing the most."),
-  };
-
   const changes: Record<WrittenCadence, string> = {
     biweekly: t("Writing practice every other week from now on."),
     finalWeeks: t("Writing practice only in the final weeks from now on."),
@@ -36,7 +29,6 @@ export function useWrittenCadenceWords() {
 
   return {
     changed: (cadence: WrittenCadence) => changes[cadence],
-    effect: (cadence: WrittenCadence) => effects[cadence],
     label: (cadence: WrittenCadence) => labels[cadence],
   };
 }
@@ -46,12 +38,10 @@ function isCadence(value: unknown): value is WrittenCadence {
 }
 
 export function WrittenCadenceChoice({
-  failed,
   onChange,
   pending,
   practice,
 }: {
-  failed: boolean;
   onChange: (cadence: WrittenCadence, answered: () => void) => void;
   pending: boolean;
   practice: WrittenPractice;
@@ -73,7 +63,7 @@ export function WrittenCadenceChoice({
       </legend>
 
       <RadioGroup
-        className="flex flex-wrap gap-2"
+        className="flex flex-col gap-2"
         disabled={pending}
         onValueChange={(value) => {
           if (isCadence(value) && value !== practice.cadence) {
@@ -85,27 +75,17 @@ export function WrittenCadenceChoice({
         {cadences.map((cadence) => (
           <RadioGroupOption className={PLAN_OPTION_CLASS} key={cadence}>
             <RadioGroupItem value={cadence} />
-            {words.label(cadence)}
+            {cadence === "weekly" ? t("Every week (recommended)") : words.label(cadence)}
           </RadioGroupOption>
         ))}
       </RadioGroup>
-
-      <p
-        aria-busy={pending}
-        aria-live="polite"
-        className="text-muted-foreground text-sm aria-busy:opacity-60"
-      >
-        {words.effect(choice.shown)}
-      </p>
-
-      {failed && <ChangeSaveError />}
     </fieldset>
   );
 }
 
 export function PlanWrittenPractice() {
   const { plan } = usePlanScreen();
-  const { change, failed, isPending } = usePlanChange();
+  const { change, isPending } = usePlanChange();
   const practice = plan.writtenPractice;
 
   if (!practice) {
@@ -114,7 +94,6 @@ export function PlanWrittenPractice() {
 
   return (
     <WrittenCadenceChoice
-      failed={failed}
       onChange={(cadence, answered) => change([{ cadence, kind: "setWrittenCadence" }], answered)}
       pending={isPending}
       practice={practice}

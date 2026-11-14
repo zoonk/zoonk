@@ -4,10 +4,10 @@ import { Checkbox } from "@zoonk/ui/components/checkbox";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { RadioGroup, RadioGroupItem, RadioGroupOption } from "@zoonk/ui/components/radio-group";
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
+import { MAX_PICK_KEYS, shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { Fragment, useRef } from "react";
+import { useRef } from "react";
 import {
   LIST_GROUP_CLASS,
   LIST_ROW_INTERACTIVE_CLASS,
@@ -16,11 +16,11 @@ import {
   ListRowLeading,
   ListRowTitle,
 } from "../_components/list-group";
-import { CHOICE_CONTROL_CLASS, CHOICE_PICKED_ROW_CLASS } from "./choice-styles";
+import { CHOICE_PICKED_ROW_CLASS } from "./choice-styles";
 import { useOnboardingAnnounce } from "./onboarding-announcer";
 
 export type Choice<Value extends string> = {
-  /** Shown under the row, such as a field the choice asks for. */
+  /** What the choice asks for, such as a field. Shown under the list, so picking moves no row. */
   after?: React.ReactNode;
   description?: string;
   label: React.ReactNode;
@@ -29,29 +29,47 @@ export type Choice<Value extends string> = {
   value: Value;
 };
 
-const NUMBER_KEY_COUNT = 9;
-
-function ChoiceRadio<Value extends string>({ value }: { value: Value }) {
-  return (
-    <span className="relative flex shrink-0 self-center">
-      <RadioGroupItem
-        className={cn(CHOICE_CONTROL_CLASS, "**:data-[slot=radio-group-indicator]:hidden")}
-        value={value}
-      />
-      <CheckIcon
-        aria-hidden="true"
-        className="text-selected-foreground pointer-events-none absolute inset-0 m-auto hidden size-3 group-has-data-checked/choice:block"
-        strokeWidth={3}
-      />
-    </span>
-  );
-}
-
 export const CHOICE_ROW_CLASS = cn(
   LIST_ROW_INTERACTIVE_CLASS,
   CHOICE_PICKED_ROW_CLASS,
-  "group/choice has-focus-visible:before:ring-ring/50 cursor-pointer has-focus-visible:before:ring-[3px]",
+  "group/choice has-focus-visible:before:ring-ring/50 cursor-pointer has-focus-visible:before:ring-[3px] has-focus-visible:before:ring-inset",
 );
+
+/**
+ * A row's number key, only where there is a keyboard. Rows past the ninth keep its room, so every
+ * label starts on one edge.
+ */
+/** Keys show only with a fine pointer; there, a row past the ninth keeps the empty slot's width. */
+function ChoiceKey({ index }: { index: number }) {
+  return (
+    <ListRowLeading className="hidden w-5 justify-center pointer-fine:flex pointer-fine:empty:flex">
+      {index < MAX_PICK_KEYS && <ShortcutKbd index={index} shortcut="pick" />}
+    </ListRowLeading>
+  );
+}
+
+function ChoiceRowText({
+  children,
+  description,
+  index,
+  numberKeys,
+}: {
+  children: React.ReactNode;
+  description?: string;
+  index: number;
+  numberKeys: boolean;
+}) {
+  return (
+    <>
+      {numberKeys && <ChoiceKey index={index} />}
+
+      <ListRowContent>
+        <ListRowTitle>{children}</ListRowTitle>
+        {description && <ListRowDescription>{description}</ListRowDescription>}
+      </ListRowContent>
+    </>
+  );
+}
 
 /**
  * `onPick` hears only a deliberate pick (a tap, a click or a number key), never the arrow keys, so
@@ -101,10 +119,16 @@ export function ChoiceList<Value extends string>({
     onPick: (index) => {
       const choice = choices[index];
 
-      if (choice) {
-        onChange(choice.value);
-        pickDeliberately(choice);
+      if (!choice) {
+        return false;
       }
+
+      // Like a click on a picked radio, the key leaves the pick as it is.
+      if (choice.value !== value) {
+        onChange(choice.value);
+      }
+
+      pickDeliberately(choice);
     },
   });
 
@@ -124,25 +148,26 @@ export function ChoiceList<Value extends string>({
   };
 
   return (
-    <RadioGroup
-      aria-label={label}
-      className={LIST_GROUP_CLASS}
-      onKeyDown={(event) => {
-        pointerPick.current = null;
-        const highlighted = choices.find((choice) => choice.value === value);
+    <>
+      <RadioGroup
+        aria-label={label}
+        className={cn(LIST_GROUP_CLASS, "gap-0")}
+        onKeyDown={(event) => {
+          pointerPick.current = null;
+          const highlighted = choices.find((choice) => choice.value === value);
 
-        if (pickOnEnter && event.key === "Enter" && highlighted) {
-          event.preventDefault();
-          pickDeliberately(highlighted);
-        }
-      }}
-      onValueChange={pick}
-      readOnly={readOnly}
-      value={value}
-    >
-      {choices.map((choice, index) => (
-        <Fragment key={choice.value}>
+          if (pickOnEnter && event.key === "Enter" && highlighted) {
+            event.preventDefault();
+            pickDeliberately(highlighted);
+          }
+        }}
+        onValueChange={pick}
+        readOnly={readOnly}
+        value={value}
+      >
+        {choices.map((choice, index) => (
           <RadioGroupOption
+            key={choice.value}
             className={CHOICE_ROW_CLASS}
             data-highlighted={choice.value === value || undefined}
             onClick={() => pickByPointer(choice)}
@@ -150,32 +175,34 @@ export function ChoiceList<Value extends string>({
               pointerPick.current = choice.value;
             }}
           >
-            {numberKeys && index < NUMBER_KEY_COUNT && (
-              <ListRowLeading className="hidden w-5 justify-center pointer-fine:flex">
-                <ShortcutKbd>{index + 1}</ShortcutKbd>
-              </ListRowLeading>
-            )}
-
-            <ListRowContent>
-              <ListRowTitle>{choice.label}</ListRowTitle>
-              {choice.description && <ListRowDescription>{choice.description}</ListRowDescription>}
-            </ListRowContent>
+            <ChoiceRowText description={choice.description} index={index} numberKeys={numberKeys}>
+              {choice.label}
+            </ChoiceRowText>
 
             {choice.trailing}
-            <ChoiceRadio value={choice.value} />
+            <RadioGroupItem
+              aria-keyshortcuts={numberKeys ? shortcutKeys("pick", index) : undefined}
+              className="self-center"
+              value={choice.value}
+            />
           </RadioGroupOption>
+        ))}
+      </RadioGroup>
 
-          {choice.after}
-        </Fragment>
-      ))}
-    </RadioGroup>
+      {choices.find((choice) => Boolean(choice.after))?.after}
+    </>
   );
 }
 
+/**
+ * Number keys tick and untick its rows, as they pick a `ChoiceList`'s: the screen's one list
+ * answers 1 to 9 whether it takes one answer or several. Turn them off beside another list.
+ */
 export function CheckList<Value extends string>({
   choices,
   label,
   max,
+  numberKeys = true,
   onChange,
   readOnly = false,
   value,
@@ -183,18 +210,40 @@ export function CheckList<Value extends string>({
   choices: Choice<Value>[];
   label: string;
   max?: number;
+  numberKeys?: boolean;
   onChange: (value: Value[]) => void;
   readOnly?: boolean;
   value: readonly Value[];
 }) {
   const isFull = max !== undefined && value.length >= max;
+  const isOff = (choice: Choice<Value>) => readOnly || (!value.includes(choice.value) && isFull);
+
+  const toggle = (choice: Choice<Value>) =>
+    onChange(
+      value.includes(choice.value)
+        ? value.filter((item) => item !== choice.value)
+        : [...value, choice.value],
+    );
+
+  useNumberKeys({
+    count: choices.length,
+    enabled: numberKeys && !readOnly,
+    onPick: (index) => {
+      const choice = choices[index];
+
+      if (!choice || isOff(choice)) {
+        return false;
+      }
+
+      toggle(choice);
+    },
+  });
 
   return (
-    <fieldset className={LIST_GROUP_CLASS}>
-      <legend className="sr-only">{label}</legend>
-      {choices.map((choice) => {
+    <div aria-label={label} className={LIST_GROUP_CLASS} role="group">
+      {choices.map((choice, index) => {
         const isPicked = value.includes(choice.value);
-        const isDisabled = readOnly || (!isPicked && isFull);
+        const isDisabled = isOff(choice);
 
         return (
           <label
@@ -202,25 +251,19 @@ export function CheckList<Value extends string>({
             data-highlighted={isPicked || undefined}
             key={choice.value}
           >
-            <ListRowContent>
-              <ListRowTitle>{choice.label}</ListRowTitle>
-              {choice.description && <ListRowDescription>{choice.description}</ListRowDescription>}
-            </ListRowContent>
+            <ChoiceRowText description={choice.description} index={index} numberKeys={numberKeys}>
+              {choice.label}
+            </ChoiceRowText>
             <Checkbox
+              aria-keyshortcuts={numberKeys ? shortcutKeys("pick", index) : undefined}
               checked={isPicked}
-              className={CHOICE_CONTROL_CLASS}
+              className="self-center"
               disabled={isDisabled}
-              onCheckedChange={(checked) =>
-                onChange(
-                  checked
-                    ? [...value, choice.value]
-                    : value.filter((item) => item !== choice.value),
-                )
-              }
+              onCheckedChange={() => toggle(choice)}
             />
           </label>
         );
       })}
-    </fieldset>
+    </div>
   );
 }

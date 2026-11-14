@@ -6,7 +6,7 @@
   "goalcontent_also_in_exam_count": "6b751e06462dc906d0d35ecd5ed9e2b972bc3959b0d7c05ceae73174a251df31",
   "goalcontent_also_in_exams": "986a74d19b1565a522320a4d310562617095d31bc107a1c44b4efc5f405251fc",
   "goalcontent_also_in_plan": "5748c7f097de887df8715ec06886462cd98d52c99819aa255798b130147793b1",
-  "goalcontent_appears_a_lot": "e3855987b967cbb6a5d57f96d0c717733a628909d1f2853def0ed2e91a502bb7",
+  "goalcontent_asked_a_lot": "cd845d9c72e0c543a64e642ebb3e0a385779ee9f4923cebfb77a56ae6b60f443",
   "goalcontent_beyond_guide": "2e1f9a4aede258f4be4b63933bf321925cd0f487cf37409e9f1ed6f334c2c708",
   "goalcontent_beyond_notice": "393397320c5863f5e65784a1a3d08371f89936a8721b8155f4e37cecd4317bbe",
   "goalcontent_bring_back": "87f8f9b03dba1431978b9fbddfc3b951b1d7119ff30b259bb7b56983733e8310",
@@ -43,7 +43,6 @@
   "goalcontent_mastery_right": "884bfb963b4891fc7baf556817561dbe31dd9d74be0a4c0da09108505ee275b2",
   "goalcontent_material_topic_count": "50f5a370a95bbae5f505b26701a1bfa517db47fac018c52485bb8fb440f5db89",
   "goalcontent_matrix_title": "46bcaa0e747857251f532bcf886bb2296bee27486689465d630d9208136c56dd",
-  "goalcontent_module": "e2a3ae0d7cf3248df8c1af7a906c68774117227963d5f5a4041f297fa6a5a5fa",
   "goalcontent_module_count": "6113870db1e5a86795b38ebeef7e15f038d027932e2c6f84dce280975f25f248",
   "goalcontent_modules": "6aef8881d3a9d9196ac7da255b66bb596c41bdf909c84ea82d5016e259d661ff",
   "goalcontent_more_chapters": "41446dd81b01c6bb14cf6cbf9ff15e27241db040f7dfa8a9a773a86ef2640646",
@@ -53,7 +52,7 @@
   "goalcontent_percent_done": "3f59c42f4a9347c56b73148f1b0f2455579f5a42026fac059148acbb92b64ebc",
   "goalcontent_practice": "1b0cdd67cec88ec9fa92c14ca63e4633dce3a2c52cff891b95d17a2ca26835c2",
   "goalcontent_practice_chapter": "bef8e786288e3eaddb4d48a2efe3a41788e84e6be1d16bca702870764703a756",
-  "goalcontent_practice_failed": "61b85f1a7ad6e8f1868adb44025f501569a8b33c69c7aea44d4a5b7123e5ff39",
+  "goalcontent_practice_failed": "2f7f7ebbbca89c3939210ca3a0a48724935392678cf27fabd60c882f759fc3f7",
   "goalcontent_practice_nothing": "696e23491ad42f464c6c31bc1c01ff0ddfc910fe00812742942b21f8dc0b3d5d",
   "goalcontent_preparation": "4c90233571d016df9c9f60e7a3b4a91740b1a3eae57744bbc7b12fca099dc043",
   "goalcontent_progress": "bb412daef9c5ac8c88b73208d10a9b3d1ec972f8a23da89165ebab89d0732677",
@@ -75,8 +74,6 @@
   "goalcontent_skipped_known": "b07e16cb11c8cffda540cb790728e6a1f6b05209b3c77c25e673af66bce58aca",
   "goalcontent_start": "a83f67753ed1c32971bc608c090cb57a52df47ab51f38ea0c3a3cb5a3c995a9c",
   "goalcontent_studied": "74527812f61c4e113cb1addf5cab6e556c60bb7e019beb14b91b6caffb52ad9c",
-  "goalcontent_subject": "f788cb56f7b39933c9475c1373174c26a4eb1a922ef9259cc6eecdeb6006a3a4",
-  "goalcontent_subject_chapter": "078a0cd2bd0b990aa8c85f6ca45bf91713ffc59556e6207a7e4611b3f7c6bfc8",
   "goalcontent_subject_count": "23d12da8f631bedbad1022dc4d5ec5a06580c71cfbf82872e2cabd6742d61609",
   "goalcontent_subject_missing": "b7b8967e4682e81ab3b2fdb07336d75f5a54cf17cbf7738c0f78e9fd66883fba",
   "goalcontent_subject_skipped": "203c04e7d2e47a3c6ba7ce6715b2faac912f59438a78bf02e8b2a297ef6d6d68",
@@ -209,10 +206,6 @@
         <item quantity="many">Também em %d provas</item>
         <item quantity="other">Também em %d provas</item>
     </plurals>
-    <!-- Eyebrow of a subject's page for a subject of an exam's notice. -->
-    <string name="goalcontent_subject">Matéria</string>
-    <!-- Eyebrow of a subject's page for a module of the learner's plan. -->
-    <string name="goalcontent_module">Módulo</string>
     <string name="goalcontent_from_material">Do seu material</string>
     <!-- How much of the exam a subject is: "20% of the exam". -->
     <string name="goalcontent_share_of_exam">%1$s da prova</string>
@@ -292,12 +285,12 @@
     <string name="goalcontent_topic_skipped_base">Você escolheu pular esta base</string>
     <string name="goalcontent_topic_time">Não cabe no tempo que você tem</string>
     <string name="goalcontent_topic_missing">Ainda não há aulas sobre isso</string>
-    <!-- Marks a topic past exams asked a lot. -->
-    <string name="goalcontent_appears_a_lot">Cai bastante</string>
-    <!-- %1$s is the "Appears a lot" mark. -->
+    <!-- Marks a topic that comes up often in the exam. -->
+    <string name="goalcontent_asked_a_lot">Cai muito</string>
+    <!-- %1$s is the "Asked a lot" mark. -->
     <string name="goalcontent_frequency_material">Os tópicos marcados com %1$s são os que seu material diz que caem bastante. Você vai dedicar mais tempo a eles.</string>
     <string name="goalcontent_frequency_past_exams">Os tópicos marcados com %1$s são os que mais caíram em provas anteriores.</string>
-    <!-- %1$s is the "Appears a lot" mark, %2$s what the source counted, %3$s a link to the source's site. -->
+    <!-- %1$s is the "Asked a lot" mark, %2$s what the source counted, %3$s a link to the source's site. -->
     <string name="goalcontent_frequency_tagged_waits">Os tópicos marcados com %1$s são os que mais caíram em provas anteriores (%2$s, segundo %3$s). Os que menos caíram ficam para depois.</string>
     <string name="goalcontent_frequency_tagged">Os tópicos marcados com %1$s são os que mais caíram em provas anteriores (%2$s, segundo %3$s). Você vai dedicar mais tempo a eles.</string>
     <!-- %1$s is what the source counted, %2$s a link to the source's site. -->
@@ -306,14 +299,12 @@
     <!-- A section of a subject listing its skills matrix (ENEM's competencies and abilities). -->
     <string name="goalcontent_matrix_title">O que as questões cobram</string>
     <string name="goalcontent_see_all">Ver tudo em %1$s</string>
-    <!-- Eyebrow of a chapter's page: "Biology · Chapter 4". -->
-    <string name="goalcontent_subject_chapter">%1$s · Capítulo %2$s</string>
     <string name="goalcontent_chapter_number">Capítulo %1$s</string>
     <string name="goalcontent_progress">Progresso</string>
     <string name="goalcontent_practice">Prática</string>
     <string name="goalcontent_practice_chapter">Praticar este capítulo</string>
     <string name="goalcontent_practice_nothing">Ainda não há nada para praticar neste capítulo.</string>
-    <string name="goalcontent_practice_failed">Não deu certo. Tente de novo daqui a pouco.</string>
+    <string name="goalcontent_practice_failed">Não deu certo. Tente de novo em instantes.</string>
     <!-- Heading over material to look things up in, such as a mind map and a summary, rather than lessons to do. -->
     <string name="goalcontent_for_reference">Para consulta</string>
     <string name="goalcontent_chapter_summary">Resumo do capítulo</string>

@@ -1,5 +1,5 @@
-import { Meter, MeterFill, MeterPart, MeterParts } from "@zoonk/learn/meter";
 import { beltColorClasses } from "@zoonk/ui/components/belt-indicator";
+import { Meter, MeterFill, MeterPart, MeterParts } from "@zoonk/ui/components/meter";
 import { type CSSPropertiesWithVariables } from "@zoonk/ui/lib/css-variables";
 import { cn } from "@zoonk/ui/lib/utils";
 
@@ -85,7 +85,7 @@ export function MissionsTrack({ delayMs = 0 }: { delayMs?: number }) {
     <span aria-hidden="true" className="flex h-1.5 gap-0.5">
       {MISSION_FILLS.map((fill, index) => (
         <span
-          className="bg-brain/15 dark:bg-brain/30 relative flex-1 overflow-hidden rounded-[3px]"
+          className="bg-brain/15 dark:bg-brain/30 rounded-meter relative flex-1 overflow-hidden"
           // oxlint-disable-next-line react/no-array-index-key -- Segments are the day's missions.
           key={index}
         >

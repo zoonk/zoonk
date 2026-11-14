@@ -1,25 +1,24 @@
 import { COURSE_TITLE_CLASS, LESSON_LEAD_CLASS } from "@/components/catalog/catalog-hero";
 import { CatalogPageBar } from "@/components/catalog/catalog-page-bar";
 import { CourseProgressScope } from "@/components/catalog/course-progress";
-import { PublicEyebrowLink } from "@/components/public/public-eyebrow-link";
 import { PublicViewTracker } from "@/components/public/public-view-tracker";
 import { type LibraryLessonRoute } from "@/data/catalog/resolve-catalog-route";
-import { getCourseHref } from "@/data/courses/course-href";
 import { getLessonUrls } from "@/lib/public/public-canonical";
 import { getChapterHref, getLessonHref, getLessonPlayerPath } from "@/lib/public/public-hrefs";
 import { getLevelLabels } from "@/lib/public/public-labels";
 import { type PublicLibraryLesson } from "@zoonk/core/library/lessons/public";
 import { Page } from "@zoonk/learn/page";
 import { PageWithAside } from "@zoonk/learn/shell";
-import { SubjectGlyph, getSubject } from "@zoonk/learn/subject-label";
+import { getSubject } from "@zoonk/learn/subject-label";
+import { PAGE_HEADER_CLASS } from "@zoonk/ui/components/page-header-class";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type SupportedLocale } from "@zoonk/utils/locale";
 import { getExtracted } from "next-intl/server";
 import { LessonChapterAside } from "./lesson-chapter-aside";
+import { LessonCourseStart } from "./lesson-course-start";
 import { LessonFirstScreen } from "./lesson-first-screen";
 import { LessonJsonLd } from "./lesson-json-ld";
 import { LessonMore } from "./lesson-more";
-import { LessonPlanDay } from "./lesson-plan-day";
 
 type Params = { brandSlug: string; courseSlug: string };
 
@@ -69,7 +68,7 @@ export async function LibraryLessonPage({
       asideClassName="hidden min-[72rem]:flex"
       asideLabel={t("Lessons")}
     >
-      <div className="flex flex-col gap-8" data-subject={subject}>
+      <div className="flex flex-col" data-subject={subject}>
         <CatalogPageBar
           back={{
             href: getChapterHref({ ...params, chapterSlug: chapter.slug }),
@@ -78,7 +77,7 @@ export async function LibraryLessonPage({
           title={lesson.title}
         />
 
-        <Page className="gap-16 pt-2 sm:gap-24 sm:pt-4">
+        <Page className="gap-16 sm:gap-24">
           <PublicViewTracker contentId={lesson.id} page="lesson" />
 
           <LessonJsonLd
@@ -99,13 +98,11 @@ export async function LibraryLessonPage({
             }}
           />
 
-          <article aria-labelledby={titleId} className="max-w-column flex flex-col">
-            <p className="text-muted-foreground flex items-center gap-2 text-sm sm:text-[15px]">
-              <SubjectGlyph subject={subject} />
-              <PublicEyebrowLink href={getCourseHref(params)}>{course.title}</PublicEyebrowLink>
-            </p>
-
-            <h1 className={cn(COURSE_TITLE_CLASS, "mt-2")} id={titleId}>
+          <article
+            aria-labelledby={titleId}
+            className={cn(PAGE_HEADER_CLASS, "max-w-column gap-0")}
+          >
+            <h1 className={COURSE_TITLE_CLASS} id={titleId}>
               {lesson.title}
             </h1>
 
@@ -122,7 +119,7 @@ export async function LibraryLessonPage({
             <LessonMore ideas={ideas} params={params} route={route} />
           </article>
 
-          <LessonPlanDay route={route} />
+          <LessonCourseStart route={route} />
         </Page>
       </div>
     </PageWithAside>

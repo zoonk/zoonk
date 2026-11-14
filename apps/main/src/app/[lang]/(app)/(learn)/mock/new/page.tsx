@@ -14,7 +14,15 @@ export async function generateMetadata(): Promise<Metadata> {
   return { robots: { follow: false, index: false }, title: t("Take a mock exam") };
 }
 
-const CHOOSER_BAR = <LearnPageBar back={{ href: "/exam" }} root />;
+async function ChooserBar() {
+  const t = await getExtracted();
+
+  return (
+    <LearnPageBar back={{ href: "/exam", label: t("Exam") }} root title={t("Take a mock exam")} />
+  );
+}
+
+const CHOOSER_BAR = <ChooserBar />;
 
 async function MockChooserContent() {
   // The root param, not `params`: a prefetch warms its caches with `params` still pending.

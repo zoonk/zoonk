@@ -8,9 +8,35 @@ import { countUsage } from "./usage-counts";
 
 type UsageClaim = { decision: UsageDecision; recorded: boolean };
 
+async function findRefusedLessonReplay({
+  decision,
+  lessonId,
+  transaction,
+  userId,
+}: {
+  decision: UsageDecision;
+  lessonId: string;
+  transaction: TransactionClient;
+  userId: string;
+}): Promise<Date | null> {
+  if (decision.status !== "limitReached" || decision.limit.resource !== "lessonStart") {
+    return null;
+  }
+
+  const [event] = await transaction.$queryRaw<{ startedAt: Date }[]>`
+    SELECT started_at AS "startedAt" FROM learning_events
+    WHERE user_id = ${userId}::uuid AND kind = 'lesson'
+      AND content_ids @> jsonb_build_object('lessonId', ${lessonId}::text)
+    ORDER BY started_at ASC LIMIT 1
+  `;
+
+  return event?.startedAt ?? null;
+}
+
 export async function claimUsageInTransaction({
   continuing = false,
   generated,
+  preparing = false,
   kind,
   now,
   seconds,
@@ -21,6 +47,7 @@ export async function claimUsageInTransaction({
   /** Continues a start the limits already admitted, so only its use is recorded. */
   continuing?: boolean;
   generated: boolean;
+  preparing?: boolean;
   kind: UsageKind;
   now: Date;
   seconds?: number;
@@ -33,7 +60,45 @@ export async function claimUsageInTransaction({
   });
 
   if (existing) {
-    return { decision: { status: "allowed" }, recorded: false };
+    if (kind !== "lessonStart" || preparing || existing.countedAt !== null) {
+      return { decision: { status: "allowed" }, recorded: false };
+    }
+
+    const decision =
+      viewer.tier === "free"
+        ? evaluateUsage({
+            costMicros: 0,
+            counts: await countUsage({
+              client: transaction,
+              kind,
+              now,
+              tier: viewer.tier,
+              userId: viewer.userId,
+            }),
+            generated: false,
+            kind,
+            now,
+            tier: viewer.tier,
+          })
+        : { status: "allowed" as const };
+
+    const replayedAt = await findRefusedLessonReplay({
+      decision,
+      lessonId: targetId,
+      transaction,
+      userId: viewer.userId,
+    });
+
+    if (decision.status !== "allowed" && !replayedAt) {
+      return { decision, recorded: false };
+    }
+
+    await transaction.usageRecord.update({
+      data: { countedAt: replayedAt ?? now },
+      where: { id: existing.id },
+    });
+
+    return { decision: { status: "allowed" }, recorded: true };
   }
 
   const costMicros = getEstimatedCostMicros({ generated, kind, seconds });
@@ -42,10 +107,17 @@ export async function claimUsageInTransaction({
     ? { status: "allowed" }
     : evaluateUsage({
         costMicros,
-        counts: await countUsage({ client: transaction, kind, now, userId: viewer.userId }),
+        counts: await countUsage({
+          client: transaction,
+          kind,
+          now,
+          tier: viewer.tier,
+          userId: viewer.userId,
+        }),
         generated,
         kind,
         now,
+        preparing,
         tier: viewer.tier,
       });
 
@@ -62,6 +134,7 @@ export async function claimUsageInTransaction({
   await transaction.usageRecord.create({
     data: {
       costMicros,
+      countedAt: kind === "lessonStart" && !preparing ? now : null,
       createdAt: now,
       generated,
       kind,

@@ -128,7 +128,7 @@ class OnboardingSpreadScreenshots {
             index = screen
             rule.waitForIdle()
             if (shown.start) {
-                rule.onNodeWithText("Start").performScrollTo().performClick()
+                rule.onNodeWithText("Start").performClick()
                 rule.waitForIdle()
             }
             val bitmap = rule.onRoot().captureRender().asAndroidBitmap()

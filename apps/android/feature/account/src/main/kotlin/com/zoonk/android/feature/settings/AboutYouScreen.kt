@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.fitInside
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -61,7 +60,7 @@ import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.scaffold.BeforeFold
-import com.zoonk.android.ui.scaffold.DockedActionBar
+import com.zoonk.android.ui.scaffold.BottomBar
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.api.models.ProfileQuestion
 import com.zoonk.api.models.ProfileQuestionView
@@ -358,24 +357,14 @@ private fun ProfilePage(
                     contentAlignment = Alignment.TopCenter,
                 ) {
                     Column(
-                        Modifier.widthIn(max = PAGE_WIDTH).fillMaxWidth().padding(vertical = 16.dp),
+                        Modifier.settingsColumn(),
                         verticalArrangement = Arrangement.spacedBy(24.dp),
                     ) {
                         content()
                     }
                 }
                 if (bar != null) {
-                    DockedActionBar {
-                        Column(
-                            Modifier
-                                .align(Alignment.CenterHorizontally)
-                                .widthIn(max = PAGE_WIDTH)
-                                .fillMaxWidth()
-                                .padding(horizontal = LIST_ITEM_INSET, vertical = 16.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                            content = bar,
-                        )
-                    }
+                    BottomBar(columnWidth = PAGE_WIDTH, content = bar)
                 }
             }
         }

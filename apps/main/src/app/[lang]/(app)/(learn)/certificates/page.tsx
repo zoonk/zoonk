@@ -1,5 +1,4 @@
 import { AuthGatePage } from "@/components/auth-gate";
-import { getCurrentPlusSubscription } from "@/data/subscriptions/get-current-plus-subscription";
 import { listCurrentUserCertificates } from "@zoonk/core/certificates/list";
 import { type GoalView } from "@zoonk/core/goals/contract";
 import { listCurrentUserGoals } from "@zoonk/core/goals/list-current-user";
@@ -39,21 +38,23 @@ function toUpNext(goals: GoalView[]): CertificateUpNext[] {
 }
 
 async function CertificatesContent() {
-  const [result, goals, plus] = await Promise.all([
+  const [result, goals] = await Promise.all([
     listCurrentUserCertificates(),
     listCurrentUserGoals(),
-    getCurrentPlusSubscription(),
   ]);
 
   if (result.status !== "ready") {
     const t = await getExtracted();
 
     return (
-      <AuthGatePage
-        description={t("A certificate for every level and plan you finish.")}
-        next="/certificates"
-        title={t("Certificates")}
-      />
+      <>
+        <CertificatesBar back={BACK_HREF} />
+        <AuthGatePage
+          description={t("A certificate for every level and plan you finish.")}
+          next="/certificates"
+          title={t("Certificates")}
+        />
+      </>
     );
   }
 
@@ -67,7 +68,6 @@ async function CertificatesContent() {
         links: facts.locked ? null : getCertificateLinks({ ...facts, origin }),
       }))}
       continueHref={BACK_HREF}
-      plus={Boolean(plus)}
       upNext={result.certificates.length > 0 ? [] : toUpNext(goals?.goals ?? [])}
     />
   );
@@ -78,11 +78,11 @@ function CertificatesSkeleton() {
     <div aria-busy="true" className="flex flex-col gap-8">
       <CertificatesBar back={BACK_HREF} />
       <div className={`${PAGE_COLUMN_CLASS} flex flex-col gap-8`}>
-        <CertificatesHeader count={null} />
+        <CertificatesHeader />
         <div className="grid gap-x-6 gap-y-7 lg:grid-cols-[repeat(auto-fill,minmax(18rem,1fr))]">
           {Array.from({ length: 3 }, (_, index) => (
             <div className="flex items-center gap-3 lg:flex-col lg:items-stretch" key={index}>
-              <Skeleton className="aspect-297/210 w-18 shrink-0 rounded-[4px] lg:w-full" />
+              <Skeleton className="aspect-297/210 w-18 shrink-0 rounded-sm lg:w-full" />
               <div className="flex flex-1 flex-col gap-2">
                 <Skeleton className="h-3.5 w-48 max-w-2/3 rounded-sm" />
                 <Skeleton className="h-3 w-32 max-w-1/2 rounded-sm" />

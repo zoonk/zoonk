@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// "I don't know yet" is welcome and there's no score. It ends when every area has a starting point,
-/// when nothing more can be asked today, or whenever the learner stops.
+/// when nothing more can be asked today, or whenever the learner stops, and goes straight on.
 struct PlacementStep: View {
   let view: GoalOnboarding
   let subject: String
@@ -29,7 +29,8 @@ struct PlacementStep: View {
     case intro
     case waiting(failure: GenerationFailure?)
     case question(PracticeQuestion, labels: PracticeTrueFalseLabels)
-    case done(forToday: Bool)
+    /// Over and not saved yet: the learner came back to it, or its last save failed.
+    case done
     case unavailable
 
     var isWaiting: Bool {
@@ -53,7 +54,7 @@ struct PlacementStep: View {
         self = .question(
           question, labels: placement.trueFalseLabels == .rightWrong ? .rightWrong : .trueFalse)
       case .done:
-        self = .done(forToday: placement.dayBudgetUsed)
+        self = .done
       case .unavailable, .failed:
         self = .unavailable
       case .preparing, .waitingForQuestions:
@@ -131,71 +132,44 @@ struct PlacementStep: View {
         subject: subject, number: progress.answered + 1, progress: progress.spent,
         question: question,
         labels: labels, isSaving: isSaving, failures: questionFailures,
-        saveFailure: finishFailed ? Self.saveFailureMessage : nil,
+        saveFailure: finishFailed ? testSaveFailure : nil,
         onReport: { showsSaveReport = true },
         onAnswer: { submit($0, to: question) }, onStop: { finish(fromScratch: false) }
       )
       .id(question.itemId)
       // A question held behind the warm-up's wait is timed from when it shows.
       .onAppear { shownAt = .now }
-    case .done(let forToday):
-      outcome(
-        title: forToday
-          ? Text(
-            "That's enough questions for today", tableName: "Onboarding",
-            comment: "Placement paused for the day: it has enough answers for now")
-          : Text(
-            "Your starting point is set", tableName: "Onboarding", comment: "Placement ended"),
-        description: forToday
-          ? Text(
-            "Your first sessions ask a few more to fine-tune your plan.", tableName: "Onboarding",
-            comment: "Under placement ended for the day")
-          : Text(
-            "It gets more accurate every day.", tableName: "Onboarding",
-            comment: "Under placement ended"))
-    case .unavailable:
-      outcome(
+    case .done:
+      TestOutcome(
         title: Text(
-          "Let's skip the questions", tableName: "Onboarding",
-          comment: "No placement question could be written"),
-        description: Text(
-          "We couldn't prepare questions for this goal. Your first sessions will find your starting point instead.",
-          tableName: "Onboarding", comment: "Why placement is skipped"))
-    }
-  }
-
-  @ViewBuilder private var saveFailure: some View {
-    if finishFailed, !isSaving {
-      Section {
-        FailureLine(message: Self.saveFailureMessage)
+          "Your answers are saved", tableName: "Onboarding",
+          comment: "Title once the short test is over and its answers wait to be saved"),
+        isSaving: isSaving, failed: finishFailed
+      ) {
+        finish(fromScratch: false)
+      }
+    case .unavailable:
+      PlacementUnavailable(isSaving: isSaving, failed: finishFailed) {
+        finish(fromScratch: false)
       }
     }
   }
-
-  private static let saveFailureMessage = LocalizedStringResource(
-    "That didn't save. Try again.", table: "Onboarding",
-    comment: "A change couldn't be saved")
 
   private var intro: some View {
     ZoonkList {
       StepHeader(
         subject: subject,
         title: Text(
-          "Let's see what you already know", tableName: "Onboarding",
-          comment: "Title of placement's start"),
+          "Skip what you already know", tableName: "Onboarding",
+          comment: "Title of the short test's start"),
         description: Text(
-          "A few quick questions, so your plan skips what you already know. There's no score, and “I don't know yet” is a fine answer.",
-          tableName: "Onboarding", comment: "What placement is"))
-
-      saveFailure
-
+          "A short test finds the lessons you don't need.", tableName: "Onboarding",
+          comment: "What the short test is"))
+    }
+    .bottomBar(note: finishFailed && !isSaving ? BarNote(testSaveFailure) : nil) {
       StepButtons(
         continueLabel: Text(
-          "Start", tableName: "Onboarding", comment: "Starts placement's questions"),
-        continueIcon: .play,
-        skipLabel: Text(
-          "Skip and start from the basics", tableName: "Onboarding",
-          comment: "Skips placement; the plan starts at the beginning")
+          "Start", tableName: "Onboarding", comment: "Starts the short test's questions")
       ) {
         Task { await start() }
       } onSkip: {
@@ -214,11 +188,9 @@ struct PlacementStep: View {
       isActing: isStarting,
       skip: .init(
         label: Text(
-          "Skip for now", tableName: "Onboarding",
+          "Skip", tableName: "Onboarding",
           comment: "Skips placement while its questions are written"),
-        note: Text(
-          "Your first sessions will ask a few of these instead.", tableName: "Onboarding",
-          comment: "Under Skip for now"),
+        note: nil,
         isBusy: isSaving, failed: finishFailed
       ) {
         finish(fromScratch: false)
@@ -226,23 +198,6 @@ struct PlacementStep: View {
       onRetry: retry
     )
     .taskThroughPush(id: waitRound) { await waitForQuestions() }
-  }
-
-  private func outcome(title: Text, description: Text) -> some View {
-    ZoonkList {
-      StepHeader(title: title, description: description)
-
-      saveFailure
-
-      StepButtons(
-        continueLabel: Text(
-          "See my plan", tableName: "Onboarding", comment: "Ends placement and shows the plan")
-      ) {
-        finish(fromScratch: false)
-      }
-      .environment(\.isSavingAnswer, isSaving)
-    }
-    .onboardingColumn()
   }
 
   /// Start reads first, so questions that already exist never flash the wait.
@@ -331,7 +286,21 @@ struct PlacementStep: View {
         questionFailures = 0
         failedAnswer = nil
         shown.answered += 1
-        show(result.placement)
+        let next = Phase(result.placement)
+
+        guard next == .done else {
+          show(next, from: result.placement)
+          return
+        }
+
+        // The last answer goes straight on; only a finish that didn't save stops on a screen.
+        do {
+          try await finishAndGoOn(fromScratch: false)
+        } catch is CancellationError {
+        } catch {
+          finishFailed = true
+          reached = .done
+        }
       } catch is CancellationError {
       } catch {
         failedAnswer = sent
@@ -353,8 +322,7 @@ struct PlacementStep: View {
       defer { isSaving = false }
 
       do {
-        try await onboarding.finishPlacement(goalID: view.goal.id, fromScratch: fromScratch)
-        try await onDone()
+        try await finishAndGoOn(fromScratch: fromScratch)
         if fromQuestion {
           questionFailures = 0
         }
@@ -368,7 +336,72 @@ struct PlacementStep: View {
       }
     }
   }
+
+  /// Finishing is one save to the learner: it goes through once the step's save does too.
+  private func finishAndGoOn(fromScratch: Bool) async throws {
+    try await onboarding.finishPlacement(goalID: view.goal.id, fromScratch: fromScratch)
+    try await onDone()
+  }
 }
+
+/// Main's `TestOutcome`: the end of a test, what it found and the way on. A save that failed is said
+/// over the bar, and Continue tries again.
+struct TestOutcome<Lead: View>: View {
+  var subject: String?
+  let title: Text
+  var description: Text?
+  var continueLabel: Text?
+  let isSaving: Bool
+  let failed: Bool
+  let onContinue: () -> Void
+  @ViewBuilder var lead: () -> Lead
+
+  var body: some View {
+    ZoonkList {
+      StepHeader(subject: subject, title: title, description: description)
+
+      lead()
+    }
+    .bottomBar(note: failed && !isSaving ? BarNote(testSaveFailure) : nil) {
+      StepButtons(continueLabel: continueLabel, onContinue: onContinue)
+    }
+    .onboardingColumn()
+    .environment(\.isSavingAnswer, isSaving)
+  }
+}
+
+extension TestOutcome where Lead == EmptyView {
+  init(
+    subject: String? = nil, title: Text, description: Text? = nil, continueLabel: Text? = nil,
+    isSaving: Bool, failed: Bool, onContinue: @escaping () -> Void
+  ) {
+    self.init(
+      subject: subject, title: title, description: description, continueLabel: continueLabel,
+      isSaving: isSaving, failed: failed, onContinue: onContinue, lead: { EmptyView() })
+  }
+}
+
+/// No test could be made for the goal, which is fine: the first days find the learner's level.
+/// The short test's and the Focus test's.
+struct PlacementUnavailable: View {
+  let isSaving: Bool
+  let failed: Bool
+  let onContinue: () -> Void
+
+  var body: some View {
+    TestOutcome(
+      title: Text(
+        "We'll find your level as you study", tableName: "Onboarding",
+        comment: "Title when no test could be made for a goal; nothing is wrong"),
+      description: Text(
+        "There's no test for this goal yet. Your first few days show us what you already know.",
+        tableName: "Onboarding", comment: "Under \"We'll find your level as you study\""),
+      isSaving: isSaving, failed: failed, onContinue: onContinue)
+  }
+}
+
+private let testSaveFailure = LocalizedStringResource(
+  "That didn't save. Try again.", table: "Onboarding", comment: "A change couldn't be saved")
 
 /// A new question gets a fresh view (`.id`), so nothing picked carries over.
 struct PlacementQuestionScreen<Media: View>: View {
@@ -386,8 +419,6 @@ struct PlacementQuestionScreen<Media: View>: View {
   let isSaving: Bool
   let failures: Int
   var saveFailure: LocalizedStringResource?
-  var stopLabel = LocalizedStringResource(
-    "Stop here and see my plan", table: "Onboarding", comment: "Ends placement early")
   /// Said right above Stop, when stopping is worth suggesting.
   var stopHint: LocalizedStringResource?
   let onReport: () -> Void
@@ -472,7 +503,9 @@ struct PlacementQuestionScreen<Media: View>: View {
         submission = .stop
         onStop()
       } label: {
-        Text(stopLabel)
+        Text(
+          "Stop and use my answers", tableName: "Onboarding",
+          comment: "Ends a test early; the answers given so far count at once")
       }
       .disabled(isSaving && submission != .stop)
     }
@@ -498,7 +531,6 @@ extension PlacementQuestionScreen where Media == EmptyView {
     isSaving: Bool,
     failures: Int,
     saveFailure: LocalizedStringResource? = nil,
-    stopLabel: LocalizedStringResource? = nil,
     stopHint: LocalizedStringResource? = nil,
     onReport: @escaping () -> Void,
     onAnswer: @escaping (PracticeAnswer) -> Void,
@@ -510,9 +542,5 @@ extension PlacementQuestionScreen where Media == EmptyView {
       stopHint: stopHint, onReport: onReport, onAnswer: onAnswer, onStop: onStop,
       media: { EmptyView() }
     )
-
-    if let stopLabel {
-      self.stopLabel = stopLabel
-    }
   }
 }

@@ -67,14 +67,18 @@ fun CertificateName.words(): String =
         }
     }
 
-/** "Certificate of completion · Nov 3, 2026", as lists show it. */
+/** A list row's name: a course level's certificate leaves its level to [rowLine]. */
 @Composable
 @ReadOnlyComposable
-fun CertificateName.kindLine(): String =
-    factsLine(
-        stringResource(R.string.certificates_kind_completion),
-        formatDate(completedOn.toJavaLocalDate(), currentLocale(), DateStyle.Short),
-    )
+fun CertificateName.rowName(): String = if (kind == CertificateKind.Course && courseLevel != null) title.orEmpty() else words()
+
+/** A list row's line: "Beginner · Nov 3, 2026", or the date alone. */
+@Composable
+@ReadOnlyComposable
+fun CertificateName.rowLine(): String {
+    val date = formatDate(completedOn.toJavaLocalDate(), currentLocale(), DateStyle.Short)
+    return courseLevel?.takeIf { kind == CertificateKind.Course }?.let { factsLine(courseLevelName(it), date) } ?: date
+}
 
 /** Main's `useCertificateSentence`: the certificate page's headline, which a reader checks. */
 @Composable

@@ -87,9 +87,22 @@ export const goalListResponseSchema = z
 
 const allowanceLimitSchema = z
   .object({
+    availableAt: z.iso
+      .datetime()
+      .nullable()
+      .optional()
+      .meta({
+        description:
+          "The instant a rolling lessonStart or chapterLessons request fits, from recorded starts before the request; null for a chapterLessons request larger than the free plan; omitted for automatic lessonPreparation and calendar limits",
+      }),
     limit: z.int(),
-    period: z.enum(["day", "month", "total"]),
-    resource: z.string().meta({ description: "What ran out, such as goal or activeGoals" }),
+    period: z.enum(["day", "month", "rolling30Days", "total"]),
+    resource: z
+      .string()
+      .meta({
+        description:
+          "What is limited; chapterLessons is the new-lesson size of a chapter request, lessonPreparation is automatic work capacity",
+      }),
     tier: z.enum(["free", "guest", "plus"]),
   })
   .meta({ id: "AllowanceLimit" });

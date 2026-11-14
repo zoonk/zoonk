@@ -91,6 +91,7 @@ import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.navigation.TaskNotFound
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
+import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
@@ -103,7 +104,6 @@ import com.zoonk.android.ui.components.StepDots
 import com.zoonk.android.ui.components.StepPagerActions
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
-import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.rememberMoveFocus
 import com.zoonk.android.ui.components.statusLink
 import com.zoonk.android.ui.components.stepHeading
@@ -116,8 +116,8 @@ import com.zoonk.android.ui.scaffold.ResultPages
 import com.zoonk.android.ui.scaffold.ResultScreen
 import com.zoonk.android.ui.scaffold.TaskExitConfirmation
 import com.zoonk.android.ui.scaffold.TaskScaffold
-import com.zoonk.android.ui.scaffold.detailPagePadding
 import com.zoonk.android.ui.scaffold.onPageSpan
+import com.zoonk.android.ui.scaffold.pagePadding
 import com.zoonk.android.ui.scaffold.spreadFold
 import com.zoonk.android.ui.scaffold.supportingPaneBeside
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -278,7 +278,6 @@ internal fun EssayWrite(
                         onClick = viewModel::send,
                         modifier = width,
                         enabled = ui.canSend && !finishing,
-                        leadingIcon = { ButtonIcon(R.drawable.ic_send) },
                     ) {
                         Text(stringResource(if (rewriting) R.string.essay_grade_rewrite else R.string.essay_send))
                     }
@@ -426,7 +425,7 @@ private fun RewriteGuide(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium,
             )
-            TextButton(onClick = onSeeGrade) { Text(stringResource(R.string.essay_see_grade)) }
+            OutlinedButton(onClick = onSeeGrade, size = ButtonSize.Small) { Text(stringResource(R.string.essay_see_grade)) }
         }
     }
 }
@@ -476,7 +475,7 @@ private fun StatusLine(
             limit = Limit.SignUpRequired,
             subject = LimitSubject.Help,
             onCreateAccount = { navigator.open(AppRoute.Login) },
-            onSeePlus = { navigator.open(AppRoute.Subscription) },
+            onSubscribe = { navigator.open(AppRoute.Subscription) },
             modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
         )
         return
@@ -529,7 +528,7 @@ private fun EssayAside(
             Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(detailPagePadding())
+                .padding(pagePadding())
                 .semantics { paneTitle = label },
             verticalArrangement = Arrangement.spacedBy(28.dp),
         ) {
@@ -594,7 +593,7 @@ internal fun EssayGradeSteps(
                     RunColumn(modifier, stepScroll) {
                         when {
                             tooShort -> TooShort(closed)
-                            shown == 0 -> EssayGradeCard(grade, rubric)
+                            shown == 0 -> EssayGradeCard(grade, rubric, onComments = { comments = true }.takeUnless { beside })
                             else -> NextStep(grade)
                         }
                     }
@@ -635,11 +634,6 @@ internal fun EssayGradeSteps(
                                     liveRegion = LiveRegionMode.Assertive,
                                     onReport = onReportSaveFailure,
                                 )
-                            }
-                            if (!tooShort && !beside) {
-                                TextButton(onClick = { comments = true }, modifier = Modifier.fillMaxWidth()) {
-                                    Text(stringResource(R.string.essay_see_comments), textAlign = TextAlign.Center)
-                                }
                             }
                         }
                     }
@@ -772,7 +766,7 @@ private fun CommentsAside(grade: EssayGrade) {
             Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(detailPagePadding())
+                .padding(pagePadding())
                 .semantics { paneTitle = label },
         ) { Comments(grade) }
     }

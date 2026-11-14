@@ -2,16 +2,16 @@
 
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { Button } from "@zoonk/ui/components/button";
-import { ArrowLeftIcon, Undo2Icon } from "lucide-react";
+import { Undo2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { StepCard, StepDetail, StepHeader, StepTitle } from "../_components/step-card";
 import { TaskActions } from "../_components/task-layout";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { useSentenceSpace } from "../_utils/locale";
-import { useLessonsEffectText } from "../plan/use-effect-counts";
+import { usePlanChangeConsequence } from "../plan-diff/use-change-consequence";
 import { TaskFrame, TaskMainLink } from "../shell/task-frame";
 import { useChallengeScreen } from "./challenge-context";
-import { MoveFailed } from "./challenge-move-failed";
+import { useMoveFailed } from "./challenge-move-failed";
 
 export function ChallengeMovedScreen({
   changeId,
@@ -22,36 +22,32 @@ export function ChallengeMovedScreen({
 }) {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
-  const lessonsText = useLessonsEffectText();
-  const leftOut = effect && effect.lessonsRemoved > 0 ? lessonsText(effect) : null;
+  const consequence = usePlanChangeConsequence()(effect);
+  const leftOut = consequence?.key === "notInPlan" ? consequence.text : null;
   const { challenge, hrefs, move } = useChallengeScreen();
+  const moveFailed = useMoveFailed();
   const space = useSentenceSpace();
   const date = challenge.date ?? challenge.today;
 
   return (
     <TaskFrame
-      closeOnEscape
       exitHref={hrefs.exit}
       footer={
-        <>
-          <MoveFailed />
-          <TaskActions>
-            <TaskMainLink href={hrefs.exit} icon={<ArrowLeftIcon aria-hidden="true" />}>
-              {t("Back to Today")}
-            </TaskMainLink>
-            <Button
-              busy={move.pending}
-              className="shrink-0"
-              icon={<Undo2Icon aria-hidden="true" />}
-              onClick={() => void move.undo(changeId)}
-              size="xl"
-              variant="outline"
-            >
-              {t("Undo")}
-            </Button>
-          </TaskActions>
-        </>
+        <TaskActions>
+          <Button
+            busy={move.pending}
+            className="shrink-0"
+            icon={<Undo2Icon aria-hidden="true" />}
+            onClick={() => void move.undo(changeId)}
+            size="xl"
+            variant="outline"
+          >
+            {t("Undo")}
+          </Button>
+          <TaskMainLink href={hrefs.exit}>{t("Back to Today")}</TaskMainLink>
+        </TaskActions>
       }
+      footerNote={moveFailed}
     >
       <StepCard role="status">
         <StepHeader>

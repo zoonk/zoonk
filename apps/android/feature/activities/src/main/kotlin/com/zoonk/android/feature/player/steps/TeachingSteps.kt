@@ -69,7 +69,9 @@ import com.zoonk.android.data.Resource
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.activities.ActivityAnnouncement
-import com.zoonk.android.feature.audio.VoiceAnswerRecorder
+import com.zoonk.android.feature.audio.VoiceAnswerButton
+import com.zoonk.android.feature.audio.VoiceAnswerLine
+import com.zoonk.android.feature.audio.voiceAnswerModel
 import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonScreen
@@ -90,7 +92,7 @@ import com.zoonk.android.ui.characters.BuddyCrop
 import com.zoonk.android.ui.components.AnswerOption
 import com.zoonk.android.ui.components.AnswerOptionGroup
 import com.zoonk.android.ui.components.AnswerResult
-import com.zoonk.android.ui.components.LabelChip
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.OutlinedTextField
 import com.zoonk.android.ui.components.PendingPicture
 import com.zoonk.android.ui.components.PictureFrame
@@ -204,7 +206,7 @@ internal fun GuessHookView(
             if (part.showsScreen) {
                 Column(verticalArrangement = Arrangement.spacedBy(QUESTION_SPACING)) {
                     if (marking != null) IdeaStrip(marking.map, step.marks)
-                    LabelChip(stringResource(R.string.player_guess_chip), icon = R.drawable.ic_auto_awesome)
+                    Eyebrow(stringResource(R.string.player_guess_chip), icon = R.drawable.ic_auto_awesome)
                 }
             }
         },
@@ -363,7 +365,7 @@ internal fun WorkedExampleView(
         if (part.showsScreen) {
             if (marking != null) IdeaStrip(marking.map, step.marks)
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                LabelChip(stringResource(R.string.player_worked_example), icon = R.drawable.ic_format_list_numbered)
+                Eyebrow(stringResource(R.string.player_worked_example), icon = R.drawable.ic_format_list_numbered)
                 worked.title?.let { QuestionText(it) }
             }
             TeachingText(title = null, text = worked.problem, marks = step.marks.takeIf { marking != null }, marksTerms = marksTerms)
@@ -556,7 +558,7 @@ internal fun TypedAnswerView(
         if (part.showsScreen && marking != null) IdeaStrip(marking.map, step.marks)
         if (part.showsScreen) {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                if (inOwnWords) LabelChip(stringResource(R.string.player_in_your_own_words), icon = R.drawable.ic_edit)
+                if (inOwnWords) Eyebrow(stringResource(R.string.player_in_your_own_words), icon = R.drawable.ic_edit)
                 ContextText(typed.context)
                 LessonStepVisual(typed.visual)
                 QuestionText(typed.question)
@@ -565,17 +567,7 @@ internal fun TypedAnswerView(
 
         if (part.showsTurn) AnswerField(text, { actions.select(it?.let(LessonAnswer::Typed)) }, state, actions, isNumber)
 
-        if (part.showsTurn && !locked && writingOptions) {
-            Column {
-                ExplainFirstButton(screen, actions)
-                if (!isNumber) {
-                    if (!screen.canExplainFirst) {
-                        GhostAction(R.drawable.ic_help, stringResource(R.string.player_dont_know_yet)) { actions.dontKnow(step.id) }
-                    }
-                    GhostAction(R.drawable.ic_edit_off, stringResource(R.string.player_cant_write_now), actions::skipWriting)
-                }
-            }
-        }
+        if (part.showsTurn && !locked && writingOptions) ExplainFirstButton(screen, actions)
     }
 }
 
@@ -597,11 +589,12 @@ internal fun SpokenAnswerView(
 ) {
     val spoken = content.content
     val locked = state.phase != LessonPhase.Playing
-    var micBlocked by rememberSaveable(step.id) { mutableStateOf(false) }
-    val types = if (locked) answer is LessonAnswer.Spoken else actions.cantTalk || micBlocked
+    val voiceKey = spokenVoiceKey(step)
+    val voice = voiceAnswerModel(voiceKey)
+    val types = if (locked) answer is LessonAnswer.Spoken else actions.cantTalk || voice.blocked
     val switchTo = { cantTalk: Boolean ->
         actions.select(null)
-        micBlocked = false
+        voice.blocked = false
         actions.setCantTalk(cantTalk)
     }
     val listening = content.listeningInstead(if (locked) answer is LessonAnswer.Listening else actions.cantTalk)
@@ -623,7 +616,7 @@ internal fun SpokenAnswerView(
         if (part.showsTurn) {
             when {
                 types -> {
-                    if (micBlocked && !locked) {
+                    if (voice.blocked && !locked) {
                         Text(
                             stringResource(R.string.player_microphone_blocked),
                             modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
@@ -640,13 +633,7 @@ internal fun SpokenAnswerView(
                 }
 
                 !locked || state.phase == LessonPhase.Checking -> {
-                    VoiceAnswerRecorder(
-                        grade = { recording -> actions.gradeSpoken(step.id, recording) },
-                        onGraded = {},
-                        navigator = navigator,
-                        key = "spoken:${step.id}",
-                        onBlocked = { micBlocked = true },
-                    )
+                    VoiceAnswerLine(navigator, key = voiceKey)
                 }
             }
 
@@ -664,6 +651,45 @@ internal fun SpokenAnswerView(
         }
     }
 }
+
+/** The spoken screen's take, shared by its line here and its Record in the lesson's bottom bar. */
+fun spokenVoiceKey(step: LessonStep): String = "spoken:${step.id}"
+
+/**
+ * A spoken screen's Record and Stop, the bar's main action while the learner answers out loud;
+ * null while they type or listen instead, when the bar keeps its Check.
+ */
+@Composable
+fun SpokenRecordAction(
+    step: LessonStep,
+    actions: StepActions,
+    modifier: Modifier = Modifier,
+) {
+    val voice = voiceAnswerModel(spokenVoiceKey(step))
+    VoiceAnswerButton(
+        grade = { recording -> actions.gradeSpoken(step.id, recording) },
+        onGraded = {},
+        key = spokenVoiceKey(step),
+        modifier = modifier,
+        onBlocked = { voice.blocked = true },
+    )
+}
+
+/** Whether a written answer offers "I don't know yet" in the bar; one with its explanation ahead offers that first instead. */
+fun offersDontKnow(
+    screen: LessonScreen,
+    state: LessonPlayerState,
+): Boolean {
+    val typed = (screen.step?.content as? StepContent.TypedAnswer)?.content ?: return false
+    return state.phase == LessonPhase.Playing && !screen.canExplainFirst && !isNumberAnswer(typed.acceptedAnswers)
+}
+
+/** Whether [SpokenRecordAction] takes the bar's main action on this screen now. */
+@Composable
+fun recordsInBar(
+    step: LessonStep?,
+    actions: StepActions,
+): Boolean = step?.content is StepContent.SpokenAnswer && !actions.cantTalk && !voiceAnswerModel(spokenVoiceKey(step)).blocked
 
 @Composable
 private fun TargetText(spoken: SpokenAnswerStepContent) {

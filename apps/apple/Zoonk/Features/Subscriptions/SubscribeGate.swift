@@ -1,0 +1,509 @@
+import SwiftUI
+
+/// Main's `GateWords`: what stopped, and at most one line under it.
+struct GateWords: View {
+  var title: Text?
+  var line: Text?
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 2) {
+      if let title {
+        title
+          .typeStyle(.rowTitle)
+          .foregroundStyle(Color(.foreground))
+      }
+
+      if let line {
+        line
+          .typeStyle(.body)
+          .foregroundStyle(.mutedForeground)
+      }
+    }
+    .fixedSize(horizontal: false, vertical: true)
+    .frame(maxWidth: .infinity, alignment: .leading)
+  }
+}
+
+/// The one action that leads to paying, wherever it shows.
+struct SubscribeButton: View {
+  @Environment(AppRouter.self) private var router
+
+  /// Replaces opening the subscription here, where the screen must close first.
+  var action: (() -> Void)?
+
+  var body: some View {
+    Button {
+      if let action {
+        action()
+      } else {
+        router.present(.subscription)
+      }
+    } label: {
+      Text(
+        "Subscribe", tableName: "Subscriptions",
+        comment: "Opens the subscription from a feature or limit that needs one")
+    }
+    .onAppear {
+      UsageAnalytics.track(.subscriptionGateShown)
+    }
+  }
+}
+
+/// Main's `SubscribeGate`: in place of what the learner tried, what stopped as the title, at most
+/// one line, and "Subscribe". Nothing announces it before the try. `action` is a second way on
+/// that isn't paying, such as their Plan.
+struct SubscribeGate<Action: View>: View {
+  let title: Text
+  var line: Text?
+  @ViewBuilder var action: Action
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 8) {
+      GateWords(title: title, line: line)
+
+      HStack(spacing: 8) {
+        SubscribeButton()
+        action
+      }
+      .buttonStyle(.outline)
+      .controlSize(.small)
+    }
+    .accessibilityElement(children: .contain)
+  }
+}
+
+extension SubscribeGate where Action == EmptyView {
+  init(title: Text, line: Text? = nil) {
+    self.init(title: title, line: line) {
+      EmptyView()
+    }
+  }
+}
+
+/// What ran out as the title, and when it comes back as the one line under it.
+struct LimitWords: Equatable {
+  var title: LocalizedStringResource?
+  var line: LocalizedStringResource?
+
+  /// The words as one sentence, for a place that holds plain text or for VoiceOver.
+  var said: String {
+    [title, line].compactMap { $0.map { String(localized: $0) } }.joinedSentences()
+  }
+
+  static func == (lhs: LimitWords, rhs: LimitWords) -> Bool {
+    lhs.said == rhs.said
+  }
+}
+
+/// Main's limit notices: the words, then the way on. A guest creates an account, a free learner
+/// subscribes, and a subscriber or a short break has only the words.
+struct LimitNotice: View {
+  @Environment(AppRouter.self) private var router
+
+  let limit: HelpLimit
+  /// Read at the gate's clock, so words about a day follow it while the notice is open.
+  let words: (Date) -> LimitWords
+
+  init(limit: HelpLimit, words: @escaping (Date) -> LimitWords) {
+    self.limit = limit
+    self.words = words
+  }
+
+  init(limit: HelpLimit, words: LimitWords) {
+    self.init(limit: limit) { _ in words }
+  }
+
+  /// What ran out is the day's help.
+  init(limit: HelpLimit, kind: HelpLimit.Kind? = nil) {
+    self.init(limit: limit) { now in limit.helpWords(kind, now: now) }
+  }
+
+  var body: some View {
+    OpeningClock(opensAt: limit.opensAt) { now in
+      notice(words(now))
+    }
+  }
+
+  private func notice(_ words: LimitWords) -> some View {
+    VStack(alignment: .leading, spacing: 8) {
+      GateWords(title: words.title.map(Text.init), line: words.line.map(Text.init))
+
+      if limit.needsAccount {
+        Button {
+          router.present(.signIn)
+        } label: {
+          Label {
+            Text(
+              "Create a free account", tableName: "Subscriptions",
+              comment: "Opens sign-up for a guest who reached what they can try without an account")
+          } icon: {
+            Image(systemName: "person.badge.plus")
+          }
+        }
+        .buttonStyle(.outline)
+        .controlSize(.small)
+      } else if limit.offersSubscription {
+        SubscribeButton()
+          .buttonStyle(.outline)
+          .controlSize(.small)
+      }
+    }
+    .accessibilityElement(children: .contain)
+  }
+}
+
+extension HelpLimit {
+  /// What the learner asked for when the day's help ran out; without it the words name no kind.
+  enum Kind {
+    case explanations
+    case messages
+  }
+
+  private var isMonthly: Bool {
+    if case .limitReached(let period, _) = self {
+      return period != .day
+    }
+
+    return false
+  }
+
+  /// When it comes back. A guest's way on is the button, so their words have no line.
+  var comesBack: LocalizedStringResource? {
+    guard case .limitReached(_, let tier) = self else {
+      return nil
+    }
+
+    switch tier {
+    case .guest:
+      return nil
+    case .plus:
+      return isMonthly
+        ? LocalizedStringResource(
+          "More next month.", table: "Subscriptions",
+          comment: "Under a limit a subscriber reached: it comes back next month")
+        : LocalizedStringResource(
+          "More tomorrow.", table: "Subscriptions",
+          comment: "Under a limit a subscriber reached: it comes back tomorrow")
+    case .free:
+      return isMonthly
+        ? LocalizedStringResource(
+          "More next month, or subscribe to keep going.", table: "Subscriptions",
+          comment: "Under a limit a free learner reached: it comes back next month")
+        : LocalizedStringResource(
+          "More tomorrow, or subscribe to keep going.", table: "Subscriptions",
+          comment: "Under a limit a free learner reached: it comes back tomorrow")
+    }
+  }
+
+  /// A short break and a guest's account need words of their own; a reached limit has none here.
+  private func refusalWords(now: Date = .now, calendar: Calendar = .current) -> LimitWords {
+    switch self {
+    case .slowDown:
+      LimitWords(
+        line: LocalizedStringResource(
+          "Take a short break, then try again.", table: "Subscriptions",
+          comment: "Fair use asks the learner to wait a moment before trying again"))
+    case .freeLessonsUsed where freeLessonOpened(at: now):
+      Self.freeLessonReady
+    case .freeLessonsUsed(let opensAt):
+      LimitWords(
+        title: LocalizedStringResource("You've used your free lessons", table: "Subscriptions"),
+        line: Self.nextFreeLesson(opensAt, now: now, calendar: calendar))
+    case .signUpRequired, .limitReached:
+      LimitWords(
+        title: LocalizedStringResource(
+          "This needs a free account", table: "Subscriptions",
+          comment: "A guest tried something that needs a signed-up account"))
+    }
+  }
+
+  func helpWords(_ kind: Kind? = nil, now: Date = .now) -> LimitWords {
+    guard case .limitReached(_, let tier) = self else {
+      return refusalWords(now: now)
+    }
+
+    guard tier != .guest else {
+      return LimitWords(
+        title: LocalizedStringResource(
+          "That's all you can try without an account", table: "Subscriptions",
+          comment: "A guest used what they can try without an account"))
+    }
+
+    let title: LocalizedStringResource =
+      switch (kind, isMonthly) {
+      case (.messages, true):
+        LocalizedStringResource(
+          "No more messages this month", table: "Subscriptions",
+          comment: "The learner sent all the messages to their buddy they can this month")
+      case (.messages, false):
+        LocalizedStringResource(
+          "No more messages today", table: "Subscriptions",
+          comment: "The learner sent all the messages to their buddy they can today")
+      case (.explanations, true):
+        LocalizedStringResource(
+          "No more explanations this month", table: "Subscriptions",
+          comment: "The learner asked for all the answer explanations they can this month")
+      case (.explanations, false):
+        LocalizedStringResource(
+          "No more explanations today", table: "Subscriptions",
+          comment: "The learner asked for all the answer explanations they can today")
+      case (nil, true):
+        LocalizedStringResource(
+          "You've reached this month's limit", table: "Subscriptions",
+          comment: "The learner used this month's AI checks, clips and similar")
+      case (nil, false):
+        LocalizedStringResource(
+          "You've reached today's limit", table: "Subscriptions",
+          comment: "The learner used today's AI checks, clips and similar")
+      }
+
+    return LimitWords(title: title, line: comesBack)
+  }
+
+  /// When a free learner's next lesson opens.
+  var opensAt: Date? {
+    if case .freeLessonsUsed(let opensAt) = self {
+      return opensAt
+    }
+
+    return nil
+  }
+
+  /// Main's opening day `"open"`: the instant has passed, so only the server can say whether the
+  /// learner is still at the limit. Only their tap asks again, since a start spends a free lesson.
+  func freeLessonOpened(at now: Date) -> Bool {
+    opensAt.map { $0 <= now } ?? false
+  }
+
+  static let freeLessonReady = LimitWords(
+    title: LocalizedStringResource("Your next free lesson is ready", table: "Subscriptions"))
+
+  /// When the gate's words next change: the learner's next midnight or the opening, whichever is
+  /// first. Nothing once the lesson has opened.
+  static func nextWake(opensAt: Date, now: Date, calendar: Calendar = .current) -> Date? {
+    guard opensAt > now else {
+      return nil
+    }
+
+    let midnight = calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: now))
+    return min(opensAt, midnight ?? opensAt)
+  }
+
+  /// Main's `toOpeningDay`: the day something opens, in the learner's own time zone, with no clock
+  /// time and no count of days.
+  enum OpeningDay: Equatable {
+    case open, today, tomorrow
+    /// The day and its month in the learner's language, such as "November 22".
+    case on(String)
+  }
+
+  static func openingDay(_ opensAt: Date, now: Date, calendar: Calendar) -> OpeningDay {
+    guard opensAt > now else {
+      return .open
+    }
+
+    let days =
+      calendar.dateComponents(
+        [.day], from: calendar.startOfDay(for: now), to: calendar.startOfDay(for: opensAt)
+      ).day ?? 0
+
+    switch days {
+    case ...0: return .today
+    case 1: return .tomorrow
+    default:
+      return .on(
+        PlanDate.momentDay(
+          opensAt,
+          style: Date.FormatStyle(
+            locale: calendar.locale ?? .current, calendar: calendar, timeZone: calendar.timeZone
+          ).month(.wide).day(), now: now, calendar: calendar))
+    }
+  }
+
+  /// When a free learner's next lesson opens. Without the instant, or once it has passed, nothing
+  /// about a day, never a guess.
+  static func nextFreeLesson(_ opensAt: Date?, now: Date = .now, calendar: Calendar = .current)
+    -> LocalizedStringResource?
+  {
+    switch opensAt.map({ openingDay($0, now: now, calendar: calendar) }) {
+    case nil, .open:
+      return nil
+    case .today:
+      return LocalizedStringResource(
+        "Your next free lesson opens later today, or subscribe to keep going.",
+        table: "Subscriptions")
+    case .tomorrow:
+      return LocalizedStringResource(
+        "Your next free lesson opens tomorrow, or subscribe to keep going.",
+        table: "Subscriptions")
+    case .on(let day):
+      return LocalizedStringResource(
+        "Your next free lesson opens on \(day), or subscribe to keep going.",
+        table: "Subscriptions",
+        comment:
+          "On the screen a free learner sees when their free lessons are used. {date} is a day and its month, such as \"November 22\" in English."
+      )
+    }
+  }
+
+  /// Main's `useMapLessonsWords`: a map writes its lessons first, so a free learner's map waits
+  /// until all of them fit in the lessons left over the last 30 days, and one that needs more than
+  /// that never fits. The learner may still have lessons left, so these never say they used them.
+  func mapLessonsWords(now: Date = .now, calendar: Calendar = .current) -> LimitWords {
+    switch self {
+    case .freeLessonsUsed(let opensAt):
+      return Self.mapFitsWords(opensAt.map { Self.openingDay($0, now: now, calendar: calendar) })
+    case .limitReached(_, .free):
+      return LimitWords(
+        title: LocalizedStringResource("This map needs a subscription", table: "Subscriptions"),
+        line: LocalizedStringResource(
+          "It writes more lessons than you get for free.", table: "Subscriptions",
+          comment:
+            "Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and this one has more lessons than a free learner can start."
+        ))
+    case .limitReached, .slowDown, .signUpRequired:
+      return mindMapWords
+    }
+  }
+
+  private static func mapFitsWords(_ day: OpeningDay?) -> LimitWords {
+    let title = LocalizedStringResource(
+      "Not enough free lessons for this map yet", table: "Subscriptions")
+
+    switch day {
+    case .open:
+      return LimitWords(
+        title: LocalizedStringResource("You can make this map now", table: "Subscriptions"))
+    case nil:
+      return LimitWords(title: title)
+    case .today:
+      return LimitWords(
+        title: title,
+        line: LocalizedStringResource(
+          "You'll have enough later today, or subscribe to make it now.", table: "Subscriptions",
+          comment:
+            "Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet."
+        ))
+    case .tomorrow:
+      return LimitWords(
+        title: title,
+        line: LocalizedStringResource(
+          "You'll have enough tomorrow, or subscribe to make it now.", table: "Subscriptions",
+          comment:
+            "Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet."
+        ))
+    case .on(let date):
+      return LimitWords(
+        title: title,
+        line: LocalizedStringResource(
+          "You'll have enough on \(date), or subscribe to make it now.", table: "Subscriptions",
+          comment:
+            "Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet. {date} is a day and its month, such as \"November 22\" in English."
+        ))
+    }
+  }
+
+  /// A free learner's lessons are the plan's one allowance, so its title says so. Every other
+  /// lesson cap is a guest's or the day's: no lesson is refused for the month.
+  func lessonWords(now: Date = .now, calendar: Calendar = .current) -> LimitWords {
+    guard case .limitReached(_, let tier) = self else {
+      return refusalWords(now: now, calendar: calendar)
+    }
+
+    guard tier != .guest else {
+      return LimitWords(
+        title: LocalizedStringResource(
+          "No more lessons without an account", table: "Subscriptions",
+          comment: "A guest took the lessons they can try without an account"))
+    }
+
+    return LimitWords(
+      title: LocalizedStringResource(
+        "No more new lessons today", table: "Subscriptions",
+        comment: "The learner started all the new lessons they can today"),
+      line: HelpLimit.limitReached(period: .day, tier: tier).comesBack)
+  }
+
+  var mindMapWords: LimitWords {
+    guard case .limitReached(_, let tier) = self else {
+      return refusalWords()
+    }
+
+    guard tier != .guest else {
+      return LimitWords(
+        title: LocalizedStringResource(
+          "No more mind maps without an account", table: "Subscriptions",
+          comment: "A guest made the mind maps they can try without an account"))
+    }
+
+    return LimitWords(
+      title: isMonthly
+        ? LocalizedStringResource(
+          "No more new mind maps this month", table: "Subscriptions",
+          comment: "The learner made all the new mind maps they can this month")
+        : LocalizedStringResource(
+          "No more new mind maps today", table: "Subscriptions",
+          comment: "The learner made all the new mind maps they can today"),
+      line: comesBack)
+  }
+
+  /// Seeing a far topic's lessons ahead of time.
+  var previewWords: LimitWords {
+    guard case .limitReached(_, let tier) = self else {
+      return refusalWords()
+    }
+
+    guard tier != .guest else {
+      return LimitWords(
+        title: LocalizedStringResource(
+          "No more previews without an account", table: "Subscriptions",
+          comment: "A guest saw the topic ahead of time they can without an account"))
+    }
+
+    return LimitWords(
+      title: isMonthly
+        ? LocalizedStringResource(
+          "No more previews this month", table: "Subscriptions",
+          comment: "The learner saw all the topics ahead of time they can this month")
+        : LocalizedStringResource(
+          "No more previews today", table: "Subscriptions",
+          comment: "The learner saw all the topics ahead of time they can today"),
+      line: comesBack)
+  }
+}
+
+/// Main's `useOpeningDay`: the time a free lesson's opening is read at. It moves at the learner's
+/// midnight (its day changes), when the instant passes and when the app comes back to the front, so
+/// a gate left open never promises a day that has gone.
+struct OpeningClock<Content: View>: View {
+  @Environment(\.scenePhase) private var scenePhase
+  @State private var now = Date.now
+
+  let opensAt: Date?
+  @ViewBuilder let content: (Date) -> Content
+
+  var body: some View {
+    content(now)
+      .task(id: opensAt) {
+        guard let opensAt else {
+          return
+        }
+
+        while !Task.isCancelled {
+          now = .now
+
+          guard let wake = HelpLimit.nextWake(opensAt: opensAt, now: now) else {
+            return
+          }
+
+          try? await Task.sleep(for: .seconds(wake.timeIntervalSince(now)))
+        }
+      }
+      .onChange(of: scenePhase) { _, phase in
+        if phase == .active {
+          now = .now
+        }
+      }
+  }
+
+}

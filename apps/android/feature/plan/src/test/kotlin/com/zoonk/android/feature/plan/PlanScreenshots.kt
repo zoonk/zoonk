@@ -32,6 +32,7 @@ import com.zoonk.android.ui.components.SuggestionLayout
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
+import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.PlanBasesAdvice
 import com.zoonk.api.models.PlanCertificates
 import com.zoonk.api.models.PlanChangePreview
@@ -105,6 +106,26 @@ class PlanScreenshots {
     @Config(qualifiers = "w1280dp-h900dp-land-night-xhdpi")
     fun expandedDark() = capture("plan-expanded-dark", dark = true)
 
+    @Test
+    @Config(qualifiers = "w411dp-h900dp-xxhdpi")
+    fun phonePaused() = capture("plan-paused-phone", paused = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h900dp-xxhdpi")
+    fun phonePausedAtTheGoalLimit() = capture("plan-paused-limit-phone", paused = true, failure = ResumeFailure.GoalLimit)
+
+    @Test
+    @Config(qualifiers = "w1280dp-h900dp-land-xhdpi")
+    fun expandedPaused() = capture("plan-paused-expanded", paused = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h900dp-xxhdpi")
+    fun phoneExamOver() = capture("plan-exam-over-phone", examOver = true)
+
+    @Test
+    @Config(qualifiers = "w1280dp-h900dp-land-xhdpi")
+    fun expandedExamOver() = capture("plan-exam-over-expanded", examOver = true)
+
     /** Robolectric copies only the activity's window, so a sheet's content is drawn here as it shows in its sheet. */
     @Test
     @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
@@ -114,12 +135,25 @@ class PlanScreenshots {
             mapOf(
                 "plan-sheet-pace" to { links -> PaceDetails(page, page.plan.status!!.pace, links, onAdjust = {}) },
                 "plan-sheet-progress" to
+                    { links -> PreparationDetails(Standing.Progress(progress(), done = 13, known = 0, total = 46), links) },
+                "plan-sheet-preparation-review" to
                     { links ->
                         PreparationDetails(
-                            progress(),
-                            forExam = false,
-                            lessons = Standing.Progress(progress(), done = 13, known = 0, total = 46),
-                            links = links,
+                            Standing.Preparation(
+                                progress(
+                                    mocks = """{"kind":"fullReviews","taken":0,"value":0}""",
+                                    rule = "examWeighted",
+                                    fading = 0,
+                                ),
+                            ),
+                            links,
+                        )
+                    },
+                "plan-sheet-preparation-reviewed" to
+                    { links ->
+                        PreparationDetails(
+                            Standing.Preparation(progress(mocks = """{"kind":"fullReviews","taken":2,"value":0.5}""")),
+                            links,
                         )
                     },
                 "plan-sheet-phase-details" to { links -> PhaseDetails(page, page.plan.phases[1], links) },
@@ -149,6 +183,11 @@ class PlanScreenshots {
             compose.waitForIdle()
             write(name, compose.onRoot().captureRender().asAndroidBitmap())
         }
+        shown = "plan-change-diff"
+        compose.waitForIdle()
+        compose.onNodeWithText("See all changes").performClick()
+        compose.waitForIdle()
+        write("plan-change-diff-open", compose.onRoot().captureRender().asAndroidBitmap())
     }
 
     /** A far topic's sheet in each state, driven through its view model as the sheet is. */
@@ -417,8 +456,6 @@ class PlanScreenshots {
                                     shot.edits,
                                     PlanLinks(navigator, page),
                                     Resume.Plain,
-                                    isSaving = false,
-                                    onSetStatus = {},
                                     onAdjust = {},
                                     layout = layout,
                                     host = shot.host,
@@ -688,7 +725,7 @@ class PlanScreenshots {
         write("$prefix-bases", compose.onRoot().captureRender().asAndroidBitmap())
 
         compose.onNodeWithText("Get a recommendation").performClick()
-        compose.onNodeWithText("Quick lesson").performClick()
+        compose.onNodeWithText("One short lesson each").performClick()
         compose.mainClock.advanceTimeBy(1_000)
         compose.waitForIdle()
         write("$prefix-bases-changed", compose.onRoot().captureRender().asAndroidBitmap())
@@ -704,8 +741,11 @@ class PlanScreenshots {
         name: String,
         dark: Boolean = false,
         moreContrast: Boolean = false,
+        paused: Boolean = false,
+        failure: ResumeFailure? = null,
+        examOver: Boolean = false,
     ) {
-        show(dark, moreContrast)
+        show(dark, moreContrast, paused, failure, examOver)
         compose.waitForIdle()
         write(name, compose.onRoot().captureRender().asAndroidBitmap())
     }
@@ -713,8 +753,26 @@ class PlanScreenshots {
     private fun show(
         dark: Boolean = false,
         moreContrast: Boolean = false,
+        paused: Boolean = false,
+        failure: ResumeFailure? = null,
+        examOver: Boolean = false,
     ) {
-        val page = page()
+        val page =
+            when {
+                paused -> {
+                    page().let { it.copy(goal = it.goal.copy(status = LearnerSummaryGoal.Status.PAUSED)) }
+                }
+
+                examOver -> {
+                    learnerSummary(kind = "exam", title = "ENEM").let {
+                        PlanPageState(it.goals.first(), plan(""""status":{"kind":"pastDate","lessons":4}"""), it)
+                    }
+                }
+
+                else -> {
+                    page()
+                }
+            }
         compose.setContent {
             val navigator = rememberAppNavigator()
             ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
@@ -727,6 +785,7 @@ class PlanScreenshots {
                         resume = Resume.Plain,
                         isSaving = false,
                         onSetStatus = {},
+                        resumeFailure = failure,
                         onAdjust = {},
                     )
                 }

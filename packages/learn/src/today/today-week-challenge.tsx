@@ -39,7 +39,7 @@ export function useChallengeDayName() {
 
   return (challenge: Challenge): string => {
     if (isFullReview(challenge)) {
-      return t("full review");
+      return t("review");
     }
 
     return challenge.kind === "mock" ? t("mock exam") : t("weekly challenge");
@@ -66,12 +66,12 @@ function FullReviewRow({ date }: { date: Date }) {
 
   return (
     <ListRow className="border-t">
-      <ListRowLeading className="w-3 justify-center">
+      <ListRowLeading>
         <KindDot kind="review" />
       </ListRowLeading>
       <ChallengeLine
-        facts={[weekdayLabel(date), t("every topic, your weakest first")].join(" · ")}
-        name={t("Full review")}
+        facts={[weekdayLabel(date), t("every topic")].join(" · ")}
+        name={t("Review")}
       />
     </ListRow>
   );
@@ -99,7 +99,7 @@ export function ChallengeRow({ challenge, date }: { challenge: Challenge; date: 
 
   const content = (
     <>
-      <ListRowLeading className="w-3 justify-center">
+      <ListRowLeading>
         <KindDot kind={getChallengeEventKind(challenge)} />
       </ListRowLeading>
       <ChallengeLine facts={facts.join(" · ")} name={name} />

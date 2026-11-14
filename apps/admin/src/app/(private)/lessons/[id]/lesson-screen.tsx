@@ -1,8 +1,8 @@
 import { AdminJson } from "@/components/admin-json";
-import { ProvenanceLine } from "@/components/provenance";
+import { ContentWords } from "@/components/content-words";
 import { type LibraryLessonStep } from "@/data/lessons/get-library-lesson";
-import { formatPercent } from "@/lib/format";
-import { Badge } from "@zoonk/ui/components/badge";
+import { formatCount, formatPercent, toWords } from "@/lib/format";
+import { LINK_CLASS } from "@/lib/link-class";
 import { isJsonObject } from "@zoonk/utils/json";
 import Link from "next/link";
 
@@ -10,108 +10,99 @@ export type StepAnswers = { correct: number; total: number };
 
 const PERCENT = 100;
 
-function getActivityTemplate(step: LibraryLessonStep): string | null {
-  const template = isJsonObject(step.content) ? step.content.template : null;
-  return step.kind === "activity" && typeof template === "string" ? template : null;
+/** "Hook · Guess", "Activity · Chart reader": the kind, then what tells its variants apart. */
+function screenKind(step: LibraryLessonStep): string {
+  const content = isJsonObject(step.content) ? step.content : {};
+  const variant = step.kind === "activity" ? content.template : content.variant;
+
+  return [step.kind, typeof variant === "string" && variant !== "text" ? variant : null]
+    .filter((part) => part !== null)
+    .map((part) => toWords(part))
+    .join(" · ");
 }
 
-function AnswersLabel({ answers }: { answers?: StepAnswers }) {
-  if (!answers || answers.total === 0) {
-    return <span className="text-muted-foreground">No answers</span>;
+function answersLabel(answers?: StepAnswers): string | null {
+  if (!answers) {
+    return null;
+  }
+
+  return answers.total === 0
+    ? "No answers yet"
+    : `${formatCount(answers.total, "answer")} · ${formatPercent((answers.correct / answers.total) * PERCENT)} right`;
+}
+
+function ScreenLinks({ step }: { step: LibraryLessonStep }) {
+  if (!(step.skill || step.item || step.mediaAsset)) {
+    return null;
   }
 
   return (
-    <span>
-      {answers.total} answers · {formatPercent((answers.correct / answers.total) * PERCENT)} right
-    </span>
-  );
-}
-
-function StepLinks({ step }: { step: LibraryLessonStep }) {
-  return (
-    <span className="text-muted-foreground flex flex-wrap items-center gap-x-3 gap-y-2 text-xs">
+    <p className="text-muted-foreground flex flex-wrap gap-x-4 gap-y-1 text-xs">
       {step.skill ? (
-        <Link
-          className="hit-area relative inline-flex min-h-11 items-center underline"
-          href={`/skills/${step.skill.id}`}
-        >
-          Skill: {step.skill.name}
+        <Link className={LINK_CLASS} href={`/skills/${step.skill.id}`}>
+          {step.skill.name}
         </Link>
       ) : null}
       {step.item ? (
-        <Link
-          className="hit-area relative inline-flex min-h-11 items-center underline"
-          href={`/items/${step.item.id}`}
-        >
-          Item ({step.item.format})
+        <Link className={LINK_CLASS} href={`/items/${step.item.id}`}>
+          Practice question
         </Link>
       ) : null}
       {step.mediaAsset ? (
-        <Link
-          className="hit-area relative inline-flex min-h-11 items-center underline"
-          href={`/media/${step.mediaAsset.id}`}
-        >
-          {step.mediaAsset.kind}
+        <Link className={LINK_CLASS} href={`/media/${step.mediaAsset.id}`}>
+          {toWords(step.mediaAsset.kind)}
         </Link>
       ) : null}
-      {step._count.answerExplanations > 0 ? (
-        <span>{step._count.answerExplanations} answer explanations</span>
-      ) : null}
-      {step._count.exampleLines > 0 ? <span>{step._count.exampleLines} example lines</span> : null}
-      {step._count.mistakes > 0 ? <span>{step._count.mistakes} mistakes</span> : null}
-    </span>
+    </p>
+  );
+}
+
+function ScreenJson({ step }: { step: LibraryLessonStep }) {
+  return (
+    <div className="flex flex-col">
+      <AdminJson label="JSON" open value={step.content} />
+      {step.variants.map((variant) => (
+        <AdminJson
+          key={variant.id}
+          label={`Version: ${toWords(variant.kind)}${variant.key ? `, ${variant.key}` : ""}`}
+          value={variant.content}
+        />
+      ))}
+    </div>
   );
 }
 
 export function LessonScreen({
   answers,
+  json,
   step,
 }: {
   answers?: StepAnswers;
+  /** Shows what is stored under the words, for a screen whose words don't say everything. */
+  json: boolean;
   step: LibraryLessonStep;
 }) {
-  const template = getActivityTemplate(step);
-
   return (
-    <li className="flex flex-col gap-2 py-4">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="flex flex-col gap-1">
-          <span className="flex items-center gap-2 text-sm font-medium">
-            <span className="text-muted-foreground tabular-nums">{step.position + 1}.</span>
-            {step.kind}
-            {template ? <Badge variant="outline">{template}</Badge> : null}
-            <span className="text-muted-foreground text-xs">v{step.contractVersion}</span>
+    <li className="grid grid-cols-[1.5rem_minmax(0,1fr)] gap-x-4 py-5 first:pt-0">
+      <span className="text-muted-foreground text-right font-mono text-xs leading-5 tabular-nums">
+        {step.position + 1}
+      </span>
+      <div className="flex min-w-0 flex-col gap-2">
+        <div className="flex items-baseline justify-between gap-4">
+          <span className="text-muted-foreground text-xs leading-5 font-medium">
+            {screenKind(step)}
           </span>
-          <StepLinks step={step} />
+          <span className="text-muted-foreground shrink-0 text-xs">{answersLabel(answers)}</span>
         </div>
 
-        <div className="flex items-start gap-4 text-xs">
-          <AnswersLabel answers={answers} />
-          <ProvenanceLine provenance={step} />
+        <div className="flex max-w-prose flex-col gap-3 text-sm leading-6">
+          <ContentWords content={step.content} />
         </div>
+
+        <ScreenLinks step={step} />
+
+        {json ? <ScreenJson step={step} /> : null}
       </div>
-
-      <AdminJson label="Content" value={step.content} />
-
-      {step.variants.length > 0 ? (
-        <ul className="border-muted ml-4 flex flex-col gap-2 border-l pl-4">
-          {step.variants.map((variant) => (
-            <li className="flex flex-col gap-1" key={variant.id}>
-              <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
-                <span className="font-medium">
-                  {variant.kind}
-                  {variant.key ? `: ${variant.key}` : ""}
-                  <span className="text-muted-foreground"> · v{variant.contractVersion}</span>
-                </span>
-                <span className="flex items-center gap-4">
-                  <ProvenanceLine provenance={variant} />
-                </span>
-              </div>
-              <AdminJson label="Version content" value={variant.content} />
-            </li>
-          ))}
-        </ul>
-      ) : null}
     </li>
   );
 }

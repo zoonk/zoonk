@@ -108,9 +108,11 @@ final class BuddyStore {
     }
   }
 
-  func answer(_ insight: MemoryInsight, accepted: Bool) async -> MutationResult<Void> {
+  func answer(_ insight: MemoryInsight, accepted: Bool) async -> MutationResult<MemoryInsight?> {
     await cache.mutate(invalidating: [.goals, .learnerModel, .memory, .userSession]) { identity in
-      try await api.answer(insightId: insight.id, accepted: accepted, token: identity.bearerToken)
+      try await api.answer(
+        insightId: insight.id, accepted: accepted, quote: insight.planChange?.quote,
+        token: identity.bearerToken)
     }
   }
 }

@@ -4,23 +4,19 @@ import {
   LEVEL_TEST_MINUTES,
   type LanguageLevelTestView,
 } from "@zoonk/core/language/level-test/contract";
+import { Button } from "@zoonk/ui/components/button";
 import { getLanguageNameInSentence } from "@zoonk/utils/languages";
 import { isValidLocale } from "@zoonk/utils/locale";
-import { CircleCheckIcon, PlayIcon, SkipForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { ChangeSaveError } from "../../_components/save-error";
 import { useAppLocale } from "../../_utils/locale";
 import { useFormatDuration } from "../../_utils/time-format";
 import {
   OnboardingColumn,
   OnboardingDescription,
-  OnboardingFooter,
   OnboardingHeading,
-  OnboardingPrimaryButton,
-  OnboardingSecondaryButton,
   OnboardingTitle,
 } from "../../onboarding/onboarding-frame";
-import { StepIcon } from "../../onboarding/steps/step-parts";
+import { TestOutcome, TestStartActions } from "../../onboarding/test-outcome";
 import { LevelBars } from "./level-test-parts";
 
 type ReadyTest = Extract<LanguageLevelTestView, { status: "ready" }>;
@@ -40,11 +36,16 @@ function InterfaceOffer({
   }
 
   return (
-    <OnboardingSecondaryButton lang={language} onClick={() => onSwitch(language)} variant="ghost">
+    <Button
+      className="self-start"
+      lang={language}
+      onClick={() => onSwitch(language)}
+      variant="link"
+    >
       {t("Use the app in {language}", {
         language: getLanguageNameInSentence({ targetLanguage: language, userLanguage: language }),
       })}
-    </OnboardingSecondaryButton>
+    </Button>
   );
 }
 
@@ -75,10 +76,19 @@ export function TestIntro({
   });
 
   return (
-    <OnboardingColumn>
+    <OnboardingColumn
+      bar={
+        <TestStartActions
+          onScratch={onScratch}
+          onStart={onStart}
+          pending={pending}
+          starting={starting}
+        />
+      }
+    >
       <OnboardingHeading>
         <OnboardingTitle>
-          {t("Let's see your level in {language}", { language: target })}
+          {t("Find your level in {language}", { language: target })}
         </OnboardingTitle>
         <OnboardingDescription>
           {t(
@@ -90,32 +100,11 @@ export function TestIntro({
 
       {showAlphabetNote && (
         <p className="text-muted-foreground text-sm text-pretty">
-          {t(
-            "New to its alphabet? Skip the test. Your first session starts with a short lesson on reading it.",
-          )}
+          {t("New to its alphabet? Skip the test. Your first lesson teaches you to read it.")}
         </p>
       )}
 
-      <OnboardingFooter>
-        <OnboardingPrimaryButton
-          busy={starting}
-          disabled={pending}
-          icon={<PlayIcon aria-hidden="true" />}
-          onClick={onStart}
-        >
-          {t("Start")}
-        </OnboardingPrimaryButton>
-        <OnboardingSecondaryButton
-          busy={pending}
-          disabled={starting}
-          icon={<SkipForwardIcon aria-hidden="true" />}
-          onClick={onScratch}
-          variant="ghost"
-        >
-          {t("Skip the test")}
-        </OnboardingSecondaryButton>
-        <InterfaceOffer language={goal.language} onSwitch={onSwitch} />
-      </OnboardingFooter>
+      <InterfaceOffer language={goal.language} onSwitch={onSwitch} />
     </OnboardingColumn>
   );
 }
@@ -134,23 +123,14 @@ export function TestDone({
   const t = useExtracted();
 
   return (
-    <OnboardingColumn>
-      <StepIcon success>
-        <CircleCheckIcon />
-      </StepIcon>
-      <OnboardingHeading>
-        <OnboardingTitle>{t("Your level today")}</OnboardingTitle>
-        <OnboardingDescription>
-          {t("Based on the test. It gets more accurate every week.")}
-        </OnboardingDescription>
-      </OnboardingHeading>
+    <TestOutcome
+      busy={pending}
+      failed={failed}
+      onContinue={onContinue}
+      subject={t("Level test")}
+      title={t("Your level")}
+    >
       <LevelBars levels={levels} />
-      <OnboardingFooter>
-        {failed && <ChangeSaveError />}
-        <OnboardingPrimaryButton autoFocus disabled={pending} onClick={onContinue}>
-          {t("Build my plan")}
-        </OnboardingPrimaryButton>
-      </OnboardingFooter>
-    </OnboardingColumn>
+    </TestOutcome>
   );
 }

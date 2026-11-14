@@ -20,102 +20,134 @@ struct LessonVerdictView: View {
         }
       }
 
-      if let spelling = result.spelling {
-        LabeledText(
-          label: Text(
-            "Spelled:", tableName: "Player", comment: "Before the right spelling of a typed answer"),
-          text: spelling)
-      }
-
-      if correctReason == nil {
-        correctAnswerLine
-      }
-
-      if case .typedAnswer(let content) = step.content, !result.isCorrect {
-        if !result.checked {
-          Text(
-            "Each question is checked a few times a day. Compare your answer with this one:",
-            tableName: "Player",
-            comment: "A typed answer that wasn't graded, before the sample answer"
-          )
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
-        }
-
-        LabeledText(
-          label: Text(
-            "Answer:", tableName: "Player", comment: "Before a typed question's sample answer"),
-          text: content.sampleAnswer)
-      }
-
-      if case .spokenAnswer(let content, _) = step.content {
-        if let heard = result.heard {
-          LessonSpokenWordsView(heard: heard, language: content.language)
-        } else if answer == nil, let transcript = result.answerText {
-          // A recording restored from an earlier sitting keeps only its words.
-          LabeledText(
-            label: Text(
-              "What we heard", tableName: "Player",
-              comment: "Above a spoken answer's words as heard"
-            ),
-            text: transcript)
-        }
-      }
-
-      ForEach(result.corrections, id: \.self) { correction in
+      if isUpdatedScreen {
         Text(
-          "\(Text(correction.wrong).strikethrough()) → \(Text(correction.right).typeWeight(.bold, legibility: legibility))"
+          "This question was updated after you started, so this answer doesn't count.",
+          tableName: "Player",
+          comment:
+            "Under “Not checked this time”: we corrected this lesson question while the learner was in the lesson, so their answer isn't graded either way."
         )
-        .typeStyle(.body)
-      }
-
-      if let keyPoints = result.keyPoints, !keyPoints.isEmpty {
-        LessonKeyPointsView(keyPoints: keyPoints)
-      }
-
-      if let feedback = result.feedback, !feedback.isEmpty {
-        LessonTextBlocks(feedback)
-          .typeStyle(.body)
-      }
-
-      if let correctReason {
-        correctAnswerLine
-
-        LessonTextBlocks(correctReason)
-          .typeStyle(.body)
-      }
-
-      if case .language(_, let wordHints?) = step.content {
-        LessonWordHints(hints: wordHints)
-          .typeStyle(.body)
-      }
-
-      if case .typedAnswer = step.content, !result.isCorrect, result.checked,
-        !result.isSampleAnswer, let store
-      {
-        LessonExplainAnswerView(step: step, store: store)
-      }
-
-      if let note {
-        Text(note)
-          .typeStyle(.meta)
-          .foregroundStyle(.mutedForeground)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
+      } else {
+        details
       }
     }
     .feedbackPanel()
     .accessibilityElement(children: .contain)
   }
 
+  /// Main's `UncheckedLine` with no answer to show: a fix changed the screen after the learner
+  /// started, so they may still see the old one. Only the verdict and this line show.
+  private var isUpdatedScreen: Bool {
+    !result.checked && result.correctAnswer == nil && !result.isSampleAnswer
+  }
+
+  @ViewBuilder
+  private var details: some View {
+    if let spelling = result.spelling {
+      LabeledText(
+        label: Text(
+          "Spelled:", tableName: "Player", comment: "Before the right spelling of a typed answer"),
+        text: spelling)
+    }
+
+    if correctReason == nil {
+      correctAnswerLine
+    }
+
+    // Main's `UncheckedLine`: the cap's sample to compare, or "I don't know yet"'s on its own.
+    if !result.checked, let correctAnswer = result.correctAnswer {
+      if result.answerText != nil {
+        Text(
+          "This question was already checked a few times today, so this answer doesn't count. Compare it with this one:",
+          tableName: "Player",
+          comment: "A typed answer that wasn't graded, before the sample answer"
+        )
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
+      }
+
+      LessonRichText(correctAnswer)
+        .typeStyle(.body.weight(.medium))
+    }
+
+    if case .typedAnswer(let content) = step.content, !result.isCorrect, result.checked {
+      if result.isSampleAnswer {
+        LessonRichText(content.sampleAnswer)
+          .typeStyle(.body.weight(.medium))
+      } else {
+        RightAnswerLine(answer: content.sampleAnswer)
+      }
+    }
+
+    if case .spokenAnswer(let content, _) = step.content {
+      if let heard = result.heard {
+        LessonSpokenWordsView(heard: heard, language: content.language)
+      } else if answer == nil, let transcript = result.answerText {
+        // A recording restored from an earlier sitting keeps only its words.
+        LabeledText(
+          label: Text(
+            "What we heard", tableName: "Player",
+            comment: "Above a spoken answer's words as heard"
+          ),
+          text: transcript)
+      }
+    }
+
+    ForEach(result.corrections, id: \.self) { correction in
+      Text(
+        "\(Text(correction.wrong).strikethrough()) → \(Text(correction.right).typeWeight(.bold, legibility: legibility))"
+      )
+      .typeStyle(.body)
+    }
+
+    if let keyPoints = result.keyPoints, !keyPoints.isEmpty {
+      LessonKeyPointsView(keyPoints: keyPoints)
+    }
+
+    if let feedback = result.feedback, !feedback.isEmpty {
+      LessonTextBlocks(feedback)
+        .typeStyle(.body)
+    }
+
+    if let correctReason {
+      correctAnswerLine
+
+      LessonTextBlocks(correctReason)
+        .typeStyle(.body)
+    }
+
+    if case .language(_, let wordHints?) = step.content {
+      LessonWordHints(hints: wordHints)
+        .typeStyle(.body)
+    }
+
+    if case .typedAnswer = step.content, !result.isCorrect, result.checked,
+      !result.isSampleAnswer, let store
+    {
+      LessonExplainAnswerView(step: step, store: store)
+    }
+
+    if let note {
+      Text(note)
+        .typeStyle(.meta)
+        .foregroundStyle(.mutedForeground)
+    }
+  }
+
   /// A guess's reveal already names the right option, and the option list marks it. A word-bank
   /// answer right in another order shows the lesson's own order too.
   @ViewBuilder
   private var correctAnswerLine: some View {
-    if let correctAnswer = result.correctAnswer {
+    if result.checked, let correctAnswer = result.correctAnswer {
       if !result.isCorrect, !Self.marksItsAnswer.contains(step.kind) {
-        LabeledText(
-          label: Text(
-            "Correct answer", tableName: "Player", comment: "Before the right answer after a miss"),
-          text: correctAnswer)
+        if result.isSampleAnswer {
+          LessonRichText(correctAnswer)
+            .typeStyle(.body.weight(.medium))
+        } else {
+          RightAnswerLine(answer: correctAnswer)
+        }
       } else if result.isCorrect, isWordBankAnswer {
         LabeledText(
           label: Text(
@@ -175,6 +207,26 @@ struct LessonVerdictView: View {
 
   private var verdict: LessonVerdict {
     .of(result, step: step)
+  }
+}
+
+/// Main's `RightAnswerLine`: the right answer after a miss, in one message around the answer, so
+/// each language owns the label's spacing and word order.
+private struct RightAnswerLine: View {
+  @Environment(\.legibilityWeight) private var legibility
+
+  let answer: String
+
+  var body: some View {
+    let typeset = LessonRichText.typeset(answer)
+    let value = typeset.quoted(spoken: false, legibility: legibility)
+      .foregroundStyle(Color.successText)
+      .typeWeight(.medium, legibility: legibility)
+
+    Text("Right answer: \(value)", tableName: "Player")
+      .typeStyle(.body)
+      .foregroundStyle(.mutedForeground)
+      .accessibilityLabel(Text("Right answer: \(typeset.said)", tableName: "Player"))
   }
 }
 
@@ -263,7 +315,9 @@ private struct LessonExplainAnswerView: View {
             .typeStyle(.note)
             .foregroundStyle(.mutedForeground)
         case .refused(let refusal):
-          LessonHelpLimitNote(refusal: refusal)
+          if let limit = refusal.limit {
+            LimitNotice(limit: limit, kind: .explanations)
+          }
         default:
           EmptyView()
         }
@@ -275,7 +329,7 @@ private struct LessonExplainAnswerView: View {
   private var statusLine: String? {
     switch store.explanations[step.id] {
     case .failed: Self.failedLine
-    case .refused(let refusal): LessonHelpLimitNote.message(refusal)
+    case .refused(let refusal): refusal.limit?.helpWords(.explanations).said
     default: nil
     }
   }
@@ -320,6 +374,15 @@ extension LessonVerdict {
       return .guess(isRight: result.isCorrect)
     }
 
+    // Counted neither way, so never read as wrong: main's `unchecked`.
+    if !result.checked {
+      return LessonVerdict(
+        title: LocalizedStringResource(
+          "Not checked this time", table: "Player",
+          comment: "Verdict when the learner's answer wasn't checked this time."),
+        tone: .neutral)
+    }
+
     if result.isCorrect {
       return result.spelling == nil
         ? LessonVerdict(
@@ -330,13 +393,6 @@ extension LessonVerdict {
             "Right, watch the spelling", table: "Player",
             comment: "A right typed answer with a typo"),
           tone: .right)
-    }
-
-    if step.kind == .typedAnswer, !result.checked {
-      return LessonVerdict(
-        title: LocalizedStringResource(
-          "Not checked this time", table: "Player", comment: "A typed answer that wasn't graded"),
-        tone: .neutral)
     }
 
     if let score = result.score, score > 0 {

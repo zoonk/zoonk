@@ -3,18 +3,19 @@
 import { type CertificateFacts } from "@zoonk/core/certificates/contract";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@zoonk/ui/components/dialog";
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerPopup,
+  DrawerTitle,
+} from "@zoonk/ui/components/drawer";
 import { showSuccessToast } from "@zoonk/ui/components/toast";
 import { useClipboard } from "@zoonk/ui/hooks/clipboard";
 import { type CertificateLinks } from "@zoonk/utils/certificate-links";
 import { LinkIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useRef } from "react";
+import { SheetHeader } from "../_components/sheet-header";
 import { CopyButton } from "./certificate-copy-button";
 import {
   roundStudyMinutes,
@@ -237,54 +238,53 @@ export function CertificateShareDialog({
   const text = shareText(facts);
 
   return (
-    <Dialog onOpenChange={onOpenChange} open={open}>
-      <DialogContent
-        className="max-h-[calc(100dvh-2rem)] gap-5 overflow-y-auto sm:max-w-[540px]"
-        closeLabel={t("Close")}
-        overNested
-      >
-        <DialogHeader>
-          <DialogTitle className="text-lg font-semibold">{t("Share your certificate")}</DialogTitle>
-          <DialogDescription>
+    <Drawer onOpenChange={onOpenChange} open={open}>
+      <DrawerPopup>
+        <SheetHeader>
+          <DrawerTitle>{t("Share your certificate")}</DrawerTitle>
+          <DrawerDescription>
             {t("Your post shows this picture and links to your certificate's page.")}
-          </DialogDescription>
-        </DialogHeader>
+          </DrawerDescription>
+        </SheetHeader>
 
-        {/* oxlint-disable-next-line next/no-img-element -- @zoonk/learn doesn't depend on next/image; this is Main's own rendered PNG. */}
-        <img
-          alt=""
-          className="ring-border aspect-1200/630 h-auto w-full rounded-lg bg-white ring-1"
-          height={630}
-          src={links.imageUrls.link}
-          width={1200}
-        />
+        <DrawerContent className="flex flex-col gap-5 pt-2">
+          {/* oxlint-disable-next-line next/no-img-element -- @zoonk/learn doesn't depend on next/image; this is Main's own rendered PNG. */}
+          <img
+            alt=""
+            className="outline-border aspect-1200/630 h-auto w-full rounded-lg bg-white outline-1 -outline-offset-1"
+            height={630}
+            src={links.imageUrls.link}
+            width={1200}
+          />
 
-        <div className="flex flex-col gap-1.5">
-          <span className="text-muted-foreground text-xs">{t("Suggested text")}</span>
-          <div className="border-input flex items-start gap-3 rounded-lg border px-3.5 py-3">
-            <p className="min-w-0 flex-1 text-sm leading-normal text-pretty">{text}</p>
-            <CopyButton label={t("Copy the suggested text")} text={text} />
+          <div className="flex flex-col gap-1.5">
+            <span className="text-muted-foreground text-xs">{t("Suggested text")}</span>
+            <div className="border-input flex items-start gap-3 rounded-lg border p-3">
+              <p className="min-w-0 flex-1 text-sm leading-normal text-pretty">{text}</p>
+              <CopyButton label={t("Copy the suggested text")} text={text} />
+            </div>
           </div>
-        </div>
 
-        <div className="flex flex-col gap-1.5">
-          <span className="text-muted-foreground text-xs">{t("Post on")}</span>
-          <NetworkLinks text={text} url={links.url} />
-        </div>
+          <div className="flex flex-col gap-1.5">
+            <span className="text-muted-foreground text-xs">{t("Post on")}</span>
+            <NetworkLinks text={text} url={links.url} />
+          </div>
 
-        <button
-          className={buttonVariants({
-            className: "-ml-3 justify-self-start",
-            size: "lg",
-            variant: "ghost",
-          })}
-          onClick={() => void copy(links.url).then(() => showSuccessToast(t("Link copied")))}
-          type="button"
-        >
-          <LinkIcon aria-hidden="true" />
-          {t("Copy link")}
-        </button>
-      </DialogContent>
-    </Dialog>
+          <button
+            className={buttonVariants({
+              className: "self-start",
+              edge: "start",
+              size: "lg",
+              variant: "ghost",
+            })}
+            onClick={() => void copy(links.url).then(() => showSuccessToast(t("Link copied")))}
+            type="button"
+          >
+            <LinkIcon aria-hidden="true" />
+            {t("Copy link")}
+          </button>
+        </DrawerContent>
+      </DrawerPopup>
+    </Drawer>
   );
 }

@@ -1,17 +1,14 @@
 "use client";
 
-import { type MockResult } from "@zoonk/core/exams/mocks/contract";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { StepRow, StepRows } from "../_components/step-card";
 import { useMockNumber, useMockPercent } from "./mock-labels";
 import { ResultSection } from "./mock-result-section";
+import { type MockPoints, type Tally, type TestRow, toTestRows } from "./mock-result-test-rows";
 
-type MockPoints = NonNullable<MockResult["points"]>;
 type Minimum = MockPoints["unjudged"][number]["minimum"];
-type Tally = Omit<MockPoints, "parts" | "unjudged">;
-type TestRow = Tally & { name: string | null; qualifying: boolean };
 
 const POINT_DECIMALS = 100;
 
@@ -21,14 +18,6 @@ function round(value: number): number {
 
 function toScorePercent({ asked, earned }: Tally): number {
   return asked > 0 ? (earned / asked) * 100 : 0;
-}
-
-/** Misses first, so what would eliminate the learner is read before what went fine. */
-function toTestRows(points: MockPoints): TestRow[] {
-  const total = points.minimum ? [{ ...points, name: null, qualifying: false }] : [];
-  const rows = [...points.parts, ...total];
-
-  return [...rows.filter((row) => row.met === false), ...rows.filter((row) => row.met !== false)];
 }
 
 export function hasTestRows(points: MockPoints | null | undefined): points is MockPoints {
@@ -86,10 +75,15 @@ function TestRowScore({ row }: { row: TestRow }) {
 
   return (
     <span className="shrink-0 font-mono text-xs tabular-nums">
-      {t("{correct} of {total}", {
-        correct: points(row.projected ?? row.earned),
-        total: points(row.max ?? row.asked),
-      })}
+      {row.projected === null
+        ? t("{correct} of {total}", {
+            correct: points(row.earned),
+            total: points(row.max ?? row.asked),
+          })
+        : t("About {correct} of {total}", {
+            correct: points(Math.round(row.projected)),
+            total: points(row.max ?? row.asked),
+          })}
     </span>
   );
 }
@@ -136,79 +130,56 @@ function TestRowItem({ row }: { row: TestRow }) {
   );
 }
 
-function useMissSentence() {
+/** What the result leads with when a test's minimum is missed, instead of the score. */
+export function useMissedMinimum(
+  points: MockPoints | null | undefined,
+): { line: string; title: string } | null {
   const t = useExtracted();
   const formatMinimum = useFormatMinimum();
   const percent = useMockPercent();
+  const [first] = hasTestRows(points) ? toTestRows(points) : [];
 
-  return (row: TestRow & { minimum: Minimum }): string => {
-    const values = {
-      minimum: formatMinimum(row.minimum),
-      name: row.name ?? "",
-      score: percent(toScorePercent(row)),
-      short: round(row.short ?? 0),
-      unit: row.minimum.unit,
-    };
-
-    if (row.name === null) {
-      return t(
-        "You'd be eliminated: the objective tests together {unit, select, percent {reach {score}, below the {minimum} they need} other {are {short, plural, one {# point} other {# points}} short of {minimum}}}.",
-        values,
-      );
-    }
-
-    return t(
-      "You'd be eliminated: {name} {unit, select, percent {is at {score}, below the {minimum} it needs} other {is {short, plural, one {# point} other {# points}} short of {minimum}}}.",
-      values,
-    );
-  };
-}
-
-function Verdict({ rows }: { rows: readonly TestRow[] }) {
-  const t = useExtracted();
-  const missSentence = useMissSentence();
-  const [first] = rows;
-
-  if (!rows.some((row) => row.met !== null)) {
+  if (first?.met !== false || !first.minimum) {
     return null;
   }
 
-  if (first?.met === false && first.minimum) {
-    return (
-      <p className="text-destructive-text flex items-start gap-2 text-sm font-medium">
-        <XIcon aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
-        {missSentence({ ...first, minimum: first.minimum })}
-      </p>
-    );
-  }
+  return {
+    line: t(
+      "{unit, select, percent {At {score}. It needs {minimum}.} other {{short, plural, one {# point} other {# points}} short of the {minimum} it needs.}}",
+      {
+        minimum: formatMinimum(first.minimum),
+        score: percent(toScorePercent(first)),
+        short: round(first.short ?? 0),
+        unit: first.minimum.unit,
+      },
+    ),
+    title:
+      first.name === null
+        ? t("Below the minimum for the exam")
+        : t("Below the minimum in {name}", { name: first.name }),
+  };
+}
 
-  return (
-    <p className="flex items-start gap-2 text-sm font-medium">
-      <CheckIcon aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
-      {t("Meets the objective minimums checked here.")}
-    </p>
-  );
+/** True when the mock exam checked at least one minimum and every one was reached. */
+export function reachedEveryMinimum(points: MockPoints | null | undefined): boolean {
+  const rows = hasTestRows(points) ? toTestRows(points) : [];
+  return rows.some((row) => row.met === true) && rows.every((row) => row.met !== false);
 }
 
 function ProjectedLine({ points }: { points: MockPoints }) {
   const t = useExtracted();
   const number = useMockNumber();
-  const projects = points.projected !== null || points.parts.some((part) => part.projected);
 
-  if (!projects) {
+  if (points.projected === null || points.max === null) {
     return null;
   }
 
   return (
     <p className="text-muted-foreground text-xs">
-      {points.projected !== null && points.max !== null
-        ? t(
-            "About {projected} of {max} points on the whole exam, projected from this mock. Only a full mock says whether you'd reach the minimums.",
-            { max: number(points.max), projected: number(points.projected) },
-          )
-        : t(
-            "Each test's points are projected onto its whole length. Only a full mock says whether you'd reach the minimums.",
-          )}
+      {t("About {projected} of {max} points on the whole exam.", {
+        max: number(points.max),
+        projected: number(Math.round(points.projected)),
+      })}
     </p>
   );
 }
@@ -228,11 +199,11 @@ function UnjudgedLine({ entry }: { entry: MockPoints["unjudged"][number] }) {
     <p>
       {entry.name === null
         ? t(
-            "The objective tests together need {unit, select, percent {{minimum} of their points} other {{value, plural, one {# point} other {# points}}}}, and this mock doesn't have them all.",
+            "The objective tests together need {unit, select, percent {{minimum} of their points} other {{value, plural, one {# point} other {# points}}}}, and this mock exam doesn't have them all.",
             values,
           )
         : t(
-            "{name} needs {unit, select, percent {{minimum} of its points} other {{value, plural, one {# point} other {# points}}}} and isn't in this mock.",
+            "{name} needs {unit, select, percent {{minimum} of its points} other {{value, plural, one {# point} other {# points}}}} and isn't in this mock exam.",
             values,
           )}
     </p>
@@ -244,11 +215,8 @@ export function MockResultPoints({ points }: { points: MockPoints }) {
   const rows = toTestRows(points);
 
   return (
-    <ResultSection title={t("By test")}>
+    <ResultSection rows title={t("By test")}>
       <div className="flex flex-col gap-3">
-        <Verdict rows={rows} />
-        <ProjectedLine points={points} />
-
         {rows.length > 0 && (
           <StepRows>
             {rows.map((row) => (
@@ -256,6 +224,8 @@ export function MockResultPoints({ points }: { points: MockPoints }) {
             ))}
           </StepRows>
         )}
+
+        <ProjectedLine points={points} />
 
         {points.unjudged.length > 0 && (
           <div className="text-muted-foreground flex flex-col gap-1 text-xs">

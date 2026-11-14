@@ -132,7 +132,7 @@ test.describe("Onboarding from a typed goal", () => {
       .poll(() => date.evaluate((input: HTMLInputElement) => input.validity.badInput))
       .toBe(true);
 
-    await page.getByRole("button", { name: "Continue without a date" }).click();
+    await page.getByRole("button", { exact: true, name: "Skip" }).click();
 
     await expect(page.getByRole("heading", { name: "What do you do now?" })).toBeVisible();
     await page.getByRole("button", { exact: true, name: "Skip all" }).click();
@@ -140,7 +140,7 @@ test.describe("Onboarding from a typed goal", () => {
     await expect(page.getByRole("heading", { name: "Choose your buddy" })).toBeVisible();
     await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
-    await page.getByRole("button", { name: "Skip and start from the basics" }).click();
+    await page.getByRole("button", { exact: true, name: "Skip" }).click();
 
     await expect(page.getByRole("heading", { name: "Building your plan" })).toBeVisible();
     await mapGoalSkills({ goalId: created.id });
@@ -154,7 +154,7 @@ test.describe("Onboarding from a typed goal", () => {
     await page.getByRole("button", { name: "Saturday" }).click();
     await page.getByRole("switch", { name: "Different time on weekends" }).click();
     await page.getByLabel("Time on weekends", { exact: true }).selectOption("60");
-    await page.getByRole("button", { exact: true, name: "See your plan" }).click();
+    await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
     await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
 
@@ -282,7 +282,7 @@ test("a learner who starts another goal from Today lands on it, never on the goa
   const switcher = page.getByRole("button", { name: /^Learn chemistry.*Switch goal$/u });
   await expectHydrated(switcher);
   await switcher.click();
-  await page.getByRole("menuitem", { name: "Start a new goal" }).click();
+  await page.getByRole("menuitem", { name: "New goal" }).click();
 
   await page.getByRole("textbox", { name: "I want to" }).fill(words);
   await page.getByRole("button", { name: "Build my plan" }).click();
@@ -295,9 +295,9 @@ test("a learner who starts another goal from Today lands on it, never on the goa
   await page.getByRole("textbox", { name: "The role you want" }).fill("Data analyst");
   await page.getByRole("textbox", { name: "What you do now" }).fill("Teacher");
   await page.getByRole("button", { exact: true, name: "Continue" }).click();
-  await page.getByRole("button", { name: "Continue without a date" }).click();
+  await page.getByRole("button", { exact: true, name: "Skip" }).click();
   await page.getByRole("button", { exact: true, name: "Skip all" }).click();
-  await page.getByRole("button", { name: "Skip and start from the basics" }).click();
+  await page.getByRole("button", { exact: true, name: "Skip" }).click();
 
   await expect(page.getByRole("heading", { name: "Building your plan" })).toBeVisible();
   await mapGoalSkills({ goalId: created.id });
@@ -306,7 +306,7 @@ test("a learner who starts another goal from Today lands on it, never on the goa
     page.getByRole("heading", { name: "How much time can you study each day?" }),
   ).toBeVisible({ timeout: NEXT_CHECK_TIMEOUT_MS });
 
-  await page.getByRole("button", { exact: true, name: "See your plan" }).click();
+  await page.getByRole("button", { exact: true, name: "Continue" }).click();
   await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
 
   await page.evaluate((text) => {
@@ -344,7 +344,7 @@ test("a learner who starts another goal from Today lands on it, never on the goa
 
   await expectHydrated(newSwitcher);
   await newSwitcher.click();
-  await page.getByRole("menuitem", { name: "Start a new goal" }).click();
+  await page.getByRole("menuitem", { name: "New goal" }).click();
   await expect(page.getByRole("textbox", { name: "I want to" })).toHaveValue("");
   await page.context().close();
 });
@@ -381,7 +381,7 @@ test("a goal a link filled in doesn't fill the box again once it's made, on Back
   const switcher = page.getByRole("button", { name: /^Quantum physics.*Switch goal$/u });
   await expectHydrated(switcher);
   await switcher.click();
-  await page.getByRole("menuitem", { name: "Start a new goal" }).click();
+  await page.getByRole("menuitem", { name: "New goal" }).click();
   await expect(page).toHaveURL(/\/start$/u);
   await expect(box).toHaveValue("");
   await page.context().close();

@@ -3,6 +3,7 @@ import SwiftUI
 /// What the learner opened and chose on a result. Kept above its pages, so folding or unfolding
 /// iPhone Duo keeps it.
 private struct MockResultChoices {
+  var showsDetails = false
   var opened: Set<String> = []
   var essayComments: [String: Set<String>] = [:]
   var plan = MockPlanAnswers()
@@ -86,19 +87,25 @@ struct MockResultView: View {
       }
     } secondary: {
       ReviewList(review: view.review, place: $choices.reviewPlace) {
-        planSections
+        planSections(answersInBar: false)
         reviewSections
       }
-      .safeAreaBar(edge: .bottom) { actionBar }
+      .bottomBar { actions }
     } single: {
       ReviewList(review: view.review, place: $choices.reviewPlace) {
         scoreSections
         diagnosisSections
         partSections
-        planSections
+        planSections(answersInBar: true)
         reviewSections
       }
-      .safeAreaBar(edge: .bottom) { actionBar.keepsOffFold() }
+      .bottomBar {
+        if let offer = choices.plan.asking(view.adapt) {
+          MockPlanAnswerButtons(run: run, offer: offer, inBar: true, answers: $choices.plan)
+        } else {
+          actions
+        }
+      }
     }
     .announcesStatus(gradesEssays ? MockEssaySections.grading : nil)
     .navigationTitle(MockLabels.title(number: view.number))
@@ -108,6 +115,7 @@ struct MockResultView: View {
         TutorAskToolbarItem(scope: .mock(blockId: view.blockId))
       }
     }
+    .sheet(isPresented: $choices.showsDetails) { details }
     .sheet(item: $choices.speakingTask) { task in
       ConversationScreen(conversationId: task.conversationId)
         .zoonkStyles()
@@ -121,7 +129,7 @@ struct MockResultView: View {
   @ViewBuilder
   private var scoreSections: some View {
     if let result = view.result, result.total > 0 || (view.essays.isEmpty && view.speaking == nil) {
-      MockScoreSections(view: view, result: result)
+      MockScoreSections(view: view, result: result, part: .score)
     }
   }
 
@@ -139,13 +147,54 @@ struct MockResultView: View {
         }
       }
 
-      MockInsightsSection(result: result)
+      Section {
+        Button {
+          choices.showsDetails = true
+        } label: {
+          Text(
+            "Details", tableName: "Mock",
+            comment: "Opens everything else about a mock exam's result")
+        }
+        .buttonStyle(.outline)
+        .controlSize(.small)
+        .listRowSeparator(.hidden)
+      }
     }
+  }
+
+  /// Main's `Details` drawer: the answers, each test, what it takes to pass, what stood out and
+  /// every caveat, said once.
+  private var details: some View {
+    NavigationStack {
+      ZoonkList {
+        if let result = view.result {
+          MockScoreSections(view: view, result: result, part: .details)
+          MockInsightsSection(result: result)
+        }
+
+        MockNotesSection(view: view)
+      }
+      .navigationTitle(
+        Text("Details", tableName: "Mock", comment: "Title of a mock exam's details")
+      )
+      .toolbarTitleDisplayMode(.inline)
+      .toolbar {
+        ToolbarItem(placement: .cancellationAction) {
+          Button(role: .close) {
+            choices.showsDetails = false
+          }
+        }
+      }
+    }
+    .zoonkStyles()
   }
 
   @ViewBuilder
   private var partSections: some View {
-    DayMomentSections(result: view.day)
+    // A missed minimum's headline isn't followed by a celebration; the day's summary still shows it.
+    if view.result?.points?.missedMinimum == nil {
+      DayMomentSections(result: view.day)
+    }
 
     ForEach(Array(view.essays.enumerated()), id: \.element.id) { index, essay in
       MockEssaySections(
@@ -164,11 +213,11 @@ struct MockResultView: View {
   }
 
   @ViewBuilder
-  private var planSections: some View {
+  private func planSections(answersInBar: Bool) -> some View {
     if let adapt = view.adapt, adapt.skip != nil || adapt.focus != nil {
       MockPlanSection(
         run: run, adapt: adapt, preparation: view.result?.preparation,
-        answers: $choices.plan)
+        answersInBar: answersInBar, answers: $choices.plan)
     } else if let preparation = view.result?.preparation, preparation.after != preparation.before {
       MockPreparationSection(preparation: preparation)
     }
@@ -181,16 +230,12 @@ struct MockResultView: View {
         items: view.review, labels: view.trueFalseLabels, opened: $choices.opened)
     }
 
-    MockNotesSection(view: view)
   }
 
-  private var actionBar: some View {
-    VStack(spacing: 8) {
-      mainAction
-      secondaryAction
-    }
-    .scenePadding(.horizontal)
-    .padding(.vertical, 10)
+  @ViewBuilder
+  private var actions: some View {
+    secondaryAction
+    mainAction
   }
 
   /// The questions answered wrong: the ones to fix. Blanks are reviewed but aren't mistakes.
@@ -201,14 +246,8 @@ struct MockResultView: View {
   @ViewBuilder
   private var mainAction: some View {
     Group {
-      if view.purpose == .placement {
-        Button {
-          // Onboarding is under the mock: its plan starts from these answers.
-          dismiss()
-        } label: {
-          Text("See my plan", tableName: "Mock", comment: "After a placement mock")
-        }
-      } else if mistakes == 0 {
+      // Onboarding is under a placement mock: its plan starts from these answers.
+      if view.purpose == .placement || mistakes == 0 {
         Button {
           dismiss()
         } label: {
@@ -218,12 +257,11 @@ struct MockResultView: View {
         Button {
           router.open(.mistakes)
         } label: {
-          Text("Review the \(mistakes) mistakes", tableName: "Mock", comment: "Opens the notebook")
+          Text("Review mistakes", tableName: "Mock", comment: "Opens the notebook")
         }
       }
     }
     .buttonStyle(.mainAction)
-    .controlSize(.large)
     .keyboardShortcut(.defaultAction)
   }
 
@@ -233,35 +271,51 @@ struct MockResultView: View {
       Button {
         dismiss()
       } label: {
-        if view.purpose == .planned {
-          Text("Continue today's session", tableName: "Mock", comment: "Back to the session")
-        } else {
-          Text("Not now", tableName: "Mock", comment: "Leaves without reviewing")
-        }
+        Text("Continue", tableName: "Mock", comment: "Leaves a mock's result")
       }
-      .buttonStyle(.borderless)
+      .buttonStyle(.outline)
     }
   }
 }
 
 private struct MockScoreSections: View {
+  enum Part {
+    /// The number and what it means, first on the page.
+    case score
+    /// Everything else, in Details.
+    case details
+  }
+
   let view: MockView
   let result: MockResult
+  let part: Part
 
   var body: some View {
+    switch part {
+    case .score: scoreSection
+    case .details: detailSections
+    }
+  }
+
+  private var scoreSection: some View {
     Section {
       VStack(alignment: .leading, spacing: 6) {
-        Text(
-          "\(MockLabels.title(number: view.number)) done", tableName: "Mock",
-          comment: "Over a mock's score"
-        )
-        .typeStyle(.note)
-        .foregroundStyle(.mutedForeground)
-        Text(score.value)
-          .typeStyle(.momentReadout)
-        Text(detail)
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
+        Chip(Text(MockLabels.title(number: view.number)))
+          .padding(.bottom, 6)
+        if let missed = result.points?.missedMinimum {
+          Text(missed.title)
+            .typeStyle(.pageTitle)
+            .foregroundStyle(.destructiveText)
+          Text(missed.line)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
+        } else {
+          Text(score.value)
+            .typeStyle(.momentReadout)
+          Text(detail)
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
+        }
         if let delta {
           Label {
             Text(delta.text)
@@ -272,11 +326,21 @@ private struct MockScoreSections: View {
           .typeStyle(.data)
           .foregroundStyle(.mutedForeground)
         }
+
+        if let verdict {
+          Text(verdict)
+            .typeStyle(.body.weight(.medium))
+            .foregroundStyle(Color(.foreground))
+            .padding(.top, 4)
+        }
       }
       .padding(.vertical, 4)
       .accessibilityElement(children: .combine)
     }
+  }
 
+  @ViewBuilder
+  private var detailSections: some View {
     if let counts {
       Section {
         IconLabeledContent {
@@ -312,15 +376,7 @@ private struct MockScoreSections: View {
       } footer: {
         SectionFooter {
           if result.net == nil, result.blank > 0 {
-            if result.irt != nil {
-              Text(
-                "Blank answers count as wrong, as on exam day.", tableName: "Mock",
-                comment: "Blank answers in an estimated score")
-            } else {
-              Text(
-                "Blank answers count as wrong in this score.", tableName: "Mock",
-                comment: "Blank answers in right answers")
-            }
+            blankNote
           }
         }
       }
@@ -331,9 +387,7 @@ private struct MockScoreSections: View {
       Section {
       } footer: {
         SectionFooter {
-          Text(
-            "Blank answers count as wrong in this score.", tableName: "Mock",
-            comment: "Blank answers in right answers")
+          blankNote
         }
       }
     }
@@ -349,14 +403,7 @@ private struct MockScoreSections: View {
             .environment(\.locale, Locale(identifier: passMarks.language))
         }
       } header: {
-        if view.examDocument == .notice {
-          SectionTitle(
-            Text("To pass, the notice says", tableName: "Mock", comment: "Pass marks header"))
-        } else {
-          SectionTitle(
-            Text(
-              "To pass, the official guide says", tableName: "Mock", comment: "Pass marks header"))
-        }
+        SectionTitle(Text("To pass", tableName: "Mock", comment: "Pass marks header"))
       }
     }
 
@@ -365,8 +412,41 @@ private struct MockScoreSections: View {
         Text(note)
           .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
+      } header: {
+        SectionTitle(
+          Text("About this mock exam", tableName: "Mock", comment: "Every caveat about a mock exam")
+        )
       }
     }
+  }
+
+  private var blankNote: Text {
+    Text("Blank answers count as wrong.", tableName: "Mock", comment: "Blank answers in a score")
+  }
+
+  /// Main's one sentence under the number: every minimum reached, or the best and worst subjects.
+  /// A missed minimum's headline stands alone.
+  private var verdict: String? {
+    if let points = result.points {
+      if points.missedMinimum != nil { return nil }
+
+      if points.reachedEveryMinimum {
+        return String(localized: "You reached every minimum in this mock exam.", table: "Mock")
+      }
+    }
+
+    let shares = result.areas.filter { $0.total > 0 }.map {
+      (name: $0.name, share: $0.correct / Double($0.total))
+    }
+    .sorted { $0.share > $1.share }
+
+    guard shares.count > 1, let best = shares.first, let worst = shares.last,
+      shares[1].share < best.share, shares[shares.count - 2].share > worst.share
+    else { return nil }
+
+    return String(
+      localized: "Strongest: \(best.name). Work on: \(worst.name).", table: "Mock",
+      comment: "Under a mock exam's score: its best and worst subjects")
   }
 
   private var score: (label: String, value: String) {
@@ -379,7 +459,11 @@ private struct MockScoreSections: View {
 
     if let irt = result.irt {
       return (
-        String(localized: "Estimated score", table: "Mock", comment: "An IRT score's label"),
+        view.examName.map {
+          String(
+            localized: "Estimated \($0) score", table: "Mock",
+            comment: "An estimated score's label; the argument is the exam's name")
+        } ?? String(localized: "Estimated score", table: "Mock", comment: "An IRT score's label"),
         MockLabels.range(low: irt.low, high: irt.high)
       )
     }
@@ -387,7 +471,7 @@ private struct MockScoreSections: View {
     if let net = result.net {
       return (
         String(
-          localized: "Net score out of \(net.max)", table: "Mock", comment: "A net score's label"),
+          localized: "Score out of \(net.max)", table: "Mock", comment: "A net score's label"),
         MockLabels.number(net.net)
       )
     }
@@ -400,16 +484,8 @@ private struct MockScoreSections: View {
     )
   }
 
-  private var detail: String {
-    let areas =
-      result.areas.count > 3
-      ? String(
-        localized: "\(result.areas.count) subjects", table: "Mock", comment: "A mock's subjects")
-      : result.areas.map(\.name).formatted(.list(type: .and))
-
-    return [score.label, view.examName, areas].compactMap { $0 }.filter { !$0.isEmpty }
-      .joinedFacts()
-  }
+  /// One line that names the number.
+  private var detail: String { score.label }
 
   private var delta: (text: String, up: Bool)? {
     // The change measures right answers, never points, so a points headline can't take it.
@@ -493,11 +569,11 @@ private struct MockScoreSections: View {
     if notes.relative {
       lines.append(
         String(
-          localized: "Your real result depends on how everyone in your sitting does.",
+          localized: "The real exam ranks you against the other candidates.",
           table: "Mock", comment: "A relative exam score"))
       lines.append(
         String(
-          localized: "This mock shows how many you got right.", table: "Mock",
+          localized: "This mock exam shows how many you got right.", table: "Mock",
           comment: "What a mock of a relative exam shows"))
     }
 
@@ -525,7 +601,7 @@ private struct MockAreaSection: View {
         }
       }
     } header: {
-      SectionTitle(Text("By area", tableName: "Mock", comment: "Each area's result"))
+      SectionTitle(Text("By subject", tableName: "Mock", comment: "Each subject's result"))
     }
   }
 
@@ -621,40 +697,40 @@ private struct MockInsightsSection: View {
 
         if let coherence = incoherent {
           insight(
-            Text("Consistency", tableName: "Mock", comment: "Insight about IRT coherence"),
+            Text("Easy questions", tableName: "Mock", comment: "Insight about IRT coherence"),
             systemImage: "scalemass"
           ) {
             Text(
-              "\(coherence.easyWrong) easy ones wrong, \(coherence.hardRight) hard ones right. The score counts that against you: review the easy ones first.",
-              tableName: "Mock", comment: "IRT coherence")
+              "You missed \(coherence.easyWrong) easy questions. Review those first.",
+              tableName: "Mock", comment: "IRT coherence: easy questions answered wrong")
           }
         }
 
         if let calibration = unsure {
           insight(
-            Text("When to leave it blank", tableName: "Mock", comment: "Insight about unsure"),
+            Text("Flagged answers", tableName: "Mock", comment: "Insight about unsure"),
             systemImage: "scalemass"
           ) {
             Text(
-              "Sure: \(calibration.sure.right) of \(calibration.sure.answered) right. Flagged as unsure: \(calibration.unsure.right) of \(calibration.unsure.answered) right.",
+              "Not flagged: \(calibration.sure.right) of \(calibration.sure.answered) right. Flagged: \(calibration.unsure.right) of \(calibration.unsure.answered) right.",
               tableName: "Mock",
               comment:
                 "How many of the answers the learner was sure of were right, against those flagged as unsure"
             )
             if calibration.advice == .blankUnsure {
               Text(
-                "Leaving the unsure ones blank would have added \(Int(calibration.blankingGain.rounded())) points.",
+                "Leaving the flagged ones blank would have added \(Int(calibration.blankingGain.rounded())) points.",
                 tableName: "Mock", comment: "What blanking unsure answers would have gained")
             } else if calibration.advice == .keepAnswering {
               Text(
-                "Your unsure answers still earned points, so keep answering them.",
+                "Your flagged answers still earned points, so keep answering them.",
                 tableName: "Mock", comment: "Keep answering unsure ones")
             }
           }
         }
       } header: {
         SectionTitle(
-          Text("What the mock exam showed", tableName: "Mock", comment: "The mock's insights"))
+          Text("What stood out", tableName: "Mock", comment: "The mock's insights"))
       }
     }
   }
@@ -780,8 +856,13 @@ private struct MockSpeakingSection: View {
   var body: some View {
     Section {
       VStack(alignment: .leading, spacing: 6) {
-        Text(estimateTitle)
-          .typeStyle(.readout)
+        if let range = estimateRange {
+          Text(range)
+            .typeStyle(.momentReadout)
+        } else {
+          Text("No estimate", tableName: "Mock", comment: "A speaking paper's estimate")
+            .typeStyle(.pageTitle)
+        }
         Group {
           Text(estimateDetail)
           if paper.estimate.typed, paper.estimate.points != nil {
@@ -819,22 +900,16 @@ private struct MockSpeakingSection: View {
     }
   }
 
-  private var estimateTitle: String {
-    guard let points = paper.estimate.points else {
-      return String(localized: "No estimate", table: "Mock", comment: "A speaking paper's estimate")
-    }
-
-    let total = number(paper.estimate.total)
+  private var estimateRange: String? {
+    guard let points = paper.estimate.points else { return nil }
 
     if points.low == points.high {
-      return String(
-        localized: "About \(number(points.low)) of \(total)", table: "Mock",
-        comment: "A speaking paper's estimated points")
+      return number(points.low)
     }
 
     return String(
-      localized: "About \(number(points.low)) to \(number(points.high)) of \(total)",
-      table: "Mock", comment: "A speaking paper's estimated points range")
+      localized: "\(number(points.low))–\(number(points.high))", table: "Mock",
+      comment: "An estimated score range, low to high")
   }
 
   private func number(_ value: Double) -> String {
@@ -844,8 +919,8 @@ private struct MockSpeakingSection: View {
   private var estimateDetail: String {
     if paper.estimate.points != nil {
       return String(
-        localized: "An estimate, not an official score.", table: "Mock",
-        comment: "Under a speaking paper's estimate")
+        localized: "Estimated score, from 0 to \(number(paper.estimate.total))", table: "Mock",
+        comment: "Under a speaking paper's estimated score")
     }
 
     if paper.tasks.contains(where: { $0.status != .completed }) {
@@ -905,24 +980,26 @@ private struct MockPreparationRow: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 6) {
-      Text(
-        verbatim:
-          "\(preparation.before.formatted(.percent.precision(.fractionLength(0)))) → \(preparation.after.formatted(.percent.precision(.fractionLength(0))))"
-      )
-      .typeStyle(.readout)
+      Text(verbatim: percent(preparation.after))
+        .typeStyle(.readout)
       Meter(value: preparation.after, total: 1, fill: .success)
       Text(
         preparation.after > preparation.before
           ? String(
-            localized: "What you showed in this mock exam counts toward it.", table: "Mock",
-            comment: "Preparation went up")
+            localized: "Up from \(percent(preparation.before))", table: "Mock",
+            comment: "Preparation went up from this percent")
           : String(
-            localized: "The mock exam showed what's still missing.", table: "Mock",
-            comment: "Preparation went down")
+            localized: "Down from \(percent(preparation.before))", table: "Mock",
+            comment: "Preparation went down from this percent")
       )
-      .typeStyle(.note)
+      .typeStyle(.data)
       .foregroundStyle(.mutedForeground)
     }
+    .accessibilityElement(children: .combine)
+  }
+
+  private func percent(_ share: Double) -> String {
+    share.formatted(.percent.precision(.fractionLength(0)))
   }
 }
 
@@ -935,6 +1012,79 @@ private struct MockPlanAnswers {
 
   var byOffer: [MockPlanOffer: Answer] = [:]
   var applying = false
+
+  static func offers(_ adapt: MockAdapt?) -> [MockPlanOffer] {
+    [adapt?.skip != nil ? .skip : nil, adapt?.focus != nil ? .focus : nil].compactMap { $0 }
+  }
+
+  /// The first question nobody answered; the second appears once the first is answered.
+  func asking(_ adapt: MockAdapt?) -> MockPlanOffer? {
+    Self.offers(adapt).first { offer in
+      switch byOffer[offer] {
+      case nil, .failed: true
+      default: false
+      }
+    }
+  }
+}
+
+/// A plan question's two answers: in the step on a wide screen, the bottom bar's on a phone (the no
+/// outlined, the yes the main action), so the bar never offers a way on while a question is open.
+private struct MockPlanAnswerButtons: View {
+  @Environment(ExamStore.self) private var exam
+  let run: MockRun
+  let offer: MockPlanOffer
+  let inBar: Bool
+  @Binding var answers: MockPlanAnswers
+
+  var body: some View {
+    Button {
+      answers.byOffer[offer] = .declined
+    } label: {
+      offer == .skip
+        ? Text("Keep them", tableName: "Mock", comment: "Keeps the known lessons")
+        : Text("Not now", tableName: "Mock", comment: "Declines giving a subject more time")
+    }
+    .buttonStyle(.outline)
+    .disabled(answers.applying)
+
+    BusyButton(isBusy: answers.applying) {
+      Task { await apply() }
+    } label: {
+      offer == .skip
+        ? Text("Skip them", tableName: "Mock", comment: "Takes the known lessons off the plan")
+        : Text("Change my plan", tableName: "Mock", comment: "Gives a subject more time")
+    }
+    .modifier(MockPlanYesStyle(inBar: inBar))
+  }
+
+  private func apply() async {
+    answers.applying = true
+    defer { answers.applying = false }
+
+    let blockId = run.mock.value?.blockId ?? ""
+    let result = await exam.write(invalidating: [.goals, .learnerModel]) { api, token in
+      try await api.adaptPlan(token: token, blockId: blockId, offer: offer)
+    }
+
+    switch result {
+    case .done(let outcome): answers.byOffer[offer] = .outcome(outcome)
+    case .failed: answers.byOffer[offer] = .failed
+    case .obsolete: return
+    }
+  }
+}
+
+private struct MockPlanYesStyle: ViewModifier {
+  let inBar: Bool
+
+  func body(content: Content) -> some View {
+    if inBar {
+      content.buttonStyle(.mainAction).keyboardShortcut(.defaultAction)
+    } else {
+      content.buttonStyle(.outline)
+    }
+  }
 }
 
 private struct MockPlanSection: View {
@@ -942,160 +1092,112 @@ private struct MockPlanSection: View {
   let run: MockRun
   let adapt: MockAdapt
   let preparation: MockResult.Preparation?
+  let answersInBar: Bool
   @Binding var answers: MockPlanAnswers
 
-  private var offers: [MockPlanOffer] {
-    [adapt.skip != nil ? .skip : nil, adapt.focus != nil ? .focus : nil].compactMap { $0 }
-  }
+  private var offers: [MockPlanOffer] { MockPlanAnswers.offers(adapt) }
 
-  private var open: [MockPlanOffer] {
-    offers.filter { offer in
-      switch answers.byOffer[offer] {
-      case nil, .failed: true
-      default: false
-      }
-    }
-  }
+  private var asking: MockPlanOffer? { answers.asking(adapt) }
 
   var body: some View {
-    Section {
-      if let preparation, preparation.after != preparation.before {
+    if let preparation, preparation.after != preparation.before {
+      Section {
         MockPreparationRow(preparation: preparation)
+      } header: {
+        SectionTitle(Text("Your preparation", tableName: "Mock", comment: "How preparation moved"))
       }
+    }
 
-      VStack(alignment: .leading, spacing: 6) {
-        if let skip = adapt.skip {
-          Text(
-            "You got everything right in \(skip.topics.count) topics", tableName: "Mock",
-            comment: "The mock showed topics the learner knows"
-          )
-          .typeStyle(.body.weight(.semibold))
-          Text(skip.topics.prefix(3).formatted(.list(type: .and)))
-            .foregroundStyle(.mutedForeground)
-          if skip.topics.count > 3 {
-            Text("\(skip.topics.count - 3) more topics", tableName: "Mock", comment: "More topics")
-              .foregroundStyle(.mutedForeground)
-          }
-          Label {
-            Text("\(skip.lessons) lessons less", tableName: "Mock", comment: "Lessons off the plan")
-          } icon: {
-            Image(systemName: "minus.circle")
-          }
-          .foregroundStyle(.mutedForeground)
-        } else if let focus = adapt.focus {
-          Text("Focus more on \(focus.area)?", tableName: "Mock", comment: "Offer to focus an area")
+    Section {
+      if let offer = asking {
+        VStack(alignment: .leading, spacing: 4) {
+          question(offer)
             .typeStyle(.body.weight(.semibold))
+          line(offer)
+            .foregroundStyle(.mutedForeground)
         }
 
-        if let focus = adapt.focus {
-          Label {
-            Text(
-              "More time for \(focus.area) (\(MockLabels.number(focus.correct)) of \(focus.total) right)",
-              tableName: "Mock", comment: "Offer to give an area more time")
-          } icon: {
-            Image(systemName: "plus.circle")
-          }
-          .foregroundStyle(.mutedForeground)
-        }
-      }
-      .announcesStatus(open.isEmpty && !statusLines.isEmpty ? statusLines.joinedSentences() : nil)
-
-      if open.isEmpty {
-        ForEach(statusLines, id: \.self) { line in
-          Text(line).foregroundStyle(.mutedForeground)
-        }
-      } else {
-        if answers.byOffer.values.contains(.failed) {
+        if answers.byOffer[offer] == .failed {
           FailureLine(
             message: LocalizedStringResource(
               "That didn't go through. Try again in a moment.", table: "Mock",
               comment: "Applying the plan change failed"))
         }
 
-        ButtonRow {
-          BusyButton(isBusy: answers.applying, icon: .check) {
-            Task { await apply() }
-          } label: {
-            Text("Apply", tableName: "Mock", comment: "Applies the mock's plan change")
+        if !answersInBar {
+          ButtonRow {
+            MockPlanAnswerButtons(run: run, offer: offer, inBar: false, answers: $answers)
           }
-          .buttonStyle(.outline)
-
-          Button {
-            for offer in open { answers.byOffer[offer] = .declined }
-          } label: {
-            Text("Keep my plan", tableName: "Mock", comment: "Declines the mock's plan change")
-          }
-          .buttonStyle(.borderless)
-          .disabled(answers.applying)
         }
       }
-    } header: {
-      SectionTitle(Text("Your plan", tableName: "Mock", comment: "The plan after the mock"))
+
+      ForEach(statusLines, id: \.self) { line in
+        Text(line).foregroundStyle(.mutedForeground)
+      }
+    }
+    .announcesStatus(statusLines.isEmpty ? nil : statusLines.joinedSentences())
+  }
+
+  private func question(_ offer: MockPlanOffer) -> Text {
+    switch offer {
+    case .skip:
+      Text(
+        "Skip \(adapt.skip?.lessons ?? 0) lessons you already know?", tableName: "Mock",
+        comment: "Offer to take lessons the mock exam showed the learner knows off the plan")
+    case .focus:
+      Text(
+        "Focus more on \(adapt.focus?.area ?? "")?", tableName: "Mock",
+        comment: "Offer to focus an area")
     }
   }
 
-  /// One after the other: both change the plan.
-  private func apply() async {
-    answers.applying = true
-    defer { answers.applying = false }
-
-    for offer in open {
-      let blockId = run.mock.value?.blockId ?? ""
-      let result = await exam.write(invalidating: [.goals, .learnerModel]) { api, token in
-        try await api.adaptPlan(token: token, blockId: blockId, offer: offer)
-      }
-
-      switch result {
-      case .done(let outcome): answers.byOffer[offer] = .outcome(outcome)
-      case .failed: answers.byOffer[offer] = .failed
-      case .obsolete: return
-      }
+  private func line(_ offer: MockPlanOffer) -> Text {
+    switch offer {
+    case .skip:
+      let topics = adapt.skip?.topics ?? []
+      let names =
+        topics.count > 3
+        ? String(
+          localized:
+            "\(topics.prefix(3).formatted(.list(type: .and))) and \(topics.count - 3) more topics",
+          table: "Mock", comment: "Three topics' names and how many more")
+        : topics.formatted(.list(type: .and))
+      return Text(
+        "You got everything right in \(names).", tableName: "Mock",
+        comment: "Why the mock exam offers to skip lessons; the argument names the topics")
+    case .focus:
+      return Text(
+        "You got \(MockLabels.number(adapt.focus?.correct ?? 0)) of \(adapt.focus?.total ?? 0) right there.",
+        tableName: "Mock", comment: "Why the mock exam offers more time for a subject")
     }
   }
 
+  /// After a yes, what changed; after one no, nothing, but a no to every question says so, since
+  /// a no saves nothing and the step would still read as an open question.
   private var statusLines: [String] {
-    let applied = answers.byOffer.values.contains {
-      if case .outcome(.applied) = $0 { return true }
-      return false
+    if offers.allSatisfy({ answers.byOffer[$0] == .declined }) {
+      return [
+        String(localized: "Your plan stays as it is.", table: "Mock")
+      ]
     }
 
-    var lines: [String] = []
-
-    for offer in offers {
+    return offers.compactMap { offer -> String? in
       switch answers.byOffer[offer] {
-      case .declined:
-        if !applied {
-          lines.append(
-            String(localized: "Your plan stays as it is.", table: "Mock", comment: "Kept the plan"))
-        }
       case .outcome(.applied(let skipped)):
-        lines.append(
-          offer == .skip
-            ? String(
-              localized: "Done: \(skipped) lessons off your plan.", table: "Mock",
-              comment: "Lessons skipped")
-            : String(
-              localized: "Done: your plan gives it more time from now on.", table: "Mock",
-              comment: "Focus applied"))
-      case .outcome(.unchanged(let reason)):
-        lines.append(
-          offer == .skip
-            ? String(
-              localized: "Your plan already has every lesson of it, so nothing had to move.",
-              table: "Mock", comment: "Nothing to skip")
-            : reason == .cantMove
-              ? String(
-                localized: "It already starts as early as what it builds on allows.",
-                table: "Mock", comment: "Focus can't move earlier")
-              : String(
-                localized: "Your plan already changed, so there's nothing left to do here.",
-                table: "Mock", comment: "Focus already in"))
-      case .failed, nil:
-        break
+        offer == .skip
+          ? String(
+            localized: "\(skipped) lessons skipped.", table: "Mock", comment: "Lessons skipped")
+          : String(
+            localized: "Your plan gives \(adapt.focus?.area ?? "") more time.", table: "Mock",
+            comment: "Focus applied")
+      case .outcome(.unchanged):
+        String(
+          localized: "Your plan didn't need to change.", table: "Mock",
+          comment: "A plan change the plan already had")
+      case .declined, .failed, nil:
+        nil
       }
     }
-
-    return Array(NSOrderedSet(array: lines)) as? [String] ?? lines
   }
 }
 
@@ -1114,27 +1216,19 @@ private struct MockReviewSection: View {
             if let context = item.context {
               LessonTextBlocks(context).typeStyle(.reading).foregroundStyle(.mutedForeground)
             }
-            LessonTextBlocks(item.question)
+            LessonTextBlocks(item.question).typeStyle(.reading.weight(.semibold))
             if item.outcome == .blank {
               Text("You left it blank.", tableName: "Mock", comment: "A blank question")
                 .foregroundStyle(.mutedForeground)
             } else if let answer = TrueFalseWords.savedAnswer(
               item.learnerAnswer, format: item.format, labels: labels)
             {
-              Label {
-                answerText(answer, of: item)
-              } icon: {
-                Image(systemName: "xmark").foregroundStyle(.destructive)
-              }
+              MistakeAnswerRow(text: answer, isRight: false, isLiteral: item.format == "typed")
             }
             if let correct = TrueFalseWords.savedAnswer(
               item.correctAnswer, format: item.format, labels: labels)
             {
-              Label {
-                answerText(correct, of: item)
-              } icon: {
-                Image(systemName: "checkmark").foregroundStyle(.success)
-              }
+              MistakeAnswerRow(text: correct, isRight: true, isLiteral: item.format == "typed")
             }
             if item.outcome == .partial {
               Text(
@@ -1154,16 +1248,23 @@ private struct MockReviewSection: View {
           VStack(alignment: .leading, spacing: 2) {
             Group {
               if let area = item.area {
-                Text(
-                  "Question \(item.number)\u{00A0}· \(area)", tableName: "Mock", comment: "Review")
+                Chip(
+                  Text(
+                    "Question \(item.number)\u{00A0}· \(area)", tableName: "Mock",
+                    comment: "Review"))
               } else {
-                Text("Question \(item.number)", tableName: "Mock", comment: "A question by number")
+                Chip(
+                  Text(
+                    "Question \(item.number)", tableName: "Mock", comment: "A question by number")
+                )
               }
             }
-            .typeStyle(.data)
-            .foregroundStyle(.mutedForeground)
-            LessonRichText(item.question)
-              .lineLimit(2)
+            .padding(.bottom, 4)
+            // Open, the whole question shows under it.
+            if !opened.contains("review:\(item.id)") {
+              LessonRichText(item.question)
+                .lineLimit(2)
+            }
           }
         }
         .id(item.id)
@@ -1176,23 +1277,13 @@ private struct MockReviewSection: View {
       .onScrollVisibilityChange(threshold: 0.5) { rows?.update(reviewHeader, isShown: $0) }
     }
   }
-
-  /// A typed answer is plain text, so `__init__` keeps its underscores.
-  @ViewBuilder
-  private func answerText(_ text: String, of item: MockReviewItem) -> some View {
-    if item.format == "typed" {
-      Text(verbatim: text)
-    } else {
-      LessonRichText(text)
-    }
-  }
 }
 
 private struct MockNotesSection: View {
   let view: MockView
 
   var body: some View {
-    let lines = view.leftOut.map(MockLabels.leftOut)
+    let lines = view.leftOut.compactMap(MockLabels.leftOut)
 
     if !lines.isEmpty || short != nil || view.sizeSource.pastEdition != nil
       || view.sizeSource.questions != .notice || view.sizeSource.time != .notice
@@ -1203,7 +1294,7 @@ private struct MockNotesSection: View {
         SectionFooter {
           VStack(alignment: .leading, spacing: 4) {
             MockSizeNote(
-              document: view.examDocument, minutes: view.minutes, questions: view.questions,
+              minutes: view.minutes, questions: view.questions,
               source: view.sizeSource)
             if let short { Text(short) }
             ForEach(lines, id: \.self) { Text($0) }
@@ -1217,7 +1308,7 @@ private struct MockNotesSection: View {
     guard let examQuestions = view.examQuestions, examQuestions > view.questions else { return nil }
     return String(
       localized:
-        "This mock asks \(view.questions) of \(examQuestions) questions: there weren't enough new ones yet.",
+        "This mock exam had \(view.questions) of the exam's \(examQuestions) questions.",
       table: "Mock", comment: "A mock that asked fewer questions than the exam")
   }
 }

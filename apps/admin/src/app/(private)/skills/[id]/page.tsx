@@ -1,12 +1,15 @@
 import {
   AdminDetailBody,
+  AdminDetailColumns,
   AdminDetailHeader,
   AdminDetailHeaderSkeleton,
   AdminDetailPage,
 } from "@/components/admin-detail";
 import { AdminSectionSkeleton } from "@/components/admin-section";
+import { AdminRecordTabs, readAdminTab } from "@/components/admin-tabs";
 import { getSkill } from "@/data/skills/get-skill";
-import { capitalize } from "@/lib/format";
+import { toWords } from "@/lib/format";
+import { languagePairName } from "@/lib/language-filter";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -14,7 +17,7 @@ import { Suspense } from "react";
 import { SkillActionsMenu } from "./skill-actions-menu";
 import { SkillGraph } from "./skill-graph";
 import { SkillLearners } from "./skill-learners";
-import { SkillOverview } from "./skill-overview";
+import { SkillCard, SkillDetails, SkillUsedIn, SkillWrittenBy } from "./skill-overview";
 import { SkillUsage } from "./skill-usage";
 
 export async function generateMetadata({ params }: PageProps<"/skills/[id]">): Promise<Metadata> {
@@ -35,18 +38,24 @@ export async function generateMetadata({ params }: PageProps<"/skills/[id]">): P
 
 const SKILL_PARENTS = [{ href: "/skills", label: "Skills" }];
 
-export default function SkillDetailPage({ params }: PageProps<"/skills/[id]">) {
+const SKILL_TABS = [
+  { label: "Overview", value: "overview" },
+  { label: "Used in", value: "used" },
+  { label: "Details", value: "details" },
+] as const;
+
+export default function SkillDetailPage({ params, searchParams }: PageProps<"/skills/[id]">) {
   return (
     <AdminDetailPage>
       <Suspense fallback={<SkillDetailSkeleton />}>
-        <SkillDetailContent params={params} />
+        <SkillDetailContent params={params} searchParams={searchParams} />
       </Suspense>
     </AdminDetailPage>
   );
 }
 
-async function SkillDetailContent({ params }: Pick<PageProps<"/skills/[id]">, "params">) {
-  const { id } = await params;
+async function SkillDetailContent({ params, searchParams }: PageProps<"/skills/[id]">) {
+  const [{ id }, query] = await Promise.all([params, searchParams]);
 
   if (!isUuid(id)) {
     notFound();
@@ -58,36 +67,61 @@ async function SkillDetailContent({ params }: Pick<PageProps<"/skills/[id]">, "p
     notFound();
   }
 
-  const language = skill.language.toUpperCase();
+  const tab = readAdminTab({ tabs: SKILL_TABS, value: query.tab });
 
   return (
     <>
       <AdminDetailHeader
-        menu={skill.mergedInto ? null : <SkillActionsMenu skillId={skill.id} />}
         facts={[
-          skill.targetLanguage ? `${language} → ${skill.targetLanguage.toUpperCase()}` : language,
-          skill.level && capitalize(skill.level),
-          capitalize(skill.visibility),
+          skill.level && toWords(skill.level),
+          languagePairName(skill),
+          skill.visibility === "private" ? "Private" : "Open to everyone",
           skill.mergedInto && `Merged into ${skill.mergedInto.name}`,
         ]}
+        menu={
+          skill.mergedInto ? null : <SkillActionsMenu skillId={skill.id} skillName={skill.name} />
+        }
         parents={SKILL_PARENTS}
         title={skill.name}
       />
 
       <AdminDetailBody>
-        <SkillOverview skill={skill} />
+        <AdminRecordTabs
+          current={tab}
+          label="Skill"
+          path={`/skills/${skill.id}`}
+          tabs={SKILL_TABS}
+        />
 
-        <Suspense fallback={<AdminSectionSkeleton description />}>
-          <SkillGraph skillId={skill.id} />
-        </Suspense>
+        {tab === "overview" ? (
+          <AdminDetailColumns
+            aside={
+              <>
+                <Suspense fallback={<AdminSectionSkeleton rows={2} />}>
+                  <SkillLearners skillId={skill.id} />
+                </Suspense>
+                <SkillUsedIn skill={skill} />
+              </>
+            }
+          >
+            <SkillCard skill={skill} />
+            <Suspense fallback={<AdminSectionSkeleton />}>
+              <SkillGraph skillId={skill.id} />
+            </Suspense>
+          </AdminDetailColumns>
+        ) : null}
 
-        <Suspense fallback={<AdminSectionSkeleton description />}>
-          <SkillLearners skillId={skill.id} />
-        </Suspense>
+        {tab === "used" ? (
+          <Suspense fallback={<AdminSectionSkeleton description />}>
+            <SkillUsage skillId={skill.id} />
+          </Suspense>
+        ) : null}
 
-        <Suspense fallback={<AdminSectionSkeleton description />}>
-          <SkillUsage skillId={skill.id} />
-        </Suspense>
+        {tab === "details" ? (
+          <AdminDetailColumns aside={<SkillWrittenBy skill={skill} />}>
+            <SkillDetails skill={skill} />
+          </AdminDetailColumns>
+        ) : null}
       </AdminDetailBody>
     </>
   );

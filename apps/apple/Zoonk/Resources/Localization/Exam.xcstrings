@@ -60,6 +60,65 @@
         }
       }
     },
+    "%@ done." : {
+      "comment" : "What the learner did before the exam: days of study, mock exams or both",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ geschafft."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Completaste %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ à ton actif."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ alle spalle."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@を終えました。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 완료했어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Za tobą: %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você fez %@."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ tamamlandı."
+          }
+        }
+      }
+    },
     "%@ is today" : {
       "comment" : "Exam day",
       "localizations" : {
@@ -292,6 +351,519 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "İlk deneme sınavından bu yana %@"
+          }
+        }
+      }
+    },
+    "%lld days left" : {
+      "comment" : "Last fact under an exam's name",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Noch %lld Tag"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Noch %lld Tage"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld day left"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld days left"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Falta %lld día"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Faltan %lld días"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld jour restant"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld jours restants"
+                }
+              }
+            }
+          }
+        },
+        "it" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Manca %lld giorno"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Mancano %lld giorni"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "あと%lld日"
+                }
+              }
+            }
+          }
+        },
+        "ko" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld일 남음"
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Pozostały %lld dni"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Pozostał %lld dzień"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Pozostało %lld dni"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Falta %lld dia"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Faltam %lld dias"
+                }
+              }
+            }
+          }
+        },
+        "tr" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld gün kaldı"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld days of study" : {
+      "comment" : "Days the learner studied before the exam, in \"… done.\"",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Lerntag"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Lerntage"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld day of study"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld days of study"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld día de estudio"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld días de estudio"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld jour d’étude"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld jours d’étude"
+                }
+              }
+            }
+          }
+        },
+        "it" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld giorno di studio"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld giorni di studio"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld日間の学習"
+                }
+              }
+            }
+          }
+        },
+        "ko" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld일 학습"
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld dzień nauki"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld dni nauki"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld dia de estudo"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld dias de estudo"
+                }
+              }
+            }
+          }
+        },
+        "tr" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld günlük çalışma"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld mock exams" : {
+      "comment" : "Mock exams the learner took before the exam, in \"… done.\"",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Probeprüfung"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Probeprüfungen"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld mock exam"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld mock exams"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld simulacro"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld simulacros"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld examen blanc"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld examens blancs"
+                }
+              }
+            }
+          }
+        },
+        "it" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld simulazione"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld simulazioni"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld回の模試"
+                }
+              }
+            }
+          }
+        },
+        "ko" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "모의고사 %lld회"
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld egzaminy próbne"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld egzamin próbny"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld egzaminów próbnych"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld simulado"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld simulados"
+                }
+              }
+            }
+          }
+        },
+        "tr" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld deneme sınavı"
+                }
+              }
+            }
           }
         }
       }
@@ -592,161 +1164,6 @@
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "%lld soru"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "%lld taken" : {
-      "comment" : "Mocks taken",
-      "localizations" : {
-        "de" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld abgelegt"
-                }
-              }
-            }
-          }
-        },
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "%lld taken"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "%lld taken"
-                }
-              }
-            }
-          }
-        },
-        "es" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld realizado"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld realizados"
-                }
-              }
-            }
-          }
-        },
-        "fr" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld passé"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld passés"
-                }
-              }
-            }
-          }
-        },
-        "it" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld svolta"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld svolte"
-                }
-              }
-            }
-          }
-        },
-        "ja" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld回受験"
-                }
-              }
-            }
-          }
-        },
-        "ko" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld회 응시"
-                }
-              }
-            }
-          }
-        },
-        "pl" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Rozwiązano %lld"
-                }
-              }
-            }
-          }
-        },
-        "pt" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld feito"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld feitos"
-                }
-              }
-            }
-          }
-        },
-        "tr" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld deneme sınavına girildi"
                 }
               }
             }
@@ -1210,6 +1627,65 @@
         }
       }
     },
+    "Add your official result when it comes out." : {
+      "comment" : "Asks for the official result once the exam is over",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trag dein offizielles Ergebnis ein, sobald es vorliegt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agrega tu resultado oficial cuando se publique."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajoute ton résultat officiel dès sa publication."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aggiungi il tuo risultato ufficiale quando viene pubblicato."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正式な結果が発表されたら追加してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "공식 결과가 나오면 입력하세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dodaj swój oficjalny wynik, gdy zostanie ogłoszony."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adicione seu resultado oficial quando sair."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Açıklandığında resmî sonucunu ekle."
+          }
+        }
+      }
+    },
     "Add your official result when it comes out. You can change it later." : {
       "comment" : "Under the official result form",
       "localizations" : {
@@ -1446,65 +1922,6 @@
         }
       }
     },
-    "Best area" : {
-      "comment" : "The subject that went best",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bestes Fach"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mejor área"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Meilleur domaine"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Area migliore"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "最もよくできた科目"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "가장 잘한 영역"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Najmocniejszy obszar"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Melhor matéria"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "En iyi branş"
-          }
-        }
-      }
-    },
     "Better in %@." : {
       "comment" : "Mock trends",
       "localizations" : {
@@ -1564,67 +1981,67 @@
         }
       }
     },
-    "Better in %@. Still needs work: %@." : {
+    "Better in %@. Work on %@." : {
       "comment" : "Mock trends",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Besser in %1$@. Hier gibt es noch Übungsbedarf: %2$@."
+            "value" : "Besser in %1$@. Üb %2$@."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Better in %1$@. Still needs work: %2$@."
+            "value" : "Better in %1$@. Work on %2$@."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mejor en %1$@. Aún falta mejorar en %2$@."
+            "value" : "Te va mejor en %1$@. Trabaja en %2$@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En progrès en %1$@. À travailler encore : %2$@."
+            "value" : "Tu progresses en %1$@. Travaille %2$@."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Meglio in %1$@. Ancora da migliorare: %2$@."
+            "value" : "Vai meglio in %1$@. Lavora su %2$@."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@が伸びています。%2$@は引き続き練習が必要です。"
+            "value" : "%1$@は伸びています。%2$@を重点的に学習しましょう。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ 성적이 올랐어요. 더 연습할 부분: %2$@."
+            "value" : "%1$@에서 더 좋은 결과를 얻었어요. %2$@에 더 집중하세요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Poprawa: %1$@. Jeszcze do poprawy: %2$@."
+            "value" : "Lepiej idzie ci: %1$@. Popracuj nad: %2$@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Melhorou em %1$@. Ainda precisa praticar: %2$@."
+            "value" : "Melhor em %1$@. Foque em %2$@."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ alanında gelişme var. Hâlâ çalışman gerekenler: %2$@."
+            "value" : "%1$@ alanında daha iyisin. %2$@ üzerinde çalış."
           }
         }
       }
@@ -1806,6 +2223,64 @@
         }
       }
     },
+    "Day not set yet" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tag steht noch nicht fest"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Día aún sin definir"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jour pas encore fixé"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Giorno ancora da definire"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "試験日未定"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "날짜 미정"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dzień jeszcze nieustalony"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dia ainda não definido"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gün henüz belli değil"
+          }
+        }
+      }
+    },
     "Did you pass?" : {
       "comment" : "Asks whether the learner passed",
       "localizations" : {
@@ -1924,596 +2399,61 @@
         }
       }
     },
-    "estimated from past editions" : {
-      "comment" : "The exam's days are an estimate",
+    "Estimated dates" : {
+      "comment" : "Tag after estimated exam dates",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "auf Grundlage früherer Prüfungen geschätzt"
+            "value" : "Geschätzte Termine"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "estimación basada en ediciones anteriores"
+            "value" : "Fechas estimadas"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "estimé d’après les éditions précédentes"
+            "value" : "Dates estimées"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "stima basata sulle edizioni precedenti"
+            "value" : "Date stimate"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "過去の試験日程から推定"
+            "value" : "予想日程"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "지난 시험 기준 예상 일정"
+            "value" : "예상 날짜"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "oszacowano na podstawie poprzednich edycji"
+            "value" : "Przewidywane daty"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "estimativa baseada em edições anteriores"
+            "value" : "Datas estimadas"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "geçmiş sınavlara göre tahmin edildi"
-          }
-        }
-      }
-    },
-    "Estimated from past editions. We'll tell you when the official dates are out." : {
-      "comment" : "Estimated days, before the calendar",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Auf Grundlage früherer Prüfungen geschätzt. Wir sagen dir Bescheid, sobald die offiziellen Termine feststehen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Estimación basada en ediciones anteriores. Te avisaremos cuando se publiquen las fechas oficiales."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dates estimées d’après les éditions précédentes. On te préviendra dès la publication des dates officielles."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stima basata sulle edizioni precedenti. Ti avviseremo quando usciranno le date ufficiali."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "過去の試験日程からの推定です。正式な日程が発表されたらお知らせします。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "지난 시험을 바탕으로 예상한 일정이에요. 공식 일정이 나오면 알려 드릴게요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Oszacowano na podstawie poprzednich edycji. Damy ci znać, gdy zostaną ogłoszone oficjalne terminy."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Estimativa baseada em edições anteriores. A gente te avisa quando as datas oficiais saírem."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Geçmiş sınavlara göre tahmin edildi. Resmî tarihler açıklanınca sana haber vereceğiz."
-          }
-        }
-      }
-    },
-    "Estimated from past editions. We'll tell you when the official notice is out." : {
-      "comment" : "Estimated days, before the notice",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Auf Grundlage früherer Prüfungen geschätzt. Wir sagen dir Bescheid, sobald die offizielle Bekanntmachung erscheint."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Estimación basada en ediciones anteriores. Te avisaremos cuando se publique la convocatoria oficial."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dates estimées d’après les éditions précédentes. On te préviendra dès la publication de l’avis officiel."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stima basata sulle edizioni precedenti. Ti avviseremo quando uscirà il bando ufficiale."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "過去の試験日程からの推定です。正式な要項が公開されたらお知らせします。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "지난 시험을 바탕으로 예상한 일정이에요. 공식 공고가 나오면 알려 드릴게요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Oszacowano na podstawie poprzednich edycji. Damy ci znać, gdy pojawi się oficjalne ogłoszenie."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Estimativa baseada em edições anteriores. A gente te avisa quando o edital sair."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Geçmiş sınavlara göre tahmin edildi. Resmî ilan yayımlanınca sana haber vereceğiz."
-          }
-        }
-      }
-    },
-    "Exam" : {
-      "comment" : "Eyebrow over the exam's name",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prüfung"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Examen"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Examen"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Esame"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "試験"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "시험"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Egzamin"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prova"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sınav"
-          }
-        }
-      }
-    },
-    "Exam · %lld days left" : {
-      "comment" : "Days left to the exam",
-      "localizations" : {
-        "de" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Prüfung · Noch %lld Tag"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Prüfung · Noch %lld Tage"
-                }
-              }
-            }
-          }
-        },
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "Exam · %lld day left"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "Exam · %lld days left"
-                }
-              }
-            }
-          }
-        },
-        "es" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Examen · falta %lld día"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Examen · faltan %lld días"
-                }
-              }
-            }
-          }
-        },
-        "fr" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Examen · %lld jour restant"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Examen · %lld jours restants"
-                }
-              }
-            }
-          }
-        },
-        "it" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Esame · manca %lld giorno"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Esame · mancano %lld giorni"
-                }
-              }
-            }
-          }
-        },
-        "ja" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "試験・あと%lld日"
-                }
-              }
-            }
-          }
-        },
-        "ko" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "시험 · %lld일 남음"
-                }
-              }
-            }
-          }
-        },
-        "pl" : {
-          "variations" : {
-            "plural" : {
-              "few" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Egzamin · pozostały %lld dni"
-                }
-              },
-              "many" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Egzamin · pozostało %lld dni"
-                }
-              },
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Egzamin · pozostał %lld dzień"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Egzamin · pozostało %lld dnia"
-                }
-              }
-            }
-          }
-        },
-        "pt" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Prova · falta %lld dia"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Prova · faltam %lld dias"
-                }
-              }
-            }
-          }
-        },
-        "tr" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Sınav · %lld gün kaldı"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "Exam · About %lld days left" : {
-      "comment" : "Estimated days left",
-      "localizations" : {
-        "de" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Prüfung · Noch etwa %lld Tag"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Prüfung · Noch etwa %lld Tage"
-                }
-              }
-            }
-          }
-        },
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "Exam · About %lld day left"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "Exam · About %lld days left"
-                }
-              }
-            }
-          }
-        },
-        "es" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Examen · falta aproximadamente %lld día"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Examen · faltan aproximadamente %lld días"
-                }
-              }
-            }
-          }
-        },
-        "fr" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Examen · Environ %lld jour restant"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Examen · Environ %lld jours restants"
-                }
-              }
-            }
-          }
-        },
-        "it" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Esame · manca circa %lld giorno"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Esame · mancano circa %lld giorni"
-                }
-              }
-            }
-          }
-        },
-        "ja" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "試験・あと約%lld日"
-                }
-              }
-            }
-          }
-        },
-        "ko" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "시험 · 약 %lld일 남음"
-                }
-              }
-            }
-          }
-        },
-        "pl" : {
-          "variations" : {
-            "plural" : {
-              "few" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Egzamin · pozostały mniej więcej %lld dni"
-                }
-              },
-              "many" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Egzamin · pozostało mniej więcej %lld dni"
-                }
-              },
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Egzamin · pozostał mniej więcej %lld dzień"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Egzamin · pozostało mniej więcej %lld dnia"
-                }
-              }
-            }
-          }
-        },
-        "pt" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Prova · falta cerca de %lld dia"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Prova · faltam cerca de %lld dias"
-                }
-              }
-            }
-          }
-        },
-        "tr" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Sınav · Yaklaşık %lld gün kaldı"
-                }
-              }
-            }
+            "value" : "Tahmini tarihler"
           }
         }
       }
@@ -2703,6 +2643,124 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@ ile %2$@ arası."
+          }
+        }
+      }
+    },
+    "From now on, review and mock exams." : {
+      "comment" : "What the final stretch does",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ab jetzt: Wiederholung und Probeprüfungen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A partir de ahora, repaso y simulacros."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Désormais, place aux révisions et aux examens blancs."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Da ora in poi, ripasso e simulazioni."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ここからは復習と模試に取り組みます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이제부터는 복습과 모의고사에 집중해요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Od teraz powtórki i egzaminy próbne."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Daqui em diante, revisão e simulados."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bundan sonra tekrar ve deneme sınavları."
+          }
+        }
+      }
+    },
+    "From past editions. We'll tell you when the official dates are out." : {
+      "comment" : "Opened from the Estimated dates tag",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anhand früherer Prüfungen geschätzt. Wir sagen dir Bescheid, sobald die offiziellen Termine feststehen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Según ediciones anteriores. Te avisaremos cuando se publiquen las fechas oficiales."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "D’après les éditions précédentes. On te préviendra quand les dates officielles seront publiées."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In base alle edizioni passate. Ti avviseremo quando usciranno le date ufficiali."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "過去の日程をもとにしています。正式な日程が発表されたらお知らせします。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "지난 시험 일정을 기준으로 했어요. 공식 일정이 나오면 알려 드릴게요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Na podstawie poprzednich edycji. Damy ci znać, gdy pojawią się oficjalne terminy."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Com base nas edições anteriores. A gente avisa quando as datas oficiais saírem."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Önceki sınavlara göre. Resmî tarihler açıklanınca haber vereceğiz."
           }
         }
       }
@@ -2943,65 +3001,6 @@
         }
       }
     },
-    "How your mocks went" : {
-      "comment" : "Mock progress section",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "So liefen deine Probeprüfungen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cómo te fue en los simulacros"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tes résultats aux examens blancs"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Come sono andate le tue simulazioni"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "模試の結果の推移"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "모의고사 성적 변화"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Jak poszły ci egzaminy próbne"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Como você foi nos simulados"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deneme sınavı sonuçların"
-          }
-        }
-      }
-    },
     "IELTS speaking mock" : {
       "comment" : "A speaking mock's name",
       "localizations" : {
@@ -3061,67 +3060,67 @@
         }
       }
     },
-    "In your mock exams: sure, %lld of %lld right. Unsure, %lld of %lld right." : {
-      "comment" : "Sure against unsure answers in mocks",
+    "In your mock exams: %lld of %lld right when not flagged, %lld of %lld right when flagged." : {
+      "comment" : "Right answers in mock exams among questions not flagged, against flagged ones",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "In deinen Probeprüfungen: Bei sicheren Antworten waren %1$lld von %2$lld richtig. Bei unsicheren Antworten waren %3$lld von %4$lld richtig."
+            "value" : "In deinen Probeprüfungen: ohne Markierung %1$lld von %2$lld richtig, mit Markierung %3$lld von %4$lld richtig."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "In your mock exams: sure, %1$lld of %2$lld right. Unsure, %3$lld of %4$lld right."
+            "value" : "In your mock exams: %1$lld of %2$lld right when not flagged, %3$lld of %4$lld right when flagged."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En tus simulacros: al responder con seguridad, acertaste %1$lld de %2$lld. Al responder con dudas, acertaste %3$lld de %4$lld."
+            "value" : "En tus simulacros: acertaste %1$lld de %2$lld preguntas sin marcar y %3$lld de %4$lld preguntas marcadas."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dans tes examens blancs : quand tu étais sûr de toi, %1$lld bonnes réponses sur %2$lld. Quand tu n’étais pas sûr de toi, %3$lld sur %4$lld."
+            "value" : "Lors de tes examens blancs : %1$lld bonnes réponses sur %2$lld pour les questions non marquées, %3$lld sur %4$lld pour les questions marquées."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Risposte giuste nelle tue simulazioni: con sicurezza, %1$lld su %2$lld. Con incertezza, %3$lld su %4$lld."
+            "value" : "Nelle tue simulazioni: %1$lld risposte corrette su %2$lld per le domande non contrassegnate, %3$lld su %4$lld per quelle contrassegnate."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "模試で自信があった問題は%1$lld／%2$lld問正解でした。自信がなかった問題は%3$lld／%4$lld問正解でした。"
+            "value" : "模試の結果：見直し対象にしなかった問題は%1$lld問正解（全%2$lld問）、見直し対象にした問題は%3$lld問正解（全%4$lld問）でした。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "모의고사에서 확신한 문제는 %1$lld/%2$lld개를 맞혔어요. 확신이 없던 문제는 %3$lld/%4$lld개를 맞혔어요."
+            "value" : "모의고사 결과: 표시하지 않은 문제는 정답 %1$lld개(총 %2$lld개), 표시한 문제는 정답 %3$lld개(총 %4$lld개)."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Na egzaminach próbnych: gdy masz pewność, poprawnie udzielasz %1$lld z %2$lld odpowiedzi. Gdy masz wątpliwości, poprawnie udzielasz %3$lld z %4$lld odpowiedzi."
+            "value" : "Na twoich egzaminach próbnych: %1$lld z %2$lld poprawnych odpowiedzi na nieoznaczone pytania, %3$lld z %4$lld na oznaczone."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nos seus simulados: quando você tinha certeza, %1$lld de %2$lld acertos. Quando tinha dúvida, %3$lld de %4$lld acertos."
+            "value" : "Nos seus simulados: você acertou %1$lld de %2$lld questões não marcadas e %3$lld de %4$lld marcadas."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deneme sınavlarında: Emin olduğun cevaplarda %1$lld / %2$lld doğru. Emin olmadığın cevaplarda %3$lld / %4$lld doğru."
+            "value" : "Deneme sınavlarında: işaretlemediğin sorularda %1$lld / %2$lld doğru, işaretlediklerinde %3$lld / %4$lld doğru."
           }
         }
       }
@@ -3185,8 +3184,8 @@
         }
       }
     },
-    "Latest mock" : {
-      "comment" : "The latest mock's score",
+    "Latest mock exam" : {
+      "comment" : "The latest mock exam's score",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3421,124 +3420,6 @@
         }
       }
     },
-    "Mock exams come with Plus: whenever you want, every week in your plan, and your progress over time." : {
-      "comment" : "What mocks with Plus unlock",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit Plus kannst du jederzeit Probeprüfungen machen, bekommst jede Woche eine in deinem Plan und siehst deinen Fortschritt im Laufe der Zeit."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con Plus puedes hacer simulacros cuando quieras, tenerlos cada semana en tu plan y ver tu progreso con el tiempo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Avec Plus, passe des examens blancs quand tu veux et chaque semaine dans ton plan, et suis tes progrès au fil du temps."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con Plus puoi fare simulazioni quando vuoi, trovarle ogni settimana nel tuo piano e seguire i tuoi progressi nel tempo."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plusなら、好きなときに模試を受けられます。学習計画には毎週模試が組み込まれ、結果の推移も確認できます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus를 구독하면 언제든 모의고사를 볼 수 있어요. 매주 계획에 모의고사가 포함되고, 그동안의 성적 변화도 확인할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Z pakietem Plus masz egzaminy próbne, kiedy chcesz i co tydzień w planie, oraz podgląd swoich postępów."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Com o Plus, você faz simulados quando quiser, tem um por semana no seu plano e acompanha seu progresso."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus ile istediğin zaman deneme sınavı çözebilirsin. Planında her hafta bir deneme sınavı olur, gelişimini de zaman içinde takip edebilirsin."
-          }
-        }
-      }
-    },
-    "Net score in %@" : {
-      "comment" : "The latest net score",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Netto-Score in %@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Puntaje neto en %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Score net en %@"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Punteggio netto in %@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@の減点後のスコア"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ 감점 반영 점수"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wynik netto: %@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pontuação líquida em %@"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ için net puan"
-          }
-        }
-      }
-    },
     "Next: %@" : {
       "comment" : "Spoken title of the mock to take next",
       "localizations" : {
@@ -3712,65 +3593,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ ayında sınav yok"
-          }
-        }
-      }
-    },
-    "No subject has changed much yet." : {
-      "comment" : "Mock trends",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bisher hat sich in keinem Fach viel verändert."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aún no hay grandes cambios en ninguna materia."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Les résultats par matière ont encore peu évolué."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Per ora nessuna materia mostra grandi cambiamenti."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "どの科目も、まだ大きな変化はありません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "아직 어느 과목도 큰 변화가 없어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "W żadnym przedmiocie nie widać jeszcze dużych zmian."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nenhuma matéria mudou muito ainda."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Henüz hiçbir branşta belirgin bir değişim yok."
           }
         }
       }
@@ -4489,6 +4311,65 @@
         }
       }
     },
+    "Score in %@" : {
+      "comment" : "The latest score, where a wrong answer takes a point off",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Score bei %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Puntaje en %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Score en %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Punteggio in %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@のスコア"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 점수"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: wynik"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pontuação em %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ puanı"
+          }
+        }
+      }
+    },
     "Scored on its own scale" : {
       "comment" : "Notice scale",
       "localizations" : {
@@ -4725,120 +4606,61 @@
         }
       }
     },
-    "Start the mock" : {
-      "comment" : "Starts the speaking mock",
+    "Start" : {
+      "comment" : "Starts the speaking mock exam",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Probeprüfung starten"
+            "value" : "Starten"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Iniciar el simulacro"
+            "value" : "Empezar"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Commencer l’examen blanc"
+            "value" : "Commencer"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Inizia la simulazione"
+            "value" : "Inizia"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "模試を始める"
+            "value" : "始める"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "모의고사 시작하기"
+            "value" : "시작하기"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rozpocznij egzamin próbny"
+            "value" : "Zacznij"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Começar o simulado"
+            "value" : "Começar"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deneme sınavına başla"
-          }
-        }
-      }
-    },
-    "Still needs work: %@." : {
-      "comment" : "Mock trends",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hier kannst du noch üben: %@."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aún por mejorar: %@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "À travailler encore : %@."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ancora da migliorare: %@."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@は、まだ練習が必要です。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "아직 연습이 더 필요한 과목: %@."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nadal do poprawy: %@."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ainda precisa praticar: %@."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hâlâ çalışılması gerekenler: %@."
+            "value" : "Başla"
           }
         }
       }
@@ -4898,65 +4720,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Deneme sınavı çöz"
-          }
-        }
-      }
-    },
-    "Take another mock exam to see how your score changes." : {
-      "comment" : "After the first mock",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mach eine weitere Probeprüfung, um zu sehen, wie sich dein Score verändert."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Haz otro simulacro para ver cómo cambia tu puntaje."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Passe un autre examen blanc pour voir comment ton Score évolue."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fai un’altra simulazione d’esame per vedere come cambia il tuo punteggio."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "もう一度模試を受けて、スコアの変化を見てみましょう。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "모의고사를 한 번 더 보고 점수가 어떻게 달라지는지 확인해 보세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Podejdź do kolejnego egzaminu próbnego, by zobaczyć, jak zmienia się twój wynik."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Faça outro simulado para ver como sua pontuação muda."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Puanının nasıl değiştiğini görmek için bir deneme sınavı daha çöz."
           }
         }
       }
@@ -5247,7 +5010,7 @@
       }
     },
     "The exam notice says %@." : {
-      "comment" : "The notice's day; the argument is a date like 'Tuesday, May 5'",
+      "comment" : "The notice's day; the argument is a date like 'May 5'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5306,7 +5069,6 @@
       }
     },
     "The exam's likely date is now %@." : {
-      "comment" : "The exam's likely day, while the notice isn't out; the argument is a date like 'Tuesday, May 5'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5365,7 +5127,7 @@
       }
     },
     "The exam's official calendar says %@." : {
-      "comment" : "The official calendar's day; the argument is a date like 'Tuesday, May 5'",
+      "comment" : "The official calendar's day; the argument is a date like 'May 5'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5482,65 +5244,6 @@
         }
       }
     },
-    "The last days before the exam go to mixed review and mock exams. New topics wait, unless they weigh a lot and are quick." : {
-      "comment" : "What the final stretch does",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "In den letzten Tagen vor der Prüfung wiederholst du verschiedene Themen und machst Probeprüfungen. Neue Themen warten, es sei denn, sie zählen stark und sind schnell zu lernen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Los últimos días antes del examen son para repasar distintos temas y hacer simulacros. Los temas nuevos quedan para después, salvo los que tienen mucho peso y se aprenden rápido."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Les derniers jours avant l’examen sont consacrés à des révisions variées et à des examens blancs. Les nouveaux sujets attendent, sauf s’ils comptent beaucoup et sont rapides à étudier."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gli ultimi giorni prima dell’esame sono dedicati al ripasso di più argomenti e alle simulazioni. I nuovi argomenti aspettano, tranne quelli che contano molto nell’esame e richiedono poco tempo."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "試験直前は、さまざまなトピックの復習と模試に取り組みます。新しいトピックは、配点が高く短時間で学べるものを除き、後回しにします。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "시험 직전 며칠은 여러 주제를 섞어 복습하고 모의고사를 봐요. 새 주제는 출제 비중이 높고 금방 배울 수 있는 경우에만 공부해요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ostatnie dni przed egzaminem to czas na powtórki różnych tematów i egzaminy próbne. Nowe tematy czekają, chyba że mają duży wpływ na wynik i da się je szybko przerobić."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Os últimos dias antes da prova são dedicados a revisões variadas e simulados. Os tópicos novos ficam para depois, a menos que tenham muito peso e sejam rápidos de estudar."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sınavdan önceki son günler karma tekrara ve deneme sınavlarına ayrılır. Yalnızca sınavdaki ağırlığı yüksek ve kısa sürede öğrenilebilen yeni konulara yer verilir."
-          }
-        }
-      }
-    },
     "The mock didn't start. Try again in a moment." : {
       "comment" : "Starting the speaking mock failed",
       "localizations" : {
@@ -5596,124 +5299,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Deneme sınavı başlamadı. Biraz sonra tekrar dene."
-          }
-        }
-      }
-    },
-    "The month you told us. We'll tell you the day once the notice sets it." : {
-      "comment" : "A named month, before the notice",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Der Monat, den du uns genannt hast. Wir nennen dir den Tag, sobald er in der Ausschreibung steht."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "El mes que nos dijiste. Te diremos el día cuando lo indique la convocatoria."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le mois que tu nous as indiqué. Nous te donnerons le jour dès qu’il sera fixé dans l’avis d’examen."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il mese che ci hai indicato. Ti diremo il giorno appena sarà fissato nel bando."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "教えていただいた月です。要項で試験日が決まったらお知らせします。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "알려 주신 달이에요. 공고에서 날짜가 확정되면 알려 드릴게요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Podany przez ciebie miesiąc. Damy ci znać, gdy w ogłoszeniu pojawi się dokładna data."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O mês que você informou. A gente avisa o dia quando o edital definir a data."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bize söylediğin ay. Sınav günü ilanda belli olunca sana haber vereceğiz."
-          }
-        }
-      }
-    },
-    "The month you told us. We'll tell you the day once the official calendar sets it." : {
-      "comment" : "A named month, before the calendar",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Der Monat, den du uns genannt hast. Wir nennen dir den Tag, sobald er im offiziellen Kalender steht."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "El mes que nos dijiste. Te diremos el día cuando lo indique el calendario oficial."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le mois que tu nous as indiqué. Nous te donnerons le jour dès qu’il sera fixé dans le calendrier officiel."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il mese che ci hai indicato. Ti diremo il giorno appena sarà fissato nel calendario ufficiale."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "教えていただいた月です。公式日程で試験日が決まったらお知らせします。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "알려 주신 달이에요. 공식 시험 일정에서 날짜가 확정되면 알려 드릴게요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Podany przez ciebie miesiąc. Damy ci znać, gdy w oficjalnym kalendarzu pojawi się dokładna data."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O mês que você informou. A gente avisa o dia quando o calendário oficial definir a data."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bize söylediğin ay. Sınav günü resmî takvimde belli olunca sana haber vereceğiz."
           }
         }
       }
@@ -5954,301 +5539,6 @@
         }
       }
     },
-    "Today goes to the topics that come up most, then a short mock. Then rest." : {
-      "comment" : "The day before: learn and a mock",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Heute lernst du die Themen, die am häufigsten vorkommen, und machst eine kurze Probeprüfung. Ruh dich danach aus."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hoy toca estudiar los temas más frecuentes y luego hacer un simulacro corto. Después, descansa."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aujourd’hui, étudie les sujets qui reviennent le plus souvent, puis fais un court examen blanc. Ensuite, repose-toi."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Oggi studi gli argomenti più frequenti, poi fai una breve simulazione. Poi riposo."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今日はよく出るトピックを学び、その後に短い模試を受けます。終わったら休みます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "오늘은 가장 자주 출제되는 주제를 공부하고 짧은 모의고사를 봐요. 그다음에는 쉬어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dziś czas na tematy, które pojawiają się najczęściej, a potem krótki egzamin próbny. Następnie odpoczynek."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hoje é dia de estudar os tópicos que mais caem e fazer um simulado curto. Depois, descanse."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bugün en çok çıkan konulara çalışıyorsun, ardından kısa bir deneme sınavı çözüyorsun. Sonra dinleniyorsun."
-          }
-        }
-      }
-    },
-    "Today goes to the topics that come up most. Then rest." : {
-      "comment" : "The day before: learn",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Heute lernst du die Themen, die am häufigsten vorkommen. Ruh dich danach aus."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hoy toca estudiar los temas más frecuentes. Después, descansa."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aujourd’hui, étudie les sujets qui reviennent le plus souvent. Ensuite, repose-toi."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Oggi studi gli argomenti più frequenti. Poi riposo."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今日はよく出るトピックを学びます。その後は休みます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "오늘은 가장 자주 출제되는 주제를 공부해요. 그다음에는 쉬어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dziś czas na tematy, które pojawiają się najczęściej. Potem odpoczynek."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hoje é dia de estudar os tópicos que mais caem. Depois, descanse."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bugün en çok çıkan konulara çalışıyorsun. Sonra dinleniyorsun."
-          }
-        }
-      }
-    },
-    "Today is a full review of every topic, in your test's format, your weakest first. Then rest. %@" : {
-      "comment" : "The day before: a full review",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Heute wiederholst du alle Themen im Format deiner Prüfung, beginnend mit deinen schwächsten. Ruh dich danach aus. %@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hoy toca una revisión completa de todos los temas, con el formato de tu examen y empezando por los que más te cuestan. Después, descansa. %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aujourd’hui, révise tous les sujets au format de ton épreuve, en commençant par ceux que tu maîtrises le moins. Ensuite, repose-toi. %@"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Oggi fai un ripasso generale di tutti gli argomenti, nel formato del tuo test, partendo da quelli in cui hai più difficoltà. Poi riposo. %@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今日は苦手なものから順に、すべてのトピックを試験と同じ形式で総復習します。その後は休みます。%@"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "오늘은 가장 약한 주제부터 시험 형식에 맞춰 모든 주제를 총복습해요. 그다음에는 쉬어요. %@"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dziś pełna powtórka wszystkich tematów w formacie twojego egzaminu. Najpierw te, które sprawiają ci najwięcej trudności. Potem odpoczynek. %@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hoje é dia de revisar todos os tópicos no formato da sua prova, começando pelos que você tem mais dificuldade. Depois, descanse. %@"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bugün en zorlandığın konulardan başlayarak sınavının formatında tüm konuların genel tekrarını yapıyorsun. Sonra dinleniyorsun. %@"
-          }
-        }
-      }
-    },
-    "Today is a short, light review. Then rest. %@" : {
-      "comment" : "The day before: light review",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Heute wiederholst du kurz und ohne großen Aufwand. Ruh dich danach aus. %@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hoy toca un repaso breve y ligero. Después, descansa. %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aujourd’hui, fais une courte révision tranquille. Ensuite, repose-toi. %@"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Oggi fai un ripasso breve e leggero. Poi riposo. %@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今日は短時間で軽く復習します。その後は休みます。%@"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "오늘은 짧고 가볍게 복습해요. 그다음에는 쉬어요. %@"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dziś krótka, lekka powtórka. Potem odpoczynek. %@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hoje é dia de uma revisão curta e leve. Depois, descanse. %@"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bugün kısa ve hafif bir tekrar yapıyorsun. Sonra dinleniyorsun. %@"
-          }
-        }
-      }
-    },
-    "Today is your short mock, then a look at what it finds. Then rest. %@" : {
-      "comment" : "The day before: a mock",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Heute machst du eine kurze Probeprüfung und schaust dir das Ergebnis an. Ruh dich danach aus. %@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hoy toca hacer tu simulacro corto y luego revisar los resultados. Después, descansa. %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aujourd’hui, passe ton court examen blanc, puis regarde ce qu’il révèle. Ensuite, repose-toi. %@"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Oggi fai la tua breve simulazione, poi rivedi i risultati. Poi riposo. %@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今日は短い模試を受け、その結果を振り返ります。その後は休みます。%@"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "오늘은 짧은 모의고사를 보고 결과를 살펴봐요. 그다음에는 쉬어요. %@"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dziś krótki egzamin próbny, a potem przegląd jego wyników. Następnie odpoczynek. %@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hoje é dia de fazer um simulado curto e depois revisar o resultado. Depois, descanse. %@"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bugün kısa deneme sınavını çözüyorsun, ardından sonuçlarını gözden geçiriyorsun. Sonra dinleniyorsun. %@"
-          }
-        }
-      }
-    },
     "TOEFL speaking mock" : {
       "comment" : "A speaking mock's name",
       "localizations" : {
@@ -6304,65 +5594,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "TOEFL konuşma deneme sınavı"
-          }
-        }
-      }
-    },
-    "Trends by subject show once your mocks ask enough new questions of each one." : {
-      "comment" : "Mock trends need more mocks",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Trends nach Fach erscheinen, sobald deine Probeprüfungen genug neue Fragen zu jedem Fach enthalten."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Las tendencias por materia aparecerán cuando tus simulacros incluyan suficientes preguntas nuevas de cada una."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Les tendances par matière s’affichent une fois que tes examens blancs t’ont posé assez de nouvelles questions dans chaque matière."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vedrai l’andamento per materia quando le simulazioni includeranno abbastanza domande nuove su ciascuna."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "模試で各科目の新しい問題に十分な数だけ答えると、科目別の傾向が表示されます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "모의고사에서 과목마다 새로운 문제를 충분히 풀면 과목별 변화를 볼 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zmiany wyników z poszczególnych przedmiotów zobaczysz, gdy egzaminy próbne obejmą wystarczająco dużo nowych pytań z każdego z nich."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A evolução por matéria aparece quando seus simulados tiverem perguntas novas suficientes de cada uma."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deneme sınavlarında her branştan yeterince yeni soru sorulduğunda branşlara göre değişimi görebilirsin."
           }
         }
       }
@@ -6540,6 +5771,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu tarihi kullan"
+          }
+        }
+      }
+    },
+    "We'll tell you the day once it's set." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir sagen dir Bescheid, sobald der Tag feststeht."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Te avisaremos cuando se defina el día."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On te dira le jour dès qu’il sera fixé."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ti diremo il giorno appena sarà fissato."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "試験日が決まり次第お知らせします。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "날짜가 정해지면 알려 드릴게요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Damy ci znać, gdy dzień zostanie ustalony."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A gente te avisa quando o dia for definido."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gün belli olduğunda sana haber vereceğiz."
           }
         }
       }
@@ -6780,61 +6069,61 @@
         }
       }
     },
-    "When your official result comes out, add it here. It helps make estimates more accurate for everyone." : {
-      "comment" : "Asks for the official result once the exam is over",
+    "Work on %@." : {
+      "comment" : "Mock trends",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wenn dein offizielles Ergebnis da ist, trag es hier ein. Das hilft, die Schätzungen für alle genauer zu machen."
+            "value" : "Üb %@."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cuando salga tu resultado oficial, agrégalo aquí. Así ayudas a que las estimaciones sean más precisas para todos."
+            "value" : "Trabaja en %@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quand ton résultat officiel sera publié, ajoute-le ici. Cela aide à rendre les estimations plus précises pour tout le monde."
+            "value" : "Travaille sur %@."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quando esce il tuo risultato ufficiale, aggiungilo qui. Ci aiuta a rendere le stime più precise per tutti."
+            "value" : "Concentrati su %@."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "正式な結果が出たら、ここに入力してください。みんなのスコアをより正確に推定するのに役立ちます。"
+            "value" : "%@に取り組みましょう。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "공식 결과가 나오면 여기에 입력해 주세요. 모두에게 더 정확한 예측을 제공하는 데 도움이 돼요."
+            "value" : "%@에 더 집중해 보세요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gdy pojawi się twój oficjalny wynik, dodaj go tutaj. Dzięki temu prognozy będą dokładniejsze dla wszystkich."
+            "value" : "Poćwicz: %@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quando seu resultado oficial sair, adicione ele aqui. Isso ajuda a tornar as estimativas mais precisas para todo mundo."
+            "value" : "Foque em %@."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Resmî sonucun açıklanınca buraya ekle. Bu sayede herkes için daha doğru tahminler yapabiliriz."
+            "value" : "%@ üzerine çalış."
           }
         }
       }
@@ -6953,628 +6242,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Evet"
-          }
-        }
-      }
-    },
-    "You did %lld sessions and %lld mock exams." : {
-      "comment" : "Sessions and mocks done before the exam",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du hast %#@sessions@ und %#@mocks@ gemacht."
-          },
-          "substitutions" : {
-            "mocks" : {
-              "argNum" : 2,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg Probeprüfung"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg Probeprüfungen"
-                    }
-                  }
-                }
-              }
-            },
-            "sessions" : {
-              "argNum" : 1,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg Lerneinheit"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg Lerneinheiten"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "You did %#@sessions@ and %#@mocks@."
-          },
-          "substitutions" : {
-            "mocks" : {
-              "argNum" : 2,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "new",
-                      "value" : "%arg mock exam"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "new",
-                      "value" : "%arg mock exams"
-                    }
-                  }
-                }
-              }
-            },
-            "sessions" : {
-              "argNum" : 1,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "new",
-                      "value" : "%arg session"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "new",
-                      "value" : "%arg sessions"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hiciste %#@sessions@ y %#@mocks@."
-          },
-          "substitutions" : {
-            "mocks" : {
-              "argNum" : 2,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg simulacro"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg simulacros"
-                    }
-                  }
-                }
-              }
-            },
-            "sessions" : {
-              "argNum" : 1,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg sesión"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg sesiones"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as fait %#@sessions@ et passé %#@mocks@."
-          },
-          "substitutions" : {
-            "mocks" : {
-              "argNum" : 2,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg examen blanc"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg examens blancs"
-                    }
-                  }
-                }
-              }
-            },
-            "sessions" : {
-              "argNum" : 1,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg séance"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg séances"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai completato %#@sessions@ e %#@mocks@."
-          },
-          "substitutions" : {
-            "mocks" : {
-              "argNum" : 2,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg simulazione"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg simulazioni"
-                    }
-                  }
-                }
-              }
-            },
-            "sessions" : {
-              "argNum" : 1,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg sessione"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg sessioni"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%#@sessions@、%#@mocks@行いました。"
-          },
-          "substitutions" : {
-            "mocks" : {
-              "argNum" : 2,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "模試を%arg回"
-                    }
-                  }
-                }
-              }
-            },
-            "sessions" : {
-              "argNum" : 1,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "学習を%arg回"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "학습을 %#@sessions@ 하고 모의고사를 %#@mocks@ 봤어요."
-          },
-          "substitutions" : {
-            "mocks" : {
-              "argNum" : 2,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg회"
-                    }
-                  }
-                }
-              }
-            },
-            "sessions" : {
-              "argNum" : 1,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg회"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Masz za sobą %#@sessions@ i %#@mocks@."
-          },
-          "substitutions" : {
-            "mocks" : {
-              "argNum" : 2,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "few" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg egzaminy próbne"
-                    }
-                  },
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg egzamin próbny"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg egzaminów próbnych"
-                    }
-                  }
-                }
-              }
-            },
-            "sessions" : {
-              "argNum" : 1,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg dzień nauki"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg dni nauki"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você fez %#@sessions@ e %#@mocks@."
-          },
-          "substitutions" : {
-            "mocks" : {
-              "argNum" : 2,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg simulado"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg simulados"
-                    }
-                  }
-                }
-              }
-            },
-            "sessions" : {
-              "argNum" : 1,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg sessão"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg sessões"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%#@sessions@ ve %#@mocks@ tamamladın."
-          },
-          "substitutions" : {
-            "mocks" : {
-              "argNum" : 2,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg deneme sınavı"
-                    }
-                  }
-                }
-              }
-            },
-            "sessions" : {
-              "argNum" : 1,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg çalışma"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "You did %lld sessions." : {
-      "comment" : "Sessions done before the exam",
-      "localizations" : {
-        "de" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Du hast %lld Lerneinheit absolviert."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Du hast %lld Lerneinheiten absolviert."
-                }
-              }
-            }
-          }
-        },
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "You did %lld session."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "You did %lld sessions."
-                }
-              }
-            }
-          }
-        },
-        "es" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Hiciste %lld sesión."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Hiciste %lld sesiones."
-                }
-              }
-            }
-          }
-        },
-        "fr" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Tu as fait %lld séance."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Tu as fait %lld séances."
-                }
-              }
-            }
-          }
-        },
-        "it" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Hai completato %lld sessione."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Hai completato %lld sessioni."
-                }
-              }
-            }
-          }
-        },
-        "ja" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "学習を%lld回行いました。"
-                }
-              }
-            }
-          }
-        },
-        "ko" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "학습을 %lld회 했어요."
-                }
-              }
-            }
-          }
-        },
-        "pl" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Masz za sobą %lld dzień nauki."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Masz za sobą %lld dni nauki."
-                }
-              }
-            }
-          }
-        },
-        "pt" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Você fez %lld sessão."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Você fez %lld sessões."
-                }
-              }
-            }
-          }
-        },
-        "tr" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld çalışma tamamladın."
-                }
-              }
-            }
           }
         }
       }
@@ -7874,6 +6541,124 @@
         }
       }
     },
+    "Your flagged answers cost more than they earn: leave those blank." : {
+      "comment" : "Advice",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine markierten Antworten kosten mehr Punkte, als sie einbringen: Lass diese Fragen unbeantwortet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tus respuestas marcadas te restan más puntos de los que te dan: deja esas preguntas en blanco."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tes réponses aux questions marquées te coûtent plus de points qu’elles ne t’en rapportent : laisse ces questions sans réponse."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Con le domande contrassegnate perdi più punti di quanti ne guadagni: lasciale in bianco."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "見直し対象にした問題では、得点より減点が多くなっています。そうした問題は空欄のままにしてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "표시한 문제는 얻는 점수보다 잃는 점수가 더 많아요. 답을 비워 두세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Na oznaczonych pytaniach tracisz więcej punktów, niż zdobywasz: zostawiaj je bez odpowiedzi."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você perde mais pontos do que ganha nas questões marcadas: deixe essas questões em branco."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İşaretlediğin sorularda kazandığından fazla puan kaybediyorsun: bu soruları boş bırak."
+          }
+        }
+      }
+    },
+    "Your flagged answers still earn points: keep answering them." : {
+      "comment" : "Advice",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine markierten Antworten bringen dir trotzdem Punkte: Beantworte auch diese Fragen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tus respuestas marcadas aún te dan puntos: sigue respondiendo esas preguntas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tes réponses aux questions marquées te rapportent quand même des points : continue à y répondre."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Con le domande contrassegnate guadagni comunque punti: continua a rispondere."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "見直し対象にした問題も得点につながっています。引き続き答えてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "표시한 문제도 점수를 올려 줘요. 계속 풀어 보세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Na oznaczonych pytaniach nadal zyskujesz punkty: dalej na nie odpowiadaj."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você ainda ganha pontos nas questões marcadas: continue respondendo essas questões."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İşaretlediğin sorulardan hâlâ puan kazanıyorsun: bu soruları cevaplamaya devam et."
+          }
+        }
+      }
+    },
     "Your mock exam scores, from %lld%% to %lld%%" : {
       "comment" : "The mock score chart",
       "localizations" : {
@@ -8112,6 +6897,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "En yakın sınav tarihini seçmediğin sürece planındaki tarih değişmez."
+          }
+        }
+      }
+    },
+    "Your progress" : {
+      "comment" : "Mock progress section",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Fortschritt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu progreso"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tes progrès"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I tuoi progressi"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "進み具合"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "성적 변화"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twoje postępy"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu progresso"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İlerlemen"
           }
         }
       }
@@ -8407,124 +7251,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Toplam puanın (400 ile 1.600 arası)"
-          }
-        }
-      }
-    },
-    "Your unsure answers cost more than they earn: leave those blank." : {
-      "comment" : "Advice",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Antworten, bei denen du unsicher bist, kosten mehr Punkte, als sie bringen: Lass sie frei."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Las respuestas de las que dudas te quitan más puntos de los que te dan: déjalas en blanco."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tes réponses incertaines te coûtent plus de points qu’elles ne t’en rapportent : laisse ces questions sans réponse."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con le risposte su cui hai dubbi perdi più punti di quanti ne guadagni: lasciale in bianco."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "自信のない問題は減点が加点を上回るので、空欄にしておきましょう。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "확신 없이 푼 문제는 얻는 점수보다 잃는 점수가 더 많아요. 그런 문제는 비워 두세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gdy nie masz pewności, tracisz więcej punktów, niż zyskujesz: zostaw te pytania bez odpowiedzi."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Suas respostas quando você tem dúvida tiram mais pontos do que dão: deixe essas em branco."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Emin olmadığın cevaplar kazandırdığından fazla puan kaybettiriyor: bu soruları boş bırak."
-          }
-        }
-      }
-    },
-    "Your unsure answers still earn points: keep answering them." : {
-      "comment" : "Advice",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Auch Antworten, bei denen du unsicher bist, bringen Punkte: Beantworte sie weiterhin."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Las respuestas de las que dudas aún te dan puntos: sigue respondiendo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tes réponses incertaines te rapportent quand même des points : continue à répondre à ces questions."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con le risposte su cui hai dubbi guadagni comunque punti: continua a rispondere."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "自信のない問題も得点につながるので、引き続き答えましょう。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "확신 없이 푼 문제도 점수에 도움이 돼요. 계속 답해 보세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nawet gdy nie masz pewności, zyskujesz punkty: nadal odpowiadaj na te pytania."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Suas respostas quando você tem dúvida ainda rendem pontos: continue respondendo."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Emin olmadığın cevaplar yine de puan kazandırıyor: bu soruları cevaplamaya devam et."
           }
         }
       }

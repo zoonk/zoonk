@@ -649,16 +649,12 @@ enum PracticeBlockTitle {
             "Mock exam", table: "Practice", comment: "Title of a weekly mock exam block.")
           : LocalizedStringResource(
             "Weekly challenge", table: "Practice", comment: "Title of the weekly challenge block.")
-      case .finalBoss:
-        return LocalizedStringResource(
-          "Final challenge", table: "Practice", comment: "Title of the final challenge block.")
-      case .boss:
+      case .finalBoss, .boss:
         return checkpoint.rematch
           ? LocalizedStringResource(
-            "Challenge, second try", table: "Practice",
-            comment: "Title of a lost phase challenge's rematch.")
+            "Rematch", table: "Practice", comment: "Title of a second go at the Trickster.")
           : LocalizedStringResource(
-            "Phase challenge", table: "Practice", comment: "Title of a phase challenge block.")
+            "The Trickster", table: "Practice", comment: "Title of a Trickster duel.")
       }
     }
 

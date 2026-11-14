@@ -1,12 +1,11 @@
 "use client";
 
-import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
-import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useKeptTyping } from "@zoonk/ui/hooks/kept-typing";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useEffect, useRef } from "react";
+import { EnterButton } from "../../_components/enter-button";
 
-export const GOAL_FIELD_TEXT_CLASS = "py-2.5 text-[17px] leading-6";
+export const GOAL_FIELD_TEXT_CLASS = "py-2.5 text-lg leading-6";
 
 const GOAL_FIELD = "goal";
 
@@ -136,7 +135,7 @@ export function GoalFieldText({
       autoComplete="off"
       className={cn(
         GOAL_FIELD_TEXT_CLASS,
-        "placeholder:text-muted-foreground contrast-more:placeholder:text-foreground/60 field-sizing-content max-h-48 min-h-11 w-full min-w-0 resize-none bg-transparent outline-none",
+        "placeholder:text-muted-foreground contrast-more:placeholder:text-foreground/60 field-sizing-content max-h-48 min-h-11 w-full min-w-0 resize-none bg-transparent outline-none placeholder:truncate",
         className,
       )}
       enterKeyHint="go"
@@ -169,19 +168,17 @@ export function GoalFieldSubmit({
   children,
   className,
   ...props
-}: Omit<React.ComponentProps<typeof Button>, "size" | "type" | "variant">) {
+}: Omit<React.ComponentProps<typeof EnterButton>, "enter" | "size" | "type">) {
   return (
-    <Button
-      aria-keyshortcuts="Enter"
-      className={cn("shrink-0 px-4", className)}
-      focusableWhenDisabled
+    // Enter in the goal's field submits its form, so the key is the field's.
+    <EnterButton
+      className={cn("shrink-0 grow-0 basis-auto rounded-md px-4", className)}
+      enter="host"
       size="lg"
       type="submit"
-      {...FORWARD_ICON}
       {...props}
     >
       {children}
-      <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-    </Button>
+    </EnterButton>
   );
 }

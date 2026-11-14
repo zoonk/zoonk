@@ -5,24 +5,36 @@ import { type ReactNode } from "react";
 import { HERO_CLASS, PUBLIC_CONTAINER_CLASS } from "./landing-styles";
 import { PublicFooter } from "./public-footer";
 import { PublicHeader } from "./public-header";
+import { PublicStartBar } from "./public-start-bar";
+import { VisitorOnly } from "./visitor-only";
 
-export const PUBLIC_COLUMN_CLASS = "mx-auto w-full max-w-[704px] px-5 sm:px-8";
+export const PUBLIC_COLUMN_CLASS = "mx-auto w-full max-w-[704px] px-4 sm:px-6";
 
 export function PublicPage({
   children,
   className,
+  ownStart,
   pathname,
 }: {
   children: ReactNode;
   className?: string;
+  ownStart?: boolean;
   pathname?: string;
 }) {
+  // The bar's last button reaches into the gutter so its words end on the column's edge; clipping
+  // keeps that from scrolling the page sideways, as the app's own frame does.
   return (
-    <div className="flex min-h-dvh flex-col">
+    <div className="flex min-h-dvh flex-col overflow-x-clip" data-slot="public-page">
       <UsageDataNotice className={PUBLIC_CONTAINER_CLASS} />
-      <PublicHeader />
+      <PublicHeader ownStart={ownStart} pathname={pathname} />
       <main className={cn("flex-1", className)}>{children}</main>
       <PublicFooter pathname={pathname} />
+
+      {ownStart && (
+        <VisitorOnly>
+          <PublicStartBar />
+        </VisitorOnly>
+      )}
     </div>
   );
 }

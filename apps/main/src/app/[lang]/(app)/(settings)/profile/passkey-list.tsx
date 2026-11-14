@@ -1,6 +1,5 @@
 "use client";
 
-import { CurrentPageLoginLink } from "@/components/current-page-login-link";
 import {
   type PasskeyChangeFailure,
   addPasskey,
@@ -8,6 +7,7 @@ import {
   renamePasskey,
 } from "@zoonk/auth/passkey-client";
 import { type PasskeyView } from "@zoonk/core/users/passkeys";
+import { findRowMenu, useKeepFocus } from "@zoonk/learn/keep-focus";
 import {
   ListGroup,
   ListRow,
@@ -16,52 +16,34 @@ import {
   ListRowTitle,
 } from "@zoonk/learn/list";
 import { SettingRow } from "@zoonk/learn/setting-rows";
-import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { Button } from "@zoonk/ui/components/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
+import { showErrorToast } from "@zoonk/ui/components/toast";
 import { safeAsync } from "@zoonk/utils/error";
-import { EllipsisIcon, LogInIcon, PencilIcon, PlusIcon, Trash2Icon } from "lucide-react";
+import { EllipsisIcon, PencilIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { useState, useTransition } from "react";
+import { SignInAgainDialog } from "../_components/sign-in-again-dialog";
 import { DeleteDialog, RenameDialog, usePasskeyName } from "./passkey-dialogs";
 import { refreshPasskeysAction } from "./refresh-passkeys-action";
 
-function ChangeFailure({ failure }: { failure: PasskeyChangeFailure | null }) {
+type PlainFailure = Exclude<PasskeyChangeFailure, "cancelled" | "signInAgain">;
+
+function useFailureMessage(): (failure: PlainFailure) => string {
   const t = useExtracted();
 
-  if (!failure || failure === "cancelled") {
-    return null;
-  }
-
-  if (failure === "signInAgain") {
-    return (
-      <div className="flex flex-col items-start gap-2" role="alert">
-        <p className="text-sm">{t("For your safety, sign in again, then add your passkey.")}</p>
-        <CurrentPageLoginLink
-          className={buttonVariants({ size: "sm", variant: "outline" })}
-          icon={<LogInIcon aria-hidden="true" />}
-        >
-          {t("Sign in again")}
-        </CurrentPageLoginLink>
-      </div>
-    );
-  }
-
-  const messages: Record<Exclude<PasskeyChangeFailure, "cancelled" | "signInAgain">, string> = {
+  const messages: Record<PlainFailure, string> = {
     alreadyAdded: t("This device already has a passkey for your account."),
     failed: t("That didn't work. Try again in a moment."),
     notConfirmed: t("That wasn't confirmed with one of your passkeys. Try again."),
   };
 
-  return (
-    <p className="text-destructive-text text-sm" role="alert">
-      {messages[failure]}
-    </p>
-  );
+  return (failure) => messages[failure];
 }
 
 function PasskeyRow({
@@ -95,7 +77,8 @@ function PasskeyRow({
           render={
             <Button
               aria-label={t("Options for “{name}”", { name })}
-              className="text-muted-foreground -mr-2 size-11 shrink-0"
+              className="text-muted-foreground shrink-0"
+              edge="end"
               size="icon"
               variant="ghost"
             />
@@ -105,11 +88,11 @@ function PasskeyRow({
         </DropdownMenuTrigger>
 
         <DropdownMenuContent align="end" className="w-44">
-          <DropdownMenuItem onClick={onRename}>
+          <DropdownMenuItem aria-haspopup="dialog" onClick={onRename}>
             <PencilIcon aria-hidden="true" />
             {t("Rename")}
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={onDelete} variant="destructive">
+          <DropdownMenuItem aria-haspopup="dialog" onClick={onDelete} variant="destructive">
             <Trash2Icon aria-hidden="true" />
             {t("Delete")}
           </DropdownMenuItem>
@@ -121,18 +104,43 @@ function PasskeyRow({
 
 type OpenDialog = { kind: "delete" | "rename"; passkey: PasskeyView };
 
+function findPasskeyList() {
+  return document.querySelector("[data-slot=passkey-list]");
+}
+
+/** "Add a passkey", which stays when the last passkey goes. */
+function findAddPasskey() {
+  return findPasskeyList()?.querySelector<HTMLElement>("button[type=submit]");
+}
+
 /** `passkeys` comes from the server again after every change, so the list keeps no copy of it. */
 export function PasskeyList({ passkeys }: { passkeys: PasskeyView[] }) {
   const t = useExtracted();
   const [isPending, startTransition] = useTransition();
-  const [failure, setFailure] = useState<PasskeyChangeFailure | null>(null);
+  const [asksLogin, setAsksLogin] = useState(false);
   const [dialog, setDialog] = useState<OpenDialog | null>(null);
+  const failureMessage = useFailureMessage();
+  const keepFocus = useKeepFocus(passkeys, findAddPasskey);
+
+  /** Resolves to whether it changed; a failure has been said by then. */
+  const settle = async (run: () => Promise<PasskeyChangeFailure | null>) => {
+    const { data, error } = await safeAsync(run);
+    await safeAsync(refreshPasskeysAction);
+    const failure = error ? "failed" : data;
+
+    if (failure === "signInAgain") {
+      setDialog(null);
+      setAsksLogin(true);
+    } else if (failure && failure !== "cancelled") {
+      showErrorToast(failureMessage(failure));
+    }
+
+    return failure === null;
+  };
 
   const change = (run: () => Promise<PasskeyChangeFailure | null>) => {
     startTransition(async () => {
-      const { data, error } = await safeAsync(run);
-      await safeAsync(refreshPasskeysAction);
-      setFailure(error ? "failed" : data);
+      await settle(run);
       setDialog(null);
     });
   };
@@ -143,20 +151,25 @@ export function PasskeyList({ passkeys }: { passkeys: PasskeyView[] }) {
       return added.status === "added" ? null : added.status;
     });
 
-  const remove = (id: string) =>
+  const remove = (id: string) => {
+    const index = passkeys.findIndex((passkey) => passkey.id === id);
+    keepFocus(() => findRowMenu(findPasskeyList(), index));
+
     change(async () => {
       const deleted = await deletePasskey(id);
       return deleted === "deleted" ? null : deleted;
     });
+  };
 
+  /** In the rename sheet's own save, which keeps the name typed if it didn't go through. */
   const rename = (id: string, name: string) =>
-    change(async () => {
+    settle(async () => {
       const renamed = await renamePasskey({ id, name });
       return renamed === "renamed" ? null : renamed;
     });
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2" data-slot="passkey-list">
       <ListGroup>
         {passkeys.map((passkey) => (
           <PasskeyRow
@@ -190,11 +203,14 @@ export function PasskeyList({ passkeys }: { passkeys: PasskeyView[] }) {
         </SettingRow>
       </ListGroup>
 
-      <ChangeFailure failure={failure} />
+      {asksLogin && (
+        <SignInAgainDialog onClose={() => setAsksLogin(false)}>
+          {t("For your safety, log in again, then add your passkey.")}
+        </SignInAgainDialog>
+      )}
 
       {dialog?.kind === "rename" && (
         <RenameDialog
-          isPending={isPending}
           onClose={() => setDialog(null)}
           onSave={(name) => rename(dialog.passkey.id, name)}
           passkey={dialog.passkey}

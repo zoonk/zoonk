@@ -1,5 +1,6 @@
 "use client";
 
+import { setGoalStatusAction } from "@/app/[lang]/(app)/(learn)/_components/goal-status-action";
 import {
   changePlanAction,
   chooseExamOptionAction,
@@ -248,6 +249,15 @@ export function TodayClient({
         adjustTimeHref: "/plan?focus=time",
         answerInsight: answerMemoryInsightAction,
         answerSuggestedGoal,
+        archiveGoal: async () => {
+          const outcome = await setGoalStatusAction(today.goal.id, "archived");
+
+          if (outcome === "saved") {
+            refresh();
+          }
+
+          return outcome === "saved";
+        },
         buddyHref: "/buddy",
         catchUp: taps.catchUp,
         challengeHref: (planItemId) => `/challenge/${planItemId}`,
@@ -298,6 +308,7 @@ export function TodayClient({
       brainPower={data.brainPower}
       buddy={data.buddy}
       completedLessons={data.completedLessons}
+      knownLessons={data.knownLessons}
       missions={{ fullMeal: today.session.fullMeal, missions: today.session.missions }}
       mistakes={data.mistakes}
       mockEntry={data.mocks && <MockEntryRow hrefs={MOCK_ENTRY_HREFS} view={data.mocks} />}
@@ -308,7 +319,6 @@ export function TodayClient({
           <SpeakingPracticeRow entry={data.language.speaking} href="/speaking" />
         )
       }
-      syllabus={data.syllabus}
       today={today}
       unfinishedGoal={unfinishedGoal}
     />

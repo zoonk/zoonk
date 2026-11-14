@@ -7,6 +7,8 @@ struct LessonStageView: View {
   @Environment(\.spokenAnswerRecording) private var recording
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
   @State private var isCheckSlow = false
+  /// A spoken answer's Record button is the bar's main action, where Check is on other steps.
+  @State private var recordInBar = RecordInBar()
 
   let store: LessonPlayerStore
   let state: LessonPlayerState
@@ -216,9 +218,10 @@ struct LessonStageView: View {
               }
             }
           }
-          .safeAreaBar(edge: .bottom) {
+          .bottomBar {
             LessonActionBar(store: store, state: state, step: step)
           }
+          .environment(recordInBar)
           // The hinge is the trailing page's safe area, so its content and the action bar stay
           // clear of the crease. One column keeps to the page before it, as `PaneSplit`'s does.
           .safeAreaPadding(.leading, spread?.gap ?? 0)
@@ -394,8 +397,8 @@ extension LessonPlayerState.Notice {
         comment: "A question left out while its picture was drawn came back once it was drawn")
     case .writingSkipped:
       String(
-        localized: "No more writing today.", table: "Player",
-        comment: "\"Can't write now\" left the lesson's writing out")
+        localized: "Writing is off for today.", table: "Player",
+        comment: "\"Skip writing questions today\" left the lesson's writing out")
     }
   }
 }
@@ -416,9 +419,10 @@ struct LessonActionBar: View {
 
   @Environment(\.activityRenderers) private var activityRenderers
   @Environment(\.lessonTutor) private var tutor
+  @Environment(RecordInBar.self) private var recordInBar: RecordInBar?
 
   var body: some View {
-    TaskActionBar {
+    Group {
       if state.canGoBack {
         StepBackButton(
           label: Text(
@@ -432,7 +436,25 @@ struct LessonActionBar: View {
         LessonAudioButton(url: step.promptAudio, style: .bar)
       }
 
-      primaryButton
+      if showsDontKnow {
+        Button {
+          store.dontKnow()
+        } label: {
+          Text(
+            "I don't know yet", tableName: "Player",
+            comment:
+              "Reveals the answer: a good answer to a written question, or the answer to the lesson's opening guess"
+          )
+        }
+        .buttonStyle(.outline)
+      }
+
+      if state.phase == .playing, let record = recordInBar?.button, recordInBar?.isChecking == false
+      {
+        record
+      } else {
+        primaryButton
+      }
 
       if tutor.panel != nil {
         askButton
@@ -440,10 +462,9 @@ struct LessonActionBar: View {
     }
   }
 
-  @ViewBuilder
   private var primaryButton: some View {
     let primary = primaryAction
-    let button = BusyButton(isBusy: primary.isBusy, icon: primary.icon) {
+    return BusyButton(isBusy: primary.isBusy, icon: primary.icon) {
       switch primary.action {
       case .check:
         Task { await store.check(gradeActivity: activityGrade) }
@@ -455,16 +476,9 @@ struct LessonActionBar: View {
     } label: {
       Text(primary.title)
     }
-    .controlSize(.large)
-    .buttonSizing(.flexible)
     .disabled(primary.isDisabled)
     .keyboardShortcut(.defaultAction)
-
-    if primary.isProminent {
-      button.buttonStyle(.mainAction)
-    } else {
-      button.buttonStyle(.secondary)
-    }
+    .buttonStyle(.mainAction)
   }
 
   private var askButton: some View {
@@ -488,6 +502,15 @@ struct LessonActionBar: View {
     .controlSize(.large)
   }
 
+  /// A written answer's way to see a good answer, left of Check, when "Explain first" isn't offered.
+  private var showsDontKnow: Bool {
+    guard let step, step.isWriting, state.phase == .playing, !state.canExplainFirst else {
+      return false
+    }
+
+    return state.answers[step.id] == nil
+  }
+
   private var activityGrade: ((ActivityStepContent, ActivityAnswer) -> Bool)? {
     guard case .activity(let content) = step?.content else {
       return nil
@@ -507,12 +530,15 @@ struct LessonActionBar: View {
     let icon: ActionIcon
     var isBusy = false
     var isDisabled = false
-    var isProminent = true
   }
 
   private var primaryAction: PrimaryAction {
     guard let step else {
       return PrimaryAction(action: .continueLesson, title: Self.continueTitle, icon: .forward)
+    }
+
+    if state.phase == .playing, recordInBar?.isChecking == true {
+      return PrimaryAction(action: .check, title: checkTitle(step), icon: .check, isBusy: true)
     }
 
     switch state.phase {
@@ -571,11 +597,12 @@ struct LessonActionBar: View {
       }
     }
 
-    // The reveal often points at the picture, so it waits for one still being drawn, as the options do.
+    // The opening guess reveals with or without a pick, under one label. The reveal often points at
+    // the picture, so it waits for one still being drawn, as the options do.
     if state.revealsWithoutGuess {
       return PrimaryAction(
-        action: .dontKnow, title: LessonWaysOut.dontKnowTitle, icon: .notSure,
-        isDisabled: step.isRequiredPictureDrawing(openedAt: store.openedAt), isProminent: false)
+        action: .dontKnow, title: checkTitle(step), icon: checkIcon(step),
+        isDisabled: step.isRequiredPictureDrawing(openedAt: store.openedAt))
     }
 
     return PrimaryAction(
@@ -641,8 +668,8 @@ private struct LessonNotice: View {
 
   var body: some View {
     if let quickCheck = state.quickCheckProgress {
-      LessonEyebrow(
-        title: Text(
+      Chip(
+        Text(
           "Quick check\u{00A0}· \(quickCheck.current) of \(quickCheck.total)", tableName: "Player",
           comment: "While \"I already know this\" asks the lesson's checks"),
         systemImage: "bolt")
@@ -680,8 +707,8 @@ private struct LessonNotice: View {
               store.restoreWriting()
             } label: {
               Text(
-                "Write again", tableName: "Player",
-                comment: "Takes back \"Can't write now\": the learner does the writing again")
+                "Turn back on", tableName: "Player",
+                comment: "Takes back \"Skip writing questions today\": written answers come back")
             }
             .buttonStyle(.ghost)
           }

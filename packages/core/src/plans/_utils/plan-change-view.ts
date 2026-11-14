@@ -1,15 +1,11 @@
 import "server-only";
 import { type Goal, type PlanChange, prisma } from "@zoonk/db";
-import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getExamDocument } from "../../exams/exam-document";
-import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
-import { getRequestInstant } from "../../learner/facts/request-instant";
 import { OWN_LEVEL_SOURCE } from "../own-level-contract";
 import { type PlanChangeView } from "../plan-view-contract";
 import { addDays } from "../planner/plan-calendar";
 import { isUndoableChange, parsePlanChangePayload } from "./plan-change-payload";
-import { type PlanContext } from "./plan-context";
-import { isCurrentPlanPreview } from "./plan-preview-basis";
+import { getPlanChangeQuote } from "./plan-change-quote";
 
 const RECENT_CHANGE_DAYS = 14;
 const MAX_CHANGES = 10;
@@ -39,39 +35,23 @@ export function canUndoChange({
   );
 }
 
-export const changeGoalSelect = { kind: true, targetLanguage: true, timezone: true } as const;
+export const changeGoalSelect = { kind: true, targetLanguage: true } as const;
 
-export async function toPlanChangeView({
+export function toPlanChangeView({
   change,
   goal,
   planVersion,
-  now,
-  timeZone,
 }: {
-  now?: Date;
-  timeZone?: string | null;
   change: PlanChange;
-  goal: Pick<Goal, "kind" | "targetLanguage" | "timezone">;
+  goal: Pick<Goal, "kind" | "targetLanguage">;
   planVersion: number;
-}): Promise<PlanChangeView> {
+}): PlanChangeView {
   const payload = parsePlanChangePayload(change.payload);
-  const zone = getAnswerTimeZone({ goal, timeZone });
-
-  const canApply =
-    change.status === "proposed" &&
-    payload.effect !== null &&
-    isCurrentPlanPreview({
-      basis: payload.previewBasis,
-      context: {
-        plan: { version: planVersion },
-        timeZone: zone,
-        today: getDateInTimeZone({ date: now ?? (await getRequestInstant()), timeZone: zone }),
-      },
-    });
 
   return {
     behind: payload.behind,
-    canApply,
+    // Accepting works the change out again and asks again when its numbers moved.
+    canApply: change.status === "proposed" && payload.effect !== null,
     canUndo: canUndoChange({ change, planVersion }),
     createdAt: change.createdAt.toISOString(),
     days: payload.days,
@@ -82,6 +62,7 @@ export async function toPlanChangeView({
     lessonsSkipped: payload.lessonsSkipped ?? 0,
     officialDate: payload.officialDate,
     operations: payload.operations,
+    quote: getPlanChangeQuote(payload.effect),
     reason: LEARNER_FACING_SOURCES.has(payload.source) || !change.reason ? null : change.reason,
     seen: payload.seenAt !== null,
     source: payload.source,
@@ -91,17 +72,15 @@ export async function toPlanChangeView({
 }
 
 export async function loadPlanChangeViews({
-  context,
   goal,
   now,
   planId,
   planVersion,
 }: {
-  goal: Pick<Goal, "kind" | "targetLanguage" | "timezone">;
+  goal: Pick<Goal, "kind" | "targetLanguage">;
   now: Date;
   planId: string;
   planVersion: number;
-  context: PlanContext;
 }): Promise<PlanChangeView[]> {
   const changes = await prisma.planChange.findMany({
     orderBy: [{ createdAt: "desc" }, { id: "desc" }],
@@ -112,11 +91,7 @@ export async function loadPlanChangeViews({
     },
   });
 
-  return Promise.all(
-    changes
-      .toSorted((a, b) => Number(b.status === "proposed") - Number(a.status === "proposed"))
-      .map((change) =>
-        toPlanChangeView({ change, goal, now, planVersion, timeZone: context.timeZone }),
-      ),
-  );
+  return changes
+    .toSorted((a, b) => Number(b.status === "proposed") - Number(a.status === "proposed"))
+    .map((change) => toPlanChangeView({ change, goal, planVersion }));
 }

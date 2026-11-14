@@ -17,7 +17,7 @@ export async function findReachedUsageLimit({
 }): Promise<AllowanceLimit | null> {
   await io();
   const now = new Date();
-  const counts = await countUsage({ client: prisma, kind, now, userId });
+  const counts = await countUsage({ client: prisma, kind, now, tier, userId });
   const decision = evaluateUsage({ costMicros: 0, counts, generated: false, kind, now, tier });
 
   return decision.status === "limitReached" ? decision.limit : null;

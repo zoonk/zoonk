@@ -30,12 +30,17 @@ export async function openUsageLedgerInWrite({
 }): Promise<UsageLedger> {
   await lockUsageForViewer({ transaction, userId: viewer.userId });
 
-  const [totals, claimed] = await Promise.all([
-    loadUsageTotals({ client: transaction, now, userId: viewer.userId }),
+  const [totals, targets] = await Promise.all([
+    loadUsageTotals({
+      client: transaction,
+      includeLessonStarts: viewer.tier === "free",
+      now,
+      userId: viewer.userId,
+    }),
     findClaimedTargets({ claims, client: transaction, userId: viewer.userId }),
   ]);
 
-  return { claimed, now, totals, viewer };
+  return { ...targets, now, totals, viewer };
 }
 
 /** GET-only: what the claims would meet now, to tell the learner before they ask. */
@@ -48,12 +53,12 @@ export async function readUsageLedger({
   now: Date;
   viewer: EntitlementViewer;
 }): Promise<UsageLedger> {
-  const [totals, claimed] = await Promise.all([
+  const [totals, targets] = await Promise.all([
     readUsageTotals(viewer.userId),
     findClaimedTargets({ claims, client: prisma, userId: viewer.userId }),
   ]);
 
-  return { claimed, now, totals, viewer };
+  return { ...targets, now, totals, viewer };
 }
 
 /**
@@ -86,15 +91,34 @@ export async function claimBundleInWrite({
   }
 
   await transaction.usageRecord.createMany({
-    data: decided.recorded.map((claim) => ({
-      costMicros: claim.costMicros,
-      createdAt: now,
-      generated: claim.generated,
-      kind: claim.kind,
-      targetId: claim.targetId,
-      userId: viewer.userId,
-    })),
+    data: decided.recorded
+      .filter((claim) => !claim.existing)
+      .map((claim) => ({
+        costMicros: claim.costMicros,
+        countedAt: claim.kind === "lessonStart" ? now : null,
+        createdAt: now,
+        generated: claim.generated,
+        kind: claim.kind,
+        targetId: claim.targetId,
+        userId: viewer.userId,
+      })),
   });
+
+  const promotions = decided.recorded
+    .filter((claim) => claim.existing)
+    .map((claim) => claim.targetId);
+
+  if (promotions.length > 0) {
+    await transaction.usageRecord.updateMany({
+      data: { countedAt: now },
+      where: {
+        countedAt: null,
+        kind: "lessonStart",
+        targetId: { in: promotions },
+        userId: viewer.userId,
+      },
+    });
+  }
 
   return { decision: decided.decision, ledger: decided.ledger };
 }

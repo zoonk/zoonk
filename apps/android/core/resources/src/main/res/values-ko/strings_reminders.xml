@@ -2,20 +2,21 @@
 <!-- eloqnt-fingerprints-v1
 {
   "reminders_cancel": "68f40434d64866054cd727f5510b8be84d0feb23aba6ec1d18c6d66336a22ab3",
-  "reminders_channel_description": "46bd8f4655e80f7b66c2dafc7ecffc3ea099522c232b2a919e8dde850938dee3",
+  "reminders_channel_description": "0a5fa73a775a8762f7ca7ed61ec45f27e99154f1bb5c661869498aa239af7de7",
   "reminders_channel_name": "567f42641ff97c650c32a19337147da28ef2057f5a36197ad8ee1c8c61b13c87",
   "reminders_email": "5d9485aae9c818e258fc1fb90944b1134bf1b239914740c14b4d190836bb6785",
   "reminders_email_instead": "da5bf077fb888ca7dd5ab1660519f487bb267c6f311203096c94d7531c0e0caf",
   "reminders_email_needs_account": "fd40b8e8e0a10988ffb8f0c924205d56c3b9f63044a0808a045c956c0d73d44a",
   "reminders_email_on": "45d4a9318a5510beb9036df056bdeec8917971d00aca19cf737255b77c7122b2",
+  "reminders_line": "fb57fc9cedef814b3a8aee1910c0e6867ab21b3c518634c2b67d0c474862a97e",
   "reminders_no_thanks": "860768fe656c254fde0ecfce8098456298524be9d45803f42d463e687c2badac",
   "reminders_not_now": "d4e6fcaab6e0a3c41516edf0d91f31e29d35d2f5666ed73d396d9c7c6c8bfb58",
   "reminders_notifications_off": "a364ef3049c189ed0a9ff69f9e9a957cf7fda314905ad8ecdae7354af058315b",
-  "reminders_offer_body": "cd84f2581352b66d2be24a42a3ebad5c424401a1182fc67fc2f730f9485f7319",
+  "reminders_offer_body": "5d994d3c898d6318a1b5f95bd4874be90a531738974ce96298d80b1d5722c221",
   "reminders_offer_title": "1ca1e31527a875247bd86936db05f3c167bdae63dccd008fe9c34730fe50153a",
   "reminders_on": "aff6a3b632340dd9da9bf5c768d307661f831e3e9627479f07373d54f4769dd2",
   "reminders_open_settings": "572584dd9d8a88219eb7ed6f47d236e2f7d42f11783d5b63eb5bda3b2bbd9fc0",
-  "reminders_permission_body": "b3d20c983deb52256e81364ca891d25779b1460b7c2a0e9fb1530040ff8b3ef1",
+  "reminders_permission_body": "0d64b1b458debf0e188f9c1e7e649f48776546fb952ed3663c7b18286c2f37d6",
   "reminders_permission_continue": "2d9c074792beca2be8b8bc7967b862b4ab2633bc7d98d685697c0079cc8eb035",
   "reminders_permission_title": "607d7d0d12f19ce710a651b7b90f2328eaaa45fc6a7f321561a121f1a2a52d4b",
   "reminders_push": "7a76f51a6d0240666bee6de092bc61e794501adbfae13c00958d1dff8a726f1a",
@@ -23,7 +24,7 @@
   "reminders_remind_me": "135009e71183fcf256b4094f1e97214eb331e59aa00c0deeae9113cffad76e60",
   "reminders_save": "e2c57f30a65dda9d839cec48a5a5b5bb69c76e962cc0a020810a78dc39376502",
   "reminders_save_failed": "01f5072f961bc0ff6e2d5616e6b0a8f96d5b13fd1dfdcc46a2ebc0e818554a5b",
-  "reminders_study_days": "073484acd77b3b780e64979e6c9995a61a2e0cdc9d88566ac53ec5664f817bdd",
+  "reminders_study_days": "5097449666aab35e9e2812feac6848676ebb0f2dbc0d7f70eafe5dbab8e6bae8",
   "reminders_this_device": "b43f5915c9c2ae556fdc49ec1f81492cb8e003495b139587867193d6aae1703e",
   "reminders_time": "b283db11afc396bf766dfa2567f3778fbdcecf4102e06e48ab4b1a6e2b58d020",
   "reminders_time_title": "d35817898eb984cfd87d6381df1c15dce564d220ce82b0e098661d3b3efdfa72",
@@ -34,12 +35,16 @@
 <resources>
     <!-- The name of the app's notification channel in Android's settings. -->
     <string name="reminders_channel_name">학습 알림</string>
-    <!-- Under the channel's name in Android's settings, and under the Reminders page's title. -->
-    <string name="reminders_channel_description">학습일에 할 공부가 남아 있으면 한 번 알려 드려요.</string>
+    <!-- Under the channel's name in Android's settings. -->
+    <string name="reminders_channel_description">공부하기로 한 날에 아직 학습을 마치지 않았다면 알림을 한 번 보내요.</string>
+    <!-- Under the reminders page's title: what reminders do; %1$s is the link "study days", which opens the Plan. -->
+    <string name="reminders_line">%1$s에 아직 학습을 마치지 않았다면 알림을 한 번 보내요.</string>
+    <!-- Link to the Plan inside "One reminder on your study days…" -->
+    <string name="reminders_study_days">공부하기로 한 날</string>
     <!-- A card under a finished lesson's result, offering a daily study reminder on the phone. -->
     <string name="reminders_offer_title">학습 알림을 받아 보실래요?</string>
     <!-- %1$s is a time of day, such as "7:00 PM". -->
-    <string name="reminders_offer_body">공부하기로 한 날에 할 공부가 남아 있으면 %1$s에 알려 드려요.</string>
+    <string name="reminders_offer_body">학습하는 날 %1$s에 알려 드려요.</string>
     <string name="reminders_remind_me">알림 받기</string>
     <!-- Declines the offer, which isn't shown again. Portuguese: "Agora não" (ungendered). -->
     <string name="reminders_no_thanks">아니요, 괜찮아요</string>
@@ -55,7 +60,7 @@
     <string name="reminders_email_instead">대신 이메일로 받기</string>
     <!-- Before Android asks to allow notifications again, after the learner said no once. -->
     <string name="reminders_permission_title">알림을 허용할까요?</string>
-    <string name="reminders_permission_body">Zoonk가 학습일에 공부할 내용이 남아 있을 때만 한 번 알려 드려요.</string>
+    <string name="reminders_permission_body">Zoonk가 공부하는 날, 오늘의 학습을 아직 끝내지 않았다면 알림을 한 번 보내요.</string>
     <string name="reminders_permission_continue">계속하기</string>
     <string name="reminders_not_now">나중에</string>
     <!-- The title of the clock that changes the reminder's time. -->
@@ -70,12 +75,10 @@
     <!-- Guests have no email address yet. -->
     <string name="reminders_email_needs_account">계정을 만들고 이메일 알림 받기</string>
     <string name="reminders_push">푸시 알림</string>
-    <!-- Under the settings; "your plans" opens the plan, which sets the study days. -->
-    <string name="reminders_study_days">계획에서 정한 학습일에</string>
-    <string name="reminders_quiet">쉬는 동안 알림을 일시 중지했어요. 다시 공부하면 켜져요.</string>
-    <string name="reminders_save_failed">저장하지 못했어요. 다시 시도해 보세요.</string>
-    <!-- Push reminders go to another of the learner's devices; this one can take over. -->
-    <string name="reminders_use_this_device">이 기기로 받기</string>
     <!-- After the selected device's name, such as "Pixel 9 · This device", when it's the device in hand. -->
     <string name="reminders_this_device">이 기기</string>
+    <!-- Push reminders go to another of the learner's devices; this one can take over. -->
+    <string name="reminders_use_this_device">이 기기로 받기</string>
+    <string name="reminders_quiet">쉬는 동안 알림을 일시 중지했어요. 다시 공부하면 켜져요.</string>
+    <string name="reminders_save_failed">저장하지 못했어요. 다시 시도해 보세요.</string>
 </resources>

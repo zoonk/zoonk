@@ -7,17 +7,20 @@ type AdminQuerySelectOption = { label: string; value: string };
 
 export function AdminQuerySelect({
   allLabel,
+  clears,
   label,
   name,
   options,
 }: {
   allLabel: string;
+  /** Another filter whose options depend on this one: a new pick here drops it. */
+  clears?: string;
   label: string;
   name: string;
   options: AdminQuerySelectOption[];
 }) {
   const [query, setQuery] = useQueryStates(
-    { [name]: parseAsString, page: parseAsString },
+    { [name]: parseAsString, page: parseAsString, ...(clears && { [clears]: parseAsString }) },
     { shallow: false },
   );
 
@@ -25,7 +28,13 @@ export function AdminQuerySelect({
     <NativeSelect
       aria-label={label}
       className="max-w-60"
-      onChange={(event) => setQuery({ [name]: event.target.value || null, page: null })}
+      onChange={(event) =>
+        setQuery({
+          ...(clears && { [clears]: null }),
+          [name]: event.target.value || null,
+          page: null,
+        })
+      }
       size="sm"
       value={query[name] ?? ""}
     >

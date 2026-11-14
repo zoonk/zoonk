@@ -763,7 +763,7 @@ private fun TopicFrequencyNote(
 ) {
     val source = subject.topicFrequencySource
     val tagged = setsApart(subject.topics.map { it.frequency })
-    val mark = stringResource(R.string.goalcontent_appears_a_lot)
+    val mark = stringResource(R.string.goalcontent_asked_a_lot)
     val markStyle = frequencyMarkStyle()
 
     val text =

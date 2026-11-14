@@ -1,20 +1,21 @@
 "use client";
 
 import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@zoonk/ui/components/dropdown-menu";
-import { CalendarClockIcon, ChevronDownIcon } from "lucide-react";
+import { DropdownMenuItem } from "@zoonk/ui/components/dropdown-menu";
+import { CalendarClockIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
 import {
+  Suggestion,
   SuggestionAction,
   SuggestionActions,
   SuggestionDescription,
+  SuggestionHeader,
+  SuggestionLine,
+  SuggestionSummary,
 } from "../_components/suggestion";
+import { SuggestionMenu } from "../_components/suggestion-menu";
+import { useFormatIsoDate } from "../_utils/iso-date";
 import { usePlanScreen } from "./plan-context";
 import {
   CheckingChange,
@@ -26,29 +27,21 @@ import { currentPlanPreview } from "./plan-preview-state";
 import { usePastDateText } from "./plan-status-label";
 import {
   PlanChangeSuggestion,
+  SlotContent,
   type SlotItem,
   usePlanSuggestionSlot,
 } from "./plan-suggestion-context";
 import { useTimeToCover, useTimeToCoverTexts } from "./use-time-to-cover";
-
-const STUDY_AFTER_EXAM: LearnerPlanOperation[] = [{ fullCourse: true, kind: "setFullCourse" }];
 
 function OtherOptions({ item }: { item: SlotItem }) {
   const t = useExtracted();
   const { dismiss, host } = usePlanSuggestionSlot();
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger render={<SuggestionAction variant="outline" />}>
-        {t("Other options")}
-        <ChevronDownIcon aria-hidden="true" data-icon="inline-end" />
-      </DropdownMenuTrigger>
-
-      <DropdownMenuContent align="start" className="w-64">
-        <DropdownMenuItem onClick={() => host.onEdit("date")}>{t("Adjust plan")}</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => dismiss(item.key)}>{t("Not now")}</DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <SuggestionMenu>
+      <DropdownMenuItem onClick={() => host.onEdit("date")}>{t("Adjust plan")}</DropdownMenuItem>
+      <DropdownMenuItem onClick={() => dismiss(item.key)}>{t("Not now")}</DropdownMenuItem>
+    </SuggestionMenu>
   );
 }
 
@@ -59,29 +52,58 @@ type DateSearch = "building" | "failed" | "finding" | "noDate" | null;
  * candidate date.
  */
 export function PastDateSuggestion({ item }: { item: Extract<SlotItem, { kind: "pastDate" }> }) {
+  const { goal } = usePlanScreen();
+
+  return goal.kind === "exam" ? (
+    <ExamOverSuggestion item={item} />
+  ) : (
+    <DateOverSuggestion item={item} />
+  );
+}
+
+/**
+ * An exam that's over: a statement, since the page's bar asks the question (`PlanExamOverBar`) and
+ * a sheet over it couldn't answer.
+ */
+function ExamOverSuggestion({ item }: { item: Extract<SlotItem, { kind: "pastDate" }> }) {
+  const pastDateText = usePastDateText();
+  const { left, title } = pastDateText({ isExam: true, lessons: item.lessons });
+
+  return (
+    <Suggestion label={title} mark={<CalendarClockIcon />}>
+      <SuggestionLine>
+        <div>
+          <SuggestionSummary>{title}</SuggestionSummary>
+          <SuggestionDescription>{left}</SuggestionDescription>
+        </div>
+      </SuggestionLine>
+
+      <SlotContent statement>
+        <SuggestionHeader>{title}</SuggestionHeader>
+        <SuggestionDescription>{left}</SuggestionDescription>
+      </SlotContent>
+    </Suggestion>
+  );
+}
+
+function DateOverSuggestion({ item }: { item: Extract<SlotItem, { kind: "pastDate" }> }) {
   const t = useExtracted();
+  const formatDate = useFormatIsoDate();
   const pastDateText = usePastDateText();
   const texts = useTimeToCoverTexts();
   const finder = useTimeToCover();
-  const { goal, plan } = usePlanScreen();
+  const { plan } = usePlanScreen();
   const { dismiss, host, preview: storedPreview, requestPreview } = usePlanSuggestionSlot();
-  const { apply, failed, isPending } = useApplyPreview(item);
+  const { apply, isPending } = useApplyPreview(item);
   const [operations, setOperations] = useState<LearnerPlanOperation[] | null>(null);
   const [search, setSearch] = useState<DateSearch>(null);
   // The search the learner waits for (0 for none), so one put off or superseded shows nothing.
   const waiting = useRef(0);
   const asked = useRef(0);
-  const isExam = goal.kind === "exam";
-  const { title } = pastDateText({ isExam, lessons: item.lessons });
+  const { title } = pastDateText({ isExam: false, lessons: item.lessons });
   const preview = currentPlanPreview({ operations: operations ?? [], plan, state: storedPreview });
 
   const showChange = async () => {
-    if (isExam) {
-      setOperations(STUDY_AFTER_EXAM);
-      void requestPreview(STUDY_AFTER_EXAM);
-      return;
-    }
-
     asked.current += 1;
     const request = asked.current;
     waiting.current = request;
@@ -119,9 +141,16 @@ export function PastDateSuggestion({ item }: { item: Extract<SlotItem, { kind: "
   };
 
   const retry = search === "failed" || search === "building";
+  const previewing = preview.status !== "idle" && operations !== null;
+  const [moved] = operations ?? [];
+
+  const question =
+    moved?.kind === "setTargetDate" && moved.targetDate
+      ? t("Move your end date to {date}?", { date: formatDate(moved.targetDate, "long") })
+      : title;
 
   const body = () => {
-    if (preview.status !== "idle" && operations) {
+    if (previewing) {
       return (
         <OfferPreview
           goalDate={getGoalDateMove({ operations, targetDate: plan.schedule.targetDate })}
@@ -141,10 +170,13 @@ export function PastDateSuggestion({ item }: { item: Extract<SlotItem, { kind: "
       return (
         <>
           <SuggestionDescription role="status">{texts.noDate}</SuggestionDescription>
-          <SuggestionActions>
-            <SuggestionAction onClick={() => host.onEdit("date")}>
-              {t("Adjust plan")}
-            </SuggestionAction>
+          <SuggestionActions
+            main={
+              <SuggestionAction onClick={() => host.onEdit("date")}>
+                {t("Adjust plan")}
+              </SuggestionAction>
+            }
+          >
             <SuggestionAction onClick={() => dismiss(item.key)} variant="outline">
               {t("Not now")}
             </SuggestionAction>
@@ -153,29 +185,36 @@ export function PastDateSuggestion({ item }: { item: Extract<SlotItem, { kind: "
       );
     }
 
-    const doesText = isExam
-      ? t("Every topic, even after the exam, at your own pace.")
-      : t("Move your date so your time covers what's left.");
+    const offerText = t(
+      "{count, plural, one {You have # lesson left. A later end date fits it.} other {You have # lessons left. A later end date fits them.}}",
+      { count: item.lessons },
+    );
 
     const retryText = search === "building" ? texts.building : t("We couldn't check what changes.");
 
     return (
       <>
         <SuggestionDescription role={retry ? "status" : undefined}>
-          {retry ? retryText : doesText}
+          {retry ? retryText : offerText}
         </SuggestionDescription>
-        <SuggestionActions>
-          <SuggestionAction action={() => void showChange()} key="preview">
-            {retry ? t("Try again") : t("Preview")}
-          </SuggestionAction>
-          <OtherOptions item={item} />
-        </SuggestionActions>
+        <SuggestionActions
+          main={
+            <SuggestionAction action={() => void showChange()} key="preview">
+              {retry ? t("Try again") : t("Find a date")}
+            </SuggestionAction>
+          }
+          menu={<OtherOptions item={item} />}
+        />
       </>
     );
   };
 
   return (
-    <PlanChangeSuggestion failed={failed} item={item} mark={<CalendarClockIcon />} title={title}>
+    <PlanChangeSuggestion
+      item={item}
+      mark={<CalendarClockIcon />}
+      title={previewing ? question : title}
+    >
       {body()}
     </PlanChangeSuggestion>
   );

@@ -32,7 +32,7 @@ type PathInput = Pick<
   | "skillAreas"
   | "taughtSkillIds"
 > & {
-  access: Pick<PlanView["access"], "freeWeekOver" | "mocksRequirePlus">;
+  access: Pick<PlanView["access"], "mocksRequirePlus">;
   context: PlanReadContext;
   today: Awaited<ReturnType<typeof readPlanToday>>;
   challengeResults: ReadonlyMap<string, CheckpointResult>;
@@ -47,7 +47,7 @@ export function buildPlanPath({ access, challengeResults, context, today, ...inp
 
   return buildPhaseViews({
     ...input,
-    challengesOpen: input.phaseChallengesRequired !== false && !access.freeWeekOver,
+    challengesOpen: input.phaseChallengesRequired !== false,
     goalKind: goal.kind,
     items,
     mocksRequirePlus: access.mocksRequirePlus,

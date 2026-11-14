@@ -10,10 +10,14 @@ import {
 
 function Antenna({
   glow,
+  grows,
   isNapping,
   side,
   uid,
-}: Omit<BuddyBodyProps, "face"> & { side: "left" | "right" }) {
+}: Pick<BuddyBodyProps, "glow" | "isNapping" | "uid"> & {
+  grows: boolean;
+  side: "left" | "right";
+}) {
   const left = side === "left";
 
   if (isNapping) {
@@ -40,14 +44,70 @@ function Antenna({
         strokeLinecap="round"
         strokeWidth="3.6"
       />
-      <BuddyHalo cx={left ? 36 : 84} cy={11} glow={glow} radius={11} uid={uid} />
+      <BuddyHalo cx={left ? 36 : 84} cy={11} glow={glow} grows={grows} radius={11} uid={uid} />
       <circle cx={left ? 36 : 84} cy="11" fill="#ff8a3d" r="5.2" />
       <circle cx={left ? 34.4 : 82.4} cy="9.4" fill="#fff" opacity=".85" r="1.7" />
     </Part>
   );
 }
 
-export function ZuBody({ face, glow, isNapping, uid }: BuddyBodyProps) {
+function ZuTorso({ uid }: { uid: string }) {
+  return (
+    <>
+      <Part name="arm-left" pivot={[42.5, 89.5]}>
+        <ellipse cx="39" cy="96" fill="#6fdfbf" rx="5.5" ry="8" transform="rotate(28 39 96)" />
+      </Part>
+      <Part name="arm-right" pivot={[77.5, 89.5]}>
+        <ellipse cx="81" cy="96" fill="#6fdfbf" rx="5.5" ry="8" transform="rotate(-28 81 96)" />
+      </Part>
+      <Part name="torso" pivot={[60, 97]}>
+        <ellipse cx="60" cy="97" fill={buddyDefUrl(uid, "zu-skin")} rx="21" ry="15.5" />
+        <g clipPath={buddyDefUrl(uid, "zu-belt")}>
+          <rect height="7.5" style={BELT_FILL} width="60" x="30" y="96" />
+          <rect
+            fill="none"
+            height="7.5"
+            stroke="#000"
+            strokeOpacity=".14"
+            strokeWidth="1.2"
+            width="60"
+            x="30"
+            y="96"
+          />
+        </g>
+        <path
+          d="M58.5 101 l-6 9 l3.6 1.2 l5 -8 z"
+          stroke="#000"
+          strokeOpacity=".16"
+          strokeWidth="1"
+          style={BELT_FILL}
+        />
+        <path
+          d="M61.5 101 l6 9 l-3.6 1.2 l-5 -8 z"
+          stroke="#000"
+          strokeOpacity=".16"
+          strokeWidth="1"
+          style={BELT_FILL}
+        />
+        <rect
+          height="10"
+          rx="3"
+          stroke="#000"
+          strokeOpacity=".2"
+          strokeWidth="1"
+          style={BELT_FILL}
+          width="10"
+          x="55"
+          y="94.5"
+        />
+      </Part>
+    </>
+  );
+}
+
+export function ZuBody({ face, glow, isNapping, uid, view }: BuddyBodyProps) {
+  const whole = view === "body";
+
   return (
     <>
       <defs>
@@ -62,64 +122,22 @@ export function ZuBody({ face, glow, isNapping, uid }: BuddyBodyProps) {
         </clipPath>
       </defs>
 
-      <Part name="shadow" pivot={[60, 115]}>
-        <ellipse cx="60" cy="115" fill="#000" opacity=".12" rx="24" ry="3.8" />
-      </Part>
-      <Part name="feet" pivot={[60, 111]}>
-        <ellipse cx="51" cy="111" fill="#3fb897" rx="7.5" ry="4.6" />
-        <ellipse cx="69" cy="111" fill="#3fb897" rx="7.5" ry="4.6" />
-      </Part>
+      {whole && (
+        <>
+          <Part name="shadow" pivot={[60, 115]}>
+            <ellipse cx="60" cy="115" fill="#000" opacity=".12" rx="24" ry="3.8" />
+          </Part>
+          <Part name="feet" pivot={[60, 111]}>
+            <ellipse cx="51" cy="111" fill="#3fb897" rx="7.5" ry="4.6" />
+            <ellipse cx="69" cy="111" fill="#3fb897" rx="7.5" ry="4.6" />
+          </Part>
+        </>
+      )}
       <Part name="body" pivot={[60, 112]}>
-        <Part name="arm-left" pivot={[42.5, 89.5]}>
-          <ellipse cx="39" cy="96" fill="#6fdfbf" rx="5.5" ry="8" transform="rotate(28 39 96)" />
-        </Part>
-        <Part name="arm-right" pivot={[77.5, 89.5]}>
-          <ellipse cx="81" cy="96" fill="#6fdfbf" rx="5.5" ry="8" transform="rotate(-28 81 96)" />
-        </Part>
-        <Part name="torso" pivot={[60, 97]}>
-          <ellipse cx="60" cy="97" fill={buddyDefUrl(uid, "zu-skin")} rx="21" ry="15.5" />
-          <g clipPath={buddyDefUrl(uid, "zu-belt")}>
-            <rect height="7.5" style={BELT_FILL} width="60" x="30" y="96" />
-            <rect
-              fill="none"
-              height="7.5"
-              stroke="#000"
-              strokeOpacity=".14"
-              strokeWidth="1.2"
-              width="60"
-              x="30"
-              y="96"
-            />
-          </g>
-          <path
-            d="M58.5 101 l-6 9 l3.6 1.2 l5 -8 z"
-            stroke="#000"
-            strokeOpacity=".16"
-            strokeWidth="1"
-            style={BELT_FILL}
-          />
-          <path
-            d="M61.5 101 l6 9 l-3.6 1.2 l-5 -8 z"
-            stroke="#000"
-            strokeOpacity=".16"
-            strokeWidth="1"
-            style={BELT_FILL}
-          />
-          <rect
-            height="10"
-            rx="3"
-            stroke="#000"
-            strokeOpacity=".2"
-            strokeWidth="1"
-            style={BELT_FILL}
-            width="10"
-            x="55"
-            y="94.5"
-          />
-        </Part>
+        {whole && <ZuTorso uid={uid} />}
         <Part name="head" pivot={[60, 86]}>
-          <Antenna glow={glow} isNapping={isNapping} side="left" uid={uid} />
-          <Antenna glow={glow} isNapping={isNapping} side="right" uid={uid} />
+          <Antenna glow={glow} grows={whole} isNapping={isNapping} side="left" uid={uid} />
+          <Antenna glow={glow} grows={whole} isNapping={isNapping} side="right" uid={uid} />
           <ellipse cx="60" cy="56" fill={buddyDefUrl(uid, "zu-skin")} rx="42" ry="33" />
           <ellipse
             cx="44"

@@ -396,7 +396,6 @@ private fun FarTopicRequest(
                 enabled = enabled,
                 busy = open.asking,
                 modifier = Modifier.fillMaxWidth(),
-                leadingIcon = { ButtonIcon(R.drawable.ic_playlist_add) },
                 content = label,
             )
         }
@@ -410,7 +409,7 @@ private fun FarTopicRequest(
                 topics.close()
                 navigator.open(AppRoute.Login)
             },
-            onSeePlus = {
+            onSubscribe = {
                 topics.close()
                 navigator.open(AppRoute.Subscription)
             },

@@ -66,7 +66,7 @@ export function BeforeAfterActivity({ content, labelId, phase }: BeforeAfterProp
         state={fields.before}
       />
 
-      <div className="flex items-start gap-2 px-1">
+      <div className="flex items-start gap-2 px-4">
         <ArrowDown aria-hidden="true" className="text-muted-foreground mt-0.5 size-4 shrink-0" />
         <p className="text-sm leading-snug font-medium">
           <LessonRichText text={fields.change} />
@@ -84,7 +84,7 @@ export function BeforeAfterActivity({ content, labelId, phase }: BeforeAfterProp
         />
       ) : (
         <button
-          className="border-viz-accent/40 text-viz-accent hover:bg-viz-accent-soft focus-visible:ring-ring/50 flex min-h-24 items-center justify-center gap-2 rounded-xl border-2 border-dashed px-4 text-sm font-semibold transition-colors outline-none select-none focus-visible:ring-[3px]"
+          className="border-viz-accent/40 text-viz-accent hover:bg-viz-accent-soft focus-visible:ring-ring/50 flex min-h-24 items-center justify-center gap-2 rounded-xl border border-dashed px-4 text-sm font-semibold transition-colors outline-none select-none focus-visible:ring-[3px]"
           onClick={() => setIsRevealed(true)}
           type="button"
         >

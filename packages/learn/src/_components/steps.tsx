@@ -1,22 +1,24 @@
 "use client";
 
-import { Button } from "@zoonk/ui/components/button";
 import { CelebrationScope } from "@zoonk/ui/hooks/celebration";
-import { useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
+import { useShortcut } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronLeftIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { getStepMoves } from "../_utils/step-moves";
 import { CeremonyClosingContext, useClosedOnReturn } from "../ceremonies/ceremony-closing";
 import { TaskFrame, type TaskFrameAside, TaskMainButton } from "../shell/task-frame";
+import { BackWithSecondAction, QuestionBack } from "./question-actions";
 import { STEP_TITLE_SLOT } from "./step-card";
 import { StepDots } from "./step-dots";
 import { useTaskAsideShown } from "./task-header";
-import { TASK_BACK_ACTION_CLASS, TaskActions } from "./task-layout";
+import { TaskActions } from "./task-layout";
 
 export type StepsItem = {
   action?: React.ReactNode;
+  /** The last step's own actions, in place of `finalAction` while it asks something. */
+  finalAction?: React.ReactNode;
+  finalSecondAction?: React.ReactNode;
   beside?: boolean;
   content: React.ReactNode;
   id: string;
@@ -30,21 +32,21 @@ export function focusStepTitle(container: HTMLElement | null) {
     ?.focus({ preventScroll: true });
 }
 
-export function StepsBackButton({ onClick }: { onClick: () => void }) {
-  const t = useExtracted();
-
-  return (
-    <Button
-      aria-keyshortcuts="ArrowLeft"
-      aria-label={t("Back")}
-      className={TASK_BACK_ACTION_CLASS}
-      onClick={onClick}
-      size="icon"
-      variant="outline"
-    >
-      <ChevronLeftIcon aria-hidden="true" />
-    </Button>
-  );
+/** The last step's own actions replace the shared ones only on the arrangement where it's last. */
+function getFinalActions({
+  finalAction,
+  finalSecondAction,
+  isLastHere,
+  item,
+}: {
+  finalAction: React.ReactNode;
+  finalSecondAction: React.ReactNode;
+  isLastHere: boolean;
+  item: StepsItem;
+}) {
+  return isLastHere && item.finalAction
+    ? { main: item.finalAction, second: item.finalSecondAction }
+    : { main: finalAction, second: finalSecondAction };
 }
 
 function WideOnly({ children, when }: { children: React.ReactNode; when: boolean }) {
@@ -84,6 +86,7 @@ export function Steps({
   exitHref,
   finalAction,
   finalOptions,
+  finalSecondAction,
   items,
 }: {
   aside?: TaskFrameAside | null;
@@ -91,6 +94,8 @@ export function Steps({
   exitHref: string;
   finalAction: React.ReactNode;
   finalOptions?: React.ReactNode;
+  /** The bar's outlined second action on the last step (`BAR_SECOND_ACTION_CLASS`). */
+  finalSecondAction?: React.ReactNode;
   items: StepsItem[];
 }) {
   const t = useExtracted();
@@ -136,7 +141,7 @@ export function Steps({
 
   const back = () => move("back");
 
-  useKeyboardCallback("ArrowLeft", back, { mode: "none", screen: true });
+  useShortcut("previous", back);
 
   useEffect(() => {
     if (focusedIndex.current === current) {
@@ -157,16 +162,21 @@ export function Steps({
     return null;
   }
 
+  const final = getFinalActions({ finalAction, finalSecondAction, isLastHere, item });
+
   return (
     <TaskFrame
       aside={aside}
-      closeOnEscape
       exitHref={exitHref}
       footer={
         showsStep ? (
           <>
             <TaskActions>
-              {phone.back !== -1 && <StepsBackButton onClick={back} />}
+              <BackWithSecondAction
+                back={phone.back !== -1 && <QuestionBack label={t("Back")} onClick={back} />}
+              >
+                {isLastWide && <WideOnly when={!isLastHere}>{final.second}</WideOnly>}
+              </BackWithSecondAction>
               {item.action}
               {!isLastHere && (
                 <TaskMainButton
@@ -176,7 +186,7 @@ export function Steps({
                   {t("Continue")}
                 </TaskMainButton>
               )}
-              {isLastWide && <WideOnly when={!isLastHere}>{finalAction}</WideOnly>}
+              {isLastWide && <WideOnly when={!isLastHere}>{final.main}</WideOnly>}
               {ask}
             </TaskActions>
             {item.option}

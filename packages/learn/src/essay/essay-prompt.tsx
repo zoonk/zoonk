@@ -1,11 +1,14 @@
 "use client";
 
 import { type EssayView } from "@zoonk/core/exams/essays/contract";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { PageSectionTitle } from "../_components/page";
+import { QuestionTitle } from "../_components/question-title";
 import { TaskAsideContent } from "../_components/task-layout";
-import { ItemStem, ItemText, QUESTION_TEXT_CLASS } from "../questions/item-text";
+import { ItemText } from "../questions/item-text";
 import { useEssayScreen } from "./essay-context";
+import { ESSAY_QUOTE_CLASS } from "./essay-labels";
 import { CriteriaInView } from "./essay-rewrite-guide";
 
 export function usePromptLabel(rubric: EssayView["rubric"]): string {
@@ -50,12 +53,15 @@ export function EssayTexts({ criteria, texts }: { criteria: boolean; texts: stri
             {label}
           </PageSectionTitle>
           <ItemText
-            className="border-border with-aside:group-data-aside/task:border-l-0 with-aside:group-data-aside/task:pl-0 border-l-2 pl-4 text-sm leading-relaxed"
+            className={cn(
+              ESSAY_QUOTE_CLASS,
+              "border-border with-aside:group-data-aside/task:border-l-0 with-aside:group-data-aside/task:pl-0 text-sm leading-relaxed",
+            )}
             text={texts}
           />
         </section>
       )}
-      <CriteriaInView />
+      <CriteriaInView headed={!texts} />
     </TaskAsideContent>
   );
 }
@@ -67,13 +73,11 @@ export function EssayInstruction({ context }: { context: string | null }) {
     <section className="flex flex-col gap-4" data-slot="essay-instruction">
       {context && (
         <ItemText
-          className="border-border border-l-2 pl-4 text-sm leading-relaxed"
+          className={cn(ESSAY_QUOTE_CLASS, "border-border text-sm leading-relaxed")}
           text={context}
         />
       )}
-      <div className={QUESTION_TEXT_CLASS}>
-        <ItemStem text={essay.question} heading="h2" />
-      </div>
+      <QuestionTitle text={essay.question} />
     </section>
   );
 }

@@ -274,71 +274,6 @@
         }
       }
     },
-    "About you · %lld of %lld" : {
-      "comment" : "Over an About you question in onboarding: which one it is of how many",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Über dich · %1$lld von %2$lld"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "About you · %1$lld of %2$lld"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sobre ti · %1$lld de %2$lld"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "À propos de toi · %1$lld sur %2$lld"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Su di te · %1$lld di %2$lld"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "プロフィール・%1$lld/%2$lld"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "내 정보 · %1$lld/%2$lld"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O tobie · %1$lld z %2$lld"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sobre você · %1$lld de %2$lld"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Senin hakkında · %1$lld / %2$lld"
-          }
-        }
-      }
-    },
     "Add" : {
       "comment" : "About you row value for an answer whose facts were deleted in Memory",
       "localizations" : {
@@ -870,61 +805,61 @@
         }
       }
     },
-    "E.g., Coldplay, Radiolab" : {
-      "comment" : "Example artists and podcasts",
+    "E.g., Coldplay, TED Talks Daily" : {
+      "comment" : "Example artists and podcasts, known in every country",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Z. B. Coldplay, Radiolab"
+            "value" : "Z. B. Coldplay, TED Talks Daily"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "P. ej., Coldplay, Radiolab"
+            "value" : "P. ej., Coldplay, TED Talks Daily"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ex. : Coldplay, Radiolab"
+            "value" : "Par ex. : Coldplay, TED Talks Daily"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ad es., Coldplay, Radiolab"
+            "value" : "Es. Coldplay, TED Talks Daily"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "例：Coldplay、Radiolab"
+            "value" : "例：Coldplay、TED Talks Daily"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "예: Coldplay, Radiolab"
+            "value" : "예: Coldplay, TED Talks Daily"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Np. Coldplay, Radiolab"
+            "value" : "Np. Coldplay, TED Talks Daily"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ex.: Coldplay, Radiolab"
+            "value" : "Ex.: Coldplay, TED Talks Daily"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Örn. Coldplay, Radiolab"
+            "value" : "Örn. Coldplay, TED Talks Daily"
           }
         }
       }
@@ -1224,61 +1159,61 @@
         }
       }
     },
-    "E.g., Star Trek, Flamengo" : {
-      "comment" : "Example shows and teams",
+    "E.g., Star Trek, Formula 1" : {
+      "comment" : "Example shows and sports, known in every country",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Z. B. Star Trek, Flamengo"
+            "value" : "Z. B. Star Trek, Formel 1"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "P. ej., Star Trek, Flamengo"
+            "value" : "P. ej., Star Trek, Formula 1"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ex. : Star Trek, Flamengo"
+            "value" : "Par ex. : Star Trek, Formule 1"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ad es., Star Trek, Flamengo"
+            "value" : "Es. Star Trek, Formula 1"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "例：Star Trek、Flamengo"
+            "value" : "例：Star Trek、Formula 1"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "예: Star Trek, Flamengo"
+            "value" : "예: Star Trek, Formula 1"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Np. Star Trek, Flamengo"
+            "value" : "Np. Star Trek, Formula 1"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ex.: Star Trek, Flamengo"
+            "value" : "Ex.: Star Trek, Formula 1"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Örn. Star Trek, Flamengo"
+            "value" : "Örn. Star Trek, Formula 1"
           }
         }
       }
@@ -2050,65 +1985,6 @@
         }
       }
     },
-    "None of these" : {
-      "comment" : "Declines an About you question",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nichts davon"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ninguna de estas"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aucun de ces cas"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nessuna di queste"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "どれも当てはまらない"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "해당하는 항목이 없어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Żadne z nich"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nenhuma dessas"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bunların hiçbiri"
-          }
-        }
-      }
-    },
     "Not answered" : {
       "comment" : "About you row value",
       "localizations" : {
@@ -2227,179 +2103,61 @@
         }
       }
     },
-    "Nothing in particular" : {
-      "comment" : "Declines What helps you learn?",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nichts Bestimmtes"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nada en particular"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rien de particulier"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Niente in particolare"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "特になし"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "특별히 없어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nic szczególnego"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nada em especial"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Özel bir şey yok"
-          }
-        }
-      }
-    },
-    "Nothing to add" : {
-      "comment" : "Declines What have you studied?",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nichts hinzuzufügen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nada que agregar"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rien à ajouter"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nulla da aggiungere"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "追加なし"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "추가할 내용이 없어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nie mam nic do dodania"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nada a acrescentar"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ekleyecek bir şeyim yok"
-          }
-        }
-      }
-    },
-    "Optional. What you pick is saved to your profile so your buddy can adapt to you. You can remove it anytime in Settings." : {
+    "Optional. We use what you pick to adapt the content to your needs. You can remove it anytime in Settings." : {
       "comment" : "Under the conditions question",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Optional. Deine Auswahl wird in deinem Profil gespeichert, damit sich dein Kumpel auf dich einstellen kann. Du kannst sie jederzeit in den Einstellungen entfernen."
+            "value" : "Optional. Wir nutzen deine Auswahl, um die Inhalte an deine Bedürfnisse anzupassen. Du kannst sie jederzeit in den Einstellungen löschen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Opcional. Lo que elijas se guarda en tu perfil para que tu compañero pueda adaptarse a ti. Puedes eliminarlo cuando quieras en Configuración."
+            "value" : "Opcional. Usamos lo que elijas para adaptar el contenido a tus necesidades. Puedes eliminarlo cuando quieras en Configuración."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Facultatif. Tes choix sont enregistrés dans ton profil pour que ton compagnon puisse s’adapter à toi. Tu peux les supprimer à tout moment dans les réglages."
+            "value" : "Facultatif. Nous utilisons tes choix pour adapter le contenu à tes besoins. Tu peux les supprimer à tout moment dans les Réglages."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Facoltativo. Le tue scelte vengono salvate nel profilo, così il tuo compagno può adattarsi alle tue esigenze. Puoi rimuoverle in qualsiasi momento dalle Impostazioni."
+            "value" : "Facoltativo. Usiamo le tue scelte per adattare i contenuti alle tue esigenze. Puoi eliminarle quando vuoi nelle Impostazioni."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "任意です。選んだ内容はプロフィールに保存され、相棒が一人ひとりに合ったサポートをするために使われます。設定からいつでも削除できます。"
+            "value" : "任意です。選んだ内容に合わせて学習内容を調整します。設定からいつでも削除できます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "선택 사항이에요. 짝꿍이 나에게 맞춰 도와줄 수 있도록 선택한 내용이 프로필에 저장돼요. 설정에서 언제든 삭제할 수 있어요."
+            "value" : "선택 사항이에요. 선택한 내용을 바탕으로 필요에 맞게 학습 내용을 조정해요. 설정에서 언제든 삭제할 수 있어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Opcjonalnie. Twój wybór zapisujemy w profilu, dzięki czemu twój kumpel może lepiej dopasować się do ciebie. Możesz go usunąć w dowolnej chwili w Ustawieniach."
+            "value" : "To opcjonalne. Dzięki tym informacjom dopasowujemy treści do twoich potrzeb. Możesz je w każdej chwili usunąć w Ustawieniach."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Opcional. O que você escolher fica salvo no seu perfil para seu parceiro se adaptar a você. Você pode remover essas informações quando quiser em Ajustes."
+            "value" : "Opcional. A gente usa o que você escolher para adaptar o conteúdo às suas necessidades. Você pode remover essas informações quando quiser em Ajustes."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "İsteğe bağlı. Arkadaşının sana uyum sağlayabilmesi için seçimlerin profiline kaydedilir. Bunları istediğin zaman Ayarlar’dan kaldırabilirsin."
+            "value" : "İsteğe bağlı. Seçtiklerine göre içeriği ihtiyaçlarına uyarlıyoruz. Bunları istediğin zaman Ayarlar’dan kaldırabilirsin."
           }
         }
       }
@@ -2463,120 +2221,120 @@
         }
       }
     },
-    "Past or present, finished or not. It can be different from your work." : {
+    "Past or present, finished or not. Pick up to 3." : {
       "comment" : "Under What have you studied?",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Früher oder heute, abgeschlossen oder nicht. Das muss nichts mit deiner Arbeit zu tun haben."
+            "value" : "Früher oder heute, abgeschlossen oder nicht. Wähl bis zu 3 aus."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estudios de antes o de ahora, terminados o no. Pueden ser distintos de tu trabajo."
+            "value" : "Estudios anteriores o actuales, terminados o no. Elige hasta 3."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Études passées ou en cours, terminées ou non. Elles peuvent être sans lien avec ton travail."
+            "value" : "Études passées ou en cours, terminées ou non. Choisis jusqu’à 3 réponses."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Studi passati o attuali, conclusi o meno. Anche in un campo diverso dal tuo lavoro."
+            "value" : "Studi passati o attuali, conclusi o no. Scegline fino a 3."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "今学んでいることでも、過去に学んだことでも、途中まででもかまいません。仕事と違う分野でも大丈夫です。"
+            "value" : "過去の学習も今の学習も、修了したかどうかに関係なく選べます。3つまで選べます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "예전에 배웠든 지금 배우고 있든, 다 마쳤든 아니든 괜찮아요. 하는 일과 달라도 돼요."
+            "value" : "예전에 배웠든 지금 배우든, 끝내지 않았어도 괜찮아요. 최대 3개까지 선택하세요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nauka obecna lub wcześniejsza, ukończona lub nie. Nie musi być związana z twoją pracą."
+            "value" : "Wcześniejsze lub obecne, ukończone lub nie. Wybierz maksymalnie 3."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vale o que você estuda ou já estudou, mesmo sem concluir. Não precisa ter a ver com seu trabalho."
+            "value" : "Estudos anteriores ou atuais, concluídos ou não. Escolha até 3."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ne zaman okuduğun ya da bitirip bitirmediğin fark etmez. İşinle aynı alanda olması gerekmiyor."
+            "value" : "Daha önce ya da şu anda okuduklarından en fazla 3 tane seç. Bitirmiş olman gerekmez."
           }
         }
       }
     },
-    "Pick anything that helps. No label or diagnosis needed." : {
+    "Pick anything that helps." : {
       "comment" : "Under What helps you learn?",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wähl aus, was dir hilft. Du brauchst dafür keine Diagnose und musst dich nicht einordnen."
+            "value" : "Wähl alles aus, was dir hilft."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elige lo que te ayude. No necesitas una etiqueta ni un diagnóstico."
+            "value" : "Elige todo lo que te ayude."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choisis ce qui t’aide. Pas besoin d’étiquette ni de diagnostic."
+            "value" : "Choisis tout ce qui t’aide."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Scegli tutto ciò che ti aiuta. Non servono etichette né diagnosi."
+            "value" : "Scegli tutto ciò che ti aiuta."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "学びやすくなるものを選んでください。特性の名前や診断は必要ありません。"
+            "value" : "学びやすくなるものを自由に選んでください。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "도움이 되는 방법을 골라 보세요. 특정 질환이나 진단 여부와 상관없어요."
+            "value" : "도움이 되는 것을 모두 선택하세요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wybierz wszystko, co ci pomaga. Nie musisz się określać ani mieć diagnozy."
+            "value" : "Wybierz wszystko, co ci pomaga."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escolha o que te ajuda. Não precisa de rótulo nem diagnóstico."
+            "value" : "Escolha o que ajudar."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "İşine yarayanları seç. Kendine bir etiket koyman ya da tanı almış olman gerekmiyor."
+            "value" : "Sana yardımcı olanları seç."
           }
         }
       }
@@ -2636,124 +2394,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "En fazla 3 seçim yap."
-          }
-        }
-      }
-    },
-    "Pick up to 3. We'll use them for examples in your lessons." : {
-      "comment" : "Under the questions about what the learner likes",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wähl bis zu 3 aus. Wir nutzen sie für Beispiele in deinen Lektionen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Elige hasta 3. Aparecerán en los ejemplos de tus lecciones."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fais jusqu’à 3 choix. On s’en servira pour les exemples de tes leçons."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Scegli fino a 3 opzioni. Le useremo negli esempi delle tue lezioni."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "3つまで選べます。レッスンの例に使います。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "최대 3개까지 골라 주세요. 레슨 예시에 활용할게요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wybierz maksymalnie 3. Wykorzystamy je w przykładach na twoich lekcjach."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Escolha até 3. A gente vai usar suas escolhas nos exemplos das suas aulas."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "En fazla 3 seçim yap. Bunları derslerindeki örneklerde kullanacağız."
-          }
-        }
-      }
-    },
-    "Pick up to 3. We'll use them in your examples." : {
-      "comment" : "Under the apps and tools question",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wähl bis zu 3 aus. Wir nutzen sie in deinen Beispielen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Elige hasta 3. Aparecerán en tus ejemplos."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fais jusqu’à 3 choix. On s’en servira dans tes exemples."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Scegli fino a 3 opzioni. Le useremo nei tuoi esempi."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "3つまで選べます。例に使います。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "최대 3개까지 골라 주세요. 예시에 활용할게요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wybierz maksymalnie 3. Wykorzystamy je w twoich przykładach."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Escolha até 3. A gente vai usar suas escolhas nos seus exemplos."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "En fazla 3 seçim yap. Bunları örneklerinde kullanacağız."
           }
         }
       }
@@ -2931,65 +2571,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kaydet"
-          }
-        }
-      }
-    },
-    "Save and start lesson 1" : {
-      "comment" : "Saves the About you answer, then opens the goal's first lesson",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Speichern und Lektion 1 starten"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Guardar y empezar la lección 1"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enregistrer et commencer la leçon 1"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Salva e inizia la lezione 1"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "保存してレッスン1を始める"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "저장하고 레슨 1 시작하기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zapisz i rozpocznij lekcję 1"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Salvar e começar a aula 1"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kaydet ve 1. derse başla"
           }
         }
       }
@@ -3407,120 +2988,179 @@
         }
       }
     },
-    "We'll remember this for your buddy. You can delete it in Memory." : {
-      "comment" : "Under the box for what helps the learner learn",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir merken uns das für deinen Kumpel. Du kannst es unter Erinnerungen löschen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Guardaremos esto para tu compañero. Puedes eliminarlo en Memoria."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "On gardera ces informations en mémoire pour ton compagnon. Tu peux les supprimer dans Mémoire."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Conserveremo queste informazioni per il tuo compagno. Puoi eliminarle in Memoria."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "相棒がこの内容を覚えておきます。「メモリ」で削除できます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "짝꿍이 참고할 수 있도록 기억해 둘게요. 메모리에서 삭제할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zapamiętamy to dla twojego kumpla. Możesz to usunąć w Pamięci."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A gente vai guardar isso para o seu parceiro. Você pode apagar em Memória."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bunu arkadaşın için aklımızda tutacağız. Bellek’ten silebilirsin."
-          }
-        }
-      }
-    },
-    "We'll use situations from your day in your examples." : {
+    "We use this to pick examples you'll care about." : {
       "comment" : "Under What do you do now?",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wir nutzen Situationen aus deinem Alltag für deine Beispiele."
+            "value" : "Damit wählen wir Beispiele aus, die dich interessieren."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Usaremos situaciones de tu día a día en tus ejemplos."
+            "value" : "Usamos esto para elegir ejemplos que te interesen."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "On utilisera des situations de ton quotidien dans tes exemples."
+            "value" : "Ces informations nous aident à choisir des exemples qui t’intéressent."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Useremo esempi tratti dalla tua vita quotidiana."
+            "value" : "Ci serve per scegliere esempi che ti interessano."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "日常の場面を学習の例に取り入れます。"
+            "value" : "興味を持てる例を選ぶために使います。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "일상 속 상황을 예시에 담을게요."
+            "value" : "흥미를 느낄 만한 예시를 고를 때 참고해요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "W przykładach wykorzystamy sytuacje z twojej codzienności."
+            "value" : "Dzięki temu dobierzemy przykłady, które cię zainteresują."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A gente vai usar situações do seu dia a dia nos exemplos."
+            "value" : "A gente usa isso para escolher exemplos que te interessem."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Örneklerini hazırlarken günlük hayatından yola çıkacağız."
+            "value" : "Buna göre ilgini çekecek örnekler seçiyoruz."
+          }
+        }
+      }
+    },
+    "We'll remember this. You can delete it anytime in Settings." : {
+      "comment" : "Under the box for what helps the learner learn",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir merken uns das. Du kannst es jederzeit in den Einstellungen löschen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo recordaremos. Puedes eliminarlo cuando quieras en Configuración."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nous garderons ces informations en mémoire. Tu peux les supprimer à tout moment dans les Réglages."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo terremo a mente. Puoi eliminarlo quando vuoi nelle Impostazioni."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この内容を覚えておきます。設定からいつでも削除できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기억해 둘게요. 설정에서 언제든 삭제할 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zapamiętamy to. Możesz to w każdej chwili usunąć w Ustawieniach."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A gente vai lembrar disso. Você pode apagar quando quiser em Ajustes."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bunu aklımızda tutacağız. İstediğin zaman Ayarlar’dan silebilirsin."
+          }
+        }
+      }
+    },
+    "We'll talk to you this way." : {
+      "comment" : "Under How should we address you?",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "So sprechen wir dich an."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Así te hablaremos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nous te parlerons comme ça."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ci rivolgeremo a te così."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このようにお話しします。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이렇게 이야기할게요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tak będziemy się do ciebie zwracać."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "É assim que a gente vai falar com você."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sana böyle hitap edeceğiz."
           }
         }
       }
@@ -4524,65 +4164,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu soruları istediğin zaman Ayarlar › Senin hakkında bölümünden cevaplayabilirsin."
-          }
-        }
-      }
-    },
-    "Your buddy and your feedback will talk to you this way. Lessons stay the same." : {
-      "comment" : "Under How should we address you?",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dein Kumpel spricht dich so an. Auch die Rückmeldungen sind so formuliert. Die Lektionen bleiben gleich."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu compañero y los comentarios que recibas usarán estas formas al hablarte. Las lecciones no cambian."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ton compagnon et les commentaires utiliseront ces formulations. Les leçons restent les mêmes."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il tuo compagno e i commenti che ricevi useranno queste forme. Le lezioni restano uguali."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "相棒の言葉やフィードバックに、この表現を使います。レッスンは変わりません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "짝꿍의 말과 피드백에 이 표현을 써요. 레슨은 그대로예요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twój kumpel będzie się tak do ciebie zwracać. Takich form użyjemy też w informacjach zwrotnych. Lekcje pozostaną bez zmian."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seu parceiro e o feedback vão falar com você assim. As aulas continuam iguais."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ders arkadaşın sana bu şekilde hitap edecek, geri bildirimler de buna göre yazılacak. Dersler aynı kalacak."
           }
         }
       }

@@ -16,12 +16,8 @@ export function StatTilesSkeleton({ className, count }: { className?: string; co
     >
       {Array.from({ length: count }, (_, index) => (
         // oxlint-disable-next-line react/no-array-index-key -- Static placeholders.
-        <Skeleton className="rounded-option h-24.5" key={index} />
+        <Skeleton className="h-24.5 rounded-xl" key={index} />
       ))}
     </div>
   );
-}
-
-export function StatsLine({ children }: { children: React.ReactNode }) {
-  return <p className="text-muted-foreground max-w-column text-sm text-pretty">{children}</p>;
 }

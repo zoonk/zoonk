@@ -4,21 +4,16 @@ import {
   type CertificateFacts,
   type OwnedCertificateFacts,
 } from "@zoonk/core/certificates/contract";
-import {
-  Dialog,
-  DialogDescription,
-  DialogPopup,
-  DialogPortal,
-  DialogTitle,
-} from "@zoonk/ui/components/dialog";
-import { type CertificateLinks } from "@zoonk/utils/certificate-links";
+import { buttonVariants } from "@zoonk/ui/components/button";
+import { DialogDescription, DialogTitle } from "@zoonk/ui/components/dialog";
+import { type CertificateLinks, getCertificatePath } from "@zoonk/utils/certificate-links";
+import { useExtracted } from "next-intl";
 import { useState } from "react";
-import { TaskBody } from "../_components/task-layout";
-import { SCREEN_STEADY_MS, useSteady } from "../_utils/use-steady";
 import { useCeremonyClosing } from "../ceremonies/ceremony-closing";
-import { CertificatePlusNotice } from "./certificate-lock";
+import { CeremonyBar, CeremonyFrame, useCeremonyFrame } from "../ceremonies/ceremony-frame";
+import { LearnLink } from "../learn-link";
 import { useCertificateMomentCopy } from "./certificate-moment-copy";
-import { ContinueBar, MomentSheets, NameRow } from "./certificate-moment-parts";
+import { MomentSheets, NameRow } from "./certificate-moment-parts";
 import { CertificateNameField, type SaveCertificateName } from "./certificate-name";
 import {
   AddToLinkedInButton,
@@ -31,7 +26,7 @@ export type CertificateMomentProps = {
   beforeCeremony?: boolean;
   /** Oldest first, as completion results carry them; the newest is the one on top. */
   certificates: OwnedCertificateFacts[];
-  /** Asked only for unlocked certificates. */
+  /** Asked only for certificates their owner can open. */
   getLinks: (facts: CertificateFacts) => CertificateLinks;
   onClose?: () => void;
   onShown: (code: string) => void;
@@ -79,7 +74,7 @@ function OwnerPart({
         <ShareCertificateButton className="flex-1 sm:flex-none" />
         <AddToLinkedInButton className="flex-1 sm:flex-none" />
       </CertificateSharing>
-      <p className="text-faint mt-3.5 text-[0.8125rem]">{saved}</p>
+      <p className="text-faint text-compact mt-3.5">{saved}</p>
     </>
   );
 }
@@ -87,8 +82,9 @@ function OwnerPart({
 /**
  * The moment a course level, a plan or a language level is certified: shown first, full screen,
  * before any milestone's ceremony and the task's own result. The name is the profile's, so fixing
- * it here fixes every certificate. A locked one plays the same moment with the Plus notice; See
- * Plus leaves without closing it, so it plays again after the next task.
+ * it here fixes every certificate. Without a subscription it plays the same moment, and "See your
+ * certificate" opens its page, where the gate stands; leaving that way doesn't close it, so it
+ * plays again after the next task.
  */
 export function CertificateMoment({
   beforeCeremony = false,
@@ -98,11 +94,21 @@ export function CertificateMoment({
   onShown,
   saveName,
 }: CertificateMomentProps) {
-  const [open, setOpen] = useState(true);
+  const t = useExtracted();
   const [savedName, setSavedName] = useState<string | null>(null);
-  const isSteady = useSteady(SCREEN_STEADY_MS);
   const onClosing = useCeremonyClosing();
   const copy = useCertificateMomentCopy(certificates);
+
+  /** Seen once it's closed: leaving before that brings it back at the end of the next task. */
+  const frame = useCeremonyFrame(() => {
+    for (const { code } of certificates) {
+      onShown(code);
+    }
+
+    if (!beforeCeremony) {
+      onClosing();
+    }
+  });
 
   const [top, behind] = certificates
     .map((facts) => ({ ...facts, recipientName: savedName ?? facts.recipientName }))
@@ -114,72 +120,41 @@ export function CertificateMoment({
 
   const links = top.locked ? null : getLinks(top);
 
-  /** Seen once it's closed: leaving before that brings it back at the end of the next task. */
-  const close = () => {
-    setOpen(false);
-
-    for (const { code } of certificates) {
-      onShown(code);
-    }
-
-    if (!beforeCeremony) {
-      onClosing();
-    }
-  };
-
   return (
-    <Dialog
-      onOpenChange={(isOpen) => {
-        if (!isOpen) {
-          close();
-        }
-      }}
-      onOpenChangeComplete={(isOpen) => {
-        if (!isOpen) {
-          onClose?.();
-        }
-      }}
-      open={open}
+    <CeremonyFrame
+      bar={<CeremonyBar action={t("Continue")} onConfirm={() => frame.whenSteady(frame.close)} />}
+      onClose={frame.close}
+      onClosed={onClose}
+      open={frame.open}
+      slot="certificate-moment"
     >
-      <DialogPortal>
-        <DialogPopup
-          className="data-open:animate-in data-open:fade-in data-closed:animate-out data-closed:fade-out duration-base fixed inset-0 z-50 flex flex-col overflow-y-auto"
-          data-slot="certificate-moment"
-        >
-          <TaskBody className="items-center justify-center gap-0 pt-12 pb-16 text-center">
-            <MomentSheets behind={behind ?? null} getLinks={getLinks} top={top} />
+      <MomentSheets behind={behind ?? null} getLinks={getLinks} top={top} />
 
-            <DialogTitle className="text-headline mt-8">{copy.title}</DialogTitle>
-            {copy.line && (
-              <DialogDescription className="text-lead mt-2 max-w-136">
-                {copy.line}
-              </DialogDescription>
-            )}
+      <div className="flex w-full flex-col items-center">
+        <DialogTitle className="text-headline">{copy.title}</DialogTitle>
+        {copy.line && (
+          <DialogDescription className="text-lead mt-2 max-w-136">{copy.line}</DialogDescription>
+        )}
 
-            <div className="mt-4.5 flex w-full flex-col items-center">
-              {links ? (
-                <OwnerPart
-                  facts={top}
-                  links={links}
-                  onNamed={setSavedName}
-                  saveName={saveName}
-                  saved={copy.saved}
-                />
-              ) : (
-                <CertificatePlusNotice className="max-w-md text-left" />
-              )}
-            </div>
-          </TaskBody>
-
-          <ContinueBar
-            onContinue={() => {
-              if (isSteady()) {
-                close();
-              }
-            }}
-          />
-        </DialogPopup>
-      </DialogPortal>
-    </Dialog>
+        <div className="mt-4.5 flex w-full flex-col items-center">
+          {links ? (
+            <OwnerPart
+              facts={top}
+              links={links}
+              onNamed={setSavedName}
+              saveName={saveName}
+              saved={copy.saved}
+            />
+          ) : (
+            <LearnLink
+              className={buttonVariants({ size: "lg", variant: "outline" })}
+              href={getCertificatePath(top.code)}
+            >
+              {t("See your certificate")}
+            </LearnLink>
+          )}
+        </div>
+      </div>
+    </CeremonyFrame>
   );
 }

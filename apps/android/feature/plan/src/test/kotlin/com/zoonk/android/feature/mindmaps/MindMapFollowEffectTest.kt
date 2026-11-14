@@ -44,8 +44,6 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -93,84 +91,6 @@ class MindMapFollowEffectTest {
 
     @After
     fun stop() = Dispatchers.resetMain()
-
-    @Test
-    fun aPollAnsweredBeforeBuyingPlusCantLockTheReadyRowItsEffectIsLeaving() =
-        runTest(dispatcher) {
-            answer = CompletableDeferred()
-            fake.chapter = { chapterMindMap("drawing") }
-
-            row(fromList = false) { store, _ ->
-                store.chapter[key].load()
-                show()
-                advanceTimeBy(MindMapShown.Drawing.pollEvery.inWholeMilliseconds)
-                runCurrent()
-
-                fake.chapter = { chapterMindMap("ready") }
-                cache.invalidate(setOf(DataDomain.UserSubscription))
-                store.chapter[key].load()
-                fake.chapter = { throw ApiException(ApiError.Network) }
-                answer?.complete(ChapterMindMapStatus.Status.PLUS_REQUIRED)
-                frame()
-
-                assertEquals(MindMapShown.Ready, rendered)
-            }
-        }
-
-    @Test
-    fun buyingPlusAfterALockStoppedTheFollowAfterCreateShowsTheUnlockedMap() =
-        runTest(dispatcher) {
-            reads("available")
-
-            row { store, maps ->
-                loadBoth(store)
-                show()
-                reads("drawing")
-                maps.create(key.chapterId)
-                frame()
-                assertEquals(MindMapShown.Drawing, rendered)
-
-                lockWhileTheChapterIsRead(maps)
-                buyPlus(store, "available")
-
-                assertEquals(MindMapShown.Available, rendered)
-            }
-        }
-
-    @Test
-    fun buyingPlusAfterALockStoppedTheFollowOfANewStageShowsTheUnlockedMap() =
-        runTest(dispatcher) {
-            reads("writingLessons")
-
-            row { store, maps ->
-                loadBoth(store)
-                show()
-                moveOnToDrawing()
-
-                lockWhileTheChapterIsRead(maps)
-                buyPlus(store, "available")
-
-                assertEquals(MindMapShown.Available, rendered)
-                assertTrue(fake.created.isEmpty())
-            }
-        }
-
-    @Test
-    fun buyingPlusShowsARunThatFailedInsteadOfItsOldProgress() =
-        runTest(dispatcher) {
-            reads("writingLessons")
-
-            row { store, maps ->
-                loadBoth(store)
-                show()
-                moveOnToDrawing()
-
-                lockWhileTheChapterIsRead(maps)
-                buyPlus(store, "failed")
-
-                assertEquals(MindMapShown.Failed, rendered)
-            }
-        }
 
     @Test
     fun aRowShownWithAnotherGoalsMapsFollowsWithThem() =
@@ -238,33 +158,6 @@ class MindMapFollowEffectTest {
         test.advanceTimeBy(MindMapShown.WritingLessons.pollEvery.inWholeMilliseconds)
         frame()
         assertEquals(MindMapShown.Drawing, rendered)
-    }
-
-    /** The list reads the lock and the row shows it, which stops the follow while the chapter's read is still out. */
-    private fun RowScope.lockWhileTheChapterIsRead(maps: MindMapViewModel) {
-        val reading = CompletableDeferred<Unit>()
-        holdChapter = reading
-        fake.statuses.add(ChapterMindMapStatus.Status.PLUS_REQUIRED)
-        fake.mindMaps = { goalMindMaps(listOf(mapJson(3, "Waves", "plusRequired"))) }
-        test.advanceTimeBy(MindMapShown.Drawing.pollEvery.inWholeMilliseconds)
-        frame()
-        assertTrue(reading.isCompleted)
-        assertEquals(MindMapShown.PlusRequired, rendered)
-        assertNull(maps.requests.value[key.chapterId])
-        holdChapter = null
-    }
-
-    private suspend fun RowScope.buyPlus(
-        store: MindMapStore,
-        status: String,
-    ) {
-        reads(status)
-        cache.invalidate(setOf(DataDomain.UserSubscription))
-        loadBoth(store)
-        frame()
-        // Three polls' worth: nothing left behind keeps following and gives up as unreachable.
-        test.advanceTimeBy(MAX_POLLS * MindMapShown.Drawing.pollEvery.inWholeMilliseconds + 1)
-        frame()
     }
 
     private class RowScope(
@@ -366,6 +259,5 @@ class MindMapFollowEffectTest {
 
     private companion object {
         const val NANOS_PER_MILLI = 1_000_000L
-        const val MAX_POLLS = 3
     }
 }

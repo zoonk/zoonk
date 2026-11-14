@@ -13,8 +13,7 @@ struct LearningPreferences: Equatable, Sendable {
 
 enum PreferencesUpdate: Equatable, Sendable {
   case buddy(BuddyChoice)
-  /// Nil clears it.
-  case homeCountry(CountryChoice?)
+  case homeCountry(CountryChoice)
   /// The summary shows it, so it changes nothing here.
   case shareUsageData(Bool)
   case soundsEnabled(Bool)
@@ -59,11 +58,6 @@ enum PreferencesUpdate: Equatable, Sendable {
     return next
   }
 
-  /// Clearing a country sends its `null`, which the generated client would leave out.
-  var nullKeys: [String] {
-    self == .homeCountry(nil) ? ["homeCountry"] : []
-  }
-
   var body: Components.Schemas.LearningProfileUpdate {
     switch self {
     case .buddy(let buddy):
@@ -74,7 +68,7 @@ enum PreferencesUpdate: Equatable, Sendable {
             kind: .init(rawValue: buddy.kind.rawValue) ?? .zu,
             name: buddy.name)))
     case .homeCountry(let country):
-      .init(homeCountry: country?.code)
+      .init(homeCountry: country.code)
     case .shareUsageData(let shares):
       .init(shareUsageData: shares)
     case .soundsEnabled(let enabled):
@@ -133,10 +127,8 @@ struct MemoryFact: Equatable, Identifiable, Sendable {
 /// What a free account can do; nil means no cap.
 struct FreePlan: Decodable, Equatable, Sendable {
   let activeGoals: Int?
-  let examPrepDays: Int?
   let guestLessons: Int?
-  let lessonsPerDay: Int?
-  let lessonsPerMonth: Int?
+  let lessonsPer30Days: Int?
   let tutorMessagesPerDay: Int?
   let uploadsPerDay: Int?
 }
@@ -207,8 +199,9 @@ extension MemoryFact {
 
 extension PlanAllowance {
   init(_ allowance: Components.Schemas.AllowanceResponse) {
-    let messages = allowance.items.first { $0.kind == .tutorMessage }
-    let goals = allowance.items.first { $0.kind == .goal }
+    let counts = allowance.items.compactMap(\.value2)
+    let messages = counts.first { $0.kind == .tutorMessage }
+    let goals = counts.first { $0.kind == .goal }
 
     self.init(
       tier: Tier(rawValue: allowance.tier.rawValue) ?? .free,

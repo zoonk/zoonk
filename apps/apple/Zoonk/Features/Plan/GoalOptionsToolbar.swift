@@ -7,7 +7,9 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
   @Environment(AppRouter.self) private var router
   @Environment(PlanStore.self) private var store
   @State private var confirming: Confirmation?
+  @State private var isArchiving = false
   @State private var failure: GoalStatusOutcome?
+  @State private var resumeFailure: GoalStatusOutcome?
   @State private var isSaving = false
   @State private var isRenaming = false
   @State private var name = ""
@@ -17,7 +19,6 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
   @ViewBuilder let planItems: PlanItems
 
   private enum Confirmation: Identifiable {
-    case archive
     case resume
 
     var id: Self { self }
@@ -35,36 +36,27 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
         }
         .disabled(isSaving)
       }
-      .environment(\.resumeGoal, ResumeGoal(isBusy: isSaving, action: resume))
+      .environment(
+        \.resumeGoal, ResumeGoal(isBusy: isSaving, failure: resumeFailure, action: resume)
+      )
       .confirmationDialog(
-        confirmationTitle, isPresented: isConfirming, titleVisibility: .visible,
-        presenting: confirming
-      ) { confirmation in
-        switch confirmation {
-        case .archive:
-          Button(role: .destructive) {
-            set(.archived)
-          } label: {
-            Text("Archive", tableName: "Plan", comment: "Confirms archiving the goal")
-          }
-        case .resume:
-          Button {
-            set(.active)
-          } label: {
-            Text("Resume", tableName: "Plan", comment: "Confirms resuming the paused goal")
-          }
+        Text(
+          "Resume your \(goal.displayName) goal?", tableName: "Plan",
+          comment: "Asks before resuming the paused goal named here"),
+        isPresented: isConfirming, titleVisibility: .visible, presenting: confirming
+      ) { _ in
+        Button {
+          set(.active)
+        } label: {
+          Text("Resume", tableName: "Plan", comment: "Confirms resuming the paused goal")
         }
-      } message: { confirmation in
-        switch confirmation {
-        case .archive:
-          Text(
-            "It leaves your goals and its plan stops. What you learned stays in your progress.",
-            tableName: "Plan", comment: "Explains what archiving a goal does")
-        case .resume:
-          Text(
-            "Your plan picks up from today, starting with the lessons planned for the days you paused.",
-            tableName: "Plan", comment: "Explains how resuming the paused goal changes its plan")
-        }
+      } message: { _ in
+        Text(
+          "Your plan picks up from today, starting with the lessons planned for the days you paused.",
+          tableName: "Plan", comment: "Explains how resuming the paused goal changes its plan")
+      }
+      .archiveGoalConfirmation(goal, isPresented: $isArchiving) {
+        set(.archived)
       }
       .alert(
         Text(
@@ -101,19 +93,10 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
         Text("Couldn't save", tableName: "Plan", comment: "Title of an error saving the goal"),
         isPresented: hasFailed, presenting: failure
       ) { _ in
-      } message: { outcome in
-        if outcome == .limitReached {
-          Text(
-            "You're following as many goals as the free plan allows. Pause another goal to resume this one, or get Plus to follow more.",
-            tableName: "Plan",
-            comment:
-              "Explains why resuming a goal failed: the learner follows as many goals at once as the free plan allows; it's about goals followed at the same time, not new goals started per day or month. Pausing a goal keeps its progress. Plus is the subscription's name, not \"more\""
-          )
-        } else {
-          Text(
-            "Check your connection and try again.", tableName: "Plan",
-            comment: "Explains a failed save")
-        }
+      } message: { _ in
+        Text(
+          "Check your connection and try again.", tableName: "Plan",
+          comment: "Explains a failed save")
       }
   }
 
@@ -159,26 +142,13 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
     }
 
     Button(role: .destructive) {
-      confirming = .archive
+      isArchiving = true
     } label: {
       Label {
         Text("Archive this goal", tableName: "Plan", comment: "Archives the goal, after asking")
       } icon: {
         Image(systemName: "archivebox")
       }
-    }
-  }
-
-  private var confirmationTitle: Text {
-    switch confirming {
-    case .resume:
-      Text(
-        "Resume your \(goal.displayName) goal?", tableName: "Plan",
-        comment: "Asks before resuming the paused goal named here")
-    default:
-      Text(
-        "Archive your \(goal.displayName) goal?", tableName: "Plan",
-        comment: "Asks before archiving the goal named here")
     }
   }
 
@@ -197,6 +167,7 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
   /// Resuming asks first only when it changes the plan (the pause left lessons behind).
   private func resume() {
     Task {
+      resumeFailure = nil
       isSaving = true
       let preview = store.resumeChangesPlan(goalId: goal.id)
       await preview.load()
@@ -243,6 +214,11 @@ struct GoalOptionsToolbar<PlanItems: View>: ViewModifier {
         if status == .archived {
           router.showRoot(of: .today)
         }
+      // A failed resume is said over the paused page's bar, where its Resume is.
+      case .done(let refused) where status == .active:
+        resumeFailure = refused
+      case .failed where status == .active:
+        resumeFailure = .failed
       case .done(let refused):
         failure = refused
       case .failed:
@@ -260,14 +236,181 @@ extension GoalOptionsToolbar where PlanItems == EmptyView {
   }
 }
 
+extension View {
+  func archiveGoalConfirmation(
+    _ goal: LearnerGoal, isPresented: Binding<Bool>, archive: @escaping () -> Void
+  ) -> some View {
+    archiveGoalConfirmation(named: goal.displayName, isPresented: isPresented, archive: archive)
+  }
+
+  /// The one archive confirm: the "…" menu's, and the Plan's and Today's question after an exam's
+  /// date.
+  func archiveGoalConfirmation(
+    named name: String, isPresented: Binding<Bool>, archive: @escaping () -> Void
+  ) -> some View {
+    confirmationDialog(
+      Text(
+        "Archive your \(name) goal?", tableName: "Plan",
+        comment: "Asks before archiving the goal named here"),
+      isPresented: isPresented, titleVisibility: .visible
+    ) {
+      Button(role: .destructive, action: archive) {
+        Text("Archive", tableName: "Plan", comment: "Confirms archiving the goal")
+      }
+    } message: {
+      Text(
+        "It leaves your goals and its plan stops. What you learned stays in your progress.",
+        tableName: "Plan", comment: "Explains what archiving a goal does")
+    }
+  }
+}
+
 /// The menu's "Resume this goal", for a page whose main action resumes its paused goal.
 struct ResumeGoal {
   var isBusy = false
+  var failure: GoalStatusOutcome?
   var action: () -> Void = {}
+}
+
+extension View {
+  /// A paused goal's page: "Resume" is its bottom bar's main action, and a refused resume is said
+  /// over the bar.
+  func resumeGoalBar(isShown: Bool = true) -> some View {
+    modifier(ResumeGoalBar(isShown: isShown))
+  }
+}
+
+private struct ResumeGoalBar: ViewModifier {
+  @Environment(\.resumeGoal) private var resumeGoal
+
+  let isShown: Bool
+
+  func body(content: Content) -> some View {
+    content
+      .bottomBar(note: isShown ? note : nil) {
+        if isShown {
+          BusyButton(isBusy: resumeGoal.isBusy, action: resumeGoal.action) {
+            Text("Resume", tableName: "Plan", comment: "Resumes the paused goal")
+          }
+          .buttonStyle(.mainAction)
+          .keyboardShortcut(.defaultAction)
+        }
+      }
+  }
+
+  private var note: BarNote? {
+    switch resumeGoal.failure {
+    case .limitReached:
+      BarNote(GoalError.resumeLimit)
+    case .failed:
+      BarNote(
+        LocalizedStringResource(
+          "That didn't save. Try again.", table: "Plan",
+          comment: "Resuming the paused goal didn't save"))
+    case .saved, nil:
+      nil
+    }
+  }
 }
 
 extension EnvironmentValues {
   @Entry var resumeGoal = ResumeGoal()
+}
+
+/// An exam whose date passed with lessons left, answered the same on Today and the Plan: archive the
+/// goal (it asks first), or keep studying, the main action.
+struct ExamOverButtons: View {
+  enum Answer {
+    case archive
+    case keepStudying
+  }
+
+  let goalName: String
+  let pressed: Answer?
+  let archive: () -> Void
+  let keepStudying: () -> Void
+
+  @State private var isArchiving = false
+
+  var body: some View {
+    BusyButton(isBusy: pressed == .archive, icon: .archive) {
+      isArchiving = true
+    } label: {
+      Text("Archive goal", tableName: "Plan", comment: "Archives the goal, after asking")
+    }
+    .buttonStyle(.outline)
+    .disabled(pressed == .keepStudying)
+    .archiveGoalConfirmation(named: goalName, isPresented: $isArchiving, archive: archive)
+
+    BusyButton(isBusy: pressed == .keepStudying, action: keepStudying) {
+      Text(
+        "Keep studying", tableName: "Plan",
+        comment: "Keeps studying the lessons left after the exam's date passed")
+    }
+    .buttonStyle(.mainAction)
+    .keyboardShortcut(.defaultAction)
+    .disabled(pressed == .archive)
+  }
+}
+
+extension View {
+  /// The Plan of an exam whose date passed with lessons left asks in its bar, as Today does.
+  func examOverBar(goal: LearnerGoal, isShown: Bool) -> some View {
+    modifier(ExamOverBar(goal: goal, isShown: isShown))
+  }
+}
+
+private struct ExamOverBar: ViewModifier {
+  @Environment(AppRouter.self) private var router
+  @Environment(PlanStore.self) private var store
+  @State private var pressed: ExamOverButtons.Answer?
+  @State private var failed = false
+
+  let goal: LearnerGoal
+  let isShown: Bool
+
+  func body(content: Content) -> some View {
+    content
+      .bottomBar(note: isShown && failed ? BarNote(saveFailure) : nil) {
+        if isShown {
+          ExamOverButtons(
+            goalName: goal.displayName, pressed: pressed, archive: { save(.archive) },
+            keepStudying: { save(.keepStudying) })
+        }
+      }
+  }
+
+  private var saveFailure: LocalizedStringResource {
+    LocalizedStringResource(
+      "That didn't save. Try again.", table: "Plan", comment: "A change couldn't be saved")
+  }
+
+  private func save(_ answer: ExamOverButtons.Answer) {
+    guard pressed == nil else {
+      return
+    }
+
+    pressed = answer
+    failed = false
+
+    Task {
+      defer { pressed = nil }
+
+      switch answer {
+      case .archive:
+        switch await store.setStatus(.archived, goalId: goal.id) {
+        case .done(.saved): router.showRoot(of: .today)
+        case .done, .failed: failed = true
+        case .obsolete: break
+        }
+      case .keepStudying:
+        switch await store.change(goalId: goal.id, edits: [.fullCourse(true)]) {
+        case .done(.invalid), .failed: failed = true
+        case .done, .obsolete: break
+        }
+      }
+    }
+  }
 }
 
 /// Core's `MAX_TITLE_LENGTH`, which bounds a goal's name.

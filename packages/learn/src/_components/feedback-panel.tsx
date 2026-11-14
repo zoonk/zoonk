@@ -53,7 +53,7 @@ export function FeedbackVerdict({
     <div className={cn("flex items-start justify-between gap-3", className)}>
       <p
         className={cn(
-          "flex items-start gap-2 text-[0.9375rem] leading-6 font-[550] [&_svg]:size-4",
+          "text-reading flex items-start gap-2 leading-6 font-medium [&_svg]:size-4",
           TONE_CLASS[tone],
         )}
         data-slot="feedback-verdict"
@@ -79,6 +79,14 @@ export function FeedbackExplanation({ className, ...props }: React.ComponentProp
       {...props}
     />
   );
+}
+
+export function FeedbackAnswerLabel({ className, ...props }: React.ComponentProps<"span">) {
+  return <span className={cn("text-muted-foreground", className)} {...props} />;
+}
+
+export function FeedbackAnswerValue({ className, ...props }: React.ComponentProps<"span">) {
+  return <span className={cn("text-success-text font-medium", className)} {...props} />;
 }
 
 export function FeedbackNote({ className, ...props }: React.ComponentProps<"p">) {

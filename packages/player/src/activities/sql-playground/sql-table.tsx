@@ -2,9 +2,11 @@
 
 import { type ActivityCell } from "@zoonk/core/library/activities/expected-answer";
 import { useFormatNumber } from "@zoonk/learn/format-number";
+import { FoldChevron } from "@zoonk/ui/components/collapsible";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronDown, Table2 } from "lucide-react";
+import { Table2 } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { ACTIVITY_BOX_CLASS } from "../_components/activity-canvas";
 import { keyedByPosition } from "../_utils/position-keys";
 
 type RowState = "extra" | "missing" | "plain" | "right";
@@ -20,6 +22,11 @@ function Cell({ value }: { value: ActivityCell }) {
   }
 
   return typeof value === "number" ? format(value, { grouping: false }) : value;
+}
+
+function isNumberColumn(rows: readonly (readonly ActivityCell[])[], position: number): boolean {
+  const values = rows.map((row) => row[position]).filter((value) => value !== null);
+  return values.length > 0 && values.every((value) => typeof value === "number");
 }
 
 function SqlRow({ row, state }: { row: readonly ActivityCell[]; state: RowState }) {
@@ -57,17 +64,25 @@ function SqlRow({ row, state }: { row: readonly ActivityCell[]; state: RowState 
 
 export function SqlRowsTable({
   caption,
+  className,
   columns,
   rowStates,
   rows,
 }: {
   caption: string;
+  className?: string;
   columns: readonly string[];
   rowStates?: readonly RowState[];
   rows: readonly (readonly ActivityCell[])[];
 }) {
   return (
-    <div className="bg-background has-focus-visible:ring-ring/50 overflow-hidden rounded-xl border has-focus-visible:ring-[3px]">
+    <div
+      className={cn(
+        ACTIVITY_BOX_CLASS,
+        "has-focus-visible:ring-ring/50 overflow-hidden has-focus-visible:ring-[3px]",
+        className,
+      )}
+    >
       <div
         aria-label={caption}
         className="scroll-fade-x overflow-x-auto outline-none"
@@ -79,9 +94,12 @@ export function SqlRowsTable({
           <caption className="sr-only">{caption}</caption>
           <thead className="bg-muted/60 text-muted-foreground font-mono text-xs">
             <tr>
-              {keyedByPosition(columns, (column) => column).map(({ item, key }) => (
+              {keyedByPosition(columns, (column) => column).map(({ item, key }, position) => (
                 <th
-                  className="px-3.5 py-1.5 text-left font-normal whitespace-nowrap"
+                  className={cn(
+                    "px-3.5 py-1.5 text-left font-normal whitespace-nowrap",
+                    isNumberColumn(rows, position) && "text-right",
+                  )}
                   key={key}
                   scope="col"
                 >
@@ -114,10 +132,7 @@ export function SqlTableViewer({ table }: { table: Table }) {
   const t = useExtracted();
 
   return (
-    <details
-      className="group bg-background rounded-xl border"
-      open={table.rows.length <= OPEN_ROW_LIMIT}
-    >
+    <details className={cn(ACTIVITY_BOX_CLASS, "group")} open={table.rows.length <= OPEN_ROW_LIMIT}>
       <summary className="focus-visible:ring-ring/50 flex min-h-11 cursor-pointer list-none items-center gap-2.5 rounded-xl px-3.5 py-2 outline-none select-none focus-visible:ring-[3px] [&::-webkit-details-marker]:hidden">
         <Table2 aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
         <span className="font-mono text-sm font-semibold">{table.name}</span>
@@ -127,19 +142,16 @@ export function SqlTableViewer({ table }: { table: Table }) {
         <span className="text-muted-foreground shrink-0 text-xs tabular-nums">
           {t("{count, plural, one {# row} other {# rows}}", { count: table.rows.length })}
         </span>
-        <ChevronDown
-          aria-hidden="true"
-          className="text-muted-foreground size-4 shrink-0 group-open:rotate-180 motion-safe:transition-transform"
-        />
+        <FoldChevron />
       </summary>
 
-      <div className="px-2 pb-2">
-        <SqlRowsTable
-          caption={t("Table {name}", { name: table.name })}
-          columns={table.columns.map((column) => column.name)}
-          rows={table.rows}
-        />
-      </div>
+      {/* The table is the lower part of this box, not a second box inside it. */}
+      <SqlRowsTable
+        caption={t("Table {name}", { name: table.name })}
+        className="rounded-t-none border-x-0 border-b-0"
+        columns={table.columns.map((column) => column.name)}
+        rows={table.rows}
+      />
     </details>
   );
 }

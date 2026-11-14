@@ -14,7 +14,10 @@ export default async function LevelPage() {
   const t = await getExtracted();
 
   return (
-    <StatsPage title={t("Level")}>
+    <StatsPage
+      description={t("You earn Brain Power for everything you study, and it never goes down.")}
+      title={t("Level")}
+    >
       <Suspense fallback={<LevelContentSkeleton />}>
         <LevelContent />
       </Suspense>

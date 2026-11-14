@@ -5,6 +5,7 @@ struct TodayDayView: View {
   @Environment(\.isCoveredByTask) private var isCovered
   @Environment(AppRouter.self) private var router
   @Environment(TodayStore.self) private var store
+  @Environment(PlanStore.self) private var plans
 
   let view: TodayView
 
@@ -28,11 +29,14 @@ struct TodayDayView: View {
   @State private var answeredInsight: MemoryInsight?
   @State private var insightAnswers: [String: Bool] = [:]
   @State private var uploadDraft = MaterialDraft()
+  @State private var suggestedGoalAnswer = SuggestedGoalAnswer()
 
   enum Tap: Equatable {
+    case archive
     case block(Int)
     case catchUp
     case keepLearning
+    case keepStudying
     case main
     case mission(Int)
     case planChange
@@ -44,11 +48,12 @@ struct TodayDayView: View {
     ScrollViewReader { scroller in
       PaneSplit(primaryShare: 0.55) {
         ZoonkList {
-          header(actionInHeader: false)
+          header
           // It asks for a decision, so it leads the day where the day has room beside it.
           notice
-          day(showsAction: true)
+          day
         }
+        .modifier(actionBar)
       } secondary: {
         ZoonkList {
           UnfinishedGoalSection()
@@ -56,17 +61,14 @@ struct TodayDayView: View {
           TodayPracticeSection(view: view, language: language)
         }
       } single: {
-        // Main's tablet column heads the day with its action.
-        let actionInHeader = horizontalSizeClass == .regular
-
         ZoonkList {
-          header(actionInHeader: actionInHeader)
-          day(showsAction: !actionInHeader)
+          header
+          day
           notice
           UnfinishedGoalSection()
 
           // Main's tablet column: missions beside the week, preparation beside practice.
-          if actionInHeader {
+          if horizontalSizeClass == .regular {
             BlockGridSection {
               aside
               TodayPracticeSection(view: view, language: language)
@@ -76,6 +78,7 @@ struct TodayDayView: View {
             TodayPracticeSection(view: view, language: language)
           }
         }
+        .modifier(actionBar)
       }
       // A new visit folds the day's later blocks out from under a learner who'd scrolled down them,
       // which the list alone leaves scrolled past them.
@@ -105,6 +108,13 @@ struct TodayDayView: View {
         holdShownNotice()
       }
     }
+    // Its open state is kept above the panes, so it outlives a proposal that's answered here, answered
+    // elsewhere or replaced by a newer edit; main's sheet closes with it.
+    .onChange(of: asksPlanChange) {
+      if !asksPlanChange {
+        disclosures.planChange = false
+      }
+    }
     .modifier(LanguageTodayLoading(goal: view.goal))
     .sheet(item: $adjusting) { section in
       TodayAdjustPlanSheet(goalID: view.goal.id, section: section)
@@ -125,26 +135,38 @@ struct TodayDayView: View {
     }
   }
 
-  private func header(actionInHeader: Bool) -> some View {
+  private var header: some View {
     let lead = TodayDayLead(view: view, writingStalled: writingStalled)
 
     return Section {
       VStack(alignment: .leading, spacing: 6) {
         PageHeader(
-          Text("Today", tableName: "Today", comment: "Today tab's title"), eyebrow: dayLine
+          Text("Today", tableName: "Today", comment: "Today tab's title"), supporting: dayLine
         ) {
-          HStack(alignment: .lastTextBaseline, spacing: 16) {
-            if let dayTime {
+          if let dayTime {
+            if let mockDay = view.mockDay {
+              ShorterDayTime(time: dayTime, mockDay: mockDay)
+            } else {
               BigQuantity(dayTime)
-            }
-
-            if actionInHeader, TodaySessionAction.offers(view) {
-              sessionAction(isInHeader: true)
             }
           }
         }
 
-        if view.dayLeadJoinsHeader, !lead.isEmpty {
+        if !view.isWelcomeBack, view.lacksTime {
+          Button {
+            router.select(.plan)
+          } label: {
+            Text(
+              "Adjust your plan", tableName: "Today", comment: "Opens the Plan to fit its lessons"
+            )
+            .disclosureChevron()
+          }
+          .buttonStyle(.plain)
+          .typeStyle(.body.weight(.medium))
+          .foregroundStyle(Color(.foreground))
+        }
+
+        if !lead.isEmpty {
           lead
         }
       }
@@ -175,11 +197,15 @@ struct TodayDayView: View {
       : nil
   }
 
+  private var actionBar: TodayActionBar {
+    TodayActionBar(action: sessionAction, offers: TodaySessionAction.offers(view))
+  }
+
   @ViewBuilder
-  private func day(showsAction: Bool) -> some View {
+  private var day: some View {
     TodaySessionSection(
       view: view, busy: busy, failed: failed, writingStalled: writingStalled,
-      disclosures: $disclosures, open: open, showsAction: showsAction, prepare: prepareLessons)
+      disclosures: $disclosures, open: open, prepare: prepareLessons)
 
     if !view.upNextLessons.isEmpty {
       TodayUpNextSection(view: view, busy: busy, failed: failed) { tap in
@@ -195,14 +221,47 @@ struct TodayDayView: View {
       })
   }
 
-  private func sessionAction(isInHeader: Bool) -> some View {
+  private var sessionAction: TodaySessionAction {
     TodaySessionAction(
       view: view, busy: busy, failed: failed, open: open, prepare: prepareLessons,
-      isInHeader: isInHeader)
+      keepLearning: keepLearning, keepStudying: keepStudying, archive: archive)
+  }
+
+  private func keepStudying() {
+    let goalId = view.goal.id
+    perform(.keepStudying) {
+      switch await plans.change(goalId: goalId, edits: [.fullCourse(true)]) {
+      case .done(.invalid): .failed(.unavailable)
+      case .done: .done(())
+      case .failed(let error): .failed(error)
+      case .obsolete: .obsolete
+      }
+    }
+  }
+
+  private func archive() {
+    let goalId = view.goal.id
+    perform(.archive) {
+      switch await plans.setStatus(.archived, goalId: goalId) {
+      case .done(.saved): .done(())
+      case .done: .failed(.unavailable)
+      case .failed(let error): .failed(error)
+      case .obsolete: .obsolete
+      }
+    }
+  }
+
+  private func keepLearning() {
+    run(.keepLearning) { await store.addExtraTime(in: view) }
   }
 
   private func prepareLessons() {
     perform(.prepare) { await store.prepareLessons(in: view) }
+  }
+
+  /// A proposal still waits for an answer, in the sheet its line opens.
+  private var asksPlanChange: Bool {
+    store.shownPlanChange(in: view).map { $0.decision == nil } ?? false
   }
 
   @ViewBuilder
@@ -260,21 +319,7 @@ struct TodayDayView: View {
       }
     case .exam:
       if let exam = view.exam {
-        ExamMomentSection(moment: exam, checked: $examChecklist) {
-          Button {
-            router.open(.exam)
-          } label: {
-            exam.stage == .afterExam
-              ? Text(
-                "Add your result", tableName: "Today",
-                comment: "Opens the exam to add the official result")
-              : Text("See your exam", tableName: "Today", comment: "Opens the exam")
-          }
-        }
-      }
-    case .examAccess:
-      Section {
-        FreeWeekOverNotice()
+        TodayExamMomentSection(moment: exam, checked: $examChecklist)
       }
     case .examChoice:
       TodayExamChoiceSection(
@@ -286,7 +331,7 @@ struct TodayDayView: View {
         onAnswer: holdShownNotice)
     case .suggestedGoal:
       if let suggestion = view.suggestedGoal {
-        SuggestedGoalSection(suggestion: suggestion)
+        SuggestedGoalSection(suggestion: suggestion, answer: suggestedGoalAnswer)
       }
     case .uploadRequest:
       if let request = answeredUpload ?? view.uploadRequest {
@@ -316,34 +361,31 @@ struct TodayDayView: View {
     }
   }
 
+  /// One line under the title at most, and only what changes today: a normal day has none. A
+  /// return after days away leads with its welcome, so the plan's state waits for the learner to
+  /// start.
   private var dayLine: Text? {
-    var parts: [String] = []
-
-    if let daysLeft = view.goal.daysLeft {
-      parts.append(
-        view.goal.dateEstimated
-          ? String(localized: "~\(daysLeft) days left", table: "Today", comment: "Days left")
-          : daysLeft == 0
-            ? String(localized: "The day is here", table: "Today", comment: "The goal's date")
-            : String(localized: "\(daysLeft) days left", table: "Today", comment: "Days left"))
+    if view.isWelcomeBack {
+      return Text(
+        "Welcome back. Today is short, so it's easy to start again.", tableName: "Today",
+        comment: "Under Today's title on a return after days away, until the learner starts")
     }
 
-    if let exam = view.exam, exam.stage == .dayBefore || exam.stage == .examDay {
-      parts.append(
-        exam.stage == .dayBefore
-          ? String(localized: "\(exam.examName) tomorrow", table: "Today", comment: "Exam soon")
-          : String(localized: "\(exam.examName) today", table: "Today", comment: "Exam day"))
+    if view.lacksTime {
+      return Text(
+        "Not enough time left for all your lessons.", tableName: "Today",
+        comment: "Under Today's title when the plan has more lessons than its days can hold")
     }
 
-    if let status = view.progress?.status {
-      if status.kind == "behind" && view.session.freshStart == .welcomeBack {
-        parts.append(String(localized: "Behind", table: "Today", comment: "Plan status"))
-      } else {
-        parts.append(status.text)
-      }
+    if let exam = view.exam, exam.stage == .finalStretch, let days = view.goal.daysLeft {
+      return Text(
+        "\(exam.examName) in \(days) days", tableName: "Today",
+        comment:
+          "Under Today's title in an exam's last weeks: the exam's name, like ENEM, and the days until it"
+      )
     }
 
-    return parts.isEmpty ? nil : Text(parts.joinedFacts())
+    return nil
   }
 
   private func open(_ block: StudyBlock, next: Bool) {
@@ -504,8 +546,6 @@ struct TodayDayView: View {
       if let insight = view.insight {
         UsageAnalytics.track(.insightShown(.init(insight)))
       }
-    case .examAccess:
-      UsageAnalytics.track(.subscriptionGateShown)
     default:
       break
     }
@@ -598,6 +638,70 @@ private struct LanguageTodayLoading: ViewModifier {
       content.loads(store.languageToday(goalID: goal.id), refreshable: false)
     } else {
       content
+    }
+  }
+}
+
+private struct TodayActionBar: ViewModifier {
+  let action: TodaySessionAction
+  let offers: Bool
+
+  func body(content: Content) -> some View {
+    content.bottomBar(note: action.failure.map { BarNote($0) }) {
+      if offers {
+        action
+      }
+    }
+  }
+}
+
+extension TodayView {
+  /// Main's `useWelcomeBack`: a return after days away, until the learner starts.
+  var isWelcomeBack: Bool {
+    let state = session.state
+
+    return session.freshStart == .welcomeBack && !studiedToday && !session.isStarted
+      && state != .ahead && state != .rest
+  }
+
+  /// The plan has more lessons than its days can hold.
+  var lacksTime: Bool {
+    progress?.status?.kind == "needsAdjusting"
+  }
+}
+
+/// Main's day time on a day kept short for a mock exam: why opens from the time itself.
+private struct ShorterDayTime: View {
+  let time: String
+  let mockDay: String
+
+  @State private var isExplaining = false
+
+  var body: some View {
+    Button {
+      isExplaining = true
+    } label: {
+      BigQuantity(time)
+        .underline(pattern: .dot)
+    }
+    .buttonStyle(.plain)
+    .popover(isPresented: $isExplaining) {
+      VStack(alignment: .leading, spacing: 4) {
+        Text(
+          "A shorter day", tableName: "Today", comment: "Title of the note on why today is short"
+        )
+        .typeStyle(.body.weight(.semibold))
+
+        Text(
+          "Your plan keeps time for the mock exam on \(mockDay).", tableName: "Today",
+          comment: "Why today is short; the argument is the mock exam's date, like 'May 5'"
+        )
+        .typeStyle(.body)
+        .foregroundStyle(.mutedForeground)
+      }
+      .padding()
+      .frame(idealWidth: 280)
+      .presentationCompactAdaptation(.popover)
     }
   }
 }

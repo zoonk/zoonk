@@ -9,18 +9,90 @@ export type Pattern = {
 export const PATTERNS: readonly Pattern[] = [
   {
     avoid: [
+      "A second paragraph, or the same fact twice on a screen.",
+      "How Zoonk picks, counts, saves or schedules, where the learner needs what they get.",
+      "A caveat on the screen where the learner decides to start: say it where and when it applies.",
+      "A button that names the next screen, a duration or a consequence (Continue to daily time).",
+      "A count or a system state shown because we have it (Questions on 2 of 18 subjects).",
+      "A word no earlier screen taught (sitting, checked, daily time).",
+    ],
+    follow: [
+      "The title says the screen's one message: what the learner gets or does here. One thing leads; everything else supports it or leaves.",
+      "Between the title and the main action: one sentence (20 words at most) and one line of facts (three at most). More becomes a step, or goes behind one Details link.",
+      "A list row is a title and at most one short line. A result leads with one number or one sentence.",
+      "A button is a verb the learner already knows, in one to three words: Start, Continue, Skip, Save, Try again.",
+      "A product term (plan, focus, phase, Brain Power) appears only on or after the screen that shows what it is.",
+      "This budget is for the product's own screens. Marketing pages (the landing, the catalog, public course pages, pricing, the blog) are read by someone deciding whether to start, and follow their own standard: more text in order, one action repeated, no insider words.",
+      "The full rules are in the `zoonk-design` skill: Words, Marketing pages and The first-glance test.",
+    ],
+    id: "words",
+    summary: "One message per screen, in the learner's words, with one thing leading.",
+    title: "Words and hierarchy",
+  },
+  {
+    avoid: [
       "A colored button.",
       "Two primaries in one area.",
       "An underlined word for a screen's main or secondary action.",
+      "An icon beside the ⏎ keycap, or an arrow in a button.",
     ],
     follow: [
       "One main action per area, inverted (`Button`); secondary actions outline, tertiary ghost.",
       "An action inside a sentence (Take the test, Try again, Undo after a memory change) is a word (the `link` variant): the text color, underlined, at the size of the text around it. A quiet option under a task's main action (another try, the details, Undo after a result) is a ghost button on its own row (`TASK_OPTION_CLASS`), never an underlined word.",
-      "The main action shows its key as a keycap on pointer devices (`ShortcutKbd`).",
+      "A button shows its label and at most one glyph. The main action that Enter presses (`EnterButton`) shows the ⏎ keycap where there is a keyboard and its label alone on a touch screen. While it works the spinner takes the glyph's place, or covers the label, so nothing changes size.",
+      "A forward glyph is a chevron (`FORWARD_ICON`), on the label's center line.",
     ],
     id: "actions",
     summary: "The main action is the text color, the strongest thing on the screen.",
     title: "Actions",
+  },
+  {
+    avoid: [
+      "An underlined or boxed tab.",
+      "A heavier weight or a thicker border on the current item: it moves its neighbors.",
+      "A filled button for the current view of a list.",
+    ],
+    follow: [
+      "The current tab is the navigation's `muted` fill, the same mark as the sidebar's current page: `Tabs`, or `TAB_CLASS` and `TAB_LIST_CLASS` for tabs that are links.",
+      "The current tab's fill reaches 10px past the column, like a highlighted row, so the first tab's label starts on the title's edge.",
+      "A pick is a 2px ring in the text color on its tint (`ChoiceList`, `AnswerOption`).",
+      "A state change moves nothing: hover, focus, current, busy and disabled keep a control's size and its neighbors' place.",
+    ],
+    id: "current",
+    summary: "Where you are and what you picked, each drawn one way in every app.",
+    title: "Current and picked",
+  },
+  {
+    avoid: [
+      "A page that pads or pushes its own title down.",
+      "A bare chevron with no name, or a second back link drawn by hand.",
+      "An arrow for back.",
+    ],
+    follow: [
+      "`PageTop` (or `PageTopBar` in a layout with `PAGE_HEADER_CLASS` in the page): 12px, the 44px bar, 12px, then the title, the same on a phone and a computer, whether or not the bar holds anything.",
+      "`BackLink`: a chevron and the name of the page it goes back to, the mirror of a See all row, so both keep one gap between words and chevron.",
+      "The link's chevron lines up with the title's first letter; the pull follows the title's type role, so no page sets it.",
+      "A full-screen task keeps ✕ instead.",
+    ],
+    id: "page-top",
+    summary: "Every page starts the same way: the way back, then the title close to the top.",
+    title: "Page top",
+  },
+  {
+    avoid: [
+      "A main action at the top of a page, or under the content where it scrolls away.",
+      "An error line inside the bar that makes it taller and moves its buttons.",
+      "A second pinned bar built from classes.",
+    ],
+    follow: [
+      "`BottomBar` holds a screen's one main action, pinned at the bottom on a phone and a computer; `BottomBarActions` is its row, buttons 8px apart, the main action last. On a phone the row gives the main action what the other buttons leave, on a computer its own width at the end, so a screen never sizes it.",
+      "What the last action couldn't do goes in `note`: it shows over the screen above the bar, and the buttons stay where they were.",
+      "The frame tells the bar its padding and what is docked under it (`--page-gutter`, `--page-bottom`, `--page-dock`), so the same piece works in the app's shell and in a task.",
+      "The buttons have the frame's gutter on all four sides: the bar sets the room over and under them from `--page-gutter`, never a screen.",
+    ],
+    id: "bottom-bar",
+    summary: "The main action has one home: the bar at the bottom of the screen.",
+    title: "Bottom bar",
   },
   {
     avoid: [
@@ -65,16 +137,18 @@ export const PATTERNS: readonly Pattern[] = [
     avoid: [
       "A number without its words.",
       "A meter part colored for decoration: each color is a meaning or a kind.",
+      "A count, a percent and a meter that say the same thing: pick one.",
+      "A number shown because we have it: it stays only when it changes what the learner does next.",
     ],
     follow: [
       "One big number per block (`BigQuantity`), its unit small and muted.",
       "Under it a meter of parts sized by what they measure (`MeterParts`): progress blue, the learner's place as a blue ring, a kind in its hue, the rest on the track.",
-      "The day's blocks are equal parts (`DayMeter`), one per block plus one for time held for lessons not on the list yet, so the meter, the count and the percent say one thing; Today and every block's end inside a session draw the same meter.",
-      'At a task\'s end, under its title (`MomentHeader`), `MomentReadouts`: the score and the Brain Power earned (`BrainPowerReadout`, its violet number large and its words small), the facts on one mono line under them. Inside a session, today\'s progress follows: the count that matters ("2 of 8 done today", then "3 left today" past the midpoint) with its percent, and the day\'s meter, where only the block just finished fills.',
+      "The day's blocks are equal parts (`DayMeter`), the same meter on Today and at every block's end inside a session, where only the block just finished fills.",
+      "At a task's end, under its title (`MomentHeader`), `MomentReadouts`: the score and the Brain Power earned (`BrainPowerReadout`, its violet number large and its words small).",
       "On a result's tiles (`StatTile`), the icon takes its stat's tone and Brain Power's number its violet, as every Brain Power amount.",
     ],
     id: "readouts",
-    summary: "Readouts with meters: the number that matters and what it's made of.",
+    summary: "The one number that matters, and what it's made of.",
     title: "Readouts and meters",
   },
   {
@@ -99,6 +173,8 @@ export const PATTERNS: readonly Pattern[] = [
     follow: [
       "Lists are flat rows with hairlines (`ListGroup`), the current row highlighted past the column's edges.",
       "A panel (`Surface`) holds one self-contained thing: a preview, a notice, the missions.",
+      "A row's mark is centered on a row of one or two lines and sits on the first line of three or more (`ListRowLeading`). Every mark takes the same 16px box, so labels start on one edge.",
+      "A row that opens a page ends in a chevron on the column's edge (`RowChevron`).",
     ],
     id: "structure",
     summary: "Fewer boxes: content sits on the page.",

@@ -1,6 +1,5 @@
 package com.zoonk.android.feature.completedlessons
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,13 +33,13 @@ import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
-import com.zoonk.android.ui.components.EmptyState
-import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.LoadMoreFooter
+import com.zoonk.android.ui.components.PageHeader
 import com.zoonk.android.ui.components.PageLoading
+import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.DateStyle
@@ -49,8 +48,7 @@ import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.DETAIL_PAGE_WIDTH
 import com.zoonk.android.ui.scaffold.PageScaffold
-import com.zoonk.android.ui.scaffold.detailPagePadding
-import com.zoonk.android.ui.scaffold.pageTitle
+import com.zoonk.android.ui.scaffold.pagePadding
 import com.zoonk.api.models.CompletedLesson
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
@@ -82,7 +80,7 @@ fun CompletedLessonsScreen(
                     // `finishedOn` is the goal's local day, and the summary is read again at its midnight.
                     val today = LocalDate.now(read.timeZone?.let(ZoneId::of) ?: ZoneId.systemDefault())
                     val goal = read.goals.firstOrNull { it.id == goalId }
-                    CompletedLessons(goalId, today, app.completedLessons, listState, eyebrow = goal?.displayName) {
+                    CompletedLessons(goalId, today, app.completedLessons, listState, goalName = goal?.displayName) {
                         navigator.open(AppRoute.Lesson(it.toString()))
                     }
                 }
@@ -110,7 +108,7 @@ internal fun CompletedLessons(
     today: LocalDate,
     store: CompletedLessonsStore,
     listState: LazyListState,
-    eyebrow: String? = null,
+    goalName: String? = null,
     onOpen: (UUID) -> Unit,
 ) {
     val resource = store.lessons[goalId]
@@ -149,26 +147,19 @@ internal fun CompletedLessons(
     val days = list.`data`.groupBy { it.finishedOn.toJavaLocalDate() }
 
     BeforeFold { beforeFold ->
-        LazyColumn(beforeFold.widthIn(max = DETAIL_PAGE_WIDTH).fillMaxSize(), listState, detailPagePadding()) {
+        LazyColumn(beforeFold.widthIn(max = DETAIL_PAGE_WIDTH).fillMaxSize(), listState, pagePadding()) {
             item(key = "title", contentType = "title") {
-                // Main's page header: the goal's name over the page's title.
-                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    eyebrow?.let { Eyebrow(it) }
-                    Text(
-                        stringResource(R.string.navigation_completed_lessons),
-                        Modifier.pageTitle(),
-                        style = MaterialTheme.typography.headlineMedium,
-                    )
-                }
+                val title = stringResource(R.string.navigation_completed_lessons)
+                if (goalName != null) PageHeader(title, supporting = goalName) else PageTitleRow(title)
             }
 
             if (days.isEmpty()) {
                 item(key = "empty", contentType = "empty") {
-                    EmptyState(
-                        icon = R.drawable.ic_history,
-                        title = stringResource(R.string.completed_lessons_empty_title),
-                        description = stringResource(R.string.completed_lessons_empty_description),
-                        modifier = Modifier.padding(top = 24.dp),
+                    Text(
+                        stringResource(R.string.completed_lessons_empty_description),
+                        Modifier.padding(top = 16.dp),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyMedium,
                     )
                 }
             }
@@ -222,7 +213,7 @@ private fun dayTitle(
     when (day) {
         today -> stringResource(R.string.completed_lessons_today)
         today.minusDays(1) -> stringResource(R.string.completed_lessons_yesterday)
-        else -> formatDate(day, currentLocale(), if (day.year == today.year) DateStyle.WeekdayDay else DateStyle.WeekdayDayYear, today)
+        else -> formatDate(day, currentLocale(), DateStyle.WeekdayDay, today)
     }
 
 private const val LOAD_AHEAD = 4

@@ -5,11 +5,11 @@
   "profile_questions_activities_placeholder": "2c67021814bafbbb8340e4a443f52f923f8641dfddd15ff1d87095dd3162f160",
   "profile_questions_activities_title": "1507a54ad10080a8c924a8a7bb2f92ac3ad598d5b8fca17c90fdd61bfc8e0fa9",
   "profile_questions_add": "0fd998da3b65a469530a359efff2e62a65379c76926359b53cf3953868dd2ad2",
-  "profile_questions_address_description": "493abaf18c2d175c3a461c139f1d8a5729a1b191abc548bb6aa86a0290960817",
+  "profile_questions_address_description": "ad3b14ec6f08ae7bba3a3622da551a6748346b61d72f987e3ae3bd29400bb2b0",
   "profile_questions_address_title": "8f1bb2143c099398d3113af0fa933da2c6674f18a9509a0829597a355f0b6244",
   "profile_questions_cap": "b5c73dbd62eca612e60bbda65c13d9dddaee0e418058d73ce2538bd9d014e1c8",
   "profile_questions_condition_note": "625f2c3951e7ca14d6ae7d21ac4931686d36a8218e0ee75f2128c8132eeb1918",
-  "profile_questions_conditions_description": "7dd17b5760d91c8d475780774dccc14e59e882f9a8bcd48df4a2299e236ddbf5",
+  "profile_questions_conditions_description": "a8df8e51a7907cf02eb6c8c64043428869714770c0aef91e9f7c33893af7bfe5",
   "profile_questions_conditions_saved": "944d126cd6ba0141843292a67d85e1141e4614a820ac9c1adb66e49148bdb5c5",
   "profile_questions_conditions_title": "815ebe52dfd6c6856aca732b9d141ae918633c5a3f254418328ec1a27ff72c92",
   "profile_questions_description": "f305602c8c7b6094f60892a2853f7b43b66eaa039ae42743b7f7389ef7f935f8",
@@ -21,16 +21,13 @@
   "profile_questions_job_placeholder": "72fcc27a4d200c1531ec45397c2e69e14ade5f500c1ecf6287578f092422efac",
   "profile_questions_lesson_ready": "43a7a775b0530468dce84104f7d31a6b3b00a798ac5db03f0ec2a699f23fcc40",
   "profile_questions_listen_favorites": "355ca3e56bef2e0c5b0851b05edcdeec4b6bc6710f101b493c8cd07d89c31841",
-  "profile_questions_listen_placeholder": "f361cc65b7e63530f37cbe2904d3ec120c5c549d3dd8a3326ac8a2d79f7b9d13",
+  "profile_questions_listen_placeholder": "ac72dcef49e263ad31645727253dc0d1935ed044c45f6824f254bf0e45dd2c36",
   "profile_questions_listen_title": "cc2ba87bfab7c9b3830126e74491b206904ee418b2e0911714a5ffb8c7d129f3",
   "profile_questions_memory_off": "ec6704ea34b2904893a49ca50f05180d116d89cd364f22e5ff1dc6ef3d7dd31e",
   "profile_questions_never_ask": "62f2be5c98de8cd5150ab9e1a9e34fdba716a8a7b71558e7b455cabad6954cb8",
   "profile_questions_never_ask_help": "251a9c7c4c156c30fd2ecd2d7504062bc9a0aea02f4f5f64f1f04929995f1882",
-  "profile_questions_none": "15bb9e44d7eeef6bd8cb6dafc6cddd3f28d14e7006a5dc2e5565783f8e01409b",
   "profile_questions_not_answered": "562096448c056acedc5f35dfa768304f6e2d229ed1367a7293eade69c1e9b7a2",
   "profile_questions_not_shared": "ebb7f3e1c7139217739134523c3ae383dfc85cfd948102cbab141caed4940ebd",
-  "profile_questions_nothing_particular": "acd5ade6f007e23f2442c609a549c6418c96f8f2975e74542b3d2bb296ae707d",
-  "profile_questions_nothing_to_add": "b4cf2f0637c8017f3b421d0c6061c72d431c00a280ffb3dd61ec958afd4d1f05",
   "profile_questions_play_favorites": "229f39423005c9a03296c533e05f7fa2687f8eb79ef79ba38af86c4204056adc",
   "profile_questions_play_placeholder": "229bb16508930874ee0de3eb1ac6d4369e16f7eadb456cc70f067f8bf9070c12",
   "profile_questions_play_title": "4d01b762e24c1335e84cd6680d145b526c8c5bca37d5551e0cb270e34cf450ac",
@@ -63,7 +60,7 @@
   "profile_questions_suggested": "7e4b72fec6b7ff1cbb1f4f99b7fd1904a7e80b7e7b7e9bce013acf079d34f27b",
   "profile_questions_support_description": "748a79d5c2737b418923a7093fffde7ae774eb25f279e210a6201a14319baee7",
   "profile_questions_support_note": "06e74654a4c8a428349111d5843c69292d9f63f5f8b2199c0ebe4c26284166a4",
-  "profile_questions_support_note_help": "3c72acd66e49399d7542546d31adf2d8e40a628428a9bb794e7ea74052b496c9",
+  "profile_questions_support_note_help": "de15283d8fdebe6ca13f9909734eab1fc6704c2f33815773873de928b7853bb6",
   "profile_questions_support_placeholder": "5f36b085ae33358e4028ecd0f14091f6ee3c10b54dba972e243353ba69e52ac2",
   "profile_questions_support_title": "7b352deb28f060e65443179aeeb4549764937891a0ef6d379561ad5b8b02348f",
   "profile_questions_title": "a4ba392aa1bd5c74fe129b6e6766e5e57f4394fd63560ceef1c58c338fd6de35",
@@ -72,7 +69,7 @@
   "profile_questions_tools_placeholder": "ca2daa1c840a43b1799a9c01ccd4ede3b44dda2f645bb832293d692770bc1b9c",
   "profile_questions_tools_title": "7c2ba0571e7c35e25266b061f06f86b7f172dc0f1781528d6500c5f7b18dbabb",
   "profile_questions_watch_favorites": "e1927831541b66cf31376e5bdec67727fa158fecae15e25a100db70bd0baa088",
-  "profile_questions_watch_placeholder": "2f8fdd889bad4928ee1dd686b3b3dbbf4c87397dcbd5eb5e15c713fa2d4e9ad6",
+  "profile_questions_watch_placeholder": "279131d6ba78f98111461ddaa7c655e601d8ba628eaf2e15b91bfff3184bfa01",
   "profile_questions_watch_title": "b9a4029439b4b38d20d0e0de75283841c4105dc1184b14ed16425178bab5639f",
   "profile_questions_which_field": "b3b431d35f9dfaeb43b55b9db5ea623c6ee694a71e2d81ab101fd533fcbae80b",
   "profile_questions_work_description": "5172f39ad57ba4ef665787d7edc6f02b0426f45b3741f367e3e15f1bf489c182",
@@ -100,20 +97,18 @@
     <string name="profile_questions_tools_description">Scegli fino a 3 opzioni. Le useremo nei tuoi esempi.</string>
     <string name="profile_questions_tools_other">Altro (facoltativo)</string>
     <string name="profile_questions_tools_placeholder">Es. Photoshop, Python, SAP</string>
-    <string name="profile_questions_none">Nessuna di queste opzioni</string>
     <string name="profile_questions_studies_title">Cosa hai studiato?</string>
     <string name="profile_questions_studies_description">Studi passati o in corso, conclusi o meno. Anche in un ambito diverso dal tuo lavoro.</string>
-    <string name="profile_questions_nothing_to_add">Non ho nulla da aggiungere</string>
     <string name="profile_questions_subject">%1$s: corso o materia (facoltativo)</string>
     <string name="profile_questions_which_field">In quale ambito?</string>
     <string name="profile_questions_subject_placeholder">Es. giornalismo</string>
     <string name="profile_questions_interest_description">Scegli fino a 3 opzioni. Le useremo per gli esempi delle tue lezioni.</string>
     <string name="profile_questions_watch_title">Cosa ti piace guardare?</string>
     <string name="profile_questions_watch_favorites">Programmi, film, squadre o canali preferiti (facoltativo)</string>
-    <string name="profile_questions_watch_placeholder">Es. Star Trek, Flamengo</string>
+    <string name="profile_questions_watch_placeholder">Es. Star Trek, Formula 1</string>
     <string name="profile_questions_listen_title">Cosa ti piace ascoltare?</string>
     <string name="profile_questions_listen_favorites">Artisti o podcast preferiti (facoltativo)</string>
-    <string name="profile_questions_listen_placeholder">Es. Coldplay, Radiolab</string>
+    <string name="profile_questions_listen_placeholder">Es. Coldplay, TED Talks Daily</string>
     <string name="profile_questions_play_title">A cosa ti piace giocare?</string>
     <string name="profile_questions_play_favorites">Giochi preferiti (facoltativo)</string>
     <string name="profile_questions_play_placeholder">Es. Catan, Valorant</string>
@@ -124,18 +119,18 @@
     <string name="profile_questions_activities_favorites">Hai altri interessi? (facoltativo)</string>
     <string name="profile_questions_activities_placeholder">Es. fare il pane, auto, astronomia</string>
     <string name="profile_questions_conditions_title">Qualcuna di queste condizioni ti riguarda?</string>
-    <string name="profile_questions_conditions_description">Facoltativo. Le tue scelte vengono salvate nel tuo profilo, così il tuo compagno può adattarsi a te. Puoi rimuoverle in qualsiasi momento dalle Impostazioni.</string>
+    <string name="profile_questions_conditions_description">Facoltativo. Usiamo le tue scelte per adattare i contenuti alle tue esigenze. Puoi rimuoverle quando vuoi nelle Impostazioni.</string>
     <string name="profile_questions_condition_note">Cosa dovremmo sapere?</string>
     <string name="profile_questions_support_title">Cosa ti aiuta a imparare?</string>
     <string name="profile_questions_support_description">Scegli tutto ciò che ti aiuta. Non servono etichette o diagnosi.</string>
+    <!-- Asks which grammatical forms (feminine, masculine or neutral wording) the app should use for words about the learner, such as "you're right". Not a question about pronouns or identity. -->
     <string name="profile_questions_address_title">Come preferisci che ci rivolgiamo a te?</string>
-    <string name="profile_questions_address_description">Il tuo compagno e i commenti che ricevi useranno queste forme. Le lezioni restano uguali.</string>
+    <string name="profile_questions_address_description">Ci rivolgeremo a te così.</string>
     <string name="profile_questions_suggested">Abbiamo verificato cosa aiuta di solito in base alle tue scelte. Cambia quello che vuoi.</string>
-    <string name="profile_questions_nothing_particular">Niente in particolare</string>
     <string name="profile_questions_something_else">+ Qualcos’altro che mi aiuta</string>
     <string name="profile_questions_support_note">Cosa ti aiuta, con parole tue (facoltativo)</string>
     <string name="profile_questions_support_placeholder">Per esempio, capisco meglio gli schemi che i testi</string>
-    <string name="profile_questions_support_note_help">Lo terremo a mente per il tuo compagno. Puoi eliminarlo in Memoria.</string>
+    <string name="profile_questions_support_note_help">Lo terremo a mente. Puoi eliminarlo quando vuoi nelle Impostazioni.</string>
     <string name="profile_questions_lesson_ready">La lezione 1 è pronta.</string>
     <string name="profile_questions_start_lesson">Inizia la lezione 1</string>
     <string name="profile_questions_save_start_lesson">Salva e inizia la lezione 1</string>
@@ -157,9 +152,11 @@
     <string name="profile_questions_row_activities">Attività</string>
     <string name="profile_questions_row_conditions">Condizioni</string>
     <string name="profile_questions_row_support">Cosa ti aiuta a imparare</string>
+    <!-- Which grammatical forms (feminine, masculine or neutral wording) the app uses for words about the learner. -->
     <string name="profile_questions_row_address">Come ci rivolgiamo a te</string>
     <string name="profile_questions_not_answered">Nessuna risposta</string>
     <string name="profile_questions_not_shared">Nessun dato condiviso</string>
+    <!-- An answer the learner saved, without showing it. -->
     <string name="profile_questions_saved">Salvata</string>
     <string name="profile_questions_add">Aggiungi</string>
     <plurals name="profile_questions_conditions_saved">

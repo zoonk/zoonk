@@ -1,5 +1,3 @@
-import { type LeaderboardEntry } from "./leaderboard";
-
 export type SortKey =
   | "modelName"
   | "provider"
@@ -9,6 +7,17 @@ export type SortKey =
   | "latencyP95"
   | "costPer1000Runs";
 export type SortDirection = "asc" | "desc";
+
+/** What both leaderboards' rows have; only the scored-one-by-one rows carry a reasoning level. */
+export type SortableEntry = {
+  averageScore: number | null;
+  costPer1000Runs: number | null;
+  latencyP50: number | null;
+  latencyP95: number | null;
+  modelName: string;
+  provider: string;
+  reasoning?: string;
+};
 
 function roundScoreToFixed(score: number): number {
   return Number(score.toFixed(2));
@@ -25,7 +34,7 @@ export function getDefaultSortDirection(key: SortKey): SortDirection {
   return NUMERIC_SORT_KEYS.has(key) ? "desc" : "asc";
 }
 
-function compareEntries(a: LeaderboardEntry, b: LeaderboardEntry, key: SortKey): number {
+function compareEntries(a: SortableEntry, b: SortableEntry, key: SortKey): number {
   if (key === "averageScore") {
     if (a.averageScore === null || b.averageScore === null) {
       return 0;
@@ -46,14 +55,14 @@ function compareEntries(a: LeaderboardEntry, b: LeaderboardEntry, key: SortKey):
     return (a[key] ?? 0) - (b[key] ?? 0);
   }
 
-  return a[key].localeCompare(b[key]);
+  return (a[key] ?? "").localeCompare(b[key] ?? "");
 }
 
-export function sortLeaderboardEntries(
-  entries: LeaderboardEntry[],
+export function sortLeaderboardEntries<Entry extends SortableEntry>(
+  entries: Entry[],
   key: SortKey,
   direction: SortDirection,
-): LeaderboardEntry[] {
+): Entry[] {
   const sign = direction === "asc" ? 1 : -1;
 
   return [...entries].toSorted((left, right) => {

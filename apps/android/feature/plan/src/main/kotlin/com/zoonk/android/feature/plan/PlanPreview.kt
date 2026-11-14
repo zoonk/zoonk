@@ -102,6 +102,7 @@ internal fun PlanPreviewResult(
     onDismiss: () -> Unit,
     goalDate: GoalDateMove? = null,
     pending: Boolean = false,
+    dateKind: GoalDateKind = GoalDateKind.Unknown,
 ) {
     val notNow = stringResource(R.string.plan_not_now)
 
@@ -125,8 +126,7 @@ internal fun PlanPreviewResult(
             if (preview.unchanged) {
                 SuggestionDescription(stringResource(R.string.plan_stays_as_it_is))
             } else {
-                PlanEffectDiff(preview.effect, goalDate = goalDate)
-                if (preview.feasibility?.fits == true) SuggestionDescription(stringResource(R.string.plan_then_covers_everything))
+                PlanEffectDiff(preview.effect, goalDate = goalDate, dateKind = dateKind)
             }
             SuggestionActions {
                 if (!preview.unchanged && preview.effect != null) {

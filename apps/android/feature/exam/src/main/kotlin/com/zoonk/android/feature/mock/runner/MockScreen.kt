@@ -46,7 +46,7 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.Resource
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
-import com.zoonk.android.feature.mock.mockShapeLabel
+import com.zoonk.android.feature.mock.mockSubject
 import com.zoonk.android.feature.mock.rememberNow
 import com.zoonk.android.feature.mock.result.MockResult
 import com.zoonk.android.navigation.AppNavigator
@@ -260,7 +260,7 @@ internal fun MockStepStatus(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium,
                 )
-                TextButton(onClick = viewModel::retrySaves) { Text(stringResource(R.string.mock_retry)) }
+                TextButton(onClick = viewModel::retrySaves) { Text(stringResource(R.string.mock_try_again)) }
             }
         }
 
@@ -306,22 +306,18 @@ internal fun MockMainButton(
     enabled: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    leadingIcon: (@Composable () -> Unit)? = null,
-    trailingIcon: (@Composable () -> Unit)? = null,
 ) = Button(
     busy = busy,
     onClick = onClick,
     modifier = modifier.heightIn(min = 48.dp),
     enabled = enabled,
-    leadingIcon = leadingIcon,
-    trailingIcon = trailingIcon,
 ) { Text(text) }
 
-/** "Mock exam · Mathematics". */
+/** "Mock exam", or "Mock exam · Mathematics" for one subject. */
 @Composable
 internal fun MockEyebrow(view: MockExam) {
-    val shape = mockShapeLabel(view.purpose == MockExam.Purpose.PLACEMENT, view.shape)
-    Eyebrow(if (shape.isEmpty()) stringResource(R.string.mock_label) else stringResource(R.string.mock_label_shape, shape))
+    val subject = mockSubject(view.shape)
+    Eyebrow(if (subject.isEmpty()) stringResource(R.string.mock_label) else stringResource(R.string.mock_label_shape, subject))
 }
 
 @Composable
@@ -361,12 +357,11 @@ private fun MockTimeUp(
         actions = {
             TaskActions { main ->
                 MockMainButton(
-                    text = stringResource(if (isLast) R.string.mock_see_how else R.string.mock_continue_section),
+                    text = stringResource(if (isLast) R.string.mock_see_result else R.string.mock_continue_section),
                     busy = handingIn,
                     enabled = !run.pending,
                     onClick = viewModel::submitSection,
                     modifier = main,
-                    trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
                 )
             }
         },
@@ -394,16 +389,20 @@ private fun MockHandedIn(
         actions = {
             TaskActions { main ->
                 MockMainButton(
-                    text = stringResource(R.string.mock_see_how),
+                    text = stringResource(R.string.mock_see_result),
                     busy = finishing,
                     enabled = !run.pending,
                     onClick = viewModel::finish,
                     modifier = main,
-                    trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
                 )
             }
         },
-    ) { StepHeader { StepTitle(stringResource(R.string.mock_handed_in_title)) } }
+    ) {
+        StepHeader {
+            StepTitle(stringResource(R.string.mock_handed_in_title))
+            StepDetail(stringResource(R.string.mock_answers_saved))
+        }
+    }
 }
 
 /** When the break ends, its clock already started the next section on the server; this shows it. */
@@ -428,12 +427,11 @@ private fun MockBreak(
         actions = {
             TaskActions { main ->
                 MockMainButton(
-                    stringResource(R.string.mock_start_next),
+                    stringResource(R.string.mock_start_now),
                     busy = run.busy == MockStep.EndBreak,
                     enabled = !run.pending,
                     onClick = viewModel::endBreak,
                     modifier = main,
-                    leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
                 )
             }
         },
@@ -510,7 +508,7 @@ private fun MockExpired(
                         )
                     },
                     modifier = main.heightIn(min = 48.dp),
-                ) { Text(stringResource(R.string.mock_take_new)) }
+                ) { Text(stringResource(R.string.mock_take_another)) }
             }
         },
     ) {

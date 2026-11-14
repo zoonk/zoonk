@@ -200,7 +200,7 @@ private struct EssayContent: View {
         Button {
           Task { await finish() }
         } label: {
-          Text("Skip the rewrite", tableName: "Essay", comment: "Goes on without rewriting")
+          Text("Skip", tableName: "Essay", comment: "Goes on without rewriting")
         }
         .buttonStyle(.outline)
         .controlSize(.large)
@@ -208,7 +208,7 @@ private struct EssayContent: View {
       }
 
       if writer.isWriting {
-        BusyButton(isBusy: writer.status == .grading, icon: .send) {
+        BusyButton(isBusy: writer.status == .grading) {
           Task { await writer.send() }
         } label: {
           if essay.drafts.isEmpty {
@@ -325,7 +325,7 @@ private struct EssayContent: View {
             table: "Essay", comment: "Grading failed"),
           onReport: { showsSaveReport = true })
       } else if writer.isWriting, writer.status == .signUpRequired {
-        HelpLimitNotice(limit: .signUpRequired)
+        LimitNotice(limit: .signUpRequired)
       } else if let statusNote {
         VStack(alignment: .leading, spacing: 2) {
           Text(statusNote)
@@ -344,7 +344,7 @@ private struct EssayContent: View {
     }
 
     if writer.isWriting, writer.status == .signUpRequired {
-      return HelpLimit.signUpRequired.message
+      return HelpLimit.signUpRequired.helpWords().said
     }
 
     if writer.isWriting, writer.status == .limitReached || essay.gradesLeft == 0 {

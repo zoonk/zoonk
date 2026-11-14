@@ -2,7 +2,6 @@ import { type TodayView } from "./get-today-view";
 
 export const TODAY_NOTICE_KINDS = [
   "exam",
-  "examAccess",
   "examChoice",
   "focusTest",
   "insight",
@@ -31,7 +30,6 @@ type NoticeTodayView = {
   planChange: Pick<NonNullable<TodayView["planChange"]>, "behind" | "id" | "status"> | null;
   session: {
     blocks: Pick<TodaySession["blocks"][number], "status">[];
-    examAccess: Pick<TodaySession["examAccess"], "trialEnded">;
     freshStart: TodaySession["freshStart"];
   };
   studiedToday: boolean;
@@ -65,14 +63,17 @@ function getPlanChangeStatus({
   return planChange.behind ? "proposed" : planChange.status;
 }
 
-export function showsFreshStart(today: Pick<NoticeTodayView, "session" | "studiedToday">): boolean {
+/** A return after days away, until the learner starts: the day's own welcome leads it. */
+export function showsWelcomeBack(
+  today: Pick<NoticeTodayView, "session" | "studiedToday">,
+): boolean {
   const started = today.session.blocks.some((block) => block.status !== "pending");
-  return today.session.freshStart !== null && !today.studiedToday && !started;
+  return today.session.freshStart === "welcomeBack" && !today.studiedToday && !started;
 }
 
 /**
- * One notice at most, the most pressing first. A free exam plan's ended week goes before anything
- * that asks more of the plan, and a fresh start is the session's own words, never a notice.
+ * One notice at most, the most pressing first. While the day welcomes the learner back, only the
+ * exam's own days show: everything else waits until they start.
  */
 export function pickTodayNotice({
   host,
@@ -81,25 +82,28 @@ export function pickTodayNotice({
   host: TodayHostNoticeState;
   today: NoticeTodayView;
 }): TodayNoticeKind | null {
-  const { exam, insight, session } = today;
+  const { exam, insight } = today;
   const insightChange = getInsightChange(insight);
   const planChange = getPlanChangeStatus(today);
 
-  const candidates: [TodayNoticeKind, boolean][] = [
-    ["exam", isExamDay(exam)],
-    ["examAccess", session.examAccess.trialEnded],
-    ["planChange", planChange === "proposed"],
-    ["insight", insightChange === "proposed"],
-    ["sourceChange", host.sourceChange],
-    ["exam", exam?.stage === "finalStretch"],
-    ["uploadRequest", host.uploadRequest],
-    ["examChoice", today.examChoice !== null],
-    ["planChange", planChange === "applied"],
-    ["insight", insight !== null],
-    ["practice", host.practice],
-    ["focusTest", today.focusTest !== null],
-    ["suggestedGoal", today.suggestedGoal !== null && !showsFreshStart(today)],
-  ];
+  const pressing: [TodayNoticeKind, boolean][] = [["exam", isExamDay(exam)]];
+
+  const candidates: [TodayNoticeKind, boolean][] = showsWelcomeBack(today)
+    ? pressing
+    : [
+        ...pressing,
+        ["planChange", planChange === "proposed"],
+        ["insight", insightChange === "proposed"],
+        ["sourceChange", host.sourceChange],
+        ["exam", exam?.stage === "finalStretch"],
+        ["uploadRequest", host.uploadRequest],
+        ["examChoice", today.examChoice !== null],
+        ["planChange", planChange === "applied"],
+        ["insight", insight !== null],
+        ["practice", host.practice],
+        ["focusTest", today.focusTest !== null],
+        ["suggestedGoal", today.suggestedGoal !== null],
+      ];
 
   return candidates.find(([, available]) => available)?.[0] ?? null;
 }

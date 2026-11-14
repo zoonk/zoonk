@@ -32,7 +32,7 @@
   "generation_phase_completed": "e1e23422eadb2faadaf975a205c44432d4eb7fcd04401777291d44310cb334e4",
   "generation_phase_failed": "01041f9254a06bde937c57a344e01e9f8e9691fd26a949f1fbc51ad460b5a46f",
   "generation_phase_pending": "b46bd5cb882c63270610836c9604a2c9b36bf699b8fc303da00685294a3ec1b4",
-  "generation_placement": "8bd12c3698d03a3e0d69a65f1d9970f17c64d5dc7295f74d58f39666abe7c08b",
+  "generation_placement": "f3aa6b1c0ec1edbd93434a2bb7ef93f43f0a328b77e610efc2f07044ff690267",
   "generation_placement_questions": "aee4c2a38b097cb5e4199db94e87dfea00d11b3aaa63c9bbb385a2b6417cfcf1",
   "generation_placement_questions_line": "629e44bc5b235395df0da3e1f212e832e000b649fa5c73212acab79c347f49f4",
   "generation_question_line": "9bf7512fb779697363a0fb80d3187b8d2460f602b4e7da25a632abb6044e9113",
@@ -103,7 +103,7 @@
     <string name="generation_curriculum_plan_line_2">スキルの学習を日ごとに振り分けています…</string>
     <string name="generation_curriculum_plan_line_3">学習計画を保存しています…</string>
     <!-- The wait while placement questions are written. -->
-    <string name="generation_placement">問題を準備しています</string>
+    <string name="generation_placement">レベル診断テストを準備しています</string>
     <string name="generation_placement_questions">問題を作成しています</string>
     <string name="generation_placement_questions_line">問題にするスキルを選んでいます…</string>
     <!-- The wait while the first day of a plan is prepared. -->

@@ -2,11 +2,11 @@
 
 import { Button } from "@zoonk/ui/components/button";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
+import { Meter, MeterFill } from "@zoonk/ui/components/meter";
 import { cn } from "@zoonk/ui/lib/utils";
 import { HeadphonesIcon, PauseIcon, PlayIcon, RotateCcwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
-import { Meter, MeterFill } from "../_components/meter";
 import { SURFACE_CLASS } from "../_components/surface";
 
 const MS_PER_SECOND = 1000;
@@ -205,7 +205,7 @@ export function ListeningPlayer({
             <MeterFill share={totalMs > 0 ? elapsedMs / totalMs : 0} />
           </Meter>
 
-          <p className="text-muted-foreground font-mono text-[0.6875rem] tabular-nums">
+          <p className="text-muted-foreground text-2xs font-mono tabular-nums">
             {t("{elapsed} of {total}", {
               elapsed: formatClock(elapsedMs),
               total: formatClock(totalMs),

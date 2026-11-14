@@ -3,16 +3,17 @@
 import { type MockResult } from "@zoonk/core/exams/mocks/contract";
 import { type MockAdaptView } from "@zoonk/core/exams/mocks/view-contract";
 import { Button } from "@zoonk/ui/components/button";
-import { cn } from "@zoonk/ui/lib/utils";
-import { CheckIcon, CircleCheckIcon } from "lucide-react";
-import { useExtracted } from "next-intl";
+import { Meter, MeterFill } from "@zoonk/ui/components/meter";
+import { CircleCheckIcon } from "lucide-react";
+import { useExtracted, useFormatter } from "next-intl";
 import { useId, useState, useTransition } from "react";
-import { type DiffLine, DiffLines } from "../_components/diff-lines";
-import { Meter, MeterFill } from "../_components/meter";
+import { Eyebrow } from "../_components/eyebrow";
 import { useChangeSaveErrorMessage } from "../_components/save-error";
-import { StepCard, StepDetail, StepEyebrow, StepHeader, StepTitle } from "../_components/step-card";
+import { StepCard, StepHeader, StepTitle } from "../_components/step-card";
 import { useFormatShare } from "../_utils/percent";
+import { TaskMainButton } from "../shell/task-frame";
 import { type MockPlanOffer, type MockPlanOfferOutcome, useMockScreen } from "./mock-context";
+import { BAR_SECOND_ACTION_CLASS } from "./mock-result-actions";
 
 type Answer = { outcome: MockPlanOfferOutcome } | { declined: true } | { failed: true };
 
@@ -30,260 +31,284 @@ function isSettled(answer: Answer | undefined): boolean {
   return answer !== undefined && !("failed" in answer);
 }
 
-async function applyOffers({
-  adapt,
-  offers,
-}: {
-  adapt: (offer: MockPlanOffer) => Promise<MockPlanOfferOutcome | null>;
-  offers: readonly MockPlanOffer[];
-}): Promise<Answers> {
-  const [offer, ...rest] = offers;
-
-  if (!offer) {
-    return {};
-  }
-
-  const outcome = await adapt(offer).catch(() => null);
-  const answers = await applyOffers({ adapt, offers: rest });
-  return { ...answers, [offer]: outcome ? { outcome } : { failed: true } };
-}
-
+/** One question at a time: the next offer shows once the learner answered the one before it. */
 export function usePlanChange(adapt: MockAdaptView | null) {
   const { actions } = useMockScreen();
   const [answers, setAnswers] = useState<Answers>({});
   const [isPending, startTransition] = useTransition();
   const offers = adapt ? getOffers(adapt) : [];
-  const open = offers.filter((offer) => !isSettled(answers[offer]));
+  const open = offers.find((offer) => !isSettled(answers[offer])) ?? null;
 
   return {
+    accept: () =>
+      startTransition(async () => {
+        if (!open) {
+          return;
+        }
+
+        const outcome = await actions.adapt(open).catch(() => null);
+        setAnswers((current) => ({ ...current, [open]: outcome ? { outcome } : { failed: true } }));
+      }),
     adapt,
     answers,
-    apply: () =>
-      startTransition(async () => {
-        const applied = await applyOffers({ adapt: actions.adapt, offers: open });
-        setAnswers((current) => ({ ...current, ...applied }));
-      }),
+    decline: () => open && setAnswers((current) => ({ ...current, [open]: { declined: true } })),
     isPending,
-    keep: () =>
-      setAnswers((current) => ({
-        ...current,
-        ...Object.fromEntries(open.map((offer) => [offer, { declined: true }])),
-      })),
     offers,
-    settled: open.length === 0,
+    open,
   };
 }
 
 export type PlanChange = ReturnType<typeof usePlanChange>;
 
-function useAnswerLine() {
+function useAnswerLine(adapt: MockAdaptView) {
   const t = useExtracted();
   const saveError = useChangeSaveErrorMessage();
 
   return ({ answer, offer }: { answer: Answer; offer: MockPlanOffer }): string => {
     if ("declined" in answer) {
-      return t("Your plan stays as it is.");
+      return "";
     }
 
     if ("failed" in answer) {
       return saveError;
     }
 
-    const { outcome } = answer;
-
-    if (outcome.status === "applied") {
-      return offer === "skip"
-        ? t("Done: {count, plural, one {# lesson} other {# lessons}} off your plan.", {
-            count: outcome.lessonsSkipped,
-          })
-        : t("Done: your plan gives it more time from now on.");
+    if (answer.outcome.status !== "applied") {
+      return t("Your plan didn't need to change.");
     }
 
-    if (outcome.reason === "alreadyIn") {
-      return t("Your plan already has every lesson of it, so nothing had to move.");
-    }
-
-    return outcome.reason === "cantMove"
-      ? t("It already starts as early as what it builds on allows.")
-      : t("Your plan already changed, so there's nothing left to do here.");
+    return offer === "skip"
+      ? t("{count, plural, one {# lesson} other {# lessons}} skipped.", {
+          count: answer.outcome.lessonsSkipped,
+        })
+      : t("Your plan gives {area} more time.", { area: adapt.focus?.area ?? "" });
   };
 }
 
-function isApplied(answer: Answer): boolean {
-  return "outcome" in answer && answer.outcome.status === "applied";
+function useStatusLines(change: PlanChange & { adapt: MockAdaptView }) {
+  const t = useExtracted();
+  const answerLine = useAnswerLine(change.adapt);
+
+  const declinedAll =
+    change.offers.length > 0 &&
+    change.offers.every((offer) => {
+      const answer = change.answers[offer];
+      return answer !== undefined && "declined" in answer;
+    });
+
+  // Declining writes nothing, so the step would still read as an open question.
+  if (declinedAll) {
+    return [{ applied: false, line: t("Your plan stays as it is.") }];
+  }
+
+  return change.offers.flatMap((offer) => {
+    const answer = change.answers[offer];
+    const line = answer ? answerLine({ answer, offer }) : null;
+    const applied = answer && "outcome" in answer && answer.outcome.status === "applied";
+    return line ? [{ applied, line }] : [];
+  });
 }
 
-function PlanChangeStatus({ change }: { change: PlanChange }) {
-  const answerLine = useAnswerLine();
+function PlanChangeStatus({ change }: { change: PlanChange & { adapt: MockAdaptView } }) {
+  const told = useStatusLines(change);
 
-  const answered = change.offers.flatMap((offer) => {
-    const answer = change.answers[offer];
-    return answer ? [{ answer, offer }] : [];
-  });
-
-  const applied = answered.some(({ answer }) => isApplied(answer));
-  const told = answered.filter(({ answer }) => !(applied && "declined" in answer));
-  const lines = [...new Set(told.map((entry) => answerLine(entry)))];
-
-  if (lines.length === 0) {
+  if (told.length === 0) {
     return null;
   }
 
   return (
-    <div className="text-muted-foreground flex items-start gap-2 text-sm" role="status">
-      {applied && (
-        <CircleCheckIcon aria-hidden="true" className="text-success-text mt-0.5 size-4 shrink-0" />
-      )}
-      <div className="flex flex-col gap-1">
-        {lines.map((line) => (
-          <p className="text-pretty" key={line}>
-            {line}
-          </p>
-        ))}
-      </div>
+    <div className="text-muted-foreground flex flex-col gap-1 text-sm" role="status">
+      {told.map(({ applied, line }) => (
+        <p className="flex items-start gap-2 text-pretty" key={line}>
+          {applied && (
+            <CircleCheckIcon
+              aria-hidden="true"
+              className="text-success-text mt-0.5 size-4 shrink-0"
+            />
+          )}
+          {line}
+        </p>
+      ))}
     </div>
   );
 }
 
-function usePlanChangeLines(adapt: MockAdaptView): DiffLine[] {
+function useOfferCopy(adapt: MockAdaptView | null) {
   const t = useExtracted();
-  const { focus, skip } = adapt;
-  const named = skip?.topics.slice(0, TOPICS_NAMED) ?? [];
-  const more = (skip?.topics.length ?? 0) - named.length;
+  const format = useFormatter();
 
-  const lines: (DiffLine | false | null)[] = [
-    ...named.map((topic): DiffLine => ({ kind: "removed", text: topic, tone: "good" })),
-    more > 0 && {
-      kind: "removed" as const,
-      text: t("{count, plural, one {# more topic} other {# more topics}}", { count: more }),
-      tone: "good" as const,
-    },
-    skip && {
-      kind: "context" as const,
-      text: t("{count, plural, one {# lesson less} other {# lessons less}}", {
-        count: skip.lessons,
-      }),
-    },
-    focus && {
-      kind: "added" as const,
-      text: t(
-        "More time for {area} ({correct, plural, =0 {# of {total} right} one {# of {total} right} other {# of {total} right}})",
+  return (
+    offer: MockPlanOffer,
+  ): { accept: string; decline: string; line: string; title: string } => {
+    if (offer === "skip") {
+      const topics = adapt?.skip?.topics ?? [];
+      const named = topics.slice(0, TOPICS_NAMED);
+      const more = topics.length - named.length;
+
+      const names =
+        more > 0
+          ? t("{names} and {count, plural, one {# more topic} other {# more topics}}", {
+              count: more,
+              names: named.join(", "),
+            })
+          : format.list(named, { type: "conjunction" });
+
+      return {
+        accept: t("Skip them"),
+        decline: t("Keep them"),
+        line: t("You got everything right in {topics}.", { topics: names }),
+        title: t("Skip {count, plural, one {# lesson} other {# lessons}} you already know?", {
+          count: adapt?.skip?.lessons ?? 0,
+        }),
+      };
+    }
+
+    return {
+      accept: t("Change my plan"),
+      decline: t("Not now"),
+      line: t(
+        "You got {correct, plural, =0 {# of {total} right} one {# of {total} right} other {# of {total} right}} there.",
         {
-          area: focus.area,
           // `#` shows up to three decimals; partial credit reads to the hundredth.
-          correct: Math.round(focus.correct * 100) / 100,
-          total: String(focus.total),
+          correct: Math.round((adapt?.focus?.correct ?? 0) * 100) / 100,
+          total: String(adapt?.focus?.total ?? 0),
         },
       ),
-      tone: "neutral" as const,
-    },
-  ];
-
-  return lines.filter((line): line is DiffLine => typeof line === "object" && line !== null);
+      title: t("Focus more on {area}?", { area: adapt?.focus?.area ?? "" }),
+    };
+  };
 }
 
-function usePlanChangeTitle(adapt: MockAdaptView | null): string | null {
-  const t = useExtracted();
-
-  if (adapt?.skip) {
-    return t("You got everything right in {count, plural, one {# topic} other {# topics}}", {
-      count: adapt.skip.topics.length,
-    });
-  }
-
-  return adapt?.focus ? t("Focus more on {area}?", { area: adapt.focus.area }) : null;
-}
-
+/**
+ * `answers={false}` leaves the open question's answers to the result's bar (`MockPlanDecline`,
+ * `MockPlanAccept`), where the step that asks it is the last one.
+ */
 export function MockPlanChange({
+  answers = true,
   change,
   showTitle = true,
 }: {
+  answers?: boolean;
   change: PlanChange & { adapt: MockAdaptView };
   showTitle?: boolean;
 }) {
-  const t = useExtracted();
   const titleId = useId();
-  const title = usePlanChangeTitle(change.adapt);
-  const lines = usePlanChangeLines(change.adapt);
+  const offerCopy = useOfferCopy(change.adapt);
+  const copy = change.open ? offerCopy(change.open) : null;
 
   return (
-    <div
-      aria-labelledby={showTitle ? titleId : undefined}
-      className="flex w-full flex-col items-start gap-3"
-      role="group"
-    >
-      {showTitle && (
-        <p className="text-sm font-medium text-pretty" id={titleId}>
-          {title}
-        </p>
-      )}
+    <div className="flex w-full flex-col items-start gap-4">
+      <PlanChangeStatus change={change} />
 
-      <DiffLines
-        className="w-full"
-        labels={{ added: t("New"), removed: t("Off your plan") }}
-        lines={lines}
-      />
+      {copy && (
+        <div
+          aria-labelledby={showTitle ? titleId : undefined}
+          className="flex w-full flex-col items-start gap-3"
+          role="group"
+        >
+          <div className="flex flex-col gap-1">
+            {showTitle && (
+              <p className="text-sm text-pretty" id={titleId}>
+                {copy.title}
+              </p>
+            )}
+            <p className="text-muted-foreground text-sm text-pretty">{copy.line}</p>
+          </div>
 
-      {!change.settled && (
-        <div className="flex flex-wrap gap-2">
-          <form action={() => change.apply()} className="contents">
-            <Button
-              busy={change.isPending}
-              icon={<CheckIcon aria-hidden="true" />}
-              size="sm"
-              type="submit"
-              variant="outline"
-            >
-              {t("Apply")}
-            </Button>
-          </form>
-          <Button
-            disabled={change.isPending}
-            focusableWhenDisabled
-            onClick={change.keep}
-            size="sm"
-            variant="ghost"
-          >
-            {t("Keep my plan")}
-          </Button>
+          {answers && (
+            <div className="flex flex-wrap gap-2">
+              <form action={() => change.accept()} className="contents">
+                <Button busy={change.isPending} size="sm" type="submit" variant="outline">
+                  {copy.accept}
+                </Button>
+              </form>
+              <Button
+                disabled={change.isPending}
+                focusableWhenDisabled
+                onClick={change.decline}
+                size="sm"
+                variant="ghost"
+              >
+                {copy.decline}
+              </Button>
+            </div>
+          )}
         </div>
       )}
-
-      <PlanChangeStatus change={change} />
     </div>
   );
 }
 
-export function hasPlanChange(change: PlanChange): change is PlanChange & { adapt: MockAdaptView } {
+type OpenPlanChange = PlanChange & { adapt: MockAdaptView };
+
+/**
+ * The open question's answers in the result's bar, in place of its way on: "Continue" there would
+ * leave the question unanswered as if it were an answer. The way on comes back once it's answered.
+ * Declining is the bar's second action and accepting its main one.
+ */
+export function MockPlanDecline({ change }: { change: OpenPlanChange }) {
+  const offerCopy = useOfferCopy(change.adapt);
+
+  if (!change.open) {
+    return null;
+  }
+
+  return (
+    <Button
+      className={BAR_SECOND_ACTION_CLASS}
+      disabled={change.isPending}
+      focusableWhenDisabled
+      onClick={change.decline}
+      size="xl"
+      variant="outline"
+    >
+      {offerCopy(change.open).decline}
+    </Button>
+  );
+}
+
+export function MockPlanAccept({ change }: { change: OpenPlanChange }) {
+  const offerCopy = useOfferCopy(change.adapt);
+
+  if (!change.open) {
+    return null;
+  }
+
+  return (
+    <TaskMainButton busy={change.isPending} onClick={change.accept}>
+      {offerCopy(change.open).accept}
+    </TaskMainButton>
+  );
+}
+
+export function hasPlanChange(change: PlanChange): change is OpenPlanChange {
   return change.adapt !== null && change.offers.length > 0;
 }
 
-export function PreparationNumbers({ change }: { change: NonNullable<MockResult["preparation"]> }) {
+type Preparation = NonNullable<MockResult["preparation"]>;
+
+export function PreparationReadout({ change }: { change: Preparation }) {
+  const t = useExtracted();
   const formatShare = useFormatShare();
+  const before = formatShare(change.before);
 
   return (
     <>
-      <span className="text-muted-foreground">{`${formatShare(change.before)} → `}</span>
-      {formatShare(change.after)}
+      <span className="text-readout text-5xl">{formatShare(change.after)}</span>
+      <span className="text-muted-foreground font-mono text-xs font-normal tracking-normal tabular-nums">
+        {change.after < change.before
+          ? t("Down from {before}", { before })
+          : t("Up from {before}", { before })}
+      </span>
     </>
   );
 }
 
-export function PreparationMeter({ change }: { change: NonNullable<MockResult["preparation"]> }) {
-  const t = useExtracted();
-  const fell = change.after < change.before;
-
+export function PreparationMeter({ change }: { change: Preparation }) {
   return (
-    <>
-      <Meter className="h-1.5 w-full max-w-xs">
-        <MeterFill className="bg-success" share={change.after} />
-      </Meter>
-      <StepDetail className="text-sm">
-        {fell
-          ? t("The mock exam showed what's still missing.")
-          : t("What you showed in this mock exam counts toward it.")}
-      </StepDetail>
-    </>
+    <Meter className="h-1.5 w-full">
+      <MeterFill className="bg-success" share={change.after} />
+    </Meter>
   );
 }
 
@@ -295,19 +320,27 @@ export function MockPlanStep({
   preparation: MockResult["preparation"];
 }) {
   const t = useExtracted();
-  const changeTitle = usePlanChangeTitle(change.adapt);
+  const offerCopy = useOfferCopy(change.adapt);
+  const [firstOffer] = change.offers;
+  const question = change.open ?? firstOffer;
 
   return (
     <StepCard>
       <StepHeader>
-        <StepEyebrow>{preparation ? t("Your preparation") : t("Your plan")}</StepEyebrow>
-        <StepTitle className={cn(preparation && "text-readout text-5xl")}>
-          {preparation ? <PreparationNumbers change={preparation} /> : changeTitle}
+        <Eyebrow>{preparation ? t("Your preparation") : t("Your plan")}</Eyebrow>
+        <StepTitle>
+          {preparation ? (
+            <PreparationReadout change={preparation} />
+          ) : (
+            question && offerCopy(question).title
+          )}
         </StepTitle>
       </StepHeader>
 
       {preparation && <PreparationMeter change={preparation} />}
-      {hasPlanChange(change) && <MockPlanChange change={change} showTitle={Boolean(preparation)} />}
+      {hasPlanChange(change) && (
+        <MockPlanChange answers={false} change={change} showTitle={Boolean(preparation)} />
+      )}
     </StepCard>
   );
 }

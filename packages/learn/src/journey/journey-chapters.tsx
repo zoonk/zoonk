@@ -4,8 +4,9 @@ import {
   type PlanChapterView,
   type PlanPhaseCheckpointView,
 } from "@zoonk/core/plans/view-contract";
+import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronRightIcon, MinusIcon, PlusIcon } from "lucide-react";
+import { MinusIcon, PlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { ChapterMark } from "../_components/chapter-mark";
@@ -33,7 +34,7 @@ export function useChapterTitle() {
   return (chapter: PlanChapterView): string => {
     if (chapter.skills.length > 0) {
       return t(
-        "{count, plural, one {# skill you already know} other {# skills you already know}}",
+        "{count, plural, one {# topic you already know} other {# topics you already know}}",
         { count: chapter.skills.length },
       );
     }
@@ -48,31 +49,6 @@ function isSkipped(chapter: PlanChapterView): boolean {
 
 export function isWritingAhead(chapter: PlanChapterView): boolean {
   return chapter.writing && !chapter.far && chapter.skills.length === 0;
-}
-
-function ChapterLessons({ chapter }: { chapter: PlanChapterView }) {
-  const t = useExtracted();
-
-  if (chapter.writing || chapter.lessonsTotal === 0 || isSkipped(chapter)) {
-    return null;
-  }
-
-  return (
-    <span className="text-muted-foreground font-mono text-xs tabular-nums">
-      <span aria-hidden="true">
-        {t("{done, number} / {total, number}", {
-          done: chapter.lessonsDone,
-          total: chapter.lessonsTotal,
-        })}
-      </span>
-      <span className="sr-only">
-        {t(
-          "{total, plural, one {{done, number} of # lesson done} other {{done, number} of # lessons done}}",
-          { done: chapter.lessonsDone, total: chapter.lessonsTotal },
-        )}
-      </span>
-    </span>
-  );
 }
 
 function ChapterRow({
@@ -96,9 +72,9 @@ function ChapterRow({
   const line =
     writing ??
     (chapter.testedOut && chapter.skills.length === 0
-      ? t("Skipped because you already know it")
+      ? t("Skipped · you already know it")
       : null) ??
-    (chapter.deeper ? t("Going deeper into an earlier topic") : null);
+    (chapter.deeper ? t("More on an earlier topic") : null);
 
   const content = (
     <>
@@ -117,7 +93,6 @@ function ChapterRow({
           </span>
           {line && <span className="text-muted-foreground text-xs">{line}</span>}
         </span>
-        <ChapterLessons chapter={chapter} />
       </span>
     </>
   );
@@ -148,36 +123,8 @@ function ChapterRow({
       href={links.chapter(chapter.chapterId)}
     >
       {content}
-      <ChevronRightIcon aria-hidden="true" className="text-muted-foreground/60 size-4 shrink-0" />
+      <RowChevron />
     </LearnLink>
-  );
-}
-
-export function WritingAheadLine({
-  chapters,
-  unit = false,
-}: {
-  chapters: readonly PlanChapterView[];
-  unit?: boolean;
-}) {
-  const t = useExtracted();
-  const writing = chapters.filter((chapter) => isWritingAhead(chapter));
-
-  if (writing.length === 0) {
-    return null;
-  }
-
-  const courses = writing.map((chapter) => chapter.title).filter(Boolean);
-
-  return (
-    <p className="text-muted-foreground py-2 text-xs" data-slot="writing-ahead">
-      {courses.length > 0 &&
-        t("Lessons from {courses} are being written.", { courses: courses.join(", ") })}
-      {courses.length === 0 &&
-        (unit
-          ? t("More lessons for this unit are being written.")
-          : t("More lessons for this phase are being written."))}
-    </p>
   );
 }
 
@@ -233,10 +180,6 @@ export function JourneyChapters({
           <CheckpointRow checkpoint={checkpoint} links={links} />
         </li>
       )}
-
-      <li className="empty:hidden">
-        <WritingAheadLine chapters={chapters} />
-      </li>
     </ul>
   );
 }

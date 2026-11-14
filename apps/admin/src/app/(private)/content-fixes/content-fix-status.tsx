@@ -1,29 +1,29 @@
+import { StateMark, type StateTone } from "@/components/state-mark";
+import { contentFixStatusLabels as storedStatusLabels } from "@zoonk/core/staff/content-fixes/status-labels";
 import { type ContentFixStatus } from "@zoonk/db";
-import { Badge } from "@zoonk/ui/components/badge";
 
 type ContentFixState = ContentFixStatus | "reverted";
 
 type RevertRef = { id: string; status: ContentFixStatus };
 
 export const contentFixStatusLabels: Record<ContentFixState, string> = {
-  applied: "Applied",
-  approved: "Approved, not applied yet",
-  proposed: "Waiting for review",
-  rejected: "Rejected",
-  reverted: "Reverted",
-  stale: "Stale",
-  withdrawn: "Withdrawn",
+  ...storedStatusLabels,
+  reverted: "Undone",
 };
 
-const variants = {
-  applied: "success",
-  approved: "secondary",
-  proposed: "default",
-  rejected: "outline",
-  reverted: "outline",
-  stale: "destructive",
-  withdrawn: "outline",
-} as const satisfies Record<ContentFixState, string>;
+/**
+ * A fix that went stale changed nothing and needs proposing again, and one approved that didn't
+ * finish applying needs its approver, so both read as ones to look at.
+ */
+export const contentFixStatusTones: Record<ContentFixState, StateTone> = {
+  applied: "done",
+  approved: "attention",
+  proposed: "waiting",
+  rejected: "off",
+  reverted: "off",
+  stale: "attention",
+  withdrawn: "off",
+};
 
 /** The revert that put back what an applied fix replaced, if one applied. */
 export function findAppliedRevert(fix: {
@@ -42,6 +42,10 @@ export function contentFixState(fix: {
   return findAppliedRevert(fix) ? "reverted" : fix.status;
 }
 
-export function ContentFixStatusBadge({ state }: { state: ContentFixState }) {
-  return <Badge variant={variants[state]}>{contentFixStatusLabels[state]}</Badge>;
+export function ContentFixStatusMark({ state }: { state: ContentFixState }) {
+  return (
+    <StateMark state={state} tone={contentFixStatusTones[state]}>
+      {contentFixStatusLabels[state]}
+    </StateMark>
+  );
 }

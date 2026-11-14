@@ -57,6 +57,7 @@ import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.FeedbackNote
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
+import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
@@ -64,9 +65,12 @@ import com.zoonk.android.ui.components.MomentReadouts
 import com.zoonk.android.ui.components.MomentScore
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SectionHeader
+import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TaskSegment
-import com.zoonk.android.ui.components.needsAccount
+import com.zoonk.android.ui.components.freeLessonReady
+import com.zoonk.android.ui.components.limitWords
+import com.zoonk.android.ui.components.stillReviewLine
 import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.components.taskOption
 import com.zoonk.android.ui.format.currentLocale
@@ -78,7 +82,6 @@ import com.zoonk.api.models.LearnerSummaryBuddy
 import com.zoonk.api.models.LessonFit
 import com.zoonk.api.models.LibraryLessonCompletion
 import com.zoonk.api.models.Milestone
-import com.zoonk.api.models.StudyReminderOffer
 import kotlinx.coroutines.delay
 import kotlin.math.roundToLong
 import kotlin.time.Duration.Companion.seconds
@@ -98,48 +101,35 @@ fun LessonResultNotes(
 private fun AccessLayout(
     icon: Int,
     title: String,
-    description: String,
-    actions: @Composable ColumnScope.() -> Unit = {},
+    description: String?,
 ) {
     LessonColumnBeforeFold {
         Icon(painterResource(icon), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
         Column(Modifier.semantics { liveRegion = LiveRegionMode.Polite }, verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
-            Text(description, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
+            description?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge) }
         }
-        Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp), content = actions)
     }
 }
 
-/** A refused run never dead-ends: each refusal offers its way on (main's `LessonAccessScreen`). */
+/** A refused run never dead-ends: each refusal says why here, and [lessonAccessBar] holds its way on (main's `LessonAccessScreen`). */
 @Composable
 fun LessonAccessScreen(
     refusal: LessonRefusal,
     onRetry: () -> Unit,
-    exits: LessonPlayerExits,
 ) {
     when (refusal) {
         is LessonRefusal.Limited -> {
-            Limited(refusal.limit, onRetry, exits)
-        }
-
-        LessonRefusal.PlusRequired -> {
-            TrackShown(AnalyticsEvent.SubscriptionGateShown)
-            AccessLayout(
-                R.drawable.ic_auto_awesome,
-                stringResource(R.string.subscription_free_week_over_title),
-                stringResource(R.string.subscription_free_week_over_description),
-            ) { PlusActions(exits) }
+            val limit = refusal.limit
+            if (limit is Limit.SlowDown) {
+                SlowDown(limit.retryAfterSeconds.toLong(), onRetry)
+            } else {
+                refusal.reached()?.let { Limited(it) }
+            }
         }
 
         LessonRefusal.NotFound -> {
-            AccessLayout(
-                R.drawable.ic_error,
-                stringResource(R.string.player_not_found_title),
-                stringResource(R.string.player_not_found_description),
-            ) {
-                Button(onClick = exits::close, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.player_back)) }
-            }
+            AccessLayout(R.drawable.ic_error, stringResource(R.string.player_not_found_title), null)
         }
 
         LessonRefusal.NotInApp -> {
@@ -147,9 +137,7 @@ fun LessonAccessScreen(
                 R.drawable.ic_error,
                 stringResource(R.string.player_not_in_app_title),
                 stringResource(R.string.player_not_in_app_description),
-            ) {
-                Button(onClick = exits::close, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.player_back)) }
-            }
+            )
         }
 
         LessonRefusal.Failed -> {
@@ -157,64 +145,93 @@ fun LessonAccessScreen(
                 R.drawable.ic_error,
                 stringResource(R.string.player_start_failed_title),
                 stringResource(R.string.player_start_failed_description),
-            ) {
-                Button(onClick = onRetry, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.player_try_again)) }
+            )
+        }
+    }
+}
+
+/** The bottom bar's one way on from [LessonAccessScreen]; none while a slow-down counts down to opening the lesson. */
+fun lessonAccessBar(
+    refusal: LessonRefusal,
+    onRetry: () -> Unit,
+    exits: LessonPlayerExits,
+): (@Composable () -> Unit)? {
+    val (label, onClick) =
+        when (refusal) {
+            LessonRefusal.NotFound, LessonRefusal.NotInApp -> {
+                R.string.player_back to exits::close
+            }
+
+            LessonRefusal.Failed -> {
+                R.string.player_try_again to onRetry
+            }
+
+            is LessonRefusal.Limited -> {
+                val reached = refusal.reached() ?: return null
+                when (reached.tier) {
+                    LimitTier.Guest -> R.string.limit_create_account to { exits.open(AppRoute.Login) }
+                    LimitTier.Free -> return { FreeLessonsBar(reached, onRetry, exits) }
+                    LimitTier.Plus -> R.string.player_back to exits::close
+                }
+            }
+        }
+    return { TaskActionBar { TaskActions { main -> Button(onClick = onClick, modifier = main) { Text(stringResource(label)) } } } }
+}
+
+/** "Subscribe", and once the next free lesson has opened, "Start the lesson" asks the server again; it never starts by itself. */
+@Composable
+private fun FreeLessonsBar(
+    reached: Limit.Reached,
+    onRetry: () -> Unit,
+    exits: LessonPlayerExits,
+) {
+    val subscribe = { exits.open(AppRoute.Subscription) }
+    TaskActionBar {
+        TaskActions { main ->
+            if (freeLessonReady(reached)) {
+                OutlinedButton(
+                    onClick = subscribe,
+                    modifier = Modifier.taskOption(),
+                ) { Text(stringResource(R.string.subscription_subscribe)) }
+                Button(onClick = onRetry, modifier = main) { Text(stringResource(R.string.player_start_the_lesson)) }
+            } else {
+                Button(onClick = subscribe, modifier = main) { Text(stringResource(R.string.subscription_subscribe)) }
             }
         }
     }
 }
 
-@Composable
-private fun ColumnScope.PlusActions(exits: LessonPlayerExits) {
-    Button(onClick = {
-        exits.open(AppRoute.Subscription)
-    }, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.player_see_plus)) }
-    OutlinedButton(onClick = exits::close, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.player_back)) }
-}
-
-@Composable
-private fun Limited(
-    limit: Limit,
-    onRetry: () -> Unit,
-    exits: LessonPlayerExits,
-) {
-    val tier = if (limit.needsAccount) LimitTier.Guest else (limit as? Limit.Reached)?.tier
-
-    when (tier) {
-        null -> {
-            SlowDown(((limit as? Limit.SlowDown)?.retryAfterSeconds ?: 0).toLong(), onRetry)
+private fun LessonRefusal.reached(): Limit.Reached? =
+    when (this) {
+        is LessonRefusal.Limited -> {
+            when (val limit = limit) {
+                is Limit.SlowDown -> null
+                Limit.SignUpRequired -> Limit.Reached(LimitTier.Guest, LimitPeriod.Total)
+                is Limit.Reached -> limit
+            }
         }
 
+        else -> {
+            null
+        }
+    }
+
+@Composable
+private fun Limited(reached: Limit.Reached) {
+    val title = limitWords(reached, LimitSubject.Lessons).title.orEmpty()
+
+    when (reached.tier) {
         LimitTier.Guest -> {
-            AccessLayout(
-                R.drawable.ic_person_add,
-                stringResource(R.string.player_guest_limit_title),
-                stringResource(R.string.player_guest_limit_description),
-            ) {
-                Button(onClick = {
-                    exits.open(AppRoute.Login)
-                }, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.player_create_free_account)) }
-            }
+            AccessLayout(R.drawable.ic_person_add, title, stringResource(R.string.player_guest_limit_description))
         }
 
         LimitTier.Free -> {
             TrackShown(AnalyticsEvent.SubscriptionGateShown)
-            val month = (limit as? Limit.Reached)?.period == LimitPeriod.Month
-            AccessLayout(
-                R.drawable.ic_auto_awesome,
-                stringResource(if (month) R.string.player_free_limit_month_title else R.string.player_free_limit_day_title),
-                stringResource(if (month) R.string.player_free_limit_month_description else R.string.player_free_limit_day_description),
-            ) { PlusActions(exits) }
+            AccessLayout(R.drawable.ic_auto_awesome, title, if (freeLessonReady(reached)) null else stillReviewLine(reached))
         }
 
         LimitTier.Plus -> {
-            AccessLayout(
-                R.drawable.ic_hourglass_empty,
-                stringResource(R.string.player_plus_limit_title),
-                stringResource(R.string.player_plus_limit_description),
-            ) {
-                OutlinedButton(onClick = exits::close, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.player_back)) }
-            }
+            AccessLayout(R.drawable.ic_hourglass_empty, title, stillReviewLine(reached))
         }
     }
 }
@@ -263,7 +280,6 @@ fun LessonCompletionView(
     buddy: LearnerSummaryBuddy? = null,
     finishedChapter: FinishedChapterSlot? = null,
     onReportSaveFailure: () -> Unit = {},
-    reminderOffer: (@Composable (StudyReminderOffer) -> Unit)? = null,
 ) {
     val completion = state.completion ?: return
 
@@ -333,7 +349,6 @@ fun LessonCompletionView(
                 val moment = buddy.momentBuddy()
                 DayMoment(result, moment.look, moment.name)
                 result.finishedChapter?.let { finishedChapter?.invoke(it) }
-                result.studyBlock?.reminderOffer?.let { reminderOffer?.invoke(it) }
             }
         },
         // On a spread the lesson's map sits under what was done; one column keeps it behind ⋮.

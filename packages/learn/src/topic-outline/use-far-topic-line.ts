@@ -1,33 +1,18 @@
 "use client";
 
-import { useExtracted, useFormatter } from "next-intl";
-import { isoDateToUtc } from "../_utils/iso-date";
+import { useExtracted } from "next-intl";
+import { useFormatIsoDate, useIsoToday } from "../_utils/iso-date";
+
+const MONTH_LENGTH = "YYYY-MM".length;
 
 function useStartWords() {
-  const format = useFormatter();
+  const formatDate = useFormatIsoDate();
+  const today = useIsoToday();
 
-  return (isoDate: string) => {
-    const date = isoDateToUtc(isoDate);
-    const now = new Date();
-    const isThisYear = date.getUTCFullYear() === now.getFullYear();
-    const isThisMonth = isThisYear && date.getUTCMonth() === now.getMonth();
-
-    if (isThisMonth) {
-      return {
-        dateKind: "day",
-        start: format.dateTime(date, { day: "numeric", month: "short", timeZone: "UTC" }),
-      };
-    }
-
-    return {
-      dateKind: "month",
-      start: format.dateTime(date, {
-        month: "long",
-        timeZone: "UTC",
-        ...(isThisYear ? {} : { year: "numeric" }),
-      }),
-    };
-  };
+  return (isoDate: string) =>
+    isoDate.slice(0, MONTH_LENGTH) === today.slice(0, MONTH_LENGTH)
+      ? { dateKind: "day", start: formatDate(isoDate, "day") }
+      : { dateKind: "month", start: formatDate(isoDate, "monthName") };
 }
 
 export function useFarTopicLine() {
@@ -45,19 +30,19 @@ export function useFarTopicLine() {
       return nextDate
         ? t({
             description: '{start} is a day, like "Nov 5", or a month, like "December".',
-            message: "{dateKind, select, month {From {start}} other {From {start}}}",
+            message: "{dateKind, select, month {Starts in {start}} other {Starts {start}}}",
             values: startWords(nextDate),
           })
         : null;
     }
 
-    const count = t("{count, plural, =1 {# lesson} other {About # lessons}}", { count: lessons });
+    const count = t("{count, plural, one {# lesson} other {# lessons}}", { count: lessons });
 
     return nextDate
       ? t({
           description: '{start} is a day, like "Nov 5", or a month, like "December".',
           message:
-            "{dateKind, select, month {{count} · from {start}} other {{count} · from {start}}}",
+            "{dateKind, select, month {{count} · starts in {start}} other {{count} · starts {start}}}",
           values: { count, ...startWords(nextDate) },
         })
       : count;
@@ -76,5 +61,5 @@ export function useWritingLine() {
     far: boolean;
     lessons: number | null;
     nextDate?: string | null;
-  }) => (far ? farLine({ lessons, nextDate }) : t("Lessons on the way"));
+  }) => (far ? farLine({ lessons, nextDate }) : t("Not ready yet"));
 }

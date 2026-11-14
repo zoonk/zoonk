@@ -132,7 +132,7 @@ private fun courseBlocks(
         }
 
         if (plan?.pace != null) {
-            add(CatalogBlock("plan") { CoursePlanSection(plan, detail.chapters, course.format == CourseResource.Format.EXAM, beside) })
+            add(CatalogBlock("plan") { CoursePlanSection(plan, detail.chapters, beside) })
         }
 
         if (audience.isNotEmpty() || outcomes.isNotEmpty()) {
@@ -153,7 +153,6 @@ private fun courseBlocks(
                     openLevel = outlineLevel(detail.chapters, courseId, hasSession, summary),
                     levels = course.levels,
                     goal = summary.value?.goalOnCourse(courseId),
-                    examples = showsExamples(courseId, hasSession, summary),
                     disclosures = layout.disclosures,
                 )
             },
@@ -204,7 +203,7 @@ private fun CourseHero(
                         modifier = Modifier.weight(1f),
                         style = MaterialTheme.typography.bodyMedium,
                     )
-                    Icon(painterResource(R.drawable.ic_arrow_forward), contentDescription = null)
+                    Icon(painterResource(R.drawable.ic_chevron_right), contentDescription = null)
                 }
             }
         }

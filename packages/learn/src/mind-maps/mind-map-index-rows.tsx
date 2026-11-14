@@ -3,7 +3,7 @@
 import { type SavedMindMapView } from "@zoonk/core/mind-maps/contract";
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { LockIcon, NetworkIcon } from "lucide-react";
+import { NetworkIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { KindIcon } from "../_components/kind-tile";
 import {
@@ -11,13 +11,11 @@ import {
   LIST_ROW_INTERACTIVE_CLASS,
   ListRowContent,
   ListRowDescription,
-  ListRowIcon,
   ListRowLeading,
   ListRowLink,
   ListRowTitle,
   ListRowTrailing,
 } from "../_components/list-group";
-import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { buildStudyHref } from "./_utils/mind-map-urls";
 import { type MindMapsPage, type MindMapsPageChapter } from "./_utils/mind-maps-page";
@@ -26,34 +24,10 @@ import { MindMapSlot } from "./mind-map-slot";
 
 const LEADING_CLASS = "py-2";
 
-function LockSlot() {
-  return (
-    <MindMapSlot thumbnailUrl={null}>
-      <LockIcon className="text-muted-foreground size-4" />
-    </MindMapSlot>
-  );
-}
-
-/** A chapter's map in the list: it opens the deck on that map, or Plus when it's locked. */
+/** A chapter's map in the list: it opens the deck on that map. */
 export function ChapterMapRow({ chapter, study }: { chapter: MindMapsPageChapter; study: string }) {
   const t = useExtracted();
-  const routes = useLearnRoutes();
   const number = t("Chapter {number, number}", { number: chapter.position });
-  const isLocked = chapter.status === "plusRequired";
-
-  if (isLocked) {
-    return (
-      <ListRowLink href={routes.upgrade}>
-        <ListRowLeading className={LEADING_CLASS}>
-          <LockSlot />
-        </ListRowLeading>
-        <ListRowContent>
-          <ListRowTitle>{chapter.title}</ListRowTitle>
-          <ListRowDescription>{`${number} · ${t("Plus")}`}</ListRowDescription>
-        </ListRowContent>
-      </ListRowLink>
-    );
-  }
 
   return (
     <ListRowLink
@@ -89,30 +63,17 @@ export type LessonGroupRowData = MindMapsPage["lessonGroups"][number] &
 /** A chapter's lesson maps in one row, which opens the Lessons deck on that chapter. */
 export function LessonGroupRow({ group, study }: { group: LessonGroupRowData; study: string }) {
   const t = useExtracted();
-  const routes = useLearnRoutes();
-  const isLocked = group.locked === group.count;
 
   const facts = [
     t("Chapter {number, number}", { number: group.position }),
     t("{count, plural, one {# lesson map} other {# lesson maps}}", { count: group.count }),
-    group.locked > 0 &&
-      t("{count, plural, one {# locked} other {# locked}}", { count: group.locked }),
-  ].filter(Boolean);
+  ];
 
   return (
     <ListRowLink
-      href={
-        isLocked
-          ? routes.upgrade
-          : buildStudyHref({ place: { chapterId: group.chapterId }, study, view: "lessons" })
-      }
-      prefetch={isLocked ? undefined : "intent"}
+      href={buildStudyHref({ place: { chapterId: group.chapterId }, study, view: "lessons" })}
+      prefetch="intent"
     >
-      {isLocked && (
-        <ListRowIcon>
-          <LockIcon />
-        </ListRowIcon>
-      )}
       <ListRowContent>
         <ListRowTitle>{group.title}</ListRowTitle>
         <ListRowDescription>{facts.join(" · ")}</ListRowDescription>
@@ -181,6 +142,7 @@ export function SavedMapRow({
       </LearnLink>
 
       <MindMapSaveButton
+        edge="end"
         labelled={false}
         onToggle={onRemove}
         saved

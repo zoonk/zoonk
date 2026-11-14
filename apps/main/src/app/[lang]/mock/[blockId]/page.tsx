@@ -9,7 +9,7 @@ import { getSessionBlockReturn } from "@/lib/session/session-block-return";
 import { withQuery } from "@/lib/with-query";
 import { getMock } from "@zoonk/core/exams/mocks/get";
 import { DrawnMath } from "@zoonk/learn/rich-text/drawn-math";
-import { TaskSkeleton } from "@zoonk/learn/task-layout";
+import { QuestionSkeleton, TaskSkeleton } from "@zoonk/learn/task-layout";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
@@ -38,15 +38,11 @@ function MockSkeleton() {
       progress
       title={<Skeleton className="h-6 w-24" />}
     >
-      <Skeleton className="h-3 w-full" />
-      <Skeleton className="h-7 w-5/6" />
-      <div className="flex flex-col gap-2.5">
-        <Skeleton className="rounded-option h-12 w-full" />
-        <Skeleton className="rounded-option h-12 w-full" />
-        <Skeleton className="rounded-option h-12 w-full" />
-        <Skeleton className="rounded-option h-12 w-full" />
-        <Skeleton className="rounded-option h-12 w-full" />
+      <div className="flex items-center gap-3">
+        <Skeleton className="h-5.5 w-40 rounded-sm" />
+        <Skeleton className="ml-auto h-3 w-16" />
       </div>
+      <QuestionSkeleton options={5} />
     </TaskSkeleton>
   );
 }

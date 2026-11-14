@@ -27,10 +27,18 @@ const DAY_RING_CLASS = cn(
   "focus-visible:**:data-current:inset-ring-foreground focus-visible:**:data-current:ring-background focus-visible:**:data-current:ring-3 focus-visible:**:data-current:inset-ring-2 focus-visible:**:data-current:ring-inset",
 );
 
+/**
+ * On touch a day is about 20 px and the calendar scrolls. Where the browser can divide lengths, the
+ * days stretch a little so whole weeks fill the column; elsewhere it shows the whole weeks that fit,
+ * starting a few px inside the column.
+ */
 const CALENDAR_SIZE_CLASS = cn(
   "@container/calendar [--calendar-gap:round(down,clamp(0.125rem,0.25cqw,0.375rem),1px)]",
   "[--calendar-cell:clamp(0.625rem,round(down,calc((100cqw-(var(--calendar-weeks,53)-1)*var(--calendar-gap))/var(--calendar-weeks,53)),1px),2.5rem)]",
-  "pointer-coarse:[--calendar-cell:1.25rem]",
+  "[--calendar-touch-cell:1.25rem] [--calendar-touch-width:calc(round(down,100%+var(--calendar-gap),var(--calendar-cell)+var(--calendar-gap))-var(--calendar-gap))]",
+  "[--calendar-touch-weeks:round(down,calc((100cqw+var(--calendar-gap))/(1.25rem+var(--calendar-gap))),1)]",
+  "supports-[width:calc(1px*(1px/1px))]:[--calendar-touch-cell:calc((100cqw-(var(--calendar-touch-weeks)-1)*var(--calendar-gap))/var(--calendar-touch-weeks))] supports-[width:calc(1px*(1px/1px))]:[--calendar-touch-width:100%]",
+  "pointer-coarse:[--calendar-cell:var(--calendar-touch-cell)]",
 );
 
 /**
@@ -97,7 +105,8 @@ export function ContributionCalendarTitle({ children, className, ...props }: Com
 
 /**
  * RTL so an overflowing calendar opens at its newest edge. On touch it is as wide as a whole number of
- * weeks and snaps to them, so a swipe never rests on half a week.
+ * weeks and snaps to them, so a swipe never rests on half a week. The side with earlier or later
+ * weeks fades by one week, the only sign on a still screen that the rest of the year is a swipe away.
  */
 export function ContributionCalendarViewport({
   children,
@@ -107,7 +116,7 @@ export function ContributionCalendarViewport({
   return (
     <div
       className={cn(
-        "ml-auto w-full min-w-0 overflow-x-auto pb-1 pointer-coarse:w-[calc(round(down,100%+var(--calendar-gap),var(--calendar-cell)+var(--calendar-gap))-var(--calendar-gap))] pointer-coarse:snap-x pointer-coarse:snap-mandatory",
+        "scroll-fade-x ml-auto w-full min-w-0 overflow-x-auto pb-1 [--scroll-fade-x-size:calc(var(--calendar-cell)+var(--calendar-gap))] pointer-coarse:w-(--calendar-touch-width) pointer-coarse:snap-x pointer-coarse:snap-mandatory",
         className,
       )}
       data-slot={VIEWPORT_SLOT}
@@ -180,7 +189,7 @@ export function ContributionCalendarPeriod({
   return (
     <span
       className={cn(
-        "text-faint absolute top-0 left-0 font-mono text-[10px] whitespace-nowrap tabular-nums",
+        "text-faint text-2xs absolute top-0 left-0 font-mono whitespace-nowrap tabular-nums",
         className,
       )}
       data-slot="contribution-calendar-period"
@@ -198,7 +207,7 @@ export function ContributionCalendarDay({
   return (
     <ChartInspectorPoint
       aria-hidden="true"
-      className={cn("size-(--calendar-cell) shrink-0 rounded-[2px]", className)}
+      className={cn("size-(--calendar-cell) shrink-0 rounded-xs", className)}
       data-slot="contribution-calendar-day"
       {...props}
     />
@@ -214,7 +223,7 @@ export function ContributionCalendarLegend({
   return (
     <div
       className={cn(
-        "text-muted-foreground flex items-center justify-end gap-1 text-[0.6875rem]",
+        "text-muted-foreground text-2xs flex items-center justify-end gap-1",
         className,
       )}
       data-slot="contribution-calendar-legend"
@@ -242,7 +251,7 @@ export function ContributionCalendarLegendSwatch({ className, ...props }: Compon
   return (
     <span
       aria-hidden="true"
-      className={cn("size-2.5 rounded-[2px]", className)}
+      className={cn("size-2.5 rounded-xs", className)}
       data-slot="contribution-calendar-legend-swatch"
       {...props}
     />

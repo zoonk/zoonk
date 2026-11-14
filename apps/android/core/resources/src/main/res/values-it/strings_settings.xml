@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "settings_account": "ebecd1285838c5353b69d6b24901d019c175b64aeae312b4e6c918931b949b50",
   "settings_account_deleted": "2a21c54fc7094162435dc4844ef1799d5ec73510c2d6f4b196c38cb98ad2a2f7",
   "settings_account_deleted_title": "e2097535c23f027d97c265ed19c89b10571751f9f4d1f02aa9b0333dcc355aac",
   "settings_apple_not_revoked": "6f5dcc05153b11c2f10dfe1fe3a142efcb3a06f678329ced4eb2893eed597c11",
   "settings_cancel": "4f9a480792b656cf62c192df3549b4df7ece7be6f13942dfc57482b1fc1abb04",
-  "settings_delete_account": "6ead666d0a0798ca010c8ad3692218e6db32ecca21879790ff25559ca90f3a12",
-  "settings_delete_account_description": "b2e1e212044d07e4dd32ad266f10c39562b96b5775e8d645720cdbd575032f47",
   "settings_delete_code_description": "608c9cd687c72c77d1892c01cd9ab3bd6853de45b0f6bcb667465c41931ccbd8",
   "settings_delete_code_title": "33895d5ef27a4485199ad19a3de450aa9f4f3dbf2c9018ffeb128de7cc679a61",
   "settings_delete_confirm_description": "62917a64d8d8247ece2dd3b48896800b9190b426fff932723dde19e174fbba11",
@@ -19,11 +16,11 @@
   "settings_done": "db41107a8ead81e2340b1745bf859a45dd39493170eacb18714f2439899ac37d",
   "settings_download": "5ecdcf3013108cbab53a99662faf0f53cec015bfda42833e84960e27a3281d7a",
   "settings_download_data": "c3c9121ccd8cf3dad6b81e3680a7e0afe9418f02b9a47af5f4038af82d610183",
-  "settings_download_data_description": "c07f5ddc0ba0e5e22af6634cfd81e3dfa8dc1e4ef09bb0f76f77fd306562c7e6",
   "settings_download_failed": "204b2b1e7d529f0823305cd46da3ec582847fcb8f9215e60f8ead2c4f1133a88",
   "settings_home_country": "63a05ca231d1b5a2e6018b536a8216976838998a475cdb3c72ea2e4cf473057a",
-  "settings_home_country_description": "ccbe1052cdd825f75254cbe1d006ed9d9027e66855b3ac8d392500c6ef02b534",
+  "settings_home_country_description": "4dbbf6b325312fb784c08577c6fca570391f05edddc93592955bac114c8e25b7",
   "settings_home_country_none": "446132534bfaa3188743caae95d56523d1992040c49a2c9abdf59417aa9f0ef2",
+  "settings_home_country_why": "1917cecc239f79ccb3beb885a917b734537869aa7834dd2ddbeee2e8cc7d952d",
   "settings_licenses": "cedd52248048326a844540e4cf722f482ab4273bd907b44c5dcde42507fb19f1",
   "settings_licenses_read": "abc1b7cd3e115eec6791918d6e3aa5704dc9a9ccbf9540fa980e42266fb208fb",
   "settings_licenses_website": "2b6c26de7f1e1c2f2bd470d16d0e713c7f87fdfaaac12616de2f838b0a1d3ed3",
@@ -32,21 +29,17 @@
   "settings_preferences": "381235baa885150a5fd9efba317270d4ac17187cb8841ea1d78e1fd18743f032",
   "settings_preferences_app_language": "e1cad3448e52be3dc6e91f3fe047cdcb39b6ec42369082eff51c2a2785d14e7e",
   "settings_preferences_buddy": "1929232eb2a7d9f5d75f6a7594e62d4807b07bdf833148670a28740f10acc721",
-  "settings_preferences_buddy_line": "fc0106aed0d12f81fac0d7067f16a2ea695c5ff003a757738b4388c436df92a1",
   "settings_preferences_change": "9f1939ee4baed836f1d3aff15f65cbebea01f6758cb62e6b9689e37a112391d9",
   "settings_preferences_choose_buddy": "f58feaaad9940984244be7962ecf3dd88bbaf4d49114a982110894394efaf5a9",
-  "settings_preferences_description": "bb08b0e896ba7039b0f82b5ecb5574de6b64adbd1aa7801fe5252c9f2f73d01d",
   "settings_preferences_language": "edfab310a5b3c88a6b195af5a11c0a7bdc3fe72ea55be46f7f92a4f9258cc19d",
   "settings_preferences_lessons": "e7813dd22498703bd5c4ab94ece4fff8d2cd8d58ae40be82f532ea01d3ebafe2",
-  "settings_preferences_on_this_device": "4e26099aabeb4b32a675c984fd8ffe473f6950ec0f40143aaef6ccf71279128b",
   "settings_preferences_save_failed": "54cae5401fc71611d084862ec475f1d3e7aa5634d82d6d0c196666708d0d8888",
   "settings_preferences_share_usage_data": "0fea72de32218115cae5812d96c8c23266a670b60766b1c9e52f13a822ad452c",
   "settings_preferences_share_usage_data_description": "c4ba3f54f9133aeea6f3c37c44e00f3dae8499051b0f097cb4fce9f2edc48261",
   "settings_preferences_sounds": "91d08567d642ca7da376933a0920e3599fca6155075387e633d62f42633c6674",
   "settings_preferences_sounds_description": "8c640ebf9a1e3a1f57c5713b9e03723c0cced7c484b0af63433eda09a5096687",
-  "settings_preferences_summary": "1283790d8b808ddfb1e3264667a4494bd9e44354435ac2ec7367b0051e98cd31",
+  "settings_privacy": "50a97198b6ff5432f49290a7fbd8d8ba0cf48d8412f568bad6cd2dc0fdcdbc0b",
   "settings_profile": "65b24ab5fd4ebaedd693c3eaea02beb2a4d35ffff1f8bbd2ac4b7240e0e8da35",
-  "settings_profile_description": "5237477af2da897c056c525f0393d4f541b73595aa0800acc30062febe7e2b62",
   "settings_profile_needs_account": "97c1e7193c1e35d9ef458659ea7c666bb72dfb02d8f6d549facd7ad89887fee9",
   "settings_reminders_off": "0f87caada30cc8fefb5a15f5446f4704c4e13ad1aae6ff2b9055b2fab9e6dcfa",
   "settings_save": "ddc0ecf517ec166a0fa780faa442afebffa3f622574fe5baa604d17f8fd8f449",
@@ -57,23 +50,18 @@
 <resources>
     <string name="settings_preferences">Preferenze</string>
     <string name="settings_memory">Memoria</string>
+    <string name="settings_privacy">Privacy</string>
     <!-- Beside "Reminders" in Settings when neither email nor push reminders are on. -->
     <string name="settings_reminders_off">Disattivati</string>
-    <!-- %1$s is the buddy's name and %2$s the app's language, like "Zu · English". -->
-    <string name="settings_preferences_summary">%1$s · %2$s</string>
     <string name="settings_profile">Profilo</string>
     <string name="settings_profile_needs_account">Crea un account per avere un profilo. Il tuo piano e i tuoi progressi restano con te.</string>
-    <string name="settings_account">Account</string>
     <string name="settings_save">Salva</string>
     <string name="settings_saved">Salvato.</string>
     <string name="settings_your_data">I tuoi dati</string>
     <string name="settings_download_data">Scarica i miei dati</string>
-    <string name="settings_download_data_description">Tutti i dati che Zoonk conserva su di te, in un unico file</string>
     <string name="settings_download">Scarica</string>
     <string name="settings_download_failed">Non siamo riusciti a preparare il file da scaricare. Riprova.</string>
-    <string name="settings_delete_account">Elimina l’account</string>
     <string name="settings_delete_my_account">Elimina il mio account</string>
-    <string name="settings_delete_account_description">Elimina per sempre il tuo account e tutti i suoi dati. L’abbonamento a Plus acquistato sul web viene disdetto; gli acquisti su Google Play e App Store si gestiscono dove li hai effettuati.</string>
     <string name="settings_delete_ellipsis">Elimina…</string>
     <string name="settings_delete_confirm_title">Vuoi eliminare il tuo account?</string>
     <string name="settings_delete_confirm_description">I tuoi obiettivi, piani e progressi, la memoria e i file caricati vengono eliminati per sempre. Non puoi annullare questa operazione.</string>
@@ -91,27 +79,24 @@
     <string name="settings_preferences_buddy">Il tuo compagno</string>
     <string name="settings_preferences_change">Cambia</string>
     <string name="settings_preferences_choose_buddy">Scegli il tuo compagno</string>
-    <!-- %1$s is the buddy's stage ("Baby") and %2$s what it wears ("Round glasses"). -->
-    <string name="settings_preferences_buddy_line">%1$s · %2$s</string>
     <string name="settings_preferences_lessons">Lezioni</string>
     <string name="settings_preferences_sounds">Suoni</string>
     <string name="settings_preferences_sounds_description">Quando rispondi bene o finisci</string>
     <string name="settings_preferences_language">Lingua e area geografica</string>
     <string name="settings_preferences_app_language">Lingua dell’app</string>
-    <string name="settings_preferences_on_this_device">Su questo dispositivo</string>
     <string name="settings_preferences_save_failed">Il salvataggio non è riuscito. Riprova.</string>
     <string name="settings_licenses">Licenze open source</string>
     <string name="settings_licenses_website">Sito web</string>
     <string name="settings_licenses_read">Leggi la licenza</string>
-    <string name="settings_profile_description">Il tuo nome, il nome utente e il tuo account.</string>
-    <string name="settings_preferences_description">Il tuo compagno, le lezioni e la lingua, come vuoi tu.</string>
     <!-- A switch that lets Zoonk record how the learner uses the app, for analytics. -->
     <string name="settings_preferences_share_usage_data">Condividi i dati di utilizzo</string>
     <string name="settings_preferences_share_usage_data_description">Ci mostra come usi Zoonk, così possiamo migliorarlo</string>
     <!-- A setting in Preferences: the country the learner lives in. -->
     <string name="settings_home_country">Dove vivi</string>
     <!-- Under that setting. -->
-    <string name="settings_home_country_description">Per i nuovi obiettivi e gli esempi pensati per te. Non cambia i piani che hai già.</string>
-    <!-- That setting's value when the learner hasn't said where they live, and the picker's first choice, which clears it. -->
+    <string name="settings_home_country_why">Per adattare esempi ed esami al tuo paese.</string>
+    <!-- The tutor's offer to save where the learner lives: what it changes. -->
+    <string name="settings_home_country_description">Per gli esempi e i nuovi obiettivi.</string>
+    <!-- That setting's value when nobody knows where the learner lives. -->
     <string name="settings_home_country_none">Non impostato</string>
 </resources>

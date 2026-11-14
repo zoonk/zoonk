@@ -1,16 +1,11 @@
 "use client";
 
 import { type ExamView } from "@zoonk/core/exams/view/contract";
-import {
-  DetailActions,
-  DetailFacts,
-  DetailHero,
-  DetailHeroText,
-  DetailTitle,
-} from "@zoonk/ui/components/detail";
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
+import { DetailFacts, DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
 import { useExtracted, useFormatter } from "next-intl";
 import { DetailAside, DetailContent, DetailLayout } from "../_components/detail-page";
-import { PageEyebrow } from "../_components/page";
+import { DetailsDrawer } from "../_components/details-drawer";
 import { FactSegments } from "../_components/task-meta";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { toLabelCase } from "../_utils/label-case";
@@ -67,43 +62,19 @@ function useExamDays(): string[] {
   return sharedTime ? [...dates, formatTimeOfDay(sharedTime)] : dates;
 }
 
-function ExamEyebrow() {
+function ExamBar() {
   const t = useExtracted();
-  const { exam } = useExamScreen();
-  const days = exam.daysLeft;
-
-  if (days === null || days <= 0) {
-    return <PageEyebrow>{t("Exam")}</PageEyebrow>;
-  }
-
-  if (!exam.daysEstimated) {
-    return (
-      <PageEyebrow>
-        {t("Exam · {days, plural, =0 {The day is here} one {# day left} other {# days left}}", {
-          days,
-        })}
-      </PageEyebrow>
-    );
-  }
+  const { exam, hrefs } = useExamScreen();
 
   return (
-    <PageEyebrow>
-      <span aria-hidden="true">
-        {t("Exam · {days, plural, one {~# day left} other {~# days left}}", { days })}
-      </span>
-      <span className="sr-only">
-        {t("Exam · {days, plural, one {About # day left} other {About # days left}}", { days })}
-      </span>
-    </PageEyebrow>
+    <LearnPageBar back={{ href: hrefs.back }} root title={exam.examName}>
+      <ReportProblemMenu label={t("Exam options")} screen="exam" />
+    </LearnPageBar>
   );
 }
 
-function ExamBar() {
-  const { exam, hrefs } = useExamScreen();
-  return <LearnPageBar back={{ href: hrefs.back }} root title={exam.examName} />;
-}
-
-function DateNote() {
+/** Why the dates may change, behind a tap: the page says once that they're estimated. */
+function useDateTag(): { label: string; text: string } | null {
   const t = useExtracted();
   const { exam } = useExamScreen();
 
@@ -112,24 +83,31 @@ function DateNote() {
   }
 
   if (exam.namedMonth) {
-    return exam.noticeDay || exam.noSitting ? null : (
-      <p className="text-muted-foreground text-xs text-pretty">
-        {t(
-          "{document, select, notice {The month you told us. We'll tell you the day once the notice sets it.} other {The month you told us. We'll tell you the day once the official calendar sets it.}}",
-          { document: exam.examDocument },
-        )}
-      </p>
-    );
+    return exam.noticeDay || exam.noSitting
+      ? null
+      : { label: t("Day not set yet"), text: t("We'll tell you the day once it's set.") };
   }
 
-  return exam.daysEstimated ? (
-    <p className="text-muted-foreground text-xs text-pretty">
-      {t(
-        "{document, select, notice {Estimated from past editions. We'll tell you when the official notice is out.} other {Estimated from past editions. We'll tell you when the official dates are out.}}",
-        { document: exam.examDocument },
-      )}
-    </p>
-  ) : null;
+  return exam.daysEstimated
+    ? {
+        label: t("Estimated dates"),
+        text: t("From past editions. We'll tell you when the official dates are out."),
+      }
+    : null;
+}
+
+function DateTag() {
+  const tag = useDateTag();
+
+  if (!tag) {
+    return null;
+  }
+
+  return (
+    <DetailsDrawer label={tag.label} title={tag.label} trigger="tag">
+      <p className="text-muted-foreground text-pretty">{tag.text}</p>
+    </DetailsDrawer>
+  );
 }
 
 function ExamNoticeDay() {
@@ -137,7 +115,6 @@ function ExamNoticeDay() {
 
   return (
     <NoticeDatesCard
-      document={exam.examDocument}
       noSitting={exam.noSitting}
       noticeDay={exam.noticeDay}
       onUse={actions.setDate}
@@ -145,48 +122,53 @@ function ExamNoticeDay() {
   );
 }
 
-function ExamFacts() {
+/** The day before, the card under the title says "tomorrow": the count would say it twice. */
+function useDaysLeft(): string | null {
   const t = useExtracted();
   const { exam } = useExamScreen();
-  const days = useExamDays();
-  const fromPastEditions = exam.daysEstimated && !exam.namedMonth;
+  const days = exam.daysLeft;
 
-  const facts = [...days, fromPastEditions && t("estimated from past editions")].filter(
-    (fact): fact is string => Boolean(fact),
-  );
+  if (days === null || days <= 0 || exam.stage === "dayBefore") {
+    return null;
+  }
 
-  if (facts.length === 0) {
+  return t("{days, plural, one {# day left} other {# days left}}", { days });
+}
+
+function ExamFacts() {
+  const dates = useExamDays();
+  const daysLeft = useDaysLeft();
+  const days = daysLeft ? [...dates, daysLeft] : dates;
+
+  if (days.length === 0) {
     return null;
   }
 
   return (
-    <DetailFacts>
-      <FactSegments facts={facts} />
-    </DetailFacts>
+    <>
+      <DetailFacts>
+        <FactSegments facts={days} />
+      </DetailFacts>
+      <DateTag />
+    </>
   );
 }
 
-function ExamHero({ mockAction }: { mockAction: React.ReactNode }) {
-  const t = useExtracted();
+/** The day before, on the day and after it, the exam leads the page and a mock exam is one row. */
+function isLastDays(stage: ExamView["stage"]): boolean {
+  return stage === "dayBefore" || stage === "examDay" || stage === "afterExam";
+}
+
+function ExamHero() {
   const { exam } = useExamScreen();
 
   return (
-    <>
-      <DetailHero>
-        <DetailHeroText>
-          <ExamEyebrow />
-          <DetailTitle>{exam.examName}</DetailTitle>
-          <ExamFacts />
-        </DetailHeroText>
-
-        <DetailActions>
-          {mockAction}
-          <ReportProblemMenu label={t("Exam options")} screen="exam" />
-        </DetailActions>
-      </DetailHero>
-
-      <ExamNoticeDay />
-    </>
+    <DetailHero>
+      <DetailHeroText>
+        <DetailTitle>{exam.examName}</DetailTitle>
+        <ExamFacts />
+      </DetailHeroText>
+    </DetailHero>
   );
 }
 
@@ -199,11 +181,10 @@ function ExamMoment() {
 
   return (
     <ExamMomentCard
-      href={null}
       moment={{
         checklist: exam.stage === "dayBefore" || exam.stage === "examDay" ? exam.checklist : [],
-        day: exam.days[0] ?? null,
-        dayBefore: exam.dayBefore,
+        // The date is under the page's title already.
+        day: null,
         examName: exam.examName,
         mocksTaken: exam.mocks.length,
         prepared: exam.prepared,
@@ -257,6 +238,7 @@ export function ExamScreen({
   openSpeakingTask?: string | null;
 }) {
   const t = useExtracted();
+  const lastDays = isLastDays(exam.stage);
 
   return (
     <ExamScreenProvider value={{ actions, exam, hrefs, openSpeakingTask }}>
@@ -265,21 +247,29 @@ export function ExamScreen({
           <>
             {exam.format.length > 0 && <ExamFormatSection />}
             <ExamScoringSection />
-            <DateNote />
           </>
         }
         asideLabel={t("About the exam")}
         bar={<ExamBar />}
+        bottomBar={
+          !lastDays &&
+          mockAction && (
+            <BottomBar>
+              <BottomBarActions>{mockAction}</BottomBarActions>
+            </BottomBar>
+          )
+        }
         data-slot="exam-screen"
       >
         <DetailAside>
-          <ExamHero mockAction={mockAction} />
+          <ExamHero />
         </DetailAside>
 
         <DetailContent>
+          <ExamNoticeDay />
           <ExamMoment />
           <ExamResultSection />
-          <ExamMocks offered={mockAction !== null} />
+          <ExamMocks entry={lastDays && mockAction !== null} />
           <ExamMockProgress />
           {exam.format.length === 0 && <ExamMapSection />}
           <ExamSpeaking />

@@ -11,7 +11,6 @@ import { getDayLessons } from "./empty-day";
 import { type ExamPrepAccess } from "./exam-access";
 import { isExamTomorrow } from "./exam-tomorrow";
 import { type DayOutlines } from "./outlining-stand-ins";
-import { type PlusLesson } from "./plus-only-lessons";
 import { type SessionAnswer } from "./session-answers";
 import { type SessionWeek, type StudySessionView } from "./session-view";
 
@@ -24,7 +23,6 @@ export type DayViewFieldsInput = {
   lessonRoom?: boolean;
   missions: readonly Pick<Mission, "status">[];
   outlines?: DayOutlines;
-  plusLessons?: PlusLesson[];
   sessionBar: StudySessionView["sessionBar"];
   session: {
     blocks: readonly DayBlockInput[];
@@ -60,7 +58,6 @@ export function toDayViewFields({
   lessonRoom = false,
   missions,
   outlines = null,
-  plusLessons = [],
   session,
   sessionBar,
   timeZone = "UTC",
@@ -70,15 +67,7 @@ export function toDayViewFields({
   "blocks" | "id" | "missions" | "nextBlockId" | "state" | "status"
 > {
   const streak = scoreAnswers({ answers }).streak;
-
-  const lessons = getDayLessons({
-    blocks: session.blocks,
-    dayMinutes,
-    lessonRoom,
-    outlines,
-    trialEnded: examAccess.trialEnded,
-  });
-
+  const lessons = getDayLessons({ blocks: session.blocks, dayMinutes, lessonRoom, outlines });
   const blocksPower = session.blocks.reduce((sum, block) => sum + block.brainPower, 0);
 
   return {
@@ -111,7 +100,6 @@ export function toDayViewFields({
     }),
     nextPosition: getNextPosition(session.blocks),
     pauseSuggested: shouldSuggestPause(answers.map((answer) => answer.isCorrect)),
-    plusLessons,
     sessionBar,
     week: { days: week.days, nextStudyDate: week.nextStudyDate },
   };

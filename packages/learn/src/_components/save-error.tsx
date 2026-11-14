@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
+import { showErrorToast } from "@zoonk/ui/components/toast";
 import { cn } from "@zoonk/ui/lib/utils";
 import { FlagIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -17,6 +18,7 @@ function ReportSaveProblem() {
 
   return (
     <Button
+      aria-haspopup="dialog"
       className="inline-flex"
       icon={<FlagIcon aria-hidden="true" />}
       onClick={() =>
@@ -70,6 +72,12 @@ export function AnswersSaveError({
 export function useChangeSaveErrorMessage(): string {
   const t = useExtracted();
   return t("That didn't save. Try again.");
+}
+
+/** A change that didn't save says so in the shared toast, so nothing under its control moves. */
+export function useChangeSaveFailed(): () => void {
+  const message = useChangeSaveErrorMessage();
+  return () => showErrorToast(message);
 }
 
 export function ChangeSaveError({

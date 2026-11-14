@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getPhaseDay, getPhaseWeight, getShareInPhase } from "./phase-weight";
+import { getPhaseWeight, getShareInPhase } from "./phase-weight";
 
 const foundations = { endDate: "2027-01-24", hours: 90, startDate: "2026-10-12" };
 const practice = { endDate: "2027-10-30", hours: 12, startDate: "2027-07-03" };
@@ -49,32 +49,6 @@ describe(getShareInPhase, () => {
         date: "2026-10-12",
         phase: { endDate: null, startDate: null },
       }),
-    ).toBeNull();
-  });
-});
-
-describe(getPhaseDay, () => {
-  it("counts the phase's first day as day 1", () => {
-    expect(getPhaseDay({ phase: foundations, today: "2026-10-12" })).toStrictEqual({
-      day: 1,
-      days: 105,
-    });
-  });
-
-  it("counts its last day as the last one", () => {
-    expect(getPhaseDay({ phase: foundations, today: "2027-01-24" })).toStrictEqual({
-      day: 105,
-      days: 105,
-    });
-  });
-
-  it("keeps a day past the phase's end on its last day", () => {
-    expect(getPhaseDay({ phase: foundations, today: "2027-02-10" })?.day).toBe(105);
-  });
-
-  it("has no day in a phase without dates", () => {
-    expect(
-      getPhaseDay({ phase: { endDate: null, startDate: null }, today: "2026-10-12" }),
     ).toBeNull();
   });
 });

@@ -430,7 +430,7 @@ struct GenerationWait: Equatable, Sendable {
     Phase(
       id: "skills",
       label: LocalizedStringResource(
-        "Mapping the skills it takes", table: "Onboarding",
+        "Choosing what to learn", table: "Onboarding",
         comment: "A step of the wait while a plan is built"),
       isOptional: false, seconds: 60,
       lines: [
@@ -1218,7 +1218,7 @@ extension GenerationWait.Kind {
         "Building your plan", table: "Onboarding", comment: "VoiceOver: the bar of a wait")
     case .placement:
       LocalizedStringResource(
-        "Getting your questions ready", table: "Onboarding",
+        "Getting your test ready", table: "Onboarding",
         comment: "Title while placement questions are written")
     case .explanation:
       LocalizedStringResource(

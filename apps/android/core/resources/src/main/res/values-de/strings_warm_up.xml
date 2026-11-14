@@ -7,7 +7,6 @@
   "warm_up_first_lesson_screens": "13041509182833e4b71766dcd741b686a11ac63ba37cc629fa5cbe82b9bfd45b",
   "warm_up_first_lesson_writing": "dadb97d85095263a3af0fc0b3596336ce7799193fe46a40f240845c359aad481",
   "warm_up_guess_hint": "08302a04d8796e0a30f07066b96943e7408e3bf5c7c7f5a8194f888e2f9f959b",
-  "warm_up_lesson_ready": "2ed942825f34ada250b386722c3153317412ec167197be76ea62e0a351bcebe4",
   "warm_up_next": "fd80e21a4b61314d4b261389740e7dd007a096a649fe3695fa4c667418964df1",
   "warm_up_plan_ready": "8d1443a8ceab7eca2ffa3ea4ffa7aff9fa0b300caf01478886974059b1ac9b2b",
   "warm_up_plan_ready_one_question": "983997493295d5a9e54b27330d5556b969ebbbe84ad50ac74686b01945b4a552",
@@ -15,7 +14,6 @@
   "warm_up_plan_waiting": "7301c1f68f93731b9027ba452b54fb7cdb30f64a2888340d03ba5f896091f492",
   "warm_up_play_quiz": "f5721f5c8a5252d30e193684ef7b0a219ea844e0b2a76c1a7f23331776cefd95",
   "warm_up_questions_ready": "6887754276ed34810197007789fe8a12fec87239190e56132248931ea6ad9cda",
-  "warm_up_questions_ready_description": "2b4046f74e817d73d7194bdeb9e5dbded247b0392a057128825b02a29241da51",
   "warm_up_ready_to_start": "baa4a9d641c619169b48e94ed892bdca136f465d837bbed8e39aa4e13f4fd832",
   "warm_up_start_first_lesson": "955873a36e73a7beebd359ed1e16dee6c6fa98634458352426b0fe01881767bb",
   "warm_up_title": "ed07f6720ec9ea020a2c86f86356dff8d7800d7864b31bead4e0ca895a3598bc"
@@ -37,10 +35,6 @@
     <string name="warm_up_plan_ready_whenever">Schau ihn dir an, wenn du so weit bist.</string>
     <!-- Title of the wait for a short level test's questions once they're ready and the learner is still guessing. -->
     <string name="warm_up_questions_ready">Deine Fragen sind fertig</string>
-    <!-- Under "Your questions are ready", above the button that starts the short level test. -->
-    <string name="warm_up_questions_ready_description">Leg los, sobald du bereit bist.</string>
-    <!-- Replaces the note under a lesson's writing progress once it's written and the learner is still guessing. -->
-    <string name="warm_up_lesson_ready">Deine Lektion ist fertig. Leg los, wann du möchtest.</string>
     <string name="warm_up_back_to_quiz">Zum Quiz zurückkehren</string>
     <string name="warm_up_play_quiz">Quiz spielen, während du wartest</string>
     <string name="warm_up_first_lesson_writing">Wir erstellen deine erste Lektion: %1$s</string>

@@ -1,7 +1,8 @@
 "use client";
 
 import { type MemoryFactView } from "@zoonk/core/memory/contract";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
+import { useFormatMomentDate } from "../_utils/iso-date";
 
 export type MemoryCategory = MemoryFactView["category"];
 
@@ -45,13 +46,12 @@ function useFactSourceName(fact: MemoryFactView): string {
   switch (fact.source?.kind) {
     case undefined:
     case "profile":
+    case "onboarding":
       return t("You told us");
     case "chat":
       return t("From a chat");
-    case "onboarding":
-      return t("From onboarding");
     case "session":
-      return t("From a study session");
+      return t("From your lessons");
     case "call":
       return t({
         description:
@@ -59,23 +59,20 @@ function useFactSourceName(fact: MemoryFactView): string {
         message: "From a call",
       });
     default:
-      return t("From a study session");
+      return t("From your lessons");
   }
 }
 
 export function MemoryFactSource({ fact }: { fact: MemoryFactView }) {
-  const format = useFormatter();
+  const formatDay = useFormatMomentDate();
   const source = useFactSourceName(fact);
 
   return (
     <>
       {source}
       {" · "}
-      <time
-        className="font-mono text-xs tabular-nums"
-        dateTime={new Date(fact.createdAt).toISOString()}
-      >
-        {format.dateTime(fact.createdAt, { day: "numeric", month: "short" })}
+      <time className="tabular-nums" dateTime={new Date(fact.createdAt).toISOString()}>
+        {formatDay(fact.createdAt)}
       </time>
     </>
   );

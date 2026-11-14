@@ -19,17 +19,15 @@ import { useState, useTransition } from "react";
 import { useChangeSaveErrorMessage } from "../_components/save-error";
 import {
   Suggestion,
-  SuggestionAction,
-  SuggestionActions,
   SuggestionDescription,
   SuggestionHeader,
   SuggestionLine,
-  SuggestionOpen,
   SuggestionSummary,
 } from "../_components/suggestion";
 import { SlotContent } from "../plan/plan-suggestion-context";
 import { RenameGoalDialog } from "./rename-goal-dialog";
 import { useResumeEffectText } from "./resume-effect";
+import { useGoalLimitText } from "./resume-goal-bar";
 
 type GoalStatusChange = "active" | "archived" | "paused";
 
@@ -47,20 +45,11 @@ export type GoalStatusControl = {
 
 /** Said in a toast: the menu has closed by then. */
 function useStatusError() {
-  const t = useExtracted();
   const saveError = useChangeSaveErrorMessage();
+  const limitText = useGoalLimitText();
 
   return (outcome: GoalStatusOutcome) => {
-    showErrorToast(
-      outcome === "limitReached"
-        ? t({
-            description:
-              "Shown when a free learner tries to resume a paused goal while following as many goals as the free plan allows at once. “Following” a goal means it's active on the learner's plan: this counts goals followed at once, not new goals started per day or month. Pausing a goal keeps its progress. “Plus” is the name of the paid plan, not the word “more”.",
-            message:
-              "You're following as many goals as the free plan allows. Pause another goal to resume this one, or get Plus to follow more.",
-          })
-        : saveError,
-    );
+    showErrorToast(outcome === "limitReached" ? limitText : saveError);
   };
 }
 
@@ -134,7 +123,7 @@ export function GoalMenuItems({ menu }: { menu: GoalMenu }) {
   return (
     <DropdownMenuGroup>
       {control.onRename && (
-        <DropdownMenuItem onClick={() => menu.setRenaming(true)}>
+        <DropdownMenuItem aria-haspopup="dialog" onClick={() => menu.setRenaming(true)}>
           <PencilIcon aria-hidden="true" />
           {t("Rename goal")}
         </DropdownMenuItem>
@@ -154,7 +143,7 @@ export function GoalMenuItems({ menu }: { menu: GoalMenu }) {
         </DropdownMenuItem>
       )}
 
-      <DropdownMenuItem onClick={() => menu.setArchiving(true)}>
+      <DropdownMenuItem aria-haspopup="dialog" onClick={() => menu.setArchiving(true)}>
         <ArchiveIcon aria-hidden="true" />
         {t("Archive this goal")}
       </DropdownMenuItem>
@@ -229,7 +218,7 @@ function ResumeGoalDialog({
   );
 }
 
-function ArchiveGoalDialog({
+export function ArchiveGoalDialog({
   goalTitle,
   onArchive,
   onOpenChange,
@@ -261,6 +250,7 @@ function ArchiveGoalDialog({
   );
 }
 
+/** Says what pausing means; the page's bar holds Resume (`ResumeGoalBar`). */
 export function GoalPausedSuggestion({
   control,
   goalTitle,
@@ -270,33 +260,21 @@ export function GoalPausedSuggestion({
 }) {
   const t = useExtracted();
   const effectText = useResumeEffectText();
-  const { isPending, setStatus } = useSetGoalStatus(control.onSetStatus);
   const title = t("Your {goal} goal is paused", { goal: goalTitle });
-  const preview = control.resume;
-
-  const resume = (
-    <SuggestionAction
-      action={() => setStatus("active")}
-      busy={isPending}
-      icon={<PlayIcon aria-hidden="true" />}
-    >
-      {t("Resume")}
-    </SuggestionAction>
-  );
+  const description = control.resume ? effectText : t("Nothing is planned until you resume it.");
 
   return (
     <Suggestion label={title} mark={<PauseIcon />}>
       <SuggestionLine>
-        <SuggestionSummary>{title}</SuggestionSummary>
-        {preview ? <SuggestionOpen /> : resume}
+        <div>
+          <SuggestionSummary>{title}</SuggestionSummary>
+          <SuggestionDescription>{description}</SuggestionDescription>
+        </div>
       </SuggestionLine>
 
-      <SlotContent>
+      <SlotContent statement>
         <SuggestionHeader>{title}</SuggestionHeader>
-        <SuggestionDescription>
-          {preview ? effectText : t("Nothing is planned until you resume it.")}
-        </SuggestionDescription>
-        <SuggestionActions>{resume}</SuggestionActions>
+        <SuggestionDescription>{description}</SuggestionDescription>
       </SlotContent>
     </Suggestion>
   );

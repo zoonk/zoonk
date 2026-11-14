@@ -194,7 +194,6 @@ internal fun BlockFinished(
             title = stringResource(if (review) R.string.practice_done_review else R.string.practice_done_title),
             action = stringResource(R.string.practice_continue),
             saving = completion == null,
-            actionTrailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
             onClose = onClose,
             actions =
                 completion?.let { done ->

@@ -1,50 +1,32 @@
 import { CurrentPageLoginLink } from "@/components/current-page-login-link";
-import { Link } from "@/i18n/navigation";
-import { getMenu } from "@/lib/menu";
+import { VisitorStartButton } from "@/components/public/visitor-start";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import {
-  SIDEBAR_ITEM_CLASS,
   Sidebar,
+  SidebarBody,
   SidebarFooter,
   SidebarHeader,
   SidebarHeaderRow,
-  SidebarSection,
 } from "@zoonk/ui/components/sidebar";
 import { SidebarToggle, SidebarTooltip } from "@zoonk/ui/components/sidebar-toggle";
 import { cn } from "@zoonk/ui/lib/utils";
 import { LogInIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import { LearnGoalMenu } from "./learn-goal-menu";
-import { SidebarAccount, StudyLinks } from "./learn-sidebar-learner";
+import { LearnerSections, SidebarAccount } from "./learn-sidebar-learner";
 import { LearnSidebarFeedback, LearnSidebarSearch } from "./learn-sidebar-links";
-
-async function StudyShortcuts() {
-  const t = await getExtracted();
-
-  return (
-    <SidebarSection aria-label={t("Study")} label={t("Study")}>
-      <StudyLinks />
-    </SidebarSection>
-  );
-}
 
 async function VisitorAccount() {
   const t = await getExtracted();
-  const { icon: PricingIcon, url } = getMenu("pricing");
 
   return (
     <div className="flex flex-col gap-2">
-      <SidebarTooltip label={t("Pricing")}>
-        <Link className={SIDEBAR_ITEM_CLASS} href={url}>
-          <PricingIcon aria-hidden="true" />
-          <span className="min-w-0 flex-1 truncate">{t("Pricing")}</span>
-        </Link>
-      </SidebarTooltip>
+      <VisitorStartButton />
 
       <SidebarTooltip label={t("Log in")}>
         <CurrentPageLoginLink
           className={cn(
-            buttonVariants({ size: "bar", variant: "outline" }),
+            buttonVariants({ variant: "outline" }),
             "sidebar-collapsed:my-1 sidebar-collapsed:size-8 sidebar-collapsed:p-0! w-full",
           )}
           icon={<LogInIcon aria-hidden="true" />}
@@ -63,16 +45,18 @@ export async function LearnAppSidebar({ tabs }: { tabs: React.ReactNode }) {
   return (
     <Sidebar aria-label={t("Sidebar")} className="gap-4">
       <SidebarHeader className="gap-4">
-        <SidebarHeaderRow>
+        {/* 44px, as tall as a page's bar, so the goal and the page's way back share a line. */}
+        <SidebarHeaderRow className="min-h-11">
           <LearnGoalMenu placement="sidebar" />
           <SidebarToggle collapseLabel={t("Collapse sidebar")} expandLabel={t("Expand sidebar")} />
         </SidebarHeaderRow>
         <LearnSidebarSearch />
       </SidebarHeader>
 
-      {tabs}
-
-      <StudyShortcuts />
+      <SidebarBody className="gap-4">
+        {tabs}
+        <LearnerSections />
+      </SidebarBody>
 
       <SidebarFooter>
         <LearnSidebarFeedback />

@@ -27,17 +27,23 @@ import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.collapse
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.expand
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
@@ -45,9 +51,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.feature.session.BlockMark
 import com.zoonk.android.feature.session.DayMission
-import com.zoonk.android.feature.session.DayStep
 import com.zoonk.android.feature.session.MissionOpens
 import com.zoonk.android.feature.session.StepOpenFailed
 import com.zoonk.android.ui.characters.Buddy
@@ -60,21 +64,22 @@ import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.ListRowChevron
 import com.zoonk.android.ui.components.busyClickable
 import com.zoonk.android.ui.components.celebrates
+import com.zoonk.android.ui.components.dottedUnderline
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.factsLine
-import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.theme.ZoonkMotion
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
+import com.zoonk.android.ui.theme.zoonkType
 import com.zoonk.api.models.StudyMission
 import kotlinx.coroutines.launch
 
 /**
- * The day's missions (main's `MissionsCard`): their status, the Brain Power they earn together,
- * a track of their progress and a row each. [rowsInQueue] leaves the rows to the session's queue,
- * which marks each mission's block; [collapseWhenDone] folds a won day to one line; [showBuddy] off
- * where the whole page is the buddy's. [opening] and [openFailed] say where a row's tap stands.
+ * The day's missions (main's `MissionsCard`), one look wherever they show: the buddy, the title, how many
+ * are done beside the Brain Power they earn together, a track, and every mission as a row. [foldRows] keeps
+ * the rows behind the title (Today, where most are rows of the day's list already); [collapseWhenDone]
+ * folds a won day to one line; [showBuddy] off where the whole page is the buddy's. [opening] and
+ * [openFailed] say where a row's tap stands.
  */
 @Composable
 fun MissionsCard(
@@ -86,10 +91,9 @@ fun MissionsCard(
     onOpen: (MissionOpens) -> Unit,
     modifier: Modifier = Modifier,
     brainPower: Long? = null,
-    blockOf: (DayMission) -> DayStep? = { null },
     opening: (DayMission) -> Boolean = { false },
     openFailed: (DayMission) -> Boolean = { false },
-    rowsInQueue: Boolean = false,
+    foldRows: Boolean = false,
     collapseWhenDone: Boolean = false,
     showBuddy: Boolean = true,
 ) {
@@ -99,6 +103,8 @@ fun MissionsCard(
     val points = formatNumber(bonus.toDouble(), locale)
     val allDone = missions.all(DayMission::done)
     val won = allDone && bonusEarned
+    var unfolded by rememberSaveable { mutableStateOf(false) }
+    val open = !foldRows || unfolded
 
     if (won && collapseWhenDone) {
         val names = missions.map { missionName(it, buddyName) }
@@ -116,32 +122,62 @@ fun MissionsCard(
     }
 
     OutlinedCard(modifier) {
-        Column(Modifier.padding(start = 16.dp, end = 16.dp, top = 14.dp, bottom = 4.dp)) {
-            Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.Top) {
-                if (showBuddy) Buddy(buddy, Modifier.padding(top = 2.dp).size(24.dp), crop = BuddyCrop.Face)
+        Column(Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = if (open) 4.dp else 16.dp)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                if (showBuddy) Buddy(buddy, Modifier.size(24.dp), crop = BuddyCrop.Face)
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                    Text(
-                        text = stringResource(if (won) R.string.missions_done else R.string.missions_title),
-                        modifier = Modifier.semantics { heading() },
-                        style = MaterialTheme.typography.titleSmall,
-                    )
-                    MissionsStatus(missions, points)
+                    MissionsTitle(won, fold = if (foldRows) ({ unfolded = !unfolded }) else null, open = open)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        MissionsStatus(missions, Modifier.weight(1f))
+                        BrainPowerReward(points, earned = won, brainPower)
+                    }
                 }
-                BrainPowerReward(points, earned = won, brainPower)
             }
 
             MissionTrack(missions, Modifier.padding(top = 14.dp))
 
-            if (!rowsInQueue) {
+            if (open) {
                 Column(Modifier.padding(top = 6.dp)) {
                     missions.forEachIndexed { index, mission ->
                         if (index > 0) HorizontalDivider()
-                        MissionRow(mission, blockOf(mission), buddy, buddyName, opening(mission), openFailed(mission), onOpen)
+                        MissionRow(mission, buddy, buddyName, opening(mission), openFailed(mission), onOpen)
                     }
                 }
-            } else {
-                Box(Modifier.height(10.dp))
             }
+        }
+    }
+}
+
+/** The card's title; where the rows fold, a press on it shows or hides them. */
+@Composable
+private fun MissionsTitle(
+    won: Boolean,
+    fold: (() -> Unit)?,
+    open: Boolean,
+) {
+    val title = stringResource(if (won) R.string.missions_done else R.string.missions_title)
+    val modifier =
+        if (fold == null) {
+            Modifier.semantics { heading() }
+        } else {
+            Modifier
+                .clip(MaterialTheme.shapes.extraSmall)
+                .clickable(role = Role.Button, onClick = fold)
+                .semantics {
+                    heading()
+                    if (open) collapse { fold().let { true } } else expand { fold().let { true } }
+                }
+        }
+
+    Row(modifier, horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically) {
+        Text(title, style = MaterialTheme.typography.titleSmall)
+        if (fold != null) {
+            Icon(
+                painterResource(R.drawable.ic_expand_more),
+                contentDescription = null,
+                modifier = Modifier.size(18.dp).rotate(if (open) 180f else 0f),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }
@@ -161,42 +197,27 @@ private fun MissionsLine(
     }
 }
 
+/** How many are done; nothing once they all are, where the reward says it. */
 @Composable
 private fun MissionsStatus(
     missions: List<DayMission>,
-    points: String,
+    modifier: Modifier,
 ) {
     val locale = currentLocale()
-    val left = missions.filterNot(DayMission::done)
-    val done = missions.size - left.size
-    val minutes = left.sumOf { it.minutes ?: 0.0 }
-    val text =
-        if (left.isEmpty()) {
-            stringResource(R.string.missions_earned, points)
-        } else {
-            val count =
-                if (left.size == missions.size) {
-                    pluralStringResource(R.plurals.missions_count, left.size, left.size)
-                } else {
-                    pluralStringResource(R.plurals.missions_left, left.size, left.size)
-                }
-            if (minutes >
-                0
-            ) {
-                listOf(
-                    count,
-                    stringResource(R.string.missions_estimate, formatMinutes(minutes.toInt().coerceAtLeast(1), locale)),
-                ).factsLine()
-            } else {
-                count
-            }
-        }
-    val progress =
-        stringResource(R.string.missions_progress, formatNumber(done.toDouble(), locale), formatNumber(missions.size.toDouble(), locale))
+    val done = missions.count(DayMission::done)
 
     Text(
-        text = text,
-        modifier = Modifier.semantics { contentDescription = "$text, $progress" },
+        text =
+            if (done == missions.size) {
+                ""
+            } else {
+                stringResource(
+                    R.string.missions_progress,
+                    formatNumber(done.toDouble(), locale),
+                    formatNumber(missions.size.toDouble(), locale),
+                )
+            },
+        modifier = modifier,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         style = MaterialTheme.typography.bodySmall.withTabularFigures(),
     )
@@ -252,7 +273,6 @@ internal fun MissionTrack(
 @Composable
 private fun MissionRow(
     mission: DayMission,
-    block: DayStep?,
     buddy: BuddyLook,
     buddyName: String,
     busy: Boolean,
@@ -263,27 +283,14 @@ private fun MissionRow(
 
     MissionListRow(
         name = missionName(mission, buddyName),
-        line = if (mission.done) null else missionStepLine(mission, block),
+        line = if (mission.done) null else missionStepLine(mission),
         done = mission.done,
         muted = mission.done || mission.waitReason != null,
-        mark = { if (block != null && !mission.done) BlockMark(block) else MissionMark(mission.kind, mission.done, buddy) },
+        mark = { MissionMark(mission.kind, mission.done, buddy) },
         openLabel = missionOpenLabel(mission, buddyName),
         onOpen = opens?.let { { onOpen(it) } },
         busy = busy,
         openFailed = openFailed,
-        trailing =
-            if (!mission.done && mission.opens is MissionOpens.Block && mission.waitReason == null) {
-                {
-                    Icon(
-                        painterResource(R.drawable.ic_target),
-                        contentDescription = null,
-                        modifier = Modifier.size(16.dp),
-                        tint = MaterialTheme.zoonk.brain,
-                    )
-                }
-            } else {
-                null
-            },
     )
 }
 
@@ -379,7 +386,7 @@ fun BrainPowerReward(
         tooltip = {
             RichTooltip(title = { Text(label) }) {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(stringResource(R.string.missions_brain_power_about, points))
+                    Text(stringResource(R.string.missions_brain_power_about))
                     if (brainPower !=
                         null
                     ) {
@@ -390,16 +397,16 @@ fun BrainPowerReward(
         },
         state = state,
     ) {
-        Column(
+        Row(
             modifier =
                 Modifier
                     .clip(MaterialTheme.shapes.small)
                     .clickable(role = Role.Button) { scope.launch { state.show() } }
                     .semantics(mergeDescendants = true) {}
-                    .heightIn(min = 48.dp)
-                    .padding(4.dp),
-            horizontalAlignment = Alignment.End,
-            verticalArrangement = Arrangement.spacedBy(2.dp),
+                    .heightIn(min = 32.dp)
+                    .padding(horizontal = 4.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             // brainText, since the page's color on brain is under AA in light.
             val fill = MaterialTheme.zoonk.brainText
@@ -407,9 +414,8 @@ fun BrainPowerReward(
                 modifier =
                     if (earned) {
                         Modifier
-                            .clip(
-                                MaterialTheme.shapes.extraSmall,
-                            ).background(fill)
+                            .clip(MaterialTheme.shapes.extraSmall)
+                            .background(fill)
                             .padding(horizontal = 6.dp, vertical = 2.dp)
                     } else {
                         Modifier
@@ -417,22 +423,25 @@ fun BrainPowerReward(
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                if (earned) {
-                    Icon(
-                        painterResource(R.drawable.ic_check),
-                        contentDescription = null,
-                        modifier = Modifier.size(14.dp),
-                        tint = MaterialTheme.colorScheme.surface,
-                    )
-                }
+                Icon(
+                    painterResource(if (earned) R.drawable.ic_check else R.drawable.ic_psychology),
+                    contentDescription = null,
+                    modifier = Modifier.size(14.dp),
+                    tint = if (earned) MaterialTheme.colorScheme.surface else MaterialTheme.zoonk.brain,
+                )
                 Text(
                     text = stringResource(R.string.missions_points, points),
                     color = if (earned) MaterialTheme.colorScheme.surface else MaterialTheme.zoonk.brainText,
                     fontWeight = FontWeight.SemiBold,
-                    style = MaterialTheme.typography.titleSmall.withTabularFigures(),
+                    style = MaterialTheme.zoonkType.data.withTabularFigures(),
                 )
             }
-            Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelSmall)
+            Text(
+                label,
+                modifier = Modifier.dottedUnderline(MaterialTheme.colorScheme.outline),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodySmall,
+            )
         }
     }
 }

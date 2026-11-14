@@ -191,8 +191,6 @@ fun MindMapStudyScreen(
     }
 }
 
-private val LessonMindMap.opens: Boolean get() = !locked && map != null
-
 /** What a slide shows once its map is read, and its [title]: the map's, or its chapter's while the map can't show. */
 internal sealed interface Slide {
     val title: String?
@@ -251,7 +249,7 @@ private fun slideOf(
     val resource = app.mindMaps.lessonMaps[ChapterKey(goalId, chapterId)]
     val read by resource.collectShown()
     val scope = rememberCoroutineScope()
-    val lessons = read.value?.lessons?.filter { it.opens }
+    val lessons = read.value?.lessons
     val lesson = lessons?.firstOrNull { it.lessonId.toString() == lessonId }
     val chapterTitle = chapter?.title ?: read.value?.chapter?.title
     return when {
@@ -359,8 +357,6 @@ internal fun MindMapStudy(
                         Button(
                             onClick = { next() },
                             modifier = main,
-                            leadingIcon = if (last) ({ ButtonIcon(R.drawable.ic_check) }) else null,
-                            trailingIcon = if (last) null else ({ ButtonIcon(R.drawable.ic_arrow_forward) }),
                         ) { Text(stringResource(if (last) R.string.mindmaps_done else R.string.mindmaps_next)) }
                     }
                 }
@@ -455,7 +451,7 @@ private fun SlideView(
         }
 
         is Slide.Lesson -> {
-            slide.lesson.map?.let { LessonSlide(StepContent.Map(it, slide.lesson.title)) }
+            LessonSlide(StepContent.Map(slide.lesson.map, slide.lesson.title))
         }
     }
 }

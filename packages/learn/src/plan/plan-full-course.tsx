@@ -4,10 +4,7 @@ import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
 import { Switch } from "@zoonk/ui/components/switch";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
-import { ChangeSaveError } from "../_components/save-error";
-import { useFormatIsoDate, useGoalDateValues } from "../_utils/iso-date";
-import { useSentenceSpace } from "../_utils/locale";
-import { useFormatDuration } from "../_utils/time-format";
+import { useFormatIsoDate } from "../_utils/iso-date";
 import { usePlanScreen } from "./plan-context";
 import { usePlanChange } from "./use-plan-change";
 
@@ -16,6 +13,11 @@ import { usePlanChange } from "./use-plan-change";
  * goal's plan practices until its date, so its end without one is previewed when asked. Null when
  * there's nothing to choose.
  */
+/** The one change that keeps an exam's plan going after the exam. */
+export const STUDY_AFTER_EXAM: LearnerPlanOperation[] = [
+  { fullCourse: true, kind: "setFullCourse" },
+];
+
 export function useFullCourse() {
   const { goal, plan } = usePlanScreen();
   const { feasibility, schedule } = plan;
@@ -45,124 +47,51 @@ export function useFullCourse() {
 
 export type FullCourse = NonNullable<ReturnType<typeof useFullCourse>>;
 
-type Finish = {
-  dailyMinutes: number;
-  endDate: string | null;
-  isExam: boolean;
-  targetDate: string;
-  targetDateNamedMonth: boolean;
-};
-
-/** Names the exam's year beside the finish's, so November 2027 never reads as the exam's month. */
+/** When a plan that studies past its exam ends; null while that month isn't known. */
 function useFinishText() {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
-  const goalDate = useGoalDateValues();
-  const formatDuration = useFormatDuration();
 
-  return function finishText({
-    dailyMinutes,
-    endDate,
-    isExam,
-    targetDate,
-    targetDateNamedMonth,
-  }: Finish): string | null {
-    if (!endDate) {
-      return null;
-    }
-
-    const month = formatDate(endDate, "month");
-    const time = formatDuration(dailyMinutes);
-
-    return isExam
-      ? t({
-          description:
-            'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
-          message:
-            "{dateKind, select, month {At {time} a day, you finish in {month}, after the exam on {date}.} other {At {time} a day, you finish in {month}, after the exam on {date}.}}",
-          values: {
-            ...goalDate({
-              isoDate: targetDate,
-              namedMonth: targetDateNamedMonth,
-              style: "longYear",
-            }),
-            month,
-            time,
-          },
-        })
-      : t("At {time} a day, you finish in {month}.", { month, time });
-  };
-}
-
-export type ExamFinish = Omit<Finish, "isExam">;
-
-export function useExamFullCourseText() {
-  const t = useExtracted();
-  const finishText = useFinishText();
-  const space = useSentenceSpace();
-
-  return (finish: ExamFinish | null): string => {
-    const end = finish && finishText({ ...finish, isExam: true });
-
-    return end
-      ? `${end}${space}${t("Until the exam, what comes up most comes first.")}`
-      : t("Until the exam, what comes up most comes first. What doesn't fit comes after it.");
-  };
+  return (endDate: string | null): string | null =>
+    endDate && t("You finish in {month}.", { month: formatDate(endDate, "month") });
 }
 
 export function useFullCourseText() {
-  const t = useExtracted();
-  const goalDate = useGoalDateValues();
   const finishText = useFinishText();
-  const examText = useExamFullCourseText();
-  const { plan } = usePlanScreen();
-  const { dailyMinutes } = plan.schedule;
+  return { finish: (course: FullCourse): string | null => finishText(course.endDate) };
+}
 
-  return {
-    finish: (course: FullCourse): string | null => finishText({ ...course, dailyMinutes }),
-    onExam: (course: FullCourse): string => examText({ ...course, dailyMinutes }),
-    rule: (course: FullCourse): string =>
-      course.isExam
-        ? t(
-            "Until the exam, nothing changes: what comes up most comes first, with mocks and the final stretch. What doesn't fit comes after it.",
-          )
-        : t({
-            description:
-              'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
-            message:
-              "{dateKind, select, month {Your deadline of {date} comes off your plan. You can set one again anytime.} other {Your deadline of {date} comes off your plan. You can set one again anytime.}}",
-            values: goalDate({
-              isoDate: course.targetDate,
-              namedMonth: course.targetDateNamedMonth,
-              style: "long",
-            }),
-          }),
-  };
+export function useKeepStudyingLabel(): string {
+  const t = useExtracted();
+  return t("Keep studying after the exam");
 }
 
 const FULL_COURSE_SWITCH_ID = "plan-editor-full-course";
 
 export function FullCourseSwitch() {
-  const t = useExtracted();
   const switchId = useId();
   const descriptionId = useId();
   const course = useFullCourse();
   const text = useFullCourseText();
-  const { change, failed, isPending } = usePlanChange();
+  const label = useKeepStudyingLabel();
+  const { change, isPending } = usePlanChange();
 
-  if (!course?.isExam) {
+  // What follows the exam is asked when its date passes; a plan that already goes on can stop here.
+  if (!course?.isExam || !course.on) {
     return null;
   }
+
+  const finish = text.finish(course);
 
   return (
     <div className="flex flex-col gap-2" id={FULL_COURSE_SWITCH_ID}>
       <div className="flex min-h-11 items-center justify-between gap-3">
         <label className="cursor-pointer text-sm font-medium" htmlFor={switchId}>
-          {t("Study everything, even after the exam")}
+          {label}
         </label>
         <Switch
           aria-busy={isPending || undefined}
-          aria-describedby={descriptionId}
+          aria-describedby={finish ? descriptionId : undefined}
           checked={course.on}
           id={switchId}
           onCheckedChange={(on) => void change(course.operations(on))}
@@ -170,11 +99,11 @@ export function FullCourseSwitch() {
         />
       </div>
 
-      <p className="text-muted-foreground text-sm text-pretty" id={descriptionId}>
-        {course.on ? text.onExam(course) : t("When off, your plan ends at the exam.")}
-      </p>
-
-      {failed && <ChangeSaveError />}
+      {finish && (
+        <p className="text-muted-foreground text-sm text-pretty" id={descriptionId}>
+          {finish}
+        </p>
+      )}
     </div>
   );
 }

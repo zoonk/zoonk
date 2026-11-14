@@ -65,48 +65,34 @@ export function KeepGoingButton({
         type="submit"
         variant="outline"
       >
-        {t("Keep going")}
+        {t("Continue")}
       </Button>
     </form>
   );
 }
 
-export function KeepGoingFailed({ keepGoing }: { keepGoing: ReturnType<typeof useKeepGoing> }) {
+/** More study after a full day sits in the column under Tomorrow, so the bar keeps two actions. */
+export function SummaryExtraTime() {
   const t = useExtracted();
+  const stopped = useIsStopped();
+  const { actions, summary } = useSessionSummary();
+  const { extraTime } = summary;
 
-  if (!keepGoing.failed) {
+  if (stopped || !extraTime.available) {
     return null;
   }
 
   return (
-    <p className="text-destructive-text text-sm" role="alert">
-      {t("We couldn't open the next step. Try again.")}
-    </p>
+    <ExtraTimeButton
+      action={actions.addExtraTime}
+      label={extraTime.lessons.length > 0 ? t("Keep learning") : undefined}
+      minutes={extraTime.minutes}
+    />
   );
 }
 
-/**
- * On a phone, only beside Finish (`lastStep`): two "Continue" buttons would leave the learner
- * guessing which one keeps them studying.
- */
-export function SummaryOptions({ lastStep }: { lastStep: boolean }) {
-  const t = useExtracted();
-  const stopped = useIsStopped();
-  const { actions, signUpHref, summary } = useSessionSummary();
-  const { extraTime } = summary;
+export function SummaryOptions() {
+  const { signUpHref } = useSessionSummary();
 
-  return (
-    <>
-      {!stopped && extraTime.available && (
-        <ExtraTimeButton
-          action={actions.addExtraTime}
-          className={cn("lg:w-auto lg:self-end", !lastStep && "without-aside:hidden")}
-          label={extraTime.lessons.length > 0 ? t("Keep learning") : undefined}
-          minutes={extraTime.minutes}
-        />
-      )}
-
-      {signUpHref && <SavePlanNote signUpHref={signUpHref} />}
-    </>
-  );
+  return signUpHref ? <SavePlanNote signUpHref={signUpHref} /> : null;
 }

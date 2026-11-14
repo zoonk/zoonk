@@ -10,6 +10,7 @@ import com.zoonk.api.models.ChapterMindMap
 import com.zoonk.api.models.ChapterMindMapStatus
 import com.zoonk.api.models.GoalMindMap
 import com.zoonk.api.models.MindMapGeneration
+import com.zoonk.api.models.MonthlyAllowanceItem
 import java.text.Normalizer
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -22,7 +23,6 @@ enum class MindMapShown {
     Drawing,
     Ready,
     Failed,
-    PlusRequired,
     Refused,
     Unreachable,
     ;
@@ -49,14 +49,14 @@ data class MindMapLocal(
 
 /**
  * The reads decide, but for a refusal or a lost connection no newer read has replaced yet; a drawn
- * map or a Plus lock leaves nothing for either to be about.
+ * map leaves nothing for either to be about.
  */
 fun shownMindMap(
     server: MindMapShown,
     local: MindMapLocal?,
 ): MindMapShown =
     when {
-        server == MindMapShown.Ready || server == MindMapShown.PlusRequired -> server
+        server == MindMapShown.Ready -> server
         local?.unreachable == true -> MindMapShown.Unreachable
         local?.limit != null -> MindMapShown.Refused
         else -> server
@@ -70,7 +70,6 @@ val GoalMindMap.Status.shown: MindMapShown
             GoalMindMap.Status.DRAWING -> MindMapShown.Drawing
             GoalMindMap.Status.READY -> MindMapShown.Ready
             GoalMindMap.Status.FAILED -> MindMapShown.Failed
-            GoalMindMap.Status.PLUS_REQUIRED -> MindMapShown.PlusRequired
         }
 
 val ChapterMindMap.Status.shown: MindMapShown
@@ -82,7 +81,6 @@ val ChapterMindMap.Status.shown: MindMapShown
             ChapterMindMap.Status.DRAWING -> MindMapShown.Drawing
             ChapterMindMap.Status.READY -> MindMapShown.Ready
             ChapterMindMap.Status.FAILED -> MindMapShown.Failed
-            ChapterMindMap.Status.PLUS_REQUIRED -> MindMapShown.PlusRequired
         }
 
 val ChapterMindMapStatus.Status.shown: MindMapShown
@@ -94,7 +92,6 @@ val ChapterMindMapStatus.Status.shown: MindMapShown
             ChapterMindMapStatus.Status.DRAWING -> MindMapShown.Drawing
             ChapterMindMapStatus.Status.READY -> MindMapShown.Ready
             ChapterMindMapStatus.Status.FAILED -> MindMapShown.Failed
-            ChapterMindMapStatus.Status.PLUS_REQUIRED -> MindMapShown.PlusRequired
         }
 
 val MindMapGeneration.Status.shown: MindMapShown
@@ -105,9 +102,13 @@ val MindMapGeneration.Status.shown: MindMapShown
             MindMapGeneration.Status.DRAWING -> MindMapShown.Drawing
         }
 
+/** The allowance of [kind]: every kind but lessons, which count their last 30 days instead of the month. */
+fun AllowanceResponse.monthly(kind: MonthlyAllowanceItem.Kind): MonthlyAllowanceItem? =
+    items.firstNotNullOfOrNull { (it as? AllowanceItem.MonthlyAllowanceItemValue)?.value?.takeIf { item -> item.kind == kind } }
+
 /** Main's `getReachedCap`: the learner's plan has no [kind] left now, and until when. */
-fun AllowanceResponse.reachedCap(kind: AllowanceItem.Kind): Limit.Reached? {
-    val item = items.firstOrNull { it.kind == kind } ?: return null
+fun AllowanceResponse.reachedCap(kind: MonthlyAllowanceItem.Kind): Limit.Reached? {
+    val item = monthly(kind) ?: return null
     val remaining = item.remaining
     if (remaining == null || remaining > 0) return null
 

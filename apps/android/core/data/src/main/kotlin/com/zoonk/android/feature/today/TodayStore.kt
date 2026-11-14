@@ -102,12 +102,17 @@ interface TodayApi {
         goalId: UUID,
     )
 
-    /** Accepting a plan change or a schedule idea applies it; dismissing an applied one undoes it. */
+    /**
+     * Accepting a plan change or a schedule idea applies it; dismissing an applied one undoes it. A plan
+     * change's [quote] is the one the learner saw: when its numbers moved, nothing applies and the insight
+     * comes back pending with today's.
+     */
     suspend fun answerInsight(
         session: AuthenticatedSession,
         insightId: UUID,
         accepted: Boolean,
-    )
+        quote: String?,
+    ): MemoryInsight
 
     /** Starts writing the day's lessons nobody is outlining yet; the next read says they're coming. */
     suspend fun prepareLessons(
@@ -138,14 +143,8 @@ class TodayStore(
     private var readAt: Instant? = null
     private var reads = 0
     private var polledReads = 0
-    private var polling = false
 
     private suspend fun readToday(session: AuthenticatedSession): TodayRead {
-        // Taken before the first suspension, so a read an invalidation starts meanwhile reads in full.
-        val conditional = polling.also { polling = false }
-        val shown = today.state.value.value as? TodayRead.Day
-        val since = readAt
-        if (conditional && shown != null && since != null && !api.todayChanged(session, shown.today.goal.id, since)) return shown
         val startedAt = Instant.fromEpochMilliseconds(now()) - PlanStore.CLOCK_MARGIN
         return read(api, session, timeZone()).also {
             readAt = startedAt
@@ -174,16 +173,17 @@ class TodayStore(
 
     /**
      * While lessons are written: asks whether the day changed since it was read, and reads it again
-     * only then, since the server plans again on every read. True when the day was read again since
-     * the last poll, by this poll or by anything else.
+     * only then, since the server plans again on every read. Any other read, a write's invalidation
+     * included, reads the day in full. True when the day was read again since the last poll, by this
+     * poll or by anything else.
      */
     suspend fun refreshIfChanged(): Boolean {
-        polling = true
-        try {
-            today.refresh()
-        } finally {
-            polling = false
-        }
+        val shown = today.state.value.value as? TodayRead.Day
+        val since = readAt
+        val unchanged =
+            shown != null && since != null &&
+                cache.mutate { api.todayChanged(it, shown.today.goal.id, since) } == MutationResult.Done(false)
+        if (!unchanged) today.refresh()
         return (reads != polledReads).also { polledReads = reads }
     }
 
@@ -212,9 +212,9 @@ class TodayStore(
     suspend fun answerInsight(
         insight: MemoryInsight,
         accepted: Boolean,
-    ): MutationResult<Unit> =
+    ): MutationResult<MemoryInsight> =
         cache.mutate(invalidating = setOf(DataDomain.Memory, DataDomain.Goals, DataDomain.UserSession)) {
-            api.answerInsight(it, insight.id, accepted)
+            api.answerInsight(it, insight.id, accepted, insight.planChange?.quote)
         }
 
     init {

@@ -176,7 +176,7 @@ struct MockRunnerView: View {
   }
 
   private var nextButton: some View {
-    BusyButton(isBusy: run.busy == .submit, icon: isLastQuestion ? .send : .forward) {
+    BusyButton(isBusy: run.busy == .submit) {
       if isLastQuestion {
         confirmsHandIn = true
       } else {
@@ -186,9 +186,9 @@ struct MockRunnerView: View {
       if !isLastQuestion {
         Text("Next", tableName: "Mock", comment: "The next question")
       } else if view.isLastSectionCurrent {
-        Text("Hand in the mock exam", tableName: "Mock", comment: "Hands in the last section")
+        Text("Hand in", tableName: "Mock", comment: "Hands in the last section")
       } else {
-        Text("Hand in this section", tableName: "Mock", comment: "Hands in a section")
+        Text("Hand in section", tableName: "Mock", comment: "Hands in a section")
       }
     }
     .buttonStyle(.mainAction)
@@ -205,15 +205,15 @@ struct MockRunnerView: View {
 }
 
 private struct MockQuestionMeta: View {
-  @Environment(\.stacksContent) private var isStacked
   let run: MockRun
   let view: MockView
   let question: MockQuestion
 
   var body: some View {
     AccessibilityStack {
-      Text(question.area ?? "")
-        .lineLimit(isStacked ? nil : 1)
+      if let area = question.area {
+        Chip(Text(area))
+      }
       Spacer(minLength: 0)
       if question.format == .essay {
         Text("Written part", tableName: "Mock", comment: "A full mock's essay part")
@@ -568,10 +568,10 @@ private struct MockAnswerSheet: View {
       } header: {
         SectionTitle(Text("Questions", tableName: "Mock", comment: "The answer sheet's questions"))
       } footer: {
-        SectionFooter {
-          Text(
-            "No feedback until the end, like on exam day.", tableName: "Mock",
-            comment: "Under the answer sheet")
+        if let tools = view.currentSection?.tools {
+          SectionFooter {
+            Label(tools, systemImage: "pencil.and.ruler")
+          }
         }
       }
 

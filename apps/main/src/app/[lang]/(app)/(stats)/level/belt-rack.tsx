@@ -44,11 +44,9 @@ function RackBelt({ color, isTied }: { color: BeltColor; isTied: boolean }) {
 export async function BeltRack({
   beltColors,
   currentIndex,
-  labelledBy,
 }: {
   beltColors: BeltColorOption[];
   currentIndex: number;
-  labelledBy: string;
 }) {
   const t = await getExtracted();
   const firstBelt = beltColors[0];
@@ -62,18 +60,18 @@ export async function BeltRack({
 
   return (
     <div className="flex flex-col gap-2">
-      <ol aria-labelledby={labelledBy} className="flex">
+      <ol aria-label={t("Belts")} className="flex justify-between">
         {beltColors.map((belt, index) => (
           <li
             aria-current={index === currentIndex ? "step" : undefined}
-            className="flex min-w-0 flex-1 flex-col items-center gap-1.5"
+            className="flex w-8 flex-col items-center gap-1.5 md:w-13"
             key={belt.key}
           >
             <span
               aria-label={belt.label}
               className={cn(
                 "flex h-6.5 w-8 items-center justify-center rounded-md md:h-9.5 md:w-13 md:rounded-lg",
-                index === currentIndex && "ring-foreground ring-[1.5px]",
+                index === currentIndex && "ring-foreground ring-[1.5px] ring-inset",
               )}
               role="img"
               style={{ color: `var(--belt-${belt.key})` }}
@@ -84,7 +82,7 @@ export async function BeltRack({
             <span
               aria-hidden="true"
               className={cn(
-                "hidden max-w-full truncate text-[0.71875rem] md:block",
+                "text-2xs hidden whitespace-nowrap md:block",
                 index === currentIndex && "text-foreground font-medium",
                 index < currentIndex && "text-muted-foreground",
                 index > currentIndex && "text-faint",
@@ -97,10 +95,7 @@ export async function BeltRack({
       </ol>
 
       {firstBelt && lastBelt && (
-        <div
-          aria-hidden="true"
-          className="text-faint flex justify-between text-[0.71875rem] md:hidden"
-        >
+        <div aria-hidden="true" className="text-faint text-2xs flex justify-between md:hidden">
           <span>{firstBelt.label}</span>
           <span>{lastBelt.label}</span>
         </div>

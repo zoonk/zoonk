@@ -4,19 +4,47 @@ import {
   type ProfileAnswerInput,
   type ProfileQuestionView,
 } from "@zoonk/core/profile/questions/contract";
-import { Button } from "@zoonk/ui/components/button";
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
-import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useState, useTransition } from "react";
-import { PageHeader, PageHeaderContent, PageSubtitle, PageTitle } from "../_components/page";
-import { CLEAR_OF_PINNED_ACTIONS_CLASS, PINNED_ACTIONS_CLASS } from "../_components/pinned-actions";
-import { ChangeSaveError } from "../_components/save-error";
-import { ABOVE_BOTTOM_TABS_CLASS } from "../shell/learn-navigation";
+import { useId, useState, useTransition } from "react";
+import { EnterButton } from "../_components/enter-button";
+import {
+  PageHeader,
+  PageHeaderContent,
+  PageSubtitle,
+  PageTitle,
+  SECTION_SUBPAGE_TITLE_CLASS,
+} from "../_components/page";
+import { CLEAR_OF_PINNED_ACTIONS_CLASS } from "../_components/pinned-actions";
+import { useChangeSaveFailed } from "../_components/save-error";
 import { canSendProfileDraft, toProfileAnswer, toProfileDraft } from "./profile-draft";
 import { ProfileQuestionBody } from "./profile-question-body";
 import { useProfileQuestionDescription, useProfileQuestionTitle } from "./profile-question-copy";
+
+const QUESTION_COLUMN_CLASS = "flex flex-col gap-6";
+
+/** Sized to a one-line title and description, the length most questions have. */
+export function AboutYouQuestionSkeleton() {
+  return (
+    <div className={QUESTION_COLUMN_CLASS}>
+      <PageHeader>
+        <PageHeaderContent className="flex-1">
+          <div className={cn("text-title", SECTION_SUBPAGE_TITLE_CLASS)}>
+            <Skeleton className="h-lh w-3/4" />
+          </div>
+          <PageSubtitle>
+            <Skeleton className="h-5 w-full" />
+          </PageSubtitle>
+        </PageHeaderContent>
+      </PageHeader>
+
+      <Skeleton className="h-64 rounded-lg" />
+    </div>
+  );
+}
 
 export function AboutYouQuestionScreen({
   memoryEnabled,
@@ -32,36 +60,39 @@ export function AboutYouQuestionScreen({
   const title = useProfileQuestionTitle(question.id);
   const description = useProfileQuestionDescription(question.id);
   const [draft, setDraft] = useState(() => toProfileDraft(question));
-  const [failed, setFailed] = useState(false);
+  const saveFailed = useChangeSaveFailed();
   const [isPending, startTransition] = useTransition();
+  const formId = useId();
 
   const input = canSendProfileDraft({ draft, from: "settings", question: question.id })
     ? toProfileAnswer({ draft, memoryEnabled, question: question.id })
     : null;
 
   return (
-    <form
-      className="flex flex-col gap-6"
-      onSubmit={(event) => {
-        event.preventDefault();
+    <>
+      <form
+        className={cn(QUESTION_COLUMN_CLASS, CLEAR_OF_PINNED_ACTIONS_CLASS)}
+        id={formId}
+        onSubmit={(event) => {
+          event.preventDefault();
 
-        if (!input || isPending) {
-          return;
-        }
+          if (!input || isPending) {
+            return;
+          }
 
-        setFailed(false);
+          startTransition(async () => {
+            const { data: saved } = await safeAsync(() => onSave(input));
 
-        startTransition(async () => {
-          const { data: saved } = await safeAsync(() => onSave(input));
-          setFailed(!saved);
-        });
-      }}
-    >
-      <div className={cn("contents", CLEAR_OF_PINNED_ACTIONS_CLASS)}>
+            if (!saved) {
+              saveFailed();
+            }
+          });
+        }}
+      >
         <PageHeader>
           <PageHeaderContent>
-            <PageTitle>{title}</PageTitle>
-            <PageSubtitle>{description}</PageSubtitle>
+            <PageTitle className={SECTION_SUBPAGE_TITLE_CLASS}>{title}</PageTitle>
+            {description && <PageSubtitle>{description}</PageSubtitle>}
           </PageHeaderContent>
         </PageHeader>
 
@@ -72,27 +103,15 @@ export function AboutYouQuestionScreen({
           onChange={setDraft}
           question={question}
         />
-      </div>
+      </form>
 
-      <div
-        className={cn(
-          PINNED_ACTIONS_CLASS,
-          ABOVE_BOTTOM_TABS_CLASS,
-          "-mb-4 flex flex-col gap-3 pb-4 lg:bottom-0",
-        )}
-      >
-        {failed && <ChangeSaveError />}
-
-        <Button
-          busy={isPending}
-          className="self-start"
-          disabled={!input}
-          icon={<CheckIcon aria-hidden="true" />}
-          type="submit"
-        >
-          {t("Save")}
-        </Button>
-      </div>
-    </form>
+      <BottomBar>
+        <BottomBarActions>
+          <EnterButton busy={isPending} disabled={!input} form={formId} type="submit">
+            {t("Save")}
+          </EnterButton>
+        </BottomBarActions>
+      </BottomBar>
+    </>
   );
 }

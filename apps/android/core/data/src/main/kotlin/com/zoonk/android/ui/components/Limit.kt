@@ -4,24 +4,29 @@ import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.MutationResult
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonPrimitive
+import java.time.Instant
 
 enum class LimitTier { Guest, Free, Plus }
 
-enum class LimitPeriod { Day, Month, Total }
+/** [Rolling30Days] is the free plan's lessons: a lesson comes back 30 days after it started. */
+enum class LimitPeriod { Day, Month, Rolling30Days, Total }
 
-enum class LimitSubject { Help, Lessons, MindMaps, Outlines, Calls }
+/** What ran out: [Help] is anything else the day's AI budget stops (a spoken answer's check, a clip). */
+enum class LimitSubject { Help, Messages, Explanations, Lessons, MapLessons, MindMaps, Outlines, Calls }
 
 sealed interface Limit {
     data class SlowDown(
         val retryAfterSeconds: Int,
     ) : Limit
 
-    /** Help without a `period` was the day's. */
+    /** Help without a `period` was the day's; [availableAt] is when the next one opens, where the API says. */
     data class Reached(
         val tier: LimitTier,
         val period: LimitPeriod? = null,
+        val availableAt: Instant? = null,
     ) : Limit
 
     data object SignUpRequired : Limit
@@ -65,8 +70,14 @@ sealed interface Limit {
                             ?.jsonPrimitive
                             ?.content
                             ?.let { LimitPeriod.entries.named(it) }
+                    val availableAt =
+                        limit
+                            ?.field("availableAt")
+                            ?.jsonPrimitive
+                            ?.contentOrNull
+                            ?.let { runCatching { Instant.parse(it) }.getOrNull() }
                     // Like main's readRefusedLimit, the status says whose cap it was when the details don't.
-                    Reached(tier ?: tierOf(status), period)
+                    Reached(tier ?: tierOf(status), period, availableAt)
                 }
 
                 else -> {

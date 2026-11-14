@@ -23,29 +23,25 @@ struct SubscriptionScreen: View {
             .scenePadding()
           }
           .loads(settings.freePlan, refreshable: false)
-          .safeAreaBar(edge: .bottom) {
+          .bottomBar {
             Button {
               router.present(.signIn)
             } label: {
               if isGuest {
                 Text(
-                  "Create an account", tableName: "Account",
-                  comment: "Asks a guest to create an account before subscribing")
+                  "Create an account", tableName: "Subscriptions")
               } else {
                 Text(
-                  "Log in", tableName: "Account",
+                  "Log in", tableName: "Subscriptions",
                   comment: "Asks a visitor to log in before subscribing")
               }
             }
             .buttonStyle(.mainAction)
-            .controlSize(.large)
-            .scenePadding()
-            .keepsOffFold()
+            .keyboardShortcut(.defaultAction)
           }
-          .navigationTitle(Text.zoonkPlus)
-          .toolbarTitleDisplayMode(.inline)
         }
       }
+      .subscriptionPageTitle()
       .toolbar {
         ToolbarItem(placement: .cancellationAction) {
           Button(role: .close) {
@@ -58,6 +54,20 @@ struct SubscriptionScreen: View {
 
   private var isGuest: Bool {
     learner.summary.value?.identity.isAnonymous == true
+  }
+}
+
+extension View {
+  /// Settings' name for the page, the same in every state and from every entry, over its
+  /// `SubscriptionHeader`; "Plus" heads its first section.
+  func subscriptionPageTitle() -> some View {
+    barTitleAfterHero(String(localized: "Subscription", table: "Subscriptions"))
+  }
+}
+
+private struct SubscriptionHeader: View {
+  var body: some View {
+    PageHeader(Text("Subscription", tableName: "Subscriptions"))
   }
 }
 
@@ -97,7 +107,7 @@ struct SubscriptionView: View {
         dismissButton: .default(
           Text(
             "OK",
-            tableName: "Account",
+            tableName: "Subscriptions",
             comment: "Dismisses a subscription status message")
         ) {
           subscriptions.clearAlert()
@@ -125,7 +135,7 @@ struct SubscriptionView: View {
   private var offer: some View {
     SubscriptionStoreView(productIDs: AppStoreSubscriptionProduct.productIDs) {
       SubscriptionMarketingContent(
-        allowance: settings.allowance.value, freePlan: settings.freePlan,
+        freePlan: settings.freePlan,
         viewer: settings.allowance.value?.tier == .free ? .free : .subscribed)
     }
     .subscriptionStoreControlStyle(.prominentPicker)
@@ -153,8 +163,6 @@ struct SubscriptionView: View {
         })
     }
     .loads(settings.allowance, settings.freePlan, refreshable: false)
-    .navigationTitle(Text.zoonkPlus)
-    .toolbarTitleDisplayMode(.inline)
     .toolbar {
       ToolbarItem(placement: .bottomBar) {
         restorePurchasesButton
@@ -186,7 +194,7 @@ struct SubscriptionView: View {
     } label: {
       Text(
         "Restore Purchases",
-        tableName: "Account",
+        tableName: "Subscriptions",
         comment: "Restores App Store purchases and synchronizes them with the Zoonk account")
     }
   }
@@ -196,52 +204,51 @@ struct SubscriptionView: View {
     case .accountMismatch:
       Text(
         "Purchase linked to another account",
-        tableName: "Account",
+        tableName: "Subscriptions",
         comment: "Title shown when an App Store purchase belongs to another Zoonk account")
     case .authenticationRequired:
       Text(
-        "Sign in again",
-        tableName: "Account",
-        comment: "Title shown when subscription synchronization requires authentication")
+        "Log in again",
+        tableName: "Subscriptions")
     case .invalidPurchase:
       Text(
         "Purchase couldn't be linked",
-        tableName: "Account",
+        tableName: "Subscriptions",
         comment: "Title shown when Zoonk cannot accept a verified App Store purchase")
     case .noActiveSubscriptionFound:
       Text(
         "No active subscription found",
-        tableName: "Account",
+        tableName: "Subscriptions",
         comment: "Title shown when restored App Store purchases do not currently provide Plus")
     case .noPurchasesFound:
       Text(
         "No purchases found",
-        tableName: "Account",
+        tableName: "Subscriptions",
         comment: "Title shown when restore finds no eligible App Store purchases")
     case .purchaseFailed:
       Text(
         "Purchase not completed",
-        tableName: "Account",
+        tableName: "Subscriptions",
         comment: "Title shown when an App Store purchase fails")
     case .purchasesRestored:
       Text(
         "Purchases restored",
-        tableName: "Account",
+        tableName: "Subscriptions",
         comment: "Title shown when App Store purchases were restored")
     case .restoreFailed:
       Text(
         "Couldn't restore purchases",
-        tableName: "Account",
+        tableName: "Subscriptions",
         comment: "Title shown when restoring App Store purchases fails")
     case .synchronizationFailed:
       Text(
         "Couldn't update your account",
-        tableName: "Account",
+        tableName: "Subscriptions",
         comment: "Title shown when a verified App Store transaction could not reach Zoonk")
     case .verificationFailed:
       Text(
         "Purchase couldn't be verified",
-        tableName: "Account",
+        tableName: "Subscriptions",
         comment: "Title shown when StoreKit cannot verify a purchase")
     case nil:
       Text(verbatim: "")
@@ -252,53 +259,53 @@ struct SubscriptionView: View {
     switch subscriptions.alert {
     case .accountMismatch:
       Text(
-        "Sign in to the Zoonk account that owns this App Store purchase, or contact support for help.",
-        tableName: "Account",
+        "Log in to the Zoonk account that bought it, or write to us at hello@zoonk.com.",
+        tableName: "Subscriptions",
         comment: "Recovery guidance when an App Store purchase belongs to another Zoonk account")
     case .authenticationRequired:
       Text(
-        "Your purchase is safe. Sign in, then restore purchases to add Plus to your Zoonk account.",
-        tableName: "Account",
+        "Your purchase is safe. Log in, then restore purchases.",
+        tableName: "Subscriptions",
         comment: "Explains how to recover a purchase after the Zoonk session expires")
     case .invalidPurchase:
       Text(
-        "Check your App Store purchase history, then contact support for help.",
-        tableName: "Account",
+        "Write to us at hello@zoonk.com and we'll look into it.",
+        tableName: "Subscriptions",
         comment: "Recovery guidance when Zoonk cannot accept a verified App Store purchase")
     case .noActiveSubscriptionFound:
       Text(
-        "Zoonk checked your App Store purchases, but none currently provide Plus.",
-        tableName: "Account",
+        "None of your App Store purchases include Plus right now.",
+        tableName: "Subscriptions",
         comment: "Explains that restored App Store purchases do not grant an active subscription")
     case .noPurchasesFound:
       Text(
         "Make sure you're signed in with the Apple Account used for the purchase, then try again.",
-        tableName: "Account",
+        tableName: "Subscriptions",
         comment: "Recovery guidance when restore finds no eligible App Store purchases")
     case .purchaseFailed:
       Text(
         "The App Store couldn't complete this purchase. Check your connection and try again.",
-        tableName: "Account",
+        tableName: "Subscriptions",
         comment: "Recovery guidance after an App Store purchase fails")
     case .purchasesRestored:
       Text(
-        "Your App Store purchases are now available on this Zoonk account.",
-        tableName: "Account",
+        "Plus is on this account now.",
+        tableName: "Subscriptions",
         comment: "Confirms restored purchases were synchronized with Zoonk")
     case .restoreFailed:
       Text(
         "Check your connection and try restoring again.",
-        tableName: "Account",
+        tableName: "Subscriptions",
         comment: "Recovery guidance after restoring App Store purchases fails")
     case .synchronizationFailed:
       Text(
-        "Your purchase is safe and hasn't been finished yet. Restore purchases when you're back online.",
-        tableName: "Account",
+        "Your purchase is safe. Restore purchases when you're back online.",
+        tableName: "Subscriptions",
         comment: "Explains that a transaction remains available after server synchronization fails")
     case .verificationFailed:
       Text(
-        "Check your App Store purchase history, then contact support if you need help.",
-        tableName: "Account",
+        "Write to us at hello@zoonk.com and we'll look into it.",
+        tableName: "Subscriptions",
         comment: "Recovery guidance after StoreKit transaction verification fails")
     case nil:
       nil
@@ -325,15 +332,6 @@ enum SubscriptionPage: Equatable {
   }
 }
 
-extension Text {
-  fileprivate static var zoonkPlus: Text {
-    Text(
-      "Zoonk Plus",
-      tableName: "Account",
-      comment: "Title of the native Zoonk Plus subscription screen")
-  }
-}
-
 /// Who decides on Plus, as main's `PlusViewerState`: a guest has a session but no account.
 private enum PlusViewer {
   case visitor
@@ -343,23 +341,25 @@ private enum PlusViewer {
 }
 
 private struct SubscriptionMarketingContent: View {
-  var allowance: PlanAllowance?
   let freePlan: Resource<FreePlan>
   let viewer: PlusViewer
 
   var body: some View {
     VStack(alignment: .leading, spacing: 24) {
+      SubscriptionHeader()
+
       VStack(alignment: .leading, spacing: 8) {
         Text(
-          "Subscribe to Zoonk Plus",
-          tableName: "Account",
-          comment: "Headline on the Zoonk Plus subscription screen"
+          "Plus", tableName: "Subscriptions",
+          comment:
+            "The plan's name beside Subscription in a menu, shown only to subscribers: the plan they have."
         )
-        .typeStyle(.heroTitle)
+        .typeStyle(.section)
+        .accessibilityAddTraits(.isHeader)
 
         Text(
           "Every goal\u{00A0}· every lesson",
-          tableName: "Account",
+          tableName: "Subscriptions",
           comment: "What Zoonk Plus includes, in one line"
         )
         .typeStyle(.section.weight(.regular))
@@ -371,14 +371,14 @@ private struct SubscriptionMarketingContent: View {
       switch freePlan.state {
       case .loaded(let limits):
         if viewer != .subscribed {
-          FreePlanCard(limits: limits, viewer: viewer, allowance: allowance)
+          FreePlanCard(limits: limits, viewer: viewer)
         }
 
         PlusQuestions(limits: limits, viewer: viewer)
       case .failed, .empty:
         VStack(alignment: .leading, spacing: 8) {
           Text(
-            "We couldn't load what the free plan includes.", tableName: "Account",
+            "We couldn't load what the free plan includes.", tableName: "Subscriptions",
             comment: "The free plan's limits failed to load on the Plus screen"
           )
           .foregroundStyle(.mutedForeground)
@@ -386,7 +386,9 @@ private struct SubscriptionMarketingContent: View {
           Button {
             Task { await freePlan.refresh() }
           } label: {
-            Text("Try again", tableName: "Account", comment: "Loads the free plan's limits again")
+            Text(
+              "Try again", tableName: "Subscriptions", comment: "Loads the free plan's limits again"
+            )
           }
           .buttonStyle(.outline)
         }
@@ -407,24 +409,19 @@ struct PlusBenefits: View {
     VStack(alignment: .leading, spacing: 12) {
       benefit(
         Text(
-          "Your whole exam plan, every day to the exam", tableName: "Account",
-          comment: "Zoonk Plus benefit: the full exam plan"))
+          "Your whole exam plan, every day to the exam", tableName: "Subscriptions"))
       benefit(
         Text(
-          "Mock exams, timed like the real one", tableName: "Account",
-          comment: "Zoonk Plus benefit: timed mock exams"))
+          "Mock exams, timed like the real one", tableName: "Subscriptions"))
       benefit(
         Text(
-          "An AI study buddy whenever you're stuck", tableName: "Account",
-          comment: "Zoonk Plus benefit: the study buddy"))
+          "An AI study buddy whenever you're stuck", tableName: "Subscriptions"))
       benefit(
         Text(
-          "Higher limits for speaking calls", tableName: "Account",
-          comment: "Zoonk Plus benefit: more speaking call time, never a number"))
+          "More speaking practice calls", tableName: "Subscriptions"))
       benefit(
         Text(
-          "A certificate for every level you finish", tableName: "Account",
-          comment: "Zoonk Plus benefit: certificates for finished course and language levels"))
+          "A certificate for every level you finish", tableName: "Subscriptions"))
     }
   }
 
@@ -472,17 +469,22 @@ struct PlusStatusView: View {
   var body: some View {
     ZoonkList {
       Section {
+        SubscriptionHeader()
+      }
+
+      Section {
         VStack(alignment: .leading, spacing: 6) {
           HStack(spacing: 8) {
-            Text("Plus", tableName: "Account", comment: "Zoonk Plus, the plan's name")
-              .typeStyle(.pageTitle)
+            Text("Plus", tableName: "Subscriptions", comment: "Zoonk Plus, the plan's name")
+              .typeStyle(.section)
+              .accessibilityAddTraits(.isHeader)
 
             Group {
               isEnding
-                ? Text(
-                  "Subscription ending", tableName: "Account",
-                  comment: "A subscription set to end")
-                : Text("Active", tableName: "Account", comment: "Status for an active subscription")
+                ? Text("Ending", tableName: "Subscriptions", comment: "A subscription set to end")
+                : Text(
+                  "Active", tableName: "Subscriptions", comment: "Status for an active subscription"
+                )
             }
             .chip()
           }
@@ -500,18 +502,8 @@ struct PlusStatusView: View {
       }
 
       Section {
-        VStack(alignment: .leading, spacing: 16) {
-          Text(
-            "Every goal\u{00A0}· every lesson", tableName: "Account",
-            comment: "What Zoonk Plus includes, in one line"
-          )
-          .typeStyle(.section)
-          .foregroundStyle(Color(.foreground))
-          .accessibilityAddTraits(.isHeader)
-
-          PlusBenefits()
-        }
-        .listRowSeparator(.hidden)
+        PlusBenefits()
+          .listRowSeparator(.hidden)
       }
 
       if isWebsite {
@@ -536,10 +528,6 @@ struct PlusStatusView: View {
         Task { await reloadPlan() }
       }
     }
-    .navigationTitle(
-      Text("Subscription", tableName: "Account", comment: "Account option for subscription")
-    )
-    .toolbarTitleDisplayMode(.inline)
   }
 
   /// Apple's own settings change a renewal without a purchase, so its entitlement goes through the
@@ -563,27 +551,19 @@ struct PlusStatusView: View {
     switch subscription.provider {
     case "apple":
       Text(
-        "You already have Plus through the App Store.", tableName: "Account",
-        comment:
-          "Shown instead of buying Plus to someone who already bought it in the App Store, so they don't pay twice"
+        "You already have Plus through the App Store.", tableName: "Subscriptions"
       )
     case "google":
       Text(
-        "You already have Plus through Google Play.", tableName: "Account",
-        comment:
-          "Shown instead of buying Plus to someone who already bought it on Google Play, so they don't pay twice"
+        "You already have Plus through Google Play.", tableName: "Subscriptions"
       )
     case "stripe":
       Text(
-        "You already have Plus through the Zoonk website.", tableName: "Account",
-        comment:
-          "Shown instead of buying Plus to someone who already bought it on Zoonk's website, so they don't pay twice"
+        "You already have Plus through the Zoonk website.", tableName: "Subscriptions"
       )
     default:
       Text(
-        "You already have Plus.", tableName: "Account",
-        comment:
-          "Shown instead of buying Plus to someone who already has it, so they don't pay twice")
+        "You already have Plus.", tableName: "Subscriptions")
     }
   }
 
@@ -597,20 +577,20 @@ struct PlusStatusView: View {
     }
 
     if let endsAt = subscription.endsAt {
-      return Text(
-        "Your subscription will end on \(day(endsAt)).", tableName: "Account",
-        comment: "When a subscription set to end ends")
+      return plusEnds(on: endsAt)
     }
 
+    // Nobody pays for a Plus that Zoonk added, so it has an end, not a renewal.
     return subscription.periodEnd.map {
-      Text(
-        "Current billing period ends on \(day($0)).", tableName: "Account",
-        comment: "When the subscription's paid period ends")
+      StoreSubscriptionProvider(rawValue: subscription.provider) == nil
+        ? Text(
+          "You have Plus until \(day($0)).", tableName: "Subscriptions",
+          comment: "When Plus that Zoonk added to the account ends")
+        : renews(on: $0)
     }
   }
 
-  /// Main's `ManagedSubscription`: where the purchase is changed, then the store's own control and
-  /// support.
+  /// Main's `ManagedSubscription`: where the purchase was made, and the way to change it.
   private var managedSection: some View {
     let provider = StoreSubscriptionProvider(rawValue: subscription.provider)
 
@@ -620,44 +600,37 @@ struct PlusStatusView: View {
           switch provider {
           case .apple:
             Text(
-              "This subscription is managed through the App Store. To change or cancel it, use Apple's subscription settings.",
-              tableName: "Account", comment: "Where Plus bought in the App Store is changed")
+              "You subscribed in the App Store.", tableName: "Subscriptions")
           case .google:
             Text(
-              "Use Google Play on an Android device to change or cancel this subscription.",
-              tableName: "Account",
-              comment:
-                "Explains how to manage a Google-owned subscription without linking to external purchasing"
-            )
+              "You subscribed in Google Play.", tableName: "Subscriptions")
           case nil:
             Text(
-              "This subscription is managed by Zoonk. Contact support if you need help changing or canceling it.",
-              tableName: "Account", comment: "Where a subscription Zoonk manages is changed")
+              "Zoonk added Plus to your account. To change it, write to us.",
+              tableName: "Subscriptions")
           }
         }
         .typeStyle(.body)
         .foregroundStyle(.mutedForeground)
 
-        ButtonRow(spacing: 8) {
-          if provider == .apple {
-            Button {
-              isAppStoreManagementPresented = true
-            } label: {
-              Text(
-                "Manage in App Store", tableName: "Account",
-                comment:
-                  "Button that opens Apple's subscription settings for Plus bought in the App Store"
-              )
-            }
-            .buttonStyle(.mainAction)
+        switch provider {
+        case .apple:
+          Button {
+            isAppStoreManagementPresented = true
+          } label: {
+            Text(
+              "Manage in App Store", tableName: "Subscriptions"
+            )
           }
-
+          .buttonStyle(.outline)
+        case .google:
+          EmptyView()
+        case nil:
           Link(destination: AccountLinks.support) {
-            Text("Contact support", tableName: "Account", comment: "Opens Zoonk's support")
+            Text("Write to us", tableName: "Subscriptions")
           }
           .buttonStyle(.outline)
         }
-        .controlSize(.small)
       }
       .listRowSeparator(.hidden)
     }
@@ -671,9 +644,14 @@ private struct UnpaidPlusView: View {
   var body: some View {
     ZoonkList {
       Section {
+        SubscriptionHeader()
+      }
+
+      Section {
         VStack(alignment: .leading, spacing: 6) {
-          Text("Plus", tableName: "Account", comment: "Zoonk Plus, the plan's name")
-            .typeStyle(.pageTitle)
+          Text("Plus", tableName: "Subscriptions", comment: "Zoonk Plus, the plan's name")
+            .typeStyle(.section)
+            .accessibilityAddTraits(.isHeader)
 
           if let dateLine = web.dateLine {
             dateLine
@@ -685,8 +663,6 @@ private struct UnpaidPlusView: View {
 
       WebPlusSection(web: web, beside: false)
     }
-    .navigationTitle(Text.zoonkPlus)
-    .toolbarTitleDisplayMode(.inline)
   }
 }
 
@@ -709,11 +685,16 @@ private struct WebPlusSection: View {
       }
 
       if web.state == .ending {
+        Text(
+          "Keep Plus, and it renews as before.", tableName: "Subscriptions"
+        )
+        .foregroundStyle(.mutedForeground)
+
         BusyButton(isBusy: change != nil, isRow: true) {
           run { await settings.keepWebPlus() }
         } label: {
           Text(
-            "Keep Plus", tableName: "Account",
+            "Keep Plus", tableName: "Subscriptions",
             comment:
               "Turns the stopped renewal of Plus bought on the web back on, so it renews as before")
         }
@@ -723,13 +704,14 @@ private struct WebPlusSection: View {
           isConfirmingCancel = true
         } label: {
           Text(
-            "Cancel Plus", tableName: "Account",
+            "Cancel Plus", tableName: "Subscriptions",
             comment:
               "Cancels Plus bought on the web: the button, and the confirmation in its dialog")
         }
         .confirmationDialog(
           Text(
-            "Cancel Plus?", tableName: "Account", comment: "Title of the dialog that cancels Plus"),
+            "Cancel Plus?", tableName: "Subscriptions",
+            comment: "Title of the dialog that cancels Plus"),
           isPresented: $isConfirmingCancel,
           titleVisibility: .visible
         ) {
@@ -737,7 +719,7 @@ private struct WebPlusSection: View {
             run { await settings.cancelWebPlus() }
           } label: {
             Text(
-              "Cancel Plus", tableName: "Account",
+              "Cancel Plus", tableName: "Subscriptions",
               comment:
                 "Cancels Plus bought on the web: the button, and the confirmation in its dialog")
           }
@@ -745,20 +727,18 @@ private struct WebPlusSection: View {
           Button(role: .cancel) {
           } label: {
             Text(
-              "Go back", tableName: "Account",
+              "Go back", tableName: "Subscriptions",
               comment: "Closes the dialog that cancels Plus without canceling it")
           }
         } message: {
           if web.state == .unpaid {
             Text(
-              "Plus ends right away, and we stop retrying your renewal payment.",
-              tableName: "Account",
-              comment:
-                "In the dialog that cancels Plus bought on the web whose renewal payment failed")
+              "Plus ends right away, and you won't be charged again.",
+              tableName: "Subscriptions")
           } else {
             Text(
               "You keep Plus until the end of the period you already paid for.",
-              tableName: "Account", comment: "In the dialog that cancels Plus bought on the web")
+              tableName: "Subscriptions")
           }
         }
       }
@@ -766,8 +746,7 @@ private struct WebPlusSection: View {
       if beside {
         SectionTitle(
           Text(
-            "Website subscription", tableName: "Account",
-            comment: "Plus bought on the website, shown beside a store purchase"))
+            "Bought on the website", tableName: "Subscriptions"))
       }
     } footer: {
       SectionFooter {
@@ -779,28 +758,18 @@ private struct WebPlusSection: View {
   @ViewBuilder
   private var footer: some View {
     if web.state == .ending {
-      VStack(alignment: .leading, spacing: 8) {
-        Text(
-          "Changed your mind? Keep Plus, and it renews as before.", tableName: "Account",
-          comment:
-            "Under the button that turns the stopped renewal of Plus bought on the web back on")
-
-        if failed {
-          FailureLine(
-            message: LocalizedStringResource(
-              "We couldn't keep Plus. Try again or email hello@zoonk.com.",
-              table: "Account",
-              comment: "Turning the stopped renewal of Plus bought on the web back on failed"))
-        }
+      if failed {
+        FailureLine(
+          message: LocalizedStringResource(
+            "We couldn't keep Plus. Try again or email hello@zoonk.com.",
+            table: "Subscriptions"))
       }
     } else if failed {
       FailureLine(
         message: AttributedString(
           localized:
             "We couldn't cancel Plus. Try again or email \(AttributedString.supportEmail).",
-          table: "Account",
-          comment:
-            "Canceling Plus bought on the web failed; the argument is the email address to write to"
+          table: "Subscriptions"
         ))
     }
   }
@@ -819,23 +788,24 @@ extension WebPlus {
   fileprivate var dateLine: Text? {
     if state == .unpaid {
       return Text(
-        "Your last renewal payment failed.", tableName: "Account",
-        comment: "Plus bought on the web whose renewal payment couldn't be charged")
+        "Your last renewal payment failed.", tableName: "Subscriptions")
     }
 
-    return periodEnd.map {
-      state == .ending
-        ? Text(
-          "Your subscription will end on \(day($0)).", tableName: "Account",
-          comment: "When a subscription set to end ends")
-        : Text(
-          "Renews on \(day($0)).", tableName: "Account", comment: "When a web subscription renews")
-    }
+    return periodEnd.map { state == .ending ? plusEnds(on: $0) : renews(on: $0) }
   }
 }
 
 private func day(_ date: Date) -> String {
   date.formatted(date: .abbreviated, time: .omitted)
+}
+
+private func plusEnds(on date: Date) -> Text {
+  Text(
+    "Plus ends on \(day(date)).", tableName: "Subscriptions", comment: "When Plus set to end ends")
+}
+
+private func renews(on date: Date) -> Text {
+  Text("Renews on \(day(date)).", tableName: "Subscriptions", comment: "When Plus renews")
 }
 
 /// Main's Free card: what the free plan includes, against Plus above it.
@@ -844,7 +814,6 @@ private struct FreePlanCard: View {
 
   let limits: FreePlan
   let viewer: PlusViewer
-  let allowance: PlanAllowance?
 
   var body: some View {
     GroupBox {
@@ -856,8 +825,7 @@ private struct FreePlanCard: View {
               router.present(.signIn)
             } label: {
               Text(
-                "Create a free account", tableName: "Account",
-                comment: "Opens sign-up from the free plan's card for a guest"
+                "Create a free account", tableName: "Subscriptions"
               )
               .frame(maxWidth: .infinity)
             }
@@ -866,42 +834,31 @@ private struct FreePlanCard: View {
 
             note(
               Text(
-                "No card needed.", tableName: "Account",
-                comment: "Under the free plan's sign-up button; card means a payment card"
+                "No card needed.", tableName: "Subscriptions"
               ))
           }
 
           Divider()
         case .free:
-          VStack(alignment: .leading, spacing: 4) {
-            Text(
-              "Your current plan", tableName: "Account",
-              comment: "On the free plan's card for a learner already on it")
-
-            if let allowance, let limit = allowance.buddyMessagesDailyLimit {
-              note(
-                Text(
-                  "\(Text(allowance.buddyMessagesToday, format: .number).monospacedDigit())/\(Text(limit, format: .number).monospacedDigit()) buddy messages used today",
-                  tableName: "Account",
-                  comment:
-                    "A free plan's buddy messages used today, as in “3/5 buddy messages used today”"
-                ))
-            }
-          }
+          Text(
+            "What you have now", tableName: "Subscriptions",
+            comment:
+              "On the Free card, in the button's place, for a learner who doesn't have Plus: it tells them this card is what they have today. Don't call it a “plan” or use your language's word for the learner's study plan."
+          )
 
           Divider()
         case .visitor, .subscribed:
           EmptyView()
         }
 
-        if let goals = limits.activeGoals, let lessons = limits.lessonsPerMonth {
+        if let goals = limits.activeGoals, let lessons = limits.lessonsPer30Days {
           Text(
             verbatim: [
               String(
-                localized: "\(goals) goals", table: "Account",
+                localized: "\(goals) goals", table: "Subscriptions",
                 comment: "How many goals the free plan has at a time"),
               String(
-                localized: "\(lessons) lessons a month", table: "Account",
+                localized: "\(lessons) lessons a month", table: "Subscriptions",
                 comment: "Free plan: lessons a month"),
             ].joinedFacts()
           )
@@ -911,35 +868,22 @@ private struct FreePlanCard: View {
 
         item(
           Text(
-            "A plan for your goal and your date", tableName: "Account",
-            comment: "Free plan: a plan for the learner's goal"))
-
-        if let days = limits.examPrepDays {
-          item(
-            days == 7
-              ? Text(
-                "For an exam: the diagnostic, your plan and its first week", tableName: "Account",
-                comment: "Free plan: how much of an exam plan it includes")
-              : Text(
-                "For an exam: the diagnostic, your plan and its first \(days) days",
-                tableName: "Account", comment: "Free plan: how much of an exam plan it includes"))
-        }
+            "A plan for your goal and your date", tableName: "Subscriptions"))
 
         if let messages = limits.tutorMessagesPerDay {
           item(
             Text(
-              "An AI study buddy: \(messages) messages a day", tableName: "Account",
+              "An AI study buddy: \(messages) messages a day", tableName: "Subscriptions",
               comment: "Free plan: the study buddy's daily messages"))
         }
 
         item(
           Text(
-            "Speaking practice calls, with lower limits than Plus", tableName: "Account",
-            comment: "Free plan: practice calls, never a number"))
+            "Speaking practice calls", tableName: "Subscriptions"))
       }
       .frame(maxWidth: .infinity, alignment: .leading)
     } label: {
-      Text("Free", tableName: "Account", comment: "The free plan's name")
+      Text("Free", tableName: "Subscriptions", comment: "The free plan's name")
     }
   }
 
@@ -968,13 +912,14 @@ private struct PlusQuestions: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
       VStack(alignment: .leading, spacing: 4) {
-        Text("Common questions", tableName: "Account", comment: "Title of the pricing questions")
-          .typeStyle(.section)
+        Text(
+          "Common questions", tableName: "Subscriptions", comment: "Title of the pricing questions"
+        )
+        .typeStyle(.section)
 
         Text(
-          "Still unsure? \(AttributedString.supportEmail)", tableName: "Account",
-          comment:
-            "Under the pricing questions' title; the argument is the email address to write to"
+          "Still unsure? \(AttributedString.askUs).", tableName: "Subscriptions",
+          comment: "Under the pricing questions' title; the argument is the link “Ask us”"
         )
         .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
@@ -984,44 +929,51 @@ private struct PlusQuestions: View {
         freePlanAnswer
       } label: {
         question(
-          Text("What's in the free plan?", tableName: "Account", comment: "A pricing question"))
+          Text("What's free?", tableName: "Subscriptions", comment: "A pricing question"))
       }
 
       DisclosureGroup {
         answer(
           Text(
-            "Almost. Lessons, goals and your buddy have limits only to stop bots and automated tools, not people learning. Speaking calls have daily and monthly limits, higher than on the free plan.",
-            tableName: "Account", comment: "Answers whether Plus is unlimited, never in minutes"))
+            "For people learning, yes. Lessons, goals and the AI study buddy only have limits that stop bots and automated tools. Speaking calls have daily and monthly limits, higher than without Plus.",
+            tableName: "Subscriptions",
+            comment: "Answers whether Plus is unlimited, never in minutes"))
 
         Link(destination: AccountLinks.fairUse) {
           Text(
-            "Read our fair use policy", tableName: "Account", comment: "Opens the fair use policy")
+            "Read our fair use policy", tableName: "Subscriptions",
+            comment: "Opens the fair use policy")
         }
       } label: {
         question(
-          Text("Is Plus really unlimited?", tableName: "Account", comment: "A pricing question"))
+          Text(
+            "Is Plus really unlimited?", tableName: "Subscriptions"))
       }
 
       DisclosureGroup {
         answer(
           Text(
-            "You keep Plus until the end of the period you already paid for. Then you're back on the free plan, and your goals and progress stay with you.",
-            tableName: "Account", comment: "Answers what canceling Plus does"))
-      } label: {
-        question(
-          Text("What happens if I cancel?", tableName: "Account", comment: "A pricing question"))
-      }
-
-      DisclosureGroup {
-        answer(
-          Text(
-            "Write to us at \(AttributedString.supportEmail) and we'll look into it. Purchases in the App Store or Google Play follow Apple's or Google's refund rules.",
-            tableName: "Account",
+            "You keep Plus until the end of the period you already paid for. Then you're back to free, and your goals and progress stay with you.",
+            tableName: "Subscriptions",
             comment:
-              "Answers whether Plus can be refunded; the argument is the email address to write to"
+              "“Back to free” means using Zoonk without paying again. Don't call it a “free plan” or use your language's word for the learner's study plan."
           ))
       } label: {
-        question(Text("Can I get a refund?", tableName: "Account", comment: "A pricing question"))
+        question(
+          Text(
+            "What happens if I cancel?", tableName: "Subscriptions"))
+      }
+
+      DisclosureGroup {
+        answer(
+          Text(
+            "\(AttributedString.writeToUs) and we'll look into it. Purchases in the App Store or Google Play follow Apple's or Google's refund rules.",
+            tableName: "Subscriptions",
+            comment: "Answers whether Plus can be refunded; the argument is the link “Write to us”"
+          ))
+      } label: {
+        question(
+          Text("Can I get a refund?", tableName: "Subscriptions"))
       }
     }
   }
@@ -1031,66 +983,49 @@ private struct PlusQuestions: View {
     if viewer == .visitor || viewer == .guest, let guestLessons = limits.guestLessons {
       answer(
         Text(
-          "Start free with \(guestLessons) lessons, no account needed. With a free account, you get:",
-          tableName: "Account", comment: "Leads the free plan's list for someone without an account"
+          "You can try \(guestLessons) lessons with no account. With a free account, you get:",
+          tableName: "Subscriptions", comment: "Leads the free list for someone without an account"
         ))
     } else {
       answer(
         Text(
-          "With the free plan, you get:", tableName: "Account",
-          comment: "Leads the free plan's list"))
+          "Without Plus, you get:", tableName: "Subscriptions"))
     }
 
     VStack(alignment: .leading, spacing: 6) {
       if let goals = limits.activeGoals {
         bullet(
           Text(
-            "\(goals) goals at a time", tableName: "Account",
+            "\(goals) goals at a time", tableName: "Subscriptions",
             comment: "Free plan: goals at a time"))
       }
 
-      if let month = limits.lessonsPerMonth {
+      if let month = limits.lessonsPer30Days {
         bullet(
           Text(
-            "\(month) lessons a month", tableName: "Account",
-            comment: "Free plan: lessons a month"))
-      }
-
-      if let day = limits.lessonsPerDay {
-        bullet(
-          Text(
-            "Up to \(day) lessons a day", tableName: "Account", comment: "Free plan: lessons a day")
-        )
-      }
-
-      if let days = limits.examPrepDays {
-        bullet(
-          days == 7
-            ? Text(
-              "The first week of exam prep", tableName: "Account",
-              comment: "Free plan: how much of an exam plan it includes")
-            : Text(
-              "The first \(days) days of exam prep", tableName: "Account",
-              comment: "Free plan: how much of an exam plan it includes"))
+            "\(month) lessons a month, across all your goals, exams included",
+            tableName: "Subscriptions", comment: "Free plan: lessons a month"))
       }
 
       if let messages = limits.tutorMessagesPerDay {
         bullet(
           Text(
-            "\(messages) messages to your buddy a day", tableName: "Account",
+            "An AI study buddy: \(messages) messages a day", tableName: "Subscriptions",
             comment: "Free plan: the study buddy's daily messages"))
       }
 
       if let uploads = limits.uploadsPerDay {
         bullet(
           Text(
-            "\(uploads) uploads a day", tableName: "Account", comment: "Free plan: daily uploads"))
+            "Your own study material: \(uploads) files a day", tableName: "Subscriptions",
+            comment:
+              "Without Plus, a learner can add files of their own (notes, a syllabus) for a goal to study from; the argument is how many a day"
+          ))
       }
 
       bullet(
         Text(
-          "Practice calls, with lower limits than Plus (exam speaking tasks come with Plus)",
-          tableName: "Account", comment: "Free plan: practice calls, never a number"))
+          "Speaking practice calls, fewer than with Plus", tableName: "Subscriptions"))
     }
   }
 
@@ -1119,9 +1054,25 @@ private struct PlusQuestions: View {
 }
 
 extension AttributedString {
+  fileprivate static var askUs: AttributedString {
+    helpLink(
+      String(localized: "Ask us", table: "Subscriptions", comment: "Opens Zoonk's Help page"))
+  }
+
+  fileprivate static var writeToUs: AttributedString {
+    helpLink(
+      String(localized: "Write to us", table: "Subscriptions", comment: "Opens Zoonk's Help page"))
+  }
+
+  private static func helpLink(_ words: String) -> AttributedString {
+    var link = AttributedString(words)
+    link.link = AccountLinks.support
+    return link
+  }
+
   fileprivate static var supportEmail: AttributedString {
     let address = String(
-      localized: "hello@zoonk.com", table: "Account",
+      localized: "hello@zoonk.com", table: "Subscriptions",
       comment:
         "An email address, not a phrase: keep it unless the style guide gives the language its own inbox"
     )

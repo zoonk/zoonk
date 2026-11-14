@@ -46,7 +46,7 @@ function ItemTableView({ table }: { table: ItemTable }) {
 
 export function ItemText({ className, text }: { className?: string; text: string }) {
   return (
-    <div className={cn("flex min-w-0 flex-col gap-3", className)} data-slot="item-text">
+    <div className={cn("flex min-w-0 flex-col gap-3 text-pretty", className)} data-slot="item-text">
       {parseItemText(text).map((block, index) => {
         const key = `${block.kind}-${index}`;
 
@@ -59,9 +59,6 @@ export function ItemText({ className, text }: { className?: string; text: string
     </div>
   );
 }
-
-export const QUESTION_TEXT_CLASS =
-  "text-[1.1875rem] leading-[1.35] font-[560] tracking-[-0.02em] text-pretty";
 
 /**
  * One element, so a flex parent such as an answer option wraps the line as text instead of stacking
@@ -90,7 +87,7 @@ export function ItemSupport({
   return (
     <>
       {context && (
-        <ItemText className={cn("text-base leading-relaxed", className)} text={context} />
+        <ItemText className={cn("text-reading leading-relaxed", className)} text={context} />
       )}
       {image && <ItemPicture image={image} />}
       <LessonVisual visual={visual} />

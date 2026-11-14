@@ -1,21 +1,15 @@
 "use client";
 
 import { type LanguageUnitView } from "@zoonk/core/view-models/language/contract";
-import {
-  DetailActions,
-  DetailFacts,
-  DetailHero,
-  DetailHeroText,
-  DetailTitle,
-} from "@zoonk/ui/components/detail";
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
+import { DetailFacts, DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
 import { useExtracted } from "next-intl";
 import { DetailContinueLink, useDoneShare } from "../../_components/detail-page";
-import { PageEyebrow } from "../../_components/page";
 import { useFormatDuration } from "../../_utils/time-format";
 import { ContentFeedbackMenu } from "../../feedback/content-feedback-menu";
 import { LearnPageBar } from "../../shell/learn-bar";
 
-function UnitEyebrow({ unit }: { unit: LanguageUnitView["unit"] }) {
+function useUnitPlace(unit: LanguageUnitView["unit"]): string {
   const t = useExtracted();
 
   if (unit.position === null) {
@@ -28,64 +22,61 @@ function UnitEyebrow({ unit }: { unit: LanguageUnitView["unit"] }) {
   });
 }
 
-function UnitFacts({ lessons }: { lessons: LanguageUnitView["lessons"] }) {
+function UnitFacts({ view }: { view: LanguageUnitView }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const doneShare = useDoneShare();
+  const place = useUnitPlace(view.unit);
+  const { lessons } = view;
   const minutes = lessons.reduce((sum, lesson) => sum + lesson.minutes, 0);
   const done = lessons.filter((lesson) => lesson.done).length;
 
-  if (lessons.length === 0) {
-    return null;
-  }
-
   const facts = [
-    t("{count, plural, one {# lesson} other {# lessons}}", { count: lessons.length }),
+    place,
+    lessons.length > 0 &&
+      t("{count, plural, one {# lesson} other {# lessons}}", { count: lessons.length }),
     minutes > 0 && formatDuration(minutes),
-    doneShare(done / lessons.length),
+    lessons.length > 0 && doneShare(done / lessons.length),
   ].filter(Boolean);
 
   return <DetailFacts>{facts.join(" · ")}</DetailFacts>;
 }
 
-export function UnitHeader({
+export function UnitHeader({ view }: { view: LanguageUnitView }) {
+  return (
+    <DetailHero>
+      <DetailHeroText>
+        <DetailTitle>{view.unit.title}</DetailTitle>
+        <UnitFacts view={view} />
+      </DetailHeroText>
+    </DetailHero>
+  );
+}
+
+export function UnitBottomBar({
   lessonHref,
   view,
 }: {
   lessonHref: (lessonId: string) => string;
   view: LanguageUnitView;
 }) {
-  const t = useExtracted();
-  const { lessons, unit } = view;
-  const done = lessons.filter((lesson) => lesson.done).length;
+  const { lessons } = view;
   const next = lessons.find((lesson) => lesson.state === "next");
 
-  return (
-    <DetailHero>
-      <DetailHeroText>
-        <PageEyebrow>
-          <UnitEyebrow unit={unit} />
-        </PageEyebrow>
-        <DetailTitle>{unit.title}</DetailTitle>
-        <UnitFacts lessons={lessons} />
-      </DetailHeroText>
+  if (!next) {
+    return null;
+  }
 
-      <DetailActions className="empty:hidden">
-        {next && (
-          <DetailContinueLink
-            href={lessonHref(next.lessonId)}
-            lessonWritten={next.written}
-            started={done > 0}
-          />
-        )}
-        <ContentFeedbackMenu
-          label={t("Unit options")}
-          screen="unit"
-          size="detail"
-          target={{ contentId: unit.chapterId, contentKind: "chapter" }}
+  return (
+    <BottomBar>
+      <BottomBarActions>
+        <DetailContinueLink
+          href={lessonHref(next.lessonId)}
+          lessonWritten={next.written}
+          started={lessons.some((lesson) => lesson.done)}
         />
-      </DetailActions>
-    </DetailHero>
+      </BottomBarActions>
+    </BottomBar>
   );
 }
 
@@ -103,6 +94,11 @@ export function UnitBar({
   return (
     <LearnPageBar back={{ href: backHref, label: t("Plan") }} title={view.unit.title}>
       {children}
+      <ContentFeedbackMenu
+        label={t("Unit options")}
+        screen="unit"
+        target={{ contentId: view.unit.chapterId, contentKind: "chapter" }}
+      />
     </LearnPageBar>
   );
 }

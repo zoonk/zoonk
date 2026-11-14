@@ -313,7 +313,7 @@ class MindMapStore(
     ): MindMapCreated {
         val limit = Limit.of(result)
         return when {
-            result.code == PLUS_REQUIRED || result.status == UNPROCESSABLE -> readAgain(key)
+            result.status == UNPROCESSABLE -> readAgain(key)
             limit != null -> MindMapCreated.Refused(limit, result.details.ranOut().limitSubject)
             else -> MindMapCreated.Unreachable
         }
@@ -381,17 +381,17 @@ class MindMapStore(
         }
 
     private companion object {
-        // Buying Plus unlocks the chapters past the free week.
+        // Subscribing lifts the free lesson limit that writing a map's lessons counts against.
         val DOMAINS = setOf(DataDomain.Goals, DataDomain.UserProgress, DataDomain.UserSubscription, DataDomain.SavedMindMaps)
         const val UNPROCESSABLE = 422
-        const val PLUS_REQUIRED = "PLUS_REQUIRED"
     }
 }
 
-/** Main's wording for what ran out: lessons for the lessons a map writes first, help for the day's AI spend. */
+/** Main's wording for what ran out: the lessons a map writes first, lessons, or help for the day's AI spend. */
 private val String?.limitSubject: LimitSubject
     get() =
         when (this) {
+            "chapterLessons" -> LimitSubject.MapLessons
             "lessonStart", "generatedLessons" -> LimitSubject.Lessons
             "aiSpend" -> LimitSubject.Help
             else -> LimitSubject.MindMaps

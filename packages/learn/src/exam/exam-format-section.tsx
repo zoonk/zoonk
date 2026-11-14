@@ -50,7 +50,7 @@ function useDayParts() {
   const t = useExtracted();
   const format = useFormatter();
 
-  return (day: ExamFormatDay): string => {
+  return (day: ExamFormatDay): { count: string | null; parts: string } => {
     const questions = day.parts.reduce(
       (sum, part) => sum + (part.written ? 0 : (part.questions ?? 0)),
       0,
@@ -61,35 +61,47 @@ function useDayParts() {
       { type: "conjunction" },
     );
 
-    return questions > 0
-      ? t("{parts} · {count, plural, one {# question} other {# questions}}", {
-          count: questions,
-          parts,
-        })
-      : parts;
+    const count =
+      questions > 0
+        ? t("{count, plural, one {# question} other {# questions}}", { count: questions })
+        : null;
+
+    return { count, parts };
+  };
+}
+
+function useDayTitle() {
+  const t = useExtracted();
+  const dayDate = useExamDayDate();
+
+  return ({ day, numbered }: { day: ExamFormatDay; numbered: boolean }): string => {
+    const number = t("Day {number, number}", { number: day.day });
+
+    if (!day.date) {
+      return number;
+    }
+
+    return numbered ? `${number} · ${dayDate(day.date)}` : dayDate(day.date);
   };
 }
 
 function DayRow({ day, numbered }: { day: ExamFormatDay; numbered: boolean }) {
-  const t = useExtracted();
-  const dayDate = useExamDayDate();
+  const dayTitle = useDayTitle();
   const dayParts = useDayParts();
   const formatDuration = useFormatDuration();
+  const { count, parts } = dayParts(day);
 
   return (
-    <li className="grid grid-cols-[auto_minmax(0,1fr)] items-baseline gap-x-3 py-2.5">
-      <span className="text-muted-foreground font-mono text-xs tabular-nums">
-        {numbered ? t("Day {number, number}", { number: day.day }) : null}
-      </span>
+    <li className="py-2.5">
       <span className={cn(TITLE_ROW_CLASS, "items-baseline")}>
-        <span className="text-[0.8125rem] font-medium">
-          {day.date ? dayDate(day.date) : t("Day {number, number}", { number: day.day })}
-        </span>
+        <span className="text-compact font-medium">{dayTitle({ day, numbered })}</span>
         <span className="text-muted-foreground font-mono text-xs tabular-nums empty:hidden">
           {day.minutes !== null && day.minutes > 0 ? formatDuration(day.minutes) : null}
         </span>
         <span className="text-muted-foreground basis-full pt-0.5 text-xs text-pretty">
-          {dayParts(day)}
+          {parts}
+          {/* Unbroken from " ·" on, so a wrapped line never starts or ends on the dot. */}
+          {count && <span className="whitespace-nowrap">{` · ${count}`}</span>}
         </span>
       </span>
     </li>

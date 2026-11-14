@@ -30,7 +30,6 @@ export async function listLearnersWithOldFollowUpsStep(): Promise<string[]> {
   return listLearnersWithOldFollowUps();
 }
 
-/** Writing a lesson ahead counts as its start, so the learner's allowance decides first. */
 export async function requestLessonWritingStep({
   lessonId,
   userId,

@@ -55,17 +55,6 @@ fun PlanPhase.shareAt(
     return ((ChronoUnit.DAYS.between(start, date) + at.offset) / days).coerceIn(0.0, 1.0).toFloat()
 }
 
-data class PhaseDay(
-    val day: Long,
-    val days: Long,
-)
-
-fun PlanPhase.dayOf(today: LocalDate): PhaseDay? {
-    val days = days() ?: return null
-    val start = start ?: return null
-    return PhaseDay((ChronoUnit.DAYS.between(start, today) + 1).coerceIn(1, days), days)
-}
-
 /** When the goal ends on the roadmap: its date, or the estimate for a goal without one (never an exam's). */
 data class PlanFinish(
     val date: LocalDate,

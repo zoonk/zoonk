@@ -9,33 +9,24 @@ import { useLanguageNameInSentence } from "./certificate-labels";
 
 function useMeaning(facts: CertificateFacts): string[] {
   const t = useExtracted();
-
-  const nameNote = t(
-    "The name is the one the learner gave their Zoonk account; Zoonk doesn't check IDs.",
-  );
-
-  const cefr = t(
-    "Levels are aligned with the CEFR, the Common European Framework of Reference for Languages. This is not an official exam result.",
-  );
+  const nameNote = t("Names aren't checked against an ID.");
 
   if (facts.kind === "languageLevel") {
+    const cefr = t(
+      "Levels are aligned with the CEFR, the Common European Framework of Reference for Languages. This is not an official exam result.",
+    );
+
     return [
-      t(
-        "Zoonk issues this certificate when a learner finishes a level, studying at least half of its lessons.",
-      ),
+      t("For finishing this level, studying at least half of its lessons."),
       `${cefr} ${nameNote}`,
     ];
   }
 
   return [
     facts.courseLevel
-      ? t(
-          "Zoonk issues this certificate when a learner finishes every chapter of a course's level, studying each lesson or passing its test, and wins every challenge in it.",
-        )
-      : t(
-          "Zoonk issues this certificate when a learner finishes every lesson of a course's plan, by studying it or passing its test, and wins every challenge in it.",
-        ),
-    `${t("It's a record of completion on Zoonk, not academic credit.")} ${nameNote}`,
+      ? t("For finishing every lesson and challenge of this level.")
+      : t("For finishing every lesson and challenge of this plan."),
+    `${t("A record of completion on Zoonk, not academic credit.")} ${nameNote}`,
   ];
 }
 
@@ -50,7 +41,7 @@ export function CertificateMeaning({ facts }: { facts: CertificateFacts }) {
       </h2>
       {paragraphs.map((paragraph) => (
         <p
-          className="text-muted-foreground mt-2.5 text-[0.9375rem] leading-relaxed text-pretty"
+          className="text-muted-foreground text-reading mt-2.5 leading-relaxed text-pretty"
           key={paragraph}
         >
           {paragraph}
@@ -71,10 +62,7 @@ export function CertificateCovered({ facts }: { facts: CertificateFacts }) {
 
   return (
     <section aria-labelledby="certificate-covered" className="mt-10">
-      <h2
-        className="flex items-baseline gap-2 text-[0.9375rem] font-semibold"
-        id="certificate-covered"
-      >
+      <h2 className="text-reading flex items-baseline gap-2 font-semibold" id="certificate-covered">
         {facts.kind === "course" ? t("Topics covered") : t("Can do")}
         {facts.kind === "course" && (
           <span className="text-muted-foreground font-mono text-xs font-normal tabular-nums">
@@ -84,7 +72,7 @@ export function CertificateCovered({ facts }: { facts: CertificateFacts }) {
       </h2>
       <ul className="mt-3 grid max-w-4xl gap-x-8 gap-y-2.5 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item) => (
-          <li className="flex gap-2.5 text-[0.9375rem] text-pretty" key={item}>
+          <li className="text-reading flex gap-2.5 text-pretty" key={item}>
             <DoneMark className="mt-1" />
             <span>{item}</span>
           </li>
@@ -114,7 +102,7 @@ export function CertificateStart({ facts, href }: { facts: CertificateFacts; hre
         <LearnLink className={buttonVariants({ size: "lg", variant: "outline" })} href={href}>
           {t("Start this course")}
         </LearnLink>
-        <span className="text-muted-foreground text-[0.8125rem]">
+        <span className="text-muted-foreground text-compact">
           {t("Start free, no account needed.")}
         </span>
       </div>

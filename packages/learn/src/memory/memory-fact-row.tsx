@@ -5,96 +5,18 @@ import { MAX_MEMORY_STATEMENT_LENGTH } from "@zoonk/core/memory/memory-limits";
 import { isProfileQuestion } from "@zoonk/core/profile/questions/contract";
 import { Button } from "@zoonk/ui/components/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@zoonk/ui/components/dialog";
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
-import { Textarea } from "@zoonk/ui/components/textarea";
 import { EllipsisIcon, PencilIcon, Trash2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useId, useState } from "react";
+import { useState } from "react";
+import { EditTextDialog } from "../_components/edit-text-dialog";
 import { LearnLink } from "../learn-link";
 import { aboutYouQuestionHref } from "../profile-questions/about-you-screen";
 import { MemoryFactSource } from "./memory-labels";
-
-function EditFactDialog({
-  fact,
-  onClose,
-  onSave,
-}: {
-  fact: MemoryFactView;
-  onClose: () => void;
-  onSave: (statement: string) => void;
-}) {
-  const t = useExtracted();
-  const statementId = useId();
-  const [statement, setStatement] = useState(fact.statement);
-  const trimmed = statement.trim();
-
-  return (
-    <Dialog
-      onOpenChange={(open) => {
-        if (!open) {
-          onClose();
-        }
-      }}
-      open
-    >
-      <DialogContent closeLabel={t("Close")}>
-        <DialogHeader>
-          <DialogTitle>
-            {t({
-              description: "A memory is one fact Zoonk remembers about the learner.",
-              message: "Edit memory",
-            })}
-          </DialogTitle>
-          <DialogDescription>
-            {t({
-              description: '"It" is the note Zoonk keeps about the learner, edited in this dialog.',
-              message: "Say it the way it's true for you.",
-            })}
-          </DialogDescription>
-        </DialogHeader>
-
-        <form
-          className="flex flex-col gap-4"
-          onSubmit={(event) => {
-            event.preventDefault();
-            onSave(trimmed);
-          }}
-        >
-          <label className="sr-only" htmlFor={statementId}>
-            {t("What Zoonk remembers")}
-          </label>
-          <Textarea
-            id={statementId}
-            maxLength={MAX_MEMORY_STATEMENT_LENGTH}
-            onChange={(event) => setStatement(event.target.value)}
-            value={statement}
-          />
-
-          <DialogFooter>
-            <Button onClick={onClose} type="button" variant="outline">
-              {t("Cancel")}
-            </Button>
-            <Button disabled={!trimmed || trimmed === fact.statement} type="submit">
-              {t("Save")}
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
-  );
-}
 
 /** A fact from About you is changed there, where its answer lives; with memory off only the list opens. */
 function getAboutYouHref({
@@ -124,7 +46,8 @@ export function MemoryFactRow({
   fact: MemoryFactView;
   memoryEnabled: boolean;
   onDelete: () => void;
-  onEdit: (statement: string) => void;
+  /** Resolves to whether the new statement was saved; until then the sheet keeps it. */
+  onEdit: (statement: string) => Promise<boolean>;
 }) {
   const t = useExtracted();
   const [isEditing, setIsEditing] = useState(false);
@@ -133,8 +56,8 @@ export function MemoryFactRow({
   return (
     <li className="flex items-start gap-3 py-2.75" data-slot="memory-fact">
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <p className="text-[0.9375rem] leading-snug">{fact.statement}</p>
-        <p className="text-muted-foreground text-[0.8125rem] leading-snug">
+        <p className="text-reading leading-snug">{fact.statement}</p>
+        <p className="text-muted-foreground text-compact leading-snug">
           <MemoryFactSource fact={fact} />
         </p>
       </div>
@@ -144,7 +67,8 @@ export function MemoryFactRow({
           render={
             <Button
               aria-label={t("Options for “{fact}”", { fact: fact.statement })}
-              className="text-muted-foreground -my-2.75 -mr-2 size-11 shrink-0"
+              className="text-muted-foreground -my-2 shrink-0"
+              edge="end"
               size="icon"
               variant="ghost"
             />
@@ -160,7 +84,7 @@ export function MemoryFactRow({
               {t("Edit")}
             </DropdownMenuItem>
           ) : (
-            <DropdownMenuItem onClick={() => setIsEditing(true)}>
+            <DropdownMenuItem aria-haspopup="dialog" onClick={() => setIsEditing(true)}>
               <PencilIcon aria-hidden="true" />
               {t("Edit")}
             </DropdownMenuItem>
@@ -173,13 +97,21 @@ export function MemoryFactRow({
       </DropdownMenu>
 
       {isEditing && (
-        <EditFactDialog
-          fact={fact}
+        <EditTextDialog
+          description={t({
+            description: '"It" is the note Zoonk keeps about the learner, edited in this dialog.',
+            message: "Say it the way it's true for you.",
+          })}
+          label={t("What Zoonk remembers")}
+          maxLength={MAX_MEMORY_STATEMENT_LENGTH}
+          multiline
           onClose={() => setIsEditing(false)}
-          onSave={(statement) => {
-            setIsEditing(false);
-            onEdit(statement);
-          }}
+          onSave={onEdit}
+          title={t({
+            description: "A memory is one fact Zoonk remembers about the learner.",
+            message: "Edit memory",
+          })}
+          value={fact.statement}
         />
       )}
     </li>

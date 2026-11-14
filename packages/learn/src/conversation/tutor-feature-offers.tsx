@@ -1,10 +1,10 @@
 "use client";
 
 import { type TutorToolOffer } from "@zoonk/core/lesson-questions/tool-offer-contract";
+import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import {
   BrainIcon,
   ChartColumnIcon,
-  ChevronRightIcon,
   MicIcon,
   NotebookTextIcon,
   PlusIcon,
@@ -12,11 +12,10 @@ import {
 } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { KindDot } from "../_components/kind-tile";
-import { PlusNotice } from "../_components/plus-lock";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { SubjectIcon } from "../syllabus/subject-icon";
-import { OfferCard, OfferLink, OfferTile, usePracticeVerb } from "./tutor-offer-card";
+import { OfferAction, OfferCard, OfferLink, OfferTile, usePracticeVerb } from "./tutor-offer-card";
 
 type Offer<Kind extends TutorToolOffer["kind"]> = Extract<TutorToolOffer, { kind: Kind }>;
 
@@ -38,14 +37,14 @@ function CatalogCourseRow({
       >
         <SubjectIcon imageUrl={course.imageUrl} size="md" />
         <span className="flex min-w-0 flex-1 flex-col">
-          <span className="text-[0.9375rem] font-medium">{course.title}</span>
+          <span className="text-reading font-medium">{course.title}</span>
           {course.description && (
-            <span className="text-muted-foreground line-clamp-2 text-[0.8125rem]">
+            <span className="text-muted-foreground text-compact line-clamp-2">
               {course.description}
             </span>
           )}
         </span>
-        <ChevronRightIcon aria-hidden="true" className="text-muted-foreground/60 size-4 shrink-0" />
+        <RowChevron />
       </LearnLink>
     </div>
   );
@@ -64,7 +63,6 @@ export function StartGoalOffer({
   return (
     <OfferCard
       description={t("“{goal}”", { goal: offer.goal })}
-      locked={locked}
       tile={
         <OfferTile>
           <PlusIcon />
@@ -72,18 +70,12 @@ export function StartGoalOffer({
       }
       title={t("Start a new goal")}
     >
-      {locked ? (
-        <PlusNotice inset>
-          {t({
-            description:
-              "On a locked card under the study buddy's answer, offering to start a new goal. The lock can come from the goals the learner follows at once or from the new goals they started recently, so it names neither. “Plus” is the name of the paid plan, not the word “more”.",
-            message:
-              "Starting another goal right now comes with Plus. Until then, keep going with your current goals.",
-          })}
-        </PlusNotice>
-      ) : (
-        <OfferLink href={hrefs.start}>{t("Start")}</OfferLink>
-      )}
+      <OfferAction
+        gate={locked ? t("Another goal now needs a subscription") : null}
+        href={hrefs.start}
+      >
+        {t("Start")}
+      </OfferAction>
 
       {offer.course && (
         <CatalogCourseRow
@@ -117,7 +109,6 @@ export function EssayOffer({ href, offer }: { href: string; offer: Offer<"essay"
   return (
     <OfferCard
       description={descriptions[offer.cadence]}
-      locked={locked}
       tile={
         <OfferTile>
           <KindDot kind="essay" />
@@ -125,11 +116,9 @@ export function EssayOffer({ href, offer }: { href: string; offer: Offer<"essay"
       }
       title={offer.subject}
     >
-      {locked ? (
-        <PlusNotice inset>{t("Essay practice with grading comes with Plus.")}</PlusNotice>
-      ) : (
-        <OfferLink href={href}>{t("Open")}</OfferLink>
-      )}
+      <OfferAction gate={locked ? t("Essay practice needs a subscription") : null} href={href}>
+        {t("Open")}
+      </OfferAction>
     </OfferCard>
   );
 }
@@ -204,7 +193,7 @@ export function PlaceOffer({
       title: t("Memory"),
     },
     stats: {
-      description: t("Energy, level, right answers and when you study best."),
+      description: t("Energy, belt, right answers and when you study best."),
       icon: <ChartColumnIcon />,
       title: t("Statistics"),
     },
@@ -230,16 +219,16 @@ export function PlusOffer({ offer }: { offer: Offer<"plus"> }) {
   return (
     <OfferCard
       description={
-        offer.subscribed ? t("Your plan and its billing.") : t("What Plus includes and its price.")
+        offer.subscribed ? t("Your plan and its billing.") : t("What it includes and its price.")
       }
       tile={
         <OfferTile>
           <SparklesIcon />
         </OfferTile>
       }
-      title={t("Plus")}
+      title={t("Subscription")}
     >
-      <OfferLink href={routes.upgrade}>{offer.subscribed ? t("Manage") : t("See Plus")}</OfferLink>
+      <OfferLink href={routes.upgrade}>{offer.subscribed ? t("Manage") : t("Subscribe")}</OfferLink>
     </OfferCard>
   );
 }

@@ -17,11 +17,7 @@ export function OnboardingHowItWorks({ hasAccount }: { hasAccount: boolean }) {
     <OnboardingRailSection id="onboarding-how-it-works" title={t("How it works")}>
       <ol className={LIST_GROUP_CLASS}>
         {steps.map((step, index) => (
-          <li
-            aria-current={index === 0 ? "step" : undefined}
-            className="aria-[current=step]:before:bg-muted relative isolate flex min-h-11 items-baseline gap-3 py-2.5 text-sm before:absolute before:-inset-x-2.5 before:inset-y-0.5 before:-z-10 before:rounded-[0.625rem]"
-            key={step}
-          >
+          <li className="flex min-h-11 items-baseline gap-3 py-2.5 text-sm" key={step}>
             <span
               aria-hidden="true"
               className="text-faint w-3 shrink-0 font-mono text-xs tabular-nums"

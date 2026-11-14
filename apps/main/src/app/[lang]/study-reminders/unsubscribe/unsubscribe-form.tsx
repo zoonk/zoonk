@@ -2,15 +2,17 @@
 
 import { Link } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
-import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { EnterButton } from "@zoonk/learn/enter-button";
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
+import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   Empty,
   EmptyContent,
-  EmptyDescription,
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
 } from "@zoonk/ui/components/empty";
+import { showErrorToast } from "@zoonk/ui/components/toast";
 import { safeAsync } from "@zoonk/utils/error";
 import { BellOffIcon, MailCheckIcon, MailXIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -24,7 +26,7 @@ function ManageRemindersLink() {
 
   return (
     <Link
-      className={buttonVariants({ variant: "outline" })}
+      className={buttonVariants({ size: "lg", variant: "outline" })}
       href={getMenu("reminders").url}
       prefetch={false}
     >
@@ -46,11 +48,6 @@ function UnsubscribeResult({ result }: { result: Result }) {
         <EmptyTitle>
           <h1>{off ? t("Email reminders are off") : t("This link is no longer active")}</h1>
         </EmptyTitle>
-        {off && (
-          <EmptyDescription>
-            {t("Your other reminder settings haven't changed. You'll still get sign-in codes.")}
-          </EmptyDescription>
-        )}
       </EmptyHeader>
       <EmptyContent>
         <ManageRemindersLink />
@@ -63,14 +60,16 @@ function UnsubscribeResult({ result }: { result: Result }) {
 export function UnsubscribeForm({ token }: { token: string | null }) {
   const t = useExtracted();
   const [result, setResult] = useState<Result | null>(token ? null : "invalid");
-  const [failed, setFailed] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   const turnOff = () =>
     startTransition(async () => {
       const { data } = await safeAsync(() => turnOffStudyReminderEmailAction(token));
-      setFailed(!data);
       setResult(data);
+
+      if (!data) {
+        showErrorToast(t("That didn't save. Try again."));
+      }
     });
 
   if (result) {
@@ -78,27 +77,27 @@ export function UnsubscribeForm({ token }: { token: string | null }) {
   }
 
   return (
-    <Empty>
-      <EmptyHeader>
-        <EmptyMedia variant="icon">
-          <BellOffIcon aria-hidden="true" />
-        </EmptyMedia>
-        <EmptyTitle>
-          <h1>{t("Turn off email reminders?")}</h1>
-        </EmptyTitle>
-      </EmptyHeader>
-      <EmptyContent>
-        <form action={() => turnOff()} className="contents">
-          <Button busy={isPending} icon={<BellOffIcon aria-hidden="true" />} type="submit">
-            {t("Turn off")}
-          </Button>
-        </form>
-        {failed && (
-          <p className="text-destructive-text text-sm" role="alert">
-            {t("That didn't save. Try again.")}
-          </p>
-        )}
-      </EmptyContent>
-    </Empty>
+    <>
+      <Empty className="flex-1">
+        <EmptyHeader>
+          <EmptyMedia variant="icon">
+            <BellOffIcon aria-hidden="true" />
+          </EmptyMedia>
+          <EmptyTitle>
+            <h1>{t("Turn off email reminders?")}</h1>
+          </EmptyTitle>
+        </EmptyHeader>
+      </Empty>
+
+      <form action={() => turnOff()} className="contents">
+        <BottomBar>
+          <BottomBarActions>
+            <EnterButton busy={isPending} type="submit">
+              {t("Turn off")}
+            </EnterButton>
+          </BottomBarActions>
+        </BottomBar>
+      </form>
+    </>
   );
 }

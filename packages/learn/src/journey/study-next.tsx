@@ -18,7 +18,6 @@ import {
   Suggestion,
   SuggestionAction,
   SuggestionActions,
-  SuggestionDescription,
   SuggestionHeader,
   SuggestionLine,
   SuggestionOpen,
@@ -105,7 +104,6 @@ export function StudyNextSuggestion({
   next: StudyNext;
 }) {
   const t = useExtracted();
-  const hasNext = next.nextLevel !== null || next.related.length > 0;
   const title = t("You finished your plan");
 
   return (
@@ -117,17 +115,18 @@ export function StudyNextSuggestion({
 
       <SlotContent>
         <SuggestionHeader>{title}</SuggestionHeader>
-        {hasNext && (
-          <SuggestionDescription>{t("Here's what to study next.")}</SuggestionDescription>
-        )}
-
         {(next.nextLevel || certificates) && (
-          <SuggestionActions>
-            {certificates && (
-              <CertificateAction certificates={certificates} primary={!next.nextLevel} />
-            )}
-            {next.nextLevel && (
-              <ContinueAtNextLevel next={next.nextLevel} onContinue={onContinue} />
+          <SuggestionActions
+            main={
+              next.nextLevel ? (
+                <ContinueAtNextLevel next={next.nextLevel} onContinue={onContinue} />
+              ) : (
+                certificates && <CertificateAction certificates={certificates} primary />
+              )
+            }
+          >
+            {next.nextLevel && certificates && (
+              <CertificateAction certificates={certificates} primary={false} />
             )}
           </SuggestionActions>
         )}

@@ -2,19 +2,12 @@
 
 import { type CurrentUserMistakes } from "@zoonk/core/mistakes/list-current-user";
 import { type NoticedPattern } from "@zoonk/core/view-models/language/contract";
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { buttonVariants } from "@zoonk/ui/components/button";
-import {
-  DetailActions,
-  DetailFacts,
-  DetailHero,
-  DetailHeroText,
-  DetailTitle,
-} from "@zoonk/ui/components/detail";
-import { ShortcutKbd } from "@zoonk/ui/components/kbd";
-import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
+import { FoldChevron } from "@zoonk/ui/components/collapsible";
+import { DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
 import { type CSSPropertiesWithVariables } from "@zoonk/ui/lib/css-variables";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronDownIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { Fragment, useState } from "react";
 import {
@@ -23,6 +16,7 @@ import {
   DetailContent,
   DetailLayout,
 } from "../_components/detail-page";
+import { EnterLink } from "../_components/enter-button";
 import {
   LIST_ROW_INTERACTIVE_CLASS,
   ListGroup,
@@ -32,14 +26,14 @@ import {
   ListRowTitle,
   ListRowTrailing,
 } from "../_components/list-group";
-import { INBOX_PAGE_CLASS, PageEyebrow } from "../_components/page";
-import { PageTab, PageTabs } from "../_components/page-tabs";
+import { PageSubtitle } from "../_components/page";
+import { PageTab, PageTabs, PageTabsGroup } from "../_components/page-tabs";
 import { DoneMark } from "../_components/status-mark";
 import { PatternRow } from "../language/today/language-today-section";
 import { LearnLink } from "../learn-link";
 import { LearnPageBar } from "../shell/learn-bar";
 import { MistakeEntryCard, getMistakeEntryLinks } from "./mistake-entry";
-import { NotebookAvailabilityText } from "./notebook-availability-text";
+import { useNotebookAvailabilityText } from "./notebook-availability-text";
 
 type Notebook = Extract<CurrentUserMistakes, { status: "ready" }>;
 export type MistakeEntry = Notebook["mistakes"][number];
@@ -83,49 +77,42 @@ function getGroupKey(group: readonly MistakeEntry[]): string {
 /** Tailwind's `lg`. */
 const INBOX_QUERY = "(min-width: 64rem)";
 
-function NotebookHero({
-  goalTitle,
-  hrefs,
-  notebook,
-}: {
-  goalTitle: string | null;
-  hrefs: MistakesHrefs;
-  notebook: Notebook;
-}) {
+function NotebookHero({ goalTitle, notebook }: { goalTitle: string | null; notebook: Notebook }) {
   const t = useExtracted();
-  const ref = useEnterClick<HTMLAnchorElement>({ enabled: notebook.availability.ready > 0 });
-  const { availability, counts } = notebook;
+  const availability = useNotebookAvailabilityText(notebook.availability);
+  const subtitle = [goalTitle, availability].filter(Boolean).join(" · ");
 
   return (
     <DetailHero>
       <DetailHeroText>
-        {goalTitle && <PageEyebrow>{goalTitle}</PageEyebrow>}
         <DetailTitle>{t("Mistakes notebook")}</DetailTitle>
-        <DetailFacts>
-          <NotebookAvailabilityText availability={availability} fixed={counts.fixed} />
-        </DetailFacts>
-        {availability.ready === 0 && availability.tomorrow > 0 && (
-          <p className="text-muted-foreground text-sm text-pretty">
-            {t("Mistakes come back for practice from the day after you make them.")}
-          </p>
-        )}
+        {subtitle && <PageSubtitle>{subtitle}</PageSubtitle>}
       </DetailHeroText>
-
-      {availability.ready > 0 && (
-        <DetailActions>
-          <LearnLink
-            className={DETAIL_PRIMARY_CLASS}
-            href={hrefs.practice}
-            // Practice picks a fresh set of mistakes when it opens, so it isn't prefetched.
-            prefetch={false}
-            ref={ref}
-          >
-            {t("Practice mistakes")}
-            <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-          </LearnLink>
-        </DetailActions>
-      )}
     </DetailHero>
+  );
+}
+
+function PracticeBar({ hrefs, notebook }: { hrefs: MistakesHrefs; notebook: Notebook }) {
+  const t = useExtracted();
+
+  if (notebook.availability.ready === 0) {
+    return null;
+  }
+
+  return (
+    <BottomBar>
+      <BottomBarActions>
+        <EnterLink
+          className={DETAIL_PRIMARY_CLASS}
+          href={hrefs.practice}
+          // Practice picks a fresh set of mistakes when it opens, so it isn't prefetched.
+          prefetch={false}
+          size="lg"
+        >
+          {t("Practice mistakes")}
+        </EnterLink>
+      </BottomBarActions>
+    </BottomBar>
   );
 }
 
@@ -213,10 +200,7 @@ function MistakesInbox({
                 </ListRowContent>
                 <ListRowTrailing>{group.length}</ListRowTrailing>
               </ListRowBody>
-              <ChevronDownIcon
-                aria-hidden="true"
-                className="text-muted-foreground/60 size-4 shrink-0 self-center transition-transform group-aria-expanded/skill:rotate-180 motion-reduce:transition-none lg:hidden"
-              />
+              <FoldChevron className="lg:hidden" />
             </button>
 
             <section
@@ -281,46 +265,50 @@ export function MistakesNotebook({
   return (
     <DetailLayout
       bar={<LearnPageBar back={{ href: hrefs.back }} root title={t("Mistakes notebook")} />}
-      className={INBOX_PAGE_CLASS}
+      bottomBar={<PracticeBar hrefs={hrefs} notebook={notebook} />}
+      measure="list"
       data-slot="mistakes-notebook"
     >
       <DetailAside>
-        <NotebookHero goalTitle={goalTitle} hrefs={hrefs} notebook={notebook} />
-        <NotebookTabs counts={counts} notebookHref={hrefs.notebook} showingFixed={showingFixed} />
+        <NotebookHero goalTitle={goalTitle} notebook={notebook} />
       </DetailAside>
 
-      <DetailContent>
-        {pattern && !showingFixed && (
-          <ListGroup>
-            <PatternRow href={`${hrefs.pattern}/${pattern.id}`} pattern={pattern} />
-          </ListGroup>
-        )}
+      <PageTabsGroup>
+        <NotebookTabs counts={counts} notebookHref={hrefs.notebook} showingFixed={showingFixed} />
 
-        {groups.length > 0 ? (
-          <section aria-label={showingFixed ? t("What you fixed") : t("What you got wrong")}>
-            <MistakesInbox
-              groups={groups}
-              hrefs={hrefs}
-              trueFalseLabels={notebook.trueFalseLabels}
-            />
-          </section>
-        ) : (
-          <EmptyNotebook showingFixed={showingFixed} />
-        )}
+        <DetailContent>
+          {pattern && !showingFixed && (
+            <ListGroup>
+              <PatternRow href={`${hrefs.pattern}/${pattern.id}`} pattern={pattern} />
+            </ListGroup>
+          )}
 
-        {filters.nextOffset !== null && (
-          <LearnLink
-            className={buttonVariants({ className: "self-start", variant: "outline" })}
-            href={buildNotebookHref({
-              ...filters,
-              notebook: hrefs.notebook,
-              offset: filters.nextOffset,
-            })}
-          >
-            {t("Show more")}
-          </LearnLink>
-        )}
-      </DetailContent>
+          {groups.length > 0 ? (
+            <section aria-label={showingFixed ? t("What you fixed") : t("What you got wrong")}>
+              <MistakesInbox
+                groups={groups}
+                hrefs={hrefs}
+                trueFalseLabels={notebook.trueFalseLabels}
+              />
+            </section>
+          ) : (
+            <EmptyNotebook showingFixed={showingFixed} />
+          )}
+
+          {filters.nextOffset !== null && (
+            <LearnLink
+              className={buttonVariants({ className: "self-start", variant: "outline" })}
+              href={buildNotebookHref({
+                ...filters,
+                notebook: hrefs.notebook,
+                offset: filters.nextOffset,
+              })}
+            >
+              {t("Show more")}
+            </LearnLink>
+          )}
+        </DetailContent>
+      </PageTabsGroup>
     </DetailLayout>
   );
 }

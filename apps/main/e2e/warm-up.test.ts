@@ -136,6 +136,13 @@ test("a learner who guessed stays once the plan is ready, and the first lesson's
   await expect(
     page.getByRole("radiogroup", { name: "How many eyes does a honey bee have?" }),
   ).toBeVisible();
+
+  // The title says the lesson is getting ready, so the strip under it says the step it's on.
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Getting your lesson ready" }),
+  ).toBeVisible();
+
+  await expect(page.getByRole("button", { name: /^Planning the lesson/u })).toBeVisible();
 });
 
 test("blocked tab storage leaves the wait quiz playable", async ({
@@ -219,7 +226,7 @@ test("a learner who guessed on the session's first lesson wait keeps its finishe
   await expect(page.getByText("Good guess!")).toBeVisible();
 
   const steps = page.getByRole("list", { name: "Writing your lesson" }).getByRole("listitem");
-  await page.getByRole("button", { name: /^Writing your lesson/u }).click();
+  await page.getByRole("button", { name: /^Getting your lesson ready/u }).click();
 
   await expect(steps).toHaveText([
     /^Planning the lesson, done/u,
@@ -299,7 +306,7 @@ test("a learner who guessed while the exam's notice is read stays once it's read
   });
 
   await expect(page.getByRole("button", { name: "Next guess" })).toBeHidden();
-  await page.getByRole("button", { name: "See your plan" }).click();
+  await page.getByRole("button", { exact: true, name: "See your plan" }).click();
   await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
 });
 

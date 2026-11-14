@@ -1,88 +1,19 @@
-import { FORWARD_ICON } from "@zoonk/ui/components/button";
-import { Input, InputError } from "@zoonk/ui/components/input";
-import { Label } from "@zoonk/ui/components/label";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
-import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 
 export function Setup({ children, className }: React.ComponentProps<"div">) {
   return <div className={cn("flex w-full flex-col gap-6", className)}>{children}</div>;
 }
 
-export function SetupHeader({ children, className }: React.ComponentProps<"header">) {
-  return (
-    <header className={cn("flex flex-col items-center gap-2 text-center", className)}>
-      {children}
-    </header>
-  );
-}
-
-export function SetupTitle({ children, className }: React.ComponentProps<"h1">) {
-  return (
-    <h1
-      className={cn(
-        "text-[1.625rem] leading-[1.1] font-[620] tracking-[-0.035em] text-balance sm:text-[1.875rem]",
-        className,
-      )}
-    >
-      {children}
-    </h1>
-  );
-}
-
-export function SetupDescription({ children, className }: React.ComponentProps<"p">) {
-  return <p className={cn("text-muted-foreground text-sm text-pretty", className)}>{children}</p>;
-}
-
-export function SetupForm({ children, className, ...props }: React.ComponentProps<"form">) {
-  return (
-    <form className={cn("flex flex-col gap-4", className)} {...props}>
-      {children}
-    </form>
-  );
-}
-
-export function SetupField({ children, className }: React.ComponentProps<"fieldset">) {
-  return <fieldset className={cn("grid gap-3", className)}>{children}</fieldset>;
-}
-
-export function SetupLabel({ children, ...props }: React.ComponentProps<"label">) {
-  return <Label {...props}>{children}</Label>;
-}
-
-export function SetupInput({ ...props }: React.ComponentProps<"input">) {
-  return <Input required {...props} />;
-}
-
-export function SetupError({
-  children,
-  hasError,
-  ...props
-}: React.ComponentProps<"p"> & { hasError: boolean }) {
-  if (!hasError) {
-    return null;
-  }
-
-  return <InputError {...props}>{children}</InputError>;
-}
-
-export function SetupSubmit({ children, ...props }: React.ComponentProps<"button">) {
-  return (
-    <SubmitButton className="h-11 font-[560]" full {...FORWARD_ICON} {...props}>
-      {children}
-    </SubmitButton>
-  );
-}
-
 export function SetupFormSkeleton() {
   return (
-    <div aria-hidden="true" className="flex flex-col gap-4">
+    <div aria-hidden="true" className="flex flex-col gap-2">
       <div className="grid gap-3">
         <Skeleton className="h-4 w-16 rounded-md" />
         <Skeleton className="h-11 w-full rounded-lg" />
       </div>
 
-      <Skeleton className="my-3 h-5 w-56 rounded-md" />
+      <div className="mb-2 h-5" />
       <Skeleton className="h-11 w-full rounded-lg" />
     </div>
   );

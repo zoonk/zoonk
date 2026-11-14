@@ -4,7 +4,7 @@ description: Use when designing, reviewing, or implementing any Apple-platform U
 license: MIT
 metadata:
   author: zoonk
-  version: "3.0.0"
+  version: "3.1.1"
 ---
 
 # Apple Human Interface Guidelines
@@ -33,14 +33,28 @@ Web, iOS and Android are one product, so the content layer looks the same on all
 - **Shape and spacing:** the generated `Radius` constants with `.continuous` corners; nothing is a capsule except avatars, dots and rings. Page margins come from `ZoonkList`, the rest from safe areas, size classes, `ViewThatFits` and adaptive grids. No fixed frames or device checks.
 - **Custom** artwork only where no piece carries the meaning (belts and characters, for example), and it still adapts to dark, Increase Contrast and Dynamic Type.
 
-From `main` take the product and its look: copy, flows, information hierarchy, screen structure, icons (as SF Symbols) and the content layer's design through the shared pieces. Take controls, navigation, gestures, input and accessibility from the platform. Don't port web implementation details (HTML layout tricks, hover-only affordances, custom replacements for native controls, hex colors, pixel sizes at the call site).
+From `main` take the product and its look: copy, flows, information hierarchy, screen structure, icons (as SF Symbols) and the content layer's design through the shared pieces. The words are main's too, written to zoonk-design's [Words](../zoonk-design/SKILL.md#words): a native slot with room for a sentence (a footer, a description, an alert's message) doesn't earn one. Take controls, navigation, gestures, input and accessibility from the platform. Don't port web implementation details (HTML layout tricks, hover-only affordances, custom replacements for native controls, hex colors, pixel sizes at the call site).
+
+## Roles
+
+Zoonk's [roles](../zoonk-design/SKILL.md#find-the-piece-before-you-build-one) each have one piece and one way on every screen. Here they are Apple's pieces:
+
+- **A page's top and the way back:** the system's. A pushed page keeps the system back button with the previous page's title (never a hidden back button, a hidden back title or a chevron a screen draws), and leads with `PageHeader`, with nothing over its title and no padding of the screen's own above it. A task keeps ✕ (`TaskToolbar`).
+- **The main action:** one `.mainAction` button in the bottom bar (`.bottomBar { }`, a `safeAreaBar`), on every screen that has one, on iPhone and iPad alike; never under the content on one screen and in the bar on the next, and never in a toolbar. A screen with no main action has no bar: a setting that is one switch or pick saves as it changes (`QueuedSaves`), and only a form the learner types into has "Save".
+- **What opens over a page:** a `.sheet`, which the system brings up from the bottom on iPhone and centers on iPad; A question that needs an answer (delete, hand in, leave with a loss) is a `.confirmationDialog`, which rises from the bottom on iPhone as main's does; an `.alert` says something went wrong or takes one short field. Never a centered card a screen draws.
+- **A button:** its title and at most one symbol, and no arrow on a main action. While it works, the progress view takes the symbol's place and the button keeps its width.
+- **The small line over a title:** one chip (`Chip`, with `tone: .success` and its check for something done), written as a sentence, never mono or uppercase text.
+- **Paying:** the action reads "Subscribe". A paid feature's row or card looks like any other (no "Plus" chip, no notice in a list), and the subscription gate (`SubscribeGate`: what stopped, at most one line and `SubscribeButton`) shows once, in the feature's place, when the learner starts it. A cap reached is a `LimitNotice`, with the same words as main's.
+- **Words:** main's. "Your buddy", a buddy's name or a feature's name only after the screen that introduces it; before that, "we". A step with Skip has no "none" option.
+
+Compare a role across the app the way [the role read](../zoonk-design/references/craft.md#the-role-read) does on the web: simulator screenshots of every screen that draws it, side by side.
 
 ## Liquid Glass (iOS 26 and later)
 
 - Standard bars, tab bars, sidebars, toolbars, sheets, popovers, menus and controls adopt Liquid Glass automatically. Remove custom backgrounds, tints and shadows from them; they fight the material and the scroll edge effect.
 - Liquid Glass is the functional layer that floats over content. Never use it in the content layer (cards, rows, backgrounds); content stays opaque on the design system's surfaces there (the page, `.panel()`).
 - Use glass on custom controls sparingly: `.buttonStyle(.glass)` / `.glassProminent` for buttons, `glassEffect(_:in:)` for the rare custom control, grouped in a `GlassEffectContainer`. Use `.regular` glass; `.clear` only over rich media.
-- Toolbars: group related items (`ToolbarItemGroup`), separate groups with `ToolbarSpacer`, one `.prominent` primary action on the trailing side, and `sharedBackgroundVisibility(.hidden)` for an item that shouldn't sit in the shared glass (such as an avatar). Give every item a `Label` with a title and a symbol so the system can choose.
+- Toolbars: group related items (`ToolbarItemGroup`), separate groups with `ToolbarSpacer`, at most one `.prominent` action on the trailing side (a toolbar's own, such as a sheet's Done; a screen's main action is the bottom bar's), and `sharedBackgroundVisibility(.hidden)` for an item that shouldn't sit in the shared glass (such as an avatar). Give every item a `Label` with a title and a symbol so the system can choose.
 - Prefer concentric shapes (`ConcentricRectangle`, `containerShape`) for rounded elements inside rounded containers.
 - Let the system's scroll edge effect separate bars from content; use `scrollEdgeEffectStyle(_:for:)` only for custom bars.
 - Don't set `UIDesignRequiresCompatibility`; the app is built for the current design.

@@ -24,11 +24,13 @@ function EmptyHeader({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+// An empty state's one mark is 24 px. Lucide's ink, stroke included, starts 1 to 2 px inside that
+// box, so the icon variant pulls it 1 px out: the ink starts within 1 px of the text's edge.
 const emptyMediaVariants = cva(
   "text-muted-foreground mb-2 flex shrink-0 items-center [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
     defaultVariants: { variant: "default" },
-    variants: { variant: { default: "", icon: "[&_svg:not([class*='size-'])]:size-5" } },
+    variants: { variant: { default: "", icon: "-ms-px [&_svg:not([class*='size-'])]:size-6" } },
   },
 );
 
@@ -50,7 +52,7 @@ function EmptyMedia({
 function EmptyTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("text-[0.9375rem] leading-snug font-[560] tracking-[-0.01em]", className)}
+      className={cn("text-reading leading-snug font-semibold tracking-[-0.01em]", className)}
       data-slot="empty-title"
       {...props}
     />
@@ -61,7 +63,7 @@ function EmptyDescription({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <div
       className={cn(
-        "text-muted-foreground [&>a:hover]:text-foreground text-[0.8125rem] leading-snug text-pretty [&>a]:underline [&>a]:underline-offset-4",
+        "text-muted-foreground [&>a:hover]:text-foreground text-compact leading-snug text-pretty [&>a]:underline [&>a]:underline-offset-4",
         className,
       )}
       data-slot="empty-description"

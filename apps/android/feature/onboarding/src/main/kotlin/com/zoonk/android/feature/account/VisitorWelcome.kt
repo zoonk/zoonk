@@ -131,7 +131,7 @@ fun VisitorWelcome(
                     error,
                     onCreateAccount = { navigator.open(AppRoute.Login) },
                     onOpenPlan = { navigator.open(AppRoute.Plan()) },
-                    onSeePlus = { navigator.open(AppRoute.Subscription) },
+                    onSubscribe = { navigator.open(AppRoute.Subscription) },
                 )
 
                 if (!examplesBeside) GoalExamples(examples = rememberGoalExamples(), onPick = onSend)
