@@ -35,12 +35,13 @@
   "session_level_up": "69bff6ac7520bcd59a6a4f3438173ba28d274b11051b3472778367ce2f7b00b4",
   "session_next_continue": "a1acc9a6160e497ac262238e9acc08d0d544a0dedb634aec0ee1b92989cbd215",
   "session_next_eyebrow": "517dd79150fef8c3955d2902b0232b4701abefea045141c1c87c64f581cb5f52",
-  "session_next_instead": "c3caac22eeeb7d774dfb2afff9037d5e2ec703980e14ab75b8cc820ff43619e4",
   "session_next_lesson_ready": "ce9735361a0434fb41aaacffa5e1b0de7c50ff0ef3c13a8461ea42f86b1da322",
+  "session_next_practice_now": "8b23029b058bbb43a5e72867f40521b1ad8602e24362d2400c23a9225801fafd",
+  "session_next_review_now": "ed691cd6c53e326431ba57db17742a9f2cc275105f4e6e7e6409fcfc04cac5cd",
   "session_next_start": "eb0fc9fdd7114344faa03d1ccb592d4c37d3f529fa65d72c7283555f2950961f",
+  "session_next_start_title": "1e1ee0355f44b15e56bd45d3a6474b5f39c84a9453bd64592dea5d5124312861",
   "session_next_stop": "042d60d4ec828fabbaa46162c7c6095eb15128c7c4ff54885adb800daba147ef",
   "session_next_stop_failed": "e7898391383f1f3147a41fd3ebe82c5184882d32eaa710fa71aad35471c93dbb",
-  "session_next_while_waiting": "101c399da1872a8b5aa568ae37375a7936c6a4977eed74aad1781c73cf76e041",
   "session_next_writing_note": "57d0dfdc8fb066a5d00b1123b61622649fa8d00cae5e07ac5650059a9571a8f5",
   "session_no_catch_up_left": "c55e5deb1893ad2a5e787196823553dbbdfd5a8363fe038cc910c6ae2b623f09",
   "session_opening_slow": "aa37c18d87444b6d187057ed23d13daddf917d98b2b45364680e2aeaa09f1cb2",
@@ -201,10 +202,12 @@
     <string name="session_next_lesson_ready">Dersin hazır.</string>
     <string name="session_next_stop">Bugünlük bitir</string>
     <string name="session_next_stop_failed">Çalışmayı durduramadık. Tekrar dene.</string>
-    <!-- A button on the session's next step while its lesson is prepared: %1$s is another step's title, such as "Review", to do meanwhile. -->
-    <string name="session_next_while_waiting">Beklerken: %1$s</string>
-    <!-- A button on the session's next step when its lesson can't be written now: %1$s is another step's title, such as "Review", to do instead. -->
-    <string name="session_next_instead">Bunun yerine: %1$s</string>
+    <!-- A button on the session's next step that starts the day's review instead, while its lesson is written or when it can't be. -->
+    <string name="session_next_review_now">Şimdi tekrar yap</string>
+    <!-- A button on the session's next step that starts the day's practice instead, while its lesson is written or when it can't be. -->
+    <string name="session_next_practice_now">Şimdi pratik yap</string>
+    <!-- A button on the session's next step that starts one of the day's challenges instead: %1$s is its name, such as "Weekly challenge". -->
+    <string name="session_next_start_title">%1$s ile başla</string>
     <!-- A finished block's line about today's session. %1$s is how many of the day's blocks are done, shown larger; %2$s is how many the session has. A block can be a lesson, a review or practice, so no noun. -->
     <plurals name="session_day_done">
         <item quantity="one">Bugün %1$s / %2$s tamamlandı</item>
