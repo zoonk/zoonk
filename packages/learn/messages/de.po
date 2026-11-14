@@ -10736,7 +10736,7 @@ msgstr "Mit den Lektionen weitermachen oder dieses Ziel archivieren?"
 #: src/plan/plan-status-label.tsx
 msgctxt "xNjzfh"
 msgid "{count, plural, one {You have # lesson left. Keep studying it, or archive this goal?} other {You have # lessons left. Keep studying them, or archive this goal?}}"
-msgstr "{count, plural, one {Du hast noch # Lektion vor dir. Damit weitermachen oder dieses Ziel archivieren?} other {Du hast noch # Lektionen vor dir. Damit weitermachen oder dieses Ziel archivieren?}}"
+msgstr "{count, plural, one {Du hast noch # Lektion offen. Möchtest du weiterlernen oder dieses Ziel archivieren?} other {Du hast noch # Lektionen offen. Möchtest du weiterlernen oder dieses Ziel archivieren?}}"
 
 #: src/plan/plan-status-label.tsx
 msgctxt "kWj6AT"
