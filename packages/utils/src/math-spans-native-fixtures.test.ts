@@ -37,6 +37,7 @@ const CASES = [
   "A next-line mark after $\u0085x$ is math",
   "Display $$\u0085x\uFEFF$$ trims like JavaScript",
   "Match `^a$|^b$` against $x$, but not `$y$`",
+  "$\\text{`x`}$ and $y$",
 ] as const;
 
 describe("lesson math as native players must split it", () => {

@@ -147,7 +147,7 @@ private val BRACKETS =
         Delimiters("\\[", "\\]", display = true),
     )
 
-private fun findMathOutsideCode(text: String): MathSpan? {
+private fun findMathIgnoringCode(text: String): MathSpan? {
     val brackets =
         BRACKETS.mapNotNull { (open, close, display) ->
             val start = text.indexOf(open)
@@ -158,12 +158,16 @@ private fun findMathOutsideCode(text: String): MathSpan? {
     return (listOfNotNull(findDollarMath(text)) + brackets).minByOrNull { it.start }
 }
 
-/** Inline code comes first, as in CommonMark, so a `$` inside it is code, never a delimiter. */
+/**
+ * Whichever opens first wins, as in Pandoc: a formula takes the backticks inside it, and inline
+ * code takes its `$`, never a delimiter.
+ */
 private fun findMath(text: String): MathSpan? {
-    val code = findCode(text) ?: return findMathOutsideCode(text)
+    val math = findMathIgnoringCode(text)
+    val code = findCode(text)
+    if (code == null || (math != null && math.start < code.start)) return math
 
-    return findMathOutsideCode(text.substring(0, code.start))
-        ?: findMath(text.substring(code.end))?.let { it.copy(start = it.start + code.end, end = it.end + code.end) }
+    return findMath(text.substring(code.end))?.let { it.copy(start = it.start + code.end, end = it.end + code.end) }
 }
 
 private fun MarkupKind.toSegmentKind(): SegmentKind =

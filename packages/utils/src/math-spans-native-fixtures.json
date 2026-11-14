@@ -578,6 +578,23 @@
         }
       ],
       "text": "Match `^a$|^b$` against $x$, but not `$y$`"
+    },
+    {
+      "segments": [
+        {
+          "kind": "math",
+          "text": "\\text{`x`}"
+        },
+        {
+          "kind": "text",
+          "text": " and "
+        },
+        {
+          "kind": "math",
+          "text": "y"
+        }
+      ],
+      "text": "$\\text{`x`}$ and $y$"
     }
   ]
 }

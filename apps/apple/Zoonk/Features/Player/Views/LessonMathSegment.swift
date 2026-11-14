@@ -53,18 +53,20 @@ private struct MathSpan {
     (Array(#"\["#), Array(#"\]"#), true),
   ]
 
-  /// Inline code comes first, as in CommonMark, so a `$` inside it is code, never a delimiter.
+  /// Whichever opens first wins, as in Pandoc: a formula takes the backticks inside it, and inline
+  /// code takes its `$`, never a delimiter.
   static func first(in text: [Character]) -> MathSpan? {
-    guard let code = code(in: text) else {
-      return firstOutsideCode(in: text)
+    let math = firstIgnoringCode(in: text)
+
+    guard let code = code(in: text), (math?.start ?? .max) > code.lowerBound else {
+      return math
     }
 
-    return firstOutsideCode(in: Array(text[..<code.lowerBound]))
-      ?? first(in: Array(text[code.upperBound...])).map {
-        MathSpan(
-          content: $0.content, display: $0.display, start: $0.start + code.upperBound,
-          end: $0.end + code.upperBound)
-      }
+    return first(in: Array(text[code.upperBound...])).map {
+      MathSpan(
+        content: $0.content, display: $0.display, start: $0.start + code.upperBound,
+        end: $0.end + code.upperBound)
+    }
   }
 
   /// `findCode` in `inline-markup.ts`: the first backtick to the next, with something between.
@@ -78,7 +80,7 @@ private struct MathSpan {
     return start..<(end + 1)
   }
 
-  private static func firstOutsideCode(in text: [Character]) -> MathSpan? {
+  private static func firstIgnoringCode(in text: [Character]) -> MathSpan? {
     let bracketed = brackets.compactMap { open, close, display -> MathSpan? in
       guard let start = text.firstIndex(of: open, from: 0),
         let end = text.firstIndex(of: close, from: start + open.count)
