@@ -14,12 +14,14 @@ export type ContentWriting = {
 
 /** `hint` says what happens once it's written, so a failed run leaves it out. */
 export function WritingWait({
+  barHasMainAction,
   children,
   className,
   hint,
   kind,
   writing,
 }: {
+  barHasMainAction?: boolean;
   children?: ReactNode;
   className?: string;
   hint?: string;
@@ -35,7 +37,12 @@ export function WritingWait({
       restart={writing.restart}
     >
       {(run) => (
-        <GenerationWait className={className} kind={kind} run={run}>
+        <GenerationWait
+          barHasMainAction={barHasMainAction}
+          className={className}
+          kind={kind}
+          run={run}
+        >
           {children}
           {hint && run.status !== "failed" && (
             <p className="text-muted-foreground text-sm">{hint}</p>

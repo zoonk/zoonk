@@ -31,12 +31,14 @@ export function PlanReadyHeading({ next }: { next: PlanNext }) {
 
 /** The plan build's progress view: its steps, then lesson 1 being written alongside it. */
 export function PlanBuilding({
+  barHasMainAction,
   firstLesson,
   holding,
   next,
   run,
   since,
 }: {
+  barHasMainAction: boolean;
   firstLesson: GenerationFirstLesson | null;
   holding: boolean;
   next: PlanNext;
@@ -48,6 +50,7 @@ export function PlanBuilding({
   return (
     <>
       <GenerationWait
+        barHasMainAction={barHasMainAction}
         doneLabel={holding ? t("Your plan is ready") : undefined}
         kind="curriculum"
         run={holding ? toHeldRun(run) : run}

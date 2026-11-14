@@ -84,6 +84,7 @@ struct WaitScreen<Status: View, Progress: View, Extra: View>: View {
       }
     }
     .waitProgress(deal, title: progressTitle, progress: progress, bar: bar(.pushed, deal))
+    .environment(\.barHoldsMainAction, ready != nil)
   }
 
   private func list(_ deal: WaitDeal) -> some View {
@@ -174,6 +175,7 @@ private struct WaitProgressPush<Progress: View, Extra: View>: ViewModifier {
         .waitBar(bar)
         // A pushed page takes the stack's environment, not the wait's.
         .environment(visit)
+        .environment(\.barHoldsMainAction, bar.ready != nil)
       }
       .loads(deal.deck.map { [$0] } ?? [], refreshable: false)
       // A deck that comes after this is offered in the bar, never swapped in under the learner.

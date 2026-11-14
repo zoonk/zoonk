@@ -56,7 +56,7 @@
   "challenge_weekly_detail": "8688810b10bdbe23f5582aed88ac2ffdc44c58e67f366a25fd1a1526166e71e2",
   "challenge_weekly_rule": "ff70f08c96a53dc0530ed3b94e1a7d475d436efd5fc3545a9b149ab3fb8785c1",
   "challenge_writing": "bf74f5044f26274995d6e265636f4897426ad44bf558074a43fd875794a9bf21",
-  "challenge_writing_detail": "70d6bd24333beb2960a2cc576310239aec1c7ed0ee6235a0abe21cd14339b8e7",
+  "challenge_writing_detail": "ae8478e97bfad255952b5c198af35a8e1e5993a0b38e0898d91e92f186002551",
   "challenge_writing_line": "5edcebc80b38e97b846fe4838744fb8c3c5c84a27a45c22b544c68014eef9a39",
   "challenge_writing_questions": "519dd2ba177ba2e7477ed9aa376d45f1feede834f41cdf81ec52ae31c63929c9",
   "challenge_writing_title": "6b371126473549083818f1c6e94954e0723943a89c256b9ac270c3385495306d"
@@ -67,7 +67,7 @@
     <string name="challenge_writing_questions">Preparando preguntas sobre lo que estudiaste</string>
     <string name="challenge_writing_line">Eligiendo qué habilidades evaluar…</string>
     <string name="challenge_writing_title">Preparando tu desafío</string>
-    <string name="challenge_writing_detail">Estamos preparando las preguntas. El desafío empezará aquí cuando estén listas.</string>
+    <string name="challenge_writing_detail">Empezará aquí cuando esté listo.</string>
     <!-- %1$s is the challenge's name, like "Phase 2 challenge". -->
     <string name="challenge_rematch">Nuevo intento · %1$s</string>
     <string name="challenge_trickster_recordings">Preguntas sobre grabaciones de esta fase, que escucharás como en el examen, sin pistas.</string>

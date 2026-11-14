@@ -36,12 +36,14 @@ function useOpenTask(openTask: string | null) {
 }
 
 export function SpeakingPaperSection({
+  barHasMainAction,
   onStart,
   openTask = null,
   paper,
   resultHref,
   title,
 }: {
+  barHasMainAction?: boolean;
   onStart: (task: string) => Promise<CallStartOutcome>;
   openTask?: string | null;
   paper: SpeakingPaperView;
@@ -97,6 +99,14 @@ export function SpeakingPaperSection({
                 language={paper.language}
                 level={paper.level}
                 needsSubscription={paper.access === "plusRequired"}
+                note={
+                  startedTask === task.key && (
+                    <CallStartNote
+                      call={call}
+                      failed={t("The task didn't start. Try again in a moment.")}
+                    />
+                  )
+                }
                 onStart={() => {
                   selected.current = task.key;
                   setStartedTask(task.key);
@@ -114,17 +124,12 @@ export function SpeakingPaperSection({
 
       {call.writing && (
         <WritingWait
+          barHasMainAction={barHasMainAction}
           hint={t("Your task opens as soon as its card is ready.")}
           kind="examSpeaking"
           writing={call.writing}
         />
       )}
-
-      <CallStartNote
-        call={call}
-        className={call.limit ? "py-4" : "px-1"}
-        failed={t("The task didn't start. Try again in a moment.")}
-      />
 
       <PageSectionFooter>
         <a className="hit-area relative" href={paper.source} rel="noreferrer" target="_blank">

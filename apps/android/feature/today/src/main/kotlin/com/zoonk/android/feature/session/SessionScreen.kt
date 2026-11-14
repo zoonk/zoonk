@@ -14,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -54,6 +55,7 @@ import com.zoonk.android.feature.certificates.naming
 import com.zoonk.android.feature.player.LessonNotWrittenNotice
 import com.zoonk.android.feature.player.LessonWriting
 import com.zoonk.android.feature.player.LessonWritingProgress
+import com.zoonk.android.feature.player.lessonWaitWords
 import com.zoonk.android.feature.today.TodayRead
 import com.zoonk.android.feature.today.stepsDone
 import com.zoonk.android.feature.warmup.WaitContent
@@ -73,6 +75,7 @@ import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.LocalMainActionInBar
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.TaskActionBar
@@ -569,32 +572,35 @@ internal fun NextStop(
                                         waitKind,
                                         shown,
                                     )
-                                WaitContent(
-                                    quiz,
-                                    hold,
-                                    AnalyticsEvent.WarmUpSurface.LessonWait,
-                                    waitKind,
-                                    shown,
-                                    stringResource(if (ready) R.string.session_next_lesson_ready else R.string.session_next_writing_note),
-                                    goalId = goalId?.toString(),
-                                    progressShare = share,
-                                    onRetry = { retry() },
-                                ) {
-                                    LessonWritingProgress(
+                                val words = lessonWaitWords(waitKind)
+                                CompositionLocalProvider(LocalMainActionInBar provides (startsFor != null || instead != null)) {
+                                    WaitContent(
+                                        quiz,
+                                        hold,
+                                        AnalyticsEvent.WarmUpSurface.LessonWait,
                                         waitKind,
                                         shown,
-                                        {
-                                            if (run.failure ==
-                                                GenerationFailure.Connection
-                                            ) {
-                                                viewModel.reconnect()
-                                            } else {
-                                                retry()
-                                            }
-                                        },
-                                        stringResource(R.string.session_next_writing_note),
+                                        stringResource(if (ready) words.ready else words.gettingReady),
+                                        goalId = goalId?.toString(),
                                         progressShare = share,
-                                    )
+                                        onRetry = { retry() },
+                                    ) {
+                                        LessonWritingProgress(
+                                            waitKind,
+                                            shown,
+                                            {
+                                                if (run.failure ==
+                                                    GenerationFailure.Connection
+                                                ) {
+                                                    viewModel.reconnect()
+                                                } else {
+                                                    retry()
+                                                }
+                                            },
+                                            stringResource(R.string.session_next_writing_note).takeUnless { ready },
+                                            progressShare = share,
+                                        )
+                                    }
                                 }
                             }
                         }

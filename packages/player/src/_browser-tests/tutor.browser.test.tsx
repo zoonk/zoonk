@@ -395,6 +395,51 @@ describe("asking the tutor", () => {
     await expect.element(composer(sheet)).not.toBeInTheDocument();
   });
 
+  it("keeps a refused question unanswered, not failed, and offers Try again once its messages come back", async () => {
+    const { api, lesson } = lessonWithTutor();
+    const opens = new Date(Date.now() + 1500);
+
+    api.next("answer", () => {
+      api.questions = api.questions.map((question) => ({ ...question, status: "failed" as const }));
+
+      return Promise.resolve(
+        Response.json(
+          {
+            error: {
+              code: LESSON_PLAYER_ERROR_CODES.usageLimitReached,
+              details: {
+                limit: {
+                  availableAt: opens.toISOString(),
+                  limit: 100,
+                  period: "rolling30Days",
+                  resource: "tutorMessage",
+                  tier: "free",
+                },
+              },
+              message: "This plan's limit is reached",
+            },
+          },
+          { status: 402 },
+        ),
+      );
+    });
+
+    playLesson({ lesson });
+    const sheet = await openTutor();
+    await ask(sheet, "A question just past the month's messages.");
+
+    await expect.element(sheet.getByText("This one wasn't answered.")).toBeVisible();
+    await expect.element(sheet.getByRole("button", { name: "Try again" })).not.toBeInTheDocument();
+
+    await expect.element(composer(sheet)).toBeInTheDocument();
+    await expect.element(sheet.getByRole("button", { name: "Try again" })).toBeVisible();
+    await expect.element(sheet.getByText("This one wasn't answered.")).toBeVisible();
+
+    await expect
+      .element(sheet.getByText("We couldn't finish this answer."))
+      .not.toBeInTheDocument();
+  });
+
   it("lets the learner answer a question another client left unfinished when this one conflicts with it", async () => {
     const { api, lesson } = lessonWithTutor();
 

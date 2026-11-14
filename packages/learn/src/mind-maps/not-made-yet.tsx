@@ -10,6 +10,7 @@ import { MindMapLimitNotice, useLiveLimit } from "../_components/help-limit-noti
 import { LIST_GROUP_CLASS, ListGroup } from "../_components/list-group";
 import { PageSection } from "../_components/page";
 import { StatusRegion } from "../_components/status-region";
+import { useHeldSlot } from "../_utils/use-held-slot";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import {
@@ -22,6 +23,10 @@ import { MindMapRowView } from "./mind-map-row";
 import { type MindMapsLibrary } from "./use-mind-maps-library";
 
 const LINE_CLASS = "text-muted-foreground max-w-prose text-sm text-pretty";
+
+function useShownStop({ bulk, page }: MindMapsLibrary) {
+  return useLiveLimit(bulk.stop ?? (startsNoMap(page.createOffer) ? page.createOffer.stop : null));
+}
 
 /**
  * Only the first line that applies shows, so the block never stacks paragraphs. Maps on their way
@@ -41,8 +46,8 @@ function NotMadeLine({
   const routes = useLearnRoutes();
   const mountedAt = useMountTime();
   const { bulk, follower, page } = library;
-  const { eligible, startable, stop } = page.createOffer;
-  const shownStop = useLiveLimit(bulk.stop ?? (startsNoMap(page.createOffer) ? stop : null));
+  const { eligible, startable } = page.createOffer;
+  const shownStop = useShownStop(library);
   const { failed, onTheWay } = countChapterMaps(chapters);
 
   if (follower.isStuck) {
@@ -160,27 +165,33 @@ export function NotMadeYet({
   const plus = tier === "plus";
   const now = chapters.filter((chapter) => canMakeNow(chapter));
   const later = chapters.filter((chapter) => !canMakeNow(chapter));
+  const slot = useHeldSlot<HTMLDivElement>(useShownStop(library) !== null);
 
   return (
     <PageSection aria-label={t("Other chapters")} data-slot="maps-not-made">
       {now.length > 0 && <NotMadeRows chapters={now} library={library} plus={plus} />}
 
-      {startable > 1 && (
-        <Button
-          busy={bulk.status === "sending"}
-          className="self-start"
-          icon={<PlusIcon aria-hidden="true" />}
-          onClick={bulk.createAll}
-          size="lg"
-          variant="outline"
-        >
-          {t("Create all")}
-        </Button>
-      )}
+      <div
+        className="flex flex-col gap-3 [&:not([data-held]):not(:has(>:not(:empty)))]:contents"
+        ref={slot}
+      >
+        {startable > 1 && (
+          <Button
+            busy={bulk.status === "sending"}
+            className="self-start"
+            icon={<PlusIcon aria-hidden="true" />}
+            onClick={bulk.createAll}
+            size="lg"
+            variant="outline"
+          >
+            {t("Create all")}
+          </Button>
+        )}
 
-      <StatusRegion>
-        <NotMadeLine chapters={later} library={library} tier={tier} />
-      </StatusRegion>
+        <StatusRegion>
+          <NotMadeLine chapters={later} library={library} tier={tier} />
+        </StatusRegion>
+      </div>
 
       {later.length > 0 && (
         <ListGroup>

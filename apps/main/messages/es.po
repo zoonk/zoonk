@@ -2130,11 +2130,11 @@ msgctxt "yyFZMH"
 msgid "Lessons are made with the latest AI models and checked before they reach you: we test their quality with several evaluations, and other models review the content. They follow your exam's subjects and topics. Mistakes are rare, but they can happen. See something wrong? Tell us from the lesson and we'll look into it."
 msgstr "Las lecciones se preparan con los modelos de IA más recientes y se revisan antes de que las veas: evaluamos su calidad con varias pruebas y otros modelos revisan el contenido. Siguen las materias y los temas de tu examen. Los errores son poco frecuentes, pero pueden ocurrir. ¿Viste algo incorrecto? Avísanos desde la lección y lo revisaremos."
 
-#. In Brazilian Portuguese: “Dá para confiar em aulas criadas por IA?”
+#. A question in the landing page's FAQ, asked by the visitor. In Brazilian Portuguese: “Posso confiar em aulas criadas por IA?”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
-msgctxt "kf3mxX"
-msgid "Can you trust lessons made by AI?"
-msgstr "¿Puedes confiar en las lecciones creadas con IA?"
+msgctxt "RcBICI"
+msgid "Can I trust lessons made by AI?"
+msgstr "¿Puedo confiar en las lecciones creadas por IA?"
 
 #. In Brazilian Portuguese: “Os apps para iPhone e Android estão chegando. Por enquanto, o Zoonk funciona no navegador do celular e do computador, sem instalar nada.”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
@@ -2164,7 +2164,7 @@ msgctxt "r4pGG1"
 msgid "Any exam, such as {exams}. Also languages, a new career or any topic you want to learn. Write your goal in your own words."
 msgstr "Cualquier examen, como {exams}. También idiomas, una nueva carrera o cualquier tema que quieras aprender. Escribe tu objetivo con tus propias palabras."
 
-#. In Brazilian Portuguese: “Quais provas e objetivos dá para estudar?”
+#. A question in the landing page's FAQ, asked by the visitor. In Brazilian Portuguese: “Para quais provas e objetivos eu posso estudar?”
 #: src/app/[lang]/(home)/_components/home-faq.tsx
 msgctxt "iJ_ZyQ"
 msgid "Which exams and goals can I study for?"

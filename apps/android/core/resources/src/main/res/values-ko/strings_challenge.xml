@@ -56,7 +56,7 @@
   "challenge_weekly_detail": "a1945078f04eba0b1b241ed1d06b9f184913e6a8b96263bbcb8e54f611e47911",
   "challenge_weekly_rule": "fe749781e342276852468fb57b2c3be2c7280d973843b21770b48b53bfad36dd",
   "challenge_writing": "8fdd9c2f8d24a32033323abd62800091e79c6fa3de9fe80080bc283b5d21d997",
-  "challenge_writing_detail": "6de944e13b94e73e5a357ad0f95715adbd8ba3ef6c956270cc162eec7c2d638f",
+  "challenge_writing_detail": "1c2c30c072ee6b9b2f3e4450c7b033c81346f7b234f7dae50a10f6c827f3b9d6",
   "challenge_writing_line": "ed861d42ca1a723b92fe14896cc74fe67f193e8c969c2f760b14c7a9e87691c0",
   "challenge_writing_questions": "ffc156d100acde83edab17910b4a667ebed5bc79a0942d9ab8c1d6fd9eb4ae2a",
   "challenge_writing_title": "9ea91efe4abfd2efd4e806f930b1e771716048e09d974e9c777cdfc820756541"
@@ -67,7 +67,7 @@
     <string name="challenge_writing_questions">공부한 내용으로 문제를 만들고 있어요</string>
     <string name="challenge_writing_line">문제로 확인할 스킬을 고르고 있어요…</string>
     <string name="challenge_writing_title">챌린지를 준비하고 있어요</string>
-    <string name="challenge_writing_detail">문제를 만들고 있어요. 준비가 끝나면 여기서 챌린지가 시작돼요.</string>
+    <string name="challenge_writing_detail">준비가 끝나면 여기서 시작돼요.</string>
     <!-- %1$s is the challenge's name, like "Phase 2 challenge". -->
     <string name="challenge_rematch">다시 도전 · %1$s</string>
     <string name="challenge_trickster_recordings">이 단계의 녹음 자료를 실제 시험처럼 듣고, 힌트 없이 문제를 풀어요.</string>
