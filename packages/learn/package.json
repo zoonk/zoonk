@@ -30,6 +30,7 @@
     "./chapter": "./src/chapter/chapter-screen.tsx",
     "./checkpoint": "./src/checkpoints/checkpoint-screen.tsx",
     "./chip": "./src/_components/chip.ts",
+    "./dates": "./src/_utils/iso-date.ts",
     "./eyebrow": "./src/_components/eyebrow.tsx",
     "./choice-rows": "./src/_components/choice-rows.tsx",
     "./citation-label": "./src/_utils/use-citation-label.ts",

@@ -1,15 +1,20 @@
 import { describe, expect, it } from "vitest";
-import { daysUntilIsoDate, getIsoDateOptions, hasIsoDatePassed, isoDateToUtc } from "./iso-date";
+import {
+  daysUntilIsoDate,
+  getIsoDateOptions,
+  getIsoRangeOptions,
+  hasIsoDatePassed,
+  isoDateToUtc,
+} from "./iso-date";
 
 function formatInEnglish(
   isoDate: string,
   style: Parameters<typeof getIsoDateOptions>[0]["style"],
   today: string,
 ) {
-  return new Intl.DateTimeFormat("en-US", {
-    ...getIsoDateOptions({ isoDate, style, today }),
-    timeZone: "UTC",
-  }).format(isoDateToUtc(isoDate));
+  return new Intl.DateTimeFormat("en-US", getIsoDateOptions({ isoDate, style, today })).format(
+    isoDateToUtc(isoDate),
+  );
 }
 
 describe(daysUntilIsoDate, () => {
@@ -54,5 +59,31 @@ describe(getIsoDateOptions, () => {
 
   it("leaves the year out of a date this year", () => {
     expect(formatInEnglish("2026-12-14", "weekdayDay", today)).toBe("Monday, December 14");
+  });
+});
+
+function formatWeek({ end, start, today }: { end: string; start: string; today: string }) {
+  return new Intl.DateTimeFormat("en-US", getIsoRangeOptions({ end, start, today }))
+    .formatRange(isoDateToUtc(start), isoDateToUtc(end))
+    .replaceAll("\u2009", " ");
+}
+
+describe(getIsoRangeOptions, () => {
+  it("names the year of a week last year", () => {
+    expect(formatWeek({ end: "2026-12-27", start: "2026-12-21", today: "2027-01-01" })).toBe(
+      "Dec 21 – 27, 2026",
+    );
+  });
+
+  it("names both years of a week across New Year", () => {
+    expect(formatWeek({ end: "2027-01-03", start: "2026-12-28", today: "2027-01-04" })).toBe(
+      "Dec 28, 2026 – Jan 3, 2027",
+    );
+  });
+
+  it("leaves the year out of a week this year", () => {
+    expect(formatWeek({ end: "2026-11-08", start: "2026-11-02", today: "2026-11-14" })).toBe(
+      "Nov 2 – 8",
+    );
   });
 });

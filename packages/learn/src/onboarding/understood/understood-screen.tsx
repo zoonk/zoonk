@@ -57,7 +57,7 @@ function GoalCard({
   onSave: (input: { field: EditableField; value: string }) => Promise<boolean>;
   timeZone: string;
 }) {
-  const rowsFor = useUnderstoodRows();
+  const rowsFor = useUnderstoodRows(timeZone);
   // oxlint-disable-next-line react/hook-use-state -- What the card opened with never changes, so there is no setter.
   const [countryAsked] = useState(Boolean(goal.draft.targetRegion));
 
@@ -93,8 +93,8 @@ function GoalCard({
   );
 }
 
-function LockedGoalCard({ goal }: { goal: UnderstoodGoalView }) {
-  const rowsFor = useUnderstoodRows();
+function LockedGoalCard({ goal, timeZone }: { goal: UnderstoodGoalView; timeZone: string }) {
+  const rowsFor = useUnderstoodRows(timeZone);
 
   const rows = rowsFor({
     contentCountry: goal.contentCountry,
@@ -253,7 +253,7 @@ export function UnderstoodScreen({
         <div className="flex flex-col gap-3">
           {draft.lockedGoals.map((understood, index) => (
             // oxlint-disable-next-line react/no-array-index-key -- Locked goals can't be edited; their place is their identity.
-            <LockedGoalCard goal={understood} key={index} />
+            <LockedGoalCard goal={understood} key={index} timeZone={draft.timeZone} />
           ))}
 
           {draft.goals.length > 0 && (

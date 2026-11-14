@@ -1,5 +1,6 @@
 import { getAppLocale } from "@/i18n/locale";
 import { type CourseLevel } from "@zoonk/db";
+import { isInAnotherYear } from "@zoonk/utils/calendar-day";
 import { formatDuration } from "@zoonk/utils/duration";
 import { getExtracted, getFormatter } from "next-intl/server";
 import { getTotalDuration } from "./total-duration";
@@ -12,8 +13,8 @@ export async function getMinutesFormatter(): Promise<(minutes: number) => string
   return (minutes) => formatDuration({ locale, totalSeconds: minutes * SECONDS_PER_MINUTE });
 }
 
-/** Read at UTC midnight so no time zone moves the day. */
-export async function getIsoDayFormatter(): Promise<(isoDate: string) => string> {
+/** Read at UTC midnight so no time zone moves the day; a day in another year than `today` names it. */
+export async function getIsoDayFormatter(today: string): Promise<(isoDate: string) => string> {
   const format = await getFormatter();
 
   return (isoDate) =>
@@ -21,6 +22,7 @@ export async function getIsoDayFormatter(): Promise<(isoDate: string) => string>
       day: "numeric",
       month: "short",
       timeZone: "UTC",
+      ...(isInAnotherYear({ isoDate, today }) && { year: "numeric" }),
     });
 }
 

@@ -45,10 +45,10 @@ function useDayTitle(today: string) {
       return t("Yesterday");
     }
 
-    return format.dateTime(isoDateToUtc(day), {
-      ...getIsoDateOptions({ isoDate: day, style: "weekdayDay", today }),
-      timeZone: "UTC",
-    });
+    return format.dateTime(
+      isoDateToUtc(day),
+      getIsoDateOptions({ isoDate: day, style: "weekdayDay", today }),
+    );
   };
 }
 

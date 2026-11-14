@@ -1,11 +1,10 @@
 "use client";
 
 import { type PlanPhaseView } from "@zoonk/core/plans/view-contract";
-import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { StatusMark } from "../_components/status-mark";
-import { toLocalIsoDate } from "../_utils/iso-date";
+import { useIsoToday } from "../_utils/iso-date";
 import { usePlanScreen } from "../plan/plan-context";
 import { useFormatPlanDate } from "../plan/plan-date-text";
 import { usePhaseName } from "../plan/use-phase-name";
@@ -138,7 +137,7 @@ export function PhaseMark({ phase }: { phase: PlanPhaseView }) {
 function PhaseResume({ phase }: { phase: PlanPhaseView }) {
   const t = useExtracted();
   const formatPlanDate = useFormatPlanDate();
-  const today = toLocalIsoDate(useMountTime());
+  const today = useIsoToday();
 
   const resumes = phase.chapters
     .filter((chapter) => chapter.state !== "done")
