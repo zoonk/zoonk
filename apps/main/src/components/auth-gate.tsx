@@ -1,11 +1,12 @@
 import { AuthGateAction } from "@/components/auth-gate-action";
-import { ColumnScreen } from "@/components/public/column-screen";
+import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { getAppLocale } from "@/i18n/locale";
 import { Link, getPathname } from "@/i18n/navigation";
 import { hasSessionCookie } from "@zoonk/auth/cookies";
 import { getSession } from "@zoonk/core/users/session";
 import { AccountAskMark } from "@zoonk/learn/account-ask";
 import { Page, PageHeader, PageHeaderContent, PageSubtitle, PageTitle } from "@zoonk/learn/page";
+import { TaskFrame } from "@zoonk/learn/task-frame";
 import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import {
@@ -156,11 +157,16 @@ export async function AuthGate({
   );
 }
 
-export function AuthGateScreen({ next }: { next: string }) {
+/** A task's gate, in the task's own frame: its ✕ leaves for the home page, as its not-found does. */
+export async function AuthGateScreen({ next }: { next: string }) {
+  const gate = await readGate({ next });
+
   return (
-    <ColumnScreen width="message">
-      <AuthGate bar heading="h1" next={next} />
-    </ColumnScreen>
+    <MainLearnProvider>
+      <TaskFrame exitHref="/" exitToApp footer={<GateActions gate={gate} />}>
+        <GateMessage className="flex-1" gate={gate} heading="h1" />
+      </TaskFrame>
+    </MainLearnProvider>
   );
 }
 
@@ -188,23 +194,30 @@ export function GatedPage({
 }
 
 /** A whole page's gate: its ways in are the bottom bar's. */
-async function GateBar({ gate }: { gate: Gate }) {
+function GateBar({ gate }: { gate: Gate }) {
+  return (
+    <BottomBar>
+      <GateActions gate={gate} />
+    </BottomBar>
+  );
+}
+
+/** The gate's ways in, as a bar's row: a page's bottom bar or a task's. */
+async function GateActions({ gate }: { gate: Gate }) {
   const t = await getExtracted();
 
   return (
-    <BottomBar>
-      <BottomBarActions>
-        {gate.kind === "login" && (
-          <Link className={buttonVariants({ size: "xl", variant: "outline" })} href="/start">
-            {t("Build my plan")}
-          </Link>
-        )}
+    <BottomBarActions>
+      {gate.kind === "login" && (
+        <Link className={buttonVariants({ size: "xl", variant: "outline" })} href="/start">
+          {t("Build my plan")}
+        </Link>
+      )}
 
-        <AuthGateAction href={gate.login}>
-          {gate.kind === "account" ? t("Create an account") : t("Log in")}
-        </AuthGateAction>
-      </BottomBarActions>
-    </BottomBar>
+      <AuthGateAction href={gate.login}>
+        {gate.kind === "account" ? t("Create an account") : t("Log in")}
+      </AuthGateAction>
+    </BottomBarActions>
   );
 }
 
