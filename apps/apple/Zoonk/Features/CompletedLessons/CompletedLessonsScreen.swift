@@ -177,17 +177,13 @@ private struct NextPageRow: View {
 /// when it isn't this one. A finished day is a calendar day, so it's formatted in UTC.
 func completedLessonsDayTitle(_ finishedOn: String, now: Date = .now, timeZone: TimeZone) -> String
 {
-  guard let finished = studyDate(finishedOn) else {
+  guard PlanDate.date(finishedOn) != nil else {
     return finishedOn
   }
 
-  var local = Calendar(identifier: .gregorian)
-  local.timeZone = timeZone
-  var utc = Calendar(identifier: .gregorian)
-  utc.timeZone = .gmt
-  let today = local.dateComponents([.year, .month, .day], from: now)
+  let today = PlanDate.today(now, in: timeZone)
 
-  switch utc.date(from: today).flatMap({ utc.dateComponents([.day], from: finished, to: $0).day }) {
+  switch PlanDate.days(from: finishedOn, to: today) {
   case 0:
     return String(
       localized: "Today", table: "CompletedLessons",
@@ -197,8 +193,6 @@ func completedLessonsDayTitle(_ finishedOn: String, now: Date = .now, timeZone: 
       localized: "Yesterday", table: "CompletedLessons",
       comment: "Section of the lessons last finished yesterday")
   default:
-    let date = Date.FormatStyle.studyDay.weekday(.wide).month(.wide).day()
-    return finished.formatted(
-      utc.component(.year, from: finished) == today.year ? date : date.year())
+    return PlanDate.weekdayDay(finishedOn, today: today)
   }
 }

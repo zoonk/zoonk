@@ -510,9 +510,15 @@ private struct MockChooser: View {
       status = .refused(limit)
     case .done(.plusRequired):
       status = .plusRequired
-      // The page read as open, so its access is out of date: read again, and the gate shows once
-      // it's locked.
-      await exam.mockOptions(goalId: goalId).refresh()
+      // The server's answer is the access now, even if the read after it fails; a later read
+      // (a subscription bought) replaces it.
+      let options = exam.mockOptions(goalId: goalId)
+      options.update { options in
+        var locked = options
+        locked.access = .plusRequired
+        return locked
+      }
+      await options.refresh()
     case .done(.needsQuestions), .failed:
       status = .failed
     case .obsolete:

@@ -29,7 +29,7 @@ struct TutorPlanChangeCard: View {
       kind: change.kind, source: change.source, status: change.status.rawValue,
       operations: facts?.operations ?? [], reason: change.reason, effect: facts?.effect,
       dateKind: .unknown)
-    let today = PlanDate.isoDate(.now)
+    let today = PlanDate.today()
     // Accepted, and still proposed: its numbers moved, so it asks again with today's.
     let repriced = accepted && change.status == .proposed
 

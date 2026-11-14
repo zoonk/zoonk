@@ -779,7 +779,7 @@ struct ChallengeScreen: View {
   private func movedDetail(_ effect: PlanEffect?) -> String {
     let leftOut = effect.flatMap {
       $0.lessonsRemoved > 0
-        ? PlanChangeEffect.consequence($0, today: PlanDate.isoDate(.now))?.text : nil
+        ? PlanChangeEffect.consequence($0, today: PlanDate.today())?.text : nil
     }
 
     return [

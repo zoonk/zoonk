@@ -149,8 +149,6 @@ struct ScoreTrendChart: View {
   }
 
   private func weekLabel(_ date: Date) -> String {
-    var format = Date.FormatStyle.dateTime.month(.abbreviated).day()
-    format.timeZone = .gmt
-    return date.formatted(format)
+    PlanDate.text(PlanDate.isoDate(date), today: PlanDate.today())
   }
 }

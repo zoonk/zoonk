@@ -941,10 +941,11 @@ private struct DateQuestion: View {
   @ViewBuilder
   private func noSittingRows(for date: Date) -> some View {
     if case .noSitting(let month, let closest) = problem,
-      isoDay(date).prefix(7) == month.prefix(7), let monthDay = studyDate(month)
+      isoDay(date).prefix(7) == month.prefix(7)
     {
       Text(
-        "No exam date in \(monthDay.formatted(.studyDay.month(.wide)))", tableName: "Exam",
+        "No exam date in \(PlanDate.monthText(month, today: PlanDate.today(), wide: true))",
+        tableName: "Exam",
         comment: "An exam with no sitting in the learner's month")
 
       ForEach(closest, id: \.self) { sitting in

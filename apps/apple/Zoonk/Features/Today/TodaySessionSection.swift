@@ -365,13 +365,11 @@ struct TodayDayLead: View {
 extension TodayView {
   /// The day is shorter to keep time for a mock exam on this day, like "May 5".
   var mockDay: String? {
-    guard let funding = mockFunding, session.state != .done, session.state != .rest,
-      let date = studyDate(funding.mockDate)
-    else {
+    guard let funding = mockFunding, session.state != .done, session.state != .rest else {
       return nil
     }
 
-    return date.formatted(.studyDay.month(.abbreviated).day())
+    return PlanDate.text(funding.mockDate, today: session.localDate)
   }
 }
 

@@ -71,7 +71,7 @@ struct FocusTestCheckpoint: View {
 
       Section {
         PlanEffectDiff(
-          effect: proposal.effect, today: PlanDate.isoDate(.now), repriced: repriced != nil
+          effect: proposal.effect, today: PlanDate.today(), repriced: repriced != nil
         )
         .listRowBackground(Color.clear)
       }
