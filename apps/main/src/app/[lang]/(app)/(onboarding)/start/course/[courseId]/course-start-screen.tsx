@@ -1,7 +1,10 @@
 "use client";
 
 import { startCourseFormAction } from "@/app/[lang]/(app)/(onboarding)/start/course-start-actions";
-import { CourseStartFailureNote } from "@/components/public/course-start-failure";
+import {
+  CourseStartFailureAction,
+  CourseStartFailureNote,
+} from "@/components/public/course-start-failure";
 import { isStartBlocked } from "@/components/public/course-start-remedy";
 import { type CourseStartFailure, useCourseStart } from "@/components/public/use-course-start";
 import { CHAPTER_PARAM, MINUTES_PARAM } from "@/lib/public/public-hrefs";
@@ -154,18 +157,26 @@ function CourseStartForm({
           note={
             failure ? (
               <CourseStartFailureNote
-                actionClassName={ONBOARDING_ACTION_LINK_CLASS[blocked ? "main" : "other"]}
+                actionClassName={ONBOARDING_ACTION_LINK_CLASS.other}
                 className="w-full max-w-none items-stretch lg:items-end"
                 failure={failure}
                 onRetry={startHere}
                 secondaryActionClassName={ONBOARDING_ACTION_LINK_CLASS.other}
+                withAction={!blocked}
               />
             ) : (
               note
             )
           }
         >
-          {!blocked && (
+          {blocked && failure ? (
+            <CourseStartFailureAction
+              className={ONBOARDING_ACTION_LINK_CLASS.main}
+              failure={failure}
+              onRetry={startHere}
+              secondaryClassName={ONBOARDING_ACTION_LINK_CLASS.other}
+            />
+          ) : (
             <OnboardingPrimaryButton
               busy={pending}
               disabled={isMounted && level === null}

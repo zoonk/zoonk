@@ -12,7 +12,8 @@ import { getCourseStartRemedy } from "./course-start-remedy";
 import { START_FAILURE_SLOT } from "./public-start";
 import { type CourseStartFailure } from "./use-course-start";
 
-function FailureAction({
+/** In a bar's action row the main action comes last, so "Go to your Plan" comes before Subscribe. */
+export function CourseStartFailureAction({
   className,
   failure,
   onRetry,
@@ -42,14 +43,14 @@ function FailureAction({
   if (remedy === "subscribe" || remedy === "upgrade") {
     return (
       <>
-        <Link className={className} href="/subscription" prefetch={false}>
-          {t("Subscribe")}
-        </Link>
         {remedy === "upgrade" && (
           <Link className={secondaryClassName} href="/plan" prefetch>
             {t("Go to your Plan")}
           </Link>
         )}
+        <Link className={className} href="/subscription" prefetch={false}>
+          {t("Subscribe")}
+        </Link>
       </>
     );
   }
@@ -71,12 +72,15 @@ export function CourseStartFailureNote({
   failure,
   onRetry,
   secondaryActionClassName,
+  withAction = true,
 }: {
   actionClassName?: string;
   className?: string;
   failure: CourseStartFailure | null;
   onRetry: () => void;
   secondaryActionClassName?: string;
+  /** False where the screen's bar shows `CourseStartFailureAction` in its main action's place. */
+  withAction?: boolean;
 }) {
   const t = useExtracted();
   const limitText = useGoalLimitText(failure?.status === "limitReached" ? failure : null);
@@ -97,12 +101,14 @@ export function CourseStartFailureNote({
         {failure.status === "limitReached" ? limitText.text : t("We couldn't start this course.")}
       </p>
 
-      <FailureAction
-        className={actionClassName ?? buttonVariants({ variant: "outline" })}
-        failure={failure}
-        onRetry={onRetry}
-        secondaryClassName={secondaryActionClassName ?? buttonVariants({ variant: "outline" })}
-      />
+      {withAction && (
+        <CourseStartFailureAction
+          className={actionClassName ?? buttonVariants({ variant: "outline" })}
+          failure={failure}
+          onRetry={onRetry}
+          secondaryClassName={secondaryActionClassName ?? buttonVariants({ variant: "outline" })}
+        />
+      )}
     </div>
   );
 }
