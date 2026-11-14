@@ -127,6 +127,11 @@ struct MindMapAllowanceStop: Decodable, Equatable, Sendable {
   let reason: Reason
   let resource: Resource?
 
+  /// Its instant has passed, so a map's Create asks the server again.
+  func isOver(at now: Date) -> Bool {
+    availableAt.map { $0 <= now } ?? false
+  }
+
   func limit(tier: LearnerTier, now: Date = .now) -> MindMapLimit {
     let limit: HelpLimit =
       switch reason {

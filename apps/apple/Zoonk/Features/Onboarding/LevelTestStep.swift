@@ -540,9 +540,13 @@ private struct ListeningMessage: View {
   }
 
   private func failedNote(_ limit: HelpLimit?) -> some View {
-    let canRetry = if case .slowDown? = limit { true } else { limit == nil }
+    OpeningClock(availableAt: limit?.availableAt) { now in
+      failedNote(limit, canRetry: limit?.letsTry(at: now) ?? true)
+    }
+  }
 
-    return VStack(alignment: .leading, spacing: 8) {
+  private func failedNote(_ limit: HelpLimit?, canRetry: Bool) -> some View {
+    VStack(alignment: .leading, spacing: 8) {
       if let limit {
         LimitNotice(limit: limit)
       } else {

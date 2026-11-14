@@ -590,6 +590,19 @@ final class LiveCallTests: XCTestCase {
       .init(reason: .limit, retry: nil))
   }
 
+  /// The cap's day came while the screen was open: Call again is back, and the server decides.
+  func testACallTheCapStoppedCanBeCalledAgainOnceItsDayHasCome() {
+    let opens = Date(timeIntervalSince1970: 1_795_339_800)
+    let dropped = DroppedCall(reason: .limit, retry: nil)
+    let monthly = HelpLimit.usedUp(tier: .free, availableAt: opens)
+
+    XCTAssertNil(dropped.retryNow(limit: monthly, at: opens.addingTimeInterval(-60)))
+    XCTAssertEqual(dropped.retryNow(limit: monthly, at: opens), .callAgain)
+    XCTAssertNil(
+      dropped.retryNow(limit: .limitReached(period: .day, tier: .free), at: opens),
+      "a day's cap has no instant to wait for")
+  }
+
   func testWithoutADroppedCallToSaveOnlyACallThatWentLiveShowsAsDropped() {
     XCTAssertEqual(
       DroppedCall(continuing: false, phase: .failed, failure: .dropped, micBlocked: false),

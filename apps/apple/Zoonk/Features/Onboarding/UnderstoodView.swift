@@ -197,23 +197,8 @@ private struct UnderstoodCard: View {
       }
     }
     .bottomBar {
-      if !(startable.isEmpty && !isGuest), shownError?.limit?.isPlusLimit != true,
-        shownError?.needsAccount != true
-      {
-        StepButtons(
-          canContinue: !rewriting,
-          canSkip: !isCreating && !rewriting,
-          continueLabel: Text(
-            "Looks right", tableName: "Onboarding",
-            comment: "Confirms what was understood and creates the goals"),
-          skipLabel: Text(
-            "Fix something", tableName: "Onboarding",
-            comment: "Opens the typed words to change and read again"),
-          onContinue: onConfirm
-        ) {
-          rewriting = true
-        }
-        .environment(\.isSavingAnswer, isCreating)
+      OpeningClock(availableAt: shownError?.limit?.availableAt) { now in
+        stepButtons(now)
       }
     }
     .sheet(item: $choosingCountry) { choice in
@@ -226,6 +211,28 @@ private struct UnderstoodCard: View {
         }
         .zoonkStyles()
       }
+    }
+  }
+
+  @ViewBuilder
+  private func stepButtons(_ now: Date) -> some View {
+    if !(startable.isEmpty && !isGuest), shownError?.limit?.holdsStart(at: now) != true,
+      shownError?.needsAccount != true
+    {
+      StepButtons(
+        canContinue: !rewriting,
+        canSkip: !isCreating && !rewriting,
+        continueLabel: Text(
+          "Looks right", tableName: "Onboarding",
+          comment: "Confirms what was understood and creates the goals"),
+        skipLabel: Text(
+          "Fix something", tableName: "Onboarding",
+          comment: "Opens the typed words to change and read again"),
+        onContinue: onConfirm
+      ) {
+        rewriting = true
+      }
+      .environment(\.isSavingAnswer, isCreating)
     }
   }
 

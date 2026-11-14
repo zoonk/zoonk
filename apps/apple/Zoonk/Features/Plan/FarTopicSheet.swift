@@ -62,18 +62,21 @@ struct FarTopicSheet: View {
           .foregroundStyle(.mutedForeground)
 
         if request != .unavailable {
-          Button {
-            Task { await ask(outline) }
-          } label: {
-            if request == .unreachable {
-              Text("Try again", tableName: "Plan", comment: "Asks for a far topic's lessons again")
-            } else {
-              Text(
-                "Get them ready", tableName: "Plan",
-                comment: "Writes the lessons of a topic that aren't ready yet")
+          OpeningClock(availableAt: limit?.availableAt) { now in
+            Button {
+              Task { await ask(outline) }
+            } label: {
+              if request == .unreachable {
+                Text(
+                  "Try again", tableName: "Plan", comment: "Asks for a far topic's lessons again")
+              } else {
+                Text(
+                  "Get them ready", tableName: "Plan",
+                  comment: "Writes the lessons of a topic that aren't ready yet")
+              }
             }
+            .disabled(limit?.letsTry(at: now) == false)
           }
-          .disabled(isCapped)
         }
 
         if case .limit(let limit) = request {
@@ -108,17 +111,8 @@ struct FarTopicSheet: View {
     }
   }
 
-  /// A short break lets the learner ask again; a used-up cap doesn't.
-  private var isCapped: Bool {
-    guard case .limit(let limit) = request else {
-      return false
-    }
-
-    if case .slowDown = limit {
-      return false
-    }
-
-    return true
+  private var limit: HelpLimit? {
+    if case .limit(let limit) = request { limit } else { nil }
   }
 
   private var writing: some View {

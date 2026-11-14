@@ -10,6 +10,13 @@ struct TutorComposerBar: View {
   @FocusState private var isFocused: Bool
 
   var body: some View {
+    // Draws again when a limit's day comes, which gives the composer back.
+    OpeningClock(availableAt: conversation.limit?.helpLimit?.availableAt) { _ in
+      content
+    }
+  }
+
+  private var content: some View {
     VStack(alignment: .leading, spacing: 10) {
       if !canTalk {
         signUpPrompt
@@ -22,7 +29,7 @@ struct TutorComposerBar: View {
           suggestionChips
         }
 
-        if let failure = conversation.askFailure {
+        if let failure = conversation.askFailure, !failure.isLimit {
           FailureLine(
             message: failure == .failed
               ? String(

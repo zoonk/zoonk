@@ -132,15 +132,18 @@ struct LimitNotice: View {
 
   var body: some View {
     OpeningClock(availableAt: limit.availableAt) { now in
-      notice(words(now))
+      notice(words(now), isOpen: limit.isOpen(at: now))
     }
   }
 
-  private func notice(_ words: LimitWords) -> some View {
+  /// Once the day has come, the screen's own action is the way on, so the notice offers nothing.
+  private func notice(_ words: LimitWords, isOpen: Bool) -> some View {
     VStack(alignment: .leading, spacing: 8) {
       GateWords(title: words.title.map(Text.init), line: words.line.map(Text.init))
 
-      if limit.needsAccount {
+      if isOpen {
+        EmptyView()
+      } else if limit.needsAccount {
         Button {
           router.present(.signIn)
         } label: {

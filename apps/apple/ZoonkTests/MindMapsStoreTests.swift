@@ -246,6 +246,25 @@ final class MindMapsStoreTests: XCTestCase {
     XCTAssertEqual(store.failure(goalId: "goal", chapterId: "chapter"), .unreachable)
   }
 
+  /// The page's stop gives each map its Create back once its day has come; Create asks the server.
+  func testAStopWhoseDayCameLetsAMapStartAgain() async {
+    let opens = Date(timeIntervalSince1970: 1_795_339_800)
+    let stop = MindMapAllowanceStop(
+      availableAt: opens, period: "rolling30Days", reason: .limitReached, resource: .mindMap)
+    XCTAssertFalse(stop.isOver(at: opens.addingTimeInterval(-60)))
+    XCTAssertTrue(stop.isOver(at: opens))
+
+    let api = MindMapsAPIStub(server: .available, statuses: [], startsAs: .drawing)
+    let store = makeStore(api: api)
+    await store.list(goalId: "goal").load()
+
+    await store.create(goalId: "goal", chapterId: "chapter")
+
+    let calls = await api.calls
+    XCTAssertEqual(calls.create, 1)
+    XCTAssertNil(store.failure(goalId: "goal", chapterId: "chapter"))
+  }
+
   func testRefusedMapSaysWhatRanOut() async {
     let limit = MindMapLimit(limit: .usedUp(tier: .free, availableAt: nil), resource: .lessons)
     let api = MindMapsAPIStub(server: .available, statuses: [], request: .refused(limit))
