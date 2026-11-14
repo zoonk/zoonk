@@ -109,9 +109,18 @@ export function SlotPager({ className }: { className?: string }) {
   );
 }
 
-export function SlotContent({ children }: { children: React.ReactNode }) {
+export function SlotContent({
+  children,
+  statement,
+}: {
+  children: React.ReactNode;
+  statement?: boolean;
+}) {
   return (
-    <SuggestionContent className="min-[72rem]:bg-transparent min-[72rem]:ring-0">
+    <SuggestionContent
+      className="min-[72rem]:bg-transparent min-[72rem]:ring-0"
+      statement={statement}
+    >
       {children}
     </SuggestionContent>
   );

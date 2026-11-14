@@ -272,7 +272,7 @@ export function GoalPausedSuggestion({
         </div>
       </SuggestionLine>
 
-      <SlotContent>
+      <SlotContent statement>
         <SuggestionHeader>{title}</SuggestionHeader>
         <SuggestionDescription>{description}</SuggestionDescription>
       </SlotContent>
