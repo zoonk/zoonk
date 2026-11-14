@@ -283,6 +283,27 @@ msgid "You've reached today's limit"
 msgstr "Tu as atteint la limite d’aujourd’hui"
 
 #: src/_components/help-limit-notice.tsx
+msgctxt "sq9fni"
+msgid "Your next free lesson opens later today, or subscribe to keep going."
+msgstr "Ta prochaine leçon gratuite sera disponible plus tard dans la journée. Tu peux aussi t’abonner pour continuer."
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "q6VpbS"
+msgid "Your next free lesson opens tomorrow, or subscribe to keep going."
+msgstr "Ta prochaine leçon gratuite sera disponible demain. Tu peux aussi t’abonner pour continuer."
+
+#. On the screen a free learner sees when their free lessons are used. {date} is a day and its month, such as "November 22" in English.
+#: src/_components/help-limit-notice.tsx
+msgctxt "wsvV5i"
+msgid "Your next free lesson opens on {date}, or subscribe to keep going."
+msgstr "Ta prochaine leçon gratuite sera disponible le {date}. Tu peux aussi t’abonner pour continuer."
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "y0Yu1A"
+msgid "You've used your free lessons"
+msgstr "Tu as utilisé toutes tes leçons gratuites"
+
+#: src/_components/help-limit-notice.tsx
 msgctxt "j9Za23"
 msgid "No more new lessons today"
 msgstr "Tu n’as plus de nouvelles leçons pour aujourd’hui"
@@ -291,11 +312,6 @@ msgstr "Tu n’as plus de nouvelles leçons pour aujourd’hui"
 msgctxt "2LDIQ9"
 msgid "No more lessons without an account"
 msgstr "Il te faut un compte pour d’autres leçons"
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "2XtwRD"
-msgid "You've used this month's free lessons"
-msgstr "Tu as utilisé toutes tes leçons gratuites de ce mois-ci"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "VGhCC9"
@@ -1467,6 +1483,7 @@ msgstr "Zu"
 #: src/focus-test/focus-test-proposal.tsx
 #: src/focus-test/focus-test-screens.tsx
 #: src/mock/mock-result-actions.tsx
+#: src/mock/mock-result-plan.tsx
 #: src/plan/plan-fit-suggestion.tsx
 #: src/plan/plan-offer-preview.tsx
 #: src/plan/plan-past-date-suggestion.tsx
@@ -8670,11 +8687,6 @@ msgstr "Tu as tout réussi sur {topics}."
 msgctxt "SvO1ek"
 msgid "Skip {count, plural, one {# lesson} other {# lessons}} you already know?"
 msgstr "Sauter {count, plural, one {# leçon} other {# leçons}} que tu connais déjà ?"
-
-#: src/mock/mock-result-plan.tsx
-msgctxt "uFDpFL"
-msgid "Keep my plan"
-msgstr "Garder mon plan"
 
 #: src/mock/mock-result-plan.tsx
 msgctxt "b4G-y7"

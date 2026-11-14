@@ -283,6 +283,27 @@ msgid "You've reached today's limit"
 msgstr "오늘 이용 한도를 다 썼어요"
 
 #: src/_components/help-limit-notice.tsx
+msgctxt "sq9fni"
+msgid "Your next free lesson opens later today, or subscribe to keep going."
+msgstr "다음 무료 레슨은 오늘 중에 열려요. 구독하면 계속 학습할 수 있어요."
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "q6VpbS"
+msgid "Your next free lesson opens tomorrow, or subscribe to keep going."
+msgstr "다음 무료 레슨은 내일 열려요. 구독하면 계속 학습할 수 있어요."
+
+#. On the screen a free learner sees when their free lessons are used. {date} is a day and its month, such as "November 22" in English.
+#: src/_components/help-limit-notice.tsx
+msgctxt "wsvV5i"
+msgid "Your next free lesson opens on {date}, or subscribe to keep going."
+msgstr "다음 무료 레슨은 {date}에 열려요. 구독하면 계속 학습할 수 있어요."
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "y0Yu1A"
+msgid "You've used your free lessons"
+msgstr "무료 레슨을 모두 이용했어요"
+
+#: src/_components/help-limit-notice.tsx
 msgctxt "j9Za23"
 msgid "No more new lessons today"
 msgstr "오늘은 새 레슨을 더 볼 수 없어요"
@@ -291,11 +312,6 @@ msgstr "오늘은 새 레슨을 더 볼 수 없어요"
 msgctxt "2LDIQ9"
 msgid "No more lessons without an account"
 msgstr "레슨을 더 보려면 계정이 필요해요"
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "2XtwRD"
-msgid "You've used this month's free lessons"
-msgstr "이번 달 무료 레슨을 다 이용했어요"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "VGhCC9"
@@ -1467,6 +1483,7 @@ msgstr "Zu"
 #: src/focus-test/focus-test-proposal.tsx
 #: src/focus-test/focus-test-screens.tsx
 #: src/mock/mock-result-actions.tsx
+#: src/mock/mock-result-plan.tsx
 #: src/plan/plan-fit-suggestion.tsx
 #: src/plan/plan-offer-preview.tsx
 #: src/plan/plan-past-date-suggestion.tsx
@@ -8670,11 +8687,6 @@ msgstr "{topics} 문제를 모두 맞혔어요."
 msgctxt "SvO1ek"
 msgid "Skip {count, plural, one {# lesson} other {# lessons}} you already know?"
 msgstr "이미 아는 레슨 {count, plural, other {#개}}를 건너뛸까요?"
-
-#: src/mock/mock-result-plan.tsx
-msgctxt "uFDpFL"
-msgid "Keep my plan"
-msgstr "내 계획 유지하기"
 
 #: src/mock/mock-result-plan.tsx
 msgctxt "b4G-y7"

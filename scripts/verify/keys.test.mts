@@ -36,6 +36,22 @@ function messages(facts: Partial<KeyFacts>) {
 }
 
 describe("the screen's keyboard controls", () => {
+  it("does not require an unobservable repeat pick, but still checks its announced key", () => {
+    const keycap = {
+      announced: "1",
+      expected: "1",
+      id: "choice",
+      label: "Work",
+      name: "pick",
+      pressed: null,
+      wasChecked: true,
+    };
+
+    assert.deepEqual(messages({ keycaps: [keycap] }), []);
+    assert.equal(messages({ keycaps: [{ ...keycap, announced: null }] }).length, 1);
+    assert.equal(messages({ keycaps: [{ ...keycap, pressed: START }] }).length, 1);
+  });
+
   it("distinguishes controls with the same label", () => {
     const findings = messages({
       enter: { bound: [{ id: "expected", label: "Start" }], pressed: START, unbuilt: [] },
@@ -47,6 +63,7 @@ describe("the screen's keyboard controls", () => {
           label: "Start",
           name: "main",
           pressed: START,
+          wasChecked: false,
         },
       ],
     });
@@ -74,6 +91,7 @@ describe("the screen's keyboard controls", () => {
             label: "Flag",
             name: "flag",
             pressed: { ...START, label: "Flag" },
+            wasChecked: false,
           },
         ],
         sidebar: [{ answered: true, restored: true, side: "start" }],
@@ -135,6 +153,7 @@ describe("the screen's keyboard controls", () => {
             label: "Flag",
             name: "flag",
             pressed: null,
+            wasChecked: false,
           },
         ],
       }),
