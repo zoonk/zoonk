@@ -1,11 +1,10 @@
 import { existsSync } from "node:fs";
-import { readdir } from "node:fs/promises";
-import { basename, dirname, join, relative, resolve } from "node:path";
+import { relative, resolve } from "node:path";
+import { isRemote } from "./locate.mts";
 import {
   type AlignmentReport,
   type CaptureItem,
   type Finding,
-  MANIFEST,
   type ManifestItem,
   isRecorded,
   readAlignment,
@@ -73,10 +72,6 @@ const KINDS = [
 
 type Kind = (typeof KINDS)[number]["kind"];
 
-function isRemote(picture: string): boolean {
-  return /^[a-z][a-z0-9+.-]*:\/\//iu.test(picture);
-}
-
 type Problem = { detail?: string; kind: Kind; picture: string };
 
 type Reads = { carried: number; missing: number; new: number };
@@ -86,29 +81,6 @@ export type CheckResult = { checked: number; problems: Problem[]; reads: Reads }
 type Entry = { folder: string; item: ManifestItem };
 
 type Manifest = { alignment: AlignmentReport; folder: string; items: ManifestItem[] };
-
-const PICTURE_LINK =
-  /!\[[^\]]*\]\((?<markdown>[^)\s]+)(?:\s+"[^"]*")?\)|<img\b[^>]*\ssrc="(?<html>[^"]+)"/giu;
-
-export function bodyPictures(markdown: string): string[] {
-  const links = [...markdown.matchAll(PICTURE_LINK)].map(
-    (match) => match.groups?.markdown ?? match.groups?.html ?? "",
-  );
-
-  return [...new Set(links)];
-}
-
-export async function findManifests(root: string): Promise<string[]> {
-  if (!existsSync(root)) {
-    return [];
-  }
-
-  const paths = await readdir(root, { recursive: true });
-
-  return paths
-    .filter((path) => basename(path) === MANIFEST)
-    .map((path) => dirname(join(root, path)));
-}
 
 async function loadManifests(folders: string[]): Promise<Manifest[]> {
   const unique = [...new Set(folders.map((folder) => resolve(folder)))];

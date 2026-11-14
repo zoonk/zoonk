@@ -2,7 +2,7 @@
 import { mkdir, rm, writeFile } from "node:fs/promises";
 import { extname, join, relative, resolve } from "node:path";
 import sharp from "sharp";
-import { findManifests } from "./check.mts";
+import { findManifests } from "./locate.mts";
 import {
   type AlignmentReport,
   type ManifestItem,

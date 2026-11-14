@@ -3,7 +3,8 @@ import { existsSync } from "node:fs";
 import { mkdir, readFile } from "node:fs/promises";
 import { dirname, extname, join, resolve } from "node:path";
 import { parseArgs } from "node:util";
-import { bodyPictures, checkPictures, findManifests, formatCheck } from "./check.mts";
+import { checkPictures, formatCheck } from "./check.mts";
+import { bodyPictures, findManifests, isRemote, manifestsAbove } from "./locate.mts";
 import {
   type Finding,
   type FindingState,
@@ -40,8 +41,9 @@ Checks that every picture a PR body shows was captured, from which build, and re
            its app or packages/; when an after picture has no read or an unresolved finding; when
            a capture's alignment.json reports unresolved layout findings or missing scenarios;
            and when a native picture is still pending. Picture paths are relative to --root (the
-           body's folder by default); capture.json files are found under it and under each
-           --manifests folder. Exits non-zero on any failure.
+           body's folder by default). Each picture's capture.json is looked for in its folder and
+           every folder above it, and anywhere under each --manifests folder, so a
+           picture copied away from its capture needs --manifests. Exits non-zero on any failure.
   tiles    cuts every after picture under <dir> into original-size tiles and writes
            <dir>/read/READ.md, the reader's sheet: pictures first, numbers second, then words.
   read     records a read on every after picture under <dir> that has none: clean, or the
@@ -90,17 +92,17 @@ async function check({ positionals: [body], values }: Arguments) {
 
   const root = resolve(values.root ?? dirname(body));
   const markdown = await readFile(body, "utf8");
-  const searched = [root, ...values.manifests.map((folder) => resolve(folder))];
-  const found = await Promise.all(searched.map(async (folder) => findManifests(folder)));
-  const manifests = found.flat();
 
-  const result = await checkPictures({
-    manifests,
-    pictures: bodyPictures(markdown).map((link) =>
-      /^[a-z][a-z0-9+.-]*:\/\//iu.test(link) ? link : resolve(root, link),
-    ),
-    repository,
-  });
+  const pictures = bodyPictures(markdown).map((link) =>
+    isRemote(link) ? link : resolve(root, link),
+  );
+
+  const named = await Promise.all(
+    values.manifests.map(async (folder) => findManifests(resolve(folder))),
+  );
+
+  const manifests = [...manifestsAbove(pictures), ...named.flat()];
+  const result = await checkPictures({ manifests, pictures, repository });
 
   console.log(formatCheck(result, root));
   return result.problems.length === 0;

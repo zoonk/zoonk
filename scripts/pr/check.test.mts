@@ -5,7 +5,8 @@ import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { beforeAll, describe, it } from "vitest";
-import { bodyPictures, checkPictures, formatCheck } from "./check.mts";
+import { checkPictures, formatCheck } from "./check.mts";
+import { bodyPictures, findManifests, manifestsAbove } from "./locate.mts";
 import { type CaptureItem, type ManifestItem, type Read } from "./media.mts";
 
 const CLEAN: Read = { at: "2026-11-14T12:00:00.000Z", by: "reader", findings: [] };
@@ -274,6 +275,26 @@ describe("the pictures a PR body shows", () => {
       "media/final/today.png",
       "media/plan.png",
       "https://github.com/user-attachments/assets/abc",
+    ]);
+  });
+});
+
+describe("where the check looks for capture manifests", () => {
+  it("walks up from each picture, and searches named folders without node_modules", async () => {
+    const root = mkdtempSync(join(tmpdir(), "pr-media-find-"));
+
+    for (const folder of ["tmp/pr-media/after", "elsewhere", "node_modules/pkg"]) {
+      mkdirSync(join(root, folder), { recursive: true });
+      writeFileSync(join(root, folder, "capture.json"), "[]");
+    }
+
+    const picture = join(root, "tmp/pr-media/after/phone/light/today.png");
+
+    assert.deepEqual(manifestsAbove([picture]), [join(root, "tmp/pr-media/after")]);
+
+    assert.deepEqual(await findManifests(root), [
+      join(root, "elsewhere"),
+      join(root, "tmp/pr-media/after"),
     ]);
   });
 });
