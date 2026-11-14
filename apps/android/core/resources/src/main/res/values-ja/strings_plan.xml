@@ -251,7 +251,7 @@
   "plan_exam_date": "a0a39f1220465490a59bb9abcf23f3f4d0497a51b4250ed1919d38d807d29a6f",
   "plan_exam_date_label": "7400ea190140d2f000dfa90e05e38a0d465076e9f5995125d82e29af8f471179",
   "plan_exam_day": "e87a3293748f5cb374674d1894a10c979288bb78b305a55f7b9a826d0e011fe1",
-  "plan_exam_over_ask": "1e98b4e76acc7fbcbbf377195c6d8644e391ed29e85885ff311dd79b6d725e8c",
+  "plan_exam_over_left": "7478738d1bba54aeafd1e1def91ff7d257dc4000a84cd5e9cf417a2e829dab8e",
   "plan_eyebrow": "bb217dc8202f97cb94bcf80d8833e031c533fff6856535412f987282f23207f8",
   "plan_far_count_from": "ea665a3e2be7546e220f5db5d99ab987292a51c92abaf75dfa698c30ed136f93",
   "plan_far_count_from_month": "d64af830fc724503213d9f5b3c45510a471b86b0eca6ca44ac28e2df6e104edd",
@@ -1255,8 +1255,9 @@
     </plurals>
     <string name="plan_past_date_goal_title">終了予定日を過ぎました</string>
     <string name="plan_past_date_exam_title">試験日を過ぎました</string>
-    <!-- Under "Your exam date has passed": the lessons left are what "them" means. -->
-    <string name="plan_exam_over_ask">残りのレッスンを続けますか？それとも、この目標をアーカイブしますか？</string>
+    <plurals name="plan_exam_over_left">
+        <item quantity="other">残りは%dレッスンです。学習を続けますか、それともこの目標をアーカイブしますか？</item>
+    </plurals>
     <plurals name="plan_past_date_offer">
         <item quantity="other">あと%dレッスン残っています。終了日を延ばせば、学習計画に収まります。</item>
     </plurals>

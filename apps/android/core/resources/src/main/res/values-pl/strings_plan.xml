@@ -251,7 +251,7 @@
   "plan_exam_date": "c5711827dcfe7af649409c795ba6f776b9fb376b0594db29bf5e393671bf8ac7",
   "plan_exam_date_label": "dc2242ff6e25e8702d7df8f1a88c458921ceb67b30668213e99acd6551677f7d",
   "plan_exam_day": "98c5fcab7fc79810f39106060b3ef3c9c784fb654f8291ef3da0fa92c9f4e34e",
-  "plan_exam_over_ask": "192f2ad5a7c0c429560d5be87a195a6ccb06253dd457231784b4410bcc11c02e",
+  "plan_exam_over_left": "0a43e9ae2181732129e07c2462f661f9a73f94a7a1658b0241db20d1c4a5b334",
   "plan_eyebrow": "5ad77f73e20d2e27a61114b18878189c721782186081eac6eb34ee2a54d404d0",
   "plan_far_count_from": "fa4968a8c50f43078a70f2b1996476f71d9169ab9b322874b9a0f6e96004a2bb",
   "plan_far_count_from_month": "345db0f799c15d827459cf92df48d5544fdd3b19b4ba195d4182aba7e48cfe8f",
@@ -1423,8 +1423,12 @@
     </plurals>
     <string name="plan_past_date_goal_title">Termin zakończenia minął</string>
     <string name="plan_past_date_exam_title">Termin egzaminu minął</string>
-    <!-- Under "Your exam date has passed": the lessons left are what "them" means. -->
-    <string name="plan_exam_over_ask">Uczyć się dalej czy zarchiwizować ten cel?</string>
+    <plurals name="plan_exam_over_left">
+        <item quantity="one">Została ci %d lekcja. Chcesz kontynuować naukę czy zarchiwizować ten cel?</item>
+        <item quantity="few">Zostały ci %d lekcje. Chcesz kontynuować naukę czy zarchiwizować ten cel?</item>
+        <item quantity="many">Zostało ci %d lekcji. Chcesz kontynuować naukę czy zarchiwizować ten cel?</item>
+        <item quantity="other">Zostało ci %d lekcji. Chcesz kontynuować naukę czy zarchiwizować ten cel?</item>
+    </plurals>
     <plurals name="plan_past_date_offer">
         <item quantity="one">Masz jeszcze %d lekcję. Późniejszy termin zakończenia daje na nią czas.</item>
         <item quantity="few">Masz jeszcze %d lekcje. Późniejszy termin zakończenia daje na nie czas.</item>

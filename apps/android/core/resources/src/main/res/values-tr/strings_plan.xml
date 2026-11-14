@@ -251,7 +251,7 @@
   "plan_exam_date": "af134b505098e9b769b7b9cbd7821f28aba1207d248ba0a0465c5114588b575f",
   "plan_exam_date_label": "11e415c382b7f53954aeff15163eac39ffeedc49666ee2519b2b7e195419bc6b",
   "plan_exam_day": "fdd0d94b54b6c5284830c835138d39c4226d372a6d82d7ed69ab9183aab2a9a6",
-  "plan_exam_over_ask": "5814479d210c13d235375c420dfc665c302a6957ec00f63919bc92fbc98df7a9",
+  "plan_exam_over_left": "19252c8a57dc913999d8e7f196e450ffada276a1f8e97af3aa3f55043f78477c",
   "plan_eyebrow": "c1a6514e612bee1ff6087941a76de8b60d8a571b0c31436c8b19367427eeb528",
   "plan_far_count_from": "2170998188c14d820f1d33baf352bc54a1594c49567e2264b46322dddd19c766",
   "plan_far_count_from_month": "6e6bc69cbfbe62e63b12f7b5aacde8986cc44aa130f3170bda46b3dcf2515eec",
@@ -1311,8 +1311,10 @@
     </plurals>
     <string name="plan_past_date_goal_title">Bitiş tarihin geçti</string>
     <string name="plan_past_date_exam_title">Sınav tarihin geçti</string>
-    <!-- Under "Your exam date has passed": the lessons left are what "them" means. -->
-    <string name="plan_exam_over_ask">Kalan derslere devam etmek mi, yoksa bu hedefi arşivlemek mi istersin?</string>
+    <plurals name="plan_exam_over_left">
+        <item quantity="one">%d dersin kaldı. Çalışmaya devam etmek mi istersin, yoksa bu hedefi arşivlemek mi?</item>
+        <item quantity="other">%d dersin kaldı. Çalışmaya devam etmek mi istersin, yoksa bu hedefi arşivlemek mi?</item>
+    </plurals>
     <plurals name="plan_past_date_offer">
         <item quantity="one">%d dersin kaldı. Bitiş tarihini ertelersen tamamlayabilirsin.</item>
         <item quantity="other">%d dersin kaldı. Bitiş tarihini ertelersen tamamlayabilirsin.</item>
