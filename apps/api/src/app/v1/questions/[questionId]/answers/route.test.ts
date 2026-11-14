@@ -171,7 +171,7 @@ const PROPOSED_CHANGE: PlanChangeView = {
   lessonsSkipped: 0,
   officialDate: null,
   operations: [{ kind: "setWeekdayMinutes", minutes: 0, weekdays: [6] }],
-  quote: null,
+  quote: "quote",
   reason: "Saturdays are off.",
   seen: false,
   source: "planEdit",

@@ -111,11 +111,17 @@ struct GoalEntrySections<Attach: View, Attachment: View>: View {
   /// The same limit core applies to a typed goal.
   private var maxLength: Int { 2000 }
 
+  /// At the goal limit the page is only the gate; a month's new goals used up shows after a try.
   var body: some View {
-    if let limit {
-      GoalLimitNoticeSection(reason: limit, upFront: true)
+    if limit == .activeGoals {
+      GoalLimitNoticeSection(reason: .activeGoals)
+    } else {
+      entry
     }
+  }
 
+  @ViewBuilder
+  private var entry: some View {
     Section {
       VStack(spacing: 0) {
         // Tops rather than first baselines: a vertical `TextField` reports its baseline above its

@@ -309,13 +309,16 @@ private struct LiveCallRun: View {
         handle(action, call: call)
       }
     } else if conversation.locked || call.failure == .plusRequired {
-      ConversationIntro(intro: CallIntro(conversation)) {
+      ConversationIntro(intro: CallIntro(conversation), isLocked: true) {
         CallStartFooter(isLocked: true, callee: nil) {}
       }
     } else if call.phase == .idle, !call.continuing {
-      ConversationIntro(intro: CallIntro(conversation)) {
+      ConversationIntro(
+        intro: CallIntro(conversation),
+        microphoneOff: call.micBlocked ? conversation.character.name : nil
+      ) {
         if call.micBlocked {
-          CallMicrophoneOff(name: conversation.character.name) {
+          CallMicrophoneOff {
             Task { await call.startTyping() }
           }
         } else {

@@ -367,15 +367,15 @@ extension MaterialDraft {
     switch error as? OnboardingError {
     case .limit(let limit) where limit.tier == "plus":
       LocalizedStringResource(
-        "You've added as much material as your plan allows today. Try again tomorrow.",
-        table: "Onboarding", comment: "A Plus learner added as much material as allowed today")
+        "No more material today. More tomorrow.",
+        table: "Onboarding", comment: "A subscriber added as much material as allowed today")
     case .limit(let limit) where limit.period == "month":
       LocalizedStringResource(
-        "You've added as much material as the free plan allows this month. Try again next month, or get Plus to keep going now.",
+        "No more material this month. More next month, or subscribe to keep going.",
         table: "Onboarding", comment: "A free learner added as much material as allowed this month")
     case .limit:
       LocalizedStringResource(
-        "You've added as much material as the free plan allows today. Try again tomorrow, or get Plus to keep going now.",
+        "No more material today. More tomorrow, or subscribe to keep going.",
         table: "Onboarding", comment: "A free learner added as much material as allowed today")
     case .slowDown:
       LocalizedStringResource(
@@ -634,16 +634,16 @@ struct MaterialQuestionsView: View {
     switch error as? OnboardingError {
     case .limit(let limit) where limit.tier == "plus":
       LocalizedStringResource(
-        "You've asked as many questions as your plan allows today.", table: "Onboarding",
-        comment: "A Plus learner asked as many material questions as allowed today")
+        "No more questions today. More tomorrow.", table: "Onboarding",
+        comment: "A subscriber asked as many material questions as allowed today")
     case .limit(let limit) where limit.period == "month":
       LocalizedStringResource(
-        "You've asked as many questions as the free plan allows this month. Ask again next month, or get Plus to keep going now.",
+        "No more questions this month. More next month, or subscribe to keep going.",
         table: "Onboarding",
         comment: "A free learner asked as many material questions as allowed this month")
     case .limit:
       LocalizedStringResource(
-        "You've asked as many questions as the free plan allows today. Ask again tomorrow, or get Plus to keep going now.",
+        "No more questions today. More tomorrow, or subscribe to keep going.",
         table: "Onboarding",
         comment: "A free learner asked as many material questions as allowed today")
     case .slowDown:

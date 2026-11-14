@@ -92,7 +92,7 @@ export async function inspectPanel(page: Page, phone: boolean) {
   return page.evaluate(readPanel, { overlays: OVERLAYS, phone });
 }
 
-export async function focusCameBack(page: Page, opener: string) {
+export async function focusCameBack(page: Page, opener: string, returnTo?: string) {
   await finishAnimations(page);
-  return page.evaluate(focusReturned, { opener, overlays: OVERLAYS });
+  return page.evaluate(focusReturned, { opener, overlays: OVERLAYS, returnTo });
 }

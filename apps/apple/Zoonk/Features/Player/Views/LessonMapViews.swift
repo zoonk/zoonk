@@ -79,13 +79,8 @@ struct LessonMapSection: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 20) {
-      Label {
-        Text(LessonMapView.name)
-      } icon: {
-        Image(systemName: LessonMapView.symbol)
-      }
-      .chip()
-      .accessibilityAddTraits(.isHeader)
+      Chip(Text(LessonMapView.name), systemImage: LessonMapView.symbol)
+        .accessibilityAddTraits(.isHeader)
 
       LessonMapView(title: title, summary: summary)
     }

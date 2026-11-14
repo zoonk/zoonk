@@ -182,6 +182,7 @@ msgstr "Continua"
 #: src/_components/question-actions.tsx
 #: src/challenge/challenge-footer.tsx
 #: src/conversation/tutor-feature-offers.tsx
+#: src/explain/explain-waiting.tsx
 #: src/focus-test/focus-test-screens.tsx
 #: src/language/conversation/checkpoint-call-preparing.tsx
 #: src/language/exam-speaking/speaking-task-row.tsx
@@ -662,7 +663,6 @@ msgstr "Torna indietro"
 
 #: src/_components/subscribe-gate.tsx
 #: src/conversation/tutor-feature-offers.tsx
-#: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "gczcC5"
 msgid "Subscribe"
 msgstr "Abbonati"
@@ -3730,11 +3730,6 @@ msgstr "Stiamo ancora preparando la spiegazione."
 msgctxt "fL_sD1"
 msgid "This is taking longer than usual."
 msgstr "Ci stiamo mettendo più del solito."
-
-#: src/explain/explain-waiting.tsx
-msgctxt "SHh7sC"
-msgid "See explanation"
-msgstr "Leggi la spiegazione"
 
 #: src/explain/quick-explanation-label.ts
 msgctxt "fjrJL6"
@@ -8888,6 +8883,16 @@ msgid "How does inflation work?"
 msgstr "Come funziona l’inflazione?"
 
 #: src/onboarding/entry/goal-limit-notice.tsx
+msgctxt "1oUkSm"
+msgid "Pause one in your Plan, or subscribe to study more at once."
+msgstr "Mettine uno in pausa nel tuo Piano, oppure abbonati per seguirne di più insieme."
+
+#: src/onboarding/entry/goal-limit-notice.tsx
+msgctxt "EreSqP"
+msgid "That's all the goals you can study at once"
+msgstr "Hai raggiunto il limite di obiettivi da seguire insieme"
+
+#: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "4RwuVD"
 msgid "No more new goals this month"
 msgstr "Questo mese non puoi iniziare altri obiettivi"
@@ -8896,16 +8901,6 @@ msgstr "Questo mese non puoi iniziare altri obiettivi"
 msgctxt "MO6156"
 msgid "Go to your Plan"
 msgstr "Vai al tuo Piano"
-
-#: src/onboarding/entry/goal-limit-notice.tsx
-msgctxt "EreSqP"
-msgid "That's all the goals you can study at once"
-msgstr "Hai raggiunto il limite di obiettivi da seguire insieme"
-
-#: src/onboarding/entry/goal-limit-notice.tsx
-msgctxt "1oUkSm"
-msgid "Pause one in your Plan, or subscribe to study more at once."
-msgstr "Mettine uno in pausa nel tuo Piano, oppure abbonati per seguirne di più insieme."
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "n-6wcY"

@@ -114,6 +114,16 @@ final class LiveCallTests: XCTestCase {
       .limitReached(period: .month, tier: .free))
     XCTAssertEqual(
       refusal(403, "USAGE_LIMIT_REACHED").limit, .limitReached(period: .day, tier: .guest))
+    XCTAssertEqual(
+      refusal(
+        402, "USAGE_LIMIT_REACHED",
+        #"{"limit":{"period":"rolling30Days","tier":"free","availableAt":"2026-11-22T09:30:00.000Z"}}"#
+      ).limit,
+      .freeLessonsUsed(opensAt: Date(timeIntervalSince1970: 1_795_339_800)))
+    XCTAssertEqual(
+      refusal(402, "USAGE_LIMIT_REACHED", #"{"limit":{"period":"rolling30Days","tier":"free"}}"#)
+        .limit,
+      .freeLessonsUsed(opensAt: nil))
     XCTAssertNil(refusal(422, "NO_SPEECH").limit)
     XCTAssertTrue(refusal(422, "NO_SPEECH").isNoSpeech)
   }

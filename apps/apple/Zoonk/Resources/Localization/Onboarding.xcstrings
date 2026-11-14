@@ -5384,65 +5384,6 @@
         }
       }
     },
-    "Available with a free account" : {
-      "comment" : "Title of the note under the goals of a card a guest can't start yet, because without an account they follow one goal at a time. A free account is a signed-up account on the free plan, not the paid plan",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit kostenlosem Konto verfügbar"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Disponible con una cuenta gratis"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Disponible avec un compte gratuit"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Disponibile con un account gratuito"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "無料アカウントで利用できます"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "무료 계정으로 이용 가능"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dostępne z bezpłatnym kontem"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Disponível com uma conta grátis"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ücretsiz hesapla kullanılabilir"
-          }
-        }
-      }
-    },
     "Back" : {
       "comment" : "Goes back to the previous question",
       "localizations" : {
@@ -9281,65 +9222,6 @@
         }
       }
     },
-    "Create your free account to continue." : {
-      "comment" : "Guests' shared AI budget for the day is spent",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Erstelle dein kostenloses Konto, um fortzufahren."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Crea tu cuenta gratis para continuar."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Crée ton compte gratuit pour continuer."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Crea il tuo account gratuito per continuare."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "無料アカウントを作成すると、続けられます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "계속하려면 무료 계정을 만드세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Utwórz bezpłatne konto, aby kontynuować."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Crie sua conta grátis para continuar."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Devam etmek için ücretsiz hesabını oluştur."
-          }
-        }
-      }
-    },
     "Date" : {
       "comment" : "Label of the goal's date picker",
       "localizations" : {
@@ -11460,242 +11342,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Düzeltme yap"
-          }
-        }
-      }
-    },
-    "Following more goals at once comes with a free account. Until then, these goals wait in your goals." : {
-      "comment" : "Under the goals a guest can't start yet, because without an account they follow one goal at a time; a free account (signed up, on the free plan, not the paid plan) follows more. It's about goals followed at the same time, not new goals started per day or month. The goals wait in their goal list and come with them when they create the account",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit einem kostenlosen Konto kannst du mehr Ziele gleichzeitig verfolgen. Bis dahin warten diese Ziele in deiner Zielliste."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Para tener más objetivos activos a la vez necesitas una cuenta gratis. Mientras tanto, estos objetivos esperan en tu lista de objetivos."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Avec un compte gratuit, tu peux suivre plus d’objectifs en même temps. D’ici là, ces objectifs restent en attente dans ta liste d’objectifs."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Per seguire più obiettivi alla volta serve un account gratuito. Nel frattempo, questi obiettivi restano in attesa nel tuo elenco di obiettivi."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "無料アカウントを作成すると、より多くの目標を同時に進められます。それまでは、目標一覧に残ります。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "더 많은 목표를 동시에 진행하려면 무료 계정이 필요해요. 그동안 해당 목표는 내 목표 목록에서 대기해요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Z bezpłatnym kontem możesz realizować więcej celów naraz. Na razie te cele czekają na liście twoich celów."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Com uma conta grátis, você pode ter mais objetivos ativos ao mesmo tempo. Até lá, esses objetivos ficam esperando na sua lista de objetivos."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aynı anda daha fazla hedefi takip etmek için ücretsiz bir hesap gerekiyor. Bu hedefler şimdilik hedef listende bekliyor."
-          }
-        }
-      }
-    },
-    "Following more goals at once comes with a free account. Until then, this goal waits in your goals." : {
-      "comment" : "Under the one goal a guest can't start yet, because without an account they follow one goal at a time; a free account (signed up, on the free plan, not the paid plan) follows more. It's about goals followed at the same time, not new goals started per day or month. The goal waits in their goal list and comes with them when they create the account",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit einem kostenlosen Konto kannst du mehr Ziele gleichzeitig verfolgen. Bis dahin wartet dieses Ziel in deiner Zielliste."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Para tener más objetivos activos a la vez necesitas una cuenta gratis. Mientras tanto, este objetivo espera en tu lista de objetivos."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Avec un compte gratuit, tu peux suivre plus d’objectifs en même temps. D’ici là, cet objectif reste en attente dans ta liste d’objectifs."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Per seguire più obiettivi alla volta serve un account gratuito. Nel frattempo, questo obiettivo resta in attesa nel tuo elenco di obiettivi."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "無料アカウントを作成すると、より多くの目標を同時に進められます。それまでは、目標一覧に残ります。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "더 많은 목표를 동시에 진행하려면 무료 계정이 필요해요. 그동안 해당 목표는 내 목표 목록에서 대기해요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Z bezpłatnym kontem możesz realizować więcej celów naraz. Na razie ten cel czeka na liście twoich celów."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Com uma conta grátis, você pode ter mais objetivos ativos ao mesmo tempo. Até lá, esse objetivo fica esperando na sua lista de objetivos."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aynı anda daha fazla hedefi takip etmek için ücretsiz bir hesap gerekiyor. Bu hedef şimdilik hedef listende bekliyor."
-          }
-        }
-      }
-    },
-    "Following more goals at once comes with Plus. Until then, these goals wait in your goals." : {
-      "comment" : "Under the goals the free plan can't follow yet, because the learner follows as many goals at once as it allows; they wait in their goal list. It's about goals followed at the same time, not new goals started per day or month. Plus is the subscription's name, not \"more\"",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit Plus kannst du mehr Ziele gleichzeitig verfolgen. Bis dahin warten diese Ziele in deiner Zielliste."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Para tener más objetivos activos a la vez necesitas Plus. Mientras tanto, estos objetivos esperan en tu lista de objetivos."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Avec Plus, tu peux suivre plus d’objectifs en même temps. D’ici là, ces objectifs restent en attente dans ta liste d’objectifs."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Per seguire più obiettivi alla volta serve Plus. Nel frattempo, questi obiettivi restano in attesa nel tuo elenco di obiettivi."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plusに登録すると、より多くの目標を同時に進められます。それまでは、目標一覧に残ります。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "더 많은 목표를 동시에 진행하려면 Plus가 필요해요. 그동안 해당 목표는 내 목표 목록에서 대기해요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "W pakiecie Plus możesz realizować więcej celów naraz. Na razie te cele czekają na liście twoich celów."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Com o Plus, você pode ter mais objetivos ativos ao mesmo tempo. Até lá, esses objetivos ficam esperando na sua lista de objetivos."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aynı anda daha fazla hedefi takip etmek için Plus gerekiyor. Bu hedefler şimdilik hedef listende bekliyor."
-          }
-        }
-      }
-    },
-    "Following more goals at once comes with Plus. Until then, this goal waits in your goals." : {
-      "comment" : "Under the one goal the free plan can't follow yet, because the learner follows as many goals at once as it allows; the goal waits in their goal list. It's about goals followed at the same time, not new goals started per day or month. Plus is the subscription's name, not \"more\"",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit Plus kannst du mehr Ziele gleichzeitig verfolgen. Bis dahin wartet dieses Ziel in deiner Zielliste."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Para tener más objetivos activos a la vez necesitas Plus. Mientras tanto, este objetivo espera en tu lista de objetivos."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Avec Plus, tu peux suivre plus d’objectifs en même temps. D’ici là, cet objectif reste en attente dans ta liste d’objectifs."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Per seguire più obiettivi alla volta serve Plus. Nel frattempo, questo obiettivo resta in attesa nel tuo elenco di obiettivi."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plusに登録すると、より多くの目標を同時に進められます。それまでは、目標一覧に残ります。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "더 많은 목표를 동시에 진행하려면 Plus가 필요해요. 그동안 해당 목표는 내 목표 목록에서 대기해요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "W pakiecie Plus możesz realizować więcej celów naraz. Na razie ten cel czeka na liście twoich celów."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Com o Plus, você pode ter mais objetivos ativos ao mesmo tempo. Até lá, esse objetivo fica esperando na sua lista de objetivos."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aynı anda daha fazla hedefi takip etmek için Plus gerekiyor. Bu hedef şimdilik hedef listende bekliyor."
           }
         }
       }
@@ -16058,61 +15704,120 @@
         }
       }
     },
-    "More goals at once with Plus" : {
-      "comment" : "Title of the notice that the learner follows as many goals at once as the free plan allows; Plus is the subscription's name, not \"more\"",
+    "More goals at once come with a free account" : {
+      "comment" : "Over the goals a card a guest can't start yet: without an account they study one goal at a time; the goals wait and come with them when they sign up",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mehr Ziele gleichzeitig mit Plus"
+            "value" : "Mehr Ziele gleichzeitig mit einem kostenlosen Konto"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Más objetivos a la vez con Plus"
+            "value" : "Con una cuenta gratis puedes estudiar más objetivos a la vez"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plus d’objectifs à la fois avec Plus"
+            "value" : "Plus d’objectifs à la fois avec un compte gratuit"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Più obiettivi alla volta con Plus"
+            "value" : "Per seguire più obiettivi insieme serve un account gratuito"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plusなら複数の目標を同時に進められます"
+            "value" : "無料アカウントで同時に進められる目標が増えます"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plus로 여러 목표를 동시에"
+            "value" : "더 많은 목표를 동시에 공부하려면 무료 계정이 필요해요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Więcej celów naraz z pakietem Plus"
+            "value" : "Więcej celów naraz z bezpłatnym kontem"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mais objetivos ao mesmo tempo com o Plus"
+            "value" : "Mais objetivos ao mesmo tempo com uma conta grátis"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plus ile aynı anda daha fazla hedef"
+            "value" : "Ücretsiz hesapla aynı anda daha fazla hedef üzerinde çalışabilirsin"
+          }
+        }
+      }
+    },
+    "More goals at once need a subscription" : {
+      "comment" : "Over the goals a card can't start yet, because the learner studies as many goals at once as their plan allows; they wait in their goal list",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für mehr Ziele gleichzeitig brauchst du ein Abo"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Necesitas una suscripción para estudiar más objetivos a la vez"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus d’objectifs à la fois avec un abonnement"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Per seguire più obiettivi insieme serve un abbonamento"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同時に進める目標を増やすにはサブスクリプションが必要です"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "더 많은 목표를 동시에 공부하려면 구독이 필요해요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Więcej celów naraz wymaga subskrypcji"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estudar mais objetivos ao mesmo tempo exige uma assinatura"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aynı anda daha fazla hedef için abonelik gerekiyor"
           }
         }
       }
@@ -16886,6 +16591,773 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tarih yok"
+          }
+        }
+      }
+    },
+    "No more material this month. More next month, or subscribe to keep going." : {
+      "comment" : "A free learner added as much material as allowed this month",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diesen Monat kannst du kein weiteres Material hinzufügen. Nächsten Monat geht’s weiter oder mit einem Abo sofort."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No puedes agregar más material este mes. Puedes agregar más el próximo mes o suscribirte para seguir."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu ne peux plus ajouter de documents ce mois-ci. Tu pourras en ajouter le mois prochain, ou t’abonner pour continuer."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non puoi aggiungere altro materiale questo mese. Riprova il mese prossimo o abbonati per continuare."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今月はこれ以上資料を追加できません。来月また追加できます。登録すると今すぐ続けられます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이번 달에는 자료를 더 추가할 수 없어요. 다음 달에 다시 추가하거나 구독해서 계속 이용할 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wykorzystano limit materiałów na ten miesiąc. Więcej dodasz w przyszłym miesiącu lub po wykupieniu subskrypcji."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você chegou ao limite de material deste mês. No mês que vem tem mais, ou assine para continuar."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu ayki materyal sınırına ulaştın. Gelecek ay ya da abone olarak hemen devam edebilirsin."
+          }
+        }
+      }
+    },
+    "No more material today. More tomorrow, or subscribe to keep going." : {
+      "comment" : "A free learner added as much material as allowed today",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heute kannst du kein weiteres Material hinzufügen. Morgen geht’s weiter oder mit einem Abo sofort."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No puedes agregar más material hoy. Puedes agregar más mañana o suscribirte para seguir."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu ne peux plus ajouter de documents aujourd’hui. Tu pourras en ajouter demain, ou t’abonner pour continuer."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non puoi aggiungere altro materiale oggi. Riprova domani o abbonati per continuare."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今日はこれ以上資料を追加できません。明日また追加できます。登録すると今すぐ続けられます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오늘은 자료를 더 추가할 수 없어요. 내일 다시 추가하거나 구독해서 계속 이용할 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wykorzystano limit materiałów na dziś. Więcej dodasz jutro lub po wykupieniu subskrypcji."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você chegou ao limite de material de hoje. Amanhã tem mais, ou assine para continuar."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bugünkü materyal sınırına ulaştın. Yarın ya da abone olarak hemen devam edebilirsin."
+          }
+        }
+      }
+    },
+    "No more material today. More tomorrow." : {
+      "comment" : "A subscriber added as much material as allowed today",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heute kannst du kein weiteres Material hinzufügen. Morgen geht’s weiter."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No puedes agregar más material hoy. Mañana podrás agregar más."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu ne peux plus ajouter de documents aujourd’hui. Tu pourras en ajouter demain."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non puoi aggiungere altro materiale oggi. Potrai aggiungerne altro domani."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今日はこれ以上資料を追加できません。明日また追加できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오늘은 자료를 더 추가할 수 없어요. 내일 다시 추가할 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wykorzystano limit materiałów na dziś. Więcej dodasz jutro."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você chegou ao limite de material de hoje. Amanhã tem mais."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bugünkü materyal sınırına ulaştın. Yarın devam edebilirsin."
+          }
+        }
+      }
+    },
+    "No more new goals this month" : {
+      "comment" : "A free learner started as many new goals as their plan allows this month",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diesen Monat keine neuen Ziele mehr"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No puedes crear más objetivos este mes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu ne peux plus commencer de nouvel objectif ce mois-ci"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non puoi iniziare altri obiettivi questo mese"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今月はこれ以上新しい目標を始められません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이번 달에는 새 목표를 더 시작할 수 없어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wykorzystano limit nowych celów na ten miesiąc"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você chegou ao limite de novos objetivos deste mês"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu ayki yeni hedef sınırına ulaştın"
+          }
+        }
+      }
+    },
+    "No more new goals this month. More next month, or subscribe to keep going." : {
+      "comment" : "A free learner sent as many goals as allowed this month\nA free learner started as many goals as allowed this month",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diesen Monat kannst du keine neuen Ziele mehr starten. Nächsten Monat geht’s weiter oder mit einem Abo sofort."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No puedes crear más objetivos este mes. Puedes crear más el próximo mes o suscribirte para seguir."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu ne peux plus commencer de nouvel objectif ce mois-ci. Tu pourras en commencer le mois prochain, ou t’abonner pour continuer."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non puoi iniziare altri obiettivi questo mese. Riprova il mese prossimo o abbonati per continuare."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今月はこれ以上新しい目標を始められません。来月また始められます。登録すると今すぐ続けられます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이번 달에는 새 목표를 더 시작할 수 없어요. 다음 달에 새 목표를 시작하거나 구독해서 계속 이용할 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wykorzystano limit nowych celów na ten miesiąc. Więcej dodasz w przyszłym miesiącu lub po wykupieniu subskrypcji."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você chegou ao limite de novos objetivos deste mês. No mês que vem tem mais, ou assine para continuar."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu ayki yeni hedef sınırına ulaştın. Gelecek ay ya da abone olarak hemen devam edebilirsin."
+          }
+        }
+      }
+    },
+    "No more new goals today without an account." : {
+      "comment" : "A guest sent as many goals as allowed today",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heute kannst du ohne Konto keine neuen Ziele mehr starten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No puedes crear más objetivos hoy sin una cuenta."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sans compte, tu ne peux plus commencer de nouvel objectif aujourd’hui."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Senza un account non puoi iniziare altri obiettivi oggi."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アカウントなしでは、今日はこれ以上新しい目標を始められません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계정이 없으면 오늘은 새 목표를 더 시작할 수 없어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bez konta nie dodasz już dziś nowych celów."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sem conta, não dá para começar mais objetivos hoje."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bugün başka bir hedefe başlamak için hesap gerekiyor."
+          }
+        }
+      }
+    },
+    "No more new goals today. More tomorrow, or subscribe to keep going." : {
+      "comment" : "A free learner sent as many goals as allowed today",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heute kannst du keine neuen Ziele mehr starten. Morgen geht’s weiter oder mit einem Abo sofort."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No puedes crear más objetivos hoy. Puedes crear más mañana o suscribirte para seguir."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu ne peux plus commencer de nouvel objectif aujourd’hui. Tu pourras en commencer demain, ou t’abonner pour continuer."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non puoi iniziare altri obiettivi oggi. Riprova domani o abbonati per continuare."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今日はこれ以上新しい目標を始められません。明日また始められます。登録すると今すぐ続けられます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오늘은 새 목표를 더 시작할 수 없어요. 내일 새 목표를 시작하거나 구독해서 계속 이용할 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wykorzystano limit nowych celów na dziś. Więcej dodasz jutro lub po wykupieniu subskrypcji."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você chegou ao limite de novos objetivos de hoje. Amanhã tem mais, ou assine para continuar."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bugünkü yeni hedef sınırına ulaştın. Yarın ya da abone olarak hemen devam edebilirsin."
+          }
+        }
+      }
+    },
+    "No more new goals today. More tomorrow." : {
+      "comment" : "A subscriber sent as many goals as allowed today\nThe learner started as many goals as allowed today",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heute kannst du keine neuen Ziele mehr starten. Morgen geht’s weiter."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No puedes crear más objetivos hoy. Mañana podrás crear más."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu ne peux plus commencer de nouvel objectif aujourd’hui. Tu pourras en commencer demain."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non puoi iniziare altri obiettivi oggi. Potrai iniziarne altri domani."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今日はこれ以上新しい目標を始められません。明日また始められます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오늘은 새 목표를 더 시작할 수 없어요. 내일 새 목표를 시작할 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wykorzystano limit nowych celów na dziś. Więcej dodasz jutro."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você chegou ao limite de novos objetivos de hoje. Amanhã tem mais."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bugünkü yeni hedef sınırına ulaştın. Yarın devam edebilirsin."
+          }
+        }
+      }
+    },
+    "No more questions this month. More next month, or subscribe to keep going." : {
+      "comment" : "A free learner asked as many material questions as allowed this month",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diesen Monat kannst du keine weiteren Fragen stellen. Nächsten Monat geht’s weiter oder mit einem Abo sofort."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No puedes hacer más preguntas este mes. Puedes hacer más el próximo mes o suscribirte para seguir."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu ne peux plus poser de questions ce mois-ci. Tu pourras en poser le mois prochain, ou t’abonner pour continuer."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non puoi fare altre domande questo mese. Riprova il mese prossimo o abbonati per continuare."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今月はこれ以上質問できません。来月また質問できます。登録すると今すぐ続けられます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이번 달에는 더 질문할 수 없어요. 다음 달에 다시 질문하거나 구독해서 계속 이용할 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wykorzystano limit pytań na ten miesiąc. Kolejne zadasz w przyszłym miesiącu lub po wykupieniu subskrypcji."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você chegou ao limite de perguntas deste mês. No mês que vem tem mais, ou assine para continuar."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu ayki soru sınırına ulaştın. Gelecek ay ya da abone olarak hemen devam edebilirsin."
+          }
+        }
+      }
+    },
+    "No more questions today. More tomorrow, or subscribe to keep going." : {
+      "comment" : "A free learner asked as many material questions as allowed today",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heute kannst du keine weiteren Fragen stellen. Morgen geht’s weiter oder mit einem Abo sofort."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No puedes hacer más preguntas hoy. Puedes hacer más mañana o suscribirte para seguir."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu ne peux plus poser de questions aujourd’hui. Tu pourras en poser demain, ou t’abonner pour continuer."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non puoi fare altre domande oggi. Riprova domani o abbonati per continuare."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今日はこれ以上質問できません。明日また質問できます。登録すると今すぐ続けられます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오늘은 더 질문할 수 없어요. 내일 다시 질문하거나 구독해서 계속 이용할 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wykorzystano limit pytań na dziś. Kolejne zadasz jutro lub po wykupieniu subskrypcji."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você chegou ao limite de perguntas de hoje. Amanhã tem mais, ou assine para continuar."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bugünkü soru sınırına ulaştın. Yarın ya da abone olarak hemen devam edebilirsin."
+          }
+        }
+      }
+    },
+    "No more questions today. More tomorrow." : {
+      "comment" : "A subscriber asked as many material questions as allowed today",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heute kannst du keine weiteren Fragen stellen. Morgen geht’s weiter."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No puedes hacer más preguntas hoy. Mañana podrás hacer más."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu ne peux plus poser de questions aujourd’hui. Tu pourras en poser demain."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non puoi fare altre domande oggi. Potrai farne altre domani."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今日はこれ以上質問できません。明日また質問できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오늘은 더 질문할 수 없어요. 내일 다시 질문할 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wykorzystano limit pytań na dziś. Kolejne zadasz jutro."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você chegou ao limite de perguntas de hoje. Amanhã tem mais."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bugünkü soru sınırına ulaştın. Yarın devam edebilirsin."
+          }
+        }
+      }
+    },
+    "No more quick explanations this month. More next month, or subscribe to keep going." : {
+      "comment" : "A free learner asked for as many quick explanations as allowed this month",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diesen Monat kannst du keine weiteren Kurzerklärungen anfordern. Nächsten Monat geht’s weiter oder mit einem Abo sofort."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No puedes pedir más explicaciones rápidas este mes. Puedes pedir más el próximo mes o suscribirte para seguir."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu ne peux plus demander d’explications rapides ce mois-ci. Tu pourras en demander le mois prochain, ou t’abonner pour continuer."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non puoi chiedere altre spiegazioni rapide questo mese. Riprova il mese prossimo o abbonati per continuare."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今月はこれ以上クイック解説を作成できません。来月また作成できます。登録すると今すぐ続けられます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이번 달에는 간단한 설명을 더 요청할 수 없어요. 다음 달에 다시 요청하거나 구독해서 계속 이용할 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wykorzystano limit szybkich wyjaśnień na ten miesiąc. Kolejne otrzymasz w przyszłym miesiącu lub po wykupieniu subskrypcji."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você chegou ao limite de explicações rápidas deste mês. No mês que vem tem mais, ou assine para continuar."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu ayki kısa açıklama sınırına ulaştın. Gelecek ay ya da abone olarak hemen devam edebilirsin."
+          }
+        }
+      }
+    },
+    "No more quick explanations today. More tomorrow, or subscribe to keep going." : {
+      "comment" : "A free learner asked for as many quick explanations as allowed today",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heute kannst du keine weiteren Kurzerklärungen anfordern. Morgen geht’s weiter oder mit einem Abo sofort."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No puedes pedir más explicaciones rápidas hoy. Puedes pedir más mañana o suscribirte para seguir."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu ne peux plus demander d’explications rapides aujourd’hui. Tu pourras en demander demain, ou t’abonner pour continuer."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non puoi chiedere altre spiegazioni rapide oggi. Riprova domani o abbonati per continuare."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今日はこれ以上クイック解説を作成できません。明日また作成できます。登録すると今すぐ続けられます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오늘은 간단한 설명을 더 요청할 수 없어요. 내일 다시 요청하거나 구독해서 계속 이용할 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wykorzystano limit szybkich wyjaśnień na dziś. Kolejne otrzymasz jutro lub po wykupieniu subskrypcji."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você chegou ao limite de explicações rápidas de hoje. Amanhã tem mais, ou assine para continuar."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bugünkü kısa açıklama sınırına ulaştın. Yarın ya da abone olarak hemen devam edebilirsin."
           }
         }
       }
@@ -18597,6 +19069,183 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Müfredatı, notlarını veya bir üniteyi yapıştır"
+          }
+        }
+      }
+    },
+    "Pause another goal to start these." : {
+      "comment" : "Under the goals a card can't start yet; pausing a goal keeps its progress",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pausier ein anderes Ziel, um diese zu starten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pausa otro objetivo para empezar a estudiar estos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mets un autre objectif en pause pour commencer ceux-ci."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Metti in pausa un altro obiettivo per iniziare questi."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "これらの目標を始めるには、ほかの目標を一時停止してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 목표들을 시작하려면 다른 목표를 일시 중지해 주세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wstrzymaj inny cel, żeby zacząć realizować te cele."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pause outro objetivo para começar esses."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bunlara başlamak için başka bir hedefi duraklat."
+          }
+        }
+      }
+    },
+    "Pause another goal to start this one." : {
+      "comment" : "Under the one goal a card can't start yet; pausing a goal keeps its progress",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pausier ein anderes Ziel, um dieses zu starten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pausa otro objetivo para empezar a estudiar este."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mets un autre objectif en pause pour commencer celui-ci."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Metti in pausa un altro obiettivo per iniziare questo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この目標を始めるには、ほかの目標を一時停止してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 목표를 시작하려면 다른 목표를 일시 중지해 주세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wstrzymaj inny cel, żeby zacząć realizować ten."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pause outro objetivo para começar esse."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buna başlamak için başka bir hedefi duraklat."
+          }
+        }
+      }
+    },
+    "Pause one in your Plan, or subscribe to study more at once." : {
+      "comment" : "Pausing a goal keeps its progress",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pausier ein Ziel in deinem Plan oder schließ ein Abo ab, um mehr Ziele gleichzeitig zu verfolgen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pausa uno en tu Plan o suscríbete para estudiar más a la vez."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mets un objectif en pause dans ton Plan ou abonne-toi pour en suivre plus à la fois."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Metti in pausa un obiettivo nel tuo Piano o abbonati per seguirne di più insieme."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習計画で目標を1つ一時停止するか、登録して同時に進める目標を増やしてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계획에서 목표 하나를 일시 중지하거나 구독해서 더 많은 목표를 동시에 공부해 보세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wstrzymaj jeden cel w Planie lub wykup subskrypcję, żeby realizować więcej naraz."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pause um objetivo no seu Plano ou assine para estudar mais ao mesmo tempo."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planında bir hedefi duraklat ya da aynı anda daha fazla hedef için abone ol."
           }
         }
       }
@@ -23947,6 +24596,124 @@
         }
       }
     },
+    "That's all the goals you can study at once" : {
+      "comment" : "A free learner studies as many goals at once as their plan allows; it's about goals at the same time, not new goals started per day or month",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du kannst keine weiteren Ziele gleichzeitig verfolgen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alcanzaste el límite de objetivos que puedes estudiar a la vez"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu suis déjà le maximum d’objectifs à la fois"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hai raggiunto il limite di obiettivi da seguire insieme"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同時に進められる目標の上限に達しました"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "동시에 공부할 수 있는 목표 수를 다 채웠어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Masz już maksymalną liczbę aktywnych celów"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você já estuda o máximo de objetivos ao mesmo tempo"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aynı anda bu kadar hedef üzerinde çalışabilirsin"
+          }
+        }
+      }
+    },
+    "That's all the goals you can study at once. Pause one, or subscribe to study more." : {
+      "comment" : "A free learner studies as many goals at once as their plan allows; it's about goals at the same time, not new goals started per day or month. Pausing a goal keeps its progress",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du kannst keine weiteren Ziele gleichzeitig verfolgen. Pausier eines oder schließ ein Abo ab, um mehr Ziele gleichzeitig zu verfolgen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alcanzaste el límite de objetivos que puedes estudiar a la vez. Pausa uno o suscríbete para estudiar más."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu suis déjà le maximum d’objectifs à la fois. Mets-en un en pause ou abonne-toi pour en suivre plus."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hai raggiunto il limite di obiettivi da seguire insieme. Mettine uno in pausa o abbonati per seguirne di più."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同時に進められる目標の上限に達しました。目標を1つ一時停止するか、登録して同時に進める目標を増やしてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "동시에 공부할 수 있는 목표 수를 다 채웠어요. 목표 하나를 일시 중지하거나 구독해서 더 많은 목표를 공부해 보세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Masz już maksymalną liczbę aktywnych celów. Wstrzymaj jeden z nich lub wykup subskrypcję, żeby realizować więcej."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você já estuda o máximo de objetivos ao mesmo tempo. Pause um ou assine para estudar mais."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aynı anda bu kadar hedef üzerinde çalışabilirsin. Birini duraklat ya da daha fazla hedef için abone ol."
+          }
+        }
+      }
+    },
     "That's enough questions for today" : {
       "comment" : "Placement paused for the day: it has enough answers for now",
       "localizations" : {
@@ -26078,6 +26845,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "İlanda kesinleşene kadar bu tarih tahminidir."
+          }
+        }
+      }
+    },
+    "This needs a free account." : {
+      "comment" : "Guests' shared AI budget for the day is spent",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dafür brauchst du ein kostenloses Konto."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Necesitas una cuenta gratis para esto."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il te faut un compte gratuit."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Serve un account gratuito."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "無料アカウントが必要です。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계속하려면 무료 계정이 필요해요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Do tego potrzebujesz bezpłatnego konta."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para isso, você precisa de uma conta grátis."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bunun için ücretsiz bir hesap gerekiyor."
           }
         }
       }
@@ -31221,65 +32047,6 @@
         }
       }
     },
-    "Without an account, you can follow one goal. Create a free account to keep going." : {
-      "comment" : "A guest can't start another goal",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ohne Konto kannst du ein Ziel verfolgen. Erstelle ein kostenloses Konto, um weiterzumachen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sin una cuenta, puedes seguir un solo objetivo. Crea una cuenta gratis para seguir avanzando."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sans compte, tu peux suivre un seul objectif. Crée un compte gratuit pour continuer."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Senza un account puoi seguire un solo obiettivo. Crea un account gratuito per continuare."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "アカウントなしで進められる目標は1つです。続けるには無料アカウントを作成してください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "계정 없이 진행할 수 있는 목표는 하나예요. 계속하려면 무료 계정을 만드세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bez konta możesz realizować jeden cel. Załóż bezpłatne konto, by kontynuować."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sem uma conta, você pode acompanhar um objetivo. Crie uma conta grátis para continuar."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hesap açmadan tek bir hedefle ilerleyebilirsin. Devam etmek için ücretsiz bir hesap oluştur."
-          }
-        }
-      }
-    },
     "Without an account, you can follow one goal. Your plan and progress come with you." : {
       "comment" : "Why a guest needs an account to start another goal",
       "localizations" : {
@@ -31339,61 +32106,61 @@
         }
       }
     },
-    "Without an account, you can send a few new goals a day. Create a free account to keep going." : {
-      "comment" : "A guest sent as many goals as allowed today",
+    "Without an account, you study one goal. Create a free account to start another." : {
+      "comment" : "A guest can't start another goal",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ohne Konto kannst du jeden Tag einige neue Ziele eingeben. Erstelle ein kostenloses Konto, um weiterzumachen."
+            "value" : "Ohne Konto kannst du ein Ziel verfolgen. Erstell ein kostenloses Konto, um ein weiteres zu starten."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sin una cuenta, puedes enviar unos cuantos objetivos nuevos al día. Crea una cuenta gratis para seguir avanzando."
+            "value" : "Sin una cuenta, solo puedes estudiar un objetivo. Con una cuenta gratis, puedes crear otro."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sans compte, tu peux envoyer quelques nouveaux objectifs par jour. Crée un compte gratuit pour continuer."
+            "value" : "Sans compte, tu peux suivre un seul objectif. Crée un compte gratuit pour en commencer un autre."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Senza un account puoi inviare qualche nuovo obiettivo al giorno. Crea un account gratuito per continuare."
+            "value" : "Senza un account puoi seguire un solo obiettivo. Crea un account gratuito per iniziarne un altro."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "アカウントなしで送れる新しい目標は1日に数件までです。続けるには無料アカウントを作成してください。"
+            "value" : "アカウントなしで進められる目標は1つです。別の目標を始めるには無料アカウントを作成してください。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "계정이 없으면 하루에 새 목표를 몇 개만 보낼 수 있어요. 계속하려면 무료 계정을 만드세요."
+            "value" : "계정이 없으면 목표 하나만 공부할 수 있어요. 다른 목표를 시작하려면 무료 계정을 만들어 보세요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bez konta możesz wysłać kilka nowych celów dziennie. Załóż bezpłatne konto, by kontynuować."
+            "value" : "Bez konta możesz realizować jeden cel. Utwórz bezpłatne konto, żeby rozpocząć kolejny."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sem uma conta, você pode enviar alguns objetivos novos por dia. Crie uma conta grátis para continuar."
+            "value" : "Sem conta, você estuda um objetivo por vez. Crie uma conta grátis para começar outro."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hesap açmadan günde birkaç yeni hedef gönderebilirsin. Devam etmek için ücretsiz bir hesap oluştur."
+            "value" : "Hesap olmadan tek bir hedef üzerinde çalışabilirsin. Başka bir hedefe başlamak için ücretsiz hesap oluştur."
           }
         }
       }
@@ -32814,124 +33581,6 @@
         }
       }
     },
-    "You're following as many goals as the free plan allows. To make room for another, pause one from the menu on your Plan. Quick questions work anytime." : {
-      "comment" : "Said before typing a goal when the learner follows as many goals at once as the free plan allows; it's about goals followed at the same time, not new goals started per day or month. Pausing a goal keeps its progress",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du verfolgst schon so viele Ziele gleichzeitig, wie der kostenlose Tarif erlaubt. Um Platz für ein weiteres Ziel zu machen, pausier ein Ziel über das Menü in deinem Plan. Kurze Fragen kannst du jederzeit stellen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ya tienes el máximo de objetivos activos que permite el plan gratis. Para hacerle espacio a otro, pausa uno desde el menú de tu Plan. Puedes hacer preguntas rápidas en cualquier momento."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu suis déjà autant d’objectifs que la formule gratuite le permet. Pour faire de la place à un autre, mets-en un en pause depuis le menu de ton Plan. Tu peux poser des questions rapides à tout moment."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stai già seguendo il numero massimo di obiettivi consentito dalla formula Free. Per fare spazio a un altro, mettine uno in pausa dal menu del tuo Piano. Puoi fare domande rapide in qualsiasi momento."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "無料プランで同時に進められる目標の上限に達しています。新しい目標を始めるには、学習計画のメニューからいずれかの目標を一時停止してください。ちょっとした質問はいつでもできます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "무료 요금제에서 동시에 진행할 수 있는 목표 수를 모두 채웠어요. 새 목표를 시작하려면 계획 화면의 메뉴에서 목표 하나를 일시 중지하세요. 간단한 질문은 언제든 할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Realizujesz już tyle celów naraz, ile pozwala pakiet Free. Aby zrobić miejsce na kolejny, wstrzymaj jeden z nich w menu na ekranie Plan. Szybkie pytania możesz zadawać w każdej chwili."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você já tem o máximo de objetivos ativos que o plano grátis permite. Para abrir espaço para outro, pause um deles pelo menu do seu Plano. Você pode fazer perguntas rápidas a qualquer hora."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ücretsiz pakette aynı anda takip edebileceğin hedef sayısına ulaştın. Yeni bir hedefe yer açmak için Plan sayfandaki menüden hedeflerinden birini duraklat. Kısa sorularını istediğin zaman sorabilirsin."
-          }
-        }
-      }
-    },
-    "You're following as many goals as the free plan allows. To make room for another, pause one of your goals from the menu on your Plan, or get Plus." : {
-      "comment" : "A free learner follows as many goals at once as the free plan allows; it's about goals followed at the same time, not new goals started per day or month. Pausing a goal keeps its progress. Plus is the subscription's name, not \"more\"",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du verfolgst schon so viele Ziele gleichzeitig, wie der kostenlose Tarif erlaubt. Um Platz für ein weiteres Ziel zu machen, pausier eines deiner Ziele über das Menü in deinem Plan oder hol dir Plus."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ya tienes el máximo de objetivos activos que permite el plan gratis. Para hacerle espacio a otro, pausa uno de tus objetivos desde el menú de tu Plan u obtén Plus."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu suis déjà autant d’objectifs que la formule gratuite le permet. Pour faire de la place à un autre, mets l’un de tes objectifs en pause depuis le menu de ton Plan, ou passe à Plus."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stai già seguendo il numero massimo di obiettivi consentito dalla formula Free. Per fare spazio a un altro, metti in pausa uno dei tuoi obiettivi dal menu del tuo Piano, oppure passa a Plus."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "無料プランで同時に進められる目標の上限に達しています。新しい目標を始めるには、学習計画のメニューからいずれかの目標を一時停止するか、Plusに登録してください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "무료 요금제에서 동시에 진행할 수 있는 목표 수를 모두 채웠어요. 새 목표를 시작하려면 계획 화면의 메뉴에서 목표 하나를 일시 중지하거나 Plus를 구독하세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Realizujesz już tyle celów naraz, ile pozwala pakiet Free. Aby zrobić miejsce na kolejny, wstrzymaj jeden ze swoich celów w menu na ekranie Plan lub przejdź na Plus."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você já tem o máximo de objetivos ativos que o plano grátis permite. Para abrir espaço para outro, pause um dos seus objetivos pelo menu do seu Plano ou assine o Plus."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ücretsiz pakette aynı anda takip edebileceğin hedef sayısına ulaştın. Yeni bir hedefe yer açmak için Plan sayfandaki menüden hedeflerinden birini duraklat ya da Plus’a geç."
-          }
-        }
-      }
-    },
     "You're on the list. We'll let you know when lessons for playing are ready." : {
       "comment" : "After joining the instrument waitlist",
       "localizations" : {
@@ -33046,773 +33695,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kısa sürede çok hedefe başladın. Birkaç dakika sonra tekrar dene."
-          }
-        }
-      }
-    },
-    "You've added as much material as the free plan allows this month. Try again next month, or get Plus to keep going now." : {
-      "comment" : "A free learner added as much material as allowed this month",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du hast diesen Monat so viel Material hinzugefügt, wie der Free-Tarif erlaubt. Versuch es nächsten Monat noch einmal oder hol dir Plus, um jetzt weiterzumachen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ya agregaste todo el material que permite el plan gratis este mes. Vuelve a intentarlo el próximo mes u obtén Plus para seguir ahora."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as atteint la limite de documents de la formule gratuite pour ce mois-ci. Réessaie le mois prochain ou passe à Plus pour continuer dès maintenant."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai raggiunto il limite di materiale che puoi aggiungere questo mese con la formula Free. Riprova il mese prossimo o passa a Plus per continuare subito."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "無料プランで今月追加できる資料の上限に達しました。来月もう一度お試しください。Plusに登録すれば、今すぐ続けられます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "무료 요금제의 이번 달 자료 추가 한도를 다 썼어요. 다음 달에 다시 시도해 보세요. Plus를 구독하면 지금 계속할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wykorzystano miesięczny limit dodawania materiałów w pakiecie Free. Spróbuj ponownie w przyszłym miesiącu lub przejdź na Plus, by kontynuować już teraz."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você atingiu o limite de material do plano Grátis para este mês. Tente de novo no mês que vem ou assine o Plus para continuar agora."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ücretsiz paketin bu ayki materyal ekleme sınırına ulaştın. Gelecek ay tekrar dene veya hemen devam etmek için Plus’a geç."
-          }
-        }
-      }
-    },
-    "You've added as much material as the free plan allows today. Try again tomorrow, or get Plus to keep going now." : {
-      "comment" : "A free learner added as much material as allowed today",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du hast heute so viel Material hinzugefügt, wie der Free-Tarif erlaubt. Versuch es morgen noch einmal oder hol dir Plus, um jetzt weiterzumachen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ya agregaste todo el material que permite el plan gratis hoy. Vuelve a intentarlo mañana u obtén Plus para seguir ahora."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as atteint la limite de documents de la formule gratuite pour aujourd’hui. Réessaie demain ou passe à Plus pour continuer dès maintenant."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai raggiunto il limite di materiale che puoi aggiungere oggi con la formula Free. Riprova domani o passa a Plus per continuare subito."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "無料プランで今日追加できる資料の上限に達しました。明日もう一度お試しください。Plusに登録すれば、今すぐ続けられます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "무료 요금제의 오늘 자료 추가 한도를 다 썼어요. 내일 다시 시도해 보세요. Plus를 구독하면 지금 계속할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wykorzystano dzienny limit dodawania materiałów w pakiecie Free. Spróbuj ponownie jutro lub przejdź na Plus, by kontynuować już teraz."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você atingiu o limite de material do plano Grátis para hoje. Tente de novo amanhã ou assine o Plus para continuar agora."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ücretsiz paketin bugünkü materyal ekleme sınırına ulaştın. Yarın tekrar dene veya hemen devam etmek için Plus’a geç."
-          }
-        }
-      }
-    },
-    "You've added as much material as your plan allows today. Try again tomorrow." : {
-      "comment" : "A Plus learner added as much material as allowed today",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du hast heute so viel Material hinzugefügt, wie dein Tarif erlaubt. Versuch es morgen noch einmal."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ya agregaste el máximo de material que permite tu plan hoy. Inténtalo de nuevo mañana."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as atteint la limite de documents de ta formule pour aujourd’hui. Réessaie demain."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai raggiunto il limite di materiale che puoi aggiungere oggi con la tua formula. Riprova domani."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "利用中のプランで今日追加できる資料の上限に達しました。明日もう一度お試しください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이용 중인 요금제의 오늘 자료 추가 한도를 다 썼어요. 내일 다시 시도해 보세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wykorzystano dzienny limit dodawania materiałów w twoim pakiecie. Spróbuj ponownie jutro."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você atingiu o limite de material do seu plano para hoje. Tente de novo amanhã."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Paketinin bugünkü materyal ekleme sınırına ulaştın. Yarın tekrar dene."
-          }
-        }
-      }
-    },
-    "You've asked as many new questions as the free plan allows this month. Try again next month, or get Plus to keep going now." : {
-      "comment" : "A free learner asked as many quick questions as allowed this month",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du hast diesen Monat so viele neue Fragen gestellt, wie der Free-Tarif erlaubt. Versuch es nächsten Monat noch einmal oder hol dir Plus, um jetzt weiterzumachen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ya hiciste todas las preguntas nuevas que permite el plan gratis este mes. Vuelve a intentarlo el próximo mes u obtén Plus para seguir ahora."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as atteint la limite de nouvelles questions de la formule gratuite pour ce mois-ci. Réessaie le mois prochain ou passe à Plus pour continuer dès maintenant."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai raggiunto il limite mensile di nuove domande della formula Free. Riprova il mese prossimo o passa a Plus per continuare subito."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今月の新しい質問の数が無料プランの上限に達しました。来月もう一度お試しください。Plusに登録すれば、今すぐ続けられます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "무료 요금제의 이번 달 새 질문 한도를 다 썼어요. 다음 달에 다시 시도해 보세요. Plus를 구독하면 지금 계속할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wykorzystano miesięczny limit nowych pytań w pakiecie Free. Spróbuj ponownie w przyszłym miesiącu lub przejdź na Plus, by kontynuować już teraz."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você atingiu o limite de perguntas novas do plano Grátis para este mês. Tente de novo no mês que vem ou assine o Plus para continuar agora."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ücretsiz paketin bu ayki yeni soru sorma sınırına ulaştın. Gelecek ay tekrar dene veya hemen devam etmek için Plus’a geç."
-          }
-        }
-      }
-    },
-    "You've asked as many new questions as the free plan allows today. Try again tomorrow, or get Plus to keep going now." : {
-      "comment" : "A free learner asked as many quick questions as allowed today",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du hast heute so viele neue Fragen gestellt, wie der Free-Tarif erlaubt. Versuch es morgen noch einmal oder hol dir Plus, um jetzt weiterzumachen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ya hiciste todas las preguntas nuevas que permite el plan gratis hoy. Vuelve a intentarlo mañana u obtén Plus para seguir ahora."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as atteint la limite de nouvelles questions de la formule gratuite pour aujourd’hui. Réessaie demain ou passe à Plus pour continuer dès maintenant."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai raggiunto il limite giornaliero di nuove domande della formula Free. Riprova domani o passa a Plus per continuare subito."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今日の新しい質問の数が無料プランの上限に達しました。明日もう一度お試しください。Plusに登録すれば、今すぐ続けられます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "무료 요금제의 오늘 새 질문 한도를 다 썼어요. 내일 다시 시도해 보세요. Plus를 구독하면 지금 계속할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wykorzystano dzienny limit nowych pytań w pakiecie Free. Spróbuj ponownie jutro lub przejdź na Plus, by kontynuować już teraz."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você atingiu o limite de perguntas novas do plano Grátis para hoje. Tente de novo amanhã ou assine o Plus para continuar agora."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ücretsiz paketin bugünkü yeni soru sorma sınırına ulaştın. Yarın tekrar dene veya hemen devam etmek için Plus’a geç."
-          }
-        }
-      }
-    },
-    "You've asked as many questions as the free plan allows this month. Ask again next month, or get Plus to keep going now." : {
-      "comment" : "A free learner asked as many material questions as allowed this month",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du hast diesen Monat so viele Fragen gestellt, wie der Free-Tarif erlaubt. Frag nächsten Monat noch einmal oder hol dir Plus, um jetzt weiterzumachen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ya hiciste todas las preguntas que permite el plan gratis este mes. Vuelve a preguntar el próximo mes u obtén Plus para seguir ahora."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as atteint la limite de questions de la formule gratuite pour ce mois-ci. Pose d’autres questions le mois prochain ou passe à Plus pour continuer dès maintenant."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai raggiunto il limite mensile di domande della formula Free. Fai altre domande il mese prossimo o passa a Plus per continuare subito."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今月の質問回数が無料プランの上限に達しました。来月また質問してください。Plusに登録すれば、今すぐ続けられます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "무료 요금제의 이번 달 질문 한도를 다 썼어요. 다음 달에 다시 질문해 보세요. Plus를 구독하면 지금 계속할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wykorzystano miesięczny limit pytań w pakiecie Free. Zapytaj ponownie w przyszłym miesiącu lub przejdź na Plus, by kontynuować już teraz."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você atingiu o limite de perguntas do plano Grátis para este mês. Pergunte de novo no mês que vem ou assine o Plus para continuar agora."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ücretsiz paketin bu ayki soru sorma sınırına ulaştın. Gelecek ay tekrar soru sor veya hemen devam etmek için Plus’a geç."
-          }
-        }
-      }
-    },
-    "You've asked as many questions as the free plan allows today. Ask again tomorrow, or get Plus to keep going now." : {
-      "comment" : "A free learner asked as many material questions as allowed today",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du hast heute so viele Fragen gestellt, wie der Free-Tarif erlaubt. Frag morgen noch einmal oder hol dir Plus, um jetzt weiterzumachen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ya hiciste todas las preguntas que permite el plan gratis hoy. Vuelve a preguntar mañana u obtén Plus para seguir ahora."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as atteint la limite de questions de la formule gratuite pour aujourd’hui. Pose d’autres questions demain ou passe à Plus pour continuer dès maintenant."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai raggiunto il limite giornaliero di domande della formula Free. Fai altre domande domani o passa a Plus per continuare subito."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今日の質問回数が無料プランの上限に達しました。明日また質問してください。Plusに登録すれば、今すぐ続けられます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "무료 요금제의 오늘 질문 한도를 다 썼어요. 내일 다시 질문해 보세요. Plus를 구독하면 지금 계속할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wykorzystano dzienny limit pytań w pakiecie Free. Zapytaj ponownie jutro lub przejdź na Plus, by kontynuować już teraz."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você atingiu o limite de perguntas do plano Grátis para hoje. Pergunte de novo amanhã ou assine o Plus para continuar agora."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ücretsiz paketin bugünkü soru sorma sınırına ulaştın. Yarın tekrar soru sor veya hemen devam etmek için Plus’a geç."
-          }
-        }
-      }
-    },
-    "You've asked as many questions as your plan allows today." : {
-      "comment" : "A Plus learner asked as many material questions as allowed today",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du hast heute so viele Fragen gestellt, wie dein Tarif erlaubt."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ya hiciste el máximo de preguntas que permite tu plan hoy."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as atteint la limite de questions de ta formule pour aujourd’hui."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai raggiunto il limite giornaliero di domande della tua formula."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今日の質問回数が利用中のプランの上限に達しました。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이용 중인 요금제의 오늘 질문 한도를 다 썼어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wykorzystano dzienny limit pytań w twoim pakiecie."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você atingiu o limite de perguntas do seu plano para hoje."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Paketinin bugünkü soru sorma sınırına ulaştın."
-          }
-        }
-      }
-    },
-    "You've sent as many new goals as the free plan allows this month. Try again next month, or get Plus to keep going now." : {
-      "comment" : "A free learner sent as many goals as allowed this month",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du hast diesen Monat so viele neue Ziele gesendet, wie der Free-Tarif erlaubt. Versuch es nächsten Monat noch einmal oder hol dir Plus, um jetzt weiterzumachen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ya enviaste el máximo de objetivos nuevos que permite el plan gratis este mes. Vuelve a intentarlo el próximo mes u obtén Plus para seguir ahora."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as atteint la limite de nouveaux objectifs à envoyer avec la formule gratuite pour ce mois-ci. Réessaie le mois prochain ou passe à Plus pour continuer dès maintenant."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai inviato il numero massimo di nuovi obiettivi consentito dalla formula Free per questo mese. Riprova il mese prossimo o passa a Plus per continuare subito."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "無料プランで今月送れる新しい目標の上限に達しました。来月もう一度お試しください。Plusに登録すれば、今すぐ続けられます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "무료 요금제로 이번 달에 보낼 수 있는 새 목표 수를 다 채웠어요. 다음 달에 다시 시도해 보세요. Plus를 구독하면 지금 계속할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wykorzystano miesięczny limit wysyłania nowych celów w pakiecie Free. Spróbuj ponownie w przyszłym miesiącu lub przejdź na Plus, by kontynuować już teraz."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você atingiu o limite de novos objetivos enviados do plano Grátis para este mês. Tente de novo no mês que vem ou assine o Plus para continuar agora."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ücretsiz paketin bu ayki yeni hedef gönderme sınırına ulaştın. Gelecek ay tekrar dene veya hemen devam etmek için Plus’a geç."
-          }
-        }
-      }
-    },
-    "You've sent as many new goals as the free plan allows today. Try again tomorrow, or get Plus to keep going now." : {
-      "comment" : "A free learner sent as many goals as allowed today",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du hast heute so viele neue Ziele gesendet, wie der Free-Tarif erlaubt. Versuch es morgen noch einmal oder hol dir Plus, um jetzt weiterzumachen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ya enviaste el máximo de objetivos nuevos que permite el plan gratis hoy. Vuelve a intentarlo mañana u obtén Plus para seguir ahora."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as atteint la limite de nouveaux objectifs à envoyer avec la formule gratuite pour aujourd’hui. Réessaie demain ou passe à Plus pour continuer dès maintenant."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai inviato il numero massimo di nuovi obiettivi consentito dalla formula Free per oggi. Riprova domani o passa a Plus per continuare subito."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "無料プランで今日送れる新しい目標の上限に達しました。明日もう一度お試しください。Plusに登録すれば、今すぐ続けられます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "무료 요금제로 오늘 보낼 수 있는 새 목표 수를 다 채웠어요. 내일 다시 시도해 보세요. Plus를 구독하면 지금 계속할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wykorzystano dzienny limit wysyłania nowych celów w pakiecie Free. Spróbuj ponownie jutro lub przejdź na Plus, by kontynuować już teraz."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você atingiu o limite de novos objetivos enviados do plano Grátis para hoje. Tente de novo amanhã ou assine o Plus para continuar agora."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ücretsiz paketin bugünkü yeni hedef gönderme sınırına ulaştın. Yarın tekrar dene veya hemen devam etmek için Plus’a geç."
-          }
-        }
-      }
-    },
-    "You've sent as many new goals as your plan allows today. Try again tomorrow." : {
-      "comment" : "A Plus learner sent as many goals as allowed today",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du hast heute so viele neue Ziele gesendet, wie dein Tarif erlaubt. Versuch es morgen noch einmal."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ya enviaste el máximo de objetivos nuevos que permite tu plan hoy. Inténtalo de nuevo mañana."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as atteint la limite de nouveaux objectifs à envoyer avec ta formule pour aujourd’hui. Réessaie demain."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai inviato il numero massimo di nuovi obiettivi consentito dalla tua formula per oggi. Riprova domani."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "利用中のプランで今日送れる新しい目標の上限に達しました。明日もう一度お試しください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이용 중인 요금제로 오늘 보낼 수 있는 새 목표 수를 다 채웠어요. 내일 다시 시도해 보세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wykorzystano dzienny limit wysyłania nowych celów w twoim pakiecie. Spróbuj ponownie jutro."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você atingiu o limite de novos objetivos enviados do seu plano para hoje. Tente de novo amanhã."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Paketinin bugünkü yeni hedef gönderme sınırına ulaştın. Yarın tekrar dene."
-          }
-        }
-      }
-    },
-    "You've started as many new goals as the free plan allows this month. Try again next month, or get Plus to keep going now." : {
-      "comment" : "A free learner started as many goals as allowed this month",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du hast diesen Monat so viele neue Ziele gestartet, wie der Free-Tarif erlaubt. Versuch es nächsten Monat noch einmal oder hol dir Plus, um jetzt weiterzumachen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ya creaste el máximo de objetivos nuevos que permite el plan gratis este mes. Vuelve a intentarlo el próximo mes u obtén Plus para seguir ahora."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as atteint la limite de nouveaux objectifs à commencer avec la formule gratuite pour ce mois-ci. Réessaie le mois prochain ou passe à Plus pour continuer dès maintenant."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai iniziato il numero massimo di nuovi obiettivi consentito dalla formula Free per questo mese. Riprova il mese prossimo o passa a Plus per continuare subito."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "無料プランで今月始められる新しい目標の上限に達しました。来月もう一度お試しください。Plusに登録すれば、今すぐ続けられます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "무료 요금제로 이번 달에 시작할 수 있는 새 목표 수를 다 채웠어요. 다음 달에 다시 시도해 보세요. Plus를 구독하면 지금 계속할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wykorzystano miesięczny limit nowych celów, które możesz zacząć realizować w pakiecie Free. Spróbuj ponownie w przyszłym miesiącu lub przejdź na Plus, by kontynuować już teraz."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você atingiu o limite de novos objetivos que pode começar no plano Grátis este mês. Tente de novo no mês que vem ou assine o Plus para continuar agora."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ücretsiz paketin bu ayki yeni hedefe başlama sınırına ulaştın. Gelecek ay tekrar dene veya hemen devam etmek için Plus’a geç."
-          }
-        }
-      }
-    },
-    "You've started as many new goals as your plan allows today. Try again tomorrow." : {
-      "comment" : "The learner started as many goals as allowed today",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du hast heute so viele neue Ziele gestartet, wie dein Tarif erlaubt. Versuch es morgen noch einmal."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ya creaste el máximo de objetivos nuevos que permite tu plan hoy. Inténtalo de nuevo mañana."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as atteint la limite de nouveaux objectifs à commencer avec ta formule pour aujourd’hui. Réessaie demain."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai iniziato il numero massimo di nuovi obiettivi consentito dalla tua formula per oggi. Riprova domani."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "利用中のプランで今日始められる新しい目標の上限に達しました。明日もう一度お試しください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이용 중인 요금제로 오늘 시작할 수 있는 새 목표 수를 다 채웠어요. 내일 다시 시도해 보세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wykorzystano dzienny limit nowych celów, które możesz zacząć realizować w twoim pakiecie. Spróbuj ponownie jutro."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você atingiu o limite de novos objetivos que pode começar no seu plano hoje. Tente de novo amanhã."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Paketinin bugünkü yeni hedefe başlama sınırına ulaştın. Yarın tekrar dene."
           }
         }
       }

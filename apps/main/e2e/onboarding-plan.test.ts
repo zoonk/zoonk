@@ -39,7 +39,7 @@ test.describe("Placement and the plan", () => {
     await page.getByRole("button", { name: "I don't know yet" }).click();
     await expect(page.getByText("Question 3", { exact: true })).toBeVisible();
 
-    const stop = page.getByRole("button", { exact: true, name: "Stop" });
+    const stop = page.getByRole("button", { name: "Stop and use my answers" });
     await expect(stop).toBeEnabled();
     await stop.click();
 
@@ -248,7 +248,7 @@ test("an exam's plan waits on the reveal while its notice is read, then shows on
   await page.clock.runFor(1);
 
   await expect(
-    page.getByRole("heading", { level: 1, name: "Reading your exam's official documents" }),
+    page.getByRole("heading", { level: 1, name: "Reading the exam's official documents" }),
   ).toBeVisible();
 
   await expect(page.getByRole("button", { exact: true, name: "Start" })).toHaveCount(0);
@@ -263,7 +263,7 @@ test("an exam's plan waits on the reveal while its notice is read, then shows on
   await page.clock.runFor(1);
 
   await expect(
-    page.getByRole("heading", { name: "Reading your exam's official documents" }),
+    page.getByRole("heading", { name: "Reading the exam's official documents" }),
   ).toBeVisible();
 
   await prisma.plan.update({ data: { noticeWaitUntil: null }, where: { goalId: goal.id } });

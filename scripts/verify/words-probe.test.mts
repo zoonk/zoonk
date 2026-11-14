@@ -2,10 +2,18 @@
 import assert from "node:assert/strict";
 import { afterEach, beforeEach, describe, it, vi } from "vitest";
 import { installPageHelpers } from "./page-helpers.mts";
-import { pageKind, placeFindings, readWords, summarizeWords, titleTopFindings } from "./words.mts";
+import {
+  pageKind,
+  pageTopComparisons,
+  placeFindings,
+  readWords,
+  summarizeWords,
+  titleTopFindings,
+} from "./words.mts";
 
 const CONTROL_HEIGHT = 44;
 const BAR_HEIGHT = 65;
+const TALL_BAR_HEIGHT = 85;
 const TITLE_TOP = 101;
 const HEADER_TOP = 4;
 
@@ -143,5 +151,33 @@ describe("reading an app title's top", () => {
 
       assert.equal(readWords().titleTop, null);
     }
+  });
+});
+
+describe("page tops across a run", () => {
+  it("detects differing bars even when each title matches its own bar", () => {
+    const loads = [BAR_HEIGHT, TALL_BAR_HEIGHT].map((height, index) => {
+      document.body.innerHTML = `<main><div data-slot="page-top-bar"></div><header style="padding-top:4px"><h1 data-top="${height + HEADER_TOP}">Page</h1></header></main>`;
+
+      vi.spyOn(Element.prototype, "getBoundingClientRect").mockImplementation(function measured(
+        this: HTMLElement,
+      ) {
+        return new DOMRect(
+          0,
+          Number(this.dataset.top ?? 0),
+          100,
+          this.dataset.slot === "page-top-bar" ? height : CONTROL_HEIGHT,
+        );
+      });
+
+      const words = summarizeWords(readWords(), "app");
+      assert.deepEqual(titleTopFindings(words), []);
+      return { path: `/page-${index}`, viewport: "phone", words };
+    });
+
+    assert.equal(pageTopComparisons(loads).length, 1);
+    const first = loads[0];
+    assert.ok(first);
+    assert.deepEqual(pageTopComparisons([first, { ...first, viewport: "laptop" }]), []);
   });
 });

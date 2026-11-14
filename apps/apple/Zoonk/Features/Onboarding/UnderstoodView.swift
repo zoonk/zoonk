@@ -322,6 +322,7 @@ private struct UnderstoodCard: View {
 }
 
 /// A guest's next step is a free account, which follows more goals at once; an account's is Plus.
+/// Main's note under the goals a card can't start yet: the gate, in place.
 private struct LockedGoalsNote: View {
   let count: Int
   let isGuest: Bool
@@ -331,60 +332,54 @@ private struct LockedGoalsNote: View {
 
   var body: some View {
     if !isGuest {
-      PlusNotice(description: plusDescription, showsSeePlus: offersRemedy)
-    } else if offersRemedy {
-      PlusNotice(title: guestTitle, description: guestDescription, showsSeePlus: false) {
-        Button {
-          router.present(.signIn)
-        } label: {
-          Text(
-            "Create a free account", tableName: "Onboarding",
-            comment: "Opens sign-up; a guest's plan and progress come with them")
-        }
+      if offersRemedy {
+        SubscribeGate(title: subscriberTitle, line: pauseLine)
+      } else {
+        GateWords(title: subscriberTitle, line: pauseLine)
       }
     } else {
-      PlusNotice(title: guestTitle, description: guestDescription, showsSeePlus: false)
+      VStack(alignment: .leading, spacing: 8) {
+        GateWords(title: guestTitle)
+
+        if offersRemedy {
+          Button {
+            router.present(.signIn)
+          } label: {
+            Text(
+              "Create a free account", tableName: "Onboarding",
+              comment: "Opens sign-up; a guest's plan and progress come with them")
+          }
+          .buttonStyle(.outline)
+          .controlSize(.small)
+        }
+      }
     }
   }
 
-  private var plusDescription: Text {
+  private var subscriberTitle: Text {
+    Text(
+      "More goals at once need a subscription", tableName: "Onboarding",
+      comment:
+        "Over the goals a card can't start yet, because the learner studies as many goals at once as their plan allows; they wait in their goal list"
+    )
+  }
+
+  private var pauseLine: Text {
     count == 1
       ? Text(
-        "Following more goals at once comes with Plus. Until then, this goal waits in your goals.",
-        tableName: "Onboarding",
-        comment:
-          "Under the one goal the free plan can't follow yet, because the learner follows as many goals at once as it allows; the goal waits in their goal list. It's about goals followed at the same time, not new goals started per day or month. Plus is the subscription's name, not \"more\""
-      )
+        "Pause another goal to start this one.", tableName: "Onboarding",
+        comment: "Under the one goal a card can't start yet; pausing a goal keeps its progress")
       : Text(
-        "Following more goals at once comes with Plus. Until then, these goals wait in your goals.",
-        tableName: "Onboarding",
-        comment:
-          "Under the goals the free plan can't follow yet, because the learner follows as many goals at once as it allows; they wait in their goal list. It's about goals followed at the same time, not new goals started per day or month. Plus is the subscription's name, not \"more\""
-      )
+        "Pause another goal to start these.", tableName: "Onboarding",
+        comment: "Under the goals a card can't start yet; pausing a goal keeps its progress")
   }
 
   private var guestTitle: Text {
     Text(
-      "Available with a free account", tableName: "Onboarding",
+      "More goals at once come with a free account", tableName: "Onboarding",
       comment:
-        "Title of the note under the goals of a card a guest can't start yet, because without an account they follow one goal at a time. A free account is a signed-up account on the free plan, not the paid plan"
+        "Over the goals a card a guest can't start yet: without an account they study one goal at a time; the goals wait and come with them when they sign up"
     )
-  }
-
-  private var guestDescription: Text {
-    count == 1
-      ? Text(
-        "Following more goals at once comes with a free account. Until then, this goal waits in your goals.",
-        tableName: "Onboarding",
-        comment:
-          "Under the one goal a guest can't start yet, because without an account they follow one goal at a time; a free account (signed up, on the free plan, not the paid plan) follows more. It's about goals followed at the same time, not new goals started per day or month. The goal waits in their goal list and comes with them when they create the account"
-      )
-      : Text(
-        "Following more goals at once comes with a free account. Until then, these goals wait in your goals.",
-        tableName: "Onboarding",
-        comment:
-          "Under the goals a guest can't start yet, because without an account they follow one goal at a time; a free account (signed up, on the free plan, not the paid plan) follows more. It's about goals followed at the same time, not new goals started per day or month. The goals wait in their goal list and come with them when they create the account"
-      )
   }
 }
 

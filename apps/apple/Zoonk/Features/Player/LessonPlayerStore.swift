@@ -66,7 +66,7 @@ final class LessonPlayerStore {
   private let fromCatalog: Bool
   private(set) var screen = Screen.loading
   private(set) var writingProgress = GenerationWait(kind: .lesson).started
-  private var writingKind = GenerationWait.Kind.lesson
+  private(set) var writingKind = GenerationWait.Kind.lesson
   private var progressRun: String?
   private(set) var warmUp: WarmUp?
   /// What's ready to do while the lesson is written, or instead of it.
@@ -487,7 +487,7 @@ final class LessonPlayerStore {
 
     leaveOutUnplayable(&state)
 
-    // "Can't write now" lasts the rest of the learner's day on this device.
+    // "Skip writing questions today" lasts the rest of the learner's day on this device.
     if choices.isChosenToday(.cantWrite) {
       state.skipWriting(opening: true)
     }

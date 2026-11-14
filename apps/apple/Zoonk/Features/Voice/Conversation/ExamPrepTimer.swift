@@ -60,7 +60,7 @@ struct ExamPrepTimer: View {
     return TimelineView(.explicit([start, deadline])) { context in
       if context.date >= deadline {
         Text(
-          "Preparation time is over. Start the call when you're ready.", tableName: "Voice",
+          "Preparation time is over.", tableName: "Voice",
           comment: "The preparation clock ran out"
         )
         .typeStyle(.note)
@@ -74,18 +74,9 @@ struct ExamPrepTimer: View {
   }
 
   private var prepLine: String {
-    let time = Self.duration(minutes: task.prepMinutes)
-
-    guard let shared = task.prepShared else {
-      return String(
-        localized: "The exam gives \(time) to prepare with the card.", table: "Voice",
-        comment: "How long the exam gives to prepare this task")
-    }
-
-    return String(
-      localized:
-        "The exam gives \(Self.duration(minutes: shared.minutes)) to prepare tasks \(shared.tasks.map(String.init).formatted(.list(type: .and))) together, about \(time) for this one.",
-      table: "Voice", comment: "Preparation time several exam tasks share, and this task's part")
+    String(
+      localized: "\(Self.duration(minutes: task.prepMinutes)), as in the exam", table: "Voice",
+      comment: "How long the exam gives to prepare this task, such as \"1 minute, as in the exam\"")
   }
 
   private static func duration(minutes: Double) -> String {
