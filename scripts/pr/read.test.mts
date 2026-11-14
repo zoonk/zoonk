@@ -6,7 +6,13 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, it } from "vitest";
 import { checkPictures } from "./check.mts";
-import { type CaptureItem, readManifest, readOf } from "./media.mts";
+import {
+  type CaptureItem,
+  type ManifestItem,
+  readManifest,
+  readOf,
+  registerItems,
+} from "./media.mts";
 import { parseFindings, recordReads } from "./read.mts";
 
 /** A repository whose HEAD built two pictures with the same bytes, nobody's read yet. */
@@ -119,6 +125,54 @@ describe("recording a read", () => {
       result.problems.map(({ kind }) => kind),
       ["finding"],
     );
+  });
+
+  it("keeps a picture's read and findings when it is registered again", async () => {
+    const root = mkdtempSync(join(tmpdir(), "pr-media-register-"));
+    const folder = join(root, "native");
+    mkdirSync(folder);
+    writeFileSync(join(folder, "after.png"), "an android screen");
+    const sha256 = createHash("sha256").update("an android screen").digest("hex");
+
+    const pending: ManifestItem = {
+      file: "after.png",
+      kind: "shot",
+      platform: "android",
+      sha256,
+      side: "after",
+    };
+
+    await registerItems(folder, [pending]);
+
+    const entries =
+      parseFindings([{ file: "native/after.png", text: "The note sits under the status" }]) ?? [];
+
+    await recordReads({ by: "reader", entries, root });
+    await registerItems(folder, [pending]);
+
+    const [item] = (await readManifest(folder)) ?? [];
+
+    assert.deepEqual(item && readOf(item)?.findings.map(({ text }) => text), [
+      "The note sits under the status",
+    ]);
+  });
+
+  it("never replaces a capture's record with one registered by hand", async () => {
+    const { folder } = twoEqualPictures();
+    const [first] = (await readManifest(folder)) ?? [];
+
+    const pending: ManifestItem = {
+      file: "first.png",
+      kind: "shot",
+      platform: "android",
+      sha256: "other",
+      side: "after",
+    };
+
+    await registerItems(folder, [pending]);
+    const items = (await readManifest(folder)) ?? [];
+
+    assert.deepEqual(items[0], first);
   });
 
   it("refuses a read with no reader's name", async () => {

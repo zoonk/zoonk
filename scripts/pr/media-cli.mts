@@ -9,7 +9,6 @@ import {
   type Finding,
   type FindingState,
   MANIFEST,
-  type ManifestItem,
   NATIVE_PLATFORMS,
   PLATFORMS,
   SIDES,
@@ -17,6 +16,7 @@ import {
   pathWithin,
   readManifest,
   readOf,
+  registerItems,
   writeManifest,
 } from "./media.mts";
 import { resolveCommit, sha256File } from "./provenance.mts";
@@ -223,12 +223,6 @@ async function hashPictures(files: string[], to: string) {
   );
 }
 
-async function addToManifest(to: string, added: ManifestItem[]) {
-  const files = new Set(added.map((item) => item.file));
-  const kept = ((await readManifest(to)) ?? []).filter((item) => !files.has(item.file));
-  await writeManifest(to, [...kept, ...added]);
-}
-
 /** A capture that recorded these bytes as an after holds them to an after's bar. */
 async function capturedAsAfter(files: string[], to: string): Promise<string[]> {
   const pictures = files.map((file) => resolve(file));
@@ -258,7 +252,7 @@ async function recordPending({ positionals: files, values }: Arguments) {
   await mkdir(to, { recursive: true });
   const pictures = await hashPictures(files, to);
 
-  await addToManifest(
+  await registerItems(
     to,
     pictures.map((picture) => ({ ...picture, platform, side: "after" as const })),
   );
@@ -292,7 +286,7 @@ async function recordBefore({ positionals: files, values }: Arguments) {
   await mkdir(to, { recursive: true });
   const pictures = await hashPictures(files, to);
 
-  await addToManifest(
+  await registerItems(
     to,
     pictures.map((picture) => ({ ...picture, platform, side: "before" as const, source })),
   );
