@@ -454,7 +454,7 @@ extension PlanPhase.Checkpoint {
 }
 
 /// When something on the path comes: a date in the data face, like the phases' ends beside it, and
-/// words in the text face.
+/// words in the text face at the date's size.
 enum PlanWhen: View {
   case date(Text)
   case words(Text)
@@ -462,7 +462,7 @@ enum PlanWhen: View {
   var body: some View {
     switch self {
     case .date(let text): text.typeStyle(.data)
-    case .words(let text): text
+    case .words(let text): text.typeStyle(.meta)
     }
   }
 

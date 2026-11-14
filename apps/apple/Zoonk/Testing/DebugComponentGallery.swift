@@ -61,6 +61,7 @@
           GallerySection(id: "options", title: "Answer options") { Options() }
           GallerySection(id: "fields", title: "Fields") { Fields() }
           GallerySection(id: "mindMaps", title: "Mind map rows") { MindMapRows() }
+          GallerySection(id: "planDates", title: "Plan path dates") { PlanPathDates() }
           GallerySection(id: "charts", title: "Lesson charts") { LessonCharts() }
         }
         .navigationTitle(Text(verbatim: "Design system"))
@@ -555,6 +556,53 @@
       ChapterMindMap(
         chapterId: "debug-\(id)", image: nil, lessonsToWrite: lessons, outline: nil, position: 3,
         saved: false, status: status, subject: nil, title: "Porcentagem e descontos")
+    }
+  }
+
+  /// Each value a date's place on the Plan's path shows: a date in the data face, words in the
+  /// text face at the date's size.
+  private struct PlanPathDates: View {
+    var body: some View {
+      Group {
+        RoadmapPhaseRow(phase: Self.phase(0), when: .today, today: "2026-11-14")
+        RoadmapPhaseRow(phase: Self.phase(1), when: .starts("2027-02-17"), today: "2026-11-14")
+
+        ForEach(Array(Self.challengeDays.enumerated()), id: \.offset) { _, when in
+          PlanChallengeLabel(when: when, explains: false, isLanguage: false)
+        }
+
+        ForEach(Array(Self.finishDays.enumerated()), id: \.offset) { _, when in
+          IconLabeledContent {
+            when
+          } title: {
+            Text(verbatim: "ENEM 2027")
+          } icon: {
+            Image(systemName: "flag")
+          }
+        }
+      }
+    }
+
+    private static let challengeDays: [PlanWhen] = [
+      .date(PlanDate.estimateText("2027-02-16", today: "2026-11-14")),
+      .words(Text(verbatim: "Today")),
+      .words(Text(verbatim: "In your next session")),
+      .words(Text(verbatim: "Won")),
+    ]
+
+    private static let finishDays: [PlanWhen] = [
+      .date(PlanDate.estimateText("2027-11-14", today: "2026-11-14")),
+      .words(Text(verbatim: "Date to be confirmed")),
+    ]
+
+    private static func phase(_ index: Int) -> PlanPhase {
+      let json = """
+        { "challengeLeftOut": false, "chapters": [], "checkpoint": null, "endDate": null,
+          "index": \(index), "kind": "learn", "lessonsDone": 0, "lessonsTotal": 10,
+          "mocks": { "count": 0, "nextDate": null }, "name": "\(index == 0 ? "Foundations" : "Fill the gaps")",
+          "startDate": "2027-02-17", "state": "\(index == 0 ? "current" : "upcoming")" }
+        """
+      return try! JSONDecoder().decode(PlanPhase.self, from: Data(json.utf8))
     }
   }
 
