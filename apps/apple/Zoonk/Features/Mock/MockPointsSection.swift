@@ -7,16 +7,6 @@ struct MockPointsSection: View {
 
   var body: some View {
     Section {
-      if let verdict = points.verdict {
-        Label {
-          Text(verdict.text)
-        } icon: {
-          Image(systemName: verdict.met ? "checkmark" : "xmark")
-        }
-        .typeStyle(.body.weight(.medium))
-        .foregroundStyle(verdict.met ? AnyShapeStyle(.primary) : AnyShapeStyle(.destructiveText))
-      }
-
       ForEach(points.tests, id: \.name) { test in
         LabeledContent {
           Text(test.score)
@@ -62,78 +52,38 @@ struct MockPointsSection: View {
 }
 
 extension MockPoints {
-  var verdict: (met: Bool, text: String)? {
-    let tests = self.tests
-
-    guard tests.contains(where: { $0.met != nil }) else {
-      return nil
-    }
-
+  /// What the result leads with when a test's minimum is missed, instead of the score.
+  var missedMinimum: (title: String, line: String)? {
     guard let first = tests.first, first.met == false, let minimum = first.minimum else {
-      return (
-        true,
-        String(
-          localized: "Meets the objective minimums checked here.", table: "Mock",
-          comment: "A full mock's result reached every minimum it could check")
-      )
+      return nil
     }
 
     let needed = MockLabels.minimum(minimum)
-    let short = MockLabels.points(first.short ?? 0)
-    let score = MockLabels.percent(first.scorePercent)
+    let title =
+      first.name.map {
+        String(localized: "Below the minimum in \($0)", table: "Mock")
+      } ?? String(localized: "Below the minimum for the exam", table: "Mock")
+    let line =
+      minimum.unit == .percent
+      ? String(
+        localized: "At \(MockLabels.percent(first.scorePercent)). It needs \(needed).",
+        table: "Mock",
+        comment: "Under a missed minimum share: the test's share, then the one it needs")
+      : String(
+        localized: "\(MockLabels.points(first.short ?? 0)) short of the \(needed) it needs.",
+        table: "Mock",
+        comment: "Under a missed minimum: the first argument is like '2 points'")
 
-    let text =
-      switch (first.name, minimum.unit) {
-      case (nil, .percent):
-        String(
-          localized:
-            "You'd be eliminated: the objective tests together reach \(score), below the \(needed) they need.",
-          table: "Mock",
-          comment:
-            "Eliminated: the exam's rules disqualify a candidate below this minimum, whatever their total. A full mock missed the objective tests' minimum share"
-        )
-      case (nil, .points):
-        String(
-          localized:
-            "You'd be eliminated: the objective tests together are \(short) short of \(needed).",
-          table: "Mock",
-          comment:
-            "Eliminated: the exam's rules disqualify a candidate below this minimum, whatever their total. A full mock missed the objective tests' minimum; the first argument is like '2 points'"
-        )
-      case (let name?, .percent):
-        String(
-          localized: "You'd be eliminated: \(name) is at \(score), below the \(needed) it needs.",
-          table: "Mock",
-          comment:
-            "Eliminated: the exam's rules disqualify a candidate below this minimum, whatever their total. A full mock missed a test's minimum share"
-        )
-      case (let name?, .points):
-        String(
-          localized: "You'd be eliminated: \(name) is \(short) short of \(needed).", table: "Mock",
-          comment:
-            "Eliminated: the exam's rules disqualify a candidate below this minimum, whatever their total. A full mock missed a test's minimum; the second argument is like '2 points'"
-        )
-      }
-
-    return (false, text)
+    return (title, line)
   }
 
   var projection: String? {
-    if let projected, let max {
-      return String(
-        localized:
-          "About \(MockLabels.number(projected)) of \(MockLabels.number(max)) points on the whole exam, projected from this mock. Only a full mock says whether you'd reach the minimums.",
-        table: "Mock", comment: "A half mock's points projected onto the whole exam")
-    }
-
-    guard parts.contains(where: { $0.projected != nil }) else {
-      return nil
-    }
+    guard let projected, let max else { return nil }
 
     return String(
       localized:
-        "Each test's points are projected onto its whole length. Only a full mock says whether you'd reach the minimums.",
-      table: "Mock", comment: "A half mock's points per test, projected onto each whole test")
+        "About \(MockLabels.number(projected.rounded())) of \(MockLabels.number(max)) points on the whole exam.",
+      table: "Mock", comment: "A half mock's points projected onto the whole exam")
   }
 }
 
@@ -196,22 +146,22 @@ extension MockPoints.Unjudged {
     case (nil, .percent):
       String(
         localized:
-          "The objective tests together need \(MockLabels.minimum(minimum)) of their points, and this mock doesn't have them all.",
+          "The objective tests together need \(MockLabels.minimum(minimum)) of their points, and this mock exam doesn't have them all.",
         table: "Mock", comment: "A minimum share of points this mock couldn't check")
     case (nil, .points):
       String(
         localized:
-          "The objective tests together need \(MockLabels.points(minimum.value)), and this mock doesn't have them all.",
+          "The objective tests together need \(MockLabels.points(minimum.value)), and this mock exam doesn't have them all.",
         table: "Mock",
         comment: "A minimum this mock couldn't check; the argument is like '60 points'")
     case (let name?, .percent):
       String(
         localized:
-          "\(name) needs \(MockLabels.minimum(minimum)) of its points and isn't in this mock.",
+          "\(name) needs \(MockLabels.minimum(minimum)) of its points and isn't in this mock exam.",
         table: "Mock", comment: "A test's minimum share of points this mock couldn't check")
     case (let name?, .points):
       String(
-        localized: "\(name) needs \(MockLabels.points(minimum.value)) and isn't in this mock.",
+        localized: "\(name) needs \(MockLabels.points(minimum.value)) and isn't in this mock exam.",
         table: "Mock",
         comment: "A test's minimum this mock couldn't check; the second argument is like '8 points'"
       )
