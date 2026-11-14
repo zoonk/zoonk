@@ -774,6 +774,80 @@ test.describe("Live call server states", () => {
     }
   });
 
+  test("a call refused for call time offers Try again once more comes back, and it connects", async ({
+    stateCallResources: owned,
+  }) => {
+    const learner = await createLanguageLearner();
+    const call = await createCall({ learner });
+    const page = await owned.open(learner);
+
+    try {
+      await usageRecordsFixture({
+        count: 1,
+        createdAt: new Date(Date.now() - 30 * 86_400_000 + 15_000),
+        kind: "conversation",
+        seconds: 300,
+        userId: learner.user.id,
+      });
+
+      await answerLiveCalls(page, "answers");
+      await page.goto(`/conversation/${call.id}`);
+      await page.getByRole("button", { name: "Call Linda" }).click();
+
+      const tryAgain = page.getByRole("button", { exact: true, name: "Try again" });
+      await expect(page.getByText("You've used your call time")).toBeVisible();
+      await expect(page.getByRole("link", { name: "Subscribe" })).toBeVisible();
+      await expect(tryAgain).toBeHidden();
+
+      await expect(tryAgain).toBeVisible({ timeout: 30_000 });
+      await expect(page.getByRole("link", { name: "Subscribe" })).toBeHidden();
+      await tryAgain.click();
+      await expectLive(page);
+    } finally {
+      await owned.cleanup();
+    }
+  });
+
+  test("Try again after the call time came back shows the next refusal's own gate", async ({
+    stateCallResources: owned,
+  }) => {
+    const learner = await createLanguageLearner();
+    const call = await createCall({ learner });
+    const page = await owned.open(learner);
+
+    try {
+      await usageRecordsFixture({
+        count: 1,
+        createdAt: new Date(Date.now() - 30 * 86_400_000 + 15_000),
+        kind: "conversation",
+        seconds: 300,
+        userId: learner.user.id,
+      });
+
+      await answerLiveCalls(page, "answers");
+      await page.goto(`/conversation/${call.id}`);
+      await page.getByRole("button", { name: "Call Linda" }).click();
+
+      const tryAgain = page.getByRole("button", { exact: true, name: "Try again" });
+      await expect(tryAgain).toBeVisible({ timeout: 30_000 });
+
+      // Today's call time runs out on another device while this screen waits.
+      await usageRecordsFixture({
+        count: 1,
+        kind: "conversation",
+        seconds: 120,
+        userId: learner.user.id,
+      });
+
+      await tryAgain.click();
+      await expect(page.getByText("No more calls today")).toBeVisible();
+      await expect(page.getByRole("link", { name: "Subscribe" })).toBeVisible();
+      await expect(tryAgain).toBeHidden();
+    } finally {
+      await owned.cleanup();
+    }
+  });
+
   test("closing the tab mid-call ends its connection at once", async ({
     stateCallResources: owned,
   }) => {
