@@ -33,32 +33,9 @@ export function yieldMenuFocus(finalFocus: FinalFocus): FinalFocus {
   };
 }
 
-/** The page's content region, which takes focus without being a Tab stop (the skip link's target). */
-function getPageMain(): HTMLElement | null {
-  return document.querySelector<HTMLElement>("main[tabindex='-1']");
-}
-
-function isFocusLost(active: Element | null): boolean {
-  return !active || active === document.body || !active.isConnected;
-}
-
-/**
- * Base UI picks the return target as the overlay unmounts, before the same change has finished
- * removing things (a deleted row and its "…"), so the target can be gone a moment later. A frame
- * on, focus that fell to the body goes to the page's content.
- */
-function catchLostFocus() {
-  requestAnimationFrame(() => {
-    if (isFocusLost(document.activeElement)) {
-      getPageMain()?.focus({ preventScroll: true });
-    }
-  });
-}
-
 /**
  * An overlay opened from a menu item gives focus back to the menu's trigger when it closes: by
- * then the item has gone with its menu. When what it did removed the trigger too (a row deleted),
- * focus goes to the page's content. Render `MenuOpenerNotice` inside the overlay's popup.
+ * then the item has gone with its menu. Render `MenuOpenerNotice` inside the overlay's popup.
  */
 export function useFocusAfterMenuItem(finalFocus: FinalFocus) {
   const [menuTrigger, setMenuTrigger] = useState<HTMLElement | null>(null);
@@ -66,12 +43,7 @@ export function useFocusAfterMenuItem(finalFocus: FinalFocus) {
   return {
     finalFocus:
       finalFocus ??
-      (menuTrigger
-        ? () => {
-            catchLostFocus();
-            return menuTrigger.isConnected ? menuTrigger : (getPageMain() ?? true);
-          }
-        : undefined),
+      (menuTrigger ? () => (menuTrigger.isConnected ? menuTrigger : true) : undefined),
     onOpen: setMenuTrigger,
   };
 }
