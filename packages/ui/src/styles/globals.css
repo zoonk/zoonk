@@ -25,6 +25,13 @@
 /* A list row's mark (`ListRowLeading` in `@zoonk/learn`) beside three lines or more: a title and two descriptions. */
 @custom-variant beside-three-lines (&:has(~ [data-slot=list-row-content] > :nth-child(3), ~ [data-slot=list-row-body] > [data-slot=list-row-content] > :nth-child(3)));
 
+/* A list row's first line (`ListRowContent`'s top room and a snug 14px line): a lead or mark centered in this box is level with that line's capitals. */
+@utility row-first-line {
+  align-self: flex-start;
+  min-height: calc(--spacing(2.75) + var(--text-sm) * var(--leading-snug));
+  padding-top: --spacing(2.75);
+}
+
 /* `SidebarStateScript` marks `<html>` before the first paint. */
 @custom-variant sidebar-collapsed (&:where([data-sidebar-collapsed] [data-slot=sidebar], [data-sidebar-collapsed] [data-slot=sidebar] *));
 

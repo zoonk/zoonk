@@ -4,7 +4,13 @@ import { type PlanDayView, type PlanItemView } from "@zoonk/core/plans/view-cont
 import { type PlanRevealDays } from "@zoonk/core/view-models/today/plan-reveal";
 import { useExtracted, useFormatter } from "next-intl";
 import { KindMark, type LearnKind } from "../../_components/kind-tile";
-import { ListGroup, ListRow, ListRowContent, ListRowTrailing } from "../../_components/list-group";
+import {
+  ListGroup,
+  ListRow,
+  ListRowContent,
+  ListRowLeading,
+  ListRowTrailing,
+} from "../../_components/list-group";
 import {
   PageSection,
   PageSectionDetail,
@@ -61,7 +67,7 @@ function DayKinds({ items }: { items: readonly PlanItemView[] }) {
   const rest = items.length - ICONS_SHOWN;
 
   return (
-    <ListRowTrailing aria-hidden="true" className="gap-1 self-start pt-3.5 max-sm:hidden">
+    <ListRowTrailing aria-hidden="true" className="row-first-line gap-1 max-sm:hidden">
       {items.slice(0, ICONS_SHOWN).map((item, index) => (
         // oxlint-disable-next-line react/no-array-index-key -- the icons are fixed for this day
         <KindMark className="size-3" key={index} kind={ITEM_KINDS[item.kind]} />
@@ -72,8 +78,9 @@ function DayKinds({ items }: { items: readonly PlanItemView[] }) {
 }
 
 /**
- * The dates never wrap, and each row's column is as wide as the longest, so the names line up. A
- * date sits on the baseline of its day's first line, in another face and size, however many lines.
+ * The dates never wrap, and each row's column is as wide as the longest, so the names line up. The
+ * date and the kinds sit on the first name's line, so the names start under the row's top room even
+ * when a day has one line, rather than centered in it.
  */
 function WeekDayRow({
   date,
@@ -90,15 +97,16 @@ function WeekDayRow({
   const names = (teaching.length > 0 ? teaching : day.items).map((item) => itemTitle(item));
 
   return (
-    <ListRow className="items-baseline">
-      <span
-        className="text-muted-foreground shrink-0 text-center font-mono text-xs whitespace-nowrap tabular-nums"
+    <ListRow>
+      <ListRowLeading
+        className="text-muted-foreground font-mono text-xs whitespace-nowrap tabular-nums"
+        firstLine
         style={{ minWidth: `${dateWidth}ch` }}
       >
         {date}
-      </span>
+      </ListRowLeading>
 
-      <ListRowContent>
+      <ListRowContent className="justify-start">
         {day.items.length === 0 ? (
           <span className="text-muted-foreground text-sm leading-snug">{t("Rest day")}</span>
         ) : (
