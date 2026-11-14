@@ -1,4 +1,3 @@
-import { type GuestSession } from "@/lib/guest/ensure-guest-session";
 import { describe, expect, it } from "vitest";
 import {
   answerHere,
@@ -56,11 +55,17 @@ describe(answerHere, () => {
     await expect(waiting).resolves.toBe(true);
   });
 
-  it("counts a navigation started while a visitor's guest sign-in is still out as leaving", async () => {
-    const signIn = Promise.withResolvers<GuestSession>();
-    const waiting = answerHere(NEVER, openingAsGuest(signIn.promise));
+  it("stops waiting the moment the learner leaves while a visitor's guest sign-in is still out", async () => {
+    const waiting = answerHere(NEVER, openingAsGuest(NEVER));
     noteNavigationStart();
-    signIn.resolve({ learnerId: "guest", status: "ready" });
+
+    await expect(waiting).resolves.toBe(true);
+  });
+
+  it("stops waiting the moment the learner leaves while it checks who holds the session", async () => {
+    const waiting = answerHere(Promise.resolve("started"), () => NEVER);
+    await Promise.resolve();
+    noteNavigationStart();
 
     await expect(waiting).resolves.toBe(true);
   });

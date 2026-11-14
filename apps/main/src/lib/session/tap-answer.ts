@@ -46,21 +46,21 @@ export function openingAsGuest(signIn: Promise<GuestSession>): () => Promise<boo
 /**
  * The answer to a request a tap sent, or what the tap resolves to without one: true once the learner
  * left, since the screen they left has nothing to report even when they come back, and false when
- * the request failed while they're still there. It stops waiting as a navigation starts: React holds
- * every navigation until a pending async transition ends, so a tap waiting inside one would hold the
- * learner's tab press until its answer came.
+ * the request failed while they're still there. It stops waiting as a navigation starts, even while
+ * it still checks who holds the session: React holds every navigation until a pending async
+ * transition ends, so a tap waiting inside one would hold the learner's tab press until it was done.
  */
-export async function answerHere<T>(
+export function answerHere<T>(
   request: Promise<T>,
   stillHere: () => Promise<boolean>,
 ): Promise<{ answer: T } | boolean> {
-  const answered = await Promise.race([
-    request.then(
-      (answer) => ({ answer }),
-      () => false,
-    ),
-    navigations.next.promise.then(() => true),
-  ]);
+  const answered = request.then(
+    (answer) => ({ answer }),
+    () => false as const,
+  );
 
-  return (await stillHere()) ? answered : true;
+  return Promise.race([
+    navigations.next.promise.then(() => true),
+    answered.then(async (result) => ((await stillHere()) ? result : true)),
+  ]);
 }

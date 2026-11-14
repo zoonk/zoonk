@@ -1,4 +1,4 @@
-import { ensureLearnerSummary } from "@/lib/learner/learner-store";
+import { noteSignIn } from "@/lib/learner/learner-store";
 import { carryUsageDataChoiceToAccount } from "@/lib/usage-data/usage-data-choice";
 import { keepSessionToken, readBrowserSession } from "@/lib/workflow/auth-headers";
 import { safeAsync } from "@zoonk/utils/error";
@@ -39,7 +39,7 @@ async function startGuestSession(): Promise<GuestSession> {
     return FAILED;
   }
 
-  ensureLearnerSummary();
+  noteSignIn();
   return { learnerId: guest.user.id, status: "ready" };
 }
 

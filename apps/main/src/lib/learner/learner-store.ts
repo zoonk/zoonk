@@ -109,17 +109,23 @@ export function getLearnerId(): LearnerId {
   return held ? held.userId : held;
 }
 
-/** While the browser knows no learner, a read on its way can name one, such as a guest just made. */
+/** Until a check of who holds the session answers, even one that failed, the browser doesn't know. */
 async function getSettledLearnerId(): Promise<LearnerId> {
   const read = store.inFlight;
-  const unsettled = store.verifying !== null || !getHeldIdentity();
+  const unsettled = store.verifying !== null || getHeldIdentity() === undefined;
 
   if (read && unsettled) {
     await read.promise;
     return getSettledLearnerId();
   }
 
-  return getLearnerId();
+  return store.verifying === null ? getLearnerId() : undefined;
+}
+
+/** A sign-in in this tab changed who holds the session, so the learner held before it is checked again. */
+export function noteSignIn(): void {
+  install();
+  void readLearnerSummary({ verify: true });
 }
 
 /**
