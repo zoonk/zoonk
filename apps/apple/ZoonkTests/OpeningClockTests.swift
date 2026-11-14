@@ -31,13 +31,4 @@ final class OpeningClockTests: XCTestCase {
     await fulfillment(of: [actionBack], timeout: 3)
     XCTAssertLessThan(try XCTUnwrap(cameBackAt).timeIntervalSince(opening), 1)
   }
-
-  private func show(_ view: some View) throws {
-    let scene = try XCTUnwrap(
-      UIApplication.shared.connectedScenes.first { $0 is UIWindowScene } as? UIWindowScene)
-    let window = UIWindow(windowScene: scene)
-    window.rootViewController = UIHostingController(rootView: view)
-    window.makeKeyAndVisible()
-    addTeardownBlock { window.isHidden = true }
-  }
 }

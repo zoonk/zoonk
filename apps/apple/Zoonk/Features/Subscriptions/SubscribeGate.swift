@@ -112,8 +112,6 @@ struct LimitWords: Equatable {
 /// subscribes, and a subscriber or a short break has only the words.
 struct LimitNotice: View {
   @Environment(AppRouter.self) private var router
-  /// The height of the button it showed on this visit, kept once the day comes: nothing below moves.
-  @State private var buttonHeight: CGFloat = 0
 
   let limit: HelpLimit
   /// Read at the gate's clock, so words about a day follow it while the notice is open.
@@ -138,18 +136,16 @@ struct LimitNotice: View {
     }
   }
 
-  /// Once the day has come, the screen's own action is the way on, so the notice offers nothing.
+  /// Once the day has come, the screen's own action is the way on, so the notice offers nothing, in
+  /// the room it had.
   private func notice(_ words: LimitWords, isOpen: Bool) -> some View {
-    VStack(alignment: .leading, spacing: 8) {
-      GateWords(title: words.title.map(Text.init), line: words.line.map(Text.init))
+    HeldSlot(gated: !isOpen) {
+      VStack(alignment: .leading, spacing: 8) {
+        GateWords(title: words.title.map(Text.init), line: words.line.map(Text.init))
 
-      if isOpen {
-        if buttonHeight > 0 {
-          Color.clear.frame(height: buttonHeight)
+        if !isOpen {
+          wayOn
         }
-      } else {
-        wayOn
-          .onGeometryChange(for: CGFloat.self, of: \.size.height) { buttonHeight = $0 }
       }
     }
     .accessibilityElement(children: .contain)
