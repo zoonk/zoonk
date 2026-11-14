@@ -73,7 +73,7 @@ function useMeasureNote(forExam: boolean): string {
 function Readout({ share, value }: { share: number; value: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-2" data-slot="preparation-readout">
-      <span className="text-readout text-4xl leading-none">
+      <span className="text-readout text-[2.5rem] leading-none">
         {typeof value === "string" ? <BigQuantity>{value}</BigQuantity> : value}
       </span>
       <Meter>
