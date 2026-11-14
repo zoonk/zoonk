@@ -1,5 +1,10 @@
 import { type UsageKind } from "@zoonk/db";
-import { type AllowanceLimit, type EntitlementTier, type UsageDecision } from "../contract";
+import {
+  type AllowanceLimit,
+  type CalendarPeriod,
+  type EntitlementTier,
+  type UsageDecision,
+} from "../contract";
 import {
   FAIR_USE_SPACING_SECONDS,
   getActiveGoalLimit,
@@ -21,7 +26,8 @@ type UsageClaim = {
   tier: EntitlementTier;
 };
 
-type LimitCheck = Omit<Exclude<AllowanceLimit, { period: "rolling30Days" }>, "tier"> & {
+type LimitCheck = Omit<AllowanceLimit, "availableAt" | "period" | "tier"> & {
+  period: CalendarPeriod;
   used: number;
 };
 

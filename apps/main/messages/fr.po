@@ -2486,14 +2486,14 @@ msgid "It stays logged in on that computer until you log out there or leave it u
 msgstr "Il reste connecté sur cet ordinateur jusqu’à ce que tu t’y déconnectes ou que tu passes 30 jours sans l’utiliser."
 
 #: src/app/[lang]/device/cli-login-form.tsx
-msgctxt "WCaf5C"
-msgid "Approve"
-msgstr "Autoriser"
-
-#: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "htvX-Z"
 msgid "Deny"
 msgstr "Refuser"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "WCaf5C"
+msgid "Approve"
+msgstr "Autoriser"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "R-mNZZ"

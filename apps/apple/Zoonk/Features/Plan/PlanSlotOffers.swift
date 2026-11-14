@@ -143,31 +143,52 @@ func planPastDateTitle(isExam: Bool) -> String {
       comment: "Title of the Plan's notice once the goal's end date passed with lessons left")
 }
 
-/// The date passed with lessons left: an exam asks whether to keep studying them or archive the
-/// goal; another goal finds the end date that fits them.
+/// An exam whose date passed with lessons left: its answers are the Plan's bottom bar
+/// (`examOverBar`), so the card only says what's left.
+struct PlanExamOverSlot: View {
+  let context: PlanContext
+
+  var body: some View {
+    let lessons = context.plan.status?.lessons ?? 0
+
+    VStack(alignment: .leading, spacing: 8) {
+      Label {
+        Text(planPastDateTitle(isExam: true))
+          .typeStyle(.body.weight(.semibold))
+      } icon: {
+        SuggestionMark(kind: .symbol("calendar.badge.clock"))
+      }
+
+      Text(
+        "You have \(lessons) lessons left. Keep studying them, or archive this goal?",
+        tableName: "Plan", comment: "Lessons left once the exam's date passed, and the question"
+      )
+      .typeStyle(.note)
+      .foregroundStyle(.mutedForeground)
+    }
+  }
+}
+
+/// The end date passed with lessons left: it finds the end date that fits them.
 struct PlanPastDateSlot: View {
-  @Environment(AppRouter.self) private var router
   @Environment(PlanStore.self) private var store
   @State private var asked: PlanSlotAskedChange?
   @State private var isWorking = false
   @State private var failed = false
   @State private var noDate = false
-  @State private var isArchiving = false
-  @State private var archiveFailed = false
 
   let context: PlanContext
   let actions: PlanSlotActions
 
   var body: some View {
-    let isExam = context.goal.kind == .exam
     let lessons = context.plan.status?.lessons ?? 0
 
     if let asked {
       PlanSlotAskedCard(asked: asked, context: context, actions: actions)
     } else {
       PlanSlotCard(
-        title: Text(planPastDateTitle(isExam: isExam)), mark: .symbol("calendar.badge.clock"),
-        description: Text(description(isExam: isExam, lessons: lessons))
+        title: Text(planPastDateTitle(isExam: false)), mark: .symbol("calendar.badge.clock"),
+        description: Text(description(lessons: lessons))
       ) {
         if failed {
           FailureLine(
@@ -177,27 +198,8 @@ struct PlanPastDateSlot: View {
           )
           .typeStyle(.note)
         }
-
-        if archiveFailed {
-          SuggestionSaveError()
-        }
       } actions: {
-        if isExam {
-          Button {
-            isArchiving = true
-          } label: {
-            Text("Archive goal", tableName: "Plan", comment: "Archives the goal, after asking")
-          }
-
-          BusyButton(isBusy: isWorking) {
-            Task { await keepStudying() }
-          } label: {
-            Text(
-              "Keep studying", tableName: "Plan",
-              comment: "Keeps studying the lessons left after the exam's date passed")
-          }
-          .buttonStyle(.mainAction)
-        } else if noDate {
+        if noDate {
           Button(action: actions.notNow) {
             Text("Not now", tableName: "Plan", comment: "Puts a suggestion off")
           }
@@ -234,34 +236,17 @@ struct PlanPastDateSlot: View {
           .buttonStyle(.mainAction)
         }
       }
-      .archiveGoalConfirmation(context.goal, isPresented: $isArchiving) {
-        Task { await archive() }
-      }
     }
   }
 
-  private func description(isExam: Bool, lessons: Int) -> String {
-    if noDate {
-      return String(
+  private func description(lessons: Int) -> String {
+    noDate
+      ? String(
         localized: "No date fits all your lessons.", table: "Plan",
         comment: "No later end date fits the lessons left")
-    }
-
-    return isExam
-      ? String(
-        localized: "You have \(lessons) lessons left. Keep studying them, or archive this goal?",
-        table: "Plan", comment: "Lessons left once the exam's date passed, and the question")
       : String(
         localized: "You have \(lessons) lessons left. A later end date fits them.", table: "Plan",
         comment: "Lessons left once the goal's end date passed")
-  }
-
-  private func keepStudying() async {
-    isWorking = true
-    defer { isWorking = false }
-
-    asked = await context.ask([.fullCourse(true)], store: store)
-    failed = asked == nil
   }
 
   private func findDate() async {
@@ -290,18 +275,6 @@ struct PlanPastDateSlot: View {
     failed = asked == nil
   }
 
-  private func archive() async {
-    archiveFailed = false
-
-    switch await store.setStatus(.archived, goalId: context.goal.id) {
-    case .done(.saved):
-      router.showRoot(of: .today)
-    case .done, .failed:
-      archiveFailed = true
-    case .obsolete:
-      break
-    }
-  }
 }
 
 /// "Other options": a menu that opens under its own trigger, never over the button beside it.

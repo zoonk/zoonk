@@ -27,15 +27,17 @@ enum PlanSlotItem: Hashable {
 
     var items: [PlanSlotItem] = !finished && courseComplete ? [.courseComplete] : []
 
+    // A paused goal and a passed date are what the page asks about first (the bar answers both on an
+    // exam).
     if isPaused {
       items.append(.paused)
     }
 
-    items += plan.examChoices.filter(\.subjects.isEmpty).map { .choice($0) }
-
     if status == .pastDate {
       items.append(.pastDate)
     }
+
+    items += plan.examChoices.filter(\.subjects.isEmpty).map { .choice($0) }
 
     if finished {
       items += timeItems
@@ -437,7 +439,11 @@ struct PlanSuggestionSection: View {
         .buttonStyle(.mainAction)
       }
     case .pastDate:
-      PlanPastDateSlot(context: context, actions: offers)
+      if context.goal.kind == .exam {
+        PlanExamOverSlot(context: context)
+      } else {
+        PlanPastDateSlot(context: context, actions: offers)
+      }
     case .fitLessons:
       if let offer = context.plan.fitOffer {
         PlanFitSlot(context: context, offer: offer, title: fitTitle(offer), actions: offers)
