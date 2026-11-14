@@ -131,8 +131,7 @@ function fixesDescription({
       recording > 1 &&
         `${String(recording)} wait for their new clips and can be approved once they're recorded.`,
       mine > 0 &&
-        approvable.length > 0 &&
-        `Approving also finishes the ${mine === 1 ? "fix" : String(mine)} you approved before.`,
+        `${mine === 1 ? "1 fix" : `${String(mine)} fixes`} you approved didn't finish applying. Finish applying completes ${mine === 1 ? "it" : "them"} with no passkey and decides nothing else.`,
     ]
       .filter(Boolean)
       .join(" ") || undefined

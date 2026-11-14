@@ -146,9 +146,10 @@ type Reject = { batchId: string; label: string } | { fixId: string };
  * The page's one decision, in the shared bottom bar: reject, then approve with a passkey (the way
  * to add one, without a passkey). Approving applies only the fixes the approver read here: the
  * challenge their passkey signs is stored on exactly `fixIds`, and it also finishes what they
- * approved before. With nothing left to approve, the main action finishes `finishing` fixes the
- * viewer approved that didn't apply, such as after a crash. What an action couldn't do shows in the
- * bar's note.
+ * approved before. "Finish applying" finishes the `finishing` fixes the viewer approved that didn't
+ * apply, such as after a crash, with no passkey and nothing else decided: the bar's other action
+ * beside an approval, its main action when nothing is left to approve. What an action couldn't do
+ * shows in the bar's note.
  */
 export function ReviewBar({
   approveLabel,
@@ -194,6 +195,14 @@ export function ReviewBar({
           <RejectBatchForm batchId={reject.batchId} label={reject.label} />
         )}
 
+        {finishing > 0 && fixIds.length > 0 && (
+          <form action={finishAction} className="contents">
+            <Button busy={isFinishing} size="xl" type="submit" variant="outline">
+              Finish applying
+            </Button>
+          </form>
+        )}
+
         {fixIds.length > 0 && needsPasskey && (
           <EnterLink href={settingsUrl} link={SettingsLink} size="xl">
             Add a passkey to approve
@@ -208,7 +217,7 @@ export function ReviewBar({
           </form>
         )}
 
-        {fixIds.length === 0 && finishing > 0 && (
+        {finishing > 0 && fixIds.length === 0 && (
           <form action={finishAction} className="contents">
             <EnterButton busy={isFinishing} size="xl" type="submit">
               Finish applying
