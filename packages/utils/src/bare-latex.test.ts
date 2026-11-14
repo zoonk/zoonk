@@ -81,7 +81,7 @@ describe(findBareLatex, () => {
 
   it("finds a one-letter subscript written against a coefficient, a difference or a short product", () => {
     const text =
-      "Then kC_A², V = QX/[kC_A0(1 − X)], pK_a, kT_e, αC_A, ΔH_f, ΔG_rxn, Δx_1, δq_rev, RT_m and nRT_m.";
+      "Then kC_A², V = QX/[kC_A0(1 − X)], pK_a, kT_e, αC_A, ΔH_f, ΔG_rxn, Δx_1, δq_rev, ΔΔG_bind, ΔpK_a, RT_m and nRT_m.";
 
     expect(find(text)).toStrictEqual([
       problem("kC_A²"),
@@ -93,6 +93,8 @@ describe(findBareLatex, () => {
       problem("ΔG_rxn"),
       problem("Δx_1"),
       problem("δq_rev"),
+      problem("ΔΔG_bind"),
+      problem("ΔpK_a"),
       problem("RT_m"),
       problem("nRT_m"),
     ]);
