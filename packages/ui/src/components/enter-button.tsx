@@ -2,7 +2,7 @@
 
 import { BusyContent, Button, buttonVariants } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
-import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
+import { ignoreHeldEnter, useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn, mergeRefs } from "@zoonk/ui/lib/utils";
 
@@ -24,14 +24,16 @@ const ENTER_HINT = <ShortcutKbd shortcut="main" tone="inverse" />;
  * A screen's main action, and the one home of Enter, the ⏎ hint and the busy look: a screen gets
  * all three by drawing it. Its one glyph is the ⏎ keycap, so it takes no icon; on a touch screen
  * it is its label alone. Acting, it shows `busy` (a spinner in the keycap's place, or over the
- * label where there is no keycap) and blocks a second press; it is never only disabled. It is a
- * screen's action, so 44px unless it says otherwise.
+ * label where there is no keycap) and blocks a second press; it is never only disabled. A held
+ * Enter presses it once, though Enter leaves it focused. It is a screen's action, so 44px unless it
+ * says otherwise.
  */
 export function EnterButton({
   busy = false,
   children,
   disabled = false,
   enter = "bound",
+  onKeyDown,
   ref,
   size = "lg",
   ...props
@@ -50,6 +52,10 @@ export function EnterButton({
       disabled={disabled}
       focusableWhenDisabled
       keyHint={enter === "off" ? undefined : ENTER_HINT}
+      onKeyDown={(event) => {
+        ignoreHeldEnter(event);
+        onKeyDown?.(event);
+      }}
       ref={mergeRefs(enterRef, ref)}
       size={size}
       {...props}
