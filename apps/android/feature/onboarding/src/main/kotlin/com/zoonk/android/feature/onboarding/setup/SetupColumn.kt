@@ -276,9 +276,8 @@ internal fun ColumnScope.QuestionPages(
                         .fillMaxSize()
                         .padding(start = fold.end)
                         .semantics { isTraversalGroup = true }
-                        .padding(start = MARGIN, end = MARGIN, bottom = EDGE)
                 },
-                verticalArrangement = Arrangement.spacedBy(GAP),
+                verticalArrangement = Arrangement.spacedBy(if (fold == null) GAP else 0.dp),
             ) {
                 Column(
                     if (fold == null) {
@@ -288,7 +287,7 @@ internal fun ColumnScope.QuestionPages(
                             .weight(1f)
                             .fillMaxWidth()
                             .verticalScroll(answerScroll)
-                            .padding(top = EDGE)
+                            .padding(horizontal = pageMargin(), vertical = EDGE)
                     },
                     verticalArrangement = Arrangement.spacedBy(GAP),
                 ) {
@@ -296,8 +295,8 @@ internal fun ColumnScope.QuestionPages(
                     answer()
                 }
                 if (fold != null) {
-                    // Across the fold the answer's page holds its own actions at its bottom.
-                    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp), content = actions)
+                    // Across the fold the answer's page holds its own bar at its bottom.
+                    BottomBar(columnWidth = COLUMN_WIDTH, content = actions)
                 } else {
                     PageActions { Column(verticalArrangement = Arrangement.spacedBy(8.dp), content = actions) }
                 }
@@ -310,7 +309,7 @@ internal fun ColumnScope.QuestionPages(
                         .fillMaxHeight()
                         .semantics { isTraversalGroup = true }
                         .verticalScroll(page.scroll)
-                        .padding(horizontal = MARGIN, vertical = EDGE),
+                        .padding(horizontal = pageMargin(), vertical = EDGE),
                     verticalArrangement = Arrangement.spacedBy(GAP),
                     content = read,
                 )
@@ -320,6 +319,5 @@ internal fun ColumnScope.QuestionPages(
 }
 
 private val COLUMN_WIDTH = 640.dp
-private val MARGIN = 16.dp
 private val EDGE = 16.dp
 private val GAP = 24.dp
