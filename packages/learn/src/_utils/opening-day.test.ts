@@ -21,10 +21,12 @@ describe(toOpeningDay, () => {
     ).toBe("2026-11-21");
   });
 
-  it("reads an instant already past as today, and one it can't read as nothing", () => {
-    expect(toOpeningDay({ availableAt: "2026-11-01T00:00:00.000Z", now, timeZone: "UTC" })).toBe(
-      "today",
+  it("reads an instant already past as open, and one it can't read as nothing", () => {
+    expect(toOpeningDay({ availableAt: "2026-11-13T23:00:00.000Z", now, timeZone: "UTC" })).toBe(
+      "open",
     );
+
+    expect(toOpeningDay({ availableAt: now.toISOString(), now, timeZone: "UTC" })).toBe("open");
 
     expect(toOpeningDay({ availableAt: "soon", now, timeZone: "UTC" })).toBeNull();
     expect(toOpeningDay({ availableAt: null, now, timeZone: "UTC" })).toBeNull();

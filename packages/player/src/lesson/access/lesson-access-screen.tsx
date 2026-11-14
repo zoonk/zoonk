@@ -1,7 +1,8 @@
 "use client";
 
 import { EnterButton, EnterLink } from "@zoonk/learn/enter-button";
-import { type LessonLimit, useLessonLimitWords } from "@zoonk/learn/help-limit";
+import { type LessonLimit, useFreeLessonReady, useLessonLimitWords } from "@zoonk/learn/help-limit";
+import { buttonVariants } from "@zoonk/ui/components/button";
 import { CircleAlertIcon, HourglassIcon, SparklesIcon, UserRoundPlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect } from "react";
@@ -28,16 +29,46 @@ function useStillFreeLine(limit: ReachedLimit): string {
   return `${t("You can still review and practice your mistakes.")} ${line}`;
 }
 
+/** Once the next free lesson opens, the gate offers to start it; the server decides again. */
+function FreeLessonReady({ title }: { title: string }) {
+  const t = useExtracted();
+  const { actions } = useLessonPlayer();
+  const { linkComponent: LinkComponent, routes } = useLessonPlayerConfig();
+
+  return (
+    <AccessLayout
+      actions={
+        <>
+          <LinkComponent
+            className={buttonVariants({ className: "shrink-0", size: "xl", variant: "outline" })}
+            href={routes.upgrade}
+          >
+            {t("Subscribe")}
+          </LinkComponent>
+          <EnterButton onClick={actions.retryStart}>{t("Start the lesson")}</EnterButton>
+        </>
+      }
+      icon={<SparklesIcon aria-hidden="true" />}
+      title={title}
+    />
+  );
+}
+
 /** The gate: what a free learner reads when a new lesson needs a subscription. */
 function SubscribeGateScreen({ limit }: { limit: ReachedLimit }) {
   const t = useExtracted();
   const { title = "" } = useLessonLimitWords(limit);
   const description = useStillFreeLine(limit);
+  const ready = useFreeLessonReady(limit);
   const { linkComponent: LinkComponent, routes, track } = useLessonPlayerConfig();
 
   useEffect(() => {
     track({ name: "Subscription Gate Shown" });
   }, [track]);
+
+  if (ready) {
+    return <FreeLessonReady title={title} />;
+  }
 
   return (
     <AccessLayout

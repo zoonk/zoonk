@@ -338,6 +338,11 @@ msgid "Your next free lesson opens on {date}, or subscribe to keep going."
 msgstr "次の無料レッスンは{date}から受けられます。登録すると、このまま学習を続けられます。"
 
 #: src/_components/help-limit-notice.tsx
+msgctxt "5SLMld"
+msgid "Your next free lesson is ready"
+msgstr "次の無料レッスンを始められます"
+
+#: src/_components/help-limit-notice.tsx
 msgctxt "y0Yu1A"
 msgid "You've used your free lessons"
 msgstr "無料レッスンを使い切りました"
@@ -406,6 +411,11 @@ msgstr "レッスン"
 msgctxt "dVwB3J"
 msgid "{done, number} of {total, number}"
 msgstr "{done, number}/{total, number}"
+
+#: src/_components/lesson-not-written-notice.tsx
+msgctxt "4NMpnC"
+msgid "Start the lesson"
+msgstr "レッスンを始める"
 
 #: src/_components/lesson-not-written-notice.tsx
 #: src/_components/save-error.tsx
