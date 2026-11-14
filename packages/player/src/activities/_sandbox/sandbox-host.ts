@@ -31,7 +31,7 @@ type SandboxOutcome =
 
 type Host = { ready: Promise<boolean>; worker: Worker };
 
-// Grading stops a regex after 50 ms on the server, so one still running after a second on a phone fails there too.
+/** Grading stops a regex after 50 ms on the server, so one still running after a second on a phone fails there too. @internal */
 export const REGEX_TIME_LIMIT_MS = 1000;
 
 const TIME_LIMIT_MS: Record<SandboxKind, number> = {
