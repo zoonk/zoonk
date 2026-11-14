@@ -102,10 +102,7 @@ function MockChooserVisit({
   const [status, setStatus] = useState<MockChooserStatus>({ kind: "choosing" });
   const [writing, setWriting] = useState<Writing | null>(null);
 
-  /**
-   * A start the server couldn't answer is a failed start, never an error page. Leaving cancels
-   * following it (null); the start itself still stands.
-   */
+  /** A start the server couldn't answer is a failed start, never an error page. */
   const startMock = async ({
     acceptFewer,
     here,
@@ -115,15 +112,17 @@ function MockChooserVisit({
     here: Here;
     option: MockOptionView;
   }): Promise<MockStartOutcome | null> => {
-    const { data: answered } = await safeAsync(() =>
+    const { data } = await safeAsync(() =>
       answerHere(startAnytimeMockAction(goalId, { ...toChoice(option), acceptFewer }), here),
     );
 
-    if (answered === true) {
+    const answered = data ?? "failed";
+
+    if (answered === "left") {
       return null;
     }
 
-    return answered ? answered.answer : { status: "failed" };
+    return answered === "failed" ? { status: "failed" } : answered.answer;
   };
 
   const open = ({ option, outcome }: { option: MockOptionView; outcome: MockStartOutcome }) => {
@@ -145,15 +144,17 @@ function MockChooserVisit({
   };
 
   const write = async (option: MockOptionView, here: Here) => {
-    const { data: asked } = await safeAsync(() =>
+    const { data } = await safeAsync(() =>
       answerHere(requestMockWriting({ goalId, option }), here),
     );
 
-    if (asked === true) {
+    const asked = data ?? "failed";
+
+    if (asked === "left") {
       return;
     }
 
-    const result: QuestionWriting = asked ? asked.answer : { status: "failed" };
+    const result: QuestionWriting = asked === "failed" ? { status: "failed" } : asked.answer;
 
     if (result.status === "writing") {
       setWriting({ generationId: result.generationId, option });

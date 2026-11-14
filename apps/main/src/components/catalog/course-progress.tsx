@@ -159,16 +159,14 @@ export function CourseContinueLink({ courseId }: { courseId: string }) {
 
   const continueGoal = () => {
     startTransition(async () => {
-      const { data: switched } = await safeAsync(() =>
-        answerHere(switchGoal(goal.id), openingHere()),
-      );
+      const { data } = await safeAsync(() => answerHere(switchGoal(goal.id), openingHere()));
+      const switched = data ?? "failed";
 
-      // Leaving cancels following the switch; the switch itself still stands.
-      if (switched === true) {
+      if (switched === "left") {
         return;
       }
 
-      if (!switched || !switched.answer) {
+      if (switched === "failed" || !switched.answer) {
         showErrorToast(switchFailed);
         return;
       }

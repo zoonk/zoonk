@@ -22,9 +22,8 @@ export function useStartTestOut() {
     }): Promise<TestOutStart> => {
       const asked = await answerHere(requestTestOutWriting({ chapterId, goalId }), openingHere());
 
-      // Leaving cancels following the start; the start itself still stands.
-      if (typeof asked === "boolean") {
-        return { status: asked ? "started" : "failed" };
+      if (typeof asked === "string") {
+        return { status: asked === "left" ? "started" : "failed" };
       }
 
       const writing = asked.answer;

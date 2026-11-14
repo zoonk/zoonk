@@ -121,9 +121,8 @@ function GoalMenu({ placement }: { placement?: Placement }) {
       openingHere(),
     );
 
-    // Leaving cancels following the start; the start itself still stands.
-    if (typeof answered === "boolean") {
-      return answered;
+    if (typeof answered === "string") {
+      return answered === "left";
     }
 
     const outcome = answered.answer;

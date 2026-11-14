@@ -82,9 +82,8 @@ export function SessionBlockClient({
       openingHere(),
     );
 
-    // Leaving cancels following the skip; the skip itself still stands.
-    if (typeof answered === "boolean") {
-      return answered;
+    if (typeof answered === "string") {
+      return answered === "left";
     }
 
     const saved = answered.answer;

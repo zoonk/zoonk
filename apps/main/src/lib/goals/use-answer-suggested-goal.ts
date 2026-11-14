@@ -23,9 +23,8 @@ export function useAnswerSuggestedGoal({ hasGoal }: { hasGoal: boolean }) {
         here,
       );
 
-      // Leaving cancels following the answer; the answer itself still stands.
-      if (typeof reply === "boolean") {
-        return reply;
+      if (typeof reply === "string") {
+        return reply === "left";
       }
 
       const answered = reply.answer;

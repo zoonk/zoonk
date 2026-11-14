@@ -27,16 +27,15 @@ export function StartPlanForm({
     async (previous: StartPlanState, formData: FormData) => {
       formData.set("timeZone", getLocalTimeZone());
 
-      const { data: answered } = await safeAsync(() =>
-        answerHere(action(previous, formData), openingHere()),
-      );
+      const { data } = await safeAsync(() => answerHere(action(previous, formData), openingHere()));
 
-      // Leaving cancels following the start; the start itself still stands.
-      if (answered === true) {
+      const answered = data ?? "failed";
+
+      if (answered === "left") {
         return previous;
       }
 
-      const result: StartPlanState = answered ? answered.answer : { error: "failed" };
+      const result: StartPlanState = answered === "failed" ? { error: "failed" } : answered.answer;
 
       if (result && "started" in result) {
         router.push("/plan");

@@ -62,13 +62,15 @@ export function useCourseStart({
       };
 
       const { data } = await safeAsync(() => answerHere(start(), openingAsGuest(signIn)));
+      const started = data ?? "failed";
 
-      // Leaving cancels following the start; the start itself still stands.
-      if (data === true) {
+      if (started === "left") {
         return;
       }
 
-      const outcome: CourseStartOutcome = (data ? data.answer : null) ?? { status: "failed" };
+      const outcome: CourseStartOutcome = (started === "failed" ? null : started.answer) ?? {
+        status: "failed",
+      };
 
       if (outcome.status !== "started") {
         setFailure(outcome);

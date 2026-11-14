@@ -149,9 +149,8 @@ function useFocusTestSuggestionActions(goalId: string) {
     startFocusTest: async (): Promise<boolean> => {
       const answered = await answerHere(getFocusTestActions(goalId).start(), openingHere());
 
-      // Leaving cancels following the start; the start itself still stands.
-      if (typeof answered === "boolean") {
-        return answered;
+      if (typeof answered === "string") {
+        return answered === "left";
       }
 
       if (answered.answer.status === "failed") {

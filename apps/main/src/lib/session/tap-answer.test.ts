@@ -29,7 +29,7 @@ describe(answerHere, () => {
 
   it("fails a request that never answered while the learner is still there", async () => {
     await expect(answerHere(Promise.reject(new Error("offline")), async () => true)).resolves.toBe(
-      false,
+      "failed",
     );
   });
 
@@ -42,8 +42,8 @@ describe(answerHere, () => {
     const rejecting = answerHere(Promise.reject(new Error("502")), rejected.stillHere);
     rejected.leave();
 
-    await expect(answering).resolves.toBe(true);
-    await expect(rejecting).resolves.toBe(true);
+    await expect(answering).resolves.toBe("left");
+    await expect(rejecting).resolves.toBe("left");
   });
 
   it("stops waiting the moment the learner starts a navigation, long before its page shows", async () => {
@@ -52,14 +52,14 @@ describe(answerHere, () => {
     noteNavigationStart();
 
     await expect(here()).resolves.toBe(false);
-    await expect(waiting).resolves.toBe(true);
+    await expect(waiting).resolves.toBe("left");
   });
 
   it("stops waiting the moment the learner leaves while a visitor's guest sign-in is still out", async () => {
     const waiting = answerHere(NEVER, openingAsGuest(NEVER));
     noteNavigationStart();
 
-    await expect(waiting).resolves.toBe(true);
+    await expect(waiting).resolves.toBe("left");
   });
 
   it("stops waiting the moment the learner leaves while it checks who holds the session", async () => {
@@ -67,14 +67,14 @@ describe(answerHere, () => {
     await Promise.resolve();
     noteNavigationStart();
 
-    await expect(waiting).resolves.toBe(true);
+    await expect(waiting).resolves.toBe("left");
   });
 
   it("lets the newest open win over one still waiting", async () => {
     const waiting = answerHere(NEVER, openingHere());
     const newest = openingHere();
 
-    await expect(waiting).resolves.toBe(true);
+    await expect(waiting).resolves.toBe("left");
     await expect(newest()).resolves.toBe(true);
   });
 });

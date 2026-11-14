@@ -19,9 +19,8 @@ export function AboutYouQuestion(props: { memoryEnabled: boolean; question: Prof
           openingHere(),
         );
 
-        // Leaving cancels following the save; the answer itself still stands.
-        if (typeof answered === "boolean") {
-          return answered;
+        if (typeof answered === "string") {
+          return answered === "left";
         }
 
         const saved = answered.answer;

@@ -20,9 +20,8 @@ export function useOpenLanguageConversation({ from }: { from?: "exam" } = {}) {
     async (request: LanguageConversationRequest): Promise<OpenedCall | { limit: CallLimit }> => {
       const answered = await answerHere(startLanguageConversationAction(request), openingHere());
 
-      // Leaving cancels following the start; the start itself still stands.
-      if (typeof answered === "boolean") {
-        return answered;
+      if (typeof answered === "string") {
+        return answered === "left";
       }
 
       const started = answered.answer;

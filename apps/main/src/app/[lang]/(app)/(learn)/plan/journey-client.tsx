@@ -54,9 +54,8 @@ function useGoalStatus({
       const here = next === "archived" ? openingHere() : stayingHere();
       const answered = await answerHere(setGoalStatusAction(goalId, next), here);
 
-      // Leaving cancels following the change; the change itself still stands.
-      if (typeof answered === "boolean") {
-        return answered ? null : "failed";
+      if (typeof answered === "string") {
+        return answered === "left" ? null : "failed";
       }
 
       const outcome = answered.answer;

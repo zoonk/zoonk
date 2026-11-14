@@ -114,9 +114,8 @@ function ChallengeVisit({
         here,
       );
 
-      // Leaving cancels following the start; the start itself still stands.
-      if (typeof answered === "boolean") {
-        return answered ? "started" : "failed";
+      if (typeof answered === "string") {
+        return answered === "left" ? "started" : "failed";
       }
 
       const started = answered.answer;
@@ -150,8 +149,8 @@ function ChallengeVisit({
     const write = async (here: () => Promise<boolean>): Promise<StartOutcome> => {
       const asked = await answerHere(requestChallengeWriting(planItemId), here);
 
-      if (typeof asked === "boolean") {
-        return asked ? "started" : "failed";
+      if (typeof asked === "string") {
+        return asked === "left" ? "started" : "failed";
       }
 
       const result = asked.answer;
