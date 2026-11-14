@@ -325,11 +325,13 @@ private struct PlanChapterRow: View {
         }
       } icon: {
         StatusMark(status: mark)
-          .accessibilityRepresentation {
-            if let markWords {
-              Text(markWords)
-            }
-          }
+      }
+      .accessibilityLabel { label in
+        if let markWords {
+          Text(markWords)
+        }
+
+        label
       }
     } value: {
       EmptyView()
