@@ -19,10 +19,12 @@ import androidx.compose.ui.platform.LocalConfiguration
 import com.zoonk.android.feature.plan.isInAnotherYear
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.ZoneId
 import java.util.Date
 import java.util.Locale
 import kotlin.math.abs
 import kotlin.math.roundToLong
+import kotlin.time.toJavaInstant
 
 /*
  * These write what main's `@zoonk/utils` and `@zoonk/learn` formatters write, so a value reads the
@@ -220,7 +222,7 @@ enum class DateStyle(
 
     Weekday("EEEE"),
 
-    WeekdayDay("MMMMEEEEd"),
+    WeekdayDay("MMMMEEEEd", yearWhenAnotherYear = true),
 
     /** "Sunday, November 14, 2027": an exam's day, whose edition may be years ahead. */
     WeekdayDayYear("yMMMMEEEEd"),
@@ -238,6 +240,14 @@ fun formatDate(
     val skeleton = if (style.yearWhenAnotherYear && isInAnotherYear(date, today)) "y${style.skeleton}" else style.skeleton
     return formatUtc(Date(date.toEpochDay() * MILLIS_PER_DAY), skeleton, locale)
 }
+
+/** Main's `useFormatMomentDay`: the day a moment happened, in the device's time zone ("Nov 8", "Nov 8, 2025"). */
+fun formatMomentDay(
+    moment: kotlin.time.Instant,
+    locale: Locale,
+    zone: ZoneId = ZoneId.systemDefault(),
+    today: LocalDate = LocalDate.now(zone),
+): String = formatDate(moment.toJavaInstant().atZone(zone).toLocalDate(), locale, DateStyle.Day, today)
 
 /** Calendar days and times of day carry no time zone, so they're formatted as UTC instants in UTC. */
 private fun formatUtc(
