@@ -2,6 +2,8 @@ import "server-only";
 import { type SourceChangeNotice, prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { isUuid } from "@zoonk/utils/uuid";
+import { cacheTag } from "next/cache";
+import { getSourceCacheTag } from "../../cache/tags";
 import { getRequestInstant } from "../../learner/facts/request-instant";
 import { parsePlanChangePayload } from "../../plans/_utils/plan-change-payload";
 import { NOTICE_SOURCE } from "../../plans/plan-change-contract";
@@ -148,6 +150,8 @@ export async function listGoalChangeNotices({
     }),
     listNoticesInPlanChanges(goal.id),
   ]);
+
+  cacheTag(...notices.map((notice) => getSourceCacheTag(notice.sourceId)));
 
   return { notices: notices.filter((notice) => !answered.has(notice.id)), status: "ready" };
 }

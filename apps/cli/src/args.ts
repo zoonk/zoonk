@@ -4,6 +4,7 @@ import { usageError } from "./errors.ts";
 import { commandUsage } from "./help.ts";
 import { isRecord, parseJson } from "./http.ts";
 import { type OutputShape } from "./output.ts";
+import { parseOrder, parseWhereOptions, splitList } from "./query-options.ts";
 
 export type ApiRequest =
   | { method: "GET"; path: string }
@@ -16,6 +17,7 @@ export type Command =
   | { name: "request"; request: ApiRequest; shape?: OutputShape };
 
 type Options = {
+  batch?: string;
   fields?: string;
   limit?: string;
   offset?: string;
@@ -34,64 +36,8 @@ type CommandSpec = {
 
 export const WHOAMI_REQUEST: ApiRequest = { method: "GET", path: "/staff/me" };
 
-const OPERATORS = ["eq", "ne", "in", "notIn", "isNull", "notNull", "gt", "gte", "lt", "lte"];
-const OPERATORS_WITHOUT_VALUE = new Set(["isNull", "notNull"]);
-const OPERATORS_WITH_LIST = new Set(["in", "notIn"]);
-const WHERE_PATTERN = /^(?<field>[^ ]+) (?<op>[^ ]+)(?: (?<value>[\s\S]*))?$/u;
-const ORDER_PATTERN = /^(?<field>[^:\s]+)(?::(?<direction>asc|desc))?$/u;
 const WHOLE_NUMBER_PATTERN = /^\d+$/u;
 const LONGEST_COMMAND_WORDS = 3;
-
-function splitList(value: string): string[] {
-  return value
-    .split(",")
-    .map((item) => item.trim())
-    .filter(Boolean);
-}
-
-function parseWhere(clause: string) {
-  const { field, op, value } = WHERE_PATTERN.exec(clause)?.groups ?? {};
-
-  if (!field || !op) {
-    throw usageError(`--where "${clause}" needs the form "<field> <op> <value>".`);
-  }
-
-  if (!OPERATORS.includes(op)) {
-    throw usageError(`--where "${clause}" has no operator "${op}". Use ${OPERATORS.join(", ")}.`);
-  }
-
-  if (OPERATORS_WITHOUT_VALUE.has(op)) {
-    if (value) {
-      throw usageError(`--where "${clause}": ${op} takes no value.`);
-    }
-
-    return { field, op };
-  }
-
-  if (value === undefined) {
-    throw usageError(`--where "${clause}" needs a value after ${op}.`);
-  }
-
-  return { field, op, value: OPERATORS_WITH_LIST.has(op) ? splitList(value) : value };
-}
-
-function parseWhereOptions(clauses: string[] | undefined) {
-  return clauses?.map((clause) => parseWhere(clause));
-}
-
-function parseOrder(order: string | undefined) {
-  if (order === undefined) {
-    return;
-  }
-
-  const { direction = "asc", field } = ORDER_PATTERN.exec(order)?.groups ?? {};
-
-  if (!field) {
-    throw usageError(`--order "${order}" needs the form "<field>" or "<field>:asc|desc".`);
-  }
-
-  return { direction, field };
-}
 
 function parseWholeNumber(name: OptionName, value: string | undefined) {
   if (value === undefined) {
@@ -133,7 +79,9 @@ function readJsonObject(path: string): Record<string, unknown> {
   const body = parseJson(readText(path));
 
   if (!isRecord(body)) {
-    throw usageError(`${path} must hold one JSON object: { reason, feedbackId?, changes }.`);
+    throw usageError(
+      `${path} must hold one JSON object: { reason, feedbackId?, changes } or { reason, fixes: [{ changes }] }.`,
+    );
   }
 
   return body;
@@ -145,6 +93,24 @@ function requireReason(reason: string | undefined): string {
   }
 
   return reason;
+}
+
+function fixTarget({
+  args,
+  batch,
+  command,
+}: {
+  args: string[];
+  batch: string | undefined;
+  command: string;
+}) {
+  const [fixId, ...extra] = args;
+
+  if (extra.length > 0 || (fixId === undefined) === (batch === undefined)) {
+    throw usageError(`"staff fixes ${command}" takes one fix id, or --batch <batchId>.`);
+  }
+
+  return fixId === undefined ? { batchId: batch } : { fixId };
 }
 
 function get(path: string, shape?: OutputShape): Command {
@@ -225,10 +191,22 @@ const COMMANDS = new Map<string, CommandSpec>([
   [
     "staff fixes revert",
     {
-      arguments: 1,
-      build: ([fixId], { reason }) =>
-        post("/staff/content-fixes/revert", { fixId, reason: requireReason(reason) }),
-      options: ["reason"],
+      arguments: "any",
+      build: (args, { batch, reason }) =>
+        post("/staff/content-fixes/revert", {
+          ...fixTarget({ args, batch, command: "revert" }),
+          reason: requireReason(reason),
+        }),
+      options: ["batch", "reason"],
+    },
+  ],
+  [
+    "staff fixes withdraw",
+    {
+      arguments: "any",
+      build: (args, { batch }) =>
+        post("/staff/content-fixes/withdraw", fixTarget({ args, batch, command: "withdraw" })),
+      options: ["batch"],
     },
   ],
   [
@@ -313,6 +291,7 @@ function parseCommandLine(argv: string[]) {
       args: argv,
       options: {
         api: { type: "string" },
+        batch: { type: "string" },
         fields: { type: "string" },
         help: { short: "h", type: "boolean" },
         limit: { type: "string" },

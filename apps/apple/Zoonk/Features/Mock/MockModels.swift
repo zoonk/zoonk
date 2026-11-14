@@ -314,6 +314,7 @@ struct MockReviewItem: Hashable, Decodable, Sendable, Identifiable {
   var context: String?
   var correctAnswer: String?
   var explanation: String?
+  var format: String
   var itemId: String
   var learnerAnswer: String?
   var number: Int

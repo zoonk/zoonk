@@ -145,17 +145,142 @@ async function loadItems(ids: string[]) {
   ]);
 }
 
+async function loadLevelTests(ids: string[]) {
+  const banks = await prisma.languageLevelTest.findMany({
+    select: { id: true, language: true, targetLanguage: true },
+    where: { id: { in: ids } },
+  });
+
+  return banks.map((bank): [string, ContentFixLocation] => [
+    bank.id,
+    {
+      adminHref: null,
+      language: `${bank.language} → ${bank.targetLanguage}`,
+      mainUrl: null,
+      trail: ["Level test"],
+    },
+  ]);
+}
+
+async function loadShared(units: readonly Unit[]): Promise<[string, ContentFixLocation][]> {
+  const [skills, sources, exams, assets, sets, warmUps] = await Promise.all([
+    prisma.skill.findMany({
+      select: { id: true, language: true, name: true },
+      where: { id: { in: idsOf(units, "skill") } },
+    }),
+    prisma.source.findMany({
+      select: { id: true, language: true, title: true },
+      where: { id: { in: idsOf(units, "source") } },
+    }),
+    prisma.examBlueprint.findMany({
+      select: { id: true, language: true, name: true },
+      where: { id: { in: idsOf(units, "examBlueprint") } },
+    }),
+    prisma.mediaAsset.findMany({
+      select: { alt: true, id: true, language: true },
+      where: { id: { in: idsOf(units, "mediaAsset") } },
+    }),
+    prisma.itemSet.findMany({
+      select: { id: true, language: true },
+      where: { id: { in: idsOf(units, "itemSet") } },
+    }),
+    prisma.warmUp.findMany({
+      select: { id: true, language: true },
+      where: { id: { in: idsOf(units, "warmUp") } },
+    }),
+  ]);
+
+  return [
+    ...skills.map((row) => ({ ...row, title: row.name })),
+    ...sources,
+    ...exams.map((row) => ({ ...row, title: row.name })),
+    ...assets.map((row) => ({ ...row, title: row.alt ?? "Media asset" })),
+    ...sets.map((row) => ({ ...row, title: "Question set" })),
+    ...warmUps.map((row) => ({ ...row, title: "Warm-up deck" })),
+  ].map((row) => [
+    row.id,
+    { adminHref: null, language: row.language, mainUrl: null, trail: [row.title] },
+  ]);
+}
+
+async function loadVocabulary(units: readonly Unit[]): Promise<[string, ContentFixLocation][]> {
+  const [words, sentences] = await Promise.all([
+    prisma.word.findMany({
+      select: { id: true, targetLanguage: true, word: true },
+      where: { id: { in: idsOf(units, "word") } },
+    }),
+    prisma.sentence.findMany({
+      select: { id: true, sentence: true, targetLanguage: true },
+      where: { id: { in: idsOf(units, "sentence") } },
+    }),
+  ]);
+
+  return [
+    ...words.map((row) => ({ ...row, title: `Word “${row.word}”` })),
+    ...sentences.map((row) => ({ ...row, title: `Sentence “${row.sentence}”` })),
+  ].map((row) => [
+    row.id,
+    { adminHref: null, language: row.targetLanguage, mainUrl: null, trail: [row.title] },
+  ]);
+}
+
+async function loadBrands(units: readonly Unit[]): Promise<[string, ContentFixLocation][]> {
+  const [products, brands] = await Promise.all([
+    prisma.product.findMany({
+      select: { id: true, name: true, organization: { select: { name: true } } },
+      where: { id: { in: idsOf(units, "product") } },
+    }),
+    prisma.organization.findMany({
+      select: { id: true, name: true },
+      where: { id: { in: idsOf(units, "organization") } },
+    }),
+  ]);
+
+  return [
+    ...products.map((row) => ({ id: row.id, trail: [row.organization.name, row.name] })),
+    ...brands.map((row) => ({ id: row.id, trail: [row.name] })),
+  ].map((row) => [row.id, { adminHref: null, language: null, mainUrl: null, trail: row.trail }]);
+}
+
 const MISSING: ContentFixLocation = { adminHref: null, language: null, mainUrl: null, trail: [] };
 
 /** Where each fix's content lives now, read fresh: a fix keeps plain ids, so the content may be gone. */
 export async function loadContentFixLocations(units: readonly Unit[]) {
-  const [lessons, chapters, courses, items] = await Promise.all([
-    loadLessons(idsOf(units, "lesson")),
-    loadChapters(idsOf(units, "chapter")),
-    loadCourses(idsOf(units, "course")),
-    loadItems(idsOf(units, "item")),
+  const [lessons, chapters, courses, items, levelTests, shared, vocabulary, brands] =
+    await Promise.all([
+      loadLessons(idsOf(units, "lesson")),
+      loadChapters(idsOf(units, "chapter")),
+      loadCourses(idsOf(units, "course")),
+      loadItems(idsOf(units, "item")),
+      loadLevelTests(idsOf(units, "levelTest")),
+      loadShared(units),
+      loadVocabulary(units),
+      loadBrands(units),
+    ]);
+
+  const graphs: [string, ContentFixLocation][] = units
+    .filter((unit) => unit.unit === "examSkillGraph" || unit.unit === "languageSkillGraph")
+    .map((unit) => [
+      unit.unitId,
+      {
+        adminHref: null,
+        language: null,
+        mainUrl: null,
+        trail: [unit.unit === "examSkillGraph" ? "Exam skill graph" : "Language skill graph"],
+      },
+    ]);
+
+  const locations = new Map([
+    ...graphs,
+    ...lessons,
+    ...chapters,
+    ...courses,
+    ...items,
+    ...levelTests,
+    ...shared,
+    ...vocabulary,
+    ...brands,
   ]);
 
-  const locations = new Map([...lessons, ...chapters, ...courses, ...items]);
   return (unit: Unit): ContentFixLocation => locations.get(unit.unitId) ?? MISSING;
 }

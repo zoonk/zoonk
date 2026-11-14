@@ -561,6 +561,32 @@
         }
       ],
       "text": "Display $$x﻿$$ trims like JavaScript"
+    },
+    {
+      "segments": [
+        {
+          "kind": "text",
+          "text": "Match `^a$|^b$` against "
+        },
+        {
+          "kind": "math",
+          "text": "x"
+        },
+        {
+          "kind": "text",
+          "text": ", but not `$y$`"
+        }
+      ],
+      "text": "Match `^a$|^b$` against $x$, but not `$y$`"
+    },
+    {
+      "segments": [
+        {
+          "kind": "text",
+          "text": "The cost is $5; print `$HOME`."
+        }
+      ],
+      "text": "The cost is $5; print `$HOME`."
     }
   ]
 }

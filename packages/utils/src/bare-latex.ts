@@ -3,8 +3,12 @@ import { splitLinesAndCells } from "./markdown-table";
 import { type MathSpan, findMathSpans, hideMath, toOneLine } from "./math-spans";
 import { type TextLayout } from "./text-flaws";
 
-/** A caret between two characters, or a braced script, is math a writer left outside `$…$`. */
-const RAW_SCRIPT = /\S\^\S|[\^_]\{/u;
+/**
+ * A caret between two characters, a braced script, or one letter with a subscript (`C_A0=2`,
+ * `E_a/RT`, `1/x_1`, `2x_1`, `F_Y(y)`) is math a writer left outside `$…$`. A longer base (`user_id`,
+ * `CH_4`, `UTF_8`) is as often a name.
+ */
+const RAW_SCRIPT = /\S\^\S|[\^_]\{|(?<![\p{L}_])\p{L}_[\p{L}\p{N}]+(?![\p{L}\p{N}_])/u;
 
 /** Trimming took the mark after this caret (`10^?`, `|x|^?`); a lone caret in quotes is a symbol. */
 const ENDING_CARET = /[\p{L}\p{N})\]}|]\^$/u;
@@ -152,16 +156,27 @@ function toLines({ layout, text }: { layout: TextLayout; text: string }): string
 
 function describe({ latex, written }: Pick<BareLatex, "latex" | "written">): string {
   const example = latex === null ? "" : `, as $${latex}$`;
-  return String.raw`Shows math as raw text: "${written}". Write it between dollar signs${example}, outside bold or italics, and any other dollar sign in that line as \$.`;
+  return String.raw`Shows raw text that reads as math: "${written}". If it's math, write it between dollar signs${example}, outside bold or italics, and any other dollar sign in that line as \$. If it's code, a file name or a link, put it in backticks.`;
 }
 
-function findInLine(line: string): string[] {
-  return findBareLatexIn(hideMathAndCode(line)).map((piece) => describe(piece));
+function findPieces({ layout, text }: { layout: TextLayout; text: string }): BareLatex[] {
+  return toLines({ layout, text }).flatMap((line) => findBareLatexIn(hideMathAndCode(line)));
 }
 
 /** After `wrapBareLatex`, what's left is beyond a plain power, in bold or italics, or beside another `$`. */
 export function findBareLatex({ layout, text }: { layout: TextLayout; text: string }): string[] {
-  return toLines({ layout, text }).flatMap((line) => findInLine(line));
+  return findPieces({ layout, text }).map((piece) => describe(piece));
+}
+
+/** The raw pieces `findBareLatex` flags, for text that isn't shown, such as a line read aloud. */
+export function findBareLatexText({
+  layout,
+  text,
+}: {
+  layout: TextLayout;
+  text: string;
+}): string[] {
+  return findPieces({ layout, text }).map((piece) => piece.written);
 }
 
 /** An inline field comes back on one line, as the player shows it, only when something was wrapped. */

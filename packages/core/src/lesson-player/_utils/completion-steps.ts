@@ -6,6 +6,7 @@ import {
 } from "../../language/activities/language-activities";
 import { loadSkippedActivities } from "../../language/activities/skipped-activities";
 import { isAnswerableStep } from "../lesson-run";
+import { findFixedScreenIds } from "./fixed-screens";
 import { loadPlayableSteps } from "./load-playable-steps";
 import { getLatePictureStepIds } from "./screen-pictures";
 
@@ -34,7 +35,10 @@ export async function recordSkippedWritingSteps({
   });
 }
 
-/** Temporary writing skips are not permanent Plan preferences and add no verdict. */
+/**
+ * Temporary writing skips are not permanent Plan preferences and add no verdict. A screen a fix
+ * changed during the run is optional, since its answer may have been excused rather than saved.
+ */
 export async function loadCompletionSteps({
   lesson,
   runStartedAt,
@@ -63,10 +67,13 @@ export async function loadCompletionSteps({
     return null;
   }
 
+  const fixedStepIds = await findFixedScreenIds({ screens: lesson.steps, startedAt: runStartedAt });
+
   return {
     hasLanguagePlan: skippedActivities !== null,
     optionalStepIds: new Set([
       ...getLatePictureStepIds({ rows: lesson.steps, runStartedAt }),
+      ...fixedStepIds,
       ...skippedWritingStepIds,
     ]),
     steps,

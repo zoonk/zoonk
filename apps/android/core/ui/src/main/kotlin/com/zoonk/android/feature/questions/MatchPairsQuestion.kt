@@ -98,8 +98,8 @@ fun MatchPairsQuestion(
                     if (matched) {
                         stringResource(
                             R.string.questions_matched_with,
-                            plainItemLine(entry),
-                            plainItemLine(left[owner]),
+                            spokenItemLine(entry),
+                            spokenItemLine(left[owner]),
                         )
                     } else {
                         null

@@ -1,5 +1,5 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type TransactionClient, prisma } from "@zoonk/db";
 import { revalidateCourseContent } from "../../cache/revalidate-course-content";
 import { assertPlacementVisibility } from "../_utils/placement-visibility";
 import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
@@ -27,12 +27,19 @@ export async function placeChapterLessons({
 
   await writePlanInputs(async (tx) => {
     await lockPlanSourceWrite(tx, { chapterIds: [chapterId], lessonIds });
-    await tx.chapterLesson.deleteMany({ where: { chapterId } });
-
-    await tx.chapterLesson.createMany({
-      data: lessonIds.map((lessonId, position) => ({ chapterId, lessonId, position })),
-    });
+    await placeChapterLessonsInTransaction(tx, { chapterId, lessonIds });
   });
 
   await revalidateCourseContent(await getChapterCacheTags(chapterId));
+}
+
+export async function placeChapterLessonsInTransaction(
+  tx: TransactionClient,
+  { chapterId, lessonIds }: { chapterId: string; lessonIds: readonly string[] },
+): Promise<void> {
+  await tx.chapterLesson.deleteMany({ where: { chapterId } });
+
+  await tx.chapterLesson.createMany({
+    data: lessonIds.map((lessonId, position) => ({ chapterId, lessonId, position })),
+  });
 }

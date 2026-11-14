@@ -1,3 +1,4 @@
+import { findCode } from "./inline-markup";
 import { splitLinesAndCells } from "./markdown-table";
 
 export type MathSpan = { content: string; display: boolean; end: number; start: number };
@@ -85,8 +86,7 @@ function findDollarMath(text: string, from = 0): MathSpan | null {
   return matchInlineMathAt(text, start) ?? findDollarMath(text, start + 1);
 }
 
-/** The first math in a line, as the web player typesets it. */
-export function findMath(text: string): MathSpan | null {
+function findMathOutsideCode(text: string): MathSpan | null {
   const dollar = findDollarMath(text);
 
   const delimiters = [
@@ -116,6 +116,25 @@ export function findMath(text: string): MathSpan | null {
     [...(dollar ? [dollar] : []), ...brackets].toSorted(
       (first, second) => first.start - second.start,
     )[0] ?? null
+  );
+}
+
+/**
+ * The first math in a line, as the web player typesets it. Inline code comes first, as in
+ * CommonMark, so a `$` inside it (``Match `^a$|^b$` ``) is code, never a delimiter.
+ */
+export function findMath(text: string): MathSpan | null {
+  const code = findCode(text);
+
+  if (!code) {
+    return findMathOutsideCode(text);
+  }
+
+  const after = findMath(text.slice(code.end));
+
+  return (
+    findMathOutsideCode(text.slice(0, code.start)) ??
+    (after && { ...after, end: after.end + code.end, start: after.start + code.end })
   );
 }
 
