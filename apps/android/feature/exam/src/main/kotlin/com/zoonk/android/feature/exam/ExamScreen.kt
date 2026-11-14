@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
@@ -54,6 +53,7 @@ import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.NotFoundMessage
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.scaffold.DetailPage
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.pageTitle
@@ -112,7 +112,7 @@ internal fun GoalExam(
         navigator = navigator,
         title = loaded?.examName,
         actions = { if (loaded != null) ReportProblemMenu(app, FeedbackTarget("exam")) },
-        bottomBar = main?.let { { MockEntryButton(it, onOpen = navigator::open, modifier = Modifier.fillMaxWidth()) } },
+        bottomBar = main?.let { entry -> { TaskActions { main -> MockEntryButton(entry, onOpen = navigator::open, modifier = main) } } },
     ) {
         PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = refresh, modifier = Modifier.fillMaxSize()) {
             val current = state

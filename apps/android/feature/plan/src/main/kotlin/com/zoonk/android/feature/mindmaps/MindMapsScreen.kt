@@ -60,6 +60,7 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageHeader
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.SectionHeader
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
@@ -246,7 +247,7 @@ internal fun MindMapsPage(
         title = { Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
         bottomBar =
             study?.let {
-                { Button(onClick = it, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.mindmaps_study)) } }
+                { TaskActions { main -> Button(onClick = it, modifier = main) { Text(stringResource(R.string.mindmaps_study)) } } }
             },
     ) { padding ->
         Box(Modifier.fillMaxSize().padding(padding)) {

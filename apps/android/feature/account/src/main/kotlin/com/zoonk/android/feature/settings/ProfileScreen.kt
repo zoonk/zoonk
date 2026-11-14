@@ -35,6 +35,7 @@ import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.PageTitleRow
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.scaffold.PageScaffold
 import kotlinx.coroutines.launch
 
@@ -59,13 +60,15 @@ fun ProfileScreen(
         bottomBar =
             form?.let {
                 {
-                    Button(
-                        onClick = it::save,
-                        enabled = it.canSave && it.isChanged,
-                        busy = it.isSaving,
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        Text(stringResource(R.string.settings_save))
+                    TaskActions { main ->
+                        Button(
+                            onClick = it::save,
+                            enabled = it.canSave && it.isChanged,
+                            busy = it.isSaving,
+                            modifier = main,
+                        ) {
+                            Text(stringResource(R.string.settings_save))
+                        }
                     }
                 }
             },

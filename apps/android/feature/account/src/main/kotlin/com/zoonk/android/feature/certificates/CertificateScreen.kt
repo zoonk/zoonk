@@ -61,6 +61,7 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.components.StatusMark
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
@@ -104,8 +105,10 @@ fun CertificateScreen(
         bottomBar =
             if (certificate?.locked == true) {
                 {
-                    Button(onClick = { navigator.open(AppRoute.Subscription) }, modifier = Modifier.fillMaxWidth()) {
-                        Text(stringResource(R.string.subscription_subscribe))
+                    TaskActions { main ->
+                        Button(onClick = { navigator.open(AppRoute.Subscription) }, modifier = main) {
+                            Text(stringResource(R.string.subscription_subscribe))
+                        }
                     }
                 }
             } else {

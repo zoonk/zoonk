@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -79,6 +78,7 @@ import com.zoonk.android.ui.components.MistakeAnswer
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageHeader
 import com.zoonk.android.ui.components.PageLoading
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.DateStyle
@@ -209,8 +209,10 @@ internal fun Notebook(
         }
         if (ready > 0) {
             BottomBar {
-                Button(onClick = { navigator.open(AppRoute.MistakePractice()) }, modifier = Modifier.fillMaxWidth()) {
-                    Text(stringResource(R.string.mistakes_practice))
+                TaskActions { main ->
+                    Button(onClick = { navigator.open(AppRoute.MistakePractice()) }, modifier = main) {
+                        Text(stringResource(R.string.mistakes_practice))
+                    }
                 }
             }
         }

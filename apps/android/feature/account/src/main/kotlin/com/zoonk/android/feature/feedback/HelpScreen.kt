@@ -33,6 +33,7 @@ import com.zoonk.android.app.openWebPage
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.ui.components.PageHeader
 import com.zoonk.android.ui.components.SectionHeader
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.scaffold.PageScaffold
 
@@ -51,7 +52,7 @@ fun HelpScreen(
     PageScaffold(
         onBack = { navigator.back() },
         title = { Text(stringResource(R.string.account_menu_help)) },
-        bottomBar = { SendButton(form, accountEmail, Modifier.fillMaxWidth()) },
+        bottomBar = { TaskActions { main -> SendButton(form, accountEmail, main) } },
     ) { padding ->
         Box(
             modifier =
