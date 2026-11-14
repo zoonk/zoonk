@@ -718,7 +718,10 @@ enum PlanDate {
     return calendar.dateComponents([.day], from: start, to: end).day ?? 0
   }
 
-  static func text(_ isoDate: String, today: String, month: Bool = false) -> String {
+  /// "Nov 20", with the year when it isn't this year's, as main's plan dates.
+  static func text(
+    _ isoDate: String, today: String, month: Bool = false, weekday: Bool = false
+  ) -> String {
     guard let date = date(isoDate) else {
       return isoDate
     }
@@ -730,6 +733,10 @@ enum PlanDate {
     }
 
     style = style.month(.abbreviated).day()
+
+    if weekday {
+      style = style.weekday(.abbreviated)
+    }
 
     if isoDate.prefix(4) != today.prefix(4) {
       style = style.year()

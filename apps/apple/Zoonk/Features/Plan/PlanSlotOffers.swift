@@ -8,8 +8,12 @@ struct PlanSlotActions {
 }
 
 /// A suggestion's card: its mark and title, at most one line under it, what it holds, then its
-/// buttons in one row, the main one last.
+/// buttons in one row, the main one last. In the suggestion's sheet its buttons are the sheet's
+/// bottom bar.
 struct PlanSlotCard<Content: View, Actions: View>: View {
+  @Environment(\.isInSuggestionSheet) private var isInSheet
+  @Environment(\.suggestionSheetNote) private var sheetNote
+
   let title: Text
   let mark: SuggestionMark.Kind
   let description: Text?
@@ -28,26 +32,41 @@ struct PlanSlotCard<Content: View, Actions: View>: View {
   }
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 8) {
-      Label {
-        title.typeStyle(.body.weight(.semibold))
-      } icon: {
-        SuggestionMark(kind: mark)
+    if isInSheet {
+      SuggestionSheetBody(note: sheetNote) {
+        words
+      } actions: {
+        Group {
+          actions
+        }
+        .buttonStyle(.outline)
       }
+    } else {
+      VStack(alignment: .leading, spacing: 8) {
+        words
 
-      if let description {
-        description
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
+        ButtonRow {
+          actions
+        }
+        .buttonStyle(.outline)
       }
-
-      content
-
-      ButtonRow {
-        actions
-      }
-      .buttonStyle(.outline)
     }
+  }
+
+  @ViewBuilder private var words: some View {
+    Label {
+      title.typeStyle(.body.weight(.semibold))
+    } icon: {
+      SuggestionMark(kind: mark)
+    }
+
+    if let description {
+      description
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
+    }
+
+    content
   }
 }
 
@@ -144,28 +163,20 @@ func planPastDateTitle(isExam: Bool) -> String {
 }
 
 /// An exam whose date passed with lessons left: its answers are the Plan's bottom bar
-/// (`examOverBar`), so the card only says what's left.
+/// (`examOverBar`), so it only says what's left.
 struct PlanExamOverSlot: View {
   let context: PlanContext
+  var isLine = false
 
   var body: some View {
     let lessons = context.plan.status?.lessons ?? 0
 
-    VStack(alignment: .leading, spacing: 8) {
-      Label {
-        Text(planPastDateTitle(isExam: true))
-          .typeStyle(.body.weight(.semibold))
-      } icon: {
-        SuggestionMark(kind: .symbol("calendar.badge.clock"))
-      }
-
-      Text(
+    PlanStatement(
+      mark: .symbol("calendar.badge.clock"), title: Text(planPastDateTitle(isExam: true)),
+      description: Text(
         "You have \(lessons) lessons left. Keep studying them, or archive this goal?",
-        tableName: "Plan", comment: "Lessons left once the exam's date passed, and the question"
-      )
-      .typeStyle(.note)
-      .foregroundStyle(.mutedForeground)
-    }
+        tableName: "Plan", comment: "Lessons left once the exam's date passed, and the question"),
+      isLine: isLine)
   }
 }
 

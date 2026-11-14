@@ -85,7 +85,7 @@ function ReviewAnswer({
 
   return (
     <p className="text-sm">
-      {t.rich("<label>Answer:</label> <answer></answer>", {
+      {t.rich("<label>Right answer:</label> <answer></answer>", {
         answer: () => line,
         label: mutedLabel,
       })}

@@ -1,3 +1,4 @@
+import { collectMathMarkup } from "@zoonk/learn/rich-text/math";
 import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
 import { atViewport } from "../_test-utils/browser-viewport";
@@ -7,7 +8,21 @@ import { contentStep } from "../preview/preview-steps";
 
 const ANSWER = "Compartilhado entre os dois átomos, no par de elétrons";
 
-function lessonWithAnswer(text: string) {
+const LONG_FORMULA = String.raw`$P(A \cup B) = P(A) + P(B) - P(A \cap B) = \frac{1}{2} + \frac{1}{3} - \frac{1}{6} = \frac{2}{3} \approx 0.667$`;
+
+function scrollersBetween(drawing: Element, box: Element): Element[] {
+  const scrollers = [];
+
+  for (let node = drawing.parentElement; node && node !== box; node = node.parentElement) {
+    if (getComputedStyle(node).overflowX === "auto" && node.scrollWidth > node.clientWidth) {
+      scrollers.push(node);
+    }
+  }
+
+  return scrollers;
+}
+
+function lessonWithAnswer(text: string, question = "Onde está o par de elétrons compartilhado?") {
   return buildLesson(
     [
       contentStep("check", {
@@ -22,7 +37,7 @@ function lessonWithAnswer(text: string) {
               text: "Em apenas um dos átomos",
             },
           ],
-          question: "Onde está o par de elétrons compartilhado?",
+          question,
         },
       }),
     ],
@@ -152,4 +167,46 @@ describe("checked answer readability", () => {
       });
     },
   );
+
+  it("keeps a formula wider than the row inside its answer, scrolling sideways", async () => {
+    await atViewport({ height: 844, width: 390 }, async () => {
+      const lesson = lessonWithAnswer(LONG_FORMULA);
+      renderLessonPlayer({ lesson, mathMarkup: collectMathMarkup(lesson) });
+
+      await expect.element(page.getByRole("radio").first()).toBeVisible();
+      const drawing = document.querySelector("[data-slot='answer-option'] math");
+      const option = drawing?.closest<HTMLElement>("[data-slot='answer-option']");
+
+      if (!drawing || !option) {
+        throw new Error("The formula must draw inside its answer.");
+      }
+
+      const selected = page.elementLocator(option);
+      await selected.click();
+      await page.getByRole("button", { name: /^Check/u }).click();
+      await expect.element(selected.getByText("Your answer")).toBeVisible();
+
+      expect(option.scrollWidth).toBeLessThanOrEqual(option.clientWidth);
+      expect(scrollersBetween(drawing, option)).toHaveLength(1);
+    });
+  });
+
+  it("keeps a formula wider than the screen inside the question, scrolling sideways", async () => {
+    await atViewport({ height: 844, width: 390 }, async () => {
+      const lesson = lessonWithAnswer("Sim", `É verdade que ${LONG_FORMULA}?`);
+      renderLessonPlayer({ lesson, mathMarkup: collectMathMarkup(lesson) });
+
+      await expect.element(page.getByRole("radio").first()).toBeVisible();
+      const drawing = document.querySelector("math");
+
+      if (!drawing) {
+        throw new Error("The question's formula must draw.");
+      }
+
+      const formula = drawing.closest("[data-slot='inline-math']");
+
+      expect(formula?.getBoundingClientRect().right).toBeLessThanOrEqual(390);
+      expect(scrollersBetween(drawing, document.body)).toHaveLength(1);
+    });
+  });
 });

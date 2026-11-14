@@ -196,24 +196,20 @@ private struct ExamHero: View {
 
     }
 
-    if let noticeDay = exam.noticeDay, let date = studyDate(noticeDay.date) {
+    if let noticeDay = exam.noticeDay, studyDate(noticeDay.date) != nil {
       Section {
         VStack(alignment: .leading, spacing: 8) {
-          let day = date.formatted(.studyDay.weekday(.wide).month(.wide).day())
+          let day = PlanDate.longDay(noticeDay.date, today: isoDay(.now))
           if noticeDay.estimated {
-            Text(
-              "The exam's likely date is now \(day).", tableName: "Exam",
-              comment:
-                "The exam's likely day, while the notice isn't out; the argument is a date like 'Tuesday, May 5'"
-            )
+            Text("The exam's likely date is now \(day).", tableName: "Exam")
           } else if exam.examDocument == .notice {
             Text(
               "The exam notice says \(day).", tableName: "Exam",
-              comment: "The notice's day; the argument is a date like 'Tuesday, May 5'")
+              comment: "The notice's day; the argument is a date like 'May 5'")
           } else {
             Text(
               "The exam's official calendar says \(day).", tableName: "Exam",
-              comment: "The official calendar's day; the argument is a date like 'Tuesday, May 5'")
+              comment: "The official calendar's day; the argument is a date like 'May 5'")
           }
           if dateFailed {
             FailureLine(
@@ -292,12 +288,8 @@ private struct ExamHero: View {
       return nil
     }
 
-    return exam.daysEstimated
-      ? String(
-        localized: "about \(days) days left", table: "Exam",
-        comment: "Last fact under an exam's name when its dates are estimated")
-      : String(
-        localized: "\(days) days left", table: "Exam", comment: "Last fact under an exam's name")
+    return String(
+      localized: "\(days) days left", table: "Exam", comment: "Last fact under an exam's name")
   }
 
   private var facts: [String] {
@@ -310,10 +302,9 @@ private struct ExamHero: View {
 
     let times = Set(exam.days.map(\.startTime))
     let shared = times.count == 1 ? exam.days.first?.startTime : nil
-    let days = dates.map { day, date in
-      var style = Date.FormatStyle.studyDay.month(.abbreviated).day()
-      if dates.count == 1 { style = style.weekday(.abbreviated) }
-      let text = date.formatted(withFarOffYear(style, for: date))
+    let today = isoDay(.now)
+    let days = dates.map { day, _ in
+      let text = PlanDate.text(day.date, today: today, weekday: dates.count == 1)
       let time = shared == nil ? day.startTime.flatMap(examTimeOfDay) : nil
       return time.map { "\(text)\u{00A0}· \($0)" } ?? text
     }
@@ -607,8 +598,8 @@ private struct ExamMocksSection: View {
             ) {
               StatusMark(status: exam.runningMocks.isEmpty ? .next : .todo)
             } trailing: {
-              if let date = next.date.flatMap(studyDate) {
-                Text(date.formatted(.studyDay.weekday(.abbreviated).month(.abbreviated).day()))
+              if let date = next.date {
+                Text(PlanDate.text(date, today: isoDay(.now), weekday: true))
               }
             }
             .disclosureChevron()
@@ -817,18 +808,14 @@ private struct ExamFormatSection: View {
 
   @ViewBuilder
   private func title(_ day: ExamView.FormatDay) -> some View {
-    let date = day.date.flatMap(studyDate)
-
     HStack(alignment: .firstTextBaseline) {
-      if exam.format.count > 1, date != nil {
+      if exam.format.count > 1, day.date != nil {
         Text("Day \(day.day)", tableName: "Exam", comment: "An exam day")
           .foregroundStyle(.mutedForeground)
       }
 
-      if let date {
-        Text(
-          date.formatted(
-            withFarOffYear(.studyDay.weekday(.abbreviated).month(.abbreviated).day(), for: date)))
+      if let date = day.date {
+        Text(PlanDate.text(date, today: isoDay(.now), weekday: true))
       } else {
         Text("Day \(day.day)", tableName: "Exam", comment: "An exam day")
       }
@@ -848,12 +835,6 @@ private struct ExamFormatSection: View {
       "\(names)\u{00A0}· \(count)", tableName: "Exam",
       comment: "An exam day's parts, then how many questions they have")
   }
-}
-
-/// The Plan's date rule: the year shows beyond the next twelve months.
-private func withFarOffYear(_ style: Date.FormatStyle, for date: Date) -> Date.FormatStyle {
-  let farOff = Calendar.current.date(byAdding: .year, value: 1, to: .now) ?? .now
-  return date > farOff ? style.year() : style
 }
 
 private struct ExamMapSection: View {
@@ -1032,17 +1013,23 @@ private struct ExamScoringSection: View {
                 calibration.sure.answered + calibration.unsure.answered > 0
               {
                 Text(
-                  "In your mock exams: sure, \(calibration.sure.right) of \(calibration.sure.answered) right. Unsure, \(calibration.unsure.right) of \(calibration.unsure.answered) right.",
-                  tableName: "Exam", comment: "Sure against unsure answers in mocks")
-                if calibration.advice == .blankUnsure {
-                  Text(
-                    "Your unsure answers cost more than they earn: leave those blank.",
-                    tableName: "Exam", comment: "Advice")
-                } else if calibration.advice == .keepAnswering {
-                  Text(
-                    "Your unsure answers still earn points: keep answering them.",
-                    tableName: "Exam", comment: "Advice")
+                  "In your mock exams: \(calibration.sure.right) of \(calibration.sure.answered) right when not flagged, \(calibration.unsure.right) of \(calibration.unsure.answered) right when flagged.",
+                  tableName: "Exam",
+                  comment:
+                    "Right answers in mock exams among questions not flagged, against flagged ones"
+                )
+                Group {
+                  if calibration.advice == .blankUnsure {
+                    Text(
+                      "Your flagged answers cost more than they earn: leave those blank.",
+                      tableName: "Exam", comment: "Advice")
+                  } else if calibration.advice == .keepAnswering {
+                    Text(
+                      "Your flagged answers still earn points: keep answering them.",
+                      tableName: "Exam", comment: "Advice")
+                  }
                 }
+                .foregroundStyle(.mutedForeground)
               }
             }
           } icon: {

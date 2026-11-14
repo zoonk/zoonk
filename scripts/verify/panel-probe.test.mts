@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import assert from "node:assert/strict";
 import { type Page } from "@playwright/test";
-import { afterEach, beforeEach, describe, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, it, test, vi } from "vitest";
 import { focusReturned, readPanel } from "./keys-probe.mts";
 import { OVERLAYS } from "./overlays.mts";
 import { installPageHelpers } from "./page-helpers.mts";
@@ -39,8 +39,8 @@ afterEach(() => {
   document.body.replaceChildren();
 });
 
-function read(phone = false) {
-  const facts = readPanel({ overlays: OVERLAYS, phone });
+function read(phone = false, opener = "opener") {
+  const facts = readPanel({ opener, overlays: OVERLAYS, phone });
   assert.ok(facts);
   return facts;
 }
@@ -51,7 +51,64 @@ function element(selector: string) {
   return node;
 }
 
-const returned = () => focusReturned({ opener: "opener", overlays: OVERLAYS });
+const returned = () => focusReturned({ opener: "opener" });
+
+test("returns to a menu trigger inside a sheet after its item's panel closes", () => {
+  document.body.innerHTML = `<div data-slot="drawer-popup" role="dialog" tabindex="-1"><h2>Questions</h2><button data-zoonk-act="menu-trigger">…</button></div>
+    <div role="menu"><button data-zoonk-act="item">Report a problem</button></div>
+    <div data-slot="drawer-popup" role="dialog" tabindex="-1" id="report"><h2>Report a problem</h2></div>`;
+
+  element("#report").focus();
+  read(true, "item");
+  element("#report").remove();
+  element("[role=menu]").remove();
+  element("button").focus();
+  assert.equal(focusReturned({ opener: "item", returnTo: "menu-trigger" }), true);
+  element("[role=dialog]").focus();
+  assert.equal(focusReturned({ opener: "item", returnTo: "menu-trigger" }), false);
+});
+
+test("returns from a menu with two portaled ancestors", () => {
+  document.body.innerHTML = `<div data-slot="side-panel-content" role="dialog"><h2>Navigation</h2></div>
+    <div data-slot="dialog-content" role="dialog"><h2>Details</h2><button data-zoonk-act="opener">More</button></div>
+    <div role="menu" tabindex="-1">Options</div>`;
+
+  const menu = element("[role=menu]");
+  menu.focus();
+  assert.equal(read(true).focusInside, true);
+  menu.remove();
+  element("button").focus();
+  assert.equal(returned(), true);
+});
+
+test.each(["removed", "hidden"])(
+  "keeps the outer popup's own close check until it is %s",
+  (closed) => {
+    document.body.innerHTML = `<button data-zoonk-act="sheet-opener">See answers</button>
+    <div data-slot="drawer-popup" role="dialog" tabindex="-1"><button data-zoonk-act="opener">More</button></div>`;
+
+    const sheet = element("[role=dialog]");
+    sheet.focus();
+    read(true, "sheet-opener");
+    document.body.insertAdjacentHTML("beforeend", '<div role="menu" tabindex="-1">Options</div>');
+    const menu = element("[role=menu]");
+    menu.focus();
+    read(true);
+    menu.remove();
+    element("[data-zoonk-act=opener]").focus();
+    assert.equal(returned(), true);
+    element("[data-zoonk-act=sheet-opener]").focus();
+    assert.equal(focusReturned({ opener: "sheet-opener" }), false);
+
+    if (closed === "removed") {
+      sheet.remove();
+    } else {
+      vi.spyOn(sheet, "getBoundingClientRect").mockReturnValue(new DOMRect());
+    }
+
+    assert.equal(focusReturned({ opener: "sheet-opener" }), true);
+  },
+);
 
 function panel(slot: string, content = "") {
   const backdrop = OVERLAYS.find(({ panel: piece }) => piece === slot)?.backdrop;
@@ -64,34 +121,35 @@ function panel(slot: string, content = "") {
 }
 
 describe("shared panel readings", () => {
-  it("reads a portaled menu inside a panel and requires its own focus and close", () => {
-    document.body.innerHTML = `<div data-slot="side-panel-content" role="dialog" tabindex="-1"><h2>Menu</h2><button data-zoonk-act="opener">Owner User</button></div>
+  it.each(["side-panel-content", "drawer-popup"])(
+    "reads a portaled menu inside %s and requires its own focus and close",
+    (slot) => {
+      document.body.innerHTML = `<div data-slot="${slot}" role="dialog" tabindex="-1"><h2>Menu</h2><button data-zoonk-act="opener">Owner User</button></div>
       <div data-slot="dropdown-menu-content" role="menu" tabindex="-1">Account</div>`;
 
-    const menu = element("[role=menu]");
-    menu.focus();
-    const facts = read(true);
-    assert.equal(facts.focusInside, true);
-    assert.equal(facts.needsClose, false);
-    assert.equal(facts.sheet, null);
-    assert.equal(facts.dim, null);
-    assert.deepEqual(panelFindings({ ...facts, focusBack: null }), []);
+      const menu = element("[role=menu]");
+      menu.focus();
+      const facts = read(true);
+      assert.equal(facts.focusInside, true);
+      assert.deepEqual([facts.needsClose, facts.sheet, facts.dim], [false, null, null]);
+      assert.deepEqual(panelFindings({ ...facts, focusBack: null }), []);
 
-    element("button").focus();
-    assert.equal(read(true).focusInside, false);
+      element("button").focus();
+      assert.equal(read(true).focusInside, false);
 
-    assert.ok(
-      panelFindings({ ...read(true), focusBack: null }).some(
-        ({ level, message }) => level === "fail" && message.includes("without taking focus"),
-      ),
-    );
+      assert.ok(
+        panelFindings({ ...read(true), focusBack: null }).some(
+          ({ level, message }) => level === "fail" && message.includes("without taking focus"),
+        ),
+      );
 
-    assert.equal(returned(), false);
-    menu.remove();
-    assert.equal(returned(), true);
-    element("[role=dialog]").focus();
-    assert.equal(returned(), false);
-  });
+      assert.equal(returned(), false);
+      menu.remove();
+      assert.equal(returned(), true);
+      element("[role=dialog]").focus();
+      assert.equal(returned(), false);
+    },
+  );
 
   it("reports unfamiliar dialog roles without imposing shared-piece behavior", () => {
     for (const slot of ["popover-content", "toast", "hand-drawn-panel"]) {

@@ -8,7 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import { getStepMoves } from "../_utils/step-moves";
 import { CeremonyClosingContext, useClosedOnReturn } from "../ceremonies/ceremony-closing";
 import { TaskFrame, type TaskFrameAside, TaskMainButton } from "../shell/task-frame";
-import { QuestionBack } from "./question-actions";
+import { BackWithSecondAction, QuestionBack } from "./question-actions";
 import { STEP_TITLE_SLOT } from "./step-card";
 import { StepDots } from "./step-dots";
 import { useTaskAsideShown } from "./task-header";
@@ -94,10 +94,7 @@ export function Steps({
   exitHref: string;
   finalAction: React.ReactNode;
   finalOptions?: React.ReactNode;
-  /**
-   * The bar's outlined second action on the last step (`BAR_SECOND_ACTION_CLASS`): first in the
-   * row, so on a phone, where it takes the line above, it's read first too.
-   */
+  /** The bar's outlined second action on the last step (`BAR_SECOND_ACTION_CLASS`). */
   finalSecondAction?: React.ReactNode;
   items: StepsItem[];
 }) {
@@ -175,8 +172,11 @@ export function Steps({
         showsStep ? (
           <>
             <TaskActions>
-              {isLastWide && <WideOnly when={!isLastHere}>{final.second}</WideOnly>}
-              {phone.back !== -1 && <QuestionBack label={t("Back")} onClick={back} />}
+              <BackWithSecondAction
+                back={phone.back !== -1 && <QuestionBack label={t("Back")} onClick={back} />}
+              >
+                {isLastWide && <WideOnly when={!isLastHere}>{final.second}</WideOnly>}
+              </BackWithSecondAction>
               {item.action}
               {!isLastHere && (
                 <TaskMainButton

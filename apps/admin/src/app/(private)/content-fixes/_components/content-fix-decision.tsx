@@ -28,6 +28,7 @@ type ApprovalNotice =
   | "changed"
   | "expired"
   | "failed"
+  | "finishFailed"
   | "needsPasskey"
   | "notSigned"
   | "refused";
@@ -38,6 +39,7 @@ const NOTICES: Record<ApprovalNotice, string> = {
   changed: "This changed since you opened the page, so nothing was approved. Check it again.",
   expired: "That took too long, so nothing changed. Approve again.",
   failed: "Couldn't approve. Check that the API is running, then try again.",
+  finishFailed: "Couldn't finish applying. Check that the API is running, then try again.",
   needsPasskey: "You have no passkey yet. Add one, then approve.",
   notSigned: "Your passkey didn't confirm, so nothing changed. Approve again.",
   refused: "That passkey wasn't accepted, so nothing changed. Use one of your own passkeys.",
@@ -166,17 +168,23 @@ export function ReviewBar({
   reject?: Reject;
   settingsUrl: string;
 }) {
+  // The note speaks for the action pressed last, so an older one's message never hides it.
+  const [lastAction, setLastAction] = useState<"approve" | "finish">("approve");
+
   const [approveNotice, approveAction, isApproving] = useActionState(async () => {
+    setLastAction("approve");
     const { data, error } = await safeAsync(() => approve({ batchId, fixIds }));
     return error ? "failed" : data;
   }, null);
 
   const [finishNotice, finishAction, isFinishing] = useActionState(async () => {
+    setLastAction("finish");
     const { data, error } = await safeAsync(() => resumeContentFixesAction(batchId));
-    return error || !data ? "failed" : toNotice(data);
+    const notice = error || !data ? "failed" : toNotice(data);
+    return notice === "failed" ? "finishFailed" : notice;
   }, null);
 
-  const notice = approveNotice ?? finishNotice;
+  const notice = lastAction === "finish" ? finishNotice : approveNotice;
   const needsPasskey = !hasPasskey || approveNotice === "needsPasskey";
 
   return (
