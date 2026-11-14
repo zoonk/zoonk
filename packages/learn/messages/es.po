@@ -5067,7 +5067,7 @@ msgstr "Haz un simulacro completo o medio simulacro para ver tu puntaje estimado
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "eMlJUc"
 msgid "{count, plural, one {Based on # review of every topic} other {Based on # reviews of every topic}}"
-msgstr "{count, plural, one {Basado en # revisión de todos los temas} other {Basado en # revisiones de todos los temas}}"
+msgstr "{count, plural, one {Con base en # revisión de todos los temas} other {Con base en # revisiones de todos los temas}}"
 
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "DJCbLV"

@@ -5067,7 +5067,7 @@ msgstr "Tahmini puanını görmek için tam veya yarım deneme sınavına gir."
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "eMlJUc"
 msgid "{count, plural, one {Based on # review of every topic} other {Based on # reviews of every topic}}"
-msgstr "{count, plural, one {Tüm konuların # tekrarına göre} other {Tüm konuların # tekrarına göre}}"
+msgstr "{count, plural, other {Her konunun # kez tekrar edilmesine göre}}"
 
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "DJCbLV"

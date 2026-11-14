@@ -5067,7 +5067,7 @@ msgstr "通常の模試か半分の長さの模試を受けると、推定スコ
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "eMlJUc"
 msgid "{count, plural, one {Based on # review of every topic} other {Based on # reviews of every topic}}"
-msgstr "{count, plural, other {すべてのトピックの復習#回の結果に基づいています}}"
+msgstr "{count, plural, other {全トピックを#回復習した結果に基づいています}}"
 
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "DJCbLV"

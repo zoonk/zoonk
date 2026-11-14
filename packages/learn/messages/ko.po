@@ -5067,7 +5067,7 @@ msgstr "예상 점수를 보려면 모의고사를 전체 또는 절반 분량�
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "eMlJUc"
 msgid "{count, plural, one {Based on # review of every topic} other {Based on # reviews of every topic}}"
-msgstr "{count, plural, other {모든 주제 복습 #회 기준}}"
+msgstr "{count, plural, other {모든 주제를 #회 복습한 결과를 바탕으로 해요}}"
 
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "DJCbLV"

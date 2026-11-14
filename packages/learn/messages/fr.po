@@ -5067,7 +5067,7 @@ msgstr "Passe un examen blanc complet ou un demi-examen blanc pour voir ton scor
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "eMlJUc"
 msgid "{count, plural, one {Based on # review of every topic} other {Based on # reviews of every topic}}"
-msgstr "{count, plural, one {D’après # révision de tous les sujets} other {D’après # révisions de tous les sujets}}"
+msgstr "{count, plural, one {D’après # révision de chaque sujet} other {D’après # révisions de chaque sujet}}"
 
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "DJCbLV"

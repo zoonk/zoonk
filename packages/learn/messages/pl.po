@@ -5067,7 +5067,7 @@ msgstr "Rozwiąż cały egzamin próbny lub jego połowę, aby poznać szacowany
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "eMlJUc"
 msgid "{count, plural, one {Based on # review of every topic} other {Based on # reviews of every topic}}"
-msgstr "{count, plural, one {Na podstawie # powtórki wszystkich tematów} few {Na podstawie # powtórek wszystkich tematów} many {Na podstawie # powtórek wszystkich tematów} other {Na podstawie # powtórki wszystkich tematów}}"
+msgstr "{count, plural, one {Podstawą jest # powtórka każdego tematu} few {Podstawą są # powtórki każdego tematu} many {Podstawą jest # powtórek każdego tematu} other {Podstawą jest # powtórki każdego tematu}}"
 
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "DJCbLV"
