@@ -755,10 +755,29 @@ enum PlanDate {
     return date.formatted(isoDate.prefix(4) == today.prefix(4) ? style : style.year())
   }
 
-  /// "Monday, May 5".
-  static func weekdayDay(_ isoDate: String) -> String {
-    date(isoDate)?.formatted(
-      Date.FormatStyle(timeZone: .gmt).weekday(.wide).month(.wide).day()) ?? isoDate
+  /// "Monday, May 5", with the year when it isn't this year's.
+  static func weekdayDay(_ isoDate: String, today: String) -> String {
+    guard let date = date(isoDate) else {
+      return isoDate
+    }
+
+    let style = Date.FormatStyle(timeZone: .gmt).weekday(.wide).month(.wide).day()
+    return date.formatted(isoDate.prefix(4) == today.prefix(4) ? style : style.year())
+  }
+
+  /// The learner's own calendar day, for a screen whose response carries no `today`.
+  static func today(_ now: Date = .now) -> String {
+    LessonTodayChoices.day(of: now)
+  }
+
+  /// A moment's day in the learner's zone, such as when a mock was finished: `style` without the
+  /// year, which it gets when the day isn't in this year (main's `useFormatMomentDay`).
+  static func momentDay(
+    _ moment: Date, style: Date.FormatStyle = .dateTime.month(.abbreviated).day(),
+    now: Date = .now, calendar: Calendar = .current
+  ) -> String {
+    let thisYear = calendar.component(.year, from: moment) == calendar.component(.year, from: now)
+    return moment.formatted(thisYear ? style : style.year())
   }
 
   static func monthText(_ isoDate: String, today: String) -> String {

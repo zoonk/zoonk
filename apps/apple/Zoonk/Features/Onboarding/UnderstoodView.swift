@@ -521,7 +521,7 @@ private struct UnderstoodRowView: View {
           Button {
             use(date)
           } label: {
-            Text(UnderstoodRows.day(date)?.formatted(.dateTime.day().month(.abbreviated)) ?? date)
+            Text(PlanDate.text(date, today: PlanDate.today()))
           }
         }
       }
