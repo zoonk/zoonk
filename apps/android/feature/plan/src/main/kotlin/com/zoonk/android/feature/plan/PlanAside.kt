@@ -21,8 +21,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -38,7 +36,6 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.varietyName
-import com.zoonk.android.ui.theme.GeistMono
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.GoalContentCountry
 import com.zoonk.api.models.LearnerSummaryGoal
@@ -365,22 +362,6 @@ private fun dailyTimeValue(page: PlanPageState): AnnotatedString {
     val weekend = shape.weekend?.let { formatMinutes(it.toInt(), locale) } ?: return withData(weekdays, weekdays)
     return withData(stringResource(R.string.plan_time_weekends, weekdays, weekend), weekdays, weekend)
 }
-
-/** Main's values: the dates and times in [text] ([data]) in mono, the words around them in the text face. */
-private fun withData(
-    text: String,
-    vararg data: String,
-): AnnotatedString =
-    buildAnnotatedString {
-        append(text)
-        data.filter { it.isNotEmpty() }.forEach { piece ->
-            var at = text.indexOf(piece)
-            while (at >= 0) {
-                addStyle(SpanStyle(fontFamily = GeistMono), at, at + piece.length)
-                at = text.indexOf(piece, at + piece.length)
-            }
-        }
-    }
 
 internal fun studyDaysText(
     weekdayMinutes: List<Int>,

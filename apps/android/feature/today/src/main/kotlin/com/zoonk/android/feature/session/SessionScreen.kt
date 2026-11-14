@@ -334,7 +334,7 @@ private fun SessionSummaryContent(
  * The day's next step, or the one a tap opened when its lesson isn't made yet. That wait reads the
  * day again until the lesson is there, or only the lesson's readiness while a run writes it, then
  * says it's ready and focuses Start, never opening it on its own: the learner may be reading, or
- * doing what "While you wait" offered. [notWritten] says,
+ * doing the other step it offers. [notWritten] says,
  * in place of Start, why the API wouldn't write the lesson the tap asked for; [alternative] is work
  * to do meanwhile or instead. [refresh] is null on a day not opened yet, which has no lesson to
  * wait for; [onStop] once the session has work done. A goal's first lesson deals its guesses while
@@ -393,7 +393,6 @@ internal fun NextStop(
         val reviewStarts = rememberReviewStarts()
         val opening = rememberWaitState(viewModel.busy == SessionAction.Start)
         val instead = alternative?.takeIf { !ready && goalId != null }
-        val insteadLabel = if (refusal != null || failure != null) R.string.session_next_instead else R.string.session_next_while_waiting
 
         LaunchedEffect(step.position, waiting, step.screen) {
             when {
@@ -483,7 +482,7 @@ internal fun NextStop(
                                         enabled = !busy,
                                     ) {
                                         Text(
-                                            stringResource(insteadLabel, blockTitle(other)),
+                                            alternativeLabel(other),
                                         )
                                     }
                                 }
@@ -664,6 +663,15 @@ private fun ErrorLine(text: String) {
 private fun SessionLoading(onClose: () -> Unit) {
     TaskScaffold(onClose = onClose) { padding -> PageLoading(Modifier.padding(padding)) }
 }
+
+/** Main's `useAlternativeLabel`: a verb for what [step] starts; only a challenge needs its name. */
+@Composable
+private fun alternativeLabel(step: DayStep): String =
+    when {
+        step.checkpointFacts != null -> stringResource(R.string.session_next_start_title, blockTitle(step))
+        step.kind == StudyBlock.Kind.REVIEW -> stringResource(R.string.session_next_review_now)
+        else -> stringResource(R.string.session_next_practice_now)
+    }
 
 /** Main's `findAlternativeStudyBlock`: other work to do while [step]'s lesson waits, never work that waits itself. */
 private fun StudySession.alternativeTo(step: StudyBlock): DayStep? =
