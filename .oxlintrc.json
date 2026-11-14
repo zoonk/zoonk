@@ -175,7 +175,6 @@
     "zoonk/no-hardcoded-aria-label": "off",
     "zoonk/no-t-function-as-argument": "error",
     "zoonk/no-uncaught-transition-await": "error",
-    // Shared-piece rules with existing callers to migrate stay off.
     "zoonk/no-page-top-spacing": "error",
     "zoonk/no-plus-badge": "error",
     "zoonk/no-hand-made-fold": "error",
