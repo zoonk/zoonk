@@ -34,7 +34,7 @@ export function WeekRings() {
         "{count, plural, =0 {# days studied} one {# day studied} other {# days studied}}",
         { count: studied.size },
       )}
-      className="grid w-full max-w-80 grid-cols-7 gap-1"
+      className="flex w-full max-w-80 justify-between"
       role="img"
     >
       {Array.from({ length: DAYS_PER_WEEK }, (_, index) => {
