@@ -2510,9 +2510,11 @@ msgid "Not this time"
 msgstr "Diesmal hat es nicht geklappt"
 
 #: src/checkpoints/checkpoint-review.tsx
-msgctxt "CsqxCb"
-msgid "<label>Answer:</label> <answer></answer>"
-msgstr "<label>Antwort:</label> <answer></answer>"
+#: src/mistakes/mistake-entry.tsx
+#: src/questions/right-answer-line.tsx
+msgctxt "wS1KQ6"
+msgid "<label>Right answer:</label> <answer></answer>"
+msgstr "<label>Richtige Antwort:</label> <answer></answer>"
 
 #: src/checkpoints/checkpoint-review.tsx
 #: src/mistakes/mistake-practice-run.tsx
@@ -7585,12 +7587,6 @@ msgstr "{seconds, number} Sekunden pro Frage, wie in der Prüfung."
 msgctxt "rs59fn"
 msgid "Only answer when you're sure. Saying you're not sure is fine."
 msgstr "Antworte nur, wenn du dir sicher bist. Es ist okay zu sagen, dass du unsicher bist."
-
-#: src/mistakes/mistake-entry.tsx
-#: src/questions/right-answer-line.tsx
-msgctxt "wS1KQ6"
-msgid "<label>Right answer:</label> <answer></answer>"
-msgstr "<label>Richtige Antwort:</label> <answer></answer>"
 
 #: src/mistakes/mistake-entry.tsx
 msgctxt "Gr6IEG"

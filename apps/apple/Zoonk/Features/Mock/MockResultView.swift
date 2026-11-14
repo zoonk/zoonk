@@ -856,8 +856,13 @@ private struct MockSpeakingSection: View {
   var body: some View {
     Section {
       VStack(alignment: .leading, spacing: 6) {
-        Text(estimateTitle)
-          .typeStyle(.readout)
+        if let range = estimateRange {
+          Text(range)
+            .typeStyle(.momentReadout)
+        } else {
+          Text("No estimate", tableName: "Mock", comment: "A speaking paper's estimate")
+            .typeStyle(.pageTitle)
+        }
         Group {
           Text(estimateDetail)
           if paper.estimate.typed, paper.estimate.points != nil {
@@ -895,22 +900,16 @@ private struct MockSpeakingSection: View {
     }
   }
 
-  private var estimateTitle: String {
-    guard let points = paper.estimate.points else {
-      return String(localized: "No estimate", table: "Mock", comment: "A speaking paper's estimate")
-    }
-
-    let total = number(paper.estimate.total)
+  private var estimateRange: String? {
+    guard let points = paper.estimate.points else { return nil }
 
     if points.low == points.high {
-      return String(
-        localized: "About \(number(points.low)) of \(total)", table: "Mock",
-        comment: "A speaking paper's estimated points")
+      return number(points.low)
     }
 
     return String(
-      localized: "About \(number(points.low)) to \(number(points.high)) of \(total)",
-      table: "Mock", comment: "A speaking paper's estimated points range")
+      localized: "\(number(points.low))–\(number(points.high))", table: "Mock",
+      comment: "An estimated score range, low to high")
   }
 
   private func number(_ value: Double) -> String {
@@ -920,8 +919,8 @@ private struct MockSpeakingSection: View {
   private var estimateDetail: String {
     if paper.estimate.points != nil {
       return String(
-        localized: "An estimate, not an official score.", table: "Mock",
-        comment: "Under a speaking paper's estimate")
+        localized: "Estimated score, from 0 to \(number(paper.estimate.total))", table: "Mock",
+        comment: "Under a speaking paper's estimated score")
     }
 
     if paper.tasks.contains(where: { $0.status != .completed }) {

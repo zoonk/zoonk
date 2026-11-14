@@ -74,17 +74,19 @@ function ChangeActions({
   const mainVariant = useMainActionVariant();
 
   return (
-    <SuggestionActions>
-      {change.canApply && (
-        <SuggestionAction
-          action={() => onAnswer("applied")}
-          disabled={disabled}
-          variant={mainVariant}
-        >
-          {overridesNotice ? t("Use my date") : t("Change my plan")}
-        </SuggestionAction>
-      )}
-
+    <SuggestionActions
+      main={
+        change.canApply && (
+          <SuggestionAction
+            action={() => onAnswer("applied")}
+            disabled={disabled}
+            variant={mainVariant}
+          >
+            {overridesNotice ? t("Use my date") : t("Change my plan")}
+          </SuggestionAction>
+        )
+      }
+    >
       <SuggestionAction action={() => onAnswer("declined")} disabled={disabled} variant="outline">
         {keepsMine && !overridesNotice && t("Keep mine")}
         {overridesNotice && t("Keep official date")}
