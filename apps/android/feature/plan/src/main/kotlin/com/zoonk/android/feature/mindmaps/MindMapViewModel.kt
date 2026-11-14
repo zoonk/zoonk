@@ -35,6 +35,7 @@ class MindMapViewModel(
     private val goalId: UUID,
     private val currentSession: () -> AuthenticatedSession?,
     private val saveFailed: () -> Unit = {},
+    private val pictureSaved: (PictureSave) -> Unit = {},
     private val io: CoroutineDispatcher = Dispatchers.IO,
 ) : ViewModel() {
     private val locals = MutableStateFlow<Map<UUID, MindMapLocal>>(emptyMap())
@@ -51,9 +52,6 @@ class MindMapViewModel(
             locals.update { current -> current.filterNot { (id, local) -> id in chapterIds && !local.pending && local.since < started } }
             if (wholeList && createAllFailedSince < started) all.compareAndSet(CreateAll.Unreachable, null)
         }
-
-    private val saved = MutableStateFlow<PictureSave?>(null)
-    val save: StateFlow<PictureSave?> = saved.asStateFlow()
 
     private val wanted = MutableStateFlow<Map<MindMapTarget, Boolean>>(emptyMap())
 
@@ -158,17 +156,13 @@ class MindMapViewModel(
             val bytes = store.picture(session, url)
             if (!isCurrent) return@launch
             val written = bytes != null && withContext(io) { isCurrent && write(open, bytes) }
-            if (isCurrent) saved.value = if (written) PictureSave.Saved else PictureSave.Failed
+            if (isCurrent) pictureSaved(if (written) PictureSave.Saved else PictureSave.Failed)
         }
     }
 
     private val isCurrent get() = currentSession() == session
 
     override fun onCleared() = stopWatching()
-
-    fun savedShown() {
-        saved.value = null
-    }
 
     private fun write(
         open: () -> OutputStream?,
