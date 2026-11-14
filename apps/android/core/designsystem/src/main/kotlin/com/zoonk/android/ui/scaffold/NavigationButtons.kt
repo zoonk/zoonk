@@ -3,6 +3,7 @@ package com.zoonk.android.ui.scaffold
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.zoonk.android.R
@@ -18,8 +19,9 @@ fun BackButton(onClick: () -> Unit) {
 fun CloseButton(
     onClick: () -> Unit,
     label: String? = null,
+    modifier: Modifier = Modifier,
 ) {
-    IconButton(onClick = onClick) {
+    IconButton(onClick = onClick, modifier = modifier) {
         Icon(painterResource(R.drawable.ic_close), contentDescription = label ?: stringResource(R.string.task_leave))
     }
 }
