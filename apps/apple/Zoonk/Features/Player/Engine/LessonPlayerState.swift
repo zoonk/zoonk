@@ -101,7 +101,7 @@ struct LessonPlayerState: Equatable, Sendable {
   private(set) var revealed: [String: Int] = [:]
   /// Screens that can't be played after all (a question about a picture that never came).
   private(set) var unavailableStepIds: [String] = []
-  /// Writing left out of this run, without a verdict ("I don't know yet", "Can't write now").
+  /// Writing left out of this run, without a verdict ("I don't know yet", "Skip writing questions today").
   private(set) var skippedWritingStepIds: [String] = []
   private(set) var writingRestore: WritingRestore?
   /// Questions answered after "Explain first", so memory rates them as helped.
