@@ -3,9 +3,15 @@ import SwiftUI
 struct StatsPage<Content: View>: View {
   @ViewBuilder let content: Content
 
+  @Environment(\.statsSection) private var section
+
   var body: some View {
     ScrollView {
       VStack(alignment: .leading, spacing: 28) {
+        if let section {
+          PageHeader(Text(section.title), supporting: section.supporting.map { Text($0) })
+        }
+
         content
       }
       .frame(maxWidth: .infinity, alignment: .leading)
@@ -47,17 +53,19 @@ struct StatsEmpty: View {
     ContentUnavailableView {
       Label {
         Text(
-          "Start learning to track your progress", tableName: "Progress",
-          comment: "Title shown on Statistics to a learner with nothing to count yet")
+          "No statistics yet", tableName: "Progress")
       } icon: {
         Image(systemName: "chart.bar")
       }
+    } description: {
+      Text(
+        "They show up after your first lesson.", tableName: "Progress")
     } actions: {
       Button {
         router.showRoot(of: .today)
       } label: {
         Text(
-          "Go to Today", tableName: "Progress", comment: "Opens Today from an empty Statistics page"
+          "Go to Today", tableName: "Progress"
         )
       }
       .buttonStyle(.mainAction)
@@ -87,22 +95,14 @@ struct StatsFailure: View {
   var body: some View {
     ContentUnavailableView {
       Label {
-        if failure == .network {
-          Text(
-            "You're offline", tableName: "Progress",
-            comment: "Title shown when Statistics can't load without a connection")
-        } else {
-          Text(
-            "Statistics didn't load", tableName: "Progress",
-            comment: "Title shown when Statistics can't load because of a service error")
-        }
+        Text(
+          "This page didn't load", tableName: "Progress")
       } icon: {
         Image(systemName: failure == .network ? "wifi.exclamationmark" : "exclamationmark.triangle")
       }
     } description: {
       Text(
-        "Your progress is safe. Try again in a moment.", tableName: "Progress",
-        comment: "Recovery guidance when Statistics can't load")
+        "Check your connection and try again.", tableName: "Progress")
     } actions: {
       Button {
         Task {

@@ -123,8 +123,7 @@ internal fun TodayNotice(
             }
         }
 
-        // Core no longer picks the free week's notice; the API still lists it.
-        Today.Notice.EXAM_ACCESS, null -> {}
+        null -> {}
     }
 }
 

@@ -6,7 +6,8 @@ final class MindMapDeckTests: XCTestCase {
   func testTheLessonsDeckIsTheLessonsTheListNamedSoMapsWrittenLaterDontMoveIt() {
     let maps = Self.maps(groups: [
       LessonMapGroup(chapterId: "c1", count: 2, lessonIds: ["l2", "l3"]),
-      LessonMapGroup(chapterId: "c3", count: 2, lessonIds: ["l5", "l6"]),
+      LessonMapGroup(chapterId: "c2", count: 3, lessonIds: []),
+      LessonMapGroup(chapterId: "c3", count: 3, lessonIds: ["l5", "l6"]),
     ])
 
     XCTAssertEqual(
@@ -71,7 +72,7 @@ final class MindMapDeckTests: XCTestCase {
   ) -> GoalMindMaps {
     GoalMindMaps(
       chapters: chapters,
-      createOffer: MindMapCreateOffer(eligible: 0, needLessons: 0, startable: 0, stop: nil),
+      createOffer: MindMapCreateOffer(eligible: 0, startable: 0, stop: nil),
       firstTab: .chapters, lessonGroups: groups, saved: saved)
   }
 

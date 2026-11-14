@@ -1,7 +1,6 @@
 "use client";
 
 import { type FeedbackTarget } from "@zoonk/core/feedback/contract";
-import { DetailMenu } from "@zoonk/ui/components/detail";
 import { useEffect, useId } from "react";
 import { TaskHeaderMenu } from "../_components/task-header";
 import { useContentFeedback } from "./feedback-context";
@@ -10,12 +9,10 @@ import { ReportProblemItem } from "./report-problem-item";
 export function ContentFeedbackMenu({
   label,
   screen,
-  size = "icon-bar",
   target,
 }: {
   label: string;
   screen: string;
-  size?: "detail" | "icon-bar";
   target: FeedbackTarget;
 }) {
   const feedback = useContentFeedback();
@@ -30,48 +27,24 @@ export function ContentFeedbackMenu({
 
   const onOpenChange = (open: boolean) => feedback.setMenuOpen({ menuId, open });
 
-  if (size !== "detail") {
-    return (
-      <TaskHeaderMenu className="w-60" label={label} onOpenChange={onOpenChange}>
-        <ReportProblemItem screen={screen} target={target} />
-      </TaskHeaderMenu>
-    );
-  }
-
   return (
-    <DetailMenu label={label} onOpenChange={onOpenChange}>
+    <TaskHeaderMenu className="w-60" label={label} onOpenChange={onOpenChange}>
       <ReportProblemItem screen={screen} target={target} />
-    </DetailMenu>
+    </TaskHeaderMenu>
   );
 }
 
-/** `place="bar"` is the page bar's borderless icon; the default is the bordered one beside a page's main button. */
-export function ReportProblemMenu({
-  label,
-  place = "detail",
-  screen,
-}: {
-  label: string;
-  place?: "bar" | "detail";
-  screen: string;
-}) {
+/** The same "…" for a report about the screen as a whole, with no one piece of content to name. */
+export function ReportProblemMenu({ label, screen }: { label: string; screen: string }) {
   const feedback = useContentFeedback();
 
   if (!feedback) {
     return null;
   }
 
-  if (place === "bar") {
-    return (
-      <TaskHeaderMenu className="w-60" label={label}>
-        <ReportProblemItem screen={screen} />
-      </TaskHeaderMenu>
-    );
-  }
-
   return (
-    <DetailMenu label={label}>
+    <TaskHeaderMenu className="w-60" label={label}>
       <ReportProblemItem screen={screen} />
-    </DetailMenu>
+    </TaskHeaderMenu>
   );
 }

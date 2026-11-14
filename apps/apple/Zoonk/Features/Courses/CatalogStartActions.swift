@@ -73,7 +73,7 @@ struct CatalogStartActions: View {
   @ViewBuilder
   private var startButtons: some View {
     if let goal {
-      BusyButton(isBusy: switchingTo != nil, icon: .forward) {
+      BusyButton(isBusy: switchingTo != nil) {
         continuePlan(goal)
       } label: {
         Text(

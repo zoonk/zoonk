@@ -1714,61 +1714,61 @@
         }
       }
     },
-    "Skip the rewrite" : {
+    "Skip" : {
       "comment" : "Goes on without rewriting",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Überarbeitung überspringen"
+            "value" : "Überspringen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Saltar la reescritura"
+            "value" : "Saltar"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Passer la réécriture"
+            "value" : "Sauter"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Salta la riscrittura"
+            "value" : "Salta"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "書き直しをスキップする"
+            "value" : "スキップ"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "다시 쓰기 건너뛰기"
+            "value" : "건너뛰기"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pomiń poprawki"
+            "value" : "Pomiń"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pular a reescrita"
+            "value" : "Pular"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Yeniden yazmayı atla"
+            "value" : "Atla"
           }
         }
       }

@@ -54,7 +54,7 @@ final class CertificatesStoreTests: XCTestCase {
     XCTAssertEqual(certificate.issueMonth, earned.formatted(utc.year().month(.wide)))
     let day = earned.formatted(utc.year().month(.abbreviated).day())
     XCTAssertTrue(
-      certificate.summary.hasSuffix(day.replacingOccurrences(of: " ", with: "\u{00A0}")))
+      certificate.rowLine.hasSuffix(day.replacingOccurrences(of: " ", with: "\u{00A0}")))
     XCTAssertEqual(certificate.groupedCode, "K7QF-2M9X-HD4P")
   }
 

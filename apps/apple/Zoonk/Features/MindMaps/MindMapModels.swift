@@ -106,8 +106,6 @@ struct SavedMindMap: Decodable, Equatable, Sendable {
 struct MindMapCreateOffer: Decodable, Equatable, Sendable {
   /// Chapters without a ready map or one on its way whose lessons are all written.
   let eligible: Int
-  /// Chapters without a map whose lessons aren't all written: each writes them from its own row.
-  let needLessons: Int
   /// How many of `eligible` one tap would start now, a failed map's free retry included.
   let startable: Int
   /// What stops a new map now; nil while the allowance has room for one more.
@@ -121,10 +119,9 @@ struct MindMapAllowanceStop: Decodable, Equatable, Sendable {
   }
 
   enum Resource: String, Decodable, Sendable {
-    case aiSpend, lessonStart, mindMap
+    case aiSpend, mindMap
   }
 
-  /// `rolling30Days` is a free learner's lessons, which come back at `resetsAt`.
   let period: String?
   let reason: Reason
   let resetsAt: Date?
@@ -142,7 +139,6 @@ struct MindMapAllowanceStop: Decodable, Equatable, Sendable {
     let ranOut: MindMapLimit.Resource =
       switch resource {
       case .aiSpend: .aiSpend
-      case .lessonStart: .lessons
       case .mindMap, nil: .mindMap
       }
 

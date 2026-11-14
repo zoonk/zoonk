@@ -4,7 +4,7 @@ description: Design, implement, or review Zoonk interfaces on the web, iOS and A
 license: MIT
 metadata:
   author: zoonk
-  version: "6.3.0"
+  version: "6.4.0"
 ---
 
 # Zoonk design
@@ -36,6 +36,7 @@ These roles each have one piece and one way on every app screen. A screen never 
 | --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | A page's top                | `PageTop` (`@zoonk/ui/components/page-top`; inside the app's frame the layout draws `PageTopBar` and the page its `PageTitle`): the bar, then the title, at one height on a phone and a computer. No page sets its own top padding.                                               |
 | The way back                | `BackLink`: a left chevron and the name of the page it goes back to, always both. A task (a full-screen flow) keeps ✕.                                                                                                                                                            |
+| A page's own actions        | The end of its top bar (`PageTopBar`'s `actions`): words as a `size="bar"` button, a glyph alone as `icon-bar`, the "…" last. Nothing sits beside a pushed page's title. A tab root (Today, Plan, the buddy) has no bar: its own action ends its title row, in the small size.    |
 | A screen's main action      | `BottomBar` (`@zoonk/ui/components/bottom-bar`), last in the page: pinned at the bottom on a phone and a computer, the action full width on a phone and at the bar's end on a computer. A screen with no main action has no bar.                                                  |
 | What opens over a page      | `Drawer`: a sheet from the bottom on a phone, a centered dialog on a computer. A question that needs an answer is an `AlertDialog`, something edited beside the page a `SidePanel`. The piece decides by screen size, never the screen.                                           |
 | A button                    | Its label and at most one glyph. The main action that Enter presses is an `EnterButton`, and ⏎ is its one glyph, where the spinner goes while it works. A button Enter doesn't press may have one icon, or trail a chevron (`FORWARD_ICON`) when it goes forward. Never an arrow. |
@@ -46,7 +47,7 @@ These roles each have one piece and one way on every app screen. A screen never 
 
 A [marketing page](#marketing-pages) is outside the first and third rows: its top is the public header over a first screen with its own room, and its one action sits in the page, shown in `BottomBar` once the page's own has scrolled away.
 
-Lint, the catalog's word list and `pnpm verify:pages` hold part of these, and `pnpm verify:pages --roles` lays a role's instances side by side; [measuring pages](../verify/references/pages.md#what-it-judges) lists each check, what it tests and what it leaves to the reader (when a gate showed, a button's width while it works, a main action that doesn't bind Enter).
+Lint, the catalog's word list and `pnpm verify:pages` hold part of these, and `pnpm verify:pages --roles` lays a role's instances side by side; [measuring pages](../verify/references/pages.md#what-it-judges) lists each check, what it tests and what it leaves to the reader (when a gate showed, a button's width while it works).
 
 A rule holds on every screen. When one looks wrong for a screen, follow it and put the case to the user in your handoff: only the user grants an exception, and each one is listed in [craft](references/craft.md#exceptions-the-user-granted) so nobody "fixes" it later. A note that something was "kept on purpose" is not an exception; it's a finding. [Rethinking a screen](#rethink-when-stuck) changes its structure, never a role's way.
 

@@ -34,40 +34,61 @@ extension ScorePatterns {
     }
   }
 
-  var weekSpreadText: String? {
-    weekSpread.map { "\(wholePercent($0.low))–\(wholePercent($0.high))" }
-  }
+  /// Main's one sentence over the charts: the best day, then the best time.
+  var summary: String {
+    let day: String? =
+      switch dayVerdict {
+      case .best(let best):
+        String(
+          localized: "Your best day is \(best.weekday.localizedTitle()).", table: "Progress")
+      case .even:
+        String(
+          localized: "You answer about the same every day.", table: "Progress")
+      case .notEnough:
+        nil
+      }
 
-  var evenDaysNote: String? {
-    guard case .even(let points) = dayVerdict else {
-      return nil
-    }
+    let time: String? =
+      switch timeVerdict {
+      case .best(let best):
+        best.daypart.bestTimeSentence
+      case .even:
+        String(
+          localized: "The time of day makes no difference.", table: "Progress")
+      case .notEnough:
+        nil
+      }
 
-    return points == 0
+    let parts = [day, time].compactMap(\.self)
+
+    return parts.isEmpty
       ? String(
-        localized: "Your days are within 0 points of each other, so any day works.",
-        table: "Progress",
-        comment: "Patterns note when every day scores the same")
-      : String(
-        localized: "Your days are within \(points) points of each other, so any day works.",
-        table: "Progress",
-        comment: "Patterns note when the days score about the same")
+        localized: "Answer more questions to see when you do best.", table: "Progress")
+      : parts.joined(separator: " ")
   }
+}
 
-  var evenTimesNote: String? {
-    guard case .even(let points) = timeVerdict else {
-      return nil
+extension ProgressDaypart {
+  /// One sentence each, so every language words its part of the day as it needs.
+  fileprivate var bestTimeSentence: String {
+    switch self {
+    case .morning:
+      String(
+        localized: "Your best time is the morning.", table: "Progress",
+        comment: "Over the patterns charts: the part of the day the learner answers best")
+    case .afternoon:
+      String(
+        localized: "Your best time is the afternoon.", table: "Progress",
+        comment: "Over the patterns charts: the part of the day the learner answers best")
+    case .evening:
+      String(
+        localized: "Your best time is the evening.", table: "Progress",
+        comment: "Over the patterns charts: the part of the day the learner answers best")
+    case .night:
+      String(
+        localized: "Your best time is the night.", table: "Progress",
+        comment: "Over the patterns charts: the part of the day the learner answers best")
     }
-
-    return points == 0
-      ? String(
-        localized: "Your times of day are within 0 points of each other, so any time works.",
-        table: "Progress", comment: "Patterns note when every part of the day scores the same")
-      : String(
-        localized:
-          "Your times of day are within \(points) points of each other, so any time works.",
-        table: "Progress",
-        comment: "Patterns note when the parts of the day score about the same")
   }
 }
 
@@ -77,7 +98,10 @@ struct PatternsStatsView: View {
   var body: some View {
     StatsContent(state: progress.patterns.state, retry: { await progress.patterns.refresh() }) {
       patterns in
-      PatternTiles(patterns: patterns)
+      Text(patterns.summary)
+        .typeStyle(.section.weight(.medium))
+        .foregroundStyle(Color(.foreground))
+        .frame(maxWidth: .infinity, alignment: .leading)
 
       StatsColumns(minimumWidth: 760) {
         WeekPatterns(patterns: patterns)
@@ -85,71 +109,8 @@ struct PatternsStatsView: View {
         DayPatterns(patterns: patterns)
           .frame(maxWidth: .infinity, alignment: .topLeading)
       }
-
-      PatternsNote(patterns: patterns, chartsSayVerdicts: true)
     }
     .loads(progress.patterns)
-  }
-}
-
-private struct PatternTiles: View {
-  let patterns: ScorePatterns
-  @ScaledMetric(relativeTo: .body) private var minimumWidth = 150.0
-
-  var body: some View {
-    StatTileGrid(columns: [3, 2, 1], minimumWidth: minimumWidth) {
-      StatTile(
-        label: Text(
-          "Best day", tableName: "Progress", comment: "The day of the week the learner answers best"
-        ),
-        value: Text(verbatim: patterns.bestDayName ?? "–"),
-        systemImage: "calendar", tone: .success,
-        detail: verdictDetail(patterns.dayVerdict)
-      )
-
-      StatTile(
-        label: Text(
-          "Best time", tableName: "Progress",
-          comment: "The part of the day the learner answers best"),
-        value: Text(verbatim: patterns.bestTimeName ?? "–"),
-        systemImage: patterns.timeVerdict.best?.daypart.symbolName ?? "clock", tone: .success,
-        detail: verdictDetail(patterns.timeVerdict)
-      )
-
-      StatTile(
-        label: Text(
-          "Answers", tableName: "Progress", comment: "Tile: how many answers the patterns come from"
-        ),
-        value: Text(
-          patterns.weekdays.reduce(0) { $0 + $1.performance.totalAnswers }, format: .number),
-        systemImage: "checklist",
-        detail: Text(
-          "In the last 90 days", tableName: "Progress",
-          comment: "Under the answers count: their window")
-      )
-    }
-  }
-}
-
-private func verdictDetail<Pattern: ScorePatternGroup>(_ verdict: PatternVerdict<Pattern>) -> Text {
-  switch verdict {
-  case .best(let group):
-    Text(
-      "\(wholePercent(group.performance.score))\u{00A0}· \(group.performance.totalAnswers) answers",
-      tableName: "Progress",
-      comment: "Under the best day or time: its share of right answers and its answers")
-  case .even(let points) where points == 0:
-    Text(
-      "Within 0 points", tableName: "Progress",
-      comment: "Under Any day or Any time: they all score the same")
-  case .even(let points):
-    Text(
-      "Within \(points) points", tableName: "Progress",
-      comment: "Under Any day or Any time: how close the days or times score")
-  case .notEnough:
-    Text(
-      "Not enough answers yet", tableName: "Progress",
-      comment: "Under a best day or time that can't be named yet")
   }
 }
 
@@ -229,7 +190,6 @@ private struct PatternChart: View {
   let bestLabel: String
   let columns: [PatternColumn]
   let minimumAnswers: Int
-  var footer: String?
 
   @Environment(ChartInspection.self) private var inspection
   @Namespace private var chart
@@ -278,12 +238,6 @@ private struct PatternChart: View {
         from: columns.firstIndex { $0.state == .best } ?? 0
       ) { index, key in
         min(max(index + (key == .leftArrow ? -1 : 1), 0), columns.count - 1)
-      }
-
-      if let footer {
-        Text(footer)
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
       }
     }
   }
@@ -460,8 +414,7 @@ private struct WeekPatterns: View {
   var body: some View {
     PatternChart(
       title: Text(
-        "Throughout the week", tableName: "Progress",
-        comment: "Title of the chart with a column per day of the week"),
+        "Throughout the week", tableName: "Progress"),
       bestLabel: String(
         localized: "Best day", table: "Progress",
         comment: "The day of the week the learner answers best"),
@@ -472,8 +425,7 @@ private struct WeekPatterns: View {
           isBest: day.weekday == patterns.dayVerdict.best?.weekday,
           minimumAnswers: patterns.minimumAnswers)
       },
-      minimumAnswers: patterns.minimumAnswers,
-      footer: patterns.evenDaysNote)
+      minimumAnswers: patterns.minimumAnswers)
   }
 }
 
@@ -487,8 +439,7 @@ private struct DayPatterns: View {
   var body: some View {
     PatternChart(
       title: Text(
-        "Throughout the day", tableName: "Progress",
-        comment: "Title of the chart with a column per part of the day"),
+        "Throughout the day", tableName: "Progress"),
       bestLabel: String(
         localized: "Best time", table: "Progress",
         comment: "The part of the day the learner answers best"),
@@ -502,31 +453,6 @@ private struct DayPatterns: View {
           isBest: time.daypart == patterns.timeVerdict.best?.daypart,
           minimumAnswers: patterns.minimumAnswers)
       },
-      minimumAnswers: patterns.minimumAnswers,
-      footer: patterns.evenTimesNote)
-  }
-}
-
-struct PatternsNote: View {
-  let patterns: ScorePatterns
-  /// Leaves out what each chart says under itself.
-  var chartsSayVerdicts = false
-
-  var body: some View {
-    Text(sentences.joinedSentences())
-      .typeStyle(.note)
-      .foregroundStyle(.mutedForeground)
-      .frame(maxWidth: .infinity, alignment: .leading)
-  }
-
-  private var sentences: [String] {
-    let verdicts = chartsSayVerdicts ? [] : [patterns.evenDaysNote, patterns.evenTimesNote]
-
-    return verdicts.compactMap(\.self) + [
-      String(
-        localized:
-          "A day or a time of day needs \(patterns.minimumAnswers) answers to count, so one lucky answer never makes a pattern.",
-        table: "Progress", comment: "Patterns note: how many answers a day or time needs to count")
-    ]
+      minimumAnswers: patterns.minimumAnswers)
   }
 }

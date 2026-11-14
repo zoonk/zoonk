@@ -40,13 +40,13 @@ import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
+import com.zoonk.android.data.hasContent
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.certificates.CertificateGateSheet
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Button
-import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.GoalMark
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListDivider
@@ -55,6 +55,7 @@ import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.SectionHeader
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.goalSpokenName
 import com.zoonk.android.ui.format.currentLocale
@@ -82,9 +83,24 @@ fun CertificatesScreen(
     val state by resource.collectShown()
     val scope = rememberCoroutineScope()
 
+    val empty = state.hasContent && state.value.orEmpty().isEmpty()
+
     PageScaffold(
         onBack = { navigator.back() },
         title = { Text(stringResource(R.string.certificates_title), maxLines = 1, overflow = TextOverflow.Ellipsis) },
+        barWidth = DETAIL_PAGE_WIDTH,
+        bottomBar =
+            if (empty) {
+                {
+                    TaskActions { main ->
+                        Button(onClick = { navigator.showRoot(AppTab.Today) }, modifier = main) {
+                            Text(stringResource(R.string.certificates_continue_learning))
+                        }
+                    }
+                }
+            } else {
+                null
+            },
     ) { padding ->
         Box(Modifier.fillMaxSize().padding(padding)) {
             when (state) {
@@ -125,7 +141,7 @@ private fun androidx.compose.foundation.lazy.LazyListScope.certificates(
     }
 
     if (certificates.isEmpty()) {
-        item(key = "empty", contentType = "empty") { Empty(app, navigator) }
+        item(key = "empty", contentType = "empty") { Empty(app) }
         return
     }
 
@@ -171,14 +187,11 @@ private fun CertificateRow(
 }
 
 /**
- * Main's empty page: Continue learning, and under "Your next certificate" each active goal that
+ * Main's empty page: under "Your next certificate" each active goal that
  * earns one, with a course's share of lessons done.
  */
 @Composable
-private fun Empty(
-    app: AppContainer,
-    navigator: AppNavigator,
-) {
+private fun Empty(app: AppContainer) {
     val goals by app.certificates.goals.collectShown()
     val upNext = certificateUpNext(goals.value.orEmpty())
 
@@ -189,9 +202,6 @@ private fun Empty(
             Modifier.padding(top = 24.dp).semantics { heading() },
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
         )
-        Button(onClick = { navigator.showRoot(AppTab.Today) }, modifier = Modifier.padding(top = 12.dp), size = ButtonSize.Large) {
-            Text(stringResource(R.string.certificates_continue_learning))
-        }
 
         if (upNext.isNotEmpty()) {
             SectionHeader(stringResource(R.string.certificates_your_next), Modifier.padding(top = 40.dp, bottom = 8.dp))

@@ -30,10 +30,6 @@ function HeroSkeleton({ title }: { title?: string }) {
           <Skeleton className="h-3 w-48 rounded-sm" />
         </span>
       </DetailHeroText>
-      <div className="flex gap-2">
-        <Skeleton className="h-11 flex-1 rounded-lg md:w-32 md:flex-none" />
-        <Skeleton className="size-11 rounded-lg" />
-      </div>
     </DetailHero>
   );
 }

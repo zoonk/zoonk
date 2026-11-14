@@ -70,7 +70,6 @@ val GoalMindMap.Status.shown: MindMapShown
             GoalMindMap.Status.DRAWING -> MindMapShown.Drawing
             GoalMindMap.Status.READY -> MindMapShown.Ready
             GoalMindMap.Status.FAILED -> MindMapShown.Failed
-            GoalMindMap.Status.PLUS_REQUIRED -> MindMapShown.Unavailable
         }
 
 val ChapterMindMap.Status.shown: MindMapShown
@@ -82,7 +81,6 @@ val ChapterMindMap.Status.shown: MindMapShown
             ChapterMindMap.Status.DRAWING -> MindMapShown.Drawing
             ChapterMindMap.Status.READY -> MindMapShown.Ready
             ChapterMindMap.Status.FAILED -> MindMapShown.Failed
-            ChapterMindMap.Status.PLUS_REQUIRED -> MindMapShown.Unavailable
         }
 
 val ChapterMindMapStatus.Status.shown: MindMapShown
@@ -94,7 +92,6 @@ val ChapterMindMapStatus.Status.shown: MindMapShown
             ChapterMindMapStatus.Status.DRAWING -> MindMapShown.Drawing
             ChapterMindMapStatus.Status.READY -> MindMapShown.Ready
             ChapterMindMapStatus.Status.FAILED -> MindMapShown.Failed
-            ChapterMindMapStatus.Status.PLUS_REQUIRED -> MindMapShown.Unavailable
         }
 
 val MindMapGeneration.Status.shown: MindMapShown

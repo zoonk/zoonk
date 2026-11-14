@@ -78,10 +78,9 @@ private struct CourseLandingList: View {
 
     CourseHeroSection(detail: detail, exam: example?.exam, goal: goal)
 
-    if let pace = example?.pace {
+    if let pace = example?.pace, case .toEnd(let weeks, let firstDay) = pace.estimate.reach {
       CoursePlanSections(
-        chapters: detail.chapters, estimate: pace.estimate, exam: example?.exam,
-        isExam: detail.course.isExam, minutes: pace.minutes)
+        chapters: detail.chapters, firstDay: firstDay, minutes: pace.minutes, weeks: weeks)
     }
   }
 
@@ -92,8 +91,7 @@ private struct CourseLandingList: View {
     CourseFitSections(landingPage: detail.course.landingPage)
 
     CourseOutlineSections(
-      detail: detail, estimate: example?.pace?.estimate, exam: example?.exam,
-      lead: outlineLead, minutes: example?.pace?.minutes,
+      detail: detail, estimate: example?.pace?.estimate, lead: outlineLead,
       learner: OutlineLearner(
         signedIn: session.authenticatedSession != nil, summary: learner.summary.state,
         courseID: detail.course.id),
@@ -173,7 +171,7 @@ private struct CourseHeroSection: View {
           ContentCountryFacts(country: country)
         }
 
-        PlanLine(startsHere: false)
+        PlanLine(start: detail.course.isExam ? .examCourse : .course)
 
         CatalogStartActions(
           courseID: detail.course.id, goal: goal, tryLessonID: detail.tryLessonID
@@ -269,18 +267,27 @@ func catalogDay(_ isoDate: String) -> String? {
 }
 
 struct PlanLine: View {
-  let startsHere: Bool
+  enum Start {
+    case chapter, course, examCourse
+  }
+
+  let start: Start
 
   var body: some View {
     Label {
-      if startsHere {
+      switch start {
+      case .chapter:
         Text(
-          "With Zoonk, your plan starts at this chapter and fits your schedule.",
+          "Zoonk builds you a study plan for each day. It fits your time and starts at this chapter.",
           tableName: "Courses", comment: "On a chapter's page, what Zoonk does with it")
-      } else {
+      case .course:
         Text(
-          "With Zoonk, your plan starts at your level and fits your schedule.",
+          "Zoonk builds you a study plan for each day. It fits your time and starts from what you already know.",
           tableName: "Courses", comment: "On a course's page, what Zoonk does with it")
+      case .examCourse:
+        Text(
+          "Zoonk builds you a study plan for each day until your exam. It fits your time and starts from what you already know.",
+          tableName: "Courses", comment: "On an exam course's page, what Zoonk does with it")
       }
     } icon: {
       Image(systemName: "map")

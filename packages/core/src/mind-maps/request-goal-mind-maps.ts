@@ -155,7 +155,7 @@ async function admitAll({
 
 /**
  * "Create all chapter maps", a learner's tap only: starts the map of every chapter of the goal's
- * scope that has none ready or on its way, whose lessons are all written and that isn't locked,
+ * scope that has none ready or on its way, whose lessons are all written,
  * in course order, as far as the learner's allowance goes. It never writes lessons. Each started
  * map is owed to the learner's follow-ups with what its run starts from, in the same write.
  */

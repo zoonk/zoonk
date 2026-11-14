@@ -129,16 +129,6 @@ export function toMindMapLimit({
     return { retryAfterSeconds, status: "slowDown" };
   }
 
-  if (stop.period === "rolling30Days") {
-    return {
-      availableAt: stop.resetsAt ?? "",
-      period: "rolling30Days",
-      resource: "lessonStart",
-      status: "limitReached",
-      tier: "free",
-    };
-  }
-
   return {
     period: stop.period ?? "day",
     resource: stop.resource ?? undefined,

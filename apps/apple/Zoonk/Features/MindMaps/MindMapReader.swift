@@ -135,7 +135,7 @@ struct MindMapReader: View {
         }
       }
       .taskOptions(
-        label: Text("More options", tableName: "MindMaps", comment: "The reader's menu")
+        label: Text("Screen options", tableName: "MindMaps", comment: "The reader's menu")
       ) {
         menuItems(cards)
       }
@@ -269,7 +269,7 @@ struct MindMapReader: View {
         }
       }
 
-      BusyButton(isBusy: false, icon: isLast ? .check : .forward) {
+      BusyButton(isBusy: false) {
         if isLast {
           dismiss()
         } else {

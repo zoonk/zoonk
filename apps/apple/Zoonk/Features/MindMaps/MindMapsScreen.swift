@@ -17,7 +17,6 @@ struct MindMapsScreen: View {
       let list = store.list(goalId: goal.id)
 
       content(list: list, goal: goal)
-        .navigationTitle(title)
         .barTitleAfterHero(
           String(localized: "Mind maps", table: "MindMaps", comment: "Title of the mind maps page")
         )
@@ -43,7 +42,7 @@ struct MindMapsScreen: View {
       ScrollViewReader { proxy in
         ZoonkList {
           Section {
-            header(maps, goal: goal, tab: shown)
+            PageHeader(title, supporting: Text(verbatim: goal.displayName))
 
             Picker(selection: $tab) {
               ForEach(GoalMindMaps.Tab.allCases, id: \.self) { tab in
@@ -77,6 +76,18 @@ struct MindMapsScreen: View {
         }
       }
       .lonePage()
+      // Study opens what the tab counts, where this device last was in it.
+      .bottomBar {
+        if count(shown, maps: maps) > 0 {
+          Button {
+            router.open(.mindMapStudy(goalId: goal.id, tab: shown))
+          } label: {
+            Text("Study", tableName: "MindMaps", comment: "Opens a tab's maps one per screen")
+          }
+          .buttonStyle(.mainAction)
+          .keyboardShortcut(.defaultAction)
+        }
+      }
     case .empty:
       ContentUnavailableView {
         Label {
@@ -97,21 +108,6 @@ struct MindMapsScreen: View {
       }
     case .idle, .loading:
       ProgressView()
-    }
-  }
-
-  /// Study opens what the tab counts, where this device last was in it.
-  private func header(_ maps: GoalMindMaps, goal: LearnerGoal, tab: GoalMindMaps.Tab) -> some View {
-    PageHeader(title) {
-      if count(tab, maps: maps) > 0 {
-        Button {
-          router.open(.mindMapStudy(goalId: goal.id, tab: tab))
-        } label: {
-          Text("Study", tableName: "MindMaps", comment: "Opens a tab's maps one per screen")
-        }
-        .buttonStyle(.mainAction)
-        .keyboardShortcut(.defaultAction)
-      }
     }
   }
 
@@ -164,9 +160,6 @@ private struct Following: Hashable {
 // MARK: - Chapters
 
 private struct MindMapChaptersTab: View {
-  @Environment(LearnerSummaryStore.self) private var learner
-  @Environment(MindMapsStore.self) private var store
-
   let goalId: String
   let maps: GoalMindMaps
   let subjectKey: String?
@@ -197,8 +190,8 @@ private struct MindMapChaptersTab: View {
   }
 }
 
-/// The chapters without a map yet: one button for every map one tap can make, one line for where
-/// they stand, and the chapters themselves folded, each with its own Create.
+/// The chapters without a map yet. Those that can be made now come first, each with its own button;
+/// the rest wait folded under one row, with one line for where they stand.
 private struct MindMapCreateSection: View {
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(MindMapsStore.self) private var store
@@ -214,16 +207,23 @@ private struct MindMapCreateSection: View {
     // A failed map's row keeps its Try again, whose retry is free.
     let canStart = offer.stop == nil
 
+    let ready = notMade.filter { $0.lessonsToWrite == 0 && $0.status != .writingLessons }
+    let others = notMade.filter { !ready.contains($0) }
+
     Section {
-      if offer.startable > 0 || line != nil {
+      ForEach(ready) { map in
+        MindMapRow(goalId: goalId, map: map, place: .notMade(canStart: canStart))
+      }
+
+      if offer.startable > 1 || line != nil {
         VStack(alignment: .leading, spacing: 12) {
-          if offer.startable > 0 {
+          if offer.startable > 1 {
             BusyButton(isBusy: store.creatingAll.contains(goalId), icon: .create) {
               Task { await store.createAll(goalId: goalId) }
             } label: {
               Text(
-                "Create \(offer.startable) chapter maps", tableName: "MindMaps",
-                comment: "Makes as many chapter maps as one tap can start now")
+                "Create all", tableName: "MindMaps",
+                comment: "Makes every chapter map one tap can start now")
             }
             .buttonStyle(.outline)
             .controlSize(.large)
@@ -238,37 +238,27 @@ private struct MindMapCreateSection: View {
         .announcesStatus(note(line))
       }
 
-      FoldRow(isUnfolded: $showsChapters) {
-        LabeledContent {
-          Text(verbatim: notMade.count.formatted())
-            .typeStyle(.data)
-            .foregroundStyle(.mutedForeground)
-        } label: {
-          Text(
-            "Show chapters", tableName: "MindMaps", comment: "Unfolds the chapters without a map"
-          )
-          .typeStyle(.body)
-        }
-      }
-
-      if showsChapters {
-        if canStart, showsLessonsNote {
-          Text(
-            "Writing lessons counts toward your free lessons.", tableName: "MindMaps",
-            comment:
-              "Over the chapters without a map, for a free learner when a chapter's lessons aren't written yet"
-          )
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
+      if !others.isEmpty {
+        FoldRow(isUnfolded: $showsChapters) {
+          LabeledContent {
+            Text(verbatim: others.count.formatted())
+              .typeStyle(.data)
+              .foregroundStyle(.mutedForeground)
+          } label: {
+            Text(
+              "Other chapters", tableName: "MindMaps",
+              comment: "Unfolds the chapters whose maps can't be made right now"
+            )
+            .typeStyle(.body)
+          }
         }
 
-        ForEach(notMade) { map in
-          MindMapRow(goalId: goalId, map: map, place: .notMade(canStart: canStart))
+        if showsChapters {
+          ForEach(others) { map in
+            MindMapRow(goalId: goalId, map: map, place: .notMade(canStart: canStart))
+          }
         }
       }
-    } header: {
-      SectionTitle(
-        Text("Not made yet", tableName: "MindMaps", comment: "Chapters whose maps aren't made yet"))
     }
   }
 
@@ -281,7 +271,6 @@ private struct MindMapCreateSection: View {
     case unfinished(Int)
     case stopped(MindMapLimit)
     case fewer(Int)
-    case needLessons(Int)
   }
 
   private func line(_ offer: MindMapCreateOffer) -> Line? {
@@ -310,10 +299,6 @@ private struct MindMapCreateSection: View {
       return .fewer(offer.startable)
     }
 
-    if offer.needLessons > 0 {
-      return .needLessons(offer.needLessons)
-    }
-
     return nil
   }
 
@@ -327,7 +312,7 @@ private struct MindMapCreateSection: View {
           comment: "Asking for a map didn't reach the server"))
     case .stopped(let limit):
       LimitNotice(limit: limit.limit, words: limit.words(now:))
-    case .onTheWay, .unfinished, .fewer, .needLessons:
+    case .onTheWay, .unfinished, .fewer:
       Text(verbatim: note(line) ?? "")
         .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
@@ -351,20 +336,9 @@ private struct MindMapCreateSection: View {
         localized: "You can make \(count) more right now.", table: "MindMaps",
         comment:
           "Fewer chapter maps can start than are ready to make: as many as the allowance lets")
-    case .needLessons(let count):
-      String(
-        localized: "\(count) chapters need their lessons written first.", table: "MindMaps",
-        comment: "Chapters whose maps the button can't make, since each writes its lessons first")
     case .unreachable, .stopped, nil:
       nil
     }
-  }
-
-  /// Rows don't repeat that writing lessons spends free lessons: this says it once, when a row
-  /// would write them.
-  private var showsLessonsNote: Bool {
-    learner.summary.value?.tier != .plus
-      && notMade.contains { $0.status != .writingLessons && $0.lessonsToWrite > 0 }
   }
 }
 
@@ -383,7 +357,7 @@ private struct MindMapLessonsTab: View {
           comment: "The Lessons tab before any lesson map")
       } description: {
         Text(
-          "Each lesson ends with a small map of its ideas. They show here once your lessons are written.",
+          "Every lesson ends with one.",
           tableName: "MindMaps", comment: "The Lessons tab before any lesson map")
       }
     } else {

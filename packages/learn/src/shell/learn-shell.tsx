@@ -1,3 +1,4 @@
+import { FRAME_GUTTER_CLASS } from "@zoonk/ui/components/bottom-bar";
 import { cn } from "@zoonk/ui/lib/utils";
 
 /** These parts render on the server. */
@@ -15,10 +16,6 @@ export function LearnShell({ children, className, ...props }: React.ComponentPro
     </div>
   );
 }
-
-/** The frame's side padding at each size: the app's shell, and a full page drawn without it. */
-export const FRAME_GUTTER_CLASS =
-  "[--page-gutter:--spacing(4)] sm:[--page-gutter:--spacing(8)] lg:[--page-gutter:--spacing(10)]";
 
 /**
  * The frame's gutter and bottom room (`--page-gutter`, `--page-bottom`) are set here so the bar over

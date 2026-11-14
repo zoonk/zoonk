@@ -257,6 +257,61 @@ msgctxt "kwl__x"
 msgid "Finish to see how it went."
 msgstr "Finalize para ver como foi."
 
+#. On the screen a free learner sees when their free lessons are used. {date} is a day and its month, such as "November 22" in English.
+#: src/_components/free-lessons-words.ts
+msgctxt "wsvV5i"
+msgid "Your next free lesson opens on {date}, or subscribe to keep going."
+msgstr "Sua próxima aula grátis será liberada em {date}. Assine para continuar agora."
+
+#: src/_components/free-lessons-words.ts
+msgctxt "sq9fni"
+msgid "Your next free lesson opens later today, or subscribe to keep going."
+msgstr "Sua próxima aula grátis será liberada ainda hoje. Assine para continuar agora."
+
+#: src/_components/free-lessons-words.ts
+msgctxt "q6VpbS"
+msgid "Your next free lesson opens tomorrow, or subscribe to keep going."
+msgstr "Sua próxima aula grátis será liberada amanhã. Assine para continuar agora."
+
+#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and this one has more lessons than a free learner can start.
+#: src/_components/free-lessons-words.ts
+msgctxt "BQZuQD"
+msgid "It writes more lessons than you get for free."
+msgstr "Ele cria mais aulas do que você recebe de graça."
+
+#: src/_components/free-lessons-words.ts
+msgctxt "PzQ0ot"
+msgid "This map needs a subscription"
+msgstr "Você precisa assinar para criar este mapa"
+
+#: src/_components/free-lessons-words.ts
+msgctxt "Ekv-QL"
+msgid "You can make this map now"
+msgstr "Você já pode criar este mapa"
+
+#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet. {date} is a day and its month, such as "November 22" in English.
+#: src/_components/free-lessons-words.ts
+msgctxt "MU7Wx6"
+msgid "You'll have enough on {date}, or subscribe to make it now."
+msgstr "Você vai ter aulas suficientes em {date}. Ou assine para criar o mapa agora."
+
+#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet.
+#: src/_components/free-lessons-words.ts
+msgctxt "HwBdEe"
+msgid "You'll have enough later today, or subscribe to make it now."
+msgstr "Você vai ter aulas suficientes ainda hoje. Ou assine para criar o mapa agora."
+
+#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet.
+#: src/_components/free-lessons-words.ts
+msgctxt "CE0pGe"
+msgid "You'll have enough tomorrow, or subscribe to make it now."
+msgstr "Você vai ter aulas suficientes amanhã. Ou assine para criar o mapa agora."
+
+#: src/_components/free-lessons-words.ts
+msgctxt "eFx_I9"
+msgid "Not enough free lessons for this map yet"
+msgstr "Você ainda não tem aulas grátis suficientes para este mapa"
+
 #: src/_components/help-limit-notice.tsx
 msgctxt "C84LQr"
 msgid "More next month."
@@ -321,22 +376,6 @@ msgstr "Você chegou ao limite deste mês"
 msgctxt "Co4ZUv"
 msgid "You've reached today's limit"
 msgstr "Você chegou ao limite de hoje"
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "sq9fni"
-msgid "Your next free lesson opens later today, or subscribe to keep going."
-msgstr "Sua próxima aula grátis será liberada ainda hoje. Assine para continuar agora."
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "q6VpbS"
-msgid "Your next free lesson opens tomorrow, or subscribe to keep going."
-msgstr "Sua próxima aula grátis será liberada amanhã. Assine para continuar agora."
-
-#. On the screen a free learner sees when their free lessons are used. {date} is a day and its month, such as "November 22" in English.
-#: src/_components/help-limit-notice.tsx
-msgctxt "wsvV5i"
-msgid "Your next free lesson opens on {date}, or subscribe to keep going."
-msgstr "Sua próxima aula grátis será liberada em {date}. Assine para continuar agora."
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "5SLMld"
@@ -2292,11 +2331,6 @@ msgid "{count, plural, one {# lesson} other {# lessons}}"
 msgstr "{count, plural, other {Aulas: #}}"
 
 #: src/chapter/chapter-header.tsx
-msgctxt "uPK7mm"
-msgid "Chapter options"
-msgstr "Opções do capítulo"
-
-#: src/chapter/chapter-header.tsx
 #: src/journey/plan-header.tsx
 #: src/language/unit/unit-header.tsx
 #: src/shell/learn-bar.tsx
@@ -2305,6 +2339,11 @@ msgstr "Opções do capítulo"
 msgctxt "fz0z4c"
 msgid "Plan"
 msgstr "Plano"
+
+#: src/chapter/chapter-header.tsx
+msgctxt "uPK7mm"
+msgid "Chapter options"
+msgstr "Opções do capítulo"
 
 #: src/chapter/chapter-mistakes.tsx
 msgctxt "EwFu5D"
@@ -12929,11 +12968,6 @@ msgid "{count, plural, one {# chapter} other {# chapters}}"
 msgstr "{count, plural, one {# capítulo} other {# capítulos}}"
 
 #: src/syllabus/subject-screen.tsx
-msgctxt "vx7zl3"
-msgid "Subject options"
-msgstr "Opções da matéria"
-
-#: src/syllabus/subject-screen.tsx
 msgctxt "NBKiJR"
 msgid "Topics in your material"
 msgstr "Tópicos do seu material"
@@ -12953,6 +12987,11 @@ msgstr "{total, plural, one {{done, number} de # tópico} other {{done, number} 
 msgctxt "XHGiOR"
 msgid "About this subject"
 msgstr "Sobre esta matéria"
+
+#: src/syllabus/subject-screen.tsx
+msgctxt "vx7zl3"
+msgid "Subject options"
+msgstr "Opções da matéria"
 
 #: src/syllabus/subject-topics.tsx
 msgctxt "fq8lB2"

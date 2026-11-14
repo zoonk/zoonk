@@ -49,7 +49,7 @@ struct SettingsAPI: SettingsAPIClient {
   func updatePreferences(token: String, _ update: PreferencesUpdate) async throws
     -> LearningPreferences
   {
-    try await clients.perform(token: token, sendingNull: update.nullKeys) { client in
+    try await clients.perform(token: token) { client in
       switch try await client.updateCurrentUserLearningProfile(
         query: .init(language: .init(rawValue: OnboardingAPI.language) ?? .en),
         body: .json(update.body))

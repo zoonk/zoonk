@@ -2,7 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "reminders_cancel": "baa1b31bb43491b70b8889c1958ed44eeb85ec5307990053d579541ea6384671",
-  "reminders_channel_description": "419266ff81f10447f92c782a710d187fd242b560ee5891275d3149533bf48815",
+  "reminders_channel_description": "5b12b6d95f38f8c18b05a308b1fff5dd3db33c884ae1515a055debcaad5f6870",
   "reminders_channel_name": "e46ed0df0027fd525257accba999c4c5109766ce53fee037750eb0ab4d978f98",
   "reminders_email": "b17d2c1c0e484f6a6e49fc5f8acf4360fa5ea44d6e6639cf8cb96de637172259",
   "reminders_email_instead": "bec618de27f1b0950d03e9f9b95cea9e564301f882ef095d7609297277db322b",
@@ -15,7 +15,7 @@
   "reminders_offer_title": "8d73a0342e31b9967e246b7179db040e28d213950ad597046ec05bb0665762d8",
   "reminders_on": "09862db82023f545de6338d8dcb1a80395dcb14ac1dd4f7e961bdf4699368205",
   "reminders_open_settings": "b97f6e9116c5fb6643758a77b28c7bac92fa827f8f49cc94fcdba806b4ae54ff",
-  "reminders_permission_body": "a5f7e276be0b7c0eeea1eebd30af1cee987ec214c22ac1bc67d0b3b88061420b",
+  "reminders_permission_body": "d344b20c6b3142a43ab574b1089e3ca9d74d8a1cff6b9db5107e6d9f08e64874",
   "reminders_permission_continue": "1c5eb6b2e3c27e5a8f91498ee017a3cb9e315ece5c40a9791acb63315581ea57",
   "reminders_permission_title": "1c609b0a378d07efd8d051faec8a461c22df491dc77a310ed1fe30b26fa583bb",
   "reminders_push": "e2e515be51faa2133f627aa77b2083441ad26f682865736cf9cedc926515208b",
@@ -34,7 +34,7 @@
     <!-- The name of the app's notification channel in Android's settings. -->
     <string name="reminders_channel_name">学習リマインダー</string>
     <!-- Under the channel's name in Android's settings, and under the Reminders page's title. -->
-    <string name="reminders_channel_description">学習日にまだ学習が残っていれば、1回お知らせします。</string>
+    <string name="reminders_channel_description">学習する日に、その日の学習がまだ終わっていなければ1回お知らせします。</string>
     <!-- A card under a finished lesson's result, offering a daily study reminder on the phone. -->
     <string name="reminders_offer_title">学習リマインダーを受け取りますか？</string>
     <!-- %1$s is a time of day, such as "7:00 PM". -->
@@ -54,7 +54,7 @@
     <string name="reminders_email_instead">代わりにメールで受け取る</string>
     <!-- Before Android asks to allow notifications again, after the learner said no once. -->
     <string name="reminders_permission_title">通知を許可しますか？</string>
-    <string name="reminders_permission_body">Zoonkは学習日に、その日の学習が残っているときだけ1回お知らせします。</string>
+    <string name="reminders_permission_body">Zoonkは、学習日にその日の学習がまだ終わっていなければ1回お知らせします。</string>
     <string name="reminders_permission_continue">続ける</string>
     <string name="reminders_not_now">今はしない</string>
     <!-- The title of the clock that changes the reminder's time. -->
