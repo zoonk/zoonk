@@ -3,12 +3,6 @@
 {
   "limit_call_time_used": "9affda514069cbacd6417a3dc807412ac047f47d488730bea4b486bb950c5337",
   "limit_create_account": "c554dd10688178a5f5e0e1214c0c3905c614a477e3ee465ae3dbda5849cb409f",
-  "limit_enough_later_today": "39a007e794655126501edc6a6c026814cacc27c16c0cdbecc8e8348483980cea",
-  "limit_enough_later_today_or_subscribe": "c6ab698f0547bda7ef347f4a8437cf3cf2c7dc02cc81be31504d031b14f1b9da",
-  "limit_enough_on": "e875d8a5ba9f15505c114deece5f5834c2216392c8b2030ca1bcbab5e1caef0f",
-  "limit_enough_on_or_subscribe": "86ebe42826ed51897e14824c7ed9c62999990ab698616283db957801ea451613",
-  "limit_enough_tomorrow": "2bdecf686e80d395a8388d69bc40d58406fba95b24781f3e16af897482dde4fa",
-  "limit_enough_tomorrow_or_subscribe": "7111a97331224489afaf99d07a21bc1ff8b63eefd705a5059c7a9d14bce2e04d",
   "limit_explanations_day": "a5f83b33fe11c46d1e0c48ebfbebb3860d8282a78f25129bebd360fd7c658e31",
   "limit_explanations_used": "bd473a58d2160ba703b06e09667b1dda42e982d35767bbd2bb8e4a43b25cd77b",
   "limit_goals_used": "35848798605ea22366d5fa6681fff9e520a10b29d610aa41eb0887ff3a4555a2",
@@ -65,18 +59,6 @@
     <string name="limit_more_on">Hakların %1$s tarihinde yenilenecek.</string>
     <!-- The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: the day more comes back. {date} is a day and its month, such as "November 22" in English. -->
     <string name="limit_more_on_or_subscribe">Hakların %1$s tarihinde yenilenecek. Devam etmek için abone olabilirsin.</string>
-    <!-- Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it. -->
-    <string name="limit_enough_later_today">Bugün ilerleyen saatlerde yeterli süren olacak.</string>
-    <!-- Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it. -->
-    <string name="limit_enough_later_today_or_subscribe">Bugün ilerleyen saatlerde yeterli süren olacak. İstersen abone olup devam edebilirsin.</string>
-    <!-- Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it. -->
-    <string name="limit_enough_tomorrow">Yarın yeterli süren olacak.</string>
-    <!-- Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it. -->
-    <string name="limit_enough_tomorrow_or_subscribe">Yarın yeterli süren olacak. İstersen abone olup devam edebilirsin.</string>
-    <!-- Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it. -->
-    <string name="limit_enough_on">%1$s tarihinde yeterli süren olacak.</string>
-    <!-- Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it. -->
-    <string name="limit_enough_on_or_subscribe">%1$s tarihinde yeterli süren olacak. İstersen abone olup devam edebilirsin.</string>
     <!-- The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back. -->
     <string name="limit_try_again_now">Şimdi tekrar deneyebilirsin.</string>
     <!-- A notice that something the learner uses ran out, as one line: {title} says what ran out, such as "You've used your uploads", and {line} when more comes back, such as "More on November 22, or subscribe to keep going." -->

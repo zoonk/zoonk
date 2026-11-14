@@ -136,12 +136,10 @@ internal fun CallLimitMessage(
     onCreateAccount: () -> Unit,
     onSubscribe: () -> Unit,
     modifier: Modifier = Modifier,
-    title: String? = null,
-    line: String? = comesBackLine(limit),
     inBar: Boolean = false,
 ) {
-    CallOffMessage(title ?: callLimitTitle(limit), modifier) {
-        line?.let {
+    CallOffMessage(callLimitTitle(limit), modifier) {
+        comesBackLine(limit)?.let {
             Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
         }
         if (!inBar) LimitActions(limit, onCreateAccount, onSubscribe)

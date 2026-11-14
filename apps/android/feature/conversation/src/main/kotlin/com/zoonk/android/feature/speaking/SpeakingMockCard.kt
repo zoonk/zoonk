@@ -29,7 +29,6 @@ import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.MarkedLine
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.WritingWait
-import com.zoonk.android.ui.components.enoughLine
 import com.zoonk.android.ui.components.needsAccount
 import com.zoonk.api.models.SpeakingMockExam
 import java.util.UUID
@@ -99,8 +98,6 @@ fun SpeakingMockCard(
                         limit,
                         onCreateAccount = { open(AppRoute.Login) },
                         onSubscribe = { open(AppRoute.Subscription) },
-                        title = stringResource(R.string.speaking_no_time_mock).takeUnless { limit.needsAccount },
-                        line = enoughLine(limit),
                     )
                 } else if (model.state == CallStartModel.State.Failed) {
                     Text(

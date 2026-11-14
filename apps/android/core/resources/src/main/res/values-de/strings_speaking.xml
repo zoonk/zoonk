@@ -14,8 +14,6 @@
   "speaking_mock_opens": "95253fd0fca965294ceccb797c7d3f0f0ec424ebe9f18e955ab97f8f9222e187",
   "speaking_mock_start": "b2926ebe344f195dd138c2b2da822de1c9a7e2a6d579d9691a0904a776e3aa03",
   "speaking_mock_toefl": "7e9e5c083b001c90ac092413c345d3fe1be8f39f4d649999e3e04515124d282f",
-  "speaking_no_time": "2ec8490105467879fc54554182398cb879d99028b82be3cb25685edc3a7a1a87",
-  "speaking_no_time_mock": "5168bf9bafb9d6b9a4583d2ba9ead1292b913232f6710b4b66cd71ad56d601c0",
   "speaking_official_format": "3b0382df9dd071c3cdc8bc91dcfbdd54df6c7d7b482aa6b6a457b445da0a13e3",
   "speaking_opens_when_ready": "06e1a661804c8e4778a3855ea88ca8cbc7027d58b9c62ad12eded7bec8c72db5",
   "speaking_prep": "f95c7b801b17dbcf4661bc481701fbb7e7f938b278f8245223fddd229795a26e",
@@ -49,8 +47,6 @@
     <string name="speaking_section">Sprechen</string>
     <string name="speaking_gate">Für Sprechübungen brauchst du ein Abo</string>
     <string name="speaking_opens_when_ready">Deine Aufgabe öffnet sich, sobald die Aufgabenkarte bereit ist.</string>
-    <string name="speaking_no_time">Nicht genug Gesprächszeit für diese Aufgabe</string>
-    <string name="speaking_no_time_mock">Nicht genug Gesprächszeit für diese Probeprüfung</string>
     <string name="speaking_start_failed">Die Aufgabe wurde nicht gestartet. Versuch es gleich noch einmal.</string>
     <string name="speaking_official_format">Offizielles Format</string>
     <string name="speaking_start_task">Starten</string>

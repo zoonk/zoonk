@@ -3,12 +3,6 @@
 {
   "limit_call_time_used": "e5957ae2ef9e35b55f1ca63cd21f57e40e146a4f03ed7fe6948a47572871a26f",
   "limit_create_account": "284d64b8a1e976a91cf83ba10b38d0ce57f92648e7485dff5acb7192635526ed",
-  "limit_enough_later_today": "03103ced13b5064c38d8be707ea968383ddfc26f28ea33027b47da915017f7f5",
-  "limit_enough_later_today_or_subscribe": "66d7e7b46f8bade4f66fd02ca1ccd96e8c39ce45254aecee451121d08e3adb03",
-  "limit_enough_on": "f94d998476e144a96c30eacf558e22e46825ccd0294c0af975b111549c4f585a",
-  "limit_enough_on_or_subscribe": "4fa472e4c39d09044b8b77e4a7aaf40026ce6c9bb3e7f564e04d08a17680a43f",
-  "limit_enough_tomorrow": "f95fec66c93ac957b05a80d412e1b054a31c0d92686981d9e93f2ef9f8867bd5",
-  "limit_enough_tomorrow_or_subscribe": "7533275e85f65350e7354586877e6873b45c41d560905c472f4ac3d79bcb8827",
   "limit_explanations_day": "44566d06657919296664f648bbca553112c7e1606a9259a81781c71806167fdd",
   "limit_explanations_used": "78de96fa1c63ca466bce50575fd0c98e1f3f42246b44e813fac1efa0ee64352a",
   "limit_goals_used": "d2f3c78c2c2ca96baa8e5c06215d40f806afafb859fa1e51f3b89a5d4e538b16",
@@ -65,18 +59,6 @@
     <string name="limit_more_on">Você terá mais em %1$s.</string>
     <!-- The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: the day more comes back. {date} is a day and its month, such as "November 22" in English. -->
     <string name="limit_more_on_or_subscribe">Você terá mais em %1$s ou pode assinar para continuar.</string>
-    <!-- Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it. -->
-    <string name="limit_enough_later_today">Você vai ter tempo suficiente ainda hoje.</string>
-    <!-- Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it. -->
-    <string name="limit_enough_later_today_or_subscribe">Você vai ter tempo suficiente ainda hoje, ou pode assinar para continuar.</string>
-    <!-- Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it. -->
-    <string name="limit_enough_tomorrow">Você vai ter tempo suficiente amanhã.</string>
-    <!-- Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it. -->
-    <string name="limit_enough_tomorrow_or_subscribe">Você vai ter tempo suficiente amanhã, ou pode assinar para continuar.</string>
-    <!-- Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it. -->
-    <string name="limit_enough_on">Você vai ter tempo suficiente em %1$s.</string>
-    <!-- Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it. -->
-    <string name="limit_enough_on_or_subscribe">Você vai ter tempo suficiente em %1$s, ou pode assinar para continuar.</string>
     <!-- The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back. -->
     <string name="limit_try_again_now">Você já pode tentar de novo.</string>
     <!-- A notice that something the learner uses ran out, as one line: {title} says what ran out, such as "You've used your uploads", and {line} when more comes back, such as "More on November 22, or subscribe to keep going." -->

@@ -82,7 +82,6 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.WritingWait
-import com.zoonk.android.ui.components.enoughLine
 import com.zoonk.android.ui.components.listRowWordsStart
 import com.zoonk.android.ui.components.needsAccount
 import com.zoonk.android.ui.format.currentLocale
@@ -332,8 +331,6 @@ private fun StartState(
                 limit,
                 onCreateAccount = { actions.open(AppRoute.Login) },
                 onSubscribe = { actions.open(AppRoute.Subscription) },
-                title = stringResource(R.string.speaking_no_time).takeUnless { limit.needsAccount },
-                line = enoughLine(limit),
             )
         }
 

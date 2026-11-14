@@ -3,12 +3,6 @@
 {
   "limit_call_time_used": "666ba9250a79c3ad50764907f3297b83bf4ba1d30b561840715dd09ab1dd43bc",
   "limit_create_account": "1665e96a9f21bccdf2417a64da61dfd3abf6c5345c3c198038196246e7811ba0",
-  "limit_enough_later_today": "a4683a371d0c4bb8d3f883e440afd970e1362e4a3279fd09c77cb8cdfd41379f",
-  "limit_enough_later_today_or_subscribe": "cd93b182ea6931a4c73d3f62ae7b926a19e3a8fec121a560b88961024aedec78",
-  "limit_enough_on": "fef1122865b6302275c6a5ee4f9fa1564c7390271ab5f67eafb967790043cf8f",
-  "limit_enough_on_or_subscribe": "0ad3c02ed9fdad844e3d287663a5f3338de24d4a72e1aee72b34e6746b7f5f1a",
-  "limit_enough_tomorrow": "8b21cd36e51879389ba1f1c9d7eb4bb76993d86d0672a4f03e554d6c3f14bd29",
-  "limit_enough_tomorrow_or_subscribe": "5f341c96534a168e56e06f2ac1433a6e6dc259f1a3bbcef445513c06ac8be644",
   "limit_explanations_day": "47ef2cd684e387b2324b8c8c182e191b80d5bd51ea4c1cb3aa83fe8177fdf006",
   "limit_explanations_used": "6da31dfa4a3d58236ae00e848726f70f5fde5dbdadd40f9466560fda47c13c0b",
   "limit_goals_used": "44a0bb5ead894e77479fb75320980bd0a85e92b57e688b87795b161a187818f2",
@@ -65,18 +59,6 @@
     <string name="limit_more_on">%1$sにまた利用できます。</string>
     <!-- The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: the day more comes back. {date} is a day and its month, such as "November 22" in English. -->
     <string name="limit_more_on_or_subscribe">%1$sにまた利用できます。有料プランに登録すると、今すぐ続けられます。</string>
-    <!-- Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it. -->
-    <string name="limit_enough_later_today">今日中に、必要な会話時間を使えるようになります。</string>
-    <!-- Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it. -->
-    <string name="limit_enough_later_today_or_subscribe">今日中に、必要な会話時間を使えるようになります。登録すれば、今すぐ続けられます。</string>
-    <!-- Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it. -->
-    <string name="limit_enough_tomorrow">明日には、必要な会話時間を使えるようになります。</string>
-    <!-- Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it. -->
-    <string name="limit_enough_tomorrow_or_subscribe">明日には、必要な会話時間を使えるようになります。登録すれば、今すぐ続けられます。</string>
-    <!-- Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it. -->
-    <string name="limit_enough_on">%1$sには、必要な会話時間を使えるようになります。</string>
-    <!-- Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it. -->
-    <string name="limit_enough_on_or_subscribe">%1$sには、必要な会話時間を使えるようになります。登録すれば、今すぐ続けられます。</string>
     <!-- The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back. -->
     <string name="limit_try_again_now">今すぐもう一度試せます。</string>
     <!-- A notice that something the learner uses ran out, as one line: {title} says what ran out, such as "You've used your uploads", and {line} when more comes back, such as "More on November 22, or subscribe to keep going." -->

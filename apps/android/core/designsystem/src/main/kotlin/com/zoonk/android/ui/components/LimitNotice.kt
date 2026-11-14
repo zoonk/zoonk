@@ -65,33 +65,6 @@ private val Limit.Reached.usedUp: Boolean
 private val Limit.Reached.freeLessons: Boolean
     get() = tier == LimitTier.Free && rolling
 
-/** The two ways a line says when more comes back: more of what ran out, or enough for a start of a set length. */
-private enum class Comes(
-    @StringRes val laterToday: Int,
-    @StringRes val laterTodayOrSubscribe: Int,
-    @StringRes val tomorrow: Int,
-    @StringRes val tomorrowOrSubscribe: Int,
-    @StringRes val on: Int,
-    @StringRes val onOrSubscribe: Int,
-) {
-    More(
-        R.string.limit_more_later_today,
-        R.string.limit_more_later_today_or_subscribe,
-        R.string.limit_more_tomorrow,
-        R.string.limit_more_tomorrow_or_subscribe,
-        R.string.limit_more_on,
-        R.string.limit_more_on_or_subscribe,
-    ),
-    Enough(
-        R.string.limit_enough_later_today,
-        R.string.limit_enough_later_today_or_subscribe,
-        R.string.limit_enough_tomorrow,
-        R.string.limit_enough_tomorrow_or_subscribe,
-        R.string.limit_enough_on,
-        R.string.limit_enough_on_or_subscribe,
-    ),
-}
-
 /**
  * When more comes back: the day of [Limit.Reached.availableAt] in the learner's calendar, "later today" or
  * "tomorrow" when it's that close, following the clock while it shows; a day's cap comes back tomorrow. Only a
@@ -99,10 +72,7 @@ private enum class Comes(
  * or when the API gave no day (never a guessed one).
  */
 @Composable
-private fun line(
-    limit: Limit.Reached,
-    comes: Comes,
-): String? {
+fun comesBackLine(limit: Limit.Reached): String? {
     val daily = limit.period == null || limit.period == LimitPeriod.Day
     val day = if (daily) OpeningDay.Tomorrow else rememberOpeningDay(limit.availableAt.takeIf { limit.rolling })
     val free = limit.tier == LimitTier.Free
@@ -116,27 +86,19 @@ private fun line(
         }
 
         day == OpeningDay.Today -> {
-            stringResource(if (free) comes.laterTodayOrSubscribe else comes.laterToday)
+            stringResource(if (free) R.string.limit_more_later_today_or_subscribe else R.string.limit_more_later_today)
         }
 
         day == OpeningDay.Tomorrow -> {
-            stringResource(if (free) comes.tomorrowOrSubscribe else comes.tomorrow)
+            stringResource(if (free) R.string.limit_more_tomorrow_or_subscribe else R.string.limit_more_tomorrow)
         }
 
         else -> {
             val date = formatDate((day as OpeningDay.On).date, currentLocale(), DateStyle.DayMonth)
-            stringResource(if (free) comes.onOrSubscribe else comes.on, date)
+            stringResource(if (free) R.string.limit_more_on_or_subscribe else R.string.limit_more_on, date)
         }
     }
 }
-
-/** When it comes back; a guest's way on is the button, and a cap used up for good has no day, so neither has a line. */
-@Composable
-fun comesBackLine(limit: Limit.Reached): String? = line(limit, Comes.More)
-
-/** A call of a set length (an exam speaking task, a speaking mock): when the learner will have enough call time for it. */
-@Composable
-fun enoughLine(limit: Limit.Reached): String? = line(limit, Comes.Enough)
 
 /** A gate in one sentence, where there's room for only one (a toast, an error under a field): "{title}. {line}". */
 @Composable
