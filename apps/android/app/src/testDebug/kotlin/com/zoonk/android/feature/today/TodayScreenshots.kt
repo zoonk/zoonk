@@ -449,19 +449,6 @@ class TodayScreenshots {
                                     },
                             ),
                     ),
-                "notice-access" to
-                    day(
-                        blocks = lessons(3),
-                        next = 0,
-                        extra =
-                            mapOf(
-                                "examAccess" to
-                                    buildJsonObject {
-                                        put("includesMockExams", false)
-                                        put("trialEnded", true)
-                                    },
-                            ),
-                    ),
                 "short-plan" to
                     day(
                         blocks = lessons(3),
