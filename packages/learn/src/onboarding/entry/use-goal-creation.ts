@@ -13,7 +13,7 @@ function useCreateError() {
 
   return (outcome: Exclude<CreateGoalsOutcome, { status: "created" }>) =>
     outcome.status === "limitReached"
-      ? limitMessage(outcome.reason)
+      ? limitMessage(outcome)
       : t("We couldn't save your goal. Try again in a moment.");
 }
 
@@ -63,7 +63,10 @@ export function useGoalCreation() {
       }
 
       setError({
-        limit: outcome.status === "limitReached" ? outcome.reason : undefined,
+        limit:
+          outcome.status === "limitReached"
+            ? { availableAt: outcome.availableAt, reason: outcome.reason }
+            : undefined,
         message: createError(outcome),
         needsAccount: outcome.status === "limitReached" && needsAccountFor(outcome.reason),
       });
@@ -75,7 +78,7 @@ export function useGoalCreation() {
 
   const clearActiveGoalsError = (draft: OnboardingDraftView) => {
     if (draft.activeGoalsLeft !== 0) {
-      setError((current) => (current?.limit === "activeGoals" ? null : current));
+      setError((current) => (current?.limit?.reason === "activeGoals" ? null : current));
     }
   };
 

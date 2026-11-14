@@ -1,26 +1,32 @@
-import { type AllowanceLimit, toCalendarPeriod } from "@zoonk/core/entitlements/contract";
+import { type AllowanceLimit } from "@zoonk/core/entitlements/contract";
 import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes";
-import { type GoalLimitReason } from "@zoonk/learn/onboarding/actions";
+import { type GoalLimit } from "@zoonk/learn/onboarding/actions";
 import { z } from "zod";
 
-export function getGoalLimitReason(
-  limit: Pick<AllowanceLimit, "period" | "tier"> & { resource: string },
-): GoalLimitReason {
+type GoalStartLimit = Pick<AllowanceLimit, "period" | "tier"> & {
+  availableAt?: Date | string | null;
+  resource: string;
+};
+
+export function getGoalLimit(limit: GoalStartLimit): GoalLimit {
   if (limit.tier === "guest") {
-    return "guest";
+    return { reason: "guest" };
   }
 
   if (limit.resource === "activeGoals") {
-    return "activeGoals";
+    return { reason: "activeGoals" };
   }
 
-  const monthly = toCalendarPeriod(limit.period) === "month";
-
-  if (limit.resource === "explanation") {
-    return monthly ? "monthlyExplanations" : "dailyExplanations";
+  if (limit.period !== "rolling30Days") {
+    return { reason: limit.resource === "explanation" ? "dailyExplanations" : "dailyGoals" };
   }
 
-  return monthly ? "monthlyGoals" : "dailyGoals";
+  const { availableAt } = limit;
+
+  return {
+    availableAt: availableAt instanceof Date ? availableAt.toISOString() : (availableAt ?? null),
+    reason: limit.resource === "explanation" ? "monthlyExplanations" : "monthlyGoals",
+  };
 }
 
 const goalRefusalErrorSchema = z.object({
@@ -30,7 +36,8 @@ const goalRefusalErrorSchema = z.object({
     z.object({
       code: z.literal("GOAL_LIMIT_REACHED"),
       details: z.object({
-        period: z.enum(["day", "month", "total"]),
+        availableAt: z.string().nullish(),
+        period: z.enum(["day", "rolling30Days", "total"]),
         resource: z.string(),
         tier: z.enum(["free", "guest", "plus"]),
       }),
@@ -38,7 +45,7 @@ const goalRefusalErrorSchema = z.object({
   ]),
 });
 
-function readGoalLimitReason(json: unknown): GoalLimitReason | null {
+function readGoalLimit(json: unknown): GoalLimit | null {
   const error = goalRefusalErrorSchema.safeParse(json).data?.error;
 
   if (!error) {
@@ -46,15 +53,17 @@ function readGoalLimitReason(json: unknown): GoalLimitReason | null {
   }
 
   if (error.code === "GOAL_LIMIT_REACHED") {
-    return getGoalLimitReason(error.details);
+    return getGoalLimit(error.details);
   }
 
-  return error.code === LESSON_PLAYER_ERROR_CODES.signUpRequired ? "signUpRequired" : "slowDown";
+  return {
+    reason: error.code === LESSON_PLAYER_ERROR_CODES.signUpRequired ? "signUpRequired" : "slowDown",
+  };
 }
 
 export function toGoalStartFailure(
   json: unknown,
-): { reason: GoalLimitReason; status: "limitReached" } | { status: "failed" } {
-  const reason = readGoalLimitReason(json);
-  return reason ? { reason, status: "limitReached" } : { status: "failed" };
+): ({ status: "limitReached" } & GoalLimit) | { status: "failed" } {
+  const limit = readGoalLimit(json);
+  return limit ? { ...limit, status: "limitReached" } : { status: "failed" };
 }

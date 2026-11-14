@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { readRefusedLessonLimit, readRefusedLimit } from "./refused-limit";
+import { readRefusedLimit } from "./refused-limit";
 
 function limitReached(limit: object) {
   return {
@@ -12,16 +12,27 @@ function limitReached(limit: object) {
 }
 
 describe(readRefusedLimit, () => {
-  it("reads which cap it was and when it starts over", () => {
+  it("reads which cap it was and when more comes back", () => {
     expect(
       readRefusedLimit({
-        body: limitReached({ limit: 40, period: "month", resource: "mindMap", tier: "free" }),
+        body: limitReached({
+          availableAt: "2026-12-02T09:00:00.000Z",
+          limit: 10,
+          period: "rolling30Days",
+          resource: "mindMap",
+          tier: "free",
+        }),
         status: 402,
       }),
-    ).toStrictEqual({ period: "month", status: "limitReached", tier: "free" });
+    ).toStrictEqual({
+      availableAt: "2026-12-02T09:00:00.000Z",
+      period: "rolling30Days",
+      status: "limitReached",
+      tier: "free",
+    });
 
     expect(
-      readRefusedLessonLimit({
+      readRefusedLimit({
         body: limitReached({
           availableAt: "2026-11-20T12:00:00.000Z",
           limit: 20,
@@ -39,7 +50,7 @@ describe(readRefusedLimit, () => {
     });
 
     expect(
-      readRefusedLessonLimit({
+      readRefusedLimit({
         body: limitReached({ limit: 200, period: "day", resource: "lessonStart", tier: "plus" }),
         status: 429,
       }),

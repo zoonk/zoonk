@@ -92,7 +92,12 @@ function useChooserNote({ busy, gated, status }: ChooserBarProps): ReactNode {
   if (status.kind === "refused") {
     return (
       <div role="alert">
-        <HelpLimitNotice limit={status.limit} linkComponent={LearnLink} routes={routes} />
+        <HelpLimitNotice
+          kind="mockExams"
+          limit={status.limit}
+          linkComponent={LearnLink}
+          routes={routes}
+        />
       </div>
     );
   }

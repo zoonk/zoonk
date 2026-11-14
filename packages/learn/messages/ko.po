@@ -85,6 +85,93 @@ msgctxt "hd07WZ"
 msgid "{done} of {total}"
 msgstr "{done} / {total}"
 
+#. The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: the day more comes back. {date} is a day and its month, such as "November 22" in English.
+#: src/_components/comes-back-words.ts
+msgctxt "limits.i7_WBD"
+msgid "More on {date}, or subscribe to keep going."
+msgstr "{date}에 다시 이용할 수 있어요. 구독하면 지금 계속할 수 있어요."
+
+#. The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back.
+#: src/_components/comes-back-words.ts
+msgctxt "limits.ecXEHc"
+msgid "More later today, or subscribe to keep going."
+msgstr "오늘 중에 다시 이용할 수 있어요. 구독하면 지금 계속할 수 있어요."
+
+#. The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back.
+#: src/_components/comes-back-words.ts
+msgctxt "limits.wwdPGH"
+msgid "More tomorrow, or subscribe to keep going."
+msgstr "내일 다시 이용할 수 있어요. 구독하면 지금 계속할 수 있어요."
+
+#. The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: the day more comes back. {date} is a day and its month, such as "November 22" in English.
+#: src/_components/comes-back-words.ts
+msgctxt "limits.LiccOr"
+msgid "More on {date}."
+msgstr "{date}에 다시 이용할 수 있어요."
+
+#. The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back.
+#: src/_components/comes-back-words.ts
+msgctxt "limits.zQZjeQ"
+msgid "More later today."
+msgstr "오늘 중에 다시 이용할 수 있어요."
+
+#. The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back.
+#: src/_components/comes-back-words.ts
+msgctxt "limits.i1JCVp"
+msgid "More tomorrow."
+msgstr "내일 다시 이용할 수 있어요."
+
+#. The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back.
+#: src/_components/comes-back-words.ts
+msgctxt "limits.d8xWY_"
+msgid "You can try again now."
+msgstr "이제 다시 시도해 보세요."
+
+#. A notice that something the learner uses ran out, as one line: {title} says what ran out, such as "You've used your uploads", and {line} when more comes back, such as "More on November 22, or subscribe to keep going."
+#: src/_components/comes-back-words.ts
+msgctxt "limits.mEm9UA"
+msgid "{title}. {line}"
+msgstr "{title}. {line}"
+
+#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and this one has more lessons than a free learner can start.
+#: src/_components/comes-back-words.ts
+msgctxt "BQZuQD"
+msgid "It writes more lessons than you get for free."
+msgstr "무료로 제공되는 것보다 더 많은 레슨을 만들어요."
+
+#: src/_components/comes-back-words.ts
+msgctxt "PzQ0ot"
+msgid "This map needs a subscription"
+msgstr "이 마인드맵을 만들려면 구독이 필요해요"
+
+#: src/_components/comes-back-words.ts
+msgctxt "Ekv-QL"
+msgid "You can make this map now"
+msgstr "이제 이 마인드맵을 만들 수 있어요"
+
+#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet. {date} is a day and its month, such as "November 22" in English.
+#: src/_components/comes-back-words.ts
+msgctxt "MU7Wx6"
+msgid "You'll have enough on {date}, or subscribe to make it now."
+msgstr "{date}에는 필요한 만큼 무료 레슨을 이용할 수 있어요. 구독하면 지금 만들 수 있어요."
+
+#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet.
+#: src/_components/comes-back-words.ts
+msgctxt "HwBdEe"
+msgid "You'll have enough later today, or subscribe to make it now."
+msgstr "오늘 중에 필요한 만큼 무료 레슨을 이용할 수 있어요. 구독하면 지금 만들 수 있어요."
+
+#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet.
+#: src/_components/comes-back-words.ts
+msgctxt "CE0pGe"
+msgid "You'll have enough tomorrow, or subscribe to make it now."
+msgstr "내일이면 필요한 만큼 무료 레슨을 이용할 수 있어요. 구독하면 지금 만들 수 있어요."
+
+#: src/_components/comes-back-words.ts
+msgctxt "eFx_I9"
+msgid "Not enough free lessons for this map yet"
+msgstr "이 마인드맵을 만들기에는 아직 무료 레슨이 부족해요"
+
 #: src/_components/coverage-bar.tsx
 #: src/syllabus/subject-aside.tsx
 msgctxt "9U6D5-"
@@ -257,81 +344,6 @@ msgctxt "kwl__x"
 msgid "Finish to see how it went."
 msgstr "마치고 결과를 확인해 보세요."
 
-#. On the screen a free learner sees when their free lessons are used. {date} is a day and its month, such as "November 22" in English.
-#: src/_components/free-lessons-words.ts
-msgctxt "wsvV5i"
-msgid "Your next free lesson opens on {date}, or subscribe to keep going."
-msgstr "다음 무료 레슨은 {date}에 열려요. 구독하면 계속 학습할 수 있어요."
-
-#: src/_components/free-lessons-words.ts
-msgctxt "sq9fni"
-msgid "Your next free lesson opens later today, or subscribe to keep going."
-msgstr "다음 무료 레슨은 오늘 중에 열려요. 구독하면 계속 학습할 수 있어요."
-
-#: src/_components/free-lessons-words.ts
-msgctxt "q6VpbS"
-msgid "Your next free lesson opens tomorrow, or subscribe to keep going."
-msgstr "다음 무료 레슨은 내일 열려요. 구독하면 계속 학습할 수 있어요."
-
-#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and this one has more lessons than a free learner can start.
-#: src/_components/free-lessons-words.ts
-msgctxt "BQZuQD"
-msgid "It writes more lessons than you get for free."
-msgstr "무료로 제공되는 것보다 더 많은 레슨을 만들어요."
-
-#: src/_components/free-lessons-words.ts
-msgctxt "PzQ0ot"
-msgid "This map needs a subscription"
-msgstr "이 마인드맵을 만들려면 구독이 필요해요"
-
-#: src/_components/free-lessons-words.ts
-msgctxt "Ekv-QL"
-msgid "You can make this map now"
-msgstr "이제 이 마인드맵을 만들 수 있어요"
-
-#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet. {date} is a day and its month, such as "November 22" in English.
-#: src/_components/free-lessons-words.ts
-msgctxt "MU7Wx6"
-msgid "You'll have enough on {date}, or subscribe to make it now."
-msgstr "{date}에는 필요한 만큼 무료 레슨을 이용할 수 있어요. 구독하면 지금 만들 수 있어요."
-
-#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet.
-#: src/_components/free-lessons-words.ts
-msgctxt "HwBdEe"
-msgid "You'll have enough later today, or subscribe to make it now."
-msgstr "오늘 중에 필요한 만큼 무료 레슨을 이용할 수 있어요. 구독하면 지금 만들 수 있어요."
-
-#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet.
-#: src/_components/free-lessons-words.ts
-msgctxt "CE0pGe"
-msgid "You'll have enough tomorrow, or subscribe to make it now."
-msgstr "내일이면 필요한 만큼 무료 레슨을 이용할 수 있어요. 구독하면 지금 만들 수 있어요."
-
-#: src/_components/free-lessons-words.ts
-msgctxt "eFx_I9"
-msgid "Not enough free lessons for this map yet"
-msgstr "이 마인드맵을 만들기에는 아직 무료 레슨이 부족해요"
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "C84LQr"
-msgid "More next month."
-msgstr "다음 달에 더 이용할 수 있어요."
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "i1JCVp"
-msgid "More tomorrow."
-msgstr "내일 더 이용할 수 있어요."
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "64dPfY"
-msgid "More next month, or subscribe to keep going."
-msgstr "다음 달에 더 이용할 수 있어요. 구독하면 지금 계속할 수 있어요."
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "wwdPGH"
-msgid "More tomorrow, or subscribe to keep going."
-msgstr "내일 더 이용할 수 있어요. 구독하면 지금 계속할 수 있어요."
-
 #: src/_components/help-limit-notice.tsx
 msgctxt "X6_KO5"
 msgid "Take a short break, then try again."
@@ -348,19 +360,14 @@ msgid "That's all you can try without an account"
 msgstr "계정 없이 체험할 수 있는 건 여기까지예요"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "Jqv4S8"
-msgid "No more messages this month"
-msgstr "이번 달 메시지 한도를 다 썼어요"
-
-#: src/_components/help-limit-notice.tsx
 msgctxt "x0gg1d"
 msgid "No more messages today"
 msgstr "오늘 메시지 한도를 다 썼어요"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "z4UYJE"
-msgid "No more explanations this month"
-msgstr "이번 달 설명 한도를 다 썼어요"
+msgctxt "BRz34t"
+msgid "You've used your messages"
+msgstr "메시지 한도를 다 썼어요"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "cPoE5U"
@@ -368,9 +375,19 @@ msgid "No more explanations today"
 msgstr "오늘 설명 한도를 다 썼어요"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "6Tamx-"
-msgid "You've reached this month's limit"
-msgstr "이번 달 이용 한도를 다 썼어요"
+msgctxt "uycXLZ"
+msgid "You've used your explanations"
+msgstr "설명 요청 한도를 다 썼어요"
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "uFNRuq"
+msgid "No more mock exams today"
+msgstr "오늘은 모의고사를 더 볼 수 없어요"
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "oTW-15"
+msgid "You've used your mock exams"
+msgstr "모의고사 이용 한도를 다 썼어요"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "Co4ZUv"
@@ -378,14 +395,14 @@ msgid "You've reached today's limit"
 msgstr "오늘 이용 한도를 다 썼어요"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "5SLMld"
-msgid "Your next free lesson is ready"
-msgstr "다음 무료 레슨이 준비됐어요"
+msgctxt "YaZomb"
+msgid "You've reached your limit"
+msgstr "이용 한도를 다 썼어요"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "y0Yu1A"
-msgid "You've used your free lessons"
-msgstr "무료 레슨을 모두 이용했어요"
+msgctxt "j9Za23"
+msgid "No more new lessons today"
+msgstr "오늘은 새 레슨을 더 볼 수 없어요"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "2LDIQ9"
@@ -393,9 +410,14 @@ msgid "No more lessons without an account"
 msgstr "레슨을 더 보려면 계정이 필요해요"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "j9Za23"
-msgid "No more new lessons today"
-msgstr "오늘은 새 레슨을 더 볼 수 없어요"
+msgctxt "y0Yu1A"
+msgid "You've used your free lessons"
+msgstr "무료 레슨을 모두 이용했어요"
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "5SLMld"
+msgid "Your next free lesson is ready"
+msgstr "다음 무료 레슨이 준비됐어요"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "jaoJk9"
@@ -408,9 +430,9 @@ msgid "No more mind maps without an account"
 msgstr "마인드맵을 더 만들려면 계정이 필요해요"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "6ootiC"
-msgid "No more new mind maps this month"
-msgstr "이번 달에는 새 마인드맵을 더 만들 수 없어요"
+msgctxt "OztxNT"
+msgid "You've used your mind maps"
+msgstr "마인드맵 한도를 다 썼어요"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "o0NLBw"
@@ -423,9 +445,9 @@ msgid "No more previews without an account"
 msgstr "미리보기를 더 이용하려면 계정이 필요해요"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "-sI9v1"
-msgid "No more previews this month"
-msgstr "이번 달 미리보기 횟수를 다 썼어요"
+msgctxt "-jMPMN"
+msgid "You've used your previews"
+msgstr "미리 보기 한도를 다 썼어요"
 
 #: src/_components/lesson-list.tsx
 msgctxt "2lvsw9"
@@ -5642,9 +5664,9 @@ msgid "No more calls today"
 msgstr "오늘은 더 이상 대화할 수 없어요"
 
 #: src/language/conversation/call-limit-message.tsx
-msgctxt "mFsER8"
-msgid "No more calls this month"
-msgstr "이번 달은 더 이상 대화할 수 없어요"
+msgctxt "fA3IHK"
+msgid "You've used your call time"
+msgstr "대화 시간을 다 썼어요"
 
 #: src/language/conversation/call-limit-message.tsx
 msgctxt "fZ-NXt"
@@ -8656,10 +8678,17 @@ msgctxt "HwbZRQ"
 msgid "Today this one has {count, number} of its {total, number} questions, about {time}. You can take the full one tomorrow."
 msgstr "오늘은 {count, number}문제(전체 {total, number}문제 중 일부)를 풀어요. 약 {time} 걸려요. 전체 모의고사는 내일 볼 수 있어요."
 
+#. In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now.
 #: src/mock/mock-short-dialog.tsx
-msgctxt "YIvNSi"
-msgid "Today this one has {count, number} of its {total, number} questions, about {time}. You can take the full one next month."
-msgstr "오늘은 {count, number}문제(전체 {total, number}문제 중 일부)를 풀어요. 약 {time} 걸려요. 전체 모의고사는 다음 달에 볼 수 있어요."
+msgctxt "3-UMw5"
+msgid "Today this one has {count, number} of its {total, number} questions, about {time}. You can take the full one later today."
+msgstr "오늘은 {count, number}문제(전체 {total, number}문제)만 나오고, 약 {time} 걸려요. 전체 모의고사는 오늘 중에 볼 수 있어요."
+
+#. In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now. {date} is a day and its month, such as "November 22" in English.
+#: src/mock/mock-short-dialog.tsx
+msgctxt "mZQ7Qe"
+msgid "Today this one has {count, number} of its {total, number} questions, about {time}. You can take the full one on {date}."
+msgstr "오늘은 {count, number}문제(전체 {total, number}문제)만 나오고, 약 {time} 걸려요. 전체 모의고사는 {date}에 볼 수 있어요."
 
 #: src/mock/mock-short-dialog.tsx
 msgctxt "Rr2HWA"
@@ -8727,19 +8756,14 @@ msgid "You picked {answer}"
 msgstr "{answer} 항목을 선택했어요"
 
 #: src/onboarding/entry/attach-panel.tsx
-msgctxt "lBAN40"
-msgid "No more material today. More tomorrow."
-msgstr "오늘은 자료를 더 추가할 수 없어요. 내일 더 추가할 수 있어요."
+msgctxt "aw2Ukw"
+msgid "No more material today"
+msgstr "오늘은 자료를 더 올릴 수 없어요"
 
 #: src/onboarding/entry/attach-panel.tsx
-msgctxt "OZTZJj"
-msgid "No more material this month. More next month, or subscribe to keep going."
-msgstr "이번 달에는 자료를 더 추가할 수 없어요. 다음 달에 더 추가할 수 있고, 구독하면 바로 더 추가할 수 있어요."
-
-#: src/onboarding/entry/attach-panel.tsx
-msgctxt "fKoONz"
-msgid "No more material today. More tomorrow, or subscribe to keep going."
-msgstr "오늘은 자료를 더 추가할 수 없어요. 내일 더 추가할 수 있고, 구독하면 바로 더 추가할 수 있어요."
+msgctxt "g0Nshd"
+msgid "You've used your uploads"
+msgstr "업로드 한도를 다 썼어요"
 
 #: src/onboarding/entry/attach-panel.tsx
 msgctxt "yeNv9c"
@@ -8909,21 +8933,6 @@ msgid "How does inflation work?"
 msgstr "인플레이션은 어떤 원리로 일어나나요?"
 
 #: src/onboarding/entry/goal-limit-notice.tsx
-msgctxt "1oUkSm"
-msgid "Pause one in your Plan, or subscribe to study more at once."
-msgstr "계획에서 목표 하나를 일시 중지해 주세요. 구독하면 더 많은 목표를 동시에 학습할 수 있어요."
-
-#: src/onboarding/entry/goal-limit-notice.tsx
-msgctxt "EreSqP"
-msgid "That's all the goals you can study at once"
-msgstr "동시에 학습할 수 있는 목표 수를 다 채웠어요"
-
-#: src/onboarding/entry/goal-limit-notice.tsx
-msgctxt "4RwuVD"
-msgid "No more new goals this month"
-msgstr "이번 달에는 새 목표를 더 추가할 수 없어요"
-
-#: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "MO6156"
 msgid "Go to your Plan"
 msgstr "내 계획으로 이동"
@@ -9069,19 +9078,14 @@ msgid "What you want to do with your material"
 msgstr "자료로 하고 싶은 일"
 
 #: src/onboarding/entry/material-questions.tsx
-msgctxt "maqtwk"
-msgid "No more questions today. More tomorrow."
-msgstr "오늘은 질문을 더 할 수 없어요. 내일 다시 질문할 수 있어요."
+msgctxt "TPgNQb"
+msgid "No more questions today"
+msgstr "오늘은 질문을 더 할 수 없어요"
 
 #: src/onboarding/entry/material-questions.tsx
-msgctxt "Iadu3J"
-msgid "No more questions this month. More next month, or subscribe to keep going."
-msgstr "이번 달에는 질문을 더 할 수 없어요. 다음 달에 다시 질문할 수 있고, 구독하면 바로 더 질문할 수 있어요."
-
-#: src/onboarding/entry/material-questions.tsx
-msgctxt "Z_xQgo"
-msgid "No more questions today. More tomorrow, or subscribe to keep going."
-msgstr "오늘은 질문을 더 할 수 없어요. 내일 다시 질문할 수 있고, 구독하면 바로 더 질문할 수 있어요."
+msgctxt "GYGZpe"
+msgid "You've used your questions"
+msgstr "질문 한도를 다 썼어요"
 
 #: src/onboarding/entry/material-questions.tsx
 msgctxt "KIdIMi"
@@ -9166,19 +9170,29 @@ msgid "{exam, select, abitur {Pass the Abitur} bac {Pass the bac} enem {Pass the
 msgstr "{exam, select, abitur {Abitur 합격하기} bac {bac 합격하기} enem {ENEM 합격하기} exani {EXANI-II 합격하기} kyotsu {Common Test 잘 보기} matura {matura 합격하기} maturita {maturità 합격하기} suneung {수능 잘 보기} yks {YKS 잘 보기} other {SAT 합격하기}}"
 
 #: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.a9a9_d"
-msgid "That's all the goals you can study at once. Pause one, or subscribe to study more."
-msgstr "동시에 학습할 수 있는 목표 수를 다 채웠어요. 목표 하나를 일시 중지하거나 구독해서 더 많은 목표를 학습해 보세요."
+msgctxt "goalErrors.ngFchc"
+msgid "No more new goals today"
+msgstr "오늘은 새 목표를 더 시작할 수 없어요"
 
 #: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.GZnNXl"
-msgid "No more quick explanations today. More tomorrow, or subscribe to keep going."
-msgstr "오늘은 간단한 설명을 더 볼 수 없어요. 내일 다시 보거나 구독해서 계속 이용해 보세요."
+msgctxt "goalErrors.ldHskD"
+msgid "You've started all the new goals you can"
+msgstr "시작할 수 있는 새 목표를 다 시작했어요"
 
 #: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.JsRkia"
-msgid "No more new goals today. More tomorrow."
-msgstr "오늘은 새 목표를 더 추가할 수 없어요. 내일 다시 추가할 수 있어요."
+msgctxt "goalErrors.1oUkSm"
+msgid "Pause one in your Plan, or subscribe to study more at once."
+msgstr "계획에서 목표 하나를 일시 중지하거나 구독해서 더 많은 목표를 동시에 공부해 보세요."
+
+#: src/onboarding/goal-errors.ts
+msgctxt "goalErrors.EreSqP"
+msgid "That's all the goals you can study at once"
+msgstr "동시에 공부할 수 있는 목표 수를 다 채웠어요"
+
+#: src/onboarding/goal-errors.ts
+msgctxt "goalErrors._8pCzX"
+msgid "No more quick explanations today"
+msgstr "오늘은 간단한 설명을 더 받을 수 없어요"
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.2aNqX-"
@@ -9186,14 +9200,9 @@ msgid "Without an account, you study one goal. Create a free account to start an
 msgstr "계정 없이 학습할 수 있는 목표는 하나예요. 다른 목표를 시작하려면 무료 계정을 만드세요."
 
 #: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.B_qpn8"
-msgid "No more quick explanations this month. More next month, or subscribe to keep going."
-msgstr "이번 달에는 간단한 설명을 더 볼 수 없어요. 다음 달에 다시 보거나 구독해서 계속 이용해 보세요."
-
-#: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.wjsNnL"
-msgid "No more new goals this month. More next month, or subscribe to keep going."
-msgstr "이번 달에는 새 목표를 더 추가할 수 없어요. 다음 달에 다시 추가하거나 구독해서 계속 이용해 보세요."
+msgctxt "goalErrors.PrgRDF"
+msgid "You've used your quick explanations"
+msgstr "간단한 설명 요청 한도를 다 썼어요"
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.MKCnRs"
@@ -9209,11 +9218,6 @@ msgstr "짧은 시간에 여러 목표를 시작했어요. 몇 분 후에 다시
 msgctxt "goalErrors.ib5oUK"
 msgid "No more new goals today without an account."
 msgstr "계정이 없으면 오늘은 새 목표를 더 추가할 수 없어요."
-
-#: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.NIiMiz"
-msgid "No more new goals today. More tomorrow, or subscribe to keep going."
-msgstr "오늘은 새 목표를 더 추가할 수 없어요. 내일 다시 추가하거나 구독해서 계속 이용해 보세요."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.YYmbyX"

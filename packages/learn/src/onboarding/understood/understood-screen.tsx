@@ -9,7 +9,7 @@ import { GateWords, SubscribeGate } from "../../_components/subscribe-gate";
 import { GoalLimitBar } from "../entry/goal-limit-notice";
 import { GoalActions, GoalErrorMessage } from "../entry/goal-outcomes";
 import { type GoalError } from "../goal-errors";
-import { type GoalLimitReason } from "../onboarding-actions";
+import { type GoalLimit } from "../onboarding-actions";
 import {
   OnboardingColumn,
   OnboardingDescription,
@@ -166,7 +166,7 @@ export function UnderstoodScreen({
   draft: UnderstandingDraft;
   error: GoalError | null;
   goal: string;
-  goalLimit?: GoalLimitReason | null;
+  goalLimit?: GoalLimit | null;
   hasAccount: boolean;
   isCreating: boolean;
   material: readonly { title: string }[];
@@ -195,7 +195,7 @@ export function UnderstoodScreen({
     <OnboardingColumn
       bar={
         plusLimit ? (
-          <GoalLimitBar reason={plusLimit} words />
+          <GoalLimitBar limit={plusLimit} words />
         ) : (
           <GoalActions error={cardError} signUpHref={signUpHref}>
             <OnboardingSecondaryButton

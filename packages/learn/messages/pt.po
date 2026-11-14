@@ -85,6 +85,93 @@ msgctxt "hd07WZ"
 msgid "{done} of {total}"
 msgstr "{done} de {total}"
 
+#. The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: the day more comes back. {date} is a day and its month, such as "November 22" in English.
+#: src/_components/comes-back-words.ts
+msgctxt "limits.i7_WBD"
+msgid "More on {date}, or subscribe to keep going."
+msgstr "Você terá mais em {date} ou pode assinar para continuar."
+
+#. The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back.
+#: src/_components/comes-back-words.ts
+msgctxt "limits.ecXEHc"
+msgid "More later today, or subscribe to keep going."
+msgstr "Você terá mais ainda hoje ou pode assinar para continuar."
+
+#. The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back.
+#: src/_components/comes-back-words.ts
+msgctxt "limits.wwdPGH"
+msgid "More tomorrow, or subscribe to keep going."
+msgstr "Você terá mais amanhã ou pode assinar para continuar."
+
+#. The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: the day more comes back. {date} is a day and its month, such as "November 22" in English.
+#: src/_components/comes-back-words.ts
+msgctxt "limits.LiccOr"
+msgid "More on {date}."
+msgstr "Você terá mais em {date}."
+
+#. The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back.
+#: src/_components/comes-back-words.ts
+msgctxt "limits.zQZjeQ"
+msgid "More later today."
+msgstr "Você terá mais ainda hoje."
+
+#. The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back.
+#: src/_components/comes-back-words.ts
+msgctxt "limits.i1JCVp"
+msgid "More tomorrow."
+msgstr "Você terá mais amanhã."
+
+#. The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back.
+#: src/_components/comes-back-words.ts
+msgctxt "limits.d8xWY_"
+msgid "You can try again now."
+msgstr "Você já pode tentar de novo."
+
+#. A notice that something the learner uses ran out, as one line: {title} says what ran out, such as "You've used your uploads", and {line} when more comes back, such as "More on November 22, or subscribe to keep going."
+#: src/_components/comes-back-words.ts
+msgctxt "limits.mEm9UA"
+msgid "{title}. {line}"
+msgstr "{title}. {line}"
+
+#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and this one has more lessons than a free learner can start.
+#: src/_components/comes-back-words.ts
+msgctxt "BQZuQD"
+msgid "It writes more lessons than you get for free."
+msgstr "Ele cria mais aulas do que você recebe de graça."
+
+#: src/_components/comes-back-words.ts
+msgctxt "PzQ0ot"
+msgid "This map needs a subscription"
+msgstr "Você precisa assinar para criar este mapa"
+
+#: src/_components/comes-back-words.ts
+msgctxt "Ekv-QL"
+msgid "You can make this map now"
+msgstr "Você já pode criar este mapa"
+
+#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet. {date} is a day and its month, such as "November 22" in English.
+#: src/_components/comes-back-words.ts
+msgctxt "MU7Wx6"
+msgid "You'll have enough on {date}, or subscribe to make it now."
+msgstr "Você vai ter aulas suficientes em {date}. Ou assine para criar o mapa agora."
+
+#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet.
+#: src/_components/comes-back-words.ts
+msgctxt "HwBdEe"
+msgid "You'll have enough later today, or subscribe to make it now."
+msgstr "Você vai ter aulas suficientes ainda hoje. Ou assine para criar o mapa agora."
+
+#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet.
+#: src/_components/comes-back-words.ts
+msgctxt "CE0pGe"
+msgid "You'll have enough tomorrow, or subscribe to make it now."
+msgstr "Você vai ter aulas suficientes amanhã. Ou assine para criar o mapa agora."
+
+#: src/_components/comes-back-words.ts
+msgctxt "eFx_I9"
+msgid "Not enough free lessons for this map yet"
+msgstr "Você ainda não tem aulas grátis suficientes para este mapa"
+
 #: src/_components/coverage-bar.tsx
 #: src/syllabus/subject-aside.tsx
 msgctxt "9U6D5-"
@@ -257,81 +344,6 @@ msgctxt "kwl__x"
 msgid "Finish to see how it went."
 msgstr "Finalize para ver como foi."
 
-#. On the screen a free learner sees when their free lessons are used. {date} is a day and its month, such as "November 22" in English.
-#: src/_components/free-lessons-words.ts
-msgctxt "wsvV5i"
-msgid "Your next free lesson opens on {date}, or subscribe to keep going."
-msgstr "Sua próxima aula grátis será liberada em {date}. Assine para continuar agora."
-
-#: src/_components/free-lessons-words.ts
-msgctxt "sq9fni"
-msgid "Your next free lesson opens later today, or subscribe to keep going."
-msgstr "Sua próxima aula grátis será liberada ainda hoje. Assine para continuar agora."
-
-#: src/_components/free-lessons-words.ts
-msgctxt "q6VpbS"
-msgid "Your next free lesson opens tomorrow, or subscribe to keep going."
-msgstr "Sua próxima aula grátis será liberada amanhã. Assine para continuar agora."
-
-#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and this one has more lessons than a free learner can start.
-#: src/_components/free-lessons-words.ts
-msgctxt "BQZuQD"
-msgid "It writes more lessons than you get for free."
-msgstr "Ele cria mais aulas do que você recebe de graça."
-
-#: src/_components/free-lessons-words.ts
-msgctxt "PzQ0ot"
-msgid "This map needs a subscription"
-msgstr "Você precisa assinar para criar este mapa"
-
-#: src/_components/free-lessons-words.ts
-msgctxt "Ekv-QL"
-msgid "You can make this map now"
-msgstr "Você já pode criar este mapa"
-
-#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet. {date} is a day and its month, such as "November 22" in English.
-#: src/_components/free-lessons-words.ts
-msgctxt "MU7Wx6"
-msgid "You'll have enough on {date}, or subscribe to make it now."
-msgstr "Você vai ter aulas suficientes em {date}. Ou assine para criar o mapa agora."
-
-#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet.
-#: src/_components/free-lessons-words.ts
-msgctxt "HwBdEe"
-msgid "You'll have enough later today, or subscribe to make it now."
-msgstr "Você vai ter aulas suficientes ainda hoje. Ou assine para criar o mapa agora."
-
-#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet.
-#: src/_components/free-lessons-words.ts
-msgctxt "CE0pGe"
-msgid "You'll have enough tomorrow, or subscribe to make it now."
-msgstr "Você vai ter aulas suficientes amanhã. Ou assine para criar o mapa agora."
-
-#: src/_components/free-lessons-words.ts
-msgctxt "eFx_I9"
-msgid "Not enough free lessons for this map yet"
-msgstr "Você ainda não tem aulas grátis suficientes para este mapa"
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "C84LQr"
-msgid "More next month."
-msgstr "Tem mais no mês que vem."
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "i1JCVp"
-msgid "More tomorrow."
-msgstr "Tem mais amanhã."
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "64dPfY"
-msgid "More next month, or subscribe to keep going."
-msgstr "Tem mais no mês que vem, ou assine para continuar."
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "wwdPGH"
-msgid "More tomorrow, or subscribe to keep going."
-msgstr "Tem mais amanhã, ou assine para continuar."
-
 #: src/_components/help-limit-notice.tsx
 msgctxt "X6_KO5"
 msgid "Take a short break, then try again."
@@ -348,19 +360,14 @@ msgid "That's all you can try without an account"
 msgstr "Para experimentar mais, você precisa de uma conta"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "Jqv4S8"
-msgid "No more messages this month"
-msgstr "Sem mais mensagens este mês"
-
-#: src/_components/help-limit-notice.tsx
 msgctxt "x0gg1d"
 msgid "No more messages today"
 msgstr "Sem mais mensagens por hoje"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "z4UYJE"
-msgid "No more explanations this month"
-msgstr "Sem mais explicações este mês"
+msgctxt "BRz34t"
+msgid "You've used your messages"
+msgstr "Você atingiu o limite de mensagens"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "cPoE5U"
@@ -368,9 +375,19 @@ msgid "No more explanations today"
 msgstr "Sem mais explicações por hoje"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "6Tamx-"
-msgid "You've reached this month's limit"
-msgstr "Você chegou ao limite deste mês"
+msgctxt "uycXLZ"
+msgid "You've used your explanations"
+msgstr "Você atingiu o limite de explicações"
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "uFNRuq"
+msgid "No more mock exams today"
+msgstr "Você atingiu o limite diário de simulados"
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "oTW-15"
+msgid "You've used your mock exams"
+msgstr "Você atingiu o limite de simulados"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "Co4ZUv"
@@ -378,14 +395,14 @@ msgid "You've reached today's limit"
 msgstr "Você chegou ao limite de hoje"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "5SLMld"
-msgid "Your next free lesson is ready"
-msgstr "Sua próxima aula grátis está disponível"
+msgctxt "YaZomb"
+msgid "You've reached your limit"
+msgstr "Você atingiu seu limite"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "y0Yu1A"
-msgid "You've used your free lessons"
-msgstr "Você usou todas as suas aulas grátis"
+msgctxt "j9Za23"
+msgid "No more new lessons today"
+msgstr "Sem novas aulas por hoje"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "2LDIQ9"
@@ -393,9 +410,14 @@ msgid "No more lessons without an account"
 msgstr "Mais aulas só com uma conta"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "j9Za23"
-msgid "No more new lessons today"
-msgstr "Sem novas aulas por hoje"
+msgctxt "y0Yu1A"
+msgid "You've used your free lessons"
+msgstr "Você usou todas as suas aulas grátis"
+
+#: src/_components/help-limit-notice.tsx
+msgctxt "5SLMld"
+msgid "Your next free lesson is ready"
+msgstr "Sua próxima aula grátis está disponível"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "jaoJk9"
@@ -408,9 +430,9 @@ msgid "No more mind maps without an account"
 msgstr "Mais mapas mentais só com uma conta"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "6ootiC"
-msgid "No more new mind maps this month"
-msgstr "Sem novos mapas mentais este mês"
+msgctxt "OztxNT"
+msgid "You've used your mind maps"
+msgstr "Você atingiu o limite de mapas mentais"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "o0NLBw"
@@ -423,9 +445,9 @@ msgid "No more previews without an account"
 msgstr "Mais prévias só com uma conta"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "-sI9v1"
-msgid "No more previews this month"
-msgstr "Sem mais prévias este mês"
+msgctxt "-jMPMN"
+msgid "You've used your previews"
+msgstr "Você atingiu o limite de prévias"
 
 #: src/_components/lesson-list.tsx
 msgctxt "2lvsw9"
@@ -5642,9 +5664,9 @@ msgid "No more calls today"
 msgstr "Você já usou suas conversas de hoje"
 
 #: src/language/conversation/call-limit-message.tsx
-msgctxt "mFsER8"
-msgid "No more calls this month"
-msgstr "Você já usou suas conversas deste mês"
+msgctxt "fA3IHK"
+msgid "You've used your call time"
+msgstr "Você usou todo o seu tempo de conversa"
 
 #: src/language/conversation/call-limit-message.tsx
 msgctxt "fZ-NXt"
@@ -8656,10 +8678,17 @@ msgctxt "HwbZRQ"
 msgid "Today this one has {count, number} of its {total, number} questions, about {time}. You can take the full one tomorrow."
 msgstr "Hoje, esse simulado tem {count, number} das {total, number} questões e leva cerca de {time}. Você pode fazer a versão completa amanhã."
 
+#. In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now.
 #: src/mock/mock-short-dialog.tsx
-msgctxt "YIvNSi"
-msgid "Today this one has {count, number} of its {total, number} questions, about {time}. You can take the full one next month."
-msgstr "Hoje, esse simulado tem {count, number} das {total, number} questões e leva cerca de {time}. Você pode fazer a versão completa no mês que vem."
+msgctxt "3-UMw5"
+msgid "Today this one has {count, number} of its {total, number} questions, about {time}. You can take the full one later today."
+msgstr "Hoje, este simulado tem {count, number} das {total, number} questões e dura cerca de {time}. Você pode fazer a versão completa mais tarde, ainda hoje."
+
+#. In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now. {date} is a day and its month, such as "November 22" in English.
+#: src/mock/mock-short-dialog.tsx
+msgctxt "mZQ7Qe"
+msgid "Today this one has {count, number} of its {total, number} questions, about {time}. You can take the full one on {date}."
+msgstr "Hoje, este simulado tem {count, number} das {total, number} questões e dura cerca de {time}. Você pode fazer a versão completa em {date}."
 
 #: src/mock/mock-short-dialog.tsx
 msgctxt "Rr2HWA"
@@ -8727,19 +8756,14 @@ msgid "You picked {answer}"
 msgstr "Você escolheu {answer}"
 
 #: src/onboarding/entry/attach-panel.tsx
-msgctxt "lBAN40"
-msgid "No more material today. More tomorrow."
-msgstr "Não dá para enviar mais material hoje. Amanhã tem mais."
+msgctxt "aw2Ukw"
+msgid "No more material today"
+msgstr "Você já enviou o máximo de material por hoje"
 
 #: src/onboarding/entry/attach-panel.tsx
-msgctxt "OZTZJj"
-msgid "No more material this month. More next month, or subscribe to keep going."
-msgstr "Não dá para enviar mais material este mês. Volte no mês que vem ou assine para continuar."
-
-#: src/onboarding/entry/attach-panel.tsx
-msgctxt "fKoONz"
-msgid "No more material today. More tomorrow, or subscribe to keep going."
-msgstr "Não dá para enviar mais material hoje. Volte amanhã ou assine para continuar."
+msgctxt "g0Nshd"
+msgid "You've used your uploads"
+msgstr "Você atingiu o limite de envios"
 
 #: src/onboarding/entry/attach-panel.tsx
 msgctxt "yeNv9c"
@@ -8909,21 +8933,6 @@ msgid "How does inflation work?"
 msgstr "Como funciona a inflação?"
 
 #: src/onboarding/entry/goal-limit-notice.tsx
-msgctxt "1oUkSm"
-msgid "Pause one in your Plan, or subscribe to study more at once."
-msgstr "Pause um no seu Plano ou assine para estudar mais ao mesmo tempo."
-
-#: src/onboarding/entry/goal-limit-notice.tsx
-msgctxt "EreSqP"
-msgid "That's all the goals you can study at once"
-msgstr "Você já tem o máximo de objetivos em andamento"
-
-#: src/onboarding/entry/goal-limit-notice.tsx
-msgctxt "4RwuVD"
-msgid "No more new goals this month"
-msgstr "Não dá para começar mais objetivos neste mês"
-
-#: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "MO6156"
 msgid "Go to your Plan"
 msgstr "Ir para seu plano"
@@ -9069,19 +9078,14 @@ msgid "What you want to do with your material"
 msgstr "O que você quer fazer com seu material"
 
 #: src/onboarding/entry/material-questions.tsx
-msgctxt "maqtwk"
-msgid "No more questions today. More tomorrow."
-msgstr "Não dá para fazer mais perguntas hoje. Amanhã tem mais."
+msgctxt "TPgNQb"
+msgid "No more questions today"
+msgstr "Você atingiu o limite diário de perguntas"
 
 #: src/onboarding/entry/material-questions.tsx
-msgctxt "Iadu3J"
-msgid "No more questions this month. More next month, or subscribe to keep going."
-msgstr "Não dá para fazer mais perguntas este mês. Volte no mês que vem ou assine para continuar."
-
-#: src/onboarding/entry/material-questions.tsx
-msgctxt "Z_xQgo"
-msgid "No more questions today. More tomorrow, or subscribe to keep going."
-msgstr "Não dá para fazer mais perguntas hoje. Volte amanhã ou assine para continuar."
+msgctxt "GYGZpe"
+msgid "You've used your questions"
+msgstr "Você atingiu o limite de perguntas"
 
 #: src/onboarding/entry/material-questions.tsx
 msgctxt "KIdIMi"
@@ -9166,19 +9170,29 @@ msgid "{exam, select, abitur {Pass the Abitur} bac {Pass the bac} enem {Pass the
 msgstr "{exam, select, abitur {Passar no Abitur} bac {Passar no bac} enem {Passar no Enem} exani {Passar no EXANI-II} kyotsu {Ir bem no Common Test} matura {Passar na matura} maturita {Passar na maturità} suneung {Ir bem no CSAT} yks {Ir bem no YKS} other {Passar no SAT}}"
 
 #: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.a9a9_d"
-msgid "That's all the goals you can study at once. Pause one, or subscribe to study more."
-msgstr "Você já tem o máximo de objetivos em andamento. Pause um ou assine para estudar mais."
+msgctxt "goalErrors.ngFchc"
+msgid "No more new goals today"
+msgstr "Você atingiu o limite diário de novos objetivos"
 
 #: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.GZnNXl"
-msgid "No more quick explanations today. More tomorrow, or subscribe to keep going."
-msgstr "Você usou todas as explicações rápidas de hoje. Amanhã tem mais, ou assine para continuar."
+msgctxt "goalErrors.ldHskD"
+msgid "You've started all the new goals you can"
+msgstr "Você atingiu o limite de novos objetivos"
 
 #: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.JsRkia"
-msgid "No more new goals today. More tomorrow."
-msgstr "Não dá para começar mais objetivos hoje. Amanhã tem mais."
+msgctxt "goalErrors.1oUkSm"
+msgid "Pause one in your Plan, or subscribe to study more at once."
+msgstr "Pause um objetivo no seu Plano ou assine para estudar mais ao mesmo tempo."
+
+#: src/onboarding/goal-errors.ts
+msgctxt "goalErrors.EreSqP"
+msgid "That's all the goals you can study at once"
+msgstr "Você já estuda o máximo de objetivos ao mesmo tempo"
+
+#: src/onboarding/goal-errors.ts
+msgctxt "goalErrors._8pCzX"
+msgid "No more quick explanations today"
+msgstr "Você atingiu o limite diário de explicações rápidas"
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.2aNqX-"
@@ -9186,14 +9200,9 @@ msgid "Without an account, you study one goal. Create a free account to start an
 msgstr "Sem uma conta, você estuda um objetivo. Crie uma conta grátis para começar outro."
 
 #: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.B_qpn8"
-msgid "No more quick explanations this month. More next month, or subscribe to keep going."
-msgstr "Você usou todas as explicações rápidas deste mês. No mês que vem tem mais, ou assine para continuar."
-
-#: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.wjsNnL"
-msgid "No more new goals this month. More next month, or subscribe to keep going."
-msgstr "Não dá para começar mais objetivos neste mês. No mês que vem tem mais, ou assine para continuar."
+msgctxt "goalErrors.PrgRDF"
+msgid "You've used your quick explanations"
+msgstr "Você atingiu o limite de explicações rápidas"
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.MKCnRs"
@@ -9209,11 +9218,6 @@ msgstr "Você está começando objetivos muito rápido. Tente de novo em alguns 
 msgctxt "goalErrors.ib5oUK"
 msgid "No more new goals today without an account."
 msgstr "Sem uma conta, não dá para começar mais objetivos hoje."
-
-#: src/onboarding/goal-errors.ts
-msgctxt "goalErrors.NIiMiz"
-msgid "No more new goals today. More tomorrow, or subscribe to keep going."
-msgstr "Não dá para começar mais objetivos hoje. Amanhã tem mais, ou assine para continuar."
 
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.YYmbyX"

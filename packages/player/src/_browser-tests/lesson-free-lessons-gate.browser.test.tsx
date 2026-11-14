@@ -42,9 +42,7 @@ describe("the free lessons gate", () => {
     await expect.poll(() => startLesson.mock.calls).toHaveLength(2);
 
     await expect
-      .element(
-        page.getByText(/Your next free lesson opens tomorrow, or subscribe to keep going\.$/u),
-      )
+      .element(page.getByText(/More tomorrow, or subscribe to keep going\.$/u))
       .toBeVisible();
   });
 });

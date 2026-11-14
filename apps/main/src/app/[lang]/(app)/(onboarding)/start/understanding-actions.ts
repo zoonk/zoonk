@@ -1,7 +1,7 @@
 "use server";
 
 import { postAsLearner } from "@/lib/api/learner-api";
-import { type AllowanceLimit, toCalendarPeriod } from "@zoonk/core/entitlements/contract";
+import { type AllowanceLimit } from "@zoonk/core/entitlements/contract";
 import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes";
 import {
   type OnboardingDraftView,
@@ -30,7 +30,8 @@ const limitSchema = z.object({
   error: z.object({
     details: z.object({
       limit: z.object({
-        period: z.enum(["day", "month", "total"]),
+        availableAt: z.string().nullish(),
+        period: z.enum(["day", "rolling30Days", "total"]),
         resource: z.string(),
         tier: z.enum(["free", "guest", "plus"]),
       }),
@@ -40,12 +41,21 @@ const limitSchema = z.object({
 
 const GOAL_LIMITS = new Set(["activeGoals", "goal"]);
 
-function toLimitOutcome(
-  limit: Pick<AllowanceLimit, "period" | "tier"> & { resource: string },
-): StartUnderstandingOutcome {
-  return GOAL_LIMITS.has(limit.resource)
-    ? { status: "needsAccount" }
-    : { period: toCalendarPeriod(limit.period), status: "limitReached", tier: limit.tier };
+function toLimitOutcome({
+  availableAt,
+  period,
+  resource,
+  tier,
+}: Pick<AllowanceLimit, "period" | "tier"> & {
+  availableAt?: Date | string | null;
+  resource: string;
+}): StartUnderstandingOutcome {
+  if (GOAL_LIMITS.has(resource)) {
+    return { status: "needsAccount" };
+  }
+
+  const at = availableAt instanceof Date ? availableAt.toISOString() : availableAt;
+  return { availableAt: at ?? null, period, status: "limitReached", tier };
 }
 
 /** When the API's slow-down answer can't be read. */

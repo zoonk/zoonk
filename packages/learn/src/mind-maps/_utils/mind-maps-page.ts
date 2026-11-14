@@ -124,15 +124,14 @@ export function toMindMapLimit({
   }
 
   if (stop.reason === "slowDown") {
-    const resetsAt = stop.resetsAt ? Date.parse(stop.resetsAt) : now;
-    const retryAfterSeconds = Math.max(0, Math.ceil((resetsAt - now) / MS_PER_SECOND));
+    const retryAt = stop.availableAt ? Date.parse(stop.availableAt) : now;
+    const retryAfterSeconds = Math.max(0, Math.ceil((retryAt - now) / MS_PER_SECOND));
     return { retryAfterSeconds, status: "slowDown" };
   }
 
-  return {
-    period: stop.period ?? "day",
-    resource: stop.resource ?? undefined,
-    status: "limitReached",
-    tier,
-  };
+  const resource = stop.resource ?? undefined;
+
+  return stop.period === "rolling30Days"
+    ? { availableAt: stop.availableAt, period: stop.period, resource, status: "limitReached", tier }
+    : { period: stop.period ?? "day", resource, status: "limitReached", tier };
 }

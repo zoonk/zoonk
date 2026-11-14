@@ -18,7 +18,8 @@ const limitSchema = z.object({
   error: z.object({
     code: z.literal("CONVERSATION_LIMIT_REACHED"),
     details: z.object({
-      period: z.enum(["day", "month", "total"]),
+      availableAt: z.string().nullish(),
+      period: z.enum(["day", "rolling30Days", "total"]),
       tier: z.enum(["free", "guest", "plus"]),
     }),
   }),

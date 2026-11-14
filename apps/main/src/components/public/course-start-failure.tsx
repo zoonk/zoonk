@@ -91,7 +91,7 @@ export function CourseStartFailureNote({
     >
       <p className="text-muted-foreground text-sm text-pretty">
         {failure.status === "limitReached"
-          ? limitMessage(failure.reason)
+          ? limitMessage(failure)
           : t("We couldn't start this course.")}
       </p>
 

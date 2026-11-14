@@ -10,7 +10,7 @@ import { type GoalError } from "../goal-errors";
 import {
   type AttachedSource,
   type CreateGoalsOutcome,
-  type GoalLimitReason,
+  type GoalLimit,
   type OnboardingActions,
   type OnboardingRoutes,
   type WaitlistOutcome,
@@ -93,7 +93,7 @@ function ReadDraft({
   creation: Creation;
   draft: OnboardingDraftView;
   draftActions: DraftActions;
-  goalLimit: GoalLimitReason | null;
+  goalLimit: GoalLimit | null;
   hasAccount: boolean;
   intent: MaterialIntent | null;
   onBack: () => void;
@@ -176,7 +176,7 @@ export function DraftScreen({
   creation: Creation;
   draft: OnboardingDraftView;
   draftActions: DraftActions;
-  goalLimit: GoalLimitReason | null;
+  goalLimit: GoalLimit | null;
   hasAccount: boolean;
   intent: MaterialIntent | null;
   onBack: () => void;

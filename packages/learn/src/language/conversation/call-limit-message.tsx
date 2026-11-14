@@ -11,7 +11,7 @@ export function useCallLimitTitle(limit: CallLimit): string {
 
   const titles = {
     day: t("No more calls today"),
-    month: t("No more calls this month"),
+    rolling30Days: t("You've used your call time"),
     total: t("Calls need a free account"),
   };
 
