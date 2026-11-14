@@ -49,6 +49,7 @@ export function TaskFrame({
   exitToApp = false,
   fit,
   footer,
+  footerNote,
   headerEnd,
   headerTitle,
   progress,
@@ -70,6 +71,8 @@ export function TaskFrame({
    */
   fit?: "always" | "lg";
   footer?: React.ReactNode;
+  /** An error or status line drawn over the screen above the bar, so the bar's buttons never move. */
+  footerNote?: React.ReactNode;
   headerEnd?: React.ReactNode;
   headerTitle?: React.ReactNode;
   /** `value` is 0 to 100; `segments` draws one per question, and `bar` a bar of the task's own. */
@@ -136,7 +139,7 @@ export function TaskFrame({
       </main>
 
       {footer && (
-        <TaskActionBar ref={bar} tabIndex={-1}>
+        <TaskActionBar note={footerNote} ref={bar} tabIndex={-1}>
           {footer}
         </TaskActionBar>
       )}

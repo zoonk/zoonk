@@ -2,7 +2,7 @@ import { type Act } from "../_character/acting";
 import { type ActTrack } from "../_character/keyframes";
 import { type TricksterExpression } from "../trickster";
 
-export type TricksterActName = "blink" | "defeat" | "sly" | "smug";
+export type TricksterActName = "blink" | "defeat" | "sly" | "smug" | "triumph";
 
 function eyes(keys: ActTrack["keys"], settle?: ActTrack["settle"]): ActTrack[] {
   return [
@@ -26,6 +26,7 @@ const SLY: Act<TricksterExpression> = {
     ...eyes([...BLINK_KEYS, { at: 6, ease: "out", scale: [1, 1] }]),
     { keys: [], part: "crown", settle: "follow" },
     { keys: [], part: "tail", settle: "follow" },
+    { keys: [{ at: 2, ease: "out", rotate: -7, scale: 0.92 }], part: "shield", settle: "spring" },
   ],
 };
 
@@ -35,32 +36,42 @@ const CHUCKLE_LEFT_ARM: ActTrack["keys"] = [
   { at: 12, ease: "swing", rotate: 10 },
 ];
 
+/** A wrong answer bounces off: the shield pushes out and comes back. */
+const SHIELD_BLOCK: ActTrack["keys"] = [
+  { at: 2, ease: "out", scale: 1.1 },
+  { at: 6, ease: "spring", scale: 1 },
+];
+
+const SMUG_FACE: readonly ActTrack[] = [
+  ...eyes(
+    [
+      { at: 3, ease: "accelerate", scale: [1, 0.7] },
+      { at: 4, scale: [1, 0.7] },
+    ],
+    "out",
+  ),
+  {
+    keys: [{ at: 7, ease: "out", rotate: -9, translate: [0, -4.5] }],
+    part: "brow-right",
+    settle: "spring",
+  },
+  { keys: [{ at: 7, ease: "out", translate: [0, 1] }], part: "brow-left", settle: "spring" },
+  {
+    keys: [
+      { at: 4, ease: "hold", scale: [0.9, 0.9] },
+      { at: 8, ease: "out", scale: [1.08, 1.05] },
+    ],
+    part: "mouth",
+    settle: "spring",
+  },
+];
+
 const SMUG: Act<TricksterExpression> = {
   frames: 22,
   swapAt: 4,
   to: "smug",
   tracks: [
-    ...eyes(
-      [
-        { at: 3, ease: "accelerate", scale: [1, 0.7] },
-        { at: 4, scale: [1, 0.7] },
-      ],
-      "out",
-    ),
-    {
-      keys: [{ at: 7, ease: "out", rotate: -9, translate: [0, -4.5] }],
-      part: "brow-right",
-      settle: "spring",
-    },
-    { keys: [{ at: 7, ease: "out", translate: [0, 1] }], part: "brow-left", settle: "spring" },
-    {
-      keys: [
-        { at: 4, ease: "hold", scale: [0.9, 0.9] },
-        { at: 8, ease: "out", scale: [1.08, 1.05] },
-      ],
-      part: "mouth",
-      settle: "spring",
-    },
+    ...SMUG_FACE,
     {
       keys: [
         { at: 6, ease: "swing", scale: [1.04, 0.94] },
@@ -72,7 +83,7 @@ const SMUG: Act<TricksterExpression> = {
       settle: "spring",
     },
     { keys: CHUCKLE_LEFT_ARM, part: "arm-left", settle: "swing" },
-    { keys: CHUCKLE_LEFT_ARM, part: "sign", settle: "swing" },
+    { keys: [...SHIELD_BLOCK, ...CHUCKLE_LEFT_ARM], part: "shield", settle: "swing" },
     {
       keys: [
         { at: 7, ease: "swing", rotate: -11 },
@@ -195,6 +206,101 @@ const DEFEAT: Act<TricksterExpression> = {
       part: "sweat",
       settle: "swing",
     },
+    {
+      keys: [
+        { at: 2, ease: "out", scale: 1.14 },
+        { at: 5, ease: "out", scale: 1 },
+      ],
+      part: "shield",
+    },
+    {
+      keys: [
+        { at: 1, opacity: 0 },
+        { at: 2, ease: "hold", opacity: 1 },
+      ],
+      part: "shield-fracture",
+    },
+    {
+      keys: [
+        { at: 4, rotate: 0, translate: [0, 0] },
+        { at: 9, ease: "out", rotate: -14, translate: [-6, -7] },
+        { at: 17, ease: "accelerate", rotate: -74, translate: [5, 22] },
+        { at: 20, ease: "out", rotate: -66, translate: [5, 19] },
+        { at: 23, ease: "accelerate", rotate: -70, translate: [5, 21] },
+      ],
+      part: "shield-left",
+      settle: "spring",
+    },
+    {
+      keys: [
+        { at: 4, rotate: 0, translate: [0, 0] },
+        { at: 10, ease: "out", rotate: 18, translate: [10, -6] },
+        { at: 19, ease: "accelerate", rotate: 86, translate: [16, 25] },
+        { at: 22, ease: "out", rotate: 78, translate: [16, 22] },
+        { at: 25, ease: "accelerate", rotate: 82, translate: [16, 24] },
+      ],
+      part: "shield-right",
+      settle: "spring",
+    },
+  ],
+};
+
+/** The duel is his: the shield comes up whole, a glint runs across it, and he chuckles behind it. */
+const TRIUMPH: Act<TricksterExpression> = {
+  frames: 30,
+  swapAt: 4,
+  to: "smug",
+  tracks: [
+    ...SMUG_FACE,
+    {
+      keys: [
+        { at: 8, ease: "swing", scale: [1.04, 0.94] },
+        { at: 12, ease: "swing", scale: [0.985, 1.035] },
+        { at: 16, ease: "swing", scale: [1.03, 0.955] },
+        { at: 20, ease: "swing", scale: [0.995, 1.01] },
+      ],
+      part: "body",
+      settle: "spring",
+    },
+    {
+      keys: [
+        ...SHIELD_BLOCK,
+        { at: 6, rotate: 0, translate: [0, 0] },
+        { at: 12, ease: "out", rotate: -6, translate: [2, -9] },
+        { at: 22, rotate: -6, translate: [2, -9] },
+      ],
+      part: "shield",
+      settle: "swing",
+    },
+    {
+      keys: [
+        { at: 0, opacity: 0, translate: [-26, 0] },
+        { at: 11, opacity: 0, translate: [-26, 0] },
+        { at: 13, ease: "out", opacity: 0.7 },
+        { at: 19, ease: "swing", opacity: 0.7, translate: [30, 0] },
+        { at: 21, ease: "out", opacity: 0, translate: [34, 0] },
+        { at: 30, opacity: 0, translate: [34, 0] },
+      ],
+      part: "shield-glint",
+    },
+    {
+      keys: [
+        { at: 9, ease: "swing", rotate: -11 },
+        { at: 13, ease: "swing", rotate: 3 },
+        { at: 17, ease: "swing", rotate: -8 },
+      ],
+      part: "arm-right",
+      settle: "swing",
+    },
+    { keys: [{ at: 10, ease: "out", rotate: -17 }], part: "crown", settle: "follow" },
+    {
+      keys: [
+        { at: 6, ease: "swing", rotate: 6 },
+        { at: 12, ease: "out", rotate: -15 },
+      ],
+      part: "tail",
+      settle: "follow",
+    },
   ],
 };
 
@@ -203,6 +309,7 @@ export const TRICKSTER_ACTS: Record<TricksterActName, Act<TricksterExpression>> 
   defeat: DEFEAT,
   sly: SLY,
   smug: SMUG,
+  triumph: TRIUMPH,
 };
 
 export const TRICKSTER_OPEN_EYES: ReadonlySet<TricksterExpression> = new Set([

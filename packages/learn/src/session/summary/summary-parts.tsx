@@ -6,13 +6,12 @@ import { cn } from "@zoonk/ui/lib/utils";
 import {
   BookOpenIcon,
   BrainIcon,
-  RotateCcwIcon,
   TargetIcon,
   TrendingDownIcon,
   TrendingUpIcon,
 } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
-import { Eyebrow } from "../../_components/eyebrow";
+import { useState } from "react";
 import { PageSectionTitle } from "../../_components/page";
 import { StatTile, StatTiles } from "../../_components/stat-tile";
 import {
@@ -25,10 +24,10 @@ import {
 } from "../../_components/step-card";
 import { useFormatGoalProgress, useFormatShare } from "../../_utils/percent";
 import { useFormatDuration } from "../../_utils/time-format";
-import { useBeltName } from "../../_utils/use-belt-name";
-import { useStateLabel } from "../../_utils/use-state-label";
+import { useBeltName, useBeltStep } from "../../_utils/use-belt-name";
+import { ReminderOffer } from "../../reminders/reminder-offer";
 import { type StudySessionSummary } from "../session-types";
-import { getRisenSkills } from "./risen-skills";
+import { SummaryExtraTime } from "./summary-actions";
 import { useIsStopped, useSessionSummary } from "./summary-context";
 
 /** In the title's one face: the mono face's wide space read "Done in 13  min". */
@@ -107,14 +106,17 @@ function RightAnswersDetail({ summary }: { summary: StudySessionSummary }) {
 }
 
 function BeltDetail({ belt }: { belt: NonNullable<StudySessionSummary["belt"]> }) {
-  const t = useExtracted();
   const beltName = useBeltName();
-  const { color, level } = belt.after;
+  const beltStep = useBeltStep();
+  const { color } = belt.after;
 
   return (
     <span className="inline-flex items-center gap-1.5">
-      <BeltIndicator color={color} label={beltName(color)} size="sm" />
-      {t("{belt}, level {level}", { belt: beltName(color), level: String(level) })}
+      {/* The label's icon box, so the belt's name starts under the label. */}
+      <span className="flex size-3.5 shrink-0 items-center justify-center">
+        <BeltIndicator color={color} label={beltName(color)} size="sm" />
+      </span>
+      {beltStep(belt.after)}
     </span>
   );
 }
@@ -161,12 +163,6 @@ function SessionNumbers() {
       )}
 
       <StatTile
-        icon={<RotateCcwIcon />}
-        label={t("To review")}
-        value={format.number(summary.comesBack.reduce((sum, day) => sum + day.skills, 0))}
-      />
-
-      <StatTile
         className="with-aside:hidden"
         detail={summary.belt && <BeltDetail belt={summary.belt} />}
         icon={<BrainIcon />}
@@ -180,42 +176,6 @@ function SessionNumbers() {
         }
       />
     </StatTiles>
-  );
-}
-
-function renderNewState(chunks: React.ReactNode) {
-  return <span className="text-foreground">{chunks}</span>;
-}
-
-function SkillRises() {
-  const t = useExtracted();
-  const stateLabel = useStateLabel();
-  const { summary } = useSessionSummary();
-  const rises = getRisenSkills(summary.skillsMoved);
-
-  if (rises.length === 0) {
-    return null;
-  }
-
-  return (
-    <section className="flex w-full flex-col gap-1">
-      <PageSectionTitle>{t("Skills that rose")}</PageSectionTitle>
-
-      <StepRows>
-        {rises.map((move) => (
-          <StepRow className="justify-between" key={move.skillId}>
-            <span className="min-w-0 font-medium text-pretty">{move.name}</span>
-            <span className="text-muted-foreground shrink-0 font-mono text-xs">
-              {t.rich("{from} → <strong>{to}</strong>", {
-                from: stateLabel({ state: move.from }),
-                strong: renderNewState,
-                to: stateLabel({ state: move.to }),
-              })}
-            </span>
-          </StepRow>
-        ))}
-      </StepRows>
-    </section>
   );
 }
 
@@ -246,23 +206,26 @@ export function DoneStep() {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const stopped = useIsStopped();
-  const { summary } = useSessionSummary();
+  const { reminderActions, summary } = useSessionSummary();
+  // Showing the offer claims it, so a re-read summary comes back without one; it stays for this visit.
+  // oxlint-disable-next-line react/hook-use-state -- Read once as the summary opens, never updated.
+  const [reminderOffer] = useState(summary.reminderOffer);
 
   return (
     <StepCard className="items-stretch">
       <StepHeader>
-        <Eyebrow>{t("Today's session")}</Eyebrow>
         <StepTitle>{stopped ? t("Done for now") : <DoneTitle />}</StepTitle>
         {stopped && summary.minutes >= 1 && (
           <StepDetail className="text-compact font-mono tabular-nums">
-            {t("{time} so far", { time: formatDuration(summary.minutes) })}
+            {t("{time} today", { time: formatDuration(summary.minutes) })}
           </StepDetail>
         )}
       </StepHeader>
 
       <SessionNumbers />
-      <SkillRises />
       <TomorrowRow />
+      <SummaryExtraTime />
+      <ReminderOffer actions={reminderActions} offer={reminderOffer} />
     </StepCard>
   );
 }

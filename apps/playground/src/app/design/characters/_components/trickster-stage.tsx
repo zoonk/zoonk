@@ -9,14 +9,14 @@ import {
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { Stage, stageRate, useStageSwitches } from "./stage";
 
-type Take = "blink" | "defeat" | "sly" | "smug" | "smugWithSign" | "smugThenDefeat";
+type Take = "blink" | "defeat" | "sly" | "smug" | "smugThenDefeat" | "triumph";
 
-const ACTS: readonly { label: string; name: Take; sign?: boolean; start: TricksterExpression }[] = [
+const ACTS: readonly { label: string; name: Take; start: TricksterExpression }[] = [
   { label: "Blink", name: "blink", start: "sly" },
-  { label: "Smug", name: "smug", start: "sly" },
-  { label: "Smug, with his sign", name: "smugWithSign", sign: true, start: "sly" },
-  { label: "Back to sly", name: "sly", start: "smug" },
-  { label: "Defeated", name: "defeat", start: "smug" },
+  { label: "Smug: a miss bounces off", name: "smug", start: "sly" },
+  { label: "Back to sly: a hit lands", name: "sly", start: "smug" },
+  { label: "Defeated: the shield breaks", name: "defeat", start: "sly" },
+  { label: "Triumph: the shield holds", name: "triumph", start: "sly" },
   { label: "Smug, then defeated", name: "smugThenDefeat", start: "sly" },
 ];
 
@@ -36,7 +36,7 @@ async function perform(actor: ActorHandle<TricksterActName>, take: Take, rate: n
     return;
   }
 
-  await actor.play(take === "smugWithSign" ? "smug" : take, { playbackRate: rate });
+  await actor.play(take, { playbackRate: rate });
 }
 
 export function TricksterStage() {
@@ -70,7 +70,6 @@ export function TricksterStage() {
         className="size-52"
         expression={shown?.start ?? "sly"}
         key={take?.id ?? 0}
-        pose={shown?.sign ? "hero" : "sly"}
         ref={actor}
       />
     </Stage>
