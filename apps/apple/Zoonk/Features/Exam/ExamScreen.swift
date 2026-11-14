@@ -975,8 +975,8 @@ private struct SpeakingMockSection: View {
 
         switch start.refusal {
         case .limit(let limit):
-          LimitNotice(limit: limit) { now in limit.enoughWords(.mock, now: now) }
-            .announcesAlert(limit.enoughWords(.mock).said)
+          LimitNotice(limit: limit, kind: .callTime)
+            .announcesAlert(limit.words(.callTime).said)
         case nil:
           EmptyView()
         case .some:
