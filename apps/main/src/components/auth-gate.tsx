@@ -15,6 +15,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@zoonk/ui/components/empty";
+import { cn } from "@zoonk/ui/lib/utils";
 import { PendingLink } from "@zoonk/ui/patterns/links/pending";
 import { LockIcon, LogInIcon, UserPlusIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
@@ -66,7 +67,7 @@ async function GateMessage({
   }[gate.kind];
 
   return (
-    <Empty className={className}>
+    <Empty className={className} data-account-ask>
       <EmptyHeader>
         <EmptyMedia variant="icon">
           <LockIcon aria-hidden="true" />
@@ -81,13 +82,18 @@ async function GateMessage({
   );
 }
 
-/** The gate inside a page's own content, such as a settings section, with its links under it. */
+/**
+ * The gate inside a page's own content, such as a step of onboarding, with its links under it; as
+ * the page's whole content (`bar`), its links are the bottom bar's.
+ */
 export async function AuthGate({
+  bar,
   className,
   ended,
   heading,
   next,
 }: {
+  bar?: boolean;
   className?: string;
   ended?: boolean;
   heading?: "h1" | "h2";
@@ -95,6 +101,16 @@ export async function AuthGate({
 }) {
   const t = await getExtracted();
   const gate = await readGate({ ended, next });
+
+  if (bar) {
+    return (
+      <>
+        <GateMessage className={cn("flex-1", className)} gate={gate} heading={heading} />
+        <GateBar gate={gate} />
+      </>
+    );
+  }
+
   const loginHref = `${getPathname({ href: "/login", locale: await getAppLocale() })}?next=${gate.back}`;
 
   return (
@@ -129,7 +145,7 @@ export async function AuthGate({
 export function AuthGateScreen({ next }: { next: string }) {
   return (
     <ColumnScreen width="message">
-      <AuthGate heading="h1" next={next} />
+      <AuthGate bar heading="h1" next={next} />
     </ColumnScreen>
   );
 }
@@ -157,6 +173,30 @@ export function GatedPage({
   );
 }
 
+/** A whole page's gate: its ways in are the bottom bar's. */
+async function GateBar({ gate }: { gate: Gate }) {
+  const t = await getExtracted();
+
+  return (
+    <BottomBar>
+      <BottomBarActions>
+        {gate.kind !== "account" && (
+          <Link className={buttonVariants({ size: "xl", variant: "outline" })} href="/start">
+            {gate.kind === "ended" ? t("Start something new") : t("Start free")}
+          </Link>
+        )}
+
+        <EnterLink
+          data-account-offer={gate.kind === "account" || undefined}
+          href={`/login?next=${gate.back}`}
+        >
+          {gate.kind === "account" ? t("Create an account") : t("Log in")}
+        </EnterLink>
+      </BottomBarActions>
+    </BottomBar>
+  );
+}
+
 export async function AuthGatePage({
   description,
   ended,
@@ -168,29 +208,13 @@ export async function AuthGatePage({
   next: string;
   title: string;
 }) {
-  const t = await getExtracted();
   const gate = await readGate({ ended, next });
 
   return (
     <GatedPage description={description} title={title}>
       <GateMessage gate={gate} />
 
-      <BottomBar>
-        <BottomBarActions>
-          {gate.kind !== "account" && (
-            <Link className={buttonVariants({ size: "xl", variant: "outline" })} href="/start">
-              {gate.kind === "ended" ? t("Start something new") : t("Start free")}
-            </Link>
-          )}
-
-          <EnterLink
-            data-account-offer={gate.kind === "account" || undefined}
-            href={`/login?next=${gate.back}`}
-          >
-            {gate.kind === "account" ? t("Create an account") : t("Log in")}
-          </EnterLink>
-        </BottomBarActions>
-      </BottomBar>
+      <GateBar gate={gate} />
     </GatedPage>
   );
 }

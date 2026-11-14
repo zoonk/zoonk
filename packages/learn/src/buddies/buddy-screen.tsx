@@ -53,7 +53,6 @@ import { type LearnBuddy } from "./use-buddy-name";
 export { BuddyDaySkeleton } from "./buddy-day";
 export { BUDDY_COLUMN_CLASS } from "./buddy-header";
 export { BuddyGoalStart } from "./buddy-goal-start";
-export { BuddyTabName } from "./buddy-labels";
 export type { MissionLinks } from "../missions/mission-links";
 export type { BuddyStatusView } from "./buddy-status-view";
 export type {

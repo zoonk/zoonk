@@ -2,16 +2,17 @@
 
 import { type StudyReminderView } from "@zoonk/core/reminders/contract";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { showErrorToast } from "@zoonk/ui/components/toast";
 import { PendingLink } from "@zoonk/ui/patterns/links/pending";
 import { safeAsync } from "@zoonk/utils/error";
-import { BellIcon, UserPlusIcon } from "lucide-react";
+import { BellIcon, CheckIcon, UserPlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useCallback, useEffect, useId, useRef, useState, useTransition } from "react";
-import { ChangeSaveError } from "../_components/save-error";
-import { useTimeZoneName } from "../_utils/locale";
+import { useChangeSaveErrorMessage } from "../_components/save-error";
 import { useFormatTimeOfDay } from "../_utils/time-format";
 import { type StudyMomentView } from "../session/session-types";
 import { ReminderTimeSelect } from "./reminder-time";
+import { useOtherZoneName } from "./reminder-zone";
 
 export type ReminderOfferActions = {
   /** True only for the call that marked the offer shown. */
@@ -114,7 +115,10 @@ function OfferFrame({
           </p>
         </div>
 
-        {claimed && children}
+        {/* Their room is there from the start, so nothing moves when the claim lands. */}
+        <div className={claimed ? "contents" : "invisible contents"} inert={!claimed}>
+          {children}
+        </div>
       </div>
     </section>
   );
@@ -139,9 +143,7 @@ function GuestOffer({
   return (
     <OfferFrame
       claimed={claimed}
-      description={t("At {time} on your study days, when you still have learning left.", {
-        time: formatTime(time),
-      })}
+      description={t("An email at {time} on your study days.", { time: formatTime(time) })}
       onSeen={onSeen}
       title={t("Want a study reminder?")}
     >
@@ -151,7 +153,7 @@ function GuestOffer({
           href={signUpHref}
           icon={<UserPlusIcon aria-hidden="true" />}
         >
-          {t("Create an account to get email reminders")}
+          {t("Create an account")}
         </PendingLink>
         <Button onClick={onClose} size="sm" variant="ghost">
           {t("No thanks")}
@@ -179,65 +181,61 @@ function EmailOffer({
   timeZone: string;
 }) {
   const t = useExtracted();
-  const formatTime = useFormatTimeOfDay();
-  const zone = useTimeZoneName(timeZone);
+  const zone = useOtherZoneName(timeZone);
   const selectId = useId();
+  const saveError = useChangeSaveErrorMessage();
   const [time, setTime] = useState(suggestedTime);
-  const [result, setResult] = useState<"failed" | "saved" | null>(null);
+  const [isOn, setIsOn] = useState(false);
   const [isSaving, startSaving] = useTransition();
 
   const remind = () =>
     startSaving(async () => {
       const { data: saved } = await safeAsync(() => remindByEmail(time));
-      setResult(saved ? "saved" : "failed");
+
+      if (saved) {
+        setIsOn(true);
+      } else {
+        showErrorToast(saveError);
+      }
     });
 
-  const description = t(
-    "We'll email {address} at {time} on your study days, when you still have learning left.",
-    { address, time: formatTime(time) },
-  );
-
-  if (result === "saved") {
-    return (
-      <OfferFrame
-        claimed
-        description={description}
-        onSeen={onSeen}
-        title={t("Email reminders are on.")}
-      />
-    );
-  }
-
+  // Turned on, the card keeps its rows and says so in them: a shorter card would move what's under it.
   return (
     <OfferFrame
       claimed={claimed}
-      description={description}
+      description={t("An email to {address} on your study days.", { address })}
       onSeen={onSeen}
-      title={t("Want a study reminder?")}
+      title={isOn ? t("Email reminders are on.") : t("Want a study reminder?")}
     >
       <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
         <label className="sr-only" htmlFor={selectId}>
           {t("Reminder time")}
         </label>
-        <ReminderTimeSelect disabled={isSaving} id={selectId} onChange={setTime} time={time} />
-        <span className="text-muted-foreground text-xs">{zone}</span>
+        <ReminderTimeSelect
+          disabled={isSaving || isOn}
+          id={selectId}
+          onChange={setTime}
+          time={time}
+        />
+        {zone && <span className="text-muted-foreground text-xs">{zone}</span>}
       </div>
-
-      {result === "failed" && <ChangeSaveError />}
 
       <div className="flex flex-wrap gap-2">
         <Button
           busy={isSaving}
-          icon={<BellIcon aria-hidden="true" />}
+          disabled={isOn}
+          icon={isOn ? <CheckIcon aria-hidden="true" /> : undefined}
           onClick={remind}
           size="sm"
           variant="outline"
         >
-          {t("Remind me")}
+          {isOn ? t("Reminder set") : t("Remind me")}
         </Button>
-        <Button disabled={isSaving} onClick={onClose} size="sm" variant="ghost">
-          {t("No thanks")}
-        </Button>
+        {!isOn && (
+          <Button disabled={isSaving} onClick={onClose} size="sm" variant="ghost">
+            {t("No thanks")}
+          </Button>
+        )}
       </div>
     </OfferFrame>
   );

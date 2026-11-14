@@ -21,30 +21,18 @@ export async function ActivityTiles({
   return (
     <StatTiles className={STAT_PAGE_TILES_CLASS}>
       <StatTile
-        detail={t("Any day you studied")}
         icon={<CalendarCheckIcon />}
         label={t("Days studied")}
         tone="success"
         value={formatWholeNumber({ format, value: activity.learningDays })}
       />
       <StatTile
-        // Its own message, by the count: "Finished" agrees with the lessons in each language
-        // ("Concluídas"), not with a goal ("Concluído").
-        detail={t("{count, plural, =0 {Finished} one {Finished} other {Finished}}", {
-          count: activity.totalLessonCompletions,
-        })}
         icon={<BookOpenCheckIcon />}
         label={t("Lessons")}
         tone="success"
         value={formatWholeNumber({ format, value: activity.totalLessonCompletions })}
       />
-      <StatTile
-        detail={t("Studying in total")}
-        icon={<ClockIcon />}
-        label={t("Time")}
-        tone="time"
-        value={time}
-      />
+      <StatTile icon={<ClockIcon />} label={t("Time")} tone="time" value={time} />
     </StatTiles>
   );
 }
