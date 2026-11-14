@@ -1,4 +1,5 @@
 import { StateMark, type StateTone } from "@/components/state-mark";
+import { contentFixStatusLabels as storedStatusLabels } from "@zoonk/core/staff/content-fixes/status-labels";
 import { type ContentFixStatus } from "@zoonk/db";
 
 type ContentFixState = ContentFixStatus | "reverted";
@@ -6,13 +7,8 @@ type ContentFixState = ContentFixStatus | "reverted";
 type RevertRef = { id: string; status: ContentFixStatus };
 
 export const contentFixStatusLabels: Record<ContentFixState, string> = {
-  applied: "Applied",
-  approved: "Approved, not applied yet",
-  proposed: "Waiting for review",
-  rejected: "Rejected",
+  ...storedStatusLabels,
   reverted: "Undone",
-  stale: "Out of date",
-  withdrawn: "Withdrawn",
 };
 
 /** A fix that went stale changed nothing and needs proposing again, so it reads as one to look at. */

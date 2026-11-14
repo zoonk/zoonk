@@ -198,8 +198,14 @@ describe(parseInvocation, () => {
 
   it.each([
     [["staff", "get", "Goal"], "pnpm zoonk staff get <model> <id> [--fields ...]"],
-    [["staff", "fixes", "revert"], 'pnpm zoonk staff fixes revert <fixId> --reason "…"'],
-    [["staff", "fixes", "withdraw"], "pnpm zoonk staff fixes withdraw <fixId>"],
+    [["staff", "fixes", "revert"], 'pnpm zoonk staff fixes revert <fixId> --reason "…"\nRun'],
+    [
+      ["staff", "fixes", "revert", "abc"],
+      'needs a reason: pnpm zoonk staff fixes revert <fixId> --reason "…"\nRun',
+    ],
+    [["staff", "fixes", "withdraw"], "pnpm zoonk staff fixes withdraw <fixId>\nRun"],
+    [["staff", "fixes", "withdraw", "--batch"], "--batch needs a value.\nRun"],
+    [["staff", "list", "Goal", "--where", "--limit", "3"], "--where needs a value.\nRun"],
     [["whoami", "now"], "pnpm zoonk whoami"],
     [["staff", "list", "Goal", "--unknown"], "Unknown option '--unknown'.\nRun"],
   ])("says how %j should be written", (argv, message) => {
