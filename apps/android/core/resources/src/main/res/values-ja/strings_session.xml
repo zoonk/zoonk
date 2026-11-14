@@ -35,12 +35,13 @@
   "session_level_up": "ae4737aeba0a78589721a589dbc0f4ac9142abcdc3a1db2d55a312ea4b980105",
   "session_next_continue": "e0fabce12834cc2bd85645092b456a1fcd3fa2de57648fd60bbc4081578ee889",
   "session_next_eyebrow": "8be43af1861a6b3fe59c541fd58b207d4cbf4f379bd353e90b8a201ad0047733",
-  "session_next_instead": "313e0d2d16d3b44fface2dcdb4242fe2bbf9b4b0b498e8a747150d4960d65c1d",
   "session_next_lesson_ready": "0ecf5ee001d9b58732bd7036ec908c85cc61f538ce88c7369dae8f16b5842869",
+  "session_next_practice_now": "c206002c209797e9b6f3ca9a04df25012866d0b9d255a96b91b86e2acf49c2a2",
+  "session_next_review_now": "02f94ccb03efccbd4109434d250e7054717982adf080f9f56b3edf62c592b924",
   "session_next_start": "021d5fd57401310be35ac9615815d1764c7aad1e820a00b8ec16cea93b5d414b",
+  "session_next_start_title": "9ee4cb8c0ab60de006d8f7b28e2797ae7e94e989b0c56ee2b7d401f0b3e96cc0",
   "session_next_stop": "997f163d8c69a622c59acd19bacfbd87de4f7c240030312b1ebe78194bba27a8",
   "session_next_stop_failed": "7a3cb9b8d680f26657130b8d535d7c21120afee3d186d761a363c87406da264d",
-  "session_next_while_waiting": "b38dd8dde2adf1c20c155347059c2f1407a4bab41c0bd0bc2d15cb231c671c26",
   "session_next_writing_note": "36b1374e65878001f19c9bf1ce4391246d42f3735b7138e74d488d7afc2762a6",
   "session_no_catch_up_left": "7a07a1fa5dc1a7b46fe3e70fa92d9e65d59a8b055dba40a6d7faab0403b55ca1",
   "session_opening_slow": "6061836f7e7b4108249b9b59bb760cff69dacd5ef39f880686d7453defdd3df4",
@@ -194,10 +195,12 @@
     <string name="session_next_lesson_ready">レッスンの準備ができました。</string>
     <string name="session_next_stop">今日はここまでにする</string>
     <string name="session_next_stop_failed">学習を終了できませんでした。もう一度お試しください。</string>
-    <!-- A button on the session's next step while its lesson is prepared: %1$s is another step's title, such as "Review", to do meanwhile. -->
-    <string name="session_next_while_waiting">待っている間に：%1$s</string>
-    <!-- A button on the session's next step when its lesson can't be written now: %1$s is another step's title, such as "Review", to do instead. -->
-    <string name="session_next_instead">代わりに：%1$s</string>
+    <!-- A button on the session's next step that starts the day's review instead, while its lesson is written or when it can't be. -->
+    <string name="session_next_review_now">今すぐ復習する</string>
+    <!-- A button on the session's next step that starts the day's practice instead, while its lesson is written or when it can't be. -->
+    <string name="session_next_practice_now">今すぐ練習する</string>
+    <!-- A button on the session's next step that starts one of the day's challenges instead: %1$s is its name, such as "Weekly challenge". -->
+    <string name="session_next_start_title">「%1$s」を始める</string>
     <!-- A finished block's line about today's session. %1$s is how many of the day's blocks are done, shown larger; %2$s is how many the session has. A block can be a lesson, a review or practice, so no noun. -->
     <plurals name="session_day_done">
         <item quantity="other">今日は%1$s／%2$sを終えました</item>
