@@ -5,7 +5,7 @@ import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CalendarCheckIcon, CalendarClockIcon, RotateCcwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { HelpLimitNotice } from "../_components/help-limit-notice";
+import { HelpLimitNotice, useLiveLimit } from "../_components/help-limit-notice";
 import { ChangeSaveError } from "../_components/save-error";
 import { StatusRegion } from "../_components/status-region";
 import { GateWords, SubscribeMainAction } from "../_components/subscribe-gate";
@@ -199,6 +199,7 @@ function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } 
   const t = useExtracted();
   const routes = useLearnRoutes();
   const { challenge, start, writing } = useChallengeScreen();
+  const writingLimit = useLiveLimit(writing?.kind === "refused" ? writing.limit : null);
 
   if (start.problem === "plusRequired") {
     return { actions: <SubscribeMainAction />, line: <PlusRequiredNotice /> };
@@ -218,10 +219,10 @@ function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } 
         };
       }
 
-      if (challenge.status === "ready" && writing?.kind === "refused") {
+      if (challenge.status === "ready" && writingLimit) {
         return {
           actions: null,
-          line: <HelpLimitNotice limit={writing.limit} linkComponent={LearnLink} routes={routes} />,
+          line: <HelpLimitNotice limit={writingLimit} linkComponent={LearnLink} routes={routes} />,
         };
       }
 

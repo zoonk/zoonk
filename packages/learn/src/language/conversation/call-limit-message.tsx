@@ -1,17 +1,13 @@
 "use client";
 
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import {
-  type CallLimit,
-  CallLimitNotice,
-  type CallNeed,
-} from "../../_components/help-limit-notice";
+import { type CallLimit, CallLimitNotice } from "../../_components/help-limit-notice";
 import { useLearnRoutes } from "../../learn-context";
 import { LearnLink } from "../../learn-link";
 import { CallReason } from "./conversation-parts";
 
-/** A start that needs a set length says it needs more than is left, which may not be none. */
-export function useCallLimitTitle(limit: CallLimit, need: CallNeed = "any"): string {
+export function useCallLimitTitle(limit: CallLimit): string {
   const t = useExtracted();
 
   const titles = {
@@ -20,31 +16,45 @@ export function useCallLimitTitle(limit: CallLimit, need: CallNeed = "any"): str
     total: t("Calls need a free account"),
   };
 
-  const needs = {
-    mock: t("Not enough call time for this mock exam"),
-    task: t("Not enough call time for this task"),
-  };
-
-  return need === "any" || limit.period === "total" ? titles[limit.period] : needs[need];
+  return titles[limit.period];
 }
 
 /** Never says how much call time a plan has. */
 export function CallLimitReason({
   className,
   limit,
-  need,
   role,
 }: {
   className?: string;
   limit: CallLimit;
-  need?: CallNeed;
   role?: "alert";
 }) {
   const routes = useLearnRoutes();
 
   return (
-    <CallReason className={className} role={role} title={useCallLimitTitle(limit, need)}>
-      <CallLimitNotice limit={limit} linkComponent={LearnLink} need={need} routes={routes} />
+    <CallReason className={className} role={role} title={useCallLimitTitle(limit)}>
+      <CallLimitNotice limit={limit} linkComponent={LearnLink} routes={routes} />
     </CallReason>
   );
+}
+
+/** Why a start didn't open: the cap that refused it, or `failed`, which names what didn't start. */
+export function CallStartNote({
+  call,
+  className,
+  failed,
+}: {
+  call: { failed: boolean; limit: CallLimit | null };
+  className?: string;
+  failed: string;
+}) {
+  if (call.limit) {
+    return <CallLimitReason className={className} limit={call.limit} role="alert" />;
+  }
+
+  return call.failed ? (
+    <p className={cn("text-destructive-text text-sm", className)} role="alert">
+      {failed}
+    </p>
+  ) : null;
 }

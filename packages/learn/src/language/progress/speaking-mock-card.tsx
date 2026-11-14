@@ -12,7 +12,7 @@ import {
   NoticeCardTitle,
 } from "../../_components/notice-card";
 import { WritingWait } from "../../generation/writing-wait";
-import { CallLimitReason } from "../conversation/call-limit-message";
+import { CallStartNote } from "../conversation/call-limit-message";
 import { useSpeakingMockTitle } from "../conversation/conversation-labels";
 import { type CallStartOutcome, useCallStart } from "../conversation/use-call-start";
 
@@ -94,13 +94,10 @@ export function SpeakingMockCard({
               {t("Start")}
             </Button>
 
-            {call.limit && <CallLimitReason limit={call.limit} need="mock" role="alert" />}
-
-            {call.failed && (
-              <p className="text-destructive-text text-sm" role="alert">
-                {t("The mock didn't start. Try again in a moment.")}
-              </p>
-            )}
+            <CallStartNote
+              call={call}
+              failed={t("The mock didn't start. Try again in a moment.")}
+            />
           </>
         ))}
     </section>

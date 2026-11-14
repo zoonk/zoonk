@@ -5,7 +5,7 @@ import {
   GenerationTimelineTitle,
 } from "@zoonk/ui/components/generation-timeline";
 import { useExtracted } from "next-intl";
-import { type HelpLimit, HelpLimitNotice } from "../_components/help-limit-notice";
+import { type HelpLimit, HelpLimitNotice, useLiveLimit } from "../_components/help-limit-notice";
 import { StatusRegion } from "../_components/status-region";
 import { StepCard, StepDetail, StepHeader } from "../_components/step-card";
 import { TaskHeaderTitle } from "../_components/task-header";
@@ -34,7 +34,7 @@ function TestOutCard() {
 }
 
 function TestOutStart({
-  limit,
+  limit: refusal,
   onStart,
   starting,
 }: {
@@ -44,6 +44,7 @@ function TestOutStart({
 }) {
   const t = useExtracted();
   const routes = useLearnRoutes();
+  const limit = useLiveLimit(refusal);
 
   return (
     <>

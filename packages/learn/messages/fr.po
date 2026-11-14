@@ -168,42 +168,6 @@ msgctxt "eFx_I9"
 msgid "Not enough free lessons for this map yet"
 msgstr "Pas encore assez de leçons gratuites pour cette carte"
 
-#. Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it.
-#: src/_components/comes-back-words.ts
-msgctxt "yWgcBI"
-msgid "You'll have enough on {date}."
-msgstr "Tu auras assez de temps d’appel le {date}."
-
-#. Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it.
-#: src/_components/comes-back-words.ts
-msgctxt "aRxkUZ"
-msgid "You'll have enough later today."
-msgstr "Tu auras assez de temps d’appel plus tard dans la journée."
-
-#. Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it.
-#: src/_components/comes-back-words.ts
-msgctxt "jYqTRI"
-msgid "You'll have enough tomorrow."
-msgstr "Tu auras assez de temps d’appel demain."
-
-#. Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it.
-#: src/_components/comes-back-words.ts
-msgctxt "yUB2A_"
-msgid "You'll have enough on {date}, or subscribe to keep going."
-msgstr "Tu auras assez de temps d’appel le {date}. Tu peux aussi t’abonner pour continuer."
-
-#. Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it.
-#: src/_components/comes-back-words.ts
-msgctxt "vEiMvb"
-msgid "You'll have enough later today, or subscribe to keep going."
-msgstr "Tu auras assez de temps d’appel plus tard dans la journée. Tu peux aussi t’abonner pour continuer."
-
-#. Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it.
-#: src/_components/comes-back-words.ts
-msgctxt "EiK7tf"
-msgid "You'll have enough tomorrow, or subscribe to keep going."
-msgstr "Tu auras assez de temps d’appel demain. Tu peux aussi t’abonner pour continuer."
-
 #: src/_components/coverage-bar.tsx
 #: src/syllabus/subject-aside.tsx
 msgctxt "9U6D5-"
@@ -5668,16 +5632,6 @@ msgstr "Tu as utilisé tout ton temps d’appel"
 msgctxt "fZ-NXt"
 msgid "Calls need a free account"
 msgstr "Un compte gratuit est nécessaire pour les appels"
-
-#: src/language/conversation/call-limit-message.tsx
-msgctxt "gHCTIf"
-msgid "Not enough call time for this mock exam"
-msgstr "Pas assez de temps d’appel pour cet examen blanc"
-
-#: src/language/conversation/call-limit-message.tsx
-msgctxt "D43Ixe"
-msgid "Not enough call time for this task"
-msgstr "Pas assez de temps d’appel pour cette tâche"
 
 #: src/language/conversation/call-objectives.tsx
 #: src/language/conversation/conversation-live.tsx

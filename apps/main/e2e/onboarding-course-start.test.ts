@@ -185,9 +185,20 @@ test.describe("Starting a course from its page", () => {
       userId: noProgressUser.id,
     });
 
+    const response = await page.request.get(`/start/course/${course.id}?minutes=15`);
+    const html = await response.text();
+
+    expect(html).toMatch(
+      /<p class="[^"]*\binvisible\b[^"]*">You&#x27;ve started all the new goals you can\. More on /u,
+    );
+
     await page.goto(`/start/course/${course.id}?minutes=15`);
 
-    await expect(page.getByText("You've started all the new goals you can")).toBeVisible();
+    const gate = page
+      .getByText("You've started all the new goals you can")
+      .filter({ visible: true });
+
+    await expect(gate).toBeVisible();
 
     await expect(
       page.getByText(
@@ -203,5 +214,36 @@ test.describe("Starting a course from its page", () => {
     await expect(page.getByRole("link", { name: "Go to your Plan" })).toBeHidden();
     await expect(page.getByRole("button", { name: /Build my plan/u })).toBeHidden();
     await expect(prisma.goal.count({ where: { primaryCourseId: course.id } })).resolves.toBe(0);
+  });
+
+  test("a refused course start comes back on its own once more goals do, and starts", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    const { course } = await createOutlinedCourse();
+
+    await usageRecordsFixture({
+      count: 10,
+      createdAt: new Date(Date.now() - 30 * 86_400_000 + 15_000),
+      kind: "goal",
+      userId: noProgressUser.id,
+    });
+
+    await page.goto(`/start/course/${course.id}?minutes=15`);
+
+    const gate = page
+      .getByText("You've started all the new goals you can")
+      .filter({ visible: true });
+
+    await expect(gate).toBeVisible();
+    await expect(page.getByRole("button", { name: /Build my plan/u })).toBeHidden();
+
+    await expect(page.getByRole("button", { name: /Build my plan/u })).toBeVisible({
+      timeout: 30_000,
+    });
+
+    await expect(gate).toBeHidden();
+    await startCourseWithLevel(page);
+    await readGoalId(page);
   });
 });

@@ -148,8 +148,8 @@ describe("the tutor's call offer", () => {
       .not.toBeInTheDocument();
   });
 
-  it("turns a refused call's gate to try again once its time comes back, while it stays open", async () => {
-    renderOffer(OFFERED_CALL, {
+  it("brings Continue back once a refused call's time comes back, and Continue starts it", async () => {
+    const startConversation = renderOffer(OFFERED_CALL, {
       limit: {
         availableAt: new Date(Date.now() + 1500).toISOString(),
         period: "rolling30Days",
@@ -161,8 +161,19 @@ describe("the tutor's call offer", () => {
     await page.getByRole("button", { name: "Continue" }).click();
 
     await expect.element(page.getByText("You've used your call time")).toBeVisible();
-    await expect.element(page.getByText("You can try again now.")).not.toBeInTheDocument();
-    await expect.element(page.getByText("You can try again now.")).toBeVisible();
+    await expect.element(page.getByRole("button", { name: "Continue" })).not.toBeInTheDocument();
+
+    await expect.element(page.getByRole("button", { name: "Continue" })).toBeVisible();
+    await expect.element(page.getByText("You've used your call time")).not.toBeInTheDocument();
+
+    startConversation.mockResolvedValueOnce(true);
+    await page.getByRole("button", { name: "Continue" }).click();
+
+    await expect
+      .element(page.getByRole("dialog", { name: "Practice a conversation" }))
+      .not.toBeInTheDocument();
+
+    expect(startConversation).toHaveBeenCalledTimes(2);
   });
 
   it("says calls are paused, with nothing to tap", async () => {

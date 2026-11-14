@@ -115,7 +115,7 @@ export function useStartError() {
   };
 }
 
-export function useGoalLimitText(limit: GoalLimit | null): string {
+export function useGoalLimitText(limit: GoalLimit | null) {
   const words = useGoalLimitWords();
   return useLimitText(limit ? words(limit) : null);
 }

@@ -19,7 +19,7 @@ import {
   PageSectionTitle,
 } from "../../_components/page";
 import { WritingWait } from "../../generation/writing-wait";
-import { CallLimitReason } from "../conversation/call-limit-message";
+import { CallStartNote } from "../conversation/call-limit-message";
 import { type CallStartOutcome, useCallStart } from "../conversation/use-call-start";
 import { TaskRow, getTaskRowId } from "./speaking-task-row";
 
@@ -120,15 +120,11 @@ export function SpeakingPaperSection({
         />
       )}
 
-      {call.limit && (
-        <CallLimitReason className="py-4" limit={call.limit} need="task" role="alert" />
-      )}
-
-      {call.failed && (
-        <p className="text-destructive-text px-1 text-sm" role="alert">
-          {t("The task didn't start. Try again in a moment.")}
-        </p>
-      )}
+      <CallStartNote
+        call={call}
+        className={call.limit ? "py-4" : "px-1"}
+        failed={t("The task didn't start. Try again in a moment.")}
+      />
 
       <PageSectionFooter>
         <a className="hit-area relative" href={paper.source} rel="noreferrer" target="_blank">

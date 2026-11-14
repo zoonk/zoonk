@@ -9,6 +9,7 @@ import { useRouter } from "@/i18n/navigation";
 import { ensureGuestSession } from "@/lib/guest/ensure-guest-session";
 import { getCourseStartHref } from "@/lib/public/public-hrefs";
 import { type OnboardingOwnLevel } from "@zoonk/core/view-models/onboarding/contract";
+import { useLiveLimit } from "@zoonk/learn/help-limit";
 import { safeAsync } from "@zoonk/utils/error";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useState, useTransition } from "react";
@@ -74,7 +75,7 @@ export function useCourseStart({
     });
 
   return {
-    failure,
+    failure: useLiveLimit(failure),
     pending,
     start: () => run(),
     startWithLevel: (level: OnboardingOwnLevel | null) => run(level),

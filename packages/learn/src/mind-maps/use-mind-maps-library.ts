@@ -1,8 +1,8 @@
 "use client";
 
 import { type MindMapAllowanceStop } from "@zoonk/core/mind-maps/contract";
-import { useState } from "react";
-import { type MindMapLimit } from "../_components/help-limit-notice";
+import { useEffect, useEffectEvent, useState } from "react";
+import { type MindMapLimit, useLiveLimit } from "../_components/help-limit-notice";
 import { usePoll } from "../_utils/use-poll";
 import { useReadOrder } from "../_utils/use-read-order";
 import { useRereadServed, useServedState } from "../_utils/use-served-state";
@@ -118,6 +118,17 @@ export function useMindMapsLibrary({
   };
 
   useRereadServed(served, () => void refresh().catch(() => null));
+
+  const shownStop = bulk.stop ?? page.createOffer.stop;
+  const liveStop = useLiveLimit(shownStop);
+  const stopPassed = shownStop !== null && liveStop === null;
+  const readAgain = useEffectEvent(() => void refresh().catch(() => null));
+
+  useEffect(() => {
+    if (stopPassed) {
+      readAgain();
+    }
+  }, [stopPassed]);
 
   const isDrawing = page.chapters.some((chapter) => chapter.status === "drawing");
   const isWriting = page.chapters.some((chapter) => chapter.status === "writingLessons");

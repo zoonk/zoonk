@@ -5,6 +5,7 @@ import { CourseStartFailureNote } from "@/components/public/course-start-failure
 import { isStartBlocked } from "@/components/public/course-start-remedy";
 import { type CourseStartFailure, useCourseStart } from "@/components/public/use-course-start";
 import { CHAPTER_PARAM, MINUTES_PARAM } from "@/lib/public/public-hrefs";
+import { useLiveLimit } from "@zoonk/learn/help-limit";
 import {
   ONBOARDING_ACTION_LINK_CLASS,
   OnboardingActions,
@@ -144,6 +145,7 @@ function CourseStartForm({
 
   const startHere = () => (level ? startWithLevel(toLevelAnswer(level)) : start());
   const blocked = isStartBlocked(failure);
+  const blockedOnOpen = isStartBlocked(useLiveLimit(initialFailure));
 
   return (
     <OnboardingColumn
@@ -180,7 +182,7 @@ function CourseStartForm({
         </OnboardingActions>
       }
     >
-      <StartHeading asksLevel={!isStartBlocked(initialFailure)} chapter={chapter} course={course} />
+      <StartHeading asksLevel={!blockedOnOpen} chapter={chapter} course={course} />
 
       <form action={startCourseFormAction} className="flex flex-1 flex-col gap-6" id={formId}>
         <input name="courseId" type="hidden" value={course.id} />

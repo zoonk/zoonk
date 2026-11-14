@@ -1,7 +1,7 @@
 "use client";
 
 import { MAX_LESSON_QUESTION_LENGTH } from "@zoonk/core/lesson-questions/contract";
-import { type HelpLimit } from "@zoonk/learn/help-limit";
+import { type HelpLimit, useLiveLimit } from "@zoonk/learn/help-limit";
 import { TUTOR_COMPOSER_FRAME_CLASS } from "@zoonk/learn/tutor-composer";
 import {
   InputGroup,
@@ -178,7 +178,7 @@ export function QuestionComposer({
     state,
   });
 
-  const limit = getQuestionLimit(state);
+  const limit = useLiveLimit(getQuestionLimit(state));
   const submitLabel = isResolvingPreviousQuestion ? t("Retry last question") : t("Send");
   const contextPlaceholder = useComposerPlaceholder(state.context.kind);
   const placeholder = hostPlaceholder ?? contextPlaceholder;

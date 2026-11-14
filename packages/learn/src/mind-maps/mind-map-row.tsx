@@ -23,7 +23,12 @@ import { type MindMapActions } from "./mind-map-actions";
 import { type MindMapCopyInput, type MindMapRowPlace, useStateLines } from "./mind-map-copy";
 import { MindMapSlot } from "./mind-map-slot";
 import { MindMapViewer } from "./mind-map-viewer";
-import { type MindMapRequest, type MindMapShown, useMindMapRequest } from "./use-mind-map-request";
+import {
+  type MindMapRequest,
+  type MindMapShown,
+  useLiveRefusal,
+  useMindMapRequest,
+} from "./use-mind-map-request";
 
 const ACTION_CLASS = buttonVariants({ size: "sm", variant: "outline" });
 
@@ -132,7 +137,8 @@ export function MindMapRowView({
   const routes = useLearnRoutes();
   const titleId = useId();
   const [open, setOpen] = useState(false);
-  const { create, isPending, limit, retry, save, shown } = request;
+  const { create, isPending, retry, save } = request;
+  const { limit, shown } = useLiveRefusal(request, view.status);
   const input: MindMapCopyInput = { place, plus, shown, view };
   const ready = shown === "ready" && view.outline !== null && save !== undefined;
 
