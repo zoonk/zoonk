@@ -69,6 +69,7 @@ import com.zoonk.android.R
 import com.zoonk.android.ui.characters.Trickster
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LearnKind
+import com.zoonk.android.ui.components.ListRowChevron
 import com.zoonk.android.ui.format.FACT_SEPARATOR
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -108,7 +109,7 @@ private val FULL_ROADMAP_WIDTH = 560.dp
 
 private data class RoadmapPosition(
     val name: String,
-    val until: PlanDateWords?,
+    val end: PlanDateWords?,
     val number: Int,
     val total: Int,
 )
@@ -122,7 +123,7 @@ private fun roadmapPosition(
     val current = phases.getOrNull(index) ?: return null
     return RoadmapPosition(
         phaseName(current, page.mocksRequirePlus),
-        phaseUntil(page, current, isLast = index == phases.lastIndex),
+        phaseEnd(page, current, isLast = index == phases.lastIndex),
         index + 1,
         phases.size,
     )
@@ -164,7 +165,7 @@ private fun RoadmapCompact(
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
-                position.until?.let { TrailingText(it) }
+                position.end?.let { TrailingText(it) }
             } else {
                 Text(
                     text = pluralStringResource(R.plurals.plan_phases_done, phases.size, done, phases.size),
@@ -173,6 +174,7 @@ private fun RoadmapCompact(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
+            if (onOpen != null) ListRowChevron()
         }
     }
 }
@@ -441,8 +443,12 @@ private fun PhaseBand(
                 null -> null
             }
         }
-    val until = page.finish?.takeIf { isLast }?.let { roadmapUntil(it, page.today) }
-    val label = listOfNotNull(name.plain + phaseStateWords(phase.state), whenWords, until).joinToString(". ")
+    val ends =
+        page.finish
+            ?.takeIf {
+                isLast
+            }?.let { endWords(formatPlanDate(it.date, page.today, currentLocale(), it.month), it.estimate, it.month).spoken }
+    val label = listOfNotNull(name.plain + phaseStateWords(phase.state), whenWords, ends).joinToString(". ")
     val (container, content) =
         when (phase.state) {
             PlanPhase.State.CURRENT -> colors.surfaceContainerHighest to colors.onSurface

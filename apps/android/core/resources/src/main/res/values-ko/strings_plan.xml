@@ -235,6 +235,9 @@
   "plan_effect_topics_added": "8a6403dbbf37a2cdf0d71c4a70f51363f895c8e74d50468428e729c712de5463",
   "plan_effect_topics_leave": "e49231670521d6e5f6b0901dc2a7f3bc8e0b2974a13c9e4a2f0f1777a2fe0106",
   "plan_effect_weekly_challenge_on": "d4b529a5104c56a954edecd7f9208e46c4215c90f16dfacb550221cb15d65c3c",
+  "plan_ends": "128311fbce2a11ac8cc0fc579e329ac4cf8322ed8fad61625e4c703b4206c288",
+  "plan_ends_about": "863ea67538a2e0fb68ef83c071418f8bda4185682bf20f5448d056f03f7af789",
+  "plan_ends_about_month": "768e50827622e19e6758c7b99974be4dd292ba52743149c60ac079fe13740a7c",
   "plan_estimate_based_on": "f39657c5b892bebefbf7fd7fa43cf17b6585cb18160adf8ef66ebe74ec5f5e48",
   "plan_estimate_based_on_last": "9a84f00f05c74328076349e2458e239aff2e9911838f181955099513493110eb",
   "plan_estimate_based_on_reviews": "cd65fa14c4b8e2c8972e9170b591649984f95567250ffe5ef1c7dc9a637ced61",
@@ -302,7 +305,6 @@
   "plan_keep_studying": "8886bf31b84c648c8f910574f29889d9af073db71149bf9f6a844f8da699118f",
   "plan_last_week_recap": "01838d93d151d0a0399ce283281c3b883c79434595ab950d7f3d2ebba846c4c8",
   "plan_lessons": "b3c5878d231409800298e7e37dfcb5f2c3a3b8df01b0308493b8666f4192ef08",
-  "plan_lessons_count": "4e2c59c3060e57077e272d4ceb4534f574e8be0d920bae9e03728b365c2118fb",
   "plan_lessons_done_of": "38b1e5994bd4b0dca6e1deda3c6018affe74764aa6eb94edadf1f2dadf2a4494",
   "plan_lessons_left": "8297c0e693bce56e47c3cea017e571b04bc739a054e308f34334f49291918d12",
   "plan_lessons_not_studied": "05139882527e159bef2951d805ca08f105ea7d7fc1b91706d928f8eed75de140",
@@ -405,10 +407,6 @@
   "plan_roadmap_from": "9843c4b4a0d02a5b743a719ed28450d748c37ec4e9025f00726f18f6d3e7c8d9",
   "plan_roadmap_phase_number": "aaf281bb9a1726b60582d14e85307eed82607d1f461baf26354dd9712c52083f",
   "plan_roadmap_phase_of": "c2933d9affb0f9b34c565bf0b79465afc8f07e4b23aa3ac4cad006d69b4c9594",
-  "plan_roadmap_until": "976c86d14a78a987feedfe9d1a5d7d156c5cf0b7870c08dc20ea0c82faf0e6d0",
-  "plan_roadmap_until_about": "07986a3e8d7f5834cdfbf6958db0a641bcd163e297560da96c639bf11b8456d0",
-  "plan_roadmap_until_about_month": "f226fd6f4f9643aad6126f3989441f844cab7e95eb8b8797be3c6a1a3411bccc",
-  "plan_roadmap_until_month": "b1d12d01508edb8a4e3ae75241b6957de5640ecb19a3da5599393c6640caed0a",
   "plan_saturdays": "de8b08cd92a24039187dbf7b339c71283f3418b3c7d398c7ba298c14a326a0db",
   "plan_save": "7909f950b5d1fbf8b94cb3f8743393a2d71edfdeadf2f53847828fe6068ef6bc",
   "plan_save_failed": "5b262125c979a7c35ff379768bf0991e6bf64dea213d20b42fe975feeaa91f08",
@@ -534,11 +532,6 @@
   "plan_try_again": "dc98417b560732ae3b4bff210d071467cc7bc79f59550bc65c69a59fd1b80bae",
   "plan_tuesdays": "e70a0cd29941957cfda9f6133c3cc63d7fce2be1271c47e3c09d503abf320589",
   "plan_undo": "c1b16070b19f787bde9d22305d8be221b30523ac460e4a0906012d38c14ff6f9",
-  "plan_until": "83b56ea42238fdb02f4ca161513f779f8147d8fe8e76bcd8ea5d8a30ad20e491",
-  "plan_until_estimate": "7243fcc7851b3637681ed897a00376a41ea2845783f063f3e94d33816e3d6d4e",
-  "plan_until_estimate_month": "1ff2b322da02ccf86e40379c4bb94aaf0c6e70f7b67da22af40b3d62bcf81f82",
-  "plan_until_estimate_month_spoken": "baf0c750fc89e6eaeb9f773a92808cf119be3a192fce04f95b623f56bbd15935",
-  "plan_until_estimate_spoken": "dcf79e4a86ba28788d47fc949764ca2bf21513186062c12728fc0246e1de1031",
   "plan_up_next": "b46f0f341dd32e592248bb5d4bc439dae6540bce024e1e0e6c2bb25841efa4f4",
   "plan_up_next_suffix": "153f254d75d72737733eb076f22aa5905462ea7b7b98d7293cfa8909845093c1",
   "plan_updated": "24ff6705c8127b1e9be92f79ec7bb14237d5ca52afcb7707190cece43435e194",
@@ -582,6 +575,11 @@
     </plurals>
     <string name="plan_date_estimate">%1$s쯤</string>
     <string name="plan_date_estimate_spoken">%1$s쯤</string>
+    <!-- What a screen reader says for a phase's end beside its name. %1$s is a day, such as "Nov 10". -->
+    <string name="plan_ends">%1$s에 끝나요</string>
+    <!-- What a screen reader says for a phase's estimated end beside its name. %1$s is a day, such as "Nov 10", or a month, such as "Jan". -->
+    <string name="plan_ends_about">%1$s쯤 끝나요</string>
+    <string name="plan_ends_about_month">%1$s쯤 끝나요</string>
     <string name="plan_date_range">%1$s ~ %2$s</string>
     <string name="plan_no_goal_description">배우고 싶은 것을 알려 주세요. 목표에 도달할 때까지 매일 무엇을 공부할지 계획해 드려요.</string>
     <string name="plan_setup_left_title">몇 가지 질문에 답하면 계획이 준비돼요</string>
@@ -620,14 +618,6 @@
     </plurals>
     <string name="plan_roadmap_phase_of">%1$d단계(총 %2$d단계)</string>
     <string name="plan_roadmap_from">%1$s부터</string>
-    <!-- %1$s is the day the plan ends, such as "Nov 3". -->
-    <string name="plan_roadmap_until">%1$s까지</string>
-    <!-- %1$s is the month the plan ends, such as "May" or "May 2027". -->
-    <string name="plan_roadmap_until_month">%1$s까지</string>
-    <!-- An estimated end. %1$s is the day the plan ends, such as "Nov 3". -->
-    <string name="plan_roadmap_until_about">%1$s쯤까지</string>
-    <!-- An estimated end. %1$s is the month the plan ends, such as "May" or "May 2027". -->
-    <string name="plan_roadmap_until_about_month">%1$s쯤까지</string>
     <string name="plan_today">오늘</string>
     <string name="plan_mock_exam">모의고사</string>
     <string name="plan_exam_day">시험 당일</string>
@@ -651,19 +641,9 @@
     <string name="plan_short_day">%1$d일차(총 %2$d일)</string>
     <string name="plan_short_days">%1$d~%2$d일차(총 %3$d일)</string>
     <string name="plan_your_path">내 학습 경로</string>
-    <string name="plan_lessons_count">%1$d / %2$d</string>
     <plurals name="plan_lessons_done_of">
         <item quantity="other">레슨 %1$d개 완료(총 %2$d개)</item>
     </plurals>
-    <string name="plan_until">%1$s까지</string>
-    <!-- %1$s is a day, such as "Nov 10". -->
-    <string name="plan_until_estimate">~%1$s까지</string>
-    <!-- %1$s is a day, such as "Nov 10". -->
-    <string name="plan_until_estimate_spoken">%1$s쯤까지</string>
-    <!-- %1$s is a month, such as "Jan" or "Jan 2028", never a day. -->
-    <string name="plan_until_estimate_month">%1$s쯤까지</string>
-    <!-- %1$s is a month, such as "Jan" or "Jan 2028", never a day. -->
-    <string name="plan_until_estimate_month_spoken">%1$s쯤까지</string>
     <string name="plan_not_in_your_plan">계획에 없어요</string>
     <plurals name="plan_lessons_not_studied">
         <item quantity="other">공부하지 않은 레슨 %d개</item>

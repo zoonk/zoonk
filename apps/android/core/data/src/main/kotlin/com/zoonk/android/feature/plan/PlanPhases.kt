@@ -68,9 +68,11 @@ fun Plan.finish(goalKind: LearnerSummaryGoal.Kind): PlanFinish? {
     }
     val end = estimate.endDate?.toJavaLocalDate() ?: return null
     if (goalKind == LearnerSummaryGoal.Kind.EXAM) return null
-    val start = week.startDate.toJavaLocalDate()
-    return PlanFinish(end, estimate = true, month = ChronoUnit.DAYS.between(start, end) > NEAR_ESTIMATE_DAYS)
+    return PlanFinish(end, estimate = true, month = estimateNamesMonth(end))
 }
+
+/** An estimated end more than six weeks past this week's start is written as its month (main's `NEAR_ESTIMATE_DAYS`). */
+fun Plan.estimateNamesMonth(end: LocalDate): Boolean = ChronoUnit.DAYS.between(week.startDate.toJavaLocalDate(), end) > NEAR_ESTIMATE_DAYS
 
 data class PlanOverrun(
     val phaseIndex: Long,

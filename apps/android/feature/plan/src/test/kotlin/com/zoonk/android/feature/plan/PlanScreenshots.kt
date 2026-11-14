@@ -21,6 +21,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
@@ -29,6 +30,7 @@ import com.zoonk.android.data.FakeSession
 import com.zoonk.android.feature.onboarding.DAILY_TIMES
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.components.SuggestionLayout
+import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
@@ -57,7 +59,10 @@ import java.util.UUID
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class PlanScreenshots {
-    @get:Rule
+    @get:Rule(order = 0)
+    val folds = WindowLayoutInfoPublisherRule()
+
+    @get:Rule(order = 1)
     val compose = createAndroidComposeRule<ComponentActivity>()
 
     private val folder = System.getProperty("zoonk.shots").orEmpty()
@@ -101,6 +106,15 @@ class PlanScreenshots {
     @Test
     @Config(qualifiers = "w1280dp-h900dp-land-xhdpi")
     fun expanded() = capture("plan-expanded")
+
+    @Test
+    @Config(qualifiers = "w852dp-h1600dp-xhdpi")
+    fun openBook() {
+        show()
+        compose.unfoldBook(folds)
+        compose.waitForIdle()
+        write("plan-open-book", compose.onRoot().captureRender().asAndroidBitmap())
+    }
 
     @Test
     @Config(qualifiers = "w1280dp-h900dp-land-night-xhdpi")

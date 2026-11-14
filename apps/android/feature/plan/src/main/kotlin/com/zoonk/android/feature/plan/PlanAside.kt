@@ -85,16 +85,10 @@ private fun NextChapterRow(
     links: PlanLinks,
 ) {
     val id = chapter.chapterId ?: return
-    val count =
-        PlanDateWords(
-            stringResource(R.string.plan_lessons_count, chapter.lessonsDone.toInt(), chapter.lessonsTotal.toInt()),
-            lessonsDoneSpoken(chapter.lessonsDone, chapter.lessonsTotal),
-        )
     ListRow(
         headline = { Text(chapter.title, maxLines = 2, overflow = TextOverflow.Ellipsis) },
         onClick = { links.chapter(id.toString()) },
         leading = { ChapterMark(chapter, isNext = true) },
-        meta = { TrailingText(count) },
     )
 }
 
