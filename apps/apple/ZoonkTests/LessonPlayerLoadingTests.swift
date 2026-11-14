@@ -863,15 +863,16 @@ final class LessonPlayerLoadingTests: XCTestCase {
     XCTAssertEqual(summary.day?.reached?.level?.level, 3)
   }
 
-  /// Answer help is capped by the day and by the calendar month; only lesson caps lost the month.
-  func testAnExplanationRefusedForTheMonthComesBackNextMonth() async throws {
+  /// Answer help's monthly cap gives the day an explanation comes back, as every monthly cap does.
+  func testAnExplanationRefusedForTheMonthSaysWhenItComesBack() async throws {
     let api = LessonPlayerAPI(
       clients: APIClientFactory(
         baseURL: URL(string: "https://api.zoonk.test")!,
         transport: JSONTransport(
           body: #"""
             {"error": {"code": "USAGE_LIMIT_REACHED", "message": "Limit reached",
-             "details": {"limit": {"period": "month", "tier": "free", "resource": "aiSpend"}}}}
+             "details": {"limit": {"period": "rolling30Days", "tier": "free",
+             "resource": "explanation", "availableAt": "2026-12-20T12:00:00.000Z"}}}}
             """#,
           status: .init(code: 402))))
 
@@ -881,10 +882,11 @@ final class LessonPlayerLoadingTests: XCTestCase {
       return XCTFail("Expected a refusal, got \(outcome)")
     }
 
-    XCTAssertEqual(refusal.limit, .limitReached(period: .month, tier: .free))
+    let availableAt = Date(timeIntervalSince1970: 1_797_768_000)
+    XCTAssertEqual(refusal.limit, .usedUp(tier: .free, availableAt: availableAt))
     XCTAssertEqual(
-      refusal.limit?.helpWords(.explanations).line.map { String(localized: $0) },
-      "More next month, or subscribe to keep going.")
+      refusal.limit?.words(.explanations, now: availableAt.addingTimeInterval(-30 * 86_400)).said,
+      "You've used your explanations. More on December 20, or subscribe to keep going.")
   }
 
   func testASavedLessonKeepsAFractionalDailyBudget() async throws {

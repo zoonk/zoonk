@@ -84,7 +84,7 @@ export const examMomentSchema = z
       .boolean()
       .meta({
         description:
-          "The learner did what their plan asked before today (a session, no lessons left from earlier days, most study days finished): say they prepared only when true",
+          "The learner did what their plan asked before today (a session, no lessons left from earlier days, most study days finished)",
       }),
     resultReported: z.boolean(),
     sessionsDone: z.number().int().min(0),
@@ -161,7 +161,7 @@ export const examViewResponseSchema = z
       .nullable()
       .meta({
         description:
-          "The last published cut-off of the learner's target (a course at an institution, a position) for the general list, with its source: show it as where the bar was, never as a promise. Null when none was found",
+          "The last published cut-off of the learner's target (a course at an institution, a position) for the general list, with its source: a past figure, not a forecast. Null when none was found",
       }),
     dayBefore: dayBeforeSchema,
     days: z.array(examDaySchema),
@@ -188,7 +188,7 @@ export const examViewResponseSchema = z
       .boolean()
       .meta({
         description:
-          "Mock exams come with Plus and the learner's plan doesn't include them: show them (the next one too) locked, with a way to Plus, never hidden",
+          "True when mock exams come with Plus and the learner's plan doesn't include them: starting one answers 402",
       }),
     namedMonth: z
       .boolean()
@@ -224,7 +224,7 @@ export const examViewResponseSchema = z
       .boolean()
       .meta({
         description:
-          "The learner did what their plan asked before today (a session, no lessons left from earlier days, most study days finished): say they prepared only when true",
+          "The learner did what their plan asked before today (a session, no lessons left from earlier days, most study days finished)",
       }),
     progress: examMockProgressSchema
       .nullable()

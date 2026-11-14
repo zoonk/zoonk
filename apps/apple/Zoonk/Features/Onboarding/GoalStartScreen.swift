@@ -31,22 +31,24 @@ struct GoalStartScreen: View {
 extension PlanAllowance {
   /// Said before the learner types, checked in core's order; creating a goal checks it again.
   var goalStartLimit: GoalLimitReason? {
-    let reached: (period: String, resource: String)? =
+    let reached: (period: String, resource: String, availableAt: Date?)? =
       if activeGoals.isReached {
-        ("total", "activeGoals")
+        ("total", "activeGoals", nil)
       } else if newGoalsTotal.isReached {
-        ("total", "goal")
+        ("total", "goal", nil)
       } else if newGoalsToday.isReached {
-        ("day", "goal")
-      } else if newGoalsThisMonth.isReached {
-        ("month", "goal")
+        ("day", "goal", nil)
+      } else if newGoalsMonthly.isReached {
+        ("rolling30Days", "goal", newGoalsMonthly.availableAt)
       } else {
         nil
       }
 
     return reached.map {
       GoalLimitReason(
-        OnboardingLimit(period: $0.period, resource: $0.resource, tier: tier.rawValue))
+        OnboardingLimit(
+          period: $0.period, resource: $0.resource, tier: tier.rawValue,
+          availableAt: $0.availableAt?.ISO8601Format()))
     }
   }
 }

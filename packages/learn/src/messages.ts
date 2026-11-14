@@ -22,8 +22,8 @@ export async function learnMessages(locale: string): Promise<LearnMessages> {
  * bar. Apps ship these everywhere and the rest of the catalog only where learn screens render.
  */
 export async function learnSiteMessages(locale: string): Promise<LearnMessages> {
-  const { belts, buddyNames, feedback, goalErrors, goalSwitcher, planPhases } =
+  const { belts, buddyNames, feedback, goalErrors, goalSwitcher, limits, planPhases } =
     await learnMessages(locale);
 
-  return { belts, buddyNames, feedback, goalErrors, goalSwitcher, planPhases };
+  return { belts, buddyNames, feedback, goalErrors, goalSwitcher, limits, planPhases };
 }

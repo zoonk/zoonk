@@ -329,7 +329,7 @@ private struct LessonExplainAnswerView: View {
   private var statusLine: String? {
     switch store.explanations[step.id] {
     case .failed: Self.failedLine
-    case .refused(let refusal): refusal.limit?.helpWords(.explanations).said
+    case .refused(let refusal): refusal.limit?.words(.explanations).said
     default: nil
     }
   }

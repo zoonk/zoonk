@@ -87,7 +87,6 @@
   "conversation_muted_detail": "d91263f8b8e5616a047afba06bdc86767b7cdf822fd8da2a51d4ff15aa5627da",
   "conversation_near_level": "753118a450ff76c1072c2f80870c04e51cf5ee560e12f4fc2ad5a4c2f938f231",
   "conversation_next_task": "9078645f3300ac81bdbbcacbcff893b602957d827e5493780d4372e6ab70289c",
-  "conversation_no_calls_month": "3bee08c27ff3343e45a4af22f2be4d80fffbbd40e597409182a27c52bb47d1d1",
   "conversation_no_calls_today": "726b0aedbaecc20cb6b31f2a87722acd74d7140e62225168a800f87617871bc9",
   "conversation_no_estimate_title": "a1e2d85089e21088e04a358c949ba561956b35c5206260902659c43a5e2d1bd7",
   "conversation_no_score": "fd2a91881c5c8b172dccef034f2d383e03afa3d95255e3eb07d6caba012997f4",
@@ -240,7 +239,6 @@
     <string name="conversation_mute">ミュートする</string>
     <string name="conversation_end">終了</string>
     <string name="conversation_no_calls_today">今日はこれ以上会話できません</string>
-    <string name="conversation_no_calls_month">今月はこれ以上会話できません</string>
     <string name="conversation_calls_need_account">会話には無料アカウントが必要です</string>
     <string name="conversation_ended_title">この会話は終了しました</string>
     <string name="conversation_taken_over">別の会話を始めたため、この会話は終了しました。</string>

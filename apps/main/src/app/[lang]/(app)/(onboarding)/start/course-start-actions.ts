@@ -13,7 +13,7 @@ import {
 import { courseGoalStartInputSchema } from "@zoonk/core/goals/course-start-contract";
 import { findCourseGoalStart } from "@zoonk/core/goals/start-course";
 import { type OnboardingOwnLevel } from "@zoonk/core/view-models/onboarding/contract";
-import { type GoalLimitReason } from "@zoonk/learn/onboarding/actions";
+import { type GoalLimit } from "@zoonk/learn/onboarding/actions";
 import { isUuid } from "@zoonk/utils/uuid";
 import { z } from "zod";
 import { COURSE_START_ERROR_PARAM } from "./course/course-start-params";
@@ -25,7 +25,7 @@ const goalSchema = z.object({ id: z.string() });
 
 export type CourseStartOutcome =
   | { goalId: string; next: "steps" | "today"; status: "started" }
-  | { reason: GoalLimitReason; status: "limitReached" }
+  | ({ status: "limitReached" } & GoalLimit)
   | { status: "failed" | "signInRequired" };
 
 function toRefusedOutcome({

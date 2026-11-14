@@ -22,8 +22,9 @@
   "mock_chooser_preparing_detail": "02f2b67f7d9c0822e3b5eca9571d98a4a6ea3fc34f77e770779433e2ee4b7228",
   "mock_chooser_questions": "80b12e3631e99ce80263fcf087a74271f86fb14d64e370737bc531e38ae56a27",
   "mock_chooser_short_day": "ea2aeb5ce0b46e5212f8225583f779ec471a698b21a967835b2ee568def5d878",
+  "mock_chooser_short_later_today": "d4c349f4d622522ca716c74318154eb4d1ea3485d6a3f22b3bee92e8a1f8cf98",
   "mock_chooser_short_line": "039c047fa0843576c3be678f274c6217417aff315bcb583799cbd05015da6aef",
-  "mock_chooser_short_month": "3157188fa3c72c5dc173fca1eeb23a7ae95219411c2556be0b1960cf7fcdf5d7",
+  "mock_chooser_short_on": "a3b91f1098a1e8ed28928346a3e0a3cf95e8f3be058d32738f07c3c5360f1769",
   "mock_chooser_short_title": "a69fe302eba2bf1c5f9aee4c6bec3f38a9ad965f2aed4214308af19e8dd79bf1",
   "mock_chooser_size_latest_exam": "ddad4f18251cbfeee51b671a1d9b32a5c638d20072fca749d00939fbbdd6f24f",
   "mock_chooser_size_past_edition": "1b3237e90d3fa785003ea8d4d8d6c6e07314d2b40bf7224bb698b2ed8c1a211f",
@@ -68,8 +69,10 @@
     <string name="mock_chooser_short_title">더 짧은 모의고사를 시작할까요?</string>
     <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
     <string name="mock_chooser_short_day">오늘은 %1$s문제(전체 %2$s문제)를 풀 수 있고, 약 %3$s 걸려요. 전체 모의고사는 내일 볼 수 있어요.</string>
-    <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
-    <string name="mock_chooser_short_month">오늘은 %1$s문제(전체 %2$s문제)를 풀 수 있고, 약 %3$s 걸려요. 전체 모의고사는 다음 달에 볼 수 있어요.</string>
+    <!-- In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now. -->
+    <string name="mock_chooser_short_later_today">오늘은 %1$s문제(전체 %2$s문제)만 나오고, 약 %3$s 걸려요. 전체 모의고사는 오늘 중에 볼 수 있어요.</string>
+    <!-- In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now. {date} is a day and its month, such as "November 22" in English. -->
+    <string name="mock_chooser_short_on">오늘은 %1$s문제(전체 %2$s문제)만 나오고, 약 %3$s 걸려요. 전체 모의고사는 %4$s에 볼 수 있어요.</string>
     <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
     <string name="mock_chooser_short_line">오늘은 %1$s문제(전체 %2$s문제)를 풀 수 있고, 약 %3$s 걸려요.</string>
     <string name="mock_chooser_pick_another">다른 모의고사 고르기</string>

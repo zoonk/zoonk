@@ -554,17 +554,8 @@ struct PracticeCallSection: View {
         }
 
         if case .limit(let limit) = outcome {
-          if limit.period == .month {
-            FailureLine(
-              message: LocalizedStringResource(
-                "Not enough call time this month.", table: "Plan",
-                comment: "The plan's call time this month is used"))
-          } else {
-            FailureLine(
-              message: LocalizedStringResource(
-                "Not enough call time today.", table: "Plan",
-                comment: "The plan's call time today is used"))
-          }
+          LimitNotice(limit: limit, kind: .callTime)
+            .announcesAlert(limit.words(.callTime).said)
         } else if outcome == .failed || outcome == .callInProgress
           || outcome == .previousConnectionClosing || outcome == .ended
         {

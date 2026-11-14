@@ -52,6 +52,27 @@ describe(findGoalStartLimit, () => {
     });
   });
 
+  it("names the rolling cap before goals followed, since pausing one cannot open the window", async () => {
+    const user = await userFixture();
+    mockSession(user.id);
+    const createdAt = new Date(Date.now() - 5 * 86_400_000);
+
+    await Promise.all([
+      goalFixture({ status: "active", userId: user.id }),
+      goalFixture({ status: "active", userId: user.id }),
+      goalFixture({ status: "active", userId: user.id }),
+      usageRecordsFixture({ count: 10, createdAt, kind: "goal", userId: user.id }),
+    ]);
+
+    await expect(findGoalStartLimit()).resolves.toStrictEqual({
+      availableAt: null,
+      limit: 10,
+      period: "rolling30Days",
+      resource: "goal",
+      tier: "free",
+    });
+  });
+
   it("leaves room once the learner's goal is paused", async () => {
     const user = await userFixture();
     mockSession(user.id);

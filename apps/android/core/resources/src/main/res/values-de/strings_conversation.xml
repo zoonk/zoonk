@@ -87,7 +87,6 @@
   "conversation_muted_detail": "67d0be41c5a0e3c0fef776656bec8aad84228b5826f3464ef4b21d1d4feb6a37",
   "conversation_near_level": "7d1896e7a23801b4cdc18a4d1d59ef2a73a4ca2f47abe2e597c96eea69f31422",
   "conversation_next_task": "93aba14447dbe6c4e825578335e477628fcb8dc4a859ab0c486bcabe1b91119f",
-  "conversation_no_calls_month": "4c171f2abc5d42247ba2e5d7a11a4ed82ddf28003a3d8afd783a9374a2068a70",
   "conversation_no_calls_today": "75199a3fb8f5750e929642fa468c2877565adb804d9b180d5650384d26094bbb",
   "conversation_no_estimate_title": "e49e5b6d663939d3653f48d097b0c1b0675c49acff9d6ddb4ecdd335bb955584",
   "conversation_no_score": "050df04020e86abbd360737d08fb93b10840bc406a7fe0d18b449b45fad7c6dd",
@@ -240,7 +239,6 @@
     <string name="conversation_mute">Stummschalten</string>
     <string name="conversation_end">Beenden</string>
     <string name="conversation_no_calls_today">Heute keine Gespräche mehr</string>
-    <string name="conversation_no_calls_month">Diesen Monat keine Gespräche mehr</string>
     <string name="conversation_calls_need_account">Für Gespräche brauchst du ein kostenloses Konto</string>
     <string name="conversation_ended_title">Dieses Gespräch ist beendet</string>
     <string name="conversation_taken_over">Es wurde beendet, als du ein anderes Gespräch begonnen hast.</string>

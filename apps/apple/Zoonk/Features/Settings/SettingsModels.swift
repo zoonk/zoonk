@@ -143,6 +143,8 @@ struct PlanAllowance: Equatable, Sendable {
   struct Cap: Equatable, Sendable {
     var limit: Int?
     var used = 0
+    /// A monthly cap's next use, once it's reached.
+    var availableAt: Date?
 
     var isReached: Bool { limit.map { used >= $0 } ?? false }
   }
@@ -154,7 +156,8 @@ struct PlanAllowance: Equatable, Sendable {
   var activeGoals = Cap()
   var newGoalsTotal = Cap()
   var newGoalsToday = Cap()
-  var newGoalsThisMonth = Cap()
+  /// Over the last 30 days.
+  var newGoalsMonthly = Cap()
 }
 
 extension LearningPreferences {
@@ -199,9 +202,8 @@ extension MemoryFact {
 
 extension PlanAllowance {
   init(_ allowance: Components.Schemas.AllowanceResponse) {
-    let counts = allowance.items.compactMap(\.value2)
-    let messages = counts.first { $0.kind == .tutorMessage }
-    let goals = counts.first { $0.kind == .goal }
+    let messages = allowance.items.first { $0.kind == .tutorMessage }
+    let goals = allowance.items.first { $0.kind == .goal }
 
     self.init(
       tier: Tier(rawValue: allowance.tier.rawValue) ?? .free,
@@ -210,6 +212,8 @@ extension PlanAllowance {
       activeGoals: Cap(limit: allowance.activeGoals.limit, used: allowance.activeGoals.used),
       newGoalsTotal: Cap(limit: goals?.totalLimit, used: goals?.usedTotal ?? 0),
       newGoalsToday: Cap(limit: goals?.dailyLimit, used: goals?.usedToday ?? 0),
-      newGoalsThisMonth: Cap(limit: goals?.monthlyLimit, used: goals?.usedThisMonth ?? 0))
+      newGoalsMonthly: Cap(
+        limit: goals?.rollingLimit, used: goals?.usedLast30Days ?? 0,
+        availableAt: goals?.availableAt))
   }
 }

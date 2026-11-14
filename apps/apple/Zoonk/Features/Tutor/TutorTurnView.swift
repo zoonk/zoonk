@@ -194,7 +194,7 @@ struct TutorTurnView: View {
     }
 
     switch failure {
-    case .signUpRequired, .limitReached:
+    case .signUpRequired, .limit:
       return String(
         localized: "This one wasn't answered.", table: "Tutor",
         comment: "A question the learner's limit stopped")

@@ -15,8 +15,10 @@
       if let section {
         content.fullScreenCover(isPresented: .constant(true)) {
           NavigationStack {
-            if section == "lessonGate" {
-              DebugLessonGate()
+            if section == "lessonGate" || section == "lessonGateLater" {
+              DebugLessonGate(opensIn: section == "lessonGate" ? 20 : 5 * 86_400)
+            } else if section == "limits" {
+              DebugLimits()
             } else if let writing = DebugLessonWait.writing(section) {
               DebugLessonWait(
                 writing: writing, kind: section.hasPrefix("challenge") ? .challenge : .lesson)
@@ -536,7 +538,7 @@
       MindMapLimit(limit: .limitReached(period: .day, tier: .free), resource: .lessons),
       MindMapLimit(limit: .limitReached(period: .day, tier: .free), resource: .aiSpend),
       MindMapLimit(
-        limit: .freeLessonsUsed(opensAt: .now.addingTimeInterval(3 * 86_400)),
+        limit: .usedUp(tier: .free, availableAt: .now.addingTimeInterval(3 * 86_400)),
         resource: .chapterLessons),
       MindMapLimit(limit: .limitReached(period: .total, tier: .free), resource: .chapterLessons),
     ]
@@ -557,15 +559,49 @@
   }
 
   /// `ZOONK_DEBUG_GALLERY=lessonGate` opens the free lessons gate as a screen, and `lessonRefused`
-  /// in place on a lesson's wait; the next free lesson opens 20 seconds after launch.
+  /// in place on a lesson's wait; the next free lesson opens 20 seconds after launch, or five days
+  /// after with `lessonGateLater`.
   private struct DebugLessonGate: View {
-    static let refusal = LessonRunRefusal.limitReached(
-      tier: .free, period: .last30Days(opensAt: .now.addingTimeInterval(20)))
+    let opensIn: TimeInterval
+
+    static func refusal(opensIn: TimeInterval = 20) -> LessonRunRefusal {
+      .limitReached(tier: .free, period: .last30Days(availableAt: .now.addingTimeInterval(opensIn)))
+    }
 
     var body: some View {
-      LessonUnavailableView(refusal: Self.refusal) {}
+      LessonUnavailableView(refusal: Self.refusal(opensIn: opensIn)) {}
         .lonePage()
         .navigationBarTitleDisplayMode(.inline)
+    }
+  }
+
+  /// `ZOONK_DEBUG_GALLERY=limits` opens the buddy's and the explanations' monthly gates, free and
+  /// subscribed, as their screens draw them.
+  private struct DebugLimits: View {
+    static let later = Date.now.addingTimeInterval(5 * 86_400)
+
+    var body: some View {
+      ZoonkList {
+        Section {
+          TutorLimitNotice(failure: .limit(.usedUp(tier: .free, availableAt: Self.later)))
+        } header: {
+          Text(verbatim: "Buddy's messages, free")
+        }
+
+        Section {
+          TutorLimitNotice(failure: .limit(.usedUp(tier: .plus, availableAt: Self.later)))
+        } header: {
+          Text(verbatim: "Buddy's messages, Plus")
+        }
+
+        Section {
+          LimitNotice(limit: .usedUp(tier: .free, availableAt: Self.later), kind: .explanations)
+        } header: {
+          Text(verbatim: "Explanations, free")
+        }
+      }
+      .navigationTitle(Text(verbatim: "Limits"))
+      .navigationBarTitleDisplayMode(.inline)
     }
   }
 
@@ -583,7 +619,7 @@
       case "Unwritten": .notStarted
       case "Failed": .failed
       case "SetAside": .setAside
-      case "Refused": .refused(DebugLessonGate.refusal)
+      case "Refused": .refused(DebugLessonGate.refusal())
       default: nil
       }
     }

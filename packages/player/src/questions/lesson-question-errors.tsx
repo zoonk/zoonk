@@ -14,7 +14,14 @@ export function toHelpLimit(error: LessonQuestionApiError | null): HelpLimit | n
   }
 
   if (error?.kind === "usageLimit") {
-    return { period: error.period, status: "limitReached", tier: error.tier };
+    return error.period === "rolling30Days"
+      ? {
+          availableAt: error.availableAt ?? null,
+          period: error.period,
+          status: "limitReached",
+          tier: error.tier,
+        }
+      : { period: error.period, status: "limitReached", tier: error.tier };
   }
 
   return null;

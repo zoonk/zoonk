@@ -79,7 +79,7 @@ final class LiveCall {
 
   private(set) var phase = Phase.idle
   private(set) var failure: Failure?
-  private(set) var limit: CallLimit?
+  private(set) var limit: HelpLimit?
   private(set) var metLabels: [String] = []
   private(set) var muted = false
   /// The learner said no to the microphone, or chose to type.
@@ -799,7 +799,7 @@ final class LiveCall {
     track(reason)
   }
 
-  private func fail(_ failure: Failure, limit: CallLimit? = nil) {
+  private func fail(_ failure: Failure, limit: HelpLimit? = nil) {
     self.failure = failure
     self.limit = limit
     phase = .failed
@@ -874,7 +874,7 @@ extension LiveCall {
 }
 
 extension CallReservation {
-  fileprivate var callLimit: CallLimit? {
+  fileprivate var callLimit: HelpLimit? {
     if case .limit(let limit) = self {
       return limit
     }

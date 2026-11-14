@@ -8,8 +8,6 @@ type UsageRule = {
   daySeconds?: number;
   fairUseDay?: number;
   generatedTotal?: number;
-  month?: number;
-  monthSeconds?: number;
   rolling30Days?: number;
   total?: number;
 };
@@ -72,28 +70,28 @@ export function getLiveCallReservationMicros(talkSeconds: number): number {
 }
 
 export const FREE_LESSON_LIMIT = 20;
-export const FREE_LESSON_WINDOW_MS = 30 * MS_PER_DAY;
+export const USAGE_WINDOW_MS = 30 * MS_PER_DAY;
 
 const USAGE_RULES: Record<EntitlementTier, Record<UsageKind, UsageRule>> = {
   free: {
-    assist: { day: 100, month: 500 },
+    assist: { day: 100, rolling30Days: 500 },
     conversation: {
       daySeconds: FREE_CALL_MINUTES_A_DAY * SECONDS_PER_MINUTE,
-      monthSeconds: FREE_CALL_MINUTES_A_MONTH * SECONDS_PER_MINUTE,
+      rolling30Days: FREE_CALL_MINUTES_A_MONTH * SECONDS_PER_MINUTE,
     },
-    explanation: { day: 5, month: 20 },
-    goal: { day: 3, month: 10 },
+    explanation: { day: 5, rolling30Days: 20 },
+    goal: { day: 3, rolling30Days: 10 },
     lessonStart: { rolling30Days: FREE_LESSON_LIMIT },
-    mindMap: { day: 3, month: 10 },
+    mindMap: { day: 3, rolling30Days: 10 },
     mockQuestions: { total: 0 },
-    outline: { day: 3, month: 10 },
-    tutorMessage: { day: 10, month: 100 },
-    upload: { day: 3, month: 10 },
+    outline: { day: 3, rolling30Days: 10 },
+    tutorMessage: { day: 10, rolling30Days: 100 },
+    upload: { day: 3, rolling30Days: 10 },
   },
   guest: {
-    assist: { day: 40, month: 100 },
+    assist: { day: 40, rolling30Days: 100 },
     conversation: { total: 0 },
-    explanation: { day: 5, month: 10 },
+    explanation: { day: 5, rolling30Days: 10 },
     goal: { total: 1 },
     lessonStart: { generatedTotal: 1, total: 3 },
     mindMap: { total: 1 },
@@ -106,18 +104,22 @@ const USAGE_RULES: Record<EntitlementTier, Record<UsageKind, UsageRule>> = {
     assist: { fairUseDay: 1000 },
     conversation: {
       daySeconds: PLUS_CALL_MINUTES_A_DAY * SECONDS_PER_MINUTE,
-      monthSeconds: PLUS_CALL_MINUTES_A_MONTH * SECONDS_PER_MINUTE,
+      rolling30Days: PLUS_CALL_MINUTES_A_MONTH * SECONDS_PER_MINUTE,
     },
     explanation: { fairUseDay: 200 },
     goal: { day: 10 },
     lessonStart: { fairUseDay: 200 },
-    mindMap: { day: 300, month: 1200 },
-    mockQuestions: { day: 2, month: 10 },
+    mindMap: { day: 300, rolling30Days: 1200 },
+    mockQuestions: { day: 2, rolling30Days: 10 },
     outline: { fairUseDay: 30 },
     tutorMessage: { fairUseDay: 300 },
     upload: { fairUseDay: 30 },
   },
 };
+
+export function getRollingClaimReadLimit(kind: UsageKind): number {
+  return Math.max(1, ...Object.values(USAGE_RULES).map((rules) => rules[kind].rolling30Days ?? 0));
+}
 
 const ACTIVE_GOAL_LIMITS: Record<EntitlementTier, number | null> = {
   free: 3,

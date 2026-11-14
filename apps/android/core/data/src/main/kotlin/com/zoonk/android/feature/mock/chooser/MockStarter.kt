@@ -14,8 +14,10 @@ import com.zoonk.api.models.MockQuestionsGeneration
 import com.zoonk.api.models.MockQuestionsInput
 import com.zoonk.api.models.MockShape
 import kotlinx.coroutines.delay
+import java.time.Instant
 import java.util.UUID
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.toJavaInstant
 
 sealed interface MockStartOutcome {
     /** Started now, or the one already running: either way the learner goes on in it. */
@@ -29,6 +31,8 @@ sealed interface MockStartOutcome {
         val examQuestions: Long,
         val minutes: Long,
         val limit: AnytimeMock.Limit?,
+        /** When the full mock fits again, for a cap counted over the last 30 days. */
+        val availableAt: Instant?,
     ) : MockStartOutcome
 
     data object NeedsQuestions : MockStartOutcome
@@ -180,6 +184,7 @@ class MockStarter(
                     examQuestions = mock.examQuestions ?: 0,
                     minutes = mock.minutes ?: 0,
                     limit = mock.limit,
+                    availableAt = mock.availableAt?.toJavaInstant(),
                 )
             }
         }

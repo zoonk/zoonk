@@ -1,6 +1,7 @@
 import { MAX_CEFR_SCORE } from "@zoonk/utils/cefr";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
+import { USAGE_PERIODS } from "../../entitlements/contract";
 import { speakingMockExamSchema } from "../../language/conversations/conversation-contract";
 import { speakingPaperViewSchema } from "../../language/exam-speaking/speaking-contract";
 import { LANGUAGE_SKILLS } from "../../language/levels/skill-level-rules";
@@ -114,13 +115,21 @@ export const practiceCallSchema = z
     defaultMinutes: z.int(),
     limit: z
       .object({
-        period: z.enum(["day", "month", "total"]),
+        availableAt: z.iso
+          .datetime()
+          .nullable()
+          .optional()
+          .meta({
+            description:
+              "For `rolling30Days`: when call time comes back; null when none does. Absent for other periods",
+          }),
+        period: z.enum(USAGE_PERIODS),
         tier: z.enum(["free", "guest", "plus"]),
       })
       .nullable()
       .meta({
         description:
-          "When no call time is left: which call time is used up (today's, this month's, or a guest's plan without calls), which is when calls come back",
+          "When no call time is left: which call time is used up (today's, the last 30 days', or a guest's plan without calls), which is when calls come back",
       }),
     minutes: z
       .array(z.int())

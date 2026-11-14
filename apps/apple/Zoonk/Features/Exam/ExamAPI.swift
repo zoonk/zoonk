@@ -5,7 +5,8 @@ enum MockStartOutcome: Equatable, Sendable {
 
   case started(id: String)
   case needsQuestions
-  case short(examQuestions: Int, limit: Limit?, minutes: Int, questions: Int)
+  /// `availableAt`: when the full mock fits, once a monthly cap shortened it.
+  case short(examQuestions: Int, limit: Limit?, availableAt: Date?, minutes: Int, questions: Int)
   case notEnoughQuestions
   case plusRequired
   case refused(HelpLimit)
@@ -149,7 +150,8 @@ struct ExamAPI {
       case .short:
         return .short(
           examQuestions: started.examQuestions ?? 0, limit: started.limit,
-          minutes: started.minutes ?? 0, questions: started.questions ?? 0)
+          availableAt: started.availableAt, minutes: started.minutes ?? 0,
+          questions: started.questions ?? 0)
       }
     }
   }

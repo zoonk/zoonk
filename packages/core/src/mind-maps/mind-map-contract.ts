@@ -1,6 +1,7 @@
 import { type GoalKind } from "@zoonk/db";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
+import { USAGE_PERIODS } from "../entitlements/contract";
 
 const mindMapBranchSchema = z
   .object({
@@ -153,8 +154,15 @@ const savedMindMapSchema = z
 
 const mindMapAllowanceStopSchema = z
   .object({
+    availableAt: z.iso
+      .datetime()
+      .nullable()
+      .meta({
+        description:
+          "When the allowance that stopped it comes back; null when it never does (`total`) or isn't known",
+      }),
     period: z
-      .enum(["day", "month", "total"])
+      .enum(USAGE_PERIODS)
       .nullable()
       .meta({
         description:
@@ -164,14 +172,7 @@ const mindMapAllowanceStopSchema = z
       .enum(["limitReached", "slowDown", "signUpRequired"])
       .meta({
         description:
-          "`limitReached`: a mind map limit or the day's AI budget ran out. `slowDown`: try again after `resetsAt`. `signUpRequired`: a guest must create an account to make more",
-      }),
-    resetsAt: z.iso
-      .datetime()
-      .nullable()
-      .meta({
-        description:
-          "When the allowance that stopped it comes back; null when it never does (`total`) or isn't known",
+          "`limitReached`: a mind map limit or the day's AI budget ran out. `slowDown`: try again after `availableAt`. `signUpRequired`: a guest must create an account to make more",
       }),
     resource: z
       .enum(["aiSpend", "mindMap"])

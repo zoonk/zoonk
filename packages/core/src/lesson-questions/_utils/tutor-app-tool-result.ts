@@ -19,7 +19,13 @@ function describeOffer(offer: TutorToolOffer): OfferedDetails {
       return { mistakes: offer.open };
     case "conversationCall":
       return offer.call.limit
-        ? { callTimeUsed: offer.call.limit.period, unit: offer.unitTitle }
+        ? {
+            ...(offer.call.limit.availableAt !== undefined && {
+              callAvailableAt: offer.call.limit.availableAt,
+            }),
+            callTimeUsed: offer.call.limit.period,
+            unit: offer.unitTitle,
+          }
         : { minutes: offer.call.minutes, unit: offer.unitTitle };
     case "pronunciation":
       return { words: offer.words };

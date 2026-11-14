@@ -11,11 +11,11 @@ import java.time.Instant
 
 enum class LimitTier { Guest, Free, Plus }
 
-/** [Rolling30Days] is the free plan's lessons: a lesson comes back 30 days after it started. */
-enum class LimitPeriod { Day, Month, Rolling30Days, Total }
+/** [Rolling30Days] counts the last 30 days: each use comes back 30 days after it was made. */
+enum class LimitPeriod { Day, Rolling30Days, Total }
 
 /** What ran out: [Help] is anything else the day's AI budget stops (a spoken answer's check, a clip). */
-enum class LimitSubject { Help, Messages, Explanations, Lessons, MapLessons, MindMaps, Outlines, Calls }
+enum class LimitSubject { Help, Messages, Explanations, Lessons, MapLessons, MindMaps, Outlines, Calls, MockExams }
 
 sealed interface Limit {
     data class SlowDown(

@@ -115,7 +115,7 @@ class GateScreenshots {
                     free(Instant.now().plus(9, ChronoUnit.DAYS)) to LimitSubject.Lessons,
                     Limit.Reached(LimitTier.Free, LimitPeriod.Day) to LimitSubject.Explanations,
                     Limit.Reached(LimitTier.Guest, LimitPeriod.Day) to LimitSubject.Messages,
-                    Limit.Reached(LimitTier.Plus, LimitPeriod.Month) to LimitSubject.Help,
+                    Limit.Reached(LimitTier.Plus, LimitPeriod.Rolling30Days, Instant.now().plus(9, ChronoUnit.DAYS)) to LimitSubject.Help,
                     Limit.SignUpRequired to LimitSubject.Help,
                 ).forEach { (limit, subject) ->
                     LimitNotice(limit, subject, onCreateAccount = {}, onSubscribe = {})

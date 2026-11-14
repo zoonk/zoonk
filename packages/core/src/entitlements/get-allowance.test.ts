@@ -25,7 +25,7 @@ describe(getAllowance, () => {
     await expect(getAllowance()).resolves.toBeNull();
   });
 
-  it("shows rolling lesson usage and next eligibility alongside unchanged calendar resets", async () => {
+  it("shows rolling lesson usage and next eligibility alongside daily resets", async () => {
     const user = await userFixture();
 
     await Promise.all([
@@ -41,7 +41,7 @@ describe(getAllowance, () => {
       activeGoals: { limit: 3, used: 1 },
       examPrep: { includesMockExams: false },
       generatedLessons: null,
-      resets: { day: new Date("2026-09-16T00:00:00Z"), month: new Date("2026-10-01T00:00:00Z") },
+      resets: { day: new Date("2026-09-16T00:00:00Z") },
       tier: "free",
     });
 
@@ -59,7 +59,7 @@ describe(getAllowance, () => {
     });
   });
 
-  it("shows the call time used today and this month beside the plan's caps", async () => {
+  it("shows the call time used today and the rolling window beside the plan's caps", async () => {
     const user = await userFixture();
 
     await Promise.all([
@@ -81,13 +81,14 @@ describe(getAllowance, () => {
 
     mockSession(user.id);
 
-    await expect(getAllowance()).resolves.toMatchObject({
-      callTime: {
-        limitSeconds: 120,
-        monthLimitSeconds: 300,
-        usedSeconds: 60,
-        usedSecondsThisMonth: 240,
-      },
+    const allowance = await getAllowance();
+
+    expect(allowance?.items.find((item) => item.kind === "conversation")).toMatchObject({
+      availableAt: null,
+      dailyLimit: 120,
+      rollingLimit: 300,
+      usedLast30Days: 240,
+      usedToday: 60,
     });
   });
 
