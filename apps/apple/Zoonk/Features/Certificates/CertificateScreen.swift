@@ -2,8 +2,8 @@ import SwiftUI
 import UIKit
 
 /// The learner's own certificate, as main's page: what it says, what they can do with it, its
-/// picture, its details, what it means and what it covers. A locked one leads with the Plus notice,
-/// then its card and facts.
+/// picture, its details, what it means and what it covers. A locked one shows its card and facts,
+/// with the subscription gate in its bar.
 struct CertificateScreen: View {
   @Environment(CertificatesStore.self) private var store
 
@@ -313,10 +313,6 @@ private struct LockedCertificateDetail: View {
       CertificateHeading(facts: facts, isIssued: false)
 
       Section {
-        CertificatePlusNotice()
-      }
-
-      Section {
         LockedCertificateCard(facts: facts)
           .listRowSeparator(.hidden)
       }
@@ -333,6 +329,18 @@ private struct LockedCertificateDetail: View {
       CertificateCovered(facts: facts)
     }
     .barTitleAfterHero(facts.name)
+    // The gate itself, since the learner opened the certificate: no card about a paid plan.
+    .bottomBar(
+      note: BarNote(
+        String(
+          localized: "Certificates need a subscription", table: "Certificates",
+          comment: "On a certificate a learner earned without a subscription"),
+        tone: .status)
+    ) {
+      SubscribeButton()
+        .buttonStyle(.mainAction)
+        .keyboardShortcut(.defaultAction)
+    }
   }
 }
 

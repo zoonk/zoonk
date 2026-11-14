@@ -1253,65 +1253,6 @@
         }
       }
     },
-    "Certificates come with Plus" : {
-      "comment" : "Title of the notice at the top of the learner's certificates without Plus",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zertifikate gibt es mit Plus"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus incluye certificados"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus inclut les certificats"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "I certificati sono inclusi in Plus"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plusなら証明書を受け取れます"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus로 인증서를 받을 수 있어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Certyfikaty w pakiecie Plus"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Certificados vêm com o Plus"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sertifikalar Plus’a dahil"
-          }
-        }
-      }
-    },
     "Certificates need a subscription" : {
       "comment" : "On a certificate a learner earned without a subscription",
       "localizations" : {
@@ -2190,65 +2131,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Derslerinin en az yarısını çalışarak bu seviyeyi tamamladığın için."
-          }
-        }
-      }
-    },
-    "Get your certificate with Plus" : {
-      "comment" : "Title of the notice on a certificate the learner earned without Plus",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit Plus bekommst du dein Zertifikat"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Obtén tu certificado con Plus"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Obtiens ton certificat avec Plus"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ottieni il tuo certificato con Plus"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plusで証明書を受け取る"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus로 인증서 받기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Odbierz certyfikat z pakietem Plus"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Receba seu certificado com o Plus"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus ile sertifikanı al"
           }
         }
       }
@@ -3986,65 +3868,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Testle geçilen dersler"
-          }
-        }
-      }
-    },
-    "Plus gives you a certificate for every level you finish, to print and share. Certificates you get stay yours if Plus ends." : {
-      "comment" : "What Plus does for certificates, on one the learner earned without Plus",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit Plus bekommst du für jedes abgeschlossene Level ein Zertifikat zum Ausdrucken und Teilen. Deine Zertifikate bleiben dir auch erhalten, wenn dein Plus-Abo endet."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus te da un certificado por cada nivel que completes, para imprimir y compartir. Los certificados que obtengas siguen siendo tuyos aunque termine tu suscripción a Plus."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Avec Plus, tu reçois un certificat à imprimer et à partager pour chaque niveau terminé. Tu conserves tes certificats même si ton abonnement Plus prend fin."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con Plus ricevi un certificato per ogni livello che completi, da stampare e condividere. I certificati che ottieni restano tuoi anche se non hai più Plus."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plusでは、レベルを終えるたびに、印刷や共有ができる証明書を受け取れます。受け取った証明書は、Plusの利用が終了してもそのまま残ります。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus를 이용하면 레벨을 마칠 때마다 인쇄하고 공유할 수 있는 인증서를 받아요. 받은 인증서는 Plus 이용이 끝나도 계속 보관할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "W pakiecie Plus za każdy ukończony poziom dostajesz certyfikat do wydrukowania i udostępnienia. Otrzymane certyfikaty zachowujesz, nawet gdy pakiet Plus wygaśnie."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O Plus te dá um certificado para cada nível que você conclui, para imprimir e compartilhar. Os certificados que você recebe continuam sendo seus mesmo se sua assinatura do Plus acabar."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus ile tamamladığın her seviye için yazdırıp paylaşabileceğin bir sertifika alırsın. Plus üyeliğin sona erse de aldığın sertifikalar sende kalır."
           }
         }
       }
