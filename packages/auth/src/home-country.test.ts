@@ -27,6 +27,32 @@ async function signUp(headers: Record<string, string>) {
   return { email, userId: result.user.id };
 }
 
+const GUEST_SETTINGS = {
+  buddyGlasses: "star",
+  buddyKind: "zu",
+  buddyName: "Pip",
+  learningNeeds: ["stepByStep"],
+  memoryEnabled: false,
+  shareUsageData: true,
+  soundsEnabled: false,
+} as const;
+
+/** A guest with every setting a sign-up carries over turned away from its default. */
+async function guestWithSettings(settings: { homeCountry?: string; memoryEnabled?: boolean } = {}) {
+  const guest = await guestAuth.api.signInAnonymous({ returnHeaders: true });
+
+  await prisma.userLearningProfile.create({
+    data: {
+      ...GUEST_SETTINGS,
+      learningNeeds: [...GUEST_SETTINGS.learningNeeds],
+      ...settings,
+      userId: guest.response.user.id,
+    },
+  });
+
+  return toCookieHeaders(guest.headers);
+}
+
 async function homeCountry(userId: string) {
   const profile = await prisma.userLearningProfile.findUnique({ where: { userId } });
   return profile?.homeCountry ?? null;
@@ -103,4 +129,51 @@ describe("home country from the sign-in's location", () => {
 
     await expect(homeCountry(account.user.id)).resolves.toBe("BR");
   });
+
+  it.each([{ country: "US" }, { country: null }])(
+    "carries a guest's settings into the account they create (country $country)",
+    async ({ country }) => {
+      const headers = await guestWithSettings();
+
+      if (country) {
+        headers.set("x-vercel-ip-country", country);
+      }
+
+      const account = await guestAuth.api.signUpEmail({
+        body: { email: createTestEmail(), name: "Home", password: PASSWORD },
+        headers,
+      });
+
+      await expect(
+        prisma.userLearningProfile.findUniqueOrThrow({ where: { userId: account.user.id } }),
+      ).resolves.toMatchObject({ ...GUEST_SETTINGS, homeCountry: country });
+    },
+  );
+
+  it.each([
+    { account: true, guest: false },
+    { account: false, guest: true },
+  ])(
+    "keeps an existing account's Memory ($account) when it signs in from a guest ($guest)",
+    async ({ account, guest }) => {
+      const email = createTestEmail();
+
+      const created = await guestAuth.api.signUpEmail({
+        body: { email, name: "Home", password: PASSWORD },
+      });
+
+      await prisma.userLearningProfile.create({
+        data: { memoryEnabled: account, userId: created.user.id },
+      });
+
+      const headers = await guestWithSettings({ memoryEnabled: guest });
+      headers.set("x-vercel-ip-country", "US");
+
+      await guestAuth.api.signInEmail({ body: { email, password: PASSWORD }, headers });
+
+      await expect(
+        prisma.userLearningProfile.findUniqueOrThrow({ where: { userId: created.user.id } }),
+      ).resolves.toMatchObject({ homeCountry: "US", memoryEnabled: account });
+    },
+  );
 });
