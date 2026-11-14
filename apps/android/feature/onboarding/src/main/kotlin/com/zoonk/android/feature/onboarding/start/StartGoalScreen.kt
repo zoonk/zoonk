@@ -163,7 +163,8 @@ fun StartGoalScreen(
         },
     ) { padding ->
         PageWithSupportingPane(
-            supportingPane = { HowItWorks(hasAccount = canAttach) },
+            // At the goals-at-once limit the page is only the gate, as main drops its rail there.
+            supportingPane = if (upFront == GoalLimitReason.ActiveGoals) null else ({ HowItWorks(hasAccount = canAttach) }),
             modifier = Modifier.padding(padding).consumeWindowInsets(padding),
         ) { _ ->
             StartColumn {
@@ -172,8 +173,12 @@ fun StartGoalScreen(
                         GuestGoalGate(actions.createAccount, onBackToToday = { navigator.showRoot(AppTab.Today) })
                     }
 
+                    upFront == GoalLimitReason.ActiveGoals && screen == StartScreen.Entry -> {
+                        GoalLimitScreen(onSubscribe = actions.subscribe, onOpenPlan = actions.openPlan)
+                    }
+
                     screen == StartScreen.Entry -> {
-                        Entry(vm, route, canAttach, upFront, language, actions)
+                        Entry(vm, route, canAttach, language, actions)
                     }
 
                     screen == StartScreen.Questions -> {
@@ -233,7 +238,6 @@ private fun ColumnScope.Entry(
     vm: StartGoalViewModel,
     route: AppRoute.StartGoal,
     canAttach: Boolean,
-    upFront: GoalLimitReason?,
     language: String,
     actions: StartActions,
 ) {
@@ -245,12 +249,6 @@ private fun ColumnScope.Entry(
         stringResource(R.string.onboarding_start_title),
         stringResource(if (route.planId != null) R.string.onboarding_start_description_shared else R.string.onboarding_start_description),
     )
-
-    // At the goals-at-once limit the page is only the gate; a month's cap waits for the learner to try (A-057).
-    if (upFront == GoalLimitReason.ActiveGoals) {
-        GoalLimitNotice(upFront, onOpenPlan = actions.openPlan, onSubscribe = actions.subscribe)
-        return
-    }
 
     GoalBox(
         value = flow.words,
