@@ -10,7 +10,8 @@ protocol TutorAPIClient: Sendable {
   func answer(questionId: String, token: String) -> AsyncThrowingStream<TutorAnswerEvent, Error>
   func question(id: String, token: String) async throws -> TutorTurn
   func decidePlanChange(
-    goalId: String, changeId: String, decision: PlanChangeDecision, token: String
+    goalId: String, changeId: String, decision: PlanChangeDecision, quote: PlanChangeQuote?,
+    token: String
   ) async throws -> Components.Schemas.PlanChange
   /// False when one of the changes was undone or changed since.
   func undoMemoryChanges(_ changes: [TutorMemoryChange], token: String) async throws -> Bool
@@ -22,6 +23,28 @@ enum PlanChangeDecision: String, Sendable {
   case undone
   /// Keeps the plan as the change left it, and stops asking.
   case seen
+}
+
+/// Which numbers a proposed change showed (its `quote`, opaque). An accept sends it back as it
+/// came: core applies only those numbers, and otherwise answers with the change still proposed,
+/// today's numbers and a new quote, for the learner to answer again.
+typealias PlanChangeQuote = String
+
+/// `PlanChangeDecisionInput`. An accept carries the quote the learner saw.
+struct PlanChangeDecisionBody: Encodable {
+  let status: String
+  var timeZone: String? = TimeZone.current.identifier
+  let quote: PlanChangeQuote?
+
+  init(_ decision: PlanChangeDecision, quote: PlanChangeQuote?, timeZone: String? = nil) {
+    status = decision.rawValue
+    self.quote = quote
+    self.timeZone = timeZone ?? TimeZone.current.identifier
+  }
+
+  var input: Components.Schemas.PlanChangeDecisionInput {
+    get throws { try StudyJSON.recode(self) }
+  }
 }
 
 struct TutorAPI: TutorAPIClient {
@@ -116,12 +139,14 @@ struct TutorAPI: TutorAPIClient {
   }
 
   func decidePlanChange(
-    goalId: String, changeId: String, decision: PlanChangeDecision, token: String
+    goalId: String, changeId: String, decision: PlanChangeDecision, quote: PlanChangeQuote?,
+    token: String
   ) async throws -> Components.Schemas.PlanChange {
-    try await clients.perform(token: token) { client in
+    let body = try PlanChangeDecisionBody(decision, quote: quote).input
+
+    return try await clients.perform(token: token) { client in
       let output = try await client.decidePlanChange(
-        path: .init(goalId: goalId, changeId: changeId),
-        body: .json(.init(status: .init(rawValue: decision.rawValue) ?? .declined)))
+        path: .init(goalId: goalId, changeId: changeId), body: .json(body))
 
       switch output {
       case .ok(let response):

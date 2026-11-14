@@ -401,7 +401,7 @@ struct ScheduleQuestion: View {
   /// The change re-plans, so the question's answers are read again for the new aim.
   private func changeAim(_ aim: String) async -> Bool {
     switch await plans.change(goalId: view.goal.id, edits: [.aim(aim)]) {
-    case .done(.applied), .done(.unchanged), .done(.undone):
+    case .done(.applied), .done(.saved), .done(.unchanged), .done(.undone):
       await onboarding.onboarding(goalID: view.goal.id).refresh()
       return true
     case .done(.invalid), .failed, .obsolete:
