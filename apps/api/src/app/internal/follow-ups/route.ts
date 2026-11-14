@@ -4,6 +4,8 @@ import { withApiErrorBoundary } from "@/lib/api-handler";
 import { readBody } from "@/lib/request-input";
 import { startOnce } from "@/workflows/_shared/run-token";
 import { followUpsWorkflow, getFollowUpsToken } from "@/workflows/follow-ups/follow-ups-workflow";
+import { getChapterMindMapToken } from "@/workflows/mind-maps/chapter-mind-map-input";
+import { chapterMindMapWorkflow } from "@/workflows/mind-maps/chapter-mind-map-workflow";
 import { FOLLOW_UP_SECRET_HEADER } from "@zoonk/core/follow-ups/contract";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { NextResponse } from "next/server";
@@ -11,7 +13,10 @@ import { z } from "zod";
 
 const ACCEPTED = 202;
 
-const followUpsRequestSchema = z.object({ userId: uuidSchema() });
+const followUpsRequestSchema = z.union([
+  z.object({ userId: uuidSchema() }),
+  z.object({ chapterId: uuidSchema() }),
+]);
 
 /** Fixed-size digests keep the comparison constant-time even when the lengths differ. */
 function hasFollowUpSecret(request: Request): boolean {
@@ -34,8 +39,16 @@ async function acceptFollowUps(request: Request) {
     return errors.unauthorized();
   }
 
-  const { userId } = await readBody(request, followUpsRequestSchema);
-  const runId = await startOnce(followUpsWorkflow, [{ userId }], getFollowUpsToken(userId));
+  const input = await readBody(request, followUpsRequestSchema);
+
+  const runId =
+    "chapterId" in input
+      ? await startOnce(
+          chapterMindMapWorkflow,
+          [{ chapterId: input.chapterId, redraw: true }],
+          getChapterMindMapToken(input.chapterId),
+        )
+      : await startOnce(followUpsWorkflow, [input], getFollowUpsToken(input.userId));
 
   return NextResponse.json({ runId }, { status: ACCEPTED });
 }

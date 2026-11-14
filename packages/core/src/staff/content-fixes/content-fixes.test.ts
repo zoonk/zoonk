@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
-import { STAFF_PROPOSE_SCOPE, STAFF_READ_SCOPE } from "@zoonk/auth/cli-login-contract";
-import { type Step, prisma } from "@zoonk/db";
+import { STAFF_READ_SCOPE } from "@zoonk/auth/cli-login-contract";
+import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
@@ -21,99 +21,29 @@ import {
 import { mockSession } from "../../_test-utils/mock-session";
 import { getSession } from "../../users/get-session";
 import {
-  approveContentFix,
-  getContentFixApprovalOptions,
-  rejectContentFix,
-} from "./decide-content-fix";
+  PROPOSE_SCOPES,
+  approve,
+  approveFix,
+  fixedQuestion,
+  intro,
+  optionsFor,
+  proposeFix,
+  publishedLesson,
+  question,
+  rejectFix,
+  rename,
+  revertFix,
+  revertInAdmin,
+  signInApprover,
+  signInProposer,
+} from "./_test-utils/content-fix-steps";
+import { approveContentFixes } from "./decide-content-fix";
 import {
   proposeContentFix,
   proposeContentFixRevert,
   proposeContentFixRevertInAdmin,
 } from "./propose-content-fix";
-
-const PROPOSE_SCOPES = [STAFF_READ_SCOPE, STAFF_PROPOSE_SCOPE, "offline_access"];
-
-const intro = { text: "Two and two make four.", title: "Adding" };
-
-const question = {
-  basis: { position: 0, quote: "Two and two make four." },
-  options: [
-    { id: "a", isCorrect: true, reason: "Two and two make four.", text: "4" },
-    { id: "b", isCorrect: false, reason: "That's two and three.", text: "5" },
-  ],
-  question: "What is 2 + 2?",
-};
-
-async function signInProposer(scopes = PROPOSE_SCOPES) {
-  const user = await userFixture({ role: "admin" });
-  const { accessToken } = await cliTokenFixture({ scopes, user });
-  vi.mocked(headers).mockResolvedValue(new Headers({ authorization: `Bearer ${accessToken}` }));
-  return user;
-}
-
-async function signInApprover() {
-  const user = await userFixture({ role: "admin" });
-  const key = await passkeyFixture(user.id);
-  mockSession(user.id);
-  return { key, user };
-}
-
-async function publishedLesson() {
-  const lesson = await libraryLessonFixture({ contentStatus: "completed" });
-
-  const [reading, check] = await Promise.all([
-    libraryStepFixture({ content: intro, lessonId: lesson.id, position: 0 }),
-    libraryStepFixture({ content: question, kind: "check", lessonId: lesson.id, position: 1 }),
-  ]);
-
-  return { check, lesson, reading };
-}
-
-function fixedQuestion(step: Pick<Step, "id">) {
-  return {
-    changes: [
-      {
-        id: step.id,
-        model: "Step",
-        set: { content: { ...question, question: "What is 2 plus 2?" } },
-      },
-    ],
-    reason: "Spell out the operation for screen readers.",
-  };
-}
-
-function rename(id: string, title: string) {
-  return { id, model: "Lesson", set: { title } };
-}
-
-async function proposeFix(input: unknown) {
-  const result = await proposeContentFix(input);
-
-  if (result.status !== "proposed") {
-    throw new Error(`Expected a proposal, got ${JSON.stringify(result)}`);
-  }
-
-  return result.fix;
-}
-
-async function approve({
-  fixId,
-  key,
-}: {
-  fixId: string;
-  key: Awaited<ReturnType<typeof passkeyFixture>>;
-}) {
-  const options = await getContentFixApprovalOptions(fixId);
-
-  if (options.status !== "ready") {
-    throw new Error(`Expected approval options, got ${JSON.stringify(options)}`);
-  }
-
-  return approveContentFix({
-    assertion: signApproval({ challenge: options.options.challenge, key }),
-    fixId,
-  });
-}
+import { rejectContentFix } from "./reject-content-fix";
 
 describe(proposeContentFix, () => {
   it("records the server's own before and after and changes nothing yet", async () => {
@@ -307,7 +237,7 @@ describe(proposeContentFix, () => {
   });
 });
 
-describe(approveContentFix, () => {
+describe(approveContentFixes, () => {
   it("applies exactly the stored change once a staff passkey signs this fix's challenge", async () => {
     const { check, lesson } = await publishedLesson();
     const learner = await userFixture();
@@ -349,7 +279,7 @@ describe(approveContentFix, () => {
     expect(after.updatedAt.getTime()).toBeGreaterThan(lesson.updatedAt.getTime());
 
     await expect(
-      approveContentFix({ assertion: signApproval({ challenge: "used", key }), fixId: fix.id }),
+      approveFix({ assertion: signApproval({ challenge: "used", key }), fixId: fix.id }),
     ).resolves.toMatchObject({
       cacheNotified: null,
       fix: { status: "applied" },
@@ -407,7 +337,7 @@ describe(approveContentFix, () => {
     await signInProposer();
     const fix = await proposeFix(fixedQuestion(check));
     const { key } = await signInApprover();
-    const options = await getContentFixApprovalOptions(fix.id);
+    const options = await optionsFor(fix.id);
 
     if (options.status !== "ready") {
       throw new Error("Expected approval options");
@@ -416,13 +346,13 @@ describe(approveContentFix, () => {
     const assertion = signApproval({ challenge: options.options.challenge, key });
 
     const results = await Promise.all([
-      approveContentFix({ assertion, fixId: fix.id }),
-      approveContentFix({ assertion, fixId: fix.id }),
+      approveFix({ assertion, fixId: fix.id }),
+      approveFix({ assertion, fixId: fix.id }),
     ]);
 
-    expect(results.map((result) => result.status === "decided" && result.fix.status)).toStrictEqual(
-      ["applied", "applied"],
-    );
+    expect(
+      results.map((result) => result.status === "decided" && result.fix?.status),
+    ).toStrictEqual(["applied", "applied"]);
 
     expect(
       results.filter((result) => result.status === "decided" && result.cacheNotified === true),
@@ -442,14 +372,14 @@ describe(approveContentFix, () => {
     await signInProposer();
     const fix = await proposeFix(fixedQuestion(check));
     const { key } = await signInApprover();
-    const options = await getContentFixApprovalOptions(fix.id);
+    const options = await optionsFor(fix.id);
 
     if (options.status !== "ready") {
       throw new Error("Expected approval options");
     }
 
     await expect(
-      approveContentFix({
+      approveFix({
         assertion: signApproval({ challenge: options.options.challenge, key, ...overrides }),
         fixId: fix.id,
       }),
@@ -467,14 +397,14 @@ describe(approveContentFix, () => {
     const other = await userFixture({ role: "admin" });
     const othersKey = await passkeyFixture(other.id);
     await signInApprover();
-    const options = await getContentFixApprovalOptions(fix.id);
+    const options = await optionsFor(fix.id);
 
     if (options.status !== "ready") {
       throw new Error("Expected approval options");
     }
 
     await expect(
-      approveContentFix({
+      approveFix({
         assertion: signApproval({ challenge: options.options.challenge, key: othersKey }),
         fixId: fix.id,
       }),
@@ -483,9 +413,7 @@ describe(approveContentFix, () => {
     const withoutPasskey = await userFixture({ role: "admin" });
     mockSession(withoutPasskey.id);
 
-    await expect(getContentFixApprovalOptions(fix.id)).resolves.toStrictEqual({
-      status: "needsPasskey",
-    });
+    await expect(optionsFor(fix.id)).resolves.toStrictEqual({ status: "needsPasskey" });
   });
 
   it("refuses a learner's session and a missing session", async () => {
@@ -496,12 +424,10 @@ describe(approveContentFix, () => {
 
     mockSession(learner.id);
 
-    await expect(getContentFixApprovalOptions(fix.id)).resolves.toStrictEqual({
-      status: "forbidden",
-    });
+    await expect(optionsFor(fix.id)).resolves.toStrictEqual({ status: "forbidden" });
 
     mockSession(null);
-    await expect(rejectContentFix(fix.id)).resolves.toStrictEqual({ status: "unauthorized" });
+    await expect(rejectFix(fix.id)).resolves.toStrictEqual({ status: "unauthorized" });
   });
 
   it("reports an applied fix whose cache notice failed", async () => {
@@ -608,13 +534,13 @@ describe(rejectContentFix, () => {
     const fix = await proposeFix(fixedQuestion(check));
     const { key, user } = await signInApprover();
 
-    await expect(rejectContentFix(fix.id)).resolves.toMatchObject({
+    await expect(rejectFix(fix.id)).resolves.toMatchObject({
       fix: { status: "rejected" },
       status: "decided",
     });
 
     await expect(
-      approveContentFix({ assertion: signApproval({ challenge: "any", key }), fixId: fix.id }),
+      approveFix({ assertion: signApproval({ challenge: "any", key }), fixId: fix.id }),
     ).resolves.toMatchObject({ fix: { status: "rejected" }, status: "decided" });
 
     await expect(
@@ -633,10 +559,7 @@ describe(proposeContentFixRevert, () => {
 
     await signInProposer();
 
-    const revert = await proposeContentFixRevert({
-      fixId: fix.id,
-      reason: "The old wording tested better.",
-    });
+    const revert = await revertFix({ fixId: fix.id, reason: "The old wording tested better." });
 
     expect(revert).toMatchObject({
       fix: {
@@ -647,9 +570,9 @@ describe(proposeContentFixRevert, () => {
       status: "proposed",
     });
 
-    await expect(
-      proposeContentFixRevert({ fixId: randomUUID(), reason: "Undo." }),
-    ).resolves.toMatchObject({ status: "notFound" });
+    await expect(revertFix({ fixId: randomUUID(), reason: "Undo." })).resolves.toMatchObject({
+      status: "notFound",
+    });
   });
 
   it("puts a detached picture back on its screen", async () => {
@@ -674,10 +597,7 @@ describe(proposeContentFixRevert, () => {
     await approve({ fixId: detach.id, key });
     await signInProposer();
 
-    const revert = await proposeContentFixRevert({
-      fixId: detach.id,
-      reason: "It was the right picture.",
-    });
+    const revert = await revertFix({ fixId: detach.id, reason: "It was the right picture." });
 
     expect(revert).toMatchObject({
       fix: {
@@ -717,8 +637,8 @@ describe(proposeContentFixRevert, () => {
     await signInProposer();
 
     const [first, second] = await Promise.all([
-      proposeContentFixRevert({ fixId: retire.id, reason: "The key was right." }),
-      proposeContentFixRevert({ fixId: retire.id, reason: "The key was right after all." }),
+      revertFix({ fixId: retire.id, reason: "The key was right." }),
+      revertFix({ fixId: retire.id, reason: "The key was right after all." }),
     ]);
 
     if (first.status !== "proposed" || second.status !== "proposed") {
@@ -752,7 +672,7 @@ describe(proposeContentFixRevertInAdmin, () => {
     await approve({ fixId: fix.id, key });
     vi.mocked(headers).mockResolvedValue(new Headers());
 
-    const revert = await proposeContentFixRevertInAdmin({ fixId: fix.id, reason: "Undo it." });
+    const revert = await revertInAdmin({ fixId: fix.id, reason: "Undo it." });
 
     expect(revert).toMatchObject({ fix: { revertsId: fix.id }, status: "proposed" });
 
@@ -771,9 +691,9 @@ describe(proposeContentFixRevertInAdmin, () => {
     const learner = await userFixture();
     mockSession(learner.id);
 
-    await expect(
-      proposeContentFixRevertInAdmin({ fixId: fix.id, reason: "Undo it." }),
-    ).resolves.toStrictEqual({ status: "forbidden" });
+    await expect(revertInAdmin({ fixId: fix.id, reason: "Undo it." })).resolves.toStrictEqual({
+      status: "forbidden",
+    });
   });
 });
 
@@ -797,15 +717,9 @@ describe("content fix approval regressions", () => {
       const approver = await signInApprover();
       await approve({ fixId: removal.id, key: approver.key });
 
-      const oldRevert = await proposeContentFixRevertInAdmin({
-        fixId: removal.id,
-        reason: "Undo first removal",
-      });
+      const oldRevert = await revertInAdmin({ fixId: removal.id, reason: "Undo first removal" });
 
-      const immediate = await proposeContentFixRevertInAdmin({
-        fixId: removal.id,
-        reason: "Restore now",
-      });
+      const immediate = await revertInAdmin({ fixId: removal.id, reason: "Restore now" });
 
       if (oldRevert.status !== "proposed" || immediate.status !== "proposed") {
         throw new Error("Expected proposals");
@@ -840,7 +754,7 @@ describe("content fix approval regressions", () => {
     await signInProposer();
     const fix = await proposeFix({ changes: [rename(lesson.id, "Fixed title")], reason: "Typo" });
     const { user, key } = await signInApprover();
-    const options = await getContentFixApprovalOptions(fix.id);
+    const options = await optionsFor(fix.id);
 
     if (options.status !== "ready") {
       throw new Error("Expected options");
@@ -857,12 +771,10 @@ describe("content fix approval regressions", () => {
       session: { ...session.session, impersonatedBy: user.id },
     });
 
-    await expect(getContentFixApprovalOptions(fix.id)).resolves.toStrictEqual({
-      status: "forbidden",
-    });
+    await expect(optionsFor(fix.id)).resolves.toStrictEqual({ status: "forbidden" });
 
     await expect(
-      approveContentFix({
+      approveFix({
         assertion: signApproval({ challenge: options.options.challenge, key }),
         fixId: fix.id,
       }),
@@ -902,7 +814,7 @@ describe("stale removal reverts", () => {
       const approver = await signInApprover();
       await approve({ fixId: firstRemoval.id, key: approver.key });
 
-      const firstRestore = await proposeContentFixRevertInAdmin({
+      const firstRestore = await revertInAdmin({
         fixId: firstRemoval.id,
         reason: "Undo first removal",
       });
@@ -913,7 +825,7 @@ describe("stale removal reverts", () => {
 
       await approve({ fixId: firstRestore.fix.id, key: approver.key });
 
-      const oldUndoOfRestore = await proposeContentFixRevertInAdmin({
+      const oldUndoOfRestore = await revertInAdmin({
         fixId: firstRestore.fix.id,
         reason: "Undo the first restore",
       });
@@ -927,7 +839,7 @@ describe("stale removal reverts", () => {
       mockSession(approver.user.id);
       await approve({ fixId: newerRemoval.id, key: approver.key });
 
-      const newerRestore = await proposeContentFixRevertInAdmin({
+      const newerRestore = await revertInAdmin({
         fixId: newerRemoval.id,
         reason: "Newer removal was a mistake; keep it",
       });
@@ -987,8 +899,8 @@ describe("stale removal reverts", () => {
     mockSession(approver.user.id);
     await approve({ fixId: later.id, key: approver.key });
 
-    const undoTitle = await proposeContentFixRevertInAdmin({ fixId: title.id, reason: "Undo" });
-    const undoDetach = await proposeContentFixRevertInAdmin({ fixId: detach.id, reason: "Undo" });
+    const undoTitle = await revertInAdmin({ fixId: title.id, reason: "Undo" });
+    const undoDetach = await revertInAdmin({ fixId: detach.id, reason: "Undo" });
 
     if (undoTitle.status !== "proposed" || undoDetach.status !== "proposed") {
       throw new Error("Expected both reverts to be proposed");
@@ -1026,7 +938,7 @@ describe("stale removal reverts", () => {
     const approver = await signInApprover();
     await approve({ fixId: removal.id, key: approver.key });
 
-    const restore = await proposeContentFixRevertInAdmin({ fixId: removal.id, reason: "Undo" });
+    const restore = await revertInAdmin({ fixId: removal.id, reason: "Undo" });
 
     if (restore.status !== "proposed") {
       throw new Error("Expected restore");
@@ -1039,7 +951,7 @@ describe("stale removal reverts", () => {
     mockSession(approver.user.id);
     await approve({ fixId: newerRemoval.id, key: approver.key });
 
-    const late = await proposeContentFixRevertInAdmin({ fixId: removal.id, reason: "Old undo" });
+    const late = await revertInAdmin({ fixId: removal.id, reason: "Old undo" });
 
     if (late.status !== "proposed") {
       throw new Error("Expected late revert");
@@ -1074,7 +986,7 @@ describe("course descriptions", () => {
     const approver = await signInApprover();
     await approve({ fixId: added.id, key: approver.key });
 
-    const undo = await proposeContentFixRevertInAdmin({ fixId: added.id, reason: "Undo" });
+    const undo = await revertInAdmin({ fixId: added.id, reason: "Undo" });
 
     if (undo.status !== "proposed") {
       throw new Error(`Expected a revert, got ${JSON.stringify(undo)}`);

@@ -177,6 +177,7 @@ internal val gallerySections =
         GallerySection("Answer tones") { Answers() },
         GallerySection("Lesson visuals") { LessonVisuals() },
         GallerySection("Question choices") { QuestionChoices() },
+        GallerySection("Question math") { QuestionMath() },
         GallerySection("Question statements") { QuestionStatements() },
         GallerySection("Question order and pairs") { QuestionOrderAndPairs() },
         GallerySection("Question fields") { QuestionFields() },

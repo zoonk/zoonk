@@ -111,6 +111,39 @@ describe(checkMathProblem, () => {
     ]);
   });
 
+  it("keeps a value's placeholder outside math, where LaTeX braces stay free", () => {
+    const math = {
+      ...discountMath,
+      steps: [
+        {
+          expression: "price * discount / 100",
+          text: String.raw`$d = \frac{1}{100} \cdot {price}$ gives {result}.`,
+        },
+        { expression: "price * (1 - discount / 100)", text: "You pay $= {result}$." },
+      ],
+    };
+
+    expect(
+      checkMathProblem({
+        math,
+        question: String.raw`A shirt costs {price} and is $\frac{{discount}}{100}$ off.`,
+      }),
+    ).toStrictEqual([
+      "Puts {discount} inside $…$. Write a value's placeholder outside the formula.",
+      "Puts {price} inside $…$. Write a value's placeholder outside the formula.",
+      "Puts {result} inside $…$. Write a value's placeholder outside the formula.",
+    ]);
+
+    const outside = {
+      ...discountMath,
+      steps: [
+        { ...discountMath.steps[0]!, text: String.raw`$\frac{1}{4}$ of {price} is {result}.` },
+      ],
+    };
+
+    expect(checkMathProblem({ math: outside, question })).toStrictEqual([]);
+  });
+
   it("reserves the result placeholder name", () => {
     const math: GeneratedMathProblem = {
       ...discountMath,

@@ -84,7 +84,7 @@ private struct SetTextView: View {
       }
 
       if let text = set.text {
-        ItemText(text)
+        LessonTextBlocks(text)
           .typeStyle(.reading)
           .lineLimit(expanded ? nil : 4)
       }
@@ -132,7 +132,7 @@ struct ItemSupportView: View {
 
   var body: some View {
     if let context {
-      ItemText(context).typeStyle(.reading).foregroundStyle(.mutedForeground)
+      LessonTextBlocks(context).typeStyle(.reading).foregroundStyle(.mutedForeground)
     }
 
     if let image, let url = URL(string: image.url) {
@@ -314,7 +314,7 @@ private struct ListeningPlayerView: View {
       }
 
       if let task = listening.task {
-        ItemText(task).typeStyle(.reading)
+        LessonTextBlocks(task).typeStyle(.reading)
       }
 
       Text(rule(answered: answered, playsLeft: playsLeft, isPlaying: isPlaying))
@@ -354,7 +354,7 @@ private struct ListeningPlayerView: View {
         DisclosureGroup(isExpanded: questionsExpanded) {
           VStack(alignment: .leading, spacing: 6) {
             ForEach(Array(questions.prompts.enumerated()), id: \.offset) { index, prompt in
-              Text("\(index + 1). \(ItemTextBlock.plain(prompt))")
+              LessonRichText("\(index + 1). \(prompt)")
                 .typeStyle(.note.weight(index == questions.current ? .medium : .regular))
                 .foregroundStyle(index == questions.current ? Color(.foreground) : .mutedForeground)
             }

@@ -217,7 +217,8 @@ struct MockResultView: View {
   @ViewBuilder
   private var reviewSections: some View {
     if !view.review.isEmpty {
-      MockReviewSection(items: view.review, opened: $choices.opened)
+      MockReviewSection(
+        items: view.review, labels: view.trueFalseLabels, opened: $choices.opened)
     }
 
   }
@@ -756,7 +757,7 @@ private struct MockEssaySections: View {
   var body: some View {
     Section {
       VStack(alignment: .leading, spacing: 6) {
-        Text(essay.question)
+        LessonTextBlocks(essay.question)
           .typeStyle(.body.weight(.semibold))
         status
       }
@@ -1141,6 +1142,7 @@ private struct MockReviewSection: View {
   @Environment(\.reviewRows) private var rows
 
   let items: [MockReviewItem]
+  let labels: PracticeTrueFalseLabels
   @Binding var opened: Set<String>
 
   var body: some View {
@@ -1149,22 +1151,26 @@ private struct MockReviewSection: View {
         DisclosureGroup(isExpanded: $opened.contains("review:\(item.id)")) {
           VStack(alignment: .leading, spacing: 8) {
             if let context = item.context {
-              ItemText(context).typeStyle(.reading).foregroundStyle(.mutedForeground)
+              LessonTextBlocks(context).typeStyle(.reading).foregroundStyle(.mutedForeground)
             }
-            ItemText(item.question)
+            LessonTextBlocks(item.question)
             if item.outcome == .blank {
               Text("You left it blank.", tableName: "Mock", comment: "A blank question")
                 .foregroundStyle(.mutedForeground)
-            } else if let answer = item.learnerAnswer {
+            } else if let answer = TrueFalseWords.savedAnswer(
+              item.learnerAnswer, format: item.format, labels: labels)
+            {
               Label {
-                Text(answer)
+                answerText(answer, of: item)
               } icon: {
                 Image(systemName: "xmark").foregroundStyle(.destructive)
               }
             }
-            if let correct = item.correctAnswer {
+            if let correct = TrueFalseWords.savedAnswer(
+              item.correctAnswer, format: item.format, labels: labels)
+            {
               Label {
-                Text(correct)
+                answerText(correct, of: item)
               } icon: {
                 Image(systemName: "checkmark").foregroundStyle(.success)
               }
@@ -1177,7 +1183,7 @@ private struct MockReviewSection: View {
               .foregroundStyle(.mutedForeground)
             }
             if let explanation = item.explanation {
-              ItemText(explanation).typeStyle(.reading).foregroundStyle(.mutedForeground)
+              LessonTextBlocks(explanation).typeStyle(.reading).foregroundStyle(.mutedForeground)
             }
             if let citation = item.citation {
               CitationNote(citation: citation)
@@ -1199,7 +1205,7 @@ private struct MockReviewSection: View {
               }
             }
             .padding(.bottom, 4)
-            Text(ItemTextBlock.plain(item.question))
+            LessonRichText(item.question)
               .lineLimit(2)
           }
         }
@@ -1211,6 +1217,16 @@ private struct MockReviewSection: View {
         Text("Questions to review", tableName: "Mock", comment: "The mock's questions to review")
       )
       .onScrollVisibilityChange(threshold: 0.5) { rows?.update(reviewHeader, isShown: $0) }
+    }
+  }
+
+  /// A typed answer is plain text, so `__init__` keeps its underscores.
+  @ViewBuilder
+  private func answerText(_ text: String, of item: MockReviewItem) -> some View {
+    if item.format == "typed" {
+      Text(verbatim: text)
+    } else {
+      LessonRichText(text)
     }
   }
 }

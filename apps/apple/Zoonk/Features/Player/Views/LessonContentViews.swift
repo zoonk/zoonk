@@ -24,9 +24,11 @@ struct LessonRichText: View {
     }
   }
 
+  /// Text that isn't valid Markdown stays as written.
   private static func markdown(_ text: String, literalNumbers: Bool) -> RichInline {
     let options = AttributedString.MarkdownParsingOptions(
-      interpretedSyntax: .inlineOnlyPreservingWhitespace)
+      interpretedSyntax: .inlineOnlyPreservingWhitespace,
+      failurePolicy: .returnPartiallyParsedIfPossible)
     let parsed = (try? AttributedString(markdown: text, options: options)) ?? AttributedString(text)
     return RichInline(text: literalNumbers ? parsed : RichTextTypography.typesetNumbers(in: parsed))
   }

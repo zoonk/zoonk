@@ -6,12 +6,12 @@ import {
 } from "@/components/admin-table-columns";
 import { AdminTableRow } from "@/components/admin-table-row";
 import { AdminTabs } from "@/components/admin-tabs";
-import { StateMark } from "@/components/state-mark";
 import { type ContentFixListItem, listContentFixes } from "@/data/content-fixes/list-content-fixes";
 import { formatDate } from "@/lib/format";
 import { readQueryParam } from "@/lib/query-param";
 import { TableCell } from "@zoonk/ui/components/table";
-import { contentFixStatusLabels, contentFixStatusTones } from "./content-fix-status";
+import Link from "next/link";
+import { ContentFixStatusMark, contentFixState } from "./content-fix-status";
 
 type SearchParams = PageProps<"/content-fixes">["searchParams"];
 
@@ -60,7 +60,17 @@ function FixCell({ fix }: { fix: ContentFixListItem }) {
       href={`/content-fixes/${fix.id}`}
       note={fix.location.trail.join(" › ") || "Content that was deleted"}
       title={fix.revertsId ? `Undo: ${fix.reason}` : fix.reason}
-    />
+    >
+      {fix.batchSize > 1 && (
+        <Link
+          className="text-muted-foreground block text-xs hover:underline"
+          href={`/content-fixes/batches/${fix.batchId}`}
+          prefetch
+        >
+          One of {fix.batchSize} proposed together
+        </Link>
+      )}
+    </AdminNameCell>
   );
 }
 
@@ -81,9 +91,7 @@ export async function ContentFixList({ searchParams }: { searchParams: SearchPar
           <AdminTableRow key={fix.id}>
             <FixCell fix={fix} />
             <TableCell>
-              <StateMark state={fix.status} tone={contentFixStatusTones[fix.status]}>
-                {contentFixStatusLabels[fix.status]}
-              </StateMark>
+              <ContentFixStatusMark state={contentFixState(fix)} />
             </TableCell>
             <TableCell>{fix.decider?.name}</TableCell>
             <TableCell>{fix.decidedAt ? formatDate(fix.decidedAt) : null}</TableCell>

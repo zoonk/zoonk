@@ -366,7 +366,16 @@ private fun ReviewAnswer(
         }
         TagBesideOrUnder(
             modifier = Modifier.weight(1f),
-            content = { ItemLine(if (statement) trueFalseLabel(isTrue, words) else answer) },
+            content = {
+                when {
+                    statement -> ItemLine(trueFalseLabel(isTrue, words))
+
+                    // A typed answer is plain text, so `__init__` keeps its underscores.
+                    entry.format == MockExamReviewInner.Format.TYPED -> Text(answer)
+
+                    else -> ItemLine(answer)
+                }
+            },
             tag = { AnswerTag(picked = !right, result = result) },
         )
     }

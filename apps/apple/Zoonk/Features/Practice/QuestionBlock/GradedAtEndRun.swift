@@ -265,7 +265,6 @@ struct PracticeQuestionsPreparingView: View {
   let isWriting: Bool
   var failure: (any Error)?
   let start: () -> Void
-  @Environment(\.practiceHooks) private var hooks
   @AccessibilityFocusState private var focus: Focus?
 
   private enum Focus { case notice, start, title }
@@ -293,11 +292,7 @@ struct PracticeQuestionsPreparingView: View {
           ProgressView().padding(.top, 8)
         }
 
-        if isPlusRequired {
-          FreeWeekOverNotice(showsSeePlus: false)
-            .accessibilityElement(children: .combine)
-            .accessibilityFocused($focus, equals: .notice)
-        } else if failure != nil, limit == nil {
+        if failure != nil, limit == nil {
           FailureLine(
             message: LocalizedStringResource(
               "We couldn't write your test. Try again.", table: "Practice",
@@ -307,32 +302,21 @@ struct PracticeQuestionsPreparingView: View {
         }
       }
     } actions: {
-      if isPlusRequired {
+      if let limit {
+        LimitNotice(limit: limit)
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .accessibilityElement(children: .combine)
+          .accessibilityFocused($focus, equals: .notice)
+      }
+
+      if !isWriting, limit?.isShortBreak ?? true {
         PracticeMainButton(
           title: LocalizedStringResource(
-            "See Plus", table: "Practice",
-            comment: "Opens the Zoonk Plus subscription; Plus is its name, not \"more\"."),
-          icon: .forward
-        ) {
-          hooks.navigate(.subscription)
-        }
-      } else {
-        if let limit {
-          LimitNotice(limit: limit)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .accessibilityElement(children: .combine)
-            .accessibilityFocused($focus, equals: .notice)
-        }
-
-        if !isWriting, limit?.isShortBreak ?? true {
-          PracticeMainButton(
-            title: LocalizedStringResource(
-              "Start the test", table: "Practice",
-              comment: "Asks for a test's questions and starts it."),
-            icon: .play, isBusy: isStarting, action: start
-          )
-          .accessibilityFocused($focus, equals: .start)
-        }
+            "Start the test", table: "Practice",
+            comment: "Asks for a test's questions and starts it."),
+          icon: .play, isBusy: isStarting, action: start
+        )
+        .accessibilityFocused($focus, equals: .start)
       }
     }
     // Only the learner's tap starts the wait or sets a failure, so focus never moves on opening.
@@ -345,17 +329,13 @@ struct PracticeQuestionsPreparingView: View {
       guard refusal != nil else { return }
 
       // A failure line reads itself out beside the Start that comes back. A notice doesn't: beside
-      // Start (a short break) it's read out; in Start's place (a limit, or Plus) it takes focus.
+      // Start (a short break) it's read out; in Start's place (a limit) it takes focus.
       if let limit, limit.isShortBreak {
         announcePolitely(limit.helpWords().said)
-      } else if limit != nil || isPlusRequired {
+      } else if limit != nil {
         focus = .notice
       }
     }
-  }
-
-  private var isPlusRequired: Bool {
-    failure as? PracticeAPIError == .plusRequired
   }
 
   private var limit: HelpLimit? {
