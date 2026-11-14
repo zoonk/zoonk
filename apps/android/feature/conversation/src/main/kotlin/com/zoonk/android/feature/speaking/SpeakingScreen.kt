@@ -366,7 +366,9 @@ private fun TaskRow(
 ) {
     val locale = currentLocale()
     var open by rememberSaveable(task.key) { mutableStateOf(openAtFirst) }
-    var gated by rememberSaveable(task.key) { mutableStateOf(false) }
+    // The gate shows once the learner tries a locked task, until a purchase reloads the paper open.
+    var triedLocked by rememberSaveable(task.key) { mutableStateOf(false) }
+    val gated = triedLocked && locked
     val requester = remember { BringIntoViewRequester() }
     LaunchedEffect(openAtFirst) { if (openAtFirst) requester.bringIntoView() }
     val level = paper.level.value
@@ -427,25 +429,25 @@ private fun TaskRow(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium,
             )
+            val lastResult: (@Composable () -> Unit)? =
+                task.lastTry?.let { last ->
+                    { OutlinedButton(onClick = { onLastResult(last.conversationId) }) { Text(stringResource(R.string.speaking_last_result)) } }
+                }
             if (gated) {
                 TrackShown(AnalyticsEvent.SubscriptionGateShown)
-                SubscribeGate(stringResource(R.string.speaking_gate), onSubscribe)
+                SubscribeGate(stringResource(R.string.speaking_gate), onSubscribe, action = lastResult)
             } else {
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     if (!paused) {
                         Button(
                             busy = starting,
-                            onClick = { if (locked) gated = true else onStart() },
+                            onClick = { if (locked) triedLocked = true else onStart() },
                             enabled = !busy,
                         ) {
                             Text(stringResource(R.string.speaking_start_task))
                         }
                     }
-                    task.lastTry?.let { last ->
-                        OutlinedButton(
-                            onClick = { onLastResult(last.conversationId) },
-                        ) { Text(stringResource(R.string.speaking_last_result)) }
-                    }
+                    lastResult?.invoke()
                 }
             }
         }
