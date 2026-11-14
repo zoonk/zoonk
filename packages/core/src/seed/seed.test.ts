@@ -1,9 +1,11 @@
 import { prisma } from "@zoonk/db";
+import { SEED_PERSONA_NAMES } from "@zoonk/db/seed/personas";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { session as sessionBoundary } from "../_test-utils/test-boundaries";
 import { getTargetLevel, loadLanguageSkillLevels } from "../language/levels/language-skill-levels";
 import { getOwnLevel } from "../learner/placement/placement-contract";
 import { addDays, toIsoDate } from "../plans/planner/plan-calendar";
+import { getBlockElapsedMs } from "../sessions/_utils/block-timing";
 import { readMissionDocument } from "../sessions/missions/catalog";
 import { getOnboarding } from "../view-models/onboarding/get-onboarding";
 import { seedPersonaCopy } from "./seed";
@@ -11,6 +13,7 @@ import { seedPersonaCopy } from "./seed";
 const FRIDAY = new Date("2026-10-16T20:52:12Z");
 const TODAY = new Date("2026-10-16T00:00:00Z");
 const HISTORY_DAYS = 14;
+const MS_PER_HOUR = 3_600_000;
 
 const ANA_STUDY_DATES = Array.from({ length: HISTORY_DAYS }, (_, index) =>
   toIsoDate(addDays(TODAY, index - HISTORY_DAYS)),
@@ -133,4 +136,23 @@ describe("a persona's copy", () => {
       expect(missions.some((document) => (document?.picks.length ?? 0) > 0)).toBe(true);
     },
   );
+});
+
+describe("a persona's copy, opened later", () => {
+  it.each(SEED_PERSONA_NAMES)("%s: its open block's clock is stopped", async (persona) => {
+    const copy = await seedPersonaCopy({
+      copyKey: `later-${persona}`,
+      email: `seed-later-${persona}@zoonk.test`,
+      persona,
+    });
+
+    const blocks = await prisma.studySessionBlock.findMany({
+      where: { session: { userId: copy.userId }, status: "active" },
+    });
+
+    const later = new Date(Date.now() + MS_PER_HOUR);
+    const running = blocks.filter((block) => getBlockElapsedMs({ block, now: later }) > 0);
+
+    expect(running).toStrictEqual([]);
+  });
 });
