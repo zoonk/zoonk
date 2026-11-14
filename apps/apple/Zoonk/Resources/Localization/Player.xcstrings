@@ -7402,7 +7402,7 @@
       }
     },
     "Not checked this time" : {
-      "comment" : "A typed answer that wasn't graded",
+      "comment" : "Verdict when the learner's answer wasn't checked this time.",
       "localizations" : {
         "de" : {
           "stringUnit" : {

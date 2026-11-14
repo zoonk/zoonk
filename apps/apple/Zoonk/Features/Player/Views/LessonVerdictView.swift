@@ -110,7 +110,7 @@ struct LessonVerdictView: View {
   /// answer right in another order shows the lesson's own order too.
   @ViewBuilder
   private var correctAnswerLine: some View {
-    if let correctAnswer = result.correctAnswer {
+    if result.checked, let correctAnswer = result.correctAnswer {
       if !result.isCorrect, !Self.marksItsAnswer.contains(step.kind) {
         LabeledText(
           label: Text(
@@ -322,6 +322,15 @@ extension LessonVerdict {
       return .guess(isRight: result.isCorrect)
     }
 
+    // Counted neither way, so never read as wrong: main's `unchecked`.
+    if !result.checked {
+      return LessonVerdict(
+        title: LocalizedStringResource(
+          "Not checked this time", table: "Player",
+          comment: "Verdict when the learner's answer wasn't checked this time."),
+        tone: .neutral)
+    }
+
     if result.isCorrect {
       return result.spelling == nil
         ? LessonVerdict(
@@ -332,13 +341,6 @@ extension LessonVerdict {
             "Right, watch the spelling", table: "Player",
             comment: "A right typed answer with a typo"),
           tone: .right)
-    }
-
-    if step.kind == .typedAnswer, !result.checked {
-      return LessonVerdict(
-        title: LocalizedStringResource(
-          "Not checked this time", table: "Player", comment: "A typed answer that wasn't graded"),
-        tone: .neutral)
     }
 
     if let score = result.score, score > 0 {
