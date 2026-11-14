@@ -10,7 +10,6 @@ import { type ContentWriting } from "../../generation/writing-wait";
  */
 export type CallStartOutcome = boolean | "paused" | { generationId: string };
 
-/** A start a cap can refuse: the refusal says which, so the screen can say when calls come back. */
 export type LimitedCallStart = CallStartOutcome | { limit: CallLimit };
 
 type CallStartState =

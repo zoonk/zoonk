@@ -63,13 +63,11 @@ type LimitNoticeProps = {
   routes: { signUp: string; upgrade: string };
 };
 
-/** What ran out as the title, and when it comes back as the one line under it. */
 export type LimitWords = { line?: string; title?: string };
 
 /** What the learner asked for when the help ran out; without it the notice names no kind. */
 export type HelpKind = "explanations" | "messages" | "mockExams";
 
-/** What decides a notice's way on. */
 type NoticeLimit =
   | { status: "signUpRequired" | "slowDown" }
   | { status: "limitReached"; tier: EntitlementTier };
@@ -119,7 +117,6 @@ function toCapLimit(limit: CallLimit): HelpLimit {
     : { period: limit.period, status: "limitReached", tier: limit.tier };
 }
 
-/** What ran out, for each kind of cap: a guest's title, the day's, and the one over the last 30 days. */
 type CapTitles = { day: string; guest: string; rolling: string };
 
 /**
@@ -261,7 +258,6 @@ export function useCallLimitLine(limit: CallLimit): string | undefined {
   return useComesBackLine(toCapLimit(limit));
 }
 
-/** What a call needs: any time left, or a speaking task's or mock's whole length. */
 export type CallNeed = "any" | "mock" | "task";
 
 /** Its screen's title says what ran out, so this is only the line and the way on. */

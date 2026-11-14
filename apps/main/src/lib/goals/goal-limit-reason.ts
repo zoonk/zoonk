@@ -1,3 +1,4 @@
+import { refusedLimitSchema } from "@/lib/api/refused-limit";
 import { type AllowanceLimit } from "@zoonk/core/entitlements/contract";
 import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes";
 import { type GoalLimit } from "@zoonk/learn/onboarding/actions";
@@ -33,15 +34,7 @@ const goalRefusalErrorSchema = z.object({
   error: z.discriminatedUnion("code", [
     z.object({ code: z.literal(LESSON_PLAYER_ERROR_CODES.signUpRequired) }),
     z.object({ code: z.literal(LESSON_PLAYER_ERROR_CODES.slowDown) }),
-    z.object({
-      code: z.literal("GOAL_LIMIT_REACHED"),
-      details: z.object({
-        availableAt: z.string().nullish(),
-        period: z.enum(["day", "rolling30Days", "total"]),
-        resource: z.string(),
-        tier: z.enum(["free", "guest", "plus"]),
-      }),
-    }),
+    z.object({ code: z.literal("GOAL_LIMIT_REACHED"), details: refusedLimitSchema }),
   ]),
 });
 

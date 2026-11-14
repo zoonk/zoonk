@@ -1,6 +1,7 @@
 "use server";
 
 import { postAsLearner } from "@/lib/api/learner-api";
+import { refusedLimitSchema } from "@/lib/api/refused-limit";
 import { type AllowanceLimit } from "@zoonk/core/entitlements/contract";
 import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes";
 import {
@@ -27,16 +28,7 @@ const signUpRequiredSchema = z.object({
 });
 
 const limitSchema = z.object({
-  error: z.object({
-    details: z.object({
-      limit: z.object({
-        availableAt: z.string().nullish(),
-        period: z.enum(["day", "rolling30Days", "total"]),
-        resource: z.string(),
-        tier: z.enum(["free", "guest", "plus"]),
-      }),
-    }),
-  }),
+  error: z.object({ details: z.object({ limit: refusedLimitSchema }) }),
 });
 
 const GOAL_LIMITS = new Set(["activeGoals", "goal"]);

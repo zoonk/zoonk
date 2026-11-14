@@ -180,7 +180,6 @@ export function useComesBackLineNow() {
     );
 }
 
-/** A cap's words as one sentence, where a gate is a single line: a toast, an error, an answer. */
 export function useLimitSentence() {
   const t = useExtracted("limits");
 
@@ -254,14 +253,12 @@ export function useMapLessonsWords(limit: MindMapLimit): LimitWords | null {
   };
 }
 
-/** A cap's period and tier as a refusal brings them; `availableAt` for one over the last 30 days. */
 type RefusedCap = {
   availableAt?: string | null;
   period: "day" | "rolling30Days" | "total";
   tier: EntitlementTier;
 };
 
-/** One sentence for a cap refused as it was asked for: its title for the period, then when more comes back. */
 export function useCapSentence() {
   const comesBack = useComesBackLineNow();
   const sentence = useLimitSentence();
