@@ -136,34 +136,42 @@ struct LimitNotice: View {
     }
   }
 
-  /// Once the day has come, the screen's own action is the way on, so the notice offers nothing.
+  /// Once the day has come, the screen's own action is the way on, so the notice offers nothing, in
+  /// the room it had.
   private func notice(_ words: LimitWords, isOpen: Bool) -> some View {
-    VStack(alignment: .leading, spacing: 8) {
-      GateWords(title: words.title.map(Text.init), line: words.line.map(Text.init))
+    HeldSlot(gated: !isOpen) {
+      VStack(alignment: .leading, spacing: 8) {
+        GateWords(title: words.title.map(Text.init), line: words.line.map(Text.init))
 
-      if isOpen {
-        EmptyView()
-      } else if limit.needsAccount {
-        Button {
-          router.present(.signIn)
-        } label: {
-          Label {
-            Text(
-              "Create a free account", tableName: "Subscriptions",
-              comment: "Opens sign-up for a guest who reached what they can try without an account")
-          } icon: {
-            Image(systemName: "person.badge.plus")
-          }
+        if !isOpen {
+          wayOn
         }
-        .buttonStyle(.outline)
-        .controlSize(.small)
-      } else if limit.offersSubscription {
-        SubscribeButton()
-          .buttonStyle(.outline)
-          .controlSize(.small)
       }
     }
     .accessibilityElement(children: .contain)
+  }
+
+  @ViewBuilder
+  private var wayOn: some View {
+    if limit.needsAccount {
+      Button {
+        router.present(.signIn)
+      } label: {
+        Label {
+          Text(
+            "Create a free account", tableName: "Subscriptions",
+            comment: "Opens sign-up for a guest who reached what they can try without an account")
+        } icon: {
+          Image(systemName: "person.badge.plus")
+        }
+      }
+      .buttonStyle(.outline)
+      .controlSize(.small)
+    } else if limit.offersSubscription {
+      SubscribeButton()
+        .buttonStyle(.outline)
+        .controlSize(.small)
+    }
   }
 }
 
@@ -465,33 +473,49 @@ extension HelpLimit {
 /// a gate left open never promises a day that has gone.
 struct OpeningClock<Content: View>: View {
   @Environment(\.scenePhase) private var scenePhase
-  @State private var now = Date.now
+  @State private var alarm = OpeningAlarm()
 
   let availableAt: Date?
   @ViewBuilder let content: (Date) -> Content
 
   var body: some View {
-    content(now)
-      .task(id: availableAt) {
-        guard let availableAt else {
-          return
-        }
+    content(alarm.now(waking: availableAt))
+  }
+}
 
-        while !Task.isCancelled {
-          now = .now
+/// The clock's wake, kept apart from what it draws: a bar that takes its buttons apart draws nothing
+/// for a gate that hides its action, and a timer on that content would never start.
+@MainActor @Observable
+private final class OpeningAlarm {
+  private var rang = 0
+  @ObservationIgnored private var wake: Date?
+  @ObservationIgnored private var ringing: Task<Void, Never>?
 
-          guard let wake = HelpLimit.nextWake(availableAt: availableAt, now: now) else {
-            return
+  /// The time to read the gate at, ringing again at the learner's next midnight or the opening.
+  func now(waking availableAt: Date?) -> Date {
+    _ = rang
+    let now = Date.now
+    let next = availableAt.flatMap { HelpLimit.nextWake(availableAt: $0, now: now) }
+
+    if next != wake {
+      wake = next
+      ringing?.cancel()
+      ringing = next.map { next in
+        Task { [weak self] in
+          try? await Task.sleep(for: .seconds(next.timeIntervalSinceNow), tolerance: .seconds(1))
+
+          if !Task.isCancelled, let self {
+            wake = nil
+            rang += 1
           }
+        }
+      }
+    }
 
-          try? await Task.sleep(for: .seconds(wake.timeIntervalSince(now)))
-        }
-      }
-      .onChange(of: scenePhase) { _, phase in
-        if phase == .active {
-          now = .now
-        }
-      }
+    return now
   }
 
+  isolated deinit {
+    ringing?.cancel()
+  }
 }
