@@ -11,8 +11,6 @@ const buttonVariants = cva(
     variants: {
       edge: { end: "edge -me-(--edge-pull)", start: "edge -ms-(--edge-start)" },
       size: {
-        adaptive:
-          "size-9 gap-1.5 px-3 has-data-[icon=inline-end]:pr-2.5 has-data-[icon=inline-start]:pl-2.5 sm:h-9 sm:w-auto",
         bar: "text-reading h-11 gap-1.5 px-4 [--edge-text:calc(--spacing(4)+1px)] has-data-[icon=inline-end]:pr-3.5 has-data-[icon=inline-end]:[--edge-text-end:calc(--spacing(3.5)+1px)] has-data-[icon=inline-start]:pl-3.5 has-data-[icon=inline-start]:[--edge-text-start:calc(--spacing(3.5)+1px)] lg:h-10 lg:text-sm",
         default:
           "h-9 gap-1.5 px-3 [--edge-text:calc(--spacing(3)+1px)] has-data-[icon=inline-end]:pr-2.5 has-data-[icon=inline-end]:[--edge-text-end:calc(--spacing(2.5)+1px)] has-data-[icon=inline-start]:pl-2.5 has-data-[icon=inline-start]:[--edge-text-start:calc(--spacing(2.5)+1px)]",
@@ -35,8 +33,6 @@ const buttonVariants = cva(
           "bg-destructive/10 text-destructive-text hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:focus-visible:ring-destructive/40 dark:hover:bg-destructive/30 border-transparent",
         ghost:
           "hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50 border-transparent",
-        inverse:
-          "bg-primary-foreground text-primary hover:bg-primary-foreground/90 focus-visible:border-primary-foreground/60 focus-visible:ring-primary-foreground/30 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90 dark:focus-visible:border-primary/60 dark:focus-visible:ring-primary/30 border-transparent",
         // Underlined at rest: a touch screen has no hover to show it's a link.
         link: "text-foreground decoration-foreground/30 hover:decoration-foreground inline h-auto rounded-sm border-0 p-0 text-start whitespace-normal underline underline-offset-4 in-[p]:text-[length:inherit] has-data-[icon=inline-end]:pr-0 has-data-[icon=inline-start]:pl-0",
         outline:

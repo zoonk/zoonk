@@ -48,7 +48,8 @@ test.describe("Study days", () => {
       const sunday = days.getByRole("button", { exact: true, name: "Sunday" });
       const monday = days.getByRole("button", { exact: true, name: "Monday" });
       const time = editor.getByLabel("Time a day", { exact: true });
-      const failed = editor.getByRole("alert");
+      // A change that didn't save says so in the shared toast, outside the sheet, announced as an alert.
+      const failed = page.getByRole("alert").filter({ hasText: "That didn't save. Try again." });
 
       await expect(sunday).toHaveAttribute("aria-pressed", "true");
 
@@ -58,14 +59,14 @@ test.describe("Study days", () => {
       await expect(monday).toBeDisabled();
 
       held[0]?.();
-      await expect(failed).toHaveText("That didn't save. Try again.");
+      await expect(failed).toBeVisible();
       await expect(sunday).toHaveAttribute("aria-pressed", "true");
       await expect(monday).toBeEnabled();
+      await expect(failed).toHaveCount(0, { timeout: 10_000 });
 
       await time.selectOption("45");
       await expect.poll(() => held.length).toBe(2);
       await expect(time).toHaveValue("45");
-      await expect(failed).toBeHidden();
       await expect(sunday).toHaveAttribute("aria-pressed", "true");
 
       held[1]?.();

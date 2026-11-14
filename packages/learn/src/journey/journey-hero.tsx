@@ -11,7 +11,7 @@ import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { ListGroup } from "../_components/list-group";
 import { SheetHeader } from "../_components/sheet-header";
-import { useFormatGoalProgress, useFormatShare } from "../_utils/percent";
+import { useFormatProgressShare, useFormatShare } from "../_utils/percent";
 import { type CallStartOutcome } from "../language/conversation/use-call-start";
 import { SpeakingPracticeRow } from "../language/exam-speaking/speaking-practice-screen";
 import { CanDoList } from "../language/progress/can-do-list";
@@ -60,7 +60,7 @@ function WeekGain({ points }: { points: number }) {
 function useStandingNumber(standing: JourneyStanding): PlanNumber {
   const t = useExtracted();
   const formatShare = useFormatShare();
-  const formatGoalProgress = useFormatGoalProgress();
+  const formatProgressShare = useFormatProgressShare();
 
   if (standing.kind === "preparation" && standing.forExam) {
     const points = Math.round(standing.preparation.weekGain * PERCENT);
@@ -88,7 +88,7 @@ function useStandingNumber(standing: JourneyStanding): PlanNumber {
       label: t("Progress"),
       numeric: true,
       share,
-      value: formatGoalProgress(share),
+      value: formatProgressShare(share),
     };
   }
 

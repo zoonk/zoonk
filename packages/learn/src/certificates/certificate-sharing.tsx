@@ -1,9 +1,10 @@
 "use client";
 
 import { type CertificateFacts } from "@zoonk/core/certificates/contract";
+import { LinkedinBrandIcon } from "@zoonk/ui/components/brand-icons";
 import { Button } from "@zoonk/ui/components/button";
 import { type CertificateLinks } from "@zoonk/utils/certificate-links";
-import { ArrowUpRightIcon, ShareIcon } from "lucide-react";
+import { ShareIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { createContext, use, useState } from "react";
 import { CertificateLinkedInDialog } from "./certificate-linkedin";
@@ -94,8 +95,14 @@ export function AddToLinkedInButton({ className }: { className?: string }) {
   const { openLinkedIn } = useSharing();
 
   return (
-    <Button className={className} onClick={openLinkedIn} size="lg" variant="outline">
-      <ArrowUpRightIcon aria-hidden="true" data-icon="inline-start" />
+    <Button
+      aria-haspopup="dialog"
+      className={className}
+      onClick={openLinkedIn}
+      size="lg"
+      variant="outline"
+    >
+      <LinkedinBrandIcon aria-hidden="true" data-icon="inline-start" />
       {t("Add to LinkedIn")}
     </Button>
   );

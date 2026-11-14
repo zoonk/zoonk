@@ -20,7 +20,7 @@ struct LessonMapStage: View {
     if tutor.panel != nil, !store.isGuest {
       PaneSplit(isSpread: true) {
         mapPage
-          .safeAreaBar(edge: .bottom) {
+          .bottomBar {
             if store.isAsking {
               actionBar
             }
@@ -32,7 +32,7 @@ struct LessonMapStage: View {
           LessonPage(store: store) {
             LessonScreenHelp(store: store)
           }
-          .safeAreaBar(edge: .bottom) { actionBar }
+          .bottomBar { actionBar }
         }
       } single: {
         onePage
@@ -45,7 +45,7 @@ struct LessonMapStage: View {
 
   private var onePage: some View {
     mapPage
-      .safeAreaBar(edge: .bottom) { actionBar.keepsOffFold() }
+      .bottomBar { actionBar }
   }
 
   private var mapPage: some View {

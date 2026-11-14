@@ -92,7 +92,13 @@ function RevealActions({
       {failure === "open" && <StepOpenFailed />}
 
       <div className="flex gap-2 lg:flex-col-reverse">
-        <Button className="flex-1 lg:flex-none" onClick={onAdjust} size="lg" variant="outline">
+        <Button
+          aria-haspopup="dialog"
+          className="flex-1 lg:flex-none"
+          onClick={onAdjust}
+          size="lg"
+          variant="outline"
+        >
           {t("Adjust")}
         </Button>
 

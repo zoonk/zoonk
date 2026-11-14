@@ -6,8 +6,12 @@ import { PageSectionTitle } from "./page";
 
 export const TASK_COLUMN_CLASS = "max-w-column mx-auto w-full px-4";
 
-/** A bar's buttons have the task's gutter on all four sides: 16px, and 24px from `lg`. */
-const TASK_BAR_ROW_CLASS = cn(TASK_COLUMN_CLASS, "lg:max-w-none lg:p-6");
+/**
+ * A bar's buttons have the task's gutter on all four sides: 16px, and 24px from `lg`. Named as the
+ * row's `--page-gutter`, so the bar's note above it takes the sides alone.
+ */
+const TASK_BAR_ROW_CLASS =
+  "max-w-column mx-auto w-full [--page-gutter:--spacing(4)] lg:max-w-none lg:[--page-gutter:--spacing(6)]";
 
 export function TaskBody({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -284,7 +288,13 @@ export function TaskSkeleton({
       </div>
 
       <div className="border-border border-t">
-        <div className={cn(TASK_BAR_ROW_CLASS, "flex gap-2 lg:justify-end", BAR_PADDING_CLASS)}>
+        <div
+          className={cn(
+            TASK_BAR_ROW_CLASS,
+            "flex gap-2 px-(--page-gutter) lg:justify-end",
+            BAR_PADDING_CLASS,
+          )}
+        >
           {actions}
           <Skeleton className="h-11 w-full rounded-lg lg:w-40" />
         </div>

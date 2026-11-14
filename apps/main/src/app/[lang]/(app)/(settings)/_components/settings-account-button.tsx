@@ -2,9 +2,11 @@
 
 import { CurrentPageLoginLink } from "@/components/current-page-login-link";
 import { buttonVariants } from "@zoonk/ui/components/button";
-import { cn } from "@zoonk/ui/lib/utils";
 import { LogInIcon, UserPlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+
+/** A page that already asks for an account in its own words (a gate, Reminders' email row) doesn't repeat the button in the bar. */
+const GATED_PAGE_CLASS = "in-[body:has([data-account-ask])]:hidden";
 
 export function SettingsAccountButton({ status }: { status: "guest" | "visitor" }) {
   const t = useExtracted();
@@ -12,7 +14,7 @@ export function SettingsAccountButton({ status }: { status: "guest" | "visitor" 
   if (status === "visitor") {
     return (
       <CurrentPageLoginLink
-        className={buttonVariants({ size: "bar", variant: "outline" })}
+        className={buttonVariants({ className: GATED_PAGE_CLASS, size: "bar", variant: "outline" })}
         icon={<LogInIcon aria-hidden="true" />}
       >
         {t("Log in")}
@@ -22,10 +24,7 @@ export function SettingsAccountButton({ status }: { status: "guest" | "visitor" 
 
   return (
     <CurrentPageLoginLink
-      className={cn(
-        buttonVariants({ size: "bar", variant: "outline" }),
-        "in-[body:has([data-account-offer])]:hidden",
-      )}
+      className={buttonVariants({ className: GATED_PAGE_CLASS, size: "bar", variant: "outline" })}
       icon={<UserPlusIcon aria-hidden="true" />}
     >
       {t("Create an account")}

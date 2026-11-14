@@ -5,6 +5,7 @@ import {
   type ProfileQuestionView,
 } from "@zoonk/core/profile/questions/contract";
 import { Button } from "@zoonk/ui/components/button";
+import { showErrorToast } from "@zoonk/ui/components/toast";
 import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
 import { CheckIcon } from "lucide-react";
@@ -12,7 +13,7 @@ import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import { PageHeader, PageHeaderContent, PageSubtitle, PageTitle } from "../_components/page";
 import { CLEAR_OF_PINNED_ACTIONS_CLASS, PINNED_ACTIONS_CLASS } from "../_components/pinned-actions";
-import { ChangeSaveError } from "../_components/save-error";
+import { useChangeSaveErrorMessage } from "../_components/save-error";
 import { ABOVE_BOTTOM_TABS_CLASS } from "../shell/learn-navigation";
 import { canSendProfileDraft, toProfileAnswer, toProfileDraft } from "./profile-draft";
 import { ProfileQuestionBody } from "./profile-question-body";
@@ -32,7 +33,7 @@ export function AboutYouQuestionScreen({
   const title = useProfileQuestionTitle(question.id);
   const description = useProfileQuestionDescription(question.id);
   const [draft, setDraft] = useState(() => toProfileDraft(question));
-  const [failed, setFailed] = useState(false);
+  const saveError = useChangeSaveErrorMessage();
   const [isPending, startTransition] = useTransition();
 
   const input = canSendProfileDraft({ draft, from: "settings", question: question.id })
@@ -49,11 +50,12 @@ export function AboutYouQuestionScreen({
           return;
         }
 
-        setFailed(false);
-
         startTransition(async () => {
           const { data: saved } = await safeAsync(() => onSave(input));
-          setFailed(!saved);
+
+          if (!saved) {
+            showErrorToast(saveError);
+          }
         });
       }}
     >
@@ -81,8 +83,6 @@ export function AboutYouQuestionScreen({
           "-mb-4 flex flex-col gap-3 pb-4 lg:bottom-0",
         )}
       >
-        {failed && <ChangeSaveError />}
-
         <Button
           busy={isPending}
           className="self-start"

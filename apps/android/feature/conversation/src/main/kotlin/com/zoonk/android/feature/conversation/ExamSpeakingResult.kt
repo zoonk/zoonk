@@ -153,7 +153,7 @@ internal fun ExamSpeakingResult(
                     add { FocusStep(criterionGloss(criterion.key, criterion.name), criterion.name, grade.evidence, grade.tip, language) }
                 }
             } else {
-                add { NoGradeStep(R.string.conversation_no_estimate_title, R.string.conversation_no_estimate) }
+                add { NoGradeStep(R.string.conversation_no_estimate_title) }
             }
         }
     val next = task.nextTask
@@ -164,14 +164,14 @@ internal fun ExamSpeakingResult(
             if (next != null &&
                 actions.nextTask != null
             ) {
-                stringResource(R.string.conversation_go_to_task, (task.number + 1).toString())
+                stringResource(R.string.conversation_next_task)
             } else {
                 null
             },
         dayMoment = dayMoment,
     ) {
         actions.tryAgain?.let {
-            TryCallAgain(it, stringResource(R.string.conversation_try_new_card), stringResource(R.string.speaking_opens_when_ready))
+            TryCallAgain(it, stringResource(R.string.conversation_try_again), stringResource(R.string.speaking_opens_when_ready))
         }
         if (graded.isNotEmpty()) {
             EveryCriterion(
@@ -220,7 +220,7 @@ private fun CriteriaStep(
             CriterionRow(criterion, grade, focus = criterion.key == feedback.focus, level = task.level.value, language = language)
         }
     }
-    Note(stringResource(if (aboutSound) R.string.conversation_estimate_sound else R.string.conversation_estimate))
+    Note(stringResource(R.string.conversation_estimate))
 }
 
 @Composable
@@ -298,11 +298,11 @@ private fun FocusStep(
 @Composable
 private fun NoGradeStep(
     title: Int,
-    text: Int,
+    text: Int? = null,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Text(stringResource(title), Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineMedium)
-        Note(stringResource(text))
+        text?.let { Note(stringResource(it)) }
     }
 }
 

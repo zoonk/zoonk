@@ -91,7 +91,7 @@ export const TYPE_ROLES: readonly TypeRole[] = [
     className: "text-readout text-[2.5rem]",
     name: "Readout",
     sample: "43",
-    use: "One big number per block (`BigQuantity`), tabular, its unit small and muted. 40px in the app, 56px on public pages.",
+    use: "One big number per block (`BigQuantity`), tabular, its unit small and muted. 40px in the app, 48px for a step's one big thing (`StepTitleNumber`, a letter being learned), 56px on public pages.",
   },
   {
     className: "font-mono text-xs tabular-nums",

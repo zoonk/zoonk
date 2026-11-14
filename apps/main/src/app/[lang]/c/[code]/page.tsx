@@ -6,15 +6,18 @@ import { getCourseStartHref } from "@/lib/public/public-hrefs";
 import { type CertificateFacts, normalizeCertificateCode } from "@zoonk/core/certificates/contract";
 import { listCurrentUserCertificates } from "@zoonk/core/certificates/list";
 import { getPublicCertificate } from "@zoonk/core/certificates/public";
-import { CertificateVerified } from "@zoonk/learn/certificates/page";
+import { CertificateGate, CertificateVerified } from "@zoonk/learn/certificates/page";
+import { SubscribeMainAction } from "@zoonk/learn/subscribe-gate";
+import { BottomBar } from "@zoonk/ui/components/bottom-bar";
+import { PageTop } from "@zoonk/ui/components/page-top";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { cn } from "@zoonk/ui/lib/utils";
 import { getCertificateLinks, getCertificateName } from "@zoonk/utils/certificate-links";
 import { getBaseUrl } from "@zoonk/utils/origin";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense, cache } from "react";
 import { CertificateNotFound } from "./certificate-not-found";
+import { CERTIFICATE_TOP_CLASS } from "./certificate-top";
 import { CertificateView } from "./certificate-view";
 import "./certificate-print.css";
 
@@ -99,10 +102,23 @@ async function CertificateBody({ params }: Props) {
 
   const { facts } = read;
 
+  if (read.locked) {
+    return (
+      <section className="bg-ground flex flex-1 flex-col">
+        <div className={CERTIFICATE_TOP_CLASS}>
+          <CertificateGate facts={facts} href="/certificates" />
+        </div>
+        <BottomBar className={PUBLIC_CONTAINER_CLASS}>
+          <SubscribeMainAction />
+        </BottomBar>
+      </section>
+    );
+  }
+
   return (
     <CertificateView
       facts={facts}
-      links={read.locked ? null : getLinks(facts)}
+      links={getLinks(facts)}
       owner={read.owner}
       startHref={facts.courseId ? getCourseStartHref({ courseId: facts.courseId }) : null}
     />
@@ -113,11 +129,13 @@ async function CertificateBody({ params }: Props) {
 function CertificateSkeleton() {
   return (
     <div aria-busy="true" className="bg-ground min-h-dvh">
-      <div className={cn(PUBLIC_CONTAINER_CLASS, "pt-8 pb-16 sm:pt-12")}>
-        <CertificateVerified />
-        <Skeleton className="mt-4 h-10 w-full max-w-2xl" />
-        <Skeleton className="mt-2 h-10 w-2/3 max-w-xl" />
-        <Skeleton className="mt-4 h-5 w-80 max-w-full" />
+      <div className={CERTIFICATE_TOP_CLASS}>
+        <PageTop>
+          <CertificateVerified className="mb-2" />
+          <Skeleton className="h-10 w-full max-w-2xl" />
+          <Skeleton className="mt-1 h-10 w-2/3 max-w-xl" />
+          <Skeleton className="mt-2.5 h-5 w-80 max-w-full" />
+        </PageTop>
         <div className="mt-8 grid items-start gap-7 min-[72rem]:grid-cols-[minmax(0,1fr)_320px] min-[72rem]:gap-12">
           <Skeleton className="aspect-297/210 w-full rounded-lg" />
           <Skeleton className="h-64 w-full rounded-lg" />

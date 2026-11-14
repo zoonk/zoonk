@@ -7,10 +7,9 @@ import { StepCard } from "../_components/step-card";
 import { TaskAsideContent } from "../_components/task-layout";
 import { TaskMeta } from "../_components/task-meta";
 import { useFormatDuration } from "../_utils/time-format";
-import { useCheckpointEyebrow } from "../checkpoints/checkpoint-labels";
 import { ChecklistRow, ChecklistRows } from "../language/checklist-rows";
 import { useChallengeScreen } from "./challenge-context";
-import { IntroHeading, useEyebrow, usePrizeFact } from "./challenge-intro-parts";
+import { IntroHeading, usePrizeFact, useRematchEyebrow } from "./challenge-intro-parts";
 
 function CallGoals({ call }: { call: ChallengeCall }) {
   const t = useExtracted();
@@ -42,7 +41,7 @@ export function CallIntro({ call }: { call: ChallengeCall }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const { challenge } = useChallengeScreen();
-  const eyebrow = useEyebrow();
+  const eyebrow = useRematchEyebrow();
   const prize = usePrizeFact();
 
   return (
@@ -75,13 +74,11 @@ export function CallIntro({ call }: { call: ChallengeCall }) {
 export function WonCallIntro() {
   const t = useExtracted();
   const { challenge } = useChallengeScreen();
-  const eyebrow = useCheckpointEyebrow(challenge);
   const { result } = challenge;
 
   return (
     <StepCard>
       <IntroHeading
-        eyebrow={eyebrow}
         title={t({
           description: "The learner passed this challenge, not just finished it.",
           message: "Challenge passed",

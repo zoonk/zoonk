@@ -190,24 +190,6 @@ describe("interface convention source checks", () => {
     );
   });
 
-  it("reports centered dialog imports while retaining full-screen and alert pieces", () => {
-    assert.deepEqual(
-      lint("one-overlay-piece", {
-        "bad.tsx": [
-          'import { DialogContent as Content } from "@zoonk/ui/components/dialog";',
-          'import { DialogHeader, DialogFooter } from "./dialog";',
-        ].join("\n"),
-        "good.tsx": [
-          'import { DialogPopup } from "@zoonk/ui/components/dialog";',
-          'import { AlertDialog } from "@zoonk/ui/components/alert-dialog";',
-          'import { Drawer } from "@zoonk/ui/components/drawer";',
-          'import { DialogContent } from "some-other-library";',
-        ].join("\n"),
-      }),
-      ["bad.tsx:1", "bad.tsx:2", "bad.tsx:2"],
-    );
-  });
-
   it("reports the legacy eyebrow pieces", () => {
     assert.deepEqual(
       lint("one-eyebrow", {

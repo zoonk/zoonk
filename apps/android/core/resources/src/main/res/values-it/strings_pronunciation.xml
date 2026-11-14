@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "pronunciation_accent": "b9c6fb45aa0bfbb6d015ea0c4b3c280b80b5c8dc66d027b2a83f585154cffcba",
   "pronunciation_continue": "7f9e1de3fadaa84f12cc4b179d674bbb3d775d98ffedb000c57c424edf36cddd",
   "pronunciation_done": "ac172f24443ae43c37b4a479cc07fde474a95cd9abff58cb6154c92c43b2102c",
   "pronunciation_failed": "645d9f92b0af9ceb3b3aab81cb547823f94d4b0813bc9776c418d05707889ef8",
@@ -59,7 +58,6 @@
     <string name="pronunciation_no_words">Oggi non ci sono parole da ripetere.</string>
     <string name="pronunciation_practice_done">Esercitazione completata</string>
     <string name="pronunciation_nothing_said">Questa volta non hai parlato</string>
-    <string name="pronunciation_accent">L’accento non ti ferma mai.</string>
     <!-- Closes the finished round. -->
     <string name="pronunciation_done">Chiudi</string>
 </resources>

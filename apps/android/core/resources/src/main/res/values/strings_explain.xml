@@ -10,19 +10,18 @@
     <string name="explain_phase_write_review">Checking the facts…</string>
     <!-- Eyebrow over a quick explanation's title: %1$s is how long it takes, such as "5 min". -->
     <string name="explain_quick">Quick explanation · %1$s</string>
-    <string name="explain_no_plan">No plan to set up.</string>
     <string name="explain_coming">What\'s coming</string>
     <string name="explain_one_question">1 quick question at the end</string>
-    <string name="explain_deeper">I want to learn this in depth</string>
+    <string name="explain_deeper">Learn more about this</string>
     <!-- %1$s is a course's title. -->
     <string name="explain_deeper_course">Build a plan for %1$s</string>
     <string name="explain_deeper_subject">Build a plan for the whole subject</string>
     <!-- A goal typed for the learner from the explanation's topic, which %1$s is, mid-sentence. -->
     <string name="explain_deeper_goal">I want to understand %1$s in depth</string>
     <string name="explain_slow">This is taking longer than usual.</string>
-    <string name="explain_still_writing">Still writing your explanation. It shows up here as soon as it\'s ready.</string>
+    <string name="explain_still_writing">Still getting your explanation ready.</string>
     <string name="explain_try_again">Try again</string>
-    <string name="explain_see">See explanation</string>
+    <string name="explain_see">Start</string>
     <string name="explain_load_failed">We couldn\'t load this explanation</string>
     <string name="explain_now_you_know">Now you know</string>
     <plurals name="explain_recap">

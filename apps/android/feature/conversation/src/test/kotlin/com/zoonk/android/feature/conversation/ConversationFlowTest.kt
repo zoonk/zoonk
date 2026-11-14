@@ -50,7 +50,7 @@ class ConversationFlowTest {
 
         compose.onNodeWithText("Order at the café").assertExists()
         seen("Ask for a coffee")
-        seen("Turn your sound on. The microphone is on only during the call.")
+        seen("Turn your sound on.")
 
         goLive()
         assertTrue(transport.microphone)
@@ -122,8 +122,8 @@ class ConversationFlowTest {
         show()
         compose.onNodeWithText("Call Lucía").performClick()
 
-        compose.onNodeWithText("You're already in a call").assertExists()
-        compose.onNodeWithText("End that call and start this one").performClick()
+        compose.onNodeWithText("You're in another call").assertExists()
+        compose.onNodeWithText("Start this call").performClick()
         compose.waitForIdle()
 
         assertEquals(listOf(false, true), client.connects)

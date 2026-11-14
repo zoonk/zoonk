@@ -24,7 +24,7 @@ export function CaseCount({
         {caseIds.map((caseId) => (
           <li key={caseId}>
             <a
-              className="block min-h-11 min-w-11 content-center break-all underline underline-offset-4"
+              className="relative block min-h-11 min-w-11 content-center break-all underline underline-offset-4"
               href={
                 model ? getCaseHref({ ...model, caseId }) : `#case-${encodeURIComponent(caseId)}`
               }

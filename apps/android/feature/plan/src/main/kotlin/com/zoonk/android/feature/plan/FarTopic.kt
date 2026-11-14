@@ -409,7 +409,7 @@ private fun FarTopicRequest(
                 topics.close()
                 navigator.open(AppRoute.Login)
             },
-            onSeePlus = {
+            onSubscribe = {
                 topics.close()
                 navigator.open(AppRoute.Subscription)
             },

@@ -10,20 +10,19 @@ import {
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
-import { type BuddyGlasses, type BuddyKind, getBuddyStage } from "@zoonk/utils/buddy";
+import { type BuddyGlasses, type BuddyKind } from "@zoonk/utils/buddy";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import {
   ListGroup,
   ListRow,
   ListRowContent,
-  ListRowDescription,
   ListRowLeading,
   ListRowTitle,
 } from "../_components/list-group";
 import { SheetHeader } from "../_components/sheet-header";
 import { type BuddyGlassesOption, BuddyGlassesPicker } from "../buddies/buddy-glasses-picker";
-import { BUDDY_GLASSES, BuddyGlassesWorn, BuddyStageName } from "../buddies/buddy-labels";
+import { BUDDY_GLASSES } from "../buddies/buddy-labels";
 import { type BuddyChoice, type BuddyLook, BuddyPicker } from "../buddies/buddy-picker";
 import { useBuddyName } from "../buddies/use-buddy-name";
 
@@ -63,7 +62,8 @@ export function BuddyEditor({
           <DrawerTitle>{t("Your buddy")}</DrawerTitle>
         </SheetHeader>
 
-        <DrawerContent className="flex flex-col gap-6 pt-2">
+        {/* One gap between the cards, the name and the glasses, the picker's own. */}
+        <DrawerContent className="flex flex-col gap-5 pt-2">
           <BuddyPicker choice={choice} look={look} onChange={setChoice} />
 
           {glasses && (
@@ -98,7 +98,7 @@ function CurrentBuddy({ look, buddy }: { look: BuddyLook; buddy: AppearanceBuddy
       <ListRowLeading>
         <Buddy
           beltColor={look.beltColor}
-          className="size-9"
+          className="size-8"
           energy={look.energy}
           glasses={buddy.glasses}
           kind={buddy.kind}
@@ -108,11 +108,6 @@ function CurrentBuddy({ look, buddy }: { look: BuddyLook; buddy: AppearanceBuddy
       </ListRowLeading>
       <ListRowContent>
         <ListRowTitle className="truncate">{name}</ListRowTitle>
-        <ListRowDescription>
-          <BuddyStageName stage={getBuddyStage(look.beltColor)} />
-          {" · "}
-          <BuddyGlassesWorn glasses={buddy.glasses} />
-        </ListRowDescription>
       </ListRowContent>
     </>
   );

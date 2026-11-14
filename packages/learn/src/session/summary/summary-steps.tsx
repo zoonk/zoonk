@@ -1,24 +1,20 @@
 "use client";
 
 import { CelebrationScope } from "@zoonk/ui/hooks/celebration";
-import { useShortcut } from "@zoonk/ui/hooks/keyboard";
-import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { QuestionBack } from "../../_components/question-actions";
-import { StepDots } from "../../_components/step-dots";
+import { useEffect, useRef } from "react";
 import { focusStepTitle } from "../../_components/steps";
-import { useTaskAsideShown } from "../../_components/task-header";
+import { TaskHeaderTitle } from "../../_components/task-header";
 import { TaskActions } from "../../_components/task-layout";
 import { isFocusLost } from "../../_utils/is-focus-lost";
-import { TaskFrame, TaskMainButton } from "../../shell/task-frame";
+import { TaskFrame } from "../../shell/task-frame";
+import { NextStepFailed } from "../action-failed";
 import { MomentAfterCeremony } from "../moment-ceremony";
 import { OpenNextStep } from "../open-next-step";
 import { SessionHeader } from "../session-header";
 import {
   FinishLink,
   KeepGoingButton,
-  KeepGoingFailed,
   SHARED_ROW_ACTION_CLASS,
   SeeMistakesLink,
   SummaryOptions,
@@ -26,91 +22,31 @@ import {
 } from "./summary-actions";
 import { useIsStopped, useSessionSummary } from "./summary-context";
 import { DoneStep } from "./summary-parts";
-import { EarnedToday, RewardsStep, hasRewardsBeyondBrainPower } from "./summary-rewards";
+import { EarnedToday } from "./summary-rewards";
 import { useFirstSummaryVisit } from "./use-first-summary-visit";
 
-const NO_STEP_LEFT = { done: false, rewards: false };
-
-function useRewardsStep(stepRef: React.RefObject<HTMLElement | null>) {
-  const stopped = useIsStopped();
-  const { summary } = useSessionSummary();
-  const [open, setOpen] = useState(false);
-  const [left, setLeft] = useState(NO_STEP_LEFT);
-  const asideShown = useTaskAsideShown();
-  const exists = !stopped && !asideShown && hasRewardsBeyondBrainPower(summary);
-  const shown = exists && open;
-
-  const close = () => {
-    setLeft((steps) => ({ ...steps, rewards: true }));
-    setOpen(false);
-  };
-
-  useShortcut("previous", () => (shown ? close() : false));
-
-  const last = useRef({ open, shown });
-
-  // Before `TaskFrame`'s effect sends lost focus to the action bar, and only when the learner moved
-  // or the focused step left: the sidebar's toggle keeps focus when it swaps the steps.
-  useLayoutEffect(() => {
-    const moved = last.current.open !== open;
-    const swapped = last.current.shown !== shown;
-    last.current = { open, shown };
-
-    if (moved || (swapped && isFocusLost(document.activeElement))) {
-      focusStepTitle(stepRef.current);
-    }
-  }, [open, shown, stepRef]);
-
-  const show = () => {
-    setLeft((steps) => ({ ...steps, done: true }));
-    setOpen(true);
-  };
-
-  return { close, exists, open: shown, revisited: shown ? left.rewards : left.done, show };
-}
-
-function SummaryButtons({
-  continuesToRewards,
-  keepGoing,
-  rewards,
-}: {
-  continuesToRewards: boolean;
-  keepGoing: ReturnType<typeof useKeepGoing>;
-  rewards: ReturnType<typeof useRewardsStep>;
-}) {
-  const t = useExtracted();
+function SummaryButtons({ keepGoing }: { keepGoing: ReturnType<typeof useKeepGoing> }) {
   const stopped = useIsStopped();
   const { mistakesHref, summary } = useSessionSummary();
   const canSeeMistakes = mistakesHref !== null && summary.mistakesSaved > 0;
   const crowded = stopped && canSeeMistakes;
   const sharedRow = crowded ? SHARED_ROW_ACTION_CLASS : undefined;
-  const ownRow = crowded && "max-lg:basis-full";
 
   return (
     <TaskActions>
-      {rewards.open && <QuestionBack label={t("Back")} onClick={rewards.close} />}
-      {!rewards.open && canSeeMistakes && (
-        <SeeMistakesLink className={sharedRow} href={mistakesHref} />
-      )}
+      {canSeeMistakes && <SeeMistakesLink className={sharedRow} href={mistakesHref} />}
       {stopped && <KeepGoingButton className={sharedRow} keepGoing={keepGoing} />}
-
-      {continuesToRewards && (
-        <TaskMainButton className={cn("with-aside:hidden", ownRow)} onClick={rewards.show}>
-          {t("Continue")}
-        </TaskMainButton>
-      )}
-
-      <FinishLink className={cn(continuesToRewards && "without-aside:hidden", ownRow)} />
+      <FinishLink className={crowded ? "max-lg:basis-full" : undefined} />
     </TaskActions>
   );
 }
 
+/** One screen: the day's numbers, what it earned, tomorrow, and Finish. */
 export function SummarySteps() {
   const t = useExtracted();
   const stopped = useIsStopped();
   const { actions, ceremony, exitHref, summary } = useSessionSummary();
   const stepRef = useRef<HTMLDivElement>(null);
-  const rewards = useRewardsStep(stepRef);
   const keepGoing = useKeepGoing();
   const firstVisit = useFirstSummaryVisit(summary);
 
@@ -134,8 +70,6 @@ export function SummarySteps() {
     );
   }
 
-  const continuesToRewards = rewards.exists && !rewards.open;
-
   return (
     <MomentAfterCeremony moments={summary} render={ceremony}>
       <TaskFrame
@@ -151,33 +85,18 @@ export function SummarySteps() {
         exitHref={exitHref}
         footer={
           <>
-            <KeepGoingFailed keepGoing={keepGoing} />
-
-            <SummaryButtons
-              continuesToRewards={continuesToRewards}
-              keepGoing={keepGoing}
-              rewards={rewards}
-            />
-
-            <SummaryOptions lastStep={!continuesToRewards} />
+            <SummaryButtons keepGoing={keepGoing} />
+            <SummaryOptions />
           </>
         }
-        headerTitle={
-          rewards.exists ? (
-            <StepDots className="with-aside:hidden" current={rewards.open ? 1 : 0} total={2} />
-          ) : null
-        }
+        footerNote={keepGoing.failed && <NextStepFailed />}
+        headerTitle={<TaskHeaderTitle title={t("Today")} />}
       >
-        <div
-          className="flex flex-col gap-4"
-          data-slot="steps-step"
-          key={rewards.open ? "rewards" : "done"}
-          ref={stepRef}
-        >
-          <CelebrationScope play={firstVisit && !rewards.revisited}>
-            {rewards.open ? <RewardsStep /> : <DoneStep />}
-          </CelebrationScope>
-        </div>
+        <CelebrationScope play={firstVisit}>
+          <div className="flex flex-col gap-4" data-slot="steps-step" ref={stepRef}>
+            <DoneStep />
+          </div>
+        </CelebrationScope>
       </TaskFrame>
     </MomentAfterCeremony>
   );

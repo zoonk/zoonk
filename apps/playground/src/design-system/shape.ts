@@ -27,7 +27,7 @@ export const RADII: readonly ShapeRule[] = [
 export const EDGE_RULES: readonly string[] = [
   "A column has one start edge and one end edge. Titles, text, rows and outlined controls line up on them by their box.",
   "A control with no outline lines up by what you see: `Button`'s `edge` (`start` or `end`) moves it out by the blank between its box and its glyph, so the glyph lines up with the letters on that edge, no part of it passes the edge, and the hover box hangs past it. No screen writes a margin for it.",
-  "A bare chevron at a row's or a fold's end takes the same utility (`edge -me-(--edge-pull)`), as `ListRowChevron` and `FoldChevron` do. A bare mark that starts a column takes `edge -ms-(--edge-start)`.",
+  "A bare chevron at a row's or a fold's end takes the same utility (`edge -me-(--edge-pull)`), as `RowChevron` and `FoldChevron` do. A bare mark that starts a column takes `edge -ms-(--edge-start)`.",
   "A highlighted or hovered row and the current tab's fill reach 10px past the column on both sides, so their words stay on the edge.",
   "A panel's line is inside its box (`ring-inset`), so a card is exactly as wide as its column.",
 ];
@@ -96,23 +96,22 @@ export const ICON_SIZES: readonly IconSize[] = [
 ];
 
 export type IconMeaning = {
-  icon: "arrow-right" | "chevron-down" | "chevron-left" | "chevron-right" | "ellipsis" | "x";
+  icon: "chevron-down" | "chevron-left" | "chevron-right" | "ellipsis" | "x";
   meaning: string;
 };
 
 export const ICON_MEANINGS: readonly IconMeaning[] = [
-  { icon: "chevron-left", meaning: "Back, alone or before the page's name" },
+  { icon: "chevron-left", meaning: "Back, before the name of the page it goes back to" },
   { icon: "x", meaning: "Close" },
   { icon: "ellipsis", meaning: "More" },
-  { icon: "chevron-right", meaning: "A row that opens a page" },
+  { icon: "chevron-right", meaning: "Forward: a row that opens a page, or after a button's label" },
   { icon: "chevron-down", meaning: "A row that folds" },
-  { icon: "arrow-right", meaning: "Forward, after a button's label" },
 ];
 
 export const ICON_RULES: readonly string[] = [
   "Lucide, in five sizes: 16px (`size-4`) beside text, 14px (`size-3.5`) as a list's mark, 20px (`size-5`) alone in a bar's button that has no outline or beside 18px text, 16px inside an outlined or filled square button, 24px (`size-6`) as an empty state's or a notice's one mark, 12px (`size-3`) inside a 24px control.",
   "The stroke is Lucide's own; only a glyph of 12px or less may be thickened.",
-  "One thing, one icon: the way back is `chevron-left`, close is `x`, more is `ellipsis`. An arrow belongs to a labeled button: `arrow-right` after the label to go forward (`FORWARD_ICON`), `arrow-left` before it on the button that ends a task by going back.",
+  "One thing, one icon: the way back is `chevron-left` and the name of the page it goes back to (`BackLink`), close is `x`, more is `ellipsis`. No button holds an arrow: a forward glyph is `chevron-right` after the label (`FORWARD_ICON`), the same glyph that ends a row that opens a page.",
   "Navigation, meta and plan-line icons are neutral (`muted-foreground`); the current item takes the text color.",
   "A kind's icon in its hue only where kinds sit side by side (`KindMark`); done is one blue check (`DoneMark`); no icon tiles, tinted or gray: an icon sits bare beside its words, in a row, an empty state or an error page.",
   "An icon beside words is decorative (`aria-hidden`); an icon alone has a name.",

@@ -14,7 +14,7 @@
   "audio_open_settings": "3c509064eed7ea6452dc877695c6a226781d7be7b1aeb09662bea8655e3a1b5d",
   "audio_record": "4e6695e18715ef1a3a0e4ec1d35be771a1e555bf2545325003fe7688e72d93a9",
   "audio_record_stop": "f7a1ab08b08cceb6c26b01f29781fc25f7da4dfefe70d3d065c6732c6ebd13a4",
-  "audio_say_it": "4435984770ce54e5d9bc1b544dfbc6353f0af38a59d9084212e698f9ff9634d4",
+  "audio_say_it": "c7fa8c55e3036fcd7571a9225bd55f5873bb315ab73778627204a2a0e8efda01",
   "audio_stop": "831b933ba5a10364a48bddd6508168c4594a154b6438630eef67c6f9dc66f8a8",
   "audio_try_again": "0594074493363a428a05efacfe86e96cffea43db5366dd7d0d31e131bf9ccdad",
   "audio_try_again_label": "49cc63f8153f19b4055cc9eafd290ca1b173bcc32cc03297a5d3045dca19d922"
@@ -37,7 +37,7 @@
     <string name="audio_checking_slow">Wir prüfen noch. Es dauert länger als sonst.</string>
     <string name="audio_no_speech">Wir konnten keine Worte hören. Versuch es noch einmal.</string>
     <string name="audio_check_failed">Wir konnten deine Antwort diesmal nicht prüfen. Versuch es noch einmal.</string>
-    <string name="audio_say_it">Tipp und sprich es laut aus</string>
+    <string name="audio_say_it">Tippe auf „Aufnehmen“ und sprich es laut aus</string>
     <string name="audio_microphone_off_title">Das Mikrofon ist ausgeschaltet</string>
     <string name="audio_microphone_off_answer">Aktiviere das Mikrofon für Zoonk in den Einstellungen, um laut zu antworten.</string>
     <string name="audio_open_settings">Einstellungen öffnen</string>

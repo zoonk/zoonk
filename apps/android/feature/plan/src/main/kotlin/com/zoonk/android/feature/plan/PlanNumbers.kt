@@ -69,10 +69,10 @@ import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.markSize
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.formatGoalProgress
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatPercent
+import com.zoonk.android.ui.format.formatProgressShare
 import com.zoonk.android.ui.format.weekdayNames
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
@@ -85,7 +85,6 @@ import com.zoonk.api.models.LanguagePlanLevel
 import com.zoonk.api.models.PlanDay
 import com.zoonk.api.models.PlanItem
 import com.zoonk.api.models.PreparationComponentsMocks
-import com.zoonk.api.models.SpeakingPaper
 import kotlinx.datetime.toJavaLocalDate
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -190,7 +189,7 @@ private fun standingNumber(standing: Standing): PlanNumber {
             val share = if (standing.total > 0) min(1f, standing.done.toFloat() / standing.total) else 0f
             PlanNumber(
                 label = stringResource(R.string.plan_progress),
-                value = formatGoalProgress(share.toDouble(), locale),
+                value = formatProgressShare(share.toDouble(), locale),
                 detail = studiedLessonsLine(standing.done, standing.known),
                 share = share,
             )
@@ -510,7 +509,6 @@ internal fun LanguageDetails(
     language.speaking?.let { paper ->
         SpeakingPracticeRow(
             paper.title,
-            paper.access == SpeakingPaper.Access.PLUS_REQUIRED,
             onOpen = links::speaking,
             modifier = Modifier.bleed(LIST_ITEM_INSET),
         )

@@ -6,7 +6,6 @@ import { SparklesIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
-import { CHIP_CLASS } from "./chip";
 import {
   NoticeCard,
   NoticeCardActions,
@@ -15,17 +14,6 @@ import {
   NoticeCardLeading,
   NoticeCardTitle,
 } from "./notice-card";
-
-export function PlusMark({ className, label }: { className?: string; label?: string }) {
-  const t = useExtracted();
-
-  return (
-    <span className={cn(CHIP_CLASS, className)} data-slot="plus-mark">
-      <span aria-hidden="true">{t("Plus")}</span>
-      <span className="sr-only">{label ?? t("Available with Plus")}</span>
-    </span>
-  );
-}
 
 export function PlusNotice({
   action,

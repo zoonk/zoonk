@@ -2,6 +2,7 @@
 
 import { PROSE_MEASURE_CLASS } from "@/lib/table-classes";
 import { Input } from "@zoonk/ui/components/input";
+import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { cn } from "@zoonk/ui/lib/utils";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -51,11 +52,11 @@ function TaskRow({ showDescription, task }: { showDescription: boolean; task: Ta
   return (
     <li>
       <Link
-        className="hover:bg-muted -mx-2.5 flex min-h-11 items-center justify-between gap-4 rounded-lg px-2.5 py-2 text-sm"
+        className="hover:bg-muted -mx-2.5 flex min-h-11 items-center gap-4 rounded-lg px-2.5 py-2 text-sm"
         href={`/tasks/${task.id}`}
         title={showDescription ? undefined : task.description}
       >
-        <span className="flex min-w-0 flex-col gap-0.5">
+        <span className="flex min-w-0 flex-1 flex-col gap-0.5">
           <span className="font-medium">{task.name}</span>
           {showDescription && (
             <span className={cn("text-muted-foreground", PROSE_MEASURE_CLASS)}>
@@ -65,6 +66,7 @@ function TaskRow({ showDescription, task }: { showDescription: boolean; task: Ta
         </span>
 
         <ScoredModels count={task.scoredModels} />
+        <RowChevron />
       </Link>
     </li>
   );

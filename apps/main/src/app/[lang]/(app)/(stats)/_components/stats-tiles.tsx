@@ -21,7 +21,3 @@ export function StatTilesSkeleton({ className, count }: { className?: string; co
     </div>
   );
 }
-
-export function StatsLine({ children }: { children: React.ReactNode }) {
-  return <p className="text-muted-foreground max-w-column text-sm text-pretty">{children}</p>;
-}

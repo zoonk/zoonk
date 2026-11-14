@@ -36,13 +36,12 @@ function SkillRows({ empty, skills }: { empty: string; skills: GraphSkill[] }) {
 export async function SkillGraph({ skillId }: { skillId: string }) {
   "use cache: private";
 
-  const { dependents, prerequisiteLayers } = await getSkillGraph(skillId);
-  const before = prerequisiteLayers[0] ?? [];
+  const { dependents, prerequisites } = await getSkillGraph(skillId);
 
   return (
     <div className="grid gap-8 md:grid-cols-2">
-      <AdminSection title={`Learned before this (${before.length})`}>
-        <SkillRows empty="Nothing has to be learned first." skills={before} />
+      <AdminSection title={`Learned before this (${prerequisites.length})`}>
+        <SkillRows empty="Nothing has to be learned first." skills={prerequisites} />
       </AdminSection>
 
       <AdminSection title={`Learned after this (${dependents.length})`}>

@@ -365,7 +365,7 @@ A dialog, a sheet or a side panel closes with Esc, with a press outside it, and 
 
 What opens decides its panel, and the screen's size decides its place. On a phone everything that opens over a page rises from the bottom: a short form, a pick or a detail as a sheet with a grab handle (`Drawer`), and a question that needs an answer as a sheet without one, the confirm on top and "Cancel" under it (`AlertDialog`). On a computer both are centered. The piece decides, so no screen picks a dialog or a sheet itself. A side panel (`SidePanel`) is a computer's, only for something edited beside the page it changes (a sheet on a phone). A menu or a popover, for a few choices or one fact tied to a control, stays anchored to it at every size. A bottom-docked box is a phone's shape (where the thumb is, closed with a swipe); on a computer the eyes and pointer are in the middle of the window.
 
-- **Check.** Open it and close it each way. On a computer, find its ✕ without looking for a grab handle. On a phone, its bottom edge is the screen's. The `verify:pages` walk opens each one and checks its place, its focus and its closes; `zoonk/one-overlay-piece` holds the source.
+- **Check.** Open it and close it each way. On a computer, find its ✕ without looking for a grab handle. On a phone, its bottom edge is the screen's. The `verify:pages` walk opens each one and checks its place, its focus and its closes.
 - **Usual break.** A sheet with a grab handle and no ✕, docked at the bottom of a computer's window. A dialog still centered on a phone.
 
 ### B5. Focus goes in, and comes back

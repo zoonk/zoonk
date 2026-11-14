@@ -9,13 +9,16 @@ import { useAppLocale } from "../_utils/locale";
 import { type CountryName, type SuggestedCountry } from "../country/country-choice";
 import { CountryPicker } from "../country/country-picker";
 
-/** Nothing rebuilds, so a pick saves at once and closes; "Not set" clears it. */
+/**
+ * Nothing rebuilds, so a pick saves at once and closes. The country starts as where the learner
+ * signed in from; "Not set" shows only when that wasn't known.
+ */
 export function HomeCountrySetting({
   onChange,
   suggested,
   value,
 }: {
-  onChange: (country: CountryName | null) => void;
+  onChange: (country: CountryName) => void;
   suggested: readonly SuggestedCountry[];
   value: CountryName | null;
 }) {
@@ -29,9 +32,7 @@ export function HomeCountrySetting({
 
   return (
     <SettingRow
-      description={t(
-        "For new goals and your examples. It doesn't change the plans you already have.",
-      )}
+      description={t("So examples and exams match your country.")}
       descriptionId={descriptionId}
       label={<span id={labelId}>{title}</span>}
     >
@@ -53,12 +54,11 @@ export function HomeCountrySetting({
 
       <CountryPicker
         language={locale}
-        noneLabel={t("Not set")}
         onOpenChange={setOpen}
         onPick={(country) => {
           setOpen(false);
 
-          if ((country?.code ?? null) !== (value?.code ?? null)) {
+          if (country.code !== value?.code) {
             onChange(country);
           }
         }}

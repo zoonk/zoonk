@@ -1,27 +1,26 @@
+import { BackLink, PageTopBar } from "@zoonk/ui/components/page-top";
 import { ZoonkLogo } from "@zoonk/ui/components/zoonk-logo";
-import { ChevronLeftIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 
 /** The product's name, the same in every language. */
 const BRAND_NAME = "Zoonk";
 
-async function BackLink({ appUrl }: { appUrl: string | Promise<string> }) {
+/** The way back to the app that sent the learner, in the shared page top's bar across the frame. */
+async function AuthBackLink({ appUrl }: { appUrl: string | Promise<string> }) {
   const [t, href] = await Promise.all([getExtracted(), appUrl]);
 
   return (
-    <a
+    <BackLink
       aria-label={t({
         description:
           'The link shows only the word "Zoonk", so keep "Zoonk" as a separate word, with no ending or particle attached.',
         message: "Back to Zoonk",
       })}
-      className="text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 edge absolute top-3 left-2 -ms-(--edge-start) inline-flex min-h-11 items-center gap-0.5 rounded-lg px-2 text-sm font-medium outline-none focus-visible:ring-[3px] sm:top-5 sm:left-5"
       href={href}
     >
-      <ChevronLeftIcon aria-hidden="true" className="size-4" />
       {BRAND_NAME}
-    </a>
+    </BackLink>
   );
 }
 
@@ -35,9 +34,15 @@ export function AuthFrame({
 }) {
   return (
     <>
-      <Suspense fallback={null}>
-        <BackLink appUrl={appUrl} />
-      </Suspense>
+      <div className="absolute inset-x-0 top-0 px-(--page-gutter) [--page-gutter:--spacing(4)] sm:[--page-gutter:--spacing(6)] lg:[--page-gutter:--spacing(8)]">
+        <PageTopBar
+          back={
+            <Suspense fallback={null}>
+              <AuthBackLink appUrl={appUrl} />
+            </Suspense>
+          }
+        />
+      </div>
 
       <div className="flex w-full max-w-[360px] flex-col items-center gap-6">
         <ZoonkLogo className="size-8" />

@@ -8,12 +8,6 @@ struct MistakesScreen: View {
 
   private var goalId: String? { summary.summary.value?.activeGoalID }
 
-  private var goalName: String? {
-    summary.summary.value.flatMap { learner in
-      learner.goals.first { $0.id == learner.activeGoalID }?.displayName
-    }
-  }
-
   private func mistakes(fixed: Bool) -> Resource<Components.Schemas.MistakeList> {
     practice.mistakes(goalId: goalId, fixed: fixed)
   }
@@ -44,7 +38,7 @@ struct MistakesScreen: View {
         }
 
         Section {
-          PageHeader(title, eyebrow: goalName.map { Text(verbatim: $0) })
+          PageHeader(title)
           header(shown.value)
         }
 

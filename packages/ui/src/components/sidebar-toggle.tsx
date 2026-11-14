@@ -10,7 +10,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { PanelLeftIcon, PanelRightIcon, SearchIcon } from "lucide-react";
 import { useEffect, useRef, useSyncExternalStore } from "react";
 import { POPUP_SELECTOR } from "../hooks/_utils/screen-shortcut";
-import { buttonVariants } from "./button";
+import { Button, buttonVariants } from "./button";
 import {
   SIDEBAR_ICON_ONLY_CLASS,
   SIDEBAR_ITEM_CLASS,
@@ -229,50 +229,16 @@ export function SidebarToggle({
   );
 }
 
-const SEARCH_CLASS = {
-  bar: "h-11 rounded-lg px-3 text-sm hover:bg-muted/60",
-  sidebar: cn(
-    "sidebar-collapsed:text-muted-foreground sidebar-collapsed:ring-0 hover:bg-muted/60 text-compact h-9 gap-2.5 rounded-lg px-2",
-    SIDEBAR_ICON_ONLY_CLASS,
-  ),
-} as const;
-
 /** Opens the app's command palette, which answers ⌘K and Ctrl+K itself. */
 export function SidebarSearch({
   className,
   label,
   onClick,
-  placement = "sidebar",
 }: {
   className?: string;
   label: string;
   onClick: () => void;
-  placement?: keyof typeof SEARCH_CLASS;
 }) {
-  const button = (
-    <button
-      aria-keyshortcuts={shortcutKeys("search")}
-      className={cn(
-        "text-faint ring-input hover:text-foreground focus-visible:ring-ring/50 hit-area relative flex w-full items-center gap-2 ring-1 transition-colors outline-none ring-inset focus-visible:ring-[3px]",
-        SEARCH_CLASS[placement],
-        className,
-      )}
-      onClick={(event) => {
-        event.currentTarget.focus();
-        onClick();
-      }}
-      type="button"
-    >
-      <SearchIcon aria-hidden="true" className="size-4 shrink-0" />
-      <span className="flex-1 truncate text-left">{label}</span>
-      <ShortcutKbd shortcut="search" />
-    </button>
-  );
-
-  if (placement === "bar") {
-    return button;
-  }
-
   return (
     <SidebarTooltip
       label={
@@ -282,7 +248,53 @@ export function SidebarSearch({
         </>
       }
     >
-      {button}
+      <button
+        aria-haspopup="dialog"
+        aria-keyshortcuts={shortcutKeys("search")}
+        className={cn(
+          "text-faint ring-input hover:text-foreground focus-visible:ring-ring/50 hit-area relative flex w-full items-center gap-2 ring-1 transition-colors outline-none ring-inset focus-visible:ring-[3px]",
+          "sidebar-collapsed:text-muted-foreground sidebar-collapsed:ring-0 hover:bg-muted/60 text-compact h-9 gap-2.5 rounded-lg px-2",
+          SIDEBAR_ICON_ONLY_CLASS,
+          className,
+        )}
+        onClick={(event) => {
+          event.currentTarget.focus();
+          onClick();
+        }}
+        type="button"
+      >
+        <SearchIcon aria-hidden="true" className="size-4 shrink-0" />
+        <span className="flex-1 truncate text-left">{label}</span>
+        <ShortcutKbd shortcut="search" />
+      </button>
     </SidebarTooltip>
+  );
+}
+
+/** The bar's search icon where there is no sidebar: it opens the same palette as `SidebarSearch`. */
+export function BarSearch({
+  className,
+  edge,
+  label,
+  onClick,
+}: {
+  className?: string;
+  edge?: "start" | "end";
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <Button
+      aria-haspopup="dialog"
+      aria-keyshortcuts={shortcutKeys("search")}
+      className={className}
+      edge={edge}
+      onClick={onClick}
+      size="icon-bar"
+      variant="ghost"
+    >
+      <SearchIcon aria-hidden="true" />
+      <span className="sr-only">{label}</span>
+    </Button>
   );
 }

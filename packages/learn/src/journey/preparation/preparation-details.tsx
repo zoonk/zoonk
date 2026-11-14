@@ -1,10 +1,10 @@
 "use client";
 
 import { type ProgressView } from "@zoonk/core/view-models/progress/get";
+import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { useExtracted } from "next-intl";
 import { BigQuantity } from "../../_components/big-quantity";
 import { KindDot, KindMark } from "../../_components/kind-tile";
-import { ListRowChevron } from "../../_components/list-group";
 import { Meter, MeterFill } from "../../_components/meter";
 import { QuietDisclosure } from "../../_components/quiet-disclosure";
 import { SectionLabel } from "../../_components/section-label";
@@ -73,7 +73,7 @@ function useMeasureNote(forExam: boolean): string {
 function Readout({ share, value }: { share: number; value: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-2" data-slot="preparation-readout">
-      <span className="text-readout text-4xl leading-none">
+      <span className="text-readout text-[2.5rem] leading-none">
         {typeof value === "string" ? <BigQuantity>{value}</BigQuantity> : value}
       </span>
       <Meter>
@@ -128,7 +128,7 @@ function StillNeededRow({ examHref, item }: { examHref: string | null; item: Sti
         href={examHref}
       >
         {content}
-        <ListRowChevron />
+        <RowChevron />
       </LearnLink>
     );
   }

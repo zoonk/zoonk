@@ -136,7 +136,7 @@ struct FreePlan: Decodable, Equatable, Sendable {
   let examPrepDays: Int?
   let guestLessons: Int?
   let lessonsPerDay: Int?
-  let lessonsPerMonth: Int?
+  let lessonsPer30Days: Int?
   let tutorMessagesPerDay: Int?
   let uploadsPerDay: Int?
 }
@@ -207,8 +207,9 @@ extension MemoryFact {
 
 extension PlanAllowance {
   init(_ allowance: Components.Schemas.AllowanceResponse) {
-    let messages = allowance.items.first { $0.kind == .tutorMessage }
-    let goals = allowance.items.first { $0.kind == .goal }
+    let counts = allowance.items.compactMap(\.value2)
+    let messages = counts.first { $0.kind == .tutorMessage }
+    let goals = counts.first { $0.kind == .goal }
 
     self.init(
       tier: Tier(rawValue: allowance.tier.rawValue) ?? .free,

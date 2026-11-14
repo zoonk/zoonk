@@ -56,12 +56,11 @@
   "activities_music_same_notes_guitar": "6c1aa8dca30a0d043ec585ff047fab6088e8c71817658cebbf9b9ff6125d406b",
   "activities_music_show_as": "b2588a08db6c76547c7fe4760c17472799171d7eb86faab10e76cbccd3bd0737",
   "activities_music_skip_for_now": "eca9535af34c0f6d7fc7b2194c4178548e41e30aa2bc892cdcd0bfbe83dd01e2",
+  "activities_music_sound_check_done": "3f89ed928cc42aa81605be824108bd5d5104b30b20a38ea91c99df967f0cde49",
   "activities_music_sound_check_failed": "2ab51412800c779f5cac9c735e0be400d11bf45524d59b064fb2a329d158b86a",
-  "activities_music_sound_check_intro": "02eed158f259f8189095d09ff51b71b4aa05a367d731600c20976f4187dd1a68",
-  "activities_music_sound_check_late": "9cb932a5fac3f086d6121559d8432fbb9131b853d7710d121dbab2b10af164f4",
+  "activities_music_sound_check_intro": "df35aa373ff87880d5e5176a365ba7a26d94ecf3a7feeb7ab91330f6a467bdce",
   "activities_music_sound_check_listen": "8030dee864cd941d8af23ceba306599ddc908d7694ee702547b03ff6e47f011f",
-  "activities_music_sound_check_on_time": "84d553902edba845d42b4d48b31eb1c719c54855997f719c9640cad22db9dfd3",
-  "activities_music_sound_check_start": "72ded65b070b504d40116ea6d61283cc6cc88c661e551cef26875b3e9e3b9074",
+  "activities_music_sound_check_start": "20357703e4c0be19c7828aa58cece32630d8afc23c395c7e67ff5d43404ce1a1",
   "activities_music_sound_check_tap": "e0e45f1f9bf7a058c3f1dcd8996f5d3e5f6b0b658e8c46df3a3f02206c5e791e",
   "activities_music_sound_check_title": "826f38b3a855895e3a983bcea6e21a127a4d7e2cd69f5629017139614dc095ad",
   "activities_music_sound_notes": "05d796080eb0f44ca1895fc999bd2bf155d212534a52caa90f318a6b02a77921",
@@ -229,16 +228,14 @@
     <!-- The title of the one-time check of how late this device plays sound. -->
     <string name="activities_music_sound_check_title">소리 설정</string>
     <plurals name="activities_music_sound_check_intro">
-        <item quantity="other">헤드폰으로 들으면 소리가 조금 늦게 나올 수 있어요. 클릭 소리 %1$d번에 맞춰 한 번씩 탭하면, 이 기기의 지연을 보정해 리듬을 정확하게 평가해요.</item>
+        <item quantity="other">클릭 소리에 맞춰 %1$d번 탭해 타이밍을 맞춰 보세요.</item>
     </plurals>
     <string name="activities_music_sound_check_listen">박자 소리를 들어 보세요…</string>
     <!-- Which click to tap with now, like "Tap with each click · 2 of 6". -->
     <string name="activities_music_sound_check_tap">클릭 소리마다 탭하세요 · %1$d/%2$d회</string>
     <string name="activities_music_sound_check_failed">클릭 소리에 맞춘 탭을 충분히 감지하지 못했어요. 소리가 날 때마다 탭하며 다시 시도해 보세요.</string>
-    <string name="activities_music_sound_check_on_time">이 기기는 소리가 제때 나와요.</string>
-    <!-- How late this device plays sound, like "about 120 ms late". -->
-    <string name="activities_music_sound_check_late">이 기기에서는 소리가 약 %1$d밀리초 늦게 나와요. 리듬 연습에서는 이 지연을 보정해요.</string>
-    <string name="activities_music_sound_check_start">소리 확인 시작하기</string>
+    <string name="activities_music_sound_check_done">준비됐어요.</string>
+    <string name="activities_music_sound_check_start">시작하기</string>
     <string name="activities_music_skip_for_now">지금은 건너뛰기</string>
     <string name="activities_music_continue">계속하기</string>
 </resources>

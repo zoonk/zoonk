@@ -37,7 +37,7 @@ import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitActions
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.OutlinedButton
-import com.zoonk.android.ui.components.limitMessage
+import com.zoonk.android.ui.components.limitWords
 import java.util.UUID
 
 /** What a screen's listen buttons read and do; the clip is asked for only in [speak], from a tap. */
@@ -157,7 +157,7 @@ fun SpeechFailedNote(
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        val reason = limit?.let { limitMessage(it, LimitSubject.Help) } ?: stringResource(R.string.audio_did_not_play)
+        val reason = limit?.let { limitWords(it, LimitSubject.Help).run { title ?: line } } ?: stringResource(R.string.audio_did_not_play)
         Text(
             text = if (text == null) reason else stringResource(R.string.audio_here_is_what_it_says, reason),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -181,7 +181,7 @@ fun SpeechFailedNote(
             LimitActions(
                 limit,
                 onCreateAccount = { navigator.open(AppRoute.Login) },
-                onSeePlus = { navigator.open(AppRoute.Subscription) },
+                onSubscribe = { navigator.open(AppRoute.Subscription) },
             )
         }
     }

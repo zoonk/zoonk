@@ -70,6 +70,7 @@ function ToolRow({ onChoose, tool }: { onChoose: () => void; tool: PlanToolView 
       </div>
 
       <Button
+        aria-haspopup="dialog"
         aria-label={
           tool.choice
             ? t("Change how you'll use {tool}", { tool: tool.name })

@@ -67,7 +67,7 @@ export function AdjustPlanButton({ onAdjust }: { onAdjust: () => void }) {
   const t = useExtracted();
 
   return (
-    <Button onClick={onAdjust} size="sm" variant="outline">
+    <Button aria-haspopup="dialog" onClick={onAdjust} size="sm" variant="outline">
       {t("Adjust plan")}
     </Button>
   );

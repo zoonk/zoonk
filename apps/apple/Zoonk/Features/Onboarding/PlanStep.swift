@@ -570,7 +570,6 @@ private struct PlanReveal: View {
   @Environment(TodayStore.self) private var today
   @State private var adjusting: AdjustPlanSheet.Section?
   @State private var sheet: PlanSheet?
-  @State private var showsTopics = false
   /// Start's, or a row's while `openingRow` names it.
   @State private var opening: Task<Void, Never>?
   @State private var openingRow: Int?
@@ -606,19 +605,19 @@ private struct PlanReveal: View {
       ZoonkList {
         heroSections(goal: goal, day: day)
       }
-      .safeAreaBar(edge: .bottom) { actions(day: day.value?.today) }
+      .bottomBar(note: barNote) { actions(day: day.value?.today) }
       // Adjust is see-through, so the plan scrolling under the bar stops at its edge.
       .scrollEdgeEffectStyle(.hard, for: .bottom)
     } secondary: {
       ZoonkList {
-        detailSections(context: context, syllabus: syllabus.value, structure: structure)
+        detailSections(context: context, structure: structure)
       }
     } single: {
       ZoonkList {
         heroSections(goal: goal, day: day)
-        detailSections(context: context, syllabus: syllabus.value, structure: structure)
+        detailSections(context: context, structure: structure)
       }
-      .safeAreaBar(edge: .bottom) { actions(day: day.value?.today) }
+      .bottomBar(note: barNote) { actions(day: day.value?.today) }
       // Adjust is see-through, so the plan scrolling under the bar stops at its edge.
       .scrollEdgeEffectStyle(.hard, for: .bottom)
       .onboardingColumn()
@@ -636,12 +635,6 @@ private struct PlanReveal: View {
       AdjustPlanSheet(goal: goal, plan: plan, section: section, store: plans)
         .zoonkStyles()
     }
-    .sheet(isPresented: $showsTopics) {
-      if let structure {
-        SyllabusTopicsSheet(syllabus: structure)
-          .zoonkStyles()
-      }
-    }
   }
 
   @ViewBuilder
@@ -650,14 +643,15 @@ private struct PlanReveal: View {
       VStack(alignment: .leading, spacing: 20) {
         RevealHero(title: goal.displayName, buddy: learner.summary.value?.buddy ?? BuddyLook())
         RevealReadouts(plan: plan, isExam: goal.kind == .exam)
+        coverage
       }
       .listRowBackground(Color.clear)
     }
 
+    RevealExamChoices(plan: plan) { adjusting = .choice($0) }
+
     RevealNoticeDay(
       isSaving: $isChangingDate, failed: $dateChangeFailed, goalID: goal.id, plan: plan)
-
-    RevealExamChoices(plan: plan) { adjusting = .choice($0) }
 
     switch day.state {
     case .loaded(let reveal):
@@ -673,78 +667,101 @@ private struct PlanReveal: View {
     }
   }
 
-  /// Main's `RevealActions`: pinned under the plan, and working from the moment's first frame.
-  private func actions(day: StudyDay?) -> some View {
-    VStack(spacing: 10) {
-      switch startFailure {
-      case .save:
-        FailureLine(
-          message: LocalizedStringResource(
-            "That didn't save. Try again.", table: "Onboarding",
-            comment: "A change couldn't be saved"))
-      case .open:
-        FailureLine(
-          message: LocalizedStringResource(
-            "We couldn't open this step. Try again.", table: "Today",
-            comment: "Under a step of the day, or a mission, that didn't open"))
-      case nil:
-        EmptyView()
-      }
-
-      HStack(spacing: 10) {
-        Button {
-          adjusting = .top
-        } label: {
-          Text(
-            "Adjust", tableName: "Onboarding", comment: "Opens the plan's settings to change it")
+  /// Main's `RevealCoverage`: the one thing a learner may want to change before starting, when
+  /// their time doesn't cover the goal. What fits lives on the Plan. A plan that goes on after the
+  /// exam covers the rest then.
+  @ViewBuilder private var coverage: some View {
+    if !plan.schedule.fullCourse, let covered = planCoverageText(plan) {
+      ViewThatFits(in: .horizontal) {
+        HStack(spacing: 16) {
+          coverageLine(covered)
+          addTime
         }
-        .buttonStyle(.outline)
-        .fixedSize()
 
-        BusyButton(isBusy: opening != nil && openingRow == nil, icon: .play) {
-          start(on: day)
-        } label: {
-          if day?.blocks.contains(where: \.isFinished) == true {
-            Text(
-              "Continue", tableName: "Onboarding",
-              comment: "Opens the plan's next step once a lesson of its first day is done")
-          } else {
-            Text("Start", tableName: "Onboarding", comment: "Opens the plan's first step")
-          }
+        VStack(alignment: .leading, spacing: 8) {
+          coverageLine(covered)
+          addTime
         }
-        .buttonStyle(.mainAction)
-        .buttonSizing(.flexible)
-        .keyboardShortcut(.defaultAction)
-        .disabled(openingRow != nil)
-      }
-
-      if learner.summary.value?.identity.isAnonymous == true {
-        HStack(spacing: 8) {
-          Text(
-            "Save your plan so it's here next time.", tableName: "Onboarding",
-            comment: "A guest's plan isn't saved to an account yet")
-
-          Button {
-            router.present(.signIn)
-          } label: {
-            Text(
-              "Create an account", tableName: "Onboarding", comment: "Opens sign-up from the plan")
-          }
-        }
-        .typeStyle(.note)
-        .foregroundStyle(.mutedForeground)
       }
     }
-    .controlSize(.large)
-    .keepsOffFold()
-    .scenePadding(.horizontal)
-    .padding(.vertical, 10)
+  }
+
+  private func coverageLine(_ text: String) -> some View {
+    Text(text)
+      .typeStyle(.note)
+      .foregroundStyle(.mutedForeground)
+      .frame(maxWidth: .infinity, alignment: .leading)
+  }
+
+  private var addTime: some View {
+    Button {
+      adjusting = .time
+    } label: {
+      Text(
+        "Add time", tableName: "Onboarding",
+        comment: "Opens the plan's time a day, beside the line saying it doesn't cover the goal")
+    }
+    .buttonStyle(.outline)
+    .controlSize(.small)
+    .fixedSize()
+  }
+
+  /// Main's `RevealActions`: pinned under the plan, and working from the moment's first frame.
+  @ViewBuilder
+  private func actions(day: StudyDay?) -> some View {
+    Button {
+      adjusting = .top
+    } label: {
+      Text("Adjust", tableName: "Onboarding", comment: "Opens the plan's settings to change it")
+    }
+    .buttonStyle(.outline)
+
+    BusyButton(isBusy: opening != nil && openingRow == nil) {
+      start(on: day)
+    } label: {
+      if day?.blocks.contains(where: \.isFinished) == true {
+        Text(
+          "Continue", tableName: "Onboarding",
+          comment: "Opens the plan's next step once a lesson of its first day is done")
+      } else {
+        Text("Start", tableName: "Onboarding", comment: "Opens the plan's first step")
+      }
+    }
+    .buttonStyle(.mainAction)
+    .keyboardShortcut(.defaultAction)
+    .disabled(openingRow != nil)
+  }
+
+  /// What a tap couldn't do, or, for a guest, that the plan isn't saved yet.
+  private var barNote: BarNote? {
+    switch startFailure {
+    case .save:
+      return BarNote(
+        LocalizedStringResource(
+          "That didn't save. Try again.", table: "Onboarding",
+          comment: "A change couldn't be saved"))
+    case .open:
+      return BarNote(
+        LocalizedStringResource(
+          "We couldn't open this step. Try again.", table: "Today",
+          comment: "Under a step of the day, or a mission, that didn't open"))
+    case nil:
+      guard learner.summary.value?.identity.isAnonymous == true else { return nil }
+
+      return BarNote(
+        LocalizedStringResource(
+          "Save your plan so it's here next time.", table: "Onboarding",
+          comment: "A guest's plan isn't saved to an account yet"),
+        tone: .status,
+        action: BarNote.Action(
+          label: Text(
+            "Create an account", tableName: "Onboarding", comment: "Opens sign-up from the plan"),
+          perform: { router.present(.signIn) }))
+    }
   }
 
   @ViewBuilder
-  private func detailSections(
-    context: PlanContext, syllabus: GoalSyllabus?, structure: GoalSyllabus?
-  ) -> some View {
+  private func detailSections(context: PlanContext, structure: GoalSyllabus?) -> some View {
     // A plan of one phase has nothing to draw in time: its chapters say its shape instead.
     if plan.roadPhases.count > 1 {
       PlanRoadmapSection(context: context, structure: structure, listsPhases: true)
@@ -764,113 +781,8 @@ private struct PlanReveal: View {
       }
     }
 
-    if let syllabus {
-      AreaWeights(syllabus: syllabus)
-    }
-
-    PlanSuggestionSection(context: context, answer: $slotAnswer)
-
-    if let tradeOff = focusTradeOff {
-      focusTradeOffSection(tradeOff, structure: structure)
-    } else if structure != nil || offersTest {
-      Section {
-        if let structure {
-          Text(syllabusSummary(structure, dailyMinutes: plan.schedule.dailyMinutes))
-            .foregroundStyle(.mutedForeground)
-
-          Button {
-            showsTopics = true
-          } label: {
-            Text("See topics", tableName: "Onboarding", comment: "Opens what the plan studies")
-          }
-        }
-
-        if offersTest {
-          Button {
-            router.open(.focusTest(goalId: view.goal.id))
-          } label: {
-            Text(FocusTestCopy.takeTest)
-          }
-        }
-      }
-    }
-
     if structure == nil, plan.roadPhases.count > 1 {
       PlanPathSection(context: context)
-    }
-  }
-
-  /// The time doesn't cover everything by the goal's date.
-  private var isShort: Bool {
-    plan.feasibility?.deadline != nil && plan.feasibility?.fits == false
-  }
-
-  /// A learner who skipped the Focus test, short on time, is offered it here.
-  private var offersTest: Bool {
-    isShort && plan.focusTest?.notStartedOffer != nil
-  }
-
-  /// What a short plan trades: nil unless the time doesn't cover everything and the plan has a
-  /// focus.
-  private var focusTradeOff: String? {
-    let focused = plan.areas.filter { $0.focused && $0.partOf == nil }.map(\.name)
-
-    guard isShort, let targetDate = plan.schedule.targetDate, !focused.isEmpty else {
-      return nil
-    }
-
-    let date = PlanDate.text(
-      targetDate, today: plan.today, month: plan.schedule.targetDateNamedMonth)
-    let time = studyDuration(minutes: plan.schedule.dailyMinutes)
-    let areas = focused.formatted(.list(type: .and))
-
-    return String(
-      localized:
-        "At \(time) a day, some topics won't fit before \(date). This plan gives \(areas) more time.",
-      table: "Onboarding",
-      comment:
-        "The reveal of a plan whose time is short: the daily time, the exam's day or month, and up to three subjects it gives more time"
-    )
-  }
-
-  /// The focus the plan follows, with what it leaves out, how to change it and where it came from.
-  private func focusTradeOffSection(_ text: String, structure: GoalSyllabus?) -> some View {
-    let choices = plan.areas.filter { !$0.skipped && $0.partOf == nil }
-    let tested = plan.focusTest.map { $0.state != .notStarted } ?? false
-
-    return Section {
-      Text(text)
-        .foregroundStyle(.mutedForeground)
-
-      if structure != nil {
-        Button {
-          showsTopics = true
-        } label: {
-          Text(
-            "See what fits", tableName: "Onboarding",
-            comment: "Opens what a short plan studies, from the line saying what it leaves out")
-        }
-      }
-
-      if choices.count > 1 {
-        Button {
-          adjusting = .focus
-        } label: {
-          Text(
-            "Change focus", tableName: "Onboarding",
-            comment: "Opens the choice of the subjects the plan gives more time")
-        }
-      }
-
-      if tested {
-        Button {
-          router.open(.focusTest(goalId: view.goal.id))
-        } label: {
-          Text(
-            "What your test changed", tableName: "Onboarding",
-            comment: "Opens the Focus test's result from the plan's reveal")
-        }
-      }
     }
   }
 
@@ -1036,250 +948,4 @@ private struct RevealChapters: View {
       }
     }
   }
-}
-
-/// Main's `useSyllabusSummaryText`: the plan's subjects in one line.
-func syllabusSummary(_ syllabus: GoalSyllabus, dailyMinutes: Int) -> String {
-  let firstSubjects = syllabus.subjects.prefix(2).map(\.shortName).joinedFacts()
-  let noticeSubjects = syllabus.subjects.filter { $0.source == "notice" }.count
-  let coverage = syllabusCoverage(syllabus, dailyMinutes: dailyMinutes)
-  let title: String
-  let detail: String?
-
-  if syllabus.kind != "notice" {
-    title = String(
-      localized: "\(syllabus.subjects.count) modules", table: "Onboarding",
-      comment: "How many modules a plan has")
-    detail = firstSubjects
-  } else if syllabus.fromMaterial {
-    title = String(
-      localized:
-        "\(syllabus.topicCount > 0 ? syllabus.topicCount : noticeSubjects) topics from your material",
-      table: "Onboarding", comment: "How many topics the learner's material lists")
-    detail =
-      syllabus.topicCount == 0 ? firstSubjects : syllabus.topicsMapped ? coverage : nil
-  } else {
-    title =
-      syllabus.examDocument == .notice
-      ? String(
-        localized: "\(noticeSubjects) subjects from the notice", table: "Onboarding",
-        comment: "How many subjects the exam notice lists")
-      : String(
-        localized: "\(noticeSubjects) parts from the official guide", table: "Onboarding",
-        comment: "How many parts the exam's official guide lists")
-
-    if syllabus.topicCount == 0 {
-      detail = heaviestSubjects(syllabus) ?? firstSubjects
-    } else if !syllabus.topicsMapped {
-      detail = String(
-        localized: "\(syllabus.topicCount) topics", table: "Onboarding",
-        comment: "How many topics the exam notice lists")
-    } else {
-      detail = coverage
-    }
-  }
-
-  return [title, detail].compactMap { $0?.isEmpty == false ? $0 : nil }.joinedFacts()
-}
-
-/// A subject's basics the learner starts past aren't left out: the plan counts them as known.
-private func syllabusCoverage(_ syllabus: GoalSyllabus, dailyMinutes: Int) -> String {
-  let topics = syllabus.subjects.flatMap(\.topics)
-  let out = topics.filter { $0.status == "notPlanned" && $0.notPlannedReason != "pastBasics" }
-  let total = syllabus.topicCount
-
-  if out.isEmpty {
-    return String(
-      localized: "\(total) topics, all in your plan", table: "Onboarding",
-      comment: "Every topic of the goal fits in the plan")
-  }
-
-  if out.allSatisfy({ $0.notPlannedReason == "time" }) {
-    return String(
-      localized:
-        "\(out.count) of \(total) topics don't fit in \(planDurationText(minutes: Double(dailyMinutes))) a day",
-      table: "Onboarding", comment: "Topics left out because the daily time can't reach them")
-  }
-
-  return String(
-    localized: "\(total - out.count) of \(total) topics in your plan", table: "Onboarding",
-    comment: "Topics the plan holds of the goal's topics")
-}
-
-private func heaviestSubjects(_ syllabus: GoalSyllabus) -> String? {
-  let subjects = syllabus.subjects.filter { $0.source == "notice" }
-  let counted = subjects.compactMap { subject in subject.questions.map { (subject, $0) } }
-
-  guard !counted.isEmpty, counted.count == subjects.count else {
-    return nil
-  }
-
-  let heaviest = counted.prefix(3).map { "\($0.0.shortName) \($0.1)" }.joinedFacts()
-  return String(
-    localized: "Most questions: \(heaviest)", table: "Onboarding",
-    comment: "The exam's subjects with the most questions and how many each has")
-}
-
-/// Main's topics sheet: each subject with how much it asks and its topics.
-private struct SyllabusTopicsSheet: View {
-  @Environment(\.dismiss) private var dismiss
-
-  let syllabus: GoalSyllabus
-
-  var body: some View {
-    NavigationStack {
-      ZoonkList {
-        ForEach(syllabus.subjects) { subject in
-          if subject.topics.isEmpty {
-            label(subject)
-          } else {
-            DisclosureGroup {
-              ForEach(subject.topics) { topic in
-                Text(topic.name)
-                  .foregroundStyle(topic.status == "notPlanned" ? .mutedForeground : .primary)
-              }
-            } label: {
-              label(subject)
-            }
-          }
-        }
-      }
-      .navigationTitle(
-        Text("What you'll study", tableName: "Onboarding", comment: "Title of the topics sheet")
-      )
-      .toolbarTitleDisplayMode(.inline)
-      .toolbar {
-        ToolbarItem(placement: .cancellationAction) {
-          Button(role: .close) {
-            dismiss()
-          }
-        }
-      }
-    }
-  }
-
-  private func label(_ subject: SyllabusSubject) -> some View {
-    VStack(alignment: .leading, spacing: 2) {
-      Text(subject.name)
-
-      if let line = subjectLine(subject) {
-        Text(line)
-          .typeStyle(.data)
-          .foregroundStyle(.mutedForeground)
-      }
-    }
-  }
-
-  private func subjectLine(_ subject: SyllabusSubject) -> String? {
-    let total = subject.topics.count
-    let leftOut = subject.topics.filter { $0.status == "notPlanned" }.count
-    let topics: String? =
-      leftOut > 0
-      ? String(
-        localized: "\(total) topics, \(leftOut) out of your plan", table: "Onboarding",
-        comment: "A subject's topics and how many the plan leaves out")
-      : total > 0
-        ? String(
-          localized: "\(total) topics", table: "Onboarding",
-          comment: "How many topics the exam notice lists")
-        : nil
-    let questions = subject.questions.flatMap { count in
-      count > 0
-        ? String(
-          localized: "\(count) questions", table: "Onboarding",
-          comment: "How many questions a subject has on the exam")
-        : nil
-    }
-    let parts = [questions, topics].compactMap(\.self)
-
-    return parts.isEmpty ? nil : parts.joinedFacts()
-  }
-}
-
-private struct AreaWeights: View {
-  let syllabus: GoalSyllabus
-
-  var body: some View {
-    let weighed = syllabus.subjects
-      .compactMap { subject in subject.displayWeight.map { (subject, $0) } }
-      .sorted { $0.1.share > $1.1.share }
-    let assumed = weighed.filter { $0.1.basis == .assumed }.count
-
-    if weighed.count >= 2 {
-      Section {
-        ForEach(weighed, id: \.0.id) { subject, weight in
-          VStack(alignment: .leading, spacing: 6) {
-            PlanPathRow {
-              Text(subject.name)
-            } value: {
-              Text(percentText(weight))
-                .typeStyle(.data)
-                .foregroundStyle(.mutedForeground)
-            }
-
-            Meter(value: weight.share, fill: .primary)
-              .accessibilityHidden(true)
-          }
-          .accessibilityElement(children: .combine)
-        }
-      } header: {
-        SectionTitle(
-          Text(
-            "Weight by area", tableName: "Onboarding",
-            comment: "Header over an exam's areas and how much each weighs"))
-      } footer: {
-        SectionFooter {
-          if assumed > 0 {
-            Text(estimateNote(assumed))
-          }
-        }
-      }
-    }
-  }
-
-  private func percentText(_ weight: SyllabusSubject.DisplayWeight) -> String {
-    let percent = (Double(weight.percent) / 100).formatted(.percent)
-
-    return weight.basis == .assumed
-      ? String(
-        localized: "~\(percent)", table: "Onboarding",
-        comment: "An area's weight the official documents don't give, so it's estimated")
-      : percent
-  }
-
-  private func estimateNote(_ count: Int) -> String {
-    switch (syllabus.fromMaterial, syllabus.examDocument, count == 1) {
-    case (true, _, true):
-      String(
-        localized: "~ Estimated: your material doesn't say how much this area weighs.",
-        table: "Onboarding",
-        comment: "Under a weight estimated because the learner's material doesn't give it")
-    case (true, _, false):
-      String(
-        localized: "~ Estimated: your material doesn't say how much these areas weigh.",
-        table: "Onboarding",
-        comment: "Under weights estimated because the learner's material doesn't give them")
-    case (false, .guide, true):
-      String(
-        localized: "~ Estimated: the official guide doesn't say how much this area weighs.",
-        table: "Onboarding",
-        comment: "Under a weight estimated because the exam's official guide doesn't give it")
-    case (false, .guide, false):
-      String(
-        localized: "~ Estimated: the official guide doesn't say how much these areas weigh.",
-        table: "Onboarding",
-        comment: "Under weights estimated because the exam's official guide doesn't give them")
-    case (false, .notice, true):
-      String(
-        localized: "~ Estimated: the notice doesn't say how much this area weighs.",
-        table: "Onboarding",
-        comment: "Under a weight estimated because the exam notice doesn't give it")
-    case (false, .notice, false):
-      String(
-        localized: "~ Estimated: the notice doesn't say how much these areas weigh.",
-        table: "Onboarding",
-        comment: "Under weights estimated because the exam notice doesn't give them")
-    }
-  }
-
 }

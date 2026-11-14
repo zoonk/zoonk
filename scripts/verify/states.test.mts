@@ -1,8 +1,9 @@
 /* oxlint-disable no-magic-numbers -- The fixtures are layout in pixels. */
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
+import { stateLeads } from "./states-checks.mts";
 import { type Moved, type Place } from "./states-probe.mts";
-import { type Step, stateLeads } from "./states.mts";
+import { type Step } from "./states.mts";
 
 function at(top: number, overrides: Partial<Place> = {}): Place {
   return { height: 36, left: 16, top, width: 120, ...overrides };

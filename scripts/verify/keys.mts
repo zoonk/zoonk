@@ -6,9 +6,7 @@ import { type Page } from "@playwright/test";
 import { type Finding } from "./checks.mts";
 import {
   type Pressed,
-  focusReturned,
   readHooks,
-  readPanel,
   readSidebar,
   recordNextClick,
   takeRecordedClick,
@@ -58,6 +56,7 @@ export async function readShortcuts(checkout: string): Promise<Shortcuts | null>
 }
 
 type Keycap = {
+  wasChecked: boolean;
   id: string;
   announced: string | null;
   expected: string;
@@ -67,15 +66,13 @@ type Keycap = {
 };
 
 export type KeyFacts = {
-  enter: { bound: { id: string; label: string }[]; pressed: Pressed; unbuilt: string[] };
+  enter: { bound: { id: string; label: string }[]; pressed: Pressed };
   escape: { pressed: Pressed; task: boolean; taskClose: boolean };
   groups: { label: string; moved: boolean; tabStops: number }[];
   keycaps: Keycap[];
   sidebar: { answered: boolean; restored: boolean; side: string }[];
   sidebarsWithoutToggle: string[];
 };
-
-export type PanelFacts = NonNullable<ReturnType<typeof readPanel>> & { focusBack: boolean | null };
 
 const PRESS_SETTLE_MS = 150;
 const SIDEBAR_SETTLE_MS = 400;
@@ -89,7 +86,7 @@ function isMainAction(pressed: NonNullable<Pressed>) {
   return ["bound", "host"].includes(pressed.enter ?? "") && pressed.drawn && pressed.keycap;
 }
 
-function enterFindings({ bound, pressed, unbuilt }: KeyFacts["enter"]): Finding[] {
+function enterFindings({ bound, pressed }: KeyFacts["enter"]): Finding[] {
   const [only] = bound;
 
   return [
@@ -107,15 +104,12 @@ function enterFindings({ bound, pressed, unbuilt }: KeyFacts["enter"]): Finding[
           ),
         ]
       : []),
-    ...unbuilt.map((label) =>
-      behavior("Enter", `${label} is a main action drawn without the piece that binds Enter`),
-    ),
   ];
 }
 
 function keycapFindings(keycap: Keycap): Finding[] {
   return [
-    ...(keycap.pressed?.id === keycap.id
+    ...(keycap.pressed?.id === keycap.id || (keycap.wasChecked && !keycap.pressed)
       ? []
       : [
           behavior(
@@ -172,46 +166,6 @@ export function keyFindings(facts: KeyFacts): Finding[] {
     ]),
     ...facts.keycaps.flatMap((keycap) => keycapFindings(keycap)),
   ];
-}
-
-/** Focus, closing behavior and responsive placement for a panel opened by the walk. */
-export function panelFindings(panel: PanelFacts): Finding[] {
-  return [
-    ...(panel.focusInside
-      ? []
-      : [behavior("panels", `${panel.label} opened without taking focus`, true)]),
-    ...(panel.needsClose && !panel.closeDrawn
-      ? [behavior("panels", `${panel.label} has no ✕ and no button to leave by`, true)]
-      : []),
-    ...(panel.centered === false
-      ? [behavior("panels", `${panel.label} isn't centered on a laptop, or shows its handle`, true)]
-      : []),
-    ...(panel.focusBack === false
-      ? [
-          behavior(
-            "panels",
-            `${panel.label} didn't close on Esc and give focus back to what opened it`,
-            true,
-          ),
-        ]
-      : []),
-    ...(panel.sheet === false
-      ? [
-          behavior(
-            "B4 phone sheets",
-            `${panel.label} opens away from the bottom on a phone, where what opens over a page is a sheet`,
-          ),
-        ]
-      : []),
-  ];
-}
-
-export async function inspectPanel(page: Page, phone: boolean) {
-  return page.evaluate(readPanel, phone);
-}
-
-export async function focusCameBack(page: Page, opener: string) {
-  return page.evaluate(focusReturned, opener);
 }
 
 async function press(page: Page, key: string): Promise<Pressed> {
@@ -309,13 +263,25 @@ export async function pressKeys(page: Page, url: string, shortcuts: Shortcuts): 
       ["sidebar", "search"].includes(keycap.name) || (keycap.name === "pick" && !digit);
 
     if (!skipped) {
+      const wasChecked = await page.evaluate(
+        (id) =>
+          document
+            .querySelector(`[data-zoonk-key="${id}"]`)
+            ?.matches(":checked, [aria-checked=true]") ?? false,
+        keycap.id,
+      );
+
       keycaps.push({
         announced: keycap.announced,
         expected: digit ? keycap.keycap : shortcuts.shortcutKeys(keycap.name),
         id: keycap.id,
         label: keycap.control,
         name: keycap.name,
-        pressed: await press(page, digit ? keycap.keycap : keyOf(shortcuts, keycap.name)),
+        pressed:
+          keycap.name === "main"
+            ? enter
+            : await press(page, digit ? keycap.keycap : keyOf(shortcuts, keycap.name)),
+        wasChecked,
       });
 
       await back();
@@ -323,7 +289,7 @@ export async function pressKeys(page: Page, url: string, shortcuts: Shortcuts): 
   }
 
   return keyFindings({
-    enter: { bound: hooks.bound, pressed: enter, unbuilt: hooks.unbuilt },
+    enter: { bound: hooks.bound, pressed: enter },
     escape: { pressed: escape, task: hooks.task, taskClose: hooks.taskClose },
     groups,
     keycaps,

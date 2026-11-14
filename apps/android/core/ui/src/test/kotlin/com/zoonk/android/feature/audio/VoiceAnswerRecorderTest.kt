@@ -47,7 +47,7 @@ class VoiceAnswerRecorderTest {
         shown = true
 
         rule.onNodeWithText("Record").assertIsDisplayed()
-        rule.onNodeWithText("Tap and say it out loud").assertIsDisplayed()
+        rule.onNodeWithText("Tap Record and say it out loud").assertIsDisplayed()
     }
 
     @Test

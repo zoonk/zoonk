@@ -317,7 +317,7 @@ private fun WordStep(
                             step.issue.limit,
                             LimitSubject.Help,
                             onCreateAccount = { navigator.open(AppRoute.Login) },
-                            onSeePlus = { navigator.open(AppRoute.Subscription) },
+                            onSubscribe = { navigator.open(AppRoute.Subscription) },
                             modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
                         )
                     }
@@ -576,7 +576,6 @@ private fun WordActions(
     status: VoiceRecorder.Status,
     tapRecord: () -> Unit,
 ) {
-    val level by model.recorder.level.collectAsStateWithLifecycle()
     val grade = step.grade
     when {
         grade != null -> {
@@ -625,14 +624,15 @@ private fun WordActions(
         }
 
         else -> {
-            RecordButton(
-                status = status,
-                level = { level },
-                onStart = tapRecord,
-                onStop = model.recorder::stop,
-                modifier = Modifier.fillMaxWidth(),
-                enabled = !round.pending,
-            )
+            TaskActions { width ->
+                RecordButton(
+                    status = status,
+                    onStart = tapRecord,
+                    onStop = model.recorder::stop,
+                    modifier = width,
+                    enabled = !round.pending,
+                )
+            }
         }
     }
 }
@@ -678,11 +678,6 @@ private fun RoundEnd(
                                     stringResource(title),
                                     Modifier.semantics { heading() },
                                     style = MaterialTheme.typography.headlineSmall,
-                                )
-                                Text(
-                                    stringResource(R.string.pronunciation_accent),
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    style = MaterialTheme.typography.bodyLarge,
                                 )
                             }
                             result?.let {
