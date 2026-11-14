@@ -46,6 +46,7 @@ function MindMapPicture({
     <Surface className="overflow-hidden" data-slot="mind-map-picture">
       <MindMapDescription id={descriptionId} outline={outline} />
       <button
+        aria-haspopup="dialog"
         aria-describedby={descriptionId}
         className="focus-visible:ring-ring block w-full outline-none focus-visible:ring-2 focus-visible:ring-inset"
         onClick={() => setOpen(true)}
@@ -61,7 +62,7 @@ function MindMapPicture({
       </button>
 
       <div className="border-border/60 flex items-center gap-1 border-t px-2 py-1.5">
-        <Button onClick={() => setOpen(true)} size="sm" variant="ghost">
+        <Button aria-haspopup="dialog" onClick={() => setOpen(true)} size="sm" variant="ghost">
           <Maximize2Icon aria-hidden="true" data-icon="inline-start" />
           {t("Full screen")}
         </Button>

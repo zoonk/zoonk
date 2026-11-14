@@ -93,6 +93,7 @@ function SpeakingHandIn({ isLast, left }: { isLast: boolean; left: number }) {
       <MockStepStatus />
       <TaskActions>
         <TaskMainButton
+          aria-haspopup="dialog"
           busy={runner.busy === "submit"}
           disabled={runner.pending}
           onClick={() => setConfirming(true)}

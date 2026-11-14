@@ -22,7 +22,7 @@ import {
   StepRows,
   StepTitle,
 } from "../../_components/step-card";
-import { useFormatGoalProgress, useFormatShare } from "../../_utils/percent";
+import { useFormatProgressShare, useFormatShare } from "../../_utils/percent";
 import { useFormatDuration } from "../../_utils/time-format";
 import { useBeltName, useBeltStep } from "../../_utils/use-belt-name";
 import { ReminderOffer } from "../../reminders/reminder-offer";
@@ -46,7 +46,7 @@ function DoneTitle() {
 function useGoalNumber() {
   const t = useExtracted();
   const formatShare = useFormatShare();
-  const formatGoalProgress = useFormatGoalProgress();
+  const formatProgressShare = useFormatProgressShare();
   const { goalKind, summary } = useSessionSummary();
 
   if (goalKind === "language") {
@@ -61,7 +61,7 @@ function useGoalNumber() {
   }
 
   const start = before ?? after;
-  const format = forExam ? formatShare : formatGoalProgress;
+  const format = forExam ? formatShare : formatProgressShare;
   const shown = { after: format(after), before: format(start) };
   const moved = shown.after !== shown.before;
 

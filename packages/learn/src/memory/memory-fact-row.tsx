@@ -83,7 +83,7 @@ export function MemoryFactRow({
               {t("Edit")}
             </DropdownMenuItem>
           ) : (
-            <DropdownMenuItem onClick={() => setIsEditing(true)}>
+            <DropdownMenuItem aria-haspopup="dialog" onClick={() => setIsEditing(true)}>
               <PencilIcon aria-hidden="true" />
               {t("Edit")}
             </DropdownMenuItem>

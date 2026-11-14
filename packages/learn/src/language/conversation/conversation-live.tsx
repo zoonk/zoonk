@@ -267,7 +267,12 @@ export function ConversationLive({
               <>
                 <CallTurn call={call} conversation={conversation} />
                 <TypedReply call={call} />
-                <CallControls call={call} onEnd={onEnd} onHelp={help} />
+                <CallControls
+                  call={call}
+                  helpPopup={asideShown ? undefined : "dialog"}
+                  onEnd={onEnd}
+                  onHelp={help}
+                />
               </>
             )}
           </div>

@@ -204,6 +204,7 @@ function FocusChoices({ onSaved }: { onSaved: () => void }) {
           focusableWhenDisabled
           form={formId}
           icon={<CheckIcon aria-hidden="true" />}
+          size="lg"
           type="submit"
         >
           {chosen.length === 0 && current.length > 0 ? t("Remove focus") : t("Focus on these")}
@@ -262,7 +263,14 @@ export function ChooseFocus() {
   const open = useChooseFocus();
 
   return (
-    <Button className="self-start" onClick={open} size="sm" type="button" variant="outline">
+    <Button
+      aria-haspopup="dialog"
+      className="self-start"
+      onClick={open}
+      size="sm"
+      type="button"
+      variant="outline"
+    >
       {t("Choose where to focus")}
     </Button>
   );

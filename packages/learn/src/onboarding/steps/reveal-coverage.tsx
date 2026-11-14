@@ -92,7 +92,7 @@ function FocusTradeOff({ syllabus, text }: { syllabus: SyllabusView | null; text
       ? {
           key: "focus",
           link: (
-            <Button onClick={chooseFocus} variant="link">
+            <Button aria-haspopup="dialog" onClick={chooseFocus} variant="link">
               {t("Change focus")}
             </Button>
           ),

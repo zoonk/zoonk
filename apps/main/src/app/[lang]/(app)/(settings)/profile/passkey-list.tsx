@@ -87,11 +87,11 @@ function PasskeyRow({
         </DropdownMenuTrigger>
 
         <DropdownMenuContent align="end" className="w-44">
-          <DropdownMenuItem onClick={onRename}>
+          <DropdownMenuItem aria-haspopup="dialog" onClick={onRename}>
             <PencilIcon aria-hidden="true" />
             {t("Rename")}
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={onDelete} variant="destructive">
+          <DropdownMenuItem aria-haspopup="dialog" onClick={onDelete} variant="destructive">
             <Trash2Icon aria-hidden="true" />
             {t("Delete")}
           </DropdownMenuItem>
