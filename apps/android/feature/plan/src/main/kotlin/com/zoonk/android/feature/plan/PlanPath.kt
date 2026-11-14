@@ -72,7 +72,6 @@ internal fun PathSection(
     val openIndex = findOpenPhase(phases)
     val beforeFinish = phases.filter { it.kind != PlanPhase.Kind.AFTER_EXAM }
     val afterExam = phases.filter { it.kind == PlanPhase.Kind.AFTER_EXAM }
-    val lastIndex = beforeFinish.lastOrNull()?.index
 
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SectionHeader(stringResource(R.string.plan_your_path))
@@ -82,13 +81,13 @@ internal fun PathSection(
         Column(Modifier.bleed(LIST_ITEM_INSET)) {
             beforeFinish.forEachIndexed { position, phase ->
                 if (position > 0) HorizontalDivider()
-                PhaseItem(page, phase, phase.index == lastIndex, phase.index == openIndex, links, brief)
+                PhaseItem(page, phase, phase.index == openIndex, links, brief)
             }
             HorizontalDivider()
-            FinishItem(page)
+            FinishItem(page, links)
             afterExam.forEach { phase ->
                 HorizontalDivider()
-                PhaseItem(page, phase, isLast = false, open = phase.index == openIndex, links = links, brief = brief)
+                PhaseItem(page, phase, open = phase.index == openIndex, links = links, brief = brief)
             }
             course?.let {
                 HorizontalDivider()
@@ -106,7 +105,6 @@ internal fun PathSection(
 private fun PhaseItem(
     page: PlanPageState,
     phase: PlanPhase,
-    isLast: Boolean,
     open: Boolean,
     links: PlanLinks,
     brief: Boolean,
@@ -122,7 +120,6 @@ private fun PhaseItem(
             PhaseRow(
                 page,
                 phase,
-                isLast,
                 open,
                 onClick = { links.chapter(chapterId) },
                 highlighted = isNext,
@@ -137,7 +134,7 @@ private fun PhaseItem(
 
     val hasContent = phase.chapters.isNotEmpty() || phase.checkpoint != null
     if (!hasContent) {
-        PhaseRow(page, phase, isLast, open)
+        PhaseRow(page, phase, open)
         return
     }
 
@@ -146,7 +143,7 @@ private fun PhaseItem(
     val byPlace = phase.isNamedLikeAChapter(name)
 
     Column {
-        PhaseRow(page, phase, isLast, open, onClick = { expanded = !expanded }, expanded = expanded, byPlace = byPlace && expanded)
+        PhaseRow(page, phase, open, onClick = { expanded = !expanded }, expanded = expanded, byPlace = byPlace && expanded)
         if (expanded) PhaseChapters(page, phase.chapters, phase.checkpoint, links, indent = nested, brief = brief)
     }
 }
@@ -155,7 +152,6 @@ private fun PhaseItem(
 private fun PhaseRow(
     page: PlanPageState,
     phase: PlanPhase,
-    isLast: Boolean,
     open: Boolean,
     onClick: (() -> Unit)? = null,
     highlighted: Boolean = false,
@@ -163,7 +159,7 @@ private fun PhaseRow(
     byPlace: Boolean = false,
     nextChapter: PlanPhaseChaptersInner? = null,
 ) {
-    val date = phaseEnd(page, phase, isLast)
+    val date = phaseEnd(page, phase)
     val name = phaseName(phase, page.mocksRequirePlus, byPlace = byPlace)
     val state =
         if (nextChapter != null && phase.state != PlanPhase.State.CURRENT) {
@@ -192,29 +188,42 @@ private fun PhaseRow(
 }
 
 /**
- * When a phase ends, the same on its path row and on the line under the roadmap: a short plan's days,
- * its booked day, or the plan's estimate ("~Nov 10", "~Jan"), which a learning phase's end is while
- * it's upcoming or its challenge, with no booked day, is still ahead.
+ * Main's `usePhaseEnd`: when a phase ends, the same on its path row and on the line under the
+ * roadmap: a short plan's days, its last day, or the plan's estimate ("~Nov 10", "~Jan"), which a
+ * learning phase's end is while it's ahead or its challenge, with no booked day, is still to come.
+ * The last phase before the finish shows nothing when the finish row shows that day; an exam with
+ * no date yet shows the plan's estimated end there instead.
  */
 @Composable
 internal fun phaseEnd(
     page: PlanPageState,
     phase: PlanPhase,
-    isLast: Boolean,
 ): PlanDateWords? {
     shortDays(page.plan, phase)?.let { return sameWords(it) }
-    val end = phase.end ?: return null
     if (phase.state == PlanPhase.State.DONE || phase.state == PlanPhase.State.UNFINISHED ||
         phase.state == PlanPhase.State.LEFT_OUT
     ) {
         return null
     }
-    if (isLast && phase.kind != PlanPhase.Kind.AFTER_EXAM && page.finish != null) return null
+    val plan = page.plan
+    if (phase.index == plan.phases.lastOrNull { it.kind != PlanPhase.Kind.AFTER_EXAM }?.index) {
+        val end = plan.estimate.endDate?.toJavaLocalDate()
+        if (plan.schedule.targetDate != null || !page.isExam || end == null) return null
+        val month = plan.estimateNamesMonth(end)
+        return endWords(formatPlanDate(end, page.today, currentLocale(), month = month), estimate = true, month = month)
+    }
+    val end = phase.lastDay() ?: return null
     val learns = phase.kind == PlanPhase.Kind.LEARN || phase.kind == PlanPhase.Kind.AFTER_EXAM
-    val estimate =
-        learns && (phase.state == PlanPhase.State.UPCOMING || phase.checkpoint?.state == PlanPhaseCheckpoint.State.UPCOMING)
-    val month = estimate && page.plan.estimateNamesMonth(end)
+    val ahead = phase.state == PlanPhase.State.UPCOMING
+    val estimate = learns && (ahead || phase.checkpoint?.state == PlanPhaseCheckpoint.State.UPCOMING)
+    val month = estimate && ahead && plan.estimateNamesMonth(end)
     return endWords(formatPlanDate(end, page.today, currentLocale(), month = month), estimate, month)
+}
+
+/** A phase is behind the learner on its challenge's day, which can come after its last lesson. */
+private fun PlanPhase.lastDay(): LocalDate? {
+    val challengeDay = checkpoint?.takeIf { it.state == PlanPhaseCheckpoint.State.UPCOMING }?.date?.toJavaLocalDate()
+    return if (challengeDay != null && end != null && challengeDay.isAfter(end)) challengeDay else end
 }
 
 /** A phase's or the goal's end as it's shown ("Nov 10", "~Nov 10") and as TalkBack says it ("Ends about Nov 10"). */
@@ -544,12 +553,19 @@ internal fun MockRow(
 }
 
 @Composable
-private fun FinishItem(page: PlanPageState) {
-    val finish = page.finish?.let { planDate(it.date, page.today, it.estimate, it.month) }
+private fun FinishItem(
+    page: PlanPageState,
+    links: PlanLinks,
+) {
+    val finish =
+        page.finish?.let { planDate(it.date, page.today, it.estimate, it.month) }
+            ?: if (page.isExam) sameWords(stringResource(R.string.plan_date_to_be_confirmed)) else null
 
     ListRow(
         headline = { Text(page.goal.displayName) },
+        onClick = if (links.hasExam) links::exam else null,
         leading = { FlagMark() },
+        supporting = if (links.hasExam) ({ Text(stringResource(R.string.plan_about_exam)) }) else null,
         meta = finish?.let { { TrailingText(it) } },
     )
 }

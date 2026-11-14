@@ -3,8 +3,12 @@ package com.zoonk.android.feature.plan
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import com.zoonk.android.R
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.theme.GeistMono
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanPhase
 import com.zoonk.api.models.PlanPhaseChaptersInner
@@ -173,3 +177,19 @@ fun lessonsDoneSpoken(
     done: Long,
     total: Long,
 ): String = pluralStringResource(R.plurals.plan_lessons_done_of, total.toInt(), done.toInt(), total.toInt())
+
+/** Main's values: the dates and times in [text] ([data]) in mono, the words around them in the text face. */
+internal fun withData(
+    text: String,
+    vararg data: String,
+): AnnotatedString =
+    buildAnnotatedString {
+        append(text)
+        data.filter { it.isNotEmpty() }.forEach { piece ->
+            var at = text.indexOf(piece)
+            while (at >= 0) {
+                addStyle(SpanStyle(fontFamily = GeistMono), at, at + piece.length)
+                at = text.indexOf(piece, at + piece.length)
+            }
+        }
+    }
