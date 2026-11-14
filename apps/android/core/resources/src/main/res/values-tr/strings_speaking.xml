@@ -14,8 +14,6 @@
   "speaking_mock_opens": "77ac8c199ddad12816de4a4798465593b7b5ad37b270c144cee6ca54e21561ee",
   "speaking_mock_start": "89ec1dd269495f8d74bdbdad2a57efed8d3b61f9a7e7d4074b7f9988f7b08c7d",
   "speaking_mock_toefl": "a221110114bc9b54d290131d7acafa193fce8178e959422382605481249402c8",
-  "speaking_no_time": "ecc669ece5fb990af7388722c29587f9ebcd06df7ab2729e8ce4c5d3235da196",
-  "speaking_no_time_mock": "027baedeed3031d8794dd04fd02fc3dde174660d75192cc05190d2a5b81a1516",
   "speaking_official_format": "9f2fd042c6b7bb17b712bc1671a194d1ab9ae59d416b03255211c67f8b423e7c",
   "speaking_opens_when_ready": "c62e0b9f4073d22b2ad61222699ad650f23791a79091c756f6f8f186affe4ed6",
   "speaking_prep": "8830a78914e40f4a9f92b82e7cc77a6bb05bbf23d89e9aa8c71fd39c724f388e",
@@ -49,8 +47,6 @@
     <string name="speaking_section">Konuşma</string>
     <string name="speaking_gate">Konuşma pratiği için abonelik gerekiyor</string>
     <string name="speaking_opens_when_ready">Kart hazır olur olmaz bölümün açılır.</string>
-    <string name="speaking_no_time">Bu bölüm için yeterli sohbet süren yok</string>
-    <string name="speaking_no_time_mock">Bu deneme sınavı için yeterli sohbet süren yok</string>
     <string name="speaking_start_failed">Bölüm başlamadı. Birazdan tekrar dene.</string>
     <string name="speaking_official_format">Resmî formatı incele</string>
     <string name="speaking_start_task">Başla</string>

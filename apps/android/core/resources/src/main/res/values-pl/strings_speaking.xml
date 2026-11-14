@@ -14,8 +14,6 @@
   "speaking_mock_opens": "786189c30777e75141444b256bd017475dfd322ae1822b26903c7d3e5648ad5c",
   "speaking_mock_start": "5bb7ae2ec30190542c1151d75f7f2cb16633c015f9a039735765a8d3ffd0be54",
   "speaking_mock_toefl": "5d435fb4a499fcf48df5291bff5701f6a11c0e6143ca78bd1236783f8379972c",
-  "speaking_no_time": "7170a3099e18e1fd7275bb459d5e418b5976a26e635542fb352a7007de765709",
-  "speaking_no_time_mock": "e65ebc95fe62bce6e7a3a9d1547539232fee1f06d0b365406ca2272a510fd559",
   "speaking_official_format": "de08b343fa372f16db5228e6d8732e5dcc3b9561d1f9c487b366aee8faae4158",
   "speaking_opens_when_ready": "6985e32649cd619258908e9a35e4aa359cd082161d53bc04de573a5a90dbc5d1",
   "speaking_prep": "c2805ec6fe62f74a99feceb1f403a6a6310f568014bc11880b89c99669f597d2",
@@ -51,8 +49,6 @@
     <string name="speaking_section">Mówienie</string>
     <string name="speaking_gate">Ćwiczenie mówienia wymaga subskrypcji</string>
     <string name="speaking_opens_when_ready">Zadanie otworzy się, gdy tylko karta będzie gotowa.</string>
-    <string name="speaking_no_time">Na to zadanie brakuje ci czasu na rozmowę</string>
-    <string name="speaking_no_time_mock">Na ten egzamin próbny brakuje ci czasu na rozmowę</string>
     <string name="speaking_start_failed">Nie udało się rozpocząć zadania. Spróbuj ponownie za chwilę.</string>
     <string name="speaking_official_format">Sprawdź oficjalny format</string>
     <string name="speaking_start_task">Zacznij</string>
