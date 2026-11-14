@@ -159,7 +159,7 @@ function WritingWait({
             run.status === "failed" ? (
               <GenerationFailureNotice failure={run.failure ?? "generation"} retry={run.retry} />
             ) : (
-              <LessonWaitStatus holding={holding} kind={kind} run={run} since={since} />
+              <LessonWaitStatus holding={holding} kind={kind} run={run} since={since} titled />
             )
           }
         />

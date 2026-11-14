@@ -65,6 +65,7 @@ msgstr "Skipped"
 #: src/_components/lesson-list.tsx
 #: src/explain/explain-ending.tsx
 #: src/focus-test/focus-test-result.tsx
+#: src/generation/generation-step-label.ts
 #: src/generation/generation-wait.tsx
 #: src/journey/phase-details.tsx
 #: src/language/pattern/language-pattern-screen.tsx

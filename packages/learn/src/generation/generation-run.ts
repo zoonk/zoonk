@@ -31,6 +31,10 @@ export type GenerationRun = {
 };
 
 /** A wait held once ready shows the work as done: every row checked, the clocks stopped, the bar full. */
+export function isFollowing(run: GenerationRun): boolean {
+  return run.status === "waiting" || run.status === "following";
+}
+
 export function toHeldRun(run: GenerationRun): GenerationRun {
   return { ...run, failure: null, status: "ready" };
 }
