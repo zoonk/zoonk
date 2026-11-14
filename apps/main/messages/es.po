@@ -1113,11 +1113,11 @@ msgid "{minutes, plural, one {# minute} other {# minutes}} a day for now. You ca
 msgstr "{minutes, plural, one {# minuto} other {# minutos}} al día por ahora. Puedes cambiarlo en los siguientes pasos."
 
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
-#: src/app/[lang]/(home)/page.tsx
 #: src/app/[lang]/learn/[lessonId]/guest-plan-start.tsx
 #: src/components/pricing/free-plan.tsx
 #: src/components/pricing/plus-pricing.tsx
 #: src/components/public/goal-form.tsx
+#: src/components/public/public-start-bar.tsx
 #: src/components/public/public-visitor-actions.tsx
 #: src/components/public/start-plan-link.tsx
 #: src/components/public/visitor-start.tsx
