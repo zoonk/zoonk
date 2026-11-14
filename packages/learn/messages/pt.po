@@ -508,14 +508,6 @@ msgctxt "Pd4dpx"
 msgid "This is taking longer than usual. It opens on its own, no need to tap again."
 msgstr "Isso está demorando mais que o normal. Vai abrir sozinho, não precisa tocar de novo."
 
-#: src/_components/plus-lock.tsx
-#: src/_components/subscribe-gate.tsx
-#: src/conversation/tutor-feature-offers.tsx
-#: src/onboarding/entry/goal-limit-notice.tsx
-msgctxt "gczcC5"
-msgid "Subscribe"
-msgstr "Assinar"
-
 #: src/_components/practice-outcome-message.tsx
 #: src/_components/test-out-start-link.tsx
 msgctxt "kaDIbJ"
@@ -662,6 +654,13 @@ msgstr "A gente não conseguiu abrir este passo. Tente de novo."
 msgctxt "cyR7Kh"
 msgid "Back"
 msgstr "Voltar"
+
+#: src/_components/subscribe-gate.tsx
+#: src/conversation/tutor-feature-offers.tsx
+#: src/onboarding/entry/goal-limit-notice.tsx
+msgctxt "gczcC5"
+msgid "Subscribe"
+msgstr "Assinar"
 
 #: src/_components/suggestion-menu.tsx
 msgctxt "KcETCo"

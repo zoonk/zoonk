@@ -508,14 +508,6 @@ msgctxt "Pd4dpx"
 msgid "This is taking longer than usual. It opens on its own, no need to tap again."
 msgstr "いつもより時間がかかっています。自動で開くので、もう一度タップしなくても大丈夫です。"
 
-#: src/_components/plus-lock.tsx
-#: src/_components/subscribe-gate.tsx
-#: src/conversation/tutor-feature-offers.tsx
-#: src/onboarding/entry/goal-limit-notice.tsx
-msgctxt "gczcC5"
-msgid "Subscribe"
-msgstr "登録する"
-
 #: src/_components/practice-outcome-message.tsx
 #: src/_components/test-out-start-link.tsx
 msgctxt "kaDIbJ"
@@ -662,6 +654,13 @@ msgstr "このステップを開けませんでした。もう一度お試しく
 msgctxt "cyR7Kh"
 msgid "Back"
 msgstr "戻る"
+
+#: src/_components/subscribe-gate.tsx
+#: src/conversation/tutor-feature-offers.tsx
+#: src/onboarding/entry/goal-limit-notice.tsx
+msgctxt "gczcC5"
+msgid "Subscribe"
+msgstr "登録する"
 
 #: src/_components/suggestion-menu.tsx
 msgctxt "KcETCo"
