@@ -46,7 +46,7 @@ const WRITING_REFRESH_MS = 10_000;
 
 const IN_COLUMN_CLASS = "min-[72rem]:hidden";
 const IN_ASIDE_CLASS = "hidden min-[72rem]:flex";
-const IN_ASIDE_GRID_CLASS = "hidden min-[72rem]:grid";
+const IN_ASIDE_BLOCK_CLASS = "hidden min-[72rem]:block";
 
 export type JourneyLinks = JourneyPathLinks & {
   completedLessons: string | null;
@@ -138,7 +138,7 @@ function JourneyBody({
       <PageWithAside
         aside={
           <>
-            {numbers("stats", IN_ASIDE_GRID_CLASS)}
+            {numbers("stats", IN_ASIDE_BLOCK_CLASS)}
             <PlanSuggestionSlot className="hidden min-[72rem]:block" />
             <NextOnPath className={structure ? undefined : IN_ASIDE_CLASS} links={links} />
             <MoreSection links={links} />
