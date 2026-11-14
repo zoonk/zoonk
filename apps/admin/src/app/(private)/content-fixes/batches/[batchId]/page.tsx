@@ -304,7 +304,7 @@ function BatchSkeleton() {
     <>
       <AdminDetailHeaderSkeleton parents={BATCH_PARENTS} />
 
-      <AdminDetailBody bar={<ReviewBarSkeleton />}>
+      <AdminDetailBody bar={<ReviewBarSkeleton batch />}>
         <AdminDetailColumns aside={<AdminSectionSkeleton rows={2} />}>
           <AdminSectionSkeleton rows={2} />
           <AdminSectionSkeleton description rows={8} />
