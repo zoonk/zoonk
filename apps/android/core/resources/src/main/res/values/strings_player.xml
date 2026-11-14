@@ -115,6 +115,7 @@
     <string name="player_challenge_ready">Your challenge is ready</string>
     <string name="player_challenge_wait_stopped">We couldn\'t get this challenge ready</string>
     <string name="player_start_this_challenge">Start this challenge</string>
+    <string name="player_start_the_lesson">Start the lesson</string>
     <string name="player_writing_lesson">Writing your lesson</string>
     <string name="player_phase_plan">Planning the lesson</string>
     <string name="player_phase_plan_line_1">Choosing what to cover…</string>

@@ -68,6 +68,7 @@ import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TaskSegment
+import com.zoonk.android.ui.components.freeLessonReady
 import com.zoonk.android.ui.components.limitWords
 import com.zoonk.android.ui.components.stillReviewLine
 import com.zoonk.android.ui.components.taskColumn
@@ -166,10 +167,10 @@ fun lessonAccessBar(
             }
 
             is LessonRefusal.Limited, LessonRefusal.PlusRequired -> {
-                when (refusal.reached()?.tier) {
-                    null -> return null
+                val reached = refusal.reached() ?: return null
+                when (reached.tier) {
                     LimitTier.Guest -> R.string.limit_create_account to { exits.open(AppRoute.Login) }
-                    LimitTier.Free -> R.string.subscription_subscribe to { exits.open(AppRoute.Subscription) }
+                    LimitTier.Free -> return { FreeLessonsBar(reached, onRetry, exits) }
                     LimitTier.Plus -> R.string.player_back to exits::close
                 }
             }
@@ -177,7 +178,30 @@ fun lessonAccessBar(
     return { TaskActionBar { TaskActions { main -> Button(onClick = onClick, modifier = main) { Text(stringResource(label)) } } } }
 }
 
-/** A refusal that still says the old free week draws the month's gate, so no screen says "free week". */
+/** "Subscribe", and once the next free lesson has opened, "Start the lesson" asks the server again; it never starts by itself. */
+@Composable
+private fun FreeLessonsBar(
+    reached: Limit.Reached,
+    onRetry: () -> Unit,
+    exits: LessonPlayerExits,
+) {
+    val subscribe = { exits.open(AppRoute.Subscription) }
+    TaskActionBar {
+        TaskActions { main ->
+            if (freeLessonReady(reached)) {
+                OutlinedButton(
+                    onClick = subscribe,
+                    modifier = Modifier.taskOption(),
+                ) { Text(stringResource(R.string.subscription_subscribe)) }
+                Button(onClick = onRetry, modifier = main) { Text(stringResource(R.string.player_start_the_lesson)) }
+            } else {
+                Button(onClick = subscribe, modifier = main) { Text(stringResource(R.string.subscription_subscribe)) }
+            }
+        }
+    }
+}
+
+/** A refusal that still says the old free week draws the free lessons' gate, so no screen says "free week". */
 private fun LessonRefusal.reached(): Limit.Reached? =
     when (this) {
         is LessonRefusal.Limited -> {
@@ -208,7 +232,7 @@ private fun Limited(reached: Limit.Reached) {
 
         LimitTier.Free -> {
             TrackShown(AnalyticsEvent.SubscriptionGateShown)
-            AccessLayout(R.drawable.ic_auto_awesome, title, stillReviewLine(reached))
+            AccessLayout(R.drawable.ic_auto_awesome, title, if (freeLessonReady(reached)) null else stillReviewLine(reached))
         }
 
         LimitTier.Plus -> {

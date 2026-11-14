@@ -156,6 +156,7 @@
   "player_spelled": "8e7c21678ecb3900843a76a0ff4dd9b89b7a2723b44c6b55c7f7f82b8fc89acf",
   "player_start_failed_description": "de98ee78104a4116a5718bf3a16dea6feb653ec201c26c6a2889a2c79bfaefe0",
   "player_start_failed_title": "89ce378768070c4170dd9e26f0764e74502e48fef689c48f566872bffd0d62ed",
+  "player_start_the_lesson": "0ce4f339111d805b929b3b8ca37049fa77778c1dece0b064a4106e5f393042e4",
   "player_start_this_challenge": "3ea18dad1ca6928892c4ac0d5b88f926e47f375da80bdc38a76dc9779384f770",
   "player_start_this_lesson": "67a6672a5b07c3ee73fd46fcfd693d84218dedef0067cac5a9af3f3a416ace62",
   "player_still_checking": "148cccc6548151d5599617bbca4c6281fec412b78fc18b350e81a02ec731b4c1",
@@ -298,6 +299,7 @@
     <string name="player_challenge_ready">チャレンジの準備ができました</string>
     <string name="player_challenge_wait_stopped">このチャレンジの準備ができませんでした</string>
     <string name="player_start_this_challenge">このチャレンジを始める</string>
+    <string name="player_start_the_lesson">レッスンを始める</string>
     <string name="player_writing_lesson">レッスンを作成しています</string>
     <string name="player_phase_plan">レッスンの構成を考えています</string>
     <string name="player_phase_plan_line_1">扱う内容を選んでいます…</string>
