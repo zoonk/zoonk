@@ -133,13 +133,17 @@ function CallSetup({
         selected={minutes}
       />
       <div className="flex flex-col gap-2">
-        {/* The line's space is kept for every length, so tapping one moves nothing. */}
-        <div className="grid text-sm font-medium text-pretty">
-          <p aria-hidden="true" className="invisible col-start-1 row-start-1">
-            {lockedLine}
-          </p>
-          <StatusRegion className="col-start-1 row-start-1">{isLocked && lockedLine}</StatusRegion>
-        </div>
+        {/* A sheet with a Plus-only length keeps the line's space for every length, so tapping one moves nothing. */}
+        {conversation.plusMinutes.length > 0 && (
+          <div className="grid text-sm font-medium text-pretty">
+            <p aria-hidden="true" className="invisible col-start-1 row-start-1">
+              {lockedLine}
+            </p>
+            <StatusRegion className="col-start-1 row-start-1">
+              {isLocked && lockedLine}
+            </StatusRegion>
+          </div>
+        )}
 
         {isLocked ? (
           <LearnLink className={cn(buttonVariants({ size: "lg" }), "w-full")} href={routes.upgrade}>
