@@ -226,7 +226,6 @@ msgstr "Download"
 
 #: src/_components/edit-text-dialog.tsx
 #: src/certificates/certificate-name.tsx
-#: src/country/country-picker.tsx
 #: src/journey/goal-actions.tsx
 #: src/language/conversation/call-control.tsx
 #: src/onboarding/start-over-menu.tsx
@@ -615,6 +614,7 @@ msgstr "That didn't save. Try again."
 
 #: src/_components/sheet-header.tsx
 #: src/_components/suggestion.tsx
+#: src/country/country-picker.tsx
 #: src/explain/explain-waiting.tsx
 #: src/mind-maps/mind-map-viewer.tsx
 #: src/plan/plan-editor.tsx
@@ -7170,6 +7170,16 @@ msgid "Create"
 msgstr "Create"
 
 #: src/mind-maps/mind-map-copy.ts
+msgctxt "fOetuN"
+msgid "{count, plural, one {# lesson to write} other {# lessons to write}}"
+msgstr "{count, plural, one {# lesson to write} other {# lessons to write}}"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "FE72mn"
+msgid "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}"
+msgstr "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}"
+
+#: src/mind-maps/mind-map-copy.ts
 msgctxt "ZyyHnb"
 msgid "A mind map of its main ideas"
 msgstr "A mind map of its main ideas"
@@ -7178,11 +7188,6 @@ msgstr "A mind map of its main ideas"
 msgctxt "AAKHvt"
 msgid "Its main ideas in one picture"
 msgstr "Its main ideas in one picture"
-
-#: src/mind-maps/mind-map-copy.ts
-msgctxt "FE72mn"
-msgid "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}"
-msgstr "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}"
 
 #: src/mind-maps/mind-map-copy.ts
 msgctxt "uhTP9c"
@@ -7377,6 +7382,11 @@ msgstr "Other chapters"
 msgctxt "Q3GPLT"
 msgid "Create all"
 msgstr "Create all"
+
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "_tV21i"
+msgid "Making one of these maps writes its lessons first, and they count toward your free lessons."
+msgstr "Making one of these maps writes its lessons first, and they count toward your free lessons."
 
 #: src/mind-maps/use-mind-map-saves.ts
 msgctxt "U0yWHz"

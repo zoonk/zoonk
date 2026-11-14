@@ -226,7 +226,6 @@ msgstr "Scarica"
 
 #: src/_components/edit-text-dialog.tsx
 #: src/certificates/certificate-name.tsx
-#: src/country/country-picker.tsx
 #: src/journey/goal-actions.tsx
 #: src/language/conversation/call-control.tsx
 #: src/onboarding/start-over-menu.tsx
@@ -615,6 +614,7 @@ msgstr "Il salvataggio non è riuscito. Riprova."
 
 #: src/_components/sheet-header.tsx
 #: src/_components/suggestion.tsx
+#: src/country/country-picker.tsx
 #: src/explain/explain-waiting.tsx
 #: src/mind-maps/mind-map-viewer.tsx
 #: src/plan/plan-editor.tsx
@@ -7170,6 +7170,16 @@ msgid "Create"
 msgstr "Crea"
 
 #: src/mind-maps/mind-map-copy.ts
+msgctxt "fOetuN"
+msgid "{count, plural, one {# lesson to write} other {# lessons to write}}"
+msgstr "{count, plural, one {# lezione da preparare} other {# lezioni da preparare}}"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "FE72mn"
+msgid "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}"
+msgstr "{count, plural, one {Prima prepariamo # lezione e la conteggiamo tra le tue lezioni gratuite.} other {Prima prepariamo # lezioni e le conteggiamo tra le tue lezioni gratuite.}}"
+
+#: src/mind-maps/mind-map-copy.ts
 msgctxt "ZyyHnb"
 msgid "A mind map of its main ideas"
 msgstr "Una mappa mentale delle idee principali"
@@ -7178,11 +7188,6 @@ msgstr "Una mappa mentale delle idee principali"
 msgctxt "AAKHvt"
 msgid "Its main ideas in one picture"
 msgstr "Le idee principali del capitolo in un’immagine"
-
-#: src/mind-maps/mind-map-copy.ts
-msgctxt "FE72mn"
-msgid "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}"
-msgstr "{count, plural, one {Prima prepariamo # lezione e la conteggiamo tra le tue lezioni gratuite.} other {Prima prepariamo # lezioni e le conteggiamo tra le tue lezioni gratuite.}}"
 
 #: src/mind-maps/mind-map-copy.ts
 msgctxt "uhTP9c"
@@ -7377,6 +7382,11 @@ msgstr "Altri capitoli"
 msgctxt "Q3GPLT"
 msgid "Create all"
 msgstr "Creale tutte"
+
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "_tV21i"
+msgid "Making one of these maps writes its lessons first, and they count toward your free lessons."
+msgstr "Per creare una di queste mappe prepariamo prima le sue lezioni, che contano tra le tue lezioni gratuite."
 
 #: src/mind-maps/use-mind-map-saves.ts
 msgctxt "U0yWHz"
