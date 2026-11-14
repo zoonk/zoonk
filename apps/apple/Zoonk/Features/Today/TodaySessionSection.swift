@@ -302,8 +302,6 @@ struct TodayMainAction: View {
       title
     }
     .buttonStyle(.mainAction)
-    .controlSize(.large)
-    .buttonSizing(.flexible)
   }
 
   static let saveFailure = LocalizedStringResource(
