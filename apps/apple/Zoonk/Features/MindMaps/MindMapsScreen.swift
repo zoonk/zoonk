@@ -196,6 +196,8 @@ private struct MindMapCreateSection: View {
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(MindMapsStore.self) private var store
   @State private var showsChapters = false
+  /// The block stays for the visit once it has shown the stop, so its held slot outlives the line.
+  @State private var showedStop = false
 
   let goalId: String
   let maps: GoalMindMaps
@@ -221,6 +223,7 @@ private struct MindMapCreateSection: View {
   private func section(canStart: Bool) -> some View {
     let offer = maps.createOffer
     let line = line(offer, canStart: canStart)
+    let isStopped = if case .stopped = line { true } else { false }
 
     let ready = notMade.filter { $0.lessonsToWrite == 0 && $0.status != .writingLessons }
     let others = notMade.filter { !ready.contains($0) }
@@ -230,23 +233,30 @@ private struct MindMapCreateSection: View {
         MindMapRow(goalId: goalId, map: map, place: .notMade(canStart: canStart))
       }
 
-      if offer.startable > 1 || line != nil {
-        VStack(alignment: .leading, spacing: 12) {
-          if offer.startable > 1 {
-            BusyButton(isBusy: store.creatingAll.contains(goalId), icon: .create) {
-              Task { await store.createAll(goalId: goalId) }
-            } label: {
-              Text(
-                "Create all", tableName: "MindMaps",
-                comment: "Makes every chapter map one tap can start now")
+      if offer.startable > 1 || line != nil || showedStop {
+        HeldSlot(gated: isStopped) {
+          VStack(alignment: .leading, spacing: 12) {
+            if offer.startable > 1 {
+              BusyButton(isBusy: store.creatingAll.contains(goalId), icon: .create) {
+                Task { await store.createAll(goalId: goalId) }
+              } label: {
+                Text(
+                  "Create all", tableName: "MindMaps",
+                  comment: "Makes every chapter map one tap can start now")
+              }
+              .buttonStyle(.outline)
+              .controlSize(.large)
+              .listRowButtonIcon()
             }
-            .buttonStyle(.outline)
-            .controlSize(.large)
-            .listRowButtonIcon()
-          }
 
-          if let line {
-            lineView(line)
+            if let line {
+              lineView(line)
+            }
+          }
+        }
+        .onChange(of: isStopped, initial: true) { _, stopped in
+          if stopped {
+            showedStop = true
           }
         }
         .listRowSeparator(.hidden)
