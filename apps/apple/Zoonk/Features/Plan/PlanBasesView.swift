@@ -214,10 +214,8 @@ struct PlanBasesView: View {
 
     let goalId = goal.id
     let edits = [edit(changed)]
-    let answer = await store.write { api, token in
+    let answer = await store.ask { api, token in
       try await api.preview(token: token, goalId: goalId, edits: edits)
-    } changed: { _ in
-      false
     }
 
     switch answer {

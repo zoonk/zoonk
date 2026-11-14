@@ -102,6 +102,14 @@ final class Resource<Value: Equatable & Sendable>: CachedResource {
     return .loading
   }
 
+  var freshValue: Value? {
+    guard case .loaded(let value) = freshState else {
+      return nil
+    }
+
+    return value
+  }
+
   /// A call while a request runs waits for that request instead of starting another.
   func load() async {
     followSession()

@@ -17,6 +17,7 @@ final class PlanStore {
   @ObservationIgnored private var languageStandings: [String: Resource<LanguageStanding>] = [:]
   @ObservationIgnored private var languageUnitLists: [String: Resource<LanguageUnitsOverview>] = [:]
   @ObservationIgnored private var outlines: [String: Resource<SkillOutline>] = [:]
+  @ObservationIgnored private var timesToCover: [String: Resource<TimeToCover>] = [:]
   @ObservationIgnored private var plans: [String: Resource<PlanRead>] = [:]
   @ObservationIgnored private var resumePreviews: [String: Resource<Bool>] = [:]
   @ObservationIgnored private var standings: [String: Resource<GoalStanding>] = [:]
@@ -105,6 +106,15 @@ final class PlanStore {
   func basesAdvice(goalId: String) -> Resource<PlanBasesAdvice> {
     resource(&basesAdvices, goalId) { api, token in
       try await api.basesAdvice(token: token, goalId: goalId)
+    }
+  }
+
+  /// The server plans the goal at each daily time to answer, so it's read only where the learner
+  /// changes their time, never by the plan page. A plan change invalidates it: read `freshState`,
+  /// since the answer it had describes the plan before that change.
+  func timeToCover(goalId: String) -> Resource<TimeToCover> {
+    resource(&timesToCover, goalId) { api, token in
+      try await api.timeToCover(token: token, goalId: goalId)
     }
   }
 
@@ -253,6 +263,17 @@ final class PlanStore {
       } changed: {
         $0 != nil
       }
+    }
+  }
+
+  /// What a change would do, worked out with today's numbers when the learner asks. It saves
+  /// nothing, so unlike `write` a failure revalidates nothing.
+  func ask<Result: Sendable>(
+    _ request: (any PlanAPIClient, String) async throws -> Result
+  ) async -> MutationResult<Result> {
+    let api = api
+    return await cache.mutate { identity in
+      try await request(api, identity.bearerToken)
     }
   }
 
