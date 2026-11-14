@@ -4,12 +4,7 @@ import { type PlanDayView, type PlanItemView } from "@zoonk/core/plans/view-cont
 import { type PlanRevealDays } from "@zoonk/core/view-models/today/plan-reveal";
 import { useExtracted, useFormatter } from "next-intl";
 import { KindMark, type LearnKind } from "../../_components/kind-tile";
-import {
-  ListGroup,
-  ListRow,
-  ListRowContent,
-  ListRowTrailing,
-} from "../../_components/list-group";
+import { ListGroup, ListRow, ListRowContent, ListRowTrailing } from "../../_components/list-group";
 import {
   PageSection,
   PageSectionDetail,
