@@ -86,10 +86,15 @@ export function EditTextDialog({
           </DrawerContent>
 
           <DrawerFooter>
-            <Button onClick={onClose} type="button" variant="outline">
+            <Button onClick={onClose} size="lg" type="button" variant="outline">
               {t("Cancel")}
             </Button>
-            <Button busy={isPending} disabled={!trimmed || trimmed === value} type="submit">
+            <Button
+              busy={isPending}
+              disabled={!trimmed || trimmed === value}
+              size="lg"
+              type="submit"
+            >
               {t("Save")}
             </Button>
           </DrawerFooter>
