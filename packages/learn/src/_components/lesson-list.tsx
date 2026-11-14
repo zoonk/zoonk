@@ -1,6 +1,7 @@
 "use client";
 
 import { type ChapterLessonView } from "@zoonk/core/view-models/chapter/contract";
+import { MeterPart, MeterParts } from "@zoonk/ui/components/meter";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useFormatDuration } from "../_utils/time-format";
@@ -14,7 +15,6 @@ import {
   ListRowNumberedTitle,
   ListRowTrailing,
 } from "./list-group";
-import { MeterPart, MeterParts } from "./meter";
 import { PageSection, PageSectionDetail, PageSectionHeader, PageSectionTitle } from "./page";
 import { StatusMark } from "./status-mark";
 

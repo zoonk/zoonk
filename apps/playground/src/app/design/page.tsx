@@ -1,9 +1,9 @@
 import { PRINCIPLES } from "@/design-system/moments";
 import { AnswerOption } from "@zoonk/learn/answer-option";
 import { kindFillClass } from "@zoonk/learn/kind-tile";
-import { MeterPart, MeterParts } from "@zoonk/learn/meter";
 import { StatusMark } from "@zoonk/learn/status-mark";
 import { SURFACE_CLASS } from "@zoonk/learn/surface";
+import { MeterPart, MeterParts } from "@zoonk/ui/components/meter";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";

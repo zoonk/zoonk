@@ -1,6 +1,5 @@
 import { PATTERNS } from "@/design-system/patterns";
 import { AnswerOption, AnswerOptionGroup } from "@zoonk/learn/answer-option";
-import { BigQuantity } from "@zoonk/learn/big-quantity";
 import { KindMark, kindFillClass } from "@zoonk/learn/kind-tile";
 import {
   ListGroup,
@@ -12,7 +11,6 @@ import {
   ListRowTitle,
   ListRowTrailing,
 } from "@zoonk/learn/list";
-import { MeterPart, MeterParts } from "@zoonk/learn/meter";
 import {
   PageSection,
   PageSectionDetail,
@@ -23,7 +21,9 @@ import { Route, RouteMark, RouteStop, RouteTitle, RouteZone } from "@zoonk/learn
 import { StatusMark } from "@zoonk/learn/status-mark";
 import { SubjectGlyph, SubjectLabel } from "@zoonk/learn/subject-label";
 import { Surface } from "@zoonk/learn/surface";
+import { BigQuantity } from "@zoonk/ui/components/big-quantity";
 import { Button } from "@zoonk/ui/components/button";
+import { MeterPart, MeterParts } from "@zoonk/ui/components/meter";
 import { type Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { DoDont, DocHeader, DocSection, Specimen } from "../_components/doc";
