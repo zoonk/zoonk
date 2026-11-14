@@ -212,6 +212,12 @@ extension HelpLimit {
     }
   }
 
+  /// A title of the screen's own over the day's line, as one sentence: a call's start names the
+  /// task, since the day waits for the call time it asked for.
+  func said(under title: LocalizedStringResource, kind: Kind? = nil, now: Date = .now) -> String {
+    LimitWords(title: title, line: words(kind, now: now).line).said
+  }
+
   /// `words` as one sentence, where a gate is one line.
   func sentence(_ kind: Kind? = nil, now: Date = .now) -> LocalizedStringResource {
     words(kind, now: now).sentence ?? Self.usedUpTitle(kind)

@@ -12352,67 +12352,132 @@
         }
       }
     },
-    "Today this one has %lld of its %lld questions, about %@. You can take the full one next month." : {
-      "comment" : "A mock exam shorter today, when this month's writing is used up",
+    "Today this one has %lld of its %lld questions, about %@. You can take the full one later today." : {
+      "comment" : "In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now.",
       "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Heute hat diese Probeprüfung %1$lld von %2$lld Fragen und dauert etwa %3$@ Nächsten Monat kannst du die vollständige Probeprüfung machen."
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Today this one has %1$lld of its %2$lld questions, about %3$@. You can take the full one next month."
+            "value" : "Today this one has %1$lld of its %2$lld questions, about %3$@. You can take the full one later today."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Probeprüfung hat heute %1$lld von %2$lld Fragen und dauert etwa %3$@ Die vollständige kannst du später am Tag machen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hoy este simulacro tiene %1$lld de sus %2$lld preguntas y dura aproximadamente %3$@. Podrás hacer el simulacro completo el próximo mes."
+            "value" : "Hoy este simulacro tiene %1$lld de sus %2$lld preguntas y dura aproximadamente %3$@. Puedes hacerlo completo hoy más tarde."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aujourd’hui, cet examen blanc comprend %1$lld questions sur %2$lld, soit environ %3$@. Tu pourras le faire en entier le mois prochain."
+            "value" : "Aujourd’hui, cet examen blanc comprend %1$lld questions sur %2$lld, soit environ %3$@. Tu pourras passer la version complète plus tard dans la journée."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Oggi questa simulazione comprende %1$lld domande su %2$lld e dura circa %3$@. Potrai fare quella completa il mese prossimo."
+            "value" : "Oggi questa simulazione ha %1$lld domande su %2$lld e dura circa %3$@. Potrai svolgerla per intero più tardi in giornata."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "今日の模試は%1$lld問（全%2$lld問）で、所要時間は約%3$@です。来月は全問に取り組めます。"
+            "value" : "今日の模試は%1$lld問（全%2$lld問中）で、所要時間は約%3$@です。今日このあと、全問そろった模試を受けられます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "오늘은 %1$lld문제(전체 %2$lld문제)를 풀어요. 약 %3$@ 걸려요. 다음 달에는 전체 모의고사를 볼 수 있어요."
+            "value" : "오늘은 %1$lld문제(전체 %2$lld문제)만 나오고, 약 %3$@ 걸려요. 전체 모의고사는 오늘 중에 볼 수 있어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dziś ten egzamin próbny ma %1$lld z %2$lld pytań, czyli około %3$@ pracy. Pełną wersję możesz rozwiązać w przyszłym miesiącu."
+            "value" : "Dziś ten egzamin ma %1$lld z %2$lld pytań, czyli około %3$@ na rozwiązanie. Pełną wersję możesz rozwiązać jeszcze dziś."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hoje, este simulado tem %1$lld das %2$lld questões e dura cerca de %3$@. Você pode fazer o simulado completo no mês que vem."
+            "value" : "Hoje, este simulado tem %1$lld das %2$lld questões e dura cerca de %3$@. Você pode fazer a versão completa mais tarde, ainda hoje."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bugün bu deneme sınavında %1$lld soru var; tamamı %2$lld soru. Yaklaşık %3$@ sürer. Tamamını gelecek ay çözebilirsin."
+            "value" : "Bugün bu deneme sınavında %1$lld soru var (normalde %2$lld) ve yaklaşık %3$@ sürüyor. Tamamını bugün daha sonra çözebilirsin."
+          }
+        }
+      }
+    },
+    "Today this one has %lld of its %lld questions, about %@. You can take the full one on %@." : {
+      "comment" : "In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now. {date} is a day and its month, such as \"November 22\" in English.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Today this one has %1$lld of its %2$lld questions, about %3$@. You can take the full one on %4$@."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Probeprüfung hat heute %1$lld von %2$lld Fragen und dauert etwa %3$@ Die vollständige kannst du am %4$@ machen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoy este simulacro tiene %1$lld de sus %2$lld preguntas y dura aproximadamente %3$@. Puedes hacerlo completo el %4$@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aujourd’hui, cet examen blanc comprend %1$lld questions sur %2$lld, soit environ %3$@. Tu pourras passer la version complète le %4$@."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oggi questa simulazione ha %1$lld domande su %2$lld e dura circa %3$@. Potrai svolgerla per intero il %4$@."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今日の模試は%1$lld問（全%2$lld問中）で、所要時間は約%3$@です。%4$@に全問そろった模試を受けられます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오늘은 %1$lld문제(전체 %2$lld문제)만 나오고, 약 %3$@ 걸려요. 전체 모의고사는 %4$@에 볼 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dziś ten egzamin ma %1$lld z %2$lld pytań, czyli około %3$@ na rozwiązanie. Pełną wersję możesz rozwiązać %4$@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoje, este simulado tem %1$lld das %2$lld questões e dura cerca de %3$@. Você pode fazer a versão completa em %4$@."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bugün bu deneme sınavında %1$lld soru var (normalde %2$lld) ve yaklaşık %3$@ sürüyor. Tamamını %4$@ tarihinde çözebilirsin."
           }
         }
       }

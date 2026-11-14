@@ -20,7 +20,7 @@ enum HelpLimit: Hashable, Sendable {
   /// A reached limit as the server names it.
   static func reached(period: String?, tier: LearnerTier, availableAt: Date?) -> HelpLimit {
     switch period {
-    case "rolling30Days", "month": .usedUp(tier: tier, availableAt: availableAt)
+    case "rolling30Days": .usedUp(tier: tier, availableAt: availableAt)
     case "total": .limitReached(period: .total, tier: tier)
     default: .limitReached(period: .day, tier: tier)
     }

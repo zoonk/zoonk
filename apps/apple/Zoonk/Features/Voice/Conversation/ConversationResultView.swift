@@ -141,7 +141,15 @@ struct ConversationResultView: View {
 
     switch failure {
     case .limit(let limit) where limit.isMonthly:
-      return limit.words(.callTime).said
+      return limit.said(
+        under: isMock
+          ? LocalizedStringResource(
+            "Not enough call time for this mock", table: "Voice",
+            comment: "The call time left can't fit the mock")
+          : LocalizedStringResource(
+            "Not enough call time for this task", table: "Voice",
+            comment: "The call time left can't fit this speaking exam task"),
+        kind: .callTime)
     case .limit:
       return isMock
         ? String(

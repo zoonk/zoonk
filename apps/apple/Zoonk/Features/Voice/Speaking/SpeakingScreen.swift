@@ -281,7 +281,11 @@ private struct SpeakingPaperView: View {
   private func startFailureMessage(_ failure: StartFailure) -> String {
     switch failure {
     case .limit(let limit) where limit.isMonthly:
-      limit.words(.callTime).said
+      limit.said(
+        under: LocalizedStringResource(
+          "Not enough call time for this task", table: "Voice",
+          comment: "The call time left can't fit this speaking exam task"),
+        kind: .callTime)
     case .limit:
       String(
         localized: "Not enough call time today for this task", table: "Voice",

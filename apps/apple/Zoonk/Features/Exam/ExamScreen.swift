@@ -977,7 +977,11 @@ private struct SpeakingMockSection: View {
         case .limit(let limit):
           FailureLine(
             message: limit.isMonthly
-              ? limit.words(.callTime).said
+              ? limit.said(
+                under: LocalizedStringResource(
+                  "Not enough call time for this mock", table: "Voice",
+                  comment: "The call time left can't fit the mock"),
+                kind: .callTime)
               : String(
                 localized: "Not enough call time today for this mock", table: "Exam",
                 comment: "The call time left today can't fit the mock"))

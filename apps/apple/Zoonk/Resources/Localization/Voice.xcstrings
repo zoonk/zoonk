@@ -5243,6 +5243,124 @@
         }
       }
     },
+    "Not enough call time for this mock" : {
+      "comment" : "The call time left can't fit the mock",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nicht genug Gesprächszeit für diese Probeprüfung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No queda suficiente tiempo de llamada para este simulacro"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas assez de temps d’appel pour cet examen blanc"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tempo di conversazione rimasto non basta per questa simulazione"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この模試を受けるには会話の残り時間が足りません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 모의고사를 보기에는 남은 대화 시간이 부족해요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pozostały czas na rozmowy nie wystarczy na ten egzamin próbny"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não há tempo de conversa suficiente para este simulado"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu deneme sınavı için sohbet süren yetmiyor"
+          }
+        }
+      }
+    },
+    "Not enough call time for this task" : {
+      "comment" : "The call time left can't fit this speaking exam task",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nicht genug Gesprächszeit für diese Aufgabe"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No te queda suficiente tiempo de llamada para esta tarea"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas assez de temps d’appel pour cette tâche"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo di conversazione insufficiente per questo compito"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このタスクに必要な会話時間が足りません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 과제에 필요한 대화 시간이 부족해요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Za mało czasu na rozmowy, by wykonać to zadanie"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não há tempo de conversa suficiente para esta tarefa"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu bölüm için yeterli sohbet süren yok"
+          }
+        }
+      }
+    },
     "Not enough call time today for this mock" : {
       "comment" : "The call time left today can't fit the mock",
       "localizations" : {
