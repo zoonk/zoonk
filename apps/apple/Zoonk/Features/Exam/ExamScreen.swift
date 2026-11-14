@@ -292,12 +292,8 @@ private struct ExamHero: View {
       return nil
     }
 
-    return exam.daysEstimated
-      ? String(
-        localized: "about \(days) days left", table: "Exam",
-        comment: "Last fact under an exam's name when its dates are estimated")
-      : String(
-        localized: "\(days) days left", table: "Exam", comment: "Last fact under an exam's name")
+    return String(
+      localized: "\(days) days left", table: "Exam", comment: "Last fact under an exam's name")
   }
 
   private var facts: [String] {
@@ -1032,17 +1028,23 @@ private struct ExamScoringSection: View {
                 calibration.sure.answered + calibration.unsure.answered > 0
               {
                 Text(
-                  "In your mock exams: sure, \(calibration.sure.right) of \(calibration.sure.answered) right. Unsure, \(calibration.unsure.right) of \(calibration.unsure.answered) right.",
-                  tableName: "Exam", comment: "Sure against unsure answers in mocks")
-                if calibration.advice == .blankUnsure {
-                  Text(
-                    "Your unsure answers cost more than they earn: leave those blank.",
-                    tableName: "Exam", comment: "Advice")
-                } else if calibration.advice == .keepAnswering {
-                  Text(
-                    "Your unsure answers still earn points: keep answering them.",
-                    tableName: "Exam", comment: "Advice")
+                  "In your mock exams: \(calibration.sure.right) of \(calibration.sure.answered) right when not flagged, \(calibration.unsure.right) of \(calibration.unsure.answered) right when flagged.",
+                  tableName: "Exam",
+                  comment:
+                    "Right answers in mock exams among questions not flagged, against flagged ones"
+                )
+                Group {
+                  if calibration.advice == .blankUnsure {
+                    Text(
+                      "Your flagged answers cost more than they earn: leave those blank.",
+                      tableName: "Exam", comment: "Advice")
+                  } else if calibration.advice == .keepAnswering {
+                    Text(
+                      "Your flagged answers still earn points: keep answering them.",
+                      tableName: "Exam", comment: "Advice")
+                  }
                 }
+                .foregroundStyle(.mutedForeground)
               }
             }
           } icon: {
