@@ -576,7 +576,6 @@ msgid "Finish"
 msgstr "Bitir"
 
 #: src/_components/question-actions.tsx
-#: src/journey/preparation/preparation-details.tsx
 msgctxt "9-Ddtu"
 msgid "Next"
 msgstr "Devam et"
@@ -5066,15 +5065,20 @@ msgid "Take a full or half mock exam to see your estimated score."
 msgstr "Tahmini puanını görmek için tam veya yarım deneme sınavına gir."
 
 #: src/journey/preparation/preparation-details.tsx
-#: src/mock/mock-result-view.tsx
-msgctxt "Psgvhk"
-msgid "Estimated score"
-msgstr "Tahmini puan"
+msgctxt "eMlJUc"
+msgid "{count, plural, one {Based on # review of every topic} other {Based on # reviews of every topic}}"
+msgstr "{count, plural, other {Her konunun # kez tekrar edilmesine göre}}"
 
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "DJCbLV"
 msgid "{count, plural, one {Based on your last mock exam} other {Based on your last # mock exams}}"
 msgstr "{count, plural, one {Son deneme sınavına göre} other {Son # deneme sınavına göre}}"
+
+#: src/journey/preparation/preparation-details.tsx
+#: src/mock/mock-result-view.tsx
+msgctxt "Psgvhk"
+msgid "Estimated score"
+msgstr "Tahmini puan"
 
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "JcR3T_"
@@ -5090,6 +5094,12 @@ msgstr "Her branş sınavdaki ağırlığına göre hesaba katılır. Bir branş
 msgctxt "Kch5Cx"
 msgid "The share of your plan's lessons you've studied or already knew. Right answers, what you remember and weekly challenges show how well you know them."
 msgstr "Planındaki derslerden çalıştıklarının veya önceden bildiklerinin oranı. Doğru cevapların, hatırladıkların ve haftalık meydan okumalar bu dersleri ne kadar iyi bildiğini gösterir."
+
+#. A section heading over the next steps toward the learner's goal, such as "Take your first mock exam". Not a button.
+#: src/journey/preparation/preparation-details.tsx
+msgctxt "preparationNextSteps"
+msgid "Next"
+msgstr "Sıradaki adımlar"
 
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "J6PYLA"

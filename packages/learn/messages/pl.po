@@ -576,7 +576,6 @@ msgid "Finish"
 msgstr "Zakończ"
 
 #: src/_components/question-actions.tsx
-#: src/journey/preparation/preparation-details.tsx
 msgctxt "9-Ddtu"
 msgid "Next"
 msgstr "Przejdź dalej"
@@ -5066,15 +5065,20 @@ msgid "Take a full or half mock exam to see your estimated score."
 msgstr "Rozwiąż cały egzamin próbny lub jego połowę, aby poznać szacowany wynik."
 
 #: src/journey/preparation/preparation-details.tsx
-#: src/mock/mock-result-view.tsx
-msgctxt "Psgvhk"
-msgid "Estimated score"
-msgstr "Szacowany wynik"
+msgctxt "eMlJUc"
+msgid "{count, plural, one {Based on # review of every topic} other {Based on # reviews of every topic}}"
+msgstr "{count, plural, one {Podstawą jest # powtórka każdego tematu} few {Podstawą są # powtórki każdego tematu} many {Podstawą jest # powtórek każdego tematu} other {Podstawą jest # powtórki każdego tematu}}"
 
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "DJCbLV"
 msgid "{count, plural, one {Based on your last mock exam} other {Based on your last # mock exams}}"
 msgstr "{count, plural, one {Na podstawie twojego ostatniego egzaminu próbnego} other {Na podstawie twoich ostatnich # egzaminów próbnych}}"
+
+#: src/journey/preparation/preparation-details.tsx
+#: src/mock/mock-result-view.tsx
+msgctxt "Psgvhk"
+msgid "Estimated score"
+msgstr "Szacowany wynik"
 
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "JcR3T_"
@@ -5090,6 +5094,12 @@ msgstr "Każdy przedmiot ma taką samą wagę jak na egzaminie. Wartość przy p
 msgctxt "Kch5Cx"
 msgid "The share of your plan's lessons you've studied or already knew. Right answers, what you remember and weekly challenges show how well you know them."
 msgstr "Część lekcji z twojego planu, które są już przerobione lub były ci znane wcześniej. Poprawne odpowiedzi, to, co pamiętasz, i wyzwania tygodnia pokazują, jak dobrze znasz ten materiał."
+
+#. A section heading over the next steps toward the learner's goal, such as "Take your first mock exam". Not a button.
+#: src/journey/preparation/preparation-details.tsx
+msgctxt "preparationNextSteps"
+msgid "Next"
+msgstr "Kolejne kroki"
 
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "J6PYLA"

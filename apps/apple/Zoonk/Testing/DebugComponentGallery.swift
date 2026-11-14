@@ -522,29 +522,29 @@
         MindMapRow(goalId: "debug", map: Self.map(.ready, id: "finish-text"), place: .finish)
         MindMapRow(
           goalId: "debug", map: Self.map(.available, id: "library", lessons: 3), place: .library)
-        MindMapRow(
-          goalId: "debug", map: Self.map(.plusRequired, id: "library-plus"), place: .library)
         MindMapRow(goalId: "debug", map: Self.map(.ready, id: "library-text"), place: .library)
 
-        ForEach(Self.refusals, id: \.self) { resource in
-          LimitNotice(
-            limit: .limitReached(period: .day, tier: .free),
-            words: MindMapLimit(
-              limit: .limitReached(period: .day, tier: .free), resource: resource
-            )
-            .words
-          )
-          .controlSize(.small)
+        ForEach(Array(Self.refusals.enumerated()), id: \.offset) { _, refusal in
+          LimitNotice(limit: refusal.limit, words: refusal.words(now:))
+            .controlSize(.small)
         }
       }
     }
 
-    private static let refusals: [MindMapLimit.Resource] = [.mindMap, .lessons, .aiSpend]
+    private static let refusals = [
+      MindMapLimit(limit: .limitReached(period: .day, tier: .free), resource: .mindMap),
+      MindMapLimit(limit: .limitReached(period: .day, tier: .free), resource: .lessons),
+      MindMapLimit(limit: .limitReached(period: .day, tier: .free), resource: .aiSpend),
+      MindMapLimit(
+        limit: .freeLessonsUsed(opensAt: .now.addingTimeInterval(3 * 86_400)),
+        resource: .chapterLessons),
+      MindMapLimit(limit: .limitReached(period: .total, tier: .free), resource: .chapterLessons),
+    ]
 
     private static let chapterStates = [
       map(.available, id: "available"), map(.available, id: "lessons", lessons: 3),
       map(.writingLessons, id: "writing", lessons: 3), map(.drawing, id: "drawing"),
-      map(.ready, id: "text"), map(.failed, id: "failed"), map(.plusRequired, id: "plus"),
+      map(.ready, id: "text"), map(.failed, id: "failed"),
     ]
 
     private static func map(

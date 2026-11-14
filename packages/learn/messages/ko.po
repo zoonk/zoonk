@@ -576,7 +576,6 @@ msgid "Finish"
 msgstr "마치기"
 
 #: src/_components/question-actions.tsx
-#: src/journey/preparation/preparation-details.tsx
 msgctxt "9-Ddtu"
 msgid "Next"
 msgstr "다음"
@@ -5066,15 +5065,20 @@ msgid "Take a full or half mock exam to see your estimated score."
 msgstr "예상 점수를 보려면 모의고사를 전체 또는 절반 분량으로 풀어 보세요."
 
 #: src/journey/preparation/preparation-details.tsx
-#: src/mock/mock-result-view.tsx
-msgctxt "Psgvhk"
-msgid "Estimated score"
-msgstr "예상 점수"
+msgctxt "eMlJUc"
+msgid "{count, plural, one {Based on # review of every topic} other {Based on # reviews of every topic}}"
+msgstr "{count, plural, other {모든 주제를 #회 복습한 결과를 바탕으로 해요}}"
 
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "DJCbLV"
 msgid "{count, plural, one {Based on your last mock exam} other {Based on your last # mock exams}}"
 msgstr "{count, plural, other {최근 모의고사 #회 기준}}"
+
+#: src/journey/preparation/preparation-details.tsx
+#: src/mock/mock-result-view.tsx
+msgctxt "Psgvhk"
+msgid "Estimated score"
+msgstr "예상 점수"
 
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "JcR3T_"
@@ -5090,6 +5094,12 @@ msgstr "각 과목은 시험에서 차지하는 비중만큼 반영돼요. 과�
 msgctxt "Kch5Cx"
 msgid "The share of your plan's lessons you've studied or already knew. Right answers, what you remember and weekly challenges show how well you know them."
 msgstr "계획에 있는 레슨 중 공부했거나 이미 알고 있던 레슨의 비율이에요. 정답률과 기억하는 정도, 주간 챌린지 결과로 얼마나 잘 알고 있는지 알 수 있어요."
+
+#. A section heading over the next steps toward the learner's goal, such as "Take your first mock exam". Not a button.
+#: src/journey/preparation/preparation-details.tsx
+msgctxt "preparationNextSteps"
+msgid "Next"
+msgstr "다음 단계"
 
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "J6PYLA"
