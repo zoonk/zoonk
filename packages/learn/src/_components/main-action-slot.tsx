@@ -22,6 +22,11 @@ export function MainActionSlot({ children }: { children: React.ReactNode }) {
   return use(PlacedContext) ?? children;
 }
 
+/** Whether a question placed its action in the bar; the caller renders again whenever that action changes. */
+export function useHasPlacedMainAction(): boolean {
+  return use(PlacedContext) !== null;
+}
+
 /**
  * A question answered by something other than "Check" (a recording) draws its main action in the
  * bar, where Check is, in reach of a thumb. Without a bar that offers the slot it stays in place.
