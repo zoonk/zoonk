@@ -237,7 +237,7 @@
   "plan_effect_weekly_challenge_on": "d07dda9ec56bc876544e8ea9c2026b7ea680ad8504a34e22a7e191b2d7c7a2e3",
   "plan_estimate_based_on": "6edb41d2955dff8d7a5def12392b389a1d78584c997a4022db67c228d07840f1",
   "plan_estimate_based_on_last": "bba743495159f715405e15dc57bebb2f8688eecd5760802370a7a3df165d9533",
-  "plan_estimate_based_on_reviews": "64674ddb0494daa181a2ef40a42591dae758d8264943211d5bab22e3b24c1e48",
+  "plan_estimate_based_on_reviews": "9d8cd8d617836d733b3ae99238dcec4074f5474880a05ac26f98b5890236ac58",
   "plan_estimate_waits": "78afcb50def71c2ad7a1040355ad86cc97fbbbe07773966330af09bbda378cba",
   "plan_estimated_score": "471ba09383b266bb1ae2d1e0e64492502e45da480ab3d606f34d5fe572793f58",
   "plan_every_day": "67e5455f0a80959a38845bd03a9c49b00c1a86fe73787b398593a67c43b3f2b8",
@@ -251,7 +251,7 @@
   "plan_exam_date": "02f49ad62a38af75b0a8718890f91fdd1143aeacfdc9d2e64851f18ed27d168b",
   "plan_exam_date_label": "f0ba48ca41908fad19a1ab00e680e71e8d407f927c859363a8fbe0b0ad1e41c0",
   "plan_exam_day": "1fdffcf8860479fba0728177493c2be4678ef0478b33634178089611c225644a",
-  "plan_exam_over_left": "f98cd20734b2d06da1d64144bd850ead39d383ccb79ba9c5c2dc52a9233c1ce3",
+  "plan_exam_over_left": "6ac00492cda63caebe10fe8b10fc1da6889b54514084c027885acea6b43a975a",
   "plan_eyebrow": "cdd281f0ee81317e76d22668c0997499dd6040fa046c318872015bf1c06a1ed5",
   "plan_far_count_from": "2e783a3041d1fe2a5b7032348e489e05f7dd3792df307dbae118594f8274e42c",
   "plan_far_count_from_month": "32bd0ae9174f5eb05efbb4640c4462f0f002a8686a57558556b969284f056dd5",
@@ -895,9 +895,9 @@
         <item quantity="other">D’après %d examens blancs, les plus récents</item>
     </plurals>
     <plurals name="plan_estimate_based_on_reviews">
-        <item quantity="one">D’après %d révision de tous les sujets</item>
-        <item quantity="many">D’après %d révisions de tous les sujets</item>
-        <item quantity="other">D’après %d révisions de tous les sujets</item>
+        <item quantity="one">D’après %d révision de chaque sujet</item>
+        <item quantity="many">D’après %d révisions de chaque sujet</item>
+        <item quantity="other">D’après %d révisions de chaque sujet</item>
     </plurals>
     <string name="plan_score_percent">%1$s %%</string>
     <string name="plan_score_percent_range">%1$s %% à %2$s %%</string>
@@ -1368,9 +1368,9 @@
     <string name="plan_past_date_goal_title">La date de fin de ton plan est passée</string>
     <string name="plan_past_date_exam_title">La date de ton examen est passée</string>
     <plurals name="plan_exam_over_left">
-        <item quantity="one">Il te reste %d leçon. Tu veux continuer à la travailler ou archiver cet objectif ?</item>
-        <item quantity="many">Il te reste %d leçons. Tu veux continuer à les travailler ou archiver cet objectif ?</item>
-        <item quantity="other">Il te reste %d leçons. Tu veux continuer à les travailler ou archiver cet objectif ?</item>
+        <item quantity="one">Il te reste %d leçon. Tu veux continuer à la travailler ou archiver cet objectif ?</item>
+        <item quantity="many">Il te reste %d leçons. Tu veux continuer à les travailler ou archiver cet objectif ?</item>
+        <item quantity="other">Il te reste %d leçons. Tu veux continuer à les travailler ou archiver cet objectif ?</item>
     </plurals>
     <plurals name="plan_past_date_offer">
         <item quantity="one">Il te reste %d leçon. Repousser la date de fin te laisse le temps de la terminer.</item>

@@ -237,7 +237,7 @@
   "plan_effect_weekly_challenge_on": "d5c0ac063c0220deb09fc6c52ee162ee884c21af3edccba6c0d4ba56c9caebfa",
   "plan_estimate_based_on": "7aca1b60fcab16a46df06842d7b8d990e0dbfd686d017862b5f263a8a4f40c5c",
   "plan_estimate_based_on_last": "e4e2fae06ff9b514b42d96631183ba6fd89ba2903bb66a995fef32d427e91ae8",
-  "plan_estimate_based_on_reviews": "7ef12e6609e4a7acd363d79577c20ca4fbf7efb00fc5302342689e4c332914a2",
+  "plan_estimate_based_on_reviews": "05c284268261ecca19319bf552739affa29009d811f2b75f9ed76d0beeb49474",
   "plan_estimate_waits": "16355e59b3d6b6e2bb359d3f9e29a476c42b3c57ba514e6f3c68d350ad72287a",
   "plan_estimated_score": "a8cbf5fdca146797a99c46f3302182465d8b00243c205418ce49a36498d9059a",
   "plan_every_day": "3a6a23cf2b886c2d43df42fd6d80cc199282ba434c4edf54efd17f39a70f8d27",
@@ -895,9 +895,9 @@
         <item quantity="other">Según %d simulacros, los más recientes</item>
     </plurals>
     <plurals name="plan_estimate_based_on_reviews">
-        <item quantity="one">Basado en %d revisión de todos los temas</item>
-        <item quantity="many">Basado en %d revisiones de todos los temas</item>
-        <item quantity="other">Basado en %d revisiones de todos los temas</item>
+        <item quantity="one">Con base en %d revisión de todos los temas</item>
+        <item quantity="many">Con base en %d revisiones de todos los temas</item>
+        <item quantity="other">Con base en %d revisiones de todos los temas</item>
     </plurals>
     <string name="plan_score_percent">%1$s%%</string>
     <string name="plan_score_percent_range">%1$s%% a %2$s%%</string>

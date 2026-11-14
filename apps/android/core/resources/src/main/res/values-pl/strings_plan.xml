@@ -237,7 +237,7 @@
   "plan_effect_weekly_challenge_on": "cc5a59abae731588852c76979b0d70740a1053ba352ba2bd2b39e19ca22a5668",
   "plan_estimate_based_on": "b14593d75b4fc7372750ea41d66985945d78d204f90b1803c6fb20f4cbd8d0f0",
   "plan_estimate_based_on_last": "c8c179b311fc90f9718d1091bc0d622bbce1ec382746e494b0cfb7931e1cc33f",
-  "plan_estimate_based_on_reviews": "0fe715f4a7b42dfd5bb0a464e84b83aad31394f94c0eb0f0f267992822f49928",
+  "plan_estimate_based_on_reviews": "62c1c11b470ea24370cc9581755ab487073ed4c878bbb1396f2eb769ed44b808",
   "plan_estimate_waits": "607190aa90db089b93f7347df8123c6a51f14ee59875b1c321b6d8aa4db56577",
   "plan_estimated_score": "f90fb5ba50c8f45f8991e390e36776ef59a920eb9690eb92a1ccff97659f94e9",
   "plan_every_day": "c23e7c3fe92da6e8043c7c59c08f7ea4f82da8e59b7b130e17eb5532437d32e2",
@@ -921,10 +921,10 @@
         <item quantity="other">Na podstawie %d ostatnich egzaminów próbnych</item>
     </plurals>
     <plurals name="plan_estimate_based_on_reviews">
-        <item quantity="one">Na podstawie %d powtórki wszystkich tematów</item>
-        <item quantity="few">Na podstawie %d powtórek wszystkich tematów</item>
-        <item quantity="many">Na podstawie %d powtórek wszystkich tematów</item>
-        <item quantity="other">Na podstawie %d powtórki wszystkich tematów</item>
+        <item quantity="one">Podstawą jest %d powtórka każdego tematu</item>
+        <item quantity="few">Podstawą są %d powtórki każdego tematu</item>
+        <item quantity="many">Podstawą jest %d powtórek każdego tematu</item>
+        <item quantity="other">Podstawą jest %d powtórki każdego tematu</item>
     </plurals>
     <string name="plan_score_percent">%1$s%%</string>
     <string name="plan_score_percent_range">Od %1$s%% do %2$s%%</string>

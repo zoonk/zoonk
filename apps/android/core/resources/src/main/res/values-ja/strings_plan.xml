@@ -237,7 +237,7 @@
   "plan_effect_weekly_challenge_on": "ad50d13aba67eb67730e3aca7bae765d3255542d914f12badd1f028af77ba334",
   "plan_estimate_based_on": "3c33e0cb6b6115ee2a3451f07ed4be18aa104a8c6f96862e649a76431cb154e1",
   "plan_estimate_based_on_last": "29b89e4d6487d09d50898d656d285382b046762a40d9cd89a04f105dce5b40c7",
-  "plan_estimate_based_on_reviews": "44993efa4465cebea9da041bf3c8c3d53de96f5d78a5cac87f84b65e8e7ac745",
+  "plan_estimate_based_on_reviews": "4159db1567950eefd3b81b518413578f0abacd1234ea59e0f1818150e11464ca",
   "plan_estimate_waits": "987848e34cf7812dcce47d137259666e40ffd2a4c19e4184da0a81e0ce243362",
   "plan_estimated_score": "41e09ef965330d4d179bd902b8b980b051904fe3bd7990dc691097721347cef6",
   "plan_every_day": "b902c43428c856c4ffd4dbde80b5be1a9bf462864418a649c6862b89588464ff",
@@ -843,7 +843,7 @@
         <item quantity="other">直近%d回の模試をもとに算出</item>
     </plurals>
     <plurals name="plan_estimate_based_on_reviews">
-        <item quantity="other">すべてのトピックの復習%d回の結果に基づいています</item>
+        <item quantity="other">全トピックを%d回復習した結果に基づいています</item>
     </plurals>
     <string name="plan_score_percent">%1$s%%</string>
     <string name="plan_score_percent_range">%1$s%%～%2$s%%</string>
