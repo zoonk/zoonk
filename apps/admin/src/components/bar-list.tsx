@@ -1,4 +1,4 @@
-import { Meter, MeterFill } from "@zoonk/learn/meter";
+import { Meter, MeterFill } from "@zoonk/ui/components/meter";
 import { cn } from "@zoonk/ui/lib/utils";
 
 export type BarListRow = {

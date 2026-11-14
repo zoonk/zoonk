@@ -8,6 +8,12 @@ struct MistakesScreen: View {
 
   private var goalId: String? { summary.summary.value?.activeGoalID }
 
+  private var goalName: String? {
+    summary.summary.value.flatMap { learner in
+      learner.goals.first { $0.id == learner.activeGoalID }?.displayName
+    }
+  }
+
   private func mistakes(fixed: Bool) -> Resource<Components.Schemas.MistakeList> {
     practice.mistakes(goalId: goalId, fixed: fixed)
   }
@@ -38,8 +44,7 @@ struct MistakesScreen: View {
         }
 
         Section {
-          PageHeader(title)
-          header(shown.value)
+          PageHeader(title, supporting: subtitle(shown.value).map { Text(verbatim: $0) })
         }
 
         if !isBeside {
@@ -54,8 +59,19 @@ struct MistakesScreen: View {
       }
       .loads(shown)
     }
-
-    .navigationTitle(title)
+    .bottomBar {
+      if (open.value?.availability.ready ?? 0) > 0 {
+        Button {
+          hooks.navigate(.mistakePractice(skillId: nil))
+        } label: {
+          Text(
+            "Practice mistakes", tableName: "Practice",
+            comment: "Starts practicing the notebook's ready mistakes.")
+        }
+        .buttonStyle(.mainAction)
+        .keyboardShortcut(.defaultAction)
+      }
+    }
     .barTitleAfterHero(
       String(
         localized: "Mistakes notebook", table: "Practice",
@@ -68,12 +84,20 @@ struct MistakesScreen: View {
     Text("Mistakes notebook", tableName: "Practice", comment: "Title of the mistakes notebook.")
   }
 
-  private func header(_ list: Components.Schemas.MistakeList?) -> some View {
-    NotebookHeader(list: list) { hooks.navigate(.mistakePractice(skillId: nil)) }
-      .listRowBackground(Color.clear)
-      .listRowSeparator(.hidden)
-      // The row's own side margins: at the cell's edge, a wrapped line's first letter was clipped.
-      .listRowInsets(.vertical, 8)
+  private func subtitle(_ list: Components.Schemas.MistakeList?) -> String? {
+    let opensTomorrow =
+      list.map { $0.availability.ready == 0 && $0.availability.tomorrow > 0 } ?? false
+    let facts = [
+      goalName,
+      opensTomorrow
+        ? String(
+          localized: "Practice opens tomorrow", table: "Practice",
+          comment:
+            "Under the notebook's title, after the goal's name, when no mistake is ready today and some are tomorrow"
+        ) : nil,
+    ].compactMap(\.self)
+
+    return facts.isEmpty ? nil : facts.joinedFacts()
   }
 
   private func picker(counts: Components.Schemas.MistakeList.CountsPayload?) -> some View {
@@ -251,82 +275,11 @@ private struct MistakeListSections: View {
   }
 }
 
-private struct NotebookHeader: View {
-  let list: Components.Schemas.MistakeList?
-  let practice: () -> Void
-
-  var body: some View {
-    VStack(alignment: .leading, spacing: 12) {
-      if let list {
-        let ready = list.availability.ready
-        let tomorrow = list.availability.tomorrow
-
-        Text(countsLine(ready: ready, tomorrow: tomorrow, fixed: list.counts.fixed))
-          .typeStyle(.data)
-          .foregroundStyle(.mutedForeground)
-
-        if ready == 0, tomorrow > 0 {
-          Text(
-            "Mistakes come back for practice from the day after you make them.",
-            tableName: "Practice",
-            comment: "Why today's mistakes can't be practiced yet."
-          )
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
-        }
-
-        if ready > 0 {
-          Button(action: practice) {
-            Text(
-              "Practice mistakes", tableName: "Practice",
-              comment: "Starts practicing the notebook's ready mistakes."
-            )
-            .frame(maxWidth: .infinity)
-          }
-          .buttonStyle(.mainAction)
-          .controlSize(.large)
-        }
-      }
-    }
-    .frame(maxWidth: .infinity, alignment: .leading)
-  }
-
-  /// A count of 0 has its own string, since Portuguese's "one" case covers 0.
-  private func countsLine(ready: Int, tomorrow: Int, fixed: Int) -> String {
-    var parts: [String] = []
-
-    if ready > 0 {
-      parts.append(
-        String(
-          localized: "\(ready) ready to practice", table: "Practice",
-          comment: "Notebook count of mistakes ready now."))
-    } else if tomorrow == 0 {
-      parts.append(
-        String(
-          localized: "0 ready to practice", table: "Practice",
-          comment: "Notebook count when no mistake is ready now."))
-    }
-
-    if tomorrow > 0 {
-      parts.append(
-        String(
-          localized: "\(tomorrow) available tomorrow", table: "Practice",
-          comment: "Notebook count of today's mistakes."))
-    }
-
-    parts.append(
-      fixed == 0
-        ? String(
-          localized: "0 fixed", table: "Practice",
-          comment: "Notebook count when no mistake is fixed yet.")
-        : String(
-          localized: "\(fixed) fixed", table: "Practice",
-          comment: "Notebook count of fixed mistakes."))
-    return parts.joinedFacts()
-  }
-}
-
 private struct MistakeEntryView: View {
+  /// Words the learner typed or said are plain text, as is a typed question's accepted answer, so
+  /// `__init__` keeps its underscores; other answers are item text with their math.
+  private static let writtenAnswerFormats: Set = ["spoken", "spokenAnswer", "typed", "typedAnswer"]
+
   let mistake: Components.Schemas.Mistake
   let labels: PracticeTrueFalseLabels
   let continuesSet: Bool
@@ -334,14 +287,13 @@ private struct MistakeEntryView: View {
 
   var body: some View {
     let snapshot = mistake.snapshot
-    let fixed = mistake.status == .fixed
 
     VStack(alignment: .leading, spacing: 12) {
       AccessibilityStack {
-        Label {
-          Text(causeLabel(fixed: fixed))
-        } icon: {
-          Image(systemName: causeIcon)
+        Group {
+          if let cause = causeLabel {
+            Chip(Text(cause), systemImage: causeIcon)
+          }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -361,18 +313,24 @@ private struct MistakeEntryView: View {
         image: try? snapshot.image.map { try PracticeJSON.recode($0.value1) },
         visual: try? snapshot.visual.map { try PracticeJSON.recode($0) })
 
-      ItemText(snapshot.question).typeStyle(.body.weight(.medium))
+      LessonTextBlocks(snapshot.question).typeStyle(.question)
 
-      if let answer = TrueFalseWords.savedAnswer(snapshot.answer, labels: labels) {
-        MistakeAnswerRow(text: answer, isRight: false)
+      if let answer = TrueFalseWords.savedAnswer(
+        snapshot.answer, format: snapshot.format, labels: labels)
+      {
+        MistakeAnswerRow(
+          text: answer, isRight: false,
+          isLiteral: Self.writtenAnswerFormats.contains(snapshot.format ?? ""))
       }
 
-      if let correct = TrueFalseWords.savedAnswer(snapshot.correctAnswer, labels: labels) {
-        MistakeAnswerRow(text: correct, isRight: true)
+      if let correct = TrueFalseWords.savedAnswer(
+        snapshot.correctAnswer, format: snapshot.format, labels: labels)
+      {
+        MistakeAnswerRow(text: correct, isRight: true, isLiteral: snapshot.format == "typed")
       }
 
       if let explanation = snapshot.explanation {
-        ItemText(explanation).typeStyle(.note).foregroundStyle(.mutedForeground)
+        LessonTextBlocks(explanation).typeStyle(.note).foregroundStyle(.mutedForeground)
       }
 
       actions
@@ -400,8 +358,8 @@ private struct MistakeEntryView: View {
             hooks.navigate(.mistakePractice(skillId: skillId))
           } label: {
             Text(
-              "Practice this skill", tableName: "Practice",
-              comment: "Practices only this skill's mistakes.")
+              "Practice this topic", tableName: "Practice",
+              comment: "Practices only this topic's mistakes.")
           }
           .buttonStyle(.outline)
         }
@@ -414,7 +372,8 @@ private struct MistakeEntryView: View {
               "Open the lesson", tableName: "Practice",
               comment: "Opens the lesson that teaches a mistake's idea.")
           }
-          .buttonStyle(.borderless)
+          // The entry always ends in a button: outlined when it's the only one.
+          .buttonStyle(skillId == nil ? .outline : .ghost)
         }
       }
       .controlSize(.small)
@@ -440,46 +399,40 @@ private struct MistakeEntryView: View {
     }
   }
 
-  private func causeLabel(fixed: Bool) -> String {
-    let cause: String =
-      switch mistake.cause?.value1 {
-      case .gap:
-        String(
-          localized: "Content gap", table: "Practice",
-          comment: "Label of a mistake's cause: the learner didn't know or misunderstood the idea.")
-      case .misread:
-        String(
-          localized: "Misread", table: "Practice", comment: "Mistake cause: misread the question.")
-      case .trap:
-        String(
-          localized: "Fell for a trap", table: "Practice",
-          comment: "Mistake cause: fell for a trap answer.")
-      case .time:
-        String(
-          localized: "Ran out of time", table: "Practice",
-          comment: "Mistake cause: ran out of time.")
-      case .guess:
-        String(localized: "Guessed", table: "Practice", comment: "Mistake cause: guessed.")
-      case nil:
-        String(
-          localized: "Not sorted yet", table: "Practice", comment: "Mistake cause not named yet.")
-      }
-
-    return fixed
-      ? String(
-        localized: "\(cause)\u{00A0}· Fixed", table: "Practice",
-        comment: "A fixed mistake's cause line.")
-      : cause
+  /// Nil while nobody has sorted the mistake; the Fixed tab already says it's fixed.
+  private var causeLabel: String? {
+    switch mistake.cause?.value1 {
+    case .gap:
+      String(
+        localized: "Didn't know it", table: "Practice",
+        comment: "Label of a mistake's cause: the learner didn't know or misunderstood the idea.")
+    case .misread:
+      String(
+        localized: "Misread", table: "Practice", comment: "Mistake cause: misread the question.")
+    case .trap:
+      String(
+        localized: "Fell for a trap", table: "Practice",
+        comment: "Mistake cause: fell for a trap answer.")
+    case .time:
+      String(
+        localized: "Ran out of time", table: "Practice", comment: "Mistake cause: ran out of time.")
+    case .guess:
+      String(localized: "Guessed", table: "Practice", comment: "Mistake cause: guessed.")
+    case nil:
+      nil
+    }
   }
 }
 
 struct MistakeAnswerRow: View {
   let text: String
   let isRight: Bool
+  /// Shows the text exactly as written, such as what the learner typed.
+  let isLiteral: Bool
 
   var body: some View {
     TagBesideOrUnder(
-      text: RichInline(text: ItemTextBlock.inline(text)),
+      text: isLiteral ? RichInline(text: AttributedString(text)) : LessonRichText.typeset(text),
       tag: AnyView(
         Text(
           isRight

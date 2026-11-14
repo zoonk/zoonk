@@ -95,7 +95,7 @@ private struct PlanSheets: ViewModifier {
                 selected: country.code,
                 confirmsRebuild: true
               ) { choice in
-                await learner.setContentCountry(choice?.code, goalID: context.goal.id)
+                await learner.setContentCountry(choice.code, goalID: context.goal.id)
               }
             }
           }

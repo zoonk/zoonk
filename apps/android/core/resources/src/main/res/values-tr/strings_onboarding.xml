@@ -192,22 +192,20 @@
   "onboarding_placement_false": "44b8a8d35c4e1b0238938d43ec1ea41e10c977df2bb4e4891b8ffc62d527f617",
   "onboarding_placement_progress": "0ede62889428674da1dcb5071327961525284e27850f5b594456f1309691b7f4",
   "onboarding_placement_question_number": "0244ad899e4231a04fb7ad16a4792e1d12cf52c742f9ac2b319d44370358932f",
+  "onboarding_placement_ready": "cde26a55f41ce9f8ddadf3962e4072d710f834cc60803d909064e37da537905f",
   "onboarding_placement_right": "74455806749c008c649b1b9db826b74ac9885ceac3221638b023e660ac0673fe",
   "onboarding_placement_see_plan": "c69580f4ea7385e1e3fb3a1a5691d751822b171dfbd0e6e555d984c45310b134",
   "onboarding_placement_set_description": "1ca773ed5e7585be5100f1ab9b349791c8ef878d85f898ae800de79c4706056d",
   "onboarding_placement_set_title": "7004fc3c5295ca665521b01ce508e3f0cdefb095a0b5897eb2d07c957d7cf2ff",
   "onboarding_placement_skip_basics": "191048db53c7ae758a3e44e524a7d45cbe9880ee863a4540fccc661e3e703a4d",
-  "onboarding_placement_skip_for_now": "69058fca9efb6655cf52d7e6431503b0efaedcedd5e4092063f11e664f1b45dd",
-  "onboarding_placement_skip_note": "ecb27fb60a01cf60b43fc43a5a46ea80902e5ea4f6ae407486eb60d3a2268fbb",
   "onboarding_placement_start": "41f95c4010570365e6945a35fe6b12427499d51e304a55ee2a147471cb122391",
   "onboarding_placement_stop": "2fab3f647591af5d1d2c203c569d66671b92abf7da4087bb1770a587a6d11fec",
   "onboarding_placement_title": "d0fa7b05b6f03847deba206a8d7c6de7627bbc1fb99b4446325fd414bfa34747",
   "onboarding_placement_true": "16af2dbe9cbfa732b57c0254dc7dd79181c68e689831cd827beaa49528778b10",
   "onboarding_placement_unavailable_description": "9a26d37c833460a6a828c806c716279dc5aa2813dcf935705c2238906b8c5929",
   "onboarding_placement_unavailable_title": "7133a6d3913d7d2555dc551f91794f90d1052f8138b28045db10503e49a2f95b",
-  "onboarding_placement_waiting_material": "84e4973bca178ebd749fb3088f9c796477a45b1136860a52953bd8e0e3b9c8f7",
-  "onboarding_placement_waiting_time": "8a39d62dfc8fb23d028339a5fe6f85a4b5a324fd5406edd927ac6de9990ecd00",
-  "onboarding_placement_waiting_title": "f496a4a2194722ce0b54940c10e1a8c1eb7b6d160987038779b8285914c9c1b9",
+  "onboarding_placement_waiting_material": "df22a2477a012ac1f288032b2c6e071597109624031eb420c6e6227aa45f0a2e",
+  "onboarding_placement_waiting_time": "9e9a2a5de46c219086e517f5feeb3f5f8df16244c36d13e99eea7cf90aac3c95",
   "onboarding_placement_wrong": "ef28abd1857c6f2b3360f10748df2de15432293930a589d04b1a972946d8d4ca",
   "onboarding_placement_your_answer": "50ae3e13d5b747c7bd384f70927d2649ab10e85920e001a709bbf7c68ac94671",
   "onboarding_plan_answers_saved": "3e850aff7c53a5910893dd6877f66ad063448733c504ca1d429147140084237a",
@@ -667,11 +665,10 @@
     <string name="onboarding_placement_description">Planın zaten bildiklerini atlasın diye birkaç kısa soru. Puan yok, “Henüz bilmiyorum” da diyebilirsin.</string>
     <string name="onboarding_placement_start">Başla</string>
     <string name="onboarding_placement_skip_basics">Atla ve temelden başla</string>
-    <string name="onboarding_placement_waiting_title">Sorularını hazırlıyoruz</string>
-    <string name="onboarding_placement_waiting_material">Soruları eklediğin materyale göre hazırlıyoruz. Materyali okumamız birkaç dakika sürüyor.</string>
-    <string name="onboarding_placement_waiting_time">Bu genelde bir iki dakika sürer.</string>
-    <string name="onboarding_placement_skip_for_now">Şimdilik atla</string>
-    <string name="onboarding_placement_skip_note">Bunun yerine ilk çalışmalarında bu sorulardan birkaçını soracağız.</string>
+    <string name="onboarding_placement_waiting_material">Materyalini okumamız birkaç dakika sürüyor.</string>
+    <!-- Shown while the learner waits for their first questions to be prepared. "This" is the wait. -->
+    <string name="onboarding_placement_waiting_time">Bir iki dakika sürer.</string>
+    <string name="onboarding_placement_ready">Testin hazır</string>
     <!-- Beside the subject, above a placement question. %1$d is its number. -->
     <string name="onboarding_placement_question_number">Soru %1$d</string>
     <string name="onboarding_placement_progress">Cevaplanan sorular</string>

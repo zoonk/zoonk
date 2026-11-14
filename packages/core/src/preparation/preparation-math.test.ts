@@ -71,12 +71,7 @@ describe(getPreparationComponents, () => {
 
     expect(components.mastery.supported).toBeLessThan(0.5);
 
-    expect(components.mocks).toStrictEqual({
-      kind: "mockExams",
-      plusRequired: false,
-      taken: 0,
-      value: null,
-    });
+    expect(components.mocks).toStrictEqual({ kind: "mockExams", taken: 0, value: null });
   });
 
   it("leaves mastery empty until enough questions were seen for the first time", () => {
@@ -127,7 +122,7 @@ describe(getPreparationValue, () => {
         value: 0.5,
       },
       mastery: masteryFrom({ answered: 10, correct: 8 }),
-      mocks: { kind: "mockExams", plusRequired: false, taken: 0, value: null },
+      mocks: { kind: "mockExams", taken: 0, value: null },
       retention: { studiedSkills: 2, value: 0.9 },
     });
 
@@ -144,7 +139,7 @@ describe(getPreparationValue, () => {
         value: 0.05,
       },
       mastery: { answered: 0, correct: 0, evidence: 0, supported: null, value: null },
-      mocks: { kind: "mockExams", plusRequired: false, taken: 0, value: null },
+      mocks: { kind: "mockExams", taken: 0, value: null },
       retention: { studiedSkills: 1, value: 1 },
     });
 
@@ -159,7 +154,7 @@ describe(getPreparationValue, () => {
       value: 3 / 35,
     };
 
-    const mocks = { kind: "weeklyChallenges" as const, plusRequired: false, taken: 0, value: null };
+    const mocks = { kind: "weeklyChallenges" as const, taken: 0, value: null };
     const retention = { studiedSkills: 3, value: 0.99 };
 
     const before = getPreparationValue({
@@ -179,22 +174,6 @@ describe(getPreparationValue, () => {
     expect(after).toBeGreaterThan(before);
   });
 
-  it("leaves out the test the learner's plan can't take, so it never holds them back", () => {
-    const value = getPreparationValue({
-      coverage: {
-        heaviest: { studiedSkills: 2, totalSkills: 4, value: 0.5 },
-        studiedSkills: 2,
-        totalSkills: 4,
-        value: 0.5,
-      },
-      mastery: masteryFrom({ answered: 10, correct: 8 }),
-      mocks: { kind: "mockExams", plusRequired: true, taken: 0, value: null },
-      retention: { studiedSkills: 2, value: 0.9 },
-    });
-
-    expect(value).toBeCloseTo(0.5 * ((0.5408 * 0.4 + 0.9 * 0.3) / 0.7), 3);
-  });
-
   it("never reads a handful of right answers as fully prepared", () => {
     const fewAnswers = getPreparationValue({
       coverage: {
@@ -204,7 +183,7 @@ describe(getPreparationValue, () => {
         value: 1,
       },
       mastery: masteryFrom({ answered: 5, correct: 5 }),
-      mocks: { kind: "mockExams", plusRequired: false, taken: 1, value: 0.8 },
+      mocks: { kind: "mockExams", taken: 1, value: 0.8 },
       retention: { studiedSkills: 3, value: 1 },
     });
 
@@ -216,7 +195,7 @@ describe(getPreparationValue, () => {
         value: 1,
       },
       mastery: masteryFrom({ answered: 40, correct: 40 }),
-      mocks: { kind: "mockExams", plusRequired: false, taken: 1, value: 0.8 },
+      mocks: { kind: "mockExams", taken: 1, value: 0.8 },
       retention: { studiedSkills: 3, value: 1 },
     });
 
@@ -234,7 +213,7 @@ describe(getPreparationValue, () => {
         value: 0,
       },
       mastery: { answered: 0, correct: 0, evidence: 0, supported: null, value: null },
-      mocks: { kind: "mockExams", plusRequired: false, taken: 0, value: null },
+      mocks: { kind: "mockExams", taken: 0, value: null },
       retention: { studiedSkills: 0, value: null },
     });
 

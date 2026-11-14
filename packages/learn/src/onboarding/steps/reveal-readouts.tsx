@@ -1,8 +1,8 @@
 "use client";
 
+import { BigQuantity } from "@zoonk/ui/components/big-quantity";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { useExtracted } from "next-intl";
-import { BigQuantity } from "../../_components/big-quantity";
 import { daysUntilIsoDate, isoDateToUtc, useFormatIsoDate } from "../../_utils/iso-date";
 import { useAppLocale } from "../../_utils/locale";
 import { useFormatDuration } from "../../_utils/time-format";

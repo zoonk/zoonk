@@ -4,7 +4,6 @@
     <string name="completed_lessons_today">Today</string>
     <!-- A section title over the lessons the learner last finished yesterday. -->
     <string name="completed_lessons_yesterday">Yesterday</string>
-    <string name="completed_lessons_empty_title">No completed lessons yet</string>
     <string name="completed_lessons_empty_description">Lessons you finish show up here, so you can do them again anytime.</string>
     <!-- Read aloud while the next lessons load at the end of the list. -->
     <string name="completed_lessons_loading_more">Loading more lessons…</string>

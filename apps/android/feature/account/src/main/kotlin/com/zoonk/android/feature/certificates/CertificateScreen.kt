@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -54,6 +53,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
+import com.zoonk.android.ui.components.DetailRow
 import com.zoonk.android.ui.components.EmptyState
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.MarkStatus
@@ -531,49 +531,6 @@ private fun CertificateCovered(
 /** Main's `roundStudyMinutes`: the plan's estimate, so whole hours past the first one. */
 internal fun roundStudyMinutes(minutes: Long): Long =
     if (minutes < MINUTES_PER_HOUR) minutes else Math.round(minutes / MINUTES_PER_HOUR.toDouble()) * MINUTES_PER_HOUR
-
-/**
- * Main's `DetailRow`: a fact's label and its value at the row's end, with the [action] that changes
- * or copies it. A value that doesn't fit beside its label goes under it, so a large font never
- * splits a date or a code mid-word.
- */
-@Composable
-private fun DetailRow(
-    label: String,
-    value: String,
-    mono: Boolean = false,
-    action: (@Composable () -> Unit)? = null,
-) {
-    HorizontalDivider()
-    Row(
-        Modifier.fillMaxWidth().padding(vertical = if (action == null) 10.dp else 0.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        FlowRow(
-            Modifier.weight(1f).semantics(mergeDescendants = true) {},
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            Text(
-                label,
-                Modifier.padding(end = 16.dp).alignByBaseline(),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-            Text(
-                value,
-                Modifier.alignByBaseline(),
-                style =
-                    if (mono) {
-                        MaterialTheme.zoonkType.data.copy(color = MaterialTheme.colorScheme.onSurface)
-                    } else {
-                        MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium)
-                    },
-            )
-        }
-        action?.invoke()
-    }
-}
 
 private const val MINUTES_PER_HOUR = 60
 private const val SECONDS_PER_MINUTE = 60

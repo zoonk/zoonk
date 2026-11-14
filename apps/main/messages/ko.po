@@ -1105,6 +1105,7 @@ msgstr "하루에 공부할 수 있는 시간에 맞춰 이 코스 순서대로 
 
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
 #: src/app/[lang]/learn/[lessonId]/guest-plan-start.tsx
+#: src/components/auth-gate.tsx
 #: src/components/pricing/free-plan.tsx
 #: src/components/pricing/plus-pricing.tsx
 #: src/components/public/goal-form.tsx
@@ -2845,45 +2846,33 @@ msgctxt "QRccCM"
 msgid "Page not found"
 msgstr "페이지를 찾을 수 없어요"
 
+#. Under the title, for a guest: what they had before keeps going once they create an account.
 #: src/components/auth-gate.tsx
-msgctxt "DrBO6u"
-msgid "Your plan and progress move to your account, safe on any device."
-msgstr "계획과 진도가 계정으로 옮겨져 어떤 기기에서든 안전하게 학습을 이어갈 수 있어요."
+msgctxt "df7Wr-"
+msgid "Your plan and progress come with you."
+msgstr "계획과 진도는 그대로 유지돼요."
 
 #: src/components/auth-gate.tsx
 msgctxt "xhBZ5m"
 msgid "Create an account to use this page"
 msgstr "이 페이지를 이용하려면 계정을 만드세요"
 
+#. Under "You've been logged out". Their plan is still saved; logging in shows it again.
 #: src/components/auth-gate.tsx
-msgctxt "pb0Q20"
-msgid "Log in to pick up your plan."
-msgstr "로그인해 계획을 이어가세요."
+msgctxt "e3Tyso"
+msgid "Log in to get back to your plan."
+msgstr "로그인해서 계획을 이어가세요."
 
+#. Title on a page that needs an account, once the learner is logged out of Zoonk. Not about a study session, which the app also calls a session.
 #: src/components/auth-gate.tsx
-msgctxt "HVR09O"
-msgid "Your session ended"
-msgstr "로그인 세션이 끝났어요"
-
-#: src/components/auth-gate.tsx
-msgctxt "eSXQ3z"
-msgid "Log in to pick up where you left off, or start free."
-msgstr "로그인해 이어서 학습하거나 무료로 시작하세요."
+msgctxt "bBaQAY"
+msgid "You've been logged out"
+msgstr "로그아웃됐어요"
 
 #: src/components/auth-gate.tsx
 msgctxt "acWSVG"
 msgid "Log in to continue"
 msgstr "계속하려면 로그인하세요"
-
-#: src/components/auth-gate.tsx
-msgctxt "77LoTm"
-msgid "Start something new"
-msgstr "새로 시작하기"
-
-#: src/components/auth-gate.tsx
-msgctxt "i7IHHZ"
-msgid "Start free"
-msgstr "무료로 시작하기"
 
 #: src/components/catalog/catalog-back-to-top.tsx
 msgctxt "Gs9Kfp"

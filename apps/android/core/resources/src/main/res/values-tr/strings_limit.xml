@@ -14,6 +14,13 @@
   "limit_lessons_day": "26cc5c7e6c13699cc7c7d240c0b6be874ae8bd0b94fafb9595551a70f3e8800f",
   "limit_lessons_free": "d123a4f073b7749b3c25a65163d7fef97385d9f872b1e55b8318db4202553057",
   "limit_lessons_guest": "ec39f05d299130683ab2dfcc62165a47e16ec3c3fc147be35ffbcf26f40483cf",
+  "limit_map_enough_on": "e4933269d7ad1214913deab5af592bc5ecd4de3732dc6f56b2a5bdbd9fac6915",
+  "limit_map_enough_today": "27e9caf326d2ec117199a311a060cad70f9594be15ef7997aa1b6f463ed0c50e",
+  "limit_map_enough_tomorrow": "3e3e6254f66e29f86ee8007479cedfb141e01781b331b4fba0efe933fc92696d",
+  "limit_map_needs_subscription": "af054658659cfc414d5e428f6345ee6facbf228796349d3e0e9a8f66ac2c4073",
+  "limit_map_needs_subscription_line": "90776152684b3828400efc0503a4289b7e7832820475fcf85b6a4b85f276888e",
+  "limit_map_not_enough": "386201364ed99cf1e08f14e208e3e8a9ba31e383db7504a89aafcf9c4440010c",
+  "limit_map_ready": "b1bcd67621d0e90e70c144508a53173ddcfe6d13457b50323503cef8c0209c94",
   "limit_messages_day": "d8902b92b76ea6e3ecfcaef77a6b6e3dcc66b490e3617c1c547a0a64a158cc52",
   "limit_messages_month": "ebfd2f6a47ed2235b0a240dfa13fdb7527b705d79980bb6abd6ccbe463b88d67",
   "limit_mind_maps_day": "485ad6c64f0ff0bc1ab0b63bd247fd3126d548fd0a21ae6d7fa1d16c577fced8",
@@ -55,6 +62,17 @@
     <string name="limit_lessons_free">Ücretsiz derslerini kullandın</string>
     <string name="limit_lessons_day">Bugün yeni ders hakkın kalmadı</string>
     <string name="limit_lesson_ready">Sıradaki ücretsiz dersin hazır</string>
+    <string name="limit_map_not_enough">Bu harita için henüz yeterli ücretsiz ders hakkın yok</string>
+    <!-- Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet. -->
+    <string name="limit_map_enough_today">Bugün ilerleyen saatlerde yeterli ücretsiz ders hakkın olacak. İstersen abone olup haritayı hemen oluşturabilirsin.</string>
+    <!-- Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet. -->
+    <string name="limit_map_enough_tomorrow">Yarın yeterli ücretsiz ders hakkın olacak. İstersen abone olup haritayı hemen oluşturabilirsin.</string>
+    <!-- Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet. {date} is a day and its month, such as "November 22" in English. -->
+    <string name="limit_map_enough_on">%1$s tarihinde yeterli ücretsiz ders hakkın olacak. İstersen abone olup haritayı hemen oluşturabilirsin.</string>
+    <string name="limit_map_ready">Bu haritayı şimdi oluşturabilirsin</string>
+    <string name="limit_map_needs_subscription">Bu harita için abonelik gerekiyor</string>
+    <!-- Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and this one has more lessons than a free learner can start. -->
+    <string name="limit_map_needs_subscription_line">Bu harita için ücretsiz ders hakkından daha fazla ders hazırlamamız gerekiyor.</string>
     <string name="limit_mind_maps_guest">Daha fazla zihin haritası için bir hesap gerekiyor</string>
     <string name="limit_mind_maps_day">Bugün yeni zihin haritası hakkın kalmadı</string>
     <string name="limit_mind_maps_month">Bu ay yeni zihin haritası hakkın kalmadı</string>

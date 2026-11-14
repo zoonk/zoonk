@@ -1,11 +1,11 @@
 "use client";
 
 import { type ProgressView } from "@zoonk/core/view-models/progress/get";
+import { BigQuantity } from "@zoonk/ui/components/big-quantity";
+import { Meter, MeterFill } from "@zoonk/ui/components/meter";
 import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { useExtracted } from "next-intl";
-import { BigQuantity } from "../../_components/big-quantity";
 import { KindDot, KindMark } from "../../_components/kind-tile";
-import { Meter, MeterFill } from "../../_components/meter";
 import { QuietDisclosure } from "../../_components/quiet-disclosure";
 import { SectionLabel } from "../../_components/section-label";
 import { useScoreRange } from "../../_utils/use-score-range";

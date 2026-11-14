@@ -325,35 +325,40 @@ internal fun FitLessonsSuggestion(slot: Slot) {
 
 private const val NAMED_TOPICS = 2
 
-private val STUDY_AFTER_EXAM = listOf(PlanOp.FullCourse(true))
-
-/**
- * Main's `PastDateSuggestion`. A goal's new date is found only when the learner taps Preview:
- * finding it plans the goal at each candidate date.
- */
 @Composable
 internal fun PastDateSuggestion(
     item: SlotItem.PastDate,
     slot: Slot,
     onAdjust: (PlanSection?) -> Unit,
 ) {
+    if (slot.page.isExam) {
+        // The page's bar holds the answers (ExamOverActions).
+        PlanChangeSuggestion(
+            item,
+            stringResource(R.string.plan_past_date_exam_title),
+            slot,
+            SuggestionMark.Symbol(R.drawable.ic_calendar_clock),
+        ) {
+            SuggestionDescription(stringResource(R.string.plan_exam_over_ask))
+        }
+    } else {
+        DateOverSuggestion(item, slot, onAdjust)
+    }
+}
+
+@Composable
+private fun DateOverSuggestion(
+    item: SlotItem.PastDate,
+    slot: Slot,
+    onAdjust: (PlanSection?) -> Unit,
+) {
     val page = slot.page
     val state = slot.state
-    val title =
-        pluralStringResource(
-            if (page.isExam) R.plurals.plan_past_date_exam_title else R.plurals.plan_past_date_goal_title,
-            item.lessons,
-            item.lessons,
-        )
     val preview = (slot.host.preview as? PlanPreviewState.Asked)?.takeIf { it.plan == page.plan }
     val search = state.dateSearch
     val retry = search == DateSearch.Failed || search == DateSearch.Building
 
-    fun showChange() {
-        if (page.isExam) {
-            slot.host.requestPreview(STUDY_AFTER_EXAM)
-            return
-        }
+    fun findDate() {
         val request = ++state.searches
         state.waiting = request
         state.dateSearch = DateSearch.Finding
@@ -377,7 +382,12 @@ internal fun PastDateSuggestion(
         state.dateSearch = null
     }
 
-    PlanChangeSuggestion(item, title, slot, mark = SuggestionMark.Symbol(R.drawable.ic_calendar_clock)) {
+    PlanChangeSuggestion(
+        item,
+        stringResource(R.string.plan_past_date_goal_title),
+        slot,
+        mark = SuggestionMark.Symbol(R.drawable.ic_calendar_clock),
+    ) {
         val adjust = {
             close()
             onAdjust(PlanSection.Date)
@@ -417,11 +427,10 @@ internal fun PastDateSuggestion(
                 when {
                     search == DateSearch.Building -> StatusDescription(stringResource(R.string.plan_find_building))
                     retry -> StatusDescription(stringResource(R.string.plan_couldnt_check_changes))
-                    page.isExam -> SuggestionDescription(stringResource(R.string.plan_study_everything_exam_description))
-                    else -> SuggestionDescription(stringResource(R.string.plan_move_date_covers_whats_left))
+                    else -> SuggestionDescription(pluralStringResource(R.plurals.plan_past_date_offer, item.lessons, item.lessons))
                 }
                 SuggestionActions {
-                    SuggestionAction(stringResource(if (retry) R.string.plan_try_again else R.string.plan_preview), onClick = ::showChange)
+                    SuggestionAction(stringResource(if (retry) R.string.plan_try_again else R.string.plan_find_date), onClick = ::findDate)
                     SuggestionMenu { done ->
                         SuggestionMenuItem(stringResource(R.string.plan_adjust_plan), done, adjust)
                         SuggestionMenuItem(stringResource(R.string.plan_not_now), done) { slot.dismiss(item) }

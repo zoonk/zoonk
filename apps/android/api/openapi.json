@@ -2558,9 +2558,9 @@
         }
       }
     },
-    "/content-fixes/{fixId}/approval-options": {
+    "/content-fix-batches/{batchId}/approval-options": {
       "post": {
-        "description": "Starts approving a proposed content fix: a single-use challenge for one of the signed-in staff person's own passkeys, with user verification. Asking again replaces the challenge. Staff sessions only; a CLI login can't approve.",
+        "description": "Starts approving the selected proposed fixes of a batch: one single-use challenge for one of the signed-in staff person's own passkeys, with user verification, stored on exactly those fixes. Asking again replaces it. Staff sessions only; a CLI login can't approve.",
         "operationId": "createContentFixApprovalOptions",
         "security": [
           {
@@ -2570,24 +2570,33 @@
             "cookieAuth": []
           }
         ],
-        "summary": "Start approving a content fix (staff)",
+        "summary": "Start approving content fixes (staff)",
         "tags": [
           "Content fixes"
         ],
         "parameters": [
           {
             "in": "path",
-            "name": "fixId",
+            "name": "batchId",
             "schema": {
               "type": "string",
               "format": "uuid",
               "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-              "description": "Content fix ID"
+              "description": "Content fix batch ID"
             },
             "required": true,
-            "description": "Content fix ID"
+            "description": "Content fix batch ID"
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContentFixApprovalOptionsRequest"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "The options to sign, or why there's nothing to sign",
@@ -2652,9 +2661,112 @@
         }
       }
     },
+    "/content-fix-batches/{batchId}/decisions": {
+      "post": {
+        "description": "Approves the batch's fixes that hold the challenge a passkey assertion signed, then applies each in its own transaction, in proposal order: a fix applies only while every field still holds its recorded value, and otherwise ends stale with nothing changed. `resume` applies what the same approver already approved but didn't finish. `reject` rejects the fixes still waiting for review, without a passkey, since it changes no content. A repeat returns where the batch stands. Staff sessions only; a CLI login can't decide.",
+        "operationId": "createContentFixBatchDecision",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Approve or reject a batch of content fixes (staff)",
+        "tags": [
+          "Content fixes"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "batchId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Content fix batch ID"
+            },
+            "required": true,
+            "description": "Content fix batch ID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContentFixBatchDecisionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Where each fix of the batch stands, or why the approval wasn't accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContentFixDecision"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Request forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/content-fixes/{fixId}/decisions": {
       "post": {
-        "description": "Approves a proposed content fix with a passkey assertion over its challenge, or rejects it. Approving applies exactly the recorded change, only while every field still holds its recorded value; otherwise the fix ends stale and nothing changes. A repeat returns what was decided first. Staff sessions only; a CLI login can't decide.",
+        "description": "Rejects one proposed content fix. It needs no passkey, since it changes no content. A repeat returns what was decided first. Staff sessions only; a CLI login can't decide.",
         "operationId": "createContentFixDecision",
         "security": [
           {
@@ -2664,7 +2776,7 @@
             "cookieAuth": []
           }
         ],
-        "summary": "Approve or reject a content fix (staff)",
+        "summary": "Reject a content fix (staff)",
         "tags": [
           "Content fixes"
         ],
@@ -2693,7 +2805,7 @@
         },
         "responses": {
           "200": {
-            "description": "What was decided, or why the approval wasn't accepted",
+            "description": "Where the fix stands",
             "content": {
               "application/json": {
                 "schema": {
@@ -9056,7 +9168,7 @@
     },
     "/steps/{stepId}/checks": {
       "post": {
-        "description": "Grades one answer to a lesson screen on the server and records it: the attempt, the review of its skill and, when wrong, an entry in the mistakes notebook. Checks, activities and language exercises are graded by the same code the app runs; typed answers (and the typed fallback of a spoken answer) by the grader. The answer counts toward an open run of the screen's lesson; an answer to a screen that already has a right answer in its progress window, or a miss after three misses there, is graded by code and returned without recording an attempt, mistake or review change. Reuse `attemptId` to replay a saved verdict. `LESSON_RUN_ENDED` (409) means the run finished.",
+        "description": "Grades one answer to a lesson screen on the server and records it: the attempt, the review of its skill and, when wrong, an entry in the mistakes notebook. Checks, activities and language exercises are graded by the same code the app runs; typed answers (and the typed fallback of a spoken answer) by the grader. The answer counts toward an open run of the screen's lesson; an answer to a screen that already has a right answer in its progress window, or a miss after three misses there, is graded by code and returned without recording an attempt, mistake or review change. An answer that isn't right to a screen a staff content fix changed after the run started comes back with `checked: false` and records nothing, since the learner may still be looking at the old screen. Reuse `attemptId` to replay a saved verdict. `LESSON_RUN_ENDED` (409) means the run finished.",
         "operationId": "createStepCheck",
         "security": [
           {
@@ -13999,16 +14111,6 @@
               }
             }
           },
-          "402": {
-            "description": "Reserved for subscription-only activities",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
           "404": {
             "description": "Resource not found",
             "content": {
@@ -14112,16 +14214,6 @@
           },
           "401": {
             "description": "Authentication required",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "402": {
-            "description": "Reserved for subscription-only activities",
             "content": {
               "application/json": {
                 "schema": {
@@ -18501,7 +18593,7 @@
     },
     "/goals/{goalId}/mind-maps": {
       "get": {
-        "description": "A goal's Mind maps page. `chapters`: every chapter of the goal's scope that can have a map, finished or not (the plan's, and for a goal that follows a course every chapter of that course), in syllabus order, with its subject (an exam's notice subject or the plan's module) to group by, its number, whether the learner saved it, and its map's status, picture (`image.thumbnailUrl` for lists) and outline, so the chapter maps open with no further request. A chapter without one yet is `available` (POST `/goals/{goalId}/chapters/{chapterId}/mind-map/generations` makes it), `writingLessons`, `drawing`, `failed` or `plusRequired`. Topics without a chapter yet and a language's units aren't listed. `lessonGroups`: each chapter's lesson maps, how many and which open (`GET /goals/{goalId}/chapters/{chapterId}/lesson-maps` reads them). `saved`: the Saved tab. `createOffer`: what `POST /goals/{goalId}/mind-maps/generations` would start now. `firstTab`: the tab to open first. While a map is `drawing` GET this again every 5 seconds, and every 15 while one is only `writingLessons`.",
+        "description": "A goal's Mind maps page. `chapters`: every chapter of the goal's scope that can have a map, finished or not (the plan's, and for a goal that follows a course every chapter of that course), in syllabus order, with its subject (an exam's notice subject or the plan's module) to group by, its number, whether the learner saved it, and its map's status, picture (`image.thumbnailUrl` for lists) and outline, so the chapter maps open with no further request. A chapter without one yet is `available` (POST `/goals/{goalId}/chapters/{chapterId}/mind-map/generations` makes it), `writingLessons`, `drawing`, or `failed`. Topics without a chapter yet and a language's units aren't listed. `lessonGroups`: each chapter's lesson maps, how many and which open (`GET /goals/{goalId}/chapters/{chapterId}/lesson-maps` reads them). `saved`: the Saved tab. `createOffer`: what `POST /goals/{goalId}/mind-maps/generations` would start now. `firstTab`: the tab to open first. While a map is `drawing` GET this again every 5 seconds, and every 15 while one is only `writingLessons`.",
         "operationId": "listGoalMindMaps",
         "security": [
           {
@@ -18585,7 +18677,7 @@
     },
     "/goals/{goalId}/mind-maps/generations": {
       "post": {
-        "description": "Create all chapter maps, when the learner asks for it (never on a screen view). Starts the map of every chapter of the goal's scope that has no map ready or on its way (failed ones included), whose lessons are all written and that isn't `plusRequired`, in course order, as far as the learner's allowance goes; it never writes lessons, so a chapter that still needs them waits for its own `POST .../mind-map/generations`. Each new map counts once toward the learner's mind maps (`resource: mindMap`); a map they claimed before, such as a failed one, counts nothing again, and a map another learner is making is joined free. When the allowance runs out partway, the chapters before it still start and the rest are `unstarted` with reason `allowance` and `stop` says why; nothing is refused as a whole. Always 202: follow progress with `GET /goals/{goalId}/mind-maps`. Sending it again starts only what's still missing.",
+        "description": "Create all chapter maps, when the learner asks for it (never on a screen view). Starts the map of every chapter of the goal's scope that has no map ready or on its way (failed ones included), whose lessons are all written, in course order, as far as the learner's allowance goes; it never writes lessons, so a chapter that still needs them waits for its own `POST .../mind-map/generations`. Each new map counts once toward the learner's mind maps (`resource: mindMap`); a map they claimed before, such as a failed one, counts nothing again, and a map another learner is making is joined free. When the allowance runs out partway, the chapters before it still start and the rest are `unstarted` with reason `allowance` and `stop` says why; nothing is refused as a whole. Always 202: follow progress with `GET /goals/{goalId}/mind-maps`. Sending it again starts only what's still missing.",
         "operationId": "createGoalMindMapGenerations",
         "security": [
           {
@@ -18669,7 +18761,7 @@
     },
     "/goals/{goalId}/mind-maps/saved": {
       "post": {
-        "description": "Saves a map to study again (`saved: true`) or removes it (`saved: false`). It's the state the learner wants, so sending it again changes nothing. Saving needs a map the learner can open now in this goal's scope: a `ready` chapter map, or a lesson map from `GET .../lesson-maps` that isn't locked; otherwise 404, or 402 `PLUS_REQUIRED` for a locked one. Removing needs only the learner's own save, from any goal. Saves belong to the learner's account and are free on every plan; a save never opens a map the learner couldn't open.",
+        "description": "Saves a map to study again (`saved: true`) or removes it (`saved: false`). It's the state the learner wants, so sending it again changes nothing. Saving needs a map the learner can open now in this goal's scope: a `ready` chapter map, or a lesson map from `GET .../lesson-maps`; otherwise 404. Removing needs only the learner's own save, from any goal. Saves belong to the learner's account and are free on every plan; a save never opens a map the learner couldn't open.",
         "operationId": "saveMindMap",
         "security": [
           {
@@ -18730,16 +18822,6 @@
           },
           "401": {
             "description": "Authentication required",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "402": {
-            "description": "The map is unavailable",
             "content": {
               "application/json": {
                 "schema": {
@@ -24626,16 +24708,6 @@
               }
             }
           },
-          "402": {
-            "description": "Reserved for subscription-only activities",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
           "404": {
             "description": "Resource not found",
             "content": {
@@ -26133,7 +26205,27 @@
         },
         "additionalProperties": false
       },
-      "ContentFixDecisionRequest": {
+      "ContentFixApprovalOptionsRequest": {
+        "type": "object",
+        "properties": {
+          "fixIds": {
+            "minItems": 1,
+            "maxItems": 250,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "description": "The batch's proposed fixes the approver read and selected"
+          }
+        },
+        "required": [
+          "fixIds"
+        ],
+        "additionalProperties": false
+      },
+      "ContentFixBatchDecisionRequest": {
         "oneOf": [
           {
             "type": "object",
@@ -26229,7 +26321,23 @@
               "decision"
             ],
             "additionalProperties": false,
-            "description": "The approver's own passkey signed this fix's challenge on Admin's page"
+            "description": "The approver's own passkey signed the challenge of the fixes they selected, on Admin's page"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "decision": {
+                "type": "string",
+                "enum": [
+                  "resume"
+                ]
+              }
+            },
+            "required": [
+              "decision"
+            ],
+            "additionalProperties": false,
+            "description": "Applies what this approver already approved but didn't finish"
           },
           {
             "type": "object",
@@ -26244,10 +26352,26 @@
             "required": [
               "decision"
             ],
-            "additionalProperties": false
+            "additionalProperties": false,
+            "description": "Rejects every fix of the batch still waiting for review; approved, applied and stale fixes keep where they stand"
           }
         ],
         "type": "object"
+      },
+      "ContentFixDecisionRequest": {
+        "type": "object",
+        "properties": {
+          "decision": {
+            "type": "string",
+            "enum": [
+              "reject"
+            ]
+          }
+        },
+        "required": [
+          "decision"
+        ],
+        "additionalProperties": false
       },
       "GenerationWaitInput": {
         "type": "object",
@@ -38670,21 +38794,18 @@
           {
             "type": "object",
             "properties": {
-              "fix": {
-                "$ref": "#/components/schemas/DecidedContentFix"
-              },
               "status": {
                 "type": "string",
                 "enum": [
-                  "decided"
+                  "changed"
                 ]
               }
             },
             "required": [
-              "fix",
               "status"
             ],
-            "additionalProperties": false
+            "additionalProperties": false,
+            "description": "The selection no longer matches the batch's proposed fixes; read it again"
           }
         ],
         "type": "object"
@@ -38748,36 +38869,6 @@
         "additionalProperties": false,
         "description": "Pass to `navigator.credentials.get()` (`startAuthentication` in `@simplewebauthn/browser`)"
       },
-      "DecidedContentFix": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid",
-            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-          },
-          "staleReason": {
-            "nullable": true,
-            "description": "Why approving found the content no longer as the fix described it",
-            "type": "string"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "proposed",
-              "applied",
-              "rejected",
-              "stale"
-            ]
-          }
-        },
-        "required": [
-          "id",
-          "staleReason",
-          "status"
-        ],
-        "additionalProperties": false
-      },
       "ContentFixDecision": {
         "oneOf": [
           {
@@ -38785,11 +38876,21 @@
             "properties": {
               "cacheNotified": {
                 "nullable": true,
-                "description": "Set when this request applied the fix: false means Main shows the old content until its cache expires. Null for an outcome decided earlier.",
+                "description": "Set when this request applied fixes: false means Main shows the old content until its cache expires. Null when it applied none.",
                 "type": "boolean"
               },
-              "fix": {
-                "$ref": "#/components/schemas/DecidedContentFix"
+              "fixes": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/DecidedContentFix"
+                },
+                "description": "Each fix of the batch and where it stands"
+              },
+              "rejected": {
+                "description": "Set on a reject: how many fixes waiting for review this request rejected, 0 on a repeat",
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
               },
               "status": {
                 "type": "string",
@@ -38800,7 +38901,7 @@
             },
             "required": [
               "cacheNotified",
-              "fix",
+              "fixes",
               "status"
             ],
             "additionalProperties": false
@@ -38835,10 +38936,43 @@
               "status"
             ],
             "additionalProperties": false,
-            "description": "The assertion isn't this person's passkey signing this fix's challenge"
+            "description": "The assertion isn't this person's passkey signing the batch's challenge"
           }
         ],
         "type": "object"
+      },
+      "DecidedContentFix": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "staleReason": {
+            "nullable": true,
+            "description": "Why approving found the content no longer as the fix described it",
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "proposed",
+              "approved",
+              "applied",
+              "rejected",
+              "stale",
+              "withdrawn"
+            ],
+            "description": "`approved` means a passkey approved it and it hasn't applied yet; the same approver resumes it. `withdrawn` means its proposer took it back before anyone approved it"
+          }
+        },
+        "required": [
+          "id",
+          "staleReason",
+          "status"
+        ],
+        "additionalProperties": false
       },
       "GoalGenerationRun": {
         "type": "object",
@@ -41702,6 +41836,10 @@
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
+          "checked": {
+            "description": "False when the sentence was corrected after the learner started the lesson: the take wasn't scored or saved and counts neither way. Absent when it was scored",
+            "type": "boolean"
+          },
           "explanation": {
             "nullable": true,
             "description": "What we heard and how to say the words that didn't match",
@@ -41888,7 +42026,7 @@
         "properties": {
           "checked": {
             "type": "boolean",
-            "description": "False for a typed answer that wasn't checked: past a few graded answers to the same screen a day, code still recognizes an accepted answer, and anything else is neither right nor wrong, with the sample answer in `correctAnswer`. It isn't recorded and saves no mistake. True otherwise."
+            "description": "False when the answer wasn't checked, so show it as not checked, never as wrong. It isn't recorded and saves no mistake. Two cases: a typed answer past a few graded answers to the same screen a day (code still recognizes an accepted answer, and anything else comes with the sample answer in `correctAnswer`), and an answer that isn't right to a screen of any kind whose content, version, word or sentence a staff fix changed after the run started, since the learner may still be looking at the old screen (`correctAnswer` is null). True otherwise."
           },
           "correctAnswer": {
             "nullable": true,
@@ -46145,18 +46283,10 @@
               "includesMockExams": {
                 "type": "boolean",
                 "description": "Whether mock exams are included"
-              },
-              "studyDays": {
-                "nullable": true,
-                "description": "Always null. Exam goals use the shared lesson allowance without time-based expiry",
-                "type": "integer",
-                "minimum": -9007199254740991,
-                "maximum": 9007199254740991
               }
             },
             "required": [
-              "includesMockExams",
-              "studyDays"
+              "includesMockExams"
             ],
             "additionalProperties": false,
             "description": "What exam prep the plan includes"
@@ -46230,7 +46360,7 @@
           "tier"
         ],
         "additionalProperties": false,
-        "description": "Free learners share 20 distinct lesson admissions in the preceding 30 times 24 hours across all goals, including exams. The lessonStart entry returns usedLast30Days, rollingLimit, remaining and availableAt. A refused start returns 402 USAGE_LIMIT_REACHED with details.limit period=rolling30Days and availableAt, so no second read or client date arithmetic is needed. Claims exactly 30 days old are outside the window. Replays of an admitted lesson never count again, whatever its age. Generation ahead of study uses the same claim. Other resources retain UTC calendar-month limits and resets.month applies only to them."
+        "description": "Free learners share 20 distinct counted lesson starts in a rolling 30 times 24 hours across all goals, including exams. The lessonStart entry returns usedLast30Days, rollingLimit, remaining and availableAt. A refused start returns 402 USAGE_LIMIT_REACHED with details.limit period=rolling30Days and availableAt, so no second read or client date arithmetic is needed. Claims exactly 30 days old are outside the window. Replays of a counted lesson never count again, whatever its age. Automatic preparation is bounded separately by counted starts plus unstarted preparations, and counts toward the learner allowance only when first started. A map explicitly requested by the learner counts each lesson it writes first at map admission. A map bundle uses resource=chapterLessons and returns the instant all its new lessons fit; more than 20 new lessons uses period=total and availableAt=null rather than claiming used lessons. Internal automatic-preparation refusals use resource=lessonPreparation. Other resources retain UTC calendar-month limits and resets.month applies only to them."
       },
       "AllowanceItem": {
         "anyOf": [
@@ -46309,7 +46439,7 @@
             "type": "integer",
             "minimum": -9007199254740991,
             "maximum": 9007199254740991,
-            "description": "Lesson claims strictly after now minus 30 times 24 hours, through now"
+            "description": "Counted lesson starts newer than now minus 30 times 24 hours; includes explicitly requested map preparation and conservatively counts server clock skew"
           }
         },
         "required": [
@@ -77848,7 +77978,7 @@
         "properties": {
           "checked": {
             "type": "boolean",
-            "description": "False for a typed answer that wasn't checked: past a few graded answers to the same screen a day, code still recognizes an accepted answer, and anything else is neither right nor wrong, with the sample answer in `correctAnswer`. It isn't recorded and saves no mistake. True otherwise."
+            "description": "False when the answer wasn't checked, so show it as not checked, never as wrong. It isn't recorded and saves no mistake. Two cases: a typed answer past a few graded answers to the same screen a day (code still recognizes an accepted answer, and anything else comes with the sample answer in `correctAnswer`), and an answer that isn't right to a screen of any kind whose content, version, word or sentence a staff fix changed after the run started, since the learner may still be looking at the old screen (`correctAnswer` is null). True otherwise."
           },
           "correctAnswer": {
             "nullable": true,
@@ -80282,13 +80412,6 @@
             "minimum": -9007199254740991,
             "maximum": 9007199254740991
           },
-          "examPrepDays": {
-            "nullable": true,
-            "description": "Always null. Exam goals have no time-based expiry",
-            "type": "integer",
-            "minimum": -9007199254740991,
-            "maximum": 9007199254740991
-          },
           "guestLessons": {
             "nullable": true,
             "description": "Lessons a guest can start before creating an account",
@@ -80299,13 +80422,6 @@
           "lessonsPer30Days": {
             "nullable": true,
             "description": "20 distinct lessons across all goals in the preceding 30 times 24 hours; admitted lessons can be replayed without another charge",
-            "type": "integer",
-            "minimum": -9007199254740991,
-            "maximum": 9007199254740991
-          },
-          "lessonsPerDay": {
-            "nullable": true,
-            "description": "Always null. Free lesson admission uses the rolling 30-day allowance",
             "type": "integer",
             "minimum": -9007199254740991,
             "maximum": 9007199254740991
@@ -80327,10 +80443,8 @@
         },
         "required": [
           "activeGoals",
-          "examPrepDays",
           "guestLessons",
           "lessonsPer30Days",
-          "lessonsPerDay",
           "tutorMessagesPerDay",
           "uploadsPerDay"
         ],
@@ -80717,10 +80831,6 @@
                 ],
                 "description": "fullReviews: an exam goal whose plan has no mock exams (free) counts its full reviews in the exam's format (study blocks with `fullReview`), which its plan gives it on the mock's day"
               },
-              "plusRequired": {
-                "type": "boolean",
-                "description": "Always false. Free exam goals measure full reviews instead of subscription-only mocks"
-              },
               "taken": {
                 "type": "integer",
                 "minimum": 0,
@@ -80736,7 +80846,6 @@
             },
             "required": [
               "kind",
-              "plusRequired",
               "taken",
               "value"
             ],
@@ -81484,6 +81593,10 @@
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
+          "chapterTitle": {
+            "type": "string",
+            "description": "The chapter's name: the test's screens are titled \"Test: {chapter}\""
+          },
           "needsItems": {
             "type": "array",
             "items": {
@@ -81518,6 +81631,7 @@
         },
         "required": [
           "chapterId",
+          "chapterTitle",
           "needsItems",
           "passMark",
           "questions",
@@ -82809,87 +82923,49 @@
         "additionalProperties": false
       },
       "AllowanceLimit": {
-        "anyOf": [
-          {
-            "type": "object",
-            "properties": {
-              "limit": {
-                "type": "integer",
-                "minimum": -9007199254740991,
-                "maximum": 9007199254740991
-              },
-              "resource": {
-                "type": "string",
-                "description": "What ran out, such as goal or activeGoals"
-              },
-              "tier": {
-                "type": "string",
-                "enum": [
-                  "free",
-                  "guest",
-                  "plus"
-                ]
-              },
-              "availableAt": {
-                "type": "string",
-                "format": "date-time",
-                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
-                "description": "The instant a new lesson is available, computed from the twentieth-newest claim in the rolling window"
-              },
-              "period": {
-                "type": "string",
-                "enum": [
-                  "rolling30Days"
-                ]
-              }
-            },
-            "required": [
-              "limit",
-              "resource",
-              "tier",
-              "availableAt",
-              "period"
-            ],
-            "additionalProperties": false
+        "type": "object",
+        "properties": {
+          "availableAt": {
+            "description": "The instant a rolling lessonStart or chapterLessons request fits, from recorded starts before the request; null for a chapterLessons request larger than the free plan; omitted for automatic lessonPreparation and calendar limits",
+            "nullable": true,
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
           },
-          {
-            "type": "object",
-            "properties": {
-              "limit": {
-                "type": "integer",
-                "minimum": -9007199254740991,
-                "maximum": 9007199254740991
-              },
-              "resource": {
-                "type": "string",
-                "description": "What ran out, such as goal or activeGoals"
-              },
-              "tier": {
-                "type": "string",
-                "enum": [
-                  "free",
-                  "guest",
-                  "plus"
-                ]
-              },
-              "period": {
-                "type": "string",
-                "enum": [
-                  "day",
-                  "month",
-                  "total"
-                ]
-              }
-            },
-            "required": [
-              "limit",
-              "resource",
-              "tier",
-              "period"
-            ],
-            "additionalProperties": false
+          "limit": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "period": {
+            "type": "string",
+            "enum": [
+              "day",
+              "month",
+              "rolling30Days",
+              "total"
+            ]
+          },
+          "resource": {
+            "type": "string",
+            "description": "What is limited; chapterLessons is the new-lesson size of a chapter request, lessonPreparation is automatic work capacity"
+          },
+          "tier": {
+            "type": "string",
+            "enum": [
+              "free",
+              "guest",
+              "plus"
+            ]
           }
-        ]
+        },
+        "required": [
+          "limit",
+          "period",
+          "resource",
+          "tier"
+        ],
+        "additionalProperties": false
       },
       "GoalUpdateResponse": {
         "type": "object",
@@ -83144,15 +83220,10 @@
               "available": {
                 "type": "boolean",
                 "description": "True while the chapter's test is available: the chapter has lessons left, and the test wasn't failed today without a lesson studied in it since. A failed one becomes available again on the next learner-local day"
-              },
-              "plusRequired": {
-                "type": "boolean",
-                "description": "Always false. Chapter test-out does not require a subscription"
               }
             },
             "required": [
-              "available",
-              "plusRequired"
+              "available"
             ],
             "additionalProperties": false
           }
@@ -83181,10 +83252,6 @@
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991
-          },
-          "plusRequired": {
-            "type": "boolean",
-            "description": "Always false. New lessons use the shared rolling 30-day lesson allowance"
           },
           "skillIds": {
             "type": "array",
@@ -83215,7 +83282,6 @@
         "required": [
           "lessonId",
           "minutes",
-          "plusRequired",
           "skillIds",
           "state",
           "title",
@@ -84468,19 +84534,11 @@
           "access": {
             "type": "object",
             "properties": {
-              "freeUntil": {
-                "nullable": true,
-                "description": "Always null. Exam goals have no time-based expiry",
-                "type": "string",
-                "format": "date",
-                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
-              },
               "mocksRequirePlus": {
                 "type": "boolean"
               }
             },
             "required": [
-              "freeUntil",
               "mocksRequirePlus"
             ],
             "additionalProperties": false
@@ -87688,18 +87746,8 @@
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
-          "locked": {
-            "type": "boolean",
-            "description": "Always false. Lesson maps do not expire"
-          },
           "map": {
-            "nullable": true,
-            "description": "Null while `locked`",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/LessonMap"
-              }
-            ]
+            "$ref": "#/components/schemas/LessonMap"
           },
           "position": {
             "type": "integer",
@@ -87718,7 +87766,6 @@
         },
         "required": [
           "lessonId",
-          "locked",
           "map",
           "position",
           "saved",
@@ -87776,10 +87823,9 @@
               "drawing",
               "ready",
               "failed",
-              "plusRequired",
               "unavailable"
             ],
-            "description": "`available`: no map yet and nobody making it; `POST .../mind-map/generations` makes it, writing the chapter's `lessonsToWrite` lessons first. `writingLessons`: on its way, writing those lessons first (a few minutes); GET the status again. `drawing`: on its way, being written and drawn (about half a minute), also when the learner just finished the chapter and its map is owed; GET the status again. `ready`: `outline`, and `image` unless its picture failed its text check twice. The words on a picture are checked after it's shown, so a ready map's `image` may change once, to a redrawn picture, or go. `failed`: the last attempt failed; POST again. `plusRequired`: the chapter's lessons are Plus-only for this learner, so its map is too, even one already made. `unavailable`: no map for this chapter (a language's unit, or nothing in its outline to draw from)"
+            "description": "`available`: no map yet and nobody making it; `POST .../mind-map/generations` makes it, writing the chapter's `lessonsToWrite` lessons first. `writingLessons`: on its way, writing those lessons first (a few minutes); GET the status again. `drawing`: on its way, being written and drawn (about half a minute), also when the learner just finished the chapter and its map is owed; GET the status again. `ready`: `outline`, and `image` unless its picture failed its text check twice. The words on a picture are checked after it's shown, so a ready map's `image` may change once, to a redrawn picture, or go. `failed`: the last attempt failed; POST again. `unavailable`: no map for this chapter (a language's unit, or nothing in its outline to draw from)"
           },
           "title": {
             "type": "string",
@@ -87962,10 +88008,9 @@
               "drawing",
               "ready",
               "failed",
-              "plusRequired",
               "unavailable"
             ],
-            "description": "`available`: no map yet and nobody making it; `POST .../mind-map/generations` makes it, writing the chapter's `lessonsToWrite` lessons first. `writingLessons`: on its way, writing those lessons first (a few minutes); GET the status again. `drawing`: on its way, being written and drawn (about half a minute), also when the learner just finished the chapter and its map is owed; GET the status again. `ready`: `outline`, and `image` unless its picture failed its text check twice. The words on a picture are checked after it's shown, so a ready map's `image` may change once, to a redrawn picture, or go. `failed`: the last attempt failed; POST again. `plusRequired`: the chapter's lessons are Plus-only for this learner, so its map is too, even one already made. `unavailable`: no map for this chapter (a language's unit, or nothing in its outline to draw from)"
+            "description": "`available`: no map yet and nobody making it; `POST .../mind-map/generations` makes it, writing the chapter's `lessonsToWrite` lessons first. `writingLessons`: on its way, writing those lessons first (a few minutes); GET the status again. `drawing`: on its way, being written and drawn (about half a minute), also when the learner just finished the chapter and its map is owed; GET the status again. `ready`: `outline`, and `image` unless its picture failed its text check twice. The words on a picture are checked after it's shown, so a ready map's `image` may change once, to a redrawn picture, or go. `failed`: the last attempt failed; POST again. `unavailable`: no map for this chapter (a language's unit, or nothing in its outline to draw from)"
           }
         },
         "required": [
@@ -88090,8 +88135,7 @@
               "writingLessons",
               "drawing",
               "ready",
-              "failed",
-              "plusRequired"
+              "failed"
             ],
             "description": "As a chapter's map, never `unavailable`: those chapters aren't listed"
           },
@@ -88140,7 +88184,7 @@
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991,
-            "description": "Chapters without a ready map or one on its way (failed ones included), whose lessons are all written and that aren't locked: what `POST /goals/{goalId}/mind-maps/generations` makes"
+            "description": "Chapters without a ready map or one on its way (failed ones included), whose lessons are all written: what `POST /goals/{goalId}/mind-maps/generations` makes"
           },
           "needLessons": {
             "type": "integer",
@@ -88182,7 +88226,6 @@
             "enum": [
               "day",
               "month",
-              "rolling30Days",
               "total"
             ]
           },
@@ -88208,7 +88251,6 @@
             "type": "string",
             "enum": [
               "aiSpend",
-              "lessonStart",
               "mindMap"
             ]
           }
@@ -88233,7 +88275,7 @@
             "type": "integer",
             "minimum": 1,
             "maximum": 9007199254740991,
-            "description": "The chapter's lessons with a written map, locked ones included, as `GET /goals/{goalId}/chapters/{chapterId}/lesson-maps` lists them, less any an earlier group already lists"
+            "description": "The chapter's lessons with a written map, as `GET /goals/{goalId}/chapters/{chapterId}/lesson-maps` lists them, less any an earlier group already lists"
           },
           "lessonIds": {
             "type": "array",
@@ -88242,20 +88284,13 @@
               "format": "uuid",
               "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
             },
-            "description": "The lessons whose maps open (not `locked`), in chapter order: the maps the Lessons tab studies, which a reader opened with this list keeps as they were"
-          },
-          "locked": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991,
-            "description": "Always zero. Chapter lessons do not expire"
+            "description": "The lessons whose maps open, in chapter order: the maps the Lessons tab studies, which a reader opened with this list keeps as they were"
           }
         },
         "required": [
           "chapterId",
           "count",
-          "lessonIds",
-          "locked"
+          "lessonIds"
         ],
         "additionalProperties": false
       },
@@ -88264,7 +88299,7 @@
         "properties": {
           "available": {
             "type": "boolean",
-            "description": "It opens now: a chapter map that's `ready`, or a lesson map in this goal's scope that isn't locked. False when it can no longer open here (its chapter left the plan, its content went, it's locked for Plus); list those last, under no longer available, with a way to remove them"
+            "description": "It opens now: a chapter map that's `ready`, or a lesson map in this goal's scope. False when it can no longer open here (its chapter left the plan, its content went); list those last, under no longer available, with a way to remove them"
           },
           "chapterId": {
             "nullable": true,
@@ -88340,10 +88375,9 @@
                   "type": "string",
                   "enum": [
                     "allowance",
-                    "needsLessons",
-                    "plusRequired"
+                    "needsLessons"
                   ],
-                  "description": "`allowance`: the learner's allowance ran out first (`stop`). `needsLessons`: its lessons aren't all written; its own `POST .../mind-map/generations` writes them. `plusRequired`: locked for Plus"
+                  "description": "`allowance`: the learner's allowance ran out first (`stop`). `needsLessons`: its lessons aren't all written; its own `POST .../mind-map/generations` writes them."
                 }
               },
               "required": [
@@ -92787,14 +92821,10 @@
             "properties": {
               "includesMockExams": {
                 "type": "boolean"
-              },
-              "trialEnded": {
-                "type": "boolean"
               }
             },
             "required": [
-              "includesMockExams",
-              "trialEnded"
+              "includesMockExams"
             ],
             "additionalProperties": false
           },
@@ -92906,22 +92936,6 @@
           },
           "pauseSuggested": {
             "type": "boolean"
-          },
-          "plusLessons": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "title": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "title"
-              ],
-              "additionalProperties": false
-            },
-            "description": "Always empty. Exam lessons no longer have time-based restrictions"
           },
           "sessionBar": {
             "type": "object",
@@ -93065,7 +93079,6 @@
           "nextBlockId",
           "nextPosition",
           "pauseSuggested",
-          "plusLessons",
           "sessionBar",
           "state",
           "status",
@@ -93113,7 +93126,6 @@
             "enum": [
               "dayOver",
               "nothingToStudy",
-              "plusRequired",
               "sessionNotFinished"
             ]
           }
@@ -93159,14 +93171,10 @@
             "properties": {
               "includesMockExams": {
                 "type": "boolean"
-              },
-              "trialEnded": {
-                "type": "boolean"
               }
             },
             "required": [
-              "includesMockExams",
-              "trialEnded"
+              "includesMockExams"
             ],
             "additionalProperties": false
           },
@@ -93260,22 +93268,6 @@
           },
           "pauseSuggested": {
             "type": "boolean"
-          },
-          "plusLessons": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "title": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "title"
-              ],
-              "additionalProperties": false
-            },
-            "description": "Always empty. Exam lessons no longer have time-based restrictions"
           },
           "sessionBar": {
             "type": "object",
@@ -94130,7 +94122,6 @@
           "minutes",
           "nextPosition",
           "pauseSuggested",
-          "plusLessons",
           "sessionBar",
           "state",
           "week",
@@ -97521,7 +97512,6 @@
             "type": "string",
             "enum": [
               "exam",
-              "examAccess",
               "examChoice",
               "focusTest",
               "insight",

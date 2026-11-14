@@ -29,6 +29,7 @@ import com.zoonk.android.feature.mock.result.ScoreRange
 import com.zoonk.android.feature.mock.runner.StepDetail
 import com.zoonk.android.feature.mock.runner.StepTitle
 import com.zoonk.android.ui.components.ButtonSize
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.stepHeading
@@ -68,7 +69,7 @@ internal fun EssayGradeCard(
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Column(Modifier.semantics(mergeDescendants = true) { heading() }.stepHeading(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(writingName(rubric), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.titleMedium)
+            Eyebrow(writingName(rubric))
             ScoreRange(stringResource(R.string.essay_range, formatNumber(grade.range.low, locale), formatNumber(grade.range.high, locale)))
         }
         StepDetail(stringResource(R.string.essay_scale, formatNumber(grade.total.maxScore, locale)))

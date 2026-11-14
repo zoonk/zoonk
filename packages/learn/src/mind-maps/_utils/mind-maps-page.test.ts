@@ -20,7 +20,6 @@ describe(countChapterMaps, () => {
     const counts = countChapterMaps([
       chapter({ lessonsToWrite: 0, status: "failed" }),
       chapter({ lessonsToWrite: 4, status: "failed" }),
-      chapter({ lessonsToWrite: 0, status: "plusRequired" }),
     ]);
 
     expect(counts.failed).toBe(1);

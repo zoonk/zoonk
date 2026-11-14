@@ -32,7 +32,7 @@
   "generation_phase_completed": "003c1702deba5d88cc1ab27485b7d4ae713b44ffb2323742009dfdeb033f83bd",
   "generation_phase_failed": "a71aa40c5d500820bdf0048ed681eba92890b75b356676a512f7a5f94d135dce",
   "generation_phase_pending": "9320559100b8dacb06a5997c1c6d1d2d7a7e59f6f589c93b488c5d2246601a6e",
-  "generation_placement": "b1e99123b87b1c4620df8ec1f0d233d800f4ba8fdc89adcaba62b326303fc06c",
+  "generation_placement": "47e2751af0b902676ab3078749b50060d79b9839b4a7edd4745b441ba3c13cb9",
   "generation_placement_questions": "2ab10e6d07d86a37841e4093e5cad80c540aaa8f7844a2dcf755215441708091",
   "generation_placement_questions_line": "475dcc01a9984f89a99a21d7213b8cb1311cf5700dabaad3740f7f108e0ab6c3",
   "generation_question_line": "613a841f4ba02ba8b72e502a3011987ee1e0233aa89be8fcb1c46662080a804d",
@@ -103,7 +103,7 @@
     <string name="generation_curriculum_plan_line_2">날짜별로 배울 스킬을 정하고 있어요…</string>
     <string name="generation_curriculum_plan_line_3">계획을 저장하고 있어요…</string>
     <!-- The wait while placement questions are written. -->
-    <string name="generation_placement">문제를 준비하고 있어요</string>
+    <string name="generation_placement">레벨 테스트를 준비하고 있어요</string>
     <string name="generation_placement_questions">문제를 만들고 있어요</string>
     <string name="generation_placement_questions_line">문제로 확인할 스킬을 고르고 있어요…</string>
     <!-- The wait while the first day of a plan is prepared. -->

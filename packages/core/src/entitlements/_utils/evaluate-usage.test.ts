@@ -16,7 +16,7 @@ function counts(overrides: Partial<UsageCounts>): UsageCounts {
     day: 0,
     generatedTotal: 0,
     lastUsedAt: null,
-    lessonStarts: { count: 0, latest: [] },
+    lessonStarts: { count: 0, latest: [], prepared: 0 },
     month: 0,
     secondsThisMonth: 0,
     secondsToday: 0,
@@ -33,7 +33,7 @@ describe(evaluateUsage, () => {
         costMicros: 0,
         counts: counts({
           day: 20,
-          lessonStarts: { count: 20, latest: Array.from({ length: 20 }, () => NOW) },
+          lessonStarts: { count: 20, latest: Array.from({ length: 20 }, () => NOW), prepared: 0 },
           month: 40,
         }),
         generated: false,

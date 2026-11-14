@@ -95,6 +95,6 @@ class AllowanceReadsTest {
     private companion object {
         const val ALLOWANCE = "/me/allowance"
         const val ALLOWANCE_BODY =
-            """{"tier":"free","activeGoals":{"limit":1,"used":0},"callTime":{"limitSeconds":null,"monthLimitSeconds":null,"usedSeconds":0,"usedSecondsThisMonth":0},"examPrep":{"includesMockExams":false,"studyDays":null},"generatedLessons":null,"resets":{"day":"2026-10-29T00:00:00Z","month":"2026-11-01T00:00:00Z"},"items":[]}"""
+            """{"tier":"free","activeGoals":{"limit":1,"used":0},"callTime":{"limitSeconds":null,"monthLimitSeconds":null,"usedSeconds":0,"usedSecondsThisMonth":0},"examPrep":{"includesMockExams":false},"generatedLessons":null,"resets":{"day":"2026-10-29T00:00:00Z","month":"2026-11-01T00:00:00Z"},"items":[]}"""
     }
 }

@@ -16,6 +16,7 @@ import { getStartMock } from "../_test-utils/start-mock";
 import { TEST_IMAGE, imageProvenance } from "../images/_test-utils/image-results";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { chapterMindMapWorkflow } from "./chapter-mind-map-workflow";
+import { startOwedMindMapRedraws } from "./start-owed-mind-map-redraws";
 
 const structure = {
   branches: ["Cells", "Nucleus", "Membrane"].map((title) => ({
@@ -94,6 +95,99 @@ describe(chapterMindMapWorkflow, () => {
 
   afterEach(() => {
     vi.unstubAllGlobals();
+  });
+
+  it("sweeps owed shared redraws through the learner map's same run token", async () => {
+    const chapter = await claimedChapter();
+
+    await prisma.chapterMindMap.update({
+      data: { redrawOwedAt: new Date(), status: "completed", structure },
+      where: { chapterId: chapter.id },
+    });
+
+    await startOwedMindMapRedraws();
+
+    expect(getStartMock()).toHaveBeenCalledWith(
+      chapterMindMapWorkflow,
+      [{ chapterId: chapter.id, redraw: true }],
+      { experimental_hook: { token: `mind-map:${chapter.id}` } },
+    );
+  });
+
+  it.each([false, true])(
+    "settles an owed redraw with its outline ready (failure: %s)",
+    async (fails) => {
+      const chapter = await claimedChapter();
+
+      await prisma.chapterMindMap.update({
+        data: { redrawOwedAt: new Date(), status: "completed", structure },
+        where: { chapterId: chapter.id },
+      });
+
+      if (fails) {
+        vi.mocked(generateMindMapImage).mockRejectedValueOnce(new Error("draw failed"));
+      }
+
+      const run = chapterMindMapWorkflow({ chapterId: chapter.id, redraw: true });
+
+      const outcome = await run.then(
+        (result) => ({ result }),
+        (error: unknown) => ({ error: error instanceof Error ? error.message : String(error) }),
+      );
+
+      expect(outcome).toStrictEqual(
+        fails ? { error: "draw failed" } : { result: { hasImage: true } },
+      );
+
+      await expect(
+        prisma.chapterMindMap.findUniqueOrThrow({ where: { chapterId: chapter.id } }),
+      ).resolves.toMatchObject({
+        redrawAttempts: 1,
+        redrawOwedAt: null,
+        status: "completed",
+        structure,
+      });
+    },
+  );
+
+  it("takes over an owed redraw only once the run that owns it ended, however long it went quiet", async () => {
+    const chapter = await claimedChapter();
+    const ownerStatuses = ["running", "failed"];
+
+    await prisma.chapterMindMap.update({
+      data: {
+        redrawOwedAt: new Date(),
+        runId: "owner-run",
+        status: "running",
+        structure,
+        updatedAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
+      },
+      where: { chapterId: chapter.id },
+    });
+
+    vi.mocked(getRun).mockImplementation(
+      () =>
+        ({
+          exists: Promise.resolve(true),
+          status: Promise.resolve(ownerStatuses.shift() ?? "completed"),
+        }) as never,
+    );
+
+    const whileLive = await chapterMindMapWorkflow({ chapterId: chapter.id, redraw: true });
+    const drawsWhileLive = vi.mocked(generateMindMapImage).mock.calls.length;
+    const afterEnd = await chapterMindMapWorkflow({ chapterId: chapter.id, redraw: true });
+
+    expect({
+      afterEnd,
+      drawsWhileLive,
+      row: await prisma.chapterMindMap.findUniqueOrThrow({ where: { chapterId: chapter.id } }),
+      whileLive,
+    }).toMatchObject({
+      afterEnd: { hasImage: true },
+      drawsWhileLive: 0,
+      row: { imageUrl: expect.any(String), redrawOwedAt: null, status: "completed" },
+      whileLive: { hasImage: false },
+    });
   });
 
   it("writes the chapter's lessons through their own runs first, keeping the map on its way", async () => {

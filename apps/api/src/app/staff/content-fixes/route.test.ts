@@ -27,6 +27,15 @@ function renameLesson(lessonId: string) {
   );
 }
 
+function proposeBatch(changes: unknown[]) {
+  return proposeFix(
+    staffRequest({
+      body: { fixes: changes.map((change) => ({ changes: [change] })), reason: "Titles." },
+      path: "/staff/content-fixes",
+    }),
+  );
+}
+
 describe("POST /staff/content-fixes", () => {
   it("records a staff login's proposal for review and changes nothing yet", async () => {
     const lesson = await libraryLessonFixture({ contentStatus: "completed" });
@@ -37,13 +46,17 @@ describe("POST /staff/content-fixes", () => {
     expect(response.status).toBe(201);
 
     await expect(response.json()).resolves.toMatchObject({
-      fix: {
-        changes: [
-          { fields: [{ after: "Adding fractions", before: lesson.title, field: "title" }] },
-        ],
-        reviewUrl: expect.stringMatching(/\/content-fixes\/[\da-f-]+$/u),
-        status: "proposed",
-      },
+      batchId: expect.any(String),
+      fixes: [
+        {
+          changes: [
+            { fields: [{ after: "Adding fractions", before: lesson.title, field: "title" }] },
+          ],
+          reviewUrl: expect.stringMatching(/\/content-fixes\/[\da-f-]+$/u),
+          status: "proposed",
+        },
+      ],
+      reviewUrl: expect.stringMatching(/\/content-fixes\/batches\/[\da-f-]+$/u),
     });
 
     await expect(
@@ -72,6 +85,34 @@ describe("POST /staff/content-fixes", () => {
 
     await signIn({ scopes: [STAFF_READ_SCOPE, STAFF_PROPOSE_SCOPE] });
     await expect(renameLesson(lesson.id)).resolves.toHaveProperty("status", 403);
+  });
+
+  it("proposes a batch whole, or refuses it with each fix's problem", async () => {
+    const [first, second] = await Promise.all([
+      libraryLessonFixture({ contentStatus: "completed" }),
+      libraryLessonFixture({ contentStatus: "completed" }),
+    ]);
+
+    await signIn({ role: "admin", scopes: [STAFF_READ_SCOPE, STAFF_PROPOSE_SCOPE] });
+
+    const refused = await proposeBatch([
+      { id: first.id, model: "Lesson", set: { title: "Fixed" } },
+      { id: second.id, model: "Lesson", set: { title: " " } },
+    ]);
+
+    expect(refused.status).toBe(400);
+
+    await expect(refused.json()).resolves.toMatchObject({
+      error: { message: expect.stringContaining("fixes[1]: title must be text") },
+    });
+
+    const proposed = await proposeBatch([
+      { id: first.id, model: "Lesson", set: { title: "Fixed" } },
+      { id: second.id, model: "Lesson", set: { title: "Fixed too" } },
+    ]);
+
+    expect(proposed.status).toBe(201);
+    await expect(proposed.json()).resolves.toMatchObject({ fixes: [{}, {}] });
   });
 
   it("answers a fix the rules refuse with what to change", async () => {

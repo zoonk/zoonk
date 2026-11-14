@@ -333,9 +333,6 @@ struct TodayDayView: View {
       if let exam = view.exam {
         TodayExamMomentSection(moment: exam, checked: $examChecklist)
       }
-    case .examAccess:
-      // The free week is gone (the free plan is 20 lessons a month): core no longer picks it.
-      EmptyView()
     case .examChoice:
       TodayExamChoiceSection(
         goalID: view.goal.id, choice: view.examChoice, editor: $examChoice,

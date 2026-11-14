@@ -167,7 +167,7 @@ export async function loadStudySessionView({
         examPrep: viewer ? getTierExamPrep(viewer.tier) : null,
         goal: session.goal,
       })
-    : { includesMockExams: true, trialEnded: false };
+    : { includesMockExams: true };
 
   const [outlines, missions, reserved] = await Promise.all([
     loadDayOutlines({ dayMinutes, plan, session }),
@@ -191,7 +191,6 @@ export async function loadStudySessionView({
     lessonRoom: reserved,
     missions,
     outlines: reserved ? (outlines ?? "idle") : null,
-    plusLessons: [],
     session,
     timeZone,
     week,

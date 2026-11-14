@@ -49,21 +49,19 @@ export function splitChapters(chapters: readonly MindMapsPageChapter[]) {
 }
 
 export function countChapterMaps(chapters: readonly MindMapsPageChapter[]) {
-  // No plan keeps a map for subscribers any more; installed native apps still decode the status.
-  const open = chapters.filter((chapter) => chapter.status !== "plusRequired");
-
   return {
     /**
      * Only the failed maps creating all chapter maps retries. One whose chapter still needs its
      * lessons shows in its own row, with that row's Try again.
      */
-    failed: open.filter((chapter) => chapter.status === "failed" && chapter.lessonsToWrite === 0)
-      .length,
-    onTheWay: open.filter(
+    failed: chapters.filter(
+      (chapter) => chapter.status === "failed" && chapter.lessonsToWrite === 0,
+    ).length,
+    onTheWay: chapters.filter(
       (chapter) => chapter.status === "drawing" || chapter.status === "writingLessons",
     ).length,
-    ready: open.filter((chapter) => chapter.status === "ready").length,
-    total: open.length,
+    ready: chapters.filter((chapter) => chapter.status === "ready").length,
+    total: chapters.length,
   };
 }
 
@@ -129,16 +127,6 @@ export function toMindMapLimit({
     const resetsAt = stop.resetsAt ? Date.parse(stop.resetsAt) : now;
     const retryAfterSeconds = Math.max(0, Math.ceil((resetsAt - now) / MS_PER_SECOND));
     return { retryAfterSeconds, status: "slowDown" };
-  }
-
-  if (stop.period === "rolling30Days") {
-    return {
-      availableAt: stop.resetsAt ?? "",
-      period: "rolling30Days",
-      resource: "lessonStart",
-      status: "limitReached",
-      tier: "free",
-    };
   }
 
   return {

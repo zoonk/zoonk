@@ -8,7 +8,7 @@ struct DataExportRow: View {
   @State private var failed = false
 
   let title: Text
-  let description: Text
+  var description: Text?
   let filename: String
   let prepare: () async -> Data?
 
@@ -33,8 +33,7 @@ struct DataExportRow: View {
       if failed {
         FailureLine(
           message: LocalizedStringResource(
-            "We couldn't prepare the download. Try again.", table: "Settings",
-            comment: "Shown when a data download failed")
+            "We couldn't prepare the download. Try again.", table: "Settings")
         )
         .typeStyle(.body)
       }

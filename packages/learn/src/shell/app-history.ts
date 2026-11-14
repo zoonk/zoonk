@@ -192,6 +192,26 @@ export function appBackName(): string | null {
   return "name" in mark && typeof mark.name === "string" ? mark.name : "";
 }
 
+/**
+ * The name of the page a back link goes to: the app page behind when it returns there, else the
+ * link's own page. Null when that page has no name, so the link reads "Back" alone.
+ */
+export function backLinkName({
+  appBack,
+  own,
+  toApp,
+}: {
+  appBack: string | null;
+  own?: string;
+  toApp: boolean;
+}): string | null {
+  if (toApp && appBack !== null) {
+    return appBack || null;
+  }
+
+  return own || null;
+}
+
 /** Returns whether it found an app page; otherwise the link goes to its default. */
 export function goBackToApp(): boolean {
   const navigation = getNavigation();

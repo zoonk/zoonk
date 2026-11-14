@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   appBackName,
+  backLinkName,
   cameFromApp,
   goBackToApp,
   markAppEntry,
@@ -164,5 +165,13 @@ describe("app history", () => {
     markAppEntry("(settings)");
 
     expect(appBackName()).toBeNull();
+  });
+
+  it("names the page a back link goes to, and no page when it can't say which", () => {
+    expect(backLinkName({ appBack: "Today", own: "Plan", toApp: true })).toBe("Today");
+    expect(backLinkName({ appBack: "", own: "Today", toApp: true })).toBeNull();
+    expect(backLinkName({ appBack: null, own: "Today", toApp: true })).toBe("Today");
+    expect(backLinkName({ appBack: null, toApp: true })).toBeNull();
+    expect(backLinkName({ appBack: "Zu", own: "Plan", toApp: false })).toBe("Plan");
   });
 });

@@ -16,7 +16,9 @@
     <string name="navigation_user_menu">User menu</string>
     <string name="task_leave">Leave</string>
     <string name="gate_sign_in_title">Log in to continue</string>
+    <!-- Title on a page that needs an account, once the learner is logged out of Zoonk. Not about a study session, which the app also calls a session. -->
     <string name="gate_session_ended_title">You\'ve been logged out</string>
+    <!-- Under "You've been logged out". Their plan is still saved; logging in shows it again. -->
     <string name="gate_session_ended_description">Log in to get back to your plan.</string>
     <string name="gate_log_in">Log in</string>
     <!-- Starts a new goal: the visitor tells us what to learn and gets a plan. -->

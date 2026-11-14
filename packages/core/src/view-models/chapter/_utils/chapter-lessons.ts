@@ -76,7 +76,6 @@ export function buildChapterLessons({
   chapterId,
   items,
   lessons,
-  plusOnlyLessonIds,
   sessionLessonIds,
   studied,
 }: {
@@ -84,7 +83,6 @@ export function buildChapterLessons({
   /** The plan's items, in its order. */
   items: readonly ChapterItem[];
   lessons: readonly ChapterLessonRow[];
-  plusOnlyLessonIds: ReadonlySet<string>;
   /** Today's session's lessons, in the order it opens them (`readTodayLearnBlocks`). */
   sessionLessonIds: readonly string[];
   studied: ReadonlySet<string>;
@@ -112,7 +110,6 @@ export function buildChapterLessons({
   return planned.map((lesson, index) => ({
     lessonId: lesson.id,
     minutes: lesson.estimatedMinutes,
-    plusRequired: !done[index] && plusOnlyLessonIds.has(lesson.id),
     skillIds: lesson.skillIds,
     state: getLessonState({ isDone: done[index] ?? false, isNext: lesson.id === nextId }),
     title: lesson.title,

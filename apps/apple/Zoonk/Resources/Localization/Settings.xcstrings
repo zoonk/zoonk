@@ -427,7 +427,7 @@
       }
     },
     "Background" : {
-      "comment" : "Memory category: facts about the learner's background, like studies and work",
+      "comment" : "A category of what Zoonk remembers about the learner: their studies, job, school year and the languages they speak.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -781,7 +781,6 @@
       }
     },
     "Check your connection and try again." : {
-      "comment" : "Explains how to recover when a settings page couldn't load",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -810,7 +809,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "接続を確認して、もう一度お試しください。"
+            "value" : "インターネット接続を確認して、もう一度試してください。"
           }
         },
         "ko" : {
@@ -834,13 +833,12 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bağlantını kontrol et ve tekrar dene."
+            "value" : "Bağlantını kontrol edip tekrar dene."
           }
         }
       }
     },
     "Choose your buddy" : {
-      "comment" : "Opens the buddy editor before the learner picked one",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -857,7 +855,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choisis ton Compagnon"
+            "value" : "Choisis ton compagnon"
           }
         },
         "it" : {
@@ -893,7 +891,7 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arkadaşını seç"
+            "value" : "Ders arkadaşını seç"
           }
         }
       }
@@ -1076,66 +1074,64 @@
       }
     },
     "Couldn't undo. It changed since." : {
-      "comment" : "Says a deleted fact couldn't come back",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das ließ sich nicht rückgängig machen. Der Eintrag wurde inzwischen geändert."
+            "value" : "Rückgängig machen nicht möglich. Der Eintrag wurde inzwischen geändert."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se pudo deshacer. Ya hubo otro cambio."
+            "value" : "No pudimos deshacerlo. Volvió a cambiar."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Impossible d’annuler. Cela a changé depuis."
+            "value" : "Impossible d’annuler. Cette information a changé depuis."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Impossibile annullare. Il dato è cambiato nel frattempo."
+            "value" : "Non possiamo annullare la modifica. Il dato è cambiato nel frattempo."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "取り消せませんでした。その後、内容が変更されています。"
+            "value" : "その後に変更があったため、元に戻せませんでした。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "그사이 내용이 바뀌어서 되돌릴 수 없어요."
+            "value" : "되돌리지 못했어요. 그사이에 내용이 바뀌었어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nie udało się cofnąć zmiany. W międzyczasie wprowadzono kolejną."
+            "value" : "Nie udało się cofnąć zmiany. W międzyczasie dane się zmieniły."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível desfazer. A informação mudou desde então."
+            "value" : "Não foi possível desfazer. A memória mudou desde então."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Geri alınamadı. Bu bilgi sonradan değişti."
+            "value" : "Geri alınamadı. Arada başka bir değişiklik yapıldı."
           }
         }
       }
     },
     "Couldn't undo. Try again." : {
-      "comment" : "A deleted fact didn't come back, and Undo stays to try again",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1312,7 +1308,6 @@
       }
     },
     "Download my memory" : {
-      "comment" : "Row that downloads everything in the learner's memory",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1430,7 +1425,7 @@
       }
     },
     "Edit memory" : {
-      "comment" : "Title of the dialog correcting one remembered fact",
+      "comment" : "A memory is one fact Zoonk remembers about the learner.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1724,65 +1719,6 @@
         }
       }
     },
-    "For new goals and your examples. It doesn't change the plans you already have." : {
-      "comment" : "What the country the learner lives in changes",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gilt für neue Ziele und deine Beispiele. Deine bestehenden Pläne ändern sich dadurch nicht."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Para tus nuevos objetivos y ejemplos. No cambia los planes que ya tienes."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pour tes nouveaux objectifs et tes exemples. Ce choix ne change pas tes plans actuels."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Per i nuovi obiettivi e gli esempi delle lezioni. Non modifica i piani che hai già."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新しい目標や学習で使う例に反映されます。現在の学習計画は変わりません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "새 목표와 예시에 적용돼요. 기존 계획은 바뀌지 않아요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dotyczy nowych celów i przykładów w lekcjach. Nie zmienia twoich obecnych planów."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vale para novos objetivos e para os seus exemplos. Não muda os planos que você já tem."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Yeni hedeflerin ve sana verilen örnekler için kullanılır. Mevcut planlarını değiştirmez."
-          }
-        }
-      }
-    },
     "From a call" : {
       "comment" : "Where a remembered fact came from: a live practice call. Use the word the app uses for these calls, and keep it apart from “From a chat”, a typed chat with the tutor.",
       "localizations" : {
@@ -1843,7 +1779,6 @@
       }
     },
     "From a chat" : {
-      "comment" : "Source of a fact from a chat",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2138,7 +2073,6 @@
       }
     },
     "Language and region" : {
-      "comment" : "Preferences section about the app's language and where the learner lives",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2161,7 +2095,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lingua e zona"
+            "value" : "Lingua e area geografica"
           }
         },
         "ja" : {
@@ -2787,7 +2721,6 @@
       }
     },
     "Noticed from your activity" : {
-      "comment" : "Source of a fact Zoonk noticed",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2846,7 +2779,6 @@
       }
     },
     "Options for “%@”" : {
-      "comment" : "Names the menu that edits or deletes a remembered fact",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3023,12 +2955,12 @@
       }
     },
     "Preferences" : {
-      "comment" : "Memory category: how the learner likes to learn, like short explanations",
+      "comment" : "A page inside Settings for the buddy, sounds and app language: use a word other than “Settings”.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vorlieben"
+            "value" : "Personalisierung"
           }
         },
         "es" : {
@@ -3052,13 +2984,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "好み"
+            "value" : "環境設定"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "선호 사항"
+            "value" : "사용 환경"
           }
         },
         "pl" : {
@@ -3077,6 +3009,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tercihler"
+          }
+        }
+      }
+    },
+    "Privacy" : {
+      "comment" : "Settings row for the Privacy page\nTitle of the Privacy page",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Datenschutz"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Privacidad"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confidentialité"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Privacy"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プライバシー"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "개인정보 보호"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prywatność"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Privacidade"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gizlilik"
           }
         }
       }
@@ -3377,7 +3368,7 @@
       }
     },
     "Say it the way it's true for you." : {
-      "comment" : "Asks the learner to correct a fact in their own words",
+      "comment" : "\"It\" is the note Zoonk keeps about the learner, edited in this dialog.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3436,7 +3427,6 @@
       }
     },
     "Share usage data" : {
-      "comment" : "Switch that lets Zoonk record how the learner uses it, for analytics",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3465,7 +3455,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "利用状況データを共有する"
+            "value" : "利用データを共有する"
           }
         },
         "ko" : {
@@ -3477,7 +3467,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Udostępnianie danych o użytkowaniu"
+            "value" : "Udostępniam dane o użytkowaniu"
           }
         },
         "pt" : {
@@ -3495,7 +3485,6 @@
       }
     },
     "Shows us how you use Zoonk, so we can improve it" : {
-      "comment" : "What sharing usage data does",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3530,7 +3519,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk 사용 방식을 알려 주면 서비스를 개선할 수 있어요"
+            "value" : "Zoonk를 어떻게 사용하는지 알려 주고 서비스 개선에 도움이 돼요"
           }
         },
         "pl" : {
@@ -3549,6 +3538,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zoonk’u nasıl kullandığını gösterir, böylece onu geliştirebiliriz"
+          }
+        }
+      }
+    },
+    "So examples and exams match your country." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Damit Beispiele und Prüfungen zu deinem Land passen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para que los ejemplos y exámenes se adapten a tu país."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pour adapter les exemples et les examens à ton pays."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Così esempi ed esami sono adatti al tuo paese."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "国に合わせた例や試験を表示します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "선택한 나라에 맞는 예시와 시험을 보여 드려요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dzięki temu dopasujemy przykłady i egzaminy do twojego kraju."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para adaptar os exemplos e as provas ao seu país."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Böylece örnekler ve sınavlar ülkene uygun olur."
           }
         }
       }
@@ -3731,30 +3778,29 @@
       }
     },
     "That didn't save. Try again." : {
-      "comment" : "Shown when a setting change didn't save",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das wurde nicht gespeichert. Versuch es noch einmal."
+            "value" : "Das ließ sich nicht speichern. Versuch es noch einmal."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se pudo guardar. Inténtalo de nuevo."
+            "value" : "No se guardó el cambio. Inténtalo de nuevo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L’enregistrement a échoué. Réessaie."
+            "value" : "Ça n’a pas été enregistré. Réessaie."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il salvataggio non è riuscito. Riprova."
+            "value" : "La modifica non è stata salvata. Riprova."
           }
         },
         "ja" : {
@@ -3772,13 +3818,13 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nie udało się zapisać. Spróbuj ponownie."
+            "value" : "Nie udało się zapisać zmiany. Spróbuj ponownie."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível salvar. Tente de novo."
+            "value" : "Não deu para salvar. Tente de novo."
           }
         },
         "tr" : {
@@ -3967,7 +4013,6 @@
       }
     },
     "We couldn't prepare the download. Try again." : {
-      "comment" : "Shown when a data download failed",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4026,7 +4071,6 @@
       }
     },
     "What Zoonk remembers" : {
-      "comment" : "Field holding a fact Zoonk remembers",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4085,7 +4129,6 @@
       }
     },
     "What Zoonk remembers to give you examples and plans that fit your life." : {
-      "comment" : "What the Memory page is for",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4144,12 +4187,11 @@
       }
     },
     "When you get it right or finish" : {
-      "comment" : "When the lessons' sounds play",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wenn du richtig antwortest oder etwas abschließt"
+            "value" : "Wenn du richtig antwortest oder fertig bist"
           }
         },
         "es" : {
@@ -4167,25 +4209,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quando rispondi bene o completi una lezione"
+            "value" : "Quando rispondi bene o finisci"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "正解したときやレッスンを終えたとき"
+            "value" : "正解したときや学習を終えたとき"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "정답을 맞히거나 레슨을 마칠 때"
+            "value" : "정답을 맞히거나 학습을 마쳤을 때"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gdy odpowiesz poprawnie lub ukończysz lekcję"
+            "value" : "Gdy odpowiesz poprawnie lub skończysz"
           }
         },
         "pt" : {
@@ -4197,13 +4239,12 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Doğru cevap verdiğinde ya da dersi bitirdiğinde"
+            "value" : "Doğru cevap verdiğinde veya bitirdiğinde"
           }
         }
       }
     },
     "Where you live" : {
-      "comment" : "Row with the country the learner lives in, which they tell us",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4244,7 +4285,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kraj zamieszkania"
+            "value" : "Tu mieszkasz"
           }
         },
         "pt" : {
@@ -4380,7 +4421,6 @@
       }
     },
     "You told us" : {
-      "comment" : "Source of a fact the learner told Zoonk themselves (\"us\" is Zoonk)",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4556,65 +4596,6 @@
         }
       }
     },
-    "Your buddy, lessons and language, the way you like them." : {
-      "comment" : "Under the Preferences page's title: what the page changes",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dein Kumpel, deine Lektionen und deine Sprache, so wie du sie magst."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu compañero, tus lecciones y tu idioma, a tu gusto."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ton compagnon, tes leçons et ta langue, comme tu les aimes."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il tuo compagno, le lezioni e la lingua, come vuoi tu."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "相棒やレッスン、言語を好みに合わせて設定できます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "짝꿍, 레슨, 언어를 원하는 대로 설정하세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twój kumpel, lekcje i język po twojemu."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seu parceiro, suas aulas e seu idioma, do seu jeito."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Arkadaşın, derslerin ve uygulama dilin tam istediğin gibi."
-          }
-        }
-      }
-    },
     "Your data" : {
       "comment" : "Preferences section about the learner's data",
       "localizations" : {
@@ -4675,7 +4656,6 @@
       }
     },
     "Zoonk doesn't keep health, religion or other sensitive details unless you ask it to." : {
-      "comment" : "Note about sensitive details at the Memory page's end",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4729,65 +4709,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sen istemedikçe Zoonk sağlık, din gibi hassas konulardaki bilgilerini saklamaz."
-          }
-        }
-      }
-    },
-    "Zoonk follows your device's language. Change it for Zoonk alone in Settings." : {
-      "comment" : "Explains where the app's language is changed on iPhone and iPad",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk verwendet die Sprache deines Geräts. In den Einstellungen kannst du die Sprache nur für Zoonk ändern."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk usa el idioma de tu dispositivo. Cámbialo solo para Zoonk en Configuración."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk utilise la langue de ton appareil. Tu peux la changer uniquement pour Zoonk dans Réglages."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk usa la lingua del tuo dispositivo. Cambiala solo per Zoonk in Impostazioni."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonkはデバイスの言語に合わせて表示されます。Zoonkだけ別の言語にするには、「設定」で変更してください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk는 기기의 언어 설정을 따라요. 설정에서 Zoonk의 언어만 따로 바꾸세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk używa języka urządzenia. W Ustawieniach możesz zmienić język samego Zoonka."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O Zoonk usa o idioma do seu aparelho. Para mudar só o do Zoonk, vá aos Ajustes."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk cihazının dilini kullanır. Yalnızca Zoonk’un dilini değiştirmek için Ayarlar’a git."
           }
         }
       }

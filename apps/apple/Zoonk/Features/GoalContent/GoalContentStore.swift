@@ -24,7 +24,6 @@ struct GoalChapter: Decodable, Equatable, Sendable {
 
     let lessonId: String
     let minutes: Int
-    let plusRequired: Bool
     let state: State
     let title: String
 
@@ -61,7 +60,6 @@ struct GoalChapter: Decodable, Equatable, Sendable {
 
   struct TestOut: Decodable, Equatable, Sendable {
     let available: Bool
-    let plusRequired: Bool
   }
 
   let chapter: Chapter

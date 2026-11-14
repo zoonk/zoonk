@@ -257,6 +257,61 @@ msgctxt "kwl__x"
 msgid "Finish to see how it went."
 msgstr "Concludi per vedere com’è andata."
 
+#. On the screen a free learner sees when their free lessons are used. {date} is a day and its month, such as "November 22" in English.
+#: src/_components/free-lessons-words.ts
+msgctxt "wsvV5i"
+msgid "Your next free lesson opens on {date}, or subscribe to keep going."
+msgstr "La tua prossima lezione gratuita sarà disponibile il {date}, oppure puoi abbonarti per continuare."
+
+#: src/_components/free-lessons-words.ts
+msgctxt "sq9fni"
+msgid "Your next free lesson opens later today, or subscribe to keep going."
+msgstr "La tua prossima lezione gratuita sarà disponibile più tardi oggi, oppure puoi abbonarti per continuare."
+
+#: src/_components/free-lessons-words.ts
+msgctxt "q6VpbS"
+msgid "Your next free lesson opens tomorrow, or subscribe to keep going."
+msgstr "La tua prossima lezione gratuita sarà disponibile domani, oppure puoi abbonarti per continuare."
+
+#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and this one has more lessons than a free learner can start.
+#: src/_components/free-lessons-words.ts
+msgctxt "BQZuQD"
+msgid "It writes more lessons than you get for free."
+msgstr "Per crearla dobbiamo preparare più lezioni di quelle incluse gratis."
+
+#: src/_components/free-lessons-words.ts
+msgctxt "PzQ0ot"
+msgid "This map needs a subscription"
+msgstr "Per questa mappa serve un abbonamento"
+
+#: src/_components/free-lessons-words.ts
+msgctxt "Ekv-QL"
+msgid "You can make this map now"
+msgstr "Ora puoi creare questa mappa"
+
+#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet. {date} is a day and its month, such as "November 22" in English.
+#: src/_components/free-lessons-words.ts
+msgctxt "MU7Wx6"
+msgid "You'll have enough on {date}, or subscribe to make it now."
+msgstr "Ne avrai abbastanza il giorno {date}, oppure abbonati per crearla subito."
+
+#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet.
+#: src/_components/free-lessons-words.ts
+msgctxt "HwBdEe"
+msgid "You'll have enough later today, or subscribe to make it now."
+msgstr "Ne avrai abbastanza in giornata, oppure abbonati per crearla subito."
+
+#. Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet.
+#: src/_components/free-lessons-words.ts
+msgctxt "CE0pGe"
+msgid "You'll have enough tomorrow, or subscribe to make it now."
+msgstr "Ne avrai abbastanza domani, oppure abbonati per crearla subito."
+
+#: src/_components/free-lessons-words.ts
+msgctxt "eFx_I9"
+msgid "Not enough free lessons for this map yet"
+msgstr "Non hai ancora abbastanza lezioni gratuite per questa mappa"
+
 #: src/_components/help-limit-notice.tsx
 msgctxt "C84LQr"
 msgid "More next month."
@@ -321,22 +376,6 @@ msgstr "Hai raggiunto il limite di questo mese"
 msgctxt "Co4ZUv"
 msgid "You've reached today's limit"
 msgstr "Hai raggiunto il limite di oggi"
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "sq9fni"
-msgid "Your next free lesson opens later today, or subscribe to keep going."
-msgstr "La tua prossima lezione gratuita sarà disponibile più tardi oggi, oppure puoi abbonarti per continuare."
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "q6VpbS"
-msgid "Your next free lesson opens tomorrow, or subscribe to keep going."
-msgstr "La tua prossima lezione gratuita sarà disponibile domani, oppure puoi abbonarti per continuare."
-
-#. On the screen a free learner sees when their free lessons are used. {date} is a day and its month, such as "November 22" in English.
-#: src/_components/help-limit-notice.tsx
-msgctxt "wsvV5i"
-msgid "Your next free lesson opens on {date}, or subscribe to keep going."
-msgstr "La tua prossima lezione gratuita sarà disponibile il {date}, oppure puoi abbonarti per continuare."
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "5SLMld"
@@ -583,7 +622,6 @@ msgstr "Domande per materia nell’ultimo esame, secondo il conteggio di <link>{
 #: src/_components/save-error.tsx
 #: src/feedback/feedback-form-dialog.tsx
 #: src/feedback/report-problem-item.tsx
-#: src/journey/journey-menu.tsx
 msgctxt "feedback.Hf_X9X"
 msgid "Report a problem"
 msgstr "Segnala un problema"
@@ -2292,11 +2330,6 @@ msgid "{count, plural, one {# lesson} other {# lessons}}"
 msgstr "{count, plural, one {# lezione} other {# lezioni}}"
 
 #: src/chapter/chapter-header.tsx
-msgctxt "uPK7mm"
-msgid "Chapter options"
-msgstr "Opzioni del capitolo"
-
-#: src/chapter/chapter-header.tsx
 #: src/journey/plan-header.tsx
 #: src/language/unit/unit-header.tsx
 #: src/shell/learn-bar.tsx
@@ -2305,6 +2338,11 @@ msgstr "Opzioni del capitolo"
 msgctxt "fz0z4c"
 msgid "Plan"
 msgstr "Piano"
+
+#: src/chapter/chapter-header.tsx
+msgctxt "uPK7mm"
+msgid "Chapter options"
+msgstr "Opzioni del capitolo"
 
 #: src/chapter/chapter-mistakes.tsx
 msgctxt "EwFu5D"
@@ -2473,9 +2511,9 @@ msgid "Not this time"
 msgstr "Non questa volta"
 
 #: src/checkpoints/checkpoint-review.tsx
-msgctxt "hmBFza"
-msgid "Answer:"
-msgstr "Risposta:"
+msgctxt "CsqxCb"
+msgid "<label>Answer:</label> <answer></answer>"
+msgstr "<label>Risposta:</label> <answer></answer>"
 
 #: src/checkpoints/checkpoint-review.tsx
 #: src/mistakes/mistake-practice-run.tsx
@@ -7539,14 +7577,15 @@ msgid "Only answer when you're sure. Saying you're not sure is fine."
 msgstr "Rispondi solo se non hai dubbi. Va bene anche dire che ne hai."
 
 #: src/mistakes/mistake-entry.tsx
-msgctxt "VM0Q1f"
-msgid "Right answer:"
-msgstr "Risposta corretta:"
+#: src/questions/right-answer-line.tsx
+msgctxt "wS1KQ6"
+msgid "<label>Right answer:</label> <answer></answer>"
+msgstr "<label>Risposta corretta:</label> <answer></answer>"
 
 #: src/mistakes/mistake-entry.tsx
-msgctxt "h_bsq4"
-msgid "You answered:"
-msgstr "Hai risposto:"
+msgctxt "Gr6IEG"
+msgid "<label>You answered:</label> <answer></answer>"
+msgstr "<label>Hai risposto:</label> <answer></answer>"
 
 #: src/mistakes/mistake-entry.tsx
 msgctxt "BICox_"
@@ -7697,12 +7736,6 @@ msgstr "{count, plural, =0 {Nessun errore corretto} one {Errore corretto. Viene 
 msgctxt "HvLGEN"
 msgid "Answer feedback"
 msgstr "Valutazione della risposta"
-
-#: src/mistakes/practice-step.tsx
-#: src/session/question-block/question-feedback.tsx
-msgctxt "amJs-w"
-msgid "Right answer: {answer}"
-msgstr "Risposta corretta: {answer}"
 
 #. Why the learner got a question wrong: they didn't know the content yet. Not missing course content.
 #: src/mistakes/use-cause-label.ts
@@ -12929,11 +12962,6 @@ msgid "{count, plural, one {# chapter} other {# chapters}}"
 msgstr "{count, plural, one {# capitolo} other {# capitoli}}"
 
 #: src/syllabus/subject-screen.tsx
-msgctxt "vx7zl3"
-msgid "Subject options"
-msgstr "Opzioni della materia"
-
-#: src/syllabus/subject-screen.tsx
 msgctxt "NBKiJR"
 msgid "Topics in your material"
 msgstr "Argomenti del tuo materiale"
@@ -12953,6 +12981,11 @@ msgstr "{total, plural, one {{done, number} su # argomento} other {{done, number
 msgctxt "XHGiOR"
 msgid "About this subject"
 msgstr "Informazioni su questa materia"
+
+#: src/syllabus/subject-screen.tsx
+msgctxt "vx7zl3"
+msgid "Subject options"
+msgstr "Opzioni della materia"
 
 #: src/syllabus/subject-topics.tsx
 msgctxt "fq8lB2"

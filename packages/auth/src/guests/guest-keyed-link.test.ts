@@ -355,3 +355,46 @@ describe("guest certificate linking", () => {
     ).resolves.toStrictEqual([{ issuedAt: expect.any(Date) }]);
   });
 });
+
+describe("guest lesson start accounting", () => {
+  it("preserves start instants, including when an account has an unstarted preparation for the same lesson", async () => {
+    const [accountId, guestId] = await Promise.all([
+      createLearner({ isAnonymous: false }),
+      createLearner({ isAnonymous: true }),
+    ]);
+
+    const shared = randomUUID();
+    const unique = randomUUID();
+
+    await prisma.usageRecord.create({
+      data: {
+        countedAt: null,
+        generated: true,
+        kind: "lessonStart",
+        targetId: shared,
+        userId: accountId,
+      },
+    });
+
+    await prisma.usageRecord.createMany({
+      data: [shared, unique].map((targetId) => ({
+        countedAt: OLDER,
+        kind: "lessonStart",
+        targetId,
+        userId: guestId,
+      })),
+    });
+
+    await prisma.$transaction((transaction) =>
+      moveKeyedRows({ guestUserId: guestId, transaction, userId: accountId }),
+    );
+
+    const rows = await prisma.usageRecord.findMany({
+      where: { kind: "lessonStart", userId: accountId },
+    });
+
+    expect(rows).toHaveLength(2);
+    expect(rows.map((row) => row.countedAt)).toStrictEqual([OLDER, OLDER]);
+    await expect(prisma.usageRecord.count({ where: { userId: guestId } })).resolves.toBe(0);
+  });
+});

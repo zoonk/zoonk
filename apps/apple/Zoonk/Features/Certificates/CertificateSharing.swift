@@ -77,9 +77,7 @@ extension CertificateFacts {
       if lessons == 0 {
         return String(
           localized: "I just finished \(name) on Zoonk.",
-          table: "Certificates",
-          comment:
-            "Suggested text for sharing a course certificate whose lessons were all passed by test: the course or its level, such as Python · Beginner"
+          table: "Certificates"
         )
       }
 
@@ -102,9 +100,7 @@ extension CertificateFacts {
     case .languageLevel:
       return String(
         localized: "I just completed level \(level ?? "") in \(languageName) on Zoonk.",
-        table: "Certificates",
-        comment:
-          "Suggested text for sharing a language level certificate: the level, then the language")
+        table: "Certificates")
     }
   }
 }

@@ -11,11 +11,11 @@ import { BarSearch } from "@zoonk/ui/components/sidebar-toggle";
 import { openCommandPalette } from "@zoonk/ui/lib/command-palette-event";
 import { EllipsisIcon, MenuIcon } from "lucide-react";
 
-/** A record's "…" in the page's bar: what staff do to it less often, after its buttons. */
+/** A record's "…" at the end of the page's bar: what staff do to it less often, after its buttons. */
 export function AdminBarMenu({ children, label }: { children: React.ReactNode; label: string }) {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger render={<Button size="icon-bar" variant="outline" />}>
+      <DropdownMenuTrigger render={<Button edge="end" size="icon-bar" variant="ghost" />}>
         <EllipsisIcon aria-hidden="true" />
         <span className="sr-only">{label}</span>
       </DropdownMenuTrigger>

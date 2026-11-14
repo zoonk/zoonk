@@ -1,5 +1,5 @@
-import { Meter, MeterFill, MeterPart, MeterParts } from "@zoonk/learn/meter";
 import { beltColorClasses } from "@zoonk/ui/components/belt-indicator";
+import { Meter, MeterFill, MeterPart, MeterParts } from "@zoonk/ui/components/meter";
 import { type CSSPropertiesWithVariables } from "@zoonk/ui/lib/css-variables";
 import { cn } from "@zoonk/ui/lib/utils";
 

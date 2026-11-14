@@ -18,7 +18,7 @@ import { PageSection, PageSectionHeader, PageSectionTitle } from "../../_compone
 import { type TestOutStart, TestOutStartRow } from "../../_components/test-out-start-link";
 import { type CallStartOutcome } from "../conversation/use-call-start";
 import { PracticeConversation } from "./practice-conversation";
-import { UnitBar, UnitHeader } from "./unit-header";
+import { UnitBar, UnitBottomBar, UnitHeader } from "./unit-header";
 import { UnitMistakes } from "./unit-mistakes";
 import { UnitPracticeRows } from "./unit-rows";
 import { UnitGrammarTips, UnitObjectives, UnitWords } from "./unit-sections";
@@ -195,10 +195,11 @@ export function LanguageUnitScreen({
           {ask}
         </UnitBar>
       }
+      bottomBar={<UnitBottomBar lessonHref={hrefs.lesson} view={unit} />}
       data-slot="language-unit"
     >
       <DetailAside>
-        <UnitHeader lessonHref={hrefs.lesson} view={unit} />
+        <UnitHeader view={unit} />
       </DetailAside>
 
       <DetailContent>

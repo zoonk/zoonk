@@ -15,6 +15,7 @@ type UsageClaim = {
   costMicros: number;
   counts: UsageCounts;
   generated: boolean;
+  preparing?: boolean;
   kind: UsageKind;
   now: Date;
   tier: EntitlementTier;
@@ -112,19 +113,16 @@ function findCallTimeLimit({ counts, kind, tier }: UsageClaim): AllowanceLimit |
 function findReachedLimit(claim: UsageClaim): AllowanceLimit | null {
   const rollingLimit = getUsageRule(claim).rolling30Days;
 
-  const availableAt =
-    rollingLimit === undefined ? null : getLessonAvailableAt(claim.counts.lessonStarts);
-
   if (
     rollingLimit !== undefined &&
-    claim.counts.lessonStarts.count >= rollingLimit &&
-    availableAt
+    claim.counts.lessonStarts.count + (claim.preparing ? claim.counts.lessonStarts.prepared : 0) >=
+      rollingLimit
   ) {
     return {
-      availableAt,
+      ...(!claim.preparing && { availableAt: getLessonAvailableAt(claim.counts.lessonStarts) }),
       limit: rollingLimit,
       period: "rolling30Days",
-      resource: claim.kind,
+      resource: claim.preparing ? "lessonPreparation" : claim.kind,
       tier: claim.tier,
     };
   }

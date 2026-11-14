@@ -1,8 +1,7 @@
 "use client";
 
 import { EnterButton } from "@zoonk/learn/enter-button";
-import { FRAME_GUTTER_CLASS } from "@zoonk/learn/shell";
-import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
+import { BottomBar, BottomBarActions, FRAME_GUTTER_CLASS } from "@zoonk/ui/components/bottom-bar";
 import { cn } from "@zoonk/ui/lib/utils";
 import { TriangleAlertIcon } from "lucide-react";
 import { useExtracted } from "next-intl";

@@ -153,7 +153,7 @@ struct QuestionTitle: View {
   var isMuted = false
 
   var body: some View {
-    ItemText(text)
+    LessonTextBlocks(text)
       .typeStyle(.section)
       .foregroundStyle(isMuted ? .mutedForeground : .primary)
       .accessibilityAddTraits(.isHeader)
@@ -337,11 +337,13 @@ enum PracticeVerdict: Equatable {
 struct PracticeFeedbackPanel<Notes: View>: View {
   let verdict: PracticeVerdict
   var streak = 0
-  var correctAnswerText: String?
+  var correctAnswerText: RichInline?
   var explanation: String?
   var workedSteps: [String] = []
   var citation: PracticeCitation?
   @ViewBuilder var notes: () -> Notes
+
+  @Environment(\.legibilityWeight) private var legibilityWeight
 
   var body: some View {
     VStack(alignment: .leading, spacing: 10) {
@@ -359,11 +361,11 @@ struct PracticeFeedbackPanel<Notes: View>: View {
       }
 
       if let correctAnswerText {
-        Text(PracticeAnswerText.rightAnswerLine(correctAnswerText))
+        Text(PracticeAnswerText.rightAnswerLine(correctAnswerText), legibility: legibilityWeight)
       }
 
       if let explanation {
-        ItemText(explanation)
+        LessonTextBlocks(explanation)
       }
 
       if !workedSteps.isEmpty {
@@ -387,7 +389,7 @@ struct PracticeFeedbackPanel<Notes: View>: View {
 
 extension PracticeFeedbackPanel where Notes == EmptyView {
   init(
-    verdict: PracticeVerdict, streak: Int = 0, correctAnswerText: String? = nil,
+    verdict: PracticeVerdict, streak: Int = 0, correctAnswerText: RichInline? = nil,
     explanation: String? = nil, workedSteps: [String] = [], citation: PracticeCitation? = nil
   ) {
     self.init(
@@ -405,7 +407,7 @@ struct WorkedStepsView: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 4) {
       ForEach(Array(steps.enumerated()), id: \.offset) { index, step in
-        Text(ItemTextBlock.inline(step), legibility: legibilityWeight)
+        Text(LessonRichText.typeset(step), legibility: legibilityWeight)
           .typeStyle(.reading.monospaced().weight(index == steps.count - 1 ? .semibold : .regular))
           .foregroundStyle(index == steps.count - 1 ? Color(.foreground) : .mutedForeground)
       }
@@ -420,16 +422,22 @@ struct WorkedStepsView: View {
 
 /// Choice and true-or-false questions mark the right option instead, so they need no line.
 enum PracticeAnswerText {
-  static func rightAnswerLine(_ answer: String) -> String {
-    String(
-      localized: "Right answer: \(answer)", table: "Practice",
-      comment: "The right answer in words, under a wrong answer's verdict.")
+  static func rightAnswerLine(_ answer: RichInline) -> RichInline {
+    RichInline(
+      text: AttributedString(
+        localized: "Right answer: \(answer.text)", table: "Practice",
+        comment: "The right answer in words, under a wrong answer's verdict."),
+      spoken: answer.spoken.map {
+        String(
+          localized: "Right answer: \($0)", table: "Practice",
+          comment: "The right answer in words, under a wrong answer's verdict.")
+      })
   }
 
   static func correctLine(
     feedbackIsCorrect: Bool, correctAnswer: PracticeAnswer?, question: PracticeQuestion,
     labels: PracticeTrueFalseLabels
-  ) -> String? {
+  ) -> RichInline? {
     guard !feedbackIsCorrect, question.format != .multipleChoice, question.format != .trueFalse,
       let correctAnswer
     else { return nil }
@@ -440,37 +448,48 @@ enum PracticeAnswerText {
   static func text(
     for answer: PracticeAnswer, question: PracticeQuestion, labels: PracticeTrueFalseLabels
   )
-    -> String?
+    -> RichInline?
   {
-    func option(_ index: Int) -> String {
-      question.options.indices.contains(index) ? ItemTextBlock.plain(question.options[index]) : ""
+    func option(_ index: Int) -> RichInline {
+      LessonRichText.typeset(
+        question.options.indices.contains(index) ? question.options[index] : "")
     }
 
     switch answer {
     case .choice(let index):
       return question.options.indices.contains(index) ? option(index) : nil
     case .choices(let indexes):
-      return indexes.map(option).joined(separator: "; ")
+      return joined(indexes.map(option), separator: "; ")
     case .order(let indexes):
-      return indexes.map(option).joined(separator: " → ")
+      return joined(indexes.map(option), separator: " → ")
     case .text(let text):
-      return text
+      return plain(text)
     case .trueFalse(let isTrue):
-      return String(localized: TrueFalseWords.label(isTrue: isTrue, labels: labels))
+      return plain(String(localized: TrueFalseWords.label(isTrue: isTrue, labels: labels)))
     case .matches(let matches):
-      return question.left.enumerated().map { index, entry in
+      let pairs = question.left.enumerated().map { index, entry in
         let match =
           matches.indices.contains(index) && question.right.indices.contains(matches[index])
           ? question.right[matches[index]] : ""
-        return "\(ItemTextBlock.plain(entry)) → \(ItemTextBlock.plain(match))"
+        return joined(
+          [LessonRichText.typeset(entry), LessonRichText.typeset(match)], separator: " → ")
       }
-      .joined(separator: "; ")
+      return joined(pairs, separator: "; ")
     case .number(let number):
       let value = number.formatted(.number.locale(.courseLanguage))
-      guard let unit = question.unit else { return value }
-      return unit.position == .prefix ? "\(unit.symbol) \(value)" : "\(value) \(unit.symbol)"
+      guard let unit = question.unit else { return plain(value) }
+      return plain(
+        unit.position == .prefix ? "\(unit.symbol) \(value)" : "\(value) \(unit.symbol)")
     case .dontKnow, .partial, .typing:
       return nil
     }
+  }
+
+  private static func plain(_ text: String) -> RichInline {
+    RichInline(text: AttributedString(text))
+  }
+
+  private static func joined(_ parts: [RichInline], separator: String) -> RichInline {
+    parts.dropFirst().reduce(parts.first ?? plain("")) { $0 + plain(separator) + $1 }
   }
 }

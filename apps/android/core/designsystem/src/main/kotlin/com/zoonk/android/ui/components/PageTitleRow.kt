@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.scaffold.pageTitle
@@ -64,6 +65,17 @@ internal fun HeadingRow(
 fun PageHeader(
     title: String,
     supporting: String,
+    modifier: Modifier = Modifier,
+) = PageHeader(title, AnnotatedString(supporting), modifier)
+
+/**
+ * [PageHeader] whose line may hold a link, a [androidx.compose.ui.text.LinkAnnotation] in [supporting] (main's `PageSubtitle`
+ * with a link in it): TalkBack reaches it and reads its words, and a tap runs it.
+ */
+@Composable
+fun PageHeader(
+    title: String,
+    supporting: AnnotatedString,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {

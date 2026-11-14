@@ -161,13 +161,10 @@ const DAILY_SPEND_BUDGET_MICROS: Record<EntitlementTier, number> = {
 
 const REUSABLE_KINDS = new Set<UsageKind>(["explanation", "lessonStart"]);
 
-const EXAM_PREP_ACCESS: Record<
-  EntitlementTier,
-  { includesMockExams: boolean; studyDays: number | null }
-> = {
-  free: { includesMockExams: false, studyDays: null },
-  guest: { includesMockExams: false, studyDays: null },
-  plus: { includesMockExams: true, studyDays: null },
+const EXAM_PREP_ACCESS: Record<EntitlementTier, { includesMockExams: boolean }> = {
+  free: { includesMockExams: false },
+  guest: { includesMockExams: false },
+  plus: { includesMockExams: true },
 };
 
 export const FAIR_USE_SPACING_SECONDS = 300;

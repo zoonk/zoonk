@@ -19,14 +19,6 @@ struct LoginView: View {
             .multilineTextAlignment(.center)
             .accessibilityAddTraits(.isHeader)
             .heroTitle()
-
-          Text(
-            "Keep your plan and progress on all your devices.",
-            tableName: "Account",
-            comment: "Explains the benefit of signing in"
-          )
-          .foregroundStyle(.mutedForeground)
-          .multilineTextAlignment(.center)
         }
 
         VStack(spacing: 12) {
@@ -88,7 +80,7 @@ struct LoginView: View {
         AccountFailureMessage(failure: session.failure)
 
         Text(
-          "By continuing, you agree to the Zoonk \(termsLink) and \(privacyLink).",
+          "By continuing, you agree to our \(termsLink) and \(privacyLink).",
           tableName: "Account",
           comment:
             "Legal agreement below the sign-in methods; the arguments are the links to the terms of service and the privacy policy"
@@ -101,13 +93,12 @@ struct LoginView: View {
       .padding(24)
       .frame(maxWidth: .infinity)
     }
-    .navigationTitle(title)
     .barTitleAfterHero(title)
   }
 
   private var title: String {
     String(
-      localized: "Sign in or create an account", table: "Account",
+      localized: "Log in or create an account", table: "Account",
       comment: "Title above the native sign-in methods; new learners create an account here too")
   }
 
@@ -151,22 +142,21 @@ struct AccountFailureMessage: View {
     switch failure {
     case .emailCodeDelivery:
       LocalizedStringResource(
-        "Zoonk couldn't send the verification code. Try again or contact hello@zoonk.com.",
+        "We couldn't send the code. Try again or email hello@zoonk.com.",
         table: "Account",
         comment: "Generic email verification code delivery failure")
     case .accountDeletion:
       LocalizedStringResource(
-        "Zoonk couldn't delete your account. Try again or contact hello@zoonk.com.",
-        table: "Account",
-        comment: "Generic account deletion failure message")
+        "We couldn't delete your account. Try again or email hello@zoonk.com.",
+        table: "Account")
     case .accountMismatch:
       LocalizedStringResource(
-        "That code belongs to a different account. Request a new code for this account.",
+        "That code is for another account. Send a new code.",
         table: "Account",
         comment: "Error shown when an account deletion code belongs to a different account")
     case .invalidCode:
       LocalizedStringResource(
-        "That code is invalid or expired. Request a new code and try again.",
+        "That code isn't right. Try again.",
         table: "Account",
         comment: "Error shown when an email verification code is invalid or expired")
     case .invalidEmail:
@@ -176,14 +166,13 @@ struct AccountFailureMessage: View {
         comment: "Error shown when an email address is invalid")
     case .disposableEmail:
       LocalizedStringResource(
-        "Temporary email addresses aren't supported. Use another email or a privacy alias.",
+        "Temporary email addresses don't work here. Use another email.",
         table: "Account",
         comment: "Temporary inbox rejection; persistent privacy aliases remain supported")
     case .network:
       LocalizedStringResource(
-        "Zoonk couldn't connect. Check your connection and try again.",
-        table: "Account",
-        comment: "Error shown when an account request cannot reach the service")
+        "Check your connection and try again.",
+        table: "Account")
     case .rateLimited:
       LocalizedStringResource(
         "Too many tries. Wait a minute, then try again.",
@@ -201,7 +190,7 @@ struct AccountFailureMessage: View {
         comment: "Error shown when profile information is invalid")
     case .signIn:
       LocalizedStringResource(
-        "Zoonk couldn't sign you in. Try again or contact hello@zoonk.com.",
+        "We couldn't log you in. Try again or email hello@zoonk.com.",
         table: "Account",
         comment: "Generic sign-in failure message")
     }

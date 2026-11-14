@@ -2,8 +2,12 @@
 <resources>
     <!-- The name of the app's notification channel in Android's settings. -->
     <string name="reminders_channel_name">Study reminders</string>
-    <!-- Under the channel's name in Android's settings, and under the Reminders page's title. -->
-    <string name="reminders_channel_description">One reminder on your study days, when you still have learning left.</string>
+    <!-- Under the channel's name in Android's settings. -->
+    <string name="reminders_channel_description">One reminder on your study days, if you\'re not done for the day.</string>
+    <!-- Under the reminders page's title: what reminders do; %1$s is the link "study days", which opens the Plan. -->
+    <string name="reminders_line">One reminder on your %1$s, if you\'re not done for the day.</string>
+    <!-- Link to the Plan inside "One reminder on your study days…" -->
+    <string name="reminders_study_days">study days</string>
     <!-- A card under a finished lesson's result, offering a daily study reminder on the phone. -->
     <string name="reminders_offer_title">Want a study reminder?</string>
     <!-- %1$s is a time of day, such as "7:00 PM". -->
@@ -23,7 +27,7 @@
     <string name="reminders_email_instead">Email me instead</string>
     <!-- Before Android asks to allow notifications again, after the learner said no once. -->
     <string name="reminders_permission_title">Allow notifications?</string>
-    <string name="reminders_permission_body">Zoonk sends one reminder on your study days, only when you still have learning left.</string>
+    <string name="reminders_permission_body">Zoonk sends one reminder on your study days, if you\'re not done for the day.</string>
     <string name="reminders_permission_continue">Continue</string>
     <string name="reminders_not_now">Not now</string>
     <!-- The title of the clock that changes the reminder's time. -->

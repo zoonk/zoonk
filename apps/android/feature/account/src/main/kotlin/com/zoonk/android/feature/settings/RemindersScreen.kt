@@ -4,9 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
@@ -24,6 +22,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLinkStyles
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -44,6 +48,7 @@ import com.zoonk.android.feature.reminders.reminderTime
 import com.zoonk.android.feature.reminders.reminderZone
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListDivider
@@ -148,15 +153,12 @@ fun RemindersScreen(
         ) {
             Column(
                 modifier =
-                    Modifier
-                        .widthIn(max = 640.dp)
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp),
+                    Modifier.settingsColumn(),
                 verticalArrangement = Arrangement.spacedBy(28.dp),
             ) {
                 PageHeader(
                     stringResource(R.string.reminders_title),
-                    stringResource(R.string.reminders_channel_description),
+                    remindersLine { navigator.showRoot(AppTab.Plan) },
                     Modifier.padding(horizontal = LIST_ITEM_INSET),
                 )
 
@@ -309,5 +311,21 @@ private fun PushRows(
                 }
             },
         )
+    }
+}
+
+/** Main's line under the title, its "study days" a link to the Plan, where they're set. */
+@Composable
+private fun remindersLine(onOpenPlan: () -> Unit): AnnotatedString {
+    val days = stringResource(R.string.reminders_study_days)
+    val line = stringResource(R.string.reminders_line, days)
+    val start = line.indexOf(days)
+
+    return buildAnnotatedString {
+        append(line)
+        if (start >= 0) {
+            val link = LinkAnnotation.Clickable(days, TextLinkStyles(SpanStyle(textDecoration = TextDecoration.Underline))) { onOpenPlan() }
+            addLink(link, start, start + days.length)
+        }
     }
 }

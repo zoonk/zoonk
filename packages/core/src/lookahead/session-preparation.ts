@@ -23,7 +23,6 @@ export type SessionPreparationAccess =
   | { goalId: string; sessionId: string; status: "ready"; timeZone: string; userId: string }
   /** Guests may prepare only their next lesson, counted as its start, and the outlines their plan reaches. */
   | { goalId: string | null; lessonId: string | null; status: "guest"; userId: string }
-  | { status: "plusRequired" }
   | { status: "notFound" }
   | { status: "unauthorized" };
 
