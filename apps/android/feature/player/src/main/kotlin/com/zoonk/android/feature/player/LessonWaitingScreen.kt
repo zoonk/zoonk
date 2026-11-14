@@ -35,6 +35,7 @@ import com.zoonk.android.data.GenerationFailure
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.TrackVisibleWait
+import com.zoonk.android.data.stepLabel
 import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.model.LessonOutline
 import com.zoonk.android.feature.player.steps.count
@@ -172,19 +173,20 @@ fun LessonWaitingScreen(
                         val share =
                             com.zoonk.android.ui.components
                                 .rememberGenerationProgress(kind, shown)
-                        val status =
+                        val sentence =
                             when {
                                 hold.holding -> R.string.player_lesson_ready
                                 kind == GenerationKind.Challenge -> R.string.player_getting_challenge_ready
                                 else -> R.string.player_getting_lesson_ready
                             }
+                        val step = kind.stepLabel(if (hold.holding) GenerationRun(status = GenerationRun.Status.Ready) else shown)
                         WaitContent(
                             quiz,
                             hold,
                             AnalyticsEvent.WarmUpSurface.LessonWait,
                             kind,
                             shown,
-                            stringResource(status),
+                            stringResource(step ?: sentence),
                             goalId = goalId,
                             progressShare = share,
                             onRetry = viewModel::retry,
