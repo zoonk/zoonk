@@ -143,4 +143,4 @@ class OnboardingBarTest {
 private fun threeGoals() = goalsUnderstanding().replace("]}", ",${learn("statistics")},${learn("calculus")}]}")
 
 private fun learn(subject: String) =
-    """{"cutoff":null,"examDates":[],"draft":{"kind":"learn","language":"en","prompt":"learn $subject","title":"Learn $subject","details":{}}}"""
+    """{"cutoff":null,"examDates":[],"draft":{"kind":"learn","language":"en","prompt":"learn $subject","title":"Learn $subject","displayName":"Learn $subject","details":{}}}"""
