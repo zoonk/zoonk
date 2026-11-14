@@ -469,7 +469,7 @@ struct ScheduleQuestion: View {
 
   private func weekSection(_ shown: Shown) -> some View {
     Section {
-      ForEach(orderedDays, id: \.self) { day in
+      ForEach(ScheduleTime.mondayFirst, id: \.self) { day in
         Toggle(
           Calendar.current.standaloneWeekdaySymbols[day],
           isOn: Binding(
@@ -517,11 +517,6 @@ struct ScheduleQuestion: View {
         ))
     }
     .tint(.success)
-  }
-
-  private var orderedDays: [Int] {
-    let first = Calendar.current.firstWeekday - 1
-    return ScheduleTime.everyDay.map { (first + $0) % 7 }
   }
 
   private func submit(_ shown: Shown) {

@@ -728,15 +728,16 @@ struct PlanSettingsSection: View {
 }
 
 func studyDaysText(_ weekdayMinutes: [Int]) -> String {
-  let mondayFirst = [1, 2, 3, 4, 5, 6, 0]
-  let days = mondayFirst.filter { weekdayMinutes.indices.contains($0) && weekdayMinutes[$0] > 0 }
+  let days = ScheduleTime.mondayFirst.filter {
+    weekdayMinutes.indices.contains($0) && weekdayMinutes[$0] > 0
+  }
   let symbols = Calendar.current.shortWeekdaySymbols
 
   if days.count == 7 {
     return String(localized: "Every day", table: "Plan", comment: "Study days: all seven")
   }
 
-  let positions = days.compactMap { mondayFirst.firstIndex(of: $0) }
+  let positions = days.compactMap { ScheduleTime.mondayFirst.firstIndex(of: $0) }
   let isOneRun = positions.enumerated().allSatisfy { index, position in
     index == 0 || position == positions[index - 1] + 1
   }

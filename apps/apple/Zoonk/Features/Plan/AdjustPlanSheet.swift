@@ -164,7 +164,7 @@ struct AdjustPlanSheet: View {
     let symbols = Calendar.current.weekdaySymbols
 
     return SwiftUI.Section {
-      ForEach(Self.mondayFirst, id: \.self) { weekday in
+      ForEach(ScheduleTime.mondayFirst, id: \.self) { weekday in
         let studies = weekdayMinutes.indices.contains(weekday) && weekdayMinutes[weekday] > 0
 
         Toggle(
@@ -246,7 +246,6 @@ struct AdjustPlanSheet: View {
 
   private var dateKind: GoalDateKind { GoalDateKind(isExam: goal.kind == .exam) }
 
-  private static let mondayFirst = [1, 2, 3, 4, 5, 6, 0]
 }
 
 /// Main's editor note: what the change did, its consequence and "See all changes", how it applies,

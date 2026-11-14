@@ -8,15 +8,18 @@ import SwiftUI
 struct PageHeader<Trailing: View>: View {
   let title: Text
   var chip: Chip?
+  /// A step keeps its chip's room without one, so every step's title sits at one height.
+  var keepsChipRoom = false
   var supporting: Text?
   @ViewBuilder let trailing: Trailing
 
   init(
-    _ title: Text, chip: Chip? = nil, supporting: Text? = nil,
+    _ title: Text, chip: Chip? = nil, keepsChipRoom: Bool = false, supporting: Text? = nil,
     @ViewBuilder trailing: () -> Trailing
   ) {
     self.title = title
     self.chip = chip
+    self.keepsChipRoom = keepsChipRoom
     self.supporting = supporting
     self.trailing = trailing()
   }
@@ -25,6 +28,11 @@ struct PageHeader<Trailing: View>: View {
     VStack(alignment: .leading, spacing: 4) {
       if let chip {
         chip
+          .padding(.bottom, 8)
+      } else if keepsChipRoom {
+        Chip(Text(verbatim: " "))
+          .hidden()
+          .accessibilityHidden(true)
           .padding(.bottom, 8)
       }
 
@@ -51,7 +59,9 @@ struct PageHeader<Trailing: View>: View {
 }
 
 extension PageHeader where Trailing == EmptyView {
-  init(_ title: Text, chip: Chip? = nil, supporting: Text? = nil) {
-    self.init(title, chip: chip, supporting: supporting) { EmptyView() }
+  init(_ title: Text, chip: Chip? = nil, keepsChipRoom: Bool = false, supporting: Text? = nil) {
+    self.init(title, chip: chip, keepsChipRoom: keepsChipRoom, supporting: supporting) {
+      EmptyView()
+    }
   }
 }

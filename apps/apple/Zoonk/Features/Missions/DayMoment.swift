@@ -211,10 +211,9 @@ struct BeltStepRow: View {
 
           if let next = belt.next {
             Text(
-              "\(beltName(next.rawValue) ?? "") comes after \(beltName(belt.rawValue) ?? "") \(10)",
-              tableName: "Session",
+              "\(beltName(next.rawValue) ?? "") comes after level \(10)", tableName: "Session",
               comment:
-                "Under the belt's number: the next belt, then this belt and its last step, such as \"Yellow belt comes after White belt 10\""
+                "Under the learner's level: the next belt and the last level before it, such as \"Yellow belt comes after level 10\""
             )
             .typeStyle(.note)
             .foregroundStyle(.mutedForeground)
@@ -228,11 +227,11 @@ struct BeltStepRow: View {
   }
 }
 
-/// "White belt 3": the belt and its step, never called a level (B2's R4).
+/// "White belt, level 3": the level, said with the belt it shows as (B2's R4).
 func beltStep(_ belt: ProgressBelt, _ level: Int) -> String {
   String(
-    localized: "\(beltName(belt.rawValue) ?? belt.rawValue) \(level)", table: "Session",
-    comment: "A belt and its step from 1 to 10, such as \"White belt 3\"")
+    localized: "\(beltName(belt.rawValue) ?? belt.rawValue), level \(level)", table: "Session",
+    comment: "A belt and the learner's level in it, from 1 to 10, such as \"White belt, level 3\"")
 }
 
 extension ProgressBelt {

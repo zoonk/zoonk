@@ -42,7 +42,7 @@ struct CertificateCeremony: View {
         }
         .scenePadding()
       }
-      .bottomBar { continueButton }
+      .bottomBar { barButtons }
     } single: {
       CenteredScroll {
         VStack(spacing: 0) {
@@ -54,7 +54,7 @@ struct CertificateCeremony: View {
         .frame(maxWidth: 600)
         .scenePadding()
       }
-      .bottomBar { continueButton }
+      .bottomBar { barButtons }
     }
     .landsActsOnInput()
     .celebratesOnce(id: top.code)
@@ -132,21 +132,13 @@ struct CertificateCeremony: View {
   private func learnerPart(_ certificate: Certificate?) -> some View {
     if top.locked {
       // The gate itself, since the learner opened the certificate: no card about a paid plan.
-      VStack(spacing: 14) {
-        Text(
-          "Certificates need a subscription", tableName: "Certificates",
-          comment: "On a certificate a learner earned without a subscription"
-        )
-        .typeStyle(.reading)
-        .foregroundStyle(.mutedForeground)
-        .multilineTextAlignment(.center)
-
-        Button(action: onSeePlus) {
-          Text("Subscribe", tableName: "Certificates", comment: "Opens the subscription page")
-        }
-        .buttonStyle(.mainAction)
-        .controlSize(.large)
-      }
+      Text(
+        "Certificates need a subscription", tableName: "Certificates",
+        comment: "On a certificate a learner earned without a subscription"
+      )
+      .typeStyle(.reading)
+      .foregroundStyle(.mutedForeground)
+      .multilineTextAlignment(.center)
       .padding(.top, 18)
     } else if name.isEmpty || isEditingName {
       CertificateNameEditor(name: $nameDraft, current: name) {
@@ -254,12 +246,29 @@ struct CertificateCeremony: View {
     .foregroundStyle(.mutedForeground)
   }
 
-  private var continueButton: some View {
-    Button(action: close) {
-      Text("Continue", tableName: "Certificates", comment: "Closes the certificate's award moment")
+  /// A locked certificate's gate makes Subscribe the main action, and Continue steps aside.
+  @ViewBuilder
+  private var barButtons: some View {
+    if top.locked {
+      Button(action: close) {
+        Text(
+          "Continue", tableName: "Certificates", comment: "Closes the certificate's award moment")
+      }
+      .buttonStyle(.outline)
+
+      Button(action: onSeePlus) {
+        Text("Subscribe", tableName: "Certificates", comment: "Opens the subscription page")
+      }
+      .buttonStyle(.mainAction)
+      .keyboardShortcut(.defaultAction)
+    } else {
+      Button(action: close) {
+        Text(
+          "Continue", tableName: "Certificates", comment: "Closes the certificate's award moment")
+      }
+      .buttonStyle(.mainAction)
+      .keyboardShortcut(.defaultAction)
     }
-    .buttonStyle(.mainAction)
-    .keyboardShortcut(.defaultAction)
   }
 
   private var title: String {

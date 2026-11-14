@@ -71,6 +71,8 @@ enum ScheduleTime {
   }
 
   static let everyDay = Array(0..<7)
+  /// How every list of the week reads, whatever the region's first weekday (Sunday is 0).
+  static let mondayFirst = [1, 2, 3, 4, 5, 6, 0]
 
   private static let weekdays = [1, 2, 3, 4, 5]
 

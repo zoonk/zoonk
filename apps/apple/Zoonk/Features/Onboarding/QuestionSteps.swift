@@ -168,10 +168,21 @@ struct StepHeader: View {
   let title: Text
   var description: Text?
 
+  @Environment(\.onboardingAside) private var aside
+
+  /// Setup's steps put their titles at one height, chip or not; the same screens elsewhere, such
+  /// as About you in Settings, are pages, with nothing over their titles.
+  private var keepsChipRoom: Bool {
+    if case .planSoFar = aside { true } else { false }
+  }
+
   var body: some View {
     Section {
-      PageHeader(title, chip: subject.map { Chip(Text(verbatim: $0)) }, supporting: description)
-        .listRowBackground(Color.clear)
+      PageHeader(
+        title, chip: subject.map { Chip(Text(verbatim: $0)) }, keepsChipRoom: keepsChipRoom,
+        supporting: description
+      )
+      .listRowBackground(Color.clear)
     }
   }
 }
