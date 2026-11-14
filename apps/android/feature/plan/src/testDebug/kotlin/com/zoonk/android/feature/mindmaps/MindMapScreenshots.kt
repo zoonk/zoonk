@@ -38,6 +38,7 @@ import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.scaffold.unfoldBook
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import org.junit.Assume.assumeTrue
 import org.junit.Before
@@ -161,8 +162,8 @@ class MindMapScreenshots {
         name: String,
         bitmap: Bitmap,
     ) {
-        val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
-        file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        val file = File(folder, "$name.png")
+        writeRender(file, bitmap)
         println("Screenshot ${file.path}")
     }
 
