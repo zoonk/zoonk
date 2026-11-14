@@ -114,6 +114,7 @@ describe(findBareLatex, () => {
       "Set item_count = gene_reads // total_reads * 1_000_000 and call contar_ativos(status).",
       "Label reads >sample_A, sample_B and sample_1, matched to NM_000546.6.",
       "Mark it not_applicable or recorded_zero.",
+      "Open LaTeX_source.tex, build a NetworkX_graph and call getX_value.",
     ];
 
     expect(texts.flatMap((text) => find(text))).toStrictEqual([]);

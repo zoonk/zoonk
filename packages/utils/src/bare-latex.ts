@@ -11,7 +11,7 @@ import { type TextLayout } from "./text-flaws";
  * `myVar_1`, `API_key`, `CH_4`, `UTF_8`).
  */
 const RAW_SCRIPT =
-  /\S\^\S|[\^_]\{|(?:(?<![\p{L}_])|(?<=\p{Ll})(?=\p{Lu})|(?<=[Δδ]))\p{L}_[\p{L}\p{N}]+(?![\p{L}\p{N}_])|(?<![\p{L}_])\p{Ll}?\p{Lu}{2,3}_\p{Ll}\p{N}*(?![\p{L}\p{N}_])/u;
+  /\S\^\S|[\^_]\{|(?<![\p{L}_])(?:\p{Ll}{1,2}(?=\p{Lu})|[Δδ])?\p{L}_[\p{L}\p{N}]+(?![\p{L}\p{N}_])|(?<![\p{L}_])\p{Ll}?\p{Lu}{2,3}_\p{Ll}\p{N}*(?![\p{L}\p{N}_])/u;
 
 /** Trimming took the mark after this caret (`10^?`, `|x|^?`); a lone caret in quotes is a symbol. */
 const ENDING_CARET = /[\p{L}\p{N})\]}|]\^$/u;
