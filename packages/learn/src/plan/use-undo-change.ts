@@ -1,10 +1,10 @@
 "use client";
 
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
-import { useStillMounted } from "@zoonk/ui/hooks/still-here";
 import { safeAsync } from "@zoonk/utils/error";
 import { useTransition } from "react";
 import { useChangeSaveFailed } from "../_components/save-error";
+import { useStillMounted } from "../_utils/use-still-mounted";
 import { usePlanScreen } from "./plan-context";
 import { useReportEditorChange } from "./plan-editor-change-context";
 

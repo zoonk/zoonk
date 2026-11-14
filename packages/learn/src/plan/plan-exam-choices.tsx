@@ -3,7 +3,6 @@
 import { type ExamChoiceView } from "@zoonk/core/exams/choices/contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { RadioGroup, RadioGroupItem, RadioGroupOption } from "@zoonk/ui/components/radio-group";
-import { useStillMounted } from "@zoonk/ui/hooks/still-here";
 import { safeAsync } from "@zoonk/utils/error";
 import { SignpostIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -18,6 +17,7 @@ import {
   SuggestionResult,
   SuggestionSummary,
 } from "../_components/suggestion";
+import { useStillMounted } from "../_utils/use-still-mounted";
 import { ExamChoicePicks } from "./exam-choice-picks";
 import { ExamChoiceAnswers, useExamChoiceQuestion } from "./exam-choice-question";
 import { usePlanScreen } from "./plan-context";
