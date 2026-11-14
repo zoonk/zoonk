@@ -48,7 +48,10 @@ export function useFocusAfterMenuItem(finalFocus: FinalFocus) {
   };
 }
 
-/** Its layout effect runs as the popup mounts, before the overlay moves focus into itself. */
+/**
+ * Its layout effect runs as the popup mounts, before the overlay moves focus into itself, and lets
+ * the trigger go when the popup unmounts, after the overlay has read where focus returns.
+ */
 export function MenuOpenerNotice({
   onOpen,
 }: {
@@ -56,6 +59,7 @@ export function MenuOpenerNotice({
 }) {
   useLayoutEffect(() => {
     onOpen(getMenuTrigger(document.activeElement));
+    return () => onOpen(null);
   }, [onOpen]);
 
   return null;

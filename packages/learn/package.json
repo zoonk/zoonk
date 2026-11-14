@@ -131,6 +131,7 @@
     "./onboarding/skeletons": "./src/onboarding/onboarding-skeletons.tsx",
     "./onboarding/steps": "./src/onboarding/steps-flow.tsx",
     "./onboarding/understanding-start": "./src/onboarding/entry/understanding-start.ts",
+    "./keep-focus": "./src/_utils/use-keep-focus.ts",
     "./page": "./src/_components/page.tsx",
     "./plan/phase-name": "./src/plan/plan-phase-name.tsx",
     "./plan-diff": "./src/plan-diff/plan-effect-diff.tsx",
