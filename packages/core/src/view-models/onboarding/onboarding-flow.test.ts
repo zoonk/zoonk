@@ -615,7 +615,7 @@ describe("onboarding a new goal", () => {
     });
 
     await expect(getOnboarding({ goalId: learn.id })).resolves.toMatchObject({
-      onboarding: { quickTestMinutes: 2 },
+      onboarding: { quickTestMinutes: 4 },
     });
   });
 

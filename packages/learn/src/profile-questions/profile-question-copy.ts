@@ -58,30 +58,29 @@ export function useProfileQuestionTitle(question: ProfileQuestion): string {
   }
 }
 
-export function useProfileQuestionDescription(question: ProfileQuestion): string {
+export function useProfileQuestionDescription(question: ProfileQuestion): string | null {
   const t = useExtracted();
 
   switch (question) {
     case "work":
-      return t("We'll use situations from your day in your examples.");
-    case "tools":
-      return t("Pick up to 3. We'll use them in your examples.");
+      return t("We use this to pick examples you'll care about.");
     case "studies":
-      return t("Past or present, finished or not. It can be different from your work.");
+      return t("Past or present, finished or not. Pick up to 3.");
     case "conditions":
       return t(
-        "Optional. What you pick is saved to your profile so your buddy can adapt to you. You can remove it anytime in Settings.",
+        "Optional. We use what you pick to adapt the content to your needs. You can remove it anytime in Settings.",
       );
     case "learningSupport":
-      return t("Pick anything that helps. No label or diagnosis needed.");
-    case "addressForm":
-      return t("Your buddy and your feedback will talk to you this way. Lessons stay the same.");
+      return t("Pick anything that helps.");
+    case "tools":
     case "watch":
     case "listen":
     case "play":
     case "read":
     case "activities":
-      return t("Pick up to 3. We'll use them for examples in your lessons.");
+      return t("Pick up to 3.");
+    case "addressForm":
+      return t("We'll talk to you this way.");
     default:
       return question satisfies never;
   }

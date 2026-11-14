@@ -74,11 +74,11 @@ function ExamBar() {
   const { exam, hrefs } = useExamScreen();
 
   return (
-    <div className="contents lg:hidden">
-      <LearnPageBar back={{ href: hrefs.back }} root title={exam.examName}>
+    <LearnPageBar back={{ href: hrefs.back }} root title={exam.examName}>
+      <div className="contents lg:hidden">
         <ReportProblemMenu label={t("Exam options")} place="bar" screen="exam" />
-      </LearnPageBar>
-    </div>
+      </div>
+    </LearnPageBar>
   );
 }
 
@@ -124,7 +124,6 @@ function ExamNoticeDay() {
 
   return (
     <NoticeDatesCard
-      document={exam.examDocument}
       noSitting={exam.noSitting}
       noticeDay={exam.noticeDay}
       onUse={actions.setDate}

@@ -8,12 +8,8 @@ struct PlanPathSection: View {
   var focusTest: PlanFocusTestRow?
 
   var body: some View {
-    let phases = context.plan.roadPhases
-    let done = phases.filter { $0.state == .done }.count
-
     Section {
       focusTest
-      PlanStudyPlaceRows()
 
       if context.goal.kind == .language,
         let alphabet = store.languageUnits(goalId: context.goal.id).value?.alphabet
@@ -35,15 +31,7 @@ struct PlanPathSection: View {
     } header: {
       SectionTitle(
         Text(
-          "Your path", tableName: "Plan", comment: "Section of the plan's phases and chapters")
-      ) {
-        if phases.count > 1 {
-          Text(
-            "\(done) of \(phases.count) phases done", tableName: "Plan",
-            comment: "Phases done of the plan's phases"
-          )
-        }
-      }
+          "Your path", tableName: "Plan", comment: "Section of the plan's phases and chapters"))
     }
   }
 }
@@ -74,6 +62,7 @@ struct PlanPathRows: View {
     } icon: {
       Image(systemName: "flag")
     }
+    .chevronSlot()
 
     ForEach(phases.filter { $0.kind == .afterExam }) { phase in
       PlanPhaseRow(
@@ -132,6 +121,7 @@ private struct PlanPhaseRow: View {
       }
     } else if phase.chapters.isEmpty && phase.checkpoint == nil {
       header(byPlace: false, next: false)
+        .chevronSlot()
     } else {
       DisclosureGroup(isExpanded: expansion) {
         chapterRows
@@ -184,15 +174,6 @@ private struct PlanPhaseRow: View {
         checkpoint: checkpoint, explains: !brief, isLanguage: context.goal.kind == .language,
         today: context.plan.today)
     }
-
-    if phase.chapters.contains(where: \.isWritingAhead) {
-      Text(
-        "More lessons for this phase are being written.", tableName: "Plan",
-        comment: "Note under a phase whose lessons are still being written"
-      )
-      .typeStyle(.note)
-      .foregroundStyle(.mutedForeground)
-    }
   }
 
   /// The phase's own chapter: a language's unit, or a course's chapter the phase is named after.
@@ -243,7 +224,8 @@ private struct PlanPhaseRow: View {
       }
     } value: {
       VStack(alignment: isStacked ? .leading : .trailing, spacing: 2) {
-        if phase.lessonsTotal > 0 {
+        // A phase not started shows only its end.
+        if phase.lessonsTotal > 0, phase.state != .upcoming {
           Text(
             "\(phase.lessonsDone) / \(phase.lessonsTotal)", tableName: "Plan",
             comment: "Lessons done of a phase's lessons"
@@ -272,75 +254,41 @@ private struct PlanPhaseRow: View {
         "Not in your plan", tableName: "Plan", comment: "A phase the plan holds nothing of")
     case .lessons(let count):
       return Text(
-        "\(count) lessons were left out", tableName: "Plan",
-        comment: "A phase moved past with lessons set aside")
-    case .challenge:
-      return Text(
-        "Challenge left out", tableName: "Plan",
-        comment: "A phase moved past with only its challenge set aside")
-    case .noTimeForChallenge:
-      return Text(
-        "No time for this phase's challenge before your date", tableName: "Plan",
-        comment:
-          "On a phase of the learner's plan: the plan has no room for its challenge before their goal's date"
-      )
+        "\(count) lessons not studied", tableName: "Plan",
+        comment: "A phase the date passed with lessons not studied")
+    case .challenge, .noTimeForChallenge:
+      return context.goal.kind == .language
+        ? Text(
+          "The call isn't in your plan", tableName: "Plan",
+          comment: "A language phase whose closing call has no day in the plan")
+        : Text(
+          "The Trickster isn't in your plan", tableName: "Plan",
+          comment:
+            "A phase whose closing challenge has no day in the plan. The Trickster is the name of the challenge's character"
+        )
     case nil:
       return phase.state == .current && !isOpen ? resumes : nil
     }
   }
 
+  /// When its lessons continue; nothing while they're being written, which the learner can't act on.
   private var resumes: Text? {
-    let writing = phase.chapters.contains { $0.writing }
-    let challenge =
-      phase.checkpoint.flatMap { $0.state == .upcoming && $0.when == .date ? $0.date : nil }
-      .map { PlanDate.estimate($0, today: context.plan.today) }
-
-    if !writing && phase.lessonsDone < phase.lessonsTotal {
-      guard
-        let next = phase.chapters.filter({ $0.state != .done }).compactMap(\.nextDate).min()
-      else {
-        return nil
-      }
-
-      return next == context.plan.today
-        ? Text(
-          "Continues today", tableName: "Plan", comment: "When the current phase's lessons continue"
-        )
-        : Text(
-          "Continues \(PlanDate.text(next, today: context.plan.today))", tableName: "Plan",
-          comment: "When the current phase's lessons continue; the argument is a date like 'May 5'")
-    }
-
-    switch (writing, challenge) {
-    case (true, let date?):
-      return Text(
-        "More lessons on the way\u{00A0}· challenge \(date.text)", tableName: "Plan",
-        comment: "The current phase's lessons are being written; its challenge's date"
-      )
-      .accessibilityLabel(
-        Text(
-          "More lessons on the way\u{00A0}· challenge \(date.spoken)", tableName: "Plan",
-          comment: "The current phase's lessons are being written; its challenge's date"))
-    case (true, nil):
-      return Text(
-        "More lessons on the way", tableName: "Plan",
-        comment: "The current phase's lessons are being written")
-    case (false, let date?):
-      return Text(
-        "Lessons done\u{00A0}· challenge \(date.text)", tableName: "Plan",
-        comment: "The current phase's lessons are done; its challenge's date"
-      )
-      .accessibilityLabel(
-        Text(
-          "Lessons done\u{00A0}· challenge \(date.spoken)", tableName: "Plan",
-          comment: "The current phase's lessons are done; its challenge's date"))
-    case (false, nil):
+    guard phase.lessonsDone < phase.lessonsTotal,
+      let next = phase.chapters.filter({ $0.state != .done }).compactMap(\.nextDate).min()
+    else {
       return nil
     }
+
+    return next == context.plan.today
+      ? Text(
+        "Continues today", tableName: "Plan", comment: "When the current phase's lessons continue")
+      : Text(
+        "Continues \(PlanDate.text(next, today: context.plan.today))", tableName: "Plan",
+        comment: "When the current phase's lessons continue; the argument is a date like 'May 5'")
   }
 
   private var until: Text? {
-    guard let endDate = phase.endDate, phase.state == .current || phase.state == .upcoming,
+    guard let endDate = phase.untilDate, phase.state == .current || phase.state == .upcoming,
       !(isLast && phase.kind != .afterExam)
     else {
       return nil
@@ -409,6 +357,7 @@ private struct PlanChapterRow: View {
     } else {
       content
         .foregroundStyle(.mutedForeground)
+        .chevronSlot()
     }
   }
 
@@ -441,8 +390,8 @@ private struct PlanChapterRow: View {
   private var title: Text {
     if !chapter.skills.isEmpty {
       return Text(
-        "\(chapter.skills.count) skills you already know", tableName: "Plan",
-        comment: "A row of skills placement showed the learner knows")
+        "\(chapter.skills.count) topics you already know", tableName: "Plan",
+        comment: "A row of topics placement showed the learner knows")
     }
 
     return chapter.title.isEmpty
@@ -455,25 +404,19 @@ private struct PlanChapterRow: View {
   private var note: Text? {
     if chapter.testedOut && chapter.skills.isEmpty {
       return Text(
-        "Skipped because you already know it", tableName: "Plan",
+        "Skipped\u{00A0}· you already know it", tableName: "Plan",
         comment: "A chapter the learner tested out of")
     }
 
     if chapter.deeper {
       return Text(
-        "Going deeper into an earlier topic", tableName: "Plan",
-        comment: "A chapter that deepens an earlier one")
+        "More on an earlier topic", tableName: "Plan",
+        comment: "A chapter that goes further into an earlier one")
     }
 
-    if chapter.far && chapter.chapterId == nil {
-      return Text(
-        "Lessons on the way", tableName: "Plan", comment: "A far topic's lessons, not planned yet")
-    }
-
-    if chapter.writing && chapter.chapterId == nil {
-      return Text(
-        "Being written", tableName: "Plan",
-        comment: "A chapter whose lessons are still being written")
+    if chapter.chapterId == nil, chapter.far || chapter.writing {
+      return planNotReadyLine(
+        lessons: chapter.lessonsTotal, start: chapter.nextDate, today: context.plan.today)
     }
 
     return nil
@@ -577,7 +520,6 @@ struct PlanSyllabusSection: View {
     Section {
       SharedExamsNote(exams: syllabus.sharedExams)
       focusTest
-      PlanStudyPlaceRows()
 
       ForEach(choices) { choice in
         if let line = choice.followingLine {
@@ -653,9 +595,9 @@ private struct PlanChoiceLine: View {
   }
 }
 
-/// Phones list the study places nowhere else, so the path leads to the lessons already done and to
-/// the chapters' mind maps.
-private struct PlanStudyPlaceRows: View {
+/// Phones list the study places nowhere else, so the Plan's "More" leads to the lessons already
+/// done and to the chapters' mind maps.
+struct PlanStudyPlaceRows: View {
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(\.tabBarPlacement) private var tabBarPlacement
 
@@ -683,7 +625,7 @@ private struct PlanStudyPlaceRows: View {
 }
 
 /// Main's `PathLinkRow`: a quiet way out of the path, in the secondary color.
-private struct PlanPathLink: View {
+struct PlanPathLink: View {
   let systemImage: String
   @ViewBuilder let title: Text
 
@@ -750,6 +692,36 @@ struct PlanPathRow<Title: View, Value: View>: View {
   }
 }
 
+extension View {
+  /// A row without a chevron in a list where others have one keeps the chevron's slot, so values
+  /// end on one edge.
+  func chevronSlot() -> some View {
+    HStack(spacing: 12) {
+      self
+      DisclosureChevron()
+        .hidden()
+    }
+  }
+}
+
+/// A topic whose lessons aren't ready: how many it has and when it starts, else "Not ready yet".
+func planNotReadyLine(lessons: Int, start: String?, today: String) -> Text {
+  guard lessons > 0, let start else {
+    return Text("Not ready yet", tableName: "Plan", comment: "A topic whose lessons aren't ready")
+  }
+
+  if PlanDate.days(from: today, to: start) > 31 {
+    return Text(
+      "\(lessons) lessons\u{00A0}· starts in \(PlanDate.monthText(start, today: today))",
+      tableName: "Plan",
+      comment: "A topic not ready yet: its lessons and the month they start, like 'Jan'")
+  }
+
+  return Text(
+    "\(lessons) lessons\u{00A0}· starts \(PlanDate.text(start, today: today))", tableName: "Plan",
+    comment: "A topic not ready yet: its lessons and the day they start, like 'May 5'")
+}
+
 /// Mirrors main's `getChapterWindow`: four chapters from the one before the next.
 func planChapterWindow(states: [PlanChapter.State]) -> Range<Int> {
   let shown = 4
@@ -769,9 +741,18 @@ struct PlanChallengeLabel: View {
     Label {
       VStack(alignment: .leading, spacing: 2) {
         AccessibilityStack(alignment: .firstTextBaseline) {
-          Text("Phase challenge", tableName: "Plan", comment: "The challenge that closes a phase")
-            .foregroundStyle(.primary)
-            .frame(maxWidth: .infinity, alignment: .leading)
+          Group {
+            if isLanguage {
+              Text("Call", tableName: "Plan", comment: "The live call that closes a language phase")
+            } else {
+              Text(
+                "The Trickster", tableName: "Plan",
+                comment:
+                  "The challenge that closes a phase, named after its character, the Trickster")
+            }
+          }
+          .foregroundStyle(.primary)
+          .frame(maxWidth: .infinity, alignment: .leading)
 
           when?
             .foregroundStyle(.mutedForeground)
@@ -786,7 +767,7 @@ struct PlanChallengeLabel: View {
             } else {
               Text(
                 "Questions on this phase, with no hints", tableName: "Plan",
-                comment: "What a phase challenge is, under its row")
+                comment: "What the Trickster is, under its row")
             }
           }
           .typeStyle(.meta)

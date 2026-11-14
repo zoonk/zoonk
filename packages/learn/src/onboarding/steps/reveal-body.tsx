@@ -1,18 +1,14 @@
 "use client";
 
-import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { type PlanRevealDays } from "@zoonk/core/view-models/today/plan-reveal";
-import { Button } from "@zoonk/ui/components/button";
 import { CelebrationScope, useCelebration } from "@zoonk/ui/hooks/celebration";
 import { BEAT_MS } from "@zoonk/ui/lib/motion";
 import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
-import { EnterButton } from "../../_components/enter-button";
 import { SuccessEyebrow } from "../../_components/eyebrow";
 import { PageSectionTitle } from "../../_components/page";
-import { ChangeSaveError } from "../../_components/save-error";
 import { StepOpenFailed } from "../../_components/step-open-failed";
 import { BuddyArt } from "../../buddies/buddy-art";
 import { type LearnBuddy } from "../../buddies/use-buddy-name";
@@ -23,16 +19,23 @@ import { PlanEditor } from "../../plan/plan-editor";
 import { type PlanEditorSection } from "../../plan/plan-editor-sections";
 import { type DayStep } from "../../session/session-types";
 import { isFinished } from "../../today/today-queue";
-import { OnboardingColumn, OnboardingTitle } from "../onboarding-frame";
+import {
+  OnboardingActions,
+  OnboardingColumn,
+  OnboardingPrimaryButton,
+  OnboardingSecondaryButton,
+  OnboardingTitle,
+} from "../onboarding-frame";
 import { SavePlanNote } from "../save-plan-note";
 import { UsualStructureNote } from "./notice-reading";
-import { AreaWeights, PlanChapterList, PlanPhasesBar } from "./plan-shape";
+import { PlanChapterList, PlanPhasesBar } from "./plan-shape";
 import { RevealCoverage } from "./reveal-coverage";
-import { RevealDayOpener, RevealToday, RevealWeek, findRevealStart } from "./reveal-days";
+import { RevealDayOpener, RevealToday, findRevealStart } from "./reveal-days";
 import { RevealNoticeDay } from "./reveal-notice-day";
 import { RevealReadouts } from "./reveal-readouts";
+import { RevealWeek } from "./reveal-week";
 
-/** Zu cheers on the moment's last beat, after the check, the count and "Start here". */
+/** Zu cheers on the moment's last beat, after the check and "Start here". */
 function RevealBuddy({ buddy }: { buddy: LearnBuddy | null }) {
   return (
     <BuddyArt
@@ -56,10 +59,7 @@ function PlanCreated() {
   );
 }
 
-/**
- * Pinned to the bottom on phones and tablets, where the plan scrolls under it, and beside the hero
- * from `lg`. Start works from the moment's first frame.
- */
+/** Start works from the moment's first frame. */
 function RevealActions({
   failure,
   isGuest,
@@ -81,31 +81,26 @@ function RevealActions({
   const t = useExtracted();
 
   return (
-    <div
-      className={cn(
-        "bg-background sticky bottom-0 -mx-4 flex flex-col gap-2 border-t px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]",
-        "lg:static lg:col-2! lg:row-start-1 lg:mx-0 lg:w-56 lg:self-start lg:border-t-0 lg:p-0",
-      )}
-      data-slot="reveal-actions"
+    <OnboardingActions
+      failed={failure === "save"}
+      note={
+        <>
+          {failure === "open" && <StepOpenFailed />}
+          {isGuest && <SavePlanNote className="text-left lg:text-right" signUpHref={signUpHref} />}
+        </>
+      }
     >
-      {failure === "save" && <ChangeSaveError />}
-      {failure === "open" && <StepOpenFailed />}
+      <OnboardingSecondaryButton aria-haspopup="dialog" onClick={onAdjust}>
+        {t("Adjust")}
+      </OnboardingSecondaryButton>
 
-      <div className="flex gap-2 lg:flex-col-reverse">
-        <Button className="flex-1 lg:flex-none" onClick={onAdjust} size="lg" variant="outline">
-          {t("Adjust")}
-        </Button>
-
-        {/* A submit, so a press before the page hydrates starts once it does. */}
-        <form action={() => onStart()} className="contents">
-          <EnterButton busy={pending} className="flex-2 lg:flex-none" size="lg" type="submit">
-            {started ? t("Continue") : t("Start")}
-          </EnterButton>
-        </form>
-      </div>
-
-      {isGuest && <SavePlanNote className="lg:text-right" signUpHref={signUpHref} />}
-    </div>
+      {/* A submit, so a press before the page hydrates starts once it does. */}
+      <form action={() => onStart()} className="contents">
+        <OnboardingPrimaryButton busy={pending} type="submit">
+          {started ? t("Continue") : t("Start")}
+        </OnboardingPrimaryButton>
+      </form>
+    </OnboardingActions>
   );
 }
 
@@ -126,7 +121,6 @@ type RevealBodyProps = {
   onStart: () => Promise<boolean>;
   reveal: PlanRevealDays | null;
   signUpHref: string;
-  syllabus: SyllabusView | null;
 };
 
 function RevealColumn({
@@ -137,7 +131,6 @@ function RevealColumn({
   openStep,
   reveal,
   signUpHref,
-  syllabus,
 }: RevealBodyProps & {
   markRevealed: () => Promise<boolean>;
   openStep: ((step: DayStep) => Promise<boolean>) | null;
@@ -182,21 +175,26 @@ function RevealColumn({
 
   return (
     <OnboardingColumn
-      className="gap-8 lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:content-start lg:gap-x-10 lg:*:col-span-2"
+      bar={
+        <RevealActions
+          failure={startFailure}
+          isGuest={isGuest}
+          onAdjust={() => setEditor({ open: true, section: null })}
+          onStart={start}
+          pending={starting}
+          signUpHref={signUpHref}
+          started={started}
+        />
+      }
+      className="gap-8"
       rail={
-        <>
-          <RevealRailBlock title={t("What fits")}>
-            <RevealCoverage syllabus={syllabus} />
-          </RevealRailBlock>
-
-          <RevealRailBlock title={t("Choices")}>
-            <PlanChoices />
-          </RevealRailBlock>
-        </>
+        <RevealRailBlock title={t("Choices")}>
+          <PlanChoices />
+        </RevealRailBlock>
       }
       wide
     >
-      <header className="flex min-w-0 flex-col gap-5 pt-2 lg:col-1! lg:row-start-1">
+      <header className="flex min-w-0 flex-col gap-5 pt-2">
         <div className="flex items-start justify-between gap-4">
           <div className="flex min-w-0 flex-col gap-1">
             <PlanCreated />
@@ -206,6 +204,7 @@ function RevealColumn({
         </div>
 
         <RevealReadouts />
+        <RevealCoverage onAddTime={() => setEditor({ open: true, section: "time" })} />
 
         <PlanChoiceLines
           choices={plan.examChoices}
@@ -223,22 +222,10 @@ function RevealColumn({
         {plan.notice === "usual" && <UsualStructureNote />}
       </div>
 
-      <AreaWeights syllabus={syllabus} />
-
       <PlanEditor
         onOpenChange={(open) => setEditor({ ...editor, open })}
         open={editor.open}
         section={editor.section}
-      />
-
-      <RevealActions
-        isGuest={isGuest}
-        onAdjust={() => setEditor({ open: true, section: null })}
-        failure={startFailure}
-        onStart={start}
-        pending={starting}
-        signUpHref={signUpHref}
-        started={started}
       />
     </OnboardingColumn>
   );

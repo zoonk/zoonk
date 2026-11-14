@@ -46,7 +46,7 @@ export default async function AboutYouPage() {
   const t = await getExtracted();
 
   return (
-    <Page className="max-w-form">
+    <Page measure="form">
       <SectionPageHeader title={t("About you")} />
 
       <p className="text-muted-foreground -mt-4 text-sm text-pretty md:mt-0">

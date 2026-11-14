@@ -4,11 +4,15 @@ enum TricksterExpression: CaseIterable, Hashable, Sendable {
   case sly, smug, defeated
 
   var poses: [CharacterPart: PartPose] {
+    // The shield's fracture shows only once it broke, and its glint only while it passes.
     switch self {
     case .sly:
-      [:]
+      [.shieldFracture: .hidden, .shieldGlint: .hidden]
     case .smug:
-      [.crown: PartPose(rotate: -7), .tail: PartPose(rotate: -5)]
+      [
+        .crown: PartPose(rotate: -7), .tail: PartPose(rotate: -5), .shieldFracture: .hidden,
+        .shieldGlint: .hidden,
+      ]
     case .defeated:
       [
         .armLeft: PartPose(rotate: -22),
@@ -16,6 +20,9 @@ enum TricksterExpression: CaseIterable, Hashable, Sendable {
         .body: PartPose(rotate: 5, scale: [1.03, 0.95]),
         .crown: PartPose(rotate: -18, translate: [-3, 8]),
         .tail: PartPose(rotate: 16),
+        .shieldLeft: PartPose(rotate: -70, translate: [5, 21]),
+        .shieldRight: PartPose(rotate: 82, translate: [16, 24]),
+        .shieldGlint: .hidden,
       ]
     }
   }
@@ -36,9 +43,10 @@ private let ink = ArtPaint.color(Color(art: 0x2a1260))
 private let pupilInk = ArtPaint.color(Color(art: 0x16123a))
 private let violet = ArtPaint.color(Color(art: 0x7c3aed))
 
-/// `holdsSign` while he's the star of a challenge he hasn't lost.
+/// He carries a shield the learner's right answers crack (`cracks`: none, one or two) and a win
+/// breaks in two.
 struct TricksterArt: CharacterArt {
-  var holdsSign = false
+  var cracks = 0
 
   var viewBox: CGRect { CGRect(x: 0, y: 0, width: 160, height: 160) }
   var overflow: CGFloat { 0.1 }
@@ -74,16 +82,13 @@ struct TricksterArt: CharacterArt {
           opacity: 0.45)
         head.fill(ArtShape.circle(93, 92, 2), .color(.white), opacity: 0.35)
 
-        if holdsSign {
-          questionSign(head)
-        }
-
         head.part(.face, pivot: CGPoint(x: 70, y: 104)) {
           TricksterFaceArt(expression: face).draw($0)
         }
         head.part(.crown, pivot: CGPoint(x: 51, y: 66), crown)
       }
     }
+    shield(painter)
   }
 
   private func tail(_ painter: ArtPainter) {
@@ -120,22 +125,69 @@ struct TricksterArt: CharacterArt {
     }
   }
 
-  /// The "?" sign on a stick. It turns around his left shoulder, as the arm holding it does, so an
-  /// act moves both together.
-  private func questionSign(_ painter: ArtPainter) {
-    let stick = ArtPaint.color(Color(art: 0xc4b5fd))
-
-    painter.part(.sign, pivot: CGPoint(x: 46, y: 116)) { sign in
-      sign.group(ArtShape.rotation(-14, 30, 120)) { board in
-        board.stroke(svg("M30 124 V104"), stick, width: 3, cap: .round)
-        board.fill(ArtShape.circle(30, 96, 13), .color(Color(art: 0xfbfaff)))
-        board.stroke(ArtShape.circle(30, 96, 13), stick, width: 1.8)
-        board.stroke(
-          svg("M25.5 92.5 C25.5 86.5 34.5 86.5 34.5 92 C34.5 95.5 30 96 30 99.5"), violet,
-          width: 2.6, cap: .round)
-        board.fill(ArtShape.circle(30, 103.5, 1.6), violet)
+  /// On top of the figure. Each half draws the whole shield under its own clip, so a half keeps its
+  /// marks as it falls; the clips overlap by a hair along the fracture, so the whole shows no seam.
+  private func shield(_ painter: ArtPainter) {
+    painter.part(.shield, pivot: CGPoint(x: 29, y: 117.5)) { shield in
+      shield.part(.shieldLeft, pivot: CGPoint(x: 18.6, y: 116.4)) { half in
+        half.clipped(
+          to: svg(
+            "M0 86 L31.6 86 L31.6 90.8 L26.4 103.6 L32.8 112.9 L25.2 123.3 L29.3 145.4 L29.3 150 L0 150 Z"
+          )
+        ) { wholeShield($0) }
       }
-      sign.fill(ArtShape.ellipse(34, 121, 6.5, 7), violet)
+      shield.part(.shieldRight, pivot: CGPoint(x: 39.4, y: 116.4)) { half in
+        half.clipped(
+          to: svg(
+            "M60 86 L31 86 L31 90.8 L25.8 103.6 L32.2 112.9 L24.6 123.3 L28.7 145.4 L28.7 150 L60 150 Z"
+          )
+        ) { wholeShield($0) }
+      }
+      shield.clipped(to: Self.rim) { rim in
+        rim.part(.shieldGlint, pivot: CGPoint(x: 29, y: 117.5)) {
+          $0.fill(svg("M22 88 L31 88 L21 148 L12 148 Z"), .color(.white))
+        }
+      }
+    }
+  }
+
+  private static let rim = svg(
+    "M9.3 98.4 Q29 92 48.7 98.4 L48.7 115.2 Q48.7 132.6 29 143 Q9.3 132.6 9.3 115.2 Z")
+
+  private func wholeShield(_ painter: ArtPainter) {
+    let gold = ArtPaint.color(Color(art: 0xc7861c))
+    let face = svg(
+      "M13.9 102 Q29 97.3 44.1 102 L44.1 115.2 Q44.1 129.1 29 137.7 Q13.9 129.1 13.9 115.2 Z")
+
+    painter.fill(
+      Self.rim,
+      .linear(Gradient(art: (0xfff0b8, 0, 1), (0xf5b52e, 1, 1)), start: .top, end: .bottom))
+    painter.stroke(Self.rim, gold, width: 2.1, join: .round)
+    painter.fill(face, .color(Color(art: 0xf3edff)))
+    painter.stroke(face, gold, width: 1.4)
+    painter.stroke(
+      svg("M23.9 110.6 C23.9 103.8 34.1 103.8 34.1 110.1 C34.1 114 29 114.5 29 118.4"), violet,
+      width: 3, cap: .round)
+    painter.fill(ArtShape.circle(29, 123.6, 1.9), violet)
+    painter.stroke(
+      svg("M12.3 100.6 Q19.7 98 26.7 97.1"), .color(.white), width: 1.7, opacity: 0.75,
+      cap: .round)
+
+    if cracks >= 1 {
+      painter.stroke(
+        svg("M42.5 96.9 L38.3 103.1 L41.3 108.2"), ink, width: 1.5, cap: .round, join: .round)
+    }
+
+    if cracks >= 2 {
+      painter.stroke(
+        svg("M9.7 121.5 L16 119.4 L15.3 114 L19.3 112"), ink, width: 1.5, cap: .round,
+        join: .round)
+    }
+
+    painter.part(.shieldFracture, pivot: CGPoint(x: 29, y: 117.5)) {
+      $0.stroke(
+        svg("M30.9 93.6 L26.1 103.6 L32.5 112.9 L24.9 123.3 L28.8 141.8"), ink, width: 1.5,
+        cap: .round, join: .round)
     }
   }
 }

@@ -19,7 +19,7 @@
   "conversation_calling": "7f60335c1c9802ffdae59354435ce1c411397c4d4a3beb25387f452b965c9b6a",
   "conversation_calls_need_account": "0e7de2a2250a143ad05fa13a30c5b78889b7fd843b3c9a132d4e03f63cf2db3c",
   "conversation_cancel": "7aea9dd4a9073dc8ea9b53772366039c318fd3bbf24a8e3c8656c4f23aad8025",
-  "conversation_challenge_gate_line": "f866d135fa38fd298d03254a520f07b96cbefd26226053dad0340ba69350a846",
+  "conversation_challenge_gate_line": "d820e588f0aca166a4ea0d32a7b232abf4242af5adb5253d37b685f6cb4cd5e4",
   "conversation_challenge_gate_title": "9711d81e4e23b481041b36ccc50b5a0719d24913c601e1f9f13a980c8549edd1",
   "conversation_challenge_passed": "83ba98fc26de1805c2c9e11fce46abc979a69a3009c034cf6808bb97faf6a0cb",
   "conversation_character_detail": "f22dde1f315cdb103794fd7ad778aa918817d3699e3ff2e1f17504b0377e551a",
@@ -72,7 +72,7 @@
   "conversation_listen_then_answer": "b65178fd2bf029d7d60a32c266ac306de6edec9e1f04e29e6df67f20b79a5405",
   "conversation_listen_to": "7056c1650a538f2706a4ed515b1a35a0f34eb88eed074c4e37003ac7ab0ddde0",
   "conversation_listening": "3352e8f2664bbfce3c93d5ff249eda76b4d48741e483b026126f71671b255743",
-  "conversation_longer_calls_gate": "e5924b7e53d79bfd931e726806fdbab5ae14230a468bf15d01f609c9ae2a7d4d",
+  "conversation_longer_calls_gate": "61a39d2ad80645f9ae6b54b9cfdfbe95a95aebbdcce1c82f6465d1d56b938dce",
   "conversation_mic_off": "84efb1464286d4044991fafb48a954be258d5a1f415e8c92294b52576ebefc47",
   "conversation_minutes_range": "75ce8408bc9dcd8cdbe5ca6abf8925ca91525f6b9922f9b4241749716a1dda0f",
   "conversation_mock_band_ielts": "626f48eaf9e06c8ea4b62ec6dac78e35e23417d025531cca8773f95537d45b25",
@@ -186,7 +186,7 @@
     <string name="conversation_start">会話を始める</string>
     <string name="conversation_start_failed">会話を開始できませんでした。少し待ってから、もう一度試してください。</string>
     <string name="conversation_challenge_gate_title">この会話にはサブスクリプションが必要です</string>
-    <string name="conversation_challenge_gate_line">この会話をしなくても学習計画は続けられます。</string>
+    <string name="conversation_challenge_gate_line">これがなくても学習計画を進められます。</string>
     <!-- The microphone permission was denied; the character's name. -->
     <string name="conversation_mic_off">%1$sさんと声で話すには、設定でマイクの使用を許可してください。文字入力でも会話できます。</string>
     <!-- Starts the call without the microphone, answering by typing. -->
@@ -286,7 +286,7 @@
     <!-- Who the practice call is with, such as "with Lucía · Waiter". -->
     <string name="conversation_practice_with">%1$sさんと · %2$s</string>
     <string name="conversation_call_length">会話時間</string>
-    <string name="conversation_longer_calls_gate">長めの会話にはサブスクリプションが必要です</string>
+    <string name="conversation_longer_calls_gate">長めの会話練習にはサブスクリプションが必要です</string>
     <string name="conversation_opens_when_ready">準備ができ次第、会話画面が開きます。</string>
     <string name="conversation_get_ready">始める</string>
     <string name="conversation_get_ready_description">このユニットの内容について、AIキャラクターと音声で短い会話をします。</string>

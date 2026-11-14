@@ -12,6 +12,7 @@ import { type MockFundingView } from "./mock-funding-contract";
 import { type PlanNumbers } from "./numbers-contract";
 import { type LearnerPlanOperation, type PlanOperation } from "./plan-contract";
 import { type PlanCourseView } from "./plan-course-contract";
+import { type PlanChangeQuote } from "./plan-decision-contract";
 import { type ToolChoice, type ToolSystem } from "./plan-tools-contract";
 import { type PlanEffect } from "./planner/plan-effect";
 import {
@@ -48,6 +49,7 @@ export type PlanChangeView = {
   lessonsSkipped: number;
   officialDate: { date: string; source: string | null } | null;
   operations: PlanOperation[];
+  quote: PlanChangeQuote | null;
   /** Null when the app words the change from `kind`, `operations` and `effect`. */
   reason: string | null;
   seen: boolean;
@@ -167,7 +169,7 @@ export type MockScheduleView = {
 };
 
 export type PlanView = {
-  access: { freeUntil: string | null; freeWeekOver: boolean; mocksRequirePlus: boolean };
+  access: { freeUntil: string | null; mocksRequirePlus: boolean };
   areas: {
     focusPart: string | null;
     focused: boolean;

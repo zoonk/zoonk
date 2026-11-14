@@ -4,22 +4,27 @@ import {
   type FocusTestOffer,
   type FocusTestSitting,
 } from "@zoonk/core/learner/placement/focus-test-contract";
+import { SkipForwardIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { ChangeSaveError } from "../_components/save-error";
 import {
+  OnboardingActions,
   OnboardingColumn,
   OnboardingDescription,
-  OnboardingFooter,
   OnboardingHeading,
   OnboardingPrimaryButton,
   OnboardingSecondaryButton,
   OnboardingSubject,
   OnboardingTitle,
 } from "../onboarding/onboarding-frame";
-import { FocusTestHowItWorks } from "./focus-test-how-it-works";
+import { TestOutcome } from "../onboarding/test-outcome";
 import { type FocusTestHost } from "./focus-test-result";
 import { type Pressed } from "./use-focus-test";
-import { useFocusTestTitle, useSeeResultLabel, useSittingTime } from "./use-focus-test-texts";
+import {
+  useFocusTestLine,
+  useFocusTestTitle,
+  useSeeResultLabel,
+  useTestTime,
+} from "./use-focus-test-texts";
 
 export function FocusTestInvitation({
   failed,
@@ -40,44 +45,36 @@ export function FocusTestInvitation({
 }) {
   const t = useExtracted();
   const title = useFocusTestTitle();
-  const { about } = useSittingTime();
+  const line = useFocusTestLine();
+  const time = useTestTime();
 
   return (
-    <OnboardingColumn>
+    <OnboardingColumn
+      bar={
+        <OnboardingActions failed={failed}>
+          <OnboardingSecondaryButton
+            busy={pressed === "other"}
+            disabled={pressed === "main"}
+            icon={host === "onboarding" ? <SkipForwardIcon aria-hidden="true" /> : undefined}
+            onClick={onSkip}
+          >
+            {host === "onboarding" ? t("Skip for now") : t("Not now")}
+          </OnboardingSecondaryButton>
+          <OnboardingPrimaryButton
+            busy={pressed === "main"}
+            disabled={pressed === "other"}
+            onClick={onStart}
+          >
+            {t("Start")}
+          </OnboardingPrimaryButton>
+        </OnboardingActions>
+      }
+    >
       <OnboardingHeading>
-        <OnboardingSubject position={about(next.minutes)}>{t("Focus test")}</OnboardingSubject>
+        <OnboardingSubject position={time.whole(next.minutes)}>{t("Focus test")}</OnboardingSubject>
         <OnboardingTitle>{title(suggestsFocus)}</OnboardingTitle>
-        <OnboardingDescription>
-          {suggestsFocus
-            ? t({
-                description:
-                  "Under the headline “Find out where to focus”. Says what the Focus test is, then why it helps: the study plan leaves out lessons on what the learner already knows.",
-                message:
-                  "Quick questions on your exam's subjects. Your plan skips what you already know, so your time goes where you need it most.",
-              })
-            : t("Quick questions on your exam's subjects. Your plan skips what you already know.")}
-        </OnboardingDescription>
+        <OnboardingDescription>{line.offer(suggestsFocus)}</OnboardingDescription>
       </OnboardingHeading>
-
-      <FocusTestHowItWorks suggestsFocus={suggestsFocus} />
-
-      <OnboardingFooter>
-        {failed && <ChangeSaveError />}
-        <OnboardingPrimaryButton
-          busy={pressed === "main"}
-          disabled={pressed === "other"}
-          onClick={onStart}
-        >
-          {t("Start the test")}
-        </OnboardingPrimaryButton>
-        <OnboardingSecondaryButton
-          busy={pressed === "other"}
-          disabled={pressed === "main"}
-          onClick={onSkip}
-        >
-          {host === "onboarding" ? t("Skip for now") : t("Not now")}
-        </OnboardingSecondaryButton>
-      </OnboardingFooter>
     </OnboardingColumn>
   );
 }
@@ -98,13 +95,24 @@ export function FocusTestResume({
   sitting: FocusTestSitting;
 }) {
   const t = useExtracted();
-  const { aboutLeft } = useSittingTime();
+  const time = useTestTime();
   const seeResult = useSeeResultLabel();
 
   return (
-    <OnboardingColumn>
+    <OnboardingColumn
+      bar={
+        <OnboardingActions failed={failed}>
+          <OnboardingSecondaryButton busy={pressed === "other"} onClick={onSeeResult}>
+            {seeResult}
+          </OnboardingSecondaryButton>
+          <OnboardingPrimaryButton autoFocus disabled={pressed === "other"} onClick={onContinue}>
+            {t("Continue")}
+          </OnboardingPrimaryButton>
+        </OnboardingActions>
+      }
+    >
       <OnboardingHeading>
-        <OnboardingSubject position={aboutLeft(sitting.minutes)}>
+        <OnboardingSubject position={time.left(sitting.minutes)}>
           {t("Focus test")}
         </OnboardingSubject>
         <OnboardingTitle>{t("Continue your test")}</OnboardingTitle>
@@ -118,16 +126,6 @@ export function FocusTestResume({
           })}
         </OnboardingDescription>
       </OnboardingHeading>
-
-      <OnboardingFooter>
-        {failed && <ChangeSaveError />}
-        <OnboardingPrimaryButton autoFocus disabled={pressed === "other"} onClick={onContinue}>
-          {t("Continue")}
-        </OnboardingPrimaryButton>
-        <OnboardingSecondaryButton busy={pressed === "other"} onClick={onSeeResult}>
-          {seeResult}
-        </OnboardingSecondaryButton>
-      </OnboardingFooter>
     </OnboardingColumn>
   );
 }
@@ -146,18 +144,13 @@ export function FocusTestEnded({
   const seeResult = useSeeResultLabel();
 
   return (
-    <OnboardingColumn>
-      <OnboardingHeading>
-        <OnboardingSubject>{t("Focus test")}</OnboardingSubject>
-        <OnboardingTitle>{t("Your answers are saved")}</OnboardingTitle>
-      </OnboardingHeading>
-
-      <OnboardingFooter>
-        {failed && <ChangeSaveError />}
-        <OnboardingPrimaryButton autoFocus busy={pending} onClick={onFinish}>
-          {seeResult}
-        </OnboardingPrimaryButton>
-      </OnboardingFooter>
-    </OnboardingColumn>
+    <TestOutcome
+      busy={pending}
+      continueLabel={seeResult}
+      failed={failed}
+      onContinue={onFinish}
+      subject={t("Focus test")}
+      title={t("Your answers are saved")}
+    />
   );
 }

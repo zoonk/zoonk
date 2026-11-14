@@ -3,7 +3,7 @@
 {
   "speaking_eyebrow": "5e52c71f212d8ef33f1fccc068fb926338e845b5a5a9c1ef20878eea0d65ae14",
   "speaking_facts": "d69fa7a857312fa3ea4c4425148bf3f9fad50bb47a8c0415e0ef9964ca4c799b",
-  "speaking_gate": "c2d2aac749df2c7cf6bdcbf0df6bccc90c218dfd8052644cab21f7be94f9acf8",
+  "speaking_gate": "e01f024d5b902ebd5788afe49c58c82453fee20cc31e9d1f22c8d8f0c51a5c2c",
   "speaking_last_at": "5f518f77112403dd773d888a2e23c7caae699e02dd2107d8c71434703b82162f",
   "speaking_last_below": "943589897ddc2d5ad815592c57e4d082b24e648ac35f6d4b3494ae5bc533425c",
   "speaking_last_near": "eeddfa43e664969b6b7909c21d6d4fd5f97c1ff3b30778c369dd38bb18d49989",
@@ -46,7 +46,7 @@
     <string name="speaking_tasks">タスク</string>
     <!-- The exam page's speaking section, with the paper's title beside it. -->
     <string name="speaking_section">スピーキング</string>
-    <string name="speaking_gate">スピーキングの練習にはサブスクリプションへの登録が必要です</string>
+    <string name="speaking_gate">スピーキングの練習にはサブスクリプションが必要です</string>
     <string name="speaking_opens_when_ready">カードの準備ができ次第、タスクが開きます。</string>
     <string name="speaking_no_time_month">このタスクを行うには、今月の残りの会話時間が足りません</string>
     <string name="speaking_no_time_day">このタスクを行うには、今日の残りの会話時間が足りません</string>

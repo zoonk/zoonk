@@ -72,7 +72,7 @@
   "conversation_listen_then_answer": "0f889368a407a900b3c12b946f01163cc45032900f2610caeb31215e989e3f25",
   "conversation_listen_to": "63d25aaeb774412fcc77dade0950af3f2b102548c43b372088de07126e1e349d",
   "conversation_listening": "2c4039d6fc1c3b303af48fc5291a9bac5f940e81b817222167b3d3212c2546e5",
-  "conversation_longer_calls_gate": "541a1f120b2df3c8e19a8a59960f9f99a9996ce704504f1e09c38bf9f91310f7",
+  "conversation_longer_calls_gate": "e99c3968b13c728aa57a96f530313c1298cab5fbfb5840e37b02d294300601ae",
   "conversation_mic_off": "0db93393b8e5bfaac7221a27de5f59c48ae0485434b812f8103776ba489d7714",
   "conversation_minutes_range": "e4a782a910fb0c64cf658d62bb996a1ddbe838374d5de680dfde9359498a9975",
   "conversation_mock_band_ielts": "8c9d48f95dec32fcb2fdc93c39fa353b1a92b4f98cb6eea77828e1775fab67c8",
@@ -288,7 +288,7 @@
     <!-- Who the practice call is with, such as "with Lucía · Waiter". -->
     <string name="conversation_practice_with">con %1$s · %2$s</string>
     <string name="conversation_call_length">Duración de la llamada</string>
-    <string name="conversation_longer_calls_gate">Las llamadas más largas requieren una suscripción</string>
+    <string name="conversation_longer_calls_gate">Necesitas una suscripción para hacer llamadas más largas</string>
     <string name="conversation_opens_when_ready">Tu llamada se abrirá en cuanto esté lista.</string>
     <string name="conversation_get_ready">Empezar</string>
     <string name="conversation_get_ready_description">Una llamada de voz breve con un personaje de IA sobre esta unidad.</string>

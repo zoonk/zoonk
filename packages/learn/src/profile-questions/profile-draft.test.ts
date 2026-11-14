@@ -78,14 +78,14 @@ describe(toggleProfilePick, () => {
     expect(result).toStrictEqual({ capped: true, draft: full });
   });
 
-  it("a pick clears an exclusive row", () => {
+  it("a pick clears the decline row", () => {
     const result = toggleProfilePick({
-      draft: draft({ exclusive: "none" }),
-      id: "excel",
-      question: "tools",
+      draft: draft({ exclusive: "ratherNot" }),
+      id: "student",
+      question: "work",
     });
 
-    expect(result.draft).toStrictEqual(draft({ picks: ["excel"] }));
+    expect(result.draft).toStrictEqual(draft({ picks: ["student"] }));
   });
 
   it("work keeps one status", () => {
@@ -255,13 +255,9 @@ describe(toProfileAnswer, () => {
     ).toStrictEqual({ declined: false, needs: [], note: null, soundEffects: false });
   });
 
-  it("Nothing in particular declines and turns sounds back on", () => {
+  it("an empty support screen declines and turns sounds back on", () => {
     expect(
-      toProfileAnswer({
-        draft: draft({ exclusive: "nothingInParticular" }),
-        memoryEnabled: true,
-        question: "learningSupport",
-      })?.answer,
+      toProfileAnswer({ draft: draft(), memoryEnabled: true, question: "learningSupport" })?.answer,
     ).toStrictEqual({ declined: true, needs: [], note: null, soundEffects: true });
   });
 
@@ -293,10 +289,14 @@ describe(toProfileAnswer, () => {
 });
 
 describe(toProfileDraft, () => {
-  it("a declined question shows its exclusive row", () => {
-    expect(toProfileDraft(view({ id: "watch", status: "declined" }))).toStrictEqual(
-      draft({ exclusive: "none" }),
+  it("a declined pick-one question shows its decline row", () => {
+    expect(toProfileDraft(view({ id: "addressForm", status: "declined" }))).toStrictEqual(
+      draft({ exclusive: "ratherNot" }),
     );
+  });
+
+  it("a declined question with several picks shows nothing picked", () => {
+    expect(toProfileDraft(view({ id: "watch", status: "declined" }))).toStrictEqual(draft());
   });
 
   it("saved answers fill the screen", () => {

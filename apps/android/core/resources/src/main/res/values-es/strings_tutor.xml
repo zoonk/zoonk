@@ -61,10 +61,10 @@
   "tutor_offer_country_description": "2db3f31de7e113e26b73c2e098eaf4336276193944d60a4b2a394ca6300f2634",
   "tutor_offer_essay_biweekly": "7b53d1ff825c8134a7e0de19371c60f07af76503712fd69bdbf83ab616e35be2",
   "tutor_offer_essay_final_weeks": "a995cc0a01b766f792b34951ba9f3e05b5d74c20de84f5e7e6a94b1becd650a2",
-  "tutor_offer_essay_gate": "3563fa68bb9bb6dd1230ea8d42ab1846bce6e48e8f1048fbf94db00e497b29fa",
+  "tutor_offer_essay_gate": "f071f2113f32eec08ddc5986500d7a29c260429c483bfd1c20d063d3f0709ffd",
   "tutor_offer_essay_weekly": "afe4c4b9c3557ff44d84613840c2fc86e30a2d8fbc76648a4aaef1c09100fbc8",
   "tutor_offer_goal": "c82a4788b6b89c5c791aa41114d56888b4c6190184bee9780a435d7f0ea97972",
-  "tutor_offer_goal_gate": "1b63ee7cab3d44408f84f02cb41a554fd3713c36ec7a482408e29581f3777e59",
+  "tutor_offer_goal_gate": "f3115d1300a20a2150eec3caf205426b2373d9b87e1d46b2df5ffc358c9e2424",
   "tutor_offer_home_country_saved": "43b9ac0cd8fb550f3e7abaeaa08a2185bd1c096bb5b5e822ba9434108eb85f5a",
   "tutor_offer_home_country_title": "aa2394b7ca333ea7ca129f1852904043166d072a6a0a680b463b8f913f9fa1a8",
   "tutor_offer_logbook": "5b36606af035780324d145030b8066834a30aa827bca337f05c3ee1ae304325b",
@@ -77,7 +77,7 @@
   "tutor_offer_mock": "f5fe6c41e972e71af3f26c6820ad8089e6e6f5244ee65bd457c9e85a30e66959",
   "tutor_offer_mock_by_subject": "0ee62fc543fcde3ac1dd062c0c655dafc7d60acb4ddb66c6decc41b7198d73fe",
   "tutor_offer_mock_description": "e2b4f342c2543b6e849c3f431f58354ed3cf51d15e5c16f78b21d1a517afadcc",
-  "tutor_offer_mock_gate": "47ad22873a165d9cb2656e79c9ea82943992d6cf0d6aeeed2999c28801d9e367",
+  "tutor_offer_mock_gate": "1955f3d015d9622941fb230971152abd07ce2d4290ae6e23242ac09d10cf8601",
   "tutor_offer_open": "46fd49386d6876f7a523aaa5144da41847a4003e2a9a054778c5542d00b17106",
   "tutor_offer_plus": "c32ba82af1d33e872af81535f06c9b9dd0a7a6b3d9505bfd4a88b1a87c21637a",
   "tutor_offer_plus_description": "436434d560aa04f4832bd2c6c4b5a03c71d52899e6964683450fe8644d17b9ef",
@@ -217,7 +217,7 @@
     <!-- The goal the learner may start, in quotes. -->
     <string name="tutor_offer_goal">“%1$s”</string>
     <!-- On that card when the free plan doesn't let the learner start another goal now: the lock can come from the goals they follow at the same time or from the new goals they started recently, so it names neither. Plus is the name of Zoonk's paid plan, not the word "more". -->
-    <string name="tutor_offer_goal_gate">Necesitas una suscripción para crear otro objetivo ahora</string>
+    <string name="tutor_offer_goal_gate">Ahora necesitas una suscripción para crear otro objetivo</string>
     <string name="tutor_offer_catalog_course">Un curso ya disponible en el catálogo</string>
     <string name="tutor_offer_chapter_test">Prueba: %1$s</string>
     <plurals name="tutor_offer_chapter_test_lessons">
@@ -235,14 +235,14 @@
     <string name="tutor_offer_mock_description">Cuando quieras: un día completo de examen o medio día</string>
     <!-- Kinds of mock exam the learner can take: a full exam day, half an exam day or one subject. -->
     <string name="tutor_offer_mock_by_subject">Cuando quieras: un día completo de examen, medio día o una materia</string>
-    <string name="tutor_offer_mock_gate">Necesitas una suscripción para hacer simulacros</string>
+    <string name="tutor_offer_mock_gate">Los simulacros requieren una suscripción</string>
     <!-- Describes the essay practice Plus offers in the plan, not an instruction to the learner. -->
     <string name="tutor_offer_essay_weekly">Práctica semanal en tu plan, con calificación de cada borrador.</string>
     <!-- Describes the essay practice Plus offers in the plan, not an instruction to the learner. -->
     <string name="tutor_offer_essay_biweekly">Práctica cada dos semanas en tu plan, con calificación de cada borrador.</string>
     <!-- Describes the essay practice Plus offers in the plan, not an instruction to the learner. -->
     <string name="tutor_offer_essay_final_weeks">Práctica en las últimas semanas antes del examen, con calificación de cada borrador.</string>
-    <string name="tutor_offer_essay_gate">Necesitas una suscripción para practicar redacción</string>
+    <string name="tutor_offer_essay_gate">La práctica de redacción requiere una suscripción</string>
     <string name="tutor_offer_mistakes">Cuaderno de errores</string>
     <plurals name="tutor_offer_mistakes_open">
         <item quantity="one">%d error por corregir, con práctica para repasarlo.</item>

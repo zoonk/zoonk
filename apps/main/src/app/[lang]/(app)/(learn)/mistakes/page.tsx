@@ -6,7 +6,6 @@ import { mistakeListInputSchema } from "@zoonk/core/mistakes/contract";
 import { listCurrentUserMistakes } from "@zoonk/core/mistakes/list-current-user";
 import { LearnPageBar } from "@zoonk/learn/bar";
 import { MistakesNotebook } from "@zoonk/learn/mistakes";
-import { INBOX_PAGE_CLASS } from "@zoonk/learn/page";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
@@ -103,7 +102,7 @@ async function NotebookSkeleton() {
     <DetailSkeleton
       aside={false}
       bar={<NotebookBar />}
-      className={INBOX_PAGE_CLASS}
+      measure="list"
       rows={3}
       tabs
       title={t("Mistakes notebook")}

@@ -20,25 +20,39 @@ struct BusyButton<Title: View>: View {
         action()
       }
     } label: {
-      if let icon, icon.trails {
-        HStack(alignment: .firstTextBaseline, spacing: 8) {
-          label
-          image(icon)
-        }
-      } else if let icon {
-        Label {
-          label
-        } icon: {
-          image(icon)
-        }
-      } else if isRow {
-        label.spinnerAtEnd(isBusy)
-      } else {
-        label.coveredBySpinner(isBusy)
-      }
+      BusyButtonLabel(isBusy: isBusy, icon: icon, isRow: isRow, label: label)
     }
     .environment(\.isBusy, isBusy)
     .accessibilityBusy(isBusy)
+  }
+}
+
+/// A main action's style leaves its icon off (`showsButtonIcon`), so its spinner covers the label.
+private struct BusyButtonLabel<Title: View>: View {
+  let isBusy: Bool
+  let icon: ActionIcon?
+  let isRow: Bool
+  let label: Title
+
+  @Environment(\.showsButtonIcon) private var showsIcon
+
+  var body: some View {
+    if let icon, showsIcon, icon.trails {
+      HStack(alignment: .firstTextBaseline, spacing: 8) {
+        label
+        image(icon)
+      }
+    } else if let icon, showsIcon {
+      Label {
+        label
+      } icon: {
+        image(icon)
+      }
+    } else if isRow {
+      label.spinnerAtEnd(isBusy)
+    } else {
+      label.coveredBySpinner(isBusy)
+    }
   }
 
   private func image(_ icon: ActionIcon) -> some View {
@@ -52,7 +66,8 @@ struct BusyButton<Title: View>: View {
 /// leads its label except `forward`, which trails it, and a busy button's spinner takes its place.
 enum ActionIcon: String {
   case addLessons = "text.badge.plus"
-  case back = "arrow.backward"
+  case archive = "archivebox"
+  case back = "chevron.backward"
   case call = "phone.fill"
   case certificate = "rosette"
   /// Commits what the learner entered or picked: check, confirm, save, apply.
@@ -61,8 +76,8 @@ enum ActionIcon: String {
   case dismiss = "xmark"
   case download = "square.and.arrow.down"
   case explain = "lightbulb"
-  /// Next, continue, see the result: it moves on.
-  case forward = "arrow.forward"
+  /// Next, continue, see the result: it moves on. A chevron, never an arrow (main's rule 6).
+  case forward = "chevron.forward"
   case notSure = "questionmark.circle"
   case notify = "bell"
   /// Starts or resumes something: a session, a lesson, a test, a mock, a task.
@@ -83,6 +98,10 @@ extension EnvironmentValues {
   /// A `BusyButton`'s action is running: a press does nothing, and its style shows neither the press
   /// nor a disabled look.
   @Entry var isBusy = false
+
+  /// A button shows at most its label and one icon, and a main action its label alone: its style
+  /// turns this off.
+  @Entry var showsButtonIcon = true
 }
 
 extension View {

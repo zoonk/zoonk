@@ -8,6 +8,8 @@ import { tabStorage } from "../_utils/device-storage";
 /** Tab-scoped marks survive the router's history.replaceState and a reload. */
 const APP_ENTRIES_KEY = "zoonk-app-entries";
 
+const markReaders = new Set<() => void>();
+
 function getMarks(): Record<string, unknown> {
   const marks = tabStorage.getJson(APP_ENTRIES_KEY);
 
@@ -89,6 +91,19 @@ function writeCurrentMark(fields: { name?: string; section?: string }): void {
     APP_ENTRIES_KEY,
     JSON.stringify({ ...marks, [entry.key]: { ...current, ...fields, path } }),
   );
+
+  for (const read of markReaders) {
+    read();
+  }
+}
+
+/**
+ * The page marks its section after the bars first read history, so until then nothing can tell
+ * which earlier pages share it: the readers keep the server's answer.
+ */
+function getMarkedEntry(navigation: Navigation | null): NavigationHistoryEntry | null {
+  const entry = navigation?.currentEntry ?? null;
+  return entry && isAppEntry(entry) ? entry : null;
 }
 
 /** The host calls it on each app page, grouping a section's pages by `section`. */
@@ -118,9 +133,10 @@ export function goBackTo(href: string): boolean {
 /** False without the Navigation API. */
 export function cameFromApp(): boolean {
   const navigation = getNavigation();
-  const index = navigation?.currentEntry?.index ?? 0;
+  const current = getMarkedEntry(navigation);
+  const index = current?.index ?? 0;
   const previous = index > 0 ? navigation?.entries()[index - 1] : null;
-  const section = getAppSection(navigation?.currentEntry ?? null);
+  const section = getAppSection(current);
 
   return previous
     ? isAppEntry(previous) && !(section !== undefined && getAppSection(previous) === section)
@@ -141,6 +157,8 @@ export function subscribeToHistory(onChange: () => void): () => void {
   };
 
   navigation?.addEventListener("currententrychange", notify, { signal: controller.signal });
+  markReaders.add(notify);
+  controller.signal.addEventListener("abort", () => markReaders.delete(notify));
   return () => controller.abort();
 }
 
@@ -153,10 +171,25 @@ function findAppEntryBehind(navigation: Navigation | null): NavigationHistoryEnt
   return entries.findLast((candidate) => isOtherAppPage({ entry: candidate, here, section }));
 }
 
-/** The name of the page `goBackToApp` returns to, when that page's bar named it. */
+/**
+ * The name of the page `goBackToApp` returns to: null when it returns to none (the link goes to
+ * its own page), and an empty string when that page's bar gave no name, so the link never shows
+ * another page's.
+ */
 export function appBackName(): string | null {
-  const mark = getAppMark(findAppEntryBehind(getNavigation()) ?? null);
-  return mark && "name" in mark && typeof mark.name === "string" ? mark.name : null;
+  const navigation = getNavigation();
+
+  if (!getMarkedEntry(navigation)) {
+    return null;
+  }
+
+  const mark = getAppMark(findAppEntryBehind(navigation) ?? null);
+
+  if (!mark) {
+    return null;
+  }
+
+  return "name" in mark && typeof mark.name === "string" ? mark.name : "";
 }
 
 /** Returns whether it found an app page; otherwise the link goes to its default. */

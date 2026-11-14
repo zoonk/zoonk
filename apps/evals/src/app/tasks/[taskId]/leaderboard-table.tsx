@@ -87,6 +87,10 @@ export function measuredColumns<Entry extends MeasuredEntry>(entries: Entry[]) {
   return { categoryColumns, cost, latencyP50, latencyP95, provider };
 }
 
+/**
+ * Covers its whole row: `LeaderboardTable`'s rows are its positioned box. The row has no chevron,
+ * which would move when "More columns" widens the table.
+ */
 export function ModelLink({
   children,
   modelId,
@@ -94,7 +98,7 @@ export function ModelLink({
 }: React.PropsWithChildren<{ modelId: string; taskId: string }>) {
   return (
     <Link
-      className="-my-2 inline-flex min-h-11 items-center font-medium underline-offset-4 hover:underline"
+      className="focus-visible:after:ring-ring/50 -my-2 flex min-h-11 items-center font-medium underline-offset-4 outline-none group-hover/row:underline after:absolute after:inset-0 focus-visible:after:ring-[3px] focus-visible:after:ring-inset"
       href={`/tasks/${taskId}/${encodeURIComponent(modelId)}`}
     >
       {children}
@@ -229,7 +233,7 @@ export function LeaderboardTable<Entry extends SortableEntry & { modelId: string
 
         <TableBody>
           {sortedEntries.map((entry, index) => (
-            <TableRow key={entry.modelId}>
+            <TableRow className="group/row hover:bg-muted/70 relative" key={entry.modelId}>
               {shownColumns.map((column) => (
                 <TableCell
                   className={cn(CELL_CLASS, column.cellClassName?.(entry))}

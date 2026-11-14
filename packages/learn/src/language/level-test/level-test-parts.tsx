@@ -5,13 +5,11 @@ import { Button } from "@zoonk/ui/components/button";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { MediaPending } from "@zoonk/ui/components/media-pending";
 import { useAudioKey } from "@zoonk/ui/hooks/keyboard";
-import { useCanRecord, useVoiceRecorder } from "@zoonk/ui/hooks/voice-recorder";
 import { cn } from "@zoonk/ui/lib/utils";
 import { HeadphonesIcon, PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { SURFACE_CLASS } from "../../_components/surface";
-import { RecordButton } from "../../speech/record-button";
 import {
   SpeechFailedNote,
   SpeechStatusIcon,
@@ -115,20 +113,18 @@ export function ListeningMessage({
 
 export function SpeakingPrompt({
   error,
-  onRecorded,
+  micAvailable,
   pending,
+  recording,
   sentence,
 }: {
   error: string | null;
-  onRecorded: (audio: Blob) => void;
+  micAvailable: boolean;
   pending: boolean;
+  recording: boolean;
   sentence: ReadyTest["next"] & { kind: "speaking" };
 }) {
   const t = useExtracted();
-  const canRecord = useCanRecord();
-  const handle = useCallback(({ audio }: { audio: Blob }) => onRecorded(audio), [onRecorded]);
-  const recorder = useVoiceRecorder({ onRecorded: handle });
-  const isRecording = recorder.status === "recording";
 
   return (
     <div className="flex flex-col items-center gap-5 text-center">
@@ -139,31 +135,19 @@ export function SpeakingPrompt({
         <p className="text-muted-foreground">{sentence.speaking.translation}</p>
       </div>
 
-      {canRecord && recorder.status !== "denied" ? (
-        <RecordButton
-          busy={recorder.status === "acquiring"}
-          className="w-full max-w-xs"
-          disabled={pending}
-          size="lg"
-          elapsedMs={recorder.elapsedMs}
-          onStart={() => void recorder.start()}
-          onStop={recorder.stop}
-          recording={isRecording}
-        />
-      ) : (
-        <p>{t("The microphone isn't available here. You can skip this part.")}</p>
-      )}
-
       <p aria-live="polite" className="text-muted-foreground text-sm">
-        {pending && t("Listening to what you said…")}
-        {!pending &&
-          isRecording &&
+        {!micAvailable && t("The microphone isn't available here. You can skip this part.")}
+        {micAvailable && pending && t("Listening to what you said…")}
+        {micAvailable &&
+          !pending &&
+          recording &&
           t({
             description: '"Stop" is the label of the record button.',
             message: "Recording… Press Stop when you're done.",
           })}
-        {!pending &&
-          !isRecording &&
+        {micAvailable &&
+          !pending &&
+          !recording &&
           (error ??
             t({
               description: '"Record" is the label of the record button.',

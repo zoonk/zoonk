@@ -27,10 +27,7 @@ async function FreePlanAction({ viewerState }: { viewerState: PlusViewerState })
 
   if (viewerState.status === "visitor") {
     return (
-      <Link
-        className={cn(buttonVariants({ size: "lg", variant: "outline" }), PLUS_CTA_CLASS)}
-        href="/start"
-      >
+      <Link className={cn(buttonVariants({ size: "lg" }), PLUS_CTA_CLASS)} href="/start">
         {t("Build my plan")}
       </Link>
     );

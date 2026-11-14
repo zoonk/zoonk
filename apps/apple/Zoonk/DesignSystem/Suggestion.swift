@@ -25,8 +25,8 @@ struct SuggestionMark: View {
   }
 }
 
-/// Main's `SuggestionLine`: a panel with the suggestion's mark, its summary in two lines at most,
-/// and one small action at its end; stacked, the whole summary and the action under it.
+/// Main's `SuggestionLine`: a panel with the suggestion's mark, its title in two lines at most, and
+/// one small action at its end; stacked, the whole title and the action under it.
 struct SuggestionLine<Mark: View, Summary: View, Action: View>: View {
   @Environment(\.stacksContent) private var isStacked
 
@@ -48,8 +48,7 @@ struct SuggestionLine<Mark: View, Summary: View, Action: View>: View {
           .accessibilityHidden(true)
 
         summary
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
+          .typeStyle(.body)
           .lineLimit(isStacked ? nil : 2)
           .frame(maxWidth: .infinity, alignment: .leading)
       }

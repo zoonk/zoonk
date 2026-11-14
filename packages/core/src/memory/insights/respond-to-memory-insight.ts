@@ -62,10 +62,12 @@ async function applyAnswer({
   answer,
   goalId,
   insight,
+  quote,
 }: {
   answer: Answer;
   goalId: string;
   insight: MemoryInsight;
+  quote: MemoryInsightAnswerInput["quote"];
 }): Promise<boolean> {
   const payload = readInsightPayload(insight.payload);
 
@@ -78,7 +80,7 @@ async function applyAnswer({
   const result = await decidePlanChange({
     changeId: payload.planChangeId,
     goalId,
-    input: { status: decision },
+    input: decision === "applied" ? { quote, status: decision } : { status: decision },
     trackAnalytics: false,
   });
 
@@ -122,7 +124,12 @@ export async function respondToMemoryInsight({
 
   const asksAgain =
     insight.goalId !== null &&
-    (await applyAnswer({ answer: input.status, goalId: insight.goalId, insight }));
+    (await applyAnswer({
+      answer: input.status,
+      goalId: insight.goalId,
+      insight,
+      quote: input.quote,
+    }));
 
   if (asksAgain) {
     const repriced = await toMemoryInsightView(insight);

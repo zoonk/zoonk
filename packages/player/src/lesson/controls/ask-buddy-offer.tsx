@@ -34,6 +34,7 @@ export function AskBuddyOffer({ reason }: { reason: "misses" | "pause" }) {
 
       <div className="flex flex-wrap gap-2">
         <Button
+          aria-haspopup={buddy.popup}
           className="pl-1.5"
           onClick={() => buddy.open("simpler")}
           size="sm"

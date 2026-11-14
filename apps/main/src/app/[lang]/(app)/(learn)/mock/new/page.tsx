@@ -16,7 +16,10 @@ export async function generateMetadata(): Promise<Metadata> {
 
 async function ChooserBar() {
   const t = await getExtracted();
-  return <LearnPageBar back={{ href: "/exam", label: t("Exam") }} root />;
+
+  return (
+    <LearnPageBar back={{ href: "/exam", label: t("Exam") }} root title={t("Take a mock exam")} />
+  );
 }
 
 const CHOOSER_BAR = <ChooserBar />;

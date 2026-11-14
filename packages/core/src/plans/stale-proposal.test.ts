@@ -6,11 +6,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { respondToMemoryInsight } from "../memory/insights/respond-to-memory-insight";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
+import { seenInsightQuote, seenQuote } from "./_test-utils/seen-quote";
 import { parsePlanChangePayload, toPlanChangePayload } from "./_utils/plan-change-payload";
 import { loadTodayPlanChange } from "./_utils/today-plan-change";
 import { createGoalPlan } from "./create-goal-plan";
 import { decidePlanChange } from "./decide-plan-change";
 import { PHASE_DATES_SOURCE } from "./plan-change-contract";
+import { type PlanChangeQuote } from "./plan-decision-contract";
 import { proposePlanChange } from "./propose-plan-change";
 
 /** A Monday in 2020, before the learning events other tests write, which estimates read. */
@@ -83,8 +85,13 @@ async function ageProposal(changeId: string, effect?: { lessonsAdded: number }) 
   return payload.effect;
 }
 
-function accept(goalId: string, changeId: string) {
-  return decidePlanChange({ changeId, goalId, input: { status: "applied" } });
+/** Accepts as an app showing `quote`, by default the one it holds right now. */
+async function accept(goalId: string, changeId: string, quote?: PlanChangeQuote | null) {
+  return decidePlanChange({
+    changeId,
+    goalId,
+    input: { quote: quote === undefined ? await seenQuote(changeId) : quote, status: "applied" },
+  });
 }
 
 async function readDailyMinutes(goalId: string) {
@@ -140,6 +147,54 @@ describe("a suggestion answered on a later day than it was priced", () => {
     await expect(readDailyMinutes(goal.id)).resolves.toBe(30);
   });
 
+  it("applies only the numbers the accepting app showed, after another app or a retry got today's", async () => {
+    const { goal } = await setup({ library: LONG, targetDate: null });
+    const changeId = await proposeLongerDays(goal.id);
+    await ageProposal(changeId, { lessonsAdded: 999 });
+    const shown = await seenQuote(changeId);
+
+    const first = await accept(goal.id, changeId, shown);
+    const today = first.status === "updated" ? first.change.quote : null;
+
+    expect(today).not.toBeNull();
+    expect(today).not.toStrictEqual(shown);
+
+    await expect(accept(goal.id, changeId, shown)).resolves.toMatchObject({
+      change: { quote: today, status: "proposed" },
+      status: "updated",
+    });
+
+    await expect(accept(goal.id, changeId, shown)).resolves.toMatchObject({
+      change: { quote: today, status: "proposed" },
+      status: "updated",
+    });
+
+    await expect(readDailyMinutes(goal.id)).resolves.toBe(12);
+
+    await expect(accept(goal.id, changeId, today)).resolves.toMatchObject({
+      change: { status: "applied" },
+      status: "updated",
+    });
+
+    await expect(readDailyMinutes(goal.id)).resolves.toBe(30);
+  });
+
+  it("applies nothing for a quote other than the change's, even when its numbers are today's", async () => {
+    const { goal } = await setup({ library: LONG, targetDate: null });
+    const changeId = await proposeLongerDays(goal.id);
+    const quote = await seenQuote(changeId);
+
+    await expect(
+      accept(goal.id, changeId, quote && { ...quote, studyDay: "2020-09-27" }),
+    ).resolves.toMatchObject({ change: { quote, status: "proposed" }, status: "updated" });
+
+    await expect(accept(goal.id, changeId, null)).resolves.toMatchObject({
+      change: { status: "proposed" },
+    });
+
+    await expect(readDailyMinutes(goal.id)).resolves.toBe(12);
+  });
+
   it("keeps a noticed pattern waiting when its change's numbers differ, and accepts it on the next answer", async () => {
     const { goal } = await setup({ library: LONG, targetDate: null });
     const changeId = await proposeLongerDays(goal.id);
@@ -152,8 +207,11 @@ describe("a suggestion answered on a later day than it was priced", () => {
       userId: goal.userId,
     });
 
-    const answer = () =>
-      respondToMemoryInsight({ input: { status: "accepted" }, insightId: insight.id });
+    const answer = async () =>
+      respondToMemoryInsight({
+        input: { quote: await seenInsightQuote(insight.id), status: "accepted" },
+        insightId: insight.id,
+      });
 
     await expect(answer()).resolves.toMatchObject({
       insight: {

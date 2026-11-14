@@ -57,7 +57,7 @@ export async function SubscriptionPlans({
 
   if (webSubscription?.status === "ready" && webSubscription.state === "unpaid") {
     return (
-      <Page className="max-w-form">
+      <Page measure="form">
         <SectionPageHeader title={t("Subscription")} />
 
         <PageSection>

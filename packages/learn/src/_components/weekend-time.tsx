@@ -9,12 +9,15 @@ export function WeekendTime({
   checked,
   children,
   className,
+  disabled = false,
   onCheckedChange,
   readOnly,
 }: {
   checked: boolean;
   children: React.ReactNode;
   className?: string;
+  /** No weekend day is studied, or only weekend days: the row keeps its place, so a day's pick moves nothing. */
+  disabled?: boolean;
   onCheckedChange: (checked: boolean) => void;
   readOnly?: boolean;
 }) {
@@ -24,21 +27,25 @@ export function WeekendTime({
   return (
     <div className="flex flex-col gap-3" data-slot="weekend-time">
       <div className="flex min-h-11 items-center justify-between gap-3">
-        <label className={cn("cursor-pointer", className)} htmlFor={switchId}>
+        <label
+          className={cn(disabled ? "text-muted-foreground" : "cursor-pointer", className)}
+          htmlFor={switchId}
+        >
           {t({
             description: "A switch to study a different amount of time a day on weekends.",
             message: "Different time on weekends",
           })}
         </label>
         <Switch
-          checked={checked}
+          checked={checked && !disabled}
+          disabled={disabled}
           id={switchId}
           onCheckedChange={onCheckedChange}
           readOnly={readOnly}
         />
       </div>
 
-      {checked && children}
+      {checked && !disabled && children}
     </div>
   );
 }

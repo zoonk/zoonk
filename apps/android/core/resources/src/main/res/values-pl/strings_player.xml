@@ -37,6 +37,7 @@
   "player_challenge_much_higher": "990e95953aaad7b96446561b0af026a5bb916550b580c3f8b6a72a36212053ae",
   "player_challenge_much_lower": "d7b4e4e105a0e54f21fa77c809193503e0bc86c92f622fb8262d61a9a2777ded",
   "player_challenge_no_change": "152e52058147e71d89f2d8a6c71488e2e30ceb95848035d8eb6b31d1615c8131",
+  "player_challenge_not_written_title": "b1e40e58f55944dbb19e6276a22c4a33adc5d3ebe3ddd2519dbbe2ca6231d3e2",
   "player_challenge_phase_fix": "91853d24e71dc7197245cbf6327e2326ea457878332c7c4522a60776b6583f7b",
   "player_challenge_phase_fix_line_1": "e89efaa29ce4ecc6d48e51f55e80a70af5f8516ce1f29f5b1bc1def99e084de1",
   "player_challenge_phase_plan": "b089cd8b774ebe1aa8b968bb581bec867262b229497e81fc72b8fe7ed2159c25",
@@ -46,10 +47,12 @@
   "player_challenge_phase_write_line_1": "3c695aaef7f2a07afd0c94a8b7cb4e2994ed22c097cd109a6866268c3bc168c6",
   "player_challenge_phase_write_line_2": "39075d6101aa2391e4591ec4508ace95734ac2ce9de00792257c476982687fb8",
   "player_challenge_practice": "5dd4ae61746e8ff037a805b8b8d7f2a7868d0875740b12a47307af560dcbce64",
+  "player_challenge_ready": "370ae66416e18f60ef2d9b3df477e1d97c2501cb07ec5a94309cf05dc1e21519",
   "player_challenge_said": "b446c9a8cdbd11f56bf67eba1b7906d2681085f9c8bfff53b284823ac543dcd6",
   "player_challenge_scenario_complete": "7d7b7e4a641c3dc24c2034d4679366fd8527252b15abd1a813c6b6b582bc6af9",
   "player_challenge_skills": "92f8fa38e1004fe305ad556f6cec491bc0918247d7cb6094755737b87fb29131",
   "player_challenge_team": "ddefbdf076387bc9b8efed2d357644daa05e49a941f598cfb3b89cdb547a28f9",
+  "player_challenge_wait_stopped": "3196c8ea3e801577ec7a9ca15b22313b38b42f158737f12ccf4ec6786b3ee4f0",
   "player_challenge_what_happened": "dfbff94a2f1489556beae558cfaa09add69ae73ed6a58cc70e3dfc2ae92dcf1d",
   "player_challenge_what_if": "808421e3fd9794b4f810a52681014e8dc20987426871b0f589a413164a6d4c7c",
   "player_challenge_you": "ae2e436e29724ed923f38ef22e8889563da96beff2773fbf0f3e2dbbdb1147af",
@@ -153,6 +156,7 @@
   "player_spelled": "4f52d2937460cc59656b44eff1d78dea22a3f362daf743df29e1d63950237465",
   "player_start_failed_description": "3e495bcd5469734b0577a153516163b9b14c7f7adea35962c998621c4ccb35e7",
   "player_start_failed_title": "991d5e250e7fec104c02665d7857bb9f0f1115be7827fa8a2b54a36daea2b077",
+  "player_start_this_challenge": "6526f470995a4618251abfaa84a62544bc68496b240e80a5e3f74f4195904853",
   "player_start_this_lesson": "17167792eb062697b8255805d56242ce94b6cee37df29729e36f32e879917ab8",
   "player_still_checking": "ceeea670f5dba8a790b67080e9ab35935a56afad5a91d3ab566151921045dddd",
   "player_stop_failed": "5ea128078f78fe88fc192f166404e478c2c236c041e4bcdc2afb771e68512c50",
@@ -180,7 +184,7 @@
   "player_write_again": "fa42da5fed440f6964bd7dd7e6000a52f5c55bd013f1f78fd4a5b782be9fb53f",
   "player_write_your_answer": "ea7425368ab44095ccb960186d0f95fc41ce3375196b52d4ea866e691d5c249f",
   "player_writing_lesson": "33802112560fc2e088175ea8d733afb25c0859a274f81e724861074716bcb5fc",
-  "player_writing_note": "575a9903d6947d8b44798457f52fb8fbba91bfef160a7bcea37c549311883c5c",
+  "player_writing_note": "4f6a23f58a6dab6ffb0dbbea52d5c96ec8a539b558b126ba2ef410c5e2bcfdda",
   "player_your_answer": "21798baaf43e884ed05469b1af23eb57f7a5b0b87ac863dee20844435b1c55a7",
   "player_your_example": "f7ea4aa643a7796ebcb2ba78ca80af58678b965b3841022c148bcdc10c19395f"
 }
@@ -296,6 +300,10 @@
     <string name="player_lesson_ready">Twoja lekcja jest gotowa</string>
     <string name="player_wait_stopped">Nie udało nam się przygotować tej lekcji</string>
     <string name="player_start_this_lesson">Zacznij tę lekcję</string>
+    <string name="player_challenge_not_written_title">To wyzwanie nie jest jeszcze gotowe</string>
+    <string name="player_challenge_ready">Twoje wyzwanie jest gotowe</string>
+    <string name="player_challenge_wait_stopped">Nie udało nam się przygotować tego wyzwania</string>
+    <string name="player_start_this_challenge">Rozpocznij wyzwanie</string>
     <string name="player_writing_lesson">Przygotowujemy twoją lekcję</string>
     <string name="player_phase_plan">Planujemy lekcję</string>
     <string name="player_phase_plan_line_1">Wybieramy, co omówić…</string>
@@ -321,7 +329,7 @@
     <!-- A step Zoonk shows while it prepares a challenge, after "Writing the challenge": its check found a problem, so Zoonk fixes it and checks the challenge again. -->
     <string name="player_challenge_phase_fix">Poprawiamy wykryte błędy</string>
     <string name="player_challenge_phase_fix_line_1">Poprawiamy niespójne fragmenty…</string>
-    <string name="player_writing_note">To potrwa kilka minut. Możesz wyjść, a my dokończymy.</string>
+    <string name="player_writing_note">To zajmuje kilka minut. Pracujemy dalej, nawet jeśli wyjdziesz.</string>
     <!-- Heading over a lesson or review the learner can start now, while or instead of the lesson that isn't ready. -->
     <string name="player_ready_now">Możesz zacząć już teraz</string>
     <plurals name="player_review_ideas">

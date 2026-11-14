@@ -107,7 +107,7 @@ export function TodayMore({ className }: { className?: string }) {
 
   return (
     <div className={cn("flex flex-col gap-3 empty:hidden", className)} data-slot="today-more">
-      {(state === "done" || state === "rest") && <MoreTime />}
+      {state === "done" && <MoreTime />}
       {(state === "underway" || state === "done") && <EarlierLessons />}
     </div>
   );

@@ -78,7 +78,7 @@ export default async function AppearancePage() {
   const t = await getExtracted();
 
   return (
-    <Page className="max-w-form">
+    <Page measure="form">
       <SectionPageHeader
         title={t({
           description:

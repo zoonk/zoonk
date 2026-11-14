@@ -81,7 +81,6 @@ import com.zoonk.api.models.LearnerSummaryBuddy
 import com.zoonk.api.models.LessonFit
 import com.zoonk.api.models.LibraryLessonCompletion
 import com.zoonk.api.models.Milestone
-import com.zoonk.api.models.StudyReminderOffer
 import kotlinx.coroutines.delay
 import kotlin.math.roundToLong
 import kotlin.time.Duration.Companion.seconds
@@ -190,7 +189,7 @@ private fun LessonRefusal.reached(): Limit.Reached? =
         }
 
         LessonRefusal.PlusRequired -> {
-            Limit.Reached(LimitTier.Free, LimitPeriod.Month)
+            Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days)
         }
 
         else -> {
@@ -262,7 +261,6 @@ fun LessonCompletionView(
     buddy: LearnerSummaryBuddy? = null,
     finishedChapter: FinishedChapterSlot? = null,
     onReportSaveFailure: () -> Unit = {},
-    reminderOffer: (@Composable (StudyReminderOffer) -> Unit)? = null,
 ) {
     val completion = state.completion ?: return
 
@@ -332,7 +330,6 @@ fun LessonCompletionView(
                 val moment = buddy.momentBuddy()
                 DayMoment(result, moment.look, moment.name)
                 result.finishedChapter?.let { finishedChapter?.invoke(it) }
-                result.studyBlock?.reminderOffer?.let { reminderOffer?.invoke(it) }
             }
         },
         // On a spread the lesson's map sits under what was done; one column keeps it behind ⋮.

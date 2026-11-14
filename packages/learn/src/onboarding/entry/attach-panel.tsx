@@ -3,10 +3,12 @@
 import { Button } from "@zoonk/ui/components/button";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { Textarea } from "@zoonk/ui/components/textarea";
+import { cn } from "@zoonk/ui/lib/utils";
 import { PendingLink } from "@zoonk/ui/patterns/links/pending";
 import { FileTextIcon, LinkIcon, UploadIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
+import { SURFACE_CLASS } from "../../_components/surface";
 import {
   type AttachOutcome,
   type AttachedSource,
@@ -19,23 +21,19 @@ import { PasteLink } from "./paste-link";
 const ACCEPTED_FILES =
   ".pdf,.docx,.pptx,.txt,.md,.jpg,.jpeg,.png,.webp,application/pdf,text/plain,text/markdown,image/jpeg,image/png,image/webp";
 
-const PANEL_CLASS = "bg-card ring-border flex flex-col gap-3 rounded-xl p-4 ring-1";
+const PANEL_CLASS = cn(SURFACE_CLASS, "flex flex-col gap-3 p-4");
 
 function useAttachLimitMessage() {
   const t = useExtracted();
 
   return ({ period, tier }: UsageCap): string => {
     if (tier === "plus") {
-      return t("You've added as much material as your plan allows today. Try again tomorrow.");
+      return t("No more material today. More tomorrow.");
     }
 
     return period === "month"
-      ? t(
-          "You've added as much material as the free plan allows this month. Try again next month, or get Plus to keep going now.",
-        )
-      : t(
-          "You've added as much material as the free plan allows today. Try again tomorrow, or get Plus to keep going now.",
-        );
+      ? t("No more material this month. More next month, or subscribe to keep going.")
+      : t("No more material today. More tomorrow, or subscribe to keep going.");
   };
 }
 

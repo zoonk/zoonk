@@ -30,7 +30,7 @@ async function ExamContent() {
 
     return (
       <LearnNoGoal
-        bar={<JourneyPageBar root />}
+        bar={<JourneyPageBar root title={t("Your exam")} />}
         description={t("Your exam's areas, how ready you are for each, and its mock exams.")}
         next="/exam"
         title={t("Your exam")}

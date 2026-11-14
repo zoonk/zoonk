@@ -1,6 +1,5 @@
 "use client";
 
-import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { useExtracted } from "next-intl";
 import { createContext, use } from "react";
 import { EnterButton, EnterLink } from "../_components/enter-button";
@@ -12,7 +11,9 @@ import { type WaitState } from "../_utils/wait-state";
 import { useLearnRoutes } from "../learn-context";
 import { useSessionAction } from "../session/use-session-action";
 import { useGoalSwitchPending } from "../shell/goal-switcher";
+import { TodayBar } from "./today-bar";
 import { useTodayScreen } from "./today-context";
+import { TodayExamOver } from "./today-exam-over";
 import { NEXT_TITLE_ID } from "./today-ids";
 import { useContinueSession } from "./use-continue-session";
 import { useDayState, useSessionState, useTodayPastDate, useUpNextLessons } from "./use-today-copy";
@@ -90,15 +91,6 @@ function TodayContinueStatus() {
         </span>
       )}
     </>
-  );
-}
-
-/** The page's one main action, in the shared bottom bar; what it couldn't do shows over the bar. */
-function TodayBar({ children, note }: { children: React.ReactNode; note?: React.ReactNode }) {
-  return (
-    <BottomBar note={note}>
-      <BottomBarActions>{children}</BottomBarActions>
-    </BottomBar>
   );
 }
 
@@ -253,12 +245,13 @@ function SeePlanLink() {
 
 /** Pinned at the page's bottom on a phone and a computer (rule 4); a day with nothing to start has none. */
 export function TodayAction() {
+  const { today } = useTodayScreen();
   const state = useDayState();
   const pastDate = useTodayPastDate();
   const keepLearning = useUpNextLessons().length > 0;
 
   if (pastDate) {
-    return <SeePlanLink />;
+    return today.goal.kind === "exam" ? <TodayExamOver /> : <SeePlanLink />;
   }
 
   if (state === "prepare") {
@@ -277,7 +270,9 @@ export function TodayAction() {
     return <SummaryLink />;
   }
 
-  if (state === "ahead") {
+  // With nothing new on the list, practice is the day's one action; once the day is done it is
+  // only an extra, so it stays in the page.
+  if (state === "ahead" || state === "rest") {
     return <PracticeTime />;
   }
 

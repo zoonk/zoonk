@@ -60,7 +60,6 @@ function FocusTestQuestion({
             )
           : undefined
       }
-      stopLabel={t("Stop and use my answers")}
       subject={sitting.subject ? getSubjectName(sitting.subject) : subject}
       total={sitting.questions}
       trueFalseLabels={phase.trueFalseLabels}
@@ -85,12 +84,11 @@ export function FocusTestFlow({
   plan?: FocusTestPlanActions | null;
   readWarmUp: OnboardingActions["readWarmUp"];
   run: GenerationRun | null;
-  /** The learner pressed "Start the test" on the screen that led here, so it isn't offered again. */
+  /** The learner pressed "Start" on the screen that led here, so it isn't offered again. */
   started?: boolean;
   /** The goal's name, over a question whose subject isn't known. */
   subject: string;
 }) {
-  const t = useExtracted();
   const test = useFocusTest({ actions, onDone, run, started });
   const { failed, phase, pressed } = test;
   const waitSkip = useWaitSkip({ answered: phase.kind === "waiting" && phase.answered, host });
@@ -118,14 +116,7 @@ export function FocusTestFlow({
         />
       );
     case "unavailable":
-      return (
-        <PlacementUnavailable
-          action={t("Continue")}
-          failed={failed}
-          onContinue={skip}
-          pending={test.isPending}
-        />
-      );
+      return <PlacementUnavailable failed={failed} onContinue={skip} pending={test.isPending} />;
     case "invitation":
       return (
         <FocusTestInvitation

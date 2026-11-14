@@ -4,60 +4,61 @@
   "limit_create_account": "c554dd10688178a5f5e0e1214c0c3905c614a477e3ee465ae3dbda5849cb409f",
   "limit_explanations_day": "a5f83b33fe11c46d1e0c48ebfbebb3860d8282a78f25129bebd360fd7c658e31",
   "limit_explanations_month": "79c878c45f707b0a34f0ecc27f874fc26c1cd3c1b2c4a02e305f416b934bdfc5",
-  "limit_help_day": "78af5c00f18753f599a73dbab2a0d2e226f260b2a9cf709ae21dfd4f9246ac4a",
-  "limit_help_guest": "13184c9ef5fb591f2459df3fd8503364f8c1144b0875608abd9679468e7dd7dc",
-  "limit_help_month": "8380f88b0fe6db4ac7c63d6d541f5b5b3707b493ae6973386ea1bb616ca7072a",
+  "limit_help_day": "7890ef1ab844e85e77c2c65f39d67476dbabe507d45e2bc6943ee07552479ac0",
+  "limit_help_guest": "03be53c19deea2591bcd088dcb3cf19fdef21537e6698e5124601500f024f218",
+  "limit_help_month": "f647f932f77b1d0b7b76c1e484387031171d32c365996b6086e2ac2611820174",
+  "limit_lesson_opens_on": "184d1ca652d7a0113f796b12ad0ef111e3ddbc7ee94876789e0d84bef48a87b5",
+  "limit_lesson_opens_today": "3bb75c64b473679ca18dc1e70ad8efb9344335a8609193a506c0596cdc366c12",
+  "limit_lesson_opens_tomorrow": "08ec4a85e38850f6b4ce3f124f9c19f627ded2daa8907d7f900dad6b5b1fd9c5",
   "limit_lessons_day": "26cc5c7e6c13699cc7c7d240c0b6be874ae8bd0b94fafb9595551a70f3e8800f",
-  "limit_lessons_free_month": "0471ad5614be715d5b65fd8aec02c2e5a164c74de9cf1aad9dd8f316e703049b",
-  "limit_lessons_guest": "fa26ce4078256a239e94309c74593c77c27244753b502e702c633f9f81a5062d",
+  "limit_lessons_free": "d123a4f073b7749b3c25a65163d7fef97385d9f872b1e55b8318db4202553057",
+  "limit_lessons_guest": "ec39f05d299130683ab2dfcc62165a47e16ec3c3fc147be35ffbcf26f40483cf",
   "limit_lessons_month": "c9ddbeff8abbd41b812bab1fc51d741f685d5f29bef05d4fdc3804adf39c769a",
-  "limit_messages_day": "67e55df42d4d8613195067e3de13a7b7d0fa4823ec930335a7dbe566c4d467d9",
-  "limit_messages_month": "6b9617b5b235848c89c2e271609262bbd2233c36f88ff96c268e6506e10390d2",
+  "limit_messages_day": "d8902b92b76ea6e3ecfcaef77a6b6e3dcc66b490e3617c1c547a0a64a158cc52",
+  "limit_messages_month": "ebfd2f6a47ed2235b0a240dfa13fdb7527b705d79980bb6abd6ccbe463b88d67",
   "limit_mind_maps_day": "485ad6c64f0ff0bc1ab0b63bd247fd3126d548fd0a21ae6d7fa1d16c577fced8",
-  "limit_mind_maps_guest": "ac6f01874a4eeb2105838f3e2cadd03f972d20847aaa604142a1d2b81c791d3d",
+  "limit_mind_maps_guest": "204eaf69d1fb17b52e56adf31d6dea18850335e199d2419d62c3614b37529e6c",
   "limit_mind_maps_month": "7766a9f954c9ccd23f8fad8cf1c771ceded3cf31f6d9672c50cc399fa598c772",
-  "limit_more_next_month": "70771016d2fda3f5b2ae95f5edc6d242580e66c10fe14fc243136587773a9e34",
-  "limit_more_next_month_or_subscribe": "2b22b7534c7a80900f9640ab9129cb0f19637cd7e43a1e15ac8c9a8f1a52d377",
-  "limit_more_tomorrow": "1b3a51fadbc221eb7eb9c67420232883aeb5297e7eea7e228135790537357af9",
-  "limit_more_tomorrow_or_subscribe": "f733f76778626009e385226e62442abe974c435b7f7999e3d48a2342000492ca",
+  "limit_more_next_month": "97771c1c941b996dc9d5e050267fb96ce59ddb53efaf62e8d1031360283969e9",
+  "limit_more_next_month_or_subscribe": "4ba8de6bc1a73d41b6369defdd74b0cc274003d89442881d75db6aeb7f58daa8",
+  "limit_more_tomorrow": "115ee20b59c32df16bac8717d9d90a1b89598956e2ef03911b8d335e6cc2246c",
+  "limit_more_tomorrow_or_subscribe": "e837bc48fc35a2751b39fbc4a03362c1c864cc3412267e3a01b7c6be560f3e4a",
   "limit_outlines_day": "529dd6114f1db5a762ea1cd4e321ac50d4632ffb31b46a6ef22136d8b3979bab",
-  "limit_outlines_guest": "213fff567008456e3cf74eb0919c3fc7074ea783d0a328765ae7ce4e490472a0",
+  "limit_outlines_guest": "01be58ca32e9810d1c8c9ca13716db366e18bda775e94050ba942c6e4385ff51",
   "limit_outlines_month": "12589dc9eaa3baec07c8284d13f562224f2648a74e4faa8da7a8a2687b835c30",
   "limit_sign_up_required": "240c692522f22585f79cdc02e0ef909a0bec1064d9ec9e7779e4dc0eebf65bd8",
   "limit_slow_down": "dc96b0ce3af7f0f3eb350a1540c4d2211650f68ff7aa78cb9626cf238ccff367",
-  "limit_still_review_more_next_month": "ef0455a5ae66f4b27c681f8d1114cd357056f3707b29962f11abb8777e550bff",
-  "limit_still_review_more_next_month_or_subscribe": "5798a59fb8b60213fc1b1e723a38475fda5c7677f7660eb0a8852aaf3820cbc4",
-  "limit_still_review_more_tomorrow": "e085395b8e35f76be21f7b1c95dc7669bb578fae5688f4b954fec42b12b24465",
-  "limit_still_review_more_tomorrow_or_subscribe": "00ce57063922231a14af5dea7be8e45ddb88381b6d4cdf88c62a56a677843674"
+  "limit_still_review": "c2e3ebaf90547192f02f4c79ceb3b896a8dab5f2b51a599700965646e3f8ad38"
 }
 -->
 <resources>
     <string name="limit_create_account">Ücretsiz hesap oluştur</string>
     <string name="limit_slow_down">Kısa bir ara ver, sonra tekrar dene.</string>
     <string name="limit_sign_up_required">Bunun için ücretsiz bir hesap gerekiyor</string>
-    <string name="limit_more_tomorrow">Yarın devam edebilirsin.</string>
-    <string name="limit_more_next_month">Gelecek ay devam edebilirsin.</string>
-    <string name="limit_more_tomorrow_or_subscribe">Yarın devam edebilirsin. Hemen devam etmek için abone ol.</string>
-    <string name="limit_more_next_month_or_subscribe">Gelecek ay devam edebilirsin. Hemen devam etmek için abone ol.</string>
-    <string name="limit_still_review_more_tomorrow">Tekrar yapmaya ve yanlışların üzerinde çalışmaya devam edebilirsin. Yarın daha fazlasını yapabilirsin.</string>
-    <string name="limit_still_review_more_next_month">Tekrar yapmaya ve yanlışların üzerinde çalışmaya devam edebilirsin. Gelecek ay daha fazlasını yapabilirsin.</string>
-    <string name="limit_still_review_more_tomorrow_or_subscribe">Tekrar yapmaya ve yanlışların üzerinde çalışmaya devam edebilirsin. Yarın daha fazlasını yapabilir ya da hemen devam etmek için abone olabilirsin.</string>
-    <string name="limit_still_review_more_next_month_or_subscribe">Tekrar yapmaya ve yanlışların üzerinde çalışmaya devam edebilirsin. Gelecek ay daha fazlasını yapabilir ya da hemen devam etmek için abone olabilirsin.</string>
-    <string name="limit_help_guest">Hesap açmadan bu kadarını deneyebilirsin</string>
-    <string name="limit_help_day">Bugünkü sınırına ulaştın</string>
-    <string name="limit_help_month">Bu ayki sınırına ulaştın</string>
-    <string name="limit_messages_day">Bugünlük mesaj hakkın bitti</string>
-    <string name="limit_messages_month">Bu ayki mesaj hakkın bitti</string>
+    <string name="limit_more_tomorrow">Hakların yarın yenilenir.</string>
+    <string name="limit_more_next_month">Hakların gelecek ay yenilenir.</string>
+    <string name="limit_more_tomorrow_or_subscribe">Hakların yarın yenilenir; devam etmek için abone ol.</string>
+    <string name="limit_more_next_month_or_subscribe">Hakların gelecek ay yenilenir; devam etmek için abone ol.</string>
+    <string name="limit_still_review">Tekrar yapmaya ve yanlışların üzerinde çalışmaya devam edebilirsin.</string>
+    <string name="limit_lesson_opens_today">Bir sonraki ücretsiz dersin bugün ilerleyen saatlerde açılacak. Abone olup hemen devam edebilirsin.</string>
+    <string name="limit_lesson_opens_tomorrow">Bir sonraki ücretsiz dersin yarın açılacak. Abone olup hemen devam edebilirsin.</string>
+    <!-- On the screen a free learner sees when their free lessons are used. {date} is a day and its month, such as "November 22" in English. -->
+    <string name="limit_lesson_opens_on">Bir sonraki ücretsiz dersin %1$s tarihinde açılacak. Abone olup hemen devam edebilirsin.</string>
+    <string name="limit_help_guest">Hesap olmadan deneyebileceklerin bu kadar</string>
+    <string name="limit_help_day">Bugünkü kullanım sınırına ulaştın</string>
+    <string name="limit_help_month">Bu ayki kullanım sınırına ulaştın</string>
+    <string name="limit_messages_day">Bugün mesaj hakkın kalmadı</string>
+    <string name="limit_messages_month">Bu ay mesaj hakkın kalmadı</string>
     <string name="limit_explanations_day">Bugün açıklama hakkın kalmadı</string>
     <string name="limit_explanations_month">Bu ay açıklama hakkın kalmadı</string>
-    <string name="limit_lessons_guest">Daha fazla ders için hesap gerekiyor</string>
-    <string name="limit_lessons_free_month">Bu ayki ücretsiz ders hakkın doldu</string>
+    <string name="limit_lessons_guest">Daha fazla ders için bir hesap gerekiyor</string>
+    <string name="limit_lessons_free">Ücretsiz derslerini kullandın</string>
     <string name="limit_lessons_day">Bugün yeni ders hakkın kalmadı</string>
     <string name="limit_lessons_month">Bu ay yeni ders hakkın kalmadı</string>
-    <string name="limit_mind_maps_guest">Daha fazla zihin haritası için hesap gerekiyor</string>
+    <string name="limit_mind_maps_guest">Daha fazla zihin haritası için bir hesap gerekiyor</string>
     <string name="limit_mind_maps_day">Bugün yeni zihin haritası hakkın kalmadı</string>
     <string name="limit_mind_maps_month">Bu ay yeni zihin haritası hakkın kalmadı</string>
-    <string name="limit_outlines_guest">Daha fazla ön izleme için hesap gerekiyor</string>
+    <string name="limit_outlines_guest">Daha fazla ön izleme için bir hesap gerekiyor</string>
     <string name="limit_outlines_day">Bugün ön izleme hakkın kalmadı</string>
     <string name="limit_outlines_month">Bu ay ön izleme hakkın kalmadı</string>
 </resources>

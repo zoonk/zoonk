@@ -1,11 +1,12 @@
 "use client";
 
 import { type PlanPhaseCheckpointView } from "@zoonk/core/plans/view-contract";
+import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { Trickster } from "@zoonk/ui/components/trickster";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { KindMark } from "../_components/kind-tile";
-import { ListRowChevron, ListRowChevronSpace } from "../_components/list-group";
+import { ListRowChevronSpace } from "../_components/list-group";
 import { TITLE_ROW_CLASS } from "../_components/title-row";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
@@ -38,7 +39,7 @@ function EventRow({ children, href }: { children: React.ReactNode; href: string 
   return (
     <LearnLink className={EVENT_ROW_CLASS} href={href}>
       {children}
-      <ListRowChevron />
+      <RowChevron />
     </LearnLink>
   );
 }

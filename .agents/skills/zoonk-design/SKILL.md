@@ -30,6 +30,8 @@ ls packages/ui/src/components packages/learn/src/_components packages/learn/src/
 
 Use the piece that does this. Extend the one that does almost this, in the same change, and check its other callers. Write a second one only for a different product rule, and name that rule in the PR. Before building a missing web primitive, check the shadcn registry; build with Tailwind utilities and semantic tokens, as [compound components](../zoonk-compound-components/SKILL.md).
 
+Lint fails the copies it can name: a fold's own height animation or chevron (`zoonk/no-hand-made-fold`), an icon-only button or link pulled to an edge by its own negative margin (`zoonk/no-hand-placed-icon-button`), a second `ANSWER_OPTION_CLASS` (`zoonk/one-answer-option`), "I don't know yet" in a button outside `QuestionActions` (`zoonk/one-question-action-bar`), and a shortcut key bound, announced or drawn outside the shared keyboard pieces (`zoonk/shortcut-keys`). Every other copy is found by the search above.
+
 These roles each have one piece and one way on every app screen. A screen never draws its own, spaces one its own way or words one differently ([rules and checks](references/craft.md#roles)):
 
 | Role                        | The one way                                                                                                                                                                                                                                                                       |
@@ -46,7 +48,7 @@ These roles each have one piece and one way on every app screen. A screen never 
 
 A [marketing page](#marketing-pages) is outside the first and third rows: its top is the public header over a first screen with its own room, and its one action sits in the page, shown in `BottomBar` once the page's own has scrolled away.
 
-Each has a check to run: `node scripts/verify/catalog-rules.mts` for the words (paying, the plan's name, a "none" option), the `zoonk/*` role lints for the source (one glyph, one back link, one overlay piece, one eyebrow, no Plus badge, no page-top spacing), `pnpm verify:pages` for where the title, the main action and an open panel sit, and `pnpm verify:pages --roles` for every instance of a role side by side.
+Some have a check to run: `node scripts/verify/catalog-rules.mts` lists the words (paying, the plan's name, a "none" option); `pnpm lint` fails a page's own top spacing (`zoonk/no-page-top-spacing`) and a Plus badge (`zoonk/no-plus-badge`); `pnpm verify:pages` leads to a title off its page top, a back link with no name, a main action outside the pinned bar, text over a title outside the chip, a second gate and a phone's panel that isn't a sheet; and `pnpm verify:pages --roles` lays the instances of a role on the pages you give it side by side. Nothing counts a button's glyphs or tells when a gate showed: those are the reader's.
 
 A rule holds on every screen. When one looks wrong for a screen, follow it and put the case to the user in your handoff: only the user grants an exception, and each one is listed in [craft](references/craft.md#exceptions-the-user-granted) so nobody "fixes" it later. A note that something was "kept on purpose" is not an exception; it's a finding. [Rethinking a screen](#rethink-when-stuck) changes its structure, never a role's way.
 
@@ -181,7 +183,7 @@ The first-glance test asks whether a screen is understood; the craft read asks w
 
 Fix every finding and run the read again on the screens that changed, until it finds nothing it can point at. A fault in a shared piece (a bar, a button, a list row, a token's use) is fixed in that piece, so every screen gets it, never with a margin on the one screen. A finding that the design system itself breaks a rule goes to the user once, as a decision about the system. When a finding is one of the system's [deliberate choices](references/craft.md#deliberate-choices) or an [exception the user granted](references/craft.md#exceptions-the-user-granted), say so and leave it.
 
-A screen's own readers can't see that it differs from another area's (a back link spaced one way here and another there, a main action pinned on one screen and inline on the next). So when a change draws or moves one of the [roles](#find-the-piece-before-you-build-one), touches a role's piece, or was built by more than one agent, run [the role read](references/craft.md#the-role-read): `pnpm verify:pages --roles` lays every instance of each role side by side, from every area, and one reader that built none of it names each one that differs. Every difference is fixed in the piece or on the screen; none is kept.
+A screen's own readers can't see that it differs from another area's (a back link spaced one way here and another there, a main action pinned on one screen and inline on the next). So when a change draws or moves one of the [roles](#find-the-piece-before-you-build-one), touches a role's piece, or was built by more than one agent, run [the role read](references/craft.md#the-role-read): `pnpm verify:pages --roles`, given the pages of every area that draw the role, lays its instances side by side, and one reader that built none of it names each one that differs. Every difference is fixed in the piece or on the screen; none is kept.
 
 ## iOS and Android
 

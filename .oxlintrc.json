@@ -175,19 +175,16 @@
     "zoonk/no-hardcoded-aria-label": "off",
     "zoonk/no-t-function-as-argument": "error",
     "zoonk/no-uncaught-transition-await": "error",
-    // The founder's rulings, off until their pieces land and their offenders move
-    // (build/TOOLS/OFFENDERS.md); switching one on is changing "off" to "error".
-    "zoonk/no-page-top-spacing": "off",
-    "zoonk/no-plus-badge": "off",
+    // Shared-piece rules with existing callers to migrate stay off.
+    "zoonk/no-page-top-spacing": "error",
+    "zoonk/no-plus-badge": "error",
     "zoonk/one-eyebrow": "off",
-    "zoonk/one-overlay-piece": "off",
-    "zoonk/no-hand-made-fold": "off",
-    "zoonk/no-hand-placed-icon-button": "off",
-    "zoonk/one-answer-option": "off",
-    "zoonk/one-back-link": "off",
+    "zoonk/no-hand-made-fold": "error",
+    "zoonk/no-hand-placed-icon-button": "error",
+    "zoonk/one-answer-option": "error",
     "zoonk/one-glyph-button": "off",
-    "zoonk/one-question-action-bar": "off",
-    "zoonk/one-question-title": "off",
+    "zoonk/one-question-action-bar": "error",
+    "zoonk/shortcut-keys": "error",
     "zoonk/padding-around-multiline-statements": "error",
     "zoonk/tailwind-canonical-classes": "error"
   },
@@ -332,16 +329,13 @@
       "files": ["apps/main/**/*.tsx", "apps/api/**/*.tsx"],
       "rules": { "zoonk/no-hardcoded-aria-label": "error" }
     },
+    { "files": ["packages/ui/src/**"], "rules": { "zoonk/no-page-top-spacing": "off" } },
     {
-      "files": ["packages/ui/src/**"],
-      "rules": {
-        "zoonk/no-page-top-spacing": "off",
-        "zoonk/one-back-link": "off",
-        "zoonk/one-overlay-piece": "off"
-      }
-    },
-    {
-      "files": ["packages/ui/src/**", "packages/oxlint-plugin/**"],
+      "files": [
+        "packages/ui/src/**",
+        "packages/oxlint-plugin/**",
+        "scripts/verify/lint-rules.test.mts"
+      ],
       "rules": { "zoonk/no-hand-made-fold": "off" }
     },
     {
@@ -349,22 +343,12 @@
       "rules": { "zoonk/no-hand-placed-icon-button": "off" }
     },
     {
-      "files": [
-        "packages/learn/src/_components/answer-option.tsx",
-        "packages/learn/src/_components/answer-tone.ts"
-      ],
+      "files": ["packages/learn/src/_components/answer-tone.ts"],
       "rules": { "zoonk/one-answer-option": "off" }
     },
     {
-      "files": [
-        "packages/learn/src/_components/question-actions.tsx",
-        "packages/learn/src/_components/enter-button.tsx"
-      ],
+      "files": ["packages/learn/src/_components/question-actions.tsx"],
       "rules": { "zoonk/one-question-action-bar": "off" }
-    },
-    {
-      "files": ["packages/learn/src/_components/question-title.tsx"],
-      "rules": { "zoonk/one-question-title": "off" }
     },
     {
       "files": ["**/setup-tests.ts", "**/browser-setup.ts"],

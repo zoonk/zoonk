@@ -18,7 +18,7 @@ export function DetailHero({ className, ...props }: React.ComponentProps<"header
       className={cn(
         PAGE_HEADER_CLASS,
         "group/detail-hero gap-4 md:flex-row md:items-end md:justify-between md:gap-6",
-        "has-[>[data-slot=detail-actions]>[data-slot=dropdown-menu-trigger]:only-child]:grid has-[>[data-slot=detail-actions]>[data-slot=dropdown-menu-trigger]:only-child]:grid-cols-[minmax(0,1fr)_auto] has-[>[data-slot=detail-actions]>[data-slot=dropdown-menu-trigger]:only-child]:gap-x-4 has-[>[data-slot=detail-actions]>[data-slot=dropdown-menu-trigger]:only-child]:gap-y-1",
+        "has-[>[data-slot=detail-actions]>[data-slot=detail-menu]:only-child]:grid has-[>[data-slot=detail-actions]>[data-slot=detail-menu]:only-child]:grid-cols-[minmax(0,1fr)_auto] has-[>[data-slot=detail-actions]>[data-slot=detail-menu]:only-child]:gap-x-4 has-[>[data-slot=detail-actions]>[data-slot=detail-menu]:only-child]:gap-y-1",
         className,
       )}
       data-slot="detail-hero"
@@ -32,7 +32,7 @@ export function DetailHeroText({ className, ...props }: React.ComponentProps<"di
     <div
       className={cn(
         "flex min-w-0 flex-col gap-1",
-        "group-has-[>[data-slot=detail-actions]>[data-slot=dropdown-menu-trigger]:only-child]/detail-hero:contents group-has-[>[data-slot=detail-actions]>[data-slot=dropdown-menu-trigger]:only-child]/detail-hero:*:col-start-1",
+        "group-has-[>[data-slot=detail-actions]>[data-slot=detail-menu]:only-child]/detail-hero:contents group-has-[>[data-slot=detail-actions]>[data-slot=detail-menu]:only-child]/detail-hero:*:col-start-1",
         className,
       )}
       data-slot="detail-hero-text"
@@ -71,7 +71,7 @@ export function DetailActions({ className, ...props }: React.ComponentProps<"div
     <div
       className={cn(
         "flex flex-wrap items-center gap-2 md:shrink-0",
-        "has-[>[data-slot=dropdown-menu-trigger]:only-child]:col-start-2 has-[>[data-slot=dropdown-menu-trigger]:only-child]:row-start-1 has-[>[data-slot=dropdown-menu-trigger]:only-child]:mt-[0.09375rem] has-[>[data-slot=dropdown-menu-trigger]:only-child]:self-start",
+        "has-[>[data-slot=detail-menu]:only-child]:col-start-2 has-[>[data-slot=detail-menu]:only-child]:row-start-1 has-[>[data-slot=detail-menu]:only-child]:mt-[0.09375rem] has-[>[data-slot=detail-menu]:only-child]:self-start",
         className,
       )}
       data-slot="detail-actions"
@@ -81,8 +81,8 @@ export function DetailActions({ className, ...props }: React.ComponentProps<"div
 }
 
 /** As tall as the action beside it; alone beside the title, a small button's 30px. */
-export const DETAIL_MENU_TRIGGER_CLASS =
-  "[--control-size:--spacing(11)] only:rounded-md only:[--control-size:--spacing(7.5)]";
+const DETAIL_MENU_TRIGGER_CLASS =
+  "[--control-size:--spacing(11)] group-only/detail-menu:rounded-md group-only/detail-menu:[--control-size:--spacing(7.5)]";
 
 export function DetailMenu({
   children,
@@ -93,18 +93,21 @@ export function DetailMenu({
   label: string;
   onOpenChange?: (open: boolean) => void;
 }) {
+  // An open menu mounts focus guards beside its trigger, so "alone" is asked of this wrapper.
   return (
-    <DropdownMenu onOpenChange={onOpenChange}>
-      <DropdownMenuTrigger
-        render={<Button className={DETAIL_MENU_TRIGGER_CLASS} size="icon" variant="outline" />}
-      >
-        <EllipsisIcon aria-hidden="true" />
-        <span className="sr-only">{label}</span>
-      </DropdownMenuTrigger>
+    <span className="group/detail-menu contents" data-slot="detail-menu">
+      <DropdownMenu onOpenChange={onOpenChange}>
+        <DropdownMenuTrigger
+          render={<Button className={DETAIL_MENU_TRIGGER_CLASS} size="icon" variant="outline" />}
+        >
+          <EllipsisIcon aria-hidden="true" />
+          <span className="sr-only">{label}</span>
+        </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" className="w-60">
-        {children}
-      </DropdownMenuContent>
-    </DropdownMenu>
+        <DropdownMenuContent align="end" className="w-60">
+          {children}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </span>
   );
 }

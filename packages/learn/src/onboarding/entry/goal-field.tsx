@@ -135,7 +135,7 @@ export function GoalFieldText({
       autoComplete="off"
       className={cn(
         GOAL_FIELD_TEXT_CLASS,
-        "placeholder:text-muted-foreground contrast-more:placeholder:text-foreground/60 field-sizing-content max-h-48 min-h-11 w-full min-w-0 resize-none bg-transparent outline-none",
+        "placeholder:text-muted-foreground contrast-more:placeholder:text-foreground/60 field-sizing-content max-h-48 min-h-11 w-full min-w-0 resize-none bg-transparent outline-none placeholder:truncate",
         className,
       )}
       enterKeyHint="go"
@@ -172,7 +172,7 @@ export function GoalFieldSubmit({
   return (
     // Enter in the goal's field submits its form, so the key is the field's.
     <EnterButton
-      className={cn("shrink-0 px-4", className)}
+      className={cn("shrink-0 grow-0 basis-auto rounded-md px-4", className)}
       enter="host"
       size="lg"
       type="submit"

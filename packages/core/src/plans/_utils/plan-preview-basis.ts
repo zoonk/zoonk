@@ -1,15 +1,9 @@
-import { z } from "zod";
+import { type PlanChangeQuote } from "../plan-decision-contract";
 import { toIsoDate } from "../planner/plan-calendar";
 
 type PreviewContext = { plan: { version: number }; timeZone: string; today: Date };
 
-export const planPreviewBasisSchema = z.object({
-  planVersion: z.int().nonnegative(),
-  studyDay: z.iso.date(),
-  timeZone: z.string(),
-});
-
-export function getPlanPreviewBasis(context: PreviewContext) {
+export function getPlanPreviewBasis(context: PreviewContext): PlanChangeQuote {
   return {
     planVersion: context.plan.version,
     studyDay: toIsoDate(context.today),
@@ -17,19 +11,21 @@ export function getPlanPreviewBasis(context: PreviewContext) {
   };
 }
 
+/** Two quotes are one when both are missing or they name the same plan version, day and zone. */
+export function isSameQuote(a: PlanChangeQuote | null, b: PlanChangeQuote | null): boolean {
+  if (a === null || b === null) {
+    return a === b;
+  }
+
+  return a.planVersion === b.planVersion && a.studyDay === b.studyDay && a.timeZone === b.timeZone;
+}
+
 export function isCurrentPlanPreview({
   basis,
   context,
 }: {
-  basis: z.infer<typeof planPreviewBasisSchema> | null;
+  basis: PlanChangeQuote | null;
   context: PreviewContext;
 }): boolean {
-  const current = getPlanPreviewBasis(context);
-
-  return (
-    basis !== null &&
-    basis.planVersion === current.planVersion &&
-    basis.studyDay === current.studyDay &&
-    basis.timeZone === current.timeZone
-  );
+  return basis !== null && isSameQuote(basis, getPlanPreviewBasis(context));
 }

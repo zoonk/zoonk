@@ -37,6 +37,7 @@
   "player_challenge_much_higher": "e9ccd5a47969be53f24ab657dbcbc2defc5583290554d5e3f2de158f3ef65de0",
   "player_challenge_much_lower": "c31945da843dd242e64ee73540c521af344db7fed1e5ae024c9c943a161d17a2",
   "player_challenge_no_change": "a828f68efcfff311e819d3598b96b04b6a48cb5c0102339fee9910599b8e4057",
+  "player_challenge_not_written_title": "d780c8c3995d498e1df48b5601f7adb6b9263f4fce958571bc5198a208397510",
   "player_challenge_phase_fix": "c132f840b8bbbfaec366a59fdf37e7c562026e45e98f94a5f484b4219744b7bd",
   "player_challenge_phase_fix_line_1": "3c96ba7f5bace33cc12441694045aea28c311c3d89fd20689870252fb3d7a280",
   "player_challenge_phase_plan": "b38268c4d2bfe28c2d1bbdf62ef68c14ed93c70986eaefd7fc17e1d8a5f52277",
@@ -46,10 +47,12 @@
   "player_challenge_phase_write_line_1": "129937f49f9aacaa1b7d493f5b29a6c1d6a6ff3067ce708b28be305d8d720d0a",
   "player_challenge_phase_write_line_2": "659ef2391c7f6e1b88dc9bbe745cbf0bc2316967728ffb0211a8bd276e0bf300",
   "player_challenge_practice": "ab1cd730bfe29b619c6300f6a434f3129a85d9c8f9898bc1c19674e74bb63b43",
+  "player_challenge_ready": "26adc8b593ad470231ef020f668a63b2b344877ef27420a6e79bdc03e06fc30b",
   "player_challenge_said": "d19d32fd552700d61cab7243e2751012e82c38f1ddaa734983423fe02602eb77",
   "player_challenge_scenario_complete": "187060011c5305b75bc2cb6e3044a1f184ad372f3e9573185690524e4d9e788e",
   "player_challenge_skills": "e17ee95cf38f6aa3928aa8bea3d0373965ffc9d9236dc97fbd2f9b5a2215b2e0",
   "player_challenge_team": "debc114cb9e26be9d9f68ed10babb78ebd240a55b78b8a77b105608dee2b88e7",
+  "player_challenge_wait_stopped": "8913085cda11685afeab50d0af14811aab6d1a20dcf1381484cef25b94840d5e",
   "player_challenge_what_happened": "76be6f4e6f1d28639ba52bc090b73de6c2bd2528c9849e5072617cf755f2dfa8",
   "player_challenge_what_if": "04985f2ff6aac1a89f1f4d53829eefa1950e2b153691c12de1b9ef6e5eb99624",
   "player_challenge_you": "3e25244d7771edce056ff876d5e419916c664bd0af320332498f095bc4283ef1",
@@ -135,7 +138,7 @@
   "player_previous_screen": "5e133610492d8158e69996a788a9e49405ef6bb76777604b5419f11900ddf919",
   "player_progress": "784e8a02b57b3cc5f02837ad987021de3a9701a565471c90dd99aea158ee04ab",
   "player_quick_check": "acb34a49891946aa38d4a147fe7dfe4b1b9847483191e7aa17dc8eb0f8549402",
-  "player_ready_now": "622c9e6df27b65cec5678a4a18f5c0c8dec9426351bae687a1ca44af313c78d7",
+  "player_ready_now": "16aea0deb788102ea1e0b83f55a7077c47466902e1f1f2a0ac715536779c3018",
   "player_review_ideas": "327ae348479aa648083730680f21250a27967744c649ba1df33e6de8b29a662c",
   "player_save_failed": "00535485a6a8bf386b3bb2a342dcabc564d64ea6cdef128793fbb2e1a6cfaab0",
   "player_saved_to_mistakes": "6e7efaa738e99ebcdb1c825a53451217d765133ccd304cbc1699003f4afb6a84",
@@ -153,6 +156,7 @@
   "player_spelled": "01e3018f9ed48328d1d35dbe399fa99ca0fd294acba65aeeac0944836b772cfb",
   "player_start_failed_description": "72da0a5789bc9cc1786a05592ddcddc9ab117f27fccaf8e26b932e220599803b",
   "player_start_failed_title": "3b5efdd1f16857399ad0edbe952192f849d0541d71b08bd828cdef5a6ce1a6a6",
+  "player_start_this_challenge": "7bd4e9dc484de240fb07ee1c7aa20913862df7bcdfc59d8c21aef0d49cfe00b4",
   "player_start_this_lesson": "18cb82fc63c666695e681a26e449ad69e5fcfab1ff369d2b85748c0332b8ee1d",
   "player_still_checking": "1e47cac3ee5cf7c5b68959355d68978cdaaca8ee5d400cd6eab958df6f47a64f",
   "player_stop_failed": "37e13c5d517a50dd17e56ab314497b71722d002ac9bd619e0a17d558e9842b5c",
@@ -170,7 +174,7 @@
   "player_verdict_sample_answer": "8a6d12d6e693a703b58762ea3cdb43e2a2ea830d9371a4b44c4c32a259e9cb04",
   "player_verdict_typo": "ee8149a01f684e9d0b8ee1e5145f862fc112a9cf13fdfcec34cb1d8dcd8e01bc",
   "player_verdict_unchecked": "277d5decb264716278e906534d3231cd51c968599afb1104f4245b8ea1200be5",
-  "player_wait_stopped": "f39ddcff721b44bcb5a1ec7facd78448f706cbd464a88e6c52d3d4897d8a9fd9",
+  "player_wait_stopped": "a356e046b941ce5d6c910e35b2933639d0b7f9615dc1e556ea179f25467228f9",
   "player_what_we_heard": "dd15a1e48810d26ce842a6b4696161857031bd1f4afefb20c08debb1dec67a6d",
   "player_word_heard_as": "6d8bae8a52ad0a8e579422745ba982bba7685a7da382c277d747cc514a3a44db",
   "player_word_not_heard": "583c24b74ce07ab8b9ba535e85d2f34829da2f92a5dc3beac7c88da1de22c4cc",
@@ -180,7 +184,7 @@
   "player_write_again": "f32e14059ed0124e713b8c264390c4f3429365983c9d8cd13a8eb91b63df8ef5",
   "player_write_your_answer": "e1c16190c02a438984cd1c63db0276699090637ed13f7d368fb32d87090355c3",
   "player_writing_lesson": "3a5e5d20c8638656c638ebf8e95645e2305e4c7375338ff30fd0f321982e0f69",
-  "player_writing_note": "f210314e326ce677ba9d05b9f7f680b1d24491f48310c4664464951ecbb5fba0",
+  "player_writing_note": "9177af8a543d1a3e68e63eae60c80de2e2e0b64a7182d1e89c59f4f3dbfb1f23",
   "player_your_answer": "6ac1c7a7117b3803e61af959b36598f94a37d6695f1ae09f1d3b49c11c245795",
   "player_your_example": "395317fd9b02b739852f65ae4d178756fff990015bbf4fb658eab1781f3f99db"
 }
@@ -292,8 +296,12 @@
     <string name="player_getting_lesson_ready">Préparation de ta leçon</string>
     <string name="player_getting_challenge_ready">Préparation de ton défi</string>
     <string name="player_lesson_ready">Ta leçon est prête</string>
-    <string name="player_wait_stopped">On n’a pas pu préparer cette leçon</string>
+    <string name="player_wait_stopped">Nous n’avons pas pu préparer cette leçon</string>
     <string name="player_start_this_lesson">Commencer cette leçon</string>
+    <string name="player_challenge_not_written_title">Ce défi n’est pas encore prêt</string>
+    <string name="player_challenge_ready">Ton défi est prêt</string>
+    <string name="player_challenge_wait_stopped">Nous n’avons pas pu préparer ce défi</string>
+    <string name="player_start_this_challenge">Commencer ce défi</string>
     <string name="player_writing_lesson">Préparation de ta leçon</string>
     <string name="player_phase_plan">Planification de la leçon</string>
     <string name="player_phase_plan_line_1">Choix des sujets à aborder…</string>
@@ -319,9 +327,9 @@
     <!-- A step Zoonk shows while it prepares a challenge, after "Writing the challenge": its check found a problem, so Zoonk fixes it and checks the challenge again. -->
     <string name="player_challenge_phase_fix">Correction des problèmes détectés</string>
     <string name="player_challenge_phase_fix_line_1">Reprise des passages incohérents…</string>
-    <string name="player_writing_note">La préparation prend quelques minutes et continue même si tu pars.</string>
+    <string name="player_writing_note">La préparation prend quelques minutes et continue même si tu quittes la page.</string>
     <!-- Heading over a lesson or review the learner can start now, while or instead of the lesson that isn't ready. -->
-    <string name="player_ready_now">Tu peux commencer maintenant</string>
+    <string name="player_ready_now">Disponible dès maintenant</string>
     <plurals name="player_review_ideas">
         <item quantity="one">Réviser %1$s idée</item>
         <item quantity="many">Réviser %1$s idées</item>

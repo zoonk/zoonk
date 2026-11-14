@@ -8,6 +8,7 @@ import { mockSession } from "../_test-utils/mock-session";
 import { analytics } from "../_test-utils/test-boundaries";
 import { trackServerEvent } from "../analytics/server";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
+import { seenQuote } from "./_test-utils/seen-quote";
 import { parsePlanChangePayload } from "./_utils/plan-change-payload";
 import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
@@ -259,7 +260,7 @@ describe("plan changes", () => {
     const accepted = await decidePlanChange({
       changeId: "changeId" in big ? big.changeId : "",
       goalId: goal.id,
-      input: { status: "applied" },
+      input: { quote: await seenQuote("changeId" in big ? big.changeId : ""), status: "applied" },
     });
 
     expect(accepted).toMatchObject({
@@ -326,7 +327,7 @@ describe("plan changes", () => {
         ? await decidePlanChange({
             changeId: proposed.changeId,
             goalId: goal.id,
-            input: { status: "applied" },
+            input: { quote: await seenQuote(proposed.changeId), status: "applied" },
           })
         : proposed;
 

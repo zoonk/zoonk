@@ -1,10 +1,8 @@
 "use client";
 
 import { type PlanBasesAdvice } from "@zoonk/core/plans/bases-advice-contract";
-import {
-  type LearnerPlanOperation,
-  type PlanChangeDecisionInput,
-} from "@zoonk/core/plans/contract";
+import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
+import { type PlanChangeAnswer } from "@zoonk/core/plans/decision-contract";
 import { type PlanChangePreview } from "@zoonk/core/plans/preview-contract";
 import { type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
 import { type ToolChoice, type ToolSystem } from "@zoonk/core/plans/tools-contract";
@@ -33,10 +31,7 @@ export type PlanActions = {
    */
   findTimeToCover: () => Promise<PlanTimeToCover | null>;
   adviseOnBases: () => Promise<PlanBasesAdvice | null>;
-  decide: (input: {
-    changeId: string;
-    status: PlanChangeDecisionInput["status"];
-  }) => Promise<boolean>;
+  decide: (answer: PlanChangeAnswer) => Promise<boolean>;
   /** The change it made: null when the pick changed nothing or the plan isn't built yet. */
   chooseExamOption: (input: {
     group: string;

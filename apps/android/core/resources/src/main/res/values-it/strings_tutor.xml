@@ -61,10 +61,10 @@
   "tutor_offer_country_description": "37ca537256f9be1c2a862959bc74e813b84bf2293cd9d391f97fda911cba64bf",
   "tutor_offer_essay_biweekly": "19eff3db65dd2b72c753fa0c714281444745f0630e116f2c7470421feef019f7",
   "tutor_offer_essay_final_weeks": "fd5d11fff11e5ffa203993d3ec992079311078b9e97a1ddbdf68a950c48a9202",
-  "tutor_offer_essay_gate": "68e618626987c2bc6117194d6dc86dfd54d3737601f1452a5248b0037668f632",
+  "tutor_offer_essay_gate": "07ef4d63c3316cca5456862b483d588fa57c3eaa6442fe8534dc03854230d086",
   "tutor_offer_essay_weekly": "296112c9d72fd2fe8d7febb96063e6721adbca0c5b0ab8ee95f17ff749508637",
   "tutor_offer_goal": "19756373852639043ae87ef88361a5437af6947b06374a872b3cab7c5c82eba3",
-  "tutor_offer_goal_gate": "adee42d8bf6764271aafb3d12909260612fde1c5f3b09f9b07740caee96fe08b",
+  "tutor_offer_goal_gate": "f10b222d7c25d49eedb40631a998d90404a0f6d6a4f43680a925b0b7bb5cefb1",
   "tutor_offer_home_country_saved": "8840f80eba2565ff61680b479efcf892501a9d4da812d0a030070044b5a27e10",
   "tutor_offer_home_country_title": "0176d28501b7f17a4df1e3adc1d0dbc5a1e36f5b18ba0b4d72845dca37ac027f",
   "tutor_offer_logbook": "d7911c2560f923fd01882e6d8d47ee6bf730c329a00068b7879266156d6b4656",
@@ -217,7 +217,7 @@
     <!-- The goal the learner may start, in quotes. -->
     <string name="tutor_offer_goal">“%1$s”</string>
     <!-- On that card when the free plan doesn't let the learner start another goal now: the lock can come from the goals they follow at the same time or from the new goals they started recently, so it names neither. Plus is the name of Zoonk's paid plan, not the word "more". -->
-    <string name="tutor_offer_goal_gate">Per iniziare un altro obiettivo ora serve un abbonamento</string>
+    <string name="tutor_offer_goal_gate">Ora serve un abbonamento per iniziare un altro obiettivo</string>
     <string name="tutor_offer_catalog_course">Un corso già pronto nel catalogo</string>
     <string name="tutor_offer_chapter_test">Test: %1$s</string>
     <plurals name="tutor_offer_chapter_test_lessons">
@@ -242,7 +242,7 @@
     <string name="tutor_offer_essay_biweekly">Esercitazioni a settimane alterne nel tuo piano, con un voto per ogni bozza.</string>
     <!-- Describes the essay practice Plus offers in the plan, not an instruction to the learner. -->
     <string name="tutor_offer_essay_final_weeks">Esercitazioni nelle ultime settimane prima dell’esame, con un voto per ogni bozza.</string>
-    <string name="tutor_offer_essay_gate">Per esercitarti con i temi serve un abbonamento</string>
+    <string name="tutor_offer_essay_gate">Per esercitarti a scrivere temi serve un abbonamento</string>
     <string name="tutor_offer_mistakes">Quaderno degli errori</string>
     <plurals name="tutor_offer_mistakes_open">
         <item quantity="one">%d errore da correggere, con esercizi che lo ripropongono.</item>

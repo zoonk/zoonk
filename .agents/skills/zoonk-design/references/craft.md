@@ -77,7 +77,7 @@ Only three things pass the column: a highlighted or hovered row (10px each side,
 
 A page's title is close to the top and at the same y on every page, on a phone and a computer: 12px, the 44px bar with the way back and the page's actions, its hairline, then 12px to the title (`PageTop`, or `PageTopBar` in a layout and `PAGE_HEADER_CLASS` in the page). The bar keeps its room when it holds nothing, the frame has no top padding, no page pads or pushes its own title, and nothing sits over it ([titles at one height](app-patterns.md#what-every-page-shares)). The way back is `BackLink` (I4), always with the page's name. A task keeps its own header with ✕. A [marketing page](../SKILL.md#marketing-pages), the blog and the design site are outside this rule: each keeps its site's header, with its titles at one height from one layout piece and a first screen's room set once per kind of page.
 
-- **Check.** The `h1`'s top per page and screen size: 69px from the frame's top, equal within 1px. `verify:pages` leads to a title with more than 4px more room over it on a phone than on a laptop and to a back link with no name; `zoonk/no-page-top-spacing` and `zoonk/one-back-link` hold the source.
+- **Check.** The `h1`'s top per page and screen size: 69px from the frame's top, equal within 1px. `verify:pages` leads to an app page whose title isn't where its page-top bar puts it, within 1px, or whose header has no page-top bar, and to a back link with no name; lint (`zoonk/no-page-top-spacing`) fails top padding or margin on a page's root or its first child.
 - **Usual break.** `pt-5` on a header, top padding on the frame, or a bar hidden on a computer, so one page's title sits higher or lower. A second header component that decides the title's place again.
 
 ### E9. Start-aligned or centered, never both
@@ -114,7 +114,7 @@ A title is closer to what it names than to what precedes it: the space above a s
 
 A box that holds content (a card, a panel, a composer, a bar) gives it the same room on all four sides. A control (a button, a chip, a field) is wider than tall, with equal left and right padding. Text is never closer than 8px to a bordered or filled edge (12px in a panel), and two containers of one kind have the same padding.
 
-- **Check.** In a box: content ink to each of the four edges, equal within 2px (a `verify:pages` craft lead). Text ink to the nearest bordered or filled edge is 8px or more.
+- **Check.** In a box: content ink to each of the four edges, equal within 2px (a `verify:pages` craft lead, for a panel 44px or taller). Text ink to the nearest bordered or filled edge is 8px or more.
 - **Usual break.** 16px at a card's sides and 12px over and under it. Two rails of one width with different inner padding.
 
 ### S5. The gutter is the frame's
@@ -276,7 +276,7 @@ An icon and its label are one gap apart per component (`Button`'s own gap; 12px 
 
 A button shows its label and at most one glyph: an icon, a forward chevron or a keycap, never two. The main action that Enter presses (`EnterButton`, and the pieces built on it) has the ⏎ keycap as its glyph where there is a keyboard and is its label alone on a touch screen, so it takes no icon. While a button works, the spinner takes its glyph's place, or covers its label when it shows none, and nothing changes size.
 
-- **Check.** Count the glyphs in each button: one at most (`zoonk/one-glyph-button`). The button's width at rest and busy: equal.
+- **Check.** Count the glyphs in each button: one at most. The button's width at rest and busy: equal.
 - **Usual break.** A forward arrow and ⏎ on "Start". A play or check icon beside the ⏎ keycap, added so the spinner has a place to go.
 
 ## Density and balance
@@ -365,7 +365,7 @@ A dialog, a sheet or a side panel closes with Esc, with a press outside it, and 
 
 What opens decides its panel, and the screen's size decides its place. On a phone everything that opens over a page rises from the bottom: a short form, a pick or a detail as a sheet with a grab handle (`Drawer`), and a question that needs an answer as a sheet without one, the confirm on top and "Cancel" under it (`AlertDialog`). On a computer both are centered. The piece decides, so no screen picks a dialog or a sheet itself. A side panel (`SidePanel`) is a computer's, only for something edited beside the page it changes (a sheet on a phone). A menu or a popover, for a few choices or one fact tied to a control, stays anchored to it at every size. A bottom-docked box is a phone's shape (where the thumb is, closed with a swipe); on a computer the eyes and pointer are in the middle of the window.
 
-- **Check.** Open it and close it each way. On a computer, find its ✕ without looking for a grab handle. On a phone, its bottom edge is the screen's. The `verify:pages` walk opens each one and checks its place, its focus and its closes; `zoonk/one-overlay-piece` holds the source.
+- **Check.** Open it and close it each way. On a computer, find its ✕ without looking for a grab handle. On a phone, its bottom edge is the screen's. The `verify:pages` walk opens each one and fails it when it doesn't take focus, shows no ✕ or footer button, isn't centered on a laptop, or doesn't close on Esc and give focus back; it leads to one that doesn't reach the screen's bottom on a phone. It never presses ✕ or taps outside.
 - **Usual break.** A sheet with a grab handle and no ✕, docked at the bottom of a computer's window. A dialog still centered on a phone.
 
 ### B5. Focus goes in, and comes back
@@ -397,21 +397,21 @@ Each role is drawn by its shared piece, with nothing added around it by the scre
 
 An app screen's one main action sits in `BottomBar`, pinned to the bottom of the screen on a phone and a computer, where the thumb is and where Enter's hint is found. A task's record or check button is its main action and sits there too. A screen with no main action has no bar; what opens over a page keeps its own footer. On a [marketing page](../SKILL.md#marketing-pages) the one action sits in the page, and the bar shows it once the page's own has scrolled away.
 
-- **Check.** The main action's box is inside the bar, and the bar's bottom is the screen's bottom (or the tab bar's top) before and after scrolling, at 390 and 1440. `verify:pages` leads to a lone primary button that isn't pinned in the screen's lower half or sits outside the bar.
+- **Check.** The main action's box is inside the bar, and the bar's bottom is the screen's bottom (or the tab bar's top) before and after scrolling, at 390 and 1440. `verify:pages` leads to a screen whose one action that binds Enter isn't inside a bar pinned in the screen's lower half; a screen with two of them, or a main action that doesn't bind Enter, isn't judged.
 - **Usual break.** The action under the content on one screen, beside the title on the next, at the top on a computer.
 
 ### R3. The line over a title is `Eyebrow`
 
 When a task's, a card's, a sheet's or a question's title has a small line over it, that line is `Eyebrow` (`SuccessEyebrow` for something done): an outlined chip, a label in sentence case, 12px over its title. A page with the app's header has no line over its title; what the line said goes under the title or leaves. A chip earns its place only by saying what its title doesn't: over "Match each word to its meaning.", "Match pairs" repeats it and goes, while "Estimate first" over "How long is a million seconds?" says to guess before the answer shows and stays. An activity's title says what to do with the content and never how to work the screen, so an activity keeps a chip only when it names how the screen is worked ("Drag a corner", "Tap along", "Ear training") or what comes first ("Estimate first").
 
-- **Check.** Anything directly over a title is the chip, or nothing (`zoonk/one-eyebrow`, and a `verify:pages` lead for text over a title outside the piece).
+- **Check.** Anything directly over a title is the chip, or nothing (a `verify:pages` lead for a line of text right over a header's title outside the piece).
 - **Usual break.** Gray or mono uppercase text over a title in one area and a chip in the next.
 
 ### R4. A paid feature wears nothing, and gates once
 
 A row, card, tab or button for a paid feature looks like its free neighbors: no badge, chip, lock or card that says it's paid. The subscription gate (`SubscribeGate`) shows once, in the feature's place, when the learner tries to use it. Its action reads "Subscribe".
 
-- **Check.** `node scripts/verify/catalog-rules.mts` lists every string that pays in other words, names the plan outside pricing or offers a "none" beside Skip (`verify:diff` asks about each new one); `zoonk/no-plus-badge` holds the source; `verify:pages` leads to a second gate on one screen. Whether a gate shows before the learner asked for the feature is the reader's to judge.
+- **Check.** `node scripts/verify/catalog-rules.mts` lists every string that pays in other words, names the plan outside pricing or reads "None of these" or "Nothing to add" (`verify:diff` asks about each new one); lint (`zoonk/no-plus-badge`) fails a badge or chip that reads "Plus"; `verify:pages` leads to a second gate on one screen. Whether a gate shows before the learner asked for the feature is the reader's to judge.
 - **Usual break.** A badge on the row and a notice on the page it opens. A card that announces the limit above a button that will show the gate anyway.
 
 ## The craft read

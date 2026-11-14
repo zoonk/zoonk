@@ -3,7 +3,13 @@
 import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
 import { type PlanBaseView, type PlanBasesView } from "@zoonk/core/plans/view-contract";
 import { Button } from "@zoonk/ui/components/button";
-import { Drawer, DrawerContent, DrawerPopup, DrawerTitle } from "@zoonk/ui/components/drawer";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerFooter,
+  DrawerPopup,
+  DrawerTitle,
+} from "@zoonk/ui/components/drawer";
 import { LayersIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
@@ -125,19 +131,18 @@ function BasesFooter({
   };
 
   return (
-    <div className="flex flex-col gap-3 border-t px-6 pt-4 pb-6">
-      <div aria-live="polite">{note()}</div>
-
+    <DrawerFooter note={<div aria-live="polite">{note()}</div>}>
       <Button
         busy={isPending}
         disabled={changed.length === 0 || preview.status !== "ready"}
         focusableWhenDisabled
         onClick={onSave}
         ref={saveButton}
+        size="lg"
       >
         {t("Save")}
       </Button>
-    </div>
+    </DrawerFooter>
   );
 }
 

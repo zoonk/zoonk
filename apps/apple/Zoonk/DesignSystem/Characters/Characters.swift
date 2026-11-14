@@ -15,17 +15,28 @@ struct BuddyCharacter: View {
 }
 
 /// `reacts` where something just happened (the challenge opened, or its result came in); a revisit
-/// passes none, and he's still.
+/// passes none, and he's still. `won` is his win: he lifts his shield whole.
 struct TricksterCharacter: View {
   var beaten = false
+  var won = false
   var reacts = false
+  /// His shield's cracks from the learner's right answers: none, one or two.
+  var cracks = 0
+  var delay: TimeInterval = .beat
   var cue: ActCue<TricksterAct>?
 
   var body: some View {
     CharacterActor(
-      art: TricksterArt(holdsSign: !beaten), expression: beaten && !reacts ? .defeated : .sly,
-      reaction: reacts ? ActReaction(act: beaten ? .defeat : .smug, delay: .beat) : nil,
+      art: TricksterArt(cracks: cracks),
+      expression: reacts ? .sly : beaten ? .defeated : won ? .smug : .sly,
+      reaction: reacts
+        ? ActReaction(act: beaten ? .defeat : won ? .triumph : .smug, delay: delay) : nil,
       cue: cue)
+  }
+
+  /// One mark from the first right answer, the second once right answers reach half the pass mark.
+  static func cracks(right: Int, passMark: Int) -> Int {
+    right == 0 ? 0 : right * 2 >= passMark ? 2 : 1
   }
 }
 

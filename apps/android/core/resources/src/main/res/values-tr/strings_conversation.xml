@@ -19,7 +19,7 @@
   "conversation_calling": "06c15624128961e66a285cfa30555c30b640602bbb6da8d0f67fbf12682b92f7",
   "conversation_calls_need_account": "3e0f27f8cf7f5d2c2f702b6420688846fd39cb3c2cc7973407c7f9e699d21b86",
   "conversation_cancel": "ae35e1445eb24dde06cb0744ae6ecbc289e14e4c267c6a6cc485959a7797b766",
-  "conversation_challenge_gate_line": "2a96330a8c90cfd17efad81d21dc647e5f0b4ae342d701ad378c67aefd66bd6b",
+  "conversation_challenge_gate_line": "5a3a48c1deeb0de00b98a316eb513f73eb2be7d8ad7c0455d984874dc290fc41",
   "conversation_challenge_gate_title": "2490822e9a323d68f57a3bd67597156cbb5e3d7227f477c980e5fd8a7e073c1e",
   "conversation_challenge_passed": "fbf9465700ee41029818cb958ff9779b89fe29fc560b5ec149aa3dee8c28fb3a",
   "conversation_character_detail": "76f7ffbf241e81b6b847a3b840efe71990e875549216081e276d18d9a02e19e6",
@@ -186,7 +186,7 @@
     <string name="conversation_start">Sohbeti başlat</string>
     <string name="conversation_start_failed">Sohbet başlamadı. Biraz sonra tekrar dene.</string>
     <string name="conversation_challenge_gate_title">Bu sohbet için abonelik gerekiyor</string>
-    <string name="conversation_challenge_gate_line">Planın bu sohbet olmadan da devam eder.</string>
+    <string name="conversation_challenge_gate_line">Planın onsuz da devam eder.</string>
     <!-- The microphone permission was denied; the character's name. -->
     <string name="conversation_mic_off">%1$s ile konuşmak için Ayarlar’dan mikrofon izni ver ya da sohbete yazarak katıl.</string>
     <!-- Starts the call without the microphone, answering by typing. -->

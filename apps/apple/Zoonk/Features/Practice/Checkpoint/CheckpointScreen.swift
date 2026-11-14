@@ -98,7 +98,7 @@ struct CheckpointScreen: View {
   private var title: LocalizedStringResource {
     guard case .loaded(let loaded) = load else {
       return LocalizedStringResource(
-        "Phase challenge", table: "Practice", comment: "Title of a phase challenge block.")
+        "Challenge", table: "Practice", comment: "Names a challenge's screen until it loads")
     }
 
     return CheckpointCopy.title(loaded.checkpoint)
@@ -137,15 +137,25 @@ struct CheckpointScreen: View {
       if state.kind != .weekly {
         HStack(spacing: 16) {
           if sizeClass == .regular {
+            // He reacts to each answer; the one that decides the duel plays its ending.
             TricksterCharacter(
+              cracks: TricksterCharacter.cracks(right: state.correct, passMark: state.passMark),
               cue: feedback.map {
-                ActCue(id: state.verdicts.count, act: $0.isCorrect ? .sly : .smug)
+                ActCue(
+                  id: state.verdicts.count,
+                  act: state.decision.map { $0 == .won ? .defeat : .triumph }
+                    ?? ($0.isCorrect ? .sly : .smug))
               }
             )
             .frame(width: 104, height: 104)
+            .overlay(alignment: .topLeading) {
+              if state.decision == .won {
+                ShieldSparks(size: 104, delay: 0.1)
+              }
+            }
           }
 
-          ShieldGauge(correct: state.correct, passMark: state.passMark)
+          ShieldGauge(correct: state.correct, passMark: state.passMark, decision: state.decision)
         }
       }
 
@@ -167,12 +177,28 @@ struct CheckpointScreen: View {
             Group {
               if let decision = state.decision {
                 Text(
-                  CheckpointCopy.decisionLine(decision, lessons: state.reinforcementLessons))
+                  CheckpointCopy.decisionLine(decision))
               } else if !feedback.isCorrect {
                 Text(seeWhyAtEnd)
               }
             }
             .foregroundStyle(.mutedForeground)
+
+            // On a phone the ending plays here, a beat after the verdict, on the card's text edge.
+            if let decision = state.decision, sizeClass != .regular {
+              TricksterCharacter(
+                beaten: decision == .won, won: decision == .lost, reacts: true,
+                cracks: TricksterCharacter.cracks(right: state.correct, passMark: state.passMark),
+                delay: 0.25
+              )
+              .frame(width: 144, height: 144)
+              .overlay(alignment: .topLeading) {
+                if decision == .won {
+                  ShieldSparks(size: 144, delay: 0.35)
+                }
+              }
+              .accessibilityHidden(true)
+            }
           }
         }
       }
@@ -224,7 +250,7 @@ struct CheckpointScreen: View {
 
     let detail =
       state.decision.map {
-        CheckpointCopy.decisionLine($0, lessons: state.reinforcementLessons)
+        CheckpointCopy.decisionLine($0)
       } ?? (feedback.isCorrect ? nil : seeWhyAtEnd)
 
     return [String(localized: PracticeVerdict(isCorrect: feedback.isCorrect).label), detail]
@@ -353,6 +379,7 @@ struct CheckpointScreen: View {
 private struct ShieldGauge: View {
   let correct: Int
   let passMark: Int
+  let decision: DuelDecision?
 
   var body: some View {
     Gauge(value: Double(min(correct, passMark)), in: 0...Double(max(passMark, 1))) {
@@ -364,14 +391,43 @@ private struct ShieldGauge: View {
         Image(systemName: "shield.lefthalf.filled")
       }
     } currentValueLabel: {
-      Text(
-        "\(min(correct, passMark)) of \(passMark) broken", tableName: "Practice",
-        comment: "How much of the Trickster's shield is broken."
-      )
+      // The three share one cell, so the track never changes width.
+      ZStack(alignment: .trailing) {
+        ForEach(ShieldLabel.allCases, id: \.self) { label in
+          text(label)
+            .opacity(label == shown ? 1 : 0)
+            .accessibilityHidden(label != shown)
+        }
+      }
       .monospacedDigit()
     }
     .tint(.success)
     .typeStyle(.body)
+  }
+
+  private enum ShieldLabel: CaseIterable {
+    case toGo, heWon, youWon
+  }
+
+  private var shown: ShieldLabel {
+    switch decision {
+    case .won: .youWon
+    case .lost: .heWon
+    case nil: .toGo
+    }
+  }
+
+  private func text(_ label: ShieldLabel) -> Text {
+    switch label {
+    case .toGo:
+      Text(
+        "\(max(passMark - correct, 0)) more to win", tableName: "Practice",
+        comment: "Right answers still needed to break the Trickster's shield")
+    case .heWon:
+      Text("He won", tableName: "Practice", comment: "The Trickster won the duel")
+    case .youWon:
+      Text("You won", tableName: "Practice", comment: "The learner won the duel")
+    }
   }
 }
 
@@ -402,55 +458,44 @@ private struct CheckpointResultView: View {
       } else {
         // A result opened again draws him still.
         if checkpoint.kind != .weekly {
-          TricksterCharacter(beaten: passed, reacts: state.completion != nil)
-            .frame(width: 112, height: 112)
+          // Still: the ending already played on the answer that decided it.
+          TricksterCharacter(
+            beaten: passed, won: !passed,
+            cracks: TricksterCharacter.cracks(
+              right: correct, passMark: result?.passMark ?? state.passMark)
+          )
+          .frame(width: 112, height: 112)
         }
 
         PracticeResultTitle(
           title: CheckpointCopy.resultTitle(kind: checkpoint.kind, passed: passed))
 
+        // A duel stops once it's decided, so the Trickster's score is a count with no total.
         PracticeResultNumbers(
-          correct: correct, total: total,
-          // A win's Brain Power is its rewards' first row, as on main.
-          brainPower: won ? 0 : state.completion?.ownBrainPower ?? 0,
+          correct: correct, total: checkpoint.kind == .weekly ? total : nil,
+          brainPower: state.completion?.ownBrainPower ?? (won ? checkpoint.reward.brainPower : 0),
           facts: won
             ? []
             : (result?.passMark).map { passMark in
               [
                 String(
-                  localized: "\(passMark) of \(state.questionCount) right to win",
-                  table: "Practice",
-                  comment: "Under a lost phase challenge's score: the right answers it needed.")
+                  localized: "\(passMark) right to win", table: "Practice",
+                  comment: "Under a lost Trickster duel's score: the right answers it needed.")
               ]
             } ?? [],
-          day: state.completion.flatMap { try? StudyJSON.recode($0, as: BlockMoment.self) }?.day)
+          // A lost duel shows no extra moment.
+          day: won
+            ? state.completion.flatMap { try? StudyJSON.recode($0, as: BlockMoment.self) }?.day
+            : nil)
       }
     } response: {
       if checkpoint.endedWithoutQuestions != true {
-        if won {
-          CheckpointRewards(
-            checkpoint: checkpoint,
-            brainPower: state.completion?.ownBrainPower ?? checkpoint.reward.brainPower)
+        if won, checkpoint.reward.badge {
+          CheckpointRewards()
         }
 
-        if let retry = CheckpointCopy.retryLine(
-          kind: checkpoint.kind, passed: passed, lessons: state.reinforcementLessons)
-        {
-          Label {
-            Text(retry)
-          } icon: {
-            Image(systemName: "arrow.counterclockwise")
-          }
-        }
-
-        if !won, let next = checkpoint.nextPhase?.value1 {
-          Label {
-            Text(
-              "The next phase, \(next.name), is already open.", tableName: "Practice",
-              comment: "After a phase challenge not won: the plan goes on.")
-          } icon: {
-            Image(systemName: "arrow.forward")
-          }
+        if !won, let retry = CheckpointRetry(checkpoint: checkpoint, state: state) {
+          CheckpointRetryView(retry: retry)
         }
 
         if let answers = result?.answers, !answers.isEmpty {
@@ -474,69 +519,111 @@ private struct CheckpointResultView: View {
   }
 }
 
-private struct CheckpointRewards: View {
-  let checkpoint: Components.Schemas.Checkpoint
-  let brainPower: Int
+private struct CheckpointResultSection<Content: View>: View {
+  let title: Text
+  @ViewBuilder let content: Content
 
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
-      Text("Rewards", tableName: "Practice", comment: "Heading over what a won challenge earned.")
-        .typeStyle(.body.weight(.semibold))
+      title.typeStyle(.body.weight(.semibold))
+      content
+    }
+  }
+}
 
-      LabeledContent {
-        Text("+\(brainPower)", tableName: "Practice", comment: "Brain Power a challenge added.")
-          .monospacedDigit()
-          .foregroundStyle(.brainText)
-      } label: {
-        Label {
-          Text("Brain Power", tableName: "Practice", comment: "A challenge's Brain Power reward.")
-        } icon: {
-          Image(systemName: "brain")
-        }
-      }
-
-      if checkpoint.reward.phaseComplete {
-        Label {
-          if let phase = checkpoint.phase?.value1 {
-            Text(
-              "Phase \(phase.index + 1) complete", tableName: "Practice",
-              comment: "Reward of a won phase challenge: its phase is done.")
-          } else {
-            Text(
-              "Phase complete", tableName: "Practice",
-              comment: "Reward of a won phase challenge: its phase is done.")
-          }
-        } icon: {
-          Image(systemName: "flag")
-        }
-      }
-
-      if checkpoint.reward.badge {
-        Label {
-          Text(
-            "Trap hunter badge", tableName: "Practice",
-            comment: "Reward of a won phase challenge.")
-        } icon: {
-          Image(systemName: "rosette")
-        }
-      }
-
-      if checkpoint.reward.phaseComplete, checkpoint.kind != .weekly,
-        let next = checkpoint.nextPhase?.value1
-      {
+/// A won duel's rewards beyond its Brain Power: the badge, when it brings one.
+private struct CheckpointRewards: View {
+  var body: some View {
+    CheckpointResultSection(
+      title: Text(
+        "Rewards", tableName: "Practice", comment: "Heading over what a won challenge earned.")
+    ) {
+      Label {
         Text(
-          "Next phase", tableName: "Practice", comment: "Heading over the phase that comes next."
-        )
-        .typeStyle(.body.weight(.semibold))
-        .padding(.top, 8)
-
-        Label {
-          Text(next.name)
-        } icon: {
-          Image(systemName: "arrow.forward")
-        }
+          "Trap hunter badge", tableName: "Practice", comment: "Reward of a won Trickster duel.")
+      } icon: {
+        Image(systemName: "rosette")
       }
     }
+  }
+}
+
+/// When a lost duel comes back, as things stand now; a duel just lost comes back tomorrow.
+private enum CheckpointRetry {
+  case tomorrow(lessons: Int)
+  case nextSession(lessons: Int)
+  case won
+
+  init?(checkpoint: Components.Schemas.Checkpoint, state: CheckpointDuelState) {
+    let lessons = state.reinforcementLessons
+
+    switch state.completion == nil ? checkpoint.retry : .tomorrow {
+    case .tomorrow: self = .tomorrow(lessons: lessons)
+    case .open: self = .nextSession(lessons: lessons)
+    case .passed: self = .won
+    case nil: return nil
+    }
+  }
+}
+
+private struct CheckpointRetryView: View {
+  let retry: CheckpointRetry
+
+  var body: some View {
+    CheckpointResultSection(
+      title: Text(
+        "What's next", tableName: "Practice",
+        comment: "Heading over when a lost Trickster duel comes back.")
+    ) {
+      Label {
+        VStack(alignment: .leading, spacing: 2) {
+          Text(title).typeStyle(.rowTitle)
+
+          if let detail {
+            Text(detail)
+              .typeStyle(.meta)
+              .foregroundStyle(.secondary)
+          }
+        }
+      } icon: {
+        Image(systemName: retry.isWon ? "checkmark" : "arrow.counterclockwise")
+      }
+    }
+  }
+
+  private var title: LocalizedStringResource {
+    switch retry {
+    case .tomorrow:
+      LocalizedStringResource(
+        "Rematch tomorrow", table: "Practice", comment: "When a lost Trickster duel comes back.")
+    case .nextSession:
+      LocalizedStringResource(
+        "Rematch next time you study", table: "Practice",
+        comment: "A lost Trickster duel is back in the plan for the next session.")
+    case .won:
+      LocalizedStringResource(
+        "You won the rematch", table: "Practice",
+        comment: "A lost Trickster duel was won on a later try.")
+    }
+  }
+
+  private var detail: LocalizedStringResource? {
+    switch retry {
+    case .tomorrow(let lessons), .nextSession(let lessons):
+      lessons == 0
+        ? nil
+        : LocalizedStringResource(
+          "After \(lessons) short lessons on what tripped you up.", table: "Practice",
+          comment: "Short lessons a learner takes before a Trickster rematch.")
+    case .won: nil
+    }
+  }
+}
+
+extension CheckpointRetry {
+  fileprivate var isWon: Bool {
+    if case .won = self { return true }
+    return false
   }
 }
 
@@ -590,12 +677,9 @@ enum CheckpointCopy {
           "Mock exam", table: "Practice", comment: "Title of a weekly mock exam block.")
         : LocalizedStringResource(
           "Weekly challenge", table: "Practice", comment: "Title of the weekly challenge block.")
-    case .finalBoss:
+    case .finalBoss, .boss:
       LocalizedStringResource(
-        "Final challenge", table: "Practice", comment: "Title of the final challenge block.")
-    case .boss:
-      LocalizedStringResource(
-        "Phase challenge", table: "Practice", comment: "Title of a phase challenge block.")
+        "The Trickster", table: "Practice", comment: "Title of a Trickster duel.")
     }
   }
 
@@ -614,42 +698,38 @@ enum CheckpointCopy {
         "Not this time", table: "Practice", comment: "A lost phase challenge.")
   }
 
-  static func retryLine(
-    kind: Components.Schemas.Checkpoint.KindPayload, passed: Bool, lessons: Int
-  )
-    -> LocalizedStringResource?
-  {
-    if kind == .weekly { return nil }
-
-    if passed { return nil }
-
-    return newTry(lessons: lessons)
-  }
-
   /// Under the verdict that decides a duel.
-  static func decisionLine(_ decision: DuelDecision, lessons: Int) -> String {
+  static func decisionLine(_ decision: DuelDecision) -> String {
     switch decision {
     case .won:
       String(
         localized: "His shield is broken. You won!", table: "Practice",
-        comment: "Under the verdict that wins a phase challenge.")
+        comment: "Under the verdict that wins a Trickster duel.")
     case .lost:
-      [
-        String(
-          localized: "His shield held this time.", table: "Practice",
-          comment: "Under the verdict that loses a phase challenge, before when it comes back."),
-        String(localized: newTry(lessons: lessons)),
-      ].joinedSentences()
+      String(
+        localized: "The Trickster won this time.", table: "Practice",
+        comment: "Under the verdict that loses a Trickster duel.")
     }
   }
 
-  private static func newTry(lessons: Int) -> LocalizedStringResource {
+  static func rematchTomorrow(lessons: Int) -> LocalizedStringResource {
     lessons == 0
       ? LocalizedStringResource(
-        "New try tomorrow. Nothing is lost.", table: "Practice",
-        comment: "A lost phase challenge comes back.")
+        "Rematch tomorrow.", table: "Practice", comment: "A lost Trickster duel comes back.")
       : LocalizedStringResource(
-        "New try tomorrow, after \(lessons) short lessons. Nothing is lost.", table: "Practice",
-        comment: "A lost phase challenge comes back after short lessons.")
+        "Rematch tomorrow, after \(lessons) short lessons.", table: "Practice",
+        comment: "A lost Trickster duel comes back after short lessons.")
+  }
+}
+
+/// A win's gold sparks from the shield's center (73% down, 18% in from the art's leading edge).
+private struct ShieldSparks: View {
+  let size: CGFloat
+  let delay: TimeInterval
+
+  var body: some View {
+    Burst(color: .warning, delay: delay)
+      .position(x: size * 0.18, y: size * 0.73)
+      .frame(width: size, height: size)
   }
 }

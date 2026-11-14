@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.player
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -35,6 +36,7 @@ import com.zoonk.android.data.GenerationFailure
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.TrackVisibleWait
+import com.zoonk.android.data.stepLabel
 import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.model.LessonOutline
 import com.zoonk.android.feature.player.steps.count
@@ -105,6 +107,7 @@ fun LessonWaitingScreen(
             waits -> WaitMoment.GettingReady
             else -> null
         }
+    val words = lessonWaitWords(kind)
     val retry = if (current == LessonWriting.Failed) viewModel::start else viewModel::retry
     val refused =
         (current as? LessonWriting.Refused)?.refusal?.takeIf {
@@ -137,7 +140,7 @@ fun LessonWaitingScreen(
                         Button(
                             onClick = hold::moveOn,
                             modifier = Modifier.fillMaxWidth(),
-                        ) { Text(stringResource(R.string.player_start_this_lesson)) }
+                        ) { Text(stringResource(words.start)) }
                     }
                 }
 
@@ -156,7 +159,7 @@ fun LessonWaitingScreen(
     ) {
         LessonColumnBeforeFold {
             if (moment != null) {
-                WaitNote(moment)
+                WaitNote(moment, words)
             } else {
                 Text(outline.description, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
             }
@@ -172,19 +175,15 @@ fun LessonWaitingScreen(
                         val share =
                             com.zoonk.android.ui.components
                                 .rememberGenerationProgress(kind, shown)
-                        val status =
-                            when {
-                                hold.holding -> R.string.player_lesson_ready
-                                kind == GenerationKind.Challenge -> R.string.player_getting_challenge_ready
-                                else -> R.string.player_getting_lesson_ready
-                            }
+                        val sentence = if (hold.holding) words.ready else words.gettingReady
+                        val step = kind.stepLabel(if (hold.holding) GenerationRun(status = GenerationRun.Status.Ready) else shown)
                         WaitContent(
                             quiz,
                             hold,
                             AnalyticsEvent.WarmUpSurface.LessonWait,
                             kind,
                             shown,
-                            stringResource(status),
+                            stringResource(step ?: sentence),
                             goalId = goalId,
                             progressShare = share,
                             onRetry = viewModel::retry,
@@ -210,14 +209,45 @@ fun LessonWaitingScreen(
     }
 }
 
+/** Main's `useWaitWords`: a challenge's wait names a challenge, since the learner tapped one on the Plan or Today. */
+data class LessonWaitWords(
+    @StringRes val notReady: Int,
+    @StringRes val gettingReady: Int,
+    @StringRes val ready: Int,
+    @StringRes val stopped: Int,
+    @StringRes val start: Int,
+)
+
+fun lessonWaitWords(kind: GenerationKind): LessonWaitWords =
+    if (kind == GenerationKind.Challenge) {
+        LessonWaitWords(
+            notReady = R.string.player_challenge_not_written_title,
+            gettingReady = R.string.player_getting_challenge_ready,
+            ready = R.string.player_challenge_ready,
+            stopped = R.string.player_challenge_wait_stopped,
+            start = R.string.player_start_this_challenge,
+        )
+    } else {
+        LessonWaitWords(
+            notReady = R.string.player_not_written_title,
+            gettingReady = R.string.player_getting_lesson_ready,
+            ready = R.string.player_lesson_ready,
+            stopped = R.string.player_wait_stopped,
+            start = R.string.player_start_this_lesson,
+        )
+    }
+
 @Composable
-private fun WaitNote(moment: WaitMoment) {
+private fun WaitNote(
+    moment: WaitMoment,
+    words: LessonWaitWords,
+) {
     val title =
         when (moment) {
-            WaitMoment.NotReady -> R.string.player_not_written_title
-            WaitMoment.GettingReady -> R.string.player_getting_lesson_ready
-            WaitMoment.Ready -> R.string.player_lesson_ready
-            WaitMoment.Stopped -> R.string.player_wait_stopped
+            WaitMoment.NotReady -> words.notReady
+            WaitMoment.GettingReady -> words.gettingReady
+            WaitMoment.Ready -> words.ready
+            WaitMoment.Stopped -> words.stopped
         }
     Column(Modifier.semantics { liveRegion = LiveRegionMode.Polite }, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(stringResource(title), modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
@@ -264,7 +294,7 @@ fun LessonNotWrittenNotice(
     val limit =
         when (val refusal = (writing as? LessonWriting.Refused)?.refusal) {
             is LessonRefusal.Limited -> refusal.limit
-            LessonRefusal.PlusRequired -> Limit.Reached(LimitTier.Free, LimitPeriod.Month)
+            LessonRefusal.PlusRequired -> Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days)
             else -> null
         }
     when {

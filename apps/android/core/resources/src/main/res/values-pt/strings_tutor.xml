@@ -77,7 +77,7 @@
   "tutor_offer_mock": "289207f11996d88de2f6c36315c47f899501c3b284f2e16fdb5908959f6a5a49",
   "tutor_offer_mock_by_subject": "7d46b4a773e9e4acdccd35a14b5358fd8750d2f7681e0167999a5319ed54a352",
   "tutor_offer_mock_description": "76d73fa3a00af807f112c19235058fce4e69c9a527f616ca450cacf68c63fb72",
-  "tutor_offer_mock_gate": "d670b2373874678fd8a1342cc21c2c5174480c96edf28b6d4375f2a00b0a1f05",
+  "tutor_offer_mock_gate": "45a310b173cd9614ae2d83a058349b1543c2f3cfdb99e9128d9067442e10801a",
   "tutor_offer_open": "5ca46ef0a06138f1ea5b8e1c21f61ad184db71ede97987d74b9b43ca6ca6a125",
   "tutor_offer_plus": "e0fef3edd9c23ebaed4b44a709ae562e7524473dc0dc85586b6b63bffd43e22a",
   "tutor_offer_plus_description": "a4d83d120b9f73950d2301dcaeb0a50e7e3824a85d35ac7f611009c8e1e2221a",
@@ -235,7 +235,7 @@
     <string name="tutor_offer_mock_description">Quando você quiser: um dia inteiro de prova ou meio dia</string>
     <!-- Kinds of mock exam the learner can take: a full exam day, half an exam day or one subject. -->
     <string name="tutor_offer_mock_by_subject">Quando quiser: um dia inteiro de prova, meio dia ou uma matéria</string>
-    <string name="tutor_offer_mock_gate">Para fazer simulados, é preciso assinar</string>
+    <string name="tutor_offer_mock_gate">Simulados precisam de assinatura</string>
     <!-- Describes the essay practice Plus offers in the plan, not an instruction to the learner. -->
     <string name="tutor_offer_essay_weekly">Prática toda semana no seu plano, com correção de cada rascunho.</string>
     <!-- Describes the essay practice Plus offers in the plan, not an instruction to the learner. -->

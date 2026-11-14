@@ -223,12 +223,7 @@ export async function getExamView({
     getAllowance(),
   ]);
 
-  const { includesMockExams } = getExamPrepAccess({
-    examPrep: allowance?.examPrep ?? null,
-    goal,
-    timeZone,
-    today,
-  });
+  const { includesMockExams } = getExamPrepAccess({ examPrep: allowance?.examPrep ?? null, goal });
 
   const [
     map,

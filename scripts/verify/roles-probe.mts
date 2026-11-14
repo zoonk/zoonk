@@ -9,7 +9,7 @@ export type RoleSample = {
 };
 
 /** Runs in the measured page; the slots belong to the shared pieces, not to a screen's classes. */
-export function readRoles(): RoleSample[] {
+export function readRoles(overlays: { panel: string }[]): RoleSample[] {
   const tailRows = 3;
 
   const selectors = {
@@ -18,22 +18,13 @@ export function readRoles(): RoleSample[] {
     empty: '[data-slot="empty"]',
     eyebrow: '[data-slot="eyebrow"]',
     "list-tail": '[data-slot="list-group"]',
-    overlay: '[data-slot="drawer-popup"], [data-slot="dialog-content"], [role="alertdialog"]',
+    overlay: overlays.map(({ panel }) => `[data-slot=${panel}]`).join(", "),
     "page-top": '[data-slot="page-top"], [data-slot="page-header"]',
-    "subscription-gate": '[data-slot="subscription-gate"]',
+    "subscription-gate": '[data-slot="subscribe-gate"]',
     tabs: '[data-slot="tabs-list"]',
   };
 
-  // oxlint-disable-next-line unicorn/consistent-function-scoping -- Serialized with the probe.
-  function shown(node: Element) {
-    const box = node.getBoundingClientRect();
-
-    return (
-      node.checkVisibility({ opacityProperty: true, visibilityProperty: true }) &&
-      box.width > 0 &&
-      box.height > 0
-    );
-  }
+  const { shown } = globalThis.zoonkPage;
 
   return Object.entries(selectors).flatMap(([role, selector]) =>
     [...document.querySelectorAll<HTMLElement>(selector)]

@@ -1,6 +1,7 @@
 "use client";
 
 import { type TutorToolOffer } from "@zoonk/core/lesson-questions/tool-offer-contract";
+import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import {
   BrainIcon,
   ChartColumnIcon,
@@ -11,7 +12,6 @@ import {
 } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { KindDot } from "../_components/kind-tile";
-import { ListRowChevron } from "../_components/list-group";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { SubjectIcon } from "../syllabus/subject-icon";
@@ -44,7 +44,7 @@ function CatalogCourseRow({
             </span>
           )}
         </span>
-        <ListRowChevron />
+        <RowChevron />
       </LearnLink>
     </div>
   );

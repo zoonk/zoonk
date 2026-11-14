@@ -16021,7 +16021,7 @@
     },
     "/goals/{goalId}/plan/changes/{changeId}": {
       "post": {
-        "description": "The learner's answer to a change: applied or declined for a proposal, undone for the latest applied edit or a test-out (while the plan is still as it left it), or seen for an applied change the learner has acknowledged. Applying a proposal works it out against the plan as it is today first: when that differs from the `effect` it had, nothing is applied and the answer is the change still `proposed`, with the new `effect`, for the learner to answer again. Applying or undoing a change prepares the lessons it brings in soon on the server; ask for nothing after it. 409 when the change was already answered or the plan moved on.",
+        "description": "The learner's answer to a change: applied or declined for a proposal, undone for the latest applied edit or a test-out (while the plan is still as it left it), or seen for an applied change the learner has acknowledged. Applying a proposal sends the `quote` the learner saw and works the change out against the plan as it is today first: when that differs from the `effect` it had, or `quote` isn't the change's current one (another app or a retried request already got today's numbers), nothing is applied and the answer is the change still `proposed`, with today's `effect` and `quote`, for the learner to answer again. Applying or undoing a change prepares the lessons it brings in soon on the server; ask for nothing after it. 409 when the change was already answered or the plan moved on.",
         "operationId": "decidePlanChange",
         "security": [
           {
@@ -17646,7 +17646,7 @@
     },
     "/me/memory/insights/{insightId}": {
       "patch": {
-        "description": "Accepts or dismisses an insight. Accepting a schedule idea moves the goal's study time to the suggested one.",
+        "description": "Accepts or dismisses an insight. Accepting a schedule idea moves the goal's study time to the suggested one. Accepting a plan change insight applies its change only when `quote` is the change's current one and today's numbers match its `effect`; otherwise the insight stays `pending` with today's.",
         "operationId": "answerMemoryInsight",
         "security": [
           {
@@ -29847,6 +29847,16 @@
       "PlanChangeDecisionInput": {
         "type": "object",
         "properties": {
+          "quote": {
+            "default": null,
+            "description": "Send the change's `quote` as the learner saw it (null when it had none). Applying a proposal applies it only when this is the change's current `quote`; otherwise nothing is applied and the answer is the change still `proposed` with its current `effect` and `quote`, for the learner to answer again. Other answers ignore it",
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlanChangeQuote"
+              }
+            ]
+          },
           "status": {
             "type": "string",
             "enum": [
@@ -29875,6 +29885,30 @@
           "status"
         ],
         "additionalProperties": false
+      },
+      "PlanChangeQuote": {
+        "type": "object",
+        "properties": {
+          "planVersion": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "studyDay": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+          },
+          "timeZone": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "planVersion",
+          "studyDay",
+          "timeZone"
+        ],
+        "description": "Which numbers a proposed change shows: the plan version, study day and time zone its `effect` was worked out for. Send it back as it came when accepting"
       },
       "OwnLevelChangeInput": {
         "type": "object",
@@ -30138,6 +30172,16 @@
       "MemoryInsightAnswer": {
         "type": "object",
         "properties": {
+          "quote": {
+            "default": null,
+            "description": "For a plan change insight, send `planChange.quote` as the learner saw it. Accepting applies the change only when this is its current `quote`; otherwise nothing is applied and the insight stays `pending` with its current `effect` and `quote`. Other insights ignore it",
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlanChangeQuote"
+              }
+            ]
+          },
           "status": {
             "type": "string",
             "enum": [
@@ -41513,6 +41557,15 @@
               ]
             }
           },
+          "quote": {
+            "nullable": true,
+            "description": "Which numbers `effect` shows. Accepting a proposal sends it back; it changes when accepting finds today's numbers differ. Null for a change with no worked-out `effect`",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlanChangeQuoteOutput"
+              }
+            ]
+          },
           "reason": {
             "nullable": true,
             "description": "Why the change is proposed or was made, written by an AI or a proposal in the learner's language. Null for every change read from the learner's words (`source: planEdit`, the buddy's or the plan page's), which `kind`, `operations` and `effect` describe in full",
@@ -41560,6 +41613,7 @@
           "lessonsSkipped",
           "officialDate",
           "operations",
+          "quote",
           "reason",
           "seen",
           "source",
@@ -84446,17 +84500,12 @@
                 "format": "date",
                 "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
               },
-              "freeWeekOver": {
-                "type": "boolean",
-                "description": "Always false. Exam plans do not expire; new lessons use the shared rolling 30-day allowance"
-              },
               "mocksRequirePlus": {
                 "type": "boolean"
               }
             },
             "required": [
               "freeUntil",
-              "freeWeekOver",
               "mocksRequirePlus"
             ],
             "additionalProperties": false
@@ -86854,6 +86903,15 @@
                 "format": "uuid",
                 "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
               },
+              "quote": {
+                "nullable": true,
+                "description": "Which numbers `effect` shows; accepting the insight sends it back as `quote`",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PlanChangeQuoteOutput"
+                  }
+                ]
+              },
               "status": {
                 "type": "string",
                 "enum": [
@@ -86867,6 +86925,7 @@
               "canApply",
               "effect",
               "id",
+              "quote",
               "status"
             ],
             "additionalProperties": false
@@ -98612,6 +98671,31 @@
           "skillIds"
         ],
         "additionalProperties": false
+      },
+      "PlanChangeQuoteOutput": {
+        "type": "object",
+        "properties": {
+          "planVersion": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "studyDay": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+          },
+          "timeZone": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "planVersion",
+          "studyDay",
+          "timeZone"
+        ],
+        "additionalProperties": false,
+        "description": "Which numbers a proposed change shows: the plan version, study day and time zone its `effect` was worked out for. Send it back as it came when accepting"
       },
       "GoalDraftOutput": {
         "type": "object",

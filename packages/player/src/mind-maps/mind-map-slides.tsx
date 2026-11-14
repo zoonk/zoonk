@@ -73,6 +73,7 @@ export function ChapterMapSlide({ save, slide }: { save: MindMapSave; slide: Cha
       data-slot="chapter-map-slide"
     >
       <button
+        aria-haspopup="dialog"
         className="focus-visible:ring-ring/50 w-full cursor-zoom-in justify-self-center rounded-xl outline-none focus-visible:ring-[3px] min-[72rem]:sticky min-[72rem]:top-4 min-[72rem]:max-w-[calc(100dvh-13rem)]"
         onClick={() => setIsZoomed(true)}
         type="button"

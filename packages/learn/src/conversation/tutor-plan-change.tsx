@@ -1,6 +1,9 @@
 "use client";
 
-import { type PlanChangeDecisionInput } from "@zoonk/core/plans/contract";
+import {
+  type PlanChangeAnswer,
+  type PlanChangeDecisionInput,
+} from "@zoonk/core/plans/decision-contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -18,10 +21,7 @@ import { TUTOR_CARD_WIDTH_CLASS } from "./tutor-offer-card";
 type Decision = Extract<PlanChangeDecisionInput["status"], "applied" | "declined" | "undone">;
 
 /** Resolves to the change as it stands now, or null when it wasn't saved. */
-export type DecideTutorPlanChange = (input: {
-  changeId: string;
-  status: Decision;
-}) => Promise<PlanChangeView | null>;
+export type DecideTutorPlanChange = (answer: PlanChangeAnswer) => Promise<PlanChangeView | null>;
 
 function useStatusLine(change: PlanChangeView): string | null {
   const t = useExtracted();
@@ -62,7 +62,9 @@ function useAnswer({
     setFailed(false);
 
     startTransition(async () => {
-      const { data: answered } = await safeAsync(() => decide({ changeId: change.id, status }));
+      const { data: answered } = await safeAsync(() =>
+        decide({ changeId: change.id, quote: change.quote, status }),
+      );
 
       if (!answered) {
         setFailed(true);

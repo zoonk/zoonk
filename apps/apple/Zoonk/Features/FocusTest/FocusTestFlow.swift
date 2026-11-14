@@ -106,7 +106,7 @@ struct FocusTestFlow: View {
     case .loading, .waiting:
       StepLoading()
     case .unavailable:
-      FocusTestUnavailable(isSaving: pressed != nil, failed: failed) {
+      PlacementUnavailable(isSaving: pressed != nil, failed: failed) {
         save(.main) { try await leave(closing: host == .onboarding) }
       }
     case .invitation(let focusTest):
@@ -158,9 +158,6 @@ struct FocusTestFlow: View {
       progress: sitting.questions > 0 ? Double(sitting.answered) / Double(sitting.questions) : 0,
       question: asked.question, labels: asked.labels, isSaving: isAnswering,
       failures: questionFailures,
-      stopLabel: LocalizedStringResource(
-        "Stop and use my answers", table: "FocusTest",
-        comment: "Ends a Focus test sitting early; its answers count at once"),
       stopHint: sitting.hint == .manyUnknown
         ? LocalizedStringResource(
           "Haven't studied most of this yet? That's fine. You can stop here and start learning.",

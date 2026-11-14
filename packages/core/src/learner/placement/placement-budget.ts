@@ -1,6 +1,11 @@
 const DAY_PLACEMENT_ANSWERS = 12;
 
-const DAY_PLACEMENT_MS = 240_000;
+const MS_PER_MINUTE = 60_000;
+
+/** Also what a learner is told the short test takes: it stops at this much answering. */
+export const DAY_PLACEMENT_MINUTES = 4;
+
+const DAY_PLACEMENT_MS = DAY_PLACEMENT_MINUTES * MS_PER_MINUTE;
 
 /** Idle time must not end a day's placement after one answer. */
 const MAX_COUNTED_ANSWER_MS = 60_000;

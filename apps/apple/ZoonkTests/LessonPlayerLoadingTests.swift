@@ -849,8 +849,8 @@ final class LessonPlayerLoadingTests: XCTestCase {
       return XCTFail("Expected a completed lesson, got \(outcome)")
     }
 
-    XCTAssertEqual(summary.brainPower, 12, "the day's bonus shows with the missions")
-    XCTAssertEqual(summary.block?.deferredLessonsCount, 0)
+    XCTAssertEqual(
+      summary.brainPower, 62, "a new level wins the moment, so the missions' bonus counts here")
     XCTAssertEqual(summary.block?.minutes.left, 20)
     XCTAssertEqual(summary.block?.sessionBar, SessionBar(completed: 1, total: 3))
     XCTAssertEqual(
@@ -863,10 +863,9 @@ final class LessonPlayerLoadingTests: XCTestCase {
     XCTAssertEqual(summary.day?.reached?.level?.level, 3)
   }
 
-  func testASavedLessonKeepsTheDeferredCountAndFractionalDailyBudget() async throws {
+  func testASavedLessonKeepsAFractionalDailyBudget() async throws {
     let response =
       sessionLessonCompletion
-      .replacingOccurrences(of: "\"deferredLessonsCount\":0", with: "\"deferredLessonsCount\":3")
       .replacingOccurrences(of: "\"dailyGoal\":30", with: "\"dailyGoal\":240.5")
     let api = LessonPlayerAPI(
       clients: APIClientFactory(
@@ -877,7 +876,6 @@ final class LessonPlayerLoadingTests: XCTestCase {
     guard case .completed(let summary) = outcome else {
       return XCTFail("Expected a saved lesson")
     }
-    XCTAssertEqual(summary.block?.deferredLessonsCount, 3)
     XCTAssertEqual(summary.block?.minutes.dailyGoal, 240.5)
   }
 

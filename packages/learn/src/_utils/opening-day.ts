@@ -1,10 +1,10 @@
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 
-/** The learner's own day something opens again: today, tomorrow, or a later day as its ISO date. */
+/** When something opens again: already `open`, today, tomorrow, or a later day as its ISO date. */
 export type OpeningDay = string;
 
-/** Which day in `timeZone` holds the server's instant. One already past is today; null when it can't be read. */
+/** Which day in `timeZone` holds the server's instant, or `open` once it has passed; null when it can't be read. */
 export function toOpeningDay({
   availableAt,
   now,
@@ -18,6 +18,10 @@ export function toOpeningDay({
 
   if (!opens || Number.isNaN(opens.getTime())) {
     return null;
+  }
+
+  if (opens.getTime() <= now.getTime()) {
+    return "open";
   }
 
   const today = getDateInTimeZone({ date: now, timeZone });
