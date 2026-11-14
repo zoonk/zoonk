@@ -64,15 +64,16 @@ function usePlanSuggestions(host: PlanSuggestionHost): SlotItem[] {
 
   const items: (SlotItem | false)[] = [
     !finished && claimable && { key: "courseComplete", kind: "courseComplete" },
+    // A paused goal and a passed date are what the page asks about first (the bar answers both on an exam).
     host.goalStatus?.status === "paused" && { key: "paused", kind: "paused" },
-    ...plan.examChoices
-      .filter((choice) => choice.subjects.length === 0)
-      .map((choice): SlotItem => ({ choice, key: `choice:${choice.group}`, kind: "choice" })),
     plan.status?.kind === "pastDate" && {
       key: "pastDate",
       kind: "pastDate",
       lessons: plan.status.lessons,
     },
+    ...plan.examChoices
+      .filter((choice) => choice.subjects.length === 0)
+      .map((choice): SlotItem => ({ choice, key: `choice:${choice.group}`, kind: "choice" })),
     ...(finished ? timeItems : []),
     finished && { key: "finished", kind: "finished" },
     status === "needsAdjusting" && { key: "doesNotFit", kind: "doesNotFit" },
