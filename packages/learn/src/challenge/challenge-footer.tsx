@@ -5,15 +5,13 @@ import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CalendarCheckIcon, CalendarClockIcon, RotateCcwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { HelpLimitNotice, useLiveLimit } from "../_components/help-limit-notice";
+import { HelpLimitWords, LimitMainAction, useLiveLimit } from "../_components/help-limit-notice";
 import { ChangeSaveError } from "../_components/save-error";
 import { StatusRegion } from "../_components/status-region";
 import { GateWords, SubscribeMainAction } from "../_components/subscribe-gate";
 import { TaskActions } from "../_components/task-layout";
 import { daysBetween } from "../_utils/iso-date";
 import { ChallengeCallGate } from "../language/conversation/challenge-call-gate";
-import { useLearnRoutes } from "../learn-context";
-import { LearnLink } from "../learn-link";
 import { TaskMainButton, TaskMainLink } from "../shell/task-frame";
 import { useChallengeScreen } from "./challenge-context";
 import { useMoveFailed } from "./challenge-move-failed";
@@ -197,7 +195,6 @@ function PlusRequiredNotice() {
 
 function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } {
   const t = useExtracted();
-  const routes = useLearnRoutes();
   const { challenge, start, writing } = useChallengeScreen();
   const writingLimit = useLiveLimit(writing?.kind === "refused" ? writing.limit : null);
 
@@ -221,8 +218,8 @@ function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } 
 
       if (challenge.status === "ready" && writingLimit) {
         return {
-          actions: null,
-          line: <HelpLimitNotice limit={writingLimit} linkComponent={LearnLink} routes={routes} />,
+          actions: <LimitMainAction limit={writingLimit} />,
+          line: <HelpLimitWords limit={writingLimit} />,
         };
       }
 

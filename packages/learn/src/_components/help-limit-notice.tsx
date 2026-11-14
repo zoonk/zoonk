@@ -11,7 +11,12 @@ import {
   useOpeningDay,
 } from "./comes-back-words";
 import { CreateAccountLink } from "./create-account-link";
-import { GateWords, SubscribeAction } from "./subscribe-gate";
+import {
+  GateWords,
+  SignUpMainAction,
+  SubscribeAction,
+  SubscribeMainAction,
+} from "./subscribe-gate";
 
 /** A refusal lasts until its instant: then the action it took the place of is back, and the server decides again. */
 export function useLiveLimit<Limit extends object>(limit: Limit | null): Limit | null {
@@ -242,6 +247,19 @@ export function HelpLimitNotice({
   ...props
 }: LimitNoticeProps & { kind?: HelpKind; limit: HelpLimit }) {
   return <LimitNoticeBody {...props} limit={limit} words={useHelpLimitWords(limit, kind)} />;
+}
+
+/** A refusal in a bar says what ran out over the bar, and `LimitMainAction` is its way on. */
+export function HelpLimitWords({ kind, limit }: { kind?: HelpKind; limit: HelpLimit }) {
+  return <GateWords {...useHelpLimitWords(limit, kind)} />;
+}
+
+export function LimitMainAction({ limit }: { limit: NoticeLimit }) {
+  if (needsAccount(limit)) {
+    return <SignUpMainAction />;
+  }
+
+  return limit.status === "limitReached" && limit.tier === "free" ? <SubscribeMainAction /> : null;
 }
 
 export function LessonLimitNotice({ limit, ...props }: LimitNoticeProps & { limit: LessonLimit }) {

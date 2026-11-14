@@ -5,15 +5,13 @@ import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
-import { EnterLink } from "../../_components/enter-button";
 import {
   type CallLimit,
   useCallLimitLine,
   useLiveLimit,
 } from "../../_components/help-limit-notice";
-import { SubscribeMainAction } from "../../_components/subscribe-gate";
+import { SignUpMainAction, SubscribeMainAction } from "../../_components/subscribe-gate";
 import { TaskActions } from "../../_components/task-layout";
-import { useLearnRoutes } from "../../learn-context";
 import { TaskFrame, TaskMainButton, TaskMainLink } from "../../shell/task-frame";
 import { useCallLimitTitle } from "./call-limit-message";
 import { useRefusalCopy } from "./call-refusal-copy";
@@ -21,11 +19,6 @@ import { CallOffMessage } from "./conversation-parts";
 import { type LiveCallError } from "./live-call-lifecycle";
 
 type CallProblemKind = Exclude<LiveCallError, "dropped"> | "takenOver";
-
-/** Sign-up leaves the app's router, so it's a full page load. */
-function PageLink({ children, ...props }: React.ComponentProps<"a">) {
-  return <a {...props}>{children}</a>;
-}
 
 function ProblemMessage({ text, title }: { text: string; title: string }) {
   return (
@@ -77,7 +70,6 @@ function CallLimitScreen({
   title: string;
 }) {
   const t = useExtracted();
-  const routes = useLearnRoutes();
   const { line, provisional } = useCallLimitLine(limit);
   const opened = useLiveLimit(limit) === null;
 
@@ -91,13 +83,7 @@ function CallLimitScreen({
               <TaskMainButton onClick={onRetry}>{t("Try again")}</TaskMainButton>
             </TaskActions>
           )}
-          {!opened && limit.tier === "guest" && (
-            <TaskActions>
-              <EnterLink href={routes.signUp} link={PageLink}>
-                {t("Create a free account")}
-              </EnterLink>
-            </TaskActions>
-          )}
+          {!opened && limit.tier === "guest" && <SignUpMainAction />}
           {!opened && limit.tier === "free" && <SubscribeMainAction />}
           {!opened && limit.tier === "plus" && (
             <TaskActions>
