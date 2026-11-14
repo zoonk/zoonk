@@ -1,4 +1,5 @@
 import { type Locator } from "@playwright/test";
+import { expectHydrated } from "@zoonk/e2e/hydration";
 import { type Page, expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
 
@@ -6,6 +7,7 @@ const PHONE = { height: 844, width: 390 };
 
 async function openFromMenu(page: Page, { item, menu }: { item: string; menu: string }) {
   const trigger = page.getByRole("button", { exact: true, name: menu });
+  await expectHydrated(trigger);
   await trigger.focus();
   await page.keyboard.press("Enter");
 
