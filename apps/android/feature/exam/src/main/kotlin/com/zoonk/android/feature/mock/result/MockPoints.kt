@@ -36,7 +36,7 @@ import com.zoonk.api.models.PointsMinimum
 import kotlin.math.roundToLong
 
 /** A test of the exam, or its objective tests together when [name] is null. */
-private data class TestRow(
+internal data class TestRow(
     val name: String?,
     val asked: Double,
     val earned: Double,
@@ -48,16 +48,29 @@ private data class TestRow(
     val qualifying: Boolean,
 )
 
-/** Misses first, so what would eliminate the learner is read before what went fine. */
-private fun testRows(points: MockPoints): List<TestRow> {
+/**
+ * Misses first, so what would eliminate the learner is read before what went fine. The total joins
+ * the tests when it has a minimum to judge, or when a missed minimum takes the result's headline,
+ * which is where the total showed.
+ */
+internal fun testRows(points: MockPoints): List<TestRow> {
     val parts =
         points.parts.map {
             TestRow(it.name, it.asked, it.earned, it.max, it.met, it.minimum, it.projected, it.short, it.qualifying)
         }
+    val headlineTaken = points.parts.any { it.met == false }
     val together =
-        points.minimum?.let {
-            TestRow(null, points.asked, points.earned, points.max, points.met, it, points.projected, points.short, qualifying = false)
-        }
+        TestRow(
+            null,
+            points.asked,
+            points.earned,
+            points.max,
+            points.met,
+            points.minimum,
+            points.projected,
+            points.short,
+            qualifying = false,
+        ).takeIf { points.minimum != null || headlineTaken }
     val rows = parts + listOfNotNull(together)
     return rows.filter { it.met == false } + rows.filter { it.met != false }
 }
