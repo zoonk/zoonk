@@ -44,7 +44,7 @@ import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.richtext.RichInlineText
 import com.zoonk.android.ui.richtext.RichText
 
-private enum class Verdict(
+internal enum class Verdict(
     val label: Int,
     val tone: FeedbackTone,
 ) {
@@ -58,13 +58,17 @@ private enum class Verdict(
     Unchecked(R.string.player_verdict_unchecked, FeedbackTone.Neutral),
 }
 
-private fun verdictOf(
-    step: LessonStep,
+/**
+ * Main's verdict: an answer the server didn't check is never right or wrong, whatever the step's kind; only
+ * "I don't know yet" shows its sample instead.
+ */
+internal fun verdictOf(
+    kind: StepKind,
     result: StepResult,
 ): Verdict =
     when {
-        step.kind == StepKind.Hook -> if (result.isCorrect) Verdict.GuessRight else Verdict.Guess
-        !result.checked -> if (result.answerText == null) Verdict.SampleAnswer else Verdict.Unchecked
+        kind == StepKind.Hook -> if (result.isCorrect) Verdict.GuessRight else Verdict.Guess
+        !result.checked -> if (result.answerText == null && result.correctAnswer != null) Verdict.SampleAnswer else Verdict.Unchecked
         result.isCorrect -> if (result.spelling != null) Verdict.Typo else Verdict.Correct
         (result.score ?: 0.0) > 0 -> Verdict.Almost
         else -> Verdict.Incorrect
@@ -100,7 +104,7 @@ fun LessonStepResultView(
     hyperdriveStreak: Int?,
     explainAnswer: @Composable () -> Unit = {},
 ) {
-    val verdict = verdictOf(step, result)
+    val verdict = verdictOf(step.kind, result)
     val keyPoints = shownKeyPoints(result)
 
     FeedbackPanel(label = stringResource(R.string.player_answer_feedback)) {

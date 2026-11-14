@@ -137,7 +137,7 @@ struct MindMapsScreen: View {
     case .chapters:
       maps.chapters.count { $0.status == .ready }
     case .lessons:
-      maps.lessonGroups.reduce(0) { $0 + $1.opens }
+      maps.lessonGroups.reduce(0) { $0 + $1.lessonIds.count }
     case .saved:
       maps.saved.count { $0.available && store.isSaved($0.key, server: true) }
     }
@@ -165,7 +165,7 @@ private struct MindMapChaptersTab: View {
   let subjectKey: String?
 
   var body: some View {
-    let index = maps.chapters.filter { $0.status == .ready || $0.status == .plusRequired }
+    let index = maps.chapters.filter { $0.status == .ready }
 
     MindMapIndex(items: index, subject: \.subject, opensAt: subjectKey) { map in
       MindMapRow(goalId: goalId, map: map, place: .library)
@@ -254,6 +254,18 @@ private struct MindMapCreateSection: View {
         }
 
         if showsChapters {
+          // A row's Create spends lessons from a free learner's allowance, so the list says so once.
+          if learner.summary.value?.tier != .plus, others.contains(where: { $0.lessonsToWrite > 0 })
+          {
+            Text(
+              "Making one of these maps writes its lessons first, and they count toward your free lessons.",
+              tableName: "MindMaps"
+            )
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
+            .listRowSeparator(.hidden)
+          }
+
           ForEach(others) { map in
             MindMapRow(goalId: goalId, map: map, place: .notMade(canStart: canStart))
           }
@@ -311,7 +323,7 @@ private struct MindMapCreateSection: View {
           "We couldn't reach the server. Check your connection.", table: "MindMaps",
           comment: "Asking for a map didn't reach the server"))
     case .stopped(let limit):
-      LimitNotice(limit: limit.limit, words: limit.words)
+      LimitNotice(limit: limit.limit, words: limit.words(now:))
     case .onTheWay, .unfinished, .fewer:
       Text(verbatim: note(line) ?? "")
         .typeStyle(.note)
@@ -379,7 +391,7 @@ private struct LessonGroupItem: Identifiable {
   var id: String { group.chapterId }
 }
 
-/// One row per chapter, opening the Lessons deck at its first map; all locked, it leads to Plus.
+/// One row per chapter, opening the Lessons deck at its first map.
 private struct LessonGroupRow: View {
   @Environment(AppRouter.self) private var router
 
@@ -388,18 +400,13 @@ private struct LessonGroupRow: View {
 
   var body: some View {
     Button {
-      if item.group.opens > 0 {
-        router.open(
-          .mindMapStudy(
-            goalId: goalId, tab: .lessons,
-            start: MindMapPosition(chapterId: item.group.chapterId)))
-      } else {
-        router.present(.subscription)
-      }
+      router.open(
+        .mindMapStudy(
+          goalId: goalId, tab: .lessons, start: MindMapPosition(chapterId: item.group.chapterId)))
     } label: {
       MarkedRow(alignment: .center) {
         MindMapSlot {
-          Image(systemName: item.group.opens > 0 ? LessonMapView.symbol : "lock")
+          Image(systemName: LessonMapView.symbol)
             .foregroundStyle(.mutedForeground)
         }
       } content: {

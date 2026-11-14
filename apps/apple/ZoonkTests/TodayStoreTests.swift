@@ -875,13 +875,13 @@ private func dayJSON(
   return """
     {"blocks":[\(blockList.joined(separator: ","))],"brainPower":0,"catchUp":null,"current":true,
     "dayEndsAt":1793242800000,"emptyDay":\(json(emptyDay)),
-    "examAccess":{"includesMockExams":true,"trialEnded":false},"examTomorrow":false,
+    "examAccess":{"includesMockExams":true},"examTomorrow":false,
     "extraTime":{"available":false,"lessons":[],"minutes":10,"reason":null},"freshStart":null,
     "fullMeal":{"bonus":50,"earned":false,"ready":false},"goalId":"\(goalID)",
     "lessonsComing":false,"lessonsToPrepare":false,
     "localDate":"\(localDate)","minutes":{"dailyGoal":15,"done":0,"left":15,"planned":15},
     "missions":[],"nextPosition":\(nextPosition.map(String.init) ?? "null"),
-    "pauseSuggested":false,"plusLessons":[],"sessionBar":{"completed":0,"total":1},"state":"\(state)",
+    "pauseSuggested":false,"sessionBar":{"completed":0,"total":1},"state":"\(state)",
     "week":{"days":[],"nextStudyDate":null},
     "status":"\(id == nil ? "unstarted" : "active")"\(id.map { ",\"id\":\"\($0)\"" } ?? "")}
     """

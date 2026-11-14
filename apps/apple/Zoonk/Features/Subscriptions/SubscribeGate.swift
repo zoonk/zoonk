@@ -101,21 +101,26 @@ struct LimitNotice: View {
   @Environment(AppRouter.self) private var router
 
   let limit: HelpLimit
-  let words: LimitWords
+  /// Read at the gate's clock, so words about a day follow it while the notice is open.
+  let words: (Date) -> LimitWords
 
-  init(limit: HelpLimit, words: LimitWords) {
+  init(limit: HelpLimit, words: @escaping (Date) -> LimitWords) {
     self.limit = limit
     self.words = words
   }
 
+  init(limit: HelpLimit, words: LimitWords) {
+    self.init(limit: limit) { _ in words }
+  }
+
   /// What ran out is the day's help.
   init(limit: HelpLimit, kind: HelpLimit.Kind? = nil) {
-    self.init(limit: limit, words: limit.helpWords(kind))
+    self.init(limit: limit) { now in limit.helpWords(kind, now: now) }
   }
 
   var body: some View {
     OpeningClock(opensAt: limit.opensAt) { now in
-      notice(limit.freeLessonOpened(at: now) ? HelpLimit.freeLessonReady : words)
+      notice(words(now))
     }
   }
 
@@ -191,17 +196,19 @@ extension HelpLimit {
   }
 
   /// A short break and a guest's account need words of their own; a reached limit has none here.
-  private var refusalWords: LimitWords {
+  private func refusalWords(now: Date = .now, calendar: Calendar = .current) -> LimitWords {
     switch self {
     case .slowDown:
       LimitWords(
         line: LocalizedStringResource(
           "Take a short break, then try again.", table: "Subscriptions",
           comment: "Fair use asks the learner to wait a moment before trying again"))
+    case .freeLessonsUsed where freeLessonOpened(at: now):
+      Self.freeLessonReady
     case .freeLessonsUsed(let opensAt):
       LimitWords(
         title: LocalizedStringResource("You've used your free lessons", table: "Subscriptions"),
-        line: Self.nextFreeLesson(opensAt))
+        line: Self.nextFreeLesson(opensAt, now: now, calendar: calendar))
     case .signUpRequired, .limitReached:
       LimitWords(
         title: LocalizedStringResource(
@@ -210,9 +217,9 @@ extension HelpLimit {
     }
   }
 
-  func helpWords(_ kind: Kind? = nil) -> LimitWords {
+  func helpWords(_ kind: Kind? = nil, now: Date = .now) -> LimitWords {
     guard case .limitReached(_, let tier) = self else {
-      return refusalWords
+      return refusalWords(now: now)
     }
 
     guard tier != .guest else {
@@ -271,13 +278,28 @@ extension HelpLimit {
   static let freeLessonReady = LimitWords(
     title: LocalizedStringResource("Your next free lesson is ready", table: "Subscriptions"))
 
-  /// The day a free learner's next lesson opens, in their own time zone: no clock time, no count of
-  /// days. Without the instant, or once it has passed, nothing about a day, never a guess.
-  static func nextFreeLesson(_ opensAt: Date?, now: Date = .now, calendar: Calendar = .current)
-    -> LocalizedStringResource?
-  {
-    guard let opensAt, opensAt > now else {
+  /// When the gate's words next change: the learner's next midnight or the opening, whichever is
+  /// first. Nothing once the lesson has opened.
+  static func nextWake(opensAt: Date, now: Date, calendar: Calendar = .current) -> Date? {
+    guard opensAt > now else {
       return nil
+    }
+
+    let midnight = calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: now))
+    return min(opensAt, midnight ?? opensAt)
+  }
+
+  /// Main's `toOpeningDay`: the day something opens, in the learner's own time zone, with no clock
+  /// time and no count of days.
+  enum OpeningDay: Equatable {
+    case open, today, tomorrow
+    /// The day and its month in the learner's language, such as "November 22".
+    case on(String)
+  }
+
+  static func openingDay(_ opensAt: Date, now: Date, calendar: Calendar) -> OpeningDay {
+    guard opensAt > now else {
+      return .open
     }
 
     let days =
@@ -286,19 +308,34 @@ extension HelpLimit {
       ).day ?? 0
 
     switch days {
-    case ...0:
+    case ...0: return .today
+    case 1: return .tomorrow
+    default:
+      return .on(
+        opensAt.formatted(
+          Date.FormatStyle(
+            locale: calendar.locale ?? .current, calendar: calendar, timeZone: calendar.timeZone
+          ).month(.wide).day()))
+    }
+  }
+
+  /// When a free learner's next lesson opens. Without the instant, or once it has passed, nothing
+  /// about a day, never a guess.
+  static func nextFreeLesson(_ opensAt: Date?, now: Date = .now, calendar: Calendar = .current)
+    -> LocalizedStringResource?
+  {
+    switch opensAt.map({ openingDay($0, now: now, calendar: calendar) }) {
+    case nil, .open:
+      return nil
+    case .today:
       return LocalizedStringResource(
         "Your next free lesson opens later today, or subscribe to keep going.",
         table: "Subscriptions")
-    case 1:
+    case .tomorrow:
       return LocalizedStringResource(
         "Your next free lesson opens tomorrow, or subscribe to keep going.",
         table: "Subscriptions")
-    default:
-      let day = opensAt.formatted(
-        Date.FormatStyle(
-          locale: calendar.locale ?? .current, calendar: calendar, timeZone: calendar.timeZone
-        ).month(.wide).day())
+    case .on(let day):
       return LocalizedStringResource(
         "Your next free lesson opens on \(day), or subscribe to keep going.",
         table: "Subscriptions",
@@ -308,15 +345,68 @@ extension HelpLimit {
     }
   }
 
+  /// Main's `useMapLessonsWords`: a map writes its lessons first, so a free learner's map waits
+  /// until all of them fit in the lessons left over the last 30 days, and one that needs more than
+  /// that never fits. The learner may still have lessons left, so these never say they used them.
+  func mapLessonsWords(now: Date = .now, calendar: Calendar = .current) -> LimitWords {
+    switch self {
+    case .freeLessonsUsed(let opensAt):
+      return Self.mapFitsWords(opensAt.map { Self.openingDay($0, now: now, calendar: calendar) })
+    case .limitReached(_, .free):
+      return LimitWords(
+        title: LocalizedStringResource("This map needs a subscription", table: "Subscriptions"),
+        line: LocalizedStringResource(
+          "It writes more lessons than you get for free.", table: "Subscriptions",
+          comment:
+            "Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and this one has more lessons than a free learner can start."
+        ))
+    case .limitReached, .slowDown, .signUpRequired:
+      return mindMapWords
+    }
+  }
+
+  private static func mapFitsWords(_ day: OpeningDay?) -> LimitWords {
+    let title = LocalizedStringResource(
+      "Not enough free lessons for this map yet", table: "Subscriptions")
+
+    switch day {
+    case .open:
+      return LimitWords(
+        title: LocalizedStringResource("You can make this map now", table: "Subscriptions"))
+    case nil:
+      return LimitWords(title: title)
+    case .today:
+      return LimitWords(
+        title: title,
+        line: LocalizedStringResource(
+          "You'll have enough later today, or subscribe to make it now.", table: "Subscriptions",
+          comment:
+            "Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet."
+        ))
+    case .tomorrow:
+      return LimitWords(
+        title: title,
+        line: LocalizedStringResource(
+          "You'll have enough tomorrow, or subscribe to make it now.", table: "Subscriptions",
+          comment:
+            "Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet."
+        ))
+    case .on(let date):
+      return LimitWords(
+        title: title,
+        line: LocalizedStringResource(
+          "You'll have enough on \(date), or subscribe to make it now.", table: "Subscriptions",
+          comment:
+            "Under the title of a notice on a chapter's mind map: making the map writes its lessons first, and the free learner doesn't have enough free lessons left for all of them yet. {date} is a day and its month, such as \"November 22\" in English."
+        ))
+    }
+  }
+
   /// A free learner's lessons are the plan's one allowance, so its title says so. Every other
   /// lesson cap is a guest's or the day's: no lesson is refused for the month.
-  func lessonWords(now: Date = .now) -> LimitWords {
-    if freeLessonOpened(at: now) {
-      return Self.freeLessonReady
-    }
-
+  func lessonWords(now: Date = .now, calendar: Calendar = .current) -> LimitWords {
     guard case .limitReached(_, let tier) = self else {
-      return refusalWords
+      return refusalWords(now: now, calendar: calendar)
     }
 
     guard tier != .guest else {
@@ -335,7 +425,7 @@ extension HelpLimit {
 
   var mindMapWords: LimitWords {
     guard case .limitReached(_, let tier) = self else {
-      return refusalWords
+      return refusalWords()
     }
 
     guard tier != .guest else {
@@ -359,7 +449,7 @@ extension HelpLimit {
   /// Seeing a far topic's lessons ahead of time.
   var previewWords: LimitWords {
     guard case .limitReached(_, let tier) = self else {
-      return refusalWords
+      return refusalWords()
     }
 
     guard tier != .guest else {
@@ -381,8 +471,9 @@ extension HelpLimit {
   }
 }
 
-/// Main's `useOpeningDay`: the time a free lesson's opening is read at. It moves when the instant
-/// passes and when the app comes back to the front, so a passed instant stops being promised.
+/// Main's `useOpeningDay`: the time a free lesson's opening is read at. It moves at the learner's
+/// midnight (its day changes), when the instant passes and when the app comes back to the front, so
+/// a gate left open never promises a day that has gone.
 struct OpeningClock<Content: View>: View {
   @Environment(\.scenePhase) private var scenePhase
   @State private var now = Date.now
@@ -399,13 +490,12 @@ struct OpeningClock<Content: View>: View {
 
         while !Task.isCancelled {
           now = .now
-          let left = opensAt.timeIntervalSince(now)
 
-          guard left > 0 else {
+          guard let wake = HelpLimit.nextWake(opensAt: opensAt, now: now) else {
             return
           }
 
-          try? await Task.sleep(for: .seconds(left))
+          try? await Task.sleep(for: .seconds(wake.timeIntervalSince(now)))
         }
       }
       .onChange(of: scenePhase) { _, phase in
@@ -414,4 +504,5 @@ struct OpeningClock<Content: View>: View {
         }
       }
   }
+
 }

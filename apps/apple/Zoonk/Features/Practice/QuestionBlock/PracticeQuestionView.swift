@@ -151,12 +151,14 @@ struct PracticeQuestionView: View {
 struct QuestionTitle: View {
   let text: String
   var isMuted = false
+  /// False where the question is a sentence in a list, not the screen's heading.
+  var isHeading = true
 
   var body: some View {
     LessonTextBlocks(text)
       .typeStyle(.section)
       .foregroundStyle(isMuted ? .mutedForeground : .primary)
-      .accessibilityAddTraits(.isHeader)
+      .accessibilityAddTraits(isHeading ? .isHeader : [])
   }
 }
 

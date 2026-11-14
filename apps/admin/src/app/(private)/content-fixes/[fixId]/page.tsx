@@ -11,8 +11,8 @@ import { DetailField, DetailFields } from "@/components/detail-field";
 import { StateMark } from "@/components/state-mark";
 import { getContentFix, rowKeyOf } from "@/data/content-fixes/get-content-fix";
 import { capitalize, formatDate, formatDateTime } from "@/lib/format";
-import { languageName } from "@/lib/language-filter";
-import { getStaffPasskeyStatus } from "@zoonk/core/staff/content-fixes/decide";
+import { languagePairName } from "@/lib/language-filter";
+import { LINK_CLASS } from "@/lib/link-class";
 import { getEnvironment } from "@zoonk/utils/environment";
 import { MAIN_URL, getMainPageUrl } from "@zoonk/utils/url";
 import { isUuid } from "@zoonk/utils/uuid";
@@ -21,7 +21,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { ContentFixChanges } from "../_components/content-fix-changes";
-import { ResumeApplying, RevertForm, ReviewBar } from "../_components/content-fix-decision";
+import { RevertForm, ReviewBar, ReviewBarSkeleton } from "../_components/content-fix-decision";
 import { ContentFixEffects } from "../_components/content-fix-effects";
 import { ContentFixVoice } from "../_components/content-fix-voice";
 import {
@@ -29,6 +29,7 @@ import {
   contentFixStatusLabels,
   contentFixStatusTones,
 } from "../content-fix-status";
+import { type ContentFixViewer, readContentFixViewer } from "../content-fix-viewer";
 
 type Props = PageProps<"/content-fixes/[fixId]">;
 
@@ -66,7 +67,29 @@ export default function ContentFixPage({ params }: Props) {
   );
 }
 
-const LINK_CLASS = "hit-area relative underline underline-offset-3";
+/** The question a "replace" asks instead, or the one a "restore" retires. */
+function correctedCopyId(change: ContentFixDetail["changes"][number]): string | null {
+  if (change.op === "replace") {
+    return change.replacementId;
+  }
+
+  return change.op === "restore" && "retires" in change ? change.retires : null;
+}
+
+/** Shared content such as a skill or a source has no Admin page: its place is plain text. */
+function ContentPlace({ href, place }: { href: string | null; place: string }) {
+  if (!place) {
+    return "It was deleted after the fix was proposed.";
+  }
+
+  return href ? (
+    <Link className={LINK_CLASS} href={href} prefetch>
+      {place}
+    </Link>
+  ) : (
+    place
+  );
+}
 
 function Where({ fix }: { fix: ContentFixDetail }) {
   const { adminHref, language, mainUrl, trail } = fix.location;
@@ -77,15 +100,11 @@ function Where({ fix }: { fix: ContentFixDetail }) {
       <AdminSection title="Where">
         <DetailFields>
           <DetailField label="Content">
-            {adminHref && place ? (
-              <Link className={LINK_CLASS} href={adminHref} prefetch>
-                {place}
-              </Link>
-            ) : (
-              "It was deleted after the fix was proposed."
-            )}
+            <ContentPlace href={adminHref} place={place} />
           </DetailField>
-          <DetailField label="Language">{language ? languageName(language) : null}</DetailField>
+          <DetailField label="Language">
+            {language ? languagePairName(fix.location) : null}
+          </DetailField>
           {mainUrl ? (
             <DetailField label="In Zoonk">
               <a className={LINK_CLASS} href={mainUrl} rel="noreferrer" target="_blank">
@@ -106,6 +125,19 @@ function Where({ fix }: { fix: ContentFixDetail }) {
             {fix.changes.map((change) => (
               <DetailField key={`${rowKeyOf(change)}:${change.op}`} label="Changed row id">
                 {change.id}
+              </DetailField>
+            ))}
+            {fix.changes.map(correctedCopyId).map(
+              (id) =>
+                id && (
+                  <DetailField key={id} label="Corrected copy id">
+                    {id}
+                  </DetailField>
+                ),
+            )}
+            {[...fix.names].map(([id, name]) => (
+              <DetailField key={id} label={name}>
+                {id}
               </DetailField>
             ))}
           </DetailFields>
@@ -166,7 +198,7 @@ const OUTCOMES = {
 } as const;
 
 /** What was decided, by whom, and the fixes that undo it. */
-function Outcome({ fix }: { fix: ContentFixDetail }) {
+function Outcome({ fix, viewer }: { fix: ContentFixDetail; viewer: ContentFixViewer }) {
   const state = contentFixState(fix);
 
   if (state === "proposed") {
@@ -211,39 +243,19 @@ function Outcome({ fix }: { fix: ContentFixDetail }) {
 
       {state === "applied" && <RevertForm fixId={fix.id} />}
       {fix.status === "approved" && (
-        <Suspense fallback={null}>
-          <ResumeSlot fix={fix} />
-        </Suspense>
+        <p className="text-muted-foreground max-w-2xl text-sm text-pretty">
+          {fix.deciderId === viewer.id
+            ? "Applying stopped before it finished. Finishing needs no passkey."
+            : `Applying stopped before it finished. Only ${fix.decider?.name ?? "whoever approved it"} can finish it.`}
+        </p>
       )}
     </AdminSection>
   );
 }
 
-/** Only whoever approved a fix can finish applying it. */
-async function ResumeSlot({ fix }: { fix: ContentFixDetail }) {
-  const passkey = await getStaffPasskeyStatus();
-  const viewerId = passkey.status === "ready" ? passkey.userId : null;
-
-  return fix.deciderId === viewerId ? <ResumeApplying batchId={fix.batchId} count={1} /> : null;
-}
-
-async function ReviewBarSlot({ fix }: { fix: ContentFixDetail }) {
-  const passkey = await getStaffPasskeyStatus();
-
-  return (
-    <ReviewBar
-      approveLabel="Approve with passkey"
-      batchId={fix.batchId}
-      fixIds={fix.voiceOwedAt ? [] : [fix.id]}
-      hasPasskey={passkey.status === "ready" && passkey.hasPasskey}
-      rejectFixId={fix.id}
-      settingsUrl={getMainPageUrl({ locale: "en", path: "/profile" })}
-    />
-  );
-}
-
 async function ContentFixContent({ params }: Pick<Props, "params">) {
-  const fix = await readFix(params);
+  const [fix, viewer] = await Promise.all([readFix(params), readContentFixViewer()]);
+  const isProposed = fix.status === "proposed";
   const proposedIn = fix.proposerClientId === "admin" ? "Admin" : "the CLI";
 
   return (
@@ -260,15 +272,21 @@ async function ContentFixContent({ params }: Pick<Props, "params">) {
 
       <AdminDetailBody
         bar={
-          fix.status === "proposed" ? (
-            <Suspense fallback={null}>
-              <ReviewBarSlot fix={fix} />
-            </Suspense>
+          isProposed || (fix.status === "approved" && fix.deciderId === viewer.id) ? (
+            <ReviewBar
+              approveLabel="Approve with passkey"
+              batchId={fix.batchId}
+              finishing={isProposed ? 0 : 1}
+              fixIds={isProposed && !fix.voiceOwedAt ? [fix.id] : []}
+              hasPasskey={viewer.hasPasskey}
+              reject={isProposed ? { fixId: fix.id } : undefined}
+              settingsUrl={getMainPageUrl({ locale: "en", path: "/profile" })}
+            />
           ) : null
         }
       >
         <AdminDetailColumns aside={<Where fix={fix} />}>
-          <Outcome fix={fix} />
+          <Outcome fix={fix} viewer={viewer} />
           <Why fix={fix} />
 
           <AdminSection title="Changes">
@@ -280,7 +298,7 @@ async function ContentFixContent({ params }: Pick<Props, "params">) {
             <ContentFixEffects fix={fix} />
           </AdminSection>
 
-          {fix.status === "proposed" ? (
+          {fix.status === "proposed" && !fix.voiceOwedAt ? (
             <p className="text-muted-foreground text-compact max-w-2xl text-pretty">
               Approving applies exactly the changes above and takes a passkey, so only you can apply
               a fix. Rejecting changes nothing.
@@ -297,7 +315,7 @@ function ContentFixSkeleton() {
     <>
       <AdminDetailHeaderSkeleton parents={FIX_PARENTS} />
 
-      <AdminDetailBody>
+      <AdminDetailBody bar={<ReviewBarSkeleton />}>
         <AdminSectionSkeleton />
         <AdminSectionSkeleton rows={2} />
         <AdminSectionSkeleton description rows={6} />

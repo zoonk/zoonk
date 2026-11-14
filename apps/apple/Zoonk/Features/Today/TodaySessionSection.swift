@@ -197,33 +197,47 @@ struct TodaySessionAction: View {
     }
   }
 
-  @State private var isArchiving = false
-
   private var asksAfterExam: Bool { view.isPastDate && view.goal.kind == .exam }
 
   var body: some View {
-    let action = action
-
-    action?.inHeader(isInHeader)
-      .disabled(busy != nil && action?.isBusy != true)
-
     if asksAfterExam {
-      BusyButton(isBusy: busy == .archive, icon: .archive) {
-        isArchiving = true
-      } label: {
-        Text("Archive goal", tableName: "Today", comment: "Archives the goal whose exam is over")
+      examOver
+    } else {
+      let action = action
+
+      action?.inHeader(isInHeader)
+        .disabled(busy != nil && action?.isBusy != true)
+    }
+  }
+
+  @ViewBuilder
+  private var examOver: some View {
+    let buttons = ExamOverButtons(
+      goalName: view.goal.title,
+      pressed: busy == .archive ? .archive : busy == .keepStudying ? .keepStudying : nil,
+      archive: archive, keepStudying: keepStudying)
+
+    if isInHeader {
+      VStack(alignment: .trailing, spacing: 8) {
+        HStack(spacing: 8) {
+          buttons
+        }
+        .controlSize(.large)
+        .buttonSizing(.fitted)
+
+        if let failure {
+          FailureLine(message: failure)
+            .typeStyle(.note)
+        }
       }
-      .buttonStyle(.outline)
-      .controlSize(.large)
-      .buttonSizing(isInHeader ? .fitted : .flexible)
-      .disabled(busy != nil && busy != .archive)
-      .archiveGoalConfirmation(named: view.goal.title, isPresented: $isArchiving, archive: archive)
+    } else {
+      buttons
     }
   }
 
   /// What failed, for the bottom bar's line: in the bar the button can't say it under itself.
   var failure: LocalizedStringResource? {
-    if failed == .archive {
+    if failed == .archive || failed == .keepStudying {
       return TodayMainAction.saveFailure
     }
 
@@ -232,12 +246,6 @@ struct TodaySessionAction: View {
 
   private var action: TodayMainAction? {
     let state = session.state
-
-    if asksAfterExam {
-      return TodayMainAction(
-        kind: .keepStudying, isBusy: busy == .keepStudying, failed: failed == .keepStudying,
-        action: keepStudying)
-    }
 
     if view.isPastDate {
       return TodayMainAction(kind: .seePlan, isBusy: false, failed: false) {
@@ -291,7 +299,6 @@ struct TodayMainAction: View {
   enum Kind {
     case continueSession
     case keepLearning
-    case keepStudying
     case practice(minutes: Int)
     case prepareLessons
     case seePlan
@@ -340,7 +347,7 @@ struct TodayMainAction: View {
 
   var failure: LocalizedStringResource {
     switch kind {
-    case .prepareLessons, .practice, .keepStudying:
+    case .prepareLessons, .practice:
       Self.saveFailure
     case .keepLearning:
       LocalizedStringResource(
@@ -359,10 +366,6 @@ struct TodayMainAction: View {
       Text("Continue", tableName: "Today", comment: "Continues today's session")
     case .keepLearning:
       Text("Keep learning", tableName: "Today", comment: "Adds the plan's next lessons")
-    case .keepStudying:
-      Text(
-        "Keep studying", tableName: "Today",
-        comment: "After an exam's date: keeps studying the lessons left")
     case .practice(let minutes):
       Text(
         "Practice \(minutes) min", tableName: "Today",

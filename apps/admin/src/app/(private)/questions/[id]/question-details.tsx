@@ -5,11 +5,10 @@ import { type getLessonQuestion } from "@/data/questions/get-lesson-question";
 import { formatUsd } from "@/lib/ai-format";
 import { formatDateTime } from "@/lib/format";
 import { getAdminQuestionContextLabel, getAdminQuestionLessonContext } from "@/lib/lesson-question";
+import { LINK_CLASS } from "@/lib/link-class";
 import Link from "next/link";
 
 type LessonQuestionDetail = NonNullable<Awaited<ReturnType<typeof getLessonQuestion>>>;
-
-const LINK_CLASS = "hit-area relative underline underline-offset-3";
 
 /** Where the learner was when they asked, and who they are. */
 export function QuestionAskedIn({ question }: { question: LessonQuestionDetail }) {

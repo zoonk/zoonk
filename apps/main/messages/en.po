@@ -2486,14 +2486,14 @@ msgid "It stays logged in on that computer until you log out there or leave it u
 msgstr "It stays logged in on that computer until you log out there or leave it unused for 30 days."
 
 #: src/app/[lang]/device/cli-login-form.tsx
-msgctxt "WCaf5C"
-msgid "Approve"
-msgstr "Approve"
-
-#: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "htvX-Z"
 msgid "Deny"
 msgstr "Deny"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "WCaf5C"
+msgid "Approve"
+msgstr "Approve"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "R-mNZZ"

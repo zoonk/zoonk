@@ -556,3 +556,74 @@ struct TodayFocusTestSection: View {
     }
   }
 }
+
+/// The exam's last days and "How did it go?", a suggestion like the others: its line, then a sheet
+/// with the day's checklist and the way to the exam.
+struct TodayExamMomentSection: View {
+  @Environment(AppRouter.self) private var router
+  @State private var isOpen = false
+
+  let moment: ExamMoment
+  /// Kept above the panes while the learner stays, as the Exam screen keeps its own.
+  @Binding var checked: Set<ExamView.ChecklistItem>
+
+  var body: some View {
+    if let words = moment.words {
+      Section {
+        SuggestionLine {
+          SuggestionMark(kind: .symbol(moment.icon))
+        } summary: {
+          Text(words.title)
+        } action: {
+          SuggestionOpen(isOpen: $isOpen) {
+            details(words)
+          }
+        }
+        .listRowSeparator(.hidden)
+      }
+    }
+  }
+
+  @ViewBuilder
+  private func details(_ words: (title: String, body: String?)) -> some View {
+    Text(words.title)
+      .typeStyle(.body.weight(.semibold))
+      .foregroundStyle(Color(.foreground))
+      .accessibilityAddTraits(.isHeader)
+
+    if let day = moment.dayLine {
+      Text(verbatim: day)
+        .typeStyle(.data)
+    }
+
+    if let body = words.body {
+      Text(body)
+        .foregroundStyle(.mutedForeground)
+    }
+
+    ExamChecklistRows(moment: moment, checked: $checked)
+
+    if let tools = moment.toolsLine {
+      Text(tools)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
+    }
+
+    Button {
+      isOpen = false
+      router.open(.exam)
+    } label: {
+      Group {
+        if moment.stage == .afterExam {
+          Text(
+            "Add your result", tableName: "Today",
+            comment: "Opens the exam to add the official result")
+        } else {
+          Text("See your exam", tableName: "Today", comment: "Opens the exam")
+        }
+      }
+      .frame(maxWidth: .infinity)
+    }
+    .buttonStyle(.mainAction)
+  }
+}

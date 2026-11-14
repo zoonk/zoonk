@@ -44,14 +44,24 @@ test.describe("After an exam's date, with lessons left", () => {
     });
   });
 
-  test("the Plan asks the same in its bottom bar, and Keep studying there puts the lessons back", async ({
+  test("the Plan says it in a line that opens nothing, asks in its bottom bar, and Keep studying there puts the lessons back", async ({
     browser,
   }) => {
     await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
       const { setAside } = await passTheDate(user.goalId);
       expect(setAside).toBeGreaterThan(0);
 
+      await page.setViewportSize({ height: 844, width: 390 });
       await page.goto("/plan");
+
+      // The line only says it: a sheet would cover the bar that answers it.
+      const line = page
+        .locator('[data-slot="suggestion-line"]')
+        .filter({ hasText: "Your exam date has passed", visible: true });
+
+      await expect(line).toContainText("Keep studying them, or archive this goal?");
+      await expect(line.getByRole("button")).toHaveCount(0);
+
       const bar = page.locator('[data-slot="bottom-bar"]');
       await expect(bar.getByRole("button", { exact: true, name: "Archive goal" })).toBeVisible();
 

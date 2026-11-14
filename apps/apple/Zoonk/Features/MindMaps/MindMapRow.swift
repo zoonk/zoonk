@@ -25,7 +25,7 @@ struct MindMapRow: View {
   }
 
   private enum Shown {
-    case create, writingLessons, drawing, ready, failed, unreachable, plusRequired
+    case create, writingLessons, drawing, ready, failed, unreachable
   }
 
   @Environment(AppRouter.self) private var router
@@ -42,19 +42,12 @@ struct MindMapRow: View {
         Button(action: open) {
           row.disclosureChevron()
         }
-      } else if shown == .plusRequired {
-        // Like the screen's other locked items: the Plus mark, and the whole row leads to Plus.
-        Button {
-          router.present(.subscription)
-        } label: {
-          row
-        }
       } else {
         row
       }
 
       if case .refused(let refusal) = failure {
-        LimitNotice(limit: refusal.limit, words: refusal.words)
+        LimitNotice(limit: refusal.limit, words: refusal.words(now:))
           .controlSize(.small)
       }
     }
@@ -103,7 +96,6 @@ struct MindMapRow: View {
 
     switch map.status {
     case .ready: return .ready
-    case .plusRequired: return .plusRequired
     case _ where failure == .unreachable: return .unreachable
     case .writingLessons: return .writingLessons
     case .drawing: return .drawing
@@ -121,9 +113,6 @@ struct MindMapRow: View {
         switch shown {
         case .writingLessons, .drawing:
           ProgressView()
-        case .plusRequired:
-          Image(systemName: "lock")
-            .foregroundStyle(.mutedForeground)
         default:
           KindMark(kind: .mindMap)
         }
@@ -183,7 +172,7 @@ struct MindMapRow: View {
       // The page says once what writing a chapter's lessons first means.
       let words: String? =
         switch shown {
-        case .create where map.lessonsToWrite > 0:
+        case .create where map.lessonsToWrite > 0 && !isPlus:
           String(
             localized: "\(map.lessonsToWrite) lessons to write", table: "MindMaps",
             comment: "A chapter on the mind maps page whose lessons a map would write first")
@@ -191,7 +180,7 @@ struct MindMapRow: View {
           String(
             localized: "As text", table: "MindMaps",
             comment: "A map on the mind maps page whose picture failed, so it opens as its outline")
-        case .create, .ready, .plusRequired: nil
+        case .create, .ready: nil
         default: waitLine ?? stateLine(ready: nil)
         }
 
@@ -209,20 +198,18 @@ struct MindMapRow: View {
   private func stateLine(ready: String?) -> String? {
     switch shown {
     case .create:
-      if map.lessonsToWrite == 0 {
-        return Self.mainIdeas
-      }
-
-      return learner.summary.value?.tier == .plus
-        ? String(
-          localized: "\(map.lessonsToWrite) lessons get written first, so it takes a few minutes.",
-          table: "MindMaps",
-          comment: "A Plus learner's map of a chapter whose lessons aren't written yet")
-        : String(
+      // Only a learner with a limit on lessons hears what writing them spends.
+      if map.lessonsToWrite > 0, !isPlus {
+        return String(
           localized:
             "\(map.lessonsToWrite) lessons get written first and count toward your free lessons.",
           table: "MindMaps",
           comment: "A free learner's map of a chapter whose lessons aren't written yet")
+      }
+
+      return place == .finish
+        ? String(localized: "A mind map of its main ideas", table: "MindMaps")
+        : Self.mainIdeas
     case .ready:
       if map.image == nil {
         return String(
@@ -239,8 +226,6 @@ struct MindMapRow: View {
       return String(
         localized: "We couldn't reach the server. Check your connection.", table: "MindMaps",
         comment: "Asking for a map didn't reach the server")
-    case .plusRequired:
-      return Self.mainIdeas
     case .writingLessons, .drawing:
       return nil
     }
@@ -274,6 +259,8 @@ struct MindMapRow: View {
     }
   }
 
+  private var isPlus: Bool { learner.summary.value?.tier == .plus }
+
   private static let mainIdeas = String(
     localized: "Its main ideas in one picture", table: "MindMaps",
     comment: "What a chapter's mind map is")
@@ -299,9 +286,7 @@ struct MindMapRow: View {
       }
       .buttonStyle(.outline)
       .controlSize(.small)
-    case .plusRequired where !place.isMindMapsPage:
-      PlusMark()
-    case .create, .ready, .plusRequired, .writingLessons, .drawing:
+    case .create, .ready, .writingLessons, .drawing:
       EmptyView()
     }
   }
@@ -371,10 +356,11 @@ extension MindMapSlot where Mark == EmptyView {
 extension MindMapLimit {
   /// Main's `MindMapLimitNotice` words: the maps, the lessons a map writes first (which count as
   /// new lessons), or the day's AI spend.
-  var words: LimitWords {
+  func words(now: Date = .now) -> LimitWords {
     switch resource {
-    case .aiSpend: limit.helpWords()
-    case .lessons: limit.lessonWords()
+    case .aiSpend: limit.helpWords(now: now)
+    case .chapterLessons: limit.mapLessonsWords(now: now)
+    case .lessons: limit.lessonWords(now: now)
     case .mindMap: limit.mindMapWords
     }
   }

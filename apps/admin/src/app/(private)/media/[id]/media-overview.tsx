@@ -5,10 +5,9 @@ import { ProvenanceFields } from "@/components/provenance";
 import { type AdminMediaAsset } from "@/data/media/get-media";
 import { formatDateTime } from "@/lib/format";
 import { languageName } from "@/lib/language-filter";
+import { LINK_CLASS } from "@/lib/link-class";
 import Link from "next/link";
 import { formatMediaSize } from "../_utils/media-format";
-
-const LINK_CLASS = "hit-area relative underline underline-offset-3";
 
 /** What the picture or clip was asked to be. */
 export function MediaPrompt({ asset }: { asset: AdminMediaAsset }) {
