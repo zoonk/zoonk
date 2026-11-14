@@ -430,7 +430,7 @@ struct GenerationWait: Equatable, Sendable {
     Phase(
       id: "skills",
       label: LocalizedStringResource(
-        "Mapping the skills it takes", table: "Onboarding",
+        "Choosing what to learn", table: "Onboarding",
         comment: "A step of the wait while a plan is built"),
       isOptional: false, seconds: 60,
       lines: [

@@ -56,9 +56,7 @@ struct CourseStartScreen: View {
           title: Text(
             "How much do you already know?", tableName: "Onboarding", comment: "Onboarding question"
           ),
-          description: Text(
-            "It only changes where your plan starts.", tableName: "Onboarding",
-            comment: "Under the level question"))
+          description: nil)
 
         ChoiceRows(
           choices: LevelChoices.all(testMinutes: course.value?.course.quickTestMinutes),
