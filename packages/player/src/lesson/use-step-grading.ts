@@ -146,7 +146,7 @@ export function useStepGrading({
 
       if (outcome?.status === "graded") {
         dispatch({
-          counts: true,
+          counts: outcome.grade.checked !== false,
           result: fromSpokenGrade({ grade: outcome.grade, step }),
           stepId,
           type: "checkResolved",

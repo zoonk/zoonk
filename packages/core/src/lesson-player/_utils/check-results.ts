@@ -3,6 +3,19 @@ import { type Attempt } from "@zoonk/db";
 import { type LessonStepCheckResult } from "../contract";
 import { type LessonAnswerVerdict } from "./grade-lesson-answer";
 
+export const NOT_CHECKED: LessonAnswerVerdict = {
+  answerText: null,
+  checked: false,
+  correctAnswer: null,
+  corrections: [],
+  expected: null,
+  feedback: null,
+  isCorrect: false,
+  keyPoints: null,
+  score: null,
+  spelling: null,
+};
+
 export function toCheckResult({
   savedMistake,
   verdict,
