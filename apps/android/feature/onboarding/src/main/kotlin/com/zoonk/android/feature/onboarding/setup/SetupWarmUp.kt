@@ -156,7 +156,6 @@ internal fun androidx.compose.foundation.layout.ColumnScope.SetupWait(
                     Button(
                         onClick = context.onStartLesson,
                         modifier = Modifier.fillMaxWidth(),
-                        leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
                     ) {
                         Text(stringResource(R.string.warm_up_start_first_lesson))
                     }

@@ -62,9 +62,11 @@ import com.zoonk.android.feature.memory.MemoryUpdated
 import com.zoonk.android.feature.missions.MissionMoment
 import com.zoonk.android.feature.missions.MissionMomentFacts
 import com.zoonk.android.feature.session.toDayMission
+import com.zoonk.android.feature.subscription.SubscribeButton
 import com.zoonk.android.navigation.AppLink
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.characters.BuddyLook
+import com.zoonk.android.ui.characters.StandingBuddy
 import com.zoonk.android.ui.components.AlertDialog
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.OutlinedButton
@@ -88,7 +90,7 @@ import java.util.UUID
 class TutorRoutes(
     val createAccount: () -> Unit,
     val signIn: () -> Unit,
-    val seePlus: () -> Unit,
+    val subscribe: () -> Unit,
     val open: (AppRoute) -> Unit,
     val startCall: CallStarter,
 )
@@ -558,7 +560,7 @@ private fun CheckAgain(
     }
 }
 
-/** Main's error action: sign in again, see Plus, or try again; a help limit or a gone lesson has none. */
+/** Main's error action: log in again, subscribe, or try again; a help limit or a gone lesson has none. */
 @Composable
 internal fun FailureAction(
     failure: TutorFailure?,
@@ -573,7 +575,7 @@ internal fun FailureAction(
         }
 
         failure == TutorFailure.PlusRequired -> {
-            OutlinedButton(onClick = routes.seePlus, modifier = modifier) { Text(stringResource(R.string.tutor_view_plans)) }
+            SubscribeButton(routes.subscribe)
         }
 
         failure?.helpLimit != null || failure == TutorFailure.Gone -> {}
@@ -588,14 +590,14 @@ internal fun FailureAction(
 }
 
 @Composable
-private fun EmptyThread(
+internal fun EmptyThread(
     identity: TutorIdentity,
     suggestions: List<TutorSuggestion>,
     canAsk: Boolean,
     onSelect: (TutorSuggestion) -> Unit,
 ) {
     CenteredState {
-        TutorAvatar(identity, EMPTY_AVATAR_SIZE)
+        identity.look?.let { StandingBuddy(it, EMPTY_BUDDY_HEIGHT) }
         Text(stringResource(R.string.tutor_empty_title), textAlign = TextAlign.Center, style = MaterialTheme.typography.titleMedium)
         Text(
             stringResource(R.string.tutor_empty_ai, identity.name),
@@ -667,7 +669,7 @@ private val AVATAR_SIZE = 32.dp
 /** Main's `LearnerBubble`: its corner nearest the learner's side tucked in. */
 private val BUBBLE_SHAPE =
     RoundedCornerShape(topStart = ZoonkRadius.option, topEnd = ZoonkRadius.option, bottomEnd = 4.dp, bottomStart = ZoonkRadius.option)
-private val EMPTY_AVATAR_SIZE = 48.dp
+private val EMPTY_BUDDY_HEIGHT = 96.dp
 private val BUBBLE_MAX_WIDTH = 480.dp
 private val LOADING_HEIGHT = 96.dp
 

@@ -72,12 +72,12 @@ test.describe("Study reminders", () => {
     const offer = page.getByRole("region", { name: "Want a study reminder?" });
 
     await offer.getByLabel("Reminder time").selectOption("20:30");
-    await expect(offer).toContainText(`We'll email ${user.email} at 8:30 PM`);
+    await expect(offer).toContainText(`An email to ${user.email} on your study days.`);
     await offer.getByRole("button", { name: "Remind me" }).click();
 
-    await expect(page.getByRole("region", { name: "Email reminders are on." })).toContainText(
-      `We'll email ${user.email} at 8:30 PM`,
-    );
+    const reminder = page.getByRole("region", { name: "Email reminders are on." });
+    await expect(reminder).toContainText(`An email to ${user.email} on your study days.`);
+    await expect(reminder.getByLabel("Reminder time")).toHaveValue("20:30");
 
     await expect
       .poll(() => readReminder(user.id))

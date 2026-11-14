@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
@@ -45,14 +46,12 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.characters.BuddyGlasses
 import com.zoonk.android.ui.characters.BuddyKind
 import com.zoonk.android.ui.characters.BuddyLook
-import com.zoonk.android.ui.characters.buddyStageName
 import com.zoonk.android.ui.components.Belt
 import com.zoonk.android.ui.components.ListRowChevron
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
@@ -125,7 +124,11 @@ internal fun BuddyTodayLine(
                     Modifier.size(icon),
                     tint = MaterialTheme.zoonk.energy,
                 )
-                Text(energy ?: DASH, style = number, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(
+                    stringResource(R.string.buddy_page_energy_share, energy ?: DASH),
+                    style = number,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
             }
             if (today == null || today.missions.isNotEmpty()) {
                 Row(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -134,8 +137,10 @@ internal fun BuddyTodayLine(
                     } else {
                         Icon(painterResource(R.drawable.ic_check), contentDescription = null, Modifier.size(icon))
                     }
+                    if (today == null) Text(DASH, style = number, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Text(
-                        today?.let { "$done/${it.missions.size}" } ?: DASH,
+                        today?.let { pluralStringResource(R.plurals.buddy_page_missions_count, it.missions.size, done, it.missions.size) }
+                            ?: stringResource(R.string.buddy_page_missions),
                         style = number,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -184,7 +189,7 @@ private fun BuddyTodaySheet(
                     style = MaterialTheme.typography.titleLarge,
                 )
                 Text(
-                    factsLine(buddyStageName(look.stage), growthLine(status.nextStage)),
+                    growthLine(status.nextStage),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium,
                 )
@@ -303,7 +308,7 @@ private fun BuddyEnergy(
     name: String,
     onOpen: () -> Unit,
 ) {
-    val title = stringResource(R.string.buddy_page_energy)
+    val title = stringResource(R.string.buddy_page_energy_named, name)
     val current = energy.current
 
     if (current == null) {
@@ -321,7 +326,7 @@ private fun BuddyEnergy(
     val line =
         when {
             energy.state == BuddyStatusEnergy.State.NAPPING -> stringResource(R.string.buddy_page_energy_napping, name)
-            energy.studiedToday -> stringResource(R.string.buddy_page_energy_studied)
+            energy.studiedToday -> null
             else -> stringResource(R.string.buddy_page_energy_study)
         }
 
@@ -344,7 +349,7 @@ private fun BuddyEnergy(
             )
         }
         Meter((current / PERCENT).toFloat(), color = MaterialTheme.zoonk.energy)
-        Text(line, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+        line?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium) }
     }
 }
 
@@ -353,10 +358,7 @@ private fun growthLine(next: BuddyStatusNextStage?): String {
     next ?: return stringResource(R.string.buddy_page_fully_grown)
     val belt = stringResource(belt(next.belt).label)
 
-    return when (next.stage) {
-        BuddyStatusNextStage.Stage.ADULT -> stringResource(R.string.buddy_page_grows_adult, belt)
-        BuddyStatusNextStage.Stage.BABY, BuddyStatusNextStage.Stage.YOUNG -> stringResource(R.string.buddy_page_grows_young, belt)
-    }
+    return stringResource(R.string.buddy_page_grows, belt)
 }
 
 private const val PERCENT = 100.0

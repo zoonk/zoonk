@@ -14,7 +14,7 @@
   "audio_open_settings": "ce465fd3cb68788fef20ceaf1d10801f036200b3cbf9e67d175248e8c8e54019",
   "audio_record": "d8969302d4661d7415b1863799a5602232d71fe91004411b856126b367c5781e",
   "audio_record_stop": "85f61ec41fdc6a206520522e96629a73873dd7a91635cdc9e7f908f0d9e205bd",
-  "audio_say_it": "1b51521a4820f1c26e7a2193d388041fe592e3bd4184d3fe711df03909de66d8",
+  "audio_say_it": "1ee282b155e8d2ead28b0cc6040700ac4e8dc6efdaf8b9c993bc7b978a39c515",
   "audio_stop": "4b29d27a501a893aa5dd221c542786d282f25a1c7897303667cf0632237e0c76",
   "audio_try_again": "5863c1ab44298448b009cb0a5a3f70c435c7d31b6f7e2427944aa8540247e000",
   "audio_try_again_label": "452dd86b59fe680c4fd1022bb177cdc77d193bcfb574d95c4780af8ea37f63b9"
@@ -37,7 +37,7 @@
     <string name="audio_checking_slow">Ainda estamos conferindo. Está demorando mais que o normal.</string>
     <string name="audio_no_speech">Não conseguimos ouvir nenhuma palavra. Tente de novo.</string>
     <string name="audio_check_failed">Não conseguimos conferir sua resposta desta vez. Tente de novo.</string>
-    <string name="audio_say_it">Toque e fale em voz alta</string>
+    <string name="audio_say_it">Toque em Gravar e fale em voz alta</string>
     <string name="audio_microphone_off_title">O microfone está desativado</string>
     <string name="audio_microphone_off_answer">Ative o microfone para o Zoonk nas configurações para responder em voz alta.</string>
     <string name="audio_open_settings">Abrir configurações</string>

@@ -71,8 +71,8 @@ test.describe("OTP Login Flow", () => {
     const wrongCode = code === "000000" ? "111111" : "000000";
     const input = page.getByRole("textbox", { name: "Code from the email" });
     const continueButton = page.getByRole("button", { name: /^continue$/iu });
-    const wrong = page.getByText("That code isn't right. Check the email and try again.");
-    const tooMany = page.getByText("Too many wrong tries with this code. Get a new one.");
+    const wrong = page.getByText("That code isn't right. Try again.");
+    const tooMany = page.getByText("Too many wrong tries. Get a new code.");
 
     async function tryCode(attempt: string) {
       await expect(continueButton).toBeEnabled();
@@ -108,7 +108,7 @@ test.describe("OTP Login Flow", () => {
     await expect(input).toBeDisabled();
 
     await page.getByRole("button", { name: "Send a new code" }).click();
-    await expect(page.getByText(`We sent a new code to ${email}.`)).toBeVisible();
+    await expect(page.getByText("We sent you a new code.")).toBeVisible();
 
     const newCode = await getOTPForEmail(email);
     await input.fill(newCode ?? "");
@@ -140,9 +140,7 @@ test.describe("OTP Login Flow", () => {
     await input.fill(wrongCode);
     await checks[0]?.continue();
 
-    await expect(
-      page.getByText("That code isn't right. Check the email and try again."),
-    ).toBeVisible();
+    await expect(page.getByText("That code isn't right. Try again.")).toBeVisible();
 
     expect(checkedCodes()).toEqual([wrongCode]);
 
@@ -214,9 +212,7 @@ test.describe("OTP Login Flow", () => {
     await page.unroute(newCodeUrl);
     await input.fill(wrongCode);
 
-    await expect(
-      page.getByText("That code isn't right. Check the email and try again."),
-    ).toBeVisible();
+    await expect(page.getByText("That code isn't right. Try again.")).toBeVisible();
 
     const newCodeRequests = await holdRequests(page, newCodeUrl);
     await sendAgain.click();
@@ -226,7 +222,7 @@ test.describe("OTP Login Flow", () => {
     await input.fill(firstCode);
     await newCodeRequests[0]?.continue();
 
-    await expect(page.getByText(`We sent a new code to ${email}.`)).toBeVisible();
+    await expect(page.getByText("We sent you a new code.")).toBeVisible();
     await expect(input).toHaveValue("");
     expect(checkedCodes).toEqual([wrongCode]);
 

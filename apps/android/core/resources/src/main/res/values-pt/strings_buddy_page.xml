@@ -6,10 +6,11 @@
   "buddy_page_count": "92c57da6bd2d12d4e1149291a0fbab60863405692cf119468cffd1af6c49696d",
   "buddy_page_earlier_questions": "02720fbf9ff48933a6f6a539cbb35e7a8a2d61ed28ee9abe7a2e3d25393cea9c",
   "buddy_page_energy": "05b29266e81952273d0f691425ddd925d3e338477ab10bccc3872b4f5926ec4d",
-  "buddy_page_energy_napping": "40a7c3cfb045f81fca2e5d025fda691b6b3b6a91ce8e1c0d088e29c70985bdff",
-  "buddy_page_energy_starts": "d361fc190ac1d041123b7d272075eeeeedc37a9f2cf30d02f3aea33dec2556c1",
-  "buddy_page_energy_studied": "99f87403f3b7b82eaff8d84beb581a8752636baec71b3a04663bc177e8e1f2c5",
-  "buddy_page_energy_study": "6f38e42c932e6a2a4222eb1a1e77c5e77fcc733186832ce21212dc0d0867412f",
+  "buddy_page_energy_named": "71d67b8dafd4224afd4703678c01c4d35abb55fbb6d18af4a12056bd29207f23",
+  "buddy_page_energy_napping": "cb5bff763e024f80b96b191f524fdee77149276c66683de7e30bcbe90a390c42",
+  "buddy_page_energy_share": "6a0b83e5c79fd1d932dfa555d323673eb2f21a523f242179e6d26e879f6477f1",
+  "buddy_page_energy_starts": "0ab543dc1acfd1d0a0fecc4ee5959bb45519f82ebf0b402a1c47eb49a82abca7",
+  "buddy_page_energy_study": "c68048f620b5d88b179d27191d03769e9bfe6fc756cb71943c6d7a6d4bfcc4cc",
   "buddy_page_first_anytime": "76990de936e4448eed83523b30e4e8c2ea67ce065ac713844d6b2cb7563a97db",
   "buddy_page_first_ask": "dfca21311da7889934c0c4001c293f9897d4d704855c45aafa8c5dce1fdbd1e1",
   "buddy_page_first_call": "5f67e3822867b64858da98c509ee8b33ab8ca6c5dfcc02c4345f9fbe1d677c98",
@@ -24,19 +25,18 @@
   "buddy_page_first_steps_done": "c69fd385217be14e495e0cab729711ca8c32b606d101e44e0642a6fa6f5314ce",
   "buddy_page_first_today": "b51c6e5f10e0ba541aaf826ae04582a2c017bcf22690259ed7657af92aaca7d0",
   "buddy_page_fully_grown": "1e6cbf3c4f381f55c21852ea2ee41aff538204177bdaef44e7db803f97cf1a54",
-  "buddy_page_glasses_description": "0653559fd9743f838f504731f7914c95838798c2727cde21675bb0b12b47851f",
-  "buddy_page_goal_greeting": "0e1d30436da6fd5b7dedc3eaa06a3b180f41125ca1ef0756ae8d558cada029fa",
+  "buddy_page_glasses_description": "7d8d9b797a68b02e95be885888f5a010174b007910710b1882a88805d6ba4cc0",
+  "buddy_page_goal_greeting": "9ba8f0749acf27af530eca5dc45476f22d823f4639acca539c89fb57b7d500a6",
   "buddy_page_goal_label": "b970ee5a3e00e9e29d013269984812fff5adfe222e17fed9713802de1a180b6d",
   "buddy_page_goal_placeholder": "18cd55359389c65033e317063617ad5232823ffa468cb3c50e4c1b09597c5318",
-  "buddy_page_greeting": "52831b8b9da1ea01db955b260f015a169fca20564eaaaa4c4b6646da0c9a7519",
-  "buddy_page_grows_adult": "940001fada9f216101c3c7f6250f7cff395ad3d66eff13f3555c0766c6966981",
-  "buddy_page_grows_young": "ac443c1756dba60e28c0f897be0680da8826b87c358ee7c8106474c634bad3d9",
-  "buddy_page_line": "5ff9477562beca94d25ed065bff340e0c035ae40a936bcd09a50eb7c64f6fd5a",
+  "buddy_page_greeting": "8d2cd072cee53d814bd5c630ad2342b5f5a350dc6d9727aea9ba3f8a81050902",
+  "buddy_page_grows": "6ffe0b712f25e902134e66dd915857703931736b1ed96cf27e687e50327beb35",
   "buddy_page_missions": "5ee8af3225d87aba57c9d16c2c5b07265875069755e3c794248a5d5cee916519",
+  "buddy_page_missions_count": "d42c8cbb1c3585b59f504d17bcacdd7f349da8d8b21ef61e4fef6a31e6684d50",
   "buddy_page_missions_done": "498cd13a17b5e8a6c90359efecbaf23551fbffceff24c1759686e705c9a583b2",
   "buddy_page_more": "a69adc5510b85ef35600609c9dc9c468732aa9aa98d9e2b784066e00dc8fbd77",
   "buddy_page_not_yet": "3f89917574417fca264d97e0003c04f1dfec6dd0d631926620eeab2d44bb4ba2",
-  "buddy_page_placeholder": "3cfd062a1e502122b93b706c151b4d8cb62a49ac3e0d3b405c514b7714e606e6",
+  "buddy_page_placeholder": "2b158a3f408b5c8487d15394532aa431b5a41cc1787256f65df6a0047554ccdc",
   "buddy_page_remembers": "5e5a03e48f08fbc1e02b493ef767f0fe14e9a40c7b32b61a199124c4bf3d6473",
   "buddy_page_save_failed": "ced8dbc8f1ac04c4a481974b61a33e1e34e0bdde63c250bf300f9657f84f0c0d",
   "buddy_page_suggest_focus": "1c4fa2c152d9c11393ee6e25d5666c8ef7a40b3fba0da9320a0f69073ae27fbc",
@@ -58,8 +58,6 @@
 }
 -->
 <resources>
-    <!-- Under the buddy's name; %1$s is its stage, like "Baby". -->
-    <string name="buddy_page_line">Seu parceiro de estudos · %1$s</string>
     <string name="buddy_page_more">Mais sobre %1$s</string>
     <string name="buddy_page_change">Trocar %1$s</string>
     <string name="buddy_page_choose">Escolha seu parceiro</string>
@@ -69,32 +67,40 @@
     <string name="buddy_page_count">%1$s de %2$s</string>
     <string name="buddy_page_save_failed">Não foi possível salvar. Tente de novo.</string>
     <!-- The buddy says it's an AI where every conversation opens (EU AI Act art. 50). -->
-    <string name="buddy_page_greeting">Oi! Sou %1$s, seu parceiro de estudos com IA. Pergunte o que quiser sobre o que você está estudando ou me conte o que gostaria de mudar no seu plano.</string>
+    <string name="buddy_page_greeting">Oi! Sou %1$s, uma IA que te acompanha nos estudos. Pergunte o que quiser ou me diga o que mudar no seu plano.</string>
     <string name="buddy_page_goal_placeholder">O que você quer aprender</string>
     <string name="buddy_page_goal_label">Seu objetivo</string>
-    <string name="buddy_page_goal_greeting">Oi! Sou %1$s, seu parceiro de estudos com IA. O que você quer aprender e até quando? Vou criar um plano para você estudar todos os dias até lá.</string>
-    <string name="buddy_page_placeholder">Faça uma pergunta ou peça uma mudança</string>
+    <string name="buddy_page_goal_greeting">Oi! Sou %1$s, uma IA que te acompanha nos estudos. Me conte o que você quer aprender e eu monto seu plano.</string>
+    <string name="buddy_page_placeholder">Pergunte o que quiser</string>
     <string name="buddy_page_suggest_plan_today">O que tem no meu plano para hoje?</string>
     <string name="buddy_page_suggest_lighter">Quero estudar menos esta semana</string>
     <string name="buddy_page_suggest_mistake">Explique meu último erro</string>
     <string name="buddy_page_suggest_focus">Em que devo focar primeiro?</string>
     <string name="buddy_page_today">%1$s hoje</string>
     <string name="buddy_page_energy">Energia</string>
-    <string name="buddy_page_energy_starts">A Energia começa com sua primeira aula e aumenta conforme você aprende.</string>
-    <string name="buddy_page_energy_napping">%1$s tirou um cochilo. Aprender qualquer coisa acorda seu parceiro.</string>
-    <string name="buddy_page_energy_studied">Você estudou hoje, então a Energia não vai cair.</string>
-    <string name="buddy_page_energy_study">Estudar hoje mantém a Energia em alta.</string>
+    <!-- The title of the buddy's Energy meter; %1$s is the buddy's name. -->
+    <string name="buddy_page_energy_named">Energia de %1$s</string>
+    <string name="buddy_page_energy_starts">Começa na sua primeira aula.</string>
+    <string name="buddy_page_energy_napping">%1$s está tirando uma soneca. Estude para espantar o sono.</string>
+    <string name="buddy_page_energy_study">Estude hoje para manter a Energia em alta.</string>
     <string name="buddy_page_not_yet">Ainda não</string>
     <string name="buddy_page_missions">Missões</string>
+    <!-- The buddy's Energy beside its mark, like "68% Energy"; a dash before any lesson. -->
+    <string name="buddy_page_energy_share">%1$s de Energia</string>
+    <!-- The day's missions done out of all of them, like "1 of 3 missions"; the count is the total. -->
+    <plurals name="buddy_page_missions_count">
+        <item quantity="one">%1$d de %2$d missão</item>
+        <item quantity="many">%1$d de %2$d missões</item>
+        <item quantity="other">%1$d de %2$d missões</item>
+    </plurals>
     <!-- Read aloud for the missions shown as "1/3". -->
     <string name="buddy_page_missions_done">Missões concluídas: %1$d de %2$d</string>
     <string name="buddy_page_fully_grown">Crescimento completo</string>
     <!-- %1$s is a belt, like "Orange belt". -->
-    <string name="buddy_page_grows_young">Passa para Jovem em %1$s</string>
-    <string name="buddy_page_grows_adult">Passa para Adulto em %1$s</string>
+    <string name="buddy_page_grows">Cresce quando você chega à %1$s</string>
     <string name="buddy_page_remembers">O que %1$s lembra</string>
     <!-- Under the buddy's glasses: the learner picks a pair they've earned, and the buddy wears it. -->
-    <string name="buddy_page_glasses_description">Escolha um par que você ganhou para seu parceiro usar.</string>
+    <string name="buddy_page_glasses_description">Escolha um par que você já ganhou.</string>
     <string name="buddy_page_first_steps">Primeiros passos</string>
     <string name="buddy_page_first_steps_done">Você já experimentou tudo que seu plano usa.</string>
     <string name="buddy_page_first_lesson">Concluir sua primeira aula</string>

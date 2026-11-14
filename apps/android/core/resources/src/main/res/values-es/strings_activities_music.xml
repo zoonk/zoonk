@@ -56,12 +56,11 @@
   "activities_music_same_notes_guitar": "6e7bb058fd768625483587db0d3f5baaf81e71cb8e677244a4a4cb8543381aa3",
   "activities_music_show_as": "3e8b23c0d8b5d8aa4a655bac4944dbf128605944a7533938b5b9f2cfe490ca83",
   "activities_music_skip_for_now": "aa6bb1bdf45e3e6d7d623ef220c7376f2069775afb6046c7f3e6572d31479c30",
+  "activities_music_sound_check_done": "818b6f5e0028d9bc8f43900c451d7c9fb156fa174fdf4f0b180032fd45c5e1d6",
   "activities_music_sound_check_failed": "d088c4dd51d73e29a0eabe2203469ad8696b66801a67d0a843e908f134fb58e4",
-  "activities_music_sound_check_intro": "df250114ec0814b372b494c964c3700a047c5cab5dcf331c45cdc8ec9a8e15f4",
-  "activities_music_sound_check_late": "aff792233212f3cb924fd8095442c5854a9d25700204b9f25e6bbc2dbdbefd73",
+  "activities_music_sound_check_intro": "b7eccf7ba07431dccdc0ab0393a6d2fc5c5864abd273b3228ff20c45dd80e078",
   "activities_music_sound_check_listen": "b7f64b7fe9b6d4e76ea3137cf36a7160839271fbc614d66685b8e00d0c7938f2",
-  "activities_music_sound_check_on_time": "e4ae71e44900c6509184c2d318e29495b807021b7e34c3d7fdf1b6d700765940",
-  "activities_music_sound_check_start": "cddbb88ab983385527b18bcd20499ebcb8d1f6879580f58684750fdd160140fe",
+  "activities_music_sound_check_start": "a20916dc5463787d1faa1e5d6a80a78cd57d1568f7ff95ab4820837415b86e3f",
   "activities_music_sound_check_tap": "6c59fa9cff0fa1d056a07c039bbde25c559e16bbe2140b5e29928cbfd1e597ee",
   "activities_music_sound_check_title": "2ca430357dfaf93decf0cf9fd140aee84a98eebbd3d1d6bb091bddf148547d8d",
   "activities_music_sound_notes": "5b01670966edf51efdb343fd5c217e2ce3404e5c3fd73859a61d93ba71fab03f",
@@ -241,18 +240,16 @@
     <!-- The title of the one-time check of how late this device plays sound. -->
     <string name="activities_music_sound_check_title">Configurar el sonido</string>
     <plurals name="activities_music_sound_check_intro">
-        <item quantity="one">Los audífonos pueden reproducir el sonido con un poco de retraso. Haz una sola prueba tocando al ritmo de %1$d clic para que los ritmos de este dispositivo compensen ese retraso.</item>
-        <item quantity="many">Los audífonos pueden reproducir el sonido con un poco de retraso. Haz una sola prueba tocando al ritmo de %1$d clics para que los ritmos de este dispositivo compensen ese retraso.</item>
-        <item quantity="other">Los audífonos pueden reproducir el sonido con un poco de retraso. Haz una sola prueba tocando al ritmo de %1$d clics para que los ritmos de este dispositivo compensen ese retraso.</item>
+        <item quantity="one">Toca la pantalla al ritmo de %1$d clic para sincronizar tus toques.</item>
+        <item quantity="many">Toca la pantalla al ritmo de %1$d clics para sincronizar tus toques.</item>
+        <item quantity="other">Toca la pantalla al ritmo de %1$d clics para sincronizar tus toques.</item>
     </plurals>
     <string name="activities_music_sound_check_listen">Escucha los clics…</string>
     <!-- Which click to tap with now, like "Tap with each click · 2 of 6". -->
     <string name="activities_music_sound_check_tap">Toca con cada clic · %1$d de %2$d</string>
     <string name="activities_music_sound_check_failed">No pudimos hacer coincidir suficientes toques con los clics. Inténtalo de nuevo, tocando con cada clic.</string>
-    <string name="activities_music_sound_check_on_time">El sonido en este dispositivo llega a tiempo.</string>
-    <!-- How late this device plays sound, like "about 120 ms late". -->
-    <string name="activities_music_sound_check_late">El sonido en este dispositivo se retrasa aproximadamente %1$d ms. Los ritmos compensan ese retraso.</string>
-    <string name="activities_music_sound_check_start">Iniciar la prueba de sonido</string>
+    <string name="activities_music_sound_check_done">Todo listo.</string>
+    <string name="activities_music_sound_check_start">Empezar</string>
     <string name="activities_music_skip_for_now">Saltar por ahora</string>
     <string name="activities_music_continue">Continuar</string>
 </resources>

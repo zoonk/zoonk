@@ -103,7 +103,7 @@ class MakeRoomScreenshots {
                                     pausing = goals.first().id.takeIf { pausing },
                                     failed = failed,
                                     onPause = {},
-                                    onGetPlus = {},
+                                    onSubscribe = {},
                                 )
                             }
                         }

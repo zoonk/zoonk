@@ -148,7 +148,7 @@ internal fun ExplainAnswer(
     explanation: AnswerExplanation?,
     onExplain: () -> Unit,
     onCreateAccount: () -> Unit,
-    onSeePlus: () -> Unit,
+    onSubscribe: () -> Unit,
 ) {
     val loading = explanation == AnswerExplanation.Loading
 
@@ -182,7 +182,7 @@ internal fun ExplainAnswer(
             }
 
             is AnswerExplanation.Refused -> {
-                LimitNotice(explanation.limit, LimitSubject.Help, onCreateAccount, onSeePlus)
+                LimitNotice(explanation.limit, LimitSubject.Explanations, onCreateAccount, onSubscribe)
             }
 
             else -> {}

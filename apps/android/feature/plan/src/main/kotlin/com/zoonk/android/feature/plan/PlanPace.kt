@@ -4,6 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import com.zoonk.android.R
+import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.api.models.PlanStatus
 import com.zoonk.api.models.PlanStatusOneOf5
 
@@ -53,27 +55,19 @@ val PlanStatus.pace: Pace
 fun paceText(pace: Pace): String =
     when (pace) {
         is Pace.Ahead -> {
-            if (pace.days ==
-                1
-            ) {
-                stringResource(R.string.plan_pace_one_day_ahead)
-            } else {
-                pluralStringResource(R.plurals.plan_pace_days_ahead, pace.days, pace.days)
-            }
+            pluralStringResource(R.plurals.plan_pace_days_ahead, pace.days, pace.days)
         }
 
         is Pace.Behind -> {
             if (pace.lessons != null && pace.lessons > 0) {
-                pluralStringResource(R.plurals.plan_pace_lessons_to_catch_up, pace.lessons, pace.lessons)
-            } else if (pace.days == 1) {
-                stringResource(R.string.plan_pace_one_day_behind)
+                pluralStringResource(R.plurals.plan_pace_lessons_behind, pace.lessons, pace.lessons)
             } else {
                 pluralStringResource(R.plurals.plan_pace_days_behind, pace.days, pace.days)
             }
         }
 
         is Pace.ChallengesLeft -> {
-            pluralStringResource(R.plurals.plan_pace_challenges_left, pace.challenges, pace.challenges)
+            pluralStringResource(R.plurals.plan_pace_challenges_to_go, pace.challenges, pace.challenges)
         }
 
         Pace.Finished -> {
@@ -81,21 +75,23 @@ fun paceText(pace: Pace): String =
         }
 
         is Pace.NeedsAdjusting -> {
-            stringResource(R.string.plan_pace_needs_adjusting)
+            stringResource(R.string.plan_pace_not_enough_time)
         }
 
         Pace.OnTrack -> {
-            stringResource(R.string.plan_pace_keeping_pace)
+            stringResource(R.string.plan_pace_up_to_date)
         }
 
         is Pace.PastDate -> {
-            stringResource(R.string.plan_pace_past_your_date)
+            stringResource(R.string.plan_pace_date_passed)
         }
     }
 
+/** The schedule sheet's one sentence; [adjust] offers Adjust plan, [today] a way to Today. */
 data class PaceFix(
     val text: String,
-    val adjust: Boolean,
+    val adjust: Boolean = false,
+    val today: Boolean = false,
 )
 
 @Composable
@@ -105,22 +101,11 @@ fun paceFix(
 ): PaceFix? =
     when (pace) {
         is Pace.PastDate -> {
-            PaceFix(pastDateSentence(pace.lessons, isExam), adjust = false)
+            PaceFix(pastDateSentence(pace.lessons, isExam))
         }
 
         is Pace.ChallengesLeft -> {
-            PaceFix(
-                stringResource(
-                    if (pace.challenges ==
-                        1
-                    ) {
-                        R.string.plan_pace_win_challenge
-                    } else {
-                        R.string.plan_pace_win_challenges
-                    },
-                ),
-                adjust = false,
-            )
+            PaceFix(stringResource(if (pace.challenges == 1) R.string.plan_pace_win_challenge else R.string.plan_pace_win_challenges))
         }
 
         is Pace.NeedsAdjusting -> {
@@ -129,12 +114,14 @@ fun paceFix(
 
         is Pace.Behind -> {
             if (pace.lessons != null && pace.lessons > 0) {
-                PaceFix(pluralStringResource(R.plurals.plan_pace_earlier_lessons_first, pace.lessons, pace.lessons), adjust = false)
+                PaceFix(stringResource(R.string.plan_pace_lessons_first_today), today = true)
             } else {
-                val days = pluralStringResource(R.plurals.plan_pace_days, pace.days, pace.days)
                 PaceFix(
-                    pluralStringResource(R.plurals.plan_pace_more_minutes, pace.extraMinutesPerDay, pace.extraMinutesPerDay, days),
-                    adjust = false,
+                    stringResource(
+                        R.string.plan_pace_more_minutes_a_day,
+                        formatNumber(pace.extraMinutesPerDay.toDouble(), currentLocale()),
+                        pluralStringResource(R.plurals.plan_pace_days, pace.days, pace.days),
+                    ),
                 )
             }
         }

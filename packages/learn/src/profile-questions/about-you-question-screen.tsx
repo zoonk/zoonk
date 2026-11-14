@@ -8,7 +8,7 @@ import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
 import { useExtracted } from "next-intl";
-import { useState, useTransition } from "react";
+import { useId, useState, useTransition } from "react";
 import { EnterButton } from "../_components/enter-button";
 import { PageHeader, PageHeaderContent, PageSubtitle, PageTitle } from "../_components/page";
 import { CLEAR_OF_PINNED_ACTIONS_CLASS } from "../_components/pinned-actions";
@@ -33,30 +33,32 @@ export function AboutYouQuestionScreen({
   const [draft, setDraft] = useState(() => toProfileDraft(question));
   const [failed, setFailed] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const formId = useId();
 
   const input = canSendProfileDraft({ draft, from: "settings", question: question.id })
     ? toProfileAnswer({ draft, memoryEnabled, question: question.id })
     : null;
 
   return (
-    <form
-      className="flex flex-1 flex-col gap-6"
-      onSubmit={(event) => {
-        event.preventDefault();
+    <>
+      <form
+        className={cn("flex flex-col gap-6", CLEAR_OF_PINNED_ACTIONS_CLASS)}
+        id={formId}
+        onSubmit={(event) => {
+          event.preventDefault();
 
-        if (!input || isPending) {
-          return;
-        }
+          if (!input || isPending) {
+            return;
+          }
 
-        setFailed(false);
+          setFailed(false);
 
-        startTransition(async () => {
-          const { data: saved } = await safeAsync(() => onSave(input));
-          setFailed(!saved);
-        });
-      }}
-    >
-      <div className={cn("flex flex-1 flex-col gap-6", CLEAR_OF_PINNED_ACTIONS_CLASS)}>
+          startTransition(async () => {
+            const { data: saved } = await safeAsync(() => onSave(input));
+            setFailed(!saved);
+          });
+        }}
+      >
         <PageHeader>
           <PageHeaderContent>
             <PageTitle>{title}</PageTitle>
@@ -71,15 +73,15 @@ export function AboutYouQuestionScreen({
           onChange={setDraft}
           question={question}
         />
-      </div>
+      </form>
 
       <BottomBar note={failed && <ChangeSaveError />}>
         <BottomBarActions>
-          <EnterButton busy={isPending} disabled={!input} type="submit">
+          <EnterButton busy={isPending} disabled={!input} form={formId} type="submit">
             {t("Save")}
           </EnterButton>
         </BottomBarActions>
       </BottomBar>
-    </form>
+    </>
   );
 }

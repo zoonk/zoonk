@@ -119,7 +119,7 @@ export async function CurrentPlan({
     : Boolean(subscription.cancelAt || subscription.cancelAtPeriodEnd);
 
   return (
-    <Page className="max-w-form">
+    <Page measure="form">
       <SectionPageHeader title={t("Subscription")} />
 
       <PageSection>

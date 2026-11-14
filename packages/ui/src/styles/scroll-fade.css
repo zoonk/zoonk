@@ -139,3 +139,26 @@
     animation-range: 0 1px;
   }
 }
+
+@theme inline {
+  @keyframes scroll-hairline-b {
+    from {
+      border-bottom-color: var(--border);
+    }
+  }
+}
+
+/* `scroll-hairline-t`, plus a hairline under the scroller while more of its content waits below what follows it (a sheet's footer). */
+@utility scroll-hairline-y {
+  border-block: 1px solid transparent;
+
+  @supports (animation-timeline: scroll()) {
+    animation:
+      scroll-hairline-t 1ms linear both,
+      scroll-hairline-b 1ms linear both;
+    animation-timeline: scroll(self y), scroll(self y);
+    animation-range:
+      0 1px,
+      calc(100% - 1px) 100%;
+  }
+}

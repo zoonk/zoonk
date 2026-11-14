@@ -11,13 +11,11 @@
   "memory_delete": "996676a7f14d6f858ddff0c45c2ec9d79e3eb872c9da8e5e282f997244eb1cb7",
   "memory_description": "dc4d4abc73493f285c8836fa6f46ed865607bddf36c9534c7b3a6924afae0715",
   "memory_download": "6272c6df7f01a67fb7ccce57d86bd049953f40cc70460fa7880a2735f89246d8",
-  "memory_download_description": "dd23ad36d4f726d99d049190f6632e767968239d86e80492b4bd3d465bd3c7ac",
   "memory_edit": "57e32b7778232bcbdc24339d4086b305c69e9b8bca3b492cb7f35073341d4883",
   "memory_edit_description": "8d63c54c2194b1ec9d2a20f50138c703f225fdb7d5abe83a04fb2f54fe0fbe60",
   "memory_edit_label": "471a3a85024027b16f7bcd5df4e1168bf4d2314af0f0af9f501de12dbd7a7675",
   "memory_edit_title": "b1730d1b5bcf7437f86c661c46791fa8089fb2927b7a50d940858d960c4c115d",
-  "memory_empty_off": "07b5799894d7bbd2ea8b4b4e2d96acd757d607bda97f401f5cbac3a0a9a240cb",
-  "memory_empty_on": "ce0a3c9db1f01d7e6d0093de90b110ba5e0ebf600a495bafe64d1fa93b671fc2",
+  "memory_empty": "9cd115f037906c9f613f2a420435417b46d0ee55d3778d20fd9fe072c4ecda9c",
   "memory_fact_options": "dc25b09d2cf2f7cb7d448920759d0018b0cb97b3727fc1bdb54bf9100738b3a3",
   "memory_fact_source": "436f7d1d057e1d1f7ef107742dedef474121401f221526d1055d084368943081",
   "memory_save_failed": "e9adaf578384a1c781fd09d700d48fa7534b78b1d9f412b78eb85026b8445e5a",
@@ -25,8 +23,7 @@
   "memory_source_call": "24fd497326c20d8b97d45f6f1ddbd4fea8c21cbe6b3b9a2daa745eb2059992c0",
   "memory_source_chat": "ce2d5affad1b85c009f2baf006feb78a56d516a944b825a13042d91c8bc4c2d5",
   "memory_source_noticed": "4f513a5dabfbc9f8583777657aa93e1dadab2d41de6de92823f1e12d70aaebe5",
-  "memory_source_onboarding": "c33f232f88973f7f23add9779dc789da45bea215ac9e65d4c3a93e6e80458ccf",
-  "memory_source_session": "41c7c69a9bb226a6ac9a526de8df96c8530c10720d35a53e3d137cda9f35d894",
+  "memory_source_session": "5eca6025bcb00fff8b073b079757f617312d8d6e19def7f799cb92005297ab2a",
   "memory_source_you": "44edf8da009c2d939c8bc7eaa5d41fc678c834d723938f920cb70cdd082e42f8",
   "memory_undo": "5a53793910722e1a31624a451a2691d5ede66e4921f68ca0d76794cc6e17f9dc",
   "memory_undo_failed": "c340683b4d6f6c98142b233f564cf3e6b7f14e946aaeff3e50e79b722d12dfe2",
@@ -34,17 +31,14 @@
   "memory_updated": "c3716f340c3a00ef57b7ceb7cd7ee3882ac71bd339e2aa792e07de3678298a3b",
   "memory_updated_more": "8a220f11a39e6ae5edadd515249308d34c9f3779d370e3a34ec165210d5e6bf8",
   "memory_use": "fd536cb298f483c7da9d01bab9a1aa5ae67f824145d18f55e48fbdfd689d87b0",
-  "memory_use_off": "255a34925bb431aa93ffaf4bc716a2bfb16ea57a4ce623b2d8b253221d3c2120",
-  "memory_use_on": "a0ccb916fdca038782555cd169f0c6b3f9de3f5248ce2633176ad7b39ee4a001"
+  "memory_use_off": "c20e1d9526e544cb8908856be16a03610e15ce1757b4213855e75b8b12e1defc"
 }
 -->
 <resources>
     <string name="memory_description">To, co Zoonk pamięta, by dopasować przykłady i plany do twojego życia.</string>
     <string name="memory_use">Korzystamy z pamięci</string>
-    <string name="memory_use_on">Przykłady z twojego życia, plany dopasowane do twojego tygodnia i rozmowy, w których pamiętamy, co u ciebie nowego</string>
-    <string name="memory_use_off">Pamięć jest wyłączona. Nie zapamiętujemy nic nowego i nie korzystamy z tych informacji.</string>
-    <string name="memory_empty_on">Na razie nic tu nie ma. Podczas nauki i rozmów pojawią się tu krótkie notatki, które pomogą Zoonkowi lepiej cię uczyć.</string>
-    <string name="memory_empty_off">Nic tu nie ma. Zoonk nie zapisuje notatek o tobie, gdy pamięć jest wyłączona.</string>
+    <string name="memory_use_off">Gdy ta opcja jest wyłączona, niczego nie zapamiętujemy ani nie wykorzystujemy.</string>
+    <string name="memory_empty">Na razie pusto. Notatki pojawią się tu w trakcie nauki i rozmów.</string>
     <string name="memory_save_failed">Nie udało się zapisać. Spróbuj ponownie.</string>
     <string name="memory_category_goals">Cele</string>
     <!-- A category of facts Zoonk remembers about the learner: their studies, job, school year and the languages they speak. -->
@@ -58,8 +52,7 @@
     <!-- Where a remembered fact came from: a live practice call. Use the word the app uses for these calls, and keep it apart from “From a chat”, a typed chat with the tutor. -->
     <string name="memory_source_call">Z rozmowy</string>
     <string name="memory_source_chat">Z czatu</string>
-    <string name="memory_source_onboarding">Z wprowadzenia</string>
-    <string name="memory_source_session">Z nauki</string>
+    <string name="memory_source_session">Z twoich lekcji</string>
     <!-- %1$s is where the fact came from ("From a chat") and %2$s the day it was noted. -->
     <string name="memory_fact_source">%1$s · %2$s</string>
     <!-- %1$s is the fact, like "Studies after work". -->
@@ -71,8 +64,6 @@
     <string name="memory_edit_description">Napisz to tak, jak jest u ciebie.</string>
     <string name="memory_edit_label">Co pamięta Zoonk</string>
     <string name="memory_download">Pobierz zawartość pamięci</string>
-    <!-- Everything Zoonk remembers about the learner, downloaded as one file. -->
-    <string name="memory_download_description">Cała zawartość pamięci w jednym pliku</string>
     <string name="memory_sensitive_note">Zoonk nie zapisuje informacji o zdrowiu, religii ani innych wrażliwych danych, chyba że o to poprosisz.</string>
     <string name="memory_updated">Zaktualizowano pamięć:</string>
     <plurals name="memory_updated_more">

@@ -104,7 +104,7 @@ fun BuddyEditor(
                     Spacer(Modifier.weight(1f))
                 }
                 TextButton(onClick = onClose) { Text(stringResource(R.string.settings_cancel)) }
-                Button(busy = isSaving, onClick = { onSave(kind, glasses, typed) }, leadingIcon = { ButtonIcon(R.drawable.ic_check) }) {
+                Button(busy = isSaving, onClick = { onSave(kind, glasses, typed) }) {
                     Text(stringResource(R.string.settings_save))
                 }
             }

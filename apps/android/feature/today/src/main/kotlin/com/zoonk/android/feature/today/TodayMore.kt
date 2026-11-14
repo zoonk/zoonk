@@ -3,6 +3,7 @@ package com.zoonk.android.feature.today
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -19,7 +20,6 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.KindDot
@@ -31,7 +31,6 @@ import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
-import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.api.models.StudySession
 import com.zoonk.api.models.TodayWeeklyChallenge
@@ -83,7 +82,7 @@ private fun MoreTime(
     if (!extraTime.available) return
 
     val minutes = formatNumber(extraTime.minutes.toDouble(), currentLocale())
-    val label = if (model.today.studiedToday) R.string.today_study_more_minutes else R.string.today_study_minutes
+    val label = if (model.today.studiedToday) R.string.today_study_more_minutes else R.string.today_practice_minutes
 
     OutlinedButton(
         busy = viewModel.pending == TodayTap.KeepLearning,
@@ -96,7 +95,10 @@ private fun MoreTime(
     if (viewModel.failed == TodayTap.KeepLearning) Failure(stringResource(R.string.today_save_failed))
 }
 
-/** Offered only while the lessons left take about one more day's time, so nobody is offered "+11 hr 52 min". */
+/**
+ * Lessons left from earlier days, offered only while they take about one more day's time, so nobody is
+ * offered "+11 hr 52 min", and never before a learner back from days away has started.
+ */
 @Composable
 private fun CatchUpLater(
     model: TodayDayModel,
@@ -104,33 +106,24 @@ private fun CatchUpLater(
 ) {
     val later = model.day.catchUp?.later ?: return
     val lessons = later.lessons.toInt()
-    val examTomorrow = model.day.examTomorrow
 
-    if (lessons == 0 || (examTomorrow && !later.offered)) return
-
-    if (!later.offered) {
-        Note(pluralStringResource(R.plurals.today_catch_up_next_days, lessons, lessons))
-        return
-    }
+    if (!later.offered || lessons == 0 || model.welcomesBack) return
 
     FlowRow(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         itemVerticalAlignment = Alignment.CenterVertically,
     ) {
-        Note(
-            if (examTomorrow) {
-                pluralStringResource(R.plurals.today_catch_up_before_exam, lessons, lessons)
-            } else {
-                pluralStringResource(R.plurals.today_catch_up_tomorrow, lessons, lessons)
-            },
-        )
+        Row(Modifier.weight(1f), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+            Text(pluralStringResource(R.plurals.today_earlier_lessons, lessons, lessons), style = MaterialTheme.typography.bodyMedium)
+            DayMinutes(later.minutes)
+        }
         OutlinedButton(
             busy = viewModel.isCatchingUp,
             onClick = { viewModel.catchUp(model.read) },
             leadingIcon = { ButtonIcon(R.drawable.ic_playlist_add) },
         ) {
-            Text(stringResource(R.string.today_catch_up_today, formatMinutes(later.minutes.toInt(), currentLocale())))
+            Text(stringResource(R.string.today_add_to_today))
         }
     }
     if (viewModel.catchUpFailed) Failure(stringResource(R.string.today_save_failed))
@@ -154,7 +147,6 @@ private fun ChallengeLink(
     LinkRow(
         text = stringResource(if (mock) R.string.today_see_day_mock else R.string.today_see_day_challenge, weekday),
         leading = { KindDot(if (mock) LearnKind.Mock else LearnKind.Challenge) },
-        trailing = if (challenge.access == TodayWeeklyChallenge.Access.PLUS_REQUIRED) ({ PlusMark() }) else null,
     ) { actions.navigate(AppRoute.Challenge(planItemId.toString(), model.day.sessionId?.toString())) }
 }
 
@@ -175,11 +167,6 @@ private fun LinkRow(
         )
         HorizontalDivider()
     }
-}
-
-@Composable
-private fun Note(text: String) {
-    Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
 }
 
 @Composable

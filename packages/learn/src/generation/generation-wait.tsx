@@ -33,12 +33,9 @@ import { type PhaseProgress, type PhaseStatus, getPhaseProgress } from "./_utils
 import { type PhaseTime, getPhaseTimes } from "./_utils/phase-times";
 import { type PhaseCopy } from "./generation-copy-types";
 import { type GenerationKind, getGenerationKind } from "./generation-kinds";
-import { type GenerationFailure, type GenerationRun } from "./generation-run";
+import { type GenerationFailure, type GenerationRun, isFollowing } from "./generation-run";
+import { getActiveStepLabel } from "./generation-step-label";
 import { useGenerationCopy } from "./use-generation-copy";
-
-function isFollowing(run: GenerationRun): boolean {
-  return run.status === "waiting" || run.status === "following";
-}
 
 /**
  * The run's progress from 0 to 100, drifting through the running phase. Bars given the same `since`
@@ -248,13 +245,12 @@ function useAnnouncement({
   run: GenerationRun;
 }): string {
   const t = useExtracted();
-  const active = progress.phases.find((phase) => phase.status === "active");
 
   if (progress.progress === 100) {
     return doneLabel ?? t("Done");
   }
 
-  return isFollowing(run) && active ? (copy[active.id]?.label ?? "") : "";
+  return getActiveStepLabel({ copy, progress, run }) ?? "";
 }
 
 export function GenerationWait({

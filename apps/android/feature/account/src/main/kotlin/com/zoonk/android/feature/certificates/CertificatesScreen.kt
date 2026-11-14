@@ -61,7 +61,7 @@ import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.scaffold.BeforeFold
 import com.zoonk.android.ui.scaffold.DETAIL_PAGE_WIDTH
 import com.zoonk.android.ui.scaffold.PageScaffold
-import com.zoonk.android.ui.scaffold.detailPagePadding
+import com.zoonk.android.ui.scaffold.pagePadding
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.zoonk
@@ -92,7 +92,7 @@ fun CertificatesScreen(
             when (state) {
                 is LoadState.Loaded, LoadState.Empty -> {
                     BeforeFold { beforeFold ->
-                        LazyColumn(beforeFold.widthIn(max = DETAIL_PAGE_WIDTH).fillMaxSize(), contentPadding = detailPagePadding()) {
+                        LazyColumn(beforeFold.widthIn(max = DETAIL_PAGE_WIDTH).fillMaxSize(), contentPadding = pagePadding()) {
                             certificates(app, navigator, state.value.orEmpty(), showsPlus)
                         }
                     }
@@ -120,7 +120,7 @@ private fun androidx.compose.foundation.lazy.LazyListScope.certificates(
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             if (certificates.isNotEmpty()) {
                 val count = certificates.size
-                Eyebrow(pluralStringResource(R.plurals.certificates_count, count, count), uppercase = false)
+                Eyebrow(pluralStringResource(R.plurals.certificates_count, count, count))
             }
             Text(stringResource(R.string.certificates_title), Modifier.pageTitle(), style = MaterialTheme.typography.headlineMedium)
             Text(

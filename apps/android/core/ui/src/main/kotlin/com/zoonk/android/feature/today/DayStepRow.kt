@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -21,15 +22,12 @@ import com.zoonk.android.feature.session.DayStep
 import com.zoonk.android.feature.session.DayView
 import com.zoonk.android.feature.session.MissionOpens
 import com.zoonk.android.feature.session.StepOpenFailed
-import com.zoonk.android.feature.session.blockDetail
 import com.zoonk.android.feature.session.blockTitle
-import com.zoonk.android.feature.session.challengePhase
 import com.zoonk.android.feature.session.practisesTopics
 import com.zoonk.android.feature.session.shortTopicList
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.android.ui.theme.zoonkType
@@ -88,7 +86,7 @@ fun DayStepRow(
                         if (openFailed) StepOpenFailed()
                         if (!finished) {
                             tag?.invoke()
-                            StepLines(day, lessonStatus, writingStalled, step)
+                            StepLines(lessonStatus, writingStalled, step)
                             testOut?.invoke()
                         }
                     }
@@ -121,60 +119,25 @@ fun DayStepRow(
     }
 }
 
+/** A row's one line: what a lesson belongs to, what practice is on, or how long a challenge is. */
 @Composable
 private fun StepLines(
-    day: DayView,
     lessonStatus: Map<String, LessonGenerationStatus>,
     writingStalled: Boolean,
     step: DayStep,
 ) {
-    val wait = step.waitReason
-    val phase = step.challengePhase
+    val count = step.questions.toInt()
     val line =
         when {
-            wait != null -> {
-                phase?.let { stringResource(R.string.today_step_after_lessons_phase, it) }
-                    ?: stringResource(R.string.today_step_after_lessons)
-            }
-
-            !writingStalled && step.isBeingWritten(lessonStatus) -> {
-                stringResource(R.string.today_step_being_written)
-            }
-
-            else -> {
-                rowLabel(day, step)
-            }
+            !writingStalled && step.isBeingWritten(lessonStatus) -> stringResource(R.string.today_step_being_written)
+            step.waitReason != null -> stringResource(R.string.today_step_after_lessons)
+            step.practisesTopics -> shortTopicList(step.topics, named = 1)
+            step.checkpoint != null -> if (count > 0) pluralStringResource(R.plurals.session_block_questions, count, count) else null
+            step.fullReview -> stringResource(R.string.today_step_every_topic)
+            else -> step.subject
         }
-    val reviewDetail = if (step.weakest || step.fullReview) blockDetail(step) else null
 
     if (line != null) SubLine(line)
-    if (reviewDetail != null) SubLine(reviewDetail)
-}
-
-@Composable
-private fun rowLabel(
-    day: DayView,
-    step: DayStep,
-): String? {
-    val catchingUp =
-        day.catchUp
-            ?.positions
-            ?.contains(step.position) == true
-    val subject = step.subject
-    val label =
-        when {
-            step.practisesTopics -> shortTopicList(step.topics, named = 1)
-            !catchingUp && step.checkpoint != null -> listOfNotNull(subject, blockDetail(step)).factsLine()
-            !catchingUp -> subject
-            subject != null -> stringResource(R.string.today_step_catching_up_subject, subject)
-            else -> stringResource(R.string.today_step_catching_up)
-        }
-
-    return when {
-        !step.oftenTested -> label
-        label != null -> stringResource(R.string.today_step_often_tested_label, label)
-        else -> stringResource(R.string.today_step_often_tested)
-    }
 }
 
 @Composable

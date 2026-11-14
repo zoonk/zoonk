@@ -62,7 +62,7 @@ export async function SupportContent() {
   const t = await getExtracted();
 
   return (
-    <Page className="max-w-form">
+    <Page measure="form">
       <SectionPageHeader title={t("Help")} />
 
       <p className="text-muted-foreground -mt-4 text-sm text-pretty md:mt-0">

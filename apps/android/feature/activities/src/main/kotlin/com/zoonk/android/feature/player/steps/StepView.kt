@@ -71,8 +71,6 @@ interface StepActions {
 
     fun dontKnow(stepId: String)
 
-    fun skipWriting()
-
     fun explainFirst()
 
     /** The day's "I can't talk now", which types spoken screens instead. */

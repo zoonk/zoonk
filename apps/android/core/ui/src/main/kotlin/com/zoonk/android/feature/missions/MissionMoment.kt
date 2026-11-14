@@ -205,7 +205,7 @@ private fun MomentMissionRow(
                 style = MaterialTheme.typography.titleSmall,
             )
             if (!mission.done) {
-                missionStepLine(mission, null)?.let {
+                missionStepLine(mission)?.let {
                     Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
                 }
             }

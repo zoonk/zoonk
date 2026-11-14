@@ -141,66 +141,6 @@ private fun cadenceEffect(cadence: WrittenPractice.Cadence) =
         },
     )
 
-/** Main's `PlanSteering`: tapping an active choice goes back to the default. Shown once the learner has studied. */
-@Composable
-internal fun PlanSteering(
-    page: PlanPageState,
-    edits: PlanEdits,
-) {
-    val steering = page.plan.steering
-    if (steering.lessonsStudied == 0L) return
-    val tap = edits.asked(PlanPart.Steering).firstOrNull()
-    val difficulty = (tap as? PlanOp.DifficultyBias)?.bias ?: steering.difficultyBias.value
-    val practice = (tap as? PlanOp.PracticeBias)?.bias ?: steering.practiceBias.value
-    val steers =
-        listOf(
-            Steer(R.string.plan_too_easy, difficulty == HARDER) { PlanOp.DifficultyBias(if (it) STANDARD else HARDER) },
-            Steer(R.string.plan_too_hard, difficulty == EASIER) { PlanOp.DifficultyBias(if (it) STANDARD else EASIER) },
-            Steer(R.string.plan_more_practice, practice == MORE_PRACTICE) { PlanOp.PracticeBias(if (it) BALANCED else MORE_PRACTICE) },
-            Steer(R.string.plan_more_explanation, practice == MORE_EXPLANATION) {
-                PlanOp.PracticeBias(if (it) BALANCED else MORE_EXPLANATION)
-            },
-        )
-
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        SectionLabel(stringResource(R.string.plan_how_is_it_going))
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            steers.forEach { steer ->
-                SelectionChip(
-                    text = stringResource(steer.label),
-                    selected = steer.active,
-                    onClick = {
-                        val operation = steer.operation(steer.active)
-                        edits.change(PlanPart.Steering, listOf(operation)) {}
-                    },
-                )
-            }
-        }
-        if (difficulty != STANDARD) {
-            Text(
-                text = difficultySentence(difficulty),
-                modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-        if (edits.hasFailed(PlanPart.Steering)) SaveFailedText()
-    }
-}
-
-private class Steer(
-    val label: Int,
-    val active: Boolean,
-    val operation: (active: Boolean) -> PlanOp,
-)
-
-private const val HARDER = "harder"
-private const val EASIER = "easier"
-private const val STANDARD = "standard"
-private const val BALANCED = "balanced"
-private const val MORE_PRACTICE = "morePractice"
-private const val MORE_EXPLANATION = "moreExplanation"
-
 /** Whether a change saving turns [activity] on or off; null while none asks about it. */
 private fun askedOn(
     asked: List<PlanOp>,
