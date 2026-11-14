@@ -365,6 +365,7 @@ private struct ExamOverBar: ViewModifier {
   @Environment(PlanStore.self) private var store
   @State private var pressed: ExamOverButtons.Answer?
   @State private var failed = false
+  @State private var saving: Task<Void, Never>?
 
   let goal: LearnerGoal
   let isShown: Bool
@@ -378,6 +379,7 @@ private struct ExamOverBar: ViewModifier {
             keepStudying: { save(.keepStudying) })
         }
       }
+      .onDisappear { saving?.cancel() }
   }
 
   private var saveFailure: LocalizedStringResource {
@@ -393,22 +395,34 @@ private struct ExamOverBar: ViewModifier {
     pressed = answer
     failed = false
 
-    Task {
+    saving = Task {
       defer { pressed = nil }
 
       switch answer {
       case .archive:
-        switch await store.setStatus(.archived, goalId: goal.id) {
-        case .done(.saved): router.showRoot(of: .today)
-        case .done, .failed: failed = true
-        case .obsolete: break
-        }
+        failed = await !store.archive(goalId: goal.id) { router.showRoot(of: .today) }
       case .keepStudying:
         switch await store.change(goalId: goal.id, edits: [.fullCourse(true)]) {
         case .done(.invalid), .failed: failed = true
         case .done, .obsolete: break
         }
       }
+    }
+  }
+}
+
+extension PlanStore {
+  /// Archives the goal, then `leave`s it. False when it didn't save. A canceled archive, its learner
+  /// gone from the Plan meanwhile, leaves nothing, so what they opened since stays open.
+  func archive(goalId: String, then leave: () -> Void) async -> Bool {
+    switch await setStatus(.archived, goalId: goalId) {
+    case .done(.saved):
+      leave()
+      return true
+    case .done, .failed:
+      return false
+    case .obsolete:
+      return true
     }
   }
 }

@@ -257,7 +257,9 @@ private struct PlanContent: View {
     }
     .feedbackSheet(
       isPresented: $isReporting,
-      context: FeedbackContext(contentID: plan.planId, contentKind: .plan), isReport: true)
+      context: FeedbackContext(contentID: plan.planId, contentKind: .plan), isReport: true
+    )
+    .onDisappear { slotAnswer?.editor.cancel() }
   }
 
   @ViewBuilder private var rebuildNotice: some View {
