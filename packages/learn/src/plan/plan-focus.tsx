@@ -204,6 +204,7 @@ function FocusChoices({ onSaved }: { onSaved: () => void }) {
           focusableWhenDisabled
           form={formId}
           icon={<CheckIcon aria-hidden="true" />}
+          size="lg"
           type="submit"
         >
           {chosen.length === 0 && current.length > 0 ? t("Remove focus") : t("Focus on these")}
