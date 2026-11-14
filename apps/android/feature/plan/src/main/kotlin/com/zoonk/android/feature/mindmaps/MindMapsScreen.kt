@@ -49,14 +49,12 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Button
-import com.zoonk.android.ui.components.EmptyState
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.NotFoundMessage
-import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageHeader
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.SectionHeader
@@ -123,7 +121,6 @@ internal fun MindMapsContent(
                     actions =
                         MindMapsActions(
                             back = back,
-                            keepStudying = { navigator.select(AppTab.Today) },
                             create = maps::create,
                             createAll = maps::createAll,
                             save = maps::save,
@@ -199,7 +196,6 @@ internal data class MindMapsState(
 
 internal data class MindMapsActions(
     val back: () -> Unit,
-    val keepStudying: () -> Unit,
     val create: (UUID) -> Unit,
     val navigate: (AppRoute) -> Unit,
     val createAll: () -> Unit = {},
@@ -429,23 +425,13 @@ internal fun Divided(
     }
 }
 
+/** Main's `EmptyTab`: one muted line where a tab has nothing to show. */
 @Composable
-internal fun TabEmpty(
-    icon: Int,
-    title: Int,
-    description: Int,
-    action: (@Composable () -> Unit)? = null,
-) {
-    EmptyState(
-        icon = icon,
-        title = stringResource(title),
-        description = stringResource(description),
-        modifier = Modifier.padding(top = 24.dp),
-        action = action,
+internal fun TabEmpty(text: Int) {
+    Text(
+        stringResource(text),
+        Modifier.padding(top = 16.dp),
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        style = MaterialTheme.typography.bodyMedium,
     )
-}
-
-@Composable
-internal fun KeepStudying(onClick: () -> Unit) {
-    OutlinedButton(onClick = onClick) { Text(stringResource(R.string.mindmaps_keep_studying)) }
 }

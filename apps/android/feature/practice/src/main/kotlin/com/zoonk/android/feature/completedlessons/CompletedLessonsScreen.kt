@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -32,7 +33,6 @@ import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
-import com.zoonk.android.ui.components.EmptyState
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
@@ -155,11 +155,11 @@ internal fun CompletedLessons(
 
             if (days.isEmpty()) {
                 item(key = "empty", contentType = "empty") {
-                    EmptyState(
-                        icon = R.drawable.ic_history,
-                        title = stringResource(R.string.completed_lessons_empty_title),
-                        description = stringResource(R.string.completed_lessons_empty_description),
-                        modifier = Modifier.padding(top = 24.dp),
+                    Text(
+                        stringResource(R.string.completed_lessons_empty_description),
+                        Modifier.padding(top = 16.dp),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyMedium,
                     )
                 }
             }

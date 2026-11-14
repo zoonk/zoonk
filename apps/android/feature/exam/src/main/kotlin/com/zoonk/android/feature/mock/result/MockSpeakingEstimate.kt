@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.mock.runner.StepDetail
 import com.zoonk.android.feature.mock.runner.StepTitle
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.stepHeading
 import com.zoonk.android.ui.format.currentLocale
@@ -45,7 +46,7 @@ internal fun SpeakingEstimate(
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Column(Modifier.semantics(mergeDescendants = true) { heading() }.stepHeading(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(paper.paper, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.titleMedium)
+            Eyebrow(paper.paper)
             if (points) {
                 ScoreRange(if (low == high) number(low) else stringResource(R.string.mock_result_range, number(low), number(high)))
             } else {

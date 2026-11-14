@@ -26,6 +26,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.mock.mockTitle
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.Readout
 import com.zoonk.android.ui.components.StatTile
 import com.zoonk.android.ui.components.StatTiles
@@ -209,7 +210,7 @@ private fun ScoreHeader(
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Column(Modifier.semantics(mergeDescendants = true) { heading() }.stepHeading(), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Text(mockTitle(view.number), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.titleMedium)
+            Eyebrow(mockTitle(view.number))
             when {
                 missed != null -> {
                     Text(

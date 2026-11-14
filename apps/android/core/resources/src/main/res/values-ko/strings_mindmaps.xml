@@ -20,17 +20,14 @@
   "mindmaps_download": "c6c4ef3c31ed4cc05847e161eda22e7421162f0bdc5d635e75cfbbd76dd90b75",
   "mindmaps_drawing": "d88412a6dfbe0faad1e97d6fd5f7665082b93f1c92cc980baad34bcb4a2014c9",
   "mindmaps_drawing_wait": "f48a7cc3a317724552331148a96e60e302bb8c2f82a69467ab3c904c416c8498",
-  "mindmaps_empty_description": "18306ebdec6b0fdadd731062078fecd7cfef24ffd4fd8f9515b32251cff2ff0b",
-  "mindmaps_empty_title": "fcdf4bdf86605ae58e090a83e7c6f86a5574fb343a31118d443ac12f74b87666",
+  "mindmaps_empty": "63d13c6402503777be0c6590d4540da32221df82516ab57f3b319a895a17a755",
   "mindmaps_failed": "e4e62367b44859ec28dbb8a5421b1af5df5f6bd71ebef78244365bc178e8b8e2",
   "mindmaps_fit": "5b0cbb0433980cf81aa01c5f3a46bab5e334ed604db7154eaf6eab0e17518ad6",
   "mindmaps_free_lessons_note": "02670ec7b5cb0fe48dece477b54b6787965c5075fae889695db50928f71edba2",
   "mindmaps_in_short": "f4ec32fee0f215d1d091d939873ba11c4d5c343440cfdcb6ed6fbee8fe7ee184",
-  "mindmaps_keep_studying": "70ffcca5db70373084f4c2a3d5c1ce330a9b7a9217ff95ec4f24914005f373aa",
   "mindmaps_lesson_map": "753240e94f4b610f1b961667775a9c73f49b5e8ecccf789e636eafa62cdd6712",
   "mindmaps_lesson_maps": "a710a21552e39fcdfbc4bc3ffede3e87167b9eabb93c18272b34a4f87fe64e5c",
-  "mindmaps_lessons_empty_description": "a9e0eff8e156caa2bdb2fe274dec15d53bba14ad2845b665ba7ea39bd1dc4d48",
-  "mindmaps_lessons_empty_title": "98889c28ffc1fec284ee7b99eb5e9f10c20bae5e42328d7f79d640e527e6ec5d",
+  "mindmaps_lessons_empty": "e119def5d208f98427c38aa995e61f9a3ceff7bf81b358c17c7fcc815e7e6162",
   "mindmaps_lessons_first_free": "d4f4f4f00b1e80e5d049c551c0433454307fccdd9fd72e04a513d8b3cc863aaa",
   "mindmaps_lessons_to_write": "b9f4568ff3ee15eeba4876e70870d3d7fc2630a2a7440650642e551e2df1466c",
   "mindmaps_map_gone": "df3f61ef1d34ea410f369c8c856e816d16b51aed6468b6c1e9c2c89e245d1c35",
@@ -53,8 +50,7 @@
   "mindmaps_save_failed": "17c4703fd5a84f9d07a6f3228e65f79a5f28fbd7f3b19349b0a95076df0c989a",
   "mindmaps_save_map_failed": "cf5072d4bec14ac81423e2d90ecaad8777494441ab54078bf60ec224f46db8f2",
   "mindmaps_saved": "7fd83126608cef0876e4c35f610c15265b3e411e424a16685d09a923a4cff0dd",
-  "mindmaps_saved_empty_description": "cba923b131bf8fa19f8d4cdf5507c3a69bc2591e0d898fe6f7269d507e8ddbc3",
-  "mindmaps_saved_empty_title": "c844550b46349f7ff917b87044e0a5235f7a571f67c12e61dc9228fead5723ca",
+  "mindmaps_saved_empty": "2a5e36f326c156fc69dd6e9ff218fd0976ca7a58957a2780e8d7a365cee547a9",
   "mindmaps_saved_state": "80438167e711e394111ea24b9b5c7d4297caa1fd9e668cd0268dba3a15eec950",
   "mindmaps_show_all": "2d897bb618e4efb10c876e77cc387a4b2a663f9695f7b8d8c73927e7965c5402",
   "mindmaps_shown_as_text": "943d780a5d4f23ca742bc022487dfa29f0f12af9736f2549efc8baf29f9cddba",
@@ -82,9 +78,7 @@
     </plurals>
     <!-- A mind map row's line under the chapter's title. -->
     <string name="mindmaps_chapter_number">챕터 %1$s</string>
-    <string name="mindmaps_empty_title">아직 챕터 마인드맵이 없어요</string>
-    <string name="mindmaps_empty_description">챕터를 끝낼 때마다 마인드맵이 하나씩 생겨요.</string>
-    <string name="mindmaps_keep_studying">계속 공부하기</string>
+    <string name="mindmaps_empty">아직 챕터 마인드맵이 없어요. 챕터를 끝낼 때마다 하나씩 생겨요.</string>
     <!-- A mind map's description for screen readers when it has no words yet. -->
     <string name="mindmaps_alt_chapter">%1$s의 마인드맵</string>
     <!-- A mind map's description for screen readers: its title, then its central idea. -->
@@ -164,10 +158,8 @@
     <string name="mindmaps_lesson_map">레슨 마인드맵</string>
     <!-- Shows every row of a long list. %1$s is how many there are. -->
     <string name="mindmaps_show_all">%1$s개 모두 보기</string>
-    <string name="mindmaps_lessons_empty_title">아직 레슨 마인드맵이 없어요</string>
-    <string name="mindmaps_lessons_empty_description">레슨을 마칠 때마다 마인드맵이 하나씩 생겨요.</string>
-    <string name="mindmaps_saved_empty_title">아직 저장한 마인드맵이 없어요</string>
-    <string name="mindmaps_saved_empty_description">마인드맵의 북마크를 눌러 여기에 저장하세요.</string>
+    <string name="mindmaps_lessons_empty">아직 레슨 마인드맵이 없어요. 레슨을 마칠 때마다 하나씩 생겨요.</string>
+    <string name="mindmaps_saved_empty">아직 저장한 마인드맵이 없어요. 마인드맵의 북마크를 눌러 여기에 저장하세요.</string>
     <!-- Over saved maps that can't open anymore, such as a chapter that left the plan. -->
     <string name="mindmaps_no_longer_available">더 이상 볼 수 없음</string>
     <!-- Removes a saved map that can't open anymore. -->
