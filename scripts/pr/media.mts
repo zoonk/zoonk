@@ -64,17 +64,13 @@ export type CaptureItem = {
  */
 type RegisteredItem = { file: string; kind: CaptureItem["kind"]; sha256: string };
 
-export type PendingItem = RegisteredItem & {
+type PendingItem = RegisteredItem & {
   platform: (typeof NATIVE_PLATFORMS)[number];
   read?: Read;
   side: "after";
 };
 
-export type RegisteredBefore = RegisteredItem & {
-  platform: Platform;
-  side: "before";
-  source: string;
-};
+type RegisteredBefore = RegisteredItem & { platform: Platform; side: "before"; source: string };
 
 export type ManifestItem = CaptureItem | PendingItem | RegisteredBefore;
 
