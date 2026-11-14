@@ -182,7 +182,8 @@ export async function LevelProgression({ currentBelt }: { currentBelt: BeltLevel
           <span aria-hidden="true" className={cn("absolute inset-0 opacity-10", belt.bgClass)} />
         )}
 
-        <div className="relative flex flex-col gap-4">
+        {/* The belt's tint takes faint gray under 4.5:1, so faint text here is the muted gray. */}
+        <div className="relative flex flex-col gap-4 [--faint:var(--muted-foreground)]">
           <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-0.5">
             <p className="text-lg font-semibold tracking-tight">
               {t("{belt}, level {level}", { belt: belt.label, level: String(currentBelt.level) })}

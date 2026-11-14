@@ -1,7 +1,5 @@
 import { getAppLocale } from "@/i18n/locale";
 import { type ScorePatternsData } from "@zoonk/core/progress/get-score-patterns";
-import { MIN_PATTERN_ANSWERS } from "@zoonk/core/progress/score-performance";
-import { getSentenceSpace } from "@zoonk/utils/locale";
 import { getExtracted } from "next-intl/server";
 import { getScoreWeekdayLabel } from "./_utils/weekday";
 import { getTimePeriodNames } from "./pattern-names";
@@ -32,43 +30,4 @@ export async function getBestTimeName(
   }
 
   return verdict.kind === "best" ? (names.at(verdict.best.period) ?? null) : null;
-}
-
-async function getEvenDaysNote(verdict: ScorePatternsData["dayVerdict"]): Promise<string | null> {
-  const t = await getExtracted();
-
-  return verdict.kind === "even"
-    ? t(
-        "Your days are within {points, plural, =0 {# points} one {# point} other {# points}} of each other, so any day works.",
-        { points: verdict.points },
-      )
-    : null;
-}
-
-async function getEvenTimesNote(verdict: ScorePatternsData["timeVerdict"]): Promise<string | null> {
-  const t = await getExtracted();
-
-  return verdict.kind === "even"
-    ? t(
-        "Your times of day are within {points, plural, =0 {# points} one {# point} other {# points}} of each other, so any time works.",
-        { points: verdict.points },
-      )
-    : null;
-}
-
-/** Without `patterns` it leaves out what each chart says under itself. */
-export async function PatternsNote({ patterns }: { patterns?: ScorePatternsData }) {
-  const t = await getExtracted();
-  const space = getSentenceSpace(await getAppLocale());
-
-  const sentences = [
-    patterns && (await getEvenDaysNote(patterns.dayVerdict)),
-    patterns && (await getEvenTimesNote(patterns.timeVerdict)),
-    t(
-      "A day or a time of day needs {count, plural, one {# answer} other {# answers}} to count, so one lucky answer never makes a pattern.",
-      { count: MIN_PATTERN_ANSWERS },
-    ),
-  ].filter(Boolean);
-
-  return <p className="text-muted-foreground text-sm text-pretty">{sentences.join(space)}</p>;
 }

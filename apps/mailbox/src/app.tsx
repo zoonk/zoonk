@@ -22,6 +22,13 @@ import { findSignInCode } from "./sign-in-code";
 
 const timeFormatter = new Intl.DateTimeFormat(undefined, { hour: "2-digit", minute: "2-digit" });
 
+const dateTimeFormatter = new Intl.DateTimeFormat(undefined, {
+  day: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+  month: "short",
+});
+
 const copy = {
   clearInbox: "Clear inbox",
   copied: "Copied",
@@ -184,7 +191,7 @@ function EmailPreview({ email }: { email: CapturedEmail }) {
             {email.replyTo ? ` · ${copy.replyTo} ${email.replyTo}` : ""}
             {" · "}
             <time dateTime={email.receivedAt}>
-              {timeFormatter.format(new Date(email.receivedAt))}
+              {dateTimeFormatter.format(new Date(email.receivedAt))}
             </time>
           </p>
         </div>

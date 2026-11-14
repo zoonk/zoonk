@@ -11,8 +11,8 @@ import { BEAT_MS } from "@zoonk/ui/lib/motion";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type CertificateLinks } from "@zoonk/utils/certificate-links";
 import { useExtracted } from "next-intl";
+import { BlankCertificateSheet } from "./certificate-blank-sheet";
 import { useCertificateSentence } from "./certificate-labels";
-import { LockedCertificateSheet } from "./certificate-lock";
 import { CertificateSheet } from "./certificate-sheet";
 
 const BEHIND_CLASS =
@@ -28,7 +28,7 @@ function TopSheet({
   const sentence = useCertificateSentence();
 
   if (top.locked) {
-    return <LockedCertificateSheet facts={top} />;
+    return <BlankCertificateSheet facts={top} />;
   }
 
   const links = getLinks(top);
@@ -61,7 +61,7 @@ export function MomentSheets({
     <div className="relative w-full max-w-150" data-slot="certificate-stage">
       {behind &&
         (behind.locked ? (
-          <LockedCertificateSheet className={BEHIND_CLASS} facts={behind} />
+          <BlankCertificateSheet className={BEHIND_CLASS} facts={behind} />
         ) : (
           <CertificateSheet alt="" className={BEHIND_CLASS} images={getLinks(behind).imageUrls} />
         ))}

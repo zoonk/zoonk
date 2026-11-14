@@ -7,7 +7,6 @@ import { useExtracted } from "next-intl";
 import { useOptimistic } from "react";
 import { ListGroup } from "../_components/list-group";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
-import { ChangeSaveError } from "../_components/save-error";
 import { SwitchSettingRow } from "../_components/setting-rows";
 import { useOptimisticSave } from "../_utils/use-optimistic-save";
 import { type BuddyLook } from "../buddies/buddy-picker";
@@ -23,19 +22,16 @@ export type AppearanceView = {
   canPersonalize: boolean;
   look: BuddyLook;
   buddy: ResolvedBuddy;
-  /** Where the learner says they live; null until they say. */
+  /** Where the learner lives: where they signed in from until they change it; null when that wasn't known. */
   homeCountry: CountryName | null;
   homeCountrySuggested: readonly SuggestedCountry[];
-  shareUsageData: boolean;
   soundsEnabled: boolean;
 };
 
 /** How Preferences saves. Each resolves to whether it was saved. */
 export type AppearanceActions = {
   saveBuddy: (buddy: AppearanceBuddy) => Promise<boolean>;
-  /** Null clears it. */
-  setHomeCountry: (country: string | null) => Promise<boolean>;
-  setShareUsageData: (share: boolean) => Promise<boolean>;
+  setHomeCountry: (country: string) => Promise<boolean>;
   setSoundsEnabled: (enabled: boolean) => Promise<boolean>;
 };
 
@@ -50,36 +46,28 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 function useAppearance({ actions, view }: { actions: AppearanceActions; view: AppearanceView }) {
   const [buddy, setOptimisticBuddy] = useOptimistic(view.buddy);
   const [soundsEnabled, setOptimisticSounds] = useOptimistic(view.soundsEnabled);
-  const [shareUsageData, setOptimisticShare] = useOptimistic(view.shareUsageData);
   const [homeCountry, setOptimisticHome] = useOptimistic(view.homeCountry);
 
-  const { failed, run } = useOptimisticSave();
+  const { run } = useOptimisticSave();
 
   return {
     buddy,
-    failed,
     homeCountry,
     saveBuddy: (next: AppearanceBuddy) =>
       run(
         () => setOptimisticBuddy({ ...next, picked: true }),
         () => actions.saveBuddy(next),
       ),
-    setHomeCountry: (next: CountryName | null) =>
+    setHomeCountry: (next: CountryName) =>
       run(
         () => setOptimisticHome(next),
-        () => actions.setHomeCountry(next?.code ?? null),
-      ),
-    setShareUsageData: (next: boolean) =>
-      run(
-        () => setOptimisticShare(next),
-        () => actions.setShareUsageData(next),
+        () => actions.setHomeCountry(next.code),
       ),
     setSoundsEnabled: (next: boolean) =>
       run(
         () => setOptimisticSounds(next),
         () => actions.setSoundsEnabled(next),
       ),
-    shareUsageData,
     soundsEnabled,
   };
 }
@@ -139,20 +127,6 @@ export function AppearanceScreen({
           )}
         </ListGroup>
       </PageSection>
-
-      <PageSection>
-        <SectionTitle>{t("Privacy")}</SectionTitle>
-        <ListGroup>
-          <SwitchSettingRow
-            checked={appearance.shareUsageData}
-            description={t("Shows us how you use Zoonk, so we can improve it")}
-            label={t("Share usage data")}
-            onCheckedChange={appearance.setShareUsageData}
-          />
-        </ListGroup>
-      </PageSection>
-
-      {appearance.failed && <ChangeSaveError />}
     </div>
   );
 }

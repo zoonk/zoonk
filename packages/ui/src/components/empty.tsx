@@ -24,11 +24,13 @@ function EmptyHeader({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+// An empty state's one mark is 24 px. Lucide's ink, stroke included, starts 1 to 2 px inside that
+// box, so the icon variant pulls it 1 px out: the ink starts within 1 px of the text's edge.
 const emptyMediaVariants = cva(
   "text-muted-foreground mb-2 flex shrink-0 items-center [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
     defaultVariants: { variant: "default" },
-    variants: { variant: { default: "", icon: "[&_svg:not([class*='size-'])]:size-5" } },
+    variants: { variant: { default: "", icon: "-ms-px [&_svg:not([class*='size-'])]:size-6" } },
   },
 );
 

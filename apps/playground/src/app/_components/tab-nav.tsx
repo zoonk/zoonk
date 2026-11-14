@@ -1,13 +1,10 @@
-"use client";
-
 import { TAB_CLASS, TAB_LIST_CLASS } from "@zoonk/ui/components/tab-class";
 import { cn } from "@zoonk/ui/lib/utils";
 import Link from "next/link";
 
 /**
  * A row of links drawn as tabs. The current one's fill reaches 10px past the column on both
- * sides, like a highlighted row, so the first label starts on the column's edge. A client
- * component because the tab classes live in a client module, which a server component can't read.
+ * sides, like a highlighted row, so the first label starts on the column's edge.
  */
 export function TabNav({
   className,

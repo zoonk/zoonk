@@ -4,13 +4,14 @@ import {
   type CertificateFacts,
   type OwnedCertificateFacts,
 } from "@zoonk/core/certificates/contract";
+import { buttonVariants } from "@zoonk/ui/components/button";
 import { DialogDescription, DialogTitle } from "@zoonk/ui/components/dialog";
-import { type CertificateLinks } from "@zoonk/utils/certificate-links";
+import { type CertificateLinks, getCertificatePath } from "@zoonk/utils/certificate-links";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { useCeremonyClosing } from "../ceremonies/ceremony-closing";
 import { CeremonyBar, CeremonyFrame, useCeremonyFrame } from "../ceremonies/ceremony-frame";
-import { CertificatePlusNotice } from "./certificate-lock";
+import { LearnLink } from "../learn-link";
 import { useCertificateMomentCopy } from "./certificate-moment-copy";
 import { MomentSheets, NameRow } from "./certificate-moment-parts";
 import { CertificateNameField, type SaveCertificateName } from "./certificate-name";
@@ -25,7 +26,7 @@ export type CertificateMomentProps = {
   beforeCeremony?: boolean;
   /** Oldest first, as completion results carry them; the newest is the one on top. */
   certificates: OwnedCertificateFacts[];
-  /** Asked only for unlocked certificates. */
+  /** Asked only for certificates their owner can open. */
   getLinks: (facts: CertificateFacts) => CertificateLinks;
   onClose?: () => void;
   onShown: (code: string) => void;
@@ -81,8 +82,9 @@ function OwnerPart({
 /**
  * The moment a course level, a plan or a language level is certified: shown first, full screen,
  * before any milestone's ceremony and the task's own result. The name is the profile's, so fixing
- * it here fixes every certificate. A locked one plays the same moment with the Plus notice; See
- * Plus leaves without closing it, so it plays again after the next task.
+ * it here fixes every certificate. Without a subscription it plays the same moment, and "See your
+ * certificate" opens its page, where the gate stands; leaving that way doesn't close it, so it
+ * plays again after the next task.
  */
 export function CertificateMoment({
   beforeCeremony = false,
@@ -144,7 +146,12 @@ export function CertificateMoment({
               saved={copy.saved}
             />
           ) : (
-            <CertificatePlusNotice className="max-w-md text-left" />
+            <LearnLink
+              className={buttonVariants({ size: "lg", variant: "outline" })}
+              href={getCertificatePath(top.code)}
+            >
+              {t("See your certificate")}
+            </LearnLink>
           )}
         </div>
       </div>

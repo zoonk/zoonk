@@ -4,8 +4,9 @@ import { getEnergyData } from "@zoonk/core/progress/get-energy-data";
 import { getSession } from "@zoonk/core/users/session";
 import { ProgressContent } from "../_components/progress-content";
 import { ProgressEmptyState } from "../_components/progress-empty-state";
+import { StatsCalendarSkeleton } from "../_components/stats-calendar";
 import { StatTilesSkeleton } from "../_components/stats-tiles";
-import { EnergyChart, EnergyChartSkeleton } from "./energy-chart";
+import { EnergyChart } from "./energy-chart";
 import { EnergyTiles } from "./energy-stats";
 
 export async function EnergyContent() {
@@ -27,7 +28,7 @@ export function EnergyContentSkeleton() {
   return (
     <ProgressContent>
       <StatTilesSkeleton count={2} />
-      <EnergyChartSkeleton />
+      <StatsCalendarSkeleton />
     </ProgressContent>
   );
 }
