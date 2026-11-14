@@ -580,16 +580,22 @@
   private struct DebugLimits: View {
     var body: some View {
       ZoonkList {
-        Section(Text(verbatim: "Buddy's messages, free")) {
+        Section {
           TutorLimitNotice(failure: .limitReached(period: .month, tier: .free))
+        } header: {
+          Text(verbatim: "Buddy's messages, free")
         }
 
-        Section(Text(verbatim: "Buddy's messages, Plus")) {
+        Section {
           TutorLimitNotice(failure: .limitReached(period: .month, tier: .plus))
+        } header: {
+          Text(verbatim: "Buddy's messages, Plus")
         }
 
-        Section(Text(verbatim: "Explanations, free")) {
+        Section {
           LimitNotice(limit: .limitReached(period: .month, tier: .free), kind: .explanations)
+        } header: {
+          Text(verbatim: "Explanations, free")
         }
       }
       .navigationTitle(Text(verbatim: "Limits"))
