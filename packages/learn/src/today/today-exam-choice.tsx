@@ -10,7 +10,6 @@ import {
   SuggestionAction,
   SuggestionActions,
   SuggestionContent,
-  SuggestionDescription,
   SuggestionHeader,
   SuggestionLine,
   SuggestionOpen,
@@ -18,10 +17,8 @@ import {
   SuggestionSaveError,
   SuggestionSummary,
 } from "../_components/suggestion";
-import { SuggestionChoices } from "../_components/suggestion-choices";
-import { useChoiceLeftOutLine } from "../_utils/use-choice-left-out";
 import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
-import { ExamChoicePicks } from "../plan/exam-choice-picks";
+import { ExamChoiceAnswers, useExamChoiceQuestion } from "../plan/exam-choice-question";
 import { useTodayChangeWords } from "./today-change-sentence";
 import { useTodayScreen } from "./today-context";
 
@@ -63,12 +60,7 @@ function ChoiceQuestion({
   onPick: (input: { group: string; subjects: string[] }) => void;
 }) {
   const t = useExtracted();
-  const leftOutLine = useChoiceLeftOutLine();
-
-  const question =
-    choice.take > 1
-      ? t("{group}: which ones will you take?", { group: choice.group })
-      : t("{group}: which one will you take?", { group: choice.group });
+  const question = useExamChoiceQuestion()(choice);
 
   return (
     <>
@@ -79,29 +71,7 @@ function ChoiceQuestion({
 
       <SuggestionContent>
         <SuggestionHeader>{question}</SuggestionHeader>
-        <SuggestionDescription>{leftOutLine}</SuggestionDescription>
-
-        {choice.take > 1 ? (
-          <ExamChoicePicks
-            choice={choice}
-            onSave={(subjects) => onPick({ group: choice.group, subjects })}
-            pending={isPending}
-          />
-        ) : (
-          <SuggestionChoices>
-            {choice.options.map((option) => (
-              <SuggestionAction
-                action={() => onPick({ group: choice.group, subjects: [option.name] })}
-                disabled={isPending}
-                key={option.name}
-                variant="outline"
-              >
-                {option.shortName ?? option.name}
-              </SuggestionAction>
-            ))}
-          </SuggestionChoices>
-        )}
-
+        <ExamChoiceAnswers choice={choice} onPick={onPick} pending={isPending} />
         {failed && <SuggestionSaveError />}
       </SuggestionContent>
     </>
