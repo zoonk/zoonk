@@ -543,7 +543,7 @@ msgid "Start the lesson"
 msgstr "Empezar la lección"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-first-screen.tsx
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+#: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
 msgctxt "x5DbVQ"
 msgid "Start this lesson"
 msgstr "Empezar esta lección"
@@ -2623,32 +2623,57 @@ msgctxt "A6lEGi"
 msgid "About this lesson"
 msgstr "Sobre esta lección"
 
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
-msgctxt "4Wktrz"
-msgid "Your lesson is ready"
-msgstr "Tu lección está lista"
+#: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
+msgctxt "FxoA1t"
+msgid "Getting your challenge ready"
+msgstr "Preparando tu desafío"
 
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+#: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
+msgctxt "Hi1o2F"
+msgid "This challenge isn't ready yet"
+msgstr "Este desafío aún no está listo"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
+msgctxt "KPgx8T"
+msgid "Your challenge is ready"
+msgstr "Tu desafío está listo"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
+msgctxt "erF9ms"
+msgid "Start this challenge"
+msgstr "Empezar este desafío"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
+msgctxt "NEAV17"
+msgid "We couldn't get this challenge ready"
+msgstr "No pudimos preparar este desafío"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
 msgctxt "uaZ--2"
 msgid "Getting your lesson ready"
 msgstr "Preparando tu lección"
 
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+#: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
 msgctxt "zvNRS6"
 msgid "This lesson isn't ready yet"
 msgstr "Esta lección aún no está lista"
 
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+#: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
+msgctxt "4Wktrz"
+msgid "Your lesson is ready"
+msgstr "Tu lección está lista"
+
+#: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
 msgctxt "_LfrbS"
 msgid "We couldn't get this lesson ready"
 msgstr "No pudimos preparar esta lección"
 
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+#: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
 msgctxt "3x95yN"
 msgid "It takes a few minutes, and keeps going if you leave."
 msgstr "Tarda unos minutos y seguimos preparándola aunque salgas."
 
-#: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
+#: src/app/[lang]/learn/[lessonId]/lesson-wait-note.tsx
 msgctxt "1H9PtO"
 msgid "Get it ready"
 msgstr "Prepararla"

@@ -1,9 +1,9 @@
 "use client";
 
 import { type OnboardingLibraryCourse } from "@zoonk/core/view-models/onboarding/contract";
+import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { BookOpenIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { ListRowChevron } from "../_components/list-group";
 import { LearnLink } from "../learn-link";
 
 /** A quiet way out of a wait, while nothing is ready: a course that fits the goal now. */
@@ -31,7 +31,7 @@ export function LibraryCourseOffer({
       </span>
       {/* Beside the bar's actions on a computer, it hugs its words, and a chevron would end mid-bar. */}
       <span className="contents lg:hidden">
-        <ListRowChevron />
+        <RowChevron />
       </span>
     </LearnLink>
   );

@@ -19,7 +19,7 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { UserAccount } from "./user-account";
 import { UserActionsMenu } from "./user-actions-menu";
-import { UserActivity, UserActivitySkeleton } from "./user-activity";
+import { UserActivity } from "./user-activity";
 import { UserAiSpend } from "./user-ai-spend";
 import { UserGoals, UserPlans } from "./user-goals";
 import { UserLearnerSkills } from "./user-learner-skills";
@@ -98,26 +98,12 @@ function UserTabContent({ tab, userId }: { tab: UserTab | undefined; userId: str
 
   if (tab === "learning") {
     return (
-      <>
-        <Suspense fallback={<AdminSectionSkeleton />}>
-          <UserLearnerSkills userId={userId} />
-        </Suspense>
-        <Suspense
-          fallback={
-            <AdminSectionSkeleton>
-              <UserActivitySkeleton />
-            </AdminSectionSkeleton>
-          }
-        >
-          <UserActivity userId={userId} />
-        </Suspense>
-        <Suspense fallback={<AdminSectionSkeleton rows={2} />}>
-          <UserLessonKinds userId={userId} />
-        </Suspense>
-        <Suspense fallback={<AdminSectionSkeleton />}>
-          <UserStudySessions userId={userId} />
-        </Suspense>
-      </>
+      <Suspense fallback={<AdminSectionSkeleton />}>
+        <UserLearnerSkills userId={userId} />
+        <UserActivity userId={userId} />
+        <UserLessonKinds userId={userId} />
+        <UserStudySessions userId={userId} />
+      </Suspense>
     );
   }
 
@@ -131,24 +117,16 @@ function UserTabContent({ tab, userId }: { tab: UserTab | undefined; userId: str
 
   if (tab === "account") {
     return (
-      <>
+      <Suspense fallback={<AdminSectionSkeleton rows={5} />}>
         <div className="grid gap-8 xl:grid-cols-2 xl:gap-10">
-          <Suspense fallback={<AdminSectionSkeleton rows={5} />}>
-            <UserAccount userId={userId} />
-          </Suspense>
+          <UserAccount userId={userId} />
           <div className="flex min-w-0 flex-col gap-8">
-            <Suspense fallback={<AdminSectionSkeleton rows={3} />}>
-              <UserSettings userId={userId} />
-            </Suspense>
-            <Suspense fallback={<AdminSectionSkeleton rows={3} />}>
-              <UserReminders userId={userId} />
-            </Suspense>
+            <UserSettings userId={userId} />
+            <UserReminders userId={userId} />
           </div>
         </div>
-        <Suspense fallback={<AdminSectionSkeleton />}>
-          <UserAiSpend userId={userId} />
-        </Suspense>
-      </>
+        <UserAiSpend userId={userId} />
+      </Suspense>
     );
   }
 
@@ -158,28 +136,22 @@ function UserTabContent({ tab, userId }: { tab: UserTab | undefined; userId: str
         <UserSummary userId={userId} />
       </Suspense>
 
-      <AdminDetailColumns
-        aside={
-          <>
-            <Suspense fallback={<AdminSectionSkeleton rows={2} />}>
+      {/* One boundary for the tab's sections: each one's height is known only once it loads, so
+          sections arriving one by one would push the ones under them. */}
+      <Suspense fallback={<AdminSectionSkeleton rows={2} />}>
+        <AdminDetailColumns
+          aside={
+            <>
               <UserSubscription userId={userId} />
-            </Suspense>
-            <Suspense fallback={<AdminSectionSkeleton rows={2} />}>
               <UserMessages userId={userId} />
-            </Suspense>
-          </>
-        }
-      >
-        <Suspense fallback={<AdminSectionSkeleton rows={2} />}>
+            </>
+          }
+        >
           <UserGoals userId={userId} />
-        </Suspense>
-        <Suspense fallback={<AdminSectionSkeleton />}>
           <UserStudyChart userId={userId} />
-        </Suspense>
-        <Suspense fallback={<AdminSectionSkeleton />}>
           <UserStudySessions limit={OVERVIEW_DAYS} userId={userId} />
-        </Suspense>
-      </AdminDetailColumns>
+        </AdminDetailColumns>
+      </Suspense>
     </>
   );
 }

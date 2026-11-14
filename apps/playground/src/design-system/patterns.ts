@@ -174,7 +174,7 @@ export const PATTERNS: readonly Pattern[] = [
       "Lists are flat rows with hairlines (`ListGroup`), the current row highlighted past the column's edges.",
       "A panel (`Surface`) holds one self-contained thing: a preview, a notice, the missions.",
       "A row's mark is centered on a row of one or two lines and sits on the first line of three or more (`ListRowLeading`). Every mark takes the same 16px box, so labels start on one edge.",
-      "A row that opens a page ends in a chevron on the column's edge (`ListRowChevron`).",
+      "A row that opens a page ends in a chevron on the column's edge (`RowChevron`).",
     ],
     id: "structure",
     summary: "Fewer boxes: content sits on the page.",

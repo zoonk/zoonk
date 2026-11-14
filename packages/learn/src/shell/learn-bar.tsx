@@ -78,6 +78,14 @@ function useTabName(href: string): string | undefined {
 }
 
 /**
+ * From `lg` the sidebar is the way between the pages it lists, so a `root` page's way back gives
+ * way only while the sidebar marks a page as the current one. Which pages it lists depends on the
+ * learner (Exam only with an exam goal, Completed lessons once one is done), so a page it doesn't
+ * list keeps its way back.
+ */
+const LISTED_IN_SIDEBAR_CLASS = "lg:[body:has([data-slot=sidebar]_[aria-current=page])_&]:hidden";
+
+/**
  * `label` names the page at `href`; a tab's page needs none. With `toApp` the link returns to
  * whatever app page came before, and names that page once the browser's history says which it was.
  */
@@ -124,8 +132,8 @@ function LearnBackLink({
 }
 
 /**
- * A `root` page is one the sidebar lists, so from `lg` its bar has no way back. In a `section`,
- * back returns to the page the learner came from outside it, as in `LearnSectionBar`.
+ * A `root` page is one the sidebar may list (`LISTED_IN_SIDEBAR_CLASS`). In a `section`, back
+ * returns to the page the learner came from outside it, as in `LearnSectionBar`.
  */
 export function LearnPageBar({
   back,
@@ -164,7 +172,7 @@ export function LearnPageBar({
       back={
         <>
           <LearnBackLink
-            className={root ? "lg:hidden" : undefined}
+            className={root ? LISTED_IN_SIDEBAR_CLASS : undefined}
             href={back.href}
             label={back.label}
             toApp={toApp}
@@ -203,7 +211,7 @@ export function LearnSectionBar({
   title?: string;
 }) {
   const fromApp = useCameFromApp();
-  const className = root ? "lg:hidden" : undefined;
+  const className = root ? LISTED_IN_SIDEBAR_CLASS : undefined;
 
   useNameAppEntry(title);
 

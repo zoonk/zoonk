@@ -3775,6 +3775,11 @@ msgid "myemail@gmail.com"
 msgstr "lamiaemail@gmail.com"
 
 #: src/feedback/feedback-form.tsx
+msgctxt "feedback.Xx0WZV"
+msgid "Send message"
+msgstr "Invia messaggio"
+
+#: src/feedback/feedback-form.tsx
 msgctxt "feedback.lknSi2"
 msgid "This screen is attached"
 msgstr "Questa schermata è allegata"
@@ -3803,11 +3808,6 @@ msgstr "Messaggio inviato! Ti risponderemo presto."
 msgctxt "feedback.dpjZ-X"
 msgid "We couldn't send your message. Try again, or email us at hello@zoonk.com."
 msgstr "Non siamo riusciti a inviare il tuo messaggio. Riprova o scrivici a hello@zoonk.com."
-
-#: src/feedback/feedback-form.tsx
-msgctxt "feedback.Xx0WZV"
-msgid "Send message"
-msgstr "Invia messaggio"
 
 #: src/focus-test/focus-test-flow.tsx
 #: src/focus-test/focus-test-screens.tsx
@@ -13573,6 +13573,11 @@ msgstr "Pronto per iniziare"
 msgctxt "uaZ--2"
 msgid "Getting your lesson ready"
 msgstr "Stiamo preparando la tua lezione"
+
+#: src/wait/lesson-wait-status.tsx
+msgctxt "KPgx8T"
+msgid "Your challenge is ready"
+msgstr "La tua sfida è pronta"
 
 #: src/wait/lesson-wait-status.tsx
 msgctxt "4Wktrz"
