@@ -23,7 +23,9 @@ import androidx.window.core.layout.WindowSizeClass
  * A page a tab or another page opened: its top bar with the way back, [title] and [actions]. A page
  * that leads its content with its title (`PageTitleRow`, as main's pages do) shows [title] in the bar
  * only once that heading scrolls under it. A page's main action goes in [bottomBar], pinned to the
- * bottom in the [BottomBar]; the page lays out its content in [pagePadding].
+ * bottom in the [BottomBar], with its buttons in `TaskActions { main -> … }` so on a wide window the main
+ * action sits at its own width at the end of the page's column; [barWidth] is that column's width, so the
+ * bar stays under what it acts on. The page lays out its content in [pagePadding].
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,6 +35,7 @@ fun PageScaffold(
     title: @Composable () -> Unit = {},
     actions: @Composable RowScope.() -> Unit = {},
     bottomBar: (@Composable ColumnScope.() -> Unit)? = null,
+    barWidth: Dp = Dp.Unspecified,
     content: @Composable (PaddingValues) -> Unit,
 ) {
     val focus = rememberTitleFocus()
@@ -60,7 +63,7 @@ fun PageScaffold(
                 actions = actions,
             )
         },
-        bottomBar = { bottomBar?.let { BottomBar(content = it) } },
+        bottomBar = { bottomBar?.let { BottomBar(columnWidth = barWidth, content = it) } },
         content = { padding -> CompositionLocalProvider(LocalTitleFocus provides focus) { content(padding) } },
     )
 }
