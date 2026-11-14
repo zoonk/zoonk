@@ -2,6 +2,7 @@ package com.zoonk.android.feature.plan
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -328,6 +329,35 @@ internal fun ChapterMark(
     )
 }
 
+/** Main's list footer that shows the chapters left out: its small plus in the marks' column, so its words start where theirs do. */
+@Composable
+internal fun MoreChaptersRow(
+    text: String,
+    open: Boolean = false,
+    indent: Dp = 0.dp,
+    onClick: () -> Unit,
+) {
+    ListRow(
+        headline = { Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant) },
+        onClick = onClick,
+        indent = indent,
+        leading = {
+            Box(Modifier.size(MARK_COLUMN), contentAlignment = Alignment.Center) {
+                Icon(
+                    painterResource(if (open) R.drawable.ic_remove else R.drawable.ic_add),
+                    contentDescription = null,
+                    modifier = Modifier.size(FOOTER_PLUS),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        },
+        chevron = false,
+    )
+}
+
+private val MARK_COLUMN = 24.dp
+private val FOOTER_PLUS = 16.dp
+
 /** A chapter's mark wherever it's listed: next, part done as a ring, skipped, done or ahead. */
 @Composable
 internal fun ChapterMark(
@@ -379,23 +409,16 @@ internal fun PhaseChapters(
     Column {
         shown.forEach { ChapterRow(it, links, indent) }
         if (hidden > 0) {
-            ListRow(
-                headline = {
-                    Text(
-                        text =
-                            if (showAll) {
-                                stringResource(R.string.plan_show_fewer_chapters)
-                            } else {
-                                pluralStringResource(R.plurals.plan_more_chapters, hidden, hidden)
-                            },
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                },
-                onClick = { showAll = !showAll },
+            MoreChaptersRow(
+                text =
+                    if (showAll) {
+                        stringResource(R.string.plan_show_fewer_chapters)
+                    } else {
+                        pluralStringResource(R.plurals.plan_more_chapters, hidden, hidden)
+                    },
+                open = showAll,
                 indent = indent,
-                leading = { Icon(painterResource(if (showAll) R.drawable.ic_remove else R.drawable.ic_add), contentDescription = null) },
-                chevron = false,
-            )
+            ) { showAll = !showAll }
         }
         checkpoint?.let { CheckpointRow(page, it, links, indent, brief) }
     }
