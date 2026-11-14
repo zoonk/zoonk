@@ -6,8 +6,6 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.zoonk.android.ui.format.DateStyle
-import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.theme.ZoonkTheme
 import org.junit.After
 import org.junit.Before
@@ -18,6 +16,7 @@ import java.time.Duration
 import java.time.Instant
 import java.time.ZoneId
 import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import java.util.Locale
 import java.util.TimeZone
 
@@ -79,7 +78,7 @@ class MonthlyLimitWordsTest {
         rule.onNodeWithText("You've used your free lessons").assertExists()
         rule
             .onNodeWithText(
-                "More on ${formatDate(day, Locale.ENGLISH, DateStyle.Long)}, or subscribe to keep going.",
+                "More on ${day.format(DateTimeFormatter.ofPattern("MMMM d", Locale.ENGLISH))}, or subscribe to keep going.",
             ).assertExists()
     }
 

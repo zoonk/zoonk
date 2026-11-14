@@ -124,7 +124,7 @@ private fun line(
         }
 
         else -> {
-            val date = formatDate((day as OpeningDay.On).date, currentLocale(), DateStyle.Long)
+            val date = formatDate((day as OpeningDay.On).date, currentLocale(), DateStyle.DayMonth)
             stringResource(if (free) comes.onOrSubscribe else comes.on, date)
         }
     }
@@ -224,7 +224,7 @@ private fun mapOpensLine(day: OpeningDay?): String? =
         null, OpeningDay.Open -> null
         OpeningDay.Today -> stringResource(R.string.limit_map_enough_today)
         OpeningDay.Tomorrow -> stringResource(R.string.limit_map_enough_tomorrow)
-        is OpeningDay.On -> stringResource(R.string.limit_map_enough_on, formatDate(day.date, currentLocale(), DateStyle.Long))
+        is OpeningDay.On -> stringResource(R.string.limit_map_enough_on, formatDate(day.date, currentLocale(), DateStyle.DayMonth))
     }
 
 /** The lesson screen's line: what stays free, then when the next lesson comes, as the web joins them. */
