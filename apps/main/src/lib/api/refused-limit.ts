@@ -1,5 +1,5 @@
 import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes";
-import { type CalendarLimit, type LessonLimit } from "@zoonk/learn/help-limit";
+import { type CalendarLimit, type FreeLessonsUsed } from "@zoonk/learn/help-limit";
 import { getNumber, getString, isJsonObject } from "@zoonk/utils/json";
 
 const HTTP_PAYMENT_REQUIRED = 402;
@@ -73,7 +73,7 @@ export function readRefusedLessonLimit({
 }: {
   body: unknown;
   status: number;
-}): LessonLimit | null {
+}): CalendarLimit | FreeLessonsUsed | null {
   const { limit } = readLimitDetails(body);
 
   if (REFUSED_STATUSES.has(status) && getString(limit, "period") === "rolling30Days") {

@@ -65,21 +65,7 @@ export function PageHeader({ className, ...props }: React.ComponentProps<"header
 
 export function PageHeaderContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
-    <div
-      className={cn(PAGE_HEADER_CLASS, "has-[>[data-slot=page-eyebrow]]:pt-0", className)}
-      data-slot="page-header-content"
-      {...props}
-    />
-  );
-}
-
-export function PageEyebrow({ className, ...props }: React.ComponentProps<"p">) {
-  return (
-    <p
-      className={cn("text-faint max-sm:text-2xs font-mono text-xs leading-4 uppercase", className)}
-      data-slot="page-eyebrow"
-      {...props}
-    />
+    <div className={cn(PAGE_HEADER_CLASS, className)} data-slot="page-header-content" {...props} />
   );
 }
 

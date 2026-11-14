@@ -338,14 +338,14 @@ msgid "Your next free lesson opens on {date}, or subscribe to keep going."
 msgstr "Bir sonraki ücretsiz dersin {date} tarihinde açılacak. Abone olup hemen devam edebilirsin."
 
 #: src/_components/help-limit-notice.tsx
+msgctxt "5SLMld"
+msgid "Your next free lesson is ready"
+msgstr "Sıradaki ücretsiz dersin hazır"
+
+#: src/_components/help-limit-notice.tsx
 msgctxt "y0Yu1A"
 msgid "You've used your free lessons"
 msgstr "Ücretsiz derslerini kullandın"
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "j9Za23"
-msgid "No more new lessons today"
-msgstr "Bugün yeni ders hakkın kalmadı"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "2LDIQ9"
@@ -353,9 +353,9 @@ msgid "No more lessons without an account"
 msgstr "Daha fazla ders için bir hesap gerekiyor"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "VGhCC9"
-msgid "No more new lessons this month"
-msgstr "Bu ay yeni ders hakkın kalmadı"
+msgctxt "j9Za23"
+msgid "No more new lessons today"
+msgstr "Bugün yeni ders hakkın kalmadı"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "jaoJk9"
@@ -411,6 +411,11 @@ msgstr "Dersler"
 msgctxt "dVwB3J"
 msgid "{done, number} of {total, number}"
 msgstr "{done, number} / {total, number}"
+
+#: src/_components/lesson-not-written-notice.tsx
+msgctxt "4NMpnC"
+msgid "Start the lesson"
+msgstr "Derse başla"
 
 #: src/_components/lesson-not-written-notice.tsx
 #: src/_components/save-error.tsx

@@ -338,14 +338,14 @@ msgid "Your next free lesson opens on {date}, or subscribe to keep going."
 msgstr "Tu próxima lección gratis estará disponible el {date}, o puedes suscribirte para seguir."
 
 #: src/_components/help-limit-notice.tsx
+msgctxt "5SLMld"
+msgid "Your next free lesson is ready"
+msgstr "Tu próxima lección gratis está lista"
+
+#: src/_components/help-limit-notice.tsx
 msgctxt "y0Yu1A"
 msgid "You've used your free lessons"
 msgstr "Ya usaste tus lecciones gratis"
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "j9Za23"
-msgid "No more new lessons today"
-msgstr "No te quedan lecciones nuevas hoy"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "2LDIQ9"
@@ -353,9 +353,9 @@ msgid "No more lessons without an account"
 msgstr "No hay más lecciones sin una cuenta"
 
 #: src/_components/help-limit-notice.tsx
-msgctxt "VGhCC9"
-msgid "No more new lessons this month"
-msgstr "No te quedan lecciones nuevas este mes"
+msgctxt "j9Za23"
+msgid "No more new lessons today"
+msgstr "No te quedan lecciones nuevas hoy"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "jaoJk9"
@@ -411,6 +411,11 @@ msgstr "Lecciones"
 msgctxt "dVwB3J"
 msgid "{done, number} of {total, number}"
 msgstr "{done, number} de {total, number}"
+
+#: src/_components/lesson-not-written-notice.tsx
+msgctxt "4NMpnC"
+msgid "Start the lesson"
+msgstr "Empezar la lección"
 
 #: src/_components/lesson-not-written-notice.tsx
 #: src/_components/save-error.tsx
