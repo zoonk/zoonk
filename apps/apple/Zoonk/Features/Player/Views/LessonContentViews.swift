@@ -15,7 +15,7 @@ struct LessonRichText: View {
     Text(Self.typeset(text, literalNumbers: literalNumbers), legibility: legibilityWeight)
   }
 
-  static func typeset(_ text: String, literalNumbers: Bool = false) -> RichInline {
+  nonisolated static func typeset(_ text: String, literalNumbers: Bool = false) -> RichInline {
     LessonMathSegment.split(text).reduce(RichInline(text: AttributedString())) { result, segment in
       switch segment.kind {
       case .text: result + markdown(segment.text, literalNumbers: literalNumbers)
@@ -25,7 +25,7 @@ struct LessonRichText: View {
   }
 
   /// Text that isn't valid Markdown stays as written.
-  private static func markdown(_ text: String, literalNumbers: Bool) -> RichInline {
+  nonisolated private static func markdown(_ text: String, literalNumbers: Bool) -> RichInline {
     let options = AttributedString.MarkdownParsingOptions(
       interpretedSyntax: .inlineOnlyPreservingWhitespace,
       failurePolicy: .returnPartiallyParsedIfPossible)
