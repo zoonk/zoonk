@@ -119,10 +119,18 @@ struct TutorTurnView: View {
               .typeStyle(words)
           }
 
-          if let failure, failure.isLimit, !opened {
+          if let failure, failure.isLimit {
+            // The limit stopped it, never a failure: once its day has come it asks again.
             Text(failureLine)
               .typeStyle(.note)
               .foregroundStyle(.mutedForeground)
+
+            if opened {
+              TutorRemedyButton(failure: .failed) {
+                Task { await conversation.retryAnswer(turn.id) }
+              }
+              .disabled(conversation.answeringID != nil)
+            }
           } else {
             if failure != nil {
               FailureLine(message: failureLine)
@@ -134,7 +142,7 @@ struct TutorTurnView: View {
                 .foregroundStyle(.destructiveText)
             }
 
-            TutorRemedyButton(failure: opened ? .failed : failure ?? .failed) {
+            TutorRemedyButton(failure: failure ?? .failed) {
               Task { await conversation.retryAnswer(turn.id) }
             }
             .disabled(conversation.answeringID != nil)
