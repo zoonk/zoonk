@@ -1,11 +1,10 @@
+import { AuthGateAction } from "@/components/auth-gate-action";
 import { ColumnScreen } from "@/components/public/column-screen";
 import { getAppLocale } from "@/i18n/locale";
 import { getPathname } from "@/i18n/navigation";
 import { getSession } from "@zoonk/core/users/session";
-import { buttonVariants } from "@zoonk/ui/components/button";
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { PendingLink } from "@zoonk/ui/patterns/links/pending";
-import { LogInIcon } from "lucide-react";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
@@ -21,7 +20,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 function CliLoginSkeleton() {
   return (
-    <div className="flex flex-col gap-8">
+    <div className="mt-2 flex flex-col gap-8">
       <div className="flex flex-col gap-1.5">
         <Skeleton className="h-9 w-48" />
         <Skeleton className="h-5 w-72 max-w-full" />
@@ -58,18 +57,18 @@ async function CliLoginBody({ searchParams }: Pick<Props, "searchParams">) {
     });
 
     return (
-      <div className="flex flex-col items-start gap-4">
-        <p className="text-muted-foreground text-pretty">
+      <>
+        <p className="text-muted-foreground -mt-3 flex-1 text-pretty">
           {t("Log in with your Zoonk staff account first. You'll come back here to approve it.")}
         </p>
-        <PendingLink
-          className={buttonVariants({ size: "lg" })}
-          href={`${getPathname({ href: "/login", locale })}?next=${encodeURIComponent(back)}`}
-          icon={<LogInIcon aria-hidden="true" />}
-        >
-          {t("Log in")}
-        </PendingLink>
-      </div>
+        <BottomBar>
+          <BottomBarActions>
+            <AuthGateAction href={`/login?next=${encodeURIComponent(back)}`}>
+              {t("Log in")}
+            </AuthGateAction>
+          </BottomBarActions>
+        </BottomBar>
+      </>
     );
   }
 
@@ -81,7 +80,7 @@ export default async function CliLoginPage({ searchParams }: Props) {
   const t = await getExtracted();
 
   return (
-    <ColumnScreen className="gap-8">
+    <ColumnScreen>
       <h1 className="text-title">{t("Log in to the Zoonk CLI")}</h1>
 
       <Suspense fallback={<CliLoginSkeleton />}>

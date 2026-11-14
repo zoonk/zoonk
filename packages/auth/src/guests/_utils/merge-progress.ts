@@ -51,9 +51,17 @@ export async function mergeLearningProfile({
   guestUserId,
   transaction,
   userId,
+  sessionId,
   takeGuestAddressForm = false,
   takeGuestSupport = false,
-}: GuestLinkContext & { takeGuestAddressForm?: boolean; takeGuestSupport?: boolean }) {
+}: GuestLinkContext & {
+  sessionId?: string;
+  takeGuestAddressForm?: boolean;
+  takeGuestSupport?: boolean;
+}) {
+  // Better Auth creates the account's session, and the session hook saves the sign-in's country,
+  // before it links the guest. A country written since that session began is that guess, so the
+  // country the guest has wins over it; one the account had before stays.
   await transaction.$executeRaw`
     WITH guest_profile AS (
       DELETE FROM user_learning_profiles
@@ -62,13 +70,13 @@ export async function mergeLearningProfile({
     )
     INSERT INTO user_learning_profiles (
       id, user_id, learning_needs, address_form, buddy_kind, buddy_name, buddy_glasses,
-      active_goal_id, memory_enabled, sounds_enabled, share_usage_data,
+      active_goal_id, memory_enabled, sounds_enabled, share_usage_data, home_country,
       created_at, updated_at
     )
     SELECT id, ${userId}::uuid, learning_needs,
       CASE WHEN ${takeGuestAddressForm} THEN address_form END,
       buddy_kind, buddy_name, buddy_glasses,
-      active_goal_id, memory_enabled, sounds_enabled, share_usage_data,
+      active_goal_id, memory_enabled, sounds_enabled, share_usage_data, home_country,
       created_at, updated_at
     FROM guest_profile
     ON CONFLICT (user_id) DO UPDATE SET
@@ -77,6 +85,11 @@ export async function mergeLearningProfile({
       sounds_enabled = CASE WHEN ${takeGuestSupport} THEN EXCLUDED.sounds_enabled ELSE user_learning_profiles.sounds_enabled END,
       address_form = CASE WHEN ${takeGuestAddressForm} THEN EXCLUDED.address_form ELSE user_learning_profiles.address_form END,
       share_usage_data = COALESCE(user_learning_profiles.share_usage_data, EXCLUDED.share_usage_data),
+      home_country = CASE
+        WHEN user_learning_profiles.updated_at >= (SELECT created_at FROM sessions WHERE id = ${sessionId ?? null}::uuid)
+        THEN COALESCE(EXCLUDED.home_country, user_learning_profiles.home_country)
+        ELSE COALESCE(user_learning_profiles.home_country, EXCLUDED.home_country)
+      END,
       buddy_kind = COALESCE(user_learning_profiles.buddy_kind, EXCLUDED.buddy_kind),
       buddy_name = CASE WHEN user_learning_profiles.buddy_kind IS NOT NULL
         THEN user_learning_profiles.buddy_name ELSE EXCLUDED.buddy_name END,

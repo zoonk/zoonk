@@ -3,12 +3,11 @@
 import { type MockResult } from "@zoonk/core/exams/mocks/contract";
 import { TrendingDownIcon, TrendingUpIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { Eyebrow } from "../_components/eyebrow";
 import {
+  LabeledStepTitle,
   StepCard,
   StepDetail,
   StepHeader,
-  StepTitle,
   StepTitleNumber,
 } from "../_components/step-card";
 import { Steps, type StepsItem } from "../_components/steps";
@@ -148,14 +147,13 @@ function ScoreStep({ result }: { result: MockResult }) {
     <StepCard className="gap-8">
       <div className="flex w-full flex-col items-start gap-6">
         <StepHeader>
-          <Eyebrow>{title(runner.view)}</Eyebrow>
-          <StepTitle>
+          <LabeledStepTitle label={title(runner.view)}>
             {missed ? (
               <span className="text-destructive-text text-balance">{missed.title}</span>
             ) : (
               <StepTitleNumber>{score.value}</StepTitleNumber>
             )}
-          </StepTitle>
+          </LabeledStepTitle>
           <StepDetail className="text-sm">{missed ? missed.line : score.caption}</StepDetail>
           {!missed && <DeltaLine result={result} />}
         </StepHeader>

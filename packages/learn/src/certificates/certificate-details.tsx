@@ -12,6 +12,7 @@ import {
 } from "@zoonk/utils/certificate-links";
 import { useExtracted, useFormatter } from "next-intl";
 import { useState } from "react";
+import { SoftBreaks } from "../_components/soft-breaks";
 import { useLevelName } from "../course/use-level-name";
 import { useCertificateDate, useStudyTime } from "./certificate-labels";
 import { CertificateNameDialog } from "./certificate-name";
@@ -27,7 +28,7 @@ function DetailRow({
   mono?: boolean;
 }) {
   return (
-    <div className="border-border text-compact flex items-baseline justify-between gap-4 border-t py-2.5">
+    <div className="border-border text-compact flex min-h-11 items-baseline justify-between gap-4 border-t py-3">
       <dt className="text-muted-foreground shrink-0">{label}</dt>
       <dd
         className={cn(
@@ -41,8 +42,7 @@ function DetailRow({
   );
 }
 
-/** A locked certificate's code isn't the learner's to share yet. */
-function useFactRows({ facts, locked }: { facts: CertificateFacts; locked: boolean }) {
+function useFactRows(facts: CertificateFacts) {
   const t = useExtracted();
   const format = useFormatter();
   const date = useCertificateDate();
@@ -59,7 +59,7 @@ function useFactRows({ facts, locked }: { facts: CertificateFacts; locked: boole
       ? { label: t("Passed by test"), mono: true, value: format.number(facts.lessonsTestedOut) }
       : null,
     facts.minutes ? { label: t("Study time"), mono: true, value: studyTime(facts.minutes) } : null,
-    !locked && { label: t("Certificate ID"), mono: true, value: formatCertificateCode(facts.code) },
+    { label: t("Certificate ID"), mono: true, value: formatCertificateCode(facts.code) },
   ];
 
   return rows.filter((row) => typeof row === "object" && row !== null);
@@ -102,7 +102,9 @@ function OwnerLinkRow({ links }: { links: CertificateLinks }) {
 
   return (
     <DetailRow label={t("Link")} mono>
-      <span className="break-all">{shown}</span>
+      <span className="wrap-anywhere">
+        <SoftBreaks>{shown}</SoftBreaks>
+      </span>
       <Button
         className="ml-2 font-sans font-medium"
         onClick={() => void copy(links.url).then(() => showSuccessToast(t("Link copied")))}
@@ -114,22 +116,18 @@ function OwnerLinkRow({ links }: { links: CertificateLinks }) {
   );
 }
 
-/**
- * Also the picture's text equivalent: everything the certificate says, as text. A locked one
- * (`links` null) shows what was done, without the name, code or link that make it a credential.
- */
+/** Also the picture's text equivalent: everything the certificate says, as text. */
 export function CertificateDetails({
   facts,
   links,
   owner,
 }: {
   facts: CertificateFacts;
-  links: CertificateLinks | null;
+  links: CertificateLinks;
   owner: CertificateOwner | null;
 }) {
   const t = useExtracted();
-  const rows = useFactRows({ facts, locked: !links });
-  const shared = owner && links;
+  const rows = useFactRows(facts);
 
   return (
     <section aria-labelledby="certificate-details" className="flex flex-col">
@@ -137,17 +135,17 @@ export function CertificateDetails({
         {t("Details")}
       </h2>
       <dl className="flex flex-col">
-        {shared && <OwnerNameRow facts={facts} owner={owner} />}
+        {owner && <OwnerNameRow facts={facts} owner={owner} />}
         {rows.map((row) => (
           <DetailRow key={row.label} label={row.label} mono={row.mono}>
             {row.value}
           </DetailRow>
         ))}
-        {shared && <OwnerLinkRow links={links} />}
+        {owner && <OwnerLinkRow links={links} />}
       </dl>
-      {shared && (
+      {owner && (
         <p className="text-muted-foreground border-border border-t pt-2.5 text-xs text-pretty">
-          {t("Anyone with the link can see this certificate. Its page doesn't show up in search.")}
+          {t("Anyone with the link can see this certificate.")}
         </p>
       )}
     </section>

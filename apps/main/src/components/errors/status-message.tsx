@@ -8,7 +8,7 @@ export function StatusMessage({
   icon,
   title,
 }: {
-  children: ReactNode;
+  children?: ReactNode;
   className?: string;
   description: string;
   icon: ReactNode;
@@ -27,7 +27,7 @@ export function StatusMessage({
 
       <p className="text-lead mt-3">{description}</p>
 
-      <div className="mt-8 flex flex-col items-center gap-2">{children}</div>
+      {children && <div className="mt-8 flex flex-col items-center gap-2">{children}</div>}
     </div>
   );
 }

@@ -13,7 +13,7 @@ export async function ProtectedSection({
   const session = await getSession();
 
   if (!session || (session.user.isAnonymous && !allowGuests)) {
-    return <AuthGate next={next} />;
+    return <AuthGate bar next={next} />;
   }
 
   return children;
