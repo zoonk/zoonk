@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
+import { type MicrophoneProblem } from "@zoonk/ui/hooks/voice-recorder";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { type CallLimit, useLiveLimit } from "../../_components/help-limit-notice";
@@ -12,7 +13,7 @@ import { useRefusalCopy } from "./call-refusal-copy";
 import { ChallengeCallGate } from "./challenge-call-gate";
 import { CallOffMessage, CallReason } from "./conversation-parts";
 import { type DroppedCall } from "./dropped-call";
-import { type CallAudio, type MicrophoneProblem, openTypedCallAudio } from "./use-call-microphone";
+import { type CallAudio, openTypedCallAudio } from "./use-call-microphone";
 
 function DroppedCallReason({
   limit,

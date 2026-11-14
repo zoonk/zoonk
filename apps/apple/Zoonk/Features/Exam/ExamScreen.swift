@@ -398,9 +398,15 @@ private struct ExamDateTag: View {
 
 /// The score is optional and so is knowing whether they passed; either is enough.
 private struct ExamResultSection: View {
+  private enum Field {
+    case score
+    case maxScore
+  }
+
   @Environment(ExamStore.self) private var store
   let exam: ExamView
   @Binding var form: ExamResultForm
+  @FocusState private var focusedField: Field?
 
   private var scale: String {
     exam.scoring.scale?.rawValue ?? (exam.scoring.method == .irt ? "irt" : "points")
@@ -446,12 +452,26 @@ private struct ExamResultSection: View {
         scoreLabel
       }
       .keyboardType(.decimalPad)
+      .focused($focusedField, equals: .score)
+      // The decimal pad has no Return key and covers the rows under the field, "Did you pass?" and
+      // Save among them, until it closes. Declared once: the bar serves both fields, and a section's
+      // modifier would repeat it on every row.
+      .toolbar {
+        ToolbarItemGroup(placement: .keyboard) {
+          Spacer()
+
+          Button(role: .confirm) {
+            focusedField = nil
+          }
+        }
+      }
 
       if scale == "points" {
         TextField(text: $form.maxScore) {
           Text("out of", tableName: "Exam", comment: "The score's maximum")
         }
         .keyboardType(.decimalPad)
+        .focused($focusedField, equals: .maxScore)
       }
 
       Picker(selection: $form.passed) {

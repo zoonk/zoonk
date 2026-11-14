@@ -13,7 +13,7 @@ vi.mock("@zoonk/auth/client", () => ({
 }));
 
 vi.mock("@/lib/api/browser-api", () => api);
-vi.mock("@/lib/learner/learner-store", () => ({ ensureLearnerSummary: vi.fn() }));
+vi.mock("@/lib/learner/learner-store", () => ({ noteSignIn: vi.fn() }));
 vi.mock("@zoonk/utils/logger", () => ({ logError: vi.fn() }));
 
 const NO_SESSION = { data: null, error: null };

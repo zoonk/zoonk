@@ -1360,7 +1360,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Incluses avec ton Compagnon"
+            "value" : "Incluses avec ton compagnon"
           }
         },
         "it" : {
@@ -1390,7 +1390,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vem com seu Parceiro"
+            "value" : "Vem com seu parceiro"
           }
         },
         "tr" : {
@@ -5102,7 +5102,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Impossible d’enregistrer ton Compagnon. Réessaie."
+            "value" : "Impossible d’enregistrer ton compagnon. Réessaie."
           }
         },
         "it" : {
@@ -5132,7 +5132,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não conseguimos salvar seu Parceiro. Tente de novo."
+            "value" : "Não conseguimos salvar seu parceiro. Tente de novo."
           }
         },
         "tr" : {

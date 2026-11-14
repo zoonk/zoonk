@@ -15,6 +15,7 @@ import { readGoalGenerationId } from "@/lib/goals/read-goal-generation-id";
 import { readGoalRebuild } from "@/lib/goals/read-goal-rebuild";
 import { useOpenLanguageConversation } from "@/lib/language/use-start-language-conversation";
 import { useRefreshOnPlanChange } from "@/lib/learn/use-refresh-on-plan-change";
+import { answerHere, openingHere, stayingHere } from "@/lib/session/tap-answer";
 import { useTopicOutlineActions } from "@/lib/topic-outlines/use-topic-outline-actions";
 import { useWorkflowRun } from "@/lib/workflow/use-workflow-run";
 import { type OwnedCertificateFacts } from "@zoonk/core/certificates/contract";
@@ -33,7 +34,6 @@ import {
 import { JourneyBuilding, JourneySetup } from "@zoonk/learn/journey/planless";
 import { usePoll } from "@zoonk/learn/poll";
 import { TopicOutlineProvider } from "@zoonk/learn/topic-outline";
-import { useStillOnPage } from "@zoonk/ui/hooks/still-here";
 import { getCertificatePath } from "@zoonk/utils/certificate-links";
 import { useState, useSyncExternalStore } from "react";
 
@@ -47,18 +47,21 @@ function useGoalStatus({
   status: GoalStatusControl["status"];
 }): GoalStatusControl {
   const router = useRouter();
-  const stillOnPage = useStillOnPage();
 
   return {
     onRename: (displayName) => renameGoalAction(goalId, displayName),
     onSetStatus: async (next) => {
-      const isStillHere = stillOnPage();
-      const outcome = await setGoalStatusAction(goalId, next);
+      const here = next === "archived" ? openingHere() : stayingHere();
+      const answered = await answerHere(setGoalStatusAction(goalId, next), here);
+
+      if (typeof answered === "string") {
+        return answered === "left" ? null : "failed";
+      }
+
+      const outcome = answered.answer;
 
       if (outcome === "saved" && next === "archived") {
-        if (isStillHere()) {
-          router.push("/today");
-        }
+        router.push("/today");
       } else if (outcome === "saved") {
         router.refresh();
       }

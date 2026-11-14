@@ -30,7 +30,7 @@ struct CharacterActor<Art: CharacterArt>: View {
   var cue: ActCue<Art.ActName>?
 
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
-  @Environment(\.actLandings) private var landings
+  @Environment(ActLandings.self) private var landings: ActLandings?
 
   @State private var landed: Art.Expression?
   @State private var playing: Playing?
@@ -77,7 +77,7 @@ struct CharacterActor<Art: CharacterArt>: View {
         cueTask?.cancel()
         cueTask = Task { await play(cue.act) }
       }
-      .onChange(of: landings) { land() }
+      .onChange(of: landings?.count) { land() }
       .onDisappear { cueTask?.cancel() }
   }
 
@@ -148,10 +148,13 @@ struct CharacterActor<Art: CharacterArt>: View {
   }
 }
 
-extension EnvironmentValues {
-  /// Counts the learner's taps, Returns and Escapes where characters act: each lands an act under
-  /// way at once, so it never plays on behind what the learner does next.
-  @Entry var actLandings = 0
+/// Counts the learner's taps, Returns and Escapes where characters act: each lands an act under
+/// way at once, so it never plays on behind what the learner does next. An object, not a number in
+/// the environment: a tap that changed the tab view's environment while a text field was focused
+/// left the tab it switched to blank on iPad.
+@MainActor @Observable
+final class ActLandings {
+  var count = 0
 }
 
 extension View {
@@ -162,14 +165,14 @@ extension View {
 }
 
 private struct LandsActsOnInput: ViewModifier {
-  @State private var landings = 0
+  @State private var landings = ActLandings()
 
   func body(content: Content) -> some View {
     content
-      .environment(\.actLandings, landings)
-      .gesture(PassingTap { landings += 1 })
+      .environment(landings)
+      .gesture(PassingTap { landings.count += 1 })
       .onKeyPress(keys: [.return, .escape], phases: .down) { _ in
-        landings += 1
+        landings.count += 1
         return .ignored
       }
   }

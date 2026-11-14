@@ -267,8 +267,8 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
 
       const answered = await answerHere(answer, here);
 
-      if (typeof answered === "boolean") {
-        return answered;
+      if (typeof answered === "string") {
+        return answered === "left";
       }
 
       if (answered.answer.kind !== "failed") {
@@ -291,8 +291,8 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
         here,
       );
 
-      if (typeof opened === "boolean") {
-        return opened;
+      if (typeof opened === "string") {
+        return opened === "left";
       }
 
       return opened.answer.status === "opened" ? { answer: opened.answer.sessionId } : false;
@@ -316,8 +316,8 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
         here,
       );
 
-      return typeof added === "boolean"
-        ? added
+      return typeof added === "string"
+        ? added === "left"
         : applyHere(toDestinationResult(added.answer), here);
     },
     catchUp: async () => {
@@ -333,8 +333,8 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
         here,
       );
 
-      if (typeof added === "boolean") {
-        return added;
+      if (typeof added === "string") {
+        return added === "left";
       }
 
       if (added.answer) {
@@ -353,8 +353,8 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
         here,
       );
 
-      if (typeof prepared === "boolean") {
-        return prepared;
+      if (typeof prepared === "string") {
+        return prepared === "left";
       }
 
       if (prepared.answer) {

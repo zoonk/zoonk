@@ -10,7 +10,7 @@ export const pedroStocks: SeedLearner = {
       key: "profit-reinvested",
       seconds: 26,
       skill: "share-ownership",
-      step: { lesson: "own-a-share", position: 3 },
+      step: { lesson: "own-a-share", position: 4 },
     },
     {
       answer: { selectedOptionId: "first" },
@@ -31,7 +31,7 @@ export const pedroStocks: SeedLearner = {
       },
       seconds: 31,
       skill: "shareholder-rights",
-      step: { lesson: "own-a-share", position: 6 },
+      step: { lesson: "own-a-share", position: 7 },
     },
   ],
   brainPower: 420,

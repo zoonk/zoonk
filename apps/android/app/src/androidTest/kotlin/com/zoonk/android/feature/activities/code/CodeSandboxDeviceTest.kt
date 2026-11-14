@@ -75,8 +75,10 @@ class CodeSandboxDeviceTest {
         val cyclic = "const message = {}\nmessage.self = message\npost({ id: state.id, line: null, message, type: 'error' })"
         assertEquals(ProgramRun.Unavailable, onMain { runProgram(cyclic, CodeLanguage.JavaScript) })
 
-        val flood = "console.error('x'.repeat(2_000_000))"
-        assertEquals(ProgramRun.Unavailable, onMain { runProgram(flood, CodeLanguage.JavaScript) })
+        // Core caps a program's output and each cell far below the page's reply limit, but not a query's 200 rows of them.
+        val fullRows = "WITH RECURSIVE n(i) AS (SELECT 1 UNION ALL SELECT i + 1 FROM n WHERE i < 200) SELECT hex(zeroblob(5000)) FROM n"
+        assertTrue(onMain(1.minutes) { warmUp(CodeLanguage.Sql) })
+        assertEquals(QueryRun.Unavailable, onMain { runQuery(fullRows, emptyList()) })
 
         assertEquals("ok\n", onMain { runProgram("console.log('ok')", CodeLanguage.JavaScript) }.output)
     }
@@ -139,7 +141,8 @@ class CodeSandboxDeviceTest {
 
         val started = System.nanoTime()
         assertEquals(RegexTest.Invalid, onMain { testRegex("a*".repeat(20) + "b", listOf("a".repeat(40)), emptyList()) })
-        assertTrue((System.nanoTime() - started) / 1_000_000 in 3_000L..6_000L)
+        assertTrue((System.nanoTime() - started) / 1_000_000 in 1_000L..3_000L)
         assertEquals(RegexTest.Empty, onMain { testRegex("", listOf("a"), emptyList()) })
+        assertEquals("ok\n", onMain(5.seconds) { runProgram("console.log('ok')", CodeLanguage.JavaScript) }.output)
     }
 }

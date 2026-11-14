@@ -156,6 +156,20 @@ function answerOf(check: () => Promise<boolean>) {
   return answer;
 }
 
+/** A visitor the browser knows as no one, then signed in as a guest: its check is still out. */
+async function signInAsGuest() {
+  const { setHint } = stubPage({ seeded: false });
+  const reads = stubSummaryReads();
+  const store = await loadStore();
+
+  setHint("0");
+  store.ensureLearnerSummary();
+  setHint("1");
+  store.noteSignIn();
+
+  return { reads, store };
+}
+
 describe("learner a tap was made for", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
@@ -269,6 +283,34 @@ describe("learner a tap was made for", () => {
     reads[0]?.resolve(answerFor(summaryOf("second")));
 
     await expect(stillHere()).resolves.toBe(false);
+  });
+
+  it("is the guest a visitor's tap just signed in as, once the check that sign-in sent names them", async () => {
+    const { reads, store } = await signInAsGuest();
+    const asked = store.learnerStaying("guest")();
+    reads[0]?.resolve(answerFor(summaryOf("guest")));
+
+    await expect(asked).resolves.toBe(true);
+  });
+
+  it("is the guest a visitor's tap just signed in as, though the check that sign-in sent failed", async () => {
+    const { reads, store } = await signInAsGuest();
+    reads[0]?.reject(new Error("503"));
+    await settle();
+
+    expect(store.getLearnerSummaryState()).toStrictEqual({ status: "visitor" });
+    await expect(store.learnerStaying("guest")()).resolves.toBe(true);
+  });
+
+  it("has left once a later read finds no one signed in, though the guest's own check failed", async () => {
+    const { reads, store } = await signInAsGuest();
+    reads[0]?.reject(new Error("503"));
+    await settle();
+    store.ensureLearnerSummary();
+    reads[1]?.resolve({ readAt: Date.now(), status: "visitor" });
+    await settle();
+
+    await expect(store.learnerStaying("guest")()).resolves.toBe(false);
   });
 
   it("is the learner the page was drawn for while the browser knows no one yet", async () => {

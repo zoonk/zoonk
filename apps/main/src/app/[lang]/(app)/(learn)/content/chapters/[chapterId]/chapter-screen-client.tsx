@@ -44,8 +44,8 @@ export function ChapterScreenClient({
       here,
     );
 
-    if (typeof practiced === "boolean") {
-      return practiced ? "started" : "failed";
+    if (typeof practiced === "string") {
+      return practiced === "left" ? "started" : "failed";
     }
 
     const { answer } = practiced;

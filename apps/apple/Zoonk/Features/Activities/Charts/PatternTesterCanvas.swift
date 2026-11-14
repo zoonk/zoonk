@@ -10,6 +10,7 @@ struct PatternTesterCanvas: View {
   @ActivityState("hintsShown") private var hintsShown = 0
   /// The `.task` below tests the kept pattern again whenever the canvas appears.
   @State private var regexTest: (pattern: String, results: PatternRegex.Results?)?
+  @State private var regexPreview = PatternRegexPreview()
 
   init(context: ActivityCanvasContext, fields: PatternTesterFields) {
     self.context = context
@@ -86,7 +87,7 @@ struct PatternTesterCanvas: View {
 
       let pattern = pattern
       let results =
-        pattern.isEmpty ? nil : await PatternRegexPreview.shared.test(pattern, regex: regex)
+        pattern.isEmpty ? nil : await regexPreview.test(pattern, regex: regex)
 
       if !Task.isCancelled {
         // The test the canvas opens with reads nothing out: its line shows from the start on main.
@@ -97,6 +98,9 @@ struct PatternTesterCanvas: View {
           announcePolitely(line)
         }
       }
+    }
+    .onDisappear {
+      regexPreview.close()
     }
   }
 

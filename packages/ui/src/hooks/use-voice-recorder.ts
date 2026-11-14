@@ -15,6 +15,16 @@ type RecorderStatus = "acquiring" | "denied" | "idle" | "recording";
 
 type Recording = { audio: Blob; durationMs: number };
 
+/** `blocked`: the learner or the browser refused it. `unavailable`: there's none, or another app holds it. */
+export type MicrophoneProblem = "blocked" | "unavailable";
+
+/** Reads what `getUserMedia` rejected with. */
+export function getMicrophoneProblem(error: unknown): MicrophoneProblem {
+  return error instanceof DOMException && error.name === "NotAllowedError"
+    ? "blocked"
+    : "unavailable";
+}
+
 function canRecord(): boolean {
   return (
     typeof MediaRecorder !== "undefined" &&
@@ -123,22 +133,22 @@ export function useVoiceRecorder({ onRecorded }: { onRecorded: (recording: Recor
     }
   }, []);
 
-  /** False means blocked; null means a busy or departed owner has no new recording to start. */
-  const start = useCallback(async (): Promise<boolean | null> => {
+  /** Null means a busy or departed owner has no new recording to start. */
+  const start = useCallback(async (): Promise<MicrophoneProblem | "recording" | null> => {
     if (acquisitionRef.current || unmountedRef.current) {
       return null;
     }
 
     if (!canRecord()) {
       setStatus("denied");
-      return false;
+      return "unavailable";
     }
 
     const acquisition = Symbol("voice-recording");
     acquisitionRef.current = acquisition;
     setStatus("acquiring");
 
-    const { data: stream } = await safeAsync(() =>
+    const { data: stream, error } = await safeAsync(() =>
       navigator.mediaDevices.getUserMedia({ audio: true }),
     );
 
@@ -150,7 +160,7 @@ export function useVoiceRecorder({ onRecorded }: { onRecorded: (recording: Recor
     if (!stream) {
       acquisitionRef.current = null;
       setStatus("denied");
-      return false;
+      return getMicrophoneProblem(error);
     }
 
     const active = await createRecording({
@@ -178,14 +188,14 @@ export function useVoiceRecorder({ onRecorded }: { onRecorded: (recording: Recor
     if (!active) {
       acquisitionRef.current = null;
       setStatus("denied");
-      return false;
+      return "unavailable";
     }
 
     activeRef.current = active;
 
     setElapsedMs(0);
     setStatus("recording");
-    return true;
+    return "recording";
   }, [onRecorded]);
 
   useEffect(() => {

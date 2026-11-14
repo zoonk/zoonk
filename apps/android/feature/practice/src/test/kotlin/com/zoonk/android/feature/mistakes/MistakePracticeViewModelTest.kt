@@ -142,6 +142,32 @@ class MistakePracticeViewModelTest {
         }
 
     @Test
+    fun aVisitAfterAMissStartsFromAReadMadeSinceNotTheListKeptFromBefore() =
+        runTest(dispatcher) {
+            val api = FakeMistakesApi(twoMistakes)
+            api.answer = { practiceFeedback(isCorrect = false) }
+            val store = MistakesStore(api, AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))) { "UTC" }
+            val key = PracticeKey(goalId = null, skillId = null)
+            val first = MistakePracticeViewModel(key, store, SavedStateHandle()) { 0L }
+            started(first)
+            first.answer()
+            advanceUntilIdle()
+
+            api.read = practice(practiceEntry(SECOND_MISTAKE, practiceQuestion(SECOND)))
+            val next = MistakePracticeViewModel(key, store, SavedStateHandle()) { 0L }
+            next.begin((next.practice.state.value as LoadState.Loaded).value)
+            next.practice.load()
+            advanceUntilIdle()
+            next.begin((next.practice.state.value as LoadState.Loaded).value)
+
+            assertEquals(
+                listOf(SECOND),
+                next.now.read.questions
+                    .map { it.itemId },
+            )
+        }
+
+    @Test
     fun anAnswerSentAgainKeepsItsAttempt() =
         runTest(dispatcher) {
             var clock = 0L
