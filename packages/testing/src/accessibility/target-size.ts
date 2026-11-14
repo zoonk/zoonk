@@ -1,4 +1,4 @@
-/** Zoonk's tap target rule sits above WCAG 2.2's 24 px floor (2.5.8), the only one axe checks. */
+/** Zoonk's tap target rule sits above WCAG 2.2's 24 px floor (2.5.8), which axe leaves off. */
 export const MIN_TARGET_PX = 44;
 
 const TARGET_LIMITS = {
@@ -11,6 +11,9 @@ const TARGET_LIMITS = {
   /** Browsers round layout sizes, so 43.99 px counts as 44. */
   sizeTolerance: 0.5,
 };
+
+/** Today's day bar keeps its look and is never made taller to press: a granted exception to Z3. */
+const EXEMPT_SLOTS = new Set(["today-day-segment"]);
 
 export const TARGET_SELECTOR = [
   "a[href]",
@@ -160,7 +163,7 @@ export function findSmallTargets(samples: TargetSample[]): string[] {
   const smallest = TARGET_LIMITS.min - TARGET_LIMITS.sizeTolerance;
 
   return samples.flatMap((sample) => {
-    if (isHiddenTarget(sample) || isInText(sample)) {
+    if (isHiddenTarget(sample) || isInText(sample) || EXEMPT_SLOTS.has(sample.slot ?? "")) {
       return [];
     }
 
