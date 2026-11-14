@@ -173,21 +173,17 @@ export function LearnSideNavigation(props: LearnNavigationProps) {
   );
 }
 
-/** An action beside the tabs, not a fourth tab: round and filled at the bar's end, as Apple's search tab is. */
-const TAB_BAR_SEARCH_CLASS =
-  "bg-muted hover:bg-foreground/10 text-foreground shrink-0 rounded-full";
-
 function TabBarSearch({ onSearch }: { onSearch: () => void }) {
   const t = useExtracted();
 
   return (
     <BarSearch
-      className={TAB_BAR_SEARCH_CLASS}
       label={t({
         description: "The search button at the end of the phone's tab bar, after the tabs.",
         message: "Search",
       })}
       onClick={onSearch}
+      variant="outline"
     />
   );
 }
@@ -230,7 +226,7 @@ export function LearnBottomNavigation({
       data-slot="learn-bottom-navigation"
     >
       <div className="mx-auto flex items-center gap-2 px-4 py-1.5 sm:max-w-3xl sm:px-8">
-        <ul className="flex flex-1 justify-around">
+        <ul className="flex flex-1 justify-evenly">
           {LEARN_TABS.map((tab) => (
             <li className="flex" key={tab}>
               <BottomTab {...props} tab={tab} />
