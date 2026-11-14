@@ -10,68 +10,71 @@ import {
   YoutubeBrandIcon,
 } from "../components/brand-icons";
 
+/**
+ * Where Zoonk posts, in the order every "Follow us" list shows them. The app's Help page and the
+ * blog read this one list, so a profile added or dropped changes both.
+ */
 /* oxlint-disable-next-line eslint/sort-keys */
 const PROFILES = {
   x: {
-    en: { handle: "@zoonkcom", url: "https://x.com/zoonkcom" },
+    en: { url: "https://x.com/zoonkcom" },
     icon: XBrandIcon,
     label: "X",
-    pt: { handle: "@zoonkbr", url: "https://x.com/zoonkbr" },
+    pt: { url: "https://x.com/zoonkbr" },
   },
   linkedin: {
-    en: { handle: "@zoonk", url: "https://www.linkedin.com/company/zoonk" },
+    en: { url: "https://www.linkedin.com/company/zoonk" },
     icon: LinkedinBrandIcon,
     label: "LinkedIn",
-    pt: { handle: "@zoonk", url: "https://www.linkedin.com/company/zoonk" },
+    pt: { url: "https://www.linkedin.com/company/zoonk" },
   },
   github: {
-    en: { handle: "@zoonk", url: "https://github.com/zoonk" },
+    en: { url: "https://github.com/zoonk" },
     icon: GithubBrandIcon,
     label: "GitHub",
-    pt: { handle: "@zoonk", url: "https://github.com/zoonk" },
+    pt: { url: "https://github.com/zoonk" },
   },
   instagram: {
-    en: { handle: "@zoonkcom", url: "https://www.instagram.com/zoonkcom" },
+    en: { url: "https://www.instagram.com/zoonkcom" },
     icon: InstagramBrandIcon,
     label: "Instagram",
-    pt: { handle: "@zoonkbr", url: "https://www.instagram.com/zoonkbr" },
+    pt: { url: "https://www.instagram.com/zoonkbr" },
   },
   youtube: {
-    en: { handle: "@zoonkcom", url: "https://www.youtube.com/@zoonkcom" },
+    en: { url: "https://www.youtube.com/@zoonkcom" },
     icon: YoutubeBrandIcon,
     label: "YouTube",
-    pt: { handle: "@zoonkbr", url: "https://www.youtube.com/@zoonkbr" },
+    pt: { url: "https://www.youtube.com/@zoonkbr" },
   },
   threads: {
-    en: { handle: "@zoonkcom", url: "https://www.threads.net/@zoonkcom" },
+    en: { url: "https://www.threads.net/@zoonkcom" },
     icon: ThreadsBrandIcon,
     label: "Threads",
-    pt: { handle: "@zoonkbr", url: "https://www.threads.net/@zoonkbr" },
+    pt: { url: "https://www.threads.net/@zoonkbr" },
   },
   reddit: {
-    en: { handle: "r/zoonk", url: "https://www.reddit.com/r/zoonk" },
+    en: { url: "https://www.reddit.com/r/zoonk" },
     icon: RedditBrandIcon,
     label: "Reddit",
-    pt: { handle: "r/ZoonkBrasil", url: "https://www.reddit.com/r/ZoonkBrasil" },
+    pt: { url: "https://www.reddit.com/r/ZoonkBrasil" },
   },
   tiktok: {
-    en: { handle: "@zoonkcom", url: "https://www.tiktok.com/@zoonkcom" },
+    en: { url: "https://www.tiktok.com/@zoonkcom" },
     icon: TiktokBrandIcon,
     label: "TikTok",
-    pt: { handle: "@zoonkbr", url: "https://www.tiktok.com/@zoonkbr" },
+    pt: { url: "https://www.tiktok.com/@zoonkbr" },
   },
   facebook: {
-    en: { handle: "@zoonkcom", url: "https://www.facebook.com/zoonkcom" },
+    en: { url: "https://www.facebook.com/zoonkcom" },
     icon: FacebookBrandIcon,
     label: "Facebook",
-    pt: { handle: "@zoonkbr", url: "https://www.facebook.com/zoonkbr" },
+    pt: { url: "https://www.facebook.com/zoonkbr" },
   },
 } as const;
 
 // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- Object.keys widens the keys to string[].
 const PROFILE_KEYS = Object.keys(PROFILES) as (keyof typeof PROFILES)[];
 
-/** The one list of where Zoonk posts, for every app that links to them. */
 export function getSocialProfiles(locale: string) {
   return PROFILE_KEYS.map((name) => {
     const profile = PROFILES[name];

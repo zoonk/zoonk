@@ -1,4 +1,6 @@
 import { cn } from "@zoonk/ui/lib/utils";
+import { useId } from "react";
+import { Eyebrow } from "./eyebrow";
 
 export const STEP_TITLE_SLOT = "step-title";
 
@@ -32,6 +34,27 @@ export function StepTitle({ children, className, ...props }: React.ComponentProp
     >
       {children}
     </h1>
+  );
+}
+
+/**
+ * The chip over a step's title, read as part of it: a title that is only a score still names its
+ * screen ("Mock exam 1 8 of 8"), and the chip isn't read twice.
+ */
+export function LabeledStepTitle({
+  label,
+  ...props
+}: React.ComponentProps<typeof StepTitle> & { label: string }) {
+  const labelId = useId();
+  const titleId = useId();
+
+  return (
+    <>
+      <Eyebrow aria-hidden="true" id={labelId}>
+        {label}
+      </Eyebrow>
+      <StepTitle aria-labelledby={`${labelId} ${titleId}`} id={titleId} {...props} />
+    </>
   );
 }
 

@@ -1,113 +1,24 @@
 "use client";
 
-import {
-  SetupError,
-  SetupField,
-  SetupForm,
-  SetupInput,
-  SetupLabel,
-  SetupSubmit,
-} from "@/components/setup";
+import { AuthField, AuthForm, AuthStatus, AuthSubmit } from "@/components/auth-form";
 import { isNameChangeTooLong } from "@zoonk/auth/name-rules";
-import { USERNAME_MAX_LENGTH, USERNAME_MIN_LENGTH } from "@zoonk/auth/username-rules";
-import {
-  type UsernameStatus,
-  useUsernameAvailability,
-} from "@zoonk/core/auth/hooks/username-availability";
-import { InputGroup, InputGroupAddon, InputGroupInput } from "@zoonk/ui/components/input-group";
-import { Spinner } from "@zoonk/ui/components/spinner";
-import { cn } from "@zoonk/ui/lib/utils";
+import { Input } from "@zoonk/ui/components/input";
+import { Label } from "@zoonk/ui/components/label";
 import { useExtracted } from "next-intl";
 import { unstable_rethrow } from "next/navigation";
 import { useActionState, useId, useState } from "react";
 import { type SetupState, setupProfileAction } from "./actions";
 
-function UsernameDescription({
-  id,
-  status,
-  username,
-}: {
-  id: string;
-  status: UsernameStatus;
-  username: string;
-}) {
-  const t = useExtracted();
-
-  if (status === "checking") {
-    return (
-      <p className="text-muted-foreground flex items-center gap-1 text-sm" id={id}>
-        <Spinner className="size-3" />
-        {t("Checking...")}
-      </p>
-    );
-  }
-
-  if (status === "available") {
-    return (
-      <p className="text-success-text text-sm" id={id}>
-        {t("{username} is available", { username })}
-      </p>
-    );
-  }
-
-  if (status === "taken") {
-    return (
-      <p className="text-destructive-text text-sm" id={id}>
-        {t("{username} is already taken", { username })}
-      </p>
-    );
-  }
-
-  return (
-    <p
-      className={cn(
-        "text-sm",
-        status === "invalid" ? "text-destructive-text" : "text-muted-foreground",
-      )}
-      id={id}
-    >
-      {t("3-30 characters. Letters a–z, numbers, and underscores only.")}
-    </p>
-  );
-}
-
-function UsernameLine({ onChange, username }: { onChange: () => void; username: string }) {
-  const t = useExtracted();
-
-  return (
-    <div className="flex items-center justify-between gap-3 text-sm">
-      <input name="username" type="hidden" value={username} />
-      {/* Korean's keep-all (globals.css) makes WebKit break between the @ and the username. */}
-      <p className="text-muted-foreground min-w-0 break-normal wrap-break-word">
-        {t("Your username: @{username}", { username })}
-      </p>
-      <button
-        aria-label={t("Change username")}
-        className="text-foreground focus-visible:ring-ring/50 -me-1 inline-flex min-h-11 shrink-0 items-center rounded-md px-1 font-medium underline-offset-4 outline-none hover:underline focus-visible:ring-[3px]"
-        onClick={onChange}
-        type="button"
-      >
-        {t("Change")}
-      </button>
-    </div>
-  );
-}
-
 export function SetupProfileForm({
   defaultName,
-  defaultUsername,
   redirectTo,
 }: {
   defaultName: string;
-  defaultUsername: string;
   redirectTo: string | null;
 }) {
   const t = useExtracted();
-  const nameErrorId = useId();
-  const descriptionId = useId();
+  const statusId = useId();
   const [name, setName] = useState(defaultName);
-  const { setUsername, status, username } = useUsernameAvailability(defaultUsername);
-  const [isChangingUsername, setIsChangingUsername] = useState(!defaultUsername);
 
   const [state, formAction] = useActionState<SetupState, FormData>(
     (previous, formData) =>
@@ -119,70 +30,33 @@ export function SetupProfileForm({
   );
 
   const isNameTooLong = isNameChangeTooLong({ name, savedName: defaultName });
-  const canSubmit = !isNameTooLong && (status === "idle" || status === "available");
-  const showsUsernameField = isChangingUsername || state.status === "usernameTaken";
+  const tellsNameTooLong = isNameTooLong || state.status === "nameTooLong";
+
+  const failure = state.status === "error" ? t("We couldn't save your profile. Try again.") : "";
 
   return (
-    <SetupForm action={formAction}>
-      <SetupField>
-        <SetupLabel htmlFor="name">{t("Name")}</SetupLabel>
-        <SetupInput
-          aria-describedby={isNameTooLong ? nameErrorId : undefined}
-          aria-invalid={isNameTooLong}
+    <AuthForm action={formAction}>
+      <AuthField>
+        <Label htmlFor="name">{t("Name")}</Label>
+        <Input
+          aria-describedby={statusId}
+          aria-invalid={tellsNameTooLong}
           autoComplete="name"
           autoFocus
           id="name"
           name="name"
           onChange={(event) => setName(event.target.value)}
+          required
           type="text"
           value={name}
         />
-        <SetupError hasError={isNameTooLong} id={nameErrorId}>
-          {t("Use 150 characters or fewer.")}
-        </SetupError>
-      </SetupField>
+      </AuthField>
 
-      {showsUsernameField ? (
-        <SetupField>
-          <SetupLabel htmlFor="username">{t("Username")}</SetupLabel>
-          <InputGroup>
-            <InputGroupAddon>@</InputGroupAddon>
-            <InputGroupInput
-              aria-describedby={descriptionId}
-              aria-invalid={status === "invalid" || status === "taken"}
-              autoCapitalize="none"
-              autoComplete="username"
-              autoCorrect="off"
-              autoFocus={Boolean(defaultUsername)}
-              id="username"
-              maxLength={USERNAME_MAX_LENGTH}
-              minLength={USERNAME_MIN_LENGTH}
-              name="username"
-              onChange={(event) => setUsername(event.target.value)}
-              required
-              spellCheck={false}
-              value={username}
-            />
-          </InputGroup>
-          <UsernameDescription id={descriptionId} status={status} username={username} />
-        </SetupField>
-      ) : (
-        <UsernameLine onChange={() => setIsChangingUsername(true)} username={username} />
-      )}
+      <AuthStatus id={statusId}>
+        {tellsNameTooLong ? t("Use 150 characters or fewer.") : failure}
+      </AuthStatus>
 
-      <SetupError hasError={state.status === "nameTooLong"}>
-        {t("Use 150 characters or fewer.")}
-      </SetupError>
-
-      <SetupError hasError={state.status === "usernameTaken"}>
-        {t("{username} is already taken", { username })}
-      </SetupError>
-
-      <SetupError hasError={state.status === "error"}>
-        {t("We couldn't save your profile. Try again.")}
-      </SetupError>
-
-      <SetupSubmit disabled={!canSubmit}>{t("Continue")}</SetupSubmit>
-    </SetupForm>
+      <AuthSubmit disabled={isNameTooLong}>{t("Continue")}</AuthSubmit>
+    </AuthForm>
   );
 }

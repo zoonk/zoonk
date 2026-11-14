@@ -1,6 +1,7 @@
 "use client";
 
 import { SectionNav, type SectionNavItem } from "@/components/learn/section-nav";
+import { usePathname } from "@/i18n/navigation";
 import { logout } from "@/lib/logout";
 import { getMenu } from "@/lib/menu";
 import {
@@ -12,7 +13,6 @@ import {
   ListRowTitle,
   ListRowTrailing,
 } from "@zoonk/learn/list";
-import { PlusMark } from "@zoonk/learn/plus-lock";
 import { useFormatTimeOfDay } from "@zoonk/learn/time-format";
 import { useExtracted } from "next-intl";
 
@@ -29,10 +29,9 @@ function toPage(
 }
 
 function useSettingsPages({
-  plus,
   showProfile,
   withProfile,
-}: SettingsPagesShown & { withProfile: boolean }) {
+}: Pick<SettingsPagesShown, "showProfile"> & { withProfile: boolean }) {
   const t = useExtracted();
 
   const yours = [
@@ -48,19 +47,20 @@ function useSettingsPages({
     toPage("reminders", t("Reminders")),
     toPage("aboutYou", t("About you")),
     toPage("memory", t("Memory")),
+    toPage("privacy", t("Privacy")),
   ].filter((item) => item !== false);
 
-  const plan = [
-    toPage("subscription", t("Subscription"), plus ? <PlusMark label={t("Plus")} /> : undefined),
-    toPage("support", t("Help")),
-  ];
+  const plan = [toPage("subscription", t("Subscription")), toPage("support", t("Help"))];
 
   return { label: t("Settings"), plan, yours };
 }
 
+/** Someone without an account who opens Profile from a link still sees its tab, marked as the page they're on. */
 export function SettingsNavLinks(shown: SettingsPagesShown) {
-  const { label, plan, yours } = useSettingsPages({ ...shown, withProfile: true });
-  const first = getMenu(shown.showProfile ? "profile" : "appearance").url;
+  const onProfile = usePathname() === getMenu("profile").url;
+  const showProfile = shown.showProfile || onProfile;
+  const { label, plan, yours } = useSettingsPages({ ...shown, showProfile, withProfile: true });
+  const first = getMenu(showProfile ? "profile" : "appearance").url;
 
   return (
     <SectionNav
@@ -80,11 +80,7 @@ function SettingsGroup({ items }: { items: SettingsPage[] }) {
             <ListRowContent>
               <ListRowTitle>{item.label}</ListRowTitle>
             </ListRowContent>
-            {item.trail !== null && item.trail !== undefined && (
-              <ListRowTrailing className={typeof item.trail === "number" ? undefined : "font-sans"}>
-                {item.trail}
-              </ListRowTrailing>
-            )}
+            {item.trail && <ListRowTrailing className="font-sans">{item.trail}</ListRowTrailing>}
           </ListRowBody>
         </ListRowLink>
       ))}
@@ -125,31 +121,39 @@ function useRemindersSummary(reminders: HubReminders | null | undefined): string
       });
 }
 
+/** Two rows show a value: Reminders its time, and a subscriber's Subscription the plan they have. */
 export function SettingsHubLists({
-  memoryCount,
-  preferencesSummary,
   reminders,
   ...shown
-}: SettingsPagesShown & {
-  memoryCount?: number;
-  preferencesSummary?: React.ReactNode;
-  reminders?: HubReminders | null;
-}) {
+}: SettingsPagesShown & { reminders?: HubReminders | null }) {
+  const t = useExtracted();
   const { label, plan, yours } = useSettingsPages({ ...shown, withProfile: false });
   const remindersSummary = useRemindersSummary(reminders);
+  const remindersUrl = getMenu("reminders").url;
+  const subscriptionUrl = getMenu("subscription").url;
 
-  const trails = new Map<string, React.ReactNode>([
-    [getMenu("appearance").url, preferencesSummary],
-    [getMenu("reminders").url, remindersSummary],
-    [getMenu("memory").url, memoryCount],
-  ]);
+  const summaries = yours.map((item) =>
+    item.url === remindersUrl ? { ...item, trail: remindersSummary } : item,
+  );
 
-  const summaries = yours.map((item) => ({ ...item, trail: trails.get(item.url) }));
+  const plans = plan.map((item) =>
+    item.url === subscriptionUrl && shown.plus
+      ? {
+          ...item,
+          trail: t({
+            description:
+              "The plan's name beside Subscription in a menu, shown only to subscribers: the plan they have.",
+            id: "subscriberPlanName",
+            message: "Plus",
+          }),
+        }
+      : item,
+  );
 
   return (
     <nav aria-label={label} className="flex flex-col gap-6">
       <SettingsGroup items={summaries} />
-      <SettingsGroup items={plan} />
+      <SettingsGroup items={plans} />
       {shown.showLogout && <LogoutGroup />}
     </nav>
   );
