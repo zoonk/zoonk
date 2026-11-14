@@ -226,9 +226,9 @@ private struct LessonPlayerContent: View {
         switch stage {
         case .waiting(let holding):
           LessonWaitingView(
-            outline: warmUp.outline, kind: LessonWaitWords(store.writingKind), writing: writing, progress: store.writingProgress,
-            alternative: store.alternative, warmUpID: warmUp.deckID, goalID: store.goalID,
-            holding: holding
+            outline: warmUp.outline, kind: LessonWaitWords(store.writingKind), writing: writing,
+            progress: store.writingProgress, alternative: store.alternative,
+            warmUpID: warmUp.deckID, goalID: store.goalID, holding: holding
           ) {
             Task { await store.writeLesson() }
           }
@@ -268,8 +268,8 @@ private struct LessonPlayerContent: View {
       .lonePage()
     case .waiting(let outline, let writing):
       LessonWaitingView(
-        outline: outline, kind: LessonWaitWords(store.writingKind), writing: writing, progress: store.writingProgress,
-        alternative: store.alternative, goalID: store.goalID
+        outline: outline, kind: LessonWaitWords(store.writingKind), writing: writing,
+        progress: store.writingProgress, alternative: store.alternative, goalID: store.goalID
       ) {
         Task { await store.writeLesson() }
       }

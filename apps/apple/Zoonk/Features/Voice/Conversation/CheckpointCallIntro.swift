@@ -34,7 +34,8 @@ struct CheckpointCallIntro: View {
     switch call.state {
     case .loaded(.notStarted(let preview)):
       ConversationIntro(
-        intro: CallIntro(preview.intro), isLocked: needsPlus, barNote: startFailure.map { BarNote($0) }
+        intro: CallIntro(preview.intro), isLocked: needsPlus,
+        barNote: startFailure.map { BarNote($0) }
       ) {
         if needsPlus {
           CallStartFooter(isLocked: true, callee: nil) {}

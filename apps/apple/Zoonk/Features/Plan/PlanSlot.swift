@@ -625,9 +625,8 @@ private struct PlanPausedSlot: View {
 
       switch failure {
       case .limitReached:
-        FailureLine(
-          message: GoalError.resumeLimit)
-        .typeStyle(.note)
+        FailureLine(message: GoalError.resumeLimit)
+          .typeStyle(.note)
       case .failed:
         FailureLine(
           message: LocalizedStringResource(
