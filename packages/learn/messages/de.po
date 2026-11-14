@@ -4002,6 +4002,7 @@ msgid "Your plan keeps the focus you chose."
 msgstr "Dein Plan behält den Schwerpunkt bei, den du gewählt hast."
 
 #: src/focus-test/use-result-line.ts
+#: src/mock/mock-result-plan.tsx
 #: src/plan-diff/plan-effect-diff.tsx
 #: src/plan/plan-bases-sheet.tsx
 #: src/plan/plan-offer-preview.tsx
@@ -8304,14 +8305,6 @@ msgstr "{count, plural, one {# Lektion} other {# Lektionen}} übersprungen."
 msgctxt "DRJEUg"
 msgid "Your plan gives {area} more time."
 msgstr "Dein Plan sieht mehr Zeit für {area} vor."
-
-#: src/mock/mock-result-plan.tsx
-#: src/plan-diff/plan-effect-diff.tsx
-#: src/plan/plan-bases-sheet.tsx
-#: src/plan/plan-offer-preview.tsx
-msgctxt "D0KGfN"
-msgid "Your plan stays as it is."
-msgstr "Dein Plan bleibt, wie er ist."
 
 #: src/mock/mock-result-plan.tsx
 #: src/plan-diff/change-names.ts

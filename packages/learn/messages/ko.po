@@ -4002,6 +4002,7 @@ msgid "Your plan keeps the focus you chose."
 msgstr "선택한 과목에 집중하는 계획을 유지해요."
 
 #: src/focus-test/use-result-line.ts
+#: src/mock/mock-result-plan.tsx
 #: src/plan-diff/plan-effect-diff.tsx
 #: src/plan/plan-bases-sheet.tsx
 #: src/plan/plan-offer-preview.tsx
@@ -8304,14 +8305,6 @@ msgstr "레슨 {count, plural, other {#개}}를 건너뛰었어요."
 msgctxt "DRJEUg"
 msgid "Your plan gives {area} more time."
 msgstr "계획에서 {area}에 더 많은 시간을 배정해요."
-
-#: src/mock/mock-result-plan.tsx
-#: src/plan-diff/plan-effect-diff.tsx
-#: src/plan/plan-bases-sheet.tsx
-#: src/plan/plan-offer-preview.tsx
-msgctxt "D0KGfN"
-msgid "Your plan stays as it is."
-msgstr "계획은 그대로 유지돼요."
 
 #: src/mock/mock-result-plan.tsx
 #: src/plan-diff/change-names.ts
