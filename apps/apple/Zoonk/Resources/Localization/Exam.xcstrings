@@ -5010,7 +5010,7 @@
       }
     },
     "The exam notice says %@." : {
-      "comment" : "The notice's day; the argument is a date like 'Tuesday, May 5'",
+      "comment" : "The notice's day; the argument is a date like 'May 5'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5069,7 +5069,6 @@
       }
     },
     "The exam's likely date is now %@." : {
-      "comment" : "The exam's likely day, while the notice isn't out; the argument is a date like 'Tuesday, May 5'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5128,7 +5127,7 @@
       }
     },
     "The exam's official calendar says %@." : {
-      "comment" : "The official calendar's day; the argument is a date like 'Tuesday, May 5'",
+      "comment" : "The official calendar's day; the argument is a date like 'May 5'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
