@@ -202,7 +202,10 @@ export function installPageHelpers() {
 
   /** What an element draws: its text, its glyphs and pictures, and the boxes it or its children paint. */
   function ink(element: Element): InkBox | null {
-    if (!shown(element)) {
+    // A `display: contents` wrapper has no box of its own; what it holds still draws.
+    const contents = getComputedStyle(element).display === "contents";
+
+    if (!contents && !shown(element)) {
       return null;
     }
 
@@ -214,9 +217,10 @@ export function installPageHelpers() {
       return element.getBoundingClientRect();
     }
 
-    const own = paints(element, ["top", "right", "bottom", "left"])
-      ? [element.getBoundingClientRect()]
-      : [];
+    const own =
+      !contents && paints(element, ["top", "right", "bottom", "left"])
+        ? [element.getBoundingClientRect()]
+        : [];
 
     const texts = [...element.childNodes]
       .filter((node) => node.nodeType === Node.TEXT_NODE && node.textContent?.trim())
