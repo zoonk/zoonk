@@ -16,6 +16,8 @@ import { TaskActions } from "./task-layout";
 
 export type StepsItem = {
   action?: React.ReactNode;
+  /** The last step's own actions, in place of `finalAction` while it asks something. */
+  finalAction?: React.ReactNode;
   beside?: boolean;
   content: React.ReactNode;
   id: string;
@@ -157,7 +159,11 @@ export function Steps({
                   {t("Continue")}
                 </TaskMainButton>
               )}
-              {isLastWide && <WideOnly when={!isLastHere}>{finalAction}</WideOnly>}
+              {isLastWide && (
+                <WideOnly when={!isLastHere}>
+                  {(isLastHere && item.finalAction) || finalAction}
+                </WideOnly>
+              )}
               {ask}
             </TaskActions>
             {item.option}

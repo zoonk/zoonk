@@ -4,8 +4,9 @@ import {
   type LanguageLevelTestView,
   type LevelTestAnswerInput,
 } from "@zoonk/core/language/level-test/contract";
+import { useCanRecord, useVoiceRecorder } from "@zoonk/ui/hooks/voice-recorder";
 import { useExtracted } from "next-intl";
-import { useState, useTransition } from "react";
+import { useCallback, useState, useTransition } from "react";
 import { CreateAccountLink } from "../../_components/create-account-link";
 import {
   OnboardingActions,
@@ -16,6 +17,7 @@ import {
 } from "../../onboarding/onboarding-frame";
 import { OnboardingTestQuestion } from "../../onboarding/onboarding-host";
 import { PlacementQuestionScreen } from "../../onboarding/steps/placement-question";
+import { RecordButton } from "../../speech/record-button";
 import { useSpokenAudio } from "../../speech/use-spoken-audio";
 import { useNoSpeechMessage } from "../no-speech-message";
 import { ListeningMessage, SpeakingPrompt } from "./level-test-parts";
@@ -121,6 +123,36 @@ export function SpeakingStep({
   const [needsAccount, setNeedsAccount] = useState(false);
   const [isPending, startTransition] = useTransition();
 
+  const send = useCallback(
+    ({ audio }: { audio: Blob }) =>
+      startTransition(async () => {
+        const result = await speak(audio).catch(() => null);
+        setNeedsAccount(result === "signUpRequired");
+
+        if (result === "noSpeech") {
+          setError(noSpeech);
+          return;
+        }
+
+        if (result === "signUpRequired") {
+          setError(t("Create your free account to continue."));
+          return;
+        }
+
+        setError(result ? null : t("We couldn't check that. Try again."));
+
+        if (result) {
+          onView(result);
+        }
+      }),
+    [noSpeech, onView, speak, t],
+  );
+
+  const canRecord = useCanRecord();
+  const recorder = useVoiceRecorder({ onRecorded: send });
+  const micAvailable = canRecord && recorder.status !== "denied";
+  const recording = recorder.status === "recording";
+
   return (
     <OnboardingTestQuestion progress={progress}>
       <OnboardingColumn
@@ -129,6 +161,16 @@ export function SpeakingStep({
             <OnboardingSecondaryButton disabled={isPending} onClick={onSkip}>
               {t("Skip this part")}
             </OnboardingSecondaryButton>
+            {micAvailable && (
+              <RecordButton
+                busy={recorder.status === "acquiring"}
+                disabled={isPending}
+                elapsedMs={recorder.elapsedMs}
+                onStart={() => void recorder.start()}
+                onStop={recorder.stop}
+                recording={recording}
+              />
+            )}
           </OnboardingActions>
         }
       >
@@ -137,29 +179,9 @@ export function SpeakingStep({
         </OnboardingHeading>
         <SpeakingPrompt
           error={error}
-          onRecorded={(audio) =>
-            startTransition(async () => {
-              const result = await speak(audio).catch(() => null);
-              setNeedsAccount(result === "signUpRequired");
-
-              if (result === "noSpeech") {
-                setError(noSpeech);
-                return;
-              }
-
-              if (result === "signUpRequired") {
-                setError(t("Create your free account to continue."));
-                return;
-              }
-
-              setError(result ? null : t("We couldn't check that. Try again."));
-
-              if (result) {
-                onView(result);
-              }
-            })
-          }
+          micAvailable={micAvailable}
           pending={isPending}
+          recording={recording}
           sentence={sentence}
         />
       </OnboardingColumn>

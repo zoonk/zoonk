@@ -1,4 +1,10 @@
-import { PAGE_COLUMN_CLASS, PageTitle } from "@zoonk/learn/page";
+import {
+  MEASURED_CLASS,
+  PAGE_COLUMN_CLASS,
+  type PageMeasure,
+  PageTitle,
+  pageMeasureClass,
+} from "@zoonk/learn/page";
 import { PageWithAside } from "@zoonk/learn/shell";
 import { DetailHero, DetailHeroText } from "@zoonk/ui/components/detail";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
@@ -69,20 +75,26 @@ export function ListSectionSkeleton({ rows = DEFAULT_ROWS }: { rows?: number }) 
 function DetailColumnSkeleton({
   bar,
   children,
-  className,
+  measure,
   tabs,
   title,
 }: {
   bar: React.ReactNode;
   children: React.ReactNode;
-  className?: string;
+  measure?: PageMeasure;
   tabs: boolean;
   title?: string;
 }) {
   return (
     <div aria-busy="true" className="flex flex-col gap-8">
       {bar}
-      <div className={cn(PAGE_COLUMN_CLASS, "flex flex-col gap-8", className)}>
+      <div
+        className={cn(
+          PAGE_COLUMN_CLASS,
+          "flex flex-col gap-8",
+          measure && [pageMeasureClass(measure), MEASURED_CLASS],
+        )}
+      >
         <div className="flex flex-col gap-5">
           <HeroSkeleton title={title} />
 
@@ -115,7 +127,7 @@ export async function DetailSkeleton({
   aside,
   bar,
   children,
-  className,
+  measure,
   rows = DEFAULT_ROWS,
   tabs = false,
   title,
@@ -123,7 +135,7 @@ export async function DetailSkeleton({
   aside?: React.ReactNode;
   bar?: React.ReactNode;
   children?: React.ReactNode;
-  className?: string;
+  measure?: PageMeasure;
   rows?: number;
   tabs?: boolean;
   title?: string;
@@ -131,7 +143,7 @@ export async function DetailSkeleton({
   const column = (
     <DetailColumnSkeleton
       bar={bar ?? <JourneyPageBar />}
-      className={className}
+      measure={measure}
       tabs={tabs}
       title={title}
     >

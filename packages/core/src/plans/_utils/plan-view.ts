@@ -67,17 +67,13 @@ function buildAreas({
 
 async function getAccess(context: PlanReadContext): Promise<PlanView["access"]> {
   if (context.goal.kind !== "exam") {
-    return { freeUntil: null, freeWeekOver: false, mocksRequirePlus: false };
+    return { freeUntil: null, mocksRequirePlus: false };
   }
 
   const allowance = await getAllowance();
   const examPrep = allowance?.examPrep ?? null;
 
-  return {
-    freeUntil: null,
-    freeWeekOver: false,
-    mocksRequirePlus: !(examPrep?.includesMockExams ?? false),
-  };
+  return { freeUntil: null, mocksRequirePlus: !(examPrep?.includesMockExams ?? false) };
 }
 
 async function loadChapterTitles(chapterIds: string[]): Promise<Map<string, string>> {

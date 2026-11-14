@@ -20,6 +20,7 @@ import {
   PageSectionHeader,
   PageSectionTitle,
 } from "../_components/page";
+import { useChangeSaveFailed } from "../_components/save-error";
 import { SettingRow } from "../_components/setting-rows";
 import { useOptimisticSave } from "../_utils/use-optimistic-save";
 import { MemoryFactRow } from "./memory-fact-row";
@@ -117,6 +118,7 @@ function useMemoryScreen({ actions, memory }: { actions: MemoryActions; memory: 
   const [enabled, setOptimisticEnabled] = useOptimistic(memory.enabled);
   const { run } = useOptimisticSave();
   const offerUndo = useUndoToast(actions.undo);
+  const saveFailed = useChangeSaveFailed();
 
   return {
     enabled,
@@ -139,11 +141,17 @@ function useMemoryScreen({ actions, memory }: { actions: MemoryActions; memory: 
         () => setOptimisticEnabled(next),
         () => actions.setEnabled(next),
       ),
-    updateFact: (factId: string, statement: string) =>
-      run(
-        () => editFacts({ id: factId, statement }),
-        () => actions.updateFact({ factId, statement }),
-      ),
+    /** Called inside the edit sheet's save, so the row shows the new text while it saves. */
+    updateFact: async (factId: string, statement: string) => {
+      editFacts({ id: factId, statement });
+      const saved = await actions.updateFact({ factId, statement });
+
+      if (!saved) {
+        saveFailed();
+      }
+
+      return saved;
+    },
   };
 }
 

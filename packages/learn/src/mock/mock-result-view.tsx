@@ -18,11 +18,12 @@ import { getCeremonyMoment } from "../session/moment-ceremony";
 import { type TaskFrameAside } from "../shell/task-frame";
 import { useMockScreen } from "./mock-context";
 import { useMockNumber, useMockTitle } from "./mock-labels";
-import { MockResultActions, MockResultSkip } from "./mock-result-actions";
+import { MockResultActions, MockResultContinue } from "./mock-result-actions";
 import { MockResultBreakdown, hasBreakdown, useMockRange } from "./mock-result-breakdown";
 import { MockResultDetails } from "./mock-result-details";
 import { useEssayItems } from "./mock-result-essays";
 import {
+  MockPlanAnswers,
   MockPlanChange,
   MockPlanStep,
   type PlanChange,
@@ -247,7 +248,13 @@ function useResultSteps(result: MockResult) {
 
   const parts: Record<MockResultPart, StepsItem[]> = {
     essays,
-    plan: [{ content: <MockPlanStep change={change} preparation={preparation} />, id: "plan" }],
+    plan: [
+      {
+        content: <MockPlanStep change={change} preparation={preparation} />,
+        finalAction: hasPlanChange(change) && change.open && <MockPlanAnswers change={change} />,
+        id: "plan",
+      },
+    ],
     score: [{ content: <ScoreStep result={result} />, id: "score" }],
     speaking,
   };
@@ -283,7 +290,7 @@ function MockResultSteps({ result }: { result: MockResult }) {
       exitHref={hrefs.exit}
       finalAction={
         <>
-          <MockResultSkip />
+          <MockResultContinue />
           <MockResultActions />
         </>
       }
