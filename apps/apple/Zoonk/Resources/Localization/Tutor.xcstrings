@@ -4630,65 +4630,6 @@
         }
       }
     },
-    "Mock exams come with Plus: whenever you want, and every week in your plan." : {
-      "comment" : "Why a free learner can't take a mock exam",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit Plus kannst du jederzeit Probeprüfungen machen. Außerdem enthält dein Plan jede Woche eine."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con Plus, tienes simulacros cuando quieras y cada semana en tu plan."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Les examens blancs sont inclus dans Plus : quand tu veux et chaque semaine dans ton plan."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le simulazioni sono incluse in Plus: quando vuoi e ogni settimana nel tuo piano."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plusなら、いつでも模試を受けられます。学習計画にも毎週模試が入ります。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus에서는 모의고사를 원할 때 언제든 볼 수 있어요. 계획에도 매주 포함돼요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pakiet Plus obejmuje egzaminy próbne: kiedy chcesz i co tydzień w twoim planie."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Os simulados estão incluídos no Plus: faça quando quiser e toda semana no seu plano."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deneme sınavları Plus’a dahil: istediğin zaman girebilirsin, planında da her hafta yer alır."
-          }
-        }
-      }
-    },
     "Mock exams need a subscription" : {
       "comment" : "A free learner tried to take a mock exam from the buddy",
       "localizations" : {
@@ -5153,65 +5094,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "Plus" : {
-      "comment" : "The buddy offers the subscription",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus"
           }
         }
       }
@@ -5857,65 +5739,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "See Plus" : {
-      "comment" : "Opens the Zoonk Plus subscription; Plus is its name, not \"more\"",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus ansehen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ver Plus"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Découvrir Plus"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Scopri Plus"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plusの詳細を見る"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus 알아보기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zobacz Plus"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Conhecer o Plus"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus’ı incele"
           }
         }
       }

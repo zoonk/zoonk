@@ -2570,65 +2570,6 @@
         }
       }
     },
-    "Challenge calls come with Plus. Your plan keeps going without them." : {
-      "comment" : "A checkpoint call or exam speaking task needs Plus",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Herausforderungs-Gespräche sind in Plus enthalten. Dein Plan geht auch ohne sie weiter."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Las llamadas de desafío están incluidas en Plus. Tu plan sigue adelante sin ellas."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Les appels de défi sont inclus dans Plus. Ton plan continue sans eux."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le conversazioni delle sfide sono incluse in Plus. Il tuo piano continua anche senza."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "チャレンジの会話練習はPlusで利用できます。利用しなくても学習計画は進みます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "챌린지 대화는 Plus에 포함돼요. 챌린지 대화 없이도 계획은 계속 진행돼요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rozmowy w ramach wyzwań są dostępne w pakiecie Plus. Bez nich też możesz kontynuować swój plan."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "As conversas de desafio estão disponíveis no Plus. Seu plano continua sem elas."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Meydan okuma sohbetleri Plus’a dahildir. Planın bu sohbetler olmadan da devam eder."
-          }
-        }
-      }
-    },
     "Challenge passed" : {
       "comment" : "A checkpoint call passed",
       "localizations" : {

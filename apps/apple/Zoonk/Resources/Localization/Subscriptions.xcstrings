@@ -709,65 +709,6 @@
         }
       }
     },
-    "No more new lessons this month" : {
-      "comment" : "The learner started all the new lessons they can this month",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Diesen Monat keine neuen Lektionen mehr"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No te quedan lecciones nuevas este mes"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Limite de nouvelles leçons atteinte pour ce mois-ci"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai raggiunto il limite mensile di nuove lezioni"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今月始められる新しいレッスンはここまでです"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이번 달에는 새 레슨을 더 시작할 수 없어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wykorzystano limit nowych lekcji na ten miesiąc"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você atingiu o limite de novas aulas deste mês"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu ayki yeni ders hakkın bitti"
-          }
-        }
-      }
-    },
     "No more new lessons today" : {
       "comment" : "The learner started all the new lessons they can today",
       "localizations" : {
@@ -1240,65 +1181,6 @@
         }
       }
     },
-    "See Plus" : {
-      "comment" : "Opens the Zoonk Plus subscription; Plus is its name, not \"more\"",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus ansehen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ver Plus"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Découvrir Plus"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Scopri Plus"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plusの詳細を見る"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus 알아보기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zobacz pakiet Plus"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Conhecer o Plus"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus’ı incele"
-          }
-        }
-      }
-    },
     "Subscribe" : {
       "comment" : "Opens the subscription from a feature or limit that needs one",
       "localizations" : {
@@ -1766,6 +1648,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ücretsiz sınava hazırlık haftan bitti"
+          }
+        }
+      }
+    },
+    "Your next free lesson is ready" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine nächste kostenlose Lektion ist verfügbar"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu próxima lección gratis está lista"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ta prochaine leçon gratuite est prête"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La tua prossima lezione gratuita è pronta"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "次の無料レッスンを始められます"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다음 무료 레슨이 준비됐어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twoja kolejna bezpłatna lekcja jest już dostępna"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sua próxima aula grátis está disponível"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sıradaki ücretsiz dersin hazır"
           }
         }
       }
