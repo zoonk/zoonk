@@ -1,14 +1,17 @@
 // @vitest-environment jsdom
 import assert from "node:assert/strict";
+import { type Page } from "@playwright/test";
 import { afterEach, beforeEach, describe, it, vi } from "vitest";
 import { focusReturned, readPanel } from "./keys-probe.mts";
 import { OVERLAYS } from "./overlays.mts";
-import { panelFindings } from "./panels.mts";
+import { installPageHelpers } from "./page-helpers.mts";
+import { focusCameBack, panelFindings } from "./panels.mts";
 
 const HALF_PANEL = 50;
 let dark = false;
 
 beforeEach(() => {
+  installPageHelpers();
   vi.spyOn(Element.prototype, "getBoundingClientRect").mockReturnValue(new DOMRect(0, 0, 100, 100));
   const box = new DOMRect(0, 0, 100, 100);
 
@@ -19,6 +22,11 @@ beforeEach(() => {
   Object.defineProperty(Element.prototype, "checkVisibility", {
     configurable: true,
     value: () => true,
+  });
+
+  Object.defineProperty(Element.prototype, "getAnimations", {
+    configurable: true,
+    value: () => [],
   });
 
   vi.stubGlobal("matchMedia", () => ({ matches: dark }));
@@ -124,6 +132,30 @@ describe("shared panel readings", () => {
 
     assert.equal(read()?.centered, false);
     assert.equal(read(true)?.centered, null);
+  });
+
+  it("waits for a closing animation before checking focus return", async () => {
+    panel("dialog-content");
+    const { promise, resolve } = Promise.withResolvers<null>();
+
+    Object.defineProperty(Element.prototype, "getAnimations", {
+      configurable: true,
+      value: () => [{ finished: promise }],
+    });
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- The adapter implements the page's serialized-evaluation boundary.
+    const page = {
+      evaluate: async (run: (argument: unknown) => unknown, argument?: unknown) => run(argument),
+    } as unknown as Page;
+
+    const result = focusCameBack(page, "opener");
+    const settled = vi.fn();
+    void result.then(settled);
+    await Promise.resolve();
+    assert.equal(settled.mock.calls.length, 0);
+    element("[data-slot=dialog-content]").remove();
+    element("button").focus();
+    resolve(null);
+    assert.equal(await result, true);
   });
 
   it("measures the phone sheet's bottom edge", () => {

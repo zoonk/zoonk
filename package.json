@@ -60,7 +60,7 @@
     "test:watch": "turbo test:watch",
     "typecheck": "turbo typecheck && tsrs --project scripts/tsconfig.json",
     "verify:diff": "node scripts/verify/diff.mts",
-    "verify:pages": "node scripts/verify/verify-pages.mts",
+    "verify:pages": "node scripts/verify/pages.mts",
     "worktree:setup": "node scripts/worktree/setup.mts",
     "zoonk": "node apps/cli/src/main.ts"
   },
