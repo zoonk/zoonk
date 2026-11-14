@@ -561,14 +561,24 @@ private fun EstimatedScoreBlock(preparation: GoalPreparation) {
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Text(scoreRange(score), style = MaterialTheme.typography.headlineMedium.withTabularFigures())
-        val mocks = score.mocks.toInt()
+        val taken = score.mocks.toInt()
         MetaLine(
-            if (mocks ==
-                1
-            ) {
-                stringResource(R.string.plan_estimate_based_on_last)
-            } else {
-                pluralStringResource(R.plurals.plan_estimate_based_on, mocks, mocks)
+            when {
+                mocks.kind == PreparationComponentsMocks.Kind.FULL_REVIEWS -> {
+                    pluralStringResource(
+                        R.plurals.plan_estimate_based_on_reviews,
+                        taken,
+                        taken,
+                    )
+                }
+
+                taken == 1 -> {
+                    stringResource(R.string.plan_estimate_based_on_last)
+                }
+
+                else -> {
+                    pluralStringResource(R.plurals.plan_estimate_based_on, taken, taken)
+                }
             },
         )
     }

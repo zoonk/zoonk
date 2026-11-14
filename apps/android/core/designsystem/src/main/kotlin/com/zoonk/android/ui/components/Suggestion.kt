@@ -311,7 +311,8 @@ private fun SuggestionLine(
                         modifier =
                             Modifier
                                 .focusRequester(LocalFrame.current.focus)
-                                .focusable()
+                                // A statement (nothing to open, nothing answered) is read, never a stop for the keyboard.
+                                .then(if (whole && !answered && !failed) Modifier else Modifier.focusable())
                                 .then(
                                     when {
                                         failed -> Modifier.semantics { liveRegion = LiveRegionMode.Assertive }

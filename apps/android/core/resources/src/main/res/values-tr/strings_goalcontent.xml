@@ -6,7 +6,7 @@
   "goalcontent_also_in_exam_count": "b319c8bf446c2cc25408ce4e98195208b09d93ae55c0001b45ee8f50d1b8e8d2",
   "goalcontent_also_in_exams": "b893196db94fd4cf59e1de9ab211f8f56509d1e5834f8eee6959ea936319c773",
   "goalcontent_also_in_plan": "f06b362de814c0f403dfc4cf0f63457b5519ae4088da6cbb6bf2cb1792e98749",
-  "goalcontent_appears_a_lot": "b40e7ddcbd875eca662cc145aa8ae5b2580be28fb09072e14c900665f0ae58f1",
+  "goalcontent_asked_a_lot": "d86f0fc3be1c1058005d7138c4655856f166cbb3c0bd3f6a9a80fdac5e574aff",
   "goalcontent_beyond_guide": "989967682bdbf3f8d7951a6230865af3b4f86cec33fb6cf67d1f8b2c4fb8a5af",
   "goalcontent_beyond_notice": "6cfb8f635eb19d69e7251e58f00a9c0621c54b99fde3a86a0525b7cc3c7a3f07",
   "goalcontent_bring_back": "6b56364d43374b204e1335e4a7d479d9063773e4e7a6f32d18227570c59bbb82",
@@ -265,12 +265,12 @@
     <string name="goalcontent_topic_skipped_base">Bu ön bilgiyi atlamayı seçtin</string>
     <string name="goalcontent_topic_time">Ayırdığın süreye sığmıyor</string>
     <string name="goalcontent_topic_missing">Bu konuda henüz ders yok</string>
-    <!-- Marks a topic past exams asked a lot. -->
-    <string name="goalcontent_appears_a_lot">Sık çıkıyor</string>
-    <!-- %1$s is the "Appears a lot" mark. -->
+    <!-- Marks a topic that comes up often in the exam. -->
+    <string name="goalcontent_asked_a_lot">Sık sorulan</string>
+    <!-- %1$s is the "Asked a lot" mark. -->
     <string name="goalcontent_frequency_material">Materyalinde sık çıktığı belirtilen konular %1$s ile işaretlenir. Bu konulara daha fazla zaman ayrılır.</string>
     <string name="goalcontent_frequency_past_exams">Geçmiş sınavlarda en çok sorulan konular %1$s ile işaretlenir.</string>
-    <!-- %1$s is the "Appears a lot" mark, %2$s what the source counted, %3$s a link to the source's site. -->
+    <!-- %1$s is the "Asked a lot" mark, %2$s what the source counted, %3$s a link to the source's site. -->
     <string name="goalcontent_frequency_tagged_waits">Geçmiş sınavlarda en çok sorulan konular %1$s ile işaretlenir (%2$s; kaynak: %3$s). En az sorulan konular sonraya kalır.</string>
     <string name="goalcontent_frequency_tagged">Geçmiş sınavlarda en çok sorulan konular %1$s ile işaretlenir (%2$s; kaynak: %3$s). Bu konulara daha fazla zaman ayrılır.</string>
     <!-- %1$s is what the source counted, %2$s a link to the source's site. -->

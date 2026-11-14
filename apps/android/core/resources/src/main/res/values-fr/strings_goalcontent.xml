@@ -6,7 +6,7 @@
   "goalcontent_also_in_exam_count": "b99e38ce17c607fa171a2b1c4b35b783b0b427b74372cf01b3cfe1c916f19e59",
   "goalcontent_also_in_exams": "cb509c44a2b9ffe6b9b605e29a90a097d60129edb6ceabf3c9dbf17b5b2b313c",
   "goalcontent_also_in_plan": "0d6be97279fc0db18500117b2271abe42f235c2e5b1e6c3b020540643c8e1f42",
-  "goalcontent_appears_a_lot": "e429d92222de9ec090cea92d5051b02b3db77f5104ce6167b38248d46841c918",
+  "goalcontent_asked_a_lot": "17e2735e0aae19e452a8b2c59c911e16da3435e2967cbf78f69071ea584bb06d",
   "goalcontent_beyond_guide": "bb7b439bfac35c1e8886411f7229d7cf34357e8c50288d6cb2dbc72f2545287e",
   "goalcontent_beyond_notice": "19df225c4881ea106b11798758e1e50609b09dc849362ab7e7949c2ab8b262fa",
   "goalcontent_bring_back": "168bcf60c5a43fecfe1831ba2af400dcc316f4b7b76bd47fa67db01fb150920d",
@@ -285,12 +285,12 @@
     <string name="goalcontent_topic_skipped_base">Tu as choisi de passer ce prérequis</string>
     <string name="goalcontent_topic_time">Tu n’as pas assez de temps pour ce sujet</string>
     <string name="goalcontent_topic_missing">Pas encore de leçons sur ce sujet</string>
-    <!-- Marks a topic past exams asked a lot. -->
-    <string name="goalcontent_appears_a_lot">Revient souvent</string>
-    <!-- %1$s is the "Appears a lot" mark. -->
+    <!-- Marks a topic that comes up often in the exam. -->
+    <string name="goalcontent_asked_a_lot">Tombe souvent</string>
+    <!-- %1$s is the "Asked a lot" mark. -->
     <string name="goalcontent_frequency_material">Les sujets marqués %1$s sont ceux qui reviennent souvent d’après tes documents. Tu y consacres plus de temps.</string>
     <string name="goalcontent_frequency_past_exams">Les sujets marqués %1$s sont ceux qui sont le plus souvent tombés aux examens précédents.</string>
-    <!-- %1$s is the "Appears a lot" mark, %2$s what the source counted, %3$s a link to the source's site. -->
+    <!-- %1$s is the "Asked a lot" mark, %2$s what the source counted, %3$s a link to the source's site. -->
     <string name="goalcontent_frequency_tagged_waits">Les sujets marqués %1$s sont ceux qui sont le plus souvent tombés aux examens précédents (%2$s, d’après %3$s). Ceux qui reviennent le moins souvent attendent.</string>
     <string name="goalcontent_frequency_tagged">Les sujets marqués %1$s sont ceux qui sont le plus souvent tombés aux examens précédents (%2$s, d’après %3$s). Tu y consacres plus de temps.</string>
     <!-- %1$s is what the source counted, %2$s a link to the source's site. -->
