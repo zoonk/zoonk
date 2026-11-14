@@ -41,7 +41,7 @@ struct PreviewedPlanChange<Control: View>: View {
       presenting: preview
     ) { _ in
       Button {
-        Task { await editor.change(edits) }
+        editor.run { await editor.change(edits) }
       } label: {
         button
       }

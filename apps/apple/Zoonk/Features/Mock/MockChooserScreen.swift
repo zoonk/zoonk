@@ -85,6 +85,7 @@ private struct MockChooser: View {
   @State private var status: ChooserStatus = .choosing
   @State private var busy = false
   @State private var isOnScreen = false
+  @State private var starting: Task<Void, Never>?
 
   let goalId: String
   let view: MockOptions
@@ -122,7 +123,10 @@ private struct MockChooser: View {
       startAction
     }
     .onAppear { isOnScreen = true }
-    .onDisappear { isOnScreen = false }
+    .onDisappear {
+      isOnScreen = false
+      starting?.cancel()
+    }
   }
 
   @ViewBuilder
@@ -207,7 +211,7 @@ private struct MockChooser: View {
     } else {
       BusyButton(isBusy: busy) {
         if isOpen {
-          Task { await start() }
+          starting = Task { await start() }
         } else {
           status = .plusRequired
         }
@@ -226,7 +230,7 @@ private struct MockChooser: View {
         presenting: shortNote
       ) { _ in
         Button {
-          Task { await start(acceptingFewer: true) }
+          starting = Task { await start(acceptingFewer: true) }
         } label: {
           Text("Start", tableName: "Mock", comment: "Starts the picked mock")
         }

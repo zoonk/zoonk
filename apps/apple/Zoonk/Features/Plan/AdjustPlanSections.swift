@@ -66,7 +66,7 @@ private struct PlanExamChoiceSection: View {
               return
             }
 
-            Task { await editor.chooseExamOptions([subject], in: choice.group) }
+            editor.run { await editor.chooseExamOptions([subject], in: choice.group) }
           })
       ) {
         if choice.subjects.isEmpty {
@@ -105,7 +105,7 @@ private struct PlanExamChoiceSection: View {
         picked: Binding(get: { picked }, set: { draft = $0 }))
 
       Button {
-        Task {
+        editor.run {
           if await editor.chooseExamOptions(picks.names, in: choice.group) {
             draft = nil
           }
@@ -185,7 +185,7 @@ private struct PlanFocusSection: View {
         }
 
         Button {
-          Task { await focus(on: selection, choices: choices) }
+          editor.run { await focus(on: selection, choices: choices) }
         } label: {
           if selection.isEmpty, !focused.isEmpty {
             Text(
@@ -235,7 +235,7 @@ private struct PlanActivitiesSection: View {
                 return
               }
 
-              Task {
+              editor.run {
                 await editor.change([
                   on ? .restoreActivities([activity]) : .skipActivities([activity])
                 ])
@@ -271,7 +271,9 @@ private struct PlanWrittenPracticeSection: View {
               return
             }
 
-            Task { await editor.change([.writtenCadence(cadence)], sentence: sentence(cadence)) }
+            editor.run {
+              await editor.change([.writtenCadence(cadence)], sentence: sentence(cadence))
+            }
           })
       ) {
         Text("Every week", tableName: "Plan", comment: "Written practice cadence").tag("weekly")

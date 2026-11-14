@@ -12,7 +12,7 @@ import { useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { LearnLink } from "../learn-link";
 import { usePlanScreen } from "../plan/plan-context";
-import { PlanDateText, useFormatPlanDate } from "../plan/plan-date-text";
+import { PlanDateText } from "../plan/plan-date-text";
 import { type JourneyPathLinks } from "./journey-links";
 
 export const PATH_ROW_CLASS =
@@ -24,7 +24,7 @@ export const PATH_ROW_BODY_CLASS = cn(TITLE_ROW_CLASS, "min-w-0 flex-1");
 
 const EVENT_ROW_CLASS = cn(PATH_ROW_CLASS, "hover:bg-muted/70");
 
-const EVENT_DATE_CLASS = "text-muted-foreground font-mono text-xs tabular-nums";
+const EVENT_DATE_CLASS = "text-muted-foreground text-xs";
 
 function EventRow({ children, href }: { children: React.ReactNode; href: string | null }) {
   if (!href) {
@@ -71,7 +71,7 @@ export function CheckpointRow({
           {goal.kind === "language" ? t("Call") : t("The Trickster")}
         </span>
 
-        <span className={cn(EVENT_DATE_CLASS, !onDate && "font-sans")}>
+        <span className={EVENT_DATE_CLASS}>
           {isDone && t({ description: "The learner won this phase challenge.", message: "Won" })}
           {!isDone &&
             when === "nextSession" &&
@@ -130,7 +130,6 @@ export function MockRow({
   examHref: string | null;
 }) {
   const t = useExtracted();
-  const formatPlanDate = useFormatPlanDate();
   const formatDuration = useFormatDuration();
   const { plan } = usePlanScreen();
   const funded = plan.fundedMocks.find((mock) => mock.scheduledFor === date);
@@ -150,7 +149,7 @@ export function MockRow({
             </span>
           ) : null}
         </span>
-        <span className={EVENT_DATE_CLASS}>{formatPlanDate(date)}</span>
+        <PlanDateText className={EVENT_DATE_CLASS} isoDate={date} />
       </span>
     </EventRow>
   );

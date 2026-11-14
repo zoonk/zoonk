@@ -54,7 +54,7 @@ struct PlanPathRows: View {
     }
 
     IconLabeledContent {
-      planFinishText(context)
+      planFinish(context)
     } title: {
       Text(context.goal.displayName)
     } icon: {
@@ -428,25 +428,47 @@ private struct PlanCheckpointRow: View {
     }
   }
 
-  private var when: Text? {
+  private var when: PlanWhen? {
     if checkpoint.state == .done {
-      return Text("Won", tableName: "Plan", comment: "A phase challenge the learner won")
+      return .words(Text("Won", tableName: "Plan", comment: "A phase challenge the learner won"))
     }
 
-    return checkpoint.whenText(today: today)
+    return checkpoint.when(today: today)
   }
 }
 
 extension PlanPhase.Checkpoint {
   /// When it comes. Dated today, the next session is today's, which may already be under way.
-  func whenText(today: String) -> Text? {
+  func when(today: String) -> PlanWhen? {
     switch when {
     case .nextSession where date == today:
-      Text("Today", tableName: "Plan", comment: "When the phase's challenge comes")
+      .words(Text("Today", tableName: "Plan", comment: "When the phase's challenge comes"))
     case .nextSession:
-      Text("In your next session", tableName: "Plan", comment: "When the phase's challenge comes")
+      .words(
+        Text("In your next session", tableName: "Plan", comment: "When the phase's challenge comes")
+      )
     case .date, .queued:
-      date.map { PlanDate.estimateText($0, today: today) }
+      date.map { .date(PlanDate.estimateText($0, today: today)) }
+    }
+  }
+}
+
+/// When something on the path comes: a date in the data face, like the phases' ends beside it, and
+/// words in the text face.
+enum PlanWhen: View {
+  case date(Text)
+  case words(Text)
+
+  var body: some View {
+    switch self {
+    case .date(let text): text.typeStyle(.data)
+    case .words(let text): text
+    }
+  }
+
+  var text: Text {
+    switch self {
+    case .date(let text), .words(let text): text
     }
   }
 }
@@ -708,7 +730,7 @@ func planChapterWindow(states: [PlanChapter.State]) -> Range<Int> {
 
 /// Says what a challenge is under its row, since a learner meets one before they've ever taken one.
 struct PlanChallengeLabel: View {
-  let when: Text?
+  let when: PlanWhen?
   let explains: Bool
   let isLanguage: Bool
 

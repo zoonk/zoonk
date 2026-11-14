@@ -144,5 +144,5 @@ export const unshownCertificatesSchema = z
   .array(ownedCertificateFactsSchema)
   .meta({
     description:
-      "The learner's certificates whose award moment wasn't closed yet, oldest first; usually empty. They come before any milestone `ceremony`, locked ones included, and POST /me/certificates/{code}/views closes each one's moment. Pictures of an unlocked one: GET /certificates/{code}",
+      "The learner's certificates whose award moment wasn't closed yet, oldest first, locked ones included; usually empty. POST /me/certificates/{code}/views closes each one's moment. Pictures of an unlocked one: GET /certificates/{code}",
   });

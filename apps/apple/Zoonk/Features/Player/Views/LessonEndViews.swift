@@ -17,6 +17,7 @@ struct LessonCompletionView: View {
 
   @State private var isStopping = false
   @State private var stopFailed = false
+  @State private var stopping: Task<Void, Never>?
 
   var body: some View {
     PaneSplit {
@@ -55,6 +56,9 @@ struct LessonCompletionView: View {
       if status == .saved, soundsEnabled {
         LessonSounds.shared.play(.finish)
       }
+    }
+    .onDisappear {
+      stopping?.cancel()
     }
   }
 
@@ -357,7 +361,7 @@ struct LessonCompletionView: View {
     isStopping = true
     stopFailed = false
 
-    Task {
+    stopping = Task {
       switch await sessions.stop(sessionID: sessionID, in: router.playback) {
       case .done:
         close()

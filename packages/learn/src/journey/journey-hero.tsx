@@ -12,7 +12,7 @@ import { useState } from "react";
 import { ListGroup } from "../_components/list-group";
 import { SheetHeader } from "../_components/sheet-header";
 import { useFormatProgressShare, useFormatShare } from "../_utils/percent";
-import { type CallStartOutcome } from "../language/conversation/use-call-start";
+import { type LimitedCallStart } from "../language/conversation/use-call-start";
 import { SpeakingPracticeRow } from "../language/exam-speaking/speaking-practice-screen";
 import { CanDoList } from "../language/progress/can-do-list";
 import { LevelValue } from "../language/progress/level-value";
@@ -42,7 +42,7 @@ export type JourneyStanding =
       kind: "language";
       language: LanguageProgressView;
       speakingHref: string;
-      startSpeakingMock: () => Promise<CallStartOutcome>;
+      startSpeakingMock: () => Promise<LimitedCallStart>;
     };
 
 function WeekGain({ points }: { points: number }) {

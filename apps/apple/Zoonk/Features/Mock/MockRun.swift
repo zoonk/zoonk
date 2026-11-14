@@ -53,6 +53,7 @@ final class MockRun {
   @ObservationIgnored private var shown: (itemId: String, at: ContinuousClock.Instant)?
   @ObservationIgnored private var unsavedText: MockDraft?
   @ObservationIgnored private var textTask: Task<Void, Never>?
+  @ObservationIgnored private let taps = ScreenTasks()
 
   init(store: ExamStore, blockId: String, now: @escaping () -> Date = { .now }) {
     self.store = store
@@ -214,6 +215,15 @@ final class MockRun {
     }
 
     return true
+  }
+
+  /// Runs a tap's step as the mock screen's, which calls `cancelTaps()` when it closes.
+  func start(_ step: @escaping @MainActor () async -> Void) {
+    taps.run(step)
+  }
+
+  func cancelTaps() {
+    taps.cancel()
   }
 
   func submitSection() async {
