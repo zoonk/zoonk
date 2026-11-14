@@ -27,7 +27,9 @@ export function readDiscovery(declaredGroups: string): DiscoveryLead[] {
   const WIDTH_SLACK = 2;
   /** Room smaller than this either way is a hairline, not a gap anyone sees. */
   const MIN_ROOM = 8;
-  const { paints, shown } = globalThis.zoonkPage;
+  /** A column a row keeps empty is a glyph's or a keycap's, never a block's. */
+  const SLOT_MAX = 48;
+  const { shown } = globalThis.zoonkPage;
 
   const round = (value: number) => Math.round(value * TENTH) / TENTH;
 
@@ -37,22 +39,63 @@ export function readDiscovery(declaredGroups: string): DiscoveryLead[] {
     return text ? `"${text}"` : `<${element.tagName.toLowerCase()}${slot ? ` ${slot}` : ""}>`;
   };
 
-  function inked(element: Element): boolean {
-    return (
-      shown(element) &&
-      (paints(element, ["top", "right", "bottom", "left"]) ||
-        element.matches("svg, img, video, canvas, input, textarea, select") ||
-        [...element.childNodes].some(
-          (child) => child.nodeType === Node.TEXT_NODE && child.textContent?.trim(),
-        ) ||
-        [...element.children].some((child) => inked(child)))
+  const inked = (element: Element) => globalThis.zoonkPage.ink(element) !== null;
+
+  /** Where a row's words start: rows line up by their text, whatever mark or fill comes first. */
+  function startOf(element: Element) {
+    const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+
+    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+      const range = document.createRange();
+      range.selectNodeContents(node);
+      const rect = [...range.getClientRects()].find((line) => line.width > 0);
+
+      if (rect && node.parentElement && shown(node.parentElement)) {
+        return rect.left;
+      }
+    }
+
+    return globalThis.zoonkPage.ink(element)?.left ?? element.getBoundingClientRect().left;
+  }
+
+  /** Where a row's last part ends, when that part is pushed to the row's end half (a value, a chevron). */
+  function endOf(row: Element) {
+    const box = row.getBoundingClientRect();
+    const last = [...row.children].findLast((child) => inked(child));
+    const ink = last ? globalThis.zoonkPage.ink(last) : null;
+    return ink && ink.left > (box.left + box.right) / 2 ? ink.right : null;
+  }
+
+  /**
+   * An empty slot as wide as a glyph, a keycap or a drawn element of its own kind in line with it
+   * elsewhere is a kept column (`ListRowChevronSpace`, a row past the ninth key), not empty room.
+   */
+  function keptColumn(slot: Element, box: DOMRect) {
+    if (box.width > SLOT_MAX) {
+      return false;
+    }
+
+    const middle = (box.left + box.right) / 2;
+
+    return [...document.querySelectorAll(`svg, kbd, ${slot.tagName.toLowerCase()}`)].some(
+      (other) => {
+        const at = other.getBoundingClientRect();
+
+        return (
+          other !== slot &&
+          Math.abs(at.width - box.width) <= 1 &&
+          Math.abs((at.left + at.right) / 2 - middle) <= box.width / 2 &&
+          globalThis.zoonkPage.ink(other) !== null
+        );
+      },
     );
   }
 
-  function inkBox(element: Element) {
-    const range = document.createRange();
-    range.selectNodeContents(element);
-    return range.getBoundingClientRect();
+  /** A bar that shows its contents by state (a top bar on scroll) holds its room on purpose. */
+  function holdsABar(element: Element) {
+    return [element, ...element.querySelectorAll("*")].some((inner) =>
+      ["fixed", "sticky"].includes(getComputedStyle(inner).position),
+    );
   }
 
   const declared = (element: Element) =>
@@ -87,7 +130,9 @@ export function readDiscovery(declaredGroups: string): DiscoveryLead[] {
         style.display !== "contents" &&
         Math.min(box.width, box.height) >= MIN_ROOM &&
         Number(style.flexGrow) === 0 &&
-        !child.matches("script, style, template, slot");
+        !child.matches("script, style, template, slot") &&
+        !keptColumn(child, box) &&
+        !holdsABar(child);
 
       return holds
         ? [
@@ -121,18 +166,27 @@ export function readDiscovery(declaredGroups: string): DiscoveryLead[] {
       return [];
     }
 
-    const measures = {
-      gap: boxes.slice(1).map((box, index) => box.top - (boxes[index]?.bottom ?? box.top)),
-      start: drawn.map((row) => inkBox(row).left),
+    type Measured = { row: Element; value: number };
+
+    const measures: Record<string, Measured[]> = {
+      end: drawn.flatMap((row) => {
+        const end = endOf(row);
+        return end === null ? [] : [{ row, value: end }];
+      }),
+      gap: drawn
+        .slice(1)
+        .map((row, index) => ({
+          row,
+          value: (boxes[index + 1]?.top ?? 0) - (boxes[index]?.bottom ?? 0),
+        })),
+      start: drawn.map((row) => ({ row, value: startOf(row) })),
     };
 
-    return Object.entries(measures).flatMap(([what, values]) => {
-      const shared = common(values);
+    return Object.entries(measures).flatMap(([what, rows]) => {
+      const shared = rows.length >= MIN_ROWS ? common(rows.map(({ value }) => value)) : null;
 
-      const odd = values.flatMap((value, index) =>
-        shared !== null && Math.abs(value - shared) > 1
-          ? [`${name(drawn[what === "gap" ? index + 1 : index] ?? parent)} at ${round(value)}`]
-          : [],
+      const odd = rows.flatMap(({ row, value }) =>
+        shared !== null && Math.abs(value - shared) > 1 ? [`${name(row)} at ${round(value)}`] : [],
       );
 
       return odd.length > 0
@@ -164,6 +218,31 @@ export function isDiscovery(finding: Finding) {
   return finding.check === "cut off" || finding.check.startsWith("X3");
 }
 
+const BLOCKED_SAVE = " (the walk blocked its save, so this is a failed save)";
+
+/**
+ * The walk blocks every write, so each tap that saves shows the same failed save: one lead for
+ * what that save moves, with the taps under it.
+ */
+function discoveryLead(finding: Finding): { detail: string; message: string } {
+  const value = finding.value === undefined ? "" : `${finding.value} ${finding.unit ?? ""}`.trim();
+
+  if (!finding.message.endsWith(BLOCKED_SAVE)) {
+    return { detail: value, message: finding.message };
+  }
+
+  const [tap = "", moved = ""] = finding.message
+    .slice(0, -BLOCKED_SAVE.length)
+    .split(/: (?<moved>.*)/u);
+
+  const changes = [...new Set(moved.replace(/ and \d+ more$/u, "").split("; "))];
+
+  return {
+    detail: tap,
+    message: `a failed save (the walk blocks every write) moves ${changes.join("; ")}`,
+  };
+}
+
 function discoveryOf(load: LoadReport): AlignmentFinding[] {
   const place = {
     configuration: configurationName(load.alignment.configuration),
@@ -176,9 +255,8 @@ function discoveryOf(load: LoadReport): AlignmentFinding[] {
       .filter((finding) => isDiscovery(finding))
       .map((finding) => ({
         ...place,
-        detail: finding.value === undefined ? "" : `${finding.value} ${finding.unit ?? ""}`.trim(),
+        ...discoveryLead(finding),
         level: "discovery" as const,
-        message: finding.message,
         piece: "page",
         rule: finding.check,
       })),

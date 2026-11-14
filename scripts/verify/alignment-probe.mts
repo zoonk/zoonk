@@ -20,8 +20,7 @@ export function readAlignment({
 }): AlignmentPage {
   const TENTH = 10;
   const LABEL_LENGTH = 32;
-  const HALF = 0.5;
-  const { paints, shown } = globalThis.zoonkPage;
+  const { shown } = globalThis.zoonkPage;
   const { scrollX, scrollY } = globalThis;
 
   const round = (value: number) => Math.round(value * TENTH) / TENTH;
@@ -59,69 +58,7 @@ export function readAlignment({
     return `<${element.tagName.toLowerCase()}${slot ? ` ${slot}` : ""}>`;
   }
 
-  function textRects(node: Node): DOMRect[] {
-    const range = document.createRange();
-    range.selectNodeContents(node);
-    return [...range.getClientRects()].filter((rect) => rect.width > 0 && rect.height > 0);
-  }
-
-  /** A Lucide glyph by its drawn shape (stroke included); any other picture by its frame. */
-  function glyphRect(svg: SVGSVGElement): Rect | null {
-    const matrix = svg.getScreenCTM();
-    const shape = svg.getBBox();
-
-    if (!matrix || shape.width === 0 || shape.height === 0) {
-      return null;
-    }
-
-    if (!svg.classList.contains("lucide")) {
-      return svg.getBoundingClientRect();
-    }
-
-    const style = getComputedStyle(svg);
-
-    const half =
-      style.stroke === "none" ? 0 : globalThis.zoonkPage.pixels(style.strokeWidth) * HALF;
-
-    const corners = [
-      new DOMPoint(shape.x - half, shape.y - half),
-      new DOMPoint(shape.x + shape.width + half, shape.y + shape.height + half),
-    ].map((point) => point.matrixTransform(matrix));
-
-    return union(
-      corners.map((point) => ({ bottom: point.y, left: point.x, right: point.x, top: point.y })),
-    );
-  }
-
-  /** What an element draws: its text, its glyphs and pictures, and the boxes it or its children paint. */
-  function inkOf(element: Element): Rect | null {
-    if (!shown(element)) {
-      return null;
-    }
-
-    if (element instanceof SVGSVGElement) {
-      return glyphRect(element);
-    }
-
-    if (element.matches("img, video, canvas, input, textarea, select")) {
-      return element.getBoundingClientRect();
-    }
-
-    const own = paints(element, ["top", "right", "bottom", "left"])
-      ? [element.getBoundingClientRect()]
-      : [];
-
-    const texts = [...element.childNodes]
-      .filter((node) => node.nodeType === Node.TEXT_NODE && node.textContent?.trim())
-      .flatMap((node) => textRects(node));
-
-    const children = [...element.children].flatMap((child) => {
-      const ink = inkOf(child);
-      return ink ? [ink] : [];
-    });
-
-    return union([...own, ...texts, ...children]);
-  }
+  const inkOf = globalThis.zoonkPage.ink;
 
   /** Room held by something that draws nothing, hidden things included (opacity 0, `invisible`). */
   function holdsRoom(element: Element) {
@@ -207,27 +144,24 @@ export function readAlignment({
   }
 
   /**
-   * The first line's baseline, read from a zero-size inline block put before the first letter: an
-   * inline block with no content sits on the baseline. It changes no line box, and is removed at once.
+   * The first line's baseline: the top of its first glyph run plus the font's ascent. It matched a
+   * zero-size inline-block marker to 0.00 px on Geist and Geist Mono, 12 to 24 px, one and two
+   * lines, and needs no change to the page, so a text that is a flex item reads right too.
    */
   function baselineOf(text: Text): number | null {
-    const marker = document.createElement("span");
+    const range = document.createRange();
+    range.selectNodeContents(text);
+    const first = [...range.getClientRects()].find((rect) => rect.width > 0);
+    const style = text.parentElement ? getComputedStyle(text.parentElement) : null;
 
-    marker.style.cssText =
-      "display:inline-block;width:0;height:0;margin:0;padding:0;border:0;vertical-align:baseline";
-
-    const offset = text.textContent?.search(/\S/u) ?? 0;
-    const after = offset > 0 ? text.splitText(offset) : text;
-    after.before(marker);
-    const { bottom } = marker.getBoundingClientRect();
-    marker.remove();
-
-    if (after !== text) {
-      text.appendData(after.data);
-      after.remove();
+    if (!first || !style || !pen) {
+      return null;
     }
 
-    return Number.isFinite(bottom) ? bottom : null;
+    pen.font = fontOf(style);
+    const metrics = pen.measureText(text.data.trim());
+    const content = metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent;
+    return first.top + (first.height - content) / 2 + metrics.fontBoundingBoxAscent;
   }
 
   function capHeight(style: CSSStyleDeclaration): number | null {
@@ -254,8 +188,18 @@ export function readAlignment({
 
     const rects = [...element.querySelectorAll("*"), element]
       .flatMap((node) => [...node.childNodes])
-      .filter((node) => node.nodeType === Node.TEXT_NODE && node.textContent?.trim())
-      .flatMap((node) => textRects(node));
+      .filter(
+        (node) =>
+          node.nodeType === Node.TEXT_NODE &&
+          node.textContent?.trim() &&
+          node.parentElement &&
+          shown(node.parentElement),
+      )
+      .flatMap((node) => {
+        const range = document.createRange();
+        range.selectNodeContents(node);
+        return [...range.getClientRects()].filter((rect) => rect.width > 0 && rect.height > 0);
+      });
 
     const top = Math.min(...rects.map((rect) => rect.top));
     const line = union(rects.filter((rect) => rect.top < top + rect.height / 2));

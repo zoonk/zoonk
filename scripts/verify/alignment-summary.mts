@@ -52,6 +52,26 @@ const LEVEL_TITLES: Record<Level, string> = {
 };
 
 /** Each fault once, its instances under it. */
+const LISTED = 3;
+
+/** One place's instances on one line: what each showed, the measured range, what holds the room. */
+function instanceText(items: AlignmentFinding[]) {
+  const details = [...new Set(items.map((item) => item.detail).filter(Boolean))];
+  const more = details.length > LISTED ? ` and ${details.length - LISTED} more` : "";
+  const measured = items.flatMap((item) => (item.measured === undefined ? [] : [item.measured]));
+  const low = Math.min(...measured);
+  const high = Math.max(...measured);
+
+  const range =
+    measured.length === 0
+      ? ""
+      : ` [${low === high ? low : `${low}–${high}`} ${items[0]?.unit ?? ""}]`;
+
+  const holder = items.find((item) => item.holder)?.holder;
+
+  return `${details.length > 0 ? `: ${details.slice(0, LISTED).join("; ")}${more}` : ""}${range.replace(/ \]$/u, "]")}${holder ? `; ${holder}` : ""}`;
+}
+
 export function alignmentLines(findings: AlignmentFinding[]): string[] {
   return (["fail", "discovery", "not-measured"] as const).flatMap((level) => {
     const faults = [
@@ -75,18 +95,14 @@ export function alignmentLines(findings: AlignmentFinding[]): string[] {
           return [];
         }
 
-        const unique = [
-          ...new Map(
-            instances.map((item) => [`${item.screen} ${item.configuration} ${item.detail}`, item]),
-          ).values(),
-        ];
+        const places = Map.groupBy(
+          instances,
+          (item) => `${item.scenario ?? item.screen} · ${item.configuration}`,
+        );
 
         return [
           `- **${first.rule}**: ${first.message}${first.exception ? ` (excepted: ${first.exception})` : ""}`,
-          ...unique.map(
-            (item) =>
-              `  - ${item.scenario ?? item.screen} · ${item.configuration}: ${item.detail}${item.measured === undefined ? "" : ` [${item.measured} ${item.unit ?? ""}]`.trimEnd()}${item.holder ? `; ${item.holder}` : ""}`,
-          ),
+          ...[...places].map(([place, here]) => `  - ${place}${instanceText(here)}`),
         ];
       }),
       "",
