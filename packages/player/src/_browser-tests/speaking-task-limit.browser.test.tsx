@@ -16,7 +16,7 @@ const ADAPTERS: React.ComponentProps<typeof LearnProvider>["adapters"] = {
   routes: { buddy: "/buddy", journey: "/plan", signUp: "/login", today: "/", upgrade: "/plus" },
 };
 
-const TASK = {
+const TASK: Omit<SpeakingPaperView["tasks"][number], "key" | "name"> = {
   criteria: [{ key: "fluency", name: "Fluidez" }],
   lastTry: null,
   minutes: { max: 7, min: 6 },
@@ -26,7 +26,7 @@ const TASK = {
   prepShared: null,
   role: "examiner",
   stimulus: "topic",
-} as const;
+};
 
 const PAPER: SpeakingPaperView = {
   access: "open",
