@@ -59,25 +59,20 @@ export async function mergeLearningProfile({
   takeGuestAddressForm?: boolean;
   takeGuestSupport?: boolean;
 }) {
-  // The session hook saves the sign-in's country before Better Auth links the guest. A row made
-  // since this session began that holds nothing but a country is that guess, so the guest's row
-  // replaces it and keeps the guess only when it has no country. A one-time token reuses an older
-  // session, so a row the learner filled in since then stays. A new setting joins this check.
+  // The session hook saves the sign-in's country before Better Auth links the guest, in a row
+  // stamped with the session's start on both timestamps. A row still carrying that stamp holds
+  // only that guess, so the guest's row replaces it and keeps the guess only when it has no
+  // country. Any later write moves `updated_at`, so a row the learner changed stays, even under a
+  // one-time token, which reuses an older session.
   const [sessionRow] = await transaction.$queryRaw<{ home_country: string | null }[]>`
-    DELETE FROM user_learning_profiles
-    WHERE user_id = ${userId}::uuid
-      AND created_at >= (SELECT created_at FROM sessions WHERE id = ${sessionId ?? null}::uuid)
-      AND cardinality(learning_needs) = 0
-      AND address_form IS NULL
-      AND buddy_kind IS NULL
-      AND buddy_name IS NULL
-      AND buddy_glasses = 'round'
-      AND active_goal_id IS NULL
-      AND memory_enabled
-      AND sounds_enabled
-      AND share_usage_data IS NULL
+    DELETE FROM user_learning_profiles AS profile
+    USING sessions AS session
+    WHERE profile.user_id = ${userId}::uuid
+      AND session.id = ${sessionId ?? null}::uuid
+      AND profile.created_at = session.created_at
+      AND profile.updated_at = session.created_at
       AND EXISTS (SELECT 1 FROM user_learning_profiles WHERE user_id = ${guestUserId}::uuid)
-    RETURNING home_country
+    RETURNING profile.home_country
   `;
 
   await transaction.$executeRaw`
