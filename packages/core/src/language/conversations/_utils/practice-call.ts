@@ -1,10 +1,8 @@
 import "server-only";
 import { isLiveCallAvailable } from "@zoonk/ai/tasks/language/live-call-session";
-import { prisma } from "@zoonk/db";
 import { type CefrLevel } from "@zoonk/utils/cefr";
-import { readEntitlementViewer } from "../../../entitlements/_utils/entitlement-viewer";
 import { getCallTimeLeft } from "../../../entitlements/_utils/evaluate-usage";
-import { sumCallSeconds } from "../../../entitlements/_utils/usage-counts";
+import { getAllowance } from "../../../entitlements/get-allowance";
 import { type PracticeCallLengths, toPracticeCallLengths } from "./call-lengths";
 import { findUnitScenario } from "./conversation-scenario";
 
@@ -14,23 +12,33 @@ async function findCharacter(where: { chapterId: string; level: CefrLevel }) {
 }
 
 async function loadCallLengths(): Promise<PracticeCallLengths & { paused: boolean }> {
-  const viewer = await readEntitlementViewer();
-  const tier = viewer?.tier ?? "guest";
+  const allowance = await getAllowance();
+  const tier = allowance?.tier ?? "guest";
 
-  if (!viewer || tier === "guest") {
+  if (!allowance || tier === "guest") {
     return { ...toPracticeCallLengths({ left: null, tier }), paused: false };
   }
 
-  const used = await sumCallSeconds({ client: prisma, now: new Date(), userId: viewer.userId });
+  const item = allowance.items.find((entry) => entry.kind === "conversation");
 
-  const left = getCallTimeLeft({
-    kind: "conversation",
-    tier,
-    usedThisMonth: used.thisMonth,
-    usedToday: used.today,
-  });
+  if (!item) {
+    throw new Error("Conversation allowance missing");
+  }
 
-  return { ...toPracticeCallLengths({ left, tier }), paused: !isLiveCallAvailable() };
+  const left =
+    item.availableAt && item.remaining === 0
+      ? { limit: item.rollingLimit ?? 0, period: "rolling30Days" as const, seconds: 0 }
+      : getCallTimeLeft({
+          kind: "conversation",
+          tier,
+          usedLast30Days: item.usedLast30Days,
+          usedToday: item.usedToday,
+        });
+
+  return {
+    ...toPracticeCallLengths({ availableAt: item.availableAt, left, tier }),
+    paused: !isLiveCallAvailable(),
+  };
 }
 
 export async function loadPracticeCall({

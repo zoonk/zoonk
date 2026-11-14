@@ -14,7 +14,7 @@ type RefusedConversation =
 
 const CALL_LIMIT_MESSAGES = {
   day: "No more call time on your plan today",
-  month: "No more call time on your plan this month",
+  rolling30Days: "No more call time on your plan this month",
   total: "Calls need a free account",
 } as const;
 
@@ -41,7 +41,11 @@ export function conversationRefusalError(
   }
 
   if ("limit" in result) {
-    if (result.limit.period === "rolling30Days") {
+    if (
+      result.limit.period === "rolling30Days" &&
+      result.limit.resource !== "callSeconds" &&
+      result.limit.resource !== "aiSpend"
+    ) {
       return usageDecisionError({ limit: result.limit, status: "limitReached" });
     }
 

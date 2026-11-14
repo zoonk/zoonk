@@ -556,7 +556,13 @@ describe("live calls", () => {
     await runWholeCall(conversation.id);
 
     await expect(reserve(conversation.id)).resolves.toStrictEqual({
-      limit: { limit: budget, period: "month", resource: "aiSpend", tier: "plus" },
+      limit: {
+        availableAt: new Date("2031-02-01T12:00:00Z"),
+        limit: budget,
+        period: "rolling30Days",
+        resource: "aiSpend",
+        tier: "plus",
+      },
       status: "limitReached",
     });
 
@@ -595,7 +601,13 @@ describe("live calls", () => {
     advance(DAY_SECONDS);
 
     await expect(reserve(conversation.id)).resolves.toStrictEqual({
-      limit: { limit: 5 * 60, period: "month", resource: "callSeconds", tier: "free" },
+      limit: {
+        availableAt: new Date("2031-02-02T12:02:45Z"),
+        limit: 5 * 60,
+        period: "rolling30Days",
+        resource: "callSeconds",
+        tier: "free",
+      },
       status: "limitReached",
     });
 
