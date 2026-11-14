@@ -56,6 +56,7 @@ export function Suggestion({
   focusOnMount = false,
   label,
   mark,
+  onClose,
   onOpen,
   ...props
 }: Omit<React.ComponentProps<"section">, "aria-label" | "ref"> & {
@@ -67,6 +68,8 @@ export function Suggestion({
   focusOnMount?: boolean;
   label: string;
   mark?: React.ReactNode;
+  /** The learner closed the sheet: work it was waiting on is no longer wanted. */
+  onClose?: () => void;
   /** The learner's tap on "View" opened the sheet: work the tap asked for can start. */
   onOpen?: () => void;
 }) {
@@ -90,10 +93,7 @@ export function Suggestion({
       <Drawer
         onOpenChange={(next) => {
           setOpen(next);
-
-          if (next) {
-            onOpen?.();
-          }
+          (next ? onOpen : onClose)?.();
         }}
         open={open}
       >
