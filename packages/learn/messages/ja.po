@@ -6317,6 +6317,11 @@ msgid "I didn't understand the audio"
 msgstr "音声の内容がわからない"
 
 #: src/language/level-test/level-test-questions.tsx
+msgctxt "chcgvC"
+msgid "We couldn't check that. Try again."
+msgstr "判定できませんでした。もう一度試してください。"
+
+#: src/language/level-test/level-test-questions.tsx
 msgctxt "TIG4Hb"
 msgid "Skip this part"
 msgstr "このパートをスキップ"
@@ -6325,11 +6330,6 @@ msgstr "このパートをスキップ"
 msgctxt "9Da2rt"
 msgid "Say it out loud"
 msgstr "声に出して言う"
-
-#: src/language/level-test/level-test-questions.tsx
-msgctxt "chcgvC"
-msgid "We couldn't check that. Try again."
-msgstr "判定できませんでした。もう一度試してください。"
 
 #: src/language/level-test/level-test-screens.tsx
 msgctxt "H4wCrn"

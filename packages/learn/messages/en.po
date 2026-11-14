@@ -6317,6 +6317,11 @@ msgid "I didn't understand the audio"
 msgstr "I didn't understand the audio"
 
 #: src/language/level-test/level-test-questions.tsx
+msgctxt "chcgvC"
+msgid "We couldn't check that. Try again."
+msgstr "We couldn't check that. Try again."
+
+#: src/language/level-test/level-test-questions.tsx
 msgctxt "TIG4Hb"
 msgid "Skip this part"
 msgstr "Skip this part"
@@ -6325,11 +6330,6 @@ msgstr "Skip this part"
 msgctxt "9Da2rt"
 msgid "Say it out loud"
 msgstr "Say it out loud"
-
-#: src/language/level-test/level-test-questions.tsx
-msgctxt "chcgvC"
-msgid "We couldn't check that. Try again."
-msgstr "We couldn't check that. Try again."
 
 #: src/language/level-test/level-test-screens.tsx
 msgctxt "H4wCrn"

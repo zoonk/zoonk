@@ -6317,6 +6317,11 @@ msgid "I didn't understand the audio"
 msgstr "무슨 말인지 못 알아들었어요"
 
 #: src/language/level-test/level-test-questions.tsx
+msgctxt "chcgvC"
+msgid "We couldn't check that. Try again."
+msgstr "답변을 확인하지 못했어요. 다시 시도해 보세요."
+
+#: src/language/level-test/level-test-questions.tsx
 msgctxt "TIG4Hb"
 msgid "Skip this part"
 msgstr "이 부분 건너뛰기"
@@ -6325,11 +6330,6 @@ msgstr "이 부분 건너뛰기"
 msgctxt "9Da2rt"
 msgid "Say it out loud"
 msgstr "소리 내어 말해 보세요"
-
-#: src/language/level-test/level-test-questions.tsx
-msgctxt "chcgvC"
-msgid "We couldn't check that. Try again."
-msgstr "답변을 확인하지 못했어요. 다시 시도해 보세요."
 
 #: src/language/level-test/level-test-screens.tsx
 msgctxt "H4wCrn"
