@@ -146,7 +146,7 @@ function useOfferCopy(adapt: MockAdaptView | null) {
 
     return {
       accept: t("Change my plan"),
-      decline: t("Keep my plan"),
+      decline: t("Not now"),
       line: t(
         "You got {correct, plural, =0 {# of {total} right} one {# of {total} right} other {# of {total} right}} there.",
         {

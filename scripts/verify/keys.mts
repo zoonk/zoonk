@@ -58,6 +58,7 @@ export async function readShortcuts(checkout: string): Promise<Shortcuts | null>
 }
 
 type Keycap = {
+  wasChecked: boolean;
   id: string;
   announced: string | null;
   expected: string;
@@ -115,7 +116,7 @@ function enterFindings({ bound, pressed, unbuilt }: KeyFacts["enter"]): Finding[
 
 function keycapFindings(keycap: Keycap): Finding[] {
   return [
-    ...(keycap.pressed?.id === keycap.id
+    ...(keycap.pressed?.id === keycap.id || (keycap.wasChecked && !keycap.pressed)
       ? []
       : [
           behavior(
@@ -309,13 +310,25 @@ export async function pressKeys(page: Page, url: string, shortcuts: Shortcuts): 
       ["sidebar", "search"].includes(keycap.name) || (keycap.name === "pick" && !digit);
 
     if (!skipped) {
+      const wasChecked = await page.evaluate(
+        (id) =>
+          document
+            .querySelector(`[data-zoonk-key="${id}"]`)
+            ?.matches(":checked, [aria-checked=true]") ?? false,
+        keycap.id,
+      );
+
       keycaps.push({
         announced: keycap.announced,
         expected: digit ? keycap.keycap : shortcuts.shortcutKeys(keycap.name),
         id: keycap.id,
         label: keycap.control,
         name: keycap.name,
-        pressed: await press(page, digit ? keycap.keycap : keyOf(shortcuts, keycap.name)),
+        pressed:
+          keycap.name === "main"
+            ? enter
+            : await press(page, digit ? keycap.keycap : keyOf(shortcuts, keycap.name)),
+        wasChecked,
       });
 
       await back();

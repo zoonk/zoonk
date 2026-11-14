@@ -110,7 +110,9 @@ export function readWords(pageTop: PageTopClasses | null): PageText {
 
   // oxlint-disable-next-line unicorn/consistent-function-scoping -- The probe is sent as one function.
   function pinned(element: Element) {
-    if (element.getBoundingClientRect().bottom <= innerHeight / 2) {
+    const box = element.getBoundingClientRect();
+
+    if (box.top < 0 || box.bottom > innerHeight || box.bottom <= innerHeight / 2) {
       return false;
     }
 
@@ -123,19 +125,31 @@ export function readWords(pageTop: PageTopClasses | null): PageText {
     return false;
   }
 
-  const between = action
-    ? all
-        .slice(start + 1, all.indexOf(action))
-        .filter(
-          (element) =>
-            !title?.contains(element) &&
-            !element.contains(action) &&
-            [...element.childNodes].some(
-              (node) => node.nodeType === Node.TEXT_NODE && node.textContent?.trim(),
-            ) &&
-            shown(element),
-        )
-    : [];
+  function beforeAction(button: HTMLElement | null) {
+    if (!button) {
+      return [];
+    }
+
+    const bar = button.closest("[data-slot=bottom-bar]");
+
+    if (bar && pinned(bar) && pinned(button)) {
+      return [];
+    }
+
+    return all
+      .slice(start + 1, all.indexOf(button))
+      .filter(
+        (element) =>
+          !title?.contains(element) &&
+          !element.contains(button) &&
+          [...element.childNodes].some(
+            (node) => node.nodeType === Node.TEXT_NODE && node.textContent?.trim(),
+          ) &&
+          shown(element),
+      );
+  }
+
+  const between = beforeAction(action);
 
   const [only] = filled;
 

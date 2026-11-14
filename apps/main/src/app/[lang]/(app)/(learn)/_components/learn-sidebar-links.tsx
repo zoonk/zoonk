@@ -3,12 +3,10 @@
 import { Link, usePathname } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
 import { useContentFeedback } from "@zoonk/learn/feedback";
-import { Button } from "@zoonk/ui/components/button";
 import { SIDEBAR_COUNT_CLASS, SIDEBAR_ITEM_CLASS } from "@zoonk/ui/components/sidebar";
-import { SidebarSearch, SidebarTooltip } from "@zoonk/ui/components/sidebar-toggle";
+import { BarSearch, SidebarSearch, SidebarTooltip } from "@zoonk/ui/components/sidebar-toggle";
 import { openCommandPalette } from "@zoonk/ui/lib/command-palette-event";
-import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
-import { MessageSquareIcon, SearchIcon } from "lucide-react";
+import { MessageSquareIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { Suspense } from "react";
 
@@ -22,18 +20,12 @@ export function LearnBarSearch({ edge }: { edge?: "start" }) {
   const t = useExtracted();
 
   return (
-    <Button
-      aria-haspopup="dialog"
-      aria-keyshortcuts={shortcutKeys("search")}
+    <BarSearch
       className="text-muted-foreground"
       edge={edge}
+      label={t("Search")}
       onClick={openCommandPalette}
-      size="icon-bar"
-      variant="ghost"
-    >
-      <SearchIcon aria-hidden="true" />
-      <span className="sr-only">{t("Search")}</span>
-    </Button>
+    />
   );
 }
 
