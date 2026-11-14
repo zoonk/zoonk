@@ -20,17 +20,14 @@
   "mindmaps_download": "8003a638b0f9cb44385860d5e2055aeb317dc7a73e065b2aa3d27442966344df",
   "mindmaps_drawing": "7a5616033bfb58b5e5f02ee1310af3324a6f4252af7113db3c2781e18e18d413",
   "mindmaps_drawing_wait": "dd366881b9acce90fcd751a668c0511a0590803fd7e329d59aacf936dc201757",
-  "mindmaps_empty_description": "ea08e58f539d49f84a24b1715ca4ec6f37b172f86b3217a315233c747945e399",
-  "mindmaps_empty_title": "cbd781319305a4df8cee4e927c8a0714a28b7a818d56ef21acc0483710e53b27",
+  "mindmaps_empty": "b363968d1fcd4abec0e718be94019adb4f7ae46a4122a3df4d04ea69a45bc344",
   "mindmaps_failed": "f9570911237951d827e0cd58be6371e7e199900fc9d586d7bd2c786f6e720db2",
   "mindmaps_fit": "20f43e8039030a5a9c08cddfae7c42d8f29f3604e59e741316566d2adcd65ed8",
   "mindmaps_free_lessons_note": "b0ec2369d7655fa21922f1b09fd43f54f1d466816e62fab324702a5d9c74c90a",
   "mindmaps_in_short": "8d9c4f61193c1c25bf8f82bac35003901cddf5d942343612d24f510d85755f32",
-  "mindmaps_keep_studying": "d91203e9d030c242b72144dbbd6200ca0b3f7d137fa61f0978b96fa6b2468db7",
   "mindmaps_lesson_map": "c13a6a29a77eb55877381cf70c61c10b5b4f8efcdaa65d37259ddac9e4d0ce73",
   "mindmaps_lesson_maps": "7277f731cff97d211da5b83e58d2ab50ce3764044b10357b0dca79c0c2c87fef",
-  "mindmaps_lessons_empty_description": "61a774b88d4653f6bc99076610d4768daa43bfc7574195700bfd2e26be7d835d",
-  "mindmaps_lessons_empty_title": "7e75d60fe96eddcd4ec50f8da13d7198534e9a11c0db38c3dde0ddd578ae49a0",
+  "mindmaps_lessons_empty": "ba9bec79b31343f0d615af23d8ffd1363bb16c963538d73f31975d018a3303e2",
   "mindmaps_lessons_first_free": "5c423f9cd4e5a2114783dc12a5f8cb2ca34f2db21688691488c4068798389d41",
   "mindmaps_lessons_to_write": "afb05314183edc6c19979d0fc218bc64ae20cef4676fd5a14301485a15f07e37",
   "mindmaps_map_gone": "086701da254189b64d02c81f042dbf9e32a1a5eb01b653cba35a98fba8d3ded7",
@@ -53,8 +50,7 @@
   "mindmaps_save_failed": "7e051e146c9b56b2bc363a8b100902d79c1e88e95f639560505102ba31bf9ce0",
   "mindmaps_save_map_failed": "8ba1a2b618ab12c5c2b0134657db2f3fe73e565b2bf0a19a76ea64c4806506f3",
   "mindmaps_saved": "380b0a16b6650c9c58968248af84dc05c929c52a1fcb605b67b8a113450b3d0b",
-  "mindmaps_saved_empty_description": "eae345ac6a6da6b748abb44b28bf7a8d580f0f7ee924abf2c087a1f25a670cad",
-  "mindmaps_saved_empty_title": "92751522779016ebd2671159a5e96eac95dd6a37af9c3c5df8a06e0d7ee52d8b",
+  "mindmaps_saved_empty": "01ab0b32a493c914c7c5bd48a162a47ecca1667801291537f82342179e0f7a67",
   "mindmaps_saved_state": "be6fc66d881a398211a2f2c0ca5ecd7497662e98c7b28ed0889c7e28df628670",
   "mindmaps_show_all": "422ac56c45fa3e82c9b52206e579d85d7029e9bd0cbb3b8352fd21e890806570",
   "mindmaps_shown_as_text": "1081d6bdc78761e0d65f227dfc59c7e335719b0c60e5d3fddff4a9bfe339ce8f",
@@ -84,9 +80,7 @@
     </plurals>
     <!-- A mind map row's line under the chapter's title. -->
     <string name="mindmaps_chapter_number">Capítulo %1$s</string>
-    <string name="mindmaps_empty_title">Ainda não há mapas de capítulos</string>
-    <string name="mindmaps_empty_description">Cada capítulo que você conclui ganha um mapa.</string>
-    <string name="mindmaps_keep_studying">Continuar estudando</string>
+    <string name="mindmaps_empty">Ainda não há mapas de capítulos. Cada capítulo que você conclui ganha um.</string>
     <!-- A mind map's description for screen readers when it has no words yet. -->
     <string name="mindmaps_alt_chapter">Mapa mental de %1$s</string>
     <!-- A mind map's description for screen readers: its title, then its central idea. -->
@@ -174,10 +168,8 @@
     <string name="mindmaps_lesson_map">Mapa de aula</string>
     <!-- Shows every row of a long list. %1$s is how many there are. -->
     <string name="mindmaps_show_all">Mostrar todos os %1$s</string>
-    <string name="mindmaps_lessons_empty_title">Ainda não há mapas de aulas</string>
-    <string name="mindmaps_lessons_empty_description">Toda aula termina com um mapa.</string>
-    <string name="mindmaps_saved_empty_title">Você ainda não salvou nada</string>
-    <string name="mindmaps_saved_empty_description">Toque no ícone de salvar em um mapa para guardar ele aqui.</string>
+    <string name="mindmaps_lessons_empty">Ainda não há mapas de aulas. Cada aula termina com um.</string>
+    <string name="mindmaps_saved_empty">Você ainda não salvou nada. Toque no ícone de salvar em um mapa para guardar ele aqui.</string>
     <!-- Over saved maps that can't open anymore, such as a chapter that left the plan. -->
     <string name="mindmaps_no_longer_available">Não está mais disponível</string>
     <!-- Removes a saved map that can't open anymore. -->

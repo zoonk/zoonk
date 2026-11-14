@@ -20,17 +20,14 @@
   "mindmaps_download": "e8e0d7f6649667b998778a6a9ac3710bcf1c26f5820c45fc69e2e2fbb960423c",
   "mindmaps_drawing": "8c76ae4616373409152d728053ff497d8d0bca6ccd812a880f311f05859beffc",
   "mindmaps_drawing_wait": "55c8c99814b0030400835ceed51c7f4d483147b3e1fa462a57ea0f975a7d4c66",
-  "mindmaps_empty_description": "4e8e17d1c169dbdb0fd1e81bb280e693b7eec8f4834f856192e8d4300b76b770",
-  "mindmaps_empty_title": "e80079062de59c1c83d55735d07e04d361f9cca0a655d836ddbc29c92fc1015b",
+  "mindmaps_empty": "090719d32939ed5dd3a358bae80361ad004d21832f9ff2728eb5cc1a5eb03997",
   "mindmaps_failed": "94875ba14adb7ae81978bbb1469601d0340c3348f6aec29c68213ae6a9859cfe",
   "mindmaps_fit": "25bb327d7426d900d38a8f3e341ea10e2843f67ceab5143fe12313a9419eaf7b",
   "mindmaps_free_lessons_note": "6f8cc897b53b8ba1e24a8f5c85b607b44d468fae139344773ed782a71b9c1aef",
   "mindmaps_in_short": "f0d66cba29693fc07d5eaa4b72204893e7db8d2905cdbdf1e417ef90a15f3ad7",
-  "mindmaps_keep_studying": "fbef05effc8eda9e1183c733635447826cef97c8230d082ca501299363761216",
   "mindmaps_lesson_map": "f56b79f9b7da17b37772870b15fff5673baf2c4d93af86e6407c145fd294cabf",
   "mindmaps_lesson_maps": "349539b758b43accc1d45bac8ff1840eb8b7a0e23ac0a17fc1558763e47ed411",
-  "mindmaps_lessons_empty_description": "fbc4dfbc6fd1bc3a7861ad9231daad1ea8883efe9a38a8616e40cd0f50b1e279",
-  "mindmaps_lessons_empty_title": "86897c63a43776c4e551c5fa27e1e4f267ea2c3bb5109666f66a5c900566d4a8",
+  "mindmaps_lessons_empty": "fa5254cc0822ec5b5592a61ce3beb7f737e0c961ab7308d8baec1dbb0ea1777c",
   "mindmaps_lessons_first_free": "96768a9e8994e39fc18f80190029a833e8230c41f4c12553241cd1692e2cc36a",
   "mindmaps_lessons_to_write": "4097cf88f14a524efe3bae340e62a54702752cc0d9c000ab9856a7b9d310e4f4",
   "mindmaps_map_gone": "65d68242aa2ed68e3e09dfd31fe25fbe1ff948ac58dea67967ceceb43b8e539b",
@@ -53,8 +50,7 @@
   "mindmaps_save_failed": "8a884e1f8793d596248094d48824eb635f74793dcee74f2f5d3fdef58c6d343c",
   "mindmaps_save_map_failed": "54a11c51b46f6846fddbfd6162ab9689a0d5b58f82fcbaa0c6643939ccc35f89",
   "mindmaps_saved": "94bb487abd006eede8dd8525985e40e6dbbc107fff9cd735212b9518a87a839b",
-  "mindmaps_saved_empty_description": "9c9b716724df4dbe4f9eb3cc567e5c929229b72634c6fd9547a647fab4fd4d40",
-  "mindmaps_saved_empty_title": "b6e3f6c0671488ef3561008a15b6ab5b3845088f19e5cadeae241e0bf990a473",
+  "mindmaps_saved_empty": "5c518de1a85b820c71915825f72515cc4f9b1535d45b4d1ca058fcd1be117213",
   "mindmaps_saved_state": "14114ba00a4ed1dd4df7b36bc471030e326a777a615e171ef6c7907c235e45c1",
   "mindmaps_show_all": "e416d1939f873aae278a4c29cec042b3c7253429bca533b126069e0827cf2785",
   "mindmaps_shown_as_text": "edea9c39aba2bbfa8ef64c28f8289ee80fb020813b78181f0986c8cb1e327792",
@@ -82,9 +78,7 @@
     </plurals>
     <!-- A mind map row's line under the chapter's title. -->
     <string name="mindmaps_chapter_number">第%1$s章</string>
-    <string name="mindmaps_empty_title">章のマインドマップはまだありません</string>
-    <string name="mindmaps_empty_description">章を終えるたびにマインドマップが作成されます。</string>
-    <string name="mindmaps_keep_studying">学習を続ける</string>
+    <string name="mindmaps_empty">章のマップはまだありません。章を終えるたびに作成されます。</string>
     <!-- A mind map's description for screen readers when it has no words yet. -->
     <string name="mindmaps_alt_chapter">%1$sのマインドマップ</string>
     <!-- A mind map's description for screen readers: its title, then its central idea. -->
@@ -164,10 +158,8 @@
     <string name="mindmaps_lesson_map">レッスンのマップ</string>
     <!-- Shows every row of a long list. %1$s is how many there are. -->
     <string name="mindmaps_show_all">全%1$s件を表示する</string>
-    <string name="mindmaps_lessons_empty_title">レッスンのマップはまだありません</string>
-    <string name="mindmaps_lessons_empty_description">各レッスンの最後にマインドマップが表示されます。</string>
-    <string name="mindmaps_saved_empty_title">保存したマップはまだありません</string>
-    <string name="mindmaps_saved_empty_description">マップのブックマークをタップすると、ここに保存できます。</string>
+    <string name="mindmaps_lessons_empty">レッスンのマインドマップはまだありません。各レッスンの最後に表示されます。</string>
+    <string name="mindmaps_saved_empty">保存したマップはまだありません。マップのブックマークをタップすると、ここに保存できます。</string>
     <!-- Over saved maps that can't open anymore, such as a chapter that left the plan. -->
     <string name="mindmaps_no_longer_available">利用できなくなりました</string>
     <!-- Removes a saved map that can't open anymore. -->

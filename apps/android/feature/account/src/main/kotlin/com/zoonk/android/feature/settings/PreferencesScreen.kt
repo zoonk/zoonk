@@ -8,10 +8,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
@@ -169,10 +167,7 @@ fun PreferencesScreen(
         ) {
             Column(
                 modifier =
-                    Modifier
-                        .widthIn(max = 640.dp)
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp),
+                    Modifier.settingsColumn(),
                 verticalArrangement = Arrangement.spacedBy(28.dp),
             ) {
                 PageTitleRow(stringResource(R.string.settings_preferences), Modifier.padding(horizontal = LIST_ITEM_INSET))

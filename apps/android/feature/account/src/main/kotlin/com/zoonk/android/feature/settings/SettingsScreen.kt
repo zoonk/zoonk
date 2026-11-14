@@ -5,9 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -85,10 +83,7 @@ fun SettingsScreen(
         ) {
             Column(
                 modifier =
-                    Modifier
-                        .widthIn(max = 640.dp)
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp),
+                    Modifier.settingsColumn(),
                 verticalArrangement = Arrangement.spacedBy(24.dp),
             ) {
                 PageTitleRow(stringResource(R.string.account_menu_settings), Modifier.padding(horizontal = LIST_ITEM_INSET))
