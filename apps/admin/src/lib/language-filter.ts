@@ -12,7 +12,10 @@ export function languageName(code: string | null | undefined): string {
   return code ? (languageNames.of(code) ?? code) : "";
 }
 
-/** What a course teaches and in which language: "Portuguese, taught in English", or "English". */
+/**
+ * What a course teaches and in which language: "Portuguese, taught in English", or "English" when
+ * it's taught in the language it teaches.
+ */
 export function languagePairName({
   language,
   targetLanguage,
@@ -20,7 +23,7 @@ export function languagePairName({
   language: string | null | undefined;
   targetLanguage?: string | null;
 }): string {
-  return targetLanguage
+  return targetLanguage && targetLanguage !== language
     ? `${languageName(targetLanguage)}, taught in ${languageName(language)}`
     : languageName(language);
 }

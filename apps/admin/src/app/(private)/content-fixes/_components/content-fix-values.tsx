@@ -27,14 +27,6 @@ function isTextOrMissing(value: unknown): boolean {
   return value === undefined || typeof value === "string";
 }
 
-function NamedId({ id, name }: { id: string; name: string }) {
-  return (
-    <>
-      {name} <span className="text-muted-foreground font-mono text-xs">{id}</span>
-    </>
-  );
-}
-
 /** One side of a changed value, with the words only this side has marked. */
 function ValueSide({
   after,
@@ -68,9 +60,7 @@ function ValueSide({
       >
         {value === undefined && <span className="text-muted-foreground">None</span>}
         {name && typeof value === "string" ? (
-          <mark className={cn("text-foreground", mark)}>
-            <NamedId id={value} name={name} />
-          </mark>
+          <mark className={cn("text-foreground", mark)}>{name}</mark>
         ) : (
           parts.map((part, index) =>
             part[own] ? (

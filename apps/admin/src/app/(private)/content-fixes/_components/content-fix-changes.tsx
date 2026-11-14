@@ -1,5 +1,6 @@
 import { AdminJson } from "@/components/admin-json";
 import { type ContentFixDetail, rowKeyOf } from "@/data/content-fixes/get-content-fix";
+import { LINK_CLASS } from "@/lib/link-class";
 import { type StoredChange } from "@zoonk/core/staff/content-fixes/contract";
 import Link from "next/link";
 import { connection } from "next/server";
@@ -44,7 +45,7 @@ const MODEL_LABELS: Record<StoredChange["model"], string> = {
 
 function PictureLink({ mediaAssetId }: { mediaAssetId: string }) {
   return (
-    <Link className="hit-area relative underline" href={`/media/${mediaAssetId}`}>
+    <Link className={LINK_CLASS} href={`/media/${mediaAssetId}`}>
       See the picture
     </Link>
   );
@@ -129,8 +130,7 @@ function OperationChange({
       return (
         <>
           <p className="text-sm">
-            Retires this question and asks a corrected copy,{" "}
-            <span className="font-mono text-xs">{change.replacementId}</span>, with these changes.
+            Retires this question and asks a corrected copy with these changes.
           </p>
           {fieldChanges(change.fields)}
         </>
@@ -138,8 +138,7 @@ function OperationChange({
     case "restore":
       return (
         <p className="text-sm">
-          Puts this question back in new practice and retires its replacement,{" "}
-          <span className="font-mono text-xs">{change.retires}</span>.
+          Puts this question back in new practice and retires the corrected copy that replaced it.
         </p>
       );
     case "retire":
