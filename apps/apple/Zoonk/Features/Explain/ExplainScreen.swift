@@ -15,17 +15,24 @@ struct ExplainScreen: View {
           ExplanationView(explanation: explanation) {
             await resource.refresh()
           }
+        case .failed(.notFound):
+          NotFoundView()
         case .failed:
           ContentUnavailableView {
-            Text(
-              "We couldn't load this explanation", tableName: "Explain",
-              comment: "A quick explanation failed to load")
+            Label {
+              Text(
+                "We couldn't load this explanation", tableName: "Explain",
+                comment: "A quick explanation failed to load")
+            } icon: {
+              Image(systemName: "wifi.exclamationmark")
+            }
           } actions: {
             Button {
               Task { await resource.refresh() }
             } label: {
               Text("Try again", tableName: "Explain", comment: "Loads the explanation again")
             }
+            .buttonStyle(.outline)
           }
           .lonePage()
         case .idle, .loading, .empty:
