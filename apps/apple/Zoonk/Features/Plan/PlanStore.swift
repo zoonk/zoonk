@@ -45,6 +45,8 @@ final class PlanStore {
     let goalId: String
   }
 
+  @ObservationIgnored private let saves: LearnerSaves
+
   init(
     api: any PlanAPIClient, cache: AppCache, calendar: Calendar = .current,
     now: @escaping @MainActor () -> Date = { .now }
@@ -53,6 +55,7 @@ final class PlanStore {
     self.cache = cache
     self.calendar = calendar
     self.now = now
+    saves = LearnerSaves(cache: cache)
   }
 
   func plan(goalId: String) -> Resource<PlanRead> {
@@ -144,10 +147,12 @@ final class PlanStore {
   func setStatus(_ status: GoalStatusChange, goalId: String) async
     -> MutationResult<GoalStatusOutcome>
   {
-    await write { api, token in
-      try await api.setStatus(token: token, goalId: goalId, status: status)
-    } changed: {
-      $0 == .saved
+    await saves.save {
+      await self.write { api, token in
+        try await api.setStatus(token: token, goalId: goalId, status: status)
+      } changed: {
+        $0 == .saved
+      }
     }
   }
 
@@ -217,13 +222,27 @@ final class PlanStore {
     }
   }
 
+  /// A change the learner made saves even when its screen closes first (`LearnerSaves`).
   func change(
-    _ request: (any PlanAPIClient, String) async throws -> PlanChangeOutcome
+    _ request: @escaping (any PlanAPIClient, String) async throws -> PlanChangeOutcome
   ) async -> MutationResult<PlanChangeOutcome> {
-    await write(request) { outcome in
-      switch outcome {
-      case .applied, .saved, .undone: true
-      case .invalid, .unchanged: false
+    await saves.save {
+      await self.write(request) { outcome in
+        switch outcome {
+        case .applied, .saved, .undone: true
+        case .invalid, .unchanged: false
+        }
+      }
+    }
+  }
+
+  func undo(goalId: String, changeId: String) async -> MutationResult<TodayView.PlanChange?> {
+    await saves.save {
+      await self.write { api, token in
+        try await api.decide(
+          token: token, goalId: goalId, changeId: changeId, decision: .undone, quote: nil)
+      } changed: {
+        $0 != nil
       }
     }
   }

@@ -494,7 +494,7 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertNil(lesson, "another learner may be signed in by now")
   }
 
-  func testACanceledStopLeavesWhatTheLearnerPlaysNext() async {
+  func testAStopWhoseScreenClosedStillStopsAndLeavesWhatTheLearnerPlaysNext() async {
     let api = StudyAPIStub(holdsStop: true)
     let cache = signedInCache()
     let store = StudySessionStore(api: api, cache: cache, today: TodayStore(api: api, cache: cache))
@@ -509,8 +509,10 @@ final class TodayStoreTests: XCTestCase {
 
     XCTAssertEqual(playback.playingBlockID, "b2")
     XCTAssertNil(playback.stoppedSessionID)
+    let stopped = await api.stoppedSessions
+    XCTAssertEqual(stopped, ["s1"], "the learner stopped on purpose")
     guard case .obsolete = result else {
-      return XCTFail("a canceled stop publishes nothing")
+      return XCTFail("a closed screen's stop publishes nothing")
     }
   }
 
@@ -1021,6 +1023,7 @@ private actor StudyAPIStub: StudyAPIClient {
   private var heldReadiness: CheckedContinuation<Void, Never>?
   private var readinessWaiter: CheckedContinuation<Void, Never>?
   private(set) var openedTargets: [String] = []
+  private(set) var stoppedSessions: [String] = []
   private(set) var openedBlocks: [String] = []
   private(set) var writtenLessons: [String] = []
   private(set) var preparedGoals: [String] = []
@@ -1205,6 +1208,10 @@ private actor StudyAPIStub: StudyAPIClient {
     if holdsStop {
       await hold()
     }
+
+    // As URLSession does, a request whose task was canceled meanwhile doesn't arrive.
+    try Task.checkCancellation()
+    stoppedSessions.append(sessionID)
   }
 
   func getSession(token: String, sessionID: String) async throws -> StudyDay {

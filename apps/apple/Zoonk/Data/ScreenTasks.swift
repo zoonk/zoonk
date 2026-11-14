@@ -1,5 +1,6 @@
-/// The writes a screen starts from several controls or views, canceled together when it goes
-/// away: a canceled write comes back `.obsolete` from `mutate`, so it shows and starts nothing.
+/// The writes started from several controls or views, held by their owner, which can cancel them
+/// together: a screen, when it goes away. A canceled write comes back `.obsolete`, so it shows and
+/// starts nothing; a change the learner made still saves when it goes through `LearnerSaves`.
 @MainActor
 final class ScreenTasks {
   private var running: [Int: Task<Void, Never>] = [:]

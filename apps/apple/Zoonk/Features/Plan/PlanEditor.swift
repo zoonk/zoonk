@@ -29,7 +29,8 @@ final class PlanEditor {
     self.dateKind = dateKind
   }
 
-  /// Runs a tap's change as the editor's screen's, which calls `cancel()` when it goes away.
+  /// Runs a tap's change for the editor's screen, which calls `cancel()` when it goes away. The
+  /// store saves the change anyway; the screen gone, the editor shows nothing of it.
   func run(_ work: @escaping @MainActor () async -> Void) {
     tasks.run(work)
   }
@@ -123,15 +124,7 @@ final class PlanEditor {
     failed = false
     defer { isSaving = false }
 
-    let goalId = goalId
-    let undone = await store.write { api, token in
-      try await api.decide(
-        token: token, goalId: goalId, changeId: change.id, decision: .undone, quote: nil)
-    } changed: {
-      $0 != nil
-    }
-
-    switch undone {
+    switch await store.undo(goalId: goalId, changeId: change.id) {
     case .done(.some): latest = .undone
     case .done(nil), .failed: failed = true
     case .obsolete: break

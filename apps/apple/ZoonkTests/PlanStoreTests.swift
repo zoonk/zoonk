@@ -198,6 +198,48 @@ final class PlanStoreTests: XCTestCase {
     XCTAssertNil(session.authenticatedSession)
   }
 
+  func testAChangeMadeAsItsSheetClosesStillSaves() async {
+    let api = PlanAPIStub()
+    await api.hold(.change)
+    let store = makeStore(api: api)
+    let plan = store.plan(goalId: "goal")
+    await plan.load()
+    let editor = PlanEditor(goalId: "goal", store: store)
+
+    editor.run { await editor.change([.dailyMinutes(20)], sentence: "") }
+    await api.waitForHeldCall()
+    editor.cancel()
+    await api.releaseHeldCall()
+    // The next change waits for it to save.
+    _ = await store.change(goalId: "goal", edits: [.dailyMinutes(30)])
+    await api.setChanged(true)
+    await plan.load()
+
+    let calls = await api.calls
+    XCTAssertEqual(calls.changes, [[.dailyMinutes(20)], [.dailyMinutes(30)]])
+    XCTAssertEqual(plan.value?.plan.planId, "plan-2", "the plan reads what the change made")
+    XCTAssertNil(editor.latest, "a closed sheet shows nothing of it")
+  }
+
+  func testAChangeMadeWhileAnotherSavesGoesOutAfterIt() async {
+    let api = PlanAPIStub()
+    await api.hold(.change)
+    let store = makeStore(api: api)
+
+    let first = Task { await store.change(goalId: "goal", edits: [.dailyMinutes(20)]) }
+    await api.waitForHeldCall()
+    // Released once the second change is made and waiting.
+    Task { await api.releaseHeldCall() }
+    let second = await store.change(goalId: "goal", edits: [.dailyMinutes(30)])
+    let firstSaved = await first.value
+
+    let calls = await api.calls
+    XCTAssertEqual(calls.changes, [[.dailyMinutes(20)], [.dailyMinutes(30)]])
+    guard case .done = firstSaved, case .done = second else {
+      return XCTFail("both changes save")
+    }
+  }
+
   func testAFitOfferWhoseNumbersHoldIsAppliedOnceChecked() async throws {
     let api = PlanAPIStub()
     let offer = try fitOffer()
@@ -237,7 +279,7 @@ final class PlanStoreTests: XCTestCase {
     XCTAssertTrue(left)
   }
 
-  func testAnArchiveTheLearnerLeftWhileItSavedLeavesNothing() async {
+  func testAnArchiveTheLearnerLeftWhileItSavedSavesAndLeavesNothing() async {
     let api = PlanAPIStub()
     await api.hold(.setStatus)
     let store = makeStore(api: api)
@@ -249,6 +291,8 @@ final class PlanStoreTests: XCTestCase {
     await api.releaseHeldCall()
     _ = await archive.value
 
+    let calls = await api.calls
+    XCTAssertEqual(calls.statuses, [.archived], "the learner archived it on purpose")
     XCTAssertFalse(left, "what the learner opened since stays open")
   }
 
@@ -310,6 +354,7 @@ actor PlanAPIStub: PlanAPIClient {
     var changed = 0
     var changes: [[PlanEdit]] = []
     var plan = 0
+    var statuses: [GoalStatusChange] = []
     var undone: [String] = []
   }
 
@@ -326,6 +371,7 @@ actor PlanAPIStub: PlanAPIClient {
   private var heldCallWaiter: CheckedContinuation<Void, Never>?
 
   enum HeldCall {
+    case change
     case preview
     case setStatus
   }
@@ -379,6 +425,10 @@ actor PlanAPIStub: PlanAPIClient {
   }
 
   func change(token: String, goalId: String, edits: [PlanEdit]) async throws -> PlanChangeOutcome {
+    await holdIfAsked(.change)
+    // As URLSession does, a request whose task was canceled meanwhile doesn't arrive.
+    try Task.checkCancellation()
+
     if let changeError {
       throw changeError
     }
@@ -436,6 +486,8 @@ actor PlanAPIStub: PlanAPIClient {
     -> GoalStatusOutcome
   {
     await holdIfAsked(.setStatus)
+    try Task.checkCancellation()
+    calls.statuses.append(status)
     return .saved
   }
   func rename(token: String, goalId: String, displayName: String) async throws -> Bool { true }
