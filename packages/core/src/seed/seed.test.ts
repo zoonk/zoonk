@@ -4,6 +4,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { session as sessionBoundary } from "../_test-utils/test-boundaries";
 import { getTargetLevel, loadLanguageSkillLevels } from "../language/levels/language-skill-levels";
 import { getOwnLevel } from "../learner/placement/placement-contract";
+import { filterMistakesWithPracticeMaterial } from "../mistakes/mistake-practice-eligibility";
+import { readMistakeSnapshot } from "../mistakes/mistake-snapshot";
 import { addDays, toIsoDate } from "../plans/planner/plan-calendar";
 import { getBlockElapsedMs } from "../sessions/_utils/block-timing";
 import { readMissionDocument } from "../sessions/missions/catalog";
@@ -139,20 +141,33 @@ describe("a persona's copy", () => {
 });
 
 describe("a persona's copy, opened later", () => {
-  it.each(SEED_PERSONA_NAMES)("%s: its open block's clock is stopped", async (persona) => {
-    const copy = await seedPersonaCopy({
-      copyKey: `later-${persona}`,
-      email: `seed-later-${persona}@zoonk.test`,
-      persona,
-    });
+  it.each(SEED_PERSONA_NAMES)(
+    "%s: its open mistakes can be practiced and its open block's clock is stopped",
+    async (persona) => {
+      const copy = await seedPersonaCopy({
+        copyKey: `later-${persona}`,
+        email: `seed-later-${persona}@zoonk.test`,
+        persona,
+      });
 
-    const blocks = await prisma.studySessionBlock.findMany({
-      where: { session: { userId: copy.userId }, status: "active" },
-    });
+      const [mistakes, blocks] = await Promise.all([
+        prisma.mistake.findMany({ where: { status: "open", userId: copy.userId } }),
+        prisma.studySessionBlock.findMany({
+          where: { session: { userId: copy.userId }, status: "active" },
+        }),
+      ]);
 
-    const later = new Date(Date.now() + MS_PER_HOUR);
-    const running = blocks.filter((block) => getBlockElapsedMs({ block, now: later }) > 0);
+      const practiced = await filterMistakesWithPracticeMaterial({ mistakes });
+      const practicedIds = new Set(practiced.map((mistake) => mistake.id));
 
-    expect(running).toStrictEqual([]);
-  });
+      const stranded = mistakes
+        .filter((mistake) => !practicedIds.has(mistake.id))
+        .map((mistake) => readMistakeSnapshot(mistake.snapshot).question);
+
+      const later = new Date(Date.now() + MS_PER_HOUR);
+      const running = blocks.filter((block) => getBlockElapsedMs({ block, now: later }) > 0);
+
+      expect({ running: running.length, stranded }).toStrictEqual({ running: 0, stranded: [] });
+    },
+  );
 });
