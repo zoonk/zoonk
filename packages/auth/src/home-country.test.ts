@@ -245,4 +245,29 @@ describe("home country from the sign-in's location", () => {
       prisma.userLearningProfile.findUniqueOrThrow({ where: { userId: created.user.id } }),
     ).resolves.toMatchObject({ id: profile.id, memoryEnabled: true, soundsEnabled: true });
   });
+
+  it("keeps an account's country when a one-time token links a guest from elsewhere", async () => {
+    const account = await guestAuth.api.signUpEmail({
+      body: { email: createTestEmail(), name: "Home", password: PASSWORD },
+      headers: new Headers({ "x-vercel-ip-country": "BR" }),
+      returnHeaders: true,
+    });
+
+    const userId = account.response.user.id;
+
+    await prisma.userLearningProfile.update({ data: { memoryEnabled: false }, where: { userId } });
+
+    const { token } = await guestAuth.api.generateOneTimeToken({
+      headers: toCookieHeaders(account.headers),
+    });
+
+    await guestAuth.api.verifyOneTimeToken({
+      body: { token },
+      headers: await guestWithSettings({ homeCountry: "US" }),
+    });
+
+    await expect(
+      prisma.userLearningProfile.findUniqueOrThrow({ where: { userId } }),
+    ).resolves.toMatchObject({ homeCountry: "BR", memoryEnabled: false });
+  });
 });
