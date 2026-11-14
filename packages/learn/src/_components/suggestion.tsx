@@ -2,7 +2,7 @@
 
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import {
-  DRAWER_ACTIONS_CLASS,
+  DRAWER_MAIN_FIRST_ACTIONS_CLASS,
   Drawer,
   DrawerCloseButton,
   DrawerContent,
@@ -289,12 +289,16 @@ export function SuggestionSaveError({ className }: { className?: string }) {
   return <ChangeSaveError className={cn("text-compact leading-snug", className)} />;
 }
 
-/** In the panel each button fills its share of a row, so buttons that wrap stack at one width. */
+/**
+ * A suggestion lists its main answer first, as a page's own row does, since on a computer its panel
+ * is part of the page; the sheet draws them as every sheet does. In the panel each button fills its
+ * share of a row, so buttons that wrap stack at one width.
+ */
 const ACTIONS_CLASS: Readonly<Record<Presentation, string>> = {
   line: "flex shrink-0 items-center gap-2",
   panel:
     "flex flex-wrap items-center gap-2 pt-1 [&>*]:h-auto [&>*]:min-h-7.5 [&>*]:max-w-full [&>*]:grow [&>*]:py-1 [&>*]:text-balance [&>*]:whitespace-normal",
-  sheet: cn(DRAWER_ACTIONS_CLASS, "pt-1"),
+  sheet: cn(DRAWER_MAIN_FIRST_ACTIONS_CLASS, "pt-1"),
 };
 
 export function SuggestionActions({ className, ...props }: React.ComponentProps<"form">) {

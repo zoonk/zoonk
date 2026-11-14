@@ -75,12 +75,6 @@ function ChangeActions({
 
   return (
     <SuggestionActions>
-      <SuggestionAction action={() => onAnswer("declined")} disabled={disabled} variant="outline">
-        {keepsMine && !overridesNotice && t("Keep mine")}
-        {overridesNotice && t("Keep official date")}
-        {!keepsMine && !overridesNotice && t("Not now")}
-      </SuggestionAction>
-
       {change.canApply && (
         <SuggestionAction
           action={() => onAnswer("applied")}
@@ -90,6 +84,12 @@ function ChangeActions({
           {overridesNotice ? t("Use my date") : t("Change my plan")}
         </SuggestionAction>
       )}
+
+      <SuggestionAction action={() => onAnswer("declined")} disabled={disabled} variant="outline">
+        {keepsMine && !overridesNotice && t("Keep mine")}
+        {overridesNotice && t("Keep official date")}
+        {!keepsMine && !overridesNotice && t("Not now")}
+      </SuggestionAction>
     </SuggestionActions>
   );
 }

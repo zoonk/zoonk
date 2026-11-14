@@ -169,19 +169,6 @@ function CoverageBody({
 
   return (
     <SuggestionActions>
-      {coverage && (
-        <OtherOptions
-          onMoveDate={moveDate ? () => ask("date") : null}
-          studyEverythingLeads={flags.studiesEverything && fullCourse !== null}
-        />
-      )}
-
-      {focusTestHref && (
-        <SuggestionLinkAction href={focusTestHref} variant="outline">
-          {takeFocusTest}
-        </SuggestionLinkAction>
-      )}
-
       {/* One key for the main action in every state, so the button pressed keeps the keyboard. */}
       {offer && (
         <SuggestionAction action={() => void requestPreview(offer.operations)} key="find">
@@ -199,6 +186,19 @@ function CoverageBody({
         <SuggestionAction action={() => studyEverything(fullCourse)} key="find">
           {keepStudying}
         </SuggestionAction>
+      )}
+
+      {focusTestHref && (
+        <SuggestionLinkAction href={focusTestHref} variant="outline">
+          {takeFocusTest}
+        </SuggestionLinkAction>
+      )}
+
+      {coverage && (
+        <OtherOptions
+          onMoveDate={moveDate ? () => ask("date") : null}
+          studyEverythingLeads={flags.studiesEverything && fullCourse !== null}
+        />
       )}
     </SuggestionActions>
   );

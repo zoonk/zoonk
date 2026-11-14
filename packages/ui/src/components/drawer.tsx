@@ -146,6 +146,13 @@ const DRAWER_ACTIONS_CLASS =
   "flex flex-col-reverse gap-2 sm:flex-row sm:justify-end sm:has-[>:nth-child(3)]:flex-col-reverse";
 
 /**
+ * The same answers drawn the same way from a source that lists the main one first, as a page's own
+ * row does: for answers that sit on the page at one size and in a sheet at another.
+ */
+const DRAWER_MAIN_FIRST_ACTIONS_CLASS =
+  "flex flex-col gap-2 sm:flex-row-reverse sm:justify-start sm:has-[>:nth-child(3)]:flex-col";
+
+/**
  * A sheet's foot, held under its content while that scrolls: one line that says what the actions
  * will do (`note`), then the actions. Its edge is the content's, drawn only while something scrolls
  * under it.
@@ -189,7 +196,7 @@ function DrawerDescription({ className, ...props }: DrawerPrimitive.Description.
 }
 
 export {
-  DRAWER_ACTIONS_CLASS,
+  DRAWER_MAIN_FIRST_ACTIONS_CLASS,
   Drawer,
   DrawerClose,
   DrawerCloseButton,
