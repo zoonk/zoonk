@@ -104,7 +104,7 @@ describe("home country from the sign-in's location", () => {
     const { userId } = await signUp({});
 
     await rememberHomeCountryAfterSessionCreate(
-      { impersonatedBy: randomUUID(), userId },
+      { createdAt: new Date(), impersonatedBy: randomUUID(), userId },
       // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the hook reads only the headers.
       { headers: new Headers({ "x-vercel-ip-country": "US" }) } as Parameters<
         typeof rememberHomeCountryAfterSessionCreate
@@ -270,4 +270,44 @@ describe("home country from the sign-in's location", () => {
       prisma.userLearningProfile.findUniqueOrThrow({ where: { userId } }),
     ).resolves.toMatchObject({ homeCountry: "BR", memoryEnabled: false });
   });
+
+  it.each([
+    { change: "its country", edits: [{ homeCountry: "PT" }], expected: { homeCountry: "PT" } },
+    {
+      change: "Memory off and back on",
+      edits: [{ memoryEnabled: false }, { memoryEnabled: true }],
+      expected: { homeCountry: "BR", memoryEnabled: true },
+    },
+  ])(
+    "keeps a profile the account changed ($change) when a one-time token links a guest",
+    async ({ edits, expected }) => {
+      const account = await guestAuth.api.signUpEmail({
+        body: { email: createTestEmail(), name: "Home", password: PASSWORD },
+        headers: new Headers({ "x-vercel-ip-country": "BR" }),
+        returnHeaders: true,
+      });
+
+      const userId = account.response.user.id;
+
+      for (const data of edits) {
+        // oxlint-disable-next-line no-await-in-loop -- each edit is its own save, in order.
+        await prisma.userLearningProfile.update({ data, where: { userId } });
+      }
+
+      const { id } = await prisma.userLearningProfile.findUniqueOrThrow({ where: { userId } });
+
+      const { token } = await guestAuth.api.generateOneTimeToken({
+        headers: toCookieHeaders(account.headers),
+      });
+
+      await guestAuth.api.verifyOneTimeToken({
+        body: { token },
+        headers: await guestWithSettings({ homeCountry: "US" }),
+      });
+
+      await expect(
+        prisma.userLearningProfile.findUniqueOrThrow({ where: { userId } }),
+      ).resolves.toMatchObject({ ...expected, id });
+    },
+  );
 });
