@@ -228,7 +228,7 @@ describe("pending word orders", () => {
       await expect.element(feedback.getByText("Not quite")).toBeVisible();
 
       await expect
-        .element(feedback.getByText(`Answer: ${kind === "reading" ? SENTENCE : TRANSLATION}`))
+        .element(feedback.getByText(`Right answer: ${kind === "reading" ? SENTENCE : TRANSLATION}`))
         .toBeVisible();
     },
   );
@@ -252,7 +252,7 @@ describe("pending word orders", () => {
       await placeWords(words);
       await check.click();
       await expect.element(feedback.getByText("Not quite")).toBeVisible();
-      await expect.element(feedback.getByText(`Answer: ${TRANSLATION}`)).toBeVisible();
+      await expect.element(feedback.getByText(`Right answer: ${TRANSLATION}`)).toBeVisible();
       await page.getByRole("button", { name: "Ask Pip" }).click();
 
       await expect

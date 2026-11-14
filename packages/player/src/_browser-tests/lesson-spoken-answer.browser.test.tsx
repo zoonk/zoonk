@@ -193,7 +193,7 @@ describe("spoken answers", () => {
 
     await expect
       .element(page.getByRole("status").filter({ hasText: "Not quite" }))
-      .toMatchTextContent(/Answer: Quanto é o aluguel\?/u);
+      .toMatchTextContent(/Right answer: Quanto é o aluguel\?/u);
   });
 
   it("saves the listening answer that replaced a slow spoken one only after that grade settles", async () => {
