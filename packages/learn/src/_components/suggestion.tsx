@@ -138,7 +138,7 @@ export function SuggestionLine({ children, className, ...props }: React.Componen
       <div
         className={cn(
           FRAME_CLASS,
-          "flex min-h-12 items-center gap-3 py-2 pr-2 pl-4",
+          "flex min-h-12 items-center gap-3 p-2",
           LINE_CLASS,
           className,
         )}
