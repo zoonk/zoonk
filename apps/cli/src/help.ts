@@ -29,6 +29,9 @@ Content fixes (proposed here, approved by a staff person in Admin with a passkey
   staff fixes revert <fixId> --reason "…" Propose putting back what an applied fix replaced
   staff fixes revert --batch <batchId> --reason "…"
                                           The same for every applied fix of a batch, as a new batch
+  staff fixes withdraw <fixId>            Take back a fix you proposed that nobody approved yet
+  staff fixes withdraw --batch <batchId>  The same for every fix of your batch still waiting for
+                                          review. An approved or applied fix stays; revert it.
 
 Data commands print JSON on stdout; messages and errors go to stderr.
 

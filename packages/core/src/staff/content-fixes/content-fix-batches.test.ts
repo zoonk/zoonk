@@ -18,10 +18,10 @@ import {
 import {
   approveContentFixes,
   getContentFixApprovalOptions,
-  rejectContentFix,
   resumeContentFixes,
 } from "./decide-content-fix";
 import { proposeContentFix, proposeContentFixRevert } from "./propose-content-fix";
+import { rejectContentFix } from "./reject-content-fix";
 
 async function threeLessons() {
   return Promise.all([

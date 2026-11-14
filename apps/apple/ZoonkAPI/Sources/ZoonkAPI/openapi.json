@@ -2663,7 +2663,7 @@
     },
     "/content-fix-batches/{batchId}/decisions": {
       "post": {
-        "description": "Approves the batch's fixes that hold the challenge a passkey assertion signed, then applies each in its own transaction, in proposal order: a fix applies only while every field still holds its recorded value, and otherwise ends stale with nothing changed. `resume` applies what the same approver already approved but didn't finish. A repeat returns where the batch stands. Staff sessions only; a CLI login can't decide.",
+        "description": "Approves the batch's fixes that hold the challenge a passkey assertion signed, then applies each in its own transaction, in proposal order: a fix applies only while every field still holds its recorded value, and otherwise ends stale with nothing changed. `resume` applies what the same approver already approved but didn't finish. `reject` rejects the fixes still waiting for review, without a passkey, since it changes no content. A repeat returns where the batch stands. Staff sessions only; a CLI login can't decide.",
         "operationId": "createContentFixBatchDecision",
         "security": [
           {
@@ -2673,7 +2673,7 @@
             "cookieAuth": []
           }
         ],
-        "summary": "Approve content fixes (staff)",
+        "summary": "Approve or reject a batch of content fixes (staff)",
         "tags": [
           "Content fixes"
         ],
@@ -26378,6 +26378,22 @@
             ],
             "additionalProperties": false,
             "description": "Applies what this approver already approved but didn't finish"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "decision": {
+                "type": "string",
+                "enum": [
+                  "reject"
+                ]
+              }
+            },
+            "required": [
+              "decision"
+            ],
+            "additionalProperties": false,
+            "description": "Rejects every fix of the batch still waiting for review; approved, applied and stale fixes keep where they stand"
           }
         ],
         "type": "object"
@@ -38881,6 +38897,12 @@
                 },
                 "description": "Each fix of the batch and where it stands"
               },
+              "rejected": {
+                "description": "Set on a reject: how many fixes waiting for review this request rejected, 0 on a repeat",
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
               "status": {
                 "type": "string",
                 "enum": [
@@ -38950,9 +38972,10 @@
               "approved",
               "applied",
               "rejected",
-              "stale"
+              "stale",
+              "withdrawn"
             ],
-            "description": "`approved` means a passkey approved it and it hasn't applied yet; the same approver resumes it"
+            "description": "`approved` means a passkey approved it and it hasn't applied yet; the same approver resumes it. `withdrawn` means its proposer took it back before anyone approved it"
           }
         },
         "required": [

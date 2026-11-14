@@ -4,7 +4,7 @@ import {
   type PasskeyApprovalOptions,
   type PasskeyAssertion,
 } from "@zoonk/auth/passkey-approval-contract";
-import { type ContentFixStatus, prisma } from "@zoonk/db";
+import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { isUuid } from "@zoonk/utils/uuid";
@@ -12,34 +12,16 @@ import { revalidateCourseContent } from "../../cache/revalidate-course-content";
 import { applyApprovedFix } from "./_utils/apply-approved-fix";
 import { getFixCacheTags } from "./_utils/apply-content-fix";
 import { logContentFix } from "./_utils/content-fix-view";
+import { type Decided, type Refused, decideAs, readOutcomes } from "./_utils/decision";
 import { cacheUnits } from "./_utils/fix-cache-units";
 import { type FixUnit } from "./_utils/resolved-change";
-import { type StaffSessionRefusal, getStaffSessionUser } from "./_utils/staff-session";
+import { getStaffSessionUser } from "./_utils/staff-session";
 import { MAX_BATCH_FIXES } from "./batches";
-
-type Refused = StaffSessionRefusal | { status: "notFound" };
-
-type ContentFixOutcome = { id: string; staleReason: string | null; status: ContentFixStatus };
-
-type Decided = {
-  /** Whether Main heard about the changes: false means it shows the old content until its cache expires. */
-  cacheNotified: boolean | null;
-  fixes: ContentFixOutcome[];
-  status: "decided";
-};
 
 export type ContentFixDecision =
   | Refused
   | Decided
   | { status: "approvalExpired" | "assertionInvalid" };
-
-function readOutcomes(batchId: string): Promise<ContentFixOutcome[]> {
-  return prisma.contentFix.findMany({
-    orderBy: { id: "asc" },
-    select: { id: true, staleReason: true, status: true },
-    where: { batchId },
-  });
-}
 
 /**
  * Whether the signed-in staff person can approve fixes yet (approving needs a passkey), and who
@@ -203,7 +185,7 @@ async function applyApproved({
 
   return {
     cacheNotified: units.length > 0 ? await notifyApps(units) : null,
-    fixes: await readOutcomes(batchId),
+    fixes: await readOutcomes({ batchId }),
     status: "decided",
   };
 }
@@ -264,22 +246,6 @@ function outcomeOf(result: ContentFixDecision): string {
   return [...new Set(result.fixes.map((fix) => fix.status))].toSorted().join(",");
 }
 
-function decideAs({
-  batchId,
-  decider,
-  run,
-}: {
-  batchId: string;
-  decider: Awaited<ReturnType<typeof getStaffSessionUser>>;
-  run: (deciderId: string) => Promise<ContentFixDecision>;
-}): Promise<ContentFixDecision> {
-  if (decider.status !== "ready") {
-    return Promise.resolve(decider);
-  }
-
-  return isUuid(batchId) ? run(decider.userId) : Promise.resolve({ status: "notFound" });
-}
-
 async function decide({
   action,
   batchId,
@@ -292,7 +258,7 @@ async function decide({
   const started = performance.now();
   const decider = await getStaffSessionUser();
 
-  const result = await decideAs({ batchId, decider, run });
+  const result = await decideAs({ decider, id: batchId, run });
 
   logContentFix({
     action,
@@ -335,49 +301,4 @@ export function resumeContentFixes(batchId: string): Promise<ContentFixDecision>
     batchId,
     run: (deciderId) => applyApproved({ batchId, deciderId }),
   });
-}
-
-/** Rejecting one fix needs a staff session but no passkey, since it changes no content. */
-export async function rejectContentFix(fixId: string): Promise<ContentFixDecision> {
-  const started = performance.now();
-  const decider = await getStaffSessionUser();
-
-  if (decider.status !== "ready") {
-    logContentFix({ action: "reject", actorUserId: null, outcome: decider.status, started });
-    return decider;
-  }
-
-  if (isUuid(fixId)) {
-    await prisma.contentFix.updateMany({
-      data: {
-        approvalChallenge: null,
-        approvalExpiresAt: null,
-        decidedAt: new Date(),
-        deciderId: decider.userId,
-        status: "rejected",
-      },
-      where: { id: fixId, status: "proposed" },
-    });
-  }
-
-  const fix = isUuid(fixId)
-    ? await prisma.contentFix.findUnique({
-        select: { id: true, staleReason: true, status: true },
-        where: { id: fixId },
-      })
-    : null;
-
-  const result: ContentFixDecision = fix
-    ? { cacheNotified: null, fixes: [fix], status: "decided" }
-    : { status: "notFound" };
-
-  logContentFix({
-    action: "reject",
-    actorUserId: decider.userId,
-    fixId: fix?.id,
-    outcome: fix?.status ?? "notFound",
-    started,
-  });
-
-  return result;
 }

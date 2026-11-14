@@ -12,10 +12,10 @@ export const contentFixBatchPathParamsSchema = z
   .meta({ id: "ContentFixBatchPathParams" });
 
 const contentFixStatusSchema = z
-  .enum(["proposed", "approved", "applied", "rejected", "stale"])
+  .enum(["proposed", "approved", "applied", "rejected", "stale", "withdrawn"])
   .meta({
     description:
-      "`approved` means a passkey approved it and it hasn't applied yet; the same approver resumes it",
+      "`approved` means a passkey approved it and it hasn't applied yet; the same approver resumes it. `withdrawn` means its proposer took it back before anyone approved it",
   });
 
 const decidedFixSchema = z
@@ -40,6 +40,13 @@ const decidedSchema = z.object({
   fixes: z
     .array(decidedFixSchema)
     .meta({ description: "Each fix of the batch and where it stands" }),
+  rejected: z
+    .int()
+    .optional()
+    .meta({
+      description:
+        "Set on a reject: how many fixes waiting for review this request rejected, 0 on a repeat",
+    }),
   status: z.literal("decided"),
 });
 
@@ -103,6 +110,13 @@ export const contentFixBatchDecisionRequestSchema = z
       .object({ decision: z.literal("resume") })
       .strict()
       .meta({ description: "Applies what this approver already approved but didn't finish" }),
+    z
+      .object({ decision: z.literal("reject") })
+      .strict()
+      .meta({
+        description:
+          "Rejects every fix of the batch still waiting for review; approved, applied and stale fixes keep where they stand",
+      }),
   ])
   .meta({ id: "ContentFixBatchDecisionRequest" });
 

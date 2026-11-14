@@ -12,6 +12,7 @@ export const contentFixStatusLabels: Record<ContentFixState, string> = {
   rejected: "Rejected",
   reverted: "Reverted",
   stale: "Stale",
+  withdrawn: "Withdrawn",
 };
 
 const variants = {
@@ -21,6 +22,7 @@ const variants = {
   rejected: "outline",
   reverted: "outline",
   stale: "destructive",
+  withdrawn: "outline",
 } as const satisfies Record<ContentFixState, string>;
 
 /** The revert that put back what an applied fix replaced, if one applied. */

@@ -58,7 +58,7 @@ describe(parseInvocation, () => {
     });
   });
 
-  it("sends a fix file's proposal and a revert's reason to their staff routes", () => {
+  it("sends a fix file's proposal, a revert's reason and a withdrawal to their staff routes", () => {
     const folder = mkdtempSync(join(tmpdir(), "zoonk-cli-fix-"));
     const file = join(folder, "fix.json");
 
@@ -90,6 +90,18 @@ describe(parseInvocation, () => {
       method: "POST",
       path: "/staff/content-fixes/revert",
     });
+
+    expect(sentRequest(["staff", "fixes", "withdraw", "fix-1"])).toStrictEqual({
+      body: { fixId: "fix-1" },
+      method: "POST",
+      path: "/staff/content-fixes/withdraw",
+    });
+
+    expect(sentRequest(["staff", "fixes", "withdraw", "--batch", "batch-1"])).toStrictEqual({
+      body: { batchId: "batch-1" },
+      method: "POST",
+      path: "/staff/content-fixes/withdraw",
+    });
   });
 
   it.each([
@@ -97,6 +109,8 @@ describe(parseInvocation, () => {
     [["staff", "fixes", "revert", "fix-1"], "--reason"],
     [["staff", "fixes", "revert", "fix-1", "--batch", "b", "--reason", "x"], "--batch <batchId>"],
     [["staff", "fixes", "revert", "--reason", "x"], "--batch <batchId>"],
+    [["staff", "fixes", "withdraw"], "--batch <batchId>"],
+    [["staff", "fixes", "withdraw", "fix-1", "--reason", "x"], "no --reason option"],
   ])("refuses %j before sending anything", (argv, message) => {
     expect(() => parseInvocation(argv)).toThrow(
       expect.objectContaining({

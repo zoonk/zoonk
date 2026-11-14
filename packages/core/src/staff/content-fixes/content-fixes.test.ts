@@ -37,12 +37,13 @@ import {
   signInApprover,
   signInProposer,
 } from "./_test-utils/content-fix-steps";
-import { approveContentFixes, rejectContentFix } from "./decide-content-fix";
+import { approveContentFixes } from "./decide-content-fix";
 import {
   proposeContentFix,
   proposeContentFixRevert,
   proposeContentFixRevertInAdmin,
 } from "./propose-content-fix";
+import { rejectContentFix } from "./reject-content-fix";
 
 describe(proposeContentFix, () => {
   it("records the server's own before and after and changes nothing yet", async () => {
