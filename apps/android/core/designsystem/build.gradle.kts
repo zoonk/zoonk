@@ -36,6 +36,7 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
 
     testFixturesApi(libs.androidx.window.testing)
+    testFixturesImplementation(project(":core:resources"))
     testFixturesImplementation(composeBom)
     testFixturesImplementation(libs.androidx.compose.ui.test.junit4)
 

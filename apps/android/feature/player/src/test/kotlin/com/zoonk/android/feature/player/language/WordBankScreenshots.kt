@@ -11,6 +11,7 @@ import com.zoonk.android.feature.player.LessonPlayerHarness
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.summaryStep
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
@@ -44,7 +45,7 @@ class WordBankScreenshots {
     private fun capture(name: String) {
         rule.waitForIdle()
         val bitmap = rule.onRoot().captureRender().asAndroidBitmap()
-        File(folder, "$name.png").apply { parentFile?.mkdirs() }.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        writeRender(File(folder, "$name.png"), bitmap)
     }
 
     private fun build(

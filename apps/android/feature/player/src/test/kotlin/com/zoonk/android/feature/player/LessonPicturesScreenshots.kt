@@ -15,6 +15,7 @@ import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.PictureDescription
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.ui.testing.captureRender
+import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.api.models.ScreenPicture
 import org.junit.Assume.assumeTrue
 import org.junit.Before
@@ -57,7 +58,7 @@ class LessonPicturesScreenshots {
 
     private fun save(name: String) {
         val bitmap = rule.onRoot().captureRender().asAndroidBitmap()
-        File(folder, "$name.png").apply { parentFile?.mkdirs() }.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        writeRender(File(folder, "$name.png"), bitmap)
     }
 
     @Test
