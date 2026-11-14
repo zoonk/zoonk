@@ -401,7 +401,6 @@ struct PracticeAPI: Sendable {
         path: .init(goalId: goalId, chapterId: chapterId), body: .json(body))
       {
       case .ok(let response): return try response.body.json.value1
-      case .code402: throw PracticeAPIError.plusRequired
       case .unauthorized: throw APIError.unauthorized
       default: throw APIError.unavailable
       }
