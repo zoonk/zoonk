@@ -2,35 +2,36 @@ import SwiftUI
 
 /// Every number covers all of the learner's goals.
 struct StatisticsScreen: View {
-  /// The statistic the route names or the learner picked beside the overview; without one, a
-  /// single column is the overview and two columns show Level beside it.
+  /// A sidebar's statistic: in one column it's its own page, with no overview behind it.
+  private let routed: StatsSection?
+  /// The one pick: beside the overview in two columns (Level when none), on top of it in one,
+  /// where Back clears it, so a resize keeps it either way.
   @State private var picked: StatsSection?
 
   init(section: StatsSection? = nil) {
+    routed = section
     _picked = State(initialValue: section)
   }
-
-  private var detail: StatsSection { picked ?? .level }
 
   var body: some View {
     PaneSplit {
       overview
-        .environment(\.statsSectionOpen, StatsSectionOpen(shown: detail) { picked = $0 })
+        .environment(\.statsSectionOpen, StatsSectionOpen(shown: picked ?? .level) { picked = $0 })
         // Each pane is about a phone wide, so the overview and the stat take their phone layouts.
         .environment(\.horizontalSizeClass, .compact)
     } secondary: {
-      page(detail)
+      page(picked ?? .level)
         .environment(\.horizontalSizeClass, .compact)
     } single: {
-      // A resize to one column keeps the stat the learner picked, however it was picked.
-      if let picked {
-        pushed(picked)
+      if let routed, picked == routed {
+        pushed(routed)
       } else {
         overview
+          .environment(\.statsSectionOpen, StatsSectionOpen(shown: nil) { picked = $0 })
+          .navigationDestination(item: $picked) { section in
+            pushed(section)
+          }
       }
-    }
-    .navigationDestination(for: StatsSection.self) { section in
-      pushed(section)
     }
   }
 
