@@ -2,6 +2,7 @@ package com.zoonk.android.feature.tutor
 
 import androidx.activity.ComponentActivity
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
@@ -20,6 +21,8 @@ import com.zoonk.android.data.MutationResult
 import com.zoonk.android.feature.conversation.CallStart
 import com.zoonk.android.feature.conversation.callStarter
 import com.zoonk.android.ui.characters.BuddyLook
+import com.zoonk.android.ui.components.LocalClock
+import com.zoonk.android.ui.components.TestClock
 import com.zoonk.android.ui.theme.ZoonkTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -40,6 +43,7 @@ class TutorRefusedQuestionTest {
     val compose = createAndroidComposeRule<ComponentActivity>()
 
     private val api = FakeTutorApi()
+    private val clock by lazy { TestClock(compose.mainClock) }
     private var answerRequests = 0
 
     private fun refusedUntil(at: Instant) =
@@ -61,7 +65,7 @@ class TutorRefusedQuestionTest {
         api.question = { id -> turn(id, TutorTurn.Status.Pending, null, question = "What is a photon?") }
         api.answers = {
             answerRequests++
-            val opens = if (answerRequests == 1) Instant.now().plusSeconds(2) else Instant.now().plus(Duration.ofDays(5))
+            val opens = if (answerRequests == 1) clock.opening else clock.start.plus(Duration.ofDays(5))
             flow { throw refusedUntil(opens) }
         }
         show()
@@ -72,6 +76,7 @@ class TutorRefusedQuestionTest {
         compose.onNodeWithText("This one wasn't answered.").assertExists()
         compose.onNodeWithText("Try again").assertDoesNotExist()
 
+        clock.passOpening()
         waitFor("Try again")
         compose.onNodeWithText("This one wasn't answered.").assertExists()
         compose.onNodeWithText("We couldn't finish this answer.").assertDoesNotExist()
@@ -102,7 +107,9 @@ class TutorRefusedQuestionTest {
         val routes = TutorRoutes(createAccount = {}, signIn = {}, subscribe = {}, open = {}, startCall = callStarter { CallStart.Failed })
 
         compose.setContent {
-            ZoonkTheme { Surface { TutorPanel(vm, TutorAccess.Ask, TutorIdentity("Zu", BuddyLook()), routes) } }
+            CompositionLocalProvider(LocalClock provides clock) {
+                ZoonkTheme { Surface { TutorPanel(vm, TutorAccess.Ask, TutorIdentity("Zu", BuddyLook()), routes) } }
+            }
         }
     }
 }
