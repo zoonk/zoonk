@@ -24,8 +24,8 @@
     "@zoonk/tsconfig": "workspace:*",
     "@zoonk/utils": "workspace:*",
     "esbuild": "0.28.2",
-    "fast-xml-builder": "1.3.1",
-    "fast-xml-parser": "5.12.0",
+    "fast-xml-builder": "1.3.2",
+    "fast-xml-parser": "5.12.1",
     "tsx": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
