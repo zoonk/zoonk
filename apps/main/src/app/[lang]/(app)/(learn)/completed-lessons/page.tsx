@@ -5,7 +5,7 @@ import { getReadAt } from "@/lib/learn/read-at";
 import { COMPLETED_LESSON_PAGE_SIZE } from "@zoonk/core/completed-lessons/contract";
 import { listCurrentUserCompletedLessons } from "@zoonk/core/completed-lessons/list-current-user";
 import { LearnPageBar } from "@zoonk/learn/bar";
-import { INBOX_PAGE_CLASS, PAGE_COLUMN_CLASS, PageTitle } from "@zoonk/learn/page";
+import { MEASURED_CLASS, PAGE_COLUMN_CLASS, PageTitle, pageMeasureClass } from "@zoonk/learn/page";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getIsoDay } from "@zoonk/utils/calendar-day";
@@ -93,7 +93,14 @@ async function CompletedLessonsSkeleton() {
   return (
     <div aria-busy="true" className="flex flex-col gap-8">
       <CompletedLessonsBar />
-      <div className={cn(PAGE_COLUMN_CLASS, INBOX_PAGE_CLASS, "flex flex-col gap-8")}>
+      <div
+        className={cn(
+          PAGE_COLUMN_CLASS,
+          pageMeasureClass("list"),
+          MEASURED_CLASS,
+          "flex flex-col gap-8",
+        )}
+      >
         <div className="flex flex-col gap-1">
           <PageTitle>{t("Completed lessons")}</PageTitle>
           <span className="flex h-6 items-center pt-1">

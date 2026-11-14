@@ -1400,7 +1400,6 @@ msgstr "ズー"
 #: src/focus-test/focus-test-flow.tsx
 #: src/focus-test/focus-test-proposal.tsx
 #: src/focus-test/focus-test-screens.tsx
-#: src/mock/mock-result-actions.tsx
 #: src/mock/mock-result-plan.tsx
 #: src/plan/plan-fit-suggestion.tsx
 #: src/plan/plan-offer-preview.tsx
@@ -6991,6 +6990,16 @@ msgid "Create"
 msgstr "作成する"
 
 #: src/mind-maps/mind-map-copy.ts
+msgctxt "fOetuN"
+msgid "{count, plural, one {# lesson to write} other {# lessons to write}}"
+msgstr "{count, plural, other {作成するレッスン: #}}"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "FE72mn"
+msgid "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}"
+msgstr "{count, plural, other {まず#レッスンを作成します。作成分は無料レッスンの利用数に含まれます。}}"
+
+#: src/mind-maps/mind-map-copy.ts
 msgctxt "ZyyHnb"
 msgid "A mind map of its main ideas"
 msgstr "主なポイントをまとめたマインドマップ"
@@ -6999,11 +7008,6 @@ msgstr "主なポイントをまとめたマインドマップ"
 msgctxt "AAKHvt"
 msgid "Its main ideas in one picture"
 msgstr "この章のポイントを1枚の図に"
-
-#: src/mind-maps/mind-map-copy.ts
-msgctxt "FE72mn"
-msgid "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}"
-msgstr "{count, plural, other {まず#レッスンを作成します。作成分は無料レッスンの利用数に含まれます。}}"
 
 #: src/mind-maps/mind-map-copy.ts
 msgctxt "uhTP9c"
@@ -7198,6 +7202,11 @@ msgstr "ほかの章"
 msgctxt "Q3GPLT"
 msgid "Create all"
 msgstr "すべて作成する"
+
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "_tV21i"
+msgid "Making one of these maps writes its lessons first, and they count toward your free lessons."
+msgstr "これらのマインドマップを作ると、先にそのレッスンが作成され、無料レッスンの利用数に含まれます。"
 
 #: src/mind-maps/use-mind-map-saves.ts
 msgctxt "U0yWHz"
@@ -8295,6 +8304,14 @@ msgstr "{count, plural, other {#レッスン}}をスキップしました。"
 msgctxt "DRJEUg"
 msgid "Your plan gives {area} more time."
 msgstr "学習計画では{area}にかける時間が増えます。"
+
+#: src/mock/mock-result-plan.tsx
+#: src/plan-diff/plan-effect-diff.tsx
+#: src/plan/plan-bases-sheet.tsx
+#: src/plan/plan-offer-preview.tsx
+msgctxt "D0KGfN"
+msgid "Your plan stays as it is."
+msgstr "学習計画はそのままです。"
 
 #: src/mock/mock-result-plan.tsx
 #: src/plan-diff/change-names.ts

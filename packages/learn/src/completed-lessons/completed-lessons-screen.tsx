@@ -14,7 +14,6 @@ import {
   ListRowTitle,
 } from "../_components/list-group";
 import {
-  INBOX_PAGE_CLASS,
   PageSection,
   PageSectionHeader,
   PageSectionTitle,
@@ -122,7 +121,7 @@ export function CompletedLessonsScreen({
   return (
     <DetailLayout
       bar={<LearnPageBar back={{ href: hrefs.back }} root title={t("Completed lessons")} />}
-      className={INBOX_PAGE_CLASS}
+      measure="list"
       data-slot="completed-lessons"
     >
       <DetailHero>

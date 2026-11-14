@@ -4,14 +4,13 @@ import { type SpeakingSectionView } from "@zoonk/core/language/exam-speaking/con
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted, useFormatter } from "next-intl";
-import { Eyebrow } from "../_components/eyebrow";
 import {
+  LabeledStepTitle,
   StepCard,
   StepDetail,
   StepHeader,
   StepRow,
   StepRows,
-  StepTitle,
   StepTitleNumber,
   renderStepNumber,
 } from "../_components/step-card";
@@ -113,10 +112,9 @@ function SpeakingStep({ paper }: { paper: SpeakingSectionView }) {
   return (
     <StepCard>
       <StepHeader>
-        <Eyebrow>{paper.paper}</Eyebrow>
-        <StepTitle>
+        <LabeledStepTitle label={paper.paper}>
           {range ? <StepTitleNumber>{range}</StepTitleNumber> : t("No estimate")}
-        </StepTitle>
+        </LabeledStepTitle>
         <StepDetail className="text-sm">
           {range
             ? t.rich("Estimated score, from <mono>0</mono> to <mono>{max}</mono>", {
