@@ -66,7 +66,7 @@ export function DisplayMath({ children }: { children: React.ReactNode }) {
 
 /**
  * A formula in a sentence can't wrap, so one wider than its column scrolls sideways. In a column
- * sized by its words, `ANSWER_FORMULA_CLASS` caps it instead, since a percentage can't.
+ * sized by its words, `TagBesideOrUnder` caps it instead, since a percentage can't.
  */
 export function InlineMath({ children }: { children: React.ReactNode }) {
   const { contentRef, scrollerRef, takesKeyboard } = useTakesKeyboard();

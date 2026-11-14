@@ -14,12 +14,7 @@ import {
 } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { TagBesideOrUnder } from "../_components/answer-option";
-import {
-  ANSWER_FORMULA_CLASS,
-  ANSWER_TAG_CLASS,
-  ANSWER_TAG_TONE,
-  ANSWER_TONE,
-} from "../_components/answer-tone";
+import { ANSWER_TAG_CLASS, ANSWER_TAG_TONE, ANSWER_TONE } from "../_components/answer-tone";
 import { Eyebrow } from "../_components/eyebrow";
 import { QuestionTitle } from "../_components/question-title";
 import { TITLE_ROW_CLASS } from "../_components/title-row";
@@ -71,7 +66,6 @@ export function MistakeAnswer({
     <p
       className={cn(
         "text-reading w-full rounded-xl px-3.5 py-3 leading-6 font-medium wrap-break-word",
-        ANSWER_FORMULA_CLASS,
         right ? ANSWER_TONE.right : ANSWER_TONE.wrong,
       )}
       data-slot="mistake-answer"

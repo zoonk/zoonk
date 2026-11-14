@@ -169,7 +169,7 @@ describe("checked answer readability", () => {
     },
   );
 
-  it("keeps a formula wider than the row inside its answer, scrolling sideways", async () => {
+  it("keeps a formula wider than the row beside its mark, scrolling sideways, the tag under it", async () => {
     await atViewport({ height: 844, width: 390 }, async () => {
       const lesson = lessonWithAnswer(LONG_FORMULA);
       renderLessonPlayer({ lesson, mathMarkup: collectMathMarkup(lesson) });
@@ -187,8 +187,19 @@ describe("checked answer readability", () => {
       await page.getByRole("button", { name: /^Check/u }).click();
       await expect.element(selected.getByText("Your answer")).toBeVisible();
 
+      const mark = option.firstElementChild?.getBoundingClientRect();
+      const formula = drawing.closest("[data-slot='inline-math']")?.getBoundingClientRect();
+      const tag = selected.getByText("Your answer").element().getBoundingClientRect();
+
+      if (!mark || !formula) {
+        throw new Error("The answer must draw its mark and its formula.");
+      }
+
       expect(option.scrollWidth).toBeLessThanOrEqual(option.clientWidth);
       expect(scrollersBetween(drawing, option)).toHaveLength(1);
+      expect(formula.left).toBeGreaterThanOrEqual(mark.right);
+      expect(formula.top).toBeLessThan(mark.bottom);
+      expect(tag.top).toBeGreaterThanOrEqual(formula.bottom);
     });
   });
 
