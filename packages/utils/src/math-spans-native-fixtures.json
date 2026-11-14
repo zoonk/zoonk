@@ -582,19 +582,11 @@
     {
       "segments": [
         {
-          "kind": "math",
-          "text": "\\text{`x`}"
-        },
-        {
           "kind": "text",
-          "text": " and "
-        },
-        {
-          "kind": "math",
-          "text": "y"
+          "text": "The cost is $5; print `$HOME`."
         }
       ],
-      "text": "$\\text{`x`}$ and $y$"
+      "text": "The cost is $5; print `$HOME`."
     }
   ]
 }

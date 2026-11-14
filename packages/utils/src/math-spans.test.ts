@@ -31,10 +31,6 @@ describe(findMathSpans, () => {
   it("never reads a dollar or bracket inside inline code as a math delimiter", () => {
     expect(formulas("Match `^a$|^b$`, then $x$.")).toStrictEqual(["x"]);
     expect(formulas("Print `echo $HOME` and `\\(x\\)` as written.")).toStrictEqual([]);
-  });
-
-  it("keeps a backtick inside a formula that opens before it", () => {
-    expect(formulas("$\\text{`x`}$ and $y$")).toStrictEqual(["\\text{`x`}", "y"]);
-    expect(formulas("\\(a `b` c\\) then `$d$`")).toStrictEqual(["a `b` c"]);
+    expect(formulas("The cost is $5; print `$HOME`.")).toStrictEqual([]);
   });
 });

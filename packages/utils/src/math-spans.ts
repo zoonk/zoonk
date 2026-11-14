@@ -86,7 +86,7 @@ function findDollarMath(text: string, from = 0): MathSpan | null {
   return matchInlineMathAt(text, start) ?? findDollarMath(text, start + 1);
 }
 
-function findMathIgnoringCode(text: string): MathSpan | null {
+function findMathOutsideCode(text: string): MathSpan | null {
   const dollar = findDollarMath(text);
 
   const delimiters = [
@@ -120,21 +120,22 @@ function findMathIgnoringCode(text: string): MathSpan | null {
 }
 
 /**
- * The first math in a line, as the web player typesets it. Whichever opens first wins, as in
- * Pandoc: a formula takes the backticks inside it (``$\text{`x`}$``), and inline code takes its
- * `$` (``Match `^a$|^b$` ``), never a delimiter.
+ * The first math in a line, as the web player typesets it. Inline code comes first, as in
+ * CommonMark, so a `$` inside it (``Match `^a$|^b$` ``) is code, never a delimiter.
  */
 export function findMath(text: string): MathSpan | null {
-  const math = findMathIgnoringCode(text);
   const code = findCode(text);
 
-  if (!code || (math && math.start < code.start)) {
-    return math;
+  if (!code) {
+    return findMathOutsideCode(text);
   }
 
   const after = findMath(text.slice(code.end));
 
-  return after && { ...after, end: after.end + code.end, start: after.start + code.end };
+  return (
+    findMathOutsideCode(text.slice(0, code.start)) ??
+    (after && { ...after, end: after.end + code.end, start: after.start + code.end })
+  );
 }
 
 export function findMathSpans(line: string): MathSpan[] {
