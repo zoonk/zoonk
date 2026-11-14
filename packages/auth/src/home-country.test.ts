@@ -176,4 +176,73 @@ describe("home country from the sign-in's location", () => {
       ).resolves.toMatchObject({ homeCountry: "US", memoryEnabled: account });
     },
   );
+
+  it("keeps what an account set in the session a one-time token signs in with", async () => {
+    const account = await guestAuth.api.signUpEmail({
+      body: { email: createTestEmail(), name: "Home", password: PASSWORD },
+      returnHeaders: true,
+    });
+
+    const userId = account.response.user.id;
+
+    await prisma.userLearningProfile.create({
+      data: {
+        buddyKind: "zu",
+        buddyName: "Account",
+        memoryEnabled: false,
+        soundsEnabled: false,
+        userId,
+      },
+    });
+
+    const { token } = await guestAuth.api.generateOneTimeToken({
+      headers: toCookieHeaders(account.headers),
+    });
+
+    await guestAuth.api.verifyOneTimeToken({
+      body: { token },
+      headers: await guestWithSettings({ memoryEnabled: true }),
+    });
+
+    await expect(
+      prisma.userLearningProfile.findUniqueOrThrow({ where: { userId } }),
+    ).resolves.toMatchObject({ buddyName: "Account", memoryEnabled: false, soundsEnabled: false });
+  });
+
+  it("carries a guest's settings through a one-time token into a country-only account", async () => {
+    const account = await guestAuth.api.signUpEmail({
+      body: { email: createTestEmail(), name: "Home", password: PASSWORD },
+      headers: new Headers({ "x-vercel-ip-country": "US" }),
+      returnHeaders: true,
+    });
+
+    const { token } = await guestAuth.api.generateOneTimeToken({
+      headers: toCookieHeaders(account.headers),
+    });
+
+    await guestAuth.api.verifyOneTimeToken({ body: { token }, headers: await guestWithSettings() });
+
+    await expect(
+      prisma.userLearningProfile.findUniqueOrThrow({ where: { userId: account.response.user.id } }),
+    ).resolves.toMatchObject({ ...GUEST_SETTINGS, homeCountry: "US" });
+  });
+
+  it("keeps an untouched profile from an earlier session when it signs in from a guest", async () => {
+    const email = createTestEmail();
+
+    const created = await guestAuth.api.signUpEmail({
+      body: { email, name: "Home", password: PASSWORD },
+    });
+
+    const profile = await prisma.userLearningProfile.create({ data: { userId: created.user.id } });
+
+    await guestAuth.api.signInEmail({
+      body: { email, password: PASSWORD },
+      headers: await guestWithSettings(),
+    });
+
+    await expect(
+      prisma.userLearningProfile.findUniqueOrThrow({ where: { userId: created.user.id } }),
+    ).resolves.toMatchObject({ id: profile.id, memoryEnabled: true, soundsEnabled: true });
+  });
 });

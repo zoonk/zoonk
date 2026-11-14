@@ -59,14 +59,24 @@ export async function mergeLearningProfile({
   takeGuestAddressForm?: boolean;
   takeGuestSupport?: boolean;
 }) {
-  // Better Auth creates the account's session, and the session hook saves the sign-in's country,
-  // before it links the guest. A row made since that session began holds only that guess, not the
-  // account's choices, so the guest's row replaces it and keeps the guess only when it has no
-  // country. A country written since then into an older row is that guess too: the guest's wins.
+  // The session hook saves the sign-in's country before Better Auth links the guest. A row made
+  // since this session began that holds nothing but a country is that guess, so the guest's row
+  // replaces it and keeps the guess only when it has no country. A one-time token reuses an older
+  // session, so a row the learner filled in since then stays. A new setting joins this check.
+  // A country written into an older row in this session is the same guess: the guest's wins below.
   const [sessionRow] = await transaction.$queryRaw<{ home_country: string | null }[]>`
     DELETE FROM user_learning_profiles
     WHERE user_id = ${userId}::uuid
       AND created_at >= (SELECT created_at FROM sessions WHERE id = ${sessionId ?? null}::uuid)
+      AND cardinality(learning_needs) = 0
+      AND address_form IS NULL
+      AND buddy_kind IS NULL
+      AND buddy_name IS NULL
+      AND buddy_glasses = 'round'
+      AND active_goal_id IS NULL
+      AND memory_enabled
+      AND sounds_enabled
+      AND share_usage_data IS NULL
       AND EXISTS (SELECT 1 FROM user_learning_profiles WHERE user_id = ${guestUserId}::uuid)
     RETURNING home_country
   `;
