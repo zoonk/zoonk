@@ -76,6 +76,21 @@ function correctedCopyId(change: ContentFixDetail["changes"][number]): string | 
   return change.op === "restore" && "retires" in change ? change.retires : null;
 }
 
+/** Shared content such as a skill or a source has no Admin page: its place is plain text. */
+function ContentPlace({ href, place }: { href: string | null; place: string }) {
+  if (!place) {
+    return "It was deleted after the fix was proposed.";
+  }
+
+  return href ? (
+    <Link className={LINK_CLASS} href={href} prefetch>
+      {place}
+    </Link>
+  ) : (
+    place
+  );
+}
+
 function Where({ fix }: { fix: ContentFixDetail }) {
   const { adminHref, language, mainUrl, trail } = fix.location;
   const place = trail.join(" › ");
@@ -85,13 +100,7 @@ function Where({ fix }: { fix: ContentFixDetail }) {
       <AdminSection title="Where">
         <DetailFields>
           <DetailField label="Content">
-            {adminHref && place ? (
-              <Link className={LINK_CLASS} href={adminHref} prefetch>
-                {place}
-              </Link>
-            ) : (
-              "It was deleted after the fix was proposed."
-            )}
+            <ContentPlace href={adminHref} place={place} />
           </DetailField>
           <DetailField label="Language">
             {language ? languagePairName(fix.location) : null}
