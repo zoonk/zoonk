@@ -1,4 +1,4 @@
-import { BigQuantity } from "@zoonk/learn/big-quantity";
+import { BigQuantity } from "@zoonk/ui/components/big-quantity";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { Stat, StatDetail, StatIcon, StatLabel, StatValue } from "@zoonk/ui/components/stat";
 import { cn } from "@zoonk/ui/lib/utils";

@@ -1,5 +1,6 @@
 "use client";
 
+import { BigQuantity } from "@zoonk/ui/components/big-quantity";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { NativeSelect, NativeSelectOption } from "@zoonk/ui/components/native-select";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
@@ -11,7 +12,6 @@ import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
 import { getDailyTimes } from "../_utils/daily-times";
 import { useFormatDuration } from "../_utils/time-format";
-import { BigQuantity } from "./big-quantity";
 
 type TimeChoice = {
   disabled: boolean;

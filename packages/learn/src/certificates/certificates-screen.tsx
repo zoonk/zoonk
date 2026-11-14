@@ -3,6 +3,7 @@
 import { type OwnedCertificateFacts } from "@zoonk/core/certificates/contract";
 import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { DetailHero, DetailHeroText, DetailTitle } from "@zoonk/ui/components/detail";
+import { Meter, MeterFill } from "@zoonk/ui/components/meter";
 import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { type CertificateLinks, getCertificatePath } from "@zoonk/utils/certificate-links";
 import { useExtracted } from "next-intl";
@@ -17,7 +18,6 @@ import {
   ListRowTitle,
   ListRowTrailing,
 } from "../_components/list-group";
-import { Meter, MeterFill } from "../_components/meter";
 import {
   PageSection,
   PageSectionHeader,

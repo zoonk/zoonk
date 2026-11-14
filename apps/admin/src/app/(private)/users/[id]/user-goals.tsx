@@ -3,7 +3,7 @@ import { GoalKindIcon } from "@/components/goal-kind-icon";
 import { StateMark } from "@/components/state-mark";
 import { type UserGoal, listUserGoals } from "@/data/users/list-user-goals";
 import { formatDate, toWords } from "@/lib/format";
-import { Meter, MeterFill } from "@zoonk/learn/meter";
+import { Meter, MeterFill } from "@zoonk/ui/components/meter";
 import {
   CalendarXIcon,
   FastForwardIcon,

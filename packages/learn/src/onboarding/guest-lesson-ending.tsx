@@ -2,11 +2,11 @@
 
 import { type LessonFit } from "@zoonk/core/view-models/onboarding/get-lesson-fit";
 import { buttonVariants } from "@zoonk/ui/components/button";
+import { MeterPart, MeterParts } from "@zoonk/ui/components/meter";
 import { cn } from "@zoonk/ui/lib/utils";
 import { PendingLink } from "@zoonk/ui/patterns/links/pending";
 import { BookOpenIcon, UserPlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { MeterPart, MeterParts } from "../_components/meter";
 import { SURFACE_CLASS } from "../_components/surface";
 import { TASK_WRAPPING_ACTION_CLASS } from "../_components/task-layout";
 import { useFormatDuration } from "../_utils/time-format";

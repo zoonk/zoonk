@@ -93,7 +93,8 @@ export default async function SettingsPage() {
         </Suspense>
       </Page>
 
-      <div className="max-w-form hidden md:block">
+      {/* Not a box of its own, so the first page sits in the section like on its own URL. */}
+      <div className="hidden md:contents">
         <Suspense fallback={<SettingsHubSkeleton />}>
           <FirstSettingsPage />
         </Suspense>

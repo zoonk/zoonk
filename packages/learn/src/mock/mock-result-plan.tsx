@@ -3,11 +3,11 @@
 import { type MockResult } from "@zoonk/core/exams/mocks/contract";
 import { type MockAdaptView } from "@zoonk/core/exams/mocks/view-contract";
 import { Button } from "@zoonk/ui/components/button";
+import { Meter, MeterFill } from "@zoonk/ui/components/meter";
 import { CircleCheckIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { useId, useState, useTransition } from "react";
 import { Eyebrow } from "../_components/eyebrow";
-import { Meter, MeterFill } from "../_components/meter";
 import { useChangeSaveErrorMessage } from "../_components/save-error";
 import { StepCard, StepHeader, StepTitle } from "../_components/step-card";
 import { useFormatShare } from "../_utils/percent";
