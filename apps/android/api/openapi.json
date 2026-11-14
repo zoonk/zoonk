@@ -14410,7 +14410,7 @@
     },
     "/goals/{goalId}/chapters/{chapterId}/test-out/results/{requestId}": {
       "get": {
-        "description": "A test-out the learner sent, as it was recorded: its score, the lessons it skipped, and whether that skip can still be undone or was undone. Show it again (after a reload, or from a link) instead of a new test, celebrating nothing. Nothing is written. 404 for a test never sent, another chapter's or another learner's.",
+        "description": "A test-out the learner sent, as it was recorded: its score, the lessons it skipped, and whether that skip can still be undone or was undone. Read it again after a reload or from a link instead of starting a new test. Nothing is written. 404 for a test never sent, another chapter's or another learner's.",
         "operationId": "getChapterTestOutResult",
         "security": [
           {
@@ -39935,7 +39935,7 @@
           },
           "cutoff": {
             "nullable": true,
-            "description": "The last published cut-off of the learner's target (a course at an institution, a position) for the general list, with its source: show it as where the bar was, never as a promise. Null when none was found",
+            "description": "The last published cut-off of the learner's target (a course at an institution, a position) for the general list, with its source: a past figure, not a forecast. Null when none was found",
             "allOf": [
               {
                 "$ref": "#/components/schemas/TargetCutoff"
@@ -40011,7 +40011,7 @@
           },
           "mocksRequirePlus": {
             "type": "boolean",
-            "description": "Mock exams come with Plus and the learner's plan doesn't include them: show them (the next one too) locked, with a way to Plus, never hidden"
+            "description": "True when mock exams come with Plus and the learner's plan doesn't include them: starting one answers 402"
           },
           "namedMonth": {
             "type": "boolean",
@@ -40114,7 +40114,7 @@
           },
           "prepared": {
             "type": "boolean",
-            "description": "The learner did what their plan asked before today (a session, no lessons left from earlier days, most study days finished): say they prepared only when true"
+            "description": "The learner did what their plan asked before today (a session, no lessons left from earlier days, most study days finished)"
           },
           "progress": {
             "nullable": true,
@@ -43853,6 +43853,7 @@
             "type": "object",
             "properties": {
               "availableAt": {
+                "description": "For `rolling30Days`: when call time comes back; null when none does. Absent for other periods",
                 "nullable": true,
                 "type": "string",
                 "format": "date-time",
@@ -47116,7 +47117,7 @@
           },
           "locked": {
             "type": "boolean",
-            "description": "The plan follows no more goals at once: show it with the Plus lock, opening Plus"
+            "description": "True when the learner's plan follows no more goals at once: POST /goals lists it in `refused`"
           }
         },
         "required": [
@@ -75787,7 +75788,7 @@
         "properties": {
           "alt": {
             "type": "string",
-            "description": "What the picture shows, with every detail its question needs: show it in the picture's place until the picture is drawn and loaded"
+            "description": "What the picture shows, with every detail its question needs, so the question can be answered without it"
           },
           "required": {
             "type": "boolean",
@@ -87071,7 +87072,7 @@
         "type": "object",
         "properties": {
           "completedOn": {
-            "description": "The learner-local day the last step was done, present only on that day: the finished list is returned once more so it can say so, and is null from the next day.",
+            "description": "The learner-local day the last step was done, present only on that day: the finished list is returned once more that day, and is null from the next day.",
             "type": "string",
             "format": "date",
             "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
@@ -89531,7 +89532,7 @@
           },
           "ceremony": {
             "nullable": true,
-            "description": "Once it's over, the one milestone the learner hasn't been shown yet (a belt it crossed, new glasses): show it as a full-screen moment before the result, then mark it shown; null before it's over and once it's been shown",
+            "description": "Once it's over, the one milestone the learner hasn't been shown yet (a belt it crossed, new glasses), until POST /me/milestones/{milestoneId}/views marks it shown; null before it's over and once it's been shown",
             "allOf": [
               {
                 "$ref": "#/components/schemas/Milestone"
@@ -89714,7 +89715,7 @@
                     },
                     "set": {
                       "nullable": true,
-                      "description": "The text, case or chart it shares with its set's other questions, asked together in the set's order: show it with each of them",
+                      "description": "The text, case or chart it shares with its set's other questions, asked together in the set's order",
                       "allOf": [
                         {
                           "$ref": "#/components/schemas/ItemSet"
@@ -89912,7 +89913,7 @@
           },
           "passMarks": {
             "nullable": true,
-            "description": "What it takes to pass, in the notice's own words, for a mock of the whole exam: show it beside the score, saying its language when it isn't the learner's; null otherwise",
+            "description": "What it takes to pass, in the notice's own words, in their language (`language`), for a mock of the whole exam; null otherwise",
             "allOf": [
               {
                 "$ref": "#/components/schemas/PassMarks"
@@ -90002,7 +90003,7 @@
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991,
-            "description": "Questions it asks that the learner answered before, because the bank had no new ones left for them (the missed ones first, then the ones answered longest ago): say so on the mock's screen when above 0"
+            "description": "Questions it asks that the learner answered before, because the bank had no new ones left for them (the missed ones first, then the ones answered longest ago); 0 when every question is new"
           },
           "review": {
             "type": "array",
@@ -97789,7 +97790,7 @@
           },
           "prepared": {
             "type": "boolean",
-            "description": "The learner did what their plan asked before today (a session, no lessons left from earlier days, most study days finished): say they prepared only when true"
+            "description": "The learner did what their plan asked before today (a session, no lessons left from earlier days, most study days finished)"
           },
           "resultReported": {
             "type": "boolean"

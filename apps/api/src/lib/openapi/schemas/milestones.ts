@@ -57,7 +57,7 @@ const firstStepsSchema = z
       .optional()
       .meta({
         description:
-          "The learner-local day the last step was done, present only on that day: the finished list is returned once more so it can say so, and is null from the next day.",
+          "The learner-local day the last step was done, present only on that day: the finished list is returned once more that day, and is null from the next day.",
       }),
     done: countSchema,
     steps: z.array(
