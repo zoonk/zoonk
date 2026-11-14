@@ -225,8 +225,9 @@ export function LearnBottomNavigation({
       data-bottom-bar=""
       data-slot="learn-bottom-navigation"
     >
-      <div className="mx-auto flex items-center gap-2 px-4 py-1.5 sm:max-w-3xl sm:px-8">
-        <ul className="flex flex-1 justify-evenly">
+      {/* One gap between every item, search included: the room left by three 72px tabs and the 44px button, in three. */}
+      <div className="mx-auto flex items-center gap-[calc((100%-16.25rem)/3)] px-4 py-1.5 sm:max-w-3xl sm:px-8">
+        <ul className="flex flex-1 justify-between">
           {LEARN_TABS.map((tab) => (
             <li className="flex" key={tab}>
               <BottomTab {...props} tab={tab} />
