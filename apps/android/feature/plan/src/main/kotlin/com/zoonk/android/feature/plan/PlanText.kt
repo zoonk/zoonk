@@ -12,10 +12,14 @@ import com.zoonk.api.models.ShortExamFocus
 import kotlinx.datetime.toJavaLocalDate
 import java.time.LocalDate
 
-/** A day of the plan as written ("Nov 3") and as read aloud, which says "about" for an estimate. */
+/**
+ * A day of the plan as written ("Nov 3") and as read aloud, which says "about" for an estimate. Words
+ * in a date's place ("Won", "Day 3") aren't [date], so they keep the text face.
+ */
 data class PlanDateWords(
     val text: String,
     val spoken: String,
+    val date: Boolean = false,
 )
 
 @Composable
@@ -27,9 +31,13 @@ fun planDate(
 ): PlanDateWords {
     val formatted = formatPlanDate(date, today, currentLocale(), month)
     return if (estimate) {
-        PlanDateWords(stringResource(R.string.plan_date_estimate, formatted), stringResource(R.string.plan_date_estimate_spoken, formatted))
+        PlanDateWords(
+            stringResource(R.string.plan_date_estimate, formatted),
+            stringResource(R.string.plan_date_estimate_spoken, formatted),
+            date = true,
+        )
     } else {
-        PlanDateWords(formatted, formatted)
+        PlanDateWords(formatted, formatted, date = true)
     }
 }
 

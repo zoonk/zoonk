@@ -29,7 +29,7 @@ import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatNumber
-import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.GeistMono
 import com.zoonk.api.models.PlanEffect
 import com.zoonk.api.models.PlanEffectTopics
 import com.zoonk.api.models.PlanEffectWeeklyEvents
@@ -133,7 +133,7 @@ private fun ChangeRows(rows: List<ChangeRow>) {
                                 append(row.after)
                             },
                         modifier = Modifier.semantics { contentDescription = listOfNotNull(row.before, row.after).joinToString(", ") },
-                        style = style.withTabularFigures(),
+                        style = style.copy(fontFamily = GeistMono),
                     )
                 }
                 row.detail?.let { Text(it, style = style, color = muted) }
