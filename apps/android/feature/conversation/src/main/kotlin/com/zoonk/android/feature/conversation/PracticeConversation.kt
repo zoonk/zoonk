@@ -65,7 +65,7 @@ class CallStartModel(
     private val starter: CallStarter,
     kind: GenerationKind,
 ) : ViewModel() {
-    enum class State { Idle, Starting, Failed, Paused }
+    enum class State { Idle, Starting, Failed, Paused, PlusRequired }
 
     var state by mutableStateOf(State.Idle)
         private set
@@ -100,6 +100,10 @@ class CallStartModel(
 
                     started == CallStart.Paused -> {
                         State.Paused
+                    }
+
+                    started == CallStart.PlusRequired -> {
+                        State.PlusRequired
                     }
 
                     else -> {

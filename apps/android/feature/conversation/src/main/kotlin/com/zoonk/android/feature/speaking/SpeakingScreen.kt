@@ -268,6 +268,7 @@ fun SpeakingPaperSection(
                 paused = paused,
                 busy = busy,
                 starting = model.state == CallStartModel.State.Starting && started == task.key,
+                refused = model.state == CallStartModel.State.PlusRequired && started == task.key,
                 onStart = { startTask(task.key) },
                 onSubscribe = { open(AppRoute.Subscription) },
                 onLastResult = openCall,
@@ -360,15 +361,17 @@ private fun TaskRow(
     paused: Boolean,
     busy: Boolean,
     starting: Boolean,
+    refused: Boolean,
     onStart: () -> Unit,
     onSubscribe: () -> Unit,
     onLastResult: (UUID) -> Unit,
 ) {
     val locale = currentLocale()
     var open by rememberSaveable(task.key) { mutableStateOf(openAtFirst) }
-    // The gate shows once the learner tries a locked task, until a purchase reloads the paper open.
+    // The gate shows once a start met the lock (the learner's tap, or the server's refusal, which reloads
+    // the paper locked), until a purchase reloads it open.
     var triedLocked by rememberSaveable(task.key) { mutableStateOf(false) }
-    val gated = triedLocked && locked
+    val gated = (triedLocked || refused) && locked
     val requester = remember { BringIntoViewRequester() }
     LaunchedEffect(openAtFirst) { if (openAtFirst) requester.bringIntoView() }
     val level = paper.level.value
