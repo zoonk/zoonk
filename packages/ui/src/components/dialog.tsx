@@ -3,6 +3,7 @@
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
 import { Button } from "@zoonk/ui/components/button";
 import { useHideElement } from "@zoonk/ui/hooks/hide-element";
+import { OVERLAY_DIM_CLASS } from "@zoonk/ui/lib/overlay-dim";
 import { cn } from "@zoonk/ui/lib/utils";
 import { XIcon } from "lucide-react";
 import { createContext, useContext } from "react";
@@ -50,7 +51,8 @@ function DialogOverlay({ className, ...props }: DialogPrimitive.Backdrop.Props) 
     <DialogPrimitive.Backdrop
       forceRender
       className={cn(
-        "data-closed:fade-out-0 data-open:fade-in-0 data-closed:animate-out data-open:animate-in fixed inset-0 isolate z-50 bg-black/50 duration-100 dark:bg-black/70",
+        "data-closed:fade-out-0 data-open:fade-in-0 data-closed:animate-out data-open:animate-in fixed inset-0 isolate z-50 duration-100",
+        OVERLAY_DIM_CLASS,
         className,
       )}
       data-slot="dialog-overlay"

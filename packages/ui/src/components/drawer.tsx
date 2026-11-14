@@ -1,6 +1,7 @@
 "use client";
 
 import { Drawer as DrawerPrimitive } from "@base-ui/react/drawer";
+import { OVERLAY_DIM_CLASS } from "@zoonk/ui/lib/overlay-dim";
 import { cn } from "@zoonk/ui/lib/utils";
 import { PopupShortcutLayer } from "../hooks/_utils/popup-shortcut-layer";
 import { PanelCloseButton } from "./_utils/panel-close";
@@ -28,9 +29,8 @@ function DrawerBackdrop({ className, ...props }: DrawerPrimitive.Backdrop.Props)
     <DrawerPrimitive.Backdrop
       forceRender
       className={cn(
-        "fixed inset-0 z-50 bg-black",
-        "[--backdrop-opacity:0.5] dark:[--backdrop-opacity:0.7]",
-        "opacity-[calc(var(--backdrop-opacity)*(1-var(--drawer-swipe-progress)))]",
+        "fixed inset-0 z-50 opacity-[calc(1-var(--drawer-swipe-progress))]",
+        OVERLAY_DIM_CLASS,
         "transition-opacity duration-450 ease-[cubic-bezier(0.32,0.72,0,1)]",
         "data-swiping:duration-0",
         "data-ending-style:opacity-0 data-starting-style:opacity-0",
@@ -49,16 +49,11 @@ function DrawerBackdrop({ className, ...props }: DrawerPrimitive.Backdrop.Props)
  * a short form far from where the learner was looking. Base UI needs the Viewport wrapper for
  * swipe gestures, and its keyboard provider keeps a focused field above a phone's keyboard.
  */
-function DrawerPopup({
-  backdropClassName,
-  className,
-  children,
-  ...props
-}: DrawerPrimitive.Popup.Props & { backdropClassName?: string }) {
+function DrawerPopup({ className, children, ...props }: DrawerPrimitive.Popup.Props) {
   return (
     <DrawerPrimitive.VirtualKeyboardProvider>
       <DrawerPortal>
-        <DrawerBackdrop className={backdropClassName} />
+        <DrawerBackdrop />
         <DrawerPrimitive.Viewport
           className="fixed inset-0 z-50 flex items-end justify-center sm:items-center"
           data-slot="drawer-viewport"
