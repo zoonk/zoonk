@@ -24,10 +24,20 @@ const ALL_MISSIONS = missions({ done: 3, paid: true });
 const ONE_MISSION = missions({ done: 1, paid: false });
 
 describe(pickDayMoment, () => {
-  it("shows the belt's new number over everything else an activity did", () => {
+  it("shows a finished chapter over everything else an activity did", () => {
     const pick = pickDayMoment({
       ceremony: null,
       finishedChapter: CHAPTER,
+      missionMoment: ALL_MISSIONS,
+      reached: { energy: 90, level: BELT },
+    });
+
+    expect(pick).toBe("chapter");
+  });
+
+  it("shows the belt's new number over the day's missions", () => {
+    const pick = pickDayMoment({
+      ceremony: null,
       missionMoment: ALL_MISSIONS,
       reached: { energy: 90, level: BELT },
     });
@@ -45,26 +55,14 @@ describe(pickDayMoment, () => {
     expect(pick).toBeNull();
   });
 
-  it("puts the day's missions all done before a finished chapter", () => {
+  it("shows the day's missions all done over one mission and Energy", () => {
     const pick = pickDayMoment({
       ceremony: null,
-      finishedChapter: CHAPTER,
       missionMoment: ALL_MISSIONS,
       reached: { energy: 90, level: null },
     });
 
     expect(pick).toBe("missions");
-  });
-
-  it("shows a finished chapter when nothing rarer happened", () => {
-    const pick = pickDayMoment({
-      ceremony: null,
-      finishedChapter: CHAPTER,
-      missionMoment: ONE_MISSION,
-      reached: { energy: 80, level: null },
-    });
-
-    expect(pick).toBe("chapter");
   });
 
   it("shows one mission done when nothing rarer happened, and never Energy moving", () => {

@@ -142,6 +142,22 @@ describe("app history", () => {
     unsubscribe();
   });
 
+  it("says an earlier page has no name rather than giving it the link's own", () => {
+    const history = browserHistory();
+    history.open("/today");
+    markAppEntry();
+    nameAppEntry("Today");
+    const privacy = history.open("/settings/privacy");
+    markAppEntry("(settings)");
+    history.open("/mistakes");
+    markAppEntry();
+    nameAppEntry("Mistakes notebook");
+
+    expect(appBackName()).toBe("");
+    expect(goBackToApp()).toBe(true);
+    expect(history.traverseTo).toHaveBeenCalledWith(privacy.key);
+  });
+
   it("has no name to give when nothing in the app came before", () => {
     const history = browserHistory();
     history.open("/settings");

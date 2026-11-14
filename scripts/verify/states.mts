@@ -1,9 +1,10 @@
-/* oxlint-disable no-await-in-loop, max-lines-per-function -- The walk acts on one page, one step at a time, and its steps share that page and its counters. */
 import { type Locator, type Page } from "@playwright/test";
 import { type Finding } from "./checks.mts";
 import { pressKeys } from "./keys.mts";
 import { type Target } from "./measure.mts";
 import { OVERLAY_SELECTOR } from "./overlays.mts";
+/* oxlint-disable no-await-in-loop, max-lines-per-function -- The walk acts on one page, one step at a time, and its steps share that page and its counters. */
+import { installPageHelpers } from "./page-helpers.mts";
 import { focusCameBack, inspectPanel, panelFindings } from "./panels.mts";
 import { stateLeads } from "./states-checks.mts";
 import {
@@ -289,6 +290,7 @@ export async function walkStates(
     storageState: target.storageState,
   });
 
+  await context.addInitScript(installPageHelpers);
   const page = await context.newPage();
   page.on("dialog", (dialog) => void dialog.dismiss());
 

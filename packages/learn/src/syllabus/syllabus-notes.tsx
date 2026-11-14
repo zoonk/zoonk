@@ -1,13 +1,11 @@
 "use client";
 
 import { type SyllabusSubject, type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
-import { FlagIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { PageSectionFooter } from "../_components/page";
 import { QuestionsSourceText } from "../_components/questions-source-text";
 import { QuietDisclosure } from "../_components/quiet-disclosure";
 import { getSourceHost } from "../_utils/source-host";
-import { usePassMarksNote } from "../_utils/use-pass-marks-note";
 import { type SubjectGroup } from "./group-subjects";
 import { type SyllabusSectionSubject, type SyllabusSectionView } from "./syllabus-section-view";
 
@@ -124,25 +122,5 @@ export function CourseWeightsNote({
             values,
           )}
     </PageSectionFooter>
-  );
-}
-
-export function PassMarks({ passMarks }: { passMarks: SyllabusView["passMarks"] }) {
-  const note = usePassMarksNote(passMarks);
-
-  if (!passMarks) {
-    return null;
-  }
-
-  return (
-    <ul className="text-muted-foreground flex flex-col gap-1 px-1 text-sm">
-      {passMarks.texts.map((text) => (
-        <li className="flex items-start gap-2" key={text}>
-          <FlagIcon aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
-          <span lang={passMarks.language}>{text}</span>
-        </li>
-      ))}
-      {note && <li className="pl-6">{note}</li>}
-    </ul>
   );
 }

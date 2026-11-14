@@ -2,12 +2,15 @@
 import assert from "node:assert/strict";
 import { afterEach, beforeEach, test, vi } from "vitest";
 import { OVERLAYS } from "./overlays.mts";
+import { installPageHelpers } from "./page-helpers.mts";
 import { readRoles } from "./roles-probe.mts";
 
 const TOP = 20;
 const HEIGHT = 44;
 
 beforeEach(() => {
+  installPageHelpers();
+
   vi.spyOn(Element.prototype, "getBoundingClientRect").mockReturnValue(
     new DOMRect(10, TOP, 100, HEIGHT),
   );

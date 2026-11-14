@@ -226,7 +226,7 @@ export function PlanProperties({
 
       <ul className="flex flex-col">
         <PropertyRow
-          label={goal.kind === "exam" ? t("Exam date") : t("Goal date")}
+          label={goal.kind === "exam" ? t("Exam date") : t("End date")}
           onOpen={() => onOpen("date")}
         >
           <GoalDateValue />

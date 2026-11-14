@@ -9,10 +9,13 @@ export type ProfileQuestion = ProfileQuestionView["id"];
 
 export type ChipQuestion = "tools" | "watch" | "listen" | "play" | "read" | "activities";
 
-const MAX_PROFILE_PICKS = 3;
+export const MAX_PROFILE_PICKS = 3;
 
-/** The exclusive rows, each of which declines the question. */
-export type ProfileExclusive = "none" | "nothing" | "nothingInParticular" | "ratherNot";
+/**
+ * The row that declines a pick-one question in Settings, the only way to take a pick back there. A
+ * question with several picks declines by saving none, and onboarding's Skip declines any question.
+ */
+export type ProfileExclusive = "ratherNot";
 
 type ProfileStudyDraft = { field: string; subject: string };
 
@@ -50,22 +53,19 @@ function isChipQuestion(question: ProfileQuestion): boolean {
 
 function getDeclineExclusive(question: ProfileQuestion): ProfileExclusive | null {
   switch (question) {
-    case "conditions":
-      return null;
     case "work":
     case "addressForm":
       return "ratherNot";
+    case "conditions":
     case "studies":
-      return "nothing";
     case "learningSupport":
-      return "nothingInParticular";
     case "tools":
     case "watch":
     case "listen":
     case "play":
     case "read":
     case "activities":
-      return "none";
+      return null;
     default:
       return question satisfies never;
   }
@@ -271,6 +271,11 @@ function toAnswer({
     default:
       return question satisfies never;
   }
+}
+
+/** What onboarding's Skip saves: the question is declined, so the next goal doesn't ask it again. */
+export function declineProfileQuestion(question: ProfileQuestion): ProfileAnswerInput {
+  return profileAnswerInputSchema.parse({ answer: { declined: true }, question });
 }
 
 /** An empty or exclusive screen declines. */

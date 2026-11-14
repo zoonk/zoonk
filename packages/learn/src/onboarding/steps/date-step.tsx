@@ -6,10 +6,10 @@ import {
   type OnboardingAnswerInput,
   type OnboardingDateProblem,
 } from "@zoonk/core/view-models/onboarding/contract";
-import { Button } from "@zoonk/ui/components/button";
 import { Input, InputError } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
+import { CalendarIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { getTodayInZone, useFormatIsoDate } from "../../_utils/iso-date";
@@ -39,16 +39,10 @@ function ExamDateStep({
   const space = useSentenceSpace();
   const date = formatDate(first);
 
-  const ready =
-    second === undefined
-      ? t("Your plan paces your lessons to end by then.")
-      : t("Your plan paces your lessons to end by the first day.");
-
   return (
     <StepForm
       description={[
         passedNote,
-        ready,
         exam.estimated && t("This is the expected date until the notice confirms it."),
       ]
         .filter(Boolean)
@@ -56,6 +50,7 @@ function ExamDateStep({
       onContinue={() => onAnswer({ question: "targetDate", targetDate: first })}
       onSkip={onOtherDate}
       pending={pending}
+      skipIcon={<CalendarIcon aria-hidden="true" />}
       skipLabel={t("Another date")}
       subject={subject}
       title={
@@ -134,7 +129,6 @@ function DateFieldStep({
   const inputId = useId();
   const noteId = useId();
   const [date, setDate] = useState(initialDate ?? "");
-  const space = useSentenceSpace();
 
   // The browser explains a day past the bounds on Continue.
   const bounds = getTargetDateBounds(today);
@@ -147,40 +141,20 @@ function DateFieldStep({
       ? noSitting
       : null;
 
-  const withoutDate = t(
-    "Without a date, you study everything at your own pace, and we show when you reach each milestone.",
-  );
-
   const dated = date !== "";
 
   return (
     <StepForm
-      canContinue={!dated || date > today}
-      continueLabel={dated ? undefined : t("Continue without a date")}
-      description={[passedNote, withoutDate].filter(Boolean).join(space)}
-      // A half-typed date is invalid but leaves the value empty, so it would block going on without one.
-      formNoValidate={!dated}
-      onContinue={() => onAnswer({ question: "targetDate", targetDate: dated ? date : null })}
+      canContinue={dated && date > today}
+      description={passedNote ?? undefined}
+      onContinue={() => onAnswer({ question: "targetDate", targetDate: date })}
+      onSkip={() => onAnswer({ question: "targetDate", targetDate: null })}
       pending={pending}
       subject={subject}
       title={t("Is there a date you're aiming for?")}
     >
       <div className="flex flex-col gap-2">
-        <div className="flex min-h-5 items-center justify-between gap-3">
-          <Label htmlFor={inputId}>{t("Date")}</Label>
-
-          {dated && (
-            <Button
-              disabled={pending}
-              focusableWhenDisabled
-              onClick={() => setDate("")}
-              type="button"
-              variant="link"
-            >
-              {t("Remove date")}
-            </Button>
-          )}
-        </div>
+        <Label htmlFor={inputId}>{t("Date")}</Label>
 
         <Input
           aria-describedby={noteId}

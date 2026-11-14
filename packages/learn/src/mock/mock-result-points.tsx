@@ -1,17 +1,14 @@
 "use client";
 
-import { type MockResult } from "@zoonk/core/exams/mocks/contract";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { StepRow, StepRows } from "../_components/step-card";
 import { useMockNumber, useMockPercent } from "./mock-labels";
 import { ResultSection } from "./mock-result-section";
+import { type MockPoints, type Tally, type TestRow, toTestRows } from "./mock-result-test-rows";
 
-type MockPoints = NonNullable<MockResult["points"]>;
 type Minimum = MockPoints["unjudged"][number]["minimum"];
-type Tally = Omit<MockPoints, "parts" | "unjudged">;
-type TestRow = Tally & { name: string | null; qualifying: boolean };
 
 const POINT_DECIMALS = 100;
 
@@ -21,14 +18,6 @@ function round(value: number): number {
 
 function toScorePercent({ asked, earned }: Tally): number {
   return asked > 0 ? (earned / asked) * 100 : 0;
-}
-
-/** Misses first, so what would eliminate the learner is read before what went fine. */
-function toTestRows(points: MockPoints): TestRow[] {
-  const total = points.minimum ? [{ ...points, name: null, qualifying: false }] : [];
-  const rows = [...points.parts, ...total];
-
-  return [...rows.filter((row) => row.met === false), ...rows.filter((row) => row.met !== false)];
 }
 
 export function hasTestRows(points: MockPoints | null | undefined): points is MockPoints {

@@ -167,7 +167,7 @@ export type MockScheduleView = {
 };
 
 export type PlanView = {
-  access: { freeUntil: string | null; freeWeekOver: boolean; mocksRequirePlus: boolean };
+  access: { freeUntil: string | null; mocksRequirePlus: boolean };
   areas: {
     focusPart: string | null;
     focused: boolean;

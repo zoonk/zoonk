@@ -106,11 +106,6 @@ export function readCraft(): CraftPage {
     return Math.round(value * TENTH) / TENTH;
   }
 
-  /** Computed lengths are always in pixels, such as "16px". */
-  function pixels(value: string) {
-    return Number(value.replace(/px$/u, "")) || 0;
-  }
-
   /** Any CSS color (`oklch`, `lab`, …) as the RGBA the screen draws, through a canvas. */
   function rgba(color: string): [number, number, number, number] {
     if (!paint) {
@@ -124,17 +119,7 @@ export function readCraft(): CraftPage {
     return [red, green, blue, alpha];
   }
 
-  function shown(element: Element) {
-    const box = element.getBoundingClientRect();
-    const style = getComputedStyle(element);
-
-    return (
-      box.width > 1 &&
-      box.height > 1 &&
-      style.clipPath !== "inset(50%)" &&
-      element.checkVisibility({ opacityProperty: true, visibilityProperty: true })
-    );
-  }
+  const { pixels, shown } = globalThis.zoonkPage;
 
   function behind(element: Element) {
     for (let parent = element.parentElement; parent; parent = parent.parentElement) {
@@ -208,12 +193,7 @@ export function readCraft(): CraftPage {
   }
 
   function label(element: Element): string {
-    const named =
-      element.getAttribute("aria-label") ??
-      // oxlint-disable-next-line unicorn/prefer-dom-node-text-content -- Only `innerText` leaves out hidden text.
-      (element instanceof HTMLElement ? element.innerText : element.textContent);
-
-    const text = named?.replaceAll(/\s+/gu, " ").trim().slice(0, LABEL_LENGTH) ?? "";
+    const text = globalThis.zoonkPage.label(element).slice(0, LABEL_LENGTH);
 
     if (text) {
       return `"${text}"`;

@@ -1,7 +1,7 @@
 import { defineRule } from "@oxlint/plugins";
 import { elementName } from "../utils/jsx.js";
 
-const ENTER = /⏎|\bEnter\b/u;
+const ACTION = /^(?:a|button)$|(?:Button|Link)$/u;
 const DONT_KNOW = "I don't know yet";
 
 function message(call) {
@@ -24,19 +24,18 @@ export default defineRule({
     return {
       CallExpression(node) {
         if (
-          node.callee.type === "Identifier" &&
-          node.callee.name === "t" &&
-          message(node) === DONT_KNOW
+          node.callee.type !== "Identifier" ||
+          node.callee.name !== "t" ||
+          message(node) !== DONT_KNOW
         ) {
-          context.report({ messageId: "actions", node });
+          return;
         }
-      },
-      JSXElement(node) {
-        if (
-          elementName(node.openingElement) === "ShortcutKbd" &&
-          ENTER.test(context.sourceCode.getText(node))
-        ) {
-          context.report({ messageId: "actions", node: node.openingElement });
+
+        for (let parent = node.parent; parent; parent = parent.parent) {
+          if (parent.type === "JSXElement" && ACTION.test(elementName(parent.openingElement))) {
+            context.report({ messageId: "actions", node });
+            return;
+          }
         }
       },
     };

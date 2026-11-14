@@ -47,6 +47,8 @@ export function usePastDateText() {
   return ({ isExam, lessons }: { isExam: boolean; lessons: number }) =>
     isExam
       ? {
+          /** The exam is over, so what's left is a choice: study on, or archive the goal. */
+          ask: t("Keep studying them, or archive this goal?"),
           sentence: t(
             "{count, plural, one {Your exam date has passed with # lesson left.} other {Your exam date has passed with # lessons left.}}",
             { count: lessons },
@@ -54,6 +56,7 @@ export function usePastDateText() {
           title: t("Your exam date has passed"),
         }
       : {
+          ask: null,
           sentence: t(
             "{count, plural, one {Your end date has passed with # lesson left.} other {Your end date has passed with # lessons left.}}",
             { count: lessons },

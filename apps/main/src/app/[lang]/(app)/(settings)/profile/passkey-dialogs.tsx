@@ -30,21 +30,18 @@ export function usePasskeyName(passkey: PasskeyView): string {
 }
 
 export function RenameDialog({
-  isPending,
   onClose,
   onSave,
   passkey,
 }: {
-  isPending: boolean;
   onClose: () => void;
-  onSave: (name: string) => void;
+  onSave: (name: string) => Promise<boolean>;
   passkey: PasskeyView;
 }) {
   const t = useExtracted();
 
   return (
     <EditTextDialog
-      isPending={isPending}
       label={t("Passkey name")}
       maxLength={MAX_NAME_LENGTH}
       onClose={onClose}

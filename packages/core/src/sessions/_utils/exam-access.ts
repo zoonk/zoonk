@@ -13,8 +13,6 @@ export function getExamPrepAccess({
 }: {
   examPrep: Allowance["examPrep"] | null;
   goal: Pick<Goal, "kind">;
-  timeZone?: string;
-  today?: Date;
 }): ExamPrepAccess {
   return {
     includesMockExams: goal.kind !== "exam" || !examPrep || examPrep.includesMockExams,

@@ -68,7 +68,6 @@ test("keeps craft, role, pinned-action and title findings in a measured load", a
     // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- openPage is the mocked browser boundary; it never uses this handle.
     browser: {} as Browser,
     out: "/unused",
-    pageTop: null,
     serverPid: null,
     shortcuts: null,
     throttle: false,

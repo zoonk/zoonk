@@ -16,7 +16,6 @@ import { measureFrames } from "./content-frames.mts";
 import { readCraft } from "./craft-probe.mts";
 import { craftFindings } from "./craft.mts";
 import { type Shortcuts } from "./keys.mts";
-import { type PageTopClasses } from "./page-top.mts";
 import {
   findOverflow,
   findTruncated,
@@ -62,7 +61,6 @@ export type Target = {
   storageState?: BrowserContextOptions["storageState"];
   throttle: boolean;
   typeScale: number[];
-  pageTop: PageTopClasses | null;
 };
 
 export type LoadReport = LoadMeasurement & {
@@ -109,7 +107,7 @@ export async function warmUp(target: Target, path: string) {
   }
 }
 
-async function readLoadedPage(page: Page, traffic: Traffic, pageTop: PageTopClasses | null) {
+async function readLoadedPage(page: Page, traffic: Traffic) {
   const prefetched = new Set(
     traffic.requests
       .filter((request) => classifyRequest(request) === "prefetch")
@@ -140,7 +138,7 @@ async function readLoadedPage(page: Page, traffic: Traffic, pageTop: PageTopClas
     unprefetchedLinks: links
       .filter((link) => !prefetched.has(link))
       .map((link) => redactQuery(link)),
-    words: await page.evaluate(readWords, pageTop),
+    words: await page.evaluate(readWords),
   };
 }
 
@@ -172,7 +170,7 @@ export async function measureLoad(
     const window = { from, to: Date.now() };
     const mainThreadMs = (await readMainThreadMs(cdp)) - workBefore;
     await screencast.stop();
-    const loaded = await readLoadedPage(page, traffic, target.pageTop);
+    const loaded = await readLoadedPage(page, traffic);
     // Chrome's in-page navigation timing can put a streamed page's first byte before the network
     // delivered it, so the time comes from the network layer.
     const responseStart = response?.request().timing().responseStart ?? -1;

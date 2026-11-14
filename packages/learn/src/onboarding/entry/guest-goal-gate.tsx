@@ -1,15 +1,14 @@
 "use client";
 
-import { buttonVariants } from "@zoonk/ui/components/button";
-import { cn } from "@zoonk/ui/lib/utils";
 import { UserRoundPlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { LearnLink } from "../../learn-link";
 import { type OnboardingRoutes } from "../onboarding-actions";
 import {
+  ONBOARDING_ACTION_LINK_CLASS,
+  OnboardingActions,
   OnboardingColumn,
   OnboardingDescription,
-  OnboardingFooter,
   OnboardingHeading,
   OnboardingTitle,
 } from "../onboarding-frame";
@@ -20,7 +19,16 @@ export function GuestGoalGate({ routes }: { routes: OnboardingRoutes }) {
   const t = useExtracted();
 
   return (
-    <OnboardingColumn>
+    <OnboardingColumn
+      bar={
+        <OnboardingActions>
+          <LearnLink className={ONBOARDING_ACTION_LINK_CLASS.other} href={routes.today}>
+            {t("Back to Today")}
+          </LearnLink>
+          <SignUpLink href={routes.signUp} />
+        </OnboardingActions>
+      }
+    >
       <StepIcon>
         <UserRoundPlusIcon />
       </StepIcon>
@@ -35,16 +43,6 @@ export function GuestGoalGate({ routes }: { routes: OnboardingRoutes }) {
           })}
         </OnboardingDescription>
       </OnboardingHeading>
-
-      <OnboardingFooter>
-        <SignUpLink href={routes.signUp} />
-        <LearnLink
-          className={cn(buttonVariants({ size: "lg", variant: "ghost" }), "w-full")}
-          href={routes.today}
-        >
-          {t("Back to Today")}
-        </LearnLink>
-      </OnboardingFooter>
     </OnboardingColumn>
   );
 }

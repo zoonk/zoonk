@@ -306,7 +306,7 @@ export async function requestUpcomingChallengeQuestionsFor({
   const now = new Date();
   const timeZone = getAnswerTimeZone({ goal, timeZone: null });
   const today = getDateInTimeZone({ date: now, timeZone });
-  const { includesMockExams } = await loadExamPrepAccess({ goal, timeZone, today });
+  const { includesMockExams } = await loadExamPrepAccess({ goal });
 
   const items = await prisma.planItem.findMany({
     orderBy: { position: "asc" },

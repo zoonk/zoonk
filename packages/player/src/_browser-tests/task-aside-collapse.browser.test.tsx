@@ -4,7 +4,7 @@ import { SessionSummary } from "@zoonk/learn/session/summary";
 import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { SIDEBAR_STATE } from "@zoonk/ui/components/sidebar";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { page, userEvent } from "vitest/browser";
+import { page } from "vitest/browser";
 import { atViewport } from "../_test-utils/browser-viewport";
 import { render } from "../_test-utils/render";
 import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
@@ -198,36 +198,35 @@ describe("collapsing a task's sidebar", () => {
     await expect.poll(showsRecapRow).toBe(true);
   });
 
-  it("returns the session's rewards to the sidebar when it opens again on their step, focus staying on the toggle", async () => {
+  it("takes the day's rewards away with the sidebar and brings them back, focus staying on the toggle", async () => {
     renderSessionSummary();
-    await page.getByRole("button", { name: "Collapse sidebar" }).click();
-    await page.getByRole("button", { name: /^Continue/u }).click();
+    const earned = page.getByRole("complementary", { name: "Earned today" });
+    await expect.element(earned).toBeVisible();
     await expect.poll(shownStreaks).toBe(1);
+
+    await page.getByRole("button", { name: "Collapse sidebar" }).click();
+
+    await expect.poll(() => earned.query()).toBeNull();
+    await expect.poll(shownStreaks).toBe(0);
+    await expect.element(page.getByRole("button", { name: "Expand sidebar" })).toHaveFocus();
 
     await page.getByRole("button", { name: "Expand sidebar" }).click();
 
-    await expect.element(page.getByRole("complementary", { name: "Earned today" })).toBeVisible();
+    await expect.element(earned).toBeVisible();
     await expect.poll(shownStreaks).toBe(1);
     await expect.element(page.getByRole("button", { name: "Collapse sidebar" })).toHaveFocus();
-
-    await page.getByRole("button", { name: "Collapse sidebar" }).click();
-
-    await expect.poll(() => document.querySelector('[data-slot="step-dots"]')).not.toBeNull();
-    await expect.element(page.getByRole("button", { name: "Expand sidebar" })).toHaveFocus();
   });
 
   it("keeps focus on the session summary's heading when a wider window brings the sidebar back", async () => {
     await atViewport({ height: 720, width: 900 }, async () => {
       renderSessionSummary();
-      await userEvent.keyboard("{Enter}");
-      await expect.poll(shownStreaks).toBe(1);
-      expect(document.activeElement).toBe(stepTitle());
+      await expect.poll(() => document.activeElement === stepTitle()).toBe(true);
+      expect(shownStreaks()).toBe(0);
 
       await page.viewport(1280, 720);
 
-      await expect.poll(() => document.querySelector('[data-slot="step-dots"]')).toBeNull();
       await expect.poll(shownStreaks).toBe(1);
-      await expect.poll(() => document.activeElement === stepTitle()).toBe(true);
+      expect(document.activeElement).toBe(stepTitle());
     });
   });
 });

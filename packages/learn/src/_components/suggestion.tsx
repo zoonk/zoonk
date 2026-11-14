@@ -55,6 +55,7 @@ export function Suggestion({
   focusOnMount = false,
   label,
   mark,
+  onOpen,
   ...props
 }: Omit<React.ComponentProps<"section">, "aria-label" | "ref"> & {
   /**
@@ -65,6 +66,8 @@ export function Suggestion({
   focusOnMount?: boolean;
   label: string;
   mark?: React.ReactNode;
+  /** The learner's tap on "View" opened the sheet: work the tap asked for can start. */
+  onOpen?: () => void;
 }) {
   const section = useRef<HTMLElement>(null);
   const [open, setOpen] = useState(false);
@@ -83,7 +86,16 @@ export function Suggestion({
 
   return (
     <SuggestionContext value={{ answered: Boolean(answered), label, mark, section, setOpen }}>
-      <Drawer onOpenChange={setOpen} open={open}>
+      <Drawer
+        onOpenChange={(next) => {
+          setOpen(next);
+
+          if (next) {
+            onOpen?.();
+          }
+        }}
+        open={open}
+      >
         <section
           aria-label={label}
           className={cn(
