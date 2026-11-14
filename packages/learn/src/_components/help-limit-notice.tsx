@@ -285,8 +285,15 @@ export function useCallLimitLine(limit: CallLimit): LimitWords {
   return useComesBackLine(toCapLimit(limit));
 }
 
-/** Its screen's title says what ran out, so this is only the line and the way on. */
-export function CallLimitNotice({ limit, ...props }: LimitNoticeProps & { limit: CallLimit }) {
+/** Without `title`, its screen's title says what ran out, and this is only the line and the way on. */
+export function CallLimitNotice({
+  limit,
+  title,
+  ...props
+}: LimitNoticeProps & { limit: CallLimit; title?: string }) {
   const reached = toCapLimit(limit);
-  return <LimitNoticeBody {...props} limit={reached} words={useComesBackLine(reached)} />;
+
+  return (
+    <LimitNoticeBody {...props} limit={reached} words={{ ...useComesBackLine(reached), title }} />
+  );
 }

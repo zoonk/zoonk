@@ -17,6 +17,7 @@ import {
   ListRowTitle,
 } from "../_components/list-group";
 import { StatusRegion } from "../_components/status-region";
+import { useHeldSlot } from "../_utils/use-held-slot";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { type MindMapActions } from "./mind-map-actions";
@@ -139,6 +140,7 @@ export function MindMapRowView({
   const [open, setOpen] = useState(false);
   const { create, isPending, retry, save } = request;
   const { limit, shown } = useLiveRefusal(request, view.status);
+  const slot = useHeldSlot<HTMLDivElement>(limit !== null && !isPending);
   const input: MindMapCopyInput = { place, plus, shown, view };
   const ready = shown === "ready" && view.outline !== null && save !== undefined;
 
@@ -169,7 +171,7 @@ export function MindMapRowView({
   );
 
   return (
-    <div className={cn("flex flex-col gap-1", className)} data-slot="mind-map-row">
+    <div className={cn("flex flex-col gap-1", className)} data-slot="mind-map-row" ref={slot}>
       {ready && (
         <button
           aria-haspopup="dialog"

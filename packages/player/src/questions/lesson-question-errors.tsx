@@ -130,6 +130,20 @@ export function QuestionErrorAction({
     return null;
   }
 
+  return <TryAgainButton className={className} disabled={disabled} onRetry={onRetry} />;
+}
+
+export function TryAgainButton({
+  className,
+  disabled = false,
+  onRetry,
+}: {
+  className?: string;
+  disabled?: boolean;
+  onRetry: () => void;
+}) {
+  const t = useExtracted();
+
   return (
     <Button
       className={className}

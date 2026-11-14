@@ -38,6 +38,21 @@ export function CallLimitReason({
   );
 }
 
+function CallStartLimit({ className, limit }: { className?: string; limit: CallLimit }) {
+  const routes = useLearnRoutes();
+
+  return (
+    <div className={className} role="alert">
+      <CallLimitNotice
+        limit={limit}
+        linkComponent={LearnLink}
+        routes={routes}
+        title={useCallLimitTitle(limit)}
+      />
+    </div>
+  );
+}
+
 /** Why a start didn't open: the cap that refused it, or `failed`, which names what didn't start. */
 export function CallStartNote({
   call,
@@ -49,7 +64,7 @@ export function CallStartNote({
   failed: string;
 }) {
   if (call.limit) {
-    return <CallLimitReason className={className} limit={call.limit} role="alert" />;
+    return <CallStartLimit className={className} limit={call.limit} />;
   }
 
   return call.failed ? (
