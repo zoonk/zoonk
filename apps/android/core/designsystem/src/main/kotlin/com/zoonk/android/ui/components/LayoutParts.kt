@@ -4,11 +4,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.SemanticsPropertyKey
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
+import com.zoonk.android.designsystem.BuildConfig
 
 /**
  * What an element of a shared piece is, for the render tests' layout capture: the parts and pieces of
- * the alignment report every platform writes (`REPORT-SHAPE.md`). Accessibility services don't read it,
- * so a learner and TalkBack get the same screen with or without it.
+ * the alignment report every platform writes (`REPORT-SHAPE.md`). Only debug builds mark parts.
  */
 data class LayoutPart(
     val piece: String,
@@ -63,4 +63,6 @@ fun Modifier.layoutPart(
     variant: LayoutPart.Variant? = null,
     gap: Dp? = null,
     endInset: Dp? = null,
-): Modifier = semantics { this[LayoutPartKey] = LayoutPart(piece, part, variant, gap, endInset) }
+): Modifier =
+    // A constant in a release build, so R8 drops the marker and a learner's app never builds one.
+    if (BuildConfig.DEBUG) semantics { this[LayoutPartKey] = LayoutPart(piece, part, variant, gap, endInset) } else this
