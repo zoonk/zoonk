@@ -4,6 +4,7 @@ import { Dialog as SidePanelPrimitive } from "@base-ui/react/dialog";
 import { OVERLAY_DIM_CLASS } from "@zoonk/ui/lib/overlay-dim";
 import { cn } from "@zoonk/ui/lib/utils";
 import { PopupShortcutLayer } from "../hooks/_utils/popup-shortcut-layer";
+import { MenuOpenerNotice, useFocusAfterMenuItem } from "./_utils/menu-handoff";
 import { PanelCloseButton } from "./_utils/panel-close";
 import type * as React from "react";
 
@@ -39,8 +40,11 @@ function SidePanelContent({
   className,
   children,
   side = "right",
+  finalFocus,
   ...props
 }: SidePanelPrimitive.Popup.Props & { side?: "left" | "right" }) {
+  const handoff = useFocusAfterMenuItem(finalFocus);
+
   return (
     <SidePanelPortal>
       <SidePanelOverlay />
@@ -52,7 +56,9 @@ function SidePanelContent({
         data-side={side}
         data-slot="side-panel-content"
         {...props}
+        finalFocus={handoff.finalFocus}
       >
+        <MenuOpenerNotice onOpen={handoff.onOpen} />
         <PopupShortcutLayer value>{children}</PopupShortcutLayer>
       </SidePanelPrimitive.Popup>
     </SidePanelPortal>
