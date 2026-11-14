@@ -124,7 +124,7 @@ private fun line(
         }
 
         else -> {
-            val date = formatDate((day as OpeningDay.On).date, currentLocale(), DateStyle.Long)
+            val date = formatDate((day as OpeningDay.On).date, currentLocale(), DateStyle.DayMonth)
             stringResource(if (free) comes.onOrSubscribe else comes.on, date)
         }
     }
@@ -145,10 +145,17 @@ fun gateSentence(
     line: String?,
 ): String = line?.let { stringResource(R.string.limit_sentence, title, it) } ?: title
 
+/**
+ * The day a cap counted over the last 30 days gave has come while its gate shows: the gate's way to try is back,
+ * so the next tap asks the server again, which decides. Never true for a day's cap or one with no day.
+ */
+@Composable
+fun limitLifted(limit: Limit?): Boolean =
+    limit is Limit.Reached && limit.rolling && rememberOpeningDay(limit.availableAt) == OpeningDay.Open
+
 /** Whether a free learner's next lesson has opened since the refusal: the server then gets asked again (main's `useFreeLessonReady`). */
 @Composable
-fun freeLessonReady(limit: Limit): Boolean =
-    limit is Limit.Reached && limit.freeLessons && rememberOpeningDay(limit.availableAt) == OpeningDay.Open
+fun freeLessonReady(limit: Limit): Boolean = limit is Limit.Reached && limit.freeLessons && limitLifted(limit)
 
 /** Main's `useLessonLimitWords`: the free learner's month with the day more comes back, a guest's, or the day's. */
 @Composable
@@ -217,7 +224,7 @@ private fun mapOpensLine(day: OpeningDay?): String? =
         null, OpeningDay.Open -> null
         OpeningDay.Today -> stringResource(R.string.limit_map_enough_today)
         OpeningDay.Tomorrow -> stringResource(R.string.limit_map_enough_tomorrow)
-        is OpeningDay.On -> stringResource(R.string.limit_map_enough_on, formatDate(day.date, currentLocale(), DateStyle.Long))
+        is OpeningDay.On -> stringResource(R.string.limit_map_enough_on, formatDate(day.date, currentLocale(), DateStyle.DayMonth))
     }
 
 /** The lesson screen's line: what stays free, then when the next lesson comes, as the web joins them. */

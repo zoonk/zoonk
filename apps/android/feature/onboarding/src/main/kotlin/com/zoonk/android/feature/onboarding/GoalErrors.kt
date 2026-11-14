@@ -10,6 +10,7 @@ import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.components.comesBackLine
 import com.zoonk.android.ui.components.gateSentence
+import com.zoonk.android.ui.components.limitLifted
 import com.zoonk.api.models.AllowanceItem
 import com.zoonk.api.models.AllowanceResponse
 
@@ -66,6 +67,26 @@ sealed interface GoalError {
                 else -> false
             }
 }
+
+/** True once the day a monthly cap gave comes while the screen is open: the way to try is back and the server decides again. */
+@Composable
+fun GoalError.lifted(): Boolean =
+    limitLifted(
+        when (this) {
+            is GoalError.ReadLimit -> {
+                limit.reached
+            }
+
+            is GoalError.Limit -> {
+                (reason as? GoalLimitReason.MonthlyGoals)?.limit
+                    ?: (reason as? GoalLimitReason.MonthlyExplanations)?.limit
+            }
+
+            else -> {
+                null
+            }
+        },
+    )
 
 fun Refusal.goalLimitReason(): GoalLimitReason =
     when (this) {

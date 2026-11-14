@@ -212,7 +212,13 @@ private fun ShortDialog(
                     }
 
                     full is OpeningDay.On -> {
-                        stringResource(R.string.mock_chooser_short_on, count, total, time, formatDate(full.date, locale, DateStyle.Long))
+                        stringResource(
+                            R.string.mock_chooser_short_on,
+                            count,
+                            total,
+                            time,
+                            formatDate(full.date, locale, DateStyle.DayMonth),
+                        )
                     }
 
                     else -> {

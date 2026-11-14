@@ -64,6 +64,7 @@ import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.MomentReadouts
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
+import com.zoonk.android.ui.components.limitLifted
 import com.zoonk.android.ui.components.rememberPressFocus
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
@@ -281,7 +282,7 @@ private fun StartActions(
     replacementFocus: FocusRequester,
     onStart: () -> Unit,
 ) {
-    val refused = ui.refused
+    val refused = ui.refused?.takeUnless { limitLifted(it) }
     val replacementModifier = Modifier.focusRequester(replacementFocus).semantics(mergeDescendants = true) {}.focusable()
     when {
         refused != null -> {

@@ -207,7 +207,7 @@ enum class DateStyle(
 ) {
     Day("MMMd", yearWhenAnotherYear = true),
 
-    /** Never with a year: for lists whose year is stated beside them. */
+    /** Never with a year: for lists whose year is stated beside them, and a cap's opening day, never more than a month away. */
     DayMonth("MMMMd"),
 
     Long("MMMMd", yearWhenAnotherYear = true),

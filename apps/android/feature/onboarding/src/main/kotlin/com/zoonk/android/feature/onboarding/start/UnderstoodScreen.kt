@@ -49,6 +49,7 @@ import com.zoonk.android.feature.country.CountrySheet
 import com.zoonk.android.feature.country.choices
 import com.zoonk.android.feature.onboarding.GoalError
 import com.zoonk.android.feature.onboarding.GoalLimitReason
+import com.zoonk.android.feature.onboarding.lifted
 import com.zoonk.android.feature.onboarding.setup.TargetDatePicker
 import com.zoonk.android.feature.onboarding.setup.goalZone
 import com.zoonk.android.feature.onboarding.setup.targetDateBounds
@@ -120,6 +121,7 @@ internal fun ColumnScope.UnderstoodScreen(
         GoalLimitReason.ActiveGoals.takeIf { full && hasAccount }
             ?: listOfNotNull((shownError as? GoalError.Limit)?.reason, goalLimit.takeIf { it != GoalLimitReason.ActiveGoals })
                 .firstOrNull { it.isPlusLimit }
+                ?.takeUnless { GoalError.Limit(it).lifted() }
 
     if (rewriting) {
         RewriteWords(words = goal, disabled = isCreating, onCancel = { rewriting = false }, onRewrite = onRewrite)

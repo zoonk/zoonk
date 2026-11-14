@@ -50,6 +50,7 @@ import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.components.limitLifted
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatNumber
@@ -212,8 +213,11 @@ internal fun MindMapRow(
     val title = map.rowTitle(place, shown)
     val status = map.statusLine(place, shown, plus)
     val supporting = if (place == MindMapPlace.Library && numbered) factsLine(chapterNumber(map.position), status) else status
-    val refused = local?.limit?.takeIf { shown == MindMapShown.Refused && !local.pending }
-    val notice = refused ?: cap?.takeIf { place != MindMapPlace.Library }
+    val refusedLimit = local?.limit?.takeIf { shown == MindMapShown.Refused && !local.pending }
+    val retry = limitLifted(refusedLimit)
+    val refused = refusedLimit.takeUnless { retry }
+    val shownCap = cap.takeUnless { limitLifted(it) }
+    val notice = refused ?: shownCap?.takeIf { place != MindMapPlace.Library }
     val library = place == MindMapPlace.Library
     val toggleSave = actions.toggleSave?.takeIf { shown == MindMapShown.Ready }
     var menu by remember { mutableStateOf(false) }
@@ -231,7 +235,7 @@ internal fun MindMapRow(
                 leading = { MapMark(map.image?.thumbnailUrl?.takeIf { shown == MindMapShown.Ready }, shown) },
                 supporting = supporting?.let { { Text(it) } },
                 meta = if (saved) ({ SavedMark() }) else null,
-                trailing = rowAction(map, place, shown, local, cap, actions),
+                trailing = rowAction(map, place, shown, local, shownCap, retry, actions),
             )
             if (toggleSave != null) SaveMenu(menu, saved, onDismiss = { menu = false }, onToggle = toggleSave)
         }
@@ -355,6 +359,7 @@ private fun rowAction(
     shown: MindMapShown,
     local: MindMapLocal?,
     cap: Limit?,
+    retry: Boolean,
     actions: MindMapRowActions,
 ): (@Composable () -> Unit)? {
     val slowedDown = shown == MindMapShown.Refused && local?.limit is Limit.SlowDown
@@ -369,7 +374,7 @@ private fun rowAction(
             { RowButton(R.string.mindmaps_try_again, R.string.mindmaps_try_again_spoken, map, place, pending, actions.create) }
         }
 
-        (shown == MindMapShown.Available && cap == null) || slowedDown -> {
+        (shown == MindMapShown.Available && cap == null) || slowedDown || retry -> {
             { RowButton(R.string.mindmaps_create, R.string.mindmaps_create_spoken, map, place, pending, actions.create) }
         }
 
