@@ -8,6 +8,7 @@ import {
 } from "@zoonk/db";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
+import { type PlanChangeQuote, quoteSeenSchema } from "../plans/plan-decision-contract";
 import { type PlanEffect } from "../plans/planner/plan-effect";
 import { MAX_MEMORY_STATEMENT_LENGTH } from "./memory-limits";
 
@@ -101,6 +102,10 @@ export type MemoryInsightQuery = z.infer<typeof memoryInsightQuerySchema>;
 
 export const memoryInsightAnswerSchema = z
   .object({
+    quote: quoteSeenSchema.meta({
+      description:
+        "For a plan change insight, send `planChange.quote` as the learner saw it. Accepting applies the change only when this is its current `quote`; otherwise nothing is applied and the insight stays `pending` with its current `effect` and `quote`. Other insights ignore it",
+    }),
     status: z
       .enum([MemoryInsightStatus.accepted, MemoryInsightStatus.dismissed])
       .meta({
@@ -162,6 +167,7 @@ export type MemoryInsightView = {
     canApply: boolean;
     effect: PlanEffect | null;
     id: string;
+    quote: PlanChangeQuote | null;
     status: "applied" | "proposed";
   } | null;
   /** Such as "20:00", for a schedule idea. */

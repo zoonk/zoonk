@@ -2,6 +2,7 @@ import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { examDocumentSchema } from "../exams/exam-document";
 import { anyPlanOperationSchema } from "./plan-contract";
+import { planChangeQuoteSchema } from "./plan-decision-contract";
 import { planEffectSchema } from "./plan-effect-contract";
 import { type PlanChangeView } from "./plan-view-contract";
 
@@ -85,6 +86,12 @@ export const planChangeSchema = z
           "The exam day the notice officially sets, when the change moves the goal's date off it, so applying it keeps the learner's own date instead of the official one. Null otherwise",
       }),
     operations: z.array(anyPlanOperationSchema),
+    quote: planChangeQuoteSchema
+      .nullable()
+      .meta({
+        description:
+          "Which numbers `effect` shows. Accepting a proposal sends it back; it changes when accepting finds today's numbers differ. Null for a change with no worked-out `effect`",
+      }),
     reason: z
       .string()
       .nullable()

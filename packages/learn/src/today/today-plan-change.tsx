@@ -1,7 +1,7 @@
 "use client";
 
 import { NOTICE_SOURCE, PHASE_DATES_SOURCE } from "@zoonk/core/plans/change-contract";
-import { type PlanChangeDecisionInput } from "@zoonk/core/plans/contract";
+import { type PlanChangeDecisionInput } from "@zoonk/core/plans/decision-contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { type TodayView } from "@zoonk/core/view-models/today/get";
 import { safeAsync } from "@zoonk/utils/error";
@@ -109,7 +109,7 @@ function useAnswer(opened: Change, onHold: (held: boolean) => void) {
 
     startTransition(async () => {
       const { data: saved } = await safeAsync(() =>
-        actions.decidePlanChange({ changeId: change.id, status }),
+        actions.decidePlanChange({ changeId: change.id, quote: change.quote, status }),
       );
 
       // An out-of-date change says nothing: Today read itself again, and its copy replaces it.

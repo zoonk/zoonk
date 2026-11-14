@@ -3,6 +3,7 @@ import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixture
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it, vi } from "vitest";
 import { replanWaitingGoal } from "../../library/curriculum/replan-waiting-goals";
+import { seenQuote } from "../../plans/_test-utils/seen-quote";
 import { decidePlanChange } from "../../plans/decide-plan-change";
 import { getRequestProgressDateContext } from "../../progress/get-request-date-context";
 import { getTodayStudySession } from "../../sessions/_test-utils/open-today";
@@ -86,7 +87,11 @@ describe("Focus test dismissals after replanning", () => {
     const changeId = await proposal(goal.id);
 
     if (status === "undone") {
-      await decidePlanChange({ changeId, goalId: goal.id, input: { status: "applied" } });
+      await decidePlanChange({
+        changeId,
+        goalId: goal.id,
+        input: { quote: await seenQuote(changeId), status: "applied" },
+      });
     }
 
     const before = await read(goal.id);
@@ -118,7 +123,12 @@ describe("Focus test dismissals after replanning", () => {
     });
 
     const changeId = await proposal(goal.id);
-    await decidePlanChange({ changeId, goalId: goal.id, input: { status: "applied" } });
+
+    await decidePlanChange({
+      changeId,
+      goalId: goal.id,
+      input: { quote: await seenQuote(changeId), status: "applied" },
+    });
 
     const skill = await prisma.planItem.findFirstOrThrow({
       select: { skillId: true },

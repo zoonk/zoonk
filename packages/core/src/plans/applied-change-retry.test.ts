@@ -9,6 +9,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { markPlansChanged } from "../learner/_utils/mark-learner-changed";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
+import { seenQuote } from "./_test-utils/seen-quote";
 import * as replan from "./_utils/commit-plan";
 import { parsePlanChangePayload, toPlanChangePayload } from "./_utils/plan-change-payload";
 import * as planContext from "./_utils/plan-context";
@@ -161,7 +162,7 @@ describe("a plan write when another write lands right after it commits", () => {
     const result = await decidePlanChange({
       changeId: proposal.id,
       goalId: goal.id,
-      input: { status: "applied", timeZone: "UTC" },
+      input: { quote: await seenQuote(proposal.id), status: "applied", timeZone: "UTC" },
     });
 
     expect(marked).toHaveBeenCalledWith(expect.objectContaining({ restorable: proposal.id }));
