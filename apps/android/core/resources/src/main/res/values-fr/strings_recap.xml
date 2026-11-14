@@ -16,7 +16,7 @@
   "recap_quiet_week": "e24e84c3a299ab8525311727ab95f9819fc58540fa1c6b71d4240eaf60ddcfd3",
   "recap_reviews_done": "197a558bac22976d4d9202fc8f2dff63db680e515be202df709140382676d0bc",
   "recap_time": "ea14349a2b7dec94346528d6f303d2b65b0632a4c4f788b0c1235230a6345f22",
-  "recap_trap_hunter_badges": "7bcea15f49d3b2519cc38ae47c20c2e644ee82f1ea559d754205a249483fe2ae",
+  "recap_trap_hunter_badges": "3cc5393a452456d396aa3568d570a59c017a93104d99f76dc0c8cc4902235a5f",
   "recap_up_next": "105bdbe803032adf469c569607c4bad8f52375893f0ae7431d91b28db766b437",
   "recap_weekly_summary": "95479d0622088281e13fc2e20e1c1f08980cc97a30eae3e4958da9f020007740",
   "recap_what_a_week": "091936704d213d5f0cbfc711830f990303414b690696cb4d10a04f45a8cdb2fc",
@@ -51,12 +51,8 @@
     <string name="recap_new_topics">Nouveaux sujets</string>
     <string name="recap_reviews_done">Révisions terminées</string>
     <string name="recap_mistakes_fixed">Erreurs corrigées</string>
-    <!-- A badge for catching the Trickster's traps. -->
-    <plurals name="recap_trap_hunter_badges">
-        <item quantity="one">Badge de chasse aux pièges</item>
-        <item quantity="many">Badges de chasse aux pièges</item>
-        <item quantity="other">Badges de chasse aux pièges</item>
-    </plurals>
+    <!-- A row's label, with how many were earned beside it: badges for catching the Trickster's traps. -->
+    <string name="recap_trap_hunter_badges">Badges de chasse aux pièges</string>
     <string name="recap_most_improved">Plus forte progression</string>
     <!-- A topic and how its share of right answers grew in a week: "Fractions · 40% to 85%". -->
     <string name="recap_most_improved_value">%1$s · de %2$s à %3$s</string>

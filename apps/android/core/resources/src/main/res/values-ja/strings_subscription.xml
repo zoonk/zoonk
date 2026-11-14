@@ -48,9 +48,6 @@
   "subscription_free_lessons_a_month": "7a99d147af021c7221aca71dea77a667bec1095c404f15b0204b0f8ed528b968",
   "subscription_free_plan": "d95676a9d48ded424ed5bd97e7e1bd6523578256adb3a8262a35b6045367ab99",
   "subscription_free_summary": "2b8b64ebff1e4c36f9dfe3bb5562fde00f47adf67c7678cba2f6eb747f066afa",
-  "subscription_free_week_over_description": "b2633a5b1c3c780b8aa578a7ef0941d08579a5416e6c6e9aeeaf6220c4a5deae",
-  "subscription_free_week_over_title": "e8fbbe44e77f0e19652c5657db2fc3879ec925967f224ffad144d84dea05e4b2",
-  "subscription_get_plus": "5c2e4498cd2167eecf200e918fa151dcf998ad15d34421c4e40d217663b52f00",
   "subscription_hide_answer": "6dc13c62d64c74f2654a96a7c0b8dbef17a9ebaf031b422a3d06ec62df0a92b6",
   "subscription_keep_failed": "534095a4387cace2ec7822bd4985aeabaf0621900b3e2ad5ffe539a152256153",
   "subscription_keep_plus": "b4d93b75a06450667ae7242f237994e9a9766022d98f481fd4a643e0f070134e",
@@ -95,8 +92,6 @@
     <string name="subscription_plus">Plus</string>
     <string name="subscription_available_with_plus">Plusで利用できます</string>
     <string name="subscription_see_plus">Plusの詳細を見る</string>
-    <string name="subscription_free_week_over_title">試験対策の無料期間（1週間）が終了しました</string>
-    <string name="subscription_free_week_over_description">復習や間違い直しは引き続き無料です。Plusでは、新しいレッスンや学習計画の続き、模試に取り組めます。</string>
     <string name="subscription_active">有効</string>
     <string name="subscription_ending">終了予定</string>
     <!-- %1$s is a date. -->
@@ -143,7 +138,6 @@
     <!-- %1$s is a price, like "$5.00". -->
     <string name="subscription_yearly_per_month">1か月あたり%1$sです。</string>
     <string name="subscription_unavailable">今はこのデバイスでPlusを購入できません。Google Playのインストールとログインが済んでいるか確認してください。</string>
-    <string name="subscription_get_plus">Plusに登録する</string>
     <string name="subscription_subscribe">登録する</string>
     <string name="subscription_cancel_anytime">いつでも解約できます。</string>
     <string name="subscription_purchase_pending">お支払いは保留中です。Google Playで確認されると、Plusを利用できるようになります。</string>

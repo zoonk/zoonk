@@ -7,7 +7,6 @@
   "pattern_got_it": "5ab5bf7352bfcf3016e9d8546f3e16349d18906a1ca81d7c388dc542a8fc5fb1",
   "pattern_just_typos": "5ed057aacd71148d5fd208a7603d95cce431713b0460c7b3fcc6e934ae80b980",
   "pattern_keep_going": "788af3e80f20f3451231179998e55cc5ebecdb8ac1f7beb88aaf15ff69191c13",
-  "pattern_noticed": "7861a639e1eb36ffe102d72eb91a42a045aeff12626f1b6072fe8db0e9a180de",
   "pattern_practice": "a5da5a59d9c6850be5fe1093d76450a11555bbc0a1fdda7a4a78d725ad9bfe02",
   "pattern_quoted": "090303e7250b0bc407a25d85f98789fd4294d75f326aa043bf56c3666a387274",
   "pattern_rule": "a2dd13867cba79ffcc7dd513b2857d7904cd32106cc45f11280f6feec1064e28",
@@ -24,7 +23,6 @@
 <resources>
     <!-- A rule the learner keeps getting wrong, found in their recent answers. -->
     <string name="pattern_title">ミスの傾向</string>
-    <string name="pattern_noticed">ミスの傾向が見つかりました</string>
     <string name="pattern_seen">最近の回答で見られました。</string>
     <!-- %d is how many times the mistake came up. Every form shows the number as %d; English says “once” only because it reads better. -->
     <plurals name="pattern_seen_times">

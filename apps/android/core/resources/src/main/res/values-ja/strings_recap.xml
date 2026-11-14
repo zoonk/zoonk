@@ -16,7 +16,7 @@
   "recap_quiet_week": "4a52176717489a23784324dcfd382c14525e337d587e89d5168f067735b3d2a6",
   "recap_reviews_done": "6b7e94669003b9b10f8feb12be76fc26c0093abbae23e5c7e4b1b64a8f0f8026",
   "recap_time": "e988f7cc9ac689b5fee11a56cccb6434e4bb60fc72f27c57aaed037e9c656047",
-  "recap_trap_hunter_badges": "08e79132c779c0bb33aafeaa11d1b1e8936f36536148fe19b49cf7c9460d4c3c",
+  "recap_trap_hunter_badges": "d5cb451f752e49f8a60e0dbdc8912d5f5508461d7a9596d81fe618e6aef31462",
   "recap_up_next": "f0213e8b5ddc33029e00bf04fbfac3b7c5dca6ceee0e794d28762c5bb3321ea6",
   "recap_weekly_summary": "392e23682ed1916df4712e1dfebd85acf1fb19b495da33060bc46bd1cbae1434",
   "recap_what_a_week": "67acad84e0e7f2a898936e510aa16f5d99295e66420a1f2de9ebbfbcca472f24",
@@ -47,10 +47,8 @@
     <string name="recap_new_topics">新しいトピック</string>
     <string name="recap_reviews_done">完了した復習</string>
     <string name="recap_mistakes_fixed">克服したミス</string>
-    <!-- A badge for catching the Trickster's traps. -->
-    <plurals name="recap_trap_hunter_badges">
-        <item quantity="other">ひっかけ発見バッジ</item>
-    </plurals>
+    <!-- A row's label, with how many were earned beside it: badges for catching the Trickster's traps. -->
+    <string name="recap_trap_hunter_badges">ひっかけ発見バッジ</string>
     <string name="recap_most_improved">いちばん伸びたトピック</string>
     <!-- A topic and how its share of right answers grew in a week: "Fractions · 40% to 85%". -->
     <string name="recap_most_improved_value">%1$s・%2$sから%3$sへ</string>

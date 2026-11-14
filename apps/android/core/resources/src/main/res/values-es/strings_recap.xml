@@ -16,7 +16,7 @@
   "recap_quiet_week": "66e34b0a56c65a5cc2ac5c176373dcdde437694ae7bd6f0abbc09fceb6e50f17",
   "recap_reviews_done": "44633b41d1021283a56e969f8c760b970077b80e172d70099b905840b89ef037",
   "recap_time": "fa399d7f515dee830355c712223fd70885d6acedb044ea651aa7c57536a52749",
-  "recap_trap_hunter_badges": "8f5149bd34da5e1205a0531cddf0038ed3fb2d5099d3a7e32f3cabe3b1b0eac8",
+  "recap_trap_hunter_badges": "f637f403522f319c9af13996b337bd208ef981c8f596eaa8d216ef284f6b01f1",
   "recap_up_next": "709bb8f531e9a0449b0b54ad2d05f21c86fef2280a80eb4c7e67bfa7034810d6",
   "recap_weekly_summary": "606687b3329d8bcc2c2767e3a95ffc852de0668c18bc00add58d24a4a151e1d7",
   "recap_what_a_week": "d8f096271dee4eb4109d98adac997bd8f47157200de15fab14ae6d81ed1671c6",
@@ -51,12 +51,8 @@
     <string name="recap_new_topics">Temas nuevos</string>
     <string name="recap_reviews_done">Repasos completados</string>
     <string name="recap_mistakes_fixed">Errores corregidos</string>
-    <!-- A badge for catching the Trickster's traps. -->
-    <plurals name="recap_trap_hunter_badges">
-        <item quantity="one">Insignia por detectar trampas</item>
-        <item quantity="many">Insignias por detectar trampas</item>
-        <item quantity="other">Insignias por detectar trampas</item>
-    </plurals>
+    <!-- A row's label, with how many were earned beside it: badges for catching the Trickster's traps. -->
+    <string name="recap_trap_hunter_badges">Insignias por detectar trampas</string>
     <string name="recap_most_improved">Lo que más mejoró</string>
     <!-- A topic and how its share of right answers grew in a week: "Fractions · 40% to 85%". -->
     <string name="recap_most_improved_value">%1$s · de %2$s a %3$s</string>

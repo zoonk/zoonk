@@ -16,7 +16,7 @@
   "recap_quiet_week": "4f57495e2f9324f4ab00fb46fc495cf39b63064a8c0b72998460d4160efbfc98",
   "recap_reviews_done": "be296f68d782a12cdc241239c188458178d5d5d879a806cc78a548708a561cee",
   "recap_time": "c4fe087bf3a432f267820f0a028f5434627821992318e317fa3602a9013e1632",
-  "recap_trap_hunter_badges": "d0397e999adf21bd34ff1cdddce8aa332c8e68d48c46250aca9de1e8b293f382",
+  "recap_trap_hunter_badges": "6d02a2e970c56b2d3391b5292a4ecae301c8b6b1ef8e57023a951af2919e0626",
   "recap_up_next": "a9e41f4d1c697b30cd13baddd0f218569e117968415c5f3ec652cca0e4e202b2",
   "recap_weekly_summary": "fdb86e4f3f798ae9321e8cc45107ac92735de15e1497fe97bb062aeaf8dea93a",
   "recap_what_a_week": "1e4be2a3d649422a2b0c8c7a585dfeb2f644eb7171e8db5d7d06711f45145ecf",
@@ -47,10 +47,8 @@
     <string name="recap_new_topics">새 주제</string>
     <string name="recap_reviews_done">완료한 복습</string>
     <string name="recap_mistakes_fixed">고친 문제</string>
-    <!-- A badge for catching the Trickster's traps. -->
-    <plurals name="recap_trap_hunter_badges">
-        <item quantity="other">함정 사냥꾼 배지</item>
-    </plurals>
+    <!-- A row's label, with how many were earned beside it: badges for catching the Trickster's traps. -->
+    <string name="recap_trap_hunter_badges">함정 사냥꾼 배지</string>
     <string name="recap_most_improved">실력이 가장 늘어난 주제</string>
     <!-- A topic and how its share of right answers grew in a week: "Fractions · 40% to 85%". -->
     <string name="recap_most_improved_value">%1$s · %2$s → %3$s</string>

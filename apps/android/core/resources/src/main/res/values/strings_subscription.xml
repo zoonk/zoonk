@@ -3,8 +3,6 @@
     <string name="subscription_plus">Plus</string>
     <string name="subscription_available_with_plus">Available with Plus</string>
     <string name="subscription_see_plus">See Plus</string>
-    <string name="subscription_free_week_over_title">Your free week of exam prep is over</string>
-    <string name="subscription_free_week_over_description">Reviews and fixing your mistakes stay free. Plus opens new lessons, the rest of your plan and mock exams.</string>
     <string name="subscription_active">Active</string>
     <string name="subscription_ending">Ending</string>
     <!-- %1$s is a date. -->
@@ -51,7 +49,6 @@
     <!-- %1$s is a price, like "$5.00". -->
     <string name="subscription_yearly_per_month">That\'s %1$s a month.</string>
     <string name="subscription_unavailable">Plus can\'t be bought on this device right now. Make sure Google Play is installed and signed in.</string>
-    <string name="subscription_get_plus">Get Plus</string>
     <string name="subscription_subscribe">Subscribe</string>
     <string name="subscription_cancel_anytime">Cancel anytime.</string>
     <string name="subscription_purchase_pending">Your payment is pending. Plus starts once Google Play confirms it.</string>

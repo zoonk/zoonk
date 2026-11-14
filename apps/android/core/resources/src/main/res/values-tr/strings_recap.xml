@@ -16,7 +16,7 @@
   "recap_quiet_week": "4a7fcc26ca736c84035a3b8102690ebd426195216321ffe676563ee86f21849d",
   "recap_reviews_done": "565bd2bc9c2769350d5a64bfc4da60f8976283068fbd6ee1b839d94214e2b66d",
   "recap_time": "38b6f89ec777d8c63b578a60cd3a0013c08e1e4fb4cf4b743d6f9d235c8d6080",
-  "recap_trap_hunter_badges": "b43f1a0517e007f10bd9aedec93820682ee5d42c8552ce4f6d7544dfca8781a2",
+  "recap_trap_hunter_badges": "50072887ec9a28a0d4ec9e09fbea833566208a811004bf8a82b62306c4bd3b49",
   "recap_up_next": "8567e365aadf722f2ccb20688800d5f7d976c681b40b0ec4ba877f398ade3d7d",
   "recap_weekly_summary": "8ed6bcc5d90e9e05d61bb829ef2d77dc5093df60b3bb3dcf1cbcb3a854aaa087",
   "recap_what_a_week": "a75e0792c4b7d5ed2e6b6be67b5f213a0291dba9890750d54e256bececa31b62",
@@ -49,11 +49,8 @@
     <string name="recap_new_topics">Yeni konular</string>
     <string name="recap_reviews_done">Tamamlanan tekrarlar</string>
     <string name="recap_mistakes_fixed">Düzeltilen hatalar</string>
-    <!-- A badge for catching the Trickster's traps. -->
-    <plurals name="recap_trap_hunter_badges">
-        <item quantity="one">Tuzak avcısı rozeti</item>
-        <item quantity="other">Tuzak avcısı rozetleri</item>
-    </plurals>
+    <!-- A row's label, with how many were earned beside it: badges for catching the Trickster's traps. -->
+    <string name="recap_trap_hunter_badges">Tuzak avcısı rozetleri</string>
     <string name="recap_most_improved">En çok ilerlediğin konu</string>
     <!-- A topic and how its share of right answers grew in a week: "Fractions · 40% to 85%". -->
     <string name="recap_most_improved_value">%1$s · %2$s iken %3$s oldu</string>

@@ -16,7 +16,7 @@
   "recap_quiet_week": "4d6565a5a3899f20dff61642d84a7fc7cfa42dc98838bb2366e208caa9caec0a",
   "recap_reviews_done": "3037afc6d41f7e3260e9c9309d9bc70420d7aad22f444c7412b525383fefcb55",
   "recap_time": "7bfd08a2e95bcdbe83d84fa0ae32507251581e966948c4be7a95711e359a1b9f",
-  "recap_trap_hunter_badges": "1943c08791d86a271d0286561ef1003f847c4c3e7400a7f814121ed150c8e672",
+  "recap_trap_hunter_badges": "d182fcf8cfaa234062924c360cd66612c959b4d71aed81e587e9b637db7271db",
   "recap_up_next": "06fe202b2eef9f795ea18d7b2d953cb3c8ec4414bf2dae7f2d89d396cd01daa7",
   "recap_weekly_summary": "4368cd02ae2d0c721f27e45ea0e34b142fc69d9c09d11d2402cfc42670dcfabc",
   "recap_what_a_week": "63a2c73c206e6c3b0b4dab2f5e307442ac3b26abef5f8c6d0427006ac39c3470",
@@ -51,12 +51,8 @@
     <string name="recap_new_topics">Nuovi argomenti</string>
     <string name="recap_reviews_done">Ripassi completati</string>
     <string name="recap_mistakes_fixed">Errori corretti</string>
-    <!-- A badge for catching the Trickster's traps. -->
-    <plurals name="recap_trap_hunter_badges">
-        <item quantity="one">Distintivo Caccia alle trappole</item>
-        <item quantity="many">Distintivi Caccia alle trappole</item>
-        <item quantity="other">Distintivi Caccia alle trappole</item>
-    </plurals>
+    <!-- A row's label, with how many were earned beside it: badges for catching the Trickster's traps. -->
+    <string name="recap_trap_hunter_badges">Distintivi Caccia alle trappole</string>
     <string name="recap_most_improved">Maggiori progressi</string>
     <!-- A topic and how its share of right answers grew in a week: "Fractions · 40% to 85%". -->
     <string name="recap_most_improved_value">%1$s · da %2$s a %3$s</string>

@@ -7,7 +7,6 @@
   "pattern_got_it": "06000b2669ed99fc79e4a4b297932c6cb35c9efe64d482e126fddf1b1cefe03a",
   "pattern_just_typos": "7540ccaadca76233360568518e9ff141acd153d60e7ae80215b8e8ed88afd4bc",
   "pattern_keep_going": "cf01442fe2d162d0db933b93ec498f2e17dc55eb5593375968a60ea022810e7f",
-  "pattern_noticed": "6836cd2e87a83e4d9dbdc74911854c6f7dfda44617544cdb0d060e45e6f52d27",
   "pattern_practice": "fe23709d3abf4f389074ff598abf81a3a296ce529bd65bd4c590e5fe226b5c8b",
   "pattern_quoted": "46c7393873e52a4e3e83df568fe68a2fac545946a7bbed55798d8532c3693619",
   "pattern_rule": "c8e732a8ddde5903a26c8ec200bcf38834775b34dad5645987921370c9db0413",
@@ -24,7 +23,6 @@
 <resources>
     <!-- A rule the learner keeps getting wrong, found in their recent answers. -->
     <string name="pattern_title">실수 패턴</string>
-    <string name="pattern_noticed">실수 패턴을 발견했어요</string>
     <string name="pattern_seen">최근 답변에서 나타났어요.</string>
     <!-- %d is how many times the mistake came up. Every form shows the number as %d; English says “once” only because it reads better. -->
     <plurals name="pattern_seen_times">

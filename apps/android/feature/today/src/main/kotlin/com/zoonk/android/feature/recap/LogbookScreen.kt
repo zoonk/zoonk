@@ -299,7 +299,7 @@ private fun WeekRows(recap: WeeklyRecap) {
         CountRow({ KindMark(LearnKind.Mistakes) }, stringResource(R.string.recap_mistakes_fixed), ate.fixes)
         CountRow(
             { RowIcon(R.drawable.ic_search_check) },
-            pluralStringResource(R.plurals.recap_trap_hunter_badges, badges.toInt()),
+            stringResource(R.string.recap_trap_hunter_badges),
             badges,
         )
         recap.turnaround?.let { turnaround ->

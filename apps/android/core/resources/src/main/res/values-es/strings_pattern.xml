@@ -7,7 +7,6 @@
   "pattern_got_it": "1cdb3ba4e13fb0c86b9260617a2d5f4670cf341ea5442e2bc7613fe82d8f9a38",
   "pattern_just_typos": "49554b07222503021994a8c2d785b26ecbcac6ce37d51fcdc9e94fcc069ba217",
   "pattern_keep_going": "a1110c0bf5ae4b5e5ee064c5010d18b1c505748d2f8b1e4f8de873b97fda657e",
-  "pattern_noticed": "00b45b39c01cacc7446cc5bd7886d4d67cee58f1f82b8d6e9e3b1caada633a9b",
   "pattern_practice": "52a2b1a07c7f27d1e6219976ab56c388b6b507ec9ca90babf944733a336925fe",
   "pattern_quoted": "6411318b9eb304daa6b76d013ebba325df76ff4f42e36f11c2958f7740c0f755",
   "pattern_rule": "767d96689a01ddf44a903b7b9f0b451fd1b75869e70b0805a37a924b47ba886b",
@@ -24,7 +23,6 @@
 <resources>
     <!-- A rule the learner keeps getting wrong, found in their recent answers. -->
     <string name="pattern_title">Error recurrente</string>
-    <string name="pattern_noticed">Notamos un patrón</string>
     <string name="pattern_seen">Apareció en tus respuestas recientes.</string>
     <!-- %d is how many times the mistake came up. Every form shows the number as %d; English says “once” only because it reads better. -->
     <plurals name="pattern_seen_times">

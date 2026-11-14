@@ -48,9 +48,6 @@
   "subscription_free_lessons_a_month": "37357e79327c71aae5324667632830d6273a579415effdb07c68797149e35cff",
   "subscription_free_plan": "febe884217d9dfecb387f0662da2ef5ff34576ee524ee1ffd35ec4ed4e357a8a",
   "subscription_free_summary": "e2f5ec144a6dba9af189d6c3431808b4c057626d053ca6c7d9bca203dafba782",
-  "subscription_free_week_over_description": "57429f64a1d7fde2070e4934d7984d36cb408b22b7dd48252fa3ace4f239b68d",
-  "subscription_free_week_over_title": "9b4f734b98a11a5e51c6532b46baf7f35ff9c88d03fe347bd51ef468abe08548",
-  "subscription_get_plus": "42bdb6871c324989090e2b058699d5c5e412d7928527087964f540b609d9086a",
   "subscription_hide_answer": "84ec3ea3757fe72b884def7b29bb462737e37d896da0b2cfa3c9e7a58322288a",
   "subscription_keep_failed": "b18b86156727bd901031aa1b21f17ba28895ec13bbcddf5ea62d59d3f8dcc536",
   "subscription_keep_plus": "9b3c556e320390ae108b0abef0cd0028fc2282cc3088d7d662483ff0046064f6",
@@ -95,8 +92,6 @@
     <string name="subscription_plus">Plus</string>
     <string name="subscription_available_with_plus">Disponible con Plus</string>
     <string name="subscription_see_plus">Ver Plus</string>
-    <string name="subscription_free_week_over_title">Terminó tu semana gratis de preparación para el examen</string>
-    <string name="subscription_free_week_over_description">Puedes seguir repasando y corrigiendo tus errores gratis. Plus te da acceso a nuevas lecciones, al resto de tu plan y a simulacros.</string>
     <string name="subscription_active">Activa</string>
     <string name="subscription_ending">Por terminar</string>
     <!-- %1$s is a date. -->
@@ -143,7 +138,6 @@
     <!-- %1$s is a price, like "$5.00". -->
     <string name="subscription_yearly_per_month">Equivale a %1$s al mes.</string>
     <string name="subscription_unavailable">Por ahora no puedes comprar Plus en este dispositivo. Asegúrate de tener Google Play instalado y de haber iniciado sesión.</string>
-    <string name="subscription_get_plus">Obtener Plus</string>
     <string name="subscription_subscribe">Suscribirse</string>
     <string name="subscription_cancel_anytime">Cancela cuando quieras.</string>
     <string name="subscription_purchase_pending">Tu pago está pendiente. Plus se activa cuando Google Play lo confirma.</string>

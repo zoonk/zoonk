@@ -48,9 +48,6 @@
   "subscription_free_lessons_a_month": "5fed4d3ae499fc85d0da04c90522a24c59d4520748a8e08e04195750a80dd5ed",
   "subscription_free_plan": "fc1c5f19add4fcf1f572383da20da9c843584fecec225cc1f017b2692ad28669",
   "subscription_free_summary": "626eabfbc625d0e1249bda58b927f6f69ce0dfafd390fc791dfcab79cc763931",
-  "subscription_free_week_over_description": "fd17cd38b1f3a147bfc3a58d570d6c3894a7531b38eec63092fcf6bf17780fe2",
-  "subscription_free_week_over_title": "d5016d60d5996a2f3cebc342a673ce8a9ac867adb06fa13898789df2a2c1e321",
-  "subscription_get_plus": "862a2de47c5cb576f7ffa43e891b5894dc8d77d468b4e7708e47f500aabd007c",
   "subscription_hide_answer": "43b3a8f01149ff422fe93a58d9907f7bdd16549100b84f9d1622feaabcf655f0",
   "subscription_keep_failed": "767f74a89da525fdcfbb295d4d4fb0c6a00fb15f345d8e4e1ea967a6020fd8e0",
   "subscription_keep_plus": "efbbcff99e28e963c54c5912f63a4f16de48988cd166e1c8d78f104b0efbba27",
@@ -95,8 +92,6 @@
     <string name="subscription_plus">Plus</string>
     <string name="subscription_available_with_plus">Plus ile kullanılabilir</string>
     <string name="subscription_see_plus">Plus’ı incele</string>
-    <string name="subscription_free_week_over_title">Ücretsiz sınava hazırlık haftan bitti</string>
-    <string name="subscription_free_week_over_description">Tekrar yapmak ve yanlışlarını düzeltmek ücretsiz olmaya devam eder. Plus ile yeni derslere, planının geri kalanına ve deneme sınavlarına erişebilirsin.</string>
     <string name="subscription_active">Aktif</string>
     <string name="subscription_ending">Sona eriyor</string>
     <!-- %1$s is a date. -->
@@ -143,7 +138,6 @@
     <!-- %1$s is a price, like "$5.00". -->
     <string name="subscription_yearly_per_month">Bu da ayda %1$s ediyor.</string>
     <string name="subscription_unavailable">Şu anda bu cihazdan Plus satın alınamıyor. Google Play’in yüklü olduğundan ve Google Play’de oturum açtığından emin ol.</string>
-    <string name="subscription_get_plus">Plus’a geç</string>
     <string name="subscription_subscribe">Abone ol</string>
     <string name="subscription_cancel_anytime">İstediğin zaman iptal et.</string>
     <string name="subscription_purchase_pending">Ödemen beklemede. Google Play onayladığında Plus etkinleşecek.</string>

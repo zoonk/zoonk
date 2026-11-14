@@ -48,9 +48,6 @@
   "subscription_free_lessons_a_month": "39f0c6500c60d2da08e6d34124025ddd6ace0b459f525a9e64249997794c6ed6",
   "subscription_free_plan": "cbf2716e9128b543bcda65d0d40d388b63f9fb530829d0ea2f2a6eab913e65ad",
   "subscription_free_summary": "a8c75db90f70b7c2e2e9a0afec2c4c713d608e40b85768fa6b5c3b7570240efe",
-  "subscription_free_week_over_description": "5dff4facdcc660ba59b98b4ea746ebc438d9ab966edccf6067ce5730aa5253bc",
-  "subscription_free_week_over_title": "92ae0e9400f450a03c8f2bf0cbee9eae441767e5e032a4d1c16cdb1e04cbdb11",
-  "subscription_get_plus": "780f81d4870760c59e2639c8d4c1dc2ca408e935e0fcbf91e905822a47ce8128",
   "subscription_hide_answer": "6d6c995779f11d6919a9b7b495e4cc7a03e3187d2d71c81c797e6bcf6921a13a",
   "subscription_keep_failed": "759eb2e683794057b181bcb2f5b77319a8d5f45ad52271c7f54d895995555fe6",
   "subscription_keep_plus": "5b7b090c5d2d1b3fadd1641a59568a0c2607f98e7b4268983dcfa4dd03e0767c",
@@ -95,8 +92,6 @@
     <string name="subscription_plus">Plus</string>
     <string name="subscription_available_with_plus">Plus에서 이용 가능</string>
     <string name="subscription_see_plus">Plus 알아보기</string>
-    <string name="subscription_free_week_over_title">일주일간의 무료 시험 준비가 끝났어요</string>
-    <string name="subscription_free_week_over_description">복습과 틀린 문제 고치기는 계속 무료예요. Plus를 구독하면 새 레슨과 모의고사를 이용하고 남은 계획도 이어 갈 수 있어요.</string>
     <string name="subscription_active">구독 중</string>
     <string name="subscription_ending">종료 예정</string>
     <!-- %1$s is a date. -->
@@ -143,7 +138,6 @@
     <!-- %1$s is a price, like "$5.00". -->
     <string name="subscription_yearly_per_month">한 달에 %1$s인 셈이에요.</string>
     <string name="subscription_unavailable">지금은 이 기기에서 Plus를 구독할 수 없어요. Google Play가 설치되어 있는지, 로그인했는지 확인하세요.</string>
-    <string name="subscription_get_plus">Plus 구독하기</string>
     <string name="subscription_subscribe">구독하기</string>
     <string name="subscription_cancel_anytime">언제든지 해지할 수 있어요.</string>
     <string name="subscription_purchase_pending">결제 대기 중이에요. Google Play에서 결제를 확인하면 Plus를 이용할 수 있어요.</string>

@@ -25,11 +25,8 @@
     <string name="recap_new_topics">New topics</string>
     <string name="recap_reviews_done">Reviews done</string>
     <string name="recap_mistakes_fixed">Mistakes fixed</string>
-    <!-- A badge for catching the Trickster's traps. -->
-    <plurals name="recap_trap_hunter_badges">
-        <item quantity="one">Trap hunter badge</item>
-        <item quantity="other">Trap hunter badges</item>
-    </plurals>
+    <!-- A row's label, with how many were earned beside it: badges for catching the Trickster's traps. -->
+    <string name="recap_trap_hunter_badges">Trap hunter badges</string>
     <string name="recap_most_improved">Most improved</string>
     <!-- A topic and how its share of right answers grew in a week: "Fractions · 40% to 85%". -->
     <string name="recap_most_improved_value">%1$s · %2$s to %3$s</string>

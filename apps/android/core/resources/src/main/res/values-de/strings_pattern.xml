@@ -7,7 +7,6 @@
   "pattern_got_it": "f48d268cbfd188e84de8a1bcebc676fbd3cb81a8e94b3871eec28d302aaab0ea",
   "pattern_just_typos": "b6b3fef5c28fae32ccbf40be3f932ace50802819701d1be00da835f7765c9ebb",
   "pattern_keep_going": "eeb24b524cbe65709e11a093001b7f0c6cc000cb086b6eb648a5019e4827b257",
-  "pattern_noticed": "755b75be0dd96cec5cac12980f71a1ff48fa214f26883c06f462f3fba01bf625",
   "pattern_practice": "fb6b7f79c6a00761579c020e7c4820c2e4a5ea06ff301ffc586ead07ffd591fc",
   "pattern_quoted": "e3d9c92fe98756d4e6a256964deafd9b7a8308716698a5b46c33570e45a06910",
   "pattern_rule": "d85eb41fdba3988bad1fde2a47688e4e6eac2234f8703ac569c80a286390fa0b",
@@ -24,7 +23,6 @@
 <resources>
     <!-- A rule the learner keeps getting wrong, found in their recent answers. -->
     <string name="pattern_title">Fehlermuster</string>
-    <string name="pattern_noticed">Uns ist ein Muster aufgefallen</string>
     <string name="pattern_seen">Das kam in deinen letzten Antworten vor.</string>
     <!-- %d is how many times the mistake came up. Every form shows the number as %d; English says “once” only because it reads better. -->
     <plurals name="pattern_seen_times">

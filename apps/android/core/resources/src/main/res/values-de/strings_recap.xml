@@ -16,7 +16,7 @@
   "recap_quiet_week": "3eb2333230457300de510ce2c3be16faf4a3e2eee8fc54dc5bf692ea845a261f",
   "recap_reviews_done": "4083204096afdca58ae144b77c10f68a62a60b704456e8a4a8258ed014291769",
   "recap_time": "85d9abdbe0d9687a2820d0daef6ee783d72022b6200f255c1fa3e1628c7aff58",
-  "recap_trap_hunter_badges": "731bf5a234b1987d4b7522e29047838347927843ebaa879adc6e667c199f404f",
+  "recap_trap_hunter_badges": "f7cc895f52755a51a3b7fd2041850a98b0880842e437fa97037b1eb1df7582be",
   "recap_up_next": "84676dbf713e5ea1d70efeef6da517fd17ed91d8b3c124160f51de4113c96cb8",
   "recap_weekly_summary": "635f58d5a97918ef49e681091fefb28195902a358b0c7a2f0b3d10fa7ebf848e",
   "recap_what_a_week": "518dd1b39137a60b8857188ed49eb76b29cecac568da04d4579db9913e12d96c",
@@ -49,11 +49,8 @@
     <string name="recap_new_topics">Neue Themen</string>
     <string name="recap_reviews_done">Abgeschlossene Wiederholungen</string>
     <string name="recap_mistakes_fixed">Korrigierte Fehler</string>
-    <!-- A badge for catching the Trickster's traps. -->
-    <plurals name="recap_trap_hunter_badges">
-        <item quantity="one">Fallenjäger-Abzeichen</item>
-        <item quantity="other">Fallenjäger-Abzeichen</item>
-    </plurals>
+    <!-- A row's label, with how many were earned beside it: badges for catching the Trickster's traps. -->
+    <string name="recap_trap_hunter_badges">Fallenjäger-Abzeichen</string>
     <string name="recap_most_improved">Größter Fortschritt</string>
     <!-- A topic and how its share of right answers grew in a week: "Fractions · 40% to 85%". -->
     <string name="recap_most_improved_value">%1$s · von %2$s auf %3$s</string>

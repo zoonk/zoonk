@@ -48,9 +48,6 @@
   "subscription_free_lessons_a_month": "3138d2ebbe3dc3c33dd1829e853f5ac4f70a4e7950030f3ba5461f4d6d5c179d",
   "subscription_free_plan": "4db22e629a78291ecb50a87aee32336822b05d6b18e4617067df55b61748faa4",
   "subscription_free_summary": "43ffd937092f135af8e707af8d4d3dca004758251194e42da5eeadfa7f8055c4",
-  "subscription_free_week_over_description": "75d78b55e34c0f85470e3bac020ffd22a4010e46b208d54cc433bb624434c926",
-  "subscription_free_week_over_title": "36ef8e8580f57fe648e8cc234e937c9d0f0ec197a3b450fcf3d67d85e4788762",
-  "subscription_get_plus": "11bbacf52d235c2a60c19a3b99012716c402f1164a4a7462b332fd3228f50b64",
   "subscription_hide_answer": "f78641011a7f2c94f3df56fc306f3175c04c1b15d52a932ba75dbaa1290189e5",
   "subscription_keep_failed": "a8e9295e28b57d2afb24cd2f58b868caf4612cf47b7f7cf8353a45b6c2a15bcc",
   "subscription_keep_plus": "134656c65b1feea9a9b3c4bb44f79337549350aa5ad3431afb069e8913a72d32",
@@ -95,8 +92,6 @@
     <string name="subscription_plus">Plus</string>
     <string name="subscription_available_with_plus">Disponible avec Plus</string>
     <string name="subscription_see_plus">Découvrir Plus</string>
-    <string name="subscription_free_week_over_title">Ta semaine gratuite de préparation à l’examen est terminée</string>
-    <string name="subscription_free_week_over_description">Les révisions et la correction de tes erreurs restent gratuites. Plus donne accès à de nouvelles leçons, à la suite de ton plan et aux examens blancs.</string>
     <string name="subscription_active">Actif</string>
     <string name="subscription_ending">Fin prévue</string>
     <!-- %1$s is a date. -->
@@ -143,7 +138,6 @@
     <!-- %1$s is a price, like "$5.00". -->
     <string name="subscription_yearly_per_month">Soit %1$s par mois.</string>
     <string name="subscription_unavailable">Impossible d’acheter Plus sur cet appareil pour le moment. Vérifie que Google Play est installé et que tu y es connecté.</string>
-    <string name="subscription_get_plus">Passer à Plus</string>
     <string name="subscription_subscribe">S’abonner</string>
     <string name="subscription_cancel_anytime">Résilie à tout moment.</string>
     <string name="subscription_purchase_pending">Ton paiement est en attente. Plus commence dès que Google Play le confirme.</string>
