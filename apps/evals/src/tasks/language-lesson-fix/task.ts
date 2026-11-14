@@ -19,7 +19,7 @@ export const languageLessonFixTask: Task<
     "Fix what a reviewer found in a published language lesson as its writer: remove real slips, decline a wrong finding, and keep the rest of the lesson as it is",
   generate: fixLanguageLesson,
   id: "language-lesson-fix",
-  name: "Language Lesson Fix",
+  name: "Language lesson fix",
   score: scoreLanguageLessonFix,
   testCases: TEST_CASES,
 };

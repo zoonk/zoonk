@@ -70,7 +70,7 @@ export const conversationObjectivesTask: Task<
     "Say which of a live call's open objectives the learner's own words achieved so far, and whether its last exchange was a mutual goodbye, from the transcript: code checks both",
   generate: (input) => checkConversationObjectives({ ...input, useFallback: false }),
   id: "conversation-objectives",
-  name: "Conversation Objectives",
+  name: "Conversation objectives",
   score: scoreConversationObjectives,
   testCases: TEST_CASES,
 };

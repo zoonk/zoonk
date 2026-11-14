@@ -32,7 +32,7 @@ export const languageLessonCheckTask: Task<
     "Review a published language lesson as a teacher of the language from another model family: find wrong forms, options also right for what the screen shows, wrong respellings, giveaways and typos, and pass clean lessons",
   generate: reviewLesson,
   id: "language-lesson-check",
-  name: "Language Lesson Check",
+  name: "Language lesson check",
   score: scoreLessonQualityCheck,
   testCases: TEST_CASES,
 };

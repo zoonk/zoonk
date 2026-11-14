@@ -227,7 +227,7 @@ export const findOfficialSourcesTask: Task<
     "Find an exam's current official notice with each search tool (gateway Exa, Parallel, Perplexity, or the model's own), and a big subject's reference syllabi with the production tool",
   generate: findOfficialSources,
   id: "find-official-sources",
-  name: "Find Official Sources",
+  name: "Find official sources",
   score: scoreFoundSources,
   testCases: TEST_CASES,
 };

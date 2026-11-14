@@ -75,7 +75,7 @@ export const findExamDateTask: Task<FindExamDateParams, ExamDateFinding, FindExa
   generate: findExamDate,
   id: "find-exam-date",
   latencyBudget: { p50: 20, p95: 30 },
-  name: "Find Exam Date",
+  name: "Find exam date",
   score: scoreExamDate,
   testCases: TEST_CASES,
 };

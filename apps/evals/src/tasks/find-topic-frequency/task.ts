@@ -112,7 +112,7 @@ export const findTopicFrequencyTask: Task<
   generate: findTopicFrequency,
   id: "find-topic-frequency",
   latencyBudget: { p50: 40, p95: 70 },
-  name: "Find Topic Frequency",
+  name: "Find topic frequency",
   score: scoreTopicFrequency,
   testCases: TEST_CASES,
 };
