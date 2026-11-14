@@ -58,29 +58,6 @@ function tableQuestion(context: string): PastQuestion {
   return question({ citation: "Algebra I, June 2025, question 4", item, number: "4" });
 }
 
-const CODE_PAPER = `Question 7
-Which command opens data/x_1.csv for reading?
-A open("data/x_1.csv", "r")
-B open("data/x_1.csv", "w")
-C read("data/x_1.csv")
-D load("data/x_1.csv")`;
-
-function codeQuestion(command: string): PastQuestion {
-  const item = {
-    ...PRINTED_ITEM,
-    context: null,
-    options: [
-      '`open("data/x_1.csv", "r")`',
-      '`open("data/x_1.csv", "w")`',
-      '`read("data/x_1.csv")`',
-      '`load("data/x_1.csv")`',
-    ].map((text, index) => ({ ...PRINTED_ITEM.options[index]!, text })),
-    question: command,
-  };
-
-  return question({ citation: "Python exam, question 7", item, number: "7" });
-}
-
 describe(checkPastQuestion, () => {
   it("accepts a question copied as printed, whatever the line breaks, hyphens and quote marks", () => {
     expect(
@@ -322,13 +299,39 @@ E 札幌。`;
   });
 
   describe("code the copy puts in backticks", () => {
+    const CODE_PAPER = `Question 7
+Which command opens data/x_1.csv for reading?
+A open("data/x_1.csv", "r")
+B open("data/x_1.csv", "w")
+C read("data/x_1.csv")
+D load("data/x_1.csv")`;
+
     const target = { ...TARGET, language: "en", optionCount: 4 };
+
+    function codeQuestion({ command, quote }: { command: string; quote: string }): PastQuestion {
+      const item = {
+        ...PRINTED_ITEM,
+        context: null,
+        options: [
+          `${quote}open("data/x_1.csv", "r")${quote}`,
+          `${quote}open("data/x_1.csv", "w")${quote}`,
+          `${quote}read("data/x_1.csv")${quote}`,
+          `${quote}load("data/x_1.csv")${quote}`,
+        ].map((text, index) => ({ ...PRINTED_ITEM.options[index]!, text })),
+        question: command,
+      };
+
+      return question({ citation: "Python exam, question 7", item, number: "7" });
+    }
 
     it("accepts a file name and options the copy puts in backticks", () => {
       expect(
         checkPastQuestion({
           paperText: CODE_PAPER,
-          question: codeQuestion("Which command opens `data/x_1.csv` for reading?"),
+          question: codeQuestion({
+            command: "Which command opens `data/x_1.csv` for reading?",
+            quote: "`",
+          }),
           target,
         }).problems,
       ).toStrictEqual([]);
@@ -338,7 +341,10 @@ E 札幌。`;
       expect(
         checkPastQuestion({
           paperText: CODE_PAPER,
-          question: codeQuestion("Which command opens `data/x_2.csv` for reading?"),
+          question: codeQuestion({
+            command: "Which command opens `data/x_2.csv` for reading?",
+            quote: "`",
+          }),
           target,
         }).problems,
       ).toStrictEqual(["The command isn't in the paper as printed."]);
@@ -349,13 +355,17 @@ E 札幌。`;
       const printed = "Which command opens `data/x_1.csv` for reading?";
 
       expect(
-        checkPastQuestion({ paperText, question: codeQuestion(printed), target }).problems,
+        checkPastQuestion({
+          paperText,
+          question: codeQuestion({ command: printed, quote: "`" }),
+          target,
+        }).problems,
       ).toStrictEqual([]);
 
       expect(
         checkPastQuestion({
           paperText: paperText.replace("for reading", "for `reading`"),
-          question: codeQuestion(printed),
+          question: codeQuestion({ command: printed, quote: "`" }),
           target,
         }).problems,
       ).toStrictEqual(["The command isn't in the paper as printed."]);
