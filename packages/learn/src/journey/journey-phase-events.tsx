@@ -29,7 +29,7 @@ const EVENT_DATE_CLASS = "text-muted-foreground text-xs";
 function EventRow({ children, href }: { children: React.ReactNode; href: string | null }) {
   if (!href) {
     return (
-      <div className={PATH_ROW_CLASS}>
+      <div className={PATH_ROW_CLASS} data-slot="path-row">
         {children}
         <ListRowChevronSpace />
       </div>
@@ -37,7 +37,7 @@ function EventRow({ children, href }: { children: React.ReactNode; href: string 
   }
 
   return (
-    <LearnLink className={EVENT_ROW_CLASS} href={href}>
+    <LearnLink className={EVENT_ROW_CLASS} data-slot="path-row" href={href}>
       {children}
       <RowChevron />
     </LearnLink>
@@ -63,15 +63,18 @@ export function CheckpointRow({
 
   return (
     <EventRow href={checkpoint.planItemId ? links.challenge(checkpoint.planItemId) : null}>
-      <span className={PATH_ROW_LEADING_CLASS}>
+      <span className={PATH_ROW_LEADING_CLASS} data-slot="path-row-mark">
         <Trickster className="size-4" view="face" />
       </span>
       <span className={PATH_ROW_BODY_CLASS}>
-        <span className={cn("font-medium", isDone && "text-muted-foreground")}>
+        <span
+          className={cn("font-medium", isDone && "text-muted-foreground")}
+          data-slot="path-row-title"
+        >
           {goal.kind === "language" ? t("Call") : t("The Trickster")}
         </span>
 
-        <span className={EVENT_DATE_CLASS}>
+        <span className={EVENT_DATE_CLASS} data-slot="path-row-value">
           {isDone && t({ description: "The learner won this phase challenge.", message: "Won" })}
           {!isDone &&
             when === "nextSession" &&
@@ -80,7 +83,10 @@ export function CheckpointRow({
         </span>
 
         {!brief && !isDone && (
-          <span className="text-muted-foreground basis-full text-xs text-pretty">
+          <span
+            className="text-muted-foreground basis-full text-xs text-pretty"
+            data-slot="path-row-note"
+          >
             {goal.kind === "language"
               ? t("A live call where you get your point across")
               : t("Questions on this phase, with no hints")}
@@ -137,12 +143,14 @@ export function MockRow({
 
   return (
     <EventRow href={href}>
-      <span className={PATH_ROW_LEADING_CLASS}>
+      <span className={PATH_ROW_LEADING_CLASS} data-slot="path-row-mark">
         <KindMark kind="mock" />
       </span>
       <span className={PATH_ROW_BODY_CLASS}>
         <span className="flex flex-col">
-          <span className="font-medium text-pretty">{t("Mock exam")}</span>
+          <span className="font-medium text-pretty" data-slot="path-row-title">
+            {t("Mock exam")}
+          </span>
           {funded?.minutes ? (
             <span className="text-muted-foreground font-mono text-xs tabular-nums">
               {formatDuration(funded.minutes)}

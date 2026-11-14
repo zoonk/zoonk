@@ -146,7 +146,10 @@ export function PhaseName({
 
   return (
     <span className="flex min-w-0 flex-1 flex-col">
-      <span className={cn("font-medium", phase.state === "done" && "text-muted-foreground")}>
+      <span
+        className={cn("font-medium", phase.state === "done" && "text-muted-foreground")}
+        data-slot="path-row-title"
+      >
         {byPlace ? (
           <>
             <span className="in-data-panel-open:hidden">{name}</span>
