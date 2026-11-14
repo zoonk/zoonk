@@ -87,10 +87,11 @@ private struct ExplanationView: View {
       Section {
         PageHeader(
           Text(explanation.title),
-          eyebrow: Text(
-            "Quick explanation\u{00A0}· \(Duration.seconds(300), format: .units(allowed: [.minutes], width: .abbreviated))",
-            tableName: "Explain",
-            comment: "Eyebrow over a quick explanation's title: its kind and length"),
+          chip: Chip(
+            Text(
+              "Quick explanation\u{00A0}· \(Duration.seconds(300), format: .units(allowed: [.minutes], width: .abbreviated))",
+              tableName: "Explain",
+              comment: "Eyebrow over a quick explanation's title: its kind and length")),
           supporting: Text(
             "No plan to set up.", tableName: "Explain", comment: "Under a quick explanation's title"
           )
@@ -136,16 +137,15 @@ private struct ExplanationView: View {
       }
 
       goFurther
-
+    }
+    .bottomBar {
       if let lesson = explanation.lesson {
         if hasPlayed {
           StepButtons(
             continueLabel: Text(
               "Done", tableName: "Explain", comment: "Leaves a quick explanation"),
-            continueIcon: .check,
             skipLabel: Text(
               "Read it again", tableName: "Explain", comment: "Plays a quick explanation again"),
-            skipIcon: nil,
             onContinue: done
           ) {
             router.open(.lesson(lessonId: lesson.id))
@@ -153,8 +153,7 @@ private struct ExplanationView: View {
         } else {
           StepButtons(
             continueLabel: Text(
-              "See explanation", tableName: "Explain", comment: "Plays a written quick explanation"),
-            continueIcon: .play
+              "See explanation", tableName: "Explain", comment: "Plays a written quick explanation")
           ) {
             hasPlayed = true
             router.open(.lesson(lessonId: lesson.id))

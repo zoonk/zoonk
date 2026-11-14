@@ -41,17 +41,17 @@ struct SuggestedGoalSection: View {
           .foregroundStyle(.mutedForeground)
       }
 
-      BusyButton(isBusy: answering == true, icon: .forward) {
+      BusyButton(isBusy: answering == true) {
         answer(accepted: true)
       } label: {
-        Text("Build my plan", tableName: "Today", comment: "Accepts the suggested goal")
+        Text("Start", tableName: "Today", comment: "Accepts the suggested goal")
       }
       .buttonStyle(.mainAction)
       .controlSize(.large)
       .buttonSizing(.flexible)
       .disabled(answering == false)
 
-      BusyButton(isBusy: answering == false, icon: .dismiss) {
+      BusyButton(isBusy: answering == false) {
         answer(accepted: false)
       } label: {
         Text("Not now", tableName: "Today", comment: "Dismisses the suggested goal")
@@ -466,7 +466,7 @@ struct TodayFocusTestSection: View {
   }
 
   private static let noted = LocalizedStringResource(
-    "Noted. You can take the test from your plan.", table: "Today",
+    "You can take the test from your plan.", table: "Today",
     comment: "After the learner dismissed Today's suggestion of the Focus test")
 
   @ViewBuilder
@@ -476,9 +476,10 @@ struct TodayFocusTestSection: View {
       .foregroundStyle(Color(.foreground))
 
     Text(
-      "Your time can't cover everything before your exam. In about \(studyDuration(minutes: shown.minutes)), the Focus test shows what to study most.",
+      "A \(studyDuration(minutes: shown.minutes)) test shows what you already know, so more of your time goes to what you need most. It never removes a subject.",
       tableName: "Today",
-      comment: "Why Today suggests the Focus test; then about how long it takes, such as \"15 min\""
+      comment:
+        "What the Focus test is and why, on Today; the argument is how long it takes, such as \"15 min\""
     )
     .foregroundStyle(.mutedForeground)
 
@@ -487,7 +488,7 @@ struct TodayFocusTestSection: View {
         isOpen = false
         router.open(.focusTest(goalId: goalID, startsTest: true))
       } label: {
-        Text("Start the test", tableName: "FocusTest", comment: "Starts the Focus test")
+        Text("Start", tableName: "Today", comment: "Starts the Focus test")
           .frame(maxWidth: .infinity)
       }
       .buttonStyle(.mainAction)

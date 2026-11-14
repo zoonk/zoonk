@@ -130,12 +130,9 @@ export function CountryStep({
         language={language}
         onOpenChange={setPickerOpen}
         onPick={(country) => {
-          if (country) {
-            pickedInPicker.current = true;
-            setOther(country);
-            setCode(country.code);
-          }
-
+          pickedInPicker.current = true;
+          setOther(country);
+          setCode(country.code);
           setPickerOpen(false);
         }}
         open={pickerOpen}

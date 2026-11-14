@@ -38,9 +38,8 @@ export type PageWords = PagePlace & {
 /**
  * Runs in the browser, so it reads nothing outside itself (`probe.mts`). A button is drawn with
  * the design system's `buttonVariants` (its `group/button` class) and isn't underlined like a link.
- * The title is the main region's first `h1`, or the region's start without one; the main action is
- * the first button with the primary fill after it. A text element has its own text and isn't
- * inside another one counted.
+ * The title is the main region's first `h1`, or the region's start without one; a main action
+ * carries `data-enter`. A text element has its own text and isn't inside another one counted.
  */
 export function readWords(pageTop: PageTopClasses | null): PageText {
   const main = document.querySelector("main") ?? document.body;
@@ -70,12 +69,13 @@ export function readWords(pageTop: PageTopClasses | null): PageText {
   const title = [...main.querySelectorAll("h1")].find((heading) => shown(heading)) ?? null;
   const start = all.indexOf(title ?? main);
 
-  const action =
-    buttons.find(
-      (button) => button.classList.contains("bg-primary") && all.indexOf(button) > start,
-    ) ?? null;
+  const scope = main.closest("[data-slot=task-frame]") ?? main;
 
-  const filled = buttons.filter((button) => button.classList.contains("bg-primary"));
+  const actions = [...scope.querySelectorAll<HTMLElement>("[data-enter]")].filter((element) =>
+    shown(element),
+  );
+
+  const action = actions.find((button) => all.indexOf(button) > start) ?? null;
   const titleBox = title?.getBoundingClientRect();
 
   const frame = title?.closest("[data-slot=learn-shell-content]");
@@ -151,7 +151,8 @@ export function readWords(pageTop: PageTopClasses | null): PageText {
 
   const between = beforeAction(action);
 
-  const [only] = filled;
+  const [only] = actions;
+  const bar = only?.closest("[data-slot=bottom-bar]");
 
   return {
     aboveAction: action
@@ -160,7 +161,7 @@ export function readWords(pageTop: PageTopClasses | null): PageText {
         ).length
       : null,
     action: action ? label(action) : null,
-    actionPinned: filled.length === 1 && only ? pinned(only) : null,
+    actionPinned: actions.length === 1 && only ? Boolean(bar && pinned(bar) && pinned(only)) : null,
     buttons: buttons.map((button) => label(button)).filter(Boolean),
     // oxlint-disable-next-line unicorn/prefer-dom-node-text-content -- Only `innerText` skips hidden text (`display: none`), which `textContent` would count.
     text: main.innerText,

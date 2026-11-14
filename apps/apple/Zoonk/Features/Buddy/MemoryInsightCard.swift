@@ -106,9 +106,9 @@ struct MemoryInsightCard: View {
         : Text("Keep it", tableName: "Buddy", comment: "Keeps a lesson an insight already added")
     case .scheduleIdea:
       Text(
-        "Move my study time to \(insight.studyTime ?? "")", tableName: "Buddy",
+        "Move it", tableName: "Buddy",
         comment:
-          "Accepts a schedule idea: moves the time of day the learner studies; the argument is a clock time like 20:00"
+          "Accepts a schedule idea: moves the time of day the learner studies to the time the sentence above names"
       )
     case .tip:
       Text("Got it", tableName: "Buddy", comment: "Acknowledges a tip")

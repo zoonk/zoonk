@@ -67,22 +67,6 @@ struct LanguageLevelSheet: View {
           }
           .accessibilityRepresentation { Text(level.estimate) }
         }
-      } header: {
-        SectionTitle(
-          Text(
-            "Practice estimates", tableName: "Plan",
-            comment:
-              "Heads each language skill's level, estimated from the learner's answers to set how hard practice is"
-          ))
-      } footer: {
-        SectionFooter {
-          Text(
-            "These estimates guide practice difficulty. Certificates follow the lessons completed in your plan.",
-            tableName: "Plan",
-            comment:
-              "Under the skill estimates: they set how hard practice is, while certificates come from finishing the plan's lessons"
-          )
-        }
       }
     }
     .navigationTitle(

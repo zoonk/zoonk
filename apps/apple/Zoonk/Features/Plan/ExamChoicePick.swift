@@ -6,13 +6,13 @@ extension GoalPlan.ExamChoice {
     return names.isEmpty ? nil : names.formatted(.list(type: .and))
   }
 
-  /// Main's `PlanChoiceLines`.
+  /// Main's `PlanChoiceLines`: "Foreign language: Spanish".
   var followingLine: String? {
     pickedNames.map { names in
       String(
-        localized: "Following the \(names) syllabus", table: "Onboarding",
+        localized: "\(group): \(names)", table: "Plan",
         comment:
-          "The options of an exam's choice the learner's plan studies, listed, such as a specialty (Desenvolvimento de Sistemas), a foreign language or two modules, named as the exam's notice names them"
+          "An exam's choice, such as its foreign language, then the options the learner's plan studies, listed as the exam's notice names them"
       )
     }
   }

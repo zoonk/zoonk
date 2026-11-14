@@ -216,7 +216,7 @@ struct LessonStageView: View {
               }
             }
           }
-          .safeAreaBar(edge: .bottom) {
+          .bottomBar {
             LessonActionBar(store: store, state: state, step: step)
           }
           // The hinge is the trailing page's safe area, so its content and the action bar stay
@@ -418,7 +418,7 @@ struct LessonActionBar: View {
   @Environment(\.lessonTutor) private var tutor
 
   var body: some View {
-    TaskActionBar {
+    Group {
       if state.canGoBack {
         StepBackButton(
           label: Text(
@@ -455,8 +455,6 @@ struct LessonActionBar: View {
     } label: {
       Text(primary.title)
     }
-    .controlSize(.large)
-    .buttonSizing(.flexible)
     .disabled(primary.isDisabled)
     .keyboardShortcut(.defaultAction)
 

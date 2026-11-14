@@ -18,10 +18,10 @@ struct MakeRoomSheet: View {
       ZoonkList {
         Section {
           Text(
-            "You're following as many goals as the free plan allows. Pause one to start \(waitingGoal.displayName). You can resume it later.",
+            "That's as many goals as you can study at once. Pause one to start this one.",
             tableName: "Navigation",
             comment:
-              "In the sheet that makes room for a goal waiting to start, above the learner's goals; the argument is the waiting goal's name"
+              "In the sheet that makes room for a goal waiting to start, above the learner's goals"
           )
           .foregroundStyle(.mutedForeground)
           .listRowSeparator(.hidden)
@@ -44,12 +44,8 @@ struct MakeRoomSheet: View {
           Button {
             router.present(.subscription)
           } label: {
-            Text(
-              "Get Plus", tableName: "Navigation",
-              comment:
-                "Opens the Zoonk Plus subscription, which follows more goals at once; Plus is its name, not \"more\""
-            )
-            .frame(maxWidth: .infinity)
+            Text("Subscribe", tableName: "Navigation", comment: "Opens the subscription")
+              .frame(maxWidth: .infinity)
           }
           .buttonStyle(.outline)
           .controlSize(.large)
