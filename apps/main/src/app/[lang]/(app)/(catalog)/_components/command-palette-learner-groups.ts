@@ -19,7 +19,7 @@ import {
 /** Until the learner is read the buddy is `null`: its row waits for its name, as its tab does. */
 export type LearnerPalette = {
   activeGoalId: string | null;
-  buddy: Pick<LearnBuddy, "kind" | "name"> | null;
+  buddy: LearnBuddy | null;
   canAskBuddy: boolean;
   explanations: { id: string; title: string }[];
   goals: { displayName: string; id: string; kind: string; title: string }[];
@@ -152,6 +152,7 @@ export function useLearnerPaletteGroups({
     createNavigationPaletteItem({ id: "journey", label: t("Plan"), menu: getMenu("journey") }),
     learner.buddy &&
       createNavigationPaletteItem({
+        buddy: learner.buddy,
         id: "buddy",
         keywords: t("Buddy"),
         label: buddy,
