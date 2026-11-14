@@ -9,6 +9,7 @@ import { ListRowChevronSpace } from "../_components/list-group";
 import { DoneMark } from "../_components/status-mark";
 import { LearnLink } from "../learn-link";
 import { usePlanScreen } from "../plan/plan-context";
+import { PlanDateText } from "../plan/plan-date-text";
 import { usePhaseName } from "../plan/use-phase-name";
 import { CurrentPhaseMark } from "./current-phase-mark";
 import { type JourneyPathLinks } from "./journey-links";
@@ -18,7 +19,8 @@ import {
   PATH_ROW_BODY_CLASS,
   usePhaseMocksLine,
 } from "./journey-phase-events";
-import { useFinishDate, usePhaseWhen } from "./use-phase-when";
+import { PhaseWhen } from "./phase-when";
+import { useRoadmapFinish } from "./use-roadmap";
 
 type NodeState = PlanPhaseView["state"] | "finish";
 
@@ -59,8 +61,7 @@ function PhaseTitle({ phase }: { phase: PlanPhaseView }) {
   const t = useExtracted();
   const { plan } = usePlanScreen();
   const phaseName = usePhaseName();
-  const phaseWhen = usePhaseWhen();
-  const when = phaseWhen(phase);
+  const lessonsLeft = phase.lessonsTotal - phase.lessonsDone;
 
   return (
     <span className={HEADER_BODY_CLASS}>
@@ -75,16 +76,15 @@ function PhaseTitle({ phase }: { phase: PlanPhaseView }) {
         {phase.state === "leftOut" && (
           <span className="text-muted-foreground text-xs">{t("Not in your plan")}</span>
         )}
-        {phase.state === "unfinished" && (
+        {phase.state === "unfinished" && lessonsLeft > 0 && (
           <span className="text-muted-foreground text-xs">
-            {t(
-              "{total, plural, one {{done, number} of # lesson done} other {{done, number} of # lessons done}}",
-              { done: phase.lessonsDone, total: phase.lessonsTotal },
-            )}
+            {t("{count, plural, one {# lesson not studied} other {# lessons not studied}}", {
+              count: lessonsLeft,
+            })}
           </span>
         )}
       </span>
-      {when && <span className={DATE_CLASS}>{when}</span>}
+      <PhaseWhen className={DATE_CLASS} phase={phase} />
     </span>
   );
 }
@@ -153,7 +153,7 @@ function CompactPhaseNode({ links, phase }: { links: JourneyPathLinks; phase: Pl
 function FinishNode({ continues, examHref }: { continues: boolean; examHref: string | null }) {
   const t = useExtracted();
   const { goal } = usePlanScreen();
-  const date = useFinishDate();
+  const finish = useRoadmapFinish();
 
   const content = (
     <span className={HEADER_BODY_CLASS}>
@@ -161,7 +161,16 @@ function FinishNode({ continues, examHref }: { continues: boolean; examHref: str
         <span className="text-sm font-medium">{goal.displayName}</span>
         {examHref && <span className="text-muted-foreground text-xs">{t("About the exam")}</span>}
       </span>
-      {date && <span className={DATE_CLASS}>{date}</span>}
+      {finish ? (
+        <PlanDateText
+          className={DATE_CLASS}
+          estimate={finish.estimate}
+          isoDate={finish.isoDate}
+          month={finish.month}
+        />
+      ) : (
+        goal.kind === "exam" && <span className={DATE_CLASS}>{t("Date to be confirmed")}</span>
+      )}
     </span>
   );
 

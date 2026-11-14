@@ -2,7 +2,6 @@
 
 import { Button } from "@zoonk/ui/components/button";
 import { ShortcutTooltip } from "@zoonk/ui/components/shortcut-tooltip";
-import { ignoreHeldEnter } from "@zoonk/ui/hooks/keyboard";
 import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronLeftIcon, HelpCircleIcon } from "lucide-react";
@@ -158,8 +157,7 @@ export function QuestionDontKnow({
 
 /**
  * One button through a question, so keyboard focus stays on it from Check to Continue. Enter
- * pressed elsewhere moves focus to it, since an answer option locks while it's checked, and a held
- * Enter acts once, so it can't check and then skip the verdict.
+ * pressed elsewhere moves focus to it, since an answer option locks while it's checked.
  *
  * `enter` is `EnterButton`'s: `host` when the screen binds Enter itself, `off` when Enter must not
  * press it (handing in).
@@ -187,7 +185,6 @@ export function QuestionMainAction({
       enter={enter}
       id={id}
       onClick={onPress}
-      onKeyDown={ignoreHeldEnter}
       {...props}
     >
       <TaskActionLabel>{children ?? label}</TaskActionLabel>

@@ -9,6 +9,14 @@ import { usePhaseName } from "../plan/use-phase-name";
 
 const NEAR_ESTIMATE_DAYS = 42;
 
+/** An estimate this far from the plan's week is said by its month: "~Jan", never a day. */
+export function useIsFarEstimate() {
+  const { plan } = usePlanScreen();
+
+  return (isoDate: string): boolean =>
+    daysBetween(plan.week.startDate, isoDate) > NEAR_ESTIMATE_DAYS;
+}
+
 export function getLessonShare(phase: PlanPhaseView): number {
   if (phase.state === "done") {
     return 1;
@@ -31,6 +39,7 @@ export function useRoadmapPhases() {
 
 export function useRoadmapFinish(): { estimate: boolean; isoDate: string; month: boolean } | null {
   const { goal, plan } = usePlanScreen();
+  const isFar = useIsFarEstimate();
   const { targetDate, targetDateEstimated, targetDateNamedMonth } = plan.schedule;
 
   if (targetDate) {
@@ -43,11 +52,7 @@ export function useRoadmapFinish(): { estimate: boolean; isoDate: string; month:
     return null;
   }
 
-  return {
-    estimate: true,
-    isoDate: endDate,
-    month: daysBetween(plan.week.startDate, endDate) > NEAR_ESTIMATE_DAYS,
-  };
+  return { estimate: true, isoDate: endDate, month: isFar(endDate) };
 }
 
 export function useRoadmapOverrun(): { phaseIndex: number; share: number } | null {
