@@ -32,10 +32,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.zoonk.android.R
 import com.zoonk.android.feature.audio.SpeechFailedNote
@@ -347,7 +347,8 @@ private fun AlphabetView(
                     modifier = modifier.semantics { contentDescription = label },
                     style =
                         MaterialTheme.typography.displayLarge.copy(
-                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 48.sp,
+                            lineHeight = 48.sp,
                             textDirection = TextDirection.Content,
                         ),
                 )

@@ -1405,7 +1405,6 @@ msgstr "Zu"
 #: src/focus-test/focus-test-flow.tsx
 #: src/focus-test/focus-test-proposal.tsx
 #: src/focus-test/focus-test-screens.tsx
-#: src/mock/mock-result-actions.tsx
 #: src/mock/mock-result-plan.tsx
 #: src/plan/plan-fit-suggestion.tsx
 #: src/plan/plan-offer-preview.tsx
@@ -4008,6 +4007,7 @@ msgid "Your plan keeps the focus you chose."
 msgstr "Il tuo piano mantiene le priorità che hai scelto."
 
 #: src/focus-test/use-result-line.ts
+#: src/mock/mock-result-plan.tsx
 #: src/plan-diff/plan-effect-diff.tsx
 #: src/plan/plan-bases-sheet.tsx
 #: src/plan/plan-offer-preview.tsx
@@ -6322,6 +6322,11 @@ msgid "I didn't understand the audio"
 msgstr "Non ho capito l’audio"
 
 #: src/language/level-test/level-test-questions.tsx
+msgctxt "chcgvC"
+msgid "We couldn't check that. Try again."
+msgstr "Non siamo riusciti a controllare la risposta. Riprova."
+
+#: src/language/level-test/level-test-questions.tsx
 msgctxt "TIG4Hb"
 msgid "Skip this part"
 msgstr "Salta questa parte"
@@ -6330,11 +6335,6 @@ msgstr "Salta questa parte"
 msgctxt "9Da2rt"
 msgid "Say it out loud"
 msgstr "Dillo ad alta voce"
-
-#: src/language/level-test/level-test-questions.tsx
-msgctxt "chcgvC"
-msgid "We couldn't check that. Try again."
-msgstr "Non siamo riusciti a controllare la risposta. Riprova."
 
 #: src/language/level-test/level-test-screens.tsx
 msgctxt "H4wCrn"
@@ -6996,6 +6996,16 @@ msgid "Create"
 msgstr "Crea"
 
 #: src/mind-maps/mind-map-copy.ts
+msgctxt "fOetuN"
+msgid "{count, plural, one {# lesson to write} other {# lessons to write}}"
+msgstr "{count, plural, one {# lezione da preparare} other {# lezioni da preparare}}"
+
+#: src/mind-maps/mind-map-copy.ts
+msgctxt "FE72mn"
+msgid "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}"
+msgstr "{count, plural, one {Prima prepariamo # lezione e la conteggiamo tra le tue lezioni gratuite.} other {Prima prepariamo # lezioni e le conteggiamo tra le tue lezioni gratuite.}}"
+
+#: src/mind-maps/mind-map-copy.ts
 msgctxt "ZyyHnb"
 msgid "A mind map of its main ideas"
 msgstr "Una mappa mentale delle idee principali"
@@ -7004,11 +7014,6 @@ msgstr "Una mappa mentale delle idee principali"
 msgctxt "AAKHvt"
 msgid "Its main ideas in one picture"
 msgstr "Le idee principali del capitolo in un’immagine"
-
-#: src/mind-maps/mind-map-copy.ts
-msgctxt "FE72mn"
-msgid "{count, plural, one {# lesson gets written first and counts toward your free lessons.} other {# lessons get written first and count toward your free lessons.}}"
-msgstr "{count, plural, one {Prima prepariamo # lezione e la conteggiamo tra le tue lezioni gratuite.} other {Prima prepariamo # lezioni e le conteggiamo tra le tue lezioni gratuite.}}"
 
 #: src/mind-maps/mind-map-copy.ts
 msgctxt "uhTP9c"
@@ -7203,6 +7208,11 @@ msgstr "Altri capitoli"
 msgctxt "Q3GPLT"
 msgid "Create all"
 msgstr "Creale tutte"
+
+#: src/mind-maps/not-made-yet.tsx
+msgctxt "_tV21i"
+msgid "Making one of these maps writes its lessons first, and they count toward your free lessons."
+msgstr "Per creare una di queste mappe prepariamo prima le sue lezioni, che contano tra le tue lezioni gratuite."
 
 #: src/mind-maps/use-mind-map-saves.ts
 msgctxt "U0yWHz"

@@ -7,6 +7,9 @@ import { LearnLink } from "../learn-link";
 import { TaskMainLink } from "../shell/task-frame";
 import { useMockScreen } from "./mock-context";
 
+/** On a phone the bar's second action takes the line above the main one and the way back. */
+export const BAR_SECOND_ACTION_CLASS = "shrink-0 max-lg:order-first max-lg:basis-full";
+
 function useMistakeCount(): number {
   const { runner } = useMockScreen();
   // A question with several picks answered partly right missed some, so the notebook keeps it too.
@@ -26,10 +29,11 @@ export function MockResultActions() {
 }
 
 /**
- * The way on without reviewing: the bar's second action, outlined beside the main one. On a phone
- * it takes the line above, since a translated pair doesn't fit one row with the way back.
+ * The way on without reviewing, named as every result's way on is: the bar's second action,
+ * outlined beside the main one. On a phone it takes the line above, since a translated pair
+ * doesn't fit one row with the way back.
  */
-export function MockResultSkip() {
+export function MockResultContinue() {
   const t = useExtracted();
   const { hrefs, runner } = useMockScreen();
   const mistakes = useMistakeCount();
@@ -40,13 +44,10 @@ export function MockResultSkip() {
 
   return (
     <LearnLink
-      className={cn(
-        buttonVariants({ size: "xl", variant: "outline" }),
-        "shrink-0 max-lg:order-first max-lg:basis-full",
-      )}
+      className={cn(buttonVariants({ size: "xl", variant: "outline" }), BAR_SECOND_ACTION_CLASS)}
       href={hrefs.continue}
     >
-      {t("Not now")}
+      {t("Continue")}
     </LearnLink>
   );
 }

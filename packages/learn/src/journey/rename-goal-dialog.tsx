@@ -1,9 +1,7 @@
 "use client";
 
 import { MAX_GOAL_TITLE_LENGTH } from "@zoonk/core/goals/goal-input-limits";
-import { safeAsync } from "@zoonk/utils/error";
 import { useExtracted } from "next-intl";
-import { useTransition } from "react";
 import { EditTextDialog } from "../_components/edit-text-dialog";
 import { useChangeSaveFailed } from "../_components/save-error";
 
@@ -18,11 +16,9 @@ export function RenameGoalDialog({
 }) {
   const t = useExtracted();
   const saveFailed = useChangeSaveFailed();
-  const [pending, startTransition] = useTransition();
 
   return (
     <EditTextDialog
-      isPending={pending}
       label={t({
         description: "A learning goal's name, not a person's name",
         id: "goalDisplayName",
@@ -30,16 +26,14 @@ export function RenameGoalDialog({
       })}
       maxLength={MAX_GOAL_TITLE_LENGTH}
       onClose={onClose}
-      onSave={(name) => {
-        startTransition(async () => {
-          const { data: saved } = await safeAsync(() => onRename(name));
+      onSave={async (name) => {
+        const saved = await onRename(name);
 
-          if (saved) {
-            onClose();
-          } else {
-            saveFailed();
-          }
-        });
+        if (!saved) {
+          saveFailed();
+        }
+
+        return saved;
       }}
       title={t("Rename goal")}
       value={displayName}

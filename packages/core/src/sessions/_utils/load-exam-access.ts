@@ -13,8 +13,6 @@ export async function loadExamPrepAccess({
 }: {
   goal: Pick<Goal, "kind">;
   readViewer?: () => Promise<EntitlementViewer | null>;
-  timeZone?: string | null;
-  today?: Date;
 }): Promise<ExamPrepAccess> {
   const viewer = goal.kind === "exam" ? await readViewer() : null;
   return getExamPrepAccess({ examPrep: viewer ? getPlanExamPrep(viewer.tier) : null, goal });
