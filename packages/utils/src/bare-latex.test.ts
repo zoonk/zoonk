@@ -108,6 +108,12 @@ describe(findBareLatex, () => {
       "Set user_id=max_value+1 and keep CH_4/UTF_8 in db_1.",
       "Call __init__ in snake_case, then read API_key, HTTP_proxy, PATH_info and SEEK_SET.",
       "Rename myVar_1, parseJSON_data, iOS_version and macOS_14, and call `kC_A = 1`.",
+      "Join on customer_id, then sort_values('updated_at') and drop_duplicates by package_id.",
+      "Read weight_lb, contact_name, returned_on, due_on and daily_kwh with pd.to_numeric.",
+      "Merge with left_index=True, call loss_fn(predictions, y) and optimizer.zero_grad().",
+      "Set item_count = gene_reads // total_reads * 1_000_000 and call contar_ativos(status).",
+      "Label reads >sample_A, sample_B and sample_1, matched to NM_000546.6.",
+      "Mark it not_applicable or recorded_zero.",
     ];
 
     expect(texts.flatMap((text) => find(text))).toStrictEqual([]);
