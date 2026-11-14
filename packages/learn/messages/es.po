@@ -2679,9 +2679,9 @@ msgid "{count, plural, one {# of {total} right to win} other {# of {total} right
 msgstr "{count, plural, one {# acierto de {total} para ganar} other {# aciertos de {total} para ganar}}"
 
 #: src/checkpoints/checkpoint-review.tsx
-msgctxt "hmBFza"
-msgid "Answer:"
-msgstr "Respuesta:"
+msgctxt "CsqxCb"
+msgid "<label>Answer:</label> <answer></answer>"
+msgstr "<label>Respuesta:</label> <answer></answer>"
 
 #: src/checkpoints/checkpoint-review.tsx
 #: src/mistakes/mistake-practice-run.tsx
@@ -8411,16 +8411,15 @@ msgid "{cause} · Fixed"
 msgstr "{cause} · Corregido"
 
 #: src/mistakes/mistake-entry.tsx
-#: src/mistakes/practice-step.tsx
-#: src/session/question-block/question-feedback.tsx
-msgctxt "VM0Q1f"
-msgid "Right answer:"
-msgstr "Respuesta correcta:"
+#: src/questions/right-answer-line.tsx
+msgctxt "wS1KQ6"
+msgid "<label>Right answer:</label> <answer></answer>"
+msgstr "<label>Respuesta correcta:</label> <answer></answer>"
 
 #: src/mistakes/mistake-entry.tsx
-msgctxt "h_bsq4"
-msgid "You answered:"
-msgstr "Respondiste:"
+msgctxt "Gr6IEG"
+msgid "<label>You answered:</label> <answer></answer>"
+msgstr "<label>Respondiste:</label> <answer></answer>"
 
 #: src/mistakes/mistake-entry.tsx
 msgctxt "BICox_"

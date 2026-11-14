@@ -62,6 +62,10 @@ function useEntryDate() {
     });
 }
 
+function hiddenLabel(words: React.ReactNode) {
+  return <span className="sr-only">{words}</span>;
+}
+
 export function MistakeAnswer({
   children,
   kind,
@@ -71,6 +75,7 @@ export function MistakeAnswer({
 }) {
   const t = useExtracted();
   const right = kind === "right";
+  const answer = () => children;
 
   return (
     <p
@@ -91,8 +96,15 @@ export function MistakeAnswer({
         }
       >
         <span>
-          <span className="sr-only">{right ? t("Right answer:") : t("You answered:")} </span>
-          {children}
+          {right
+            ? t.rich("<label>Right answer:</label> <answer></answer>", {
+                answer,
+                label: hiddenLabel,
+              })
+            : t.rich("<label>You answered:</label> <answer></answer>", {
+                answer,
+                label: hiddenLabel,
+              })}
         </span>
       </TagBesideOrUnder>
     </p>

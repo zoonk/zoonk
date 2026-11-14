@@ -14,6 +14,7 @@ import {
 import { ItemCitationNote } from "../../_components/item-citation";
 import { useAppLocale } from "../../_utils/locale";
 import { ItemLine, ItemText } from "../../questions/item-text";
+import { RightAnswerLine } from "../../questions/right-answer-line";
 import { useTrueFalseLabels } from "../../questions/use-true-false-labels";
 import {
   type StudyAnswerFeedback,
@@ -217,11 +218,7 @@ export function QuestionFeedback({
         {verdict.label}
       </FeedbackVerdict>
 
-      {correct && (
-        <FeedbackExplanation>
-          {t("Right answer:")} <ItemLine text={correct} />
-        </FeedbackExplanation>
-      )}
+      {correct && <RightAnswerLine answer={correct} />}
 
       {feedback.explanation && (
         <FeedbackExplanation>

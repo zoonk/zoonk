@@ -8,7 +8,8 @@ import {
   FeedbackPanel,
   FeedbackVerdict,
 } from "../_components/feedback-panel";
-import { ItemLine, ItemText } from "../questions/item-text";
+import { ItemText } from "../questions/item-text";
+import { RightAnswerLine } from "../questions/right-answer-line";
 import { QuestionMainButton } from "../session/question-block/question-actions";
 import {
   WorkedSteps,
@@ -143,11 +144,7 @@ function PracticeFeedback({
     <FeedbackPanel aria-label={t("Answer feedback")} aria-live="polite">
       <FeedbackVerdict tone={verdict.tone}>{verdict.label}</FeedbackVerdict>
 
-      {correct && (
-        <FeedbackExplanation>
-          {t("Right answer:")} <ItemLine text={correct} />
-        </FeedbackExplanation>
-      )}
+      {correct && <RightAnswerLine answer={correct} />}
       <WorkedSteps steps={feedback.workedSteps} />
 
       {feedback.explanation && (

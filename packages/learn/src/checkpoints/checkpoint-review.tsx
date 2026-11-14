@@ -25,6 +25,10 @@ export function useReviewedAnswers(): ReviewedAnswer[] {
   return duel.state.completion?.checkpoint?.answers ?? [];
 }
 
+function mutedLabel(words: React.ReactNode) {
+  return <span className="text-muted-foreground">{words}</span>;
+}
+
 function ReviewAnswer({
   answer,
   question,
@@ -73,12 +77,18 @@ function ReviewAnswer({
     return null;
   }
 
+  const line = (
+    <span className={cn(question.format === "numeric" && "font-mono tabular-nums")}>
+      <ItemLine text={rightAnswer} />
+    </span>
+  );
+
   return (
     <p className="text-sm">
-      <span className="text-muted-foreground">{t("Answer:")}</span>{" "}
-      <span className={cn(question.format === "numeric" && "font-mono tabular-nums")}>
-        <ItemLine text={rightAnswer} />
-      </span>
+      {t.rich("<label>Answer:</label> <answer></answer>", {
+        answer: () => line,
+        label: mutedLabel,
+      })}
     </p>
   );
 }
