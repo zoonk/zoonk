@@ -58,7 +58,7 @@ export default async function RemindersPage() {
   const t = await getExtracted();
 
   return (
-    <Page className="max-w-form">
+    <Page measure="form">
       <SectionPageHeader
         description={
           // One phrase: the subtitle lays its children out as separate facts.

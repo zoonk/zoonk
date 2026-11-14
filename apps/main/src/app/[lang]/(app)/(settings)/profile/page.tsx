@@ -60,7 +60,7 @@ export default async function ProfilePage() {
   const t = await getExtracted();
 
   return (
-    <Page className="max-w-form">
+    <Page measure="form">
       <SectionPageHeader title={t("Profile")} />
 
       <Suspense fallback={<ProfileSkeleton />}>
