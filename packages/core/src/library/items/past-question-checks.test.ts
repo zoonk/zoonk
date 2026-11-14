@@ -334,6 +334,21 @@ E 札幌。`;
       ).toStrictEqual([]);
     });
 
+    it("accepts code and file names wrapped independently", () => {
+      const paperText = CODE_PAPER.replace(
+        "Which command opens data/x_1.csv for reading?",
+        "What does `cat` read from data/x_1.csv?",
+      );
+
+      expect(
+        checkPastQuestion({
+          paperText,
+          question: codeQuestion("What does `cat` read from `data/x_1.csv`?"),
+          target,
+        }).problems,
+      ).toStrictEqual([]);
+    });
+
     it("refuses code changed inside its backticks", () => {
       expect(
         checkPastQuestion({
@@ -342,9 +357,17 @@ E 札幌。`;
           target,
         }).problems,
       ).toStrictEqual(["The command isn't in the paper as printed."]);
+
+      expect(
+        checkPastQuestion({
+          paperText: CODE_PAPER,
+          question: codeQuestion("Which command opens `data/x_1.csv` for `writing`?"),
+          target,
+        }).problems,
+      ).toStrictEqual(["The command isn't in the paper as printed."]);
     });
 
-    it("keeps backticks the paper prints", () => {
+    it("accepts a copy that leaves out backticks the paper prints", () => {
       const paperText = CODE_PAPER.replace("opens data/x_1.csv", "opens `data/x_1.csv`");
       const printed = "Which command opens `data/x_1.csv` for reading?";
 
@@ -358,7 +381,7 @@ E 札幌。`;
           question: codeQuestion(printed),
           target,
         }).problems,
-      ).toStrictEqual(["The command isn't in the paper as printed."]);
+      ).toStrictEqual([]);
     });
   });
 

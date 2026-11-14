@@ -1,5 +1,4 @@
 import { type PastQuestion, type PastQuestionFormat } from "@zoonk/ai/tasks/items/past-questions";
-import { parseInlineMarkupRanges } from "@zoonk/utils/inline-markup";
 import { NO_SPACE_SCRIPT } from "@zoonk/utils/string";
 import { checkItem } from "./item-checks";
 import { repairItem } from "./item-repairs";
@@ -8,6 +7,7 @@ const DASHES = /[-­‐-―−]/gu;
 const SINGLE_QUOTES = /[‘’‚‛′]/gu;
 const DOUBLE_QUOTES = /[“”„‟″]/gu;
 const WHITESPACE = /\s+/gu;
+const BACKTICKS = /`/gu;
 const TABLE_DELIMITER_ROW = /^[|:]+$/u;
 const WORD = /\p{L}{2,}/gu;
 const LETTER_RUN = /[\p{L}\p{M}]+/gu;
@@ -34,13 +34,18 @@ const RUN_TOGETHER_LETTERS = 20;
  */
 const LOST_SPACES_SHARE = 0.1;
 
-/** Spaces, line breaks, hyphens and quote marks vary with how the paper was read, not with its wording. */
+/**
+ * Spaces, line breaks, hyphens and quote marks vary with how the paper was read, not with its
+ * wording. Backticks are formatting too: the item rules ask for code and file names in them, which
+ * papers print either way.
+ */
 function toComparableText(text: string): string {
   return text
     .normalize("NFKC")
     .replaceAll(SINGLE_QUOTES, "'")
     .replaceAll(DOUBLE_QUOTES, '"')
     .replaceAll(DASHES, "")
+    .replaceAll(BACKTICKS, "")
     .replaceAll(WHITESPACE, "");
 }
 
@@ -90,21 +95,6 @@ function isPrinted({ paper, text }: { paper: ComparablePaper; text: string }): b
     (quote.length > 0 && paper.printed.includes(quote)) ||
     (withoutNotes.length > 0 && paper.withoutNotes.includes(withoutNotes))
   );
-}
-
-function withoutCodeMarks(text: string): string {
-  return parseInlineMarkupRanges(text)
-    .map((range) => (range.kind === "code" ? range.text : text.slice(range.start, range.end)))
-    .join("");
-}
-
-/**
- * The item rules ask for code, file names and links in backticks, which most papers print bare,
- * so a quote also matches with its backticks taken off; one that the paper prints still matches
- * as written.
- */
-function isQuoted({ paper, text }: { paper: ComparablePaper; text: string }): boolean {
-  return [text, withoutCodeMarks(text)].some((quote) => isPrinted({ paper, text: quote }));
 }
 
 function findLetterRuns(text: string): string[] {
@@ -160,7 +150,7 @@ function findQuoteProblems({
     const runTogether = lostSpaces ? findRunTogetherWords(text) : [];
 
     return [
-      ...(isQuoted({ paper, text }) ? [] : [`${label} isn't in the paper as printed.`]),
+      ...(isPrinted({ paper, text }) ? [] : [`${label} isn't in the paper as printed.`]),
       ...runTogether.map(
         (run) => `${label} runs words together as the paper's text does: "${run}".`,
       ),
