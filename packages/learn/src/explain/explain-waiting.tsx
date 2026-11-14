@@ -195,7 +195,7 @@ export function ExplainWaiting({
           ready && (
             <OnboardingActions>
               <OnboardingPrimaryButton autoFocus onClick={onStart}>
-                {t("See explanation")}
+                {t("Start")}
               </OnboardingPrimaryButton>
             </OnboardingActions>
           )

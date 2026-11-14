@@ -126,7 +126,7 @@ function LearnerMilestoneForm({
           name="learningDays"
         />
 
-        <Button className="self-start sm:self-auto" type="submit" variant="outline">
+        <Button className="self-start sm:self-auto" size="lg" type="submit" variant="outline">
           Apply thresholds
         </Button>
       </div>

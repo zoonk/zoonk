@@ -10,10 +10,10 @@
   "limit_lesson_opens_on": "c1e02ce2dea0554876203e17361bd53116ebf65020452d0a5ab45310a78917aa",
   "limit_lesson_opens_today": "315605ecd436f57ff22ac6031d3d1f2e10cbb6e33ee744444a221d52212821ee",
   "limit_lesson_opens_tomorrow": "db416be9d45ddc67b64a84f6fd888035d845ee3eef39d2cb3827f577e887dd89",
+  "limit_lesson_ready": "96656cd65e10aba1a92fecfee1b3ffabf497c37793289fa1e055510f7d231a92",
   "limit_lessons_day": "546b71b169bef918a461e9e2eadcd2295c43e689d4d0692db00febf7ea3da51e",
   "limit_lessons_free": "317c72621ec17168c7387f956f39724199f2d905f6da0f1ad12afe0475d05988",
   "limit_lessons_guest": "9a35392a0483d4da9a6bc9abf7d78e6eb36b615ef432e40590f1af0d4e037f33",
-  "limit_lessons_month": "3b84b4f85099d9726d6fd100197b02794eb0c3a57d67d1728e28c529f1f3241d",
   "limit_messages_day": "0572dd58be69e1ea4e3c1c17c3e5da99738e91978be9e447847d369ee4aecb36",
   "limit_messages_month": "a7d17bfb0b51202379213ce71539f8ad118709a781244e5603a8a08450797454",
   "limit_mind_maps_day": "c8c671f2443618d0356eac79302dd7619bb7429593ed3e1012359558b9b974ba",
@@ -54,7 +54,7 @@
     <string name="limit_lessons_guest">Mais aulas só com uma conta</string>
     <string name="limit_lessons_free">Você usou todas as suas aulas grátis</string>
     <string name="limit_lessons_day">Sem novas aulas por hoje</string>
-    <string name="limit_lessons_month">Sem novas aulas este mês</string>
+    <string name="limit_lesson_ready">Sua próxima aula grátis está disponível</string>
     <string name="limit_mind_maps_guest">Mais mapas mentais só com uma conta</string>
     <string name="limit_mind_maps_day">Sem novos mapas mentais por hoje</string>
     <string name="limit_mind_maps_month">Sem novos mapas mentais este mês</string>

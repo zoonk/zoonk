@@ -187,7 +187,7 @@ test.describe("An exam's Focus test in onboarding", () => {
     await page.getByRole("button", { exact: true, name: "Confirm" }).click();
     await expect(question(page, 3)).toBeVisible();
 
-    await page.getByRole("button", { exact: true, name: "Stop" }).click();
+    await page.getByRole("button", { name: "Stop and use my answers" }).click();
     await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
     await expect(
@@ -230,7 +230,7 @@ test("a focus proposed on a plan already seen applies on the learner's tap, and 
   await expect(question(page, 1)).toBeVisible();
   await page.getByRole("button", { name: "I don't know yet" }).click();
   await expect(question(page, 2)).toBeVisible();
-  await page.getByRole("button", { exact: true, name: "Stop" }).click();
+  await page.getByRole("button", { name: "Stop and use my answers" }).click();
 
   const update = page.getByRole("button", { name: "Change my plan" });
   await expect(page.getByRole("heading", { name: "Give these subjects more time?" })).toBeVisible();

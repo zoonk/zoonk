@@ -156,6 +156,7 @@
   "player_spelled": "ee61ca7e9096dc8645f01b0523ea25dd08c2e383f18eda7d4c7f718c72f8f3a0",
   "player_start_failed_description": "2d825214ce41aae70d60a4c5b0bd23c9e629076dbe987a971968b197f6fda03c",
   "player_start_failed_title": "a8aefb48bdff05bdc23e6f6b7a835b02aa6a393ecf0f7d486311207ee89b7e24",
+  "player_start_the_lesson": "a2e558917decfc7b2482bd2a8912da78b8d26743d54ab9589cee414931aa982f",
   "player_start_this_challenge": "23ce915e3cab085e96b131a212e85911602ca3e4a1392d0760cf1a3ed05bd5ab",
   "player_start_this_lesson": "4c24b7a7c76990b25d90eca2be9f69a89bb38fb4fc046018317372b7bf0ac560",
   "player_still_checking": "5d83cfddec9b65417780eff208a73fa1cb14521da21c4cdfd6682270bf673d5e",
@@ -302,6 +303,7 @@
     <string name="player_challenge_ready">Tu desafío está listo</string>
     <string name="player_challenge_wait_stopped">No pudimos preparar este desafío</string>
     <string name="player_start_this_challenge">Empezar este desafío</string>
+    <string name="player_start_the_lesson">Empezar la lección</string>
     <string name="player_writing_lesson">Preparando tu lección</string>
     <string name="player_phase_plan">Planeando la lección</string>
     <string name="player_phase_plan_line_1">Eligiendo qué incluir…</string>

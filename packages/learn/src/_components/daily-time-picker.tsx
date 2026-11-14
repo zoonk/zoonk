@@ -3,6 +3,7 @@
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { NativeSelect, NativeSelectOption } from "@zoonk/ui/components/native-select";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { useKeptTyping } from "@zoonk/ui/hooks/kept-typing";
 import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronDownIcon } from "lucide-react";
@@ -133,6 +134,7 @@ function DailyTimeReadout({
   const formatDuration = useFormatDuration();
   const times = getDailyTimes(minutes, suggested, full);
   const { waiting, ...choice } = useTimeChoice({ disabled, minutes, onChange, saves });
+  const kept = useKeptTyping({ value: choice.value });
 
   return (
     <div
@@ -155,6 +157,7 @@ function DailyTimeReadout({
         aria-label={label}
         className="absolute inset-0 size-full cursor-pointer appearance-none text-base opacity-0 aria-disabled:pointer-events-none"
         {...choice}
+        {...kept}
       >
         {times.map((time) => (
           <option key={time} value={time}>
