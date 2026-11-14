@@ -60,8 +60,17 @@ export async function mergeLearningProfile({
   takeGuestSupport?: boolean;
 }) {
   // Better Auth creates the account's session, and the session hook saves the sign-in's country,
-  // before it links the guest. A country written since that session began is that guess, so the
-  // country the guest has wins over it; one the account had before stays.
+  // before it links the guest. A row made since that session began holds only that guess, not the
+  // account's choices, so the guest's row replaces it and keeps the guess only when it has no
+  // country. A country written since then into an older row is that guess too: the guest's wins.
+  const [sessionRow] = await transaction.$queryRaw<{ home_country: string | null }[]>`
+    DELETE FROM user_learning_profiles
+    WHERE user_id = ${userId}::uuid
+      AND created_at >= (SELECT created_at FROM sessions WHERE id = ${sessionId ?? null}::uuid)
+      AND EXISTS (SELECT 1 FROM user_learning_profiles WHERE user_id = ${guestUserId}::uuid)
+    RETURNING home_country
+  `;
+
   await transaction.$executeRaw`
     WITH guest_profile AS (
       DELETE FROM user_learning_profiles
@@ -76,7 +85,8 @@ export async function mergeLearningProfile({
     SELECT id, ${userId}::uuid, learning_needs,
       CASE WHEN ${takeGuestAddressForm} THEN address_form END,
       buddy_kind, buddy_name, buddy_glasses,
-      active_goal_id, memory_enabled, sounds_enabled, share_usage_data, home_country,
+      active_goal_id, memory_enabled, sounds_enabled, share_usage_data,
+      COALESCE(home_country, ${sessionRow?.home_country ?? null}),
       created_at, updated_at
     FROM guest_profile
     ON CONFLICT (user_id) DO UPDATE SET
