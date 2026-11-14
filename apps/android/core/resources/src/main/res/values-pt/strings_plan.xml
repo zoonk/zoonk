@@ -328,7 +328,7 @@
   "plan_more": "c8ff63d12e79c84b50bd2c214c7f30b3b212a2e2e3d7dc4bffd7134c2b6824b6",
   "plan_more_chapters": "65004e429505c4ca2a74a4b4a6e7f90b32faaf86a039ec6bce9d26ec9c1eecd4",
   "plan_more_lessons": "7b9ff255631536415cbbb93f6235d776419489a86659fc96dfb9682eabe54a76",
-  "plan_more_lessons_fit": "196e006ccc681178dff4b3a6c1fe849f2515bacf2731dfbb928f4a12cb57a8d8",
+  "plan_more_lessons_fit": "7d47b9cbc2ea034d31b53afd9e8c552b3a92ae917085b3d7083b0b57602e53df",
   "plan_most_asked_first_until_exam": "ed717d20008b4d12e8fbde24b18719d34419dc8b3d33f9b12a112a5cf190fc10",
   "plan_move_date": "b850b36b4fd8b1be35a69710e44faea41c635ccb8c083ab35369d698d875c3bc",
   "plan_move_date_to": "71cdb4be05ca9bff2a6d67fb9ca57a9cd354d0023d2a70c71f6f343423f9f1ca",
@@ -1342,9 +1342,9 @@
     <string name="plan_most_asked_first_until_exam">Até a prova, o que mais cai vem primeiro.</string>
     <string name="plan_time_covers_everything_in_depth">%1$s por dia cobre tudo a fundo</string>
     <plurals name="plan_more_lessons_fit">
-        <item quantity="one">Cabe mais %1$d aula no tempo disponível</item>
-        <item quantity="many">Cabem mais %1$d aulas no tempo disponível</item>
-        <item quantity="other">Cabem mais %1$d aulas no tempo disponível</item>
+        <item quantity="one">Você tem tempo para mais %1$d aula</item>
+        <item quantity="many">Você tem tempo para mais %1$d aulas</item>
+        <item quantity="other">Você tem tempo para mais %1$d aulas</item>
     </plurals>
     <string name="plan_past_date_goal_title">A data final do seu plano já passou</string>
     <string name="plan_past_date_exam_title">A data da sua prova já passou</string>

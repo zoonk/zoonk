@@ -328,7 +328,7 @@
   "plan_more": "3f5e15d16cd4f43f8b43b63163549ed0d6d5ea1a40d754fe7f967d4ae1b03f66",
   "plan_more_chapters": "4ce2dc1adeb7f1b39d5db476ae4a885e6e4f73e46cebdcd3b72921cef8095268",
   "plan_more_lessons": "a0d587c04c59f1815e79059b3edb6ce7be912de2fcb24afddb654ee898850615",
-  "plan_more_lessons_fit": "decc8bc78def00375f405743d435e6feac65ae3283793e31ffc51f0e0d8cc081",
+  "plan_more_lessons_fit": "b5f220df1b6477fb0c3af5f88a2694c2688f803ae0564ea886d4f46c931087cf",
   "plan_most_asked_first_until_exam": "98a6c53f1e9301551ecdb27d8315b8962b174f1728f354f47b2e153428f205fd",
   "plan_move_date": "86f154933a78c5149afd996c4214109e4b46354219fa60033d224c805c669136",
   "plan_move_date_to": "0fbc8328724c22ab752ddaa41921dd916352bd4b6e74eb767ad8f6322ac5c902",
@@ -1232,7 +1232,7 @@
     <string name="plan_most_asked_first_until_exam">시험 전까지는 자주 출제되는 내용부터 배워요.</string>
     <string name="plan_time_covers_everything_in_depth">하루 %1$s씩 공부하면 모든 내용을 깊이 있게 배워요</string>
     <plurals name="plan_more_lessons_fit">
-        <item quantity="other">학습 시간 안에 레슨 %1$d개를 더 공부할 수 있어요</item>
+        <item quantity="other">레슨 %1$d개를 더 할 시간이 있어요</item>
     </plurals>
     <string name="plan_past_date_goal_title">종료일이 지났어요</string>
     <string name="plan_past_date_exam_title">시험 날짜가 지났어요</string>

@@ -328,7 +328,7 @@
   "plan_more": "77852aca1ed9d6fb9d7fa86df94f821f88031943115ae64d6ceb92876a414b37",
   "plan_more_chapters": "c29a8a3105219660046e237ddcfd5f3d9b00c52a8482db3e51f00805bfd42c2f",
   "plan_more_lessons": "165daca0cb6e79a3c360f2f0f54cea384076c726ec1735164c959fef920cc15d",
-  "plan_more_lessons_fit": "7ebc19a6103ef54ce9462d5067956aeb32fe59405785cfefddc793d87e4dc745",
+  "plan_more_lessons_fit": "cceb5f2acd9b34ec9bbd859214fd9dd5babb99fe8cd7db58f9631d05fe793c89",
   "plan_most_asked_first_until_exam": "a86fafed2d1af309e1088ffa749b0a340448208dc9a58bddf8a2ae6a7b97d9f3",
   "plan_move_date": "8fd9718b0428f1ba687e60986286cca3e92dea79fc30b98e563786c1e6ae2b51",
   "plan_move_date_to": "8d7598fa2aa52e54d744f53dcc8e6af08d4c8cd34b971b0e80db0c89a30a230c",
@@ -1287,8 +1287,8 @@
     <string name="plan_most_asked_first_until_exam">Sınava kadar en sık çıkan konulara öncelik verilir.</string>
     <string name="plan_time_covers_everything_in_depth">Günde %1$s ile her şey ayrıntılı olarak işlenir</string>
     <plurals name="plan_more_lessons_fit">
-        <item quantity="one">Çalışma sürene %1$d ders daha sığıyor</item>
-        <item quantity="other">Çalışma sürene %1$d ders daha sığıyor</item>
+        <item quantity="one">%1$d ders daha için zamanın var</item>
+        <item quantity="other">%1$d ders daha için zamanın var</item>
     </plurals>
     <string name="plan_past_date_goal_title">Bitiş tarihin geçti</string>
     <string name="plan_past_date_exam_title">Sınav tarihin geçti</string>
