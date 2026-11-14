@@ -4,6 +4,7 @@ import { type Page } from "@playwright/test";
 import { afterEach, beforeEach, describe, it, vi } from "vitest";
 import { readHooks, recordNextClick, takeRecordedClick } from "./keys-probe.mts";
 import { pressKeys } from "./keys.mts";
+import { markActions } from "./states-probe.mts";
 import { readWords } from "./words.mts";
 
 const CONTROL_HEIGHT = 44;
@@ -134,5 +135,34 @@ describe("checking a main keycap after Enter", () => {
 
     assert.deepEqual(findings, []);
     assert.equal(pressed.filter((key) => key === "Enter").length, 1);
+  });
+});
+
+describe("walking a command palette", () => {
+  it("keeps the search field but never schedules its command rows or their links", () => {
+    document.body.innerHTML = `<div role="dialog">
+      <input type="search" data-slot="command-input" placeholder="Search" />
+      <div data-slot="command-list" role="listbox">
+        <div id="command" role="option" data-slot="command-item">Continue today's session
+          <a href="/session">Continue</a><button>Run</button>
+        </div>
+      </div>
+    </div>`;
+
+    assert.deepEqual(
+      markActions("body").map((action) => action.kind),
+      ["search"],
+    );
+
+    assert.equal(document.querySelector<HTMLElement>("#command")?.dataset.zoonkAct, undefined);
+  });
+
+  it("still schedules ordinary choices outside command rows", () => {
+    document.body.innerHTML = '<div role="listbox"><div role="option">A choice</div></div>';
+
+    assert.deepEqual(
+      markActions("body").map((action) => action.kind),
+      ["pick"],
+    );
   });
 });
