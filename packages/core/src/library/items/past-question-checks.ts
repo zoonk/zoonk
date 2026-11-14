@@ -1,4 +1,5 @@
 import { type PastQuestion, type PastQuestionFormat } from "@zoonk/ai/tasks/items/past-questions";
+import { splitAtMath } from "@zoonk/utils/math-spans";
 import { NO_SPACE_SCRIPT } from "@zoonk/utils/string";
 import { checkItem } from "./item-checks";
 import { repairItem } from "./item-repairs";
@@ -12,6 +13,14 @@ const WORD = /\p{L}{2,}/gu;
 const LETTER_RUN = /[\p{L}\p{M}]+/gu;
 const LOWERCASE = /\p{Ll}/u;
 const PAGE_LINE = /[\n\f]/u;
+const ESCAPED_DOLLAR = /\\\$/gu;
+const FORMULA_TOKEN = /\\[A-Za-z]+|[\p{L}\p{N}]/gu;
+
+/**
+ * LaTeX names Greek letters and symbols with commands (`\alpha`, `\cdot`, `\sqrt`), so the paper's
+ * own `α`, `·` and `√` sit between a formula's Latin letters and digits.
+ */
+const FORMULA_GAP = String.raw`[^\p{Script=Latin}\p{N}]*`;
 
 /**
  * A page's own notes are phrases ("Use this space for computations.", a running header) repeated
@@ -58,14 +67,10 @@ function findPageNotes(paperText: string): Set<string> {
   return new Set(phrases.filter((line) => (repeats.get(line)?.length ?? 0) >= PAGE_NOTE_REPEATS));
 }
 
-function toComparableLines(text: string, separator: RegExp): string[] {
-  return text.split(separator).map((line) => toComparableText(line));
-}
-
 type ComparablePaper = { notes: Set<string>; printed: string; withoutNotes: string };
 
 function toComparablePaper(paperText: string): ComparablePaper {
-  const lines = toComparableLines(paperText, PAGE_LINE);
+  const lines = paperText.split(PAGE_LINE).map((line) => toComparableText(line));
   const notes = findPageNotes(paperText);
 
   return {
@@ -76,18 +81,55 @@ function toComparablePaper(paperText: string): ComparablePaper {
 }
 
 /**
+ * The paper's text reader flattens math (`x4y`, `C A0`, `x²`), so a formula matches by its letters
+ * and digits in order, and a command's name may be printed (`\log`) or not (`\cdot`).
+ */
+function toFormulaPattern(formula: string): string {
+  const tokens = (formula.normalize("NFKC").match(FORMULA_TOKEN) ?? []).map((token) =>
+    token.startsWith("\\") ? `(?:${token.slice(1)})?` : RegExp.escape(token),
+  );
+
+  return ["", ...tokens, ""].join(FORMULA_GAP);
+}
+
+type QuoteLine = { comparable: string; pattern: string };
+
+function toQuoteLine(line: string): QuoteLine {
+  const pattern = splitAtMath(line)
+    .map((segment) =>
+      segment.kind === "text"
+        ? RegExp.escape(toComparableText(segment.text.replaceAll(ESCAPED_DOLLAR, "$")))
+        : toFormulaPattern(segment.text),
+    )
+    .join("");
+
+  return { comparable: toComparableText(line), pattern };
+}
+
+function isIn(paper: string, lines: QuoteLine[]): boolean {
+  return (
+    lines.some((line) => line.comparable.length > 0) &&
+    new RegExp(lines.map((line) => line.pattern).join(""), "u").test(paper)
+  );
+}
+
+/**
  * A table's `| --- |` row is the formatting it needs to show as one, so it isn't compared. A
  * quote matches as printed, or with page notes left out of both sides; a command every question
  * repeats ("Assinale a alternativa correta.") is a page note too, and matches as printed.
  */
 function isQuoted({ paper, text }: { paper: ComparablePaper; text: string }): boolean {
-  const lines = toComparableLines(text, /\n/u).filter((line) => !TABLE_DELIMITER_ROW.test(line));
-  const quote = lines.join("");
-  const withoutNotes = lines.filter((line) => !paper.notes.has(line)).join("");
+  const lines = text
+    .split("\n")
+    .map((line) => toQuoteLine(line))
+    .filter((line) => !TABLE_DELIMITER_ROW.test(line.comparable));
 
   return (
-    (quote.length > 0 && paper.printed.includes(quote)) ||
-    (withoutNotes.length > 0 && paper.withoutNotes.includes(withoutNotes))
+    isIn(paper.printed, lines) ||
+    isIn(
+      paper.withoutNotes,
+      lines.filter((line) => !paper.notes.has(line.comparable)),
+    )
   );
 }
 

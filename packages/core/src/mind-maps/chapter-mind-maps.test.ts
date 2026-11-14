@@ -12,17 +12,29 @@ import {
 } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { serveStoredFile, storeBlobUploads } from "../_test-utils/blob-uploads";
 import { mockSession } from "../_test-utils/mock-session";
 import { listFollowUps } from "../follow-ups/follow-up-rows";
 import { drawTestImage } from "../library/media/_test-utils/image-mocks";
+import {
+  approve,
+  proposeFix,
+  revertFix,
+  signInApprover,
+  signInProposer,
+} from "../staff/content-fixes/_test-utils/content-fix-steps";
+import { proposeContentFix } from "../staff/content-fixes/propose-content-fix";
 import { signedInCourseGoal } from "../view-models/_test-utils/course-goal";
 import { getChapterView } from "../view-models/chapter/get-chapter-view";
 import {
   checkChapterMindMapImage,
+  claimChapterMindMapRedraw,
   drawChapterMindMap,
   failChapterMindMap,
+  finishChapterMindMapRedraw,
+  listOwedMindMapRedraws,
   removeChapterMindMapImage,
   showChapterMindMap,
   writeChapterMindMapStructure,
@@ -115,6 +127,45 @@ function byId(a: string | undefined = "", b: string | undefined = "") {
 
 function runAnalytics() {
   return { runId: `run-${randomUUID()}` };
+}
+
+function runsAlive(...runIds: string[]) {
+  const alive = new Set(runIds);
+
+  return { alive, isRunActive: async (runId: string) => alive.has(runId) };
+}
+
+async function drawnSharedMap() {
+  const { finished, goal } = await finishedChapter();
+  const analytics = runAnalytics();
+  await requestChapterMindMap({ chapterId: finished, goalId: goal.id });
+  await writeChapterMindMapStructure({ analytics, chapterId: finished });
+  const drawn = await drawChapterMindMap({ analytics, chapterId: finished });
+  await showChapterMindMap({ chapterId: finished, drawn, runId: analytics.runId });
+  const map = await prisma.chapterMindMap.findUniqueOrThrow({ where: { chapterId: finished } });
+  return { analytics, finished, map };
+}
+
+function titleFix(mapId: string) {
+  return {
+    changes: [
+      {
+        id: mapId,
+        model: "ChapterMindMap",
+        set: { structure: { ...structure, title: "Corrected outline" } },
+      },
+    ],
+    reason: "Fix the map title.",
+  };
+}
+
+async function applyTitleFix(mapId: string) {
+  await signInProposer();
+  const fix = await proposeFix(titleFix(mapId));
+
+  const approver = await signInApprover();
+  await approve({ fixId: fix.id, key: approver.key });
+  return fix;
 }
 
 describe("chapter mind maps", () => {
@@ -480,6 +531,343 @@ describe("chapter mind maps", () => {
     ).resolves.toStrictEqual([{ targetId: finished }]);
   });
 
+  it("keeps the corrected outline ready and uncharged while one shared redraw owns the map", async () => {
+    const { finished, goal, user } = await finishedChapter();
+    const analytics = runAnalytics();
+    await requestChapterMindMap({ chapterId: finished, goalId: goal.id });
+    await writeChapterMindMapStructure({ analytics, chapterId: finished });
+    const drawn = await drawChapterMindMap({ analytics, chapterId: finished });
+    await showChapterMindMap({ chapterId: finished, drawn, runId: analytics.runId });
+
+    await prisma.followUp.deleteMany({ where: { userId: user.id } });
+    await prisma.usageRecord.deleteMany({ where: { userId: user.id } });
+
+    const map = await prisma.chapterMindMap.findUniqueOrThrow({ where: { chapterId: finished } });
+    const before = await getChapterMindMap({ chapterId: finished });
+    const usedBefore = await prisma.usageRecord.count({ where: { userId: user.id } });
+
+    await signInProposer();
+
+    const fix = await proposeFix({
+      changes: [
+        {
+          id: map.id,
+          model: "ChapterMindMap",
+          set: { structure: { ...structure, title: "Corrected outline" } },
+        },
+      ],
+      reason: "Fix the map title.",
+    });
+
+    const approver = await signInApprover();
+    const decided = await approve({ fixId: fix.id, key: approver.key });
+
+    mockSession(user.id);
+    const after = await getChapterMindMap({ chapterId: finished });
+    const asked = await requestChapterMindMap({ chapterId: finished, goalId: goal.id });
+    const usedAfter = await prisma.usageRecord.count({ where: { userId: user.id } });
+    const rowAfterTap = await prisma.chapterMindMap.findUniqueOrThrow({ where: { id: map.id } });
+
+    const { isRunActive } = runsAlive("redraw-run", "other-run");
+
+    await expect(
+      claimChapterMindMapRedraw({ chapterId: finished, isRunActive, runId: "redraw-run" }),
+    ).resolves.toBe(true);
+
+    const owners = await Promise.all(
+      ["redraw-run", "other-run"].map((runId) =>
+        claimChapterMindMapRedraw({ chapterId: finished, isRunActive, runId }),
+      ),
+    );
+
+    expect(owners.filter(Boolean)).toHaveLength(1);
+    const winner = owners[0] ? "redraw-run" : "other-run";
+
+    await expect(
+      writeChapterMindMapStructure({ analytics: { runId: "learner-run" }, chapterId: finished }),
+    ).resolves.toBe(false);
+
+    await expect(
+      requestChapterMindMap({ chapterId: finished, goalId: goal.id }),
+    ).resolves.toStrictEqual({ status: "ready" });
+
+    await failChapterMindMap({ chapterId: finished, runId: winner });
+    const rowAfterFail = await prisma.chapterMindMap.findUniqueOrThrow({ where: { id: map.id } });
+
+    await signInProposer();
+    const reverted = await revertFix({ fixId: fix.id, reason: "Put it back." });
+
+    expect({
+      asked,
+      decided: "fix" in decided ? decided.fix?.status : decided.status,
+      reverted: reverted.status === "proposed" ? "proposed" : reverted,
+      rowAfterFail: rowAfterFail.status,
+      rowAfterTap: rowAfterTap.status,
+      statusAfterFix: "mindMap" in after ? after.mindMap.status : after.status,
+      statusBefore: "mindMap" in before ? before.mindMap.status : before.status,
+      usedAfter,
+      usedBefore,
+    }).toStrictEqual({
+      asked: { status: "ready" },
+      decided: "applied",
+      reverted: "proposed",
+      rowAfterFail: "completed",
+      rowAfterTap: "completed",
+      statusAfterFix: "ready",
+      statusBefore: "ready",
+      usedAfter: 0,
+      usedBefore: 0,
+    });
+  });
+
+  it("takes over an owed redraw only once the run that owns it ended, and keeps staff waiting until then", async () => {
+    const { finished, map } = await drawnSharedMap();
+    const fix = await applyTitleFix(map.id);
+    const { alive, isRunActive } = runsAlive("dead-run", "retry-run");
+
+    await claimChapterMindMapRedraw({ chapterId: finished, isRunActive, runId: "dead-run" });
+
+    await prisma.chapterMindMap.update({
+      data: { updatedAt: new Date(Date.now() - MS_PER_DAY) },
+      where: { id: map.id },
+    });
+
+    const whileLive = await claimChapterMindMapRedraw({
+      chapterId: finished,
+      isRunActive,
+      runId: "retry-run",
+    });
+
+    await signInProposer();
+    const revertWhileLive = await revertFix({ fixId: fix.id, reason: "Put it back." });
+
+    alive.delete("dead-run");
+    const owed = await listOwedMindMapRedraws();
+
+    const afterEnd = await claimChapterMindMapRedraw({
+      chapterId: finished,
+      isRunActive,
+      runId: "retry-run",
+    });
+
+    const other = await claimChapterMindMapRedraw({
+      chapterId: finished,
+      isRunActive,
+      runId: "other-run",
+    });
+
+    await finishChapterMindMapRedraw({ chapterId: finished, runId: "retry-run" });
+    const revertAfterEnd = await revertFix({ fixId: fix.id, reason: "Put it back." });
+
+    expect({
+      afterEnd,
+      other,
+      owed,
+      revertAfterEnd: revertAfterEnd.status,
+      revertWhileLive,
+      whileLive,
+    }).toStrictEqual({
+      afterEnd: true,
+      other: false,
+      owed: expect.arrayContaining([finished]),
+      revertAfterEnd: "proposed",
+      revertWhileLive: {
+        message: expect.stringContaining("Wait for the current mind-map run"),
+        status: "invalid",
+      },
+      whileLive: false,
+    });
+  });
+
+  it("gives up a redraw whose runs keep dying, keeping the corrected outline until a later fix owes one again", async () => {
+    const { finished, map } = await drawnSharedMap();
+    await applyTitleFix(map.id);
+    const { isRunActive } = runsAlive();
+
+    const claims = [];
+
+    for (const runId of ["first-run", "second-run", "third-run", "fourth-run"]) {
+      // oxlint-disable-next-line no-await-in-loop -- each run claims after the one before it died
+      claims.push(await claimChapterMindMapRedraw({ chapterId: finished, isRunActive, runId }));
+    }
+
+    const exhausted = await prisma.chapterMindMap.findUniqueOrThrow({ where: { id: map.id } });
+    const owedAfterExhausted = await listOwedMindMapRedraws();
+
+    await signInProposer();
+
+    const fix = await proposeFix({
+      changes: [
+        {
+          id: map.id,
+          model: "ChapterMindMap",
+          set: { structure: { ...structure, title: "Corrected again" } },
+        },
+      ],
+      reason: "Fix the map title again.",
+    });
+
+    const approver = await signInApprover();
+    await approve({ fixId: fix.id, key: approver.key });
+
+    expect({
+      claims,
+      exhausted,
+      owedAfterExhausted,
+      owedAfterFix: await listOwedMindMapRedraws(),
+      reclaimed: await claimChapterMindMapRedraw({
+        chapterId: finished,
+        isRunActive,
+        runId: "fifth-run",
+      }),
+    }).toMatchObject({
+      claims: [true, true, true, false],
+      exhausted: {
+        imageUrl: null,
+        redrawOwedAt: null,
+        status: "completed",
+        structure: { ...structure, title: "Corrected outline" },
+      },
+      owedAfterExhausted: expect.not.arrayContaining([finished]),
+      owedAfterFix: expect.arrayContaining([finished]),
+      reclaimed: true,
+    });
+  });
+
+  it("keeps the redraw owed when a fix lands while the learner's run checks its picture", async () => {
+    const { analytics, finished, map } = await drawnSharedMap();
+    vi.mocked(checkMindMapImage).mockResolvedValueOnce(failed);
+    const first = await checkChapterMindMapImage({ analytics, chapterId: finished });
+    await applyTitleFix(map.id);
+
+    const redrawn = await drawChapterMindMap({
+      analytics,
+      chapterId: finished,
+      corrections: first.problems,
+    });
+
+    await showChapterMindMap({ chapterId: finished, drawn: redrawn, runId: analytics.runId });
+
+    await expect(
+      prisma.chapterMindMap.findUniqueOrThrow({ where: { id: map.id } }),
+    ).resolves.toMatchObject({ status: "completed" });
+
+    await expect(
+      claimChapterMindMapRedraw({
+        chapterId: finished,
+        isRunActive: runsAlive(analytics.runId).isRunActive,
+        runId: "redraw-run",
+      }),
+    ).resolves.toBe(true);
+  });
+
+  it("puts the old outline and its picture back when a map fix is reverted, owing no redraw", async () => {
+    const { finished, map } = await drawnSharedMap();
+    const fix = await applyTitleFix(map.id);
+
+    await signInProposer();
+    const revert = await revertFix({ fixId: fix.id, reason: "Put it back." });
+
+    if (revert.status !== "proposed") {
+      throw new Error(`Expected a revert, got ${revert.status}`);
+    }
+
+    const approver = await signInApprover();
+    const decided = await approve({ fixId: revert.fix.id, key: approver.key });
+
+    expect({
+      decided: "fix" in decided ? decided.fix?.status : decided.status,
+      effects: revert.fix.effects,
+      owed: await listOwedMindMapRedraws(),
+      row: await prisma.chapterMindMap.findUniqueOrThrow({ where: { id: map.id } }),
+    }).toMatchObject({
+      decided: "applied",
+      effects: [],
+      owed: expect.not.arrayContaining([finished]),
+      row: {
+        imageHeight: map.imageHeight,
+        imageModel: map.imageModel,
+        imageUrl: map.imageUrl,
+        imageWidth: map.imageWidth,
+        redrawOwedAt: null,
+        status: "completed",
+        structure,
+        thumbnailUrl: map.thumbnailUrl,
+      },
+    });
+  });
+
+  it("goes stale when the map's picture changed after its revert was proposed", async () => {
+    const { map } = await drawnSharedMap();
+    const fix = await applyTitleFix(map.id);
+
+    await signInProposer();
+    const revert = await revertFix({ fixId: fix.id, reason: "Put it back." });
+
+    if (revert.status !== "proposed") {
+      throw new Error(`Expected a revert, got ${revert.status}`);
+    }
+
+    await prisma.chapterMindMap.update({
+      data: { imageUrl: "https://blob.test/redrawn.webp" },
+      where: { id: map.id },
+    });
+
+    const approver = await signInApprover();
+    const decided = await approve({ fixId: revert.fix.id, key: approver.key });
+
+    expect({
+      decided: "fix" in decided ? decided.fix?.status : decided.status,
+      row: await prisma.chapterMindMap.findUniqueOrThrow({ where: { id: map.id } }),
+    }).toMatchObject({
+      decided: "stale",
+      row: {
+        imageUrl: "https://blob.test/redrawn.webp",
+        structure: { ...structure, title: "Corrected outline" },
+      },
+    });
+  });
+
+  it("keeps staff waiting while a slow run draws the map, however long it goes without writing it", async () => {
+    const { finished, goal } = await finishedChapter();
+    const analytics = runAnalytics();
+    await requestChapterMindMap({ chapterId: finished, goalId: goal.id });
+    await writeChapterMindMapStructure({ analytics, chapterId: finished });
+    const map = await prisma.chapterMindMap.findUniqueOrThrow({ where: { chapterId: finished } });
+
+    await prisma.chapterMindMap.update({
+      data: { updatedAt: new Date(Date.now() - MS_PER_DAY) },
+      where: { id: map.id },
+    });
+
+    await signInProposer();
+    const whileDrawing = await proposeContentFix(titleFix(map.id));
+
+    const drawn = await drawChapterMindMap({ analytics, chapterId: finished });
+    await showChapterMindMap({ chapterId: finished, drawn, runId: analytics.runId });
+    const shown = await prisma.chapterMindMap.findUniqueOrThrow({ where: { id: map.id } });
+
+    await applyTitleFix(map.id);
+
+    expect({
+      fixed: await prisma.chapterMindMap.findUniqueOrThrow({ where: { id: map.id } }),
+      shown: { imageUrl: shown.imageUrl, status: shown.status },
+      whileDrawing,
+    }).toMatchObject({
+      fixed: {
+        imageUrl: null,
+        redrawOwedAt: expect.any(Date),
+        status: "completed",
+        structure: { ...structure, title: "Corrected outline" },
+      },
+      shown: { imageUrl: expect.any(String), status: "completed" },
+      whileDrawing: {
+        message: expect.stringContaining("Wait for the current mind-map run"),
+        status: "invalid",
+      },
+    });
+  });
+
   it("writes and draws the map once, then every learner of the chapter reads it", async () => {
     const { current, finished, goal } = await finishedChapter();
     const analytics = runAnalytics();
@@ -506,7 +894,7 @@ describe("chapter mind maps", () => {
 
     const drawn = await drawChapterMindMap({ analytics, chapterId: finished });
     expect(put).not.toHaveBeenCalled();
-    await showChapterMindMap({ chapterId: finished, drawn });
+    await showChapterMindMap({ chapterId: finished, drawn, runId: analytics.runId });
 
     expect(
       vi.mocked(put).mock.calls.map(([pathname, , options]) => [options.access, pathname]),
@@ -565,6 +953,7 @@ describe("chapter mind maps", () => {
     await showChapterMindMap({
       chapterId: finished,
       drawn: await drawChapterMindMap({ analytics, chapterId: finished }),
+      runId: analytics.runId,
     });
 
     expect(checkMindMapImage).not.toHaveBeenCalled();
@@ -592,6 +981,7 @@ describe("chapter mind maps", () => {
         chapterId: finished,
         corrections: failed.data.problems,
       }),
+      runId: analytics.runId,
     });
 
     expect(vi.mocked(generateMindMapImage).mock.calls[1]?.[0]).toMatchObject({
@@ -602,13 +992,21 @@ describe("chapter mind maps", () => {
     const secondUrl = replaced.status === "ready" ? replaced.mindMap.image?.url : null;
     expect(secondUrl).not.toBe(firstUrl);
 
-    await removeChapterMindMapImage({ chapterId: finished, imageUrl: firstUrl ?? "" });
+    await removeChapterMindMapImage({
+      chapterId: finished,
+      imageUrl: firstUrl ?? "",
+      runId: analytics.runId,
+    });
 
     await expect(getChapterMindMap({ chapterId: finished })).resolves.toMatchObject({
       mindMap: { image: { url: secondUrl } },
     });
 
-    await removeChapterMindMapImage({ chapterId: finished, imageUrl: secondUrl ?? "" });
+    await removeChapterMindMapImage({
+      chapterId: finished,
+      imageUrl: secondUrl ?? "",
+      runId: analytics.runId,
+    });
 
     await expect(getChapterMindMap({ chapterId: finished })).resolves.toMatchObject({
       mindMap: { image: null, outline: { title: "The very small world" }, status: "ready" },

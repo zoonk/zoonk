@@ -20,7 +20,10 @@ function getFollowUpKey(followUp: FollowUp): string {
     case "rememberOnboarding":
       return followUp.input.goalId;
     case "writeLesson":
+    case "writeSentenceOrders":
       return followUp.input.lessonId;
+    case "voiceContentFix":
+      return followUp.input.fixId;
     // An admitted run is owed apart from an ask, so an ask from a write that read the map before
     // the admission committed can't replace the run the learner was charged for.
     case "makeChapterMindMap":

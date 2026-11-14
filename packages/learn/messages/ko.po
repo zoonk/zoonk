@@ -2510,9 +2510,9 @@ msgid "Not this time"
 msgstr "이번엔 아쉬워요"
 
 #: src/checkpoints/checkpoint-review.tsx
-msgctxt "hmBFza"
-msgid "Answer:"
-msgstr "정답:"
+msgctxt "CsqxCb"
+msgid "<label>Answer:</label> <answer></answer>"
+msgstr "<label>정답:</label> <answer></answer>"
 
 #: src/checkpoints/checkpoint-review.tsx
 #: src/mistakes/mistake-practice-run.tsx
@@ -7587,14 +7587,15 @@ msgid "Only answer when you're sure. Saying you're not sure is fine."
 msgstr "확실할 때만 답하세요. 잘 모르겠다고 해도 괜찮아요."
 
 #: src/mistakes/mistake-entry.tsx
-msgctxt "VM0Q1f"
-msgid "Right answer:"
-msgstr "정답:"
+#: src/questions/right-answer-line.tsx
+msgctxt "wS1KQ6"
+msgid "<label>Right answer:</label> <answer></answer>"
+msgstr "<label>정답:</label> <answer></answer>"
 
 #: src/mistakes/mistake-entry.tsx
-msgctxt "h_bsq4"
-msgid "You answered:"
-msgstr "내 답:"
+msgctxt "Gr6IEG"
+msgid "<label>You answered:</label> <answer></answer>"
+msgstr "<label>내 답:</label> <answer></answer>"
 
 #: src/mistakes/mistake-entry.tsx
 msgctxt "BICox_"
@@ -7745,12 +7746,6 @@ msgstr "{count, plural, =0 {고친 오답 없음} other {오답 #개를 고쳤�
 msgctxt "HvLGEN"
 msgid "Answer feedback"
 msgstr "답안 피드백"
-
-#: src/mistakes/practice-step.tsx
-#: src/session/question-block/question-feedback.tsx
-msgctxt "amJs-w"
-msgid "Right answer: {answer}"
-msgstr "정답: {answer}"
 
 #. Why the learner got a question wrong: they didn't know the content yet. Not missing course content.
 #: src/mistakes/use-cause-label.ts

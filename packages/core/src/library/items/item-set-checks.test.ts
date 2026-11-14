@@ -27,6 +27,32 @@ describe(repairWrittenItemSet, () => {
       title: "Sundays, a test",
     });
   });
+
+  it("repairs each question's evidence as it repairs the stimulus, so a faithful quote still matches", () => {
+    const set = writtenItemSet();
+    const [first, second, third] = set.questions;
+
+    const repaired = repairWrittenItemSet({
+      ...set,
+      questions: [
+        { ...first!, evidence: "The town has 10^3 readers — most of them families." },
+        { ...second!, evidence: "10^3 readers" },
+        third!,
+      ],
+      text: `${set.text} The town has 10^3 readers — most of them families.`,
+    });
+
+    expect(repaired.questions.map((question) => question.evidence)).toStrictEqual([
+      "The town has $10^{3}$ readers, most of them families.",
+      "$10^{3}$ readers",
+      third!.evidence,
+    ]);
+
+    expect(checkWrittenItemSet({ set: repaired, skillCount: 2 })).toStrictEqual({
+      questions: [[], [], []],
+      set: [],
+    });
+  });
 });
 
 describe(checkWrittenItemSet, () => {

@@ -47,9 +47,36 @@ function CodeReadout({ userCode }: { userCode: string }) {
   );
 }
 
-function CodeField({ defaultValue, errorId }: { defaultValue?: string; errorId?: string }) {
+/**
+ * Enter in the field presses Approve, as a click would (so not while a decision is running): a
+ * form's own Enter would press its first button, Deny.
+ */
+function CodeField({
+  approveId,
+  defaultValue,
+  errorId,
+}: {
+  approveId: string;
+  defaultValue?: string;
+  errorId?: string;
+}) {
   const t = useExtracted();
   const id = useId();
+
+  const approveOnEnter = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    const approve = event.currentTarget.form?.elements.namedItem(approveId);
+
+    if (
+      event.key !== "Enter" ||
+      event.nativeEvent.isComposing ||
+      !(approve instanceof HTMLButtonElement)
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+    approve.click();
+  };
 
   return (
     <Field>
@@ -63,6 +90,7 @@ function CodeField({ defaultValue, errorId }: { defaultValue?: string; errorId?:
         defaultValue={defaultValue}
         id={id}
         name="userCode"
+        onKeyDown={approveOnEnter}
         required
         spellCheck={false}
       />
@@ -114,31 +142,16 @@ function Grant({ email }: { email: string }) {
   );
 }
 
-/**
- * Approve is first in the form, so Enter in the code field approves as before, and drawn last as the
- * bar's main action. Enter alone never approves a login: the learner presses it.
- */
-function DecisionButtons() {
+/** Deny, then Approve as the bar's main action. Enter alone never approves a login: the learner presses it. */
+function DecisionButtons({ approveId }: { approveId: string }) {
   const t = useExtracted();
   const { data, pending } = useFormStatus();
   const deciding = pending ? data?.get("decision") : null;
 
   return (
     <BottomBarActions>
-      <EnterButton
-        busy={deciding === "approve"}
-        disabled={deciding === "deny"}
-        enter="off"
-        name="decision"
-        type="submit"
-        value="approve"
-      >
-        {t("Approve")}
-      </EnterButton>
-
       <Button
         busy={deciding === "deny"}
-        className="order-first"
         disabled={deciding === "approve"}
         name="decision"
         size="xl"
@@ -148,6 +161,18 @@ function DecisionButtons() {
       >
         {t("Deny")}
       </Button>
+
+      <EnterButton
+        busy={deciding === "approve"}
+        disabled={deciding === "deny"}
+        enter="off"
+        id={approveId}
+        name="decision"
+        type="submit"
+        value="approve"
+      >
+        {t("Approve")}
+      </EnterButton>
     </BottomBarActions>
   );
 }
@@ -219,6 +244,7 @@ export function CliLoginForm({ email, userCode }: { email: string; userCode?: st
   const t = useExtracted();
 
   const errorId = useId();
+  const approveId = useId();
 
   const [state, formAction] = useActionState(
     async (_previous: FormState, formData: FormData): Promise<FormState> => {
@@ -247,7 +273,11 @@ export function CliLoginForm({ email, userCode }: { email: string; userCode?: st
         {userCode ? (
           <CodeReadout userCode={userCode} />
         ) : (
-          <CodeField defaultValue={failed?.userCode} errorId={failed ? errorId : undefined} />
+          <CodeField
+            approveId={approveId}
+            defaultValue={failed?.userCode}
+            errorId={failed ? errorId : undefined}
+          />
         )}
 
         <Grant email={email} />
@@ -259,7 +289,7 @@ export function CliLoginForm({ email, userCode }: { email: string; userCode?: st
       </div>
 
       <BottomBar note={failed && <FailureNote failure={failed.failure} id={errorId} />}>
-        <DecisionButtons />
+        <DecisionButtons approveId={approveId} />
       </BottomBar>
     </form>
   );
