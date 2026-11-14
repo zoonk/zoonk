@@ -1016,16 +1016,6 @@ msgctxt "n1Whvj"
 msgid "Switch"
 msgstr "Przełącz"
 
-#: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
-msgctxt "DuuVCx"
-msgid "That's as many goals as you can study at once. Pause another goal to resume this one."
-msgstr "To maksymalna liczba celów, które możesz realizować jednocześnie. Wstrzymaj inny cel, aby wznowić ten."
-
-#: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
-msgctxt "3y9DGg"
-msgid "Resume"
-msgstr "Wznów"
-
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 msgctxt "PcSnMu"
 msgid "You finished your {goal} goal."

@@ -93,10 +93,11 @@ function FullCourseChoice({ course, onDone }: { course: FullCourse; onDone: () =
           busy={isPending}
           icon={<ListPlusIcon aria-hidden="true" />}
           onClick={() => void choose()}
+          size="lg"
         >
           {course.isExam ? t("Keep studying") : t("Study everything")}
         </Button>
-        <DrawerClose render={<Button variant="outline" />}>{t("Cancel")}</DrawerClose>
+        <DrawerClose render={<Button size="lg" variant="outline" />}>{t("Cancel")}</DrawerClose>
       </div>
     </>
   );

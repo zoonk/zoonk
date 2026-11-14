@@ -1,14 +1,15 @@
+import { setGoalStatusAction } from "@/app/[lang]/(app)/(learn)/_components/goal-status-action";
 import { Link } from "@/i18n/navigation";
 import { listCurrentUserGoals } from "@zoonk/core/goals/list-current-user";
 import { getGoalResumePreview } from "@zoonk/core/plans/resume-preview";
 import { EnterLink } from "@zoonk/learn/enter-button";
 import { ResumeEffect } from "@zoonk/learn/journey/resume-effect";
+import { ResumeGoalBar } from "@zoonk/learn/journey/resume-goal-bar";
 import { TodayAtRest } from "@zoonk/learn/today/at-rest";
 import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { FlagIcon, PauseIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
-import { ResumeGoalBar } from "./resume-goal-button";
 
 async function loadResumePreview(goal: { id: string; status: string } | undefined) {
   if (goal?.status !== "paused") {
@@ -48,7 +49,7 @@ export async function TodayGoalPaused({ banner }: { banner: React.ReactNode }) {
       banner={banner}
       bottomBar={
         goal ? (
-          <ResumeGoalBar goalId={goal.id} key={goal.id}>
+          <ResumeGoalBar key={goal.id} onResume={setGoalStatusAction.bind(null, goal.id, "active")}>
             <Link className={buttonVariants({ size: "xl", variant: "outline" })} href="/start">
               {t("New goal")}
             </Link>

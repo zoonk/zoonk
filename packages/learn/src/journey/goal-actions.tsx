@@ -19,17 +19,15 @@ import { useState, useTransition } from "react";
 import { useChangeSaveErrorMessage } from "../_components/save-error";
 import {
   Suggestion,
-  SuggestionAction,
-  SuggestionActions,
   SuggestionDescription,
   SuggestionHeader,
   SuggestionLine,
-  SuggestionOpen,
   SuggestionSummary,
 } from "../_components/suggestion";
 import { SlotContent } from "../plan/plan-suggestion-context";
 import { RenameGoalDialog } from "./rename-goal-dialog";
 import { useResumeEffectText } from "./resume-effect";
+import { useGoalLimitText } from "./resume-goal-bar";
 
 type GoalStatusChange = "active" | "archived" | "paused";
 
@@ -47,24 +45,15 @@ export type GoalStatusControl = {
 
 /** Said in a toast: the menu has closed by then. */
 function useStatusError() {
-  const t = useExtracted();
   const saveError = useChangeSaveErrorMessage();
+  const limitText = useGoalLimitText();
 
   return (outcome: GoalStatusOutcome) => {
-    showErrorToast(
-      outcome === "limitReached"
-        ? t({
-            description:
-              "Shown when a learner without a subscription tries to resume a paused goal while studying as many goals at once as they can. This counts goals studied at the same time, not new goals per day or month. Pausing a goal keeps its progress.",
-            message:
-              "That's all the goals you can study at once. Pause another to resume this one, or subscribe to study more.",
-          })
-        : saveError,
-    );
+    showErrorToast(outcome === "limitReached" ? limitText : saveError);
   };
 }
 
-export function useSetGoalStatus(onSetStatus: GoalStatusControl["onSetStatus"] | null) {
+function useSetGoalStatus(onSetStatus: GoalStatusControl["onSetStatus"] | null) {
   const showError = useStatusError();
   const [isPending, startTransition] = useTransition();
 
@@ -261,6 +250,7 @@ export function ArchiveGoalDialog({
   );
 }
 
+/** Says what pausing means; the page's bar holds Resume (`ResumeGoalBar`). */
 export function GoalPausedSuggestion({
   control,
   goalTitle,
@@ -270,33 +260,21 @@ export function GoalPausedSuggestion({
 }) {
   const t = useExtracted();
   const effectText = useResumeEffectText();
-  const { isPending, setStatus } = useSetGoalStatus(control.onSetStatus);
   const title = t("Your {goal} goal is paused", { goal: goalTitle });
-  const preview = control.resume;
-
-  const resume = (
-    <SuggestionAction
-      action={() => setStatus("active")}
-      busy={isPending}
-      icon={<PlayIcon aria-hidden="true" />}
-    >
-      {t("Resume")}
-    </SuggestionAction>
-  );
+  const description = control.resume ? effectText : t("Nothing is planned until you resume it.");
 
   return (
     <Suggestion label={title} mark={<PauseIcon />}>
       <SuggestionLine>
-        <SuggestionSummary>{title}</SuggestionSummary>
-        {preview ? <SuggestionOpen /> : resume}
+        <div>
+          <SuggestionSummary>{title}</SuggestionSummary>
+          <SuggestionDescription>{description}</SuggestionDescription>
+        </div>
       </SuggestionLine>
 
       <SlotContent>
         <SuggestionHeader>{title}</SuggestionHeader>
-        <SuggestionDescription>
-          {preview ? effectText : t("Nothing is planned until you resume it.")}
-        </SuggestionDescription>
-        <SuggestionActions>{resume}</SuggestionActions>
+        <SuggestionDescription>{description}</SuggestionDescription>
       </SlotContent>
     </Suggestion>
   );
