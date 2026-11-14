@@ -1,12 +1,6 @@
+import { AuthDescription, AuthHeader, AuthTitle } from "@/components/auth-form";
 import { AuthFrame } from "@/components/auth-frame";
-import {
-  Login,
-  LoginDescription,
-  LoginDivider,
-  LoginFooter,
-  LoginHeader,
-  LoginTitle,
-} from "@/components/login";
+import { Login, LoginDivider, LoginFooter } from "@/components/login";
 import { getAuthPageLocale } from "@/i18n/page-locale";
 import { getMainPageUrl } from "@zoonk/utils/url";
 import { getExtracted } from "next-intl/server";
@@ -45,15 +39,15 @@ export async function LoginScreen({
       />
 
       <Login>
-        <LoginHeader>
-          <LoginTitle>{t("Sign in or create an account")}</LoginTitle>
+        <AuthHeader>
+          <AuthTitle>{t("Log in or create an account")}</AuthTitle>
 
           {expired && (
-            <LoginDescription role="status">
-              {t("That sign-in expired. Try again.")}
-            </LoginDescription>
+            <AuthDescription role="status">
+              {t("Logging in took too long. Try again.")}
+            </AuthDescription>
           )}
-        </LoginHeader>
+        </AuthHeader>
 
         <SocialLogin />
 
@@ -63,7 +57,7 @@ export async function LoginScreen({
 
         <LoginFooter>
           {t.rich(
-            "By clicking on Continue, you agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>.",
+            "By continuing, you agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>.",
             {
               privacy: linkTo(getMainPageUrl({ locale, path: "/privacy" })),
               terms: linkTo(getMainPageUrl({ locale, path: "/terms" })),

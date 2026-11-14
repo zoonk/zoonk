@@ -1,14 +1,15 @@
 "use client";
 
-import { LoginError, LoginSocial, LoginWithApple, LoginWithGoogle } from "@/components/login";
+import { LoginSocial, LoginWithApple, LoginWithGoogle } from "@/components/login";
 import { authClient } from "@zoonk/auth/client";
+import { showErrorToast } from "@zoonk/ui/components/toast";
 import { logError } from "@zoonk/utils/logger";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { getCallbackHref } from "../../_utils/auth-redirect";
 import { readPageRedirectTo } from "./page-url";
 
-type SocialState = "initial" | "loadingGoogle" | "loadingApple" | "error";
+type SocialState = "initial" | "loadingGoogle" | "loadingApple";
 
 function getLoadingState(provider: "google" | "apple"): SocialState {
   return provider === "google" ? "loadingGoogle" : "loadingApple";
@@ -28,7 +29,8 @@ export function SocialLogin() {
 
     if (error) {
       logError("Social login error:", error);
-      setState("error");
+      setState("initial");
+      showErrorToast(t("We couldn't log you in. Try again."));
     }
   };
 
@@ -41,10 +43,6 @@ export function SocialLogin() {
       <LoginWithApple isLoading={state === "loadingApple"} onClick={() => signIn("apple")}>
         {t("Continue with Apple")}
       </LoginWithApple>
-
-      <LoginError hasError={state === "error"}>
-        {t("There was an error signing you in. Please try again or contact hello@zoonk.com")}
-      </LoginError>
     </LoginSocial>
   );
 }

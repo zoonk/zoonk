@@ -1,16 +1,15 @@
+import { SectionPageHeader } from "@/components/learn/section-page";
 import { BILLING_PERIOD_PARAM, readBillingPeriod } from "@/components/pricing/plus-plan";
 import { PlusPricing } from "@/components/pricing/plus-pricing";
 import { getCurrentPlusSubscription } from "@/data/subscriptions/get-current-plus-subscription";
 import { getPlusPrices } from "@/data/subscriptions/get-plus-prices";
 import { getRequestBillingCurrency } from "@/data/subscriptions/get-request-billing-currency";
-import { getAllowance } from "@zoonk/core/entitlements/get-allowance";
 import { getWebPlusSubscription } from "@zoonk/core/subscriptions/get-web-plus-subscription";
 import { getSession } from "@zoonk/core/users/session";
-import { Page, PageHeader, PageHeaderContent, PageSubtitle, PageTitle } from "@zoonk/learn/page";
+import { Page, PageSection, PageSectionTitle, PageSubtitle } from "@zoonk/learn/page";
 import { getExtracted } from "next-intl/server";
 import { CancelPlusButton } from "./cancel-plus-button";
 import { CurrentPlan } from "./current-plan";
-import { FreePlanUsage } from "./free-plan-usage";
 import { StripeCheckoutConfirming } from "./stripe-checkout-confirming";
 import { StripeCheckoutReturn } from "./stripe-checkout-return";
 
@@ -29,13 +28,12 @@ export async function SubscriptionPlans({
 }) {
   const t = await getExtracted();
 
-  const [query, session, subscription, webSubscription, prices, allowance] = await Promise.all([
+  const [query, session, subscription, webSubscription, prices] = await Promise.all([
     searchParams,
     getSession(),
     getCurrentPlusSubscription(),
     getWebPlusSubscription(),
     getRequestBillingCurrency().then((currency) => getPlusPrices(currency)),
-    getAllowance(),
   ]);
 
   const stripeCheckoutCompleted = query.stripe_checkout === "complete";
@@ -60,12 +58,14 @@ export async function SubscriptionPlans({
   if (webSubscription?.status === "ready" && webSubscription.state === "unpaid") {
     return (
       <Page className="max-w-form">
-        <PageHeader>
-          <PageHeaderContent>
-            <PageTitle className="md:text-xl md:leading-tight">{t("Plus")}</PageTitle>
+        <SectionPageHeader title={t("Subscription")} />
+
+        <PageSection>
+          <div className="flex flex-col gap-1">
+            <PageSectionTitle>{t("Plus")}</PageSectionTitle>
             <PageSubtitle>{t("Your last renewal payment failed.")}</PageSubtitle>
-          </PageHeaderContent>
-        </PageHeader>
+          </div>
+        </PageSection>
         <CancelPlusButton endsNow />
       </Page>
     );
@@ -73,18 +73,11 @@ export async function SubscriptionPlans({
 
   return (
     <Page>
-      <PageHeader>
-        <PageHeaderContent>
-          <PageTitle className="md:text-xl md:leading-tight">
-            {t("Subscribe to Zoonk Plus")}
-          </PageTitle>
-        </PageHeaderContent>
-      </PageHeader>
+      <SectionPageHeader title={t("Subscription")} />
 
       <PlusPricing
         defaultPeriod={readBillingPeriod(query[BILLING_PERIOD_PARAM])}
         monthlyPrice={prices.monthlyPrice}
-        usedToday={allowance?.tier === "free" && <FreePlanUsage allowance={allowance} />}
         viewerState={{ status: getOfferViewer({ hasAccount, hasSession: Boolean(session) }) }}
         yearlyPrice={prices.yearlyPrice}
       />

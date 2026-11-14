@@ -1,6 +1,8 @@
+import { AuthHeader, AuthTitle } from "@/components/auth-form";
 import { AuthFrame } from "@/components/auth-frame";
-import { Login, LoginDescription, LoginHeader, LoginTitle } from "@/components/login";
+import { Login } from "@/components/login";
 import { buttonVariants } from "@zoonk/ui/components/button";
+import { cn } from "@zoonk/ui/lib/utils";
 import { MAIN_URL } from "@zoonk/utils/url";
 import { getExtracted } from "next-intl/server";
 
@@ -10,15 +12,12 @@ export default async function UntrustedOriginPage() {
   return (
     <AuthFrame appUrl={MAIN_URL}>
       <Login>
-        <LoginHeader>
-          <LoginTitle>{t("Unable to redirect")}</LoginTitle>
-          <LoginDescription>
-            {t("The destination URL is not recognized as a trusted Zoonk application.")}
-          </LoginDescription>
-        </LoginHeader>
+        <AuthHeader>
+          <AuthTitle>{t("That link didn't work")}</AuthTitle>
+        </AuthHeader>
 
-        <a className={buttonVariants()} href={MAIN_URL}>
-          {t("Continue to Zoonk")}
+        <a className={cn(buttonVariants({ size: "lg" }), "w-full")} href={MAIN_URL}>
+          {t("Go to Zoonk")}
         </a>
       </Login>
     </AuthFrame>
