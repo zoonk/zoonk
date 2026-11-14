@@ -194,7 +194,7 @@ private fun mapOpensLine(day: OpeningDay?): String? =
 fun stillReviewLine(limit: Limit.Reached): String =
     listOfNotNull(stringResource(R.string.limit_still_review), lessonWords(limit).line).joinToString(" ")
 
-/** Calls have no title here: their screen already says what ran out. Lessons read [lessonWords], a map's lessons [mapLessonsWords]. */
+/** Lessons read [lessonWords], a map's lessons [mapLessonsWords]. */
 @StringRes
 private fun reachedTitle(
     limit: Limit.Reached,
@@ -264,7 +264,15 @@ private fun reachedTitle(
             }
         }
 
-        LimitSubject.Lessons, LimitSubject.MapLessons, LimitSubject.Calls -> {
+        LimitSubject.Calls -> {
+            when (limit.period) {
+                LimitPeriod.Rolling30Days -> R.string.limit_call_time_used
+                LimitPeriod.Total -> R.string.conversation_calls_need_account
+                else -> R.string.conversation_no_calls_today
+            }
+        }
+
+        LimitSubject.Lessons, LimitSubject.MapLessons -> {
             null
         }
     }

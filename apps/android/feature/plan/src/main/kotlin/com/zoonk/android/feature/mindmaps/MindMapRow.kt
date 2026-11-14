@@ -42,6 +42,7 @@ import com.zoonk.android.feature.goalcontent.ChapterKey
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.DropdownMenu
+import com.zoonk.android.ui.components.HeldSlot
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitSubject
@@ -240,13 +241,15 @@ internal fun MindMapRow(
             if (toggleSave != null) SaveMenu(menu, saved, onDismiss = { menu = false }, onToggle = toggleSave)
         }
 
-        if (notice != null) {
-            MindMapLimit(
-                notice,
-                local?.subject ?: LimitSubject.MindMaps,
-                actions.navigate,
-                Modifier.padding(start = LIST_ITEM_INSET + MARK_SIZE + MARK_GAP, end = LIST_ITEM_INSET, bottom = 12.dp),
-            )
+        HeldSlot(gated = notice != null) {
+            if (notice != null) {
+                MindMapLimit(
+                    notice,
+                    local?.subject ?: LimitSubject.MindMaps,
+                    actions.navigate,
+                    Modifier.padding(start = LIST_ITEM_INSET + MARK_SIZE + MARK_GAP, end = LIST_ITEM_INSET, bottom = 12.dp),
+                )
+            }
         }
     }
 }

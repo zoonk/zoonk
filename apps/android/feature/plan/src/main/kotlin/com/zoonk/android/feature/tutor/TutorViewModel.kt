@@ -252,12 +252,21 @@ class TutorViewModel internal constructor(
         saved[OFFERED_ID] = suggestion.id
     }
 
-    /** The day the messages cap gave has come: its refusal goes, so the composer and a failed answer's retry are back. */
+    /** The day the messages cap gave has come: the composer is back, and a refused question stays unanswered with its retry. */
     fun limitLifted() {
         mutableState.update { state ->
             state.copy(
                 askFailure = state.askFailure?.takeIf { it.helpLimit == null },
-                answerFailures = state.answerFailures.filterValues { it.helpLimit == null },
+                answerFailures =
+                    state.answerFailures.mapValues { (_, failure) ->
+                        if (failure.helpLimit !=
+                            null
+                        ) {
+                            TutorFailure.Unanswered
+                        } else {
+                            failure
+                        }
+                    },
             )
         }
     }

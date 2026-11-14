@@ -79,7 +79,7 @@ internal fun failureMessage(failure: TutorFailure?): String {
             TutorFailure.Gone -> R.string.tutor_error_gone
             TutorFailure.Invalid -> R.string.tutor_error_invalid
             is TutorFailure.Refused -> R.string.tutor_error_slow_down
-            TutorFailure.Failed, null -> R.string.tutor_error_failed
+            TutorFailure.Failed, TutorFailure.Unanswered, null -> R.string.tutor_error_failed
         },
     )
 }

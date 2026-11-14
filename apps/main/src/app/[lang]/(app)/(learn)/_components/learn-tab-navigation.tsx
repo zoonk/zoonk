@@ -15,6 +15,7 @@ import {
   type LearnTabMissions,
 } from "@zoonk/learn/navigation";
 import { LearnShellMain } from "@zoonk/learn/shell";
+import { openCommandPalette } from "@zoonk/ui/lib/command-palette-event";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useSelectedLayoutSegments } from "next/navigation";
@@ -93,7 +94,14 @@ function CurrentBottomTabs({ buddy, missions }: TabsProps) {
     return null;
   }
 
-  return <LearnBottomNavigation activeTab={activeTab} buddy={buddy} missions={missions} />;
+  return (
+    <LearnBottomNavigation
+      activeTab={activeTab}
+      buddy={buddy}
+      missions={missions}
+      onSearch={openCommandPalette}
+    />
+  );
 }
 
 /** `contents` keeps the bar sticky to the frame. */
@@ -156,7 +164,12 @@ function LearnerBottomTabs({ learner }: { learner: LearnerSummaryState }) {
     <Suspense
       fallback={
         <div className={ONBOARDING_FIRST_PAINT_CLASS}>
-          <LearnBottomNavigation activeTab={null} buddy={buddy} missions={missions} />
+          <LearnBottomNavigation
+            activeTab={null}
+            buddy={buddy}
+            missions={missions}
+            onSearch={openCommandPalette}
+          />
         </div>
       }
     >
