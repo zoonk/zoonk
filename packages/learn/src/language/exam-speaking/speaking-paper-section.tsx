@@ -36,12 +36,14 @@ function useOpenTask(openTask: string | null) {
 }
 
 export function SpeakingPaperSection({
+  barHasMainAction,
   onStart,
   openTask = null,
   paper,
   resultHref,
   title,
 }: {
+  barHasMainAction?: boolean;
   onStart: (task: string) => Promise<CallStartOutcome>;
   openTask?: string | null;
   paper: SpeakingPaperView;
@@ -114,6 +116,7 @@ export function SpeakingPaperSection({
 
       {call.writing && (
         <WritingWait
+          barHasMainAction={barHasMainAction}
           hint={t("Your task opens as soon as its card is ready.")}
           kind="examSpeaking"
           writing={call.writing}

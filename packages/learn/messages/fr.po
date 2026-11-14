@@ -209,7 +209,7 @@ msgid "Today"
 msgstr "Aujourd’hui"
 
 #: src/_components/create-account-link.tsx
-#: src/language/conversation/call-problem.tsx
+#: src/_components/subscribe-gate.tsx
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "d82w2J"
 msgid "Create a free account"
@@ -480,7 +480,7 @@ msgstr "Commencer la leçon"
 #: src/_components/time-answer.tsx
 #: src/country/country-picker.tsx
 #: src/explain/explain-waiting.tsx
-#: src/generation/generation-wait.tsx
+#: src/generation/generation-failure-notice.tsx
 #: src/language/conversation/call-intro-footer.tsx
 #: src/language/conversation/call-problem.tsx
 #: src/language/conversation/dropped-call-screen.tsx
@@ -718,6 +718,7 @@ msgstr "Retour"
 
 #: src/_components/subscribe-gate.tsx
 #: src/conversation/tutor-feature-offers.tsx
+#: src/language/unit/practice-conversation.tsx
 msgctxt "gczcC5"
 msgid "Subscribe"
 msgstr "S’abonner"
@@ -4153,6 +4154,44 @@ msgctxt "vNw6Rg"
 msgid "Writing each card's instructions…"
 msgstr "Préparation des consignes de chaque fiche…"
 
+#: src/generation/generation-failure-notice.tsx
+msgctxt "Eg11ZY"
+msgid "Reconnect"
+msgstr "Rétablir la connexion"
+
+#: src/generation/generation-failure-notice.tsx
+msgctxt "53pCO9"
+msgid "We stopped getting updates. It may still be working."
+msgstr "Nous ne recevons plus de nouvelles. La préparation est peut-être toujours en cours."
+
+#: src/generation/generation-failure-notice.tsx
+msgctxt "CN_B_k"
+msgid "Connection lost"
+msgstr "Connexion perdue"
+
+#: src/generation/generation-failure-notice.tsx
+#: src/onboarding/steps/step-parts.tsx
+#: src/wait/first-lesson-row.tsx
+msgctxt "YXnM-X"
+msgid "Something went wrong on our side."
+msgstr "Un problème est survenu de notre côté."
+
+#. Preparing this content failed. It is not still running.
+#: src/generation/generation-failure-notice.tsx
+msgctxt "0fLHBg"
+msgid "This didn't finish"
+msgstr "La préparation a échoué"
+
+#: src/generation/generation-failure-notice.tsx
+msgctxt "iKz0K6"
+msgid "We couldn't get this started."
+msgstr "Nous n’avons pas réussi à lancer la préparation."
+
+#: src/generation/generation-failure-notice.tsx
+msgctxt "q8l1Sf"
+msgid "This didn't start"
+msgstr "La préparation n’a pas commencé"
+
 #: src/generation/generation-wait.tsx
 msgctxt "NhDwgx"
 msgid "in progress"
@@ -4174,44 +4213,6 @@ msgstr "arrêté ici"
 msgctxt "wSt267"
 msgid "not started yet"
 msgstr "pas encore commencé"
-
-#: src/generation/generation-wait.tsx
-msgctxt "Eg11ZY"
-msgid "Reconnect"
-msgstr "Rétablir la connexion"
-
-#: src/generation/generation-wait.tsx
-msgctxt "53pCO9"
-msgid "We stopped getting updates. It may still be working."
-msgstr "Nous ne recevons plus de nouvelles. La préparation est peut-être toujours en cours."
-
-#: src/generation/generation-wait.tsx
-msgctxt "CN_B_k"
-msgid "Connection lost"
-msgstr "Connexion perdue"
-
-#: src/generation/generation-wait.tsx
-#: src/onboarding/steps/step-parts.tsx
-#: src/wait/first-lesson-row.tsx
-msgctxt "YXnM-X"
-msgid "Something went wrong on our side."
-msgstr "Un problème est survenu de notre côté."
-
-#. Preparing this content failed. It is not still running.
-#: src/generation/generation-wait.tsx
-msgctxt "0fLHBg"
-msgid "This didn't finish"
-msgstr "La préparation a échoué"
-
-#: src/generation/generation-wait.tsx
-msgctxt "iKz0K6"
-msgid "We couldn't get this started."
-msgstr "Nous n’avons pas réussi à lancer la préparation."
-
-#: src/generation/generation-wait.tsx
-msgctxt "q8l1Sf"
-msgid "This didn't start"
-msgstr "La préparation n’a pas commencé"
 
 #: src/generation/lesson-generation-copy.ts
 msgctxt "57Hm5c"
@@ -12298,6 +12299,7 @@ msgctxt "v8WYcE"
 msgid "It takes a few minutes."
 msgstr "Ça prend quelques minutes."
 
+#. {title} is the name of one of the day's challenges, such as "Weekly challenge", never a course.
 #: src/session/next-stop-wait.tsx
 msgctxt "RBw4AC"
 msgid "Start {title}"
