@@ -257,7 +257,6 @@ internal fun PlayingLesson(
                     CertificateCeremony(app, awarded, onClose, onSeePlus = { navigator.open(AppRoute.Subscription) }, app.timeSource)
                 },
                 finishedChapter = { FinishedChapterMoment(it, app, navigator::open) },
-                reminderOffer = { ReminderOfferCard(app, it) },
             )
             LessonSounds(state, enabled = profile.value?.soundsEnabled ?: true)
         }

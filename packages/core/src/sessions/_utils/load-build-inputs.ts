@@ -127,7 +127,7 @@ type SessionBuildContext = BuildContext & {
 export async function loadSessionBuildInput(
   context: SessionBuildContext,
 ): Promise<SessionBuildInput> {
-  const { goal, keepsBlocks = false, keptLessonIds, localDate, now, timeZone, userId } = context;
+  const { goal, keepsBlocks = false, keptLessonIds, localDate, now, userId } = context;
 
   const plan = await (context.dayPlan ?? loadDayPlan(context));
   const awaitingOutlines = plan.outlines === "awaiting";
@@ -147,7 +147,7 @@ export async function loadSessionBuildInput(
 
   const testSkillIds = getPlanTestSkillIds(plan);
 
-  const access = getExamPrepAccess({ examPrep: plan.examPrep, goal, timeZone, today: localDate });
+  const access = getExamPrepAccess({ examPrep: plan.examPrep, goal });
   const review = toReviewInput({ context, field, netScored, plan });
 
   const dayLessons = loadDayPlanLessons({

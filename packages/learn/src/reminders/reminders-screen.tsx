@@ -9,6 +9,7 @@ import { PendingLink } from "@zoonk/ui/patterns/links/pending";
 import { PauseIcon, UserPlusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useOptimistic } from "react";
+import { AccountAskMark } from "../_components/account-ask";
 import { ListGroup } from "../_components/list-group";
 import { NoticeCard } from "../_components/notice-card";
 import { PageSectionFooter } from "../_components/page";
@@ -77,12 +78,12 @@ function GuestEmailSetting({ signUpHref }: { signUpHref: string }) {
       <PendingLink
         className={buttonVariants({ size: "sm", variant: "outline" })}
         data-account-ask
-        data-account-offer
         href={signUpHref}
         icon={<UserPlusIcon aria-hidden="true" />}
       >
         {t("Create an account")}
       </PendingLink>
+      <AccountAskMark />
     </SettingRow>
   );
 }

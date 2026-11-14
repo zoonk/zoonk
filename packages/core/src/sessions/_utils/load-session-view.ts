@@ -166,8 +166,6 @@ export async function loadStudySessionView({
     ? getExamPrepAccess({
         examPrep: viewer ? getTierExamPrep(viewer.tier) : null,
         goal: session.goal,
-        timeZone,
-        today: session.localDate,
       })
     : { includesMockExams: true, trialEnded: false };
 

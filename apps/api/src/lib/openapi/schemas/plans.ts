@@ -81,12 +81,6 @@ export const planResponseSchema = z
       freeUntil: isoDateSchema
         .nullable()
         .meta({ description: "Always null. Exam goals have no time-based expiry" }),
-      freeWeekOver: z
-        .boolean()
-        .meta({
-          description:
-            "Always false. Exam plans do not expire; new lessons use the shared rolling 30-day allowance",
-        }),
       mocksRequirePlus: z.boolean(),
     }),
     areas: z.array(planAreaSchema),
