@@ -53,8 +53,8 @@ struct DayResult: Decodable, Hashable, Sendable {
 }
 
 /// Main's `DayMoment` (B2's R2): at most one extra moment at a block's end, the first that applies:
-/// the belt's number moved, today's missions all done, a chapter finished, then one mission done.
-/// Energy never shows here. A new belt's number isn't said twice: its ceremony shows before.
+/// a new level, today's missions all done, a chapter finished, then one mission done. Energy never
+/// shows here. A new belt's level isn't said twice: its ceremony shows before.
 struct DayMomentSections: View {
   let result: DayResult
   var chapter: Components.Schemas.FinishedChapter?
@@ -67,7 +67,7 @@ struct DayMomentSections: View {
 
 extension DayResult {
   enum Moment {
-    case belt(ProgressBelt, level: Int)
+    case level(ProgressBelt, level: Int)
     case missionsDone(MissionMoment)
     case chapter
     case missionDone(MissionMoment)
@@ -77,7 +77,7 @@ extension DayResult {
     if ceremony?.kind != "belt", let level = reached?.level,
       let belt = ProgressBelt(rawValue: level.color)
     {
-      return .belt(belt, level: level.level)
+      return .level(belt, level: level.level)
     }
 
     if let missions = missionMoment, missions.isPayoff {
@@ -94,6 +94,16 @@ extension DayResult {
 
     return nil
   }
+
+  /// The day's bonus is said by the missions' moment; where another moment shows instead, the bonus
+  /// is part of what the block earned.
+  func shownBrainPower(_ brainPower: Int, bonus: Int, hasChapter: Bool) -> Int {
+    guard case .missionsDone = moment(hasChapter: hasChapter) else {
+      return brainPower
+    }
+
+    return brainPower - bonus
+  }
 }
 
 private struct DayMomentContent: View {
@@ -105,9 +115,9 @@ private struct DayMomentContent: View {
 
   var body: some View {
     switch result.moment(hasChapter: chapter != nil) {
-    case .belt(let belt, let level):
+    case .level(let belt, let level):
       Section {
-        BeltStepRow(belt: belt, level: level)
+        LevelRow(belt: belt, level: level)
       }
     case .missionsDone(let moment):
       missions(moment, payoff: true)
@@ -132,7 +142,7 @@ private struct DayMomentContent: View {
 
           VStack(alignment: .leading, spacing: payoff ? 8 : 2) {
             missionsTitle(moment)
-              .typeStyle(payoff ? .section : .body.weight(.semibold))
+              .typeStyle(payoff ? .section : .lead.weight(.semibold))
 
             if payoff {
               bonus(moment.fullMeal.bonus)
@@ -170,11 +180,11 @@ private struct DayMomentContent: View {
   private func bonus(_ points: Int) -> some View {
     HStack(alignment: .firstTextBaseline, spacing: 6) {
       EarnedNumber(value: points, delay: 2 * .beat)
-        .typeStyle(.heroTitle)
+        .typeStyle(.momentReadout)
         .foregroundStyle(.brainText)
 
       Text("Brain Power", tableName: "Session", comment: "Under the missions' bonus")
-        .typeStyle(.note.weight(.medium))
+        .typeStyle(.body.weight(.medium))
         .foregroundStyle(.mutedForeground)
     }
     .settles(delay: 2 * .beat, from: 0.9)
@@ -192,9 +202,9 @@ private struct DayMomentContent: View {
   }
 }
 
-/// The belt's number, taught by the row itself: the badge, "White belt 3", which belt comes after
-/// this one's tenth step, and the ten ticks.
-struct BeltStepRow: View {
+/// The level, taught by the row itself: the badge, "White belt, level 3", which belt comes after
+/// this one's tenth level, and the ten ticks.
+struct LevelRow: View {
   let belt: ProgressBelt
   let level: Int
   var delay: TimeInterval = 0
@@ -206,14 +216,15 @@ struct BeltStepRow: View {
           .settles(delay: delay)
 
         VStack(alignment: .leading, spacing: 2) {
-          Text(beltStep(belt, level))
+          Text(levelName(belt, level))
             .typeStyle(.body.weight(.semibold))
 
           if let next = belt.next {
             Text(
-              "\(beltName(next.rawValue) ?? "") comes after level \(10)", tableName: "Session",
+              "\(beltName(next.rawValue) ?? next.rawValue) comes after level \(10)",
+              tableName: "Session",
               comment:
-                "Under the learner's level: the next belt and the last level before it, such as \"Yellow belt comes after level 10\""
+                "Under a new level: the next belt and the level it comes after, such as \"Yellow belt comes after level 10\""
             )
             .typeStyle(.note)
             .foregroundStyle(.mutedForeground)
@@ -227,11 +238,11 @@ struct BeltStepRow: View {
   }
 }
 
-/// "White belt, level 3": the level, said with the belt it shows as (B2's R4).
-func beltStep(_ belt: ProgressBelt, _ level: Int) -> String {
+/// "White belt, level 3": a level said with the belt it shows as (B2's R4).
+func levelName(_ belt: ProgressBelt, _ level: Int) -> String {
   String(
     localized: "\(beltName(belt.rawValue) ?? belt.rawValue), level \(level)", table: "Session",
-    comment: "A belt and the learner's level in it, from 1 to 10, such as \"White belt, level 3\"")
+    comment: "The belt and level reached")
 }
 
 extension ProgressBelt {

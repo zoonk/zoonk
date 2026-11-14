@@ -133,6 +133,7 @@ struct SessionSummaryView: View {
       }
       .listRowBackground(Color.clear)
     }
+
   }
 
   /// "Earned today" beside the numbers: the buddy, the day's Brain Power even when it's none, and
@@ -319,7 +320,7 @@ private struct SummaryTiles: View {
 
   private var belt: Text? {
     summary.belt.flatMap { belt in
-      ProgressBelt(rawValue: belt.after.color).map { Text(beltStep($0, belt.after.level)) }
+      ProgressBelt(rawValue: belt.after.color).map { Text(levelName($0, belt.after.level)) }
     }
   }
 
@@ -411,7 +412,7 @@ private struct SummaryBuddy: View {
   }
 }
 
-/// Main's reward rows: the day's missions bonus, a belt's new levels and the best streak.
+/// Main's reward rows: the day's missions bonus, the new levels and the best streak.
 private struct RewardRows: View {
   let summary: SessionSummary
   let missionsBonus: Int?
@@ -443,13 +444,13 @@ private struct RewardRows: View {
           VStack(alignment: .leading, spacing: 8) {
             IconLabeledContent {
               Text(
-                "+\(stripes.stripesGained)", tableName: "Session",
-                comment: "How many steps on the belt the day added, such as +1"
+                "+\(stripes.stripesGained) levels", tableName: "Session",
+                comment: "How many belt levels the session added"
               )
               .monospacedDigit()
               .foregroundStyle(.successText)
             } title: {
-              Text(beltStep(belt, stripes.after.level))
+              Text(levelName(belt, stripes.after.level))
             } icon: {
               BeltDot(belt: belt)
             }

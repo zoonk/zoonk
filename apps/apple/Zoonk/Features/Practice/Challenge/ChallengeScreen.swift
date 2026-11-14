@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// Writes its questions first when the bank holds too few, only on the learner's tap. Plus-only
-/// challenges stay visible with a lock.
+/// Writes its questions first when the bank holds too few, only on the learner's tap. A challenge
+/// that needs a subscription shows the gate once it's opened.
 struct ChallengeScreen: View {
   let planItemId: String
   var sessionId: String?
@@ -132,21 +132,6 @@ struct ChallengeScreen: View {
         gateWords(challenge)
       }
 
-      if let result = challenge.result, challenge.status == .done, !won {
-        Label {
-          Text(
-            result.passed
-              ? LocalizedStringResource(
-                "You beat the Trickster!", table: "Practice", comment: "A won phase challenge.")
-              : LocalizedStringResource(
-                "Challenge passed", table: "Practice", comment: "A finished challenge.")
-          )
-          Text("\(result.correct)/\(result.total)").monospacedDigit()
-        } icon: {
-          Image(systemName: "checkmark.seal")
-        }
-      }
-
       if !challenge.topics.isEmpty, !challenge.mock {
         // A closed row the learner can open: the intro is the character and one sentence.
         DisclosureGroup {
@@ -253,6 +238,10 @@ struct ChallengeScreen: View {
     } else if challenge.status == .done || challenge.status == .tried,
       let blockId = challenge.blockId
     {
+      if let status = statusLine(challenge) {
+        Text(status).typeStyle(.note).foregroundStyle(.mutedForeground)
+      }
+
       PracticeMainButton(
         title: LocalizedStringResource(
           "See how it went", table: "Practice", comment: "Opens a finished checkpoint's result."),
@@ -282,16 +271,19 @@ struct ChallengeScreen: View {
           }
 
           PracticeMainButton(
-            title:
-              LocalizedStringResource("Start", table: "Practice", comment: "Starts a challenge."),
+            title: challenge.status == .started
+              ? LocalizedStringResource(
+                "Continue", table: "Practice",
+                comment: "Goes back into a challenge already started.")
+              : LocalizedStringResource("Start", table: "Practice", comment: "Starts a challenge."),
             icon: .play, isBusy: isStarting || isWriting,
             isDisabled: isMoving
           ) { run { await start(afterWriting: false) } }
         }
       }
     } else {
-      if let wait = waitLine(challenge) {
-        Text(wait).typeStyle(.note).foregroundStyle(.mutedForeground)
+      if let status = statusLine(challenge) {
+        Text(status).typeStyle(.note).foregroundStyle(.mutedForeground)
       }
 
       if challenge.canMove, moved == nil {
@@ -309,18 +301,61 @@ struct ChallengeScreen: View {
     [.ready, .started].contains(challenge.status) && challenge.waitReason == nil
   }
 
-  /// Main's footer line for a challenge with nothing to start yet. A dated one already says its day
-  /// above.
-  private func waitLine(_ challenge: Components.Schemas.Challenge) -> LocalizedStringResource? {
-    let waits = [.ready, .started].contains(challenge.status) && challenge.waitReason != nil
+  /// Main's footer line: where the challenge stands when there's nothing to start yet, or when a
+  /// lost duel comes back.
+  private func statusLine(_ challenge: Components.Schemas.Challenge) -> LocalizedStringResource? {
+    switch challenge.status {
+    case .ready, .started:
+      guard challenge.waitReason != nil else {
+        return nil
+      }
 
-    guard waits || (challenge.status == .upcoming && challenge.date == nil) else {
+      return LocalizedStringResource(
+        "After today's lessons", table: "Today",
+        comment: "A challenge that opens once the lessons before it are done")
+    case .tried:
+      return CheckpointCopy.rematchTomorrow(lessons: challenge.reinforcementLessons)
+    case .waiting:
+      let empty = challenge.questions == 0 && challenge.call == nil && !challenge.mock
+
+      if empty, let date = challenge.date, date > challenge.today {
+        return opensLine(challenge)
+      }
+
+      return empty
+        ? LocalizedStringResource(
+          "This challenge isn't ready yet.", table: "Practice",
+          comment: "A challenge whose questions aren't there yet.")
+        : LocalizedStringResource(
+          "Next time you study", table: "Practice",
+          comment: "A challenge that opens in the learner's next study session.")
+    case .upcoming, .queued:
+      return opensLine(challenge)
+    case .done, .plusRequired:
       return nil
     }
+  }
 
-    return LocalizedStringResource(
-      "Opens when you finish the lessons before it", table: "Practice",
-      comment: "A challenge waiting for the lessons before it.")
+  /// When a challenge opens: its day, else once the lessons before it are done.
+  private func opensLine(_ challenge: Components.Schemas.Challenge) -> LocalizedStringResource {
+    guard let date = challenge.date.flatMap(Self.parseDay),
+      let today = Self.parseDay(challenge.today)
+    else {
+      return LocalizedStringResource(
+        "Opens when you finish the lessons before it", table: "Practice",
+        comment: "A challenge waiting for the lessons before it.")
+    }
+
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.timeZone = .gmt
+    let days = max(1, calendar.dateComponents([.day], from: today, to: date).day ?? 1)
+
+    return days == 1
+      ? LocalizedStringResource(
+        "Opens tomorrow", table: "Practice", comment: "A challenge that opens tomorrow.")
+      : LocalizedStringResource(
+        "Opens in \(days) days", table: "Practice",
+        comment: "How many days until a challenge opens.")
   }
 
   private func isLocked(_ challenge: Components.Schemas.Challenge) -> Bool {
@@ -331,7 +366,7 @@ struct ChallengeScreen: View {
   private func hasActions(_ challenge: Components.Schemas.Challenge) -> Bool {
     isLocked(challenge)
       || challenge.canMove
-      || waitLine(challenge) != nil
+      || statusLine(challenge) != nil
       || [.ready, .started].contains(challenge.status)
       || ([.done, .tried].contains(challenge.status) && challenge.blockId != nil)
   }
@@ -549,8 +584,7 @@ struct ChallengeScreen: View {
         )
         .typeStyle(.body.weight(.semibold))
         Text(
-          "You can still review and practice your mistakes, or subscribe to keep going.",
-          tableName: "Practice",
+          "You can still review and practice your mistakes.", tableName: "Practice",
           comment: "A Trickster duel's gate once the free plan's lessons are used"
         )
         .typeStyle(.note)

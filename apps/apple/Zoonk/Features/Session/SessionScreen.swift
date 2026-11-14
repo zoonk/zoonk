@@ -143,7 +143,8 @@ private struct SessionContent: View {
       } else if let moment = playback.moment {
         ZoonkList {
           Section {
-            MomentSummary(moment: moment, title: nil)
+            // Brain Power waits for the next stop, so its first-time line is drawn once, there.
+            MomentSummary(moment: moment, earns: false)
           }
 
           // The buddy acts once, on the next stop's screen.
@@ -311,7 +312,7 @@ private struct NextStopView: View {
   private var daySoFar: some View {
     if let moment {
       Section {
-        MomentSummary(moment: moment, title: title(of: moment))
+        MomentSummary(moment: moment)
       }
 
       Section {
@@ -323,12 +324,7 @@ private struct NextStopView: View {
     } else {
       Section {
         VStack(alignment: .leading, spacing: 8) {
-          Text(
-            "\(day.sessionBar.completed) of \(day.sessionBar.total) done",
-            tableName: "Session", comment: "How far the day's session is"
-          )
-          .typeStyle(.data)
-          .foregroundStyle(.mutedForeground)
+          DayProgressLead(bar: day.sessionBar, isOpen: false)
 
           DaySegments(segments: day.daySegments.map(\.mark))
         }
@@ -428,11 +424,6 @@ private struct NextStopView: View {
           "We couldn't open the next step. Try again.", table: "Session",
           comment: "Opening the next step failed"))
       : nil
-  }
-
-  private func title(of moment: BlockMoment) -> String {
-    day.blocks.first { $0.id == moment.blockId }?.displayTitle
-      ?? String(localized: "Block", table: "Session", comment: "A finished block without a name")
   }
 
   private var writing: LessonWriting? {
@@ -787,39 +778,33 @@ private struct FirstLessonWarmUp {
   let deckID: String
 }
 
+/// A block's end, as the lesson's: what was finished, then what it earned (B2's R1).
 private struct MomentSummary: View {
   let moment: BlockMoment
-  let title: String?
+  var earns = true
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 4) {
-      Group {
-        if let title {
-          Text(
-            "\(title) done", tableName: "Session", comment: "The block the learner just finished")
-        } else {
-          Text(
-            "Done", tableName: "Session", comment: "A block just finished, before its name loads")
-        }
-      }
-      .typeStyle(.section)
-      .accessibilityAddTraits(.isHeader)
+    VStack(alignment: .leading, spacing: 8) {
+      title
+        .typeStyle(.heroTitle)
+        .accessibilityAddTraits(.isHeader)
 
-      if moment.ownBrainPower > 0 {
-        Text("+\(moment.ownBrainPower) Brain Power", tableName: "Session", comment: "Earned")
-          .typeStyle(.body.weight(.semibold).monospaced())
-          .foregroundStyle(.brainText)
+      if earns, moment.ownBrainPower > 0 {
+        EarnedBrainPower(points: moment.ownBrainPower)
       }
+    }
+  }
 
-      if moment.total > 0 {
-        Text(
-          "\(moment.correct) of \(moment.total) right", tableName: "Session",
-          comment: "Questions right in the block just finished"
-        )
-        .monospacedDigit()
-        .foregroundStyle(.mutedForeground)
-      }
-
+  private var title: Text {
+    switch moment.blocks.first(where: { $0.id == moment.blockId })?.kind {
+    case .learn:
+      Text("Lesson complete", tableName: "Player", comment: "Title at the end of a lesson")
+    case .review:
+      Text("Review done", tableName: "Practice", comment: "End of a review block.")
+    case nil:
+      Text("Done", tableName: "Session", comment: "A block just finished, before its kind loads")
+    default:
+      Text("Practice done", tableName: "Practice", comment: "End of a practice run.")
     }
   }
 }

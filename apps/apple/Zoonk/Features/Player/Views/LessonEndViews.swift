@@ -2,6 +2,7 @@ import SwiftUI
 
 struct LessonCompletionView: View {
   @Environment(AppRouter.self) private var router
+  @Environment(\.lessonPlayerRoutes) private var routes
   @Environment(StudySessionStore.self) private var sessions
   @State private var showsSaveReport = false
   let completion: LessonPlayerState.Completion
@@ -30,6 +31,7 @@ struct LessonCompletionView: View {
       }
     } secondary: {
       page {
+        upNext
         planRevealRow
         reminderOfferCard
         guestEndingView
@@ -39,14 +41,15 @@ struct LessonCompletionView: View {
       page {
         moment
         dayMoment
+        upNext
         planRevealRow
         reminderOfferCard
         guestEndingView
       }
       .bottomBar(note: stopFailure) { actionBar }
     }
-    .onChange(of: offer, initial: true) {
-      if let offer, reminderOffer == nil {
+    .onChange(of: block?.reminderOffer, initial: true) {
+      if let offer = block?.reminderOffer, reminderOffer == nil {
         reminderOffer = ReminderOfferState(
           time: ReminderTime.rounded(offer.time), timeZone: offer.timeZone)
       }
@@ -167,14 +170,35 @@ struct LessonCompletionView: View {
     }
   }
 
-  private var offer: ReminderOffer? {
-    completion.status == .saved ? completion.summary?.block?.reminderOffer : nil
+  private var block: BlockMoment? {
+    completion.status == .saved ? completion.summary?.block : nil
   }
 
   @ViewBuilder
   private var reminderOfferCard: some View {
     if let offer = Binding($reminderOffer) {
       ReminderOfferCard(offer: offer)
+    }
+  }
+
+  /// The day's next step, and the chapter test's line when the next lesson starts a chapter the
+  /// learner may already know (B2's R1).
+  @ViewBuilder
+  private var upNext: some View {
+    if let block, let next = block.upNext {
+      VStack(alignment: .leading, spacing: 8) {
+        Chip(Text("Up next", tableName: "Session", comment: "Over the session's next block"))
+
+        BlockRow(
+          block: next, view: nil, isNext: true, countsTowardMission: false, showsDetail: true)
+
+        if let chapterID = block.testChapterID {
+          TestOutLine {
+            router.dismissTask()
+            router.open(.testOut(chapterId: chapterID))
+          }
+        }
+      }
     }
   }
 
@@ -247,7 +271,9 @@ struct LessonCompletionView: View {
   @ViewBuilder
   private var actionBar: some View {
     // As on main, a guest's ending leads with Build my plan, and the close button leaves.
-    if guestEnding == nil || completion.status == .ready || completion.status == .failed {
+    if let guestEnding, completion.status == .saved {
+      guestActions(guestEnding)
+    } else if guestEnding == nil || completion.status == .ready || completion.status == .failed {
       Group {
         switch completion.status {
         case .ready:
@@ -306,6 +332,31 @@ struct LessonCompletionView: View {
       .buttonStyle(.mainAction)
       .keyboardShortcut(.defaultAction)
     }
+  }
+
+  /// A guest's way on: saving, then the main action last.
+  @ViewBuilder
+  private func guestActions(_ ending: LessonGuestEnding) -> some View {
+    Button {
+      routes.signIn()
+    } label: {
+      Text(
+        "Create an account to save", tableName: "Player",
+        comment: "A guest creates an account at the end of a lesson")
+    }
+    .buttonStyle(.outline)
+
+    Button {
+      if let course = ending.fit?.course {
+        routes.startCourse(course.id, course.startChapterId)
+      } else {
+        routes.startGoal(ending.fit?.course?.title ?? ending.lessonTitle)
+      }
+    } label: {
+      Text("Build my plan", tableName: "Player", comment: "Starts a plan from a guest's lesson")
+    }
+    .buttonStyle(.mainAction)
+    .keyboardShortcut(.defaultAction)
   }
 
   private var stopFailure: BarNote? {
@@ -530,8 +581,6 @@ struct LessonGuestEnding: Hashable {
 }
 
 private struct LessonGuestEndingView: View {
-  @Environment(\.lessonPlayerRoutes) private var routes
-
   let ending: LessonGuestEnding
 
   var body: some View {
@@ -592,33 +641,6 @@ private struct LessonGuestEndingView: View {
       }
       .typeStyle(.note)
       .foregroundStyle(.mutedForeground)
-
-      VStack(spacing: 8) {
-        Button {
-          if let course = ending.fit?.course {
-            routes.startCourse(course.id, course.startChapterId)
-          } else {
-            routes.startGoal(ending.fit?.course?.title ?? ending.lessonTitle)
-          }
-        } label: {
-          Text("Build my plan", tableName: "Player", comment: "Starts a plan from a guest's lesson")
-            .frame(maxWidth: .infinity)
-        }
-        .buttonStyle(.mainAction)
-        .controlSize(.large)
-        .keyboardShortcut(.defaultAction)
-
-        Button {
-          routes.signIn()
-        } label: {
-          Text(
-            "Create an account to save", tableName: "Player",
-            comment: "A guest creates an account at the end of a lesson"
-          ).frame(maxWidth: .infinity)
-        }
-        .buttonStyle(.outline)
-        .controlSize(.large)
-      }
     }
   }
 }

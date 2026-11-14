@@ -12,33 +12,11 @@ struct SessionSummary: Decodable, Equatable, Sendable {
     let stripesGained: Int
   }
 
-  struct ComesBack: Decodable, Equatable, Sendable {
-    let skills: Int
-  }
-
-  struct Energy: Decodable, Equatable, Sendable {
-    let after: Double
-    let before: Double
-  }
-
   /// A goal's share before and after the session: progress for a goal that isn't an exam,
   /// preparation for an exam.
   struct Share: Decodable, Equatable, Sendable {
     let after: Double?
     let before: Double?
-  }
-
-  struct NewCard: Decodable, Equatable, Sendable {
-    let description: String
-    let name: String
-    let skillId: String
-  }
-
-  struct SkillMove: Decodable, Equatable, Sendable {
-    let from: GoalChapter.Skill.State
-    let name: String
-    let skillId: String
-    let to: GoalChapter.Skill.State
   }
 
   struct Tomorrow: Decodable, Equatable, Sendable {
@@ -53,9 +31,7 @@ struct SessionSummary: Decodable, Equatable, Sendable {
   let ceremony: Milestone?
   /// Unshown, so a moment whose completion response was lost still plays here.
   let certificates: [CertificateFacts]
-  let comesBack: [ComesBack]
   let correct: Int
-  let energy: Energy?
   let extraTime: StudyDay.ExtraTime
   let finished: Bool
   let fullMeal: Bool
@@ -63,12 +39,10 @@ struct SessionSummary: Decodable, Equatable, Sendable {
   let missions: [StudyMission]
   let mistakesSaved: Int
   let netScore: Int?
-  let newCards: [NewCard]
   let preparation: Share
   let progress: Share
   let questions: Int
   let sessionId: String
-  let skillsMoved: [SkillMove]
   let tomorrow: Tomorrow?
 }
 
@@ -80,8 +54,9 @@ struct BlockMoment: Decodable, Hashable, Sendable {
   }
   let blocks: [StudyBlock]
   let dayProgress: DayProgress
-  let deferredLessonsCount: Int
   let minutes: StudyDay.Minutes
+  /// Asked once per learner, after a plan lesson; B2 moves it to the day's summary with its API.
+  let reminderOffer: ReminderOffer?
   let sessionId: String
   let goalId: String?
   let finishedChapterId: String?
@@ -92,30 +67,49 @@ struct BlockMoment: Decodable, Hashable, Sendable {
     let paid: Bool
   }
 
+  struct TestOutOffer: Decodable, Hashable, Sendable {
+    let chapterId: String
+  }
+
   let blockId: String
   let brainPower: Int
   let ceremony: Milestone?
   let certificates: [CertificateFacts]
   let completedMissions: [StudyMission.Kind]
-  let correct: Int
   let finishedChapter: Components.Schemas.FinishedChapter?
   let fullMeal: FullMeal
   let missions: [StudyMission]
   /// The block the session goes on to; nil once it's done.
   let nextBlockId: String?
   let reached: DayResult.Reached?
-  let reminderOffer: ReminderOffer?
   let sessionBar: SessionBar
   let sessionCompleted: Bool
-  let total: Int
+  /// After a run of easy lessons in a chapter, its test, offered once.
+  let testOutOffer: TestOutOffer?
 
+  /// The line under a block end's title: without the day's bonus only where the missions' moment
+  /// shows it (B2's R2).
   var ownBrainPower: Int {
-    Self.ownBrainPower(brainPower, bonus: fullMeal.bonus, paid: fullMeal.paid)
+    day.shownBrainPower(brainPower, bonus: fullMeal.bonus, hasChapter: finishedChapter != nil)
   }
 
-  /// A block's Brain Power without the day's bonus it paid, which its missions show.
-  static func ownBrainPower(_ brainPower: Int, bonus: Int, paid: Bool) -> Int {
-    brainPower - (paid ? bonus : 0)
+  /// The step after this one, while the day goes on.
+  var upNext: StudyBlock? {
+    sessionCompleted ? nil : next?.block
+  }
+
+  /// The chapter whose test the end offers: core's offer, else the next lesson's when it starts
+  /// another chapter the learner may already know.
+  var testChapterID: String? {
+    if let offer = testOutOffer {
+      return offer.chapterId
+    }
+
+    guard let block = upNext, block.canTestOut, block.chapterId != finishedChapterId else {
+      return nil
+    }
+
+    return block.chapterId
   }
 
   var day: DayResult {
@@ -132,13 +126,13 @@ struct BlockMoment: Decodable, Hashable, Sendable {
   }
 }
 
-/// `key` is the belt color, the glasses, the stage, or `trapHunter:<boss>` for a badge.
 extension Components.Schemas.StudyBlockCompletion {
   var ownBrainPower: Int {
-    BlockMoment.ownBrainPower(brainPower, bonus: fullMeal.bonus, paid: fullMeal.paid)
+    (try? StudyJSON.recode(self, as: BlockMoment.self))?.ownBrainPower ?? brainPower
   }
 }
 
+/// `key` is the belt color, the glasses, the stage, or `trapHunter:<boss>` for a badge.
 struct Milestone: Decodable, Hashable, Identifiable, Sendable {
   let id: String
   let key: String

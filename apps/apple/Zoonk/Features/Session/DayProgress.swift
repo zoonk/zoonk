@@ -91,8 +91,7 @@ struct DayProgressBlock: View {
     VStack(alignment: .leading, spacing: 8) {
       VStack(alignment: .leading, spacing: 2) {
         HStack(alignment: .firstTextBaseline, spacing: 12) {
-          lead
-            .typeStyle(.body.monospacedDigit())
+          DayProgressLead(bar: bar, isOpen: progress.lead == .open)
             .frame(maxWidth: .infinity, alignment: .leading)
 
           if let percent = progress.percent {
@@ -122,20 +121,23 @@ struct DayProgressBlock: View {
       }
     }
   }
+}
+
+/// What's done today, the number in bold: "2 of 3 done today", or "2 done today" while today's list
+/// still grows.
+struct DayProgressLead: View {
+  let bar: SessionBar
+  let isOpen: Bool
+
+  var body: some View {
+    lead
+      .typeStyle(.body.monospacedDigit())
+  }
 
   /// `AttributedString` parses the bold after the plural variant resolves; `Text`'s key doesn't.
   private var lead: Text {
-    switch progress.lead {
-    case .done, .complete, .left:
-      Text(
-        AttributedString(
-          localized:
-            "**\(bar.completed)** of \(bar.total) done today", table: "Session",
-          comment:
-            "At a block's end: blocks of today's session done out of all of them. Keep the ** around the first number: it shows in bold."
-        ))
-    case .open:
-      Text(
+    if isOpen {
+      return Text(
         AttributedString(
           localized:
             "**\(bar.completed)** done today", table: "Session",
@@ -143,6 +145,14 @@ struct DayProgressBlock: View {
             "At a block's end on a day still holding time for lessons not listed yet: blocks done today. Keep the ** around the number: it shows in bold."
         ))
     }
+
+    return Text(
+      AttributedString(
+        localized:
+          "**\(bar.completed)** of \(bar.total) done today", table: "Session",
+        comment:
+          "At a block's end: blocks of today's session done out of all of them. Keep the ** around the first number: it shows in bold."
+      ))
   }
 }
 

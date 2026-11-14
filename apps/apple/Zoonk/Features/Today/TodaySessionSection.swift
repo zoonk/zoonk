@@ -69,14 +69,10 @@ struct TodaySessionSection: View {
           blockButton(next, isNext: true)
             .contentShape(.rect)
 
-          Button {
+          TestOutLine {
             router.open(.testOut(chapterId: chapterID))
-          } label: {
-            Text(testOutLine)
-              .typeStyle(.meta)
-              .foregroundStyle(.mutedForeground)
-              .padding(.top, 6)
           }
+          .padding(.top, 6)
         }
         // A list row with a default-style button sends a tap anywhere in it to one of its buttons,
         // which opened the test from the lesson's title; borderless, each answers only its own area.
@@ -135,26 +131,6 @@ struct TodaySessionSection: View {
       .accessibilityBusy(busy == .block(block.position))
     } else {
       row
-    }
-  }
-
-  /// Main's link in the sentence: ink and underlined in its muted words.
-  private var testOutLine: AttributedString {
-    let line = AttributedString(
-      localized: "Already know this? **Take the test**", table: "Today",
-      comment: "Skips the next lesson's chapter with its test")
-
-    return line.runs[\.inlinePresentationIntent].reduce(into: AttributedString()) {
-      result, run in
-      var piece = AttributedString(line[run.1])
-
-      if run.0?.contains(.stronglyEmphasized) == true {
-        piece.inlinePresentationIntent = nil
-        piece.foregroundColor = Color(.foreground)
-        piece.underlineStyle = .single
-      }
-
-      result += piece
     }
   }
 

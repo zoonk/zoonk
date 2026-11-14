@@ -622,7 +622,7 @@ enum CheckpointCopy {
 
     if passed { return nil }
 
-    return newTry(lessons: lessons)
+    return rematchTomorrow(lessons: lessons)
   }
 
   /// Under the verdict that decides a duel.
@@ -639,7 +639,7 @@ enum CheckpointCopy {
     }
   }
 
-  private static func newTry(lessons: Int) -> LocalizedStringResource {
+  static func rematchTomorrow(lessons: Int) -> LocalizedStringResource {
     lessons == 0
       ? LocalizedStringResource(
         "Rematch tomorrow.", table: "Practice", comment: "A lost Trickster duel comes back.")

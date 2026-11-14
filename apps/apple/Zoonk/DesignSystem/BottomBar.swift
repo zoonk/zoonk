@@ -59,7 +59,8 @@ private struct BottomBar<Actions: View>: View {
       buttons
     }
     .controlSize(.large)
-    .buttonSizing(isStacked ? .flexible : .automatic)
+    // A lone button on a phone takes the whole row, as the main action does beside others.
+    .buttonSizing(isStacked || (buttons.count == 1 && !isWide) ? .flexible : .automatic)
     .environment(\.mainActionFillsRow, !isWide)
     .environment(\.mainActionMinWidth, isWide ? 160 : nil)
     .frame(maxWidth: .infinity, alignment: isWide ? .trailing : .center)
