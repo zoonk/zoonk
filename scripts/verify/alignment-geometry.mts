@@ -23,10 +23,6 @@ export function tenths(value: number) {
   return Math.round(value * 10) / 10;
 }
 
-export function overlapsVertically(one: Box, other: Box) {
-  return Math.min(one.bottom, other.bottom) - Math.max(one.top, other.top) > 0;
-}
-
 export type Context = { capture: Capture; unit: string };
 
 export function finding(
@@ -71,6 +67,26 @@ export type Group = {
   holders: CaptureElement[];
 };
 
+const PARTS = new Set(["end", "label", "lead", "mark", "note", "value"]);
+
+function mirrorBounds([x, y, width, height]: Bounds): Bounds {
+  return [-(x + width), y, width, height];
+}
+
+/**
+ * A right-to-left group, mirrored so its start is on the left like every other: one set of rules
+ * reads both directions. Positions in its findings are mirrored too; distances are not.
+ */
+function mirrored(element: CaptureElement): CaptureElement {
+  return {
+    ...element,
+    bounds: mirrorBounds(element.bounds),
+    ...(Array.isArray(element.ink) ? { ink: mirrorBounds(element.ink) } : {}),
+    ...(element.firstLine ? { firstLine: mirrorBounds(element.firstLine) } : {}),
+    ...(typeof element.endEdge === "number" ? { endEdge: -element.endEdge } : {}),
+  };
+}
+
 export function groupsOf(capture: Capture): Group[] {
   const byGroup = Map.groupBy(
     capture.elements.filter((element) => element.group !== null),
@@ -79,15 +95,14 @@ export function groupsOf(capture: Capture): Group[] {
 
   return capture.elements
     .filter((element) => element.part === "group")
-    .map((group) => {
-      const inside = byGroup.get(group.id) ?? [];
+    .map((declared) => {
+      const flip = declared.direction === "rtl" ? mirrored : (element: CaptureElement) => element;
+      const inside = (byGroup.get(declared.id) ?? []).map((element) => flip(element));
 
       return {
-        group,
+        group: flip(declared),
         holders: inside.filter((element) => element.part === "holder"),
-        parts: inside.filter(
-          (element) => !["group", "holder", "row", "action"].includes(element.part),
-        ),
+        parts: inside.filter((element) => PARTS.has(element.part)),
         rows: inside
           .filter((element) => element.part === "row")
           .toSorted((one, other) => one.bounds[1] - other.bounds[1]),
@@ -95,10 +110,20 @@ export function groupsOf(capture: Capture): Group[] {
     });
 }
 
-export function groupName(group: CaptureElement) {
-  return `${group.piece} ${group.name ?? group.id}`;
+/** A row by its name, or its first label's words where a platform names rows by their parts. */
+export function rowName({ parts, rows }: Group, id: string | null): string {
+  const row = rows.find((candidate) => candidate.id === id);
+  const self = parts.find((element) => element.id === id);
+
+  const label =
+    parts.find((element) => element.row === id && element.part === "label") ??
+    parts.find((element) => element.row === id && element.text);
+
+  const text = self?.text ?? label?.text;
+  return row?.name ?? self?.name ?? (text ? `"${text}"` : (id ?? ""));
 }
 
-export function rowName(rows: CaptureElement[], id: string | null) {
-  return rows.find((row) => row.id === id)?.name ?? id ?? "";
+/** A group by its name, or its first row's, so one fault reads the same on every capture. */
+export function groupName(group: Group): string {
+  return `${group.group.piece} ${group.group.name ?? rowName(group, group.rows[0]?.id ?? null)}`;
 }

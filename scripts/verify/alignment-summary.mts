@@ -97,7 +97,8 @@ export function alignmentLines(findings: AlignmentFinding[]): string[] {
 
         const places = Map.groupBy(
           instances,
-          (item) => `${item.scenario ?? item.screen} · ${item.configuration}`,
+          (item) =>
+            `${item.screen}${item.scenario ? ` [${item.scenario}]` : ""} · ${item.configuration}`,
         );
 
         return [

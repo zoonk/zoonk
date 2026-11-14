@@ -91,6 +91,26 @@ export const PIECES: Piece[] = [
       rows: ":scope > [data-slot=plan-roadmap-line]",
     },
   },
+  {
+    name: "journey-path",
+    // No gap: a phase row holds its open chapters under it. No type: a word stands in a date's
+    // place on purpose ("Won", "Today", "Date to be confirmed").
+    relations: ["label-start", "mark-axis", "end-edge", "line"],
+    web: {
+      group: "[data-slot=journey-path-list], [data-slot=path-nested]",
+      parts: {
+        end: "svg.lucide-chevron-right, [data-slot=fold-chevron]",
+        label: "[data-slot=path-row-title]",
+        mark: "[data-slot=path-row-mark]",
+        note: "[data-slot=path-row-note]",
+        value: "[data-slot=path-row-value], [data-slot=phase-when], [data-slot=plan-date]",
+      },
+      rows: "[data-slot=path-row]",
+    },
+  },
+  // Android's wait screens name these; the web's wait pieces aren't marked yet.
+  { name: "wait-content", relations: ["gap"] },
+  { name: "generation-wait", relations: ["gap"] },
 ];
 
 /** Each piece's declared relations, by the name every platform's captures use. */

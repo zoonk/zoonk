@@ -13,7 +13,7 @@ type NotMeasured = "not measured";
 export type CaptureElement = {
   id: string;
   piece: string;
-  part: Part | "action" | "group" | "holder" | "row";
+  part: Part | "action" | "anchor" | "group" | "holder" | "row" | "unmeasured";
   group: string | null;
   row: string | null;
   bounds: Bounds;
@@ -32,7 +32,9 @@ export type CaptureElement = {
   text?: string;
   name?: string;
   /** A group's or a row's: the edge its last drawn parts reach. */
-  endEdge?: number;
+  endEdge?: number | NotMeasured;
+  /** A group's: the gap its piece lays out between rows. */
+  gap?: number | NotMeasured;
   /** A row's: the gap its flow parent declares, which parent, and its margins before and after. */
   gapBefore?: number;
   flow?: string;
@@ -40,8 +42,14 @@ export type CaptureElement = {
   /** An action's: its look, and the surface it is on ("page", or a dialog's or sheet's name). */
   variant?: string;
   surface?: string;
-  /** A state pair's anchor: the same id in both captures of one screen (slice 4). */
+  /** A state pair's anchor: the same id in both captures of one screen. */
   anchor?: string;
+  /** A group's: its layout runs right to left, so its start edge is the right one. */
+  direction?: "ltr" | "rtl";
+  /** A group's: "stack" when the platform grouped rows no piece frames; its findings are leads. */
+  source?: "piece" | "stack";
+  /** A row's: its value moved under its label (large text), as the row piece does on purpose. */
+  stacked?: boolean;
 };
 
 export type Configuration = {
@@ -64,6 +72,8 @@ export type Capture = {
   scale: number;
   /** The topmost dialog or sheet showing, or "page". */
   activeSurface: string;
+  /** A gallery of the pieces shown side by side, not a screen: one filled action isn't judged. */
+  specimen?: boolean;
   elements: CaptureElement[];
 };
 

@@ -124,6 +124,80 @@ describe("the declared relationships on the faults the owner caught", () => {
   });
 });
 
+describe("the Plan's path and Android's captures", () => {
+  it("prints the Trickster row's date 8.3 px above its chevron as a line miss, failing nothing yet", () => {
+    const findings = evaluateCapture(real("plan path, phone"));
+    const line = findings.find((finding) => finding.detail.includes("The Trickster"));
+
+    assert.deepEqual(failures(real("plan path, phone")), []);
+    assert.equal(line?.level, "not-measured");
+    assert.match(line?.detail ?? "", /the value 8\.25 above the row's center/u);
+  });
+
+  it("fails Android's note 0 dp under its wait where the piece lays out 24, from the group's gap", () => {
+    const [finding, ...rest] = failures(real("android lesson wait before 43c393b7c4, writing"));
+
+    assert.equal(rest.length, 0);
+    assert.equal(finding?.rule, "gap");
+    assert.equal(finding?.measured, -24);
+    assert.deepEqual(failures(real("android lesson wait after, writing")), []);
+  });
+
+  it("fails Android's two filled actions beside a failed lesson, and passes its fix", () => {
+    assert.equal(
+      failures(real("android lesson wait before 43c393b7c4, failed"))[0]?.rule,
+      "one-filled",
+    );
+
+    assert.deepEqual(failures(real("android lesson wait after, failed")), []);
+  });
+
+  it("passes Material's chevrons by their box and a chevron clipped under a bar by its slot", () => {
+    const ends = evaluateCapture(real("android today rows with chevrons, phone")).filter(
+      (finding) => finding.rule === "end-edge",
+    );
+
+    assert.deepEqual(ends, []);
+  });
+
+  it("judges a row whose value stacked under its label by what still applies", () => {
+    const findings = evaluateCapture(real("android plan rows stacked at 200%, phone"));
+    const line = findings.find((finding) => finding.detail.includes("Learn Python"));
+
+    assert.deepEqual(
+      findings.filter((finding) => finding.rule === "end-edge" || finding.rule === "label-start"),
+      [],
+    );
+
+    assert.match(line?.detail ?? "", /the mark 16\.73 below the label's first line/u);
+  });
+
+  it("reads a right-to-left group mirrored, so its start is its right edge", () => {
+    const rtl = fixtureCapture([
+      element({ direction: "rtl", endEdge: 16, group: null, id: "g", part: "group" }),
+      element({ bounds: [16, 0, 358, 44], id: "r0", part: "row" }),
+      element({ bounds: [16, 44, 358, 44], id: "r1", part: "row" }),
+      element({ firstLine: [200, 12, 150, 20], id: "l0", part: "label", row: "r0" }),
+      element({ firstLine: [250, 56, 100, 20], id: "l1", part: "label", row: "r1" }),
+    ]);
+
+    assert.deepEqual(evaluateCapture(rtl), []);
+  });
+
+  it("makes a stack-grouped row's fault a lead, not a failure", () => {
+    const stack = fixtureCapture([
+      element({ group: null, id: "g", part: "group", source: "stack" }),
+      element({ firstLine: [16, 12, 100, 20], id: "l0", part: "label", row: "r0" }),
+      element({ firstLine: [52, 56, 100, 20], id: "l1", part: "label", row: "r1" }),
+    ]);
+
+    assert.deepEqual(
+      evaluateCapture(stack).map((finding) => finding.level),
+      ["discovery"],
+    );
+  });
+});
+
 describe("relationships with no vote", () => {
   it("fails two neighbors farther apart than their flow's gap, with two rows alone", () => {
     const findings = evaluateCapture(
