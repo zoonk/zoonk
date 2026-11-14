@@ -652,6 +652,52 @@ extension LessonRunRefusal.Period {
   }
 }
 
+/// Main's `useWaitWords`: a challenge's wait names a challenge, since the learner tapped one.
+enum LessonWaitWords {
+  case lesson
+  case challenge
+
+  init(_ kind: GenerationWait.Kind) {
+    self = kind == .challenge ? .challenge : .lesson
+  }
+
+  var notReady: LocalizedStringResource {
+    switch self {
+    case .lesson: LocalizedStringResource("This lesson isn't ready yet", table: "Player")
+    case .challenge: LocalizedStringResource("This challenge isn't ready yet", table: "Player")
+    }
+  }
+
+  var gettingReady: LocalizedStringResource {
+    switch self {
+    case .lesson: LocalizedStringResource("Getting your lesson ready", table: "Player")
+    case .challenge: LocalizedStringResource("Getting your challenge ready", table: "Player")
+    }
+  }
+
+  var ready: LocalizedStringResource {
+    switch self {
+    case .lesson: LocalizedStringResource("Your lesson is ready", table: "Player")
+    case .challenge: LocalizedStringResource("Your challenge is ready", table: "Player")
+    }
+  }
+
+  var stopped: LocalizedStringResource {
+    switch self {
+    case .lesson: LocalizedStringResource("We couldn't get this lesson ready", table: "Player")
+    case .challenge:
+      LocalizedStringResource("We couldn't get this challenge ready", table: "Player")
+    }
+  }
+
+  var start: LocalizedStringResource {
+    switch self {
+    case .lesson: LocalizedStringResource("Start this lesson", table: "Player")
+    case .challenge: LocalizedStringResource("Start this challenge", table: "Player")
+    }
+  }
+}
+
 /// Main's `LessonWaiting`: the lesson's description, then how its writing stands, and once that
 /// takes a while something ready to do meanwhile. Only the learner asks for the lesson to be
 /// written: it runs AI.
@@ -660,6 +706,7 @@ struct LessonWaitingView: View {
   private static let lateAfter = Duration.seconds(15)
 
   let outline: LessonOutline
+  let kind: LessonWaitWords
   let writing: LessonPlayerStore.LessonWriting
   let progress: GenerationWait
   var alternative: Components.Schemas.ReadyAlternative?
@@ -671,30 +718,35 @@ struct LessonWaitingView: View {
 
   @State private var isLate = false
 
+  /// Main's `useGenerationStepLabel` under a title that already says the lesson is getting ready.
+  private func stripLabel(title: Text) -> Text {
+    if holding != nil {
+      return Text("Done", tableName: "Player")
+    }
+
+    guard writing == .writing, let step = progress.phases.first(where: { $0.state == .working })
+    else {
+      return title
+    }
+
+    return Text(step.label)
+  }
+
   var body: some View {
     Group {
       if let warmUpID {
-        let writingTitle =
-          progress.kind == .challenge
-          ? Text(
-            "Getting your challenge ready", tableName: "Player",
-            comment: "The challenge's status over the quiz while it's made")
-          : Text(Self.gettingReady)
-        let title = holding == nil ? writingTitle : Text(Self.ready)
+        let title = Text(holding == nil ? kind.gettingReady : kind.ready)
         let shown = holding == nil && writing == .writing ? progress : progress.finished
 
         WaitScreen(
           deck: WaitDeck(id: warmUpID), goalID: goalID, progressTitle: title,
           ready: holding.map { holding in
-            WaitReady(
-              label: Text(
-                "Start this lesson", tableName: "Player",
-                comment: "Opens a goal's first lesson, made while the learner played on its wait"),
-              action: holding.moveOn)
+            WaitReady(label: Text(kind.start), action: holding.moveOn)
           }
         ) {
           WaitStatusStrip(
-            label: title, isDone: holding != nil, share: { shown.shownShare(at: $0) })
+            label: stripLabel(title: title), isDone: holding != nil,
+            share: { shown.shownShare(at: $0) })
         } progress: {
           Section {
             page
@@ -765,21 +817,14 @@ struct LessonWaitingView: View {
   private var status: some View {
     switch (holding, writing) {
     case (nil, .notStarted):
-      LessonNoticeText(
-        title: Text(
-          "This lesson isn't ready yet", tableName: "Player",
-          comment: "Under a lesson's description, before the learner asks for it to be made"),
-        description: Text(Self.takesMinutes))
+      LessonNoticeText(title: Text(kind.notReady), description: Text(Self.takesMinutes))
     case (nil, .refused(let refusal)):
       LessonUnavailableView(refusal: refusal, isNotice: true, retry: write)
     case (nil, .setAside):
       LessonNoticeText(title: Text(Self.setAsideTitle), description: Text(Self.setAsideLine))
     case (nil, .failed):
-      Text(
-        "We couldn't get this lesson ready", tableName: "Player",
-        comment: "Making a lesson stopped; its retry is under the progress"
-      )
-      .typeStyle(.rowTitle)
+      Text(kind.stopped)
+        .typeStyle(.rowTitle)
 
       // A run that reported a phase stopped there; otherwise it never got going.
       GenerationTimeline(
@@ -789,9 +834,9 @@ struct LessonWaitingView: View {
     case (_?, _), (nil, .writing), (nil, .written):
       VStack(alignment: .leading, spacing: 24) {
         if holding == nil {
-          LessonNoticeText(title: Text(Self.gettingReady), description: Text(Self.takesMinutes))
+          LessonNoticeText(title: Text(kind.gettingReady), description: Text(Self.takesMinutes))
         } else {
-          Text(Self.ready)
+          Text(kind.ready)
             .typeStyle(.rowTitle)
         }
 
@@ -826,13 +871,6 @@ struct LessonWaitingView: View {
     default: nil
     }
   }
-
-  private static let gettingReady = LocalizedStringResource(
-    "Getting your lesson ready", table: "Player", comment: "While a lesson is made")
-
-  static let ready = LocalizedStringResource(
-    "Your lesson is ready", table: "Player",
-    comment: "A lesson made while the learner waited, before they start it")
 
   private static let takesMinutes = LocalizedStringResource(
     "It takes a few minutes, and keeps going if you leave.", table: "Player",
@@ -965,9 +1003,7 @@ struct LessonGuestGateView: View {
             isStarting = false
           }
         } label: {
-          Text(
-            "Start this lesson", tableName: "Player",
-            comment: "A visitor starts a public lesson as a guest")
+          Text(LessonWaitWords.lesson.start)
         }
         .buttonStyle(.mainAction)
 

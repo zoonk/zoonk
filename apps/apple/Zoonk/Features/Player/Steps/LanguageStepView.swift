@@ -286,10 +286,8 @@ private struct AlphabetView: View {
 
     HStack(alignment: .center, spacing: 16) {
       Text(content.symbol ?? "")
-        .typeStyle(.heroTitle)
+        .typeStyle(.letterReadout)
         .dynamicTypeSize(...DynamicTypeSize.accessibility5)
-        .scaleEffect(1.6, anchor: .leading)
-        .padding(.trailing, 24)
       AccessibilityStack(spacing: 8) {
         VStack(alignment: .leading, spacing: 4) {
           if let readingAid = content.readingAid {

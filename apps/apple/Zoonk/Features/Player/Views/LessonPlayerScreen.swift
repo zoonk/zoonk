@@ -221,12 +221,12 @@ private struct LessonPlayerContent: View {
     if let warmUp = store.warmUp, case .waiting(_, let writing) = store.screen {
       WaitHold(
         surface: .lessonWait, isReady: writing == .written,
-        announcement: LessonWaitingView.ready
+        announcement: LessonWaitWords(store.writingKind).ready
       ) { stage in
         switch stage {
         case .waiting(let holding):
           LessonWaitingView(
-            outline: warmUp.outline, writing: writing, progress: store.writingProgress,
+            outline: warmUp.outline, kind: LessonWaitWords(store.writingKind), writing: writing, progress: store.writingProgress,
             alternative: store.alternative, warmUpID: warmUp.deckID, goalID: store.goalID,
             holding: holding
           ) {
@@ -268,7 +268,7 @@ private struct LessonPlayerContent: View {
       .lonePage()
     case .waiting(let outline, let writing):
       LessonWaitingView(
-        outline: outline, writing: writing, progress: store.writingProgress,
+        outline: outline, kind: LessonWaitWords(store.writingKind), writing: writing, progress: store.writingProgress,
         alternative: store.alternative, goalID: store.goalID
       ) {
         Task { await store.writeLesson() }
