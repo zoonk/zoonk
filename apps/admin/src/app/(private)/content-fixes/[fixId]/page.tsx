@@ -236,8 +236,8 @@ function Outcome({ fix, viewer }: { fix: ContentFixDetail; viewer: ContentFixVie
       {fix.status === "approved" && (
         <p className="text-muted-foreground max-w-2xl text-sm text-pretty">
           {fix.deciderId === viewer.id
-            ? "Something stopped it partway. Finishing needs no passkey."
-            : `Something stopped it partway. Only ${fix.decider?.name ?? "whoever approved it"} can finish applying it.`}
+            ? "Applying stopped before it finished. Finishing needs no passkey."
+            : `Applying stopped before it finished. Only ${fix.decider?.name ?? "whoever approved it"} can finish it.`}
         </p>
       )}
     </AdminSection>
@@ -289,7 +289,7 @@ async function ContentFixContent({ params }: Pick<Props, "params">) {
             <ContentFixEffects fix={fix} />
           </AdminSection>
 
-          {fix.status === "proposed" ? (
+          {fix.status === "proposed" && !fix.voiceOwedAt ? (
             <p className="text-muted-foreground text-compact max-w-2xl text-pretty">
               Approving applies exactly the changes above and takes a passkey, so only you can apply
               a fix. Rejecting changes nothing.
