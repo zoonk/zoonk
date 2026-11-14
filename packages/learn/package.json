@@ -14,6 +14,7 @@
     "./answer-tone": "./src/_components/answer-tone.ts",
     "./big-quantity": "./src/_components/big-quantity.tsx",
     "./brain-power-reward": "./src/missions/brain-power-reward.tsx",
+    "./account-ask": "./src/_components/account-ask.tsx",
     "./appearance": "./src/appearance/appearance-screen.tsx",
     "./avatar-belt": "./src/shell/learn-avatar-belt.tsx",
     "./bar": "./src/shell/learn-bar.tsx",
