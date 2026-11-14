@@ -201,7 +201,7 @@ internal fun MockResult(
                         MockResultPart.Plan -> {
                             listOf(
                                 ResultStep(PLAN, part.beside) {
-                                    PlanStep(view.adapt, preparation, offers, offersViewModel::accept, offersViewModel::decline)
+                                    PlanStep(view.adapt, preparation, offers)
                                 },
                             )
                         }
@@ -217,7 +217,12 @@ internal fun MockResult(
             val position = shown.indexOf(current).coerceAtLeast(0)
             // Beside the main action on a wide layout and above it on a phone or a book's page, as main's `MockResultSkip`.
             val secondaryBeside = isWideLayout()
-            val secondary = stringResource(R.string.mock_result_not_now).takeUnless { placement || mistakes == 0 }
+            val secondary = stringResource(R.string.mock_result_continue).takeUnless { placement || mistakes == 0 }
+            // Main's `MockPlanAnswers`: while the plan step asks, its answers are the bar's, in place of the way on.
+            val asking =
+                view.adapt
+                    ?.let { adapt -> offers.open(adapt)?.let { offerCopy(it, adapt) to it } }
+                    ?.takeIf { current?.id == PLAN && position == shown.lastIndex }
             val heading = remember { FocusRequester() }
             var announced by rememberSaveable { mutableStateOf(current?.id) }
 
@@ -231,6 +236,18 @@ internal fun MockResult(
 
             val actions: @Composable () -> Unit = {
                 TaskActionBar {
+                    // On a phone the second action takes the line above the main one and the way back.
+                    if (position == shown.lastIndex && !secondaryBeside) {
+                        if (asking != null) {
+                            OutlinedButton(
+                                onClick = { offersViewModel.decline(asking.second) },
+                                modifier = Modifier.fillMaxWidth(),
+                                enabled = !offers.applying,
+                            ) { Text(asking.first.decline) }
+                        } else if (secondary != null) {
+                            OutlinedButton(onClick = onContinue, modifier = Modifier.fillMaxWidth()) { Text(secondary) }
+                        }
+                    }
                     StepPagerActions(
                         count = shown.size,
                         index = position,
@@ -239,11 +256,23 @@ internal fun MockResult(
                             reachedId = shown[to].id
                         },
                     ) { main ->
-                        if (secondaryBeside && secondary != null) OutlinedButton(onClick = onContinue) { Text(secondary) }
-                        MainAction(placement, mistakes, onMistakes = { navigator.open(AppRoute.Mistakes) }, onContinue, main)
-                    }
-                    if (position == shown.lastIndex && !secondaryBeside && secondary != null) {
-                        OutlinedButton(onClick = onContinue, modifier = Modifier.fillMaxWidth()) { Text(secondary) }
+                        if (asking != null) {
+                            val (copy, offer) = asking
+                            if (secondaryBeside) {
+                                OutlinedButton(
+                                    onClick = { offersViewModel.decline(offer) },
+                                    enabled = !offers.applying,
+                                ) { Text(copy.decline) }
+                            }
+                            Button(
+                                busy = offers.applying,
+                                onClick = { offersViewModel.accept(offer) },
+                                modifier = main,
+                            ) { Text(copy.accept) }
+                        } else {
+                            if (secondaryBeside && secondary != null) OutlinedButton(onClick = onContinue) { Text(secondary) }
+                            MainAction(placement, mistakes, onMistakes = { navigator.open(AppRoute.Mistakes) }, onContinue, main)
+                        }
                     }
                 }
             }
@@ -277,7 +306,15 @@ internal fun MockResult(
                                     if (offered.isNotEmpty()) {
                                         view.adapt?.let { adapt ->
                                             AsideSection(stringResource(R.string.mock_result_your_plan)) {
-                                                PlanChange(adapt, offers, true, offersViewModel::accept, offersViewModel::decline)
+                                                PlanChange(adapt, offers, true) { offer ->
+                                                    InlinePlanAnswers(
+                                                        adapt,
+                                                        offer,
+                                                        offers,
+                                                        offersViewModel::accept,
+                                                        offersViewModel::decline,
+                                                    )
+                                                }
                                             }
                                         }
                                     }

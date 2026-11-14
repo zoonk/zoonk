@@ -126,8 +126,6 @@ internal fun PlanStep(
     adapt: MockAdapt?,
     preparation: MockResultPreparation?,
     offers: PlanOffers,
-    onAccept: (Offer) -> Unit,
-    onDecline: (Offer) -> Unit,
 ) {
     val question = offers.open(adapt) ?: planOffers(adapt).firstOrNull()
 
@@ -144,7 +142,7 @@ internal fun PlanStep(
         }
     }
     preparation?.let { PreparationMeter(it) }
-    if (adapt != null && planOffers(adapt).isNotEmpty()) PlanChange(adapt, offers, showTitle = preparation != null, onAccept, onDecline)
+    if (adapt != null && planOffers(adapt).isNotEmpty()) PlanChange(adapt, offers, showTitle = preparation != null)
 }
 
 /** "14%", with where it came from under it: "Up from 12%". */
@@ -182,7 +180,7 @@ internal fun PreparationMeter(preparation: MockResultPreparation) {
     Meter(preparation.after.toFloat(), Modifier.widthIn(max = METER_WIDTH))
 }
 
-private class OfferCopy(
+internal class OfferCopy(
     val title: String,
     val line: String,
     val accept: String,
@@ -206,7 +204,7 @@ private fun offerTitle(
     }
 
 @Composable
-private fun offerCopy(
+internal fun offerCopy(
     offer: Offer,
     adapt: MockAdapt,
 ): OfferCopy {
@@ -255,8 +253,7 @@ internal fun PlanChange(
     adapt: MockAdapt,
     offers: PlanOffers,
     showTitle: Boolean,
-    onAccept: (Offer) -> Unit,
-    onDecline: (Offer) -> Unit,
+    answers: (@Composable (Offer) -> Unit)? = null,
 ) {
     val open = offers.open(adapt)
 
@@ -269,12 +266,25 @@ internal fun PlanChange(
                     if (showTitle) Text(copy.title, style = MaterialTheme.typography.bodyMedium)
                     Text(copy.line, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
                 }
-                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedButton(busy = offers.applying, onClick = { onAccept(offer) }, size = ButtonSize.Small) { Text(copy.accept) }
-                    TextButton(onClick = { onDecline(offer) }, enabled = !offers.applying, size = ButtonSize.Small) { Text(copy.decline) }
-                }
+                answers?.invoke(offer)
             }
         }
+    }
+}
+
+/** The open question's answers inside the page, where the aside asks it. */
+@Composable
+internal fun InlinePlanAnswers(
+    adapt: MockAdapt,
+    offer: Offer,
+    offers: PlanOffers,
+    onAccept: (Offer) -> Unit,
+    onDecline: (Offer) -> Unit,
+) {
+    val copy = offerCopy(offer, adapt)
+    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        OutlinedButton(busy = offers.applying, onClick = { onAccept(offer) }, size = ButtonSize.Small) { Text(copy.accept) }
+        TextButton(onClick = { onDecline(offer) }, enabled = !offers.applying, size = ButtonSize.Small) { Text(copy.decline) }
     }
 }
 
@@ -290,7 +300,10 @@ private fun OfferStatus(
             val applied = (answer as? OfferAnswer.Outcome)?.result?.status == MockPlanOfferResult.Status.APPLIED
             answerLine(offer, answer, adapt)?.let { it to applied }
         }
-    if (lines.isEmpty()) return
+    val declinedAll = planOffers(adapt).let { all -> all.isNotEmpty() && all.all { offers.answers[it] == OfferAnswer.Declined } }
+    // Declining writes nothing, so the step would still read as an open question.
+    val shown = if (declinedAll) listOf(stringResource(R.string.plan_stays_as_it_is) to false) else lines
+    if (shown.isEmpty()) return
     val glyph =
         with(LocalDensity.current) {
             MaterialTheme.typography.bodyMedium.lineHeight
@@ -303,7 +316,7 @@ private fun OfferStatus(
         },
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        lines.forEach { (line, applied) ->
+        shown.forEach { (line, applied) ->
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 if (applied) {
                     Icon(
