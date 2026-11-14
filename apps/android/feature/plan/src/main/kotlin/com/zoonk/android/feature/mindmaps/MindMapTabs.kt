@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
@@ -18,7 +17,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -26,8 +24,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -38,6 +34,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.ButtonIcon
+import com.zoonk.android.ui.components.HeldSlot
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
@@ -218,24 +215,18 @@ private fun NotMadeSummary(
             ?.takeIf { offer.startable == 0L }
             ?.limit(actions.state.tier)
             ?.takeUnless { limitLifted(it) }
-    // Once the stop's day comes, what replaces it keeps its height for this visit, so nothing below moves without a tap.
-    var held by rememberSaveable { mutableIntStateOf(0) }
-    Column(
-        Modifier
-            .padding(top = 16.dp)
-            .onSizeChanged { if (limit != null) held = maxOf(held, it.height) }
-            .heightIn(min = with(LocalDensity.current) { held.toDp() }),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        if (offer.startable > 1) {
-            OutlinedButton(
-                onClick = actions.page.createAll,
-                busy = actions.state.createAll == CreateAll.Pending,
-                leadingIcon = { ButtonIcon(R.drawable.ic_add) },
-            ) { Text(stringResource(R.string.mindmaps_create_all)) }
-        }
+    HeldSlot(gated = limit != null, Modifier.padding(top = 16.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            if (offer.startable > 1) {
+                OutlinedButton(
+                    onClick = actions.page.createAll,
+                    busy = actions.state.createAll == CreateAll.Pending,
+                    leadingIcon = { ButtonIcon(R.drawable.ic_add) },
+                ) { Text(stringResource(R.string.mindmaps_create_all)) }
+            }
 
-        Box(Modifier.semantics { liveRegion = LiveRegionMode.Polite }) { NotMadeLine(mindMaps, later, limit, actions) }
+            Box(Modifier.semantics { liveRegion = LiveRegionMode.Polite }) { NotMadeLine(mindMaps, later, limit, actions) }
+        }
     }
 }
 
