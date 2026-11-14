@@ -12,13 +12,22 @@ const WORD_LIMITS = {
   text: { max: 450, min: 90 },
 };
 
+/** Evidence quotes the stimulus word for word, so both get the same repairs. */
+function repairQuotable(text: string): string {
+  return wrapBareLatex({ layout: "blocks", text: replaceEmDashes(text) });
+}
+
 export function repairWrittenItemSet(set: WrittenItemSet): WrittenItemSet {
   const kind = set.visual ? "chart" : set.kind;
 
   return {
     ...set,
     kind,
-    text: wrapBareLatex({ layout: "blocks", text: replaceEmDashes(set.text) }),
+    questions: set.questions.map((question) => ({
+      ...question,
+      evidence: repairQuotable(question.evidence),
+    })),
+    text: repairQuotable(set.text),
     title: set.title === null ? null : replaceEmDashes(set.title),
   };
 }
