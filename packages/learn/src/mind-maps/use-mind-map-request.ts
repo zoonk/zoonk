@@ -12,12 +12,7 @@ import { useMindMapSaves } from "./use-mind-map-saves";
 const DRAWING_POLL_MS = 4000;
 const WRITING_POLL_MS = 15_000;
 
-export type MindMapShown = Exclude<MindMapStatus, "plusRequired"> | "refused" | "unreachable";
-
-/** No plan keeps a map for subscribers any more; installed native apps still decode the status. */
-export function shownStatus(status: MindMapStatus): MindMapShown {
-  return status === "plusRequired" ? "unavailable" : status;
-}
+export type MindMapShown = MindMapStatus | "refused" | "unreachable";
 
 export type MindMapRequest = ReturnType<typeof useMindMapRequest>;
 
@@ -146,6 +141,6 @@ export function useMindMapRequest({
     reread: () => void showRead(),
     retry: isStuck ? poll.restart : create,
     save,
-    shown: isStuck ? "unreachable" : (local?.shown ?? shownStatus(status)),
+    shown: isStuck ? "unreachable" : (local?.shown ?? status),
   };
 }

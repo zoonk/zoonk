@@ -134,11 +134,7 @@ export function TestOutPreparingClient({
       closeHref={page.closeHref}
       limit={writing?.status === "refused" ? writing.limit : null}
       onStart={start}
-      run={
-        (writing?.status === "failed" || writing?.status === "plusRequired") && !isPending
-          ? notStartedRun(start)
-          : null
-      }
+      run={writing?.status === "failed" && !isPending ? notStartedRun(start) : null}
       starting={isPending || writing?.status === "ready"}
     />
   );

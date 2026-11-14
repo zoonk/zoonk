@@ -39,7 +39,7 @@ describe(getAllowance, () => {
 
     expect(allowance).toMatchObject({
       activeGoals: { limit: 3, used: 1 },
-      examPrep: { includesMockExams: false, studyDays: null },
+      examPrep: { includesMockExams: false },
       generatedLessons: null,
       resets: { day: new Date("2026-09-16T00:00:00Z"), month: new Date("2026-10-01T00:00:00Z") },
       tier: "free",
@@ -101,10 +101,7 @@ describe(getAllowance, () => {
     mockSession(user.id);
     const allowance = await getAllowance();
 
-    expect(allowance).toMatchObject({
-      examPrep: { includesMockExams: true, studyDays: null },
-      tier: "plus",
-    });
+    expect(allowance).toMatchObject({ examPrep: { includesMockExams: true }, tier: "plus" });
 
     expect(allowance?.items.find((item) => item.kind === "lessonStart")).toMatchObject({
       dailyLimit: null,

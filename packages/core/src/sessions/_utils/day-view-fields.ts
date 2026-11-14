@@ -10,7 +10,6 @@ import { type DayBlockInput } from "./day-block-view";
 import { getDayLessons } from "./empty-day";
 import { type ExamPrepAccess } from "./exam-access";
 import { isExamTomorrow } from "./exam-tomorrow";
-import { type PlusLesson } from "./load-exam-access";
 import { type DayOutlines } from "./outlining-stand-ins";
 import { type SessionAnswer } from "./session-answers";
 import { type SessionWeek, type StudySessionView } from "./session-view";
@@ -24,7 +23,6 @@ export type DayViewFieldsInput = {
   lessonRoom?: boolean;
   missions: readonly Pick<Mission, "status">[];
   outlines?: DayOutlines;
-  plusLessons?: PlusLesson[];
   sessionBar: StudySessionView["sessionBar"];
   session: {
     blocks: readonly DayBlockInput[];
@@ -60,7 +58,6 @@ export function toDayViewFields({
   lessonRoom = false,
   missions,
   outlines = null,
-  plusLessons = [],
   session,
   sessionBar,
   timeZone = "UTC",
@@ -103,7 +100,6 @@ export function toDayViewFields({
     }),
     nextPosition: getNextPosition(session.blocks),
     pauseSuggested: shouldSuggestPause(answers.map((answer) => answer.isCorrect)),
-    plusLessons,
     sessionBar,
     week: { days: week.days, nextStudyDate: week.nextStudyDate },
   };

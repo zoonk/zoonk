@@ -77,12 +77,7 @@ const dailyTimesSchema = z
 
 export const planResponseSchema = z
   .object({
-    access: z.object({
-      freeUntil: isoDateSchema
-        .nullable()
-        .meta({ description: "Always null. Exam goals have no time-based expiry" }),
-      mocksRequirePlus: z.boolean(),
-    }),
+    access: z.object({ mocksRequirePlus: z.boolean() }),
     areas: z.array(planAreaSchema),
     bases: planBasesSchema
       .nullable()

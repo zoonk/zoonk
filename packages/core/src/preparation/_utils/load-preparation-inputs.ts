@@ -128,7 +128,7 @@ function toPreparationSkill({
   };
 }
 
-type GoalTest = { kind: PreparationTestKind; mocksOnly: boolean; plusRequired: boolean };
+type GoalTest = { kind: PreparationTestKind; mocksOnly: boolean };
 
 type TestGoal = Pick<Goal, "kind">;
 
@@ -142,7 +142,7 @@ async function loadGoalTest({
   userId: string;
 }): Promise<GoalTest> {
   if (goal?.kind !== "exam") {
-    return { kind: "weeklyChallenges", mocksOnly: false, plusRequired: false };
+    return { kind: "weeklyChallenges", mocksOnly: false };
   }
 
   const subscribed =
@@ -154,10 +154,10 @@ async function loadGoalTest({
   });
 
   if (access.includesMockExams) {
-    return { kind: "mockExams", mocksOnly: true, plusRequired: false };
+    return { kind: "mockExams", mocksOnly: true };
   }
 
-  return { kind: "fullReviews", mocksOnly: false, plusRequired: false };
+  return { kind: "fullReviews", mocksOnly: false };
 }
 
 function getTestEvents(kind: PreparationTestKind) {
@@ -319,6 +319,5 @@ export async function loadPreparationInputs({
     skills,
     studiesPastTarget: measuredGoal?.kind === "exam" && fullCourse,
     testKind: test.kind,
-    testPlusRequired: test.plusRequired,
   };
 }

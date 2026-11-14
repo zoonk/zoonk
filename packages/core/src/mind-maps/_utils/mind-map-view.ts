@@ -59,22 +59,16 @@ export function getMindMapStatus({
   lessonsToWrite,
   now,
   owed,
-  plusRequired,
   row,
 }: {
   canHaveMap: boolean;
   lessonsToWrite: number;
   now: Date;
   owed: boolean;
-  plusRequired: boolean;
   row: MindMapRow | null;
 }): MindMapStatus {
   if (!canHaveMap) {
     return "unavailable";
-  }
-
-  if (plusRequired) {
-    return "plusRequired";
   }
 
   if (row?.status === "completed" && toMindMapOutline(row.structure)) {

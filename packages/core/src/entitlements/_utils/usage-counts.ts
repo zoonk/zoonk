@@ -1,7 +1,12 @@
 import { type TransactionClient, type UsageKind } from "@zoonk/db";
-import { FREE_LESSON_LIMIT } from "../limits";
+import { type EntitlementTier } from "../contract";
+import { FREE_LESSON_LIMIT, FREE_LESSON_WINDOW_MS } from "../limits";
 import { countActiveGoals } from "./active-goals-left";
-import { type LessonStartUsage, loadLessonStartUsage } from "./lesson-start-usage";
+import {
+  type LessonStartUsage,
+  NO_LESSON_STARTS,
+  loadLessonStartUsage,
+} from "./lesson-start-usage";
 import { getUsagePeriodStarts } from "./usage-periods";
 
 export type UsageCounts = {
@@ -73,6 +78,7 @@ function getLatest(dates: readonly (Date | null)[]): Date | null {
 }
 
 export async function loadUsageTotals({
+  includeLessonStarts = true,
   client,
   now,
   userId,
@@ -80,6 +86,7 @@ export async function loadUsageTotals({
   client: TransactionClient;
   now: Date;
   userId: string;
+  includeLessonStarts?: boolean;
 }): Promise<UsageTotals> {
   const starts = getUsagePeriodStarts(now);
 
@@ -103,7 +110,7 @@ export async function loadUsageTotals({
       where: { createdAt: { gte: starts.day }, userId },
     }),
     countActiveGoals({ db: client, userId }),
-    loadLessonStartUsage({ client, now, userId }),
+    includeLessonStarts ? loadLessonStartUsage({ client, now, userId }) : NO_LESSON_STARTS,
   ]);
 
   const monthOf = new Map(thisMonth.map((group) => [group.kind, group]));
@@ -151,6 +158,7 @@ export function getUsageCounts(totals: UsageTotals, kind: UsageKind): UsageCount
 }
 
 export async function countUsage({
+  tier,
   client,
   kind,
   now,
@@ -160,8 +168,17 @@ export async function countUsage({
   kind: UsageKind;
   now: Date;
   userId: string;
+  tier?: EntitlementTier;
 }): Promise<UsageCounts> {
-  return getUsageCounts(await loadUsageTotals({ client, now, userId }), kind);
+  return getUsageCounts(
+    await loadUsageTotals({
+      client,
+      includeLessonStarts: kind === "lessonStart" && (!tier || tier === "free"),
+      now,
+      userId,
+    }),
+    kind,
+  );
 }
 
 /** The totals once one more use is recorded now. */
@@ -199,10 +216,43 @@ export function addUsage({
     lessonStarts:
       kind === "lessonStart"
         ? {
+            ...totals.lessonStarts,
             count: totals.lessonStarts.count + 1,
-            latest: [now, ...totals.lessonStarts.latest].slice(0, FREE_LESSON_LIMIT),
+            latest: [now, ...totals.lessonStarts.latest]
+              .toSorted((a, b) => b.getTime() - a.getTime())
+              .slice(0, FREE_LESSON_LIMIT),
           }
         : totals.lessonStarts,
     spentTodayMicros: totals.spentTodayMicros + costMicros,
+  };
+}
+
+export function promotePreparedUsage({
+  now,
+  preparedAt,
+  totals,
+}: {
+  now: Date;
+  preparedAt: Date;
+  totals: UsageTotals;
+}): UsageTotals {
+  const usage = totals.lessonStarts;
+  const inWindow = preparedAt.getTime() > now.getTime() - FREE_LESSON_WINDOW_MS;
+
+  const remove = inWindow
+    ? usage.latestPrepared.findIndex((at) => at.getTime() === preparedAt.getTime())
+    : -1;
+
+  return {
+    ...totals,
+    lessonStarts: {
+      ...usage,
+      count: usage.count + 1,
+      latest: [now, ...usage.latest]
+        .toSorted((a, b) => b.getTime() - a.getTime())
+        .slice(0, FREE_LESSON_LIMIT),
+      latestPrepared: usage.latestPrepared.filter((_at, index) => index !== remove),
+      prepared: Math.max(0, usage.prepared - Number(inWindow)),
+    },
   };
 }

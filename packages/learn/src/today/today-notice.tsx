@@ -53,8 +53,6 @@ function NoticeOfKind({ kind }: { kind: TodayNoticeKind | null }) {
       return <TodaySuggestedGoal />;
     case "uploadRequest":
       return notices.uploadRequest;
-    // The free week it announced is gone; core keeps the kind for clients that still read it.
-    case "examAccess":
     case null:
       return null;
     default:

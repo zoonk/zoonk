@@ -9,7 +9,6 @@ import { type SessionMinutes } from "../session-minutes";
 import { toDayBlockView } from "./day-block-view";
 import { type DayViewFieldsInput, toDayViewFields } from "./day-view-fields";
 import { type ExamPrepAccess } from "./exam-access";
-import { type PlusLesson } from "./load-exam-access";
 import { type StudySessionRow } from "./study-session-access";
 
 export type StudyBlockView = z.infer<typeof studyBlockSchema>;
@@ -64,7 +63,6 @@ export type StudySessionView = {
   nextBlockId: string | null;
   nextPosition: number | null;
   pauseSuggested: boolean;
-  plusLessons: PlusLesson[];
   sessionBar: { completed: number; total: number };
   /** Where the day stands, which decides what Today offers. */
   state: DayState;

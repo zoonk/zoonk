@@ -9,11 +9,6 @@ const chapterLessonSchema = z
   .object({
     lessonId: uuidSchema(),
     minutes: z.int().min(0),
-    plusRequired: z
-      .boolean()
-      .meta({
-        description: "Always false. New lessons use the shared rolling 30-day lesson allowance",
-      }),
     skillIds: z
       .array(uuidSchema())
       .meta({ description: "Skills it teaches, so tapping a skill on the map lists its lessons" }),
@@ -80,9 +75,6 @@ export const chapterViewSchema = z
           description:
             "True while the chapter's test is available: the chapter has lessons left, and the test wasn't failed today without a lesson studied in it since. A failed one becomes available again on the next learner-local day",
         }),
-      plusRequired: z
-        .boolean()
-        .meta({ description: "Always false. Chapter test-out does not require a subscription" }),
     }),
   })
   .meta({ id: "GoalChapter" });

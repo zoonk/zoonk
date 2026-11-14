@@ -14,13 +14,23 @@ export function toCalendarPeriod(period: UsagePeriod): CalendarPeriod {
   return period === "rolling30Days" ? "month" : period;
 }
 
-type AllowanceResource = UsageKind | "activeGoals" | "aiSpend" | "callSeconds" | "generatedLessons";
+type AllowanceResource =
+  | UsageKind
+  | "activeGoals"
+  | "aiSpend"
+  | "callSeconds"
+  | "chapterLessons"
+  | "lessonPreparation"
+  | "generatedLessons";
 
 export type AllowanceLimit = {
   limit: number;
   resource: AllowanceResource;
   tier: EntitlementTier;
-} & ({ availableAt: Date; period: "rolling30Days" } | { period: CalendarPeriod });
+} & (
+  | { availableAt: Date; period: "rolling30Days" }
+  | { availableAt?: null; period: CalendarPeriod }
+);
 
 /** slowDown retries after retryAfterSeconds; limitReached waits for a cap reset. signUpRequired moves guest work into an account. */
 export type UsageDecision =
@@ -79,8 +89,7 @@ export type Allowance = {
     usedSeconds: number;
     usedSecondsThisMonth: number;
   };
-  /** studyDays is always null; exam plans have no time-based expiry. */
-  examPrep: { includesMockExams: boolean; studyDays: number | null };
+  examPrep: { includesMockExams: boolean };
   /** A guest's newly generated lessons; null for accounts. */
   generatedLessons: { limit: number; used: number } | null;
   items: AllowanceItem[];
