@@ -357,9 +357,15 @@ private struct SpeakingPaperView: View {
     case .done(.done(let id)):
       router.open(.conversation(conversationId: id))
     case .done(.refused(let refusal)):
-      if case .limit(let limit) = CallReservation(refusal: refusal) {
+      switch CallReservation(refusal: refusal) {
+      case .limit(let limit):
         startFailure = .limit(limit)
-      } else {
+      case .plusRequired:
+        gatedTask = task
+        // The paper read as open, so its access is out of date: read again, and the gate shows
+        // once it's locked.
+        await paper.refresh()
+      default:
         startFailure = .failed
       }
     case .failed:
