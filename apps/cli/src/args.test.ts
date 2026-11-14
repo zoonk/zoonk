@@ -198,7 +198,8 @@ describe(parseInvocation, () => {
 
   it.each([
     [["staff", "get", "Goal"], "pnpm zoonk staff get <model> <id> [--fields ...]"],
-    [["staff", "fixes", "revert"], 'pnpm zoonk staff fixes revert <id> --reason "…"'],
+    [["staff", "fixes", "revert"], 'pnpm zoonk staff fixes revert <fixId> --reason "…"'],
+    [["staff", "fixes", "withdraw"], "pnpm zoonk staff fixes withdraw <fixId>"],
     [["whoami", "now"], "pnpm zoonk whoami"],
     [["staff", "list", "Goal", "--unknown"], "Unknown option '--unknown'.\nRun"],
   ])("says how %j should be written", (argv, message) => {

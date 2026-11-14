@@ -107,7 +107,9 @@ function fixTarget({
   const [fixId, ...extra] = args;
 
   if (extra.length > 0 || (fixId === undefined) === (batch === undefined)) {
-    throw usageError(`"staff fixes ${command}" takes one fix id, or --batch <batchId>.`);
+    throw usageError(
+      `"staff fixes ${command}" takes one fix id, or --batch <batchId>: ${commandUsage(`staff fixes ${command}`)}`,
+    );
   }
 
   return fixId === undefined ? { batchId: batch } : { fixId };
