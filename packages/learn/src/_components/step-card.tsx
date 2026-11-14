@@ -73,19 +73,6 @@ export function StepTitleNumber({ className, ...props }: React.ComponentProps<"s
   );
 }
 
-export function StepTitleLabel({ children, className, ...props }: React.ComponentProps<"span">) {
-  return (
-    <span
-      className={cn("text-muted-foreground text-sm font-medium tracking-normal", className)}
-      data-slot="step-title-label"
-      {...props}
-    >
-      {" "}
-      {children}{" "}
-    </span>
-  );
-}
-
 export function StepDetail({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
