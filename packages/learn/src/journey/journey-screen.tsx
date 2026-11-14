@@ -145,7 +145,7 @@ function JourneyBody({
             <PlanProperties className={IN_ASIDE_CLASS} examHref={links.exam} onOpen={editor.open} />
           </>
         }
-        asideClassName="sm:max-[72rem]:grid sm:max-[72rem]:grid-cols-2 sm:max-[72rem]:items-start sm:max-[72rem]:gap-x-10"
+        asideClassName="sm:max-[72rem]:grid sm:max-[72rem]:grid-cols-[repeat(auto-fit,minmax(16rem,1fr))] sm:max-[72rem]:items-start sm:max-[72rem]:gap-x-10"
         asideLabel={t("Your plan at a glance")}
         bottomBar={
           goalStatus && (
