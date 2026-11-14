@@ -4,7 +4,7 @@ description: Use when designing, reviewing, or implementing any Apple-platform U
 license: MIT
 metadata:
   author: zoonk
-  version: "3.1.0"
+  version: "3.1.1"
 ---
 
 # Apple Human Interface Guidelines
@@ -39,12 +39,12 @@ From `main` take the product and its look: copy, flows, information hierarchy, s
 
 Zoonk's [roles](../zoonk-design/SKILL.md#find-the-piece-before-you-build-one) each have one piece and one way on every screen. Here they are Apple's pieces:
 
-- **A page's top and the way back:** the system's. A pushed page keeps the system back button with the previous page's title (never a hidden back button, a hidden back title or a chevron a screen draws), and leads with `PageHeader`, with no eyebrow and no padding of the screen's own above it. A task keeps ✕ (`TaskToolbar`).
-- **The main action:** one `.mainAction` button in a `.safeAreaBar(edge: .bottom)`, on every screen that has one, on iPhone and iPad alike; never under the content on one screen and in the bar on the next. A screen with no main action has no bar.
-- **What opens over a page:** a `.sheet`, which the system brings up from the bottom on iPhone and centers on iPad; `.alert` or `confirmationDialog` only to confirm. Never a centered card a screen draws.
+- **A page's top and the way back:** the system's. A pushed page keeps the system back button with the previous page's title (never a hidden back button, a hidden back title or a chevron a screen draws), and leads with `PageHeader`, with nothing over its title and no padding of the screen's own above it. A task keeps ✕ (`TaskToolbar`).
+- **The main action:** one `.mainAction` button in the bottom bar (`.bottomBar { }`, a `safeAreaBar`), on every screen that has one, on iPhone and iPad alike; never under the content on one screen and in the bar on the next, and never in a toolbar. A screen with no main action has no bar: a setting that is one switch or pick saves as it changes (`QueuedSaves`), and only a form the learner types into has "Save".
+- **What opens over a page:** a `.sheet`, which the system brings up from the bottom on iPhone and centers on iPad; A question that needs an answer (delete, hand in, leave with a loss) is a `.confirmationDialog`, which rises from the bottom on iPhone as main's does; an `.alert` says something went wrong or takes one short field. Never a centered card a screen draws.
 - **A button:** its title and at most one symbol, and no arrow on a main action. While it works, the progress view takes the symbol's place and the button keeps its width.
-- **The small line over a title:** one chip (`.chip()`), written as a sentence, never the mono uppercase `.eyebrow`.
-- **Paying:** the action reads "Subscribe". A paid feature's row or card looks like any other (no "Plus" chip, no notice in a list), and the subscription gate shows once, when the learner starts the feature.
+- **The small line over a title:** one chip (`Chip`, with `tone: .success` and its check for something done), written as a sentence, never mono or uppercase text.
+- **Paying:** the action reads "Subscribe". A paid feature's row or card looks like any other (no "Plus" chip, no notice in a list), and the subscription gate (`SubscribeGate`: what stopped, at most one line and `SubscribeButton`) shows once, in the feature's place, when the learner starts it. A cap reached is a `LimitNotice`, with the same words as main's.
 - **Words:** main's. "Your buddy", a buddy's name or a feature's name only after the screen that introduces it; before that, "we". A step with Skip has no "none" option.
 
 Compare a role across the app the way [the role read](../zoonk-design/references/craft.md#the-role-read) does on the web: simulator screenshots of every screen that draws it, side by side.
@@ -54,7 +54,7 @@ Compare a role across the app the way [the role read](../zoonk-design/references
 - Standard bars, tab bars, sidebars, toolbars, sheets, popovers, menus and controls adopt Liquid Glass automatically. Remove custom backgrounds, tints and shadows from them; they fight the material and the scroll edge effect.
 - Liquid Glass is the functional layer that floats over content. Never use it in the content layer (cards, rows, backgrounds); content stays opaque on the design system's surfaces there (the page, `.panel()`).
 - Use glass on custom controls sparingly: `.buttonStyle(.glass)` / `.glassProminent` for buttons, `glassEffect(_:in:)` for the rare custom control, grouped in a `GlassEffectContainer`. Use `.regular` glass; `.clear` only over rich media.
-- Toolbars: group related items (`ToolbarItemGroup`), separate groups with `ToolbarSpacer`, one `.prominent` primary action on the trailing side, and `sharedBackgroundVisibility(.hidden)` for an item that shouldn't sit in the shared glass (such as an avatar). Give every item a `Label` with a title and a symbol so the system can choose.
+- Toolbars: group related items (`ToolbarItemGroup`), separate groups with `ToolbarSpacer`, at most one `.prominent` action on the trailing side (a toolbar's own, such as a sheet's Done; a screen's main action is the bottom bar's), and `sharedBackgroundVisibility(.hidden)` for an item that shouldn't sit in the shared glass (such as an avatar). Give every item a `Label` with a title and a symbol so the system can choose.
 - Prefer concentric shapes (`ConcentricRectangle`, `containerShape`) for rounded elements inside rounded containers.
 - Let the system's scroll edge effect separate bars from content; use `scrollEdgeEffectStyle(_:for:)` only for custom bars.
 - Don't set `UIDesignRequiresCompatibility`; the app is built for the current design.
