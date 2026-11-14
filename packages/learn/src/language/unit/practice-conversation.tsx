@@ -1,7 +1,7 @@
 "use client";
 
 import { type LanguageUnitView } from "@zoonk/core/view-models/language/contract";
-import { Button, FORWARD_ICON } from "@zoonk/ui/components/button";
+import { Button, FORWARD_ICON, buttonVariants } from "@zoonk/ui/components/button";
 import {
   Drawer,
   DrawerContent,
@@ -22,9 +22,11 @@ import {
   ListRowTitle,
 } from "../../_components/list-group";
 import { SheetHeader } from "../../_components/sheet-header";
-import { SubscribeGate } from "../../_components/subscribe-gate";
+import { StatusRegion } from "../../_components/status-region";
 import { useFormatDuration } from "../../_utils/time-format";
 import { WritingWait } from "../../generation/writing-wait";
+import { useLearnRoutes } from "../../learn-context";
+import { LearnLink } from "../../learn-link";
 import { CallLimitReason } from "../conversation/call-limit-message";
 import { CallReason } from "../conversation/conversation-parts";
 import { type CallStartOutcome, useCallStart } from "../conversation/use-call-start";
@@ -93,6 +95,7 @@ function CallSetup({
   onStart: (minutes: number) => Promise<CallStartOutcome>;
 }) {
   const t = useExtracted();
+  const routes = useLearnRoutes();
   const [minutes, setMinutes] = useState(conversation.defaultMinutes);
   const call = useCallStart({ onStart: () => onStart(minutes) });
   const limit = useLiveLimit(call.limit ?? conversation.limit);
@@ -118,6 +121,7 @@ function CallSetup({
   }
 
   const isLocked = conversation.plusMinutes.includes(minutes);
+  const lockedLine = t("Longer calls need a subscription");
 
   return (
     <div className="flex flex-col gap-5">
@@ -128,20 +132,32 @@ function CallSetup({
         onChange={setMinutes}
         selected={minutes}
       />
-      {isLocked ? (
-        <SubscribeGate title={t("Longer calls need a subscription")} />
-      ) : (
-        // It opens the call's intro, whose button is the one that calls.
-        <Button
-          busy={call.isStarting}
-          className="w-full"
-          onClick={call.start}
-          size="lg"
-          {...FORWARD_ICON}
-        >
-          {t("Continue")}
-        </Button>
-      )}
+      <div className="flex flex-col gap-2">
+        {/* The line's space is kept for every length, so tapping one moves nothing. */}
+        <div className="grid text-sm font-medium text-pretty">
+          <p aria-hidden="true" className="invisible col-start-1 row-start-1">
+            {lockedLine}
+          </p>
+          <StatusRegion className="col-start-1 row-start-1">{isLocked && lockedLine}</StatusRegion>
+        </div>
+
+        {isLocked ? (
+          <LearnLink className={cn(buttonVariants({ size: "lg" }), "w-full")} href={routes.upgrade}>
+            {t("Subscribe")}
+          </LearnLink>
+        ) : (
+          // It opens the call's intro, whose button is the one that calls.
+          <Button
+            busy={call.isStarting}
+            className="w-full"
+            onClick={call.start}
+            size="lg"
+            {...FORWARD_ICON}
+          >
+            {t("Continue")}
+          </Button>
+        )}
+      </div>
       {call.failed && (
         <p className="text-destructive-text text-sm" role="alert">
           {t("The call didn't start. Try again in a moment.")}
