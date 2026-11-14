@@ -246,10 +246,13 @@ fun SpeakingPaperSection(
     val model = viewModel(key = "speaking-start:$goalId") { CallStartModel(start, GenerationKind.ExamSpeaking) }
     val paused = paper.access == SpeakingPaper.Access.CALLS_PAUSED
     var started by rememberSaveable { mutableStateOf<String?>(null) }
+    // Tasks refused before the latest start: each keeps its notice while the limit holds.
+    var refusedBefore by rememberSaveable { mutableStateOf(emptyList<String>()) }
     val writing by model.writing.generationId.collectAsStateWithLifecycle()
     val busy = model.state == CallStartModel.State.Starting || writing != null
     val openCall = { id: UUID -> open(AppRoute.Conversation(id.toString(), from = from)) }
     val startTask = { key: String ->
+        if (model.limit != null) refusedBefore = (refusedBefore + listOfNotNull(started)).distinct()
         started = key
         model.start(CallRequest.ExamSpeaking(goalId, key), onRefused)
     }
@@ -276,9 +279,17 @@ fun SpeakingPaperSection(
                 onStart = { startTask(task.key) },
                 onSubscribe = { open(AppRoute.Subscription) },
                 onLastResult = openCall,
+                note =
+                    if (started == task.key || task.key in refusedBefore) {
+                        { StartNote(model, started == task.key, actions) }
+                    } else {
+                        null
+                    },
             )
         }
-        StartState(model, writing != null, actions)
+        if (writing != null) {
+            WritingWait(model.writing, hint = stringResource(R.string.speaking_opens_when_ready), modifier = Modifier.padding(top = 16.dp))
+        }
         val official = stringResource(R.string.speaking_official_format)
         Text(
             buildAnnotatedString {
@@ -314,18 +325,15 @@ internal fun CallsPaused(modifier: Modifier = Modifier) {
     }
 }
 
+/** Why a task's Start didn't open, under it: the limit that refused it, or, for the [latest] start, that it failed. */
 @Composable
-private fun StartState(
+private fun StartNote(
     model: CallStartModel,
-    writing: Boolean,
+    latest: Boolean,
     actions: SpeakingActions,
 ) {
     val limit = model.limit
     when {
-        writing -> {
-            WritingWait(model.writing, hint = stringResource(R.string.speaking_opens_when_ready), modifier = Modifier.padding(top = 16.dp))
-        }
-
         model.state == CallStartModel.State.Failed && limit != null -> {
             CallLimitMessage(
                 limit,
@@ -334,10 +342,10 @@ private fun StartState(
             )
         }
 
-        model.state == CallStartModel.State.Failed -> {
+        model.state == CallStartModel.State.Failed && latest -> {
             Text(
                 stringResource(R.string.speaking_start_failed),
-                Modifier.padding(top = 12.dp).semantics { liveRegion = LiveRegionMode.Polite },
+                Modifier.semantics { liveRegion = LiveRegionMode.Polite },
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodyMedium,
             )
@@ -359,6 +367,7 @@ private fun TaskRow(
     onStart: () -> Unit,
     onSubscribe: () -> Unit,
     onLastResult: (UUID) -> Unit,
+    note: (@Composable () -> Unit)?,
 ) {
     val locale = currentLocale()
     var open by rememberSaveable(task.key) { mutableStateOf(openAtFirst) }
@@ -450,6 +459,7 @@ private fun TaskRow(
                     }
                     lastResult?.invoke()
                 }
+                note?.invoke()
             }
         }
     }
