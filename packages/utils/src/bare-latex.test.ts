@@ -79,12 +79,44 @@ describe(findBareLatex, () => {
     expect(wrap(text)).toBe(text);
   });
 
+  it("finds a one-letter subscript written against a coefficient, a difference or a short product", () => {
+    const text =
+      "Then kC_A², V = QX/[kC_A0(1 − X)], pK_a, kT_e, αC_A, ΔH_f, ΔG_rxn, Δx_1, δq_rev, ΔΔG_bind, ΔpK_a, RT_m and nRT_m.";
+
+    expect(find(text)).toStrictEqual([
+      problem("kC_A²"),
+      problem("QX/[kC_A0(1"),
+      problem("pK_a"),
+      problem("kT_e"),
+      problem("αC_A"),
+      problem("ΔH_f"),
+      problem("ΔG_rxn"),
+      problem("Δx_1"),
+      problem("δq_rev"),
+      problem("ΔΔG_bind"),
+      problem("ΔpK_a"),
+      problem("RT_m"),
+      problem("nRT_m"),
+    ]);
+
+    expect(wrap(text)).toBe(text);
+  });
+
   it("leaves italics, names, code and math that hold an underscore", () => {
     const texts = [
       "Read _carefully_ and _a_ word, then _the whole phrase_.",
       "Store it in user_id or max_value, and call `x_1 = load()`.",
       String.raw`The rate is $k = A e^{-E_a/RT}$ and $C_{A0}$ is given.`,
       "Set user_id=max_value+1 and keep CH_4/UTF_8 in db_1.",
+      "Call __init__ in snake_case, then read API_key, HTTP_proxy, PATH_info and SEEK_SET.",
+      "Rename myVar_1, parseJSON_data, iOS_version and macOS_14, and call `kC_A = 1`.",
+      "Join on customer_id, then sort_values('updated_at') and drop_duplicates by package_id.",
+      "Read weight_lb, contact_name, returned_on, due_on and daily_kwh with pd.to_numeric.",
+      "Merge with left_index=True, call loss_fn(predictions, y) and optimizer.zero_grad().",
+      "Set item_count = gene_reads // total_reads * 1_000_000 and call contar_ativos(status).",
+      "Label reads >sample_A, sample_B and sample_1, matched to NM_000546.6.",
+      "Mark it not_applicable or recorded_zero.",
+      "Open LaTeX_source.tex, build a NetworkX_graph and call getX_value.",
     ];
 
     expect(texts.flatMap((text) => find(text))).toStrictEqual([]);
