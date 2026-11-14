@@ -1,5 +1,6 @@
 "use client";
 
+import { useStillMounted } from "@zoonk/ui/hooks/still-here";
 import { safeAsync } from "@zoonk/utils/error";
 import { useState, useTransition } from "react";
 import { useChangeSaveFailed } from "../_components/save-error";
@@ -20,6 +21,7 @@ export function useToolChoice() {
   const [failed, setFailed] = useState(false);
   const saveFailed = useChangeSaveFailed();
   const [pending, setPending] = useState<PendingChoice | null>(null);
+  const isMounted = useStillMounted();
 
   const send = ({
     afterWrite,
@@ -47,7 +49,7 @@ export function useToolChoice() {
         saveFailed();
       }
 
-      if (data === true) {
+      if (data === true && isMounted()) {
         onDone?.();
       }
     });

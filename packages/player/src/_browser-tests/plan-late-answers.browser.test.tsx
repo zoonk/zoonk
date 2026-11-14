@@ -1,7 +1,9 @@
 import { type PlanChangePreview } from "@zoonk/core/plans/preview-contract";
-import { type PlanView } from "@zoonk/core/plans/view-contract";
+import { type PlanBasesView, type PlanView } from "@zoonk/core/plans/view-contract";
+import { useState } from "react";
 import { describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
+import { PlanBasesSheet } from "../../../learn/src/plan/plan-bases-sheet";
 import { type PlanActions, PlanScreenProvider } from "../../../learn/src/plan/plan-context";
 import {
   PlanSuggestionProvider,
@@ -20,11 +22,28 @@ const FIT_EFFECT = {
   lessonsRemoved: 0,
 } satisfies PlanChangePreview["effect"];
 
-/** An offer from an earlier day's plan write, so "Add to my plan" checks today's numbers first. */
+const BASES: PlanBasesView = {
+  daysLeft: null,
+  items: [
+    {
+      area: "Algebra",
+      choice: "quick",
+      choices: ["deep", "essential", "quick", "skip"],
+      minutes: { deep: 120, essential: 40, quick: 10 },
+      name: "Fractions",
+      neededFor: ["Equations"],
+      skillId: "fractions",
+      studied: false,
+    },
+  ],
+  knownCount: 0,
+};
+
+/** Its fit offer is from an earlier day's plan write, so "Add to my plan" checks today's numbers first. */
 const PLAN: PlanView = {
   access: { mocksRequirePlus: false },
   areas: [],
-  bases: null,
+  bases: BASES,
   changes: [],
   course: null,
   currentPhase: null,
@@ -112,11 +131,12 @@ const TODAY_PREVIEW: PlanChangePreview = {
   unchanged: false,
 };
 
-/** The check for today's numbers waits until the test releases it. */
-function renderHeldOffer() {
-  const held = Promise.withResolvers<PlanChangePreview | null>();
-  const change = vi.fn<PlanActions["change"]>(async () => ({ change: null, status: "applied" }));
-  const preview = vi.fn<PlanActions["preview"]>(() => held.promise);
+/** The Plan's answers wait until the test releases them. */
+function renderPlan(children: React.ReactNode) {
+  const heldPreview = Promise.withResolvers<PlanChangePreview | null>();
+  const heldChange = Promise.withResolvers<Awaited<ReturnType<PlanActions["change"]>>>();
+  const change = vi.fn<PlanActions["change"]>(() => heldChange.promise);
+  const preview = vi.fn<PlanActions["preview"]>(() => heldPreview.promise);
 
   const actions: PlanActions = {
     adviseOnBases: async () => null,
@@ -137,19 +157,47 @@ function renderHeldOffer() {
         shareHref: "/plan",
       }}
     >
-      <PlanSuggestionProvider host={HOST}>
-        <PlanSuggestionSlot />
-      </PlanSuggestionProvider>
+      {children}
     </PlanScreenProvider>,
   );
 
-  return { change, preview, release: () => held.resolve(TODAY_PREVIEW), screen };
+  return {
+    change,
+    preview,
+    releaseChange: () => heldChange.resolve({ change: null, status: "applied" }),
+    releasePreview: () => heldPreview.resolve(TODAY_PREVIEW),
+    screen,
+  };
+}
+
+function renderHeldOffer() {
+  const held = renderPlan(
+    <PlanSuggestionProvider host={HOST}>
+      <PlanSuggestionSlot />
+    </PlanSuggestionProvider>,
+  );
+
+  return { ...held, release: held.releasePreview };
 }
 
 async function addFromSheet(held: ReturnType<typeof renderHeldOffer>) {
   await page.getByRole("button", { name: "View" }).click();
   await page.getByRole("button", { name: "Add to my plan" }).click();
   await expect.poll(() => held.preview).toHaveBeenCalledOnce();
+}
+
+function BasesSheetHost() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <button onClick={() => setOpen(true)} type="button">
+        Open prerequisites
+      </button>
+      <output>{open ? "Sheet open" : "Sheet closed"}</output>
+      <PlanBasesSheet bases={BASES} onOpenChange={setOpen} open={open} />
+    </>
+  );
 }
 
 async function settle() {
@@ -167,6 +215,7 @@ describe("the Plan's offer to fit more lessons", () => {
       held.release();
 
       await expect.poll(() => held.change).toHaveBeenCalledWith([{ kind: "fitLessons" }]);
+      held.releaseChange();
       held.screen.unmount();
     });
   });
@@ -195,6 +244,29 @@ describe("the Plan's offer to fit more lessons", () => {
       await settle();
 
       expect(held.change).not.toHaveBeenCalled();
+    });
+  });
+});
+
+describe("the Plan's prerequisites sheet", () => {
+  it("stays open when a save the learner closed answers after they open it again", async () => {
+    await atViewport(PHONE, async () => {
+      const held = renderPlan(<BasesSheetHost />);
+      held.releasePreview();
+
+      await page.getByRole("button", { name: "Open prerequisites" }).click();
+      await page.getByText("Every lesson").click();
+      await page.getByRole("button", { name: "Save" }).click();
+      await expect.poll(() => held.change).toHaveBeenCalledOnce();
+
+      await page.getByRole("button", { name: "Close" }).click();
+      await page.getByRole("button", { name: "Open prerequisites" }).click();
+      await expect.element(page.getByText("Sheet open")).toBeInTheDocument();
+      held.releaseChange();
+      await settle();
+
+      expect(page.getByText("Sheet closed").query()).toBeNull();
+      held.screen.unmount();
     });
   });
 });
