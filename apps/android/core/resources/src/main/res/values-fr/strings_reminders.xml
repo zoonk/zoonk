@@ -2,7 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "reminders_cancel": "02b00eb5e82389ec7a6657d4b162d3287fbdeb9a28a2a81da21ab8f412f7c1f0",
-  "reminders_channel_description": "1ae556f314bf4ec74161e82099a2b12246eccaa67b440fd69c1d4c3d3e40b8c8",
+  "reminders_channel_description": "7490cb2487e14a37a42acbcdcc964ff4385ea994e5d90376fda17d849ad07ffd",
   "reminders_channel_name": "c4410f048a84c755fefe3bed0b0e2623a2034ae3ae5896545c511f485a52897a",
   "reminders_email": "c3e1c114c7878e459678cc049d3841be3aa1d63808ed2e568aa456176963ffe4",
   "reminders_email_instead": "ee9f72f163af8d8163222ecada561e1355fd2243410bb6cc4f7b81aadef07fc9",
@@ -15,7 +15,7 @@
   "reminders_offer_title": "0588b9bb90c823b687d5a604f6805ee2f4b105c3020f1f3cd7d8a085a85ea5d3",
   "reminders_on": "ca3befa2c19517741d3d869dc86a0602af1617afb5be21eddfac34584c31abc9",
   "reminders_open_settings": "6c61a4d9327b481aba02dd9fc98652bae7f2be2d70d0f3c40046620e59f4dea1",
-  "reminders_permission_body": "608abced1c550596ec07a5c7580ff6d8c534d34d672d31bae75dc3cce2dc383d",
+  "reminders_permission_body": "83e618e940fa2f1358d877db94879c2ebea51315afad75f33361e329bfa69f70",
   "reminders_permission_continue": "f1123f0969456c35ecead9a00b3836ce0c2f7d5d9dff18e8ab6d0c8769498e86",
   "reminders_permission_title": "65cccfb6d708d6b899c6b73715852e074a0e7cf4ae73027868b8ef4714d23a88",
   "reminders_push": "f5ee202e92ec8b46758a7c08af875a9f2e86369c2f066330f55247f9a459ae23",
@@ -34,7 +34,7 @@
     <!-- The name of the app's notification channel in Android's settings. -->
     <string name="reminders_channel_name">Rappels pour étudier</string>
     <!-- Under the channel's name in Android's settings, and under the Reminders page's title. -->
-    <string name="reminders_channel_description">Un rappel les jours d’étude, s’il te reste des choses à apprendre.</string>
+    <string name="reminders_channel_description">Un rappel les jours d’étude, si tu n’as pas encore fini pour la journée.</string>
     <!-- A card under a finished lesson's result, offering a daily study reminder on the phone. -->
     <string name="reminders_offer_title">Tu veux un rappel pour étudier ?</string>
     <!-- %1$s is a time of day, such as "7:00 PM". -->
@@ -54,7 +54,7 @@
     <string name="reminders_email_instead">Recevoir plutôt les rappels par e-mail</string>
     <!-- Before Android asks to allow notifications again, after the learner said no once. -->
     <string name="reminders_permission_title">Autoriser les notifications ?</string>
-    <string name="reminders_permission_body">Zoonk envoie un rappel les jours prévus pour étudier, seulement s’il te reste des choses à apprendre.</string>
+    <string name="reminders_permission_body">Zoonk t’envoie un rappel les jours d’étude, si tu n’as pas encore fini pour la journée.</string>
     <string name="reminders_permission_continue">Continuer</string>
     <string name="reminders_not_now">Pas maintenant</string>
     <!-- The title of the clock that changes the reminder's time. -->

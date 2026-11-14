@@ -2,7 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "reminders_cancel": "d85c9d78af6a3fff11a2433dbe764f121184dca85705f7ed52ceb59122537569",
-  "reminders_channel_description": "e83fffe8411a4d93ca288faba7a7e0745ea40414af7d96ae92cd700c8ebab726",
+  "reminders_channel_description": "74427a47f4bc1c7b3aa781892b2d6c98687600a8e6ae13831e5cc127b7324cf0",
   "reminders_channel_name": "4536d4010f4459f958a45c7cf968b7e705a6e1a8a2e0112a633cfe860ccd2397",
   "reminders_email": "e78c3d6cd19cf0ed685135270eb15a55144281474ff90c3579c3a375e112a9d4",
   "reminders_email_instead": "099c65dff4e27384d3cc80988685c9021e39b22773d73c363ef4f47f4e1e03e8",
@@ -15,7 +15,7 @@
   "reminders_offer_title": "e3967601ff5b80a53e707c72bbc8a522bf5645e155ce42524378853e60c0bb54",
   "reminders_on": "4234ee75213a07980946487c42e85ca45c57d4081472893b3c70b81e2ef3b9e6",
   "reminders_open_settings": "325da0939b326683ddecb8a5c760469fd782924efea3d971d15a24123dfacfb2",
-  "reminders_permission_body": "948376604bc721911cf8b661a1541f16e16c8ff4bb6074bf44f0a7014aea033c",
+  "reminders_permission_body": "cc1901d25cab36d2d65e8cd8249ca72175a1e3d4f3bc0529b3fae25ad7fd19e8",
   "reminders_permission_continue": "13778e82dfa01c5a90919192312fee46bd337443f6c35aeb0573d6ac8cb6b3fc",
   "reminders_permission_title": "c3564c761e0f085cda7b0f89ff992c7ac63617f20db0537821b34e819e3e6815",
   "reminders_push": "a5add4142003bc6a5c710d886c7d9a09d19629e66389ccd9ec537d3f04448b8a",
@@ -34,7 +34,7 @@
     <!-- The name of the app's notification channel in Android's settings. -->
     <string name="reminders_channel_name">Promemoria di studio</string>
     <!-- Under the channel's name in Android's settings, and under the Reminders page's title. -->
-    <string name="reminders_channel_description">Un promemoria nei tuoi giorni di studio, se hai ancora qualcosa da studiare.</string>
+    <string name="reminders_channel_description">Un promemoria nei tuoi giorni di studio, se non hai ancora finito di studiare.</string>
     <!-- A card under a finished lesson's result, offering a daily study reminder on the phone. -->
     <string name="reminders_offer_title">Vuoi un promemoria per studiare?</string>
     <!-- %1$s is a time of day, such as "7:00 PM". -->
@@ -54,7 +54,7 @@
     <string name="reminders_email_instead">Ricordamelo via email</string>
     <!-- Before Android asks to allow notifications again, after the learner said no once. -->
     <string name="reminders_permission_title">Vuoi consentire le notifiche?</string>
-    <string name="reminders_permission_body">Zoonk invia un promemoria nei tuoi giorni di studio, solo se hai ancora qualcosa da studiare.</string>
+    <string name="reminders_permission_body">Zoonk invia un promemoria nei giorni di studio, se non hai ancora finito per oggi.</string>
     <string name="reminders_permission_continue">Continua</string>
     <string name="reminders_not_now">Non ora</string>
     <!-- The title of the clock that changes the reminder's time. -->
