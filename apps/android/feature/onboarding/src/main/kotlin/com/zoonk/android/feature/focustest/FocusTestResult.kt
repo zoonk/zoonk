@@ -29,6 +29,7 @@ import com.zoonk.android.R
 import com.zoonk.android.feature.onboarding.setup.FinishFailed
 import com.zoonk.android.feature.onboarding.setup.SetupContent
 import com.zoonk.android.feature.onboarding.start.OnboardingActions
+import com.zoonk.android.feature.plan.GoalDateKind
 import com.zoonk.android.feature.plan.PlanEffectDiff
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
@@ -173,7 +174,7 @@ private fun ColumnScope.FocusProposal(
     SetupContent {
         TestHeader(stringResource(R.string.focustest_proposal_title), stringResource(R.string.focustest_proposal_description))
         FocusRows(rows)
-        PlanEffectDiff(proposal.effect)
+        PlanEffectDiff(proposal.effect, dateKind = GoalDateKind.Exam)
         OnboardingActions {
             FinishFailed(plan.failed)
             Button(

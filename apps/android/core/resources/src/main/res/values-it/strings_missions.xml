@@ -38,7 +38,7 @@
   "missions_points": "953534e4a573f5befad5c3bd0a12f3940f6835c8b3637bd75c8bd346a62e4f19",
   "missions_practice": "0b9ba7b50204e971c208cb98747f02a6e093e2bbd93c455fcbd3f494af3a65cf",
   "missions_practice_area": "15c4e54e136632b855d6d961ab8bc5b8032f83e0e691e9ff14e4ae0d285c4cc4",
-  "missions_progress": "4af2d3e0bc5ee336bdb36a39d6b03f82b16d938d76bff8dfd43ad1b8b1f958dd",
+  "missions_progress": "e4ed58a555f0033fb67198bab17c6ee65e4a01ef18a4eb956fafa8dc7af55e6d",
   "missions_pronunciation": "3d459f9f168f2fe4a8d757100a0f223e6922db2c4da283212bbbb80bce2c1174",
   "missions_rematch": "22429f6b6388a2835400f031340d09331a5ac53ff1eecd0d6fc8a44c4bf292d0",
   "missions_review": "519306b12e4b6c58e95d94ddaf119b65f26f189a00bd8afd7db5c5ad7bafeecf",
@@ -67,7 +67,7 @@
     </plurals>
     <string name="missions_just_done">Appena completata</string>
     <!-- Read by TalkBack after the missions' status: "2 of 3 done". -->
-    <string name="missions_progress">Hai completato %1$s su %2$s</string>
+    <string name="missions_progress">%1$s su %2$s completati</string>
     <string name="missions_brain_power">Potenza Mentale</string>
     <!-- %1$s is a formatted number of Brain Power points: "+50". -->
     <string name="missions_points">+%1$s</string>

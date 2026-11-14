@@ -66,12 +66,9 @@ import androidx.compose.ui.window.DialogWindowProvider
 import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.data.ContentWritingWait
-import com.zoonk.android.ui.characters.BuddyKind
-import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.FullScreenDialog
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
-import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.bleed
@@ -79,7 +76,6 @@ import com.zoonk.android.ui.scaffold.pageFold
 import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.zoonk
-import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanBase
 import com.zoonk.api.models.PlanBasesAdvice
@@ -458,6 +454,7 @@ private fun LatestChange(
                     ?.toJavaLocalDate(),
             fullCourse = page.plan.schedule.fullCourse,
             icon = R.drawable.ic_tune,
+            dateKind = page.dateKind,
         )
         if (latest.change.canUndo) {
             TextButton(busy = latest.undoing, onClick = { onUndo(latest.change) }, leadingIcon = { ButtonIcon(R.drawable.ic_undo) }) {

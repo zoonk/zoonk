@@ -72,7 +72,7 @@ internal fun MockSpeaking(
                         )
                     } else {
                         MockMainButton(
-                            stringResource(if (isLast) R.string.mock_hand_in_mock else R.string.mock_hand_in_section),
+                            stringResource(if (isLast) R.string.mock_hand_in else R.string.mock_hand_in_section),
                             busy = run.busy == MockStep.Submit,
                             enabled = !run.pending,
                             onClick = { confirming = true },
@@ -89,7 +89,7 @@ internal fun MockSpeaking(
                 StepDetail(
                     when {
                         speaking == null -> stringResource(R.string.mock_speaking_intro)
-                        left > 0 -> pluralStringResource(R.plurals.mock_speaking_left, left, left)
+                        left > 0 -> stringResource(R.string.mock_speaking_left)
                         else -> stringResource(R.string.mock_speaking_all_done)
                     },
                 )

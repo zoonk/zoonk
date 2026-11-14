@@ -114,10 +114,21 @@ internal fun KeepWebPlusButton(cancellation: WebPlusCancellationViewModel) {
     }
 }
 
+/**
+ * What deleting the account does to Plus: the website's ends with it; a store's ([provider], the
+ * account's subscription's) keeps charging until it's canceled there.
+ */
 @Composable
-internal fun webPlusDeletionNotice(subscription: Resource<StripeSubscriptionCancellation>): String? {
-    val state by subscription.collectShown()
-    return if (state.value != null) stringResource(R.string.subscription_deletion_notice) else null
+internal fun deletionPlusNotices(
+    website: Resource<StripeSubscriptionCancellation>,
+    provider: String?,
+): List<String> {
+    val web by website.collectShown()
+    return listOfNotNull(
+        stringResource(R.string.subscription_deletion_notice).takeIf { web.value != null },
+        stringResource(R.string.subscription_deletion_app_store).takeIf { provider == "apple" },
+        stringResource(R.string.subscription_deletion_google_play).takeIf { provider == "google" },
+    )
 }
 
 @Composable

@@ -298,14 +298,13 @@ internal fun QuestionCell(
     question: MockQuestion,
     onPick: (Int) -> Unit,
     modifier: Modifier,
-    compact: Boolean,
 ) {
     val draft = run.drafts[question.itemId]
     val answered = draft.isAnswered
     val flagged = draft?.flagged == true
     val current = index == run.position
     val enabled = run.moves.canOpen(index)
-    val shape = RoundedCornerShape(if (compact) ZoonkRadius.sm else 10.dp)
+    val shape = RoundedCornerShape(10.dp)
     val name =
         if (question.essay) {
             stringResource(
@@ -321,17 +320,17 @@ internal fun QuestionCell(
             },
             stringResource(R.string.mock_cell_flagged).takeIf { flagged },
         ).joinToString(", ")
+    // The current one is ringed the way a pick is; a flagged one keeps its amber ring.
     val border =
         when {
-            current -> MaterialTheme.colorScheme.tertiary
             flagged -> MaterialTheme.zoonk.warning
+            current -> MaterialTheme.colorScheme.onSurface
             answered -> Color.Transparent
             else -> MaterialTheme.colorScheme.outlineVariant
         }
 
     val interactions = remember { MutableInteractionSource() }
 
-    // The strip's cell is drawn small, as main's, inside a full-size target.
     Box(
         modifier
             .heightIn(min = 48.dp)
@@ -347,16 +346,16 @@ internal fun QuestionCell(
         Box(
             Modifier
                 .fillMaxWidth()
-                .heightIn(min = if (compact) 28.dp else 48.dp)
+                .heightIn(min = 44.dp)
                 .alpha(if (enabled) 1f else DISABLED_ALPHA)
                 .clip(shape)
                 .background(if (answered) MaterialTheme.colorScheme.surfaceContainerHighest else Color.Transparent)
-                .border(if (current) 2.dp else 1.dp, border, shape)
+                .border(if (current || flagged) 2.dp else 1.dp, border, shape)
                 .indication(interactions, ripple()),
             contentAlignment = Alignment.Center,
         ) {
-            CellLabel(question, answered || current, compact)
-            if (flagged) FlagGlyph(Modifier.align(Alignment.TopEnd).padding(3.dp).size(if (compact) 8.dp else 10.dp))
+            CellLabel(question, answered || current, flagged)
+            if (flagged) FlagGlyph(Modifier.align(Alignment.TopEnd).padding(3.dp).size(10.dp))
         }
     }
 }
@@ -371,21 +370,22 @@ internal fun FlagGlyph(modifier: Modifier = Modifier) {
 private fun CellLabel(
     question: MockQuestion,
     strong: Boolean,
-    compact: Boolean,
+    flagged: Boolean,
 ) {
     if (question.essay) {
-        Icon(
-            painterResource(R.drawable.ic_border_color),
-            contentDescription = null,
-            modifier = Modifier.size(if (compact) 14.dp else 16.dp),
-        )
+        Icon(painterResource(R.drawable.ic_border_color), contentDescription = null, modifier = Modifier.size(16.dp))
     } else {
         Text(
             question.number.toString(),
-            color = if (strong) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
+            color =
+                when {
+                    flagged -> MaterialTheme.zoonk.warningText
+                    strong -> MaterialTheme.colorScheme.onSurface
+                    else -> MaterialTheme.colorScheme.onSurfaceVariant
+                },
             maxLines = 1,
             softWrap = false,
-            style = (if (compact) MaterialTheme.typography.labelSmall else MaterialTheme.typography.labelLarge).withTabularFigures(),
+            style = MaterialTheme.typography.labelLarge.withTabularFigures(),
         )
     }
 }

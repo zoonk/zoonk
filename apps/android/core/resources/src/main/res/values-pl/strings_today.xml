@@ -10,8 +10,8 @@
   "today_building_plan_detail": "ffad46f8ff6ba7fd77a4b1c3f243eaded2a992f6465acfd3e23150364db9040d",
   "today_building_plan_goal": "fe5bae3ef0de0849a08cf89c683c2eda6a63645dd66587702b79786d4f7828c8",
   "today_choose_focus": "b3c4fc556835875484b45956404dc2ca0bf2fd1da78a2046a02bacf5675a706f",
-  "today_coming_not_written": "7e107a6da407c8bec20dba1f547283d9c208d6a18e69df7d515b9b8b517b31bb",
-  "today_coming_stalled": "74afed68a1184633af1fdb397cae6039f3b22f1d9c95429561d2da0a6b2f6d46",
+  "today_coming_not_written": "1c647fc63608e6edb2021ea1640f47314f800f9344bd6686656d73054e4ea64d",
+  "today_coming_stalled": "90a3353e7c211de5f5faabc1fee1cccac4072aa96c163d4f0193f9e64ff9a1af",
   "today_coming_title": "4b85ad32e14b179ff8e21af16bfef336b81bb8c3f5f2f07d8529f3df32190da6",
   "today_coming_writing": "0cb41dfcc5b1a0cd008d2f4a6f9bd7636d278ee4da64e4a4e4497f0da5df95f0",
   "today_connection_lost": "2ea15112203e79d03ac0f0e9550b16779a7c15b53240357afb930e6f6da94fee",
@@ -27,8 +27,8 @@
   "today_done_day_off": "a50a56953ac22bbd5f313cf00ed35a8b206d7de12df0a32444cd6d674bb98a43",
   "today_earlier_lessons": "76e05ad55ae4409118b6bc76c8c269824bd971c1a6e3be87b9381f1c5f61528d",
   "today_exam_choice_choose": "e1b551fcfd26ad668e24233a0ddbb5d4a4208455c39975c9663903570a74be73",
-  "today_exam_choice_question": "e8c1d06b9f18842a72f2ffe75717cb93d518b0bc482a75b29d90fb52ef90f807",
-  "today_exam_choice_question_several": "540bdd917f73e12cc1e1f62a08fd79646a82c7cd09adcf56209006dea0977420",
+  "today_exam_choice_question": "e0b9ca5f3eacb3f5671c976413af98d4639a78d538f62ff667407560ca548339",
+  "today_exam_choice_question_several": "a26775f61b3d4dbf88c0e337dff846f35792dac4a0c03d2fcd3710ae82140d8d",
   "today_exam_in_days": "d351b553238f87c66eb1fedf0f3e30f4c8d5daf09bb7d14e8cafff88ec3f81f7",
   "today_exam_speaking": "94e3d09125aed30b75a553f6c907d6d653d4471efed7ff2b584f566f569a2778",
   "today_exam_speaking_detail": "79a11efe07541868d93489fddaf96b48ba55a86526d91c74f036b3fc306eae3e",
@@ -57,7 +57,7 @@
   "today_more_time_or_later_date": "4847eea0f584e6eb61fdbf7a34499192050062ea470992e5c35b3f6ef97ff24c",
   "today_new_goal": "72c7b614c87763ec0cc523c3d5ec43c725140a3cc2b15eb6cbdcd9555583d680",
   "today_next_suggestion": "fc2bd4a43d2f2f524059aa54aaff288b73e78ba68c1c7b95db7fa20813967aa8",
-  "today_not_enough_time": "a78980a055bdbd2592b8f3e392cf843f5a2e1f7d6e77d630842a2b1cfa8392b9",
+  "today_not_enough_time": "8572a3b1b0528dae6a31f7d7096db1e0ac3f67e9621446f83c92ec34717cc783",
   "today_not_now": "878178c5920f2e53739829dd2f78a21f3b5af405b0b9cfbcb180c7eaadc317ce",
   "today_noted": "ac1ec93b467182969e033c42e289a157547da1008bd916c46643b13251707bd3",
   "today_nothing_new": "dd75f06f82d41b8c0d5db8fa9c6962cb3d13591ca6c2d392726e7392c6873a1d",
@@ -68,7 +68,7 @@
   "today_notice_suggested_goal": "6d62fe7b550f30ef61127e00b77a49aeeb0f65a12280a1f5446ef67bb79b17da",
   "today_open_failed": "ed51c9ed21679393fed5986b2f88a00176790e358d79336dca44662dfe902228",
   "today_pace_lessons_to_catch_up": "f2cd327b81a9177428ad81edf8bb86ca41bbe1263620e0b9944ebae3ed82836f",
-  "today_paused_detail": "79070be821ec6ac7951169fbabc824bd9e6b4b222b83c196866f7b91232ddafd",
+  "today_paused_detail": "83b104f81cb9e7b7809b052f4f28a5c865dcd2436ae66c81d30596c2afe87ac4",
   "today_paused_goal": "2c041d7e45fdaff0675c34b561819b9f184e6abca5185974783eee3b943df509",
   "today_paused_this_goal": "7c5426d3d347644ab1f0c396b7be52ae43bf83cd027d1cac9dddf83390139fcd",
   "today_plan_apply": "9d58c27b4f42b92f91cb914bc8b5330a36ac641ae09e6793fff014a1d82ede2e",
@@ -93,9 +93,9 @@
   "today_rest_next_lessons": "b8bd1aeb5b3c21dcbb1a027a65210b4af715cfa3066a93fb6859d71854355489",
   "today_resume": "86777ddd59b4426bc804091d67466763e3fdbf6ebf7aeb7d1f802f31e1f84e16",
   "today_resume_effect": "695a467ed129fea4c7a7b75fa3990c05ee5bae54a678799539083b5ac007607d",
-  "today_resume_goal_limit": "978d5b4aede93fd7fee816a54770370b5fcd4798dcf0e35298efe0de548798eb",
+  "today_resume_goal_limit": "ccca4077edebfa87961c11426ee8554c9ea473475a9262d5f0195cf109d319bc",
   "today_save_failed": "9ca8b48792f3149522121de8fda9dd639a8d815c70f66f616169ee00673289fb",
-  "today_see_day_challenge": "0e3057408cac453491613fa016218824541758bc526bc8349ce3641e73b01d97",
+  "today_see_day_challenge": "32beea04a06e0f816c0d0a47eab66fc1502d20a7cfe6c837f9bc65a59761bdbb",
   "today_see_day_mock": "3f12ffb6d7b913d261ddbd983f46a7b6dffd208d12c37e628bd1c9468d1de1c4",
   "today_see_plan": "e245905c61b38d1619252a69e2fde14c753f017978b7a960520ec36f456e04f6",
   "today_see_summary": "14a042697f619861c628db642e78e1891eed438df0914918c96b31349505e953",
@@ -111,7 +111,7 @@
   "today_segment_up_next": "2860a9afd3115b2b33204d2984c61fbe920f4bb2b8fe7052cc4760d7546dbb2a",
   "today_setting_up_goal": "99ada9ba8632250be7ea916efa14bc93f621317aa145bc720c6eb2f867568d0c",
   "today_shorter_day": "4c27177e035719415a5f92cd33a49325bfa9f985f9d2d351c6e591d98b33fbd5",
-  "today_shorter_day_note": "068589eea689f3c202e5b0cd25e7a190a9662fcd32d6ab412f27c9fa3230c3cc",
+  "today_shorter_day_note": "00c3cd06b92e31ba53f8b0ef33c425f5c5f4de6e8748ac758dfca856c3e5bbee",
   "today_show_less": "9cec010259de41f5be4c351629f905915938ebed7ef24b1dc4978fd76f72c592",
   "today_skipped_count": "1872289658b6406a2181c1e7842e3bca80b4e31f462dfaabf3142c469dab03c9",
   "today_start_session": "a0b58bc91b36e1609d6481af287ad5a909b4dadcf0db1a362b24f1411bb0337e",
@@ -165,13 +165,13 @@
   "today_week_title": "4bd06d97edaca527869b96565709b74ac199dd7ab54b4c65cf9e67a08635e964",
   "today_week_today": "1cb132c6224ec1f80eb4a5068d6f35bae083f00ebf7c32f59d8eedec3753a069",
   "today_welcome_back": "69ce3615e04782deb3a5ccfd6e3ac8fb823455d660df0b515528ff6f2e91f16f",
-  "today_welcome_back_line": "1f9fe1314906ca0033e986d6460e6d439d0b796a183211107702d0598a6d1ec7"
+  "today_welcome_back_line": "f27ee23ce4adfaf8e0ba5d29415b34f03996920ad476bbb87ccb832aa1f99ab9"
 }
 -->
 <resources>
     <string name="today_title">Dziś</string>
-    <string name="today_welcome_back_line">Miło cię znów widzieć. Dziś jest mniej nauki, więc łatwiej będzie wrócić.</string>
-    <string name="today_not_enough_time">Zostało za mało czasu na wszystkie twoje lekcje.</string>
+    <string name="today_welcome_back_line">Witaj ponownie. Dziś nauka potrwa krótko, więc łatwo będzie do niej wrócić.</string>
+    <string name="today_not_enough_time">Zostało za mało czasu na wszystkie lekcje.</string>
     <string name="today_adjust_your_plan">Dostosuj plan</string>
     <plurals name="today_exam_in_days">
         <item quantity="one">%1$s za %2$d dzień</item>
@@ -180,7 +180,7 @@
         <item quantity="other">%1$s za %2$d dni</item>
     </plurals>
     <string name="today_shorter_day">Krótszy dzień</string>
-    <string name="today_shorter_day_note">Twój plan zostawia czas na egzamin próbny w dniu %1$s.</string>
+    <string name="today_shorter_day_note">Twój plan rezerwuje czas na egzamin próbny %1$s.</string>
     <string name="today_day_is_here">To już dziś</string>
     <plurals name="today_days_left">
         <item quantity="one">Pozostał %d dzień</item>
@@ -261,11 +261,11 @@
     <string name="today_paused_goal">Twój cel jest wstrzymany: %1$s.</string>
     <string name="today_paused_this_goal">Ten cel jest wstrzymany.</string>
     <!-- "It" is the learner's paused goal. -->
-    <string name="today_paused_detail">Nic nie jest zaplanowane, dopóki nie wrócisz do tego celu.</string>
+    <string name="today_paused_detail">Dopóki nie wznowisz celu, nic nie planujemy.</string>
     <string name="today_new_goal">Wyznacz nowy cel</string>
     <string name="today_resume_effect">Od dziś kontynuujesz plan, zaczynając od lekcji zaplanowanych na dni przerwy.</string>
     <!-- When a learner resumes a paused goal while studying as many goals at once as they can. Pausing a goal keeps its progress. -->
-    <string name="today_resume_goal_limit">To maksymalna liczba celów, które możesz realizować naraz. Wstrzymaj jeden z nich lub wykup subskrypcję, żeby realizować więcej.</string>
+    <string name="today_resume_goal_limit">Masz już maksymalną liczbę aktywnych celów. Wstrzymaj jeden z nich lub wykup subskrypcję, by realizować więcej.</string>
     <string name="today_setting_up_goal">Twój plan czeka na jeszcze kilka odpowiedzi: %1$s.</string>
     <string name="today_building_plan_goal">Przygotowujemy twój plan: %1$s</string>
     <string name="today_building_plan_detail">To zajmie minutę lub dwie. Gdy skończymy, zobaczysz tu swój pierwszy dzień nauki.</string>
@@ -292,7 +292,7 @@
     <string name="today_week_full_review_detail">wszystkie tematy</string>
     <string name="today_study_more_minutes">Ćwicz jeszcze %1$s min</string>
     <!-- %1$s is a weekday, such as "Saturday". -->
-    <string name="today_see_day_challenge">Zobacz wyzwanie: %1$s</string>
+    <string name="today_see_day_challenge">Zobacz wyzwanie (%1$s)</string>
     <string name="today_see_day_mock">Zobacz egzamin próbny (%1$s)</string>
     <!-- %1$s is the learner's buddy's name. -->
     <string name="today_practice_with_buddy">Ćwicz z: %1$s</string>
@@ -340,9 +340,9 @@
     <string name="today_undo">Cofnij</string>
     <string name="today_notice_exam_choice">Wybór egzaminu</string>
     <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
-    <string name="today_exam_choice_question">%1$s: co będziesz zdawać?</string>
+    <string name="today_exam_choice_question">%1$s: który przedmiot będziesz zdawać?</string>
     <!-- %1$s is a group of the exam's subjects of which each candidate takes several, such as the modules of a course. -->
-    <string name="today_exam_choice_question_several">%1$s: które z nich będziesz zdawać?</string>
+    <string name="today_exam_choice_question_several">%1$s: które opcje wybierzesz?</string>
     <string name="today_exam_choice_choose">Wybierz</string>
     <string name="today_notice_plan_change">Proponowana zmiana</string>
     <string name="today_plan_suggestion">Propozycja planu</string>
@@ -393,9 +393,9 @@
     <!-- Under "Your next lessons" (plural) while those lessons are being written; it must agree with "lessons", or say it without a subject. -->
     <string name="today_coming_writing">Przygotowujemy…</string>
     <!-- Under "Your next lessons" when their writing has taken a while. -->
-    <string name="today_coming_stalled">Trwa to dłużej niż zwykle</string>
+    <string name="today_coming_stalled">Potrzebujemy więcej czasu niż zwykle</string>
     <!-- Under "Your next lessons" when nobody is writing them, before the "Get today's lessons" link. -->
-    <string name="today_coming_not_written">Jeszcze nie są gotowe</string>
+    <string name="today_coming_not_written">Jeszcze niegotowe</string>
     <!-- Read by TalkBack for a part of today's progress bar: its step's title and what the popover says, such as "Review: 10 min". -->
     <string name="today_segment_label">%1$s: %2$s</string>
     <string name="today_segment_up_next">Następne</string>

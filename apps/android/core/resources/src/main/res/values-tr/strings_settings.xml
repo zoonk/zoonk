@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "settings_account": "df3adf6ab782e89ee3cd5e7a55ed9d5b0f9343215b374526217cc0bd7038754a",
   "settings_account_deleted": "33347416de15d07d33a93dfe86370352777b445611ad05c1fb168ce20113cb4c",
   "settings_account_deleted_title": "c555066c777269bafc0e4acfb0ce939542974d52efcb8b79779525ecbaeadc88",
   "settings_apple_not_revoked": "bec4b899cbdc02676767526c12bf904ce76716554040c6c93866e6be37c4cb5e",
   "settings_cancel": "fda3ace47d02bfec75a2a05030d3beb1de0b154ad04287512e497d94ed2bd6bc",
-  "settings_delete_account": "31bc45042cf5e8e2e9150fa261b2fcc37517af0cfdac5f8e11d2510100f794b4",
-  "settings_delete_account_description": "56c5f7534ab96b9b5cd747e041881f6b38835c67474d694d45fe33597e364128",
   "settings_delete_code_description": "87d0e51fe5429332328cd17a123bb66478f4ff0bee17623f27503195a0b9b260",
   "settings_delete_code_title": "54b54e3f5a4242fdcb75fe76c9f67f0cd4c9280384be75b1685483e05df56397",
   "settings_delete_confirm_description": "f9aa73466d1726e8c34e28c0dc10041000071114220278902dea0b7e86a3aa85",
@@ -19,11 +16,11 @@
   "settings_done": "38dbd3712120bf0851a53c0722937d6a5a1655c68b171d4f4a768ebd5860d84e",
   "settings_download": "05ea479a7e445a07f1bd1ad1c61e98fb8ffc1b07af3386acad744c3c6f37598f",
   "settings_download_data": "478eee67c3e7d49d413ac8ed2e4f6f097d3388b96286f6086ad0aad127ec1f91",
-  "settings_download_data_description": "b7544b1d9437a2a58bf63b0286c1fe0416e22d13765b45a376a0bcaa0e1b3d4b",
   "settings_download_failed": "f7ac5d92935444b33d9df9d4180b1a75477829a6dc2da3c1aeb0c7c9b98a35fb",
   "settings_home_country": "886c1b0c65863dbb7d33a77e8cd1b661ebf076f73635cb4b8091e12e840d89c0",
-  "settings_home_country_description": "73437ad991d9ce2217dfef51b88858bd55b19915e9695788fc1d5b2c9ac116f6",
+  "settings_home_country_description": "44d1bdd0ccb1f389ff568c6070cc4b25b2406b7ff2c71d2c1f1527095d982a4a",
   "settings_home_country_none": "8933e54b3f2f758150bacdfc0dfc792c9380a89484e3463585f1bd4d2eb19ddb",
+  "settings_home_country_why": "c94a72a65fd81d3786a3fdcb3c982d74ff6ace58d1229822a7dece248c25935e",
   "settings_licenses": "fbe7585e243de3d879cab9bc628e1a0ae9a39efac5b33ae30a1aa3f1ee15f5db",
   "settings_licenses_read": "140a819a1e6a448e833657273c88187a9ff532e27ddd432fb4d173f96eb267c1",
   "settings_licenses_website": "769ef0aeb62f23ff2895af6ba281781c64cad8ce029d70bc0dea31d58f45d395",
@@ -32,21 +29,17 @@
   "settings_preferences": "31384c1f613bc71225fe5af0806fcad5a6ddf7f106a452866e619028c1c75d37",
   "settings_preferences_app_language": "227c6274a735a8e8918de0c568bf4a6d7dd414a2755ebb426938b9ae57505afd",
   "settings_preferences_buddy": "5c4c03cd7407432f74b5e0172d2eb18b96955c86b1c0e6b1a1bf7dc883ed0a73",
-  "settings_preferences_buddy_line": "1eaf4beb31840b2b3d133fb919df4f330547405112486f7cd7dbdb2f18c38487",
   "settings_preferences_change": "9e1bfc759cde76c1eb03c03837c1a8858869d43b608567bbbebb4512285eac50",
   "settings_preferences_choose_buddy": "b042865c4bcf7d6c9c1c03953bc50b11020db4345fff0e800cb7208ba05b6883",
-  "settings_preferences_description": "8481af56ade678f2521708f0bfd3095bcc08d4bd1e677c6ed29ecdc68aed28bc",
   "settings_preferences_language": "b4b4b04e3e03391f845fd626efc538746a6567eb4bd7f513a6dd025070873b27",
   "settings_preferences_lessons": "dbe0f1c22cd41c898819f95879589cdc53a8d1293688b7a7ce76b5a39a6c233a",
-  "settings_preferences_on_this_device": "496cefd1433525b25b958ccb0b3a34942a9a6cac91465b63badded2a808eeda1",
   "settings_preferences_save_failed": "c024dc9c3bde1dbe764789ed8f46d361c10b8ee502e0fd04837717998a16ffcb",
   "settings_preferences_share_usage_data": "143dd9210deb0e71f9062c0e42ca7f67bf22fc95fee36b21308dcbb251458b15",
   "settings_preferences_share_usage_data_description": "12f3155ea60b55d292846755a0a576fce683e40d68faa88f7492de8bfcaf687e",
   "settings_preferences_sounds": "74477518c5add3303302e23e3dc2511604bc9d7ef4ecaf387f1a7f706f05c7b1",
   "settings_preferences_sounds_description": "498c70a9a880d4cb2723ce94d80cafa4834912dfa5a48d60f295225b9b4a188b",
-  "settings_preferences_summary": "5cd0895a3432aacf11bce4074038a36b84e03a187d1339f6ef6377a899a8125f",
+  "settings_privacy": "8971a7208ce70198dd7f437bc5ef33b4313a3044474697af1fb6b49f4e995221",
   "settings_profile": "57965f55bf442a0f6d46d34423eba254b84f37f9dc3a219fd126589daeb52269",
-  "settings_profile_description": "a32195282407b821650be9e064b5b5480ae9b13f8e640e583f4204bbb995b1fb",
   "settings_profile_needs_account": "008ae068b1b82688e2eb223be9bbaf821dee912ab104d23587d6eacc92f57ecd",
   "settings_reminders_off": "9e42bcd5e114dde14174d098b9c6b73310fa49bfdb2cc67e4eb82a36f6d2aee9",
   "settings_save": "35b8be4801431ac07ee5fa6ec224525c029e447a0affba8c8799168d4dbf9b4c",
@@ -57,23 +50,18 @@
 <resources>
     <string name="settings_preferences">Tercihler</string>
     <string name="settings_memory">Bellek</string>
+    <string name="settings_privacy">Gizlilik</string>
     <!-- Beside "Reminders" in Settings when neither email nor push reminders are on. -->
     <string name="settings_reminders_off">Kapalı</string>
-    <!-- %1$s is the buddy's name and %2$s the app's language, like "Zu · English". -->
-    <string name="settings_preferences_summary">%1$s · %2$s</string>
     <string name="settings_profile">Profil</string>
     <string name="settings_profile_needs_account">Profil oluşturmak için hesap aç. Planın ve ilerlemen hesabına taşınır.</string>
-    <string name="settings_account">Hesap</string>
     <string name="settings_save">Kaydet</string>
     <string name="settings_saved">Kaydedildi.</string>
     <string name="settings_your_data">Verilerin</string>
     <string name="settings_download_data">Verilerimi indir</string>
-    <string name="settings_download_data_description">Zoonk’un seninle ilgili sakladığı her şey tek dosyada</string>
     <string name="settings_download">İndir</string>
     <string name="settings_download_failed">İndirilecek dosyayı hazırlayamadık. Tekrar dene.</string>
-    <string name="settings_delete_account">Hesabı sil</string>
     <string name="settings_delete_my_account">Hesabımı sil</string>
-    <string name="settings_delete_account_description">Hesabını ve içindeki her şeyi kalıcı olarak siler. İnternetten aldığın Plus iptal edilir; Google Play ve App Store satın alımlarını ise ilgili mağazadan yönetirsin.</string>
     <string name="settings_delete_ellipsis">Sil…</string>
     <string name="settings_delete_confirm_title">Hesabın silinsin mi?</string>
     <string name="settings_delete_confirm_description">Hedeflerin, planların, ilerlemen, bellekteki bilgilerin ve yüklediğin dosyalar kalıcı olarak silinir. Bu işlem geri alınamaz.</string>
@@ -91,27 +79,24 @@
     <string name="settings_preferences_buddy">Arkadaşın</string>
     <string name="settings_preferences_change">Değiştir</string>
     <string name="settings_preferences_choose_buddy">Arkadaşını seç</string>
-    <!-- %1$s is the buddy's stage ("Baby") and %2$s what it wears ("Round glasses"). -->
-    <string name="settings_preferences_buddy_line">%1$s · %2$s</string>
     <string name="settings_preferences_lessons">Dersler</string>
     <string name="settings_preferences_sounds">Sesler</string>
     <string name="settings_preferences_sounds_description">Doğru cevap verdiğinde veya bitirdiğinde</string>
     <string name="settings_preferences_language">Dil ve bölge</string>
     <string name="settings_preferences_app_language">Uygulama dili</string>
-    <string name="settings_preferences_on_this_device">Bu cihazda</string>
     <string name="settings_preferences_save_failed">Kaydedilemedi. Tekrar dene.</string>
     <string name="settings_licenses">Açık kaynak lisansları</string>
     <string name="settings_licenses_website">Web sitesi</string>
     <string name="settings_licenses_read">Lisansı oku</string>
-    <string name="settings_profile_description">Adın, kullanıcı adın ve hesabın.</string>
-    <string name="settings_preferences_description">Arkadaşın, derslerin ve uygulama dilin tam istediğin gibi.</string>
     <!-- A switch that lets Zoonk record how the learner uses the app, for analytics. -->
     <string name="settings_preferences_share_usage_data">Kullanım verilerini paylaş</string>
     <string name="settings_preferences_share_usage_data_description">Zoonk’u nasıl kullandığını gösterir, böylece onu geliştirebiliriz</string>
     <!-- A setting in Preferences: the country the learner lives in. -->
     <string name="settings_home_country">Yaşadığın ülke</string>
     <!-- Under that setting. -->
-    <string name="settings_home_country_description">Yeni hedeflerinde ve sana verilen örneklerde kullanılır. Mevcut planlarını değiştirmez.</string>
-    <!-- That setting's value when the learner hasn't said where they live, and the picker's first choice, which clears it. -->
+    <string name="settings_home_country_why">Örnekler ve sınavlar ülkene uygun olsun diye.</string>
+    <!-- The tutor's offer to save where the learner lives: what it changes. -->
+    <string name="settings_home_country_description">Sana uygun örnekler ve yeni hedefler için.</string>
+    <!-- That setting's value when nobody knows where the learner lives. -->
     <string name="settings_home_country_none">Belirtilmedi</string>
 </resources>

@@ -154,7 +154,7 @@ internal fun ColumnScope.BasesChoices(
             }
         },
         actions = {
-            if (operations.isNotEmpty()) PreviewOutcome(check, onRetry = { attempt++ })
+            if (operations.isNotEmpty()) PreviewOutcome(page.dateKind, check, onRetry = { attempt++ })
             Button(
                 busy = pending,
                 onClick = { edits.change(PlanPart.Bases, operations) { edits.answerSheet(draft.opening, it) } },
@@ -325,6 +325,7 @@ private fun BasesAdvice(
 
 @Composable
 private fun PreviewOutcome(
+    dateKind: GoalDateKind,
     check: Check,
     onRetry: () -> Unit,
 ) {
@@ -347,7 +348,7 @@ private fun PreviewOutcome(
                 if (preview.unchanged) {
                     Note(stringResource(R.string.plan_stays_as_it_is))
                 } else {
-                    PlanEffectDiff(preview.effect)
+                    PlanEffectDiff(preview.effect, dateKind = dateKind)
                 }
             }
         }
