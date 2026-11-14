@@ -28,9 +28,9 @@
   "disclosure_collapsed": "69eb18d3fbabcae2dd4089681ce0dcc4ce73368a37fe39c54a4b04b62854765c",
   "disclosure_expanded": "084df3e97163a1eaae7f83fdecbd1bfd67674e710856dbe017de9ea80755f8f4",
   "exam_choice_pick_up_to": "328c9012dad7162e2cf2979b50e7fe35b2b46b93b4a4f4db7a9ba08479ac089c",
-  "gate_build_plan": "20f75d4c0bb7ec85fcf20ee8464c404ceb43fef5c893e3af321acb4efd592d8e",
+  "gate_build_plan": "aa48c9e36ad10e422e1dc44519f8ebf3ce6be9fedd25683ca6261c4a4d38c4cb",
   "gate_log_in": "2b82847e0bd18e2fb23b070b8f116e61f0fbc79c98332a3b0164be3f7189fe53",
-  "gate_session_ended_description": "562027913c8d51d9b3bd4130b5fbeae8670c6e9fff9b64e53bd451b287798336",
+  "gate_session_ended_description": "561691a2304d3f5a44e3e2d7d6273d25b33002f279802c43a4002efd14208f88",
   "gate_session_ended_title": "4a0b7717dfd4d3e3ec634a7559642d63ab19f9a852e2767a3002075d381a4808",
   "gate_sign_in_title": "e2f10622ab3cbabd276868091f86fb8aee6786efb1d5bbc5cf45aad2a00b1368",
   "gate_start_goal": "cb4a44fb50bd5845985d96c179549fa4a7ff4d52b4d7998d0caa9a6390727bda",
@@ -91,11 +91,13 @@
     <string name="navigation_user_menu">ユーザーメニュー</string>
     <string name="task_leave">中断する</string>
     <string name="gate_sign_in_title">ログインして続ける</string>
+    <!-- Title on a page that needs an account, once the learner is logged out of Zoonk. Not about a study session, which the app also calls a session. -->
     <string name="gate_session_ended_title">ログアウトしました</string>
-    <string name="gate_session_ended_description">学習計画に戻るには、ログインしてください。</string>
+    <!-- Under "You've been logged out". Their plan is still saved; logging in shows it again. -->
+    <string name="gate_session_ended_description">ログインすると、学習計画に戻れます。</string>
     <string name="gate_log_in">ログイン</string>
     <!-- Starts a new goal: the visitor tells us what to learn and gets a plan. -->
-    <string name="gate_build_plan">学習計画を作る</string>
+    <string name="gate_build_plan">学習計画を作成する</string>
     <string name="gate_start_goal_title">目標を決めて始める</string>
     <string name="gate_start_goal_description">学びたいことを教えてください。目標を達成するまで、毎日の学習計画を立てます。</string>
     <string name="gate_start_goal">目標を始める</string>
