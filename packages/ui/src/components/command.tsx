@@ -199,8 +199,7 @@ function CommandGroup({ className, ...props }: AutocompleteGroupProps) {
   );
 }
 
-const COMMAND_GROUP_LABEL_CLASS =
-  "text-label pt-3.5 pb-1.5 sm:px-2.5 sm:pt-2 sm:pb-1";
+const COMMAND_GROUP_LABEL_CLASS = "text-label pt-3.5 pb-1.5 sm:px-2.5 sm:pt-2 sm:pb-1";
 
 function CommandGroupLabel({ className, ...props }: AutocompleteGroupLabelProps) {
   return (
