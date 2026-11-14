@@ -1,33 +1,18 @@
 "use client";
 
-import { useExtracted, useFormatter } from "next-intl";
-import { isoDateToUtc } from "../_utils/iso-date";
+import { useExtracted } from "next-intl";
+import { useFormatIsoDate, useIsoToday } from "../_utils/iso-date";
+
+const MONTH_LENGTH = "YYYY-MM".length;
 
 function useStartWords() {
-  const format = useFormatter();
+  const formatDate = useFormatIsoDate();
+  const today = useIsoToday();
 
-  return (isoDate: string) => {
-    const date = isoDateToUtc(isoDate);
-    const now = new Date();
-    const isThisYear = date.getUTCFullYear() === now.getFullYear();
-    const isThisMonth = isThisYear && date.getUTCMonth() === now.getMonth();
-
-    if (isThisMonth) {
-      return {
-        dateKind: "day",
-        start: format.dateTime(date, { day: "numeric", month: "short", timeZone: "UTC" }),
-      };
-    }
-
-    return {
-      dateKind: "month",
-      start: format.dateTime(date, {
-        month: "long",
-        timeZone: "UTC",
-        ...(isThisYear ? {} : { year: "numeric" }),
-      }),
-    };
-  };
+  return (isoDate: string) =>
+    isoDate.slice(0, MONTH_LENGTH) === today.slice(0, MONTH_LENGTH)
+      ? { dateKind: "day", start: formatDate(isoDate, "day") }
+      : { dateKind: "month", start: formatDate(isoDate, "monthName") };
 }
 
 export function useFarTopicLine() {

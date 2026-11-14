@@ -1,11 +1,8 @@
 "use client";
 
-import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type DateTimeFormatOptions, useExtracted, useFormatter } from "next-intl";
-import { use } from "react";
-import { isoDateToUtc, toLocalIsoDate } from "../_utils/iso-date";
-import { PlanScreenContext } from "./plan-context";
+import { isoDateToUtc, useIsoToday } from "../_utils/iso-date";
 import { type PlanDateStyle, getPlanDateStyle } from "./plan-date-style";
 
 const STYLE_OPTIONS: Record<PlanDateStyle, DateTimeFormatOptions> = {
@@ -20,9 +17,7 @@ const PLAN_DATE_CLASS = "inline-block font-mono tabular-nums";
 
 export function useFormatPlanDate() {
   const format = useFormatter();
-  const plan = use(PlanScreenContext);
-  const mountedAt = useMountTime();
-  const today = plan?.today ?? toLocalIsoDate(mountedAt);
+  const today = useIsoToday();
 
   return (
     isoDate: string,
