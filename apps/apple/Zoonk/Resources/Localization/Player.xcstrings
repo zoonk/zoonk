@@ -1539,65 +1539,6 @@
         }
       }
     },
-    "Answer:" : {
-      "comment" : "Before a typed question's sample answer",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Antwort:"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Respuesta:"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Réponse :"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Risposta:"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "解答例："
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "답:"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Odpowiedź:"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Resposta:"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cevap:"
-          }
-        }
-      }
-    },
     "Ask" : {
       "comment" : "Opens the panel to ask about the lesson",
       "localizations" : {
@@ -9114,6 +9055,64 @@
         }
       }
     },
+    "Right answer: %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Richtige Antwort: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Respuesta correcta: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bonne réponse : %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Risposta corretta: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正解：%@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "정답: %@"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poprawna odpowiedź: %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resposta certa: %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Doğru cevap: %@"
+          }
+        }
+      }
+    },
     "Right, watch the spelling" : {
       "comment" : "A right typed answer with a typo",
       "localizations" : {
@@ -12291,6 +12290,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu soru bugün birkaç kez kontrol edildiği için bu cevabın sayılmıyor. Örnek cevapla karşılaştır:"
+          }
+        }
+      }
+    },
+    "This question was updated after you started, so this answer doesn't count." : {
+      "comment" : "Under “Not checked this time”: we corrected this lesson question while the learner was in the lesson, so their answer isn't graded either way.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Frage wurde aktualisiert, nachdem du angefangen hast, deshalb zählt diese Antwort nicht."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta pregunta se actualizó después de que empezaras, así que esta respuesta no cuenta."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette question a été mise à jour après que tu as commencé, donc cette réponse ne compte pas."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questa domanda è stata aggiornata dopo che hai iniziato, quindi questa risposta non viene conteggiata."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "始めた後にこの問題が更新されたため、今回の回答は採点されません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "시작한 뒤에 이 문제가 업데이트되어 이번 답은 반영되지 않아요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To pytanie zmieniło się po rozpoczęciu lekcji, więc ta odpowiedź się nie liczy."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta pergunta foi atualizada depois que você começou, então esta resposta não conta."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu soru sen başladıktan sonra güncellendi, bu yüzden bu cevap sayılmıyor."
           }
         }
       }
