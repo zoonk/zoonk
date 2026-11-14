@@ -235,7 +235,8 @@ private final class TestClock {
   }
 }
 
-private actor PlanAPIStub: PlanAPIClient {
+/// Also Today's tests', for plan changes saved from the Plan's screens.
+actor PlanAPIStub: PlanAPIClient {
   struct Calls {
     var changed = 0
     var changes: [[PlanEdit]] = []

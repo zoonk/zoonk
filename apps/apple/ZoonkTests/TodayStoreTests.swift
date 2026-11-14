@@ -662,6 +662,41 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertEqual(shown?.change.canUndo, true)
   }
 
+  func testAnAcceptOrAnUndoOnTodayReadsTodayAgain() async throws {
+    let proposed = try planChange(status: "proposed")
+    let applied = try planChange(status: "applied", canUndo: true)
+    let view = try today(session: day(blocks: [], nextPosition: nil), planChange: proposed)
+    let api = StudyAPIStub(today: .day(view), decided: applied)
+    let store = TodayStore(api: api, cache: signedInCache())
+    await store.today.load()
+
+    _ = await store.answer(proposed, with: .applied, in: view)
+    await store.today.load()
+    _ = await store.answer(applied, with: .undone, in: view)
+    await store.today.load()
+
+    let reads = await api.todayReads
+    XCTAssertEqual(reads, 3, "the day's lessons follow each answer")
+  }
+
+  func testAPlanChangeSavedFromAnotherScreenReadsTodayAgain() async throws {
+    let view = try today(session: day(blocks: [], nextPosition: nil))
+    let api = StudyAPIStub(today: .day(view))
+    let cache = signedInCache()
+    let store = TodayStore(api: api, cache: cache)
+    let plans = PlanStore(api: PlanAPIStub(), cache: cache)
+    await store.today.load()
+
+    // The Focus test's proposal, then the Plan's editor.
+    _ = await plans.decide(try planChange(status: "proposed"), goalId: "g1", decision: .applied)
+    await store.today.load()
+    _ = await plans.change(goalId: "g1", edits: [.dailyMinutes(20)])
+    await store.today.load()
+
+    let reads = await api.todayReads
+    XCTAssertEqual(reads, 3, "Today's lessons follow a change saved anywhere")
+  }
+
   func testAnAcceptSendsTheQuoteShownAndAsksAgainWhenTheNumbersMoved() async throws {
     let proposed = try planChange(status: "proposed", quote: "q1")
     let view = try today(session: day(blocks: [], nextPosition: nil), planChange: proposed)
