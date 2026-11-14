@@ -176,7 +176,7 @@ A page's "…", its way back, a sheet's close and a list's row are one size and 
 
 ### Z3. Targets are 44px and don't overlap
 
-Everything tappable takes 44 by 44px to press ([44px targets](app-patterns.md#what-every-page-shares)), and two press areas never overlap.
+Everything tappable takes 44 by 44px to press ([44px targets](app-patterns.md#what-every-page-shares)), and two press areas never overlap. Today's day bar is the [one exception](#exceptions-the-user-granted).
 
 - **Check.** Small controls side by side: their `hit-area`s don't intersect.
 - **Usual break.** Two 30px buttons 8px apart.
