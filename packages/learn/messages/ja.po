@@ -182,6 +182,7 @@ msgstr "続ける"
 #: src/_components/question-actions.tsx
 #: src/challenge/challenge-footer.tsx
 #: src/conversation/tutor-feature-offers.tsx
+#: src/explain/explain-waiting.tsx
 #: src/focus-test/focus-test-screens.tsx
 #: src/language/conversation/checkpoint-call-preparing.tsx
 #: src/language/exam-speaking/speaking-task-row.tsx
@@ -662,7 +663,6 @@ msgstr "戻る"
 
 #: src/_components/subscribe-gate.tsx
 #: src/conversation/tutor-feature-offers.tsx
-#: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "gczcC5"
 msgid "Subscribe"
 msgstr "登録する"
@@ -3730,11 +3730,6 @@ msgstr "まだ解説を準備しています。"
 msgctxt "fL_sD1"
 msgid "This is taking longer than usual."
 msgstr "いつもより時間がかかっています。"
-
-#: src/explain/explain-waiting.tsx
-msgctxt "SHh7sC"
-msgid "See explanation"
-msgstr "解説を見る"
 
 #: src/explain/quick-explanation-label.ts
 msgctxt "fjrJL6"
@@ -8888,6 +8883,16 @@ msgid "How does inflation work?"
 msgstr "インフレはどういう仕組みですか？"
 
 #: src/onboarding/entry/goal-limit-notice.tsx
+msgctxt "1oUkSm"
+msgid "Pause one in your Plan, or subscribe to study more at once."
+msgstr "学習計画で目標を1つ一時停止するか、サブスクリプションに登録して同時に取り組める目標を増やしてください。"
+
+#: src/onboarding/entry/goal-limit-notice.tsx
+msgctxt "EreSqP"
+msgid "That's all the goals you can study at once"
+msgstr "同時に取り組める目標の上限に達しました"
+
+#: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "4RwuVD"
 msgid "No more new goals this month"
 msgstr "今月はこれ以上、新しい目標を始められません"
@@ -8896,16 +8901,6 @@ msgstr "今月はこれ以上、新しい目標を始められません"
 msgctxt "MO6156"
 msgid "Go to your Plan"
 msgstr "学習計画を見る"
-
-#: src/onboarding/entry/goal-limit-notice.tsx
-msgctxt "EreSqP"
-msgid "That's all the goals you can study at once"
-msgstr "同時に取り組める目標の上限に達しました"
-
-#: src/onboarding/entry/goal-limit-notice.tsx
-msgctxt "1oUkSm"
-msgid "Pause one in your Plan, or subscribe to study more at once."
-msgstr "学習計画で目標を1つ一時停止するか、サブスクリプションに登録して同時に取り組める目標を増やしてください。"
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "n-6wcY"

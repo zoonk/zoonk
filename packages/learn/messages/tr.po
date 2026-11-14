@@ -182,6 +182,7 @@ msgstr "Devam et"
 #: src/_components/question-actions.tsx
 #: src/challenge/challenge-footer.tsx
 #: src/conversation/tutor-feature-offers.tsx
+#: src/explain/explain-waiting.tsx
 #: src/focus-test/focus-test-screens.tsx
 #: src/language/conversation/checkpoint-call-preparing.tsx
 #: src/language/exam-speaking/speaking-task-row.tsx
@@ -662,7 +663,6 @@ msgstr "Geri dön"
 
 #: src/_components/subscribe-gate.tsx
 #: src/conversation/tutor-feature-offers.tsx
-#: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "gczcC5"
 msgid "Subscribe"
 msgstr "Abone ol"
@@ -3730,11 +3730,6 @@ msgstr "Açıklamanı hâlâ hazırlıyoruz."
 msgctxt "fL_sD1"
 msgid "This is taking longer than usual."
 msgstr "Normalden uzun sürüyor."
-
-#: src/explain/explain-waiting.tsx
-msgctxt "SHh7sC"
-msgid "See explanation"
-msgstr "Açıklamayı gör"
 
 #: src/explain/quick-explanation-label.ts
 msgctxt "fjrJL6"
@@ -8888,6 +8883,16 @@ msgid "How does inflation work?"
 msgstr "Enflasyon nasıl işler?"
 
 #: src/onboarding/entry/goal-limit-notice.tsx
+msgctxt "1oUkSm"
+msgid "Pause one in your Plan, or subscribe to study more at once."
+msgstr "Plan bölümünde bir hedefi duraklat veya aynı anda daha fazla hedef üzerinde çalışmak için abone ol."
+
+#: src/onboarding/entry/goal-limit-notice.tsx
+msgctxt "EreSqP"
+msgid "That's all the goals you can study at once"
+msgstr "Aynı anda çalışabileceğin hedef sınırına ulaştın"
+
+#: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "4RwuVD"
 msgid "No more new goals this month"
 msgstr "Bu ayki yeni hedef sınırına ulaştın"
@@ -8896,16 +8901,6 @@ msgstr "Bu ayki yeni hedef sınırına ulaştın"
 msgctxt "MO6156"
 msgid "Go to your Plan"
 msgstr "Planına git"
-
-#: src/onboarding/entry/goal-limit-notice.tsx
-msgctxt "EreSqP"
-msgid "That's all the goals you can study at once"
-msgstr "Aynı anda çalışabileceğin hedef sınırına ulaştın"
-
-#: src/onboarding/entry/goal-limit-notice.tsx
-msgctxt "1oUkSm"
-msgid "Pause one in your Plan, or subscribe to study more at once."
-msgstr "Plan bölümünde bir hedefi duraklat veya aynı anda daha fazla hedef üzerinde çalışmak için abone ol."
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "n-6wcY"

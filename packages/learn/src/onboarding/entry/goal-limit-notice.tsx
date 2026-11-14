@@ -1,77 +1,89 @@
 "use client";
 
 import { buttonVariants } from "@zoonk/ui/components/button";
-import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useCapLine } from "../../_components/help-limit-notice";
-import { SubscribeGate } from "../../_components/subscribe-gate";
+import { GateWords, SubscribeGate, SubscribeMainAction } from "../../_components/subscribe-gate";
 import { useLearnRoutes } from "../../learn-context";
 import { LearnLink } from "../../learn-link";
-import { useGoalLimitMessage } from "../goal-errors";
 import { type GoalLimitReason } from "../onboarding-actions";
+import { ONBOARDING_ACTION_LINK_CLASS, OnboardingBottomBar } from "../onboarding-frame";
 
 export function isPlusGoalLimit(reason: GoalLimitReason): boolean {
   return reason === "activeGoals" || reason === "monthlyGoals";
 }
 
-/** The gate a learner meets on trying to start a goal their plan has no room for. */
-export function GoalLimitNotice({ reason }: { reason: GoalLimitReason }) {
+type GoalLimitWords = { line?: string; title: string };
+
+/** What the gate says when the learner's plan has no room for another goal. */
+export function useGoalLimitWords(reason: GoalLimitReason): GoalLimitWords | null {
   const t = useExtracted();
-  const routes = useLearnRoutes();
   const monthLine = useCapLine({ period: "month", tier: "free" });
 
   if (!isPlusGoalLimit(reason)) {
     return null;
   }
 
-  if (reason !== "activeGoals") {
-    return <SubscribeGate title={t("No more new goals this month")}>{monthLine}</SubscribeGate>;
+  return reason === "activeGoals"
+    ? {
+        line: t("Pause one in your Plan, or subscribe to study more at once."),
+        title: t("That's all the goals you can study at once"),
+      }
+    : { line: monthLine, title: t("No more new goals this month") };
+}
+
+function PlanLink({ className }: { className: string }) {
+  const t = useExtracted();
+  const routes = useLearnRoutes();
+
+  return (
+    <LearnLink className={className} href={routes.journey}>
+      {t("Go to your Plan")}
+    </LearnLink>
+  );
+}
+
+/** The gate a learner meets on trying to start a goal their plan has no room for. */
+export function GoalLimitNotice({ reason }: { reason: GoalLimitReason }) {
+  const words = useGoalLimitWords(reason);
+
+  if (!words) {
+    return null;
   }
 
   return (
     <SubscribeGate
       action={
-        <LearnLink
-          className={buttonVariants({ size: "sm", variant: "outline" })}
-          href={routes.journey}
-        >
-          {t("Go to your Plan")}
-        </LearnLink>
+        reason === "activeGoals" && (
+          <PlanLink className={buttonVariants({ size: "sm", variant: "outline" })} />
+        )
       }
-      title={t("That's all the goals you can study at once")}
+      title={words.title}
     >
-      {t("Pause one in your Plan, or subscribe to study more at once.")}
+      {words.line}
     </SubscribeGate>
   );
 }
 
-export function GoalLimitWall({ reason }: { reason: GoalLimitReason }) {
-  const t = useExtracted();
-  const message = useGoalLimitMessage();
-  const routes = useLearnRoutes();
+/**
+ * The gate as an onboarding screen's bar: Subscribe as the main action, and the Plan, where a goal
+ * can be paused, before it. `words` puts the gate's words over the bar, for a screen whose own title
+ * isn't the gate's.
+ */
+export function GoalLimitBar({ reason, words }: { reason: GoalLimitReason; words?: boolean }) {
+  const said = useGoalLimitWords(reason);
 
-  if (!isPlusGoalLimit(reason)) {
+  if (!said) {
     return null;
   }
 
   return (
-    <>
-      <p className="text-muted-foreground text-center text-sm text-pretty" role="alert">
-        {message(reason)}
-      </p>
-
-      <LearnLink className={cn(buttonVariants({ size: "lg" }), "w-full")} href={routes.upgrade}>
-        {t("Subscribe")}
-      </LearnLink>
-
-      {reason === "activeGoals" && (
-        <LearnLink
-          className={cn(buttonVariants({ size: "lg", variant: "outline" }), "w-full")}
-          href={routes.journey}
-        >
-          {t("Go to your Plan")}
-        </LearnLink>
-      )}
-    </>
+    <OnboardingBottomBar note={words && <GateWords line={said.line} title={said.title} />}>
+      <SubscribeMainAction
+        action={
+          reason === "activeGoals" && <PlanLink className={ONBOARDING_ACTION_LINK_CLASS.other} />
+        }
+      />
+    </OnboardingBottomBar>
   );
 }
