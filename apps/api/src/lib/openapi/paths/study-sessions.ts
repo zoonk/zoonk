@@ -20,7 +20,6 @@ import {
   conflictResponse,
   jsonResponse,
   notFoundResponse,
-  paymentRequiredResponse,
   unauthorizedResponse,
   unprocessableEntityResponse,
   validationErrorResponse,
@@ -228,10 +227,6 @@ export const studySessionPaths = {
       responses: {
         "200": jsonResponse(studySessionResponseSchema, "The session with the lessons added"),
         ...readErrors,
-        "402": {
-          ...paymentRequiredResponse,
-          description: "Reserved for subscription-only activities",
-        },
         "422": {
           ...unprocessableEntityResponse,
           description: `Nothing to add to today: no lessons left to catch up on, or the day doesn't offer them (\`catchUp.later.offered\` is false or \`catchUp\` is null). Error code: ${studySessionErrorCodes.nothingToCatchUp}.`,

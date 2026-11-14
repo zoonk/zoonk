@@ -131,6 +131,7 @@ describe("rolling lesson admission", () => {
 
     await prisma.usageRecord.create({
       data: {
+        countedAt: new Date(CUTOFF.getTime() - 1000),
         createdAt: new Date(CUTOFF.getTime() - 1000),
         kind: "lessonStart",
         targetId: oldTarget,
@@ -166,6 +167,7 @@ describe("rolling lesson admission", () => {
       beforeCommit: (tx) =>
         tx.usageRecord.create({
           data: {
+            countedAt: new Date(NOW.getTime() + 1000),
             createdAt: new Date(NOW.getTime() + 1000),
             kind: "lessonStart",
             targetId: randomUUID(),

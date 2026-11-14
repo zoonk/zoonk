@@ -5,7 +5,6 @@ struct CatalogScreen: View {
 
   var body: some View {
     AllCoursesView(category: $category)
-      .navigationTitle(Text(catalogTitle(category)))
       .barTitleAfterHero(String(localized: catalogTitle(category)))
       .catalogDestinations()
   }

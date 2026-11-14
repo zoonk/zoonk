@@ -313,6 +313,40 @@ describe("chapter mind maps", () => {
     }
   });
 
+  it("counts explicitly requested map lessons while promoting an existing preparation without charging generation twice", async () => {
+    const { current, goal, lessons, user } = await finishedChapter();
+    const preparedLesson = lessons[2];
+
+    if (!preparedLesson) {
+      throw new Error("Missing preparation fixture");
+    }
+
+    await prisma.usageRecord.create({
+      data: {
+        costMicros: 200_000,
+        countedAt: null,
+        generated: true,
+        kind: "lessonStart",
+        targetId: preparedLesson.id,
+        userId: user.id,
+      },
+    });
+
+    const before = new Date();
+
+    await expect(
+      requestChapterMindMap({ chapterId: current, goalId: goal.id }),
+    ).resolves.toMatchObject({ status: "writingLessons" });
+
+    const rows = await prisma.usageRecord.findMany({
+      where: { kind: "lessonStart", userId: user.id },
+    });
+
+    expect(rows).toHaveLength(2);
+    expect(rows.every((row) => row.countedAt !== null && row.countedAt >= before)).toBe(true);
+    expect(rows.find((row) => row.targetId === preparedLesson.id)?.costMicros).toBe(200_000);
+  });
+
   it("claims the map and each lesson it writes first together, or none of them", async () => {
     const { current, goal, lessons, user } = await finishedChapter();
     const [writing, unstarted] = lessons.slice(2).map((lesson) => lesson.id);
@@ -329,6 +363,7 @@ describe("chapter mind maps", () => {
 
     await prisma.usageRecord.createMany({
       data: Array.from({ length: 19 }, () => ({
+        countedAt: claimedAt,
         createdAt: claimedAt,
         generated: true,
         kind: "lessonStart" as const,
@@ -345,7 +380,7 @@ describe("chapter mind maps", () => {
           availableAt: new Date(claimedAt.getTime() + 30 * 24 * 60 * 60 * 1000),
           limit: 20,
           period: "rolling30Days",
-          resource: "lessonStart",
+          resource: "chapterLessons",
           tier: "free",
         },
         status: "limitReached",

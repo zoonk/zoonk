@@ -262,7 +262,6 @@ test.describe("Mind maps API", () => {
       lessons: [
         {
           lessonId: finishedLesson.id,
-          locked: false,
           map: { ideas: [{ about: null, icon: null, text: "A cell has parts." }], shape: "hub" },
           position: 1,
           saved: false,
@@ -304,9 +303,7 @@ test.describe("Mind maps API", () => {
         schema: goalMindMapsSchema,
       }),
     ).resolves.toMatchObject({
-      lessonGroups: [
-        { chapterId: finished.id, count: 1, lessonIds: [finishedLesson.id], locked: 0 },
-      ],
+      lessonGroups: [{ chapterId: finished.id, count: 1, lessonIds: [finishedLesson.id] }],
       saved: [
         {
           available: true,

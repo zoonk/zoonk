@@ -56,16 +56,28 @@ async function GateMessage({
 }) {
   const t = await getExtracted();
 
-  const words = {
+  const words: { description?: string; title: string } = {
     account: {
-      description: t("Your plan and progress move to your account, safe on any device."),
+      description: t({
+        description:
+          "Under the title, for a guest: what they had before keeps going once they create an account.",
+        message: "Your plan and progress come with you.",
+      }),
       title: t("Create an account to use this page"),
     },
-    ended: { description: t("Log in to pick up your plan."), title: t("Your session ended") },
-    login: {
-      description: t("Log in to pick up where you left off, or start free."),
-      title: t("Log in to continue"),
+    ended: {
+      description: t({
+        description:
+          'Under "You\'ve been logged out". Their plan is still saved; logging in shows it again.',
+        message: "Log in to get back to your plan.",
+      }),
+      title: t({
+        description:
+          "Title on a page that needs an account, once the learner is logged out of Zoonk. Not about a study session, which the app also calls a session.",
+        message: "You've been logged out",
+      }),
     },
+    login: { title: t("Log in to continue") },
   }[gate.kind];
 
   return (
@@ -78,7 +90,7 @@ async function GateMessage({
         <EmptyTitle>
           <Heading>{words.title}</Heading>
         </EmptyTitle>
-        <EmptyDescription>{words.description}</EmptyDescription>
+        {words.description && <EmptyDescription>{words.description}</EmptyDescription>}
       </EmptyHeader>
       {children && <EmptyContent>{children}</EmptyContent>}
     </Empty>
@@ -133,9 +145,11 @@ export async function AuthGate({
           >
             {t("Log in")}
           </PendingLink>
-          <Link className={buttonVariants({ variant: "outline" })} href="/start">
-            {gate.kind === "ended" ? t("Start something new") : t("Start free")}
-          </Link>
+          {gate.kind === "login" && (
+            <Link className={buttonVariants({ variant: "outline" })} href="/start">
+              {t("Build my plan")}
+            </Link>
+          )}
         </div>
       )}
     </GateMessage>
@@ -180,9 +194,9 @@ async function GateBar({ gate }: { gate: Gate }) {
   return (
     <BottomBar>
       <BottomBarActions>
-        {gate.kind !== "account" && (
+        {gate.kind === "login" && (
           <Link className={buttonVariants({ size: "xl", variant: "outline" })} href="/start">
-            {gate.kind === "ended" ? t("Start something new") : t("Start free")}
+            {t("Build my plan")}
           </Link>
         )}
 

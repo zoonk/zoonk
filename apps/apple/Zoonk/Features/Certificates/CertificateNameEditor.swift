@@ -37,8 +37,7 @@ struct CertificateNameEditor: View {
         TextField(
           text: $name,
           prompt: Text(
-            "Your full name", tableName: "Certificates",
-            comment: "Placeholder of the field for the name on the learner's certificates")
+            "Your full name", tableName: "Certificates")
         ) {
           label
         }
@@ -48,7 +47,7 @@ struct CertificateNameEditor: View {
         .focused($isFocused)
         .onSubmit(save)
 
-        BusyButton(isBusy: session.isWorking, icon: .check, action: save) {
+        BusyButton(isBusy: session.isWorking, action: save) {
           Text("Save", tableName: "Certificates", comment: "Saves the name on the certificates")
         }
         .buttonStyle(.mainAction)
@@ -63,7 +62,7 @@ struct CertificateNameEditor: View {
           )
           .foregroundStyle(.destructiveText)
         } else {
-          hint
+          NameHint()
             .foregroundStyle(.mutedForeground)
         }
       }
@@ -87,21 +86,9 @@ struct CertificateNameEditor: View {
   private var label: Text {
     isFirst
       ? Text(
-        "Your name, as it should appear", tableName: "Certificates",
-        comment: "Label of the field asking for the name to print on a certificate")
+        "Your name, as it should appear", tableName: "Certificates")
       : Text(
-        "Name on your certificates", tableName: "Certificates",
-        comment: "Label of the field that changes the name on the learner's certificates")
-  }
-
-  private var hint: Text {
-    isFirst
-      ? Text(
-        "Your certificates and your buddy use this name. You can change it anytime.",
-        tableName: "Certificates", comment: "Under the field asking for the learner's name")
-      : Text(
-        "Your certificates and your buddy use this name.", tableName: "Certificates",
-        comment: "Under the field that changes the learner's name")
+        "Name on your certificates", tableName: "Certificates")
   }
 
   private func save() {

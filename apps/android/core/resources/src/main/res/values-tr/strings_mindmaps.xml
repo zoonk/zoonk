@@ -20,17 +20,14 @@
   "mindmaps_download": "b333b45450d635eedd4efa549fd4caa8e85650846a62884b7d00f505a9097d64",
   "mindmaps_drawing": "80ed264a9a7f6d48626aa45683a9a21b23c5666b703d125baf29cb1a7ae3d5a6",
   "mindmaps_drawing_wait": "bd6efb602cbe1b94f02cf083a25f7ce53ced54d2f0910b77f679fdfa1ffc0f21",
-  "mindmaps_empty_description": "5e4ca8ead3d095811aa9fa933294a9e17f99a68835d84ba46d250de996dfeb1e",
-  "mindmaps_empty_title": "94f08c0c5fb01c9d9103f44830ac09f4e2bea91641a3844e4ce2cd349a23df71",
+  "mindmaps_empty": "bd61da6acb4d5eb23bfaa4b3ab0fdd740424e18efc67c3cf194a4a4f8042e8f3",
   "mindmaps_failed": "292f458295f824ff1bf48df0f01e304a7ec450d6b281e84feda205e843980f40",
   "mindmaps_fit": "13ce7ea637bbd0381a39ca82b622679f58a53abfb0c3e68542dd559d79e512ca",
   "mindmaps_free_lessons_note": "47423a3a0ef6e187288811dea67479abe4a6adb787f3978ec4abe5ca9f4662e2",
   "mindmaps_in_short": "510935e0b38e3a3470604c09f491aaa500aa08dad6b824f8660861ff1b97a43a",
-  "mindmaps_keep_studying": "603b9bd298bee4325ae51f245b74e9d497c695d0e0f4b5f5657cfb3c32c66d0e",
   "mindmaps_lesson_map": "5bb30d0f45ecfde2b8e0f03f070e7671246641fbaf58a83675ef2e4e0b52df30",
   "mindmaps_lesson_maps": "f4c611dc71251ad1457882b1bd26d88a105f9b0f4deb3a81c5f80d628387c997",
-  "mindmaps_lessons_empty_description": "38d595518d5a20e85e7ffd1c6bb482d3d14cd509e56bb427c26c3734b9a83a97",
-  "mindmaps_lessons_empty_title": "bda7f9ea6d0385439a92e98791a76f3bf96112c51fc729ff55d205a495d714c6",
+  "mindmaps_lessons_empty": "e8f73c87acee88bd160b7635900a93f8066e0fc508d6d10ae63108631253fbeb",
   "mindmaps_lessons_first_free": "f8acb4b7c9cfc88677fdc0f592652df92ec8273a5c5a1b57cef1b616502381c3",
   "mindmaps_lessons_to_write": "7faee3711fb245b146e9ad6aa4a118e7374b2467c82147cdf977ec33cf7ff818",
   "mindmaps_map_gone": "c82ece4765be89a798eac8121630990a9c39669386139a510bdfb2e278279a9b",
@@ -53,8 +50,7 @@
   "mindmaps_save_failed": "2be82fcc902724856b6c4488a3f0b35c50e6df79da37f9f83919293e512babd7",
   "mindmaps_save_map_failed": "f86254f44512d0e1d280e8505d40faf2f1bc1985d7d2f9769580a7a11965a72b",
   "mindmaps_saved": "f8435eb144f3491959b63b6b3b2c8a80dc068fee0f7b39e63b8db33433c19e71",
-  "mindmaps_saved_empty_description": "595cc0010c03a2e6832cf5be4ffe967054b087b597f1dac4bda7529333cfeee9",
-  "mindmaps_saved_empty_title": "478e407523bb32c2e0fe14b17580e40c1cb4502d11e6e9e7f0cb765be9114dee",
+  "mindmaps_saved_empty": "ca99ff617322bbd11b7b14c47a1f1f704023826b042651e0f67e6f386d3fec86",
   "mindmaps_saved_state": "73bc22257a6bebf97060e7fdbea6b7a89017b52d0dfe0eeb2d2099c9c99632f9",
   "mindmaps_show_all": "0262aff550f5e46b29563b87e3819506ad6e76d07828edb0f9f6fd2c1a665c01",
   "mindmaps_shown_as_text": "c20e11075bcf89d5789416048f1f1c6ca2588b78c7dc151383081192a5486278",
@@ -83,9 +79,7 @@
     </plurals>
     <!-- A mind map row's line under the chapter's title. -->
     <string name="mindmaps_chapter_number">Ünite %1$s</string>
-    <string name="mindmaps_empty_title">Henüz ünite haritası yok</string>
-    <string name="mindmaps_empty_description">Bitirdiğin her ünite için bir zihin haritası hazırlanır.</string>
-    <string name="mindmaps_keep_studying">Çalışmaya devam et</string>
+    <string name="mindmaps_empty">Henüz ünite haritası yok. Bitirdiğin her ünite için bir harita hazırlanır.</string>
     <!-- A mind map's description for screen readers when it has no words yet. -->
     <string name="mindmaps_alt_chapter">%1$s için zihin haritası</string>
     <!-- A mind map's description for screen readers: its title, then its central idea. -->
@@ -169,10 +163,8 @@
     <string name="mindmaps_lesson_map">Ders haritası</string>
     <!-- Shows every row of a long list. %1$s is how many there are. -->
     <string name="mindmaps_show_all">Tümünü göster (%1$s)</string>
-    <string name="mindmaps_lessons_empty_title">Henüz ders haritası yok</string>
-    <string name="mindmaps_lessons_empty_description">Her ders bir zihin haritasıyla biter.</string>
-    <string name="mindmaps_saved_empty_title">Henüz kayıtlı harita yok</string>
-    <string name="mindmaps_saved_empty_description">Bir haritayı buraya kaydetmek için üzerindeki yer imi simgesine dokun.</string>
+    <string name="mindmaps_lessons_empty">Henüz ders haritası yok. Her ders bir haritayla biter.</string>
+    <string name="mindmaps_saved_empty">Henüz kayıtlı harita yok. Bir haritayı buraya kaydetmek için üzerindeki yer imi simgesine dokun.</string>
     <!-- Over saved maps that can't open anymore, such as a chapter that left the plan. -->
     <string name="mindmaps_no_longer_available">Artık kullanılamıyor</string>
     <!-- Removes a saved map that can't open anymore. -->

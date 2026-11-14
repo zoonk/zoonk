@@ -245,7 +245,7 @@ private struct UnderstoodCard: View {
         selected: ContentCountry(goal.contentCountry)?.code
       ) { choice in
         // Nothing is built yet, so a pick saves on the draft without asking.
-        await save(field: .contentCountry, goal: index, value: choice?.code)
+        await save(field: .contentCountry, goal: index, value: choice.code)
       }
       .zoonkStyles()
     }

@@ -673,7 +673,18 @@ struct GoalStanding: Decodable, Equatable, Sendable {
       var id: String { areaId }
     }
 
+    /// The practice tests preparation counts: `fullReviews` for a learner without mock exams,
+    /// whose day calls them "Review".
+    struct Parts: Decodable, Equatable, Sendable {
+      struct Mocks: Decodable, Equatable, Sendable {
+        let kind: String
+      }
+
+      let mocks: Mocks
+    }
+
     let areas: [Area]
+    let components: Parts
     let value: Double
     let weekGain: Double
   }

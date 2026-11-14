@@ -13999,16 +13999,6 @@
               }
             }
           },
-          "402": {
-            "description": "Reserved for subscription-only activities",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
           "404": {
             "description": "Resource not found",
             "content": {
@@ -14112,16 +14102,6 @@
           },
           "401": {
             "description": "Authentication required",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "402": {
-            "description": "Reserved for subscription-only activities",
             "content": {
               "application/json": {
                 "schema": {
@@ -18501,7 +18481,7 @@
     },
     "/goals/{goalId}/mind-maps": {
       "get": {
-        "description": "A goal's Mind maps page. `chapters`: every chapter of the goal's scope that can have a map, finished or not (the plan's, and for a goal that follows a course every chapter of that course), in syllabus order, with its subject (an exam's notice subject or the plan's module) to group by, its number, whether the learner saved it, and its map's status, picture (`image.thumbnailUrl` for lists) and outline, so the chapter maps open with no further request. A chapter without one yet is `available` (POST `/goals/{goalId}/chapters/{chapterId}/mind-map/generations` makes it), `writingLessons`, `drawing`, `failed` or `plusRequired`. Topics without a chapter yet and a language's units aren't listed. `lessonGroups`: each chapter's lesson maps, how many and which open (`GET /goals/{goalId}/chapters/{chapterId}/lesson-maps` reads them). `saved`: the Saved tab. `createOffer`: what `POST /goals/{goalId}/mind-maps/generations` would start now. `firstTab`: the tab to open first. While a map is `drawing` GET this again every 5 seconds, and every 15 while one is only `writingLessons`.",
+        "description": "A goal's Mind maps page. `chapters`: every chapter of the goal's scope that can have a map, finished or not (the plan's, and for a goal that follows a course every chapter of that course), in syllabus order, with its subject (an exam's notice subject or the plan's module) to group by, its number, whether the learner saved it, and its map's status, picture (`image.thumbnailUrl` for lists) and outline, so the chapter maps open with no further request. A chapter without one yet is `available` (POST `/goals/{goalId}/chapters/{chapterId}/mind-map/generations` makes it), `writingLessons`, `drawing`, or `failed`. Topics without a chapter yet and a language's units aren't listed. `lessonGroups`: each chapter's lesson maps, how many and which open (`GET /goals/{goalId}/chapters/{chapterId}/lesson-maps` reads them). `saved`: the Saved tab. `createOffer`: what `POST /goals/{goalId}/mind-maps/generations` would start now. `firstTab`: the tab to open first. While a map is `drawing` GET this again every 5 seconds, and every 15 while one is only `writingLessons`.",
         "operationId": "listGoalMindMaps",
         "security": [
           {
@@ -18585,7 +18565,7 @@
     },
     "/goals/{goalId}/mind-maps/generations": {
       "post": {
-        "description": "Create all chapter maps, when the learner asks for it (never on a screen view). Starts the map of every chapter of the goal's scope that has no map ready or on its way (failed ones included), whose lessons are all written and that isn't `plusRequired`, in course order, as far as the learner's allowance goes; it never writes lessons, so a chapter that still needs them waits for its own `POST .../mind-map/generations`. Each new map counts once toward the learner's mind maps (`resource: mindMap`); a map they claimed before, such as a failed one, counts nothing again, and a map another learner is making is joined free. When the allowance runs out partway, the chapters before it still start and the rest are `unstarted` with reason `allowance` and `stop` says why; nothing is refused as a whole. Always 202: follow progress with `GET /goals/{goalId}/mind-maps`. Sending it again starts only what's still missing.",
+        "description": "Create all chapter maps, when the learner asks for it (never on a screen view). Starts the map of every chapter of the goal's scope that has no map ready or on its way (failed ones included), whose lessons are all written, in course order, as far as the learner's allowance goes; it never writes lessons, so a chapter that still needs them waits for its own `POST .../mind-map/generations`. Each new map counts once toward the learner's mind maps (`resource: mindMap`); a map they claimed before, such as a failed one, counts nothing again, and a map another learner is making is joined free. When the allowance runs out partway, the chapters before it still start and the rest are `unstarted` with reason `allowance` and `stop` says why; nothing is refused as a whole. Always 202: follow progress with `GET /goals/{goalId}/mind-maps`. Sending it again starts only what's still missing.",
         "operationId": "createGoalMindMapGenerations",
         "security": [
           {
@@ -18669,7 +18649,7 @@
     },
     "/goals/{goalId}/mind-maps/saved": {
       "post": {
-        "description": "Saves a map to study again (`saved: true`) or removes it (`saved: false`). It's the state the learner wants, so sending it again changes nothing. Saving needs a map the learner can open now in this goal's scope: a `ready` chapter map, or a lesson map from `GET .../lesson-maps` that isn't locked; otherwise 404, or 402 `PLUS_REQUIRED` for a locked one. Removing needs only the learner's own save, from any goal. Saves belong to the learner's account and are free on every plan; a save never opens a map the learner couldn't open.",
+        "description": "Saves a map to study again (`saved: true`) or removes it (`saved: false`). It's the state the learner wants, so sending it again changes nothing. Saving needs a map the learner can open now in this goal's scope: a `ready` chapter map, or a lesson map from `GET .../lesson-maps`; otherwise 404. Removing needs only the learner's own save, from any goal. Saves belong to the learner's account and are free on every plan; a save never opens a map the learner couldn't open.",
         "operationId": "saveMindMap",
         "security": [
           {
@@ -18730,16 +18710,6 @@
           },
           "401": {
             "description": "Authentication required",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "402": {
-            "description": "The map is unavailable",
             "content": {
               "application/json": {
                 "schema": {
@@ -24618,16 +24588,6 @@
           },
           "401": {
             "description": "Authentication required",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "402": {
-            "description": "Reserved for subscription-only activities",
             "content": {
               "application/json": {
                 "schema": {
@@ -46145,18 +46105,10 @@
               "includesMockExams": {
                 "type": "boolean",
                 "description": "Whether mock exams are included"
-              },
-              "studyDays": {
-                "nullable": true,
-                "description": "Always null. Exam goals use the shared lesson allowance without time-based expiry",
-                "type": "integer",
-                "minimum": -9007199254740991,
-                "maximum": 9007199254740991
               }
             },
             "required": [
-              "includesMockExams",
-              "studyDays"
+              "includesMockExams"
             ],
             "additionalProperties": false,
             "description": "What exam prep the plan includes"
@@ -46230,7 +46182,7 @@
           "tier"
         ],
         "additionalProperties": false,
-        "description": "Free learners share 20 distinct lesson admissions in the preceding 30 times 24 hours across all goals, including exams. The lessonStart entry returns usedLast30Days, rollingLimit, remaining and availableAt. A refused start returns 402 USAGE_LIMIT_REACHED with details.limit period=rolling30Days and availableAt, so no second read or client date arithmetic is needed. Claims exactly 30 days old are outside the window. Replays of an admitted lesson never count again, whatever its age. Generation ahead of study uses the same claim. Other resources retain UTC calendar-month limits and resets.month applies only to them."
+        "description": "Free learners share 20 distinct counted lesson starts in a rolling 30 times 24 hours across all goals, including exams. The lessonStart entry returns usedLast30Days, rollingLimit, remaining and availableAt. A refused start returns 402 USAGE_LIMIT_REACHED with details.limit period=rolling30Days and availableAt, so no second read or client date arithmetic is needed. Claims exactly 30 days old are outside the window. Replays of a counted lesson never count again, whatever its age. Automatic preparation is bounded separately by counted starts plus unstarted preparations, and counts toward the learner allowance only when first started. A map explicitly requested by the learner counts each lesson it writes first at map admission. A map bundle uses resource=chapterLessons and returns the instant all its new lessons fit; more than 20 new lessons uses period=total and availableAt=null rather than claiming used lessons. Internal automatic-preparation refusals use resource=lessonPreparation. Other resources retain UTC calendar-month limits and resets.month applies only to them."
       },
       "AllowanceItem": {
         "anyOf": [
@@ -46309,7 +46261,7 @@
             "type": "integer",
             "minimum": -9007199254740991,
             "maximum": 9007199254740991,
-            "description": "Lesson claims strictly after now minus 30 times 24 hours, through now"
+            "description": "Counted lesson starts newer than now minus 30 times 24 hours; includes explicitly requested map preparation and conservatively counts server clock skew"
           }
         },
         "required": [
@@ -80282,13 +80234,6 @@
             "minimum": -9007199254740991,
             "maximum": 9007199254740991
           },
-          "examPrepDays": {
-            "nullable": true,
-            "description": "Always null. Exam goals have no time-based expiry",
-            "type": "integer",
-            "minimum": -9007199254740991,
-            "maximum": 9007199254740991
-          },
           "guestLessons": {
             "nullable": true,
             "description": "Lessons a guest can start before creating an account",
@@ -80299,13 +80244,6 @@
           "lessonsPer30Days": {
             "nullable": true,
             "description": "20 distinct lessons across all goals in the preceding 30 times 24 hours; admitted lessons can be replayed without another charge",
-            "type": "integer",
-            "minimum": -9007199254740991,
-            "maximum": 9007199254740991
-          },
-          "lessonsPerDay": {
-            "nullable": true,
-            "description": "Always null. Free lesson admission uses the rolling 30-day allowance",
             "type": "integer",
             "minimum": -9007199254740991,
             "maximum": 9007199254740991
@@ -80327,10 +80265,8 @@
         },
         "required": [
           "activeGoals",
-          "examPrepDays",
           "guestLessons",
           "lessonsPer30Days",
-          "lessonsPerDay",
           "tutorMessagesPerDay",
           "uploadsPerDay"
         ],
@@ -80717,10 +80653,6 @@
                 ],
                 "description": "fullReviews: an exam goal whose plan has no mock exams (free) counts its full reviews in the exam's format (study blocks with `fullReview`), which its plan gives it on the mock's day"
               },
-              "plusRequired": {
-                "type": "boolean",
-                "description": "Always false. Free exam goals measure full reviews instead of subscription-only mocks"
-              },
               "taken": {
                 "type": "integer",
                 "minimum": 0,
@@ -80736,7 +80668,6 @@
             },
             "required": [
               "kind",
-              "plusRequired",
               "taken",
               "value"
             ],
@@ -82820,7 +82751,7 @@
               },
               "resource": {
                 "type": "string",
-                "description": "What ran out, such as goal or activeGoals"
+                "description": "What is limited; chapterLessons is the new-lesson size of a chapter request, lessonPreparation is automatic work capacity"
               },
               "tier": {
                 "type": "string",
@@ -82834,7 +82765,7 @@
                 "type": "string",
                 "format": "date-time",
                 "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
-                "description": "The instant a new lesson is available, computed from the twentieth-newest claim in the rolling window"
+                "description": "The instant this request fits the rolling allowance, computed from recorded starts before the request"
               },
               "period": {
                 "type": "string",
@@ -82862,7 +82793,7 @@
               },
               "resource": {
                 "type": "string",
-                "description": "What ran out, such as goal or activeGoals"
+                "description": "What is limited; chapterLessons is the new-lesson size of a chapter request, lessonPreparation is automatic work capacity"
               },
               "tier": {
                 "type": "string",
@@ -82870,6 +82801,13 @@
                   "free",
                   "guest",
                   "plus"
+                ]
+              },
+              "availableAt": {
+                "type": "string",
+                "nullable": true,
+                "enum": [
+                  null
                 ]
               },
               "period": {
@@ -83144,15 +83082,10 @@
               "available": {
                 "type": "boolean",
                 "description": "True while the chapter's test is available: the chapter has lessons left, and the test wasn't failed today without a lesson studied in it since. A failed one becomes available again on the next learner-local day"
-              },
-              "plusRequired": {
-                "type": "boolean",
-                "description": "Always false. Chapter test-out does not require a subscription"
               }
             },
             "required": [
-              "available",
-              "plusRequired"
+              "available"
             ],
             "additionalProperties": false
           }
@@ -83181,10 +83114,6 @@
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991
-          },
-          "plusRequired": {
-            "type": "boolean",
-            "description": "Always false. New lessons use the shared rolling 30-day lesson allowance"
           },
           "skillIds": {
             "type": "array",
@@ -83215,7 +83144,6 @@
         "required": [
           "lessonId",
           "minutes",
-          "plusRequired",
           "skillIds",
           "state",
           "title",
@@ -84468,19 +84396,11 @@
           "access": {
             "type": "object",
             "properties": {
-              "freeUntil": {
-                "nullable": true,
-                "description": "Always null. Exam goals have no time-based expiry",
-                "type": "string",
-                "format": "date",
-                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
-              },
               "mocksRequirePlus": {
                 "type": "boolean"
               }
             },
             "required": [
-              "freeUntil",
               "mocksRequirePlus"
             ],
             "additionalProperties": false
@@ -87688,18 +87608,8 @@
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
-          "locked": {
-            "type": "boolean",
-            "description": "Always false. Lesson maps do not expire"
-          },
           "map": {
-            "nullable": true,
-            "description": "Null while `locked`",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/LessonMap"
-              }
-            ]
+            "$ref": "#/components/schemas/LessonMap"
           },
           "position": {
             "type": "integer",
@@ -87718,7 +87628,6 @@
         },
         "required": [
           "lessonId",
-          "locked",
           "map",
           "position",
           "saved",
@@ -87776,10 +87685,9 @@
               "drawing",
               "ready",
               "failed",
-              "plusRequired",
               "unavailable"
             ],
-            "description": "`available`: no map yet and nobody making it; `POST .../mind-map/generations` makes it, writing the chapter's `lessonsToWrite` lessons first. `writingLessons`: on its way, writing those lessons first (a few minutes); GET the status again. `drawing`: on its way, being written and drawn (about half a minute), also when the learner just finished the chapter and its map is owed; GET the status again. `ready`: `outline`, and `image` unless its picture failed its text check twice. The words on a picture are checked after it's shown, so a ready map's `image` may change once, to a redrawn picture, or go. `failed`: the last attempt failed; POST again. `plusRequired`: the chapter's lessons are Plus-only for this learner, so its map is too, even one already made. `unavailable`: no map for this chapter (a language's unit, or nothing in its outline to draw from)"
+            "description": "`available`: no map yet and nobody making it; `POST .../mind-map/generations` makes it, writing the chapter's `lessonsToWrite` lessons first. `writingLessons`: on its way, writing those lessons first (a few minutes); GET the status again. `drawing`: on its way, being written and drawn (about half a minute), also when the learner just finished the chapter and its map is owed; GET the status again. `ready`: `outline`, and `image` unless its picture failed its text check twice. The words on a picture are checked after it's shown, so a ready map's `image` may change once, to a redrawn picture, or go. `failed`: the last attempt failed; POST again. `unavailable`: no map for this chapter (a language's unit, or nothing in its outline to draw from)"
           },
           "title": {
             "type": "string",
@@ -87962,10 +87870,9 @@
               "drawing",
               "ready",
               "failed",
-              "plusRequired",
               "unavailable"
             ],
-            "description": "`available`: no map yet and nobody making it; `POST .../mind-map/generations` makes it, writing the chapter's `lessonsToWrite` lessons first. `writingLessons`: on its way, writing those lessons first (a few minutes); GET the status again. `drawing`: on its way, being written and drawn (about half a minute), also when the learner just finished the chapter and its map is owed; GET the status again. `ready`: `outline`, and `image` unless its picture failed its text check twice. The words on a picture are checked after it's shown, so a ready map's `image` may change once, to a redrawn picture, or go. `failed`: the last attempt failed; POST again. `plusRequired`: the chapter's lessons are Plus-only for this learner, so its map is too, even one already made. `unavailable`: no map for this chapter (a language's unit, or nothing in its outline to draw from)"
+            "description": "`available`: no map yet and nobody making it; `POST .../mind-map/generations` makes it, writing the chapter's `lessonsToWrite` lessons first. `writingLessons`: on its way, writing those lessons first (a few minutes); GET the status again. `drawing`: on its way, being written and drawn (about half a minute), also when the learner just finished the chapter and its map is owed; GET the status again. `ready`: `outline`, and `image` unless its picture failed its text check twice. The words on a picture are checked after it's shown, so a ready map's `image` may change once, to a redrawn picture, or go. `failed`: the last attempt failed; POST again. `unavailable`: no map for this chapter (a language's unit, or nothing in its outline to draw from)"
           }
         },
         "required": [
@@ -88090,8 +87997,7 @@
               "writingLessons",
               "drawing",
               "ready",
-              "failed",
-              "plusRequired"
+              "failed"
             ],
             "description": "As a chapter's map, never `unavailable`: those chapters aren't listed"
           },
@@ -88140,7 +88046,7 @@
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991,
-            "description": "Chapters without a ready map or one on its way (failed ones included), whose lessons are all written and that aren't locked: what `POST /goals/{goalId}/mind-maps/generations` makes"
+            "description": "Chapters without a ready map or one on its way (failed ones included), whose lessons are all written: what `POST /goals/{goalId}/mind-maps/generations` makes"
           },
           "needLessons": {
             "type": "integer",
@@ -88233,7 +88139,7 @@
             "type": "integer",
             "minimum": 1,
             "maximum": 9007199254740991,
-            "description": "The chapter's lessons with a written map, locked ones included, as `GET /goals/{goalId}/chapters/{chapterId}/lesson-maps` lists them, less any an earlier group already lists"
+            "description": "The chapter's lessons with a written map, as `GET /goals/{goalId}/chapters/{chapterId}/lesson-maps` lists them, less any an earlier group already lists"
           },
           "lessonIds": {
             "type": "array",
@@ -88242,20 +88148,13 @@
               "format": "uuid",
               "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
             },
-            "description": "The lessons whose maps open (not `locked`), in chapter order: the maps the Lessons tab studies, which a reader opened with this list keeps as they were"
-          },
-          "locked": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991,
-            "description": "Always zero. Chapter lessons do not expire"
+            "description": "The lessons whose maps open, in chapter order: the maps the Lessons tab studies, which a reader opened with this list keeps as they were"
           }
         },
         "required": [
           "chapterId",
           "count",
-          "lessonIds",
-          "locked"
+          "lessonIds"
         ],
         "additionalProperties": false
       },
@@ -88264,7 +88163,7 @@
         "properties": {
           "available": {
             "type": "boolean",
-            "description": "It opens now: a chapter map that's `ready`, or a lesson map in this goal's scope that isn't locked. False when it can no longer open here (its chapter left the plan, its content went, it's locked for Plus); list those last, under no longer available, with a way to remove them"
+            "description": "It opens now: a chapter map that's `ready`, or a lesson map in this goal's scope. False when it can no longer open here (its chapter left the plan, its content went); list those last, under no longer available, with a way to remove them"
           },
           "chapterId": {
             "nullable": true,
@@ -88340,10 +88239,9 @@
                   "type": "string",
                   "enum": [
                     "allowance",
-                    "needsLessons",
-                    "plusRequired"
+                    "needsLessons"
                   ],
-                  "description": "`allowance`: the learner's allowance ran out first (`stop`). `needsLessons`: its lessons aren't all written; its own `POST .../mind-map/generations` writes them. `plusRequired`: locked for Plus"
+                  "description": "`allowance`: the learner's allowance ran out first (`stop`). `needsLessons`: its lessons aren't all written; its own `POST .../mind-map/generations` writes them."
                 }
               },
               "required": [
@@ -92787,14 +92685,10 @@
             "properties": {
               "includesMockExams": {
                 "type": "boolean"
-              },
-              "trialEnded": {
-                "type": "boolean"
               }
             },
             "required": [
-              "includesMockExams",
-              "trialEnded"
+              "includesMockExams"
             ],
             "additionalProperties": false
           },
@@ -92906,22 +92800,6 @@
           },
           "pauseSuggested": {
             "type": "boolean"
-          },
-          "plusLessons": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "title": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "title"
-              ],
-              "additionalProperties": false
-            },
-            "description": "Always empty. Exam lessons no longer have time-based restrictions"
           },
           "sessionBar": {
             "type": "object",
@@ -93065,7 +92943,6 @@
           "nextBlockId",
           "nextPosition",
           "pauseSuggested",
-          "plusLessons",
           "sessionBar",
           "state",
           "status",
@@ -93113,7 +92990,6 @@
             "enum": [
               "dayOver",
               "nothingToStudy",
-              "plusRequired",
               "sessionNotFinished"
             ]
           }
@@ -93159,14 +93035,10 @@
             "properties": {
               "includesMockExams": {
                 "type": "boolean"
-              },
-              "trialEnded": {
-                "type": "boolean"
               }
             },
             "required": [
-              "includesMockExams",
-              "trialEnded"
+              "includesMockExams"
             ],
             "additionalProperties": false
           },
@@ -93260,22 +93132,6 @@
           },
           "pauseSuggested": {
             "type": "boolean"
-          },
-          "plusLessons": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "title": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "title"
-              ],
-              "additionalProperties": false
-            },
-            "description": "Always empty. Exam lessons no longer have time-based restrictions"
           },
           "sessionBar": {
             "type": "object",
@@ -94130,7 +93986,6 @@
           "minutes",
           "nextPosition",
           "pauseSuggested",
-          "plusLessons",
           "sessionBar",
           "state",
           "week",
@@ -97521,7 +97376,6 @@
             "type": "string",
             "enum": [
               "exam",
-              "examAccess",
               "examChoice",
               "focusTest",
               "insight",

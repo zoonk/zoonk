@@ -209,10 +209,14 @@ private struct ContinueDraftButton: View {
 
 private struct TodaySuggestedGoal: View {
   let suggestion: SuggestedGoal
+  @State private var answer = SuggestedGoalAnswer()
 
   var body: some View {
     ZoonkList {
-      SuggestedGoalSection(suggestion: suggestion)
+      SuggestedGoalSection(suggestion: suggestion, answer: answer, buttonsInBar: true)
+    }
+    .bottomBar(note: answer.failed ? BarNote(SuggestedGoalAnswer.failure) : nil) {
+      SuggestedGoalButtons(suggestion: suggestion, answer: answer)
     }
     .navigationSubtitle(
       Text("Welcome back", tableName: "Today", comment: "Greets a learner back with no goal"))
@@ -248,7 +252,8 @@ private struct TodayPreparing: View {
           } icon: {
             Image(systemName: "map")
           }
-        } actions: {
+        }
+        .bottomBar {
           Button {
             router.open(.goalSetup(goalId: goalID))
           } label: {
@@ -257,7 +262,7 @@ private struct TodayPreparing: View {
               comment: "Opens the goal's plan before its first day")
           }
           .buttonStyle(.mainAction)
-          .controlSize(.large)
+          .keyboardShortcut(.defaultAction)
         }
       } else if answersLeft {
         ContentUnavailableView {
@@ -268,14 +273,15 @@ private struct TodayPreparing: View {
           } icon: {
             Image(systemName: "list.bullet.clipboard")
           }
-        } actions: {
+        }
+        .bottomBar {
           Button {
             router.open(.goalSetup(goalId: goalID))
           } label: {
             Text("Continue", tableName: "Today", comment: "Opens the goal's questions")
           }
           .buttonStyle(.mainAction)
-          .controlSize(.large)
+          .keyboardShortcut(.defaultAction)
         }
       } else {
         ContentUnavailableView {
@@ -374,7 +380,8 @@ private struct TodayGoalPaused: View {
         } icon: {
           Image(systemName: "flag.checkered")
         }
-      } actions: {
+      }
+      .bottomBar {
         newGoal(prominent: true)
       }
     } else {
@@ -407,34 +414,38 @@ private struct TodayGoalPaused: View {
             "Your plan picks up from today, starting with the lessons planned for the days you paused.",
             tableName: "Today", comment: "What resuming the paused goal moves")
         }
-
-        if failure == .limitReached {
-          FailureLine(
-            message: GoalError.resumeLimit)
-        } else if failure != nil {
-          FailureLine(
-            message: LocalizedStringResource(
-              "Couldn't save. Check your connection and try again.", table: "Today",
-              comment: "Resuming the goal failed"))
-        }
       }
-    } actions: {
+    }
+    .bottomBar(note: failureNote) {
+      newGoal(prominent: goal == nil)
+
       if let goal {
-        Button {
+        BusyButton(isBusy: isResuming) {
           resume(goal)
         } label: {
           Text("Resume", tableName: "Today", comment: "Resumes the paused goal")
         }
         .buttonStyle(.mainAction)
-        .controlSize(.large)
-        .disabled(isResuming)
+        .keyboardShortcut(.defaultAction)
       }
-
-      newGoal(prominent: goal == nil)
     }
     .modifier(ResumePreviewLoading(goalID: goal?.id))
     .onDisappear {
       resumeTask?.cancel()
+    }
+  }
+
+  private var failureNote: BarNote? {
+    switch failure {
+    case .limitReached:
+      BarNote(GoalError.resumeLimit)
+    case nil:
+      nil
+    default:
+      BarNote(
+        LocalizedStringResource(
+          "Couldn't save. Check your connection and try again.", table: "Today",
+          comment: "Resuming the goal failed"))
     }
   }
 
@@ -447,9 +458,9 @@ private struct TodayGoalPaused: View {
     }
 
     if prominent {
-      button.buttonStyle(.mainAction).controlSize(.large)
+      button.buttonStyle(.mainAction).keyboardShortcut(.defaultAction)
     } else {
-      button.buttonStyle(.outline).controlSize(.large)
+      button.buttonStyle(.outline)
     }
   }
 

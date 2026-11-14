@@ -173,7 +173,7 @@ export async function requestGoalMindMaps({
   const { goal } = owned;
 
   const [facts, numbering, viewer, platform] = await Promise.all([
-    loadMindMapChapters({ goal, readViewer: getEntitlementViewer }),
+    loadMindMapChapters({ goal }),
     loadChapterNumbering(goal),
     getEntitlementViewer(),
     getRequestPlatform(),
@@ -211,7 +211,6 @@ export async function requestGoalMindMaps({
       unstarted: [
         ...admitted.refused.map((chapterId) => ({ chapterId, reason: "allowance" as const })),
         ...sorted.needLessons.map((chapterId) => ({ chapterId, reason: "needsLessons" as const })),
-        ...sorted.plusRequired.map((chapterId) => ({ chapterId, reason: "plusRequired" as const })),
       ],
     },
     status: "ready",

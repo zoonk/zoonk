@@ -25,8 +25,7 @@ export function useStartTestOut() {
         return writing;
       }
 
-      // Chapter tests aren't lessons, so the free plan never refuses one.
-      if (writing.status === "failed" || writing.status === "plusRequired") {
+      if (writing.status === "failed") {
         return { status: "failed" };
       }
 

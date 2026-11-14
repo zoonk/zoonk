@@ -9,7 +9,7 @@ import { type MindMapLimit } from "../_components/help-limit-notice";
 
 export type MindMapRequestOutcome =
   | { limit: MindMapLimit; status: "refused" }
-  | { status: "drawing" | "failed" | "plusRequired" | "ready" | "unavailable" | "writingLessons" };
+  | { status: "drawing" | "failed" | "ready" | "unavailable" | "writingLessons" };
 
 /** Resolves to whether the map is saved now, or null when it couldn't be stored. */
 export type SaveMindMap = (input: SaveMindMapInput) => Promise<boolean | null>;

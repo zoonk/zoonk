@@ -77,7 +77,7 @@ function PlanMenuTrigger({ busy }: { busy: boolean }) {
   const t = useExtracted();
 
   return (
-    <DropdownMenuTrigger render={<Button busy={busy} size="icon-sm" variant="outline" />}>
+    <DropdownMenuTrigger render={<Button busy={busy} edge="end" size="icon-sm" variant="ghost" />}>
       <EllipsisIcon aria-hidden="true" />
       <span className="sr-only">{t("Plan options")}</span>
     </DropdownMenuTrigger>

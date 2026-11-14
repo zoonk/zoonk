@@ -162,161 +162,6 @@
         }
       }
     },
-    "**%lld** left today" : {
-      "comment" : "At a block's end past the session's midpoint: blocks of today's session still to do. Keep the ** around the number: it shows in bold.",
-      "localizations" : {
-        "de" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Heute noch **%lld**"
-                }
-              }
-            }
-          }
-        },
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "**%lld** left today"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "**%lld** left today"
-                }
-              }
-            }
-          }
-        },
-        "es" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Te queda **%lld** hoy"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Te quedan **%lld** hoy"
-                }
-              }
-            }
-          }
-        },
-        "fr" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "**%lld** à faire aujourd’hui"
-                }
-              }
-            }
-          }
-        },
-        "it" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "**%lld** da completare oggi"
-                }
-              }
-            }
-          }
-        },
-        "ja" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "今日はあと**%lld**ブロックです"
-                }
-              }
-            }
-          }
-        },
-        "ko" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "오늘 **%lld**개 남음"
-                }
-              }
-            }
-          }
-        },
-        "pl" : {
-          "variations" : {
-            "plural" : {
-              "few" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Na dziś zostały **%lld** bloki"
-                }
-              },
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Na dziś został **%lld** blok"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Na dziś zostało **%lld** bloków"
-                }
-              }
-            }
-          }
-        },
-        "pt" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Falta **%lld** hoje"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Faltam **%lld** hoje"
-                }
-              }
-            }
-          }
-        },
-        "tr" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Bugün için **%lld** kaldı"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "**%lld** of %lld done today" : {
       "comment" : "At a block's end: blocks of today's session done out of all of them. Keep the ** around the first number: it shows in bold.",
       "localizations" : {
@@ -382,262 +227,67 @@
         }
       }
     },
-    "%@ %lld" : {
-      "comment" : "A belt and its step from 1 to 10, such as \"White belt 3\"",
+    "%@ · %@ to %@" : {
+      "comment" : "The topic that grew most, then its right answers at the week's start and end, as in Fractions · 40% to 85%",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ %2$lld"
+            "value" : "%1$@ · von %2$@ auf %3$@"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "%1$@ %2$lld"
+            "value" : "%1$@ · %2$@ to %3$@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ %2$lld"
+            "value" : "%1$@ · de %2$@ a %3$@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ %2$lld"
+            "value" : "%1$@ · de %2$@ à %3$@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ %2$lld"
+            "value" : "%1$@ · da %2$@ a %3$@"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ %2$lld"
+            "value" : "%1$@ · %2$@から%3$@へ"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ %2$lld단계"
+            "value" : "%1$@ · %2$@에서 %3$@로"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ %2$lld"
+            "value" : "%1$@ · od %2$@ do %3$@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ %2$lld"
+            "value" : "%1$@ · de %2$@ a %3$@"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ %2$lld"
-          }
-        }
-      }
-    },
-    "%@ → %@" : {
-      "comment" : "A skill's state before and after the session, such as Learning → Solid",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ → %2$@"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ → %2$@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ → %2$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ → %2$@"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ → %2$@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ → %2$@"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ → %2$@"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ → %2$@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ → %2$@"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ → %2$@"
-          }
-        }
-      }
-    },
-    "%@ → %@ right answers" : {
-      "comment" : "A skill's right answers at the week's start and end",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ → %2$@ richtige Antworten"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ → %2$@ right answers"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ → %2$@ respuestas correctas"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ → %2$@ bonnes réponses"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ → %2$@ risposte corrette"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正解数：%1$@ → %2$@"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "정답 %1$@개 → %2$@개"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Poprawne odpowiedzi: %1$@ → %2$@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ → %2$@ acertos"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ → %2$@ doğru cevap"
-          }
-        }
-      }
-    },
-    "%@ comes after %@ %lld" : {
-      "comment" : "Under the belt's number: the next belt, then this belt and its last step, such as \"Yellow belt comes after White belt 10\"",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ folgt auf „%2$@ %3$lld“"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ comes after %2$@ %3$lld"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "El %1$@ viene después del %2$@ %3$lld"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ après %2$@ %3$lld"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ viene dopo %2$@ %3$lld"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@は%2$@ %3$lldの次です"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@(으)로 올라가려면 %2$@ %3$lld단계를 마쳐야 해요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ czeka po ukończeniu stopnia: %2$@ %3$lld"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ vem depois de %2$@ %3$lld"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@, %2$@ aşamasındaki %3$lld. adımdan sonra gelir"
+            "value" : "%1$@ · %2$@ → %3$@"
           }
         }
       }
@@ -707,65 +357,6 @@
         }
       }
     },
-    "%@ done" : {
-      "comment" : "The block the learner just finished",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ abgeschlossen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@: completado"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ terminé"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai completato %@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@完了"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ 완료"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ukończono: %@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@: concluído"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ tamamlandı"
-          }
-        }
-      }
-    },
     "%@ grew up!" : {
       "comment" : "The buddy's new stage",
       "localizations" : {
@@ -821,65 +412,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ büyüdü!"
-          }
-        }
-      }
-    },
-    "%@ is an Adult now, fully grown with your Brain Power." : {
-      "comment" : "The buddy's last stage",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ ist jetzt erwachsen und dank deiner Brain Power ausgewachsen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ alcanzó la etapa Adulta gracias a tu Poder Mental."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ a atteint l’âge adulte grâce à ta Puissance Mentale."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ora %@ ha raggiunto la fase Adulto grazie alla tua Potenza Mentale."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@は脳力とともに成長し、おとなになりました。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@(이)가 두뇌력과 함께 자라 이제 어른이 됐어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dzięki twojej Mocy Umysłu %@ jest już na ostatnim etapie rozwoju: „Dorosły”."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ chegou à fase adulta e cresceu com seu Poder Mental."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ artık Yetişkin; Beyin Gücünle büyümesini tamamladı."
           }
         }
       }
@@ -943,411 +475,7 @@
         }
       }
     },
-    "%@ is glowing as bright as it gets." : {
-      "comment" : "Energy at its top",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ leuchtet jetzt so hell wie möglich."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ brilla al máximo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ brille de tout son éclat."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ brilla al massimo."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@は最高に輝いています。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@(이)가 더없이 환하게 빛나고 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ lśni pełnym blaskiem."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ está brilhando ao máximo."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ en parlak hâliyle ışıldıyor."
-          }
-        }
-      }
-    },
-    "%@ is glowing now." : {
-      "comment" : "Energy at 80% or more",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ leuchtet jetzt."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ ya brilla."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ brille maintenant."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ora %@ brilla."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@が輝いています。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@(이)가 이제 빛나고 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ już lśni."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ está brilhando agora."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ artık ışıldıyor."
-          }
-        }
-      }
-    },
-    "%@ is Mastered now: you remembered it on %lld different days." : {
-      "comment" : "Why the week's biggest turnaround grew: its skill, then the days it was remembered on",
-      "localizations" : {
-        "de" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%1$@ ist jetzt gemeistert: Du hast dich an %2$lld Tag daran erinnert."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%1$@ ist jetzt gemeistert: Du hast dich an %2$lld verschiedenen Tagen daran erinnert."
-                }
-              }
-            }
-          }
-        },
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "%1$@ is Mastered now: you remembered it on %2$lld different day."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "%1$@ is Mastered now: you remembered it on %2$lld different days."
-                }
-              }
-            }
-          }
-        },
-        "es" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%1$@ alcanzó el nivel Dominado: lo recordaste en %2$lld día distinto."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%1$@ alcanzó el nivel Dominado: lo recordaste en %2$lld días distintos."
-                }
-              }
-            }
-          }
-        },
-        "fr" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%1$@ a atteint le niveau Maîtrisé : tu t’en es souvenu pendant %2$lld jour différent."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%1$@ a atteint le niveau Maîtrisé : tu t’en es souvenu pendant %2$lld jours différents."
-                }
-              }
-            }
-          }
-        },
-        "it" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%1$@ ora è al livello Padroneggiato: hai ricordato le risposte in %2$lld giorno diverso."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%1$@ ora è al livello Padroneggiato: hai ricordato le risposte in %2$lld giorni diversi."
-                }
-              }
-            }
-          }
-        },
-        "ja" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%1$@は「習得済み」になりました。思い出せた日が%2$lld日になりました。"
-                }
-              }
-            }
-          }
-        },
-        "ko" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%1$@, 이제 마스터 단계예요. 기억해 낸 날이 %2$lld일이나 돼요."
-                }
-              }
-            }
-          }
-        },
-        "pl" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%1$@: status „Opanowane” po %2$lld dniu, w którym udało ci się to przypomnieć."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%1$@: status „Opanowane” po %2$lld dniach, w których udało ci się to przypomnieć."
-                }
-              }
-            }
-          }
-        },
-        "pt" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%1$@ chegou ao nível Dominado: você se lembrou disso em %2$lld dia diferente."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%1$@ chegou ao nível Dominado: você se lembrou disso em %2$lld dias diferentes."
-                }
-              }
-            }
-          }
-        },
-        "tr" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%1$@ artık Tam öğrenildi düzeyinde: %2$lld farklı günde hatırladın."
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "%@ is Solid now: you kept getting it right on later days." : {
-      "comment" : "Why the week's biggest turnaround grew; the argument is its skill",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ ist jetzt sicher: Du hast es auch an späteren Tagen immer wieder richtig beantwortet."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ alcanzó el nivel Firme: seguiste acertando en los días siguientes."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ a atteint le niveau Solide : tu as continué à donner les bonnes réponses les jours suivants."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ ora è al livello Solido: hai continuato a rispondere correttamente nei giorni successivi."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@が定着しました。日を置いても、繰り返し正解できました。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@, 이제 안정 단계예요. 날이 지나도 계속 맞혔어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@: status „Utrwalone” dzięki poprawnym odpowiedziom w kolejnych dniach."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ chegou ao nível Firme: você continuou acertando nos dias seguintes."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ artık Sağlam düzeyinde: sonraki günlerde de doğru cevaplamaya devam ettin."
-          }
-        }
-      }
-    },
-    "%@ is Young now, and keeps growing with your Brain Power." : {
-      "comment" : "The buddy's next stage",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ ist jetzt jung und wächst mit deiner Brain Power weiter."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ ya está en la etapa Joven y sigue creciendo con tu Poder Mental."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ a atteint le stade Jeune et continue de grandir grâce à ta Puissance Mentale."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ora %@ è nella fase Giovane e continua a crescere grazie alla tua Potenza Mentale."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@はこどもになりました。脳力とともに、これからも成長していきます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@(이)가 이제 어린이가 됐어요. 두뇌력과 함께 계속 자라요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ jest już na etapie „Nastolatek” i dalej rośnie dzięki twojej Mocy Umysłu."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ chegou à fase jovem e continua crescendo com seu Poder Mental."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ artık Genç ve Beyin Gücünle büyümeye devam ediyor."
-          }
-        }
-      }
-    },
     "%@ more than the week before!" : {
-      "comment" : "More time than last week",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1370,25 +498,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ in più rispetto alla settimana precedente!"
+            "value" : "%@ in più rispetto alla settimana prima!"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "先週より%@長く学習しました！"
+            "value" : "前の週より%@長く学習しました！"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "지난주보다 %@ 더 공부했어요!"
+            "value" : "전주보다 %@ 더 공부했어요!"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ więcej niż w poprzednim tygodniu!"
+            "value" : "%@ więcej niż tydzień wcześniej!"
           }
         },
         "pt" : {
@@ -1401,71 +529,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Önceki haftaya göre %@ daha fazla!"
-          }
-        }
-      }
-    },
-    "%@ so far" : {
-      "comment" : "Time studied in a session stopped for today",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bisher %@"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ so far"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ hasta ahora"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ jusqu’ici"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ finora"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ここまで%@"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "지금까지 %@"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ do tej pory"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ até agora"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Şimdiye kadar %@"
           }
         }
       }
@@ -2594,136 +1657,6 @@
         }
       }
     },
-    "%lld of %lld done" : {
-      "comment" : "How far the day's session is",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$lld von %2$lld abgeschlossen"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld of %2$lld done"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Completaste %1$lld de %2$lld"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$lld sur %2$lld terminés"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$lld su %2$lld completati"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "完了：%1$lld/%2$lld"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "완료 %1$lld/%2$lld"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ukończono %1$lld z %2$lld"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$lld de %2$lld concluídos"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$lld / %2$lld tamamlandı"
-          }
-        }
-      }
-    },
-    "%lld of %lld right" : {
-      "comment" : "Questions right in the block just finished",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$lld von %2$lld richtig"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld of %2$lld right"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Acertaste %1$lld de %2$lld"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$lld bonnes réponses sur %2$lld"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$lld su %2$lld corrette"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正解：%1$lld/%2$lld問"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "정답 %1$lld/%2$lld"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$lld z %2$lld poprawnie"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$lld de %2$lld acertos"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$lld / %2$lld doğru"
-          }
-        }
-      }
-    },
     "%lld right in a row" : {
       "comment" : "The session's most right answers in a row",
       "localizations" : {
@@ -3034,65 +1967,6 @@
         }
       }
     },
-    "+%lld" : {
-      "comment" : "How many steps on the belt the day added, such as +1",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "+%lld"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "+%lld"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "+%lld"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "+%lld"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "+%lld"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "+%lld"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "+%lld"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "+%lld"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "+%lld"
-          }
-        }
-      }
-    },
     "+%lld Brain Power" : {
       "comment" : "Earned",
       "localizations" : {
@@ -3331,65 +2205,6 @@
         }
       }
     },
-    "A few quick questions to check what you already know." : {
-      "comment" : "Under the first week's warm-up, which checks what the learner knows",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ein paar kurze Fragen, um zu prüfen, was du schon weißt."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Unas preguntas rápidas para comprobar lo que ya sabes."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quelques questions rapides pour vérifier ce que tu sais déjà."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Qualche domanda veloce per verificare cosa sai già."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "短い問題をいくつか解いて、すでに知っていることを確かめます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "짧은 문제 몇 개로 이미 아는 내용을 확인해요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kilka krótkich pytań, żeby sprawdzić, co już wiesz."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Algumas perguntas rápidas para ver o que você já sabe."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zaten bildiklerini kontrol etmek için birkaç kısa soru."
-          }
-        }
-      }
-    },
     "A monocle!" : {
       "comment" : "Glasses earned",
       "localizations" : {
@@ -3568,7 +2383,6 @@
       }
     },
     "A quiet week" : {
-      "comment" : "A week without study",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3597,7 +2411,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "お休みの1週間"
+            "value" : "静かな1週間"
           }
         },
         "ko" : {
@@ -3615,7 +2429,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Uma semana de pausa"
+            "value" : "Uma semana tranquila"
           }
         },
         "tr" : {
@@ -4031,65 +2845,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Siyah kuşak"
-          }
-        }
-      }
-    },
-    "Block" : {
-      "comment" : "A finished block without a name",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Block"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bloque"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bloc"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Blocco"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ブロック"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "학습"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Blok"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bloco"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bölüm"
           }
         }
       }
@@ -4808,67 +3563,7 @@
         }
       }
     },
-    "Energy at %lld%%" : {
-      "comment" : "A new tenth of Energy",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Energie bei %lld%%"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Energía al %lld%%"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Énergie à %lld %%"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Energia al %lld%%"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "エネルギー%lld%%"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "에너지 %lld%%"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Energia na poziomie %lld%%"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Energia em %lld%%"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enerji %%%lld"
-          }
-        }
-      }
-    },
     "Every week starts fresh." : {
-      "comment" : "A quiet week",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4897,13 +3592,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "毎週、新しいスタートを切れます。"
+            "value" : "毎週が新しいスタートです。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "매주 새롭게 시작할 수 있어요."
+            "value" : "매주가 새로운 시작이에요."
           }
         },
         "pl" : {
@@ -5221,65 +3916,6 @@
         }
       }
     },
-    "For winning the final challenge." : {
-      "comment" : "What earned the glasses",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Für deinen Sieg in der letzten Herausforderung."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Por ganar el desafío final."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pour avoir remporté le défi final."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Per aver vinto la sfida finale."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "最後のチャレンジに勝ったごほうびです。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "마지막 챌린지에서 이겨서 받았어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Za zwycięstwo w finałowym wyzwaniu."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Por vencer o desafio final."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Son meydan okumayı kazandığın için."
-          }
-        }
-      }
-    },
     "For winning your first challenge." : {
       "comment" : "What earned the glasses",
       "localizations" : {
@@ -5335,65 +3971,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "İlk meydan okumanı kazandığın için."
-          }
-        }
-      }
-    },
-    "For winning your first phase challenge." : {
-      "comment" : "What earned the glasses",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Für deinen ersten Sieg in einer Phasen-Herausforderung."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Por ganar tu primer desafío de la fase."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pour avoir remporté ton premier Défi de la phase."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Per aver vinto la tua prima sfida della fase."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "初めてフェーズチャレンジに勝ったごほうびです。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "첫 단계 챌린지에서 이겨서 받았어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Za zwycięstwo w pierwszym wyzwaniu etapu."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Por vencer seu primeiro desafio da fase."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "İlk aşama meydan okumanı kazandığın için."
           }
         }
       }
@@ -5689,183 +4266,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tekrarlar nasıl işler"
-          }
-        }
-      }
-    },
-    "Instead: %@" : {
-      "comment" : "A ready block to do when the lesson can't be written now",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stattdessen: %@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "En su lugar: %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "À la place : %@"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "In alternativa: %@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "代わりに：%@"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "대신 할 활동: %@"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zamiast tego: %@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Em vez disso: %@"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bunun yerine: %@"
-          }
-        }
-      }
-    },
-    "It didn't pass our quality checks, so your plan goes on without it." : {
-      "comment" : "A lesson its quality checks set aside",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sie hat unsere Qualitätsprüfungen nicht bestanden. Dein Plan wird deshalb ohne sie fortgesetzt."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No pasó nuestros controles de calidad, así que tu plan sigue sin ella."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Elle ne répondait pas à nos critères de qualité, donc ton plan continue sans elle."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non ha superato i nostri controlli di qualità, quindi il tuo piano prosegue senza includerla."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "品質チェックに通らなかったため、このレッスンを省いて学習計画を進めます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "품질 검사를 통과하지 못해 이 레슨 없이 계획을 이어 가요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nie przeszła naszej kontroli jakości, więc twój plan jej nie uwzględnia."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ela não passou no nosso controle de qualidade, então seu plano segue sem ela."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kalite kontrollerimizi geçemediği için planın bu ders olmadan devam ediyor."
-          }
-        }
-      }
-    },
-    "It shows your week in numbers and the skill that grew the most." : {
-      "comment" : "What the weekly summary shows",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Er zeigt deine Woche in Zahlen und die Fähigkeit, die du am meisten verbessert hast."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Muestra tu semana en números y la habilidad que más mejoró."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il présente ta semaine en chiffres et la compétence où tu as le plus progressé."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mostra i numeri della tua settimana e l’abilità in cui hai fatto più progressi."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1週間の学習を数字で振り返り、一番伸びたスキルも確認できます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "한 주의 학습 기록을 숫자로 보여 주고 가장 많이 성장한 스킬도 알려 줘요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pokazuje twój tydzień w liczbach i umiejętność, w której postęp jest największy."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mostra sua semana em números e a habilidade que mais cresceu."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Haftanı sayılarla özetler ve en çok gelişen becerini gösterir."
           }
         }
       }
@@ -6230,183 +4630,6 @@
         }
       }
     },
-    "Level up!" : {
-      "comment" : "A new belt level",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Neues Level!"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "¡Subiste de nivel!"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Niveau supérieur !"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nuovo livello!"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "レベルアップ！"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "레벨 업!"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nowy poziom!"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você subiu de nível!"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seviye atladın!"
-          }
-        }
-      }
-    },
-    "Logbook" : {
-      "comment" : "The weekly recap's title",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Logbuch"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bitácora"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Journal de bord"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Diario di bordo"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "学習記録"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "학습 일지"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dziennik nauki"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Diário de bordo"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Çalışma günlüğü"
-          }
-        }
-      }
-    },
-    "Max Energy: %lld%%" : {
-      "comment" : "Energy at its top",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Maximale Energie: %lld%%"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Energía máxima: %lld%%"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Énergie maximale : %lld %%"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Energia massima: %lld%%"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "最大エネルギー：%lld%%"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "최대 에너지: %lld%%"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Maksymalna Energia: %lld%%"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Energia máxima: %lld%%"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "En yüksek Enerji: %%%lld"
-          }
-        }
-      }
-    },
     "Mission done!" : {
       "comment" : "One mission this work completed",
       "localizations" : {
@@ -6584,6 +4807,65 @@
         }
       }
     },
+    "Most improved" : {
+      "comment" : "The topic that grew most",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Größter Fortschritt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mayor avance"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus forte progression"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maggiori progressi"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最も伸びたトピック"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "가장 많이 향상된 주제"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Największy postęp"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maior evolução"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En çok gelişen konu"
+          }
+        }
+      }
+    },
     "net %lld" : {
       "comment" : "Right minus wrong answers",
       "localizations" : {
@@ -6708,61 +4990,61 @@
         }
       }
     },
-    "New ideas" : {
-      "comment" : "New ideas learned this week",
+    "New topics" : {
+      "comment" : "New topics learned this week",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Neue Ideen"
+            "value" : "Neue Themen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ideas nuevas"
+            "value" : "Temas nuevos"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nouvelles idées"
+            "value" : "Nouveaux sujets"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nuove idee"
+            "value" : "Nuovi argomenti"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "新しく学んだこと"
+            "value" : "新しく学んだトピック"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "새로 배운 개념"
+            "value" : "새로 배운 주제"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nowe pojęcia"
+            "value" : "Nowe tematy"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Novas ideias"
+            "value" : "Novos tópicos"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Yeni bilgiler"
+            "value" : "Yeni konular"
           }
         }
       }
@@ -6822,65 +5104,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sonraki derse geç"
-          }
-        }
-      }
-    },
-    "Next week" : {
-      "comment" : "The plan's next week",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nächste Woche"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Próxima semana"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Semaine prochaine"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La prossima settimana"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "来週"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "다음 주"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Następny tydzień"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Próxima semana"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gelecek hafta"
           }
         }
       }
@@ -8024,6 +6247,65 @@
         }
       }
     },
+    "Reviews done" : {
+      "comment" : "Reviews done this week",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abgeschlossene Wiederholungen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repasos completados"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Révisions terminées"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ripassi completati"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完了した復習"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "완료한 복습"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ukończone powtórki"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revisões feitas"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tamamlanan tekrarlar"
+          }
+        }
+      }
+    },
     "Reviews open your session and take a small part of it, even after days away." : {
       "comment" : "How reviews work: where reviews go in a session",
       "localizations" : {
@@ -8079,65 +6361,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Günlerce ara versen bile tekrarlar çalışmanın başında yer alır ve yalnızca küçük bir kısmını kaplar."
-          }
-        }
-      }
-    },
-    "Rewards" : {
-      "comment" : "Title of what the session earned",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Belohnungen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Recompensas"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Récompenses"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ricompense"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "報酬"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "보상"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nagrody"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Recompensas"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ödüller"
           }
         }
       }
@@ -8266,130 +6489,6 @@
         }
       }
     },
-    "Right answers on this skill each day of the week" : {
-      "comment" : "Spoken name of the turnaround chart",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Richtige Antworten zu dieser Fähigkeit an jedem Wochentag"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Right answers on this skill each day of the week"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Respuestas correctas en esta habilidad cada día de la semana"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bonnes réponses pour cette compétence chaque jour de la semaine"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Risposte corrette per questa abilità in ogni giorno della settimana"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "このスキルの曜日ごとの正解数"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이 스킬의 요일별 정답 수"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Poprawne odpowiedzi dotyczące tej umiejętności w poszczególne dni tygodnia"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Respostas certas nesta habilidade em cada dia da semana"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Haftanın her günü bu beceride verilen doğru cevaplar"
-          }
-        }
-      }
-    },
-    "Right answers raise it. A day away lowers it a little." : {
-      "comment" : "What moves Energy",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Richtige Antworten erhöhen sie. Ein Tag Pause senkt sie ein wenig."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Las respuestas correctas la aumentan. Un día sin estudiar la reduce un poco."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Les bonnes réponses l’augmentent. Un jour sans étudier la fait baisser un peu."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le risposte corrette la fanno salire. Un giorno di pausa la fa scendere un po’."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正解すると上がります。1日学習を休むと少し下がります。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "문제를 맞히면 올라가요. 하루 쉬면 조금 내려가요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Poprawne odpowiedzi ją zwiększają. Dzień przerwy trochę ją zmniejsza."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Respostas certas aumentam sua energia. Um dia sem estudar diminui um pouco."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Doğru cevaplarla artar. Bir gün ara verince biraz azalır."
-          }
-        }
-      }
-    },
     "Right answers wait longer" : {
       "comment" : "How reviews work: how answers move an idea's next review",
       "localizations" : {
@@ -8510,124 +6609,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yanlışları gör"
-          }
-        }
-      }
-    },
-    "See today's summary" : {
-      "comment" : "Moves on from the block that completed today's session",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Heutige Zusammenfassung ansehen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ver el resumen de hoy"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Voir le résumé du jour"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vedi il riepilogo di oggi"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今日のまとめを見る"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "오늘의 요약 보기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zobacz dzisiejsze podsumowanie"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ver o resumo de hoje"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bugünün özetini gör"
-          }
-        }
-      }
-    },
-    "Skills that rose" : {
-      "comment" : "Skills that moved up",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Verbesserte Fähigkeiten"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Habilidades que mejoraron"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Compétences en progrès"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Abilità migliorate"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "伸びたスキル"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "성장한 스킬"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Umiejętności, które się rozwinęły"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Habilidades que melhoraram"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gelişen beceriler"
           }
         }
       }
@@ -9224,65 +7205,6 @@
         }
       }
     },
-    "The biggest turnaround" : {
-      "comment" : "The skill that grew most",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Die größte Verbesserung"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La mayor mejora"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La plus belle progression"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il miglioramento più grande"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "一番伸びたスキル"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "가장 많이 성장한 스킬"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Największy postęp"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A maior evolução"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "En büyük gelişim"
-          }
-        }
-      }
-    },
     "The session didn't load" : {
       "comment" : "Load failed",
       "localizations" : {
@@ -9460,124 +7382,6 @@
         }
       }
     },
-    "This challenge is being written for you. It's usually ready in a few minutes." : {
-      "comment" : "A challenge being written",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir erstellen diese Herausforderung für dich. Sie ist meist in wenigen Minuten fertig."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Estamos preparando este desafío para ti. Suele estar listo en unos minutos."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "On prépare ce défi pour toi. Il est généralement prêt en quelques minutes."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stiamo preparando questa sfida per te. Di solito è pronta in pochi minuti."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "このチャレンジを作成しています。通常は数分で準備が整います。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "챌린지를 만들고 있어요. 보통 몇 분이면 준비돼요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Przygotowujemy dla ciebie to wyzwanie. Zwykle jest gotowe w ciągu kilku minut."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Este desafio está sendo criado para você. Ele costuma ficar pronto em poucos minutos."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu meydan okumayı senin için hazırlıyoruz. Genellikle birkaç dakika içinde hazır olur."
-          }
-        }
-      }
-    },
-    "This lesson is being written for you. It's usually ready in a few minutes." : {
-      "comment" : "A lesson being written",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir erstellen diese Lektion für dich. Sie ist normalerweise in ein paar Minuten fertig."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Estamos preparando esta lección para ti. Suele estar lista en unos minutos."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cette leçon est en cours de préparation pour toi. Elle est généralement prête en quelques minutes."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stiamo preparando questa lezione per te. Di solito è pronta in qualche minuto."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "レッスンを作成しています。通常は数分で準備が整います。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "맞춤 레슨을 만들고 있어요. 보통 몇 분이면 준비돼요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Przygotowujemy dla ciebie tę lekcję. Zwykle jest gotowa w ciągu kilku minut."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Esta aula está sendo criada para você. Ela costuma ficar pronta em alguns minutos."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu dersi senin için hazırlıyoruz. Genellikle birkaç dakika içinde hazır olur."
-          }
-        }
-      }
-    },
     "This lesson isn't available" : {
       "comment" : "A lesson its quality checks set aside",
       "localizations" : {
@@ -9692,71 +7496,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Süre"
-          }
-        }
-      }
-    },
-    "To review" : {
-      "comment" : "Topics that come back to review",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zum Wiederholen"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "To review"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Por repasar"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "À réviser"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Da ripassare"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "復習予定"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "복습할 주제"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Do powtórki"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Para revisar"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tekrar edilecekler"
           }
         }
       }
@@ -9934,65 +7673,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bugünkü görevler tamamlandı!"
-          }
-        }
-      }
-    },
-    "Today's session" : {
-      "comment" : "Session's title",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Heutige Lerneinheit"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sesión de hoy"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Séance du jour"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sessione di oggi"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今日の学習"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "오늘의 학습"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dzisiejsza nauka"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sessão de hoje"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bugünkü çalışma"
           }
         }
       }
@@ -10469,6 +8149,65 @@
         }
       }
     },
+    "Weekly summary" : {
+      "comment" : "The weekly summary's name",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wochenrückblick"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resumen semanal"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bilan de la semaine"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Riepilogo settimanale"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "週間まとめ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "주간 요약"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Podsumowanie tygodnia"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resumo semanal"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Haftalık özet"
+          }
+        }
+      }
+    },
     "Weekly summary · %@" : {
       "comment" : "The recap's week",
       "localizations" : {
@@ -10529,7 +8268,6 @@
       }
     },
     "What a week, %@!" : {
-      "comment" : "The recap's title",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -10564,7 +8302,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "멋진 한 주였어요, %@님!"
+            "value" : "%@님, 멋진 한 주였어요!"
           }
         },
         "pl" : {
@@ -10588,7 +8326,6 @@
       }
     },
     "What a week!" : {
-      "comment" : "The recap's title",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -10642,124 +8379,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ne haftaydı ama!"
-          }
-        }
-      }
-    },
-    "What you learned" : {
-      "comment" : "The week's learning",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Was du gelernt hast"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lo que aprendiste"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ce que tu as appris"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cosa hai imparato"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今週学んだこと"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "배운 내용"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Czego udało ci się nauczyć"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O que você aprendeu"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Öğrendiklerin"
-          }
-        }
-      }
-    },
-    "While you wait: %@" : {
-      "comment" : "A ready block to do while the lesson is written",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Während du wartest: %@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mientras esperas: %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "En attendant : %@"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mentre aspetti: %@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "待っている間に：%@"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "기다리는 동안: %@"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "W międzyczasie: %@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enquanto você espera: %@"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Beklerken: %@"
           }
         }
       }
@@ -10941,6 +8560,64 @@
         }
       }
     },
+    "You finished %@." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast %@ abgeschlossen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Completaste %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as terminé %@."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hai completato %@."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@を終えました。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@을(를) 마쳤어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ukończono: %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você concluiu %@."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ tamamlandı."
+          }
+        }
+      }
+    },
     "Your Brain Power earned it." : {
       "comment" : "What earned a new belt",
       "localizations" : {
@@ -11000,6 +8677,64 @@
         }
       }
     },
+    "Your first weekly summary comes this Sunday" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diesen Sonntag bekommst du deinen ersten Wochenrückblick"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu primer resumen semanal llega este domingo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton premier bilan de la semaine sera prêt ce dimanche"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo primo riepilogo settimanale arriva questa domenica"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "初めての週間まとめは今度の日曜日に届きます"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "첫 주간 요약은 이번 일요일에 나와요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pierwsze podsumowanie tygodnia zobaczysz w tę niedzielę"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu primeiro resumo semanal chega neste domingo"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İlk haftalık özetin bu pazar gelecek"
+          }
+        }
+      }
+    },
     "Your Brain Power helped %@ grow." : {
       "comment" : "The buddy's next stage",
       "localizations" : {
@@ -11055,65 +8790,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Beyin Gücün sayesinde %@ büyüdü."
-          }
-        }
-      }
-    },
-    "Your first summary comes on Sunday" : {
-      "comment" : "No weekly summary yet",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dein erster Wochenrückblick kommt am Sonntag"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu primer resumen llega el domingo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ton premier récapitulatif arrive dimanche"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il tuo primo riepilogo arriva domenica"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "最初の週間まとめは日曜日に届きます"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "첫 주간 요약은 일요일에 볼 수 있어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twoje pierwsze podsumowanie pojawi się w niedzielę"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seu primeiro resumo chega no domingo"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "İlk özetin pazar günü hazır olacak"
           }
         }
       }

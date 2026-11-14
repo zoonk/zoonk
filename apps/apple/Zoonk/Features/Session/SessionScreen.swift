@@ -354,7 +354,7 @@ private struct NextStopView: View {
 
       if case .refused(let refusal) = writing {
         Section {
-          LessonUnavailableView(refusal: refusal) {
+          LessonUnavailableView(refusal: refusal, isNotice: true) {
             open(next)
           }
         }
@@ -692,11 +692,7 @@ private struct NextStopWait<DaySoFar: View, UpNext: View, Actions: View>: View {
   var body: some View {
     let deal = WaitDeal(deck: WaitDeck(id: deckID), visit: visit, warmUps: warmUps)
     let ready = held.map { held in
-      WaitReady(
-        label: Text(
-          "Get it ready", tableName: "Player",
-          comment: "Opens a goal's first lesson, written while the learner played on its wait"),
-        icon: .play, action: held.moveOn)
+      WaitReady(label: Text(words.start), icon: .play, action: held.moveOn)
     }
 
     PaneSplit {
@@ -743,12 +739,10 @@ private struct NextStopWait<DaySoFar: View, UpNext: View, Actions: View>: View {
     upNext()
   }
 
+  private var words: LessonWaitWords { LessonWaitWords(kind) }
+
   private var title: Text {
-    isWritten
-      ? Text(
-        "Your lesson is ready", tableName: "Player",
-        comment: "The lesson's status over the quiz once it's written")
-      : Text(kind.name)
+    isWritten ? Text(words.ready) : Text(kind.name)
   }
 
   /// The session doesn't hear the writing's steps, so the ring drifts over the run's usual time.

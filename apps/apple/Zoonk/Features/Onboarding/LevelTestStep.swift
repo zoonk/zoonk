@@ -599,6 +599,8 @@ private struct LevelTestSpeaking: View {
   let progress: Double
   let onTest: (LevelTest) -> Void
   let onSkip: () -> Void
+  /// Record and Stop are the step's main action, in its bottom bar beside "Skip this part".
+  @State private var recordInBar = RecordInBar()
 
   var body: some View {
     PracticeTaskLayout {
@@ -631,7 +633,12 @@ private struct LevelTestSpeaking: View {
       Button(action: onSkip) {
         Text("Skip this part", tableName: "Onboarding", comment: "Skips the level test's sentence")
       }
+      .buttonStyle(.outline)
+      .disabled(recordInBar.isChecking)
+
+      recordInBar.button
     }
+    .environment(recordInBar)
   }
 }
 

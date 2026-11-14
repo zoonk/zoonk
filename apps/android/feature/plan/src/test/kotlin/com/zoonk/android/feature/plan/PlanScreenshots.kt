@@ -141,7 +141,7 @@ class PlanScreenshots {
                         PreparationDetails(
                             Standing.Preparation(
                                 progress(
-                                    mocks = """{"kind":"fullReviews","plusRequired":false,"taken":0,"value":0}""",
+                                    mocks = """{"kind":"fullReviews","taken":0,"value":0}""",
                                     rule = "examWeighted",
                                     fading = 0,
                                 ),
@@ -152,7 +152,7 @@ class PlanScreenshots {
                 "plan-sheet-preparation-reviewed" to
                     { links ->
                         PreparationDetails(
-                            Standing.Preparation(progress(mocks = """{"kind":"fullReviews","plusRequired":false,"taken":2,"value":0.5}""")),
+                            Standing.Preparation(progress(mocks = """{"kind":"fullReviews","taken":2,"value":0.5}""")),
                             links,
                         )
                     },

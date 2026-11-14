@@ -680,13 +680,13 @@ private actor MindMapsAPIStub: MindMapsAPIClient {
     calls.list += 1
     let read = GoalMindMaps(
       chapters: answered?.chapters ?? [chapter],
-      createOffer: MindMapCreateOffer(eligible: 0, needLessons: 0, startable: 0, stop: nil),
+      createOffer: MindMapCreateOffer(eligible: 0, startable: 0, stop: nil),
       firstTab: .chapters,
       lessonGroups: lessonIds.isEmpty
         ? []
         : [
           LessonMapGroup(
-            chapterId: "chapter", count: lessonIds.count, locked: 0, lessonIds: lessonIds)
+            chapterId: "chapter", count: lessonIds.count, lessonIds: lessonIds)
         ],
       saved: answered?.saved
         ?? (saved

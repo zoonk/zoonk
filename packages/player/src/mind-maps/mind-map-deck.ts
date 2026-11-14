@@ -103,11 +103,7 @@ export function findLessonMap({
   lessons: readonly LessonMindMap[];
   slide: LessonSlide;
 }): LessonMindMap | null {
-  return (
-    lessons.find(
-      (lesson) => lesson.lessonId === slide.lessonId && !lesson.locked && lesson.map !== null,
-    ) ?? null
-  );
+  return lessons.find((lesson) => lesson.lessonId === slide.lessonId) ?? null;
 }
 
 function isAt({ place, slide }: { place: MindMapPlace; slide: DeckSlide }): boolean {

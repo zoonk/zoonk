@@ -95,7 +95,6 @@ export async function getChapterView({
     chapterId,
     items: map.items,
     lessons,
-    plusOnlyLessonIds: new Set(),
     sessionLessonIds: map.todayBlocks.flatMap((block) => block.lessonId ?? []),
     studied,
   });
@@ -118,10 +117,7 @@ export async function getChapterView({
       mistakes: { open: openMistakes },
       skills: area.skills,
       summaries: buildChapterSummaries({ lessons, states: lessonStates }),
-      testOut: {
-        available: area.state !== "done" && !blockedTestOutChapters.has(chapterId),
-        plusRequired: false,
-      },
+      testOut: { available: area.state !== "done" && !blockedTestOutChapters.has(chapterId) },
     },
     status: "ready",
   };

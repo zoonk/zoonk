@@ -115,7 +115,6 @@ private func daysLeft(_ plan: GoalPlan?) -> String? {
 /// learner resumes the goal.
 private struct PlanSetupLeft: View {
   @Environment(AppRouter.self) private var router
-  @Environment(\.resumeGoal) private var resumeGoal
 
   let goal: LearnerGoal
 
@@ -143,14 +142,15 @@ private struct PlanSetupLeft: View {
       Text(
         "Answer them and we'll plan every day until you reach your goal.", tableName: "Plan",
         comment: "Why the Plan waits for the goal's setup questions")
-    } actions: {
+    }
+    .bottomBar {
       Button {
         router.open(.goalSetup(goalId: goal.id))
       } label: {
         Text("Continue", tableName: "Plan", comment: "Opens the goal's setup questions")
       }
       .buttonStyle(.mainAction)
-      .controlSize(.large)
+      .keyboardShortcut(.defaultAction)
     }
   }
 
@@ -167,13 +167,8 @@ private struct PlanSetupLeft: View {
       Text(
         "Nothing is planned until you resume it.", tableName: "Plan",
         comment: "Explains a paused goal")
-    } actions: {
-      BusyButton(isBusy: resumeGoal.isBusy, action: resumeGoal.action) {
-        Text("Resume", tableName: "Plan", comment: "Resumes the paused goal")
-      }
-      .buttonStyle(.mainAction)
-      .controlSize(.large)
     }
+    .resumeGoalBar()
   }
 }
 
@@ -242,6 +237,7 @@ private struct PlanContent: View {
         PlanSettingsSection(context: context)
       }
     }
+    .resumeGoalBar(isShown: goal.status == .paused)
     .barTitleAfterHero(String(localized: "Plan", table: "Plan", comment: "Title of the Plan tab"))
     .announcesStatus(rebuildStatus)
     .onChange(of: goal.contentCountry?.rebuild) { old, new in

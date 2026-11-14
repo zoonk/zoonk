@@ -21,7 +21,7 @@ fun plan(extra: String = ""): Plan {
         ApiJson
             .parseToJsonElement(
                 """
-                {"access":{"freeWeekOver":false,"mocksRequirePlus":false},"areas":[],"changes":[],
+                {"access":{"mocksRequirePlus":false},"areas":[],"changes":[],
                  "estimate":{"remainingHours":10,"totalHours":12},"examChoices":[],"examDocument":"guide",
                  "fundedMocks":[],"goalId":"$GOAL","phases":[],"planId":"$PLAN_ID","ready":true,
                  "schedule":{"dailyMinutes":20,"dailyTimes":$DAILY_TIMES,"fullCourse":false,"lightWeeks":[],"studyDays":5,
@@ -36,7 +36,7 @@ fun plan(extra: String = ""): Plan {
 }
 
 internal fun progress(
-    mocks: String = """{"kind":"weeklyChallenges","plusRequired":false,"taken":1,"value":0.6}""",
+    mocks: String = """{"kind":"weeklyChallenges","taken":1,"value":0.6}""",
     rule: String = "solid",
     fading: Int = 2,
 ): GoalProgress =

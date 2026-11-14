@@ -17,5 +17,3 @@ export async function loadExamPrepAccess({
   const viewer = goal.kind === "exam" ? await readViewer() : null;
   return getExamPrepAccess({ examPrep: viewer ? getPlanExamPrep(viewer.tier) : null, goal });
 }
-
-export type PlusLesson = { title: string };

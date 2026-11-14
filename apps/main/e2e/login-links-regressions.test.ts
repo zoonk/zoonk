@@ -51,7 +51,9 @@ test("the sidebar logs in with one document request and returns to Plan", async 
   await expect(page).toHaveURL(/\/plan$/u);
 });
 
-test("a task page outside the app's frame offers to log in to a visitor", async ({ page }) => {
+test("a task page outside the app's frame offers a visitor to log in or build a plan", async ({
+  page,
+}) => {
   await page.goto("/pronunciation");
 
   await expect(page.getByRole("heading", { level: 1, name: "Log in to continue" })).toBeVisible();
@@ -60,6 +62,30 @@ test("a task page outside the app's frame offers to log in to a visitor", async 
     "href",
     `/login?next=${encodeURIComponent("/pronunciation")}`,
   );
+
+  await expect(page.getByRole("link", { exact: true, name: "Build my plan" })).toHaveAttribute(
+    "href",
+    "/start",
+  );
+});
+
+test("a learner whose login ended is offered only to log in, not a new plan", async ({ page }) => {
+  await page
+    .context()
+    .addCookies([{ name: "better-auth.session_token", url: getBaseURL(), value: "ended" }]);
+
+  await page.goto("/pronunciation");
+
+  await expect(
+    page.getByRole("heading", { level: 1, name: "You've been logged out" }),
+  ).toBeVisible();
+
+  await expect(page.getByRole("link", { exact: true, name: "Log in" })).toHaveAttribute(
+    "href",
+    `/login?next=${encodeURIComponent("/pronunciation")}`,
+  );
+
+  await expect(page.getByRole("link", { name: "Build my plan" })).toHaveCount(0);
 });
 
 test("signed-in home resolves browser, saved, and explicit locales in one redirect", async ({

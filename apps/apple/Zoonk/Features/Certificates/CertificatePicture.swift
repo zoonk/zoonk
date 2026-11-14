@@ -52,17 +52,14 @@ struct CertificatePicture: View {
   }
 }
 
-/// A locked certificate in its picture's place: its frame, a lock, and on a page its name and date.
+/// A certificate earned without a subscription, in its picture's place: the blank sheet, and on a
+/// page its name and date.
 struct LockedCertificateCard: View {
   let facts: CertificateFacts
   var size = CertificatePicture.Size.page
 
   var body: some View {
     VStack(spacing: 8) {
-      Image(systemName: "lock.fill")
-        .typeStyle(size == .page ? .section : .body)
-        .foregroundStyle(.mutedForeground)
-
       if size == .page {
         Text(facts.name)
           .typeStyle(.body.weight(.semibold))
@@ -78,12 +75,7 @@ struct LockedCertificateCard: View {
     .frame(maxWidth: .infinity, maxHeight: .infinity)
     .background(.muted)
     .certificateFrame(size)
-    .accessibilityElement(children: .ignore)
-    .accessibilityLabel(
-      Text(
-        "\(facts.name), locked", tableName: "Certificates",
-        comment: "VoiceOver for a certificate that comes with Plus: its name, then that it's locked"
-      ))
+    .accessibilityElement(children: .combine)
   }
 }
 

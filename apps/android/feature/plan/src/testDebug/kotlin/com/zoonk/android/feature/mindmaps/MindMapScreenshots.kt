@@ -203,7 +203,6 @@ class MindMapScreenshots {
                 mapJson(4, "Electricity", "drawing"),
                 mapJson(5, "Light", "writingLessons", lessonsToWrite = 3),
                 mapJson(6, "Optics", "available", lessonsToWrite = 2),
-                mapJson(7, "Modern physics", "plusRequired"),
                 mapJson(1, "Functions", "failed", subject = "mathematics", id = 11),
             )
 
@@ -213,8 +212,7 @@ class MindMapScreenshots {
             listOf(
                 lessonGroupJson(1, (1..4).toList()),
                 lessonGroupJson(2, (5..7).toList()),
-                lessonGroupJson(7, emptyList(), locked = 5),
-                lessonGroupJson(11, (8..11).toList(), locked = 2),
+                lessonGroupJson(11, (8..11).toList()),
             )
         val SAVED =
             listOf(
@@ -307,7 +305,6 @@ class MindMapScreenshots {
                 Row("ready", place, image = false)
                 Row("failed", place)
                 Row("failed", place, shown = MindMapShown.Unreachable)
-                Row("plusRequired", place)
                 Row("available", place, cap = FREE_CAP)
                 Row(
                     "available",

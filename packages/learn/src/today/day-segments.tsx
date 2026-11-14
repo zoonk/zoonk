@@ -1,6 +1,6 @@
+import { METER_PARTS_CLASS, MeterPart } from "@zoonk/ui/components/meter";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type LearnKind, kindFillClass } from "../_components/kind-tile";
-import { METER_PARTS_CLASS, MeterPart } from "../_components/meter";
 
 const PERCENT = 100;
 

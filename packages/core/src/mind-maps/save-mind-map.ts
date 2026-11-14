@@ -3,7 +3,6 @@ import { type Goal, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getSavedMindMapsCacheTag } from "../cache/tags";
-import { getEntitlementViewer } from "../entitlements/_utils/entitlement-viewer";
 import { findOwnedGoal } from "../learner/_utils/owned-goal";
 import { loadMindMapChapters } from "./_utils/load-mind-map-chapters";
 import { getMindMapStatus } from "./_utils/mind-map-view";
@@ -12,9 +11,9 @@ import { type SaveMindMapInput } from "./mind-map-contract";
 
 export type SaveMindMapResult =
   | { saved: boolean; status: "ready" }
-  | { status: "notFound" | "plusRequired" | "unauthorized" };
+  | { status: "notFound" | "unauthorized" };
 
-type SaveTarget = { status: "ready"; title: string } | { status: "notFound" | "plusRequired" };
+type SaveTarget = { status: "ready"; title: string } | { status: "notFound" };
 
 async function findChapterTarget({
   chapterId,
@@ -23,21 +22,13 @@ async function findChapterTarget({
   chapterId: string;
   goal: Goal;
 }): Promise<SaveTarget> {
-  const [facts] = await loadMindMapChapters({
-    chapterIds: [chapterId],
-    goal,
-    readViewer: getEntitlementViewer,
-  });
+  const [facts] = await loadMindMapChapters({ chapterIds: [chapterId], goal });
 
   if (!facts) {
     return { status: "notFound" };
   }
 
   const status = getMindMapStatus({ ...facts, now: new Date() });
-
-  if (status === "plusRequired") {
-    return { status };
-  }
 
   return status === "ready" ? { status, title: facts.title } : { status: "notFound" };
 }
@@ -57,7 +48,6 @@ async function findLessonTarget({
   const chapters = await loadMindMapChapters({
     chapterIds: placements.map((placement) => placement.chapterId),
     goal,
-    readViewer: getEntitlementViewer,
   });
 
   const lessonMaps = await loadScopeLessonMaps({
@@ -65,14 +55,13 @@ async function findLessonTarget({
     userId: goal.userId,
   });
 
-  const maps = [...lessonMaps.values()].flat().filter((map) => map.lessonId === lessonId);
-  const open = maps.find((map) => !map.locked);
+  const open = [...lessonMaps.values()].flat().find((map) => map.lessonId === lessonId);
 
   if (open) {
     return { status: "ready", title: open.title };
   }
 
-  return { status: maps.length > 0 ? "plusRequired" : "notFound" };
+  return { status: "notFound" };
 }
 
 /**

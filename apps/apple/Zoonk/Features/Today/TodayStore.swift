@@ -360,17 +360,23 @@ final class TodayStore {
     let goalID = view.goal.id
     let result = await cache.mutate(invalidating: [.goals, .userSession]) { identity in
       let saved = try await api.decidePlanChange(
-        token: identity.bearerToken, goalID: goalID, changeID: change.id, decision: decision)
+        token: identity.bearerToken, goalID: goalID, changeID: change.id, decision: decision,
+        quote: change.quote)
       return (identity, saved)
     }
 
     switch result {
     case .done(let (owner, saved)):
+      let day = OpenedSession.Day(view)
+
       // Out of date, it says nothing: Today reads the day again, as main does.
-      answered = saved.flatMap {
-        $0.status == "proposed"
-          ? nil
-          : (owner, OpenedSession.Day(view), AnsweredPlanChange(change: $0, decision: decision))
+      answered = saved.flatMap { saved in
+        if saved.status != "proposed" {
+          return (owner, day, AnsweredPlanChange(change: saved, decision: decision))
+        }
+
+        return decision == .applied
+          ? (owner, day, AnsweredPlanChange(change: saved, repriced: true)) : nil
       }
       return .done(())
     case .failed(let error):
@@ -589,4 +595,6 @@ private struct OpenedSession {
 struct AnsweredPlanChange: Equatable {
   let change: TodayView.PlanChange
   var decision: PlanChangeDecision?
+  /// Accepted, and still waiting: its numbers moved, so it asks again with today's.
+  var repriced = false
 }

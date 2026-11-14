@@ -1,10 +1,10 @@
 "use client";
 
 import { type ExamView } from "@zoonk/core/exams/view/contract";
+import { Meter, MeterFill } from "@zoonk/ui/components/meter";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowDownRightIcon, ArrowUpRightIcon, TimerIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
-import { Meter, MeterFill } from "../_components/meter";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { StatTile, StatTiles } from "../_components/stat-tile";
 import { TITLE_ROW_CLASS } from "../_components/title-row";

@@ -3,7 +3,7 @@ import { Stop, StopBody, StopHeader, StopTitle } from "@/components/public/stop"
 import { getMinutesFormatter } from "@/lib/public/public-labels";
 import { getFreePlanLimits } from "@zoonk/core/entitlements/plan-limits";
 import { Eyebrow } from "@zoonk/learn/eyebrow";
-import { MeterPart, MeterParts } from "@zoonk/learn/meter";
+import { MeterPart, MeterParts } from "@zoonk/ui/components/meter";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted } from "next-intl/server";
 
