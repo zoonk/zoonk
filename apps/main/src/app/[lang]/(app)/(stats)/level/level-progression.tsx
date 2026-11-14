@@ -187,7 +187,8 @@ export async function LevelProgression({ currentBelt }: { currentBelt: BeltLevel
           <span aria-hidden="true" className={cn("absolute inset-0 opacity-10", belt.bgClass)} />
         )}
 
-        <div className="relative grid gap-x-6 gap-y-4 md:grid-cols-[1fr_auto]">
+        {/* The belt's tint takes faint gray under 4.5:1, so faint text here is the muted gray. */}
+        <div className="relative grid gap-x-6 gap-y-4 [--faint:var(--muted-foreground)] md:grid-cols-[1fr_auto]">
           <div className="flex flex-col gap-0.5">
             <p className="text-lg font-semibold tracking-tight">{belt.label}</p>
             <p className="text-muted-foreground text-sm">

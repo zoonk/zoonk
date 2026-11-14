@@ -37,11 +37,11 @@ msgstr "정답"
 
 #: src/_components/chapter-mark.tsx
 #: src/_components/lesson-list.tsx
-#: src/certificates/certificates-screen.tsx
 #: src/onboarding/steps/reveal-days.tsx
 #: src/session/next-stop.tsx
 #: src/session/study-moment.tsx
 #: src/today/today-segment-popover.tsx
+#: src/week/logbook-sections.tsx
 msgctxt "nC-1Um"
 msgid "Up next"
 msgstr "다음"
@@ -74,6 +74,7 @@ msgstr "건너뜀"
 #: src/plan/plan-change-applied.tsx
 #: src/today/today-segment-popover.tsx
 #: src/wait/first-lesson-row.tsx
+#: src/week/logbook-screen.tsx
 msgctxt "JXdbo8"
 msgid "Done"
 msgstr "완료"
@@ -206,6 +207,49 @@ msgstr "시작하기"
 msgctxt "xJFp6i"
 msgid "{percent}% done"
 msgstr "{percent}% 완료"
+
+#: src/_components/download-row.tsx
+msgctxt "owirfw"
+msgid "We couldn't prepare the download. Try again."
+msgstr "다운로드할 파일을 준비하지 못했어요. 다시 시도해 보세요."
+
+#: src/_components/download-row.tsx
+#: src/certificates/certificate-page.tsx
+#: src/mind-maps/mind-map-aside.tsx
+#: src/mind-maps/mind-map-viewer.tsx
+msgctxt "5q3qC0"
+msgid "Download"
+msgstr "다운로드"
+
+#: src/_components/edit-text-dialog.tsx
+#: src/certificates/certificate-name.tsx
+#: src/country/country-picker.tsx
+#: src/journey/goal-actions.tsx
+#: src/language/conversation/call-control.tsx
+#: src/onboarding/start-over-menu.tsx
+#: src/onboarding/understood/understood-row.tsx
+#: src/onboarding/understood/understood-words.tsx
+#: src/plan/plan-country.tsx
+#: src/plan/plan-tool-sheet.tsx
+#: src/plan/study-everything.tsx
+msgctxt "47FYwb"
+msgid "Cancel"
+msgstr "취소"
+
+#: src/_components/edit-text-dialog.tsx
+#: src/appearance/buddy-settings.tsx
+#: src/certificates/certificate-name.tsx
+#: src/conversation/tutor-country-offer.tsx
+#: src/mind-maps/mind-map-save-button.tsx
+#: src/onboarding/understood/understood-row.tsx
+#: src/plan/exam-choice-picks.tsx
+#: src/plan/plan-bases-sheet.tsx
+#: src/plan/plan-date.tsx
+#: src/plan/plan-tool-sheet.tsx
+#: src/profile-questions/about-you-question-screen.tsx
+msgctxt "jvo0vs"
+msgid "Save"
+msgstr "저장"
 
 #: src/_components/finish-ready.tsx
 msgctxt "MaLZrn"
@@ -437,6 +481,16 @@ msgctxt "mA2Wor"
 msgid "{correct, plural, =0 {<number>#</number> of {answered} right} one {<number>#</number> of {answered} right} other {<number>#</number> of {answered} right}}"
 msgstr "{correct, plural, =0 {맞힌 문제는 <number>#</number>개예요 (전체 {answered}개)} other {문제 <number>#</number>개를 맞혔어요 (전체 {answered}개)}}"
 
+#: src/_components/name-hint.tsx
+msgctxt "zW5SM4"
+msgid "Your buddy and all your certificates use this name."
+msgstr "짝꿍이 이 이름으로 부르고, 모든 인증서에도 이 이름이 들어가요."
+
+#: src/_components/name-hint.tsx
+msgctxt "D4cYHr"
+msgid "Use 150 characters or fewer."
+msgstr "150자 이내로 입력해 주세요."
+
 #: src/_components/opening-wait-line.tsx
 msgctxt "bSuhQp"
 msgid "Opening your next step…"
@@ -446,16 +500,6 @@ msgstr "다음 단계를 열고 있어요…"
 msgctxt "Pd4dpx"
 msgid "This is taking longer than usual. It opens on its own, no need to tap again."
 msgstr "평소보다 오래 걸리고 있어요. 자동으로 열리니 다시 누르지 않아도 돼요."
-
-#: src/_components/plus-lock.tsx
-msgctxt "lOdoIb"
-msgid "Plus"
-msgstr "Plus"
-
-#: src/_components/plus-lock.tsx
-msgctxt "fi0FtL"
-msgid "Available with Plus"
-msgstr "Plus에서 이용 가능"
 
 #: src/_components/plus-lock.tsx
 #: src/_components/subscribe-gate.tsx
@@ -557,11 +601,7 @@ msgstr "저장하지 못했어요. 다시 시도해 보세요."
 
 #: src/_components/sheet-header.tsx
 #: src/_components/suggestion.tsx
-#: src/certificates/certificate-linkedin.tsx
-#: src/certificates/certificate-name.tsx
-#: src/certificates/certificate-share.tsx
 #: src/explain/explain-waiting.tsx
-#: src/memory/memory-fact-row.tsx
 #: src/mind-maps/mind-map-viewer.tsx
 #: src/plan/plan-editor.tsx
 msgctxt "rbrahO"
@@ -1079,21 +1119,6 @@ msgctxt "y1Z3or"
 msgid "Language"
 msgstr "언어"
 
-#: src/appearance/appearance-screen.tsx
-msgctxt "cXBJ7U"
-msgid "Privacy"
-msgstr "개인정보 처리방침"
-
-#: src/appearance/appearance-screen.tsx
-msgctxt "8uEFmZ"
-msgid "Shows us how you use Zoonk, so we can improve it"
-msgstr "Zoonk를 어떻게 사용하는지 알려 주고 서비스 개선에 도움이 돼요"
-
-#: src/appearance/appearance-screen.tsx
-msgctxt "JPXk5m"
-msgid "Share usage data"
-msgstr "사용 데이터 제공"
-
 #: src/appearance/buddy-settings.tsx
 #: src/buddies/buddy-day.tsx
 #: src/buddies/buddy-glasses-picker.tsx
@@ -1102,22 +1127,6 @@ msgstr "사용 데이터 제공"
 msgctxt "T9w4Km"
 msgid "Glasses"
 msgstr "안경"
-
-#: src/appearance/buddy-settings.tsx
-#: src/certificates/certificate-name.tsx
-#: src/conversation/tutor-country-offer.tsx
-#: src/journey/rename-goal-dialog.tsx
-#: src/memory/memory-fact-row.tsx
-#: src/mind-maps/mind-map-save-button.tsx
-#: src/onboarding/understood/understood-row.tsx
-#: src/plan/exam-choice-picks.tsx
-#: src/plan/plan-bases-sheet.tsx
-#: src/plan/plan-date.tsx
-#: src/plan/plan-tool-sheet.tsx
-#: src/profile-questions/about-you-question-screen.tsx
-msgctxt "jvo0vs"
-msgid "Save"
-msgstr "저장"
 
 #: src/appearance/buddy-settings.tsx
 #: src/certificates/certificate-details.tsx
@@ -1144,20 +1153,14 @@ msgid "Where you live"
 msgstr "사는 나라"
 
 #: src/appearance/home-country-setting.tsx
-#: src/conversation/tutor-country-offer.tsx
-msgctxt "i8Cibb"
-msgid "For new goals and your examples. It doesn't change the plans you already have."
-msgstr "새 목표와 예시에 반영돼요. 기존 계획은 바뀌지 않아요."
+msgctxt "yXIjI8"
+msgid "So examples and exams match your country."
+msgstr "선택한 나라에 맞는 예시와 시험을 보여 드려요."
 
 #: src/appearance/home-country-setting.tsx
 msgctxt "p5LNtB"
 msgid "Not set"
 msgstr "설정 안 됨"
-
-#: src/appearance/language-setting.tsx
-msgctxt "V1yMTL"
-msgid "On this device"
-msgstr "이 기기에서"
 
 #: src/appearance/language-setting.tsx
 msgctxt "y0ef9b"
@@ -1308,21 +1311,6 @@ msgid "Curious alien"
 msgstr "호기심 많은 외계인"
 
 #: src/buddies/buddy-labels.tsx
-msgctxt "G6AWdQ"
-msgid "Young"
-msgstr "어린이"
-
-#: src/buddies/buddy-labels.tsx
-msgctxt "zHPqOq"
-msgid "Adult"
-msgstr "어른"
-
-#: src/buddies/buddy-labels.tsx
-msgctxt "GpLsPj"
-msgid "Baby"
-msgstr "아기"
-
-#: src/buddies/buddy-labels.tsx
 msgctxt "Vwapsm"
 msgid "Star"
 msgstr "별 모양"
@@ -1351,36 +1339,6 @@ msgstr "외알 안경"
 msgctxt "V55xlZ"
 msgid "Round"
 msgstr "원형"
-
-#: src/buddies/buddy-labels.tsx
-msgctxt "EG5RcY"
-msgid "Star glasses"
-msgstr "별 모양 안경"
-
-#: src/buddies/buddy-labels.tsx
-msgctxt "zDRNy5"
-msgid "Aviator glasses"
-msgstr "비행사 안경"
-
-#: src/buddies/buddy-labels.tsx
-msgctxt "4k0N-w"
-msgid "Cat-eye glasses"
-msgstr "캣아이 안경"
-
-#: src/buddies/buddy-labels.tsx
-msgctxt "kkaEy0"
-msgid "Retro glasses"
-msgstr "복고풍 안경"
-
-#: src/buddies/buddy-labels.tsx
-msgctxt "gFpH0q"
-msgid "A monocle"
-msgstr "외알 안경"
-
-#: src/buddies/buddy-labels.tsx
-msgctxt "AwxE2b"
-msgid "Round glasses"
-msgstr "동그란 안경"
 
 #: src/buddies/buddy-labels.tsx
 msgctxt "0Ys5Rm"
@@ -1483,6 +1441,7 @@ msgstr "Zu"
 #: src/focus-test/focus-test-proposal.tsx
 #: src/focus-test/focus-test-screens.tsx
 #: src/mock/mock-result-actions.tsx
+#: src/mock/mock-result-plan.tsx
 #: src/plan/plan-fit-suggestion.tsx
 #: src/plan/plan-offer-preview.tsx
 #: src/plan/plan-past-date-suggestion.tsx
@@ -1668,9 +1627,9 @@ msgid "Details"
 msgstr "상세 정보"
 
 #: src/certificates/certificate-details.tsx
-msgctxt "QshKyk"
-msgid "Anyone with the link can see this certificate. Its page doesn't show up in search."
-msgstr "링크가 있으면 누구나 이 인증서를 볼 수 있어요. 이 페이지는 검색 결과에 나오지 않아요."
+msgctxt "5zN5Wd"
+msgid "Anyone with the link can see this certificate."
+msgstr "링크가 있으면 누구나 이 인증서를 볼 수 있어요."
 
 #. A course level's certificate name, such as "Python · Beginner": the course's title, then the level's name.
 #: src/certificates/certificate-labels.ts
@@ -1771,30 +1730,10 @@ msgctxt "CEB03t"
 msgid "Open LinkedIn"
 msgstr "LinkedIn 열기"
 
-#: src/certificates/certificate-lock.tsx
-msgctxt "oL0rU6"
-msgid "Locked"
-msgstr "잠김"
-
-#: src/certificates/certificate-lock.tsx
-msgctxt "rS5epi"
-msgid "Get your certificate with Plus"
-msgstr "Plus로 인증서 받기"
-
-#: src/certificates/certificate-lock.tsx
-msgctxt "QIyGxo"
-msgid "Plus gives you a certificate for every level you finish, to print and share. Certificates you get stay yours if Plus ends."
-msgstr "Plus를 이용하면 레벨을 마칠 때마다 인쇄하고 공유할 수 있는 인증서를 받아요. 받은 인증서는 Plus 이용이 끝나도 계속 보관할 수 있어요."
-
-#: src/certificates/certificate-lock.tsx
-msgctxt "Oe9wC5"
-msgid "Certificates come with Plus"
-msgstr "Plus로 인증서를 받을 수 있어요"
-
 #: src/certificates/certificate-meaning.tsx
-msgctxt "l4zQLP"
-msgid "The name is the one the learner gave their Zoonk account; Zoonk doesn't check IDs."
-msgstr "이름은 학습자가 Zoonk 계정에 등록한 이름이에요. Zoonk는 신분증을 확인하지 않아요."
+msgctxt "7tn6mk"
+msgid "Names aren't checked against an ID."
+msgstr "이름은 신분증으로 확인하지 않아요."
 
 #: src/certificates/certificate-meaning.tsx
 msgctxt "s94wjH"
@@ -1802,24 +1741,24 @@ msgid "Levels are aligned with the CEFR, the Common European Framework of Refere
 msgstr "레벨은 유럽 공통 언어 참조 기준인 CEFR에 맞춰져 있어요. 공식 시험 결과는 아니에요."
 
 #: src/certificates/certificate-meaning.tsx
-msgctxt "iO6aKW"
-msgid "Zoonk issues this certificate when a learner finishes a level, studying at least half of its lessons."
-msgstr "Zoonk는 학습자가 한 레벨의 레슨을 절반 이상 공부하고 그 레벨을 완료하면 이 인증서를 발급해요."
+msgctxt "LVfsiZ"
+msgid "For finishing this level, studying at least half of its lessons."
+msgstr "이 레벨의 레슨을 절반 이상 공부하고 레벨을 마쳤다는 뜻이에요."
 
 #: src/certificates/certificate-meaning.tsx
-msgctxt "j5jrUM"
-msgid "Zoonk issues this certificate when a learner finishes every chapter of a course's level, studying each lesson or passing its test, and wins every challenge in it."
-msgstr "코스의 한 레벨에서 각 레슨을 공부하거나 해당 레슨의 테스트를 통과해 모든 챕터를 마치고, 모든 챌린지에서 이기면 Zoonk가 이 인증서를 발급해요."
+msgctxt "Fudciu"
+msgid "For finishing every lesson and challenge of this level."
+msgstr "이 레벨의 모든 레슨과 챌린지를 마쳤다는 뜻이에요."
 
 #: src/certificates/certificate-meaning.tsx
-msgctxt "9Bnhaw"
-msgid "Zoonk issues this certificate when a learner finishes every lesson of a course's plan, by studying it or passing its test, and wins every challenge in it."
-msgstr "코스 계획의 모든 레슨을 학습하거나 테스트에 통과하는 방식으로 완료하고, 그 안의 모든 챌린지에서 이기면 Zoonk가 이 인증서를 발급해요."
+msgctxt "R--mlV"
+msgid "For finishing every lesson and challenge of this plan."
+msgstr "이 계획의 모든 레슨과 챌린지를 마쳤다는 뜻이에요."
 
 #: src/certificates/certificate-meaning.tsx
-msgctxt "wB_Ebz"
-msgid "It's a record of completion on Zoonk, not academic credit."
-msgstr "Zoonk에서 학습을 완료했다는 기록이에요. 학점으로 인정되지는 않아요."
+msgctxt "371LJf"
+msgid "A record of completion on Zoonk, not academic credit."
+msgstr "Zoonk에서 학습을 마쳤다는 기록이며, 학점으로 인정되지는 않아요."
 
 #: src/certificates/certificate-meaning.tsx
 msgctxt "I9vOlY"
@@ -1907,20 +1846,10 @@ msgctxt "e_2HUM"
 msgid "On your certificate: <strong>{name}</strong>"
 msgstr "인증서에 표시되는 이름: <strong>{name}</strong>님"
 
-#: src/certificates/certificate-name.tsx
-msgctxt "D4cYHr"
-msgid "Use 150 characters or fewer."
-msgstr "150자 이내로 입력해 주세요."
-
-#: src/certificates/certificate-name.tsx
-msgctxt "Vrz1pI"
-msgid "Your certificates and your buddy use this name."
-msgstr "인증서에 이 이름이 표시돼요. 짝꿍도 이 이름으로 불러요."
-
-#: src/certificates/certificate-name.tsx
-msgctxt "F6SpEM"
-msgid "Your certificates and your buddy use this name. You can change it anytime."
-msgstr "인증서에 이 이름이 표시돼요. 짝꿍도 이 이름으로 불러요. 언제든 바꿀 수 있어요."
+#: src/certificates/certificate-moment.tsx
+msgctxt "BJKVSX"
+msgid "See your certificate"
+msgstr "인증서 보기"
 
 #: src/certificates/certificate-name.tsx
 msgctxt "CG1x0d"
@@ -1937,31 +1866,22 @@ msgctxt "m4c_De"
 msgid "Your full name"
 msgstr "성명"
 
-#: src/certificates/certificate-name.tsx
-#: src/country/country-picker.tsx
-#: src/journey/goal-actions.tsx
-#: src/journey/rename-goal-dialog.tsx
-#: src/language/conversation/call-control.tsx
-#: src/memory/memory-fact-row.tsx
-#: src/onboarding/start-over-menu.tsx
-#: src/onboarding/understood/understood-row.tsx
-#: src/onboarding/understood/understood-words.tsx
-#: src/plan/plan-country.tsx
-#: src/plan/plan-tool-sheet.tsx
-#: src/plan/study-everything.tsx
-msgctxt "47FYwb"
-msgid "Cancel"
-msgstr "취소"
-
-#: src/certificates/certificate-name.tsx
-msgctxt "Qcr1L3"
-msgid "It shows on every certificate and its link. Your buddy calls you by it too."
-msgstr "모든 인증서와 인증서 링크에 이 이름이 표시돼요. 짝꿍도 이 이름으로 불러요."
+#: src/certificates/certificate-page.tsx
+#: src/certificates/certificates-screen.tsx
+msgctxt "lX2csU"
+msgid "Certificates"
+msgstr "인증서"
 
 #: src/certificates/certificate-page.tsx
-msgctxt "5lbext"
-msgid "Your certificates"
-msgstr "내 인증서"
+#: src/shell/learn-bar.tsx
+msgctxt "KeiV4d"
+msgid "Back to {page}"
+msgstr "{page} 화면으로 돌아가기"
+
+#: src/certificates/certificate-page.tsx
+msgctxt "sSIPzb"
+msgid "Certificates need a subscription"
+msgstr "인증서를 받으려면 구독이 필요해요"
 
 #: src/certificates/certificate-page.tsx
 msgctxt "QXN1kN"
@@ -1969,22 +1889,14 @@ msgid "Verified certificate · issued by Zoonk"
 msgstr "검증된 인증서 · Zoonk 발급"
 
 #: src/certificates/certificate-page.tsx
-msgctxt "faSg-e"
-msgid "Certificate of completion, issued on {date}."
-msgstr "{date}에 발급한 수료 인증서예요."
+msgctxt "ko85l6"
+msgid "Certificate of completion, issued on <whole>{date}</whole>."
+msgstr "<whole>{date}</whole>에 발급된 수료 인증서예요."
 
 #: src/certificates/certificate-page.tsx
 msgctxt "CXRlIo"
 msgid "Print"
 msgstr "인쇄"
-
-#: src/certificates/certificate-page.tsx
-#: src/memory/memory-screen.tsx
-#: src/mind-maps/mind-map-aside.tsx
-#: src/mind-maps/mind-map-viewer.tsx
-msgctxt "5q3qC0"
-msgid "Download"
-msgstr "다운로드"
 
 #: src/certificates/certificate-share.tsx
 msgctxt "sfDPEB"
@@ -2062,49 +1974,24 @@ msgid "Add to LinkedIn"
 msgstr "LinkedIn에 추가하기"
 
 #: src/certificates/certificates-screen.tsx
-msgctxt "zaINXN"
-msgid "Certificate of completion"
-msgstr "수료 인증서"
-
-#: src/certificates/certificates-screen.tsx
-msgctxt "lX2csU"
-msgid "Certificates"
-msgstr "인증서"
-
-#: src/certificates/certificates-screen.tsx
-msgctxt "OqErrx"
-msgid "Comes when you finish a level, studying at least half of it"
-msgstr "레벨의 레슨을 절반 이상 학습하고 해당 레벨을 완료하면 받을 수 있어요"
-
-#: src/certificates/certificates-screen.tsx
-msgctxt "ojltlj"
-msgid "Your certificate comes when you finish the plan"
-msgstr "계획을 마치면 인증서를 받을 수 있어요"
-
-#: src/certificates/certificates-screen.tsx
 msgctxt "GyTxyv"
 msgid "No certificates yet"
 msgstr "아직 인증서가 없어요"
 
 #: src/certificates/certificates-screen.tsx
-msgctxt "_eLagx"
-msgid "Your certificates show up here when you finish a level or a plan."
-msgstr "레벨이나 계획을 마치면 여기에 인증서가 표시돼요."
-
-#: src/certificates/certificates-screen.tsx
-msgctxt "0X-xfW"
-msgid "Continue learning"
-msgstr "계속 학습하기"
-
-#: src/certificates/certificates-screen.tsx
-msgctxt "7yoAJi"
-msgid "{count, plural, one {# certificate} other {# certificates}}"
-msgstr "{count, plural, other {인증서 #개}}"
+msgctxt "GTvW0W"
+msgid "Your next certificate"
+msgstr "다음에 받을 인증서"
 
 #: src/certificates/certificates-screen.tsx
 msgctxt "Ybfjqu"
 msgid "A certificate for every level and plan you finish."
 msgstr "레벨이나 계획을 완료할 때마다 인증서를 받아요."
+
+#: src/certificates/certificates-screen.tsx
+msgctxt "0X-xfW"
+msgid "Continue learning"
+msgstr "계속 학습하기"
 
 #: src/challenge/challenge-call-intro.tsx
 #: src/challenge/challenge-intro.tsx
@@ -2381,6 +2268,7 @@ msgstr "오늘로 돌아가기"
 #: src/challenge/challenge-moved-screen.tsx
 #: src/conversation/tutor-plan-change.tsx
 #: src/focus-test/focus-test-result.tsx
+#: src/memory/memory-screen.tsx
 #: src/memory/memory-updated.tsx
 #: src/plan/plan-change-applied.tsx
 #: src/plan/plan-editor-change.tsx
@@ -2840,6 +2728,11 @@ msgid "Country: {country}"
 msgstr "국가: {country}"
 
 #: src/conversation/tutor-country-offer.tsx
+msgctxt "i8Cibb"
+msgid "For new goals and your examples. It doesn't change the plans you already have."
+msgstr "새 목표와 예시에 반영돼요. 기존 계획은 바뀌지 않아요."
+
+#: src/conversation/tutor-country-offer.tsx
 msgctxt "EWygiy"
 msgid "Saved. You can change it in Preferences."
 msgstr "저장했어요. 환경설정에서 바꿀 수 있어요."
@@ -2935,7 +2828,6 @@ msgid "See, correct or delete what your buddy remembers about you."
 msgstr "짝꿍이 기억하는 내 정보를 확인하고 수정하거나 삭제하세요."
 
 #: src/conversation/tutor-feature-offers.tsx
-#: src/profile-questions/about-you-screen.tsx
 msgctxt "dVx3yz"
 msgid "Memory"
 msgstr "메모리"
@@ -3004,6 +2896,7 @@ msgid "Use my date"
 msgstr "내가 정한 날짜 사용하기"
 
 #: src/conversation/tutor-plan-change.tsx
+#: src/focus-test/focus-test-proposal.tsx
 #: src/mock/mock-result-plan.tsx
 #: src/plan/plan-offer-preview.tsx
 #: src/today/today-plan-change.tsx
@@ -3986,9 +3879,9 @@ msgid "myemail@gmail.com"
 msgstr "honggildong@gmail.com"
 
 #: src/feedback/feedback-form.tsx
-msgctxt "feedback.Xx0WZV"
-msgid "Send message"
-msgstr "메시지 보내기"
+msgctxt "feedback.lknSi2"
+msgid "This screen is attached"
+msgstr "이 화면이 첨부되어 있어요"
 
 #: src/feedback/feedback-form.tsx
 msgctxt "feedback.f7aJd1"
@@ -4011,14 +3904,14 @@ msgid "Message sent successfully! We'll get back to you soon."
 msgstr "메시지를 보냈어요! 곧 답변해 드릴게요."
 
 #: src/feedback/feedback-form.tsx
-msgctxt "feedback.lknSi2"
-msgid "This screen is attached"
-msgstr "이 화면이 첨부되어 있어요"
-
-#: src/feedback/feedback-form.tsx
 msgctxt "feedback.dpjZ-X"
 msgid "We couldn't send your message. Try again, or email us at hello@zoonk.com."
 msgstr "메시지를 보내지 못했어요. 다시 시도해 보거나 hello@zoonk.com으로 이메일을 보내 주세요."
+
+#: src/feedback/feedback-form.tsx
+msgctxt "feedback.Xx0WZV"
+msgid "Send message"
+msgstr "메시지 보내기"
 
 #: src/focus-test/focus-test-flow.tsx
 #: src/focus-test/focus-test-screens.tsx
@@ -4128,11 +4021,6 @@ msgstr "이 과목들에 시간을 더 쓸까요?"
 msgctxt "ZQfsV7"
 msgid "Your time can't cover everything before your exam."
 msgstr "시험 전까지 모든 내용을 공부할 시간이 부족해요."
-
-#: src/focus-test/focus-test-proposal.tsx
-msgctxt "YWfqky"
-msgid "Update my plan"
-msgstr "내 계획 바꾸기"
 
 #: src/focus-test/focus-test-result.tsx
 #: src/onboarding/steps/reveal-coverage.tsx
@@ -7147,23 +7035,6 @@ msgctxt "IKiWjm"
 msgid "{count, plural, =0 {Questions on this recording (#)} one {Question on this recording (#)} other {Questions on this recording (#)}}"
 msgstr "{count, plural, =0 {이 음성에 딸린 #개의 문제} other {이 음성에 딸린 문제 #개}}"
 
-#. A memory is one fact Zoonk remembers about the learner.
-#: src/memory/memory-fact-row.tsx
-msgctxt "XjSodK"
-msgid "Edit memory"
-msgstr "메모리 수정"
-
-#. "It" is the note Zoonk keeps about the learner, edited in this dialog.
-#: src/memory/memory-fact-row.tsx
-msgctxt "RmRxzU"
-msgid "Say it the way it's true for you."
-msgstr "실제 상황에 맞게 고쳐 주세요."
-
-#: src/memory/memory-fact-row.tsx
-msgctxt "FGmRC7"
-msgid "What Zoonk remembers"
-msgstr "Zoonk가 기억하는 내용"
-
 #: src/memory/memory-fact-row.tsx
 msgctxt "2ho8uo"
 msgid "Options for “{fact}”"
@@ -7178,6 +7049,23 @@ msgstr "수정"
 msgctxt "K3r6DQ"
 msgid "Delete"
 msgstr "삭제"
+
+#. "It" is the note Zoonk keeps about the learner, edited in this dialog.
+#: src/memory/memory-fact-row.tsx
+msgctxt "RmRxzU"
+msgid "Say it the way it's true for you."
+msgstr "실제 상황에 맞게 고쳐 주세요."
+
+#: src/memory/memory-fact-row.tsx
+msgctxt "FGmRC7"
+msgid "What Zoonk remembers"
+msgstr "Zoonk가 기억하는 내용"
+
+#. A memory is one fact Zoonk remembers about the learner.
+#: src/memory/memory-fact-row.tsx
+msgctxt "XjSodK"
+msgid "Edit memory"
+msgstr "메모리 수정"
 
 #: src/memory/memory-labels.tsx
 msgctxt "memoryCategories.XHLYdJ"
@@ -7227,14 +7115,9 @@ msgid "From a chat"
 msgstr "채팅에서 알려 주셨어요"
 
 #: src/memory/memory-labels.tsx
-msgctxt "TVfPfM"
-msgid "From onboarding"
-msgstr "처음 시작할 때 알려 준 내용"
-
-#: src/memory/memory-labels.tsx
-msgctxt "dppJZz"
-msgid "From a study session"
-msgstr "학습 중에 알려 주셨어요"
+msgctxt "5yxABH"
+msgid "From your lessons"
+msgstr "레슨에서"
 
 #. Where a remembered fact came from: a live practice call. Use the word the app uses for these calls, and keep it apart from “From a chat”, a typed chat with the tutor.
 #: src/memory/memory-labels.tsx
@@ -7243,14 +7126,9 @@ msgid "From a call"
 msgstr "대화에서"
 
 #: src/memory/memory-screen.tsx
-msgctxt "PRUyMZ"
-msgid "Personal examples, plans that fit your week and calls that remember your news"
-msgstr "나에게 맞춘 예시, 한 주 일정에 맞는 계획, 내 근황을 기억하는 대화"
-
-#: src/memory/memory-screen.tsx
-msgctxt "yp_BUN"
-msgid "Memory is off. Nothing new is learned, and these facts aren't used."
-msgstr "메모리가 꺼져 있어요. 새로운 정보를 기억하지 않고, 저장된 정보도 사용하지 않아요."
+msgctxt "ut2Sio"
+msgid "When off, notes aren't saved or used."
+msgstr "끄면 메모를 저장하거나 사용하지 않아요."
 
 #: src/memory/memory-screen.tsx
 msgctxt "z7tQIR"
@@ -7258,29 +7136,31 @@ msgid "Use memory"
 msgstr "메모리 사용"
 
 #: src/memory/memory-screen.tsx
-msgctxt "jUyOoM"
-msgid "Everything in your memory, as one file"
-msgstr "메모리에 있는 모든 내용을 파일 하나로"
+msgctxt "QQtAa-"
+msgid "Removed from memory"
+msgstr "메모리에서 삭제했어요"
+
+#: src/memory/memory-screen.tsx
+#: src/memory/memory-updated.tsx
+msgctxt "GGUKxA"
+msgid "Couldn't undo. Try again."
+msgstr "되돌리지 못했어요. 다시 시도해 보세요."
+
+#: src/memory/memory-screen.tsx
+#: src/memory/memory-updated.tsx
+msgctxt "_718cU"
+msgid "Couldn't undo. It changed since."
+msgstr "그사이 내용이 바뀌어서 되돌릴 수 없어요."
+
+#: src/memory/memory-screen.tsx
+msgctxt "9fUBB_"
+msgid "Nothing yet. Notes show up here as you study and chat."
+msgstr "아직 메모가 없어요. 공부하고 채팅하다 보면 여기에 메모가 생겨요."
 
 #: src/memory/memory-screen.tsx
 msgctxt "etMoG6"
 msgid "Download my memory"
 msgstr "내 메모리 다운로드"
-
-#: src/memory/memory-screen.tsx
-msgctxt "owirfw"
-msgid "We couldn't prepare the download. Try again."
-msgstr "다운로드할 파일을 준비하지 못했어요. 다시 시도해 보세요."
-
-#: src/memory/memory-screen.tsx
-msgctxt "kxonMZ"
-msgid "Nothing yet. As you study and chat, short notes that help Zoonk teach you show up here."
-msgstr "아직 메모가 없어요. 공부하고 대화하다 보면 Zoonk가 학습을 도울 때 참고할 짧은 메모가 여기에 생겨요."
-
-#: src/memory/memory-screen.tsx
-msgctxt "FL1DwQ"
-msgid "Nothing here. Zoonk keeps no notes about you while memory is off."
-msgstr "저장된 내용이 없어요. 메모리가 꺼져 있는 동안에는 Zoonk가 메모를 남기지 않아요."
 
 #: src/memory/memory-screen.tsx
 msgctxt "GUOjcs"
@@ -7301,16 +7181,6 @@ msgstr "{count, plural, other {외 #건}}"
 msgctxt "to7ZbS"
 msgid "Change undone"
 msgstr "변경 사항을 되돌렸어요"
-
-#: src/memory/memory-updated.tsx
-msgctxt "_718cU"
-msgid "Couldn't undo. It changed since."
-msgstr "그사이 내용이 바뀌어서 되돌릴 수 없어요."
-
-#: src/memory/memory-updated.tsx
-msgctxt "GGUKxA"
-msgid "Couldn't undo. Try again."
-msgstr "되돌리지 못했어요. 다시 시도해 보세요."
 
 #: src/mind-maps/finished-chapter-map.tsx
 #: src/mind-maps/mind-map-copy.ts
@@ -8692,11 +8562,6 @@ msgid "Skip {count, plural, one {# lesson} other {# lessons}} you already know?"
 msgstr "이미 아는 레슨 {count, plural, other {#개}}를 건너뛸까요?"
 
 #: src/mock/mock-result-plan.tsx
-msgctxt "uFDpFL"
-msgid "Keep my plan"
-msgstr "내 계획 유지하기"
-
-#: src/mock/mock-result-plan.tsx
 msgctxt "b4G-y7"
 msgid "You got {correct, plural, =0 {# of {total} right} one {# of {total} right} other {# of {total} right}} there."
 msgstr "이 영역에서 {correct, plural, =0 {#개를 맞혔어요(전체 {total}개)} other {#개를 맞혔어요(전체 {total}개)}}."
@@ -9091,6 +8956,7 @@ msgstr "무료로 가입해 목표에 PDF, 필기 사진, 원하는 텍스트를
 #: src/onboarding/entry/attach-panel.tsx
 #: src/onboarding/entry/goal-outcomes.tsx
 #: src/onboarding/save-plan-note.tsx
+#: src/reminders/reminder-offer.tsx
 #: src/reminders/reminders-screen.tsx
 msgctxt "0vL5u1"
 msgid "Create an account"
@@ -12224,6 +12090,16 @@ msgctxt "9HOF1s"
 msgid "When to practice {parts}"
 msgstr "{parts} 연습 시기"
 
+#: src/privacy/usage-data-setting.tsx
+msgctxt "8uEFmZ"
+msgid "Shows us how you use Zoonk, so we can improve it"
+msgstr "Zoonk를 어떻게 사용하는지 알려 주고 서비스 개선에 도움이 돼요"
+
+#: src/privacy/usage-data-setting.tsx
+msgctxt "JPXk5m"
+msgid "Share usage data"
+msgstr "사용 데이터 제공"
+
 #: src/profile-questions/about-you-screen.tsx
 msgctxt "BV0cQk"
 msgid "Your day"
@@ -12253,31 +12129,31 @@ msgstr "공부한 분야"
 #. What the learner likes to watch.
 #: src/profile-questions/about-you-screen.tsx
 msgctxt "aboutYouWatch"
-msgid "Watch"
+msgid "What you watch"
 msgstr "즐겨 보는 것"
 
 #. What the learner likes to listen to.
 #: src/profile-questions/about-you-screen.tsx
 msgctxt "aboutYouListen"
-msgid "Listen"
+msgid "What you listen to"
 msgstr "즐겨 듣는 것"
 
 #. What the learner likes to play.
 #: src/profile-questions/about-you-screen.tsx
 msgctxt "aboutYouPlay"
-msgid "Play"
+msgid "What you play"
 msgstr "즐겨 하는 놀이"
 
 #. What the learner likes to read.
 #: src/profile-questions/about-you-screen.tsx
 msgctxt "aboutYouRead"
-msgid "Read"
+msgid "What you read"
 msgstr "즐겨 읽는 것"
 
 #. What the learner likes to do for fun.
 #: src/profile-questions/about-you-screen.tsx
 msgctxt "aboutYouDo"
-msgid "Do"
+msgid "What you do for fun"
 msgstr "즐겨 하는 활동"
 
 #. Health conditions or disabilities the learner chose to save.
@@ -12302,17 +12178,6 @@ msgctxt "LveDpT"
 msgid "Not shared"
 msgstr "알려 주지 않음"
 
-#. Invites the learner to fill in an empty answer.
-#: src/profile-questions/about-you-screen.tsx
-msgctxt "2_2yg-"
-msgid "Add"
-msgstr "추가하기"
-
-#: src/profile-questions/about-you-screen.tsx
-msgctxt "v3Sw1m"
-msgid "Not answered"
-msgstr "답변하지 않음"
-
 #: src/profile-questions/about-you-screen.tsx
 msgctxt "hH9Oht"
 msgid "{count, plural, one {# saved} other {# saved}}"
@@ -12325,9 +12190,14 @@ msgid "Saved"
 msgstr "저장됨"
 
 #: src/profile-questions/about-you-screen.tsx
-msgctxt "AYPOzn"
-msgid "Memory is off, so Zoonk isn't using your day or what you do for fun. Turn it on in Memory to change them."
-msgstr "메모리가 꺼져 있어서 Zoonk가 일상이나 취미 정보를 사용하지 않아요. 이 정보를 수정하려면 메모리에서 기능을 켜세요."
+msgctxt "qgIu-N"
+msgid "Your day and For fun need Memory."
+msgstr "‘일상’과 ‘취미’를 이용하려면 메모리를 켜야 해요."
+
+#: src/profile-questions/about-you-screen.tsx
+msgctxt "D86MHA"
+msgid "Turn on Memory"
+msgstr "메모리 켜기"
 
 #. An option that declines a question: none of the listed options apply.
 #: src/profile-questions/profile-body-parts.ts
@@ -12725,20 +12595,14 @@ msgid "False"
 msgstr "거짓"
 
 #: src/reminders/reminder-offer.tsx
-msgctxt "8mg7o6"
-msgid "At {time} on your study days, when you still have learning left."
-msgstr "공부하기로 한 날에 할 공부가 남아 있으면 {time}에 알려 드려요."
+msgctxt "zpIWGc"
+msgid "An email at {time} on your study days."
+msgstr "공부하는 날 {time}에 이메일을 보내요."
 
 #: src/reminders/reminder-offer.tsx
 msgctxt "SwCKSr"
 msgid "Want a study reminder?"
 msgstr "학습 알림을 받아 보실래요?"
-
-#: src/reminders/reminder-offer.tsx
-#: src/reminders/reminders-screen.tsx
-msgctxt "ZZS4vO"
-msgid "Create an account to get email reminders"
-msgstr "계정 만들고 이메일 알림 받기"
 
 #: src/reminders/reminder-offer.tsx
 #: src/today/today-insight.tsx
@@ -12747,9 +12611,9 @@ msgid "No thanks"
 msgstr "아니요, 괜찮아요"
 
 #: src/reminders/reminder-offer.tsx
-msgctxt "viijDX"
-msgid "We'll email {address} at {time} on your study days, when you still have learning left."
-msgstr "공부하기로 한 날에 할 공부가 남아 있으면 {address} 주소로 {time}에 이메일을 보내 드려요."
+msgctxt "P7nVxL"
+msgid "An email to {address} on your study days."
+msgstr "공부하는 날 {address}에 이메일을 보내요."
 
 #: src/reminders/reminder-offer.tsx
 msgctxt "1mG4ae"
@@ -12760,6 +12624,11 @@ msgstr "이메일 알림이 켜져 있어요."
 msgctxt "6Vy4z5"
 msgid "Reminder time"
 msgstr "알림 시간"
+
+#: src/reminders/reminder-offer.tsx
+msgctxt "07ov3_"
+msgid "Reminder set"
+msgstr "알림 설정됨"
 
 #: src/reminders/reminder-offer.tsx
 msgctxt "zSzHqS"
@@ -12773,6 +12642,11 @@ msgid "Time"
 msgstr "시간"
 
 #: src/reminders/reminders-screen.tsx
+msgctxt "ZZS4vO"
+msgid "Create an account to get email reminders"
+msgstr "계정 만들고 이메일 알림 받기"
+
+#: src/reminders/reminders-screen.tsx
 msgctxt "sy-pv5"
 msgid "Email"
 msgstr "이메일"
@@ -12784,14 +12658,9 @@ msgstr "푸시 알림"
 
 #. Stands in for the Push notifications row: name them in the same words as that row
 #: src/reminders/reminders-screen.tsx
-msgctxt "1uzrpo"
-msgid "To get push notifications, turn them on in the Zoonk app."
-msgstr "푸시 알림을 받으려면 Zoonk 앱에서 알림을 켜세요."
-
-#: src/reminders/reminders-screen.tsx
-msgctxt "1cVf3e"
-msgid "On your study days, from your <link>plans</link>"
-msgstr "<link>계획</link>에 정해진 학습일에"
+msgctxt "vBM5w1"
+msgid "To get notifications on your phone, turn them on in the Zoonk phone app."
+msgstr "휴대폰으로 푸시 알림을 받으려면 Zoonk 모바일 앱에서 켜세요."
 
 #: src/reminders/reminders-screen.tsx
 msgctxt "ClZyPb"
@@ -13594,11 +13463,6 @@ msgstr "새 목표"
 msgctxt "goalSwitcher.s-Ncqj"
 msgid "Explore courses"
 msgstr "코스 둘러보기"
-
-#: src/shell/learn-bar.tsx
-msgctxt "KeiV4d"
-msgid "Back to {page}"
-msgstr "{page} 화면으로 돌아가기"
 
 #: src/shell/learn-navigation.tsx
 msgctxt "lgkU1s"
@@ -14520,15 +14384,15 @@ msgctxt "FZtFoB"
 msgid "Writing your first lesson: <lesson>{title}</lesson>"
 msgstr "첫 레슨을 만들고 있어요: <lesson>{title}</lesson>"
 
-#: src/week/logbook-screen.tsx
-msgctxt "wVu1FL"
-msgid "Let's go"
-msgstr "시작하기"
-
 #: src/week/logbook-sections.tsx
 msgctxt "H2q9r9"
 msgid "{count, plural, =0 {# days studied} one {# day studied} other {# days studied}}"
 msgstr "{count, plural, =0 {학습한 날이 #일이에요} other {#일 동안 학습했어요}}"
+
+#: src/week/logbook-sections.tsx
+msgctxt "uJ3xDF"
+msgid "You finished {name}."
+msgstr "{name}을(를) 마쳤어요."
 
 #: src/week/logbook-sections.tsx
 msgctxt "koboTV"
@@ -14539,11 +14403,6 @@ msgstr "전주보다 {time} 더 공부했어요!"
 msgctxt "mY3vs_"
 msgid "{questions, plural, one {# more question than the week before!} other {# more questions than the week before!}}"
 msgstr "{questions, plural, other {전주보다 #문제 더 풀었어요!}}"
-
-#: src/week/logbook-sections.tsx
-msgctxt "v3GVFU"
-msgid "Phase {phase} · {name} done"
-msgstr "{phase}단계 · {name} 완료"
 
 #: src/week/logbook-sections.tsx
 msgctxt "gpv0cM"
@@ -14561,19 +14420,14 @@ msgid "What a week!"
 msgstr "멋진 한 주였어요!"
 
 #: src/week/logbook-sections.tsx
-msgctxt "ug01Mk"
-msgid "Time"
-msgstr "시간"
-
-#: src/week/logbook-sections.tsx
 msgctxt "OSDyvJ"
 msgid "A quiet week"
 msgstr "조용한 한 주"
 
 #: src/week/logbook-sections.tsx
-msgctxt "AItAm_"
-msgid "Your first summary comes on Sunday"
-msgstr "첫 주간 요약은 일요일에 볼 수 있어요"
+msgctxt "Zjsbqs"
+msgid "Your first weekly summary comes this Sunday"
+msgstr "첫 주간 요약은 이번 일요일에 나와요"
 
 #: src/week/logbook-sections.tsx
 msgctxt "Cm3HO1"
@@ -14581,50 +14435,24 @@ msgid "Every week starts fresh."
 msgstr "매주가 새로운 시작이에요."
 
 #: src/week/logbook-sections.tsx
-msgctxt "d1woXi"
-msgid "It shows your week in numbers and the skill that grew the most."
-msgstr "한 주의 학습을 숫자로 보여 주고, 가장 크게 성장한 스킬도 알려 줘요."
+msgctxt "ug01Mk"
+msgid "Time"
+msgstr "시간"
 
 #: src/week/logbook-sections.tsx
-msgctxt "zrmLbt"
-msgid "{skill} is Mastered now: you remembered it on {count, plural, =0 {# different days} one {# different day} other {# different days}}."
-msgstr "이제 {skill}의 숙련도는 마스터예요: {count, plural, =0 {기억해 낸 날이 #일이에요} other {#일에 걸쳐 기억해 냈어요}}."
+msgctxt "t1zI4h"
+msgid "New topics"
+msgstr "새 주제"
 
 #: src/week/logbook-sections.tsx
-msgctxt "iQqSg9"
-msgid "{skill} is Solid now: you kept getting it right on later days."
-msgstr "이제 {skill}의 숙련도는 안정이에요: 날이 지나도 꾸준히 정답을 맞혔어요."
+msgctxt "IWrblK"
+msgid "Reviews done"
+msgstr "완료한 복습"
 
 #: src/week/logbook-sections.tsx
-msgctxt "HhTzc6"
-msgid "The biggest turnaround"
-msgstr "가장 크게 성장한 스킬"
-
-#. {from} and {to} are shares of right answers, like "40%".
-#: src/week/logbook-sections.tsx
-msgctxt "ZS3MVu"
-msgid "{from} → {to} right answers"
-msgstr "정답률 {from} → {to}"
-
-#: src/week/logbook-sections.tsx
-msgctxt "z0xsAO"
-msgid "What you learned"
-msgstr "배운 내용"
-
-#: src/week/logbook-sections.tsx
-msgctxt "p28DcJ"
-msgid "{count, plural, one {new idea} other {new ideas}}"
-msgstr "{count, plural, other {새로운 개념}}"
-
-#: src/week/logbook-sections.tsx
-msgctxt "Ml35-W"
-msgid "{count, plural, one {review} other {reviews}}"
-msgstr "{count, plural, other {복습}}"
-
-#: src/week/logbook-sections.tsx
-msgctxt "hCSegn"
-msgid "{count, plural, one {mistake fixed} other {mistakes fixed}}"
-msgstr "{count, plural, other {바로잡은 실수}}"
+msgctxt "mioNGq"
+msgid "Mistakes fixed"
+msgstr "고친 문제"
 
 #. A badge for catching the Trickster's traps.
 #: src/week/logbook-sections.tsx
@@ -14633,11 +14461,12 @@ msgid "{count, plural, one {Trap hunter badge} other {Trap hunter badges}}"
 msgstr "{count, plural, other {함정 사냥꾼 배지}}"
 
 #: src/week/logbook-sections.tsx
-msgctxt "iMjjOH"
-msgid "Next week"
-msgstr "다음 주"
+msgctxt "YZYqtB"
+msgid "Most improved"
+msgstr "가장 많이 나아진 부분"
 
-#: src/week/turnaround-chart.tsx
-msgctxt "tnsNdR"
-msgid "Right answers on this skill each day of the week"
-msgstr "이번 주 이 스킬의 요일별 정답 기록"
+#. A topic and how its share of right answers grew in a week: "Fractions · 40% to 85%".
+#: src/week/logbook-sections.tsx
+msgctxt "HZneUP"
+msgid "{topic} · {from} to {to}"
+msgstr "{topic} · {from}에서 {to}로"

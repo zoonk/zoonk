@@ -6,7 +6,6 @@ import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
 import { getMenu } from "@/lib/menu";
 import { type LearnerSummary } from "@zoonk/core/learner/summary/contract";
 import { SendFeedbackItem } from "@zoonk/learn/feedback/menu-items";
-import { PlusMark } from "@zoonk/learn/plus-lock";
 import {
   DropdownMenuContent,
   DropdownMenuItem,
@@ -62,7 +61,16 @@ function PlanItem({ isAccount, plus }: { isAccount: boolean; plus: boolean }) {
   return (
     <MenuPageItem page="subscription">
       {t("Subscription")}
-      {plus && <PlusMark className="ml-auto" label={t("Plus")} />}
+      {plus && (
+        <span className="text-muted-foreground ml-auto">
+          {t({
+            description:
+              "The plan's name beside Subscription in a menu, shown only to subscribers: the plan they have.",
+            id: "subscriberPlanName",
+            message: "Plus",
+          })}
+        </span>
+      )}
     </MenuPageItem>
   );
 }

@@ -1,13 +1,7 @@
 "use client";
 
-import {
-  LoginEmailInput,
-  LoginEmailLabel,
-  LoginError,
-  LoginField,
-  LoginForm,
-  LoginSubmit,
-} from "@/components/login";
+import { AuthField, AuthForm, AuthStatus, AuthSubmit } from "@/components/auth-form";
+import { LoginEmailInput, LoginEmailLabel } from "@/components/login";
 import { parseFormField } from "@zoonk/utils/form";
 import { type SupportedLocale } from "@zoonk/utils/locale";
 import { useExtracted } from "next-intl";
@@ -39,20 +33,20 @@ export function EmailLoginForm({ locale }: { locale: SupportedLocale }) {
   const hasError = state.status !== "idle";
 
   const errorMessage = {
-    disposableEmail: t(
-      "Temporary email addresses aren't supported. Use another email or a privacy alias.",
-    ),
-    error: t("There was an error signing you in. Please try again or contact hello@zoonk.com"),
+    disposableEmail: t("Temporary emails don't work. Use another."),
+    error: t("We couldn't log you in. Try again."),
     idle: "",
     invalidEmail: t("Enter a valid email address"),
-    rateLimited: t("Too many tries. Wait a minute, then try again."),
+    rateLimited: t("Too many tries. Try again in a minute."),
   }[state.status];
 
   return (
-    <LoginForm action={formAction}>
+    // The server checks the address and says what's wrong in the form's own line, in the app's
+    // language; the browser's bubble would cover Continue.
+    <AuthForm action={formAction} noValidate>
       <input name="locale" type="hidden" value={locale} />
 
-      <LoginField>
+      <AuthField>
         <LoginEmailLabel>{t("Email")}</LoginEmailLabel>
         <LoginEmailInput
           aria-describedby={hasError ? emailErrorId : undefined}
@@ -64,13 +58,10 @@ export function EmailLoginForm({ locale }: { locale: SupportedLocale }) {
             message: "me@gmail.com",
           })}
         />
-      </LoginField>
+      </AuthField>
 
-      <LoginError aria-live="polite" hasError={hasError} id={emailErrorId}>
-        {errorMessage}
-      </LoginError>
-
-      <LoginSubmit>{t("Continue")}</LoginSubmit>
-    </LoginForm>
+      <AuthStatus id={emailErrorId}>{errorMessage}</AuthStatus>
+      <AuthSubmit>{t("Continue")}</AuthSubmit>
+    </AuthForm>
   );
 }

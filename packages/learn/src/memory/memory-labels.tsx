@@ -45,13 +45,12 @@ function useFactSourceName(fact: MemoryFactView): string {
   switch (fact.source?.kind) {
     case undefined:
     case "profile":
+    case "onboarding":
       return t("You told us");
     case "chat":
       return t("From a chat");
-    case "onboarding":
-      return t("From onboarding");
     case "session":
-      return t("From a study session");
+      return t("From your lessons");
     case "call":
       return t({
         description:
@@ -59,7 +58,7 @@ function useFactSourceName(fact: MemoryFactView): string {
         message: "From a call",
       });
     default:
-      return t("From a study session");
+      return t("From your lessons");
   }
 }
 
@@ -71,10 +70,7 @@ export function MemoryFactSource({ fact }: { fact: MemoryFactView }) {
     <>
       {source}
       {" · "}
-      <time
-        className="font-mono text-xs tabular-nums"
-        dateTime={new Date(fact.createdAt).toISOString()}
-      >
+      <time className="tabular-nums" dateTime={new Date(fact.createdAt).toISOString()}>
         {format.dateTime(fact.createdAt, { day: "numeric", month: "short" })}
       </time>
     </>

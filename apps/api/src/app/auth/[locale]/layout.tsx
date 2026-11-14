@@ -1,4 +1,5 @@
 import { getAuthPageLocale } from "@/i18n/page-locale";
+import { Toaster } from "@zoonk/ui/components/toast";
 import { KEEP_TYPING_SCRIPT } from "@zoonk/ui/lib/kept-typing-script";
 import { SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import { type Metadata } from "next";
@@ -16,7 +17,7 @@ export function generateStaticParams() {
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
 
-  return { title: t("Sign in to Zoonk") };
+  return { title: t("Log in to Zoonk") };
 }
 
 export default async function AuthLayout({ children }: LayoutProps<"/auth/[locale]">) {
@@ -35,6 +36,7 @@ export default async function AuthLayout({ children }: LayoutProps<"/auth/[local
           <main className="relative flex min-h-dvh w-full flex-col items-center justify-center px-4 py-16">
             {children}
           </main>
+          <Toaster />
         </NextIntlClientProvider>
       </body>
     </html>
