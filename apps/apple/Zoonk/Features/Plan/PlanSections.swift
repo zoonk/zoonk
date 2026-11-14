@@ -137,8 +137,7 @@ private struct RoadmapPhaseRow: View {
 
 }
 
-/// Main's line under the roadmap: "Phase 1 of 4 · Foundations", then the day the phase is behind
-/// you.
+/// Main's line under the roadmap: "Phase 1 of 4 · Foundations", then the phase's end.
 private struct RoadmapCompact: View {
   @Environment(\.legibilityWeight) private var legibilityWeight
 
@@ -158,19 +157,17 @@ private struct RoadmapCompact: View {
               ? .color(.success) : phase.state == .current ? .current : .track)
         })
 
-      HStack(alignment: .firstTextBaseline) {
+      HStack(alignment: .firstTextBaseline, spacing: 12) {
         if let currentIndex {
           let phase = phases[currentIndex]
 
           PlanPathRow {
             position(phase: phase, number: currentIndex + 1, count: phases.count)
           } value: {
-            if let until = phase.untilDate {
-              Text(
-                "until \(PlanDate.text(until, today: context.plan.today))", tableName: "Plan",
-                comment: "When a phase ends; the argument is a date like 'May 5'"
-              )
-              .typeStyle(.data)
+            if let end = context.plan.phaseEnd(phase, goalKind: context.goal.kind) {
+              Text(verbatim: end.shown)
+                .typeStyle(.data)
+                .accessibilityLabel(Text(verbatim: end.spoken))
             }
           }
         } else if opens {
@@ -210,6 +207,77 @@ private struct RoadmapCompact: View {
       comment: "The learner's phase under the roadmap: its number of the phases, then its name"
     )
     .foregroundStyle(.mutedForeground)
+  }
+}
+
+/// Where a phase ends, at the end of its row or under the roadmap's bar: "Dec 12", "~Dec 12" or
+/// "~Mar". The place says it's the end, so it has no "until".
+struct PhaseEnd: Equatable {
+  let shown: String
+  let spoken: String
+
+  init(_ isoDate: String, estimate: Bool, month: Bool, today: String) {
+    let date =
+      month ? PlanDate.monthText(isoDate, today: today) : PlanDate.text(isoDate, today: today)
+
+    guard estimate else {
+      shown = date
+      spoken = String(
+        localized: "Ends \(date)", table: "Plan",
+        comment: "When a phase of the plan ends, read aloud; the argument is a day like 'Dec 12'")
+      return
+    }
+
+    shown = String(
+      localized: "~\(date)", table: "Plan", comment: "An estimated day or month, like '~Nov 20'")
+    spoken =
+      month
+      ? String(
+        localized: LocalizedStringResource(
+          "endsAboutMonth", defaultValue: "Ends about \(date)", table: "Plan",
+          comment:
+            "When a phase of the plan ends, about, read aloud; the argument is a month like 'Jan' or 'Jan 2028'"
+        ))
+      : String(
+        localized: "Ends about \(date)", table: "Plan",
+        comment:
+          "When a phase of the plan ends, about, read aloud; the argument is a day like 'Dec 12'")
+  }
+}
+
+extension GoalPlan {
+  /// Nothing for a phase behind the learner, and nothing on the last one where the finish row or
+  /// the goal's date already says the end. A learning phase's end is an estimate while it's ahead,
+  /// and while it's current with its challenge, which has no booked day, still to come; an exam's
+  /// phases end on booked days.
+  func phaseEnd(_ phase: PlanPhase, goalKind: LearnerGoal.Kind) -> PhaseEnd? {
+    guard phase.state == .current || phase.state == .upcoming else {
+      return nil
+    }
+
+    if phase.index == phases.last(where: { $0.kind != .afterExam })?.index {
+      guard goalKind == .exam, schedule.targetDate == nil, let endDate = estimate.endDate else {
+        return nil
+      }
+
+      return PhaseEnd(endDate, estimate: true, month: isFar(endDate), today: today)
+    }
+
+    guard let lastDay = phase.untilDate else {
+      return nil
+    }
+
+    let learns = phase.kind == .learn || phase.kind == .afterExam
+    let ahead = phase.state == .upcoming
+    let isEstimate = learns && (ahead || phase.checkpoint?.state == .upcoming)
+
+    return PhaseEnd(
+      lastDay, estimate: isEstimate, month: isEstimate && ahead && isFar(lastDay), today: today)
+  }
+
+  /// An estimate past six weeks from this week's start names only its month.
+  private func isFar(_ isoDate: String) -> Bool {
+    PlanDate.days(from: week.startDate, to: isoDate) > 42
   }
 }
 
@@ -471,11 +539,7 @@ struct NextOnPathSection: View {
                 StatusMark(status: .next)
               }
             } value: {
-              Text(
-                "\(chapter.lessonsDone) / \(chapter.lessonsTotal)", tableName: "Plan",
-                comment: "Lessons done of a chapter's lessons"
-              )
-              .monospacedDigit()
+              EmptyView()
             }
           }
         }
