@@ -63,7 +63,7 @@ internal fun androidx.compose.foundation.layout.ColumnScope.SetupWait(
     onRetry: (() -> Unit)? = null,
     next: PlanNext? = null,
     waitSurface: String = surface.value,
-    afterWait: (@Composable androidx.compose.foundation.layout.ColumnScope.() -> Unit)? = null,
+    skip: (@Composable () -> Unit)? = null,
     progress: @Composable (Float) -> Unit,
 ) {
     val context = LocalSetupWait.current
@@ -128,11 +128,10 @@ internal fun androidx.compose.foundation.layout.ColumnScope.SetupWait(
             onRetry = onRetry,
             progress = shownProgress,
         )
-        afterWait?.invoke(this)
         val firstReady = first?.ready == true && !context.planReady && context.onStartLesson != null
         val course = context.course?.takeIf { !context.planReady && first?.ready != true }
         val actionsVisible =
-            hold.holding || firstReady || course != null ||
+            hold.holding || firstReady || course != null || skip != null ||
                 (quiz.canShowQuiz && ((quiz.showingProgress && !beside) || quiz.hasNext))
         PageActions(hold, visible = actionsVisible) {
             when {
@@ -166,6 +165,7 @@ internal fun androidx.compose.foundation.layout.ColumnScope.SetupWait(
                     WaitQuizAction(quiz, hold, beside)
                 }
             }
+            if (!hold.holding) skip?.invoke()
         }
     }
 }

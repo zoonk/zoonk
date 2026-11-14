@@ -56,6 +56,7 @@ import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.taskColumn
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatDayRange
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatPercent
@@ -227,19 +228,8 @@ private fun WeekSummary(
 }
 
 @Composable
-private fun weekRange(recap: WeeklyRecap): String {
-    val locale = currentLocale()
-    val formatter =
-        android.icu.text.DateIntervalFormat
-            .getInstance("MMMd", locale)
-    val start = recap.weekStart.toJavaLocalDate()
-    val end = recap.weekEnd.toJavaLocalDate()
-    val utc = android.icu.util.TimeZone.GMT_ZONE
-    formatter.timeZone = utc
-    val from = java.util.Date(start.toEpochDay() * MILLIS_PER_DAY)
-    val to = java.util.Date(end.toEpochDay() * MILLIS_PER_DAY)
-    return formatter.format(android.icu.util.DateInterval(from.time, to.time))
-}
+private fun weekRange(recap: WeeklyRecap): String =
+    formatDayRange(recap.weekStart.toJavaLocalDate(), recap.weekEnd.toJavaLocalDate(), currentLocale())
 
 @Composable
 private fun WeekRings(recap: WeeklyRecap) {
@@ -375,4 +365,3 @@ private fun NameRow(
 }
 
 private const val DAYS_PER_WEEK = 7
-private const val MILLIS_PER_DAY = 86_400_000L

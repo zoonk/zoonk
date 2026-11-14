@@ -221,8 +221,11 @@ struct RevealToday: View {
           Text("Today", tableName: "Onboarding", comment: "Header over the plan's lessons today")
         ) {
           Text(
-            [revealDay(day.localDate), planDurationText(minutes: Double(minutes))]
-              .joinedFacts())
+            [
+              PlanDate.text(day.localDate, today: day.localDate, weekday: true),
+              planDurationText(minutes: Double(minutes)),
+            ]
+            .joinedFacts())
         }
       }
     }
@@ -291,7 +294,7 @@ struct RevealWeek: View {
     let rest = day.items.count - Self.marksShown
 
     return HStack(alignment: .firstTextBaseline, spacing: 12) {
-      Text(revealDay(day.date))
+      Text(PlanDate.text(day.date, today: PlanDate.today(), weekday: true))
         .typeStyle(.data)
         .foregroundStyle(.mutedForeground)
         .frame(minWidth: 56, alignment: .leading)
@@ -326,15 +329,6 @@ struct RevealWeek: View {
     }
     .accessibilityElement(children: .combine)
   }
-}
-
-private func revealDay(_ isoDate: String) -> String {
-  guard let date = PlanDate.date(isoDate) else {
-    return isoDate
-  }
-
-  return date.formatted(
-    Date.FormatStyle(timeZone: .gmt).weekday(.abbreviated).month(.abbreviated).day())
 }
 
 extension RevealDay.Item {

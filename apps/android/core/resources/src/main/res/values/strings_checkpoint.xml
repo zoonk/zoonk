@@ -86,6 +86,4 @@
     <string name="checkpoint_next_phase_open">The next phase, %1$s, is already open.</string>
     <string name="checkpoint_answers">The answers</string>
     <string name="checkpoint_review">Review the answers</string>
-    <!-- %1$s is the right answer. -->
-    <string name="checkpoint_answer">Answer: %1$s</string>
 </resources>

@@ -234,6 +234,7 @@ private fun LazyListScope.examSections(
                 start = app.conversations,
                 open = navigator::open,
                 openWeb = { openWebPage(context, it) },
+                onRefused = { app.exams.speakingRefused(exam.goalId) },
                 from = FROM_EXAM,
             )
         }

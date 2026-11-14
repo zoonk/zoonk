@@ -38,21 +38,7 @@ internal fun ScoreChart(
     modifier: Modifier = Modifier,
 ) {
     val locale = currentLocale()
-    val newest =
-        score.dataPoints
-            .lastOrNull()
-            ?.date
-            ?.toJavaLocalDate()
-    val weeks =
-        score.dataPoints.map {
-            formatDate(
-                it.date.toJavaLocalDate(),
-                locale,
-                DateStyle.Day,
-                today =
-                    newest ?: it.date.toJavaLocalDate(),
-            )
-        }
+    val weeks = score.dataPoints.map { formatDate(it.date.toJavaLocalDate(), locale, DateStyle.Day) }
     val points =
         score.dataPoints.mapIndexed { index, point ->
             pluralStringResource(

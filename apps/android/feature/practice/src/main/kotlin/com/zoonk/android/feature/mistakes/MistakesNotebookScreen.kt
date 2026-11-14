@@ -81,10 +81,9 @@ import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.bleed
-import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
-import com.zoonk.android.ui.format.formatDate
+import com.zoonk.android.ui.format.formatMomentDay
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.scaffold.BottomBar
 import com.zoonk.android.ui.scaffold.PageScaffold
@@ -102,7 +101,6 @@ import com.zoonk.api.models.MistakeList
 import com.zoonk.api.models.MistakeStatus
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.time.ZoneId
 import java.util.UUID
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -625,18 +623,13 @@ private fun MistakeEntry(
     val snapshot = mistake.snapshot
     val fixed = mistake.status == MistakeStatus.FIXED
     val instant = mistake.fixedAt?.takeIf { fixed } ?: mistake.createdAt
-    val date =
-        java.time.Instant
-            .ofEpochMilli(instant.toEpochMilliseconds())
-            .atZone(ZoneId.systemDefault())
-            .toLocalDate()
     val skillId = mistake.skill?.id?.takeIf { mistake.practiceAvailable }
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
             Box(Modifier.weight(1f)) { mistake.cause?.let { CauseLabel(it) } }
             Text(
-                formatDate(date, currentLocale(), DateStyle.Day),
+                formatMomentDay(instant, currentLocale()),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.zoonkType.data,
             )

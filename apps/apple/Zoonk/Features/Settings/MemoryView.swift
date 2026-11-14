@@ -191,7 +191,7 @@ private struct MemoryFactRow: View {
       ListRow(
         Text(fact.statement),
         description: Text(
-          "\(fact.source.name)\u{00A0}· \(fact.createdAt.formatted(.dateTime.month(.abbreviated).day()))",
+          "\(fact.source.name)\u{00A0}· \(PlanDate.momentDay(fact.createdAt))",
           tableName: "Settings",
           comment: "Where a remembered fact came from and its day, as in “From a chat · Oct 11”"))
 

@@ -10301,6 +10301,16 @@ msgctxt "LcFFqV"
 msgid "New lessons start"
 msgstr "New lessons start"
 
+#: src/plan/exam-choice-question.tsx
+msgctxt "FXC8l3"
+msgid "{group}: which ones will you take?"
+msgstr "{group}: which ones will you take?"
+
+#: src/plan/exam-choice-question.tsx
+msgctxt "gDpw0U"
+msgid "{group}: which one will you take?"
+msgstr "{group}: which one will you take?"
+
 #: src/plan/exam-over-actions.tsx
 msgctxt "rBTgSX"
 msgid "Archive goal"
@@ -10484,18 +10494,6 @@ msgstr "{month} for now. Pick the day when you know it."
 msgctxt "v5e5kt"
 msgid "Adjust your plan"
 msgstr "Adjust your plan"
-
-#: src/plan/plan-exam-choices.tsx
-#: src/today/today-exam-choice.tsx
-msgctxt "FXC8l3"
-msgid "{group}: which ones will you take?"
-msgstr "{group}: which ones will you take?"
-
-#: src/plan/plan-exam-choices.tsx
-#: src/today/today-exam-choice.tsx
-msgctxt "gDpw0U"
-msgid "{group}: which one will you take?"
-msgstr "{group}: which one will you take?"
 
 #: src/plan/plan-finish.tsx
 msgctxt "6Due7K"

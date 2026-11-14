@@ -49,10 +49,12 @@ class MockChooserViewModel(
     private val starter: MockStarter,
     private val sessions: SessionSource,
     private val generations: (AuthenticatedSession?) -> GenerationSource,
+    private val refused: suspend () -> Unit = {},
 ) : ViewModel() {
     private val mutableStatus = MutableStateFlow<ChooserStatus>(ChooserStatus.Choosing)
     private val mutableBusy = MutableStateFlow(false)
     private val mutableOpened = MutableStateFlow<String?>(null)
+    private val mutableTriedLocked = MutableStateFlow(false)
     private var owner: AuthenticatedSession? = null
     private var writing: MockShape? = null
     private var generationId: String? = null
@@ -81,11 +83,24 @@ class MockChooserViewModel(
 
     val run: StateFlow<GenerationRun> = follower.run
 
+    /** The learner pressed Start on a locked mock, or the server refused a start: the gate shows while the mocks read locked. */
+    val triedLocked: StateFlow<Boolean> = mutableTriedLocked.asStateFlow()
+
+    fun tryLocked() {
+        mutableTriedLocked.value = true
+    }
+
     fun start(
         shape: MockShape,
         key: String,
     ) {
         begin(shape, key, MockStartAsk.First)
+    }
+
+    /** The server's refusal is the options' access now ([refused] writes it), so the gate reads it from them. */
+    private fun metTheLock() {
+        tryLocked()
+        viewModelScope.launch { refused() }
     }
 
     /** The learner agreed, in the confirmation, to start the shorter mock exam. */
@@ -186,8 +201,11 @@ class MockChooserViewModel(
                 mutableStatus.value = ChooserStatus.Refused(written.limit)
             }
 
-            // Plus required: the options read again shows the mock locked.
-            QuestionWriting.PlusRequired, null -> {
+            QuestionWriting.PlusRequired -> {
+                metTheLock()
+            }
+
+            null -> {
                 return
             }
         }
@@ -212,15 +230,10 @@ class MockChooserViewModel(
         mutableStatus.value =
             when (outcome) {
                 is MockStartOutcome.Opened -> ChooserStatus.Choosing.also { mutableOpened.value = outcome.id }
-
                 is MockStartOutcome.Short -> ChooserStatus.Short(key, shape, outcome)
-
                 MockStartOutcome.NotEnoughQuestions -> ChooserStatus.Failed(notEnoughQuestions = true)
-
                 MockStartOutcome.NeedsQuestions -> ChooserStatus.Failed(notEnoughQuestions = false)
-
-                // The options read again shows the mock locked.
-                MockStartOutcome.PlusRequired -> ChooserStatus.Choosing
+                MockStartOutcome.PlusRequired -> ChooserStatus.Choosing.also { metTheLock() }
             }
     }
 

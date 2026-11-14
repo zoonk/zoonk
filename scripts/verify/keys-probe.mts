@@ -179,7 +179,7 @@ export function readPanel({
   const last = (query: string) =>
     [...document.querySelectorAll<HTMLElement>(query)].toReversed().find(shown);
 
-  const known = last(`${selector}, [role=menu]`);
+  const known = last(`${selector}, [role=menu], [data-slot=popover-content]`);
   const panel = known ?? last("[role=dialog], [role=alertdialog]");
 
   if (!panel) {
@@ -246,6 +246,7 @@ export function readPanel({
   const box = panel.getBoundingClientRect();
   const slot = panel.dataset.slot;
   const menu = panel.getAttribute("role") === "menu";
+  const anchored = menu || slot === "popover-content";
   const title = panel.querySelector("h2, [data-slot$=-title]")?.textContent.trim();
 
   function centered() {
@@ -267,16 +268,19 @@ export function readPanel({
         "[data-slot=drawer-close], [data-slot=dialog-close], [data-slot=side-panel-close], [data-slot$=-footer] button",
       ),
     ].some(shown),
-    dim: known && !menu ? dim(overlays.find(({ panel: piece }) => piece === slot)?.backdrop) : null,
+    dim:
+      known && !anchored
+        ? dim(overlays.find(({ panel: piece }) => piece === slot)?.backdrop)
+        : null,
     edge: edge(),
     focusInside: known ? panel.contains(document.activeElement) : null,
     label:
       panel.getAttribute("aria-label") ??
       title?.slice(0, LABEL_LENGTH) ??
       (menu ? "a menu" : "a panel"),
-    needsClose: Boolean(known) && panel.getAttribute("role") === "dialog",
+    needsClose: Boolean(known) && !anchored && panel.getAttribute("role") === "dialog",
     shared: Boolean(known),
-    sheet: known && !menu && phone ? Math.abs(box.bottom - innerHeight) <= 2 : null,
+    sheet: known && !anchored && phone ? Math.abs(box.bottom - innerHeight) <= 2 : null,
   };
 }
 

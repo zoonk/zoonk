@@ -12,17 +12,13 @@ import {
   TimerIcon,
   TriangleAlertIcon,
 } from "lucide-react";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { TagBesideOrUnder } from "../_components/answer-option";
-import {
-  ANSWER_FORMULA_CLASS,
-  ANSWER_TAG_CLASS,
-  ANSWER_TAG_TONE,
-  ANSWER_TONE,
-} from "../_components/answer-tone";
+import { ANSWER_TAG_CLASS, ANSWER_TAG_TONE, ANSWER_TONE } from "../_components/answer-tone";
 import { Eyebrow } from "../_components/eyebrow";
 import { QuestionTitle } from "../_components/question-title";
 import { TITLE_ROW_CLASS } from "../_components/title-row";
+import { useFormatMomentDate } from "../_utils/iso-date";
 import { LearnLink } from "../learn-link";
 import { ItemLine, ItemText } from "../questions/item-text";
 import { useTrueFalseLabels } from "../questions/use-true-false-labels";
@@ -51,17 +47,6 @@ function MistakeCauseLabel({ cause }: { cause: MistakeEntry["cause"] }) {
   return <Eyebrow icon={<CauseIcon aria-hidden="true" />}>{causeLabel(cause)}</Eyebrow>;
 }
 
-function useEntryDate() {
-  const format = useFormatter();
-
-  return (date: Date) =>
-    format.dateTime(date, {
-      day: "numeric",
-      month: "short",
-      ...(date.getFullYear() === new Date().getFullYear() ? {} : { year: "numeric" }),
-    });
-}
-
 function hiddenLabel(words: React.ReactNode) {
   return <span className="sr-only">{words}</span>;
 }
@@ -81,7 +66,6 @@ export function MistakeAnswer({
     <p
       className={cn(
         "text-reading w-full rounded-xl px-3.5 py-3 leading-6 font-medium wrap-break-word",
-        ANSWER_FORMULA_CLASS,
         right ? ANSWER_TONE.right : ANSWER_TONE.wrong,
       )}
       data-slot="mistake-answer"
@@ -192,7 +176,7 @@ export function MistakeEntryCard({
   mistake: MistakeEntry;
   trueFalseLabels: TrueFalseLabels;
 }) {
-  const entryDate = useEntryDate();
+  const entryDate = useFormatMomentDate();
   const { answerText } = useTrueFalseLabels(trueFalseLabels);
   const { snapshot } = mistake;
   const answer = answerText({ answer: snapshot.answer, format: snapshot.format });

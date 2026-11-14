@@ -519,6 +519,7 @@ struct LessonPlayerAPI: Sendable {
         }
       let period: LessonRunRefusal.Period =
         switch periodName {
+        case "month": .month
         case "total": .total
         case "rolling30Days":
           .last30Days(

@@ -44,7 +44,7 @@ class MockChooserViewModelTest {
 
     private fun TestScope.viewModel(): MockChooserViewModel {
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))
-        return MockChooserViewModel(GOAL, MockStarter(api, cache), session) { runs }
+        return MockChooserViewModel(GOAL, MockStarter(api, cache), session, generations = { runs })
     }
 
     @Test

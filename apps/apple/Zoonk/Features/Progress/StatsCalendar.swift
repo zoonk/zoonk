@@ -377,18 +377,3 @@ private struct CalendarChartDescriptor: AXChartDescriptorRepresentable {
       series: [AXDataSeriesDescriptor(name: title, isContinuous: false, dataPoints: points)])
   }
 }
-
-func calendarDayFormatter(newest: ProgressDate?) -> (ProgressDate) -> String {
-  var sameYear = Date.FormatStyle.dateTime.month(.abbreviated).day()
-  sameYear.timeZone = .gmt
-  var otherYear = Date.FormatStyle.dateTime.month(.abbreviated).day().year()
-  otherYear.timeZone = .gmt
-
-  return { day in
-    guard let date = day.date(in: .gmt) else {
-      return ""
-    }
-
-    return date.formatted(day.year == newest?.year ? sameYear : otherYear)
-  }
-}

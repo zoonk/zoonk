@@ -65,7 +65,7 @@ class CallStartModel(
     private val starter: CallStarter,
     kind: GenerationKind,
 ) : ViewModel() {
-    enum class State { Idle, Starting, Failed, Paused }
+    enum class State { Idle, Starting, Failed, Paused, PlusRequired }
 
     var state by mutableStateOf(State.Idle)
         private set
@@ -80,12 +80,16 @@ class CallStartModel(
 
     val writing = starter.writingWaits.create(kind, viewModelScope)
 
-    fun start(request: CallRequest) {
+    /** [onRefused] writes a subscription refusal into the access the screen reads, which shows its gate. */
+    fun start(
+        request: CallRequest,
+        onRefused: suspend () -> Unit = {},
+    ) {
         state = State.Starting
         limit = null
         viewModelScope.launch {
             val started = starter.start(request)
-            val answer = writing.answered((started as? CallStart.Writing)?.generationId) { start(request) }
+            val answer = writing.answered((started as? CallStart.Writing)?.generationId) { start(request, onRefused) }
             limit = (started as? CallStart.Limited)?.limit
             state =
                 when {
@@ -102,10 +106,15 @@ class CallStartModel(
                         State.Paused
                     }
 
+                    started == CallStart.PlusRequired -> {
+                        State.PlusRequired
+                    }
+
                     else -> {
                         State.Failed
                     }
                 }
+            if (started == CallStart.PlusRequired) onRefused()
         }
     }
 

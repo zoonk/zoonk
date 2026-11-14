@@ -103,6 +103,7 @@ internal class SpeakingActions(
     val start: CallStarter,
     val open: (AppRoute) -> Unit,
     val openWeb: (String) -> Unit,
+    val refused: suspend (UUID) -> Unit,
 )
 
 /** `/speaking`: the active goal's exam speaking paper, each task practiced on a call. */
@@ -121,6 +122,7 @@ fun SpeakingScreen(
                 start = app.conversations,
                 open = navigator::open,
                 openWeb = { openWebPage(context, it) },
+                refused = app.speaking::refused,
             )
         }
 
@@ -191,6 +193,7 @@ private fun Paper(
                     start = actions.start,
                     open = actions.open,
                     openWeb = actions.openWeb,
+                    onRefused = { actions.refused(goalId) },
                     modifier = Modifier.pageItem(),
                     title = stringResource(R.string.speaking_tasks),
                 )
@@ -234,6 +237,7 @@ fun SpeakingPaperSection(
     start: CallStarter,
     open: (AppRoute) -> Unit,
     openWeb: (String) -> Unit,
+    onRefused: suspend () -> Unit,
     modifier: Modifier = Modifier,
     title: String? = null,
     from: String? = null,
@@ -247,9 +251,9 @@ fun SpeakingPaperSection(
     val openCall = { id: UUID -> open(AppRoute.Conversation(id.toString(), from = from)) }
     val startTask = { key: String ->
         started = key
-        model.start(CallRequest.ExamSpeaking(goalId, key))
+        model.start(CallRequest.ExamSpeaking(goalId, key), onRefused)
     }
-    val actions = SpeakingActions(start, open, openWeb)
+    val actions = SpeakingActions(start, open, openWeb) { onRefused() }
     OpenStartedCall(model, openCall)
 
     Column(modifier) {
@@ -268,6 +272,7 @@ fun SpeakingPaperSection(
                 paused = paused,
                 busy = busy,
                 starting = model.state == CallStartModel.State.Starting && started == task.key,
+                refused = model.state == CallStartModel.State.PlusRequired && started == task.key,
                 onStart = { startTask(task.key) },
                 onSubscribe = { open(AppRoute.Subscription) },
                 onLastResult = openCall,
@@ -360,13 +365,17 @@ private fun TaskRow(
     paused: Boolean,
     busy: Boolean,
     starting: Boolean,
+    refused: Boolean,
     onStart: () -> Unit,
     onSubscribe: () -> Unit,
     onLastResult: (UUID) -> Unit,
 ) {
     val locale = currentLocale()
     var open by rememberSaveable(task.key) { mutableStateOf(openAtFirst) }
-    var gated by rememberSaveable(task.key) { mutableStateOf(false) }
+    // The gate shows once the learner tries a locked task, or the server refused its start (which locks the
+    // paper), until a read of the paper says open again.
+    var triedLocked by rememberSaveable(task.key) { mutableStateOf(false) }
+    val gated = (triedLocked || refused) && locked
     val requester = remember { BringIntoViewRequester() }
     LaunchedEffect(openAtFirst) { if (openAtFirst) requester.bringIntoView() }
     val level = paper.level.value
@@ -427,25 +436,29 @@ private fun TaskRow(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium,
             )
+            val lastResult: (@Composable () -> Unit)? =
+                task.lastTry?.let { last ->
+                    {
+                        OutlinedButton(
+                            onClick = { onLastResult(last.conversationId) },
+                        ) { Text(stringResource(R.string.speaking_last_result)) }
+                    }
+                }
             if (gated) {
                 TrackShown(AnalyticsEvent.SubscriptionGateShown)
-                SubscribeGate(stringResource(R.string.speaking_gate), onSubscribe)
+                SubscribeGate(stringResource(R.string.speaking_gate), onSubscribe, action = lastResult)
             } else {
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     if (!paused) {
                         Button(
                             busy = starting,
-                            onClick = { if (locked) gated = true else onStart() },
+                            onClick = { if (locked) triedLocked = true else onStart() },
                             enabled = !busy,
                         ) {
                             Text(stringResource(R.string.speaking_start_task))
                         }
                     }
-                    task.lastTry?.let { last ->
-                        OutlinedButton(
-                            onClick = { onLastResult(last.conversationId) },
-                        ) { Text(stringResource(R.string.speaking_last_result)) }
-                    }
+                    lastResult?.invoke()
                 }
             }
         }

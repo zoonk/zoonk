@@ -241,7 +241,7 @@ struct PatternTableCanvas: View {
           .foregroundStyle(.successText)
           .accessibilityLabel(
             Text(
-              "Correct answer: \(stem + expected)", tableName: "ActivitiesCharts",
+              "Right answer: \(stem + expected)", tableName: "ActivitiesCharts",
               comment: "The right form after a miss, for VoiceOver"))
       }
     }

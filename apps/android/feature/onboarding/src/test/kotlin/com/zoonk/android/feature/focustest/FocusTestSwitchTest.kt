@@ -122,7 +122,7 @@ class FocusTestSwitchTest {
         rule.onNode(isToggleable()).performScrollTo().performClick()
         rule.waitUntil(5_000) { !questions.saving }
         rule.onNode(isToggleable()).assertIsOff()
-        rule.onNodeWithText("Answer more questions").performScrollTo().performClick()
+        rule.onNodeWithText("Answer more questions").performClick()
         rule.onNodeWithText("True").performScrollTo().performClick()
         rule.onNodeWithText("Confirm").performClick()
 

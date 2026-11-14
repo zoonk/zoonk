@@ -3,24 +3,15 @@ package com.zoonk.android.feature.onboarding.start
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -62,6 +53,7 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.onboarding.GoalLimitReason
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.goalStartLimit
+import com.zoonk.android.feature.onboarding.setup.SetupColumn
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
@@ -163,17 +155,22 @@ fun StartGoalScreen(
         },
     ) { padding ->
         PageWithSupportingPane(
-            supportingPane = { HowItWorks(hasAccount = canAttach) },
+            // At the goals-at-once limit the page is only the gate, as main drops its rail there.
+            supportingPane = if (upFront == GoalLimitReason.ActiveGoals) null else ({ HowItWorks(hasAccount = canAttach) }),
             modifier = Modifier.padding(padding).consumeWindowInsets(padding),
         ) { _ ->
-            StartColumn {
+            SetupColumn {
                 when {
                     upFront == GoalLimitReason.Guest && screen == StartScreen.Entry -> {
                         GuestGoalGate(actions.createAccount, onBackToToday = { navigator.showRoot(AppTab.Today) })
                     }
 
+                    upFront == GoalLimitReason.ActiveGoals && screen == StartScreen.Entry -> {
+                        GoalLimitScreen(onSubscribe = actions.subscribe, onOpenPlan = actions.openPlan)
+                    }
+
                     screen == StartScreen.Entry -> {
-                        Entry(vm, route, canAttach, upFront, language, actions)
+                        Entry(vm, route, canAttach, language, actions)
                     }
 
                     screen == StartScreen.Questions -> {
@@ -208,32 +205,11 @@ private class StartActions(
     val toExplanation: (String) -> Unit,
 )
 
-/** At least the window's height, so a screen's actions can sit at its bottom. */
-@Composable
-private fun StartColumn(content: @Composable ColumnScope.() -> Unit) {
-    BoxWithConstraints(Modifier.fillMaxSize().imePadding()) {
-        val windowHeight = maxHeight
-        Box(Modifier.fillMaxSize().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopCenter) {
-            Column(
-                modifier =
-                    Modifier
-                        .widthIn(max = 640.dp)
-                        .fillMaxWidth()
-                        .heightIn(min = windowHeight)
-                        .padding(horizontal = 16.dp, vertical = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(24.dp),
-                content = content,
-            )
-        }
-    }
-}
-
 @Composable
 private fun ColumnScope.Entry(
     vm: StartGoalViewModel,
     route: AppRoute.StartGoal,
     canAttach: Boolean,
-    upFront: GoalLimitReason?,
     language: String,
     actions: StartActions,
 ) {
@@ -245,12 +221,6 @@ private fun ColumnScope.Entry(
         stringResource(R.string.onboarding_start_title),
         stringResource(if (route.planId != null) R.string.onboarding_start_description_shared else R.string.onboarding_start_description),
     )
-
-    // At the goals-at-once limit the page is only the gate; a month's cap waits for the learner to try (A-057).
-    if (upFront == GoalLimitReason.ActiveGoals) {
-        GoalLimitNotice(upFront, onOpenPlan = actions.openPlan, onSubscribe = actions.subscribe)
-        return
-    }
 
     GoalBox(
         value = flow.words,
@@ -561,7 +531,6 @@ private fun ColumnScope.MaterialQuestions(
         }
     }
 
-    if (isCompactWidth()) Spacer(Modifier.weight(1f))
     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         OutlinedTextField(
             value = question,

@@ -68,7 +68,7 @@ private fun opensLine(day: OpeningDay?): String? =
         null, OpeningDay.Open -> null
         OpeningDay.Today -> stringResource(R.string.limit_lesson_opens_today)
         OpeningDay.Tomorrow -> stringResource(R.string.limit_lesson_opens_tomorrow)
-        is OpeningDay.On -> stringResource(R.string.limit_lesson_opens_on, formatDate(day.date, currentLocale(), DateStyle.DayMonth))
+        is OpeningDay.On -> stringResource(R.string.limit_lesson_opens_on, formatDate(day.date, currentLocale(), DateStyle.Long))
     }
 
 /** Whether a free learner's next lesson has opened since the refusal: the server then gets asked again (main's `useFreeLessonReady`). */
@@ -171,7 +171,7 @@ private fun mapOpensLine(day: OpeningDay?): String? =
         null, OpeningDay.Open -> null
         OpeningDay.Today -> stringResource(R.string.limit_map_enough_today)
         OpeningDay.Tomorrow -> stringResource(R.string.limit_map_enough_tomorrow)
-        is OpeningDay.On -> stringResource(R.string.limit_map_enough_on, formatDate(day.date, currentLocale(), DateStyle.DayMonth))
+        is OpeningDay.On -> stringResource(R.string.limit_map_enough_on, formatDate(day.date, currentLocale(), DateStyle.Long))
     }
 
 /** The lesson screen's line: what stays free, then when the next lesson comes, as the web joins them. */

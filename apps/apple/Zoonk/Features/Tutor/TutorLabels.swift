@@ -301,5 +301,7 @@ func tutorDayLabel(_ date: Date, now: Date = .now) -> Text {
     return Text("Yesterday", tableName: "Tutor", comment: "The day of the messages below")
   }
 
-  return Text(date.formatted(.dateTime.weekday(.wide).day().month(.wide)))
+  return Text(
+    PlanDate.momentDay(
+      date, style: .dateTime.weekday(.wide).day().month(.wide), now: now, calendar: calendar))
 }

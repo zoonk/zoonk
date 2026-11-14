@@ -4,17 +4,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import com.zoonk.android.R
-import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.formatDate
+import com.zoonk.android.ui.format.formatMomentDay
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.api.models.ExamMockSummary
 import com.zoonk.api.models.MockShape
-import java.time.ZoneId
 import kotlin.math.floor
 import kotlin.math.roundToLong
 import kotlin.time.Instant
-import kotlin.time.toJavaInstant
 
 @Composable
 fun mockTitle(number: Long): String = stringResource(R.string.mock_title, number)
@@ -22,17 +19,9 @@ fun mockTitle(number: Long): String = stringResource(R.string.mock_title, number
 /** A one-subject mock exam is told apart by its subject; a full or half one needs no label. */
 fun mockSubject(shape: MockShape?): String = if (shape?.kind == MockShape.Kind.AREA) shape.area.orEmpty() else ""
 
-/** "Oct 28", in the device's time zone as main writes it in the browser's. */
+/** "Oct 28", or "Oct 28, 2025" in another year, in the device's time zone as main writes it in the browser's. */
 @Composable
-fun mockDate(finishedAt: Instant): String =
-    formatDate(
-        finishedAt
-            .toJavaInstant()
-            .atZone(ZoneId.systemDefault())
-            .toLocalDate(),
-        currentLocale(),
-        DateStyle.Day,
-    )
+fun mockDate(finishedAt: Instant): String = formatMomentDay(finishedAt, currentLocale())
 
 /** What a finished mock exam certainly was: its score where wrong answers cost points, else its right answers. */
 @Composable

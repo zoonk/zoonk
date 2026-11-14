@@ -1,29 +1,28 @@
 "use client";
 
+import { useFormatMomentDate, useMomentDays } from "@zoonk/learn/dates";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { useMountTime } from "@zoonk/ui/hooks/mount-time";
-import { useExtracted, useFormatter } from "next-intl";
+import { addIsoDays } from "@zoonk/utils/calendar-day";
+import { useExtracted } from "next-intl";
 import { useLessonQuestionController } from "./lesson-question-provider";
 
 function useDayLabel() {
   const t = useExtracted();
-  const format = useFormatter();
-  const now = useMountTime();
+  const formatDate = useFormatMomentDate();
+  const { dayOf, today } = useMomentDays();
 
   return (date: Date): string => {
-    const day = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-    const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1).getTime();
+    const day = dayOf(date);
 
     if (day === today) {
       return t("Today");
     }
 
-    if (day === yesterday) {
+    if (day === addIsoDays({ day: today, days: -1 })) {
       return t("Yesterday");
     }
 
-    return format.dateTime(date, { day: "numeric", month: "long", weekday: "long" });
+    return formatDate(date, "weekdayDay");
   };
 }
 
@@ -31,14 +30,11 @@ function DayLabel({ children }: { children: string }) {
   return <p className="text-label text-center">{children}</p>;
 }
 
-function isSameDay(a: Date, b: Date): boolean {
-  return a.toDateString() === b.toDateString();
-}
-
 export function TurnDay({ date, previous }: { date: Date; previous: Date | null }) {
   const dayLabel = useDayLabel();
+  const { dayOf } = useMomentDays();
 
-  if (!previous || isSameDay(date, previous)) {
+  if (!previous || dayOf(date) === dayOf(previous)) {
     return null;
   }
 
@@ -47,11 +43,11 @@ export function TurnDay({ date, previous }: { date: Date; previous: Date | null 
 
 export function FirstDay() {
   const dayLabel = useDayLabel();
-  const now = useMountTime();
+  const { dayOf, today } = useMomentDays();
   const { state } = useLessonQuestionController();
   const first = state.questions[0];
 
-  if (!first || isSameDay(new Date(first.createdAt), now)) {
+  if (!first || dayOf(first.createdAt) === today) {
     return null;
   }
 

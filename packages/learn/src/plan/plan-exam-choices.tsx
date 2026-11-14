@@ -10,18 +10,15 @@ import { useTransition } from "react";
 import { useChangeSaveFailed } from "../_components/save-error";
 import {
   Suggestion,
-  SuggestionAction,
   SuggestionActions,
-  SuggestionDescription,
   SuggestionHeader,
   SuggestionLine,
   SuggestionOpen,
   SuggestionResult,
   SuggestionSummary,
 } from "../_components/suggestion";
-import { SuggestionChoices } from "../_components/suggestion-choices";
-import { useChoiceLeftOutLine } from "../_utils/use-choice-left-out";
 import { ExamChoicePicks } from "./exam-choice-picks";
+import { ExamChoiceAnswers, useExamChoiceQuestion } from "./exam-choice-question";
 import { usePlanScreen } from "./plan-context";
 import { useReportEditorChange } from "./plan-editor-change-context";
 import { PLAN_OPTION_CLASS } from "./plan-option-styles";
@@ -128,15 +125,11 @@ export function PlanExamChoices() {
 export function ExamChoiceSuggestion({ item }: { item: Extract<SlotItem, { kind: "choice" }> }) {
   const t = useExtracted();
   const sentence = usePlanChangeSentence();
-  const leftOutLine = useChoiceLeftOutLine();
+  const question = useExamChoiceQuestion();
   const { setResult } = usePlanSuggestionSlot();
   const answer = useSlotAnswer(item);
   const { choice } = item;
-
-  const title =
-    choice.take > 1
-      ? t("{group}: which ones will you take?", { group: choice.group })
-      : t("{group}: which one will you take?", { group: choice.group });
+  const title = question(choice);
 
   const { choose, isPending } = useExamChoice({
     onChange: (change) => setResult({ change, item, text: sentence(change) }),
@@ -169,30 +162,7 @@ export function ExamChoiceSuggestion({ item }: { item: Extract<SlotItem, { kind:
             <SuggestionActions>{undo}</SuggestionActions>
           </>
         ) : (
-          <>
-            <SuggestionDescription>{leftOutLine}</SuggestionDescription>
-
-            {choice.take > 1 ? (
-              <ExamChoicePicks
-                choice={choice}
-                onSave={(subjects) => choose({ group: choice.group, subjects })}
-                pending={isPending}
-              />
-            ) : (
-              <SuggestionChoices>
-                {choice.options.map((option) => (
-                  <SuggestionAction
-                    action={() => choose({ group: choice.group, subjects: [option.name] })}
-                    disabled={isPending}
-                    key={option.name}
-                    variant="outline"
-                  >
-                    {option.shortName ?? option.name}
-                  </SuggestionAction>
-                ))}
-              </SuggestionChoices>
-            )}
-          </>
+          <ExamChoiceAnswers choice={choice} onPick={choose} pending={isPending} />
         )}
       </SlotContent>
     </Suggestion>

@@ -17,6 +17,25 @@ function RowsSkeleton({ count, rowClassName }: { count: number; rowClassName: st
   );
 }
 
+function PlanHeaderSkeleton({ title }: { title: string }) {
+  return (
+    <PageHeader>
+      <PageHeaderContent className="w-full">
+        <div className={cn(TITLE_ROW_CLASS, "gap-y-2")}>
+          <PageTitle>{title}</PageTitle>
+          <div className="flex flex-wrap items-center gap-2">
+            <Skeleton className="h-7.5 w-24 rounded-lg" />
+            <Skeleton className="size-7.5 rounded-lg" />
+          </div>
+        </div>
+        <PageSubtitle>
+          <Skeleton className="my-1 h-3 w-48 rounded-sm" />
+        </PageSubtitle>
+      </PageHeaderContent>
+    </PageHeader>
+  );
+}
+
 function SectionSkeleton({
   className,
   count,
@@ -60,18 +79,7 @@ export async function PlanSkeleton() {
       asideLabel={t("Your plan at a glance")}
     >
       <Page aria-busy="true">
-        <PageHeaderContent>
-          <PageHeader className={cn(TITLE_ROW_CLASS, "gap-y-2")}>
-            <PageTitle>{t("Plan")}</PageTitle>
-            <div className="flex flex-wrap items-center gap-2">
-              <Skeleton className="h-7.5 w-24 rounded-lg" />
-              <Skeleton className="size-7.5 rounded-lg" />
-            </div>
-          </PageHeader>
-          <PageSubtitle>
-            <Skeleton className="my-1 h-3 w-48 rounded-sm" />
-          </PageSubtitle>
-        </PageHeaderContent>
+        <PlanHeaderSkeleton title={t("Plan")} />
 
         <div className="flex flex-col gap-2 sm:hidden">
           <Skeleton className="h-1 w-full rounded-xs" />
