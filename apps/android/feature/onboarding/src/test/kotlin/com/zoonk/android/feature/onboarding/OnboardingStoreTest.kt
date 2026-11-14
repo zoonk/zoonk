@@ -176,41 +176,45 @@ class OnboardingStoreTest {
             tier: String,
             goal: String,
             activeGoals: String = """{"limit":null,"used":0}""",
+            availableAt: String = "null",
         ): AllowanceResponse =
             ApiJson.decodeFromString(
                 """
                 {"tier":"$tier","activeGoals":$activeGoals,"examPrep":{"includesMockExams":false},"generatedLessons":null,"resets":{"day":"2026-10-29T00:00:00Z"},
-                 "items":[{"kind":"goal",$goal,"fairUseDailyLimit":null,"remaining":null}]}
+                 "items":[{"kind":"goal",$goal,"fairUseDailyLimit":null,"remaining":null,"availableAt":$availableAt}]}
                 """.trimIndent(),
             )
-        val room = """"dailyLimit":null,"rollingLimit":3,"totalLimit":null,"usedToday":0,"usedLast30Days":1,"usedTotal":1,"availableAt":null"""
+        val room = """"dailyLimit":null,"rollingLimit":3,"totalLimit":null,"usedToday":0,"usedLast30Days":1,"usedTotal":1"""
 
         assertNull(allowance("free", room).goalStartLimit())
         assertEquals(
             GoalLimitReason.Guest,
             allowance(
                 "guest",
-                """"dailyLimit":null,"rollingLimit":null,"totalLimit":1,"usedToday":1,"usedLast30Days":1,"usedTotal":1,"availableAt":null""",
+                """"dailyLimit":null,"rollingLimit":null,"totalLimit":1,"usedToday":1,"usedLast30Days":1,"usedTotal":1""",
             ).goalStartLimit(),
         )
         assertEquals(
-            GoalLimitReason.MonthlyGoals(Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days, java.time.Instant.parse("2026-11-20T09:00:00Z"))),
+            GoalLimitReason.MonthlyGoals(
+                Limit.Reached(LimitTier.Free, LimitPeriod.Rolling30Days, java.time.Instant.parse("2026-11-20T09:00:00Z")),
+            ),
             allowance(
                 "free",
-                """"dailyLimit":null,"rollingLimit":3,"totalLimit":null,"usedToday":1,"usedLast30Days":3,"usedTotal":3,"availableAt":"2026-11-20T09:00:00Z"""",
+                """"dailyLimit":null,"rollingLimit":3,"totalLimit":null,"usedToday":1,"usedLast30Days":3,"usedTotal":3""",
+                availableAt = "\"2026-11-20T09:00:00Z\"",
             ).goalStartLimit(),
         )
         assertEquals(GoalLimitReason.ActiveGoals, allowance("free", room, """{"limit":3,"used":3}""").goalStartLimit())
         assertNull(allowance("free", room, """{"limit":3,"used":2}""").goalStartLimit())
 
-        val noneToday = """"dailyLimit":3,"rollingLimit":10,"totalLimit":null,"usedToday":3,"usedLast30Days":3,"usedTotal":3,"availableAt":null"""
+        val noneToday = """"dailyLimit":3,"rollingLimit":10,"totalLimit":null,"usedToday":3,"usedLast30Days":3,"usedTotal":3"""
         assertEquals(GoalLimitReason.ActiveGoals, allowance("free", noneToday, """{"limit":3,"used":3}""").goalStartLimit())
         assertEquals(GoalLimitReason.DailyGoals, allowance("free", noneToday, """{"limit":3,"used":2}""").goalStartLimit())
         assertEquals(
             GoalLimitReason.Guest,
             allowance(
                 "guest",
-                """"dailyLimit":null,"rollingLimit":null,"totalLimit":1,"usedToday":1,"usedLast30Days":1,"usedTotal":1,"availableAt":null""",
+                """"dailyLimit":null,"rollingLimit":null,"totalLimit":1,"usedToday":1,"usedLast30Days":1,"usedTotal":1""",
                 """{"limit":1,"used":1}""",
             ).goalStartLimit(),
         )
