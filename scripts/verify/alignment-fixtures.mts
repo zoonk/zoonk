@@ -79,3 +79,20 @@ export function filledActions(surface: string, count: number) {
     }),
   );
 }
+
+/** Two rows whose values sit before their chevrons, and a third whose value ends at `lastValueEnd`. */
+export function valueList(lastValueEnd: number) {
+  return fixtureCapture([
+    element({ endEdge: 358, group: null, id: "g", part: "group" }),
+    ...labelledRows(3),
+    element({ id: "v0", ink: [300, 14, 30, 16], part: "value", row: "r0" }),
+    element({ id: "e0", ink: [352, 15, 6, 14], part: "end", row: "r0" }),
+    element({ id: "v1", ink: [300, 58, 30, 16], part: "value", row: "r1" }),
+    element({ id: "e1", ink: [352, 59, 6, 14], part: "end", row: "r1" }),
+    element({ id: "v2", ink: [lastValueEnd - 30, 102, 30, 16], part: "value", row: "r2" }),
+  ]);
+}
+
+export function endFindings(capture: Capture) {
+  return evaluateCapture(capture).filter((finding) => finding.rule === "end-edge");
+}

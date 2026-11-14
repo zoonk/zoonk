@@ -87,21 +87,28 @@ describe("the Plan's path and Android's captures", () => {
     assert.deepEqual(failures(real("android lesson wait after, failed")), []);
   });
 
-  it("passes Material's chevrons by their box and a chevron clipped under a bar by its slot", () => {
+  it("fails Material's chevrons 5.7 dp short by their ink, leaving a clipped one unmeasured", () => {
     const ends = evaluateCapture(real("android today rows with chevrons, phone")).filter(
       (finding) => finding.rule === "end-edge",
     );
 
-    assert.deepEqual(ends, []);
+    // b18-16: the chevron's ink ends inside its icon's box, short of where the dates end.
+    assert.deepEqual(
+      ends.map((finding) => finding.measured),
+      [5.7],
+    );
   });
 
   it("judges a row whose value stacked under its label by what still applies", () => {
     const findings = evaluateCapture(real("android plan rows stacked at 200%, phone"));
     const line = findings.find((finding) => finding.detail.includes("Learn Python"));
 
+    // The stacked value no longer ends the row: only the chevron's own 6 dp short shows.
     assert.deepEqual(
-      findings.filter((finding) => finding.rule === "end-edge" || finding.rule === "label-start"),
-      [],
+      findings
+        .filter((finding) => finding.rule === "end-edge" || finding.rule === "label-start")
+        .map((finding) => finding.measured),
+      [6, 6],
     );
 
     // E5: beside a title that wraps, the mark is centered on the row, as Android draws it: it is

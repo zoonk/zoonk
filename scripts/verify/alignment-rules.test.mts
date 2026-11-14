@@ -8,11 +8,13 @@ import { describe, it } from "vitest";
 import { type Bounds, type Capture } from "./alignment-capture.mts";
 import {
   element,
+  endFindings,
   failures,
   filledActions,
   fixtureCapture,
   labelledRows,
   real,
+  valueList,
 } from "./alignment-fixtures.mts";
 import { alignmentLines, summarize, summaryLine } from "./alignment-summary.mts";
 import { applyExceptions, evaluateCapture, evaluateFile } from "./alignment.mts";
@@ -63,6 +65,11 @@ describe("relationships with no vote", () => {
       findings.filter((finding) => finding.rule === "end-edge"),
       [],
     );
+  });
+
+  it("holds a list's values to one edge: a kept chevron slot passes, a value that ends the row fails", () => {
+    assert.deepEqual(endFindings(valueList(330)), []);
+    assert.match(endFindings(valueList(358))[0]?.message ?? "", /values .* don't end on one edge/u);
   });
 
   it("fails labels of one role in two type tokens", () => {

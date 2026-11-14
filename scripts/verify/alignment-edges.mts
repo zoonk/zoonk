@@ -122,23 +122,6 @@ export function axisLeads(context: Context, read: Group): AlignmentFinding[] {
   ];
 }
 
-/**
- * Where an end glyph or control meets the edge: by its ink or by its box, whichever is nearer.
- * Platforms keep a glyph's padding differently (the web pulls the ink onto the edge, Material keeps
- * it inside a box that sits on the edge), and either way the slot is on the edge. A value meets it
- * by its ink: a slot with nothing drawn in it holds room, it doesn't reach the edge.
- */
-function reach(element: CaptureElement, edge: number) {
-  const ink = drawn(element)?.right ?? element.bounds[0] + element.bounds[2];
-
-  if (element.part !== "end") {
-    return ink;
-  }
-
-  const frame = element.bounds[0] + element.bounds[2];
-  return Math.abs(edge - frame) < Math.abs(edge - ink) ? frame : ink;
-}
-
 /** A text's first line: as the capture gives it, or its ink's top line when it gives a line count. */
 function firstLineOf(text: CaptureElement): Box | null {
   if (text.firstLine) {
@@ -147,10 +130,6 @@ function firstLineOf(text: CaptureElement): Box | null {
 
   const ink = drawn(text);
   return ink ? { ...ink, bottom: ink.top + (ink.bottom - ink.top) / (text.lines ?? 1) } : null;
-}
-
-function rightOf(element: CaptureElement) {
-  return drawn(element)?.right ?? element.bounds[0] + element.bounds[2];
 }
 
 /** The row's value went under its label (large text): its value no longer ends the row. */
@@ -166,10 +145,17 @@ export function isStacked(row: CaptureElement, own: CaptureElement[]) {
   return Boolean(line && ink && ink.top >= line.bottom - EDGE);
 }
 
+/** Where a part's drawing ends: a learner sees ink, never a glyph's padding inside its box. */
+function inkRight(element: CaptureElement) {
+  return drawn(element)?.right ?? element.bounds[0] + element.bounds[2];
+}
+
 /**
- * A row with a value beside its label or an end mark: its last drawn part ends on the end edge. A
- * row with no end mark may instead end its value where the rows with one end theirs (the chevron's
- * kept slot, `ListRowChevronSpace`).
+ * One list, one end: a row's last drawn part (its end glyph, or its value where it has none) ends
+ * on the group's end edge, by its ink. A row with no end glyph may instead keep the glyph's slot,
+ * its value ending where the other rows' values end. And every value in the list ends on one edge,
+ * so a row that drops the slot (its value at the end edge, the others' before their chevrons) fails
+ * too. An end glyph whose ink wasn't measured (clipped) is left to the not-measured record.
  */
 export function endLeads(context: Context, read: Group): AlignmentFinding[] {
   const { group, holders, parts, rows } = read;
@@ -178,36 +164,38 @@ export function endLeads(context: Context, read: Group): AlignmentFinding[] {
     const own = parts.filter((element) => element.row === row.id);
     const declared = row.endEdge ?? group.endEdge;
     const edge = typeof declared === "number" ? declared : undefined;
-    // An end clipped under a bar still has its slot on the edge: its box stands in for its ink.
-    const ends = own.filter(
-      (element) => element.part === "end" && (drawn(element) || element.ink === "not measured"),
-    );
+    const ends = own.filter((element) => element.part === "end" && drawn(element));
+
+    // An end whose ink wasn't measured (clipped) leaves the row to its not-measured record.
+    if (own.some((element) => element.part === "end" && element.ink === "not measured")) {
+      return [];
+    }
 
     const values = isStacked(row, own)
       ? []
       : own.filter((element) => element.part === "value" && drawn(element));
 
-    const last = [...ends, ...values].toSorted((one, other) => rightOf(other) - rightOf(one))[0];
+    const last = [...ends, ...values].toSorted((one, other) => inkRight(other) - inkRight(one))[0];
 
     if (!last || edge === undefined) {
       return [];
     }
 
     const valueEnd = values
-      .map((element) => drawn(element)?.right ?? 0)
+      .map((element) => inkRight(element))
       .toSorted((one, other) => other - one)[0];
 
-    return [{ edge, hasEnd: ends.length > 0, last: reach(last, edge), row, valueEnd }];
+    return [{ edge, hasEnd: ends.length > 0, last: inkRight(last), row, valueEnd }];
   });
 
   const valueColumns = ending.flatMap(({ hasEnd, valueEnd }) =>
     hasEnd && valueEnd !== undefined ? [valueEnd] : [],
   );
 
-  return ending.flatMap(({ edge, hasEnd, last, row }) => {
-    const short = edge - last;
+  const short = ending.flatMap(({ edge, hasEnd, last, row }) => {
+    const off = edge - last;
 
-    if (Math.abs(short) <= EDGE) {
+    if (Math.abs(off) <= EDGE) {
       return [];
     }
 
@@ -218,7 +206,7 @@ export function endLeads(context: Context, read: Group): AlignmentFinding[] {
     const rowBox = box(row.bounds);
 
     const holder =
-      short > 0
+      off > 0
         ? holderNamed(
             holders.filter((element) => element.row === row.id),
             { ...rowBox, left: last - EDGE, right: edge + EDGE },
@@ -229,14 +217,38 @@ export function endLeads(context: Context, read: Group): AlignmentFinding[] {
       finding(context, {
         detail: `${rowName(read, row.id)} ends at ${tenths(last)}, the edge is at ${tenths(edge)}`,
         level: "fail",
-        measured: short,
-        message: `a row of ${groupName(read)} ends ${short > 0 ? "short of" : "past"} the group's end edge`,
+        measured: off,
+        message: `a row of ${groupName(read)} ends ${off > 0 ? "short of" : "past"} the group's end edge`,
         piece: group.piece,
         rule: "end-edge",
         ...(holder ? { holder } : {}),
       }),
     ];
   });
+
+  const values = ending.flatMap(({ row, valueEnd }) =>
+    valueEnd === undefined ? [] : [{ row, valueEnd }],
+  );
+
+  const column = oneEdge(values, ({ valueEnd }) => valueEnd);
+
+  return [
+    ...short,
+    ...(column
+      ? [
+          finding(context, {
+            detail: `${column.odd.map(({ row }) => rowName(read, row.id)).join(", ")} end at ${column.odd.map(({ valueEnd }) => tenths(valueEnd)).join(", ")} where ${column.shared} of ${values.length} values end at ${tenths(column.common)}`,
+            level: "fail",
+            measured: Math.max(
+              ...column.odd.map(({ valueEnd }) => Math.abs(valueEnd - column.common)),
+            ),
+            message: `the values of ${groupName(read)} don't end on one edge`,
+            piece: group.piece,
+            rule: "end-edge",
+          }),
+        ]
+      : []),
+  ];
 }
 
 /** A value stacked under its label (large text) starts on the label's start edge. */
