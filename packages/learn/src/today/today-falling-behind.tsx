@@ -113,11 +113,13 @@ function BehindChoices({
 
   return (
     <SuggestionActions>
-      {lead && (
-        <SuggestionLinkAction href={lead.href} variant={mainVariant}>
-          {lead.label}
-        </SuggestionLinkAction>
-      )}
+      <SuggestionMenu>
+        {others.map(({ href, label, option }) => (
+          <DropdownMenuItem key={option} render={<LearnLink href={href} />}>
+            {label}
+          </DropdownMenuItem>
+        ))}
+      </SuggestionMenu>
 
       <SuggestionAction
         action={keep}
@@ -129,13 +131,11 @@ function BehindChoices({
         {t({ description: "Keeps the learner's time a day as it is.", message: "Keep my time" })}
       </SuggestionAction>
 
-      <SuggestionMenu>
-        {others.map(({ href, label, option }) => (
-          <DropdownMenuItem key={option} render={<LearnLink href={href} />}>
-            {label}
-          </DropdownMenuItem>
-        ))}
-      </SuggestionMenu>
+      {lead && (
+        <SuggestionLinkAction href={lead.href} variant={mainVariant}>
+          {lead.label}
+        </SuggestionLinkAction>
+      )}
     </SuggestionActions>
   );
 }

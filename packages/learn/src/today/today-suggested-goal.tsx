@@ -64,16 +64,15 @@ function SuggestedGoalCard({
         <SuggestionDescription>{t("Build a plan in 1 minute.")}</SuggestionDescription>
 
         <SuggestionActions>
-          <SuggestionAction action={() => answer("accepted")} disabled={isPending}>
-            {t("Start")}
-          </SuggestionAction>
-
           <SuggestionAction
             action={() => answer("dismissed")}
             disabled={isPending}
             variant="outline"
           >
             {t("Not now")}
+          </SuggestionAction>
+          <SuggestionAction action={() => answer("accepted")} disabled={isPending}>
+            {t("Start")}
           </SuggestionAction>
         </SuggestionActions>
 

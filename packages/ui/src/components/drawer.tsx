@@ -138,10 +138,17 @@ function DrawerHeader({
 }
 
 /**
+ * A sheet's answers, the main one last in the source. On a phone they stack full width with it on
+ * top; from `sm` they sit in a row at the end, in order, unless there are three, which a sheet's
+ * width can't hold in a row, so they stay stacked.
+ */
+const DRAWER_ACTIONS_CLASS =
+  "flex flex-col-reverse gap-2 sm:flex-row sm:justify-end sm:has-[>:nth-child(3)]:flex-col-reverse";
+
+/**
  * A sheet's foot, held under its content while that scrolls: one line that says what the actions
- * will do (`note`), then the actions. On a phone they stack full width with the last one (the main
- * action) on top; from `sm` they sit in a row at the end, in order. Its edge is the content's, drawn
- * only while something scrolls under it.
+ * will do (`note`), then the actions. Its edge is the content's, drawn only while something scrolls
+ * under it.
  */
 function DrawerFooter({
   children,
@@ -156,9 +163,7 @@ function DrawerFooter({
       {...props}
     >
       {note}
-      {children && (
-        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">{children}</div>
-      )}
+      {children && <div className={DRAWER_ACTIONS_CLASS}>{children}</div>}
     </div>
   );
 }
@@ -184,6 +189,7 @@ function DrawerDescription({ className, ...props }: DrawerPrimitive.Description.
 }
 
 export {
+  DRAWER_ACTIONS_CLASS,
   Drawer,
   DrawerClose,
   DrawerCloseButton,

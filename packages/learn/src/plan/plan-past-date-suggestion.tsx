@@ -153,11 +153,11 @@ function DateOverSuggestion({ item }: { item: Extract<SlotItem, { kind: "pastDat
         <>
           <SuggestionDescription role="status">{texts.noDate}</SuggestionDescription>
           <SuggestionActions>
-            <SuggestionAction onClick={() => host.onEdit("date")}>
-              {t("Adjust plan")}
-            </SuggestionAction>
             <SuggestionAction onClick={() => dismiss(item.key)} variant="outline">
               {t("Not now")}
+            </SuggestionAction>
+            <SuggestionAction onClick={() => host.onEdit("date")}>
+              {t("Adjust plan")}
             </SuggestionAction>
           </SuggestionActions>
         </>
@@ -177,11 +177,10 @@ function DateOverSuggestion({ item }: { item: Extract<SlotItem, { kind: "pastDat
           {retry ? retryText : offerText}
         </SuggestionDescription>
         <SuggestionActions>
+          <OtherOptions item={item} />
           <SuggestionAction action={() => void showChange()} key="preview">
             {retry ? t("Try again") : t("Find a date")}
           </SuggestionAction>
-
-          <OtherOptions item={item} />
         </SuggestionActions>
       </>
     );

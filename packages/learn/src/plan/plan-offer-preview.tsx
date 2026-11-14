@@ -102,11 +102,11 @@ export function OfferPreview({
           {t("We couldn't check what changes.")}
         </PlanEffectNote>
         <SuggestionActions>
-          <SuggestionAction key="retry" onClick={onRetry}>
-            {t("Try again")}
-          </SuggestionAction>
           <SuggestionAction key="not-now" onClick={() => setPreview()} variant="outline">
             {t("Not now")}
+          </SuggestionAction>
+          <SuggestionAction key="retry" onClick={onRetry}>
+            {t("Try again")}
           </SuggestionAction>
         </SuggestionActions>
       </>
@@ -136,15 +136,15 @@ export function OfferPreview({
       )}
 
       <SuggestionActions>
+        <SuggestionAction disabled={pending} onClick={() => setPreview()} variant="outline">
+          {t("Not now")}
+        </SuggestionAction>
         {/* Never applied before its effect is worked out, as Today's proposals. */}
         {!unchanged && effect !== null && (
           <SuggestionAction action={onApply} busy={pending}>
             {t("Change my plan")}
           </SuggestionAction>
         )}
-        <SuggestionAction disabled={pending} onClick={() => setPreview()} variant="outline">
-          {t("Not now")}
-        </SuggestionAction>
       </SuggestionActions>
     </>
   );
@@ -159,11 +159,11 @@ function CheckingActions({ onCancel }: { onCancel: () => void }) {
 
   return (
     <SuggestionActions>
-      <SuggestionAction disabled key="apply">
-        {t("Change my plan")}
-      </SuggestionAction>
       <SuggestionAction key="not-now" onClick={onCancel} variant="outline">
         {t("Not now")}
+      </SuggestionAction>
+      <SuggestionAction disabled key="apply">
+        {t("Change my plan")}
       </SuggestionAction>
     </SuggestionActions>
   );
