@@ -396,24 +396,49 @@ struct LessonCompletionView: View {
   }
 }
 
-/// Never a dead end. `isNotice` is main's `LessonNotWrittenNotice`: a lesson its writing was
-/// refused for says so under its description, start-aligned with small buttons, instead of the
-/// centered state a lesson that can't open takes.
+/// Never a dead end. As a screen it is main's `lesson-access-screen`: the reason as the title, at
+/// most one line, and the one way on in the bottom bar (a free learner's is "Subscribe", and the
+/// close button leaves). `isNotice` is main's `LessonNotWrittenNotice`: a lesson whose writing was
+/// refused says so under its description, start-aligned with a small button.
 struct LessonUnavailableView: View {
-  @Environment(\.dismiss) private var dismiss
-
   let refusal: LessonRunRefusal
   var isNotice = false
   let retry: () -> Void
 
   var body: some View {
+    OpeningClock(opensAt: refusal.limit?.opensAt) { now in
+      LessonUnavailableBody(refusal: refusal, isNotice: isNotice, now: now, retry: retry)
+    }
+  }
+
+  var said: String {
+    LessonUnavailableBody(refusal: refusal, isNotice: isNotice, now: .now, retry: retry).said
+  }
+}
+
+/// Once a free learner's next lesson has opened, "Start the lesson" asks again beside "Subscribe".
+private struct LessonUnavailableBody: View {
+  @Environment(\.dismiss) private var dismiss
+
+  let refusal: LessonRunRefusal
+  let isNotice: Bool
+  let now: Date
+  let retry: () -> Void
+
+  private var isReady: Bool {
+    refusal.limit?.freeLessonOpened(at: now) == true
+  }
+
+  var body: some View {
     if isNotice {
-      VStack(alignment: .leading, spacing: 12) {
-        LessonNoticeText(title: Text(title), description: Text(description))
+      VStack(alignment: .leading, spacing: 8) {
+        GateWords(title: Text(title), line: noticeLine.map(Text.init))
 
         HStack(spacing: 8) {
-          actions
+          secondAction
+          action
         }
+        .buttonStyle(.outline)
         .controlSize(.small)
       }
       .frame(maxWidth: .infinity, alignment: .leading)
@@ -425,62 +450,69 @@ struct LessonUnavailableView: View {
           Image(systemName: symbol)
         }
       } description: {
-        Text(description)
-      } actions: {
-        actions
+        if let line = screenLine {
+          Text(line)
+        }
+      }
+      .bottomBar {
+        secondAction
+          .buttonStyle(.outline)
+        action
+          .buttonStyle(.mainAction)
+      }
+      .task(id: refusal) {
+        // Main's `LessonSlowDown`: the lesson opens on its own once the break is over.
+        if case .slowDown(let seconds) = refusal,
+          (try? await Task.sleep(for: .seconds(seconds))) != nil
+        {
+          retry()
+        }
       }
     }
   }
 
-  /// A notice's buttons are all quiet: the screen's own bar holds its main action.
-  private var mainStyle: ZoonkButtonStyle {
-    isNotice ? .outline : .mainAction
-  }
-
   var said: String {
-    [String(localized: title), String(localized: description)].joinedSentences()
+    let line = isNotice ? noticeLine.map { String(localized: $0) } : screenLine
+    return ([String(localized: title)] + [line].compactMap(\.self)).joinedSentences()
   }
 
   @ViewBuilder
-  private var actions: some View {
+  private var secondAction: some View {
+    if isReady {
+      SubscribeButton()
+    }
+  }
+
+  @ViewBuilder
+  private var action: some View {
     switch refusal {
+    case .limitReached where isReady:
+      Button(action: retry) {
+        Text("Start the lesson", tableName: "Player")
+      }
     case .failed:
       Button(action: retry) {
         Text("Try again", tableName: "Player", comment: "Tries opening the lesson again")
       }
-      .buttonStyle(mainStyle)
     case .slowDown:
-      Button(action: retry) {
-        Text("Try again", tableName: "Player", comment: "Tries opening the lesson again")
-      }
-      .buttonStyle(.outline)
-    case .plusRequired, .limitReached(tier: .free, _):
-      SeePlusButton()
-        .buttonStyle(mainStyle)
-        .onAppear {
-          UsageAnalytics.track(.subscriptionGateShown)
+      if isNotice {
+        Button(action: retry) {
+          Text("Try again", tableName: "Player", comment: "Tries opening the lesson again")
         }
-
-      if !isNotice {
-        backButton
       }
+    case .limitReached(tier: .free, _):
+      SubscribeButton()
     case .limitReached(tier: .guest, _):
       SignUpButton()
-        .buttonStyle(mainStyle)
     case .limitReached(tier: .plus, _), .notFound:
       if !isNotice {
-        backButton
+        Button {
+          dismiss()
+        } label: {
+          Text("Back", tableName: "Player", comment: "Leaves a lesson that can't open")
+        }
       }
     }
-  }
-
-  private var backButton: some View {
-    Button {
-      dismiss()
-    } label: {
-      Text("Back", tableName: "Player", comment: "Leaves a lesson that can't open")
-    }
-    .buttonStyle(.outline)
   }
 
   private var title: LocalizedStringResource {
@@ -491,61 +523,42 @@ struct LessonUnavailableView: View {
     case .slowDown:
       LocalizedStringResource(
         "Take a short break", table: "Player", comment: "Fair use spaces new lessons out")
-    case .plusRequired:
-      FreeWeekOverNotice.title
-    case .limitReached(.guest, _):
-      LocalizedStringResource(
-        "Save your progress to keep going", table: "Player", comment: "A guest used their lessons")
-    case .limitReached(.free, .month):
-      LocalizedStringResource(
-        "That's all the new lessons for this month", table: "Player",
-        comment: "A free learner used the month's lessons")
-    case .limitReached(.free, _):
-      LocalizedStringResource(
-        "That's all the new lessons for today", table: "Player",
-        comment: "A free learner used the day's lessons")
-    case .limitReached(.plus, _):
-      LocalizedStringResource(
-        "That's a lot of learning today", table: "Player",
-        comment: "A Plus learner reached the day's limit")
     case .notFound:
       LocalizedStringResource(
-        "Lesson not available", table: "Player", comment: "The lesson doesn't exist anymore")
+        "This lesson isn't available", table: "Player", comment: "The lesson doesn't exist anymore")
+    case .limitReached:
+      refusal.limit?.lessonWords(now: now).title
+        ?? LocalizedStringResource(
+          "We couldn't open this lesson", table: "Player", comment: "A lesson failed to open")
     }
   }
 
-  private var description: LocalizedStringResource {
+  /// In place, a limit's line says only when lessons come back.
+  private var noticeLine: LocalizedStringResource? {
+    refusal.limit?.lessonWords(now: now).line
+  }
+
+  private var screenLine: String? {
     switch refusal {
-    case .failed:
-      LocalizedStringResource(
-        "Try again in a moment. Nothing you did was lost.", table: "Player",
-        comment: "A lesson failed to open")
+    case .failed, .notFound:
+      return nil
     case .slowDown(let seconds):
-      LocalizedStringResource(
-        "New lessons open again in \(Duration.seconds(seconds).formatted(.units(allowed: [.minutes, .seconds], width: .wide)))",
-        table: "Player", comment: "How long until the next lesson opens")
-    case .plusRequired:
-      FreeWeekOverNotice.description
+      return String(
+        localized:
+          "You opened a lot of lessons quickly. This one opens on its own in \(Duration.seconds(seconds).formatted(.units(allowed: [.minutes, .seconds], width: .wide))).",
+        table: "Player", comment: "How long until the next lesson opens; the argument is a duration"
+      )
+    case .limitReached where isReady:
+      return nil
     case .limitReached(.guest, _):
-      LocalizedStringResource(
-        "You've taken the lessons you can try without an account. Create a free account to keep going, and everything you learned comes with you.",
-        table: "Player", comment: "A guest used their lessons")
-    case .limitReached(.free, .month):
-      LocalizedStringResource(
-        "You can still review what you learned and practice your mistakes. New lessons open again next month, or get Plus to keep going now.",
-        table: "Player", comment: "A free learner used the month's lessons")
-    case .limitReached(.free, _):
-      LocalizedStringResource(
-        "You can still review what you learned and practice your mistakes. New lessons open again tomorrow, or get Plus to keep going now.",
-        table: "Player", comment: "A free learner used the day's lessons")
-    case .limitReached(.plus, _):
-      LocalizedStringResource(
-        "You've reached today's limit. New lessons open again tomorrow.", table: "Player",
-        comment: "A Plus learner reached the day's limit")
-    case .notFound:
-      LocalizedStringResource(
-        "This lesson isn't available anymore.", table: "Player",
-        comment: "The lesson doesn't exist anymore")
+      return String(
+        localized: "Everything you learned comes with you.", table: "Player",
+        comment: "A guest used the lessons they can try; signing up keeps their progress")
+    case .limitReached:
+      let stillFree = String(
+        localized: "You can still review and practice your mistakes.", table: "Player")
+      return ([stillFree] + [noticeLine.map { String(localized: $0) }].compactMap(\.self))
+        .joinedSentences()
     }
   }
 
@@ -553,7 +566,7 @@ struct LessonUnavailableView: View {
     switch refusal {
     case .failed, .notFound: "exclamationmark.circle"
     case .slowDown, .limitReached(.plus, _): "hourglass"
-    case .plusRequired, .limitReached(.free, _): "lock.fill"
+    case .limitReached(.free, _): "sparkles"
     case .limitReached(.guest, _): "person.crop.circle.badge.plus"
     }
   }
@@ -642,45 +655,84 @@ private struct SignUpButton: View {
   }
 }
 
-struct LessonHelpLimitNote: View {
-  let refusal: LessonRunRefusal
-
-  var body: some View {
-    VStack(alignment: .leading, spacing: 8) {
-      Text(Self.message(refusal))
-
-      switch refusal {
-      case .limitReached(.guest, _):
-        SignUpButton()
-          .buttonStyle(.mainAction)
-      case .limitReached(.free, _):
-        SeePlusButton()
-          .buttonStyle(.outline)
-      default:
-        EmptyView()
-      }
+extension LessonRunRefusal {
+  /// The refusal as the limit every limit notice reads; a lesson that failed or is gone has none.
+  var limit: HelpLimit? {
+    switch self {
+    case .slowDown(let seconds):
+      .slowDown(retryAfterSeconds: seconds)
+    case .limitReached(_, .last30Days(let opensAt)):
+      .freeLessonsUsed(opensAt: opensAt)
+    case .limitReached(let tier, let period):
+      .limitReached(period: period.helpPeriod, tier: tier.learnerTier)
+    case .failed, .notFound:
+      nil
     }
-    .typeStyle(.note)
-    .foregroundStyle(.mutedForeground)
+  }
+}
+
+extension LessonRunRefusal.Tier {
+  fileprivate var learnerTier: LearnerTier {
+    switch self {
+    case .guest: .guest
+    case .free: .free
+    case .plus: .plus
+    }
+  }
+}
+
+extension LessonRunRefusal.Period {
+  /// `last30Days` is read as `freeLessonsUsed` before it gets here.
+  fileprivate var helpPeriod: HelpLimit.Period {
+    switch self {
+    case .day, .last30Days: .day
+    case .total: .total
+    }
+  }
+}
+
+/// Main's `useWaitWords`: a challenge's wait names a challenge, since the learner tapped one.
+enum LessonWaitWords {
+  case lesson
+  case challenge
+
+  init(_ kind: GenerationWait.Kind) {
+    self = kind == .challenge ? .challenge : .lesson
   }
 
-  static func message(_ refusal: LessonRunRefusal) -> String {
-    switch refusal {
-    case .slowDown:
-      String(
-        localized: "Take a short break", table: "Player", comment: "Fair use spaces AI help out")
-    case .limitReached(.guest, _):
-      String(
-        localized: "Save your progress to keep going", table: "Player",
-        comment: "A guest used their AI help")
-    case .limitReached(.free, _):
-      String(
-        localized: "You used today's AI help. Plus gives you more.", table: "Player",
-        comment: "A free learner used the day's AI help")
-    default:
-      String(
-        localized: "You've used today's AI help. It's back tomorrow.", table: "Player",
-        comment: "A learner used the day's AI help")
+  var notReady: LocalizedStringResource {
+    switch self {
+    case .lesson: LocalizedStringResource("This lesson isn't ready yet", table: "Player")
+    case .challenge: LocalizedStringResource("This challenge isn't ready yet", table: "Player")
+    }
+  }
+
+  var gettingReady: LocalizedStringResource {
+    switch self {
+    case .lesson: LocalizedStringResource("Getting your lesson ready", table: "Player")
+    case .challenge: LocalizedStringResource("Getting your challenge ready", table: "Player")
+    }
+  }
+
+  var ready: LocalizedStringResource {
+    switch self {
+    case .lesson: LocalizedStringResource("Your lesson is ready", table: "Player")
+    case .challenge: LocalizedStringResource("Your challenge is ready", table: "Player")
+    }
+  }
+
+  var stopped: LocalizedStringResource {
+    switch self {
+    case .lesson: LocalizedStringResource("We couldn't get this lesson ready", table: "Player")
+    case .challenge:
+      LocalizedStringResource("We couldn't get this challenge ready", table: "Player")
+    }
+  }
+
+  var start: LocalizedStringResource {
+    switch self {
+    case .lesson: LocalizedStringResource("Start this lesson", table: "Player")
+    case .challenge: LocalizedStringResource("Start this challenge", table: "Player")
     }
   }
 }
@@ -689,14 +741,11 @@ struct LessonHelpLimitNote: View {
 /// takes a while something ready to do meanwhile. Only the learner asks for the lesson to be
 /// written: it runs AI.
 struct LessonWaitingView: View {
-  static let lessonReady = LocalizedStringResource(
-    "Your lesson is ready. Start it whenever you like.", table: "Player",
-    comment: "A goal's first lesson is written while the learner still guesses on its wait")
-
   /// Main's `ALTERNATIVE_AFTER_MS`: a wait this long offers what's ready meanwhile.
   private static let lateAfter = Duration.seconds(15)
 
   let outline: LessonOutline
+  let kind: LessonWaitWords
   let writing: LessonPlayerStore.LessonWriting
   let progress: GenerationWait
   var alternative: Components.Schemas.ReadyAlternative?
@@ -708,38 +757,35 @@ struct LessonWaitingView: View {
 
   @State private var isLate = false
 
+  /// Main's `useGenerationStepLabel` under a title that already says the lesson is getting ready.
+  private func stripLabel(title: Text) -> Text {
+    if holding != nil {
+      return Text("Done", tableName: "Player")
+    }
+
+    guard writing == .writing, let step = progress.phases.first(where: { $0.state == .working })
+    else {
+      return title
+    }
+
+    return Text(step.label)
+  }
+
   var body: some View {
     Group {
       if let warmUpID {
-        let writingTitle =
-          progress.kind == .challenge
-          ? Text(
-            "Writing your challenge", tableName: "Player",
-            comment: "The challenge's status over the quiz while it's written")
-          : Text(
-            "Writing your lesson", tableName: "Player",
-            comment: "The lesson's status over the quiz while it's written")
-        let title =
-          holding == nil
-          ? writingTitle
-          : Text(
-            "Your lesson is ready", tableName: "Player",
-            comment: "The lesson's status over the quiz once it's written")
+        let title = Text(holding == nil ? kind.gettingReady : kind.ready)
         let shown = holding == nil && writing == .writing ? progress : progress.finished
 
         WaitScreen(
           deck: WaitDeck(id: warmUpID), goalID: goalID, progressTitle: title,
           ready: holding.map { holding in
-            WaitReady(
-              label: Text(
-                "Start this lesson", tableName: "Player",
-                comment: "Opens a goal's first lesson, written while the learner played on its wait"
-              ),
-              icon: .play, action: holding.moveOn)
+            WaitReady(label: Text(kind.start), action: holding.moveOn)
           }
         ) {
           WaitStatusStrip(
-            label: title, isDone: holding != nil, share: { shown.shownShare(at: $0) })
+            label: stripLabel(title: title), isDone: holding != nil,
+            share: { shown.shownShare(at: $0) })
         } progress: {
           Section {
             page
@@ -771,8 +817,8 @@ struct LessonWaitingView: View {
       if holding == nil, writing == .notStarted {
         Button(action: write) {
           Text(
-            "Start this lesson", tableName: "Player",
-            comment: "Starts a lesson that isn't written yet: it's written, then opens")
+            "Get it ready", tableName: "Player",
+            comment: "Starts making a lesson that isn't ready yet; it opens once it's ready")
         }
         .buttonStyle(.mainAction)
         .keyboardShortcut(.defaultAction)
@@ -810,18 +856,15 @@ struct LessonWaitingView: View {
   private var status: some View {
     switch (holding, writing) {
     case (nil, .notStarted):
-      LessonNoticeText(
-        title: Text(
-          "This lesson isn't written yet", tableName: "Player",
-          comment: "Under a lesson's description, before the learner starts it and it's written"),
-        description: Text(
-          "Zoonk writes it when you start. It takes a few minutes.", tableName: "Player",
-          comment: "A lesson not written yet"))
+      LessonNoticeText(title: Text(kind.notReady), description: Text(Self.takesMinutes))
     case (nil, .refused(let refusal)):
       LessonUnavailableView(refusal: refusal, isNotice: true, retry: write)
     case (nil, .setAside):
       LessonNoticeText(title: Text(Self.setAsideTitle), description: Text(Self.setAsideLine))
     case (nil, .failed):
+      Text(kind.stopped)
+        .typeStyle(.rowTitle)
+
       // A run that reported a phase stopped there; otherwise it never got going.
       GenerationTimeline(
         wait: progress,
@@ -829,12 +872,15 @@ struct LessonWaitingView: View {
         act: write)
     case (_?, _), (nil, .writing), (nil, .written):
       VStack(alignment: .leading, spacing: 24) {
+        if holding == nil {
+          LessonNoticeText(title: Text(kind.gettingReady), description: Text(Self.takesMinutes))
+        } else {
+          Text(kind.ready)
+            .typeStyle(.rowTitle)
+        }
+
         GenerationTimeline(
           wait: holding == nil && writing == .writing ? progress : progress.finished)
-
-        Text(holding == nil ? Self.writingLine : Self.lessonReady)
-          .typeStyle(.body)
-          .foregroundStyle(.mutedForeground)
       }
     }
   }
@@ -845,9 +891,8 @@ struct LessonWaitingView: View {
     }
 
     return switch writing {
-    case .refused, .setAside: LessonWaitAlternative(alternative: alternative, isInstead: true)
-    case .failed: LessonWaitAlternative(alternative: alternative, isInstead: false)
-    case .writing where isLate: LessonWaitAlternative(alternative: alternative, isInstead: false)
+    case .refused, .setAside, .failed: LessonWaitAlternative(alternative: alternative)
+    case .writing where isLate: LessonWaitAlternative(alternative: alternative)
     default: nil
     }
   }
@@ -866,17 +911,16 @@ struct LessonWaitingView: View {
     }
   }
 
-  private static let writingLine = LocalizedStringResource(
-    "It usually takes a few minutes. The lesson opens here as soon as it's ready.",
-    table: "Player",
-    comment: "While a lesson is written")
+  private static let takesMinutes = LocalizedStringResource(
+    "It takes a few minutes, and keeps going if you leave.", table: "Player",
+    comment: "How long making a lesson takes; it goes on when the learner leaves")
 
   private static let setAsideTitle = LocalizedStringResource(
     "This lesson isn't available", table: "Player",
     comment: "Every draft of a lesson was held back by its quality checks")
 
   private static let setAsideLine = LocalizedStringResource(
-    "It didn't pass our quality checks, so your plan goes on without it.", table: "Player",
+    "Your plan goes on without it.", table: "Player",
     comment: "Every draft of a lesson was held back by its quality checks")
 }
 
@@ -904,26 +948,14 @@ private struct LessonWaitAlternative: View {
   @Environment(AppRouter.self) private var router
 
   let alternative: Components.Schemas.ReadyAlternative
-  /// Offered in place of a lesson that won't be written, rather than while it is.
-  let isInstead: Bool
 
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
-      Group {
-        if isInstead {
-          Text(
-            "Ready to do instead", tableName: "Player",
-            comment:
-              "Heading over a lesson or review the learner can start now, because this lesson couldn't be written."
-          )
-        } else {
-          Text(
-            "Ready while you wait", tableName: "Player",
-            comment:
-              "Heading over a lesson or review the learner can start while a lesson is written"
-          )
-        }
-      }
+      Text(
+        "Ready to start now", tableName: "Player",
+        comment:
+          "Heading over a lesson or review the learner can start now, while or instead of the lesson that isn't ready"
+      )
       .typeStyle(.label)
       .foregroundStyle(.mutedForeground)
       .accessibilityAddTraits(.isHeader)
@@ -1010,9 +1042,7 @@ struct LessonGuestGateView: View {
             isStarting = false
           }
         } label: {
-          Text(
-            "Start this lesson", tableName: "Player",
-            comment: "A visitor starts a public lesson as a guest")
+          Text(LessonWaitWords.lesson.start)
         }
         .buttonStyle(.mainAction)
 

@@ -544,7 +544,7 @@ private struct ListeningMessage: View {
 
     return VStack(alignment: .leading, spacing: 8) {
       if let limit {
-        HelpLimitNotice(limit: limit)
+        LimitNotice(limit: limit)
       } else {
         Text(audioDidntPlay)
           .typeStyle(.note)
@@ -578,7 +578,7 @@ private struct ListeningMessage: View {
       return nil
     }
 
-    return limit?.message ?? audioDidntPlay
+    return limit?.helpWords().said ?? audioDidntPlay
   }
 
   private func play() {

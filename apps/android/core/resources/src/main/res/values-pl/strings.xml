@@ -9,7 +9,7 @@
   "belt_brown": "99c9ae410511a723b7d995f2877b0f36989c7e07ccc5861d8c3f4df27611380b",
   "belt_gray": "f6f257bde536fa8fa5d27ab0492fcddf89b7b29aed2649da62a761bedfccac53",
   "belt_green": "cc3a28fb4beb4cce6ff2a3420251fc19492b009c15ac98a881741e24fefc1992",
-  "belt_level": "74d51a1cea222129f3cc9b7c239600f546d4edf6e8f1a197fb4dc84ecb6d4783",
+  "belt_level": "e1d9baa0a7d4559e53e4ec208d35e3cd7ea80c6be704a5e75b750fb590c5ea14",
   "belt_orange": "d6a7ba96fd26ba82f065cd3215da6778eeb866fbeef0dce2151aea6d355bbf33",
   "belt_purple": "319893cbdf2763b5d49e94ec09792531a6c904dad573300f743e1bf0879b26a0",
   "belt_red": "75300a7e53b3319c5caf3e03dd7f495ed798149bd84416d74cf49b808d0b9ab2",
@@ -28,16 +28,14 @@
   "disclosure_collapsed": "511fdf52a175e5bbbf35326ca3c8f288edfba55e748cdc5cf19e7c7b4a30f0d3",
   "disclosure_expanded": "4513287709d2e39883fd436e4692d660daad062bc4acb01924839b34432d4c89",
   "exam_choice_pick_up_to": "d3968e178d549411ff8a536ae05f4976439c63cab2ba8c5c0c89c287f3fe7547",
+  "gate_build_plan": "3eafff30c3e43a38ccfd2d87c952b1907d03fa0c9cc6f9c80f3279c7060ea419",
   "gate_log_in": "8da7ec76ed6463a841dfd016b5f9ab1915734d6b05d2278ff11cdf4e9b917e96",
-  "gate_session_ended_description": "527a50a36506d98a81674c75b5470a980a9c1bef713f34e8cbe35b36c75733af",
-  "gate_session_ended_title": "aad16e3a92a0d9345f3899a1dfc3b3545acebe923396f105047ba49db3fd591d",
-  "gate_sign_in_description": "83453ffdca37940e6dbe116d29a761d567194a8ed421069ce5465de414a96292",
+  "gate_session_ended_description": "3c3edb9554af82f49f0f04eef3c7527cd584d018fd3c282fab21a8b9f3b719b7",
+  "gate_session_ended_title": "3ccb7a74af9a6d338dbc40d2c4db16a46949ff2b36e446ebde136734af9aab85",
   "gate_sign_in_title": "a6421c2effe0a04fe7862525aca8a515c8889aac439d285f4d196284f9c1d074",
-  "gate_start_free": "4cfb910186db6d05a3be67c30417632991cecf963963cb4695929d8e3880c220",
   "gate_start_goal": "a09f4deb614a1346402ee152f5322f24b53c474f5eda5af72a90a1a7aecb5985",
   "gate_start_goal_description": "614d4cc00bb1cc78099155d87e0d47568db76ed27a78c2f5a1db852f925c81bc",
   "gate_start_goal_title": "4002ac385485171eb5179f2389e184bb6aa2c7b6fd057ae4759cd739602eced0",
-  "gate_start_something_new": "1fdf68e1e3844ed68403cbdeacf092f2bb1d4ab8e99ba5b859036f384bb520af",
   "goal_with_variety": "f4f65b9fe207c18c27727bc4e2522753a5873f78e48a31e4f73b79bf4e2f6413",
   "lesson_summaries_title": "8a50eec5e7da82a28df0aca27d5581934afc1ca63c5a4c018e1fe9d46eaee3fd",
   "lessons_coming_up": "14f09091f3794a1e94b987491fae18c7ab62b07223d0235d292f8b72798a9c7b",
@@ -47,7 +45,7 @@
   "lessons_title": "8c0a2487395797f8648b92c8804d3f7557e6a2bd402628d78b8010fa8850f5d8",
   "lessons_up_next": "cff5f682a8e5e3ad9e8711c7865ae0739b391d9f54c5747de85f81349deca63c",
   "list_row_states": "0f759e672564a8c2f920b61d652ed9d0ac462a782cf0755c914f079d8088784c",
-  "load_failed_description": "46f6533a6bd622decf6d06f48569211cb818d37b5ccc1371a69a02c151219352",
+  "load_failed_description": "40d0e376dcffe1ad1ab4c9645afd30ae9885d6f472cb6ba39578048ab4fabc93",
   "load_failed_title": "e3d37a5701d23b860fe887277996fd5a639c61feb743960f50a383ad6c09c947",
   "load_failed_try_again": "8d4822a06a9ff6e75b1fb8d07b58721e6ce0c16eec918c53d3d6a493cba7d9aa",
   "navigation_back": "c87f72b19e753321c0ca1680616b845d57290545613d36a68675bb6726a9f585",
@@ -92,12 +90,11 @@
     <string name="navigation_user_menu">Menu użytkownika</string>
     <string name="task_leave">Wyjdź</string>
     <string name="gate_sign_in_title">Zaloguj się, aby kontynuować</string>
-    <string name="gate_sign_in_description">Zaloguj się, aby kontynuować naukę od miejsca przerwania, lub zacznij za darmo.</string>
-    <string name="gate_session_ended_title">Twoja sesja się zakończyła</string>
-    <string name="gate_session_ended_description">Zaloguj się, aby wrócić do swojego planu.</string>
+    <string name="gate_session_ended_title">Wylogowano cię</string>
+    <string name="gate_session_ended_description">Zaloguj się, by wrócić do swojego planu.</string>
     <string name="gate_log_in">Zaloguj się</string>
-    <string name="gate_start_free">Zacznij za darmo</string>
-    <string name="gate_start_something_new">Zacznij coś nowego</string>
+    <!-- Starts a new goal: the visitor tells us what to learn and gets a plan. -->
+    <string name="gate_build_plan">Ułóż mój plan</string>
     <string name="gate_start_goal_title">Zacznij od celu</string>
     <string name="gate_start_goal_description">Powiedz nam, czego chcesz się nauczyć, a zaplanujemy każdy dzień aż do osiągnięcia celu.</string>
     <string name="gate_start_goal">Wyznacz cel</string>
@@ -113,12 +110,13 @@
     <string name="belt_red">Czerwony pas</string>
     <string name="belt_gray">Szary pas</string>
     <string name="belt_black">Czarny pas</string>
-    <string name="belt_level">%1$s, poziom %2$s</string>
+    <!-- A belt and its number from 1 to 10, such as White belt 4. %1$s is the belt's name. -->
+    <string name="belt_level">%1$s %2$s</string>
     <string name="answer_tag_correct">Poprawna</string>
     <string name="answer_tag_your_answer">Twoja odpowiedź</string>
     <string name="answer_tag_your_guess">Twój strzał</string>
     <string name="load_failed_title">Nie udało się wczytać tej strony</string>
-    <string name="load_failed_description">Może to być problem z połączeniem lub po naszej stronie. Ponowna próba zwykle pomaga.</string>
+    <string name="load_failed_description">Sprawdź połączenie z internetem i spróbuj ponownie.</string>
     <string name="load_failed_try_again">Spróbuj ponownie</string>
     <string name="suggestion_view">Zobacz</string>
     <string name="suggestion_save_failed">Nie udało się zapisać. Spróbuj ponownie.</string>

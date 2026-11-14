@@ -1,15 +1,15 @@
 import { z } from "zod";
 import { answerTimeZoneSchema } from "../learner/contract";
 
-/**
- * The plan version, study day and time zone a proposal's `effect` was worked out for. A reprice
- * gives it a new one, so it names the numbers a learner saw.
- */
+const MAX_QUOTE_LENGTH = 64;
+
+/** Names the numbers a proposal shows: it changes whenever its `effect` does, whoever wrote it. */
 export const planChangeQuoteSchema = z
-  .object({ planVersion: z.int().nonnegative(), studyDay: z.iso.date(), timeZone: z.string() })
+  .string()
+  .max(MAX_QUOTE_LENGTH)
   .meta({
     description:
-      "Which numbers a proposed change shows: the plan version, study day and time zone its `effect` was worked out for. Send it back as it came when accepting",
+      "Names the numbers `effect` shows, and changes whenever they do. Send it back as it came when accepting",
     id: "PlanChangeQuote",
   });
 
@@ -25,7 +25,7 @@ export const planChangeDecisionInputSchema = z
   .object({
     quote: quoteSeenSchema.meta({
       description:
-        "Send the change's `quote` as the learner saw it (null when it had none). Applying a proposal applies it only when this is the change's current `quote`; otherwise nothing is applied and the answer is the change still `proposed` with its current `effect` and `quote`, for the learner to answer again. Other answers ignore it",
+        "Send the change's `quote` as the learner saw it. Applying a proposal applies it only when this is the change's current `quote`; otherwise nothing is applied and the answer is the change still `proposed` with its current `effect` and `quote`, for the learner to answer again. Other answers ignore it",
     }),
     status: z
       .enum(["applied", "declined", "undone", "seen"])

@@ -96,7 +96,6 @@ internal fun MockChooser(
             when {
                 loaded == null -> null
                 writing -> "wait"
-                loaded.access != MockOptions.Access.OPEN -> "plus"
                 else -> "start"
             },
             // On a phone the action is in the list's first row, which can be scrolled away.

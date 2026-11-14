@@ -5,7 +5,7 @@
   "goalcontent_also": "f79e32f3dfc299363dc4eee5a64cc9c71bd5a23521792a16551d57597cad4365",
   "goalcontent_also_in_exam_count": "766f7a1d63d1d796b324c05a74f318ed5caf031bbef95fb56698ce9f880c96c0",
   "goalcontent_also_in_exams": "c9cbe500ed3aac58c109401763a07807c8162086585902f3c0e781df1f23a02a",
-  "goalcontent_also_in_plan": "326abc1ff219d07b0003ccd3df649e638ed57bb1db08caeefff106a49d1737e0",
+  "goalcontent_also_in_plan": "55d5c2936f025723288b341c1d7764918faa742a0a0ea3fbb959b84c4dccee38",
   "goalcontent_appears_a_lot": "4befbb131636e1e37eeec0b53f2383ed54b8eda972ad01e57a54408c054be1ec",
   "goalcontent_beyond_guide": "5db5fc713491616b8fba6ae2a9114b3251a18c84701fa1552247e685bd58c80c",
   "goalcontent_beyond_notice": "7d02dd741b3596f35f381662a661272df25f1152130986755915b07de5cb154e",
@@ -18,7 +18,7 @@
   "goalcontent_chapters_known": "0c9d6946e637403e3b70468fc6001adfd95b4b75ab81377834994df6fc5a3abb",
   "goalcontent_chapters_known_after_done": "f6d74c4367a4ee2d0f13be47803884f3fbed651f079b34f795fe54c0e1245c69",
   "goalcontent_continue": "47a053d13a3f8b8198e416ba888f0fae45ea8c47bae47fee8668bc42f0fe2607",
-  "goalcontent_count_of": "a2a4f0f2734bb862053295562c17e08eb6f337f46069ab1312a8c2524b014ef6",
+  "goalcontent_count_of": "089e55c9fd09563a6543ab97ae89e19fdee15f73a25ab6e86ba73125269c2198",
   "goalcontent_course_weights_even": "524570ab35ce25f8eb4b80afb88dfd43fef37b47018b869ff02d198c0fad49ee",
   "goalcontent_course_weights_heavier": "90989014b3307a182505b6144ad9032de6ac3ae83c7aab6d6d01466039739f38",
   "goalcontent_coverage": "a97efc80e7958a719d02cf5015990cbcf1a176f68269719521f37018f738a51b",
@@ -42,7 +42,7 @@
   "goalcontent_mastery_pending": "3d484bb9009dfb1b30ff6e5ec99e757473e8d42cde802edb321aa987896f0d4c",
   "goalcontent_mastery_right": "9d542b836d2021b07efd0a351746255b1f35e1b6b2eb45b1c26dac4a95b5fae1",
   "goalcontent_material_topic_count": "0ad21583ee32085e5f25d78ee12630490df7b32cdb29800d4ef71ab658ec6021",
-  "goalcontent_matrix_title": "f1440df2f277db3990723fb8dc1368e91c16c4bed6e629eaf28272ef75ab6f56",
+  "goalcontent_matrix_title": "cf51be90bc38c047b077e267131c4dd339b48798755bbf9f1f238d1ebe066e63",
   "goalcontent_module_count": "7506eee2df9cc8bf155fc341267dea929e4e8a8178ffab73e866119a166a2221",
   "goalcontent_modules": "27676010b67443d416c99b13db8a6c1f7b743410c6e095c30227331f20de77b3",
   "goalcontent_more_chapters": "f27ee266241ecf73e2f9d07068532b0bba7fc2f3351b18ac22033a8185497375",
@@ -130,7 +130,7 @@
         <item quantity="other">%dスキル</item>
     </plurals>
     <!-- Progress in words: "3 of 12". -->
-    <string name="goalcontent_count_of">%1$s／%2$s</string>
+    <string name="goalcontent_count_of">%1$s / %2$s</string>
     <!-- A subject's topics studied of all its topics: "3 of 12 topics". -->
     <plurals name="goalcontent_topics_studied_of">
         <item quantity="other">%1$s／%2$dトピック</item>
@@ -154,7 +154,7 @@
     <string name="goalcontent_mastery_pending">練習問題をいくつか解くと表示されます</string>
     <string name="goalcontent_not_in_plan">学習計画に含まれていません</string>
     <!-- A group of subjects the plan adds outside what the learner's own material lists. -->
-    <string name="goalcontent_also_in_plan">学習計画に含まれるほかの科目</string>
+    <string name="goalcontent_also_in_plan">学習計画の追加項目</string>
     <!-- A group of subjects the plan adds outside an exam's public notice. -->
     <string name="goalcontent_beyond_notice">要項にない科目</string>
     <!-- A group of subjects the plan adds outside a language certificate's official guide. -->
@@ -257,7 +257,7 @@
     <string name="goalcontent_frequency_waits">過去の試験で出題の少なかったトピックは後回しになります（%1$s、出典：%2$s）。</string>
     <string name="goalcontent_frequency_most">過去の試験で特によく出題されたトピックには、学習時間を多めに割り当てます（%1$s、出典：%2$s）。</string>
     <!-- A section of a subject listing its skills matrix (ENEM's competencies and abilities). -->
-    <string name="goalcontent_matrix_title">問題で求められる力</string>
+    <string name="goalcontent_matrix_title">問題で問われる力</string>
     <string name="goalcontent_see_all">すべて見る（%1$s）</string>
     <string name="goalcontent_chapter_number">第%1$s章</string>
     <string name="goalcontent_progress">進み具合</string>

@@ -81,7 +81,7 @@ class TestOutScreenshots {
             Question("00000000-0000-4000-8000-000000000003", QuestionFormat.MultipleChoice, "Q3", listOf("a", "b")),
         )
 
-    private val page = TestOutPage("Test out: Porcentagem", "Porcentagem", lessonsLeft = 4)
+    private val page = TestOutPage("Test: Porcentagem", "Porcentagem", lessonsLeft = 4)
 
     private fun viewModel(passed: Boolean = true): TestOutViewModel {
         val api =
@@ -144,7 +144,6 @@ class TestOutScreenshots {
 
     private fun intro(
         name: String,
-        plusRequired: Boolean = false,
         writing: Boolean = false,
         fold: Boolean = false,
     ) {
@@ -152,7 +151,7 @@ class TestOutScreenshots {
         rule.setContent {
             ZoonkTheme {
                 val ui by viewModel.ui.collectAsStateWithLifecycle()
-                TestOutPreparing(viewModel, ui.copy(writing = writing), page.title, plusRequired, rememberAppNavigator())
+                TestOutPreparing(viewModel, ui.copy(writing = writing), page.title, rememberAppNavigator())
             }
         }
         if (fold) rule.unfoldBook(folds)
@@ -201,17 +200,6 @@ class TestOutScreenshots {
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun phoneIntro() = intro("phone-intro")
-
-    @Test
-    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
-    fun phonePlusRequired() = intro("phone-plus", plusRequired = true)
-
-    @Test
-    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
-    fun phonePlusRequiredLargeFont() {
-        RuntimeEnvironment.setFontScale(2f)
-        intro("phone-plus-font200", plusRequired = true)
-    }
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")

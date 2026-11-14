@@ -5,6 +5,7 @@ import { OWN_LEVEL_SOURCE } from "../own-level-contract";
 import { type PlanChangeView } from "../plan-view-contract";
 import { addDays } from "../planner/plan-calendar";
 import { isUndoableChange, parsePlanChangePayload } from "./plan-change-payload";
+import { getPlanChangeQuote } from "./plan-change-quote";
 
 const RECENT_CHANGE_DAYS = 14;
 const MAX_CHANGES = 10;
@@ -61,7 +62,7 @@ export function toPlanChangeView({
     lessonsSkipped: payload.lessonsSkipped ?? 0,
     officialDate: payload.officialDate,
     operations: payload.operations,
-    quote: payload.previewBasis,
+    quote: getPlanChangeQuote(payload.effect),
     reason: LEARNER_FACING_SOURCES.has(payload.source) || !change.reason ? null : change.reason,
     seen: payload.seenAt !== null,
     source: payload.source,

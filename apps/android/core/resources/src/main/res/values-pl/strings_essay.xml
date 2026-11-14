@@ -41,11 +41,11 @@
   "essay_rewrite_label": "c91d7ed459286c0922c3ce193102c48ec98f5e5afa1f02977eeb5d4611e2ea8b",
   "essay_scale": "eed94ce3f1ac2e9f98b3347da9ecb3f329e596990d91d6e44d3e98a36c9b8577",
   "essay_score_of": "56c8637cff9410b0bdcb31cfa7fc1efd49944d10ed6535a5ef4bdf1dba0fdfc2",
-  "essay_see_comments": "cd4230faaaf0d8ad37702e04b2d2c87b424a4a1829ad9d11e5e672e30541cc9c",
+  "essay_see_comments": "9b6eb352a66df5dd1336ec692ef01da4deb4ee6072b93e3a93a71244db34d721",
   "essay_see_grade": "5bad45d8620324106d96c216a45553226bfec4dea082e24234d9f590ee361170",
   "essay_send": "48fb0c6adb0548d937482e2391a7abcc15876de99524efa1036e9fdf466cc6c9",
   "essay_send_failed": "afb0b1b0d6d9531ae8ab6c2b633edd7cc5366001524ac12d165ef6b69756b8c5",
-  "essay_skip_rewrite": "13a0ace997245638cd4cb5d0288fc9ec5a20bf23e8bb31925616b36551e6ce9b",
+  "essay_skip_rewrite": "66e5ffe397640df09d01f52cc1c61575e9e1ff0753f6e31a35e30f86935bc887",
   "essay_skipped": "6e0164918377158ade07868e780cc11b48e0976394c40cca60880688f2dc022a",
   "essay_supporting_texts": "7eb6fe55055065e97a910708affe384a6c09feeaa8acea1404b1eb5ad35a852a",
   "essay_the_case": "26449493c22a26e932122c23c8ad7c5ba607b2e8b574f81516ce05f133ba0c0a",
@@ -111,7 +111,7 @@
     <string name="essay_limit_reached">Wykorzystano już limit ocen wypracowań na dziś. Twój tekst zostaje tutaj; wyślij go jutro.</string>
     <string name="essay_grading">Sprawdzamy twoje wypracowanie według każdego kryterium. Może to potrwać do 30 sekund.</string>
     <string name="essay_grading_slow">Nadal oceniamy. Trwa to dłużej niż zwykle.</string>
-    <string name="essay_skip_rewrite">Pomiń poprawianie</string>
+    <string name="essay_skip_rewrite">Pomiń</string>
     <string name="essay_grade_rewrite">Oceń poprawioną wersję</string>
     <string name="essay_send">Wyślij do oceny</string>
     <string name="essay_leave_title">Przerwać lekcję?</string>
@@ -124,7 +124,7 @@
     <string name="essay_too_short_detail">Napisz całe wypracowanie, a potem wyślij je ponownie.</string>
     <string name="essay_rewrite">Popraw</string>
     <string name="essay_finish_failed">Nie udało się. Spróbuj ponownie za chwilę.</string>
-    <string name="essay_see_comments">Zobacz komentarze do każdego kryterium</string>
+    <string name="essay_see_comments">Zobacz komentarze</string>
     <string name="essay_comments">Komentarze</string>
     <string name="essay_proposal_elements">Pięć elementów propozycji</string>
     <!-- One of the five elements of an ENEM essay's intervention proposal: who carries it out. -->

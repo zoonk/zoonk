@@ -18,8 +18,37 @@ class OpeningDayTest {
     }
 
     @Test
-    fun anInstantAlreadyPastOpensToday() {
-        assertEquals(OpeningDay.Today, openingDay(Instant.parse("2026-11-10T08:00:00Z"), now, ZoneId.of("UTC")))
+    fun anInstantAlreadyPastIsOpenNotToday() {
+        assertEquals(OpeningDay.Open, openingDay(Instant.parse("2026-11-10T08:00:00Z"), now, ZoneId.of("UTC")))
+        assertEquals(OpeningDay.Open, openingDay(now, now, ZoneId.of("UTC")))
+        assertEquals(OpeningDay.Today, openingDay(now.plusSeconds(60), now, ZoneId.of("UTC")))
+    }
+
+    /** The gate's one timer, stepped on a fake clock: open at 23:59, it reads the day again at midnight, then opens at noon. */
+    @Test
+    fun aGateLeftOpenAcrossMidnightReadsTodayThenReady() {
+        val zone = ZoneId.of("America/Sao_Paulo")
+        val noon =
+            LocalDate
+                .of(2026, 11, 15)
+                .atTime(12, 0)
+                .atZone(zone)
+                .toInstant()
+        var clock =
+            LocalDate
+                .of(2026, 11, 14)
+                .atTime(23, 59)
+                .atZone(zone)
+                .toInstant()
+        assertEquals(OpeningDay.Tomorrow, openingDay(noon, clock, zone))
+
+        clock = nextLook(noon, clock, zone)
+        assertEquals(LocalDate.of(2026, 11, 15).atStartOfDay(zone).toInstant(), clock)
+        assertEquals(OpeningDay.Today, openingDay(noon, clock, zone))
+
+        clock = nextLook(noon, clock, zone)
+        assertEquals(noon, clock)
+        assertEquals(OpeningDay.Open, openingDay(noon, clock, zone))
     }
 
     @Test

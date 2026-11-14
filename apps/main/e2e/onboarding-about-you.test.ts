@@ -22,7 +22,7 @@ async function createGoalAtAboutYou(userId: string, answered: string[] = BEFORE_
   return goal;
 }
 
-test("questions about the learner lead to the plan, and a skipped one comes back on the next goal", async ({
+test("questions about the learner lead to the plan; a skipped one isn't asked again, and Skip all's come back on the next goal", async ({
   noProgressUser,
   userWithoutProgress: page,
 }) => {
@@ -61,6 +61,7 @@ test("questions about the learner lead to the plan, and a skipped one comes back
 
   expect(answers.map(({ outcome, question }) => ({ outcome, question }))).toStrictEqual([
     { outcome: "answered", question: "work" },
+    { outcome: "declined", question: "tools" },
   ]);
 
   expect(facts.map((fact) => fact.statement)).toStrictEqual(["Works as: nurse"]);
@@ -68,11 +69,8 @@ test("questions about the learner lead to the plan, and a skipped one comes back
   const next = await createGoalAtAboutYou(noProgressUser.id);
   await page.goto(`/start/${next.id}`);
 
-  await expect(
-    page.getByRole("heading", { name: "Which apps and tools do you use most?" }),
-  ).toBeVisible();
-
-  await expect(page.getByText("1 of 9", { exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "What have you studied?" })).toBeVisible();
+  await expect(page.getByText("1 of 8", { exact: true })).toBeVisible();
 });
 
 function createGoalAtConditions(userId: string) {

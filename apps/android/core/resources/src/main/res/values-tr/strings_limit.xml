@@ -10,10 +10,10 @@
   "limit_lesson_opens_on": "184d1ca652d7a0113f796b12ad0ef111e3ddbc7ee94876789e0d84bef48a87b5",
   "limit_lesson_opens_today": "3bb75c64b473679ca18dc1e70ad8efb9344335a8609193a506c0596cdc366c12",
   "limit_lesson_opens_tomorrow": "08ec4a85e38850f6b4ce3f124f9c19f627ded2daa8907d7f900dad6b5b1fd9c5",
+  "limit_lesson_ready": "ebfb6e8e1ff1bb3fb3b671c12c7313b6783c0bb17e4fefdfea29ee990e151d8c",
   "limit_lessons_day": "26cc5c7e6c13699cc7c7d240c0b6be874ae8bd0b94fafb9595551a70f3e8800f",
   "limit_lessons_free": "d123a4f073b7749b3c25a65163d7fef97385d9f872b1e55b8318db4202553057",
   "limit_lessons_guest": "ec39f05d299130683ab2dfcc62165a47e16ec3c3fc147be35ffbcf26f40483cf",
-  "limit_lessons_month": "c9ddbeff8abbd41b812bab1fc51d741f685d5f29bef05d4fdc3804adf39c769a",
   "limit_messages_day": "d8902b92b76ea6e3ecfcaef77a6b6e3dcc66b490e3617c1c547a0a64a158cc52",
   "limit_messages_month": "ebfd2f6a47ed2235b0a240dfa13fdb7527b705d79980bb6abd6ccbe463b88d67",
   "limit_mind_maps_day": "485ad6c64f0ff0bc1ab0b63bd247fd3126d548fd0a21ae6d7fa1d16c577fced8",
@@ -54,7 +54,7 @@
     <string name="limit_lessons_guest">Daha fazla ders için bir hesap gerekiyor</string>
     <string name="limit_lessons_free">Ücretsiz derslerini kullandın</string>
     <string name="limit_lessons_day">Bugün yeni ders hakkın kalmadı</string>
-    <string name="limit_lessons_month">Bu ay yeni ders hakkın kalmadı</string>
+    <string name="limit_lesson_ready">Sıradaki ücretsiz dersin hazır</string>
     <string name="limit_mind_maps_guest">Daha fazla zihin haritası için bir hesap gerekiyor</string>
     <string name="limit_mind_maps_day">Bugün yeni zihin haritası hakkın kalmadı</string>
     <string name="limit_mind_maps_month">Bu ay yeni zihin haritası hakkın kalmadı</string>

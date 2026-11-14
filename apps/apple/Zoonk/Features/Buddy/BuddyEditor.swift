@@ -206,7 +206,7 @@ struct BuddyGlassesPicker: View {
             Text("Glasses", tableName: "Buddy", comment: "Title of the buddy's glasses")
               .typeStyle(.body.weight(.semibold))
             Text(
-              "Pick a pair you've earned to wear it.", tableName: "Buddy",
+              "Pick a pair you've earned.", tableName: "Buddy",
               comment: "What the glasses list does"
             )
             .typeStyle(.meta)

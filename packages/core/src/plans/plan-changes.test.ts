@@ -105,6 +105,26 @@ describe("plan changes", () => {
     await expect(prisma.planChange.count({ where: { planId: plan.id } })).resolves.toBe(0);
   });
 
+  it("removes a focus that moves no lesson", async () => {
+    const { goal, plan } = await setup();
+    const { settings } = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+
+    await prisma.plan.update({
+      data: { settings: { ...(settings as object), focusAreas: ["Math"] } },
+      where: { id: plan.id },
+    });
+
+    await expect(
+      changeGoalPlan({
+        goalId: goal.id,
+        input: { operations: [{ areas: [], kind: "focusAreas" }] },
+      }),
+    ).resolves.toStrictEqual({ change: null, status: "applied" });
+
+    const stored = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+    expect(stored.settings).toMatchObject({ focusAreas: [] });
+  });
+
   it.each(["today", "tutor"] as const)(
     "applies the learner's change and lets %s undo it",
     async (surface) => {

@@ -10,10 +10,10 @@
   "limit_lesson_opens_on": "033c6dbb9b9d4e527e55f9fede910a918d6771dd0fe35848e5d462fc4ca02d66",
   "limit_lesson_opens_today": "99b7cc8bab1b2f17fc939d120e4cc35f6bc43bbbadd4135890cf74a5b4bff2e2",
   "limit_lesson_opens_tomorrow": "cc45d023d49d8fe6320782279b3a17afb2d68447ab3e8609808f1c945b90ec8b",
+  "limit_lesson_ready": "3676d0e1924cb2b74e72885b43a671b73c4cb947ecee60fecffa7131aa4e1836",
   "limit_lessons_day": "8ab172fba4451d7f34fd0a9355e23e0e155bf6fa24cb73331bd84a61bb9c736d",
   "limit_lessons_free": "6b51bc943f5790aa5c6552ae32933b5f3876704e0cfef3d08fadb0a33c7378dc",
   "limit_lessons_guest": "a9f5d3034c7fb759a77ce27b8436c911f34e0fe86ae84c24ed4fc1880d5fc43b",
-  "limit_lessons_month": "390c5c48bd08b829f839dfe0f7fbdb1f5a1824efab49e97c89bfc7c322ce6859",
   "limit_messages_day": "079d624f0b139ff6e51f9faafcf25b12c975cfe2df5ba14f51860b36def16813",
   "limit_messages_month": "e2dc927dce2b527ee8766f9e2aff02362d5fadfc955e770b6b6f9d0b07b034e6",
   "limit_mind_maps_day": "70b8ca537b67c7817cce4a4f69a66d91a88a7912f3c08f79b8759065b175a858",
@@ -54,7 +54,7 @@
     <string name="limit_lessons_guest">アカウントなしで受けられるレッスンはここまでです</string>
     <string name="limit_lessons_free">無料レッスンを使い切りました</string>
     <string name="limit_lessons_day">今日はこれ以上新しいレッスンを始められません</string>
-    <string name="limit_lessons_month">今月はこれ以上新しいレッスンを始められません</string>
+    <string name="limit_lesson_ready">次の無料レッスンを始められます</string>
     <string name="limit_mind_maps_guest">アカウントなしで作れるマインドマップはここまでです</string>
     <string name="limit_mind_maps_day">今日はこれ以上新しいマインドマップを作れません</string>
     <string name="limit_mind_maps_month">今月はこれ以上新しいマインドマップを作れません</string>

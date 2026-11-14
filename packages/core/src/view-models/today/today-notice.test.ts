@@ -46,7 +46,7 @@ const insightChange = (status: "applied" | "proposed"): Today["insight"] => ({
     canApply: status === "proposed",
     effect: null,
     id: "insight-change",
-    quote: null,
+    quote: "quote",
     status,
   },
 });

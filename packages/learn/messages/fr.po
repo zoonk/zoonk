@@ -182,6 +182,7 @@ msgstr "Continuer"
 #: src/_components/question-actions.tsx
 #: src/challenge/challenge-footer.tsx
 #: src/conversation/tutor-feature-offers.tsx
+#: src/explain/explain-waiting.tsx
 #: src/focus-test/focus-test-screens.tsx
 #: src/language/conversation/checkpoint-call-preparing.tsx
 #: src/language/exam-speaking/speaking-task-row.tsx
@@ -662,7 +663,6 @@ msgstr "Retour"
 
 #: src/_components/subscribe-gate.tsx
 #: src/conversation/tutor-feature-offers.tsx
-#: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "gczcC5"
 msgid "Subscribe"
 msgstr "S’abonner"
@@ -3194,6 +3194,7 @@ msgid "Leave for now?"
 msgstr "Quitter pour le moment ?"
 
 #: src/essay/essay-skip-button.tsx
+#: src/onboarding/steps/placement-waiting.tsx
 #: src/onboarding/steps/step-form.tsx
 #: src/onboarding/test-outcome.tsx
 #: src/plan/plan-bases-choices.tsx
@@ -3406,19 +3407,16 @@ msgid "From now on, review and mock exams."
 msgstr "Place aux révisions et aux examens blancs."
 
 #: src/exam/exam-moment-card.tsx
-#: src/today/today-exam-moment.tsx
 msgctxt "VYBPRQ"
 msgid "The final stretch"
 msgstr "La dernière ligne droite"
 
 #: src/exam/exam-moment-card.tsx
-#: src/today/today-exam-moment.tsx
 msgctxt "Qr0X96"
 msgid "{exam} is tomorrow"
 msgstr "{exam}, c’est demain"
 
 #: src/exam/exam-moment-card.tsx
-#: src/today/today-exam-moment.tsx
 msgctxt "7OX7b1"
 msgid "{exam} is today"
 msgstr "{exam}, c’est aujourd’hui"
@@ -3430,20 +3428,9 @@ msgstr "Ajoute ton résultat officiel quand il sera publié."
 
 #: src/exam/exam-moment-card.tsx
 #: src/exam/exam-result-section.tsx
-#: src/today/today-exam-moment.tsx
 msgctxt "yMXlRJ"
 msgid "How did it go?"
 msgstr "Comment ça s’est passé ?"
-
-#: src/exam/exam-moment-card.tsx
-msgctxt "GDT0eI"
-msgid "Add your result"
-msgstr "Ajouter ton résultat"
-
-#: src/exam/exam-moment-card.tsx
-msgctxt "0LZY2s"
-msgid "See your exam"
-msgstr "Voir ton examen"
 
 #: src/exam/exam-next-mock.tsx
 #: src/plan-diff/use-change-rows.ts
@@ -3731,11 +3718,6 @@ msgctxt "fL_sD1"
 msgid "This is taking longer than usual."
 msgstr "Cela prend plus de temps que d’habitude."
 
-#: src/explain/explain-waiting.tsx
-msgctxt "SHh7sC"
-msgid "See explanation"
-msgstr "Voir l’explication"
-
 #: src/explain/quick-explanation-label.ts
 msgctxt "fjrJL6"
 msgid "Quick explanation · {time}"
@@ -3815,7 +3797,6 @@ msgstr "Nous n’avons pas pu envoyer ton message. Réessaie ou écris-nous à h
 
 #: src/focus-test/focus-test-flow.tsx
 #: src/focus-test/focus-test-screens.tsx
-#: src/onboarding/steps/placement-waiting.tsx
 msgctxt "WYzHAI"
 msgid "Skip for now"
 msgstr "Sauter pour l’instant"
@@ -4408,9 +4389,10 @@ msgstr "Enregistrement de ton plan…"
 
 #: src/generation/use-generation-copy.ts
 #: src/onboarding/steps/placement-waiting.tsx
-msgctxt "zI4cUg"
-msgid "Getting your questions ready"
-msgstr "Préparation de tes questions"
+#: src/questions/test-out-preparing.tsx
+msgctxt "Ge7HX4"
+msgid "Getting your test ready"
+msgstr "Préparation de ton test"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "dw8Odu"
@@ -8888,6 +8870,16 @@ msgid "How does inflation work?"
 msgstr "Comment fonctionne l’inflation ?"
 
 #: src/onboarding/entry/goal-limit-notice.tsx
+msgctxt "1oUkSm"
+msgid "Pause one in your Plan, or subscribe to study more at once."
+msgstr "Mets-en un en pause dans ton Plan ou abonne-toi pour travailler sur plus d’objectifs à la fois."
+
+#: src/onboarding/entry/goal-limit-notice.tsx
+msgctxt "EreSqP"
+msgid "That's all the goals you can study at once"
+msgstr "Tu as atteint ta limite d’objectifs en cours"
+
+#: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "4RwuVD"
 msgid "No more new goals this month"
 msgstr "Tu ne peux plus ajouter d’objectifs ce mois-ci"
@@ -8896,16 +8888,6 @@ msgstr "Tu ne peux plus ajouter d’objectifs ce mois-ci"
 msgctxt "MO6156"
 msgid "Go to your Plan"
 msgstr "Voir ton plan"
-
-#: src/onboarding/entry/goal-limit-notice.tsx
-msgctxt "EreSqP"
-msgid "That's all the goals you can study at once"
-msgstr "Tu as atteint ta limite d’objectifs en cours"
-
-#: src/onboarding/entry/goal-limit-notice.tsx
-msgctxt "1oUkSm"
-msgid "Pause one in your Plan, or subscribe to study more at once."
-msgstr "Mets-en un en pause dans ton Plan ou abonne-toi pour travailler sur plus d’objectifs à la fois."
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "n-6wcY"
@@ -9558,30 +9540,20 @@ msgid "We'll find your level as you study"
 msgstr "On évaluera ton niveau au fil de tes séances"
 
 #: src/onboarding/steps/placement-waiting.tsx
-msgctxt "kx8w4b"
-msgid "They come from the material you added. Reading it takes a few minutes."
-msgstr "Elles sont tirées des documents que tu as ajoutés. Leur lecture prend quelques minutes."
+msgctxt "MwxYjr"
+msgid "Reading your material takes a few minutes."
+msgstr "La lecture de tes documents prend quelques minutes."
 
 #. Shown while the learner waits for their first questions to be prepared. “This” is the wait.
 #: src/onboarding/steps/placement-waiting.tsx
-msgctxt "WFtloO"
-msgid "This usually takes a minute or two."
-msgstr "Ça prend généralement une ou deux minutes."
+msgctxt "xBapiR"
+msgid "This takes a minute or two."
+msgstr "Ça prend une ou deux minutes."
 
 #: src/onboarding/steps/placement-waiting.tsx
-msgctxt "QRwbAL"
-msgid "Your questions are ready"
-msgstr "Tes questions sont prêtes"
-
-#: src/onboarding/steps/placement-waiting.tsx
-msgctxt "7yADK5"
-msgid "Start them whenever you're ready."
-msgstr "Commence quand tu veux."
-
-#: src/onboarding/steps/placement-waiting.tsx
-msgctxt "8S9f9-"
-msgid "Your first sessions will ask a few of these instead."
-msgstr "Quelques-unes de ces questions te seront posées pendant tes premières séances."
+msgctxt "hzXWla"
+msgid "Your test is ready"
+msgstr "Ton test est prêt"
 
 #: src/onboarding/steps/plan-building.tsx
 msgctxt "JoLgk1"
@@ -11992,11 +11964,6 @@ msgid "Start the test"
 msgstr "Commencer le test"
 
 #: src/questions/test-out-preparing.tsx
-msgctxt "Ge7HX4"
-msgid "Getting your test ready"
-msgstr "Préparation de ton test"
-
-#: src/questions/test-out-preparing.tsx
 msgctxt "gb32bG"
 msgid "We're writing a few questions on this chapter. The test opens here when they're ready."
 msgstr "Nous préparons quelques questions sur ce chapitre. Le test s’ouvrira ici dès qu’elles seront prêtes."
@@ -13260,6 +13227,16 @@ msgstr "Ajouter aux leçons du jour"
 msgctxt "SVKPfj"
 msgid "Exam choice"
 msgstr "Choix d’examen"
+
+#: src/today/today-exam-moment.tsx
+msgctxt "GDT0eI"
+msgid "Add your result"
+msgstr "Ajouter ton résultat"
+
+#: src/today/today-exam-moment.tsx
+msgctxt "0LZY2s"
+msgid "See your exam"
+msgstr "Voir ton examen"
 
 #: src/today/today-exam-moment.tsx
 msgctxt "9HjIgh"

@@ -94,6 +94,9 @@ extension TypeStyle {
   /// The number a moment or a result leads with.
   static let momentReadout = TypeStyle(
     size: 40, relativeTo: .largeTitle, weight: .semibold, tracking: -0.04, isTabular: true)
+  /// A step's one big letter, main's `text-readout text-5xl`.
+  static let letterReadout = TypeStyle(
+    size: 48, relativeTo: .largeTitle, weight: .semibold, tracking: -0.04, lineHeight: 1)
 
   func weight(_ weight: Font.Weight) -> TypeStyle {
     var style = self

@@ -75,6 +75,23 @@ class GateScreenshots {
 
     @Test
     @Config(qualifiers = PHONE)
+    fun lessonFreeReady() = capture("gate-lesson-free-ready-phone") { access(free(Instant.now().minusSeconds(60))) }
+
+    @Test
+    @Config(qualifiers = PHONE)
+    fun lessonFreeReadyInPlace() =
+        capture("gate-lesson-free-ready-in-place-phone") {
+            Column(Modifier.padding(16.dp)) {
+                LessonNotWrittenNotice(
+                    LessonWriting.Refused(LessonRefusal.Limited(free(Instant.now().minusSeconds(60)))),
+                    onRetry = {},
+                    onOpen = {},
+                )
+            }
+        }
+
+    @Test
+    @Config(qualifiers = PHONE)
     fun lessonFreeNoDay() = capture("gate-lesson-free-no-day-phone") { access(free(null)) }
 
     @Test

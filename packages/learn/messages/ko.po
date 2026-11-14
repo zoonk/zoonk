@@ -182,6 +182,7 @@ msgstr "계속하기"
 #: src/_components/question-actions.tsx
 #: src/challenge/challenge-footer.tsx
 #: src/conversation/tutor-feature-offers.tsx
+#: src/explain/explain-waiting.tsx
 #: src/focus-test/focus-test-screens.tsx
 #: src/language/conversation/checkpoint-call-preparing.tsx
 #: src/language/exam-speaking/speaking-task-row.tsx
@@ -662,7 +663,6 @@ msgstr "뒤로"
 
 #: src/_components/subscribe-gate.tsx
 #: src/conversation/tutor-feature-offers.tsx
-#: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "gczcC5"
 msgid "Subscribe"
 msgstr "구독하기"
@@ -3194,6 +3194,7 @@ msgid "Leave for now?"
 msgstr "잠시 나갈까요?"
 
 #: src/essay/essay-skip-button.tsx
+#: src/onboarding/steps/placement-waiting.tsx
 #: src/onboarding/steps/step-form.tsx
 #: src/onboarding/test-outcome.tsx
 #: src/plan/plan-bases-choices.tsx
@@ -3406,19 +3407,16 @@ msgid "From now on, review and mock exams."
 msgstr "이제 복습과 모의고사에 집중해요."
 
 #: src/exam/exam-moment-card.tsx
-#: src/today/today-exam-moment.tsx
 msgctxt "VYBPRQ"
 msgid "The final stretch"
 msgstr "막바지 준비"
 
 #: src/exam/exam-moment-card.tsx
-#: src/today/today-exam-moment.tsx
 msgctxt "Qr0X96"
 msgid "{exam} is tomorrow"
 msgstr "내일은 {exam} 보는 날이에요"
 
 #: src/exam/exam-moment-card.tsx
-#: src/today/today-exam-moment.tsx
 msgctxt "7OX7b1"
 msgid "{exam} is today"
 msgstr "오늘은 {exam} 보는 날이에요"
@@ -3430,20 +3428,9 @@ msgstr "공식 시험 결과가 나오면 입력해 주세요."
 
 #: src/exam/exam-moment-card.tsx
 #: src/exam/exam-result-section.tsx
-#: src/today/today-exam-moment.tsx
 msgctxt "yMXlRJ"
 msgid "How did it go?"
 msgstr "시험은 어땠어요?"
-
-#: src/exam/exam-moment-card.tsx
-msgctxt "GDT0eI"
-msgid "Add your result"
-msgstr "결과 입력하기"
-
-#: src/exam/exam-moment-card.tsx
-msgctxt "0LZY2s"
-msgid "See your exam"
-msgstr "시험 정보 보기"
 
 #: src/exam/exam-next-mock.tsx
 #: src/plan-diff/use-change-rows.ts
@@ -3731,11 +3718,6 @@ msgctxt "fL_sD1"
 msgid "This is taking longer than usual."
 msgstr "평소보다 시간이 더 걸리고 있어요."
 
-#: src/explain/explain-waiting.tsx
-msgctxt "SHh7sC"
-msgid "See explanation"
-msgstr "설명 보기"
-
 #: src/explain/quick-explanation-label.ts
 msgctxt "fjrJL6"
 msgid "Quick explanation · {time}"
@@ -3815,7 +3797,6 @@ msgstr "메시지를 보내지 못했어요. 다시 시도해 보거나 hello@zo
 
 #: src/focus-test/focus-test-flow.tsx
 #: src/focus-test/focus-test-screens.tsx
-#: src/onboarding/steps/placement-waiting.tsx
 msgctxt "WYzHAI"
 msgid "Skip for now"
 msgstr "일단 건너뛰기"
@@ -4408,9 +4389,10 @@ msgstr "계획을 저장하고 있어요…"
 
 #: src/generation/use-generation-copy.ts
 #: src/onboarding/steps/placement-waiting.tsx
-msgctxt "zI4cUg"
-msgid "Getting your questions ready"
-msgstr "문제를 준비하고 있어요"
+#: src/questions/test-out-preparing.tsx
+msgctxt "Ge7HX4"
+msgid "Getting your test ready"
+msgstr "테스트를 준비하고 있어요"
 
 #: src/generation/use-generation-copy.ts
 msgctxt "dw8Odu"
@@ -8888,6 +8870,16 @@ msgid "How does inflation work?"
 msgstr "인플레이션은 어떤 원리로 일어나나요?"
 
 #: src/onboarding/entry/goal-limit-notice.tsx
+msgctxt "1oUkSm"
+msgid "Pause one in your Plan, or subscribe to study more at once."
+msgstr "계획에서 목표 하나를 일시 중지해 주세요. 구독하면 더 많은 목표를 동시에 학습할 수 있어요."
+
+#: src/onboarding/entry/goal-limit-notice.tsx
+msgctxt "EreSqP"
+msgid "That's all the goals you can study at once"
+msgstr "동시에 학습할 수 있는 목표 수를 다 채웠어요"
+
+#: src/onboarding/entry/goal-limit-notice.tsx
 msgctxt "4RwuVD"
 msgid "No more new goals this month"
 msgstr "이번 달에는 새 목표를 더 추가할 수 없어요"
@@ -8896,16 +8888,6 @@ msgstr "이번 달에는 새 목표를 더 추가할 수 없어요"
 msgctxt "MO6156"
 msgid "Go to your Plan"
 msgstr "내 계획으로 이동"
-
-#: src/onboarding/entry/goal-limit-notice.tsx
-msgctxt "EreSqP"
-msgid "That's all the goals you can study at once"
-msgstr "동시에 학습할 수 있는 목표 수를 다 채웠어요"
-
-#: src/onboarding/entry/goal-limit-notice.tsx
-msgctxt "1oUkSm"
-msgid "Pause one in your Plan, or subscribe to study more at once."
-msgstr "계획에서 목표 하나를 일시 중지해 주세요. 구독하면 더 많은 목표를 동시에 학습할 수 있어요."
 
 #: src/onboarding/entry/goal-outcomes.tsx
 msgctxt "n-6wcY"
@@ -9558,30 +9540,20 @@ msgid "We'll find your level as you study"
 msgstr "공부하면서 실력을 파악할게요"
 
 #: src/onboarding/steps/placement-waiting.tsx
-msgctxt "kx8w4b"
-msgid "They come from the material you added. Reading it takes a few minutes."
-msgstr "추가한 자료를 바탕으로 문제를 만들고 있어요. 자료를 읽는 데 몇 분 걸려요."
+msgctxt "MwxYjr"
+msgid "Reading your material takes a few minutes."
+msgstr "자료를 읽는 데 몇 분 걸려요."
 
 #. Shown while the learner waits for their first questions to be prepared. “This” is the wait.
 #: src/onboarding/steps/placement-waiting.tsx
-msgctxt "WFtloO"
-msgid "This usually takes a minute or two."
-msgstr "보통 1~2분 정도 걸려요."
+msgctxt "xBapiR"
+msgid "This takes a minute or two."
+msgstr "1~2분 정도 걸려요."
 
 #: src/onboarding/steps/placement-waiting.tsx
-msgctxt "QRwbAL"
-msgid "Your questions are ready"
-msgstr "문제가 준비됐어요"
-
-#: src/onboarding/steps/placement-waiting.tsx
-msgctxt "7yADK5"
-msgid "Start them whenever you're ready."
-msgstr "준비되면 언제든 시작해 보세요."
-
-#: src/onboarding/steps/placement-waiting.tsx
-msgctxt "8S9f9-"
-msgid "Your first sessions will ask a few of these instead."
-msgstr "대신 처음 몇 번의 학습에서 이 중 몇 문제를 풀게 돼요."
+msgctxt "hzXWla"
+msgid "Your test is ready"
+msgstr "테스트가 준비됐어요"
 
 #: src/onboarding/steps/plan-building.tsx
 msgctxt "JoLgk1"
@@ -11992,11 +11964,6 @@ msgid "Start the test"
 msgstr "테스트 시작하기"
 
 #: src/questions/test-out-preparing.tsx
-msgctxt "Ge7HX4"
-msgid "Getting your test ready"
-msgstr "테스트를 준비하고 있어요"
-
-#: src/questions/test-out-preparing.tsx
 msgctxt "gb32bG"
 msgid "We're writing a few questions on this chapter. The test opens here when they're ready."
 msgstr "이 챕터에 관한 문제 몇 개를 만들고 있어요. 준비되면 여기에서 테스트가 열려요."
@@ -13260,6 +13227,16 @@ msgstr "오늘 학습에 추가하기"
 msgctxt "SVKPfj"
 msgid "Exam choice"
 msgstr "시험 선택"
+
+#: src/today/today-exam-moment.tsx
+msgctxt "GDT0eI"
+msgid "Add your result"
+msgstr "결과 입력하기"
+
+#: src/today/today-exam-moment.tsx
+msgctxt "0LZY2s"
+msgid "See your exam"
+msgstr "시험 정보 보기"
 
 #: src/today/today-exam-moment.tsx
 msgctxt "9HjIgh"

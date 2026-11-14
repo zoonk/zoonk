@@ -259,19 +259,6 @@ internal fun Sparkline(values: List<Int>) {
     }
 }
 
-/** A made-up rising line behind the Plus mark: what the chart shows once there are mocks. */
-@Composable
-internal fun SampleProgressChart(values: List<Int>) {
-    val color = LearnKind.Mock.color
-    val grid = MaterialTheme.zoonk.vizGrid
-
-    Canvas(Modifier.fillMaxWidth().height(80.dp)) {
-        drawLine(grid, Offset.Zero, Offset(size.width, 0f), strokeWidth = 1.dp.toPx())
-        drawLine(grid, Offset(0f, size.height), Offset(size.width, size.height), strokeWidth = 1.dp.toPx())
-        drawChartLine(values, floor = 0, color = color, wash = true)
-    }
-}
-
 private fun DrawScope.drawChartLine(
     values: List<Int>,
     floor: Int,

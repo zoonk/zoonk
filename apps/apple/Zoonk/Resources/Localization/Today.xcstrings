@@ -18400,61 +18400,61 @@
         }
       }
     },
-    "That's as many goals as you can study at once. Pause another goal to resume this one." : {
-      "comment" : "Why resuming the goal failed: the learner studies as many goals at once as they can; it's about goals studied at the same time, not new goals started per day or month",
+    "That's all the goals you can study at once. Pause another goal to resume this one, or subscribe to study more." : {
+      "comment" : "Why resuming the goal failed: the learner follows as many goals at once as their plan allows; it's about goals followed at the same time, not new goals started per day or month. Pausing a goal keeps its progress",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mehr Ziele kannst du nicht gleichzeitig verfolgen. Pausier ein anderes Ziel, um dieses fortzusetzen."
+            "value" : "Du verfolgst schon so viele Ziele gleichzeitig, wie dein Tarif erlaubt. Pausier ein anderes Ziel, um dieses fortzusetzen, oder schließ ein Abo ab, um mehr Ziele zu verfolgen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Llegaste al límite de objetivos que puedes estudiar a la vez. Pausa otro objetivo para reanudar este."
+            "value" : "Alcanzaste el límite de objetivos que puedes estudiar a la vez. Pausa otro objetivo para reanudar este o suscríbete para estudiar más."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu as déjà le maximum d’objectifs en cours. Mets un autre objectif en pause pour reprendre celui-ci."
+            "value" : "Tu ne peux pas suivre plus d’objectifs en même temps. Mets un autre objectif en pause pour reprendre celui-ci, ou abonne-toi pour en suivre davantage."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hai raggiunto il limite di obiettivi che puoi portare avanti insieme. Metti in pausa un altro obiettivo per riprendere questo."
+            "value" : "Hai raggiunto il limite di obiettivi che puoi seguire contemporaneamente. Metti in pausa un altro obiettivo per riprendere questo, oppure abbonati per seguirne di più."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "同時に進められる目標の数が上限に達しています。この目標を再開するには、ほかの目標を一時停止してください。"
+            "value" : "同時に学習できる目標の数が上限に達しています。ほかの目標を一時停止すると、この目標を再開できます。サブスクリプションに登録すると、同時に学習できる目標を増やせます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "동시에 공부할 수 있는 목표 수를 모두 채웠어요. 이 목표를 이어서 공부하려면 다른 목표를 일시 중지하세요."
+            "value" : "동시에 학습할 수 있는 목표 수를 모두 채웠어요. 다른 목표를 일시 중지하면 이 목표를 이어 갈 수 있고, 구독하면 더 많은 목표를 함께 학습할 수 있어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Masz już tyle celów, ile możesz realizować naraz. Wstrzymaj inny cel, by wznowić ten."
+            "value" : "Realizujesz już maksymalną liczbę celów jednocześnie. Wstrzymaj inny cel, aby wznowić ten, lub wykup subskrypcję, by realizować ich więcej."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você chegou ao limite de objetivos que pode estudar ao mesmo tempo. Pause outro objetivo para retomar este."
+            "value" : "Você chegou ao limite de objetivos que pode estudar ao mesmo tempo. Pause outro objetivo para retomar este ou assine para estudar mais."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aynı anda çalışabileceğin hedef sayısına ulaştın. Bu hedefe devam etmek için başka bir hedefi duraklat."
+            "value" : "Aynı anda üzerinde çalışabileceğin hedef sayısına ulaştın. Bu hedefe devam etmek için başka bir hedefi duraklat veya daha fazla hedef üzerinde çalışmak için abone ol."
           }
         }
       }
@@ -22517,65 +22517,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bugünkü çalışmanı tamamladın."
-          }
-        }
-      }
-    },
-    "You're following as many goals as the free plan allows. Pause another goal to resume this one, or get Plus to follow more." : {
-      "comment" : "Why resuming the goal failed: the learner follows as many goals at once as the free plan allows; it's about goals followed at the same time, not new goals started per day or month. Pausing a goal keeps its progress. Plus is the subscription's name, not \"more\"",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du verfolgst schon so viele Ziele gleichzeitig, wie der kostenlose Tarif erlaubt. Pausier ein anderes Ziel, um dieses fortzusetzen, oder hol dir Plus, um mehr Ziele gleichzeitig zu verfolgen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ya tienes el máximo de objetivos activos que permite el plan gratis. Pausa otro objetivo para reanudar este u obtén Plus para tener más objetivos activos."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu suis déjà autant d’objectifs que la formule gratuite le permet. Mets un autre objectif en pause pour reprendre celui-ci, ou passe à Plus pour en suivre davantage."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stai già seguendo il numero massimo di obiettivi consentito dalla formula Free. Metti in pausa un altro obiettivo per riprendere questo, oppure passa a Plus per seguirne di più."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "無料プランで同時に進められる目標の上限に達しています。ほかの目標を一時停止すると、この目標を再開できます。Plusに登録すれば、より多くの目標を同時に進められます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "무료 요금제에서 동시에 진행할 수 있는 목표 수를 모두 채웠어요. 이 목표를 다시 진행하려면 다른 목표를 일시 중지하세요. Plus를 구독하면 더 많은 목표를 동시에 진행할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Realizujesz już tyle celów naraz, ile pozwala pakiet Free. Wstrzymaj inny cel, aby wznowić ten, lub przejdź na Plus, by realizować ich więcej."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você já tem o máximo de objetivos ativos que o plano grátis permite. Pause outro objetivo para retomar este ou assine o Plus para ter mais objetivos ativos."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ücretsiz pakette aynı anda takip edebileceğin hedef sayısına ulaştın. Bu hedefe devam etmek için başka bir hedefi duraklat ya da daha fazla hedefi takip etmek için Plus’a geç."
           }
         }
       }

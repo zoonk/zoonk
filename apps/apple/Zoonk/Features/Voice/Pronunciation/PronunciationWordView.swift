@@ -79,7 +79,7 @@ private struct ListenButtons: View {
 
       if case .failed(let limit) = state {
         if let limit {
-          HelpLimitNotice(limit: limit)
+          LimitNotice(limit: limit)
         } else {
           FailureLine(
             message: LocalizedStringResource(
@@ -90,7 +90,7 @@ private struct ListenButtons: View {
         }
       }
     }
-    .announcesStatus(limit(state)?.message)
+    .announcesStatus(limit(state)?.helpWords().said)
   }
 
   private func limit(_ state: SpeechPlayer.State) -> HelpLimit? {

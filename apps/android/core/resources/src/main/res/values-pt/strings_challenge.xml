@@ -3,18 +3,19 @@
 {
   "challenge_back_to_today": "558c2c24dcb724a39f2407fd729b5f79c23cbc851074448a04ca6efd38928817",
   "challenge_call_detail": "37d760aca6fdea6c0a54c9998b196c960b88850a67b4dc9ce240aff8c9b52e71",
+  "challenge_call_gate": "f024ed7099255fa81f6fa09e9c0f57502de7e109042a6a2d6c8a3bd99e5ee83b",
+  "challenge_call_gate_line": "cff4b79751b65b30575cb3e8a7d23867017f41710ac4fd1049a72b46623f8bc5",
   "challenge_call_goals": "ff82338b7af2dc3620032ae98224a572ef8f565255aa489256c3edbaaef040d6",
   "challenge_call_goals_title": "4e1d3c84d3b8ebba6693ba47f831eeaa3400230f5de646d3d475a27870138408",
   "challenge_call_level": "3b070375af86de599689e9cd64628804d14e36475cc84b253275af9ed1b32d58",
   "challenge_call_passed": "a8230ca01160b149314970c88b45ef56d8ceec1e16e1dabbe5e1ed3dc74351d4",
-  "challenge_call_plus": "500733d41eb9c89cfa8ea5043ba2fb0356e688f9b85979516089786d7dff4c11",
   "challenge_call_result": "fe6a784374ddbc21347122d0cb76678d5054b2a75e3a231b01f50251294b1692",
   "challenge_call_title": "415e0089ea71833509c661d0c4d83d6481ac53525b5ad97282bc9a5f1471f3c6",
   "challenge_call_to_win": "9ee4b96277a29dec882ca17b8d7b595183e54d4c48627fd22200d49acca3eccf",
   "challenge_change_failed": "4e1af2f3838201360d1645377412077915a4653c2b50042d703f0e19fb1dfed2",
   "challenge_continue": "a129b19c146b214e12ff563697b5156bc0e7c416894d059fa8b49319feb81567",
   "challenge_day_time": "4b8d59960e55229572e921e3e01f9fd8d624921951a4132c6d39efa2b7456b32",
-  "challenge_mock_plus": "56260dd51d2bbd05eb997651db88847257ba02a3382811faca560d54dda07356",
+  "challenge_mock_gate": "9a54ed115c0f765285000ed0dee7203599f0a4e74b15ccf5a933faf3c45c5bd2",
   "challenge_mock_start": "f690149cd68e693e26df4f8c8c63aaefba3d446273c59aa19bea9a9e9e9d5e6b",
   "challenge_move": "f9753511fa55d6493d63f1cc7dcde51cdf33b530394d32b4e395c50730f22d4e",
   "challenge_move_before_monday": "b750345d280281b4f4ee569d70ca12b45ebd52a58016c72201155491f6da981b",
@@ -25,7 +26,6 @@
   "challenge_moved_title": "ca893bf2d79f377d8aa1dca14bc719d0bade245f94bf003280bdec6b784f7c93",
   "challenge_next_session": "dad5f38d35f26b6c7c105374a70ca29c96f379506488d416d5c9afe0625ce9f7",
   "challenge_not_ready": "b9cba7d19fcf0f63eee47a2b6744cf7ad6e0c6078ed53105b8e637cea84b6a50",
-  "challenge_objective_only": "4c00742f595a54e480804def2cee5decd8a237a8f13ff1ce2f7945966e2321b0",
   "challenge_opens_after_lessons": "8c5005707893bffce74b624e096c5411a3e649e92328a9fbb320f8c6f63701fb",
   "challenge_opens_in": "36f4ea5e290474a8728e933b5d6181d4302d057da3535e5e30e3c1b08051bd35",
   "challenge_opens_tomorrow": "a0b132bd22a4b784012970b475c16dfb0fb6ce1cde110dfb37ba6dbc114961aa",
@@ -34,11 +34,10 @@
   "challenge_prize": "3a83ee4a982ada33917657ccfa3d227b6fff6e99dbe0aec867259bf8892da1e7",
   "challenge_questions": "b994119d4b48c1ff6777941035703fa5de1de7c4582b93b93d82846bb8da41f1",
   "challenge_rematch": "4e2d745a11384a4818041fab4c7f1c6d6135f3cba1c428f41403c9ffcbdef62f",
-  "challenge_result_at_end": "ffff64698df7d5510687525bdb6ed85059c96de3704375ab6670b60b32e1dcd1",
+  "challenge_result_at_end": "122dab7b19f2c2b044c5cff391677ee8e031471d1519b89970cf3f8585723ddc",
   "challenge_result_right": "cfefb71af122149f6d53987bba66185dc8156740df09ce23b22af8bfd50f3ad6",
   "challenge_section_questions": "db85e901bf29ef0373fb78f9fffa53571a152bedb76339e5c26ddde402192eee",
   "challenge_section_size": "468220a1e0d3a376966b74d161da6b28c1b10ffbfe3fcc7db7af375d9b005d20",
-  "challenge_see_plus": "4ebcb7996b125f5a2442e2763c5f0d1f700c18dfe67f224bb59c0c9f182fa209",
   "challenge_see_result": "c8ae151a7b1e1dc74399600e6eba8d1791ad24a22ac0dde3ef1a1803a331c9cf",
   "challenge_start": "1a25bfa6afeab602358d5ef086ad0b45d85f760ecfecbb0d3742fd41692bc72a",
   "challenge_start_failed": "0f7bc3615ae7d686c03bf497b86a3bdcc3deb36bbf5450a193195dbc8aed3a01",
@@ -60,9 +59,7 @@
   "challenge_writing_detail": "11b9017606b13bd4076f12a4863ead54d4294a3cb217aefa56a3b78af0026666",
   "challenge_writing_line": "c886553dabdb0f4c63e4e97485b86a089f0678e7e116651b86b670d812e59200",
   "challenge_writing_questions": "d69c54cb22b551d200c799c10e60616bbea03a8dd5c7c35e6d84aecb2b07670b",
-  "challenge_writing_title": "2b89cd6d5ff69aa444db8448c7433c2a739b4dcb6e35b76113d2d257d60b5679",
-  "challenge_written_asked": "841b3bbb66e4a88cb8dec4aa18b3bafd07483456f142db5d6fb8f765d25da15b",
-  "challenge_written_practiced": "8800afb706ff9c5487884035918e13bd42599b0c3d2939ccd82a687fc01a375c"
+  "challenge_writing_title": "2b89cd6d5ff69aa444db8448c7433c2a739b4dcb6e35b76113d2d257d60b5679"
 }
 -->
 <resources>
@@ -109,7 +106,6 @@
     <!-- %1$s is the day; %2$s is the time it starts, like 9:00 AM. -->
     <string name="challenge_day_time">%1$s · %2$s</string>
     <string name="challenge_mock_start">Começar o simulado</string>
-    <string name="challenge_objective_only">Só a parte objetiva</string>
     <string name="challenge_section_questions">Perguntas</string>
     <!-- A section's questions (%1$d) and its time (%2$s), like "45 questions · 1 h 30 min". -->
     <plurals name="challenge_section_size">
@@ -117,13 +113,10 @@
         <item quantity="many">%1$d questões · %2$s</item>
         <item quantity="other">%1$d questões · %2$s</item>
     </plurals>
-    <string name="challenge_written_asked">Você vai escrever no simulado e a resposta será corrigida pelos critérios da prova depois que você entregar.</string>
-    <string name="challenge_written_practiced">Parte escrita: você pratica nas sessões de redação, com correção pelos critérios da prova.</string>
     <string name="challenge_penalty_cancels">Uma resposta errada anula uma certa. Se não tiver certeza, deixe a afirmação em branco.</string>
     <!-- %1$s is the share of a right answer a wrong one costs, like 25%; %2$s is the confidence below which leaving it blank pays off, like 20%. -->
     <string name="challenge_penalty_costs">Uma resposta errada desconta %1$s de uma certa. Se não tiver pelo menos %2$s de certeza, deixe a pergunta em branco.</string>
-    <string name="challenge_result_at_end">Seu resultado só aparece no final, como no dia da prova.</string>
-    <string name="challenge_mock_plus">O Plus inclui simulados quando você quiser e um por semana no seu plano.</string>
+    <string name="challenge_result_at_end">Você vê seu resultado no final.</string>
     <string name="challenge_call_title">A conversa da unidade</string>
     <string name="challenge_call_detail">Uma conversa ao vivo para você se expressar. Fale ou digite.</string>
     <!-- %1$s is the call's length; %2$s its level, like B1. -->
@@ -143,13 +136,14 @@
         <item quantity="many">%1$d de %2$d objetivos</item>
         <item quantity="other">%1$d de %2$d objetivos</item>
     </plurals>
-    <string name="challenge_call_plus">O Plus inclui conversas de desafio. Seu plano continua sem elas.</string>
     <string name="challenge_start">Começar</string>
+    <string name="challenge_mock_gate">Simulados exigem uma assinatura</string>
+    <string name="challenge_call_gate">Esta conversa exige uma assinatura</string>
+    <string name="challenge_call_gate_line">Seu plano continua sem ela.</string>
     <string name="challenge_start_failed">Não deu certo. Tente de novo daqui a pouco.</string>
     <string name="challenge_start_slow">Ainda está começando. Está demorando mais que o normal.</string>
     <string name="challenge_continue">Continuar</string>
     <string name="challenge_see_result">Ver como foi</string>
-    <string name="challenge_see_plus">Ver o Plus</string>
     <string name="challenge_opens_tomorrow">Abre amanhã</string>
     <plurals name="challenge_opens_in">
         <item quantity="one">Abre em %d dia</item>

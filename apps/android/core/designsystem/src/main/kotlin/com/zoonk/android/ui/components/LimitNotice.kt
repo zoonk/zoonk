@@ -11,7 +11,6 @@ import com.zoonk.android.feature.subscription.SubscribeButton
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
-import java.time.Instant
 
 /** What ran out as the title, and when it comes back as the one line under it. */
 data class LimitWords(
@@ -62,20 +61,35 @@ private val Limit.Reached.monthly: Boolean
 private val Limit.Reached.freeLessons: Boolean
     get() = tier == LimitTier.Free && period == LimitPeriod.Rolling30Days
 
-/** The day's sentence from [availableAt]; none when the API gave no instant, never a guessed day. */
+/** The day's sentence; none when the API gave no instant (never a guessed day) or the lesson is already open. */
 @Composable
-private fun opensLine(
-    availableAt: Instant?,
-    @StringRes today: Int,
-    @StringRes tomorrow: Int,
-    @StringRes on: Int,
-): String? =
-    when (val day = availableAt?.let { openingDay(it) }) {
-        null -> null
-        OpeningDay.Today -> stringResource(today)
-        OpeningDay.Tomorrow -> stringResource(tomorrow)
-        is OpeningDay.On -> stringResource(on, formatDate(day.date, currentLocale(), DateStyle.DayMonth))
+private fun opensLine(day: OpeningDay?): String? =
+    when (day) {
+        null, OpeningDay.Open -> null
+        OpeningDay.Today -> stringResource(R.string.limit_lesson_opens_today)
+        OpeningDay.Tomorrow -> stringResource(R.string.limit_lesson_opens_tomorrow)
+        is OpeningDay.On -> stringResource(R.string.limit_lesson_opens_on, formatDate(day.date, currentLocale(), DateStyle.DayMonth))
     }
+
+/** Whether a free learner's next lesson has opened since the refusal: the server then gets asked again (main's `useFreeLessonReady`). */
+@Composable
+fun freeLessonReady(limit: Limit): Boolean =
+    limit is Limit.Reached && limit.freeLessons && rememberOpeningDay(limit.availableAt) == OpeningDay.Open
+
+/**
+ * Main's `useLessonLimitWords`: the free learner's 30 days with the day the next lesson opens, a guest's,
+ * or the day's; a lesson is never refused for a month.
+ */
+@Composable
+private fun lessonWords(limit: Limit.Reached): LimitWords {
+    val opens = rememberOpeningDay(limit.availableAt.takeIf { limit.freeLessons })
+    return when {
+        opens == OpeningDay.Open -> LimitWords(stringResource(R.string.limit_lesson_ready), line = null)
+        limit.freeLessons -> LimitWords(stringResource(R.string.limit_lessons_free), opensLine(opens))
+        limit.tier == LimitTier.Guest -> LimitWords(stringResource(R.string.limit_lessons_guest), line = null)
+        else -> LimitWords(stringResource(R.string.limit_lessons_day), reachedLine(limit.tier, monthly = false))
+    }
+}
 
 @Composable
 fun limitWords(
@@ -83,49 +97,54 @@ fun limitWords(
     subject: LimitSubject,
 ): LimitWords =
     when (limit) {
-        is Limit.SlowDown -> LimitWords(title = null, line = stringResource(R.string.limit_slow_down))
-        Limit.SignUpRequired -> LimitWords(title = stringResource(R.string.limit_sign_up_required), line = null)
-        is Limit.Reached -> LimitWords(reachedTitle(limit, subject)?.let { stringResource(it) }, comesBackLine(limit))
+        is Limit.SlowDown -> {
+            LimitWords(title = null, line = stringResource(R.string.limit_slow_down))
+        }
+
+        Limit.SignUpRequired -> {
+            LimitWords(title = stringResource(R.string.limit_sign_up_required), line = null)
+        }
+
+        is Limit.Reached -> {
+            if (subject == LimitSubject.Lessons) {
+                lessonWords(limit)
+            } else {
+                LimitWords(reachedTitle(limit, subject)?.let { stringResource(it) }, comesBackLine(limit))
+            }
+        }
     }
 
 /** When it comes back; a guest's way on is the button, so their notice has no line. */
 @Composable
-fun comesBackLine(limit: Limit.Reached): String? =
-    if (limit.freeLessons) {
-        opensLine(
-            limit.availableAt,
-            R.string.limit_lesson_opens_today,
-            R.string.limit_lesson_opens_tomorrow,
-            R.string.limit_lesson_opens_on,
-        )
-    } else {
-        reachedLine(limit)
-    }
+fun comesBackLine(limit: Limit.Reached): String? = reachedLine(limit.tier, limit.monthly)
 
 @Composable
-private fun reachedLine(limit: Limit.Reached): String? =
-    when (limit.tier) {
+private fun reachedLine(
+    tier: LimitTier,
+    monthly: Boolean,
+): String? =
+    when (tier) {
         LimitTier.Guest -> {
             null
         }
 
         LimitTier.Plus -> {
-            stringResource(if (limit.monthly) R.string.limit_more_next_month else R.string.limit_more_tomorrow)
+            stringResource(if (monthly) R.string.limit_more_next_month else R.string.limit_more_tomorrow)
         }
 
         LimitTier.Free -> {
             stringResource(
-                if (limit.monthly) R.string.limit_more_next_month_or_subscribe else R.string.limit_more_tomorrow_or_subscribe,
+                if (monthly) R.string.limit_more_next_month_or_subscribe else R.string.limit_more_tomorrow_or_subscribe,
             )
         }
     }
 
-/** The lesson screen's line: what stays free, then [comesBackLine], as the web joins them. */
+/** The lesson screen's line: what stays free, then when the next lesson comes, as the web joins them. */
 @Composable
 fun stillReviewLine(limit: Limit.Reached): String =
-    listOfNotNull(stringResource(R.string.limit_still_review), comesBackLine(limit)).joinToString(" ")
+    listOfNotNull(stringResource(R.string.limit_still_review), lessonWords(limit).line).joinToString(" ")
 
-/** Calls have no title here: their screen already says what ran out. */
+/** Calls have no title here: their screen already says what ran out. Lessons read [lessonWords]. */
 @StringRes
 private fun reachedTitle(
     limit: Limit.Reached,
@@ -165,15 +184,6 @@ private fun reachedTitle(
             }
         }
 
-        LimitSubject.Lessons -> {
-            when {
-                guest -> R.string.limit_lessons_guest
-                limit.freeLessons || (limit.tier == LimitTier.Free && month) -> R.string.limit_lessons_free
-                month -> R.string.limit_lessons_month
-                else -> R.string.limit_lessons_day
-            }
-        }
-
         LimitSubject.MindMaps -> {
             if (guest) {
                 R.string.limit_mind_maps_guest
@@ -194,7 +204,7 @@ private fun reachedTitle(
             }
         }
 
-        LimitSubject.Calls -> {
+        LimitSubject.Lessons, LimitSubject.Calls -> {
             null
         }
     }
