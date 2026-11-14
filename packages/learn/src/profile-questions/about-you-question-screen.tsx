@@ -10,7 +10,13 @@ import { safeAsync } from "@zoonk/utils/error";
 import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
 import { EnterButton } from "../_components/enter-button";
-import { PageHeader, PageHeaderContent, PageSubtitle, PageTitle } from "../_components/page";
+import {
+  PageHeader,
+  PageHeaderContent,
+  PageSubtitle,
+  PageTitle,
+  SECTION_SUBPAGE_TITLE_CLASS,
+} from "../_components/page";
 import { CLEAR_OF_PINNED_ACTIONS_CLASS } from "../_components/pinned-actions";
 import { useChangeSaveFailed } from "../_components/save-error";
 import { canSendProfileDraft, toProfileAnswer, toProfileDraft } from "./profile-draft";
@@ -62,7 +68,7 @@ export function AboutYouQuestionScreen({
       >
         <PageHeader>
           <PageHeaderContent>
-            <PageTitle>{title}</PageTitle>
+            <PageTitle className={SECTION_SUBPAGE_TITLE_CLASS}>{title}</PageTitle>
             {description && <PageSubtitle>{description}</PageSubtitle>}
           </PageHeaderContent>
         </PageHeader>
