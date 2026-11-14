@@ -1,8 +1,8 @@
 import { expect, test } from "./fixtures";
 import { createStudyDay } from "./study-day";
 
-// Playwright's tracing (its HarTracer, as of 1.65) reads each page load's title through an
-// evaluate sent as a user gesture, which activates the page before the learner acts.
+// Playwright's tracing reads each page load's title through an evaluate sent as a user gesture,
+// which activates the page before the learner acts (microsoft/playwright#44119).
 test.use({ trace: "off" });
 
 test("a reload sends no start until the first action, then sends the URL's exact opening", async ({
