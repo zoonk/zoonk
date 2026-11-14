@@ -20,6 +20,7 @@ struct AccountDeletionView: View {
   @Environment(SettingsStore.self) private var settings
   @State private var code = ""
   @State private var hasSentCode = false
+  @FocusState private var isCodeFocused: Bool
   @State private var isAppStoreSubscriptionManagementPresented = false
   @State private var isConfirmingDeletion = false
   @State private var isPerformingDeletion = false
@@ -89,8 +90,10 @@ struct AccountDeletionView: View {
   @ViewBuilder
   private var content: some View {
     switch phase {
-    case .ready, .emailReauthentication:
+    case .ready:
       deletionForm
+    case .emailReauthentication:
+      emailReauthenticationForm
     case .deleted:
       deletedContent
     case .deletedWithManualAppleRevocation:
@@ -100,66 +103,7 @@ struct AccountDeletionView: View {
 
   private var deletionForm: some View {
     ZoonkList {
-      Section {
-        Label {
-          Text(
-            "Profile and account information",
-            tableName: "Account",
-            comment: "Account data removed during deletion")
-        } icon: {
-          Image(systemName: "person")
-        }
-
-        Label {
-          Text(
-            "Goals, plans and progress",
-            tableName: "Account",
-            comment: "Learning goals, study plans and progress removed during account deletion")
-        } icon: {
-          Image(systemName: "chart.line.uptrend.xyaxis")
-        }
-
-        Label {
-          Text(
-            "Memory and uploads",
-            tableName: "Account",
-            comment:
-              "What the app remembers about the learner and their uploaded files, removed during account deletion"
-          )
-        } icon: {
-          Image(systemName: "tray.full")
-        }
-      } header: {
-        SectionTitle(
-          Text(
-            "Permanently deleted",
-            tableName: "Account",
-            comment: "Heading above the data removed during account deletion"))
-      } footer: {
-        SectionFooter {
-          Text(
-            "Account deletion can't be undone.",
-            tableName: "Account",
-            comment: "Warns that account deletion is irreversible")
-        }
-      }
-
-      if let storeSubscriptionProvider {
-        Section {
-          subscriptionManagementControl(for: storeSubscriptionProvider)
-        } header: {
-          SectionTitle(
-            Text(
-              "Subscription",
-              tableName: "Account",
-              comment: "Heading for mobile-store billing guidance during account deletion"))
-        } footer: {
-          SectionFooter {
-            subscriptionDeletionMessage(for: storeSubscriptionProvider)
-          }
-        }
-      }
-
+      deletedData
       deletionActionSection
 
       if session.failure != nil {
@@ -170,11 +114,85 @@ struct AccountDeletionView: View {
     }
   }
 
+  private var emailReauthenticationForm: some View {
+    QuestionForm {
+      deletedData
+      emailReauthenticationSection
+    } buttons: {
+      AccountFailureMessage(failure: session.failure)
+      emailReauthenticationButtons
+    }
+    .onChange(of: hasSentCode) {
+      isCodeFocused = hasSentCode
+    }
+  }
+
+  @ViewBuilder
+  private var deletedData: some View {
+    Section {
+      Label {
+        Text(
+          "Profile and account information",
+          tableName: "Account",
+          comment: "Account data removed during deletion")
+      } icon: {
+        Image(systemName: "person")
+      }
+
+      Label {
+        Text(
+          "Goals, plans and progress",
+          tableName: "Account",
+          comment: "Learning goals, study plans and progress removed during account deletion")
+      } icon: {
+        Image(systemName: "chart.line.uptrend.xyaxis")
+      }
+
+      Label {
+        Text(
+          "Memory and uploads",
+          tableName: "Account",
+          comment:
+            "What the app remembers about the learner and their uploaded files, removed during account deletion"
+        )
+      } icon: {
+        Image(systemName: "tray.full")
+      }
+    } header: {
+      SectionTitle(
+        Text(
+          "Permanently deleted",
+          tableName: "Account",
+          comment: "Heading above the data removed during account deletion"))
+    } footer: {
+      SectionFooter {
+        Text(
+          "Account deletion can't be undone.",
+          tableName: "Account",
+          comment: "Warns that account deletion is irreversible")
+      }
+    }
+
+    if let storeSubscriptionProvider {
+      Section {
+        subscriptionManagementControl(for: storeSubscriptionProvider)
+      } header: {
+        SectionTitle(
+          Text(
+            "Subscription",
+            tableName: "Account",
+            comment: "Heading for mobile-store billing guidance during account deletion"))
+      } footer: {
+        SectionFooter {
+          subscriptionDeletionMessage(for: storeSubscriptionProvider)
+        }
+      }
+    }
+  }
+
   @ViewBuilder
   private var deletionActionSection: some View {
-    if phase == .emailReauthentication {
-      emailReauthenticationSection
-    } else if hasAppleAccount {
+    if hasAppleAccount {
       Section {
         HStack {
           Spacer()
@@ -249,6 +267,7 @@ struct AccountDeletionView: View {
         }
         .keyboardType(.numberPad)
         .textContentType(.oneTimeCode)
+        .focused($isCodeFocused)
         .accessibilityLabel(
           Text(
             "Verification code",
@@ -256,41 +275,6 @@ struct AccountDeletionView: View {
             comment: "Account deletion verification code field label")
         )
         .disabled(session.isWorking)
-
-        BusyButton(isBusy: isPerformingDeletion, role: .destructive, isRow: true) {
-          pendingDeletion = .email
-          isConfirmingDeletion = true
-        } label: {
-          Text(
-            "Verify and delete",
-            tableName: "Account",
-            comment: "Verifies the email code and permanently deletes the account")
-        }
-        .foregroundStyle(.destructiveText)
-        .disabled((normalizedCode.count != 6 || session.isWorking) && !isPerformingDeletion)
-
-        BusyButton(isBusy: session.isWorking && !isPerformingDeletion, isRow: true) {
-          Task {
-            await sendEmailCode()
-          }
-        } label: {
-          Text(
-            "Send a new code",
-            tableName: "Account",
-            comment: "Sends a replacement account deletion verification code")
-        }
-        .disabled(isPerformingDeletion)
-      } else {
-        BusyButton(isBusy: session.isWorking, isRow: true) {
-          Task {
-            await sendEmailCode()
-          }
-        } label: {
-          Text(
-            "Send verification code",
-            tableName: "Account",
-            comment: "Sends an email code for account deletion reauthorization")
-        }
       }
     } header: {
       SectionTitle(
@@ -306,6 +290,51 @@ struct AccountDeletionView: View {
           comment: "Explains the email reauthentication requirement for account deletion")
       }
     }
+  }
+
+  private var emailReauthenticationButtons: some View {
+    Group {
+      if hasSentCode {
+        BusyButton(isBusy: isPerformingDeletion, role: .destructive) {
+          pendingDeletion = .email
+          isConfirmingDeletion = true
+        } label: {
+          Text(
+            "Verify and delete",
+            tableName: "Account",
+            comment: "Verifies the email code and permanently deletes the account")
+        }
+        .buttonStyle(.mainAction)
+        .disabled((normalizedCode.count != 6 || session.isWorking) && !isPerformingDeletion)
+
+        BusyButton(isBusy: session.isWorking && !isPerformingDeletion) {
+          Task {
+            await sendEmailCode()
+          }
+        } label: {
+          Text(
+            "Send a new code",
+            tableName: "Account",
+            comment: "Sends a replacement account deletion verification code")
+        }
+        .buttonStyle(.ghost)
+        .disabled(isPerformingDeletion)
+      } else {
+        BusyButton(isBusy: session.isWorking, icon: .send) {
+          Task {
+            await sendEmailCode()
+          }
+        } label: {
+          Text(
+            "Send verification code",
+            tableName: "Account",
+            comment: "Sends an email code for account deletion reauthorization")
+        }
+        .buttonStyle(.mainAction)
+      }
+    }
+    .buttonSizing(.flexible)
+    .controlSize(.large)
   }
 
   private var deletedContent: some View {
