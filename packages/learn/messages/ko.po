@@ -2898,6 +2898,7 @@ msgid "Use my date"
 msgstr "내가 정한 날짜 사용하기"
 
 #: src/conversation/tutor-plan-change.tsx
+#: src/focus-test/focus-test-proposal.tsx
 #: src/mock/mock-result-plan.tsx
 #: src/plan/plan-offer-preview.tsx
 #: src/today/today-plan-change.tsx
@@ -4022,11 +4023,6 @@ msgstr "이 과목들에 시간을 더 쓸까요?"
 msgctxt "ZQfsV7"
 msgid "Your time can't cover everything before your exam."
 msgstr "시험 전까지 모든 내용을 공부할 시간이 부족해요."
-
-#: src/focus-test/focus-test-proposal.tsx
-msgctxt "YWfqky"
-msgid "Update my plan"
-msgstr "내 계획 바꾸기"
 
 #: src/focus-test/focus-test-result.tsx
 #: src/onboarding/steps/reveal-coverage.tsx

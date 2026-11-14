@@ -2898,6 +2898,7 @@ msgid "Use my date"
 msgstr "指定した日付を使う"
 
 #: src/conversation/tutor-plan-change.tsx
+#: src/focus-test/focus-test-proposal.tsx
 #: src/mock/mock-result-plan.tsx
 #: src/plan/plan-offer-preview.tsx
 #: src/today/today-plan-change.tsx
@@ -4022,11 +4023,6 @@ msgstr "これらの科目の学習時間を増やしますか？"
 msgctxt "ZQfsV7"
 msgid "Your time can't cover everything before your exam."
 msgstr "試験までにすべてを学ぶには、時間が足りません。"
-
-#: src/focus-test/focus-test-proposal.tsx
-msgctxt "YWfqky"
-msgid "Update my plan"
-msgstr "学習計画を更新する"
 
 #: src/focus-test/focus-test-result.tsx
 #: src/onboarding/steps/reveal-coverage.tsx

@@ -2898,6 +2898,7 @@ msgid "Use my date"
 msgstr "Ustaw moją datę"
 
 #: src/conversation/tutor-plan-change.tsx
+#: src/focus-test/focus-test-proposal.tsx
 #: src/mock/mock-result-plan.tsx
 #: src/plan/plan-offer-preview.tsx
 #: src/today/today-plan-change.tsx
@@ -4022,11 +4023,6 @@ msgstr "Przeznaczyć więcej czasu na te przedmioty?"
 msgctxt "ZQfsV7"
 msgid "Your time can't cover everything before your exam."
 msgstr "Nie wystarczy ci czasu na naukę całego materiału przed egzaminem."
-
-#: src/focus-test/focus-test-proposal.tsx
-msgctxt "YWfqky"
-msgid "Update my plan"
-msgstr "Zaktualizuj mój plan"
 
 #: src/focus-test/focus-test-result.tsx
 #: src/onboarding/steps/reveal-coverage.tsx
