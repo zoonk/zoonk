@@ -69,6 +69,24 @@ class SpeakingGateTest {
         rule.onNodeWithText("Start").assertDoesNotExist()
     }
 
+    /**
+     * The paper can't be read again after the refusal (offline): the refusal alone keeps the gate.
+     * Back from the subscription page with a purchase, the paper's access decides.
+     */
+    @Test
+    fun aRefusalShowsTheGateWhenThePaperCantBeReadAgain() {
+        paper.value = paper("open")
+        show(callStarter { CallStart.PlusRequired })
+
+        rule.onNodeWithText("Subscribe").assertExists()
+        rule.onNodeWithText("Start").assertDoesNotExist()
+
+        rule.onNodeWithText("Subscribe").performClick()
+
+        rule.onNodeWithText("Subscribe").assertDoesNotExist()
+        rule.onNodeWithText("Start").assertExists()
+    }
+
     private fun paper(access: String): SpeakingPaper =
         ApiJson.decodeFromString(
             """

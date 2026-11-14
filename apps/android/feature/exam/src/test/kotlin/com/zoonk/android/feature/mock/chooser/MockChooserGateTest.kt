@@ -81,7 +81,7 @@ class MockChooserGateTest {
         rule.onNodeWithText("Start").assertIsEnabled()
     }
 
-    /** The options said open, then the subscription lapsed: the server's refusal shows the gate once they read locked. */
+    /** The options said open, then the subscription lapsed: the server's refusal shows the gate, and it stays once they read locked. */
     @Test
     fun aStartTheServerRefusesShowsTheGate() {
         view.value = mockOptions("")
@@ -92,6 +92,26 @@ class MockChooserGateTest {
 
         rule.onNodeWithText("Subscribe").assertExists()
         rule.onNodeWithText("Start").assertDoesNotExist()
+    }
+
+    /**
+     * The options can't be read again after the refusal (offline): the refusal alone keeps the gate.
+     * Back from the subscription page with a purchase, the options' access decides.
+     */
+    @Test
+    fun aRefusalShowsTheGateWhenTheOptionsCantBeReadAgain() {
+        view.value = mockOptions("")
+        starts.starts = listOf { throw refusal("PLUS_REQUIRED") }
+        show()
+
+        rule.onNodeWithText("Subscribe").assertExists()
+        rule.onNodeWithText("Start").assertDoesNotExist()
+
+        rule.onNodeWithText("Subscribe").performClick()
+
+        rule.runOnIdle { assertEquals(AppRoute.Subscription, navigator.currentRoute) }
+        rule.onNodeWithText("Subscribe").assertDoesNotExist()
+        rule.onNodeWithText("Start").assertIsEnabled()
     }
 
     @Test
