@@ -2,7 +2,9 @@
 
 import { Link, getPathname } from "@/i18n/navigation";
 import { useAppLocale } from "@zoonk/learn/locale";
+import { ONBOARDING_ACTION_LINK_CLASS } from "@zoonk/learn/onboarding/frame";
 import { useGoalLimitText } from "@zoonk/learn/onboarding/goal-errors";
+import { SignUpMainAction, SubscribeMainAction } from "@zoonk/learn/subscribe-gate";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { PendingLink } from "@zoonk/ui/patterns/links/pending";
@@ -12,8 +14,7 @@ import { getCourseStartRemedy } from "./course-start-remedy";
 import { START_FAILURE_SLOT } from "./public-start";
 import { type CourseStartFailure } from "./use-course-start";
 
-/** In a bar's action row the main action comes last, so "Go to your Plan" comes before Subscribe. */
-export function CourseStartFailureAction({
+function FailureAction({
   className,
   failure,
   onRetry,
@@ -43,14 +44,14 @@ export function CourseStartFailureAction({
   if (remedy === "subscribe" || remedy === "upgrade") {
     return (
       <>
+        <Link className={className} href="/subscription" prefetch={false}>
+          {t("Subscribe")}
+        </Link>
         {remedy === "upgrade" && (
           <Link className={secondaryClassName} href="/plan" prefetch>
             {t("Go to your Plan")}
           </Link>
         )}
-        <Link className={className} href="/subscription" prefetch={false}>
-          {t("Subscribe")}
-        </Link>
       </>
     );
   }
@@ -79,7 +80,7 @@ export function CourseStartFailureNote({
   failure: CourseStartFailure | null;
   onRetry: () => void;
   secondaryActionClassName?: string;
-  /** False where the screen's bar shows `CourseStartFailureAction` in its main action's place. */
+  /** False where the screen's bar shows `CourseStartBlockedAction` in its main action's place. */
   withAction?: boolean;
 }) {
   const t = useExtracted();
@@ -102,7 +103,7 @@ export function CourseStartFailureNote({
       </p>
 
       {withAction && (
-        <CourseStartFailureAction
+        <FailureAction
           className={actionClassName ?? buttonVariants({ variant: "outline" })}
           failure={failure}
           onRetry={onRetry}
@@ -110,5 +111,25 @@ export function CourseStartFailureNote({
         />
       )}
     </div>
+  );
+}
+
+export function CourseStartBlockedAction({ failure }: { failure: CourseStartFailure }) {
+  const t = useExtracted();
+
+  if (getCourseStartRemedy(failure) === "signUp") {
+    return <SignUpMainAction />;
+  }
+
+  return (
+    <SubscribeMainAction
+      action={
+        getCourseStartRemedy(failure) === "upgrade" && (
+          <Link className={ONBOARDING_ACTION_LINK_CLASS.other} href="/plan" prefetch>
+            {t("Go to your Plan")}
+          </Link>
+        )
+      }
+    />
   );
 }

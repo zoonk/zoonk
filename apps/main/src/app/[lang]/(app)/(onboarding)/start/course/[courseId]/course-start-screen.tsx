@@ -2,7 +2,7 @@
 
 import { startCourseFormAction } from "@/app/[lang]/(app)/(onboarding)/start/course-start-actions";
 import {
-  CourseStartFailureAction,
+  CourseStartBlockedAction,
   CourseStartFailureNote,
 } from "@/components/public/course-start-failure";
 import { isStartBlocked } from "@/components/public/course-start-remedy";
@@ -11,7 +11,7 @@ import { CHAPTER_PARAM, MINUTES_PARAM } from "@/lib/public/public-hrefs";
 import { useLiveLimit } from "@zoonk/learn/help-limit";
 import {
   ONBOARDING_ACTION_LINK_CLASS,
-  OnboardingActions,
+  OnboardingBottomBar,
   OnboardingColumn,
   OnboardingDescription,
   OnboardingFrame,
@@ -25,6 +25,7 @@ import {
   LevelChoiceList,
   toLevelAnswer,
 } from "@zoonk/learn/onboarding/level-choices";
+import { TaskActions } from "@zoonk/learn/task-layout";
 import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
@@ -153,7 +154,7 @@ function CourseStartForm({
   return (
     <OnboardingColumn
       bar={
-        <OnboardingActions
+        <OnboardingBottomBar
           note={
             failure ? (
               <CourseStartFailureNote
@@ -170,27 +171,24 @@ function CourseStartForm({
           }
         >
           {blocked && failure ? (
-            <CourseStartFailureAction
-              className={ONBOARDING_ACTION_LINK_CLASS.main}
-              failure={failure}
-              onRetry={startHere}
-              secondaryClassName={ONBOARDING_ACTION_LINK_CLASS.other}
-            />
+            <CourseStartBlockedAction failure={failure} />
           ) : (
-            <OnboardingPrimaryButton
-              busy={pending}
-              disabled={isMounted && level === null}
-              form={formId}
-              onClick={(event) => {
-                event.preventDefault();
-                startHere();
-              }}
-              type="submit"
-            >
-              {t("Build my plan")}
-            </OnboardingPrimaryButton>
+            <TaskActions>
+              <OnboardingPrimaryButton
+                busy={pending}
+                disabled={isMounted && level === null}
+                form={formId}
+                onClick={(event) => {
+                  event.preventDefault();
+                  startHere();
+                }}
+                type="submit"
+              >
+                {t("Build my plan")}
+              </OnboardingPrimaryButton>
+            </TaskActions>
           )}
-        </OnboardingActions>
+        </OnboardingBottomBar>
       }
     >
       <StartHeading asksLevel={!blockedOnOpen} chapter={chapter} course={course} />
