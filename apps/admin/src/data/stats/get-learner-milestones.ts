@@ -3,6 +3,7 @@ import { cacheAdminData } from "@/data/_utils/admin-data-cache";
 import {
   completedLessonActivitySql,
   trackedAnalyticsUserSql,
+  trackedAnalyticsUserWhere,
 } from "@/data/stats/_utils/analytics-user-filter";
 import { type LearnerMilestoneKind } from "@/lib/learner-milestone-filters";
 import { type Sql, prisma, sql } from "@zoonk/db";
@@ -38,22 +39,25 @@ export type LearnerMilestoneUser = {
 
 export const getLearnerMilestoneSummary = cacheAdminData(
   async (completedLessonsThreshold: number, learningDaysThreshold: number) => {
-    const [completedLessonsUsers, learningDaysUsers] = await Promise.all([
-      countUsersByLearnerMilestone({
-        queryParts: getLearnerMilestoneQueryParts({
-          kind: "completedLessons",
-          threshold: completedLessonsThreshold,
+    const [completedLessonsUsers, learningDaysUsers, totalUsers, lessonsPerLearner] =
+      await Promise.all([
+        countUsersByLearnerMilestone({
+          queryParts: getLearnerMilestoneQueryParts({
+            kind: "completedLessons",
+            threshold: completedLessonsThreshold,
+          }),
         }),
-      }),
-      countUsersByLearnerMilestone({
-        queryParts: getLearnerMilestoneQueryParts({
-          kind: "learningDays",
-          threshold: learningDaysThreshold,
+        countUsersByLearnerMilestone({
+          queryParts: getLearnerMilestoneQueryParts({
+            kind: "learningDays",
+            threshold: learningDaysThreshold,
+          }),
         }),
-      }),
-    ]);
+        prisma.user.count({ where: trackedAnalyticsUserWhere }),
+        getLessonsPerLearner(),
+      ]);
 
-    return { completedLessonsUsers, learningDaysUsers };
+    return { completedLessonsUsers, learningDaysUsers, lessonsPerLearner, totalUsers };
   },
 );
 
@@ -94,6 +98,22 @@ function getLearnerMilestoneQueryParts({
     havingFilter: sql`${completedLessonsSql} >= ${threshold}`,
     primaryOrder: sql`learner_progress.completed_lessons DESC, learner_progress.learning_days DESC`,
   };
+}
+
+/** Lessons completed, all time, over the learners who completed at least one. */
+async function getLessonsPerLearner() {
+  const result = await prisma.$queryRaw<[{ learners: bigint; lessons: bigint | null }]>`
+    SELECT
+      SUM(daily_progress.lessons_completed) AS lessons,
+      COUNT(DISTINCT daily_progress.user_id) AS learners
+    FROM daily_progress
+    JOIN users ON users.id = daily_progress.user_id
+    WHERE ${trackedAnalyticsUserSql} AND daily_progress.lessons_completed > 0
+  `;
+
+  const learners = Number(result[0].learners);
+
+  return learners === 0 ? 0 : Number(result[0].lessons ?? 0n) / learners;
 }
 
 async function countUsersByLearnerMilestone({
