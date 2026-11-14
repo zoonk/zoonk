@@ -231,7 +231,6 @@ internal fun ColumnScope.StudyEverythingBody(
                 busy = pending,
                 onClick = ::choose,
                 modifier = Modifier.fillMaxWidth(),
-                leadingIcon = { ButtonIcon(R.drawable.ic_playlist_add) },
             ) { Text(stringResource(R.string.plan_study_everything)) }
             TextButton(onClick = onDone, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.plan_cancel)) }
             if (save != null && edits.sheetFailed(PlanPart.FullCourse, save)) SaveFailedText()

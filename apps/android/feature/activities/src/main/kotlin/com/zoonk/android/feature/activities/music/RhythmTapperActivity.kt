@@ -488,8 +488,7 @@ private fun SoundCheckPanel(
             is SoundCheck.Phase.Done -> {
                 when {
                     phase.delayMs == null -> stringResource(R.string.activities_music_sound_check_failed)
-                    phase.delayMs < ON_TIME_MS -> stringResource(R.string.activities_music_sound_check_on_time)
-                    else -> stringResource(R.string.activities_music_sound_check_late, phase.delayMs)
+                    else -> stringResource(R.string.activities_music_sound_check_done)
                 }
             }
         }
@@ -534,7 +533,6 @@ private fun SoundCheckPanel(
 }
 
 private const val INACTIVE_ALPHA = 0.6f
-private const val ON_TIME_MS = 20
 private val STEP_GAP = 2.dp
 private val BEAT_GAP = 6.dp
 private val RESULT_DOT = 8.dp

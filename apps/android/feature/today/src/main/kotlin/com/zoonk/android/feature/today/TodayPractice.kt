@@ -16,7 +16,6 @@ import com.zoonk.android.R
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.mock.MockStore
-import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
@@ -87,7 +86,6 @@ fun TodayPracticeRows(
                     PracticeRow(
                         kind = LearnKind.Lesson,
                         title = stringResource(R.string.navigation_completed_lessons),
-                        description = stringResource(R.string.today_completed_lessons_detail),
                     ) { navigate(AppRoute.CompletedLessons) }
                 }
             }
@@ -125,7 +123,6 @@ private fun MockRow(
         kind = LearnKind.Mock,
         title = stringResource(R.string.today_take_mock),
         description = stringResource(if (bySubject) R.string.today_take_mock_detail_by_subject else R.string.today_take_mock_detail),
-        trailing = { if (mocks.access == MockOptions.Access.PLUS_REQUIRED) PlusMark() },
     ) { navigate(AppRoute.MockChooser) }
 }
 
@@ -138,7 +135,6 @@ private fun SpeakingRow(
         kind = LearnKind.Conversation,
         title = stringResource(R.string.today_exam_speaking),
         description = stringResource(R.string.today_exam_speaking_detail, speaking.title),
-        trailing = { if (speaking.access == LanguageTodaySpeaking.Access.PLUS_REQUIRED) PlusMark() },
     ) { navigate(AppRoute.Speaking()) }
 }
 
@@ -190,7 +186,7 @@ private fun MistakesRow(
 private fun PracticeRow(
     kind: LearnKind,
     title: String,
-    description: String,
+    description: String? = null,
     trailing: (@Composable () -> Unit)? = null,
     onClick: () -> Unit,
 ) {
@@ -199,7 +195,7 @@ private fun PracticeRow(
         modifier = Modifier.bleed(LIST_ITEM_INSET),
         onClick = onClick,
         leading = { KindDot(kind) },
-        supporting = { Text(description) },
+        supporting = description?.let { { Text(it) } },
         meta = trailing,
     )
 }

@@ -16,7 +16,7 @@
     <string name="audio_checking_slow">Still checking. This is taking longer than usual.</string>
     <string name="audio_no_speech">We couldn\'t hear any words. Try again.</string>
     <string name="audio_check_failed">We couldn\'t check your answer this time. Try again.</string>
-    <string name="audio_say_it">Tap and say it out loud</string>
+    <string name="audio_say_it">Tap Record and say it out loud</string>
     <string name="audio_microphone_off_title">The microphone is off</string>
     <string name="audio_microphone_off_answer">Turn on the microphone for Zoonk in Settings to answer out loud.</string>
     <string name="audio_open_settings">Open Settings</string>

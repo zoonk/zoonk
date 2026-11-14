@@ -156,17 +156,15 @@
     <!-- The title of the one-time check of how late this device plays sound. -->
     <string name="activities_music_sound_check_title">Set up your sound</string>
     <plurals name="activities_music_sound_check_intro">
-        <item quantity="one">Headphones can play sound a little late. Tap along with %1$d click once, and rhythms on this device are timed fairly.</item>
-        <item quantity="other">Headphones can play sound a little late. Tap along with %1$d clicks once, and rhythms on this device are timed fairly.</item>
+        <item quantity="one">Tap along with %1$d click, so your taps are timed right.</item>
+        <item quantity="other">Tap along with %1$d clicks, so your taps are timed right.</item>
     </plurals>
     <string name="activities_music_sound_check_listen">Listen to the clicks…</string>
     <!-- Which click to tap with now, like "Tap with each click · 2 of 6". -->
     <string name="activities_music_sound_check_tap">Tap with each click · %1$d of %2$d</string>
     <string name="activities_music_sound_check_failed">We couldn\'t match enough taps to the clicks. Try again, tapping with each one.</string>
-    <string name="activities_music_sound_check_on_time">Sound on this device arrives on time.</string>
-    <!-- How late this device plays sound, like "about 120 ms late". -->
-    <string name="activities_music_sound_check_late">Sound on this device arrives about %1$d ms late. Rhythms here take that out.</string>
-    <string name="activities_music_sound_check_start">Start the sound check</string>
+    <string name="activities_music_sound_check_done">All set.</string>
+    <string name="activities_music_sound_check_start">Start</string>
     <string name="activities_music_skip_for_now">Skip for now</string>
     <string name="activities_music_continue">Continue</string>
 </resources>

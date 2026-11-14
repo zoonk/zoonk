@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,14 +26,15 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.data.AnalyticsEvent
+import com.zoonk.android.data.TrackShown
 import com.zoonk.android.feature.audio.MicrophoneOff
-import com.zoonk.android.feature.subscription.PlusNotice
+import com.zoonk.android.feature.subscription.GateWords
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
-import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.LanguageConversationIntro
 
 /** What the intro's Start does now. */
@@ -42,7 +42,7 @@ enum class CallIntroStart { Idle, Starting, Failed, PlusRequired }
 
 /**
  * Main's call intro: about how long and at what level, the situation, who answers, how the call
- * goes, and the goals to get across, with the call's main action (or See Plus for a locked call).
+ * goes, and the goals to get across, with the call's main action (or the gate for a locked call).
  * The microphone is asked for on that action; a refusal stays here, with nothing reserved.
  */
 @Composable
@@ -50,7 +50,7 @@ internal fun CallIntro(
     conversation: LanguageConversationIntro,
     start: CallIntroStart,
     launcher: CallLauncher?,
-    onSeePlus: () -> Unit,
+    onSubscribe: () -> Unit,
     onClose: () -> Unit,
     actions: (@Composable ColumnScope.() -> Unit)? = null,
 ) {
@@ -78,11 +78,15 @@ internal fun CallIntro(
                     }
 
                     start == CallIntroStart.PlusRequired || launcher == null -> {
-                        PlusNotice(onSeePlus = null, description = stringResource(R.string.conversation_challenge_plus), inset = true)
+                        TrackShown(AnalyticsEvent.SubscriptionGateShown)
+                        GateWords(
+                            stringResource(R.string.conversation_challenge_gate_title),
+                            stringResource(R.string.conversation_challenge_gate_line),
+                        )
                         Button(
-                            onClick = onSeePlus,
+                            onClick = onSubscribe,
                             modifier = Modifier.barAction(),
-                        ) { Text(stringResource(R.string.subscription_see_plus)) }
+                        ) { Text(stringResource(R.string.subscription_subscribe)) }
                     }
 
                     else -> {
@@ -116,51 +120,11 @@ internal fun CallIntro(
                 Modifier.callItem(),
             )
         }
-        if (rolePlay) {
-            item(key = "how") { HowTheCallWorks(character.name, time, Modifier.callItem()) }
-        } else {
-            item(
-                key = "ends",
-            ) { CallNote(stringResource(R.string.conversation_ends_after, time), R.drawable.ic_schedule, Modifier.callItem()) }
-        }
         if (!beside) {
             item(key = "goals") { Column(Modifier.callItem()) { goals() } }
         }
         item(key = "sound") {
-            CallNote(stringResource(R.string.conversation_sound_note), R.drawable.ic_mic, Modifier.callItem())
-        }
-    }
-}
-
-@Composable
-private fun HowTheCallWorks(
-    name: String,
-    time: String,
-    modifier: Modifier = Modifier,
-) {
-    val steps =
-        listOf(
-            stringResource(R.string.conversation_how_answers_first, name),
-            stringResource(R.string.conversation_how_your_turn),
-            stringResource(R.string.conversation_how_it_ends, time, name),
-        )
-    Surface(modifier, shape = MaterialTheme.shapes.large, color = MaterialTheme.colorScheme.surfaceContainerHigh) {
-        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(
-                stringResource(R.string.conversation_how_it_works),
-                Modifier.semantics { heading() },
-                style = MaterialTheme.typography.titleSmall,
-            )
-            steps.forEachIndexed { index, step ->
-                Row(Modifier.semantics(mergeDescendants = true) {}, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(
-                        "${index + 1}.",
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyMedium.withTabularFigures(),
-                    )
-                    Text(step, style = MaterialTheme.typography.bodyMedium)
-                }
-            }
+            CallNote(stringResource(R.string.conversation_sound_note), R.drawable.ic_volume_up, Modifier.callItem())
         }
     }
 }
@@ -214,5 +178,5 @@ internal fun StartCallButton(
     modifier: Modifier = Modifier,
     label: String = stringResource(R.string.conversation_start),
 ) {
-    Button(busy = starting, onClick = onClick, modifier = modifier, leadingIcon = { ButtonIcon(R.drawable.ic_call) }) { Text(label) }
+    Button(busy = starting, onClick = onClick, modifier = modifier) { Text(label) }
 }

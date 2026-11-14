@@ -7,14 +7,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.zoonk.android.R
+import com.zoonk.android.data.AnalyticsEvent
+import com.zoonk.android.data.TrackShown
 import com.zoonk.android.feature.livecall.LiveCallFailure
+import com.zoonk.android.feature.subscription.SubscribeGate
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitActions
 import com.zoonk.android.ui.components.LimitPeriod
-import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.LimitTier
-import com.zoonk.android.ui.components.limitMessage
+import com.zoonk.android.ui.components.comesBackLine
+import com.zoonk.android.ui.components.hasWayOn
+import com.zoonk.android.ui.components.needsAccount
 
 /** Why a call stopped before its result: a failure, or a save the server refused. */
 sealed interface CallProblemKind {
@@ -33,7 +37,7 @@ internal class CallProblemActions(
     val onRetry: () -> Unit,
     val onTakeover: () -> Unit,
     val onCreateAccount: () -> Unit,
-    val onSeePlus: () -> Unit,
+    val onSubscribe: () -> Unit,
 )
 
 /** Main's `CallProblem`: what happened, in the learner's words, with the one way on. */
@@ -47,8 +51,28 @@ internal fun CallProblem(
     when {
         failure == LiveCallFailure.Limit -> {
             val limit = kind.limit ?: Limit.Reached(LimitTier.Plus, LimitPeriod.Day)
-            ProblemWithBack(title, actions.onClose) {
-                CallLimitMessage(limit, actions.onCreateAccount, actions.onSeePlus)
+            val words: @Composable () -> Unit = { CallLimitMessage(limit, actions.onCreateAccount, actions.onSubscribe, inBar = true) }
+            when {
+                limit.needsAccount -> {
+                    Problem(title, actions.onClose, actions = {
+                        Button(onClick = actions.onCreateAccount, modifier = Modifier.barAction()) {
+                            Text(stringResource(R.string.limit_create_account))
+                        }
+                    }, content = words)
+                }
+
+                limit.hasWayOn -> {
+                    Problem(title, actions.onClose, actions = {
+                        TrackShown(AnalyticsEvent.SubscriptionGateShown)
+                        Button(onClick = actions.onSubscribe, modifier = Modifier.barAction()) {
+                            Text(stringResource(R.string.subscription_subscribe))
+                        }
+                    }, content = words)
+                }
+
+                else -> {
+                    ProblemWithBack(title, actions.onClose, words)
+                }
             }
         }
 
@@ -101,18 +125,28 @@ internal fun CallProblem(
 internal fun CallLimitMessage(
     limit: Limit.Reached,
     onCreateAccount: () -> Unit,
-    onSeePlus: () -> Unit,
+    onSubscribe: () -> Unit,
     modifier: Modifier = Modifier,
     title: String? = null,
+    inBar: Boolean = false,
 ) {
     CallOffMessage(title ?: callLimitTitle(limit), modifier) {
-        Text(
-            limitMessage(limit, LimitSubject.Calls),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyLarge,
-        )
-        LimitActions(limit, onCreateAccount, onSeePlus)
+        comesBackLine(limit)?.let {
+            Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
+        }
+        if (!inBar) LimitActions(limit, onCreateAccount, onSubscribe)
     }
+}
+
+/** A language plan's challenge call a free learner tried, in place under its result. */
+@Composable
+internal fun ChallengeCallGate(onSubscribe: () -> Unit) {
+    TrackShown(AnalyticsEvent.SubscriptionGateShown)
+    SubscribeGate(
+        stringResource(R.string.conversation_challenge_gate_title),
+        onSubscribe,
+        line = stringResource(R.string.conversation_challenge_gate_line),
+    )
 }
 
 @Composable

@@ -29,9 +29,9 @@
   "onboarding_ask": "70bc25ad5dd15a22397ecb08fb48065b9a42e2ab09d549112e126434d39992e3",
   "onboarding_attach_already_read": "6cf010b161b8ebe242f03f75b6609ee4325e1b6333f16b960bd631bed77ea77b",
   "onboarding_attach_failed": "1b36d782aec03cdc2c4048e31340e437d1f51b0bd771605d986724cad1475d87",
-  "onboarding_attach_limit_day": "ab1167daaba7b029258903596e4fc3cf4ecefe51a9e58c99e813497713c4dc28",
-  "onboarding_attach_limit_month": "98150f18e9f7dd95350783016fa693de4ddd4ab275d3314e1d2d93b76cf8ee13",
-  "onboarding_attach_limit_plus": "2cb82b2ee1545ffe3db0bee4c7d432ec726aefdf532bf9667ba5efce1a3092b4",
+  "onboarding_attach_limit_day": "a85ab160487db70a8b98ec629de06ec1c6e5c8e9d2e76864b491a3b6c14e1c15",
+  "onboarding_attach_limit_month": "4702b3974d0d99235347f1327ae365c3e01c9b31473e686b46ca23ae0907066f",
+  "onboarding_attach_limit_plus": "784aba5cab42549c455c7b08ef642da50fe624b7ab881966d7cf5c9ff1abf4ac",
   "onboarding_attach_sign_in": "4154f944ddee78b5b95203b2d56b66474ccd180b8da355fefbd69cc8406a810d",
   "onboarding_attach_slow_down": "563bcac23b0bbafce5f042580984571c9893aca873dd8ea19775140974e90ce1",
   "onboarding_attach_unsupported": "a728be94710b81d547b932e6ab041abbee55028eed33e00e590512ef0ac17199",
@@ -98,6 +98,8 @@
   "onboarding_full_course_rule": "4336be2ad785bf533ee9e7aea83ec6b0bb012c76423bbbf623aa4cf4e9e20e7c",
   "onboarding_full_course_until_exam": "3de208647f1da59804bcd4d4b0e6c00ffbb961b26474aed3d6bd3650d791387c",
   "onboarding_go_to_plan": "417d55ca2cb167a192dd9fa09065158309d4e6b97384d7f00e80dd7dc8b77dc8",
+  "onboarding_goals_at_once_line": "086d59b5e2fad550a38c4abe25ad4990035e9d1b06eb453b4342df430b73bf7e",
+  "onboarding_goals_at_once_title": "ce1edb0d309fd7a1d617a084f9c0bee98e08acd9393be746fef15a66ff9ce674",
   "onboarding_guest_gate_description": "99101ea5f2c85b6d70b7bb97fa7997eb47b44d452c0200d2f6355bb0e06934f3",
   "onboarding_guest_gate_title": "fd08648a5c6ca8a3431a60251c3b1a4ee5a175d423c609eaa38577f0fea0890c",
   "onboarding_how_it_works": "cae4421f298d7fbee9bf11e27786a92ef1b54bd254d76ebb326aa8a39ead514e",
@@ -154,12 +156,12 @@
   "onboarding_level_test_description": "df3fd3ea198c082f988d741e433d7e791c2371240ddce49bf9c264aeb526a688",
   "onboarding_level_title": "18f8afa27f7b1ed56da77f92b0d9612ec712807f34217858c39b53880b89cb45",
   "onboarding_library_course_fits": "0ac1b31ced991a297312e4b54b3845e935e5f4de760d9482707c09749cd5418d",
-  "onboarding_limit_active_goals": "e66915c7b19c0d9996cdd92b6638c13d6663139aa037cf86b1972351515d37a8",
-  "onboarding_limit_daily_explanations": "7dad31901e571429cf8f95b075a37d5d57319091f52063ad34bb7372de3bb5d6",
+  "onboarding_limit_active_goals": "72c475eef9a481d79625f0939571f2702ab6abc70c80fc81721899a501648d0b",
+  "onboarding_limit_daily_explanations": "b9102632e10d172b4971a0194aace854a20989b028a2fabcc0f8f177f231425c",
   "onboarding_limit_daily_goals": "c2f3a1cea14890b449df1d79b20e228f692d62ca280d7cdff82f93ca4f4ec652",
   "onboarding_limit_guest": "5fc865c6afd14ba968c1de0b8d1835c3b2347221ce3cdc42fafea91f06789749",
-  "onboarding_limit_monthly_explanations": "ddb33b219c6de18a63c48f1bbeb2d135c92ba917d16dc80a26effa933d63d9b7",
-  "onboarding_limit_monthly_goals": "6d69741c7e9fe04eb0c022e8b91bf5251bda41fc804126d9b5519c0e03e55e50",
+  "onboarding_limit_monthly_explanations": "6885844ddf7d1db67dd1dcfa46c51498a16b1a7116d68538305adb4a1df4b31a",
+  "onboarding_limit_monthly_goals": "926019f23c5a6956ecebf450694e5eed520878227df897e133c3725aebe197fe",
   "onboarding_limit_sign_up_required": "536e537ec53aeb02218c5fb948c96ea6db3fb5d9ea544aaf37db0b78ca13555e",
   "onboarding_limit_slow_down": "cba1214a3e0949628fe8191364915e699b9c622d9cb2c86c34f9dec0437661ac",
   "onboarding_link": "7af7a55c2708e902e1d6ad526b56bf0197fa38a01fe02c95af404cdff437ed75",
@@ -168,6 +170,8 @@
   "onboarding_material_goal_exam": "3ef455ff654e973b505ce6a01f35069019def15a6d04d280fbbb108e539c94c7",
   "onboarding_material_goal_understand": "7d51644357f858fd423a8cfcadb3c082edae0b006fe61477b9a20e4fa88626d7",
   "onboarding_material_sign_up": "424cef4594e325bf3a401f4de56c3fe72ebc06c4676c89cfec827e3fbeeb8823",
+  "onboarding_month_goals_line": "5eb09279e029e808e8cdff9ce599b15a118eaf5f39894983b3d1e0ff5eb8d41e",
+  "onboarding_month_goals_title": "f17da75ac7d31655141037adf8820c6ba87342675ab4219c7fced827c9ffea21",
   "onboarding_more": "c0e7ca3ca815c19f7715cbfee7f09e4818a8ecfa6baefb9070b9d148a1e38bcc",
   "onboarding_musicianship_card": "9c553b08e152e22563099866bd188f24b159efd530c6c59266deefa2368468f1",
   "onboarding_musicianship_subject": "d7f825f4a3a6415cf91d132ddc096d0885eba003012028dc6cc8c2e634e24ff6",
@@ -208,14 +212,10 @@
   "onboarding_placement_wrong": "bad919077ee246f3495ea7ea0322d5ef3d1cbd2b976d60491e26887ec383c899",
   "onboarding_placement_your_answer": "c3a4799cff17b93ab5974d186dde00ef9c37196ebc78a4c375ff7d3c8175eef1",
   "onboarding_plan_answers_saved": "14c88c1667d57ba39ebc17118e8d54bc73f445f54feaa3856202809a45bca133",
-  "onboarding_plan_look_over": "d47ff63424fdb7ba594c5d6fe13d4ab7f8823f74119b245d1ad050df91ed7be6",
   "onboarding_plan_not_started": "88de981632f14526d266f5565952f8c057db3897624a3688435ff9314d37a799",
-  "onboarding_plan_ready": "c318662e3a74674344b80a2b03a860458202cb044431357901e624dbdf5ffd1d",
   "onboarding_plan_ready_goal": "826e77fb14e2f70fd48df6c9b129cf31599ee1ca4f0dbfecd0a1b5db2feb0f83",
   "onboarding_plan_so_far": "47d56d3b06b5eb573bb143aff2c5421dbdc55831f055a9037e522193d8297260",
   "onboarding_plan_stopped": "0d4bf8ba8790edd2b5dbab6b8bf2ed297183524b7c1366fb798a23ec5498131a",
-  "onboarding_plus_more_goals": "0c5cd8b3de7f6f49dac3085af0dff6cf4a8855c9fabbfcc4bf469ffad873e4cf",
-  "onboarding_plus_more_goals_up_front": "dd294237c13285c038ce5e8491feae7fb0732f50d5eb2f5b900d6dd0c35491db",
   "onboarding_position_description": "a89f60e1c4847bcc789d4b07bc118b7ffca672106d529e575f6184013a7472bf",
   "onboarding_position_label": "a2ac4f32049092bd5cf914d43b6afa68f6e8fda9390c207c216d46d51ed7d44f",
   "onboarding_position_title": "d90efc5c11709a576d63601ba657eae865c7dd367101aaec52acec40d11af826",
@@ -235,9 +235,9 @@
   "onboarding_purpose_work": "b78b57bd3bcdf4c05d2df0e9b2e85516af7ee06d52e68c5e650e1a248dcc49d4",
   "onboarding_purpose_work_description": "c257328c47b3e126fee2cf4dd41a84452b76ad2fbe2cb318fe9a565d2bc2c1b4",
   "onboarding_question_failed": "250545d15513859569193944ad878c5f295e43ceea298f222cacca744536a399",
-  "onboarding_question_limit_day": "bca2d1f7036d77f0862567323f28fb0712de390688517d5373c1203386094991",
-  "onboarding_question_limit_month": "224199c7ed84491bdf4e092d2941b2534532fc98dbbdf078fcdfbcb6807a669e",
-  "onboarding_question_limit_plus": "4cd30059fa7e4acfb2a64340ea38a243c11ceb2f4719274a87a39f1181915788",
+  "onboarding_question_limit_day": "16b4a0b2ae4f22827d9122f38710f45d034fd85c6de5beb1286323d04c8bf766",
+  "onboarding_question_limit_month": "d27a38b976fafced6a27f7fdde1b06d020603176bf6e40476289438ce66d358a",
+  "onboarding_question_limit_plus": "0351828a93046effffdf8175589eeec4fe89511b4919ae9c52129554bd34d81d",
   "onboarding_question_placeholder": "744a3b5030a06c86fb9e2d5f1776c4e59a8751f5d3bddd9d9464a7b99cf98cc2",
   "onboarding_question_sign_in": "51117949825e361a5a7e7aec85b62059939991ab51acb2555b695577a4d8966b",
   "onboarding_question_slow_down": "73e29acca291668568c23e49bf026ebabb48c841c96e10f490f9225f61c74487",
@@ -245,8 +245,8 @@
   "onboarding_questions_reading": "2541262ce30c2ed6d3c8e93c44fadd73ea51ca32cf7e19712ad5cd6925c20ce9",
   "onboarding_questions_title": "5dd41f23c9121279ed9aa9296b3aa320c7e181bde6e81d43faff1df104a92b9d",
   "onboarding_read_again": "12ff59e951262ee8c8938c54d9b26ca6170703be33ed02ec7a4878e8dc4e67db",
-  "onboarding_read_limit_free_day": "6480a4d476710e7cc4a6d5ec01e9bd1df7c12782e4b4dae37380b1d46fbee908",
-  "onboarding_read_limit_free_month": "18bdb75c585dd3eb806e85c4a9c592e2f75bec537ff833015c0b678c95266bc9",
+  "onboarding_read_limit_free_day": "b18bfd5c48db4253f90591b3c577fa7c18d7c7a42899b8fee282eeb62eeecf52",
+  "onboarding_read_limit_free_month": "1f466c17cee36fe8e66e88b3e56f4b911567ff9b9544f9dd5c7c6a35ecbc7e88",
   "onboarding_read_limit_guest": "64dc2246299762d474626f17293e0e5a0a317fc073b1dd815ec4bde6d81e36f9",
   "onboarding_read_limit_plus": "0465838f4ad8845d65a5857fbe44a510a6c6aafb7ebd91797bfcb51f07ce4fdb",
   "onboarding_reason_certificate": "9a4934e169220c3e6859d6fc95bad5d4ba0cc8639a9ab2c41a535f8ee8e6de2b",
@@ -292,8 +292,6 @@
   "onboarding_reveal_estimated_notice_areas": "722893e75ee51d1eafe1dc65a01ec917ccbc85ca2e9a3fb8df09475ee85b2ad9",
   "onboarding_reveal_estimated_percent": "30c0fb3c747a169f48f90035a97e5b9f694ec1d03ecb59168d2f05ceac8e05f3",
   "onboarding_reveal_first_week": "2098c7417c943912e41dd10fd20c7d5bba444adac337987da95ee5b11af2030f",
-  "onboarding_reveal_free_week_over_body": "ad73f47754396a1c50929fcb2cfd646952f2fdf06d19bd8d53a3ecf4dd386214",
-  "onboarding_reveal_free_week_over_title": "a29c01ed4ce5c848738a176e465b240916782ed34e92a3fb0178e92e57b9860a",
   "onboarding_reveal_full_course": "5efc1a5345e213b870c7c8e9e9ebcb52ce0bf0e808864b57e48ae39f43f24f08",
   "onboarding_reveal_full_course_finish": "43251d1e69e4bc50e116d825d83d43ca46a4b2b43d6a34e9dcfd7d97b2a0f19c",
   "onboarding_reveal_full_course_finish_month": "bbe615051f3f4ed81a8468ad60b6460a543e5809db7312a3f65c82d635a683cf",
@@ -315,7 +313,6 @@
   "onboarding_reveal_notice_subjects": "10f2bce87213289014dca217d456e7b4790023a60b9070b56bd5b36acffb6424",
   "onboarding_reveal_pace_covers": "24f8e014bc65bc2cada7d0656bb79fc9342795e14cc52be129f38bbf100c31aa",
   "onboarding_reveal_pace_time": "291073076db1257c30528b8695f6eb9e57e487cd5b146acccb5d468b17aa91e2",
-  "onboarding_reveal_phase_day": "13fe8082e713f150f391f56d8bb4d570183ab8ba18267634592e06d94480d1cd",
   "onboarding_reveal_phase_final_stretch": "57cfd584eb0c0cdf6a05d43d523dcfed10a347cd667499192d3e4ca12572d0d2",
   "onboarding_reveal_phase_foundations": "69cec947866ee08798d3535a8d41f983a7fc7978d30293cf2c0aaf93bb22b373",
   "onboarding_reveal_phase_full_review": "df31d036a33db890344a71402f7a51a4901970a97f78148c48cb43644e08746c",
@@ -410,7 +407,6 @@
   "onboarding_score_placeholder": "a5d366dacbd42353e2c81e35fc6094974afbb93df232cb81cf4e15bdbeee08b8",
   "onboarding_score_title": "dc93538f21bc6779164b006c70ccdd6a55bf42932acefca66ea3a8979aa3aa00",
   "onboarding_see_plan": "d290a6dd2a08b676d62245f7375d023170f1ff7ef9d8045f6e965b4bc0dc2894",
-  "onboarding_see_plus": "44693717094a4f4b82f4ede11d34d41db0553b9b48ffeca8249ed7c4346b5cbd",
   "onboarding_skip": "f4bb9715c1139287c32c08cb89c03645356770a38e96707e40f44b49354eaa9d",
   "onboarding_source": "be0bb6fdb16c48a51b682135a0bc67570d5141dd763cad85862aeedcecbf40cd",
   "onboarding_start_description": "d94dbf4129ca438c8311d5eae51c204b17331e4228b776470cc228ede4eff7e3",
@@ -440,17 +436,16 @@
   "onboarding_understanding_title": "82d2ec7ee65659994f0df07c4596ec58939145a8f559e008df5f6f3cf1b1188a",
   "onboarding_understood_description": "c95ed50831f3f2f786221223932d5ec46773d70b6cf6eb300cb2ee29fa273501",
   "onboarding_understood_description_shared": "8add3c711bf1633097f5869d819be71bf2d3e5002166f63d3d7f268cccee2706",
-  "onboarding_understood_free_account_title": "8b1dcbe157245128191b59ca63ec8fc023bcb2c4222263add92514742af833b4",
-  "onboarding_understood_locked_goal": "9ae441754b582fd731363b0a05f12b2f5866da179c151930de6bf9d861112093",
-  "onboarding_understood_locked_goal_guest": "f50a2e7e3c82cbb504ade548c57dd069173446380f2ab98772864d689208b38e",
-  "onboarding_understood_locked_goals": "501236edabc6bffbe0f2461c5da20c8e4851e00fc46f1519851c0932e167e864",
-  "onboarding_understood_locked_goals_guest": "d9349f31ab8389cea9ca9f9753d754400485d5990f356e240ab7ee4bd4b2111c",
+  "onboarding_understood_free_account_title": "039109c33c249acbdd671dbcd240be39c340251d771c1c446e16ed7ba3ed5f1f",
+  "onboarding_understood_locked_line_more": "495fa861014e528e16768866a58ca982d01cc9dc7407823bc57ef623ad37be7a",
+  "onboarding_understood_locked_line_one": "f3637ad5d0c4cce5332cc9fee8cf6964249ffe37be5291b732c7d00f299adff1",
+  "onboarding_understood_locked_title": "c842f40dbc74ca1559cccc885c4222fb4e209462ec9c9ffe390481d78e9c091d",
   "onboarding_understood_title": "07b1c7fb082b21601ab13365ca26e1bfb57a21edb914f48a9dcbd54231ee1de0",
   "onboarding_upload_file": "ec871e3e59cc4c60d2d753d707a804d2ff9a29de750db90e6e20b0c21f3ddc7c",
   "onboarding_use_this_date": "7d10133f3b9330e094e66f7a2e383305527debe0836854a589a4d5b62e7fa7b3",
-  "onboarding_variety_description": "15998f4ad1125744517c663a2cf27c0bd1c89012c37ace6bfe5b33357d48e495",
+  "onboarding_variety_description": "93df52cccd2e5940a93db8db3d62ad87b621b5e69473c63b7c11ddf31e587ead",
   "onboarding_variety_none": "460bcd8ac80c27821d4e72f3890e144f226dfe8eb2b030a545f37bc4a5e93af5",
-  "onboarding_variety_note": "ad1b3ca57cfef3e2ad186dafc4b61c04e0794974ee391b97215b99b094b346c0",
+  "onboarding_variety_note": "f30a52bf2fe7221f5c371552bb15b38a61750373a1f265249e7f904b4ec7ea76",
   "onboarding_variety_title": "79742f4c2daa7761299a32044058dccab6e6e69d287374003e10998530820b0c",
   "onboarding_waitlist_joined": "8c3392d0df1700950159472fdce1784e0ae783c030958d1a06e80110a9c89bec",
   "onboarding_waitlist_sign_in": "6dcacf3124ae10d2ef121b7514e24e827f0390ad8b88a17a6dc75ccf87562de9",
@@ -489,20 +484,19 @@
     <string name="onboarding_my_notes">自分のメモ</string>
     <!-- Stands for pasted text without a title. -->
     <string name="onboarding_your_text">入力した文章</string>
-    <string name="onboarding_limit_daily_explanations">今日の新しい質問の数が、無料プランの上限に達しました。明日もう一度試すか、Plusに登録して今すぐ続けてください。</string>
+    <string name="onboarding_limit_daily_explanations">今日はこれ以上クイック解説を利用できません。明日また利用できます。サブスクリプションに登録すると、このまま続けられます。</string>
     <string name="onboarding_limit_daily_goals">今日始めた新しい目標の数が、ご利用のプランの上限に達しました。明日もう一度試してください。</string>
     <string name="onboarding_limit_guest">アカウントなしで取り組める目標は1つです。続けるには、無料アカウントを作成してください。</string>
-    <!-- Shown when the app's automated security check won't let this device continue without an account; a button to create one follows. -->
-    <string name="onboarding_limit_monthly_explanations">今月の新しい質問の数が、無料プランの上限に達しました。来月もう一度試すか、Plusに登録して今すぐ続けてください。</string>
-    <string name="onboarding_limit_monthly_goals">今月始めた新しい目標の数が、無料プランの上限に達しました。来月もう一度試すか、Plusに登録して今すぐ続けてください。</string>
-    <!-- When a free learner starts a goal while following as many goals as the free plan allows. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. Plus is the name of Zoonk's paid plan, not the word "more". -->
-    <string name="onboarding_limit_active_goals">無料プランで同時に進められる目標の上限に達しています。新しい目標を始めるには、学習計画のメニューからいずれかの目標を一時停止するか、Plusに登録してください。</string>
+    <string name="onboarding_limit_monthly_explanations">今月はこれ以上クイック解説を利用できません。来月また利用できます。サブスクリプションに登録すると、このまま続けられます。</string>
+    <string name="onboarding_limit_monthly_goals">今月はこれ以上新しい目標を始められません。来月また始められます。サブスクリプションに登録すると、このまま続けられます。</string>
+    <!-- When a learner starts a goal while studying as many goals at once as they can. Pausing a goal keeps its progress. -->
+    <string name="onboarding_limit_active_goals">同時に学習できる目標の上限に達しました。ほかの目標を一時停止するか、サブスクリプションに登録すると、この目標も学習できます。</string>
     <string name="onboarding_limit_sign_up_required">続けるには、無料アカウントを作成してください。</string>
     <string name="onboarding_limit_slow_down">短時間にいくつも目標を始めています。数分後にもう一度試してください。</string>
     <string name="onboarding_read_limit_guest">アカウントなしで送信できる新しい目標は1日に数件です。続けるには、無料アカウントを作成してください。</string>
     <string name="onboarding_read_limit_plus">今日送信した新しい目標の数が、ご利用のプランの上限に達しました。明日もう一度試してください。</string>
-    <string name="onboarding_read_limit_free_month">今月送信した新しい目標の数が、無料プランの上限に達しました。来月もう一度試すか、Plusに登録して今すぐ続けてください。</string>
-    <string name="onboarding_read_limit_free_day">今日送信した新しい目標の数が、無料プランの上限に達しました。明日もう一度試すか、Plusに登録して今すぐ続けてください。</string>
+    <string name="onboarding_read_limit_free_month">今月はこれ以上新しい目標を始められません。来月また始められます。サブスクリプションに登録すると、このまま続けられます。</string>
+    <string name="onboarding_read_limit_free_day">今日はこれ以上新しい目標を始められません。明日また始められます。サブスクリプションに登録すると、このまま続けられます。</string>
     <string name="onboarding_error_one_moment">少しお待ちください。数秒後にもう一度試してください。</string>
     <string name="onboarding_error_could_not_read">目標の内容を読み取れませんでした。少し待ってからもう一度試してください。</string>
     <string name="onboarding_error_could_not_save">目標を保存できませんでした。少し待ってからもう一度お試しください。</string>
@@ -511,12 +505,12 @@
     <plurals name="onboarding_day_too_short">
         <item quantity="other">1日%1$s以上を選んでください。%2$d件の目標を進めるのに必要です。</item>
     </plurals>
-    <!-- Plus notice before typing, for a free learner who already follows a goal. -->
-    <string name="onboarding_plus_more_goals">Plusなら複数の目標に同時に取り組めます</string>
-    <!-- Under that title, before typing. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Pausing a goal keeps its progress. "Quick questions" are short explanations, which the limit doesn't count. -->
-    <string name="onboarding_plus_more_goals_up_front">無料プランで同時に進められる目標の上限に達しています。新しい目標を始めるには、学習計画のメニューからいずれかの目標を一時停止してください。ちょっとした質問はいつでもできます。</string>
     <string name="onboarding_go_to_plan">学習計画を見る</string>
-    <string name="onboarding_see_plus">Plusを見る</string>
+    <!-- The new-goal page for a learner already studying as many goals at once as they can. -->
+    <string name="onboarding_goals_at_once_title">同時に学習できる目標の上限に達しました</string>
+    <string name="onboarding_goals_at_once_line">学習計画でほかの目標を一時停止すると始められます。サブスクリプションに登録すると、同時に学習できる目標が増えます。</string>
+    <string name="onboarding_month_goals_title">今月はこれ以上新しい目標を始められません</string>
+    <string name="onboarding_month_goals_line">来月また始められます。サブスクリプションに登録すると、今すぐ続けられます。</string>
     <string name="onboarding_create_account">無料アカウントを作成する</string>
     <string name="onboarding_create_account_short">アカウントを作成する</string>
     <string name="onboarding_guest_gate_title">無料アカウントを作成して、別の目標を始める</string>
@@ -529,16 +523,13 @@
     <string name="onboarding_understood_description">内容はすべて後から変更できます。</string>
     <!-- When the learner's words became more than one goal. -->
     <string name="onboarding_understood_description_shared">1日の学習時間をこれらの目標に振り分けます。あとですべて変更できます。</string>
-    <!-- Under the goals the learner typed past the ones the free plan can still follow while another goal on the card starts; "this goal" is the one shown just above. This is about how many goals they follow at the same time, not how many new goals they start per day or month. Plus is the name of Zoonk's paid plan, not the word "more". -->
-    <string name="onboarding_understood_locked_goal">Plusに登録すると、より多くの目標を同時に進められます。それまでは、目標一覧に残ります。</string>
-    <!-- The same, for two or more goals shown just above. -->
-    <string name="onboarding_understood_locked_goals">Plusに登録すると、より多くの目標を同時に進められます。それまでは、目標一覧に残ります。</string>
-    <!-- Title of the note under the goals of a card a guest can't start yet, because without an account they follow one goal at a time. A free account is a signed-up account on the free plan, not the paid plan. -->
-    <string name="onboarding_understood_free_account_title">無料アカウントで利用できます</string>
-    <!-- Under the goal a guest typed past the one they can start, because without an account they follow one goal at a time; a free account (signed up, on the free plan, not the paid plan) follows more. "this goal" is the one shown just above. This is about how many goals they follow at the same time, not how many new goals they start per day or month. The goal comes with them when they create the account. -->
-    <string name="onboarding_understood_locked_goal_guest">無料アカウントを作成すると、より多くの目標を同時に進められます。それまでは、目標一覧に残ります。</string>
-    <!-- The same, for two or more goals shown just above. -->
-    <string name="onboarding_understood_locked_goals_guest">無料アカウントを作成すると、より多くの目標を同時に進められます。それまでは、目標一覧に残ります。</string>
+    <!-- Under the goals a guest typed past the one they can start: a free account studies more goals at once. -->
+    <string name="onboarding_understood_free_account_title">無料アカウントを作ると、同時に学習できる目標が増えます</string>
+    <!-- Under the goals typed past the ones the learner can study at once. -->
+    <string name="onboarding_understood_locked_title">同時に学習する目標を増やすにはサブスクリプションへの登録が必要です</string>
+    <string name="onboarding_understood_locked_line_one">この目標を始めるには、ほかの目標を一時停止してください。</string>
+    <!-- More than one goal is locked. -->
+    <string name="onboarding_understood_locked_line_more">これらの目標を始めるには、ほかの目標を一時停止してください。</string>
     <string name="onboarding_looks_right">この内容で進める</string>
     <string name="onboarding_fix_something">内容を修正する</string>
     <!-- Label of the box holding the words the learner wrote, while they rewrite them. -->
@@ -636,9 +627,9 @@
     <string name="onboarding_adding_material">資料を追加しています…</string>
     <!-- Removes an attached file or text. %1$s is its title. -->
     <string name="onboarding_remove_material">%1$sを外す</string>
-    <string name="onboarding_attach_limit_plus">ご利用のプランで今日追加できる資料の上限に達しました。明日またお試しください。</string>
-    <string name="onboarding_attach_limit_month">無料プランで今月追加できる資料の上限に達しました。来月またお試しください。Plusに登録すると、今すぐ追加を続けられます。</string>
-    <string name="onboarding_attach_limit_day">無料プランで今日追加できる資料の上限に達しました。明日またお試しください。Plusに登録すると、今すぐ追加を続けられます。</string>
+    <string name="onboarding_attach_limit_plus">今日はこれ以上資料を追加できません。明日また追加できます。</string>
+    <string name="onboarding_attach_limit_month">今月はこれ以上資料を追加できません。来月また追加できます。サブスクリプションに登録すると、このまま続けられます。</string>
+    <string name="onboarding_attach_limit_day">今日はこれ以上資料を追加できません。明日また追加できます。サブスクリプションに登録すると、このまま続けられます。</string>
     <string name="onboarding_attach_slow_down">短時間に資料が続けて追加されています。数分後にもう一度お試しください。</string>
     <string name="onboarding_attach_unsupported">このファイルを読み取れません。PDF、写真、Word、PowerPoint、テキストのいずれかをお試しください。</string>
     <string name="onboarding_attach_sign_in">アカウントを作成すると、自分の資料を追加できます。</string>
@@ -662,9 +653,9 @@
     <string name="onboarding_question_failed">回答できませんでした。少し待ってからもう一度お試しください。</string>
     <string name="onboarding_question_sign_in">資料について質問するには、アカウントを作成してください。</string>
     <string name="onboarding_question_slow_down">短時間に質問が続いています。数分後にもう一度お試しください。</string>
-    <string name="onboarding_question_limit_plus">今日の質問回数がプランの上限に達しました。</string>
-    <string name="onboarding_question_limit_month">今月の質問回数が無料プランの上限に達しました。来月また質問できます。Plusに登録すると、今すぐ続けられます。</string>
-    <string name="onboarding_question_limit_day">今日の質問回数が無料プランの上限に達しました。明日また質問できます。Plusに登録すると、今すぐ続けられます。</string>
+    <string name="onboarding_question_limit_plus">今日はこれ以上質問できません。明日また質問できます。</string>
+    <string name="onboarding_question_limit_month">今月はこれ以上質問できません。来月また質問できます。サブスクリプションに登録すると、このまま続けられます。</string>
+    <string name="onboarding_question_limit_day">今日はこれ以上質問できません。明日また質問できます。サブスクリプションに登録すると、このまま続けられます。</string>
     <!-- Placement: a few questions that find where the plan starts. -->
     <string name="onboarding_placement_title">知っていることを確かめましょう</string>
     <!-- %d is how many areas of the goal the questions cover. -->
@@ -791,8 +782,6 @@
     <string name="onboarding_reveal_phase_light_review">軽めの復習</string>
     <!-- Beside the phase the learner is in, in place of its start date. -->
     <string name="onboarding_reveal_today">今日</string>
-    <!-- %1$d is the day the learner is on in the current phase, %2$d how many days it has. -->
-    <string name="onboarding_reveal_phase_day">%1$d日目（全%2$d日）</string>
     <!-- %1$d is the current phase's place, %2$d how many phases the plan has. -->
     <string name="onboarding_reveal_phase_position">%1$d / %2$d</string>
     <string name="onboarding_reveal_phase_place">フェーズ%1$d（全%2$dフェーズ）</string>
@@ -802,9 +791,6 @@
     <string name="onboarding_reveal_notice_day_guide">試験の公式日程では%1$sとなっています。</string>
     <!-- %1$s is a month and year, such as "March 2027". -->
     <string name="onboarding_reveal_no_sitting">%1$sには試験の予定がありません</string>
-    <string name="onboarding_reveal_free_week_over_title">試験対策の無料期間（1週間）が終了しました</string>
-    <!-- "Reviews" are reviews of lessons already done, a free feature separate from fixing mistakes. -->
-    <string name="onboarding_reveal_free_week_over_body">復習や間違えたところの学び直しは、引き続き無料です。Plusでは新しいレッスン、学習計画の続き、模試を利用できます。</string>
     <!-- What the learner's time a day covers. %1$s is a duration, such as "30 min". -->
     <string name="onboarding_reveal_covers_nothing">1日%1$sでは、目標の内容を学ぶ時間が足りません。</string>
     <string name="onboarding_reveal_covers_exam_deeper">1日%1$sの学習で、試験のすべてのトピックを学び、よく出るトピックはより深く学びます。</string>
@@ -1018,9 +1004,7 @@
     <string name="onboarding_reveal_reading_line_dates">試験の日程と形式を確認しています…</string>
     <string name="onboarding_reveal_reading_line_fit">学習計画に組み込んでいます…</string>
     <string name="onboarding_see_plan">学習計画を見る</string>
-    <string name="onboarding_plan_ready">学習計画の準備完了</string>
     <string name="onboarding_plan_ready_goal">「%1$s」の学習計画ができました。</string>
-    <string name="onboarding_plan_look_over">始める前に目を通してください。</string>
     <string name="onboarding_reveal_start_here">ここからスタート</string>
     <string name="onboarding_reveal_up_next">次のレッスン</string>
     <string name="onboarding_reveal_first_week">最初の週</string>
@@ -1082,11 +1066,11 @@
     <!-- The title of the sheet choosing the country whose way of speaking a language goal follows; its choices are countries and "No preference". -->
     <string name="onboarding_variety_title">国</string>
     <!-- Under the title of the sheet choosing the country whose way of speaking a language goal follows; %1$s is the language as lessons teach it, such as "Spanish (Mexico)", lowercase mid-sentence where the language needs it. -->
-    <string name="onboarding_variety_description">相棒とのやり取りや会話練習では、選んだ国の言葉を使います。レッスンとその音声では%1$sを使います。</string>
+    <string name="onboarding_variety_description">会話練習や質問への回答は、選んだ国の言葉に合わせます。レッスンとその音声には%1$sを使います。</string>
     <!-- The first choice in that sheet: no country, so the buddy and calls use the language as lessons teach it. -->
     <string name="onboarding_variety_none">指定なし</string>
     <!-- %1$s is the language as the chosen country speaks it, such as "Spanish (Argentina)"; %2$s as the lessons teach it, such as "Spanish (Mexico)". -->
-    <string name="onboarding_variety_note">相棒とのやり取りや会話練習では%1$sを使います。レッスンとその音声では%2$sを使います。</string>
+    <string name="onboarding_variety_note">会話練習や質問への回答には%1$sを使います。レッスンとその音声には%2$sを使います。</string>
     <!-- The title of the setup question asking which country a course should be about, for a subject that changes by country such as law or taxes. -->
     <string name="onboarding_country_title">どの国に合わせたレッスンにしますか？</string>
     <!-- Under that question's title. -->

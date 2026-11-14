@@ -56,12 +56,11 @@
   "activities_music_same_notes_guitar": "c4d9a02140b3577a78947f413f63b7aa0e7bdccde054db9764b30fc8ae8ec8ef",
   "activities_music_show_as": "38428f4e2ebb39066a29cba0f50a0caf400cc64f1465a40c37e0efe37b1bdc66",
   "activities_music_skip_for_now": "161df6f527e3f33e83f72d471602c88bb730ac178141e514931aef19935c30e9",
+  "activities_music_sound_check_done": "6c6a01ae930ab27ded8cf76720712622fc5545c1e2fa47741cb204bf7a0ebb7d",
   "activities_music_sound_check_failed": "cd5ba8340d862f67b2f52dc04efa95cc7e144fe01bcfe2f03f14f275f6f3bd6d",
-  "activities_music_sound_check_intro": "da34f2a5a59a608f91ffdaa81f6fa9b3444b3dd92345dc4041c68a707c4efff8",
-  "activities_music_sound_check_late": "3095197873f1e2b16ac76ba6428d026e747a24c23e6b48b9c40ac0a76a4238d5",
+  "activities_music_sound_check_intro": "0562623943328be396d340796696828e9f54f5a46350e5e3cecee4eca721b5aa",
   "activities_music_sound_check_listen": "b5500949df7c74425c92e375cfec78e848d01fd13850919285d48331553d83bb",
-  "activities_music_sound_check_on_time": "bfa954e8966c23d9d1dfd08d60ef1d2a50c57248e609d9a52a2206d50676537a",
-  "activities_music_sound_check_start": "26774d8892a4ef0a074355b3c8924b5eb72226ea7a6f589250344b19dc1b56ae",
+  "activities_music_sound_check_start": "631b35aa1ec901d9f59221418b9c8630f6ddc54916ec56fcf648114ded62724d",
   "activities_music_sound_check_tap": "17149a4400ac6a357691d5583fa33905eebe2a2e30a923f4f9b68f7f533385ec",
   "activities_music_sound_check_title": "042801cf7fb4f80f186864f0c0b6eb76cfb6b248c418c18663464bed5d72e1aa",
   "activities_music_sound_notes": "a02b80a7952bda0bf3969fe305d94cbf14daf3ea76fc3537896c817bce9fec23",
@@ -241,18 +240,16 @@
     <!-- The title of the one-time check of how late this device plays sound. -->
     <string name="activities_music_sound_check_title">Configura l’audio</string>
     <plurals name="activities_music_sound_check_intro">
-        <item quantity="one">Le cuffie possono riprodurre il suono con un leggero ritardo. Segui %1$d clic toccando a tempo: basta farlo una volta per valutare correttamente i ritmi su questo dispositivo.</item>
-        <item quantity="many">Le cuffie possono riprodurre il suono con un leggero ritardo. Segui %1$d clic toccando a tempo: basta farlo una volta per valutare correttamente i ritmi su questo dispositivo.</item>
-        <item quantity="other">Le cuffie possono riprodurre il suono con un leggero ritardo. Segui %1$d clic toccando a tempo: basta farlo una volta per valutare correttamente i ritmi su questo dispositivo.</item>
+        <item quantity="one">Tocca a tempo con %1$d clic per sincronizzare i tuoi colpi.</item>
+        <item quantity="many">Tocca a tempo con %1$d clic per sincronizzare i tuoi colpi.</item>
+        <item quantity="other">Tocca a tempo con %1$d clic per sincronizzare i tuoi colpi.</item>
     </plurals>
     <string name="activities_music_sound_check_listen">Ascolta i clic…</string>
     <!-- Which click to tap with now, like "Tap with each click · 2 of 6". -->
     <string name="activities_music_sound_check_tap">Tocca a ogni clic · %1$d di %2$d</string>
     <string name="activities_music_sound_check_failed">Non siamo riusciti ad abbinare abbastanza colpi ai clic. Riprova, toccando a ogni clic.</string>
-    <string name="activities_music_sound_check_on_time">Su questo dispositivo l’audio arriva senza ritardo.</string>
-    <!-- How late this device plays sound, like "about 120 ms late". -->
-    <string name="activities_music_sound_check_late">Su questo dispositivo il suono arriva con circa %1$d ms di ritardo. Nelle attività di ritmo lo compensiamo.</string>
-    <string name="activities_music_sound_check_start">Avvia il controllo audio</string>
+    <string name="activities_music_sound_check_done">Tutto pronto.</string>
+    <string name="activities_music_sound_check_start">Inizia</string>
     <string name="activities_music_skip_for_now">Salta per ora</string>
     <string name="activities_music_continue">Continua</string>
 </resources>

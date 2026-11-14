@@ -69,7 +69,6 @@ internal fun MockSpeaking(
                             enabled = !run.pending,
                             onClick = viewModel::startSpeaking,
                             modifier = main,
-                            leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
                         )
                     } else {
                         MockMainButton(
@@ -78,7 +77,6 @@ internal fun MockSpeaking(
                             enabled = !run.pending,
                             onClick = { confirming = true },
                             modifier = main,
-                            leadingIcon = { ButtonIcon(R.drawable.ic_send) },
                         )
                     }
                 }

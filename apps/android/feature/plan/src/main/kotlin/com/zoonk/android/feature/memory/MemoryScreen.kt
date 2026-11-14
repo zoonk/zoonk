@@ -141,7 +141,12 @@ private fun Loaded(
 
     ListRow(
         headline = { Text(stringResource(R.string.memory_use)) },
-        supporting = { Text(stringResource(if (memory.enabled) R.string.memory_use_on else R.string.memory_use_off)) },
+        supporting =
+            if (memory.enabled) {
+                null
+            } else {
+                { Text(stringResource(R.string.memory_use_off)) }
+            },
         trailing = { Switch(checked = memory.enabled, onCheckedChange = null) },
         modifier = Modifier.toggleable(value = memory.enabled, role = Role.Switch, onValueChange = screen::setEnabled),
     )
@@ -160,12 +165,14 @@ private fun Loaded(
     }
 
     if (groups.isEmpty()) {
-        Text(
-            text = stringResource(if (memory.enabled) R.string.memory_empty_on else R.string.memory_empty_off),
-            modifier = Modifier.padding(horizontal = LIST_ITEM_INSET),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium,
-        )
+        if (memory.enabled) {
+            Text(
+                text = stringResource(R.string.memory_empty),
+                modifier = Modifier.padding(horizontal = LIST_ITEM_INSET),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
     } else {
         groups.forEach { (category, facts) ->
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -188,7 +195,6 @@ private fun Loaded(
 
     ListRow(
         headline = { Text(stringResource(R.string.memory_download)) },
-        supporting = { Text(stringResource(R.string.memory_download_description)) },
         trailing = {
             OutlinedButton(
                 onClick = { export.launch(EXPORT_FILE_NAME) },
@@ -329,10 +335,9 @@ private fun sourceName(fact: MemoryFact): String =
     stringResource(
         when {
             fact.origin == MemoryFact.Origin.NOTICED -> R.string.memory_source_noticed
-            fact.source == null -> R.string.memory_source_you
+            fact.source == null || fact.source?.kind == MemorySource.Kind.ONBOARDING -> R.string.memory_source_you
             fact.source?.kind == MemorySource.Kind.CALL -> R.string.memory_source_call
             fact.source?.kind == MemorySource.Kind.CHAT -> R.string.memory_source_chat
-            fact.source?.kind == MemorySource.Kind.ONBOARDING -> R.string.memory_source_onboarding
             fact.source?.kind == MemorySource.Kind.PROFILE -> R.string.profile_questions_you_told_us
             else -> R.string.memory_source_session
         },

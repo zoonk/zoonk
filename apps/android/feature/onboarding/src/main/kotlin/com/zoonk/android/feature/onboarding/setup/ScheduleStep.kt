@@ -51,7 +51,7 @@ import com.zoonk.android.feature.plan.timeLine
 import com.zoonk.android.feature.plan.timeOffer
 import com.zoonk.android.feature.warmup.rememberReadyHold
 import com.zoonk.android.ui.components.DailyTimePicker
-import com.zoonk.android.ui.components.LabelChip
+import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LocalButtonSize
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.TimeSelect
@@ -480,7 +480,7 @@ private fun PlanFactChips(goal: Goal) {
     val facts = planFacts(goal).filter { it.chip }
     if (facts.isEmpty()) return
     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        facts.flatMap { listOfNotNull(it.count ?: it.value, it.note) }.forEach { LabelChip(text = it) }
+        facts.flatMap { listOfNotNull(it.count ?: it.value, it.note) }.forEach { Eyebrow(text = it) }
     }
 }
 

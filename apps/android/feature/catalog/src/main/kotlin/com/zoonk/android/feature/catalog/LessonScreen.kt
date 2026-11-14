@@ -267,10 +267,8 @@ private fun LessonMore(
             ) {
                 Column(Modifier.padding(bottom = 16.dp)) {
                     ChapterLessonRows(navigator, courseId, place, currentLessonId = lessonId)
-                    TextButton(onClick = { navigator.open(AppRoute.CatalogChapter(chapter.id.toString(), courseId)) }) {
+                    TextButton(onClick = { navigator.open(AppRoute.CatalogChapter(chapter.id.toString(), courseId)) }, forward = true) {
                         Text(stringResource(R.string.catalog_go_to_chapter))
-                        Spacer(Modifier.size(8.dp))
-                        Icon(painterResource(R.drawable.ic_arrow_forward), contentDescription = null, Modifier.size(18.dp))
                     }
                 }
             }

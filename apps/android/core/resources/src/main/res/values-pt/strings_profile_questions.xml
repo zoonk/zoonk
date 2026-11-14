@@ -5,11 +5,11 @@
   "profile_questions_activities_placeholder": "3801687916e095e656c19d64633a4cfec93ac64ac3638c98302c31e2075b7186",
   "profile_questions_activities_title": "476e9670979bb098f4706c3837fe42947f57703706c66fe5f1811bcc9980120c",
   "profile_questions_add": "ae2c0b9b21af3e9609b5f63ae611574edf0b81603c06fb0fa19f715f6704c66e",
-  "profile_questions_address_description": "92031d56b9658ad7cb1b9f025deb0e91005f9d9007a532d86710ab364919d049",
+  "profile_questions_address_description": "17ab53e7db279f9818fa0c15b3f46ccabfad1b8a551b3d62e43adc9abb174aaa",
   "profile_questions_address_title": "3d2bcb096439c110d24c108e436ec0f7c84e2beb9041236105d9fdd1cfcc75b9",
   "profile_questions_cap": "da7e186d98419ace31df1961b1dfa7a46efda65b136aa1db35126908ef2897e8",
   "profile_questions_condition_note": "76522f184770230755d7be3f40717040041a18d1cae99186f43c8b4e1c7bc537",
-  "profile_questions_conditions_description": "ce70c881221017e7a9d2b507b4a4efe35785cbadd5ae107e14085fb959c2ed96",
+  "profile_questions_conditions_description": "349fe0e5532c43a3815ccca94762305d8c60aa01fcbd2c2f0ae6b7692b057e61",
   "profile_questions_conditions_saved": "400e40d4888a672ae7c1e95a4c34bbd9ba42e608c3c376470484b2d70355c8e2",
   "profile_questions_conditions_title": "a2b418c6612ea166df3b50804cee5532aa7f1908f6bf2f82b2dc90ed20a8dd76",
   "profile_questions_description": "d5e4962a793317e8a5cf78afff0e17e1ca30daef5790d0787c4cc8523f112a3e",
@@ -21,7 +21,7 @@
   "profile_questions_job_placeholder": "2e1fcca03f2d210682fd261da02b7961f42d69a2a086d253ebcaceba3c690ab8",
   "profile_questions_lesson_ready": "e789fb8861f2e977ed77e03cd31c526e44927db84ac1f87ceae2775811727469",
   "profile_questions_listen_favorites": "a51d652412d93d09f238434d42c6f7c9e10ab4243b49e83e3d3b04fe6ed8fe10",
-  "profile_questions_listen_placeholder": "43a06835e993daf264e3116f9caed006de5b44ff49907afb2cc636d6c8463c75",
+  "profile_questions_listen_placeholder": "9afb5dab14dee128d8794c35ed9451a7608c5c01f237e50d005c1c9b283262e6",
   "profile_questions_listen_title": "49bac9c2e67819913be5e222cf559a2d208b2444b6d3fade30328e0a56afdcd0",
   "profile_questions_memory_off": "e5d1d0ec46787d3c72d308e4801d34930684896e080202e1ba53af2978fa7b50",
   "profile_questions_never_ask": "8ad9dbe4eedfd39d9524afc42215a0637d0716cf4520f3b8c8873229e3c5dbf5",
@@ -63,7 +63,7 @@
   "profile_questions_suggested": "ea5470fa1a601e19c5bb284aef60bc5e0bee9903af331f8c083758d812e506c8",
   "profile_questions_support_description": "07603b43daaa933d415b2bb11fa0ace28692b5f76ef8c452f0a62f53028b853c",
   "profile_questions_support_note": "344e923dfaf3a03f14b224096d0bd0ffb3e71369e90489ff9bca5b300307aee2",
-  "profile_questions_support_note_help": "b2d48b5d04599719144bca471f006fba78493de02c05d1e61cd55277d5b11c8b",
+  "profile_questions_support_note_help": "83cdf0bd44666d15959fc4f6696d0e665cc09d778def9c0195b9937b78d58dd5",
   "profile_questions_support_placeholder": "4c3d3290f3442eab382a10866cf5c2d36152fa0e2c553c84f0d617d11253a323",
   "profile_questions_support_title": "ba489165b8c8fa53a89ce1c253c57ae55d4e630de6b7d337a91c191a221546d3",
   "profile_questions_title": "ed64658e0cb0c9079569a27a6a96335b8bd1a3d522aa9a6cf752f633fef18cda",
@@ -72,7 +72,7 @@
   "profile_questions_tools_placeholder": "bcfeb8dd5029df3bfcadfed9ecf1e781358f353628256a51c2d7e756a1d444de",
   "profile_questions_tools_title": "175cc9a816e4515842a6efb1fbf775047a97465d3e74e464aa261d3299c93394",
   "profile_questions_watch_favorites": "a17729ad32e449a806930543f9f7cf313d5e24c9d30fafa2e38aeb800773307f",
-  "profile_questions_watch_placeholder": "b80dfd21b34ac0a08e49f9ae9f6f05465a2ee6b7f1860aced59fb136aa7fbbbd",
+  "profile_questions_watch_placeholder": "c9f7af870161bfaf6a89a78e7571ba18ab5a897efb67b5dbc4d531409f584059",
   "profile_questions_watch_title": "f9f22f2dadd110eb14e1a813b8de039e9e2de39467308d6ed6c1ae01f8ca265f",
   "profile_questions_which_field": "9f63c7668489e37bb71f6960f7b1c02d087d73dab23e77a38a3efe57d0afeeb9",
   "profile_questions_work_description": "1c503b9f57c58eb5cdece58f67248fcb1caeebaeee6af20e9064adfe4e1ee643",
@@ -110,10 +110,10 @@
     <string name="profile_questions_interest_description">Escolha até 3. A gente vai usar nos exemplos das suas aulas.</string>
     <string name="profile_questions_watch_title">O que você gosta de assistir?</string>
     <string name="profile_questions_watch_favorites">Séries, filmes, times ou canais favoritos (opcional)</string>
-    <string name="profile_questions_watch_placeholder">Ex.: Star Trek, Flamengo</string>
+    <string name="profile_questions_watch_placeholder">Ex.: Star Trek, Formula 1</string>
     <string name="profile_questions_listen_title">O que você gosta de ouvir?</string>
     <string name="profile_questions_listen_favorites">Artistas ou podcasts favoritos (opcional)</string>
-    <string name="profile_questions_listen_placeholder">Ex.: Coldplay, Radiolab</string>
+    <string name="profile_questions_listen_placeholder">Ex.: Coldplay, TED Talks Daily</string>
     <string name="profile_questions_play_title">O que você gosta de jogar?</string>
     <string name="profile_questions_play_favorites">Jogos favoritos (opcional)</string>
     <string name="profile_questions_play_placeholder">Ex.: Catan, Valorant</string>
@@ -124,18 +124,19 @@
     <string name="profile_questions_activities_favorites">O que mais você curte? (opcional)</string>
     <string name="profile_questions_activities_placeholder">Ex.: fazer pão, carros, astronomia</string>
     <string name="profile_questions_conditions_title">Alguma dessas opções se aplica a você?</string>
-    <string name="profile_questions_conditions_description">Opcional. Suas escolhas ficam salvas no seu perfil para seu parceiro se adaptar a você. Você pode remover essas informações quando quiser nas Configurações.</string>
+    <string name="profile_questions_conditions_description">Opcional. A gente usa suas escolhas para adaptar o conteúdo às suas necessidades. Você pode remover essas informações quando quiser nas Configurações.</string>
     <string name="profile_questions_condition_note">O que a gente deve saber?</string>
     <string name="profile_questions_support_title">O que te ajuda a aprender?</string>
     <string name="profile_questions_support_description">Escolha tudo o que te ajuda. Não precisa de rótulo nem diagnóstico.</string>
+    <!-- Asks which grammatical forms (feminine, masculine or neutral wording) the app should use for words about the learner, such as "you're right". Not a question about pronouns or identity. -->
     <string name="profile_questions_address_title">Como a gente fala com você?</string>
-    <string name="profile_questions_address_description">Seu parceiro e o feedback vão falar com você assim. As aulas continuam iguais.</string>
+    <string name="profile_questions_address_description">A gente vai falar com você assim.</string>
     <string name="profile_questions_suggested">A gente pesquisou o que costuma ajudar com as opções que você escolheu. Mude o que quiser.</string>
     <string name="profile_questions_nothing_particular">Nada em especial</string>
     <string name="profile_questions_something_else">+ Algo mais que ajuda</string>
     <string name="profile_questions_support_note">O que te ajuda, nas suas palavras (opcional)</string>
     <string name="profile_questions_support_placeholder">Ex.: entendo diagramas melhor do que textos</string>
-    <string name="profile_questions_support_note_help">A gente vai guardar isso para seu parceiro. Você pode apagar essa informação em Memória.</string>
+    <string name="profile_questions_support_note_help">A gente vai lembrar disso. Você pode apagar quando quiser nas Configurações.</string>
     <string name="profile_questions_lesson_ready">A aula 1 está pronta.</string>
     <string name="profile_questions_start_lesson">Começar a aula 1</string>
     <string name="profile_questions_save_start_lesson">Salvar e começar a aula 1</string>
@@ -157,9 +158,11 @@
     <string name="profile_questions_row_activities">Fazer</string>
     <string name="profile_questions_row_conditions">Condições</string>
     <string name="profile_questions_row_support">O que te ajuda a aprender</string>
+    <!-- Which grammatical forms (feminine, masculine or neutral wording) the app uses for words about the learner. -->
     <string name="profile_questions_row_address">Como a gente fala com você</string>
     <string name="profile_questions_not_answered">Sem resposta</string>
     <string name="profile_questions_not_shared">Não informado</string>
+    <!-- An answer the learner saved, without showing it. -->
     <string name="profile_questions_saved">Salva</string>
     <string name="profile_questions_add">Adicionar</string>
     <plurals name="profile_questions_conditions_saved">

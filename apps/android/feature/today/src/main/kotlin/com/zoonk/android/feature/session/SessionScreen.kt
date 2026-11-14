@@ -458,7 +458,6 @@ internal fun NextStop(
                                         },
                                         modifier = main.focusRequester(startFocus),
                                         enabled = !busy,
-                                        leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
                                     ) {
                                         Text(
                                             stringResource(
@@ -477,7 +476,6 @@ internal fun NextStop(
                                         onClick = { goalId?.let { viewModel.start(day, other, it) } },
                                         modifier = main,
                                         enabled = !busy,
-                                        leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
                                     ) {
                                         Text(
                                             stringResource(

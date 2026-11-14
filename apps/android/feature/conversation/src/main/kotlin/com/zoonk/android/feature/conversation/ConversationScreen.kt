@@ -217,7 +217,7 @@ private fun Conversation(
     // unless a dropped call is left to save.
     val launcher =
         rememberCallLauncher(onBlocked = model::cancel) { microphone, takeover -> model.start(conversation, microphone, takeover) }
-    val onSeePlus = { exits.open(AppRoute.Subscription) }
+    val onSubscribe = { exits.open(AppRoute.Subscription) }
     LaunchedEffect(model) { if (startWith != null && result == null) model.startOnce(conversation, startWith) }
 
     val examTask = conversation.examTask
@@ -287,7 +287,7 @@ private fun Conversation(
                             speech = speech,
                             onContinue = exits::close,
                             onClose = exits::close,
-                            onSeePlus = onSeePlus,
+                            onSubscribe = onSubscribe,
                             dayMoment = dayMoment,
                         )
                     }
@@ -306,7 +306,7 @@ private fun Conversation(
             onRetry = { launcher.start(false) },
             onTakeover = { launcher.start(true) },
             onCreateAccount = { exits.open(AppRoute.Login) },
-            onSeePlus = onSeePlus,
+            onSubscribe = onSubscribe,
         )
     val dropped =
         if (call != null &&
@@ -326,13 +326,13 @@ private fun Conversation(
                     onTakeover = problemActions.onTakeover,
                     onTypeInstead = launcher.typeInstead,
                     onCreateAccount = problemActions.onCreateAccount,
-                    onSeePlus = onSeePlus,
+                    onSubscribe = onSubscribe,
                 )
             DroppedCallScreen(dropped, callState.limit, conversation.character.name, title, actions)
         }
 
         conversation.locked || callState?.failure == LiveCallFailure.PlusRequired -> {
-            CallIntro(intro, CallIntroStart.PlusRequired, launcher = null, onSeePlus = onSeePlus, onClose = exits::close)
+            CallIntro(intro, CallIntroStart.PlusRequired, launcher = null, onSubscribe = onSubscribe, onClose = exits::close)
         }
 
         callState == null && examTask != null -> {
@@ -343,7 +343,7 @@ private fun Conversation(
         }
 
         callState == null -> {
-            CallIntro(intro, CallIntroStart.Idle, launcher, onSeePlus = onSeePlus, onClose = exits::close)
+            CallIntro(intro, CallIntroStart.Idle, launcher, onSubscribe = onSubscribe, onClose = exits::close)
         }
 
         save == CallSave.Ended || save == CallSave.TakenOver -> {

@@ -1,168 +1,201 @@
 package com.zoonk.android.ui.components
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.data.ApiException
-import com.zoonk.android.data.MutationResult
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.int
-import kotlinx.serialization.json.jsonPrimitive
+import com.zoonk.android.feature.subscription.CreateAccountButton
+import com.zoonk.android.feature.subscription.GateLayout
+import com.zoonk.android.feature.subscription.SubscribeButton
+import com.zoonk.android.ui.format.DateStyle
+import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatDate
+import java.time.Instant
+
+/** What ran out as the title, and when it comes back as the one line under it. */
+data class LimitWords(
+    val title: String?,
+    val line: String?,
+)
 
 /**
- * Main's limit notice: what ran out and when it comes back, with "Create a free account" for a guest
- * and "See Plus" on Free. Plus and a slow-down only say when.
+ * Main's limit notice, the gate's form for a cap: what ran out, when it comes back, and the way on:
+ * "Create a free account" for a guest, "Subscribe" on Free, nothing when the limit only waits.
  */
 @Composable
 fun LimitNotice(
     limit: Limit,
     subject: LimitSubject,
     onCreateAccount: () -> Unit,
-    onSeePlus: () -> Unit,
+    onSubscribe: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp), horizontalAlignment = Alignment.Start) {
-        Text(
-            text = limitMessage(limit, subject),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium,
-        )
-
-        LimitActions(limit, onCreateAccount, onSeePlus)
-    }
+    val words = limitWords(limit, subject)
+    GateLayout(words.title, words.line, modifier, if (limit.hasWayOn) ({ LimitActions(limit, onCreateAccount, onSubscribe) }) else null)
 }
 
-/** "Create a free account" for a guest, "See Plus" on Free, nothing when the limit only waits. */
+/** The limit's way on, for a screen that draws its own words. */
 @Composable
 fun LimitActions(
     limit: Limit,
     onCreateAccount: () -> Unit,
-    onSeePlus: () -> Unit,
+    onSubscribe: () -> Unit,
 ) {
     when {
-        limit.needsAccount -> {
-            OutlinedButton(onClick = onCreateAccount) { Text(stringResource(R.string.limit_create_account)) }
-        }
-
-        limit is Limit.Reached && limit.tier == LimitTier.Free -> {
-            OutlinedButton(onClick = onSeePlus) { Text(stringResource(R.string.limit_see_plus)) }
-        }
+        limit.needsAccount -> CreateAccountButton(onCreateAccount)
+        limit.hasWayOn -> SubscribeButton(onSubscribe)
     }
 }
 
 val Limit.needsAccount: Boolean
     get() = this == Limit.SignUpRequired || (this is Limit.Reached && tier == LimitTier.Guest)
 
+/** A guest can create an account and a free learner can subscribe; a subscriber or a slow-down only waits. */
+val Limit.hasWayOn: Boolean
+    get() = needsAccount || (this is Limit.Reached && tier == LimitTier.Free)
+
+private val Limit.Reached.monthly: Boolean
+    get() = period == LimitPeriod.Month || period == LimitPeriod.Total
+
+/** A free learner's new lessons count their last 30 days (rule 16), so their gate gives the day the next one opens. */
+private val Limit.Reached.freeLessons: Boolean
+    get() = tier == LimitTier.Free && period == LimitPeriod.Rolling30Days
+
+/** The day's sentence from [availableAt]; none when the API gave no instant, never a guessed day. */
 @Composable
-fun limitMessage(
-    limit: Limit,
-    subject: LimitSubject,
-): String =
-    when (limit) {
-        is Limit.SlowDown -> stringResource(R.string.limit_slow_down)
-        Limit.SignUpRequired -> stringResource(R.string.limit_sign_up_required)
-        is Limit.Reached -> reachedMessage(limit.tier, limit.period ?: LimitPeriod.Day, subject)
+private fun opensLine(
+    availableAt: Instant?,
+    @StringRes today: Int,
+    @StringRes tomorrow: Int,
+    @StringRes on: Int,
+): String? =
+    when (val day = availableAt?.let { openingDay(it) }) {
+        null -> null
+        OpeningDay.Today -> stringResource(today)
+        OpeningDay.Tomorrow -> stringResource(tomorrow)
+        is OpeningDay.On -> stringResource(on, formatDate(day.date, currentLocale(), DateStyle.DayMonth))
     }
 
 @Composable
-private fun reachedMessage(
-    tier: LimitTier,
-    period: LimitPeriod,
+fun limitWords(
+    limit: Limit,
     subject: LimitSubject,
-): String {
-    val month = period != LimitPeriod.Day
+): LimitWords =
+    when (limit) {
+        is Limit.SlowDown -> LimitWords(title = null, line = stringResource(R.string.limit_slow_down))
+        Limit.SignUpRequired -> LimitWords(title = stringResource(R.string.limit_sign_up_required), line = null)
+        is Limit.Reached -> LimitWords(reachedTitle(limit, subject)?.let { stringResource(it) }, comesBackLine(limit))
+    }
 
-    return stringResource(
-        when (subject) {
-            LimitSubject.Help -> {
-                when (tier) {
-                    LimitTier.Guest -> if (month) R.string.limit_help_guest_total else R.string.limit_help_guest_day
-                    LimitTier.Plus -> R.string.limit_help_plus
-                    LimitTier.Free -> if (month) R.string.limit_help_free_month else R.string.limit_help_free_day
-                }
+/** When it comes back; a guest's way on is the button, so their notice has no line. */
+@Composable
+fun comesBackLine(limit: Limit.Reached): String? =
+    if (limit.freeLessons) {
+        opensLine(
+            limit.availableAt,
+            R.string.limit_lesson_opens_today,
+            R.string.limit_lesson_opens_tomorrow,
+            R.string.limit_lesson_opens_on,
+        )
+    } else {
+        reachedLine(limit)
+    }
+
+@Composable
+private fun reachedLine(limit: Limit.Reached): String? =
+    when (limit.tier) {
+        LimitTier.Guest -> {
+            null
+        }
+
+        LimitTier.Plus -> {
+            stringResource(if (limit.monthly) R.string.limit_more_next_month else R.string.limit_more_tomorrow)
+        }
+
+        LimitTier.Free -> {
+            stringResource(
+                if (limit.monthly) R.string.limit_more_next_month_or_subscribe else R.string.limit_more_tomorrow_or_subscribe,
+            )
+        }
+    }
+
+/** The lesson screen's line: what stays free, then [comesBackLine], as the web joins them. */
+@Composable
+fun stillReviewLine(limit: Limit.Reached): String =
+    listOfNotNull(stringResource(R.string.limit_still_review), comesBackLine(limit)).joinToString(" ")
+
+/** Calls have no title here: their screen already says what ran out. */
+@StringRes
+private fun reachedTitle(
+    limit: Limit.Reached,
+    subject: LimitSubject,
+): Int? {
+    val month = limit.monthly
+    val guest = limit.tier == LimitTier.Guest
+
+    return when (subject) {
+        LimitSubject.Help -> {
+            if (guest) {
+                R.string.limit_help_guest
+            } else if (month) {
+                R.string.limit_help_month
+            } else {
+                R.string.limit_help_day
             }
+        }
 
-            LimitSubject.Lessons -> {
-                when (tier) {
-                    LimitTier.Guest -> {
-                        R.string.limit_lessons_guest
-                    }
-
-                    LimitTier.Plus -> {
-                        R.string.limit_lessons_plus
-                    }
-
-                    LimitTier.Free -> {
-                        if (period ==
-                            LimitPeriod.Month
-                        ) {
-                            R.string.limit_lessons_free_month
-                        } else {
-                            R.string.limit_lessons_free_day
-                        }
-                    }
-                }
+        LimitSubject.Messages -> {
+            if (guest) {
+                R.string.limit_help_guest
+            } else if (month) {
+                R.string.limit_messages_month
+            } else {
+                R.string.limit_messages_day
             }
+        }
 
-            LimitSubject.MindMaps -> {
-                when (tier) {
-                    LimitTier.Guest -> {
-                        R.string.limit_mind_maps_guest
-                    }
-
-                    LimitTier.Plus -> {
-                        if (period == LimitPeriod.Month) R.string.limit_mind_maps_plus_month else R.string.limit_mind_maps_plus
-                    }
-
-                    LimitTier.Free -> {
-                        if (period ==
-                            LimitPeriod.Month
-                        ) {
-                            R.string.limit_mind_maps_free_month
-                        } else {
-                            R.string.limit_mind_maps_free_day
-                        }
-                    }
-                }
+        LimitSubject.Explanations -> {
+            if (guest) {
+                R.string.limit_help_guest
+            } else if (month) {
+                R.string.limit_explanations_month
+            } else {
+                R.string.limit_explanations_day
             }
+        }
 
-            LimitSubject.Outlines -> {
-                when (tier) {
-                    LimitTier.Guest -> {
-                        R.string.limit_outlines_guest
-                    }
-
-                    LimitTier.Plus -> {
-                        R.string.limit_outlines_plus
-                    }
-
-                    LimitTier.Free -> {
-                        if (period ==
-                            LimitPeriod.Month
-                        ) {
-                            R.string.limit_outlines_free_month
-                        } else {
-                            R.string.limit_outlines_free_day
-                        }
-                    }
-                }
+        LimitSubject.Lessons -> {
+            when {
+                guest -> R.string.limit_lessons_guest
+                limit.freeLessons || (limit.tier == LimitTier.Free && month) -> R.string.limit_lessons_free
+                month -> R.string.limit_lessons_month
+                else -> R.string.limit_lessons_day
             }
+        }
 
-            LimitSubject.Calls -> {
-                when (tier) {
-                    LimitTier.Guest -> R.string.limit_calls_guest
-                    LimitTier.Plus -> if (period == LimitPeriod.Month) R.string.limit_calls_plus_month else R.string.limit_calls_plus_day
-                    LimitTier.Free -> if (period == LimitPeriod.Month) R.string.limit_calls_free_month else R.string.limit_calls_free_day
-                }
+        LimitSubject.MindMaps -> {
+            if (guest) {
+                R.string.limit_mind_maps_guest
+            } else if (month) {
+                R.string.limit_mind_maps_month
+            } else {
+                R.string.limit_mind_maps_day
             }
-        },
-    )
+        }
+
+        LimitSubject.Outlines -> {
+            if (guest) {
+                R.string.limit_outlines_guest
+            } else if (month) {
+                R.string.limit_outlines_month
+            } else {
+                R.string.limit_outlines_day
+            }
+        }
+
+        LimitSubject.Calls -> {
+            null
+        }
+    }
 }

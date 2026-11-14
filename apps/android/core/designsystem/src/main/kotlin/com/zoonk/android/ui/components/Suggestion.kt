@@ -256,7 +256,6 @@ fun SuggestionAction(
             modifier = modifier.then(width),
             enabled = enabled,
             busy = busy,
-            leadingIcon = leadingIcon,
             content = content,
         )
     }

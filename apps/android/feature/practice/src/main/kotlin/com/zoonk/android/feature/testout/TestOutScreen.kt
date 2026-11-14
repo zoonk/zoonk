@@ -313,7 +313,7 @@ private fun StartActions(
                 refused,
                 LimitSubject.Help,
                 onCreateAccount = { navigator.open(AppRoute.Login) },
-                onSeePlus = { navigator.open(AppRoute.Subscription) },
+                onSubscribe = { navigator.open(AppRoute.Subscription) },
                 modifier = replacementModifier,
             )
         }
@@ -324,7 +324,6 @@ private fun StartActions(
                     busy = ui.starting,
                     onClick = onStart,
                     modifier = width.focusRequester(replacementFocus),
-                    leadingIcon = { ButtonIcon(R.drawable.ic_play_arrow) },
                 ) {
                     Text(stringResource(R.string.testout_start))
                 }
@@ -415,7 +414,6 @@ internal fun TestOutResult(
             title = stringResource(if (outcome.passed) R.string.testout_passed else R.string.testout_not_passed),
             action = stringResource(R.string.testout_continue),
             saving = false,
-            actionTrailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
             onClose = onClose,
             detail = detail,
             actions = {
@@ -423,7 +421,6 @@ internal fun TestOutResult(
                     Button(
                         onClick = onClose,
                         modifier = width,
-                        trailingIcon = { ButtonIcon(R.drawable.ic_arrow_forward) },
                     ) { Text(stringResource(R.string.testout_continue)) }
                 }
                 if (canUndo) UndoAction(ui.undo, viewModel::undo)

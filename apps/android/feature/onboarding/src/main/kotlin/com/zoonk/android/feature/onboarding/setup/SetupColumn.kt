@@ -41,7 +41,7 @@ import com.zoonk.android.feature.onboarding.start.OnboardingActions
 import com.zoonk.android.feature.warmup.ReadyHold
 import com.zoonk.android.feature.warmup.watchTouches
 import com.zoonk.android.ui.components.Button
-import com.zoonk.android.ui.scaffold.DockedActionBar
+import com.zoonk.android.ui.scaffold.BottomBar
 import com.zoonk.android.ui.scaffold.PageFold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 
@@ -226,19 +226,11 @@ internal fun PageActions(
 
 @Composable
 private fun SetupActionBar(bar: PageBar) {
-    DockedActionBar {
-        Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
-            Box(Modifier.widthIn(max = COLUMN_WIDTH).fillMaxWidth().padding(horizontal = MARGIN, vertical = EDGE)) {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    if (bar.actions !=
-                        null
-                    ) {
-                        bar.actions.value()
-                    } else {
-                        Button(onClick = { bar.hold?.moveOn() }, modifier = Modifier.fillMaxWidth()) { Text(bar.action) }
-                    }
-                }
-            }
+    BottomBar(columnWidth = COLUMN_WIDTH) {
+        if (bar.actions != null) {
+            bar.actions.value()
+        } else {
+            Button(onClick = { bar.hold?.moveOn() }, modifier = Modifier.fillMaxWidth()) { Text(bar.action) }
         }
     }
 }
