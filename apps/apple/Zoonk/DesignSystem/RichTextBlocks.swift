@@ -36,7 +36,7 @@ extension Text {
 }
 
 /// Anything beyond paragraphs, lists and GFM tables stays text, so a stray marker never changes a
-/// screen's layout. Each caller reads the inline markup its own way: lessons typeset math, items don't.
+/// screen's layout.
 struct RichTextBlocks: View {
   let text: String
   /// A quote of the text, in its markup, to highlight where it first shows.

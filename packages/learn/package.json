@@ -194,6 +194,7 @@
     "./wait/lesson-status": "./src/wait/lesson-wait-status.tsx",
     "./rich-text": "./src/rich-text/rich-text-blocks.tsx",
     "./rich-text/display-math": "./src/rich-text/display-math.tsx",
+    "./rich-text/drawn-math": "./src/rich-text/drawn-math.tsx",
     "./rich-text/inline": "./src/rich-text/rich-inline-segments.tsx",
     "./rich-text/math": "./src/rich-text/math-markup.ts",
     "./rich-text/math-enclosures": "./src/rich-text/math-enclosures.ts",

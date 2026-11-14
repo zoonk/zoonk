@@ -120,7 +120,7 @@ private struct EssayContent: View {
       } else {
         ZoonkList {
           Section {
-            ItemText(essay.question)
+            LessonTextBlocks(essay.question)
               .typeStyle(.body.weight(.semibold))
           } footer: {
             SectionFooter {
@@ -237,7 +237,7 @@ private struct EssayContent: View {
   private var promptSections: some View {
     if let context = essay.context, !context.isEmpty {
       Section {
-        ItemText(context)
+        LessonTextBlocks(context)
           .typeStyle(.reading)
       } header: {
         SectionTitle(Text(essay.rubric.textsLabel))
@@ -245,7 +245,7 @@ private struct EssayContent: View {
     }
 
     Section {
-      ItemText(essay.question)
+      LessonTextBlocks(essay.question)
         .typeStyle(.body.weight(.semibold))
     }
   }

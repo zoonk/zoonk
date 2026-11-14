@@ -7,6 +7,7 @@ import { AnswerOption, AnswerOptionGroup } from "../_components/answer-option";
 import { DetailsDrawer } from "../_components/details-drawer";
 import { ItemCitationNote } from "../_components/item-citation";
 import { ContentFeedbackMenu } from "../feedback/content-feedback-menu";
+import { readStatementAnswer } from "../questions/_utils/statement-answer";
 import { ItemSetStimulus } from "../questions/item-set-stimulus";
 import { ItemLine, ItemStem, ItemText } from "../questions/item-text";
 import { useTrueFalseLabels } from "../questions/use-true-false-labels";
@@ -28,15 +29,15 @@ function AnswerMark({
   right: boolean;
 }) {
   const { runner } = useMockScreen();
-  const isStatement = entry.format === "trueFalse" && (answer === "true" || answer === "false");
+  const isTrue = readStatementAnswer({ answer, format: entry.format });
   const marks = getOptionMarks({ format: entry.format, scoring: runner.view.scoring });
 
-  if (isStatement && marks === "numbers") {
-    return answer === "true" ? 1 : 2;
+  if (isTrue !== null && marks === "numbers") {
+    return isTrue ? 1 : 2;
   }
 
-  if (isStatement) {
-    return answer === "true" ? <CheckIcon /> : <XIcon />;
+  if (isTrue !== null) {
+    return isTrue ? <CheckIcon /> : <XIcon />;
   }
 
   return right ? <CheckIcon /> : <XIcon />;
@@ -48,6 +49,13 @@ function ReviewAnswers({ entry }: { entry: MockReviewEntry }) {
   const { answerText } = useTrueFalseLabels(runner.view.trueFalseLabels);
   const yours = entry.learnerAnswer;
   const right = entry.correctAnswer;
+
+  const line = (text: string) =>
+    entry.format === "typed" ? (
+      text
+    ) : (
+      <ItemLine text={answerText({ answer: text, format: entry.format }) ?? text} />
+    );
 
   return (
     <>
@@ -61,7 +69,7 @@ function ReviewAnswers({ entry }: { entry: MockReviewEntry }) {
             picked
             result="wrong"
           >
-            <ItemLine text={answerText(yours) ?? yours} />
+            {line(yours)}
           </AnswerOption>
         )}
         {right !== null && (
@@ -71,7 +79,7 @@ function ReviewAnswers({ entry }: { entry: MockReviewEntry }) {
             picked={false}
             result="right"
           >
-            <ItemLine text={answerText(right) ?? right} />
+            {line(right)}
           </AnswerOption>
         )}
       </AnswerOptionGroup>

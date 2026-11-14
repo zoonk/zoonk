@@ -5,7 +5,7 @@ export type DiffLine = {
   kind: "added" | "context" | "removed";
   label?: string | null;
   lang?: string;
-  text: string;
+  text: React.ReactNode;
   tone?: DiffTone;
 };
 

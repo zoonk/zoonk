@@ -2679,9 +2679,9 @@ msgid "{count, plural, one {# of {total} right to win} other {# of {total} right
 msgstr "{count, plural, one {# risposta corretta su {total} per vincere} other {# risposte corrette su {total} per vincere}}"
 
 #: src/checkpoints/checkpoint-review.tsx
-msgctxt "hmBFza"
-msgid "Answer:"
-msgstr "Risposta:"
+msgctxt "CsqxCb"
+msgid "<label>Answer:</label> <answer></answer>"
+msgstr "<label>Risposta:</label> <answer></answer>"
 
 #: src/checkpoints/checkpoint-review.tsx
 #: src/mistakes/mistake-practice-run.tsx
@@ -8411,14 +8411,15 @@ msgid "{cause} · Fixed"
 msgstr "{cause} · Corretto"
 
 #: src/mistakes/mistake-entry.tsx
-msgctxt "VM0Q1f"
-msgid "Right answer:"
-msgstr "Risposta corretta:"
+#: src/questions/right-answer-line.tsx
+msgctxt "wS1KQ6"
+msgid "<label>Right answer:</label> <answer></answer>"
+msgstr "<label>Risposta corretta:</label> <answer></answer>"
 
 #: src/mistakes/mistake-entry.tsx
-msgctxt "h_bsq4"
-msgid "You answered:"
-msgstr "Hai risposto:"
+msgctxt "Gr6IEG"
+msgid "<label>You answered:</label> <answer></answer>"
+msgstr "<label>Hai risposto:</label> <answer></answer>"
 
 #: src/mistakes/mistake-entry.tsx
 msgctxt "BICox_"
@@ -8580,12 +8581,6 @@ msgstr "{count, plural, =0 {Nessun errore corretto} one {Errore corretto. Viene 
 msgctxt "HvLGEN"
 msgid "Answer feedback"
 msgstr "Valutazione della risposta"
-
-#: src/mistakes/practice-step.tsx
-#: src/session/question-block/question-feedback.tsx
-msgctxt "amJs-w"
-msgid "Right answer: {answer}"
-msgstr "Risposta corretta: {answer}"
 
 #. Why the learner got a question wrong: they didn't know the content yet. Not missing course content.
 #: src/mistakes/use-cause-label.ts

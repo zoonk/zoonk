@@ -1,6 +1,8 @@
 import { type WrittenItemSet } from "@zoonk/ai/tasks/items/write-set";
+import { wrapBareLatex } from "@zoonk/utils/bare-latex";
 import { normalizeString, replaceEmDashes, segmentWords } from "@zoonk/utils/string";
-import { findPlaceholderText, findUnrenderedMarkdown } from "@zoonk/utils/text-flaws";
+import { findPlaceholderText } from "@zoonk/utils/text-flaws";
+import { findUnrenderedText } from "@zoonk/utils/unrendered-text";
 
 export const MIN_SET_QUESTIONS = 2;
 
@@ -10,13 +12,22 @@ const WORD_LIMITS = {
   text: { max: 450, min: 90 },
 };
 
+/** Evidence quotes the stimulus word for word, so both get the same repairs. */
+function repairQuotable(text: string): string {
+  return wrapBareLatex({ layout: "blocks", text: replaceEmDashes(text) });
+}
+
 export function repairWrittenItemSet(set: WrittenItemSet): WrittenItemSet {
   const kind = set.visual ? "chart" : set.kind;
 
   return {
     ...set,
     kind,
-    text: replaceEmDashes(set.text),
+    questions: set.questions.map((question) => ({
+      ...question,
+      evidence: repairQuotable(question.evidence),
+    })),
+    text: repairQuotable(set.text),
     title: set.title === null ? null : replaceEmDashes(set.title),
   };
 }
@@ -35,7 +46,7 @@ function checkStimulus(set: WrittenItemSet): string[] {
     set.kind !== "chart" && findPlaceholderText(set.text),
     words < limits.min && `The ${set.kind} has ${words} words, fewer than ${limits.min}.`,
     words > limits.max && `The ${set.kind} has ${words} words, more than ${limits.max}.`,
-    findUnrenderedMarkdown({ layout: "blocks", text: set.text }),
+    findUnrenderedText({ layout: "blocks", text: set.text }),
   ]
     .flat()
     .filter((problem) => typeof problem === "string");

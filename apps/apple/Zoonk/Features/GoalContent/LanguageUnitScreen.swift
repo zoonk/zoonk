@@ -403,19 +403,19 @@ private struct LanguageUnitContent: View {
               .typeStyle(.meta.weight(.medium))
               .foregroundStyle(.mutedForeground)
 
-            ItemText(mistake.question)
+            LessonTextBlocks(mistake.question)
               .typeStyle(.body.weight(.medium))
 
             if let answer = mistake.answer {
-              MistakeAnswerRow(text: answer, isRight: false)
+              MistakeAnswerRow(text: answer, isRight: false, isLiteral: true)
             }
 
             if let correctAnswer = mistake.correctAnswer {
-              MistakeAnswerRow(text: correctAnswer, isRight: true)
+              MistakeAnswerRow(text: correctAnswer, isRight: true, isLiteral: true)
             }
 
             if let explanation = mistake.explanation {
-              ItemText(explanation)
+              LessonTextBlocks(explanation)
                 .typeStyle(.note)
                 .foregroundStyle(.mutedForeground)
             }

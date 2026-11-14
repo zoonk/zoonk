@@ -62,6 +62,10 @@ function useEntryDate() {
     });
 }
 
+function hiddenLabel(words: React.ReactNode) {
+  return <span className="sr-only">{words}</span>;
+}
+
 export function MistakeAnswer({
   children,
   kind,
@@ -71,6 +75,7 @@ export function MistakeAnswer({
 }) {
   const t = useExtracted();
   const right = kind === "right";
+  const answer = () => children;
 
   return (
     <p
@@ -91,13 +96,26 @@ export function MistakeAnswer({
         }
       >
         <span>
-          <span className="sr-only">{right ? t("Right answer:") : t("You answered:")} </span>
-          {children}
+          {right
+            ? t.rich("<label>Right answer:</label> <answer></answer>", {
+                answer,
+                label: hiddenLabel,
+              })
+            : t.rich("<label>You answered:</label> <answer></answer>", {
+                answer,
+                label: hiddenLabel,
+              })}
         </span>
       </TagBesideOrUnder>
     </p>
   );
 }
+
+/**
+ * Words the learner typed or said are plain text, as is a typed question's accepted answer, so
+ * `__init__` keeps its underscores; other answers are item text with their formulas.
+ */
+const WRITTEN_ANSWER_FORMATS = new Set(["spoken", "spokenAnswer", "typed", "typedAnswer"]);
 
 type MistakeEntryLinks = { lesson: string | null; practiceSkill: string | null };
 
@@ -173,8 +191,8 @@ export function MistakeEntryCard({
   const entryDate = useEntryDate();
   const { answerText } = useTrueFalseLabels(trueFalseLabels);
   const { snapshot } = mistake;
-  const answer = answerText(snapshot.answer);
-  const correct = answerText(snapshot.correctAnswer);
+  const answer = answerText({ answer: snapshot.answer, format: snapshot.format });
+  const correct = answerText({ answer: snapshot.correctAnswer, format: snapshot.format });
   const date = mistake.status === "fixed" && mistake.fixedAt ? mistake.fixedAt : mistake.createdAt;
 
   return (
@@ -205,12 +223,16 @@ export function MistakeEntryCard({
         <div className="flex flex-col gap-2">
           {answer && (
             <MistakeAnswer kind="learner">
-              <ItemLine text={answer} />
+              {WRITTEN_ANSWER_FORMATS.has(snapshot.format ?? "") ? (
+                answer
+              ) : (
+                <ItemLine text={answer} />
+              )}
             </MistakeAnswer>
           )}
           {correct && (
             <MistakeAnswer kind="right">
-              <ItemLine text={correct} />
+              {snapshot.format === "typed" ? correct : <ItemLine text={correct} />}
             </MistakeAnswer>
           )}
         </div>

@@ -29,7 +29,7 @@ class QuestionModelsTest {
     }
 
     @Test
-    fun itemTextKeepsTablesAndLeavesMathAsText() {
+    fun itemTextKeepsTablesAndMoney() {
         val blocks = parseItemText("Costs $5 and $10.\nIt's **cheap**.\n\n| Item | Price |\n| --- | ---: |\n| Shirt | R$ 80 |")
 
         assertEquals(2, blocks.size)
@@ -48,8 +48,16 @@ class QuestionModelsTest {
     }
 
     @Test
-    fun anOptionReadsAsOneLineOfPlainWords() {
-        assertEquals("The cell wall", plainItemLine("The **cell**\n  wall"))
-        assertEquals("15 %", plainItemLine("15 %"))
+    fun anOptionIsOneLineWithItsMathAndMoney() {
+        assertEquals(
+            listOf(
+                RichSegment(SegmentKind.Text, "The "),
+                RichSegment(SegmentKind.Bold, "cell"),
+                RichSegment(SegmentKind.Text, " wall: "),
+                RichSegment(SegmentKind.Math, "C_{A0} = 2"),
+                RichSegment(SegmentKind.Text, " mol/L costs $5 or $10"),
+            ),
+            parseItemLine("The **cell**\n  wall: \$C_{A0} = 2$ mol/L costs $5 or $10"),
+        )
     }
 }

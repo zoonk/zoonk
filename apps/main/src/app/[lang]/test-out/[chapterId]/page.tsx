@@ -13,6 +13,7 @@ import {
 import { getChapterTestOut } from "@zoonk/core/learner/test-out/get";
 import { getRecordedTestOut } from "@zoonk/core/learner/test-out/recorded";
 import { getGoalPlan } from "@zoonk/core/plans/get";
+import { DrawnMath } from "@zoonk/learn/rich-text/drawn-math";
 import { TaskSkeleton } from "@zoonk/learn/task-layout";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
@@ -144,17 +145,19 @@ async function TestOutBody({ params, searchParams }: Props) {
   }
 
   return (
-    <TestOutClient
-      buddy={buddy}
-      lessonsLeft={chapter?.lessonsLeft ?? null}
-      page={page}
-      recorded={null}
-      test={{
-        passMark: result.testOut.passMark,
-        questions: result.testOut.questions,
-        trueFalseLabels: result.testOut.trueFalseLabels,
-      }}
-    />
+    <DrawnMath content={result.testOut.questions}>
+      <TestOutClient
+        buddy={buddy}
+        lessonsLeft={chapter?.lessonsLeft ?? null}
+        page={page}
+        recorded={null}
+        test={{
+          passMark: result.testOut.passMark,
+          questions: result.testOut.questions,
+          trueFalseLabels: result.testOut.trueFalseLabels,
+        }}
+      />
+    </DrawnMath>
   );
 }
 

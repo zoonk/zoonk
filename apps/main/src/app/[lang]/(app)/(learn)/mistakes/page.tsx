@@ -7,6 +7,7 @@ import { listCurrentUserMistakes } from "@zoonk/core/mistakes/list-current-user"
 import { LearnPageBar } from "@zoonk/learn/bar";
 import { MistakesNotebook } from "@zoonk/learn/mistakes";
 import { INBOX_PAGE_CLASS } from "@zoonk/learn/page";
+import { DrawnMath } from "@zoonk/learn/rich-text/drawn-math";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
@@ -77,22 +78,24 @@ async function MistakesBody({ searchParams }: Pick<Props, "searchParams">) {
   }
 
   return (
-    <MistakesNotebook
-      filters={{
-        nextOffset: result.hasMore ? input.offset + input.limit : null,
-        status: input.status ?? "open",
-      }}
-      goalTitle={goal.displayName}
-      hrefs={{
-        back: "/today",
-        lesson: "/learn",
-        notebook: "/mistakes",
-        pattern: "/pattern",
-        practice: "/mistakes/practice",
-      }}
-      notebook={result}
-      pattern={language.status === "ready" ? language.pattern : null}
-    />
+    <DrawnMath content={result}>
+      <MistakesNotebook
+        filters={{
+          nextOffset: result.hasMore ? input.offset + input.limit : null,
+          status: input.status ?? "open",
+        }}
+        goalTitle={goal.displayName}
+        hrefs={{
+          back: "/today",
+          lesson: "/learn",
+          notebook: "/mistakes",
+          pattern: "/pattern",
+          practice: "/mistakes/practice",
+        }}
+        notebook={result}
+        pattern={language.status === "ready" ? language.pattern : null}
+      />
+    </DrawnMath>
   );
 }
 

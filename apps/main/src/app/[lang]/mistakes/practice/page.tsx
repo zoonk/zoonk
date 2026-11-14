@@ -8,6 +8,7 @@ import { getTutorViewer } from "@/lib/learn/tutor-viewer";
 import { mistakePracticeInputSchema } from "@zoonk/core/mistakes/contract";
 import { getMistakePractice } from "@zoonk/core/mistakes/practice";
 import { getSession } from "@zoonk/core/users/session";
+import { DrawnMath } from "@zoonk/learn/rich-text/drawn-math";
 import { TaskSkeleton } from "@zoonk/learn/task-layout";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
@@ -69,12 +70,14 @@ async function PracticeBody({ searchParams }: Pick<Props, "searchParams">) {
 
   return (
     <PracticeMain>
-      <MistakePracticeClient
-        goalId={goal.id}
-        practice={result.practice}
-        trueFalseLabels={result.trueFalseLabels}
-        tutor={tutor}
-      />
+      <DrawnMath content={result.practice}>
+        <MistakePracticeClient
+          goalId={goal.id}
+          practice={result.practice}
+          trueFalseLabels={result.trueFalseLabels}
+          tutor={tutor}
+        />
+      </DrawnMath>
     </PracticeMain>
   );
 }
