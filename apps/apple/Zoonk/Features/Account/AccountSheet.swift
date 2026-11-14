@@ -219,8 +219,10 @@ struct AccountSheet: View {
       }
     case .plus(let subscription):
       PlusStatusView(subscription: subscription)
+        .subscriptionPageTitle()
     case .subscription(let appAccountToken):
       SubscriptionView(appAccountToken: appAccountToken)
+        .subscriptionPageTitle()
     }
   }
 

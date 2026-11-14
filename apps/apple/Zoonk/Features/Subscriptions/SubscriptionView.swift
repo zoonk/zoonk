@@ -41,9 +41,7 @@ struct SubscriptionScreen: View {
           }
         }
       }
-      // Settings' name for the page, the same in every state; "Plus" heads its first section.
-      .navigationTitle(Text("Subscription", tableName: "Subscriptions"))
-      .navigationBarTitleDisplayMode(.inline)
+      .subscriptionPageTitle()
       .toolbar {
         ToolbarItem(placement: .cancellationAction) {
           Button(role: .close) {
@@ -56,6 +54,15 @@ struct SubscriptionScreen: View {
 
   private var isGuest: Bool {
     learner.summary.value?.identity.isAnonymous == true
+  }
+}
+
+extension View {
+  /// Settings' name for the page, the same in every state and from every entry; "Plus" heads its
+  /// first section.
+  func subscriptionPageTitle() -> some View {
+    navigationTitle(Text("Subscription", tableName: "Subscriptions"))
+      .navigationBarTitleDisplayMode(.inline)
   }
 }
 
