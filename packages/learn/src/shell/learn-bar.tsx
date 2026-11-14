@@ -88,7 +88,8 @@ function useTabName(href: string): string | undefined {
  * learner (Exam only with an exam goal, Completed lessons once one is done), so a page it doesn't
  * list keeps its way back.
  */
-const LISTED_IN_SIDEBAR_CLASS = "lg:[body:has([data-slot=sidebar]_[aria-current=page])_&]:hidden";
+export const LISTED_IN_SIDEBAR_CLASS =
+  "lg:[body:has([data-slot=sidebar]_[aria-current=page])_&]:hidden";
 
 /**
  * `label` names the page at `href`; a tab's page needs none. With `toApp` the link returns to
