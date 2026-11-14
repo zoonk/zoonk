@@ -12,6 +12,7 @@ import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { captureAnalytics } from "./analytics";
 import { type Page, expect, test } from "./fixtures";
+import { waitForLessonStart } from "./study-day";
 
 const RIGHT_TYPED = "It shows where the electron is likely to be";
 
@@ -220,19 +221,12 @@ test.describe("Library lesson player", () => {
       const lessons = page.getByRole("region", { name: "Lessons" });
       await expect(lessons.getByText("0 of 2", { exact: true })).toBeVisible();
 
-      const started = page.waitForResponse(
-        (response) =>
-          response.request().method() === "POST" &&
-          new URL(response.url()).pathname === `/api/library/lessons/${first.id}/starts`,
-      );
-
+      const started = waitForLessonStart(page, first.id);
       await lessons.getByRole("link", { name: /^Up next 1\. An almost empty atom/u }).click();
 
       await expect(page).toHaveURL(new RegExp(`/learn/${first.id}$`, "u"));
       await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
 
-      // A learner reads the one screen while the lesson's start returns; the end then waits only
-      // for the completion save, which can't be sent before the start's run exists.
       await started;
       await primary(page, /^Continue/u).click();
       await expect(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
