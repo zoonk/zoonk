@@ -6,6 +6,7 @@ import {
   DrawerClose,
   DrawerContent,
   DrawerDescription,
+  DrawerFooter,
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
@@ -84,7 +85,8 @@ function FullCourseChoice({ course, onDone }: { course: FullCourse; onDone: () =
         <p className="text-muted-foreground text-sm text-pretty">{text.rule(course)}</p>
       </DrawerContent>
 
-      <div className="flex flex-col gap-2 border-t px-6 pt-4 pb-6">
+      <DrawerFooter>
+        <DrawerClose render={<Button size="lg" variant="outline" />}>{t("Cancel")}</DrawerClose>
         <Button
           busy={isPending}
           icon={<ListPlusIcon aria-hidden="true" />}
@@ -93,8 +95,7 @@ function FullCourseChoice({ course, onDone }: { course: FullCourse; onDone: () =
         >
           {t("Study everything")}
         </Button>
-        <DrawerClose render={<Button size="lg" variant="outline" />}>{t("Cancel")}</DrawerClose>
-      </div>
+      </DrawerFooter>
     </>
   );
 }
