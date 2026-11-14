@@ -3825,6 +3825,11 @@ msgid "myemail@gmail.com"
 msgstr "taro@gmail.com"
 
 #: src/feedback/feedback-form.tsx
+msgctxt "feedback.Xx0WZV"
+msgid "Send message"
+msgstr "メッセージを送信する"
+
+#: src/feedback/feedback-form.tsx
 msgctxt "feedback.lknSi2"
 msgid "This screen is attached"
 msgstr "この画面が添付されています"
@@ -3853,11 +3858,6 @@ msgstr "メッセージを送信しました！まもなく返信します。"
 msgctxt "feedback.dpjZ-X"
 msgid "We couldn't send your message. Try again, or email us at hello@zoonk.com."
 msgstr "メッセージを送信できませんでした。もう一度試すか、hello@zoonk.comにメールでご連絡ください。"
-
-#: src/feedback/feedback-form.tsx
-msgctxt "feedback.Xx0WZV"
-msgid "Send message"
-msgstr "メッセージを送信する"
 
 #: src/focus-test/focus-test-flow.tsx
 #: src/focus-test/focus-test-screens.tsx
@@ -14156,6 +14156,11 @@ msgstr "開始できます"
 msgctxt "uaZ--2"
 msgid "Getting your lesson ready"
 msgstr "レッスンを準備しています"
+
+#: src/wait/lesson-wait-status.tsx
+msgctxt "KPgx8T"
+msgid "Your challenge is ready"
+msgstr "チャレンジの準備ができました"
 
 #: src/wait/lesson-wait-status.tsx
 msgctxt "4Wktrz"
