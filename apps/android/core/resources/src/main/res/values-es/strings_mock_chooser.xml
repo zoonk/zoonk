@@ -22,9 +22,9 @@
   "mock_chooser_preparing_detail": "14d255b8ee61e73c0f95b649d82de9fb8093ca7587302465f991fc071a4f56ba",
   "mock_chooser_questions": "c5735793df69142bd86c6d9e76fe65821b6280b52a715b9656279694dc56a904",
   "mock_chooser_short_day": "447dfacaefdfb8870438c858614280d727ec869591f910aba2b10c10af2ba8c1",
-  "mock_chooser_short_later_today": "b0ba9bd8707c5022e2893f751950f57ebe87fb64aafb970535e42d1eab916027",
+  "mock_chooser_short_later_today": "2fc8e300176c4feee4407b0873e83ac94fb9b0948f23c60202111300c39feb4c",
   "mock_chooser_short_line": "6c6ec6551be317a0bb2ecfc5cd28554dc09f05f9a060451506a8f1913728b678",
-  "mock_chooser_short_on": "18b832339d06e85d3c10379dadb5845de359383e84fc261344b38e81725754ec",
+  "mock_chooser_short_on": "48073eeecceb8e01546acb6e3a22707c97ee6739ac53e3be0eeda402957a5a15",
   "mock_chooser_short_title": "96ec2a9f2f3836be3028ffdc3796827375b7d138750687943b2b24f412ef036b",
   "mock_chooser_size_latest_exam": "f0f34d285af8b9e02bed05a13fa73ff70c2f4ba7be8456ae9854397fb6461827",
   "mock_chooser_size_past_edition": "e5407351a6cabd3431be35a43637a3fd314eab8967a3086622740acf2b2aa9c3",
@@ -71,10 +71,10 @@
     <string name="mock_chooser_short_title">¿Empezar un simulacro más corto?</string>
     <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
     <string name="mock_chooser_short_day">Hoy este simulacro incluye %1$s de sus %2$s preguntas y dura aproximadamente %3$s. Puedes hacerlo completo mañana.</string>
-    <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
-    <string name="mock_chooser_short_later_today">Hoy este simulacro incluye %1$s de sus %2$s preguntas y dura aproximadamente %3$s. Puedes hacerlo completo hoy más tarde.</string>
-    <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min"; %4$s is a day and its month, such as "November 22" in English. -->
-    <string name="mock_chooser_short_on">Hoy este simulacro incluye %1$s de sus %2$s preguntas y dura aproximadamente %3$s. Puedes hacerlo completo el %4$s.</string>
+    <!-- In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now. -->
+    <string name="mock_chooser_short_later_today">Hoy este simulacro tiene %1$s de sus %2$s preguntas y dura aproximadamente %3$s. Puedes hacerlo completo hoy más tarde.</string>
+    <!-- In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now. {date} is a day and its month, such as "November 22" in English. -->
+    <string name="mock_chooser_short_on">Hoy este simulacro tiene %1$s de sus %2$s preguntas y dura aproximadamente %3$s. Puedes hacerlo completo el %4$s.</string>
     <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
     <string name="mock_chooser_short_line">Hoy este simulacro incluye %1$s de sus %2$s preguntas y dura aproximadamente %3$s.</string>
     <string name="mock_chooser_pick_another">Elegir otro</string>

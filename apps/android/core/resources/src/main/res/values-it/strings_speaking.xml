@@ -14,8 +14,8 @@
   "speaking_mock_opens": "5950eedf64bbed7f158399b2567043c26b1ea38bed8eff9400b0cf8a04860d5b",
   "speaking_mock_start": "aff74a3ac4d56be955c28e53b10cc5ff29eef5b41f6844885db25a3226824cbe",
   "speaking_mock_toefl": "1604982a7afe4550ec7c89609c9d45706439e6a61b8031e2cb36687026b5c804",
-  "speaking_no_time": "1f87873c8d2b2769ecee054132576f0eda3b216c40b7daf304bc2e56657f7e48",
-  "speaking_no_time_mock": "f424adf3ea1b79b5799082bc3e2b9cc8fc85fb29e5ab78088f298fd870be4636",
+  "speaking_no_time": "ef4aee3cd1477a43cf6e3534edbe67b6b536ff584a63f6b0c010b84242124803",
+  "speaking_no_time_mock": "0d9076563d32ba529007fd8b3ab7e19c0fe0ed09f22fb7db3306a29b7c412cce",
   "speaking_official_format": "856d2bb1b2bc92ded4b7d214c75ce0c81f2fec6c5d93b689db44cdd5228eacdf",
   "speaking_opens_when_ready": "d6c16239d2a2614ab07b1e10ea17f091d1c77518f65396b1e06b7e05a31eba14",
   "speaking_prep": "2c521ba46912bdaecc759bf57e014241306f8e33ea1ff43d305bbdb19d5134fb",
@@ -50,8 +50,8 @@
     <string name="speaking_section">Parlato</string>
     <string name="speaking_gate">Per l’esercitazione orale serve un abbonamento</string>
     <string name="speaking_opens_when_ready">Apriremo il tuo compito appena la scheda sarà pronta.</string>
-    <string name="speaking_no_time">Tempo di conversazione insufficiente per questo compito</string>
-    <string name="speaking_no_time_mock">Tempo di conversazione insufficiente per questa simulazione</string>
+    <string name="speaking_no_time">Non hai abbastanza tempo di conversazione per questo compito</string>
+    <string name="speaking_no_time_mock">Non hai abbastanza tempo di conversazione per questa simulazione</string>
     <string name="speaking_start_failed">Il compito non si è avviato. Riprova tra poco.</string>
     <string name="speaking_official_format">Vedi la struttura ufficiale</string>
     <string name="speaking_start_task">Inizia</string>

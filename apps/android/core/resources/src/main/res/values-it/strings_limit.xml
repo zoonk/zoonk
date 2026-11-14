@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "limit_call_time_used": "9f71d6aa6ab9a77dda7056af94f64698ac42115a97bb7163146014e951801024",
+  "limit_call_time_used": "f6507838d56d42f0701b74073fd88a80de5fb2dd3ffa4d92f88d9a026859dcba",
   "limit_create_account": "82041771321814443de9d477f8f23565ab21112f568f7e11b0ee54b7f31fb4f5",
   "limit_enough_later_today": "80b0aaae2f379535214ad13232f375d0fa88e7eaa2b68892c5fb62a4e59e8074",
-  "limit_enough_later_today_or_subscribe": "1500897dd39c280b0b6f5efcf6b81008a80f9f007bf27405a539e9aff3338052",
+  "limit_enough_later_today_or_subscribe": "4327f2e13cc266b29e6abd168595ee3e0d755398204e02d4a6d6be59be4185a8",
   "limit_enough_on": "833f2aeb08f028cc07e050bb9370b83bb06327daee4dd84147aeb101feeaf8f5",
-  "limit_enough_on_or_subscribe": "7c6734c380dfbe273eb4d63e1a551d3cf83bfb46cdbfe7588617710996dc5b93",
-  "limit_enough_tomorrow": "1e9efee86decabd4b502e47f662d0609491f6ad16f8ec5d7f17ecb1e594fb7cb",
-  "limit_enough_tomorrow_or_subscribe": "f8735333a377d8191a703cac2c83ad75c106c4e7bd9d22cd50ef7a5d9612f0f3",
+  "limit_enough_on_or_subscribe": "8e5f778f713f5742f2fbefe7b632cf5066cad431bc2d8a5d06508776f6fd3776",
+  "limit_enough_tomorrow": "792f25ff267c35bfd958f04535afae7097a0dc0181cd70298340aaa01d25f80b",
+  "limit_enough_tomorrow_or_subscribe": "3591f6c36175dee34ea3da6e460305da2c6445f237e97003b6845a71cecc70ea",
   "limit_explanations_day": "98d29715e150449c9007e5d4c2c46d0d754ceb319c8e937238b78a8d04019133",
   "limit_explanations_used": "fd0427d9b7c61d4e197997c296e51050d3e6c08da3ca1e3bda8344f286fb56aa",
   "limit_goals_used": "a5b17f0cee9c43ef7d5b7af7b103b832035960918f180366e975523c527ee9a0",
@@ -32,12 +32,12 @@
   "limit_mind_maps_guest": "f5dcb7c766c707dd4fe676755200352dae0a7326e4d428c90b97c647205ab4e3",
   "limit_mind_maps_used": "8fb775c0d7b5f53632d29b92753c2e5d5173d78d2a4c9b6276c076160a0e8b00",
   "limit_mock_exams_used": "f8e0dd5859663f9a1b915dec4288ade9c5d3f8f9ca2000d69a459f7f2d93d175",
-  "limit_more_later_today": "e1a87e2f0216a71b787c83dabddc37149ce7408621597ff10477002d0a6a96f0",
-  "limit_more_later_today_or_subscribe": "cc62e3231a7ce547d365e96c99d2684b62bdae1290d7fd7fe7b19cdd7b15bc4f",
+  "limit_more_later_today": "fa89bfcf98f2c9b2f14bce8912e6d6ee5d8b749076143b16dd7c738ed7154add",
+  "limit_more_later_today_or_subscribe": "8490b76b43d96e3c449f10dd2bbb0e70146d9b3ca969885aa522613bb7b1715e",
   "limit_more_on": "bc6860bab0fab00c7bbdbd9e47e3c309d133e0ba9a70a084ba681a61a899f728",
-  "limit_more_on_or_subscribe": "507b5e2ac3b344429af67cbf961e324a8fd549c12d035a3016e23336162b0f3a",
-  "limit_more_tomorrow": "ff7cde64488c0f358d255fce606984791081f0d0d6f0808bee8e1e1bbcde7cd2",
-  "limit_more_tomorrow_or_subscribe": "27b35250ac3860a567286197ea4131d2c36065190a4a9997f46bb2fc6cb3cbe7",
+  "limit_more_on_or_subscribe": "e33722c8e114fc82ed9688db29977ab99000262ddea8cc171dfff237d393a59c",
+  "limit_more_tomorrow": "256de6323af6c9d1af4405effc4289b7deb43e95817ed78ade9c5c8cdb0db344",
+  "limit_more_tomorrow_or_subscribe": "d74cb22b0658dc05f8e2ab231f13f171f0a2c59407d35fabf465cb37c889c3ac",
   "limit_outlines_day": "23a44378925b766374c214e438fe2d2b735a348eaf200fa9dcc7e091d0f3082f",
   "limit_outlines_guest": "cf1786b34f638e93c930192788a43182e4aef69183d95523889c5440e7be81f2",
   "limit_outlines_used": "2aefedf6e0479dbaf6e3cc1997284a78600687ec13cf9b3474c409be1e4d109c",
@@ -55,29 +55,31 @@
     <string name="limit_create_account">Crea un account gratuito</string>
     <string name="limit_slow_down">Fai una breve pausa, poi riprova.</string>
     <string name="limit_sign_up_required">Serve un account gratuito</string>
-    <string name="limit_more_tomorrow">Ne avrai ancora domani.</string>
-    <string name="limit_more_tomorrow_or_subscribe">Ne avrai ancora domani, oppure abbonati per continuare.</string>
-    <string name="limit_more_later_today">Potrai continuare più tardi oggi.</string>
-    <string name="limit_more_later_today_or_subscribe">Potrai continuare più tardi oggi, o anche subito con un abbonamento.</string>
-    <!-- Under the title of a notice when something the learner's plan allows has run out. {date} is a day and its month, such as "November 22" in English. -->
+    <string name="limit_more_tomorrow">Altro domani.</string>
+    <string name="limit_more_tomorrow_or_subscribe">Potrai continuare domani, oppure abbonati per farlo subito.</string>
+    <!-- The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back. -->
+    <string name="limit_more_later_today">Potrai continuare più tardi in giornata.</string>
+    <!-- The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back. -->
+    <string name="limit_more_later_today_or_subscribe">Potrai continuare più tardi in giornata, oppure abbonati per farlo subito.</string>
+    <!-- The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: the day more comes back. {date} is a day and its month, such as "November 22" in English. -->
     <string name="limit_more_on">Potrai continuare il %1$s.</string>
-    <!-- Under the title of a notice when something the learner's plan allows has run out. {date} is a day and its month, such as "November 22" in English. -->
-    <string name="limit_more_on_or_subscribe">Potrai continuare il %1$s, o anche subito con un abbonamento.</string>
-    <!-- Under "Not enough call time for this task": a call of a set length that doesn't fit the learner's call time yet. -->
+    <!-- The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: the day more comes back. {date} is a day and its month, such as "November 22" in English. -->
+    <string name="limit_more_on_or_subscribe">Potrai continuare il %1$s, oppure abbonati per farlo subito.</string>
+    <!-- Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it. -->
     <string name="limit_enough_later_today">Avrai abbastanza tempo più tardi in giornata.</string>
-    <!-- Under "Not enough call time for this task": a call of a set length that doesn't fit the learner's call time yet. -->
-    <string name="limit_enough_later_today_or_subscribe">Avrai abbastanza tempo più tardi in giornata, oppure puoi abbonarti per continuare.</string>
-    <!-- Under "Not enough call time for this task": a call of a set length that doesn't fit the learner's call time yet. -->
-    <string name="limit_enough_tomorrow">Domani avrai abbastanza tempo.</string>
-    <!-- Under "Not enough call time for this task": a call of a set length that doesn't fit the learner's call time yet. -->
-    <string name="limit_enough_tomorrow_or_subscribe">Domani avrai abbastanza tempo, oppure puoi abbonarti per continuare.</string>
-    <!-- Under "Not enough call time for this task": a call of a set length that doesn't fit the learner's call time yet. {date} is a day and its month, such as "November 22" in English. -->
+    <!-- Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it. -->
+    <string name="limit_enough_later_today_or_subscribe">Avrai abbastanza tempo più tardi in giornata, oppure abbonati per continuare.</string>
+    <!-- Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it. -->
+    <string name="limit_enough_tomorrow">Avrai abbastanza tempo domani.</string>
+    <!-- Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it. -->
+    <string name="limit_enough_tomorrow_or_subscribe">Avrai abbastanza tempo domani, oppure abbonati per continuare.</string>
+    <!-- Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it. -->
     <string name="limit_enough_on">Avrai abbastanza tempo il %1$s.</string>
-    <!-- Under "Not enough call time for this task": a call of a set length that doesn't fit the learner's call time yet. {date} is a day and its month, such as "November 22" in English. -->
-    <string name="limit_enough_on_or_subscribe">Avrai abbastanza tempo il %1$s, oppure puoi abbonarti per continuare.</string>
-    <!-- Under the title of a notice when something the learner had run out of has come back while the notice was open. -->
+    <!-- Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it. -->
+    <string name="limit_enough_on_or_subscribe">Avrai abbastanza tempo il %1$s, oppure abbonati per continuare.</string>
+    <!-- The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back. -->
     <string name="limit_try_again_now">Ora puoi riprovare.</string>
-    <!-- Joins a notice's title and its line into one sentence where there's room for only one, such as "You've used your uploads. More on November 22, or subscribe to keep going." -->
+    <!-- A notice that something the learner uses ran out, as one line: {title} says what ran out, such as "You've used your uploads", and {line} when more comes back, such as "More on November 22, or subscribe to keep going." -->
     <string name="limit_sentence">%1$s. %2$s</string>
     <string name="limit_still_review">Puoi ancora ripassare ed esercitarti sui tuoi errori.</string>
     <string name="limit_help_guest">Per continuare a provare serve un account</string>
@@ -91,7 +93,7 @@
     <string name="limit_goals_used">Hai raggiunto il limite di nuovi obiettivi</string>
     <string name="limit_uploads_used">Hai esaurito i caricamenti</string>
     <string name="limit_questions_used">Hai esaurito le domande</string>
-    <string name="limit_call_time_used">Hai esaurito il tempo di conversazione</string>
+    <string name="limit_call_time_used">Hai esaurito il tempo per le conversazioni</string>
     <string name="limit_mock_exams_used">Hai esaurito le simulazioni</string>
     <string name="limit_lessons_guest">Per altre lezioni serve un account</string>
     <string name="limit_lessons_free">Hai esaurito le tue lezioni gratuite</string>

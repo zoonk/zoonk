@@ -22,9 +22,9 @@
   "mock_chooser_preparing_detail": "c0b638db76ebb51afe9e50227c647d8f8c5d0a98f8a1e5ad2160032025c14aa8",
   "mock_chooser_questions": "35ffae49d790325ceaa22a24bbc87a338de571ffd63801fe5cb36da6abcc91ac",
   "mock_chooser_short_day": "70ca231af2714413b0f620d9d0d504559e3aa03543638c1a29002a24b2a0e8a6",
-  "mock_chooser_short_later_today": "bdd6edf68a8fb9d57fb73b9e7ff5d3e43e023dceb85c63b93951815a8bcf1068",
+  "mock_chooser_short_later_today": "326b33c231990c59324e80bc760cba74e42f0deae7d6198e75dfae1e4cd2d09c",
   "mock_chooser_short_line": "daac8535bfd824f8c574f58c0533e02492533562cade6daec6229fc0b469782f",
-  "mock_chooser_short_on": "ff9d710528c67e777bdd70569c3aa3bdcec8331d2ad9e0b2fc313212d32c58e8",
+  "mock_chooser_short_on": "8f9df5124d959d0a7eb354acae6c1f191025134628f73e45de40b80173bddfd0",
   "mock_chooser_short_title": "5ae0e80590712a7dcae39ea1defa51dcc8c9b20cc283229b348df64afed009b9",
   "mock_chooser_size_latest_exam": "efadf4df7aa8e5a1ebd51b12c35061032c352031f96c7753f7f3899a31286296",
   "mock_chooser_size_past_edition": "9e0db5aedf9080a9326edfeb43fe6f96c9dd91027a8feaadbfb50edc7f73eda7",
@@ -71,10 +71,10 @@
     <string name="mock_chooser_short_title">Commencer un examen blanc plus court ?</string>
     <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
     <string name="mock_chooser_short_day">Aujourd’hui, cet examen blanc compte %1$s questions sur %2$s, soit environ %3$s. Tu pourras le faire en entier demain.</string>
-    <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
-    <string name="mock_chooser_short_later_today">Aujourd’hui, cet examen blanc compte %1$s questions sur %2$s et dure environ %3$s. Tu pourras le passer en entier plus tard dans la journée.</string>
-    <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min"; %4$s is a day and its month, such as "November 22" in English. -->
-    <string name="mock_chooser_short_on">Aujourd’hui, cet examen compte %1$s questions sur %2$s, soit environ %3$s. Tu peux le passer en entier le %4$s.</string>
+    <!-- In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now. -->
+    <string name="mock_chooser_short_later_today">Aujourd’hui, cet examen blanc comprend %1$s questions sur %2$s, soit environ %3$s. Tu pourras passer la version complète plus tard dans la journée.</string>
+    <!-- In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now. {date} is a day and its month, such as "November 22" in English. -->
+    <string name="mock_chooser_short_on">Aujourd’hui, cet examen blanc comprend %1$s questions sur %2$s, soit environ %3$s. Tu pourras passer la version complète le %4$s.</string>
     <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
     <string name="mock_chooser_short_line">Aujourd’hui, cet examen blanc compte %1$s questions sur %2$s, soit environ %3$s.</string>
     <string name="mock_chooser_pick_another">En choisir un autre</string>

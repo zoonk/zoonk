@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "limit_call_time_used": "c7f9750bfb926135c8929205335c6d6de0871f22eb14bb6e3d3347810779e6c9",
+  "limit_call_time_used": "9c51deef26576d3db9e5616d8e36664d6768714bffef98e579fe05855d5a235d",
   "limit_create_account": "265d60bd193345c318a8be0d6b5e447aad4a2a95bf0d6ac03aaacfb937cc6952",
   "limit_enough_later_today": "0523e7675026fdcace207f8b8a0fef589306afda0d0b450d70c23d03547ae3dd",
   "limit_enough_later_today_or_subscribe": "bbfa1aeda0de51e1d69d13c23f0b86ada79db0cdf00deea9dc3183b5091a6ab7",
@@ -14,7 +14,7 @@
   "limit_goals_used": "680f7fbdadf6cc55c48e4eae8fc05f394485c861af1f6cd654954d058988ba93",
   "limit_help_day": "eba094d21086adcf7e31d460e9cfbbc9d63eb2bef8ab4b8e8fe17d98f5c76d1f",
   "limit_help_guest": "d8e4bac454d576f8ee607fd11b65402fab7d98fb6a0a59529f1d4ff851437ef6",
-  "limit_help_used": "11051fe305d9c2da2836fe32575763dddd309b8117740360ef56861df6104507",
+  "limit_help_used": "af3e7a9d03df4da08c9898173f73a47c5188ae8e4670874dcf9835aab7f8d4cb",
   "limit_lesson_ready": "b9e98cbfc9758207c0dbf77c62eb3cceee005092819b4e5c9460a548a637ac04",
   "limit_lessons_day": "fbce5c113297c2d9a3045548b5017a86b76893f12a040edbf4007f608b257acb",
   "limit_lessons_free": "44f3dbe8e1c31179c1978d13395626bae15bba6164c8c163df3bef6b39941f24",
@@ -32,12 +32,12 @@
   "limit_mind_maps_guest": "40b607cca3747759260954bf18408e0bca54906c3a92565da9bed3cc3e6e08d2",
   "limit_mind_maps_used": "3e115ada8273ebd9261477c91923f854387bcd58825203c339c2e301b584136d",
   "limit_mock_exams_used": "50e4a30efb0c35a13c7bedf77e470bd69b3a238947952f3e8477b3192bac753e",
-  "limit_more_later_today": "8e2e247cc2a29ef82f16ec2b2e9b597b3e0919918dd6b81438016db76979d29d",
-  "limit_more_later_today_or_subscribe": "3f1d310da64798e07ff19482aeeb305ae33e220899310a6d7efb99c2ad98cd3d",
-  "limit_more_on": "a72c7ba87495fd936dfc990bf5040462cf57eab4ad790fa16161b359e2ef8415",
-  "limit_more_on_or_subscribe": "eac84a3f4278c16d8856cb1c589bd2cd969c02678e7cd2676f57625bea2546c2",
+  "limit_more_later_today": "7301044839b5f36115658a702ae7cd756ca373f780382abc8b362dbaac8954a0",
+  "limit_more_later_today_or_subscribe": "e0881e436ac2a26df9623d90a9942e739d5c7ec8583c0b62822e6eca14384d76",
+  "limit_more_on": "f6af874e3df51dd5a1089ce801cb9c1eb8bf1571190bef5d76e9656877805201",
+  "limit_more_on_or_subscribe": "3fabea9566e0e8af5c1d7e35a46a58ff163d54961411e8e6e519a78048f7c13d",
   "limit_more_tomorrow": "d8f5015ce1e1f9b7385107234a9e0a69bf1289dcdd48c27ded430916fa783f80",
-  "limit_more_tomorrow_or_subscribe": "87a5c251b71ba6d75e7479a6f63d00439b7f9adae52c7e56391e0b6274d7fb22",
+  "limit_more_tomorrow_or_subscribe": "b33ac3e0b35db2ef735f0bf20654adf13869a85fc83d70c687de0a6f362135e1",
   "limit_outlines_day": "3648722008ca98fb7eb73a99dc52933c2667dc770f995c3349372e9bfcfc58cd",
   "limit_outlines_guest": "75b8c7020d149b1e62bee86084f6554979685d8ccb3919684c5e72ee8eff567a",
   "limit_outlines_used": "64b9badd2bd20d4ef6a24eaf40a622c029620cf58ca2a714a46517eafb90210c",
@@ -56,33 +56,35 @@
     <string name="limit_slow_down">Zrób krótką przerwę i spróbuj ponownie.</string>
     <string name="limit_sign_up_required">Potrzebujesz bezpłatnego konta</string>
     <string name="limit_more_tomorrow">Więcej jutro.</string>
-    <string name="limit_more_tomorrow_or_subscribe">Więcej jutro. Wykup subskrypcję, by korzystać dalej.</string>
-    <string name="limit_more_later_today">Limit odnowi się jeszcze dziś.</string>
-    <string name="limit_more_later_today_or_subscribe">Limit odnowi się jeszcze dziś. Możesz też wykupić pakiet, by kontynuować.</string>
-    <!-- Under the title of a notice when something the learner's plan allows has run out. {date} is a day and its month, such as "November 22" in English. -->
-    <string name="limit_more_on">Limit odnowi się %1$s.</string>
-    <!-- Under the title of a notice when something the learner's plan allows has run out. {date} is a day and its month, such as "November 22" in English. -->
-    <string name="limit_more_on_or_subscribe">Limit odnowi się %1$s. Możesz też wykupić pakiet, by kontynuować.</string>
-    <!-- Under "Not enough call time for this task": a call of a set length that doesn't fit the learner's call time yet. -->
+    <string name="limit_more_tomorrow_or_subscribe">Możesz kontynuować jutro lub już teraz, jeśli wykupisz subskrypcję.</string>
+    <!-- The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back. -->
+    <string name="limit_more_later_today">Możesz kontynuować później dzisiaj.</string>
+    <!-- The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back. -->
+    <string name="limit_more_later_today_or_subscribe">Możesz kontynuować później dzisiaj lub już teraz, jeśli wykupisz subskrypcję.</string>
+    <!-- The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: the day more comes back. {date} is a day and its month, such as "November 22" in English. -->
+    <string name="limit_more_on">Możesz kontynuować %1$s.</string>
+    <!-- The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: the day more comes back. {date} is a day and its month, such as "November 22" in English. -->
+    <string name="limit_more_on_or_subscribe">Możesz kontynuować %1$s lub już teraz, jeśli wykupisz subskrypcję.</string>
+    <!-- Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it. -->
     <string name="limit_enough_later_today">Jeszcze dziś będziesz mieć dość czasu.</string>
-    <!-- Under "Not enough call time for this task": a call of a set length that doesn't fit the learner's call time yet. -->
+    <!-- Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it. -->
     <string name="limit_enough_later_today_or_subscribe">Jeszcze dziś będziesz mieć dość czasu. Możesz też wykupić pakiet, by kontynuować.</string>
-    <!-- Under "Not enough call time for this task": a call of a set length that doesn't fit the learner's call time yet. -->
+    <!-- Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it. -->
     <string name="limit_enough_tomorrow">Jutro będziesz mieć dość czasu.</string>
-    <!-- Under "Not enough call time for this task": a call of a set length that doesn't fit the learner's call time yet. -->
+    <!-- Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it. -->
     <string name="limit_enough_tomorrow_or_subscribe">Jutro będziesz mieć dość czasu. Możesz też wykupić pakiet, by kontynuować.</string>
-    <!-- Under "Not enough call time for this task": a call of a set length that doesn't fit the learner's call time yet. {date} is a day and its month, such as "November 22" in English. -->
+    <!-- Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it. -->
     <string name="limit_enough_on">%1$s będziesz mieć dość czasu.</string>
-    <!-- Under "Not enough call time for this task": a call of a set length that doesn't fit the learner's call time yet. {date} is a day and its month, such as "November 22" in English. -->
+    <!-- Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it. -->
     <string name="limit_enough_on_or_subscribe">%1$s będziesz mieć dość czasu. Możesz też wykupić pakiet, by kontynuować.</string>
-    <!-- Under the title of a notice when something the learner had run out of has come back while the notice was open. -->
+    <!-- The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back. -->
     <string name="limit_try_again_now">Możesz już spróbować ponownie.</string>
-    <!-- Joins a notice's title and its line into one sentence where there's room for only one, such as "You've used your uploads. More on November 22, or subscribe to keep going." -->
+    <!-- A notice that something the learner uses ran out, as one line: {title} says what ran out, such as "You've used your uploads", and {line} when more comes back, such as "More on November 22, or subscribe to keep going." -->
     <string name="limit_sentence">%1$s. %2$s</string>
     <string name="limit_still_review">Nadal możesz robić powtórki i pracować nad błędami.</string>
     <string name="limit_help_guest">To już wszystko, co możesz wypróbować bez konta</string>
     <string name="limit_help_day">Dzisiejszy limit wykorzystany</string>
-    <string name="limit_help_used">Osiągnięto limit</string>
+    <string name="limit_help_used">Wykorzystano limit</string>
     <string name="limit_messages_day">To już wszystkie wiadomości na dziś</string>
     <string name="limit_messages_used">Wykorzystano limit wiadomości</string>
     <string name="limit_explanations_day">To już wszystkie wyjaśnienia na dziś</string>
@@ -91,7 +93,7 @@
     <string name="limit_goals_used">Wykorzystano limit nowych celów</string>
     <string name="limit_uploads_used">Wykorzystano limit przesyłania plików</string>
     <string name="limit_questions_used">Wykorzystano limit pytań</string>
-    <string name="limit_call_time_used">Wykorzystano cały czas na rozmowy</string>
+    <string name="limit_call_time_used">Twój czas na rozmowy się skończył</string>
     <string name="limit_mock_exams_used">Wykorzystano limit egzaminów próbnych</string>
     <string name="limit_lessons_guest">Do kolejnych lekcji potrzebujesz konta</string>
     <string name="limit_lessons_free">Wykorzystano wszystkie bezpłatne lekcje</string>

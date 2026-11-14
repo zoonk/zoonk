@@ -24,7 +24,7 @@
   "mock_chooser_short_day": "ae6e7906ff42a2c3b843668cc3a58d6a204fc39d25d864250cfa02a7cc7221bd",
   "mock_chooser_short_later_today": "d1d47b8d8e567212871f611695cfab973c6329f140f3a164b32ffebd40a36a92",
   "mock_chooser_short_line": "71ca3f961bbcbf206085a2637a609d3908598c38f1fb551da8cb1249834ce415",
-  "mock_chooser_short_on": "b4d0e2f3edece7a29fd438cf48a46a143611838f93ffdef4ec4cb7a823d9da2a",
+  "mock_chooser_short_on": "cd50759d3a1cc48ccc73f9f2b9ba2656176efbd570b21760e125d0cb35aa4890",
   "mock_chooser_short_title": "f02c071adfc3964ea1d97a7436b102240a948aba8c86e8f33d683f43eeea9376",
   "mock_chooser_size_latest_exam": "49cf15d1d209c7bc2f8c27be74fa678b1c58fa348c61d8a7999e406164745264",
   "mock_chooser_size_past_edition": "89dd0d68d663a92b3733e98ff607e98a8f73da18833ab004430d1ec6ab312c18",
@@ -71,10 +71,10 @@
     <string name="mock_chooser_short_title">Começar um simulado mais curto?</string>
     <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
     <string name="mock_chooser_short_day">Hoje, esse simulado tem %1$s das %2$s questões e leva cerca de %3$s. Você pode fazer o completo amanhã.</string>
-    <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
+    <!-- In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now. -->
     <string name="mock_chooser_short_later_today">Hoje, este simulado tem %1$s das %2$s questões e dura cerca de %3$s. Você pode fazer a versão completa mais tarde, ainda hoje.</string>
-    <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min"; %4$s is a day and its month, such as "November 22" in English. -->
-    <string name="mock_chooser_short_on">Hoje, esse simulado tem %1$s das %2$s questões e leva cerca de %3$s. Você pode fazer o simulado completo em %4$s.</string>
+    <!-- In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now. {date} is a day and its month, such as "November 22" in English. -->
+    <string name="mock_chooser_short_on">Hoje, este simulado tem %1$s das %2$s questões e dura cerca de %3$s. Você pode fazer a versão completa em %4$s.</string>
     <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
     <string name="mock_chooser_short_line">Hoje, esse simulado tem %1$s das %2$s questões e leva cerca de %3$s.</string>
     <string name="mock_chooser_pick_another">Escolher outro</string>

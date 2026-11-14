@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "limit_call_time_used": "49996e91b8177eceeea416eabebc21ddd36f93428e82d2610d1c22276c3ca268",
+  "limit_call_time_used": "9affda514069cbacd6417a3dc807412ac047f47d488730bea4b486bb950c5337",
   "limit_create_account": "c554dd10688178a5f5e0e1214c0c3905c614a477e3ee465ae3dbda5849cb409f",
-  "limit_enough_later_today": "7acc4c6a3953d022c8b791e059b9f206fa0684429a55ba6d0a1f3fec62c97465",
-  "limit_enough_later_today_or_subscribe": "35e8f7c3b50cd30fb0be723d225bca0108a962ee1ea5e5669d21f3f66d8219c3",
-  "limit_enough_on": "cdfbfc00cde0fc0282fc0b31813ea7967ed8654acb34ac84a75758ae48189096",
-  "limit_enough_on_or_subscribe": "316b3a70caabae24d5e894016f3fe873b32732d34e9ba087c92f510945dd3ed5",
-  "limit_enough_tomorrow": "ba8166a82a0f1e6ffc2ea9713fde7c08693d6d4b35adaecd4c3b864ead9d0167",
-  "limit_enough_tomorrow_or_subscribe": "61a5738f43158090412b00083225a95fb5cf914ba0ef3faecb38cab0441debb6",
+  "limit_enough_later_today": "39a007e794655126501edc6a6c026814cacc27c16c0cdbecc8e8348483980cea",
+  "limit_enough_later_today_or_subscribe": "c6ab698f0547bda7ef347f4a8437cf3cf2c7dc02cc81be31504d031b14f1b9da",
+  "limit_enough_on": "e875d8a5ba9f15505c114deece5f5834c2216392c8b2030ca1bcbab5e1caef0f",
+  "limit_enough_on_or_subscribe": "86ebe42826ed51897e14824c7ed9c62999990ab698616283db957801ea451613",
+  "limit_enough_tomorrow": "2bdecf686e80d395a8388d69bc40d58406fba95b24781f3e16af897482dde4fa",
+  "limit_enough_tomorrow_or_subscribe": "7111a97331224489afaf99d07a21bc1ff8b63eefd705a5059c7a9d14bce2e04d",
   "limit_explanations_day": "a5f83b33fe11c46d1e0c48ebfbebb3860d8282a78f25129bebd360fd7c658e31",
   "limit_explanations_used": "bd473a58d2160ba703b06e09667b1dda42e982d35767bbd2bb8e4a43b25cd77b",
   "limit_goals_used": "35848798605ea22366d5fa6681fff9e520a10b29d610aa41eb0887ff3a4555a2",
@@ -32,12 +32,12 @@
   "limit_mind_maps_guest": "204eaf69d1fb17b52e56adf31d6dea18850335e199d2419d62c3614b37529e6c",
   "limit_mind_maps_used": "c4d26751f96f9f470943f3600a233182fcfc43a560787969ec203e885bd89b49",
   "limit_mock_exams_used": "3138869b727f23b888d3271f3e80ea0c354fc6e903bdcc2d0eaf688306ef5977",
-  "limit_more_later_today": "d38e89c35f1a08d6aa10f73a36241757e222e583f49d39d97dbd10da09a29d3d",
-  "limit_more_later_today_or_subscribe": "a8eebc9db76182816b923699ea9221bb38282296e83d518076eb8c2ffd0099ae",
-  "limit_more_on": "299b3cc286c378d529f6c469f4711a6f0f8e052334b1cc2fe153bac444f1e7ae",
-  "limit_more_on_or_subscribe": "9d407dcaba5a73dbcf7e49bf43dedaae46fa1f3abed39affd7a5b49bef08e114",
-  "limit_more_tomorrow": "115ee20b59c32df16bac8717d9d90a1b89598956e2ef03911b8d335e6cc2246c",
-  "limit_more_tomorrow_or_subscribe": "e837bc48fc35a2751b39fbc4a03362c1c864cc3412267e3a01b7c6be560f3e4a",
+  "limit_more_later_today": "b3c2ccfe60a19d01dc55a52044c3ef5e243e99968d97c6dcfd51f1abf9ae2811",
+  "limit_more_later_today_or_subscribe": "95fa0056cbc50c743706b6579004eb21ad824d5cc821ed36807efa5ae9094a3a",
+  "limit_more_on": "961c1e27eb1f39d55d467a0a5d2f0cebdda9d3ea6d4182d84f7fd18a7d7317c6",
+  "limit_more_on_or_subscribe": "b306bbe80cb78888afdc91a5d01b82691adea76f534bc562302142c63dfc118e",
+  "limit_more_tomorrow": "f65ff916dd744476fdf13629a8d5c13c6e86c9fcf1a55bd8088c9ea7e07958f0",
+  "limit_more_tomorrow_or_subscribe": "4a6619f1de5902eb09f0aa248365565ec40598fea1aa518661b89e69124b80b3",
   "limit_outlines_day": "529dd6114f1db5a762ea1cd4e321ac50d4632ffb31b46a6ef22136d8b3979bab",
   "limit_outlines_guest": "01be58ca32e9810d1c8c9ca13716db366e18bda775e94050ba942c6e4385ff51",
   "limit_outlines_used": "530a98919e856d1f5fa30d263622451d159dfa7546db652b4f92653f39641f0b",
@@ -55,29 +55,31 @@
     <string name="limit_create_account">Ücretsiz hesap oluştur</string>
     <string name="limit_slow_down">Kısa bir ara ver, sonra tekrar dene.</string>
     <string name="limit_sign_up_required">Bunun için ücretsiz bir hesap gerekiyor</string>
-    <string name="limit_more_tomorrow">Hakların yarın yenilenir.</string>
-    <string name="limit_more_tomorrow_or_subscribe">Hakların yarın yenilenir; devam etmek için abone ol.</string>
-    <string name="limit_more_later_today">Bugün daha sonra devam edebilirsin.</string>
-    <string name="limit_more_later_today_or_subscribe">Bugün daha sonra ya da abone olup hemen devam edebilirsin.</string>
-    <!-- Under the title of a notice when something the learner's plan allows has run out. {date} is a day and its month, such as "November 22" in English. -->
-    <string name="limit_more_on">%1$s tarihinde devam edebilirsin.</string>
-    <!-- Under the title of a notice when something the learner's plan allows has run out. {date} is a day and its month, such as "November 22" in English. -->
-    <string name="limit_more_on_or_subscribe">%1$s tarihinde ya da abone olup hemen devam edebilirsin.</string>
-    <!-- Under "Not enough call time for this task": a call of a set length that doesn't fit the learner's call time yet. -->
-    <string name="limit_enough_later_today">Bugün ilerleyen saatlerde yeterli sohbet süren olacak.</string>
-    <!-- Under "Not enough call time for this task": a call of a set length that doesn't fit the learner's call time yet. -->
-    <string name="limit_enough_later_today_or_subscribe">Bugün ilerleyen saatlerde yeterli sohbet süren olacak. Hemen devam etmek için abone ol.</string>
-    <!-- Under "Not enough call time for this task": a call of a set length that doesn't fit the learner's call time yet. -->
-    <string name="limit_enough_tomorrow">Yarın yeterli sohbet süren olacak.</string>
-    <!-- Under "Not enough call time for this task": a call of a set length that doesn't fit the learner's call time yet. -->
-    <string name="limit_enough_tomorrow_or_subscribe">Yarın yeterli sohbet süren olacak. Hemen devam etmek için abone ol.</string>
-    <!-- Under "Not enough call time for this task": a call of a set length that doesn't fit the learner's call time yet. {date} is a day and its month, such as "November 22" in English. -->
-    <string name="limit_enough_on">%1$s tarihinde yeterli sohbet süren olacak.</string>
-    <!-- Under "Not enough call time for this task": a call of a set length that doesn't fit the learner's call time yet. {date} is a day and its month, such as "November 22" in English. -->
-    <string name="limit_enough_on_or_subscribe">%1$s tarihinde yeterli sohbet süren olacak. Hemen devam etmek için abone ol.</string>
-    <!-- Under the title of a notice when something the learner had run out of has come back while the notice was open. -->
+    <string name="limit_more_tomorrow">Yarın daha fazlası var.</string>
+    <string name="limit_more_tomorrow_or_subscribe">Hakların yarın yenilenecek. Devam etmek için abone olabilirsin.</string>
+    <!-- The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back. -->
+    <string name="limit_more_later_today">Hakların bugün ilerleyen saatlerde yenilenecek.</string>
+    <!-- The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back. -->
+    <string name="limit_more_later_today_or_subscribe">Hakların bugün ilerleyen saatlerde yenilenecek. Devam etmek için abone olabilirsin.</string>
+    <!-- The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: the day more comes back. {date} is a day and its month, such as "November 22" in English. -->
+    <string name="limit_more_on">Hakların %1$s tarihinde yenilenecek.</string>
+    <!-- The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: the day more comes back. {date} is a day and its month, such as "November 22" in English. -->
+    <string name="limit_more_on_or_subscribe">Hakların %1$s tarihinde yenilenecek. Devam etmek için abone olabilirsin.</string>
+    <!-- Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it. -->
+    <string name="limit_enough_later_today">Bugün ilerleyen saatlerde yeterli süren olacak.</string>
+    <!-- Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it. -->
+    <string name="limit_enough_later_today_or_subscribe">Bugün ilerleyen saatlerde yeterli süren olacak. İstersen abone olup devam edebilirsin.</string>
+    <!-- Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it. -->
+    <string name="limit_enough_tomorrow">Yarın yeterli süren olacak.</string>
+    <!-- Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it. -->
+    <string name="limit_enough_tomorrow_or_subscribe">Yarın yeterli süren olacak. İstersen abone olup devam edebilirsin.</string>
+    <!-- Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it. -->
+    <string name="limit_enough_on">%1$s tarihinde yeterli süren olacak.</string>
+    <!-- Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it. -->
+    <string name="limit_enough_on_or_subscribe">%1$s tarihinde yeterli süren olacak. İstersen abone olup devam edebilirsin.</string>
+    <!-- The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back. -->
     <string name="limit_try_again_now">Şimdi tekrar deneyebilirsin.</string>
-    <!-- Joins a notice's title and its line into one sentence where there's room for only one, such as "You've used your uploads. More on November 22, or subscribe to keep going." -->
+    <!-- A notice that something the learner uses ran out, as one line: {title} says what ran out, such as "You've used your uploads", and {line} when more comes back, such as "More on November 22, or subscribe to keep going." -->
     <string name="limit_sentence">%1$s. %2$s</string>
     <string name="limit_still_review">Tekrar yapmaya ve yanlışların üzerinde çalışmaya devam edebilirsin.</string>
     <string name="limit_help_guest">Hesap olmadan deneyebileceklerin bu kadar</string>
@@ -91,7 +93,7 @@
     <string name="limit_goals_used">Yeni hedef başlatma hakkın bitti</string>
     <string name="limit_uploads_used">Yükleme hakkın bitti</string>
     <string name="limit_questions_used">Soru hakkın bitti</string>
-    <string name="limit_call_time_used">Sohbet süren bitti</string>
+    <string name="limit_call_time_used">Sohbet süren doldu</string>
     <string name="limit_mock_exams_used">Deneme sınavı hakkın bitti</string>
     <string name="limit_lessons_guest">Daha fazla ders için bir hesap gerekiyor</string>
     <string name="limit_lessons_free">Ücretsiz derslerini kullandın</string>

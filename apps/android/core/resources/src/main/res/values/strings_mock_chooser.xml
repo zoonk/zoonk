@@ -29,9 +29,9 @@
     <string name="mock_chooser_short_title">Start a shorter mock exam?</string>
     <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
     <string name="mock_chooser_short_day">Today this one has %1$s of its %2$s questions, about %3$s. You can take the full one tomorrow.</string>
-    <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
+    <!-- In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now. -->
     <string name="mock_chooser_short_later_today">Today this one has %1$s of its %2$s questions, about %3$s. You can take the full one later today.</string>
-    <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min"; %4$s is a day and its month, such as "November 22" in English. -->
+    <!-- In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now. {date} is a day and its month, such as "November 22" in English. -->
     <string name="mock_chooser_short_on">Today this one has %1$s of its %2$s questions, about %3$s. You can take the full one on %4$s.</string>
     <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
     <string name="mock_chooser_short_line">Today this one has %1$s of its %2$s questions, about %3$s.</string>

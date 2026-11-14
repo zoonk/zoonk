@@ -22,9 +22,9 @@
   "mock_chooser_preparing_detail": "eab9db4249c33a374766bbb01604cd66f7cb76eee9f94e3a07494f1040a6f95e",
   "mock_chooser_questions": "4fac9353111e615edf7c100bf5df480248e9e87538bf8aaadb3bb3ba0288bc6d",
   "mock_chooser_short_day": "ee4c52bfa145e03e35c0d6c09f4aba0ef4602c5a417fc80efc8cfbbfc4812608",
-  "mock_chooser_short_later_today": "16f9bf66b8e38399b5852fa6aab9c0ac08495af984a5d661141e78c40d43a9df",
+  "mock_chooser_short_later_today": "8dcbf071837eecc504906fb052540fd736018ea92ae864f53f17eb73c13f9630",
   "mock_chooser_short_line": "64d869615302f77b0183b7562b8cef2e58b4ce53258adbadf4ef13dbd9244a4e",
-  "mock_chooser_short_on": "e5b8b21dbf40620bdc696c9d9c02a04b655d994abd6ff03d2d4cad8da6b5781a",
+  "mock_chooser_short_on": "3137551fd91c1d27e3e92c17a2b53a102c213473220c0eb897c4cb76b929e072",
   "mock_chooser_short_title": "07bec76a5aa206d0d3e227960c2db36c45b66ec00b1b22556574bb2508336b82",
   "mock_chooser_size_latest_exam": "f97622836371922a6bd934cad95a6ed2c5d09bbf448fdc0051a03f88cd69a4a3",
   "mock_chooser_size_past_edition": "daead7c286ac4dff31f4d23c44310b544efe7ef8559cbe724c6b8c13507fb810",
@@ -72,10 +72,10 @@
     <string name="mock_chooser_short_title">Rozpocząć krótszy egzamin próbny?</string>
     <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
     <string name="mock_chooser_short_day">Ten egzamin ma dziś %1$s z %2$s pytań, czyli około %3$s na rozwiązanie. Pełną wersję możesz rozwiązać jutro.</string>
-    <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
-    <string name="mock_chooser_short_later_today">Dziś ten egzamin obejmuje %1$s z %2$s pytań i zajmie około %3$s, a pełną wersję możesz rozwiązać jeszcze dziś.</string>
-    <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min"; %4$s is a day and its month, such as "November 22" in English. -->
-    <string name="mock_chooser_short_on">Dziś ten egzamin obejmuje %1$s z %2$s pytań, czyli około %3$s pracy. Pełną wersję możesz rozwiązać %4$s.</string>
+    <!-- In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now. -->
+    <string name="mock_chooser_short_later_today">Dziś ten egzamin ma %1$s z %2$s pytań, czyli około %3$s na rozwiązanie. Pełną wersję możesz rozwiązać jeszcze dziś.</string>
+    <!-- In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now. {date} is a day and its month, such as "November 22" in English. -->
+    <string name="mock_chooser_short_on">Dziś ten egzamin ma %1$s z %2$s pytań, czyli około %3$s na rozwiązanie. Pełną wersję możesz rozwiązać %4$s.</string>
     <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
     <string name="mock_chooser_short_line">Ten egzamin ma dziś %1$s z %2$s pytań, czyli około %3$s na rozwiązanie.</string>
     <string name="mock_chooser_pick_another">Wybierz inny</string>

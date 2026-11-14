@@ -22,9 +22,9 @@
   "mock_chooser_preparing_detail": "a97e16099c20a0ac810f5bd7cc52159c009663dde2e3c355144f4417428b43b3",
   "mock_chooser_questions": "87696f8bd86e57854e61e9689ce68471acd9b649c92cb2d28e9ee10d712e749a",
   "mock_chooser_short_day": "6056b1fe80a616a1123f92224ac7ade10df1eeaaea59811095fcfa45e89f98e6",
-  "mock_chooser_short_later_today": "6a9fab9f1292fb445923047eeb659a023f7bf7b87696327fc41e4882dd3877a1",
+  "mock_chooser_short_later_today": "a64e68978fba92726c3de764dbbd7e2de6e0a8db9b79516877e45bc5d4870ba7",
   "mock_chooser_short_line": "967bd5a7b99f3757f6dcd18577323d0a444dbf58fe01bfd664f8ccfae81f82f9",
-  "mock_chooser_short_on": "45b343cf855e9ae1da928db60aabcd4a7946d07ab9e7c9b2a0233ac095ac54be",
+  "mock_chooser_short_on": "c7f946baabafc5e0f8bad73cb91006ef4d1e5c478ecc82d6d1408938866ae55d",
   "mock_chooser_short_title": "7a128bcc97a28155ddcc78825f7ed2942ab63933f301d8c05837367ce386a5ea",
   "mock_chooser_size_latest_exam": "3054e57a1ad963d922d12280ae290c09ae9c11310d5183ae56b3a80a3c36b347",
   "mock_chooser_size_past_edition": "a7c88dd5c8e159f6aa73b54393dbe2b6abd761942aa94890306b3357aadfd57d",
@@ -70,10 +70,10 @@
     <string name="mock_chooser_short_title">Daha kısa bir deneme sınavı başlatalım mı?</string>
     <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
     <string name="mock_chooser_short_day">Bugün bu deneme sınavı %1$s soruluk (tamamı %2$s soru) ve yaklaşık %3$s sürüyor. Tamamına yarın girebilirsin.</string>
-    <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
-    <string name="mock_chooser_short_later_today">Bu sınav bugün %1$s soruluk (tamamı %2$s soru) ve yaklaşık %3$s sürer. Sınavın tamamına bugün daha sonra girebilirsin.</string>
-    <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min"; %4$s is a day and its month, such as "November 22" in English. -->
-    <string name="mock_chooser_short_on">Bugün bu deneme sınavının %1$s sorusunu (toplam %2$s soru) yaklaşık %3$s sürede çözebilirsin. Tamamını %4$s tarihinde çözebilirsin.</string>
+    <!-- In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now. -->
+    <string name="mock_chooser_short_later_today">Bugün bu deneme sınavında %1$s soru var (normalde %2$s) ve yaklaşık %3$s sürüyor. Tamamını bugün daha sonra çözebilirsin.</string>
+    <!-- In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now. {date} is a day and its month, such as "November 22" in English. -->
+    <string name="mock_chooser_short_on">Bugün bu deneme sınavında %1$s soru var (normalde %2$s) ve yaklaşık %3$s sürüyor. Tamamını %4$s tarihinde çözebilirsin.</string>
     <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
     <string name="mock_chooser_short_line">Bugün bu deneme sınavı %1$s soruluk (tamamı %2$s soru) ve yaklaşık %3$s sürüyor.</string>
     <string name="mock_chooser_pick_another">Başka birini seç</string>

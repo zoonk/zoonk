@@ -14,8 +14,8 @@
   "speaking_mock_opens": "133f7333f7eea73921d44fd9e890362807e55fbe971f2a602c3e1c1fe58daa77",
   "speaking_mock_start": "367ffbfa099574a97d92e3a3177e01f2f538ef101c52e1ab82c42d635f080ce6",
   "speaking_mock_toefl": "8430399669803d18cbb64d7f59f00903f7ecbe03ef58763e0dd352fd182e53be",
-  "speaking_no_time": "9eab082fd9d6cbd9509a4265cb6fd8a18fcef890697696ed47216360c0c44e91",
-  "speaking_no_time_mock": "ac720a602a556f02bfad7319bfcd74157469956e358237477f40f0c78be05b56",
+  "speaking_no_time": "f9a21f407873efd5cb0baa54e46ff27aeffc98547f6fbf1f39d2d4c8a90b46a0",
+  "speaking_no_time_mock": "32f6f08a2e436a8066326d83d7054139df97799e6545b16d81c4a5abfacbdbf8",
   "speaking_official_format": "70db97464ebc2e32071f03d8b4d2b56730b84cb3ab1812f51ef5c49f03b6d5d3",
   "speaking_opens_when_ready": "0918e39c49b9d7ecfb9107a087800dc9d94a48cdbf0510aead698a982c71cbb1",
   "speaking_prep": "bac9cbf55aeb53107fb1e0da911a0aefc775ba9cc9b809e60b8000b93764c5d9",
@@ -50,8 +50,8 @@
     <string name="speaking_section">Conversação</string>
     <string name="speaking_gate">Para praticar conversação, é preciso assinar</string>
     <string name="speaking_opens_when_ready">Sua tarefa abre assim que o cartão estiver pronto.</string>
-    <string name="speaking_no_time">Não há tempo de conversa suficiente para esta tarefa</string>
-    <string name="speaking_no_time_mock">Tempo de conversa insuficiente para este simulado</string>
+    <string name="speaking_no_time">Falta tempo de conversa para esta tarefa</string>
+    <string name="speaking_no_time_mock">Falta tempo de conversa para este simulado</string>
     <string name="speaking_start_failed">A tarefa não começou. Tente de novo daqui a pouco.</string>
     <string name="speaking_official_format">Formato oficial</string>
     <string name="speaking_start_task">Começar</string>

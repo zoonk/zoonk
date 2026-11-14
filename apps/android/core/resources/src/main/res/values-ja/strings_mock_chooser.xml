@@ -22,9 +22,9 @@
   "mock_chooser_preparing_detail": "797d22ff795817ff9e41a8c52fc961246a96e52f49f092f94a912f50407615fe",
   "mock_chooser_questions": "534a01ceeabd74444a6d4a3b10313b1639925592cac764ae6b19339380e97d30",
   "mock_chooser_short_day": "388d73a5b6fc6fb02d74facb364cc6123c7c1804e768c8be236c71a0950eef94",
-  "mock_chooser_short_later_today": "f3b338b3a1d93c6595b027d42727b12b7edff4cc409111bb8571fda7bb0c8763",
+  "mock_chooser_short_later_today": "a2a20ab9ee15cea7bfd399351150771ee1f0f5ffd3459244df26e7a26b8fb035",
   "mock_chooser_short_line": "2f2251b1882b35e237ecd909de72ebd56d3fc392d1fe9daed8d73ae2df1d5020",
-  "mock_chooser_short_on": "992d8fe5a02cecdba0363448c18c97fa26ef6ced0b2c0145450fcc22ede6b048",
+  "mock_chooser_short_on": "0ebe8db8f9f177a9cd43dd3e7c734b1c74f04640a818e21fb6909975d0c6bd65",
   "mock_chooser_short_title": "62d7ce3b4eaf15ed10f16cbddbb646f29681643d8db022dec39cc820f818efec",
   "mock_chooser_size_latest_exam": "a3a21dc6387db822834b66889aa96629eed80d02d58e023dbf940d6dde198110",
   "mock_chooser_size_past_edition": "f32688ba2743d17d61a9cc0c033793116cd78677124017f59e1418cbd36670ce",
@@ -69,10 +69,10 @@
     <string name="mock_chooser_short_title">短めの模試を始めますか？</string>
     <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
     <string name="mock_chooser_short_day">今日は%1$s問（全%2$s問中）で、所要時間は約%3$sです。明日は全問に取り組めます。</string>
-    <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
-    <string name="mock_chooser_short_later_today">今日は%1$s問（全%2$s問）で、所要時間は約%3$sです。今日中に全問の模試を受けられます。</string>
-    <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min"; %4$s is a day and its month, such as "November 22" in English. -->
-    <string name="mock_chooser_short_on">今日受けられるのは%1$s問（全%2$s問中）で、所要時間は約%3$sです。%4$sには全問に取り組めます。</string>
+    <!-- In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now. -->
+    <string name="mock_chooser_short_later_today">今日の模試は%1$s問（全%2$s問中）で、所要時間は約%3$sです。今日このあと、全問そろった模試を受けられます。</string>
+    <!-- In a dialog before a mock exam starts shorter than the one picked, because the learner used the questions they can have written for now. {date} is a day and its month, such as "November 22" in English. -->
+    <string name="mock_chooser_short_on">今日の模試は%1$s問（全%2$s問中）で、所要時間は約%3$sです。%4$sに全問そろった模試を受けられます。</string>
     <!-- %1$s and %2$s are numbers of questions; %3$s is a duration, such as "40 min". -->
     <string name="mock_chooser_short_line">今日は%1$s問（全%2$s問中）で、所要時間は約%3$sです。</string>
     <string name="mock_chooser_pick_another">別の模試を選ぶ</string>

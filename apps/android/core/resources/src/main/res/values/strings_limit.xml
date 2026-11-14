@@ -5,27 +5,29 @@
     <string name="limit_sign_up_required">This needs a free account</string>
     <string name="limit_more_tomorrow">More tomorrow.</string>
     <string name="limit_more_tomorrow_or_subscribe">More tomorrow, or subscribe to keep going.</string>
+    <!-- The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back. -->
     <string name="limit_more_later_today">More later today.</string>
+    <!-- The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back. -->
     <string name="limit_more_later_today_or_subscribe">More later today, or subscribe to keep going.</string>
-    <!-- Under the title of a notice when something the learner's plan allows has run out. {date} is a day and its month, such as "November 22" in English. -->
+    <!-- The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: the day more comes back. {date} is a day and its month, such as "November 22" in English. -->
     <string name="limit_more_on">More on %1$s.</string>
-    <!-- Under the title of a notice when something the learner's plan allows has run out. {date} is a day and its month, such as "November 22" in English. -->
+    <!-- The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: the day more comes back. {date} is a day and its month, such as "November 22" in English. -->
     <string name="limit_more_on_or_subscribe">More on %1$s, or subscribe to keep going.</string>
-    <!-- Under "Not enough call time for this task": a call of a set length that doesn't fit the learner's call time yet. -->
+    <!-- Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it. -->
     <string name="limit_enough_later_today">You\'ll have enough later today.</string>
-    <!-- Under "Not enough call time for this task": a call of a set length that doesn't fit the learner's call time yet. -->
+    <!-- Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it. -->
     <string name="limit_enough_later_today_or_subscribe">You\'ll have enough later today, or subscribe to keep going.</string>
-    <!-- Under "Not enough call time for this task": a call of a set length that doesn't fit the learner's call time yet. -->
+    <!-- Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it. -->
     <string name="limit_enough_tomorrow">You\'ll have enough tomorrow.</string>
-    <!-- Under "Not enough call time for this task": a call of a set length that doesn't fit the learner's call time yet. -->
+    <!-- Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it. -->
     <string name="limit_enough_tomorrow_or_subscribe">You\'ll have enough tomorrow, or subscribe to keep going.</string>
-    <!-- Under "Not enough call time for this task": a call of a set length that doesn't fit the learner's call time yet. {date} is a day and its month, such as "November 22" in English. -->
+    <!-- Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it. -->
     <string name="limit_enough_on">You\'ll have enough on %1$s.</string>
-    <!-- Under "Not enough call time for this task": a call of a set length that doesn't fit the learner's call time yet. {date} is a day and its month, such as "November 22" in English. -->
+    <!-- Under the title of a notice that the learner doesn't have enough call time left for a speaking task or mock exam of a set length: when they'll have enough for the whole of it. -->
     <string name="limit_enough_on_or_subscribe">You\'ll have enough on %1$s, or subscribe to keep going.</string>
-    <!-- Under the title of a notice when something the learner had run out of has come back while the notice was open. -->
+    <!-- The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back. -->
     <string name="limit_try_again_now">You can try again now.</string>
-    <!-- Joins a notice's title and its line into one sentence where there's room for only one, such as "You've used your uploads. More on November 22, or subscribe to keep going." -->
+    <!-- A notice that something the learner uses ran out, as one line: {title} says what ran out, such as "You've used your uploads", and {line} when more comes back, such as "More on November 22, or subscribe to keep going." -->
     <string name="limit_sentence">%1$s. %2$s</string>
     <string name="limit_still_review">You can still review and practice your mistakes.</string>
     <string name="limit_help_guest">That\'s all you can try without an account</string>
