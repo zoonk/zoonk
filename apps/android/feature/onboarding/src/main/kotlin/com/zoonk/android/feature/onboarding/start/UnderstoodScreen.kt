@@ -115,7 +115,7 @@ internal fun ColumnScope.UnderstoodScreen(
     val locked = understanding.goals.drop(startable.size)
     val full = activeGoalsLeft == 0L
     // A full card's way on for a guest is a free account, which has room; for an account it's a pause or Plus.
-    val shownError = if (full && !hasAccount) GoalError.Limit(GoalLimitReason.Guest) else error
+    val shownError = if (full && !hasAccount) GoalError.Limit(GoalLimitReason.Guest) else error?.takeUnless { it.lifted() }
     // The draft counts the goals the plan can still follow; the up-front read of that cap may be older.
     val plusLimit =
         GoalLimitReason.ActiveGoals.takeIf { full && hasAccount }
