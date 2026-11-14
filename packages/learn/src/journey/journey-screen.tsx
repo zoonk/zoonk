@@ -33,6 +33,7 @@ import { NextOnPath } from "./next-on-path";
 import { PlanGoalLine, PlanHeader } from "./plan-header";
 import { PlanRoadmap } from "./plan-roadmap";
 import { MoreSection, PathSection, PhasesSheet } from "./plan-sections";
+import { ResumeGoalBar } from "./resume-goal-bar";
 
 export type { PlanEnd } from "../plan/plan-suggestion-context";
 export type { PlanActions, PlanChangeOutcome, PlanTutor } from "../plan/plan-context";
@@ -145,6 +146,10 @@ function JourneyBody({
         }
         asideClassName="sm:max-[72rem]:grid sm:max-[72rem]:grid-cols-2 sm:max-[72rem]:items-start sm:max-[72rem]:gap-x-10"
         asideLabel={t("Your plan at a glance")}
+        bottomBar={
+          paused &&
+          goalStatus && <ResumeGoalBar onResume={() => goalStatus.onSetStatus("active")} />
+        }
       >
         <Page data-slot="journey">
           <PlanHeader subtitle={<PlanGoalLine />}>
