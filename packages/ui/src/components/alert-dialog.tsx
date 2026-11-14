@@ -5,6 +5,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { OVERLAY_DIM_CLASS } from "@zoonk/ui/lib/overlay-dim";
 import { cn } from "@zoonk/ui/lib/utils";
 import { PopupShortcutLayer } from "../hooks/_utils/popup-shortcut-layer";
+import { MenuOpenerNotice, useFocusAfterMenuItem } from "./_utils/menu-handoff";
 import type * as React from "react";
 
 function AlertDialog({ ...props }: AlertDialogPrimitive.Root.Props) {
@@ -40,7 +41,14 @@ function AlertDialogOverlay({ className, ...props }: AlertDialogPrimitive.Backdr
  * phone it rises from the bottom like every sheet, with the answers stacked under the thumb and no
  * grab handle, since it doesn't leave by a swipe. From `sm` it is centered, like `Drawer`.
  */
-function AlertDialogContent({ children, className, ...props }: AlertDialogPrimitive.Popup.Props) {
+function AlertDialogContent({
+  children,
+  className,
+  finalFocus,
+  ...props
+}: AlertDialogPrimitive.Popup.Props) {
+  const handoff = useFocusAfterMenuItem(finalFocus);
+
   return (
     <AlertDialogPortal>
       <AlertDialogOverlay />
@@ -53,7 +61,9 @@ function AlertDialogContent({ children, className, ...props }: AlertDialogPrimit
         )}
         data-slot="alert-dialog-content"
         {...props}
+        finalFocus={handoff.finalFocus}
       >
+        <MenuOpenerNotice onOpen={handoff.onOpen} />
         <PopupShortcutLayer value>{children}</PopupShortcutLayer>
       </AlertDialogPrimitive.Popup>
     </AlertDialogPortal>
