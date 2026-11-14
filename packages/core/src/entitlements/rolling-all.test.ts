@@ -14,7 +14,7 @@ import {
 } from "../language/conversations/_test-utils/live-call-fixture";
 import { claimUsage } from "./claim-usage";
 import { getAllowance } from "./get-allowance";
-import { getCallMonthlyBudgetMicros } from "./limits";
+import { getCallMonthlyBudgetMicros, getLiveCallReservationMicros } from "./limits";
 
 const NOW = new Date("2026-12-01T12:00:00Z");
 
@@ -49,6 +49,43 @@ describe("rolling allowances", () => {
     await expect(claimUsage({ kind: "mindMap", targetId: randomUUID() })).resolves.toMatchObject({
       status: "allowed",
     });
+  });
+
+  it("does not delay a time opening for money that already admits the requested call", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(NOW);
+    const { conversation, user } = await liveCallFixture();
+    mockSession(user.id);
+
+    await usageRecordsFixture({
+      count: 1,
+      createdAt: new Date("2026-11-10T12:00:00Z"),
+      kind: "conversation",
+      seconds: 300,
+      userId: user.id,
+    });
+
+    await liveCallHistoryFixture({
+      conversationId: conversation.id,
+      costMicros: getCallMonthlyBudgetMicros("free") - getLiveCallReservationMicros(120) + 1,
+      createdAt: new Date("2026-11-25T12:00:00Z"),
+      userId: user.id,
+    });
+
+    const availableAt = new Date("2026-12-10T12:00:00Z");
+
+    await expect(
+      claimUsage({ kind: "conversation", seconds: 120, targetId: randomUUID() }),
+    ).resolves.toMatchObject({
+      limit: { availableAt, resource: "callSeconds" },
+      status: "limitReached",
+    });
+
+    vi.setSystemTime(availableAt);
+
+    await expect(
+      claimUsage({ kind: "conversation", seconds: 120, targetId: randomUUID() }),
+    ).resolves.toMatchObject({ status: "allowed" });
   });
 
   it.each(["mindMap", "conversation"] as const)("uses strict 30-day edges for %s", async (kind) => {
@@ -201,7 +238,7 @@ describe("rolling allowances", () => {
     ).resolves.toMatchObject({ status: "allowed" });
   });
 
-  it("dates a known call for its full seconds rather than the first second", async () => {
+  it("dates a known call at the first instant the same start is admitted", async () => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(NOW);
     const user = await userFixture();
@@ -230,12 +267,12 @@ describe("rolling allowances", () => {
     await expect(
       claimUsage({ kind: "conversation", seconds: 120, targetId: randomUUID() }),
     ).resolves.toMatchObject({
-      limit: { availableAt: new Date("2026-12-20T12:00:00Z") },
+      limit: { availableAt: new Date("2026-12-10T12:00:00Z") },
       status: "limitReached",
     });
   });
 
-  it("dates a known call for its full reserved money rather than the first microdollar", async () => {
+  it("dates a known call when positive money capacity returns", async () => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(NOW);
     const { conversation, user } = await liveCallFixture();
@@ -263,7 +300,7 @@ describe("rolling allowances", () => {
     await expect(
       claimUsage({ kind: "conversation", seconds: 120, targetId: randomUUID() }),
     ).resolves.toMatchObject({
-      limit: { availableAt: new Date("2026-12-20T12:00:00Z"), resource: "aiSpend" },
+      limit: { availableAt: new Date("2026-12-10T12:00:00Z"), resource: "aiSpend" },
       status: "limitReached",
     });
   });

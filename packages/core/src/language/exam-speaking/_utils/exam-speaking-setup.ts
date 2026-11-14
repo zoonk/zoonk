@@ -8,7 +8,7 @@ import { evaluateUsage } from "../../../entitlements/_utils/evaluate-usage";
 import { getUsageCounts } from "../../../entitlements/_utils/usage-counts";
 import { type AllowanceLimit } from "../../../entitlements/contract";
 import { getAllowance } from "../../../entitlements/get-allowance";
-import { getLiveCallReservationMicros } from "../../../entitlements/limits";
+import { getEstimatedCostMicros } from "../../../entitlements/limits";
 import { getRequestInstant } from "../../../learner/facts/request-instant";
 import { readUsageTotals } from "../../../learner/facts/usage-totals";
 import { getSpeakingLevel, toSpeakingLevel } from "../../conversations/_utils/conversation-goal";
@@ -129,7 +129,7 @@ export async function hasSpeakingAccess(): Promise<boolean> {
   return allowance?.examPrep.includesMockExams ?? false;
 }
 
-export async function findCallStartLimit(seconds: number): Promise<AllowanceLimit | null> {
+export async function findCallStartLimit(): Promise<AllowanceLimit | null> {
   const viewer = await readEntitlementViewer();
 
   if (!viewer) {
@@ -139,12 +139,11 @@ export async function findCallStartLimit(seconds: number): Promise<AllowanceLimi
   const [totals, now] = await Promise.all([readUsageTotals(viewer.userId), getRequestInstant()]);
 
   const decision = evaluateUsage({
-    costMicros: getLiveCallReservationMicros(seconds),
+    costMicros: getEstimatedCostMicros({ generated: false, kind: "conversation" }),
     counts: getUsageCounts(totals, "conversation"),
     generated: false,
     kind: "conversation",
     now,
-    seconds,
     tier: viewer.tier,
   });
 

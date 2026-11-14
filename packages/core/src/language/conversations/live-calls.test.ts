@@ -602,7 +602,7 @@ describe("live calls", () => {
 
     await expect(reserve(conversation.id)).resolves.toStrictEqual({
       limit: {
-        availableAt: new Date("2031-02-02T12:02:45Z"),
+        availableAt: new Date("2031-02-01T12:00:00Z"),
         limit: 5 * 60,
         period: "rolling30Days",
         resource: "callSeconds",

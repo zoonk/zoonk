@@ -1,8 +1,10 @@
 import { type TransactionClient, UsageKind, sql } from "@zoonk/db";
 import { type EntitlementTier } from "../contract";
 import {
+  FAIR_USE_SPACING_SECONDS,
   FREE_LESSON_LIMIT,
   USAGE_WINDOW_MS,
+  getActiveGoalLimit,
   getCallMonthlyBudgetMicros,
   getDailySpendBudgetMicros,
   getEstimatedCostMicros,
@@ -96,46 +98,20 @@ function getRollingAvailableAt({
   return null;
 }
 
-function getCallAvailableAt({
-  counts,
-  now,
-  tier,
-  seconds = 1,
-  costMicros = 1,
-}: {
-  counts: UsageCounts;
-  now: Date;
-  tier: EntitlementTier;
-  seconds?: number;
-  costMicros?: number;
-}): Date | null {
+function getCallAvailableAt({ counts, now, tier }: UsageOpeningInput): Date {
   const rule = getUsageRule({ kind: "conversation", tier });
   const budget = getCallMonthlyBudgetMicros(tier);
-  const duration = Math.max(1, seconds);
-  const cost = Math.max(1, costMicros);
-
-  if ((rule.rolling30Days !== undefined && duration > rule.rolling30Days) || cost > budget) {
-    return null;
-  }
 
   const timeAt =
     rule.rolling30Days === undefined
       ? null
-      : getRollingAvailableAt({
-          claims: counts.rollingClaims,
-          limit: rule.rolling30Days,
-          required: duration,
-        });
+      : getRollingAvailableAt({ claims: counts.rollingClaims, limit: rule.rolling30Days });
 
-  const moneyAt = getRollingAvailableAt({
-    claims: counts.callSpend,
-    limit: budget,
-    required: cost,
-  });
+  const moneyAt = getRollingAvailableAt({ claims: counts.callSpend, limit: budget });
 
-  const opening = [timeAt, moneyAt].reduce<Date | null>(
-    (latest, date) => (date && (!latest || date > latest) ? date : latest),
-    null,
+  const opening = [timeAt, moneyAt].reduce<Date>(
+    (latest, date) => (date && date > latest ? date : latest),
+    now,
   );
 
   const dayFull =
@@ -145,25 +121,12 @@ function getCallAvailableAt({
   return afterDailyOpening(opening, dayFull, now);
 }
 
-function afterDailyOpening(opening: Date | null, blocked: boolean, now: Date): Date | null {
-  if (!opening) {
-    return null;
-  }
-
+function afterDailyOpening(opening: Date, blocked: boolean, now: Date): Date {
   const day = getUsageResets(now).day;
   return blocked && day > opening ? day : opening;
 }
 
-export function getUsageAvailableAt({
-  counts,
-  kind,
-  now,
-  tier,
-  required = 1,
-  preparing = false,
-  costMicros,
-  seconds,
-}: {
+type UsageOpeningInput = {
   counts: UsageCounts;
   kind: UsageKind;
   now: Date;
@@ -171,15 +134,35 @@ export function getUsageAvailableAt({
   required?: number;
   preparing?: boolean;
   costMicros?: number;
-  seconds?: number;
-}): Date | null {
+  generatedCount?: number;
+};
+
+export function getUsageOpening({
+  counts,
+  kind,
+  now,
+  tier,
+  required = 1,
+  preparing = false,
+  costMicros,
+  generatedCount = 0,
+}: UsageOpeningInput): Date | null {
+  if (kind === "conversation" && getCallMonthlyBudgetMicros(tier) === 0) {
+    return null;
+  }
+
   if (kind === "conversation") {
-    return getCallAvailableAt({ costMicros, counts, now, seconds, tier });
+    return getCallAvailableAt({ counts, kind, now, tier });
   }
 
   const rule = getUsageRule({ kind, tier });
 
-  if (rule.rolling30Days === undefined) {
+  const budget = getDailySpendBudgetMicros(tier);
+
+  const cost =
+    costMicros ?? (kind === "lessonStart" ? 0 : getEstimatedCostMicros({ generated: true, kind }));
+
+  if (cannotOpen({ costMicros: cost, counts, generatedCount, kind, now, required, tier })) {
     return null;
   }
 
@@ -190,14 +173,92 @@ export function getUsageAvailableAt({
           .map((at) => ({ amount: 1, at }))
       : counts.rollingClaims;
 
-  const opening = getRollingAvailableAt({ claims, limit: rule.rolling30Days, required });
-
-  const cost =
-    costMicros ?? (kind === "lessonStart" ? 0 : getEstimatedCostMicros({ generated: true, kind }));
+  const opening =
+    rule.rolling30Days === undefined
+      ? now
+      : (getRollingAvailableAt({ claims, limit: rule.rolling30Days, required }) ?? now);
 
   const dayFull =
-    (rule.day !== undefined && counts.day >= rule.day) ||
-    (cost > 0 && counts.spentTodayMicros + cost > getDailySpendBudgetMicros(tier));
+    (rule.day !== undefined && counts.day + required > rule.day) ||
+    (cost > 0 && counts.spentTodayMicros + cost > budget);
 
-  return afterDailyOpening(opening, dayFull, now);
+  const afterDay = afterDailyOpening(opening, dayFull, now);
+
+  const fairUseAt = getFairUseOpening({ counts, kind, now, required, tier });
+
+  return fairUseAt > afterDay ? fairUseAt : afterDay;
+}
+
+function getFairUseOpening({ counts, kind, now, required = 1, tier }: UsageOpeningInput): Date {
+  const { fairUseDay } = getUsageRule({ kind, tier });
+
+  if (fairUseDay !== undefined && required > 1 && counts.day + required > fairUseDay) {
+    return getUsageResets(now).day;
+  }
+
+  if (fairUseDay === undefined || counts.day < fairUseDay || !counts.lastUsedAt) {
+    return now;
+  }
+
+  return new Date(
+    Math.min(
+      counts.lastUsedAt.getTime() + FAIR_USE_SPACING_SECONDS * 1000,
+      getUsageResets(now).day.getTime(),
+    ),
+  );
+}
+
+export function getUsageAvailableAt(input: UsageOpeningInput): Date | null {
+  const { counts, kind, preparing = false, required = 1, tier } = input;
+  const rule = getUsageRule({ kind, tier });
+  const used = getRollingUsed({ counts, kind, preparing });
+
+  const rollingFull =
+    rule.rolling30Days !== undefined &&
+    used + (kind === "conversation" ? 1 : required) > rule.rolling30Days;
+
+  const moneyFull =
+    kind === "conversation" &&
+    counts.callSpend.reduce((sum, row) => sum + row.amount, 0) >= getCallMonthlyBudgetMicros(tier);
+
+  return rollingFull || moneyFull ? getUsageOpening(input) : null;
+}
+
+function getRollingUsed({
+  counts,
+  kind,
+  preparing = false,
+}: Pick<UsageOpeningInput, "counts" | "kind" | "preparing">): number {
+  if (kind === "conversation") {
+    return counts.secondsLast30Days;
+  }
+
+  if (kind === "lessonStart") {
+    return counts.lessonStarts.count + (preparing ? counts.lessonStarts.prepared : 0);
+  }
+
+  return counts.usedLast30Days;
+}
+
+function cannotOpen({
+  counts,
+  kind,
+  tier,
+  required = 1,
+  generatedCount = 0,
+  costMicros = 0,
+}: UsageOpeningInput): boolean {
+  const rule = getUsageRule({ kind, tier });
+  const activeGoalLimit = kind === "goal" ? getActiveGoalLimit(tier) : null;
+
+  return (
+    (activeGoalLimit !== null && counts.activeGoals >= activeGoalLimit) ||
+    (rule.total !== undefined && counts.total + required > rule.total) ||
+    (rule.generatedTotal !== undefined &&
+      counts.generatedTotal + generatedCount > rule.generatedTotal) ||
+    (rule.rolling30Days !== undefined && required > rule.rolling30Days) ||
+    (rule.day !== undefined && required > rule.day) ||
+    (rule.fairUseDay !== undefined && required > rule.fairUseDay) ||
+    costMicros > getDailySpendBudgetMicros(tier)
+  );
 }

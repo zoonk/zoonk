@@ -26,7 +26,7 @@ const allowanceItemSchema = allowanceItemBaseSchema
       .nullable()
       .meta({
         description:
-          "Instant rolling capacity permits another unit; null below all rolling caps. Conversation guarantees positive seconds and positive call money budget, not a chosen duration. A known-duration refusal returns the instant its full seconds and reservation cost fit. Current daily blockers may delay the opening.",
+          "Earliest instant another use is admitted against this item's recorded caps, assuming no intervening use. Null below all rolling caps or when waiting alone cannot admit a use. Calls require positive seconds and positive call money capacity and then run whole. Includes a currently blocking UTC-day reset.",
       }),
     kind: z.enum(UsageKind),
     rollingLimit: limitSchema.meta({

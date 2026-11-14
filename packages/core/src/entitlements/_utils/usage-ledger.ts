@@ -3,7 +3,7 @@ import { type UsageDecision } from "../contract";
 import { FREE_LESSON_LIMIT, getEstimatedCostMicros } from "../limits";
 import { type EntitlementViewer } from "./entitlement-viewer";
 import { evaluateUsage } from "./evaluate-usage";
-import { getUsageAvailableAt } from "./rolling-usage";
+import { getUsageOpening } from "./rolling-usage";
 import { type UsageTotals, addUsage, getUsageCounts, promotePreparedUsage } from "./usage-counts";
 
 export type BundleClaim = { generated: boolean; kind: UsageKind; targetId: string };
@@ -162,22 +162,7 @@ export function decideBundle({
     lessons > 0 &&
     ledger.totals.lessonStarts.count + lessons > FREE_LESSON_LIMIT
   ) {
-    const availableAt = getUsageAvailableAt({
-      costMicros: fresh.reduce(
-        (sum, claim) =>
-          sum + (ledger.prepared.has(toClaimKey(claim)) ? 0 : getEstimatedCostMicros(claim)),
-        0,
-      ),
-      counts: getUsageCounts(ledger.totals, "lessonStart"),
-      kind: "lessonStart",
-      now: ledger.now,
-      required: lessons,
-      tier: ledger.viewer.tier,
-    });
-
-    if (!availableAt) {
-      throw new Error("Rolling lesson usage is missing the claim that admits this bundle.");
-    }
+    const availableAt = getBundleAvailableAt({ fresh, ledger });
 
     return {
       decision: {
@@ -201,7 +186,19 @@ export function decideBundle({
   );
 
   if (decided.decision.status !== "allowed") {
-    return { decision: decided.decision, ledger, recorded: [] };
+    const decision =
+      decided.decision.status === "limitReached" &&
+      decided.decision.limit.period === "rolling30Days"
+        ? {
+            ...decided.decision,
+            limit: {
+              ...decided.decision.limit,
+              availableAt: getBundleAvailableAt({ fresh, ledger }),
+            },
+          }
+        : decided.decision;
+
+    return { decision, ledger, recorded: [] };
   }
 
   return {
@@ -213,4 +210,46 @@ export function decideBundle({
     },
     recorded: decided.recorded,
   };
+}
+
+function getBundleAvailableAt({
+  fresh,
+  ledger,
+}: {
+  fresh: readonly BundleClaim[];
+  ledger: UsageLedger;
+}): Date | null {
+  const costMicros = fresh.reduce(
+    (sum, claim) =>
+      sum + (ledger.prepared.has(toClaimKey(claim)) ? 0 : getEstimatedCostMicros(claim)),
+    0,
+  );
+
+  const openings = [...Map.groupBy(fresh, (claim) => claim.kind)].map(([kind, claims]) => {
+    const unprepared = claims.filter((claim) => !ledger.prepared.has(toClaimKey(claim)));
+
+    const required =
+      kind === "lessonStart" && ledger.viewer.tier === "free" ? claims.length : unprepared.length;
+
+    if (required === 0) {
+      return ledger.now;
+    }
+
+    return getUsageOpening({
+      costMicros,
+      counts: getUsageCounts(ledger.totals, kind),
+      generatedCount: unprepared.filter((claim) => claim.generated).length,
+      kind,
+      now: ledger.now,
+      required,
+      tier: ledger.viewer.tier,
+    });
+  });
+
+  return openings.some((opening) => opening === null)
+    ? null
+    : openings.reduce<Date>(
+        (latest, opening) => (opening && opening > latest ? opening : latest),
+        ledger.now,
+      );
 }

@@ -94,7 +94,7 @@ const allowanceLimitSchema = z
       .optional()
       .meta({
         description:
-          "The instant the refused rolling request fits the recorded quota: all requested lessons, or the requested talk seconds and full call reservation cost. Includes a currently blocking UTC-day reset. Null if the request exceeds a rolling cap; omitted for nonrolling limits.",
+          "The earliest instant the refused rolling request can be admitted against all its recorded caps, assuming no intervening use. Calls need positive time and money capacity and then run whole. Includes a currently blocking UTC-day reset. Null when waiting alone cannot admit the request; omitted for nonrolling limits.",
       }),
     limit: z.int(),
     period: z.enum(USAGE_PERIODS),
