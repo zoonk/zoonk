@@ -86,6 +86,7 @@ export function useNoticeTitle(lastNotice: boolean): string {
 }
 
 export function NoticeReading({
+  barHasMainAction,
   document,
   holding,
   lastNotice,
@@ -93,6 +94,7 @@ export function NoticeReading({
   since,
   stopped,
 }: {
+  barHasMainAction: boolean;
   document: ExamDocument;
   holding: boolean;
   lastNotice: boolean;
@@ -129,7 +131,11 @@ export function NoticeReading({
         )}
 
         {stop ? (
-          <GenerationFailureNotice failure={stop.failure} retry={stop.retry} />
+          <GenerationFailureNotice
+            barHasMainAction={barHasMainAction}
+            failure={stop.failure}
+            retry={stop.retry}
+          />
         ) : (
           <GenerationTimelineProgress
             aria-label={title}

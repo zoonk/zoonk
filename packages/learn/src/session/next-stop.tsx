@@ -295,6 +295,7 @@ export function NextStop({
           {showsWait && (
             <Waiting
               actions={actions}
+              barHasMainAction={alternative !== null}
               block={block}
               failed={failed}
               generationId={generationId}
