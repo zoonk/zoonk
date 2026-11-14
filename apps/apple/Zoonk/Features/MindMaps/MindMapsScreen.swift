@@ -196,6 +196,7 @@ private struct MindMapCreateSection: View {
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(MindMapsStore.self) private var store
   @State private var showsChapters = false
+  @State private var heldHeight: CGFloat = 0
 
   let goalId: String
   let maps: GoalMindMaps
@@ -230,7 +231,7 @@ private struct MindMapCreateSection: View {
         MindMapRow(goalId: goalId, map: map, place: .notMade(canStart: canStart))
       }
 
-      if offer.startable > 1 || line != nil {
+      if offer.startable > 1 || line != nil || heldHeight > 0 {
         VStack(alignment: .leading, spacing: 12) {
           if offer.startable > 1 {
             BusyButton(isBusy: store.creatingAll.contains(goalId), icon: .create) {
@@ -247,6 +248,14 @@ private struct MindMapCreateSection: View {
 
           if let line {
             lineView(line)
+          }
+        }
+        // What replaces the stop's line starts at its top, in the height it had, so the rows below
+        // stay under the learner's finger for the rest of the visit.
+        .frame(minHeight: heldHeight, alignment: .top)
+        .onGeometryChange(for: CGFloat.self, of: \.size.height) { height in
+          if case .stopped = line {
+            heldHeight = height
           }
         }
         .listRowSeparator(.hidden)

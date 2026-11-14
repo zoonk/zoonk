@@ -112,6 +112,8 @@ struct LimitWords: Equatable {
 /// subscribes, and a subscriber or a short break has only the words.
 struct LimitNotice: View {
   @Environment(AppRouter.self) private var router
+  /// The height of the button it showed on this visit, kept once the day comes: nothing below moves.
+  @State private var buttonHeight: CGFloat = 0
 
   let limit: HelpLimit
   /// Read at the gate's clock, so words about a day follow it while the notice is open.
@@ -142,28 +144,38 @@ struct LimitNotice: View {
       GateWords(title: words.title.map(Text.init), line: words.line.map(Text.init))
 
       if isOpen {
-        EmptyView()
-      } else if limit.needsAccount {
-        Button {
-          router.present(.signIn)
-        } label: {
-          Label {
-            Text(
-              "Create a free account", tableName: "Subscriptions",
-              comment: "Opens sign-up for a guest who reached what they can try without an account")
-          } icon: {
-            Image(systemName: "person.badge.plus")
-          }
+        if buttonHeight > 0 {
+          Color.clear.frame(height: buttonHeight)
         }
-        .buttonStyle(.outline)
-        .controlSize(.small)
-      } else if limit.offersSubscription {
-        SubscribeButton()
-          .buttonStyle(.outline)
-          .controlSize(.small)
+      } else {
+        wayOn
+          .onGeometryChange(for: CGFloat.self, of: \.size.height) { buttonHeight = $0 }
       }
     }
     .accessibilityElement(children: .contain)
+  }
+
+  @ViewBuilder
+  private var wayOn: some View {
+    if limit.needsAccount {
+      Button {
+        router.present(.signIn)
+      } label: {
+        Label {
+          Text(
+            "Create a free account", tableName: "Subscriptions",
+            comment: "Opens sign-up for a guest who reached what they can try without an account")
+        } icon: {
+          Image(systemName: "person.badge.plus")
+        }
+      }
+      .buttonStyle(.outline)
+      .controlSize(.small)
+    } else if limit.offersSubscription {
+      SubscribeButton()
+        .buttonStyle(.outline)
+        .controlSize(.small)
+    }
   }
 }
 
