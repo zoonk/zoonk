@@ -42,7 +42,7 @@
   "session_next_start_title": "9ee4cb8c0ab60de006d8f7b28e2797ae7e94e989b0c56ee2b7d401f0b3e96cc0",
   "session_next_stop": "997f163d8c69a622c59acd19bacfbd87de4f7c240030312b1ebe78194bba27a8",
   "session_next_stop_failed": "7a3cb9b8d680f26657130b8d535d7c21120afee3d186d761a363c87406da264d",
-  "session_next_writing_note": "36b1374e65878001f19c9bf1ce4391246d42f3735b7138e74d488d7afc2762a6",
+  "session_next_writing_note": "8e0f7e70fd29401faa19b7a35cad4d67492a87eccef0acc57a1b9d72699a74b1",
   "session_no_catch_up_left": "7a07a1fa5dc1a7b46fe3e70fa92d9e65d59a8b055dba40a6d7faab0403b55ca1",
   "session_opening_slow": "6061836f7e7b4108249b9b59bb760cff69dacd5ef39f880686d7453defdd3df4",
   "session_opening_very_slow": "887a5727365922affbc611fdb1baccfd1e556d27e05b182beca673ba6b99ac06",
@@ -191,7 +191,7 @@
     <string name="session_review_intro_weakest_title">今日は特に苦手なトピック</string>
     <string name="session_review_intro_weakest">今は忘れそうな内容がないので、これまで特に苦手だった内容を練習します。</string>
     <string name="session_review_intro_first_week">短い問題をいくつか解いて、すでに知っていることを確かめます。</string>
-    <string name="session_next_writing_note">レッスンを作成しています。通常は数分で準備が整います。</string>
+    <string name="session_next_writing_note">数分かかります。</string>
     <string name="session_next_lesson_ready">レッスンの準備ができました。</string>
     <string name="session_next_stop">今日はここまでにする</string>
     <string name="session_next_stop_failed">学習を終了できませんでした。もう一度お試しください。</string>
