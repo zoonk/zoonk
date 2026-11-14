@@ -393,6 +393,7 @@ internal fun NextStop(
         val reviewStarts = rememberReviewStarts()
         val opening = rememberWaitState(viewModel.busy == SessionAction.Start)
         val instead = alternative?.takeIf { !ready && goalId != null }
+        val insteadLabel = if (refusal != null || failure != null) R.string.session_next_instead else R.string.session_next_while_waiting
 
         LaunchedEffect(step.position, waiting, step.screen) {
             when {
@@ -482,10 +483,7 @@ internal fun NextStop(
                                         enabled = !busy,
                                     ) {
                                         Text(
-                                            stringResource(
-                                                if (refusal != null) R.string.session_next_instead else R.string.session_next_while_waiting,
-                                                blockTitle(other),
-                                            ),
+                                            stringResource(insteadLabel, blockTitle(other)),
                                         )
                                     }
                                 }

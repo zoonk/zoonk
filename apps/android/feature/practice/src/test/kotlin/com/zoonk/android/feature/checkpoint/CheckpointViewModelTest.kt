@@ -51,7 +51,7 @@ class CheckpointViewModelTest {
     @After
     fun reset() = Dispatchers.resetMain()
 
-    private suspend fun TestScope.started(): CheckpointViewModel {
+    private fun store(): CheckpointStore {
         val api =
             object : CheckpointApi {
                 override suspend fun checkpoint(
@@ -71,11 +71,11 @@ class CheckpointViewModelTest {
                     timeZone: String,
                 ) = finish()
             }
-        val viewModel =
-            CheckpointViewModel(
-                read.blockId,
-                CheckpointStore(api, AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))) { "UTC" },
-            ) { 0L }
+        return CheckpointStore(api, AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))) { "UTC" }
+    }
+
+    private suspend fun TestScope.started(store: CheckpointStore = store()): CheckpointViewModel {
+        val viewModel = CheckpointViewModel(read.blockId, store) { 0L }
         viewModel.checkpoint.load()
         advanceUntilIdle()
         viewModel.begin((viewModel.checkpoint.state.value as LoadState.Loaded).value)
@@ -129,6 +129,24 @@ class CheckpointViewModelTest {
                     ?.passed,
             )
             assertNull(viewModel.state.error)
+        }
+
+    @Test
+    fun aVisitAfterAnAnswerStartsFromAReadMadeSinceNotTheOneKeptFromBefore() =
+        runTest(dispatcher) {
+            val store = store()
+            started(store).confirm(Answer.Choice(0))
+            advanceUntilIdle()
+
+            read = checkpoint(duelQuestion(Q1, answered = true), duelQuestion(Q2), duelQuestion(Q3))
+            val next = CheckpointViewModel(read.blockId, store) { 0L }
+            next.begin((next.checkpoint.state.value as LoadState.Loaded).value)
+            next.checkpoint.load()
+            advanceUntilIdle()
+            next.begin((next.checkpoint.state.value as LoadState.Loaded).value)
+
+            val duel = requireNotNull(next.duel.value)
+            assertEquals(Q2, duel.state.current(duel.read)?.itemId)
         }
 
     @Test

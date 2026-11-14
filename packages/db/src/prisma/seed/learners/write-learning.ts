@@ -1,5 +1,6 @@
 import { atLocalHour, localTimeFields, minutesBefore } from "../_utils/dates";
 import { seedId } from "../_utils/seed-id";
+import { answeredStepId } from "./answered-step";
 import { toLearnerSkillMemory } from "./memory-presets";
 import { type SeedAttempt } from "./types";
 import { type LearnerScope } from "./write-goal";
@@ -53,7 +54,7 @@ async function writeAttempt(
   const answeredAt = studyMoment(scope, attempt.day, order);
   const skillId = lookup.skill(attempt.skill);
   const itemId = attempt.item ? lookup.item(attempt.item) : null;
-  const stepId = attempt.step ? lookup.step(attempt.step.lesson, attempt.step.position) : null;
+  const stepId = answeredStepId({ attempt, learner, lookup });
 
   const data = {
     answer: attempt.answer,

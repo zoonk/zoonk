@@ -146,7 +146,7 @@ test.describe("Mistakes notebook", () => {
     await page.context().close();
   });
 
-  test("a mistake missed in practice waits for tomorrow, and the ones a stopped run never reached stay ready", async ({
+  test("a mistake missed in practice waits for tomorrow, and the ones a stopped run never reached stay ready, in a run left open in another tab too", async ({
     browser,
   }) => {
     const { user } = await createMistakeLearner({ causes: ["trap", "guess"] });
@@ -154,16 +154,22 @@ test.describe("Mistakes notebook", () => {
 
     await page.goto("/mistakes");
     await page.getByRole("link", { name: /^Practice mistakes/u }).click();
-    await page.getByRole("radio", { name: "Wrong answer" }).click();
-    await page.getByRole("button", { name: /^Check/u }).click();
+    await expect(page.getByRole("heading", { name: "trap first question?" })).toBeVisible();
+    await page.getByRole("link", { name: "Leave" }).click();
+
+    const other = await page.context().newPage();
+    await other.goto("/mistakes");
+    await other.getByRole("link", { name: /^Practice mistakes/u }).click();
+    await other.getByRole("radio", { name: "Wrong answer" }).click();
+    await other.getByRole("button", { name: /^Check/u }).click();
 
     await expect(
-      page.getByRole("region", { name: "Answer feedback" }).getByText("Not quite"),
+      other.getByRole("region", { name: "Answer feedback" }).getByText("Not quite"),
     ).toBeVisible();
 
-    await page.getByRole("button", { name: "Leave. What you answered counts." }).click();
+    await other.getByRole("button", { name: "Leave. What you answered counts." }).click();
 
-    const done = page.getByRole("status").filter({ hasText: "Practice done" });
+    const done = other.getByRole("status").filter({ hasText: "Practice done" });
 
     await expect(
       done.getByText(
@@ -171,8 +177,8 @@ test.describe("Mistakes notebook", () => {
       ),
     ).toBeVisible();
 
-    await page.getByRole("link", { name: /^Back(?! to)/u }).click();
-    await expect(notebookTab(page, /^To fix\s*2$/u)).toBeVisible();
+    await other.getByRole("link", { name: /^Back(?! to)/u }).click();
+    await expect(notebookTab(other, /^To fix\s*2$/u)).toBeVisible();
 
     await page.getByRole("link", { name: /^Practice mistakes/u }).click();
     await expect(page.getByRole("heading", { name: "guess first question?" })).toBeVisible();

@@ -34,8 +34,8 @@ export function useOpenMissionBlock({
         here,
       );
 
-      if (typeof opened === "boolean") {
-        return opened;
+      if (typeof opened === "string") {
+        return opened === "left";
       }
 
       // Only an answer with nothing to open reads the page again: Next turns a refresh that can't

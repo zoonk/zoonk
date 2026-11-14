@@ -27,6 +27,7 @@ import {
   NotWritten,
   Waiting,
   useKeptDeck,
+  useWritingFailed,
   useWrittenWhileWaiting,
 } from "./next-stop-wait";
 import { ReviewIntro, noteReviewStart, useReviewLine } from "./review-intro";
@@ -248,6 +249,7 @@ export function NextStop({
   const aside = useSessionQueueAside({ left: minutesLeft, rows });
 
   const written = useWrittenWhileWaiting({ block, lesson });
+  const failed = useWritingFailed(lesson);
   const deck = useKeptDeck(warmUp);
   const hold = useReadyHold(isReady);
   const { track } = useLearnAnalytics();
@@ -294,6 +296,7 @@ export function NextStop({
             <Waiting
               actions={actions}
               block={block}
+              failed={failed}
               generationId={generationId}
               kind={lessonKind}
               lesson={lesson}

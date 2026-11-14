@@ -86,12 +86,13 @@ const anaAttempts: SeedAttempt[] = [
       cause: "trap",
       snapshot: {
         answer: "R$ 1.000",
+        context:
+          "Um investidor aplicou R$ 1.000 num fundo. No primeiro mês, a aplicação rendeu 10%; no segundo, perdeu 10%.",
         correctAnswer: "R$ 990",
         explanation: "A perda de 10% saiu de R$ 1.100, então tirou R$ 110.",
         format: "multipleChoice",
         misconception: "Achou que ganho e perda iguais se anulam",
-        question:
-          "Um investidor aplicou R$ 1.000. No primeiro mês rendeu 10%; no segundo, perdeu 10%. Ao fim dos dois meses, ele tem:",
+        question: "Ao fim dos dois meses, o investidor tem:",
       },
       status: "open",
     },
@@ -140,12 +141,13 @@ const anaAttempts: SeedAttempt[] = [
       cause: "gap",
       snapshot: {
         answer: "3,0 A",
+        context:
+          "Uma lanterna usa uma bateria de 6 V ligada a dois resistores em série, de 2 Ω e 4 Ω.",
         correctAnswer: "1,0 A",
         explanation: "6 ÷ 2 usa só um resistor. Em série eles se somam.",
         format: "multipleChoice",
         misconception: "Usou só o resistor de 2 Ω",
-        question:
-          "Uma lanterna usa uma bateria de 6 V ligada a dois resistores em série, de 2 Ω e 4 Ω. Qual é a corrente elétrica no circuito?",
+        question: "Qual é a corrente elétrica no circuito?",
       },
       status: "open",
     },

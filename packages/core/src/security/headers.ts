@@ -15,7 +15,6 @@ const PUBLIC_APP_PERMISSIONS_POLICY = [
   "accelerometer=()",
   "gyroscope=()",
   "magnetometer=()",
-  "browsing-topics=()",
 ].join(", ");
 
 const PUBLIC_APP_SECURITY_HEADERS = [

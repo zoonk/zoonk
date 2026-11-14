@@ -29,7 +29,29 @@ struct ZoonkList<Content: View>: View {
     .listSectionSpacing(24)
     .environment(\.defaultMinListRowHeight, 44)
     .readableColumn(
-      readableWidth ?? (horizontalSizeClass == .regular ? 768 : .infinity), alignment: alignment)
+      readableWidth ?? ListColumn.width(horizontalSizeClass), alignment: alignment)
+  }
+}
+
+extension View {
+  /// As wide as a `ZoonkList`'s column, for what lines up with its rows from outside the list, such
+  /// as the buttons pinned under it.
+  func listColumnWidth() -> some View {
+    modifier(ListColumnWidth())
+  }
+}
+
+private struct ListColumnWidth: ViewModifier {
+  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
+  func body(content: Content) -> some View {
+    content.frame(maxWidth: ListColumn.width(horizontalSizeClass))
+  }
+}
+
+private enum ListColumn {
+  static func width(_ sizeClass: UserInterfaceSizeClass?) -> CGFloat {
+    sizeClass == .regular ? 768 : .infinity
   }
 }
 

@@ -1,5 +1,8 @@
 import SwiftUI
 
+// The target's default actor isolation stays nonisolated: under MainActor, every model's Codable
+// and Hashable conformance becomes main-actor isolated and can't satisfy a Sendable generic
+// parameter (https://docs.swift.org/compiler/documentation/diagnostics/isolated-conformances).
 @main
 struct ZoonkApp: App {
   @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate

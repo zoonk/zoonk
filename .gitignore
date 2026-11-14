@@ -32,6 +32,7 @@ coverage
 # Build Outputs
 .next/
 .next-e2e/
+.next-e2e-build-time.txt
 .swc/
 .workflow-data/
 .workflow-vitest/
