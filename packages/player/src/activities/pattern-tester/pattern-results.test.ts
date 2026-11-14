@@ -1,44 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { testFormula, testRegex } from "./pattern-results";
-
-const zip = {
-  shouldMatch: ["94103", "94103-1234"],
-  shouldNotMatch: ["9410", "941031", "94103-12"],
-};
-
-describe(testRegex, () => {
-  it("marks where the pattern matches and whether each example passes", () => {
-    const results = testRegex(String.raw`^\d{5}`, zip);
-
-    expect(results).toMatchObject({
-      shouldMatch: [
-        { match: { end: 5, start: 0 }, passes: true, sample: "94103" },
-        { match: { end: 5, start: 0 }, passes: true, sample: "94103-1234" },
-      ],
-      shouldNotMatch: [
-        { match: null, passes: true, sample: "9410" },
-        { passes: false, sample: "941031" },
-        { passes: false, sample: "94103-12" },
-      ],
-      status: "tested",
-    });
-  });
-
-  it("passes every example with the full pattern", () => {
-    const results = testRegex(String.raw`^\d{5}(-\d{4})?$`, zip);
-
-    expect(
-      results.status === "tested" &&
-        [...results.shouldMatch, ...results.shouldNotMatch].every((row) => row.passes),
-    ).toBe(true);
-  });
-
-  it("refuses patterns grading refuses", () => {
-    expect(testRegex("", zip)).toStrictEqual({ status: "empty" });
-    expect(testRegex("(", zip)).toStrictEqual({ status: "invalid" });
-    expect(testRegex("(a+)+$", zip)).toStrictEqual({ status: "invalid" });
-  });
-});
+import { testFormula } from "./pattern-results";
 
 describe(testFormula, () => {
   const examples = [

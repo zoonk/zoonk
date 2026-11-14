@@ -180,6 +180,24 @@ self.onmessage = async (event) => {
 };
 `;
 
+export const REGEX_WORKER_SOURCE = `"use strict";
+self.onmessage = (event) => {
+  const { flags, id, samples, source } = event.data;
+  try {
+    const regex = new RegExp(source, flags);
+    const matches = samples.map((sample) => {
+      const found = regex.exec(sample);
+      return found ? { end: found.index + found[0].length, start: found.index } : null;
+    });
+    self.postMessage({ id, matches, type: "done" });
+  } catch (error) {
+    self.postMessage({ id, message: String(error), type: "error" });
+  }
+};
+
+self.postMessage({ type: "ready" });
+`;
+
 export const SQL_WORKER_SOURCE = `"use strict";
 ${LOCK_DOWN}
 const BASE_URL = ${JSON.stringify(SQL_JS_BASE_URL)};

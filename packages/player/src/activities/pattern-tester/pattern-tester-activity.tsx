@@ -3,7 +3,7 @@
 import { useKeptTyping } from "@zoonk/ui/hooks/kept-typing";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { useId, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import {
   ActivityCanvas,
@@ -15,7 +15,7 @@ import { type CodeSnippet } from "../_utils/insert-at-cursor";
 import { type ActivityRendererProps } from "../activity-renderer";
 import { FormulaExamples } from "./formula-examples";
 import { PatternHints } from "./pattern-hints";
-import { countPassing, testFormula, testRegex } from "./pattern-results";
+import { type RegexResults, countPassing, testFormula, testRegex } from "./pattern-results";
 import { RegexSampleList } from "./regex-samples";
 
 type PatternTesterProps = ActivityRendererProps<"patternTester">;
@@ -70,9 +70,34 @@ function useFormulaSnippets(fields: Fields): NamedSnippet[] {
   ];
 }
 
+function useRegexResults(fields: Fields, pattern: string): RegexResults | null {
+  const [results, setResults] = useState<RegexResults | null>(null);
+
+  useEffect(() => {
+    if (fields.mode !== "regex") {
+      return;
+    }
+
+    const subscription = { isActive: true };
+
+    void testRegex(pattern, fields).then((tested) => {
+      if (subscription.isActive) {
+        setResults(tested);
+      }
+    });
+
+    return () => {
+      subscription.isActive = false;
+    };
+  }, [fields, pattern]);
+
+  return results;
+}
+
 function passingSummary(
   fields: Fields,
   pattern: string,
+  regexResults: RegexResults | null,
 ): { passing: number; total: number } | null {
   if (fields.mode === "formula") {
     const results = testFormula(pattern, {
@@ -86,11 +111,9 @@ function passingSummary(
     return pattern.trim() ? { passing: countPassing(results), total: results.length } : null;
   }
 
-  const results = testRegex(pattern, fields);
-
-  return results.status === "tested"
+  return regexResults?.status === "tested"
     ? {
-        passing: countPassing([...results.shouldMatch, ...results.shouldNotMatch]),
+        passing: countPassing([...regexResults.shouldMatch, ...regexResults.shouldNotMatch]),
         total: fields.shouldMatch.length + fields.shouldNotMatch.length,
       }
     : null;
@@ -120,7 +143,8 @@ export function PatternTesterActivity({
 
   const regexSnippets = useRegexSnippets();
   const formulaSnippets = useFormulaSnippets(fields);
-  const summary = passingSummary(fields, pattern);
+  const regexResults = useRegexResults(fields, pattern);
+  const summary = passingSummary(fields, pattern, regexResults);
 
   function change(next: string) {
     setPattern(next);
@@ -184,7 +208,7 @@ export function PatternTesterActivity({
         )}
       </div>
 
-      <PatternExamples fields={fields} pattern={pattern} />
+      <PatternExamples fields={fields} pattern={pattern} regexResults={regexResults} />
 
       <p aria-live="polite" className="sr-only">
         {summary &&
@@ -220,7 +244,15 @@ export function PatternTesterActivity({
   );
 }
 
-function PatternExamples({ fields, pattern }: { fields: Fields; pattern: string }) {
+function PatternExamples({
+  fields,
+  pattern,
+  regexResults,
+}: {
+  fields: Fields;
+  pattern: string;
+  regexResults: RegexResults | null;
+}) {
   const t = useExtracted();
 
   if (fields.mode === "formula") {
@@ -239,12 +271,11 @@ function PatternExamples({ fields, pattern }: { fields: Fields; pattern: string 
     );
   }
 
-  const results = testRegex(pattern, fields);
-  const tested = results.status === "tested" ? results : null;
+  const tested = regexResults?.status === "tested" ? regexResults : null;
 
   return (
     <div className="flex flex-col gap-3">
-      {results.status === "invalid" && (
+      {regexResults?.status === "invalid" && (
         <p className="text-destructive-text text-sm" role="status">
           {t(
             "This pattern can't run. Check that brackets close, and don't repeat a group that already repeats inside.",
