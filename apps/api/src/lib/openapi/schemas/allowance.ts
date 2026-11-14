@@ -34,7 +34,8 @@ const allowanceItemSchema = z
         usedLast30Days: z
           .int()
           .meta({
-            description: "Lesson claims strictly after now minus 30 times 24 hours, through now",
+            description:
+              "Counted lesson starts newer than now minus 30 times 24 hours; includes explicitly requested map preparation and conservatively counts server clock skew",
           }),
       })
       .meta({ id: "LessonAllowanceItem" }),
@@ -92,6 +93,6 @@ export const allowanceResponseSchema = z
     tier: z.enum(["free", "guest", "plus"]).meta({ description: "The learner's plan" }),
   })
   .meta({
-    description: `Free learners share ${getFreePlanLimits().lessonsPer30Days} distinct lesson admissions in the preceding 30 times 24 hours across all goals, including exams. The lessonStart entry returns usedLast30Days, rollingLimit, remaining and availableAt. A refused start returns 402 USAGE_LIMIT_REACHED with details.limit period=rolling30Days and availableAt, so no second read or client date arithmetic is needed. Claims exactly 30 days old are outside the window. Replays of an admitted lesson never count again, whatever its age. Generation ahead of study uses the same claim. Other resources retain UTC calendar-month limits and resets.month applies only to them.`,
+    description: `Free learners share ${getFreePlanLimits().lessonsPer30Days} distinct counted lesson starts in a rolling 30 times 24 hours across all goals, including exams. The lessonStart entry returns usedLast30Days, rollingLimit, remaining and availableAt. A refused start returns 402 USAGE_LIMIT_REACHED with details.limit period=rolling30Days and availableAt, so no second read or client date arithmetic is needed. Claims exactly 30 days old are outside the window. Replays of a counted lesson never count again, whatever its age. Automatic preparation is bounded separately by counted starts plus unstarted preparations, and counts toward the learner allowance only when first started. A map explicitly requested by the learner counts each lesson it writes first at map admission. A map bundle uses resource=chapterLessons and returns the instant all its new lessons fit; more than 20 new lessons uses period=total and availableAt=null rather than claiming used lessons. Internal automatic-preparation refusals use resource=lessonPreparation. Other resources retain UTC calendar-month limits and resets.month applies only to them.`,
     id: "AllowanceResponse",
   });

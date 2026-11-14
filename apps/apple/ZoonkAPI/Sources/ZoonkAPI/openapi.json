@@ -46255,7 +46255,7 @@
           "tier"
         ],
         "additionalProperties": false,
-        "description": "Free learners share 20 distinct lesson admissions in the preceding 30 times 24 hours across all goals, including exams. The lessonStart entry returns usedLast30Days, rollingLimit, remaining and availableAt. A refused start returns 402 USAGE_LIMIT_REACHED with details.limit period=rolling30Days and availableAt, so no second read or client date arithmetic is needed. Claims exactly 30 days old are outside the window. Replays of an admitted lesson never count again, whatever its age. Generation ahead of study uses the same claim. Other resources retain UTC calendar-month limits and resets.month applies only to them."
+        "description": "Free learners share 20 distinct counted lesson starts in a rolling 30 times 24 hours across all goals, including exams. The lessonStart entry returns usedLast30Days, rollingLimit, remaining and availableAt. A refused start returns 402 USAGE_LIMIT_REACHED with details.limit period=rolling30Days and availableAt, so no second read or client date arithmetic is needed. Claims exactly 30 days old are outside the window. Replays of a counted lesson never count again, whatever its age. Automatic preparation is bounded separately by counted starts plus unstarted preparations, and counts toward the learner allowance only when first started. A map explicitly requested by the learner counts each lesson it writes first at map admission. A map bundle uses resource=chapterLessons and returns the instant all its new lessons fit; more than 20 new lessons uses period=total and availableAt=null rather than claiming used lessons. Internal automatic-preparation refusals use resource=lessonPreparation. Other resources retain UTC calendar-month limits and resets.month applies only to them."
       },
       "AllowanceItem": {
         "anyOf": [
@@ -46334,7 +46334,7 @@
             "type": "integer",
             "minimum": -9007199254740991,
             "maximum": 9007199254740991,
-            "description": "Lesson claims strictly after now minus 30 times 24 hours, through now"
+            "description": "Counted lesson starts newer than now minus 30 times 24 hours; includes explicitly requested map preparation and conservatively counts server clock skew"
           }
         },
         "required": [
@@ -82845,7 +82845,7 @@
               },
               "resource": {
                 "type": "string",
-                "description": "What ran out, such as goal or activeGoals"
+                "description": "What is limited; chapterLessons is the new-lesson size of a chapter request, lessonPreparation is automatic work capacity"
               },
               "tier": {
                 "type": "string",
@@ -82859,7 +82859,7 @@
                 "type": "string",
                 "format": "date-time",
                 "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
-                "description": "The instant a new lesson is available, computed from the twentieth-newest claim in the rolling window"
+                "description": "The instant this request fits the rolling allowance, computed from recorded starts before the request; null for a chapterLessons request-size refusal"
               },
               "period": {
                 "type": "string",
@@ -82887,7 +82887,7 @@
               },
               "resource": {
                 "type": "string",
-                "description": "What ran out, such as goal or activeGoals"
+                "description": "What is limited; chapterLessons is the new-lesson size of a chapter request, lessonPreparation is automatic work capacity"
               },
               "tier": {
                 "type": "string",
@@ -82895,6 +82895,13 @@
                   "free",
                   "guest",
                   "plus"
+                ]
+              },
+              "availableAt": {
+                "type": "string",
+                "nullable": true,
+                "enum": [
+                  null
                 ]
               },
               "period": {
