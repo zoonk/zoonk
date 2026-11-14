@@ -364,7 +364,7 @@ extension GoalPlan {
   fileprivate static func stub(planId: String) throws -> GoalPlan {
     let json = """
       {
-        "access": { "freeUntil": null, "mocksRequirePlus": false },
+        "access": { "mocksRequirePlus": false },
         "areas": [], "bases": null, "course": null, "end": null,
         "estimate": { "endDate": null, "fullCourseEndDate": null },
         "examChoices": [], "examDocument": "notice", "feasibility": null, "fitOffer": null, "goalId": "goal",

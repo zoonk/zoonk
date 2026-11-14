@@ -7787,61 +7787,61 @@
         }
       }
     },
-    "Getting your questions ready" : {
+    "Getting your test ready" : {
       "comment" : "Title while placement questions are written",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wir bereiten deine Fragen vor"
+            "value" : "Wir bereiten deinen Test vor"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Preparando tus preguntas"
+            "value" : "Preparando tu prueba"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Préparation de tes questions"
+            "value" : "Préparation de ton test"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stiamo preparando le tue domande"
+            "value" : "Stiamo preparando il tuo test"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "問題を準備しています"
+            "value" : "テストを準備しています"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "문제를 준비하고 있어요"
+            "value" : "테스트를 준비하고 있어요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Przygotowujemy dla ciebie pytania"
+            "value" : "Przygotowujemy twój test"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Preparando suas perguntas"
+            "value" : "Preparando seu teste"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sorularını hazırlıyoruz"
+            "value" : "Testini hazırlıyoruz"
           }
         }
       }
@@ -14873,6 +14873,65 @@
         }
       }
     },
+    "Reading your material takes a few minutes." : {
+      "comment" : "How long placement questions take to write from the learner's material",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Material zu lesen dauert ein paar Minuten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leer tu material toma unos minutos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La lecture de tes documents prend quelques minutes."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ci serve qualche minuto per leggere il tuo materiale."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "資料の読み取りには数分かかります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "자료를 읽는 데 몇 분 걸려요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przeczytanie twoich materiałów zajmuje kilka minut."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A leitura do seu material leva alguns minutos."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Materyalini okumamız birkaç dakika sürüyor."
+          }
+        }
+      }
+    },
     "Reading your material…" : {
       "comment" : "While a question about the learner's material is answered",
       "localizations" : {
@@ -15990,65 +16049,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Atla"
-          }
-        }
-      }
-    },
-    "Skip for now" : {
-      "comment" : "Skips placement while its questions are written",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vorerst überspringen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Saltar por ahora"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sauter pour l’instant"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Salta per ora"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今はスキップ"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "지금은 건너뛰기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Na razie pomiń"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pular por enquanto"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Şimdilik atla"
           }
         }
       }
@@ -17300,65 +17300,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Baştan başlayalım mı?"
-          }
-        }
-      }
-    },
-    "Start them whenever you're ready." : {
-      "comment" : "Under \"Your questions are ready\" on placement's wait",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Leg los, wenn du bereit bist."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Puedes empezar cuando quieras."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Commence quand tu veux."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inizia quando vuoi."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "準備ができたら、いつでも始められます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "준비되면 언제든 시작해 보세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zacznij, kiedy chcesz."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Comece quando quiser."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hazır olduğunda başlayabilirsin."
           }
         }
       }
@@ -19747,61 +19688,61 @@
         }
       }
     },
-    "This usually takes a minute or two." : {
-      "comment" : "How long placement questions take to write",
+    "This takes a minute or two." : {
+      "comment" : "How long placement questions take to write. \"This\" is the wait.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das dauert meist ein bis zwei Minuten."
+            "value" : "Das dauert ein bis zwei Minuten."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esto suele tardar uno o dos minutos."
+            "value" : "Esto tarda uno o dos minutos."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ça prend généralement une ou deux minutes."
+            "value" : "Ça prend une ou deux minutes."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Di solito ci vuole un minuto o due."
+            "value" : "Ci vuole un minuto o due."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "通常は1〜2分ほどかかります。"
+            "value" : "1〜2分ほどかかります。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "보통 1~2분 정도 걸려요."
+            "value" : "1~2분 정도 걸려요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zwykle zajmuje to minutę lub dwie."
+            "value" : "Zajmuje to minutę lub dwie."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Isso costuma levar um ou dois minutos."
+            "value" : "Isso leva um ou dois minutos."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bu genelde bir iki dakika sürer."
+            "value" : "Bu bir iki dakika sürer."
           }
         }
       }
@@ -26007,65 +25948,6 @@
         }
       }
     },
-    "Your first sessions will ask a few of these instead." : {
-      "comment" : "Under Skip for now",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stattdessen kommen ein paar dieser Fragen in deinen ersten Lerneinheiten dran."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "En su lugar, te haremos algunas de estas preguntas en tus primeras sesiones."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tes premières séances te poseront quelques-unes de ces questions à la place."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nelle prime sessioni ti faremo invece alcune di queste domande."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "代わりに、最初の数回の学習でこれらの問題をいくつか出します。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "대신 처음 몇 번의 학습에서 이런 문제를 몇 개 풀어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zamiast tego zadamy ci kilka z tych pytań w pierwszych dniach nauki."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Suas primeiras sessões terão algumas dessas perguntas."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bunun yerine bu sorulardan birkaçını ilk çalışmalarında soracağız."
-          }
-        }
-      }
-    },
     "Your first week" : {
       "comment" : "Header over the plan's next seven days",
       "localizations" : {
@@ -26951,65 +26833,6 @@
         }
       }
     },
-    "Your questions are ready" : {
-      "comment" : "Title of placement's wait once its questions are ready, for a learner still guessing",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine Fragen sind fertig"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tus preguntas están listas"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tes questions sont prêtes"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le tue domande sono pronte"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "問題の準備ができました"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "문제가 준비됐어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twoje pytania są gotowe"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Suas perguntas estão prontas"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Soruların hazır"
-          }
-        }
-      }
-    },
     "Your role" : {
       "comment" : "Box for the learner's role at work\nRow with the learner's role at work",
       "localizations" : {
@@ -27124,6 +26947,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hedefin"
+          }
+        }
+      }
+    },
+    "Your test is ready" : {
+      "comment" : "Title of placement's wait once its questions are ready, for a learner still guessing",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Test ist fertig"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu prueba está lista"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton test est prêt"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo test è pronto"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "テストの準備ができました"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "테스트가 준비됐어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twój test jest gotowy"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu teste está pronto"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Testin hazır"
           }
         }
       }

@@ -6,9 +6,13 @@ import { CalendarClockIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
 import {
+  Suggestion,
   SuggestionAction,
   SuggestionActions,
   SuggestionDescription,
+  SuggestionHeader,
+  SuggestionLine,
+  SuggestionSummary,
 } from "../_components/suggestion";
 import { SuggestionMenu } from "../_components/suggestion-menu";
 import { useFormatIsoDate } from "../_utils/iso-date";
@@ -23,6 +27,7 @@ import { currentPlanPreview } from "./plan-preview-state";
 import { usePastDateText } from "./plan-status-label";
 import {
   PlanChangeSuggestion,
+  SlotContent,
   type SlotItem,
   usePlanSuggestionSlot,
 } from "./plan-suggestion-context";
@@ -56,15 +61,28 @@ export function PastDateSuggestion({ item }: { item: Extract<SlotItem, { kind: "
   );
 }
 
-/** An exam that's over: the page's bar holds its answers (`PlanExamOverBar`). */
+/**
+ * An exam that's over: a statement, since the page's bar asks the question (`PlanExamOverBar`) and
+ * a sheet over it couldn't answer.
+ */
 function ExamOverSuggestion({ item }: { item: Extract<SlotItem, { kind: "pastDate" }> }) {
   const pastDateText = usePastDateText();
-  const { ask, title } = pastDateText({ isExam: true, lessons: item.lessons });
+  const { left, title } = pastDateText({ isExam: true, lessons: item.lessons });
 
   return (
-    <PlanChangeSuggestion item={item} mark={<CalendarClockIcon />} title={title}>
-      <SuggestionDescription>{ask}</SuggestionDescription>
-    </PlanChangeSuggestion>
+    <Suggestion label={title} mark={<CalendarClockIcon />}>
+      <SuggestionLine>
+        <div>
+          <SuggestionSummary>{title}</SuggestionSummary>
+          <SuggestionDescription>{left}</SuggestionDescription>
+        </div>
+      </SuggestionLine>
+
+      <SlotContent statement>
+        <SuggestionHeader>{title}</SuggestionHeader>
+        <SuggestionDescription>{left}</SuggestionDescription>
+      </SlotContent>
+    </Suggestion>
   );
 }
 

@@ -317,5 +317,101 @@ extension EnvironmentValues {
   @Entry var resumeGoal = ResumeGoal()
 }
 
+/// An exam whose date passed with lessons left, answered the same on Today and the Plan: archive the
+/// goal (it asks first), or keep studying, the main action.
+struct ExamOverButtons: View {
+  enum Answer {
+    case archive
+    case keepStudying
+  }
+
+  let goalName: String
+  let pressed: Answer?
+  let archive: () -> Void
+  let keepStudying: () -> Void
+
+  @State private var isArchiving = false
+
+  var body: some View {
+    BusyButton(isBusy: pressed == .archive, icon: .archive) {
+      isArchiving = true
+    } label: {
+      Text("Archive goal", tableName: "Plan", comment: "Archives the goal, after asking")
+    }
+    .buttonStyle(.outline)
+    .disabled(pressed == .keepStudying)
+    .archiveGoalConfirmation(named: goalName, isPresented: $isArchiving, archive: archive)
+
+    BusyButton(isBusy: pressed == .keepStudying, action: keepStudying) {
+      Text(
+        "Keep studying", tableName: "Plan",
+        comment: "Keeps studying the lessons left after the exam's date passed")
+    }
+    .buttonStyle(.mainAction)
+    .keyboardShortcut(.defaultAction)
+    .disabled(pressed == .archive)
+  }
+}
+
+extension View {
+  /// The Plan of an exam whose date passed with lessons left asks in its bar, as Today does.
+  func examOverBar(goal: LearnerGoal, isShown: Bool) -> some View {
+    modifier(ExamOverBar(goal: goal, isShown: isShown))
+  }
+}
+
+private struct ExamOverBar: ViewModifier {
+  @Environment(AppRouter.self) private var router
+  @Environment(PlanStore.self) private var store
+  @State private var pressed: ExamOverButtons.Answer?
+  @State private var failed = false
+
+  let goal: LearnerGoal
+  let isShown: Bool
+
+  func body(content: Content) -> some View {
+    content
+      .bottomBar(note: isShown && failed ? BarNote(saveFailure) : nil) {
+        if isShown {
+          ExamOverButtons(
+            goalName: goal.displayName, pressed: pressed, archive: { save(.archive) },
+            keepStudying: { save(.keepStudying) })
+        }
+      }
+  }
+
+  private var saveFailure: LocalizedStringResource {
+    LocalizedStringResource(
+      "That didn't save. Try again.", table: "Plan", comment: "A change couldn't be saved")
+  }
+
+  private func save(_ answer: ExamOverButtons.Answer) {
+    guard pressed == nil else {
+      return
+    }
+
+    pressed = answer
+    failed = false
+
+    Task {
+      defer { pressed = nil }
+
+      switch answer {
+      case .archive:
+        switch await store.setStatus(.archived, goalId: goal.id) {
+        case .done(.saved): router.showRoot(of: .today)
+        case .done, .failed: failed = true
+        case .obsolete: break
+        }
+      case .keepStudying:
+        switch await store.change(goalId: goal.id, edits: [.fullCourse(true)]) {
+        case .done(.invalid), .failed: failed = true
+        case .done, .obsolete: break
+        }
+      }
+    }
+  }
+}
+
 /// Core's `MAX_TITLE_LENGTH`, which bounds a goal's name.
 private let goalNameLimit = 120

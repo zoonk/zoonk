@@ -174,7 +174,7 @@
   "player_verdict_incorrect": "c47f957247cbdbbba009742e3c8748d6e67845d2d8a11862274641090b8158b9",
   "player_verdict_sample_answer": "8a6d12d6e693a703b58762ea3cdb43e2a2ea830d9371a4b44c4c32a259e9cb04",
   "player_verdict_typo": "ee8149a01f684e9d0b8ee1e5145f862fc112a9cf13fdfcec34cb1d8dcd8e01bc",
-  "player_verdict_unchecked": "277d5decb264716278e906534d3231cd51c968599afb1104f4245b8ea1200be5",
+  "player_verdict_unchecked": "6040a9c77f625abd8b8cad40b25948e0dbb4a9583a7ad4dc50fa5650c692ffff",
   "player_wait_stopped": "a356e046b941ce5d6c910e35b2933639d0b7f9615dc1e556ea179f25467228f9",
   "player_what_we_heard": "dd15a1e48810d26ce842a6b4696161857031bd1f4afefb20c08debb1dec67a6d",
   "player_word_heard_as": "6d8bae8a52ad0a8e579422745ba982bba7685a7da382c277d747cc514a3a44db",
@@ -238,7 +238,7 @@
     <string name="player_verdict_incorrect">Ce n’est pas ça</string>
     <string name="player_verdict_sample_answer">Voici une bonne réponse</string>
     <string name="player_verdict_typo">Correct, attention à l’orthographe</string>
-    <string name="player_verdict_unchecked">Non vérifié cette fois</string>
+    <string name="player_verdict_unchecked">Pas de vérification cette fois</string>
     <string name="player_answer_feedback">Retour sur ta réponse</string>
     <string name="player_spelled">Orthographe :</string>
     <string name="player_correct_answer_label">Réponse :</string>
