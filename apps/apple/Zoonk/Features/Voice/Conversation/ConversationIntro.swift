@@ -62,7 +62,13 @@ struct ConversationIntro<Footer: View>: View {
   let intro: CallIntro
   /// The call needs a subscription: the gate's words take the sound note's place.
   var isLocked = false
+  /// Whom the learner would call with the microphone blocked: how to go on takes the note's place.
+  var microphoneOff: String?
+  /// What the bar's last tap couldn't do, over its buttons.
+  var barNote: BarNote?
   @ViewBuilder let footer: Footer
+
+  @AccessibilityFocusState private var isStopFocused: Bool
 
   var body: some View {
     PaneSplit {
@@ -74,14 +80,14 @@ struct ConversationIntro<Footer: View>: View {
         task
         gate
       }
-      .safeAreaBar(edge: .bottom) { startBar }
+      .bottomBar(note: barNote) { footer }
     } single: {
       ZoonkList {
         about
         task
         gate
       }
-      .safeAreaBar(edge: .bottom) { startBar.keepsOffFold() }
+      .bottomBar(note: barNote) { footer }
     }
   }
 
@@ -166,7 +172,7 @@ struct ConversationIntro<Footer: View>: View {
   /// A call that can't start needs no sound.
   @ViewBuilder
   private var note: some View {
-    if !isLocked {
+    if !isLocked, microphoneOff == nil {
       SectionFooter {
         SoundNote()
       }
@@ -177,25 +183,28 @@ struct ConversationIntro<Footer: View>: View {
   @ViewBuilder
   private var gate: some View {
     if isLocked {
-      Section {
-        VStack(alignment: .leading, spacing: 4) {
-          CallStartFooter.lockedTitle
-            .typeStyle(.section)
-
-          CallStartFooter.lockedLine
-            .foregroundStyle(.mutedForeground)
-        }
-        .listRowBackground(Color.clear)
-        .listRowSeparator(.hidden)
-      }
+      stop(title: CallStartFooter.lockedTitle, line: CallStartFooter.lockedLine)
+    } else if let microphoneOff {
+      stop(title: CallMicrophoneOff.title, line: CallMicrophoneOff.text(name: microphoneOff))
+        // It replaces the Call button VoiceOver was on.
+        .accessibilityFocused($isStopFocused)
+        .onAppear { isStopFocused = true }
     }
   }
 
-  private var startBar: some View {
-    VStack(spacing: 12) {
-      footer
+  private func stop(title: Text, line: Text) -> some View {
+    Section {
+      VStack(alignment: .leading, spacing: 4) {
+        title
+          .typeStyle(.section)
+
+        line
+          .foregroundStyle(.mutedForeground)
+      }
+      .accessibilityElement(children: .combine)
+      .listRowBackground(Color.clear)
+      .listRowSeparator(.hidden)
     }
-    .scenePadding()
   }
 }
 
@@ -222,8 +231,6 @@ struct CallStartFooter: View {
     if isLocked {
       SubscribeButton()
         .buttonStyle(.mainAction)
-        .controlSize(.large)
-        .buttonSizing(.flexible)
     } else {
       Button(action: onStart) {
         Label {
@@ -231,10 +238,8 @@ struct CallStartFooter: View {
         } icon: {
           Image(systemName: "phone.fill")
         }
-        .frame(maxWidth: .infinity)
       }
       .buttonStyle(.mainAction)
-      .controlSize(.large)
       .keyboardShortcut(.defaultAction)
     }
   }
@@ -254,11 +259,10 @@ struct CallButtonTitle: View {
 
 /// The learner said no to the microphone: nothing is reserved until they choose to type or allow
 /// it in Settings.
+/// A call whose microphone is blocked goes on by typing; its words show in the intro.
 struct CallMicrophoneOff: View {
   @Environment(\.openURL) private var openURL
-  @AccessibilityFocusState private var isMessageFocused: Bool
 
-  let name: String
   let onType: () -> Void
 
   static var title: Text {
@@ -273,21 +277,14 @@ struct CallMicrophoneOff: View {
   }
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 4) {
-      Self.title
-        .typeStyle(.body.weight(.semibold))
-
-      Self.text(name: name)
-        .typeStyle(.note)
-        .foregroundStyle(.mutedForeground)
+    Button {
+      if let url = URL(string: UIApplication.openSettingsURLString) {
+        openURL(url)
+      }
+    } label: {
+      Text("Open Settings", tableName: "Voice", comment: "Button that opens the app's settings")
     }
-    .frame(maxWidth: .infinity, alignment: .leading)
-    .accessibilityElement(children: .combine)
-    // It replaces the Call button VoiceOver was on.
-    .accessibilityFocused($isMessageFocused)
-    .onAppear {
-      isMessageFocused = true
-    }
+    .buttonStyle(.outline)
 
     Button(action: onType) {
       Label {
@@ -295,21 +292,8 @@ struct CallMicrophoneOff: View {
       } icon: {
         Image(systemName: "keyboard")
       }
-      .frame(maxWidth: .infinity)
     }
     .buttonStyle(.mainAction)
-    .controlSize(.large)
-
-    Button {
-      if let url = URL(string: UIApplication.openSettingsURLString) {
-        openURL(url)
-      }
-    } label: {
-      Text("Open Settings", tableName: "Voice", comment: "Button that opens the app's settings")
-        .frame(maxWidth: .infinity)
-    }
-    .buttonStyle(.outline)
-    .controlSize(.large)
   }
 }
 

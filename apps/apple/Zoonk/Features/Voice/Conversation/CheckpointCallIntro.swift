@@ -33,7 +33,9 @@ struct CheckpointCallIntro: View {
   private var content: some View {
     switch call.state {
     case .loaded(.notStarted(let preview)):
-      ConversationIntro(intro: CallIntro(preview.intro), isLocked: needsPlus) {
+      ConversationIntro(
+        intro: CallIntro(preview.intro), isLocked: needsPlus, barNote: startFailure.map { BarNote($0) }
+      ) {
         if needsPlus {
           CallStartFooter(isLocked: true, callee: nil) {}
         } else {
@@ -59,6 +61,11 @@ struct CheckpointCallIntro: View {
               "This takes about half a minute.", tableName: "Voice",
               comment: "How long getting a checkpoint's call ready takes; it opens by itself"))
         } else {
+          if let startFailure {
+            FailureLine(message: startFailure)
+              .typeStyle(.body)
+          }
+
           startButton(writesFirst: true, callee: nil)
         }
       }
@@ -94,32 +101,27 @@ struct CheckpointCallIntro: View {
 
   /// Writing the call first calls no one, so only the button that calls has the phone.
   private func startButton(writesFirst: Bool, callee: String?) -> some View {
-    VStack(spacing: 8) {
-      if didFail {
-        FailureLine(
-          message: LocalizedStringResource(
-            "The call didn't start. Try again in a moment.", table: "Voice",
-            comment: "Starting a checkpoint call failed")
-        )
-        .typeStyle(.body)
+    BusyButton(isBusy: isStarting, icon: .call) {
+      starting = Task { await start(writesFirst: writesFirst) }
+    } label: {
+      if writesFirst {
+        Text(
+          "Start", tableName: "Voice",
+          comment: "Gets a checkpoint's call ready, then opens it")
+      } else {
+        CallButtonTitle(callee: callee)
       }
-
-      BusyButton(isBusy: isStarting, icon: .call) {
-        starting = Task { await start(writesFirst: writesFirst) }
-      } label: {
-        if writesFirst {
-          Text(
-            "Start", tableName: "Voice",
-            comment: "Gets a checkpoint's call ready, then opens it")
-        } else {
-          CallButtonTitle(callee: callee)
-        }
-      }
-      .buttonStyle(.mainAction)
-      .controlSize(.large)
-      .buttonSizing(.flexible)
-      .keyboardShortcut(.defaultAction)
     }
+    .buttonStyle(.mainAction)
+    .keyboardShortcut(.defaultAction)
+  }
+
+  private var startFailure: LocalizedStringResource? {
+    didFail
+      ? LocalizedStringResource(
+        "The call didn't start. Try again in a moment.", table: "Voice",
+        comment: "Starting a checkpoint call failed")
+      : nil
   }
 
   /// Mirrors main's `startCheckpointCallAction`: what changed since the intro was read (earlier
