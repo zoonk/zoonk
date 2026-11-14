@@ -55,6 +55,7 @@ import com.zoonk.android.feature.certificates.naming
 import com.zoonk.android.feature.player.LessonNotWrittenNotice
 import com.zoonk.android.feature.player.LessonWriting
 import com.zoonk.android.feature.player.LessonWritingProgress
+import com.zoonk.android.feature.player.lessonWaitWords
 import com.zoonk.android.feature.today.TodayRead
 import com.zoonk.android.feature.today.stepsDone
 import com.zoonk.android.feature.warmup.WaitContent
@@ -571,6 +572,7 @@ internal fun NextStop(
                                         waitKind,
                                         shown,
                                     )
+                                val words = lessonWaitWords(waitKind)
                                 CompositionLocalProvider(LocalMainActionInBar provides (startsFor != null || instead != null)) {
                                     WaitContent(
                                         quiz,
@@ -578,9 +580,7 @@ internal fun NextStop(
                                         AnalyticsEvent.WarmUpSurface.LessonWait,
                                         waitKind,
                                         shown,
-                                        stringResource(
-                                            if (ready) R.string.session_next_lesson_ready else R.string.session_next_writing_note,
-                                        ),
+                                        stringResource(if (ready) words.ready else words.gettingReady),
                                         goalId = goalId?.toString(),
                                         progressShare = share,
                                         onRetry = { retry() },
@@ -597,7 +597,7 @@ internal fun NextStop(
                                                     retry()
                                                 }
                                             },
-                                            stringResource(R.string.session_next_writing_note),
+                                            stringResource(R.string.session_next_writing_note).takeUnless { ready },
                                             progressShare = share,
                                         )
                                     }
