@@ -10301,6 +10301,16 @@ msgctxt "LcFFqV"
 msgid "New lessons start"
 msgstr "Neue Lektionen beginnen"
 
+#: src/plan/exam-choice-question.tsx
+msgctxt "FXC8l3"
+msgid "{group}: which ones will you take?"
+msgstr "{group}: Welche wählst du?"
+
+#: src/plan/exam-choice-question.tsx
+msgctxt "gDpw0U"
+msgid "{group}: which one will you take?"
+msgstr "{group}: Welches Fach wählst du für die Prüfung?"
+
 #: src/plan/exam-over-actions.tsx
 msgctxt "rBTgSX"
 msgid "Archive goal"
@@ -10484,18 +10494,6 @@ msgstr "Vorerst {month}. Wähle den Tag, sobald du ihn kennst."
 msgctxt "v5e5kt"
 msgid "Adjust your plan"
 msgstr "Deinen Plan anpassen"
-
-#: src/plan/plan-exam-choices.tsx
-#: src/today/today-exam-choice.tsx
-msgctxt "FXC8l3"
-msgid "{group}: which ones will you take?"
-msgstr "{group}: Welche wählst du?"
-
-#: src/plan/plan-exam-choices.tsx
-#: src/today/today-exam-choice.tsx
-msgctxt "gDpw0U"
-msgid "{group}: which one will you take?"
-msgstr "{group}: Welches Fach wählst du für die Prüfung?"
 
 #: src/plan/plan-finish.tsx
 msgctxt "6Due7K"
