@@ -172,7 +172,7 @@ struct MindMapRow: View {
       // The page says once what writing a chapter's lessons first means.
       let words: String? =
         switch shown {
-        case .create where map.lessonsToWrite > 0:
+        case .create where map.lessonsToWrite > 0 && !isPlus:
           String(
             localized: "\(map.lessonsToWrite) lessons to write", table: "MindMaps",
             comment: "A chapter on the mind maps page whose lessons a map would write first")
@@ -198,20 +198,18 @@ struct MindMapRow: View {
   private func stateLine(ready: String?) -> String? {
     switch shown {
     case .create:
-      if map.lessonsToWrite == 0 {
-        return Self.mainIdeas
-      }
-
-      return learner.summary.value?.tier == .plus
-        ? String(
-          localized: "\(map.lessonsToWrite) lessons get written first, so it takes a few minutes.",
-          table: "MindMaps",
-          comment: "A Plus learner's map of a chapter whose lessons aren't written yet")
-        : String(
+      // Only a learner with a limit on lessons hears what writing them spends.
+      if map.lessonsToWrite > 0, !isPlus {
+        return String(
           localized:
             "\(map.lessonsToWrite) lessons get written first and count toward your free lessons.",
           table: "MindMaps",
           comment: "A free learner's map of a chapter whose lessons aren't written yet")
+      }
+
+      return place == .finish
+        ? String(localized: "A mind map of its main ideas", table: "MindMaps")
+        : Self.mainIdeas
     case .ready:
       if map.image == nil {
         return String(
@@ -260,6 +258,8 @@ struct MindMapRow: View {
       nil
     }
   }
+
+  private var isPlus: Bool { learner.summary.value?.tier == .plus }
 
   private static let mainIdeas = String(
     localized: "Its main ideas in one picture", table: "MindMaps",

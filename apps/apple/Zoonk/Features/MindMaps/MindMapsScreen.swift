@@ -254,6 +254,18 @@ private struct MindMapCreateSection: View {
         }
 
         if showsChapters {
+          // A row's Create spends lessons from a free learner's allowance, so the list says so once.
+          if learner.summary.value?.tier != .plus, others.contains(where: { $0.lessonsToWrite > 0 })
+          {
+            Text(
+              "Making one of these maps writes its lessons first, and they count toward your free lessons.",
+              tableName: "MindMaps"
+            )
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
+            .listRowSeparator(.hidden)
+          }
+
           ForEach(others) { map in
             MindMapRow(goalId: goalId, map: map, place: .notMade(canStart: canStart))
           }
