@@ -334,3 +334,12 @@ describe("a screen's leads", () => {
     assert.equal(craftFindings(page, TYPE_SCALE).length, 1);
   });
 });
+
+describe("shared mark and corner sizes", () => {
+  it("accepts 24 px marks and 6 px corners while rejecting outliers", () => {
+    assert.deepEqual(iconLeads([{ label: "Notice", size: 24, stroke: 2 }]), []);
+    assert.equal(iconLeads([{ label: "Notice", size: 25, stroke: 2 }]).length, 1);
+    assert.deepEqual(shapeLeads(shaped([control("Chip", { radius: 6 })])), []);
+    assert.equal(shapeLeads(shaped([control("Chip", { radius: 7 })])).length, 1);
+  });
+});
