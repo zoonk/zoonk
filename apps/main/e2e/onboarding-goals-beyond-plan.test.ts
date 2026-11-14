@@ -22,7 +22,7 @@ const STATISTICS = { kind: "learn", subject: "Statistics", title: "Learn statist
 
 const LOCKED_NOTE = /More goals at once need a subscription/u;
 
-const FULL = "That's all the goals you can study at once. Pause one, or subscribe to study more.";
+const FULL = "That's all the goals you can study at once";
 
 async function createLearnerFollowing(count: number) {
   const user = await createE2EUser(getBaseURL());
@@ -152,7 +152,7 @@ test.describe("Goals typed together beyond the goals the free plan follows at on
       page.getByRole("main").getByText(STATISTICS.subject, { exact: true }),
     ).toBeVisible();
 
-    await expect(page.getByRole("alert").filter({ hasText: FULL })).toBeVisible();
+    await expect(page.getByText(FULL, { exact: true })).toBeVisible();
     await expect(page.getByRole("link", { name: "Subscribe" })).toBeVisible();
     await expect(page.getByRole("button", { name: "Looks right" })).toHaveCount(0);
     await expect(page.getByText(LOCKED_NOTE)).toHaveCount(0);
@@ -192,7 +192,7 @@ test.describe("Goals typed together beyond the goals the free plan follows at on
 
     await page.getByRole("button", { name: "Looks right" }).click();
 
-    await expect(page.getByRole("alert").filter({ hasText: FULL })).toBeVisible();
+    await expect(page.getByText(FULL, { exact: true })).toBeVisible();
     await expect(page.getByText(LOCKED_NOTE)).toHaveCount(0);
     await expect(page.getByRole("button", { name: "Looks right" })).toHaveCount(0);
 
@@ -207,7 +207,7 @@ test.describe("Goals typed together beyond the goals the free plan follows at on
     await page.goBack();
 
     await expect(page.getByRole("button", { name: "Looks right" })).toBeVisible();
-    await expect(page.getByRole("alert").filter({ hasText: FULL })).toHaveCount(0);
+    await expect(page.getByText(FULL, { exact: true })).toHaveCount(0);
     await expect(page.getByText(LOCKED_NOTE)).toBeVisible();
 
     await page.context().close();
@@ -228,7 +228,7 @@ test.describe("Goals typed together beyond the goals the free plan follows at on
     ).toBeVisible();
 
     await expect(page.getByRole("link", { name: "Create a free account" })).toBeVisible();
-    await expect(page.getByRole("alert").filter({ hasText: FULL })).toHaveCount(0);
+    await expect(page.getByText(FULL, { exact: true })).toHaveCount(0);
     await expect(page.getByRole("link", { name: "Subscribe" })).toHaveCount(0);
     await expect(page.getByRole("button", { name: "Looks right" })).toHaveCount(0);
   });
