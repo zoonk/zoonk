@@ -1,6 +1,5 @@
 package com.zoonk.android.ui.format
 
-import com.zoonk.android.feature.plan.isInAnotherYear
 import android.icu.math.BigDecimal
 import android.icu.text.DateFormat
 import android.icu.text.DateIntervalFormat
@@ -17,6 +16,7 @@ import android.icu.util.ULocale
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.platform.LocalConfiguration
+import com.zoonk.android.feature.plan.isInAnotherYear
 import java.time.LocalDate
 import java.time.LocalTime
 import java.util.Date

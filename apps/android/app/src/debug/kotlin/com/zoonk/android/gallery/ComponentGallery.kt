@@ -418,7 +418,11 @@ private fun BusyButtons() {
                 busy = true,
                 leadingIcon = { ButtonIcon(R.drawable.ic_event_available) },
             ) { Text("Move to Monday") }
-            SecondaryButton(onClick = {}, busy = true, leadingIcon = { ButtonIcon(R.drawable.ic_event_available) }) { Text("Use this date") }
+            SecondaryButton(
+                onClick = {},
+                busy = true,
+                leadingIcon = { ButtonIcon(R.drawable.ic_event_available) },
+            ) { Text("Use this date") }
             TextButton(onClick = {}, busy = true, leadingIcon = { ButtonIcon(R.drawable.ic_undo) }) { Text("Undo") }
             DestructiveButton(onClick = {}, busy = true, leadingIcon = { ButtonIcon(R.drawable.ic_delete) }) { Text("Delete") }
             OutlinedButton(onClick = {}, busy = true, leadingIcon = { ButtonIcon(R.drawable.ic_download) }, size = ButtonSize.Small) {

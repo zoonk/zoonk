@@ -38,7 +38,12 @@ class MistakeReplayWorkTest {
     private fun replay(
         id: String,
         kind: String = "activity",
-        content: JsonObject = ApiJson.encodeToJsonElement(ActivityStepContent.serializer(), ActivityFixtures.content("patternTable")).jsonObject,
+        content: JsonObject =
+            ApiJson
+                .encodeToJsonElement(
+                    ActivityStepContent.serializer(),
+                    ActivityFixtures.content("patternTable"),
+                ).jsonObject,
     ): JsonObject {
         val entry = fixture("mistake-practice-lesson-entry", "mistakeId" to id)
         val lesson = entry.getValue("lesson").jsonObject

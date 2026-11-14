@@ -104,15 +104,12 @@ internal fun PracticeChooser(
     // until a purchase opens the mocks (the options reload when the subscription changes).
     var triedLocked by rememberSaveable { mutableStateOf(false) }
     val gated = triedLocked && !open
-    // The bar's main action, for its button and for Enter.
     val mainAction = {
-        when {
-            gated -> navigator.open(AppRoute.Subscription)
-            option == null || busy -> Unit
-            else -> {
-                onStart()
-                if (open) viewModel.start(option.shape, option.key) else triedLocked = true
-            }
+        if (gated) {
+            navigator.open(AppRoute.Subscription)
+        } else if (option != null && !busy) {
+            onStart()
+            if (open) viewModel.start(option.shape, option.key) else triedLocked = true
         }
     }
     val action: @Composable (Modifier) -> Unit = { modifier ->

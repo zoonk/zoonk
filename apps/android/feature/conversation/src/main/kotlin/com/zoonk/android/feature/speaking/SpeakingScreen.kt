@@ -431,7 +431,11 @@ private fun TaskRow(
             )
             val lastResult: (@Composable () -> Unit)? =
                 task.lastTry?.let { last ->
-                    { OutlinedButton(onClick = { onLastResult(last.conversationId) }) { Text(stringResource(R.string.speaking_last_result)) } }
+                    {
+                        OutlinedButton(
+                            onClick = { onLastResult(last.conversationId) },
+                        ) { Text(stringResource(R.string.speaking_last_result)) }
+                    }
                 }
             if (gated) {
                 TrackShown(AnalyticsEvent.SubscriptionGateShown)
