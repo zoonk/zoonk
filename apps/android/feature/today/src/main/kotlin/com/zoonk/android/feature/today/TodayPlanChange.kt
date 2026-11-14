@@ -20,6 +20,7 @@ import com.zoonk.android.ui.components.SuggestionActions
 import com.zoonk.android.ui.components.SuggestionDescription
 import com.zoonk.android.ui.components.SuggestionHeader
 import com.zoonk.android.ui.components.SuggestionLayout
+import com.zoonk.android.ui.components.SuggestionMainAction
 import com.zoonk.android.ui.components.SuggestionMark
 import com.zoonk.android.ui.components.SuggestionMenu
 import com.zoonk.android.ui.components.SuggestionMenuItem
@@ -150,7 +151,7 @@ private fun ChangeActions(
 
     SuggestionActions {
         if (change.canApply) {
-            SuggestionAction(
+            SuggestionMainAction(
                 text =
                     stringResource(
                         when {
@@ -285,7 +286,7 @@ private fun BehindChoices(
         )
 
     SuggestionActions {
-        leading?.let { SuggestionAction(label(it), { onChoose(route(it)) }) }
+        leading?.let { SuggestionMainAction(label(it), { onChoose(route(it)) }) }
         SuggestionAction(stringResource(R.string.today_keep_my_time), { onChoose(null) }, enabled = enabled, secondary = true)
         SuggestionMenu { done ->
             options.filter { it != leading }.forEach { option -> SuggestionMenuItem(label(option), done) { onChoose(route(option)) } }

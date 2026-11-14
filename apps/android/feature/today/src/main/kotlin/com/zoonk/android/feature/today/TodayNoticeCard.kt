@@ -2,6 +2,8 @@ package com.zoonk.android.feature.today
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
@@ -9,8 +11,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.data.AnalyticsEvent
-import com.zoonk.android.feature.exam.ExamMomentCard
+import com.zoonk.android.feature.exam.ExamChecklist
+import com.zoonk.android.feature.exam.examDayText
 import com.zoonk.android.feature.exam.examMomentTitle
+import com.zoonk.android.feature.exam.examMomentWords
 import com.zoonk.android.feature.exam.icon
 import com.zoonk.android.feature.language.LanguagePracticeNotice
 import com.zoonk.android.feature.onboarding.OnboardingStore
@@ -29,12 +33,14 @@ import com.zoonk.android.ui.components.SuggestionActions
 import com.zoonk.android.ui.components.SuggestionDescription
 import com.zoonk.android.ui.components.SuggestionHeader
 import com.zoonk.android.ui.components.SuggestionLayout
+import com.zoonk.android.ui.components.SuggestionMainAction
 import com.zoonk.android.ui.components.SuggestionMark
 import com.zoonk.android.ui.components.SuggestionOpen
 import com.zoonk.android.ui.components.SuggestionResult
 import com.zoonk.android.ui.components.SuggestionSaveError
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
+import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.ExamMoment
 import com.zoonk.api.models.LanguageToday
 import com.zoonk.api.models.MemoryInsight
@@ -128,6 +134,7 @@ internal fun TodayNotice(
     }
 }
 
+/** Main's `TodayExamMoment`: built from the suggestion's pieces like every other one; the exam page keeps the card. */
 @Composable
 private fun ExamMomentNotice(
     moment: ExamMoment,
@@ -135,20 +142,29 @@ private fun ExamMomentNotice(
     layout: SuggestionLayout,
     modifier: Modifier,
 ) {
+    val words = examMomentWords(moment) ?: return
+    val title = examMomentTitle(moment)
+    val afterExam = moment.stage == ExamMoment.Stage.AFTER_EXAM
+
     Suggestion(
         label = stringResource(R.string.today_notice_exam),
-        summary = examMomentTitle(moment),
+        summary = title,
         layout = layout,
         modifier = modifier,
         mark = SuggestionMark.Symbol(moment.stage.icon),
     ) {
-        ExamMomentCard(
-            moment,
-            onOpen = {
+        SuggestionHeader(title)
+        moment.day?.takeUnless { afterExam }?.let {
+            Text(examDayText(it), style = MaterialTheme.typography.bodyMedium.withTabularFigures())
+        }
+        SuggestionDescription(words)
+        ExamChecklist(moment.checklist, moment.tools)
+        SuggestionActions {
+            SuggestionMainAction(stringResource(if (afterExam) R.string.exam_add_result else R.string.exam_see_exam), {
                 close()
                 state.navigate(AppRoute.Exam)
-            },
-        )
+            })
+        }
     }
 }
 
@@ -318,7 +334,7 @@ private fun FocusTestNotice(
         } else {
             SuggestionDescription(stringResource(R.string.focustest_suggestion_body, formatMinutes(test.minutes.toInt(), currentLocale())))
             SuggestionActions {
-                SuggestionAction(
+                SuggestionMainAction(
                     text = stringResource(R.string.focustest_start),
                     onClick = {
                         close()

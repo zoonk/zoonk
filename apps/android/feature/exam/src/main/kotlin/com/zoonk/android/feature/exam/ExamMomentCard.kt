@@ -31,6 +31,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -62,9 +63,8 @@ fun ExamMomentCard(
     modifier: Modifier = Modifier,
     titleStyle: TextStyle = MaterialTheme.typography.titleSmall,
 ) {
-    val body = momentBody(moment) ?: return
+    val words = examMomentWords(moment) ?: return
     val afterExam = moment.stage == ExamMoment.Stage.AFTER_EXAM
-    val lead = stringResource(R.string.exam_prepared).takeIf { moment.prepared && moment.stage.isLastDays }
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(24.dp)) {
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -79,18 +79,7 @@ fun ExamMomentCard(
                 moment.day?.takeUnless { afterExam }?.let {
                     Text(examDayText(it), style = MaterialTheme.typography.bodyMedium.withTabularFigures())
                 }
-                Text(
-                    buildAnnotatedString {
-                        lead?.let {
-                            withStyle(
-                                SpanStyle(color = MaterialTheme.colorScheme.onSurface),
-                            ) { append(it + spaceAfterSentence(it)) }
-                        }
-                        append(body)
-                    },
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
+                Text(words, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
             }
         }
 
@@ -136,6 +125,17 @@ fun examDayText(day: ExamDay): String {
 private val ExamMoment.Stage.isLastDays: Boolean
     get() = this == ExamMoment.Stage.DAY_BEFORE || this == ExamMoment.Stage.EXAM_DAY
 
+/** What the moment means for today, led by "You're prepared." in the last days when it's true; null once nothing's left to say. */
+@Composable
+fun examMomentWords(moment: ExamMoment): AnnotatedString? {
+    val body = momentBody(moment) ?: return null
+    val lead = stringResource(R.string.exam_prepared).takeIf { moment.prepared && moment.stage.isLastDays }
+    return buildAnnotatedString {
+        lead?.let { withStyle(SpanStyle(color = MaterialTheme.colorScheme.onSurface)) { append(it + spaceAfterSentence(it)) } }
+        append(body)
+    }
+}
+
 @Composable
 private fun momentBody(moment: ExamMoment): String? =
     when (moment.stage) {
@@ -162,7 +162,7 @@ private fun workLine(moment: ExamMoment): String {
 
 /** Nothing is saved: it's a calm reminder, never a test. */
 @Composable
-private fun ExamChecklist(
+fun ExamChecklist(
     items: List<ExamMoment.Checklist>,
     tools: List<String>,
 ) {
