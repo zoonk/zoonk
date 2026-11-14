@@ -331,7 +331,7 @@ struct PracticeQuestionsPreparingView: View {
       // A failure line reads itself out beside the Start that comes back. A notice doesn't: beside
       // Start (a short break) it's read out; in Start's place (a limit) it takes focus.
       if let limit, limit.isShortBreak {
-        announcePolitely(limit.helpWords().said)
+        announcePolitely(limit.words().said)
       } else if limit != nil {
         focus = .notice
       }

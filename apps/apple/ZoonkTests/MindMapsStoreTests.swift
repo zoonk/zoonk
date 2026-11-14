@@ -247,7 +247,7 @@ final class MindMapsStoreTests: XCTestCase {
   }
 
   func testRefusedMapSaysWhatRanOut() async {
-    let limit = MindMapLimit(limit: .limitReached(period: .month, tier: .free), resource: .lessons)
+    let limit = MindMapLimit(limit: .usedUp(tier: .free, availableAt: nil), resource: .lessons)
     let api = MindMapsAPIStub(server: .available, statuses: [], request: .refused(limit))
     let store = makeStore(api: api)
 

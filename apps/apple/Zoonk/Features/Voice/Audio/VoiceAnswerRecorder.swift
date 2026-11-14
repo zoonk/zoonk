@@ -82,7 +82,7 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
     }
 
     if case .limit(let limit) = issue {
-      return limit.helpWords().said
+      return limit.words().said
     }
 
     // A failure is a `FailureLine`, which reads itself out.

@@ -2,45 +2,43 @@ import Foundation
 import OpenAPIRuntime
 
 /// Mirrors main's `HelpLimit`.
-enum HelpLimit: Equatable, Sendable {
+enum HelpLimit: Hashable, Sendable {
+  /// A monthly cap is `usedUp`, never a period.
   enum Period: String, Sendable {
     case day
-    case month
     case total
   }
 
   case slowDown(retryAfterSeconds: Int)
+  /// The day's cap, or what a guest gets for good.
   case limitReached(period: Period, tier: LearnerTier)
-  /// A free learner's lessons of the last 30 days are used; `opensAt` is when the next one opens.
-  case freeLessonsUsed(opensAt: Date?)
+  /// A monthly cap: each use comes back 30 days after it was made, and `availableAt` is when the
+  /// next one does.
+  case usedUp(tier: LearnerTier, availableAt: Date?)
   case signUpRequired
 
-  /// A reached limit as the server names it: a free learner's last 30 days come with the instant
-  /// the next lesson opens, every other limit with its period.
-  static func reached(period: String?, tier: LearnerTier, opensAt: Date?) -> HelpLimit {
-    period == "rolling30Days"
-      ? .freeLessonsUsed(opensAt: opensAt)
-      : .limitReached(period: period.flatMap(Period.init) ?? .day, tier: tier)
+  /// A reached limit as the server names it.
+  static func reached(period: String?, tier: LearnerTier, availableAt: Date?) -> HelpLimit {
+    switch period {
+    case "rolling30Days": .usedUp(tier: tier, availableAt: availableAt)
+    case "total": .limitReached(period: .total, tier: tier)
+    default: .limitReached(period: .day, tier: tier)
+    }
+  }
+
+  var tier: LearnerTier? {
+    switch self {
+    case .limitReached(_, let tier), .usedUp(let tier, _): tier
+    case .slowDown, .signUpRequired: nil
+    }
   }
 
   var needsAccount: Bool {
-    switch self {
-    case .signUpRequired:
-      true
-    case .limitReached(_, let tier):
-      tier == .guest
-    case .slowDown, .freeLessonsUsed:
-      false
-    }
+    self == .signUpRequired || tier == .guest
   }
 
   var offersSubscription: Bool {
-    switch self {
-    case .limitReached(_, .free), .freeLessonsUsed:
-      true
-    case .limitReached, .slowDown, .signUpRequired:
-      false
-    }
+    tier == .free
   }
 
   /// It passes on its own, so the learner tries again from the same screen.
@@ -50,6 +48,29 @@ enum HelpLimit: Equatable, Sendable {
     }
 
     return false
+  }
+
+  var isMonthly: Bool {
+    if case .usedUp = self {
+      return true
+    }
+
+    return false
+  }
+
+  /// When a monthly cap's next use comes back.
+  var availableAt: Date? {
+    if case .usedUp(_, let availableAt) = self {
+      return availableAt
+    }
+
+    return nil
+  }
+
+  /// Main's opening day `"open"`: the instant has passed, so only the server can say whether the
+  /// learner is still at the limit. Only their tap asks again.
+  func isOpen(at now: Date) -> Bool {
+    availableAt.map { $0 <= now } ?? false
   }
 }
 
@@ -93,7 +114,7 @@ struct VoiceRefusal: Error, Equatable, Sendable {
 
     return .reached(
       period: (limit?["period"] ?? nil) as? String, tier: tier,
-      opensAt: ((limit?["availableAt"] ?? object?["availableAt"] ?? nil) as? String).flatMap(
+      availableAt: ((limit?["availableAt"] ?? object?["availableAt"] ?? nil) as? String).flatMap(
         Date.init(serverInstant:)))
   }
 }

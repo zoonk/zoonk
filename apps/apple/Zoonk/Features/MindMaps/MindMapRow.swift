@@ -358,10 +358,10 @@ extension MindMapLimit {
   /// new lessons), or the day's AI spend.
   func words(now: Date = .now) -> LimitWords {
     switch resource {
-    case .aiSpend: limit.helpWords(now: now)
+    case .aiSpend: limit.words(now: now)
     case .chapterLessons: limit.mapLessonsWords(now: now)
-    case .lessons: limit.lessonWords(now: now)
-    case .mindMap: limit.mindMapWords
+    case .lessons: limit.words(.lessons, now: now)
+    case .mindMap: limit.words(.mindMaps, now: now)
     }
   }
 }

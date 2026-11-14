@@ -2393,65 +2393,6 @@
         }
       }
     },
-    "Calls need a free account" : {
-      "comment" : "A guest can't call",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Für Gespräche brauchst du ein kostenloses Konto"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Necesitas una cuenta gratis para llamar"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Un compte gratuit est nécessaire pour appeler"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Per le conversazioni serve un account gratuito"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "会話練習には無料アカウントが必要です"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "대화하려면 무료 계정이 필요해요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Do rozmów potrzebujesz bezpłatnego konta"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Para conversar, você precisa de uma conta grátis"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sohbet etmek için ücretsiz bir hesap gerekli"
-          }
-        }
-      }
-    },
     "Cancel" : {
       "comment" : "Stops a call that hasn't connected yet",
       "localizations" : {
@@ -5184,124 +5125,6 @@
         }
       }
     },
-    "No more calls this month" : {
-      "comment" : "The plan's call time is used",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Diesen Monat sind keine Gespräche mehr möglich"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No quedan llamadas este mes"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus d’appels ce mois-ci"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nessun’altra conversazione questo mese"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今月の会話時間を使い切りました"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이번 달 대화 시간을 다 썼어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Miesięczny limit rozmów wyczerpany"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sem mais conversas neste mês"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu ayki sohbet süren doldu"
-          }
-        }
-      }
-    },
-    "No more calls today" : {
-      "comment" : "The plan's call time is used",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Heute sind keine Gespräche mehr möglich"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No quedan llamadas por hoy"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus d’appels aujourd’hui"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nessun’altra conversazione oggi"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今日の会話時間を使い切りました"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "오늘 대화 시간을 다 썼어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dzisiejszy limit rozmów wyczerpany"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sem mais conversas hoje"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bugünkü sohbet süren doldu"
-          }
-        }
-      }
-    },
     "No speaking practice for this goal" : {
       "comment" : "No exam format fits the goal",
       "localizations" : {
@@ -5420,238 +5243,119 @@
         }
       }
     },
-    "Not enough call time this month for this mock" : {
-      "comment" : "The call time left this month can't fit the mock",
+    "Not enough call time for this mock exam" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diesen Monat reicht deine Gesprächszeit nicht für diese Probeprüfung"
+            "value" : "Nicht genug Gesprächszeit für diese Probeprüfung"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No queda suficiente tiempo de llamadas este mes para este simulacro"
+            "value" : "No tienes suficiente tiempo de llamada para este simulacro"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Temps d’appel insuffisant ce mois-ci pour cet examen blanc"
+            "value" : "Pas assez de temps d’appel pour cet examen blanc"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il tempo di conversazione rimasto questo mese non basta per questa simulazione"
+            "value" : "Non hai abbastanza tempo di conversazione per questa simulazione"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "今月の残りの会話時間では、この模試を受けられません"
+            "value" : "この模試に必要な会話時間が足りません"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이번 달 남은 대화 시간이 이 모의고사를 보기에는 부족해요"
+            "value" : "이 모의고사에 필요한 대화 시간이 부족해요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "W tym miesiącu zostało za mało czasu na rozmowy, by ukończyć ten egzamin próbny"
+            "value" : "Na ten egzamin próbny brakuje ci czasu na rozmowę"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não resta tempo de conversa suficiente neste mês para este simulado"
+            "value" : "Falta tempo de conversa para este simulado"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bu deneme sınavı için bu ay yeterli sohbet süren kalmadı"
+            "value" : "Bu deneme sınavı için yeterli sohbet süren yok"
           }
         }
       }
     },
-    "Not enough call time this month for this task" : {
-      "comment" : "The call time left this month can't fit this speaking exam task\nThe call time left this month can't fit this task",
+    "Not enough call time for this task" : {
+      "comment" : "The call time left can't fit this speaking exam task",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Für diese Aufgabe hast du diesen Monat nicht mehr genug Gesprächszeit"
+            "value" : "Nicht genug Gesprächszeit für diese Aufgabe"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No queda suficiente tiempo de llamadas este mes para esta tarea"
+            "value" : "No tienes suficiente tiempo de llamada para esta tarea"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pas assez de temps d’appel ce mois-ci pour cette tâche"
+            "value" : "Pas assez de temps d’appel pour cette tâche"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il tempo di conversazione rimasto questo mese non basta per questo compito"
+            "value" : "Non hai abbastanza tempo di conversazione per questo compito"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "今月の残りの会話時間では、このタスクに取り組めません"
+            "value" : "このタスクに必要な会話時間が足りません"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이번 달 남은 대화 시간이 이 과제를 하기에는 부족해요"
+            "value" : "이 과제에 필요한 대화 시간이 부족해요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "W tym miesiącu zostało za mało czasu na rozmowy, by ukończyć to zadanie"
+            "value" : "Na to zadanie brakuje ci czasu na rozmowę"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O tempo de conversa que resta no mês não basta para essa tarefa"
+            "value" : "Falta tempo de conversa para esta tarefa"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bu bölüm için bu ay yeterli sohbet süren kalmadı"
-          }
-        }
-      }
-    },
-    "Not enough call time today for this mock" : {
-      "comment" : "The call time left today can't fit the mock",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Heute reicht deine Gesprächszeit nicht für diese Probeprüfung"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No queda suficiente tiempo de llamadas hoy para este simulacro"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Temps d’appel insuffisant aujourd’hui pour cet examen blanc"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il tempo di conversazione rimasto oggi non basta per questa simulazione"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今日の残りの会話時間では、この模試を受けられません"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "오늘 남은 대화 시간이 이 모의고사를 보기에는 부족해요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dziś zostało za mało czasu na rozmowy, by ukończyć ten egzamin próbny"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não resta tempo de conversa suficiente hoje para este simulado"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu deneme sınavı için bugün yeterli sohbet süren kalmadı"
-          }
-        }
-      }
-    },
-    "Not enough call time today for this task" : {
-      "comment" : "The call time left today can't fit this speaking exam task\nThe call time left today can't fit this task",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Für diese Aufgabe hast du heute nicht mehr genug Gesprächszeit"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No queda suficiente tiempo de llamadas hoy para esta tarea"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pas assez de temps d’appel aujourd’hui pour cette tâche"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il tempo di conversazione rimasto oggi non basta per questo compito"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今日の残りの会話時間では、このタスクに取り組めません"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "오늘 남은 대화 시간이 이 과제를 하기에는 부족해요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dziś zostało za mało czasu na rozmowy, by ukończyć to zadanie"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O tempo de conversa que resta hoje não basta para essa tarefa"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu bölüm için bugün yeterli sohbet süren kalmadı"
+            "value" : "Bu bölüm için yeterli sohbet süren yok"
           }
         }
       }

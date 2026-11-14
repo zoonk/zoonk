@@ -42,7 +42,7 @@ private struct SpeakingPaperView: View {
   let paper: Resource<Components.Schemas.SpeakingPaper>
 
   private enum StartFailure: Equatable {
-    case limit(CallLimit)
+    case limit(HelpLimit)
     case failed
   }
 
@@ -270,29 +270,22 @@ private struct SpeakingPaperView: View {
       }
 
       // Only the open task starts, so a failure is said right under its button.
-      if let startFailure {
-        FailureLine(message: startFailureMessage(startFailure))
-          .typeStyle(.body)
+      switch startFailure {
+      case .limit(let limit):
+        LimitNotice(limit: limit) { now in limit.enoughWords(.task, now: now) }
+          .announcesAlert(limit.enoughWords(.task).said)
+      case .failed:
+        FailureLine(
+          message: LocalizedStringResource(
+            "The task didn't start. Try again in a moment.", table: "Voice",
+            comment: "Starting an exam task failed")
+        )
+        .typeStyle(.body)
+      case nil:
+        EmptyView()
       }
     }
     .padding(.vertical, 4)
-  }
-
-  private func startFailureMessage(_ failure: StartFailure) -> String {
-    switch failure {
-    case .limit(let limit) where limit.period == .month:
-      String(
-        localized: "Not enough call time this month for this task", table: "Voice",
-        comment: "The call time left this month can't fit this speaking exam task")
-    case .limit:
-      String(
-        localized: "Not enough call time today for this task", table: "Voice",
-        comment: "The call time left today can't fit this speaking exam task")
-    case .failed:
-      String(
-        localized: "The task didn't start. Try again in a moment.", table: "Voice",
-        comment: "Starting an exam task failed")
-    }
   }
 
   private func facts(_ task: Components.Schemas.SpeakingPaperTask) -> String {

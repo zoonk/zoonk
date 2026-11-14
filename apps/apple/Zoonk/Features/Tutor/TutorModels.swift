@@ -92,7 +92,7 @@ enum TutorFailure: Error, Equatable, Sendable {
   /// A guest's help, or the day's budget all guests share, is used up.
   case signUpRequired
   case slowDown
-  case limitReached(period: Period, tier: LearnerTier)
+  case limit(HelpLimit)
   case plusRequired
   case gone
   case invalid
@@ -101,15 +101,17 @@ enum TutorFailure: Error, Equatable, Sendable {
   case conflict
   case failed
 
-  enum Period: String, Decodable, Sendable {
-    case day
-    case month
-    case total
+  var helpLimit: HelpLimit? {
+    if case .limit(let limit) = self {
+      return limit
+    }
+
+    return nil
   }
 
   var isLimit: Bool {
     switch self {
-    case .signUpRequired, .limitReached:
+    case .signUpRequired, .limit:
       true
     case .slowDown, .plusRequired, .gone, .invalid, .signedOut, .conflict, .failed:
       false
