@@ -553,6 +553,7 @@ private fun PausedSuggestion(
         layout = layout,
         mark = SuggestionMark.Symbol(R.drawable.ic_pause),
         lineAction = null,
+        lineDescription = description,
     ) {
         SuggestionHeader(title)
         SuggestionDescription(description)
