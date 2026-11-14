@@ -2349,7 +2349,7 @@ msgstr "Parle-nous de ton objectif avec tes mots et réponds à quelques questio
 #: src/app/[lang]/(home)/_components/home-faq.tsx
 msgctxt "60PJVp"
 msgid "You start free, no account needed. With a free account, you follow {goals, plural, one {one goal} other {# goals}} at a time, with a limit on lessons and on messages to Zu. For an exam, the diagnostic, the plan and {days, plural, =7 {the first week} one {the first day} other {the first # days}} of study are free. No card needed."
-msgstr "Tu peux commencer gratuitement, sans compte. Avec un compte gratuit, tu suis {goals, plural, one {un objectif} other {# objectifs}} à la fois, avec un nombre limité de leçons et de messages à Zu. Pour un examen, le diagnostic, le plan et {days, plural, =7 {la première semaine} one {le premier jour} other {les # premiers jours}} d’étude sont gratuits. Pas besoin de carte bancaire."
+msgstr "Tu peux commencer gratuitement, sans compte. Avec un compte gratuit, tu suis {goals, plural, =1 {un objectif} other {# objectifs}} à la fois, avec un nombre limité de leçons et de messages à Zu. Pour un examen, le diagnostic, le plan et {days, plural, =7 {la première semaine} =1 {le premier jour} other {les # premiers jours}} d’étude sont gratuits. Pas besoin de carte bancaire."
 
 #: src/app/[lang]/(home)/_components/home-faq.tsx
 msgctxt "NNtrw6"
@@ -3339,7 +3339,7 @@ msgstr "Un plan adapté à ton objectif et à ta date"
 #: src/components/pricing/free-plan.tsx
 msgctxt "Bj_ci-"
 msgid "For an exam: the diagnostic, your plan and {days, plural, =7 {its first week} one {its first day} other {its first # days}}"
-msgstr "Pour un examen : le diagnostic, ton plan et {days, plural, =7 {sa première semaine} one {son premier jour} other {ses # premiers jours}}"
+msgstr "Pour un examen : le diagnostic, ton plan et {days, plural, =7 {sa première semaine} =1 {son premier jour} other {ses # premiers jours}}"
 
 #: src/components/pricing/free-plan.tsx
 msgctxt "5ZDN6U"
@@ -3466,7 +3466,7 @@ msgstr "Commence gratuitement. <rest>Plus quand tu veux tout.</rest>"
 #: src/components/pricing/plus-pricing.tsx
 msgctxt "brY8f_"
 msgid "Free covers {goals, plural, one {one goal} other {up to # goals}} at a time. Plus covers every goal, all the way to the big day."
-msgstr "La formule gratuite te permet de suivre {goals, plural, one {un objectif} other {jusqu’à # objectifs}} à la fois. Plus t’accompagne pour tous tes objectifs jusqu’au grand jour."
+msgstr "La formule gratuite te permet de suivre {goals, plural, =1 {un objectif} other {jusqu’à # objectifs}} à la fois. Plus t’accompagne pour tous tes objectifs jusqu’au grand jour."
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "1vrigA"
@@ -3492,7 +3492,7 @@ msgstr "{month, plural, one {# leçon} other {# leçons}} par mois, jusqu’à {
 #: src/components/pricing/plus-questions.tsx
 msgctxt "PVvHeY"
 msgid "{days, plural, =7 {The first week} one {The first day} other {The first # days}} of exam prep"
-msgstr "{days, plural, =7 {La première semaine} one {Le premier jour} other {Les # premiers jours}} de préparation à un examen"
+msgstr "{days, plural, =7 {La première semaine} =1 {Le premier jour} other {Les # premiers jours}} de préparation à un examen"
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "FZOFIX"
@@ -3552,7 +3552,7 @@ msgstr "Écris-nous à {email} et nous examinerons ta demande. Les achats sur l�
 #: src/components/pricing/pricing-covers.tsx
 msgctxt "4YTeTA"
 msgid "{days, plural, =7 {Diagnostic and week 1} one {Diagnostic and day 1} other {Diagnostic and the first # days}}"
-msgstr "{days, plural, =7 {Diagnostic et semaine 1} one {Diagnostic et jour 1} other {Diagnostic et # premiers jours}}"
+msgstr "{days, plural, =7 {Diagnostic et semaine 1} =1 {Diagnostic et jour 1} other {Diagnostic et # premiers jours}}"
 
 #: src/components/pricing/pricing-covers.tsx
 msgctxt "NsXWWN"
@@ -3592,7 +3592,7 @@ msgstr "Tout autre objectif"
 #: src/components/pricing/pricing-covers.tsx
 msgctxt "KshPEJ"
 msgid "{count, plural, one {About one short lesson each weekday.} other {About # short lessons each weekday.}}"
-msgstr "{count, plural, one {Environ une courte leçon chaque jour de semaine.} other {Environ # courtes leçons chaque jour de semaine.}}"
+msgstr "{count, plural, =1 {Environ une courte leçon chaque jour de semaine.} other {Environ # courtes leçons chaque jour de semaine.}}"
 
 #: src/components/pricing/pricing-covers.tsx
 msgctxt "en1DQp"
