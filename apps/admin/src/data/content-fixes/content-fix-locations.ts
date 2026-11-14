@@ -98,8 +98,8 @@ async function loadLessons(ids: string[]) {
     {
       adminHref: `/lessons/${lesson.id}`,
       language: lesson.language,
-      targetLanguage: lesson.targetLanguage ?? undefined,
       mainUrl: mainUrl({ language: lesson.language, path: `/learn/${lesson.id}` }),
+      targetLanguage: lesson.targetLanguage ?? undefined,
       trail: [
         ...(lesson.homeChapter ? chapterLocation(lesson.homeChapter).trail : []),
         lesson.title,
@@ -157,8 +157,8 @@ async function loadLevelTests(ids: string[]) {
     {
       adminHref: null,
       language: bank.language,
-      targetLanguage: bank.targetLanguage,
       mainUrl: null,
+      targetLanguage: bank.targetLanguage,
       trail: ["Level test"],
     },
   ]);
