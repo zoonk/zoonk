@@ -1120,14 +1120,14 @@ private struct MockReviewSection: View {
                 .foregroundStyle(.mutedForeground)
             } else if let answer = TrueFalseWords.savedAnswer(item.learnerAnswer, labels: labels) {
               Label {
-                LessonRichText(answer)
+                answerText(answer, of: item)
               } icon: {
                 Image(systemName: "xmark").foregroundStyle(.destructive)
               }
             }
             if let correct = TrueFalseWords.savedAnswer(item.correctAnswer, labels: labels) {
               Label {
-                LessonRichText(correct)
+                answerText(correct, of: item)
               } icon: {
                 Image(systemName: "checkmark").foregroundStyle(.success)
               }
@@ -1170,6 +1170,16 @@ private struct MockReviewSection: View {
         Text("Questions to review", tableName: "Mock", comment: "The mock's questions to review")
       )
       .onScrollVisibilityChange(threshold: 0.5) { rows?.update(reviewHeader, isShown: $0) }
+    }
+  }
+
+  /// A typed answer is plain text, so `__init__` keeps its underscores.
+  @ViewBuilder
+  private func answerText(_ text: String, of item: MockReviewItem) -> some View {
+    if item.format == "typed" {
+      Text(verbatim: text)
+    } else {
+      LessonRichText(text)
     }
   }
 }

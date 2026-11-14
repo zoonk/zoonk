@@ -407,11 +407,11 @@ private struct LanguageUnitContent: View {
               .typeStyle(.body.weight(.medium))
 
             if let answer = mistake.answer {
-              MistakeAnswerRow(text: answer, isRight: false)
+              MistakeAnswerRow(text: answer, isRight: false, isLiteral: true)
             }
 
             if let correctAnswer = mistake.correctAnswer {
-              MistakeAnswerRow(text: correctAnswer, isRight: true)
+              MistakeAnswerRow(text: correctAnswer, isRight: true, isLiteral: true)
             }
 
             if let explanation = mistake.explanation {
