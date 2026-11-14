@@ -5,13 +5,23 @@ import SwiftUI
 struct MemoryInsightCard: View {
   @Environment(BuddyStore.self) private var store
 
-  let insight: MemoryInsight
+  let opened: MemoryInsight
   /// Held by Today, so the answer outlives the card when a layout change builds it again.
   @Binding var answer: Bool?
   var onAnswering: () -> Void = {}
 
   @State private var failed = false
   @State private var isSaving = false
+  /// Accepted, and still waiting: its plan change's numbers moved, so it asks again with today's.
+  @State private var repriced: MemoryInsight?
+
+  init(insight: MemoryInsight, answer: Binding<Bool?>, onAnswering: @escaping () -> Void = {}) {
+    opened = insight
+    _answer = answer
+    self.onAnswering = onAnswering
+  }
+
+  private var insight: MemoryInsight { repriced ?? opened }
 
   var body: some View {
     GroupBox {
@@ -21,6 +31,13 @@ struct MemoryInsightCard: View {
             .foregroundStyle(.mutedForeground)
         } else {
           Text(insight.message)
+
+          if let change = insight.planChange, change.status == .proposed {
+            PlanEffectDiff(
+              effect: try? StudyJSON.recode(change.effect, as: PlanEffect.self),
+              today: PlanDate.isoDate(.now), repriced: repriced != nil)
+          }
+
           actions
         }
 
@@ -162,6 +179,8 @@ struct MemoryInsightCard: View {
       isSaving = false
 
       switch result {
+      case .done(let saved?) where accepted && saved.status == .pending:
+        repriced = saved
       case .done:
         answer = accepted
       case .failed:

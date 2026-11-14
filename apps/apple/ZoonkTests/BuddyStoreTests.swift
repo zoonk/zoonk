@@ -92,10 +92,14 @@ private final class BuddyAPIStub: BuddyAPIClient, @unchecked Sendable {
     pages[cursor] ?? EarlierQuestionsPage(questions: [], nextCursor: nil)
   }
 
-  func answer(insightId: String, accepted: Bool, token: String) async throws {
+  func answer(insightId: String, accepted: Bool, quote: PlanChangeQuote?, token: String)
+    async throws -> MemoryInsight?
+  {
     if let answerFailure {
       throw answerFailure
     }
+
+    return nil
   }
 }
 
