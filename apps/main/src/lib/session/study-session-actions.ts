@@ -1,7 +1,11 @@
 "use server";
 
 import { postAsLearner } from "@/lib/api/learner-api";
-import { type MemoryInsightView } from "@zoonk/core/memory/contract";
+import {
+  type MemoryInsightAnswerInput,
+  type MemoryInsightView,
+  memoryInsightAnswerSchema,
+} from "@zoonk/core/memory/contract";
 import { respondToMemoryInsight } from "@zoonk/core/memory/insights/respond";
 import { catchUpToday } from "@zoonk/core/sessions/catch-up";
 import { serializeStudyBlockCompletion } from "@zoonk/core/sessions/completion-contract";
@@ -194,15 +198,11 @@ export async function prepareTodayLessonsAction(input: { goalId: string }): Prom
   return response.ok;
 }
 
-const insightAnswerSchema = z.object({
-  insightId: uuidSchema(),
-  status: z.enum(["accepted", "dismissed"]),
-});
+const insightAnswerSchema = memoryInsightAnswerSchema.extend({ insightId: uuidSchema() });
 
-export async function answerMemoryInsightAction(input: {
-  insightId: string;
-  status: "accepted" | "dismissed";
-}): Promise<MemoryInsightView | null> {
+export async function answerMemoryInsightAction(
+  input: MemoryInsightAnswerInput & { insightId: string },
+): Promise<MemoryInsightView | null> {
   const parsed = insightAnswerSchema.safeParse(input);
 
   if (!parsed.success) {
@@ -211,7 +211,7 @@ export async function answerMemoryInsightAction(input: {
 
   const { data: result, error } = await safeAsync(() =>
     respondToMemoryInsight({
-      input: { status: parsed.data.status },
+      input: { quote: parsed.data.quote, status: parsed.data.status },
       insightId: parsed.data.insightId,
     }),
   );

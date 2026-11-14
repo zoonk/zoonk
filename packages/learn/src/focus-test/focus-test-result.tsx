@@ -229,7 +229,7 @@ export function FocusTestCheckpoint({
     return (
       <FocusTestProposal
         failed={answerFailed}
-        onDecide={(status) => decide(proposal.id, status)}
+        onDecide={(status) => decide(proposal, status)}
         pressed={decision}
         proposal={proposal}
         repriced={repriced !== null}
@@ -240,7 +240,7 @@ export function FocusTestCheckpoint({
 
   const undo = () => {
     if (answer) {
-      decide(answer.change.id, "undone");
+      decide(answer.change, "undone");
     }
   };
 

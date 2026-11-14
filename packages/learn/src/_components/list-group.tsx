@@ -220,8 +220,8 @@ export function ListRowNumberedTitle({
   return (
     <span className={cn("flex flex-col", className)}>
       <ListRowTitle className={textClassName}>
-        <span className="text-muted-foreground me-1.5 font-mono text-xs font-normal tabular-nums">
-          {`${number}.`}
+        <span className="text-muted-foreground font-mono text-xs font-normal tabular-nums">
+          {`${number}.\u00A0`}
         </span>
         {children}
       </ListRowTitle>

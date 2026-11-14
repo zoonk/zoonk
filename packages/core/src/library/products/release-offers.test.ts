@@ -11,6 +11,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "../../plans/_test-utils/plan-library";
+import { seenQuote } from "../../plans/_test-utils/seen-quote";
 import { createGoalPlan } from "../../plans/create-goal-plan";
 import { decidePlanChange } from "../../plans/decide-plan-change";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
@@ -124,7 +125,7 @@ describe(offerWhatsNew, () => {
     await decidePlanChange({
       changeId: changes[0]?.id ?? "",
       goalId: started.goal.id,
-      input: { status: "applied", timeZone: "UTC" },
+      input: { quote: await seenQuote(changes[0]?.id ?? ""), status: "applied", timeZone: "UTC" },
     });
 
     const plan = await prisma.plan.findUniqueOrThrow({ where: { id: started.plan.id } });

@@ -24,6 +24,7 @@ import {
   uniqueWord,
 } from "../library/identity/_test-utils/identity-mocks";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
+import { seenQuote } from "../plans/_test-utils/seen-quote";
 import { changeGoalPlan } from "../plans/change-goal-plan";
 import { createGoalPlan } from "../plans/create-goal-plan";
 import { decidePlanChange } from "../plans/decide-plan-change";
@@ -223,7 +224,12 @@ describe("plan changes the buddy proposes", () => {
     });
 
     const changeId = result.status === "proposed" ? result.change.id : "";
-    await decidePlanChange({ changeId, goalId: goal.id, input: { status: "applied" } });
+
+    await decidePlanChange({
+      changeId,
+      goalId: goal.id,
+      input: { quote: await seenQuote(changeId), status: "applied" },
+    });
 
     const after = await prisma.planItem.findMany({
       where: { kind: { in: ["checkpoint", "mock", "boss"] }, planId: plan.id, status: "todo" },
@@ -268,7 +274,12 @@ describe("plan changes the buddy proposes", () => {
     expect(result).toMatchObject({ change: { effect: { lessonsAdded: 8 } }, status: "proposed" });
 
     const changeId = result.status === "proposed" ? result.change.id : "";
-    await decidePlanChange({ changeId, goalId: goal.id, input: { status: "applied" } });
+
+    await decidePlanChange({
+      changeId,
+      goalId: goal.id,
+      input: { quote: await seenQuote(changeId), status: "applied" },
+    });
 
     const skill = await prisma.skill.findFirstOrThrow({
       where: { name: `Read dashboards ${word}` },
@@ -323,7 +334,12 @@ describe("plan changes the buddy proposes", () => {
     const asked = await askBuddy({ goalId: goal.id, question: "add the organelles table" });
     const result = await proposeTutorPlanChange({ ...asked, request: "add Ms. Ana's table" });
     const changeId = result.status === "proposed" ? result.change.id : "";
-    await decidePlanChange({ changeId, goalId: goal.id, input: { status: "applied" } });
+
+    await decidePlanChange({
+      changeId,
+      goalId: goal.id,
+      input: { quote: await seenQuote(changeId), status: "applied" },
+    });
 
     const skill = await prisma.skill.findFirstOrThrow({ where: { name: canonical } });
     const stored = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
@@ -423,7 +439,12 @@ describe("plan changes the buddy proposes", () => {
     const asked = await askBuddy({ goalId: goal.id, question: "add the organelles table" });
     const result = await proposeTutorPlanChange({ ...asked, request: "add the organelles table" });
     const changeId = result.status === "proposed" ? result.change.id : "";
-    await decidePlanChange({ changeId, goalId: goal.id, input: { status: "applied" } });
+
+    await decidePlanChange({
+      changeId,
+      goalId: goal.id,
+      input: { quote: await seenQuote(changeId), status: "applied" },
+    });
 
     const stored = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
     const graph = stored.graph as { skills: { skillId: string }[] };
@@ -475,7 +496,11 @@ describe("plan changes the buddy proposes", () => {
     const result = await proposeTutorPlanChange({ ...asked, request: "add my field's topics" });
     const changeId = result.status === "proposed" ? result.change.id : "";
 
-    await decidePlanChange({ changeId, goalId: goal.id, input: { status: "applied" } });
+    await decidePlanChange({
+      changeId,
+      goalId: goal.id,
+      input: { quote: await seenQuote(changeId), status: "applied" },
+    });
 
     const stored = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
     const graph = stored.graph as { skills: { name: string }[] };
@@ -560,7 +585,12 @@ describe("plan changes the buddy proposes", () => {
         ) ?? [];
 
       const changeId = result.status === "proposed" ? result.change.id : "";
-      await decidePlanChange({ changeId, goalId: goal.id, input: { status: "applied" } });
+
+      await decidePlanChange({
+        changeId,
+        goalId: goal.id,
+        input: { quote: await seenQuote(changeId), status: "applied" },
+      });
 
       const skill = await prisma.skill.findFirstOrThrow({ where: { name } });
       const stored = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
@@ -633,7 +663,11 @@ describe("plan changes the buddy proposes", () => {
     ]);
 
     await expect(
-      decidePlanChange({ changeId, goalId: goal.id, input: { status: "applied" } }),
+      decidePlanChange({
+        changeId,
+        goalId: goal.id,
+        input: { quote: await seenQuote(changeId), status: "applied" },
+      }),
     ).resolves.toMatchObject({ status: "updated" });
 
     await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
@@ -712,7 +746,7 @@ describe("plan changes the buddy proposes", () => {
       decidePlanChange({
         changeId: saturdays,
         goalId: goal.id,
-        input: { status: "applied", timeZone: "UTC" },
+        input: { quote: await seenQuote(saturdays), status: "applied", timeZone: "UTC" },
       }),
     ).resolves.toStrictEqual({ status: "conflict" });
   });
@@ -743,7 +777,7 @@ describe("plan changes the buddy proposes", () => {
       decidePlanChange({
         changeId: saturdays,
         goalId: goal.id,
-        input: { status: "applied", timeZone: "UTC" },
+        input: { quote: await seenQuote(saturdays), status: "applied", timeZone: "UTC" },
       }),
     ).resolves.toMatchObject({ change: { status: "applied" }, status: "updated" });
 
@@ -751,7 +785,7 @@ describe("plan changes the buddy proposes", () => {
       decidePlanChange({
         changeId: biology,
         goalId: goal.id,
-        input: { status: "applied", timeZone: "UTC" },
+        input: { quote: await seenQuote(biology), status: "applied", timeZone: "UTC" },
       }),
     ).resolves.toMatchObject({ change: { status: "applied" }, status: "updated" });
   });
@@ -1256,7 +1290,11 @@ describe("plan changes the buddy proposes", () => {
       status: "proposed",
     });
 
-    await decidePlanChange({ changeId, goalId: goal.id, input: { status: "applied" } });
+    await decidePlanChange({
+      changeId,
+      goalId: goal.id,
+      input: { quote: await seenQuote(changeId), status: "applied" },
+    });
 
     const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
     expect(saved.settings).toMatchObject({ focusAreas: [], reducedAreas: ["Math"] });
@@ -1394,7 +1432,12 @@ describe("plan changes the buddy proposes", () => {
 
     const changeId = result.status === "proposed" ? result.change.id : "";
     await completeLessonQuestionAnswer({ ...ANSWER_RUN, ...asked });
-    await decidePlanChange({ changeId, goalId: goal.id, input: { status: "applied" } });
+
+    await decidePlanChange({
+      changeId,
+      goalId: goal.id,
+      input: { quote: await seenQuote(changeId), status: "applied" },
+    });
 
     const [planAfter, todo] = await Promise.all([
       prisma.plan.findUniqueOrThrow({ where: { id: plan.id } }),

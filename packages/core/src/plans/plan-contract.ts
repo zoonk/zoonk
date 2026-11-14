@@ -292,25 +292,3 @@ export const planChangeInputSchema = z
   .meta({ id: "PlanChangeInput" });
 
 export type PlanChangeInput = z.infer<typeof planChangeInputSchema>;
-
-export const planChangeDecisionInputSchema = z
-  .object({
-    status: z
-      .enum(["applied", "declined", "undone", "seen"])
-      .meta({
-        description:
-          "Accept or decline a proposed change, undo an applied one (a proposal the learner applied then waits for their answer again, status proposed, as before Apply; replaced when a newer proposal asks about the same thing), or mark an applied one as seen, which sets its `seen`",
-      }),
-    surface: z
-      .enum(["today", "tutor", "behind"])
-      .optional()
-      .meta({
-        description:
-          "Where the learner answered the change, to preserve the analytics change_kind. Defaults to the proposal source when omitted.",
-      }),
-    timeZone: answerTimeZoneSchema,
-  })
-  .strict()
-  .meta({ id: "PlanChangeDecisionInput" });
-
-export type PlanChangeDecisionInput = z.infer<typeof planChangeDecisionInputSchema>;
