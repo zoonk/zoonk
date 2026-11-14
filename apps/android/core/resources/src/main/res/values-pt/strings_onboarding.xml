@@ -981,7 +981,7 @@
     </plurals>
     <string name="onboarding_decide_later">Decidir depois</string>
     <string name="onboarding_buddy_title">Escolha seu parceiro</string>
-    <string name="onboarding_buddy_description">Seu Parceiro cresce enquanto você aprende.</string>
+    <string name="onboarding_buddy_description">Seu parceiro cresce enquanto você aprende.</string>
     <!-- Screen reader name of the step dots, like "Step 2 of 6". -->
     <string name="onboarding_step_of">Etapa %1$d de %2$d</string>
     <string name="onboarding_more">Mais</string>

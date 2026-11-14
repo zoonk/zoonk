@@ -980,7 +980,7 @@
         <item quantity="other">Tu as %1$d choix à faire pour cet examen. Ton plan et tes examens blancs s’adaptent à tes choix, que tu peux modifier dans ton plan.</item>
     </plurals>
     <string name="onboarding_decide_later">Décider plus tard</string>
-    <string name="onboarding_buddy_title">Choisis ton Compagnon</string>
+    <string name="onboarding_buddy_title">Choisis ton compagnon</string>
     <string name="onboarding_buddy_description">Ton compagnon grandit à mesure que tu apprends.</string>
     <!-- Screen reader name of the step dots, like "Step 2 of 6". -->
     <string name="onboarding_step_of">Étape %1$d sur %2$d</string>
