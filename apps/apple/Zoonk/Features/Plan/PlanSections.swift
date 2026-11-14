@@ -173,8 +173,14 @@ private struct RoadmapCompact: View {
               .typeStyle(.data)
             }
           }
-        } else {
-          Spacer()
+        } else if opens {
+          Text(
+            "\(phases.filter { $0.state == .done }.count) of \(phases.count) phases done",
+            tableName: "Plan",
+            comment: "Under the roadmap once no phase is current, such as after the plan's date"
+          )
+          .foregroundStyle(.mutedForeground)
+          .frame(maxWidth: .infinity, alignment: .leading)
         }
 
         if opens {
