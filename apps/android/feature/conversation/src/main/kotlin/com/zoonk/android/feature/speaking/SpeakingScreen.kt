@@ -76,14 +76,15 @@ import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
-import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.WritingWait
+import com.zoonk.android.ui.components.enoughLine
 import com.zoonk.android.ui.components.listRowWordsStart
+import com.zoonk.android.ui.components.needsAccount
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.formatDuration
@@ -331,10 +332,8 @@ private fun StartState(
                 limit,
                 onCreateAccount = { actions.open(AppRoute.Login) },
                 onSubscribe = { actions.open(AppRoute.Subscription) },
-                title =
-                    stringResource(
-                        if (limit.period == LimitPeriod.Day) R.string.speaking_no_time_day else R.string.speaking_no_time,
-                    ),
+                title = stringResource(R.string.speaking_no_time).takeUnless { limit.needsAccount },
+                line = enoughLine(limit),
             )
         }
 

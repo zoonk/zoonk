@@ -154,7 +154,6 @@
   "onboarding_level_test_description": "202d081895ad10ebf7a6f7cc2a02bb34bdd09186a49396419b3f848bbdb725e8",
   "onboarding_level_title": "9ee10dbbf17c45ec692ff1223d3c87cfc1ffbc5fdbf92611cadeb46dcfb2beb9",
   "onboarding_library_course_fits": "e5d45e9b5472cbf9af1610660b4ca20f42df36bb8e2292f2dbc438a3f4dfc4f3",
-  "onboarding_limit_active_goals": "5edf2e3c1c6cce8a5a398078ed695613eac3057dc0d6b51926b39fe97f49b4a2",
   "onboarding_limit_daily_explanations": "dfe3e05af79fc47a80a2ce05fe3c9daf90768523b53a473a22fdf23499ec0250",
   "onboarding_limit_daily_goals": "b4e99cf3e9bc5a665415cfb7ba8f26872961893fd65e86a4124cd292788cfcc9",
   "onboarding_limit_guest": "609a5efc12907487641bda0aa43648aa7d5a9990cc40d670983b83c6691fc49c",
@@ -477,8 +476,6 @@
     <string name="onboarding_limit_daily_explanations">오늘은 간단한 설명을 더 볼 수 없어요. 내일 다시 보거나 구독해서 계속 이용해 보세요.</string>
     <string name="onboarding_limit_daily_goals">현재 요금제에서는 오늘 새 목표를 더 시작할 수 없어요. 내일 다시 시도해 보세요.</string>
     <string name="onboarding_limit_guest">계정이 없으면 목표 하나만 진행할 수 있어요. 계속하려면 무료 계정을 만드세요.</string>
-    <!-- When a learner starts a goal while studying as many goals at once as they can. Pausing a goal keeps its progress. -->
-    <string name="onboarding_limit_active_goals">동시에 학습할 수 있는 목표 수를 다 채웠어요. 목표 하나를 일시 중지하거나 구독해서 더 많은 목표를 학습해 보세요.</string>
     <string name="onboarding_limit_sign_up_required">계속 이용하려면 무료 계정을 만드세요.</string>
     <string name="onboarding_limit_slow_down">짧은 시간에 여러 목표를 시작했어요. 몇 분 후에 다시 시도해 보세요.</string>
     <string name="onboarding_read_limit_guest">계정이 없으면 하루에 새 목표를 몇 개만 보낼 수 있어요. 계속하려면 무료 계정을 만드세요.</string>

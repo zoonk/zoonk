@@ -25,8 +25,6 @@
     <string name="onboarding_limit_daily_explanations">No more quick explanations today. More tomorrow, or subscribe to keep going.</string>
     <string name="onboarding_limit_daily_goals">You\'ve started as many new goals as your plan allows today. Try again tomorrow.</string>
     <string name="onboarding_limit_guest">Without an account, you can follow one goal. Create a free account to keep going.</string>
-    <!-- When a learner starts a goal while studying as many goals at once as they can. Pausing a goal keeps its progress. -->
-    <string name="onboarding_limit_active_goals">That\'s all the goals you can study at once. Pause one, or subscribe to study more.</string>
     <string name="onboarding_limit_sign_up_required">Create your free account to continue.</string>
     <string name="onboarding_limit_slow_down">You\'re starting goals quickly. Try again in a few minutes.</string>
     <string name="onboarding_read_limit_guest">Without an account, you can send a few new goals a day. Create a free account to keep going.</string>

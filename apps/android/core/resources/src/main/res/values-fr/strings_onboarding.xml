@@ -154,7 +154,6 @@
   "onboarding_level_test_description": "c65109b2136c7da593e453430e86bba520c6f3701d243b962ddb92c599281ade",
   "onboarding_level_title": "8a90cafbb5885553f5992c2c357361fd836e72d34501c21006fcbf06c27b7bb0",
   "onboarding_library_course_fits": "6c1fb76e168f08b1a17d1492dcd0ed78ce7a2843d2fc1495f5debc30ae06da6b",
-  "onboarding_limit_active_goals": "dc93510b6a92aec19a7f4e0b3e154f642e7efba907f6fefe2fc4ca85082eb970",
   "onboarding_limit_daily_explanations": "e59f0cf9f2576d155f6f46b7d5c6a86576a16ff60e8132a5a393ae5f7bbe5e3b",
   "onboarding_limit_daily_goals": "d99362d3b27904fa41733cd5680db0a754347a8cdf1e3c2ac7f9345ec18945ca",
   "onboarding_limit_guest": "4ac0933bc0e80ce45243e27673b4fdb7ab599ff2acee1b19f178e96c42e05dc5",
@@ -477,8 +476,6 @@
     <string name="onboarding_limit_daily_explanations">Tu ne peux plus demander d’explications rapides aujourd’hui. Reviens demain ou abonne-toi pour continuer.</string>
     <string name="onboarding_limit_daily_goals">Tu as atteint la limite de nouveaux objectifs pour aujourd’hui avec ta formule. Réessaie demain.</string>
     <string name="onboarding_limit_guest">Sans compte, tu peux suivre un seul objectif. Crée un compte gratuit pour continuer.</string>
-    <!-- When a learner starts a goal while studying as many goals at once as they can. Pausing a goal keeps its progress. -->
-    <string name="onboarding_limit_active_goals">Tu as atteint ta limite d’objectifs en cours. Mets-en un en pause ou abonne-toi pour travailler sur plus d’objectifs.</string>
     <string name="onboarding_limit_sign_up_required">Crée ton compte gratuit pour continuer.</string>
     <string name="onboarding_limit_slow_down">Tu commences des objectifs rapidement. Réessaie dans quelques minutes.</string>
     <string name="onboarding_read_limit_guest">Sans compte, tu peux envoyer quelques nouveaux objectifs par jour. Crée un compte gratuit pour continuer.</string>

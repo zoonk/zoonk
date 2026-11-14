@@ -114,6 +114,22 @@ class MonthlyLimitWordsTest {
         rule.onNodeWithText("You can try again now.").assertExists()
     }
 
+    /** A speaking task needs its whole length: the line says when there'll be enough, for the day's cap and the month's. */
+    @Test
+    fun aStartOfASetLengthSaysWhenThereWillBeEnough() {
+        rule.setContent {
+            ZoonkTheme {
+                Column {
+                    enoughLine(Limit.Reached(LimitTier.Free, LimitPeriod.Day))?.let { Text(it) }
+                    enoughLine(Limit.Reached(LimitTier.Plus, LimitPeriod.Rolling30Days, now.plus(Duration.ofHours(1))))?.let { Text(it) }
+                }
+            }
+        }
+
+        rule.onNodeWithText("You'll have enough tomorrow, or subscribe to keep going.").assertExists()
+        rule.onNodeWithText("You'll have enough later today.").assertExists()
+    }
+
     /** Daily caps are unchanged. */
     @Test
     fun aDailyCapStillSaysToday() {

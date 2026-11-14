@@ -3,6 +3,12 @@
 {
   "limit_call_time_used": "b9bcb65108382548f49358311d977543d316b1680f39225b1d6636ff18df3bcb",
   "limit_create_account": "7d45395b5f556859325a2af008306f06cb1b2545d20f5adf25834cabafa9c813",
+  "limit_enough_later_today": "2cbc5cade1beb10804409424ddc3e1277dd46ae23af8ec1945734e7bb95f9fb5",
+  "limit_enough_later_today_or_subscribe": "d2a322bce9712218c7b3c272f4596bd2ba0c9c70241042c3487e209d7c4a0d4a",
+  "limit_enough_on": "6e2a2487fc051dfd28a5947e200b98ee47e6be21776a34e3f6e00d1bcba5178a",
+  "limit_enough_on_or_subscribe": "0186fcdbcacbb6184f01a479ab292026e814d6e36392feb87d72135f2309051a",
+  "limit_enough_tomorrow": "ef8ed9a02dfc4d7545c88eba14d0d2ff75ebf5d307018a54cb3ada6b275bbbbb",
+  "limit_enough_tomorrow_or_subscribe": "caef703e943e60b525fe18ed0c3bb28c267cb00b621090f249dea72519f5a4ed",
   "limit_explanations_day": "f4b4d5c936d99039f17790cb2639970491bffe0d3f05cf83235afe53e83e2039",
   "limit_explanations_used": "7d667ede776a2c1807b05e343cf755620ba2f892f3408f863cca691ac116e7d0",
   "limit_goals_used": "7e63c5f2ce415958d75a780f13544da2bc67e61752030aa583f68412e7eebdb2",
@@ -57,6 +63,18 @@
     <string name="limit_more_on">%1$s에 다시 이용할 수 있어요.</string>
     <!-- Under the title of a notice when something the learner's plan allows has run out. {date} is a day and its month, such as "November 22" in English. -->
     <string name="limit_more_on_or_subscribe">%1$s에 다시 이용할 수 있어요. 구독하면 바로 계속할 수 있어요.</string>
+    <!-- Under "Not enough call time for this task": a call of a set length that doesn't fit the learner's call time yet. -->
+    <string name="limit_enough_later_today">오늘 중에 필요한 대화 시간이 채워져요.</string>
+    <!-- Under "Not enough call time for this task": a call of a set length that doesn't fit the learner's call time yet. -->
+    <string name="limit_enough_later_today_or_subscribe">오늘 중에 필요한 대화 시간이 채워져요. 구독하면 바로 계속할 수 있어요.</string>
+    <!-- Under "Not enough call time for this task": a call of a set length that doesn't fit the learner's call time yet. -->
+    <string name="limit_enough_tomorrow">내일이면 필요한 대화 시간이 채워져요.</string>
+    <!-- Under "Not enough call time for this task": a call of a set length that doesn't fit the learner's call time yet. -->
+    <string name="limit_enough_tomorrow_or_subscribe">내일이면 필요한 대화 시간이 채워져요. 구독하면 바로 계속할 수 있어요.</string>
+    <!-- Under "Not enough call time for this task": a call of a set length that doesn't fit the learner's call time yet. {date} is a day and its month, such as "November 22" in English. -->
+    <string name="limit_enough_on">%1$s에 필요한 대화 시간이 채워져요.</string>
+    <!-- Under "Not enough call time for this task": a call of a set length that doesn't fit the learner's call time yet. {date} is a day and its month, such as "November 22" in English. -->
+    <string name="limit_enough_on_or_subscribe">%1$s에 필요한 대화 시간이 채워져요. 구독하면 바로 계속할 수 있어요.</string>
     <!-- Under the title of a notice when something the learner had run out of has come back while the notice was open. -->
     <string name="limit_try_again_now">이제 다시 시도할 수 있어요.</string>
     <!-- Joins a notice's title and its line into one sentence where there's room for only one, such as "You've used your uploads. More on November 22, or subscribe to keep going." -->

@@ -161,14 +161,37 @@ fun AllowanceResponse.goalStartLimit(): GoalLimitReason? {
 @Composable
 fun goalLimitMessage(reason: GoalLimitReason): String =
     when (reason) {
-        GoalLimitReason.ActiveGoals -> stringResource(R.string.onboarding_limit_active_goals)
-        GoalLimitReason.DailyExplanations -> stringResource(R.string.onboarding_limit_daily_explanations)
-        GoalLimitReason.DailyGoals -> stringResource(R.string.onboarding_limit_daily_goals)
-        GoalLimitReason.Guest -> stringResource(R.string.onboarding_limit_guest)
-        is GoalLimitReason.MonthlyExplanations -> usedSentence(R.string.limit_quick_explanations_used, reason.limit)
-        is GoalLimitReason.MonthlyGoals -> usedSentence(R.string.limit_goals_used, reason.limit)
-        GoalLimitReason.SignUpRequired -> stringResource(R.string.onboarding_limit_sign_up_required)
-        GoalLimitReason.SlowDown -> stringResource(R.string.onboarding_limit_slow_down)
+        GoalLimitReason.ActiveGoals -> {
+            gateSentence(stringResource(R.string.onboarding_goals_at_once_title), stringResource(R.string.onboarding_goals_at_once_line))
+        }
+
+        GoalLimitReason.DailyExplanations -> {
+            stringResource(R.string.onboarding_limit_daily_explanations)
+        }
+
+        GoalLimitReason.DailyGoals -> {
+            stringResource(R.string.onboarding_limit_daily_goals)
+        }
+
+        GoalLimitReason.Guest -> {
+            stringResource(R.string.onboarding_limit_guest)
+        }
+
+        is GoalLimitReason.MonthlyExplanations -> {
+            usedSentence(R.string.limit_quick_explanations_used, reason.limit)
+        }
+
+        is GoalLimitReason.MonthlyGoals -> {
+            usedSentence(R.string.limit_goals_used, reason.limit)
+        }
+
+        GoalLimitReason.SignUpRequired -> {
+            stringResource(R.string.onboarding_limit_sign_up_required)
+        }
+
+        GoalLimitReason.SlowDown -> {
+            stringResource(R.string.onboarding_limit_slow_down)
+        }
     }
 
 /** A cap used up over the last 30 days in one sentence: what ran out, then when more comes. */

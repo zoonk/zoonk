@@ -154,7 +154,6 @@
   "onboarding_level_test_description": "935feabedce00be4e1177f24c3ab64d65988dcd4366f7b2908eaa067fb07eee8",
   "onboarding_level_title": "c76f8aea0b82b1b8f8efa91013e034ad8b94725c72d91c88c91b88b6597479c4",
   "onboarding_library_course_fits": "79bc4818712ae951274d664b99bfd8a4a8a17cf04f2bf1274835ab094c5579bc",
-  "onboarding_limit_active_goals": "328c44c3d90ac86cf379b5a818e18a45f7e0ab94d07ec51017aabbe11102c4a2",
   "onboarding_limit_daily_explanations": "36be407429e4f2a6f3cea0a74b10d55f8ea3cebf658f66e7d2bce1995746bc30",
   "onboarding_limit_daily_goals": "a4aa13d88bfda35d03749c6fd78a1d0acda60df7fa0ed96de5ad5285c086d0a9",
   "onboarding_limit_guest": "3407e42e8c02cb0b3a2b891aaea5e30de1ad0d9ea6ca3fedb37a37e027e5064f",
@@ -477,8 +476,6 @@
     <string name="onboarding_limit_daily_explanations">Heute gibt es keine Kurzerklärungen mehr. Morgen gibt es mehr. Mit einem Abo kannst du gleich weitermachen.</string>
     <string name="onboarding_limit_daily_goals">Du hast heute so viele neue Ziele gestartet, wie dein Tarif erlaubt. Versuch es morgen noch einmal.</string>
     <string name="onboarding_limit_guest">Ohne Konto kannst du ein Ziel verfolgen. Erstelle ein kostenloses Konto, um weiterzumachen.</string>
-    <!-- When a learner starts a goal while studying as many goals at once as they can. Pausing a goal keeps its progress. -->
-    <string name="onboarding_limit_active_goals">Mehr Ziele kannst du nicht gleichzeitig verfolgen. Pausier ein Ziel oder schließ ein Abo ab, um mehr Ziele zu verfolgen.</string>
     <string name="onboarding_limit_sign_up_required">Erstelle dein kostenloses Konto, um weiterzumachen.</string>
     <string name="onboarding_limit_slow_down">Du startest gerade mehrere Ziele kurz hintereinander. Versuch es in ein paar Minuten noch einmal.</string>
     <string name="onboarding_read_limit_guest">Ohne Konto kannst du jeden Tag ein paar neue Ziele senden. Erstelle ein kostenloses Konto, um weiterzumachen.</string>

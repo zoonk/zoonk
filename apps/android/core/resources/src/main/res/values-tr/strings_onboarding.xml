@@ -154,7 +154,6 @@
   "onboarding_level_test_description": "81c364adeef00b7b232f8960248f8d5f1c740afee9b5f7842fc7d888652bb4ef",
   "onboarding_level_title": "bca6c18b18ea9f42ee0a603c68803d4447da021f8dffc464c779b72041a56262",
   "onboarding_library_course_fits": "1c2ef15952bac2a92386137179367eff3e6f4757a698f45474d1e1fa3598b127",
-  "onboarding_limit_active_goals": "fea1c7f83096fa791729235cdd90b90aa9c0463d14ee55ae3dfd4d02aa57a983",
   "onboarding_limit_daily_explanations": "d22202d14ea8fb4f31609136f6b75d982b90efca94d5551b50219b8fd2925a06",
   "onboarding_limit_daily_goals": "27c2b8c2d1f629666da6dcd438aa73620eee9d0a3a96921a403821362e999182",
   "onboarding_limit_guest": "606bf0abec1818007ca7d552499db1b8629256186f22984ef2ca6573c0f920a0",
@@ -477,8 +476,6 @@
     <string name="onboarding_limit_daily_explanations">Bugünkü hızlı açıklama sınırına ulaştın. Yarın tekrar kullanabilir veya abone olup devam edebilirsin.</string>
     <string name="onboarding_limit_daily_goals">Paketinin günlük yeni hedef başlatma sınırına ulaştın. Yarın tekrar dene.</string>
     <string name="onboarding_limit_guest">Hesap oluşturmadan tek bir hedefi takip edebilirsin. Devam etmek için ücretsiz hesap oluştur.</string>
-    <!-- When a learner starts a goal while studying as many goals at once as they can. Pausing a goal keeps its progress. -->
-    <string name="onboarding_limit_active_goals">Aynı anda çalışabileceğin hedef sınırına ulaştın. Birini duraklat veya daha fazla hedef üzerinde çalışmak için abone ol.</string>
     <string name="onboarding_limit_sign_up_required">Devam etmek için ücretsiz bir hesap oluştur.</string>
     <string name="onboarding_limit_slow_down">Peş peşe hedefler başlatıyorsun. Birkaç dakika sonra tekrar dene.</string>
     <string name="onboarding_read_limit_guest">Hesap oluşturmadan günde birkaç yeni hedef gönderebilirsin. Devam etmek için ücretsiz hesap oluştur.</string>

@@ -3,6 +3,12 @@
 {
   "limit_call_time_used": "e52e6a674a18e1dda10a4858b399cc9702bf49ea6012db00ca2ababbbaf45b7e",
   "limit_create_account": "ab97bbf1fe87d3802babb2ccc775b49e2f9c46a22e1184416b7cc61d77bae801",
+  "limit_enough_later_today": "3c37af898d5005310dd129c8f115930612094e820441d275b09ad705a44c664f",
+  "limit_enough_later_today_or_subscribe": "f71758707897151fbc482b19887ed458a19f7f5ef1109ba394bf4957a8f86204",
+  "limit_enough_on": "c5ebbf3cfca783740682259e46e8608fbd9d46bcfab2c8419a5be69f83f18b67",
+  "limit_enough_on_or_subscribe": "5143c38332508a6728a4ba8e7ee8c8de09e11c339afa0eae731e87167d48907d",
+  "limit_enough_tomorrow": "756aeb1d93a6ad3c294d911ec05031ae860098f4539bb9e2a330a0b0f542bca1",
+  "limit_enough_tomorrow_or_subscribe": "ac8ce783c0b95d22a2fe1419dc5a9e2fb99c238680c89d030b54b74a83a36832",
   "limit_explanations_day": "22209d7cc788feaa2cd9fceb7265587028571621a4eb915a1b46b218bf62b085",
   "limit_explanations_used": "9f0fca770d32646a52b56066083a5e27d6b5f8dc66b7f4e3afa6f0d6b33966dd",
   "limit_goals_used": "43f995ba464a0f9f316c1e329651f4ddbde343bc86a808d47997b86394324970",
@@ -57,6 +63,18 @@
     <string name="limit_more_on">Mehr gibt es am %1$s.</string>
     <!-- Under the title of a notice when something the learner's plan allows has run out. {date} is a day and its month, such as "November 22" in English. -->
     <string name="limit_more_on_or_subscribe">Mehr gibt es am %1$s. Mit einem Abo kannst du gleich weitermachen.</string>
+    <!-- Under "Not enough call time for this task": a call of a set length that doesn't fit the learner's call time yet. -->
+    <string name="limit_enough_later_today">Später heute hast du genug Gesprächszeit.</string>
+    <!-- Under "Not enough call time for this task": a call of a set length that doesn't fit the learner's call time yet. -->
+    <string name="limit_enough_later_today_or_subscribe">Später heute hast du genug Gesprächszeit. Mit einem Abo kannst du direkt weitermachen.</string>
+    <!-- Under "Not enough call time for this task": a call of a set length that doesn't fit the learner's call time yet. -->
+    <string name="limit_enough_tomorrow">Morgen hast du genug Gesprächszeit.</string>
+    <!-- Under "Not enough call time for this task": a call of a set length that doesn't fit the learner's call time yet. -->
+    <string name="limit_enough_tomorrow_or_subscribe">Morgen hast du genug Gesprächszeit. Mit einem Abo kannst du direkt weitermachen.</string>
+    <!-- Under "Not enough call time for this task": a call of a set length that doesn't fit the learner's call time yet. {date} is a day and its month, such as "November 22" in English. -->
+    <string name="limit_enough_on">Am %1$s hast du genug Gesprächszeit.</string>
+    <!-- Under "Not enough call time for this task": a call of a set length that doesn't fit the learner's call time yet. {date} is a day and its month, such as "November 22" in English. -->
+    <string name="limit_enough_on_or_subscribe">Am %1$s hast du genug Gesprächszeit. Mit einem Abo kannst du direkt weitermachen.</string>
     <!-- Under the title of a notice when something the learner had run out of has come back while the notice was open. -->
     <string name="limit_try_again_now">Du kannst es jetzt noch einmal versuchen.</string>
     <!-- Joins a notice's title and its line into one sentence where there's room for only one, such as "You've used your uploads. More on November 22, or subscribe to keep going." -->

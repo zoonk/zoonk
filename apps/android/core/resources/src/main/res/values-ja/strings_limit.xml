@@ -3,6 +3,12 @@
 {
   "limit_call_time_used": "666ba9250a79c3ad50764907f3297b83bf4ba1d30b561840715dd09ab1dd43bc",
   "limit_create_account": "1665e96a9f21bccdf2417a64da61dfd3abf6c5345c3c198038196246e7811ba0",
+  "limit_enough_later_today": "ba121133400388731fc3e9e6069d2ed58ae4d747dd161c6bcaf0ba7cbd23ecb0",
+  "limit_enough_later_today_or_subscribe": "2105f6a03dad475682a1bee1d27f55f50d0a8afe929a3428bf12df082cc6636d",
+  "limit_enough_on": "1ff63788de93a0547a4d418b77429a9bb8a07780f68c3375e94611c184bc4d1e",
+  "limit_enough_on_or_subscribe": "87f7c7da0076a2ceca14b1cb2700cc71270f2ba7e2816a8e0da37e6c7fed7503",
+  "limit_enough_tomorrow": "7945c8765ae300496e215a63eaa2932893d0d08474ca6afb17344e15afbc53c7",
+  "limit_enough_tomorrow_or_subscribe": "f1d574640e8641704d2d3dc7a9f85428f9e2cce21366226c3ae2d03be70dd9a9",
   "limit_explanations_day": "47ef2cd684e387b2324b8c8c182e191b80d5bd51ea4c1cb3aa83fe8177fdf006",
   "limit_explanations_used": "6da31dfa4a3d58236ae00e848726f70f5fde5dbdadd40f9466560fda47c13c0b",
   "limit_goals_used": "44a0bb5ead894e77479fb75320980bd0a85e92b57e688b87795b161a187818f2",
@@ -57,6 +63,18 @@
     <string name="limit_more_on">%1$sにまた利用できます。</string>
     <!-- Under the title of a notice when something the learner's plan allows has run out. {date} is a day and its month, such as "November 22" in English. -->
     <string name="limit_more_on_or_subscribe">%1$sにまた利用できます。登録すると今すぐ続けられます。</string>
+    <!-- Under "Not enough call time for this task": a call of a set length that doesn't fit the learner's call time yet. -->
+    <string name="limit_enough_later_today">今日のうちに、必要な会話時間がたまります。</string>
+    <!-- Under "Not enough call time for this task": a call of a set length that doesn't fit the learner's call time yet. -->
+    <string name="limit_enough_later_today_or_subscribe">今日のうちに、必要な会話時間がたまります。登録すると今すぐ続けられます。</string>
+    <!-- Under "Not enough call time for this task": a call of a set length that doesn't fit the learner's call time yet. -->
+    <string name="limit_enough_tomorrow">明日には、必要な会話時間がたまります。</string>
+    <!-- Under "Not enough call time for this task": a call of a set length that doesn't fit the learner's call time yet. -->
+    <string name="limit_enough_tomorrow_or_subscribe">明日には、必要な会話時間がたまります。登録すると今すぐ続けられます。</string>
+    <!-- Under "Not enough call time for this task": a call of a set length that doesn't fit the learner's call time yet. {date} is a day and its month, such as "November 22" in English. -->
+    <string name="limit_enough_on">%1$sには、必要な会話時間がたまります。</string>
+    <!-- Under "Not enough call time for this task": a call of a set length that doesn't fit the learner's call time yet. {date} is a day and its month, such as "November 22" in English. -->
+    <string name="limit_enough_on_or_subscribe">%1$sには、必要な会話時間がたまります。登録すると今すぐ続けられます。</string>
     <!-- Under the title of a notice when something the learner had run out of has come back while the notice was open. -->
     <string name="limit_try_again_now">今すぐもう一度試せます。</string>
     <!-- Joins a notice's title and its line into one sentence where there's room for only one, such as "You've used your uploads. More on November 22, or subscribe to keep going." -->

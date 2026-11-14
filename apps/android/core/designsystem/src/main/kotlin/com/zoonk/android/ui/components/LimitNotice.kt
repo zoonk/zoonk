@@ -11,7 +11,6 @@ import com.zoonk.android.feature.subscription.SubscribeButton
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
-import java.time.Instant
 
 /** What ran out as the title, and when it comes back as the one line under it. */
 data class LimitWords(
@@ -66,21 +65,49 @@ private val Limit.Reached.usedUp: Boolean
 private val Limit.Reached.freeLessons: Boolean
     get() = tier == LimitTier.Free && rolling
 
+/** The two ways a line says when more comes back: more of what ran out, or enough for a start of a set length. */
+private enum class Comes(
+    @StringRes val laterToday: Int,
+    @StringRes val laterTodayOrSubscribe: Int,
+    @StringRes val tomorrow: Int,
+    @StringRes val tomorrowOrSubscribe: Int,
+    @StringRes val on: Int,
+    @StringRes val onOrSubscribe: Int,
+) {
+    More(
+        R.string.limit_more_later_today,
+        R.string.limit_more_later_today_or_subscribe,
+        R.string.limit_more_tomorrow,
+        R.string.limit_more_tomorrow_or_subscribe,
+        R.string.limit_more_on,
+        R.string.limit_more_on_or_subscribe,
+    ),
+    Enough(
+        R.string.limit_enough_later_today,
+        R.string.limit_enough_later_today_or_subscribe,
+        R.string.limit_enough_tomorrow,
+        R.string.limit_enough_tomorrow_or_subscribe,
+        R.string.limit_enough_on,
+        R.string.limit_enough_on_or_subscribe,
+    ),
+}
+
 /**
- * When more of a cap counted over the last 30 days comes back: the day of [availableAt] in the learner's
- * calendar, "later today" or "tomorrow" when it's that close, following the clock while it shows. Only a free
- * learner is offered to subscribe. None for a guest, whose way on is an account, or when the API gave no
- * day (never a guessed one).
+ * When more comes back: the day of [Limit.Reached.availableAt] in the learner's calendar, "later today" or
+ * "tomorrow" when it's that close, following the clock while it shows; a day's cap comes back tomorrow. Only a
+ * free learner is offered to subscribe. None for a guest, whose way on is an account, for a cap used up for good,
+ * or when the API gave no day (never a guessed one).
  */
 @Composable
-private fun monthlyLine(
-    tier: LimitTier,
-    availableAt: Instant?,
+private fun line(
+    limit: Limit.Reached,
+    comes: Comes,
 ): String? {
-    val day = rememberOpeningDay(availableAt)
-    val free = tier == LimitTier.Free
+    val daily = limit.period == null || limit.period == LimitPeriod.Day
+    val day = if (daily) OpeningDay.Tomorrow else rememberOpeningDay(limit.availableAt.takeIf { limit.rolling })
+    val free = limit.tier == LimitTier.Free
     return when {
-        tier == LimitTier.Guest || day == null -> {
+        limit.tier == LimitTier.Guest || day == null -> {
             null
         }
 
@@ -89,19 +116,27 @@ private fun monthlyLine(
         }
 
         day == OpeningDay.Today -> {
-            stringResource(if (free) R.string.limit_more_later_today_or_subscribe else R.string.limit_more_later_today)
+            stringResource(if (free) comes.laterTodayOrSubscribe else comes.laterToday)
         }
 
         day == OpeningDay.Tomorrow -> {
-            stringResource(if (free) R.string.limit_more_tomorrow_or_subscribe else R.string.limit_more_tomorrow)
+            stringResource(if (free) comes.tomorrowOrSubscribe else comes.tomorrow)
         }
 
         else -> {
             val date = formatDate((day as OpeningDay.On).date, currentLocale(), DateStyle.Long)
-            if (free) stringResource(R.string.limit_more_on_or_subscribe, date) else stringResource(R.string.limit_more_on, date)
+            stringResource(if (free) comes.onOrSubscribe else comes.on, date)
         }
     }
 }
+
+/** When it comes back; a guest's way on is the button, and a cap used up for good has no day, so neither has a line. */
+@Composable
+fun comesBackLine(limit: Limit.Reached): String? = line(limit, Comes.More)
+
+/** A call of a set length (an exam speaking task, a speaking mock): when the learner will have enough call time for it. */
+@Composable
+fun enoughLine(limit: Limit.Reached): String? = line(limit, Comes.Enough)
 
 /** A gate in one sentence, where there's room for only one (a toast, an error under a field): "{title}. {line}". */
 @Composable
@@ -121,9 +156,9 @@ private fun lessonWords(limit: Limit.Reached): LimitWords {
     val opens = rememberOpeningDay(limit.availableAt.takeIf { limit.freeLessons })
     return when {
         opens == OpeningDay.Open -> LimitWords(stringResource(R.string.limit_lesson_ready), line = null)
-        limit.freeLessons -> LimitWords(stringResource(R.string.limit_lessons_free), monthlyLine(limit.tier, limit.availableAt))
+        limit.freeLessons -> LimitWords(stringResource(R.string.limit_lessons_free), comesBackLine(limit))
         limit.tier == LimitTier.Guest -> LimitWords(stringResource(R.string.limit_lessons_guest), line = null)
-        else -> LimitWords(stringResource(R.string.limit_lessons_day), dayLine(limit.tier))
+        else -> LimitWords(stringResource(R.string.limit_lessons_day), comesBackLine(limit))
     }
 }
 
@@ -148,23 +183,6 @@ fun limitWords(
                 else -> LimitWords(reachedTitle(limit, subject)?.let { stringResource(it) }, comesBackLine(limit))
             }
         }
-    }
-
-/** When it comes back; a guest's way on is the button, and a cap used up for good has no day, so neither has a line. */
-@Composable
-fun comesBackLine(limit: Limit.Reached): String? =
-    when {
-        limit.rolling -> monthlyLine(limit.tier, limit.availableAt)
-        limit.period == LimitPeriod.Total -> null
-        else -> dayLine(limit.tier)
-    }
-
-@Composable
-private fun dayLine(tier: LimitTier): String? =
-    when (tier) {
-        LimitTier.Guest -> null
-        LimitTier.Plus -> stringResource(R.string.limit_more_tomorrow)
-        LimitTier.Free -> stringResource(R.string.limit_more_tomorrow_or_subscribe)
     }
 
 /**

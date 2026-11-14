@@ -154,7 +154,6 @@
   "onboarding_level_test_description": "264b33dcdcb166cfe60702281114fea8c498f0b5fd7a89fc860157867c883d4f",
   "onboarding_level_title": "18f8afa27f7b1ed56da77f92b0d9612ec712807f34217858c39b53880b89cb45",
   "onboarding_library_course_fits": "d45a125d44f2eec602f150cf74608e5458cbb8d56aa00d50f5a202cc91e0e38b",
-  "onboarding_limit_active_goals": "6cab4fa8f41472f6818a0db3931e6b68cbe91ae25408fbe6ee7d2e7f7088b4bc",
   "onboarding_limit_daily_explanations": "dabbc629b301064a8712f0799baf94f43967a86bddad7c88fd54abbb01db4815",
   "onboarding_limit_daily_goals": "c2f3a1cea14890b449df1d79b20e228f692d62ca280d7cdff82f93ca4f4ec652",
   "onboarding_limit_guest": "5fc865c6afd14ba968c1de0b8d1835c3b2347221ce3cdc42fafea91f06789749",
@@ -477,8 +476,6 @@
     <string name="onboarding_limit_daily_explanations">今日はこれ以上、クイック解説を利用できません。明日また利用できます。サブスクリプションに登録すれば、このまま続けられます。</string>
     <string name="onboarding_limit_daily_goals">今日始めた新しい目標の数が、ご利用のプランの上限に達しました。明日もう一度試してください。</string>
     <string name="onboarding_limit_guest">アカウントなしで取り組める目標は1つです。続けるには、無料アカウントを作成してください。</string>
-    <!-- When a learner starts a goal while studying as many goals at once as they can. Pausing a goal keeps its progress. -->
-    <string name="onboarding_limit_active_goals">同時に取り組める目標の上限に達しました。どれかの目標を一時停止するか、サブスクリプションに登録して取り組める目標を増やしてください。</string>
     <string name="onboarding_limit_sign_up_required">続けるには、無料アカウントを作成してください。</string>
     <string name="onboarding_limit_slow_down">短時間にいくつも目標を始めています。数分後にもう一度試してください。</string>
     <string name="onboarding_read_limit_guest">アカウントなしで送信できる新しい目標は1日に数件です。続けるには、無料アカウントを作成してください。</string>

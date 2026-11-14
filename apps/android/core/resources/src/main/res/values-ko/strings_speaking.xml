@@ -15,7 +15,7 @@
   "speaking_mock_start": "ad91c95f11421c8ef113dfcc9166be4b2bb57b30607af6bfc956d0d92a4f565e",
   "speaking_mock_toefl": "b1b272409c7ccf0f9f5d0c6b4cf8e01c007e8cba6a6ddf2fbcf3a04acc9828db",
   "speaking_no_time": "23214935e8d470e3389ee0d38ac9eb00cfd004f69bcef09442aad208e0fa9d04",
-  "speaking_no_time_day": "3d2829d2979194d3e05268f239d97c2bd693d3b7924b0cda7bcbfb8cf0cd354d",
+  "speaking_no_time_mock": "cd136cee9cb99551b6a422e09df6012d564c40407d57691a44dc4ed766e63963",
   "speaking_official_format": "79314a370b8128897db096863c92c6a76455d707df0f266d2cb4d4f8acf21e3d",
   "speaking_opens_when_ready": "0a5887c0cfb338065f4eb12d797fa2edad77281de4c64c375cfac201d97427d9",
   "speaking_prep": "5cc1050dbe9c14bb62a62f1212ea2d68e920c1033f519b56775ad46361f1701a",
@@ -49,7 +49,7 @@
     <string name="speaking_gate">말하기 연습에는 구독이 필요해요</string>
     <string name="speaking_opens_when_ready">카드가 준비되는 대로 과제가 열려요.</string>
     <string name="speaking_no_time">이 과제에 필요한 대화 시간이 부족해요</string>
-    <string name="speaking_no_time_day">이 과제를 진행하기에는 오늘 남은 대화 시간이 부족해요</string>
+    <string name="speaking_no_time_mock">이 모의고사에 필요한 대화 시간이 부족해요</string>
     <string name="speaking_start_failed">과제가 시작되지 않았어요. 잠시 후 다시 시도해 보세요.</string>
     <string name="speaking_official_format">공식 시험 형식</string>
     <string name="speaking_start_task">시작하기</string>

@@ -154,7 +154,6 @@
   "onboarding_level_test_description": "fb189cfa3c4049967b6ba3d6fe80314057f2d89f10bc6640f4e15840f6ce34ce",
   "onboarding_level_title": "5655fca8ae915b03f5cca84703172fba0e479b345106853be92e6eec4a5d81eb",
   "onboarding_library_course_fits": "af3f59de31bfd97521344eb3d87cb3a68403699b65f4df65b6584d904acde86c",
-  "onboarding_limit_active_goals": "da6c6fabb464d6b188cb47b935ec23617b9f5abd85955d7f96150a1bb93cd2a6",
   "onboarding_limit_daily_explanations": "aa1d167c458a9ca92ae4a64774158e4d97dd77e6e315e6d27caaa73be3f2682d",
   "onboarding_limit_daily_goals": "e5480a6135d498b2045843bc4d434885c94d349587a26474cc25e16bc997218e",
   "onboarding_limit_guest": "d4b339ea7cbab77d180295a0fac8ef470c1154ecb723e123db2903965b27595e",
@@ -477,8 +476,6 @@
     <string name="onboarding_limit_daily_explanations">Wykorzystano dzisiejszy limit szybkich wyjaśnień. Wróć jutro lub wykup subskrypcję, by korzystać dalej.</string>
     <string name="onboarding_limit_daily_goals">Twój pakiet nie pozwala dziś rozpocząć więcej nowych celów. Spróbuj ponownie jutro.</string>
     <string name="onboarding_limit_guest">Bez konta możesz realizować jeden cel. Załóż bezpłatne konto, żeby kontynuować.</string>
-    <!-- When a learner starts a goal while studying as many goals at once as they can. Pausing a goal keeps its progress. -->
-    <string name="onboarding_limit_active_goals">Masz już maksymalną liczbę aktywnych celów. Wstrzymaj jeden z nich lub wykup subskrypcję, by realizować więcej.</string>
     <string name="onboarding_limit_sign_up_required">Załóż bezpłatne konto, by kontynuować.</string>
     <string name="onboarding_limit_slow_down">Rozpoczynasz wiele celów w krótkim czasie. Spróbuj ponownie za kilka minut.</string>
     <string name="onboarding_read_limit_guest">Bez konta możesz wysłać kilka nowych celów dziennie. Załóż bezpłatne konto, żeby kontynuować.</string>
