@@ -328,7 +328,7 @@
   "plan_more": "e90481faf60f326f9313c9480a25138d5bca6f1452cad389157e9fcacec42190",
   "plan_more_chapters": "9db098536baa8382cabc60e60e3d8705775219f53de84807a61264422de1dc4c",
   "plan_more_lessons": "8bcf0b9d368244fe25241f347139d6634ac9c25b13ad6ede56c320aa0bb1c9cc",
-  "plan_more_lessons_fit": "d778f05a8df235290f21f36bfd31a1957969d5f2bd03feb19d12754b3e429608",
+  "plan_more_lessons_fit": "622165ab8d5a068cb0ee117260ac14324688ee2ea3becab782a7d79a3cf0d49c",
   "plan_most_asked_first_until_exam": "c69ccea95a3b9bcb83f35146c78ed04f9127a65ddf67fbf59a55e5b6bfb6f221",
   "plan_move_date": "f273083342ebff92d334e1827585a4ca9fbe1d1ef46d3948bf5a2c230ef93cd6",
   "plan_move_date_to": "a1fe51516bb0595907bf9619c0e77737384b90ab7dcd51fc636e41bf5b388af6",
@@ -1287,8 +1287,8 @@
     <string name="plan_most_asked_first_until_exam">Bis zur Prüfung kommen die Themen zuerst, die am häufigsten drankommen.</string>
     <string name="plan_time_covers_everything_in_depth">Mit %1$s täglich kannst du alles gründlich lernen</string>
     <plurals name="plan_more_lessons_fit">
-        <item quantity="one">%1$d weitere Lektion passt in deine Lernzeit</item>
-        <item quantity="other">%1$d weitere Lektionen passen in deine Lernzeit</item>
+        <item quantity="one">Du hast Zeit für %1$d weitere Lektion</item>
+        <item quantity="other">Du hast Zeit für %1$d weitere Lektionen</item>
     </plurals>
     <string name="plan_past_date_goal_title">Dein Zieldatum liegt zurück</string>
     <string name="plan_past_date_exam_title">Dein Prüfungstermin ist vorbei</string>

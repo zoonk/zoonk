@@ -328,7 +328,7 @@
   "plan_more": "334e28fc2dc9e0f1c4f09701d9aa1881049c038215fe0ee72a5814aaa6447321",
   "plan_more_chapters": "69d9bde8d33ccc297837f35d50fbf3a64e4dc7a9df86eb88c5a5fe108d498845",
   "plan_more_lessons": "d8c4b749ae54fb46af11ce666223e5909888b5b99851b5181c622acc8828774b",
-  "plan_more_lessons_fit": "90562c944dd300d872d6e24e425e6d78b51d1508b1f8f23255ba12e561484c58",
+  "plan_more_lessons_fit": "b96daba869d4ec1a49ab520d48ea6eacddeec9b6d783bf3e718f3067843f3a1f",
   "plan_most_asked_first_until_exam": "020524495e00e51afa4d154ee975b9e8f0f800e86047c2f0d5fdcb5ee1d84a53",
   "plan_move_date": "ede55f9d2a8c1318b5d494808dc51fa13d4a073d87d1a148b7bd646983f68a22",
   "plan_move_date_to": "76d3e64da82de376a392b3d08addc7097e04c59a3d7289b530240081f0286c91",
@@ -1342,9 +1342,9 @@
     <string name="plan_most_asked_first_until_exam">Jusqu’à l’examen, les sujets les plus fréquents passent en premier.</string>
     <string name="plan_time_covers_everything_in_depth">%1$s par jour pour tout étudier en profondeur</string>
     <plurals name="plan_more_lessons_fit">
-        <item quantity="one">Tu peux inclure %1$d leçon de plus dans ton temps disponible</item>
-        <item quantity="many">Tu peux inclure %1$d leçons de plus dans ton temps disponible</item>
-        <item quantity="other">Tu peux inclure %1$d leçons de plus dans ton temps disponible</item>
+        <item quantity="one">Tu as le temps de faire %1$d leçon de plus</item>
+        <item quantity="many">Tu as le temps de faire %1$d leçons de plus</item>
+        <item quantity="other">Tu as le temps de faire %1$d leçons de plus</item>
     </plurals>
     <string name="plan_past_date_goal_title">La date de fin de ton plan est passée</string>
     <string name="plan_past_date_exam_title">La date de ton examen est passée</string>

@@ -328,7 +328,7 @@
   "plan_more": "8bea52958575ccf82d66408e54f8779c9d66144aa2cfc87168483708307f47a3",
   "plan_more_chapters": "adb297b2e6a118648cb64ce19c8b509f0158d418a2027a24386bc3e66c81ceef",
   "plan_more_lessons": "93b6d7beaec1e05f57cd4b40b99b45b3e83faafa8f5b39f1ea966d701904ae2f",
-  "plan_more_lessons_fit": "54aba5101f6cfe475edb181bec74004110dcc1aed2b21d5fec8f5f67f7aeb509",
+  "plan_more_lessons_fit": "ea52d2c18cfef31fb8ffe137cc07f2f7cea146837cdb9c7a9140ca35d7ad5ee5",
   "plan_most_asked_first_until_exam": "1d5c3d819096d78636b0fceff983d5f4a898b95372a71b35ffa3eb0c8dbb0511",
   "plan_move_date": "e42592ace7c0f56872b2d48d37d398176426a4e2521c727ae8254715d6cc816f",
   "plan_move_date_to": "0e8a94d543c124582ace869c690d850fb3eadb922113995d78a116af580d8dfd",
@@ -1232,7 +1232,7 @@
     <string name="plan_most_asked_first_until_exam">試験までは、よく出る内容を優先して学びます。</string>
     <string name="plan_time_covers_everything_in_depth">1日%1$sですべての内容を深く学べます</string>
     <plurals name="plan_more_lessons_fit">
-        <item quantity="other">今の学習時間で、さらに%1$dレッスン学べます</item>
+        <item quantity="other">あと%1$dレッスン分の時間があります</item>
     </plurals>
     <string name="plan_past_date_goal_title">終了予定日を過ぎました</string>
     <string name="plan_past_date_exam_title">試験日を過ぎました</string>

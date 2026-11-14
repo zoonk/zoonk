@@ -264,6 +264,7 @@ internal fun PlanPage(
                 preview = slotPreview,
                 requestPreview = { viewModel.requestSlotPreview(page.plan, it) },
                 clearPreview = viewModel::clearSlotPreview,
+                addFitOffer = { viewModel.addFitOffer(page.plan, it) },
                 next = end?.next,
                 nextLevel = nextLevel,
                 onContinue = viewModel::continueAtNextLevel,
