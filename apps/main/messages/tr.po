@@ -2486,14 +2486,14 @@ msgid "It stays logged in on that computer until you log out there or leave it u
 msgstr "O bilgisayarda çıkış yapana kadar oturum açık kalır. Aracı 30 gün kullanmazsan da oturum kapanır."
 
 #: src/app/[lang]/device/cli-login-form.tsx
-msgctxt "WCaf5C"
-msgid "Approve"
-msgstr "Onayla"
-
-#: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "htvX-Z"
 msgid "Deny"
 msgstr "Reddet"
+
+#: src/app/[lang]/device/cli-login-form.tsx
+msgctxt "WCaf5C"
+msgid "Approve"
+msgstr "Onayla"
 
 #: src/app/[lang]/device/cli-login-form.tsx
 msgctxt "R-mNZZ"

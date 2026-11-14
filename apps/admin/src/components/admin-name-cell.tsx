@@ -7,14 +7,11 @@ import { type Route } from "next";
  * It is the row's link, so the whole row opens the record.
  */
 export function AdminNameCell<Href extends string>({
-  children,
   href,
   icon,
   note,
   title,
 }: {
-  /** A link of its own under the note, such as the batch a fix came in. */
-  children?: React.ReactNode;
   href: Route<Href>;
   /** What kind of record it is, before its name. */
   icon?: React.ReactNode;
@@ -38,7 +35,6 @@ export function AdminNameCell<Href extends string>({
           ) : null}
         </span>
       </AdminTableRowLink>
-      {children}
     </TableCell>
   );
 }

@@ -572,25 +572,16 @@ class PlanStore(
      * invalidations always read the plan, as main's page does.
      */
     suspend fun refreshIfChanged(goalId: UUID) {
-        polls += goalId
-        try {
-            plan[goalId].refresh()
-        } finally {
-            polls -= goalId
-        }
+        val resource = plan[goalId]
+        val shown = resource.state.value.value
+        if (shown != null && cache.mutate { api.planChanged(it, goalId, shown.readAt) } == MutationResult.Done(false)) return
+        resource.refresh()
     }
-
-    private val polls = mutableSetOf<UUID>()
 
     private suspend fun read(
         session: AuthenticatedSession,
         goalId: UUID,
-    ): PlanRead {
-        val shown = plan[goalId].state.value.value
-        val written = writes[goalId] ?: 0
-        if (polls.remove(goalId) && shown != null && !api.planChanged(session, goalId, shown.readAt)) return shown.copy(writes = written)
-        return PlanRead(api.plan(session, goalId), now() - CLOCK_MARGIN, written)
-    }
+    ): PlanRead = PlanRead(api.plan(session, goalId), now() - CLOCK_MARGIN, writes[goalId] ?: 0)
 
     companion object {
         val PLAN_DOMAINS = setOf(DataDomain.Goals, DataDomain.LearnerModel, DataDomain.UserProgress, DataDomain.UserSubscription)

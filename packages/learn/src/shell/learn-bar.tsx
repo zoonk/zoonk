@@ -2,6 +2,7 @@
 
 import { BackLink, PageTopBar } from "@zoonk/ui/components/page-top";
 import { useEscapeClick } from "@zoonk/ui/hooks/keyboard";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useLearnRoutes } from "../learn-context";
@@ -213,7 +214,8 @@ export function LearnSectionBar({
 }: {
   back: { href: string; label?: string };
   end?: React.ReactNode;
-  parent?: { href: string; label: string };
+  /** `tabs`: the section's hub, which from a tablet up is these pages' own tabbed page. */
+  parent?: { href: string; label: string; tabs?: boolean };
   root?: boolean;
   title?: string;
 }) {
@@ -222,14 +224,29 @@ export function LearnSectionBar({
 
   useNameAppEntry(title);
 
+  const leave = (hidden?: string) => (
+    <LearnBackLink className={cn(className, hidden)} href={back.href} label={back.label} toApp />
+  );
+
+  if (!parent || fromApp) {
+    return <PageTopBar actions={end} back={leave()} />;
+  }
+
+  const toParent = (hidden?: string) => (
+    <LearnBackLink className={cn(className, hidden)} href={parent.href} label={parent.label} />
+  );
+
   return (
     <PageTopBar
       actions={end}
       back={
-        !parent || fromApp ? (
-          <LearnBackLink className={className} href={back.href} label={back.label} toApp />
+        parent.tabs ? (
+          <>
+            {toParent("md:hidden")}
+            {leave("max-md:hidden")}
+          </>
         ) : (
-          <LearnBackLink className={className} href={parent.href} label={parent.label} />
+          toParent()
         )
       }
     />

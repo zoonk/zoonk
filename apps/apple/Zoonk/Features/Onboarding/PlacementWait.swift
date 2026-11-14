@@ -26,8 +26,12 @@ struct PlacementWaitScreen: View {
   @Environment(OnboardingStore.self) private var store
 
   static let questionsReady = LocalizedStringResource(
-    "Your questions are ready", table: "Onboarding",
+    "Your test is ready", table: "Onboarding",
     comment: "Title of placement's wait once its questions are ready, for a learner still guessing")
+
+  private var readsMaterial: Bool {
+    run.phases.contains { $0.id == "notice" && $0.isReported }
+  }
 
   var body: some View {
     let failure = holding == nil ? failure : nil
@@ -35,7 +39,7 @@ struct PlacementWaitScreen: View {
     let title =
       holding == nil
       ? Text(
-        "Getting your questions ready", tableName: "Onboarding",
+        "Getting your test ready", tableName: "Onboarding",
         comment: "Title while placement questions are written")
       : Text(Self.questionsReady)
 
@@ -61,13 +65,15 @@ struct PlacementWaitScreen: View {
     } progress: {
       WaitHeading(
         title: title,
-        description: holding == nil
-          ? Text(
-            "This usually takes a minute or two.", tableName: "Onboarding",
-            comment: "How long placement questions take to write")
-          : Text(
-            "Start them whenever you're ready.", tableName: "Onboarding",
-            comment: "Under \"Your questions are ready\" on placement's wait"))
+        description: holding != nil
+          ? nil
+          : readsMaterial
+            ? Text(
+              "Reading your material takes a few minutes.", tableName: "Onboarding",
+              comment: "How long placement questions take to write from the learner's material")
+            : Text(
+              "This takes a minute or two.", tableName: "Onboarding",
+              comment: "How long placement questions take to write. \"This\" is the wait."))
 
       Section {
         GenerationTimeline(wait: shown, failure: failure)

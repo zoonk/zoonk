@@ -199,6 +199,7 @@
     "./missions-ring": "./src/buddies/missions-ring.tsx",
     "./tutor-identity": "./src/conversation/tutor-identity.tsx",
     "./upload-request": "./src/research/upload-request-card.tsx",
+    "./right-answer-line": "./src/questions/right-answer-line.tsx",
     "./verdict-label": "./src/_components/verdict-label.tsx",
     "./visual": "./src/visuals/lesson-visual.tsx",
     "./wait": "./src/wait/wait-screen.tsx",

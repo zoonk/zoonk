@@ -4,6 +4,7 @@ import { GoalKindIcon } from "@/components/goal-kind-icon";
 import { StateMark } from "@/components/state-mark";
 import { type AdminPrompt } from "@/data/prompts/get-prompt";
 import { formatDateTime, toWords } from "@/lib/format";
+import { LINK_CLASS } from "@/lib/link-class";
 import { TableCell } from "@zoonk/ui/components/table";
 import Link from "next/link";
 
@@ -31,7 +32,7 @@ export function PromptGoals({ prompt }: { prompt: AdminPrompt }) {
                 <span className="text-foreground block font-medium">{goal.title}</span>
                 {goal.primaryCourse ? (
                   <Link
-                    className="hit-area relative text-xs underline underline-offset-3"
+                    className={`${LINK_CLASS} text-xs`}
                     href={`/courses/${goal.primaryCourse.id}`}
                     prefetch
                   >

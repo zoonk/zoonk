@@ -7,14 +7,13 @@ import { type AdminExam } from "@/data/exams/get-exam";
 import { countryName } from "@/lib/country-name";
 import { formatCount, formatDate, formatDateTime } from "@/lib/format";
 import { languageName } from "@/lib/language-filter";
+import { LINK_CLASS } from "@/lib/link-class";
 import { examEditionSchema } from "@zoonk/core/library/exams/blueprint-contract";
 import { parsePlanGraph } from "@zoonk/core/plans/plan-state";
 import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
 import { BrainCircuitIcon, CalendarIcon, ListChecksIcon, TargetIcon } from "lucide-react";
 import Link from "next/link";
 import { formatExamDate } from "../_utils/format-exam-date";
-
-const LINK_CLASS = "hit-area relative underline underline-offset-3";
 
 /** How far the exam's day is from today, in whole calendar days. */
 function daysAway(examDate: Date): string {

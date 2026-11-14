@@ -5,9 +5,10 @@ import { STAT_TILES_CLASS, StatTile } from "@/components/stat-tile";
 import { StateMark } from "@/components/state-mark";
 import { type AdminPublicSource } from "@/data/sources/get-source";
 import { formatDate, formatDateTime } from "@/lib/format";
+import { LINK_CLASS } from "@/lib/link-class";
 import { CalendarClockIcon, GraduationCapIcon, ListChecksIcon, UsersIcon } from "lucide-react";
 
-const LINK_CLASS = "hit-area relative underline underline-offset-3 break-all";
+const SOURCE_LINK_CLASS = `${LINK_CLASS} break-all`;
 
 /** What depends on the source, and when Zoonk looks at it next. */
 export function SourceTotals({ source }: { source: AdminPublicSource }) {
@@ -54,7 +55,7 @@ export function SourceChecking({ source }: { source: AdminPublicSource }) {
       <DetailFields>
         <DetailField label="Link" mono={false}>
           {source.url ? (
-            <a className={LINK_CLASS} href={source.url} rel="noreferrer" target="_blank">
+            <a className={SOURCE_LINK_CLASS} href={source.url} rel="noreferrer" target="_blank">
               {source.url}
             </a>
           ) : null}

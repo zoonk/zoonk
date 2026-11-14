@@ -180,8 +180,8 @@ function useOfferCopy(adapt: MockAdaptView | null) {
 }
 
 /**
- * `answers={false}` leaves the open question's answers to the result's bar (`MockPlanAnswers`),
- * where the step that asks it is the last one.
+ * `answers={false}` leaves the open question's answers to the result's bar (`MockPlanDecline`,
+ * `MockPlanAccept`), where the step that asks it is the last one.
  */
 export function MockPlanChange({
   answers = true,
@@ -239,39 +239,49 @@ export function MockPlanChange({
   );
 }
 
+type OpenPlanChange = PlanChange & { adapt: MockAdaptView };
+
 /**
  * The open question's answers in the result's bar, in place of its way on: "Continue" there would
  * leave the question unanswered as if it were an answer. The way on comes back once it's answered.
+ * Declining is the bar's second action and accepting its main one.
  */
-export function MockPlanAnswers({ change }: { change: PlanChange & { adapt: MockAdaptView } }) {
+export function MockPlanDecline({ change }: { change: OpenPlanChange }) {
   const offerCopy = useOfferCopy(change.adapt);
 
   if (!change.open) {
     return null;
   }
 
-  const copy = offerCopy(change.open);
-
   return (
-    <>
-      <Button
-        className={BAR_SECOND_ACTION_CLASS}
-        disabled={change.isPending}
-        focusableWhenDisabled
-        onClick={change.decline}
-        size="xl"
-        variant="outline"
-      >
-        {copy.decline}
-      </Button>
-      <TaskMainButton busy={change.isPending} onClick={change.accept}>
-        {copy.accept}
-      </TaskMainButton>
-    </>
+    <Button
+      className={BAR_SECOND_ACTION_CLASS}
+      disabled={change.isPending}
+      focusableWhenDisabled
+      onClick={change.decline}
+      size="xl"
+      variant="outline"
+    >
+      {offerCopy(change.open).decline}
+    </Button>
   );
 }
 
-export function hasPlanChange(change: PlanChange): change is PlanChange & { adapt: MockAdaptView } {
+export function MockPlanAccept({ change }: { change: OpenPlanChange }) {
+  const offerCopy = useOfferCopy(change.adapt);
+
+  if (!change.open) {
+    return null;
+  }
+
+  return (
+    <TaskMainButton busy={change.isPending} onClick={change.accept}>
+      {offerCopy(change.open).accept}
+    </TaskMainButton>
+  );
+}
+
+export function hasPlanChange(change: PlanChange): change is OpenPlanChange {
   return change.adapt !== null && change.offers.length > 0;
 }
 

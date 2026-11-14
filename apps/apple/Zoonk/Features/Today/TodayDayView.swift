@@ -111,6 +111,13 @@ struct TodayDayView: View {
         holdShownNotice()
       }
     }
+    // Its open state is kept above the panes, so it outlives a proposal that's answered here, answered
+    // elsewhere or replaced by a newer edit; main's sheet closes with it.
+    .onChange(of: asksPlanChange) {
+      if !asksPlanChange {
+        disclosures.planChange = false
+      }
+    }
     .modifier(LanguageTodayLoading(goal: view.goal))
     .sheet(item: $adjusting) { section in
       TodayAdjustPlanSheet(goalID: view.goal.id, section: section)
@@ -264,6 +271,11 @@ struct TodayDayView: View {
     perform(.prepare) { await store.prepareLessons(in: view) }
   }
 
+  /// A proposal still waits for an answer, in the sheet its line opens.
+  private var asksPlanChange: Bool {
+    store.shownPlanChange(in: view).map { $0.decision == nil } ?? false
+  }
+
   @ViewBuilder
   private var planChange: some View {
     if let shown = store.shownPlanChange(in: view) {
@@ -319,17 +331,7 @@ struct TodayDayView: View {
       }
     case .exam:
       if let exam = view.exam {
-        ExamMomentSection(moment: exam, checked: $examChecklist) {
-          Button {
-            router.open(.exam)
-          } label: {
-            exam.stage == .afterExam
-              ? Text(
-                "Add your result", tableName: "Today",
-                comment: "Opens the exam to add the official result")
-              : Text("See your exam", tableName: "Today", comment: "Opens the exam")
-          }
-        }
+        TodayExamMomentSection(moment: exam, checked: $examChecklist)
       }
     case .examChoice:
       TodayExamChoiceSection(

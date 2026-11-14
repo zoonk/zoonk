@@ -662,6 +662,7 @@
     "./staff/content-fixes/propose": "./src/staff/content-fixes/propose-content-fix.ts",
     "./staff/content-fixes/reject": "./src/staff/content-fixes/reject-content-fix.ts",
     "./staff/content-fixes/screen-content-rules": "./src/staff/content-fixes/screen-content-rules.ts",
+    "./staff/content-fixes/status-labels": "./src/staff/content-fixes/status-labels.ts",
     "./staff/content-fixes/voice": "./src/staff/content-fixes/voice-content-fix.ts",
     "./staff/content-fixes/voice-schema": "./src/staff/content-fixes/voice-schema.ts",
     "./staff/content-fixes/withdraw": "./src/staff/content-fixes/withdraw-content-fix.ts",

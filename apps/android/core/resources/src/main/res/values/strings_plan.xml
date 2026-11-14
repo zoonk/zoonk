@@ -309,6 +309,10 @@
         <item quantity="one">Based on your last %d mock exam</item>
         <item quantity="other">Based on your last %d mock exams</item>
     </plurals>
+    <plurals name="plan_estimate_based_on_reviews">
+        <item quantity="one">Based on %d review of every topic</item>
+        <item quantity="other">Based on %d reviews of every topic</item>
+    </plurals>
     <string name="plan_score_percent">%1$s%%</string>
     <string name="plan_score_percent_range">%1$s%% to %2$s%%</string>
     <string name="plan_score_band">Band %1$s</string>
@@ -755,8 +759,10 @@
     </plurals>
     <string name="plan_past_date_goal_title">Your end date has passed</string>
     <string name="plan_past_date_exam_title">Your exam date has passed</string>
-    <!-- Under "Your exam date has passed": the lessons left are what "them" means. -->
-    <string name="plan_exam_over_ask">Keep studying them, or archive this goal?</string>
+    <plurals name="plan_exam_over_left">
+        <item quantity="one">You have %d lesson left. Keep studying it, or archive this goal?</item>
+        <item quantity="other">You have %d lessons left. Keep studying them, or archive this goal?</item>
+    </plurals>
     <plurals name="plan_past_date_offer">
         <item quantity="one">You have %d lesson left. A later end date fits it.</item>
         <item quantity="other">You have %d lessons left. A later end date fits them.</item>

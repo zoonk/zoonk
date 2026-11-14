@@ -67,24 +67,11 @@ msgid "Source:"
 msgstr "출처:"
 
 #: src/activities/_components/activity-feedback.tsx
-#: src/activities/labeled-diagram/diagram-slots.tsx
-#: src/activities/pattern-table/pattern-row.tsx
-msgctxt "QAJ_Tl"
-msgid "Correct answer:"
-msgstr "정답:"
-
-#: src/activities/_components/activity-feedback.tsx
 #: src/activities/combination-grid/grid-board.tsx
 #: src/activities/labeled-diagram/diagram-slots.tsx
 msgctxt "3nOd8f"
 msgid "Your answer:"
 msgstr "내 답:"
-
-#: src/activities/_components/activity-feedback.tsx
-#: src/lesson/feedback/lesson-step-result.tsx
-msgctxt "hmBFza"
-msgid "Answer:"
-msgstr "정답:"
 
 #: src/activities/_components/activity-feedback.tsx
 #: src/lesson/feedback/lesson-step-result.tsx
@@ -1308,6 +1295,12 @@ msgstr "{number}번 자리:"
 msgctxt "uilHxe"
 msgid "Pick a name"
 msgstr "이름 고르기"
+
+#: src/activities/labeled-diagram/diagram-slots.tsx
+#: src/activities/pattern-table/pattern-row.tsx
+msgctxt "QAJ_Tl"
+msgid "Correct answer:"
+msgstr "정답:"
 
 #: src/activities/labeled-diagram/diagram-slots.tsx
 msgctxt "vjLo-k"
@@ -3157,6 +3150,12 @@ msgstr "이렇게 들렸어요"
 msgctxt "yDk4bj"
 msgid "Also correct:"
 msgstr "이 문장도 맞아요:"
+
+#. Under “Not checked this time”: we corrected this lesson question while the learner was in the lesson, so their answer isn't graded either way.
+#: src/lesson/feedback/lesson-step-result.tsx
+msgctxt "FtNhyg"
+msgid "This question was updated after you started, so this answer doesn't count."
+msgstr "시작한 뒤에 이 문제가 업데이트되어 이번 답은 반영되지 않아요."
 
 #: src/lesson/feedback/lesson-step-result.tsx
 msgctxt "WGhDaL"

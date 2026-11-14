@@ -1218,7 +1218,7 @@ extension GenerationWait.Kind {
         "Building your plan", table: "Onboarding", comment: "VoiceOver: the bar of a wait")
     case .placement:
       LocalizedStringResource(
-        "Getting your questions ready", table: "Onboarding",
+        "Getting your test ready", table: "Onboarding",
         comment: "Title while placement questions are written")
     case .explanation:
       LocalizedStringResource(
