@@ -183,7 +183,7 @@ Everything tappable takes 44 by 44px to press ([44px targets](app-patterns.md#wh
 
 ### Z4. Two actions in a bar
 
-In the bottom bar (`BottomBar`, its row `BottomBarActions`; [R2](#r2-the-main-action-is-in-the-bottom-bar)) with a main and a second action, both are one height, 8px apart, and on a phone the main one fills what the second leaves. The buttons have the same room over and under them as at their sides, the frame's gutter: 16px on a phone, 24px in a task on a computer, 32px in the app's shell from `sm`. A third action is a quiet option in the column, not a third style in the bar. What the last action couldn't do shows over the screen above the bar (`note`), so the bar never grows and its buttons never move.
+In the bottom bar (`BottomBar`, its row `BottomBarActions`; [R2](#r2-the-main-action-is-in-the-bottom-bar)) with a main and a second action, both are one height, 8px apart, and on a phone the main one fills what the second leaves. The buttons have the same room over and under them as at their sides: the frame's gutter ([S5](#s5-the-gutter-is-the-frames)), which one class sets for the frame, its bar and the toast that rises over the bar (`FRAME_GUTTER_CLASS`), so no screen gives any of them a number. A third action is a quiet option in the column, not a third style in the bar. What the last action couldn't do shows over the screen above the bar (`note`), so the bar never grows and its buttons never move.
 
 - **Check.** Equal visible heights; the bar's one gap; two button styles at most; the bar's height and its buttons' places the same with and without an error line.
 - **Usual break.** An outline, a filled and a gray button in one bar. An error line as a second row in the bar.
