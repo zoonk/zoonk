@@ -1,12 +1,17 @@
 package com.zoonk.android.feature.plan
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.SuggestionAction
 import com.zoonk.android.ui.components.SuggestionActions
@@ -116,7 +121,7 @@ internal fun PlanPreviewResult(
         }
 
         is PlanPreviewState.Failed -> {
-            StatusDescription(stringResource(R.string.plan_couldnt_check_changes))
+            EffectRoom { StatusDescription(stringResource(R.string.plan_couldnt_check_changes)) }
             SuggestionActions {
                 SuggestionAction(stringResource(R.string.plan_try_again), onRetry)
                 SuggestionAction(notNow, onDismiss, secondary = true)
@@ -125,10 +130,12 @@ internal fun PlanPreviewResult(
 
         is PlanPreviewState.Ready -> {
             val preview = state.preview
-            if (preview.unchanged) {
-                SuggestionDescription(stringResource(R.string.plan_stays_as_it_is))
-            } else {
-                PlanEffectDiff(preview.effect, goalDate = goalDate, dateKind = dateKind, repriced = repriced)
+            EffectRoom {
+                if (preview.unchanged) {
+                    SuggestionDescription(stringResource(R.string.plan_stays_as_it_is))
+                } else {
+                    PlanEffectDiff(preview.effect, goalDate = goalDate, dateKind = dateKind, repriced = repriced)
+                }
             }
             SuggestionActions {
                 if (!preview.unchanged && preview.effect != null) {
@@ -140,11 +147,31 @@ internal fun PlanPreviewResult(
     }
 }
 
-/** Main's `CheckingChange`. */
+/**
+ * Main's `CheckingChange`: the answer's room, and its Change my plan in place, off, so nothing
+ * moves when the changes arrive.
+ */
 @Composable
 internal fun CheckingChange(onCancel: () -> Unit) {
-    StatusDescription(stringResource(R.string.plan_checking_changes))
-    SuggestionActions { SuggestionAction(stringResource(R.string.plan_not_now), onCancel, secondary = true) }
+    EffectRoom { StatusDescription(stringResource(R.string.plan_checking_changes)) }
+    SuggestionActions {
+        SuggestionAction(stringResource(R.string.plan_apply), onClick = {}, enabled = false)
+        SuggestionAction(stringResource(R.string.plan_not_now), onCancel, secondary = true)
+    }
+}
+
+/**
+ * Main's `EFFECT_ROOM_CLASS`: room for a consequence of two lines and its "See all changes", which
+ * a check's note and its answer both take, so the actions under them stay put.
+ */
+@Composable
+private fun EffectRoom(content: @Composable () -> Unit) {
+    val line =
+        with(LocalDensity.current) {
+            MaterialTheme.typography.bodyMedium.lineHeight
+                .toDp()
+        }
+    Column(Modifier.heightIn(min = line * 2 + 4.dp + 48.dp)) { content() }
 }
 
 @Composable

@@ -313,19 +313,22 @@ internal fun FitLessonsSuggestion(slot: Slot) {
         }
 
     val pending = slot.edits.isPending(PlanPart.Suggestion)
+    val checking = preview is PlanPreviewState.Loading
     val add = { slot.host.addFitOffer(offer) }
+    val checkingWords = stringResource(R.string.plan_checking_changes)
 
     PlanChangeSuggestion(SlotItem.FitLessons, title, slot) {
         CancelCheckWhenGone(slot, offer)
-        if (preview == PlanPreviewState.Idle) {
+        // While it checks, the card stays as it was with its Add busy: the same numbers add from there.
+        if (preview == PlanPreviewState.Idle || checking) {
             PlanEffectDiff(offer.effect, dateKind = page.dateKind, said = EffectSaid.LessonsAdded)
             SuggestionActions {
                 SuggestionAction(
-                    stringResource(R.string.plan_add_to_my_plan),
                     onClick = add,
-                    busy = pending,
+                    modifier = if (checking) Modifier.semantics { stateDescription = checkingWords } else Modifier,
+                    busy = pending || checking,
                     leadingIcon = { ButtonIcon(R.drawable.ic_check) },
-                )
+                ) { Text(stringResource(R.string.plan_add_to_my_plan)) }
                 SuggestionAction(stringResource(R.string.plan_not_now), onClick = { slot.dismiss(SlotItem.FitLessons) }, secondary = true)
             }
         } else {

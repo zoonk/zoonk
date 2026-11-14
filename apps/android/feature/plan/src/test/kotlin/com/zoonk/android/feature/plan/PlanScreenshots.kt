@@ -423,6 +423,12 @@ class PlanScreenshots {
                         edits = PlanEdits(timeToCover = found),
                         host = SlotHost(preview = ready(listOf(PlanOp.DailyMinutes(75)), goalPlan)),
                     ),
+                "plan-slot-coverage-checking" to
+                    Shot(
+                        goalPlan,
+                        edits = PlanEdits(timeToCover = found),
+                        host = SlotHost(preview = PlanPreviewState.Loading(listOf(PlanOp.DailyMinutes(75)), goalPlan)),
+                    ),
                 "plan-slot-coverage-checking-date" to
                     Shot(
                         goalPlan,
@@ -440,6 +446,7 @@ class PlanScreenshots {
                 "plan-slot-fit" to Shot(fitPlan),
                 "plan-slot-fit-checking" to
                     Shot(laterFitPlan, host = SlotHost(preview = PlanPreviewState.Loading(fitOperations, laterFitPlan))),
+                "plan-slot-fit-adding" to Shot(laterFitPlan, edits = PlanEdits(pending = setOf(PlanPart.Suggestion))),
                 "plan-slot-fit-repriced" to Shot(laterFitPlan, host = SlotHost(preview = ready(fitOperations, laterFitPlan))),
                 "plan-slot-fit-check-failed" to
                     Shot(laterFitPlan, host = SlotHost(preview = PlanPreviewState.Failed(fitOperations, laterFitPlan))),

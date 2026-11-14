@@ -1,12 +1,18 @@
 package com.zoonk.android.feature.plan
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.getUnclippedBoundsInRoot
+import androidx.compose.ui.test.hasStateDescription
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -26,6 +32,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -68,7 +75,7 @@ class FitOfferCheckTest {
         show()
 
         compose.onNodeWithText("Add to my plan").performClick()
-        compose.onNodeWithText("Checking what changes…").assertExists()
+        compose.onNode(hasStateDescription("Checking what changes…")).assertExists()
         shown = false
         compose.waitForIdle()
         held.complete(Unit)
@@ -79,7 +86,7 @@ class FitOfferCheckTest {
     }
 
     @Test
-    fun notNowWhileItChecksGoesBackToTheOfferAndAddsNothing() {
+    fun notNowWhileItChecksPutsTheOfferOffAndAddsNothing() {
         val held = CompletableDeferred<Unit>()
         api.previewGate = held
         api.preview = checked(plan.fitOffer!!.effect)
@@ -90,9 +97,38 @@ class FitOfferCheckTest {
         held.complete(Unit)
         compose.waitForIdle()
 
-        compose.onNodeWithText("Add to my plan").assertIsEnabled()
+        assertTrue(SlotItem.FitLessons.key in viewModel.slotState.dismissed)
+        assertEquals(PlanPreviewState.Idle, viewModel.slotPreview.value)
         assertEquals(emptyList<List<PlanOp>>(), api.changes)
     }
+
+    @Test
+    fun aCheckThatFindsTheSameNumbersMovesNothingOnTheCard() {
+        val checkHeld = CompletableDeferred<Unit>()
+        val addHeld = CompletableDeferred<Unit>()
+        val operations = plan.fitOffer!!.operations.map { it.op }
+        api.previewGate = checkHeld
+        api.preview = checked(plan.fitOffer!!.effect)
+        operations.forEach { api.gates[it] = addHeld }
+        show()
+        val before = layout()
+
+        compose.onNodeWithText("Add to my plan").performClick()
+        val during = layout()
+        checkHeld.complete(Unit)
+        compose.waitForIdle()
+        val after = layout()
+
+        assertEquals(before, during)
+        assertEquals(before, after)
+        addHeld.complete(Unit)
+        compose.waitForIdle()
+        assertEquals(listOf(operations), api.changes)
+    }
+
+    /** The card's height and where Not now sits, which a state change must leave as they are. */
+    private fun layout() =
+        compose.onNodeWithTag(CARD).getUnclippedBoundsInRoot() to compose.onNodeWithText("Not now").getUnclippedBoundsInRoot()
 
     @Test
     fun otherNumbersTodaySaySoAndTheirCountTitlesTheCard() {
@@ -117,23 +153,29 @@ class FitOfferCheckTest {
                 val pending by viewModel.pending.collectAsState()
                 if (shown) {
                     val navigator = rememberAppNavigator()
-                    FitLessonsSuggestion(
-                        Slot(
-                            page,
-                            PlanEdits(pending = pending, change = viewModel::change),
-                            PlanLinks(navigator, page),
-                            SlotHost(
-                                preview = preview,
-                                clearPreview = viewModel::clearSlotPreview,
-                                addFitOffer = { viewModel.addFitOffer(page.plan, it) },
+                    Box(Modifier.testTag(CARD)) {
+                        FitLessonsSuggestion(
+                            Slot(
+                                page,
+                                PlanEdits(pending = pending, change = viewModel::change),
+                                PlanLinks(navigator, page),
+                                SlotHost(
+                                    preview = preview,
+                                    clearPreview = viewModel::clearSlotPreview,
+                                    addFitOffer = { viewModel.addFitOffer(page.plan, it) },
+                                ),
+                                viewModel.slotState,
+                                SuggestionLayout.Panel,
+                                SlotFocus(),
                             ),
-                            viewModel.slotState,
-                            SuggestionLayout.Panel,
-                            SlotFocus(),
-                        ),
-                    )
+                        )
+                    }
                 }
             }
         }
+    }
+
+    private companion object {
+        const val CARD = "card"
     }
 }
