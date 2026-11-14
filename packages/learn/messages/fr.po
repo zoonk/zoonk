@@ -576,7 +576,6 @@ msgid "Finish"
 msgstr "Terminer"
 
 #: src/_components/question-actions.tsx
-#: src/journey/preparation/preparation-details.tsx
 msgctxt "9-Ddtu"
 msgid "Next"
 msgstr "Suivant"
@@ -622,7 +621,6 @@ msgstr "Nombre de questions par matière au dernier examen, selon le décompte d
 #: src/_components/save-error.tsx
 #: src/feedback/feedback-form-dialog.tsx
 #: src/feedback/report-problem-item.tsx
-#: src/journey/journey-menu.tsx
 msgctxt "feedback.Hf_X9X"
 msgid "Report a problem"
 msgstr "Signaler un problème"
@@ -5067,15 +5065,20 @@ msgid "Take a full or half mock exam to see your estimated score."
 msgstr "Passe un examen blanc complet ou un demi-examen blanc pour voir ton score estimé."
 
 #: src/journey/preparation/preparation-details.tsx
-#: src/mock/mock-result-view.tsx
-msgctxt "Psgvhk"
-msgid "Estimated score"
-msgstr "Score estimé"
+msgctxt "eMlJUc"
+msgid "{count, plural, one {Based on # review of every topic} other {Based on # reviews of every topic}}"
+msgstr "{count, plural, one {D’après # révision de tous les sujets} other {D’après # révisions de tous les sujets}}"
 
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "DJCbLV"
 msgid "{count, plural, one {Based on your last mock exam} other {Based on your last # mock exams}}"
 msgstr "{count, plural, one {D’après ton dernier examen blanc} other {D’après tes # derniers examens blancs}}"
+
+#: src/journey/preparation/preparation-details.tsx
+#: src/mock/mock-result-view.tsx
+msgctxt "Psgvhk"
+msgid "Estimated score"
+msgstr "Score estimé"
 
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "JcR3T_"
@@ -5091,6 +5094,12 @@ msgstr "Chaque matière compte selon son poids à l’examen. Son pourcentage co
 msgctxt "Kch5Cx"
 msgid "The share of your plan's lessons you've studied or already knew. Right answers, what you remember and weekly challenges show how well you know them."
 msgstr "La part des leçons de ton plan que tu as étudiées ou que tu connaissais déjà. Tes bonnes réponses, ce que tu retiens et les défis hebdomadaires montrent à quel point tu les maîtrises."
+
+#. A section heading over the next steps toward the learner's goal, such as "Take your first mock exam". Not a button.
+#: src/journey/preparation/preparation-details.tsx
+msgctxt "preparationNextSteps"
+msgid "Next"
+msgstr "Prochaines étapes"
 
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "J6PYLA"
