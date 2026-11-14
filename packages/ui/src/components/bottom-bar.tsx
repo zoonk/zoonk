@@ -62,14 +62,18 @@ function BottomBar({
 }
 
 /**
- * A row of the bar's buttons, 8px apart, the main action last. The main action (the one Enter
- * presses) takes what the row has left on a phone and its own width at the row's end on a computer.
+ * A row of the bar's buttons, 8px apart, the main action last. On a phone every line of buttons
+ * fills the bar's width: the main action (the one Enter presses) takes what its line has left, and
+ * a line without it, when the buttons wrap, shares the width out. On a computer each keeps its own
+ * width at the row's end. A button may sit in a `<form className="contents">`, which draws no box,
+ * so the rule reaches through it.
  */
 function BottomBarActions({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       className={cn(
-        "flex w-full flex-wrap items-center gap-2 *:data-enter:grow lg:justify-end lg:*:data-enter:grow-0",
+        "flex w-full flex-wrap items-center gap-2 lg:justify-end",
+        "max-lg:[&>*,&>.contents>*]:grow max-lg:[&>[data-enter],&>.contents>[data-enter]]:grow-999",
         className,
       )}
       data-slot="bottom-bar-actions"
