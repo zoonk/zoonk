@@ -1456,7 +1456,6 @@ msgstr "Zu"
 #: src/focus-test/focus-test-flow.tsx
 #: src/focus-test/focus-test-proposal.tsx
 #: src/focus-test/focus-test-screens.tsx
-#: src/mock/mock-result-actions.tsx
 #: src/mock/mock-result-plan.tsx
 #: src/plan/plan-fit-suggestion.tsx
 #: src/plan/plan-offer-preview.tsx
@@ -8472,6 +8471,14 @@ msgid "Your plan gives {area} more time."
 msgstr "Il tuo piano dedica più tempo a {area}."
 
 #: src/mock/mock-result-plan.tsx
+#: src/plan-diff/plan-effect-diff.tsx
+#: src/plan/plan-bases-sheet.tsx
+#: src/plan/plan-offer-preview.tsx
+msgctxt "D0KGfN"
+msgid "Your plan stays as it is."
+msgstr "Il tuo piano resta com’è."
+
+#: src/mock/mock-result-plan.tsx
 #: src/plan-diff/change-names.ts
 #: src/plan/use-short-list.ts
 msgctxt "v5V1P2"
@@ -10553,13 +10560,6 @@ msgstr "{names} e altre"
 msgctxt "61Vs84"
 msgid "The numbers are different today."
 msgstr "Oggi i numeri sono diversi."
-
-#: src/plan-diff/plan-effect-diff.tsx
-#: src/plan/plan-bases-sheet.tsx
-#: src/plan/plan-offer-preview.tsx
-msgctxt "D0KGfN"
-msgid "Your plan stays as it is."
-msgstr "Il tuo piano resta com’è."
 
 #: src/plan-diff/plan-effect-diff.tsx
 msgctxt "3vidCV"
