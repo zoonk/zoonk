@@ -61,9 +61,11 @@ class HardcodedComposeTextDetector :
             (method.isConstructor || method.name in setOf("append", "appendLine"))
     }
 
+    // A test tag and a property key's name are for code and tests; nothing reads them to a learner.
     private fun isSemanticsText(method: PsiMethod): Boolean =
         method.containingClass?.qualifiedName?.startsWith("androidx.compose.ui.semantics.") == true &&
-            method.name != "setTestTag" && method.name != "getTestTag"
+            method.name != "setTestTag" && method.name != "getTestTag" &&
+            !(method.isConstructor && method.containingClass?.name == "SemanticsPropertyKey")
 
     private fun reportHardcodedText(
         context: JavaContext,
