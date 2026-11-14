@@ -3824,6 +3824,11 @@ msgid "myemail@gmail.com"
 msgstr "epostam@gmail.com"
 
 #: src/feedback/feedback-form.tsx
+msgctxt "feedback.Xx0WZV"
+msgid "Send message"
+msgstr "Mesaj gönder"
+
+#: src/feedback/feedback-form.tsx
 msgctxt "feedback.lknSi2"
 msgid "This screen is attached"
 msgstr "Bu ekran mesaja eklendi"
@@ -3852,11 +3857,6 @@ msgstr "Mesajın gönderildi! Yakında sana yanıt vereceğiz."
 msgctxt "feedback.dpjZ-X"
 msgid "We couldn't send your message. Try again, or email us at hello@zoonk.com."
 msgstr "Mesajını gönderemedik. Tekrar dene veya hello@zoonk.com adresine e-posta gönder."
-
-#: src/feedback/feedback-form.tsx
-msgctxt "feedback.Xx0WZV"
-msgid "Send message"
-msgstr "Mesaj gönder"
 
 #: src/focus-test/focus-test-flow.tsx
 #: src/focus-test/focus-test-screens.tsx
@@ -4771,12 +4771,6 @@ msgctxt "dhP2hY"
 msgid "Course complete"
 msgstr "Kurs tamamlandı"
 
-#. Shown when a learner tries to resume a paused goal while already following as many goals at once as they can without a subscription. Pausing a goal keeps its progress.
-#: src/journey/goal-actions.tsx
-msgctxt "7MouSk"
-msgid "You're following as many goals as you can for free. Pause another to resume this one, or subscribe."
-msgstr "Ücretsiz olarak aynı anda takip edebileceğin hedef sayısına ulaştın. Bu hedefe devam etmek için başka bir hedefi duraklat veya abone ol."
-
 #: src/journey/goal-actions.tsx
 #: src/journey/rename-goal-dialog.tsx
 msgctxt "kvT_KU"
@@ -4804,7 +4798,7 @@ msgid "Resume your {goal} goal?"
 msgstr "{goal} hedefine devam etmek ister misin?"
 
 #: src/journey/goal-actions.tsx
-#: src/journey/journey-planless.tsx
+#: src/journey/resume-goal-bar.tsx
 msgctxt "3y9DGg"
 msgid "Resume"
 msgstr "Devam et"
@@ -5309,6 +5303,11 @@ msgstr "Ad"
 msgctxt "ViPPTn"
 msgid "Your plan picks up from today, starting with the lessons planned for the days you paused."
 msgstr "Planın bugünden itibaren devam eder; önce ara verdiğin günler için planlanan dersler gelir."
+
+#: src/journey/resume-goal-bar.tsx
+msgctxt "DuuVCx"
+msgid "That's as many goals as you can study at once. Pause another goal to resume this one."
+msgstr "Aynı anda çalışabileceğin hedef sınırına ulaştın. Bu hedefe devam etmek için başka bir hedefi duraklat."
 
 #: src/journey/roadmap-full.tsx
 #: src/onboarding/plan-receipt.tsx
@@ -14156,6 +14155,11 @@ msgstr "Başlamaya hazır"
 msgctxt "uaZ--2"
 msgid "Getting your lesson ready"
 msgstr "Dersini hazırlıyoruz"
+
+#: src/wait/lesson-wait-status.tsx
+msgctxt "KPgx8T"
+msgid "Your challenge is ready"
+msgstr "Meydan okuman hazır"
 
 #: src/wait/lesson-wait-status.tsx
 msgctxt "4Wktrz"

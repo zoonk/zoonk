@@ -5,15 +5,11 @@ import SwiftUI
 struct LanguageAimView: Codable, Equatable, Sendable {
   struct Choice: Codable, Equatable, Sendable {
     let aim: String
-    /// Hours of study, practice included, from the learner's level to this aim.
-    let hours: Int
   }
 
   struct Reason: Codable, Equatable, Sendable {
     /// Nil for a certificate, whose exam decides.
     let aim: String?
-    /// Hours of study from scratch; nil for a certificate.
-    let hours: Int?
     let reason: String
   }
 
@@ -56,22 +52,15 @@ extension View {
   }
 }
 
-/// Under an aim to pick: the hours of study still needed, then when it's reached once that's known.
-func aimChoiceDetail(hours: Int, end: String?) -> String {
-  let hours = hours.formatted()
-
-  guard let end else {
-    return String(
-      localized: "About \(hours) h more", table: "Onboarding",
-      comment: "Under a language level to aim for: the hours of study still needed to reach it")
+/// Under an aim to pick: when it's reached at the learner's time, once that's known.
+func aimChoiceDetail(end: String?) -> String? {
+  end.map {
+    String(
+      localized: "Around \(PlanDate.longText($0, month: true))", table: "Onboarding",
+      comment:
+        "Under a language level to aim for: when the learner reaches it; the argument is a month and year, like 'Nov 2027'"
+    )
   }
-
-  return String(
-    localized: "About \(hours) h more · around \(PlanDate.longText(end, month: true))",
-    table: "Onboarding",
-    comment:
-      "Under a language level to aim for: the hours of study still needed to reach it, then when; the second argument is a month and year, like 'Nov 2027'"
-  )
 }
 
 /// Main's `useAimWords`: what each aim lets the learner do.
@@ -133,12 +122,10 @@ struct AimName: View {
   }
 }
 
-/// Main's `AimPicker` on phones: "How far do you want to go?", each aim with the hours left and when
-/// it's reached. Picking applies it; a change that didn't save keeps the choices open.
+/// Main's `AimPicker` on phones: "How far do you want to go?", each aim with when it's reached.
+/// Picking applies it; a change that didn't save keeps the choices open.
 struct AimChoicesSheet: View {
   let languageAim: LanguageAimView
-  /// What the hours count from, the learner's level and their time a day; nil while unknown.
-  var fromLine: String?
   /// When the current aim is reached, as its screen says.
   var currentEnd: String?
   /// When another aim would be reached, as picking it would lay the plan out.
@@ -164,25 +151,18 @@ struct AimChoicesSheet: View {
                   .typeStyle(.rowTitle)
                   .foregroundStyle(Color(.foreground))
 
-                Text(
-                  aimChoiceDetail(
-                    hours: choice.hours,
-                    end: choice.aim == languageAim.aim ? currentEnd : ends[choice.aim])
-                )
-                .typeStyle(.meta)
-                .foregroundStyle(.mutedForeground)
+                if let detail = aimChoiceDetail(
+                  end: choice.aim == languageAim.aim ? currentEnd : ends[choice.aim])
+                {
+                  Text(detail)
+                    .typeStyle(.meta)
+                    .foregroundStyle(.mutedForeground)
+                }
               }
               .frame(maxWidth: .infinity, alignment: .leading)
             }
             .pickedRow(choice.aim == languageAim.aim)
             .accessibilityAddTraits(choice.aim == languageAim.aim ? .isSelected : [])
-          }
-        } header: {
-          if let fromLine {
-            Text(fromLine)
-              .typeStyle(.note)
-              .foregroundStyle(.mutedForeground)
-              .textCase(nil)
           }
         } footer: {
           SectionFooter {
@@ -233,35 +213,5 @@ struct AimChoicesSheet: View {
         failed = true
       }
     }
-  }
-}
-
-/// Main's `useFromLevel`: where the aims' hours count from, and the learner's time a day.
-func aimFromLine(level: String?, minutes: Int) -> String {
-  let time = planDurationText(minutes: Double(minutes))
-
-  return switch level {
-  case nil, "none"?:
-    String(
-      localized: "From scratch, at \(time) a day.", table: "Onboarding",
-      comment: "Under \"How far do you want to go?\": the learner starts from nothing")
-  case "basic"?:
-    String(
-      localized: "From the basics, at \(time) a day.", table: "Onboarding",
-      comment: "Under \"How far do you want to go?\": the learner knows the basics")
-  case "intermediate"?:
-    String(
-      localized: "From an intermediate level, at \(time) a day.", table: "Onboarding",
-      comment: "Under \"How far do you want to go?\": the learner is at an intermediate level")
-  case "advanced"?:
-    String(
-      localized: "From an advanced level, at \(time) a day.", table: "Onboarding",
-      comment: "Under \"How far do you want to go?\": the learner is at an advanced level")
-  case let level?:
-    String(
-      localized: "From \(level), at \(time) a day.", table: "Onboarding",
-      comment:
-        "Under \"How far do you want to go?\": the learner's level, a CEFR label like 'B1+', and their time a day"
-    )
   }
 }

@@ -3824,6 +3824,11 @@ msgid "myemail@gmail.com"
 msgstr "honggildong@gmail.com"
 
 #: src/feedback/feedback-form.tsx
+msgctxt "feedback.Xx0WZV"
+msgid "Send message"
+msgstr "메시지 보내기"
+
+#: src/feedback/feedback-form.tsx
 msgctxt "feedback.lknSi2"
 msgid "This screen is attached"
 msgstr "이 화면이 첨부되어 있어요"
@@ -3852,11 +3857,6 @@ msgstr "메시지를 보냈어요! 곧 답변해 드릴게요."
 msgctxt "feedback.dpjZ-X"
 msgid "We couldn't send your message. Try again, or email us at hello@zoonk.com."
 msgstr "메시지를 보내지 못했어요. 다시 시도해 보거나 hello@zoonk.com으로 이메일을 보내 주세요."
-
-#: src/feedback/feedback-form.tsx
-msgctxt "feedback.Xx0WZV"
-msgid "Send message"
-msgstr "메시지 보내기"
 
 #: src/focus-test/focus-test-flow.tsx
 #: src/focus-test/focus-test-screens.tsx
@@ -4771,12 +4771,6 @@ msgctxt "dhP2hY"
 msgid "Course complete"
 msgstr "코스 완료"
 
-#. Shown when a learner tries to resume a paused goal while already following as many goals at once as they can without a subscription. Pausing a goal keeps its progress.
-#: src/journey/goal-actions.tsx
-msgctxt "7MouSk"
-msgid "You're following as many goals as you can for free. Pause another to resume this one, or subscribe."
-msgstr "무료로 동시에 진행할 수 있는 목표 수를 다 채웠어요. 다른 목표를 일시 중지하거나 구독하면 이 목표를 이어서 진행할 수 있어요."
-
 #: src/journey/goal-actions.tsx
 #: src/journey/rename-goal-dialog.tsx
 msgctxt "kvT_KU"
@@ -4804,7 +4798,7 @@ msgid "Resume your {goal} goal?"
 msgstr "{goal} 목표를 이어갈까요?"
 
 #: src/journey/goal-actions.tsx
-#: src/journey/journey-planless.tsx
+#: src/journey/resume-goal-bar.tsx
 msgctxt "3y9DGg"
 msgid "Resume"
 msgstr "이어가기"
@@ -5309,6 +5303,11 @@ msgstr "목표 이름"
 msgctxt "ViPPTn"
 msgid "Your plan picks up from today, starting with the lessons planned for the days you paused."
 msgstr "오늘부터 계획을 다시 이어 가요. 일시 중지한 기간에 예정되어 있던 레슨부터 시작해요."
+
+#: src/journey/resume-goal-bar.tsx
+msgctxt "DuuVCx"
+msgid "That's as many goals as you can study at once. Pause another goal to resume this one."
+msgstr "동시에 공부할 수 있는 목표 수를 다 채웠어요. 이 목표를 이어서 공부하려면 다른 목표를 일시 중지하세요."
 
 #: src/journey/roadmap-full.tsx
 #: src/onboarding/plan-receipt.tsx
@@ -14156,6 +14155,11 @@ msgstr "시작 준비 완료"
 msgctxt "uaZ--2"
 msgid "Getting your lesson ready"
 msgstr "레슨을 준비하고 있어요"
+
+#: src/wait/lesson-wait-status.tsx
+msgctxt "KPgx8T"
+msgid "Your challenge is ready"
+msgstr "챌린지가 준비됐어요"
 
 #: src/wait/lesson-wait-status.tsx
 msgctxt "4Wktrz"

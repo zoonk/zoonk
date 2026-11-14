@@ -1,6 +1,7 @@
 import SwiftUI
 
-/// The app recommends a choice only when the learner asks. Studied prerequisites stay studied.
+/// Main's prerequisites sheet: how much of what the topics build on to study. The recommended
+/// option is marked as soon as the sheet has it; studied prerequisites stay studied.
 struct PlanBasesView: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(PlanStore.self) private var store
@@ -8,9 +9,6 @@ struct PlanBasesView: View {
   @State private var preview: PlanPreviewState = .checking
   @State private var previewAttempt = 0
   @State private var recommended: BaseChoice?
-  @State private var advice: Advice = .none
-  /// Kept apart from `advice`, so a retry leaves the last answer and its Try again in place.
-  @State private var isAsking = false
 
   let editor: PlanEditor
   let goal: LearnerGoal
@@ -22,13 +20,6 @@ struct PlanBasesView: View {
     let attempt: Int
     let choices: [String]
     let plan: GoalPlan
-  }
-
-  private enum Advice: Equatable {
-    case building
-    case failed
-    case none
-    case shown
   }
 
   init(editor: PlanEditor, goal: LearnerGoal, plan: GoalPlan, bases: GoalPlan.Bases) {
@@ -60,54 +51,24 @@ struct PlanBasesView: View {
             })
         ) {
           if sharedChoice(open) == nil {
-            Text(
-              "Different choices", tableName: "Plan", comment: "Prerequisites with mixed choices"
-            )
-            .tag(BaseChoice?.none)
+            Text("Mixed", tableName: "Plan", comment: "Prerequisites with different choices")
+              .tag(BaseChoice?.none)
           }
 
           ForEach([BaseChoice.deep, .essential, .quick, .skip], id: \.self) { choice in
-            choiceLabel(choice).tag(BaseChoice?.some(choice))
+            option(choice, minutes: open.reduce(0) { $0 + minutes($1, choice) })
+              .tag(BaseChoice?.some(choice))
           }
         } label: {
           Text(
             "All prerequisites", tableName: "Plan",
             comment: "Picks one choice for every prerequisite")
         }
-        .announcesStatus(adviceLine)
-        .announcesStatus(changed.isEmpty ? nil : previewLine)
+        .pickerStyle(.inline)
 
-        switch advice {
-        case .none:
-          BusyButton(isBusy: isAsking, icon: .explain) {
-            Task { await advise() }
-          } label: {
-            Text(
-              "Recommend a choice", tableName: "Plan",
-              comment: "Asks which choice the app recommends")
-          }
-        case .building, .failed:
-          if let adviceLine {
-            Text(adviceLine)
-              .foregroundStyle(.mutedForeground)
-          }
-
-          BusyButton(isBusy: isAsking, icon: .retry) {
-            Task { await advise() }
-          } label: {
-            Text("Try again", tableName: "Plan", comment: "Asks again after it failed")
-          }
-        case .shown:
-          if let adviceLine {
-            Text(adviceLine)
-              .foregroundStyle(.mutedForeground)
-          }
-        }
-      } footer: {
-        SectionFooter {
-          Text(
-            "Already know some? Show it in a test and they leave your plan on their own.",
-            tableName: "Plan", comment: "Says known prerequisites can be tested out")
+        if let recommended {
+          Text(recommendation(recommended))
+            .foregroundStyle(.mutedForeground)
         }
       }
 
@@ -126,24 +87,12 @@ struct PlanBasesView: View {
                 set: { choices[item.skillId] = $0 })
             ) {
               ForEach(item.choices, id: \.self) { choice in
-                VStack(alignment: .leading) {
-                  choiceLabel(choice)
-                  if choice != .skip {
-                    Text(planDurationText(minutes: Double(minutes(item, choice))))
-                  }
-                }
-                .tag(choice)
+                option(choice, minutes: minutes(item, choice)).tag(choice)
               }
             } label: {
               Text(item.name)
             }
           }
-        }
-      } footer: {
-        SectionFooter {
-          Text(
-            "Prerequisites you've studied stay studied.", tableName: "Plan",
-            comment: "Says studied prerequisites keep counting")
         }
       }
 
@@ -158,9 +107,9 @@ struct PlanBasesView: View {
               ProgressView()
             }
           case .failed:
-            if let previewLine {
-              Text(previewLine)
-            }
+            Text(
+              "We couldn't check what changes.", tableName: "Plan",
+              comment: "A change's preview failed to load")
 
             Button {
               previewAttempt += 1
@@ -168,23 +117,19 @@ struct PlanBasesView: View {
               Text("Try again", tableName: "Plan", comment: "Asks again after it failed")
             }
           case .unchanged:
-            if let previewLine {
-              Text(previewLine)
-            }
+            Text(
+              "Your plan stays as it is.", tableName: "Plan", comment: "A preview with no change")
           case .changes(let previewed):
-            PlanEffectDiff(effect: previewed.effect, today: plan.today)
-
-            if let footnote = footnote(previewed) {
-              Text(footnote)
-                .typeStyle(.note)
-                .foregroundStyle(.mutedForeground)
-            }
+            PlanEffectDiff(
+              effect: previewed.effect, today: plan.today,
+              options: PlanChangeOptions(
+                byDate: plan.schedule.targetDate != nil, dateKind: editor.dateKind))
           }
 
           BusyButton(isBusy: editor.isSaving, isRow: true) {
-            Task { await save(changed) }
+            Task { await save(changed, open: open) }
           } label: {
-            Text("Save choices", tableName: "Plan", comment: "Saves the prerequisites' choices")
+            Text("Save", tableName: "Plan", comment: "Saves the prerequisites' choices")
           }
           .disabled(!preview.canSave && !editor.isSaving)
         }
@@ -194,6 +139,9 @@ struct PlanBasesView: View {
       Text("Prerequisites", tableName: "Plan", comment: "Title of the prerequisites")
     )
     .toolbarTitleDisplayMode(.inline)
+    .task {
+      await advise()
+    }
     .task(
       id: PreviewKey(
         attempt: previewAttempt,
@@ -204,14 +152,38 @@ struct PlanBasesView: View {
     }
   }
 
-  private func choiceLabel(_ choice: BaseChoice) -> Text {
+  /// An option's name and the time it takes, the recommended one marked.
+  private func option(_ choice: BaseChoice, minutes: Int) -> some View {
+    VStack(alignment: .leading, spacing: 2) {
+      choice == .skip
+        ? planBaseChoiceName(choice)
+        : Text(
+          "\(planBaseChoiceName(choice))\u{00A0}· \(planDurationText(minutes: Double(minutes)))",
+          tableName: "Plan",
+          comment: "A prerequisite option and the time it takes, like \"Every lesson · 12 hr\"")
+
+      if choice == recommended {
+        Text("Recommended", tableName: "Plan", comment: "Marks the recommended prerequisite option")
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
+      }
+    }
+  }
+
+  private func recommendation(_ choice: BaseChoice) -> String {
     switch choice {
-    case .deep: Text("In depth", tableName: "Plan", comment: "Prerequisite choice: every lesson")
+    case .deep:
+      String(
+        localized: "We recommend every lesson. Your time covers them.", table: "Plan",
+        comment: "The app's recommendation for the prerequisites")
     case .essential:
-      Text("Essentials", tableName: "Plan", comment: "Prerequisite choice: the first third")
-    case .quick:
-      Text("Quick lesson", tableName: "Plan", comment: "Prerequisite choice: one short lesson")
-    case .skip: Text("Skip", tableName: "Plan", comment: "Prerequisite choice: leave it out")
+      String(
+        localized: "We recommend the first lessons only.", table: "Plan",
+        comment: "The app's recommendation for the prerequisites")
+    case .quick, .skip:
+      String(
+        localized: "We recommend one short lesson each, so there's time for the rest.",
+        table: "Plan", comment: "The app's recommendation for the prerequisites")
     }
   }
 
@@ -229,50 +201,8 @@ struct PlanBasesView: View {
     return picked.count == 1 ? picked.first : nil
   }
 
-  private var adviceLine: String? {
-    switch advice {
-    case .building:
-      String(
-        localized: "Your plan is still being built. Try again in a moment.", table: "Plan",
-        comment: "Advice asked while the plan was being built")
-    case .failed:
-      String(
-        localized: "We couldn't get a recommendation.", table: "Plan",
-        comment: "Asking for the app's recommendation failed")
-    case .shown where recommended == .deep:
-      String(
-        localized: "Your time covers everything, so we recommend each prerequisite in depth.",
-        table: "Plan", comment: "The app's recommendation for prerequisites")
-    case .shown where recommended != nil:
-      String(
-        localized: "We recommend the essentials, so the topics that build on them make sense.",
-        table: "Plan", comment: "The app's recommendation for prerequisites")
-    case .none, .shown:
-      nil
-    }
-  }
-
-  private var previewLine: String? {
-    switch preview {
-    case .checking:
-      nil
-    case .failed:
-      String(
-        localized: "We couldn't check what changes.", table: "Plan",
-        comment: "A change's preview failed to load")
-    case .unchanged:
-      String(
-        localized: "Your plan stays as it is.", table: "Plan", comment: "A preview with no change")
-    case .changes(let previewed):
-      (PlanEffectLines.lines(previewed.effect, today: plan.today).map(\.spoken)
-        + [footnote(previewed)].compactMap(\.self)).joined(separator: "\n")
-    }
-  }
-
+  /// No recommendation shows when it can't be read: the options stand without it.
   private func advise() async {
-    isAsking = true
-    defer { isAsking = false }
-
     let goalId = goal.id
     let result = await store.write { api, token in
       try await api.basesAdvice(token: token, goalId: goalId)
@@ -280,28 +210,8 @@ struct PlanBasesView: View {
       false
     }
 
-    let answer: PlanBasesAdvice
-
-    switch result {
-    case .done(let value): answer = value
-    case .failed:
-      advice = .failed
-      return
-    case .obsolete:
-      advice = .none
-      return
-    }
-
-    guard answer.ready, let choice = answer.recommended else {
-      advice = .building
-      return
-    }
-
-    recommended = choice
-    advice = .shown
-
-    for item in bases.items where !item.studied && item.choices.contains(choice) {
-      choices[item.skillId] = choice
+    if case .done(let answer) = result, answer.ready {
+      recommended = answer.recommended
     }
   }
 
@@ -327,64 +237,10 @@ struct PlanBasesView: View {
     }
   }
 
-  /// Main's `useBasesFootnote`: the topics that come in or leave, and what the plan covers then.
-  private func footnote(_ preview: PlanChangePreview) -> String? {
-    let added = (preview.effect?.topicsAdded ?? []).flatMap(\.topics)
-    let leftOut = (preview.effect?.topicsLeftOut ?? []).flatMap(\.topics)
-    let lines = [
-      added.isEmpty
-        ? nil
-        : String(
-          localized: "\(added.count) topics come in: \(planTopicList(added)).", table: "Plan",
-          comment: "Topics a prerequisites' change brings into the plan, named"),
-      leftOut.isEmpty
-        ? nil
-        : String(
-          localized: "\(leftOut.count) topics leave: \(planTopicList(leftOut)).", table: "Plan",
-          comment: "Topics a prerequisites' change leaves out of the plan, named"),
-      preview.feasibility.map(coverageLine),
-    ].compactMap(\.self)
-
-    return lines.isEmpty ? nil : lines.joinedSentences()
-  }
-
-  private func coverageLine(_ feasibility: PlanChangePreview.Feasibility) -> String {
-    if feasibility.fits {
-      return String(
-        localized: "Everything then fits by your date.", table: "Plan",
-        comment: "A change would fit everything by the goal's date")
-    }
-
-    let share = FloatingPointFormatStyle<Double>.Percent().precision(.fractionLength(0))
-    let after = feasibility.coveredShare.formatted(share)
-    let before = (plan.feasibility?.coveredShare ?? 0).formatted(share)
-    let isExam = feasibility.measure == "exam"
-
-    if after == before {
-      return isExam
-        ? String(
-          localized: "By your date: \(after) of the exam, as now.", table: "Plan",
-          comment: "What a change covers of the exam by its date, the same as now")
-        : String(
-          localized: "By your date: \(after) of your goal, as now.", table: "Plan",
-          comment: "What a change covers of the goal by its date, the same as now")
-    }
-
-    return isExam
-      ? String(
-        localized: "By your date: \(after) of the exam, against \(before) now.", table: "Plan",
-        comment: "What a change covers of the exam by its date, then what the plan covers now")
-      : String(
-        localized: "By your date: \(after) of your goal, against \(before) now.", table: "Plan",
-        comment: "What a change covers of the goal by its date, then what the plan covers now")
-  }
-
-  private func save(_ changed: [GoalPlan.Bases.Item]) async {
+  private func save(_ changed: [GoalPlan.Bases.Item], open: [GoalPlan.Bases.Item]) async {
     let saved = await editor.change(
       [edit(changed)],
-      sentence: String(
-        localized: "Your prerequisites changed.", table: "Plan",
-        comment: "Says the prerequisites' choices were saved"))
+      sentence: planBaseChoicesStatement(open.map { choices[$0.skillId] ?? $0.choice }))
 
     if saved {
       dismiss()
@@ -396,8 +252,27 @@ struct PlanBasesView: View {
   }
 }
 
+func planBaseChoiceName(_ choice: BaseChoice) -> Text {
+  switch choice {
+  case .deep:
+    Text("Every lesson", tableName: "Plan", comment: "Prerequisite option: all its lessons")
+  case .essential:
+    Text(
+      "First lessons only", tableName: "Plan",
+      comment: "Prerequisite option: the first third of its lessons")
+  case .quick:
+    Text(
+      "One short lesson each", tableName: "Plan", comment: "Prerequisite option: one short lesson")
+  case .skip: Text("Skip", tableName: "Plan", comment: "Prerequisite option: leave it out")
+  }
+}
+
+/// "12 prerequisites · first lessons only · 4 hr".
 func planBasesSummary(_ bases: GoalPlan.Bases) -> String {
-  let minutes = bases.items.filter { !$0.studied }.reduce(0) { sum, item in
+  let open = bases.items.filter { !$0.studied }
+  let count = bases.items.count
+  let picked = Set(open.map(\.choice))
+  let minutes = open.reduce(0) { sum, item in
     switch item.choice {
     case .deep: sum + item.minutes.deep
     case .essential: sum + item.minutes.essential
@@ -405,10 +280,32 @@ func planBasesSummary(_ bases: GoalPlan.Bases) -> String {
     case .skip: sum
     }
   }
+  let time = planDurationText(minutes: Double(minutes))
 
-  let count = String(
-    localized: "\(bases.items.count) prerequisites", table: "Plan",
-    comment: "How many prerequisites the plan has")
+  guard picked.count == 1, let choice = picked.first else {
+    return String(
+      localized: "\(count) prerequisites\u{00A0}· your choices\u{00A0}· \(time)", table: "Plan",
+      comment: "The plan's prerequisites with different choices, and the time they take")
+  }
 
-  return minutes > 0 ? "\(count)\u{00A0}· \(planDurationText(minutes: Double(minutes)))" : count
+  switch choice {
+  case .deep:
+    return String(
+      localized: "\(count) prerequisites\u{00A0}· every lesson\u{00A0}· \(time)", table: "Plan",
+      comment: "The plan's prerequisites, all studied with every lesson, and the time they take")
+  case .essential:
+    return String(
+      localized: "\(count) prerequisites\u{00A0}· first lessons only\u{00A0}· \(time)",
+      table: "Plan",
+      comment: "The plan's prerequisites, all studied with their first lessons only, and the time")
+  case .quick:
+    return String(
+      localized: "\(count) prerequisites\u{00A0}· one short lesson each\u{00A0}· \(time)",
+      table: "Plan",
+      comment: "The plan's prerequisites, each studied with one short lesson, and the time")
+  case .skip:
+    return String(
+      localized: "\(count) prerequisites\u{00A0}· skipped", table: "Plan",
+      comment: "The plan's prerequisites, all skipped")
+  }
 }

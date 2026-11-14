@@ -8,7 +8,6 @@ import {
   ContributionCalendarContent,
   ContributionCalendarDay,
   ContributionCalendarGrid,
-  ContributionCalendarGridSkeleton,
   ContributionCalendarLegend,
   ContributionCalendarLegendLabel,
   ContributionCalendarLegendSwatch,
@@ -133,13 +132,5 @@ export async function UserActivity({ userId }: { userId: string }) {
         </ContributionCalendarViewport>
       </ContributionCalendar>
     </AdminSection>
-  );
-}
-
-export function UserActivitySkeleton() {
-  return (
-    <ContributionCalendar aria-hidden="true">
-      <ContributionCalendarGridSkeleton />
-    </ContributionCalendar>
   );
 }

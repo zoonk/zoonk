@@ -10,11 +10,11 @@ import {
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
+import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, CrosshairIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { createContext, use, useId, useState } from "react";
-import { ListRowChevron } from "../_components/list-group";
 import { SheetHeader } from "../_components/sheet-header";
 import { FactSegments } from "../_components/task-meta";
 import { useFocusTestRowFacts } from "../focus-test/use-focus-test-texts";
@@ -70,7 +70,7 @@ function FocusTestLink({ focusTest, href }: { focusTest: FocusTestSummary; href:
           <FactSegments facts={rowFacts(focusTest)} />
         </span>
       </span>
-      <ListRowChevron />
+      <RowChevron />
     </LearnLink>
   );
 }
@@ -204,6 +204,7 @@ function FocusChoices({ onSaved }: { onSaved: () => void }) {
           focusableWhenDisabled
           form={formId}
           icon={<CheckIcon aria-hidden="true" />}
+          size="lg"
           type="submit"
         >
           {chosen.length === 0 && current.length > 0 ? t("Remove focus") : t("Focus on these")}
@@ -262,7 +263,14 @@ export function ChooseFocus() {
   const open = useChooseFocus();
 
   return (
-    <Button className="self-start" onClick={open} size="sm" type="button" variant="outline">
+    <Button
+      aria-haspopup="dialog"
+      className="self-start"
+      onClick={open}
+      size="sm"
+      type="button"
+      variant="outline"
+    >
       {t("Choose where to focus")}
     </Button>
   );

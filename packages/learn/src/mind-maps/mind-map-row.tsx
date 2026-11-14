@@ -166,6 +166,7 @@ export function MindMapRowView({
     <div className={cn("flex flex-col gap-1", className)} data-slot="mind-map-row">
       {ready && (
         <button
+          aria-haspopup="dialog"
           className={cn(LIST_ROW_INTERACTIVE_CLASS, MIND_MAP_ROW_CLASS)}
           onClick={() => setOpen(true)}
           type="button"

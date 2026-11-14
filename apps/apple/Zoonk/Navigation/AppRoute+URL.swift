@@ -44,7 +44,7 @@ enum AppLink: Equatable {
     case (1, "today", _, _): return .tab(.today)
     case (1, "plan", _, _): return .tab(.plan)
     case (1, "buddy", _, _): return .tab(.buddy)
-    case (1, "stats", _, _): return .route(.statistics)
+    case (1, "stats", _, _): return .route(.statistics())
     case (1, "courses", _, _): return .route(.catalog)
     case (1, "mind-maps", _, _): return .route(.mindMaps())
     case (1, "exam", _, _): return .route(.exam)

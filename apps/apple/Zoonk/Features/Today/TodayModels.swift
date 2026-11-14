@@ -94,25 +94,6 @@ struct TodayView: Decodable, Equatable, Sendable {
       let date: String
     }
 
-    /// An edit the change makes, read only for the subjects a focus gives more time.
-    struct Operation: Decodable, Equatable, Sendable {
-      let kind: String
-      /// For `focusAreas`.
-      let areas: [String]?
-
-      private enum CodingKeys: String, CodingKey {
-        case kind
-        case areas
-      }
-
-      init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        kind = try container.decode(String.self, forKey: .kind)
-        areas =
-          kind == "focusAreas" ? try container.decodeIfPresent([String].self, forKey: .areas) : nil
-      }
-    }
-
     let behind: Behind?
     let canApply: Bool
     let canUndo: Bool
@@ -121,7 +102,7 @@ struct TodayView: Decodable, Equatable, Sendable {
     let id: String
     let kind: String
     let officialDate: OfficialDate?
-    let operations: [Operation]
+    let operations: [PlanChangeOperation]
     let reason: String?
     let source: String
     let status: String

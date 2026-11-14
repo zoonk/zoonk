@@ -26,7 +26,7 @@ export function PlanChoices() {
 
   return (
     <ListGroup aria-label={t("Your choices")} role="group">
-      <ListRowButton onClick={() => setBasesOpen(true)}>
+      <ListRowButton aria-haspopup="dialog" onClick={() => setBasesOpen(true)}>
         <ListRowLeading>
           <ListRowIcon>
             <LayersIcon />

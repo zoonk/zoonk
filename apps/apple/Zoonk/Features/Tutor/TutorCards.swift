@@ -1,6 +1,7 @@
 import SwiftUI
 
-/// Undo shows while the plan is still as the change left it.
+/// Main's `TutorPlanChange`: the question, one consequence, "See all changes" and the two answers;
+/// once answered, what it did and Undo while the plan is still as the change left it.
 struct TutorPlanChangeCard: View {
   let change: Components.Schemas.PlanChange
   let turnID: String
@@ -8,80 +9,113 @@ struct TutorPlanChangeCard: View {
 
   @State private var isSaving = false
   @State private var failed = false
+  /// The learner's last answer was to apply it.
+  @State private var accepted = false
   @AccessibilityFocusState private var isResultFocused: Bool
 
+  private struct Facts: Decodable {
+    struct OfficialDate: Decodable {
+      let date: String
+    }
+
+    let effect: PlanEffect?
+    let officialDate: OfficialDate?
+    let operations: [PlanChangeOperation]
+  }
+
   var body: some View {
+    let facts = try? PracticeJSON.recode(change, as: Facts.self)
+    let words = PlanChangeWords.words(
+      kind: change.kind, source: change.source, status: change.status.rawValue,
+      operations: facts?.operations ?? [], reason: change.reason, effect: facts?.effect,
+      dateKind: .unknown)
+    let today = PlanDate.isoDate(.now)
+    // Accepted, and still proposed: its numbers moved, so it asks again with today's.
+    let repriced = accepted && change.status == .proposed
+
     GroupBox {
       VStack(alignment: .leading, spacing: 12) {
-        if let reason = change.reason {
-          Text(reason)
+        VStack(alignment: .leading, spacing: 4) {
+          Text(words.title)
+            .typeStyle(.body.weight(.semibold))
+
+          if let why = words.why {
+            Text(why)
+              .typeStyle(.note)
+              .foregroundStyle(.mutedForeground)
+          }
         }
 
-        if let focusEffect {
-          Text(focusEffect)
-            .typeStyle(.note)
-            .foregroundStyle(.mutedForeground)
+        if change.status == .proposed {
+          PlanEffectDiff(effect: facts?.effect, today: today, repriced: repriced)
+
+          if let date = facts?.officialDate?.date {
+            Text(
+              "The official exam date is \(PlanDate.longDay(date, today: today)).",
+              tableName: "Tutor",
+              comment:
+                "Under a change that moves the exam off its official date; the argument is a day like \"May 5\""
+            )
+            .typeStyle(.note.weight(.medium))
+          }
         }
 
         if let status = statusLine {
-          status
+          Text(status)
             .typeStyle(.note)
             .foregroundStyle(.mutedForeground)
             .accessibilityFocused($isResultFocused)
         }
 
-        actions
+        actions(overridesNotice: facts?.officialDate != nil)
 
         if failed {
           FailureLine(
             message: LocalizedStringResource(
-              "We couldn't save your answer. Try again.", table: "Tutor",
+              "That didn't save. Try again.", table: "Tutor",
               comment: "Answering a plan change the buddy proposed failed")
           )
           .typeStyle(.note)
         }
       }
       .frame(maxWidth: .infinity, alignment: .leading)
-    } label: {
-      HStack {
-        Label {
-          Text(
-            "Change to your plan", tableName: "Tutor",
-            comment: "Title of a plan change the buddy proposed")
-        } icon: {
-          Image(systemName: "calendar.badge.clock")
-        }
-
-        if isForOneWeek {
-          Spacer()
-          Text("1 week", tableName: "Tutor", comment: "A plan change that lasts one week").chip()
-        }
-      }
     }
+    .accessibilityElement(children: .contain)
   }
 
   @ViewBuilder
-  private var actions: some View {
+  private func actions(overridesNotice: Bool) -> some View {
     switch change.status {
     case .proposed:
-      ButtonRow {
+      // "Change my plan" takes the room "Not now" leaves.
+      HStack(spacing: 8) {
+        Button {
+          decide(.declined)
+        } label: {
+          overridesNotice
+            ? Text(
+              "Keep official date", tableName: "Tutor",
+              comment: "Declines a change and keeps the exam's official date")
+            : Text(
+              "Not now", tableName: "Tutor", comment: "Declines a plan change the buddy proposed")
+        }
+        .buttonStyle(.outline)
+
         if change.canApply {
           Button {
             decide(.applied)
           } label: {
-            Text("Apply", tableName: "Tutor", comment: "Applies a plan change the buddy proposed")
-              .frame(maxWidth: .infinity)
+            overridesNotice
+              ? Text(
+                "Use my date", tableName: "Tutor",
+                comment: "Applies a change that moves the exam off its official date")
+              : Text(
+                "Change my plan", tableName: "Tutor",
+                comment: "Applies a plan change the buddy proposed")
           }
           .buttonStyle(.mainAction)
+          .buttonSizing(.flexible)
         }
-
-        Button {
-          decide(.declined)
-        } label: {
-          Text("Not now", tableName: "Tutor", comment: "Declines a plan change the buddy proposed")
-            .frame(maxWidth: .infinity)
-        }
-        .buttonStyle(.outline)
       }
       .disabled(isSaving)
     case .applied where change.canUndo:
@@ -96,60 +130,24 @@ struct TutorPlanChangeCard: View {
     }
   }
 
-  private var statusLine: Text? {
+  private var statusLine: String? {
     switch change.status {
     case .applied:
-      switch change.todaySession {
-      case .changed:
-        Text(
-          "It's in your plan, and today's session follows it.", tableName: "Tutor",
-          comment: "A plan change was applied")
-      case .unchanged:
-        Text(
-          "It's in your plan from your next study day. Today's session stays as it is.",
-          tableName: "Tutor", comment: "A plan change was applied")
-      case nil:
-        Text(
-          "Your plan follows it from now on.", tableName: "Tutor",
-          comment: "A plan change was applied")
-      }
+      PlanChangeWords.appliedLine(todaySession: change.todaySession?.rawValue)
     case .declined:
-      Text(
-        "Not applied. Your plan stays as it was.", tableName: "Tutor",
+      String(
+        localized: "Your plan stays as it was.", table: "Tutor",
         comment: "A plan change was declined")
     case .undone:
-      Text(
-        "Undone. Your plan is back as it was.", tableName: "Tutor",
+      String(
+        localized: "Undone. Your plan is back as it was.", table: "Tutor",
         comment: "A plan change was undone")
     case .replaced:
-      Text(
-        "A newer suggestion replaced this one.", tableName: "Tutor",
+      String(
+        localized: "A newer suggestion replaced this one.", table: "Tutor",
         comment: "A newer plan change replaced this one")
     case .proposed:
       nil
-    }
-  }
-
-  /// Only a focus says its effect here, leading with what each subject gains, as on Today.
-  private var focusEffect: String? {
-    guard change.status == .proposed,
-      let operations = try? PracticeJSON.recode(
-        change.operations, as: [TodayView.PlanChange.Operation].self),
-      operations.contains(where: { $0.kind == "focusAreas" })
-    else {
-      return nil
-    }
-
-    let effect = change.effect.flatMap { try? PracticeJSON.recode($0, as: PlanEffect.self) }
-    return planProposalEffectText(effect, setsFocus: true, today: PlanDate.isoDate(.now))
-  }
-
-  private var isForOneWeek: Bool {
-    change.operations.contains { operation in
-      switch operation.value1 {
-      case .case3, .case4: true
-      default: false
-      }
     }
   }
 
@@ -163,6 +161,7 @@ struct TutorPlanChangeCard: View {
 
       switch result {
       case .done:
+        accepted = decision == .applied
         // The buttons leave with the answer, so VoiceOver lands on what it did.
         isResultFocused = true
       case .failed:

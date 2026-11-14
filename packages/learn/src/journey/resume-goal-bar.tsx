@@ -1,17 +1,19 @@
 "use client";
 
-import { setGoalStatusAction } from "@/app/[lang]/(app)/(learn)/_components/goal-status-action";
-import { EnterButton } from "@zoonk/learn/enter-button";
-import { type GoalStatusOutcome } from "@zoonk/learn/journey";
-import { ChangeSaveError } from "@zoonk/learn/save-error";
 import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
+import { EnterButton } from "../_components/enter-button";
+import { ChangeSaveError } from "../_components/save-error";
+import { type GoalStatusOutcome } from "./goal-actions";
 
-type ResumeFailure = Exclude<GoalStatusOutcome, "saved">;
-
-function ResumeError({ outcome }: { outcome: ResumeFailure }) {
+export function useGoalLimitText() {
   const t = useExtracted();
+  return t("That's as many goals as you can study at once. Pause another goal to resume this one.");
+}
+
+function ResumeError({ outcome }: { outcome: Exclude<GoalStatusOutcome, "saved"> }) {
+  const limitText = useGoalLimitText();
 
   if (outcome !== "limitReached") {
     return <ChangeSaveError />;
@@ -19,23 +21,29 @@ function ResumeError({ outcome }: { outcome: ResumeFailure }) {
 
   return (
     <p className="text-destructive-text text-sm text-pretty" role="alert">
-      {t("That's as many goals as you can study at once. Pause another goal to resume this one.")}
+      {limitText}
     </p>
   );
 }
 
-/** A paused goal's bar: `children` (the other way on), then Resume. */
-export function ResumeGoalBar({ children, goalId }: { children: React.ReactNode; goalId: string }) {
+/**
+ * A paused goal's bar: `children` (another way on), then Resume. Once `onResume` saves, the host
+ * renders the goal again; the button stays busy until then.
+ */
+export function ResumeGoalBar({
+  children,
+  onResume,
+}: {
+  children?: React.ReactNode;
+  onResume: () => Promise<GoalStatusOutcome>;
+}) {
   const t = useExtracted();
   const [outcome, setOutcome] = useState<GoalStatusOutcome | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  // The resume expires the learner's goals, so Today renders again; the button stays busy until then.
   const resume = () => {
     startTransition(async () => {
-      setOutcome(
-        await setGoalStatusAction(goalId, "active").catch((): GoalStatusOutcome => "failed"),
-      );
+      setOutcome(await onResume().catch((): GoalStatusOutcome => "failed"));
     });
   };
 

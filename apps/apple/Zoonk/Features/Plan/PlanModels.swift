@@ -2,12 +2,6 @@ import Foundation
 
 /// Every date is a calendar day.
 struct GoalPlan: Decodable, Equatable, Sendable {
-  struct Access: Decodable, Equatable, Sendable {
-    /// A free exam plan past its first week: new lessons, challenges and mocks come with Plus.
-    let freeWeekOver: Bool
-    let mocksRequirePlus: Bool
-  }
-
   struct Area: Decodable, Equatable, Identifiable, Sendable {
     let focused: Bool
     let name: String
@@ -209,7 +203,6 @@ struct GoalPlan: Decodable, Equatable, Sendable {
     let targetMinutes: Double
   }
 
-  let access: Access
   let areas: [Area]
   let bases: Bases?
   let course: Course?
@@ -377,8 +370,7 @@ struct PlanChapter: Decodable, Equatable, Identifiable, Sendable {
 
   var isSkipped: Bool { !skills.isEmpty || testedOut }
 
-  /// Lessons on the way within the weeks the plan writes ahead: the phase says so in a line instead
-  /// of a row.
+  /// Lessons on the way within the weeks the plan writes ahead: no row of their own.
   var isWritingAhead: Bool { writing && !far && skills.isEmpty }
 }
 
@@ -470,7 +462,7 @@ struct PlanEnd: Decodable, Equatable, Sendable {
   struct Certificates: Decodable, Equatable, Sendable {
     struct Earned: Decodable, Equatable, Sendable {
       let code: String
-      /// Earned without Plus: the button carries the Plus mark.
+      /// Earned without a subscription.
       let locked: Bool
     }
 
@@ -735,6 +727,22 @@ enum PlanDate {
     return date.formatted(style)
   }
 
+  /// Main's "long" date: "May 5", with the year when it isn't this year's.
+  static func longDay(_ isoDate: String, today: String) -> String {
+    guard let date = date(isoDate) else {
+      return isoDate
+    }
+
+    let style = Date.FormatStyle(timeZone: .gmt).month(.wide).day()
+    return date.formatted(isoDate.prefix(4) == today.prefix(4) ? style : style.year())
+  }
+
+  /// "Monday, May 5".
+  static func weekdayDay(_ isoDate: String) -> String {
+    date(isoDate)?.formatted(
+      Date.FormatStyle(timeZone: .gmt).weekday(.wide).month(.wide).day()) ?? isoDate
+  }
+
   static func monthText(_ isoDate: String, today: String) -> String {
     guard let date = date(isoDate) else {
       return isoDate
@@ -757,6 +765,11 @@ enum PlanDate {
 
     let style = Date.FormatStyle(timeZone: .gmt)
     return date.formatted(month ? style.month(.wide).year() : style.month(.wide).day().year())
+  }
+
+  /// "Monday".
+  static func weekdayName(_ isoDate: String) -> String {
+    date(isoDate)?.formatted(Date.FormatStyle(timeZone: .gmt).weekday(.wide)) ?? ""
   }
 
   static func weekday(_ isoDate: String) -> String {

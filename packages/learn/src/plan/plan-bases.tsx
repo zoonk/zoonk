@@ -22,7 +22,13 @@ export function PlanBases() {
         <h3 className="text-sm font-medium">{t("Prerequisites")}</h3>
         <p className="text-muted-foreground text-sm text-pretty">{summaryText(bases)}</p>
       </div>
-      <Button className="self-start" onClick={() => setOpen(true)} size="sm" variant="outline">
+      <Button
+        aria-haspopup="dialog"
+        className="self-start"
+        onClick={() => setOpen(true)}
+        size="sm"
+        variant="outline"
+      >
         {t("Change")}
       </Button>
       <PlanBasesSheet bases={bases} onOpenChange={setOpen} open={open} />

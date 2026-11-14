@@ -134,6 +134,7 @@ function BasesFooter({
         focusableWhenDisabled
         onClick={onSave}
         ref={saveButton}
+        size="lg"
       >
         {t("Save")}
       </Button>

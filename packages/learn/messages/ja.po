@@ -3824,6 +3824,11 @@ msgid "myemail@gmail.com"
 msgstr "taro@gmail.com"
 
 #: src/feedback/feedback-form.tsx
+msgctxt "feedback.Xx0WZV"
+msgid "Send message"
+msgstr "メッセージを送信する"
+
+#: src/feedback/feedback-form.tsx
 msgctxt "feedback.lknSi2"
 msgid "This screen is attached"
 msgstr "この画面が添付されています"
@@ -3852,11 +3857,6 @@ msgstr "メッセージを送信しました！まもなく返信します。"
 msgctxt "feedback.dpjZ-X"
 msgid "We couldn't send your message. Try again, or email us at hello@zoonk.com."
 msgstr "メッセージを送信できませんでした。もう一度試すか、hello@zoonk.comにメールでご連絡ください。"
-
-#: src/feedback/feedback-form.tsx
-msgctxt "feedback.Xx0WZV"
-msgid "Send message"
-msgstr "メッセージを送信する"
 
 #: src/focus-test/focus-test-flow.tsx
 #: src/focus-test/focus-test-screens.tsx
@@ -4771,12 +4771,6 @@ msgctxt "dhP2hY"
 msgid "Course complete"
 msgstr "コース修了"
 
-#. Shown when a learner tries to resume a paused goal while already following as many goals at once as they can without a subscription. Pausing a goal keeps its progress.
-#: src/journey/goal-actions.tsx
-msgctxt "7MouSk"
-msgid "You're following as many goals as you can for free. Pause another to resume this one, or subscribe."
-msgstr "無料で同時に取り組める目標の数が上限に達しています。この目標を再開するには、ほかの目標を一時停止するか、サブスクリプションに登録してください。"
-
 #: src/journey/goal-actions.tsx
 #: src/journey/rename-goal-dialog.tsx
 msgctxt "kvT_KU"
@@ -4804,7 +4798,7 @@ msgid "Resume your {goal} goal?"
 msgstr "目標「{goal}」を再開しますか？"
 
 #: src/journey/goal-actions.tsx
-#: src/journey/journey-planless.tsx
+#: src/journey/resume-goal-bar.tsx
 msgctxt "3y9DGg"
 msgid "Resume"
 msgstr "再開する"
@@ -5309,6 +5303,11 @@ msgstr "目標名"
 msgctxt "ViPPTn"
 msgid "Your plan picks up from today, starting with the lessons planned for the days you paused."
 msgstr "今日から学習計画を再開し、休んでいた日に予定されていたレッスンから進めます。"
+
+#: src/journey/resume-goal-bar.tsx
+msgctxt "DuuVCx"
+msgid "That's as many goals as you can study at once. Pause another goal to resume this one."
+msgstr "同時に学習できる目標の上限に達しています。ほかの目標を一時停止すると、この目標を再開できます。"
 
 #: src/journey/roadmap-full.tsx
 #: src/onboarding/plan-receipt.tsx
@@ -14156,6 +14155,11 @@ msgstr "開始できます"
 msgctxt "uaZ--2"
 msgid "Getting your lesson ready"
 msgstr "レッスンを準備しています"
+
+#: src/wait/lesson-wait-status.tsx
+msgctxt "KPgx8T"
+msgid "Your challenge is ready"
+msgstr "チャレンジの準備ができました"
 
 #: src/wait/lesson-wait-status.tsx
 msgctxt "4Wktrz"

@@ -3824,6 +3824,11 @@ msgid "myemail@gmail.com"
 msgstr "monadresse@gmail.com"
 
 #: src/feedback/feedback-form.tsx
+msgctxt "feedback.Xx0WZV"
+msgid "Send message"
+msgstr "Envoyer le message"
+
+#: src/feedback/feedback-form.tsx
 msgctxt "feedback.lknSi2"
 msgid "This screen is attached"
 msgstr "Cet écran est joint"
@@ -3852,11 +3857,6 @@ msgstr "Message envoyé ! Nous te répondrons bientôt."
 msgctxt "feedback.dpjZ-X"
 msgid "We couldn't send your message. Try again, or email us at hello@zoonk.com."
 msgstr "Nous n’avons pas pu envoyer ton message. Réessaie ou écris-nous à hello@zoonk.com."
-
-#: src/feedback/feedback-form.tsx
-msgctxt "feedback.Xx0WZV"
-msgid "Send message"
-msgstr "Envoyer le message"
 
 #: src/focus-test/focus-test-flow.tsx
 #: src/focus-test/focus-test-screens.tsx
@@ -4771,12 +4771,6 @@ msgctxt "dhP2hY"
 msgid "Course complete"
 msgstr "Cours terminé"
 
-#. Shown when a learner tries to resume a paused goal while already following as many goals at once as they can without a subscription. Pausing a goal keeps its progress.
-#: src/journey/goal-actions.tsx
-msgctxt "7MouSk"
-msgid "You're following as many goals as you can for free. Pause another to resume this one, or subscribe."
-msgstr "Tu as atteint la limite d’objectifs de la formule gratuite. Mets-en un autre en pause pour reprendre celui-ci, ou abonne-toi."
-
 #: src/journey/goal-actions.tsx
 #: src/journey/rename-goal-dialog.tsx
 msgctxt "kvT_KU"
@@ -4804,7 +4798,7 @@ msgid "Resume your {goal} goal?"
 msgstr "Reprendre ton objectif {goal} ?"
 
 #: src/journey/goal-actions.tsx
-#: src/journey/journey-planless.tsx
+#: src/journey/resume-goal-bar.tsx
 msgctxt "3y9DGg"
 msgid "Resume"
 msgstr "Reprendre"
@@ -5309,6 +5303,11 @@ msgstr "Nom"
 msgctxt "ViPPTn"
 msgid "Your plan picks up from today, starting with the lessons planned for the days you paused."
 msgstr "Ton plan reprend aujourd’hui, en commençant par les leçons prévues pendant ta pause."
+
+#: src/journey/resume-goal-bar.tsx
+msgctxt "DuuVCx"
+msgid "That's as many goals as you can study at once. Pause another goal to resume this one."
+msgstr "Tu as atteint la limite d’objectifs en cours. Mets un autre objectif en pause pour reprendre celui-ci."
 
 #: src/journey/roadmap-full.tsx
 #: src/onboarding/plan-receipt.tsx
@@ -14156,6 +14155,11 @@ msgstr "Prêt à démarrer"
 msgctxt "uaZ--2"
 msgid "Getting your lesson ready"
 msgstr "Préparation de ta leçon"
+
+#: src/wait/lesson-wait-status.tsx
+msgctxt "KPgx8T"
+msgid "Your challenge is ready"
+msgstr "Ton défi est prêt"
 
 #: src/wait/lesson-wait-status.tsx
 msgctxt "4Wktrz"

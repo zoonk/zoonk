@@ -93,30 +93,52 @@ function CommandDialogDescription({
 }
 
 /**
- * Its text stays 16px on phones so iOS Safari doesn't zoom in. `cancelLabel` closes the palette:
- * the word after the field on a phone, and from `sm` the field's "Esc" keycap as a button.
+ * The search field over a list: its glass, the field's ring and the text, at every width. Its text
+ * stays 16px on phones so iOS Safari doesn't zoom in. `className` is the field's box, and `children`
+ * sit at its end.
+ */
+function CommandSearchField({
+  children,
+  className,
+  ...props
+}: Omit<AutocompleteInputProps, "children"> & { children?: React.ReactNode }) {
+  return (
+    <div
+      className={cn(
+        "ring-input focus-within:ring-foreground flex h-11 min-w-0 flex-1 items-center gap-2.5 rounded-lg px-3 ring-[1.5px] ring-inset",
+        className,
+      )}
+      data-slot="command-search-field"
+    >
+      <SearchIcon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
+      <Autocomplete.Input
+        className="placeholder:text-muted-foreground sm:text-reading h-full min-w-0 flex-1 bg-transparent text-base outline-none disabled:cursor-not-allowed disabled:opacity-50"
+        data-slot="command-input"
+        {...props}
+      />
+      {children}
+    </div>
+  );
+}
+
+/**
+ * The palette's field. `cancelLabel` closes the palette: the word after the field on a phone, and
+ * from `sm` the field's "Esc" keycap as a button, where the field fills the palette's top edge.
  */
 function CommandInput({
   cancelLabel,
-  className,
   ...props
-}: AutocompleteInputProps & { cancelLabel: string }) {
+}: Omit<AutocompleteInputProps, "children" | "className"> & { cancelLabel: string }) {
   return (
     <div
       className="flex items-center gap-3 px-4 pt-2.5 pb-2 sm:border-b sm:p-0"
       data-slot="command-input-wrapper"
     >
-      <div className="ring-input focus-within:ring-foreground flex h-11 min-w-0 flex-1 items-center gap-2.5 rounded-lg px-3 ring-[1.5px] ring-inset sm:h-13 sm:gap-3 sm:rounded-none sm:px-5 sm:ring-0 sm:focus-within:ring-0">
-        <SearchIcon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
-        <Autocomplete.Input
-          autoFocus
-          className={cn(
-            "placeholder:text-muted-foreground sm:text-reading h-full min-w-0 flex-1 bg-transparent text-base outline-none disabled:cursor-not-allowed disabled:opacity-50",
-            className,
-          )}
-          data-slot="command-input"
-          {...props}
-        />
+      <CommandSearchField
+        autoFocus
+        className="sm:h-13 sm:gap-3 sm:rounded-none sm:px-5 sm:ring-0 sm:focus-within:ring-0"
+        {...props}
+      >
         <DialogClose
           aria-keyshortcuts="Escape"
           className="hit-area focus-visible:ring-ring/50 hover:[&>kbd]:text-foreground hover:[&>kbd]:ring-foreground/25 relative hidden shrink-0 rounded-sm outline-none focus-visible:ring-[3px] sm:inline-flex"
@@ -124,7 +146,7 @@ function CommandInput({
           <span className="sr-only">{cancelLabel}</span>
           <Kbd>Esc</Kbd>
         </DialogClose>
-      </div>
+      </CommandSearchField>
 
       <DialogClose className="hit-area focus-visible:ring-ring/50 relative shrink-0 rounded-md text-sm font-medium outline-none focus-visible:ring-[3px] sm:hidden">
         {cancelLabel}
@@ -252,4 +274,5 @@ export {
   CommandItem,
   CommandKeyHints,
   CommandList,
+  CommandSearchField,
 };
