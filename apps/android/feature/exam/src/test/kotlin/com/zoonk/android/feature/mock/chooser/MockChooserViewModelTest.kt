@@ -5,7 +5,6 @@ import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.feature.exam.GOAL
-import com.zoonk.android.feature.exam.mockOptions
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
@@ -45,7 +44,7 @@ class MockChooserViewModelTest {
 
     private fun TestScope.viewModel(): MockChooserViewModel {
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))
-        return MockChooserViewModel(GOAL, MockStarter(api, cache), session) { runs }
+        return MockChooserViewModel(GOAL, MockStarter(api, cache), session, generations = { runs })
     }
 
     @Test
@@ -54,7 +53,7 @@ class MockChooserViewModelTest {
             api.starts = listOf({ short() }, { short() }, { started() })
             val viewModel = viewModel()
 
-            viewModel.start(full, "full:1:", mockOptions(""))
+            viewModel.start(full, "full:1:")
             advanceUntilIdle()
             assertEquals(
                 ChooserStatus.Short("full:1:", full, MockStartOutcome.Short(40, 90, 130, AnytimeMock.Limit.DAY)),
@@ -64,7 +63,7 @@ class MockChooserViewModelTest {
 
             viewModel.stayChoosing()
             assertEquals(ChooserStatus.Choosing, viewModel.status.value)
-            viewModel.start(math, "area::Mathematics", mockOptions(""))
+            viewModel.start(math, "area::Mathematics")
             advanceUntilIdle()
             viewModel.startShort()
             advanceUntilIdle()
@@ -84,7 +83,7 @@ class MockChooserViewModelTest {
                 )
             val viewModel = viewModel()
 
-            viewModel.start(full, "full:1:", mockOptions(""))
+            viewModel.start(full, "full:1:")
             advanceUntilIdle()
 
             assertEquals(listOf("run-1"), runs.followed)
@@ -99,7 +98,7 @@ class MockChooserViewModelTest {
             api.writes = listOf { writing(MockQuestionsGeneration.Status.GENERATING, "run-1") }
             val viewModel = viewModel()
 
-            viewModel.start(full, "full:1:", mockOptions(""))
+            viewModel.start(full, "full:1:")
             viewModel.onShown(false)
             advanceUntilIdle()
             assertEquals(listOf(full to MockStartAsk.First), api.started)
@@ -117,7 +116,7 @@ class MockChooserViewModelTest {
             api.writes = listOf { writing(MockQuestionsGeneration.Status.GENERATING, "run-1") }
             val viewModel = viewModel()
 
-            viewModel.start(full, "full:1:", mockOptions(""))
+            viewModel.start(full, "full:1:")
             viewModel.onShown(false)
             advanceUntilIdle()
             session.session = AuthenticatedSession("bea", "token-b", "local-b")
@@ -135,7 +134,7 @@ class MockChooserViewModelTest {
             api.starts = listOf({ NEEDS_QUESTIONS }, { started() })
             val viewModel = viewModel()
 
-            viewModel.start(full, "full:1:", mockOptions(""))
+            viewModel.start(full, "full:1:")
             advanceUntilIdle()
 
             assertEquals(emptyList<String>(), runs.followed)
@@ -150,7 +149,7 @@ class MockChooserViewModelTest {
             api.writes = listOf { throw usageLimit() }
             val viewModel = viewModel()
 
-            viewModel.start(full, "full:1:", mockOptions(""))
+            viewModel.start(full, "full:1:")
             advanceUntilIdle()
 
             assertEquals(ChooserStatus.Refused(Limit.Reached(LimitTier.Free, LimitPeriod.Day)), viewModel.status.value)
