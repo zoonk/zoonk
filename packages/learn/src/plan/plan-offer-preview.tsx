@@ -293,7 +293,9 @@ export function OtherOptions({
         </DropdownMenuItem>
       )}
       {canChooseFocus && (
-        <DropdownMenuItem onClick={chooseFocus}>{t("Choose where to focus")}</DropdownMenuItem>
+        <DropdownMenuItem aria-haspopup="dialog" onClick={chooseFocus}>
+          {t("Choose where to focus")}
+        </DropdownMenuItem>
       )}
       {course && !course.on && !studyEverythingLeads && (
         <DropdownMenuItem onClick={() => studyEverything(course)}>

@@ -27,6 +27,7 @@ export function DidntGetItButton() {
 
   return (
     <Button
+      aria-haspopup={buddy.popup}
       className="text-muted-foreground w-fit"
       edge="start"
       data-slot="didnt-get-it"

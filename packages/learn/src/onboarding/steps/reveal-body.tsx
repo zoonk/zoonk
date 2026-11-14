@@ -90,7 +90,9 @@ function RevealActions({
         </>
       }
     >
-      <OnboardingSecondaryButton onClick={onAdjust}>{t("Adjust")}</OnboardingSecondaryButton>
+      <OnboardingSecondaryButton aria-haspopup="dialog" onClick={onAdjust}>
+        {t("Adjust")}
+      </OnboardingSecondaryButton>
 
       {/* A submit, so a press before the page hydrates starts once it does. */}
       <form action={() => onStart()} className="contents">

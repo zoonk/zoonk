@@ -192,6 +192,7 @@ export function StudyEverything({ course }: { course: FullCourse }) {
 
   return (
     <Button
+      aria-haspopup="dialog"
       className="self-start"
       onClick={() => open(course)}
       size="sm"

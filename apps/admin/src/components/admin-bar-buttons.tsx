@@ -31,6 +31,7 @@ export function AdminBarMenu({ children, label }: { children: React.ReactNode; l
 export function AdminBarMenuButton() {
   return (
     <Button
+      aria-haspopup="dialog"
       className="lg:hidden"
       edge="start"
       onClick={openAdminMenu}
