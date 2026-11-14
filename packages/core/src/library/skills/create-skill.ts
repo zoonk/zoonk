@@ -1,5 +1,5 @@
 import "server-only";
-import { type CourseLevel, type Skill, prisma } from "@zoonk/db";
+import { type CourseLevel, type Skill, type TransactionClient, prisma } from "@zoonk/db";
 import { assertIdentityKeyScope } from "@zoonk/utils/identity-key";
 import { normalizeString } from "@zoonk/utils/string";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
@@ -82,23 +82,31 @@ export async function setSkillsPrerequisites({
       tx,
     });
 
-    await tx.skillPrerequisite.deleteMany({
-      where: {
-        NOT: {
-          OR: updates.map(({ kept, skillId }) => ({ prerequisiteId: { in: kept }, skillId })),
-        },
-        prerequisiteId: { in: [...among] },
-        skillId: { in: updates.map((update) => update.skillId) },
-      },
-    });
-
-    await tx.skillPrerequisite.createMany({
-      data: updates.flatMap(({ kept, skillId }) =>
-        kept.map((prerequisiteId) => ({ prerequisiteId, skillId })),
-      ),
-      skipDuplicates: true,
-    });
+    await writeSkillsPrerequisites(tx, { among, updates });
   });
 
   revalidateCacheTags(updates.map(({ skillId }) => getSkillCacheTag(skillId)));
+}
+
+export async function writeSkillsPrerequisites(
+  tx: TransactionClient,
+  {
+    among,
+    updates,
+  }: { among: ReadonlySet<string>; updates: readonly { kept: string[]; skillId: string }[] },
+): Promise<void> {
+  await tx.skillPrerequisite.deleteMany({
+    where: {
+      NOT: { OR: updates.map(({ kept, skillId }) => ({ prerequisiteId: { in: kept }, skillId })) },
+      prerequisiteId: { in: [...among] },
+      skillId: { in: updates.map((update) => update.skillId) },
+    },
+  });
+
+  await tx.skillPrerequisite.createMany({
+    data: updates.flatMap(({ kept, skillId }) =>
+      kept.map((prerequisiteId) => ({ prerequisiteId, skillId })),
+    ),
+    skipDuplicates: true,
+  });
 }

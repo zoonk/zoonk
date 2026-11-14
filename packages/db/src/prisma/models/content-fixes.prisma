@@ -1,8 +1,11 @@
 enum ContentFixStatus {
   proposed
+  approved
   applied
   rejected
   stale
+  /// Its proposer took it back before anyone approved it.
+  withdrawn
 }
 
 enum ContentFixUnit {
@@ -10,14 +13,30 @@ enum ContentFixUnit {
   chapter
   lesson
   item
+  levelTest          @map("level_test")
+  skill
+  warmUp             @map("warm_up")
+  source
+  mediaAsset         @map("media_asset")
+  examBlueprint      @map("exam_blueprint")
+  itemSet            @map("item_set")
+  word
+  sentence
+  examSkillGraph     @map("exam_skill_graph")
+  languageSkillGraph @map("language_skill_graph")
+  product
+  organization
 }
 
 /// A reviewed change to shared Library content. Staff propose it from the CLI, and a staff person
 /// approves it in Admin with a passkey; approving applies `changes` only while every field still
-/// holds its `before`. Content ids are plain columns, so the record outlives what it changed.
+/// holds its `before`. Content ids are plain columns, so the record outlives what it changed. A
+/// passkey approves the selected fixes of one batch together; each then applies on its own.
 model ContentFix {
   id                String           @id @default(dbgenerated("uuidv7()")) @db.Uuid
   status            ContentFixStatus @default(proposed)
+  /// The fixes proposed together, reviewed and approved on one page.
+  batchId           String           @map("batch_id") @db.Uuid
   unit              ContentFixUnit
   unitId            String           @map("unit_id") @db.Uuid
   reason            String
@@ -35,16 +54,24 @@ model ContentFix {
   proposerClientId  String           @map("proposer_client_id")
   deciderId         String?          @map("decider_id") @db.Uuid
   decider           User?            @relation("ContentFixDecider", fields: [deciderId], references: [id], onDelete: SetNull)
+  /// When it applied, went stale, was rejected or was withdrawn; an approved fix waiting to apply
+  /// has none.
   decidedAt         DateTime?        @map("decided_at")
   /// Why approving found the content no longer as the fix described it.
   staleReason       String?          @map("stale_reason")
   /// The WebAuthn challenge the approval's assertion must sign, cleared once an approval uses it.
   approvalChallenge String?          @map("approval_challenge")
   approvalExpiresAt DateTime?        @map("approval_expires_at")
+  /// Set while the fix waits for the clip of its new word or sentence; approving waits for it too.
+  voiceOwedAt       DateTime?        @map("voice_owed_at")
+  /// Core's `contentFixVoiceSchema`: the clip voiced for the fix's text, which approving writes with
+  /// it, or why it couldn't be voiced.
+  voice             Json?
   createdAt         DateTime         @default(now()) @map("created_at")
   updatedAt         DateTime         @default(now()) @updatedAt @map("updated_at")
 
   @@index([status, createdAt])
+  @@index([batchId])
   @@index([unit, unitId])
   @@index([feedbackId])
   @@index([revertsId])

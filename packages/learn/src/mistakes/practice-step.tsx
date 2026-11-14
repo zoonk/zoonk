@@ -10,9 +10,10 @@ import {
 } from "../_components/feedback-panel";
 import { QuestionDontKnow, QuestionMainAction } from "../_components/question-actions";
 import { ItemText } from "../questions/item-text";
+import { RightAnswerLine } from "../questions/right-answer-line";
 import {
   WorkedSteps,
-  useAnswerText,
+  useAnswerLine,
   useVerdict,
 } from "../session/question-block/question-feedback";
 import { BankPracticeQuestion } from "./bank-practice-question";
@@ -128,22 +129,18 @@ function PracticeFeedback({
   const t = useExtracted();
   const verdict = useVerdict({ ...feedback, notSure });
   const fixed = feedback.fixedMistakeIds.length;
-  const answerText = useAnswerText(trueFalseLabels);
+  const answerLine = useAnswerLine(trueFalseLabels);
 
   const correct =
     !feedback.isCorrect && question.format !== "multipleChoice" && question.format !== "trueFalse"
-      ? answerText({ answer: feedback.correctAnswer, question })
+      ? answerLine({ answer: feedback.correctAnswer, question })
       : null;
 
   return (
     <FeedbackPanel aria-label={t("Answer feedback")} aria-live="polite">
       <FeedbackVerdict tone={verdict.tone}>{verdict.label}</FeedbackVerdict>
 
-      {correct && (
-        <FeedbackExplanation>
-          {t("Right answer: {answer}", { answer: correct })}
-        </FeedbackExplanation>
-      )}
+      {correct && <RightAnswerLine answer={correct} />}
       <WorkedSteps steps={feedback.workedSteps} />
 
       {feedback.explanation && (

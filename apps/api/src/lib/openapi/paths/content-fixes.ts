@@ -1,5 +1,8 @@
 import {
+  contentFixApprovalOptionsRequestSchema,
   contentFixApprovalOptionsResponseSchema,
+  contentFixBatchDecisionRequestSchema,
+  contentFixBatchPathParamsSchema,
   contentFixDecisionRequestSchema,
   contentFixDecisionResponseSchema,
   contentFixPathParamsSchema,
@@ -20,12 +23,15 @@ const errorResponses = {
 };
 
 export const contentFixPaths = {
-  "/content-fixes/{fixId}/approval-options": {
+  "/content-fix-batches/{batchId}/approval-options": {
     post: {
       description:
-        "Starts approving a proposed content fix: a single-use challenge for one of the signed-in staff person's own passkeys, with user verification. Asking again replaces the challenge. Staff sessions only; a CLI login can't approve.",
+        "Starts approving the selected proposed fixes of a batch: one single-use challenge for one of the signed-in staff person's own passkeys, with user verification, stored on exactly those fixes. Asking again replaces it. Staff sessions only; a CLI login can't approve.",
       operationId: "createContentFixApprovalOptions",
-      requestParams: { path: contentFixPathParamsSchema },
+      requestBody: {
+        content: { "application/json": { schema: contentFixApprovalOptionsRequestSchema } },
+      },
+      requestParams: { path: contentFixBatchPathParamsSchema },
       responses: {
         "200": {
           content: { "application/json": { schema: contentFixApprovalOptionsResponseSchema } },
@@ -34,26 +40,47 @@ export const contentFixPaths = {
         ...errorResponses,
       },
       security: AUTHENTICATED_SECURITY,
-      summary: "Start approving a content fix (staff)",
+      summary: "Start approving content fixes (staff)",
+      tags: ["Content fixes"],
+    },
+  },
+  "/content-fix-batches/{batchId}/decisions": {
+    post: {
+      description:
+        "Approves the batch's fixes that hold the challenge a passkey assertion signed, then applies each in its own transaction, in proposal order: a fix applies only while every field still holds its recorded value, and otherwise ends stale with nothing changed. `resume` applies what the same approver already approved but didn't finish. `reject` rejects the fixes still waiting for review, without a passkey, since it changes no content. A repeat returns where the batch stands. Staff sessions only; a CLI login can't decide.",
+      operationId: "createContentFixBatchDecision",
+      requestBody: {
+        content: { "application/json": { schema: contentFixBatchDecisionRequestSchema } },
+      },
+      requestParams: { path: contentFixBatchPathParamsSchema },
+      responses: {
+        "200": {
+          content: { "application/json": { schema: contentFixDecisionResponseSchema } },
+          description: "Where each fix of the batch stands, or why the approval wasn't accepted",
+        },
+        ...errorResponses,
+      },
+      security: AUTHENTICATED_SECURITY,
+      summary: "Approve or reject a batch of content fixes (staff)",
       tags: ["Content fixes"],
     },
   },
   "/content-fixes/{fixId}/decisions": {
     post: {
       description:
-        "Approves a proposed content fix with a passkey assertion over its challenge, or rejects it. Approving applies exactly the recorded change, only while every field still holds its recorded value; otherwise the fix ends stale and nothing changes. A repeat returns what was decided first. Staff sessions only; a CLI login can't decide.",
+        "Rejects one proposed content fix. It needs no passkey, since it changes no content. A repeat returns what was decided first. Staff sessions only; a CLI login can't decide.",
       operationId: "createContentFixDecision",
       requestBody: { content: { "application/json": { schema: contentFixDecisionRequestSchema } } },
       requestParams: { path: contentFixPathParamsSchema },
       responses: {
         "200": {
           content: { "application/json": { schema: contentFixDecisionResponseSchema } },
-          description: "What was decided, or why the approval wasn't accepted",
+          description: "Where the fix stands",
         },
         ...errorResponses,
       },
       security: AUTHENTICATED_SECURITY,
-      summary: "Approve or reject a content fix (staff)",
+      summary: "Reject a content fix (staff)",
       tags: ["Content fixes"],
     },
   },

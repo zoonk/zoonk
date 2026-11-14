@@ -15,7 +15,8 @@ struct LessonStepResult: Hashable, Sendable {
   var answerText: String?
   var correctAnswer: String?
   var feedback: String?
-  /// False for a typed answer the server recognized without grading it.
+  /// False for an answer the server didn't check: a typed answer it recognized without grading,
+  /// or an answer to a screen fixed after the learner started, which counts neither way.
   var checked = true
   var corrections: [Correction] = []
   var keyPoints: [KeyPoint]?

@@ -9,6 +9,10 @@ import { callContentWorkflow } from "../calls/call-content-workflow";
 import { getGoalRebuildAsk } from "../goals/goal-rebuild-ask";
 import { placementItemsWorkflow } from "../goals/placement-items-workflow";
 import { rebuildGoalCurriculumWorkflow } from "../goals/rebuild-goal-curriculum-workflow";
+import {
+  getSentenceOrdersToken,
+  sentenceOrdersWorkflow,
+} from "../language/sentence-orders-workflow";
 import { getLessonContentHookToken } from "../lessons/lesson-content-result";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { getChapterMindMapToken, toChapterMindMapInput } from "../mind-maps/chapter-mind-map-input";
@@ -32,6 +36,14 @@ export type FollowUpsInput = { userId: string };
 
 export function getFollowUpsToken(userId: string): string {
   return `follow-ups:${userId}`;
+}
+
+function startSentenceOrders(lessonId: string) {
+  return startOnce(
+    sentenceOrdersWorkflow,
+    [{ lessonId, wait: "soon" }],
+    getSentenceOrdersToken(lessonId),
+  );
 }
 
 /** `start()` in a workflow is a step, so a replay never starts the same run twice. */
@@ -87,6 +99,9 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
 
       return;
     }
+    case "writeSentenceOrders":
+      await startSentenceOrders(followUp.input.lessonId);
+      return;
     case "makeChapterMindMap": {
       const { chapterId, goalId, launch } = followUp.input;
 
@@ -108,6 +123,7 @@ async function startFollowUp(followUp: OwedFollowUp): Promise<void> {
     case "endWebPlusBesideStore":
     case "rememberSession":
     case "settleSessionDay":
+    case "voiceContentFix":
     case "voiceWord":
       await startOnce(backgroundTaskWorkflow, [followUp], getBackgroundTaskToken(followUp));
       return;
