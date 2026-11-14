@@ -11,17 +11,21 @@ import {
 } from "@zoonk/ui/components/drawer";
 import { Input } from "@zoonk/ui/components/input";
 import { Textarea } from "@zoonk/ui/components/textarea";
+import { safeAsync } from "@zoonk/utils/error";
 import { useExtracted } from "next-intl";
-import { useId, useState } from "react";
+import { useId, useState, useTransition } from "react";
+import { useChangeSaveFailed } from "./save-error";
 import { SheetHeader } from "./sheet-header";
 
 /**
  * A sheet that edits one text: a title, an optional line, one field, Cancel and Save. Save stays
- * off until the text is there and differs from `value`.
+ * off until the text is there and differs from `value`. `onSave` resolves to whether the text was
+ * saved: the sheet stays busy until then, closes when it was, and otherwise keeps the text to try
+ * again. A caller that resolves false has said what went wrong; a save that throws gets the shared
+ * "didn't save" toast.
  */
 export function EditTextDialog({
   description,
-  isPending = false,
   label,
   maxLength,
   multiline = false,
@@ -32,13 +36,12 @@ export function EditTextDialog({
   value,
 }: {
   description?: string;
-  isPending?: boolean;
   /** The field's name, read to screen readers. */
   label: string;
   maxLength: number;
   multiline?: boolean;
   onClose: () => void;
-  onSave: (text: string) => void;
+  onSave: (text: string) => Promise<boolean>;
   placeholder?: string;
   title: string;
   value: string;
@@ -46,6 +49,8 @@ export function EditTextDialog({
   const t = useExtracted();
   const fieldId = useId();
   const [text, setText] = useState(value);
+  const [isPending, startTransition] = useTransition();
+  const saveFailed = useChangeSaveFailed();
   const trimmed = text.trim();
   const Field = multiline ? Textarea : Input;
 
@@ -63,7 +68,16 @@ export function EditTextDialog({
           className="contents"
           onSubmit={(event) => {
             event.preventDefault();
-            onSave(trimmed);
+
+            startTransition(async () => {
+              const { data: saved, error } = await safeAsync(() => onSave(trimmed));
+
+              if (saved) {
+                onClose();
+              } else if (error) {
+                saveFailed();
+              }
+            });
           }}
         >
           <SheetHeader>
