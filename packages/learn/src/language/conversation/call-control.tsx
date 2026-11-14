@@ -237,10 +237,13 @@ export function CallAnnouncer({
 
 export function CallControls({
   call,
+  helpPopup,
   onEnd,
   onHelp,
 }: {
   call: LiveCall;
+  /** "dialog" where Help opens the phrases in a sheet, not beside the call. */
+  helpPopup?: "dialog";
   onEnd: () => void;
   onHelp: () => void;
 }) {
@@ -250,7 +253,7 @@ export function CallControls({
 
   return (
     <div className="flex gap-2 *:min-w-0 *:flex-1">
-      <Button onClick={onHelp} size="lg" type="button" variant="outline">
+      <Button aria-haspopup={helpPopup} onClick={onHelp} size="lg" type="button" variant="outline">
         <LifeBuoyIcon aria-hidden="true" />
         {t("Help")}
       </Button>

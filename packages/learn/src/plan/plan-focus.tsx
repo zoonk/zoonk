@@ -262,7 +262,14 @@ export function ChooseFocus() {
   const open = useChooseFocus();
 
   return (
-    <Button className="self-start" onClick={open} size="sm" type="button" variant="outline">
+    <Button
+      aria-haspopup="dialog"
+      className="self-start"
+      onClick={open}
+      size="sm"
+      type="button"
+      variant="outline"
+    >
       {t("Choose where to focus")}
     </Button>
   );
