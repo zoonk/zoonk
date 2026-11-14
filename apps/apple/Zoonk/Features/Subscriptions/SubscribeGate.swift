@@ -94,7 +94,7 @@ struct LimitWords: Equatable {
     return LocalizedStringResource(
       "\(title). \(line)", table: "Subscriptions",
       comment:
-        "A limit's words where they're one sentence, such as under a button or as the buddy's answer: what ran out, then when more comes back"
+        "A notice that something the learner uses ran out, as one line: {title} says what ran out, such as \"You've used your uploads\", and {line} when more comes back, such as \"More on November 22, or subscribe to keep going.\""
     )
   }
 
@@ -225,65 +225,27 @@ extension HelpLimit {
     case .lessons:
       LocalizedStringResource("You've used your free lessons", table: "Subscriptions")
     case .messages:
-      LocalizedStringResource(
-        "You've used your messages", table: "Subscriptions",
-        comment:
-          "In place of the buddy's message box: the learner sent all the messages their plan allows"
-      )
+      LocalizedStringResource("You've used your messages", table: "Subscriptions")
     case .explanations:
-      LocalizedStringResource(
-        "You've used your explanations", table: "Subscriptions",
-        comment:
-          "In place of an answer's explanation: the learner asked for all the explanations their plan allows"
-      )
+      LocalizedStringResource("You've used your explanations", table: "Subscriptions")
     case .quickExplanations:
-      LocalizedStringResource(
-        "You've used your quick explanations", table: "Subscriptions",
-        comment:
-          "Before a goal starts: the learner asked for all the quick explanations of a topic their plan allows"
-      )
+      LocalizedStringResource("You've used your quick explanations", table: "Subscriptions")
     case .mindMaps:
-      LocalizedStringResource(
-        "You've used your mind maps", table: "Subscriptions",
-        comment:
-          "In place of making a chapter's mind map: the learner made all the mind maps their plan allows"
-      )
+      LocalizedStringResource("You've used your mind maps", table: "Subscriptions")
     case .previews:
-      LocalizedStringResource(
-        "You've used your previews", table: "Subscriptions",
-        comment:
-          "In place of a topic's lessons ahead of time: the learner saw all the previews their plan allows"
-      )
+      LocalizedStringResource("You've used your previews", table: "Subscriptions")
     case .goals:
-      LocalizedStringResource(
-        "You've started all the new goals you can", table: "Subscriptions",
-        comment: "Where a new goal starts: the learner started all the new goals their plan allows")
+      LocalizedStringResource("You've started all the new goals you can", table: "Subscriptions")
     case .uploads:
-      LocalizedStringResource(
-        "You've used your uploads", table: "Subscriptions",
-        comment:
-          "Under adding material to a goal: the learner added all the material their plan allows")
+      LocalizedStringResource("You've used your uploads", table: "Subscriptions")
     case .questions:
-      LocalizedStringResource(
-        "You've used your questions", table: "Subscriptions",
-        comment:
-          "Under asking about the learner's material: they asked all the questions their plan allows"
-      )
+      LocalizedStringResource("You've used your questions", table: "Subscriptions")
     case .callTime:
-      LocalizedStringResource(
-        "You've used your call time", table: "Subscriptions",
-        comment:
-          "Where a speaking call starts: the learner used all the call time their plan allows")
+      LocalizedStringResource("You've used your call time", table: "Subscriptions")
     case .mockExams:
-      LocalizedStringResource(
-        "You've used your mock exams", table: "Subscriptions",
-        comment:
-          "In place of starting a mock exam: the learner took all the mock exams their plan allows")
+      LocalizedStringResource("You've used your mock exams", table: "Subscriptions")
     case nil:
-      LocalizedStringResource(
-        "You've reached your limit", table: "Subscriptions",
-        comment:
-          "The learner used all the small AI help their plan allows: checks, clips and similar")
+      LocalizedStringResource("You've reached your limit", table: "Subscriptions")
     }
   }
 
@@ -363,16 +325,20 @@ extension HelpLimit {
       return LocalizedStringResource(
         "You can try again now.", table: "Subscriptions",
         comment:
-          "Under a monthly limit the learner reached: the day more comes back has come while the screen was open"
+          "The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back."
       )
     case .today:
       return isPlus
         ? LocalizedStringResource(
           "More later today.", table: "Subscriptions",
-          comment: "Under a monthly limit a subscriber reached: more comes back later today")
+          comment:
+            "The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back."
+        )
         : LocalizedStringResource(
           "More later today, or subscribe to keep going.", table: "Subscriptions",
-          comment: "Under a monthly limit a free learner reached: more comes back later today")
+          comment:
+            "The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: when more comes back."
+        )
     case .tomorrow:
       return moreTomorrow(tier)
     case .on(let date):
@@ -380,12 +346,12 @@ extension HelpLimit {
         ? LocalizedStringResource(
           "More on \(date).", table: "Subscriptions",
           comment:
-            "Under a monthly limit a subscriber reached: the day more comes back. {date} is a day and its month, such as \"November 22\" in English."
+            "The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: the day more comes back. {date} is a day and its month, such as \"November 22\" in English."
         )
         : LocalizedStringResource(
           "More on \(date), or subscribe to keep going.", table: "Subscriptions",
           comment:
-            "Under a monthly limit a free learner reached: the day more comes back. {date} is a day and its month, such as \"November 22\" in English."
+            "The line under the title of a notice that something the learner uses ran out, such as their messages to the study buddy or their free lessons: the day more comes back. {date} is a day and its month, such as \"November 22\" in English."
         )
     }
   }
@@ -454,8 +420,7 @@ extension HelpLimit {
   }
 
   private static func mapFitsWords(_ day: OpeningDay?) -> LimitWords {
-    let title = LocalizedStringResource(
-      "Not enough free lessons for this map yet", table: "Subscriptions")
+    let title = LocalizedStringResource("Not enough free lessons for this map yet", table: "Subscriptions")
 
     switch day {
     case .open:
