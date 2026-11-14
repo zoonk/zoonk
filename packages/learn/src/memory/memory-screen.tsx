@@ -22,6 +22,7 @@ import {
 } from "../_components/page";
 import { useChangeSaveFailed } from "../_components/save-error";
 import { SettingRow } from "../_components/setting-rows";
+import { findRowMenu, useKeepFocus } from "../_utils/use-keep-focus";
 import { useOptimisticSave } from "../_utils/use-optimistic-save";
 import { MemoryFactRow } from "./memory-fact-row";
 import { type MemoryCategory, MemoryCategoryName } from "./memory-labels";
@@ -60,6 +61,15 @@ function groupByCategory(facts: MemoryFactView[]) {
     category,
     facts: facts.filter((fact) => fact.category === category),
   })).filter((group) => group.facts.length > 0);
+}
+
+function findMemoryScreen() {
+  return document.querySelector("[data-slot=memory-screen]");
+}
+
+/** The control that stays when the last note goes. */
+function findMemorySwitch() {
+  return findMemoryScreen()?.querySelector<HTMLElement>("[role=switch]");
 }
 
 function MemorySwitch({
@@ -119,11 +129,16 @@ function useMemoryScreen({ actions, memory }: { actions: MemoryActions; memory: 
   const { run } = useOptimisticSave();
   const offerUndo = useUndoToast(actions.undo);
   const saveFailed = useChangeSaveFailed();
+  const keepFocus = useKeepFocus(facts, findMemorySwitch);
 
   return {
     enabled,
     facts,
-    removeFact: (factId: string) =>
+    removeFact: (factId: string) => {
+      const shown = groupByCategory(facts).flatMap((group) => group.facts);
+      const index = shown.findIndex((fact) => fact.id === factId);
+      keepFocus(() => findRowMenu(findMemoryScreen(), index));
+
       run(
         () => editFacts({ id: factId, statement: null }),
         async () => {
@@ -135,7 +150,8 @@ function useMemoryScreen({ actions, memory }: { actions: MemoryActions; memory: 
 
           return change !== null;
         },
-      ),
+      );
+    },
     setEnabled: (next: boolean) =>
       run(
         () => setOptimisticEnabled(next),
