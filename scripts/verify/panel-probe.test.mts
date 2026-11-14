@@ -53,6 +53,31 @@ function element(selector: string) {
 
 const returned = () => focusReturned({ opener: "opener" });
 
+test("reads a popover's focus and close independently of its sheet", () => {
+  document.body.innerHTML = `<div data-slot="drawer-popup" role="dialog" tabindex="-1"><h2>Zu today</h2><button data-zoonk-act="opener">Brain Power</button></div>
+    <div data-slot="popover-content" role="dialog" tabindex="-1"><h2>Brain Power</h2></div>`;
+
+  const popover = element("[data-slot=popover-content]");
+  popover.focus();
+  const facts = read(true);
+  assert.equal(facts.label, "Brain Power");
+  assert.equal(facts.focusInside, true);
+  assert.deepEqual([facts.needsClose, facts.sheet, facts.dim], [false, null, null]);
+  assert.deepEqual(panelFindings({ ...facts, focusBack: null }), []);
+  element("button").focus();
+  assert.equal(read(true).focusInside, false);
+
+  assert.ok(
+    panelFindings({ ...read(true), focusBack: null }).some(({ level }) => level === "fail"),
+  );
+
+  assert.equal(returned(), false);
+  popover.remove();
+  assert.equal(returned(), true);
+  element("[role=dialog]").focus();
+  assert.equal(returned(), false);
+});
+
 test("returns to a menu trigger inside a sheet after its item's panel closes", () => {
   document.body.innerHTML = `<div data-slot="drawer-popup" role="dialog" tabindex="-1"><h2>Questions</h2><button data-zoonk-act="menu-trigger">…</button></div>
     <div role="menu"><button data-zoonk-act="item">Report a problem</button></div>
@@ -152,7 +177,7 @@ describe("shared panel readings", () => {
   );
 
   it("reports unfamiliar dialog roles without imposing shared-piece behavior", () => {
-    for (const slot of ["popover-content", "toast", "hand-drawn-panel"]) {
+    for (const slot of ["toast", "hand-drawn-panel"]) {
       panel(slot);
       const facts = read(true);
       assert.equal(facts?.shared, false);
