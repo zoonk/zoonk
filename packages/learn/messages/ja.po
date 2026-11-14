@@ -40,7 +40,7 @@ msgstr "正解"
 #: src/onboarding/steps/reveal-days.tsx
 #: src/session/next-stop.tsx
 #: src/session/study-moment.tsx
-#: src/today/today-segment-popover.tsx
+#: src/today/today-day-progress.tsx
 #: src/week/logbook-sections.tsx
 msgctxt "nC-1Um"
 msgid "Up next"
@@ -73,7 +73,7 @@ msgstr "スキップ"
 #: src/mock/mock-speaking.tsx
 #: src/onboarding/steps/reveal-days.tsx
 #: src/plan/plan-change-applied.tsx
-#: src/today/today-segment-popover.tsx
+#: src/today/today-day-progress.tsx
 #: src/wait/first-lesson-row.tsx
 #: src/week/logbook-screen.tsx
 msgctxt "JXdbo8"
@@ -622,7 +622,6 @@ msgstr "直近の試験の科目別問題数は、<link>{publisher}</link>の集
 #: src/_components/save-error.tsx
 #: src/feedback/feedback-form-dialog.tsx
 #: src/feedback/report-problem-item.tsx
-#: src/journey/journey-menu.tsx
 msgctxt "feedback.Hf_X9X"
 msgid "Report a problem"
 msgstr "問題を報告する"
@@ -13096,7 +13095,6 @@ msgstr "学習計画に含まれません・学習時間が足りません"
 
 #: src/syllabus/topic-note.tsx
 #: src/today/today-coming-lessons.tsx
-#: src/today/today-segment-popover.tsx
 #: src/topic-outline/use-far-topic-line.ts
 msgctxt "5CkyMG"
 msgid "Not ready yet"
@@ -13152,7 +13150,6 @@ msgstr "、ミッションの達成にカウントされます"
 
 #: src/today/today-block-row.tsx
 #: src/today/today-coming-lessons.tsx
-#: src/today/today-segment-popover.tsx
 msgctxt "2LhxfA"
 msgid "Getting ready…"
 msgstr "準備しています…"
@@ -13168,16 +13165,20 @@ msgid "Get them now"
 msgstr "今すぐ準備する"
 
 #: src/today/today-coming-lessons.tsx
-#: src/today/today-segment-popover.tsx
+#: src/today/today-day-progress.tsx
 msgctxt "FAEHQ7"
 msgid "Your next lessons"
 msgstr "次のレッスン"
 
 #: src/today/today-coming-lessons.tsx
-#: src/today/today-segment-popover.tsx
 msgctxt "Bhd3E-"
 msgid "Taking longer than usual"
 msgstr "いつもより時間がかかっています"
+
+#: src/today/today-day-progress.tsx
+msgctxt "G-gCWb"
+msgid "{answered, number} of {count, plural, one {# question} other {# questions}}"
+msgstr "{answered, number}問に回答済み（{count, plural, other {全#問}}）"
 
 #: src/today/today-day-progress.tsx
 msgctxt "m9CrfE"
@@ -13428,41 +13429,6 @@ msgstr "今週の学習"
 msgctxt "cBjaVC"
 msgid "Today's lessons"
 msgstr "今日のレッスン"
-
-#: src/today/today-segment-popover.tsx
-msgctxt "MDSrNP"
-msgid "Checks what you've learned so far."
-msgstr "これまでに学んだことを確認します。"
-
-#: src/today/today-segment-popover.tsx
-msgctxt "jIBu7R"
-msgid "You put what you learned into your own words."
-msgstr "学んだことを自分の言葉で書きます。"
-
-#: src/today/today-segment-popover.tsx
-msgctxt "LjCPIV"
-msgid "Another try at questions you missed."
-msgstr "間違えた問題にもう一度挑戦します。"
-
-#: src/today/today-segment-popover.tsx
-msgctxt "hm2fwy"
-msgid "A practice exam, like the real one."
-msgstr "本番に近い模試です。"
-
-#: src/today/today-segment-popover.tsx
-msgctxt "1zNtC7"
-msgid "New questions that mix what you've learned."
-msgstr "学んだことを組み合わせた新しい問題です。"
-
-#: src/today/today-segment-popover.tsx
-msgctxt "LHmG9j"
-msgid "Brings back what you studied before you forget it."
-msgstr "忘れる前に、学んだことを復習します。"
-
-#: src/today/today-segment-popover.tsx
-msgctxt "G-gCWb"
-msgid "{answered, number} of {count, plural, one {# question} other {# questions}}"
-msgstr "{answered, number}問に回答済み（{count, plural, other {全#問}}）"
 
 #: src/today/today-session-card.tsx
 msgctxt "RrxniK"

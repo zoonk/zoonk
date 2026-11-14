@@ -40,7 +40,7 @@ msgstr "Correct"
 #: src/onboarding/steps/reveal-days.tsx
 #: src/session/next-stop.tsx
 #: src/session/study-moment.tsx
-#: src/today/today-segment-popover.tsx
+#: src/today/today-day-progress.tsx
 #: src/week/logbook-sections.tsx
 msgctxt "nC-1Um"
 msgid "Up next"
@@ -73,7 +73,7 @@ msgstr "Sauté"
 #: src/mock/mock-speaking.tsx
 #: src/onboarding/steps/reveal-days.tsx
 #: src/plan/plan-change-applied.tsx
-#: src/today/today-segment-popover.tsx
+#: src/today/today-day-progress.tsx
 #: src/wait/first-lesson-row.tsx
 #: src/week/logbook-screen.tsx
 msgctxt "JXdbo8"
@@ -622,7 +622,6 @@ msgstr "Nombre de questions par matière au dernier examen, selon le décompte d
 #: src/_components/save-error.tsx
 #: src/feedback/feedback-form-dialog.tsx
 #: src/feedback/report-problem-item.tsx
-#: src/journey/journey-menu.tsx
 msgctxt "feedback.Hf_X9X"
 msgid "Report a problem"
 msgstr "Signaler un problème"
@@ -13096,7 +13095,6 @@ msgstr "Hors de ton plan · le temps prévu ne suffit pas"
 
 #: src/syllabus/topic-note.tsx
 #: src/today/today-coming-lessons.tsx
-#: src/today/today-segment-popover.tsx
 #: src/topic-outline/use-far-topic-line.ts
 msgctxt "5CkyMG"
 msgid "Not ready yet"
@@ -13152,7 +13150,6 @@ msgstr ", compte pour une mission"
 
 #: src/today/today-block-row.tsx
 #: src/today/today-coming-lessons.tsx
-#: src/today/today-segment-popover.tsx
 msgctxt "2LhxfA"
 msgid "Getting ready…"
 msgstr "Préparation en cours…"
@@ -13168,16 +13165,20 @@ msgid "Get them now"
 msgstr "Les préparer maintenant"
 
 #: src/today/today-coming-lessons.tsx
-#: src/today/today-segment-popover.tsx
+#: src/today/today-day-progress.tsx
 msgctxt "FAEHQ7"
 msgid "Your next lessons"
 msgstr "Tes prochaines leçons"
 
 #: src/today/today-coming-lessons.tsx
-#: src/today/today-segment-popover.tsx
 msgctxt "Bhd3E-"
 msgid "Taking longer than usual"
 msgstr "Ça prend plus de temps que d’habitude"
+
+#: src/today/today-day-progress.tsx
+msgctxt "G-gCWb"
+msgid "{answered, number} of {count, plural, one {# question} other {# questions}}"
+msgstr "{answered, number} sur {count, plural, one {# question} other {# questions}}"
 
 #: src/today/today-day-progress.tsx
 msgctxt "m9CrfE"
@@ -13428,41 +13429,6 @@ msgstr "Ta semaine"
 msgctxt "cBjaVC"
 msgid "Today's lessons"
 msgstr "Leçons d’aujourd’hui"
-
-#: src/today/today-segment-popover.tsx
-msgctxt "MDSrNP"
-msgid "Checks what you've learned so far."
-msgstr "Vérifie ce que tu as appris jusqu’ici."
-
-#: src/today/today-segment-popover.tsx
-msgctxt "jIBu7R"
-msgid "You put what you learned into your own words."
-msgstr "Tu expliques ce que tu as appris avec tes propres mots."
-
-#: src/today/today-segment-popover.tsx
-msgctxt "LjCPIV"
-msgid "Another try at questions you missed."
-msgstr "Tu reprends les questions où tu as fait des erreurs."
-
-#: src/today/today-segment-popover.tsx
-msgctxt "hm2fwy"
-msgid "A practice exam, like the real one."
-msgstr "Un examen blanc, comme le vrai."
-
-#: src/today/today-segment-popover.tsx
-msgctxt "1zNtC7"
-msgid "New questions that mix what you've learned."
-msgstr "De nouvelles questions qui mélangent ce que tu as appris."
-
-#: src/today/today-segment-popover.tsx
-msgctxt "LHmG9j"
-msgid "Brings back what you studied before you forget it."
-msgstr "Te fait revoir ce que tu as étudié avant que tu l’oublies."
-
-#: src/today/today-segment-popover.tsx
-msgctxt "G-gCWb"
-msgid "{answered, number} of {count, plural, one {# question} other {# questions}}"
-msgstr "{answered, number} sur {count, plural, one {# question} other {# questions}}"
 
 #: src/today/today-session-card.tsx
 msgctxt "RrxniK"
