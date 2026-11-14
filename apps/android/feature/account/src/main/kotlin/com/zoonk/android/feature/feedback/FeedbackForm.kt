@@ -50,6 +50,7 @@ import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.DropdownMenu
+import com.zoonk.android.ui.components.LocalButtonSize
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OptionsButton
 import com.zoonk.android.ui.components.OutlinedTextField
@@ -57,20 +58,26 @@ import com.zoonk.api.models.FeedbackSubmissionContext
 import kotlinx.coroutines.flow.first
 import java.util.UUID
 
-/** Main's message to the team: the message, an email for the reply when there's no account, and Send. */
+/** The signed-in account's email, which a reply goes to; null for a guest or a visitor, who type one. */
+@Composable
+fun accountEmail(app: AppContainer): String? {
+    val session by app.sessions.state.collectAsStateWithLifecycle()
+    return (session as? SessionState.SignedIn)
+        ?.takeUnless { it.isGuest }
+        ?.account
+        ?.user
+        ?.email
+}
+
+/** Main's message to the team: the message, an email for the reply when there's no account, and Send unless a bottom bar holds it. */
 @Composable
 fun FeedbackForm(
     app: AppContainer,
     form: FeedbackViewModel,
     modifier: Modifier = Modifier,
+    withSend: Boolean = true,
 ) {
-    val session by app.sessions.state.collectAsStateWithLifecycle()
-    val accountEmail =
-        (session as? SessionState.SignedIn)
-            ?.takeUnless { it.isGuest }
-            ?.account
-            ?.user
-            ?.email
+    val accountEmail = accountEmail(app)
     val isSending = form.status == FeedbackStatus.Sending
 
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -125,14 +132,24 @@ fun FeedbackForm(
             FeedbackStatus.Idle, FeedbackStatus.Sending -> {}
         }
 
-        Button(
-            busy = isSending,
-            onClick = { form.send(accountEmail) },
-            modifier = Modifier.align(Alignment.End),
-            enabled = form.canSend(accountEmail),
-            size = ButtonSize.Small,
-        ) { Text(stringResource(R.string.feedback_send)) }
+        if (withSend) SendButton(form, accountEmail, Modifier.align(Alignment.End), ButtonSize.Small)
     }
+}
+
+@Composable
+fun SendButton(
+    form: FeedbackViewModel,
+    accountEmail: String?,
+    modifier: Modifier = Modifier,
+    size: ButtonSize = LocalButtonSize.current,
+) {
+    Button(
+        busy = form.status == FeedbackStatus.Sending,
+        onClick = { form.send(accountEmail) },
+        modifier = modifier,
+        enabled = form.canSend(accountEmail),
+        size = size,
+    ) { Text(stringResource(R.string.feedback_send)) }
 }
 
 @Composable

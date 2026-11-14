@@ -21,7 +21,6 @@
   "certificates_copied": "f4379c3f093f69ae620aba2396f1dd641b9cc55d6b4d2759e5e538eec2c94256",
   "certificates_copy": "5dc25a580e2022398f735cc014bdde838431e7c059db1f05ede69389d910e841",
   "certificates_copy_field": "0c5beab06d6fbffd3d51bb0ca4c32792884641e2c70f6977783f9220f93d7e94",
-  "certificates_count": "e729dcddb6713406a09fe12be64c766e4ee4c7e4ded98af5a20da3c4d5510c15",
   "certificates_course_complete": "564a6e2eab423579d8f08f89fba33873946bf9aa1f854bf7bea8c1eeed7a67e8",
   "certificates_course_level": "c47f3c2e94cf30d6f5779e2915e78e9bfc53d3735d1ef0cbaf6af7faf563c900",
   "certificates_course_on_zoonk": "74723160bf3abc3036cc464843af246b0218ebbcd94a5bd40a65e57ff7eac59f",
@@ -37,11 +36,10 @@
   "certificates_download": "eb6e1e11f5ff6d31905645cb6acecb49c1c167e70d5187e828ab830ec9209020",
   "certificates_downloaded": "6c150eb7c3b809be23c078b3dc8f27b1da93db1f0b377834a2014de8d4c2834e",
   "certificates_earned": "014b3ffd2bcbb6d17061123bf8ed3c754e8d6ffc0ee17e7f29fb09b748adfc7f",
-  "certificates_empty_description": "22d9eca34576e40c9ac6221c736852d057a77dfccba58e1d66a31e41a39f2b2f",
   "certificates_empty_title": "c52e11f81ea5d868b3e5e6dfab5208f296228425fb79eaaeb6e676408f9d2bff",
+  "certificates_gate_title": "e974dc64dc3829737c37c8c116d35e51d53c19070368969607e354eba4e0593f",
   "certificates_get": "d08cb9679a701fbe4fdaf80a72ee9d77334278d8007c0e705705be9b0b9e78f3",
   "certificates_issued_on": "4366a6379e28caa5f0ddfe4b9ecf247d851e75ca0e07df94c796859c7e239f79",
-  "certificates_kind_completion": "5be0df23bc47dd0260c4163330e737dad7fa34a079671517fb8538573548fe01",
   "certificates_language_level": "942070bd341fcc34f5cf7e3d7133194d944054a0e70eba1f2aa380b4ae35c408",
   "certificates_language_ready": "f1444af26c07163b7c9f7ca80d324f541d4239ef28905f69e156a6330248502f",
   "certificates_lead": "867842555baa2036685439ce2fa5fcb0e839201e5439e66e77b1aeb20fbc7001",
@@ -58,7 +56,6 @@
   "certificates_linkedin_open": "666b6d685cd7f6af82c1f36f7c8d493cd393a24ee395dba6d50beead57b1a766",
   "certificates_linkedin_organization": "921166884b66fe660af1234e6d73ccc41a80bf8b70bfb1f4b8f9ba017cdc6b9a",
   "certificates_linkedin_title": "90ff492fe1f4436662fb757886c3bcc207704d995f6778f6f6c1f990aa6e74cf",
-  "certificates_locked": "7aa387d05c7b6f82060198e816a0d3f2ed4699d18dd6eb81a9c37794bfbfc96c",
   "certificates_meaning_cefr": "97da19af2abb13ea8d48a9a095a5506a9b3c0f7aacebebab07e93f73975d7fcf",
   "certificates_meaning_language": "42e697a8cbd81b6edb20014d637afc530b4158c7a60ea3983c41fafd0fa71c63",
   "certificates_meaning_level": "60c2c95fc1807d2555fa4a64229c423fe953d65218fa9a100fbbd6649d1cfd18",
@@ -75,53 +72,40 @@
   "certificates_not_found": "f0443b9fcad5b26800a1c836e4d1f06014ccefc6252938e6d3dc7bd5abe0f3d8",
   "certificates_on_your_certificate": "fa472d989f62466ffa1532d5ebecc7c0c25505681a412efc069552cd5d31f2ec",
   "certificates_picture_failed": "73ef0451ea37fad5495f434e63ea8206c8f1b2ced5c8329edbe70f0842f00b8f",
-  "certificates_plus_description": "3b387f8c12dc69b7ee472e688a8a9c1802fdea997d47b946ce71f159b1cedfa2",
-  "certificates_plus_list_title": "63947d20703300bbba3fe63861fff87edaebba3b6fd2b203cd5d92e3d970af51",
-  "certificates_plus_title": "2b146a4bd9714f8be7662a436259ed4991c9ed9821b374288984b9824a53a314",
   "certificates_print": "103aeacea9c31618fc4f79c27929acea6f62a38fdaad99df69e13125db974f2f",
   "certificates_recipient_name": "96e9761e6480d1f7fbdd962b3455dc7339b4fa428a06291435642e191e0cf950",
   "certificates_save": "fa64e3ff34da391c213ef64a868468feaf6bb9c54333f85f824b46e50a19fd28",
   "certificates_saved_one": "cb9a0eff88b9afea06d79f3ce15b58dfc7ef8c6a39d1ef65bfdc922882d76c3c",
   "certificates_saved_several": "c1b76c21d2aeb5f701b7ee77114a23c29774a289af4d72aeb16a2b3b2b0b2765",
+  "certificates_see_yours": "56fdf48258ba9ec9c6477bb04c2fe7d95e2e7a3ffda8b1dae3716841d3e943b1",
   "certificates_several_ready": "2aa8ab946b2b14b1dbcf771c081d35db61950cb5cd5e80db356996bdef743c30",
   "certificates_share": "1667a04a3fa87ab77b2af29918c4e5937c3ed9b0dd266072e1aa943c71739091",
   "certificates_title": "e7dd358dc931effbbf24d9491bf7d473b1db8e856c697ea1209be98ea816e65c",
   "certificates_topics_covered": "0090afe0bb5329a502e5847116df80cbda15ab483a4fcd977b5d905a5908de0a",
-  "certificates_up_next": "41ac7c68c0b715bc2e2c4f2c06bde1a1d78af8fedbf29de5a60af5549faa6f23",
-  "certificates_up_next_course": "69a83fbfbe47c65bb6b81a6261e3aedacb81dc4a788695c8f626ecf9601aaaf3",
-  "certificates_up_next_language": "f7e033a3091764eb06cbcdf33e59772091824da232f461392c956e205ba7a790",
   "certificates_verified": "ebc12e6b7894dae692f213859e6bec215903b9c3dc12637a0cb7e2e5d928befa",
   "certificates_view": "cd42dc9fe7ca27340f613bb5f781207d9cfefdf03285c57bf78c243de7045754",
-  "certificates_view_several": "2901bd1a4f679e496f6bd1b62f0da5dceea48f35171e95ea68af69fbf4d377e9"
+  "certificates_view_several": "2901bd1a4f679e496f6bd1b62f0da5dceea48f35171e95ea68af69fbf4d377e9",
+  "certificates_your_next": "b0232f0630ab606d5f5f82208b627929f901f36f166d62d8d5c4fdad4c18c568"
 }
 -->
 <resources>
     <!-- A place name, like "Completed lessons": the page listing the learner's completion certificates, to print, download or share. -->
     <string name="certificates_title">Sertifikalar</string>
-    <!-- Above the page title, counting the learner's certificates. -->
-    <plurals name="certificates_count">
-        <item quantity="one">%1$d sertifika</item>
-        <item quantity="other">%1$d sertifika</item>
-    </plurals>
     <string name="certificates_lead">Tamamladığın her seviye ve plan için bir sertifika.</string>
-    <!-- What a certificate certifies: a finished course or a finished language level. Printed on the certificate itself. -->
-    <string name="certificates_kind_completion">Tamamlama sertifikası</string>
     <!-- A language certificate's name: %1$s is the language, such as "Spanish", and %2$s its CEFR level, such as "B1". -->
     <string name="certificates_language_level">%1$s %2$s</string>
     <!-- A course level's certificate name, such as "Python · Beginner": the course's title, then the level's name. -->
     <string name="certificates_course_level">%1$s · %2$s</string>
     <string name="certificates_empty_title">Henüz sertifikan yok</string>
-    <string name="certificates_empty_description">Bir seviyeyi veya planı tamamladığında sertifikaların burada görünür.</string>
     <string name="certificates_continue_learning">Öğrenmeye devam et</string>
+    <string name="certificates_your_next">Sıradaki sertifikan</string>
+    <string name="certificates_gate_title">Sertifikalar için abonelik gerekiyor</string>
+    <string name="certificates_see_yours">Sertifikanı gör</string>
     <!-- On a finished plan's card: opens the plan's one certificate. -->
     <string name="certificates_view">Sertifikayı görüntüle</string>
     <string name="certificates_view_several">Sertifikaları görüntüle</string>
     <!-- On a finished plan's card: issues the course's certificate, which wasn't issued yet. -->
     <string name="certificates_get">Sertifikanı al</string>
-    <string name="certificates_up_next">Sıradaki</string>
-    <string name="certificates_up_next_course">Planı tamamladığında sertifikanı alırsın</string>
-    <!-- Under a language goal: its next certificate comes when the learner finishes a CEFR level of their plan, having studied at least half of that level's lessons. -->
-    <string name="certificates_up_next_language">Bir seviyeyi derslerinin en az yarısını çalışarak tamamladığında verilir</string>
     <!-- The title of a full screen shown once, right after the learner finishes every lesson of a course. -->
     <string name="certificates_course_complete">Kurs tamamlandı!</string>
     <string name="certificates_level_complete">%1$s tamamlandı!</string>
@@ -160,10 +144,6 @@
     <!-- "Certificates" is the place name. -->
     <string name="certificates_saved_several">Sertifikalar bölümüne kaydedildi.</string>
     <string name="certificates_continue">Devam et</string>
-    <string name="certificates_locked">Kilitli</string>
-    <string name="certificates_plus_title">Plus ile sertifikanı al</string>
-    <string name="certificates_plus_description">Plus ile tamamladığın her seviye için yazdırıp paylaşabileceğin bir sertifika alırsın. Plus üyeliğin sona erse de aldığın sertifikalar sende kalır.</string>
-    <string name="certificates_plus_list_title">Sertifikalar Plus’a dahil</string>
     <!-- The title of the screen showing one certificate. -->
     <string name="certificates_certificate">Sertifika</string>
     <!-- Prints the certificate, or saves it as a PDF from the printing screen. -->

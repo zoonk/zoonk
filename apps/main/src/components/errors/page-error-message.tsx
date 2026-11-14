@@ -1,6 +1,7 @@
 "use client";
 
 import { EnterButton } from "@zoonk/learn/enter-button";
+import { FRAME_GUTTER_CLASS } from "@zoonk/learn/shell";
 import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { cn } from "@zoonk/ui/lib/utils";
 import { TriangleAlertIcon } from "lucide-react";
@@ -24,9 +25,7 @@ export function PageErrorMessage({
     <Root
       className={cn(
         "flex w-full flex-col",
-        inFrame
-          ? "flex-1"
-          : "min-h-dvh [--page-gutter:--spacing(4)] sm:[--page-gutter:--spacing(8)]",
+        inFrame ? "flex-1" : ["min-h-dvh px-(--page-gutter)", FRAME_GUTTER_CLASS],
       )}
     >
       <StatusMessage

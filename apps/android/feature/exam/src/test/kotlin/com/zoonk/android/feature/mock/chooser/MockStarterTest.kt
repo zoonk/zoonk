@@ -45,11 +45,11 @@ class MockStarterTest {
             model.load()
 
             api.starts = listOf({ short() }, { started() })
-            starter.start(GOAL, full, acceptFewer = false)
+            starter.start(GOAL, full, MockStartAsk.First)
             model.load()
             assertEquals(1, reads)
 
-            assertEquals(MutationResult.Done(MockStartOutcome.Opened(STARTED)), starter.start(GOAL, full, acceptFewer = true))
+            assertEquals(MutationResult.Done(MockStartOutcome.Opened(STARTED)), starter.start(GOAL, full, MockStartAsk.AcceptFewer))
             model.load()
             assertEquals(2, reads)
         }
@@ -60,13 +60,13 @@ class MockStarterTest {
             val starter = MockStarter(api, cache())
 
             api.starts = listOf { throw refusal("NOT_ENOUGH_QUESTIONS") }
-            assertEquals(MutationResult.Done(MockStartOutcome.NotEnoughQuestions), starter.start(GOAL, full, acceptFewer = false))
+            assertEquals(MutationResult.Done(MockStartOutcome.NotEnoughQuestions), starter.start(GOAL, full, MockStartAsk.First))
 
             api.starts = listOf { throw refusal("PLUS_REQUIRED") }
-            assertEquals(MutationResult.Done(MockStartOutcome.PlusRequired), starter.start(GOAL, full, acceptFewer = false))
+            assertEquals(MutationResult.Done(MockStartOutcome.PlusRequired), starter.start(GOAL, full, MockStartAsk.First))
 
             api.starts = listOf { throw refusal("GOAL_NOT_ACTIVE") }
-            assertEquals(MutationResult.Failed::class, starter.start(GOAL, full, acceptFewer = false)::class)
+            assertEquals(MutationResult.Failed::class, starter.start(GOAL, full, MockStartAsk.First)::class)
         }
 
     @Test

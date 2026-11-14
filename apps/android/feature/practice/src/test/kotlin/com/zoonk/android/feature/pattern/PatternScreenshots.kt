@@ -79,7 +79,7 @@ class PatternScreenshots {
         ).apply { parentFile?.mkdirs() }.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
     }
 
-    private fun start() = rule.onNodeWithText("Practice this", substring = true).performClick()
+    private fun start() = rule.onNodeWithText("Practice").performClick()
 
     private fun answer(option: String) {
         rule.onNodeWithText(option).performClick()
@@ -207,7 +207,7 @@ class PatternScreenshots {
         answer("agree")
         rule.onNodeWithText("Continue").performClick()
         answer("are agree")
-        rule.onNodeWithText("See how you did").performClick()
+        rule.onNodeWithText("See how it went").performClick()
     }
 
     @Test

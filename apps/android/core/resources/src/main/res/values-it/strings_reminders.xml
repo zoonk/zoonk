@@ -11,7 +11,7 @@
   "reminders_no_thanks": "68b41e450158581e347f003c8a48b2d67d7e5f77d6cd15369b73614cb2d5dbe9",
   "reminders_not_now": "eae25cef6d3351e8e7d88df484e93bd3e4e44ab602c464b87f609b165d41a40d",
   "reminders_notifications_off": "fb6a418df6c3c9f6a1a0e6e960dbcef2dfd15d629cc03705a6c6136ced971cd8",
-  "reminders_offer_body": "7f62632bd286c6d5335cfaa461a50d970f4d739083587cd37e4f1b2d5e00abb2",
+  "reminders_offer_body": "f9021cddd5893469d6c036488cac840838dab5a711846843ca143ae0026c1ec9",
   "reminders_offer_title": "e3967601ff5b80a53e707c72bbc8a522bf5645e155ce42524378853e60c0bb54",
   "reminders_on": "4234ee75213a07980946487c42e85ca45c57d4081472893b3c70b81e2ef3b9e6",
   "reminders_open_settings": "325da0939b326683ddecb8a5c760469fd782924efea3d971d15a24123dfacfb2",
@@ -23,7 +23,6 @@
   "reminders_remind_me": "dbdc196a1d54cf95921749099d09dc9b0d685fdcedb35c4a9496b0ba3eee6817",
   "reminders_save": "ffd7f5ecd82d3ce6b201bdd9e197bd533a346f15c93adac15e5f74957afb08ef",
   "reminders_save_failed": "45019847f762471d84fa11c92480d36d5f927374500596a0781be0fa3e5da941",
-  "reminders_study_days": "97b2b2028d061e29828dae20d96893a565b99cff8b5ce7b0570043ef4f8c6234",
   "reminders_this_device": "58ac697cadabbea2f76f9d3a5772cc9d98a73f654af70dacbdd67ca10c4275da",
   "reminders_time": "edee9c9a12dbccb98b1f2fa584d33db4319373e67de6279f23d48c69826c851d",
   "reminders_time_title": "2c0174bfc49e1174b80072159e312da1decade95db3e4abea3e870e2b2417a58",
@@ -39,7 +38,7 @@
     <!-- A card under a finished lesson's result, offering a daily study reminder on the phone. -->
     <string name="reminders_offer_title">Vuoi un promemoria per studiare?</string>
     <!-- %1$s is a time of day, such as "7:00 PM". -->
-    <string name="reminders_offer_body">Alle %1$s nei tuoi giorni di studio, se hai ancora qualcosa da studiare.</string>
+    <string name="reminders_offer_body">Alle %1$s nei giorni in cui studi.</string>
     <string name="reminders_remind_me">Ricordamelo</string>
     <!-- Declines the offer, which isn't shown again. Portuguese: "Agora não" (ungendered). -->
     <string name="reminders_no_thanks">No, grazie</string>
@@ -70,12 +69,10 @@
     <!-- Guests have no email address yet. -->
     <string name="reminders_email_needs_account">Crea un account per ricevere i promemoria via email</string>
     <string name="reminders_push">Notifiche push</string>
-    <!-- Under the settings; "your plans" opens the plan, which sets the study days. -->
-    <string name="reminders_study_days">Nei giorni di studio previsti dai tuoi piani</string>
-    <string name="reminders_quiet">In pausa durante la tua assenza. Si riattivano quando riprendi a studiare.</string>
-    <string name="reminders_save_failed">Il salvataggio non è riuscito. Riprova.</string>
-    <!-- Push reminders go to another of the learner's devices; this one can take over. -->
-    <string name="reminders_use_this_device">Usa questo dispositivo</string>
     <!-- After the selected device's name, such as "Pixel 9 · This device", when it's the device in hand. -->
     <string name="reminders_this_device">Questo dispositivo</string>
+    <!-- Push reminders go to another of the learner's devices; this one can take over. -->
+    <string name="reminders_use_this_device">Usa questo dispositivo</string>
+    <string name="reminders_quiet">In pausa durante la tua assenza. Si riattivano quando riprendi a studiare.</string>
+    <string name="reminders_save_failed">Il salvataggio non è riuscito. Riprova.</string>
 </resources>

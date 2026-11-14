@@ -7,11 +7,10 @@
   "pattern_got_it": "936f1c0d4cf011ae50107842269c1ff0293885382dbe808a1d0c805b37515cf3",
   "pattern_just_typos": "39658803bcc17d22acd4b7a22ab45572f47b057b1801059696af2633bb6ad990",
   "pattern_keep_going": "874796f705543b3c88da9b1e3b0cfbe0d2a62bd4eab3ddedbca62ae3ab46f59f",
-  "pattern_noticed": "fccf145031a9346a5d310b4cd7c61ef447b2cdf3eef2a5f0cedd8a6ccff9a55d",
-  "pattern_practice": "13ee2d35929e25e68fda19d1b5abba24f50a2311101b088f2017daa8a9d853a7",
+  "pattern_practice": "cc5be192ed719d2dc89e6e90a36120c076facb85193c1e3160f748753f9614cf",
   "pattern_quoted": "a7a61163c3e5edae31e49789205f95d57a9fad4b5f3d79f4c2288430973609a2",
   "pattern_rule": "be84e0ebdc0b7ebecf268e694c6027ecc8f9c3b1fda633d341e0a06d07fe4a25",
-  "pattern_see_how_you_did": "fcba8371616cb4a512b18d2c529392dbcc3b672ba267d34a1d1860dc15734f0f",
+  "pattern_see_how_it_went": "2b85ef1ff572fbdd191eb1f73fdf86a1903bcb52d462a008549c7b5c852a9e5d",
   "pattern_see_rule": "f14fc0b88ec069328aee54f944521015d646a39d89c3765d4f00dece7129e825",
   "pattern_seen": "3e236ea08cf327b46469d55ef9b218fcb3cb4354f4093c4e009d40373ec8c185",
   "pattern_seen_times": "a2bf17b6b165f787a08137dbd981c6ec147b76bcde4d81caaf7ada933da583a8",
@@ -24,7 +23,6 @@
 <resources>
     <!-- A rule the learner keeps getting wrong, found in their recent answers. -->
     <string name="pattern_title">Errore ricorrente</string>
-    <string name="pattern_noticed">Abbiamo notato un errore ricorrente</string>
     <string name="pattern_seen">È emerso nelle tue risposte recenti.</string>
     <!-- %d is how many times the mistake came up. Every form shows the number as %d; English says “once” only because it reads better. -->
     <plurals name="pattern_seen_times">
@@ -32,8 +30,7 @@
         <item quantity="many">È emerso %d volte nelle tue risposte recenti.</item>
         <item quantity="other">È emerso %d volte nelle tue risposte recenti.</item>
     </plurals>
-    <!-- Starts a short practice of the rule on this page; "this" is the rule. %1$s is how long it takes, like "3 min". -->
-    <string name="pattern_practice">Esercitati su questa regola · %1$s</string>
+    <string name="pattern_practice">Esercitazione</string>
     <!-- Heads the learner's other sentences that show the same mistake. -->
     <string name="pattern_also_came_up">È emerso anche in</string>
     <!-- A sentence the learner said or wrote, in quotation marks. -->
@@ -47,7 +44,7 @@
     <string name="pattern_where_you_slipped">Dove hai sbagliato</string>
     <string name="pattern_see_rule">Vedi la regola</string>
     <!-- After the practice's last question, opens its result. -->
-    <string name="pattern_see_how_you_did">Guarda com’è andata</string>
+    <string name="pattern_see_how_it_went">Vedi com’è andata</string>
     <string name="pattern_got_it">Hai capito questa regola.</string>
     <string name="pattern_keep_going">Conoscere la regola è il primo passo. Più la usi, più è facile applicarla.</string>
     <!-- The button that closes the practice result or the typos note and leaves the screen. -->

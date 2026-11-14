@@ -5,11 +5,8 @@ import androidx.activity.ComponentActivity
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
-import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
-import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.window.testing.layout.WindowLayoutInfoPublisherRule
@@ -29,7 +26,7 @@ import org.robolectric.annotation.GraphicsMode
 import java.io.File
 
 /**
- * Review screenshots of each logbook step for a real recap saved as `recap.json` (GET
+ * Review screenshots of the weekly summary for a real recap saved as `recap.json` (GET
  * /v1/me/weekly-recap) in the shots folder: `-Pzoonk.shots=<folder>`.
  */
 @RunWith(AndroidJUnit4::class)
@@ -110,14 +107,8 @@ class LogbookScreenshots {
         }
 
         if (fold) compose.unfoldBook(folds)
-        var step = 0
-        while (true) {
-            compose.waitForIdle()
-            write("logbook-$step-$name", compose.onRoot().captureRender().asAndroidBitmap())
-            if (compose.onAllNodes(hasText("Continue")).fetchSemanticsNodes().isEmpty()) break
-            compose.onNodeWithText("Continue").performClick()
-            step++
-        }
+        compose.waitForIdle()
+        write("logbook-$name", compose.onRoot().captureRender().asAndroidBitmap())
     }
 
     private fun write(

@@ -70,7 +70,7 @@ val LocalCountryCatalog = staticCompositionLocalOf<KeyedResources<String, List<C
 /**
  * The one country picker: a search over [suggested] then every country, named in [language], which
  * it reads once the sheet opens. A tap on a country picks it ([onPick]); on the [selected] one, it just closes.
- * With [allowNone], "Not set" comes first and picks null. While [pending], the row picked spins.
+ * While [pending], the row picked spins.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -81,7 +81,6 @@ fun CountrySheet(
     selected: String?,
     onPick: (CountryChoice?) -> Unit,
     onDismiss: () -> Unit,
-    allowNone: Boolean = false,
     pending: Boolean = false,
     failed: Boolean = false,
 ) {
@@ -90,11 +89,11 @@ fun CountrySheet(
     val scope = rememberCoroutineScope()
     var query by rememberSaveable { mutableStateOf("") }
     var picked by rememberSaveable { mutableStateOf<String?>(null) }
-    val pick = { choice: CountryChoice? ->
-        if (choice?.code == selected) {
+    val pick = { choice: CountryChoice ->
+        if (choice.code == selected) {
             onDismiss()
         } else {
-            picked = choice?.code ?: NONE
+            picked = choice.code
             onPick(choice)
         }
     }
@@ -135,12 +134,6 @@ fun CountrySheet(
                     items(matches, key = { "match-${it.code}" }, contentType = { "country" }) { row(it) }
                     unloaded(all) { scope.launch { catalog?.refresh() } }
                     return@LazyColumn
-                }
-                if (allowNone) {
-                    item(key = "none", contentType = "country") {
-                        val none = CountryChoice("", stringResource(R.string.settings_home_country_none))
-                        CountryRow(none, selected == null, busy = pending && picked == NONE, enabled = !pending) { pick(null) }
-                    }
                 }
                 if (suggested.isNotEmpty()) {
                     label("suggested", R.string.country_suggested)
@@ -255,8 +248,5 @@ private fun normalize(text: String) =
 
 private val COMBINING_ACCENTS = Regex("\\p{Mn}+")
 private val WORD_STARTS = listOf(" ", "-", "(", "'")
-
-/** The "Not set" row's mark while it saves. */
-private const val NONE = ""
 
 private const val SKELETON_ROWS = 6
