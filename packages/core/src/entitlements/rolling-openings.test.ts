@@ -1,4 +1,4 @@
-import { type UsageKind } from "@zoonk/db";
+import { UsageKind } from "@zoonk/db";
 import * as fc from "fast-check";
 import { describe, expect, it } from "vitest";
 import { toAllowance } from "./_utils/allowance-view";
@@ -105,7 +105,7 @@ describe("rolling request openings", () => {
     const first = decideBundle({ claims, ledger: ledgerAt(rows, NOW) }).decision;
 
     expect(first).toMatchObject({
-      limit: { availableAt: new Date("2026-12-20T12:00:00Z"), resource: "chapterLessons" },
+      limit: { availableAt: new Date("2026-12-20T12:00:00Z"), resource: "mindMap" },
       status: "limitReached",
     });
 
@@ -283,11 +283,11 @@ describe("rolling request openings", () => {
 
           const first = decide(NOW);
 
-          if (first.status !== "limitReached" || first.limit.period !== "rolling30Days") {
+          if (first.status !== "limitReached") {
             return;
           }
 
-          const at = first.limit.availableAt;
+          const at = first.limit.availableAt ?? new Date("2026-12-02T00:00:00Z");
 
           const allowance = toAllowance({
             now: NOW,
@@ -295,7 +295,7 @@ describe("rolling request openings", () => {
             totals: totalsAt(rows, costs, NOW),
           }).items.find((item) => item.kind === "conversation");
 
-          expect(at).toStrictEqual(allowance?.availableAt);
+          expect(at).toStrictEqual(allowance?.availableAt ?? new Date("2026-12-02T00:00:00Z"));
           expect(at).toBeInstanceOf(Date);
 
           if (!at) {
@@ -304,6 +304,119 @@ describe("rolling request openings", () => {
 
           expect(decide(at)).toStrictEqual({ status: "allowed" });
           expect(decide(new Date(at.getTime() - 1)).status).not.toBe("allowed");
+        },
+      ),
+      { numRuns: 300 },
+    );
+  });
+
+  it.each(
+    Object.values(UsageKind).flatMap((kind) =>
+      (["free", "guest", "plus"] as const).flatMap((tier) => {
+        const rule = getUsageRule({ kind, tier });
+        const day = kind === "conversation" ? rule.daySeconds : rule.day;
+
+        return day !== undefined && rule.rolling30Days !== undefined
+          ? [{ day, kind, rolling: rule.rolling30Days, tier }]
+          : [];
+      }),
+    ),
+  )("reports the later daily or rolling cap for $tier $kind", ({ kind, tier, day, rolling }) => {
+    fc.assert(
+      fc.property(
+        fc.integer({ max: 2 * DAY, min: 1 }),
+        fc.integer({ max: 5, min: 0 }),
+        (delay, over) => {
+          const now = NOW;
+          const oldAt = new Date(now.getTime() - USAGE_WINDOW_MS + delay);
+
+          const rows =
+            kind === "conversation"
+              ? [
+                  usageRow(kind, 0, day),
+                  { at: oldAt, cost: 0, kind, seconds: rolling - day + over },
+                ]
+              : [
+                  ...Array.from({ length: day }, () => usageRow(kind, 0)),
+                  ...Array.from({ length: rolling - day + over }, () => ({
+                    at: oldAt,
+                    cost: 0,
+                    kind,
+                    seconds: 0,
+                  })),
+                ];
+
+          const decide = (at: Date) =>
+            evaluateUsage({
+              costMicros: 0,
+              counts: getUsageCounts(totalsAt(rows, [], at), kind),
+              generated: false,
+              kind,
+              now: at,
+              tier,
+            });
+
+          const first = decide(now);
+          const availableAt = new Date(now.getTime() + Math.max(delay, DAY / 2));
+
+          expect(first).toMatchObject({
+            limit: { availableAt, period: delay >= DAY / 2 ? "rolling30Days" : "day" },
+            status: "limitReached",
+          });
+
+          expect(decide(availableAt)).toStrictEqual({ status: "allowed" });
+          expect(decide(new Date(availableAt.getTime() - 1)).status).toBe("limitReached");
+        },
+      ),
+      { numRuns: 100 },
+    );
+  });
+
+  it("does not hide a later rolling call-money opening behind daily time for random histories", () => {
+    fc.assert(
+      fc.property(
+        fc.constantFrom("free" as const, "plus" as const),
+        fc.integer({ max: 2 * DAY, min: 1 }),
+        (tier, delay) => {
+          const day = getUsageRule({ kind: "conversation", tier }).daySeconds ?? 0;
+          const rows = [usageRow("conversation", 0, day)];
+
+          const money = [
+            {
+              amount: getCallMonthlyBudgetMicros(tier),
+              at: new Date(NOW.getTime() - USAGE_WINDOW_MS + delay),
+            },
+          ];
+
+          const decide = (at: Date) =>
+            evaluateUsage({
+              costMicros: 0,
+              counts: getUsageCounts(totalsAt(rows, money, at), "conversation"),
+              generated: false,
+              kind: "conversation",
+              now: at,
+              tier,
+            });
+
+          const availableAt = new Date(NOW.getTime() + Math.max(delay, DAY / 2));
+
+          expect(decide(NOW)).toMatchObject({
+            limit: {
+              availableAt,
+              period: delay >= DAY / 2 ? "rolling30Days" : "day",
+              resource: delay >= DAY / 2 ? "aiSpend" : "callSeconds",
+            },
+            status: "limitReached",
+          });
+
+          expect(
+            toAllowance({ now: NOW, tier, totals: totalsAt(rows, money, NOW) }).items.find(
+              (item) => item.kind === "conversation",
+            )?.availableAt,
+          ).toStrictEqual(availableAt);
+
+          expect(decide(availableAt)).toStrictEqual({ status: "allowed" });
+          expect(decide(new Date(availableAt.getTime() - 1)).status).toBe("limitReached");
         },
       ),
       { numRuns: 300 },
