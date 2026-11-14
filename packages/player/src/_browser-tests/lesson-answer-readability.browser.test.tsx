@@ -1,10 +1,11 @@
 import { collectMathMarkup } from "@zoonk/learn/rich-text/math";
+import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
 import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
 import { atViewport } from "../_test-utils/browser-viewport";
 import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { buildLesson } from "../preview/preview-lesson";
-import { contentStep } from "../preview/preview-steps";
+import { activityStep, contentStep } from "../preview/preview-steps";
 
 const ANSWER = "Compartilhado entre os dois átomos, no par de elétrons";
 
@@ -207,6 +208,41 @@ describe("checked answer readability", () => {
 
       expect(formula?.getBoundingClientRect().right).toBeLessThanOrEqual(390);
       expect(scrollersBetween(drawing, document.body)).toHaveLength(1);
+    });
+  });
+
+  it("keeps a formula wider than a match card inside its text column", async () => {
+    const fixture = activityContentFixtures.matchPairs;
+
+    const distractor = { side: "right" as const, text: LONG_FORMULA, why: "It has no match." };
+
+    const lesson = buildLesson([
+      activityStep({
+        content: {
+          ...fixture,
+          fields: { ...fixture.fields, distractors: [...fixture.fields.distractors, distractor] },
+        },
+      }),
+    ]);
+
+    await atViewport({ height: 844, width: 390 }, async () => {
+      renderLessonPlayer({ lesson, mathMarkup: collectMathMarkup(lesson) });
+
+      await expect.element(page.getByRole("group", { name: "Cards to match" })).toBeVisible();
+      const drawing = document.querySelector("[data-slot='match-entry'] math");
+      const card = drawing?.closest("[data-slot='match-entry']");
+      const formula = drawing?.closest("[data-slot='inline-math']");
+      const column = formula?.closest("[data-slot='match-entry'] > span");
+
+      if (!drawing || !card || !formula || !column) {
+        throw new Error("The formula must draw inside its card's text column.");
+      }
+
+      const columnEnd = column.getBoundingClientRect().right;
+
+      expect(formula.getBoundingClientRect().right).toBeLessThanOrEqual(columnEnd);
+      expect(card.scrollWidth).toBeLessThanOrEqual(card.clientWidth);
+      expect(scrollersBetween(drawing, card)).toHaveLength(1);
     });
   });
 });
