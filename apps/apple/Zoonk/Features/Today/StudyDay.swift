@@ -32,11 +32,6 @@ struct StudyDay: Decodable, Equatable, Sendable {
     let positions: [Int]
   }
 
-  struct ExamAccess: Decodable, Equatable, Sendable {
-    let includesMockExams: Bool
-    let trialEnded: Bool
-  }
-
   struct ExtraTime: Decodable, Equatable, Sendable {
     struct Lesson: Decodable, Equatable, Sendable {
       let minutes: Int
@@ -55,10 +50,6 @@ struct StudyDay: Decodable, Equatable, Sendable {
 
   typealias Minutes = Components.Schemas.StudySessionMinutes
 
-  struct PlusLesson: Decodable, Equatable, Sendable {
-    let title: String
-  }
-
   let id: String?
   var blocks: [StudyBlock]
   let brainPower: Int
@@ -67,7 +58,6 @@ struct StudyDay: Decodable, Equatable, Sendable {
   /// Epoch milliseconds.
   let dayEndsAt: Int
   let emptyDay: EmptyDay?
-  let examAccess: ExamAccess
   let extraTime: ExtraTime
   let freshStart: FreshStart?
   let fullMeal: FullMeal
@@ -80,7 +70,6 @@ struct StudyDay: Decodable, Equatable, Sendable {
   let missions: [StudyMission]
   var nextBlockId: String?
   var nextPosition: Int?
-  let plusLessons: [PlusLesson]
   var state: DayState
   let status: Status
   let week: StudyWeek

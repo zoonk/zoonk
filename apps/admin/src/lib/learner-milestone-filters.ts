@@ -1,4 +1,5 @@
 import { readQueryParam } from "@/lib/query-param";
+import { type Route } from "next";
 
 export const DEFAULT_COMPLETED_LESSONS_THRESHOLD = 10;
 export const DEFAULT_LEARNING_DAYS_THRESHOLD = 3;
@@ -80,7 +81,7 @@ export function buildLearnerMilestoneUsersHref({
 }: {
   kind: LearnerMilestoneKind;
   threshold: number;
-}) {
+}): Route {
   const params = new URLSearchParams({ kind, threshold: threshold.toString() });
 
   return `/stats/engagement/learners?${params.toString()}`;

@@ -420,24 +420,21 @@ struct PracticeResultNumbers: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 16) {
       FlowLayout(spacing: 32, alignment: .firstTextBaseline) {
-        if let correct, let total, total > 0 {
+        // With no total, a count alone: a duel stops once it's decided, so a total reads wrong.
+        if let correct, total.map({ $0 > 0 }) ?? true {
           MomentReadout {
-            Text("\(correct)/\(total)")
+            Text(total.map { "\(correct)/\($0)" } ?? "\(correct)")
           } words: {
             Text(
               "Right", tableName: "Practice",
               comment: "Readout label: right answers out of the total.")
           }
         }
+      }
 
-        if brainPower > 0 {
-          MomentReadout(tint: .brainText) {
-            EarnedNumber(value: brainPower)
-          } words: {
-            Text(
-              "Brain Power", tableName: "Practice", comment: "Readout label: Brain Power earned.")
-          }
-        }
+      // What it earned, the same line at every task's end (B2's R1).
+      if brainPower > 0 {
+        EarnedBrainPower(points: brainPower)
       }
 
       ForEach(facts, id: \.self) { fact in

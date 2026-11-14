@@ -1,10 +1,11 @@
 "use client";
 
 import { type PlanPhaseView } from "@zoonk/core/plans/view-contract";
+import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { cn } from "@zoonk/ui/lib/utils";
 import { FlagIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { ListRowChevron, ListRowChevronSpace } from "../_components/list-group";
+import { ListRowChevronSpace } from "../_components/list-group";
 import { DoneMark } from "../_components/status-mark";
 import { LearnLink } from "../learn-link";
 import { usePlanScreen } from "../plan/plan-context";
@@ -171,7 +172,7 @@ function FinishNode({ continues, examHref }: { continues: boolean; examHref: str
       {examHref ? (
         <LearnLink className={cn(HEADER_CLASS, HEADER_INTERACTIVE_CLASS)} href={examHref}>
           {content}
-          <ListRowChevron />
+          <RowChevron />
         </LearnLink>
       ) : (
         <div className={HEADER_CLASS}>

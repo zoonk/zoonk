@@ -25,33 +25,40 @@ extension StudyBlock {
       comment: "A short list of topics and how many more")
   }
 
-  var challengePhase: String? {
-    guard let checkpoint, !checkpoint.isWeekly else {
-      return nil
+  /// A language unit's challenge is a live call, with no questions.
+  private var isCall: Bool {
+    guard let checkpoint else {
+      return false
     }
 
-    return title
+    return !checkpoint.mock && !checkpoint.isWeekly && questions == 0
   }
 
+  /// One name per row (main's `use-block-copy.ts`): "The Trickster", "Rematch", "Weekly
+  /// challenge", "Mock exam", "Call", "Review".
   var displayTitle: String {
     if let checkpoint {
-      if checkpoint.isWeekly {
-        return checkpoint.mock
-          ? String(localized: "Mock exam", table: "Today", comment: "A weekly mock exam block")
-          : String(
-            localized: "Weekly challenge", table: "Today", comment: "The week's challenge block")
+      if checkpoint.mock {
+        return String(localized: "Mock exam", table: "Today", comment: "A mock exam block")
       }
 
-      if checkpoint.kind == "finalBoss" {
+      if checkpoint.isWeekly {
         return String(
-          localized: "Final challenge", table: "Today", comment: "The plan's final challenge block")
+          localized: "Weekly challenge", table: "Today", comment: "The week's challenge block")
+      }
+
+      if isCall {
+        return String(
+          localized: "Call", table: "Today", comment: "A language plan's challenge: a live call")
       }
 
       return checkpoint.rematch
         ? String(
-          localized: "Challenge, second try", table: "Today",
-          comment: "A phase challenge taken again")
-        : String(localized: "Phase challenge", table: "Today", comment: "A phase's challenge block")
+          localized: "Rematch", table: "Today",
+          comment: "A second go at the Trickster, the character a phase's challenge is against")
+        : String(
+          localized: "The Trickster", table: "Today",
+          comment: "A phase's challenge, named by the character it's against")
     }
 
     switch kind {
@@ -60,9 +67,7 @@ extension StudyBlock {
         localized: "What you already know", table: "Today",
         comment: "The first week's warm-up block of placement questions")
     case .review:
-      return estimatedMinutes > 5
-        ? String(localized: "Reviews", table: "Today", comment: "A review block longer than 5 min")
-        : String(localized: "Quick review", table: "Today", comment: "A short review block")
+      return String(localized: "Review", table: "Today", comment: "A review block")
     case .learn:
       return title
         ?? String(
@@ -72,7 +77,7 @@ extension StudyBlock {
         ?? String(localized: "Writing practice", table: "Today", comment: "A writing block")
     case .practice, .checkpoint:
       if fullReview {
-        return String(localized: "Full review", table: "Today", comment: "A full review block")
+        return String(localized: "Review", table: "Today", comment: "A review block")
       }
 
       if mistakesOnly {
@@ -102,24 +107,19 @@ extension StudyBlock {
     }
   }
 
+  /// The row's line where the block is told on its own, as "Up next" does.
   var detail: String? {
     if hasCapsules && weakest {
       return String(
-        localized: "No reviews due today\u{00A0}· \(questions) questions on your weakest topics",
-        table: "Today", comment: "A review of the weakest topics when nothing was due")
+        localized: "\(questions) questions on what's been hardest for you", table: "Today",
+        comment: "A review of the weakest topics, on a day with nothing due to review")
     }
 
     if hasCapsules {
-      let reviewed = capsules.reduce(0) { $0 + $1.questions }
-      let topics = shortList(capsules.compactMap(\.title), named: 2)
-
-      return questions > reviewed
-        ? String(
-          localized: "\(questions) questions\u{00A0}· \(topics), plus what you already know",
-          table: "Today", comment: "A review's questions and its topics")
-        : String(
-          localized: "\(questions) questions\u{00A0}· \(topics)", table: "Today",
-          comment: "A review's questions and its topics")
+      return String(
+        localized:
+          "\(questions) questions\u{00A0}· \(shortList(capsules.compactMap(\.title), named: 2))",
+        table: "Today", comment: "A review's questions and its topics")
     }
 
     if kind == .learn {
@@ -130,27 +130,8 @@ extension StudyBlock {
         : canDo
     }
 
-    // A language unit's challenge is a live call, with no questions.
-    if let checkpoint, !checkpoint.mock, questions == 0 {
-      return challengePhase.map {
-        String(
-          localized: "\($0)\u{00A0}· a live call", table: "Today",
-          comment: "A language unit's challenge: its phase, and that it's a live call")
-      }
-        ?? String(
-          localized: "A live call", table: "Today", comment: "A language unit's challenge")
-    }
-
-    if let phase = challengePhase {
-      return String(
-        localized: "\(phase)\u{00A0}· \(questions) questions, no hints", table: "Today",
-        comment: "A phase challenge's phase and questions")
-    }
-
-    if checkpoint != nil {
-      return String(
-        localized: "\(questions) questions, no hints", table: "Today",
-        comment: "A challenge's questions")
+    if isCall {
+      return nil
     }
 
     if kind == .produce {
@@ -159,8 +140,8 @@ extension StudyBlock {
 
     if fullReview {
       return String(
-        localized: "\(questions) questions on every topic, your weakest first", table: "Today",
-        comment: "A full review's questions: the count is the total, drawn from every topic")
+        localized: "\(questions) questions on every topic", table: "Today",
+        comment: "A review of every topic: the count is its questions")
     }
 
     if practisesTopics {
@@ -173,74 +154,32 @@ extension StudyBlock {
       localized: "\(questions) questions", table: "Today", comment: "A practice block's questions")
   }
 
-  func label(isCatchingUp: Bool) -> String? {
+  /// The row's one short line on Today's list: the subject, or what a challenge or review is.
+  var label: String? {
     if waitReason != nil {
-      guard let phase = challengePhase else {
-        return String(
-          localized: "After this phase's lessons", table: "Today",
-          comment: "A phase challenge waiting for its phase's lessons")
-      }
-
       return String(
-        localized: "\(phase)\u{00A0}· after this phase's lessons", table: "Today",
-        comment: "A phase challenge waiting for its phase's lessons, after the phase's name")
+        localized: "After today's lessons", table: "Today",
+        comment: "A challenge that opens once the lessons before it are done")
     }
-
-    let part: String?
 
     if practisesTopics {
-      part = shortList(topics, named: 1)
-    } else if isCatchingUp {
-      part =
-        subject.map {
-          String(
-            localized: "Catching up\u{00A0}· \($0)", table: "Today",
-            comment: "A lesson left from earlier days, and its subject")
-        }
-        ?? String(localized: "Catching up", table: "Today", comment: "A lesson from earlier days")
-    } else if checkpoint != nil {
-      let parts = [subject, detail].compactMap(\.self)
-      part = parts.isEmpty ? nil : parts.joinedFacts()
-    } else {
-      part = subject
+      return shortList(topics, named: 1)
     }
 
-    guard oftenTested else {
-      return part
+    if fullReview {
+      return String(
+        localized: "Every topic", table: "Today", comment: "A review that covers every topic")
     }
 
-    return part.map {
-      String(
-        localized: "\($0)\u{00A0}· often tested", table: "Today",
-        comment: "A topic the exam asks a lot")
-    } ?? String(localized: "Often tested", table: "Today", comment: "A topic the exam asks a lot")
-  }
-}
-
-extension TodayView.PlanStatus {
-  var text: String {
-    switch kind {
-    case "ahead":
-      String(localized: "\(days ?? 0) days ahead", table: "Today", comment: "Plan status")
-    case "behind":
-      if let lessons {
-        String(
-          localized: "\(lessons) lessons to catch up", table: "Today", comment: "Plan status")
-      } else {
-        String(localized: "\(days ?? 0) days behind", table: "Today", comment: "Plan status")
-      }
-    case "challengesLeft":
-      String(
-        localized: "\(challenges ?? 0) challenges left", table: "Today", comment: "Plan status")
-    case "finished":
-      String(localized: "Plan finished", table: "Today", comment: "Plan status")
-    case "needsAdjusting":
-      String(localized: "Needs adjusting", table: "Today", comment: "Plan status")
-    case "pastDate":
-      String(localized: "Past your date", table: "Today", comment: "Plan status")
-    default:
-      String(localized: "Keeping pace", table: "Today", comment: "Plan status")
+    if checkpoint != nil {
+      return isCall
+        ? nil
+        : String(
+          localized: "\(questions) questions", table: "Today",
+          comment: "A practice block's questions")
     }
+
+    return subject
   }
 }
 

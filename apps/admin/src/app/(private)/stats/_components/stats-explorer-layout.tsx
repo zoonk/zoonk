@@ -7,8 +7,6 @@ import { type StatsPeriod } from "../_utils/stats-period";
 import { StatsAnalysisPicker } from "./stats-analysis-picker";
 import { StatsPeriodPicker } from "./stats-period-picker";
 
-const STATS = { href: "/stats", label: "Stats" };
-
 export function StatsExplorerLayout({
   children,
   periodQuery,
@@ -32,7 +30,6 @@ export function StatsExplorerLayout({
             />
           ) : null
         }
-        parent={STATS}
         title={
           <PageTitle>
             <StatsAnalysisPicker periodQuery={periodQuery} selectedView={selectedView} />
@@ -80,7 +77,6 @@ export function StatsExplorerPageSkeleton() {
     <Container className="min-h-full gap-2">
       <AdminHeader
         actions={<Skeleton className="h-11 w-28 rounded-lg lg:h-10" />}
-        parent={STATS}
         title={
           <span aria-hidden="true" className="text-title flex h-lh items-center">
             <Skeleton className="h-7 w-56 max-w-full" />

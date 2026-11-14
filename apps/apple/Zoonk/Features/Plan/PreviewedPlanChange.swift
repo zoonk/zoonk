@@ -10,12 +10,11 @@ struct PreviewedPlanChange<Control: View>: View {
   let editor: PlanEditor
   let plan: GoalPlan
   let edits: [PlanEdit]
-  /// The alert's title, and its button that makes the change.
   let title: Text
-  /// What the change does, said before what it changes in the plan.
+  /// The alert's button that makes the change.
+  let button: Text
+  /// What the change does, said before its consequence.
   let what: String
-  /// What the Plan says once the change is saved.
-  let sentence: String
   /// Asks as soon as it shows, for a learner who came to make this change.
   var asksOnAppear = false
   @ViewBuilder let control: (_ isPreviewing: Bool, _ ask: @escaping () -> Void) -> Control
@@ -42,9 +41,9 @@ struct PreviewedPlanChange<Control: View>: View {
       presenting: preview
     ) { _ in
       Button {
-        Task { await editor.change(edits, sentence: sentence) }
+        Task { await editor.change(edits) }
       } label: {
-        title
+        button
       }
 
       Button(role: .cancel) {
@@ -52,9 +51,18 @@ struct PreviewedPlanChange<Control: View>: View {
         Text("Cancel", tableName: "Plan", comment: "Cancels a change")
       }
     } message: { preview in
+      // An alert holds text alone, so the change's consequence follows what it does, without its
+      // rows.
       Text(
-        verbatim: [what, planEffectText(preview.effect, plan: plan)].compactMap(\.self)
-          .joinedSentences())
+        verbatim: [
+          what,
+          PlanChangeEffect.consequence(
+            preview.effect,
+            PlanChangeOptions(
+              byDate: plan.schedule.targetDate != nil,
+              dateKind: editor.dateKind),
+            today: plan.today)?.text,
+        ].compactMap(\.self).joinedSentences())
     }
   }
 

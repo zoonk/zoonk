@@ -120,9 +120,8 @@ struct MindMapReader: View {
         move(to: cards[index + 1])
         return .handled
       }
-      .safeAreaBar(edge: .bottom) {
+      .bottomBar {
         actionBar(cards, index: index)
-          .keepsOffFold()
       }
       // The bar's soft edge doesn't reach a page's own scroll inside the pager, so an outline would
       // run crisp under the see-through Previous.
@@ -258,10 +257,11 @@ struct MindMapReader: View {
   }
 
   /// The lesson player's bar: Previous from the second map, then Next, which is Done on the last.
+  @ViewBuilder
   private func actionBar(_ cards: [MindMapCard], index: Int) -> some View {
     let isLast = index == cards.count - 1
 
-    return TaskActionBar {
+    Group {
       if index > 0 {
         StepBackButton(
           label: Text(
@@ -285,8 +285,6 @@ struct MindMapReader: View {
         }
       }
       .buttonStyle(.mainAction)
-      .controlSize(.large)
-      .buttonSizing(.flexible)
       .keyboardShortcut(.defaultAction)
     }
   }

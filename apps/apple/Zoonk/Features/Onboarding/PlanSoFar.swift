@@ -74,18 +74,6 @@ struct PlanFact: Identifiable, Equatable {
       + [level(details), time(of: goal, answered: details?.answered ?? [])].compactMap { $0 }
   }
 
-  /// Main's `PlanReceiptChips`: the short facts, the date as its days left.
-  static func chips(_ facts: [PlanFact]) -> String {
-    let shown: Set = [
-      "title", "date", "targetLanguage", "targetCourse", "institution", "targetPosition",
-      "targetScore",
-    ]
-
-    return facts.filter { shown.contains($0.id) }
-      .flatMap { [$0.daysLeft ?? $0.value, $0.note].compactMap { $0 } }
-      .joinedFacts()
-  }
-
   private struct Details: Decodable {
     let answered: [String]
     let level: String?
@@ -111,7 +99,7 @@ struct PlanFact: Identifiable, Equatable {
       ? LocalizedStringResource(
         "Exam date", table: "Onboarding", comment: "Row with an exam's date")
       : LocalizedStringResource(
-        "Date", table: "Onboarding", comment: "Row with the date a goal aims for")
+        "End date", table: "Onboarding", comment: "Row with the date a goal aims for")
 
     guard let targetDate = goal.targetDate else {
       return answered.contains("targetDate")

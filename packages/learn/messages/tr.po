@@ -3825,6 +3825,11 @@ msgid "myemail@gmail.com"
 msgstr "epostam@gmail.com"
 
 #: src/feedback/feedback-form.tsx
+msgctxt "feedback.Xx0WZV"
+msgid "Send message"
+msgstr "Mesaj gönder"
+
+#: src/feedback/feedback-form.tsx
 msgctxt "feedback.lknSi2"
 msgid "This screen is attached"
 msgstr "Bu ekran mesaja eklendi"
@@ -3853,11 +3858,6 @@ msgstr "Mesajın gönderildi! Yakında sana yanıt vereceğiz."
 msgctxt "feedback.dpjZ-X"
 msgid "We couldn't send your message. Try again, or email us at hello@zoonk.com."
 msgstr "Mesajını gönderemedik. Tekrar dene veya hello@zoonk.com adresine e-posta gönder."
-
-#: src/feedback/feedback-form.tsx
-msgctxt "feedback.Xx0WZV"
-msgid "Send message"
-msgstr "Mesaj gönder"
 
 #: src/focus-test/focus-test-flow.tsx
 #: src/focus-test/focus-test-screens.tsx
@@ -14156,6 +14156,11 @@ msgstr "Başlamaya hazır"
 msgctxt "uaZ--2"
 msgid "Getting your lesson ready"
 msgstr "Dersini hazırlıyoruz"
+
+#: src/wait/lesson-wait-status.tsx
+msgctxt "KPgx8T"
+msgid "Your challenge is ready"
+msgstr "Meydan okuman hazır"
 
 #: src/wait/lesson-wait-status.tsx
 msgctxt "4Wktrz"

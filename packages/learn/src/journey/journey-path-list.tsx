@@ -7,11 +7,12 @@ import {
   CollapsibleTrigger,
   FoldChevron,
 } from "@zoonk/ui/components/collapsible";
+import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { cn } from "@zoonk/ui/lib/utils";
 import { FlagIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { ChapterMark } from "../_components/chapter-mark";
-import { ListRowChevron, ListRowChevronSpace } from "../_components/list-group";
+import { ListRowChevronSpace } from "../_components/list-group";
 import { LearnLink } from "../learn-link";
 import { usePlanScreen } from "../plan/plan-context";
 import { PlanDateText } from "../plan/plan-date-text";
@@ -98,7 +99,7 @@ function ChapterPhase({
           open={open}
           phase={phase}
         />
-        <ListRowChevron />
+        <RowChevron />
       </LearnLink>
 
       {open && <OpenPhaseEvents links={links} phase={phase} />}

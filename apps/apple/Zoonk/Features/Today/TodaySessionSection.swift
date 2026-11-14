@@ -3,7 +3,6 @@ import SwiftUI
 /// What the learner opened or closed in the day's session. Kept by the screen above its panes, so
 /// folding or unfolding keeps it.
 struct TodayDisclosures {
-  var earlierWork: Bool?
   var planChange = false
   var showsDone = false
   var showsMore = false
@@ -18,8 +17,6 @@ struct TodaySessionSection: View {
   let writingStalled: Bool
   @Binding var disclosures: TodayDisclosures
   let open: (StudyBlock, Bool) -> Void
-  /// Main's tablet column heads the day with its action instead (`TodaySessionAction`).
-  var showsAction = true
   let prepare: () -> Void
 
   static let moreFold = "TodaySessionSection.moreFold"
@@ -30,39 +27,12 @@ struct TodaySessionSection: View {
   private var session: StudyDay { view.session }
 
   var body: some View {
-    if !view.earlierWork.isEmpty {
-      TodayEarlierWorkSection(
-        items: view.earlierWork,
-        isExpanded: Binding {
-          disclosures.earlierWork ?? (view.earlierWork.count <= 5)
-        } set: {
-          disclosures.earlierWork = $0
-        })
-    }
-
     Section {
-      let lead = TodayDayLead(view: view, writingStalled: writingStalled)
-
-      if !view.dayLeadJoinsHeader, !lead.isEmpty {
-        lead
-          .listRowSeparator(.hidden)
-      }
-
       queue
 
       if let status = TodayDayStatus(view: view, writingStalled: writingStalled) {
         status
       }
-    }
-
-    if showsAction, TodaySessionAction.offers(view) {
-      Section {
-        TodaySessionAction(
-          view: view, busy: busy, failed: failed, open: open, prepare: prepare)
-      }
-      .listRowBackground(Color.clear)
-      .listRowInsets(.vertical, 0)
-      .listSectionSpacing(.compact)
     }
   }
 
@@ -74,7 +44,7 @@ struct TodaySessionSection: View {
     let foldsDone = done.count > doneRows
     let coming = next == nil ? nil : session.comingLessons
     let timedRows = upcoming.count + (coming == nil ? 0 : 1)
-    let upcomingCount = timedRows + session.plusLessons.count
+    let upcomingCount = timedRows
     let shownUpcoming = disclosures.showsMore ? upcomingCount : StudyDay.upcomingRows
 
     if foldsDone {
@@ -97,18 +67,16 @@ struct TodaySessionSection: View {
       if next.canTestOut, let chapterID = next.chapterId {
         VStack(alignment: .blockTitle, spacing: 0) {
           blockButton(next, isNext: true)
+            .contentShape(.rect)
 
-          Button {
+          TestOutLine {
             router.open(.testOut(chapterId: chapterID))
-          } label: {
-            Text(testOutLine)
-              .typeStyle(.meta)
-              .foregroundStyle(.mutedForeground)
-              .padding(.top, 6)
           }
-          // A list row fires every default-style button in it; this one opens only the test.
-          .buttonStyle(.borderless)
+          .padding(.top, 6)
         }
+        // A list row with a default-style button sends a tap anywhere in it to one of its buttons,
+        // which opened the test from the lesson's title; borderless, each answers only its own area.
+        .buttonStyle(.borderless)
         .currentRow()
       } else {
         blockButton(next, isNext: true)
@@ -130,13 +98,6 @@ struct TodaySessionSection: View {
         failed: failed == .prepare, prepare: prepare
       )
       .disabled(busy != nil && busy != .prepare)
-    }
-
-    ForEach(
-      Array(session.plusLessons.prefix(max(0, shownUpcoming - timedRows)).enumerated()),
-      id: \.offset
-    ) { _, lesson in
-      PlusLessonRow(title: lesson.title)
     }
 
     if upcomingCount > StudyDay.upcomingRows {
@@ -170,26 +131,6 @@ struct TodaySessionSection: View {
       .accessibilityBusy(busy == .block(block.position))
     } else {
       row
-    }
-  }
-
-  /// Main's link in the sentence: ink and underlined in its muted words.
-  private var testOutLine: AttributedString {
-    let line = AttributedString(
-      localized: "Already know this? **Take the test**", table: "Today",
-      comment: "Skips the next lesson's chapter with its test")
-
-    return line.runs[\.inlinePresentationIntent].reduce(into: AttributedString()) {
-      result, run in
-      var piece = AttributedString(line[run.1])
-
-      if run.0?.contains(.stronglyEmphasized) == true {
-        piece.inlinePresentationIntent = nil
-        piece.foregroundColor = Color(.foreground)
-        piece.underlineStyle = .single
-      }
-
-      result += piece
     }
   }
 
@@ -227,6 +168,12 @@ struct TodaySessionAction: View {
   let failed: TodayDayView.Tap?
   let open: (StudyBlock, Bool) -> Void
   let prepare: () -> Void
+  /// Adds the plan's next lessons once the day is done or resting.
+  let keepLearning: () -> Void
+  /// After an exam's date: studies the lessons left after the exam.
+  let keepStudying: () -> Void
+  /// After an exam's date, once confirmed.
+  let archive: () -> Void
   /// Beside the page's title rather than across the column.
   var isInHeader = false
 
@@ -239,7 +186,7 @@ struct TodaySessionAction: View {
     }
 
     if !view.upNextLessons.isEmpty {
-      return false
+      return true
     }
 
     switch view.session.state {
@@ -249,15 +196,47 @@ struct TodaySessionAction: View {
     }
   }
 
+  @State private var isArchiving = false
+
+  private var asksAfterExam: Bool { view.isPastDate && view.goal.kind == .exam }
+
   var body: some View {
     let action = action
 
     action?.inHeader(isInHeader)
       .disabled(busy != nil && action?.isBusy != true)
+
+    if asksAfterExam {
+      BusyButton(isBusy: busy == .archive, icon: .archive) {
+        isArchiving = true
+      } label: {
+        Text("Archive goal", tableName: "Today", comment: "Archives the goal whose exam is over")
+      }
+      .buttonStyle(.outline)
+      .controlSize(.large)
+      .buttonSizing(isInHeader ? .fitted : .flexible)
+      .disabled(busy != nil && busy != .archive)
+      .archiveGoalConfirmation(named: view.goal.title, isPresented: $isArchiving, archive: archive)
+    }
+  }
+
+  /// What failed, for the bottom bar's line: in the bar the button can't say it under itself.
+  var failure: LocalizedStringResource? {
+    if failed == .archive {
+      return TodayMainAction.saveFailure
+    }
+
+    return action.flatMap { $0.failed ? $0.failure : nil }
   }
 
   private var action: TodayMainAction? {
     let state = session.state
+
+    if asksAfterExam {
+      return TodayMainAction(
+        kind: .keepStudying, isBusy: busy == .keepStudying, failed: failed == .keepStudying,
+        action: keepStudying)
+    }
 
     if view.isPastDate {
       return TodayMainAction(kind: .seePlan, isBusy: false, failed: false) {
@@ -266,7 +245,9 @@ struct TodaySessionAction: View {
     }
 
     if !view.upNextLessons.isEmpty {
-      return nil
+      return TodayMainAction(
+        kind: .keepLearning, isBusy: busy == .keepLearning,
+        failed: failed == .keepLearning || failed == .upNextLesson, action: keepLearning)
     }
 
     switch state {
@@ -299,6 +280,7 @@ struct TodayMainAction: View {
   enum Kind {
     case continueSession
     case keepLearning
+    case keepStudying
     case practice(minutes: Int)
     case prepareLessons
     case seePlan
@@ -328,25 +310,27 @@ struct TodayMainAction: View {
 
   var body: some View {
     VStack(alignment: isInHeader ? .trailing : .center, spacing: 8) {
-      BusyButton(isBusy: isBusy, icon: icon, action: action) {
+      BusyButton(isBusy: isBusy, action: action) {
         title
       }
       .buttonStyle(.mainAction)
       .controlSize(.large)
       .buttonSizing(isInHeader ? .fitted : .flexible)
 
-      if failed {
+      if failed, isInHeader {
         FailureLine(message: failure)
           .typeStyle(.note)
       }
     }
   }
 
-  private var failure: LocalizedStringResource {
+  static let saveFailure = LocalizedStringResource(
+    "That didn't save. Try again.", table: "Today", comment: "A change couldn't be saved")
+
+  var failure: LocalizedStringResource {
     switch kind {
-    case .prepareLessons, .practice:
-      LocalizedStringResource(
-        "That didn't save. Try again.", table: "Today", comment: "A change couldn't be saved")
+    case .prepareLessons, .practice, .keepStudying:
+      Self.saveFailure
     case .keepLearning:
       LocalizedStringResource(
         "We couldn't open your next lessons. Try again.", table: "Today",
@@ -358,25 +342,20 @@ struct TodayMainAction: View {
     }
   }
 
-  /// The slot keeps one shape whatever it says: ▶ starts or resumes, → only goes somewhere.
-  private var icon: ActionIcon {
-    switch kind {
-    case .continueSession, .keepLearning, .practice, .startSession: .play
-    case .prepareLessons: .addLessons
-    case .seePlan, .summary: .forward
-    }
-  }
-
   private var title: Text {
     switch kind {
     case .continueSession:
-      Text("Continue session", tableName: "Today", comment: "Continues today's session")
+      Text("Continue", tableName: "Today", comment: "Continues today's session")
     case .keepLearning:
       Text("Keep learning", tableName: "Today", comment: "Adds the plan's next lessons")
+    case .keepStudying:
+      Text(
+        "Keep studying", tableName: "Today",
+        comment: "After an exam's date: keeps studying the lessons left")
     case .practice(let minutes):
       Text(
-        "Practice for \(minutes) minutes", tableName: "Today",
-        comment: "Adds practice on a day with nothing new")
+        "Practice \(minutes) min", tableName: "Today",
+        comment: "Adds practice on a day with nothing new; the number is minutes")
     case .prepareLessons:
       Text(
         "Get today's lessons", tableName: "Today",
@@ -384,18 +363,11 @@ struct TodayMainAction: View {
     case .seePlan:
       Text("See your plan", tableName: "Today", comment: "Opens the Plan")
     case .startSession:
-      Text("Start session", tableName: "Today", comment: "Starts today's session")
+      Text("Start", tableName: "Today", comment: "Starts today's session")
     case .summary:
       Text("See today's summary", tableName: "Today", comment: "Opens today's summary")
     }
   }
-}
-
-extension TodayView {
-  /// Main's order puts earlier unfinished work between the heading and the session's meter. Without
-  /// it, the day's lead sits in the heading's row: in a row of its own, the list's 44pt minimum row
-  /// height would hold the 6pt meter far from the title.
-  var dayLeadJoinsHeader: Bool { earlierWork.isEmpty }
 }
 
 /// What opens main's `TodaySession` before its queue: why the day is as it is, then its meter.
@@ -405,93 +377,25 @@ struct TodayDayLead: View {
 
   private var session: StudyDay { view.session }
 
-  var isEmpty: Bool { freshStart == nil && mockDay == nil && !session.showsDayProgress }
+  var isEmpty: Bool { !session.showsDayProgress }
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 12) {
-      if let freshStart {
-        Text(freshStart)
-          .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
-      }
-
-      mockFunding
-
-      if session.showsDayProgress {
-        DayProgressRow(session: session, writingStalled: writingStalled)
-      }
+    if session.showsDayProgress {
+      DayProgressRow(session: session, writingStalled: writingStalled)
     }
   }
+}
 
-  /// It belongs to the session it explains, so it goes once the learner starts, and a day with
-  /// nothing to start says its own words instead.
-  private var freshStart: String? {
-    let state = session.state
-    guard !view.studiedToday, !session.isStarted,
-      state != .ahead, state != .rest
-    else {
-      return nil
-    }
-
-    let time = studyDuration(minutes: session.minutes.left)
-
-    switch session.freshStart {
-    case .welcomeBack:
-      return session.examAccess.trialEnded
-        ? String(
-          localized: "Welcome back! Today takes about \(time), so it's easy to pick up again.",
-          table: "Today", comment: "A return after a break")
-        : String(
-          localized:
-            "Welcome back! Today is lighter, about \(time), so it's easy to pick up again.",
-          table: "Today", comment: "A return after a break")
-    case .newPhase:
-      return String(
-        localized: "A new phase starts today, with an easy warm-up first.", table: "Today",
-        comment: "A day starting a new phase")
-    case .newWeek:
-      return String(
-        localized: "A fresh week. Today starts with an easy warm-up.", table: "Today",
-        comment: "A day starting a new week")
-    case nil:
-      return nil
-    }
-  }
-
-  private var mockDay: String? {
-    guard let funding = view.mockFunding, session.state != .done, session.state != .rest,
+extension TodayView {
+  /// The day is shorter to keep time for a mock exam on this day, like "May 5".
+  var mockDay: String? {
+    guard let funding = mockFunding, session.state != .done, session.state != .rest,
       let date = studyDate(funding.mockDate)
     else {
       return nil
     }
 
     return date.formatted(.studyDay.month(.abbreviated).day())
-  }
-
-  /// A return after a break already says the day is lighter, so it only names the mock.
-  @ViewBuilder
-  private var mockFunding: some View {
-    if let day = mockDay {
-      HStack {
-        if session.freshStart == .welcomeBack {
-          Text(
-            "Saving time for \(day)'s mock exam", tableName: "Today",
-            comment:
-              "Why the day is lighter, on a return after a break that already says so; the argument is the mock's date, like 'May 5'"
-          )
-        } else {
-          Text(
-            "Lighter day: saving time for \(day)'s mock exam", tableName: "Today",
-            comment: "Why the day is lighter; the argument is the mock's date, like 'May 5'")
-        }
-
-        if !session.examAccess.includesMockExams {
-          PlusMark()
-        }
-      }
-      .typeStyle(.note)
-      .foregroundStyle(.mutedForeground)
-    }
   }
 }
 
@@ -514,6 +418,8 @@ struct BlockRow: View {
   var isBusy = false
   var failed = false
   var showsDetail = false
+  /// Said in place of the row's own line, such as a review's first explanations.
+  var lineOverride: String?
   /// Main's reveal tags its next block where to start, on the moment's third beat.
   var tag: Text?
 
@@ -543,12 +449,10 @@ struct BlockRow: View {
             .typeStyle(.note)
           }
 
-          if !block.isFinished {
-            ForEach(lines, id: \.self) { line in
-              Text(line)
-                .typeStyle(.meta)
-                .foregroundStyle(.mutedForeground)
-            }
+          if !block.isFinished, let line {
+            Text(line)
+              .typeStyle(.meta)
+              .foregroundStyle(.mutedForeground)
           }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -595,31 +499,17 @@ struct BlockRow: View {
     }
   }
 
-  private var lines: [String] {
-    var lines: [String] = []
-
+  /// A row is its title and at most one short line.
+  private var line: String? {
     if let view, today.isBeingWritten(block, in: view) {
-      lines.append(
-        String(
-          localized: "Being written for you…", table: "Today",
-          comment:
-            "Under a lesson, or under the day's next lessons, while they're written right now. It can be one lesson or several."
-        ))
-    } else if let label = block.label(isCatchingUp: isCatchingUp) {
-      lines.append(label)
+      return String(
+        localized: "Getting ready…", table: "Today",
+        comment:
+          "Under a lesson, or under the day's next lessons, while they're being made ready. It can be one lesson or several."
+      )
     }
 
-    if block.weakest || block.fullReview || showsDetail && block.checkpoint == nil,
-      let detail = block.detail
-    {
-      lines.append(detail)
-    }
-
-    return lines
-  }
-
-  private var isCatchingUp: Bool {
-    view?.session.catchUp?.positions.contains(block.position) == true
+    return lineOverride ?? (showsDetail ? block.detail : block.label)
   }
 
   private var status: Text {
@@ -677,8 +567,10 @@ private struct ComingLessonsRow: View {
           case .toPrepare:
             Text(
               AttributedString(
-                localized: "Not written yet. **Get today's lessons**", table: "Today",
-                comment: "Asks for the day's next lessons, which nobody is writing"),
+                localized: "**Get them now**", table: "Today",
+                comment:
+                  "Under Your next lessons: asks for the day's next lessons, which nobody has asked for yet"
+              ),
               legibility: legibilityWeight)
           case .beingWritten where writingStalled:
             Text(
@@ -686,9 +578,9 @@ private struct ComingLessonsRow: View {
               comment: "The day's next lessons are taking long to outline")
           case .beingWritten:
             Text(
-              "Being written for you…", tableName: "Today",
+              "Getting ready…", tableName: "Today",
               comment:
-                "Under a lesson, or under the day's next lessons, while they're written right now. It can be one lesson or several."
+                "Under a lesson, or under the day's next lessons, while they're being made ready. It can be one lesson or several."
             )
           }
         }
@@ -704,31 +596,6 @@ private struct ComingLessonsRow: View {
         }
       }
     }
-  }
-}
-
-private struct PlusLessonRow: View {
-  @Environment(AppRouter.self) private var router
-
-  let title: String
-
-  var body: some View {
-    Button {
-      router.present(.subscription)
-    } label: {
-      HStack(alignment: .firstTextBaseline, spacing: 12) {
-        KindMark(kind: .lesson)
-          .frame(minWidth: 20)
-        Text(title)
-          .typeStyle(.rowTitle)
-        Spacer(minLength: 8)
-        Text("Plus", tableName: "Today", comment: "Marks a lesson that comes with Plus")
-          .chip()
-          .accessibilityLabel(
-            Text("Available with Plus", tableName: "Today", comment: "A Plus lesson"))
-      }
-    }
-    .tint(.primary)
   }
 }
 
@@ -816,18 +683,28 @@ struct TodayDayStatus: View {
     let session = view.session
 
     if view.isPastDate {
+      let lessons = view.progress?.status?.lessons ?? 0
       systemImage = "calendar.badge.clock"
-      sentence = String(
-        localized: "Your goal's date has passed with lessons left.", table: "Today",
-        comment: "The goal's date passed")
-      clause = String(
-        localized: "Adjust your plan to keep going.", table: "Today",
-        comment: "The goal's date passed")
+
+      if view.goal.kind == .exam {
+        sentence = String(
+          localized: "Your exam date has passed with \(lessons) lessons left.", table: "Today",
+          comment: "An exam's date passed with lessons left; the number is the lessons")
+        clause = String(
+          localized: "Keep studying them, or archive this goal?", table: "Today",
+          comment:
+            "After an exam's date: asks whether to study the lessons left or archive the goal")
+      } else {
+        sentence = String(
+          localized: "Your end date has passed with \(lessons) lessons left.", table: "Today",
+          comment: "A goal's end date passed with lessons left; the number is the lessons")
+        clause = nil
+      }
+
       return
     }
 
     let keepLearning = !view.upNextLessons.isEmpty
-    let welcomeBack = session.freshStart == .welcomeBack
 
     switch session.state {
     case .done:
@@ -837,8 +714,8 @@ struct TodayDayStatus: View {
         ? String(
           localized: "You studied on your day off.", table: "Today", comment: "Rest day studied")
         : String(
-          localized: "Today's session is complete.", table: "Today", comment: "Day done")
-      clause = Self.seeYou(session.week)
+          localized: "You're done for today.", table: "Today", comment: "Day done")
+      clause = nil
       link = keepLearning ? .summary : nil
     case .waiting where writingStalled:
       systemImage = "clock"
@@ -853,13 +730,11 @@ struct TodayDayStatus: View {
       sentence = String(
         localized: "Getting today's lessons ready…", table: "Today",
         comment: "The day's lessons are being outlined")
-      clause = String(
-        localized: "They show up here on their own.", table: "Today",
-        comment: "The day's lessons are being outlined")
+      clause = nil
     case .prepare:
       systemImage = "clock"
       sentence = String(
-        localized: "Today's lessons aren't written yet.", table: "Today",
+        localized: "Today's lessons aren't ready yet.", table: "Today",
         comment: "The day's lessons wait for the learner to ask for them")
       clause = nil
     case .rest:
@@ -867,35 +742,21 @@ struct TodayDayStatus: View {
       sentence = String(
         localized: "No study planned today.", table: "Today", comment: "A rest day")
       clause =
-        switch (keepLearning, welcomeBack) {
-        case (true, true):
-          String(
-            localized: "Welcome back! Your next lessons are here if you'd like to study.",
-            table: "Today", comment: "A rest day after a break")
-        case (true, false):
-          String(
-            localized: "Your next lessons are here if you'd like to study.", table: "Today",
-            comment: "A rest day")
-        case (false, true):
-          String(
-            localized: "Welcome back! Today is a rest day in your plan, so enjoy it.",
-            table: "Today", comment: "A rest day after a break")
-        case (false, false):
-          String(localized: "Enjoy your day off!", table: "Today", comment: "A rest day")
-        }
+        keepLearning
+        ? String(
+          localized: "Your next lessons are below if you want to study.", table: "Today",
+          comment: "A rest day, over the plan's next lessons")
+        : String(localized: "Enjoy your day off!", table: "Today", comment: "A rest day")
     case .ahead:
       systemImage = "sparkles"
+      clause = nil
 
-      if session.examAccess.trialEnded {
+      if view.progress?.status?.kind == "finished" {
         sentence = String(
-          localized: "Nothing to review today.", table: "Today", comment: "Nothing to do")
-        clause = nil
+          localized: "You finished your plan.", table: "Today", comment: "The plan is finished")
       } else {
         sentence = String(
-          localized: "Nothing new for today.", table: "Today", comment: "Nothing new")
-        clause = String(
-          localized: "You've done every lesson in your plan, or already know it.", table: "Today",
-          comment: "Nothing new")
+          localized: "You're all caught up.", table: "Today", comment: "Nothing new today")
       }
     case .underway:
       return nil
@@ -938,40 +799,4 @@ struct TodayDayStatus: View {
     .typeStyle(.note)
   }
 
-  private static func seeYou(_ week: StudyWeek) -> String {
-    guard let next = week.nextStudyDate.flatMap(studyDate),
-      let today = (week.days.first(where: \.isToday)?.date).flatMap(studyDate)
-    else {
-      return String(
-        localized: "See you in your next session!", table: "Today", comment: "Next session")
-    }
-
-    if next.timeIntervalSince(today) <= 86_400 {
-      return String(localized: "See you tomorrow!", table: "Today", comment: "Next session")
-    }
-
-    let day = next.formatted(.studyDay.weekday(.wide))
-    return String(localized: "See you \(day)!", table: "Today", comment: "Next study day")
-  }
-}
-
-private struct TodayEarlierWorkSection: View {
-  let items: [TodayView.EarlierWork]
-  @Binding var isExpanded: Bool
-
-  var body: some View {
-    Section {
-      DisclosureGroup(isExpanded: $isExpanded) {
-        ForEach(Array(items.enumerated()), id: \.offset) { _, item in
-          Text(item.title)
-        }
-      } label: {
-        Text(
-          "Earlier unfinished work\u{00A0}· \(items.count.formatted())", tableName: "Today",
-          comment: "Lessons left from earlier days, with how many"
-        )
-        .typeStyle(.body.weight(.medium))
-      }
-    }
-  }
 }

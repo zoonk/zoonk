@@ -102,8 +102,8 @@ extension AppRoute {
       SpeakingScreen()
     case .earlierQuestions:
       EarlierQuestionsScreen()
-    case .statistics:
-      StatisticsScreen()
+    case .statistics(let section):
+      StatisticsScreen(section: section)
     case .certificates:
       CertificatesTabScreen()
     case .certificate(let code):
@@ -188,7 +188,8 @@ extension AppTab {
       }
     case .search:
       SearchScreen()
-    case .mistakes, .completedLessons, .certificates, .exam, .speaking, .mindMaps, .statistics:
+    case .mistakes, .completedLessons, .certificates, .exam, .mockExam, .speaking, .mindMaps,
+      .statistics, .stats:
       studyRoute?.destination
     }
   }

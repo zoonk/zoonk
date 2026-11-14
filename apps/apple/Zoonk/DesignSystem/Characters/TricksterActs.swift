@@ -6,6 +6,7 @@ enum TricksterAct: CaseIterable, Hashable, Sendable {
   case smug
   case sly
   case defeat
+  case triumph
 
   var act: CharacterAct<TricksterExpression> {
     switch self {
@@ -13,6 +14,7 @@ enum TricksterAct: CaseIterable, Hashable, Sendable {
     case .smug: Self.smugAct
     case .sly: Self.slyAct
     case .defeat: Self.defeatAct
+    case .triumph: Self.triumphAct
     }
   }
 
@@ -35,6 +37,10 @@ enum TricksterAct: CaseIterable, Hashable, Sendable {
     tracks: eyes(blinkKeys + [ActKey(at: 6, ease: .out, scale: [1, 1])]) + [
       ActTrack(part: .crown, keys: [], settle: .follow),
       ActTrack(part: .tail, keys: [], settle: .follow),
+      // A right answer: the shield flinches.
+      ActTrack(
+        part: .shield, keys: [ActKey(at: 2, ease: .out, rotate: -7, scale: [0.92, 0.92])],
+        settle: .spring),
     ])
 
   private static let chuckle = [
@@ -68,7 +74,13 @@ enum TricksterAct: CaseIterable, Hashable, Sendable {
             ActKey(at: 15, ease: .swing, scale: [0.995, 1.01]),
           ], settle: .spring),
         ActTrack(part: .armLeft, keys: chuckle, settle: .swing),
-        ActTrack(part: .sign, keys: chuckle, settle: .swing),
+        // A wrong answer bounces off the shield.
+        ActTrack(
+          part: .shield,
+          keys: [
+            ActKey(at: 2, ease: .out, scale: [1.1, 1.1]),
+            ActKey(at: 6, ease: .spring, scale: [1, 1]),
+          ], settle: .swing),
         ActTrack(
           part: .armRight,
           keys: [
@@ -157,5 +169,92 @@ enum TricksterAct: CaseIterable, Hashable, Sendable {
             ActKey(at: 28, opacity: 0, translate: [0, -4]),
             ActKey(at: 31, ease: .out, opacity: 1),
           ], settle: .swing),
+        // The hit: the shield pops and cracks through, its halves lift apart and fall to his feet.
+        ActTrack(
+          part: .shield,
+          keys: [
+            ActKey(at: 2, ease: .out, scale: [1.14, 1.14]),
+            ActKey(at: 5, ease: .out, scale: [1, 1]),
+          ], settle: .out),
+        ActTrack(
+          part: .shieldFracture,
+          keys: [ActKey(at: 1, opacity: 0), ActKey(at: 2, ease: .hold, opacity: 1)],
+          settle: .out),
+        ActTrack(
+          part: .shieldLeft,
+          keys: [
+            ActKey(at: 4, rotate: 0, translate: [0, 0]),
+            ActKey(at: 9, ease: .out, rotate: -14, translate: [-6, -7]),
+            ActKey(at: 17, ease: .accelerate, rotate: -74, translate: [5, 22]),
+            ActKey(at: 20, ease: .out, rotate: -66, translate: [5, 19]),
+            ActKey(at: 23, ease: .accelerate, rotate: -70, translate: [5, 21]),
+          ], settle: .spring),
+        ActTrack(
+          part: .shieldRight,
+          keys: [
+            ActKey(at: 4, rotate: 0, translate: [0, 0]),
+            ActKey(at: 10, ease: .out, rotate: 18, translate: [10, -6]),
+            ActKey(at: 19, ease: .accelerate, rotate: 86, translate: [16, 25]),
+            ActKey(at: 22, ease: .out, rotate: 78, translate: [16, 22]),
+            ActKey(at: 25, ease: .accelerate, rotate: 82, translate: [16, 24]),
+          ], settle: .spring),
+      ])
+
+  /// His win: he squints and grins, chuckles, lifts the shield whole toward the learner while a
+  /// glint crosses it, and settles back.
+  private static let triumphAct = CharacterAct<TricksterExpression>(
+    frames: 30, swapAt: 4, to: .smug,
+    tracks: eyes(
+      [ActKey(at: 3, ease: .accelerate, scale: [1, 0.7]), ActKey(at: 4, scale: [1, 0.7])],
+      settle: .out)
+      + [
+        ActTrack(
+          part: .browRight, keys: [ActKey(at: 7, ease: .out, rotate: -9, translate: [0, -4.5])],
+          settle: .spring),
+        ActTrack(
+          part: .browLeft, keys: [ActKey(at: 7, ease: .out, translate: [0, 1])], settle: .spring),
+        ActTrack(
+          part: .mouth,
+          keys: [
+            ActKey(at: 4, ease: .hold, scale: [0.9, 0.9]),
+            ActKey(at: 8, ease: .out, scale: [1.08, 1.05]),
+          ], settle: .spring),
+        ActTrack(
+          part: .body,
+          keys: [
+            ActKey(at: 8, ease: .swing, scale: [1.04, 0.94]),
+            ActKey(at: 12, ease: .swing, scale: [0.985, 1.035]),
+            ActKey(at: 16, ease: .swing, scale: [1.03, 0.955]),
+            ActKey(at: 20, ease: .swing, scale: [0.995, 1.01]),
+          ], settle: .spring),
+        ActTrack(
+          part: .shield,
+          keys: [
+            ActKey(at: 2, ease: .out, scale: [1.1, 1.1]),
+            ActKey(at: 6, ease: .spring, rotate: 0, scale: [1, 1], translate: [0, 0]),
+            ActKey(at: 12, ease: .out, rotate: -6, translate: [2, -9]),
+            ActKey(at: 22, rotate: -6, translate: [2, -9]),
+          ], settle: .swing),
+        ActTrack(
+          part: .shieldGlint,
+          keys: [
+            ActKey(at: 0, opacity: 0, translate: [-26, 0]),
+            ActKey(at: 11, opacity: 0, translate: [-26, 0]),
+            ActKey(at: 13, ease: .out, opacity: 0.7),
+            ActKey(at: 19, ease: .swing, opacity: 0.7, translate: [30, 0]),
+            ActKey(at: 21, ease: .out, opacity: 0, translate: [34, 0]),
+            ActKey(at: 30, opacity: 0, translate: [34, 0]),
+          ], rest: .hidden),
+        ActTrack(
+          part: .armRight,
+          keys: [
+            ActKey(at: 9, ease: .swing, rotate: -11), ActKey(at: 13, ease: .swing, rotate: 3),
+            ActKey(at: 17, ease: .swing, rotate: -8),
+          ], settle: .swing),
+        ActTrack(part: .crown, keys: [ActKey(at: 10, ease: .out, rotate: -17)], settle: .follow),
+        ActTrack(
+          part: .tail,
+          keys: [ActKey(at: 6, ease: .swing, rotate: 6), ActKey(at: 12, ease: .out, rotate: -15)],
+          settle: .follow),
       ])
 }

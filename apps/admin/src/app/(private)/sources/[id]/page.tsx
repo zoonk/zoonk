@@ -114,15 +114,13 @@ async function SourceDetailContent({ params, searchParams }: PageProps<"/sources
           <>
             <SourceTotals source={source} />
 
-            <AdminDetailColumns aside={<SourceChecking source={source} />}>
-              <Suspense fallback={<AdminSectionSkeleton />}>
+            {/* One boundary: on a phone the aside follows the tables, which would push it as they load. */}
+            <Suspense fallback={<AdminSectionSkeleton />}>
+              <AdminDetailColumns aside={<SourceChecking source={source} />}>
                 <SourceCitations sourceId={source.id} />
-              </Suspense>
-
-              <Suspense fallback={<AdminSectionSkeleton description />}>
                 <SourceChangeNotices sourceId={source.id} />
-              </Suspense>
-            </AdminDetailColumns>
+              </AdminDetailColumns>
+            </Suspense>
           </>
         ) : null}
 

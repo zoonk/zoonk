@@ -1,12 +1,12 @@
 "use client";
 
 import { Drawer, DrawerContent, DrawerPopup, DrawerTitle } from "@zoonk/ui/components/drawer";
+import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { cn } from "@zoonk/ui/lib/utils";
 import { GraduationCapIcon, HistoryIcon, LibraryIcon, NetworkIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import {
   ListGroup,
-  ListRowChevron,
   ListRowContent,
   ListRowIcon,
   ListRowLeading,
@@ -51,7 +51,7 @@ function PathLinkRow({
         {icon}
       </span>
       <span className="min-w-0 flex-1">{children}</span>
-      <ListRowChevron />
+      <RowChevron />
     </LearnLink>
   );
 }

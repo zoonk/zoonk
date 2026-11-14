@@ -68,7 +68,7 @@ extension TutorPlaces {
       case .pronunciation(let goalId):
         router.open(.pronunciation(goalId: goalId))
       case .statistics, .energy:
-        router.open(.statistics)
+        router.open(.statistics())
       case .logbook:
         router.open(.logbook)
       case .earlierQuestions:

@@ -46,7 +46,7 @@ afterEach(() => {
 function textAboveAction({ position, top }: { position: string; top: number }) {
   document.body.innerHTML = `<main><h1>Today</h1>${"<p>A lesson</p>".repeat(PARAGRAPHS)}
     <footer data-slot="bottom-bar" data-top="${top}" style="position:${position};bottom:0">
-      <button class="group/button bg-primary" data-top="${top}">Start</button>
+      <button class="group/button" data-enter="bound" data-top="${top}">Start</button>
     </footer></main>`;
 
   return readWords(null).aboveAction;
