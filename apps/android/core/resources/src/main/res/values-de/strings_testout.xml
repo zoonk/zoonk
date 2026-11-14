@@ -14,7 +14,6 @@
   "testout_passed": "57389b3d07ca6966286843270e7bd4dd456a28f04985a7fd59513f8567e398f0",
   "testout_rule": "a9561ca2bc5c6194c19ff45bdc1fef0cd6a28d4eb26ec41c923068ea3b0b30c7",
   "testout_start": "66d59de6282215040714b371553021fb5a35bcdbb989a4d4134dc8b75b6a77ac",
-  "testout_this_chapter": "6c4ac83a9290f97f3f19aa0c484bc62449e3ee243f69b70196a8109a9c3feb06",
   "testout_title": "02784a38e102e86c29ae4cddc0a9acb9fe3f4cc7aec48f8c774fbae64306e59f",
   "testout_writing": "0f552bbe99eb1a309242c9bcaf06bc9dc16b6dd5937d9f3b005541f7fed0c158",
   "testout_writing_detail": "f902ad69b26b3f33328d6e1cfca0a4e205893788b545608e9dd2fad264f48a31",
@@ -26,8 +25,6 @@
 <resources>
     <!-- A chapter test-out's title. %1$s is the chapter's name. -->
     <string name="testout_title">Test: %1$s</string>
-    <!-- Stands in for a chapter's name while it isn't known. -->
-    <string name="testout_this_chapter">Dieses Kapitel</string>
     <string name="testout_intro_title">Kennst du das schon?</string>
     <string name="testout_intro_detail">Du beantwortest ein paar Fragen zu diesem Kapitel und siehst am Ende dein Ergebnis. Schneidest du gut ab, überspringt dein Plan, was du schon weißt.</string>
     <string name="testout_start">Test starten</string>

@@ -14,7 +14,6 @@
   "testout_passed": "b9667fd7d8d8a36eab0e1815db99a90e99367ea753ea13afec132a365930b0e0",
   "testout_rule": "14bd2aefb7f65135c4cf5888893c1fd09fe045e277b268391c3375b936d3ecb6",
   "testout_start": "0da27b176c6c541df5d3fcbd6e25f888bec55a958ebeaf0b187482619e159bae",
-  "testout_this_chapter": "1eca64fb3b9239ce67ca994b05cee312c9ab11c544f9a05241dc5a91b89c71bb",
   "testout_title": "ae6388c96bc781821b1e1925d27425cf34c35505fafdc625896e9918c9ea4f4b",
   "testout_writing": "27f38068717727fdf7dfd8f6e9a71962072f4a96c947603c6c3c68cf1ee2dd66",
   "testout_writing_detail": "9b4e9fe0a1a76dc83ed702d9970ec15708d5039a75fe2bdbaf4f9cebaec63f3c",
@@ -26,8 +25,6 @@
 <resources>
     <!-- A chapter test-out's title. %1$s is the chapter's name. -->
     <string name="testout_title">テスト：%1$s</string>
-    <!-- Stands in for a chapter's name while it isn't known. -->
-    <string name="testout_this_chapter">この章</string>
     <string name="testout_intro_title">すでに知っている内容ですか？</string>
     <string name="testout_intro_detail">この章の問題にいくつか答えると、最後に結果が表示されます。十分に正解できれば、すでに知っている内容は学習計画でスキップされます。</string>
     <string name="testout_start">テストを始める</string>
