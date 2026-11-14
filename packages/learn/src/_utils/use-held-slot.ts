@@ -7,7 +7,7 @@ import { useLayoutEffect, useRef } from "react";
  */
 export function useHeldSlot<Slot extends HTMLElement>(gated: boolean) {
   const slot = useRef<Slot>(null);
-  const gateHeight = useRef<number | null>(null);
+  const gate = useRef<{ height: number; width: number } | null>(null);
 
   useLayoutEffect(() => {
     const element = slot.current;
@@ -17,20 +17,19 @@ export function useHeldSlot<Slot extends HTMLElement>(gated: boolean) {
     }
 
     if (!gated) {
-      if (gateHeight.current !== null) {
+      if (gate.current) {
         element.dataset.held = "";
-        element.style.minHeight = `${gateHeight.current}px`;
+        element.style.minHeight = `${gate.current.height}px`;
       }
 
       return;
     }
 
-    // The tallest it has been: its line can go a moment before the gate does, at the same instant.
+    // The tallest it has been at this width: its line can go a moment before the gate does.
     const measure = () => {
-      gateHeight.current = Math.max(
-        gateHeight.current ?? 0,
-        element.getBoundingClientRect().height,
-      );
+      const { height, width } = element.getBoundingClientRect();
+      const kept = gate.current?.width === width ? gate.current.height : 0;
+      gate.current = { height: Math.max(kept, height), width };
     };
 
     measure();
