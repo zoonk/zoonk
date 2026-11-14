@@ -159,13 +159,24 @@ function describe({ latex, written }: Pick<BareLatex, "latex" | "written">): str
   return String.raw`Shows raw text that reads as math: "${written}". If it's math, write it between dollar signs${example}, outside bold or italics, and any other dollar sign in that line as \$. If it's code, a file name or a link, put it in backticks.`;
 }
 
-function findInLine(line: string): string[] {
-  return findBareLatexIn(hideMathAndCode(line)).map((piece) => describe(piece));
+function findPieces({ layout, text }: { layout: TextLayout; text: string }): BareLatex[] {
+  return toLines({ layout, text }).flatMap((line) => findBareLatexIn(hideMathAndCode(line)));
 }
 
 /** After `wrapBareLatex`, what's left is beyond a plain power, in bold or italics, or beside another `$`. */
 export function findBareLatex({ layout, text }: { layout: TextLayout; text: string }): string[] {
-  return toLines({ layout, text }).flatMap((line) => findInLine(line));
+  return findPieces({ layout, text }).map((piece) => describe(piece));
+}
+
+/** The raw pieces `findBareLatex` flags, for text that isn't shown, such as a line read aloud. */
+export function findBareLatexText({
+  layout,
+  text,
+}: {
+  layout: TextLayout;
+  text: string;
+}): string[] {
+  return findPieces({ layout, text }).map((piece) => piece.written);
 }
 
 /** An inline field comes back on one line, as the player shows it, only when something was wrapped. */
