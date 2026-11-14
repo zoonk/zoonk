@@ -8,7 +8,6 @@ import {
   ListGroup,
   ListRow,
   ListRowContent,
-  ListRowLeading,
   ListRowTrailing,
 } from "../../_components/list-group";
 import {
@@ -77,7 +76,10 @@ function DayKinds({ items }: { items: readonly PlanItemView[] }) {
   );
 }
 
-/** The dates never wrap, and each row's column is as wide as the longest, so the names line up. */
+/**
+ * The dates never wrap, and each row's column is as wide as the longest, so the names line up. A
+ * date sits on the baseline of its day's first line, in another face and size, however many lines.
+ */
 function WeekDayRow({
   date,
   day,
@@ -93,17 +95,17 @@ function WeekDayRow({
   const names = (teaching.length > 0 ? teaching : day.items).map((item) => itemTitle(item));
 
   return (
-    <ListRow>
-      <ListRowLeading
-        className="text-muted-foreground self-start pt-3 font-mono text-xs whitespace-nowrap tabular-nums"
+    <ListRow className="items-baseline">
+      <span
+        className="text-muted-foreground shrink-0 text-center font-mono text-xs whitespace-nowrap tabular-nums"
         style={{ minWidth: `${dateWidth}ch` }}
       >
         {date}
-      </ListRowLeading>
+      </span>
 
       <ListRowContent>
         {day.items.length === 0 ? (
-          <span className="text-muted-foreground text-sm">{t("Rest day")}</span>
+          <span className="text-muted-foreground text-sm leading-snug">{t("Rest day")}</span>
         ) : (
           names.map((name, index) => (
             // oxlint-disable-next-line react/no-array-index-key -- two lessons can share a title
