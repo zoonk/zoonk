@@ -222,7 +222,12 @@ function useAlternativeLabel() {
 
   return (alternative: DayStep): string => {
     if (alternative.checkpoint) {
-      return t("Start {title}", { title: title(alternative) });
+      return t({
+        description:
+          '{title} is the name of one of the day\'s challenges, such as "Weekly challenge", never a course.',
+        message: "Start {title}",
+        values: { title: title(alternative) },
+      });
     }
 
     if (alternative.kind === "review") {
