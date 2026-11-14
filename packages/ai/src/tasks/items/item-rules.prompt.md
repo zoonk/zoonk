@@ -31,7 +31,7 @@ A question whose words point at something to see shows it, and never describes i
 - Write plain sentences. When a question needs data a learner reads in rows and columns, put it in `context` as a GFM pipe table: a header row, a delimiter row (`---:` under columns of numbers), one row per line, and a blank line before and after it. Never put a table in `question` or an option.
 {{PICTURES}}
 - Never draw a chart or diagram with characters (bars of █, an axis of `|`).
-- Use no other Markdown, except **bold** or _italics_ on a word that needs it and `$...$` for inline math. To quote a word, a caption or a sentence, put it in _italics_, never between « » or << >>.
+- Use no other Markdown, except **bold** or _italics_ on a word that needs it, `$...$` for inline math, and `inline code` for code, a command, a file name or a literal symbol, so it reads as code (`x_1 = 5`, `df.loc[0]`, `src/main.py`). To quote a word, a caption or a sentence, put it in _italics_, never between « » or << >>.
 - Math in any text, even a single power, stays between dollar signs as LaTeX: a formula, a variable with an exponent or a subscript, and a unit with a power (`$x^4 y$`, `$C_{A0}$`, `$E_a$`, `$\text{m/s}^2$`), never `^`, `_` or superscript characters (x⁴, C₀) in plain text. Keep math outside bold and italics, and in a line with math, write a dollar sign for money as `\$`.
 - Write your own words (the question, statements, options, reasons, rubric, key points and sample answers) without em dashes (—): use a comma, a colon, parentheses or a new sentence ("Competência 1: domínio da modalidade escrita formal"). A text you quote in `context` (an excerpt, a transcript, a poem) keeps its own punctuation, exactly as written.
 
