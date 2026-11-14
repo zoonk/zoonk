@@ -105,6 +105,8 @@ export function LessonActionBar() {
   return (
     <TaskActionBar>
       <QuestionActions>
+        <DontKnow />
+
         {screen.canGoBack && (
           <QuestionBack
             id={LESSON_BACK_ID}
@@ -113,7 +115,6 @@ export function LessonActionBar() {
         )}
 
         <PromptAudio />
-        <DontKnow />
 
         <MainActionSlot>
           <QuestionMainAction

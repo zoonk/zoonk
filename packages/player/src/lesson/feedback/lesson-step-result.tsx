@@ -1,8 +1,14 @@
 "use client";
 
 import { DiffLines } from "@zoonk/learn/diff-lines";
-import { FeedbackExplanation, FeedbackPanel } from "@zoonk/learn/feedback-panel";
+import {
+  FeedbackAnswerLabel,
+  FeedbackAnswerValue,
+  FeedbackExplanation,
+  FeedbackPanel,
+} from "@zoonk/learn/feedback-panel";
 import { RichTextBlocks } from "@zoonk/learn/rich-text";
+import { RightAnswerLine } from "@zoonk/learn/right-answer-line";
 import { type Verdict, VerdictLabel } from "@zoonk/learn/verdict-label";
 import { useExtracted } from "next-intl";
 import { LessonRichText } from "../_components/lesson-rich-text";
@@ -44,10 +50,10 @@ function getVerdict({
 function LabeledAnswerLine({ label, text }: { label: string; text: string }) {
   return (
     <FeedbackExplanation>
-      <span className="text-muted-foreground">{label}</span>{" "}
-      <span className="text-success-text font-medium">
+      <FeedbackAnswerLabel>{label}</FeedbackAnswerLabel>{" "}
+      <FeedbackAnswerValue>
         <LessonRichText text={text} />
-      </span>
+      </FeedbackAnswerValue>
     </FeedbackExplanation>
   );
 }
@@ -82,14 +88,31 @@ function CorrectAnswerLine({
     return null;
   }
 
-  return <LabeledAnswerLine label={t("Answer:")} text={result.correctAnswer} />;
+  return <RightAnswerLine answer={<LessonRichText text={result.correctAnswer} />} />;
 }
 
-function SampleAnswerLine({ result }: { result: LessonStepResult }) {
+/**
+ * Why an answer wasn't checked: a sample asked for, a question checked a few times today (with its
+ * sample to compare), or a screen a fix changed after the learner started, which has no answer to
+ * show since they may still see the old screen.
+ */
+function UncheckedLine({ result }: { result: LessonStepResult }) {
   const t = useExtracted();
 
-  if (result.checked || !result.correctAnswer) {
+  if (result.checked) {
     return null;
+  }
+
+  if (!result.correctAnswer) {
+    return (
+      <FeedbackExplanation className="text-muted-foreground">
+        {t({
+          description:
+            "Under “Not checked this time”: we corrected this lesson question while the learner was in the lesson, so their answer isn't graded either way.",
+          message: "This question was updated after you started, so this answer doesn't count.",
+        })}
+      </FeedbackExplanation>
+    );
   }
 
   if (result.answerText === null) {
@@ -174,7 +197,7 @@ export function LessonStepResultView({
         {result.spelling && <SpellingLine spelling={result.spelling} />}
         {result.corrections.length > 0 && <CorrectionLines corrections={result.corrections} />}
         <CorrectAnswerLine result={result} step={step} />
-        <SampleAnswerLine result={result} />
+        <UncheckedLine result={result} />
         {result.heard && step.kind === "spokenAnswer" && (
           <LessonSpokenWords heard={result.heard} language={step.content.language} />
         )}
