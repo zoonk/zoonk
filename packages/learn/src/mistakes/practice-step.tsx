@@ -13,7 +13,7 @@ import { RightAnswerLine } from "../questions/right-answer-line";
 import { QuestionMainButton } from "../session/question-block/question-actions";
 import {
   WorkedSteps,
-  useAnswerText,
+  useAnswerLine,
   useVerdict,
 } from "../session/question-block/question-feedback";
 import { BankPracticeQuestion } from "./bank-practice-question";
@@ -133,11 +133,11 @@ function PracticeFeedback({
   const t = useExtracted();
   const verdict = useVerdict({ ...feedback, notSure });
   const fixed = feedback.fixedMistakeIds.length;
-  const answerText = useAnswerText(trueFalseLabels);
+  const answerLine = useAnswerLine(trueFalseLabels);
 
   const correct =
     !feedback.isCorrect && question.format !== "multipleChoice" && question.format !== "trueFalse"
-      ? answerText({ answer: feedback.correctAnswer, question })
+      ? answerLine({ answer: feedback.correctAnswer, question })
       : null;
 
   return (

@@ -22,22 +22,22 @@ import {
   type StudyQuestionAnswer,
 } from "../session-types";
 
-/** The answer as item text, with its formulas, for `ItemLine` to show. */
-export function useAnswerText(trueFalseLabels: TrueFalseLabels) {
+/**
+ * An answer as feedback shows it: picked options, pairs and numbers as item text with their
+ * formulas, and a typed answer exactly as typed, since it's plain text (`__init__` keeps its
+ * underscores).
+ */
+export function useAnswerLine(trueFalseLabels: TrueFalseLabels) {
   const locale = useAppLocale();
   const { answerLabel } = useTrueFalseLabels(trueFalseLabels);
 
-  return function answerText({
+  function itemText({
     answer,
     question,
   }: {
-    answer: StudyQuestionAnswer | null;
+    answer: Exclude<StudyQuestionAnswer, { text: string }>;
     question: Pick<StudyQuestion, "options" | "left" | "right" | "unit">;
   }): string | null {
-    if (!answer) {
-      return null;
-    }
-
     if ("selectedIndex" in answer) {
       const option = question.options?.[answer.selectedIndex];
       return option ?? null;
@@ -48,10 +48,6 @@ export function useAnswerText(trueFalseLabels: TrueFalseLabels) {
         "order" in answer ? [answer.order, " → "] : [answer.selectedIndexes, "; "];
 
       return picks.map((index) => question.options?.[index] ?? "").join(separator);
-    }
-
-    if ("text" in answer) {
-      return answer.text;
     }
 
     if ("isTrue" in answer) {
@@ -76,6 +72,25 @@ export function useAnswerText(trueFalseLabels: TrueFalseLabels) {
     }
 
     return null;
+  }
+
+  return function answerLine({
+    answer,
+    question,
+  }: {
+    answer: StudyQuestionAnswer | null;
+    question: Pick<StudyQuestion, "options" | "left" | "right" | "unit">;
+  }): React.ReactNode {
+    if (!answer) {
+      return null;
+    }
+
+    if ("text" in answer) {
+      return answer.text || null;
+    }
+
+    const text = itemText({ answer, question });
+    return text === null ? null : <ItemLine text={text} />;
   };
 }
 
@@ -109,8 +124,8 @@ function useCorrectAnswerLine({
   feedback: StudyAnswerFeedback;
   question: StudyQuestion;
   trueFalseLabels: TrueFalseLabels;
-}): string | null {
-  const answerText = useAnswerText(trueFalseLabels);
+}): React.ReactNode {
+  const answerLine = useAnswerLine(trueFalseLabels);
 
   if (
     feedback.isCorrect ||
@@ -120,7 +135,7 @@ function useCorrectAnswerLine({
     return null;
   }
 
-  return answerText({ answer: feedback.correctAnswer, question });
+  return answerLine({ answer: feedback.correctAnswer, question });
 }
 
 function MistakeNote({ feedback }: { feedback: StudyAnswerFeedback }) {

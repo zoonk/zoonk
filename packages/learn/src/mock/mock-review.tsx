@@ -49,6 +49,9 @@ function ReviewAnswers({ entry }: { entry: MockReviewEntry }) {
   const yours = entry.learnerAnswer;
   const right = entry.correctAnswer;
 
+  const line = (text: string) =>
+    entry.format === "typed" ? text : <ItemLine text={answerText(text) ?? text} />;
+
   return (
     <>
       {yours === null && <p className="text-muted-foreground text-sm">{t("You left it blank.")}</p>}
@@ -61,7 +64,7 @@ function ReviewAnswers({ entry }: { entry: MockReviewEntry }) {
             picked
             result="wrong"
           >
-            <ItemLine text={answerText(yours) ?? yours} />
+            {line(yours)}
           </AnswerOption>
         )}
         {right !== null && (
@@ -71,7 +74,7 @@ function ReviewAnswers({ entry }: { entry: MockReviewEntry }) {
             picked={false}
             result="right"
           >
-            <ItemLine text={answerText(right) ?? right} />
+            {line(right)}
           </AnswerOption>
         )}
       </AnswerOptionGroup>

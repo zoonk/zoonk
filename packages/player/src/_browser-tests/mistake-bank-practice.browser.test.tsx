@@ -54,12 +54,12 @@ describe("exact standalone bank mistake practice", () => {
     await expect.element(page.getByText("40 × 0.2 = 8")).toBeVisible();
   });
 
-  it("checks a typed bank answer and shows its correct original wording", async () => {
+  it("checks a typed bank answer and shows its correct original wording as typed", async () => {
     const answer = vi
       .fn<Actions["answer"]>()
       .mockResolvedValue({
         ...bankFeedback(),
-        correctAnswer: { text: "Mitochondrion" },
+        correctAnswer: { text: "__init__(self, **kwargs**)" },
         fixed: false,
         fixedMistakeIds: [],
         isCorrect: false,
@@ -71,7 +71,7 @@ describe("exact standalone bank mistake practice", () => {
     await page.getByRole("textbox").fill("Chloroplast");
     await page.getByRole("button", { name: /^Check/u }).click();
 
-    await expect.element(page.getByText("Right answer: Mitochondrion")).toBeVisible();
+    await expect.element(page.getByText("Right answer: __init__(self, **kwargs**)")).toBeVisible();
 
     expect(answer).toHaveBeenCalledWith(
       expect.objectContaining({ answer: { text: "Chloroplast" }, itemId: "original-bank-item" }),

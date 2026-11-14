@@ -14,7 +14,7 @@ import { ContentFeedbackMenu } from "../feedback/content-feedback-menu";
 import { ItemSetStimulus } from "../questions/item-set-stimulus";
 import { ItemLine, ItemStem, ItemText } from "../questions/item-text";
 import { useTrueFalseLabels } from "../questions/use-true-false-labels";
-import { WorkedSteps, useAnswerText } from "../session/question-block/question-feedback";
+import { WorkedSteps, useAnswerLine } from "../session/question-block/question-feedback";
 import { useCheckpointScreen } from "./checkpoint-context";
 import { getReviewedOptions } from "./review-options";
 
@@ -39,7 +39,7 @@ function ReviewAnswer({
   const t = useExtracted();
   const { answersGiven, checkpoint } = useCheckpointScreen();
   const { answerLabel } = useTrueFalseLabels(checkpoint.trueFalseLabels);
-  const answerText = useAnswerText(checkpoint.trueFalseLabels);
+  const answerLine = useAnswerLine(checkpoint.trueFalseLabels);
 
   const labels =
     question.format === "trueFalse"
@@ -71,7 +71,7 @@ function ReviewAnswer({
     );
   }
 
-  const rightAnswer = answerText({ answer: answer.correctAnswer, question });
+  const rightAnswer = answerLine({ answer: answer.correctAnswer, question });
 
   if (!rightAnswer) {
     return null;
@@ -79,7 +79,7 @@ function ReviewAnswer({
 
   const line = (
     <span className={cn(question.format === "numeric" && "font-mono tabular-nums")}>
-      <ItemLine text={rightAnswer} />
+      {rightAnswer}
     </span>
   );
 

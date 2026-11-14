@@ -111,6 +111,12 @@ export function MistakeAnswer({
   );
 }
 
+/**
+ * Words the learner typed or said are plain text, as is a typed question's accepted answer, so
+ * `__init__` keeps its underscores; other answers are item text with their formulas.
+ */
+const WRITTEN_ANSWER_FORMATS = new Set(["spoken", "spokenAnswer", "typed", "typedAnswer"]);
+
 type MistakeEntryLinks = { lesson: string | null; practiceSkill: string | null };
 
 export function getMistakeEntryLinks({
@@ -217,12 +223,16 @@ export function MistakeEntryCard({
         <div className="flex flex-col gap-2">
           {answer && (
             <MistakeAnswer kind="learner">
-              <ItemLine text={answer} />
+              {WRITTEN_ANSWER_FORMATS.has(snapshot.format ?? "") ? (
+                answer
+              ) : (
+                <ItemLine text={answer} />
+              )}
             </MistakeAnswer>
           )}
           {correct && (
             <MistakeAnswer kind="right">
-              <ItemLine text={correct} />
+              {snapshot.format === "typed" ? correct : <ItemLine text={correct} />}
             </MistakeAnswer>
           )}
         </div>
