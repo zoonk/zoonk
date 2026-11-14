@@ -13,14 +13,14 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.zoonk.android.ui.richtext.MarkupKind
 import com.zoonk.android.ui.richtext.RichSegment
 import com.zoonk.android.ui.richtext.RichTable
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.richtext.RichTextLine
 import com.zoonk.android.ui.richtext.SegmentKind
+import com.zoonk.android.ui.richtext.SpokenText
 import com.zoonk.android.ui.richtext.TableAlign
-import com.zoonk.android.ui.richtext.parseInlineMarkup
+import com.zoonk.android.ui.richtext.parseRichInline
 import com.zoonk.android.ui.richtext.readMarkdownTable
 import com.zoonk.android.ui.richtext.richText
 
@@ -38,8 +38,8 @@ internal sealed interface ItemBlock {
 
 /**
  * A question's context, a set's passage or an explanation (main's `ItemText`): paragraphs, data
- * tables and inline code, bold and italics, as item writers are told. Anything else stays text,
- * math included, since "$5" here is money.
+ * tables and lesson inline text (code, bold, italics and `$…$` math, found by the lessons' rule, so
+ * "$5" stays money), as item writers are told. Anything else stays text.
  */
 @Composable
 fun ItemText(
@@ -64,16 +64,23 @@ fun ItemText(
     }
 }
 
-/** One line of an option, a step or an entry, with its emphasis (main's `ItemLine`). */
+/** One line of an option, a step or an entry, with its emphasis and math (main's `ItemLine`). */
 @Composable
 fun ItemLine(
     text: String,
     modifier: Modifier = Modifier,
     style: TextStyle = LocalTextStyle.current,
 ) {
-    val segments = remember(text) { parseItemLine(text) }
-    RichTextLine(richText(segments), modifier, style)
+    RichTextLine(itemLine(text), modifier, style)
 }
+
+/** An item line as [ItemLine] shows it, with the words TalkBack says for its math. */
+@Composable
+fun itemLine(text: String): SpokenText = richText(remember(text) { parseItemLine(text) })
+
+/** What TalkBack says for an item line: its words, with its math read out. */
+@Composable
+fun spokenItemLine(text: String): String = itemLine(text).let { it.spoken ?: it.text.text }
 
 /** The question itself, with its math, as a TalkBack heading; quiet once it's graded. */
 @Composable
@@ -124,18 +131,8 @@ internal fun parseItemText(text: String): List<ItemBlock> {
 
 internal fun parseItemLine(text: String): List<RichSegment> = parseInline(text.trim().replace(LINE_BREAKS, " "))
 
-/** An option's words without their marks, for TalkBack labels and "Right answer: …" lines. */
-fun plainItemLine(text: String): String = parseItemLine(text).joinToString("") { it.text }
-
 private fun parseInline(text: String): List<RichSegment> =
-    parseInlineMarkup(text).map { markup ->
-        when (markup.kind) {
-            MarkupKind.Code -> RichSegment(SegmentKind.Code, markup.text)
-            MarkupKind.Bold -> RichSegment(SegmentKind.Bold, keepAmountsTogether(markup.text))
-            MarkupKind.Italic -> RichSegment(SegmentKind.Italic, keepAmountsTogether(markup.text))
-            MarkupKind.Text -> RichSegment(SegmentKind.Text, keepAmountsTogether(markup.text))
-        }
-    }
+    parseRichInline(text).map { if (it.kind in PROSE) it.copy(text = keepAmountsTogether(it.text)) else it }
 
 /** "R$ 5" and "5 %" never break between the sign and the amount. */
 private fun keepAmountsTogether(text: String): String =
@@ -143,6 +140,7 @@ private fun keepAmountsTogether(text: String): String =
         .replace(SIGN_THEN_AMOUNT, "$1$NO_BREAK_SPACE")
         .replace(AMOUNT_THEN_SIGN, "$1$NO_BREAK_SPACE")
 
+private val PROSE = setOf(SegmentKind.Text, SegmentKind.Bold, SegmentKind.Italic)
 private val LINE_END = Regex("\\r?\n")
 private val LINE_BREAKS = Regex("\\s*\\r?\\n\\s*")
 private val SIGN_THEN_AMOUNT = Regex("(\\p{Sc})[ \\t](?=\\d)")

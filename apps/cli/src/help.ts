@@ -6,8 +6,8 @@ Account
   whoami                                  Show who is logged in
 
 Staff (production data)
-  staff models [model...]                 The models you can read, or the named models' fields,
-                                          relations and, for content, what a fix may change
+  staff models [model...]                 The models you can read or fix, or the named models'
+                                          fields, relations and each change a fix may make
   staff users find <email|username|id>    One account by exact email, username or id
   staff users search <text> [--limit n]   Accounts whose name, email or username contain the text
   staff get <model> <id> [--fields ...]   One record by id
@@ -21,10 +21,18 @@ Staff (production data)
   staff count <model> [--where ...]       Number of records matching every --where
 
 Content fixes (proposed here, approved by a staff person in Admin with a passkey)
-  staff fixes propose <file.json>         Propose { reason, feedbackId?, changes: [...] } and print
-                                          the fix: its review link, each field's before and after,
-                                          and its effects. Nothing changes until it's approved.
-  staff fixes revert <id> --reason "…"    Propose putting back what an applied fix replaced
+  staff fixes propose <file.json>         Propose { reason, feedbackId?, changes: [...] }, or a batch
+                                          { reason, fixes: [{ changes, reason? }, ...] } of up to
+                                          250, and print the batch's review link and each fix: each
+                                          field's before and after, and its effects. Nothing changes
+                                          until it's approved.
+  staff fixes revert <fixId> --reason "…" Propose putting back what an applied fix replaced
+  staff fixes revert --batch <batchId> --reason "…"
+                                          The same for every applied fix of a batch, as a new batch
+  staff fixes withdraw <fixId>            Take back a fix you proposed that nobody approved yet
+  staff fixes withdraw --batch <batchId>  The same for every fix of your batch still waiting for
+                                          review. An approved or applied fix stays; undo it with
+                                          revert.
 
 Data commands print JSON on stdout; messages and errors go to stderr.
 

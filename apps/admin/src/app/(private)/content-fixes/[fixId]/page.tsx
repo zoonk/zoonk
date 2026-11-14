@@ -9,7 +9,7 @@ import { AdminDisclosure } from "@/components/admin-json";
 import { AdminSection, AdminSectionSkeleton } from "@/components/admin-section";
 import { DetailField, DetailFields } from "@/components/detail-field";
 import { StateMark } from "@/components/state-mark";
-import { type ContentFixDetail, getContentFix } from "@/data/content-fixes/get-content-fix";
+import { getContentFix, rowKeyOf } from "@/data/content-fixes/get-content-fix";
 import { capitalize, formatDate, formatDateTime } from "@/lib/format";
 import { languageName } from "@/lib/language-filter";
 import { getStaffPasskeyStatus } from "@zoonk/core/staff/content-fixes/decide";
@@ -20,12 +20,19 @@ import { type Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { contentFixStatusLabels } from "../content-fix-status";
-import { ContentFixChanges } from "./content-fix-changes";
-import { RevertForm, ReviewBar } from "./content-fix-decision";
-import { ContentFixEffects } from "./content-fix-effects";
+import { ContentFixChanges } from "../_components/content-fix-changes";
+import { ResumeApplying, RevertForm, ReviewBar } from "../_components/content-fix-decision";
+import { ContentFixEffects } from "../_components/content-fix-effects";
+import { ContentFixVoice } from "../_components/content-fix-voice";
+import {
+  contentFixState,
+  contentFixStatusLabels,
+  contentFixStatusTones,
+} from "../content-fix-status";
 
 type Props = PageProps<"/content-fixes/[fixId]">;
+
+type ContentFixDetail = NonNullable<Awaited<ReturnType<typeof getContentFix>>>;
 
 const FIX_PARENTS = [{ href: "/content-fixes", label: "Content fixes" }];
 
@@ -97,7 +104,7 @@ function Where({ fix }: { fix: ContentFixDetail }) {
             </DetailField>
             <DetailField label="Fix id">{fix.id}</DetailField>
             {fix.changes.map((change) => (
-              <DetailField key={`${change.id}:${change.op}`} label="Changed row id">
+              <DetailField key={`${rowKeyOf(change)}:${change.op}`} label="Changed row id">
                 {change.id}
               </DetailField>
             ))}
@@ -115,8 +122,17 @@ function Why({ fix }: { fix: ContentFixDetail }) {
         {fix.reason}
       </p>
 
-      {fix.reverts || fix.feedback ? (
+      {fix.batchSize > 1 || fix.reverts || fix.feedback ? (
         <DetailFields>
+          {fix.batchSize > 1 && (
+            <DetailField label="Proposed with">
+              <Link className={LINK_CLASS} href={`/content-fixes/batches/${fix.batchId}`} prefetch>
+                {fix.batchSize - 1 === 1
+                  ? "1 other fix"
+                  : `${String(fix.batchSize - 1)} other fixes`}
+              </Link>
+            </DetailField>
+          )}
           {fix.reverts && (
             <DetailField label="Undoes">
               <Link className={LINK_CLASS} href={`/content-fixes/${fix.reverts.id}`} prefetch>
@@ -141,25 +157,31 @@ function Why({ fix }: { fix: ContentFixDetail }) {
 }
 
 const OUTCOMES = {
-  applied: { title: "Applied. Learners get the changed content.", tone: "done" },
-  rejected: { title: "Rejected. Nothing changed.", tone: "off" },
-  stale: { title: "Out of date. Nothing changed.", tone: "attention" },
+  applied: "Applied. Learners get the changed content.",
+  approved: "Approved with a passkey. It hasn't applied yet.",
+  rejected: "Rejected. Nothing changed.",
+  reverted: "Applied, then undone. Learners get the content from before this fix.",
+  stale: "Out of date. Nothing changed.",
+  withdrawn: "Withdrawn by whoever proposed it. Nothing changed.",
 } as const;
 
 /** What was decided, by whom, and the fixes that undo it. */
 function Outcome({ fix }: { fix: ContentFixDetail }) {
-  if (fix.status === "proposed") {
+  const state = contentFixState(fix);
+
+  if (state === "proposed") {
     return null;
   }
 
-  const outcome = OUTCOMES[fix.status];
-  const undoing = fix.revertedBy.filter((revert) => revert.status !== "rejected");
+  const undoing = fix.revertedBy.filter(
+    (revert) => revert.status !== "rejected" && revert.status !== "withdrawn",
+  );
 
   return (
     <AdminSection title="Decision">
       <div className="flex flex-col gap-1 text-sm">
-        <StateMark className="font-medium" state={fix.status} tone={outcome.tone}>
-          {outcome.title}
+        <StateMark className="font-medium" state={state} tone={contentFixStatusTones[state]}>
+          {OUTCOMES[state]}
         </StateMark>
         <p className="text-muted-foreground">
           {[
@@ -187,9 +209,22 @@ function Outcome({ fix }: { fix: ContentFixDetail }) {
         </ul>
       )}
 
-      {fix.status === "applied" && <RevertForm fixId={fix.id} />}
+      {state === "applied" && <RevertForm fixId={fix.id} />}
+      {fix.status === "approved" && (
+        <Suspense fallback={null}>
+          <ResumeSlot fix={fix} />
+        </Suspense>
+      )}
     </AdminSection>
   );
+}
+
+/** Only whoever approved a fix can finish applying it. */
+async function ResumeSlot({ fix }: { fix: ContentFixDetail }) {
+  const passkey = await getStaffPasskeyStatus();
+  const viewerId = passkey.status === "ready" ? passkey.userId : null;
+
+  return fix.deciderId === viewerId ? <ResumeApplying batchId={fix.batchId} count={1} /> : null;
 }
 
 async function ReviewBarSlot({ fix }: { fix: ContentFixDetail }) {
@@ -197,8 +232,11 @@ async function ReviewBarSlot({ fix }: { fix: ContentFixDetail }) {
 
   return (
     <ReviewBar
-      fixId={fix.id}
+      approveLabel="Approve with passkey"
+      batchId={fix.batchId}
+      fixIds={fix.voiceOwedAt ? [] : [fix.id]}
       hasPasskey={passkey.status === "ready" && passkey.hasPasskey}
+      rejectFixId={fix.id}
       settingsUrl={getMainPageUrl({ locale: "en", path: "/profile" })}
     />
   );
@@ -213,7 +251,7 @@ async function ContentFixContent({ params }: Pick<Props, "params">) {
       <AdminDetailHeader
         alert={fix.status === "stale" ? contentFixStatusLabels.stale : null}
         facts={[
-          fix.status !== "stale" && contentFixStatusLabels[fix.status],
+          fix.status !== "stale" && contentFixStatusLabels[contentFixState(fix)],
           `Proposed ${formatDateTime(fix.createdAt)} by ${fix.proposer?.name ?? "a deleted account"} in ${proposedIn}`,
         ]}
         parents={FIX_PARENTS}
@@ -235,6 +273,7 @@ async function ContentFixContent({ params }: Pick<Props, "params">) {
 
           <AdminSection title="Changes">
             <ContentFixChanges fix={fix} />
+            {fix.status === "proposed" && <ContentFixVoice fix={fix} />}
           </AdminSection>
 
           <AdminSection title="What else approving does">

@@ -28,6 +28,7 @@ The quoted parts keep the paper's wording, letter for letter and in its order: c
 - `options[].text`: each option exactly as printed, in the paper's order, without its letter ("A", "(A)", "a)").
 - Learners read what you copy, so give it the spaces the printed page has. The text reader sometimes drops the spaces between words ("Onúmeromínimodesalasquedeverãoserconstruídasé"): put each one back ("O número mínimo de salas que deverão ser construídas é"). Join a paragraph's lines with spaces.
 - A table `PAPER` gives as rows of `|` cells: keep each row on its own line, with its cells as printed, and add a `| --- |` line after the header row, one `---` per column, so it shows as a table.
+- Math keeps its printed meaning between dollar signs as LaTeX, even a single power: a formula, a variable with an exponent or a subscript, and a unit with a power (`$x^4 y$`, `$C_{A0}$`, `$\text{m/s}^2$`), never `^`, `_` or superscript characters (x⁴, C₀) in plain text. Keep math outside bold and italics, and in a line with math, write a dollar sign for money as `\$`.
 - Leave out the page's own notes that land inside a question's text, such as "Use this space for computations." or a running header.
 - Don't fix typos, translate, shorten, reorder or add anything else to a quoted part.
 

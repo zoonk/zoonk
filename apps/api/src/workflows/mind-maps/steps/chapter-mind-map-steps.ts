@@ -6,9 +6,12 @@ import {
   type MindMapAnalytics,
   type MindMapImageCheck,
   checkChapterMindMapImage,
+  claimChapterMindMapRedraw,
   drawChapterMindMap,
   failChapterMindMap,
+  finishChapterMindMapRedraw,
   holdChapterMindMap,
+  listOwedMindMapRedraws,
   removeChapterMindMapImage,
   showChapterMindMap,
   writeChapterMindMapStructure,
@@ -72,10 +75,19 @@ export async function holdMindMapStep({
 export async function writeMindMapStructureStep(input: {
   analytics: MindMapAnalytics;
   chapterId: string;
-}): Promise<void> {
+}): Promise<boolean> {
   "use step";
 
-  await writeChapterMindMapStructure(input);
+  return writeChapterMindMapStructure(input);
+}
+
+export async function claimMindMapRedrawStep(input: {
+  chapterId: string;
+  runId: string;
+}): Promise<boolean> {
+  "use step";
+
+  return claimChapterMindMapRedraw({ ...input, isRunActive });
 }
 
 /** A drawn picture is paid for, so a failed store fails the run instead of retrying to draw another. */
@@ -89,7 +101,7 @@ export async function drawMindMapStep(input: {
   const drawn = await drawChapterMindMap(input);
 
   const { error } = await safeAsync(() =>
-    showChapterMindMap({ chapterId: input.chapterId, drawn }),
+    showChapterMindMap({ chapterId: input.chapterId, drawn, runId: input.analytics.runId }),
   );
 
   if (error) {
@@ -111,6 +123,7 @@ export async function checkMindMapStep(input: {
 export async function removeMindMapImageStep(input: {
   chapterId: string;
   imageUrl: string;
+  runId: string;
 }): Promise<void> {
   "use step";
 
@@ -121,4 +134,17 @@ export async function failMindMapStep(input: { chapterId: string; runId: string 
   "use step";
 
   await failChapterMindMap(input);
+}
+
+export async function finishMindMapRedrawStep(input: {
+  chapterId: string;
+  runId: string;
+}): Promise<void> {
+  "use step";
+  await finishChapterMindMapRedraw(input);
+}
+
+export async function listOwedMindMapRedrawsStep(): Promise<string[]> {
+  "use step";
+  return listOwedMindMapRedraws();
 }

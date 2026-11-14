@@ -43,6 +43,15 @@ private val choice =
         options = listOf("Ribosome", "Mitochondria", "Golgi apparatus", "Nucleus"),
     )
 
+private val math =
+    Question(
+        itemId = "math",
+        format = QuestionFormat.MultipleChoice,
+        question = "Which is the simplest form?",
+        context = "Simplify \$x^4 y \\cdot x^2$ when the bill is \$5.",
+        options = listOf("\$x^6 y$", "\$C_{A0} = 2$ mol/L", "\$E_a$ = 50 kJ/mol", "costs \$5 or \$10"),
+    )
+
 private val severalPicks =
     choice.copy(
         itemId = "several",
@@ -119,6 +128,30 @@ internal fun QuestionChoices() {
                 {},
             )
         }
+    }
+}
+
+@Composable
+internal fun QuestionMath() {
+    Samples {
+        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            ItemSupport(math)
+            QuestionTitle(math.question)
+            QuestionAnswer(math, TrueFalseWords.TrueFalse, false, null, null, true, {}, {})
+        }
+        QuestionFeedback(
+            question = math,
+            answer = Answer.Choice(3),
+            feedback =
+                AnswerFeedback(
+                    isCorrect = false,
+                    correctAnswer = Answer.Choice(0),
+                    explanation = "Add the exponents, as in \$2^5 \\cdot 2^6 = 2^{11}$.",
+                    workedSteps = listOf("\$x^4 \\cdot x^2 = x^{4+2}$", "\$x^6 y$"),
+                ),
+            words = TrueFalseWords.TrueFalse,
+            timedOut = false,
+        )
     }
 }
 

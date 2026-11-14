@@ -8,6 +8,7 @@ import { MOCK_ENTRY_HREFS } from "@/lib/mocks/mock-entry-hrefs";
 import { getSessionBlockReturn } from "@/lib/session/session-block-return";
 import { withQuery } from "@/lib/with-query";
 import { getMock } from "@zoonk/core/exams/mocks/get";
+import { DrawnMath } from "@zoonk/learn/rich-text/drawn-math";
 import { QuestionSkeleton, TaskSkeleton } from "@zoonk/learn/task-layout";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
@@ -94,12 +95,14 @@ async function MockContent({ params, searchParams }: Props) {
 
   return (
     <MainLearnProvider>
-      <MockClient
-        againHref={againHref}
-        continueHref={continueHref}
-        mock={mock}
-        tutor={{ ...tutor, goalId: mock.goalId ?? tutor.goalId }}
-      />
+      <DrawnMath content={mock}>
+        <MockClient
+          againHref={againHref}
+          continueHref={continueHref}
+          mock={mock}
+          tutor={{ ...tutor, goalId: mock.goalId ?? tutor.goalId }}
+        />
+      </DrawnMath>
     </MainLearnProvider>
   );
 }

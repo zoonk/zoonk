@@ -623,6 +623,12 @@ struct LessonPlayerState: Equatable, Sendable {
   mutating func confirm(
     _ stepId: String, attemptId: String, answer: LessonAnswer, verdict: LessonStepResult
   ) {
+    // The screen was fixed after the learner started: the server saved nothing, and the device's
+    // verdict, given on the screen they saw, stands.
+    guard verdict.checked else {
+      return
+    }
+
     if firstVerdictAttemptIds[stepId] == attemptId {
       firstVerdicts[stepId] = verdict.isCorrect
     }

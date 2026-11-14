@@ -5,7 +5,8 @@ import {
   type OptionSelect,
 } from "@zoonk/ai/tasks/items/schemas";
 import { normalizeString } from "@zoonk/utils/string";
-import { findEmDashes, findPlaceholderText, findUnrenderedMarkdown } from "@zoonk/utils/text-flaws";
+import { findEmDashes, findPlaceholderText } from "@zoonk/utils/text-flaws";
+import { findUnrenderedText } from "@zoonk/utils/unrendered-text";
 import { findOptionPositionReferences, stripOptionLabels } from "../_utils/answer-options";
 import {
   findAnswerKeyProblems,
@@ -169,7 +170,7 @@ function checkVisuals(item: GeneratedItem, language: string): Problem[] {
 
 function checkWriting(item: GeneratedItem): string[] {
   return getItemWriting(item).flatMap(({ layout, text }) => [
-    ...findUnrenderedMarkdown({ layout, text }),
+    ...findUnrenderedText({ layout, text }),
     ...findPlaceholderText(text),
   ]);
 }

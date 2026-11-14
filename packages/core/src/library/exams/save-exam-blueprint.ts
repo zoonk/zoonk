@@ -81,7 +81,7 @@ function findLastDate(dates: ExamDate[], kind: ExamDate["kind"]): Date | null {
   return last ? new Date(`${last}T00:00:00.000Z`) : null;
 }
 
-function toDateColumns(content: BlueprintContent) {
+export function toDateColumns(content: Pick<BlueprintContent, "edition">) {
   const examDate = findLastDate(content.edition.dates, "exam");
 
   return {
