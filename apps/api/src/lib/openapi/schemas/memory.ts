@@ -117,12 +117,7 @@ export const memoryInsightSchema = z
           .nullable()
           .meta({ description: "Lessons the change adds and how it moves the plan's end date" }),
         id: uuidSchema(),
-        quote: planChangeQuoteSchema
-          .nullable()
-          .meta({
-            description:
-              "Which numbers `effect` shows; accepting the insight sends it back as `quote`",
-          }),
+        quote: planChangeQuoteSchema,
         status: z
           .enum(["applied", "proposed"])
           .meta({

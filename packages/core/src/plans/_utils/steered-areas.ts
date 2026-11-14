@@ -194,6 +194,18 @@ export function getAskedAreas({
   return added.length > 0 ? added : areas;
 }
 
+/** Takes areas out of the focus and adds none. */
+export function removesFocusOnly({
+  focused,
+  operations,
+}: {
+  focused: readonly string[];
+  operations: readonly PlanOperation[];
+}): boolean {
+  const areas = listFocusedAreas(operations);
+  return areas.every((area) => focused.includes(area)) && areas.length < focused.length;
+}
+
 export function getAskedFocus({
   baseline,
   computed,

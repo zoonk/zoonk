@@ -16,13 +16,10 @@ import {
   parsePlanChangePayload,
   toPlanChangePayload,
 } from "./_utils/plan-change-payload";
+import { getPlanChangeQuote } from "./_utils/plan-change-quote";
 import { canUndoChange } from "./_utils/plan-change-view";
 import { type PlanContext } from "./_utils/plan-context";
-import {
-  getPlanPreviewBasis,
-  isCurrentPlanPreview,
-  isSameQuote,
-} from "./_utils/plan-preview-basis";
+import { getPlanPreviewBasis, isCurrentPlanPreview } from "./_utils/plan-preview-basis";
 import { replaceWaitingProposals } from "./_utils/replace-waiting-proposals";
 import { revalidatePlanTags } from "./_utils/replan";
 import { getChangePlanning } from "./_utils/steered-areas";
@@ -120,7 +117,7 @@ async function acceptProposal({
     return repriced;
   }
 
-  if (!isSameQuote(quote, payload.previewBasis)) {
+  if (quote !== getPlanChangeQuote(payload.effect)) {
     return REPRICED;
   }
 
