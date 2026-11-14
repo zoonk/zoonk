@@ -228,10 +228,10 @@ fun lessonsStudied(
 ): Long = (done - known).coerceAtLeast(0)
 
 @Composable
-private fun weekGain(gain: Double): String {
+private fun weekGain(gain: Double): String? {
     val points = (gain * PERCENT).roundToInt()
     return when {
-        points == 0 -> stringResource(R.string.plan_no_change_this_week)
+        points == 0 -> null
         points > 0 -> pluralStringResource(R.plurals.plan_gain_this_week, points, points)
         else -> pluralStringResource(R.plurals.plan_loss_this_week, -points, points)
     }
@@ -239,52 +239,40 @@ private fun weekGain(gain: Double): String {
 
 private const val PERCENT = 100
 
+/** The tile: the plan's state as its value, and its time a day or the lessons left as its one line. */
 @Composable
 private fun paceNumber(
     page: PlanPageState,
     pace: Pace,
 ): PlanNumber {
-    val (value, detail) =
+    val resting = page.isPaused && pace !is Pace.Finished && pace !is Pace.PastDate && pace !is Pace.ChallengesLeft
+    val value = if (resting) stringResource(R.string.plan_pace_value_paused) else paceText(pace)
+    val detail =
         when {
-            pace is Pace.Finished -> {
-                R.string.plan_pace_value_finished to null
-            }
-
             pace is Pace.PastDate -> {
-                R.string.plan_pace_value_past_date to pluralStringResource(R.plurals.plan_lessons_left, pace.lessons, pace.lessons)
+                pluralStringResource(R.plurals.plan_lessons_left, pace.lessons, pace.lessons)
             }
 
-            pace is Pace.ChallengesLeft -> {
-                R.string.plan_pace_value_challenges to paceText(pace)
+            resting -> {
+                null
             }
 
-            page.isPaused -> {
-                R.string.plan_pace_value_paused to stringResource(R.string.plan_nothing_planned)
-            }
-
-            pace is Pace.Ahead -> {
-                R.string.plan_pace_value_ahead to paceText(pace)
-            }
-
-            pace is Pace.Behind -> {
-                R.string.plan_pace_value_behind to paceText(pace)
-            }
-
-            pace is Pace.NeedsAdjusting -> {
-                R.string.plan_pace_value_too_tight to paceText(pace)
-            }
-
-            else -> {
-                val time =
+            pace is Pace.OnTrack || pace is Pace.Ahead || pace is Pace.Behind -> {
+                stringResource(
+                    R.string.plan_time_a_day,
                     formatMinutes(
                         page.plan.schedule.dailyMinutes
                             .toInt(),
                         currentLocale(),
-                    )
-                R.string.plan_pace_value_on_pace to stringResource(R.string.plan_time_a_day, time)
+                    ),
+                )
+            }
+
+            else -> {
+                null
             }
         }
-    return PlanNumber(stringResource(R.string.plan_pace), stringResource(value), detail, numeric = false)
+    return PlanNumber(stringResource(R.string.plan_pace), value, detail, numeric = false)
 }
 
 @Composable
@@ -380,6 +368,11 @@ internal fun PaceDetails(
                 onClick = onAdjust,
                 modifier = Modifier.padding(top = 4.dp),
             ) { Text(stringResource(R.string.plan_adjust_plan)) }
+        }
+        if (fix?.today == true) {
+            OutlinedButton(onClick = links::today, modifier = Modifier.padding(top = 4.dp), forward = true) {
+                Text(stringResource(R.string.plan_go_to_today))
+            }
         }
     }
 

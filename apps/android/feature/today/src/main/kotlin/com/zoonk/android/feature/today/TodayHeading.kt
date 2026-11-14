@@ -16,10 +16,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -43,6 +39,7 @@ import com.zoonk.android.feature.plan.shortDayRange
 import com.zoonk.android.feature.session.FreshStart
 import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.components.Readout
+import com.zoonk.android.ui.components.dottedUnderline
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
@@ -217,19 +214,6 @@ internal fun DayTime(
         Readout(text, open.dottedUnderline(MaterialTheme.colorScheme.onSurfaceVariant), style)
     }
 }
-
-/** Main's dotted underline under something that opens a note. */
-private fun Modifier.dottedUnderline(color: Color): Modifier =
-    drawBehind {
-        val y = size.height - 2.dp.toPx()
-        drawLine(
-            color = color,
-            start = Offset(0f, y),
-            end = Offset(size.width, y),
-            strokeWidth = 1.dp.toPx(),
-            pathEffect = PathEffect.dashPathEffect(floatArrayOf(2.dp.toPx(), 2.dp.toPx())),
-        )
-    }
 
 /** A status, so a day that changes while the learner is here (lessons that arrive) is announced. */
 @Composable

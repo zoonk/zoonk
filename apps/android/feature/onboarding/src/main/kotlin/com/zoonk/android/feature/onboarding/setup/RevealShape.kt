@@ -52,17 +52,6 @@ internal val Plan.roadmapPhases get() = revealPhases.filter { it.state != PlanPh
 /** Days when it has dates, else hours, so every drawing of the phases shares one scale: time. */
 internal fun PlanPhase.weight(): Float = days()?.toFloat() ?: hours.toFloat().coerceAtLeast(1f)
 
-internal data class PhaseDay(
-    val day: Int,
-    val days: Int,
-)
-
-internal fun PlanPhase.dayOf(today: LocalDate): PhaseDay? {
-    val days = days() ?: return null
-    val start = startDate?.toJavaLocalDate() ?: return null
-    return PhaseDay((ChronoUnit.DAYS.between(start, today).toInt() + 1).coerceIn(1, days), days)
-}
-
 /** Both its first and last day count: the planner's end date is its last day. */
 private fun PlanPhase.days(): Int? {
     val start = startDate?.toJavaLocalDate() ?: return null

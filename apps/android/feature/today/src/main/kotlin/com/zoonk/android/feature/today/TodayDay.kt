@@ -76,11 +76,6 @@ internal class TodayDayModel(
     val pastDate = today.pastDateLessons()?.takeIf { state == StudySession.State.REST || state == StudySession.State.AHEAD }
     val upNext = day.upNextLessons(pastDate != null)
     val keepLearning = upNext.isNotEmpty()
-    val todaySubjects =
-        day.steps
-            .filterNot(DayStep::isFinished)
-            .mapNotNull(DayStep::subject)
-            .toSet()
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -175,7 +170,7 @@ fun TodayDay(
                         language?.value?.level?.let { LanguageLevelCard(it, onOpenPlan = openPlan) }
                     } else {
                         val syllabus = plans?.syllabus?.get(read.today.goal.id)?.collectShown()
-                        TodayPreparation(read.today.progress, syllabus?.value?.value, model.todaySubjects, onOpenPlan = openPlan)
+                        TodayPreparation(read.today.progress, syllabus?.value?.value, onOpenPlan = openPlan)
                     }
                 },
             )

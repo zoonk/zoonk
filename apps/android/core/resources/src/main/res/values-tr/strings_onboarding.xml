@@ -313,7 +313,6 @@
   "onboarding_reveal_notice_subjects": "20eeea0ddbc8c2fde5a1807c7fd8a6fc204733592ffce2bdec5d21cf4a419043",
   "onboarding_reveal_pace_covers": "59ffc876a921e1da56adbf5e7976b127cfaf9f7623c8db05ea5ea8e4a1a0a6f4",
   "onboarding_reveal_pace_time": "44769e9bd976c4693094bd546dcbd554cd5d5ff3a64df5c449922fb318a519fa",
-  "onboarding_reveal_phase_day": "d66f8aec29bbe4831de367ee4964ef5bb3d46b20032547deec60499809981ba6",
   "onboarding_reveal_phase_final_stretch": "91fd63dfceb97e313698a0e916ae833c1cc193cd795e057342756dfc68e07876",
   "onboarding_reveal_phase_foundations": "ebe630ca89cccf4e056d70db8a01c2ca261bbbfa9cc2f63f2b013251e12685a6",
   "onboarding_reveal_phase_full_review": "6f8819a99f7e687fec46c54778a5d7a0002c76c59d4e0c89fb282627d0a1cd44",
@@ -438,7 +437,8 @@
   "onboarding_understood_description": "1e46c5f0c3159604f95781af70b30a52f70d65b8386f913c492e2d1289ea0a5b",
   "onboarding_understood_description_shared": "8e97611806e8c6d2c317f08aecf89e60d53051599370296eb5271647144be2cb",
   "onboarding_understood_free_account_title": "36f6bf89ee6e45ad775bd03c8c9cdca3095eb2953fdb906f7fd31c39e08adf57",
-  "onboarding_understood_locked_line": "6233a860d08633a7f228aedab2b01a3ac8f243e241fd14e9fef4aaeb77096232",
+  "onboarding_understood_locked_line_more": "94a7ccb3203a14195266dbed0117990610ac57ccd1d0be2cf537da4b098438fc",
+  "onboarding_understood_locked_line_one": "178e6637e493ff428a629b2b22dc631c4fe1eae28675f07a47b64188ad90af69",
   "onboarding_understood_locked_title": "e4d5152c0317bffa9dd16e0189954934f212dd11318e7b328ae266174c2f3fbf",
   "onboarding_understood_title": "90a292c49ee6b99ee0b658bdc5f500482ffc010b49f74fce10f835af49a790f1",
   "onboarding_upload_file": "2bc2c500d0c0ccac3b411d6192fa6225dc7f0c4eba31b0fbd7b713b2f73bb6ea",
@@ -528,10 +528,9 @@
     <string name="onboarding_understood_free_account_title">Ücretsiz hesapla aynı anda daha fazla hedef üzerinde çalışabilirsin</string>
     <!-- Under the goals typed past the ones the learner can study at once. -->
     <string name="onboarding_understood_locked_title">Aynı anda daha fazla hedef üzerinde çalışmak için abonelik gerekir</string>
-    <plurals name="onboarding_understood_locked_line">
-        <item quantity="one">Bu hedefe başlamak için başka bir hedefi duraklat.</item>
-        <item quantity="other">Bu hedeflere başlamak için başka bir hedefi duraklat.</item>
-    </plurals>
+    <string name="onboarding_understood_locked_line_one">Bu hedefe başlamak için başka bir hedefe ara ver.</string>
+    <!-- More than one goal is locked. -->
+    <string name="onboarding_understood_locked_line_more">Bu hedeflere başlamak için başka bir hedefe ara ver.</string>
     <string name="onboarding_looks_right">Onayla</string>
     <string name="onboarding_fix_something">Düzeltme yap</string>
     <!-- Label of the box holding the words the learner wrote, while they rewrite them. -->
@@ -789,8 +788,6 @@
     <string name="onboarding_reveal_phase_light_review">Hafif tekrar</string>
     <!-- Beside the phase the learner is in, in place of its start date. -->
     <string name="onboarding_reveal_today">Bugün</string>
-    <!-- %1$d is the day the learner is on in the current phase, %2$d how many days it has. -->
-    <string name="onboarding_reveal_phase_day">%1$d. gün / %2$d gün</string>
     <!-- %1$d is the current phase's place, %2$d how many phases the plan has. -->
     <string name="onboarding_reveal_phase_position">%1$d / %2$d</string>
     <string name="onboarding_reveal_phase_place">%1$d. aşama / %2$d aşama</string>

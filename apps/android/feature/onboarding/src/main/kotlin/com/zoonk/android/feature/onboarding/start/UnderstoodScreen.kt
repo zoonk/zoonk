@@ -30,7 +30,6 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
@@ -226,7 +225,16 @@ private fun LockedGoals(
     if (!waiting) return
     if (hasAccount) {
         val title = stringResource(R.string.onboarding_understood_locked_title)
-        val line = pluralStringResource(R.plurals.onboarding_understood_locked_line, goals.size)
+        val line =
+            stringResource(
+                if (goals.size ==
+                    1
+                ) {
+                    R.string.onboarding_understood_locked_line_one
+                } else {
+                    R.string.onboarding_understood_locked_line_more
+                },
+            )
         if (onRemedy != null) SubscribeGate(title, onSubscribe = onRemedy, line = line) else GateWords(title, line)
     } else {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {

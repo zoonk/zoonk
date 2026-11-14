@@ -313,7 +313,6 @@
   "onboarding_reveal_notice_subjects": "fa84beaec92e2da5c39dba1fb97c275902692297091cb43f3b6d5638236b76af",
   "onboarding_reveal_pace_covers": "c90fd5b2825bb6bfacd89a2ca47475b5707e15e033d299cffb0ad41c19c15694",
   "onboarding_reveal_pace_time": "2772903b46464bd116c89286a4c4f6909d083ee20b13594d447cb89b74401813",
-  "onboarding_reveal_phase_day": "a73b164d931fdd59cfd5aa811d84fc695c7cc5b98b5353805af7e413144176ae",
   "onboarding_reveal_phase_final_stretch": "167aed99c05d77b0727e0ea7aed0714ad950b568edc2e33eb5719051006a7027",
   "onboarding_reveal_phase_foundations": "536369f3af734bfc6d95f85c243cb58fa5eb41bff3c5db021fe52bbb5e152322",
   "onboarding_reveal_phase_full_review": "ce3adad25d5bf826529c2d9501249d046d34121f8173f8923ba2854a6013d475",
@@ -438,7 +437,8 @@
   "onboarding_understood_description": "9bdcdabbd16a8d775575dcbfd53c628c0ba0faa18748d75807e6591ae6445ff3",
   "onboarding_understood_description_shared": "76dc4b611d51f473e8ceb24927f202702a9ac68fcd99a32b4afaa5a98892d8d9",
   "onboarding_understood_free_account_title": "ac1d05b6ff85c8fcc2e7bc112af18eaed4ecfdf7bdd834c3e844822c05d7f990",
-  "onboarding_understood_locked_line": "74bab84fc2b06804247fc0511f0422831a586962bd50dc62d2e3297d10c7500d",
+  "onboarding_understood_locked_line_more": "672c67deb4aec87ad4209eecc67996a34449825bc3648d73982f4b0f7a8bd920",
+  "onboarding_understood_locked_line_one": "c46c4e4a98b92b9179a8f1f53a171fc57a5fb7f71459c798dfa451017c63b074",
   "onboarding_understood_locked_title": "a8e434e3af1e867533c24ff4a792343ab6b6d746c94231cfe149aa8a0806e17d",
   "onboarding_understood_title": "afbb4bea56134a1a5a91c824c1591b15daf073956170fd3cf80ba8b2f0fce60f",
   "onboarding_upload_file": "d2d52367d480fbb119d1abcd9e2199c560bd75085940a316d3fa597eca0eaf09",
@@ -527,9 +527,9 @@
     <string name="onboarding_understood_free_account_title">무료 계정을 만들면 한 번에 더 많은 목표를 학습할 수 있어요</string>
     <!-- Under the goals typed past the ones the learner can study at once. -->
     <string name="onboarding_understood_locked_title">한 번에 더 많은 목표를 학습하려면 구독이 필요해요</string>
-    <plurals name="onboarding_understood_locked_line">
-        <item quantity="other">이 목표를 시작하려면 다른 목표를 일시 중지하세요.</item>
-    </plurals>
+    <string name="onboarding_understood_locked_line_one">이 목표를 시작하려면 다른 목표를 일시 중지하세요.</string>
+    <!-- More than one goal is locked. -->
+    <string name="onboarding_understood_locked_line_more">이 목표들을 시작하려면 다른 목표를 일시 중지하세요.</string>
     <string name="onboarding_looks_right">맞아요</string>
     <string name="onboarding_fix_something">수정하기</string>
     <!-- Label of the box holding the words the learner wrote, while they rewrite them. -->
@@ -782,8 +782,6 @@
     <string name="onboarding_reveal_phase_light_review">가벼운 복습</string>
     <!-- Beside the phase the learner is in, in place of its start date. -->
     <string name="onboarding_reveal_today">오늘</string>
-    <!-- %1$d is the day the learner is on in the current phase, %2$d how many days it has. -->
-    <string name="onboarding_reveal_phase_day">%1$d일째 / 총 %2$d일</string>
     <!-- %1$d is the current phase's place, %2$d how many phases the plan has. -->
     <string name="onboarding_reveal_phase_position">%1$d / %2$d</string>
     <string name="onboarding_reveal_phase_place">%1$d단계 / 총 %2$d단계</string>

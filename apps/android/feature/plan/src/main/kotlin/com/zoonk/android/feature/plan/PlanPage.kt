@@ -299,10 +299,6 @@ internal fun PlanPage(
             page = page,
             edits = edits,
             section = editingAt,
-            onTellBuddy = {
-                editing = false
-                links.buddy()
-            },
             onDismiss = { editing = false },
         )
     }

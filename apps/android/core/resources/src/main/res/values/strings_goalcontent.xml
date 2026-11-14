@@ -93,10 +93,6 @@
         <item quantity="other">Also in %d exams</item>
     </plurals>
 
-    <!-- Eyebrow of a subject's page for a subject of an exam's notice. -->
-    <string name="goalcontent_subject">Subject</string>
-    <!-- Eyebrow of a subject's page for a module of the learner's plan. -->
-    <string name="goalcontent_module">Module</string>
     <string name="goalcontent_from_material">From your material</string>
     <!-- How much of the exam a subject is: "20% of the exam". -->
     <string name="goalcontent_share_of_exam">%1$s of the exam</string>
@@ -184,8 +180,6 @@
     <string name="goalcontent_matrix_title">What the questions ask</string>
     <string name="goalcontent_see_all">See all %1$s</string>
 
-    <!-- Eyebrow of a chapter's page: "Biology · Chapter 4". -->
-    <string name="goalcontent_subject_chapter">%1$s · Chapter %2$s</string>
     <string name="goalcontent_chapter_number">Chapter %1$s</string>
     <string name="goalcontent_progress">Progress</string>
     <string name="goalcontent_practice">Practice</string>
