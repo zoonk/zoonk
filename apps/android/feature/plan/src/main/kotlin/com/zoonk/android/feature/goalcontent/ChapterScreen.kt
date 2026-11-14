@@ -237,12 +237,17 @@ internal fun ChapterPage(
 ) {
     val shownMap = mindMap?.takeIf { it.shown }
     val lessons = remember(chapter.lessons) { chapter.lessons.map { it.listed() } }
+    val next = chapter.lessons.firstOrNull { it.state == ChapterLesson.State.NEXT }
 
     DetailPage(
         title = chapter.chapter.title,
         onBack = actions.back,
-        hero = { ChapterHero(chapter, actions, menu) },
+        hero = { ChapterHero(chapter, menu) },
         ask = ask,
+        action =
+            next?.let {
+                { modifier -> ContinueButton(started = lessons.any { it.done }, onClick = { actions.openLesson(it.lessonId) }, modifier) }
+            },
         aside = {
             ChapterProgress(lessons)
             ChapterPractice(chapter, practice, actions)
@@ -281,13 +286,11 @@ private fun ChapterLesson.listed() =
 @Composable
 private fun ChapterHero(
     chapter: GoalChapter,
-    actions: ChapterActions,
     menu: @Composable () -> Unit,
 ) {
     val locale = currentLocale()
     val lessons = chapter.lessons
     val done = lessons.count { it.state == ChapterLesson.State.DONE }
-    val next = lessons.firstOrNull { it.state == ChapterLesson.State.NEXT }
     val number = formatNumber(chapter.chapter.position.toDouble(), locale)
     val minutes = lessons.sumOf { it.minutes }.toInt()
     val counts =
