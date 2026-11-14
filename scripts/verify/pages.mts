@@ -8,6 +8,8 @@ import { chromium } from "@playwright/test";
 import { assertBrowserLaunchAllowed } from "../../packages/testing/src/browser-preflight.ts";
 import { getMailboxCaptureUrl, getServiceUrl } from "../dev/config.mts";
 import { readActionNames } from "./actions.mts";
+import { failed, summaryLine } from "./alignment-summary.mts";
+import { alignmentOfLoads, alignmentSection, isDiscovery } from "./alignment-web.mts";
 import { compareWithBaseline, comparisonRows, readBaseline } from "./baseline.mts";
 import { markBusy } from "./busy.mts";
 import { type Finding } from "./checks.mts";
@@ -230,10 +232,19 @@ try {
 }
 
 const production = loads.every((load) => load.production);
+
+// Discovery leads print with the alignment report, apart from what fails; the rest stays here.
+const alignment = alignmentOfLoads(loads);
+
 const loadAtEnd = loadPerCore();
 const busy = Math.max(loadAtStart, loadAtEnd) > BUSY_LOAD_PER_CORE;
 const judge = (findings: Finding[]) => (busy ? markBusy(findings) : findings);
-const judgedLoads = loads.map((load) => ({ ...load, findings: judge(load.findings) }));
+
+const judgedLoads = loads.map((load) => ({
+  ...load,
+  findings: judge(load.findings.filter((finding) => !isDiscovery(finding))),
+}));
+
 const judgedNavigations = navigations.map((hop) => ({ ...hop, findings: judge(hop.findings) }));
 
 const exposures = learner
@@ -298,6 +309,7 @@ const report = renderReport({
   navigations: judgedNavigations,
   out,
   sections: [
+    ...alignmentSection(alignment.findings),
     ...renderRows(renders),
     ...(soak ? soakRows(soak) : []),
     ...(comparison ? comparisonRows(comparison) : []),
@@ -306,6 +318,8 @@ const report = renderReport({
 });
 
 await writeFile(join(out, "report.md"), `${report.markdown}\n`);
+
+await writeFile(join(out, "alignment.json"), JSON.stringify(alignment, null, 2));
 
 await writeFile(
   join(out, "report.json"),
@@ -329,4 +343,5 @@ await writeFile(
 );
 
 console.log(`\n${report.markdown}\n\nReport: ${join(out, "report.md")}`);
-process.exitCode = report.failures > 0 ? 1 : 0;
+console.log(summaryLine(alignment.summary));
+process.exitCode = report.failures > 0 || failed(alignment.summary) ? 1 : 0;

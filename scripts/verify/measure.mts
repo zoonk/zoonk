@@ -1,6 +1,10 @@
 import { createHash } from "node:crypto";
 import { join } from "node:path";
 import { type Browser, type BrowserContextOptions, type Page } from "@playwright/test";
+import { type Capture } from "./alignment-capture.mts";
+import { readAlignment, webCapture } from "./alignment-probe.mts";
+import { FILLED_ACTION, PIECES, SURFACES } from "./alignment-table.mts";
+import { type DiscoveryLead, readDiscovery } from "./alignment-web.mts";
 import {
   type Traffic,
   checkSchemes,
@@ -64,6 +68,8 @@ export type Target = {
 };
 
 export type LoadReport = LoadMeasurement & {
+  alignment: Capture;
+  discovery: DiscoveryLead[];
   bytes: { html: number; scripts: number; total: number };
   mainThreadMs: number;
   database: { count: number; ms: number } | null;
@@ -78,6 +84,13 @@ export type LoadReport = LoadMeasurement & {
 };
 
 const QUERY_HASH_LENGTH = 8;
+
+const WEB_PIECES = PIECES.flatMap((piece) =>
+  piece.web ? [{ name: piece.name, web: piece.web }] : [],
+);
+
+/** Craft's E1 and E3 measure past their 24 px cap inside these. */
+const DECLARED_GROUPS = WEB_PIECES.map((piece) => piece.web.group).join(", ");
 
 export function slug(path: string): string {
   const { search } = new URL(path, "http://slug.invalid");
@@ -121,10 +134,16 @@ async function readLoadedPage(page: Page, traffic: Traffic) {
   return {
     ...measureFrames(probe?.mainFrames ?? [], fcpMs),
     ...summarizePrefetches(traffic.requests, probe?.timeOrigin ?? null),
+    alignment: await page.evaluate(readAlignment, {
+      filled: FILLED_ACTION,
+      pieces: WEB_PIECES,
+      surfaces: SURFACES,
+    }),
     blankSeenMs: probe?.blankFrames[0] ?? null,
     blockingMs: probe ? totalBlockingTime(probe.longTasks, fcpMs) : null,
     bytes: await page.evaluate(transferredBytes),
-    craft: await page.evaluate(readCraft),
+    craft: await page.evaluate(readCraft, DECLARED_GROUPS),
+    discovery: await page.evaluate(readDiscovery, DECLARED_GROUPS),
     fcpMs,
     lcpMs: probe?.lcp ?? null,
     overflow: await page.evaluate(findOverflow),
@@ -189,7 +208,17 @@ export async function measureLoad(
 
     const appearances = await checkSchemes(page, { name, schemes });
 
-    const { bytes, craft, roles, timeOrigin: _, words: text, ...measured } = loaded;
+    const {
+      alignment,
+      bytes,
+      craft,
+      discovery,
+      roles,
+      timeOrigin: _,
+      words: text,
+      ...measured
+    } = loaded;
+
     const words = summarizeWords(text, pageKind(target.app, path));
 
     const measurement: LoadMeasurement = {
@@ -210,11 +239,18 @@ export async function measureLoad(
 
     return {
       ...measurement,
+      alignment: webCapture({
+        page: alignment,
+        path: redactQuery(path),
+        scheme: schemes[0] ?? "light",
+        viewport,
+      }),
       bytes,
       database: statements && {
         count: statements.length,
         ms: statements.reduce((total, statement) => total + statement.ms, 0),
       },
+      discovery,
       findings: [
         ...judgeLoad(measurement),
         ...wordFindings(words),
