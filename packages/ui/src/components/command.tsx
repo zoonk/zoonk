@@ -120,7 +120,6 @@ function CommandInput({
         <DialogClose
           aria-keyshortcuts="Escape"
           className="hit-area focus-visible:ring-ring/50 hover:[&>kbd]:text-foreground hover:[&>kbd]:ring-foreground/25 relative hidden shrink-0 rounded-sm outline-none focus-visible:ring-[3px] sm:inline-flex"
-          data-slot="command-close"
         >
           <span className="sr-only">{cancelLabel}</span>
           <Kbd>Esc</Kbd>
