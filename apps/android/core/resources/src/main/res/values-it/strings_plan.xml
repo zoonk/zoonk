@@ -237,6 +237,7 @@
   "plan_effect_weekly_challenge_on": "671f3dd7613b22ed86dadf2d6150201137ff77dadd3c3fd2a13fca3b656b1370",
   "plan_estimate_based_on": "b27935ff8e4ea2f3addebc90458090130c68b80be40876733af283270b5f3a80",
   "plan_estimate_based_on_last": "350dceddbcfa44bf83d870c49efd0aef3fc569acd27cccc79909924479b35573",
+  "plan_estimate_based_on_reviews": "24c0dac88528b99b4816c9a8cf4eb7f96c41f7060246f0404203d802a3039431",
   "plan_estimate_waits": "805cdda73fb1e8c13ea804e201a1849b3151af634388f71e22f557c83a7b637a",
   "plan_estimated_score": "a5f3493f456525da369d4b4ade74873f15b5c397c33b9e8537c95c1ec18cff83",
   "plan_every_day": "3d707b01ec095a3e9f24cb968bd9077bd2e99f66edee0206181c3a2a6f5d9680",
@@ -250,7 +251,7 @@
   "plan_exam_date": "ed3689d91523a58c006e259378c0425952e8ea3fd9373a6ea21b0ac555fb2519",
   "plan_exam_date_label": "1642a9e82ce7c09386239ca2f3027b725bae95c4c4fe2f59dc04105235a95807",
   "plan_exam_day": "dd4eec15d3027e28f16955949e746b9163dceed5246e82748d11013df7bccccf",
-  "plan_exam_over_ask": "3e2f6c552df5f3e0e813f7a74fe254d7fd0ede5e3f0edd87624d686f0e25c272",
+  "plan_exam_over_left": "24eb1525c15a8949590fa788d16f1b848de201a50a7c786861117a155f61e52c",
   "plan_eyebrow": "418db86f48b729353596516392bc2880326e69c3ae7199839696a54714c524ef",
   "plan_far_count_from": "69e501c022aecfba80f28540744e608ddeeef55d9a7d3835e898198fc1885d4e",
   "plan_far_count_from_month": "880afdb89b58f811ba1f290294537537eee0df355a604c07423791e909ed047f",
@@ -893,6 +894,11 @@
         <item quantity="many">In base a %d simulazioni, le tue più recenti</item>
         <item quantity="other">In base a %d simulazioni, le tue più recenti</item>
     </plurals>
+    <plurals name="plan_estimate_based_on_reviews">
+        <item quantity="one">In base a %d ripasso di tutti gli argomenti</item>
+        <item quantity="many">In base a %d ripassi di tutti gli argomenti</item>
+        <item quantity="other">In base a %d ripassi di tutti gli argomenti</item>
+    </plurals>
     <string name="plan_score_percent">%1$s%%</string>
     <string name="plan_score_percent_range">Da %1$s%% a %2$s%%</string>
     <string name="plan_score_band">Punteggio %1$s</string>
@@ -1361,8 +1367,11 @@
     </plurals>
     <string name="plan_past_date_goal_title">La data di fine è passata</string>
     <string name="plan_past_date_exam_title">La data dell’esame è passata</string>
-    <!-- Under "Your exam date has passed": the lessons left are what "them" means. -->
-    <string name="plan_exam_over_ask">Vuoi continuare a studiarle o archiviare questo obiettivo?</string>
+    <plurals name="plan_exam_over_left">
+        <item quantity="one">Ti resta %d lezione. Vuoi continuare a studiarla o archiviare questo obiettivo?</item>
+        <item quantity="many">Ti restano %d lezioni. Vuoi continuare a studiarle o archiviare questo obiettivo?</item>
+        <item quantity="other">Ti restano %d lezioni. Vuoi continuare a studiarle o archiviare questo obiettivo?</item>
+    </plurals>
     <plurals name="plan_past_date_offer">
         <item quantity="one">Ti resta %d lezione. Posticipare la data di fine ti dà il tempo di completarla.</item>
         <item quantity="many">Ti restano %d lezioni. Posticipare la data di fine ti dà il tempo di completarle.</item>

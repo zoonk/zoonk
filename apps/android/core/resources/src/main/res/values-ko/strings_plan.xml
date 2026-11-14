@@ -237,6 +237,7 @@
   "plan_effect_weekly_challenge_on": "d4b529a5104c56a954edecd7f9208e46c4215c90f16dfacb550221cb15d65c3c",
   "plan_estimate_based_on": "f39657c5b892bebefbf7fd7fa43cf17b6585cb18160adf8ef66ebe74ec5f5e48",
   "plan_estimate_based_on_last": "9a84f00f05c74328076349e2458e239aff2e9911838f181955099513493110eb",
+  "plan_estimate_based_on_reviews": "cd65fa14c4b8e2c8972e9170b591649984f95567250ffe5ef1c7dc9a637ced61",
   "plan_estimate_waits": "c63f829e2767dd057670c6ff6718fa658235b8f26302f531bccee5aa1cf85056",
   "plan_estimated_score": "00ea4b92cc768f8cf84ef9c5e6a016641daf37dcb8db005fc4c3a6c772f6a2bf",
   "plan_every_day": "7b0616256cd2d2a7a3ba3ac2fc38f80686583f7a2b0235be2bfe8ad01d36b471",
@@ -250,7 +251,7 @@
   "plan_exam_date": "be27cc6bbb76f7ac14aed161fbca88c6b68999909d958fe448bbf55a46b01ed9",
   "plan_exam_date_label": "caea26dfa6fa36c007b3812992075aca6905b815cead875eedefff25c646dc17",
   "plan_exam_day": "acf946054bb780e369a63070aa177cdf27c0a15450b0b5ca98e28296cd9c63c7",
-  "plan_exam_over_ask": "dcd885221c3d6dc4b7cc9d8c35657a45cfeda10f747d298f61a924508b565c9f",
+  "plan_exam_over_left": "aabee5a399eb58ff144b7c2a3a53ae40309aa2b850c6949d9f010e3435898536",
   "plan_eyebrow": "6cad505ddd282cdfdcf5c61f2d80009da444abe9ca35345d63b1e3d7edbaca13",
   "plan_far_count_from": "0417dfa25c1b41740e8285f1efb04325cb0e86aa31d7ff24c8989e70c46e6d53",
   "plan_far_count_from_month": "84b50220152e4acfab6425db56f8d931f0d1b1c243820195991e17cb87327d29",
@@ -841,6 +842,9 @@
     <plurals name="plan_estimate_based_on">
         <item quantity="other">최근 모의고사 %d회 기준</item>
     </plurals>
+    <plurals name="plan_estimate_based_on_reviews">
+        <item quantity="other">모든 주제를 %d회 복습한 결과를 바탕으로 해요</item>
+    </plurals>
     <string name="plan_score_percent">%1$s%%</string>
     <string name="plan_score_percent_range">%1$s%%~%2$s%%</string>
     <string name="plan_score_band">밴드 %1$s</string>
@@ -1251,8 +1255,9 @@
     </plurals>
     <string name="plan_past_date_goal_title">종료일이 지났어요</string>
     <string name="plan_past_date_exam_title">시험 날짜가 지났어요</string>
-    <!-- Under "Your exam date has passed": the lessons left are what "them" means. -->
-    <string name="plan_exam_over_ask">남은 레슨을 계속 공부할까요, 아니면 이 목표를 보관할까요?</string>
+    <plurals name="plan_exam_over_left">
+        <item quantity="other">레슨이 %d개 남았어요. 계속 공부할까요, 아니면 이 목표를 보관할까요?</item>
+    </plurals>
     <plurals name="plan_past_date_offer">
         <item quantity="other">레슨이 %d개 남았어요. 종료일을 늦추면 모두 공부할 수 있어요.</item>
     </plurals>
