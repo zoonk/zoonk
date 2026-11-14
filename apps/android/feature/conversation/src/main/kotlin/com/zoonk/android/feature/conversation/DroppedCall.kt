@@ -25,6 +25,7 @@ import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.comesBackLine
+import com.zoonk.android.ui.components.limitLifted
 
 internal enum class DroppedReason { CallInProgress, CallsPaused, Ended, Limit, Microphone, PlusRequired }
 
@@ -81,7 +82,7 @@ internal fun DroppedCallScreen(
     CallFrame(
         title = { CallTitle(title) },
         onClose = actions.onEnd,
-        bottomBar = { DroppedActions(dropped.retry, actions) },
+        bottomBar = { DroppedActions(dropped.retry ?: DroppedRetry.CallAgain.takeIf { limitLifted(limit) }, actions) },
         lonePage = true,
     ) {
         item(key = "dropped") {

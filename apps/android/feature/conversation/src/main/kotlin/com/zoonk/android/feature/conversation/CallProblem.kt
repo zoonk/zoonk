@@ -18,6 +18,7 @@ import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.components.comesBackLine
 import com.zoonk.android.ui.components.hasWayOn
+import com.zoonk.android.ui.components.limitLifted
 import com.zoonk.android.ui.components.needsAccount
 
 /** Why a call stopped before its result: a failure, or a save the server refused. */
@@ -53,6 +54,14 @@ internal fun CallProblem(
             val limit = kind.limit ?: Limit.Reached(LimitTier.Plus, LimitPeriod.Day)
             val words: @Composable () -> Unit = { CallLimitMessage(limit, actions.onCreateAccount, actions.onSubscribe, inBar = true) }
             when {
+                limitLifted(limit) -> {
+                    Problem(title, actions.onClose, actions = {
+                        Button(onClick = actions.onRetry, modifier = Modifier.barAction()) {
+                            Text(stringResource(R.string.conversation_try_again))
+                        }
+                    }, content = words)
+                }
+
                 limit.needsAccount -> {
                     Problem(title, actions.onClose, actions = {
                         Button(onClick = actions.onCreateAccount, modifier = Modifier.barAction()) {

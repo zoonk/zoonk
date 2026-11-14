@@ -53,6 +53,7 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.onboarding.GoalLimitReason
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.goalStartLimit
+import com.zoonk.android.feature.onboarding.lifted
 import com.zoonk.android.feature.onboarding.setup.SetupColumn
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -350,7 +351,7 @@ private fun ColumnScope.DraftContent(
     LaunchedEffect(draft.activeGoalsLeft) { vm.readRoom(draft.activeGoalsLeft) }
 
     val back = { vm.backToEntry(draft.prompt) }
-    val limit = vm.draftLimit
+    val limit = vm.draftLimit?.takeUnless { it.lifted() }
 
     when (val understanding = draft.understanding) {
         null -> {

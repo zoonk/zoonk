@@ -252,6 +252,16 @@ class TutorViewModel internal constructor(
         saved[OFFERED_ID] = suggestion.id
     }
 
+    /** The day the messages cap gave has come: its refusal goes, so the composer and a failed answer's retry are back. */
+    fun limitLifted() {
+        mutableState.update { state ->
+            state.copy(
+                askFailure = state.askFailure?.takeIf { it.helpLimit == null },
+                answerFailures = state.answerFailures.filterValues { it.helpLimit == null },
+            )
+        }
+    }
+
     fun retryAnswer(id: String) {
         val turn = turns?.firstOrNull { it.id == id } ?: return
         val session = sessions.current ?: return
