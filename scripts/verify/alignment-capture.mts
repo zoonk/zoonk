@@ -50,6 +50,8 @@ export type CaptureElement = {
   direction?: "ltr" | "rtl";
   /** A group's: "stack" when the platform grouped rows no piece frames; its findings are leads. */
   source?: "piece" | "stack";
+  /** A row's: the one the learner is on (current, picked), which may set its words apart. */
+  current?: boolean;
   /** A row's: the middle of what it lays out (inside a divider's border and its padding). */
   middle?: number;
   /** A row's: its value moved under its label (large text), as the row piece does on purpose. */

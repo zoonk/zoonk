@@ -465,6 +465,11 @@ export function readAlignment({
         middle: round(contentMiddle(row) + scrollY),
         name: name(row),
         note: note ? [...row.querySelectorAll(note)].some((element) => shown(element)) : false,
+        // The row the learner is on (current, picked, highlighted) may set its words apart.
+        ...(row.matches("[aria-current], [data-highlighted], [aria-selected=true]") ||
+        row.querySelector("[aria-current]")
+          ? { current: true }
+          : {}),
         part: "row",
         piece: read.pieceName,
         row: null,
@@ -557,7 +562,12 @@ export function readAlignment({
   const actions = [...document.querySelectorAll(controls)]
     .filter((action) => filled(action) && present(action))
     .map((action, index): CaptureElement => {
-      const target = action instanceof HTMLAnchorElement ? action.href : null;
+      // A link's destination, or the form a submit button sends: the same words to the same place
+      // offered twice (a page's goal box at its top and its end) are one action.
+      const form =
+        action instanceof HTMLButtonElement && action.type === "submit" ? action.form : null;
+
+      const target = action instanceof HTMLAnchorElement ? action.href : (form?.action ?? null);
 
       return {
         bounds: bounds(boxOf(action)),

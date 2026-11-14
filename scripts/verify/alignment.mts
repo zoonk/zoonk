@@ -29,8 +29,17 @@ function typeLeads(context: Context, read: Group): AlignmentFinding[] {
   const { group, parts } = read;
 
   return (["label", "lead", "note", "value"] as const).flatMap((part) => {
+    const current = new Set(read.rows.filter((row) => row.current).map((row) => row.id));
+
+    // A current row may set its words apart, and a word in a value's place ("Won", "Today") is
+    // set in the text face where figures are mono: values compare only where they hold figures.
     const typed = parts.filter(
-      (element) => element.part === part && element.type && element.type !== "not measured",
+      (element) =>
+        element.part === part &&
+        element.type &&
+        element.type !== "not measured" &&
+        !current.has(element.row ?? "") &&
+        (part !== "value" || /\d/u.test(element.text ?? "")),
     );
 
     const tokens = [...Map.groupBy(typed, (element) => element.type ?? "")].toSorted(
