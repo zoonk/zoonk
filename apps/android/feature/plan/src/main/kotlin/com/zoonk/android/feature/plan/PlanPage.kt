@@ -22,7 +22,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -67,7 +66,6 @@ import com.zoonk.api.models.LanguageProgress
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.Syllabus
-import kotlinx.coroutines.launch
 
 class PlanLinks(
     private val navigator: AppNavigator,
@@ -208,6 +206,7 @@ internal fun PlanPage(
             latest = latest,
             changes = changes,
             change = viewModel::change,
+            saveFailed = { app.snackbars.show(R.string.plan_save_failed) },
             undo = viewModel::undo,
             setRegion = viewModel::setRegion,
             setContentCountry = viewModel::setContentCountry,
@@ -611,10 +610,6 @@ private fun ExamOverBar(
     archiving: Boolean,
     onArchive: () -> Unit,
 ) {
-    val snackbars = LocalSnackbarHostState.current
-    val scope = rememberCoroutineScope()
-    val saveFailed = stringResource(R.string.plan_save_failed)
-
     BottomBar {
         ExamOverActions(
             goalTitle = page.goal.displayName,
@@ -622,9 +617,7 @@ private fun ExamOverBar(
             archiving = archiving,
             onArchive = onArchive,
             onKeepStudying = {
-                edits.change(PlanPart.FullCourse, STUDY_AFTER_EXAM) { answer ->
-                    if (answer == null) scope.launch { snackbars.showSnackbar(saveFailed) }
-                }
+                edits.change(PlanPart.FullCourse, STUDY_AFTER_EXAM) { answer -> if (answer == null) edits.saveFailed() }
             },
         )
     }
