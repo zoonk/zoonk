@@ -128,7 +128,7 @@ struct SignInGate: View {
       Label {
         sessionEnded
           ? Text(
-            "Your session ended", tableName: "Navigation",
+            "You've been logged out", tableName: "Navigation",
             comment:
               "Title shown instead of a page that needs an account, to someone whose session ended")
           : Text(
@@ -138,13 +138,11 @@ struct SignInGate: View {
         Image(systemName: "lock")
       }
     } description: {
-      sessionEnded
-        ? Text(
-          "Log in to pick up your plan.", tableName: "Navigation",
+      if sessionEnded {
+        Text(
+          "Log in to get back to your plan.", tableName: "Navigation",
           comment: "Tells someone whose session ended that their plan is still in their account")
-        : Text(
-          "Log in to pick up where you left off, or start free.", tableName: "Navigation",
-          comment: "Explains the two ways on from a page that needs an account")
+      }
     } actions: {
       Button {
         router.present(.signIn)
@@ -153,21 +151,13 @@ struct SignInGate: View {
       }
       .buttonStyle(.mainAction)
 
-      if sessionEnded {
-        Button {
-          router.open(.startGoal())
-        } label: {
-          Text(
-            "Start something new", tableName: "Navigation",
-            comment: "Opens the start of a new goal, for someone whose session ended")
-        }
-        .buttonStyle(.outline)
-      } else {
+      // Their plan is there: a second start would make a new one.
+      if !sessionEnded {
         Button {
           router.showRoot(of: .today)
         } label: {
           Text(
-            "Start free", tableName: "Navigation",
+            "Build my plan", tableName: "Navigation",
             comment: "Opens Today, where someone without an account starts a goal")
         }
         .buttonStyle(.outline)

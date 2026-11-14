@@ -481,6 +481,65 @@
         }
       }
     },
+    "Build my plan" : {
+      "comment" : "Opens Today, where someone without an account starts a goal",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meinen Plan erstellen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crear mi plan"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Créer mon plan"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crea il mio piano"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習計画を作る"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "내 계획 만들기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ułóż mój plan"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Criar meu plano"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planımı oluştur"
+          }
+        }
+      }
+    },
     "Certificates" : {
       "comment" : "Study place listing the learner's certificates",
       "localizations" : {
@@ -1130,78 +1189,19 @@
         }
       }
     },
-    "Log in to pick up where you left off, or start free." : {
-      "comment" : "Explains the two ways on from a page that needs an account",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Melde dich an, um dort weiterzumachen, wo du aufgehört hast, oder starte kostenlos."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inicia sesión para seguir donde te quedaste o empieza gratis."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Connecte-toi pour reprendre là où tu en étais, ou commence gratuitement."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Accedi per riprendere da dove avevi lasciato, oppure inizia gratis."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ログインして続きから再開できます。無料で始めることもできます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "로그인해 학습을 이어가거나 무료로 시작해 보세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zaloguj się, by kontynuować naukę, albo zacznij bezpłatnie."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Entre para continuar de onde parou ou comece grátis."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kaldığın yerden devam etmek için giriş yap ya da ücretsiz başla."
-          }
-        }
-      }
-    },
-    "Log in to pick up your plan." : {
+    "Log in to get back to your plan." : {
       "comment" : "Tells someone whose session ended that their plan is still in their account",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Melde dich an, um mit deinem Plan weiterzumachen."
+            "value" : "Meld dich an, um zu deinem Plan zurückzukommen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Inicia sesión para retomar tu plan."
+            "value" : "Inicia sesión para volver a tu plan."
           }
         },
         "fr" : {
@@ -1213,19 +1213,19 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Accedi per riprendere il tuo piano."
+            "value" : "Accedi per tornare al tuo piano."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ログインすると、学習計画を再開できます。"
+            "value" : "ログインすると学習計画に戻れます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "로그인해 계획을 이어가세요."
+            "value" : "로그인해서 계획을 이어가세요."
           }
         },
         "pl" : {
@@ -1237,13 +1237,13 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Entre para continuar seu plano."
+            "value" : "Entre para voltar ao seu plano."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Planına devam etmek için giriş yap."
+            "value" : "Planına dönmek için giriş yap."
           }
         }
       }
@@ -2129,124 +2129,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bir hedefe başla"
-          }
-        }
-      }
-    },
-    "Start free" : {
-      "comment" : "Opens Today, where someone without an account starts a goal",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kostenlos starten"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Empezar gratis"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Commencer gratuitement"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inizia gratis"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "無料で始める"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "무료로 시작하기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zacznij bezpłatnie"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Começar grátis"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ücretsiz başla"
-          }
-        }
-      }
-    },
-    "Start something new" : {
-      "comment" : "Opens the start of a new goal, for someone whose session ended",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Etwas Neues beginnen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Empezar algo nuevo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Commencer autre chose"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inizia qualcosa di nuovo"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新しいことを始める"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "새로 시작하기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zacznij coś nowego"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Começar algo novo"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Yeni bir şeye başla"
           }
         }
       }
@@ -3372,6 +3254,65 @@
         }
       }
     },
+    "You've been logged out" : {
+      "comment" : "Title shown instead of a page that needs an account, to someone whose session ended",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du wurdest abgemeldet"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se cerró tu sesión"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ta session a pris fin"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La tua sessione è terminata"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ログアウトしました"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "로그아웃됐어요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wylogowano cię"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sua sessão terminou"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oturumun kapandı"
+          }
+        }
+      }
+    },
     "Your buddy answers your questions and adjusts your plan." : {
       "comment" : "What the buddy is for, under its title until someone logs in",
       "localizations" : {
@@ -3545,65 +3486,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hedeflerin yüklenemedi. Tekrar dene"
-          }
-        }
-      }
-    },
-    "Your session ended" : {
-      "comment" : "Title shown instead of a page that needs an account, to someone whose session ended",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine Sitzung ist abgelaufen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu sesión terminó"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ta session a pris fin"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La tua sessione è terminata"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "セッションが終了しました"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "로그인 세션이 끝났어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twoja sesja się zakończyła"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sua sessão terminou"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Oturumun sona erdi"
           }
         }
       }

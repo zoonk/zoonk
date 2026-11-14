@@ -15,7 +15,7 @@ struct CertificateLinkedInSheet: View {
         Section {
           Text(
             "LinkedIn opens its form to add a license or certification. Copy each field into it.",
-            tableName: "Certificates", comment: "How adding a certificate to LinkedIn works"
+            tableName: "Certificates"
           )
           .foregroundStyle(.mutedForeground)
           .listRowSeparator(.hidden)
@@ -72,8 +72,7 @@ struct CertificateLinkedInSheet: View {
       }
       .navigationTitle(
         Text(
-          "Add to your LinkedIn profile", tableName: "Certificates",
-          comment: "Title of the sheet that adds a certificate to LinkedIn")
+          "Add to your LinkedIn profile", tableName: "Certificates")
       )
       .toolbarTitleDisplayMode(.inline)
       .toolbar {

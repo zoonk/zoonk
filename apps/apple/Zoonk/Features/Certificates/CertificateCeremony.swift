@@ -327,29 +327,6 @@ struct CertificateCeremony: View {
   }
 }
 
-/// What a locked certificate says wherever it shows; the list's one notice covers all of them. See
-/// Plus opens Plus unless `seePlus` leaves the screen first.
-struct CertificatePlusNotice: View {
-  var isList = false
-  var seePlus: (() -> Void)?
-
-  var body: some View {
-    PlusNotice(
-      title: isList
-        ? Text(
-          "Certificates come with Plus", tableName: "Certificates",
-          comment: "Title of the notice at the top of the learner's certificates without Plus")
-        : Text(
-          "Get your certificate with Plus", tableName: "Certificates",
-          comment: "Title of the notice on a certificate the learner earned without Plus"),
-      description: Text(
-        "Plus gives you a certificate for every level you finish, to print and share. Certificates you get stay yours if Plus ends.",
-        tableName: "Certificates",
-        comment: "What Plus does for certificates, on one the learner earned without Plus"),
-      seePlus: seePlus)
-  }
-}
-
 /// A picture appears once the learner's list has the certificate; a locked one shows its card.
 private struct StagePicture: View {
   @Environment(CertificatesStore.self) private var store

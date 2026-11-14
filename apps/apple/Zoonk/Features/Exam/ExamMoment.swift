@@ -5,7 +5,6 @@ import SwiftUI
 struct ExamMoment: Hashable, Decodable, Sendable {
   var checklist: [ExamView.ChecklistItem]
   var day: ExamView.Day?
-  var dayBefore: ExamView.DayBefore
   var examName: String
   var mocksTaken: Int
   var prepared: Bool
@@ -20,7 +19,7 @@ extension ExamView {
   var moment: ExamMoment {
     ExamMoment(
       checklist: stage == .dayBefore || stage == .examDay ? checklist : [], day: days.first,
-      dayBefore: dayBefore, examName: examName, mocksTaken: mocks.count, prepared: prepared,
+      examName: examName, mocksTaken: mocks.count, prepared: prepared,
       resultReported: true, sessionsDone: sessionsDone, stage: stage, tools: tools)
   }
 }
@@ -47,8 +46,10 @@ struct ExamMomentSection<Action: View>: View {
               )
               .typeStyle(.data)
             }
-            Text(copy.body)
-              .foregroundStyle(.mutedForeground)
+            if let body = copy.body {
+              Text(body)
+                .foregroundStyle(.mutedForeground)
+            }
           }
         } icon: {
           Image(systemName: icon)
@@ -114,21 +115,20 @@ struct ExamMomentSection<Action: View>: View {
     }
   }
 
-  private var copy: (title: String, body: String)? {
+  private var copy: (title: String, body: String?)? {
     switch moment.stage {
     case .finalStretch:
       (
         String(localized: "The final stretch", table: "Exam", comment: "The exam's last weeks"),
         String(
-          localized:
-            "The last days before the exam go to mixed review and mock exams. New topics wait, unless they weigh a lot and are quick.",
-          table: "Exam", comment: "What the final stretch does")
+          localized: "From now on, review and mock exams.", table: "Exam",
+          comment: "What the final stretch does")
       )
     case .dayBefore:
       (
         String(
           localized: "\(moment.examName) is tomorrow", table: "Exam", comment: "The day before"),
-        dayBeforeBody
+        work
       )
     case .examDay:
       (
@@ -141,55 +141,41 @@ struct ExamMomentSection<Action: View>: View {
           localized: "How did it go?", table: "Exam",
           comment: "Asks how the exam went, once it's over"),
         String(
-          localized:
-            "When your official result comes out, add it here. It helps make estimates more accurate for everyone.",
-          table: "Exam", comment: "Asks for the official result once the exam is over")
+          localized: "Add your official result when it comes out.", table: "Exam",
+          comment: "Asks for the official result once the exam is over")
       )
     case .preparing, .afterExam:
       nil
     }
   }
 
-  private var work: String {
+  /// Today's list shows today's work, so the day before and exam day say only what was done.
+  private var work: String? {
+    let parts = [
+      moment.sessionsDone > 0
+        ? String(
+          localized: "\(moment.sessionsDone) days of study", table: "Exam",
+          comment: "Days the learner studied before the exam, in \"… done.\"")
+        : nil,
+      moment.mocksTaken > 0
+        ? String(
+          localized: "\(moment.mocksTaken) mock exams", table: "Exam",
+          comment: "Mock exams the learner took before the exam, in \"… done.\"")
+        : nil,
+    ].compactMap(\.self)
+
     let done =
-      moment.mocksTaken == 0
-      ? String(
-        localized: "You did \(moment.sessionsDone) sessions.", table: "Exam",
-        comment: "Sessions done before the exam")
+      parts.isEmpty
+      ? nil
       : String(
-        localized: "You did \(moment.sessionsDone) sessions and \(moment.mocksTaken) mock exams.",
-        table: "Exam", comment: "Sessions and mocks done before the exam")
+        localized: "\(parts.formatted(.list(type: .and))) done.", table: "Exam",
+        comment: "What the learner did before the exam: days of study, mock exams or both")
+    let prepared =
+      moment.prepared
+      ? String(localized: "You've prepared for this.", table: "Exam", comment: "Prepared") : nil
+    let sentences = [prepared, done].compactMap(\.self)
 
-    return moment.prepared
-      ? [done, String(localized: "You've prepared for this.", table: "Exam", comment: "Prepared")]
-        .joinedSentences()
-      : done
-  }
-
-  private var dayBeforeBody: String {
-    switch moment.dayBefore {
-    case .mock:
-      String(
-        localized: "Today is your short mock, then a look at what it finds. Then rest. \(work)",
-        table: "Exam", comment: "The day before: a mock")
-    case .learnAndMock:
-      String(
-        localized: "Today goes to the topics that come up most, then a short mock. Then rest.",
-        table: "Exam", comment: "The day before: learn and a mock")
-    case .learn:
-      String(
-        localized: "Today goes to the topics that come up most. Then rest.", table: "Exam",
-        comment: "The day before: learn")
-    case .review:
-      String(
-        localized:
-          "Today is a full review of every topic, in your test's format, your weakest first. Then rest. \(work)",
-        table: "Exam", comment: "The day before: a full review")
-    case .light:
-      String(
-        localized: "Today is a short, light review. Then rest. \(work)", table: "Exam",
-        comment: "The day before: light review")
-    }
+    return sentences.isEmpty ? nil : sentences.joinedSentences()
   }
 
   private func checklistLabel(_ item: ExamView.ChecklistItem) -> String {

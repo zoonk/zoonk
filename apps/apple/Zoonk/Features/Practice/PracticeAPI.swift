@@ -40,7 +40,6 @@ struct TestOutTest: Equatable {
 
 enum TestOutLoad: Equatable {
   case nothingToSkip
-  case plusRequired
   case test(TestOutTest)
 }
 
@@ -339,7 +338,6 @@ struct PracticeAPI: Sendable {
             needsItems: test.needsItems, passMark: test.passMark,
             questions: try test.questions.map { try PracticeJSON.recode($0) },
             trueFalseLabels: .init(test.trueFalseLabels)))
-      case .code402: return .plusRequired
       case .unauthorized: throw APIError.unauthorized
       case .notFound: throw APIError.notFound
       default: throw APIError.unavailable

@@ -70,9 +70,15 @@ enum ReminderTime {
     string(date(time))
   }
 
-  /// The zone reminders follow, named the system's way, as in “Brasília Time”.
-  static func zoneName(_ identifier: String) -> String {
-    TimeZone(identifier: identifier)?.localizedName(for: .generic, locale: .current) ?? identifier
+  /// The zone reminders follow, named the system's way, as in “Brasília Time”; nil when it's this
+  /// device's, which goes without saying.
+  static func zoneName(_ identifier: String) -> String? {
+    guard identifier != TimeZone.current.identifier else {
+      return nil
+    }
+
+    return TimeZone(identifier: identifier)?.localizedName(for: .generic, locale: .current)
+      ?? identifier
   }
 
   static func formatted(_ time: String) -> String {

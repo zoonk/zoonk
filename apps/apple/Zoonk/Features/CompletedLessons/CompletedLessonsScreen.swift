@@ -17,7 +17,6 @@ struct CompletedLessonsScreen: View {
           .lonePage()
       }
     }
-    .navigationTitle(title)
     .barTitleAfterHero(
       String(
         localized: "Completed lessons", table: "CompletedLessons",
@@ -38,7 +37,7 @@ struct CompletedLessonsScreen: View {
     case .loaded(let page):
       ZoonkList {
         Section {
-          PageHeader(title)
+          PageHeader(title, supporting: Text(verbatim: goal.displayName))
         }
 
         ForEach(days(page.lessons)) { day in
