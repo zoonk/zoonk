@@ -122,7 +122,7 @@ export const practiceCallSchema = z
       .nullable()
       .meta({
         description:
-          "When no call time is left: which call time is used up (today's, this month's, or a guest's plan without calls), which is when calls come back",
+          "When no call time is left: which call time is used up (today's, the last 30 days', or a guest's plan without calls), which is when calls come back",
       }),
     minutes: z
       .array(z.int())

@@ -20,14 +20,14 @@ export const lessonsToPrepareSchema = z
   .boolean()
   .meta({
     description:
-      "The day has blocks and holds time for more lessons that aren't written while nobody is outlining them: list them after its blocks with one action that posts the goal's lesson preparation, as for an empty day's `lessonsToPrepare`, and the next read says `lessonsComing`. Never post it on your own. False otherwise, and on a day without blocks (`emptyDay` says why)",
+      "The day has blocks and holds time for more lessons that aren't written while nobody is outlining them: the goal's lesson preparation writes them when the learner asks for it, never on its own, as for an empty day's `lessonsToPrepare`, and the next read says `lessonsComing`. False otherwise, and on a day without blocks (`emptyDay` says why)",
   });
 
 export const examTomorrowSchema = z
   .boolean()
   .meta({
     description:
-      "The goal's exam is tomorrow: nothing of the goal comes back tomorrow (its next lesson, a saved mistake, lessons to catch up), so don't point there",
+      "The goal's exam is tomorrow: nothing of the goal comes back tomorrow (its next lesson, a saved mistake, lessons to catch up)",
   });
 
 export const dayStateSchema = z
@@ -35,5 +35,5 @@ export const dayStateSchema = z
   .default("underway")
   .meta({
     description:
-      "Where the day stands, which decides what Today offers: `underway` (a block to start or continue), `done` (every block behind the learner), `waiting` (its lessons are still being outlined; read it again), `prepare` (its lessons wait for the learner to ask for them, see `emptyDay`), `ahead` (nothing new: practice, the week's challenge or the buddy instead) or `rest` (no study planned). Always sent",
+      "Where the day stands: `underway` (a block to start or continue), `done` (every block behind the learner), `waiting` (its lessons are still being outlined; read it again), `prepare` (its lessons wait for the learner to ask for them, see `emptyDay`), `ahead` (nothing new to learn) or `rest` (no study planned). Always sent",
   });

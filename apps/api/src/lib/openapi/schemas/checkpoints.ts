@@ -242,7 +242,7 @@ export const challengeResponseSchema = z
       }),
     waitReason: studyBlockSchema.shape.waitReason.meta({
       description:
-        "Why it waits in today's day, the saved session or, before Start builds it, the day Today plans: earlier lessons (`lessons`) are still pending or active. The `challenge` enum value is retained for older clients and is never returned. Read it only when `status` is `ready` or `started`. Starting it then answers 409 `EARLIER_FIRST` with the same `details.reason`, unless a 402 (Plus required) or 403 (today's study time is used up) refusal comes first. Completed or skipped work releases it. Null when nothing before it waits",
+        "Why it waits in today's day, the saved session or, before that session is built, the day Today plans: earlier lessons (`lessons`) are still pending or active. The `challenge` enum value is retained for older clients and is never returned. Read it only when `status` is `ready` or `started`. Starting it then answers 409 `EARLIER_FIRST` with the same `details.reason`, unless a 402 (Plus required) or 403 (today's study time is used up) refusal comes first. Completed or skipped work releases it. Null when nothing before it waits",
     }),
     written: mockWrittenPartsSchema,
     wrongPenalty: z
