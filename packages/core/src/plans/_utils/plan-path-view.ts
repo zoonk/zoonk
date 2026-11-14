@@ -32,7 +32,7 @@ type PathInput = Pick<
   | "skillAreas"
   | "taughtSkillIds"
 > & {
-  access: Pick<PlanView["access"], "freeWeekOver" | "mocksRequirePlus">;
+  access: Pick<PlanView["access"], "mocksRequirePlus">;
   context: PlanReadContext;
   today: Awaited<ReturnType<typeof readPlanToday>>;
   challengeResults: ReadonlyMap<string, CheckpointResult>;

@@ -27,11 +27,9 @@ import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-acc
  */
 export async function loadSessionTime({
   stored,
-  timeZone,
   userId,
 }: {
   stored: StudySessionRow;
-  timeZone: string;
   userId: string;
 }) {
   const required =
@@ -54,9 +52,7 @@ export async function loadSessionTime({
           where: { goalId: session.goalId },
         })
       : null,
-    session.goal
-      ? loadExamPrepAccess({ goal: session.goal, timeZone, today: session.localDate })
-      : null,
+    session.goal ? loadExamPrepAccess({ goal: session.goal }) : null,
   ]);
 
   const prerequisites = plan
@@ -131,7 +127,7 @@ export async function loadCompletionQueue({
   });
 
   const [{ minutes, plan, reserved, session }, carriedItemIds] = await Promise.all([
-    loadSessionTime({ stored, timeZone, userId }),
+    loadSessionTime({ stored, userId }),
     loadCarriedItemIds(stored.goalId),
   ]);
 

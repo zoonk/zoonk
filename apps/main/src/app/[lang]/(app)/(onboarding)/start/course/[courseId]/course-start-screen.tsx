@@ -6,9 +6,10 @@ import { isStartBlocked } from "@/components/public/course-start-remedy";
 import { type CourseStartFailure, useCourseStart } from "@/components/public/use-course-start";
 import { CHAPTER_PARAM, MINUTES_PARAM } from "@/lib/public/public-hrefs";
 import {
+  ONBOARDING_ACTION_LINK_CLASS,
+  OnboardingActions,
   OnboardingColumn,
   OnboardingDescription,
-  OnboardingFooter,
   OnboardingFrame,
   OnboardingHeading,
   OnboardingPrimaryButton,
@@ -20,11 +21,9 @@ import {
   LevelChoiceList,
   toLevelAnswer,
 } from "@zoonk/learn/onboarding/level-choices";
-import { buttonVariants } from "@zoonk/ui/components/button";
 import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
-import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
+import { useId, useState } from "react";
 
 type StartTarget = {
   chapter: { id: string; title: string } | null;
@@ -103,9 +102,6 @@ function StartHeading({
       <OnboardingHeading>
         <OnboardingSubject>{course.title}</OnboardingSubject>
         <OnboardingTitle>{t("How much do you already know?")}</OnboardingTitle>
-        <OnboardingDescription>
-          {t("It only changes where your plan starts.")}
-        </OnboardingDescription>
       </OnboardingHeading>
     );
   }
@@ -136,6 +132,7 @@ function CourseStartForm({
   note: React.ReactNode;
 }) {
   const t = useExtracted();
+  const formId = useId();
   const isMounted = useIsMounted();
 
   const { failure, pending, start, startWithLevel } = useCourseStart({
@@ -149,60 +146,65 @@ function CourseStartForm({
   const blocked = isStartBlocked(failure);
 
   return (
-    <form action={startCourseFormAction} className="flex flex-1 flex-col gap-6">
-      {!blocked && dailyMinutes && (
-        <p className="text-muted-foreground -mt-2 text-sm text-pretty">
-          {t(
-            "{minutes, plural, one {# minute} other {# minutes}} a day for now. You can change it in the next steps.",
-            { minutes: dailyMinutes },
+    <OnboardingColumn
+      bar={
+        <OnboardingActions
+          note={
+            failure ? (
+              <CourseStartFailureNote
+                actionClassName={ONBOARDING_ACTION_LINK_CLASS[blocked ? "main" : "other"]}
+                className="w-full max-w-none items-stretch lg:items-end"
+                failure={failure}
+                onRetry={startHere}
+                secondaryActionClassName={ONBOARDING_ACTION_LINK_CLASS.other}
+              />
+            ) : (
+              note
+            )
+          }
+        >
+          {!blocked && (
+            <OnboardingPrimaryButton
+              busy={pending}
+              disabled={isMounted && level === null}
+              form={formId}
+              onClick={(event) => {
+                event.preventDefault();
+                startHere();
+              }}
+              type="submit"
+            >
+              {t("Build my plan")}
+            </OnboardingPrimaryButton>
           )}
-        </p>
-      )}
+        </OnboardingActions>
+      }
+    >
+      <StartHeading asksLevel={!isStartBlocked(initialFailure)} chapter={chapter} course={course} />
 
-      {!blocked && children}
-
-      <OnboardingFooter className="gap-3 [&:has([data-slot=start-failure])>[data-slot=start-note]]:hidden">
+      <form action={startCourseFormAction} className="flex flex-1 flex-col gap-6" id={formId}>
         <input name="courseId" type="hidden" value={course.id} />
         {chapter && <input name={CHAPTER_PARAM} type="hidden" value={chapter.id} />}
         {dailyMinutes && <input name={MINUTES_PARAM} type="hidden" value={dailyMinutes} />}
 
-        {!blocked && (
-          <OnboardingPrimaryButton
-            busy={pending}
-            disabled={isMounted && level === null}
-            onClick={(event) => {
-              event.preventDefault();
-              startHere();
-            }}
-            type="submit"
-          >
-            {t("Build my plan")}
-          </OnboardingPrimaryButton>
+        {!blocked && dailyMinutes && (
+          <p className="text-muted-foreground -mt-2 text-sm text-pretty">
+            {t(
+              "{minutes, plural, one {# minute} other {# minutes}} a day. You can change it later.",
+              { minutes: dailyMinutes },
+            )}
+          </p>
         )}
+
+        {!blocked && children}
 
         {pending && (
           <span className="sr-only" role="status">
             {t("Starting your plan…")}
           </span>
         )}
-
-        {note}
-
-        <CourseStartFailureNote
-          actionClassName={cn(
-            buttonVariants({ size: "lg", variant: blocked ? "default" : "outline" }),
-            "w-full",
-          )}
-          className="max-w-none items-stretch text-center"
-          failure={failure}
-          onRetry={startHere}
-          secondaryActionClassName={cn(
-            buttonVariants({ size: "lg", variant: "outline" }),
-            "w-full",
-          )}
-        />
-      </OnboardingFooter>
-    </form>
+      </form>
+    </OnboardingColumn>
   );
 }
 
@@ -246,32 +248,24 @@ export function CourseStartScreen({
 }) {
   return (
     <OnboardingFrame>
-      <OnboardingColumn>
-        <StartHeading
-          asksLevel={!isStartBlocked(initialFailure)}
+      {chapter ? (
+        <CourseStartForm
           chapter={chapter}
           course={course}
+          dailyMinutes={dailyMinutes}
+          initialFailure={initialFailure}
+          note={note}
+        >
+          <PlanPreview chapters={chapters} />
+        </CourseStartForm>
+      ) : (
+        <CourseLevelStart
+          course={course}
+          dailyMinutes={dailyMinutes}
+          initialFailure={initialFailure}
+          note={note}
         />
-
-        {chapter ? (
-          <CourseStartForm
-            chapter={chapter}
-            course={course}
-            dailyMinutes={dailyMinutes}
-            initialFailure={initialFailure}
-            note={note}
-          >
-            <PlanPreview chapters={chapters} />
-          </CourseStartForm>
-        ) : (
-          <CourseLevelStart
-            course={course}
-            dailyMinutes={dailyMinutes}
-            initialFailure={initialFailure}
-            note={note}
-          />
-        )}
-      </OnboardingColumn>
+      )}
     </OnboardingFrame>
   );
 }

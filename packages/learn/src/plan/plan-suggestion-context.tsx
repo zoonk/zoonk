@@ -147,11 +147,16 @@ export function PlanChangeSuggestion({
   children,
   item,
   mark,
+  onOpen,
+  summary,
   title,
 }: {
   children: React.ReactNode;
   item: SlotItem;
   mark?: React.ReactNode;
+  onOpen?: () => void;
+  /** The line on the page, when the sheet it opens has a title of its own. */
+  summary?: string;
   title: string;
 }) {
   const t = useExtracted();
@@ -163,6 +168,7 @@ export function PlanChangeSuggestion({
       answered={answer !== null}
       label={t("Plan suggestion")}
       mark={answer ? <DoneMark /> : mark}
+      onOpen={onOpen}
     >
       <SuggestionLine>
         {answer ? (
@@ -172,7 +178,7 @@ export function PlanChangeSuggestion({
           </>
         ) : (
           <>
-            <SuggestionSummary>{title}</SuggestionSummary>
+            <SuggestionSummary>{summary ?? title}</SuggestionSummary>
             <SuggestionOpen />
           </>
         )}

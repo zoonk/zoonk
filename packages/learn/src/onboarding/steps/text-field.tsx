@@ -15,7 +15,6 @@ export function TextField({
   label,
   maxLength = MAX_ONBOARDING_ANSWER_LENGTH,
   onChange,
-  onKeyDown,
   placeholder,
   required,
   value,
@@ -25,7 +24,6 @@ export function TextField({
   label: string;
   maxLength?: number;
   onChange: (value: string) => void;
-  onKeyDown?: React.KeyboardEventHandler<HTMLInputElement>;
   placeholder?: string;
   required?: boolean;
   value: string;
@@ -43,7 +41,6 @@ export function TextField({
         id={inputId}
         maxLength={maxLength}
         onChange={(event) => onChange(event.target.value)}
-        onKeyDown={onKeyDown}
         placeholder={placeholder}
         required={required}
         value={value}

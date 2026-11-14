@@ -65,7 +65,7 @@ describe("reading the catalogs", () => {
               en: { variations: { plural: { one: { stringUnit: { value: "%lld lesson" } } } } },
             },
           },
-          Keep: { comment: "Keeps the plan", localizations: { pt: {} } },
+          'Keep "this" : plan': { comment: "Keeps the plan", localizations: { pt: {} } },
         },
       },
       null,
@@ -76,7 +76,7 @@ describe("reading the catalogs", () => {
       readCatalog("apps/apple/Zoonk/Resources/Localization/Plan.xcstrings", apple).map(
         ({ line, note, text }) => `${line} ${text} (${note})`,
       ),
-      ["4 %lld lesson ()", "19 Keep (Keeps the plan)"],
+      ["4 %lld lesson ()", '19 Keep "this" : plan (Keeps the plan)'],
     );
 
     const android = [

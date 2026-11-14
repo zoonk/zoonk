@@ -6,9 +6,8 @@ import { RadioGroup, RadioGroupItem, RadioGroupOption } from "@zoonk/ui/componen
 import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
 import { MAX_PICK_KEYS, shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { Fragment, useRef } from "react";
+import { useRef } from "react";
 import {
   LIST_GROUP_CLASS,
   LIST_ROW_INTERACTIVE_CLASS,
@@ -17,11 +16,11 @@ import {
   ListRowLeading,
   ListRowTitle,
 } from "../_components/list-group";
-import { CHOICE_CONTROL_CLASS, CHOICE_PICKED_ROW_CLASS } from "./choice-styles";
+import { CHOICE_PICKED_ROW_CLASS } from "./choice-styles";
 import { useOnboardingAnnounce } from "./onboarding-announcer";
 
 export type Choice<Value extends string> = {
-  /** Shown under the row, such as a field the choice asks for. */
+  /** What the choice asks for, such as a field. Shown under the list, so picking moves no row. */
   after?: React.ReactNode;
   description?: string;
   label: React.ReactNode;
@@ -29,29 +28,6 @@ export type Choice<Value extends string> = {
   trailing?: React.ReactNode;
   value: Value;
 };
-
-function ChoiceRadio<Value extends string>({
-  keyShortcuts,
-  value,
-}: {
-  keyShortcuts: string | undefined;
-  value: Value;
-}) {
-  return (
-    <span className="relative flex shrink-0 self-center">
-      <RadioGroupItem
-        aria-keyshortcuts={keyShortcuts}
-        className={cn(CHOICE_CONTROL_CLASS, "**:data-[slot=radio-group-indicator]:hidden")}
-        value={value}
-      />
-      <CheckIcon
-        aria-hidden="true"
-        className="text-selected-foreground pointer-events-none absolute inset-0 m-auto hidden size-3 group-has-data-checked/choice:block"
-        strokeWidth={3}
-      />
-    </span>
-  );
-}
 
 export const CHOICE_ROW_CLASS = cn(
   LIST_ROW_INTERACTIVE_CLASS,
@@ -171,25 +147,26 @@ export function ChoiceList<Value extends string>({
   };
 
   return (
-    <RadioGroup
-      aria-label={label}
-      className={LIST_GROUP_CLASS}
-      onKeyDown={(event) => {
-        pointerPick.current = null;
-        const highlighted = choices.find((choice) => choice.value === value);
+    <>
+      <RadioGroup
+        aria-label={label}
+        className={cn(LIST_GROUP_CLASS, "gap-0")}
+        onKeyDown={(event) => {
+          pointerPick.current = null;
+          const highlighted = choices.find((choice) => choice.value === value);
 
-        if (pickOnEnter && event.key === "Enter" && highlighted) {
-          event.preventDefault();
-          pickDeliberately(highlighted);
-        }
-      }}
-      onValueChange={pick}
-      readOnly={readOnly}
-      value={value}
-    >
-      {choices.map((choice, index) => (
-        <Fragment key={choice.value}>
+          if (pickOnEnter && event.key === "Enter" && highlighted) {
+            event.preventDefault();
+            pickDeliberately(highlighted);
+          }
+        }}
+        onValueChange={pick}
+        readOnly={readOnly}
+        value={value}
+      >
+        {choices.map((choice, index) => (
           <RadioGroupOption
+            key={choice.value}
             className={CHOICE_ROW_CLASS}
             data-highlighted={choice.value === value || undefined}
             onClick={() => pickByPointer(choice)}
@@ -202,16 +179,17 @@ export function ChoiceList<Value extends string>({
             </ChoiceRowText>
 
             {choice.trailing}
-            <ChoiceRadio
-              keyShortcuts={numberKeys ? shortcutKeys("pick", index) : undefined}
+            <RadioGroupItem
+              aria-keyshortcuts={numberKeys ? shortcutKeys("pick", index) : undefined}
+              className="self-center"
               value={choice.value}
             />
           </RadioGroupOption>
+        ))}
+      </RadioGroup>
 
-          {choice.after}
-        </Fragment>
-      ))}
-    </RadioGroup>
+      {choices.find((choice) => Boolean(choice.after))?.after}
+    </>
   );
 }
 
@@ -261,8 +239,7 @@ export function CheckList<Value extends string>({
   });
 
   return (
-    <fieldset className={LIST_GROUP_CLASS}>
-      <legend className="sr-only">{label}</legend>
+    <div aria-label={label} className={LIST_GROUP_CLASS} role="group">
       {choices.map((choice, index) => {
         const isPicked = value.includes(choice.value);
         const isDisabled = isOff(choice);
@@ -279,13 +256,13 @@ export function CheckList<Value extends string>({
             <Checkbox
               aria-keyshortcuts={numberKeys ? shortcutKeys("pick", index) : undefined}
               checked={isPicked}
-              className={CHOICE_CONTROL_CLASS}
+              className="self-center"
               disabled={isDisabled}
               onCheckedChange={() => toggle(choice)}
             />
           </label>
         );
       })}
-    </fieldset>
+    </div>
   );
 }

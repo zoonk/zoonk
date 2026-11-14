@@ -2,6 +2,7 @@
 import assert from "node:assert/strict";
 import { afterEach, beforeEach, test, vi } from "vitest";
 import { type Target } from "./measure.mts";
+import { installPageHelpers } from "./page-helpers.mts";
 import { walkStates } from "./states.mts";
 
 vi.mock("./states-wait.mts", () => ({
@@ -13,6 +14,7 @@ const CONTROL_HEIGHT = 44;
 const GROWN_WIDTH = 200;
 
 beforeEach(() => {
+  installPageHelpers();
   const box = new DOMRect(0, 0, 100, CONTROL_HEIGHT);
   vi.spyOn(Element.prototype, "getBoundingClientRect").mockReturnValue(box);
 
@@ -23,6 +25,11 @@ beforeEach(() => {
   Object.defineProperty(Element.prototype, "checkVisibility", {
     configurable: true,
     value: () => true,
+  });
+
+  Object.defineProperty(Element.prototype, "getAnimations", {
+    configurable: true,
+    value: () => [],
   });
 
   Object.defineProperty(HTMLElement.prototype, "innerText", {
@@ -113,6 +120,7 @@ function fixture(html: string) {
     baseUrl: origin,
     browser: {
       newContext: async () => ({
+        addInitScript: async (run: () => unknown) => run(),
         close: async () => {
           state.closed = true;
         },

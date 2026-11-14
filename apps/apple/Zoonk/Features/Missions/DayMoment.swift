@@ -53,7 +53,7 @@ struct DayResult: Decodable, Hashable, Sendable {
 }
 
 /// Main's `DayMoment` (B2's R2): at most one extra moment at a block's end, the first that applies:
-/// a new level, today's missions all done, a chapter finished, then one mission done. Energy never
+/// a chapter finished, a new level, today's missions all done, then one mission done. Energy never
 /// shows here. A new belt's level isn't said twice: its ceremony shows before.
 struct DayMomentSections: View {
   let result: DayResult
@@ -67,13 +67,17 @@ struct DayMomentSections: View {
 
 extension DayResult {
   enum Moment {
+    case chapter
     case level(ProgressBelt, level: Int)
     case missionsDone(MissionMoment)
-    case chapter
     case missionDone(MissionMoment)
   }
 
   func moment(hasChapter: Bool) -> Moment? {
+    if hasChapter {
+      return .chapter
+    }
+
     if ceremony?.kind != "belt", let level = reached?.level,
       let belt = ProgressBelt(rawValue: level.color)
     {
@@ -82,10 +86,6 @@ extension DayResult {
 
     if let missions = missionMoment, missions.isPayoff {
       return .missionsDone(missions)
-    }
-
-    if hasChapter {
-      return .chapter
     }
 
     if let missions = missionMoment, !missions.justDone.isEmpty {

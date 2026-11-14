@@ -17,7 +17,12 @@ import { SheetHeader } from "../_components/sheet-header";
 import { useCloseSuggestionSheet } from "../_components/suggestion";
 import { PlanChangeApplied } from "./plan-change-applied";
 import { type PlanChangeOutcome, usePlanScreen } from "./plan-context";
-import { type FullCourse, useFullCourse, useFullCourseText } from "./plan-full-course";
+import {
+  type FullCourse,
+  useFullCourse,
+  useFullCourseText,
+  useKeepStudyingLabel,
+} from "./plan-full-course";
 import { currentPlanPreview } from "./plan-preview-state";
 import { usePlanChange } from "./use-plan-change";
 import { usePlanPreview, usePreviewBase } from "./use-plan-preview";
@@ -82,7 +87,6 @@ function FullCourseChoice({ course, onDone }: { course: FullCourse; onDone: () =
             {t("Checking what changes…")}
           </p>
         )}
-        <p className="text-muted-foreground text-sm text-pretty">{text.rule(course)}</p>
       </DrawerContent>
 
       <DrawerFooter>
@@ -93,7 +97,7 @@ function FullCourseChoice({ course, onDone }: { course: FullCourse; onDone: () =
           onClick={() => void choose()}
           size="lg"
         >
-          {t("Study everything")}
+          {course.isExam ? t("Keep studying") : t("Study everything")}
         </Button>
       </DrawerFooter>
     </>
@@ -110,6 +114,7 @@ function StudyEverythingSheet({
   shown: Shown;
 }) {
   const t = useExtracted();
+  const keepStudying = useKeepStudyingLabel();
   const { course, open } = shown;
 
   return (
@@ -117,11 +122,11 @@ function StudyEverythingSheet({
       <DrawerPopup>
         <SheetHeader>
           <div className="flex flex-col gap-1">
-            <DrawerTitle>{t("Study everything")}</DrawerTitle>
+            <DrawerTitle>{course.isExam ? keepStudying : t("Study everything")}</DrawerTitle>
             <DrawerDescription>
               {course.isExam
-                ? t("Every topic, even after the exam, at your own pace.")
-                : t("Every part of your goal, at your own pace, with no end date.")}
+                ? t("You study every topic. What doesn't fit before the exam comes after it.")
+                : t("Every part of your goal, with no end date.")}
             </DrawerDescription>
           </div>
         </SheetHeader>
@@ -183,6 +188,7 @@ export function useStudyEverythingFromSuggestion(): (course: FullCourse) => void
 
 export function StudyEverything({ course }: { course: FullCourse }) {
   const t = useExtracted();
+  const keepStudying = useKeepStudyingLabel();
   const open = useStudyEverything();
 
   return (
@@ -194,7 +200,7 @@ export function StudyEverything({ course }: { course: FullCourse }) {
       type="button"
       variant="outline"
     >
-      {t("Study everything")}
+      {course.isExam ? keepStudying : t("Study everything")}
     </Button>
   );
 }

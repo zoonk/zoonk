@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import assert from "node:assert/strict";
 import { afterEach, beforeEach, describe, it, vi } from "vitest";
+import { installPageHelpers } from "./page-helpers.mts";
 import { compareLayout, markActions, pickedIds, snapshotLayout } from "./states-probe.mts";
 
 function frame(element: HTMLElement) {
@@ -12,6 +13,7 @@ function frame(element: HTMLElement) {
 }
 
 beforeEach(() => {
+  installPageHelpers();
   // jsdom supplies the tree, while mutable fixture frames supply its layout measurements.
   for (const [property, dimension] of Object.entries({
     offsetHeight: "height",

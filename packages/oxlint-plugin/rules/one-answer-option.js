@@ -1,25 +1,15 @@
 import { defineRule } from "@oxlint/plugins";
 
-const PIECE = new Set(["ANSWER_OPTION_CLASS", "AnswerOptionContent"]);
-
-function declaredNames(declaration) {
-  if (!declaration) {
-    return [];
-  }
-
-  if (declaration.type === "VariableDeclaration") {
-    return declaration.declarations.map((declarator) => declarator.id);
-  }
-
-  return declaration.id ? [declaration.id] : [];
-}
-
 export default defineRule({
   createOnce(context) {
     return {
       ExportNamedDeclaration(node) {
-        for (const id of declaredNames(node.declaration)) {
-          if (id.type === "Identifier" && PIECE.has(id.name)) {
+        if (node.declaration?.type !== "VariableDeclaration") {
+          return;
+        }
+
+        for (const { id } of node.declaration.declarations) {
+          if (id.type === "Identifier" && id.name === "ANSWER_OPTION_CLASS") {
             context.report({ data: { name: id.name }, messageId: "answerOption", node: id });
           }
         }

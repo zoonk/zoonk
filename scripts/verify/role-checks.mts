@@ -4,10 +4,7 @@ import { type Finding } from "./checks.mts";
 export type RoleFacts = { backLinksWithoutText: number; gates: number; unmarkedEyebrows: string[] };
 
 export function readRoleFacts(): RoleFacts {
-  const shown = (element: Element) =>
-    element.checkVisibility({ opacityProperty: true, visibilityProperty: true }) &&
-    element.getBoundingClientRect().width > 0 &&
-    element.getBoundingClientRect().height > 0;
+  const { shown } = globalThis.zoonkPage;
 
   const visible = (selector: string) =>
     [...document.querySelectorAll(selector)].filter((element) => shown(element));

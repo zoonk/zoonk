@@ -22,6 +22,7 @@ import {
 import { type LoadMeasurement } from "./checks.mts";
 import { neutralTextOnly } from "./contrast.mts";
 import { isBlockedFrameProbe } from "./frame-console.mts";
+import { installPageHelpers } from "./page-helpers.mts";
 import { installProbe, readProbe } from "./probe.mts";
 import { type RequestRecord } from "./requests.mts";
 import { type Scheme, THROTTLING, VIEWPORTS, type ViewportName } from "./viewports.mts";
@@ -160,6 +161,7 @@ export async function openPage({
   });
 
   await context.addInitScript(installProbe);
+  await context.addInitScript(installPageHelpers);
   const page = await context.newPage();
   const cdp = await context.newCDPSession(page);
   // Thread time counts only the main thread's own work, so a busy machine barely moves it.

@@ -94,7 +94,10 @@ export function useFormatIsoDate() {
   };
 }
 
-/** Messages `select` on `dateKind`, since a month and a day take different words around them. */
+/**
+ * Messages `select` on `dateKind`, since a month and a day take different words around them. The
+ * date keeps its words on one line, so a sentence never breaks between a day and its year.
+ */
 export function useGoalDateValues() {
   const formatDate = useFormatIsoDate();
 
@@ -107,7 +110,7 @@ export function useGoalDateValues() {
     namedMonth: boolean;
     style?: DateStyle;
   }): { date: string; dateKind: "day" | "month" } => ({
-    date: formatDate(isoDate, namedMonth ? "month" : style),
+    date: formatDate(isoDate, namedMonth ? "month" : style).replaceAll(" ", "\u00A0"),
     dateKind: namedMonth ? "month" : "day",
   });
 }

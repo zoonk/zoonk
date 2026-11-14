@@ -64,8 +64,8 @@ test("a new exam goal asks which option the learner takes, saves it for the plan
   const options = page.getByRole("radiogroup", { name: FOREIGN });
   const spanish = options.getByRole("radio", { name: /Espanhol/u });
   await expectHydrated(spanish);
+  // A single pick answers and goes on by itself: pressing Continue after it races the next screen.
   await spanish.click();
-  await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
   await expect
     .poll(() => loadPicks(goal.id))

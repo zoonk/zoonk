@@ -9,7 +9,6 @@ import {
   prisma,
   sql,
 } from "@zoonk/db";
-import { getDateInTimeZone, isValidTimeZone } from "@zoonk/utils/time-zone";
 import { findActiveSubscription } from "../../auth/subscription";
 import { CHECKPOINT_LEDGER_KINDS } from "../../checkpoints/_utils/checkpoint-results";
 import { getExamPrepAccess as getTierExamPrep } from "../../entitlements/limits";
@@ -131,16 +130,14 @@ function toPreparationSkill({
 
 type GoalTest = { kind: PreparationTestKind; mocksOnly: boolean; plusRequired: boolean };
 
-type TestGoal = Pick<Goal, "createdAt" | "kind" | "timezone">;
+type TestGoal = Pick<Goal, "kind">;
 
 async function loadGoalTest({
   goal,
-  now,
   subscription,
   userId,
 }: {
   goal: TestGoal | null;
-  now: Date;
   subscription?: Subscription | null;
   userId: string;
 }): Promise<GoalTest> {
@@ -151,13 +148,9 @@ async function loadGoalTest({
   const subscribed =
     subscription === undefined ? await findActiveSubscription(userId) : subscription;
 
-  const timeZone = goal.timezone && isValidTimeZone(goal.timezone) ? goal.timezone : "UTC";
-
   const access = getExamPrepAccess({
     examPrep: getTierExamPrep(subscribed ? "plus" : "free"),
     goal,
-    timeZone,
-    today: getDateInTimeZone({ date: now, timeZone }),
   });
 
   if (access.includesMockExams) {
@@ -227,32 +220,27 @@ async function loadTests({
   };
 }
 
-type PreparationGoal = Pick<
-  Goal,
-  "createdAt" | "details" | "examBlueprintId" | "kind" | "timezone"
->;
+type PreparationGoal = Pick<Goal, "details" | "examBlueprintId" | "kind">;
 
 async function loadGoalWithTest({
   goal: providedGoal,
   goalId,
-  now,
   subscription,
   userId,
 }: {
   goal?: PreparationGoal;
   goalId: string;
-  now: Date;
   subscription?: Subscription | null;
   userId: string;
 }) {
   const goal =
     providedGoal ??
     (await prisma.goal.findUnique({
-      select: { createdAt: true, details: true, examBlueprintId: true, kind: true, timezone: true },
+      select: { details: true, examBlueprintId: true, kind: true },
       where: { id: goalId },
     }));
 
-  return { goal, test: await loadGoalTest({ goal, now, subscription, userId }) };
+  return { goal, test: await loadGoalTest({ goal, subscription, userId }) };
 }
 
 export async function loadPreparationInputs({
@@ -280,7 +268,7 @@ export async function loadPreparationInputs({
     { goal: measuredGoal, test },
   ] = await Promise.all([
     loadMeasuredSkills({ goalId, readPlan, savedPlan }),
-    loadGoalWithTest({ goal, goalId, now, subscription, userId }),
+    loadGoalWithTest({ goal, goalId, subscription, userId }),
   ]);
 
   const evidenceIds = [...new Set(measured.flatMap((skill) => skill.memberSkillIds))];

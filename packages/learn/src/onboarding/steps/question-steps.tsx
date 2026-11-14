@@ -28,14 +28,10 @@ export function PurposeStep({ onAnswer, pending, subject }: StepProps) {
   });
 
   const choices: Choice<OnboardingPurpose>[] = [
-    {
-      description: t("A short course: the big ideas, no formulas"),
-      label: t("Get an overview"),
-      value: "overview",
-    },
+    { description: t("The big ideas, in short"), label: t("Get an overview"), value: "overview" },
     {
       description: t("The full path, from the basics to advanced"),
-      label: t("Understand it in depth"),
+      label: t("Understand it well"),
       value: "deep",
     },
     {
@@ -49,7 +45,7 @@ export function PurposeStep({ onAnswer, pending, subject }: StepProps) {
       value: "careerChange",
     },
     {
-      description: t("Back to the level you had, after a quick test"),
+      description: t("Back to the level you had, after a short test"),
       label: t("Refresh what I studied"),
       value: "refresh",
     },
@@ -63,7 +59,6 @@ export function PurposeStep({ onAnswer, pending, subject }: StepProps) {
   return (
     <StepForm
       canContinue={purpose !== null}
-      description={t("It sets how deep your course goes, and so how long it is.")}
       subject={subject}
       onContinue={() => purpose && submit(purpose)}
       pending={pending}
@@ -105,7 +100,6 @@ export function LevelStep({
   return (
     <StepForm
       canContinue={level !== null}
-      description={t("It only changes where your plan starts.")}
       subject={subject}
       onContinue={() => level && submit(level)}
       pending={pending}
@@ -131,23 +125,14 @@ function toTextAnswer(value: string | null): OnboardingAnswerInput {
 function useExamTargetCopy(question: ExamTarget) {
   const t = useExtracted();
 
-  const copy: Record<
-    ExamTarget,
-    Record<"description" | "label" | "title", string> & { placeholder?: string }
-  > = {
+  const copy: Record<ExamTarget, Record<"label" | "title", string> & { placeholder?: string }> = {
     admission: {
-      description: t("It helps your plan focus on what counts most."),
       label: t("Your target"),
       placeholder: t("E.g., medicine, 750 points"),
       title: t("Which course and score are you aiming for?"),
     },
-    position: {
-      description: t("The notice can have a different exam for each position."),
-      label: t("Position"),
-      title: t("Which position are you applying for?"),
-    },
+    position: { label: t("Position"), title: t("Which position are you applying for?") },
     score: {
-      description: t("It helps your plan focus on what counts most."),
       label: t("Your target"),
       placeholder: t({
         description: "An example score: a band is an IELTS-style score.",
@@ -172,7 +157,6 @@ export function TextStep({
   return (
     <StepForm
       canContinue={value.trim().length > 0}
-      description={copy.description}
       onContinue={() => onAnswer(toTextAnswer(value.trim()))}
       onSkip={() => onAnswer(toTextAnswer(null))}
       pending={pending}
@@ -199,7 +183,6 @@ export function FollowUpsStep({
 
   return (
     <StepForm
-      description={t("A couple of details make your plan fit better.")}
       onContinue={() =>
         onAnswer({ answers: answers.map((answer) => answer.trim() || null), question: "followUps" })
       }

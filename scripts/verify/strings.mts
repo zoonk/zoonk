@@ -149,7 +149,16 @@ function appleStrings(content: string): CatalogString[] {
   })();
 
   const entries = isRecord(catalog) && isRecord(catalog.strings) ? catalog.strings : {};
-  const lines = content.split("\n");
+
+  const sourceLines = new Map(
+    content
+      .split("\n")
+      .flatMap((line, index) => {
+        const key = /^(?<key>"(?:\\.|[^"\\])*") :/u.exec(line.trimStart())?.groups?.key;
+        return key ? [[key, index + 1] as const] : [];
+      })
+      .toReversed(),
+  );
 
   return Object.entries(entries).flatMap(([key, entry]) => {
     if (!isRecord(entry) || entry.shouldTranslate === false) {
@@ -157,11 +166,10 @@ function appleStrings(content: string): CatalogString[] {
     }
 
     const english = isRecord(entry.localizations) ? unitValues(entry.localizations.en) : [];
-    const line = lines.findIndex((text) => text.trimStart().startsWith(`${JSON.stringify(key)} :`));
     const note = typeof entry.comment === "string" ? entry.comment : "";
 
     return [...new Set(english.length > 0 ? english : [key])].map((text) => ({
-      line: line + 1,
+      line: sourceLines.get(JSON.stringify(key)) ?? 0,
       note,
       sources: [],
       text,

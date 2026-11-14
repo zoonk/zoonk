@@ -11,7 +11,7 @@ export function ProfileQuestionBody({
   prechecked = false,
   ...props
 }: BodyProps & {
-  /** Onboarding declines through its skip button instead of a row. */
+  /** Onboarding declines through its Skip button, so no body draws a row that declines. */
   declineAsSkip?: boolean;
   /** The goal's current role, prefilled into the job field. */
   jobPrefill?: string | null;
@@ -21,7 +21,9 @@ export function ProfileQuestionBody({
 }) {
   switch (props.question.id) {
     case "work":
-      return <WorkBody {...props} jobPrefill={jobPrefill} label={label} />;
+      return (
+        <WorkBody {...props} declineAsSkip={declineAsSkip} jobPrefill={jobPrefill} label={label} />
+      );
     case "studies":
       return <StudiesBody {...props} label={label} />;
     case "conditions":

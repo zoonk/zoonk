@@ -3,10 +3,10 @@ import { type PlanTimeAdvice, type PlanTimeToCover } from "@zoonk/core/plans/tim
 export type TimeLine =
   | { kind: "asking" }
   | { kind: "askFailed" }
-  | { kind: "everything"; suggested: boolean }
+  | { kind: "everything" }
   | { kind: "findFailed" }
   | { kind: "finish"; endDate: string }
-  | { coveredShare: number; everyTopic: boolean; kind: "focus" }
+  | { coveredShare: number; kind: "focus" }
   | { kind: "noDays" }
   | { kind: "noFinish" }
   | { kind: "pastDate" }
@@ -66,43 +66,8 @@ export function getLongerTime(found: PlanTimeToCover | null): FullTime | null | 
   return full && full.minutes <= suggested.minutes ? undefined : full;
 }
 
-export type FullTimeNote =
-  | { full: FullTime | null; kind: "takes"; moreDays: boolean }
-  | { kind: "tooLong" };
-
-/**
- * Beside a focus suggestion: what the longest useful time takes, or that the time shown, which
- * covers everything, is more than most people keep up. More days bring the time down until every
- * day is a study day, except where part never fits whatever the time.
- */
-export function getFullTimeNote({
-  found,
-  line,
-  studiesEveryDay,
-}: {
-  found: PlanTimeToCover | null;
-  line: TimeLine;
-  studiesEveryDay: boolean;
-}): FullTimeNote | null {
-  if (found?.suggested?.kind !== "focus") {
-    return null;
-  }
-
-  if (line.kind === "everything") {
-    return { kind: "tooLong" };
-  }
-
-  const full = getLongerTime(found);
-
-  if (full === undefined) {
-    return null;
-  }
-
-  const neverFits = full !== null && !full.everything;
-  return { full, kind: "takes", moreDays: !studiesEveryDay && !neverFits };
-}
-
-export type TimeOffer = { kind: "everything" | "focus" | "full"; minutes: number };
+/** `more`: the longest useful time where part of the goal never fits, whatever the time. */
+export type TimeOffer = { kind: "everything" | "more" | "suggested"; minutes: number };
 
 /**
  * The suggestion while another time is shown, unless that time covers everything anyway; on a
@@ -125,13 +90,14 @@ export function getOffer({
 
   if (suggested.minutes !== minutes) {
     const covered = suggested.kind === "everything" && line.kind === "everything";
-    return covered ? null : { kind: suggested.kind, minutes: suggested.minutes };
+    const kind = suggested.kind === "everything" ? "everything" : "suggested";
+    return covered ? null : { kind, minutes: suggested.minutes };
   }
 
   const full = getFullTime(found);
 
   return suggested.kind === "focus" && full && full.minutes > suggested.minutes
-    ? { kind: "full", minutes: full.minutes }
+    ? { kind: full.everything ? "everything" : "more", minutes: full.minutes }
     : null;
 }
 
@@ -156,13 +122,13 @@ function getDatedLine({
 
   if (suggested?.minutes === minutes) {
     return suggested.kind === "everything"
-      ? { kind: "everything", suggested: true }
-      : { coveredShare: suggested.coveredShare, everyTopic: suggested.everyTopic, kind: "focus" };
+      ? { kind: "everything" }
+      : { coveredShare: suggested.coveredShare, kind: "focus" };
   }
 
   if (advice) {
     const share = advice.coveredShare ?? 0;
-    return share >= 1 ? { kind: "everything", suggested: false } : { kind: "share", share };
+    return share >= 1 ? { kind: "everything" } : { kind: "share", share };
   }
 
   if (!found) {

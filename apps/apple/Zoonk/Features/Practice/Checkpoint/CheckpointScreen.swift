@@ -98,7 +98,7 @@ struct CheckpointScreen: View {
   private var title: LocalizedStringResource {
     guard case .loaded(let loaded) = load else {
       return LocalizedStringResource(
-        "Phase challenge", table: "Practice", comment: "Title of a phase challenge block.")
+        "Challenge", table: "Practice", comment: "Names a challenge's screen until it loads")
     }
 
     return CheckpointCopy.title(loaded.checkpoint)
@@ -494,14 +494,8 @@ private struct CheckpointResultView: View {
           CheckpointRewards()
         }
 
-        if let retry = CheckpointCopy.retryLine(
-          kind: checkpoint.kind, passed: passed, lessons: state.reinforcementLessons)
-        {
-          Label {
-            Text(retry)
-          } icon: {
-            Image(systemName: "arrow.counterclockwise")
-          }
+        if !won, let retry = CheckpointRetry(checkpoint: checkpoint, state: state) {
+          CheckpointRetryView(retry: retry)
         }
 
         if let answers = result?.answers, !answers.isEmpty {
@@ -525,13 +519,25 @@ private struct CheckpointResultView: View {
   }
 }
 
+private struct CheckpointResultSection<Content: View>: View {
+  let title: Text
+  @ViewBuilder let content: Content
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 12) {
+      title.typeStyle(.body.weight(.semibold))
+      content
+    }
+  }
+}
+
 /// A won duel's rewards beyond its Brain Power: the badge, when it brings one.
 private struct CheckpointRewards: View {
   var body: some View {
-    VStack(alignment: .leading, spacing: 12) {
-      Text("Rewards", tableName: "Practice", comment: "Heading over what a won challenge earned.")
-        .typeStyle(.body.weight(.semibold))
-
+    CheckpointResultSection(
+      title: Text(
+        "Rewards", tableName: "Practice", comment: "Heading over what a won challenge earned.")
+    ) {
       Label {
         Text(
           "Trap hunter badge", tableName: "Practice", comment: "Reward of a won Trickster duel.")
@@ -539,6 +545,85 @@ private struct CheckpointRewards: View {
         Image(systemName: "rosette")
       }
     }
+  }
+}
+
+/// When a lost duel comes back, as things stand now; a duel just lost comes back tomorrow.
+private enum CheckpointRetry {
+  case tomorrow(lessons: Int)
+  case nextSession(lessons: Int)
+  case won
+
+  init?(checkpoint: Components.Schemas.Checkpoint, state: CheckpointDuelState) {
+    let lessons = state.reinforcementLessons
+
+    switch state.completion == nil ? checkpoint.retry : .tomorrow {
+    case .tomorrow: self = .tomorrow(lessons: lessons)
+    case .open: self = .nextSession(lessons: lessons)
+    case .passed: self = .won
+    case nil: return nil
+    }
+  }
+}
+
+private struct CheckpointRetryView: View {
+  let retry: CheckpointRetry
+
+  var body: some View {
+    CheckpointResultSection(
+      title: Text(
+        "What's next", tableName: "Practice",
+        comment: "Heading over when a lost Trickster duel comes back.")
+    ) {
+      Label {
+        VStack(alignment: .leading, spacing: 2) {
+          Text(title).typeStyle(.rowTitle)
+
+          if let detail {
+            Text(detail)
+              .typeStyle(.meta)
+              .foregroundStyle(.secondary)
+          }
+        }
+      } icon: {
+        Image(systemName: retry.isWon ? "checkmark" : "arrow.counterclockwise")
+      }
+    }
+  }
+
+  private var title: LocalizedStringResource {
+    switch retry {
+    case .tomorrow:
+      LocalizedStringResource(
+        "Rematch tomorrow", table: "Practice", comment: "When a lost Trickster duel comes back.")
+    case .nextSession:
+      LocalizedStringResource(
+        "Rematch next time you study", table: "Practice",
+        comment: "A lost Trickster duel is back in the plan for the next session.")
+    case .won:
+      LocalizedStringResource(
+        "You won the rematch", table: "Practice",
+        comment: "A lost Trickster duel was won on a later try.")
+    }
+  }
+
+  private var detail: LocalizedStringResource? {
+    switch retry {
+    case .tomorrow(let lessons), .nextSession(let lessons):
+      lessons == 0
+        ? nil
+        : LocalizedStringResource(
+          "After \(lessons) short lessons on what tripped you up.", table: "Practice",
+          comment: "Short lessons a learner takes before a Trickster rematch.")
+    case .won: nil
+    }
+  }
+}
+
+extension CheckpointRetry {
+  fileprivate var isWon: Bool {
+    if case .won = self { return true }
+    return false
   }
 }
 
@@ -611,18 +696,6 @@ enum CheckpointCopy {
         "You beat the Trickster!", table: "Practice", comment: "A won phase challenge.")
       : LocalizedStringResource(
         "Not this time", table: "Practice", comment: "A lost phase challenge.")
-  }
-
-  static func retryLine(
-    kind: Components.Schemas.Checkpoint.KindPayload, passed: Bool, lessons: Int
-  )
-    -> LocalizedStringResource?
-  {
-    if kind == .weekly { return nil }
-
-    if passed { return nil }
-
-    return rematchTomorrow(lessons: lessons)
   }
 
   /// Under the verdict that decides a duel.

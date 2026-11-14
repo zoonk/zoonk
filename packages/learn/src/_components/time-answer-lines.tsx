@@ -1,6 +1,5 @@
 import { useExtracted } from "next-intl";
 import { useFormatIsoDate, useGoalDateValues } from "../_utils/iso-date";
-import { useSentenceSpace } from "../_utils/locale";
 import { type TimeLine } from "../_utils/time-answer";
 import { useFormatDuration } from "../_utils/time-format";
 import { type GoalDate, useTimeAnswerTexts } from "./time-answer-texts";
@@ -24,43 +23,14 @@ function FinishMonth(chunks: React.ReactNode) {
   return <span className="text-foreground font-medium">{chunks}</span>;
 }
 
-function DatedWords({
-  date,
-  exam,
-  line,
-  minutes,
-}: {
-  date: GoalDate;
-  exam: boolean;
-  line: DatedLine;
-  minutes: number;
-}) {
+function DatedWords({ date, exam, line }: { date: GoalDate; exam: boolean; line: DatedLine }) {
   const t = useExtracted();
   const texts = useTimeAnswerTexts();
-  const space = useSentenceSpace();
   const goalDate = useGoalDateValues();
   const shown = goalDate({ ...date, style: "long" });
 
   switch (line.kind) {
     case "everything":
-      if (line.suggested) {
-        return exam
-          ? t({
-              description:
-                'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
-              message:
-                "{dateKind, select, month {What it takes to cover all your exam topics by {date}.} other {What it takes to cover all your exam topics by {date}.}}",
-              values: shown,
-            })
-          : t({
-              description:
-                'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
-              message:
-                "{dateKind, select, month {What it takes to cover your whole goal by {date}.} other {What it takes to cover your whole goal by {date}.}}",
-              values: shown,
-            });
-      }
-
       return exam
         ? t({
             description:
@@ -77,13 +47,7 @@ function DatedWords({
             values: shown,
           });
     case "focus":
-      return (
-        <>
-          {texts.suggest(minutes)}
-          {space}
-          {texts.focus({ coveredShare: line.coveredShare, everyTopic: line.everyTopic, exam })}
-        </>
-      );
+      return texts.share({ date, exam, value: line.coveredShare });
     case "share":
       return texts.share({ date, exam, value: line.share });
     case "pastDate":
@@ -127,9 +91,7 @@ function FinishWords({
             month: formatDate(line.endDate, "month"),
           });
     case "noFinish":
-      return t(
-        "We can't estimate a finish date for this schedule. Try more time or more study days.",
-      );
+      return t("We can't estimate an end date. Try more time or more study days.");
     default:
       return line satisfies never;
   }
@@ -182,10 +144,7 @@ export function LineWords({
   minutes: number | null;
 }) {
   if (isDatedLine(line)) {
-    return (
-      date &&
-      minutes !== null && <DatedWords date={date} exam={exam} line={line} minutes={minutes} />
-    );
+    return date && <DatedWords date={date} exam={exam} line={line} />;
   }
 
   if (isFinishLine(line)) {

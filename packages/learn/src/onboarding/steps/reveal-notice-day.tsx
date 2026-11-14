@@ -26,7 +26,7 @@ export function RevealNoticeDay() {
       <form className="text-muted-foreground text-sm text-pretty" data-slot="notice-day">
         {noticeDay ? (
           <>
-            <span>{noticeDayText({ ...noticeDay, document: plan.examDocument })}</span>
+            <span>{noticeDayText(noticeDay)}</span>
             {space}
             <Button
               busy={isPending}

@@ -171,7 +171,11 @@ function findAppEntryBehind(navigation: Navigation | null): NavigationHistoryEnt
   return entries.findLast((candidate) => isOtherAppPage({ entry: candidate, here, section }));
 }
 
-/** The name of the page `goBackToApp` returns to, when that page's bar named it. */
+/**
+ * The name of the page `goBackToApp` returns to: null when it returns to none (the link goes to
+ * its own page), and an empty string when that page's bar gave no name, so the link never shows
+ * another page's.
+ */
 export function appBackName(): string | null {
   const navigation = getNavigation();
 
@@ -180,7 +184,12 @@ export function appBackName(): string | null {
   }
 
   const mark = getAppMark(findAppEntryBehind(navigation) ?? null);
-  return mark && "name" in mark && typeof mark.name === "string" ? mark.name : null;
+
+  if (!mark) {
+    return null;
+  }
+
+  return "name" in mark && typeof mark.name === "string" ? mark.name : "";
 }
 
 /** Returns whether it found an app page; otherwise the link goes to its default. */
