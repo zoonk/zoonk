@@ -68,21 +68,21 @@ struct TestOutScreen: View {
                 comment: "Why a test-out has nothing to skip.")
             }
             .lonePage()
-          case .loaded(.plusRequired):
-            preparing(failure: PracticeAPIError.plusRequired)
           case .loaded(.test(let test)) where test.questions.isEmpty:
             preparing(failure: writeFailure)
           case .loaded(.test(let test)):
             GradedAtEndRun(
               questions: test.questions, labels: test.trueFalseLabels, draftKey: draftKey,
-              hint: { _ in rule(test.passMark) }, isPending: isSubmitting, failures: submitFailures,
+              hint: { question in
+                question.id == test.questions.first?.id ? rule(test.passMark) : ""
+              }, isPending: isSubmitting, failures: submitFailures,
               onReport: { showsSaveReport = true },
               onFinish: { answers in Task { await submit(answers) } })
           }
         }
       }
       .navigationTitle(
-        Text("Test out", tableName: "Practice", comment: "Title of a chapter test-out.")
+        Text("Chapter test", tableName: "Practice", comment: "Title of a chapter test.")
       )
       .navigationBarTitleDisplayMode(.inline)
       .taskClose {
@@ -105,7 +105,7 @@ struct TestOutScreen: View {
       title: LocalizedStringResource(
         "Already know this?", table: "Practice", comment: "Title of a chapter test-out's start."),
       detail: LocalizedStringResource(
-        "A few questions on this chapter. Do well, and your plan skips what you already know.",
+        "A few questions on this chapter, with your results at the end. Do well, and your plan skips what you already know.",
         table: "Practice",
         comment: "What a chapter test-out does."),
       writingDetail: LocalizedStringResource(
@@ -118,9 +118,8 @@ struct TestOutScreen: View {
 
   private func rule(_ passMark: Double) -> String {
     String(
-      localized:
-        "\(Int((passMark * 100).rounded()))% right skips the chapter. No feedback until the end.",
-      table: "Practice", comment: "A chapter test-out's rule above each question.")
+      localized: "\(Int((passMark * 100).rounded()))% right skips the chapter", table: "Practice",
+      comment: "A chapter test's rule, a label over its first question")
   }
 
   private func resultView(_ result: Components.Schemas.ChapterTestOutResult) -> some View {
@@ -128,7 +127,7 @@ struct TestOutScreen: View {
       PracticeResultTitle(
         title: result.passed
           ? LocalizedStringResource(
-            "You already know this", table: "Practice", comment: "A passed test-out's result.")
+            "You passed the test", table: "Practice", comment: "A passed chapter test's result.")
           : LocalizedStringResource(
             "Not yet, and that's fine", table: "Practice", comment: "A failed test-out's result."),
         detail: resultDetail(result))
@@ -199,7 +198,7 @@ struct TestOutScreen: View {
         "Your plan already skips it.", table: "Practice",
         comment: "A passed test-out that skipped nothing new.")
       : LocalizedStringResource(
-        "\(result.lessonsSkipped) lessons are off your plan.", table: "Practice",
+        "Your plan skips \(result.lessonsSkipped) lessons you already know.", table: "Practice",
         comment: "How many lessons a passed test-out skipped.")
   }
 
@@ -294,8 +293,6 @@ struct TestOutScreen: View {
       submitFailures = 0
       PracticeAnswerDraft.clear(key: draftKey)
       if let graded { result = graded } else { load = .loaded(.nothingToSkip) }
-    case .refused(.plusRequired):
-      load = .loaded(.plusRequired)
     case .refused, .failed:
       submitFailures += 1
     case .obsolete:

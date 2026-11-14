@@ -1,5 +1,7 @@
 "use client";
 
+import { BigQuantity } from "@zoonk/ui/components/big-quantity";
+import { METER_PARTS_CLASS } from "@zoonk/ui/components/meter";
 import {
   Popover,
   PopoverContent,
@@ -10,8 +12,6 @@ import {
 } from "@zoonk/ui/components/popover";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { BigQuantity } from "../_components/big-quantity";
-import { METER_PARTS_CLASS } from "../_components/meter";
 import { moveFocusWithArrows } from "../_utils/arrow-focus";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";

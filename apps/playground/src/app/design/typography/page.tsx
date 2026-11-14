@@ -1,6 +1,6 @@
 import { TYPE_ROLES, TYPE_RULES } from "@/design-system/type";
-import { BigQuantity } from "@zoonk/learn/big-quantity";
 import { PageSectionTitle } from "@zoonk/learn/page";
+import { BigQuantity } from "@zoonk/ui/components/big-quantity";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type Metadata } from "next";
 import { DocHeader, DocRules, DocSection, Specimen, renderCode } from "../_components/doc";

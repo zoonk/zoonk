@@ -1105,6 +1105,7 @@ msgstr "Tu plan sigue este curso y se adapta al tiempo que tienes cada día."
 
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
 #: src/app/[lang]/learn/[lessonId]/guest-plan-start.tsx
+#: src/components/auth-gate.tsx
 #: src/components/pricing/free-plan.tsx
 #: src/components/pricing/plus-pricing.tsx
 #: src/components/public/goal-form.tsx
@@ -2845,45 +2846,33 @@ msgctxt "QRccCM"
 msgid "Page not found"
 msgstr "Página no encontrada"
 
+#. Under the title, for a guest: what they had before keeps going once they create an account.
 #: src/components/auth-gate.tsx
-msgctxt "DrBO6u"
-msgid "Your plan and progress move to your account, safe on any device."
-msgstr "Tu plan y tu progreso pasan a tu cuenta y se mantienen seguros en cualquier dispositivo."
+msgctxt "df7Wr-"
+msgid "Your plan and progress come with you."
+msgstr "Conservas tu plan y tu progreso."
 
 #: src/components/auth-gate.tsx
 msgctxt "xhBZ5m"
 msgid "Create an account to use this page"
 msgstr "Crea una cuenta para usar esta página"
 
+#. Under "You've been logged out". Their plan is still saved; logging in shows it again.
 #: src/components/auth-gate.tsx
-msgctxt "pb0Q20"
-msgid "Log in to pick up your plan."
-msgstr "Inicia sesión para retomar tu plan."
+msgctxt "e3Tyso"
+msgid "Log in to get back to your plan."
+msgstr "Inicia sesión para volver a tu plan."
 
+#. Title on a page that needs an account, once the learner is logged out of Zoonk. Not about a study session, which the app also calls a session.
 #: src/components/auth-gate.tsx
-msgctxt "HVR09O"
-msgid "Your session ended"
-msgstr "Tu sesión terminó"
-
-#: src/components/auth-gate.tsx
-msgctxt "eSXQ3z"
-msgid "Log in to pick up where you left off, or start free."
-msgstr "Inicia sesión para seguir donde lo dejaste o empieza gratis."
+msgctxt "bBaQAY"
+msgid "You've been logged out"
+msgstr "Se cerró tu sesión"
 
 #: src/components/auth-gate.tsx
 msgctxt "acWSVG"
 msgid "Log in to continue"
 msgstr "Inicia sesión para continuar"
-
-#: src/components/auth-gate.tsx
-msgctxt "77LoTm"
-msgid "Start something new"
-msgstr "Empezar algo nuevo"
-
-#: src/components/auth-gate.tsx
-msgctxt "i7IHHZ"
-msgid "Start free"
-msgstr "Empezar gratis"
 
 #: src/components/catalog/catalog-back-to-top.tsx
 msgctxt "Gs9Kfp"

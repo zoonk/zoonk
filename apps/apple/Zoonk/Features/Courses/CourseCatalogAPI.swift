@@ -390,69 +390,25 @@ private func makeCoursePlanEstimate(
   _ payload: Components.Schemas.CoursePlanEstimate
 ) -> CoursePlanEstimate? {
   if let toEnd = payload.value1 {
-    return makeCoursePlanEstimate(
-      numbers: toEnd.numbers,
+    return CoursePlanEstimate(
       reach: .toEnd(
         weeks: toEnd.weeks,
-        endDate: toEnd.endDate,
         firstDay: toEnd.firstDay.map {
           CoursePlanEstimate.FirstDayLesson(
             chapterID: $0.chapterId, dayMinutes: $0.dayMinutes, id: $0.lessonId, title: $0.title)
         }),
       chapters: toEnd.chapters.map {
-        CoursePlanEstimate.ChapterPlace(
-          area: nil, chapterID: $0.chapterId, endWeek: $0.endWeek, lessonsInPlan: nil,
-          studyOrder: nil, week: $0.week,
-          workKinds: Set(
-            $0.workKinds.compactMap { CoursePlanEstimate.WorkKind(rawValue: $0.rawValue) }))
-      },
-      unwrittenLessonMinutes: toEnd.workload.unwrittenLessonMinutes)
+        CoursePlanEstimate.ChapterPlace(area: nil, chapterID: $0.chapterId)
+      })
   }
 
   guard let byDate = payload.value2 else {
     return nil
   }
 
-  return makeCoursePlanEstimate(
-    numbers: byDate.numbers,
-    reach: .byDate(
-      fittingLessons: byDate.fittingLessons,
-      publishedLessons: byDate.publishedContent.lessons,
-      areas: byDate.areas.map {
-        CoursePlanEstimate.Area(
-          fitting: $0.fitting, name: $0.area, plannedMinutes: $0.plannedMinutes,
-          quickLessons: $0.quickLessons, total: $0.total, unwrittenMinutes: $0.unwrittenMinutes)
-      }),
+  return CoursePlanEstimate(
+    reach: .byDate(areas: byDate.areas.compactMap(\.area)),
     chapters: byDate.chapters.map {
-      CoursePlanEstimate.ChapterPlace(
-        area: $0.area, chapterID: $0.chapterId, endWeek: $0.endWeek,
-        lessonsInPlan: $0.lessonsInPlan, studyOrder: $0.studyOrder, week: $0.week,
-        workKinds: Set(
-          $0.workKinds.compactMap { CoursePlanEstimate.WorkKind(rawValue: $0.rawValue) }))
-    },
-    unwrittenLessonMinutes: byDate.workload.unwrittenLessonMinutes)
-}
-
-private func makeCoursePlanEstimate(
-  numbers: Components.Schemas.PlanNumbers,
-  reach: CoursePlanEstimate.Reach,
-  chapters: [CoursePlanEstimate.ChapterPlace],
-  unwrittenLessonMinutes: Double
-) -> CoursePlanEstimate {
-  CoursePlanEstimate(
-    reach: reach,
-    chapters: chapters,
-    afterDeadlineMinutes: numbers.afterDeadlineMinutes,
-    beforeDeadlineMinutes: numbers.beforeDeadlineMinutes,
-    coverage: numbers.coverage.map {
-      CoursePlanEstimate.Coverage(coveredShare: $0.coveredShare, measuresGoal: $0.measure == .goal)
-    },
-    fromDate: numbers.context.fromDate,
-    scheduledMinutes: numbers.scheduledMinutes,
-    unwrittenLessonMinutes: unwrittenLessonMinutes,
-    workload: CoursePlanEstimate.Workload(
-      checkpointMinutes: numbers.workload.checkpointMinutes,
-      lessonMinutes: numbers.workload.lessonMinutes,
-      practiceMinutes: numbers.workload.practiceMinutes,
-      unwrittenLessonMinutes: numbers.workload.unwrittenLessonMinutes))
+      CoursePlanEstimate.ChapterPlace(area: $0.area, chapterID: $0.chapterId)
+    })
 }

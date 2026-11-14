@@ -21,7 +21,7 @@ fun plan(extra: String = ""): Plan {
         ApiJson
             .parseToJsonElement(
                 """
-                {"access":{"freeWeekOver":false,"mocksRequirePlus":false},"areas":[],"changes":[],
+                {"access":{"mocksRequirePlus":false},"areas":[],"changes":[],
                  "estimate":{"remainingHours":10,"totalHours":12},"examChoices":[],"examDocument":"guide",
                  "fundedMocks":[],"goalId":"$GOAL","phases":[],"planId":"$PLAN_ID","ready":true,
                  "schedule":{"dailyMinutes":20,"dailyTimes":$DAILY_TIMES,"fullCourse":false,"lightWeeks":[],"studyDays":5,
@@ -44,7 +44,7 @@ internal fun progress(): GoalProgress =
           "skills":{"fading":2,"learning":3,"mastered":1,"new":10,"solid":2,"total":18},
           "components":{"coverage":{"heaviest":{"studiedSkills":2,"totalSkills":5,"value":0.4},"studiedSkills":6,"totalSkills":18,"value":0.33},
            "mastery":{"answered":20,"correct":15,"evidence":0.5,"supported":0.7,"value":0.75},
-           "mocks":{"kind":"weeklyChallenges","plusRequired":false,"taken":1,"value":0.6},
+           "mocks":{"kind":"weeklyChallenges","taken":1,"value":0.6},
            "retention":{"studiedSkills":6,"value":0.8}}}}
         """.trimIndent(),
     )

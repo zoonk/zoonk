@@ -24,6 +24,19 @@ final class ExamAPITests: XCTestCase {
     XCTAssertEqual(shape, ["area": NSNull(), "day": NSNull(), "kind": "half"])
   }
 
+  func testTheStartAfterWritingNeverAcceptsFewerQuestionsOnItsOwn() async throws {
+    let transport = RecordingTransport(answer: #"{"id": "\#(blockId)", "status": "started"}"#)
+    let api = ExamAPI(clients: APIClientFactory(baseURL: Self.baseURL, transport: transport))
+
+    _ = try await api.startMock(
+      token: "token", goalId: goalId, shape: MockShape(kind: .full), acceptFewer: false,
+      afterWriting: true)
+
+    let sent = try XCTUnwrap(transport.sent.value.first)
+    XCTAssertEqual(sent.json["afterWriting"] as? Bool, true)
+    XCTAssertEqual(sent.json["acceptFewer"] as? Bool, false)
+  }
+
   func testABlankDraftSavesAnExplicitNullAnswer() async throws {
     let transport = RecordingTransport(status: .noContent)
     let api = ExamAPI(clients: APIClientFactory(baseURL: Self.baseURL, transport: transport))

@@ -279,13 +279,13 @@ struct MistakePracticeScreen: View {
     if state.answerIds.isEmpty || state.isOver {
       PracticeCloseButton(
         label: LocalizedStringResource(
-          "Back to the notebook", table: "Practice",
+          "Leave", table: "Practice",
           comment: "VoiceOver label: leaves mistake practice.")
       ) { dismiss() }
     } else {
       PracticeCloseButton(
         label: LocalizedStringResource(
-          "End practice. What you answered counts.", table: "Practice",
+          "Leave. What you answered counts.", table: "Practice",
           comment: "VoiceOver label: ends mistake practice early.")
       ) { Task { await end() } }
       .disabled(checking != nil || state.phase == .lessonChecking)

@@ -6,7 +6,7 @@ import {
 } from "@/data/courses/get-course-curriculum";
 import { formatCount } from "@/lib/format";
 import { libraryLessonStatusLabels } from "@/lib/library-lesson-filters";
-import { Meter, MeterFill } from "@zoonk/learn/meter";
+import { Meter, MeterFill } from "@zoonk/ui/components/meter";
 import Link from "next/link";
 
 type Chapter = CourseCurriculumChapter["chapter"];

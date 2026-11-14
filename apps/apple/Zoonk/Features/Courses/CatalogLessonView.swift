@@ -166,15 +166,9 @@ private struct CatalogLessonList: View {
           DisclosureGroup {
             ForEach(ideas, id: \.self) { idea in CheckLine { LessonRichText(idea) } }
           } label: {
-            LabeledContent {
-              Text(
-                "\(ideas.count) ideas", tableName: "Courses",
-                comment: "How many ideas a lesson teaches")
-            } label: {
-              Text(
-                "What you'll learn", tableName: "Courses",
-                comment: "Header of what a lesson teaches")
-            }
+            Text(
+              "What you'll learn", tableName: "Courses",
+              comment: "Header of what a lesson teaches")
           }
         }
       }
@@ -184,80 +178,79 @@ private struct CatalogLessonList: View {
   }
 }
 
-/// Main's `LessonPlanDay`: the course this lesson belongs to, as a day of its plan would hold it
-/// (the lesson before, this one, the next).
+/// Main's chapter fold and closing: the chapter's other lessons, then the way into a plan.
 private struct LessonPlanDay: View {
-  private static let dayLessons = 3
-
   let lesson: LessonReference
   let chapterLessons: [CourseLesson]
 
   var body: some View {
-    let index = chapterLessons.firstIndex { $0.id == lesson.id }
-
-    if let index {
-      let start = max(0, min(index - 1, chapterLessons.count - Self.dayLessons))
-      let day = Array(chapterLessons[start..<min(start + Self.dayLessons, chapterLessons.count)])
-      let minutes = day.reduce(0) { $0 + $1.estimatedMinutes }
+    if !chapterLessons.isEmpty {
+      let minutes = chapterLessons.reduce(0) { $0 + $1.estimatedMinutes }
 
       Section {
+        DisclosureGroup {
+          ForEach(Array(chapterLessons.enumerated()), id: \.element.id) { offset, item in
+            let row = LabeledContent {
+              Text(studyDuration(minutes: item.estimatedMinutes))
+                .monospacedDigit()
+            } label: {
+              Text(item.displayTitle())
+            }
+
+            if item.id == lesson.id {
+              row.currentRow()
+            } else {
+              NavigationLink(
+                value: CourseDestination.lesson(
+                  LessonReference(
+                    chapter: lesson.chapter, chapterNumber: lesson.chapterNumber, id: item.id,
+                    lessonCount: chapterLessons.count, minutes: item.estimatedMinutes,
+                    number: offset + 1, title: item.displayTitle()))
+              ) {
+                row
+              }
+            }
+          }
+        } label: {
+          LabeledContent {
+            Text(
+              "\(chapterLessons.count) lessons\u{00A0}· \(studyDuration(minutes: minutes))",
+              tableName: "Courses", comment: "How many lessons a chapter has, and how long")
+          } label: {
+            Text(
+              "Lessons in \(lesson.chapter.title)", tableName: "Courses",
+              comment: "Folds the lessons of a lesson's chapter; the argument is the chapter's name"
+            )
+          }
+        }
+      }
+    }
+
+    // Main's `StartPlanLink`, secondary beside the lesson's own start: past the first chapter
+    // the plan starts from this one.
+    Section {
+      VStack(alignment: .leading, spacing: 8) {
         Text(
-          "This lesson is part of the \(lesson.chapter.courseTitle) course.", tableName: "Courses",
-          comment: "Heads a lesson's example plan on its Library page; the argument is the course"
+          "Keep going with \(lesson.chapter.courseTitle)", tableName: "Courses",
+          comment:
+            "Heads the way into a plan on a lesson's Library page; the argument is the course"
         )
         .typeStyle(.section)
-        .foregroundStyle(Color(.foreground))
         .accessibilityAddTraits(.isHeader)
-        .listRowSeparator(.hidden)
-      }
 
-      Section {
-        ForEach(Array(day.enumerated()), id: \.element.id) { offset, item in
-          let position = start + offset
-          let isDone = position < index
+        PlanLine(start: startsAtChapter ? .chapter : .course)
 
-          ListRow(
-            Text(item.displayTitle()),
-            description: isDone ? nil : Text(lesson.chapter.title)
-          ) {
-            if isDone {
-              StatusMark(status: .done)
-            } else {
-              KindMark(kind: .lesson)
-            }
-          } trailing: {
-            Text(studyDuration(minutes: item.estimatedMinutes))
-          }
-          .accessibilityElement(children: .combine)
-          .currentRow(position == index)
-        }
-      } header: {
-        SectionTitle(
-          Text(
-            "Example plan", tableName: "Courses", comment: "Heads a lesson's example day of a plan")
-        ) {
-          Text(
-            "\(day.count) lessons\u{00A0}· \(studyDuration(minutes: minutes))",
-            tableName: "Courses",
-            comment: "How many lessons an example plan's first day has, and how long")
-        }
-      } footer: {
-        SectionFooter {
-          Text(
-            "An example. Your plan follows your answers, so it can start later and end sooner.",
-            tableName: "Courses", comment: "Under a lesson's example plan")
-        }
-      }
-
-      // Main's `StartPlanLink`, secondary beside the lesson's own start: past the first chapter
-      // the plan starts from this one.
-      Section {
         CatalogStartActions(
-          courseID: lesson.chapter.courseID,
-          chapterID: (lesson.chapterNumber ?? 1) > 1 ? lesson.chapter.id : nil,
-          tryLessonID: nil, isSecondary: true)
+          courseID: lesson.chapter.courseID, chapterID: startsAtChapter ? lesson.chapter.id : nil,
+          tryLessonID: nil, isSecondary: true
+        )
+        .padding(.top, 8)
       }
-      .listRowSeparator(.hidden)
+      .listRowBackground(Color.clear)
     }
+  }
+
+  private var startsAtChapter: Bool {
+    (lesson.chapterNumber ?? 1) > 1
   }
 }

@@ -18,14 +18,6 @@ struct ExamView: Hashable, Decodable, Sendable {
     case materials
   }
 
-  enum DayBefore: String, Decodable, Sendable {
-    case learn
-    case learnAndMock
-    case light
-    case mock
-    case review
-  }
-
   struct Day: Hashable, Decodable, Sendable {
     var date: String
     var label: String?
@@ -152,7 +144,6 @@ struct ExamView: Hashable, Decodable, Sendable {
 
   var calibration: NetCalibration?
   var checklist: [ChecklistItem]
-  var dayBefore: DayBefore
   var days: [Day]
   var daysEstimated: Bool
   var daysLeft: Int?

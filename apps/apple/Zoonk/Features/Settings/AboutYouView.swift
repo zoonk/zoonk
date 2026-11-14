@@ -48,7 +48,6 @@ struct AboutYouView: View {
           [.addressForm, .conditions, .learningSupport], in: profile)
       }
     }
-    .navigationTitle(aboutYouTitle)
     .barTitleAfterHero(
       String(localized: "About you", table: "AboutYou", comment: "Title of the About you page")
     )
