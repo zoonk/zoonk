@@ -136,6 +136,13 @@ test("a learner who guessed stays once the plan is ready, and the first lesson's
   await expect(
     page.getByRole("radiogroup", { name: "How many eyes does a honey bee have?" }),
   ).toBeVisible();
+
+  // The title says the lesson is getting ready, so the strip under it says the step it's on.
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Getting your lesson ready" }),
+  ).toBeVisible();
+
+  await expect(page.getByRole("button", { name: /^Planning the lesson/u })).toBeVisible();
 });
 
 test("blocked tab storage leaves the wait quiz playable", async ({
