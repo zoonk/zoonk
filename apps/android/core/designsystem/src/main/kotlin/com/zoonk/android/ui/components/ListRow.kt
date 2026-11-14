@@ -99,6 +99,7 @@ fun ListRow(
     Row(
         modifier =
             modifier
+                .layoutPart(LayoutPart.LIST, LayoutPart.Part.Row, endInset = LIST_ITEM_INSET)
                 .fillMaxWidth()
                 .heightIn(min = MIN_HEIGHT)
                 // The whole row takes the tap; its ripple stays inside the highlight's rounded shape.
@@ -147,14 +148,19 @@ fun ListRow(
                 Modifier.sizeIn(minWidth = markSize(), minHeight = markSize())
             }
         CompositionLocalProvider(LocalContentColor provides quiet) {
-            leading?.let { Box(markBox, contentAlignment = Alignment.Center) { it() } }
+            leading?.let { Box(markBox.layoutPart(LayoutPart.LIST, LayoutPart.Part.Mark), contentAlignment = Alignment.Center) { it() } }
         }
 
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(1.dp)) {
             CompositionLocalProvider(LocalContentColor provides ink) {
                 ProvideTextStyle(MaterialTheme.typography.titleSmall) {
                     if (meta == null) {
-                        headline()
+                        Column(
+                            Modifier.layoutPart(LayoutPart.LIST, LayoutPart.Part.Label),
+                            verticalArrangement = Arrangement.spacedBy(1.dp),
+                        ) {
+                            headline()
+                        }
                     } else {
                         TitleAndMeta(
                             metaBusy = busy && !chevron,
@@ -170,7 +176,14 @@ fun ListRow(
                 }
             }
             supporting?.let {
-                CompositionLocalProvider(LocalContentColor provides quiet) { ProvideTextStyle(MaterialTheme.typography.bodySmall, it) }
+                CompositionLocalProvider(LocalContentColor provides quiet) {
+                    ProvideTextStyle(MaterialTheme.typography.bodySmall) {
+                        Column(
+                            Modifier.layoutPart(LayoutPart.LIST, LayoutPart.Part.Note),
+                            verticalArrangement = Arrangement.spacedBy(1.dp),
+                        ) { it() }
+                    }
+                }
             }
         }
 
@@ -178,12 +191,12 @@ fun ListRow(
             Icon(
                 painterResource(R.drawable.ic_expand_more),
                 contentDescription = null,
-                modifier = Modifier.rotate(if (it) 180f else 0f),
+                modifier = Modifier.layoutPart(LayoutPart.LIST, LayoutPart.Part.End).rotate(if (it) 180f else 0f),
                 tint = quiet,
             )
         }
 
-        trailing?.invoke()
+        trailing?.let { Box(Modifier.layoutPart(LayoutPart.LIST, LayoutPart.Part.End)) { it() } }
 
         if (chevron) BusyContent(busy) { ListRowChevron() }
     }
@@ -195,7 +208,7 @@ fun ListRowChevron() {
     Icon(
         painterResource(R.drawable.ic_chevron_right),
         contentDescription = null,
-        modifier = Modifier.size(16.dp),
+        modifier = Modifier.layoutPart(LayoutPart.LIST, LayoutPart.Part.End).size(16.dp),
         tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
     )
 }
@@ -231,12 +244,16 @@ private fun TitleAndMeta(
     Layout(
         contents =
             listOf({
-                Column {
+                Column(Modifier.layoutPart(LayoutPart.LIST, LayoutPart.Part.Label)) {
                     title()
                 }
             }, {
                 BusyContent(metaBusy) {
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) { meta() }
+                    Row(
+                        Modifier.layoutPart(LayoutPart.LIST, LayoutPart.Part.Value),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) { meta() }
                 }
             }),
     ) { (titles, metas), constraints ->
