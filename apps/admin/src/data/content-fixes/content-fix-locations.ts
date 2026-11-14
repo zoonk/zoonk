@@ -5,6 +5,8 @@ import { getMainPageUrl } from "@zoonk/utils/url";
 export type ContentFixLocation = {
   adminHref: string | null;
   language: string | null;
+  /** What a language course teaches; `language` is the language it's taught in. */
+  targetLanguage?: string;
   mainUrl: string | null;
   /** From the course down to what the fix changes; empty once the content was deleted. */
   trail: string[];
@@ -95,9 +97,8 @@ async function loadLessons(ids: string[]) {
     lesson.id,
     {
       adminHref: `/lessons/${lesson.id}`,
-      language: lesson.targetLanguage
-        ? `${lesson.language} → ${lesson.targetLanguage}`
-        : lesson.language,
+      language: lesson.language,
+      targetLanguage: lesson.targetLanguage ?? undefined,
       mainUrl: mainUrl({ language: lesson.language, path: `/learn/${lesson.id}` }),
       trail: [
         ...(lesson.homeChapter ? chapterLocation(lesson.homeChapter).trail : []),
@@ -155,7 +156,8 @@ async function loadLevelTests(ids: string[]) {
     bank.id,
     {
       adminHref: null,
-      language: `${bank.language} → ${bank.targetLanguage}`,
+      language: bank.language,
+      targetLanguage: bank.targetLanguage,
       mainUrl: null,
       trail: ["Level test"],
     },

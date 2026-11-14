@@ -11,7 +11,7 @@ import { DetailField, DetailFields } from "@/components/detail-field";
 import { StateMark } from "@/components/state-mark";
 import { getContentFix, rowKeyOf } from "@/data/content-fixes/get-content-fix";
 import { capitalize, formatDate, formatDateTime } from "@/lib/format";
-import { languageName } from "@/lib/language-filter";
+import { languagePairName } from "@/lib/language-filter";
 import { getStaffPasskeyStatus } from "@zoonk/core/staff/content-fixes/decide";
 import { getEnvironment } from "@zoonk/utils/environment";
 import { MAIN_URL, getMainPageUrl } from "@zoonk/utils/url";
@@ -85,7 +85,9 @@ function Where({ fix }: { fix: ContentFixDetail }) {
               "It was deleted after the fix was proposed."
             )}
           </DetailField>
-          <DetailField label="Language">{language ? languageName(language) : null}</DetailField>
+          <DetailField label="Language">
+            {language ? languagePairName(fix.location) : null}
+          </DetailField>
           {mainUrl ? (
             <DetailField label="In Zoonk">
               <a className={LINK_CLASS} href={mainUrl} rel="noreferrer" target="_blank">
