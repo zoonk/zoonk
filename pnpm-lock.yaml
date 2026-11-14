@@ -239,6 +239,9 @@ catalogs:
     '@vercel/analytics':
       specifier: 2.0.1
       version: 2.0.1
+    '@vercel/functions':
+      specifier: 3.11.2
+      version: 3.11.2
     '@vitejs/plugin-react':
       specifier: 6.3.0
       version: 6.3.0
@@ -1134,7 +1137,7 @@ importers:
         specifier: 2.9.0
         version: 2.9.0
       '@vercel/functions':
-        specifier: 3.11.2
+        specifier: 'catalog:'
         version: 3.11.2(@aws-sdk/credential-provider-web-identity@3.972.88)(ws@8.23.0)
       '@vercel/oidc':
         specifier: 4.0.9
@@ -1246,7 +1249,7 @@ importers:
         specifier: 7.10.1
         version: 7.10.1(prisma@7.10.1(@types/node@26.6.6)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(typescript@7.1.0-beta))(typescript@7.1.0-beta)
       '@vercel/functions':
-        specifier: 3.11.2
+        specifier: 'catalog:'
         version: 3.11.2(@aws-sdk/credential-provider-web-identity@3.972.88)(ws@8.23.0)
       '@zoonk/utils':
         specifier: workspace:*
