@@ -133,8 +133,15 @@ struct PlanSuggestionSection: View {
 
     return Group {
       if isShowing {
-        slot(item)
-        answerFailure(item)
+        if item == .finished {
+          SuggestionSheetBody {
+            slot(item)
+          }
+        } else {
+          slot(item)
+            .environment(
+              \.suggestionSheetNote, failed(item) ? BarNote(SuggestionSaveError.message) : nil)
+        }
       }
     }
     .disabled(currentAnswer?.editor.isSaving == true)
@@ -164,6 +171,9 @@ struct PlanSuggestionSection: View {
           } else if isInline {
             slot(item)
             answerFailure(item)
+          } else if isStatement(item) {
+            slot(item)
+              .accessibilityFocused($focus, equals: .item)
           } else {
             let summary = summary(item)
 
@@ -286,11 +296,14 @@ struct PlanSuggestionSection: View {
 
   @ViewBuilder
   private func answerFailure(_ item: PlanSlotItem) -> some View {
-    if currentAnswer?.item == item, currentAnswer?.editor.latest == nil,
-      currentAnswer?.editor.failed == true
-    {
+    if failed(item) {
       SuggestionSaveError()
     }
+  }
+
+  private func failed(_ item: PlanSlotItem) -> Bool {
+    currentAnswer?.item == item && currentAnswer?.editor.latest == nil
+      && currentAnswer?.editor.failed == true
   }
 
   /// Clears the answer once its moment is over, later while the learner is on it or its Undo is
@@ -385,6 +398,11 @@ struct PlanSuggestionSection: View {
     )
   }
 
+  /// The page's bottom bar answers it, so its line says everything and opens nothing.
+  private func isStatement(_ item: PlanSlotItem) -> Bool {
+    item == .paused || (item == .pastDate && context.goal.kind == .exam)
+  }
+
   @ViewBuilder
   private func slot(_ item: PlanSlotItem) -> some View {
     let offers = PlanSlotActions(
@@ -393,7 +411,7 @@ struct PlanSuggestionSection: View {
 
     switch item {
     case .paused:
-      PlanPausedSlot(context: context)
+      PlanPausedSlot(context: context, isLine: !isInline)
     case .choice(let choice) where choice.take > 1:
       PlanSlotCard(
         title: choiceTitle(choice), mark: .symbol("signpost.right"),
@@ -427,20 +445,23 @@ struct PlanSuggestionSection: View {
         title: choiceTitle(choice), mark: .symbol("signpost.right"),
         description: Text(choice.leftOut.line)
       ) {
-        Menu {
+        // Equal picks: one under the other in their order, none drawn as the main answer.
+        VStack(spacing: 8) {
           ForEach(choice.options, id: \.self) { option in
             Button(option.name) {
               choose([option.name], in: choice, item: item)
             }
+            .buttonStyle(.outline)
+            .buttonSizing(.flexible)
           }
-        } label: {
-          Text("Choose", tableName: "Plan", comment: "Opens an exam choice's options")
         }
-        .buttonStyle(.mainAction)
+        .controlSize(.large)
+      } actions: {
+        EmptyView()
       }
     case .pastDate:
       if context.goal.kind == .exam {
-        PlanExamOverSlot(context: context)
+        PlanExamOverSlot(context: context, isLine: !isInline)
       } else {
         PlanPastDateSlot(context: context, actions: offers)
       }
@@ -451,14 +472,7 @@ struct PlanSuggestionSection: View {
     case .coverage(let text):
       PlanCoverageSlot(context: context, title: text, asksAtOnce: !isInline, actions: offers)
     case .courseComplete:
-      VStack(alignment: .leading, spacing: 8) {
-        Label {
-          completeTitle
-            .typeStyle(.body.weight(.semibold))
-        } icon: {
-          StatusMark(status: .done)
-        }
-
+      PlanSlotCard(title: completeTitle, mark: .done, description: nil) {
         CertificateClaimButton(context: context)
       }
     case .finished:
@@ -586,41 +600,71 @@ struct PlanSuggestionSection: View {
   }
 }
 
-/// Its Resume is the Plan's bottom bar (`resumeGoalBar`), so the card only says what pausing means.
+/// Its Resume is the Plan's bottom bar (`resumeGoalBar`), so it only says what pausing means.
 private struct PlanPausedSlot: View {
   @Environment(PlanStore.self) private var store
 
   let context: PlanContext
+  var isLine = false
 
   var body: some View {
     let preview = store.resumeChangesPlan(goalId: context.goal.id)
 
-    VStack(alignment: .leading, spacing: 8) {
-      Label {
-        Text(
-          "Your \(context.goal.displayName) goal is paused", tableName: "Plan",
-          comment: "Title of the Plan's notice for a paused goal"
-        )
-        .typeStyle(.body.weight(.semibold))
-      } icon: {
-        SuggestionMark(kind: .symbol("pause"))
-      }
-
-      Group {
-        if preview.value == true {
-          Text(
-            "Your plan picks up from today, starting with the lessons planned for the days you paused.",
-            tableName: "Plan", comment: "Explains how resuming the paused goal changes its plan")
-        } else {
-          Text(
-            "Nothing is planned until you resume it.", tableName: "Plan",
-            comment: "Explains a paused goal")
-        }
-      }
-      .typeStyle(.note)
-      .foregroundStyle(.mutedForeground)
-    }
+    PlanStatement(
+      mark: .symbol("pause"),
+      title: Text(
+        "Your \(context.goal.displayName) goal is paused", tableName: "Plan",
+        comment: "Title of the Plan's notice for a paused goal"),
+      description: preview.value == true
+        ? Text(
+          "Your plan picks up from today, starting with the lessons planned for the days you paused.",
+          tableName: "Plan", comment: "Explains how resuming the paused goal changes its plan")
+        : Text(
+          "Nothing is planned until you resume it.", tableName: "Plan",
+          comment: "Explains a paused goal"),
+      isLine: isLine
+    )
     .loads(preview, refreshable: false)
+  }
+}
+
+/// A suggestion whose answers are the page's bottom bar: it says what's so and opens nothing. In
+/// the page's column it's a suggestion line with no "View"; beside the page, the card's words.
+struct PlanStatement: View {
+  let mark: SuggestionMark.Kind
+  let title: Text
+  let description: Text
+  var isLine = false
+
+  var body: some View {
+    if isLine {
+      SuggestionLine {
+        SuggestionMark(kind: mark)
+      } summary: {
+        VStack(alignment: .leading, spacing: 2) {
+          title
+          description
+            .typeStyle(.note)
+            .foregroundStyle(.mutedForeground)
+        }
+        .accessibilityElement(children: .combine)
+      } action: {
+        EmptyView()
+      }
+    } else {
+      VStack(alignment: .leading, spacing: 8) {
+        Label {
+          title
+            .typeStyle(.body.weight(.semibold))
+        } icon: {
+          SuggestionMark(kind: mark)
+        }
+
+        description
+          .typeStyle(.note)
+          .foregroundStyle(.mutedForeground)
+      }
+    }
   }
 }
 

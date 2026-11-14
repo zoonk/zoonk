@@ -100,23 +100,27 @@ internal fun PracticeChooser(
     val examChoices = practiceChoices(view.options.filter { it.kind != MockOption.Kind.AREA }, severalDays)
     val subjectChoices = practiceChoices(view.options.filter { it.kind == MockOption.Kind.AREA }, severalDays)
 
-    // A free learner meets the subscription when they press Start: the bar's button becomes Subscribe.
-    var gated by rememberSaveable { mutableStateOf(false) }
-    val start = {
-        option?.let {
+    // A free learner meets the subscription when they press Start: the bar's button becomes Subscribe,
+    // until a purchase opens the mocks (the options reload when the subscription changes).
+    var triedLocked by rememberSaveable { mutableStateOf(false) }
+    val gated = triedLocked && !open
+    val mainAction = {
+        if (gated) {
+            navigator.open(AppRoute.Subscription)
+        } else if (option != null && !busy) {
             onStart()
-            if (open) viewModel.start(it.shape, it.key) else gated = true
+            if (open) viewModel.start(option.shape, option.key) else triedLocked = true
         }
     }
     val action: @Composable (Modifier) -> Unit = { modifier ->
         if (gated) {
-            Button(onClick = { navigator.open(AppRoute.Subscription) }, modifier = modifier.focus(replacementFocus)) {
+            Button(onClick = mainAction, modifier = modifier.focus(replacementFocus)) {
                 Text(stringResource(R.string.subscription_subscribe))
             }
         } else {
             Button(
                 busy = busy,
-                onClick = { start() },
+                onClick = mainAction,
                 modifier = modifier.focus(replacementFocus),
                 enabled = option != null,
             ) { Text(stringResource(R.string.mock_chooser_start)) }
@@ -125,7 +129,7 @@ internal fun PracticeChooser(
 
     ChooserPage(
         listState = listState,
-        onEnter = { start() },
+        onEnter = mainAction,
         note =
             when {
                 gated -> ({ MockGate() })

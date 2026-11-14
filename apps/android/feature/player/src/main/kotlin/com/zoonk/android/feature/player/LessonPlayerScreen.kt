@@ -136,9 +136,9 @@ import com.zoonk.android.ui.components.DropdownMenu
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.ModalBottomSheet
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedIconButton
 import com.zoonk.android.ui.components.PageLoading
-import com.zoonk.android.ui.components.SecondaryButton
 import com.zoonk.android.ui.components.TaskActionBar
 import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TaskSegment
@@ -888,7 +888,7 @@ private fun ActionBar(
 
     val dontKnowAbove = dontKnow && back != null && !isWideLayout()
     val giveUp: @Composable (Modifier) -> Unit = { modifier ->
-        SecondaryButton(
+        OutlinedButton(
             onClick = { step?.let { actions.dontKnow(it.id) } },
             modifier = modifier,
             leadingIcon = { ButtonIcon(R.drawable.ic_help) },
@@ -907,7 +907,7 @@ private fun ActionBar(
             }
             val label: @Composable RowScope.() -> Unit = { Text(stringResource(primary.label.text())) }
             if (primary.label == PrimaryLabel.DontKnowYet) {
-                SecondaryButton(
+                OutlinedButton(
                     onClick = actions::runPrimary,
                     enabled = primary.enabled,
                     busy = primary.busy,

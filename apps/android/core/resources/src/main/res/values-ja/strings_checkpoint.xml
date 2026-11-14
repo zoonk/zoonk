@@ -2,7 +2,6 @@
 <!-- eloqnt-fingerprints-v1
 {
   "checkpoint_after_lessons": "6503df06842e2de94e930bd1b222f474c5bdde257afd5cc1ee166e6157d4f155",
-  "checkpoint_answer": "98516dd67b5f0000a51d54e7202fabe23314a73561ed73f012bf6fd26ea344ad",
   "checkpoint_answers": "cdca993060d201c6d99cae6f0deab5941eefa96c27798b83d020a8b489c04c1f",
   "checkpoint_badge": "66dad14987f016aae86aed33ea00e2ff92b87166abbcac0a4bf265c6ad5d8381",
   "checkpoint_beat": "0c38bca6f74653eb1146debd47757692b152760789ef7c686ea49724a167f2a8",
@@ -134,6 +133,4 @@
     <string name="checkpoint_next_phase_open">次のフェーズ「%1$s」はもう始められます。</string>
     <string name="checkpoint_answers">答え</string>
     <string name="checkpoint_review">答えを見直す</string>
-    <!-- %1$s is the right answer. -->
-    <string name="checkpoint_answer">正解：%1$s</string>
 </resources>

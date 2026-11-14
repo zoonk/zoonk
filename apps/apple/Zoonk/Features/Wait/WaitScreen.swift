@@ -393,7 +393,7 @@ private struct LibraryCourseRow: View {
             .lineLimit(1)
 
           Text(
-            "A Library course fits your goal. Start it now", tableName: "Onboarding",
+            "A course on this is ready now", tableName: "Onboarding",
             comment: "Under a Library course offered while the learner's plan is built"
           )
           .typeStyle(.meta)

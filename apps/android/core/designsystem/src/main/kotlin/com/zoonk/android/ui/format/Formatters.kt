@@ -16,6 +16,7 @@ import android.icu.util.ULocale
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.platform.LocalConfiguration
+import com.zoonk.android.feature.plan.isInAnotherYear
 import java.time.LocalDate
 import java.time.LocalTime
 import java.util.Date
@@ -226,8 +227,6 @@ enum class DateStyle(
 
     /** "Wed, Oct 28": Today's date line. */
     WeekdayDayShort("MMMEEEd"),
-
-    WeekdayShort("EEE"),
 }
 
 fun formatDate(
@@ -236,7 +235,7 @@ fun formatDate(
     style: DateStyle = DateStyle.Day,
     today: LocalDate = LocalDate.now(),
 ): String {
-    val skeleton = if (style.yearWhenAnotherYear && date.year != today.year) "y${style.skeleton}" else style.skeleton
+    val skeleton = if (style.yearWhenAnotherYear && isInAnotherYear(date, today)) "y${style.skeleton}" else style.skeleton
     return formatUtc(Date(date.toEpochDay() * MILLIS_PER_DAY), skeleton, locale)
 }
 
