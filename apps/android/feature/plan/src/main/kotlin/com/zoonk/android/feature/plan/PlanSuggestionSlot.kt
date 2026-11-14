@@ -56,6 +56,7 @@ import com.zoonk.api.models.ExamChoice
 import com.zoonk.api.models.PlanCertificates
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeResult
+import com.zoonk.api.models.PlanFitOffer
 import com.zoonk.api.models.StudyNext
 import kotlinx.coroutines.delay
 
@@ -188,6 +189,7 @@ internal class SlotHost(
     val preview: PlanPreviewState = PlanPreviewState.Idle,
     val requestPreview: (List<PlanOp>) -> Unit = {},
     val clearPreview: () -> Unit = {},
+    val addFitOffer: (PlanFitOffer) -> Unit = {},
     val next: StudyNext? = null,
     val nextLevel: NextLevelStart = NextLevelStart.Idle,
     val onContinue: () -> Unit = {},

@@ -103,6 +103,8 @@ internal fun PlanPreviewResult(
     goalDate: GoalDateMove? = null,
     pending: Boolean = false,
     dateKind: GoalDateKind = GoalDateKind.Unknown,
+    /** The card showed other numbers before this check. */
+    repriced: Boolean = false,
 ) {
     val notNow = stringResource(R.string.plan_not_now)
 
@@ -126,7 +128,7 @@ internal fun PlanPreviewResult(
             if (preview.unchanged) {
                 SuggestionDescription(stringResource(R.string.plan_stays_as_it_is))
             } else {
-                PlanEffectDiff(preview.effect, goalDate = goalDate, dateKind = dateKind)
+                PlanEffectDiff(preview.effect, goalDate = goalDate, dateKind = dateKind, repriced = repriced)
             }
             SuggestionActions {
                 if (!preview.unchanged && preview.effect != null) {
