@@ -74,7 +74,7 @@ export function SessionQueueAsideContent({ queue }: { queue: SessionQueueView })
   const aside = useSessionQueueAside(queue);
 
   return (
-    <TaskAsideContent className="without-aside:hidden with-aside:top-0 with-aside:group-data-aside/task:px-0">
+    <TaskAsideContent className="without-aside:hidden with-aside:top-0 with-aside:group-data-aside/task:px-0 with-aside:group-data-aside/task:pt-0">
       <TaskAsideHeader meta={aside.meta} title={aside.title} />
       <div className="px-6">{aside.children}</div>
     </TaskAsideContent>
