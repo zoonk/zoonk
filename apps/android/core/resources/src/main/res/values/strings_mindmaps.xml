@@ -6,9 +6,7 @@
     </plurals>
     <!-- A mind map row's line under the chapter's title. -->
     <string name="mindmaps_chapter_number">Chapter %1$s</string>
-    <string name="mindmaps_empty_title">No chapter maps yet</string>
-    <string name="mindmaps_empty_description">Every chapter you finish gets one.</string>
-    <string name="mindmaps_keep_studying">Keep studying</string>
+    <string name="mindmaps_empty">No chapter maps yet. Every chapter you finish gets one.</string>
     <!-- A mind map's description for screen readers when it has no words yet. -->
     <string name="mindmaps_alt_chapter">Mind map of %1$s</string>
     <!-- A mind map's description for screen readers: its title, then its central idea. -->
@@ -92,10 +90,8 @@
     <string name="mindmaps_lesson_map">Lesson map</string>
     <!-- Shows every row of a long list. %1$s is how many there are. -->
     <string name="mindmaps_show_all">Show all %1$s</string>
-    <string name="mindmaps_lessons_empty_title">No lesson maps yet</string>
-    <string name="mindmaps_lessons_empty_description">Every lesson ends with one.</string>
-    <string name="mindmaps_saved_empty_title">Nothing saved yet</string>
-    <string name="mindmaps_saved_empty_description">Tap the bookmark on a map to keep it here.</string>
+    <string name="mindmaps_lessons_empty">No lesson maps yet. Every lesson ends with one.</string>
+    <string name="mindmaps_saved_empty">Nothing saved yet. Tap the bookmark on a map to keep it here.</string>
     <!-- Over saved maps that can't open anymore, such as a chapter that left the plan. -->
     <string name="mindmaps_no_longer_available">No longer available</string>
     <!-- Removes a saved map that can't open anymore. -->
