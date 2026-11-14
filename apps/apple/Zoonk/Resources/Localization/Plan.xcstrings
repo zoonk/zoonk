@@ -34614,13 +34614,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Du hast noch %lld Lektion übrig. Weiterlernen oder dieses Ziel archivieren?"
+                  "value" : "Du hast noch %lld Lektion offen. Möchtest du weiterlernen oder dieses Ziel archivieren?"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Du hast noch %lld Lektionen übrig. Weiterlernen oder dieses Ziel archivieren?"
+                  "value" : "Du hast noch %lld Lektionen offen. Möchtest du weiterlernen oder dieses Ziel archivieren?"
                 }
               }
             }
@@ -34668,13 +34668,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Il te reste %lld leçon. Continuer à étudier ou archiver cet objectif ?"
+                  "value" : "Il te reste %lld leçon. Tu veux continuer à la travailler ou archiver cet objectif ?"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Il te reste %lld leçons. Continuer à étudier ou archiver cet objectif ?"
+                  "value" : "Il te reste %lld leçons. Tu veux continuer à les travailler ou archiver cet objectif ?"
                 }
               }
             }
@@ -34704,7 +34704,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "残り%lldレッスンです。学習を続けますか？それとも、この目標をアーカイブしますか？"
+                  "value" : "残りは%lldレッスンです。学習を続けますか、それともこの目標をアーカイブしますか？"
                 }
               }
             }
@@ -34770,7 +34770,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld dersin kaldı. Çalışmaya devam etmek mi, yoksa bu hedefi arşivlemek mi istersin?"
+                  "value" : "%lld dersin kaldı. Çalışmaya devam etmek mi istersin, yoksa bu hedefi arşivlemek mi?"
                 }
               }
             }
