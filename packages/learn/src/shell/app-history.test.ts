@@ -1,5 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { appBackName, goBackToApp, markAppEntry, nameAppEntry } from "./app-history";
+import {
+  appBackName,
+  cameFromApp,
+  goBackToApp,
+  markAppEntry,
+  nameAppEntry,
+  subscribeToHistory,
+} from "./app-history";
 
 /** Only the browser boundary is faked: Next's replace clears an entry's Navigation API state. */
 function browserHistory() {
@@ -112,6 +119,27 @@ describe("app history", () => {
     markAppEntry("(settings)");
 
     expect(appBackName()).toBe("Plan");
+  });
+
+  it("keeps the server's answer until the page marks its own section, then tells its readers", async () => {
+    const history = browserHistory();
+    history.open("/profile");
+    markAppEntry("(settings)");
+    history.open("/settings/memory");
+    const onChange = vi.fn();
+    const unsubscribe = subscribeToHistory(onChange);
+    await Promise.resolve();
+    onChange.mockClear();
+
+    expect(cameFromApp()).toBe(false);
+    expect(appBackName()).toBeNull();
+
+    markAppEntry("(settings)");
+    await Promise.resolve();
+
+    expect(onChange).toHaveBeenCalled();
+    expect(cameFromApp()).toBe(false);
+    unsubscribe();
   });
 
   it("has no name to give when nothing in the app came before", () => {
