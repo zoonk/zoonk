@@ -56,7 +56,9 @@ struct ProfileEditorView: View {
               prompt: Text(
                 "Your name",
                 tableName: "Account",
-                comment: "Placeholder for the profile name field")
+                comment:
+                  "Shown on a certificate where the learner's name goes, until they add one to their profile."
+              )
             ) {
               Text("Name", tableName: "Account", comment: "Profile name field label")
             }
@@ -65,8 +67,7 @@ struct ProfileEditorView: View {
           } hint: {
             if isNameTooLong {
               Text(
-                "Use 150 characters or fewer.", tableName: "Account",
-                comment: "Shown under the profile name field when the typed name is too long"
+                "Use 150 characters or fewer.", tableName: "Account"
               )
               .foregroundStyle(.destructiveText)
             } else if !isRequiredSetup {
@@ -129,6 +130,13 @@ struct ProfileEditorView: View {
       if isRequiredSetup {
         StepButtons(canContinue: isValid, onContinue: save)
           .environment(\.isSavingAnswer, session.isWorking)
+      } else {
+        BusyButton(isBusy: session.isWorking, action: save) {
+          Text("Save", tableName: "Account", comment: "Button that saves profile changes")
+        }
+        .buttonStyle(.mainAction)
+        .disabled(!isValid)
+        .keyboardShortcut(.defaultAction)
       }
     }
     .navigationTitle(
@@ -162,16 +170,6 @@ struct ProfileEditorView: View {
     .onChange(of: name) { isSaved = false }
     .onChange(of: username) { isSaved = false }
     .announcesStatus(isSaved ? Self.savedLine : nil)
-    .toolbar {
-      if !isRequiredSetup {
-        ToolbarItem(placement: .confirmationAction) {
-          BusyButton(isBusy: session.isWorking, icon: .check, action: save) {
-            Text("Save", tableName: "Account", comment: "Button that saves profile changes")
-          }
-          .disabled(!isValid)
-        }
-      }
-    }
   }
 
   private var setupTitle: Text {
@@ -217,8 +215,7 @@ struct ProfileEditorView: View {
       .foregroundStyle(.successText)
     case .taken:
       Text(
-        "\(normalizedUsername) is already taken", tableName: "Account",
-        comment: "Another account has the typed username; the argument is the username"
+        "\(normalizedUsername) is already taken", tableName: "Account"
       )
       .foregroundStyle(.destructiveText)
     case .idle:
@@ -232,8 +229,7 @@ struct ProfileEditorView: View {
   private var usernameRules: Text {
     Text(
       "3-30 characters. Letters a–z, numbers, and underscores only.",
-      tableName: "Account",
-      comment: "Username requirements below the profile field")
+      tableName: "Account")
   }
 
   private func checkUsername() async {

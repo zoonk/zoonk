@@ -71,6 +71,7 @@ struct EmailLoginView: View {
             Text("Continue", tableName: "Account", comment: "Button that verifies an email code")
           }
           .disabled(!isCodeValid && !session.isWorking)
+          .keyboardShortcut(.defaultAction)
 
           Button {
             code = ""
@@ -88,6 +89,7 @@ struct EmailLoginView: View {
               "Continue", tableName: "Account", comment: "Button that sends an email log in code")
           }
           .disabled(!isEmailValid && !session.isWorking)
+          .keyboardShortcut(.defaultAction)
         }
       }
 
