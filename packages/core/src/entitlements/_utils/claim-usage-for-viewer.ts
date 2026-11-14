@@ -5,7 +5,7 @@ import { type UsageDecision } from "../contract";
 import { claimUsageInTransaction } from "./claim-usage-in-transaction";
 import { type EntitlementViewer } from "./entitlement-viewer";
 import { refreshLiveCallViewer } from "./live-call-viewer";
-import { LiveCallReservationRefusedError, reserveLiveCall } from "./reserve-live-call";
+import { reserveLiveCall } from "./reserve-live-call";
 import { lockUsageForViewer } from "./usage-lock";
 
 /** Retries of a used target are free; claims acquire the learner's lock before the usage lock. */
@@ -49,32 +49,24 @@ export async function claimLiveCallUsageForViewer(input: {
   now: Date;
   viewer: EntitlementViewer;
 }): Promise<LiveCallReservationResult> {
-  try {
-    return await writeLearnerChange<LiveCallReservationResult>(
-      { userId: input.viewer.userId },
-      async (transaction) => {
-        await lockUsageForViewer({ transaction, userId: input.viewer.userId });
+  return writeLearnerChange<LiveCallReservationResult>(
+    { userId: input.viewer.userId },
+    async (transaction) => {
+      await lockUsageForViewer({ transaction, userId: input.viewer.userId });
 
-        const viewer = await refreshLiveCallViewer({
-          isGuest: input.viewer.isGuest,
-          now: input.now,
-          transaction,
-          userId: input.viewer.userId,
-        });
+      const viewer = await refreshLiveCallViewer({
+        isGuest: input.viewer.isGuest,
+        now: input.now,
+        transaction,
+        userId: input.viewer.userId,
+      });
 
-        if (!viewer) {
-          return unchanged({ status: "unauthorized" as const });
-        }
+      if (!viewer) {
+        return unchanged({ status: "unauthorized" as const });
+      }
 
-        const result = await reserveLiveCall({ ...input, transaction, viewer });
-        return result.status === "reserved" ? result : unchanged(result);
-      },
-    );
-  } catch (error) {
-    if (error instanceof LiveCallReservationRefusedError) {
-      return error.result;
-    }
-
-    throw error;
-  }
+      const result = await reserveLiveCall({ ...input, transaction, viewer });
+      return result.status === "reserved" ? result : unchanged(result);
+    },
+  );
 }
