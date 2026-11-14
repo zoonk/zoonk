@@ -493,7 +493,6 @@ msgstr "レッスンを始める"
 #: src/mock/mock-frame.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
 #: src/onboarding/steps/step-parts.tsx
-#: src/plan/plan-bases-advice.tsx
 #: src/plan/plan-bases-sheet.tsx
 #: src/plan/plan-offer-preview.tsx
 #: src/plan/plan-past-date-suggestion.tsx
@@ -4875,15 +4874,6 @@ msgctxt "8sxDix"
 msgid "Date to be confirmed"
 msgstr "日程未定"
 
-#. The name of a study step: a live voice call in the language being learned.
-#: src/journey/journey-phase-events.tsx
-#: src/journey/roadmap-full.tsx
-#: src/language/conversation/conversation-live.tsx
-#: src/session/use-block-copy.ts
-msgctxt "f-GKc4"
-msgid "Call"
-msgstr "会話"
-
 #. The learner won this phase challenge.
 #: src/journey/journey-phase-events.tsx
 msgctxt "J15Qzq"
@@ -4894,6 +4884,15 @@ msgstr "勝利"
 msgctxt "f0UFlY"
 msgid "In your next session"
 msgstr "次の学習で"
+
+#. The name of a study step: a live voice call in the language being learned.
+#: src/journey/journey-phase-events.tsx
+#: src/journey/roadmap-full.tsx
+#: src/language/conversation/conversation-live.tsx
+#: src/session/use-block-copy.ts
+msgctxt "f-GKc4"
+msgid "Call"
+msgstr "会話"
 
 #: src/journey/journey-phase-events.tsx
 msgctxt "zHMlZo"
@@ -10317,32 +10316,6 @@ msgctxt "p2OROv"
 msgid "What you practice"
 msgstr "練習内容"
 
-#: src/plan/plan-bases-advice.tsx
-#: src/plan/use-time-to-cover.ts
-msgctxt "ZBKOXO"
-msgid "Your plan is still being built. Try again in a moment."
-msgstr "学習計画を作成しています。もう少し待ってから再度お試しください。"
-
-#: src/plan/plan-bases-advice.tsx
-msgctxt "R0UlFt"
-msgid "We couldn't get a recommendation."
-msgstr "おすすめを確認できませんでした。"
-
-#: src/plan/plan-bases-advice.tsx
-msgctxt "lBDux5"
-msgid "Getting a recommendation…"
-msgstr "おすすめを確認しています…"
-
-#: src/plan/plan-bases-advice.tsx
-msgctxt "EgPIKi"
-msgid "Your plan already follows it."
-msgstr "学習計画にはすでにおすすめの内容が反映されています。"
-
-#: src/plan/plan-bases-advice.tsx
-msgctxt "IdA8la"
-msgid "Get a recommendation"
-msgstr "おすすめを確認する"
-
 #. Choice to study a prerequisite with all its lessons.
 #: src/plan/plan-bases-choices.tsx
 msgctxt "beOzyz"
@@ -10865,21 +10838,6 @@ msgstr "すべてのトピックを学びます。試験前の計画に入りき
 msgctxt "x7ZSzV"
 msgid "Every part of your goal, with no end date."
 msgstr "終了日を決めずに、目標の内容をすべて学びます。"
-
-#: src/plan/use-bases-texts.ts
-msgctxt "wkUyCk"
-msgid "We recommend every lesson. Your time covers them."
-msgstr "すべてのレッスンをおすすめします。学習時間は十分にあります。"
-
-#: src/plan/use-bases-texts.ts
-msgctxt "5yF3ST"
-msgid "We recommend one short lesson each, so there's time for the rest."
-msgstr "ほかの学習にも時間を使えるよう、前提知識はそれぞれ短い1レッスンがおすすめです。"
-
-#: src/plan/use-bases-texts.ts
-msgctxt "jCiV53"
-msgid "We recommend the first lessons only."
-msgstr "最初のレッスンだけ学ぶのがおすすめです。"
 
 #: src/plan/use-bases-texts.ts
 msgctxt "c28kAC"
@@ -11464,6 +11422,11 @@ msgstr "スマートフォンのみ"
 msgctxt "XnimdQ"
 msgid "Windows"
 msgstr "Windows"
+
+#: src/plan/use-time-to-cover.ts
+msgctxt "ZBKOXO"
+msgid "Your plan is still being built. Try again in a moment."
+msgstr "学習計画を作成しています。もう少し待ってから再度お試しください。"
 
 #: src/plan/use-time-to-cover.ts
 msgctxt "g7wBHi"

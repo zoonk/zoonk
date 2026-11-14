@@ -13,7 +13,8 @@ import { type FocusTarget, useKeepFocus } from "../_utils/use-keep-focus";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { type CountryName, type SuggestedCountry } from "../country/country-choice";
 import { type LessonVariety } from "../country/use-country-lines";
-import { getTimeToCoverRevision } from "./time-to-cover-revision";
+import { type BasesAdviceStore, useBasesAdviceStore } from "./bases-advice-store";
+import { getPlanAdviceRevision } from "./plan-advice-revision";
 
 /** `change` is null while the plan isn't built yet. */
 export type PlanChangeOutcome =
@@ -121,6 +122,7 @@ type PlanScreenContextValue = PlanScreenValue & {
   today: string;
   changes: PlanChanges;
   timeToCover: TimeToCoverStore;
+  basesAdvice: BasesAdviceStore;
   /**
    * Call as a save starts: if the save takes the focused control away, focus moves to `target` or
    * the plan's title.
@@ -136,8 +138,7 @@ function findPlanTitle() {
 
 const IDLE: TimeToCoverState = { status: "idle" };
 
-function useTimeToCoverStore(plan: PlanView): TimeToCoverStore {
-  const revision = useMemo(() => getTimeToCoverRevision(plan), [plan]);
+function useTimeToCoverStore(revision: string): TimeToCoverStore {
   const [stored, setStored] = useState<TimeToCoverState>(IDLE);
   const latest = useRef(revision);
   const search = useRef<TimeToCoverSearch | null>(null);
@@ -232,11 +233,15 @@ export function PlanScreenProvider({
     value.plan.week.days.find((day) => day.state === "today")?.date ?? value.plan.week.startDate;
 
   const keepFocus = useKeepFocus(value.plan, findPlanTitle);
-  const timeToCover = useTimeToCoverStore(value.plan);
+  const revision = useMemo(() => getPlanAdviceRevision(value.plan), [value.plan]);
+  const timeToCover = useTimeToCoverStore(revision);
+  const basesAdvice = useBasesAdviceStore({ advise: value.actions.adviseOnBases, revision });
   const { actions, changes } = useCountedChanges(value.actions);
 
   return (
-    <PlanScreenContext value={{ ...value, actions, changes, keepFocus, timeToCover, today }}>
+    <PlanScreenContext
+      value={{ ...value, actions, basesAdvice, changes, keepFocus, timeToCover, today }}
+    >
       {children}
     </PlanScreenContext>
   );

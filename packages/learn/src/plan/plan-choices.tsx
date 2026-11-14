@@ -2,7 +2,6 @@
 
 import { LayersIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
 import {
   ListGroup,
   ListRowButton,
@@ -11,14 +10,14 @@ import {
   ListRowLeading,
   ListRowTitle,
 } from "../_components/list-group";
-import { PlanBasesSheet } from "./plan-bases-sheet";
+import { PlanBasesSheet, useBasesSheet } from "./plan-bases-sheet";
 import { usePlanBases, useSummaryText } from "./use-bases-texts";
 
 export function PlanChoices() {
   const t = useExtracted();
   const bases = usePlanBases();
   const summaryText = useSummaryText();
-  const [basesOpen, setBasesOpen] = useState(false);
+  const sheet = useBasesSheet();
 
   if (!bases) {
     return null;
@@ -26,7 +25,7 @@ export function PlanChoices() {
 
   return (
     <ListGroup aria-label={t("Your choices")} role="group">
-      <ListRowButton aria-haspopup="dialog" onClick={() => setBasesOpen(true)}>
+      <ListRowButton aria-haspopup="dialog" onClick={sheet.show}>
         <ListRowLeading>
           <ListRowIcon>
             <LayersIcon />
@@ -37,7 +36,7 @@ export function PlanChoices() {
         </ListRowContent>
       </ListRowButton>
 
-      <PlanBasesSheet bases={bases} onOpenChange={setBasesOpen} open={basesOpen} />
+      <PlanBasesSheet bases={bases} onOpenChange={sheet.setOpen} open={sheet.open} />
     </ListGroup>
   );
 }

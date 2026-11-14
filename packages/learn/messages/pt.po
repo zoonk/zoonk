@@ -493,7 +493,6 @@ msgstr "Começar a aula"
 #: src/mock/mock-frame.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
 #: src/onboarding/steps/step-parts.tsx
-#: src/plan/plan-bases-advice.tsx
 #: src/plan/plan-bases-sheet.tsx
 #: src/plan/plan-offer-preview.tsx
 #: src/plan/plan-past-date-suggestion.tsx
@@ -4875,15 +4874,6 @@ msgctxt "8sxDix"
 msgid "Date to be confirmed"
 msgstr "Data a confirmar"
 
-#. The name of a study step: a live voice call in the language being learned.
-#: src/journey/journey-phase-events.tsx
-#: src/journey/roadmap-full.tsx
-#: src/language/conversation/conversation-live.tsx
-#: src/session/use-block-copy.ts
-msgctxt "f-GKc4"
-msgid "Call"
-msgstr "Conversa"
-
 #. The learner won this phase challenge.
 #: src/journey/journey-phase-events.tsx
 msgctxt "J15Qzq"
@@ -4894,6 +4884,15 @@ msgstr "Venceu"
 msgctxt "f0UFlY"
 msgid "In your next session"
 msgstr "Na sua próxima sessão"
+
+#. The name of a study step: a live voice call in the language being learned.
+#: src/journey/journey-phase-events.tsx
+#: src/journey/roadmap-full.tsx
+#: src/language/conversation/conversation-live.tsx
+#: src/session/use-block-copy.ts
+msgctxt "f-GKc4"
+msgid "Call"
+msgstr "Conversa"
 
 #: src/journey/journey-phase-events.tsx
 msgctxt "zHMlZo"
@@ -10317,32 +10316,6 @@ msgctxt "p2OROv"
 msgid "What you practice"
 msgstr "O que você pratica"
 
-#: src/plan/plan-bases-advice.tsx
-#: src/plan/use-time-to-cover.ts
-msgctxt "ZBKOXO"
-msgid "Your plan is still being built. Try again in a moment."
-msgstr "Seu plano ainda está sendo criado. Tente de novo em instantes."
-
-#: src/plan/plan-bases-advice.tsx
-msgctxt "R0UlFt"
-msgid "We couldn't get a recommendation."
-msgstr "Não conseguimos obter uma recomendação."
-
-#: src/plan/plan-bases-advice.tsx
-msgctxt "lBDux5"
-msgid "Getting a recommendation…"
-msgstr "Buscando uma recomendação…"
-
-#: src/plan/plan-bases-advice.tsx
-msgctxt "EgPIKi"
-msgid "Your plan already follows it."
-msgstr "Seu plano já segue essa recomendação."
-
-#: src/plan/plan-bases-advice.tsx
-msgctxt "IdA8la"
-msgid "Get a recommendation"
-msgstr "Receber uma recomendação"
-
 #. Choice to study a prerequisite with all its lessons.
 #: src/plan/plan-bases-choices.tsx
 msgctxt "beOzyz"
@@ -10865,21 +10838,6 @@ msgstr "Você estuda todos os tópicos. O que não couber antes da prova fica pa
 msgctxt "x7ZSzV"
 msgid "Every part of your goal, with no end date."
 msgstr "Todo o conteúdo do seu objetivo, sem data de término."
-
-#: src/plan/use-bases-texts.ts
-msgctxt "wkUyCk"
-msgid "We recommend every lesson. Your time covers them."
-msgstr "A gente recomenda todas as aulas. Você tem tempo para todas."
-
-#: src/plan/use-bases-texts.ts
-msgctxt "5yF3ST"
-msgid "We recommend one short lesson each, so there's time for the rest."
-msgstr "A gente recomenda uma aula curta por base, para dar tempo de estudar o resto."
-
-#: src/plan/use-bases-texts.ts
-msgctxt "jCiV53"
-msgid "We recommend the first lessons only."
-msgstr "A gente recomenda só as primeiras aulas."
 
 #: src/plan/use-bases-texts.ts
 msgctxt "c28kAC"
@@ -11464,6 +11422,11 @@ msgstr "Só celular"
 msgctxt "XnimdQ"
 msgid "Windows"
 msgstr "Windows"
+
+#: src/plan/use-time-to-cover.ts
+msgctxt "ZBKOXO"
+msgid "Your plan is still being built. Try again in a moment."
+msgstr "Seu plano ainda está sendo criado. Tente de novo em instantes."
 
 #: src/plan/use-time-to-cover.ts
 msgctxt "g7wBHi"

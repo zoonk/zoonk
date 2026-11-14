@@ -493,7 +493,6 @@ msgstr "레슨 시작하기"
 #: src/mock/mock-frame.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
 #: src/onboarding/steps/step-parts.tsx
-#: src/plan/plan-bases-advice.tsx
 #: src/plan/plan-bases-sheet.tsx
 #: src/plan/plan-offer-preview.tsx
 #: src/plan/plan-past-date-suggestion.tsx
@@ -4875,15 +4874,6 @@ msgctxt "8sxDix"
 msgid "Date to be confirmed"
 msgstr "날짜 미정"
 
-#. The name of a study step: a live voice call in the language being learned.
-#: src/journey/journey-phase-events.tsx
-#: src/journey/roadmap-full.tsx
-#: src/language/conversation/conversation-live.tsx
-#: src/session/use-block-copy.ts
-msgctxt "f-GKc4"
-msgid "Call"
-msgstr "대화"
-
 #. The learner won this phase challenge.
 #: src/journey/journey-phase-events.tsx
 msgctxt "J15Qzq"
@@ -4894,6 +4884,15 @@ msgstr "승리"
 msgctxt "f0UFlY"
 msgid "In your next session"
 msgstr "다음 학습 때"
+
+#. The name of a study step: a live voice call in the language being learned.
+#: src/journey/journey-phase-events.tsx
+#: src/journey/roadmap-full.tsx
+#: src/language/conversation/conversation-live.tsx
+#: src/session/use-block-copy.ts
+msgctxt "f-GKc4"
+msgid "Call"
+msgstr "대화"
 
 #: src/journey/journey-phase-events.tsx
 msgctxt "zHMlZo"
@@ -10317,32 +10316,6 @@ msgctxt "p2OROv"
 msgid "What you practice"
 msgstr "연습 내용"
 
-#: src/plan/plan-bases-advice.tsx
-#: src/plan/use-time-to-cover.ts
-msgctxt "ZBKOXO"
-msgid "Your plan is still being built. Try again in a moment."
-msgstr "아직 계획을 만들고 있어요. 잠시 후에 다시 시도해 보세요."
-
-#: src/plan/plan-bases-advice.tsx
-msgctxt "R0UlFt"
-msgid "We couldn't get a recommendation."
-msgstr "추천을 받지 못했어요."
-
-#: src/plan/plan-bases-advice.tsx
-msgctxt "lBDux5"
-msgid "Getting a recommendation…"
-msgstr "추천을 준비하고 있어요…"
-
-#: src/plan/plan-bases-advice.tsx
-msgctxt "EgPIKi"
-msgid "Your plan already follows it."
-msgstr "계획에 이미 반영되어 있어요."
-
-#: src/plan/plan-bases-advice.tsx
-msgctxt "IdA8la"
-msgid "Get a recommendation"
-msgstr "추천받기"
-
 #. Choice to study a prerequisite with all its lessons.
 #: src/plan/plan-bases-choices.tsx
 msgctxt "beOzyz"
@@ -10865,21 +10838,6 @@ msgstr "모든 주제를 공부해요. 시험 전 일정에 다 넣지 못한 �
 msgctxt "x7ZSzV"
 msgid "Every part of your goal, with no end date."
 msgstr "종료일을 정하지 않고 목표에 필요한 모든 내용을 공부해요."
-
-#: src/plan/use-bases-texts.ts
-msgctxt "wkUyCk"
-msgid "We recommend every lesson. Your time covers them."
-msgstr "모든 레슨을 추천해요. 계획한 시간 안에 끝낼 수 있어요."
-
-#: src/plan/use-bases-texts.ts
-msgctxt "5yF3ST"
-msgid "We recommend one short lesson each, so there's time for the rest."
-msgstr "나머지도 공부할 수 있게 짧은 레슨을 하나씩 추천해요."
-
-#: src/plan/use-bases-texts.ts
-msgctxt "jCiV53"
-msgid "We recommend the first lessons only."
-msgstr "첫 레슨만 추천해요."
 
 #: src/plan/use-bases-texts.ts
 msgctxt "c28kAC"
@@ -11464,6 +11422,11 @@ msgstr "휴대폰만"
 msgctxt "XnimdQ"
 msgid "Windows"
 msgstr "Windows"
+
+#: src/plan/use-time-to-cover.ts
+msgctxt "ZBKOXO"
+msgid "Your plan is still being built. Try again in a moment."
+msgstr "아직 계획을 만들고 있어요. 잠시 후에 다시 시도해 보세요."
 
 #: src/plan/use-time-to-cover.ts
 msgctxt "g7wBHi"

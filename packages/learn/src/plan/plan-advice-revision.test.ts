@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getTimeToCoverRevision } from "./time-to-cover-revision";
+import { getPlanAdviceRevision } from "./plan-advice-revision";
 
 function searchedPlan(planId: string) {
   return {
@@ -47,16 +47,16 @@ function searchedPlan(planId: string) {
   };
 }
 
-describe(getTimeToCoverRevision, () => {
+describe(getPlanAdviceRevision, () => {
   it("keys an answer to the plan it was found for, never to another goal's plan that looks the same", () => {
-    expect(getTimeToCoverRevision(searchedPlan("plan-a"))).not.toBe(
-      getTimeToCoverRevision(searchedPlan("plan-b")),
+    expect(getPlanAdviceRevision(searchedPlan("plan-a"))).not.toBe(
+      getPlanAdviceRevision(searchedPlan("plan-b")),
     );
   });
 
   it("keeps the answer when the same plan comes back unchanged", () => {
-    expect(getTimeToCoverRevision(searchedPlan("plan-a"))).toBe(
-      getTimeToCoverRevision(searchedPlan("plan-a")),
+    expect(getPlanAdviceRevision(searchedPlan("plan-a"))).toBe(
+      getPlanAdviceRevision(searchedPlan("plan-a")),
     );
   });
 });
