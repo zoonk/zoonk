@@ -38,7 +38,9 @@ import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.components.TextButton
+import com.zoonk.android.ui.components.taskOption
 import com.zoonk.android.ui.scaffold.pageTitle
 import com.zoonk.android.ui.scaffold.windowAdaptiveInfo
 import com.zoonk.android.ui.theme.ZoonkRadius
@@ -201,14 +203,23 @@ internal fun ColumnScope.GoalLimitWall(
     }
 }
 
-/** Main's `GoalLimitScreen`: at the goals-at-once limit, starting a goal is only the gate, its words as the heading. */
+/** Main's `GoalLimitScreen`: at the goals-at-once limit, starting a goal is only the gate, its words as the heading and [GoalLimitBar] pinned under it. */
 @Composable
-internal fun ColumnScope.GoalLimitScreen(
+internal fun GoalLimitScreen() {
+    OnboardingHeading(stringResource(R.string.onboarding_goals_at_once_title), stringResource(R.string.onboarding_goals_at_once_line))
+}
+
+/** Main's `GoalLimitBar`, for the page's pinned bar: the Plan, where a goal can be paused, before Subscribe, the main action. */
+@Composable
+internal fun GoalLimitBar(
     onSubscribe: () -> Unit,
     onOpenPlan: () -> Unit,
 ) {
-    OnboardingHeading(stringResource(R.string.onboarding_goals_at_once_title), stringResource(R.string.onboarding_goals_at_once_line))
-    OnboardingActions { GoalLimitButtons(GoalLimitReason.ActiveGoals, onSubscribe, onOpenPlan) }
+    TaskActions(back = {
+        OutlinedButton(onClick = onOpenPlan, modifier = Modifier.taskOption()) { Text(stringResource(R.string.onboarding_go_to_plan)) }
+    }) { main ->
+        Button(onClick = onSubscribe, modifier = main) { Text(stringResource(R.string.subscription_subscribe)) }
+    }
 }
 
 /** Main's `GoalLimitBar`: the Plan, where a goal can be paused, before Subscribe, the main action. */
@@ -355,14 +366,20 @@ internal fun ColumnScope.InstrumentGoal(
 }
 
 @Composable
-internal fun ColumnScope.GuestGoalGate(
+internal fun GuestGoalGate() {
+    OutcomeIcon(R.drawable.ic_person_add)
+    OnboardingHeading(stringResource(R.string.onboarding_guest_gate_title), stringResource(R.string.onboarding_guest_gate_description))
+}
+
+/** [GuestGoalGate]'s pinned bar, as main's: back to Today before the free account, the main action. */
+@Composable
+internal fun GuestGoalBar(
     onCreateAccount: () -> Unit,
     onBackToToday: () -> Unit,
 ) {
-    OutcomeIcon(R.drawable.ic_person_add)
-    OnboardingHeading(stringResource(R.string.onboarding_guest_gate_title), stringResource(R.string.onboarding_guest_gate_description))
-    OnboardingActions {
-        CreateAccountButton(onCreateAccount)
-        TextButton(onClick = onBackToToday, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.onboarding_back_to_today)) }
+    TaskActions(back = {
+        TextButton(onClick = onBackToToday, modifier = Modifier.taskOption()) { Text(stringResource(R.string.onboarding_back_to_today)) }
+    }) { main ->
+        Button(onClick = onCreateAccount, modifier = main) { Text(stringResource(R.string.onboarding_create_account)) }
     }
 }

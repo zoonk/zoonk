@@ -77,6 +77,7 @@ import com.zoonk.android.ui.components.rememberGoalExamples
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
+import com.zoonk.android.ui.scaffold.pageMargin
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.AllowanceResponse
 import com.zoonk.api.models.GoalUnderstanding
@@ -156,11 +157,21 @@ fun StartGoalScreen(
 
     BackHandler(enabled = backInFlow != null) { backInFlow?.invoke() }
 
+    val guestGate = upFront == GoalLimitReason.Guest && screen == StartScreen.Entry
+    val goalLimit = upFront == GoalLimitReason.ActiveGoals && screen == StartScreen.Entry
+
     PageScaffold(
         onBack = { backInFlow?.invoke() ?: navigator.back() },
         actions = {
             if (!hasSession) TextButton(onClick = { navigator.open(AppRoute.Login) }) { Text(stringResource(R.string.gate_log_in)) }
         },
+        bottomBar =
+            when {
+                guestGate -> ({ GuestGoalBar(actions.createAccount, onBackToToday = { navigator.showRoot(AppTab.Today) }) })
+                goalLimit -> ({ GoalLimitBar(onSubscribe = actions.subscribe, onOpenPlan = actions.openPlan) })
+                else -> null
+            },
+        barWidth = 640.dp,
     ) { padding ->
         PageWithSupportingPane(
             // At the goals-at-once limit the page is only the gate, as main drops its rail there.
@@ -169,12 +180,12 @@ fun StartGoalScreen(
         ) { _ ->
             StartColumn {
                 when {
-                    upFront == GoalLimitReason.Guest && screen == StartScreen.Entry -> {
-                        GuestGoalGate(actions.createAccount, onBackToToday = { navigator.showRoot(AppTab.Today) })
+                    guestGate -> {
+                        GuestGoalGate()
                     }
 
-                    upFront == GoalLimitReason.ActiveGoals && screen == StartScreen.Entry -> {
-                        GoalLimitScreen(onSubscribe = actions.subscribe, onOpenPlan = actions.openPlan)
+                    goalLimit -> {
+                        GoalLimitScreen()
                     }
 
                     screen == StartScreen.Entry -> {
@@ -225,7 +236,7 @@ private fun StartColumn(content: @Composable ColumnScope.() -> Unit) {
                         .widthIn(max = 640.dp)
                         .fillMaxWidth()
                         .heightIn(min = windowHeight)
-                        .padding(horizontal = 16.dp, vertical = 16.dp),
+                        .padding(horizontal = pageMargin(), vertical = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(24.dp),
                 content = content,
             )
