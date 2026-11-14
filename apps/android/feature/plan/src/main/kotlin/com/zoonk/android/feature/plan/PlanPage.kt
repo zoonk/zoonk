@@ -13,7 +13,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
@@ -22,7 +21,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -36,7 +34,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.app.LocalNavigationSuiteType
-import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
@@ -67,7 +64,6 @@ import com.zoonk.api.models.LanguageProgress
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.Syllabus
-import kotlinx.coroutines.launch
 
 class PlanLinks(
     private val navigator: AppNavigator,
@@ -208,6 +204,7 @@ internal fun PlanPage(
             latest = latest,
             changes = changes,
             change = viewModel::change,
+            saveFailed = { app.snackbars.show(R.string.plan_save_failed) },
             undo = viewModel::undo,
             setRegion = viewModel::setRegion,
             setContentCountry = viewModel::setContentCountry,
@@ -560,14 +557,10 @@ internal fun PlanEvents(
     viewModel: PlanViewModel,
     navigator: AppNavigator,
 ) {
-    val snackbars: SnackbarHostState = LocalSnackbarHostState.current
-    val saveFailed = stringResource(R.string.plan_save_failed)
-
     LaunchedEffect(viewModel) {
         viewModel.events.collect { event ->
             when (event) {
                 PlanEvent.Archived -> navigator.select(AppTab.Today)
-                PlanEvent.SaveFailed -> snackbars.showSnackbar(saveFailed)
             }
         }
     }
@@ -611,10 +604,6 @@ private fun ExamOverBar(
     archiving: Boolean,
     onArchive: () -> Unit,
 ) {
-    val snackbars = LocalSnackbarHostState.current
-    val scope = rememberCoroutineScope()
-    val saveFailed = stringResource(R.string.plan_save_failed)
-
     BottomBar {
         ExamOverActions(
             goalTitle = page.goal.displayName,
@@ -622,9 +611,7 @@ private fun ExamOverBar(
             archiving = archiving,
             onArchive = onArchive,
             onKeepStudying = {
-                edits.change(PlanPart.FullCourse, STUDY_AFTER_EXAM) { answer ->
-                    if (answer == null) scope.launch { snackbars.showSnackbar(saveFailed) }
-                }
+                edits.change(PlanPart.FullCourse, STUDY_AFTER_EXAM) { answer -> if (answer == null) edits.saveFailed() }
             },
         )
     }

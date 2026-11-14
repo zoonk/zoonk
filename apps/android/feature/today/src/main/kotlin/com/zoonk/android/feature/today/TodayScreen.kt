@@ -187,6 +187,7 @@ private fun TodayRead(
                             )
                         },
                         plans = app.plans,
+                        snackbars = app.snackbars,
                         refreshIfChanged = app.today::refreshIfChanged,
                         language = language,
                         onboarding = app.onboarding,

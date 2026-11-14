@@ -30,7 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
-import com.zoonk.android.app.LocalSnackbarHostState
+import com.zoonk.android.app.AppSnackbars
 import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.Resource
@@ -92,6 +92,7 @@ fun TodayDay(
     plans: PlanStore? = null,
     language: LoadState<LanguageToday>? = null,
     onboarding: OnboardingStore? = null,
+    snackbars: AppSnackbars,
     refreshIfChanged: suspend () -> Boolean,
 ) {
     val poll =
@@ -122,6 +123,7 @@ fun TodayDay(
                 upNext = { if (idle()) viewModel.keepLearning(read, fromUpNext = true) },
                 prepare = { if (idle()) viewModel.prepareLessons(read) },
                 navigate = navigator::open,
+                saveFailed = { snackbars.show(R.string.today_save_failed) },
             )
         }
 
@@ -234,6 +236,8 @@ internal class TodayActionHandlers(
     val upNext: () -> Unit,
     val prepare: () -> Unit,
     val navigate: (AppRoute) -> Unit,
+    /** Said in the app's snackbars, since the save it reports can end after a recreated window took this one's place. */
+    val saveFailed: () -> Unit,
 )
 
 /** The day's one action, pinned to the bottom at every width; what it waits for or why it failed shows over the bar. */
@@ -274,7 +278,7 @@ private fun TodayAction(
 
         when {
             model.pastDate != null && model.today.goal.kind == TodayGoal.Kind.EXAM -> {
-                TodayExamOver(model, viewModel)
+                TodayExamOver(model, viewModel, actions.saveFailed)
             }
 
             model.pastDate != null -> {
@@ -416,19 +420,16 @@ private const val SWITCHING_ALPHA = 0.6f
 private fun TodayExamOver(
     model: TodayDayModel,
     viewModel: TodayViewModel,
+    saveFailed: () -> Unit,
 ) {
     val goal = model.today.goal
     val answer = viewModel.examOverAnswer?.takeIf { it.goalId == goal.id }
-    val snackbars = LocalSnackbarHostState.current
-    val scope = rememberCoroutineScope()
-    val saveFailed = stringResource(R.string.today_save_failed)
-    val failed = { scope.launch { snackbars.showSnackbar(saveFailed) } }
 
     ExamOverActions(
         goalTitle = goal.displayName,
         keeping = answer?.archive == false,
         archiving = answer?.archive == true,
-        onArchive = { viewModel.archiveGoal(goal.id) { failed() } },
-        onKeepStudying = { viewModel.keepStudying(goal.id) { failed() } },
+        onArchive = { viewModel.archiveGoal(goal.id, saveFailed) },
+        onKeepStudying = { viewModel.keepStudying(goal.id, saveFailed) },
     )
 }

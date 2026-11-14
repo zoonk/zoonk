@@ -57,7 +57,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
-import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.app.shell.GoalSwitcherViewModel
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.SessionState
@@ -159,10 +158,8 @@ internal fun SearchPanel(
 ) {
     val text = rememberTextFieldState()
     val scope = rememberCoroutineScope()
-    val snackbars = LocalSnackbarHostState.current
     val switcher = viewModel { GoalSwitcherViewModel(app) }
     val search = viewModel { SearchViewModel(app.today, app.studyOpener) }
-    val continueFailed = stringResource(R.string.search_continue_failed)
     val expanded = state.currentValue == SearchBarValue.Expanded
     val sendFeedback = rememberSendFeedback(app, "command-palette")
 
@@ -203,7 +200,7 @@ internal fun SearchPanel(
             SearchAction.Continue -> {
                 search.continueToday(
                     open = { route -> if (route == null) navigator.showRoot(AppTab.Today) else navigator.open(route) },
-                    failed = { scope.launch { snackbars.showSnackbar(continueFailed) } },
+                    failed = { app.snackbars.show(R.string.search_continue_failed) },
                 )
             }
         }

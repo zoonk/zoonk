@@ -22,7 +22,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,7 +44,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
-import com.zoonk.android.app.LocalSnackbarHostState
+import com.zoonk.android.app.AppSnackbars
 import com.zoonk.android.data.LearningProfileStore
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
@@ -78,13 +77,11 @@ import kotlinx.coroutines.launch
 import java.util.Locale
 import com.zoonk.api.models.Buddy as ProfileBuddy
 
+/** A change that didn't save is put back, and says so in the app's snackbars, which a recreated window still shows. */
 class PreferencesViewModel(
     private val profile: LearningProfileStore,
+    private val snackbars: AppSnackbars,
 ) : ViewModel() {
-    /** A change didn't save: it was put back. */
-    var saveFailed by mutableStateOf(false)
-        private set
-
     var isEditingBuddy by mutableStateOf(false)
         private set
 
@@ -97,10 +94,6 @@ class PreferencesViewModel(
     fun editBuddy(editing: Boolean) {
         isEditingBuddy = editing
         buddySaveFailed = false
-    }
-
-    fun saveFailedShown() {
-        saveFailed = false
     }
 
     fun setSoundsEnabled(enabled: Boolean) = save { profile.setSoundsEnabled(enabled) }
@@ -128,8 +121,7 @@ class PreferencesViewModel(
     }
 
     private fun save(write: suspend () -> Boolean) {
-        saveFailed = false
-        viewModelScope.launch { saveFailed = !write() }
+        viewModelScope.launch { if (!write()) snackbars.show(R.string.settings_preferences_save_failed) }
     }
 }
 
@@ -144,17 +136,8 @@ fun PreferencesScreen(
 ) {
     val profile by app.learningProfile.profile.collectShown()
     val summary by app.learnerSummary.summary.collectShown()
-    val preferences = viewModel { PreferencesViewModel(app.learningProfile) }
+    val preferences = viewModel { PreferencesViewModel(app.learningProfile, app.snackbars) }
     val scope = rememberCoroutineScope()
-    val snackbars = LocalSnackbarHostState.current
-    val saveFailed = stringResource(R.string.settings_preferences_save_failed)
-
-    LaunchedEffect(preferences.saveFailed) {
-        if (preferences.saveFailed) {
-            preferences.saveFailedShown()
-            snackbars.showSnackbar(saveFailed)
-        }
-    }
 
     PageScaffold(onBack = { navigator.back() }, title = { Text(stringResource(R.string.settings_preferences)) }) { padding ->
         Box(

@@ -590,7 +590,7 @@ class MindMapViewModelTest {
             advanceUntilIdle()
 
             assertEquals(0, file.size())
-            assertNull(maps.save.value)
+            assertEquals(emptyList<PictureSave>(), pictureSaves)
         }
 
     @Test
@@ -601,7 +601,7 @@ class MindMapViewModelTest {
             maps.savePicture("https://api.zoonk.test/v1/files/images/a/b.webp") { throw SecurityException("revoked") }
             advanceUntilIdle()
 
-            assertEquals(PictureSave.Failed, maps.save.value)
+            assertEquals(listOf(PictureSave.Failed), pictureSaves)
         }
 
     @Test
@@ -614,7 +614,7 @@ class MindMapViewModelTest {
             advanceUntilIdle()
 
             assertEquals(listOf<Byte>(1, 2, 3), file.toByteArray().toList())
-            assertEquals(PictureSave.Saved, maps.save.value)
+            assertEquals(listOf(PictureSave.Saved), pictureSaves)
         }
 
     @Test
@@ -625,7 +625,7 @@ class MindMapViewModelTest {
             maps.savePicture("https://api.zoonk.test/v1/files/images/a/b.webp") { throw IOException("full") }
             advanceUntilIdle()
 
-            assertEquals(PictureSave.Failed, maps.save.value)
+            assertEquals(listOf(PictureSave.Failed), pictureSaves)
         }
 
     @Test
@@ -793,10 +793,13 @@ class MindMapViewModelTest {
             assertNull(maps.createAll.value)
         }
 
+    /** What each picture save said, in order. */
+    private val pictureSaves = mutableListOf<PictureSave>()
+
     private fun TestScope.setUp(saveFailed: () -> Unit = {}): Triple<MindMapViewModel, MindMapStore, AppCache> {
         val cache = AppCache(FakeSession(ana), CoroutineScope(SupervisorJob() + dispatcher))
         val store = MindMapStore(api, cache)
-        return Triple(MindMapViewModel(store, ana, goalId, { current }, saveFailed, io = dispatcher), store, cache)
+        return Triple(MindMapViewModel(store, ana, goalId, { current }, saveFailed, pictureSaves::add, io = dispatcher), store, cache)
     }
 
     private fun MindMapStore.listed(id: UUID) =

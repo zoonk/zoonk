@@ -12,14 +12,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -36,7 +34,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
-import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.onboarding.WriteOutcome
@@ -53,8 +50,6 @@ import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.LearnerSummaryWaitingGoal
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.toJavaLocalDate
 import java.time.LocalDate
@@ -81,9 +76,6 @@ fun GoalSwitcher(
     val selectedId = pending ?: learner.activeGoalId ?: followed.firstOrNull()?.id
     val selected = followed.firstOrNull { it.id == selectedId } ?: followed.firstOrNull()
     val viewModel = viewModel { GoalSwitcherViewModel(app) }
-    val snackbars = LocalSnackbarHostState.current
-    val resources = LocalResources.current
-    LaunchedEffect(viewModel, resources) { viewModel.failures.collect { snackbars.showSnackbar(resources.getString(it)) } }
     var expanded by rememberSaveable { mutableStateOf(false) }
     var makingRoomFor by rememberSaveable { mutableStateOf<String?>(null) }
 
@@ -276,9 +268,6 @@ private fun MenuItems(
 class GoalSwitcherViewModel(
     private val app: AppContainer,
 ) : ViewModel() {
-    private val failed = Channel<Int>(Channel.CONFLATED)
-    val failures = failed.receiveAsFlow()
-
     private var starting = false
 
     /** The goal a start from the Make room sheet pauses, while that request runs. */
@@ -297,7 +286,7 @@ class GoalSwitcherViewModel(
         viewModelScope.launch {
             val saved = app.switchGoal(goalId)
             // A switch its session didn't outlive (sign-out, another account) isn't the next learner's to retry.
-            if (saved == false && app.sessions.current == session) failed.send(R.string.goal_switcher_failed)
+            if (saved == false && app.sessions.current == session) app.snackbars.show(R.string.goal_switcher_failed)
         }
     }
 
@@ -323,7 +312,7 @@ class GoalSwitcherViewModel(
                 WriteOutcome.Obsolete -> {}
 
                 else -> {
-                    if (pauseGoalId == null) failed.send(R.string.goal_switcher_start_failed) else makeRoomFailed = true
+                    if (pauseGoalId == null) app.snackbars.show(R.string.goal_switcher_start_failed) else makeRoomFailed = true
                 }
             }
             pausing = null

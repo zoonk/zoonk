@@ -79,11 +79,13 @@ class PlanViewModelTest {
     @Test
     fun anyOtherFailureSaysItDidntSave() =
         runTest {
+            var failures = 0
+            val viewModel = PlanViewModel(store, goalId, writingWaits(runs)) { failures++ }
             api.statusFailure = ApiException(ApiError.Network)
 
             viewModel.setStatus(LearnerSummaryGoal.Status.PAUSED)
 
-            assertEquals(PlanEvent.SaveFailed, viewModel.events.first())
+            assertEquals(1, failures)
         }
 
     @Test

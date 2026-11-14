@@ -33,14 +33,12 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import coil3.size.Size
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
-import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
@@ -220,20 +218,10 @@ internal fun rememberSavePicture(
     chapterTitle: String,
 ): () -> Unit {
     val context = LocalContext.current
-    val snackbar = LocalSnackbarHostState.current
-    val save by maps.save.collectAsStateWithLifecycle()
-    val saved = stringResource(R.string.mindmaps_saved)
-    val failed = stringResource(R.string.mindmaps_save_failed)
     val launcher =
         rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument(PICTURE_TYPE)) { uri ->
             if (uri != null) maps.savePicture(image.url) { context.contentResolver.openOutputStream(uri) }
         }
-
-    LaunchedEffect(save) {
-        val result = save ?: return@LaunchedEffect
-        maps.savedShown()
-        snackbar.showSnackbar(if (result == PictureSave.Saved) saved else failed)
-    }
 
     return { launcher.launch(mindMapFileName(chapterTitle)) }
 }
@@ -307,13 +295,16 @@ internal class MindMapsHost(
     val tier: @Composable () -> LimitTier,
     private val currentSession: () -> AuthenticatedSession?,
     private val saveFailed: () -> Unit = {},
+    private val pictureSaved: (PictureSave) -> Unit = {},
 ) {
     @Composable
     fun plus(): Boolean = tier() == LimitTier.Plus
 
     @Composable
     fun maps(goalId: UUID): MindMapViewModel =
-        viewModel(key = "mindmaps-$goalId-${session.localId}") { MindMapViewModel(store, session, goalId, currentSession, saveFailed) }
+        viewModel(key = "mindmaps-$goalId-${session.localId}") {
+            MindMapViewModel(store, session, goalId, currentSession, saveFailed, pictureSaved)
+        }
 }
 
 @Composable
@@ -337,5 +328,6 @@ internal fun mindMapsHost(app: AppContainer): MindMapsHost? {
         },
         currentSession = { app.sessions.current },
         saveFailed = { app.snackbars.show(R.string.mindmaps_save_map_failed) },
+        pictureSaved = { app.snackbars.show(if (it == PictureSave.Saved) R.string.mindmaps_saved else R.string.mindmaps_save_failed) },
     )
 }
