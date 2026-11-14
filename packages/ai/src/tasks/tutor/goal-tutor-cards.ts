@@ -66,12 +66,10 @@ export type ProposeGoalPlanChange = (request: string) => Promise<GoalTutorPlanCh
 
 export type GoalTutorAppToolResult =
   | {
-      /**
-       * `callTimeUsed`: call time is used until tomorrow, next month or, for a guest, an account.
-       */
       offered: {
         cadence?: "biweekly" | "finalWeeks" | "weekly";
-        callTimeUsed?: "day" | "month" | "total";
+        callAvailableAt?: string | null;
+        callTimeUsed?: "day" | "rolling30Days" | "total";
         chapter?: string;
         /** For a variety, a content country or a home country: the country, a two-letter code. */
         country?: string;

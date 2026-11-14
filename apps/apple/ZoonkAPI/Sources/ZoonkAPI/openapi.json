@@ -43852,11 +43852,17 @@
             "description": "When no call time is left: which call time is used up (today's, this month's, or a guest's plan without calls), which is when calls come back",
             "type": "object",
             "properties": {
+              "availableAt": {
+                "nullable": true,
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+              },
               "period": {
                 "type": "string",
                 "enum": [
                   "day",
-                  "month",
+                  "rolling30Days",
                   "total"
                 ]
               },
@@ -46238,45 +46244,6 @@
             "additionalProperties": false,
             "description": "Active goals and the plan's cap, or null for none"
           },
-          "callTime": {
-            "type": "object",
-            "properties": {
-              "limitSeconds": {
-                "nullable": true,
-                "description": "Seconds of live calls the plan allows each UTC day, or null for none",
-                "type": "integer",
-                "minimum": -9007199254740991,
-                "maximum": 9007199254740991
-              },
-              "monthLimitSeconds": {
-                "nullable": true,
-                "description": "Seconds of live calls the plan allows each UTC month, or null for none",
-                "type": "integer",
-                "minimum": -9007199254740991,
-                "maximum": 9007199254740991
-              },
-              "usedSeconds": {
-                "type": "integer",
-                "minimum": -9007199254740991,
-                "maximum": 9007199254740991,
-                "description": "Seconds held or used by live calls this UTC day"
-              },
-              "usedSecondsThisMonth": {
-                "type": "integer",
-                "minimum": -9007199254740991,
-                "maximum": 9007199254740991,
-                "description": "Seconds held or used by live calls this UTC month"
-              }
-            },
-            "required": [
-              "limitSeconds",
-              "monthLimitSeconds",
-              "usedSeconds",
-              "usedSecondsThisMonth"
-            ],
-            "additionalProperties": false,
-            "description": "Live call time today and this month: each connection holds the call's length, and an ended call keeps what it ran. Don't show learners these amounts; plans only say that Plus has higher call limits"
-          },
           "examPrep": {
             "type": "object",
             "properties": {
@@ -46326,19 +46293,13 @@
                 "type": "string",
                 "format": "date-time",
                 "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-              },
-              "month": {
-                "type": "string",
-                "format": "date-time",
-                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
               }
             },
             "required": [
-              "day",
-              "month"
+              "day"
             ],
             "additionalProperties": false,
-            "description": "When daily and monthly counts start over"
+            "description": "When the UTC daily counts start over"
           },
           "tier": {
             "type": "string",
@@ -46352,7 +46313,6 @@
         },
         "required": [
           "activeGoals",
-          "callTime",
           "examPrep",
           "generatedLessons",
           "items",
@@ -46360,19 +46320,9 @@
           "tier"
         ],
         "additionalProperties": false,
-        "description": "Free learners share 20 distinct counted lesson starts in a rolling 30 times 24 hours across all goals, including exams. The lessonStart entry returns usedLast30Days, rollingLimit, remaining and availableAt. A refused start returns 402 USAGE_LIMIT_REACHED with details.limit period=rolling30Days and availableAt, so no second read or client date arithmetic is needed. Claims exactly 30 days old are outside the window. Replays of a counted lesson never count again, whatever its age. Automatic preparation is bounded separately by counted starts plus unstarted preparations, and counts toward the learner allowance only when first started. A map explicitly requested by the learner counts each lesson it writes first at map admission. A map bundle uses resource=chapterLessons and returns the instant all its new lessons fit; more than 20 new lessons uses period=total and availableAt=null rather than claiming used lessons. Internal automatic-preparation refusals use resource=lessonPreparation. Other resources retain UTC calendar-month limits and resets.month applies only to them."
+        "description": "Free learners share 20 distinct counted lesson starts in a rolling 30 times 24 hours across all goals, including exams. The lessonStart entry returns usedLast30Days, rollingLimit, remaining and availableAt. A refused start returns 402 USAGE_LIMIT_REACHED with details.limit period=rolling30Days and availableAt, so no second read or client date arithmetic is needed. Claims exactly 30 days old are outside the window. Replays of a counted lesson never count again, whatever its age. Automatic preparation is bounded separately by counted starts plus unstarted preparations, and counts toward the learner allowance only when first started. A map explicitly requested by the learner counts each lesson it writes first at map admission. A map bundle uses resource=chapterLessons and returns the instant all its new lessons fit; more than 20 new lessons uses period=total and availableAt=null rather than claiming used lessons. Internal automatic-preparation refusals use resource=lessonPreparation. Every monthly cap uses the same rolling window. Nothing resets on the first of a calendar month. Each item returns rollingLimit, usedLast30Days and availableAt. Conversation amounts are seconds."
       },
       "AllowanceItem": {
-        "anyOf": [
-          {
-            "$ref": "#/components/schemas/LessonAllowanceItem"
-          },
-          {
-            "$ref": "#/components/schemas/MonthlyAllowanceItem"
-          }
-        ]
-      },
-      "LessonAllowanceItem": {
         "type": "object",
         "properties": {
           "dailyLimit": {
@@ -46391,7 +46341,7 @@
           },
           "remaining": {
             "nullable": true,
-            "description": "Uses left before a hard cap, or null",
+            "description": "Uses left before a hard cap, or null; conversation amounts are seconds",
             "type": "integer",
             "minimum": -9007199254740991,
             "maximum": 9007199254740991
@@ -46407,17 +46357,17 @@
             "type": "integer",
             "minimum": -9007199254740991,
             "maximum": 9007199254740991,
-            "description": "Uses this UTC day"
+            "description": "Uses this UTC day; seconds for conversation, claims otherwise"
           },
           "usedTotal": {
             "type": "integer",
             "minimum": -9007199254740991,
             "maximum": 9007199254740991,
-            "description": "Uses ever"
+            "description": "Claims ever, including conversation starts"
           },
           "availableAt": {
             "nullable": true,
-            "description": "Instant a new lesson becomes available when the rolling cap is reached; null while rolling capacity remains or the tier has no rolling cap. The twentieth-newest claim time plus 30 times 24 hours, including when existing usage exceeds 20",
+            "description": "Instant rolling capacity permits another unit; null below all rolling caps. Conversation guarantees positive seconds and positive call money budget, not a chosen duration. A known-duration refusal returns the instant its full seconds and reservation cost fit. Current daily blockers may delay the opening.",
             "type": "string",
             "format": "date-time",
             "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
@@ -46425,12 +46375,21 @@
           "kind": {
             "type": "string",
             "enum": [
-              "lessonStart"
+              "lessonStart",
+              "explanation",
+              "goal",
+              "tutorMessage",
+              "upload",
+              "conversation",
+              "assist",
+              "mindMap",
+              "outline",
+              "mockQuestions"
             ]
           },
           "rollingLimit": {
             "nullable": true,
-            "description": "Hard cap on new lesson claims in the preceding 30 times 24 hours; null for tiers without this cap",
+            "description": "Cap in the preceding 30 times 24 hours; conversation amounts are seconds, other kinds count claims. Null when uncapped.",
             "type": "integer",
             "minimum": -9007199254740991,
             "maximum": 9007199254740991
@@ -46439,7 +46398,7 @@
             "type": "integer",
             "minimum": -9007199254740991,
             "maximum": 9007199254740991,
-            "description": "Counted lesson starts newer than now minus 30 times 24 hours; includes explicitly requested map preparation and conservatively counts server clock skew"
+            "description": "Usage newer than now minus 30 times 24 hours; seconds for conversation and counted claims otherwise. Lesson starts use their counted instant; automatic preparation is excluded until started."
           }
         },
         "required": [
@@ -46453,90 +46412,6 @@
           "kind",
           "rollingLimit",
           "usedLast30Days"
-        ],
-        "additionalProperties": false
-      },
-      "MonthlyAllowanceItem": {
-        "type": "object",
-        "properties": {
-          "dailyLimit": {
-            "nullable": true,
-            "description": "Hard cap per UTC day, or null",
-            "type": "integer",
-            "minimum": -9007199254740991,
-            "maximum": 9007199254740991
-          },
-          "fairUseDailyLimit": {
-            "nullable": true,
-            "description": "Above this many a day, new uses are spaced out instead of blocked",
-            "type": "integer",
-            "minimum": -9007199254740991,
-            "maximum": 9007199254740991
-          },
-          "remaining": {
-            "nullable": true,
-            "description": "Uses left before a hard cap, or null",
-            "type": "integer",
-            "minimum": -9007199254740991,
-            "maximum": 9007199254740991
-          },
-          "totalLimit": {
-            "nullable": true,
-            "description": "Hard cap for as long as the account exists",
-            "type": "integer",
-            "minimum": -9007199254740991,
-            "maximum": 9007199254740991
-          },
-          "usedToday": {
-            "type": "integer",
-            "minimum": -9007199254740991,
-            "maximum": 9007199254740991,
-            "description": "Uses this UTC day"
-          },
-          "usedTotal": {
-            "type": "integer",
-            "minimum": -9007199254740991,
-            "maximum": 9007199254740991,
-            "description": "Uses ever"
-          },
-          "kind": {
-            "type": "string",
-            "enum": [
-              "explanation",
-              "goal",
-              "tutorMessage",
-              "upload",
-              "conversation",
-              "assist",
-              "mindMap",
-              "outline",
-              "mockQuestions"
-            ]
-          },
-          "monthlyLimit": {
-            "nullable": true,
-            "description": "Hard cap per UTC calendar month, or null",
-            "type": "integer",
-            "minimum": -9007199254740991,
-            "maximum": 9007199254740991
-          },
-          "usedThisMonth": {
-            "type": "integer",
-            "minimum": -9007199254740991,
-            "maximum": 9007199254740991,
-            "description": "Uses this UTC calendar month"
-          }
-        },
-        "required": [
-          "dailyLimit",
-          "fairUseDailyLimit",
-          "remaining",
-          "totalLimit",
-          "usedToday",
-          "usedTotal",
-          "kind",
-          "monthlyLimit",
-          "usedThisMonth"
         ],
         "additionalProperties": false
       },
@@ -77396,7 +77271,7 @@
       },
       "StudyReminderOffer": {
         "nullable": true,
-        "description": "While no reminder channel is on and the offer was never shown: offer study reminders at `time` (the saved time, the goal's study time or 19:00). Show it on the day's summary, where the learner is done for the day, never at a lesson's end, and claim it with POST /me/study-reminder/offer when it's shown. Null otherwise",
+        "description": "Set while no reminder channel is on and the offer was never shown: the time study reminders would be offered at is `time` (the saved time, the goal's study time or 19:00). POST /me/study-reminder/offer marks it shown. Null otherwise",
         "type": "object",
         "properties": {
           "time": {
@@ -82926,7 +82801,7 @@
         "type": "object",
         "properties": {
           "availableAt": {
-            "description": "The instant a rolling lessonStart or chapterLessons request fits, from recorded starts before the request; null for a chapterLessons request larger than the free plan; omitted for automatic lessonPreparation and calendar limits",
+            "description": "The instant the refused rolling request fits the recorded quota: all requested lessons, or the requested talk seconds and full call reservation cost. Includes a currently blocking UTC-day reset. Null if the request exceeds a rolling cap; omitted for nonrolling limits.",
             "nullable": true,
             "type": "string",
             "format": "date-time",
@@ -82941,7 +82816,6 @@
             "type": "string",
             "enum": [
               "day",
-              "month",
               "rolling30Days",
               "total"
             ]
@@ -88219,13 +88093,20 @@
       "MindMapAllowanceStop": {
         "type": "object",
         "properties": {
+          "availableAt": {
+            "nullable": true,
+            "description": "When the allowance that stopped it comes back; null when it never does (`total`) or isn't known",
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+          },
           "period": {
             "nullable": true,
             "description": "Which of the learner's limits ran out; null for `slowDown` and `signUpRequired`",
             "type": "string",
             "enum": [
               "day",
-              "month",
+              "rolling30Days",
               "total"
             ]
           },
@@ -88236,14 +88117,7 @@
               "slowDown",
               "signUpRequired"
             ],
-            "description": "`limitReached`: a mind map limit or the day's AI budget ran out. `slowDown`: try again after `resetsAt`. `signUpRequired`: a guest must create an account to make more"
-          },
-          "resetsAt": {
-            "nullable": true,
-            "description": "When the allowance that stopped it comes back; null when it never does (`total`) or isn't known",
-            "type": "string",
-            "format": "date-time",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+            "description": "`limitReached`: a mind map limit or the day's AI budget ran out. `slowDown`: try again after `availableAt`. `signUpRequired`: a guest must create an account to make more"
           },
           "resource": {
             "nullable": true,
@@ -88256,9 +88130,9 @@
           }
         },
         "required": [
+          "availableAt",
           "period",
           "reason",
-          "resetsAt",
           "resource"
         ],
         "additionalProperties": false
@@ -89545,6 +89419,13 @@
       "AnytimeMock": {
         "type": "object",
         "properties": {
+          "availableAt": {
+            "description": "For a short mock stopped by the rolling question-writing cap: instant the full mock question-writing request can be admitted; absent when no rolling cap stopped it.",
+            "nullable": true,
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+          },
           "examQuestions": {
             "description": "For `short`: the questions of what was picked, in the real exam",
             "type": "integer",
@@ -89564,7 +89445,7 @@
             "type": "string",
             "enum": [
               "day",
-              "month",
+              "rolling30Days",
               "total"
             ]
           },
