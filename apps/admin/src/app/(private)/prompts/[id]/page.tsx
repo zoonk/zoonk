@@ -9,6 +9,7 @@ import { DetailField, DetailFields } from "@/components/detail-field";
 import { type AdminPrompt, getPrompt } from "@/data/prompts/get-prompt";
 import { formatDateTime } from "@/lib/format";
 import { languageName } from "@/lib/language-filter";
+import { LINK_CLASS } from "@/lib/link-class";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
@@ -44,11 +45,7 @@ function PromptDetails({ prompt }: { prompt: AdminPrompt }) {
   return (
     <DetailFields>
       <DetailField label="Learner">
-        <Link
-          className="hit-area relative underline underline-offset-3"
-          href={`/users/${user.id}`}
-          prefetch
-        >
+        <Link className={LINK_CLASS} href={`/users/${user.id}`} prefetch>
           {getPromptLearnerLabel(user)}
         </Link>
         {email && <span className="text-muted-foreground block">{email}</span>}

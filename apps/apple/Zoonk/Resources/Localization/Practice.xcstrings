@@ -2943,19 +2943,19 @@
     "After %lld short lessons on what tripped you up." : {
       "comment" : "Short lessons a learner takes before a Trickster rematch.",
       "localizations" : {
-        "fr" : {
+        "de" : {
           "variations" : {
             "plural" : {
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Après %lld courte leçon sur ce qui t’a posé problème."
+                  "value" : "Nach %lld kurzer Lektion zu dem, was dir schwergefallen ist."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Après %lld courtes leçons sur ce qui t’a posé problème."
+                  "value" : "Nach %lld kurzen Lektionen zu dem, was dir schwergefallen ist."
                 }
               }
             }
@@ -2979,36 +2979,6 @@
             }
           }
         },
-        "tr" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Zorlandığın konularda %lld kısa dersten sonra."
-                }
-              }
-            }
-          }
-        },
-        "it" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Dopo %lld breve lezione su quello che ti ha messo in difficoltà."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Dopo %lld brevi lezioni su quello che ti ha messo in difficoltà."
-                }
-              }
-            }
-          }
-        },
         "es" : {
           "variations" : {
             "plural" : {
@@ -3027,19 +2997,37 @@
             }
           }
         },
-        "de" : {
+        "fr" : {
           "variations" : {
             "plural" : {
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Nach %lld kurzer Lektion zu dem, was dir schwergefallen ist."
+                  "value" : "Après %lld courte leçon sur ce qui t’a posé problème."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Nach %lld kurzen Lektionen zu dem, was dir schwergefallen ist."
+                  "value" : "Après %lld courtes leçons sur ce qui t’a posé problème."
+                }
+              }
+            }
+          }
+        },
+        "it" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Dopo %lld breve lezione su quello che ti ha messo in difficoltà."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Dopo %lld brevi lezioni su quello che ti ha messo in difficoltà."
                 }
               }
             }
@@ -3100,6 +3088,18 @@
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "Depois de %lld aulas curtas sobre o que você errou."
+                }
+              }
+            }
+          }
+        },
+        "tr" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Zorlandığın konularda %lld kısa dersten sonra."
                 }
               }
             }
@@ -3699,65 +3699,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Meydan okuma, ikinci deneme"
-          }
-        }
-      }
-    },
-    "Chapter test" : {
-      "comment" : "Title of a chapter test.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kapiteltest"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prueba del capítulo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Test du chapitre"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Test sul capitolo"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "章のテスト"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "챕터 테스트"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Test z rozdziału"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Teste do capítulo"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ünite testi"
           }
         }
       }
@@ -11014,22 +10955,10 @@
     "Rematch next time you study" : {
       "comment" : "A lost Trickster duel is back in the plan for the next session.",
       "localizations" : {
-        "fr" : {
+        "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Revanche à ta prochaine séance"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bir sonraki çalışmanda rövanş"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rivincita la prossima volta che studi"
+            "value" : "Bei deiner nächsten Lerneinheit noch einmal"
           }
         },
         "es" : {
@@ -11038,10 +10967,16 @@
             "value" : "Revancha la próxima vez que estudies"
           }
         },
-        "de" : {
+        "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bei deiner nächsten Lerneinheit noch einmal"
+            "value" : "Revanche à ta prochaine séance"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rivincita la prossima volta che studi"
           }
         },
         "ja" : {
@@ -11067,28 +11002,22 @@
             "state" : "translated",
             "value" : "Revanche na próxima vez que você estudar"
           }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir sonraki çalışmanda rövanş"
+          }
         }
       }
     },
     "Rematch tomorrow" : {
       "comment" : "When a lost Trickster duel comes back.",
       "localizations" : {
-        "fr" : {
+        "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Revanche demain"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Yarın rövanş"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rivincita domani"
+            "value" : "Morgen noch einmal"
           }
         },
         "es" : {
@@ -11097,10 +11026,16 @@
             "value" : "Revancha mañana"
           }
         },
-        "de" : {
+        "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Morgen noch einmal"
+            "value" : "Revanche demain"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rivincita domani"
           }
         },
         "ja" : {
@@ -11125,6 +11060,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Revanche amanhã"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yarın rövanş"
           }
         }
       }
@@ -12816,6 +12757,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Adımlara sırayla dokun."
+          }
+        }
+      }
+    },
+    "Test: %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Test: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prueba: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Test : %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Test: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "テスト：%@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "테스트: %@"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Test: %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Teste: %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Test: %@"
           }
         }
       }
@@ -15779,22 +15778,10 @@
     "What's next" : {
       "comment" : "Heading over when a lost Trickster duel comes back.",
       "localizations" : {
-        "fr" : {
+        "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La suite"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sıradaki adımlar"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prossimi passi"
+            "value" : "Wie es weitergeht"
           }
         },
         "es" : {
@@ -15803,10 +15790,16 @@
             "value" : "Lo que sigue"
           }
         },
-        "de" : {
+        "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wie es weitergeht"
+            "value" : "La suite"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prossimi passi"
           }
         },
         "ja" : {
@@ -15831,6 +15824,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "O que vem a seguir"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sıradaki adımlar"
           }
         }
       }
@@ -16664,22 +16663,10 @@
     "You won the rematch" : {
       "comment" : "A lost Trickster duel was won on a later try.",
       "localizations" : {
-        "fr" : {
+        "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu as gagné la revanche"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rövanşı kazandın"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai vinto la rivincita"
+            "value" : "Noch einmal versucht und gewonnen"
           }
         },
         "es" : {
@@ -16688,10 +16675,16 @@
             "value" : "Ganaste la revancha"
           }
         },
-        "de" : {
+        "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Noch einmal versucht und gewonnen"
+            "value" : "Tu as gagné la revanche"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hai vinto la rivincita"
           }
         },
         "ja" : {
@@ -16716,6 +16709,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Você venceu a revanche"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rövanşı kazandın"
           }
         }
       }

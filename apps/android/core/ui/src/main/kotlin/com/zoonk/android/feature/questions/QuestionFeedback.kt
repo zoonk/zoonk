@@ -10,7 +10,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.LayoutDirection
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.DiffKind
@@ -22,6 +26,9 @@ import com.zoonk.android.ui.components.FeedbackTone
 import com.zoonk.android.ui.components.FeedbackVerdict
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMathAnswer
+import com.zoonk.android.ui.richtext.RichTextLine
+import com.zoonk.android.ui.richtext.SpokenText
+import com.zoonk.android.ui.theme.GeistMono
 
 /**
  * What a checked question got (main's `QuestionFeedback`): the verdict and any streak, the right
@@ -82,7 +89,9 @@ fun verdict(
 
 /**
  * [label] around an answer: picked options, pairs and numbers as item text with their math, and a
- * typed answer exactly as typed, since it's plain text (`__init__` keeps its underscores).
+ * typed answer exactly as typed, since it's plain text (`__init__` keeps its underscores). With
+ * [mutedLabel], the label's words are muted and a number is set in mono, as main's checkpoint
+ * review draws its "Answer:" line.
  */
 @Composable
 fun AnswerLine(
@@ -91,10 +100,27 @@ fun AnswerLine(
     question: Question,
     words: TrueFalseWords,
     style: TextStyle,
+    mutedLabel: Boolean = false,
 ) {
-    val line = stringResource(label, answerText(answer, question, words) ?: return)
-    if (answer is Answer.Text) Text(line, style = style) else ItemLine(line, style = style)
+    val text = answerText(answer, question, words) ?: return
+    if (!mutedLabel) {
+        val line = stringResource(label, text)
+        if (answer is Answer.Text) Text(line, style = style) else ItemLine(line, style = style)
+        return
+    }
+    val (before, after) = stringResource(label, ANSWER_MARK).split(ANSWER_MARK).let { it.first() to it.getOrElse(1) { "" } }
+    val shown = if (answer is Answer.Text) SpokenText(AnnotatedString(text)) else itemLine(text)
+    val muted = SpanStyle(color = MaterialTheme.colorScheme.onSurfaceVariant)
+    val line =
+        buildAnnotatedString {
+            withStyle(muted) { append(before) }
+            if (answer is Answer.Numeric) withStyle(SpanStyle(fontFamily = GeistMono)) { append(shown.text) } else append(shown.text)
+            withStyle(muted) { append(after) }
+        }
+    RichTextLine(SpokenText(line, shown.spoken?.let { before + it + after }), Modifier, style)
 }
+
+private const val ANSWER_MARK = "\uE000"
 
 /** An answer in words: an option's, steps in their order, pairs, a number with its unit. */
 @Composable

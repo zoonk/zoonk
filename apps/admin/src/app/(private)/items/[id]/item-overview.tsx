@@ -5,11 +5,10 @@ import { DetailField, DetailFields } from "@/components/detail-field";
 import { ProvenanceFields } from "@/components/provenance";
 import { type AdminItem } from "@/data/items/get-item";
 import { formatDate, formatDateTime } from "@/lib/format";
+import { LINK_CLASS } from "@/lib/link-class";
 import Link from "next/link";
 
 const CALIBRATION_DIGITS = 2;
-const LINK_CLASS = "hit-area relative underline underline-offset-3";
-
 /** How far from an average question counts as easier or harder than most. */
 const NOTABLE_DIFFICULTY = 0.5;
 

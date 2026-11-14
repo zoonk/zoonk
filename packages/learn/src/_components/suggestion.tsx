@@ -188,9 +188,12 @@ export function SuggestionOpen({ children }: { children?: React.ReactNode }) {
 export function SuggestionContent({
   children,
   className,
+  statement = false,
 }: {
   children: React.ReactNode;
   className?: string;
+  /** The line says it all and the page's own bar answers it, so the line opens no sheet. */
+  statement?: boolean;
 }) {
   const { answered, label, section } = useSuggestion();
 
@@ -207,16 +210,18 @@ export function SuggestionContent({
 
       {/* Closed by an answer, the sheet hands focus to the suggestion, since "View" is gone by
           then. */}
-      <DrawerPopup aria-label={label} finalFocus={answered ? section : true}>
-        <PresentationContext value="sheet">
-          <DrawerContent
-            className="flex flex-col gap-4 pt-4 pb-[max(1.5rem,env(safe-area-inset-bottom))]"
-            data-slot="suggestion-sheet"
-          >
-            {children}
-          </DrawerContent>
-        </PresentationContext>
-      </DrawerPopup>
+      {!statement && (
+        <DrawerPopup aria-label={label} finalFocus={answered ? section : true}>
+          <PresentationContext value="sheet">
+            <DrawerContent
+              className="flex flex-col gap-4 pt-4 pb-[max(1.5rem,env(safe-area-inset-bottom))]"
+              data-slot="suggestion-sheet"
+            >
+              {children}
+            </DrawerContent>
+          </PresentationContext>
+        </DrawerPopup>
+      )}
     </>
   );
 }

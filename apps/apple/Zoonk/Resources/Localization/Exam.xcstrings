@@ -2390,6 +2390,64 @@
         }
       }
     },
+    "Day not set yet" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tag steht noch nicht fest"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Día aún sin definir"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jour pas encore fixé"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Giorno ancora da definire"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "試験日未定"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "날짜 미정"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dzień jeszcze nieustalony"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dia ainda não definido"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gün henüz belli değil"
+          }
+        }
+      }
+    },
     "Did you pass?" : {
       "comment" : "Asks whether the learner passed",
       "localizations" : {
@@ -5413,65 +5471,6 @@
         }
       }
     },
-    "The month you told us. We'll tell you the day once it's set." : {
-      "comment" : "A named month, before the exam's day is set",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Der Monat, den du uns genannt hast. Wir sagen dir Bescheid, sobald der Tag feststeht."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "El mes que nos dijiste. Te avisaremos cuando se confirme el día."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le mois que tu nous as indiqué. On te précisera le jour dès qu’il sera fixé."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il mese che ci hai indicato. Ti diremo il giorno appena verrà fissato."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "教えてもらった月です。日にちが決まったらお知らせします。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "알려 주신 달이에요. 시험 날짜가 정해지면 알려 드릴게요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Podany przez ciebie miesiąc. Damy ci znać, gdy będzie znana dokładna data."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O mês que você informou. A gente avisa o dia assim que for definido."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bize söylediğin ay. Gün kesinleşince haber vereceğiz."
-          }
-        }
-      }
-    },
     "The two days" : {
       "comment" : "A two-day exam's format",
       "localizations" : {
@@ -5940,6 +5939,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu tarihi kullan"
+          }
+        }
+      }
+    },
+    "We'll tell you the day once it's set." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir sagen dir Bescheid, sobald der Tag feststeht."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Te avisaremos cuando se defina el día."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On te dira le jour dès qu’il sera fixé."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ti diremo il giorno appena sarà fissato."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "試験日が決まり次第お知らせします。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "날짜가 정해지면 알려 드릴게요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Damy ci znać, gdy dzień zostanie ustalony."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A gente te avisa quando o dia for definido."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gün belli olduğunda sana haber vereceğiz."
           }
         }
       }

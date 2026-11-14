@@ -251,9 +251,12 @@ struct MockPoints: Hashable, Decodable, Sendable {
 
   /// Each test, and the tests together when they have a minimum. Misses come first, so what would
   /// eliminate the learner is read before what went fine.
+  /// Misses first, so what would eliminate the learner is read before what went fine. The total
+  /// joins the tests when it has a minimum to judge, or when a missed minimum takes the result's
+  /// headline, which is where the total showed.
   var tests: [Test] {
     let together =
-      minimum == nil
+      minimum == nil && !parts.contains(where: { $0.met == false })
       ? []
       : [
         Test(
@@ -266,6 +269,11 @@ struct MockPoints: Hashable, Decodable, Sendable {
   }
 
   var hasTests: Bool { !parts.isEmpty || minimum != nil || !unjudged.isEmpty }
+
+  /// The mock exam checked at least one minimum and every one was reached.
+  var reachedEveryMinimum: Bool {
+    tests.contains { $0.met == true } && !tests.contains { $0.met == false }
+  }
 }
 
 struct NetCalibration: Hashable, Decodable, Sendable {
