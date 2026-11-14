@@ -8,6 +8,7 @@ import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import {
   appBackName,
+  backLinkName,
   cameFromApp,
   goBackTo,
   goBackToApp,
@@ -110,8 +111,7 @@ function LearnBackLink({
   const ref = useEscapeClick<HTMLAnchorElement>();
   const appName = useAppBackName();
   const tabName = useTabName(href);
-  const ownName = label || tabName || t("Back");
-  const name = toApp && appName !== null ? appName || t("Back") : ownName;
+  const name = backLinkName({ appBack: appName, own: label || tabName, toApp });
 
   const onClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
     const isPlainClick =
@@ -130,10 +130,10 @@ function LearnBackLink({
 
   return (
     <BackLink
-      aria-label={t("Back to {page}", { page: name })}
+      aria-label={name ? t("Back to {page}", { page: name }) : t("Back")}
       render={<LearnLink className={className} href={href} onClick={onClick} ref={ref} />}
     >
-      {name}
+      {name ?? t("Back")}
     </BackLink>
   );
 }
