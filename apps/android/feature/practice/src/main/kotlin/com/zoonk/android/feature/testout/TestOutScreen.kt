@@ -121,18 +121,12 @@ fun TestOutScreen(
     val ui by viewModel.ui.collectAsStateWithLifecycle()
     LifecycleEventEffect(Lifecycle.Event.ON_STOP) { viewModel.onStop() }
     val plan by app.plans.plan[goalId].collectShown()
-    val chapter =
+    val lessonsLeft =
         plan.value
             ?.plan
             ?.phases
             ?.let { planChapter(it, chapterId) }
-    val chapterTitle = chapter?.title ?: stringResource(R.string.testout_this_chapter)
-    val page =
-        TestOutPage(
-            title = if (plan.isSettled) stringResource(R.string.testout_title, chapterTitle) else "",
-            chapterTitle = chapterTitle,
-            lessonsLeft = chapter?.lessonsLeft,
-        )
+            ?.lessonsLeft
 
     val showChapter = { navigator.open(AppRoute.Chapter(route.chapterId)) }
 
@@ -143,7 +137,7 @@ fun TestOutScreen(
     when {
         outcome != null -> TestOutResult(outcome, ui, viewModel, app, close, navigator::open)
         sent != null && !ui.sending -> RecordedTestOut(viewModel, sent, close)
-        else -> TestOutBody(viewModel, ui, page, app, navigator, showChapter)
+        else -> TestOutBody(viewModel, ui, lessonsLeft, app, navigator, showChapter)
     }
 }
 
@@ -153,8 +147,11 @@ internal data class TestOutPage(
     val lessonsLeft: Int?,
 )
 
-/** Waits only while nothing is known, so the title doesn't name a placeholder before the chapter. */
-private val LoadState<*>.isSettled: Boolean get() = this != LoadState.Idle && this != LoadState.Loading
+@Composable
+internal fun testOutPage(
+    test: TestOutRead.Ready,
+    lessonsLeft: Int?,
+) = TestOutPage(stringResource(R.string.testout_title, test.chapterTitle), test.chapterTitle, lessonsLeft)
 
 @Composable
 private fun RecordedTestOut(
@@ -177,7 +174,7 @@ private fun RecordedTestOut(
 private fun TestOutBody(
     viewModel: TestOutViewModel,
     ui: TestOutUi,
-    page: TestOutPage,
+    lessonsLeft: Int?,
     app: AppContainer,
     navigator: AppNavigator,
     showChapter: () -> Unit,
@@ -190,6 +187,7 @@ private fun TestOutBody(
         is LoadState.Loaded -> {
             when (val test = read.value) {
                 is TestOutRead.Ready -> {
+                    val page = testOutPage(test, lessonsLeft)
                     if (test.questions.isEmpty() || ui.writing) {
                         TestOutPreparing(viewModel, ui, page.title, navigator)
                     } else {

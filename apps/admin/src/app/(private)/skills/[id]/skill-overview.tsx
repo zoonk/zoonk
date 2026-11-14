@@ -4,9 +4,8 @@ import { ProvenanceFields } from "@/components/provenance";
 import { type AdminSkill } from "@/data/skills/get-skill";
 import { formatDateTime } from "@/lib/format";
 import { languageName } from "@/lib/language-filter";
+import { LINK_CLASS } from "@/lib/link-class";
 import Link from "next/link";
-
-const LINK_CLASS = "hit-area relative underline underline-offset-3";
 
 /** The card learners review: its front, and the example on its back. */
 export function SkillCard({ skill }: { skill: AdminSkill }) {

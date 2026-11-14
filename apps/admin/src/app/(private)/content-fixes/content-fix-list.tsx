@@ -10,7 +10,7 @@ import { type ContentFixListItem, listContentFixes } from "@/data/content-fixes/
 import { formatDate } from "@/lib/format";
 import { readQueryParam } from "@/lib/query-param";
 import { TableCell } from "@zoonk/ui/components/table";
-import Link from "next/link";
+import { sharedPlace, sharedReason } from "./content-fix-batch";
 import { ContentFixStatusMark, contentFixState } from "./content-fix-status";
 
 type SearchParams = PageProps<"/content-fixes">["searchParams"];
@@ -60,18 +60,27 @@ function FixCell({ fix }: { fix: ContentFixListItem }) {
       href={`/content-fixes/${fix.id}`}
       note={fix.location.trail.join(" › ") || "Content that was deleted"}
       title={fix.revertsId ? `Undo: ${fix.reason}` : fix.reason}
-    >
-      {fix.batchSize > 1 && (
-        <Link
-          className="text-muted-foreground block text-xs hover:underline"
-          href={`/content-fixes/batches/${fix.batchId}`}
-          prefetch
-        >
-          One of {fix.batchSize} proposed together
-        </Link>
-      )}
-    </AdminNameCell>
+    />
   );
+}
+
+/** Fixes proposed together are reviewed on one page, so the queue lists them once. */
+function BatchCell({ fixes }: { fixes: readonly ContentFixListItem[] }) {
+  const [first] = fixes;
+  const reason = sharedReason(fixes) ?? "Each fix gives its own reason";
+  const place = sharedPlace(fixes.map((fix) => fix.location.trail)).join(" › ");
+
+  return (
+    <AdminNameCell
+      href={`/content-fixes/batches/${first?.batchId ?? ""}`}
+      note={`${String(fixes.length)} fixes · ${place || "Several places"}`}
+      title={fixes.every((fix) => fix.revertsId) ? `Undo: ${reason}` : reason}
+    />
+  );
+}
+
+function groupByBatch(fixes: readonly ContentFixListItem[]): ContentFixListItem[][] {
+  return [...Map.groupBy(fixes, (fix) => fix.batchId).values()];
 }
 
 export async function ContentFixList({ searchParams }: { searchParams: SearchParams }) {
@@ -107,13 +116,17 @@ export async function ContentFixList({ searchParams }: { searchParams: SearchPar
       emptyLabel="No fix is waiting for review."
       isEmpty={pending.length === 0}
     >
-      {pending.map((fix) => (
-        <AdminTableRow key={fix.id}>
-          <FixCell fix={fix} />
-          <TableCell>{fix.proposer?.name ?? "Deleted account"}</TableCell>
-          <TableCell>{formatDate(fix.createdAt)}</TableCell>
-        </AdminTableRow>
-      ))}
+      {groupByBatch(pending).map((fixes) => {
+        const [first] = fixes;
+
+        return first ? (
+          <AdminTableRow key={first.id}>
+            {fixes.length > 1 ? <BatchCell fixes={fixes} /> : <FixCell fix={first} />}
+            <TableCell>{first.proposer?.name ?? "Deleted account"}</TableCell>
+            <TableCell>{formatDate(first.createdAt)}</TableCell>
+          </AdminTableRow>
+        ) : null;
+      })}
     </AdminTableColumns>
   );
 }
