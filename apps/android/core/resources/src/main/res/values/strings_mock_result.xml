@@ -234,7 +234,6 @@
     <!-- The share the learner is prepared fell since the last mock exam: "Down from 15%". -->
     <string name="mock_result_down_from">Down from %1$s</string>
     <string name="mock_result_plan_unchanged">Your plan didn\'t need to change.</string>
-    <string name="mock_result_keep_plan">Keep my plan</string>
     <string name="mock_result_plan_not_saved">That didn\'t save. Try again.</string>
     <plurals name="mock_result_skip_done">
         <item quantity="one">%d lesson skipped.</item>

@@ -41,7 +41,6 @@
   "mock_result_had_of": "e98e919363c53c10702c08d58ebf242ad6f13d01588a62d8833fb51f53229001",
   "mock_result_insights": "2b6690e5f200d653f08cb0d0abba5978a943a8fea622adaf22026ff4b69134df",
   "mock_result_keep_answering": "47c61b1a3dfaa797a13334b845356aaaffaa90caf635f814c9bfcf1ca6bbb2e3",
-  "mock_result_keep_plan": "b333011192394d81c69f3fb6fd64be43ac71e63e71808c2160413443fff9a1e4",
   "mock_result_keep_them": "f413dba102feec6deed7ed49bd22d7b7c526fb00443627574597ef76b06972b0",
   "mock_result_left_at_timeout": "ff5c8a135452928a250fdc8e1bbcc5730635f5103b4c6962ba2b6bff0e2e463d",
   "mock_result_left_blank": "3a86ebb48032669e4492a1c07e43aa37ec48ce1e7baa3f570ed6dbf814d0b3fe",
@@ -402,7 +401,6 @@
     <!-- The share the learner is prepared fell since the last mock exam: "Down from 15%". -->
     <string name="mock_result_down_from">Spadek z %1$s</string>
     <string name="mock_result_plan_unchanged">Twój plan nie wymagał zmian.</string>
-    <string name="mock_result_keep_plan">Zachowaj mój plan</string>
     <string name="mock_result_plan_not_saved">Nie udało się zapisać. Spróbuj ponownie.</string>
     <plurals name="mock_result_skip_done">
         <item quantity="one">Pominięto %d lekcję.</item>

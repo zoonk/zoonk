@@ -41,7 +41,6 @@
   "mock_result_had_of": "a7482922765b8da1d03eb4da48a92094b4e45b6d0118fa8ae7b0b817c51df0a4",
   "mock_result_insights": "93481743cf692490b3cf1f523171b2c2d91ae87926fe42486975fdf5cb099833",
   "mock_result_keep_answering": "e266329cff3b3c31f0a1a1a7ff4fb70b3635998ec19521191212a4f7010e55c2",
-  "mock_result_keep_plan": "bad8d839858d7cd70b454a706545c3045f6e20e783849a8f34b528ff4e2915cf",
   "mock_result_keep_them": "9598c8f1ff6b2cef1b433641299f42f225289428e8b2da607beb481a0630e467",
   "mock_result_left_at_timeout": "46d8d7129e9a40e5c69899eb14a98391a734cb5ddc67a4ddfb70ee71936fe7f9",
   "mock_result_left_blank": "561d26a1259414528e352598af4a1fc14986fdcb3599c069a1ca34f4b34d65a8",
@@ -345,7 +344,6 @@
     <!-- The share the learner is prepared fell since the last mock exam: "Down from 15%". -->
     <string name="mock_result_down_from">前回の%1$sから低下</string>
     <string name="mock_result_plan_unchanged">学習計画を変更する必要はありませんでした。</string>
-    <string name="mock_result_keep_plan">学習計画を変えない</string>
     <string name="mock_result_plan_not_saved">保存できませんでした。もう一度お試しください。</string>
     <plurals name="mock_result_skip_done">
         <item quantity="other">%dレッスンをスキップしました。</item>

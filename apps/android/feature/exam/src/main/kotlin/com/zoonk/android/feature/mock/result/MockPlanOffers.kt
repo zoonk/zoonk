@@ -244,7 +244,7 @@ private fun offerCopy(
                         (focus?.total ?: 0L).toInt(),
                     ),
                 accept = stringResource(R.string.mock_result_change_plan),
-                decline = stringResource(R.string.mock_result_keep_plan),
+                decline = stringResource(R.string.mock_result_not_now),
             )
         }
     }

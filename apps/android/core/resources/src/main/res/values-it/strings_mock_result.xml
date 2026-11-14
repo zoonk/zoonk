@@ -41,7 +41,6 @@
   "mock_result_had_of": "743f1c88fe214efbe2d2962f7e227f44d78592876713428c224f4ce091349651",
   "mock_result_insights": "a2c129820166a5166ee70dc63a0c51622d11126cc354bdcbed59017f052cd92e",
   "mock_result_keep_answering": "1d87b44682a544e0879dc914d4f2e06fbb1546ccd0493658d953414d10d1e0d3",
-  "mock_result_keep_plan": "7e78aaee48c893cfc519cd5b1547ab55bd3c8d337af1bd3cf44e7f58a5145706",
   "mock_result_keep_them": "6d91cbeab3424ced0151e7fd592134f4e3d69e38b2684ff793e46a44b0d575dc",
   "mock_result_left_at_timeout": "dd808f4f00fa25741cd936b19184fa80e67cab22503d9deb60dd883896c2ef4f",
   "mock_result_left_blank": "bbc0b69f1657254f341f2e39b92688f6c0dd85f2b7082ef974cba03a9a3ba903",
@@ -383,7 +382,6 @@
     <!-- The share the learner is prepared fell since the last mock exam: "Down from 15%". -->
     <string name="mock_result_down_from">In calo rispetto a %1$s</string>
     <string name="mock_result_plan_unchanged">Non serviva modificare il tuo piano.</string>
-    <string name="mock_result_keep_plan">Mantieni il mio piano</string>
     <string name="mock_result_plan_not_saved">Il salvataggio non è riuscito. Riprova.</string>
     <plurals name="mock_result_skip_done">
         <item quantity="one">%d lezione saltata.</item>

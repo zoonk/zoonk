@@ -41,7 +41,6 @@
   "mock_result_had_of": "8cdcabb7d7fceed65ed5e2ccbd5ee1cb8fa09f908cb8ad90e27ec82b6b58d0a1",
   "mock_result_insights": "7a9ebe91eba4c3fdfb3e892970a0f3760b9538b2b575e3bcd6c4217fa40160dc",
   "mock_result_keep_answering": "aaccb6fde7b4e783845b3c5c912aca3351756c8f7f69acaa56815cb99b5753ae",
-  "mock_result_keep_plan": "9e56106dcaa525e4d417e8cfe5c0d485509bd125ea3e9c3189abe8d9ac539949",
   "mock_result_keep_them": "c99069087de62b0086e60d2cdf9fcb2c9156eddd4f9ecf08bb2bbc23e132d281",
   "mock_result_left_at_timeout": "6d1d1329f9f9c56745dda2cdf09d064176ea5c63e7c250ac14c00edd8686d573",
   "mock_result_left_blank": "8e4c47c57d52f06c0d58f6a354cfff5d18da2484707f7d6919846245d630772a",
@@ -364,7 +363,6 @@
     <!-- The share the learner is prepared fell since the last mock exam: "Down from 15%". -->
     <string name="mock_result_down_from">Gesunken von %1$s</string>
     <string name="mock_result_plan_unchanged">Dein Plan musste nicht angepasst werden.</string>
-    <string name="mock_result_keep_plan">Meinen Plan beibehalten</string>
     <string name="mock_result_plan_not_saved">Das wurde nicht gespeichert. Versuch es noch einmal.</string>
     <plurals name="mock_result_skip_done">
         <item quantity="one">%d Lektion übersprungen.</item>

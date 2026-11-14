@@ -41,7 +41,6 @@
   "mock_result_had_of": "62085b88d84d8e3b3cbcec2513744bd9db7db5ebd5d99de41b1d80ab26751466",
   "mock_result_insights": "058a75a17ab4287d0ba91ee2c218d374cf24f84e973b936deaede6feff469167",
   "mock_result_keep_answering": "5948a68b3d445935db3bf54c15ca0b26b25cd901037db6dad0856b22413e662f",
-  "mock_result_keep_plan": "9b4724db14919bca782ba71d78a4b79e8e35585c89feab96433dcbf6df10a22a",
   "mock_result_keep_them": "27a333538d390f2625ae253b2fa835a935274d6fa04e2c2e133b3615ceb5639c",
   "mock_result_left_at_timeout": "c07d8fdd7ef8c7a78bce8b470edd479225f2d589f50db8bc8092b81271dd7ffe",
   "mock_result_left_blank": "5cef8730f6afcb44f2d729387e7198c7181e2824e54a514f847f8f0bbb00639d",
@@ -364,7 +363,6 @@
     <!-- The share the learner is prepared fell since the last mock exam: "Down from 15%". -->
     <string name="mock_result_down_from">%1$s düzeyinden düştü</string>
     <string name="mock_result_plan_unchanged">Planını değiştirmeye gerek yoktu.</string>
-    <string name="mock_result_keep_plan">Planımı koru</string>
     <string name="mock_result_plan_not_saved">Kaydedilemedi. Tekrar dene.</string>
     <plurals name="mock_result_skip_done">
         <item quantity="one">%d ders atlandı.</item>

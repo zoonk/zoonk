@@ -41,7 +41,6 @@
   "mock_result_had_of": "c580409bc01c776b565be3b2d6f7914edeea58523aa3235d70f27dd084688870",
   "mock_result_insights": "bcb3254a2ef83ddd22602fe46d19c144d5c46794e0040d4105967e1219bd52b0",
   "mock_result_keep_answering": "f79076208073ba4b0504f270edb0a8d1885de513710d67d71e0304aae4c8ba0d",
-  "mock_result_keep_plan": "22931020506b586957fb76c9673dab077708748ce771d4b89c98e22fb4ba564a",
   "mock_result_keep_them": "68200615b855e6b78608b2c9fdaa33fba792622ee92fa082a91a474863d4898f",
   "mock_result_left_at_timeout": "b9300c37fc1b74579170285dd1dde6701a58447e5365859309ba62cc3b91901b",
   "mock_result_left_blank": "69b5f0fea7cb7805f4102ce053b798a09de0b4d60bc78a2dc5cf83fbb6f5fcd1",
@@ -345,7 +344,6 @@
     <!-- The share the learner is prepared fell since the last mock exam: "Down from 15%". -->
     <string name="mock_result_down_from">%1$s에서 하락</string>
     <string name="mock_result_plan_unchanged">계획을 바꿀 필요가 없었어요.</string>
-    <string name="mock_result_keep_plan">내 계획 유지하기</string>
     <string name="mock_result_plan_not_saved">저장하지 못했어요. 다시 시도해 보세요.</string>
     <plurals name="mock_result_skip_done">
         <item quantity="other">레슨 %d개를 건너뛰었어요.</item>

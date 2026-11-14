@@ -41,7 +41,6 @@
   "mock_result_had_of": "582792852b901b965469338bfefb24cf6ba37951dedc2006c3fd2223e265f692",
   "mock_result_insights": "bab434f691fe7fad549502b7995253d125ae60d131403f50e24d4f0d813b5e98",
   "mock_result_keep_answering": "ac67940dc054c0097647ea519f07f2069297b2d82b9ad1eb7957e0f7b6d2f987",
-  "mock_result_keep_plan": "63ca130ec88626a3ac2033da509c4c55e976733dcccae036b8176f93ab49ca0e",
   "mock_result_keep_them": "3dff3e434d564f80d565cbe22a13b3a7bbee7720ef37af9d5093d69fea751952",
   "mock_result_left_at_timeout": "b59c2ca2ca2917557c073c48ac8f68de3298acd952700dbd12ee07e527dfa0a4",
   "mock_result_left_blank": "22932c7905dfa58bcc48d98d90e81b4ecaef386508da9accc51731c028967794",
@@ -383,7 +382,6 @@
     <!-- The share the learner is prepared fell since the last mock exam: "Down from 15%". -->
     <string name="mock_result_down_from">En baisse par rapport à %1$s</string>
     <string name="mock_result_plan_unchanged">Ton plan n’avait pas besoin d’être modifié.</string>
-    <string name="mock_result_keep_plan">Garder mon plan</string>
     <string name="mock_result_plan_not_saved">Ça n’a pas été enregistré. Réessaie.</string>
     <plurals name="mock_result_skip_done">
         <item quantity="one">%d leçon sautée.</item>

@@ -41,7 +41,6 @@
   "mock_result_had_of": "1130a5e6287d437c7c92cabf1b04809eadc94e6ca2760394bc0c6a2c9fd6ee05",
   "mock_result_insights": "177a7501b87ed9b6dab3c1478cf1531b3a2c74623884ea7d52011057a9590592",
   "mock_result_keep_answering": "4b73e6700ba1674243274b0058b337f6018f276f965f959adc3eb567799603e0",
-  "mock_result_keep_plan": "5a6cd8db38e7d61c5fa18224741c2a4a2662c20dcd8099e571765b5c5b16a19e",
   "mock_result_keep_them": "cbd0208134dd8006e8b26cafd2cf2333b3fe047f3729a9c1f1a2c80d0cc4fea3",
   "mock_result_left_at_timeout": "232e0ba8064eb481a173ed1fd5d40e922f57bb27974ed23bcc858cef623f6527",
   "mock_result_left_blank": "df018ebd7a131459b756918f4622c94004eb7a66764e737efe5b5884f9f392cb",
@@ -383,7 +382,6 @@
     <!-- The share the learner is prepared fell since the last mock exam: "Down from 15%". -->
     <string name="mock_result_down_from">Caiu de %1$s</string>
     <string name="mock_result_plan_unchanged">Seu plano não precisou mudar.</string>
-    <string name="mock_result_keep_plan">Manter meu plano</string>
     <string name="mock_result_plan_not_saved">Não foi possível salvar. Tente de novo.</string>
     <plurals name="mock_result_skip_done">
         <item quantity="one">%d aula pulada.</item>
