@@ -19,6 +19,8 @@ import { type DayStep } from "../session/session-types";
  */
 export type TodayActions = {
   addExtraTime: () => Promise<boolean>;
+  /** Today reads itself again once the goal is archived, and shows the learner's next goal. */
+  archiveGoal: () => Promise<boolean>;
   /** The insight as it stands after the answer; null when it wasn't saved. */
   answerInsight: (input: {
     insightId: string;

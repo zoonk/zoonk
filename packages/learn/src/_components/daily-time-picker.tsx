@@ -112,24 +112,12 @@ type DailyTimeProps = {
   suggested?: number | null;
 };
 
-function TimeOptionLabel({
-  full,
-  minutes,
-  suggested,
-}: {
-  full: number | null;
-  minutes: number;
-  suggested: number | null;
-}) {
+function TimeOptionLabel({ minutes, suggested }: { minutes: number; suggested: number | null }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const time = formatDuration(minutes);
 
-  if (minutes === suggested) {
-    return t("{time} (suggested)", { time });
-  }
-
-  return minutes === full ? t("{time} (covers everything)", { time }) : time;
+  return minutes === suggested ? t("{time} (suggested)", { time }) : time;
 }
 
 function DailyTimeReadout({
@@ -157,7 +145,7 @@ function DailyTimeReadout({
     >
       <span aria-hidden="true" className="flex items-baseline gap-2">
         <BigQuantity className="text-5xl">{formatDuration(choice.value)}</BigQuantity>
-        <ChevronDownIcon className="text-muted-foreground size-5 shrink-0 translate-y-1" />
+        <ChevronDownIcon className="text-muted-foreground -ms-1.5 size-5 shrink-0 translate-y-1" />
         {waiting && <ShortcutKbd shortcut="main" />}
       </span>
 
@@ -170,7 +158,7 @@ function DailyTimeReadout({
       >
         {times.map((time) => (
           <option key={time} value={time}>
-            <TimeOptionLabel full={full} minutes={time} suggested={suggested} />
+            <TimeOptionLabel minutes={time} suggested={suggested} />
           </option>
         ))}
       </select>
@@ -195,7 +183,7 @@ export function DailyTimePicker({
   }
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-0.5">
       {/* The picker carries the name for screen readers (`label`); this is its visible title. */}
       <span aria-hidden="true" className="text-sm font-medium">
         {props.label}

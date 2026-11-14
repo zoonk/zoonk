@@ -1,7 +1,8 @@
 "use client";
 
+import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CheckIcon, ChevronRightIcon } from "lucide-react";
+import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { ProgressRing } from "../_components/progress-ring";
 import { useFormatShare } from "../_utils/percent";
@@ -66,10 +67,9 @@ export function WaitStatus({
           <span className="sr-only">{`, ${formatShare(done ? 1 : value / 100)}`}</span>
         </span>
 
-        <ChevronRightIcon
-          aria-hidden="true"
-          className="text-muted-foreground col-start-3 row-start-1 size-4 self-center"
-        />
+        <span className="col-start-3 row-start-1 flex justify-end self-center">
+          <RowChevron />
+        </span>
 
         {line}
       </button>

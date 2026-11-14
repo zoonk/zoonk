@@ -8,13 +8,12 @@ import { SuggestionAction, SuggestionActions } from "../_components/suggestion";
 import { SuggestionMenu } from "../_components/suggestion-menu";
 import { useTimeAnswerTexts } from "../_components/time-answer";
 import { useFormatIsoDate } from "../_utils/iso-date";
-import { getLongerTime } from "../_utils/time-answer";
 import { useFormatDuration } from "../_utils/time-format";
 import { type GoalDateMove } from "../plan-diff/change-names";
 import { PlanEffectDiff, PlanEffectNote } from "../plan-diff/plan-effect-diff";
 import { usePlanScreen } from "./plan-context";
 import { useCanChooseFocus, useChooseFocus } from "./plan-focus";
-import { useFullCourse, useFullCourseText } from "./plan-full-course";
+import { useFullCourse, useFullCourseText, useKeepStudyingLabel } from "./plan-full-course";
 import { type SlotItem, type SlotPreview, usePlanSuggestionSlot } from "./plan-suggestion-context";
 import { useStudyEverythingFromSuggestion } from "./study-everything";
 import { usePlanChangeSentence, usePlanDateKind } from "./use-change-sentence";
@@ -208,27 +207,20 @@ export function useAnswerOffer() {
     time: PlanTimeToCover;
   }): CoverageOffer | null {
     const answer = readTimeToCover(time);
-    const { fittingDate, targetDate, targetDateNamedMonth } = time;
-    const longer = getLongerTime(time);
-
-    const takes =
-      longer !== undefined && targetDate
-        ? answerTexts.everythingTakes({
-            date: { isoDate: targetDate, namedMonth: targetDateNamedMonth },
-            full: longer,
-          })
-        : null;
+    const { fittingDate } = time;
 
     if (goal.kind !== "exam" && fittingDate && (intent === "date" || answer.kind !== "covers")) {
+      const date = formatDate(fittingDate, "long");
+
       return {
-        description: intent === "date" || !takes ? [covered] : [covered, takes],
+        description: [covered],
         operations: [{ kind: "setTargetDate", targetDate: fittingDate }],
         title: t({
           description:
             'In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".',
           message:
             "{dateKind, select, month {Your time covers everything by {date}} other {Your time covers everything by {date}}}",
-          values: { date: formatDate(fittingDate, "long"), dateKind: "day" },
+          values: { date, dateKind: "day" },
         }),
       };
     }
@@ -242,11 +234,10 @@ export function useAnswerOffer() {
       return answer.minutes > plan.schedule.dailyMinutes
         ? {
             description: [
-              ...(takes ? [takes] : []),
-              answerTexts.focus({
-                coveredShare: answer.coveredShare,
-                everyTopic: answer.everyTopic,
+              answerTexts.timeCovers({
                 exam: goal.kind === "exam",
+                minutes: answer.minutes,
+                value: answer.coveredShare,
               }),
             ],
             operations: [{ kind: "setDailyMinutes", minutes: answer.minutes }],
@@ -258,24 +249,24 @@ export function useAnswerOffer() {
     return {
       description: [covered],
       operations: [{ kind: "setDailyMinutes", minutes: answer.minutes }],
-      title: t("{time} a day covers everything in depth", { time: formatDuration(answer.minutes) }),
+      title: t("{time} a day covers everything", { time: formatDuration(answer.minutes) }),
     };
   };
 }
 
 export function useCourseOffer(): CoverageOffer | null {
-  const t = useExtracted();
   const course = useFullCourse();
   const text = useFullCourseText();
+  const keepStudying = useKeepStudyingLabel();
 
   if (!course?.on) {
     return null;
   }
 
   return {
-    description: [t("Until the exam, what comes up most comes first.")],
+    description: [],
     operations: course.operations(false),
-    title: text.finish(course) ?? t("Study everything, even after the exam"),
+    title: text.finish(course) ?? keepStudying,
   };
 }
 
@@ -291,6 +282,7 @@ export function OtherOptions({
   const chooseFocus = useChooseFocus();
   const studyEverything = useStudyEverythingFromSuggestion();
   const course = useFullCourse();
+  const keepStudying = useKeepStudyingLabel();
   const { dismiss } = usePlanSuggestionSlot();
 
   return (
@@ -307,7 +299,7 @@ export function OtherOptions({
       )}
       {course && !course.on && !studyEverythingLeads && (
         <DropdownMenuItem onClick={() => studyEverything(course)}>
-          {course.isExam ? t("Study everything, even after the exam") : t("Study everything")}
+          {course.isExam ? keepStudying : t("Study everything")}
         </DropdownMenuItem>
       )}
       <DropdownMenuItem onClick={() => dismiss("coverage")}>{t("Not now")}</DropdownMenuItem>

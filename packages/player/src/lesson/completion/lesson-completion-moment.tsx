@@ -22,6 +22,7 @@ import { useStudyTimeFact } from "@zoonk/learn/time-format";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
+import { type ComponentProps } from "react";
 import {
   type LessonCompletionSlotProps,
   useLessonPlayer,
@@ -110,6 +111,27 @@ function SavedReadouts({ completion, correctCount, incorrectCount }: LessonCompl
   );
 }
 
+/** The lesson end's actions: the plan's reveal, a host's own, or the way to the next lesson. */
+function CompletionBar({
+  planReveal,
+  ...props
+}: LessonCompletionSlotProps & {
+  planReveal: ComponentProps<typeof SeePlanAction>["reveal"] | null;
+}) {
+  const { slots } = useLessonPlayerConfig();
+  const isSaved = props.completion.status === "saved";
+
+  if (planReveal) {
+    return <SeePlanAction reveal={planReveal} />;
+  }
+
+  if (slots.completionActions) {
+    return isSaved && slots.completionActions(props);
+  }
+
+  return <CompletionLinks pending={!isSaved} />;
+}
+
 /** A lesson's end shows one extra moment at most; the host draws a finished chapter's. */
 function ExtraMoment({
   result,
@@ -160,14 +182,10 @@ export function LessonCompletionMoment(props: LessonCompletionSlotProps) {
 
         {isSaved && result && <ExtraMoment result={result} />}
         {planReveal && <LessonCompletionPlan reveal={planReveal} />}
-        {isSaved && slots.completionActions?.(props)}
+        {isSaved && slots.completionDetails?.(props)}
       </TaskBody>
 
-      {planReveal ? (
-        <SeePlanAction reveal={planReveal} />
-      ) : (
-        !slots.completionActions && <CompletionLinks pending={!isSaved} />
-      )}
+      <CompletionBar {...props} planReveal={planReveal} />
     </>
   );
 }

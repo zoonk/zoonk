@@ -23,7 +23,6 @@ import { getWarmUp } from "@zoonk/core/library/warm-ups/get";
 import { getGoalPlan } from "@zoonk/core/plans/get";
 import { onboardingAnswerInputSchema } from "@zoonk/core/view-models/onboarding/contract";
 import { getOnboarding } from "@zoonk/core/view-models/onboarding/get";
-import { getSyllabusView } from "@zoonk/core/view-models/syllabus/get";
 import { getPlanRevealToday } from "@zoonk/core/view-models/today/plan-reveal";
 import {
   type AnswerOutcome,
@@ -232,11 +231,7 @@ export async function getPlanAction(goalId: string): Promise<PlanOutcome> {
     return { status: "failed" };
   }
 
-  const [result, syllabus, today] = await Promise.all([
-    getGoalPlan(goalId),
-    getSyllabusView({ goalId }),
-    getPlanRevealToday(goalId),
-  ]);
+  const [result, today] = await Promise.all([getGoalPlan(goalId), getPlanRevealToday(goalId)]);
 
   if (result.status !== "ready") {
     return { status: "failed" };
@@ -246,7 +241,6 @@ export async function getPlanAction(goalId: string): Promise<PlanOutcome> {
     plan: result.plan,
     reveal: today.status === "ready" ? today.reveal : null,
     status: "ready",
-    syllabus: syllabus.status === "ready" ? syllabus.syllabus : null,
   };
 }
 

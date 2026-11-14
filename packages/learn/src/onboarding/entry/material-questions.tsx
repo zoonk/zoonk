@@ -8,6 +8,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowUpIcon, FileTextIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
+import { SURFACE_CLASS } from "../../_components/surface";
 import { useAppLocale } from "../../_utils/locale";
 import { useCitationLabel } from "../../_utils/use-citation-label";
 import {
@@ -37,16 +38,12 @@ function useQuestionLimitMessage() {
 
   return (outcome: MaterialQuestionOutcome): string => {
     if (outcome.status !== "limitReached" || outcome.tier === "plus") {
-      return t("You've asked as many questions as your plan allows today.");
+      return t("No more questions today. More tomorrow.");
     }
 
     return outcome.period === "month"
-      ? t(
-          "You've asked as many questions as the free plan allows this month. Ask again next month, or get Plus to keep going now.",
-        )
-      : t(
-          "You've asked as many questions as the free plan allows today. Ask again tomorrow, or get Plus to keep going now.",
-        );
+      ? t("No more questions this month. More next month, or subscribe to keep going.")
+      : t("No more questions today. More tomorrow, or subscribe to keep going.");
   };
 }
 
@@ -82,7 +79,7 @@ function TurnAnswer({
 
   return (
     <TutorMessage identity={identity}>
-      <div className="bg-card ring-border flex flex-col gap-3 rounded-xl p-4 ring-1">
+      <div className={cn(SURFACE_CLASS, "flex flex-col gap-3 p-4")}>
         <p className="leading-relaxed whitespace-pre-wrap">{answer}</p>
 
         {citations.length > 0 && (
