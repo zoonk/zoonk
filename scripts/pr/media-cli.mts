@@ -8,13 +8,15 @@ import {
   type Finding,
   type FindingState,
   MANIFEST,
+  type ManifestItem,
   NATIVE_PLATFORMS,
-  type PendingItem,
+  PLATFORMS,
   type Read,
   SIDES,
   displayPath,
   pathWithin,
   readManifest,
+  readOf,
   writeManifest,
 } from "./media.mts";
 import { resolveCommit, sha256File, sha256Text } from "./provenance.mts";
@@ -28,7 +30,8 @@ const USAGE = `Usage: pnpm pr:media check <body.md> [--root <dir>] [--manifests 
        pnpm pr:media tiles [<dir>]
        pnpm pr:media read --by <reader> [--findings <file.json>] [<dir>]
        pnpm pr:media resolve <finding id> (--fixed <commit> | --exception <who granted it>) [<dir>]
-       pnpm pr:media pending --platform <android|apple> --side <before|after> [--to <dir>] <file>...
+       pnpm pr:media pending --platform <android|apple> [--to <dir>] <file>...
+       pnpm pr:media before --platform <web|android|apple> --source <where> [--to <dir>] <file>...
 
 Checks that every picture a PR body shows was captured, from which build, and read.
 
@@ -44,8 +47,10 @@ Checks that every picture a PR body shows was captured, from which build, and re
   read     records a read on every after picture under <dir> that has none: clean, or the
            findings in the file, a JSON array of { "file", "text" } with files as READ.md lists them.
   resolve  marks a finding fixed in a commit, or an exception the user granted.
-  pending  records native pictures with no capture record yet; they keep failing the check as
-           pending until their platform's capture writes the record.
+  pending  records native after pictures with no capture record yet; they keep failing the
+           check as pending until their platform's capture writes the record.
+  before   records existing before pictures and where they came from; they pass, since a before
+           picture's build isn't checked. --to is tmp/pr-media/registered by default for both.
 
 <dir> is tmp/pr-media by default, where pnpm pr:capture writes. After read or resolve there, the
 before-and-after section is written again once the check passes.`;
@@ -63,8 +68,8 @@ function readArguments() {
         manifests: { default: [], multiple: true, type: "string" },
         platform: { type: "string" },
         root: { type: "string" },
-        side: { type: "string" },
-        to: { default: join(CAPTURE, "native"), type: "string" },
+        source: { type: "string" },
+        to: { default: join(CAPTURE, "registered"), type: "string" },
       },
     });
   } catch (error) {
@@ -165,7 +170,7 @@ async function recordRead({ positionals: [folder], values }: Arguments) {
   const by = values.by ?? fail("Say who read the pictures with --by.");
   const root = resolve(folder ?? CAPTURE);
   const pictures = await readablePictures(root);
-  const unread = pictures.filter(({ item }) => !item.read);
+  const unread = pictures.filter(({ item }) => !readOf(item));
   const entries = await readFindingsFile(values.findings);
   const known = new Set(unread.map(({ id }) => id));
   const strays = entries.flatMap(({ files }) => files.filter((file) => !known.has(file)));
@@ -233,19 +238,21 @@ async function resolveFinding({ positionals: [id, folder], values }: Arguments) 
   const changed = await Promise.all(
     folders.map(async (manifest) => {
       const items = (await readManifest(manifest)) ?? [];
-      const found = items.some((item) => item.read?.findings.some((finding) => finding.id === id));
+
+      const found = items.some((item) =>
+        readOf(item)?.findings.some((finding) => finding.id === id),
+      );
 
       if (found) {
         await writeManifest(
           manifest,
-          items.map((item) =>
-            item.read
-              ? {
-                  ...item,
-                  read: { ...item.read, findings: resolveIn(item.read.findings, id, state) },
-                }
-              : item,
-          ),
+          items.map((item) => {
+            const read = readOf(item);
+
+            return read
+              ? { ...item, read: { ...read, findings: resolveIn(read.findings, id, state) } }
+              : item;
+          }),
         );
       }
 
@@ -263,33 +270,66 @@ async function resolveFinding({ positionals: [id, folder], values }: Arguments) 
 
 const VIDEO_EXTENSIONS = new Set([".mov", ".mp4", ".webm"]);
 
+async function hashPictures(files: string[], to: string) {
+  return Promise.all(
+    files.map(async (file) => ({
+      file: pathWithin(to, resolve(file)),
+      kind: VIDEO_EXTENSIONS.has(extname(file)) ? ("video" as const) : ("shot" as const),
+      sha256: await sha256File(file),
+    })),
+  );
+}
+
+async function addToManifest(to: string, added: ManifestItem[]) {
+  const hashes = new Set(added.map((item) => item.sha256));
+  const kept = ((await readManifest(to)) ?? []).filter((item) => !hashes.has(item.sha256));
+  await writeManifest(to, [...kept, ...added]);
+}
+
 async function recordPending({ positionals: files, values }: Arguments) {
   const platform = NATIVE_PLATFORMS.find((name) => name === values.platform);
-  const side = SIDES.find((name) => name === values.side);
 
-  if (!platform || !side || files.length === 0) {
-    fail("Give --platform android or apple, --side before or after, and the pictures.");
+  if (!platform || files.length === 0) {
+    fail("Give --platform android or apple, and the after pictures.");
   }
 
   const to = resolve(values.to);
   await mkdir(to, { recursive: true });
+  const pictures = await hashPictures(files, to);
 
-  const added: PendingItem[] = await Promise.all(
-    files.map(async (file) => ({
-      file: pathWithin(to, resolve(file)),
-      kind: VIDEO_EXTENSIONS.has(extname(file)) ? ("video" as const) : ("shot" as const),
-      platform,
-      sha256: await sha256File(file),
-      side,
-    })),
+  await addToManifest(
+    to,
+    pictures.map((picture) => ({ ...picture, platform, side: "after" as const })),
   );
 
-  const hashes = new Set(added.map((item) => item.sha256));
-  const kept = ((await readManifest(to)) ?? []).filter((item) => !hashes.has(item.sha256));
-  await writeManifest(to, [...kept, ...added]);
+  console.log(
+    `${files.length} ${platform} pictures pending in ${displayPath(join(to, MANIFEST))}.`,
+  );
+
+  return true;
+}
+
+async function recordBefore({ positionals: files, values }: Arguments) {
+  const platform = PLATFORMS.find((name) => name === values.platform);
+  const source = values.source ?? "";
+
+  if (!platform || !source || files.length === 0) {
+    fail(
+      "Give --platform web, android or apple, --source <where they came from>, and the before pictures.",
+    );
+  }
+
+  const to = resolve(values.to);
+  await mkdir(to, { recursive: true });
+  const pictures = await hashPictures(files, to);
+
+  await addToManifest(
+    to,
+    pictures.map((picture) => ({ ...picture, platform, side: "before" as const, source })),
+  );
 
   console.log(
-    `${added.length} ${platform} pictures pending in ${displayPath(join(to, MANIFEST))}.`,
+    `${files.length} ${platform} before pictures registered in ${displayPath(join(to, MANIFEST))}.`,
   );
 
   return true;
@@ -303,6 +343,7 @@ async function tiles({ positionals: [folder] }: Arguments) {
 }
 
 const COMMANDS = {
+  before: recordBefore,
   check,
   pending: recordPending,
   read: recordRead,

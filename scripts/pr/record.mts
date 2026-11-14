@@ -9,9 +9,9 @@ import {
 } from "@playwright/test";
 import { openPage, waitForQuiet } from "../verify/browser.mts";
 import { type Scheme, VIEWPORTS, type ViewportName } from "../verify/viewports.mts";
+import { carryReads } from "./carry.mts";
 import {
   type CaptureItem,
-  type Read,
   type Side,
   fileName,
   pathShotName,
@@ -186,22 +186,15 @@ async function captureScreen({
   return items;
 }
 
-/** A retake with the same bytes shows what was read, so it keeps that read. */
 async function hashItems({
   folder,
   items,
-  reads,
 }: {
   folder: string;
   items: Unhashed[];
-  reads: Map<string, Read>;
 }): Promise<CaptureItem[]> {
   return Promise.all(
-    items.map(async (item) => {
-      const sha256 = await sha256File(join(folder, item.file));
-      const read = reads.get(sha256);
-      return { ...item, sha256, ...(read && { read }) };
-    }),
+    items.map(async (item) => ({ ...item, sha256: await sha256File(join(folder, item.file)) })),
   );
 }
 
@@ -228,13 +221,13 @@ export async function captureSide({
     }
   }
 
-  const previous = (await readCapture(folder)) ?? [];
+  const items = await carryReads({
+    folder: scratch,
+    items: await hashItems({ folder: scratch, items: unhashed }),
+    previous: (await readCapture(folder)) ?? [],
+    previousFolder: folder,
+  });
 
-  const reads = new Map(
-    previous.flatMap((item) => (item.read ? [[item.sha256, item.read] as const] : [])),
-  );
-
-  const items = await hashItems({ folder: scratch, items: unhashed, reads });
   await writeManifest(scratch, items);
   await rm(folder, { force: true, recursive: true });
   await rename(scratch, folder);

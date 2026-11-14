@@ -187,6 +187,39 @@ describe("pr:media check", () => {
     assert.deepEqual(kinds(await capture([pending]).check()), ["pending"]);
   });
 
+  it("passes an existing before picture registered by hand with where it came from", async () => {
+    const registered: ManifestItem = {
+      file: "today-before.png",
+      kind: "shot",
+      platform: "web",
+      sha256: sha256("today-before.png"),
+      side: "before",
+      source: "B1/shots/before/today-learn-maya-top-phone.png",
+    };
+
+    const result = await capture([registered]).check();
+
+    assert.deepEqual(result.problems, []);
+  });
+
+  it("says how many reads carried over from the same pixels and how many are new", async () => {
+    const carried = { ...CLEAN, carriedFrom: sha256("an earlier capture") };
+
+    const { check, folder } = capture([
+      shot({ file: "a.png", read: carried }),
+      shot({ file: "b.png" }),
+      shot({ file: "c.png", read: undefined }),
+    ]);
+
+    const lines = formatCheck(await check(), folder).split("\n");
+
+    assert.ok(
+      lines.includes(
+        "Reads: 1 carried over from a capture with the same pixels, 1 new, 1 still to read",
+      ),
+    );
+  });
+
   it("fails what the capture's alignment report leaves unresolved or missing", async () => {
     const message = '"Dec 12" ends 28 px short of the group\'s end edge';
 
@@ -221,6 +254,7 @@ describe("pr:media check", () => {
       "No read recorded: run pnpm pr:media tiles, read, then pnpm pr:media read (2)",
       "  a.png",
       "  b.png",
+      "Reads: 0 carried over from a capture with the same pixels, 0 new, 2 still to read",
       "FAIL: 1 not in any capture manifest; 2 with no read, of 3 pictures",
     ]);
   });

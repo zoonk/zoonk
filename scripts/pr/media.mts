@@ -7,7 +7,8 @@ export const SIDES = ["before", "after"] as const;
 export type Side = (typeof SIDES)[number];
 
 export const NATIVE_PLATFORMS = ["android", "apple"] as const;
-type Platform = "web" | (typeof NATIVE_PLATFORMS)[number];
+export const PLATFORMS = ["web", ...NATIVE_PLATFORMS] as const;
+type Platform = (typeof PLATFORMS)[number];
 
 /**
  * What the picture shows was built from `commit` plus the uncommitted changes `changes` digests
@@ -29,8 +30,11 @@ export type Finding = FindingState & {
   text: string;
 };
 
-/** A read by someone who built none of it; no findings means the read was clean. */
-export type Read = { at: string; by: string; findings: Finding[] };
+/**
+ * A read by someone who built none of it; no findings means the read was clean. `carriedFrom` is
+ * the picture that was read, when a later capture showed the same pixels.
+ */
+export type Read = { at: string; by: string; carriedFrom?: string; findings: Finding[] };
 
 /**
  * `file` is relative to its manifest's folder, with forward slashes, since Markdown links use it.
@@ -53,19 +57,26 @@ export type CaptureItem = {
 } & ({ kind: "shot"; name: string } | { kind: "video" });
 
 /**
- * A native picture registered by hand until its platform's capture writes its record. `file` is
- * absolute when the picture lives outside the manifest's folder.
+ * A picture registered by hand; `file` is absolute when it lives outside the manifest's folder.
+ * A native after picture stays pending until its platform's capture writes its record. An
+ * existing before picture passes, since a before's build isn't checked; `source` says where it
+ * came from.
  */
-export type PendingItem = {
-  file: string;
-  kind: CaptureItem["kind"];
+type RegisteredItem = { file: string; kind: CaptureItem["kind"]; sha256: string };
+
+export type PendingItem = RegisteredItem & {
   platform: (typeof NATIVE_PLATFORMS)[number];
   read?: Read;
-  sha256: string;
-  side: Side;
+  side: "after";
 };
 
-export type ManifestItem = CaptureItem | PendingItem;
+export type RegisteredBefore = RegisteredItem & {
+  platform: Platform;
+  side: "before";
+  source: string;
+};
+
+export type ManifestItem = CaptureItem | PendingItem | RegisteredBefore;
 
 export const MANIFEST = "capture.json";
 
@@ -126,6 +137,10 @@ export async function readAlignment(folder: string): Promise<AlignmentReport> {
 
 export async function writeManifest(folder: string, items: ManifestItem[]): Promise<void> {
   await writeFile(join(folder, MANIFEST), `${JSON.stringify(items, null, 2)}\n`);
+}
+
+export function readOf(item: ManifestItem): Read | undefined {
+  return "read" in item ? item.read : undefined;
 }
 
 export function isRecorded(item: ManifestItem): item is CaptureItem {

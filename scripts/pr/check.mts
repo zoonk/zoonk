@@ -10,6 +10,7 @@ import {
   isRecorded,
   readAlignment,
   readManifest,
+  readOf,
 } from "./media.mts";
 import { commitIncludes, latestCommitSince, sha256File } from "./provenance.mts";
 
@@ -78,7 +79,9 @@ function isRemote(picture: string): boolean {
 
 type Problem = { detail?: string; kind: Kind; picture: string };
 
-export type CheckResult = { checked: number; problems: Problem[] };
+type Reads = { carried: number; missing: number; new: number };
+
+export type CheckResult = { checked: number; problems: Problem[]; reads: Reads };
 
 type Entry = { folder: string; item: ManifestItem };
 
@@ -217,12 +220,12 @@ async function itemProblems({
   item: ManifestItem;
   picture: string;
 }): Promise<Problem[]> {
-  if (!isRecorded(item)) {
-    return [{ kind: "pending", picture }];
-  }
-
   if (item.side === "before") {
     return [];
+  }
+
+  if (!isRecorded(item)) {
+    return [{ kind: "pending", picture }];
   }
 
   const findings: Problem[] = item.read
@@ -307,6 +310,14 @@ export async function checkPictures({
   );
 
   const used = new Set(checked.flatMap(({ entry }) => (entry ? [entry.folder] : [])));
+  const after = checked.flatMap(({ entry }) => (entry?.item.side === "after" ? [entry.item] : []));
+  const read = after.flatMap((item) => readOf(item) ?? []);
+
+  const reads = {
+    carried: read.filter((record) => record.carriedFrom).length,
+    missing: after.length - read.length,
+    new: read.filter((record) => !record.carriedFrom).length,
+  };
 
   const fromAlignment = loaded
     .filter(({ folder }) => used.has(folder))
@@ -315,6 +326,7 @@ export async function checkPictures({
   return {
     checked: unique.length,
     problems: [...checked.flatMap(({ problems }) => problems), ...fromAlignment],
+    reads,
   };
 }
 
@@ -324,7 +336,7 @@ function kindOf(kind: Kind) {
   return { index, label, summary };
 }
 
-export function formatCheck({ checked, problems }: CheckResult, root: string): string {
+export function formatCheck({ checked, problems, reads }: CheckResult, root: string): string {
   const groups = [...Map.groupBy(problems, (problem) => problem.kind)].toSorted(
     ([first], [second]) => kindOf(first).index - kindOf(second).index,
   );
@@ -341,5 +353,9 @@ export function formatCheck({ checked, problems }: CheckResult, root: string): s
       ? `PASS: ${checked} pictures, each in a capture manifest; every after picture from a current, committed build and read`
       : `FAIL: ${groups.map(([kind, list]) => `${list.length} ${kindOf(kind).summary}`).join("; ")}, of ${checked} pictures`;
 
-  return [...lines, summary].join("\n");
+  const readLine =
+    reads.carried + reads.new + reads.missing > 0 &&
+    `Reads: ${reads.carried} carried over from a capture with the same pixels, ${reads.new} new, ${reads.missing} still to read`;
+
+  return [...lines, readLine, summary].filter(Boolean).join("\n");
 }
