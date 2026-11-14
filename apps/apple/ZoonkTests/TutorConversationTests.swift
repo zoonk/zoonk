@@ -709,8 +709,8 @@ extension Components.Schemas.PlanChange {
     .init(
       behind: nil, canApply: true, canUndo: false, createdAt: .now, days: nil, effect: nil,
       examDocument: .notice, id: id, kind: "edited", lessonsSkipped: 0, officialDate: nil,
-      operations: [], reason: "A lighter week", seen: false, source: "tutor", status: .proposed,
-      todaySession: nil)
+      operations: [], quote: "quote", reason: "A lighter week", seen: false, source: "tutor",
+      status: .proposed, todaySession: nil)
   }
 }
 

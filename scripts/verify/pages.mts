@@ -18,6 +18,7 @@ import { type LoadReport, measureLoad, warmUp } from "./measure.mts";
 import { type SoakReport, judgeSoak, measureSoak, soakRows } from "./memory.mts";
 import { type NavigationMode } from "./navigation-checks.mts";
 import { type NavigationReport, measureNavigations } from "./navigations.mts";
+import { pageTopComparisons } from "./page-top-comparisons.mts";
 import { PAGE_OPTIONS, USAGE } from "./pages-usage.mts";
 import {
   type RenderReport,
@@ -35,7 +36,6 @@ import { renderNavigationSheet, renderSheets } from "./sheets.mts";
 import { signIn } from "./sign-in.mts";
 import { walkStates } from "./states.mts";
 import { SCHEMES, THROTTLING, VIEWPORT_NAMES, type ViewportName, pick } from "./viewports.mts";
-import { pageTopComparisons } from "./words.mts";
 
 const repository = resolve(import.meta.dirname, "../..");
 

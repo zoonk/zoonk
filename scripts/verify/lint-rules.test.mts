@@ -3,13 +3,29 @@ import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { basename, join, resolve } from "node:path";
+import { basename, dirname, join, resolve } from "node:path";
 import { afterAll, beforeAll, describe, it } from "vitest";
 
 const repository = resolve(import.meta.dirname, "../..");
 const folder = mkdtempSync(join(tmpdir(), "zoonk-lint-"));
 
 const FIXTURES = [
+  {
+    bad: [
+      'export const A = <div role="dialog" />;',
+      'export const B = <section role={"alertdialog"} />;',
+    ],
+    good: [
+      'export const A = <section role="region" />;',
+      "export const B = <DrawerPopup />;",
+      "export const C = <div role={role} />;",
+    ],
+    rule: "no-hand-made-panel",
+    skipped: {
+      "fixture.test.tsx": 'export const A = <div role="alertdialog" />;',
+      "packages/ui/owned.tsx": 'export const A = <div role="dialog" />;',
+    },
+  },
   {
     bad: [
       "export const A = <Button><PlayIcon />{t('Play')}<ShortcutKbd>⏎</ShortcutKbd></Button>;",
@@ -120,11 +136,20 @@ const FIXTURES = [
 function lint() {
   const config = join(folder, "oxlintrc.json");
 
-  for (const { rule, bad, good } of FIXTURES) {
+  for (const fixture of FIXTURES) {
+    const { rule, bad, good } = fixture;
     const here = join(folder, rule);
     mkdirSync(here);
     writeFileSync(join(here, "bad.tsx"), bad.join("\n"));
     writeFileSync(join(here, "good.tsx"), good.join("\n"));
+
+    if ("skipped" in fixture) {
+      for (const [name, content] of Object.entries(fixture.skipped ?? {})) {
+        const path = join(here, name);
+        mkdirSync(dirname(path), { recursive: true });
+        writeFileSync(path, content);
+      }
+    }
   }
 
   writeFileSync(
@@ -133,7 +158,7 @@ function lint() {
       categories: { correctness: "off" },
       jsPlugins: [join(repository, "packages/oxlint-plugin/index.js")],
       overrides: FIXTURES.map(({ rule }) => ({
-        files: [`${rule}/*.tsx`],
+        files: [`${rule}/**/*.tsx`],
         rules: { [`zoonk/${rule}`]: "error" },
       })),
       plugins: [],

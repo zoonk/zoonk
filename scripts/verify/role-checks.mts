@@ -41,7 +41,7 @@ export function readRoleFacts(): RoleFacts {
 
         return previous &&
           shown(previous) &&
-          previous.matches("p, span, [data-slot=page-eyebrow], [data-slot=detail-eyebrow]") &&
+          previous.matches("p, span, div") &&
           !previous.matches("[data-slot=eyebrow]") &&
           !previous.querySelector("a, button, input, [role], [data-slot=eyebrow]") &&
           written(previous)

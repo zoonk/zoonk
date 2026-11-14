@@ -43,8 +43,11 @@ export const CATALOG_RULES = [
 
 export type CatalogRuleId = (typeof CATALOG_RULES)[number]["id"];
 
-/** Rules whose offenders are all gone from the tree; the test fails when one comes back. */
-export const SWITCHED_ON: CatalogRuleId[] = [];
+export const SWITCHED_ON: Record<"web" | "apple" | "android", CatalogRuleId[]> = {
+  android: [],
+  apple: [],
+  web: CATALOG_RULES.map(({ id }) => id),
+};
 
 function allowedHere(rule: CatalogRule, path: string, string: CatalogString) {
   if (rule.allowedNote?.test(string.note)) {

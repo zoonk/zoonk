@@ -48,6 +48,12 @@ const WIDE_ASIDE_CLASS =
 
 const SCREEN_MEASURE_CLASS = "lg:mx-auto lg:max-w-column";
 
+/** The bar's buttons end where the screen's centered column does, as a measured page's do. */
+const BAR_AT_MEASURE_CLASS = cn(
+  "lg:**:data-[slot=bottom-bar-row]:mx-auto lg:**:data-[slot=bottom-bar-row]:max-w-[calc(var(--container-column)+2*var(--page-gutter))]",
+  "lg:**:data-[slot=bottom-bar-note]:*:*:mx-auto lg:**:data-[slot=bottom-bar-note]:*:*:max-w-[calc(var(--container-column)+2*var(--page-gutter))]",
+);
+
 export function OnboardingScreenPage({
   backHref,
   barEnd,
@@ -71,7 +77,7 @@ export function OnboardingScreenPage({
       aside={rail}
       asideClassName={wide ? WIDE_ASIDE_CLASS : "hidden min-[72rem]:flex"}
       asideLabel={t("Getting started")}
-      className="flex-1 gap-1 lg:gap-4"
+      className={cn("flex-1 gap-1 lg:gap-4", !wide && BAR_AT_MEASURE_CLASS)}
     >
       <OnboardingPageBar backHref={backHref} bar={bar} barEnd={barEnd} />
 

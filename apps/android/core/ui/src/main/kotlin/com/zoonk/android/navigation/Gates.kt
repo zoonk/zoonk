@@ -36,13 +36,13 @@ fun SignInGate(
     GateMessage(
         icon = R.drawable.ic_lock,
         title = stringResource(if (ended) R.string.gate_session_ended_title else R.string.gate_sign_in_title),
-        description =
-            stringResource(if (ended) R.string.gate_session_ended_description else R.string.gate_sign_in_description),
+        description = if (ended) stringResource(R.string.gate_session_ended_description) else null,
         padding = padding,
     ) {
         Button(onClick = { navigator.open(AppRoute.Login) }) { Text(stringResource(R.string.gate_log_in)) }
-        OutlinedButton(onClick = { navigator.open(AppRoute.StartGoal()) }) {
-            Text(stringResource(if (ended) R.string.gate_start_something_new else R.string.gate_start_free))
+        // A learner who was logged out still has a plan; a second start would make a new one.
+        if (!ended) {
+            OutlinedButton(onClick = { navigator.open(AppRoute.StartGoal()) }) { Text(stringResource(R.string.gate_build_plan)) }
         }
     }
 }
@@ -51,7 +51,7 @@ fun SignInGate(
 fun GateMessage(
     @DrawableRes icon: Int,
     title: String,
-    description: String,
+    description: String?,
     padding: PaddingValues,
     actions: @Composable () -> Unit,
 ) {
@@ -76,12 +76,14 @@ fun GateMessage(
                     textAlign = TextAlign.Center,
                     modifier = Modifier.semantics { heading() },
                 )
-                Text(
-                    text = description,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center,
-                )
+                if (description != null) {
+                    Text(
+                        text = description,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center,
+                    )
+                }
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
                     verticalArrangement = Arrangement.spacedBy(8.dp),

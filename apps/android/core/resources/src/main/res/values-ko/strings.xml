@@ -9,7 +9,7 @@
   "belt_brown": "eb907ba7cb34e20a988f8ba0360d40dc339ea314485e6aad23450b1ba2908d33",
   "belt_gray": "505e1c83013867c1415bf86fa62913d177b0ba653d387fcb03350dbcbdff7d81",
   "belt_green": "d15ad55b5c2f61595ac38ff2877f73d634a9684008973f63126a9a5338fc3c66",
-  "belt_level": "fe39142aff461574525abc4ceaaa7c007d1f79b5077d21625a7dd25f33f9e315",
+  "belt_level": "15b86cc5671573d9f2144302cc7bf99eaaccf383f5f202d83333751b61399b4c",
   "belt_orange": "972289101c9c68ed9793cf2fe5b40d9e0282291ec1021b4b6e9d9b0cf254fca9",
   "belt_purple": "4618a94ee1a87050dce0176292dd40a10c03b71cb0a77f5fc257acf4ad573f78",
   "belt_red": "dfe390117ae16bb1dbf2097131eef76758f8798eb07348c41cb02f903caba925",
@@ -28,16 +28,14 @@
   "disclosure_collapsed": "fa1bad44df758dfa625098ee66aee098f1952e1601d149bb16e36b7a94b449b6",
   "disclosure_expanded": "27af94e7a4369888430cbe0ef55a24057455dfaad9c6d8691aa91621de99a6a1",
   "exam_choice_pick_up_to": "6794baca64fe6d3075e568d624d6f91a3967410fea886d6c8e507bb150f7b7b7",
+  "gate_build_plan": "6d554b328e568cb66a6a596ba27486b6155c32c45d4d793c45a4603375e25861",
   "gate_log_in": "3f1e893127f663b43010ec90f4b5e06e7a3ae15633e3cc836bb377fce475fff8",
-  "gate_session_ended_description": "23748cb2bb188e5fd1155f1fd762ea92d777c3748969e58350106b33cf3b4dd8",
-  "gate_session_ended_title": "a6c574a2be5c2a5a1a9c81bcf2d6decc0e86f7f80b9714edb07f647f8aaca731",
-  "gate_sign_in_description": "cc5a2dd7fdb5ab160d508461303c9789bab61642c8edee50f190fac5c942b208",
+  "gate_session_ended_description": "26d36e6143d0e82118120794a00841ef6ab379a2c8448978701d2ee96053f4e4",
+  "gate_session_ended_title": "be938fc77b9739081b98f546303c1a70eeec86156f161dcbb62e82cc5a593910",
   "gate_sign_in_title": "8a5e135549f45f9240e7f441a9eb2a59fcfa757ecf0061bf024cdfae6eb85e49",
-  "gate_start_free": "4f6cb625cea2e267aedb8b81a57dfe4b6e89b6b1ab4b882c9ee6fd4bc2247085",
   "gate_start_goal": "f82275fe95452c39957ca373ced73406c90be17c5f226858fb0e249567668ad8",
   "gate_start_goal_description": "c50cea4f46376451aace50b56fbdfd00dc8de2455f3468c23c43528acf4df4a9",
   "gate_start_goal_title": "9eb2e139f9c41b9b08c46b6b972cb6d96481cbd16cca5aa2099958458fe50cd6",
-  "gate_start_something_new": "9d5fcca3665a2328d89a37393abf0b8825327810c365f0ccd22637cb38927384",
   "goal_with_variety": "70862f927a401b687ca5e7170e639cb884043f678f16027d898cd87538cfb27c",
   "lesson_summaries_title": "2bc180e0bc0a3d3aa46398616298bf8d1aaffafd192243ce41dc71eec154306f",
   "lessons_coming_up": "c0ca0eac66c24c7d3ec1eb8d79833d421dd1c4a802b400f6c748d3125e2f573d",
@@ -47,7 +45,7 @@
   "lessons_title": "12443d3790163134d54734bdf11b0254f090569d72b5c87c0821aff89c2cf9be",
   "lessons_up_next": "3d934ae26df298c84ff6ad3e7c8dc0a6a1ed81143bf2c83bf71260d92c691de3",
   "list_row_states": "2e2886527e22ffcb16f2edba9ba71325b4f828eb88ae613ed720ac0a61c4035a",
-  "load_failed_description": "9ed9aa1cc4d8b5db49a0800506c38e9417168664c89a6b69e5748cee0193d4f2",
+  "load_failed_description": "da1924863d37b5f5755fa8b9982108e17a8a9ae69e98b5b268b9114744c91812",
   "load_failed_title": "cc1cc95a1f6e1e1b152e3b89be8f5c93fb18f106ca99b2b20955c9eea9050d60",
   "load_failed_try_again": "fcf4e2a3446679a6aee46830a337f7c483876aab3a300142110336633923dca5",
   "navigation_back": "612c1236cfb72db287ccfc6641f5a3eab287af4493e6b279b21e001250f746fc",
@@ -93,12 +91,11 @@
     <string name="navigation_user_menu">사용자 메뉴</string>
     <string name="task_leave">나가기</string>
     <string name="gate_sign_in_title">계속하려면 로그인하세요</string>
-    <string name="gate_sign_in_description">로그인해 이어서 학습하거나 무료로 시작하세요.</string>
-    <string name="gate_session_ended_title">로그인 세션이 끝났어요</string>
-    <string name="gate_session_ended_description">로그인해 계획을 이어가세요.</string>
+    <string name="gate_session_ended_title">로그아웃됐어요</string>
+    <string name="gate_session_ended_description">로그인해서 계획을 이어 가세요.</string>
     <string name="gate_log_in">로그인</string>
-    <string name="gate_start_free">무료로 시작하기</string>
-    <string name="gate_start_something_new">새로 시작하기</string>
+    <!-- Starts a new goal: the visitor tells us what to learn and gets a plan. -->
+    <string name="gate_build_plan">내 계획 만들기</string>
     <string name="gate_start_goal_title">목표부터 시작하기</string>
     <string name="gate_start_goal_description">배우고 싶은 것을 알려 주세요. 목표에 도달할 때까지 매일 무엇을 공부할지 계획해 드려요.</string>
     <string name="gate_start_goal">목표 시작하기</string>
@@ -114,12 +111,13 @@
     <string name="belt_red">빨간띠</string>
     <string name="belt_gray">회색띠</string>
     <string name="belt_black">검은띠</string>
-    <string name="belt_level">%1$s, 레벨 %2$s</string>
+    <!-- A belt and its number from 1 to 10, such as White belt 4. %1$s is the belt's name. -->
+    <string name="belt_level">%1$s %2$s</string>
     <string name="answer_tag_correct">정답</string>
     <string name="answer_tag_your_answer">내 답</string>
     <string name="answer_tag_your_guess">내 예상</string>
     <string name="load_failed_title">페이지를 불러오지 못했어요</string>
-    <string name="load_failed_description">인터넷 연결이나 서비스에 문제가 있을 수 있어요. 다시 시도하면 대부분 해결돼요.</string>
+    <string name="load_failed_description">인터넷 연결을 확인하고 다시 시도해 보세요.</string>
     <string name="load_failed_try_again">다시 시도</string>
     <string name="suggestion_view">보기</string>
     <string name="suggestion_save_failed">저장하지 못했어요. 다시 시도해 보세요.</string>

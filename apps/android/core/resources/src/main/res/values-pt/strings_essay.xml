@@ -41,11 +41,11 @@
   "essay_rewrite_label": "a57f6fe58a17b126eb2e14bfbc572e2e378e807ac4b6fd0b4fdef4844fb22692",
   "essay_scale": "6090bbc6959da8bf14aec663001ed168bae86725f134af645d46f265f892f523",
   "essay_score_of": "08499b6e9f0a2c1c89ca684e34578b01f4ebe20bd5cd930dfd2c9e73bb4652cf",
-  "essay_see_comments": "56b6b23619f8c3299267c6bb1781f390929e0a5ddf59f4e829b92ba5916aa9f4",
+  "essay_see_comments": "8d95e16ecebd3f71f0aa76d19a2452d6ec139bec2d9b2df99b23158e5b6f5dd9",
   "essay_see_grade": "6d1446bd3303e0eb78f58a73b7463613fbc333bdaf3e3857149020d1644fb83f",
   "essay_send": "7b647689b447706f1ec4c0095c2542602586021851779df37d43dc5c74c2227a",
   "essay_send_failed": "a0fcc32fba5168579880613c5990e0346b8adc903cdb2a9d993531acb7846707",
-  "essay_skip_rewrite": "ecc466f10c448017b13e219eb782ba03b7ac91dd3368b26d365c18a16775d75f",
+  "essay_skip_rewrite": "91e9eae7c03b093686f8acb5df48b7de2a230188d7b53d5ad8c1b118fa6cacab",
   "essay_skipped": "2bc60907cc0b3e6b2cbc452d675ff9bb54e68ea8d50cc815b35dd5267e73ca38",
   "essay_supporting_texts": "23e26d328b6d48cadee65f247426a46f7e68a5071ad59b44f760f8cd1d29ea42",
   "essay_the_case": "6a79827af19b7a884f54f5fabaf073b1b769042a7a1c279bc8810f82a0e42590",
@@ -110,7 +110,7 @@
     <string name="essay_limit_reached">Você usou todas as correções de redação de hoje. Seu texto continua aqui; envie amanhã.</string>
     <string name="essay_grading">Estamos avaliando sua redação em cada critério. Pode levar até 30 segundos.</string>
     <string name="essay_grading_slow">Ainda estamos corrigindo. Está demorando mais que o normal.</string>
-    <string name="essay_skip_rewrite">Pular a reescrita</string>
+    <string name="essay_skip_rewrite">Pular</string>
     <string name="essay_grade_rewrite">Corrigir a reescrita</string>
     <string name="essay_send">Enviar para correção</string>
     <string name="essay_leave_title">Sair por enquanto?</string>
@@ -123,7 +123,7 @@
     <string name="essay_too_short_detail">Escreva a redação inteira e envie de novo.</string>
     <string name="essay_rewrite">Reescrever</string>
     <string name="essay_finish_failed">Não deu certo. Tente de novo daqui a pouco.</string>
-    <string name="essay_see_comments">Ver comentários de todos os critérios</string>
+    <string name="essay_see_comments">Ver comentários</string>
     <string name="essay_comments">Comentários</string>
     <string name="essay_proposal_elements">Os cinco elementos da proposta</string>
     <!-- One of the five elements of an ENEM essay's intervention proposal: who carries it out. -->

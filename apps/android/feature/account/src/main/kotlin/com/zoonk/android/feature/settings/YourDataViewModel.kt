@@ -16,8 +16,8 @@ import java.io.OutputStream
 
 enum class DeletionStep { None, Confirm, Code, AppleNote, Deleted }
 
-/** The profile's download and its account deletion, for the account [session] shows. */
-class ProfileViewModel(
+/** Privacy's "Your data": the download and deleting the account, for the account [session] shows. */
+class YourDataViewModel(
     private val account: AccountStore,
     private val session: AuthenticatedSession,
     private val email: String,
