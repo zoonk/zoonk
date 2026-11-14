@@ -477,34 +477,49 @@ extension HelpLimit {
 /// a gate left open never promises a day that has gone.
 struct OpeningClock<Content: View>: View {
   @Environment(\.scenePhase) private var scenePhase
-  @State private var now = Date.now
+  @State private var alarm = OpeningAlarm()
 
   let availableAt: Date?
   @ViewBuilder let content: (Date) -> Content
 
   var body: some View {
-    content(now)
-      .task(id: availableAt) {
-        guard let availableAt else {
-          return
-        }
+    content(alarm.now(waking: availableAt))
+  }
+}
 
-        while !Task.isCancelled {
-          now = .now
+/// The clock's wake, kept apart from what it draws: a bar that takes its buttons apart draws nothing
+/// for a gate that hides its action, and a timer on that content would never start.
+@MainActor @Observable
+private final class OpeningAlarm {
+  private var rang = 0
+  @ObservationIgnored private var wake: Date?
+  @ObservationIgnored private var ringing: Task<Void, Never>?
 
-          guard let wake = HelpLimit.nextWake(availableAt: availableAt, now: now) else {
-            return
+  /// The time to read the gate at, ringing again at the learner's next midnight or the opening.
+  func now(waking availableAt: Date?) -> Date {
+    _ = rang
+    let now = Date.now
+    let next = availableAt.flatMap { HelpLimit.nextWake(availableAt: $0, now: now) }
+
+    if next != wake {
+      wake = next
+      ringing?.cancel()
+      ringing = next.map { next in
+        Task { [weak self] in
+          try? await Task.sleep(for: .seconds(next.timeIntervalSinceNow), tolerance: .seconds(1))
+
+          if !Task.isCancelled, let self {
+            wake = nil
+            rang += 1
           }
+        }
+      }
+    }
 
-          try? await Task.sleep(
-            for: .seconds(wake.timeIntervalSince(now)), tolerance: .seconds(1))
-        }
-      }
-      .onChange(of: scenePhase) { _, phase in
-        if phase == .active {
-          now = .now
-        }
-      }
+    return now
   }
 
+  isolated deinit {
+    ringing?.cancel()
+  }
 }
