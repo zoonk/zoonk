@@ -55,8 +55,9 @@ export default async function HomePage() {
   const locale = getSupportedLocaleFromLanguage(language);
   const startPath = getPathname({ href: "/start", locale });
 
+  // Clipped like every public page, so the bar's last button doesn't scroll the page sideways.
   return (
-    <div className="flex min-h-dvh flex-col">
+    <div className="flex min-h-dvh flex-col overflow-x-clip">
       <JsonLd items={HOME_JSON_LD} />
       <PublicViewTracker page="home" />
       <VisitorSummarySeed />

@@ -1,5 +1,8 @@
 import { prisma } from "@zoonk/db";
+import { isCountryCode } from "@zoonk/utils/countries";
+import { safeAsync } from "@zoonk/utils/error";
 import { getString } from "@zoonk/utils/json";
+import { getIpCountry } from "@zoonk/utils/locale-request";
 import { type GenericEndpointContext } from "better-auth";
 import { APIError } from "better-auth/api";
 import { type SignInMethod, reportAuthEvent } from "./auth-events";
@@ -34,6 +37,45 @@ export const ensureUserProgressAfterAuthCreate: UserCreateAfterHook = async (use
     where: { userId: user.id },
   });
 };
+
+/**
+ * Where a learner lives starts as the country they signed in from, so nobody has to say it. Only
+ * an empty one is filled: a country the learner picked stays, and staff looking at an account as
+ * its learner leave it alone. A sign-in never fails over it; a country it couldn't save is filled
+ * at the next sign-in.
+ */
+export async function rememberHomeCountryAfterSessionCreate(
+  session: { impersonatedBy?: string | null; userId: string },
+  context: GenericEndpointContext | null,
+): Promise<void> {
+  const homeCountry = context?.headers ? getIpCountry(context.headers) : null;
+
+  if (!homeCountry || !isCountryCode(homeCountry) || session.impersonatedBy) {
+    return;
+  }
+
+  await safeAsync(() => fillEmptyHomeCountry({ homeCountry, userId: session.userId }));
+}
+
+async function fillEmptyHomeCountry({
+  homeCountry,
+  userId,
+}: {
+  homeCountry: string;
+  userId: string;
+}) {
+  const filled = await prisma.userLearningProfile.updateMany({
+    data: { homeCountry },
+    where: { homeCountry: null, userId },
+  });
+
+  if (filled.count === 0) {
+    await prisma.userLearningProfile.createMany({
+      data: [{ homeCountry, userId }],
+      skipDuplicates: true,
+    });
+  }
+}
 
 export const reportSignUpAfterAuthCreate: UserCreateAfterHook = async (user) => {
   if (user.isAnonymous === true) {

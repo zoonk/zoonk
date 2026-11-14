@@ -6,11 +6,12 @@ import {
   type UsernameStatus as UsernameStatusType,
   useUsernameAvailability,
 } from "@zoonk/core/auth/hooks/username-availability";
+import { EnterButton } from "@zoonk/learn/enter-button";
 import { ListGroup } from "@zoonk/learn/list";
-import { ChangeSaveError } from "@zoonk/learn/save-error";
+import { NameHint } from "@zoonk/learn/name-hint";
+import { useChangeSaveErrorMessage } from "@zoonk/learn/save-error";
 import { SettingRow } from "@zoonk/learn/setting-rows";
-import { Button } from "@zoonk/ui/components/button";
-import { FieldDynamicDescription } from "@zoonk/ui/components/field";
+import { BottomBar, BottomBarActions } from "@zoonk/ui/components/bottom-bar";
 import { Input } from "@zoonk/ui/components/input";
 import {
   InputGroup,
@@ -19,22 +20,10 @@ import {
   InputGroupText,
 } from "@zoonk/ui/components/input-group";
 import { Spinner } from "@zoonk/ui/components/spinner";
-import { cn } from "@zoonk/ui/lib/utils";
-import { CheckIcon } from "lucide-react";
+import { showErrorToast, showSuccessToast } from "@zoonk/ui/components/toast";
 import { useExtracted } from "next-intl";
 import { useActionState, useId, useState } from "react";
-import { useFormStatus } from "react-dom";
 import { profileFormAction } from "./actions";
-
-function NameHint({ isTooLong }: { isTooLong: boolean }) {
-  const t = useExtracted();
-
-  if (isTooLong) {
-    return <span className="text-destructive-text">{t("Use 150 characters or fewer.")}</span>;
-  }
-
-  return t("How Zoonk and your buddy call you, and the name on your certificates.");
-}
 
 function UsernameHint({ status, username }: { status: UsernameStatusType; username: string }) {
   const t = useExtracted();
@@ -61,77 +50,91 @@ function UsernameHint({ status, username }: { status: UsernameStatusType; userna
   }
 
   return (
-    <span className={cn(status === "invalid" && "text-destructive-text")}>
+    <span className={status === "invalid" ? "text-destructive-text" : undefined}>
       {t("3-30 characters. Letters a–z, numbers, and underscores only.")}
     </span>
   );
 }
 
-function SaveButton({ disabled }: { disabled: boolean }) {
-  const t = useExtracted();
-  const { pending } = useFormStatus();
-
+function UsernameInput({
+  describedBy,
+  invalid,
+  onChange,
+  value,
+}: {
+  describedBy: string;
+  invalid: boolean;
+  onChange: (value: string) => void;
+  value: string;
+}) {
   return (
-    <Button
-      busy={pending}
-      disabled={disabled}
-      focusableWhenDisabled
-      icon={<CheckIcon aria-hidden="true" />}
-      size="sm"
-      type="submit"
-    >
-      {t("Save")}
-    </Button>
+    <InputGroup>
+      <InputGroupAddon>
+        <InputGroupText>@</InputGroupText>
+      </InputGroupAddon>
+      <InputGroupInput
+        aria-describedby={describedBy}
+        aria-invalid={invalid}
+        autoCapitalize="none"
+        autoComplete="username"
+        autoCorrect="off"
+        id="username"
+        maxLength={USERNAME_MAX_LENGTH}
+        minLength={USERNAME_MIN_LENGTH}
+        name="username"
+        onChange={(event) => onChange(event.target.value)}
+        required
+        spellCheck={false}
+        value={value}
+      />
+    </InputGroup>
   );
-}
-
-function SaveError({ state }: { state: typeof initialState }) {
-  const t = useExtracted();
-
-  if (state.status === "error") {
-    return <ChangeSaveError />;
-  }
-
-  if (state.status === "nameTooLong") {
-    return (
-      <p className="text-destructive-text text-sm" role="alert">
-        {t("Use 150 characters or fewer.")}
-      </p>
-    );
-  }
-
-  if (state.status === "usernameTaken") {
-    return (
-      <p className="text-destructive-text text-sm" role="alert">
-        {t("{username} is already taken", { username: state.username })}
-      </p>
-    );
-  }
-
-  return null;
 }
 
 type FormStatus = "error" | "idle" | "nameTooLong" | "success" | "usernameTaken";
 
 const initialState = { status: "idle" as FormStatus, username: "" };
 
+/** `children` sit between the fields and the bar, whose Save belongs to the fields alone. */
 export function ProfileForm({
+  children,
   defaultName,
   defaultUsername,
 }: {
+  children?: React.ReactNode;
   defaultName: string;
   defaultUsername: string;
 }) {
   const t = useExtracted();
+  const formId = useId();
   const nameHintId = useId();
   const usernameHintId = useId();
 
-  const [state, formAction] = useActionState(
-    (previous: typeof initialState, formData: FormData) =>
-      profileFormAction(previous, formData).catch(() => ({
+  const saveError = useChangeSaveErrorMessage();
+
+  /** A save's answer goes in a toast, so Save and the rows under it stay where they are. */
+  const tellResult = (result: typeof initialState) => {
+    if (result.status === "success") {
+      showSuccessToast(t("Saved."));
+    } else if (result.status === "usernameTaken") {
+      showErrorToast(t("{username} is already taken", { username: result.username }));
+    } else if (result.status === "nameTooLong") {
+      showErrorToast(t("Use 150 characters or fewer."));
+    } else if (result.status === "error") {
+      showErrorToast(saveError);
+    }
+  };
+
+  const [state, formAction, isSaving] = useActionState(
+    async (previous: typeof initialState, formData: FormData) => {
+      const result = await profileFormAction(previous, formData).catch(() => ({
         ...previous,
         status: "error" as const,
-      })),
+      }));
+
+      tellResult(result);
+      return result;
+    },
     initialState,
   );
 
@@ -142,63 +145,55 @@ export function ProfileForm({
   const canSave = !isNameTooLong && (status === "idle" || status === "available");
 
   return (
-    <form action={formAction} className="flex flex-col">
-      <ListGroup>
-        <SettingRow
-          description={<NameHint isTooLong={isNameTooLong} />}
-          descriptionId={nameHintId}
-          label={<label htmlFor="name">{t("Name")}</label>}
-          wide
-        >
-          <Input
-            aria-describedby={nameHintId}
-            aria-invalid={
-              isNameTooLong || state.status === "error" || state.status === "nameTooLong"
-            }
-            autoComplete="name"
-            id="name"
-            name="name"
-            onChange={(event) => setName(event.target.value)}
-            required
-            type="text"
-            value={name}
-          />
-        </SettingRow>
-
-        <SettingRow
-          description={<UsernameHint status={status} username={username} />}
-          descriptionId={usernameHintId}
-          label={<label htmlFor="username">{t("Username")}</label>}
-          wide
-        >
-          <InputGroup>
-            <InputGroupAddon>
-              <InputGroupText>@</InputGroupText>
-            </InputGroupAddon>
-            <InputGroupInput
-              aria-describedby={usernameHintId}
-              aria-invalid={status === "invalid" || status === "taken"}
-              autoCapitalize="none"
-              autoComplete="username"
-              autoCorrect="off"
-              id="username"
-              maxLength={USERNAME_MAX_LENGTH}
-              minLength={USERNAME_MIN_LENGTH}
-              name="username"
-              onChange={(event) => setUsername(event.target.value)}
+    <>
+      <form action={formAction} className="flex flex-col" id={formId}>
+        <ListGroup>
+          <SettingRow
+            description={<NameHint isTooLong={isNameTooLong} />}
+            descriptionId={nameHintId}
+            label={<label htmlFor="name">{t("Name")}</label>}
+            wide
+          >
+            <Input
+              aria-describedby={nameHintId}
+              aria-invalid={
+                isNameTooLong || state.status === "error" || state.status === "nameTooLong"
+              }
+              autoComplete="name"
+              id="name"
+              name="name"
+              onChange={(event) => setName(event.target.value)}
               required
-              spellCheck={false}
+              type="text"
+              value={name}
+            />
+          </SettingRow>
+
+          <SettingRow
+            description={<UsernameHint status={status} username={username} />}
+            descriptionId={usernameHintId}
+            label={<label htmlFor="username">{t("Username")}</label>}
+            wide
+          >
+            <UsernameInput
+              describedBy={usernameHintId}
+              invalid={status === "invalid" || status === "taken"}
+              onChange={setUsername}
               value={username}
             />
-          </InputGroup>
-        </SettingRow>
-      </ListGroup>
+          </SettingRow>
+        </ListGroup>
+      </form>
 
-      <div className="flex flex-col items-end gap-2 border-t pt-3">
-        <FieldDynamicDescription successMessage={state.status === "success" ? t("Saved.") : null} />
-        <SaveError state={state} />
-        <SaveButton disabled={!canSave} />
-      </div>
-    </form>
+      {children}
+
+      <BottomBar>
+        <BottomBarActions>
+          <EnterButton busy={isSaving} disabled={!canSave} form={formId} type="submit">
+            {t("Save")}
+          </EnterButton>
+        </BottomBarActions>
+      </BottomBar>
+    </>
   );
 }
