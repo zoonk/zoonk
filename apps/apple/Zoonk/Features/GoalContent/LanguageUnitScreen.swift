@@ -254,7 +254,7 @@ private struct LanguageUnitContent: View {
           } label: {
             LessonRow(
               lesson: GoalChapter.Lesson(
-                lessonId: lesson.lessonId, minutes: lesson.minutes, plusRequired: false,
+                lessonId: lesson.lessonId, minutes: lesson.minutes,
                 state: lesson.state, title: lesson.title),
               number: index + 1)
           }

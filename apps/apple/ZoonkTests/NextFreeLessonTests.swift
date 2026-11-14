@@ -39,6 +39,65 @@ final class NextFreeLessonTests: XCTestCase {
     XCTAssertNil(day(Date(timeIntervalSince1970: 1_794_607_200)))
   }
 
+  /// The gate's one timer, stepped by hand: open at 23:59 with the lesson opening at noon.
+  func testAGateLeftOpenAcrossMidnightFollowsTheDay() throws {
+    let lateNight = try XCTUnwrap(
+      calendar.date(from: DateComponents(year: 2026, month: 11, day: 13, hour: 23, minute: 59)))
+    let noon = try XCTUnwrap(
+      calendar.date(from: DateComponents(year: 2026, month: 11, day: 14, hour: 12)))
+    let limit = HelpLimit.freeLessonsUsed(opensAt: noon)
+    let wake = { (now: Date) in
+      HelpLimit.nextWake(opensAt: noon, now: now, calendar: self.calendar)
+    }
+    let words = { (now: Date) in
+      let words = limit.lessonWords(now: now, calendar: self.calendar)
+      return [words.title, words.line].compactMap { $0.map { String(localized: $0) } }
+    }
+
+    XCTAssertEqual(
+      words(lateNight),
+      [
+        "You've used your free lessons",
+        "Your next free lesson opens tomorrow, or subscribe to keep going.",
+      ])
+
+    let midnight = try XCTUnwrap(wake(lateNight))
+    XCTAssertEqual(midnight, calendar.startOfDay(for: noon))
+    XCTAssertEqual(
+      words(midnight),
+      [
+        "You've used your free lessons",
+        "Your next free lesson opens later today, or subscribe to keep going.",
+      ])
+
+    let opening = try XCTUnwrap(wake(midnight))
+    XCTAssertEqual(opening, noon)
+    XCTAssertEqual(words(opening), ["Your next free lesson is ready"])
+    XCTAssertNil(wake(opening))
+  }
+
+  /// The learner may still have lessons left, so a map's refusal never says they used them.
+  func testAMapWhoseLessonsDontFitSaysWhenItFits() throws {
+    let fits = try XCTUnwrap(
+      calendar.date(from: DateComponents(year: 2026, month: 11, day: 22, hour: 9)))
+    let dated = HelpLimit.freeLessonsUsed(opensAt: fits)
+    let text = { (words: LimitWords) in
+      [words.title, words.line].compactMap { $0.map { String(localized: $0) } }
+    }
+
+    XCTAssertEqual(
+      text(dated.mapLessonsWords(now: now, calendar: calendar)),
+      [
+        "Not enough free lessons for this map yet",
+        "You'll have enough on November 22, or subscribe to make it now.",
+      ])
+    XCTAssertEqual(
+      text(dated.mapLessonsWords(now: fits, calendar: calendar)), ["You can make this map now"])
+    XCTAssertEqual(
+      text(HelpLimit.limitReached(period: .total, tier: .free).mapLessonsWords()),
+      ["This map needs a subscription", "It writes more lessons than you get for free."])
+  }
+
   func testNoLessonIsRefusedForTheMonth() {
     let words = HelpLimit.limitReached(period: .month, tier: .plus).lessonWords()
 
