@@ -4,14 +4,14 @@ import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.zoonk.android.R
-import com.zoonk.android.feature.mindmaps.monthly
+import com.zoonk.android.feature.mindmaps.item
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.components.comesBackLine
 import com.zoonk.android.ui.components.gateSentence
+import com.zoonk.api.models.AllowanceItem
 import com.zoonk.api.models.AllowanceResponse
-import com.zoonk.api.models.MonthlyAllowanceItem
 
 sealed interface GoalLimitReason {
     data object ActiveGoals : GoalLimitReason
@@ -140,19 +140,19 @@ fun WriteOutcome<*>.startError(): GoalError =
 
 /** The first cap a new goal would hit, checked in core's order. */
 fun AllowanceResponse.goalStartLimit(): GoalLimitReason? {
-    val goal = monthly(MonthlyAllowanceItem.Kind.GOAL)
+    val goal = item(AllowanceItem.Kind.GOAL)
     val period =
         when {
             goal == null -> null
             goal.totalLimit?.let { goal.usedTotal >= it } == true -> "total"
             goal.dailyLimit?.let { goal.usedToday >= it } == true -> "day"
-            goal.monthlyLimit?.let { goal.usedThisMonth >= it } == true -> "month"
+            goal.rollingLimit?.let { goal.usedLast30Days >= it } == true -> "rolling30Days"
             else -> null
         }
     val limit =
         when {
             activeGoals.limit?.let { activeGoals.used >= it } == true -> UsageLimit("total", "activeGoals", tier.value)
-            period != null -> UsageLimit(period, "goal", tier.value)
+            period != null -> UsageLimit(period, "goal", tier.value, goal?.availableAt?.toString())
             else -> return null
         }
     return Refusal.Limit(limit).goalLimitReason()

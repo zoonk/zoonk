@@ -57,7 +57,7 @@ val Limit.hasWayOn: Boolean
 
 /** Counted over the last 30 days, "a month" to the learner: each use comes back 30 days after it was made. */
 private val Limit.Reached.rolling: Boolean
-    get() = period == LimitPeriod.Month || period == LimitPeriod.Rolling30Days
+    get() = period == LimitPeriod.Rolling30Days
 
 /** Used up for longer than a day: over the last 30 days, or for good. */
 private val Limit.Reached.usedUp: Boolean
@@ -73,7 +73,7 @@ private val Limit.Reached.freeLessons: Boolean
  * day (never a guessed one).
  */
 @Composable
-fun monthlyLine(
+private fun monthlyLine(
     tier: LimitTier,
     availableAt: Instant?,
 ): String? {
@@ -160,7 +160,7 @@ fun comesBackLine(limit: Limit.Reached): String? =
     }
 
 @Composable
-fun dayLine(tier: LimitTier): String? =
+private fun dayLine(tier: LimitTier): String? =
     when (tier) {
         LimitTier.Guest -> null
         LimitTier.Plus -> stringResource(R.string.limit_more_tomorrow)

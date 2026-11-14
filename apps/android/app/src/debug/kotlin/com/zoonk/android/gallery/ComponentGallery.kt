@@ -760,7 +760,13 @@ private fun LimitNotices() {
     Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
         listOf(
             Limit.Reached(LimitTier.Guest, LimitPeriod.Day) to LimitSubject.Help,
-            Limit.Reached(LimitTier.Free, LimitPeriod.Month) to LimitSubject.Help,
+            Limit.Reached(
+                LimitTier.Free,
+                LimitPeriod.Rolling30Days,
+                java.time.Instant
+                    .now()
+                    .plusSeconds(9 * 86_400L),
+            ) to LimitSubject.Help,
             Limit.Reached(LimitTier.Plus) to LimitSubject.Help,
             Limit.SlowDown(30) to LimitSubject.Lessons,
             Limit.Reached(LimitTier.Free, LimitPeriod.Day) to LimitSubject.Calls,

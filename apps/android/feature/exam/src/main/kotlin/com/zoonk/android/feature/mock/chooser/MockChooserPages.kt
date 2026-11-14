@@ -196,7 +196,7 @@ private fun ShortDialog(
     val count = formatNumber(short.questions.toDouble(), locale)
     val total = formatNumber(short.examQuestions.toDouble(), locale)
     val time = minutesText(short.minutes)
-    val full = rememberOpeningDay(short.availableAt.takeIf { short.limit == AnytimeMock.Limit.MONTH })
+    val full = rememberOpeningDay(short.availableAt.takeIf { short.limit == AnytimeMock.Limit.ROLLING30_DAYS })
     AlertDialog(
         onDismissRequest = onPickAnother,
         title = { Text(stringResource(R.string.mock_chooser_short_title)) },

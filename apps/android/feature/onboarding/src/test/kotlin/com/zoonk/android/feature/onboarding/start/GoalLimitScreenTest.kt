@@ -95,11 +95,10 @@ class GoalLimitScreenTest {
             ApiJson.decodeFromString(
                 """
                 {"tier":"free","activeGoals":{"limit":3,"used":3},
-                 "callTime":{"limitSeconds":null,"monthLimitSeconds":null,"usedSeconds":0,"usedSecondsThisMonth":0},
                  "examPrep":{"includesMockExams":false},"generatedLessons":null,
-                 "resets":{"day":"2026-10-29T00:00:00Z","month":"2026-11-01T00:00:00Z"},
-                 "items":[{"kind":"goal","dailyLimit":null,"monthlyLimit":3,"totalLimit":null,"usedToday":0,"usedThisMonth":1,
-                   "usedTotal":1,"fairUseDailyLimit":null,"remaining":null}]}
+                 "resets":{"day":"2026-10-29T00:00:00Z"},
+                 "items":[{"kind":"goal","dailyLimit":null,"rollingLimit":3,"totalLimit":null,"usedToday":0,"usedLast30Days":1,
+                   "usedTotal":1,"fairUseDailyLimit":null,"remaining":null,"availableAt":null}]}
                 """.trimIndent(),
             )
     }
