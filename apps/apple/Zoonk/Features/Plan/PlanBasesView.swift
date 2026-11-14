@@ -8,7 +8,6 @@ struct PlanBasesView: View {
   @State private var choices: [String: BaseChoice]
   @State private var preview: PlanPreviewState = .checking
   @State private var previewAttempt = 0
-  @State private var recommended: BaseChoice?
   @State private var saving: Task<Void, Never>?
 
   let editor: PlanEditor
@@ -140,9 +139,7 @@ struct PlanBasesView: View {
       Text("Prerequisites", tableName: "Plan", comment: "Title of the prerequisites")
     )
     .toolbarTitleDisplayMode(.inline)
-    .task {
-      await advise()
-    }
+    .loads(store.basesAdvice(goalId: goal.id), refreshable: false)
     .onDisappear { saving?.cancel() }
     .task(
       id: PreviewKey(
@@ -204,17 +201,8 @@ struct PlanBasesView: View {
   }
 
   /// No recommendation shows when it can't be read: the options stand without it.
-  private func advise() async {
-    let goalId = goal.id
-    let result = await store.write { api, token in
-      try await api.basesAdvice(token: token, goalId: goalId)
-    } changed: { _ in
-      false
-    }
-
-    if case .done(let answer) = result, answer.ready {
-      recommended = answer.recommended
-    }
+  private var recommended: BaseChoice? {
+    store.basesAdvice(goalId: goal.id).value.flatMap { $0.ready ? $0.recommended : nil }
   }
 
   private func check(_ changed: [GoalPlan.Bases.Item]) async {

@@ -296,6 +296,30 @@ final class PlanStoreTests: XCTestCase {
     XCTAssertFalse(left, "what the learner opened since stays open")
   }
 
+  func testPrerequisitesAdviceIsAskedOnceAndShownAgainOnReopen() async {
+    let api = PlanAPIStub()
+    let store = makeStore(api: api)
+
+    await store.basesAdvice(goalId: "goal").load()
+    await store.basesAdvice(goalId: "goal").load()
+
+    let calls = await api.calls
+    XCTAssertEqual(calls.advice, 1)
+    XCTAssertEqual(store.basesAdvice(goalId: "goal").value?.recommended, .essential)
+  }
+
+  func testAFailedAdviceRefreshKeepsTheRecommendation() async {
+    let api = PlanAPIStub()
+    let store = makeStore(api: api)
+    let advice = store.basesAdvice(goalId: "goal")
+
+    await advice.load()
+    await api.setAdviceFails(true)
+    await advice.refresh()
+
+    XCTAssertEqual(advice.value?.recommended, .essential)
+  }
+
   func testSuggestionStateBelongsToTheSessionThatMadeIt() {
     let store = makeStore(api: PlanAPIStub())
     let earlier = PlanStore.SuggestionKey(
@@ -351,6 +375,7 @@ private final class TestClock {
 /// Also Today's tests', for plan changes saved from the Plan's screens.
 actor PlanAPIStub: PlanAPIClient {
   struct Calls {
+    var advice = 0
     var changed = 0
     var changes: [[PlanEdit]] = []
     var plan = 0
@@ -360,6 +385,7 @@ actor PlanAPIStub: PlanAPIClient {
 
   private(set) var calls = Calls()
   private(set) var lastSince: Date?
+  private var adviceFails = false
   private var changed = false
   private var changeError: Error?
   private var changeOutcome = PlanChangeOutcome.applied(.stub)
@@ -376,6 +402,7 @@ actor PlanAPIStub: PlanAPIClient {
     case setStatus
   }
 
+  func setAdviceFails(_ fails: Bool) { adviceFails = fails }
   func setChanged(_ changed: Bool) { self.changed = changed }
   func setChangeError(_ error: Error) { changeError = error }
   func setChangeOutcome(_ outcome: PlanChangeOutcome) { changeOutcome = outcome }
@@ -507,7 +534,13 @@ actor PlanAPIStub: PlanAPIClient {
     throw APIError.unavailable
   }
   func basesAdvice(token: String, goalId: String) async throws -> PlanBasesAdvice {
-    throw APIError.unavailable
+    calls.advice += 1
+
+    guard !adviceFails else {
+      throw APIError.unavailable
+    }
+
+    return PlanBasesAdvice(ready: true, recommended: .essential)
   }
   func continueAtNextLevel(token: String, goalId: String) async throws -> Bool { false }
   func skipAlphabet(token: String, goalId: String) async throws -> Bool { false }

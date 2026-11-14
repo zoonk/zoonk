@@ -13,6 +13,7 @@ final class PlanStore {
   @ObservationIgnored let cache: AppCache
   @ObservationIgnored private let calendar: Calendar
   @ObservationIgnored private let now: @MainActor () -> Date
+  @ObservationIgnored private var basesAdvices: [String: Resource<PlanBasesAdvice>] = [:]
   @ObservationIgnored private var languageStandings: [String: Resource<LanguageStanding>] = [:]
   @ObservationIgnored private var languageUnitLists: [String: Resource<LanguageUnitsOverview>] = [:]
   @ObservationIgnored private var outlines: [String: Resource<SkillOutline>] = [:]
@@ -97,6 +98,14 @@ final class PlanStore {
 
   func setSuggestionState(_ key: SuggestionKey, _ change: (inout SuggestionState) -> Void) {
     change(&suggestionStates[key, default: SuggestionState()])
+  }
+
+  /// The server plans the goal with every prerequisite in depth to answer, so only the prerequisites
+  /// sheet reads it, and a reopen shows the answer it already has.
+  func basesAdvice(goalId: String) -> Resource<PlanBasesAdvice> {
+    resource(&basesAdvices, goalId) { api, token in
+      try await api.basesAdvice(token: token, goalId: goalId)
+    }
   }
 
   func syllabus(goalId: String) -> Resource<GoalSyllabus> {
