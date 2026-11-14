@@ -1,6 +1,6 @@
 import { toWords } from "@/lib/format";
 import { type MasteryState } from "@zoonk/db/enums";
-import { MeterPart, MeterParts } from "@zoonk/learn/meter";
+import { MeterPart, MeterParts } from "@zoonk/ui/components/meter";
 
 /** How far a skill is, weakest first: one blue that deepens as the skill settles. */
 const MASTERY: { fill: string; state: MasteryState }[] = [

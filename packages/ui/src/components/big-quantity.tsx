@@ -1,5 +1,5 @@
+import { splitQuantity } from "@zoonk/ui/lib/quantity-parts";
 import { cn } from "@zoonk/ui/lib/utils";
-import { splitQuantity } from "../_utils/quantity-parts";
 
 export function BigQuantity({ children, className }: { children: string; className?: string }) {
   return (
