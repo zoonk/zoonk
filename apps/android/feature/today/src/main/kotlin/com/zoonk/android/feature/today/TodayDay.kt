@@ -1,9 +1,7 @@
 package com.zoonk.android.feature.today
 
 import androidx.activity.compose.LocalActivity
-import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -51,13 +49,11 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.components.Button
-import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.BottomBar
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
-import com.zoonk.android.ui.scaffold.isMediumLayout
 import com.zoonk.android.ui.scaffold.mainActionWidth
 import com.zoonk.api.models.LanguageToday
 import com.zoonk.api.models.StudySession
@@ -152,7 +148,6 @@ fun TodayDay(
                             fresh is LoadState.Loaded || fresh is LoadState.Failed,
                             viewModel,
                             navigator::open,
-                            plans,
                             language?.value,
                             onboarding,
                         ),
