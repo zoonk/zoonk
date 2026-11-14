@@ -5,18 +5,17 @@ import {
   COMMAND_GROUP_LABEL_CLASS,
   Command,
   CommandCollection,
-  CommandDialog,
-  CommandDialogTitle,
   CommandGroup,
   CommandGroupLabel,
-  CommandInput,
   CommandItem,
   CommandList,
+  CommandSearchField,
 } from "@zoonk/ui/components/command";
+import { Drawer, DrawerHeader, DrawerPopup, DrawerTitle } from "@zoonk/ui/components/drawer";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { StatusRegion } from "../_components/status-region";
 import { type CountryChoice, type SuggestedCountry } from "./country-choice";
 import { foundNoCountry, matchesCountry } from "./country-search";
@@ -107,7 +106,7 @@ function CatalogState({ onRetry, status }: { onRetry: () => void; status: "faile
   const t = useExtracted();
 
   return (
-    <div className="flex flex-col px-4 pb-4 sm:px-1.5 sm:pb-1.5">
+    <div className="flex flex-col px-6 pb-4 sm:px-3.5">
       <p className={COMMAND_GROUP_LABEL_CLASS}>{t("All countries")}</p>
 
       {status === "loading" ? (
@@ -128,9 +127,62 @@ function CatalogState({ onRetry, status }: { onRetry: () => void; status: "faile
   );
 }
 
+/** What the list says when it has no rows to show: nothing found, or the full list not here yet. */
+function ListState({
+  catalog,
+  noCountry,
+}: {
+  catalog: ReturnType<typeof useCountryCatalog>;
+  noCountry: boolean;
+}) {
+  const t = useExtracted();
+
+  return (
+    <>
+      {noCountry && (
+        <p className="text-muted-foreground px-6 py-6 text-center text-sm">
+          {t("No country found")}
+        </p>
+      )}
+      {catalog.status !== "ready" && (
+        <CatalogState onRetry={catalog.retry} status={catalog.status} />
+      )}
+    </>
+  );
+}
+
+function CountryGroups({
+  groups,
+  onPick,
+  value,
+}: {
+  groups: PickerGroup[];
+  onPick: (country: CountryChoice) => void;
+  value: string | null;
+}) {
+  return groups.map((group) => (
+    <CommandGroup items={group.items} key={group.id}>
+      {group.label && <CommandGroupLabel>{group.label}</CommandGroupLabel>}
+      <CommandCollection>
+        {(row: PickerRow) => (
+          <PickerOption
+            key={row.key}
+            onPick={onPick}
+            row={row}
+            selected={row.country.code === value}
+          />
+        )}
+      </CommandCollection>
+    </CommandGroup>
+  ));
+}
+
 /**
- * Picking a row hands it to `onPick` and leaves the picker open: the caller closes it, or keeps it
- * open while it asks to confirm or shows why the save failed (`children`, under the search field).
+ * A sheet on a phone and a centered dialog on a computer: the title with its ✕, the search field,
+ * then the list. Picking a row hands it to `onPick` and leaves the picker open: the caller closes
+ * it, or keeps it open while it asks to confirm or shows why the save failed (`children`, under
+ * the search field). A pointer starts in the field; touch starts on the list, so the keyboard
+ * doesn't cover the suggestions until the learner taps the field.
  */
 export function CountryPicker({
   children,
@@ -144,7 +196,7 @@ export function CountryPicker({
   value,
 }: {
   children?: React.ReactNode;
-  finalFocus?: React.ComponentProps<typeof CommandDialog>["finalFocus"];
+  finalFocus?: React.ComponentProps<typeof DrawerPopup>["finalFocus"];
   /** The list's names and lesson varieties: a goal's language for its content, else the app's. */
   language: string;
   onOpenChange: (open: boolean) => void;
@@ -156,6 +208,8 @@ export function CountryPicker({
 }) {
   const t = useExtracted();
   const [query, setQuery] = useState("");
+  const popupRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const catalog = useCountryCatalog({ enabled: open, language });
   const searching = query.trim() !== "";
 
@@ -184,65 +238,55 @@ export function CountryPicker({
   };
 
   return (
-    <CommandDialog finalFocus={finalFocus} onOpenChange={changeOpen} open={open} suggestionsFirst>
-      <CommandDialogTitle className="not-sr-only px-4 pt-4 text-base font-semibold sm:px-4 sm:pt-3.5 sm:pb-1">
-        {title}
-      </CommandDialogTitle>
-
-      <Command
-        autoHighlight
-        inline
-        itemToStringValue={(row: PickerRow) => row.label}
-        items={groups}
-        mode="none"
-        onValueChange={setQuery}
-        open
-        value={query}
+    <Drawer onOpenChange={changeOpen} open={open}>
+      {/* On a phone it rises over the keyboard and gives up that much height, so every row can scroll into view. */}
+      <DrawerPopup
+        className="h-[calc(80dvh-var(--drawer-keyboard-inset,0px))] max-sm:mb-(--drawer-keyboard-inset) sm:h-auto"
+        finalFocus={finalFocus}
+        initialFocus={() =>
+          globalThis.matchMedia("(pointer: fine)").matches ? inputRef.current : popupRef.current
+        }
+        ref={popupRef}
       >
-        <CommandInput
-          aria-label={t("Search countries")}
-          autoFocus={false}
-          cancelLabel={t("Cancel")}
-          placeholder={t("Search countries")}
-        />
+        <DrawerHeader closeLabel={t("Close")}>
+          <DrawerTitle>{title}</DrawerTitle>
+        </DrawerHeader>
 
-        {children && <div className="px-4 pb-2 sm:px-4 sm:pt-2">{children}</div>}
-
-        <CommandList
-          after={
-            <>
-              {noCountry && (
-                <p className="text-muted-foreground px-4 py-6 text-center text-sm">
-                  {t("No country found")}
-                </p>
-              )}
-              {catalog.status !== "ready" && (
-                <CatalogState onRetry={catalog.retry} status={catalog.status} />
-              )}
-            </>
-          }
+        <Command
+          autoHighlight
+          inline
+          itemToStringValue={(row: PickerRow) => row.label}
+          items={groups}
+          mode="none"
+          onValueChange={setQuery}
+          open
+          value={query}
         >
-          {groups.map((group) => (
-            <CommandGroup items={group.items} key={group.id}>
-              {group.label && <CommandGroupLabel>{group.label}</CommandGroupLabel>}
-              <CommandCollection>
-                {(row: PickerRow) => (
-                  <PickerOption
-                    key={row.key}
-                    onPick={onPick}
-                    row={row}
-                    selected={row.country.code === value}
-                  />
-                )}
-              </CommandCollection>
-            </CommandGroup>
-          ))}
-        </CommandList>
-      </Command>
+          <div className="shrink-0 px-6 pt-2 pb-3">
+            <CommandSearchField
+              aria-label={t("Search countries")}
+              placeholder={t("Search countries")}
+              ref={inputRef}
+            />
+          </div>
 
-      <StatusRegion className="sr-only">
-        {results !== null && (results > 0 || noCountry) && <ResultCount count={results} />}
-      </StatusRegion>
-    </CommandDialog>
+          {children && <div className="shrink-0 px-6 pb-2">{children}</div>}
+
+          {/* One box of a set height on a computer, so the dialog doesn't resize as a search narrows the list. */}
+          <div className="flex min-h-0 flex-1 flex-col sm:h-[min(60vh,28rem)] sm:flex-none">
+            <CommandList
+              after={<ListState catalog={catalog} noCountry={noCountry} />}
+              className="px-6 sm:px-2.5"
+            >
+              <CountryGroups groups={groups} onPick={onPick} value={value} />
+            </CommandList>
+          </div>
+        </Command>
+
+        <StatusRegion className="sr-only">
+          {results !== null && (results > 0 || noCountry) && <ResultCount count={results} />}
+        </StatusRegion>
+      </DrawerPopup>
+    </Drawer>
   );
 }
