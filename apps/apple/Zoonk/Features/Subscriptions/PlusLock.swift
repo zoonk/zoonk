@@ -23,8 +23,7 @@ struct PlusMark: View {
 /// At most one on a screen, inline where the locked things are, never a pop-up. Main's
 /// `PlusNotice`: a panel with the sparkle on its title's line, in a list too.
 ///
-/// - `title` replaces "Available with Plus" where something the free plan had ends (a free exam
-///   plan's first week).
+/// - `title` replaces "Available with Plus".
 /// - `showsSeePlus: false` drops the button where the screen's main action already is
 ///   `SubscribeButton`, or where `action` is the only way forward (a guest's free account).
 /// - `isInset` drops the panel inside a card that already has one (a tutor's offer).
@@ -99,25 +98,6 @@ extension PlusNotice where Action == EmptyView {
     ) {
       EmptyView()
     }
-  }
-}
-
-struct FreeWeekOverNotice: View {
-  static let title = LocalizedStringResource(
-    "Your free week of exam prep is over", table: "Subscriptions",
-    comment: "Title of the notice when a free exam plan's first week ended")
-  static let description = LocalizedStringResource(
-    "Reviews and fixing your mistakes stay free. Plus opens new lessons, the rest of your plan and mock exams.",
-    table: "Subscriptions",
-    comment: "What stays free and what Plus opens once a free exam plan's first week ended")
-
-  var showsSeePlus = true
-  var isInset = false
-
-  var body: some View {
-    PlusNotice(
-      title: Text(Self.title), description: Text(Self.description), showsSeePlus: showsSeePlus,
-      isInset: isInset)
   }
 }
 

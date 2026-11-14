@@ -2,6 +2,7 @@
 
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import {
+  DRAWER_MAIN_FIRST_ACTIONS_CLASS,
   Drawer,
   DrawerCloseButton,
   DrawerContent,
@@ -162,9 +163,8 @@ export function SuggestionSummary({ className, ...props }: React.ComponentProps<
 }
 
 /**
- * A suggestion's main action on a page that has its own (Today's "Start session"): filled in the
- * sheet, which covers the page, and outline in the panel beside it, so the page keeps one filled
- * button.
+ * A suggestion's main action on a page that has its own main action: filled in the sheet, which
+ * covers the page, and outline in the panel beside it, so the page keeps one filled button.
  */
 export function useMainActionVariant(): "default" | "outline" {
   return use(PresentationContext) === "panel" ? "outline" : "default";
@@ -294,13 +294,16 @@ export function SuggestionSaveError({ className }: { className?: string }) {
   return <ChangeSaveError className={cn("text-compact leading-snug", className)} />;
 }
 
-/** In the panel each button fills its share of a row, so buttons that wrap stack at one width. */
+/**
+ * A suggestion lists its main answer first, as a page's own row does, since on a computer its panel
+ * is part of the page; the sheet draws them as every sheet does. In the panel each button fills its
+ * share of a row, so buttons that wrap stack at one width.
+ */
 const ACTIONS_CLASS: Readonly<Record<Presentation, string>> = {
   line: "flex shrink-0 items-center gap-2",
   panel:
     "flex flex-wrap items-center gap-2 pt-1 [&>*]:h-auto [&>*]:min-h-7.5 [&>*]:max-w-full [&>*]:grow [&>*]:py-1 [&>*]:text-balance [&>*]:whitespace-normal",
-  sheet:
-    "flex gap-2 pt-1 [&>*:first-child]:h-auto [&>*:first-child]:min-h-11 [&>*:first-child]:min-w-0 [&>*:first-child]:flex-1 [&>*:first-child]:text-center [&>*:first-child]:text-balance [&>*:first-child]:whitespace-normal has-[>:nth-child(3_of_a,button)]:flex-col",
+  sheet: cn(DRAWER_MAIN_FIRST_ACTIONS_CLASS, "pt-1"),
 };
 
 export function SuggestionActions({ className, ...props }: React.ComponentProps<"form">) {
@@ -310,6 +313,17 @@ export function SuggestionActions({ className, ...props }: React.ComponentProps<
     <form
       className={cn(ACTIONS_CLASS[presentation], "empty:hidden", className)}
       data-slot="suggestion-actions"
+      {...props}
+    />
+  );
+}
+
+/** Equal picks: one under the other in their order, none drawn as the main answer. */
+export function SuggestionChoices({ className, ...props }: React.ComponentProps<"form">) {
+  return (
+    <form
+      className={cn("flex flex-col gap-2 pt-1", className)}
+      data-slot="suggestion-choices"
       {...props}
     />
   );

@@ -576,7 +576,6 @@ msgid "Finish"
 msgstr "Concluir"
 
 #: src/_components/question-actions.tsx
-#: src/journey/preparation/preparation-details.tsx
 msgctxt "9-Ddtu"
 msgid "Next"
 msgstr "Próximo"
@@ -5066,15 +5065,20 @@ msgid "Take a full or half mock exam to see your estimated score."
 msgstr "Faça um simulado completo ou só metade dele para ver sua pontuação estimada."
 
 #: src/journey/preparation/preparation-details.tsx
-#: src/mock/mock-result-view.tsx
-msgctxt "Psgvhk"
-msgid "Estimated score"
-msgstr "Pontuação estimada"
+msgctxt "eMlJUc"
+msgid "{count, plural, one {Based on # review of every topic} other {Based on # reviews of every topic}}"
+msgstr "{count, plural, one {Com base em # revisão de todos os tópicos} other {Com base em # revisões de todos os tópicos}}"
 
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "DJCbLV"
 msgid "{count, plural, one {Based on your last mock exam} other {Based on your last # mock exams}}"
 msgstr "{count, plural, one {Com base no seu último simulado} other {Com base nos seus últimos # simulados}}"
+
+#: src/journey/preparation/preparation-details.tsx
+#: src/mock/mock-result-view.tsx
+msgctxt "Psgvhk"
+msgid "Estimated score"
+msgstr "Pontuação estimada"
 
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "JcR3T_"
@@ -5090,6 +5094,12 @@ msgstr "Cada matéria conta de acordo com seu peso na prova. O valor de cada mat
 msgctxt "Kch5Cx"
 msgid "The share of your plan's lessons you've studied or already knew. Right answers, what you remember and weekly challenges show how well you know them."
 msgstr "A porcentagem de aulas do seu plano que você estudou ou que ensinam o que você já sabia. Seus acertos, o que você lembra e os desafios semanais mostram o quanto você conhece esse conteúdo."
+
+#. A section heading over the next steps toward the learner's goal, such as "Take your first mock exam". Not a button.
+#: src/journey/preparation/preparation-details.tsx
+msgctxt "preparationNextSteps"
+msgid "Next"
+msgstr "Próximos passos"
 
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "J6PYLA"
