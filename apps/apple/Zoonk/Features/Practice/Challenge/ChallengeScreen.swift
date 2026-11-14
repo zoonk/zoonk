@@ -259,26 +259,29 @@ struct ChallengeScreen: View {
           .frame(maxWidth: .infinity, alignment: .leading)
       }
 
-      if writeLimit?.isShortBreak ?? true {
-        PracticeActionRow {
-          if challenge.canMove, moved == nil {
-            PracticeSecondaryButton(
-              title: LocalizedStringResource(
-                "Move to Monday", table: "Practice",
-                comment: "Moves the weekly challenge to next Monday."),
-              icon: .setDate, isBusy: isMoving, isDisabled: isStarting
-            ) { run { await move() } }
-          }
+      OpeningClock(availableAt: writeLimit?.availableAt) { now in
+        if writeLimit?.letsTry(at: now) ?? true {
+          PracticeActionRow {
+            if challenge.canMove, moved == nil {
+              PracticeSecondaryButton(
+                title: LocalizedStringResource(
+                  "Move to Monday", table: "Practice",
+                  comment: "Moves the weekly challenge to next Monday."),
+                icon: .setDate, isBusy: isMoving, isDisabled: isStarting
+              ) { run { await move() } }
+            }
 
-          PracticeMainButton(
-            title: challenge.status == .started
-              ? LocalizedStringResource(
-                "Continue", table: "Practice",
-                comment: "Goes back into a challenge already started.")
-              : LocalizedStringResource("Start", table: "Practice", comment: "Starts a challenge."),
-            icon: .play, isBusy: isStarting || isWriting,
-            isDisabled: isMoving
-          ) { run { await start(afterWriting: false) } }
+            PracticeMainButton(
+              title: challenge.status == .started
+                ? LocalizedStringResource(
+                  "Continue", table: "Practice",
+                  comment: "Goes back into a challenge already started.")
+                : LocalizedStringResource(
+                  "Start", table: "Practice", comment: "Starts a challenge."),
+              icon: .play, isBusy: isStarting || isWriting,
+              isDisabled: isMoving
+            ) { run { await start(afterWriting: false) } }
+          }
         }
       }
     } else {

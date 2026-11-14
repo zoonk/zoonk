@@ -41,8 +41,8 @@ final class LimitWordsTests: XCTestCase {
     XCTAssertEqual(lessons(nil), [title])
   }
 
-  /// Seen on December 28, a day in January names its year.
-  func testADayInAnotherYearNamesIt() throws {
+  /// A cap's day is never more than 30 days away, so a January day seen in December has no year.
+  func testADayInTheNextYearIsTheMonthAndDayAlone() throws {
     let lateDecember = try XCTUnwrap(
       calendar.date(from: DateComponents(year: 2026, month: 12, day: 28, hour: 10)))
     let january = try XCTUnwrap(
@@ -50,7 +50,7 @@ final class LimitWordsTests: XCTestCase {
 
     XCTAssertEqual(
       lessons(january, now: lateDecember),
-      ["You've used your free lessons", "More on January 4, 2027, or subscribe to keep going."])
+      ["You've used your free lessons", "More on January 4, or subscribe to keep going."])
   }
 
   /// The buddy's messages run out for a subscriber too, who's never offered a subscription.

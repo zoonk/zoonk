@@ -1,3 +1,5 @@
+import Foundation
+
 /// What the dropped screen shows: why the call can't go on (nil keeps the plain "call dropped"
 /// line) and how the learner can call again, if that can work. Ending the call is always there.
 struct DroppedCall: Equatable {
@@ -40,5 +42,10 @@ extension DroppedCall {
     case .limit: self.init(reason: .limit, retry: nil)
     case .plusRequired: self.init(reason: .plusRequired, retry: nil)
     }
+  }
+
+  /// A call the cap stopped can be called again once the cap's day has come: the server decides.
+  func retryNow(limit: HelpLimit?, at now: Date) -> Retry? {
+    retry ?? (reason == .limit && limit?.isOpen(at: now) == true ? .callAgain : nil)
   }
 }

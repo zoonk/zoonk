@@ -202,10 +202,16 @@ private struct MindMapCreateSection: View {
   let notMade: [ChapterMindMap]
 
   var body: some View {
+    OpeningClock(availableAt: maps.createOffer.stop?.availableAt) { now in
+      section(canStart: maps.createOffer.stop?.isOver(at: now) ?? true)
+    }
+  }
+
+  /// A failed map's row keeps its Try again, whose retry is free.
+  @ViewBuilder
+  private func section(canStart: Bool) -> some View {
     let offer = maps.createOffer
     let line = line(offer)
-    // A failed map's row keeps its Try again, whose retry is free.
-    let canStart = offer.stop == nil
 
     let ready = notMade.filter { $0.lessonsToWrite == 0 && $0.status != .writingLessons }
     let others = notMade.filter { !ready.contains($0) }

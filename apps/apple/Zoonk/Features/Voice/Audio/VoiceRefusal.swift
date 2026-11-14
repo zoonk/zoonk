@@ -72,6 +72,12 @@ enum HelpLimit: Hashable, Sendable {
   func isOpen(at now: Date) -> Bool {
     availableAt.map { $0 <= now } ?? false
   }
+
+  /// The way to try is on the screen: a short break passes, and a cap's day has come. The server
+  /// decides again.
+  func letsTry(at now: Date) -> Bool {
+    isShortBreak || isOpen(at: now)
+  }
 }
 
 struct VoiceRefusal: Error, Equatable, Sendable {

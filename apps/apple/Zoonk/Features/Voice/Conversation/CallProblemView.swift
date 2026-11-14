@@ -32,10 +32,10 @@ struct CallProblemView: View {
       } description: {
         description(now)
       }
-    }
-    .bottomBar {
-      actions
-        .buttonStyle(.mainAction)
+      .bottomBar {
+        actions(now)
+          .buttonStyle(.mainAction)
+      }
     }
     .lonePage()
   }
@@ -78,9 +78,9 @@ struct CallProblemView: View {
   }
 
   /// The screen's one way on, in its bottom bar; a gate's is "Subscribe" and the close button
-  /// leaves.
+  /// leaves. Once the cap's day has come, calling again asks the server.
   @ViewBuilder
-  private var actions: some View {
+  private func actions(_ now: Date) -> some View {
     switch problem {
     case .call(.callInProgress, _):
       Button {
@@ -88,7 +88,8 @@ struct CallProblemView: View {
       } label: {
         CallRefusal.takeover
       }
-    case .call(.connect, _), .call(.plusRequired, _):
+    case .call(.connect, _), .call(.plusRequired, _),
+      .call(.limit, _) where limit?.isOpen(at: now) == true:
       Button {
         onAction(.retry)
       } label: {
@@ -117,22 +118,24 @@ struct DroppedCallView: View {
   let onAction: (CallProblemAction) -> Void
 
   var body: some View {
-    ContentUnavailableView {
-      Label {
-        Text("The call dropped", tableName: "Voice", comment: "A live call lost its connection")
-      } icon: {
-        Image(systemName: "phone.down")
+    OpeningClock(availableAt: limit?.availableAt) { now in
+      ContentUnavailableView {
+        Label {
+          Text("The call dropped", tableName: "Voice", comment: "A live call lost its connection")
+        } icon: {
+          Image(systemName: "phone.down")
+        }
+      } description: {
+        reason(now)
+      } actions: {
+        actions(now)
       }
-    } description: {
-      reason
-    } actions: {
-      actions
     }
     .lonePage()
   }
 
   @ViewBuilder
-  private var reason: some View {
+  private func reason(_ now: Date) -> some View {
     switch dropped.reason {
     case nil:
       Text(
@@ -149,13 +152,13 @@ struct DroppedCallView: View {
     case .ended:
       refused(.ended)
     case .limit:
-      refused(.limit)
+      refused(.limit, now: now)
     }
   }
 
   @ViewBuilder
-  private var actions: some View {
-    switch dropped.retry {
+  private func actions(_ now: Date) -> some View {
+    switch dropped.retryNow(limit: limit, at: now) {
     case .callAgain:
       CallMainButton {
         onAction(.retry)
@@ -223,8 +226,10 @@ struct DroppedCallView: View {
     Text("End the call", tableName: "Voice", comment: "Ends a dropped call and saves it")
   }
 
-  private func refused(_ failure: LiveCall.Failure) -> some View {
-    why(CallRefusal.title(failure, limit: limit), CallRefusal.text(failure, limit: limit))
+  private func refused(_ failure: LiveCall.Failure, now: Date = .now) -> some View {
+    why(
+      CallRefusal.title(failure, limit: limit, now: now),
+      CallRefusal.text(failure, limit: limit, now: now))
   }
 
   /// Under the screen's own title.

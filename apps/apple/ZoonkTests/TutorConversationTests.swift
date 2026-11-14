@@ -73,6 +73,31 @@ final class TutorConversationTests: XCTestCase {
     XCTAssertFalse(conversation.canAsk)
   }
 
+  /// Once a monthly cap's day has come, the composer is back and sending asks the server again.
+  func testARefusalWhoseDayCameGivesTheComposerBack() async {
+    let opens = Date(timeIntervalSince1970: 1_795_339_800)
+    let limit = TutorFailure.limit(.usedUp(tier: .free, availableAt: opens))
+    let api = TutorAPIStub(askFailures: [limit])
+    let conversation = makeConversation(api: api)
+    conversation.now = { opens.addingTimeInterval(-60) }
+    await conversation.thread.load()
+
+    conversation.draft = "One more?"
+    await conversation.send()
+
+    XCTAssertEqual(conversation.limit, limit)
+    XCTAssertFalse(conversation.canAsk)
+
+    conversation.now = { opens }
+
+    XCTAssertNil(conversation.limit)
+    XCTAssertTrue(conversation.canSendDraft)
+    await conversation.send()
+
+    XCTAssertEqual(api.requestIDs.count, 2)
+    XCTAssertEqual(conversation.turns.last?.question, "One more?")
+  }
+
   func testStreamCutBeforeAnyTextFailsTheAnswer() async {
     let api = TutorAPIStub(answers: [[]])
     let conversation = makeConversation(api: api)

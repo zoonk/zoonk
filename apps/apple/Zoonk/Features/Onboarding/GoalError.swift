@@ -19,6 +19,20 @@ enum GoalLimitReason: Equatable, Sendable {
     return self == .activeGoals
   }
 
+  /// When a monthly cap's next use comes back.
+  var availableAt: Date? {
+    switch self {
+    case .monthlyGoals(let limit), .monthlyExplanations(let limit): limit.availableAt
+    default: nil
+    }
+  }
+
+  /// The gate takes the start's place until the monthly cap's day has come; then the start is back
+  /// and the server decides again.
+  func holdsStart(at now: Date) -> Bool {
+    isPlusLimit && !(availableAt.map { $0 <= now } ?? false)
+  }
+
   /// Mirrors main's `getGoalLimitReason`.
   init(_ limit: OnboardingLimit) {
     let help = limit.help

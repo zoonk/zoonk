@@ -57,6 +57,8 @@ final class TutorConversation {
   @ObservationIgnored private var draftSuggestion: TutorSuggestion?
   @ObservationIgnored private var preparedOffers: Set<UUID> = []
   /// A question whose reply never came, sent again with its request id so it's asked once.
+  /// The time limits are read at; a test sets it.
+  var now: () -> Date = { .now }
   private var unresolved: (question: String, suggestion: String?, id: String)?
 
   init(scope: TutorScope, api: any TutorAPIClient, cache: AppCache) {
@@ -86,13 +88,14 @@ final class TutorConversation {
     return turns.filter { $0.about != .answer || $0.status != .completed }
   }
 
-  /// Nothing can be asked until it resets, so it takes the composer's place.
+  /// Nothing can be asked until its day has come, so it takes the composer's place; then the
+  /// composer is back and the server decides again.
   var limit: TutorFailure? {
-    if let askFailure, askFailure.isLimit {
-      return askFailure
-    }
+    let failure =
+      askFailure?.isLimit == true
+      ? askFailure : turns.last.flatMap { answerFailures[$0.id] }.flatMap { $0.isLimit ? $0 : nil }
 
-    return turns.last.flatMap { answerFailures[$0.id] }.flatMap { $0.isLimit ? $0 : nil }
+    return failure?.helpLimit?.isOpen(at: now()) == true ? nil : failure
   }
 
   var isAsking: Bool {

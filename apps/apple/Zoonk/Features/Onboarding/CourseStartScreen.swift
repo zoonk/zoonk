@@ -79,15 +79,17 @@ struct CourseStartScreen: View {
       }
     }
     .bottomBar {
-      if error?.needsAccount != true, error?.limit?.isPlusLimit != true {
-        StepButtons(
-          canContinue: chapterId != nil || level != nil,
-          continueLabel: Text(
-            "Build my plan", tableName: "Onboarding",
-            comment: "Starts a course as the learner's goal"),
-          onContinue: start
-        )
-        .environment(\.isSavingAnswer, isStarting)
+      OpeningClock(availableAt: error?.limit?.availableAt) { now in
+        if error?.needsAccount != true, error?.limit?.holdsStart(at: now) != true {
+          StepButtons(
+            canContinue: chapterId != nil || level != nil,
+            continueLabel: Text(
+              "Build my plan", tableName: "Onboarding",
+              comment: "Starts a course as the learner's goal"),
+            onContinue: start
+          )
+          .environment(\.isSavingAnswer, isStarting)
+        }
       }
     }
     .loads(course, refreshable: false)
