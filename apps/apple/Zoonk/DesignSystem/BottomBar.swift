@@ -3,8 +3,8 @@ import SwiftUI
 extension View {
   /// Main's `BottomBar`: the one home of a screen's main action, pinned at the bottom in a
   /// `safeAreaBar`, so content scrolls under it with the system's edge effect. Its buttons are 44pt,
-  /// 8pt apart in one row, the main action last and taking the room the others leave; at an
-  /// accessibility text size they stack, each as wide as the bar. On a wide bar the main action sits
+  /// 8pt apart in one row, the main action last and taking the room the others leave; when they
+  /// don't fit one row, or at an accessibility text size, they stack, each as wide as the bar. On a wide bar the main action sits
   /// at the bar's end at its own width instead. Its one line (`note`) floats over the screen just
   /// above the bar, so the bar and its buttons never move when it shows.
   func bottomBar<Actions: View>(
@@ -57,12 +57,30 @@ private struct BottomBar<Actions: View>: View {
     // Wide, a filling button would read as a banner across the page (main's E-102).
     let isWide = width >= wideBarWidth && !isStacked
 
-    return AccessibilityStack(spacing: 8) {
-      buttons
+    return Group {
+      if isWide || isStacked || buttons.count < 2 {
+        AccessibilityStack(spacing: 8) {
+          buttons
+        }
+        // A lone button on a phone takes the whole row, as the main action does beside others.
+        .buttonSizing(isStacked || (buttons.count == 1 && !isWide) ? .flexible : .automatic)
+      } else {
+        // Main's bar: a second action too long to share the row ("Ich weiß es noch nicht") sits on
+        // its own line above the main action, and is read first, as drawn.
+        ViewThatFits(in: .horizontal) {
+          HStack(spacing: 8) {
+            actions
+          }
+          .buttonSizing(.automatic)
+
+          VStack(spacing: 8) {
+            actions
+          }
+          .buttonSizing(.flexible)
+        }
+      }
     }
     .controlSize(.large)
-    // A lone button on a phone takes the whole row, as the main action does beside others.
-    .buttonSizing(isStacked || (buttons.count == 1 && !isWide) ? .flexible : .automatic)
     .environment(\.mainActionFillsRow, !isWide)
     .environment(\.mainActionMinWidth, isWide ? 160 : nil)
     .frame(maxWidth: .infinity, alignment: isWide ? .trailing : .center)
