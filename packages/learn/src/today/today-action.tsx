@@ -277,7 +277,9 @@ export function TodayAction() {
     return <SummaryLink />;
   }
 
-  if (state === "ahead") {
+  // With nothing new on the list, practice is the day's one action; once the day is done it is
+  // only an extra, so it stays in the page.
+  if (state === "ahead" || state === "rest") {
     return <PracticeTime />;
   }
 
