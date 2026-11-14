@@ -35,6 +35,7 @@ import { renderNavigationSheet, renderSheets } from "./sheets.mts";
 import { signIn } from "./sign-in.mts";
 import { walkStates } from "./states.mts";
 import { SCHEMES, THROTTLING, VIEWPORT_NAMES, type ViewportName, pick } from "./viewports.mts";
+import { pageTopComparisons } from "./words.mts";
 
 const repository = resolve(import.meta.dirname, "../..");
 
@@ -275,6 +276,10 @@ const report = renderReport({
           },
         ]
       : []),
+    ...pageTopComparisons(loads).map(({ finding, path, viewport }) => ({
+      findings: [finding],
+      place: { page: path, screen: viewport },
+    })),
     ...(comparison?.findings ?? []).map(({ finding, path, viewport }) => ({
       findings: judge([finding]),
       place: { page: path, screen: viewport },

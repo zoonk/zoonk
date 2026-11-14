@@ -29,7 +29,7 @@ const PROPOSAL: PlanChangeView = {
   lessonsSkipped: 0,
   officialDate: null,
   operations: [{ areas: ["Direito", "Português"], kind: "focusAreas" }],
-  quote: null,
+  quote: "quote",
   reason: null,
   seen: false,
   source: "focusTest",

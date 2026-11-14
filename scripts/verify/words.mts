@@ -197,10 +197,7 @@ export function summarizeWords(page: PageText, kind: PageKind): PageWords {
   };
 }
 
-/**
- * R2 on one load: a screen's one main action is pinned in the bottom bar. A
- * screen that keeps it elsewhere says why in its decisions, so this is a lead.
- */
+/** A screen's one main action is pinned in its bottom bar. */
 export function placeFindings(page: PageWords): Finding[] {
   return page.kind !== "marketing" && page.actionPinned === false
     ? [
@@ -306,4 +303,36 @@ export function wordGrowth(was: PageWords | undefined, now: PageWords): Finding[
       value: Math.round((now.words / was.words - 1) * PERCENT),
     },
   ];
+}
+
+export function pageTopComparisons(loads: { path: string; viewport: string; words: PageWords }[]) {
+  const pages = loads.filter(({ words }) => words.kind !== "marketing" && words.titleTop !== null);
+
+  return [...Map.groupBy(pages, ({ viewport }) => viewport)].flatMap(([, group]) => {
+    const offsets = group.map(({ words }) => words.titleTop?.actual ?? 0);
+
+    const common = [...Map.groupBy(offsets, (offset) => Math.round(offset))].toSorted(
+      (a, b) => b[1].length - a[1].length,
+    )[0]?.[0];
+
+    return group.flatMap(({ path, viewport, words }) => {
+      const actual = words.titleTop?.actual;
+
+      return actual !== undefined && common !== undefined && Math.abs(actual - common) > 1
+        ? [
+            {
+              finding: {
+                check: "E8 page tops across pages",
+                level: "warn" as const,
+                message: `the title starts ${actual} px below its frame; the most common start across this screen's pages is ${common} px`,
+                unit: "px",
+                value: actual - common,
+              },
+              path,
+              viewport,
+            },
+          ]
+        : [];
+    });
+  });
 }

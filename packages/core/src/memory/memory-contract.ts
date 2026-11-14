@@ -167,7 +167,7 @@ export type MemoryInsightView = {
     canApply: boolean;
     effect: PlanEffect | null;
     id: string;
-    quote: PlanChangeQuote | null;
+    quote: PlanChangeQuote;
     status: "applied" | "proposed";
   } | null;
   /** Such as "20:00", for a schedule idea. */

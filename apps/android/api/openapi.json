@@ -29849,7 +29849,7 @@
         "properties": {
           "quote": {
             "default": null,
-            "description": "Send the change's `quote` as the learner saw it (null when it had none). Applying a proposal applies it only when this is the change's current `quote`; otherwise nothing is applied and the answer is the change still `proposed` with its current `effect` and `quote`, for the learner to answer again. Other answers ignore it",
+            "description": "Send the change's `quote` as the learner saw it. Applying a proposal applies it only when this is the change's current `quote`; otherwise nothing is applied and the answer is the change still `proposed` with its current `effect` and `quote`, for the learner to answer again. Other answers ignore it",
             "nullable": true,
             "allOf": [
               {
@@ -29887,28 +29887,9 @@
         "additionalProperties": false
       },
       "PlanChangeQuote": {
-        "type": "object",
-        "properties": {
-          "planVersion": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991
-          },
-          "studyDay": {
-            "type": "string",
-            "format": "date",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
-          },
-          "timeZone": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "planVersion",
-          "studyDay",
-          "timeZone"
-        ],
-        "description": "Which numbers a proposed change shows: the plan version, study day and time zone its `effect` was worked out for. Send it back as it came when accepting"
+        "type": "string",
+        "maxLength": 64,
+        "description": "Names the numbers `effect` shows, and changes whenever they do. Send it back as it came when accepting"
       },
       "OwnLevelChangeInput": {
         "type": "object",
@@ -41558,13 +41539,7 @@
             }
           },
           "quote": {
-            "nullable": true,
-            "description": "Which numbers `effect` shows. Accepting a proposal sends it back; it changes when accepting finds today's numbers differ. Null for a change with no worked-out `effect`",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/PlanChangeQuoteOutput"
-              }
-            ]
+            "$ref": "#/components/schemas/PlanChangeQuote"
           },
           "reason": {
             "nullable": true,
@@ -86904,13 +86879,7 @@
                 "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
               },
               "quote": {
-                "nullable": true,
-                "description": "Which numbers `effect` shows; accepting the insight sends it back as `quote`",
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/PlanChangeQuoteOutput"
-                  }
-                ]
+                "$ref": "#/components/schemas/PlanChangeQuote"
               },
               "status": {
                 "type": "string",
@@ -98671,31 +98640,6 @@
           "skillIds"
         ],
         "additionalProperties": false
-      },
-      "PlanChangeQuoteOutput": {
-        "type": "object",
-        "properties": {
-          "planVersion": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991
-          },
-          "studyDay": {
-            "type": "string",
-            "format": "date",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
-          },
-          "timeZone": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "planVersion",
-          "studyDay",
-          "timeZone"
-        ],
-        "additionalProperties": false,
-        "description": "Which numbers a proposed change shows: the plan version, study day and time zone its `effect` was worked out for. Send it back as it came when accepting"
       },
       "GoalDraftOutput": {
         "type": "object",
