@@ -43,7 +43,10 @@ export function StatIcon({ className, ...props }: React.ComponentProps<"span">) 
 export function StatValue({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
-      className={cn("text-readout text-2xl leading-tight", className)}
+      className={cn(
+        "text-readout text-2xl leading-none [text-box:trim-end_cap_alphabetic]",
+        className,
+      )}
       data-slot="stat-value"
       {...props}
     />

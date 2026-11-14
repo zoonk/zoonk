@@ -6,6 +6,7 @@ import { getCurrentGoal } from "@/lib/learn/current-goal";
 import { getWeeklyRecap } from "@zoonk/core/milestones/weekly-recap";
 import { getSession } from "@zoonk/core/users/session";
 import { LogbookScreen } from "@zoonk/learn/logbook";
+import { StatTileSkeleton } from "@zoonk/learn/stat-tile";
 import { TaskSkeleton } from "@zoonk/learn/task-layout";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
@@ -27,8 +28,8 @@ function LogbookSkeleton() {
         <Skeleton className="h-5 w-1/2" />
       </div>
       <div className="grid w-full grid-cols-2 gap-2">
-        <Skeleton className="h-20 rounded-xl" />
-        <Skeleton className="h-20 rounded-xl" />
+        <StatTileSkeleton />
+        <StatTileSkeleton />
       </div>
       <div className="flex w-full flex-col gap-6 py-3">
         <Skeleton className="h-5 w-full" />

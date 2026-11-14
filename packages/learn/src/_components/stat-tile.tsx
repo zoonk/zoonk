@@ -1,4 +1,5 @@
 import { BigQuantity } from "@zoonk/ui/components/big-quantity";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { Stat, StatDetail, StatIcon, StatLabel, StatValue } from "@zoonk/ui/components/stat";
 import { cn } from "@zoonk/ui/lib/utils";
 
@@ -60,6 +61,25 @@ export function StatTile({
           {" "}
           <StatDetail>{detail}</StatDetail>
         </>
+      )}
+    </Stat>
+  );
+}
+
+/** The tile's own parts around a blank line each, so a tile takes its loaded height while it loads. */
+export function StatTileSkeleton({ detail = false }: { detail?: boolean }) {
+  return (
+    <Stat aria-hidden="true">
+      <StatLabel>
+        <Skeleton className="w-20 rounded-sm">{"\u00A0"}</Skeleton>
+      </StatLabel>
+      <StatValue>
+        <Skeleton className="w-14 rounded-sm">{"\u00A0"}</Skeleton>
+      </StatValue>
+      {detail && (
+        <StatDetail>
+          <Skeleton className="w-28 max-w-full rounded-sm">{"\u00A0"}</Skeleton>
+        </StatDetail>
       )}
     </Stat>
   );
