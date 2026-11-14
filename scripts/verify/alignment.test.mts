@@ -104,7 +104,9 @@ describe("the Plan's path and Android's captures", () => {
       [],
     );
 
-    assert.match(line?.detail ?? "", /the mark 16\.73 below the label's first line/u);
+    // E5: beside a title that wraps, the mark is centered on the row, as Android draws it: it is
+    // 0.75 dp off the row's center, not 16.73 off the first line.
+    assert.match(line?.detail ?? "", /the mark 0\.75 below the row's center/u);
   });
 
   it("reads a right-to-left group mirrored, so its start is its right edge", () => {

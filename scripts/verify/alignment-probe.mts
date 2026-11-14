@@ -295,6 +295,16 @@ export function readAlignment({
       : box.right - pixels(style.paddingRight) - pixels(style.borderRightWidth);
   }
 
+  /** The middle of what a row lays out, inside a divider's border and its padding. */
+  function contentMiddle(element: Element) {
+    const box = boxOf(element);
+    const style = getComputedStyle(element);
+    const { pixels } = globalThis.zoonkPage;
+    const top = box.top + pixels(style.borderTopWidth) + pixels(style.paddingTop);
+    const bottom = box.bottom - pixels(style.borderBottomWidth) - pixels(style.paddingBottom);
+    return (top + bottom) / 2;
+  }
+
   /** A row wrapped in `display: contents` is its children. */
   function expandRows(element: Element): Element[] {
     return isContents(element)
@@ -447,6 +457,7 @@ export function readAlignment({
         id: rowId,
         ink: rowInk ? bounds(rowInk) : null,
         margins: [margin("marginTop"), margin("marginBottom")],
+        middle: round(contentMiddle(row) + scrollY),
         name: name(row),
         note: note ? [...row.querySelectorAll(note)].some((element) => shown(element)) : false,
         part: "row",

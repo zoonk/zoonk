@@ -40,9 +40,11 @@ function middleOf(element: CaptureElement): number | null {
 type Miss = { off: number; part: string; to: string };
 
 /**
- * Each part's distance from where it belongs. One line: on the label's middle. More lines or a
- * note: a lead and a mark on the label's first line, a value and an end glyph on the row's center
- * and level with each other. A value stacked under its label has no line to share.
+ * Each part's distance from where it belongs (craft E5 and E6). One line: on the label's middle.
+ * Beside a title and one description, or a title that wraps: a mark, a value and an end glyph on
+ * the row's center. Beside three lines or more (a title and two descriptions): a mark on the
+ * label's first line, a value and an end glyph on the row's center. A text lead always goes with
+ * the label's first line. A value stacked under its label has no line to share.
  */
 function misses(row: CaptureElement, own: CaptureElement[]): Miss[] | null {
   const label = own
@@ -69,26 +71,23 @@ function misses(row: CaptureElement, own: CaptureElement[]): Miss[] | null {
     return null;
   }
 
-  const oneLine =
-    !stacked &&
-    (label.lines ?? 1) === 1 &&
-    !row.note &&
-    !own.some((element) => element.part === "note");
+  // A title counts as one line however it wraps; each description under it is another (E5).
+  const notes = Math.max(own.filter((element) => element.part === "note").length, row.note ? 1 : 0);
 
-  const rowMiddle = row.bounds[1] + row.bounds[3] / 2;
+  const oneLine = !stacked && (label.lines ?? 1) === 1 && notes === 0;
+  const rowMiddle = row.middle ?? row.bounds[1] + row.bounds[3] / 2;
   const endMiddle = middles.find(({ element }) => element.part === "end")?.middle ?? null;
 
   return middles.flatMap(({ element, middle }): Miss[] => {
     const at = middle ?? labelMiddle;
 
-    if (oneLine || element.part === "lead" || element.part === "mark") {
-      return [
-        {
-          off: at - labelMiddle,
-          part: element.part,
-          to: oneLine ? "the label's middle" : "the label's first line",
-        },
-      ];
+    if (oneLine) {
+      return [{ off: at - labelMiddle, part: element.part, to: "the label's middle" }];
+    }
+
+    // A text lead goes with the first line; a mark does beside three lines or more.
+    if (element.part === "lead" || (element.part === "mark" && notes >= 2)) {
+      return [{ off: at - labelMiddle, part: element.part, to: "the label's first line" }];
     }
 
     return [
