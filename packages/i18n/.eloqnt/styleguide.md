@@ -4,6 +4,7 @@
 
 Zoonk helps anyone learn anything, especially first-time learners in small towns and under-resourced communities. Write simple, everyday, welcoming text without jargon: friendly and encouraging, never condescending, and never scolding learners for mistakes, breaks, or missed days.
 
+- A question in a list of common questions (an FAQ) is the reader asking about themselves: word it in the first person, the way your language's other FAQ questions ask (“Can I trust lessons made by AI?”, “What do I get if I subscribe?”), never as a question put to the reader. A language that asks these without a subject keeps doing so.
 - Use “…” for ellipses. Avoid em dashes.
 - Put a no-break space before every “·”, the English one or one you add, so the dot never starts a line or sits alone on one. A language that writes its separator without spaces, such as Japanese “・”, needs none.
 
