@@ -8,12 +8,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -32,7 +30,6 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layout
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.collapse
@@ -40,12 +37,14 @@ import androidx.compose.ui.semantics.expand
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.zoonkType
+import kotlin.math.roundToInt
 
 /**
  * Main's `ListRow`, as every list draws its rows: a mark, the title (`ListRowTitle`) over its
@@ -136,52 +135,57 @@ fun ListRow(
         horizontalArrangement = Arrangement.spacedBy(LEADING_GAP),
         verticalAlignment = verticalAlignment,
     ) {
-        val firstLine =
-            with(LocalDensity.current) {
-                MaterialTheme.typography.titleSmall.lineHeight
-                    .toDp()
-            }
-        val markBox =
-            if (verticalAlignment == Alignment.Top) {
-                Modifier.widthIn(min = markSize()).heightIn(min = firstLine)
-            } else {
-                Modifier.sizeIn(minWidth = markSize(), minHeight = markSize())
-            }
-        CompositionLocalProvider(LocalContentColor provides quiet) {
-            leading?.let { Box(markBox.layoutPart(LayoutPart.LIST, LayoutPart.Part.Mark), contentAlignment = Alignment.Center) { it() } }
-        }
-
-        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(1.dp)) {
-            CompositionLocalProvider(LocalContentColor provides ink) {
-                ProvideTextStyle(MaterialTheme.typography.titleSmall) {
-                    if (meta == null) {
-                        Column(
-                            Modifier.layoutPart(LayoutPart.LIST, LayoutPart.Part.Label),
-                            verticalArrangement = Arrangement.spacedBy(1.dp),
-                        ) {
-                            headline()
+        FirstLineMark(
+            firstLine = MaterialTheme.typography.titleSmall,
+            modifier = Modifier.weight(1f),
+            mark =
+                leading?.let { mark ->
+                    {
+                        CompositionLocalProvider(LocalContentColor provides quiet) {
+                            Box(
+                                Modifier
+                                    .sizeIn(
+                                        minWidth = markSize(),
+                                        minHeight = markSize(),
+                                    ).layoutPart(LayoutPart.LIST, LayoutPart.Part.Mark),
+                                contentAlignment = Alignment.Center,
+                            ) { mark() }
                         }
-                    } else {
-                        TitleAndMeta(
-                            metaBusy = busy && !chevron,
-                            meta = {
-                                CompositionLocalProvider(LocalContentColor provides quiet) {
-                                    ProvideTextStyle(MaterialTheme.zoonkType.data, meta)
-                                }
-                            },
-                        ) {
-                            headline()
+                    }
+                },
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
+                CompositionLocalProvider(LocalContentColor provides ink) {
+                    ProvideTextStyle(MaterialTheme.typography.titleSmall) {
+                        if (meta == null) {
+                            Column(
+                                Modifier.layoutPart(LayoutPart.LIST, LayoutPart.Part.Label),
+                                verticalArrangement = Arrangement.spacedBy(1.dp),
+                            ) {
+                                headline()
+                            }
+                        } else {
+                            TitleAndMeta(
+                                metaBusy = busy && !chevron,
+                                meta = {
+                                    CompositionLocalProvider(LocalContentColor provides quiet) {
+                                        ProvideTextStyle(MaterialTheme.zoonkType.data, meta)
+                                    }
+                                },
+                            ) {
+                                headline()
+                            }
                         }
                     }
                 }
-            }
-            supporting?.let {
-                CompositionLocalProvider(LocalContentColor provides quiet) {
-                    ProvideTextStyle(MaterialTheme.typography.bodySmall) {
-                        Column(
-                            Modifier.layoutPart(LayoutPart.LIST, LayoutPart.Part.Note),
-                            verticalArrangement = Arrangement.spacedBy(1.dp),
-                        ) { it() }
+                supporting?.let {
+                    CompositionLocalProvider(LocalContentColor provides quiet) {
+                        ProvideTextStyle(MaterialTheme.typography.bodySmall) {
+                            Column(
+                                Modifier.layoutPart(LayoutPart.LIST, LayoutPart.Part.Note),
+                                verticalArrangement = Arrangement.spacedBy(1.dp),
+                            ) { it() }
+                        }
                     }
                 }
             }
@@ -228,10 +232,46 @@ fun MarkedLine(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
-    val line = with(LocalDensity.current) { firstLine.lineHeight.toDp() }
-    Row(modifier, horizontalArrangement = Arrangement.spacedBy(LEADING_GAP)) {
-        Box(Modifier.width(markSize()).height(line), contentAlignment = Alignment.Center) { mark() }
-        content()
+    FirstLineMark(
+        firstLine = firstLine,
+        modifier = modifier,
+        mark = { Box(Modifier.widthIn(min = markSize()), contentAlignment = Alignment.Center) { mark() } },
+        content = content,
+    )
+}
+
+/**
+ * A mark beside words, centered on the words' first line (E6): a line as tall as [firstLine]'s at this text
+ * size, from the words' top, so a wrapped label, a value under it or a note never moves the mark off it.
+ * The words start [LEADING_GAP] past the mark.
+ */
+@Composable
+private fun FirstLineMark(
+    firstLine: TextStyle,
+    modifier: Modifier = Modifier,
+    mark: (@Composable () -> Unit)?,
+    content: @Composable () -> Unit,
+) {
+    if (mark == null) {
+        Box(modifier) { content() }
+        return
+    }
+    val measurer = rememberTextMeasurer()
+    // As the words' own style lays a line out at this text size, nonlinear scaling included.
+    val line = remember(firstLine, measurer) { measurer.measure("A", firstLine, maxLines = 1).size.height }
+    Layout(contents = listOf(mark, content), modifier = modifier) { (marks, words), constraints ->
+        val gap = LEADING_GAP.roundToPx()
+        val markPlaceable = marks.first().measure(constraints.copy(minWidth = 0, minHeight = 0))
+        val wordsWidth = (constraints.maxWidth - markPlaceable.width - gap).coerceAtLeast(0)
+        val wordsPlaceable = words.first().measure(constraints.copy(minWidth = wordsWidth, maxWidth = wordsWidth, minHeight = 0))
+        // Whichever reaches higher above the line's middle sets the top.
+        val markTop = ((line - markPlaceable.height) / 2f).coerceAtLeast(0f).roundToInt()
+        val wordsTop = ((markPlaceable.height - line) / 2f).coerceAtLeast(0f).roundToInt()
+        val height = maxOf(markTop + markPlaceable.height, wordsTop + wordsPlaceable.height, constraints.minHeight)
+        layout(constraints.maxWidth, height) {
+            markPlaceable.placeRelative(0, markTop)
+            wordsPlaceable.placeRelative(markPlaceable.width + gap, wordsTop)
+        }
     }
 }
 
