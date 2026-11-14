@@ -1,6 +1,7 @@
 "use client";
 
 import { BigQuantity } from "@zoonk/ui/components/big-quantity";
+import { METER_PARTS_CLASS } from "@zoonk/ui/components/meter";
 import {
   Popover,
   PopoverContent,
@@ -9,15 +10,17 @@ import {
   PopoverTitle,
   PopoverTrigger,
 } from "@zoonk/ui/components/popover";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
+import { moveFocusWithArrows } from "../_utils/arrow-focus";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
-import { type DayStepPart, getDayMeterParts } from "../session/day-meter-parts";
+import { getDayMeterParts } from "../session/day-meter-parts";
 import { getSessionQueue } from "../session/session-queue-rows";
 import { type DayStep } from "../session/session-types";
-import { useBlockTitle } from "../session/use-block-copy";
-import { DayMeter } from "./day-segments";
+import { drawsDayMeter } from "./day-segments";
 import { useTodayScreen } from "./today-context";
+import { BlockSegment, DAY_SEGMENT_SLOT, HeldSegment } from "./today-segment-popover";
 import { getDayTime, getHeldMinutes } from "./today-time";
 
 function getBlockShare(block: DayStep): number {
@@ -28,39 +31,10 @@ function getBlockShare(block: DayStep): number {
   return Math.min(1, block.answered / block.questions);
 }
 
-function usePartFacts() {
-  const t = useExtracted();
-  const formatDuration = useFormatDuration();
+const moveBetweenSegments = moveFocusWithArrows(DAY_SEGMENT_SLOT);
 
-  return ({ block, state }: DayStepPart): string => {
-    const time = formatDuration(block.estimatedMinutes);
-
-    if (state === "done") {
-      return t("Done");
-    }
-
-    if (state === "ahead") {
-      return time;
-    }
-
-    return block.status === "active" && block.answered > 0
-      ? t("{answered, number} of {count, plural, one {# question} other {# questions}}", {
-          answered: block.answered,
-          count: block.questions,
-        })
-      : [t("Up next"), time].join(" · ");
-  };
-}
-
-/**
- * A picture of the day, not a row of buttons: a part per block is too thin to tap on a phone, and
- * the list under it opens each block. Its name reads the day in order, each block with its state.
- */
 export function DayProgress({ className }: { className?: string }) {
   const t = useExtracted();
-  const formatDuration = useFormatDuration();
-  const blockTitle = useBlockTitle();
-  const partFacts = usePartFacts();
   const { today } = useTodayScreen();
   const { blocks, nextPosition, sessionBar } = today.session;
   const next = blocks.find((block) => block.position === nextPosition);
@@ -71,21 +45,29 @@ export function DayProgress({ className }: { className?: string }) {
     rows: getSessionQueue({ blocks, nextPosition }),
   });
 
-  const done = t(
-    "{done, plural, =0 {# of {total, number} done} one {# of {total, number} done} other {# of {total, number} done}}",
-    { done: sessionBar.completed, total: sessionBar.total },
-  );
+  const focusPosition = next?.position ?? parts[0]?.block.position;
 
-  const steps = parts.map((part) => `${blockTitle(part.block)}: ${partFacts(part)}`);
-  const heldStep = held > 0 ? [`${t("Your next lessons")}: ${formatDuration(held)}`] : [];
+  if (!drawsDayMeter({ held: held > 0, parts })) {
+    return null;
+  }
 
   return (
-    <DayMeter
-      className={className}
-      held={held > 0}
-      label={[done, ...steps, ...heldStep].join(". ")}
-      parts={parts}
-    />
+    // oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- The arrow keys move between the buttons inside.
+    <div
+      aria-label={t(
+        "{done, plural, =0 {# of {total, number} done} one {# of {total, number} done} other {# of {total, number} done}}",
+        { done: sessionBar.completed, total: sessionBar.total },
+      )}
+      className={cn(METER_PARTS_CLASS, className)}
+      data-slot="today-day-progress"
+      onKeyDown={moveBetweenSegments}
+      role="group"
+    >
+      {parts.map((part) => (
+        <BlockSegment focusable={part.block.position === focusPosition} key={part.id} part={part} />
+      ))}
+      {held > 0 && <HeldSegment minutes={held} />}
+    </div>
   );
 }
 
