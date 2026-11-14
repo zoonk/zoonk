@@ -9,8 +9,8 @@ import { ChevronsUpIcon, ListChecksIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { BeltTicks } from "../../_components/belt-ticks";
 import { BrainPowerReadout } from "../../_components/moment-readouts";
-import { StepCard, StepRow, StepRows, StepTitle } from "../../_components/step-card";
-import { useBeltName } from "../../_utils/use-belt-name";
+import { StepRow, StepRows } from "../../_components/step-card";
+import { useBeltName, useBeltStep } from "../../_utils/use-belt-name";
 import { BuddyArt } from "../../buddies/buddy-art";
 import { resolveLearnBuddy, useBuddyName } from "../../buddies/use-buddy-name";
 import { type StudySessionSummary } from "../session-types";
@@ -28,14 +28,6 @@ function hasMissionsDone(summary: StudySessionSummary): boolean {
   return summary.fullMeal && isFullMeal(summary.missions);
 }
 
-export function hasRewardsBeyondBrainPower(summary: StudySessionSummary): boolean {
-  return (
-    hasMissionsDone(summary) ||
-    (summary.belt?.stripesGained ?? 0) > 0 ||
-    summary.bestStreak >= SHOWN_STREAK
-  );
-}
-
 function RewardsArt() {
   const t = useExtracted();
   const { buddy: learnerBuddy } = useSessionSummary();
@@ -44,8 +36,9 @@ function RewardsArt() {
   return (
     <BuddyArt
       buddy={learnerBuddy}
-      className="h-28"
+      className="[--buddy-height:--spacing(28)]"
       expression="happy"
+      fit="ink"
       label={t({
         description: "Image description: the buddy is happy with what the learner studied today.",
         message: "{buddy}, happy with today",
@@ -96,19 +89,18 @@ function MissionsBonusRow({ count }: { count: number }) {
   );
 }
 
-/** The ticks hold still: each level already landed at the end of the block that reached it. */
+/** The ticks hold still: each number already landed at the end of the block that reached it. */
 function BeltRow({ belt }: { belt: SummaryBelt }) {
   const t = useExtracted();
   const beltName = useBeltName();
+  const beltStep = useBeltStep();
   const { color, level } = belt.after;
 
   return (
     <StepRow className="flex-col items-stretch gap-2" data-slot="belt-stripes">
       <span className="flex items-center gap-3">
         <BeltIndicator color={color} label={beltName(color)} />
-        <span className="min-w-0 flex-1 font-medium">
-          {t("{belt}, level {level}", { belt: beltName(color), level: String(level) })}
-        </span>
+        <span className="min-w-0 flex-1 font-medium">{beltStep(belt.after)}</span>
         <RewardValue tone="progress">
           {t("{count, plural, one {+# level} other {+# levels}}", { count: belt.stripesGained })}
         </RewardValue>
@@ -150,24 +142,6 @@ function RewardRows() {
   );
 }
 
-export function RewardsStep() {
-  const t = useExtracted();
-  const { summary } = useSessionSummary();
-  const { brainPower } = summary;
-
-  return (
-    <StepCard className="items-stretch">
-      <RewardsArt />
-
-      <StepTitle>
-        {brainPower > 0 ? <BrainPowerReadout points={brainPower} /> : t("Rewards")}
-      </StepTitle>
-
-      <RewardRows />
-    </StepCard>
-  );
-}
-
 export function EarnedToday() {
   const { summary } = useSessionSummary();
 
@@ -175,7 +149,7 @@ export function EarnedToday() {
     <div className="flex flex-col items-start gap-4" data-slot="earned-today">
       <RewardsArt />
       <p>
-        <BrainPowerReadout points={summary.brainPower} />
+        <BrainPowerReadout hero points={summary.brainPower} />
       </p>
       <RewardRows />
     </div>
