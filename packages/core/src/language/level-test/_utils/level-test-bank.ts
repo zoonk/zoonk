@@ -24,7 +24,7 @@ export type LevelTestBankAnalytics = Omit<
 >;
 
 export type LevelTestBankState =
-  | { bank: LevelTestBank; runId: string; status: "ready"; writtenAt: Date }
+  | { bank: LevelTestBank; id: string; runId: string; status: "ready"; writtenAt: Date }
   | { startedAt: Date | null; status: "preparing" };
 
 export function readBank(row: Pick<LanguageLevelTest, "content"> | null): LevelTestBank | null {
@@ -177,7 +177,7 @@ export async function loadLevelTestBank(pair: LanguagePair): Promise<LevelTestBa
   const bank = readBank(row);
 
   if (bank && row) {
-    return { bank, runId: row.runId, status: "ready", writtenAt: row.generatedAt };
+    return { bank, id: row.id, runId: row.runId, status: "ready", writtenAt: row.generatedAt };
   }
 
   const running = row && row.generatedAt.getTime() > Date.now() - STALE_CLAIM_MS;

@@ -117,7 +117,11 @@ function pauseNextFinishAfterSettling() {
 
 const TESTED_UP_TO_B2 = {
   answers: ["reading", "listening"].flatMap((skill) =>
-    ["A2", "B1", "B2"].map((level) => ({ answerIndex: 1, id: `${skill}-${level}-0` })),
+    ["A2", "B1", "B2"].map((level) => ({
+      answerIndex: 1,
+      correct: true,
+      id: `${skill}-${level}-0`,
+    })),
   ),
   speaking: null,
 };
@@ -643,7 +647,10 @@ describe("language level test", () => {
       data: {
         details: {
           ...(goal.details as object),
-          levelTest: { answers: answers.map((id) => ({ answerIndex: 1, id })), speaking: null },
+          levelTest: {
+            answers: answers.map((id) => ({ answerIndex: 1, correct: true, id })),
+            speaking: null,
+          },
         },
       },
       where: { id: goal.id },
@@ -699,7 +706,7 @@ describe("language level test", () => {
     mockSession(user.id);
 
     const answers = ["reading", "listening"].flatMap((skill) =>
-      ["A2", "B1"].map((level) => ({ answerIndex: 1, id: `${skill}-${level}-0` })),
+      ["A2", "B1"].map((level) => ({ answerIndex: 1, correct: true, id: `${skill}-${level}-0` })),
     );
 
     await prisma.goal.update({
@@ -739,7 +746,10 @@ describe("language level test", () => {
         data: {
           details: {
             ...(goal.details as object),
-            levelTest: { answers: answers.map((id) => ({ answerIndex: 1, id })), speaking: null },
+            levelTest: {
+              answers: answers.map((id) => ({ answerIndex: 1, correct: true, id })),
+              speaking: null,
+            },
           },
         },
         where: { id: goal.id },

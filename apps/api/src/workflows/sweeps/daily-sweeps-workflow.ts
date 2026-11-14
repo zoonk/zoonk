@@ -15,6 +15,7 @@ import {
   sentenceOrdersWorkflow,
 } from "../language/sentence-orders-workflow";
 import { getSkillLevelsToken, skillLevelsWorkflow } from "../language/skill-levels-workflow";
+import { startOwedMindMapRedraws } from "../mind-maps/start-owed-mind-map-redraws";
 import { updateCoursesBehind } from "../products/product-releases";
 import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow";
 import {
@@ -193,6 +194,7 @@ async function sweep(): Promise<SweepCounts> {
     checkLevelTestAnswersStep(),
     writeOwedSentenceOrders(),
     tagOwedSkillLevels(),
+    startOwedMindMapRedraws(),
   ]);
 
   return {

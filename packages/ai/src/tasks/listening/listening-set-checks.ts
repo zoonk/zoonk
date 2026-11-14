@@ -1,3 +1,4 @@
+import { findBareLatexText } from "@zoonk/utils/bare-latex";
 import { countWords, replaceEmDashes } from "@zoonk/utils/string";
 import { findPlaceholderText, findUnrenderedMarkdown } from "@zoonk/utils/text-flaws";
 import { countListeningVoices } from "../audio/listening-voices";
@@ -219,6 +220,10 @@ function findScriptProblems(set: ListeningSet): string[] {
     ...set.turns.flatMap((turn) => [
       ...findPlaceholderText(turn.text),
       ...findUnrenderedMarkdown({ layout: "inline", text: turn.text }),
+      ...findBareLatexText({ layout: "inline", text: turn.text }).map(
+        (written) =>
+          `A spoken line has written notation a voice can't say: "${written}". Write it as the words a speaker would say.`,
+      ),
     ]),
   ].filter((problem) => typeof problem === "string");
 }

@@ -58,6 +58,55 @@ function tableQuestion(context: string): PastQuestion {
   return question({ citation: "Algebra I, June 2025, question 4", item, number: "4" });
 }
 
+const MATH_PAPER = `7 A pen costs $5 and the store sold x² + 3x pens.
+Simplify x4y · x2 when log2 x = 3 and ΔH = 10 3.
+(1) x6y
+(2) x8y
+(3) 2x6y
+(4) x6y2
+8 What is 10^3?
+(1) 30
+(2) 300
+(3) 1000
+(4) 3000`;
+
+function mathQuestion({
+  context = String.raw`A pen costs \$5 and the store sold $x^2 + 3x$ pens.`,
+  question:
+    command = String.raw`Simplify $x^4 y \cdot x^2$ when $\log_2 x = 3$ and $\Delta H = 10^{3}$.`,
+}: {
+  context?: string;
+  question?: string;
+}): PastQuestion {
+  const item = {
+    ...PRINTED_ITEM,
+    context,
+    options: ["$x^6 y$", "$x^8 y$", "$2x^6 y$", "$x^6 y^2$"].map((text, index) => ({
+      ...PRINTED_ITEM.options[index]!,
+      text,
+    })),
+    question: command,
+  };
+
+  return question({ citation: "Algebra I, question 7", item, number: "7" });
+}
+
+function powerQuestion(command: string): PastQuestion {
+  const item = {
+    ...PRINTED_ITEM,
+    context: null,
+    options: ["30", "300", "1000", "3000"].map((text, index) => ({
+      ...PRINTED_ITEM.options[index]!,
+      isCorrect: index === 2,
+      misconception: index === 2 ? null : "Multiplies 10 by 3",
+      text,
+    })),
+    question: command,
+  };
+
+  return question({ citation: "Algebra I, question 8", item, number: "8" });
+}
+
 describe(checkPastQuestion, () => {
   it("accepts a question copied as printed, whatever the line breaks, hyphens and quote marks", () => {
     expect(
@@ -397,6 +446,56 @@ Which polynomial has a degree of 3?`;
         checkPastQuestion({ paperText: TABLE_PAPER, question: tableQuestion(context), target })
           .problems,
       ).toStrictEqual(["The support text isn't in the paper as printed."]);
+    });
+  });
+
+  describe("math the paper's text gives without its notation", () => {
+    const target = { ...TARGET, language: "en", optionCount: 4 };
+
+    it.each(["What is 10^3?", "What is $10^3$?", "What is $10^{3}$?"])(
+      "accepts a power copied as %s",
+      (command) => {
+        expect(
+          checkPastQuestion({ paperText: MATH_PAPER, question: powerQuestion(command), target })
+            .problems,
+        ).toStrictEqual([]);
+      },
+    );
+
+    it("accepts formulas written as LaTeX where the paper's text flattened them", () => {
+      expect(
+        checkPastQuestion({ paperText: MATH_PAPER, question: mathQuestion({}), target }).problems,
+      ).toStrictEqual([]);
+    });
+
+    it("refuses a changed word beside the math", () => {
+      const reworded = mathQuestion({
+        question: String.raw`Reduce $x^4 y \cdot x^2$ when $\log_2 x = 3$ and $\Delta H = 10^{3}$.`,
+      });
+
+      expect(
+        checkPastQuestion({ paperText: MATH_PAPER, question: reworded, target }).problems,
+      ).toStrictEqual(["The command isn't in the paper as printed."]);
+    });
+
+    it("refuses a formula with another power", () => {
+      const changed = mathQuestion({
+        context: String.raw`A pen costs \$5 and the store sold $x^3 + 3x$ pens.`,
+      });
+
+      expect(
+        checkPastQuestion({ paperText: MATH_PAPER, question: changed, target }).problems,
+      ).toStrictEqual(["The support text isn't in the paper as printed."]);
+    });
+
+    it("refuses a formula with another variable", () => {
+      const changed = mathQuestion({
+        question: String.raw`Simplify $x^4 z \cdot x^2$ when $\log_2 x = 3$ and $\Delta H = 10^{3}$.`,
+      });
+
+      expect(
+        checkPastQuestion({ paperText: MATH_PAPER, question: changed, target }).problems,
+      ).toStrictEqual(["The command isn't in the paper as printed."]);
     });
   });
 });

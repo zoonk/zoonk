@@ -28,12 +28,16 @@ enum class DiffKind { Added, Context, Removed }
 
 enum class DiffTone { Good, Bad, Neutral }
 
-/** An unlabeled line says its own side ("Leaves out", "Adds"), so TalkBack reads it without the list's labels. */
+/**
+ * An unlabeled line says its own side ("Leaves out", "Adds"), so TalkBack reads it without the
+ * list's labels. [spoken] is what TalkBack says instead of [text], such as a formula in words.
+ */
 class DiffLine(
     val kind: DiffKind,
     val text: AnnotatedString,
     val tone: DiffTone? = null,
     val labeled: Boolean = true,
+    val spoken: String? = null,
 ) {
     constructor(kind: DiffKind, text: String, tone: DiffTone? = null, labeled: Boolean = true) :
         this(kind, AnnotatedString(text), tone, labeled)
@@ -64,7 +68,8 @@ fun DiffLines(
                     DiffKind.Removed -> removed
                     DiffKind.Context -> null
                 }?.takeIf { line.labeled }
-            val spoken = label?.let { withWords(stringResource(R.string.diff_line_spoken, it, WORDS_MARK), line.text) } ?: line.text
+            val words = line.spoken?.let(::AnnotatedString) ?: line.text
+            val spoken = label?.let { withWords(stringResource(R.string.diff_line_spoken, it, WORDS_MARK), words) } ?: words
             Row(
                 Modifier
                     .fillMaxWidth()

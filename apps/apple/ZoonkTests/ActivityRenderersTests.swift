@@ -67,7 +67,7 @@ final class ActivityRenderersTests: XCTestCase {
     XCTAssertEqual(ActivityNumberFormat.format(2.5), 2.5.formatted(.number.locale(lessons)))
     XCTAssertEqual(
       PracticeAnswerText.text(
-        for: .number(12_000.5), question: makeQuestion("a"), labels: .trueFalse),
+        for: .number(12_000.5), question: makeQuestion("a"), labels: .trueFalse)?.said,
       12_000.5.formatted(.number.locale(lessons)))
   }
 

@@ -1,85 +1,49 @@
 import { type TransactionClient } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
-import { CURRENT_STEPS, readStagedLessonVersion } from "../../../library/lessons/lesson-versions";
+import { CURRENT_STEPS } from "../../../library/lessons/lesson-versions";
 import { getScreenReadingTexts, holdsQuote } from "../../../library/steps/question-bases";
-import { type ContentFixEffect, type ProposedChange, type StoredChange } from "../contract";
-import { resolveExplanation, resolveItemRestore, resolveItemRetire } from "./resolve-practice";
-import {
-  resolvePictureAttach,
-  resolvePictureDetach,
-  resolveStepContent,
-  resolveVariantContent,
-} from "./resolve-screen";
-import { resolveTextRow } from "./resolve-text-row";
-import {
-  type FixUnit,
-  type Json,
-  PRIVATE_CONTENT,
-  type Refusal,
-  type ResolvedChange,
-  refuse,
-} from "./resolved-change";
+import { type ContentFixEffect, type StoredChange, contentFixChangesSchema } from "../contract";
+import { type FixTarget } from "../handlers/fix-handler";
+import { numericScreenProblem } from "../handlers/numeric-screen";
+import { findStoredHandler, prepareProposedChange } from "../handlers/registry";
+import { lessonProblem } from "./lesson-problem";
+import { type FixUnit, type Json, type Refusal, type Resolution, refuse } from "./resolved-change";
+import { isVocabularyUnit, vocabularyEffects } from "./vocabulary-unit";
 
 export type PreparedFix = { changes: StoredChange[]; effects: ContentFixEffect[]; unit: FixUnit };
 
-function resolveChange(db: TransactionClient, change: ProposedChange): Promise<ResolvedChange> {
-  if ("retire" in change) {
-    return resolveItemRetire(db, change.id);
-  }
+/** Reads what one change touches now and returns what it would write. */
+export type ChangeResolver = (db: TransactionClient) => Promise<Resolution<unknown>>;
 
-  if ("unretire" in change) {
-    return resolveItemRestore(db, change.id);
-  }
-
-  if ("detachPicture" in change) {
-    return resolvePictureDetach(db, change.id);
-  }
-
-  if ("attachPicture" in change) {
-    return resolvePictureAttach(db, { id: change.id, mediaAssetId: change.attachPicture });
-  }
-
-  if (change.model === "Step") {
-    return resolveStepContent(db, change);
-  }
-
-  if (change.model === "StepVariant") {
-    return resolveVariantContent(db, change);
-  }
-
-  if (change.model === "AnswerExplanation") {
-    return resolveExplanation(db, change);
-  }
-
-  return resolveTextRow(db, { id: change.id, model: change.model, set: change.set });
+export function proposedChange(change: unknown): ChangeResolver {
+  return (db) => prepareProposedChange(db, change);
 }
 
-function changeKey(change: ProposedChange): string {
-  const part = "detachPicture" in change || "attachPicture" in change ? "picture" : "fields";
-  return `${change.model}:${change.id}:${part}`;
+export function storedChange(change: StoredChange): ChangeResolver {
+  return (db) => findStoredHandler(change).reprepare(db, change);
 }
 
-async function lessonProblem(db: TransactionClient, lessonId: string): Promise<string | null> {
-  const lesson = await db.lesson.findUnique({
-    select: { contentStatus: true, ownerId: true, visibility: true },
-    where: { id: lessonId },
-  });
+export function inverseChange(change: StoredChange): ChangeResolver {
+  return (db) => findStoredHandler(change).revert(db, change);
+}
 
-  if (!lesson) {
-    return `No Lesson with id ${lessonId}.`;
-  }
+export function targetsOf(change: StoredChange): FixTarget[] {
+  return findStoredHandler(change).targets(change);
+}
 
-  if (lesson.visibility === "private" || lesson.ownerId) {
-    return PRIVATE_CONTENT;
-  }
+function targetKey({ id, model, part }: FixTarget): string {
+  return `${model}:${id}:${part}`;
+}
 
-  if (lesson.contentStatus !== "completed") {
-    return "Only a published lesson can be fixed; this one is still being written.";
-  }
+/** Two changes of one fix writing the same thing would leave only the last one's value. */
+function overlapProblem(changes: readonly StoredChange[]): string | null {
+  const keys = changes.flatMap((change) => [
+    ...new Set(targetsOf(change).map((target) => targetKey(target))),
+  ]);
 
-  return (await readStagedLessonVersion(lessonId, db))
-    ? "A new version of this lesson is waiting to replace it; fix it once that version is published."
-    : null;
+  return new Set(keys).size === keys.length
+    ? null
+    : "Each row appears once in a fix; put all of a row's fields in one change.";
 }
 
 function readBasis(content: unknown): { position: number; quote: string } | null {
@@ -135,11 +99,37 @@ async function quoteProblem(
 function screenContents(changes: readonly StoredChange[]): Map<string, Json> {
   return new Map(
     changes.flatMap((change) =>
-      change.op === "set" && change.model === "Step"
+      (change.op === "set" || change.op === "setOptions") && change.model === "Step"
         ? change.fields.map((field) => [change.id, field.after] as const)
         : [],
     ),
   );
+}
+
+function variantIds(changes: readonly StoredChange[]): string[] {
+  return changes.filter((change) => change.model === "StepVariant").map((change) => change.id);
+}
+
+/** A screen's versions for a field or tool are rows of their own, which a fix sets or leaves. */
+async function keptVariantEffects(
+  db: TransactionClient,
+  changes: readonly StoredChange[],
+): Promise<ContentFixEffect[]> {
+  const stepIds = [...screenContents(changes).keys()];
+
+  if (stepIds.length === 0) {
+    return [];
+  }
+
+  const kept = await db.stepVariant.findMany({
+    select: { stepId: true },
+    where: { id: { notIn: variantIds(changes) }, stepId: { in: stepIds } },
+  });
+
+  return stepIds.flatMap((stepId) => {
+    const count = kept.filter((variant) => variant.stepId === stepId).length;
+    return count > 0 ? [{ count, kind: "variantsKept" as const, stepId }] : [];
+  });
 }
 
 function uniqueEffects(effects: readonly ContentFixEffect[]): ContentFixEffect[] {
@@ -166,13 +156,66 @@ async function deletedExplanationProblem(
     return null;
   }
 
+  const itemIds = changes
+    .filter((change) => change.op === "set" && change.model === "Item")
+    .map((change) => change.id);
+
   const deleted = await db.answerExplanation.findFirst({
     select: { id: true },
-    where: { id: { in: explanationIds }, stepId: { in: [...screenContents(changes).keys()] } },
+    where: {
+      OR: [
+        { stepId: { in: [...screenContents(changes).keys()] } },
+        { step: { variants: { some: { id: { in: variantIds(changes) } } } } },
+        { itemId: { in: itemIds } },
+      ],
+      id: { in: explanationIds },
+    },
   });
 
   return deleted
-    ? `Fixing a screen deletes its saved answer explanations, AnswerExplanation ${deleted.id} among them. Leave that change out; a new one is written from the fixed screen.`
+    ? `Fixing a screen or a question deletes its saved answer explanations, AnswerExplanation ${deleted.id} among them. Leave that change out; a new one is written from the fixed content.`
+    : null;
+}
+
+async function optionsVariantProblem(
+  db: TransactionClient,
+  changes: readonly StoredChange[],
+): Promise<string | null> {
+  const steps = changes.filter((change) => change.model === "Step" && change.op === "setOptions");
+
+  const changedVariants = await db.stepVariant.findMany({
+    select: { stepId: true },
+    where: {
+      id: {
+        in: changes
+          .filter((change) => change.model === "StepVariant" && change.op === "setOptions")
+          .map((change) => change.id),
+      },
+    },
+  });
+
+  const stepIds = [
+    ...new Set([
+      ...steps.map((step) => step.id),
+      ...changedVariants.map((variant) => variant.stepId),
+    ]),
+  ];
+
+  const variants = await db.stepVariant.findMany({
+    select: { id: true },
+    where: { stepId: { in: stepIds } },
+  });
+
+  const missing = variants.find(
+    (variant) =>
+      !changes.some(
+        (change) =>
+          change.model === "StepVariant" && change.op === "setOptions" && change.id === variant.id,
+      ),
+  );
+
+  return missing
+    ? `setOptions must include every variant; include StepVariant ${missing.id}.`
     : null;
 }
 
@@ -180,13 +223,21 @@ async function unitProblem(
   db: TransactionClient,
   { changes, unit }: { changes: readonly StoredChange[]; unit: FixUnit },
 ): Promise<string | null> {
+  if (unit.kind === "item") {
+    return deletedExplanationProblem(db, changes);
+  }
+
   if (unit.kind !== "lesson") {
     return null;
   }
 
   return (
-    (await lessonProblem(db, unit.id)) ??
+    (changes.every((change) => change.model === "Lesson" && change.op === "setSkills")
+      ? null
+      : await lessonProblem(db, unit.id)) ??
+    (await optionsVariantProblem(db, changes)) ??
     (await deletedExplanationProblem(db, changes)) ??
+    (await numericScreenProblem(db, changes)) ??
     quoteProblem(db, { contents: screenContents(changes), lessonId: unit.id })
   );
 }
@@ -198,15 +249,9 @@ async function unitProblem(
  */
 export async function prepareContentFix(
   db: TransactionClient,
-  changes: readonly ProposedChange[],
+  resolvers: readonly ChangeResolver[],
 ): Promise<Refusal | { fix: PreparedFix; ok: true }> {
-  const keys = changes.map((change) => changeKey(change));
-
-  if (new Set(keys).size !== keys.length) {
-    return refuse("Each row appears once in a fix; put all of a row's fields in one change.");
-  }
-
-  const resolved = await Promise.all(changes.map((change) => resolveChange(db, change)));
+  const resolved = await Promise.all(resolvers.map((resolve) => resolve(db)));
   const refused = resolved.find((change) => !change.ok);
 
   if (refused && !refused.ok) {
@@ -219,12 +264,14 @@ export async function prepareContentFix(
 
   if (!first || units.size !== 1) {
     return refuse(
-      "One fix covers one lesson (with its screens), one chapter, one course or one practice question. Split it into one fix each.",
+      "One fix changes one thing: a lesson with its screens, a word or sentence with the lesson rows that use it, or one row of another model. Split it into one fix each.",
     );
   }
 
-  const stored = accepted.map((change) => change.stored);
-  const problem = await unitProblem(db, { changes: stored, unit: first.unit });
+  const stored = contentFixChangesSchema.parse(accepted.map((change) => change.stored));
+
+  const problem =
+    overlapProblem(stored) ?? (await unitProblem(db, { changes: stored, unit: first.unit }));
 
   if (problem) {
     return refuse(problem);
@@ -233,38 +280,14 @@ export async function prepareContentFix(
   const lessonVersion: ContentFixEffect[] =
     first.unit.kind === "lesson" ? [{ kind: "lessonVersion", lessonId: first.unit.id }] : [];
 
-  return {
-    fix: {
-      changes: stored,
-      effects: uniqueEffects([...lessonVersion, ...accepted.flatMap((change) => change.effects)]),
-      unit: first.unit,
-    },
-    ok: true,
-  };
-}
+  const effects = [
+    ...lessonVersion,
+    ...accepted.flatMap((change) => change.effects),
+    ...(await keptVariantEffects(db, stored)),
+    ...(isVocabularyUnit(first.unit)
+      ? await vocabularyEffects(db, { changes: stored, unit: first.unit })
+      : []),
+  ];
 
-export function toProposedChanges(changes: readonly StoredChange[]): ProposedChange[] {
-  return changes.map((change): ProposedChange => {
-    if (change.op === "retire") {
-      return { id: change.id, model: "Item", retire: true };
-    }
-
-    if (change.op === "unretire") {
-      return { id: change.id, model: "Item", unretire: true };
-    }
-
-    if (change.op === "detachPicture") {
-      return { detachPicture: true, id: change.id, model: "Step" };
-    }
-
-    if (change.op === "attachPicture") {
-      return { attachPicture: change.mediaAssetId, id: change.id, model: "Step" };
-    }
-
-    return {
-      id: change.id,
-      model: change.model,
-      set: Object.fromEntries(change.fields.map((field) => [field.field, field.after])),
-    };
-  });
+  return { fix: { changes: stored, effects: uniqueEffects(effects), unit: first.unit }, ok: true };
 }
