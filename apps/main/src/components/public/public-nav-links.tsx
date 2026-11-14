@@ -40,12 +40,13 @@ export async function CoursesBarLink({ className }: { className?: string }) {
 
 /**
  * So visitors and crawlers reach both from every public page. From 360 px wide both fit beside the
- * logo and "Log in" in every language; narrower than that, "Courses" gives way to the footer's.
+ * logo and "Log in" in every language; narrower than that, "Courses" gives way to the footer's. On a
+ * phone a learner's goal takes the logo's place, so "Courses" gives way to it too.
  */
 export function PublicNavLinks({ pathname }: { pathname?: string }) {
   return (
     <>
-      <CoursesBarLink className="hidden min-[22.5rem]:inline-flex" />
+      <CoursesBarLink className="max-sm:signed-in:hidden hidden min-[22.5rem]:inline-flex" />
       <PricingBarLink current={pathname === "/pricing"} />
     </>
   );
