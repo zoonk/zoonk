@@ -7,11 +7,10 @@ import {
 } from "@zoonk/core/learner/placement/focus-test-contract";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
-import { ChangeSaveError } from "../_components/save-error";
 import {
+  OnboardingActions,
   OnboardingColumn,
   OnboardingDescription,
-  OnboardingFooter,
   OnboardingHeading,
   OnboardingPrimaryButton,
   OnboardingSecondaryButton,
@@ -78,7 +77,26 @@ export function FocusTestProposal({
   const t = useExtracted();
 
   return (
-    <OnboardingColumn>
+    <OnboardingColumn
+      bar={
+        <OnboardingActions failed={failed}>
+          <OnboardingSecondaryButton
+            busy={pressed === "declined"}
+            disabled={pressed === "applied"}
+            onClick={() => onDecide("declined")}
+          >
+            {t("Not now")}
+          </OnboardingSecondaryButton>
+          <OnboardingPrimaryButton
+            busy={pressed === "applied"}
+            disabled={pressed === "declined"}
+            onClick={() => onDecide("applied")}
+          >
+            {t("Change my plan")}
+          </OnboardingPrimaryButton>
+        </OnboardingActions>
+      }
+    >
       <OnboardingHeading>
         <OnboardingSubject>{t("Focus test")}</OnboardingSubject>
         <OnboardingTitle>
@@ -99,24 +117,6 @@ export function FocusTestProposal({
 
       <FocusSubjects rows={rows} />
       <PlanEffectDiff dateKind="exam" effect={proposal.effect} repriced={repriced} />
-
-      <OnboardingFooter>
-        {failed && <ChangeSaveError />}
-        <OnboardingPrimaryButton
-          busy={pressed === "applied"}
-          disabled={pressed === "declined"}
-          onClick={() => onDecide("applied")}
-        >
-          {t("Change my plan")}
-        </OnboardingPrimaryButton>
-        <OnboardingSecondaryButton
-          busy={pressed === "declined"}
-          disabled={pressed === "applied"}
-          onClick={() => onDecide("declined")}
-        >
-          {t("Not now")}
-        </OnboardingSecondaryButton>
-      </OnboardingFooter>
     </OnboardingColumn>
   );
 }

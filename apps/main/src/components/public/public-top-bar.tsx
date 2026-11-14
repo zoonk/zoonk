@@ -36,7 +36,7 @@ export function PublicTopBar({
       <div
         className={cn(
           PUBLIC_CONTAINER_CLASS,
-          "flex h-14 items-center gap-4 sm:grid sm:h-[72px] sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]",
+          "flex h-14 items-center gap-3 sm:grid sm:h-[72px] sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] sm:gap-4",
         )}
       >
         <div className="flex min-w-0 items-center">{start ?? <PublicHomeLink />}</div>

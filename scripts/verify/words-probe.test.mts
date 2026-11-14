@@ -1,19 +1,20 @@
 // @vitest-environment jsdom
 import assert from "node:assert/strict";
 import { afterEach, beforeEach, describe, it, vi } from "vitest";
-import { placeFindings, readWords, summarizeWords } from "./words.mts";
+import { installPageHelpers } from "./page-helpers.mts";
+import { pageKind, placeFindings, readWords, summarizeWords, titleTopFindings } from "./words.mts";
 
 const CONTROL_HEIGHT = 44;
 const BAR_HEIGHT = 65;
 const TITLE_TOP = 101;
 const HEADER_TOP = 4;
-const PAGE_TOP = { bar: "sample-bar", header: "sample-header", row: "sample-row" };
 
 function value(this: HTMLElement) {
   return !this.hidden;
 }
 
 beforeEach(() => {
+  installPageHelpers();
   // jsdom supplies the tree and styles; these boxes stand in for browser layout.
   vi.spyOn(Element.prototype, "getBoundingClientRect").mockImplementation(function box(
     this: HTMLElement,
@@ -22,7 +23,7 @@ beforeEach(() => {
       0,
       Number(this.dataset.top ?? 0),
       100,
-      this.classList.contains(PAGE_TOP.bar) ? BAR_HEIGHT : CONTROL_HEIGHT,
+      this.dataset.slot === "page-top-bar" ? BAR_HEIGHT : CONTROL_HEIGHT,
     );
   });
 
@@ -54,7 +55,7 @@ function action({
       <button data-enter="${enter}" data-top="${top}">Continue</button>
     </footer></section>`;
 
-  return readWords(null);
+  return readWords();
 }
 
 describe("reading the one main action", () => {
@@ -73,6 +74,7 @@ describe("reading the one main action", () => {
     ]) {
       assert.equal(words.actionPinned, false);
       assert.equal(placeFindings(summarizeWords(words, "app")).length, 1);
+      assert.equal(placeFindings(summarizeWords(words, "long-form")).length, 1);
     }
   });
 
@@ -80,34 +82,58 @@ describe("reading the one main action", () => {
     for (const enter of ["host", "off"]) {
       action({ enter });
       document.querySelector("[data-enter]")?.setAttribute("disabled", "");
-      assert.equal(readWords(null).actionPinned, true);
+      assert.equal(readWords().actionPinned, true);
     }
   });
 
   it("does not call a normal filled button or two actions the one main action", () => {
     action();
     delete document.querySelector<HTMLElement>("[data-enter]")?.dataset.enter;
-    assert.equal(readWords(null).actionPinned, null);
-    assert.equal(readWords(null).action, null);
+    assert.equal(readWords().actionPinned, null);
+    assert.equal(readWords().action, null);
     action();
 
     document
       .querySelector("main")
       ?.insertAdjacentHTML("beforeend", '<button data-enter="host">Save</button>');
 
-    assert.equal(readWords(null).actionPinned, null);
+    assert.equal(readWords().actionPinned, null);
   });
 });
 
 describe("reading an app title's top", () => {
   it("reads a 101 px title offset rather than comparing two equally wrong screens", () => {
-    document.body.innerHTML = `<style>.sample-header { padding-top: 4px; border-top-width: 0px; }</style>
-      <section data-slot="learn-shell-content"><main><h1 data-top="${TITLE_TOP}">Today</h1></main></section>`;
+    document.body.innerHTML = `<section data-slot="learn-shell-content"><div data-slot="page-top-bar"></div><main><header data-slot="page-header" style="padding-top:4px"><h1 data-top="${TITLE_TOP}">Today</h1></header></main></section>`;
 
-    assert.deepEqual(readWords(PAGE_TOP).titleTop, {
+    assert.deepEqual(readWords().titleTop, {
       actual: TITLE_TOP,
       expected: BAR_HEIGHT + HEADER_TOP,
     });
+  });
+
+  it("measures shared tops on internal apps even on their root route", () => {
+    document.body.innerHTML = `<main><div data-slot="page-top-bar"></div><header data-slot="page-header" style="padding-top:4px"><h1 data-top="${TITLE_TOP}">Tools</h1></header></main>`;
+
+    for (const app of ["admin", "api", "evals", "mailbox"]) {
+      const facts = summarizeWords(readWords(), pageKind(app, "/"));
+      assert.equal(facts.kind, "app");
+      assert.equal(facts.titleTop?.expected, BAR_HEIGHT + HEADER_TOP);
+      assert.equal(titleTopFindings(facts).length, 1);
+    }
+  });
+
+  it("reports a missing bar instead of skipping a title at 4 px on both sizes", () => {
+    document.body.innerHTML = `<main><header data-slot="page-header" style="padding-top:4px"><h1 data-top="${HEADER_TOP}">Focus test</h1></header></main>`;
+    const facts = summarizeWords(readWords(), "app");
+    assert.deepEqual(facts.titleTop, { actual: HEADER_TOP, expected: null });
+    assert.ok(titleTopFindings(facts)[0]?.message.includes("no visible shared page-top-bar"));
+  });
+
+  it("leaves a centered sign-in form without a page header unmeasured", () => {
+    document.body.innerHTML =
+      '<main><div data-slot="page-top-bar"></div><form><h1>Log in</h1></form></main>';
+
+    assert.equal(readWords().titleTop, null);
   });
 
   it("leaves task and onboarding tops to their own frames", () => {
@@ -115,7 +141,7 @@ describe("reading an app title's top", () => {
       document.body.innerHTML = `<section data-slot="learn-shell-content"><div data-slot="${frame}">
         <main><h1 data-top="${TITLE_TOP}">A question</h1></main></div></section>`;
 
-      assert.equal(readWords(PAGE_TOP).titleTop, null);
+      assert.equal(readWords().titleTop, null);
     }
   });
 });

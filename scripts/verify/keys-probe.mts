@@ -123,6 +123,9 @@ export function readHooks() {
           ? [
               {
                 announced: control.getAttribute("aria-keyshortcuts"),
+                canPress:
+                  !control.matches(":disabled, [aria-disabled=true]") &&
+                  !(keycap.dataset.shortcut === "main" && control.matches("[data-enter=host]")),
                 control: text(control) || (host ? text(host) : ""),
                 id: control instanceof HTMLElement ? (control.dataset.zoonkKey ?? "") : "",
                 keycap: keycap.textContent.trim(),
@@ -169,11 +172,10 @@ export function readPanel({
   const DARK_DIM = 0.7;
   const selector = overlays.map(({ panel }) => `[data-slot=${panel}]`).join(", ");
 
-  const visible = (element: Element) =>
-    element.checkVisibility() && element.getClientRects().length > 0;
+  const { shown } = globalThis.zoonkPage;
 
   const last = (query: string) =>
-    [...document.querySelectorAll<HTMLElement>(query)].toReversed().find(visible);
+    [...document.querySelectorAll<HTMLElement>(query)].toReversed().find(shown);
 
   const known = last(selector);
   const panel = known ?? last("[role=dialog], [role=alertdialog]");
@@ -248,7 +250,7 @@ export function readPanel({
     return (
       Math.abs((box.left + box.right) / 2 - innerWidth / 2) <= 2 &&
       Math.abs((box.top + box.bottom) / 2 - innerHeight / 2) <= 2 &&
-      ![...(panel?.querySelectorAll("[data-slot=drawer-handle]") ?? [])].some(visible)
+      ![...(panel?.querySelectorAll("[data-slot=drawer-handle]") ?? [])].some(shown)
     );
   }
 
@@ -258,7 +260,7 @@ export function readPanel({
       ...panel.querySelectorAll(
         "[data-slot=drawer-close], [data-slot=dialog-close], [data-slot=side-panel-close], [data-slot$=-footer] button",
       ),
-    ].some(visible),
+    ].some(shown),
     dim: known ? dim(overlays.find(({ panel: piece }) => piece === slot)?.backdrop) : null,
     edge: edge(),
     focusInside: known ? panel.contains(document.activeElement) : null,
@@ -279,11 +281,7 @@ export function focusReturned({
 }) {
   const selector = overlays.map(({ panel }) => `[data-slot=${panel}]`).join(", ");
 
-  if (
-    [...document.querySelectorAll(selector)].some(
-      (panel) => panel.checkVisibility() && panel.getClientRects().length > 0,
-    )
-  ) {
+  if ([...document.querySelectorAll(selector)].some(globalThis.zoonkPage.shown)) {
     return false;
   }
 

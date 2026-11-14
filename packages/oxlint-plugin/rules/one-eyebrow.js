@@ -1,13 +1,11 @@
 import { defineRule } from "@oxlint/plugins";
 import { elementName } from "../utils/jsx.js";
 
-const LEGACY = new Set(["PageEyebrow", "DetailEyebrow"]);
-
 export default defineRule({
   createOnce(context) {
     return {
       JSXOpeningElement(node) {
-        if (LEGACY.has(elementName(node))) {
+        if (elementName(node) === "PageEyebrow") {
           context.report({ messageId: "eyebrow", node });
         }
       },

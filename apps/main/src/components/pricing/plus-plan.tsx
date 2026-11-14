@@ -119,10 +119,17 @@ async function PlusAction({
     );
   }
 
+  // A visitor's strongest button on the page is "Build my plan", as on every public page; a guest already has a plan.
   return (
     <PlusLoginLink
       billingSwitch={billingSwitch}
-      className={cn(buttonVariants({ size: "lg" }), PLUS_CTA_CLASS)}
+      className={cn(
+        buttonVariants({
+          size: "lg",
+          variant: viewerState.status === "visitor" ? "outline" : "default",
+        }),
+        PLUS_CTA_CLASS,
+      )}
       hasChoice={hasChoice}
     />
   );

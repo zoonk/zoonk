@@ -50,7 +50,7 @@ function RailSkeleton() {
 function HeadingSkeleton({ eyebrow = false }: { eyebrow?: boolean }) {
   return (
     <OnboardingHeading>
-      {eyebrow && <Skeleton className="h-4 w-32" data-slot="page-eyebrow" />}
+      {eyebrow && <Skeleton className="h-5.5 w-32" data-slot="onboarding-subject" />}
       <Skeleton className="h-16.5 w-4/5 sm:h-8.25" />
       <Skeleton className="mt-1 h-5 w-3/5" />
     </OnboardingHeading>
@@ -65,7 +65,7 @@ export function StartEntrySkeleton() {
       <OnboardingFrame>
         <OnboardingColumn aria-busy="true">
           <OnboardingHeading>
-            <OnboardingTitle>{t("What do you want to achieve?")}</OnboardingTitle>
+            <OnboardingTitle>{t("What's your goal?")}</OnboardingTitle>
             <OnboardingDescription>
               {t("Tell us in your own words. We'll build the plan.")}
             </OnboardingDescription>

@@ -137,7 +137,7 @@ function PlanWaitBar({
             : undefined
         }
       >
-        <OnboardingPrimaryButton className="lg:w-auto lg:min-w-40" onClick={release}>
+        <OnboardingPrimaryButton onClick={release}>
           {next === "plan" ? t("See your plan") : t("Continue")}
         </OnboardingPrimaryButton>
       </WaitBar>

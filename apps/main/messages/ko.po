@@ -38,6 +38,16 @@ msgid "Home"
 msgstr "홈"
 
 #: src/app/[lang]/(app)/(catalog)/_components/catalog-bar-content.tsx
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
+#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
+#: src/app/[lang]/(app)/(catalog)/courses/layout.tsx
+#: src/components/catalog/catalog-not-found.tsx
+msgctxt "s-Ncqj"
+msgid "Explore courses"
+msgstr "코스 둘러보기"
+
+#: src/app/[lang]/(app)/(catalog)/_components/catalog-bar-content.tsx
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-tab-navigation.tsx
 #: src/app/[lang]/(app)/(learn)/today/page.tsx
@@ -60,15 +70,6 @@ msgstr "로그아웃"
 msgctxt "U3l-Q9"
 msgid "Home page"
 msgstr "홈"
-
-#: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
-#: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
-#: src/app/[lang]/(app)/(catalog)/courses/layout.tsx
-#: src/components/catalog/catalog-not-found.tsx
-msgctxt "s-Ncqj"
-msgid "Explore courses"
-msgstr "코스 둘러보기"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
 #: src/app/[lang]/(app)/(learn)/_components/learn-no-goal.tsx
@@ -1098,19 +1099,9 @@ msgid "How much do you already know?"
 msgstr "이미 어느 정도 알고 있나요?"
 
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
-msgctxt "eePhP0"
-msgid "It only changes where your plan starts."
-msgstr "계획의 시작 지점만 달라져요."
-
-#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
 msgctxt "C1D9a4"
 msgid "Your plan follows this course, in the time you have each day."
 msgstr "하루에 공부할 수 있는 시간에 맞춰 이 코스 순서대로 계획을 세워요."
-
-#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
-msgctxt "6CVLNb"
-msgid "{minutes, plural, one {# minute} other {# minutes}} a day for now. You can change it in the next steps."
-msgstr "우선 하루 {minutes, plural, other {#분}}으로 시작해요. 다음 단계에서 바꿀 수 있어요."
 
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
 #: src/app/[lang]/(home)/page.tsx
@@ -1124,6 +1115,11 @@ msgstr "우선 하루 {minutes, plural, other {#분}}으로 시작해요. 다음
 msgctxt "UTU-oM"
 msgid "Build my plan"
 msgstr "내 계획 만들기"
+
+#: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
+msgctxt "54WyfN"
+msgid "{minutes, plural, one {# minute} other {# minutes}} a day. You can change it later."
+msgstr "하루 {minutes, plural, other {#분}}이에요. 나중에 바꿀 수 있어요."
 
 #: src/app/[lang]/(app)/(onboarding)/start/course/[courseId]/course-start-screen.tsx
 #: src/app/[lang]/learn/[lessonId]/guest-plan-start.tsx

@@ -3,7 +3,7 @@
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { useSignUpHref } from "@/components/learn/use-sign-up-href";
 import { type LessonFit } from "@zoonk/core/view-models/onboarding/get-lesson-fit";
-import { GuestLessonNext } from "@zoonk/learn/guest-ending";
+import { GuestLessonFit, GuestSignUpLink } from "@zoonk/learn/guest-ending";
 import { type ComponentProps, useMemo } from "react";
 import { GuestPlanStart } from "./guest-plan-start";
 import { LessonPlayerClient } from "./lesson-player-client";
@@ -25,12 +25,13 @@ function createGuestEnding({
 
   return {
     completionActions: () => (
-      <GuestLessonNext
-        fit={fit}
-        plan={<GuestPlanStart goal={goal} start={start} />}
-        signUpHref={signUpHref}
+      <GuestPlanStart
+        goal={goal}
+        other={<GuestSignUpLink signUpHref={signUpHref} />}
+        start={start}
       />
     ),
+    completionDetails: () => fit && <GuestLessonFit fit={fit} />,
   };
 }
 

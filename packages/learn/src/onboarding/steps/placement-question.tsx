@@ -21,13 +21,13 @@ import { useSpokenText } from "../../rich-text/use-spoken-text";
 import { type Choice } from "../choice-list";
 import { type PlacementAnswer, type PlacementQuestion } from "../onboarding-actions";
 import {
+  OnboardingBottomBar,
   OnboardingColumn,
   OnboardingHeading,
   OnboardingScreenTop,
   OnboardingSubject,
 } from "../onboarding-frame";
 import { OnboardingTestQuestion } from "../onboarding-host";
-import { PlanStartNoticeSlot } from "./plan-start-notice";
 import { TypedAnswerField } from "./typed-answer-field";
 
 function useQuestionChoices({
@@ -108,7 +108,6 @@ function toAnswer({
 
 type PlacementControl = "confirm" | "dontKnow" | "stop";
 
-/** Pinned to the screen's bottom, as a lesson's are, so answering never needs a scroll. */
 function PlacementActions({
   canConfirm,
   dontKnowLabel,
@@ -129,10 +128,9 @@ function PlacementActions({
   const busy = pending ? pressed : null;
 
   return (
-    <div className="flex flex-col gap-2">
-      <PlanStartNoticeSlot />
-      {failures > 0 && !pending && <AnswersSaveError failures={failures} />}
-
+    <OnboardingBottomBar
+      note={failures > 0 && !pending && <AnswersSaveError failures={failures} />}
+    >
       <QuestionActions>
         <QuestionDontKnow busy={busy === "dontKnow"} disabled={pending} onPress={onDontKnow}>
           {dontKnowLabel}
@@ -144,7 +142,7 @@ function PlacementActions({
           onPress={onConfirm}
         />
       </QuestionActions>
-    </div>
+    </OnboardingBottomBar>
   );
 }
 
@@ -159,7 +157,6 @@ export function PlacementQuestionScreen({
   progress,
   question,
   stopHint,
-  stopLabel,
   subject,
   total,
   trueFalseLabels = "trueFalse",
@@ -176,7 +173,6 @@ export function PlacementQuestionScreen({
   progress: number;
   question: PlacementQuestion;
   stopHint?: string;
-  stopLabel?: string;
   subject?: string;
   total?: number;
   trueFalseLabels?: TrueFalseLabels;
@@ -240,8 +236,10 @@ export function PlacementQuestionScreen({
             pressed={pressed}
           />
         }
+        // A question's title sits as far over its options as in a session and the wait's quiz.
+        className="gap-5"
       >
-        <OnboardingHeading className="gap-5">
+        <OnboardingHeading>
           {subject && number !== undefined && (
             <OnboardingSubject
               position={
@@ -254,9 +252,14 @@ export function PlacementQuestionScreen({
             </OnboardingSubject>
           )}
 
-          {media}
-
-          <ItemSupport context={question.context} image={question.image} visual={question.visual} />
+          <div className="flex flex-col gap-5 pb-4 not-first:pt-4 empty:hidden">
+            {media}
+            <ItemSupport
+              context={question.context}
+              image={question.image}
+              visual={question.visual}
+            />
+          </div>
 
           <QuestionTitle heading="h1" ref={title} tabIndex={-1} text={question.question} />
         </OnboardingHeading>
@@ -273,14 +276,14 @@ export function PlacementQuestionScreen({
         )}
 
         {stopHint && (
-          <p className="text-muted-foreground text-center text-sm text-pretty" role="status">
+          <p className="text-muted-foreground text-sm text-pretty" role="status">
             {stopHint}
           </p>
         )}
 
         <Button
           busy={pending && pressed === "stop"}
-          className="self-center"
+          className="self-start"
           disabled={pending}
           focusableWhenDisabled
           onClick={() => {
@@ -288,9 +291,9 @@ export function PlacementQuestionScreen({
             onStop();
           }}
           type="button"
-          variant="ghost"
+          variant="link"
         >
-          {stopLabel ?? t("Stop here and see my plan")}
+          {t("Stop and use my answers")}
         </Button>
       </OnboardingColumn>
     </OnboardingTestQuestion>
