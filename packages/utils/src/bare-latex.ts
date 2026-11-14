@@ -10,10 +10,6 @@ import { type TextLayout } from "./text-flaws";
  */
 const RAW_SCRIPT = /\S\^\S|[\^_]\{|(?<![\p{L}_])\p{L}_[\p{L}\p{N}]+(?![\p{L}\p{N}_])/u;
 
-/** A link, an email, a path or a file name is never math, whatever underscores or carets it holds. */
-const LINK_OR_PATH =
-  /:\/\/|^www\.|^[^@]+@[^@]+\.|^(?:\.{1,2}|~)?\/|^\p{L}:\\|\.\p{L}[\p{L}\p{N}]{0,4}$/u;
-
 /** Trimming took the mark after this caret (`10^?`, `|x|^?`); a lone caret in quotes is a symbol. */
 const ENDING_CARET = /[\p{L}\p{N})\]}|]\^$/u;
 
@@ -85,10 +81,6 @@ function trimRange({ end, start, text }: { end: number; start: number; text: str
 function toBareLatex(match: RegExpExecArray): BareLatex | null {
   const { end, start } = trimRange({ end: match[0].length, start: 0, text: match[0] });
   const written = match[0].slice(start, end);
-
-  if (LINK_OR_PATH.test(written)) {
-    return null;
-  }
 
   if (RAW_SCRIPT.test(written)) {
     return { end: match.index + end, latex: toLatex(written), start: match.index + start, written };
@@ -164,7 +156,7 @@ function toLines({ layout, text }: { layout: TextLayout; text: string }): string
 
 function describe({ latex, written }: Pick<BareLatex, "latex" | "written">): string {
   const example = latex === null ? "" : `, as $${latex}$`;
-  return String.raw`Shows math as raw text: "${written}". Write it between dollar signs${example}, outside bold or italics, and any other dollar sign in that line as \$.`;
+  return String.raw`Shows raw text that reads as math: "${written}". If it's math, write it between dollar signs${example}, outside bold or italics, and any other dollar sign in that line as \$. If it's code, a file name or a link, put it in backticks.`;
 }
 
 function findInLine(line: string): string[] {

@@ -12,7 +12,7 @@ function wrap(text: string): string {
 
 function problem(written: string, latex?: string): string {
   const example = latex ? `, as $${latex}$` : "";
-  return String.raw`Shows math as raw text: "${written}". Write it between dollar signs${example}, outside bold or italics, and any other dollar sign in that line as \$.`;
+  return String.raw`Shows raw text that reads as math: "${written}". If it's math, write it between dollar signs${example}, outside bold or italics, and any other dollar sign in that line as \$. If it's code, a file name or a link, put it in backticks.`;
 }
 
 describe(findBareLatex, () => {
@@ -79,19 +79,26 @@ describe(findBareLatex, () => {
     expect(wrap(text)).toBe(text);
   });
 
-  it("leaves italics, names, code, math, links and emails that hold an underscore", () => {
+  it("leaves italics, names, code and math that hold an underscore", () => {
     const texts = [
       "Read _carefully_ and _a_ word, then _the whole phrase_.",
       "Store it in user_id or max_value, and call `x_1 = load()`.",
       String.raw`The rate is $k = A e^{-E_a/RT}$ and $C_{A0}$ is given.`,
-      "See https://example.com/a_b/x_1 or write to j_doe@example.com.",
-      "Open data/x_train.csv, set user_id=max_value+1 and keep CH_4/UTF_8 in db_1.",
-      "Fetch https://example.com?q=x_1 or www.example.com?q=x_1 and save x_1-x_2.csv.",
-      String.raw`Run ./x_1, ~/x_1 or /tmp/x_1 and open C:\x_1 or (mailto:a_b@example.com).`,
+      "Set user_id=max_value+1 and keep CH_4/UTF_8 in db_1.",
     ];
 
     expect(texts.flatMap((text) => find(text))).toStrictEqual([]);
     expect(texts.flatMap((text) => findBareLatex({ layout: "inline", text }))).toStrictEqual([]);
+  });
+
+  it("asks for backticks around code, a file name or a link that reads as math", () => {
+    expect(find("Read x^2.y, 10^3.m and data/x_1.")).toStrictEqual([
+      problem("x^2.y"),
+      problem("10^3.m"),
+      problem("data/x_1"),
+    ]);
+
+    expect(find("Read `x^2.y`, `10^3.m` and `data/x_1`.")).toStrictEqual([]);
   });
 
   it("doesn't look for backslash commands, longer subscripted names or spaced carets, which are as often something else", () => {
