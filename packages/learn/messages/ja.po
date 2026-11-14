@@ -5052,6 +5052,11 @@ msgid "{count, plural, one {Based on your last mock exam} other {Based on your l
 msgstr "{count, plural, other {直近#回の模試の結果に基づいています}}"
 
 #: src/journey/preparation/preparation-details.tsx
+msgctxt "JcR3T_"
+msgid "Each subject counts as much as it's worth on the exam. A subject's number is how much of it you've studied times how well you answer, and it stays under 75% until you review every topic once."
+msgstr "各科目の数値は、試験の配点に応じて準備状況に反映されます。科目ごとの数値は、学習した範囲の割合に正答率を掛けたもので、すべてのトピックを1回復習するまでは75%未満にとどまります。"
+
+#: src/journey/preparation/preparation-details.tsx
 msgctxt "QexwxS"
 msgid "Each subject counts as much as it's worth on the exam. A subject's number is how much of it you've studied times how well you answer, and it stays under 75% until you take a mock exam."
 msgstr "試験で配点が高い科目ほど、大きく反映されます。科目ごとの数値は、学習した割合に正答率を掛けたもので、模試を受けるまでは75%未満にとどまります。"
@@ -5084,9 +5089,20 @@ msgid "Remembered"
 msgstr "覚えている割合"
 
 #: src/journey/preparation/use-preparation-parts.ts
+msgctxt "ey4ACX"
+msgid "Reviews of every topic"
+msgstr "すべてのトピックの復習"
+
+#: src/journey/preparation/use-preparation-parts.ts
 msgctxt "hK7cUG"
 msgid "Weekly challenges"
 msgstr "週間チャレンジ"
+
+#. How many reviews of every topic the learner has done, beside the label "Reviews of every topic". The count is of reviews.
+#: src/journey/preparation/use-preparation-parts.ts
+msgctxt "z8bUxd"
+msgid "{reviews, plural, one {# done} other {# done}}"
+msgstr "{reviews, plural, other {#回完了}}"
 
 #: src/journey/preparation/use-preparation-parts.ts
 msgctxt "9_WhRd"
@@ -5119,14 +5135,19 @@ msgid "Needed to go past 75%"
 msgstr "75%を超えるために必要"
 
 #: src/journey/preparation/use-still-needed.ts
-msgctxt "xOPwTm"
-msgid "Take your first weekly challenge"
-msgstr "初めての週間チャレンジに挑戦する"
+msgctxt "v5t0w3"
+msgid "Review every topic once"
+msgstr "すべてのトピックを1回復習する"
 
 #: src/journey/preparation/use-still-needed.ts
 msgctxt "ePGEKw"
 msgid "Take your first mock exam"
 msgstr "初めての模試を受ける"
+
+#: src/journey/preparation/use-still-needed.ts
+msgctxt "xOPwTm"
+msgid "Take your first weekly challenge"
+msgstr "初めての週間チャレンジに挑戦する"
 
 #. A learning goal's name, not a person's name
 #: src/journey/rename-goal-dialog.tsx

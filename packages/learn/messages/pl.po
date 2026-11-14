@@ -5052,6 +5052,11 @@ msgid "{count, plural, one {Based on your last mock exam} other {Based on your l
 msgstr "{count, plural, one {Na podstawie twojego ostatniego egzaminu próbnego} other {Na podstawie twoich ostatnich # egzaminów próbnych}}"
 
 #: src/journey/preparation/preparation-details.tsx
+msgctxt "JcR3T_"
+msgid "Each subject counts as much as it's worth on the exam. A subject's number is how much of it you've studied times how well you answer, and it stays under 75% until you review every topic once."
+msgstr "Każdy przedmiot ma taką samą wagę jak na egzaminie. Wynik dla przedmiotu obliczamy, mnożąc procent przerobionego materiału przez skuteczność twoich odpowiedzi. Pozostaje on poniżej 75%, dopóki nie powtórzysz każdego tematu raz."
+
+#: src/journey/preparation/preparation-details.tsx
 msgctxt "QexwxS"
 msgid "Each subject counts as much as it's worth on the exam. A subject's number is how much of it you've studied times how well you answer, and it stays under 75% until you take a mock exam."
 msgstr "Każdy przedmiot ma taką samą wagę jak na egzaminie. Wartość przy przedmiocie to procent przerobionego materiału pomnożony przez skuteczność twoich odpowiedzi. Pozostaje poniżej 75%, dopóki nie rozwiążesz egzaminu próbnego."
@@ -5084,9 +5089,20 @@ msgid "Remembered"
 msgstr "Zapamiętane"
 
 #: src/journey/preparation/use-preparation-parts.ts
+msgctxt "ey4ACX"
+msgid "Reviews of every topic"
+msgstr "Powtórki wszystkich tematów"
+
+#: src/journey/preparation/use-preparation-parts.ts
 msgctxt "hK7cUG"
 msgid "Weekly challenges"
 msgstr "Wyzwania tygodnia"
+
+#. How many reviews of every topic the learner has done, beside the label "Reviews of every topic". The count is of reviews.
+#: src/journey/preparation/use-preparation-parts.ts
+msgctxt "z8bUxd"
+msgid "{reviews, plural, one {# done} other {# done}}"
+msgstr "{reviews, plural, one {# ukończona} few {# ukończone} many {# ukończonych} other {# ukończonej}}"
 
 #: src/journey/preparation/use-preparation-parts.ts
 msgctxt "9_WhRd"
@@ -5119,14 +5135,19 @@ msgid "Needed to go past 75%"
 msgstr "Potrzebne, by przekroczyć 75%"
 
 #: src/journey/preparation/use-still-needed.ts
-msgctxt "xOPwTm"
-msgid "Take your first weekly challenge"
-msgstr "Podejmij pierwsze wyzwanie tygodnia"
+msgctxt "v5t0w3"
+msgid "Review every topic once"
+msgstr "Powtórz każdy temat raz"
 
 #: src/journey/preparation/use-still-needed.ts
 msgctxt "ePGEKw"
 msgid "Take your first mock exam"
 msgstr "Podejdź do pierwszego egzaminu próbnego"
+
+#: src/journey/preparation/use-still-needed.ts
+msgctxt "xOPwTm"
+msgid "Take your first weekly challenge"
+msgstr "Podejmij pierwsze wyzwanie tygodnia"
 
 #. A learning goal's name, not a person's name
 #: src/journey/rename-goal-dialog.tsx

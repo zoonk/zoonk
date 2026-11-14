@@ -5052,6 +5052,11 @@ msgid "{count, plural, one {Based on your last mock exam} other {Based on your l
 msgstr "{count, plural, one {Son deneme sınavına göre} other {Son # deneme sınavına göre}}"
 
 #: src/journey/preparation/preparation-details.tsx
+msgctxt "JcR3T_"
+msgid "Each subject counts as much as it's worth on the exam. A subject's number is how much of it you've studied times how well you answer, and it stays under 75% until you review every topic once."
+msgstr "Her branş, sınavdaki ağırlığına göre hesaba katılır. Bir branşın değeri, çalıştığın kısmın oranıyla cevaplarındaki başarının çarpımıdır ve her konuyu bir kez tekrar edene kadar %75’in altında kalır."
+
+#: src/journey/preparation/preparation-details.tsx
 msgctxt "QexwxS"
 msgid "Each subject counts as much as it's worth on the exam. A subject's number is how much of it you've studied times how well you answer, and it stays under 75% until you take a mock exam."
 msgstr "Her branş sınavdaki ağırlığına göre hesaba katılır. Bir branşın değeri, çalıştığın kısmın oranıyla doğru cevap oranının çarpımıdır ve deneme sınavına girene kadar %75’in altında kalır."
@@ -5084,9 +5089,20 @@ msgid "Remembered"
 msgstr "Hatırlananlar"
 
 #: src/journey/preparation/use-preparation-parts.ts
+msgctxt "ey4ACX"
+msgid "Reviews of every topic"
+msgstr "Tüm konuların tekrarı"
+
+#: src/journey/preparation/use-preparation-parts.ts
 msgctxt "hK7cUG"
 msgid "Weekly challenges"
 msgstr "Haftalık meydan okumalar"
+
+#. How many reviews of every topic the learner has done, beside the label "Reviews of every topic". The count is of reviews.
+#: src/journey/preparation/use-preparation-parts.ts
+msgctxt "z8bUxd"
+msgid "{reviews, plural, one {# done} other {# done}}"
+msgstr "{reviews, plural, other {# tamamlandı}}"
 
 #: src/journey/preparation/use-preparation-parts.ts
 msgctxt "9_WhRd"
@@ -5119,14 +5135,19 @@ msgid "Needed to go past 75%"
 msgstr "%75’i aşmak için gerekli"
 
 #: src/journey/preparation/use-still-needed.ts
-msgctxt "xOPwTm"
-msgid "Take your first weekly challenge"
-msgstr "İlk haftalık meydan okumana katıl"
+msgctxt "v5t0w3"
+msgid "Review every topic once"
+msgstr "Her konuyu bir kez tekrar et"
 
 #: src/journey/preparation/use-still-needed.ts
 msgctxt "ePGEKw"
 msgid "Take your first mock exam"
 msgstr "İlk deneme sınavına gir"
+
+#: src/journey/preparation/use-still-needed.ts
+msgctxt "xOPwTm"
+msgid "Take your first weekly challenge"
+msgstr "İlk haftalık meydan okumana katıl"
 
 #. A learning goal's name, not a person's name
 #: src/journey/rename-goal-dialog.tsx
