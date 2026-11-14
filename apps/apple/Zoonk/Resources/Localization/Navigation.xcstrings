@@ -125,71 +125,6 @@
         }
       }
     },
-    "%@, level %lld. Statistics" : {
-      "comment" : "Spoken label of the toolbar button with the learner's belt and level, which opens their statistics",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@, Level %2$lld. Statistik"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@, level %2$lld. Statistics"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@, nivel %2$lld. Estadísticas"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@, niveau %2$lld. Statistiques"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@, livello %2$lld. Statistiche"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@、レベル%2$lld。統計"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@, 레벨 %2$lld. 통계"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@, poziom %2$lld. Statystyki"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@, nível %2$lld. Estatísticas"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@, %2$lld. seviye. İstatistikler"
-          }
-        }
-      }
-    },
     "%lld days left" : {
       "comment" : "Days until a goal's target date",
       "localizations" : {
@@ -1018,65 +953,6 @@
         }
       }
     },
-    "Get Plus" : {
-      "comment" : "Opens the Zoonk Plus subscription, which follows more goals at once; Plus is its name, not \"more\"",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus holen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Obtener Plus"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Passer à Plus"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Passa a Plus"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plusに登録する"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus 구독하기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Przejdź na Plus"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Assinar o Plus"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus’a geç"
-          }
-        }
-      }
-    },
     "Go to the home page" : {
       "comment" : "Opens Today from a link that leads to something that doesn't exist",
       "localizations" : {
@@ -1726,65 +1602,6 @@
         }
       }
     },
-    "Pause a goal or get Plus" : {
-      "comment" : "Under a goal in the goal switcher that waits for room on the free plan; Plus is the subscription's name, not \"more\"",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ziel pausieren oder Plus holen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pausar un objetivo u obtener Plus"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mets un objectif en pause ou passe à Plus"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Metti in pausa un obiettivo o passa a Plus"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "目標を一時停止するか、Plusに登録する"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "목표 일시 중지 또는 Plus 구독하기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wstrzymaj realizację celu lub przejdź na Plus"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pause um objetivo ou assine o Plus"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bir hedefi duraklat veya Plus’a geç"
-          }
-        }
-      }
-    },
     "Pause a goal to start it" : {
       "comment" : "Under a goal in the goal switcher that waits for room: another goal must be paused first",
       "localizations" : {
@@ -2312,65 +2129,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bir hedefe başla"
-          }
-        }
-      }
-    },
-    "Start a new goal" : {
-      "comment" : "Goal switcher option that starts another goal",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Neues Ziel starten"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Crear un nuevo objetivo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Commencer un nouvel objectif"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inizia un nuovo obiettivo"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新しい目標を始める"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "새 목표 시작하기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wyznacz nowy cel"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Começar um novo objetivo"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Yeni bir hedefe başla"
           }
         }
       }
@@ -3610,65 +3368,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hedefine ulaşana kadar her gün ne çalışacağın ve planının neleri kapsadığı."
-          }
-        }
-      }
-    },
-    "You're following as many goals as the free plan allows. Pause one to start %@. You can resume it later." : {
-      "comment" : "In the sheet that makes room for a goal waiting to start, above the learner's goals; the argument is the waiting goal's name",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du verfolgst schon so viele Ziele, wie der kostenlose Tarif erlaubt. Pausier eines, um mit %@ zu starten. Du kannst es später weiterverfolgen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ya estás siguiendo el máximo de objetivos que permite el plan gratis. Pausa uno para activar %@. Puedes reanudarlo más adelante."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as atteint la limite d’objectifs de la formule gratuite. Mets-en un en pause pour commencer %@. Tu pourras le reprendre plus tard."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hai raggiunto il limite di obiettivi della formula Free. Mettine uno in pausa per iniziare %@. Puoi riprenderlo più avanti."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "無料プランで同時に進められる目標数の上限に達しています。%@を始めるには、目標を1つ一時停止してください。一時停止した目標は、あとで再開できます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "무료 요금제로 진행할 수 있는 목표 수를 모두 채웠어요. %@ 목표를 시작하려면 다른 목표 하나를 일시 중지하세요. 일시 중지한 목표는 나중에 이어서 할 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Masz już maksymalną liczbę aktywnych celów w pakiecie Free. Wstrzymaj jeden z nich, aby zacząć realizować cel: %@. Do wstrzymanego celu możesz wrócić później."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você já está no limite de objetivos do plano grátis. Pause um para começar %@. Você pode retomar o objetivo pausado depois."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ücretsiz paketteki hedef sınırına ulaştın. %@ hedefine başlamak için birini duraklat. Duraklattığın hedefe daha sonra devam edebilirsin."
           }
         }
       }
