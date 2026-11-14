@@ -6,7 +6,7 @@
   "goalcontent_also_in_exam_count": "6b751e06462dc906d0d35ecd5ed9e2b972bc3959b0d7c05ceae73174a251df31",
   "goalcontent_also_in_exams": "986a74d19b1565a522320a4d310562617095d31bc107a1c44b4efc5f405251fc",
   "goalcontent_also_in_plan": "5748c7f097de887df8715ec06886462cd98d52c99819aa255798b130147793b1",
-  "goalcontent_appears_a_lot": "e3855987b967cbb6a5d57f96d0c717733a628909d1f2853def0ed2e91a502bb7",
+  "goalcontent_asked_a_lot": "cd845d9c72e0c543a64e642ebb3e0a385779ee9f4923cebfb77a56ae6b60f443",
   "goalcontent_beyond_guide": "2e1f9a4aede258f4be4b63933bf321925cd0f487cf37409e9f1ed6f334c2c708",
   "goalcontent_beyond_notice": "393397320c5863f5e65784a1a3d08371f89936a8721b8155f4e37cecd4317bbe",
   "goalcontent_bring_back": "87f8f9b03dba1431978b9fbddfc3b951b1d7119ff30b259bb7b56983733e8310",
@@ -285,12 +285,12 @@
     <string name="goalcontent_topic_skipped_base">Você escolheu pular esta base</string>
     <string name="goalcontent_topic_time">Não cabe no tempo que você tem</string>
     <string name="goalcontent_topic_missing">Ainda não há aulas sobre isso</string>
-    <!-- Marks a topic past exams asked a lot. -->
-    <string name="goalcontent_appears_a_lot">Cai bastante</string>
-    <!-- %1$s is the "Appears a lot" mark. -->
+    <!-- Marks a topic that comes up often in the exam. -->
+    <string name="goalcontent_asked_a_lot">Cai muito</string>
+    <!-- %1$s is the "Asked a lot" mark. -->
     <string name="goalcontent_frequency_material">Os tópicos marcados com %1$s são os que seu material diz que caem bastante. Você vai dedicar mais tempo a eles.</string>
     <string name="goalcontent_frequency_past_exams">Os tópicos marcados com %1$s são os que mais caíram em provas anteriores.</string>
-    <!-- %1$s is the "Appears a lot" mark, %2$s what the source counted, %3$s a link to the source's site. -->
+    <!-- %1$s is the "Asked a lot" mark, %2$s what the source counted, %3$s a link to the source's site. -->
     <string name="goalcontent_frequency_tagged_waits">Os tópicos marcados com %1$s são os que mais caíram em provas anteriores (%2$s, segundo %3$s). Os que menos caíram ficam para depois.</string>
     <string name="goalcontent_frequency_tagged">Os tópicos marcados com %1$s são os que mais caíram em provas anteriores (%2$s, segundo %3$s). Você vai dedicar mais tempo a eles.</string>
     <!-- %1$s is what the source counted, %2$s a link to the source's site. -->

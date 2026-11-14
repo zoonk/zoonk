@@ -6,7 +6,7 @@
   "goalcontent_also_in_exam_count": "ae4303b485a83e6e5f56dee0f4d7f2c72fe86ed4b80389f140888b32a2a35918",
   "goalcontent_also_in_exams": "d7a541faf40edd48c0f787a5831462999401a8cc1b9be6dc94ed4ceb7aa41d30",
   "goalcontent_also_in_plan": "e10617a00b12bee24f78da204ded6cb7c9fe1e39581f9d004fe1930ebb21d317",
-  "goalcontent_appears_a_lot": "6df51919043a85ae61eb30a6777e4b71a30b3b84dbbe71a03b9bc14d1bdf0d0b",
+  "goalcontent_asked_a_lot": "c3ed33fbdd064971a6b446c147aec7097b33ebb6cdab753a02facdcace9edd20",
   "goalcontent_beyond_guide": "fe7406821fedd8ca81caa0f52cdffe18a46f32efb4b62597fe6d20f0406132a3",
   "goalcontent_beyond_notice": "462718e7648b93b643e9a9ab4b71ca185027b9d854efc91399f87c65ca302119",
   "goalcontent_bring_back": "cab04274e8e8d3ab00cb457ca81b907b3040d87c39b927835c19ffcf834820a4",
@@ -285,12 +285,12 @@
     <string name="goalcontent_topic_skipped_base">Hai scelto di saltare questo prerequisito</string>
     <string name="goalcontent_topic_time">Non rientra nel tempo che hai a disposizione</string>
     <string name="goalcontent_topic_missing">Non ci sono ancora lezioni su questo argomento</string>
-    <!-- Marks a topic past exams asked a lot. -->
-    <string name="goalcontent_appears_a_lot">Molto frequente</string>
-    <!-- %1$s is the "Appears a lot" mark. -->
+    <!-- Marks a topic that comes up often in the exam. -->
+    <string name="goalcontent_asked_a_lot">Molto frequente</string>
+    <!-- %1$s is the "Asked a lot" mark. -->
     <string name="goalcontent_frequency_material">Gli argomenti con l’etichetta %1$s sono quelli che il tuo materiale indica come più frequenti. Il piano dedica loro più tempo.</string>
     <string name="goalcontent_frequency_past_exams">Gli argomenti con l’etichetta %1$s sono quelli più frequenti negli esami passati.</string>
-    <!-- %1$s is the "Appears a lot" mark, %2$s what the source counted, %3$s a link to the source's site. -->
+    <!-- %1$s is the "Asked a lot" mark, %2$s what the source counted, %3$s a link to the source's site. -->
     <string name="goalcontent_frequency_tagged_waits">Gli argomenti con l’etichetta %1$s sono quelli più frequenti negli esami passati (%2$s, secondo %3$s). Quelli meno frequenti vengono rimandati.</string>
     <string name="goalcontent_frequency_tagged">Gli argomenti con l’etichetta %1$s sono quelli più frequenti negli esami passati (%2$s, secondo %3$s). Il piano dedica loro più tempo.</string>
     <!-- %1$s is what the source counted, %2$s a link to the source's site. -->
