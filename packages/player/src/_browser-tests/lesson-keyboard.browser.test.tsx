@@ -330,6 +330,31 @@ describe("lesson by keyboard", () => {
     });
   });
 
+  it("a click that turns the screen lets go of focus at once, so keys pressed before the next frame act on the new screen", async () => {
+    await atViewport(DESKTOP, async () => {
+      openLesson({
+        steps: [
+          explanationStep({ text: "Electrons spread out.", title: "First idea" }),
+          teachingStep("check"),
+        ],
+      });
+
+      const next = page.getByRole("button", { name: /^Next/u }).element();
+
+      // Checked within the click's task: a frame would let the browser drop the focus itself.
+      next.focus();
+
+      next.dispatchEvent(
+        new PointerEvent("click", { bubbles: true, detail: 1, pointerType: "mouse" }),
+      );
+
+      await Promise.resolve();
+
+      expect(document.activeElement).toBe(document.body);
+      await expect.element(page.getByRole("radiogroup")).toBeVisible();
+    });
+  });
+
   it("a key that turns onto an unanswered question lands on its Check, which takes focus before it can run", async () => {
     await atViewport(DESKTOP, async () => {
       openLesson({
