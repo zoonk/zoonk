@@ -1,9 +1,9 @@
 "use client";
 
-import { useStillMounted } from "@zoonk/ui/hooks/still-here";
 import { safeAsync } from "@zoonk/utils/error";
 import { useState, useTransition } from "react";
 import { useChangeSaveFailed } from "../_components/save-error";
+import { useStillMounted } from "../_utils/use-still-mounted";
 import { type ContentWriting } from "../generation/writing-wait";
 import { type PlanActions, usePlanScreen } from "./plan-context";
 

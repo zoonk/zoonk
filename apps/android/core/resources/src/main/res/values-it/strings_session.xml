@@ -35,12 +35,13 @@
   "session_level_up": "5b65d3c90f2ff7fa8f6e59b3ac8f45ca4e59736d579dd852b3cd6c5ef390eb4a",
   "session_next_continue": "9d4ac3fc01a84e9ee87083349c1437c1adb2dcbd249b6444b6ba084c6ebb2d95",
   "session_next_eyebrow": "edc39276105547bc7f0fc9adbc9e82e91009b4f33685555c6576f8e0b517241c",
-  "session_next_instead": "9a1c96428ec691ab73630cb57cd10b63cd33299d3346ad88ac2179d4bf755b24",
   "session_next_lesson_ready": "5847d644c59487063c2014a636d4ff4ca45ee7dfba1b7e7ff03ac7d54dce1fd1",
+  "session_next_practice_now": "fa311bda57bef3fb9852aa50c3c05d1624e85e5771207b9cf8b2a4863024a35c",
+  "session_next_review_now": "710a80b79762b8297c4aa3cd84d9029093203d0c4862a08393c68d579d466553",
   "session_next_start": "de5d9f1ccb04562d8a2c666c94f465bd0987e52694e12a1fc2980f2b25215c3f",
+  "session_next_start_title": "12b037985a1b0000cc6c79a932ebb2d2acab503982528b4c11e2204b86880638",
   "session_next_stop": "72888b480cdbd2a04ffe198427f5d9a3dba02817b9825fbadbceb42d6a423bc6",
   "session_next_stop_failed": "c9a75f168beb4ce4024a98c98c40f0ae688ae2c65221da977517294783126407",
-  "session_next_while_waiting": "713fa02f2053b7d18b52ae054e8574efcc338c7b67b6507929c7114cb4d2deba",
   "session_next_writing_note": "a9f70503af8ecc9d052c4123feff14397f7138097a757f632665fadb7037aaba",
   "session_no_catch_up_left": "d61a8ce31fcbfdc3a1b45507fa363b807a172b553902434d8c4725ccfafa31c7",
   "session_opening_slow": "9cdf7c9eb11c35fa1e33eacf0aaf9673f27c25756c2fed5d62a07275e4cc5193",
@@ -208,10 +209,12 @@
     <string name="session_next_lesson_ready">La tua lezione è pronta.</string>
     <string name="session_next_stop">Fermati per oggi</string>
     <string name="session_next_stop_failed">Non siamo riusciti a interrompere la sessione. Riprova.</string>
-    <!-- A button on the session's next step while its lesson is prepared: %1$s is another step's title, such as "Review", to do meanwhile. -->
-    <string name="session_next_while_waiting">Nell’attesa: %1$s</string>
-    <!-- A button on the session's next step when its lesson can't be written now: %1$s is another step's title, such as "Review", to do instead. -->
-    <string name="session_next_instead">In alternativa: %1$s</string>
+    <!-- A button on the session's next step that starts the day's review instead, while its lesson is written or when it can't be. -->
+    <string name="session_next_review_now">Ripassa ora</string>
+    <!-- A button on the session's next step that starts the day's practice instead, while its lesson is written or when it can't be. -->
+    <string name="session_next_practice_now">Esercitati ora</string>
+    <!-- A button on the session's next step that starts one of the day's challenges instead: %1$s is its name, such as "Weekly challenge". -->
+    <string name="session_next_start_title">Inizia %1$s</string>
     <!-- A finished block's line about today's session. %1$s is how many of the day's blocks are done, shown larger; %2$s is how many the session has. A block can be a lesson, a review or practice, so no noun. -->
     <plurals name="session_day_done">
         <item quantity="one">%1$s su %2$s completato oggi</item>

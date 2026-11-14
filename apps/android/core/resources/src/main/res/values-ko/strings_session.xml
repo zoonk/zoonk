@@ -35,12 +35,13 @@
   "session_level_up": "b11c966a1fdc28af53818eab0d694f37c1588a9fd51f2b125d779ef61060f9ba",
   "session_next_continue": "a5308726d6243d7d6f89b34ee3b7d858381eef6f42d2a9fe91bf4306cf5a2e5f",
   "session_next_eyebrow": "5806dd98bbc4def222990ed89d32c1874410d3f350f46602ee8de898bb37c58e",
-  "session_next_instead": "89da6d38cac031e901f6d8a03efb8d0df0f2101e97fe38b321f4b5580395ace6",
   "session_next_lesson_ready": "33fbd98216ad37d4342ee22ed126450634a737040aaf70c5931b2046d030c2ce",
+  "session_next_practice_now": "1d70869f3147a087c9a74dc3838e9c91276b007a67b76dfba883047eeef99177",
+  "session_next_review_now": "6f6690e71b300a99473b58949af9eee7359ed14e2691797d005edcfc94f24d3d",
   "session_next_start": "2ce9cf29eb98766e210c3858b4e740f6977e95e735f63cd644fec32068d8aae4",
+  "session_next_start_title": "4ab5ee63206a9d62d5f602753e0d2d9b58520719590bf26e9a0f953b179378d7",
   "session_next_stop": "0c3ea72636d0f181528d259ebb0a3ec93bd94cceddc2d77f9c88c398b6d4e360",
   "session_next_stop_failed": "7fc4f563b2bcc965a405745f3d9c19f917a3e2a6006ac6a3f44719aaac24e1a8",
-  "session_next_while_waiting": "de950ac6ae4cc7ae0fe8b154cd9c9efa80ad6e55acc4845e17b9b8eea6daf53f",
   "session_next_writing_note": "fb563baa8dfcfa12262c114035a5b50348a203e94ffa8eddbc9bba510bc3b681",
   "session_no_catch_up_left": "857f93d74c490b92542ddc166293bbfed79ca3e33aeb207b04a88bdbe9abc038",
   "session_opening_slow": "6910940508c5ce305852f8c8f5da24274aef65f6c7e1b122971ad459d22ff19f",
@@ -194,10 +195,12 @@
     <string name="session_next_lesson_ready">레슨이 준비됐어요.</string>
     <string name="session_next_stop">오늘 학습 마치기</string>
     <string name="session_next_stop_failed">학습을 중단하지 못했어요. 다시 시도해 보세요.</string>
-    <!-- A button on the session's next step while its lesson is prepared: %1$s is another step's title, such as "Review", to do meanwhile. -->
-    <string name="session_next_while_waiting">기다리는 동안 %1$s</string>
-    <!-- A button on the session's next step when its lesson can't be written now: %1$s is another step's title, such as "Review", to do instead. -->
-    <string name="session_next_instead">대신 %1$s</string>
+    <!-- A button on the session's next step that starts the day's review instead, while its lesson is written or when it can't be. -->
+    <string name="session_next_review_now">지금 복습하기</string>
+    <!-- A button on the session's next step that starts the day's practice instead, while its lesson is written or when it can't be. -->
+    <string name="session_next_practice_now">지금 연습하기</string>
+    <!-- A button on the session's next step that starts one of the day's challenges instead: %1$s is its name, such as "Weekly challenge". -->
+    <string name="session_next_start_title">%1$s 시작하기</string>
     <!-- A finished block's line about today's session. %1$s is how many of the day's blocks are done, shown larger; %2$s is how many the session has. A block can be a lesson, a review or practice, so no noun. -->
     <plurals name="session_day_done">
         <item quantity="other">오늘 %1$s/%2$s 완료</item>

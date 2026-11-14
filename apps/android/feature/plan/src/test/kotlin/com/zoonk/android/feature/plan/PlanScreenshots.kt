@@ -38,6 +38,7 @@ import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.PlanBasesAdvice
 import com.zoonk.api.models.PlanCertificates
 import com.zoonk.api.models.PlanChangePreview
+import com.zoonk.api.models.PlanPhase
 import com.zoonk.api.models.SkillOutline
 import com.zoonk.api.models.SkillOutlineChapter
 import kotlinx.coroutines.CoroutineScope
@@ -114,6 +115,46 @@ class PlanScreenshots {
         compose.unfoldBook(folds)
         compose.waitForIdle()
         write("plan-open-book", compose.onRoot().captureRender().asAndroidBitmap())
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h1900dp-xxhdpi")
+    fun examPhone() = capture("plan-exam-phone", exam = examPage(dated = true))
+
+    @Test
+    @Config(qualifiers = "w411dp-h3200dp-xhdpi")
+    fun examPhoneAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        capture("plan-exam-phone-font200", exam = examPage(dated = true))
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h1900dp-xxhdpi")
+    fun examWithoutADatePhone() = capture("plan-exam-no-date-phone", exam = examPage(dated = false))
+
+    @Test
+    @Config(qualifiers = "w1280dp-h900dp-land-xhdpi")
+    fun examExpanded() = capture("plan-exam-expanded", exam = examPage(dated = true))
+
+    /** Ana's ENEM: four phases to the exam, then After the exam; without a date, the plan's estimate ends it. */
+    private fun examPage(dated: Boolean): PlanPageState {
+        val summary = learnerSummary(kind = "exam", title = "ENEM")
+        val base = learnPlan()
+        val after =
+            base.phases.last().copy(
+                index = 4,
+                name = "After the exam",
+                kind = PlanPhase.Kind.AFTER_EXAM,
+                startDate = kotlinx.datetime.LocalDate(2027, 2, 1),
+                endDate = kotlinx.datetime.LocalDate(2027, 3, 15),
+            )
+        val plan =
+            base.copy(
+                phases = base.phases + after,
+                schedule = base.schedule.copy(targetDate = base.schedule.targetDate.takeIf { dated }, fullCourse = true),
+                estimate = base.estimate.copy(endDate = kotlinx.datetime.LocalDate(2027, 2, 6)),
+            )
+        return PlanPageState(summary.goals.first(), plan, summary)
     }
 
     @Test
@@ -772,8 +813,9 @@ class PlanScreenshots {
         paused: Boolean = false,
         failure: ResumeFailure? = null,
         examOver: Boolean = false,
+        exam: PlanPageState? = null,
     ) {
-        show(dark, moreContrast, paused, failure, examOver)
+        show(dark, moreContrast, paused, failure, examOver, exam)
         compose.waitForIdle()
         write(name, compose.onRoot().captureRender().asAndroidBitmap())
     }
@@ -784,9 +826,14 @@ class PlanScreenshots {
         paused: Boolean = false,
         failure: ResumeFailure? = null,
         examOver: Boolean = false,
+        exam: PlanPageState? = null,
     ) {
         val page =
             when {
+                exam != null -> {
+                    exam
+                }
+
                 paused -> {
                     page().let { it.copy(goal = it.goal.copy(status = LearnerSummaryGoal.Status.PAUSED)) }
                 }
