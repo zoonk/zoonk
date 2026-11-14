@@ -95,3 +95,21 @@ export function SubscribeMainAction({ action }: { action?: ReactNode }) {
     </TaskActions>
   );
 }
+
+/** Sign-up leaves the app's router, so it's a full page load. */
+function PageLink({ children, ...props }: React.ComponentProps<"a">) {
+  return <a {...props}>{children}</a>;
+}
+
+export function SignUpMainAction() {
+  const t = useExtracted();
+  const routes = useLearnRoutes();
+
+  return (
+    <TaskActions>
+      <EnterLink href={routes.signUp} link={PageLink}>
+        {t("Create a free account")}
+      </EnterLink>
+    </TaskActions>
+  );
+}
