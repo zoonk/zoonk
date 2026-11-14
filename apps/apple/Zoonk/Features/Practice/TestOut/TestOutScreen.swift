@@ -38,6 +38,12 @@ struct TestOutScreen: View {
 
   private enum UndoState: Equatable { case done, failed, idle, pending }
 
+  /// Only a loaded test knows its chapter, so the other states have no title.
+  private var title: String {
+    guard case .loaded(.test(let test)) = load else { return "" }
+    return String(localized: "Test: \(test.chapterTitle)", table: "Practice")
+  }
+
   private var draftKey: String { "test-out:\(goalId ?? ""):\(chapterId)" }
 
   var body: some View {
@@ -81,9 +87,7 @@ struct TestOutScreen: View {
           }
         }
       }
-      .navigationTitle(
-        Text("Chapter test", tableName: "Practice", comment: "Title of a chapter test.")
-      )
+      .navigationTitle(title)
       .navigationBarTitleDisplayMode(.inline)
       .taskClose {
         PracticeCloseButton { dismiss() }

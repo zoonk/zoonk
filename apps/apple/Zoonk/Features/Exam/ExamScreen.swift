@@ -155,8 +155,7 @@ private struct ExamList: View {
     }
   }
 
-  /// Main's order: the map with the mocks, then speaking, then its aside (the format, scoring and
-  /// the date note).
+  /// Main's order: the map with the mocks, then speaking, then its aside (the format and scoring).
   @ViewBuilder
   private var about: some View {
     if exam.format.isEmpty, let map = exam.map, !map.subjects.isEmpty {
@@ -170,7 +169,6 @@ private struct ExamList: View {
     }
 
     ExamScoringSection(exam: exam)
-    ExamDateNote(exam: exam)
   }
 }
 
@@ -178,7 +176,6 @@ private struct ExamHero: View {
   @Environment(PlanStore.self) private var plan
   @State private var usingDate = false
   @State private var dateFailed = false
-  @State private var showsEstimate = false
   let exam: ExamView
 
   var body: some View {
@@ -193,23 +190,7 @@ private struct ExamHero: View {
             .foregroundStyle(.mutedForeground)
         }
 
-        if exam.daysEstimated, !exam.namedMonth {
-          Button {
-            showsEstimate = true
-          } label: {
-            Text("Estimated dates", tableName: "Exam", comment: "Tag after estimated exam dates")
-              .typeStyle(.note)
-          }
-          .buttonStyle(.borderless)
-          .popover(isPresented: $showsEstimate) {
-            Text(
-              "From past editions. We'll tell you when the official dates are out.",
-              tableName: "Exam", comment: "Opened from the Estimated dates tag"
-            )
-            .padding()
-            .presentationCompactAdaptation(.popover)
-          }
-        }
+        ExamDateTag(exam: exam)
       }
       .listRowSeparator(.hidden)
 
@@ -358,31 +339,69 @@ private struct ExamHero: View {
   }
 }
 
-/// Main's date note at the end of the exam's aside: where the dates come from while they aren't
-/// official.
-private struct ExamDateNote: View {
+/// Main's `DateTag`: a small tag after the facts that opens one sentence on where the dates come
+/// from while they aren't set.
+private struct ExamDateTag: View {
+  @State private var isOpen = false
   let exam: ExamView
 
   var body: some View {
-    if let note {
-      Section {
-      } footer: {
-        SectionFooter {
-          Text(note)
+    if let tag {
+      Button {
+        isOpen = true
+      } label: {
+        Text(tag.label)
+          .typeStyle(.meta)
+          .foregroundStyle(.mutedForeground)
+          .underline(pattern: .dot, color: .faint)
+          // A 44pt target that leaves the tag right under the facts, like main's `hit-area`.
+          .padding(.vertical, 14)
+          .contentShape(.rect)
+          .padding(.vertical, -14)
+      }
+      .buttonStyle(.plain)
+      .sheet(isPresented: $isOpen) {
+        NavigationStack {
+          Text(tag.text)
+            .typeStyle(.body)
+            .foregroundStyle(.mutedForeground)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            .padding()
+            .navigationTitle(tag.label)
+            .toolbarTitleDisplayMode(.inline)
+            .toolbar {
+              ToolbarItem(placement: .cancellationAction) {
+                Button(role: .close) {
+                  isOpen = false
+                }
+              }
+            }
         }
+        .presentationDetents([.fraction(0.3), .medium])
+        .zoonkStyles()
       }
     }
   }
 
-  /// Estimated days say where they come from in their tag's popover.
-  private var note: String? {
-    guard exam.namedMonth, exam.noticeDay == nil, exam.noSitting == nil, !exam.days.isEmpty else {
-      return nil
+  private var tag: (label: String, text: String)? {
+    if exam.namedMonth {
+      return exam.noticeDay != nil || exam.noSitting != nil
+        ? nil
+        : (
+          String(localized: "Day not set yet", table: "Exam"),
+          String(localized: "We'll tell you the day once it's set.", table: "Exam")
+        )
     }
 
-    return String(
-      localized: "The month you told us. We'll tell you the day once it's set.", table: "Exam",
-      comment: "A named month, before the exam's day is set")
+    return exam.daysEstimated
+      ? (
+        String(
+          localized: "Estimated dates", table: "Exam", comment: "Tag after estimated exam dates"),
+        String(
+          localized: "From past editions. We'll tell you when the official dates are out.",
+          table: "Exam", comment: "Opened from the Estimated dates tag")
+      )
+      : nil
   }
 }
 

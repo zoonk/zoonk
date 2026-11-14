@@ -32,6 +32,7 @@ enum StudyAnswerOutcome: Equatable {
 }
 
 struct TestOutTest: Equatable {
+  var chapterTitle: String
   var needsItems: [String]
   var passMark: Double
   var questions: [PracticeQuestion]
@@ -335,7 +336,7 @@ struct PracticeAPI: Sendable {
 
         return .test(
           TestOutTest(
-            needsItems: test.needsItems, passMark: test.passMark,
+            chapterTitle: test.chapterTitle, needsItems: test.needsItems, passMark: test.passMark,
             questions: try test.questions.map { try PracticeJSON.recode($0) },
             trueFalseLabels: .init(test.trueFalseLabels)))
       case .unauthorized: throw APIError.unauthorized

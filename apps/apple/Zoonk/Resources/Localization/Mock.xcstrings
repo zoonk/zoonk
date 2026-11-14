@@ -292,55 +292,55 @@
         }
       }
     },
-    "%@ needs %@ and isn't in this mock." : {
+    "%@ needs %@ and isn't in this mock exam." : {
       "comment" : "A test's minimum this mock couldn't check; the second argument is like '8 points'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Für %1$@ sind mindestens %2$@ nötig. Der Test ist in dieser Probeprüfung nicht enthalten."
+            "value" : "Für %1$@ sind %2$@ nötig. Dieser Test ist nicht Teil dieser Probeprüfung."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "%1$@ needs %2$@ and isn't in this mock."
+            "value" : "%1$@ needs %2$@ and isn't in this mock exam."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ requiere %2$@ y no está en este simulacro."
+            "value" : "%1$@ requiere %2$@ y no se incluye en este simulacro."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ exige %2$@ et ne figure pas dans cet examen blanc."
+            "value" : "Pour %1$@, il faut %2$@, mais cette épreuve ne figure pas dans cet examen blanc."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ richiede almeno %2$@ e non è presente in questa simulazione."
+            "value" : "%1$@ richiede %2$@ e non fa parte di questa simulazione."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@には%2$@が必要ですが、この模試には含まれていません。"
+            "value" : "%1$@では%2$@以上の得点が必要ですが、この模試には含まれていません。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@의 최소 기준은 %2$@이고, 이번 모의고사에는 포함되지 않아요."
+            "value" : "%1$@에서 %2$@ 이상을 받아야 하지만, 이번 모의고사에는 이 시험이 없어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ wymaga co najmniej %2$@ i nie wchodzi w zakres tego egzaminu próbnego."
+            "value" : "%1$@: wymagane minimum to %2$@. Tego testu nie ma w tym egzaminie próbnym."
           }
         },
         "pt" : {
@@ -352,72 +352,72 @@
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ için en az %2$@ gerekiyor; bu deneme sınavında bu bölüm yok."
+            "value" : "%1$@ için en az %2$@ gerekiyor; bu test deneme sınavında yer almıyor."
           }
         }
       }
     },
-    "%@ needs %@ of its points and isn't in this mock." : {
+    "%@ needs %@ of its points and isn't in this mock exam." : {
       "comment" : "A test's minimum share of points this mock couldn't check",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Für %1$@ sind mindestens %2$@ der möglichen Punkte nötig. Der Test ist in dieser Probeprüfung nicht enthalten."
+            "value" : "Für %1$@ sind %2$@ der möglichen Punkte nötig. Dieser Test ist nicht Teil dieser Probeprüfung."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "%1$@ needs %2$@ of its points and isn't in this mock."
+            "value" : "%1$@ needs %2$@ of its points and isn't in this mock exam."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ requiere el %2$@ de sus puntos y no está en este simulacro."
+            "value" : "%1$@ requiere %2$@ de sus puntos y no se incluye en este simulacro."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ exige %2$@ des points possibles et ne figure pas dans cet examen blanc."
+            "value" : "Pour %1$@, il faut %2$@ des points, mais cette épreuve ne figure pas dans cet examen blanc."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ richiede almeno il %2$@ dei punti disponibili e non è presente in questa simulazione."
+            "value" : "%1$@ richiede il %2$@ dei punti e non fa parte di questa simulazione."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@には満点の%2$@に当たる得点が必要ですが、この模試には含まれていません。"
+            "value" : "%1$@では満点の%2$@以上の得点が必要ですが、この模試には含まれていません。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@의 최소 기준은 배점의 %2$@이고, 이번 모의고사에는 포함되지 않아요."
+            "value" : "%1$@에서 총점의 %2$@ 이상을 받아야 하지만, 이번 모의고사에는 이 시험이 없어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ wymaga zdobycia co najmniej %2$@ możliwych punktów i nie wchodzi w zakres tego egzaminu próbnego."
+            "value" : "%1$@: wymagane minimum to %2$@ punktów. Tego testu nie ma w tym egzaminie próbnym."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ exige %2$@ dos pontos e não está neste simulado."
+            "value" : "%1$@ exige %2$@ do total de pontos e não está neste simulado."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ için gereken en düşük puan oranı %2$@; bu deneme sınavında bu bölüm yok."
+            "value" : "%1$@ için alınabilecek toplam puanın en az %2$@ kadarı gerekiyor; bu test deneme sınavında yer almıyor."
           }
         }
       }
@@ -737,6 +737,71 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@ eksik; en az %2$@ gerekiyor"
+          }
+        }
+      }
+    },
+    "%@ short of the %@ it needs." : {
+      "comment" : "Under a missed minimum: the first argument is like '2 points'",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch %1$@ bis zum Minimum von %2$@."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ short of the %2$@ it needs."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ por debajo del mínimo de %2$@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il manque %1$@ pour atteindre le minimum de %2$@."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ancora %1$@ per raggiungere il minimo di %2$@."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@足りず、必要な%2$@に届いていません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ 부족해 최소 기준인 %2$@에 못 미쳤어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O %1$@ poniżej wymaganego minimum: %2$@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ abaixo do mínimo de %2$@."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ eksik; en az %2$@ gerekiyor."
           }
         }
       }
@@ -2990,67 +3055,67 @@
         }
       }
     },
-    "About %@ of %@ points on the whole exam, projected from this mock. Only a full mock says whether you'd reach the minimums." : {
+    "About %@ of %@ points on the whole exam." : {
       "comment" : "A half mock's points projected onto the whole exam",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Etwa %1$@ von %2$@ Punkten für die gesamte Prüfung, aus dieser Probeprüfung hochgerechnet. Nur eine vollständige Probeprüfung zeigt, ob du die Mindestanforderungen erfüllen würdest."
+            "value" : "Etwa %1$@ von %2$@ Punkten in der gesamten Prüfung."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "About %1$@ of %2$@ points on the whole exam, projected from this mock. Only a full mock says whether you'd reach the minimums."
+            "value" : "About %1$@ of %2$@ points on the whole exam."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aproximadamente %1$@ de %2$@ puntos en el examen completo, estimados a partir de este simulacro. Solo un simulacro completo permite saber si alcanzarías los mínimos."
+            "value" : "Aproximadamente %1$@ de %2$@ puntos en el examen completo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estimation pour l’examen entier d’après cet examen blanc : environ %1$@ sur %2$@ points. Seul un examen blanc complet permet de savoir si tu atteindrais les seuils requis."
+            "value" : "Environ %1$@ points sur %2$@ pour l’ensemble de l’examen."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Circa %1$@ punti su %2$@ per l’intero esame, stimati in base a questa simulazione. Solo una simulazione completa indica se raggiungeresti i punteggi minimi."
+            "value" : "Circa %1$@ punti su %2$@ nell’intero esame."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "この模試から予測した試験全体のスコアは、約%1$@／%2$@点です。最低基準を満たすかどうかは、試験全体を通す模試でのみ確かめられます。"
+            "value" : "試験全体では約%1$@点（%2$@点満点）です。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이번 모의고사를 바탕으로 예상한 전체 시험 점수는 약 %1$@점이에요 (총 %2$@점). 최소 기준을 충족하는지는 전체 모의고사에서만 알 수 있어요."
+            "value" : "전체 시험으로 환산하면 약 %1$@점(총 %2$@점 만점)이에요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Około %1$@ z %2$@ punktów za cały egzamin, na podstawie tego egzaminu próbnego. Tylko pełny egzamin próbny pozwala ocenić, czy udałoby ci się osiągnąć wymagane progi."
+            "value" : "Około %1$@ z %2$@ punktów na całym egzaminie."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cerca de %1$@ de %2$@ pontos na prova inteira, estimados com base neste simulado. Só um simulado completo mostra se você atingiria as pontuações mínimas."
+            "value" : "Cerca de %1$@ dos %2$@ pontos da prova inteira."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bu deneme sınavına göre sınavın tamamında yaklaşık %1$@ / %2$@ puan alabilirsin. Gereken en düşük puanlara ulaşıp ulaşamayacağını yalnızca tam bir deneme sınavı gösterir."
+            "value" : "Sınavın tamamında yaklaşık %1$@ / %2$@ puan."
           }
         }
       }
@@ -3728,6 +3793,71 @@
         }
       }
     },
+    "At %@. It needs %@." : {
+      "comment" : "Under a missed minimum share: the test's share, then the one it needs",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erreicht: %1$@. Nötig: %2$@."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "At %1$@. It needs %2$@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Obtuvo %1$@. Necesita %2$@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Résultat : %1$@. Minimum : %2$@."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Al %1$@. Serve il %2$@."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "得点率は%1$@です。%2$@以上が必要です。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "현재 %1$@예요. 최소 %2$@는 되어야 해요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wynik: %1$@. Wymagane minimum: %2$@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Está em %1$@. O mínimo é %2$@."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Puan oranı %1$@. En az %2$@ gerekiyor."
+          }
+        }
+      }
+    },
     "Below %@ on this paper, the whole exam isn't passed." : {
       "comment" : "A speaking paper's floor for the whole exam",
       "localizations" : {
@@ -3783,6 +3913,122 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu oturumda %@ altında puan alırsan sınavı geçemezsin."
+          }
+        }
+      }
+    },
+    "Below the minimum for the exam" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unter der Mindestpunktzahl für die Prüfung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por debajo del puntaje mínimo del examen"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sous le minimum requis pour l’examen"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sotto il minimo richiesto per l’esame"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "試験全体の基準点未満"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "시험 최소 기준 미달"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poniżej wymaganego minimum na egzaminie"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abaixo do mínimo para a prova"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sınavın baraj puanının altında"
+          }
+        }
+      }
+    },
+    "Below the minimum in %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unter der Mindestpunktzahl in %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por debajo del puntaje mínimo en %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sous le minimum requis pour %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sotto il minimo richiesto in %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@の基準点未満"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 최소 기준 미달"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poniżej minimum w części: %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abaixo do mínimo em %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ için baraj puanının altında"
           }
         }
       }
@@ -4792,65 +5038,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ seviyesinden düştü"
-          }
-        }
-      }
-    },
-    "Each test's points are projected onto its whole length. Only a full mock says whether you'd reach the minimums." : {
-      "comment" : "A half mock's points per test, projected onto each whole test",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Die Punkte jedes Tests werden auf den gesamten Test hochgerechnet. Nur eine vollständige Probeprüfung zeigt, ob du die Mindestanforderungen erfüllen würdest."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Se estima cuántos puntos obtendrías en cada prueba completa. Solo un simulacro completo permite saber si alcanzarías los mínimos."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Les points de chaque épreuve sont estimés comme si tu l’avais passée en entier. Seul un examen blanc complet permet de savoir si tu atteindrais les seuils requis."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Per ogni prova, i punti sono rapportati alla versione completa. Solo una simulazione completa ti dice se raggiungeresti i minimi richiesti."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "各試験の得点は、全問分に換算しています。最低基準に届くかどうかは、本番と同じ長さの模試でのみわかります。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "각 시험에서 얻은 점수를 시험 전체 분량에 맞춰 환산했어요. 전체 분량의 모의고사를 봐야 최소 기준을 충족하는지 알 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wynik każdego testu jest szacowany dla jego pełnej wersji. Tylko pełny egzamin próbny pokaże, czy udałoby się osiągnąć wymagane minima."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Os pontos de cada prova são estimados para a prova inteira. Só um simulado completo mostra se você atingiria as pontuações mínimas."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Her testin puanı, testin tamamına göre tahmini olarak hesaplanır. Alt sınırlara ulaşıp ulaşamayacağını ancak tam bir deneme sınavı gösterir."
           }
         }
       }
@@ -6562,65 +6749,6 @@
         }
       }
     },
-    "Meets the objective minimums checked here." : {
-      "comment" : "A full mock's result reached every minimum it could check",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Erfüllt die hier geprüften Mindestanforderungen für objektiv bewertete Tests."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cumple los mínimos de las pruebas objetivas evaluados aquí."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tous les seuils vérifiés ici pour les épreuves objectives sont atteints."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Raggiunge le soglie minime verificate qui per la parte oggettiva."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "この模試で判定できる選択式試験の最低基準をすべて満たしています。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "여기서 확인한 객관식 최소 기준을 모두 충족했어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Osiąga wszystkie sprawdzane tu progi punktowe części testowej."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Atinge os mínimos verificados aqui para as provas objetivas."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Testler için burada kontrol edilen tüm alt sınırları karşılıyor."
-          }
-        }
-      }
-    },
     "Mock exam" : {
       "comment" : "Names a mock exam's screen until it loads",
       "localizations" : {
@@ -7990,7 +8118,7 @@
       }
     },
     "Not now" : {
-      "comment" : "Leaves without reviewing",
+      "comment" : "Declines giving a subject more time",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -11036,120 +11164,120 @@
         }
       }
     },
-    "The objective tests together need %@ of their points, and this mock doesn't have them all." : {
+    "The objective tests together need %@ of their points, and this mock exam doesn't have them all." : {
       "comment" : "A minimum share of points this mock couldn't check",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Für die objektiv bewerteten Tests sind insgesamt mindestens %@ der möglichen Punkte nötig. Diese Probeprüfung enthält nicht alle davon."
+            "value" : "In den objektiven Tests sind insgesamt %@ der möglichen Punkte nötig. Diese Probeprüfung enthält nicht alle diese Tests."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las pruebas objetivas requieren en conjunto el %@ de sus puntos y este simulacro no las incluye todas."
+            "value" : "Las pruebas objetivas requieren en conjunto %@ de sus puntos, y este simulacro no las incluye todas."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pour l’ensemble des épreuves objectives, il faut %@ des points possibles, mais elles ne figurent pas toutes dans cet examen blanc."
+            "value" : "Il faut obtenir %@ des points sur l’ensemble des épreuves objectives, mais cet examen blanc ne les inclut pas toutes."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La soglia complessiva per le prove oggettive è pari a %@ dei punti totali e questa simulazione non le include tutte."
+            "value" : "Le prove oggettive richiedono complessivamente il %@ dei punti, ma questa simulazione non le include tutte."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "選択式の試験では合計で満点の%@以上が必要ですが、この模試には一部の試験が含まれていません。"
+            "value" : "選択式の試験全体で満点の%@以上の得点が必要ですが、この模試では一部の試験が対象外です。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "객관식 시험의 합산 점수가 총점의 %@ 이상이어야 하지만, 이 모의고사에는 일부 시험만 포함되어 있어요."
+            "value" : "객관식 시험을 모두 합쳐 총점의 %@ 이상을 받아야 하지만, 이번 모의고사에는 일부 시험이 빠져 있어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Z części testowych trzeba łącznie uzyskać co najmniej %@ możliwych punktów, a ten egzamin próbny nie obejmuje wszystkich tych części."
+            "value" : "Łączne minimum z testów z zadaniami zamkniętymi to %@ punktów, a ten egzamin próbny nie obejmuje ich wszystkich."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Juntas, as provas objetivas exigem %@ dos pontos, e este simulado não inclui todas elas."
+            "value" : "As provas objetivas juntas exigem %@ do total de pontos, e este simulado não inclui todas elas."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Objektif testlerin toplam puanında en az %@ oranına ulaşmak gerekiyor ve bu deneme sınavı bu testlerin hepsini kapsamıyor."
+            "value" : "Çoktan seçmeli testlerin toplam puanının en az %@ kadarı gerekiyor; bu deneme sınavında bu testlerin hepsi yer almıyor."
           }
         }
       }
     },
-    "The objective tests together need %@, and this mock doesn't have them all." : {
+    "The objective tests together need %@, and this mock exam doesn't have them all." : {
       "comment" : "A minimum this mock couldn't check; the argument is like '60 points'",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Für die objektiv bewerteten Tests sind insgesamt mindestens %@ nötig. Diese Probeprüfung enthält nicht alle davon."
+            "value" : "In den objektiven Tests sind insgesamt %@ nötig. Diese Probeprüfung enthält nicht alle diese Tests."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las pruebas objetivas requieren en conjunto %@ y este simulacro no las incluye todas."
+            "value" : "Las pruebas objetivas requieren en conjunto %@, y este simulacro no las incluye todas."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pour l’ensemble des épreuves objectives, il faut %@, mais elles ne figurent pas toutes dans cet examen blanc."
+            "value" : "Il faut obtenir %@ sur l’ensemble des épreuves objectives, mais cet examen blanc ne les inclut pas toutes."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La soglia complessiva per le prove oggettive è pari a %@ e questa simulazione non le include tutte."
+            "value" : "Le prove oggettive richiedono complessivamente %@, ma questa simulazione non le include tutte."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "選択式の試験では合計で%@以上が必要ですが、この模試には一部の試験が含まれていません。"
+            "value" : "選択式の試験全体で%@以上の得点が必要ですが、この模試では一部の試験が対象外です。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "객관식 시험의 합산 점수가 %@ 이상이어야 하지만, 이 모의고사에는 일부 시험만 포함되어 있어요."
+            "value" : "객관식 시험을 모두 합쳐 %@ 이상을 받아야 하지만, 이번 모의고사에는 일부 시험이 빠져 있어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Z części testowych trzeba łącznie uzyskać co najmniej %@, a ten egzamin próbny nie obejmuje wszystkich tych części."
+            "value" : "Łączne minimum z testów z zadaniami zamkniętymi to %@, a ten egzamin próbny nie obejmuje ich wszystkich."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Juntas, as provas objetivas exigem %@, e este simulado não inclui todas elas."
+            "value" : "As provas objetivas juntas exigem %@, e este simulado não inclui todas elas."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Objektif testlerden toplam en az %@ almak gerekiyor ve bu deneme sınavı bu testlerin hepsini kapsamıyor."
+            "value" : "Çoktan seçmeli testlerden toplamda en az %@ almak gerekiyor; bu deneme sınavında bu testlerin hepsi yer almıyor."
           }
         }
       }
@@ -13501,6 +13629,64 @@
         }
       }
     },
+    "You reached every minimum in this mock exam." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast in dieser Probeprüfung überall die Mindestpunktzahl erreicht."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alcanzaste todos los puntajes mínimos en este simulacro."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as atteint tous les minimums requis dans cet examen blanc."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hai raggiunto tutti i punteggi minimi in questa simulazione."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この模試では、すべての基準点に達しました。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이번 모의고사에서 최소 기준을 모두 충족했어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Udało ci się osiągnąć wszystkie minima w tym egzaminie próbnym."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você atingiu todas as pontuações mínimas neste simulado."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu deneme sınavında tüm baraj puanlarına ulaştın."
+          }
+        }
+      }
+    },
     "You typed in at least one task, and typing shows nothing of how you sound, so the speaking part has no estimate. Speak every task next time to get one." : {
       "comment" : "A speaking paper with a typed task",
       "localizations" : {
@@ -13615,266 +13801,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "En az bir bölümde yazarak cevap verdin, bu yüzden puan tahmini o bölümde nasıl konuştuğunu hesaba katmıyor."
-          }
-        }
-      }
-    },
-    "You'd be eliminated: %@ is %@ short of %@." : {
-      "comment" : "Eliminated: the exam's rules disqualify a candidate below this minimum, whatever their total. A full mock missed a test's minimum; the second argument is like '2 points'",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du würdest ausscheiden: Bei %1$@ fehlen dir %2$@, um %3$@ zu erreichen."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "You'd be eliminated: %1$@ is %2$@ short of %3$@."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quedarías fuera: %1$@ está %2$@ por debajo del mínimo de %3$@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ce résultat serait éliminatoire : %1$@ est %2$@ en dessous du minimum de %3$@."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Scatterebbe l’esclusione: in %1$@ il punteggio è %2$@ sotto il minimo di %3$@."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "本番なら不合格になります：%1$@は%2$@足りず、基準の%3$@に届いていません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "실제 시험이라면 탈락해요. %1$@ 점수가 %2$@만큼 부족해 최소 기준인 %3$@에 못 미쳐요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "To oznaczałoby dyskwalifikację. %1$@: wynik jest o %2$@ niższy od wymaganego minimum %3$@."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Esse resultado eliminaria você: %1$@ está %2$@ abaixo do mínimo de %3$@."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Elenirdin: %1$@ için %2$@ daha gerekiyor; alt sınır %3$@."
-          }
-        }
-      }
-    },
-    "You'd be eliminated: %@ is at %@, below the %@ it needs." : {
-      "comment" : "Eliminated: the exam's rules disqualify a candidate below this minimum, whatever their total. A full mock missed a test's minimum share",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du würdest ausscheiden: %1$@ liegt bei %2$@ und damit unter dem Minimum von %3$@."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "You'd be eliminated: %1$@ is at %2$@, below the %3$@ it needs."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quedarías fuera: %1$@ alcanzó el %2$@, por debajo del mínimo de %3$@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ce résultat serait éliminatoire : %1$@ atteint %2$@, en dessous du minimum de %3$@."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Scatterebbe l’esclusione: %1$@ raggiunge %2$@, sotto il minimo richiesto di %3$@."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "本番なら不合格になります：%1$@は%2$@で、必要な%3$@を下回っています。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "실제 시험이라면 탈락해요. %1$@ 점수가 %2$@에 그쳐 최소 기준인 %3$@에 못 미쳐요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "To oznaczałoby dyskwalifikację. %1$@: wynik to %2$@, poniżej wymaganego minimum %3$@."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Esse resultado eliminaria você: %1$@ está com %2$@, abaixo do mínimo de %3$@."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Elenirdin: %1$@ için sonucun %2$@; bu, gereken %3$@ sınırının altında."
-          }
-        }
-      }
-    },
-    "You'd be eliminated: the objective tests together are %@ short of %@." : {
-      "comment" : "Eliminated: the exam's rules disqualify a candidate below this minimum, whatever their total. A full mock missed the objective tests' minimum; the first argument is like '2 points'",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du würdest ausscheiden: Bei den objektiven Tests fehlen dir insgesamt %1$@, um %2$@ zu erreichen."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "You'd be eliminated: the objective tests together are %1$@ short of %2$@."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quedarías fuera: las pruebas objetivas en conjunto están %1$@ por debajo del mínimo de %2$@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ce résultat serait éliminatoire : le total des épreuves objectives est %1$@ en dessous du minimum de %2$@."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Scatterebbe l’esclusione: il totale delle prove oggettive è %1$@ sotto il minimo di %2$@."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "本番なら不合格になります：選択式の問題の合計スコアは%1$@足りず、基準の%2$@に届いていません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "실제 시험이라면 탈락해요. 객관식 시험의 합산 점수가 %1$@만큼 부족해 최소 기준인 %2$@에 못 미쳐요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "To oznaczałoby dyskwalifikację: łączny wynik części testowych jest o %1$@ poniżej wymaganego minimum %2$@."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Esse resultado eliminaria você: a soma das provas objetivas está %1$@ abaixo do mínimo de %2$@."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Elenirdin: testlerden toplamda %1$@ daha alman gerekiyor; alt sınır %2$@."
-          }
-        }
-      }
-    },
-    "You'd be eliminated: the objective tests together reach %@, below the %@ they need." : {
-      "comment" : "Eliminated: the exam's rules disqualify a candidate below this minimum, whatever their total. A full mock missed the objective tests' minimum share",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du würdest ausscheiden: Die objektiven Tests erreichen zusammen %1$@ und liegen damit unter dem Minimum von %2$@."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "You'd be eliminated: the objective tests together reach %1$@, below the %2$@ they need."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quedarías fuera: las pruebas objetivas en conjunto alcanzan el %1$@, por debajo del mínimo de %2$@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ce résultat serait éliminatoire : le total des épreuves objectives atteint %1$@, en dessous du minimum de %2$@."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Scatterebbe l’esclusione: il totale delle prove oggettive è %1$@, sotto il minimo richiesto di %2$@."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "本番なら不合格になります：選択式の問題の合計スコアは%1$@で、必要な%2$@を下回っています。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "실제 시험이라면 탈락해요. 객관식 시험의 합산 점수가 %1$@에 그쳐 최소 기준인 %2$@에 못 미쳐요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "To oznaczałoby dyskwalifikację: łączny wynik części testowych wynosi %1$@, poniżej wymaganego minimum %2$@."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Esse resultado eliminaria você: a soma das provas objetivas chega a %1$@, abaixo do mínimo de %2$@."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Elenirdin: testlerdeki toplam sonucun %1$@; bu, gereken %2$@ sınırının altında."
           }
         }
       }
@@ -14561,6 +14487,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Planın %@ için daha fazla süre ayırıyor."
+          }
+        }
+      }
+    },
+    "Your plan stays as it is." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Plan bleibt, wie er ist."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu plan sigue igual."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton plan reste tel quel."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo piano resta com’è."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習計画は今のままです。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계획은 그대로 유지돼요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twój plan pozostaje bez zmian."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu plano continua como está."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planın olduğu gibi kalır."
           }
         }
       }

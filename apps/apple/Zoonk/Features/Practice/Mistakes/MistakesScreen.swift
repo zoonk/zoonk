@@ -313,7 +313,7 @@ private struct MistakeEntryView: View {
         image: try? snapshot.image.map { try PracticeJSON.recode($0.value1) },
         visual: try? snapshot.visual.map { try PracticeJSON.recode($0) })
 
-      LessonTextBlocks(snapshot.question).typeStyle(.question)
+      QuestionTitle(text: snapshot.question, isHeading: false)
 
       if let answer = TrueFalseWords.savedAnswer(
         snapshot.answer, format: snapshot.format, labels: labels)
