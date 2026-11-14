@@ -3,6 +3,7 @@
 import { type LanguageConversationIntro } from "@zoonk/core/language/conversations/checkpoint-call-contract";
 import { Button } from "@zoonk/ui/components/button";
 import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
+import { type MicrophoneProblem } from "@zoonk/ui/hooks/voice-recorder";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { StatusRegion } from "../../_components/status-region";
@@ -12,12 +13,7 @@ import { TaskMainButton } from "../../shell/task-frame";
 import { ChallengeCallGate } from "./challenge-call-gate";
 import { CallReason } from "./conversation-parts";
 import { loadLiveCallSession } from "./load-live-call-session";
-import {
-  type CallAudio,
-  type MicrophoneProblem,
-  openCallAudio,
-  openTypedCallAudio,
-} from "./use-call-microphone";
+import { type CallAudio, openCallAudio, openTypedCallAudio } from "./use-call-microphone";
 
 export type CallIntroFooterState = "failed" | "idle" | "plusRequired" | "starting";
 

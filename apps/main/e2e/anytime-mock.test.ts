@@ -8,6 +8,7 @@ import {
   failEssayGrading,
 } from "./anytime-mock-fixtures";
 import { expect, test } from "./fixtures";
+import { holdActionAnswer } from "./held-action";
 import { continueToStep } from "./result-steps";
 import { openAs } from "./study-day";
 
@@ -200,6 +201,27 @@ test.describe("Mocks whenever the learner wants", () => {
 
     await expect(page.getByRole("timer", { name: "Time left" })).toBeVisible();
     await expect.poll(mocks).toBe(1);
+    await page.context().close();
+  });
+
+  test("leaving while a mock starts goes where the learner tapped at once, never into the mock", async ({
+    browser,
+  }) => {
+    const { user } = await createAnytimeMockLearner({ plus: true });
+    const page = await openAs(browser, user);
+    await page.goto("/mock/new");
+    const exam = page.getByRole("radiogroup", { name: "The exam" });
+    await exam.getByText("The full exam", { exact: true }).click();
+    const start = await holdActionAnswer(page, "/mock/new");
+
+    await page.getByRole("button", { name: "Start" }).click();
+    await start.held;
+    await page.getByRole("link", { exact: true, name: "Exam" }).click();
+    await expect(page).toHaveURL(/\/exam$/u);
+
+    expect(await start.release(/\/mock\/[\da-f-]{36}$/u)).toBe(false);
+    await expect(page).toHaveURL(/\/exam$/u);
+
     await page.context().close();
   });
 });

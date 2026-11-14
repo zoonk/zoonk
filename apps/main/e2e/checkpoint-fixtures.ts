@@ -116,19 +116,23 @@ export async function createCheckpointLearner() {
 }
 
 /** The options keep their order, so the right answer is the first. */
-async function answerDuelQuestion(page: Page, number: number) {
+export async function answerDuelQuestion(page: Page, number: number) {
   const decides = number === CHECKPOINT_PASS_MARK;
 
   await expect(
     page.getByRole("progressbar", { name: `Question ${number} of ${CHECKPOINT_QUESTIONS}` }),
   ).toBeAttached();
 
-  await page.keyboard.press("1");
+  // Keys work once the page hydrates, so the first press retries until it picks.
+  await expect(async () => {
+    await page.keyboard.press("1");
 
-  await expect(page.getByRole("radio", { name: "Right answer" })).toHaveAttribute(
-    "aria-checked",
-    "true",
-  );
+    await expect(page.getByRole("radio", { name: "Right answer" })).toHaveAttribute(
+      "aria-checked",
+      "true",
+      { timeout: 1000 },
+    );
+  }).toPass({ timeout: 10_000 });
 
   await page.keyboard.press("Enter");
   await expect(page.getByRole("status")).toHaveText(decides ? /^Correct!/u : "Correct!");

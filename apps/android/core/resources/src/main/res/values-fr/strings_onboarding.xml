@@ -35,7 +35,7 @@
   "onboarding_attach_unsupported": "6540506e4c39ca4dcc6453514f5e28dd856ae741049521651b58491eb95f55cc",
   "onboarding_back_to_today": "697bfecbae740fa83754fe92e674549bdf7a4d653d1d2f525b76c18d53b1e74e",
   "onboarding_buddy_description": "cb85e2cf4966b9a63e033da356ac97e0ef4c0d4001769bb5b9e305d85becec41",
-  "onboarding_buddy_title": "7e90b31f05f01072adefb4dd5f6de4b54df6428ae09ffa63cac279e92c73ce8a",
+  "onboarding_buddy_title": "e570af64462708b517a16faf595db82e0400402f481da6f0f154dab13e624a64",
   "onboarding_cancel": "b647c7cb1e486ecf5d493e8edc143ba461acb1ddb3f339fcdd81a84d6b18eb91",
   "onboarding_change_date": "a1e002471c4df5c28e3b7c1e54e487e01652d90ab47ecf5ee8e7be2c0e72f760",
   "onboarding_choose_date": "561a3f965196a6edb53afdebbd243af2c933d95bc8c009dbf42ad017b66ea39d",
@@ -980,7 +980,7 @@
         <item quantity="other">Tu as %1$d choix à faire pour cet examen. Ton plan et tes examens blancs s’adaptent à tes choix, que tu peux modifier dans ton plan.</item>
     </plurals>
     <string name="onboarding_decide_later">Décider plus tard</string>
-    <string name="onboarding_buddy_title">Choisis ton Compagnon</string>
+    <string name="onboarding_buddy_title">Choisis ton compagnon</string>
     <string name="onboarding_buddy_description">Ton compagnon grandit à mesure que tu apprends.</string>
     <!-- Screen reader name of the step dots, like "Step 2 of 6". -->
     <string name="onboarding_step_of">Étape %1$d sur %2$d</string>

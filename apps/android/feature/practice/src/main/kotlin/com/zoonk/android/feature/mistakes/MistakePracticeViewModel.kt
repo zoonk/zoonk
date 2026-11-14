@@ -4,6 +4,7 @@ import android.os.SystemClock
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.recode
 import com.zoonk.android.feature.audio.GradeOutcome
@@ -136,8 +137,9 @@ class MistakePracticeViewModel(
 
     override val canRetry: Boolean get() = sent != null
 
+    /** Only from a read made since the last answer: a kept one may hold mistakes that now wait for tomorrow. */
     fun begin(practice: MistakePractice) {
-        if (mutableState.value != null) return
+        if (mutableState.value != null || this.practice.freshState.value !is LoadState.Loaded) return
         val read = practice.toQuestions()
         val lesson = restoreLesson(read, 0)
         val phase = if (lessonSent != null) RunPhase.AnswerFailed else RunPhase.Answering

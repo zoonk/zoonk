@@ -3,6 +3,8 @@
 import { useRouter } from "@/i18n/navigation";
 import { STUDY_SESSION_PARAM } from "@/lib/lessons/lesson-player-params";
 import { requestQuestionWriting } from "@/lib/questions/question-writing";
+import { answerHere, openingHere } from "@/lib/session/tap-answer";
+import { useResetWhenDone } from "@/lib/use-reset-when-done";
 import { useWorkflowRun } from "@/lib/workflow/use-workflow-run";
 import {
   type ChallengeDestination,
@@ -74,15 +76,18 @@ function WritingChallenge({
   return <ChallengeScreen {...screen} writing={{ kind: "writing", run }} />;
 }
 
-export function ChallengeClient({
-  challenge,
-  moved,
-  sessionId,
-}: {
+type ChallengeClientProps = {
   challenge: ChallengeView;
   moved: ComponentProps<typeof ChallengeScreen>["moved"];
   sessionId: string | null;
-}) {
+};
+
+function ChallengeVisit({
+  challenge,
+  moved,
+  onDone,
+  sessionId,
+}: ChallengeClientProps & { onDone: () => void }) {
   const router = useRouter();
   const locale = useAppLocale();
   const { planItemId } = challenge;
@@ -100,8 +105,20 @@ export function ChallengeClient({
       return "started";
     };
 
-    const startOnce = async (afterWriting: boolean): Promise<StartOutcome | "questionsNeeded"> => {
-      const started = await startChallengeAction(planItemId, getLocalTimeZone(), afterWriting);
+    const startOnce = async (
+      afterWriting: boolean,
+      here: () => Promise<boolean>,
+    ): Promise<StartOutcome | "questionsNeeded"> => {
+      const answered = await answerHere(
+        startChallengeAction(planItemId, getLocalTimeZone(), afterWriting),
+        here,
+      );
+
+      if (typeof answered === "string") {
+        return answered === "left" ? "started" : "failed";
+      }
+
+      const started = answered.answer;
 
       // None of these is worth retrying: the intro, read again, says where it stands.
       if (
@@ -129,8 +146,14 @@ export function ChallengeClient({
       return open(started);
     };
 
-    const write = async (): Promise<StartOutcome> => {
-      const result = await requestChallengeWriting(planItemId);
+    const write = async (here: () => Promise<boolean>): Promise<StartOutcome> => {
+      const asked = await answerHere(requestChallengeWriting(planItemId), here);
+
+      if (typeof asked === "string") {
+        return asked === "left" ? "started" : "failed";
+      }
+
+      const result = asked.answer;
 
       if (result.status === "writing") {
         setWriting({ generationId: result.generationId, kind: "writing" });
@@ -142,17 +165,20 @@ export function ChallengeClient({
         return "writing";
       }
 
-      const again = result.status === "ready" ? await startOnce(true) : "failed";
+      const again = result.status === "ready" ? await startOnce(true, here) : "failed";
       return again === "questionsNeeded" ? "failed" : again;
     };
 
     const start = async (afterWriting: boolean): Promise<StartOutcome> => {
-      const outcome = await startOnce(afterWriting);
-      return outcome === "questionsNeeded" ? write() : outcome;
+      onDone();
+      const here = openingHere();
+      const outcome = await startOnce(afterWriting, here);
+      return outcome === "questionsNeeded" ? write(here) : outcome;
     };
 
     const challengeActions: ChallengeActions = {
       move: async () => {
+        onDone();
         const outcome = await moveChallengeAction({ page, planItemId }, getLocalTimeZone());
 
         if (outcome === "notDone") {
@@ -169,10 +195,10 @@ export function ChallengeClient({
 
     return {
       actions: challengeActions,
-      openWritten: () => startOnce(true),
+      openWritten: () => startOnce(true, openingHere()),
       startAfterWriting: () => start(true),
     };
-  }, [challenge.blockId, challenge.mock, page, planItemId, router, search, startRereading]);
+  }, [challenge.blockId, challenge.mock, onDone, page, planItemId, router, search, startRereading]);
 
   const hrefs = useMemo(
     () => ({
@@ -208,4 +234,10 @@ export function ChallengeClient({
       screen={screen}
     />
   );
+}
+
+/** Back or a link shows this page as it was left, so a visit that started or moved its block starts over. */
+export function ChallengeClient(props: ChallengeClientProps) {
+  const reset = useResetWhenDone();
+  return <ChallengeVisit key={reset.key} {...props} onDone={reset.done} />;
 }

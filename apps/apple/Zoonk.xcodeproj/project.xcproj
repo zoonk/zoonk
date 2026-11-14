@@ -29,13 +29,13 @@
       "kind": "remote",
       "repository": "https://github.com/PostHog/posthog-ios",
       "version": {
-        "up-to-next-major-version": "3.93.6",
+        "up-to-next-major-version": "3.97.1",
       },
     }, {
       "kind": "remote",
       "repository": "https://github.com/getsentry/sentry-cocoa",
       "version": {
-        "up-to-next-major-version": "9.33.0",
+        "up-to-next-major-version": "9.34.0",
       },
     }, {
       "kind": "remote",

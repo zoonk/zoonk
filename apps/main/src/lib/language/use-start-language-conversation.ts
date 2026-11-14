@@ -1,8 +1,8 @@
 "use client";
 
 import { useRouter } from "@/i18n/navigation";
+import { answerHere, openingHere } from "@/lib/session/tap-answer";
 import { type ConversationConnection } from "@zoonk/learn/language/conversation";
-import { useStillOnPage } from "@zoonk/ui/hooks/still-here";
 import { useCallback } from "react";
 import {
   type LanguageConversationRequest,
@@ -15,12 +15,16 @@ type OpenedCall = boolean | "paused" | { generationId: string };
 
 export function useOpenLanguageConversation({ from }: { from?: "exam" } = {}) {
   const router = useRouter();
-  const stillOnPage = useStillOnPage();
 
   return useCallback(
     async (request: LanguageConversationRequest): Promise<OpenedCall | { limit: CallLimit }> => {
-      const isStillHere = stillOnPage();
-      const started = await startLanguageConversationAction(request);
+      const answered = await answerHere(startLanguageConversationAction(request), openingHere());
+
+      if (typeof answered === "string") {
+        return answered === "left";
+      }
+
+      const started = answered.answer;
 
       if (!started) {
         return false;
@@ -30,12 +34,9 @@ export function useOpenLanguageConversation({ from }: { from?: "exam" } = {}) {
         return started;
       }
 
-      if (isStillHere()) {
-        router.push(`/conversation/${started.conversationId}${from ? `?from=${from}` : ""}`);
-      }
-
+      router.push(`/conversation/${started.conversationId}${from ? `?from=${from}` : ""}`);
       return true;
     },
-    [from, router, stillOnPage],
+    [from, router],
   );
 }

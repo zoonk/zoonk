@@ -1,6 +1,7 @@
 "use client";
 
 import { type ConversationTurn } from "@zoonk/core/language/conversations/contract";
+import { type MicrophoneProblem } from "@zoonk/ui/hooks/voice-recorder";
 import { type Experimental_RealtimeServerEvent as RealtimeServerEvent } from "ai";
 import { type RefObject, useCallback, useRef } from "react";
 import { type CallLimit } from "../../_components/help-limit-notice";
@@ -10,11 +11,7 @@ import { type LiveCallSession } from "./live-call-session";
 import { type SpeechSample } from "./speech-activity";
 import { type LiveCallSetup, type useCallConnection } from "./use-call-connection";
 import { type LiveCallPhase } from "./use-call-controls";
-import {
-  type CallAudio,
-  type MicrophoneProblem,
-  type TappedCallAudio,
-} from "./use-call-microphone";
+import { type CallAudio, type TappedCallAudio } from "./use-call-microphone";
 
 type Connection = ReturnType<typeof useCallConnection>;
 

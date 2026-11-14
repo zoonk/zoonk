@@ -2,6 +2,7 @@
 
 import { type LanguageConversationIntro } from "@zoonk/core/language/conversations/checkpoint-call-contract";
 import { type LanguageConversationView } from "@zoonk/core/language/conversations/contract";
+import { type MicrophoneProblem } from "@zoonk/ui/hooks/voice-recorder";
 import { useExtracted } from "next-intl";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { Eyebrow } from "../../_components/eyebrow";
@@ -14,12 +15,7 @@ import { ExamTaskIntro } from "../exam-speaking/exam-task-intro";
 import { CallIntroFooter, type CallIntroFooterState } from "./call-intro-footer";
 import { useConversationTitle } from "./conversation-labels";
 import { CharacterRow, SoundNote } from "./conversation-parts";
-import {
-  type CallAudio,
-  type MicrophoneProblem,
-  type TappedCallAudio,
-  holdCallAudio,
-} from "./use-call-microphone";
+import { type CallAudio, type TappedCallAudio, holdCallAudio } from "./use-call-microphone";
 
 type CheckpointStart = "failed" | "idle" | "plusRequired" | "starting";
 

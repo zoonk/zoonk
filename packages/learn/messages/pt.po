@@ -1526,7 +1526,7 @@ msgstr "Um monóculo!"
 #: src/ceremonies/use-ceremony-copy.ts
 msgctxt "vwv1rM"
 msgid "They come with your buddy."
-msgstr "Eles vêm com seu Parceiro."
+msgstr "Eles vêm com seu parceiro."
 
 #: src/ceremonies/use-ceremony-copy.ts
 msgctxt "DIrp2X"
@@ -2061,7 +2061,7 @@ msgstr "{correct, plural, =0 {# de {total} objetivos} other {# de {total} objeti
 #: src/challenge/challenge-footer.tsx
 msgctxt "O274f-"
 msgid "{count, plural, one {Opens tomorrow} other {Opens in <mono>#</mono> days}}"
-msgstr "{count, plural, one {Abre amanhã} other {Abre em <mono>#</mono> dias}}"
+msgstr "{count, plural, =1 {Abre amanhã} other {Abre em <mono>#</mono> dias}}"
 
 #: src/challenge/challenge-footer.tsx
 msgctxt "rnxGr1"
@@ -4012,12 +4012,12 @@ msgstr "Ver seu resultado"
 #: src/focus-test/use-result-line.ts
 msgctxt "2jwvQI"
 msgid "{count, plural, one {The test suggests this subject} other {The test suggests these # subjects}}"
-msgstr "{count, plural, one {O teste sugere esta matéria} other {O teste sugere estas # matérias}}"
+msgstr "{count, plural, =1 {O teste sugere esta matéria} other {O teste sugere estas # matérias}}"
 
 #: src/focus-test/use-result-line.ts
 msgctxt "JkvsQ2"
 msgid "{count, plural, one {Focus on this subject} other {Focus on these # subjects}}"
-msgstr "{count, plural, one {Foque nesta matéria} other {Foque nestas # matérias}}"
+msgstr "{count, plural, =1 {Foque nesta matéria} other {Foque nestas # matérias}}"
 
 #: src/focus-test/use-result-line.ts
 msgctxt "225sKn"
@@ -5075,7 +5075,7 @@ msgstr "{count, plural, one {Com base em # revisão de todos os tópicos} other 
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "DJCbLV"
 msgid "{count, plural, one {Based on your last mock exam} other {Based on your last # mock exams}}"
-msgstr "{count, plural, one {Com base no seu último simulado} other {Com base nos seus últimos # simulados}}"
+msgstr "{count, plural, =1 {Com base no seu último simulado} other {Com base nos seus últimos # simulados}}"
 
 #: src/journey/preparation/preparation-details.tsx
 #: src/mock/mock-result-view.tsx
@@ -7386,7 +7386,7 @@ msgstr "Praticar redação"
 #: src/missions/mission-copy.tsx
 msgctxt "missions.wCMhp6"
 msgid "{count, plural, one {Fix a mistake} other {Fix # mistakes}}"
-msgstr "{count, plural, one {Corrigir um erro} other {Corrigir # erros}}"
+msgstr "{count, plural, =1 {Corrigir um erro} other {Corrigir # erros}}"
 
 #: src/missions/mission-copy.tsx
 msgctxt "missions.YahrnI"
@@ -7486,7 +7486,7 @@ msgstr "Missões de hoje concluídas!"
 #: src/missions/mission-moment.tsx
 msgctxt "5Bpyg-"
 msgid "{count, plural, one {Mission done!} other {# missions done!}}"
-msgstr "{count, plural, one {Missão concluída!} other {# missões concluídas!}}"
+msgstr "{count, plural, =1 {Missão concluída!} other {# missões concluídas!}}"
 
 #: src/missions/mission-moment.tsx
 msgctxt "oKqRoi"
@@ -7979,7 +7979,7 @@ msgstr "{count, plural, one {# pergunta está marcada.} other {# perguntas estã
 #: src/mock/mock-hand-in.tsx
 msgctxt "EJ9hwv"
 msgid "{count, plural, one {The essay is blank.} other {# essays are blank.}}"
-msgstr "{count, plural, one {A redação está em branco.} other {# redações estão em branco.}}"
+msgstr "{count, plural, =1 {A redação está em branco.} other {# redações estão em branco.}}"
 
 #: src/mock/mock-hand-in.tsx
 #: src/mock/mock-speaking.tsx
@@ -9330,7 +9330,7 @@ msgstr "{count, plural, one {Escolha pelo menos {time} por dia para seu # objeti
 #: src/onboarding/steps/buddy-step.tsx
 msgctxt "bv5Y_i"
 msgid "Your buddy grows as you learn."
-msgstr "Seu Parceiro cresce enquanto você aprende."
+msgstr "Seu parceiro cresce enquanto você aprende."
 
 #: src/onboarding/steps/country-step.tsx
 msgctxt "jFT6CV"
@@ -12589,7 +12589,7 @@ msgstr "{buddy}, com alegria pelo que você estudou hoje"
 #: src/session/summary/summary-rewards.tsx
 msgctxt "ajfhRp"
 msgid "{count, plural, one {Done} other {All # done}}"
-msgstr "{count, plural, one {Concluída} other {Todas as # concluídas}}"
+msgstr "{count, plural, =1 {Concluída} other {Todas as # concluídas}}"
 
 #: src/session/summary/summary-rewards.tsx
 msgctxt "4VMsuw"

@@ -1165,7 +1165,7 @@ msgstr "Modifier"
 #: src/onboarding/steps/buddy-step.tsx
 msgctxt "DWD-Vm"
 msgid "Choose your buddy"
-msgstr "Choisis ton Compagnon"
+msgstr "Choisis ton compagnon"
 
 #: src/appearance/home-country-setting.tsx
 #: src/country/country-picker.tsx
@@ -1526,7 +1526,7 @@ msgstr "Un monocle !"
 #: src/ceremonies/use-ceremony-copy.ts
 msgctxt "vwv1rM"
 msgid "They come with your buddy."
-msgstr "Elles accompagnent ton Compagnon."
+msgstr "Elles accompagnent ton compagnon."
 
 #: src/ceremonies/use-ceremony-copy.ts
 msgctxt "DIrp2X"
@@ -2061,7 +2061,7 @@ msgstr "{correct, plural, =0 {# objectif sur {total}} one {# objectif sur {total
 #: src/challenge/challenge-footer.tsx
 msgctxt "O274f-"
 msgid "{count, plural, one {Opens tomorrow} other {Opens in <mono>#</mono> days}}"
-msgstr "{count, plural, one {Disponible demain} other {Disponible dans <mono>#</mono> jours}}"
+msgstr "{count, plural, =1 {Disponible demain} other {Disponible dans <mono>#</mono> jours}}"
 
 #: src/challenge/challenge-footer.tsx
 msgctxt "rnxGr1"
@@ -2774,7 +2774,7 @@ msgstr "Journal de bord"
 #: src/conversation/tutor-feature-offers.tsx
 msgctxt "Kvxbfx"
 msgid "See, correct or delete what your buddy remembers about you."
-msgstr "Consulte, corrige ou supprime ce que ton Compagnon retient sur toi."
+msgstr "Consulte, corrige ou supprime ce que ton compagnon retient sur toi."
 
 #: src/conversation/tutor-feature-offers.tsx
 msgctxt "dVx3yz"
@@ -4012,12 +4012,12 @@ msgstr "Voir ton résultat"
 #: src/focus-test/use-result-line.ts
 msgctxt "2jwvQI"
 msgid "{count, plural, one {The test suggests this subject} other {The test suggests these # subjects}}"
-msgstr "{count, plural, one {Le test suggère cette matière} other {Le test suggère ces # matières}}"
+msgstr "{count, plural, =1 {Le test suggère cette matière} other {Le test suggère ces # matières}}"
 
 #: src/focus-test/use-result-line.ts
 msgctxt "JkvsQ2"
 msgid "{count, plural, one {Focus on this subject} other {Focus on these # subjects}}"
-msgstr "{count, plural, one {Concentre-toi sur cette matière} other {Concentre-toi sur ces # matières}}"
+msgstr "{count, plural, =1 {Concentre-toi sur cette matière} other {Concentre-toi sur ces # matières}}"
 
 #: src/focus-test/use-result-line.ts
 msgctxt "225sKn"
@@ -5075,7 +5075,7 @@ msgstr "{count, plural, one {D’après # révision de chaque sujet} other {D’
 #: src/journey/preparation/preparation-details.tsx
 msgctxt "DJCbLV"
 msgid "{count, plural, one {Based on your last mock exam} other {Based on your last # mock exams}}"
-msgstr "{count, plural, one {D’après ton dernier examen blanc} other {D’après tes # derniers examens blancs}}"
+msgstr "{count, plural, =1 {D’après ton dernier examen blanc} other {D’après tes # derniers examens blancs}}"
 
 #: src/journey/preparation/preparation-details.tsx
 #: src/mock/mock-result-view.tsx
@@ -7386,7 +7386,7 @@ msgstr "S’entraîner à la rédaction"
 #: src/missions/mission-copy.tsx
 msgctxt "missions.wCMhp6"
 msgid "{count, plural, one {Fix a mistake} other {Fix # mistakes}}"
-msgstr "{count, plural, one {Corriger une erreur} other {Corriger # erreurs}}"
+msgstr "{count, plural, =1 {Corriger une erreur} other {Corriger # erreurs}}"
 
 #: src/missions/mission-copy.tsx
 msgctxt "missions.YahrnI"
@@ -7486,7 +7486,7 @@ msgstr "Missions du jour terminées !"
 #: src/missions/mission-moment.tsx
 msgctxt "5Bpyg-"
 msgid "{count, plural, one {Mission done!} other {# missions done!}}"
-msgstr "{count, plural, one {Mission terminée !} other {# missions terminées !}}"
+msgstr "{count, plural, =1 {Mission terminée !} other {# missions terminées !}}"
 
 #: src/missions/mission-moment.tsx
 msgctxt "oKqRoi"
@@ -7979,7 +7979,7 @@ msgstr "{count, plural, one {# question est signalée.} other {# questions sont 
 #: src/mock/mock-hand-in.tsx
 msgctxt "EJ9hwv"
 msgid "{count, plural, one {The essay is blank.} other {# essays are blank.}}"
-msgstr "{count, plural, one {La rédaction est vide.} other {# rédactions sont vides.}}"
+msgstr "{count, plural, =1 {La rédaction est vide.} other {# rédactions sont vides.}}"
 
 #: src/mock/mock-hand-in.tsx
 #: src/mock/mock-speaking.tsx
@@ -12589,7 +12589,7 @@ msgstr "{buddy}, avec le sourire devant tes progrès du jour"
 #: src/session/summary/summary-rewards.tsx
 msgctxt "ajfhRp"
 msgid "{count, plural, one {Done} other {All # done}}"
-msgstr "{count, plural, one {Terminée} other {Les # sont terminées}}"
+msgstr "{count, plural, =1 {Terminée} other {Les # sont terminées}}"
 
 #: src/session/summary/summary-rewards.tsx
 msgctxt "4VMsuw"
