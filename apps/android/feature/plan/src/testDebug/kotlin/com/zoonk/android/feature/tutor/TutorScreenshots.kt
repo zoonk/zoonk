@@ -86,7 +86,9 @@ class TutorScreenshots {
     /** A free learner's messages used up over the last 30 days: the notice in place of the composer, with the day more come back. */
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
-    fun messagesUsed() =
+    fun messagesUsed() {
+        val opens = Instant.now().plus(9, ChronoUnit.DAYS)
+        val limit = """{"availableAt":"$opens","limit":30,"period":"rolling30Days","resource":"tutorMessage","tier":"free"}"""
         capture(
             "tutor-messages-used-phone",
             dark = false,
@@ -96,15 +98,10 @@ class TutorScreenshots {
                     ApiError.Unavailable,
                     "USAGE_LIMIT_REACHED",
                     status = 402,
-                    details =
-                        Json.parseToJsonElement(
-                            """{"limit":{"availableAt":"${Instant.now().plus(
-                                9,
-                                ChronoUnit.DAYS,
-                            )}","limit":30,"period":"rolling30Days","resource":"tutorMessage","tier":"free"}}""",
-                        ),
+                    details = Json.parseToJsonElement("""{"limit":$limit}"""),
                 ),
         )
+    }
 
     private fun planChangeTurns() =
         listOf(
